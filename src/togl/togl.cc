@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 08:14:07 2000
+// written: Wed May 24 08:20:57 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -12,85 +12,14 @@
 // Win32 support has been removed from this version, and the code has
 // been C++-ified.
 //
+// *** Original Copyright Notice ***
+//
+// Togl - a Tk OpenGL widget
+// Version 1.5
+// Copyright (C) 1996-1997  Brian Paul and Ben Bederson
+// See the LICENSE file for copyright details.
+//
 ///////////////////////////////////////////////////////////////////////
-
-/*
- * Togl - a Tk OpenGL widget
- * Version 1.5
- * Copyright (C) 1996-1997  Brian Paul and Ben Bederson
- * See the LICENSE file for copyright details.
- */
-
-
-/*
- * $Log$
- * Revision 2.5  2000/05/24 15:16:28  rjpeters
- * Added helper functions setupOverlayIfNeeded(), issueConfigureNotify(),
- * checkDblBufferSnafu(), and setupEPS().
- *
- * Revision 2.4  2000/05/24 14:28:12  rjpeters
- * Made Togl::configure().
- *
- * Revision 2.3  2000/05/24 14:13:40  rjpeters
- * Changed all names of Togl members to 'its...', and made a constructor
- * with the code that used to be in Togl_Cmd().
- *
- * Revision 2.2  2000/05/23 20:15:53  rjpeters
- * Added info about this ongoing revision of the Togl widget.
- *
- * Revision 2.1  2000/05/23 20:11:46  rjpeters
- * *** empty log message ***
- *
- * Revision 1.45  1998/08/22 03:05:53  brianp
- * added -indirect config option
- *
- * Revision 1.44  1998/05/04 23:42:43  brianp
- * fixed NULL pointer dereference bug in ToglCmdDeletedProc()
- *
- * Revision 1.43  1998/03/12 04:10:47  brianp
- * added display list and OpenGL context sharing options
- *
- * Revision 1.42  1998/03/12 03:20:31  brianp
- * fixed a few overlay update bugs (Yang Guo Liang)
- *
- * Revision 1.41  1998/01/20 01:05:10  brianp
- * added more destroy/clean-up code
- * added a few Tcl 7.4 / Tk 4.0 #if/#else/#endifs (David Laur)
- *
- * Revision 1.40  1997/12/13 02:27:46  brianp
- * only call Tcl_DeleteCommandFromToken() is using Tcl/Tk 8.0 or later
- *
- * Revision 1.39  1997/12/13 02:26:02  brianp
- * test for STEREO to enable SGI stereo code
- * general code clean-up
- *
- * Revision 1.38  1997/12/11 02:21:18  brianp
- * added support for Tcl/Tk 8.0p2
- *
- * Revision 1.37  1997/11/15 04:11:30  brianp
- * added Adrian J. Chung's widget destroy code
- *
- * Revision 1.36  1997/11/15 03:33:13  brianp
- * fixed multi-expose/redraw problem (Andy Colebourne)
- *
- * Revision 1.35  1997/11/15 03:28:42  brianp
- * removed code in Togl_Configure(), added for stereo, that caused a new bug
- *
- * Revision 1.34  1997/11/15 02:58:48  brianp
- * added Togl_TkWin() per Glenn Lewis
- *
- * Revision 1.33  1997/10/01 02:50:57  brianp
- * added SGI stereo functions from Ben Evans
- *
- * Revision 1.32  1997/10/01 00:25:22  brianp
- * made small change for HP compilation (Glenn Lewis)
- *
- * Revision 1.31  1997/09/17 02:41:07  brianp
- * added Geza Groma's Windows NT/95 patches
- *
- * Revision 1.30  1997/09/12 01:21:05  brianp
- * a few more tweaks for Windows compilation
- */
 
 #ifndef TOGL_CC_DEFINED
 #define TOGL_CC_DEFINED
@@ -99,18 +28,16 @@
 
 #include <iostream.h>
 
-/*
- * Currently support only X11
- */
+// Currently support only X11
 #define X11
 
-/*** Standard C headers ***/
+// Standard C headers
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/*** X Window System headers ***/
+// X Window System headers
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>  /* for XA_RGB_DEFAULT_MAP atom */
@@ -123,9 +50,9 @@
 
 #include <GL/glx.h>
 
-/*** Tcl/Tk headers ***/
+// Tcl/Tk headers
 #ifndef _TKPORT
-#  define _TKPORT  /* This eliminates need to include a bunch of Tk baggage */
+#  define _TKPORT  // This eliminates need to include a bunch of Tk baggage
 #endif
 #include <tcl.h>
 #include <tk.h>
@@ -138,7 +65,7 @@
 
 namespace {
 
-  /* Defaults */
+  // Defaults
   char*  DEFAULT_WIDTH     = "400";
   char*  DEFAULT_HEIGHT    = "400";
   char*  DEFAULT_IDENT     = "";
@@ -172,6 +99,7 @@ public:
   int makeWindowExist();
 
 private:
+  void setupStackingOrder();
   void setupOverlayIfNeeded();
   void issueConfigureNotify();
   void checkDblBufferSnafu();
@@ -2565,6 +2493,32 @@ DOTRACE("Togl::makeWindowExist");
   winPtr->inputContext = NULL;
 #endif /* TK_USE_INPUT_METHODS */
 
+  setupStackingOrder();
+
+  setupOverlayIfNeeded();
+
+  // Issue a ConfigureNotify event if there were deferred changes
+  issueConfigureNotify();
+
+  // Request the X window to be displayed
+  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
+
+  // Bind the context to the window and make it the current context
+  Togl_MakeCurrent(this);
+
+  // Check for a single/double buffering snafu
+  checkDblBufferSnafu();
+
+  // for EPS Output
+  setupEPS();
+
+  return TCL_OK;
+}
+
+void Togl::setupStackingOrder() {
+DOTRACE("Togl::setupStackingOrder");
+  TkWindow *winPtr = (TkWindow *) itsTkWin;
+
   if (!(winPtr->flags & TK_TOP_LEVEL)) {
 	 /*
 	  * If any siblings higher up in the stacking order have already
@@ -2599,25 +2553,6 @@ DOTRACE("Togl::makeWindowExist");
 		TkWmAddToColormapWindows(winPtr);
 	 }
   }
-
-  setupOverlayIfNeeded();
-
-  // Issue a ConfigureNotify event if there were deferred changes
-  issueConfigureNotify();
-
-  // Request the X window to be displayed
-  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
-
-  // Bind the context to the window and make it the current context
-  Togl_MakeCurrent(this);
-
-  // Check for a single/double buffering snafu
-  checkDblBufferSnafu();
-
-  // for EPS Output
-  setupEPS();
-
-  return TCL_OK;
 }
 
 void Togl::setupOverlayIfNeeded() {
