@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Sep 23 15:02:54 2000
+// written: Fri Oct 20 17:51:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ public:
   ThListPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, ThList::theThList(), "ThList", "$Revision$")
   {
-	 ThList::theThList().insertAt(0, ThList::Ptr(new TimingHandler()));
+	 ThList::theThList().insertAt(0, ThList::Ptr(TimingHandler::make()));
   }
 };
 
@@ -154,17 +154,17 @@ DOTRACE("Th_Init");
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
   Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
 
-  FactoryRegistrar<IO::IoObject, TimingHdlr>       :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, TimingHandler>    :: registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
-  FactoryRegistrar<IO::IoObject, AbortTrialEvent>  :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, DrawEvent>        :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, UndrawEvent>      :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, EndTrialEvent>    :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, SwapBuffersEvent> :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, RenderBackEvent>  :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, RenderFrontEvent> :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, ClearBufferEvent> :: registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&DrawEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
