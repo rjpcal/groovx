@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Wed Sep 25 19:04:00 2002
+// written: Wed Nov 20 17:19:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,24 +13,22 @@
 #ifndef XBMAPRENDERER_H_DEFINED
 #define XBMAPRENDERER_H_DEFINED
 
-#include "visx/bmaprenderer.h"
-
 struct _XImage;
 typedef _XImage XImage;
 
 struct Tk_Window_;
 typedef Tk_Window_* Tk_Window;
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c XBmapRenderer is an implementation of \c BmapRenderer that
- * renders bitmap data using X11's drawing API's.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+namespace Gfx
+{
+  class BmapData;
+  class Canvas;
+  template <class V> class Rect;
+  template <class V> class Vec2;
+}
 
-class XBmapRenderer : public BmapRenderer
+/// XBmapRenderer is "in between jobs"... needs to be merged into GLCanvas.
+class XBmapRenderer
 {
 public:
   /** Initializes some X11 structures. Must be called before any \c
