@@ -34,12 +34,13 @@
 
 #include "io/io.h"
 #include "io/reader.h"
+#include "io/readattribmap.h"
+#include "io/readobjectmap.h"
 
 #include "util/arrays.h"
 #include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/gzstreambuf.h"
-#include "util/objmgr.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/slink_list.h"
@@ -47,8 +48,6 @@
 #include "util/value.h"
 
 #include <istream>
-#include <map>
-#include <list>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -56,134 +55,6 @@ DBG_REGISTER;
 
 using Util::Ref;
 using Util::SoftRef;
-
-namespace IO
-{
-  class ObjectMap
-  {
-  private:
-    typedef std::map<Util::UID, Ref<IO::IoObject> > MapType;
-    MapType itsMap;
-
-  public:
-    ObjectMap() : itsMap() {}
-
-    // This returns the object for the given id; the object must
-    // already have been created, otherwise an exception will be thrown.
-    Ref<IO::IoObject> getObject(Util::UID id)
-      {
-        MapType::const_iterator itr = itsMap.find(id);
-        if ( itr == itsMap.end() )
-          {
-            throw Util::Error(fstring("no object was found "
-                                      "for the given id:", id));
-          }
-
-        return (*itr).second;
-      }
-
-    // This will create an object for the id if one has not yet been
-    // created, then return the object for that id.
-    Ref<IO::IoObject> fetchObject(const fstring& type, Util::UID id)
-      {
-        MapType::const_iterator itr = itsMap.find(id);
-
-        if ( itr == itsMap.end() )
-          {
-            Ref<IO::IoObject> obj(
-                     Util::ObjMgr::newTypedObj<IO::IoObject>(type));
-
-            itsMap.insert(MapType::value_type(id, obj));
-
-            return obj;
-          }
-
-        return (*itr).second;
-      }
-
-    void assignObjectForId(Util::UID id, Ref<IO::IoObject> object)
-      {
-        MapType::const_iterator itr = itsMap.find(id);
-
-        // See if an object has already been created for this id
-        if ( itr != itsMap.end() )
-          {
-            fstring msg;
-            msg.append("object has already been created\n");
-            msg.append("\ttype: ", object->objTypename().c_str(), "\n");
-            msg.append("\tid: ", id);
-            throw Util::Error(msg);
-          }
-
-        itsMap.insert(MapType::value_type(id, object));
-      }
-
-    void clear() { itsMap.clear(); }
-  };
-
-
-  class AttribMap
-  {
-  public:
-
-    struct Attrib
-    {
-    private:
-      Attrib(); // not implemented
-
-    public:
-      Attrib(const fstring& t, const fstring& v) :
-        type(t), value(v) {}
-
-      fstring type;
-      fstring value;
-    };
-
-  private:
-    fstring itsObjTag;
-
-    typedef std::pair<fstring, Attrib> ValueType;
-    typedef std::list<ValueType> ListType;
-
-    ListType itsMap;
-
-    IO::VersionId itsSerialVersionId;
-
-  public:
-    AttribMap(const fstring& obj_tag) :
-      itsObjTag(obj_tag), itsMap(), itsSerialVersionId(0) {}
-
-    IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
-
-    void setSerialVersionId(IO::VersionId id) { itsSerialVersionId = id; }
-
-    Attrib get(const fstring& attrib_name)
-      {
-        ListType::iterator itr = itsMap.begin(), end = itsMap.end();
-        while (itr != end)
-          {
-            dbgEval(3, attrib_name); dbgEvalNL(3, (*itr).first);
-            if ((*itr).first == attrib_name)
-              {
-                Attrib result = (*itr).second;
-                itsMap.erase(itr);
-                return result;
-              }
-            ++itr;
-          }
-
-        throw Util::Error(fstring("no attribute named '",
-                                  attrib_name.c_str(), "' for ",
-                                  itsObjTag.c_str()));
-      }
-
-    void addNewAttrib(const fstring& attrib_name,
-                      const fstring& type, const fstring& value)
-      {
-        itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
-      }
-  };
-}
 
 using IO::AttribMap;
 
