@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Thu Nov 21 18:30:22 2002
+// written: Thu Nov 21 18:41:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,6 +121,9 @@ public:
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
+
+  double getLogPixelsPerUnit() const;
+  void setLogPixelsPerUnit(double s);
 
   double getPixelsPerUnit() const { return itsPixelsPerUnit; }
   void setPixelsPerUnit(double s);
