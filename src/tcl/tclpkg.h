@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Sep 30 10:58:30 1999
+// written: Mon Oct  4 12:29:30 1999
 // $Id$
 //
 //
@@ -415,6 +415,66 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
+// CPropertiesCmd
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class CPropertiesCmd : public TclCmd {
+public:
+  CPropertiesCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 TclCmd(interp, cmd_name, NULL, 1, 1),
+	 itsInterp(interp),
+	 itsPropertyList(0) {}
+protected:
+  virtual void invoke() {
+	 if (itsPropertyList == 0) {
+
+		const vector<PropertyInfo<C> >& vec = C::getPropertyInfos();
+		
+		vector<Tcl_Obj*> elements;
+		
+		for (int i = 0; i < vec.size(); ++i) {
+		  vector<Tcl_Obj*> sub_elements;
+		  
+		  // property name
+		  sub_elements.push_back(Tcl_NewStringObj(vec[i].name.c_str(), -1));
+		  
+		  // min value
+		  TclValue min(itsInterp, *(vec[i].min));
+		  sub_elements.push_back(min.getObj());
+		  
+		  // max value
+		  TclValue max(itsInterp, *(vec[i].max));
+		  sub_elements.push_back(max.getObj());
+		  
+		  // resolution value
+		  TclValue res(itsInterp, *(vec[i].res));
+		  sub_elements.push_back(res.getObj());
+		  
+		  // start new group flag
+		  sub_elements.push_back(Tcl_NewBooleanObj(vec[i].startNewGroup));
+		  
+		  elements.push_back(Tcl_NewListObj(sub_elements.size(),
+														&(sub_elements[0])));
+		}
+		
+		itsPropertyList = Tcl_NewListObj(elements.size(),
+											 &(elements[0]));
+		
+		Tcl_IncrRefCount(itsPropertyList);
+	 }
+	 
+	 returnVal(TclValue(itsInterp, itsPropertyList));
+  }
+
+private:
+  Tcl_Interp* itsInterp;
+  Tcl_Obj* itsPropertyList;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
 // CTclIoItemPkg definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -431,6 +491,9 @@ void CTclIoItemPkg::declareAllProperties() {
   for (int i = 0; i < pinfos.size(); ++i) {
 	 declareProperty(pinfos[i]);
   }
+
+  addCommand( new CPropertiesCmd<C>(TclPkg::interp(),
+												makePkgCmdName("properties")));
 }
 
 static const char vcid_tclitempkg_h[] = "$Header$";
