@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Aug  7 11:40:23 2002
+// written: Mon Sep  9 11:29:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@
 #include <tk.h>
 #include <cmath>
 
-#ifndef NO_CPP_LIMITS
+#ifdef HAVE_LIMITS
 #  include <limits>
 #else
 #  include <climits>
@@ -521,7 +521,7 @@ DOTRACE("Toglet::queryColor");
   XQueryColor(display, cmap, &col);
 
   color.pixel = (unsigned int)col.pixel;
-#ifndef NO_CPP_LIMITS
+#ifdef HAVE_LIMITS
   const unsigned short usmax = std::numeric_limits<unsigned short>::max();
 #else
   const unsigned short usmax = USHRT_MAX;

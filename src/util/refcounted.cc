@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Thu Jun  6 17:26:33 2002
+// written: Mon Sep  9 11:29:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "util/error.h"
 
-#ifndef NO_CPP_LIMITS
+#ifdef HAVE_LIMITS
 #  include <limits>
 #else
 #  include <climits>
@@ -58,7 +58,7 @@ void Util::RefCounts::acquireWeak()
 {
 DOTRACE("Util::RefCounts::acquireWeak");
 
-#ifndef NO_CPP_LIMITS
+#ifdef HAVE_LIMITS
   Assert(itsWeak < std::numeric_limits<Count>::max());
 #else
   Assert(itsWeak < USHRT_MAX);
@@ -88,7 +88,7 @@ void Util::RefCounts::acquireStrong()
 {
 DOTRACE("Util::RefCounts::acquireStrong");
 
-#ifndef NO_CPP_LIMITS
+#ifdef HAVE_LIMITS
   Assert(itsStrong < std::numeric_limits<Count>::max());
 #else
   Assert(itsStrong < USHRT_MAX);

@@ -40,7 +40,7 @@ TK_VERSION := 8.4
 
 MAKEFLAGS += --warn-undefined-variables
 
-CPP_DEFINES :=
+CPP_DEFINES := $(DEFS)
 CC_SWITCHES :=
 LD_OPTIONS :=
 INCLUDE_PATH :=
@@ -171,7 +171,7 @@ endif
 ifeq ($(COMPILER),g++2)
 	CXX := time g++2
 	CC_SWITCHES += -Wall -W -Wsign-promo
-	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+	CPP_DEFINES += -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O1

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Wed Jul 31 18:08:44 2002
+// written: Mon Sep  9 11:28:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #define NEW_DEFINED
 #endif
 
-#ifndef NO_CPP_LIMITS
+#ifdef HAVE_LIMITS
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LIMITS_DEFINED)
 #include <limits>
 #define LIMITS_DEFINED
