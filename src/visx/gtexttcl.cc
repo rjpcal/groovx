@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Jul 18 11:25:15 2001
+// written: Wed Jul 18 12:10:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,7 @@ public:
     Tcl::defGenericObjCmds<Gtext>(this);
 
     defAttrib("text", &Gtext::getText, &Gtext::setText);
-    defAttrib("strokeWidth",
-              &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
+    defAttrib("strokeWidth", &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
   }
 };
 

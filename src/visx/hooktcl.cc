@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Jul 18 11:33:30 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ public:
   HookPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Hook", "$Revision$")
   {
-    defVecRaw( HookTcl::hook, "::hook", "variable", 1 );
-    def( HookTcl::memUsage, "::memUsage", 0 );
+    defVecRaw( "::hook", 1, "variable", HookTcl::hook );
+    def( "::memUsage", 0, HookTcl::memUsage );
   }
 };
 

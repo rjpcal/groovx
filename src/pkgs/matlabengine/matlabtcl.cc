@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Wed Jul 18 11:27:36 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,8 +106,8 @@ public:
   {
     Tcl::defGenericObjCmds<MatlabEngine>(this);
 
-    def( &MatlabEngine::evalString, "eval", "engine_id command" );
-    def( &MatlabEngine::getMtx, "get", "engine_id mtx_name" );
+    def( "eval", "engine_id command", &MatlabEngine::evalString );
+    def( "get", "engine_id mtx_name", &MatlabEngine::getMtx );
 
     eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
     eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");

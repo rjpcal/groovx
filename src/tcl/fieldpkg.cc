@@ -127,9 +127,10 @@ void Tcl::defField(Tcl::Pkg* pkg, const FieldInfo& finfo)
 {
 DOTRACE("Tcl::defField");
 
-  pkg->defVecRaw( FieldGetter(finfo), finfo.name().c_str(), "item_id(s)", 1 );
-  pkg->defVecRaw( FieldSetter(finfo), finfo.name().c_str(),
-                  "item_id(s) new_val(s)", 2 );
+  pkg->defVecRaw( finfo.name().c_str(), 1, "item_id(s)",
+						FieldGetter(finfo) );
+  pkg->defVecRaw( finfo.name().c_str(), 2, "item_id(s) new_val(s)",
+						FieldSetter(finfo) );
 }
 
 void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fmap)
@@ -142,7 +143,7 @@ DOTRACE("Tcl::defAllFields");
       defField(pkg, *itr);
     }
 
-  pkg->defRaw( FieldsLister(fmap), "fields", 0, 0 );
+  pkg->defRaw( "fields", 0, "", FieldsLister(fmap) );
 }
 
 static const char vcid_fieldpkg_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 18 11:27:36 2001
+// written: Wed Jul 18 12:59:55 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -171,37 +171,36 @@ public:
   {
     Tcl::defGenericObjCmds<Toglet>(this);
 
-    def( &Toglet::bind, "bind", "event_sequence binding_script" );
-    def( &ObjTogl::setCurrentTogl, "currentToglet", "toglet_id" );
-    def( &ObjTogl::getCurrentTogl, "currentToglet", 0 );
-    def( &Toglet::defaultParent, "defaultParent", "parent" );
-    def( &ObjTogl::dumpCmap, "dumpCmap", "toglet_id start_index end_index" );
-    def( &ObjTogl::dumpCmapAll, "dumpCmap", "toglet_id" );
-    def( &ObjTogl::inited, "Togl::inited", 0 );
-    def( &ObjTogl::see, "see", "gxnode_id" );
-    def( &ObjTogl::setColor, "setColor", "index r g b" );
-    def( &ObjTogl::setCurTrial, "setCurTrial", "toglet_id widget_id" );
-    def( &ObjTogl::setMinRect, "setMinRect", "left top right bottom" );
-    def( &ObjTogl::show, "show", "toglet_id trial_id" );
+    def( "bind", "event_sequence binding_script", &Toglet::bind );
+    def( "currentToglet", "toglet_id", &ObjTogl::setCurrentTogl );
+    def( "currentToglet", 0, &ObjTogl::getCurrentTogl );
+    def( "defaultParent", "parent", &Toglet::defaultParent );
+    def( "dumpCmap", "toglet_id start_index end_index", &ObjTogl::dumpCmap );
+    def( "dumpCmap", "toglet_id", &ObjTogl::dumpCmapAll );
+    def( "Togl::inited", 0, &ObjTogl::inited );
+    def( "see", "gxnode_id", &ObjTogl::see );
+    def( "setColor", "index r g b", &ObjTogl::setColor );
+    def( "setCurTrial", "toglet_id widget_id", &ObjTogl::setCurTrial );
+    def( "setMinRect", "left top right bottom", &ObjTogl::setMinRect );
+    def( "show", "toglet_id trial_id", &ObjTogl::show );
 
     defAction("clearscreen", &Toglet::clearscreen);
     defAction("destroy", &Toglet::destroyWidget);
-    defSetter("dumpEps", &Toglet::writeEpsFile, "item_id(s) filename");
+    defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
     defAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
-    defSetter("hold", &Toglet::setHold, "item_id(s) hold_on?");
+    defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
     defAction("loadDefaultFont", &Toglet::loadDefaultFont);
     defSetter("loadFont", &Toglet::loadFont);
     defSetter("loadFonti", &Toglet::loadFonti);
     defGetter("pathname", &Toglet::pathname);
     defAction("refresh", &Toglet::refresh);
-    defSetter("scaleRect", &Toglet::scaleRect, "item_id(s) scale");
-    defSetter("setFixedScale", &Toglet::setFixedScale, "item_id(s) scale");
-    defSetter("setUnitAngle", &Toglet::setUnitAngle,
-              "item_id(s) angle_in_degrees");
-    defSetter("setViewingDistance", &Toglet::setViewingDistIn,
-              "item_id(s) distance_in_inches");
-    defSetter("setVisible", &Toglet::setVisibility,
-              "item_id(s) visibility");
+    defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
+    defSetter("setFixedScale", "item_id(s) scale", &Toglet::setFixedScale);
+    defSetter("setUnitAngle", "item_id(s) angle_in_degrees",
+              &Toglet::setUnitAngle);
+    defSetter("setViewingDistance", "item_id(s) distance_in_inches",
+              &Toglet::setViewingDistIn);
+    defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);

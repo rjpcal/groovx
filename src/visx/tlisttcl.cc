@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 18 11:27:35 2001
+// written: Wed Jul 18 12:05:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -294,27 +294,20 @@ public:
   TlistPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Tlist", "$Revision$")
   {
-    def( &TlistTcl::createPreview,
-         "createPreview", "objids pixel_width pixel_height" );
+    def( "createPreview", "objids pixel_width pixel_height",
+         &TlistTcl::createPreview );
 
-    def( &TlistTcl::dealSingles,
-         "dealSingles", "objid(s) posid" );
-    def( &TlistTcl::dealPairs,
-         "dealPairs", "objids1 objids2 posid1 posid2" );
-    def( &TlistTcl::dealTriads,
-         "dealTriads", "objids posid1 posid2 posid3" );
+    def( "dealSingles", "objid(s) posid", &TlistTcl::dealSingles );
+    def( "dealPairs", "objids1 objids2 posid1 posid2", &TlistTcl::dealPairs );
+    def( "dealTriads", "objids posid1 posid2 posid3", &TlistTcl::dealTriads );
 
-    def( &TlistTcl::loadObjidFile,
-         "loadObjidFile", "objid_file objids posids" );
-    def( &TlistTcl::loadObjidFileAll,
-         "loadObjidFile", "objid_file objids posids num_lines=-1" );
+    def( "loadObjidFile", "objid_file objids posids", &TlistTcl::loadObjidFile );
+    def( "loadObjidFile", "objid_file objids posids num_lines=-1",
+         &TlistTcl::loadObjidFileAll );
 
-    def( &TlistUtils::writeResponses,
-         "write_responses", "filename" );
-    def( &TlistUtils::writeIncidenceMatrix,
-         "writeIncidenceMatrix", "filename" );
-    def( &TlistUtils::writeMatlab,
-         "writeMatlab", "filename" );
+    def( "write_responses", "filename", &TlistUtils::writeResponses );
+    def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix );
+    def( "writeMatlab", "filename", &TlistUtils::writeMatlab );
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Jul 18 11:27:36 2001
+// written: Wed Jul 18 12:16:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,8 +39,8 @@ public:
   {
     Tcl::defGenericObjCmds<Jitter>(this);
 
-    defVec( &Jitter::setJitter,
-            "setJitter", "posid x_jitter y_jitter r_jitter" );
+    defVec( "setJitter", "posid x_jitter y_jitter r_jitter",
+            &Jitter::setJitter );
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 18 11:27:35 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -58,17 +58,17 @@ int Misc_Init(Tcl_Interp* interp)
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Misc", "$Revision$");
 
-  pkg->def( &MiscTcl::rand, "::rand", "min max" );
-  pkg->def( &MiscTcl::srand, "::srand", "seed" );
+  pkg->def( "::rand", "min max", &MiscTcl::rand );
+  pkg->def( "::srand", "seed", &MiscTcl::srand );
 
-  pkg->def( &::sleep, "::sleep", "secs" );
+  pkg->def( "::sleep", "secs", &::sleep );
   // use the standard library sleep() to sleep a specified # of seconds
   //
   // performance: performance is pretty good, considering that we're on
   // a seconds timescale with this command. It seems to use an extra
   // 9msec more than the specified delay
 
-  pkg->def( &::usleep, "::usleep", "usecs" );
+  pkg->def( "::usleep", "usecs", &::usleep );
   // use the standard library usleep() to sleep a specified # of microseconds
   //
   // performance: in a real Tcl script, this command chews up an
@@ -76,7 +76,7 @@ int Misc_Init(Tcl_Interp* interp)
   // specified number is < 10000, in which case this command invariably
   // takes ~19000 us (ugh)
 
-  pkg->def( &MiscTcl::usleepr, "::usleepr", "usecs reps" );
+  pkg->def( "::usleepr", "usecs reps", &MiscTcl::usleepr );
   // use the standard library usleep() to repeatedly sleep a specified #
   // of microseconds
   //

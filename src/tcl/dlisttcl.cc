@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Jul 18 11:27:35 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -296,15 +296,15 @@ DOTRACE("Dlist_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Dlist", "$Revision$");
 
-  pkg->def( &DlistTcl::choose, "::dlist_choose", "source_list index_list" );
-  pkg->def( &DlistTcl::not_, "::dlist_not", "source_list" );
-  pkg->def( &DlistTcl::ones, "::dlist_ones", "num_ones" );
-  pkg->def( &DlistTcl::pickone, "::dlist_pickone", "source_list" );
-  pkg->def( &DlistTcl::range, "::dlist_range", "begin end" );
-  pkg->def( &DlistTcl::repeat, "::dlist_repeat", "source_list times_list" );
-  pkg->def( &DlistTcl::select, "::dlist_select", "source_list flags_list" );
-  pkg->def( &DlistTcl::sum, "::dlist_sum", "source_list" );
-  pkg->def( &DlistTcl::zeros, "::dlist_zeros", "num_zeros" );
+  pkg->def( "::dlist_choose", "source_list index_list", &DlistTcl::choose );
+  pkg->def( "::dlist_not", "source_list", &DlistTcl::not_ );
+  pkg->def( "::dlist_ones", "num_ones", &DlistTcl::ones );
+  pkg->def( "::dlist_pickone", "source_list", &DlistTcl::pickone );
+  pkg->def( "::dlist_range", "begin end", &DlistTcl::range );
+  pkg->def( "::dlist_repeat", "source_list times_list", &DlistTcl::repeat );
+  pkg->def( "::dlist_select", "source_list flags_list", &DlistTcl::select );
+  pkg->def( "::dlist_sum", "source_list", &DlistTcl::sum );
+  pkg->def( "::dlist_zeros", "num_zeros", &DlistTcl::zeros );
 
   return pkg->initStatus();
 }

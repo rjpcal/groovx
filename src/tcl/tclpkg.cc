@@ -157,22 +157,28 @@ Tcl::Pkg::~Pkg() {}
 
 const char* Tcl::Pkg::actionUsage(const char* usage)
 {
-  return usage ? usage : "item_id(s)";
+  if (usage != 0 && *usage != 0)
+	 return usage;
+  return "item_id(s)";
 }
 
 const char* Tcl::Pkg::getterUsage(const char* usage)
 {
-  return usage ? usage : "item_id(s)";
+  if (usage != 0 && *usage != 0)
+	 return usage;
+  return "item_id(s)";
 }
 
 const char* Tcl::Pkg::setterUsage(const char* usage)
 {
-  return usage ? usage : "item_id(s) new_value(s)";
+  if (usage != 0 && *usage != 0)
+	 return usage;
+  return "item_id(s) new_value(s)";
 }
 
-void Tcl::Pkg::addIoCommands()
+void Tcl::Pkg::defIoCommands()
 {
-DOTRACE("Tcl::Pkg::addIoCommands");
+DOTRACE("Tcl::Pkg::defIoCommands");
   addCommand( new StringifyCmd(interp(), makePkgCmdName("stringify")) );
   addCommand( new DestringifyCmd(interp(), makePkgCmdName("destringify")) );
 
@@ -183,12 +189,12 @@ DOTRACE("Tcl::Pkg::addIoCommands");
   addCommand( new ASRLoadCmd(interp(), makePkgCmdName("load")) );
 }
 
-void Tcl::Pkg::addGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
+void Tcl::Pkg::defGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
 {
-  defVecRaw( IsFunc(caster), "is", "item_id(s)", 1 );
-  defRaw( CountAllFunc(caster), "countAll", 0, 0 );
-  defRaw( FindAllFunc(caster), "findAll", 0, 0 );
-  defRaw( RemoveAllFunc(caster), "removeAll", 0, 0 );
+  defVecRaw( "is", 1, "item_id(s)", IsFunc(caster) );
+  defRaw( "countAll", 0, "", CountAllFunc(caster) );
+  defRaw( "findAll", 0, "", FindAllFunc(caster) );
+  defRaw( "removeAll", 0, "", RemoveAllFunc(caster) );
 }
 
 static const char vcid_tclpkg_cc[] = "$Header$";

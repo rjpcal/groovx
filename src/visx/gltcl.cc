@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 18 11:27:36 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -732,57 +732,57 @@ public:
 
     using namespace Tcl;
 
-    def( glBegin, "::glBegin", "mode" );
-    def( glBlendFunc, "::glBlendFunc", "sfactor dfactor" );
-    def( glCallList, "::glCallList", "list" );
-    def( glClear, "::glClear", "mask_bits" );
-    def( glClearColor, "::glClearColor", "red green blue alpha" );
-    def( glClearIndex, "::glClearIndex", "index" );
-    def( glColor4d, "::glColor", "red green blue alpha" );
-    def( glDeleteLists, "::glDeleteLists", "list_id range" );
-    def( glDisable, "::glDisable", "capability" );
-    def( glDrawBuffer, "::glDrawBuffer", "mode" );
-    def( glEnable, "::glEnable", "capability" );
-    def( glEnd, "::glEnd", 0 );
-    def( glEndList, "::glEndList", 0 );
-    def( glFlush, "::glFlush", 0 );
-    def( glFrustum, "::glFrustum", "left right bottom top zNear zFar" );
-    def( glGenLists, "::glGenLists", "range" );
-    def( checkGL, "::glGetError", 0 );
-    def( glIndexi, "::glIndexi", "index" );
-    def( glIsList, "::glIsList", "list_id" );
-    def( glLineWidth, "::glLineWidth", "width" );
-    def( glListBase, "::glListBase", "base" );
-    def( glLoadIdentity, "::glLoadIdentity", 0 );
-    def( GLTcl::loadMatrix, "::glLoadMatrix", "4x4_column_major_matrix" );
-    def( glMatrixMode, "::glMatrixMode", "mode" );
-    def( glNewList, "::glNewList", "list_id mode" );
-    def( glOrtho, "::glOrtho", "left right bottom top zNear zFar" );
-    def( glPolygonMode, "::glPolygonMode", "face mode" );
-    def( glPopMatrix, "::glPopMatrix", 0 );
-    def( glPushMatrix, "::glPushMatrix", 0 );
-    def( glRotated, "::glRotate", "angle_in_degrees x y z" );
-    def( glScaled, "::glScale", "x y z" );
-    def( glTranslated, "::glTranslate", "x y z" );
-    def( glVertex2d, "::glVertex2", "x y" );
-    def( glVertex3d, "::glVertex3", "x y z" );
-    def( glVertex4d, "::glVertex4", "x y z w" );
-    def( GLTcl::lookAt, "::gluLookAt",
-         "eyeX eyeY eyeZ targX targY targZ upX upY upZ" );
-    def( gluPerspective,
-         "::gluPerspective", "field_of_view_y aspect zNear zFar" );
+    def( "::glBegin", "mode", glBegin );
+    def( "::glBlendFunc", "sfactor dfactor", glBlendFunc );
+    def( "::glCallList", "list", glCallList );
+    def( "::glClear", "mask_bits", glClear );
+    def( "::glClearColor", "red green blue alpha", glClearColor );
+    def( "::glClearIndex", "index", glClearIndex );
+    def( "::glColor", "red green blue alpha", glColor4d );
+    def( "::glDeleteLists", "list_id range", glDeleteLists );
+    def( "::glDisable", "capability", glDisable );
+    def( "::glDrawBuffer", "mode", glDrawBuffer );
+    def( "::glEnable", "capability", glEnable );
+    def( "::glEnd", 0, glEnd );
+    def( "::glEndList", 0, glEndList );
+    def( "::glFlush", 0, glFlush );
+    def( "::glFrustum", "left right bottom top zNear zFar", glFrustum );
+    def( "::glGenLists", "range", glGenLists );
+    def( "::glGetError", 0, checkGL );
+    def( "::glIndexi", "index", glIndexi );
+    def( "::glIsList", "list_id", glIsList );
+    def( "::glLineWidth", "width", glLineWidth );
+    def( "::glListBase", "base", glListBase );
+    def( "::glLoadIdentity", 0, glLoadIdentity );
+    def( "::glLoadMatrix", "4x4_column_major_matrix", GLTcl::loadMatrix );
+    def( "::glMatrixMode", "mode", glMatrixMode );
+    def( "::glNewList", "list_id mode", glNewList );
+    def( "::glOrtho", "left right bottom top zNear zFar", glOrtho );
+    def( "::glPolygonMode", "face mode", glPolygonMode );
+    def( "::glPopMatrix", 0, glPopMatrix );
+    def( "::glPushMatrix", 0, glPushMatrix );
+    def( "::glRotate", "angle_in_degrees x y z", glRotated );
+    def( "::glScale", "x y z", glScaled );
+    def( "::glTranslate", "x y z", glTranslated );
+    def( "::glVertex2", "x y", glVertex2d );
+    def( "::glVertex3", "x y z", glVertex3d );
+    def( "::glVertex4", "x y z w", glVertex4d );
+    def( "::gluLookAt", "eyeX eyeY eyeZ targX targY targZ upX upY upZ",
+         GLTcl::lookAt );
+    def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
+         gluPerspective );
 
     initializeGet(this);
-    def( GLTcl::get<GLboolean>, "::glGetBoolean", "param_name" );
-    def( GLTcl::get<GLdouble>, "::glGetDouble", "param_name" );
-    def( GLTcl::get<GLint>, "::glGetInteger", "param_name" );
+    def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
+    def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
+    def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
 
-    def( GLTcl::antialias, "::antialias", "on_off" );
-    def( GLTcl::drawOneLine, "::drawOneLine", "x1 y1 x2 y2" );
-    def( GLTcl::drawThickLine, "::drawThickLine", "x1 y1 x2 y2 thickness" );
-    def( GLTcl::lineInfo, "::lineInfo", 0 );
-    def( GLTcl::pixelCheckSum, "::pixelCheckSum", "x y w h" );
-    def( GLTcl::pixelCheckSumAll, "::pixelCheckSum", 0 );
+    def( "::antialias", "on_off", GLTcl::antialias );
+    def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine );
+    def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine );
+    def( "::lineInfo", 0, GLTcl::lineInfo );
+    def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum );
+    def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll );
   }
 };
 

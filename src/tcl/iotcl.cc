@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 18 11:27:35 2001
+// written: Wed Jul 18 13:06:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -165,7 +165,7 @@ public:
   IoObjectPkg(Tcl_Interp* interp) :
     Pkg(interp, "IO", "$Revision$")
   {
-    Pkg::addIoCommands();
+    Pkg::defIoCommands();
 
     Tcl::defGenericObjCmds<IO::IoObject>(this);
 
@@ -185,9 +185,9 @@ public:
     defAction("incrRefCount", &Util::Object::incrRefCount);
     defAction("decrRefCount", &Util::Object::decrRefCount);
 
-    def( &Tcl::objNew, "new", "typename array_size=1" );
-    def( &Tcl::objNewOne, "new", "typename" );
-    def( &Tcl::objDelete, "delete", "item_id(s)" );
+    def( "new", "typename array_size=1", &Tcl::objNew );
+    def( "new", "typename", &Tcl::objNewOne );
+    def( "delete", "item_id(s)", &Tcl::objDelete );
 
     Pkg::eval("proc new {args} { eval Obj::new $args }");
     Pkg::eval("proc delete {args} { eval Obj::delete $args }");
@@ -208,15 +208,13 @@ public:
   ObjDbPkg(Tcl_Interp* interp) :
     Pkg(interp, "ObjDb", "$Revision$")
   {
-    def( &ObjDbPkg::clear, "clear", 0 );
-    def( &ObjDbPkg::purge, "purge", 0 );
-    def( &ObjDbPkg::release, "release", 0 );
-    def( &IoTcl::loadObjects, "loadObjects", "filename num_to_read=-1" );
-    def( &IoTcl::loadAllObjects, "loadObjects", "filename" );
-    def( &IoTcl::saveObjects,
-         "saveObjects", "objids filename use_bases=yes" );
-    def( &IoTcl::saveObjectsDefault,
-         "saveObjects", "objids filename" );
+    def( "clear", 0, &ObjDbPkg::clear );
+    def( "purge", 0, &ObjDbPkg::purge );
+    def( "release", 0, &ObjDbPkg::release );
+    def( "loadObjects", "filename num_to_read=-1", &IoTcl::loadObjects );
+    def( "loadObjects", "filename", &IoTcl::loadAllObjects );
+    def( "saveObjects", "objids filename use_bases=yes", &IoTcl::saveObjects );
+    def( "saveObjects", "objids filename", &IoTcl::saveObjectsDefault );
 
     Pkg::eval("namespace eval IoDb {\n"
               "  proc clear {args} { eval ObjDb::clear $args }\n"

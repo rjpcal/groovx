@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Jul 18 11:27:35 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
     {
       Tcl::defGenericObjCmds<GxNode>(this);
 
-      def( &GxTcl::contains, "contains", "item_id other_id" );
+      def( "contains", "item_id other_id", &GxTcl::contains );
     }
 };
 
@@ -67,7 +67,7 @@ public:
     {
       Tcl::defGenericObjCmds<GxSeparator>(this);
 
-      def( &GxSeparator::addChild, "addChild", "item_id child_item_id" );
+      def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
       defGetter("numChildren", &GxSeparator::numChildren);
       defSetter("removeChildId", &GxSeparator::removeChildId);
       defSetter("removeChildUid", &GxSeparator::removeChildUid);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 18 11:36:07 2001
+// written: Wed Jul 18 12:11:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,14 +65,14 @@ public:
   {
     Tcl::defGenericObjCmds<TimingHdlr>(this);
 
-    def( &ThTcl::addImmediateEvent,
-         "addImmediateEvent", "th_id event_type msec_delay" );
-    def( &ThTcl::addStartEvent,
-         "addStartEvent", "th_id event_type msec_delay" );
-    def( &ThTcl::addResponseEvent,
-         "addResponseEvent", "th_id event_type msec_delay" );
-    def( &ThTcl::addAbortEvent,
-         "addAbortEvent", "th_id event_type msec_delay" );
+    def( "addImmediateEvent", "th_id event_type msec_delay",
+         &ThTcl::addImmediateEvent );
+    def( "addStartEvent", "th_id event_type msec_delay",
+         &ThTcl::addStartEvent );
+    def( "addResponseEvent", "th_id event_type msec_delay",
+         &ThTcl::addResponseEvent );
+    def( "addAbortEvent", "th_id event_type msec_delay",
+         &ThTcl::addAbortEvent );
 
     Pkg::eval("namespace eval Th { "
               "    proc autosavePeriod {id args} { "
@@ -104,12 +104,8 @@ public:
     defAttrib("interTrialInterval",
               &TimingHandler::getInterTrialInterval,
               &TimingHandler::setInterTrialInterval);
-    defAttrib("stimDur",
-              &TimingHandler::getStimDur,
-              &TimingHandler::setStimDur);
-    defAttrib("timeout",
-              &TimingHandler::getTimeout,
-              &TimingHandler::setTimeout);
+    defAttrib("stimDur", &TimingHandler::getStimDur, &TimingHandler::setStimDur);
+    defAttrib("timeout", &TimingHandler::getTimeout, &TimingHandler::setTimeout);
   }
 };
 

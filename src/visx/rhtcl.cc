@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 18 11:25:14 2001
+// written: Wed Jul 18 12:19:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,10 +133,9 @@ public:
   SerialRhPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "SerialRh", "$Revision$")
     {
-      defRaw( &SerialRhTcl::startSerial, "SerialRh::SerialRh",
-              "device=/dev/tty0p0", 1 );
-      defRaw( &SerialRhTcl::startSerial, "SerialRh::SerialRh",
-              0, 0 );
+      defRaw( "SerialRh::SerialRh", 1, "device=/dev/tty0p0",
+              &SerialRhTcl::startSerial );
+      defRaw( "SerialRh::SerialRh", 0, "", &SerialRhTcl::startSerial );
     }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Jul 18 11:27:36 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,13 +97,13 @@ public:
 
     Tcl::defGenericObjCmds<GrObj>(this);
 
-    defVec( &GrobjTcl::boundingBox, "boundingBox", "item_id(s)" );
-    defVec( &GrobjTcl::saveBitmapCache,
-            "saveBitmapCache", "item_id(s) filename(s)" );
+    defVec( "boundingBox", "item_id(s)", &GrobjTcl::boundingBox );
+    defVec( "saveBitmapCache", "item_id(s) filename(s)",
+            &GrobjTcl::saveBitmapCache );
     defAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
-    defVec( &GrobjTcl::update, "update", "item_id(s)" );
+    defVec( "update", "item_id(s)", &GrobjTcl::update );
 
-    def( &GrObj::setBitmapCacheDir, "setBitmapCacheDir", "filename" );
+    def( "setBitmapCacheDir", "filename", &GrObj::setBitmapCacheDir );
 
     defAttrib("alignmentMode",
               &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);

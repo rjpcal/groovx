@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jul 18 11:26:12 2001
+// written: Wed Jul 18 12:28:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,9 +64,9 @@ public:
 
     Tcl::defTracing(this, Block::tracer);
 
-    defVec(&BlockTcl::addTrialIds1, "addTrialIds", "item_id(s) trial_id(s)");
-    defVec(&BlockTcl::addTrialIds2,
-           "addTrialIds", "item_id(s) trial_id(s) repeat=1");
+    defVec("addTrialIds", "item_id(s) trial_id(s)", &BlockTcl::addTrialIds1);
+    defVec("addTrialIds", "item_id(s) trial_id(s) repeat=1",
+           &BlockTcl::addTrialIds2 );
 
     defGetter("currentTrial", &Block::currentTrial);
     defGetter("currentTrialType", &Block::currentTrialType);
@@ -76,7 +76,7 @@ public:
     defGetter("prevResponse", &Block::prevResponse);
     defAction("removeAllTrials", &Block::removeAllTrials);
     defAction("reset", &Block::resetBlock);
-    defSetter("shuffle", &Block::shuffle, "item_id rand_seed");
+    defSetter("shuffle", "item_id rand_seed", &Block::shuffle);
     defGetter("trialDescription", &Block::trialDescription);
     defAction("undoPrevTrial", &Block::undoPrevTrial);
     defAttrib("verbose", &Block::getVerbose, &Block::setVerbose);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jul 18 11:26:06 2001
+// written: Wed Jul 18 12:15:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,16 +60,16 @@ public:
   {
     Tcl::defGenericObjCmds<Bitmap>(this);
 
-    defVec(&Bitmap::loadPbmFile, "loadPbm", "item_id(s) filename(s)");
-    defVec(&BitmapTcl::loadPbmGz,
-           "loadPbmGz", "item_id(s) filename(s)(no-gz-suffix)");
-    defVec(&Bitmap::writePbmFile, "writePbm", "item_id(s) filename(s)");
-    defVec(&BitmapTcl::writePbmGz,
-           "writePbmGz", "item_id(s) filename(s)(no-gz-suffix)");
-    defVec( (void(Bitmap::*)(int,int,int,int)) &Bitmap::grabScreenRect,
-            "grabScreenRect", "item_id(s) left top right bottom" );
-    defVec( (void(Bitmap::*)(double,double,double,double)) &Bitmap::grabWorldRect,
-            "grabWorldRect", "item_id(s) left top right bottom" );
+    defVec( "loadPbm", "item_id(s) filename(s)", &Bitmap::loadPbmFile );
+    defVec( "loadPbmGz", "item_id(s) filename(s)(no-gz-suffix)",
+            &BitmapTcl::loadPbmGz );
+    defVec( "writePbm", "item_id(s) filename(s)", &Bitmap::writePbmFile );
+    defVec( "writePbmGz", "item_id(s) filename(s)(no-gz-suffix)",
+            &BitmapTcl::writePbmGz );
+    defVec( "grabScreenRect", "item_id(s) left top right bottom",
+            (void(Bitmap::*)(int,int,int,int)) &Bitmap::grabScreenRect );
+    defVec( "grabWorldRect", "item_id(s) left top right bottom",
+            (void(Bitmap::*)(double,double,double,double)) &Bitmap::grabWorldRect );
     defAction("flipContrast", &Bitmap::flipContrast);
     defAction("flipVertical", &Bitmap::flipVertical);
     defAction("center", &Bitmap::center);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Jul 18 11:03:12 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public:
 
     Tcl::defFieldContainer<Trial>(this);
 
-    def( &Trial::add, "add", "trialid objid posid" );
+    def( "add", "trialid objid posid", &Trial::add );
 
     defSetter("addNode", &Trial::addNode);
     defGetter("avgResponse", &Trial::avgResponse);

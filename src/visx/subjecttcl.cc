@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jul 18 11:35:07 2001
+// written: Wed Jul 18 12:10:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,7 @@ public:
     Tcl::defGenericObjCmds<Subject>(this);
 
     defAttrib("name", &Subject::getName, &Subject::setName);
-    defAttrib("directory", &Subject::getDirectory,
-              &Subject::setDirectory);
+    defAttrib("directory", &Subject::getDirectory, &Subject::setDirectory);
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Wed Jul 18 11:25:14 2001
+// written: Wed Jul 18 12:21:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,14 +64,14 @@ void Tcl::defTracing(Tcl::Pkg* pkg, Util::Tracer& tracer)
 {
   using Util::Tracer;
 
-  pkg->defRaw( TraceFunc<TraceActionFunc>(tracer, &Tracer::on),
-               "traceOn", 0, 0 );
-  pkg->defRaw( TraceFunc<TraceActionFunc>(tracer, &Tracer::off),
-               "traceOff", 0, 0 );
-  pkg->defRaw( TraceFunc<TraceActionFunc>(tracer, &Tracer::toggle),
-               "traceToggle", 0, 0 );
-  pkg->defRaw( TraceFunc<TraceGetterFunc>(tracer, &Tracer::status),
-               "traceStatus", 0, 0 );
+  pkg->defRaw( "traceOn", 0, "",
+               TraceFunc<TraceActionFunc>(tracer, &Tracer::on) );
+  pkg->defRaw( "traceOff", 0, "",
+               TraceFunc<TraceActionFunc>(tracer, &Tracer::off) );
+  pkg->defRaw( "traceToggle", 0, "",
+               TraceFunc<TraceActionFunc>(tracer, &Tracer::toggle) );
+  pkg->defRaw( "traceStatus", 0, "",
+               TraceFunc<TraceGetterFunc>(tracer, &Tracer::status) );
 }
 
 static const char vcid_tracertcl_cc[] = "$Header$";

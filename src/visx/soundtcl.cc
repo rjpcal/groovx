@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Jul 18 11:27:35 2001
+// written: Wed Jul 18 12:27:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ public:
           }
       }
 
-    def( &Sound::haveSound, "haveAudio", 0 );
+    def( "haveAudio", 0, &Sound::haveSound );
 
     defAction("play", &Sound::play);
     defAttrib("file", &Sound::getFile, &Sound::setFile);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jul 18 11:27:36 2001
+// written: Wed Jul 18 13:06:30 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -172,17 +172,16 @@ public:
 
     Tcl::defGenericObjCmds<ExptDriver>(this);
 
-    Tcl::Pkg::addIoCommands();
+    Tcl::Pkg::defIoCommands();
 
     Tcl::defTracing(this, ExptDriver::tracer);
 
-    def( &ExptTcl::setCurrentExpt, "currentExp", "expt_id" );
-    def( &ExptTcl::getCurrentExpt, "currentExp", 0 );
+    def( "currentExp", "expt_id", &ExptTcl::setCurrentExpt );
+    def( "currentExp", 0, &ExptTcl::getCurrentExpt );
 
-    def( &ExptTcl::begin, "begin", "expt_id" );
-    defRaw( &ExptTcl::pause, "pause", "expt_id", 1 );
-    def( &ExptTcl::setStartCommand,
-         "setStartCommand", "expt_id start_command" );
+    def( "begin", "expt_id", ExptTcl::begin );
+    defRaw( "pause", 1, "expt_id", &ExptTcl::pause );
+    def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
 
     defSetter("addBlock", &ExptDriver::addBlock);
     defAttrib("autosaveFile",
