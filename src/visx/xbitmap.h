@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Dec  1 20:15:25 1999
+// written: Wed Dec  1 20:59:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #ifndef BITMAP_H_DEFINED
 #include "bitmap.h"
 #endif
-
-class ToglConfig;
 
 class XBmapRenderer;
 
@@ -29,8 +27,6 @@ public:
   private: void init();
   
 public:
-  static void initClass(const ToglConfig* config);
-
   virtual ~XBitmap();
 
   virtual void serialize(ostream& os, IOFlag flag) const;

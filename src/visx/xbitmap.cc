@@ -15,7 +15,6 @@
 
 #include <string>
 
-#include "toglconfig.h"
 #include "xbmaprenderer.h"
 
 #define NO_TRACE
@@ -27,11 +26,6 @@ namespace {
   const string ioTag = "XBitmap";
 
   XBmapRenderer* tempRenderer = 0;
-}
-
-void XBitmap::initClass(const ToglConfig* config) {
-DOTRACE("XBitmap::initClass");
-  XBmapRenderer::initClass(config);
 }
 
 //////////////
