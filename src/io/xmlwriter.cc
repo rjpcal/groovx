@@ -210,7 +210,7 @@ DOTRACE("XMLWriter::writeObject");
   else
     {
       indent();
-      itsBuf << "<objref type=\"NULL\" id=\"0\" name=\"" << name << "\"";
+      itsBuf << "<objref type=\"NULL\" id=\"0\" name=\"" << name << "\"/>\n";
     }
 }
 
