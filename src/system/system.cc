@@ -3,7 +3,7 @@
 // system.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Tue Nov 23 16:00:19 1999
+// written: Mon Mar  6 19:34:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,12 @@
 
 #include "system.h"
 
+#include "util/arrays.h"
+
 #include <cstdio>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -70,7 +71,7 @@ DOTRACE("System::remove");
 string System::getcwd() {
 DOTRACE("System::getcwd");
   int size = 256;
-  vector<char> buf(size);
+  dynamic_block<char> buf(size);
 
   while ( !::getcwd(&buf[0], buf.size()) ) {
 	 buf.resize(buf.size() * 2);
