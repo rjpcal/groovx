@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Apr  3 17:30:38 2002
+// written: Wed Dec  4 15:45:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ DOTRACE("Trial_Init");
                  &Trial::getCorrectResponse, &Trial::setCorrectResponse);
   pkg->defAttrib("currentNode",
                  &Trial::getCurrentNode, &Trial::setCurrentNode);
-  pkg->defGetter("description", &Trial::description);
+  pkg->defGetter("description", &Trial::status);
   pkg->defGetter("lastResponse", &Trial::lastResponse);
   pkg->defAction("nextNode", &Trial::trNextNode);
   pkg->defGetter("nodes", &Trial::nodes);

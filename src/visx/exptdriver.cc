@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat Nov 23 13:50:12 2002
+// written: Wed Dec  4 15:49:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,6 +107,14 @@ public:
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
+
+  fstring status() const
+  {
+    if (!haveValidBlock())
+      return "not running";
+
+    return currentBlock()->status();
+  }
 
   void addLogInfo(const char* message)
   {
@@ -524,6 +532,9 @@ void ExptDriver::writeTo(IO::Writer* writer) const
 // ExptDriver accessor + manipulator method definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+fstring ExptDriver::status() const
+  { return itsImpl->status(); }
 
 const fstring& ExptDriver::getAutosaveFile() const
   { return itsImpl->itsAutosaveFile; }

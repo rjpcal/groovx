@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Sep 25 19:01:09 2002
+// written: Wed Dec  4 15:41:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "io/io.h"
 
 #include "util/tracer.h"
+
+#include "visx/element.h"
 
 namespace Util
 {
@@ -46,7 +48,7 @@ class fstring;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Block : public IO::IoObject
+class Block : public Element, public IO::IoObject
 {
 public:
   /** This tracer dynamically controls the tracing of Block member
@@ -118,7 +120,7 @@ public:
       of the objects that are displayed in the trial, the categories of
       those objects, and the number of completed trials and number of total
       trials. */
-  fstring trialDescription() const;
+  virtual fstring status() const;
 
   /////////////
   // actions //

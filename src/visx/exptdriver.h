@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat Nov 23 13:46:24 2002
+// written: Wed Dec  4 15:46:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,9 @@ public:
   //////////////////////////////
   // Accessors + Manipulators //
   //////////////////////////////
+
+  /// Overridden from Element.
+  virtual fstring status() const;
 
   /// Return the name of the file currently being used for autosaves
   const fstring& getAutosaveFile() const;

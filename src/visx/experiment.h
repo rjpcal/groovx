@@ -5,13 +5,15 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Sat Nov 23 13:49:15 2002
+// written: Wed Dec  4 15:42:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPERIMENT_H_DEFINED
 #define EXPERIMENT_H_DEFINED
+
+#include "visx/element.h"
 
 namespace Gfx
 {
@@ -28,7 +30,7 @@ class Response;
 class Toglet;
 
 /// Protocol class that represents psychophysical experiments.
-class Experiment
+class Experiment : public Element
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.

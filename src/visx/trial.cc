@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Nov 23 13:49:54 2002
+// written: Wed Dec  4 15:45:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ public:
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  const char* description() const;
+  fstring status() const;
 
   int lastResponse() const;
   void undoLastResponse();
@@ -219,9 +219,9 @@ DOTRACE("Trial::Impl::writeTo");
 // accessors //
 ///////////////
 
-const char* Trial::Impl::description() const
+fstring Trial::Impl::status() const
 {
-DOTRACE("Trial::Impl::description");
+DOTRACE("Trial::Impl::status");
 
   fstring objids;
   fstring cats;
@@ -245,13 +245,12 @@ DOTRACE("Trial::Impl::description");
         }
     }
 
-  static fstring buf;
+  fstring buf;
 
-  buf = "";
   buf.append("trial type == ", itsType);
   buf.append(", objs ==", objids, ", categories == ", cats);
 
-  return buf.c_str();
+  return buf;
 }
 
 int Trial::Impl::lastResponse() const
@@ -553,8 +552,8 @@ void Trial::setType(int t)
   { itsImpl->itsType = t; }
 
 
-const char* Trial::description() const
-  { return itsImpl->description(); }
+fstring Trial::status() const
+  { return itsImpl->status(); }
 
 int Trial::lastResponse() const
   { return itsImpl->lastResponse(); }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Sat Nov 23 13:48:01 2002
+// written: Wed Dec  4 15:44:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,8 @@ public:
   virtual int trialType() const;
   void setType(int t);
 
-  virtual const char* description() const;
+  /// Overridden from Element.
+  virtual fstring status() const;
 
   virtual int lastResponse() const;
 

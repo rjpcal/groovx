@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Sat Nov 23 13:38:17 2002
+// written: Wed Dec  4 15:45:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -290,14 +290,14 @@ DOTRACE("Block::isComplete");
           (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
 }
 
-fstring Block::trialDescription() const
+fstring Block::status() const
 {
-DOTRACE("Block::trialDescription");
+DOTRACE("Block::status");
   if (isComplete()) return fstring("block is complete");
 
   fstring msg;
   msg.append("next trial ", currentTrial().id(), ", ")
-    .append(itsImpl->currentTrial()->description())
+    .append(itsImpl->currentTrial()->status())
     .append(", completed ", numCompleted(), " of ", numTrials());
 
   return msg;
@@ -317,7 +317,7 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->itsHasBegun = true;
 
-  Util::log( trialDescription() );
+  Util::log( status() );
 
   itsImpl->setExpt(expt);
 
