@@ -464,8 +464,9 @@ TAGS: $(ALL_SRCS)
 DISTNAME := $(PACKAGE_TARNAME)_$(shell date +%Y%m%d)
 CVS_ROOT := $(shell test -e ./CVS/Root && cat ./CVS/Root)
 CVS_REPO := $(shell test -e ./CVS/Root && cat ./CVS/Repository)
+SVN_REV  := $(shell svnversion .)
 
-export:
+cvs_export:
 	echo $(DISTNAME)
 	mkdir -p snapshots
 	cd snapshots && \
@@ -476,7 +477,19 @@ export:
 	  && (cd $(DISTNAME) && rm -r autom4te.cache) \
 	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
 
-www_export: export
+svn_export:
+	echo $(DISTNAME)
+	mkdir -p snapshots
+	cd snapshots && \
+	  svn export file:///home/rjpeters/svnrepos/code/trunk/groovx $(DISTNAME) \
+	  && rm -r $(DISTNAME)/logs/* \
+	  && (cd $(DISTNAME) && autoconf) \
+	  && (echo "date is $(DISTNAME)" > $(DISTNAME)/SNAPSHOT) \
+	  && (echo "svn revision is $(SVN_REV)" >> $(DISTNAME)/SNAPSHOT) \
+	  && (rm -r $(DISTNAME)/autom4te.cache) \
+	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
+
+www_export: svn_export
 	/bin/cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/
 	/bin/chmod 444 $(HOME)/www/code/$(DISTNAME).tar.gz
 	/bin/rm -f $(HOME)/www/code/$(PACKAGE_TARNAME)_current.tar.gz
