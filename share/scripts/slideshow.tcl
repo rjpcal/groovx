@@ -10,7 +10,7 @@ itcl::class Playlist {
     private variable itsListFile
     private variable itsList
     private variable itsIdx
-    private variable itsToglet
+    private variable itsWidget
     private variable itsPixmap
 
     constructor { fname widget } {
@@ -35,7 +35,7 @@ itcl::class Playlist {
 	close $fd
 	
 	set itsIdx 0
-	set itsToglet $widget
+	set itsWidget $widget
 	set itsPixmap [new GxPixmap]
     }
 
@@ -81,10 +81,14 @@ itcl::class Playlist {
 
 	puts $f
 
+	-> $itsWidget allowRefresh 0
+
 	-> $itsPixmap loadImage $f
 	-> $itsPixmap zoomTo [-> $itsWidget size]
 
 	-> $itsWidget see $itsPixmap
+
+	-> $itsWidget allowRefresh 1
     }
 }
 
@@ -155,6 +159,8 @@ pack .f -side top
 
 -> $t height 975
 -> $t width 1400
+
+-> $t repack "-side bottom"
 
 update
 
