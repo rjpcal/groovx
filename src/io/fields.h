@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Sep  3 13:38:33 2001
+// written: Mon Sep  3 13:54:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H_DEFINED)
+#include "tcl/tclvalue.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
@@ -98,7 +102,7 @@ protected:
 public:
   virtual ~FieldImpl();
 
-  virtual void set(FieldContainer* obj, const Value& new_val) const = 0;
+  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const = 0;
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const = 0;
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -161,11 +165,11 @@ public:
   DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<DerefT> > checker) :
     itsDataMember(memptr), itsChecker(checker) {}
 
-  virtual void set(FieldContainer* obj, const Value& new_val) const
+  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
-    DerefT raw = new_val.get(Util::TypeCue<DerefT>());
+    DerefT raw = new_val.as(Util::TypeCue<DerefT>());
 
     dereference(cobj, itsDataMember) =
       itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
@@ -207,14 +211,15 @@ template <class C, class V>
 class ValueFieldImpl : public FieldImpl
 {
 public:
-
   ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
 
-  virtual void set(FieldContainer* obj, const Value& new_val) const
+  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
-    dereference(cobj, itsValueMember).assignFrom(new_val);
+    Tcl::TclValue tval(new_val);
+
+    dereference(cobj, itsValueMember).assignFrom(tval);
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
@@ -265,13 +270,13 @@ class FuncMemberFieldImpl : public FieldImpl
 public:
   FuncMemberFieldImpl(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
 
-  virtual void set(FieldContainer* obj, const Value& new_val) const
+  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
   {
     if (itsSetter == 0) throwNotAllowed("set");
 
     C& cobj = dynamic_cast<C&>(*obj);
 
-    (cobj.*itsSetter)(new_val.get(Util::TypeCue<T>()));
+    (cobj.*itsSetter)(new_val.as(Util::TypeCue<T>()));
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
@@ -456,7 +461,7 @@ public:
   const fstring& res() const { return itsRes; }
 
   /// Set the value of this field for \a obj.
-  void setValue(FieldContainer* obj, const Value& new_val) const
+  void setValue(FieldContainer* obj, Tcl::ObjPtr& new_val) const
   {
     itsFieldImpl->set(obj, new_val);
   }
@@ -567,8 +572,8 @@ public:
   Tcl::ObjPtr getField(const fstring& name) const;
   Tcl::ObjPtr getField(const Field& field) const;
 
-  void setField(const fstring& name, Tcl::ObjPtr new_val);
-  void setField(const Field& field, Tcl::ObjPtr new_val);
+  void setField(const fstring& name, Tcl::ObjPtr& new_val);
+  void setField(const Field& field, Tcl::ObjPtr& new_val);
 
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;

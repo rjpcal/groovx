@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Sep  3 13:38:29 2001
+// written: Mon Sep  3 13:54:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -154,15 +154,14 @@ Tcl::ObjPtr FieldContainer::getField(const Field& field) const
   return field.getValue(this);
 }
 
-void FieldContainer::setField(const fstring& name, Tcl::ObjPtr new_val)
+void FieldContainer::setField(const fstring& name, Tcl::ObjPtr& new_val)
 {
   setField(itsFieldMap->field(name), new_val);
 }
 
-void FieldContainer::setField(const Field& field, Tcl::ObjPtr new_val)
+void FieldContainer::setField(const Field& field, Tcl::ObjPtr& new_val)
 {
-  Tcl::TclValue tval(new_val);
-  field.setValue(this, tval);
+  field.setValue(this, new_val);
   if (itsSignal)
     itsSignal->emit();
 }
