@@ -93,7 +93,7 @@ public:
   int writer() const throw() { return m_fds[1]; }
 
   void close_reader() throw() { if (m_fds[0] >= 0) close(m_fds[0]); m_fds[0] = -1; }
-  void close_writer() throw() { if (m_fds[0] >= 0) close(m_fds[1]); m_fds[1] = -1; }
+  void close_writer() throw() { if (m_fds[1] >= 0) close(m_fds[1]); m_fds[1] = -1; }
 
 private:
   pipe_fds(const pipe_fds&);
