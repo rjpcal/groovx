@@ -112,6 +112,7 @@
 
     gxtcl.cc GxShapeKit GxCache GxScaler GxAligner
     gltcl.cc theAttribMap
+    soundtcl.cc
 
   Maybe the simplest way is this. Make a big ugly global associative
   array of enum names. Buyer beware of name clashes. Then we have the
@@ -137,6 +138,10 @@
   where to find an EnumList (or EnumTranslator) that could do the
   translation. Then we could get the string values out to the IO files
   (but do we want that?).
+
+** (7-Oct-2004) Hmm... what about using Tcl arrays to define enums...
+   the array name could be the enum type, and the element names could
+   be the enum element names?
 
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
