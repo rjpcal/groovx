@@ -2,7 +2,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Mar 12 12:52:56 1999
+// written: Sat Mar 13 13:17:12 1999
 static const char vcid_toglconfig_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,8 +15,8 @@ static const char vcid_toglconfig_cc[] = "$Id$";
 
 #include "gfxattribs.h"
 
-ToglConfig::ToglConfig(Glist** glist, float dist, float unit_angle) :
-  itsGlist_h(glist),
+ToglConfig::ToglConfig(Tlist** tlist, float dist, float unit_angle) :
+  itsTlist_h(tlist),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(1) 
 { 
@@ -62,8 +62,8 @@ int ToglConfig::usingFixedScale() const {
   return itsFixedScaleFlag; 
 }
 
-Glist** ToglConfig::getGlist() const { 
-  return itsGlist_h; 
+Tlist** ToglConfig::getTlist() const { 
+  return itsTlist_h; 
 }
 
 #endif // !TOGLCONFIG_CC_DEFINED
