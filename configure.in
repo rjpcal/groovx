@@ -238,6 +238,8 @@ dnl Checks for libraries.
 dnl Checks for header files.
 AC_PATH_XTRA
 
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+
 ### Check for audio header files and libraries
 
 AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream],,,-)
