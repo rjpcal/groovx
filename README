@@ -81,7 +81,9 @@ Table of contents:
    The following packages are optional, but are used in some of the
    scripts that use the groovx software.
 
-     - itcl and itk (itcl3.2.1_src.tgz)
+   <ul>
+
+     <li> itcl and itk (itcl3.2.1_src.tgz)
 
        Note that the itcl+itk configure script expects to find the
        tcl+tk sources sitting in the location where you built
@@ -109,7 +111,9 @@ Table of contents:
        looks for e.g. libtclstub8.x.a in the install directory rather
        than in the tcl's apparent build directory.
 
-     - iwidgets (iwidgets4.0.1.tar.gz)
+     </li>
+
+     <li> iwidgets (iwidgets4.0.1.tar.gz)
 
        Again, note that iwidgets expects to still be able to find the
        source code from the itcl/itk build, so don't remove the
@@ -134,7 +138,9 @@ Table of contents:
        make install
        \endcode
 
-     - Mac OS X Tcl/Tk build notes
+     </li>
+
+     <li> Mac OS X Tcl/Tk build notes
 
        Notes for doing a custom Tcl/Tk build for Aqua (i.e. not for
        X11 on Mac OS X).
@@ -188,24 +194,36 @@ Table of contents:
 
        Problems:
 
-        - Tk install requires 'chmod' with '-RH' options. But, the
-          Fink version of chmod in /sw/bin/chmod doesn't recognize the
-          '-H' option. So, need to point the installation to
-          /bin/chmod instead. For now, just put a link from
-          ~/local/bin/chmod to /bin/chmod, since ~/local/bin is higher
-          in $PATH than is /sw/bin.
+       <ul>
 
-        - Tk install expects to find 'Wish Shell.app' in
-          ~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But,
-          the Makefile fragment above puts 'Wish Shell.app' in
-          ~/Applications/Utilities instead. So, for now just do:
+         <li> Tk install requires 'chmod' with '-RH' options. But, the
+	      Fink version of chmod in /sw/bin/chmod doesn't recognize
+	      the '-H' option. So, need to point the installation to
+	      /bin/chmod instead. For now, just put a link from
+	      ~/local/bin/chmod to /bin/chmod, since ~/local/bin is
+	      higher in $PATH than is /sw/bin.
 
-          \code
+	 </li>
 
-          ln -s ~/Applications/Utilities/Wish\ Shell.app \
-             ~/Library/Frameworks/Tk.framework/Versions/8.5/Resources/
+         <li> Tk install expects to find 'Wish Shell.app' in
+	      ~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But,
+	      the Makefile fragment above puts 'Wish Shell.app' in
+	      ~/Applications/Utilities instead. So, for now just do:
 
-          \endcode
+         \code
+
+         ln -s ~/Applications/Utilities/Wish\ Shell.app \
+            ~/Library/Frameworks/Tk.framework/Versions/8.5/Resources/
+
+         \endcode
+
+	 </li>
+
+       </ul>
+
+     </li>
+
+   </ul>
 
 <!--############################################################--><hr>
 
@@ -231,56 +249,63 @@ Table of contents:
 
    Some important configuration options:
 
-       - --enable-debug={no|yes} [default is yes]
+   <dl>
 
-           determines whether to include runtime debuggability into
-           the executable. If 'yes' (the default), then certain
+      <dt> --enable-debug={no|yes} [default is yes] </dt>
+
+	   <dd> determines whether to include runtime debuggability
+           into the executable. If 'yes' (the default), then certain
            commands will be available in the shell to control debug
-           verbosity and stack tracing.
+           verbosity and stack tracing. </dd>
 
-       - --enable-aqua={no|yes} [default is no]
+      <dt> --enable-aqua={no|yes} [default is no] </dt>
 
-           determines whether to use Aqua windows or X11 windows on a
-           Mac OS X build; default is X11
+	   <dd> determines whether to use Aqua windows or X11 windows
+           on a Mac OS X build; default is X11 </dd>
 
-       - --enable-readline={no|yes} [default is yes]
+      <dt> --enable-readline={no|yes} [default is yes] </dt>
 
-           whether to enable readline support, which allows for
-           command-line editing and a command history
+           <dd> whether to enable readline support, which allows for
+           command-line editing and a command history </dd>
 
-       - --enable-rgba={no|yes} [default is yes]
+      <dt> --enable-rgba={no|yes} [default is yes] </dt>
 
-           whether to run OpenGL graphics in rgba true-color mode
-           (instead of color-index mode)
+           <dd> whether to run OpenGL graphics in rgba true-color mode
+           (instead of color-index mode) </dd>
 
-       - --enable-double-buffer={no|yes} [default is yes]
+      <dt> --enable-double-buffer={no|yes} [default is yes] </dt>
 
-           whether to run OpenGL graphics in double-buffered mode
+           <dd> whether to run OpenGL graphics in double-buffered mode
            (instead of single-buffer mode); double-buffering allows
            for smoother screen redraws with less flicker and "tearing"
+           </dd>
 
-       - --enable-direct-render={no|yes} [default is yes]
+      <dt> --enable-direct-render={no|yes} [default is yes] </dt>
 
-           whether to run OpenGL graphics in a direct-rendering
+           <dd> whether to run OpenGL graphics in a direct-rendering
            context; this means that 3-D graphics calls will use the
            hardware acceleration of the grapics card, if possible
+           </dd>
 
-       - --enable-werror={no|yes} [default is yes]
+      <dt> --enable-werror={no|yes} [default is yes] </dt>
 
-           whether to force all compiler warnings to be errors
+           <dd> whether to force all compiler warnings to be errors
+           </dd>
 
-       - --with-matlab=/path/to/matlab
+      <dt> --with-matlab=/path/to/matlab [default is /usr/local/matlab] </dt>
 
-           give the location of a matlab installation against which
-           some matlab interfaces can be built; if no matlab directory
-           is given, then only stub matlab interfaces will be set
-           up... the code will compile, but attempts to use a matlab
-           interface will trigger a run-time error
+           <dd> give the location of a matlab installation against
+           which some matlab interfaces can be built; if no matlab
+           directory is given, then only stub matlab interfaces will
+           be set up... the code will compile, but attempts to use a
+           matlab interface will trigger a run-time error </dd>
 
-       - --with-html=/path/to/html [default is ~/www/groovx/]
+      <dt> --with-html=/path/to/html [default is ~/www/groovx/] </dt>
 
-           specifies where HTML documentation should be installed
-           during a "make docs" invocation
+           <dd> specifies where HTML documentation should be installed
+           during a "make docs" invocation </dd>
+
+   </dl>
 
 <!--############################################################--><hr>
 
@@ -291,20 +316,31 @@ Table of contents:
    install. A short test suite (takes ~10 seconds on a 1GHz Pentium
    III Linux machine) is run at the end of every "make" invocation.
 
-   - environment variables
+   <ul>
+     <li> environment variables
 
-     LD_LIBRARY_PATH
+       <dl>
 
-     On Linux, you need to make sure that your LD_LIBRARY_PATH
-     environment variable includes the paths to wherever you have
-     installed the libraries associated with this package; e.g. in
-     bash:
+          <dt>LD_LIBRARY_PATH</dt>
 
-     \code
+          <dd> On Linux, you need to make sure that your
+          LD_LIBRARY_PATH environment variable includes the paths to
+          wherever you have installed the libraries associated with
+          this package; e.g. in bash:
 
-     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/path/to/install"
+          \code
 
-     \endcode
+          export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/path/to/install"
+
+          \endcode
+
+	  </dd>
+
+       </dl>
+
+     </li>
+
+   </ul>
 
 <!--############################################################--><hr>
 
