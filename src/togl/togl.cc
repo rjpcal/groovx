@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sun Aug  4 16:00:27 2002
+// written: Sun Aug  4 16:46:40 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,7 +27,7 @@
 #include "togl/togl.h"
 
 #include "togl/glutil.h"
-#include "togl/glxattribs.h"
+#include "togl/glxopts.h"
 #include "togl/glxwrapper.h"
 #include "togl/tkutil.h"
 #include "togl/x11util.h"
@@ -53,7 +53,6 @@
 
 #include "util/algo.h"
 #include "util/error.h"
-#include "util/pointers.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -82,59 +81,6 @@ namespace
 KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
 EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
 VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
-
-struct GlxOpts
-{
-  GlxOpts() :
-#ifndef NO_RGBA
-    rgbaFlag(1),
-#else
-    rgbaFlag(0),
-#endif
-    rgbaRed(1),
-    rgbaGreen(1),
-    rgbaBlue(1),
-    colorIndexSize(8),
-#ifndef NO_DOUBLE_BUFFER
-    doubleFlag(1),
-#else
-    doubleFlag(0),
-#endif
-    depthFlag(0),
-    depthSize(1),
-    accumFlag(0),
-    accumRed(1),
-    accumGreen(1),
-    accumBlue(1),
-    accumAlpha(1),
-    alphaFlag(0),
-    alphaSize(1),
-    stencilFlag(0),
-    stencilSize(1),
-    auxNumber(0),
-    indirect(GL_FALSE)
-  {}
-
-  int rgbaFlag;           /* configuration flags (ala GLX parameters) */
-  int rgbaRed;
-  int rgbaGreen;
-  int rgbaBlue;
-  int colorIndexSize;
-  int doubleFlag;
-  int depthFlag;
-  int depthSize;
-  int accumFlag;
-  int accumRed;
-  int accumGreen;
-  int accumBlue;
-  int accumAlpha;
-  int alphaFlag;
-  int alphaSize;
-  int stencilFlag;
-  int stencilSize;
-  int auxNumber;
-  int indirect;
-};
 
 class Togl::Impl
 {
@@ -190,7 +136,7 @@ public:
   int height() const { return itsHeight; }
   bool isRgba() const { return itsGlxOpts.rgbaFlag; }
   bool isDoubleBuffered() const { return itsGlxOpts.doubleFlag; }
-  unsigned int bitsPerPixel() const { return itsVisInfo->depth; }
+  unsigned int bitsPerPixel() const { return itsBitsPerPixel; }
   bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
@@ -231,16 +177,10 @@ public:
 private:
   void eventProc(XEvent* eventPtr);
   void widgetCmdDeletedProc();
-
   int makeWindowExist();
-
   bool checkForGLX();
-  void setupVisInfoAndContext();
-  shared_ptr<GlxAttribs> buildAttribList();
-  void createWindow();
   void setupOverlayIfNeeded();
   int setupOverlay();
-  void checkDblBufferSnafu();
 
 public:
 
@@ -265,6 +205,8 @@ public:
   int itsOverlayFlag;
   int itsStereoFlag;
 
+  int itsBitsPerPixel;
+
   ClientData itsClientData;     /* Pointer to user data */
 
   bool itsUpdatePending;        /* Should normal planes be redrawn? */
@@ -282,10 +224,6 @@ public:
   Colormap itsOverlayCmap;      /* colormap for overlay is created */
   int itsOverlayTransparentPixel; /* transparent pixel */
   int itsOverlayIsMapped;
-
-  /* for DumpToEpsFile: Added by Miguel A. de Riera Pasenau 10.01.1997 */
-  XVisualInfo* itsVisInfo;    /* Visual info of the current */
-                              /* context needed for DumpToEpsFile */
 };
 
 
@@ -749,6 +687,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsPrivateCmapFlag(0),
   itsOverlayFlag(0),
   itsStereoFlag(0),
+  itsBitsPerPixel(-1),
   itsClientData(DefaultClientData),
   itsUpdatePending(false),
   itsDisplayProc(DefaultDisplayProc),
@@ -761,8 +700,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayUpdatePending(false),
   itsOverlayCmap(),
   itsOverlayTransparentPixel(),
-  itsOverlayIsMapped(0),
-  itsVisInfo(0)
+  itsOverlayIsMapped(0)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -1484,31 +1422,50 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   try
     {
-      setupVisInfoAndContext();
+      Assert( itsGlx == 0 );
+
+      itsGlx = GlxWrapper::make(itsDisplay, itsGlxOpts);
+
+      Colormap cmap =
+        X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
+                              itsGlxOpts.rgbaFlag, itsPrivateCmapFlag);
+
+      TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
+                           itsWidth, itsHeight, cmap);
+
+      if (!itsGlxOpts.rgbaFlag)
+        {
+          X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
+        }
+
+      TkUtil::setupStackingOrder(itsTkWin);
+
+      setupOverlayIfNeeded();
+
+      // Issue a ConfigureNotify event if there were deferred changes
+      TkUtil::issueConfigureNotify(itsTkWin);
+
+      TkUtil::selectAllInput(itsTkWin);
+
+      TkUtil::mapWindow(itsTkWin);
+
+      // Bind the context to the window and make it the current context
+      makeCurrent();
+
+      // Check for a single/double buffering snafu
+      if (itsGlxOpts.doubleFlag == 0 && itsGlx->isDoubleBuffered())
+        {
+          // We requested single buffering but had to accept a double buffered
+          // visual.  Set the GL draw buffer to be the front buffer to
+          // simulate single buffering.
+          glDrawBuffer( GL_FRONT );
+        }
     }
   catch (Util::Error& err)
     {
       return TCL_ERR(itsInterp, err.msg_cstr());
     }
 
-  createWindow();
-
-  TkUtil::setupStackingOrder(itsTkWin);
-
-  setupOverlayIfNeeded();
-
-  // Issue a ConfigureNotify event if there were deferred changes
-  TkUtil::issueConfigureNotify(itsTkWin);
-
-  TkUtil::selectAllInput(itsTkWin);
-
-  TkUtil::mapWindow(itsTkWin);
-
-  // Bind the context to the window and make it the current context
-  makeCurrent();
-
-  // Check for a single/double buffering snafu
-  checkDblBufferSnafu();
 
   return TCL_OK;
 }
@@ -1526,110 +1483,6 @@ DOTRACE("Togl::Impl::checkForGLX");
     }
 
   return true;
-}
-
-void Togl::Impl::setupVisInfoAndContext()
-{
-DOTRACE("Togl::Impl::setupVisInfoAndContext");
-
-  shared_ptr<GlxAttribs> attribs = buildAttribList();
-
-  // Create a new OpenGL rendering context.
-  Assert( itsGlx == 0 );
-
-  itsGlx = new GlxWrapper(itsDisplay, *attribs, !itsGlxOpts.indirect);
-
-  itsVisInfo = itsGlx->visInfo();
-
-  // Make sure we don't try to use a depth buffer with indirect rendering
-  if ( !itsGlx->isDirect() && itsGlxOpts.depthFlag == true )
-    {
-      delete itsGlx;
-      itsGlx = 0;
-      itsGlxOpts.depthFlag = false;
-      setupVisInfoAndContext();
-      return;
-    }
-
-  itsGlxOpts.indirect = !itsGlx->isDirect();
-}
-
-shared_ptr<GlxAttribs> Togl::Impl::buildAttribList()
-{
-DOTRACE("Togl::Impl::buildAttribList");
-
-  shared_ptr<GlxAttribs> attribs(new GlxAttribs);
-
-  if (itsGlxOpts.rgbaFlag)        attribs->rgba(itsGlxOpts.rgbaRed,
-                                        itsGlxOpts.rgbaGreen,
-                                        itsGlxOpts.rgbaBlue,
-                                        itsGlxOpts.alphaFlag ? itsGlxOpts.alphaSize : -1);
-
-  else                    attribs->colorIndex( itsGlxOpts.colorIndexSize );
-
-  if (itsGlxOpts.depthFlag)       attribs->depthBuffer( itsGlxOpts.depthSize );
-
-  if (itsGlxOpts.doubleFlag)      attribs->doubleBuffer();
-
-  if (itsGlxOpts.stencilFlag)     attribs->stencilBuffer( itsGlxOpts.stencilSize );
-
-  if (itsGlxOpts.accumFlag)       attribs->accum(itsGlxOpts.accumRed,
-                                         itsGlxOpts.accumGreen,
-                                         itsGlxOpts.accumBlue,
-                                         itsGlxOpts.alphaFlag ? itsGlxOpts.accumAlpha : -1);
-
-  if (itsGlxOpts.auxNumber > 0)   attribs->auxBuffers( itsGlxOpts.auxNumber );
-
-  return attribs;
-}
-
-// FIXME should be a helper func in TkUtil
-void Togl::Impl::createWindow()
-{
-DOTRACE("Togl::Impl::createWindow");
-
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
-
-  Colormap cmap = X11Util::findColormap(itsDisplay, itsVisInfo,
-                                        itsGlxOpts.rgbaFlag, itsPrivateCmapFlag);
-
-  // Make sure Tk knows to switch to the new colormap when the cursor is over
-  // this window when running in color index mode.
-  Tk_SetWindowVisual(itsTkWin, itsVisInfo->visual, itsVisInfo->depth, cmap);
-
-  // Find parent of window (necessary for creation)
-  Window parent = TkUtil::findParent(itsTkWin);
-
-  DebugEvalNL(parent);
-
-  winPtr->atts.colormap = cmap;
-  winPtr->atts.border_pixel = 0;
-  winPtr->atts.event_mask = ALL_EVENTS_MASK;
-  winPtr->window = XCreateWindow(itsDisplay,
-                                 parent,
-                                 0, 0, itsWidth, itsHeight,
-                                 0, itsVisInfo->depth,
-                                 InputOutput, itsVisInfo->visual,
-                                 CWBorderPixel | CWColormap | CWEventMask,
-                                 &winPtr->atts);
-
-  DebugEvalNL(winPtr->window);
-
-  if (!itsGlxOpts.rgbaFlag)
-    {
-      X11Util::hackInstallColormap(itsDisplay, winPtr->window, cmap);
-    }
-
-  int dummy_new_flag;
-  Tcl_HashEntry *hPtr = Tcl_CreateHashEntry(&winPtr->dispPtr->winTable,
-                                            (char *) windowId(), &dummy_new_flag);
-  Tcl_SetHashValue(hPtr, winPtr);
-
-  winPtr->dirtyAtts = 0;
-  winPtr->dirtyChanges = 0;
-#ifdef TK_USE_INPUT_METHODS
-  winPtr->inputContext = NULL;
-#endif /* TK_USE_INPUT_METHODS */
 }
 
 void Togl::Impl::setupOverlayIfNeeded()
@@ -1737,22 +1590,6 @@ DOTRACE("Togl::Impl::setupOverlay");
   XSetWMColormapWindows( itsDisplay, itsOverlayWindow, &itsOverlayWindow, 1 );
 
   return TCL_OK;
-}
-
-void Togl::Impl::checkDblBufferSnafu()
-{
-DOTRACE("Togl::Impl::checkDblBufferSnafu");
-  int dbl_flag;
-  if (glXGetConfig( itsDisplay, itsVisInfo, GLX_DOUBLEBUFFER, &dbl_flag ))
-    {
-      if (itsGlxOpts.doubleFlag==0 && dbl_flag)
-        {
-          /* We requested single buffering but had to accept a */
-          /* double buffered visual.  Set the GL draw buffer to */
-          /* be the front buffer to simulate single buffering. */
-          glDrawBuffer( GL_FRONT );
-        }
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Sat Aug  3 16:40:58 2002
+// written: Sun Aug  4 16:39:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <X11/Xlib.h>
 
 class GlxAttribs;
+class GlxOpts;
 
 class GlxWrapper
 {
@@ -34,6 +35,8 @@ public:
   GlxWrapper(Display* dpy, GlxAttribs& attribs, bool direct,
              GlxWrapper* share = 0);
 
+  static GlxWrapper* make(Display* dpy, GlxOpts& opts);
+
   ~GlxWrapper()
   {
     glXDestroyContext(itsDisplay, itsContext);
@@ -43,6 +46,8 @@ public:
   {
     return glXIsDirect(itsDisplay, itsContext) == True ? true : false;
   }
+
+  bool isDoubleBuffered() const;
 
   void makeCurrent(Window win) const
   {

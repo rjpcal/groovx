@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 15:09:49 2002
-// written: Sun Aug  4 15:33:11 2002
+// written: Sun Aug  4 16:51:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,54 @@
 #include <tkInt.h>
 
 #include "util/trace.h"
+#include "util/debug.h"
+
+void TkUtil::createWindow(Tk_Window tkWin, XVisualInfo* visInfo,
+                          int width, int height, Colormap cmap)
+{
+DOTRACE("TkUtil::createWindow");
+
+  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
+
+  // Make sure Tk knows to switch to the new colormap when the cursor is over
+  // this window when running in color index mode.
+  Tk_SetWindowVisual(tkWin, visInfo->visual, visInfo->depth, cmap);
+
+  // Find parent of window (necessary for creation)
+  Window parent = TkUtil::findParent(tkWin);
+
+  DebugEvalNL(parent);
+
+#define ALL_EVENTS_MASK \
+KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
+EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
+VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+
+  winPtr->atts.colormap = cmap;
+  winPtr->atts.border_pixel = 0;
+  winPtr->atts.event_mask = ALL_EVENTS_MASK;
+  winPtr->window = XCreateWindow(winPtr->display,
+                                 parent,
+                                 0, 0, width, height,
+                                 0, visInfo->depth,
+                                 InputOutput, visInfo->visual,
+                                 CWBorderPixel | CWColormap | CWEventMask,
+                                 &winPtr->atts);
+
+  DebugEvalNL(winPtr->window);
+
+  int dummy_new_flag;
+  Tcl_HashEntry* hPtr =
+    Tcl_CreateHashEntry(&winPtr->dispPtr->winTable,
+                        (char*) winPtr->window, &dummy_new_flag);
+  Tcl_SetHashValue(hPtr, winPtr);
+
+  winPtr->dirtyAtts = 0;
+  winPtr->dirtyChanges = 0;
+#ifdef TK_USE_INPUT_METHODS
+  winPtr->inputContext = NULL;
+#endif /* TK_USE_INPUT_METHODS */
+}
 
 void TkUtil::selectAllInput(Tk_Window tkWin) throw()
 {
