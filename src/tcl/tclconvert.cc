@@ -205,6 +205,14 @@ DOTRACE("Tcl::fromTcl<Tcl::TclValue>");
 }
 
 template <>
+Tcl::List Tcl::fromTcl<Tcl::List>(Tcl_Obj* obj)
+{
+DOTRACE("Tcl::fromTcl<Tcl::List>");
+
+  return Tcl::List(obj);
+}
+
+template <>
 Tcl_Obj* Tcl::fromTcl<Tcl_Obj*>(Tcl_Obj* obj)
 {
 DOTRACE("Tcl::fromTcl<Tcl_Obj*>");
