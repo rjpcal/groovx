@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu May 10 12:04:43 2001
+// written: Thu May 17 11:57:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "io/iodb.h"
 
+#include "io/io.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
@@ -29,10 +30,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-namespace {
-  const IO::VersionId IODB_SERIAL_VERSION_ID = 1;
-}
 
 InvalidIdError::InvalidIdError() : ErrorWithMsg() {}
 
@@ -280,29 +277,6 @@ DOTRACE("IoDb::IoDb");
 IoDb::~IoDb() {
 DOTRACE("IoDb::~IoDb");
   delete itsImpl; 
-}
-
-IO::VersionId IoDb::serialVersionId() const {
-  return IODB_SERIAL_VERSION_ID;
-}
-
-void IoDb::readFrom(IO::Reader* reader) {
-DOTRACE("IoDb::readFrom");
-
-  reader->ensureReadVersionId("IoDb", 1, "Try grsh0.8a3");
-
-  purge();
-  IO::ReadUtils::readObjectSeq<IO::IoObject>(reader, "itsVec", inserter());
-}
-
-void IoDb::writeTo(IO::Writer* writer) const {
-DOTRACE("IoDb::writeTo");
-
-  writer->ensureWriteVersionId("IoDb", IODB_SERIAL_VERSION_ID, 1,
-										 "Try grsh0.7a3");
-
-  IO::WriteUtils::writeObjectSeq(writer, "itsVec",
-											beginPtrs(), endPtrs());
 }
 
 int IoDb::count() const {

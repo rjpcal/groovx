@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed May 16 17:20:40 2001
+// written: Thu May 17 11:57:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IODB_H_DEFINED
 #define IODB_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
@@ -53,7 +49,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoDb : public virtual IO::IoObject {
+class IoDb {
 private:
   static IoDb theInstance;
 
@@ -66,14 +62,6 @@ public:
 
   /// Returns the singleton instance of IoDb.
   static IoDb& theDb();
-
-  //
-  // IO interface
-  //
-
-  virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
 
   class Impl;
   class ItrImpl;
