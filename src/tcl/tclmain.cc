@@ -36,6 +36,7 @@
 
 #include "tcl/tclsafeinterp.h"
 
+#include "util/backtrace.h"
 #include "util/error.h"
 #include "util/strings.h"
 
@@ -550,8 +551,10 @@ DOTRACE("Tcl::MainImpl::run");
           // ensure errorInfo is set properly:
           itsSafeInterp.addErrorInfo("");
 
+          const fstring bt = Util::Error::lastBackTrace().format();
+
           std::cerr << itsSafeInterp.getGlobalVar<const char*>("errorInfo")
-                    << "\nError in startup script\n";
+                    << "\n" << bt << "\nError in startup script\n";
           itsSafeInterp.destroy();
           Tcl_Exit(1);
         }
