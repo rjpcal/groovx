@@ -157,6 +157,12 @@ int Gx_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gx_Init");
 
+  // This is just a dummy package to make sure that Tcl sees a package
+  // named "Gx", in order for "package require Gx" to succeed.
+  Tcl::Pkg* pkg0 = new Tcl::Pkg(interp, "Gx", "$Revision$");
+
+  int status = pkg0->initStatus();
+
   Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "GxNode", "$Revision$");
   Tcl::defGenericObjCmds<GxNode>(pkg1);
 
@@ -165,7 +171,7 @@ DOTRACE("Gx_Init");
   pkg1->defVec("boundingBox", "item_id(s)", &GxTcl::boundingBox );
   pkg1->def( "savePS", "item_id filename", &GxTcl::savePS );
 
-  int status = pkg1->initStatus();
+  status = pkg1->combineStatus(status);
 
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GxSeparator", "$Revision$");
   pkg2->inherit("GxNode");

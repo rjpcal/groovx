@@ -70,6 +70,10 @@ int Th_Init(Tcl_Interp* interp)
 {
 DOTRACE("Th_Init");
 
+  // This is just a dummy package to make sure that Tcl sees a package
+  // named "Th", in order for "package require Th" to succeed.
+  Tcl::Pkg* pkg0 = new Tcl::Pkg(interp, "Th", "$Revision$");
+
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
@@ -143,7 +147,7 @@ DOTRACE("Th_Init");
   pkg4->defGetter("callback", &GenericEvent::getCallback);
   pkg4->defSetter("callback", &GenericEvent::setCallback);
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3, pkg4);
+  return Tcl::Pkg::initStatus(pkg0, pkg1, pkg2, pkg3, pkg4);
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";

@@ -128,7 +128,7 @@ class ExptTcl::ExpPkg : public Tcl::Pkg
 {
 public:
   ExpPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Exp", "$Revision$")
+    Tcl::Pkg(interp, "ExptDriver", "$Revision$")
   {
     theExptDriver = Ref<ExptDriver>(ExptDriver::make());
 
@@ -163,8 +163,8 @@ public:
     defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
     defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
 
-    Pkg::eval("foreach cmd [info commands ::Exp::*] {"
-              "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" } }\n"
+    Pkg::eval("foreach cmd [info commands ::ExptDriver::*] {"
+              "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[ExptDriver::currentExp\\] \\$args \" } }\n"
               "namespace eval Expt { namespace export * }"
               );
   }
@@ -183,9 +183,9 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Expt_Init(Tcl_Interp* interp)
+int Exptdriver_Init(Tcl_Interp* interp)
 {
-DOTRACE("Expt_Init");
+DOTRACE("Exptdriver_Init");
 
   Tcl::Pkg* pkg = new ExptTcl::ExpPkg(interp);
 

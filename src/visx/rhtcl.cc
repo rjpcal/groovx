@@ -151,6 +151,10 @@ int Rh_Init(Tcl_Interp* interp)
 {
 DOTRACE("Rh_Init");
 
+  // This is just a dummy package to make sure that Tcl sees a package
+  // named "Rh", in order for "package require Rh" to succeed.
+  Tcl::Pkg* pkg0 = new Tcl::Pkg(interp, "Rh", "$Revision$");
+
   //
   // Rh
   //
@@ -232,7 +236,7 @@ DOTRACE("Rh_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3, pkg4, pkg5);
+  return Tcl::Pkg::initStatus(pkg0, pkg1, pkg2, pkg3, pkg4, pkg5);
 }
 
 static const char vcid_rhtcl_cc[] = "$Header$";

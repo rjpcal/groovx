@@ -7,7 +7,7 @@
 ##############################################################################
 
 package require Gxpixmap
-package require Tclgl
+package require Gl
 package require Tlist
 package require Toglet
 

@@ -42,19 +42,19 @@ extern "C"
 {
   Tcl_PackageInitProc Block_Init;
   Tcl_PackageInitProc Dlist_Init;
-  Tcl_PackageInitProc Expt_Init;
+  Tcl_PackageInitProc Exptdriver_Init;
   Tcl_PackageInitProc Face_Init;
   Tcl_PackageInitProc Fish_Init;
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Gabor_Init;
-  Tcl_PackageInitProc Gltcl_Init;
+  Tcl_PackageInitProc Gl_Init;
   Tcl_PackageInitProc Gx_Init;
   Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Hook_Init;
   Tcl_PackageInitProc House_Init;
   Tcl_PackageInitProc Io_Init;
   Tcl_PackageInitProc Jitter_Init;
-  Tcl_PackageInitProc Mask_Init;
+  Tcl_PackageInitProc Maskhatch_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
   Tcl_PackageInitProc Obj_Init;
@@ -80,38 +80,38 @@ struct PackageInfo
 };
 
 PackageInfo IMMEDIATE_PKGS[] =
-{
-  { "Tcl",      Tcl_Init       },
-  { "Tk",       Tk_Init        },
-  { "Block",    Block_Init     },
-  { "Dlist",    Dlist_Init     },
-  { "Expt",     Expt_Init      },
-  { "Face",     Face_Init      },
-  { "Fish",     Fish_Init      },
-  { "Fixpt",    Fixpt_Init     },
-  { "Gabor",    Gabor_Init     },
-  { "Gltcl",    Gltcl_Init     },
-  { "Gtrace",   Gtrace_Init    },
-  { "Gx",       Gx_Init        },
-  { "Hook",     Hook_Init      },
-  { "House",    House_Init     },
-  { "Io",       Io_Init        },
-  { "Jitter",   Jitter_Init    },
-  { "Mask",     Mask_Init      },
-  { "Misc",     Misc_Init      },
-  { "Morphyface",Morphyface_Init},
-  { "Obj",      Obj_Init       },
-  { "Rh",       Rh_Init        },
-  { "Sound",    Sound_Init     },
-  { "Th",       Th_Init        },
-  { "Tlist",    Tlist_Init     },
-  { "Toglet",   Toglet_Init    },
-  { "Trial",    Trial_Init     },
-};
+  {
+    { "Tcl",      Tcl_Init       },
+    { "Tk",       Tk_Init        },
+  };
 
-#if 0
-PackageInfo DELAYED_PKGS[] = {};
-#endif
+PackageInfo DELAYED_PKGS[] =
+  {
+    { "Block",                Block_Init                   },
+    { "Dlist",                Dlist_Init                   },
+    { "Exptdriver",           Exptdriver_Init              },
+    { "Face",                 Face_Init                    },
+    { "Fish",                 Fish_Init                    },
+    { "Fixpt",                Fixpt_Init                   },
+    { "Gabor",                Gabor_Init                   },
+    { "Gl",                   Gl_Init                      },
+    { "Gtrace",               Gtrace_Init                  },
+    { "Gx",                   Gx_Init                      },
+    { "Hook",                 Hook_Init                    },
+    { "House",                House_Init                   },
+    { "Io",                   Io_Init                      },
+    { "Jitter",               Jitter_Init                  },
+    { "Maskhatch",            Maskhatch_Init               },
+    { "Misc",                 Misc_Init                    },
+    { "Morphyface",           Morphyface_Init              },
+    { "Obj",                  Obj_Init                     },
+    { "Rh",                   Rh_Init                      },
+    { "Sound",                Sound_Init                   },
+    { "Th",                   Th_Init                      },
+    { "Tlist",                Tlist_Init                   },
+    { "Toglet",               Toglet_Init                  },
+    { "Trial",                Trial_Init                   },
+  };
 
 int          appArgc      = 0;
 char**       appArgv      = 0;
@@ -204,6 +204,43 @@ DOTRACE("main");
             {
               std::cerr << "initialization failed: "
                         << IMMEDIATE_PKGS[i].pkgName << '\n';
+              fstring msg = interp.getResult<const char*>();
+              if ( !msg.is_empty() )
+                std::cerr << '\t' << msg << '\n';
+              interp.resetResult();
+            }
+        }
+
+      for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
+        {
+          Tcl_StaticPackage((Tcl_Interp*) 0, // 0 means this package hasn't
+                                             // yet been loaded into any
+                                             // interpreter
+                            DELAYED_PKGS[i].pkgName,
+                            DELAYED_PKGS[i].pkgInitProc,
+                            0);
+
+          fstring ifneededcmd("package ifneeded ",
+                              DELAYED_PKGS[i].pkgName,
+                              " 1.0 {load {} ",
+                              DELAYED_PKGS[i].pkgName,
+                              " }");
+
+          interp.eval(ifneededcmd);
+        }
+
+      for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
+        {
+          const char* ver =
+            Tcl_PkgRequire(interp.intp(),
+                           DELAYED_PKGS[i].pkgName,
+                           "1.0",
+                           0);
+
+          if (ver == 0)
+            {
+              std::cerr << "'package require' failed: "
+                        << DELAYED_PKGS[i].pkgName << '\n';
               fstring msg = interp.getResult<const char*>();
               if ( !msg.is_empty() )
                 std::cerr << '\t' << msg << '\n';

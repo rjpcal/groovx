@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-package require Exp
+package require Exptdriver
 package require Tlist
 package require Toglet
 package require Block
@@ -16,10 +16,10 @@ package require Timinghdlr
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd ExptTcl IO 1 [Exp::currentExp]
-IO::testDestringifyCmd ExptTcl IO 1 [Exp::currentExp]
-IO::testWriteCmd ExptTcl IO 1 [Exp::currentExp]
-IO::testReadCmd ExptTcl IO 1 [Exp::currentExp]
+IO::testStringifyCmd ExptTcl IO 1 [ExptDriver::currentExp]
+IO::testDestringifyCmd ExptTcl IO 1 [ExptDriver::currentExp]
+IO::testWriteCmd ExptTcl IO 1 [ExptDriver::currentExp]
+IO::testReadCmd ExptTcl IO 1 [ExptDriver::currentExp]
 
 # need to add checks on appropriate returns from all functions that use
 # isComplete()

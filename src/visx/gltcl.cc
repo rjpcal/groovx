@@ -472,11 +472,11 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
 //--------------------------------------------------------------------
 
 extern "C"
-int Gltcl_Init(Tcl_Interp* interp)
+int Gl_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gltcl_Init");
+DOTRACE("Gl_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Tclgl", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GL", "$Revision$");
   GLTcl::loadGet(pkg);
   GLTcl::loadEnums(pkg);
 

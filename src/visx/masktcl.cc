@@ -37,9 +37,9 @@
 #include "util/trace.h"
 
 extern "C"
-int Mask_Init(Tcl_Interp* interp)
+int Maskhatch_Init(Tcl_Interp* interp)
 {
-DOTRACE("Mask_Init");
+DOTRACE("Maskhatch_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MaskHatch", "$Revision$");
   Tcl::defFieldContainer<MaskHatch>(pkg);

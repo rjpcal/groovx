@@ -8,7 +8,7 @@
 
 package require Gxtext
 package require Toglet
-package require Tclgl
+package require Gl
 package require Tlist
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
