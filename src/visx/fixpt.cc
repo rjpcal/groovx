@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 29 16:46:32 2001
+// written: Thu Aug 30 10:26:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,6 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include <cstring>
-
-#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Aug 28 06:21:42 2001
+// written: Thu Aug 30 10:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,6 @@
 
 #include <tcl.h>
 #include <cctype>
-#include <cstring>
 #include <typeinfo>
 #include <string>
 

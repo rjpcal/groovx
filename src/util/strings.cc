@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Aug 20 15:10:28 2001
+// written: Thu Aug 30 10:31:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "util/algo.h"
 #include "util/freelist.h"
 
-#include <cstring>
 #include <iostream.h>
 
 #define NO_PROF
