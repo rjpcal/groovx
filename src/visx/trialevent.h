@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Nov 18 10:42:42 1999
+// written: Wed Dec  1 14:21:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 #include "stopwatch.h"
 #endif
 
-class ExptDriver;
+class Experiment;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -47,19 +47,21 @@ public:
   int getDelay() const { return itsRequestedDelay; }
   void setDelay(int msec) { itsRequestedDelay = msec; }
 
-  void schedule();
+  void schedule(Experiment* expt);
   void cancel();
 
 protected:
   virtual void invoke() = 0;
 
-  ExptDriver& getExptDriver();
-  
+  Experiment& getExperiment();
+
 private:
   static void dummyInvoke(ClientData clientData);
 
   int itsRequestedDelay;
   Tcl_TimerToken itsToken;
+
+  Experiment* itsExperiment;
 
   // Diagnostic stuff
   mutable StopWatch itsTimer;
