@@ -41,7 +41,7 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
   // non-const iterator
   m.makeUnique();
 
-  data = m.dataStorage() + storageOffset;
+  data = m.storageStart() + storageOffset;
   stride = s;
   stop = data + s*n;
 }
@@ -69,7 +69,7 @@ void Mtx::MtxImpl::selectRowRange(int r, int nr)
   if ((r+nr) > mrows_)
     throw ErrorWithMsg("attempted to index more rows than are available");
 
-  start_ += r;
+  offset_ += r;
   mrows_ = nr;
 }
 
@@ -78,9 +78,7 @@ void Mtx::MtxImpl::makeUnique()
   if ( !storage_->isUnique() )
 	 {
 		DOTRACE("Mtx::MtxImpl::makeUnique");
-		ptrdiff_t offset = getOffset();
   		DataBlock::makeUnique(storage_);
-		setOffset(offset);
 	 }
 }
 
