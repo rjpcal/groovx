@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Wed Jul 11 11:15:50 2001
+// written: Mon Jul 16 11:02:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,49 +38,6 @@ void Tcl::SafeInterface::handleError(const char* msg) const {
 DOTRACE("Tcl::SafeInterface::handleError");
 
   throw TclError(msg);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Tcl::SafeInterface -- Lists
-//
-///////////////////////////////////////////////////////////////////////
-
-int Tcl::SafeInterface::listLength(Tcl_Obj* tcllist)
-  const throw(Tcl::TclError) {
-DOTRACE("Tcl::SafeInterface::listLength");
-
-  int length;
-  // OK if itsInterp is 0
-  if (Tcl_ListObjLength(itsInterp, tcllist, &length) != TCL_OK) {
-    handleError("error getting list length");
-  }
-  return length;
-}
-
-Tcl_Obj* Tcl::SafeInterface::listElement(Tcl_Obj* tcllist,
-                                         int index) const throw(Tcl::TclError) {
-DOTRACE("Tcl::SafeInterface::listElement");
-
-  Tcl_Obj* element = 0;
-  // OK if interp is 0
-  if (Tcl_ListObjIndex(itsInterp, tcllist, index, &element) != TCL_OK) {
-    handleError("error getting list element");
-  }
-
-  Postcondition(element != 0);
-  return element;
-}
-
-void Tcl::SafeInterface::splitList(Tcl_Obj* tcllist, Tcl_Obj**& elements_out,
-                                   int& length_out) const throw(Tcl::TclError) {
-DOTRACE("Tcl::SafeInterface::splitList");
-
-  // OK if itsInterp is 0
-  if ( Tcl_ListObjGetElements(itsInterp, tcllist,
-                              &length_out, &elements_out) != TCL_OK ) {
-    handleError("error splitting list");
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////

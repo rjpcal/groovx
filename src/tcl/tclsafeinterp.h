@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Jul 11 11:15:39 2001
+// written: Mon Jul 16 11:02:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 struct Tcl_Interp;
 struct Tcl_Obj;
 
-namespace Tcl {
+namespace Tcl
+{
   class SafeInterface;
   class SafeInterp;
 }
@@ -50,14 +51,6 @@ public:
 
   bool hasInterp() const { return itsInterp != 0; }
   Tcl_Interp* intp() const { return itsInterp; }
-
-  // Lists
-  int listLength(Tcl_Obj* tcllist) const throw(TclError);
-
-  Tcl_Obj* listElement(Tcl_Obj* tcllist, int index) const throw(TclError);
-
-  void splitList(Tcl_Obj* tcllist, Tcl_Obj**& elements_out,
-                 int& length_out) const throw(TclError);
 };
 
 ///////////////////////////////////////////////////////////////////////
