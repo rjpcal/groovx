@@ -80,7 +80,8 @@ public:
   // manipulators //
   //////////////////
 
-  unsigned int addEvent(Util::Ref<TrialEvent> event, TimePoint time_point);
+  unsigned int addEvent(Util::Ref<TrialEvent> event,
+                        TimePoint time_point);
   unsigned int addEventByName(const char* event_type,
                               TimePoint time_point, int msec_delay);
 

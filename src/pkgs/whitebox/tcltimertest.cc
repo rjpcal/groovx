@@ -49,23 +49,10 @@ DBG_REGISTER
 
 namespace
 {
-  // A Util::Timer class that uses Tcl::TimerScheduler.
-  class TclTimer : public Util::Timer
-  {
-  public:
-    TclTimer(unsigned int msec, bool repeat)
-      :
-      Util::Timer(rutz::make_shared(new Tcl::TimerScheduler),
-                  msec, repeat)
-    {}
-
-    virtual ~TclTimer() {}
-  };
-
   int v0 = 0;
   int v1 = 0;
   int v2 = 0;
-  TclTimer* tp1 = 0;
+  Util::Timer* tp1 = 0;
 
   void v0_callback()
   {
@@ -90,9 +77,12 @@ namespace
     v1 = 0;
     v2 = 0;
 
-    TclTimer t0(20, false);
-    TclTimer t1(5,  true);
-    TclTimer t2(0,  false);
+    rutz::shared_ptr<Tcl::TimerScheduler> s
+      (rutz::make_shared(new Tcl::TimerScheduler));
+
+    Util::Timer t0(20, false);
+    Util::Timer t1(5,  true);
+    Util::Timer t2(0,  false);
 
     tp1 = &t1;
 
@@ -104,9 +94,9 @@ namespace
     t1.sigTimeOut.connect(&v1_callback);
     t2.sigTimeOut.connect(&v2_callback);
 
-    t0.schedule();
-    t1.schedule();
-    t2.schedule(); // delay==0 ==> callback should happen immediately
+    t0.schedule(s);
+    t1.schedule(s);
+    t2.schedule(s); // delay==0 ==> callback should happen immediately
 
     TEST_REQUIRE(t0.isPending());
     TEST_REQUIRE(t1.isPending());
@@ -140,13 +130,16 @@ namespace
   {
     v0 = 0;
 
-    TclTimer t0(10, false);
+    rutz::shared_ptr<Tcl::TimerScheduler> s
+      (rutz::make_shared(new Tcl::TimerScheduler));
+
+    Util::Timer t0(10, false);
 
     t0.sigTimeOut.connect(&v0_callback);
 
     TEST_REQUIRE(!t0.isPending());
 
-    t0.schedule();
+    t0.schedule(s);
 
     TEST_REQUIRE(t0.isPending());
     TEST_REQUIRE_EQ(v0, 0);
@@ -166,13 +159,16 @@ namespace
   // Make sure that we don't let ourselves get into an infinite loop
   void testTimerNoInfiniteLoop()
   {
-    TclTimer t(0, true);
+    rutz::shared_ptr<Tcl::TimerScheduler> s
+      (rutz::make_shared(new Tcl::TimerScheduler));
+
+    Util::Timer t(0, true);
 
     bool caught = false;
 
     try
       {
-        t.schedule();
+        t.schedule(s);
       }
     catch (rutz::error&)
       {

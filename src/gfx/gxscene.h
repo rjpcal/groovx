@@ -38,8 +38,14 @@
 #include "gfx/gxnode.h"
 
 #include "util/ref.h"
+#include "util/sharedptr.h"
 #include "util/timer.h"
 #include "util/volatileobject.h"
+
+namespace Util
+{
+  class Scheduler;
+}
 
 /// Manages a graphics "scene" for a window object.
 class GxScene : public Util::VolatileObject
@@ -120,6 +126,7 @@ private:
   bool isItRefreshing;
   bool isItRefreshed;
 
+  const rutz::shared_ptr<Util::Scheduler> itsScheduler;
   Util::Timer itsTimer;
 
   Util::Ref<Util::Slot0> slotNodeChanged;

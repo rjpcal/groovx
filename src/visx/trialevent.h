@@ -40,13 +40,19 @@
 
 #include <vector>
 
-class OutputFile;
-class Trial;
-
 namespace rutz
 {
   template <class T> class fwd_iter;
+  template <class T> class shared_ptr;
 }
+
+namespace Util
+{
+  class Scheduler;
+}
+
+class OutputFile;
+class Trial;
 
 //  #######################################################
 //  =======================================================
@@ -99,7 +105,9 @@ public:
       specifies a minimum delay time; this may be used to ensure that
       proper relative ordering of TrialEvent's is maintained, even if
       the event loop is getting slowed down overall.  */
-  unsigned int schedule(Trial& trial, unsigned int minimum_msec = 0);
+  unsigned int schedule(rutz::shared_ptr<Util::Scheduler> s,
+                        Trial& trial,
+                        unsigned int minimum_msec = 0);
 
   /// Cancels a pending event.
   /** That is, if \c cancel() is called after \c schedule() has been
@@ -108,7 +116,6 @@ public:
       there is no pending event, this function does nothing. */
   void cancel();
 
-protected:
   /// Called after the requested delay after a call to \c schedule().
   /** Subclasses must override this function to take whatever specific
       action is desired when the callback triggers. The function is

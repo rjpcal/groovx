@@ -39,10 +39,13 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "tcl/tcltimerscheduler.h"
+
 #include "util/error.h"
 #include "util/log.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
+#include "util/sharedptr.h"
 #include "util/stopwatch.h"
 
 #include <algorithm>
@@ -77,6 +80,7 @@ private:
 
 public:
   Impl() :
+    scheduler(rutz::make_shared(new Tcl::TimerScheduler)),
     immediateEvents(),
     startEvents(),
     responseEvents(),
@@ -84,6 +88,8 @@ public:
     timer(),
     trial(0)
     {}
+
+  rutz::shared_ptr<Util::Scheduler> scheduler;
 
   typedef std::vector<Util::Ref<TrialEvent> > EventGroup;
 
@@ -111,8 +117,10 @@ public:
 
   Trial* trial;
 
-  void scheduleAll(EventGroup& events);
-  void cancelAll(EventGroup& events);
+  static void scheduleAll(EventGroup& events,
+                          rutz::shared_ptr<Util::Scheduler> s,
+                          Trial* trial);
+  static void cancelAll(EventGroup& events);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -258,16 +266,19 @@ namespace
   }
 }
 
-void TimingHdlr::Impl::scheduleAll(EventGroup& events)
+void TimingHdlr::Impl::scheduleAll(EventGroup& events,
+                                   rutz::shared_ptr<Util::Scheduler> s,
+                                   Trial* trial)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   PRECONDITION(trial != 0);
 
-  // In order to ensure that events get scheduled in the proper order, even if
-  // the whole event loop is getting bogged down, we do two things: (1) sort
-  // the collection of events according to their requested delays, and (2)
-  // keep track of the delay at which each was actually scheduled, and make
-  // sure that the next event is scheduled no sooner than that
+  // In order to ensure that events get scheduled in the proper order,
+  // even if the whole event loop is getting bogged down, we do two
+  // things: (1) sort the collection of events according to their
+  // requested delays, and (2) keep track of the delay at which each
+  // was actually scheduled, and make sure that the next event is
+  // scheduled no sooner than that
 
   std::stable_sort(events.begin(), events.end(), cmp_delay_less);
 
@@ -275,7 +286,8 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
 
   for (size_t i = 0; i < events.size(); ++i)
     {
-      unsigned int scheduled_delay = events[i]->schedule(*trial, minimum_delay);
+      unsigned int scheduled_delay =
+        events[i]->schedule(s, *trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
 
       rutz::fstring info("scheduled @ ", scheduled_delay,
@@ -307,10 +319,10 @@ DOTRACE("TimingHdlr::thBeginTrial");
 
   rep->trial = &trial;
 
-  rep->cancelAll(rep->responseEvents);
-  rep->cancelAll(rep->abortEvents);
-  rep->scheduleAll(rep->immediateEvents);
-  rep->scheduleAll(rep->startEvents);
+  Impl::cancelAll(rep->responseEvents);
+  Impl::cancelAll(rep->abortEvents);
+  Impl::scheduleAll(rep->immediateEvents, rep->scheduler, rep->trial);
+  Impl::scheduleAll(rep->startEvents, rep->scheduler, rep->trial);
 }
 
 void TimingHdlr::thResponseSeen()
@@ -318,8 +330,8 @@ void TimingHdlr::thResponseSeen()
 DOTRACE("TimingHdlr::thResponseSeen");
   if (rep->responseEvents.size() > 0)
     {
-      rep->cancelAll(rep->startEvents);
-      rep->scheduleAll(rep->responseEvents);
+      Impl::cancelAll(rep->startEvents);
+      Impl::scheduleAll(rep->responseEvents, rep->scheduler, rep->trial);
     }
 }
 
@@ -328,27 +340,27 @@ void TimingHdlr::thAbortTrial()
 DOTRACE("TimingHdlr::thAbortTrial");
   if (rep->abortEvents.size() > 0)
     {
-      rep->cancelAll(rep->startEvents);
-      rep->cancelAll(rep->responseEvents);
-      rep->scheduleAll(rep->abortEvents);
+      Impl::cancelAll(rep->startEvents);
+      Impl::cancelAll(rep->responseEvents);
+      Impl::scheduleAll(rep->abortEvents, rep->scheduler, rep->trial);
     }
 }
 
 void TimingHdlr::thEndTrial()
 {
 DOTRACE("TimingHdlr::thEndTrial");
-  rep->cancelAll(rep->immediateEvents);
-  rep->cancelAll(rep->startEvents);
-  rep->cancelAll(rep->responseEvents);
-  rep->cancelAll(rep->abortEvents);
+  Impl::cancelAll(rep->immediateEvents);
+  Impl::cancelAll(rep->startEvents);
+  Impl::cancelAll(rep->responseEvents);
+  Impl::cancelAll(rep->abortEvents);
 }
 
 void TimingHdlr::thHaltExpt()
 {
 DOTRACE("TimingHdlr::thHaltExpt");
-  rep->cancelAll(rep->startEvents);
-  rep->cancelAll(rep->responseEvents);
-  rep->cancelAll(rep->abortEvents);
+  Impl::cancelAll(rep->startEvents);
+  Impl::cancelAll(rep->responseEvents);
+  Impl::cancelAll(rep->abortEvents);
 }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";

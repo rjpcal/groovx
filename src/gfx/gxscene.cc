@@ -36,6 +36,7 @@
 
 #include "tcl/tcltimerscheduler.h"
 
+#include "util/scheduler.h"
 #include "util/sharedptr.h"
 
 #include "util/trace.h"
@@ -59,7 +60,8 @@ GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
   isItHolding(false),
   isItRefreshing(true),
   isItRefreshed(false),
-  itsTimer(rutz::make_shared(new Tcl::TimerScheduler), 100, true),
+  itsScheduler(rutz::make_shared(new Tcl::TimerScheduler)),
+  itsTimer(100, true),
   slotNodeChanged(Util::Slot0::make(this, &GxScene::onNodeChange))
 {
 DOTRACE("GxScene::GxScene");
@@ -204,7 +206,7 @@ DOTRACE("GxScene::animate");
   else
     {
       itsTimer.setDelayMsec((unsigned int)(1000.0/framesPerSecond));
-      itsTimer.schedule();
+      itsTimer.schedule(itsScheduler);
     }
 }
 

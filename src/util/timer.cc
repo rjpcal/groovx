@@ -42,11 +42,10 @@ DBG_REGISTER
 
 using rutz::shared_ptr;
 
-Util::Timer::Timer(shared_ptr<Util::Scheduler> sched,
-                   unsigned int msec, bool repeat)
+Util::Timer::Timer(unsigned int msec, bool repeat)
   :
   sigTimeOut(),
-  itsScheduler(sched),
+  itsScheduler(0),
   itsToken(0),
   itsMsecDelay(msec),
   isItRepeating(repeat),
@@ -58,9 +57,11 @@ Util::Timer::~Timer()
   cancel();
 }
 
-void Util::Timer::schedule()
+void Util::Timer::schedule(rutz::shared_ptr<Util::Scheduler> scheduler)
 {
 DOTRACE("Util::Timer::schedule");
+
+  PRECONDITION(scheduler.get() != 0);
 
   if (itsMsecDelay == 0 && isItRepeating == true)
     {
@@ -75,6 +76,8 @@ DOTRACE("Util::Timer::schedule");
   itsStopWatch.restart();
 
   dbg_eval_nl(3, itsMsecDelay);
+
+  itsScheduler = scheduler;
 
   // Note that the returned token might be null for one reason or
   // another (e.g. if the scheduler decides to run the callback
@@ -112,7 +115,9 @@ DOTRACE("Util::Timer::dummyCallback");
       // immediate (delay == 0), otherwise we fall into an
       // infinite loop
       ASSERT(timer->itsMsecDelay != 0);
-      timer->schedule();
+
+      if (timer->itsScheduler.get() != 0)
+        timer->schedule(timer->itsScheduler);
     }
 
   timer->sigTimeOut.emit();

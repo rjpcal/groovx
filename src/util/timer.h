@@ -46,14 +46,13 @@ namespace Util
 class Util::Timer
 {
 public:
-  Timer(rutz::shared_ptr<Util::Scheduler> sched,
-        unsigned int msec, bool repeat = false);
+  Timer(unsigned int msec, bool repeat = false);
 
   virtual ~Timer();
 
   Util::Signal0 sigTimeOut;
 
-  void schedule();
+  void schedule(rutz::shared_ptr<Util::Scheduler> s);
   void cancel();
 
   unsigned int delayMsec() const { return itsMsecDelay; }

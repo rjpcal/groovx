@@ -68,7 +68,7 @@ using rutz::fstring;
 ///////////////////////////////////////////////////////////////////////
 
 TrialEvent::TrialEvent(unsigned int msec) :
-  itsTimer(rutz::make_shared(new Tcl::TimerScheduler), msec, false),
+  itsTimer(msec, false),
   itsRequestedDelay(msec),
   itsTrial(0),
   itsEstimatedOffset(0.0),
@@ -109,7 +109,8 @@ DOTRACE("TrialEvent::writeTo");
   writer.writeValue("requestedDelay", itsRequestedDelay);
 }
 
-unsigned int TrialEvent::schedule(Trial& trial,
+unsigned int TrialEvent::schedule(rutz::shared_ptr<Util::Scheduler> s,
+                                  Trial& trial,
                                   unsigned int minimum_msec)
 {
 DOTRACE("TrialEvent::schedule");
@@ -130,7 +131,7 @@ DOTRACE("TrialEvent::schedule");
                 int(minimum_msec));
 
   itsTimer.setDelayMsec(actual_request);
-  itsTimer.schedule();
+  itsTimer.schedule(s);
 
   return actual_request;
 }
@@ -370,7 +371,7 @@ void MultiEvent::invoke(Trial& trial)
   for (unsigned int i = 0; i < itsEvents.size(); ++i)
     {
       itsEvents[i]->setDelay(0);
-      itsEvents[i]->schedule(trial);
+      itsEvents[i]->invoke(trial);
     }
 }
 
