@@ -11,7 +11,7 @@
 if { [info exists List::TEST_DEFINED] } return;
 
 package require Objtogl
-if { ![Togl::inited] } { Togl::init "-rgba false"; ::update }
+if { ![Togl::inited] } { Togl::init; ::update }
 
 namespace eval List {
 
