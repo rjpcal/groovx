@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Sep 25 18:52:20 2002
+// written: Tue Nov  5 06:41:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,13 @@ class GbVec3 : public Gfx::Vec3<T>,
                public TMultiValue<T>
 {
 public:
+  /// Default constructor, or set initial 3-D coordinates.
   GbVec3(T x_=T(), T y_=T(), T z_=T());
+
+  /// String conversion constructor.
+  GbVec3(const fstring& s) : TMultiValue<T>(3) { setFstring(s); }
+
+  /// Virtual destructor.
   virtual ~GbVec3();
 
   // These help to disambiguate function calls to set()
@@ -32,10 +38,6 @@ public:
 
   virtual fstring getNativeTypeName() const;
 
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
-
-  virtual unsigned int numValues() const;
   virtual const T* constBegin() const;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Wed Sep 25 18:51:56 2002
+// written: Tue Nov  5 06:41:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,12 +31,6 @@ public:
 
   virtual fstring getNativeTypeName() const;
 
-  virtual void printTo(STD_IO::ostream& os) const
-  { TMultiValue<double>::doPrintTo(os); }
-  virtual void scanFrom(STD_IO::istream& is)
-  { TMultiValue<double>::doScanFrom(is); }
-
-  virtual unsigned int numValues() const;
   virtual const double* constBegin() const;
 };
 
