@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Jul 12 13:12:40 1999
+// written: Fri Jul 23 13:50:13 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -30,7 +30,7 @@
 #include "tclitempkg.h"
 #include "toglconfig.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
 #include "debug.h"
 
@@ -60,8 +60,6 @@ namespace ObjTogl {
   class SetMinRectCmd;
 
   class ObjToglPkg;
-
-  void toglCreateCallback(struct Togl* togl);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -97,14 +95,6 @@ DOTRACE("ObjTogl::theToglConfig");
   return theConfig;
 }
 
-void ObjTogl::toglCreateCallback(struct Togl* togl) {
-DOTRACE("ObjTogl::toglCreateCallback");
-
-  if (toglCreated) { return; }
-
-  /* else */ ObjTogl::widget = togl;
-}
-
 //---------------------------------------------------------------------
 //
 // ObjTogl::DestroyCmd --
@@ -114,13 +104,32 @@ DOTRACE("ObjTogl::toglCreateCallback");
 class ObjTogl::DestroyCmd : public TclCmd {
 public:
   DestroyCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
+	 TclCmd(interp, cmd_name, NULL, 1, 1)
+  {
+	 Togl_DestroyFunc(destroyCallback);	 
+  }
+
+  ~DestroyCmd() { invoke(); }
+
+  static void destroyCallback(struct Togl* togl) {
+  DOTRACE("ObjTogl::DestroyCmd::destroyCallback");
+	 if ( (togl != 0) && (togl == ObjTogl::widget) ) {
+		ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
+		delete config;
+		ObjTogl::theConfig = 0;
+		ObjTogl::widget = 0;
+		ObjTogl::toglCreated = false;
+	 }
+  }
+
 protected:
   virtual void invoke() {
-	 delete theConfig;
-	 theConfig = 0;
-	 widget = 0;
-	 toglCreated = false;
+  DOTRACE("ObjTogl::DestroyCmd::invoke");
+
+    // This tells the ToglConfig to destroy the widget, which in turn
+    // generates a call to the destroyCallback, which in turn delete's
+    // the toglConfig.
+	 ObjTogl::theToglConfig()->destroyWidget();
   }
 };
 
@@ -194,8 +203,16 @@ public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
 	 TclCmd(interp, cmd_name,
 			  "init_args ?viewing_dist=30? ?gl_unit_angle=2.05?", 2, 4),
-	 itsInterp(interp) {}
+	 itsInterp(interp)
+  {
+	 Togl_CreateFunc(createCallback);
+  }
 protected:
+  static void createCallback(struct Togl* togl) {
+    if (ObjTogl::toglCreated) { return; }
+    /* else */ ObjTogl::widget = togl;
+  }
+
   virtual void invoke() {
 	 if (toglCreated) { throw TclError("Togl widget already initialized"); }
 
@@ -205,6 +222,9 @@ protected:
 
 	 const char* pathname = ".togl_private";
 
+	 // Eval a command to create the widget. This will cause in turn
+	 // call the createCallback as part of Togl's internal creation
+	 // procedures.
 	 string create_cmd_str = string("togl ") + pathname + " " + init_args;
 	 TclEvalCmd create_cmd(create_cmd_str.c_str());
 	 if ( create_cmd.invoke(itsInterp) != TCL_OK ) { throw TclError(); }
@@ -342,8 +362,6 @@ public:
   {
 	 Tcl_PkgProvide(interp, "Objtogl", "3.2");
 
-	 Togl_CreateFunc(toglCreateCallback);
-
 	 addCommand( new DestroyCmd    (interp, "Togl::destroy") );
 	 addCommand( new DumpCmapCmd   (this, "Togl::dumpCmap") );
 	 addCommand( new DumpEpsCmd    (this, "Togl::dumpEps") );
@@ -365,10 +383,6 @@ public:
 	 declareCAction("swapBuffers", &ToglConfig::swapBuffers);
 	 declareCGetter("usingFixedScale", &ToglConfig::usingFixedScale);
 	 declareCAttrib("width", &ToglConfig::getWidth, &ToglConfig::setWidth);
-  }
-
-  virtual ~ObjToglPkg() {
-	 delete theConfig;
   }
 
   ToglConfig* getCItemFromId(int) {
