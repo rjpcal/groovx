@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Nov 20 17:10:48 2002
+// written: Thu Nov 21 11:57:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,76 @@
 
 #include "gfx/recttcl.h"
 
-#include "visx/bitmap.h"
-#include "visx/glbitmap.h"
-#include "visx/pointtcl.h"
-#include "visx/xbitmap.h"
-
-#include "util/objfactory.h"
+#include "io/ioproxy.h"
+#include "io/reader.h"
 
 #include "tcl/tclpkg.h"
 
+#include "util/objfactory.h"
+
+#include "visx/bitmap.h"
+#include "visx/pointtcl.h"
+
 #include "util/trace.h"
 #include "util/debug.h"
+
+namespace
+{
+  const IO::VersionId XBITMAP_SVID = 2;
+  const IO::VersionId GLBITMAP_SVID = 3;
+}
+
+class XBitmap : public Bitmap
+{
+public:
+  XBitmap() : Bitmap() {}
+
+  static XBitmap* make() { return new XBitmap; }
+
+  virtual ~XBitmap() {}
+
+  virtual fstring ioTypename() const { return fstring("Bitmap"); }
+
+  virtual IO::VersionId serialVersionId() const { return XBITMAP_SVID; }
+
+  virtual void readFrom(IO::Reader* reader)
+  {
+    reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
+
+    reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
+  }
+
+  // no writeTo() override since we just want Bitmap's writeTo()
+};
+
+class GLBitmap : public Bitmap
+{
+public:
+  GLBitmap() : Bitmap() {}
+
+  static GLBitmap* make() { return new GLBitmap; }
+
+  virtual ~GLBitmap() {}
+
+  virtual fstring ioTypename() const { return fstring("Bitmap"); }
+
+  virtual IO::VersionId serialVersionId() const { return GLBITMAP_SVID; }
+
+  virtual void readFrom(IO::Reader* reader)
+  {
+    int svid = reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
+
+    if (svid <= 2)
+      {
+        bool val;
+        reader->readValue("usingGlBitmap", val);
+      }
+
+    reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
+  }
+
+  // no writeTo() override since we just want Bitmap's writeTo()
+};
 
 extern "C"
 int Bitmap_Init(Tcl_Interp* interp)
