@@ -637,6 +637,8 @@ namespace
 
   void drawLetter(CP* cp)
   {
+    DOTRACE("<gxvectorfont.cc>::drawLetter");
+
     glBegin(GL_LINE_STRIP);
     while (1)
     {
@@ -662,6 +664,8 @@ namespace
 
   GLuint getStrokeFontListBase()
   {
+    DOTRACE("<gxvectorfont.cc>::getStrokeFontListBase");
+
     static GLuint listBase = 0;
 
     if (listBase != 0) return listBase;
@@ -786,22 +790,31 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 
-GxVectorFont::GxVectorFont() {}
+GxVectorFont::GxVectorFont()
+{
+DOTRACE("GxVectorFont::GxVectorFont");
+}
 
-GxVectorFont::~GxVectorFont() throw() {}
+GxVectorFont::~GxVectorFont() throw()
+{
+DOTRACE("GxVectorFont::~GxVectorFont");
+}
 
 const char* GxVectorFont::fontName() const
 {
+DOTRACE("GxVectorFont::fontName");
   return "vector";
 }
 
 unsigned int GxVectorFont::listBase() const
 {
+DOTRACE("GxVectorFont::listBase");
   return getStrokeFontListBase();
 }
 
 void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
+DOTRACE("GxVectorFont::bboxOf");
   int longest = 0;
   int current = 0;
   int lines = 1;
