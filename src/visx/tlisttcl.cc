@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Nov 20 16:10:45 2002
+// written: Thu Nov 21 14:20:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
 #include "gfx/gxshapekit.h"
+#include "gfx/gxtext.h"
 #include "gfx/gxtransform.h"
 
 #include "gx/rect.h"
@@ -30,7 +31,6 @@
 #include "util/error.h"
 #include "util/ref.h"
 
-#include "visx/gtext.h"
 #include "visx/tlistutils.h"
 #include "visx/trial.h"
 
@@ -99,7 +99,7 @@ namespace
 
         if (text_labels)
           {
-            Ref<Gtext> label(Gtext::make());
+            Ref<GxText> label(GxText::make());
             label->setText(fstring(objids[i]));
             label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
             label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);

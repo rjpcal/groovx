@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 12:43:32 2002
+// written: Thu Nov 21 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 #include "gfx/gxseparator.h"
 #include "gfx/gxshapekit.h"
 #include "gfx/gxsphere.h"
+#include "gfx/gxtext.h"
 #include "gfx/gxtransform.h"
 #include "gfx/pscanvas.h"
 #include "gfx/pointtcl.h"
@@ -305,6 +306,14 @@ DOTRACE("Gx_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeX, "XBitmap");
 
   status = pkg15->combineStatus(status);
+
+  Tcl::Pkg* pkg16 = new Tcl::Pkg(interp, "GxText", "$Revision$");
+  pkg16->inherit("GxShapeKit");
+  Tcl::defCreator<GxText>(pkg16, "Gtext");
+  Tcl::defGenericObjCmds<GxText>(pkg16);
+  Tcl::defAllFields(pkg16, GxText::classFields());
+
+  status = pkg16->combineStatus(status);
 
   return status;
 }

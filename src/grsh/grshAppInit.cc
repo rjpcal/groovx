@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Nov 21 12:19:02 2002
+// written: Thu Nov 21 14:19:59 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -47,7 +47,6 @@ extern "C"
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Gabor_Init;
   Tcl_PackageInitProc Gltcl_Init;
-  Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc Gx_Init;
   Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Hook_Init;
@@ -92,7 +91,6 @@ PackageInfo IMMEDIATE_PKGS[] =
   { "Fixpt",    Fixpt_Init     },
   { "Gabor",    Gabor_Init     },
   { "Gltcl",    Gltcl_Init     },
-  { "Gtext",    Gtext_Init     },
   { "Gtrace",   Gtrace_Init    },
   { "Gx",       Gx_Init        },
   { "Hook",     Hook_Init      },
