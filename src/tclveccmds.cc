@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed Mar 15 11:00:29 2000
+// written: Thu Mar 16 09:59:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,20 +42,28 @@ DOTRACE("Tcl::VecGetterBaseCmd::VecGetterBaseCmd");
 
 void Tcl::VecGetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecGetterBaseCmd::invoke");
-  vector<int> ids;
   if (itsItemArgn) {
-	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+	 Tcl::ListIterator<int>
+		id_itr = beginOfArg(itsItemArgn, (int*)0),
+		end    =   endOfArg(itsItemArgn, (int*)0);
+
+	 // We do the first iteration outside the loop, because if there is
+	 // only one item, we want to do a regular return rather than a
+	 // list-append to the return value. It is safe to assume that
+	 // there is at least one item in the list, otherwise the number of
+	 // arguments to the command would have been wrong.
+	 void* item = itsPkg->getItemFromId(*id_itr);
+	 doReturnValForItem(item);
+
+	 while (++id_itr != end)
+		{
+		  void* item = itsPkg->getItemFromId(*id_itr);
+		  doAppendValForItem(item);
+		}
   }
   else {
-	 ids.push_back(-1);
-  }
-  
-  void* item = itsPkg->getItemFromId(ids[0]);
-  doReturnValForItem(item);
-  
-  for (size_t i = 1; i < ids.size(); ++i) {
-	 void* item = itsPkg->getItemFromId(ids[i]);
-	 doAppendValForItem(item);
+	 void* item = itsPkg->getItemFromId(-1);
+	 doReturnValForItem(item);
   }
 }
 
@@ -82,17 +90,6 @@ void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item) {
   lappendVal(itsGetter->get(item));
 }
 
-// Specializations for std::string
-template <>
-void Tcl::TVecGetterCmd<const string&>::doReturnValForItem(void* item) {
-  returnVal(itsGetter->get(item).c_str());
-}
-
-template <>
-void Tcl::TVecGetterCmd<const string&>::doAppendValForItem(void* item) {
-  lappendVal(itsGetter->get(item).c_str());
-}
-
 // Specializations for fixed_string
 template <>
 void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(void* item) {
@@ -110,7 +107,6 @@ template class TVecGetterCmd<int>;
 template class TVecGetterCmd<bool>;
 template class TVecGetterCmd<double>;
 template class TVecGetterCmd<const char*>;
-template class TVecGetterCmd<const string&>;
 template class TVecGetterCmd<const fixed_string&>;
 }
 
@@ -207,38 +203,6 @@ void Tcl::TVecSetterCmd<T>::destroyValVec(void* val_vec) {
 }
 
 
-// Specialization for T=const string&, since we must declare 'vals' as
-// type 'vector<string>' rather than 'vector<const string&>'.
-template <>
-void* Tcl::TVecSetterCmd<const string&>::getValVec(int val_argn, int num_ids,
-																	unsigned int& num_vals) {
-  vector<string>* vals = new vector<string>;
-  if (num_ids == 1) {
-	 string val;
-	 getValFromArg(val_argn, val);
-	 vals->push_back(val);
-  }
-  else {
-	 getSequenceFromArg(val_argn, back_inserter(*vals), (string*) 0);
-  }
-  num_vals = vals->size();
-  return static_cast<void*>(vals);
-}
-
-template <>
-void Tcl::TVecSetterCmd<const string&>::setValForItem(void* item,
-														void* val_vec, unsigned int valn) {
-  vector<string>& vals = *(static_cast<vector<string>*>(val_vec));
-  itsSetter->set(item, vals[valn]);
-}
-
-template <>
-void Tcl::TVecSetterCmd<const string&>::destroyValVec(void* val_vec) {
-  vector<string>* vals = static_cast<vector<string>*>(val_vec);
-  delete vals;
-}
-
-
 // Specialization for T=const fixed_string&
 template <>
 void* Tcl::TVecSetterCmd<const fixed_string&>::getValVec(
@@ -277,7 +241,6 @@ template class TVecSetterCmd<int>;
 template class TVecSetterCmd<bool>;
 template class TVecSetterCmd<double>;
 template class TVecSetterCmd<const char*>;
-template class TVecSetterCmd<const string&>;
 template class TVecSetterCmd<const fixed_string&>;
 }
 
@@ -317,7 +280,6 @@ template class TVecAttribCmd<int>;
 template class TVecAttribCmd<bool>;
 template class TVecAttribCmd<double>;
 template class TVecAttribCmd<const char*>;
-template class TVecAttribCmd<const string&>;
 template class TVecAttribCmd<const fixed_string&>;
 }
 
@@ -342,16 +304,20 @@ DOTRACE("Tcl::VecActionCmd::VecActionCmd");
 
 void Tcl::VecActionCmd::invoke() {
 DOTRACE("Tcl::VecActionCmd::invoke");
-  vector<int> ids;
   if (itsItemArgn) {
-	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+	 Tcl::ListIterator<int>
+		id_itr = beginOfArg(itsItemArgn, (int*)0),
+		end    =   endOfArg(itsItemArgn, (int*)0);
+
+	 while (id_itr != end)
+		{
+		  void* item = itsPkg->getItemFromId(*id_itr);
+		  itsAction->action(item);
+		  ++id_itr;
+		}
   }
   else {
-	 ids.push_back(-1);
-  }
-  
-  for (size_t i = 0; i < ids.size(); ++i) {
-	 void* item = itsPkg->getItemFromId(ids[i]);
+	 void* item = itsPkg->getItemFromId(-1);
 	 itsAction->action(item);
   }
 }
