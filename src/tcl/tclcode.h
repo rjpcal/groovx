@@ -50,11 +50,9 @@ public:
 
   Code();
 
-  Code(const char* tcl_cmd, ErrorHandlingMode mode = NONE);
+  Code(Tcl::ObjPtr cmd, ErrorHandlingMode mode = NONE);
 
-  Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE);
-
-  Code(Tcl_Obj* cmd_object, Util::ErrorHandler* errHandler);
+  Code(Tcl::ObjPtr cmd, Util::ErrorHandler* errHandler);
 
   /// Returns true on success, false on failure.
   bool invoke(Tcl_Interp* interp);
