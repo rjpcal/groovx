@@ -256,11 +256,11 @@ DOTRACE("Toglet::defaultParent");
   PARENT = pathname;
 }
 
-Gfx::Canvas& Toglet::getCanvas() const
+Nub::SoftRef<Gfx::Canvas> Toglet::getCanvas() const
 {
 DOTRACE("Toglet::getCanvas");
   makeCurrent();
-  return *(rep->canvas);
+  return rep->canvas;
 }
 
 void Toglet::makeCurrent() const

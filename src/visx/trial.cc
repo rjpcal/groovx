@@ -628,7 +628,7 @@ void Trial::trRenderBack()
 DOTRACE("Trial::trRenderBack");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
-    widget->getCanvas().drawOnBackBuffer();
+    widget->getCanvas()->drawOnBackBuffer();
 }
 
 void Trial::trRenderFront()
@@ -636,7 +636,7 @@ void Trial::trRenderFront()
 DOTRACE("Trial::trRenderFront");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
-    widget->getCanvas().drawOnFrontBuffer();
+    widget->getCanvas()->drawOnFrontBuffer();
 }
 
 void Trial::trClearBuffer()
@@ -652,7 +652,7 @@ void Trial::trFinishDrawing()
 DOTRACE("Trial::trFinishDrawing");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
-    widget->getCanvas().finishDrawing();
+    widget->getCanvas()->finishDrawing();
 }
 
 

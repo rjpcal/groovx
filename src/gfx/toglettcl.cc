@@ -32,6 +32,7 @@
 #ifndef TOGLETTCL_CC_DEFINED
 #define TOGLETTCL_CC_DEFINED
 
+#include "gfx/canvas.h"
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
 #include "gfx/pointtcl.h"
@@ -97,6 +98,7 @@ DOTRACE("Toglet_Init");
   pkg->defSetter("allowRefresh", &Toglet::allowRefresh, SRC_POS);
   pkg->defSetter("animate", "objref(s) frames_per_second", &Toglet::animate, SRC_POS);
   pkg->defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera, SRC_POS);
+  pkg->defGetter("canvas", &Toglet::getCanvas, SRC_POS);
   pkg->defAction("clearscreen", &Toglet::fullClearscreen, SRC_POS);
   pkg->defSetter("hold", "objref(s) hold_on?", &Toglet::setHold, SRC_POS);
   pkg->defSetter("setVisible", "objref(s) visibility", &Toglet::setVisibility, SRC_POS);

@@ -82,7 +82,7 @@ public:
   static void defaultParent(const char* pathname);
 
   /// Return the associated canvas.
-  Gfx::Canvas& getCanvas() const;
+  Nub::SoftRef<Gfx::Canvas> getCanvas() const;
 
   void makeCurrent() const;
 
