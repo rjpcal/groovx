@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Sat Sep 23 16:50:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,12 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+#ifdef MIPSPRO_COMPILER
+#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
+#else
+#  define SGI_IDIOT_CAST(to, from) (from)
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -45,57 +51,95 @@ namespace {
   typedef Property House::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
-	 &House::storyAspectRatio,
-	 &House::numStories,
+	 SGI_IDIOT_CAST(Property House::*, &House::storyAspectRatio),
+	 SGI_IDIOT_CAST(Property House::*, &House::numStories),
 
-	 &House::doorPosition,
-	 &House::doorWidth,  // fraction of avail. space
-	 &House::doorHeight, // fraction of one story
-	 &House::doorOrientation, // left or right
+	 SGI_IDIOT_CAST(Property House::*, &House::doorPosition),
+	 SGI_IDIOT_CAST(Property House::*, &House::doorWidth),  // fraction of avail. space
+	 SGI_IDIOT_CAST(Property House::*, &House::doorHeight), // fraction of one story
+	 SGI_IDIOT_CAST(Property House::*, &House::doorOrientation), // left or right
 
-	 &House::numWindows,
-	 &House::windowWidth,	// fraction of avail. space
-	 &House::windowHeight, // fraction of one story
-	 &House::windowVertBars,
-	 &House::windowHorizBars,
+	 SGI_IDIOT_CAST(Property House::*, &House::numWindows),
+	 SGI_IDIOT_CAST(Property House::*, &House::windowWidth),	// fraction of avail. space
+	 SGI_IDIOT_CAST(Property House::*, &House::windowHeight), // fraction of one story
+	 SGI_IDIOT_CAST(Property House::*, &House::windowVertBars),
+	 SGI_IDIOT_CAST(Property House::*, &House::windowHorizBars),
 
-	 &House::roofShape,
-	 &House::roofOverhang,
-	 &House::roofHeight,
-	 &House::roofColor,
+	 SGI_IDIOT_CAST(Property House::*, &House::roofShape),
+	 SGI_IDIOT_CAST(Property House::*, &House::roofOverhang),
+	 SGI_IDIOT_CAST(Property House::*, &House::roofHeight),
+	 SGI_IDIOT_CAST(Property House::*, &House::roofColor),
 
-	 &House::chimneyXPosition,
-	 &House::chimneyYPosition,
-	 &House::chimneyWidth,
-	 &House::chimneyHeight
+	 SGI_IDIOT_CAST(Property House::*, &House::chimneyXPosition),
+	 SGI_IDIOT_CAST(Property House::*, &House::chimneyYPosition),
+	 SGI_IDIOT_CAST(Property House::*, &House::chimneyWidth),
+	 SGI_IDIOT_CAST(Property House::*, &House::chimneyHeight)
   };
 
   const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
   const House::PInfo PINFOS[] = {
-		House::PInfo("storyAspectRatio", &House::storyAspectRatio, 0.5, 10.0, 0.05, true),
-		House::PInfo("numStories", &House::numStories, 1, 5, 1),
+	 House::PInfo("storyAspectRatio",
+					  SGI_IDIOT_CAST(Property House::*, &House::storyAspectRatio), 
+					  0.5, 10.0, 0.05, true),
+	 House::PInfo("numStories",
+					  SGI_IDIOT_CAST(Property House::*, &House::numStories), 
+					  1, 5, 1),
 
-		House::PInfo("doorPosition", &House::doorPosition, 0, 5, 1, true),
-		House::PInfo("doorWidth", &House::doorWidth, 0.05, 1.0, 0.05),
-		House::PInfo("doorHeight", &House::doorHeight, 0.05, 1.0, 0.05),
-		House::PInfo("doorOrientation", &House::doorOrientation, 0, 1, 1),
+	 House::PInfo("doorPosition",
+					  SGI_IDIOT_CAST(Property House::*, &House::doorPosition), 
+					  0, 5, 1, true),
+	 House::PInfo("doorWidth",
+					  SGI_IDIOT_CAST(Property House::*, &House::doorWidth), 
+					  0.05, 1.0, 0.05),
+	 House::PInfo("doorHeight",
+					  SGI_IDIOT_CAST(Property House::*, &House::doorHeight), 
+					  0.05, 1.0, 0.05),
+	 House::PInfo("doorOrientation",
+					  SGI_IDIOT_CAST(Property House::*, &House::doorOrientation), 
+					  0, 1, 1),
 
-		House::PInfo("numWindows", &House::numWindows, 2, 6, 1, true),
-		House::PInfo("windowWidth", &House::windowWidth, 0.05, 1.0, 0.05),
-		House::PInfo("windowHeight", &House::windowHeight, 0.05, 1.0, 0.05),
-		House::PInfo("windowVertBars", &House::windowVertBars, 0, 5, 1),
-		House::PInfo("windowHorizBars", &House::windowHorizBars, 0, 5, 1),
+	 House::PInfo("numWindows",
+					  SGI_IDIOT_CAST(Property House::*, &House::numWindows), 
+					  2, 6, 1, true),
+	 House::PInfo("windowWidth",
+					  SGI_IDIOT_CAST(Property House::*, &House::windowWidth), 
+					  0.05, 1.0, 0.05),
+	 House::PInfo("windowHeight",
+					  SGI_IDIOT_CAST(Property House::*, &House::windowHeight), 
+					  0.05, 1.0, 0.05),
+	 House::PInfo("windowVertBars",
+					  SGI_IDIOT_CAST(Property House::*, &House::windowVertBars), 
+					  0, 5, 1),
+	 House::PInfo("windowHorizBars",
+					  SGI_IDIOT_CAST(Property House::*, &House::windowHorizBars), 
+					  0, 5, 1),
 
-		House::PInfo("roofShape", &House::roofShape, 0, 2, 1, true),
-		House::PInfo("roofHeight", &House::roofHeight, 0.05, 2.0, 0.05),
-		House::PInfo("roofOverhang", &House::roofOverhang, 0.0, 0.5, 0.05),
-		House::PInfo("roofColor", &House::roofColor, 0, 1, 1),
+	 House::PInfo("roofShape",
+					  SGI_IDIOT_CAST(Property House::*, &House::roofShape), 
+					  0, 2, 1, true),
+	 House::PInfo("roofHeight",
+					  SGI_IDIOT_CAST(Property House::*, &House::roofHeight), 
+					  0.05, 2.0, 0.05),
+	 House::PInfo("roofOverhang",
+					  SGI_IDIOT_CAST(Property House::*, &House::roofOverhang), 
+					  0.0, 0.5, 0.05),
+	 House::PInfo("roofColor",
+					  SGI_IDIOT_CAST(Property House::*, &House::roofColor), 
+					  0, 1, 1),
 
-		House::PInfo("chimneyXPosition", &House::chimneyXPosition, -0.5, 0.5, 0.05, true),
-		House::PInfo("chimneyYPosition", &House::chimneyYPosition, 0.0, 1.0, 0.05),
-		House::PInfo("chimneyWidth", &House::chimneyWidth, 0.01, 0.30, 0.01),
-		House::PInfo("chimneyHeight", &House::chimneyHeight, 0.05, 2.0, 0.1)
+	 House::PInfo("chimneyXPosition",
+					  SGI_IDIOT_CAST(Property House::*, &House::chimneyXPosition), 
+					  -0.5, 0.5, 0.05, true),
+	 House::PInfo("chimneyYPosition",
+					  SGI_IDIOT_CAST(Property House::*, &House::chimneyYPosition), 
+					  0.0, 1.0, 0.05),
+	 House::PInfo("chimneyWidth",
+					  SGI_IDIOT_CAST(Property House::*, &House::chimneyWidth), 
+					  0.01, 0.30, 0.01),
+	 House::PInfo("chimneyHeight",
+					  SGI_IDIOT_CAST(Property House::*, &House::chimneyHeight), 
+					  0.05, 2.0, 0.1)
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(House::PInfo);

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Sat Sep 23 16:46:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,19 +29,43 @@
 #include "util/debug.h"
 
 
+#ifdef MIPSPRO_COMPILER
+#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
+#else
+#  define SGI_IDIOT_CAST(to, from) (from)
+#endif
+
 namespace {
   const char* ioTag = "Gabor";
 
   const Gabor::PInfo PINFOS[] = {
-		Gabor::PInfo("colorMode", &Gabor::colorMode, 1, 3, 1, true),
-		Gabor::PInfo("contrast", &Gabor::contrast, 0.0, 1.0, 0.05),
-		Gabor::PInfo("spatialFreq", &Gabor::spatialFreq, 0.5, 10.0, 0.5),
-		Gabor::PInfo("phase", &Gabor::phase, -180, 179, 1),
-		Gabor::PInfo("sigma", &Gabor::sigma, 0.025, 0.5, 0.025),
-		Gabor::PInfo("aspectRatio", &Gabor::aspectRatio, 0.1, 10.0, 0.1),
-		Gabor::PInfo("orientation", &Gabor::orientation, -180, 179, 1),
-		Gabor::PInfo("resolution", &Gabor::resolution, 5, 500, 5),
-		Gabor::PInfo("pointSize", &Gabor::pointSize, 1, 25, 1)
+		Gabor::PInfo("colorMode",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::colorMode),
+						 1, 3, 1, true),
+		Gabor::PInfo("contrast",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::contrast),
+						 0.0, 1.0, 0.05),
+		Gabor::PInfo("spatialFreq",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::spatialFreq),
+						 0.5, 10.0, 0.5),
+		Gabor::PInfo("phase",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::phase),
+						 -180, 179, 1),
+		Gabor::PInfo("sigma",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::sigma),
+						 0.025, 0.5, 0.025),
+		Gabor::PInfo("aspectRatio",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::aspectRatio),
+						 0.1, 10.0, 0.1),
+		Gabor::PInfo("orientation",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::orientation),
+						 -180, 179, 1),
+		Gabor::PInfo("resolution",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::resolution),
+						 5, 500, 5),
+		Gabor::PInfo("pointSize",
+						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::pointSize),
+						 1, 25, 1)
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Gabor::PInfo);

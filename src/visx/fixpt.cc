@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Sep 23 15:32:26 2000
+// written: Sat Sep 23 16:43:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,12 +18,19 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include <cstring>
 #include <iostream.h>
 #include <GL/gl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
+
+#ifdef MIPSPRO_COMPILER
+#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
+#else
+#  define SGI_IDIOT_CAST(to, from) (from)
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -35,8 +42,10 @@ namespace {
   const char* ioTag = "FixPt";
 
   const FixPt::PInfo PINFOS[] = {
-		FixPt::PInfo("length", &FixPt::length, 0.0, 10.0, 0.1, true),
-		FixPt::PInfo("width", &FixPt::width, 0, 100, 1)
+		FixPt::PInfo("length", SGI_IDIOT_CAST(Property FixPt::*, &FixPt::length),
+						 0.0, 10.0, 0.1, true),
+		FixPt::PInfo("width", SGI_IDIOT_CAST(Property FixPt::*, &FixPt::width),
+						 0, 100, 1)
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(FixPt::PInfo);

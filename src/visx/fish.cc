@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Sat Sep 23 16:42:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,12 @@
 #define LOCAL_DEBUG
 #include "util/debug.h"
 
+#ifdef MIPSPRO_COMPILER
+#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
+#else
+#  define SGI_IDIOT_CAST(to, from) (from)
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -45,27 +51,44 @@ namespace {
   typedef Property Fish::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
-	 &Fish::category,
-	 &Fish::dorsalFinCoord,
-	 &Fish::tailFinCoord,
-	 &Fish::lowerFinCoord,
-	 &Fish::mouthCoord
+	 SGI_IDIOT_CAST(Property Fish::*, &Fish::category),
+	 SGI_IDIOT_CAST(Property Fish::*, &Fish::dorsalFinCoord),
+	 SGI_IDIOT_CAST(Property Fish::*, &Fish::tailFinCoord),
+	 SGI_IDIOT_CAST(Property Fish::*, &Fish::lowerFinCoord),
+	 SGI_IDIOT_CAST(Property Fish::*, &Fish::mouthCoord)
   };
 
   const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
   const Fish::PInfo PINFOS[] = {
-	 Fish::PInfo("category", &Fish::category, 0, 10, 1, true),
-	 Fish::PInfo("dorsalFinCoord", &Fish::dorsalFinCoord, -2.0, 2.0, 0.1),
-	 Fish::PInfo("tailFinCoord", &Fish::tailFinCoord, -2.0, 2.0, 0.1),
-	 Fish::PInfo("lowerFinCoord", &Fish::lowerFinCoord, -2.0, 2.0, 0.1),
-	 Fish::PInfo("mouthCoord", &Fish::mouthCoord, -2.0, 2.0, 0.1),
+	 Fish::PInfo("category",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::category), 0, 10, 1, true),
+	 Fish::PInfo("dorsalFinCoord",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::dorsalFinCoord),
+					 -2.0, 2.0, 0.1),
+	 Fish::PInfo("tailFinCoord",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::tailFinCoord),
+					 -2.0, 2.0, 0.1),
+	 Fish::PInfo("lowerFinCoord",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::lowerFinCoord),
+					 -2.0, 2.0, 0.1),
+	 Fish::PInfo("mouthCoord",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::mouthCoord),
+					 -2.0, 2.0, 0.1),
 
-	 Fish::PInfo("currentPart", &Fish::currentPart, 0, 3, 1, true),
+	 Fish::PInfo("currentPart",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::currentPart),
+					 0, 3, 1, true),
 
-	 Fish::PInfo("currentEndPt", &Fish::currentEndPt, 0, 3, 1, true),
-	 Fish::PInfo("endPt_Part", &Fish::endPt_Part, 1, 4, 1),
-	 Fish::PInfo("endPt_Bkpt", &Fish::endPt_Bkpt, 1, 10, 1)
+	 Fish::PInfo("currentEndPt",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::currentEndPt),
+					 0, 3, 1, true),
+	 Fish::PInfo("endPt_Part",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::endPt_Part),
+					 1, 4, 1),
+	 Fish::PInfo("endPt_Bkpt",
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::endPt_Bkpt),
+					 1, 10, 1)
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Fish::PInfo);

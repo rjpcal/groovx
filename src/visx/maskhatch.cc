@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Sat Sep 23 16:51:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,12 +26,22 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+#ifdef MIPSPRO_COMPILER
+#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
+#else
+#  define SGI_IDIOT_CAST(to, from) (from)
+#endif
+
 namespace {
   const char* ioTag = "MaskHatch";
 
   const MaskHatch::PInfo PINFOS[] = {
-	 MaskHatch::PInfo("numLines", &MaskHatch::numLines, 0, 25, 1, true),
-	 MaskHatch::PInfo("lineWidth", &MaskHatch::lineWidth, 0, 25, 1)
+	 MaskHatch::PInfo("numLines",
+							SGI_IDIOT_CAST(Property MaskHatch::*, &MaskHatch::numLines),
+							0, 25, 1, true),
+	 MaskHatch::PInfo("lineWidth",
+							SGI_IDIOT_CAST(Property MaskHatch::*, &MaskHatch::lineWidth),
+							0, 25, 1)
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MaskHatch::PInfo);
