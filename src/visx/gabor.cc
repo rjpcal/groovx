@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Sep 29 16:08:08 2000
+// written: Tue Oct  3 12:04:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,7 @@ namespace {
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
+const Gabor::ColorMode Gabor::COLOR_INDEX;
 const Gabor::ColorMode Gabor::BW_DITHER_POINT;
 const Gabor::ColorMode Gabor::BW_DITHER_RECT;
 
