@@ -3,7 +3,7 @@
 // soundlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:40 1999
-// written: Thu Jul  8 11:47:22 1999
+// written: Wed Feb 16 08:07:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,24 @@
 
 class Sound;
 
-class SoundList : public PtrList<Sound>, public virtual IO {
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * SoundList is a singleton wrapper for \c PtrList<Sound>.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class SoundList : public PtrList<Sound> {
 private:
   typedef PtrList<Sound> Base;
+
 protected:
+  /// Construct and reserve space for \a size objects. 
   SoundList(int size);
+
 public:
+  /// Returns a reference to the singleton instance.
   static SoundList& theSoundList();
 };
 

@@ -3,16 +3,8 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Wed Oct 20 17:59:21 1999
+// written: Wed Feb 16 08:06:34 2000
 // $Id$
-//
-//
-// This file defines ObjList, a singleton class whose instance is a
-// global repository of GrObj pointers. It allows GrObj's to be
-// uniquely identified by an objid from anywhere in the
-// application. In addition, the entire collection can be written to
-// or read from a stream. The singleton instance is retrieved with the
-// function theObjList().
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -26,21 +18,23 @@
 class GrObj;
 
 ///////////////////////////////////////////////////////////////////////
-//
-// ObjList class definition
-//
+/**
+ *
+ * ObjList is a singleton wrapper for \c PtrList<GrObj>.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
-class ObjList : public PtrList<GrObj>, public virtual IO {
+class ObjList : public PtrList<GrObj> {
 private:
   typedef PtrList<GrObj> Base;
 
 protected:
-  // Construct a list of 'size' GrObj*'s, initialized to NULL
+  /// Construct and reserve space for \a size objects.
   ObjList (int size) : Base(size) {}
 
 public:
-  // Returns a reference to the singleton instance of ObjList
+  /// Returns a reference to the singleton instance.
   static ObjList& theObjList();
 };
 
