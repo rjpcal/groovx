@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Sun Nov  3 13:41:26 2002
+// written: Mon Nov 25 11:22:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,7 +152,14 @@ DOTRACE("Util::RefCounted::RefCounted");
 Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
-  dbgPrint(3, "RefCounted dtor"); dbgEvalNL(3, (void*)this);
+  dbgPrint(3, "RefCounted dtor");
+  dbgEval(3, (void*)this); dbgEvalNL(3, itsRefCounts->strongCount());
+
+  // Must guarantee that (strong-count == 0) when the refcounted object is
+  // destroyed. Without that guarantee, weak references will be messed up,
+  // since they'll think that the object is still alive (i.e. strong count
+  // > 0) when it actually is already destroyed.
+  Assert(itsRefCounts->strongCount() == 0);
 
   itsRefCounts->releaseWeak();
 }
