@@ -161,8 +161,6 @@ ifeq ($(COMPILER),g++2)
 	CC_SWITCHES += -Wall -W -Wsign-promo
 	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
-
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O1
 	endif
