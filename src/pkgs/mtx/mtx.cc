@@ -221,10 +221,10 @@ double slice::max() const
 {
 DOTRACE("slice::max");
   mtx_const_iter i = begin();
-  double mx = *i;
+  double m = *i;
   for (; i.has_more(); ++i)
-    if (*i > mx) mx = *i;
-  return mx;
+    if (*i > m) m = *i;
+  return m;
 }
 
 namespace
