@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Sun Aug 19 17:24:01 2001
+// written: Mon Aug 20 08:57:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,6 +101,9 @@ template <class T>
 class Util::FwdIterIfx
 {
 public:
+  typedef T ValueType;
+  typedef Util::FwdIterIfx<T> Interface;
+
   virtual ~FwdIterIfx() {}
   virtual FwdIterIfx<T>* clone() const = 0;
   virtual void next() = 0;
@@ -146,11 +149,12 @@ class Util::FwdIter :
   }
 
 public:
-  typedef Util::ConcreteIter<T, Util::FwdIterIfx<T> > Base;
+  typedef Util::FwdIterIfx<T> Interface;
+  typedef Util::ConcreteIter<T, Interface> Base;
 
   FwdIter(const Base& other) : Base(other) {}
 
-  FwdIter(shared_ptr<Util::FwdIterIfx<T> > impl) : Base(impl) {}
+  FwdIter(shared_ptr<Interface> impl) : Base(impl) {}
 
   template <class It>
   FwdIter(It iter, It end) : Base(adapt(iter, end)) {}
@@ -167,6 +171,8 @@ template <class T>
 class Util::BidirIterIfx : public Util::FwdIterIfx<T>
 {
 public:
+  typedef Util::BidirIterIfx<T> Interface;
+
   virtual BidirIterIfx<T>* clone() const = 0;
   virtual void prev() = 0;
 };
@@ -210,11 +216,12 @@ class Util::BidirIter :
   }
 
 public:
-  typedef Util::ConcreteIter<T, Util::BidirIterIfx<T> > Base;
+  typedef Util::BidirIterIfx<T> Interface;
+  typedef Util::ConcreteIter<T, Interface> Base;
 
   BidirIter(const Base& other) : Base(other) {}
 
-  BidirIter(shared_ptr<Util::BidirIterIfx<T> > impl) : Base(impl) {}
+  BidirIter(shared_ptr<Interface> impl) : Base(impl) {}
 
   template <class It>
   BidirIter(It iter, It end) : Base(adapt(iter, end)) {}
@@ -231,6 +238,8 @@ template <class T>
 class Util::RxsIterIfx : public Util::BidirIterIfx<T>
 {
 public:
+  typedef Util::RxsIterIfx<T> Interface;
+
   virtual RxsIterIfx<T>* clone() const = 0;
   virtual void step(int n) = 0;
   virtual int minus(RxsIterIfx<T>& other) const = 0;
@@ -286,11 +295,12 @@ class Util::RxsIter :
   }
 
 public:
-  typedef Util::ConcreteIter<T, Util::RxsIterIfx<T> > Base;
+  typedef Util::RxsIterIfx<T> Interface;
+  typedef Util::ConcreteIter<T, Interface> Base;
 
   RxsIter(const Base& other) : Base(other) {}
 
-  RxsIter(shared_ptr<Util::RxsIterIfx<T> > impl) : Base(impl) {}
+  RxsIter(shared_ptr<Interface> impl) : Base(impl) {}
 
   template <class It>
   RxsIter(It iter, It end) : Base(adapt(iter, end)) {}
