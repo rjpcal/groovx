@@ -1,0 +1,64 @@
+***************************************************
+***                                             ***
+*** BOTTOM of stack for items completed in 2001 ***
+***                                             ***
+***************************************************
+
+(9-Dec-2000, done 17-May-2001) IoDb does not need to be an IoObject
+anymore; instead, it should provide functionality for reading+writing
+object archives. The IoDb package should not have
+stringify/destringify or read/write.
+
++-----
+|
+| (4-Dec-2000, done 18-May-2001) Need to prevent resource leaks by
+| making newIO() return a PtrHandle<IO::IoObject>. This will require
+| Reader::readObject() to return a PtrHandle as well, and require Reader
+| implementations to use PtrHandle's internally. Hmmm... need to make
+| real sure that there is no way to create more than one PtrHandle for a
+| given IoObject... oops, duh! I already have avoided this problem by
+| making RefCount a base class of IoObject, so we can actually make
+| multiple PtrHandle's without a problem. The way to get at this is to
+| change the static make() functions to return a PtrHandle. Then
+| CreatorFromFunc will store the appropriate type of function pointer,
+| and its create() method will return a PtrHandle<Base>. The main
+| drawback here is that we greatly increase the dependence on
+| PtrHandle... Then again, this is probably a good thing, as it reduces
+| the use of raw pointers.
+| 
+| (done) change users of newIO() and make() to instantiate a PtrHandle
+| rather than a raw pointer
+| 
+| (done) newIO() to return a PtrHandle
+| 
+| (done) change Factory to return IdItem's
+|
++-----
+
+(19-Jan-2000, done 18-May-2001) GLBitmap should use auto_ptr for
+itsRenderer and fix initialization order (eliminate
+tempRenderer). Same for XBitmap.
+
+(8-Jul-1999, done 18-May-2001) Idea: have TclCmd's be able to return
+doc strings; then TclCmd or TclPkg would store a list of all
+registered commands, so that a special help command (like '?')
+followed by a command name could return its help string. This would be
+nice since the various intermediate command classes could provide
+default doc-strings. Subclasses could either append, or override,
+their superclass's doc-string.
+
+(19-May-2001, done 19-May-2001) IoProxy should still store its
+referand's as IdItem's. IdItem's no longer need to do IoDb insertion.
+
+(16-May-2001, done 19-May-2001) Don't need IoMap; instead, IoObject's
+should just insert themselves into the IoDb automatically upon
+construction. Hmmm... the problem here is that this won't work for
+IoObject's that are constructed on the stack (such as IoProxy's). So
+do we somehow forbid any subclasses from being instantiated on the
+stack? Or just give up on automatic IoDb insertion? And the answer
+is... we can prohibit IoObject's from being instantiated on the stack
+at runtime, by Assert'ing in RefCounted's destructor that the
+ref-counts are zero. And we can allow subclasses (such as IoProxy) to
+choose not to be automatically inserted in the IoDb, by the addition
+of a "doInsert" argument to the IoObject constructor that defaults to
+true.
