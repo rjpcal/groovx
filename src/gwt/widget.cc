@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Sun Aug 26 08:35:16 2001
+// written: Fri Aug 31 10:23:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,9 @@ DOTRACE("GWT::Widget::Impl::display");
     {
       try
         {
+          Gfx::Canvas::MatrixSaver msaver(canvas);
+          Gfx::Canvas::AttribSaver asaver(canvas);
+
           itsDrawNode->draw(canvas);
           itsUndrawNode = itsDrawNode;
 
