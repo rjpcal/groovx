@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Thu Oct 19 17:32:13 2000
+// written: Tue Oct 31 22:51:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "util/pointers.h"
 #include "util/strings.h"
+
+#include "util/trace.h"
 
 Property::~Property() {}
 
@@ -98,20 +100,25 @@ namespace {
 
 PropertyInfoBase::PropertyInfoBase(const PropertyInfoBase& other) :
   itsImpl(new Impl(*(other.itsImpl)))
-{}
+{
+DOTRACE("PropertyInfoBase::PropertyInfoBase");
+}
 
 PropertyInfoBase::~PropertyInfoBase() 
 {
+DOTRACE("PropertyInfoBase::~PropertyInfoBase");
   delete itsImpl;
 }
 
 PropertyInfoBase& PropertyInfoBase::operator=(const PropertyInfoBase& other)
 {
+DOTRACE("PropertyInfoBase::operator=");
   *itsImpl = *(other.itsImpl);
   return *this;
 }
 
 const char* PropertyInfoBase::name_cstr() const {
+DOTRACE("PropertyInfoBase::name_cstr");
   return itsImpl->name.c_str();
 }
 
