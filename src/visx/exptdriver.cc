@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Mar  3 17:32:51 2000
+// written: Tue Mar  7 11:23:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,9 @@
 #include "exptdriver.h"
 
 #include <tcl.h>
-#include <cstring>
 #include <iostream.h>
 #include <fstream.h>
 #include <string>
-#include <vector>
 #include <sys/time.h>
 
 #include "block.h"
@@ -37,6 +35,8 @@
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
+#include "util/arrays.h"
+#include "util/strings.h"
 #include "writer.h"
 #include "system.h"
 #include "stopwatch.h"
@@ -206,7 +206,7 @@ private:
 	 IO* object;
   };
 
-  vector<ManagedObject> itsManagedObjects;
+//   vector<ManagedObject> itsManagedObjects;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -221,8 +221,8 @@ ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
   itsRhId(0),
-  itsThId(0),
-  itsManagedObjects()
+  itsThId(0)
+  //  ,itsManagedObjects()
 {
 DOTRACE("ExptDriver::Impl::Impl");
   Tcl_Preserve(itsInterp);
@@ -422,9 +422,9 @@ DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
 
 bool ExptDriver::Impl::safeTclGlobalEval(const char* script) const {
 DOTRACE("ExptDriver::Impl::safeTclGlobalEval");
-  vector<char> temp_buf(script, script + strlen(script) + 1);
+  fixed_string temp_buf = script;
 
-  int tclresult = Tcl_GlobalEval(itsInterp, &temp_buf[0]);
+  int tclresult = Tcl_GlobalEval(itsInterp, temp_buf.data());
 
   if (tclresult == TCL_OK) return true;
 
@@ -556,7 +556,7 @@ DOTRACE("ExptDriver::Impl::deserialize");
   if (is.peek() == '\n') { is.get(); }
 
   if ( numchars > 0 ) {
-	 vector<char> buf(numchars+1);
+	 fixed_block<char> buf(numchars+1);
 	 is.read(&buf[0], numchars);
 	 buf[numchars] = '\0';
 	 
@@ -641,9 +641,9 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
 }
 
-void ExptDriver::Impl::manageObject(const char* name, IO* object) {
+void ExptDriver::Impl::manageObject(const char* /* name */, IO* /* object */) {
 DOTRACE("ExptDriver::Impl::manageObject");
-  itsManagedObjects.push_back(ManagedObject(name, object)); 
+//   itsManagedObjects.push_back(ManagedObject(name, object)); 
 }
 
 void ExptDriver::Impl::init() {
