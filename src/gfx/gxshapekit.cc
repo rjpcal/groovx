@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.cc)
-// written: Wed Mar 19 12:45:58 2003
+// written: Wed Mar 19 13:41:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@
 
 class GxShapeKitNode : public GxBin
 {
-  borrowed_ptr<GxShapeKit> itsObj;
+  GxShapeKit* itsObj;
 
 public:
   GxShapeKitNode(GxShapeKit* obj) : GxBin(), itsObj(obj) {}

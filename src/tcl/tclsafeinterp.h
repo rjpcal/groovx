@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Mar 19 12:45:42 2003
+// written: Wed Mar 19 13:41:44 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ private:
   Tcl_Obj* getObjGlobalVar(const char* name1, const char* name2) const;
   void setObjResult(Tcl_Obj* obj);
 
-  borrowed_ptr<Tcl_Interp> itsInterp;
+  Tcl_Interp* itsInterp;
 };
 
 static const char vcid_tclsafeinterp_h[] = "$Header$";
