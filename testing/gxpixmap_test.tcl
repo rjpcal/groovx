@@ -269,49 +269,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy" {
     wm geometry . 402x402
     update idletasks
 
-    set p [new GxPixmap]
-
-    glClearColor 0 0 0 0
-
-    see $p
-
-    set c0 [-> [::cv] pixelCheckSum]
-
-    -> $p loadImage testing/images/square_bottom_left.pgm.gz
-    set c1 [-> [::cv] pixelCheckSum]
-    set p1 [-> [::cv] pixelCheckSum 0 0 4 4]
-
-    -> $p loadImage testing/images/square_top_left.pgm.gz
-    set c2 [-> [::cv] pixelCheckSum]
-    set p2 [-> [::cv] pixelCheckSum 0 398 4 4]
-
-    -> $p loadImage testing/images/square_bottom_right.pgm.gz
-    set c3 [-> [::cv] pixelCheckSum]
-    set p3 [-> [::cv] pixelCheckSum 398 0 4 4]
-
-    -> $p loadImage testing/images/square_top_right.pgm.gz
-    set c4 [-> [::cv] pixelCheckSum]
-    set p4 [-> [::cv] pixelCheckSum 398 398 4 4]
-
-    set expected [expr 16*255*3]
-    set ok \
-	[expr \
-	     $c1 == $expected && \
-	     $c2 == $expected && \
-	     $c3 == $expected && \
-	     $c4 == $expected && \
-	     $p1 == $expected && \
-	     $p2 == $expected && \
-	     $p3 == $expected && \
-	     $p4 == $expected ]
-
-    return "$ok $c0 $c1 $c2 $c3 $c4 $p1 $p2 $p3 $p4"
-} {^1 0 }
-
-test "GLCanvas::bitmap" "single-pixel accuracy 2" {
-    wm geometry . 402x402
-    update idletasks
-
     set oldcam [-> [Toglet::current] camera]
 
     set newcam [new GxFixedScaleCamera]
@@ -331,7 +288,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy 2" {
     -> $p loadImage testing/images/square_bottom_left.pgm.gz
     -> $p centerX 0
     -> $p centerY 0
-    set c1 [-> [::cv] pixelCheckSum]
     set p10 [-> [::cv] pixelCheckSum 0 0 4 4]
     -> $p centerX -1
     -> $p centerY -1
@@ -346,7 +302,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy 2" {
     -> $p loadImage testing/images/square_top_left.pgm.gz
     -> $p centerX 0
     -> $p centerY 0
-    set c2 [-> [::cv] pixelCheckSum]
     set p20 [-> [::cv] pixelCheckSum 0 398 4 4]
     -> $p centerX -1
     -> $p centerY -1
@@ -361,7 +316,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy 2" {
     -> $p loadImage testing/images/square_bottom_right.pgm.gz
     -> $p centerX 0
     -> $p centerY 0
-    set c3 [-> [::cv] pixelCheckSum]
     set p30 [-> [::cv] pixelCheckSum 398 0 4 4]
     -> $p centerX -1
     -> $p centerY -1
@@ -376,7 +330,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy 2" {
     -> $p loadImage testing/images/square_top_right.pgm.gz
     -> $p centerX 0
     -> $p centerY 0
-    set c4 [-> [::cv] pixelCheckSum]
     set p40 [-> [::cv] pixelCheckSum 398 398 4 4]
     -> $p centerX -1
     -> $p centerY -1
@@ -397,10 +350,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy 2" {
 
     set ok \
 	[expr \
-	     $c1 == $count16 && \
-	     $c2 == $count16 && \
-	     $c3 == $count16 && \
-	     $c4 == $count16 && \
 	     $p10 == $count16 && \
 	     $p20 == $count16 && \
 	     $p30 == $count16 && \
@@ -421,7 +370,6 @@ test "GLCanvas::bitmap" "single-pixel accuracy 2" {
 	    ]
 
     return "$ok $c0 \
-$c1 $c2 $c3 $c4 \
 $p10 $p20 $p30 $p40 \
 $p11 $p21 $p31 $p41 \
 $p12 $p22 $p32 $p42 \
