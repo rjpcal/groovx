@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Mon Sep  9 12:19:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,14 @@
 #ifndef VALUE_H_DEFINED
 #define VALUE_H_DEFINED
 
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
+#ifdef HAVE_IOSFWD
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
 #    include <iosfwd>
 #    define IOSFWD_DEFINED
 #  endif
+#else
+class istream;
+class ostream;
 #endif
 
 class fstring;

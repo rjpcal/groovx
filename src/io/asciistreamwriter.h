@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Thu Jun  6 17:50:24 2002
+// written: Mon Sep  9 12:17:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,13 @@
 #include "io/writer.h"
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
-class ostream;
-#else
+#ifdef HAVE_IOSFWD
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
 #    include <iosfwd>
 #    define IOSFWD_DEFINED
 #  endif
+#else
+class ostream;
 #endif
 
 // This is a hack to help shorten up names for assemblers on systems

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Wed Jun 26 12:27:06 2002
+// written: Mon Sep  9 12:17:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,14 +25,14 @@
 #include "io/writer.h"
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
+#ifdef HAVE_IOSFWD
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
 #    include <iosfwd>
 #    define IOSFWD_DEFINED
 #  endif
+#else
+class istream;
+class ostream;
 #endif
 
 namespace IO

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue May 14 19:46:21 2002
+// written: Mon Sep  9 12:20:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@
 
 #include <cmath>
 #include <fstream>
-#ifndef PRESTANDARD_IOSTREAMS
+#ifdef HAVE_SSTREAM
 #include <sstream>
 #else
 #include <strstream>
@@ -371,7 +371,7 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       if (ifs.fail())
         throw Util::Error("error reading objid file");
 
-#ifndef PRESTANDARD_IOSTREAMS
+#ifdef HAVE_SSTREAM
       std::istringstream ist(line);
 #else
       istrstream ist(line);

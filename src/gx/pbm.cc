@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Tue Apr 30 19:40:47 2002
+// written: Mon Sep  9 12:16:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,10 @@
 #include "util/pointers.h"
 #include "util/strings.h"
 
-#ifdef PRESTANDARD_IOSTREAMS
-#  include <iostream.h>
-#else
+#ifdef HAVE_IOSTREAM
 #  include <iostream>
+#else
+#  include <iostream.h>
 #endif
 #include <cctype>
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Jul 31 15:46:34 2002
+// written: Mon Sep  9 12:19:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,14 +22,14 @@
 #include "util/tostring.h"
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
+#ifdef HAVE_IOSFWD
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
 #    include <iosfwd>
 #    define IOSFWD_DEFINED
 #  endif
+#else
+class istream;
+class ostream;
 #endif
 
 ///////////////////////////////////////////////////////////////////////

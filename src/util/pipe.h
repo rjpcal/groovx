@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Wed Jun 26 12:22:14 2002
+// written: Mon Sep  9 12:18:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,13 +18,13 @@
 #define CSTDIO_DEFINED
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
+#ifdef HAVE_FSTREAM
+#  include <fstream>
+#else
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FSTREAM_H_DEFINED)
 #    include <fstream.h>
 #    define FSTREAM_H_DEFINED
 #  endif
-#else
-#  include <fstream>
 #endif
 
 namespace Util
