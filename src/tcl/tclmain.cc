@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Tue Dec 10 13:25:42 2002
+// written: Tue Dec 10 13:42:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ DOTRACE("Tcl::MainImpl::historyNext");
 #else
   Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
 
-  Tcl_GlobalEval(interp().intp(), "history nextid");
+  itsSafeInterp.eval("history nextid", 0);
 
   int result = itsSafeInterp.getResult<int>();
 
@@ -212,14 +212,8 @@ DOTRACE("Tcl::MainImpl::doPrompt");
 #else
   if (length > 0)
     {
-      // Check that outChannel is a real channel - it is possible that
-      // someone has transferred stdout out of this interpreter with
-      // "interp transfer".
-
-      Tcl_Channel outChannel = Tcl_GetChannel(interp().intp(),
-                                              "stdout", NULL);
-      Tcl_WriteChars(outChannel, text, length);
-      Tcl_Flush(outChannel);
+      std::cout.write(text, length);
+      std::cout.flush();
     }
 #endif
 }
@@ -506,22 +500,22 @@ DOTRACE("Tcl::MainImpl::run");
   if (itsStartupFileName != NULL)
     {
       itsSafeInterp.resetResult();
-      int code = Tcl_EvalFile(itsSafeInterp.intp(), itsStartupFileName);
-      if (code != TCL_OK)
+      bool success = itsSafeInterp.evalFile(itsStartupFileName);
+      if (!success)
         {
           // ensure errorInfo is set properly:
-          Tcl_AddErrorInfo(itsSafeInterp.intp(), "");
+          itsSafeInterp.addErrorInfo("");
 
           std::cerr << itsSafeInterp.getGlobalVar<const char*>("errorInfo")
                     << "\nError in startup script\n";
-          Tcl_DeleteInterp(itsSafeInterp.intp());
+          itsSafeInterp.destroy();
           Tcl_Exit(1);
         }
     }
   else
     {
       // Evaluate the .rc file, if one has been specified.
-      Tcl_SourceRCFile(itsSafeInterp.intp());
+      itsSafeInterp.sourceRCFile();
 
       // Set up a stdin channel handler.
       itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
@@ -550,7 +544,7 @@ DOTRACE("Tcl::MainImpl::run");
     {
       Tcl_DoOneEvent(0);
     }
-  Tcl_DeleteInterp(itsSafeInterp.intp());
+  itsSafeInterp.destroy();
   Tcl_Exit(0);
 }
 

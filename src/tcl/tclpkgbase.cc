@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 13:49:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,42 +46,6 @@ namespace
 // Helper functions that provide typesafe access to Tcl_LinkVar
 //
 ///////////////////////////////////////////////////////////////////////
-
-namespace Tcl
-{
-  inline void linkInt(Tcl::Interp& interp, const char* varName,
-                      int* addr, int flag)
-  {
-    dbgEvalNL(3, varName);
-    fstring temp = varName;
-    flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp.intp(), temp.data(), reinterpret_cast<char *>(addr),
-                     flag | TCL_LINK_INT) != TCL_OK )
-      throw TclError("error while linking int variable");
-  }
-
-  inline void linkDouble(Tcl::Interp& interp, const char* varName,
-                         double* addr, int flag)
-  {
-    dbgEvalNL(3, varName);
-    fstring temp = varName;
-    flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp.intp(), temp.data(), reinterpret_cast<char *>(addr),
-                     flag | TCL_LINK_DOUBLE) != TCL_OK )
-      throw TclError("error while linking double variable");
-  }
-
-  inline void linkBoolean(Tcl::Interp& interp, const char* varName,
-                          int* addr, int flag)
-  {
-    dbgEvalNL(3, varName);
-    fstring temp = varName;
-    flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp.intp(), temp.data(), reinterpret_cast<char *>(addr),
-                     flag | TCL_LINK_BOOLEAN) != TCL_OK )
-      throw TclError("error while linking boolean variable");
-  }
-}
 
 struct Tcl::PkgBase::Impl
 {
@@ -138,7 +102,7 @@ DOTRACE("Tcl::PkgBase::Impl::Impl");
     version.erase(0, version.find_first_of("0123456789"));
     version.erase(version.find_last_of("0123456789")+1, std::string::npos);
 
-    Tcl_PkgProvide(interp.intp(), pkgname.c_str(), version.c_str());
+    interp.pkgProvide(pkgname.c_str(), version.c_str());
   }
 }
 
@@ -274,13 +238,13 @@ DOTRACE("Tcl::PkgBase::addCommand");
 void Tcl::PkgBase::linkVar(const char* varName, int& var)
 {
 DOTRACE("Tcl::PkgBase::linkVar int");
-  linkInt(rep->interp, varName, &var, 0);
+  rep->interp.linkInt(varName, &var, false);
 }
 
 void Tcl::PkgBase::linkVar(const char* varName, double& var)
 {
 DOTRACE("Tcl::PkgBase::linkVar double");
-  linkDouble(rep->interp, varName, &var, 0);
+  rep->interp.linkDouble(varName, &var, false);
 }
 
 void Tcl::PkgBase::linkVarCopy(const char* varName, int var)
@@ -288,7 +252,7 @@ void Tcl::PkgBase::linkVarCopy(const char* varName, int var)
 DOTRACE("Tcl::PkgBase::linkVarCopy int");
   shared_ptr<int> copy(new int(var));
   rep->ownedInts.push_front(copy);
-  linkInt(rep->interp, varName, copy.get(), TCL_LINK_READ_ONLY);
+  rep->interp.linkInt(varName, copy.get(), true);
 }
 
 void Tcl::PkgBase::linkVarCopy(const char* varName, double var)
@@ -296,19 +260,19 @@ void Tcl::PkgBase::linkVarCopy(const char* varName, double var)
 DOTRACE("Tcl::PkgBase::linkVarCopy double");
   shared_ptr<double> copy(new double(var));
   rep->ownedDoubles.push_front(copy);
-  linkDouble(rep->interp, varName, copy.get(), TCL_LINK_READ_ONLY);
+  rep->interp.linkDouble(varName, copy.get(), true);
 }
 
 void Tcl::PkgBase::linkConstVar(const char* varName, int& var)
 {
 DOTRACE("Tcl::PkgBase::linkConstVar int");
-  linkInt(rep->interp, varName, &var, TCL_LINK_READ_ONLY);
+  rep->interp.linkInt(varName, &var, true);
 }
 
 void Tcl::PkgBase::linkConstVar(const char* varName, double& var)
 {
 DOTRACE("Tcl::PkgBase::linkConstVar double");
-  linkDouble(rep->interp, varName, &var, TCL_LINK_READ_ONLY);
+  rep->interp.linkDouble(varName, &var, true);
 }
 
 void Tcl::PkgBase::setInitStatusError()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 13:49:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,10 @@ public:
   Tcl_Interp* intp() const;
   bool interpDeleted() const;
   void forgetInterp();
+  void destroy();
+
+  // Packages
+  void pkgProvide(const char* name, const char* version);
 
   // Expressions
   bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
@@ -63,6 +67,9 @@ public:
   bool eval(const char* code, Util::ErrorHandler* handler);
   bool eval(const fstring& code, Util::ErrorHandler* handler);
   bool eval(const Tcl::ObjPtr& code, Util::ErrorHandler* handler);
+
+  bool evalFile(const char* fname);
+  void sourceRCFile();
 
   // Result
   void resetResult() const;
@@ -90,10 +97,16 @@ public:
     return Tcl::toNative<T>(getObjGlobalVar(name1, name2));
   }
 
+  void linkInt(const char* varName, int* addr, bool readOnly);
+  void linkDouble(const char* varName, double* addr, bool readOnly);
+  void linkBoolean(const char* varName, int* addr, bool readOnly);
+
   // Errors
   void handleLiveException(const char* where,
                            bool withBkgdError = false) throw();
   void backgroundError() throw();
+
+  void addErrorInfo(const char* info);
 
   // Events
   static void clearEventQueue();

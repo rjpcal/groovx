@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Tue Dec 10 13:17:35 2002
+// written: Tue Dec 10 13:49:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,31 @@ DOTRACE("Tcl::Interp::interpDeleted");
 
 void Tcl::Interp::forgetInterp()
 {
+DOTRACE("Tcl::Interp::forgetInterp");
   itsInterp = 0;
+}
+
+void Tcl::Interp::destroy()
+{
+DOTRACE("Tcl::Interp::destroy");
+
+  if (hasInterp())
+    {
+      Tcl_DeleteInterp(intp());
+      itsInterp = 0;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::Interp -- Packages
+//
+///////////////////////////////////////////////////////////////////////
+
+void Tcl::Interp::pkgProvide(const char* name, const char* version)
+{
+DOTRACE("Tcl::Interp::pkgProvide");
+  Tcl_PkgProvide(intp(), name, version);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -154,6 +178,18 @@ DOTRACE("Tcl::Interp::eval");
     }
 
   return false; // to indicate error
+}
+
+bool Tcl::Interp::evalFile(const char* fname)
+{
+DOTRACE("Tcl::Interp::evalFile");
+  return (Tcl_EvalFile(intp(), fname) == TCL_OK);
+}
+
+void Tcl::Interp::sourceRCFile()
+{
+DOTRACE("Tcl::Interp::sourceRCFile");
+  Tcl_SourceRCFile(intp());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -238,6 +274,51 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
   return obj;
 }
 
+void Tcl::Interp::linkInt(const char* varName, int* addr, bool readOnly)
+{
+DOTRACE("Tcl::Interp::linkInt");
+  dbgEvalNL(3, varName);
+
+  fstring temp = varName;
+
+  int flag = TCL_LINK_INT;
+  if (readOnly) flag |= TCL_LINK_READ_ONLY;
+
+  if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
+       != TCL_OK )
+    throw TclError("error while linking int variable");
+}
+
+void Tcl::Interp::linkDouble(const char* varName, double* addr, bool readOnly)
+{
+DOTRACE("Tcl::Interp::linkDouble");
+  dbgEvalNL(3, varName);
+
+  fstring temp = varName;
+
+  int flag = TCL_LINK_DOUBLE;
+  if (readOnly) flag |= TCL_LINK_READ_ONLY;
+
+  if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
+       != TCL_OK )
+    throw TclError("error while linking double variable");
+}
+
+void Tcl::Interp::linkBoolean(const char* varName, int* addr, bool readOnly)
+{
+DOTRACE("Tcl::Interp::linkBoolean");
+  dbgEvalNL(3, varName);
+
+  fstring temp = varName;
+
+  int flag = TCL_LINK_BOOLEAN;
+  if (readOnly) flag |= TCL_LINK_READ_ONLY;
+
+  if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
+       != TCL_OK )
+    throw TclError("error while linking boolean variable");
+}
+
 void Tcl::Interp::handleLiveException(const char* where,
                                       bool withBkgdError) throw()
 {
@@ -273,6 +354,13 @@ DOTRACE("Tcl::Interp::backgroundError");
 
   if (hasInterp())
     Tcl_BackgroundError(itsInterp);
+}
+
+void Tcl::Interp::addErrorInfo(const char* info)
+{
+DOTRACE("Tcl::Interp::addErrorInfo");
+
+  Tcl_AddErrorInfo(intp(), info);
 }
 
 void Tcl::Interp::clearEventQueue()
