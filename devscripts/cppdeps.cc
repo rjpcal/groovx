@@ -33,6 +33,7 @@
 
 #include <cassert>
 #include <cctype>
+#include <cstdlib>     // for atoi()
 #include <cstring>     // for strerror()
 #include <fstream>
 #include <iostream>
@@ -437,6 +438,15 @@ namespace
   //
   //----------------------------------------------------------
 
+  enum verbosity_level
+    {
+      SILENT = -1,
+      QUIET = 0,
+      NORMAL = 1,
+      VERBOSE = 2,
+      NOISY = 3
+    };
+
   struct dep_config
   {
     dep_config() :
@@ -445,8 +455,7 @@ namespace
       phantom_link_formats("--phantomlinkformat"),
       check_sys_deps(false),
       phantom_sys_deps(true),
-      quiet(false),
-      verbose(false),
+      verbosity(NORMAL),
       output_mode(0),
       start_time(time((time_t*) 0))
     {}
@@ -463,8 +472,7 @@ namespace
     format_set      phantom_link_formats;
     bool            check_sys_deps;
     bool            phantom_sys_deps;
-    bool            quiet;
-    bool            verbose;
+    verbosity_level verbosity;
     int             output_mode;
     vector<string>  prune_exts;
     vector<string>  prune_dirs;
@@ -508,14 +516,14 @@ namespace
 
     std::ostream& info()
     {
-      if (cfg.verbose)
+      if (cfg.verbosity >= NOISY)
         for (int i = 0; i < s_nest_level; ++i) cerr << '\t';
       return cerr;
     }
 
     std::ostream& warning()
     {
-      if (cfg.verbose)
+      if (cfg.verbosity >= NOISY)
         for (int i = 0; i < s_nest_level; ++i) cerr << '\t';
       cerr << "WARNING: ";
       return cerr;
@@ -552,6 +560,19 @@ namespace
 
     const string& name() const { return m_fname; }
     const string& stripped_name() const { return m_stripped_name; }
+
+    static void dump()
+    {
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          cerr << (*itr).second->m_nested_ldeps_done
+               << ' ' << (*itr).second->m_fname << '\n';;
+        }
+    }
 
   private:
     static int              s_nest_level;
@@ -595,7 +616,7 @@ namespace
 
   file_info::file_info(const string& t)
     :
-    m_fname(make_normpath(t)),
+    m_fname(t),
     m_dotpos(get_last_of(m_fname, '.')),
     m_rootname(m_fname.substr(0,m_dotpos)),
     m_stripped_name(strip_leading_prefix(m_rootname, cfg.strip_prefix)),
@@ -640,8 +661,9 @@ namespace
     return false;
   }
 
-  file_info* file_info::get(const string& fname)
+  file_info* file_info::get(const string& fname_orig)
   {
+    const string fname = make_normpath(fname_orig);
     info_map_t::iterator p = s_info_map.find(fname);
     if (p != s_info_map.end())
       return (*p).second;
@@ -785,7 +807,7 @@ namespace
 
     mapped_file f(this->m_fname.c_str());
 
-    if (f.mtime() > cfg.start_time && !cfg.quiet)
+    if (f.mtime() > cfg.start_time && (cfg.verbosity >= NORMAL))
       {
         warning() << "for file " << this->m_fname << ":\n"
                   << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
@@ -903,7 +925,7 @@ namespace
                                   cfg.literal_exts))
           continue;
 
-        if (!cfg.quiet)
+        if (cfg.verbosity >= NORMAL)
           {
             warning() << "in " << this->m_fname
                       << ": couldn\'t resolve #include \""
@@ -995,7 +1017,7 @@ namespace
         // Check for other recursion cycles
         if ((*i)->m_cdep_parse_state == IN_PROGRESS)
           {
-            if (!cfg.quiet)
+            if (cfg.verbosity >= NORMAL)
               warning() << "in " << this->m_fname
                         << ": recursive #include cycle with "
                         << (*i)->m_fname << "\n";
@@ -1070,7 +1092,7 @@ namespace
     assert(!computing_ldeps);
     computing_ldeps = true;
 
-    if (cfg.verbose)
+    if (cfg.verbosity >= NOISY)
       {
         info() << "start ldeps for " << this->m_fname << '\n';
       }
@@ -1101,10 +1123,10 @@ namespace
           {
             if (*itr == this)
               {
-                if (!cfg.quiet)
+                if (cfg.verbosity >= VERBOSE)
                   warning() << " in " << this->m_fname
                             << ": recursive link-dep cycle with "
-                            << (*itr)->m_fname << "\n";
+                            << f->m_fname << "\n";
                 continue;
               }
 
@@ -1112,7 +1134,7 @@ namespace
           }
       }
 
-    if (cfg.verbose)
+    if (cfg.verbosity >= NOISY)
       {
         info() << "...end ldeps for " << this->m_fname << '\n';
       }
@@ -1208,9 +1230,13 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          directives (default is to not record <...> files\n"
          "                          as dependencies)\n"
          "    --literal [.ext]      treat files ending in \".ext\" as literal #include\'s\n"
-         "    --quiet               suppress warnings\n"
+         "    --verbosity [level]   level = -1: suppress warnings and error messages\n"
+         "                                      (you'll still get the errors themselves :)\n"
+         "                          level =  0: suppress warnings\n"
+         "                          level =  1: [default] normal verbosity\n"
+         "                          level =  2: extra warnings\n"
+         "                          level =  3: lots of extra tracing statements\n"
          "    --debug               show contents of internal variables\n"
-         "    --verbose             trace the progress of the search algorithms\n"
          "\n"
          "any unrecognized command-line arguments are treated as source directories,\n"
          "which will be searched recursively for files with C/C++ filename extensions\n"
@@ -1305,10 +1331,10 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       cfg.check_sys_deps = true;
       return false;
     }
-  else if (strcmp(option, "--quiet") == 0)
+  else if (strcmp(option, "--verbosity") == 0)
     {
-      cfg.quiet = true;
-      return false;
+      cfg.verbosity = verbosity_level(atoi(optarg));
+      return true;
     }
   else if (strcmp(option, "--output-compile-deps") == 0)
     {
@@ -1363,11 +1389,6 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--debug") == 0)
     {
       m_debug = true;
-      return false;
-    }
-  else if (strcmp(option, "--verbose") == 0)
-    {
-      cfg.verbose = true;
       return false;
     }
   // treat any unrecognized arguments as src files
@@ -1532,7 +1553,17 @@ void cppdeps::print_link_deps(file_info* finfo)
   const string exe = cfg.exe_formats.transform(finfo->name());
 
   if (exe.empty())
-    return;
+    {
+      // If the verbosity is high, then force the nested ldeps to be
+      // computed for every source file... this way we have the
+      // information needed to give warnings about recursive link-dep
+      // cycles. If the verbosity is low, then we can skip these extra
+      // computations and save execution time.
+      if ((cfg.verbosity >= VERBOSE) && exe.empty())
+        (void) finfo->get_nested_ldeps();
+
+      return;
+    }
 
   const dep_list_t& ldeps = finfo->get_nested_ldeps();
 
@@ -1648,6 +1679,7 @@ int main(int argc, char** argv)
 {
   cppdeps dc(argc, argv);
   dc.traverse_sources();
+//   file_info::dump();
   exit(0);
 }
 
