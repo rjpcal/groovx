@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Nov 10 17:23:54 2000
+// written: Tue Dec 12 11:23:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,9 +35,12 @@ class fixed_string;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * The IO class defines the abstract interface for object
- * input/output. Classes which need to be read/written
- * should inherit virtually from IO.
+ * The IO::IoObject class defines the abstract interface for object
+ * persistence. Classes which need these facilities should inherit
+ * virtually from IO::IoObject. IO::IoObject is reference counted (by
+ * subclassing RefCounted), providing automatic memory management when
+ * IO::IoObject's are managed with a smart pointer that manages the
+ * reference count, such as PtrHandle or IdItem.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -57,29 +60,30 @@ public:
   /// Virtual destructor to ensure correct destruction of subclasses
   virtual ~IoObject() = 0;
 
-  /** The preferred method for saving an object's state via the
-      generic interface provided by \c IO::Reader. Each subclass of \c
-      IO::Reader provides its own formatting scheme, so that subclasses of
-      \c IO don't need to implement any formatting. */
+  /** Subclasses implement this method to save the object's state via
+      the generic interface provided by \c IO::Reader. Parsing the
+      format of the input is handled by the \c IO::Reader, so
+      implementors of \c readFrom() of don't need to deal with
+      formatting. */
   virtual void readFrom(IO::Reader* reader) = 0;
 
-  /** The preferred method for restoring an object's state via the
-      generic interface provided by \c IO::Writer. Each subclass of \c
-      IO::Writer provides its own formatting scheme, so that subclasses of
-      \c IO don't need to implement any formatting. */
+  /** Subclasses implement this method to restore the object's state
+      via the generic interface provided by \c IO::Writer. Formatting
+      the output is handled by the \c IO::Writer, so implementors of
+      \c writeTo() of don't need to deal with formatting. */
   virtual void writeTo(IO::Writer* writer) const = 0;
 
-  /** This function returns the number of attributes that are written
-		in the object's \c writeTo() function. The default
-		implementation simply calls writeTo() with a dummy Writer and
-		counts how many attributes are written. However, this is
-		somewhat inefficient since it defers the counting to runtime
-		when the number may in fact be known at compile time. Thus
-		subclasses may which to override this function to return a
-		compile-time constant. **/
+  /** Returns the number of attributes that are written in the
+		object's \c writeTo() function. The default implementation
+		simply calls writeTo() with a dummy Writer and counts how many
+		attributes are written. However, this is somewhat inefficient
+		since it defers the counting to runtime when the number may in
+		fact be known at compile time. Thus subclasses may wish to
+		override this function to return a compile-time constant. */
   virtual unsigned int ioAttribCount() const;
 
-  /** Returns a unique id for this object. */
+  /** Returns the unique id for this object. The unique id will always
+      be strictly positive; zero will never be a valid unique id. */
   IO::UID id() const;
 
   /** Returns a serialization version id for the class. The default
@@ -87,15 +91,15 @@ public:
       they make a change that requires a change to their serialization
       protocol. Overriding versions of this function should follow the
       convention that a higher id refers to a later version of the
-      class. Implementations of \c IO::Reader and \c IO::Writer will provide a
-      way for a class to store and retrieve the serialization version
-      of an object. */
+      class. Implementations of \c IO::Reader and \c IO::Writer will
+      provide a way for a class to store and retrieve the
+      serialization version of an object. */
   virtual IO::VersionId serialVersionId() const;
 
-  /** Returns a string specifying the typename of the actual
-		object. The implementation provided by \c IO returns a demangled
-		version of \c typeid(*this).name(), which should very closely
-		resemble the way the object was declared in source code. */
+  /** Returns the typename of the full object. The implementation
+		provided by \c IO returns a demangled version of \c
+		typeid(*this).name(), which should very closely resemble the way
+		the object was declared in source code. */
   virtual fixed_string ioTypename() const;
 
 private:
