@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Thu May 27 19:48:37 1999
+// written: Mon Jun  7 14:18:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 class FixPt : public GrObj {
 public:
-  FixPt (float len, int wid);
+  FixPt (float len=0.1, int wid=1);
   FixPt (istream &is, IOFlag flag);
   virtual ~FixPt ();
 
