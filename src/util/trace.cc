@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov  7 17:20:17 2002
+// written: Sat Nov  9 13:14:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -330,12 +330,16 @@ const char* Util::Prof::name() const throw()
 
 double Util::Prof::totalTime() const throw()
 {
-  return itsTotalTime.usec();
+  return (itsCallCount > 0) ?
+    itsTotalTime.usec()
+    : 0.0;
 }
 
 double Util::Prof::selfTime() const throw()
 {
-  return itsTotalTime.usec() - itsChildrenTime.usec();
+  return (itsCallCount > 0)
+    ? itsTotalTime.usec() - itsChildrenTime.usec()
+    : 0.0;
 }
 
 double Util::Prof::avgTime() const throw()
