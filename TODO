@@ -7,6 +7,47 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (13-Oct-2004) try to minimize global data masquerading as singletons
+
+  Tcl::Interp
+  Gfx::Canvas
+
+* (12-Oct-2004) move into rutz:: namespace and de-camel-case
+
+  algo
+  fstring
+  base64
+  cstrstream
+  error
+  fileposition
+  freelist
+  functors
+  gzstreambuf
+  mappedfile
+  pipe
+  pointers
+  serialport?
+  stderror
+  stopwatch
+
+* (12-Oct-2004) Make it easier to debug+test timing sequences
+
+  Need to generalize Tcl::Timer into something that includes a
+  Scheduler interface. The usual Scheduler interface would just rely
+  on Tcl_CreateTimerHandler, but we could have a DebugScheduler that
+  would allow us to manually step through events.
+
+  How to do this incrementally?
+
+  (1) Just implement a Tcl::TimerScheduler, then have Tcl::Timer rely
+      on that.
+
+  (2) Make a generic Util::Scheduler, and have Tcl::Timer depend on
+      that instead of the specific Tcl::TimerScheduler implementation.
+
+  (3) Now Tcl::Timer doesn't depend on Tcl, so move it elsewhere
+      (maybe down into Util?).
+
 * (9-Oct-2004) Fix GLCanvas::grabPixels() to work with 16-bit framebuffer
 
   This is a problem under my YellowDog Linux install. Should be able
