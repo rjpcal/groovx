@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Fri Oct  6 16:47:53 2000
+// written: Fri Oct  6 16:59:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ protected:
   virtual void destroy();
 
 public:
-  MasterVoidPtr(VoidPtrList* vpl);
+  explicit MasterVoidPtr(VoidPtrList* vpl);
   MasterVoidPtr(const MasterVoidPtr& other);
 
   MasterVoidPtr& operator=(const MasterVoidPtr& other);
@@ -133,11 +133,11 @@ protected:
   /** Return the \c void* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
-  void* getVoidPtr(int id) const throw ();
+  MasterVoidPtr* getVoidPtr(int id) const throw ();
 
   /** Like \c getVoidPtr(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
-  void* getCheckedVoidPtr(int id) const throw (InvalidIdError);
+  MasterVoidPtr* getCheckedVoidPtr(int id) const throw (InvalidIdError);
 
 #if 0
   /** Releases the \c void* at the given index from the management of

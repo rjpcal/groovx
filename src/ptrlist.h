@@ -11,8 +11,8 @@
 #ifndef PTRLIST_H_DEFINED
 #define PTRLIST_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LISTITEM_H_DEFINED)
-#include "listitem.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DUMBPTR_H_DEFINED)
+#include "dumbptr.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOPTRLIST_H_DEFINED)
@@ -53,7 +53,7 @@ public:
 
   typedef T* Ptr;
 
-  typedef ListItem<T> SharedPtr;
+  typedef DumbPtr<T> SharedPtr;
 
   ///////////////
   // accessors //
@@ -67,7 +67,7 @@ public:
       valid object, the pointer returned may be null. */
   SharedPtr getPtr(int id) const throw () 
     {
-		return SharedPtr(castToT(VoidPtrList::getVoidPtr(id)), *this, id);
+		return DumbPtr<T>(castToT(VoidPtrList::getVoidPtr(id)->ptr()));
 	 }
 
   /** Returns the object at index \a id, after a check is performed to
@@ -75,7 +75,7 @@ public:
       the check fails, an \c InvalidIdError exception is thrown. */
   SharedPtr getCheckedPtr(int id) const throw (InvalidIdError)
 	 {
-		return SharedPtr(castToT(VoidPtrList::getCheckedVoidPtr(id)), *this, id);
+		return DumbPtr<T>(castToT(VoidPtrList::getCheckedVoidPtr(id)->ptr()));
 	 }
 
   //////////////////

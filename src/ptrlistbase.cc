@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Fri Oct  6 16:57:06 2000
+// written: Fri Oct  6 17:18:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -276,12 +276,12 @@ DOTRACE("VoidPtrList::clear");
   itsImpl->itsFirstVacant = 0;
 }
 
-void* VoidPtrList::getVoidPtr(int id) const throw () {
+MasterVoidPtr* VoidPtrList::getVoidPtr(int id) const throw () {
 DOTRACE("VoidPtrList::getVoidPtr");
-  return itsImpl->itsPtrVec[id].masterPtr()->ptr();
+  return itsImpl->itsPtrVec[id].masterPtr();
 }
 
-void* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
+MasterVoidPtr* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
 DOTRACE("VoidPtrList::getCheckedVoidPtr");
   if ( !isValidId(id) ) {
 	 InvalidIdError err("attempt to access invalid id '");
@@ -295,7 +295,7 @@ DOTRACE("VoidPtrList::getCheckedVoidPtr");
 #if 0
 void* VoidPtrList::releaseVoidPtr(int id) throw (InvalidIdError) {
 DOTRACE("VoidPtrList::releaseVoidPtr");
-  void* ptr = getCheckedVoidPtr(id);
+  void* ptr = getCheckedVoidPtr(id)->ptr();
   itsImpl->itsPtrVec[id].masterPtr()->release();
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant

@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Sep 29 18:42:35 2000
+// written: Fri Oct  6 17:17:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,9 @@ IoPtrList::IoPtrList(int size) :
 DOTRACE("IoPtrList::IoPtrList");
 }
 
-IoPtrList::~IoPtrList() {}
+IoPtrList::~IoPtrList() {
+DOTRACE("IoPtrList::~IoPtrList");
+}
 
 void IoPtrList::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("IoPtrList::legacySrlz");
@@ -57,12 +59,12 @@ DOTRACE("IoPtrList::legacySrlz");
   for (size_t i = 0, end = voidVecSize();
 		 i < end;
 		 ++i) {
-	 if (getVoidPtr(i) != NULL) {
+	 if (getVoidPtr(i)->ptr() != NULL) {
 		lwriter->writeValue("i", i);
 
 		// we must legacySrlz the typename since legacyDesrlz requires a
 		// typename in order to call the virtual constructor
-		IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
+		IO::IoObject* obj = fromVoidToIO(getVoidPtr(i)->ptr());
 		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
 		lwriter->writeObject("ptrListItem", obj);
 
@@ -175,7 +177,7 @@ DOTRACE("IoPtrList::writeTo");
   for (size_t i = 0; i < count; ++i)
 	 {
 		DebugEval(i);
-		void* voidptr = getVoidPtr(i);       DebugEval(voidptr);
+		void* voidptr = getVoidPtr(i)->ptr();       DebugEval(voidptr);
 
 		ioBlock[i] = fromVoidToIO(voidptr);
 
