@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Sat Dec  2 09:50:31 2000
+// written: Sat Dec  2 09:59:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,17 +81,13 @@ namespace {
     DebugEvalNL(clientData);
   }
 
-  const char* pathname(Togl* togl) {
-	 return Tk_PathName(reinterpret_cast<Tk_FakeWin*>(togl->tkWin()));
-  }
-
   void setIntParam(Togl* togl, const char* param, int val) {
 	 const int BUF_SIZE = 256;
 	 char buf[BUF_SIZE];
 	 ostrstream ost(buf, BUF_SIZE);
-	 ost << pathname(togl);
+	 ost << togl->pathname();
 	 ost << " configure -" << param << ' ' << val << '\0';
-	 
+
 	 Tcl::TclEvalCmd cmd(buf, Tcl::TclEvalCmd::THROW_EXCEPTION);
 	 cmd.invoke(togl->interp());
   }
@@ -124,7 +120,7 @@ DOTRACE("ToglConfig::ToglConfig");
   itsTogl->setReshapeFunc(ToglConfig_Impl::dummyReshapeCallback);
   itsTogl->setDisplayFunc(ToglConfig_Impl::dummyDisplayCallback);
   itsTogl->setDestroyFunc(toglDestroyCallback);
-  
+
   setUnitAngle(unit_angle);
 
   if ( itsTogl->usesRgba() ) {
@@ -202,7 +198,7 @@ DOTRACE("ToglConfig::queryColor");
   Display* display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
   Colormap cmap = itsTogl->colormap();
   XColor col;
-  
+
   col.pixel = color_index;
   XQueryColor(display, cmap, &col);
 
@@ -253,7 +249,7 @@ DebugPrintNL("ToglConfig::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(itsTogl->interp()) ) {
 	 dynamic_string destroy_cmd_str = "destroy ";
-	 destroy_cmd_str += pathname(itsTogl);
+	 destroy_cmd_str += itsTogl->pathname();
 
 	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
 										  Tcl::TclEvalCmd::BACKGROUND_ERROR);
@@ -376,7 +372,7 @@ DOTRACE("ToglConfig::setDestroyCallback");
 void ToglConfig::bind(const char* event_sequence, const char* script) {
 DOTRACE("ToglConfig::bind");
   dynamic_string cmd_str = "bind ";
-  cmd_str += pathname(itsTogl); cmd_str += " ";
+  cmd_str += itsTogl->pathname(); cmd_str += " ";
   cmd_str += event_sequence;      cmd_str += " ";
   cmd_str += script;
 
@@ -422,7 +418,7 @@ DOTRACE("ToglConfig::loadFonti");
 #else
   GLuint newListBase = 0*fontnumber; // this will force an exception to be thrown
 #endif
-  
+
 
   // Check if font loading succeeded...
   try {
@@ -458,24 +454,24 @@ DOTRACE("ToglConfig::reconfigure");
   else { // not usingFixedScale (i.e. minRect instead)
 
     Rect<double> therect(itsMinRect);        // the actual Rect that we'll build
-  
+
     // the desired conditions are as follows:
     //    (1) therect contains itsMinRect
     //    (2) therect.aspect() == getAspect()
     //    (3) therect is the smallest rectangle that meets (1) and (2)
-    
+
     double ratio_of_aspects = itsMinRect.aspect() / getAspect();
-    
+
     if ( ratio_of_aspects < 1 ) { // the available space is too wide...
       therect.widenByFactor(1/ratio_of_aspects); // so use some extra width
     }
     else {                        // the available space is too tall...
       therect.heightenByFactor(ratio_of_aspects); // and use some extra height
     }
-    
+
     glOrtho(therect.left(), therect.right(),
 				therect.bottom(), therect.top(), -1.0, 1.0);
-    
+
 	 DebugEval(itsMinRect.left());
 	 DebugEval(itsMinRect.right());
 	 DebugEval(itsMinRect.bottom());
@@ -501,7 +497,7 @@ DOTRACE("ToglConfig::swapBuffers");
 void ToglConfig::takeFocus() {
 DOTRACE("ToglConfig::takeFocus");
   dynamic_string cmd_str = "focus -force ";
-  cmd_str += pathname(itsTogl);
+  cmd_str += itsTogl->pathname();
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
@@ -528,7 +524,7 @@ DOTRACE("ToglConfig::writeEpsFile");
 	 // get a clear buffer
 	 glClear(GL_COLOR_BUFFER_BIT);
 	 swapBuffers();
-	 
+
 	 // do the EPS dump
 	 const int rgbFlag = 0;
 	 itsTogl->dumpToEpsFile(filename, rgbFlag,
