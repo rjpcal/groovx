@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Jul  9 17:51:00 2001
+// written: Tue Jul 10 10:11:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,9 @@
 #include <algorithm>
 #include <iostream.h>
 #include <iomanip.h>
-#include "libmatlb.h"
+#ifdef HAVE_MATLAB
+#include <libmatlb.h>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -246,6 +248,7 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
 //
 ///////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_MATLAB
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
   if (!mxIsNumeric(a))
@@ -253,6 +256,7 @@ Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
+#endif
 
 void Mtx::MtxImpl::reshape(int mr, int nc)
 {
@@ -327,6 +331,7 @@ Mtx::Mtx(const Slice& s) :
 
 Mtx::~Mtx() {}
 
+#ifdef HAVE_MATLAB
 mxArray* Mtx::makeMxArray() const
 {
   mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
@@ -340,6 +345,7 @@ mxArray* Mtx::makeMxArray() const
 
   return result_mx;
 }
+#endif
 
 void Mtx::resize(int mrowsNew, int ncolsNew)
 {
