@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Thu Jul 22 10:06:31 1999
+// written: Wed Oct 13 16:21:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,8 @@
 #include "sound.h"
 #include "soundlist.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
@@ -110,9 +109,14 @@ DOTRACE("KbdResponseHdlr::deserialize");
   if (flag & BASES) { /* no bases to deserialize */ }
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
+  // Pull off the separator following the typename
+  DebugEvalNL(is.peek());
+  is.get();
+
   getline(is, itsKeyRespPairs, '\n');
   updateRegexps();
 
+  DebugEvalNL(is.peek());
   getline(is, itsFeedbackPairs, '\n');
   updateFeedbacks();
 
@@ -181,8 +185,8 @@ DOTRACE("KbdResponseHdlr::rhAbortTrial");
 	 p->play();
   }
   catch (ErrorWithMsg& err) {
-	 Tcl_BackgroundError(itsInterp);
 	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
+	 Tcl_BackgroundError(itsInterp);
   }
 }
 
