@@ -3,7 +3,7 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Thu May 27 11:29:48 1999
+// written: Fri Jun 11 11:25:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ namespace ObjlistTcl {
      int objc, Tcl_Obj* const objv[]);
 
   GrObj* getObjFromArg(Tcl_Interp* interp, Tcl_Obj* const objv[], 
-                       const ObjList& olist, int argn);
+                       int argn);
 
   const char* const bad_objid_msg = "objid out of range";
   const char* const wrong_type_msg = "object not of correct type";
