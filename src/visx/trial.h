@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Mon Jun 11 14:49:17 2001
+// written: Thu Jun 21 13:32:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,15 +29,6 @@
 #include "trialbase.h"
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
-class ostream;
-#else
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
-#endif
-
 namespace Util { template <class T> class Ref; };
 
 namespace GWT { class Widget; }
@@ -59,7 +50,7 @@ class Trial : public TrialBase, public FieldContainer {
 public:
 
   /** This tracer dynamically controls the tracing of Trial member
-		functions. */
+      functions. */
   static Util::Tracer tracer;
 
   //////////////
@@ -76,8 +67,6 @@ public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
-
-  void writeMatlab(STD_IO::ostream& os) const;
 
   static const FieldMap& classFields();
 
@@ -130,7 +119,7 @@ public:
   /////////////
 
   virtual void trDoTrial(GWT::Widget& widget,
-								 Util::ErrorHandler& errhdlr, Block& block);
+                         Util::ErrorHandler& errhdlr, Block& block);
 
   virtual int trElapsedMsec();
 
