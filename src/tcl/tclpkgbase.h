@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Feb 22 10:10:25 2000
+// written: Wed Mar  8 16:06:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,6 +64,10 @@ public:
       the package. */
   virtual ~TclPkg();
 
+  /** Returns a Tcl status code indicating whether the package
+      initialization was successful. */
+  int initStatus() const;
+
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl_Interp* interp();
 
@@ -108,6 +112,9 @@ public:
   /** Links \a var with the Tcl variable \a varName. The Tcl variable
       will be read_only. */
   void linkConstVar(const char* varName, char*& var) throw (TclError);
+
+protected:
+  void setInitStatus(int status);
 
 private:
   struct Impl;

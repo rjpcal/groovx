@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Sat Dec 18 18:54:42 1999
+// written: Wed Mar  8 16:09:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,8 @@ struct Tcl::TclPkg::Impl {
   string itsPkgName;
   string itsVersion;
 
+  int itsInitStatus;
+
   vector<int*> ownedInts;
   vector<double*> ownedDoubles;
   vector<char**> ownedCstrings;
@@ -58,7 +60,8 @@ Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
   itsInterp(interp),
   itsCmds(),
   itsPkgName(name ? name : ""),
-  itsVersion(version ? version : "")
+  itsVersion(version ? version : ""),
+  itsInitStatus(TCL_OK)
 {
 DOTRACE("Tcl::TclPkg::Impl::Impl");
   if ( !itsPkgName.empty() && !itsVersion.empty() ) {
@@ -125,6 +128,11 @@ DOTRACE("TclPkg::TclPkg");
 Tcl::TclPkg::~TclPkg() {
 DOTRACE("TclPkg::~TclPkg");
   delete itsImpl;
+}
+
+int Tcl::TclPkg::initStatus() {
+DOTRACE("Tcl::TclPkg::initStatus");
+  return itsImpl->itsInitStatus;
 }
 
 Tcl_Interp* Tcl::TclPkg::interp() {
@@ -228,6 +236,16 @@ DOTRACE("Tcl::TclPkg::linkConstVar char*");
 void Tcl::TclPkg::addCommand(TclCmd* cmd) {
 DOTRACE("Tcl::TclPkg::addCommand");
   itsImpl->itsCmds.push_back(cmd);
+}
+
+void Tcl::TclPkg::setInitStatusOk() {
+DOTRACE("Tcl::TclPkg::setInitStatusOk");
+  itsImpl->itsInitStatus = TCL_OK;
+}
+
+void Tcl::TclPkg::setInitStatusError() {
+DOTRACE("Tcl::TclPkg::setInitStatusOk");
+  itsImpl->itsInitStatus = TCL_ERROR;
 }
 
 static const char vcid_tclpkg_cc[] = "$Header$";
