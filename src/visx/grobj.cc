@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Sun Jan 16 22:58:44 2000
+// written: Thu Feb  3 12:48:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -389,15 +389,16 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 	 // Do the object's internal scaling and alignment, and find the
 	 // bounding box in screen coordinates
 	 
-	 glMatrixMode(GL_MODELVIEW);
-	 glPushMatrix();
+	 {
+		glMatrixMode(GL_MODELVIEW);
+
+		Canvas::StateSaver state(canvas);
 
 		itsOwner->doScaling();
 		itsOwner->doAlignment();
 		
 		Rect<int> screen_pos = canvas.getScreenFromWorld(getRaw());
-
-	 glPopMatrix();
+	 }
 	 
 	 // Add a pixel border around the edges of the image...
 	 int bp = pixelBorder();
@@ -471,9 +472,10 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   
   obj->undraw(canvas);
   
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
   {
+	 glMatrixMode(GL_MODELVIEW);
+	 Canvas::StateSaver state(canvas);
+
 	 glPushAttrib(GL_PIXEL_MODE_BIT|GL_COLOR_BUFFER_BIT);
 	 {
 		glDrawBuffer(GL_FRONT);
@@ -492,7 +494,6 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 	 }
 	 glPopAttrib();
   }
-  glPopMatrix();
   
   if (GrObj::GROBJ_X11_BITMAP_CACHE == itsMode) {
 	 itsBitmapCache->flipVertical();
@@ -960,14 +961,17 @@ DOTRACE("GrObj::Impl::draw");
   bool objectDrawn = itsRenderer.update(this, canvas);
 
   if ( !objectDrawn ) {
-	 glMatrixMode(GL_MODELVIEW);
 
-	 glPushMatrix();
+	 {
+		glMatrixMode(GL_MODELVIEW);
+
+		Canvas::StateSaver state(canvas);
+
 	   doScaling();
 		doAlignment();
 
 		itsRenderer.render(this, canvas);
-	 glPopMatrix();
+	 }
   }
 
   checkForGlError("during GrObj::draw"); 
@@ -1073,26 +1077,25 @@ void GrObj::Impl::undrawDirectRender(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
 
-  glPushMatrix();
-  {
-	 doScaling();
-	 doAlignment();
+  Canvas::StateSaver state(canvas);
+
+  doScaling();
+  doAlignment();
 	 
-	 self->grUnRender(canvas);
-  }
-  glPopMatrix();
+  self->grUnRender(canvas);
 }
 
 void GrObj::Impl::undrawSwapForeBack(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawSwapForeBack");
-  glMatrixMode(GL_MODELVIEW);
-
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
 	 canvas.swapForeBack();
 	 
-	 glPushMatrix();
 	 {
+		glMatrixMode(GL_MODELVIEW);
+
+		Canavs::StateSaver state(canvas);
+
 		doScaling();
 		doAlignment();
 		  
@@ -1103,7 +1106,6 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 		  self->grRender(canvas);
 		}
 	 }
-	 glPopMatrix();
   }
   glPopAttrib();
 }
@@ -1136,20 +1138,20 @@ DOTRACE("GrObj::Impl::undrawClearBoundingBox");
 
 void GrObj::Impl::undrawBoundingBox(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawBoundingBox");
-  glMatrixMode(GL_MODELVIEW);
-
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
 	 canvas.swapForeBack();
 
-	 glPushMatrix();
 	 {
+		glMatrixMode(GL_MODELVIEW);
+
+		Canvas::StateSaver state(canvas);
+
 		doScaling();
 		doAlignment();
 		  
 		grDrawBoundingBox(canvas);
 	 }
-	 glPopMatrix();
   }
   glPopAttrib();
 }
