@@ -134,43 +134,45 @@ test "FaceTcl-Face::loadFaces" "normal file read with no comments" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/faces_file_no_comments]
 	 set num_read [llength $objids]
-	 expr $num_read == 10 && $num_read == [ObjList::count] \
-				&& [string compare [GrObj::type 0] "Face"] == 0
-	 set result "$num_read [ObjList::count] [GrObj::type 0]"
+	 set result "$num_read [GrObj::type [lindex $objids 0]]"
 	 return $result
-} {^10 10 Face$}
+} {^10 Face$}
 test "FaceTcl-Face::loadFaces" "normal file read" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/faces_file]
 	 set num_read [llength $objids]
-	 expr $num_read == 10 && $num_read == [ObjList::count] \
-				&& [string compare [GrObj::type 0] "Face"] == 0
-} {^1$}
+	 set result "$num_read [GrObj::type [lindex $objids 0]]"
+	 return $result
+} {^10 Face$}
 test "FaceTcl-Face::loadFaces" "normal file read with limit on # to read" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/faces_file 5]
 	 set num_read [llength $objids]
-	 expr $num_read == 5 && $num_read == [ObjList::count] \
-				&& [string compare [GrObj::type 0] "Face"] == 0
-} {^1$}
+	 set result "$num_read [GrObj::type [lindex $objids 0]]"
+	 return $result
+} {^5 Face$}
 test "FaceTcl-Face::loadFaces" "file read with virtual constructor" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/nos_faces_s50_c3]
-	 return "[llength $objids] [ObjList::count] \
-				[GrObj::type 0] [GrObj::type 10]"
-} {^20 *20 *Face *CloneFace$}
+	 return "[llength $objids] \
+				[GrObj::type [lindex $objids 0]] [GrObj::type [lindex $objids 10]]"
+} {^20 *Face *CloneFace$}
 test "FaceTcl-Face::loadFaces" "empty file read" {
 	 ObjList::reset
+	 set before_count [ObjList::count]
 	 set objids [Face::loadFaces $::TEST_DIR/empty_file]
 	 set num_read [llength $objids]
-	 expr $num_read == 0 && [ObjList::count] == 0
-} {^1$}
+	 set after_count [ObjList::count]
+	 return "$num_read [expr $after_count - $before_count]"
+} {^0 0$}
 test "FaceTcl-Face::loadFaces" "empty file read with limit on # to read" {
 	 ObjList::reset
+	 set before_count [ObjList::count]
 	 set objids [Face::loadFaces $::TEST_DIR/empty_file 5]
 	 set num_read [llength $objids]
-	 expr $num_read == 0 && [ObjList::count] == 0
-} {^1$}
+	 set after_count [ObjList::count]
+	 return "$num_read [expr $after_count - $before_count]"
+} {^0 0$}
 # On bad input, the error may be detected by either Face or IoMgr 
 # depending on which constructor got called.
 test "FaceTcl-Face::loadFaces" "error on non-existent file" {
