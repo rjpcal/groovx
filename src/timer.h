@@ -2,14 +2,14 @@
 // timer.h
 // Rob Peters
 // created: Thu Feb  4 23:09:20 1999
-// written: Tue Mar 16 19:25:39 1999
+// written: Thu May 20 09:46:59 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMER_H_DEFINED
 #define TIMER_H_DEFINED
 
-#ifndef GROBJ_H_INCLUDED
+#ifndef GROBJ_H_DEFINED
 #include "grobj.h"
 #endif
 
