@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Fri Mar 10 01:00:43 2000
+// written: Fri Mar 10 01:06:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ public:
 
   /// Copy constructor.
   TValue(const TValue& other) :
-	 Value(), itsVal(other.itsVal) {}
+	 Value(other), itsVal(other.itsVal) {}
 
   /// Assignment operator.
   TValue& operator=(const TValue& other)
@@ -230,7 +230,7 @@ public:
 
   /// Copy constructor.
   TValuePtr(const TValuePtr& other) :
-	 Value(), itsValPtr(other.itsValPtr) {}
+	 Value(other), itsValPtr(other.itsValPtr) {}
 
   /// Assignment operator.
   TValuePtr& operator=(const TValuePtr& other)
