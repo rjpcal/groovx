@@ -85,7 +85,8 @@ public:
 
   void pop() throw()
   {
-    AbortIf(sz == 0);
+    if (sz == 0)
+      Panic("underflow in static_stack::pop");
     --sz;
   }
 
@@ -129,13 +130,15 @@ struct Util::BackTrace::Impl
 Util::BackTrace::BackTrace() throw() :
   rep(new (std::nothrow) Impl)
 {
-  AbortIf(rep == 0);
+  if (rep == 0)
+    Panic("memory allocation failed");
 }
 
 Util::BackTrace::BackTrace(const BackTrace& other) throw() :
   rep(new (std::nothrow) Impl(*other.rep))
 {
-  AbortIf(rep == 0);
+  if (rep == 0)
+    Panic("memory allocation failed");
 }
 
 Util::BackTrace& Util::BackTrace::operator=(const BackTrace& other) throw()
@@ -156,7 +159,8 @@ Util::BackTrace& Util::BackTrace::current() throw()
     {
       ptr = new (std::nothrow) Util::BackTrace;
 
-      AbortIf(ptr == 0);
+      if (ptr == 0)
+        Panic("memory allocation failed");
     }
   return *ptr;
 }
@@ -197,7 +201,7 @@ void Util::BackTrace::print() const throw()
 
   for (; i < end; ++i, --ri)
     {
-      printf("\t[%d] %s\n", int(i), rep->vec.at(ri)->name());
+      fprintf(stderr, "\t[%d] %s\n", int(i), rep->vec.at(ri)->name());
     }
 }
 
@@ -271,7 +275,9 @@ namespace
     if (ptr == 0)
       {
         ptr = new (std::nothrow) ProfVec;
-        AbortIf(ptr == 0);
+
+        if (ptr == 0)
+          Panic("memory allocation failed");
       }
     return *ptr;
   }
