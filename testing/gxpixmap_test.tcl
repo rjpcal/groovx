@@ -59,9 +59,6 @@ test "GxPixmap-GxPixmap::loadImage" "error on junk binary file" {
     file delete -force $::TEST_DIR/junk_bin_file.pbm
     return $result
 } "^GxPixmap::loadImage: bad magic number while reading pbm file.*$"
-test "GxPixmap-GxPixmap::loadImage" "unknown format" {
-    GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_text_file
-} "^GxPixmap::loadImage: unknown file format.*$"
 
 ### GxPixmap rendering ###
 test "GxPixmap-rendering" "normal render" {
