@@ -46,27 +46,27 @@ public:
   virtual Type getNativeType() const = 0;
 
   // Input/Output
-  virtual void printTo(ostream& os) const = 0;
-  virtual void scanFrom(istream& is) = 0;
+  virtual void printTo(ostream& os) const;
+  virtual void scanFrom(istream& is);
 
   // Two sets of functions are provided to allow values to be
   // retrieved either as the return value, or as a reference
   // argument. Depending on a subclass's implementation, one or the
   // other type of function may be more efficient.
 
-  virtual int getInt() const = 0;
-  virtual long getLong() const = 0;
-  virtual bool getBool() const = 0;
-  virtual double getDouble() const = 0;
-  virtual const char* getCstring() const = 0;
-  virtual string getString() const = 0;
+  virtual int getInt() const;
+  virtual long getLong() const;
+  virtual bool getBool() const;
+  virtual double getDouble() const;
+  virtual const char* getCstring() const;
+  virtual string getString() const;
 
-  virtual void get(int& val) const = 0;
-  virtual void get(long& val) const = 0;
-  virtual void get(bool& val) const = 0;
-  virtual void get(double& val) const = 0;
-  virtual void get(const char*& val) const = 0;
-  virtual void get(string& val) const = 0;
+  virtual void get(int& val) const;
+  virtual void get(long& val) const;
+  virtual void get(bool& val) const;
+  virtual void get(double& val) const;
+  virtual void get(const char*& val) const;
+  virtual void get(string& val) const;
 
   // The default implementations of the set functions all throw
   // exceptions, so that the default case is a read-only value.
