@@ -58,6 +58,20 @@ namespace
     throw Util::Error("Tcl::Dict requires Tcl version >= 8.5");
   }
 }
+
+Tcl::ObjPtr Tcl::Dict::doPut(const char*, Tcl::ObjPtr)
+{
+  noDictError();
+  Assert(0);
+}
+
+Tcl::ObjPtr Tcl::Dict::doGet(const char*) const
+{
+  noDictError();
+  Assert(0);
+  return Tcl::ObjPtr(); // can't happen, but placate compiler
+}
+
 #else
 
 void Tcl::Dict::doPut(const char* key, Tcl::ObjPtr val)
