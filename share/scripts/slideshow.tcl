@@ -8,12 +8,19 @@ package require Iwidgets
 
 set TMPCOUNTER 0
 
+proc msg { tag content } {
+    puts [format "%15s: %s" $tag $content]
+}
+
+proc split_lines { text linelength indent } {
+}
+
 proc build_scaled_pixmap { fname size } {
     set px [new GxPixmap]
     -> $px purgeable 1
 
     set cmd "|anytopnm $fname | pnmscale -xysize $size"
-    puts $cmd
+    msg "resize load" $fname
     set fd [open $cmd r]
 
     fconfigure $fd -encoding binary -translation {binary binary}
@@ -178,7 +185,7 @@ itcl::class Playlist {
     }
 
     public method save {} {
-	puts "writing playlist"
+	msg "write playlist" $itsListFile
 	if { [file exists ${itsListFile}.bkp] } {
 	    file delete ${itsListFile}.bkp
 	}
@@ -214,7 +221,7 @@ itcl::class Playlist {
 
     public method remove {} {
 	set target [lindex $itsList $itsIdx]
-	puts "removing $target from the list"
+	msg "hide file" $target
 	lappend itsPurgeList $target
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
 	$this spin 0
@@ -223,7 +230,7 @@ itcl::class Playlist {
     public method purge {} {
 	puts "purging..."
 	foreach f $itsPurgeList {
-	    puts "deleting $f"
+	    msg "delete file" $f
 	    set dir [file dirname $f]
 	    set tail [file tail $f]
 	    set stubfile ${dir}/.${tail}.deleted
@@ -248,25 +255,34 @@ itcl::class Playlist {
 	set i $itsGuessNext
 	set f [lindex $itsList $i]
 	while { ![file exists $f] } {
+	    msg "no such file" $f
 	    set itsList [lreplace $itsList $i $i]
 	    set i [expr $i % [llength $itsList]]
 	    set f [lindex $itsList $i]
 	}
 	set itsPixmapCache($f) \
 	    [build_scaled_pixmap $f [-> $itsWidget size]]
-	puts "inserted $f in cache"
+	msg "cache insert" $f
     }
 
     public method show {} {
 	set f [$this filename]
-	puts $f
+
+	while { ![file exists $f] } {
+	    msg "no such file" $f
+	    set itsList [lreplace $itsList $itsIdx $itsIdx]
+	    set itsIdx [expr $itsIdx % [llength $itsList]]
+	    set f [$this filename]
+	}
+
+	msg "show file" $f
 
 	set old $itsPixmap
 	if { [info exists itsPixmapCache($f)] \
 		 && [GxPixmap::is $itsPixmapCache($f)] } {
 	    set itsPixmap $itsPixmapCache($f)
 	    unset itsPixmapCache($f)
-	    puts "got cache hit for $f"
+	    msg "cache hit" $f
 	} else {
 	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
 	}
@@ -281,7 +297,7 @@ itcl::class Playlist {
 
 	ObjDb::clear
 
-	puts [GxPixmap::findAll]
+	msg "pixmaps" [GxPixmap::findAll]
 
 	after idle [itcl::code $this cachenext]
     }
