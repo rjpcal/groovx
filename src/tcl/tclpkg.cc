@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Oct 12 16:41:31 1999
+// written: Mon Oct 18 18:56:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -451,12 +451,55 @@ private:
   int itsItemArgn;
 };
 
+class ItemWriteCmd : public WriteCmd {
+public:
+  ItemWriteCmd(TclIoItemPkg* pkg, int item_argn) :
+	 WriteCmd(pkg->interp(), pkg->makePkgCmdName("write"),
+				 item_argn ? "item_id" : NULL,
+				 item_argn+1),
+	 itsPkg(pkg),
+	 itsItemArgn(item_argn) {}
+
+protected:
+  virtual IO& getIO() {
+	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+	 return itsPkg->getIoFromId(id);
+  }
+
+private:
+  TclIoItemPkg* itsPkg;
+  int itsItemArgn;
+};
+
+class ItemReadCmd : public ReadCmd {
+public:
+  ItemReadCmd(TclIoItemPkg* pkg, int item_argn) :
+	 ReadCmd(pkg->interp(), pkg->makePkgCmdName("read"),
+				 item_argn ? "item_id string" : "string",
+				 item_argn+2),
+	 itsPkg(pkg),
+	 itsItemArgn(item_argn) {}
+
+protected:
+  virtual IO& getIO() {
+	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+	 return itsPkg->getIoFromId(id);
+  }
+
+private:
+  TclIoItemPkg* itsPkg;
+  int itsItemArgn;
+};
+
 TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name, 
                            const char* version, int item_argn) :
   TclItemPkg(interp, name, version, item_argn)
 {
   addCommand( new ItemStringifyCmd(this, itemArgn()) );
   addCommand( new ItemDestringifyCmd(this, itemArgn()) );
+
+  addCommand( new ItemWriteCmd(this, itemArgn()) );
+  addCommand( new ItemReadCmd(this, itemArgn()) );
 }
 
 static const char vcid_tclitempkg_cc[] = "$Header$";
