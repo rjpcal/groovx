@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu May 10 12:04:48 2001
+// written: Wed Jun  6 09:43:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,16 +85,15 @@ public:
 	 ERHState() {}
 
   public:
-	 virtual ~ERHState();
+	 virtual ~ERHState() {}
 
-	 virtual void rhAbortTrial(const EventResponseHdlr::Impl* erh) = 0;
-	 virtual void rhEndTrial(const EventResponseHdlr::Impl* erh) = 0;
-	 virtual void rhHaltExpt(const EventResponseHdlr::Impl* erh) = 0;
+	 virtual void rhAbortTrial() = 0;
+	 virtual void rhEndTrial() = 0;
+	 virtual void rhHaltExpt() = 0;
 
-	 virtual void handleResponse(const EventResponseHdlr::Impl* erh,
-										  const char* keysym) = 0;
+	 virtual void handleResponse(const char* keysym) = 0;
 
-	 virtual void onDestroy(const EventResponseHdlr::Impl* erh) = 0;
+	 virtual void onDestroy() = 0;
 
 	 static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
 														  GWT::Widget& widget,
@@ -104,67 +103,69 @@ public:
 
   class ERHInactiveState : public ERHState {
   public:
-	 virtual ~ERHInactiveState();
+	 virtual ~ERHInactiveState() {}
 
-	 virtual void rhAbortTrial(const EventResponseHdlr::Impl*) {}
-	 virtual void rhEndTrial(const EventResponseHdlr::Impl*) {}
-	 virtual void rhHaltExpt(const EventResponseHdlr::Impl*) {}
+	 virtual void rhAbortTrial() {}
+	 virtual void rhEndTrial() {}
+	 virtual void rhHaltExpt() {}
 
-	 virtual void handleResponse(const EventResponseHdlr::Impl*,
-										  const char*) {}
+	 virtual void handleResponse(const char*) {}
 
-	 virtual void onDestroy(const EventResponseHdlr::Impl*) {};
+	 virtual void onDestroy() {};
   };
 
   class ERHActiveState : public ERHState {
   private:
+	 const EventResponseHdlr::Impl& itsErh;
 	 GWT::Widget& itsWidget;
 	 TrialBase& itsTrial;
 
-	 bool check() { return (&itsWidget != 0) && (&itsTrial != 0); }
+	 bool check()
+	 { return (&itsErh != 0) && (&itsWidget != 0) && (&itsTrial != 0); }
 
   public:
-	 virtual ~ERHActiveState();
+	 virtual ~ERHActiveState()
+	 { itsErh.ignore(itsWidget); }
 
 	 ERHActiveState(const EventResponseHdlr::Impl* erh,
 						 GWT::Widget& widget, TrialBase& trial) :
+		itsErh(*erh),
 		itsWidget(widget),
 		itsTrial(trial)
 	 {
 		Invariant(check());
-		erh->attend(itsWidget);
+		itsErh.attend(itsWidget);
 	 }
 
-	 virtual void rhAbortTrial(const EventResponseHdlr::Impl* erh)
+	 virtual void rhAbortTrial()
 	 {
 		Invariant(check());
-		erh->ignore(itsWidget);
+		itsErh.ignore(itsWidget);
 
 		IdItem<Sound> p = Sound::getErrSound();
 		p->play();
 	 }
 
-	 virtual void rhEndTrial(const EventResponseHdlr::Impl* erh)
+	 virtual void rhEndTrial()
 	 {
 		Invariant(check());
-		erh->ignore(itsWidget);
-		erh->changeState(ERHState::inactiveState());
+		itsErh.ignore(itsWidget);
+		itsErh.changeState(ERHState::inactiveState());
 	 }
 
-	 virtual void rhHaltExpt(const EventResponseHdlr::Impl* erh)
+	 virtual void rhHaltExpt()
 	 {
 		Invariant(check());
-		erh->ignore(itsWidget);
-		erh->changeState(ERHState::inactiveState());
+		itsErh.ignore(itsWidget);
+		itsErh.changeState(ERHState::inactiveState());
 	 }
 
-	 virtual void handleResponse(const EventResponseHdlr::Impl* erh,
-										  const char* keysym);
+	 virtual void handleResponse(const char* keysym);
 
-	 virtual void onDestroy(const EventResponseHdlr::Impl* erh)
+	 virtual void onDestroy()
 	 {
 		Invariant(check());
-		erh->ignore(itsWidget);
+		itsErh.ignore(itsWidget);
 	 };
   };
 
@@ -227,11 +228,17 @@ public:
 		itsState = ERHState::activeState(this, widget, trial);
 	 }
 
-  void rhAbortTrial() const { itsState->rhAbortTrial(this); }
+  void rhAbortTrial() const { itsState->rhAbortTrial(); }
 
-  void rhEndTrial() const { itsState->rhEndTrial(this); }
+  void rhEndTrial() const { itsState->rhEndTrial(); }
 
-  void rhHaltExpt() const { itsState->rhHaltExpt(this); }
+  void rhHaltExpt() const { itsState->rhHaltExpt(); }
+
+  void rhAllowResponses(GWT::Widget& widget, TrialBase& trial) const
+    { itsState = ERHState::activeState(this, widget, trial); }
+
+  void rhDenyResponses() const
+    { itsState = ERHState::inactiveState(); }
 
   // Helper functions
 private:
@@ -453,10 +460,6 @@ Util::Tracer EventResponseHdlr::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-EventResponseHdlr::Impl::ERHState::~ERHState() {}
-EventResponseHdlr::Impl::ERHActiveState::~ERHActiveState() {}
-EventResponseHdlr::Impl::ERHInactiveState::~ERHInactiveState() {}
-
 shared_ptr<EventResponseHdlr::Impl::ERHState>
 EventResponseHdlr::Impl::ERHState::activeState(
   const EventResponseHdlr::Impl* erh, GWT::Widget& widget, TrialBase& trial
@@ -473,7 +476,7 @@ DOTRACE("EventResponseHdlr::Impl::ERHState::inactiveState");
 }
 
 void EventResponseHdlr::Impl::ERHActiveState::handleResponse(
-  const EventResponseHdlr::Impl* erh, const char* keysym
+  const char* keysym
 ) {
 DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 
@@ -485,19 +488,19 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 
   itsTrial.trResponseSeen();
 
-  erh->ignore(itsWidget);
+  itsErh.ignore(itsWidget);
 
-  theResponse.setVal(erh->getRespFromKeysym(keysym));
+  theResponse.setVal(itsErh.getRespFromKeysym(keysym));
   DebugEvalNL(theResponse.val());
 
   if ( !theResponse.isValid() ) {
-	 if ( erh->itsAbortInvalidResponses )
+	 if ( itsErh.itsAbortInvalidResponses )
 		itsTrial.trAbortTrial();
   }
 
   else {
 	 itsTrial.trRecordResponse(theResponse);
-	 erh->feedback(theResponse.val());
+	 itsErh.feedback(theResponse.val());
   }
 }
 
@@ -547,7 +550,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   if ( !itsSafeIntp.interpDeleted() ) {
 	 try
 		{
-		  itsState->onDestroy(this);
+		  itsState->onDestroy();
 
 		  DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
@@ -628,7 +631,7 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 	 static_cast<EventResponseHdlr::Impl *>(clientData);
 
   try {
-	 impl->itsState->handleResponse(impl, Tcl_GetString(objv[1]));
+	 impl->itsState->handleResponse(Tcl_GetString(objv[1]));
   }
   catch (ErrorWithMsg& err) {
 	 impl->itsSafeIntp.appendResult(err.msg_cstr());
@@ -883,6 +886,13 @@ void EventResponseHdlr::rhEndTrial() const
 
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
+
+void EventResponseHdlr::rhAllowResponses(GWT::Widget& widget,
+													  TrialBase& trial) const
+  { itsImpl->rhAllowResponses(widget, trial); }
+
+void EventResponseHdlr::rhDenyResponses() const
+  { itsImpl->rhDenyResponses(); }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";
 #endif // !EVENTRESPONSEHDLR_CC_DEFINED
