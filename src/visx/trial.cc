@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Dec  5 14:17:16 2002
+// written: Thu Dec  5 14:24:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -371,6 +371,8 @@ DOTRACE("Trial::Impl::vxEndTrial");
 void Trial::Impl::vxNext()
 {
 DOTRACE("Trial::Impl::vxNext");
+
+  vxEndTrial();
 
   Precondition( isActive() );
 
