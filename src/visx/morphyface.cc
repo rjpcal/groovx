@@ -155,6 +155,8 @@ const FieldMap& MorphyFace::classFields()
     Field("bottomWidth", &MF::itsBottomWidth, 1.0, 0.05, 2.0, 0.05),
     Field("topHeight", &MF::itsTopHeight, 3.8, 0.5, 5.0, 0.25),
     Field("bottomHeight", &MF::itsBottomHeight, -3.0, -5.0, -0.5, 0.25),
+    Field("strokeWidth", &MF::itsStrokeWidth, 1.0, 0.1, 10.0, 0.1,
+          Field::TRANSIENT),
     Field("lineJoin", &MF::itsLineJoin, true, false, true, true,
           Field::TRANSIENT | Field::BOOLEAN),
 
@@ -241,6 +243,7 @@ MorphyFace::MorphyFace() :
   itsMouthWidth(2.5),
   itsMouthCurvature(0.6),
 
+  itsStrokeWidth(3.0),
   itsLineJoin(true)
 {
 DOTRACE("MorphyFace::MorphyFace");
@@ -338,7 +341,7 @@ DOTRACE("MorphyFace::grRender");
                        itsEyeHeight,
                        1.0);
 
-        ls.begin(canvas, 0.02, itsLineJoin);
+        ls.begin(canvas, 0.01*itsStrokeWidth, itsLineJoin);
         // Two bezier curves end to end, sharing a common vertex in the middle
         ls.drawBezier4(s1*eye_ctrlpnts[3], s1*eye_ctrlpnts[2],
                        s1*eye_ctrlpnts[1], s1*eye_ctrlpnts[0],
@@ -368,7 +371,7 @@ DOTRACE("MorphyFace::grRender");
                       itsEyeHeight*itsEyebrowCurvature,
                       1.0);
 
-        ls.begin(canvas, itsEyebrowThickness/100.0, itsLineJoin);
+        ls.begin(canvas, 0.01*itsStrokeWidth*itsEyebrowThickness, itsLineJoin);
         ls.drawBezier4(s*eye_ctrlpnts[0], s*eye_ctrlpnts[1],
                        s*eye_ctrlpnts[2], s*eye_ctrlpnts[3],
                        eye_subdivisions);
@@ -398,7 +401,7 @@ DOTRACE("MorphyFace::grRender");
   // Draw face outline.
   //
 
-  ls.begin(canvas, 0.03, itsLineJoin);
+  ls.begin(canvas, 0.015*itsStrokeWidth, itsLineJoin);
   ls.drawBezier4(Vec3d(itsFaceWidth, 0.0, 0.0),
                  Vec3d(itsBottomWidth*itsFaceWidth,
                        itsBottomHeight*4.0/3.0, 0.0),
@@ -422,7 +425,7 @@ DOTRACE("MorphyFace::grRender");
     const Vec2d s(Util::abs(itsNoseWidth)/2.0,
                   Util::abs(itsNoseLength));
 
-    ls.begin(canvas, 0.02, itsLineJoin);
+    ls.begin(canvas, 0.01*itsStrokeWidth, itsLineJoin);
     ls.vertex(s*Vec2d(-0.75, 0.5));
     ls.vertex(s*Vec2d(-1.0,  0.0));
     ls.vertex(s*Vec2d(-0.75, -0.333333));
@@ -448,7 +451,7 @@ DOTRACE("MorphyFace::grRender");
 
     const Vec3d s(itsMouthWidth, itsMouthCurvature, 1.0);
 
-    ls.begin(canvas, 0.02, itsLineJoin);
+    ls.begin(canvas, 0.01*itsStrokeWidth, itsLineJoin);
     ls.drawBezier4(s*Vec3d(-0.5,  0.5,      0.0),
                    s*Vec3d(-0.2, -0.833333, 0.0),
                    s*Vec3d( 0.2, -0.833333, 0.0),

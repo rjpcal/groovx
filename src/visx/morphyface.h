@@ -137,6 +137,8 @@ private:
   double itsMouthCurvature;
     ///< The degree of curvature of the mouth.
 
+  double itsStrokeWidth;
+    ///< Base stroke width.
   bool itsLineJoin;
     ///< Whether or not to do fancy line-joining.
 
