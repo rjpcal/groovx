@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Wed Jun  9 12:08:35 1999
+// written: Wed Jun  9 14:54:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,8 +41,8 @@ private:
   //////////////
 
 protected:
-  Tlist() : 
-    itsTrials(1, NULL), itsCurTrial(0), itsVisibility(false) {}
+  Tlist();
+
 public:
 
   // Returns a reference to the singleton instance of Tlist
