@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Sep 29 16:26:51 1999
+// written: Wed Sep 29 16:47:19 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -94,6 +94,19 @@ protected:
 		T val;
 		getValFromObj(elements[i], val);
 		*itr = val;
+	 }
+  }
+
+  template <class Iterator>
+  void getValSequenceFromArg(int argn, Iterator itr) {
+	 Tcl_Obj** elements;
+	 int count;
+	 if ( Tcl_ListObjGetElements(itsInterp, itsObjv[argn], &count, &elements)
+			!= TCL_OK) {
+		throw TclError();
+	 }
+	 for (int i = 0; i < count; ++i) {
+		*itr = elements[i];
 	 }
   }
 
