@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Feb  2 16:55:37 2002
+// written: Tue Nov 19 13:45:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/rect.h"
 #include "gx/vec3.h"
 
@@ -264,11 +265,11 @@ DOTRACE("House::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> House::grGetBoundingBox(Gfx::Canvas&) const
+void House::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("House::grGetBoundingBox");
 
-  Gfx::Rect<double> bbox;
+  Gfx::Rect<double> rect;
 
   const double main_width = itsStoryAspectRatio;
   const double main_height = itsNumStories + itsRoofHeight;
@@ -277,16 +278,16 @@ DOTRACE("House::grGetBoundingBox");
 
   const double max_dim = max(main_height, main_width);
 
-  bbox.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
-  bbox.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
-  bbox.bottom() = -main_height/2.0 / max_dim;
+  rect.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
+  rect.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
+  rect.bottom() = -main_height/2.0 / max_dim;
 
   const double extra_chimney_height =
     max(0.0, itsChimneyYPosition + itsChimneyHeight - itsRoofHeight);
 
-  bbox.top()    =  (main_height/2.0 + extra_chimney_height) / max_dim;
+  rect.top()    =  (main_height/2.0 + extra_chimney_height) / max_dim;
 
-  return bbox;
+  bbox.cube.merge(rect);
 }
 
 void House::grRender(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Nov 19 12:53:29 2002
+// written: Tue Nov 19 13:47:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ public:
 
   virtual void getBoundingCube(Gfx::Bbox& bbox) const
   {
-    bbox.cube.unionize(itsObj->grGetBoundingBox(bbox.canvas));
+    itsObj->grGetBoundingBox(bbox);
     dbgDump(2, bbox.cube);
   }
 };

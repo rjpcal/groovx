@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Nov 14 17:23:54 2002
+// written: Tue Nov 19 13:38:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 
+#include "gx/bbox.h"
 #include "gx/bmapdata.h"
 #include "gx/imgfile.h"
 #include "gx/rect.h"
@@ -337,22 +338,18 @@ DOTRACE("Bitmap::grRender");
 // accessors //
 ///////////////
 
-Gfx::Rect<double> Bitmap::grGetBoundingBox(Gfx::Canvas& canvas) const
+void Bitmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Bitmap::grGetBoundingBox");
 
   // Get the corners in screen coordinates
 
-  Gfx::Vec2<int> bottom_left = canvas.screenFromWorld(Gfx::Vec2<double>());
+  Gfx::Vec2<int> bottom_left = bbox.canvas.screenFromWorld(Gfx::Vec2<double>());
   Gfx::Vec2<int> top_right = bottom_left + (size() * getZoom());
 
-  Gfx::Rect<double> bbox;
+  bbox.cube.merge(Gfx::Vec2<double>());
 
-  bbox.setBottomLeft(Gfx::Vec2<double>());
-
-  bbox.setTopRight(canvas.worldFromScreen(top_right));
-
-  return bbox;
+  bbox.cube.merge(bbox.canvas.worldFromScreen(top_right));
 }
 
 Gfx::Vec2<int> Bitmap::size() const

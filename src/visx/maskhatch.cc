@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Nov 13 13:01:18 2002
+// written: Tue Nov 19 13:46:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 
+#include "gx/bbox.h"
 #include "gx/rect.h"
 
 #include "io/ioproxy.h"
@@ -105,11 +106,11 @@ void MaskHatch::update()
   setPixelBorder(itsLineWidth/2 + 2);
 }
 
-Gfx::Rect<double> MaskHatch::grGetBoundingBox(Gfx::Canvas&) const
+void MaskHatch::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MaskHatch::grGetBoundingBox");
 
-  return Gfx::RectLBWH<double>(0.0, 0.0, 1.0, 1.0);
+  bbox.cube.merge(Gfx::RectLBWH<double>(0.0, 0.0, 1.0, 1.0));
 }
 
 void MaskHatch::grRender(Gfx::Canvas& canvas) const

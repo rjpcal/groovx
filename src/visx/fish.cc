@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Sep 12 14:29:41 2002
+// written: Tue Nov 19 13:40:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "gfx/canvas.h"
 
-#include "gx/rect.h"
+#include "gx/bbox.h"
 #include "gx/rgbacolor.h"
 #include "gx/vec3.h"
 
@@ -435,11 +435,12 @@ DOTRACE("Fish::readCoordFile");
     }
 }
 
-Gfx::Rect<double> Fish::grGetBoundingBox(Gfx::Canvas&) const
+void Fish::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Fish::grGetBoundingBox");
 
-  return Gfx::RectLBWH<double>(-0.75, -0.5, 1.5, 1.0);
+  bbox.cube.merge(Gfx::Vec2<double>(-0.75, -0.5));
+  bbox.cube.merge(Gfx::Vec2<double>(+0.75, +0.5));
 }
 
 void Fish::grRender(Gfx::Canvas& canvas) const

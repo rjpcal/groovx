@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Tue Nov 19 13:41:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "gfx/canvas.h"
 
-#include "gx/rect.h"
+#include "gx/bbox.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -99,12 +99,12 @@ DOTRACE("FixPt::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-Gfx::Rect<double> FixPt::grGetBoundingBox(Gfx::Canvas&) const
+void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("FixPt::grGetBoundingBox");
 
-  return Gfx::RectLBWH<double>(-itsLength/2.0, -itsLength/2.0,
-                               itsLength, itsLength);
+  bbox.cube.merge(Gfx::Vec2<double>(-itsLength/2.0, -itsLength/2.0));
+  bbox.cube.merge(Gfx::Vec2<double>(+itsLength/2.0, +itsLength/2.0));
 }
 
 void FixPt::grRender(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Sep 25 19:02:37 2002
+// written: Tue Nov 19 13:33:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ public:
   static const FieldMap& classFields();
 
 protected:
-  virtual Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
 
   virtual void grRender(Gfx::Canvas& canvas) const;
 

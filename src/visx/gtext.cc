@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Nov 13 22:08:25 2002
+// written: Tue Nov 19 13:45:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 #include "gfx/gxcache.h"
 #include "gfx/gxfont.h"
 #include "gfx/gxscaler.h"
+
+#include "gx/bbox.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -152,11 +154,13 @@ DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth;
 }
 
-Gfx::Rect<double> Gtext::grGetBoundingBox(Gfx::Canvas& canvas) const
+void Gtext::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gtext::grGetBoundingBox");
 
-  return itsFont->sizeOf(itsText.c_str(), canvas);
+  Gfx::Rect<double> rect = itsFont->sizeOf(itsText.c_str(), bbox.canvas);
+
+  bbox.cube.merge(rect);
 }
 
 void Gtext::setFont(fstring name)

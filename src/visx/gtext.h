@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Nov 13 21:44:33 2002
+// written: Tue Nov 19 13:33:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public:
   fstring getFont() const;
 
 protected:
-  virtual Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
 
   virtual void grRender(Gfx::Canvas& canvas) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Nov 13 13:11:55 2002
+// written: Tue Nov 19 13:46:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 
+#include "gx/bbox.h"
 #include "gx/rect.h"
 #include "gx/vec3.h"
 
@@ -436,11 +437,11 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> MorphyFace::grGetBoundingBox(Gfx::Canvas&) const
+void MorphyFace::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MorphyFace::grGetBoundingBox");
 
-  Gfx::Rect<double> bbox;
+  Gfx::Rect<double> rect;
 
   Bezier4 xbezier_top(-1.0, -itsTopWidth, itsTopWidth, 1.0);
   Bezier4 xbezier_bottom(1.0, itsBottomWidth, -itsBottomWidth, -1.0);
@@ -454,12 +455,12 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   dbgEvalNL(3, max_width);
 
-  bbox.left()   = -max_width      * itsFaceWidth * (1 + itsHairWidth);
-  bbox.right()  =  max_width      * itsFaceWidth * (1 + itsHairWidth);
-  bbox.top()    =  itsTopHeight * (1 + itsHairWidth);
-  bbox.bottom() =  itsBottomHeight;
+  rect.left()   = -max_width      * itsFaceWidth * (1 + itsHairWidth);
+  rect.right()  =  max_width      * itsFaceWidth * (1 + itsHairWidth);
+  rect.top()    =  itsTopHeight * (1 + itsHairWidth);
+  rect.bottom() =  itsBottomHeight;
 
-  return bbox;
+  bbox.cube.merge(rect);
 }
 
 static const char vcid_morphyface_cc[] = "$Header$";

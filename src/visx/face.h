@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Sep 25 19:01:26 2002
+// written: Tue Nov 19 13:33:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public:
   virtual void setCategory(int val);
 
 protected:
-  virtual Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
 
   /** Reimplements the \c GrObj pure virtual function. It renders a
       face with the appropriate parameters. */

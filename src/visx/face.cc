@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Mon Feb 25 11:11:24 2002
+// written: Tue Nov 19 13:39:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "gfx/canvas.h"
 
-#include "gx/rect.h"
+#include "gx/bbox.h"
 #include "gx/vec3.h"
 
 #include "io/ioproxy.h"
@@ -288,17 +288,12 @@ DOTRACE("Face::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> Face::grGetBoundingBox(Gfx::Canvas&) const
+void Face::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Face::grGetBoundingBox");
 
-  Gfx::Rect<double> bounding_box;
-  bounding_box.left() = -0.7;
-  bounding_box.right() = 0.7;
-  bounding_box.bottom() = 0.2 + 0.75*(-1.7-0.2);
-  bounding_box.top() = 0.2 + 0.75*(1.4-0.2);
-
-  return bounding_box;
+  bbox.cube.merge(Gfx::Vec2<double>(-0.7, 0.2 + 0.75*(-1.7-0.2)));
+  bbox.cube.merge(Gfx::Vec2<double>(+0.7, 0.2 + 0.75*(+1.4-0.2)));
 }
 
 int Face::category() const

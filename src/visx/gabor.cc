@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Nov 13 13:10:28 2002
+// written: Tue Nov 19 13:44:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 
+#include "gx/bbox.h"
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
 #include "gx/vec2.h"
@@ -153,13 +154,13 @@ DOTRACE("getLogContrast");
   return (itsContrast > 0.0) ? std::log10(itsContrast) : -10.0;
 }
 
-Gfx::Rect<double> Gabor::grGetBoundingBox(Gfx::Canvas& canvas) const
+void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
   Gfx::Vec2<double> world_origin;
 
-  Gfx::Vec2<int> screen_origin = canvas.screenFromWorld(world_origin);
+  Gfx::Vec2<int> screen_origin = bbox.canvas.screenFromWorld(world_origin);
 
   Gfx::Vec2<int> size(itsResolution * itsPointSize,
                       itsResolution * itsPointSize);
@@ -168,7 +169,9 @@ DOTRACE("Gabor::grGetBoundingBox");
   screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
                           size.x(), size.y());
 
-  return canvas.worldFromScreen(screen_rect);
+  Gfx::Rect<double> world_rect = bbox.canvas.worldFromScreen(screen_rect);
+
+  bbox.cube.merge(world_rect);
 }
 
 void Gabor::grRender(Gfx::Canvas& canvas) const

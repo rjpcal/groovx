@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Thu Nov 14 19:11:35 2002
+// written: Tue Nov 19 13:44:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -157,11 +157,24 @@ public:
       }
   }
 
+  void merge(const Gfx::Vec2<V>& p)
+  {
+    if (p.x() < xx0) xx0 = p.x(); else if (p.x() > xx1) xx1 = p.x();
+    if (p.y() < yy0) yy0 = p.y(); else if (p.y() > yy1) yy1 = p.y();
+    if (V(0)  < zz0) zz0 = V(0);  else if (V(0)  > zz1) zz1 = V(0);
+  }
+
   void merge(const Gfx::Vec3<V>& p)
   {
     if (p.x() < xx0) xx0 = p.x(); else if (p.x() > xx1) xx1 = p.x();
     if (p.y() < yy0) yy0 = p.y(); else if (p.y() > yy1) yy1 = p.y();
     if (p.z() < zz0) zz0 = p.z(); else if (p.z() > zz1) zz1 = p.z();
+  }
+
+  void merge(const Gfx::Rect<V>& r)
+  {
+    merge(r.bottomLeft());
+    merge(r.topRight());
   }
 
   void debugDump() const
