@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Fri Nov 10 17:03:56 2000
+// written: Tue Dec  5 16:01:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@
 namespace {
 
 void exitHandler(ClientData clientData) {
-DOTRACE("exitHandler");
+DOTRACE("TclPkg-exitHandler");
   Tcl::TclPkg* pkg = static_cast<Tcl::TclPkg*>(clientData);
   DebugEvalNL(typeid(*pkg).name());
   delete pkg;
@@ -64,7 +64,6 @@ public:
 
   slink_list<shared_ptr<int> > ownedInts;
   slink_list<shared_ptr<double> > ownedDoubles;
-  slink_list<shared_ptr<char*> > ownedCstrings;
 };
 
 Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
@@ -75,8 +74,7 @@ Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
   itsVersion(version ? version : ""),
   itsInitStatus(TCL_OK),
   ownedInts(),
-  ownedDoubles(),
-  ownedCstrings()
+  ownedDoubles()
 {
 DOTRACE("Tcl::TclPkg::Impl::Impl");
   if ( !itsPkgName.empty() && !itsVersion.empty() ) {
@@ -86,10 +84,10 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
 	 // uppercase, all others lowercase.
 	 std::string pkgname = itsPkgName;
 
-	 pkgname[0] = toupper(pkgname[0]);
+	 pkgname[0] = char(toupper(pkgname[0]));
 	 
 	 for (size_t i = 1; i < pkgname.length(); ++i) {
-		pkgname[i] = tolower(pkgname[i]);
+		pkgname[i] = char(tolower(pkgname[i]));
 	 }
 
 	 // Fix up itsVersion to remove any extraneous char's (such as
@@ -107,10 +105,6 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
 
 Tcl::TclPkg::Impl::~Impl() {
 DOTRACE("Tcl::TclPkg::Impl::~Impl");
-  while ( !(ownedCstrings.empty()) ) {
- 	 delete [] *(ownedCstrings.front());
- 	 ownedCstrings.pop_front();
-  }
 }
 
 Tcl::TclPkg::TclPkg(Tcl_Interp* interp,
@@ -195,13 +189,6 @@ DOTRACE("Tcl::TclPkg::linkVar double");
 	 throw TclError();
 }
 
-void Tcl::TclPkg::linkVar(const char* varName, char*& var) throw (Tcl::TclError) {
-DOTRACE("Tcl::TclPkg::linkVar char*");
-  DebugEvalNL(varName);
-  if (Tcl_LinkString(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
-	 throw TclError();
-}
-
 void Tcl::TclPkg::linkVarCopy(const char* varName, int var) throw (Tcl::TclError) {
 DOTRACE("Tcl::TclPkg::linkVarCopy int");
   DebugEvalNL(varName);
@@ -221,17 +208,6 @@ DOTRACE("Tcl::TclPkg::linkVarCopy double");
 	 throw TclError();
 }
 
-void Tcl::TclPkg::linkVarCopy(const char* varName, const char* var) throw (Tcl::TclError) {
-DOTRACE("Tcl::TclPkg::linkVarCopy char*");
-  DebugEvalNL(varName);
-  char* copy = new char[strlen(var)+1];
-  strcpy(copy, var);
-  shared_ptr<char*> copyptr(new char* (copy));
-  if (Tcl_LinkString(itsImpl->itsInterp, varName,
-							copyptr.get(), TCL_LINK_READ_ONLY) != TCL_OK)
-	 throw TclError();
-}
-
 void Tcl::TclPkg::linkConstVar(const char* varName, int& var) throw (Tcl::TclError) {
 DOTRACE("Tcl::TclPkg::linkConstVar int");
   DebugEvalNL(varName);
@@ -244,14 +220,6 @@ void Tcl::TclPkg::linkConstVar(const char* varName, double& var) throw (Tcl::Tcl
 DOTRACE("Tcl::TclPkg::linkConstVar double");
   DebugEvalNL(varName);
   if (Tcl_LinkDouble(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
-		!= TCL_OK)
-	 throw TclError();
-}
-
-void Tcl::TclPkg::linkConstVar(const char* varName, char*& var) throw (Tcl::TclError) {
-DOTRACE("Tcl::TclPkg::linkConstVar char*");
-  DebugEvalNL(varName);
-  if (Tcl_LinkString(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
 		!= TCL_OK)
 	 throw TclError();
 }
