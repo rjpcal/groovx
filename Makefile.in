@@ -220,6 +220,7 @@ $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
 
 PKG_LIB_DEPS :=					\
 $(exec_prefix)/lib/libDeepTcl$(LIB_EXT)		\
+$(exec_prefix)/lib/libDeepNub$(LIB_EXT)		\
 $(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
 # Common dependencies for all package libraries:
@@ -257,7 +258,7 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
-		--modules "Visx,Gfx,Tcl,IO,Gx,System,Util,Nub"
+		--modules "Visx,Gfx,Tcl,IO,Gx,Util,Nub"
 
 $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
@@ -274,9 +275,6 @@ include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 # requires that there be no undefined symbols when creating a shared
 # library, and that in turn requires that each shared library be linked
 # against all its prerequisites.
-
-$(exec_prefix)/lib/libDeepSystem$(LIB_EXT): \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
 $(exec_prefix)/lib/libDeepNub$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
@@ -298,12 +296,10 @@ $(exec_prefix)/lib/libDeepGfx$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepSystem$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepNub$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 
 $(exec_prefix)/lib/libDeepVisx$(LIB_EXT): \
-	$(exec_prefix)/lib/libDeepSystem$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepGfx$(LIB_EXT) \
