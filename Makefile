@@ -76,7 +76,6 @@ CPPFLAGS += -I$(SRC)
 ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
-	@mkdir -p $(LOGS) $(dir $@)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
 	time $(CXX) $(ALL_CXXFLAGS) \
@@ -227,7 +226,7 @@ check:
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
 
-benchmarks: $(EXECUTABLE) $(LOGS)/.timestamp
+benchmarks: $(EXECUTABLE)
 	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
 
 # Remove all backups, temporaries, and coredumps
@@ -241,10 +240,10 @@ cleaner: clean
 	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
 
 # Count the lines in all source files
-count: $(LOGS)/.timestamp
+count:
 	wc $(ALL_SOURCES) $(ALL_HEADERS) | tee $(LOGS)/count
 
-count_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+count_sort: $(ALL_SOURCES) $(ALL_HEADERS)
 	wc $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/count_sort
 
 docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
@@ -256,11 +255,11 @@ H_TAGS: $(ALL_HEADERS)
 	find $(SRC) -name \*.h | etags - -o $@
 
 # Count the number of non-commented source lines
-ncsl: $(LOGS)/.timestamp
+ncsl:
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | tee $(LOGS)/ncsl
 
 # Count the number of non-commented source lines and sort
-ncsl_sort: $(LOGS)/.timestamp
+ncsl_sort:
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/ncsl_sort
 
 obj_sizes:
