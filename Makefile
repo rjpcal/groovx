@@ -106,7 +106,7 @@ ifeq ($(PLATFORM),i686)
 
 	DEFAULT_MODE := debug
 
-	AUDIO_LIB :=
+	AUDIO_LIB := -lesd -laudiofile
 	ZSTREAM_LIB := -lzstream
 endif
 
