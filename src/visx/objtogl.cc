@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 19:02:14 2002
+// written: Mon Sep 16 19:21:09 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -178,13 +178,13 @@ public:
     defAction("destroy", &Toglet::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
     def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
-    defAttrib("height", &Toglet::height, &Toglet::setHeight);
+    defAttrib("height", &Togl::height, &Togl::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
-    defAction("loadDefaultFont", &Toglet::loadDefaultFont);
-    defSetter("loadFont", &Toglet::loadFont);
-    defSetter("loadFonti", &Toglet::loadFonti);
-    defGetter("pathname", &Toglet::pathname);
-    defGetter("pixelsPerInch", &Toglet::pixelsPerInch);
+    defAction("loadDefaultFont", &Togl::loadDefaultFont);
+    defSetter("loadFont", &Togl::loadBitmapFont);
+    defSetter("loadFonti", &Togl::loadBitmapFonti);
+    defGetter("pathname", &Togl::pathname);
+    defGetter("pixelsPerInch", &Togl::pixelsPerInch);
     defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
     defSetter("pixelsPerUnit", "item_id(s) scale", &Toglet::setPixelsPerUnit);
     def("setMinRect", "uid left top right bottom", &Toglet::setMinRectLTRB);
@@ -197,7 +197,7 @@ public:
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);
     defGetter("usingFixedScale", &Toglet::usingFixedScale);
-    defAttrib("width", &Toglet::width, &Toglet::setWidth);
+    defAttrib("width", &Togl::width, &Togl::setWidth);
 
     defAction("hook", &Tcl::TkWidget::hook);
 

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 19:08:46 2002
+// written: Mon Sep 16 19:29:03 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -205,6 +205,8 @@ public:
   shared_ptr<ToglOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
 
+  int itsFontListBase;
+
   bool itsUpdatePending;
   bool itsShutdownRequested;
 
@@ -237,6 +239,8 @@ public:
   void queryColor(unsigned int color_index, Color& color) const;
 
   void useLayer(Togl::Layer layer);
+
+  void loadFontList(GLuint newListBase);
 
   Window windowId() const { return Tk_WindowId(itsTkWin); }
 
@@ -283,6 +287,8 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsDisplay(0),
   itsOpts(new ToglOpts),
   itsGlx(0),
+
+  itsFontListBase(0),
 
   itsUpdatePending(false),
   itsShutdownRequested(false),
@@ -659,6 +665,25 @@ DOTRACE("Togl::Impl::useLayer");
     }
 }
 
+void Togl::Impl::loadFontList(GLuint newListBase)
+{
+DOTRACE("Togl::Impl::loadFontList");
+  // Check if font loading succeeded...
+  if (newListBase == 0)
+    {
+      throw Util::Error("unable to load font");
+    }
+
+  // ... otherwise unload the current font
+  if (itsFontListBase > 0)
+    {
+      GLUtil::unloadBitmapFont(itsFontListBase);
+    }
+
+  // ... and point to the new font
+  itsFontListBase = newListBase;
+}
+
 void Togl::Impl::eventProc(XEvent* eventPtr)
 {
 DOTRACE("Togl::Impl::eventProc");
@@ -870,15 +895,23 @@ Togl::Color Togl::queryColor(unsigned int color_index) const
 void Togl::queryColor(unsigned int color_index, Color& color) const
   { rep->queryColor(color_index, color); }
 
-GLuint Togl::loadBitmapFont( const char *fontname ) const
-  { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin), fontname); }
+void Togl::loadDefaultFont() const
+{
+  loadBitmapFont(0);
+}
 
-GLuint Togl::loadBitmapFonti( int fontnumber ) const
-  { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
-                                  GLUtil::NamedFont(fontnumber)); }
+void Togl::loadBitmapFont(const char* fontname) const
+{
+DOTRACE("Togl::loadBitmapFont");
+  rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin), fontname));
+}
 
-void Togl::unloadBitmapFont( GLuint fontbase ) const
-  { GLUtil::unloadBitmapFont(fontbase); }
+void Togl::loadBitmapFonti(int fontnumber) const
+{
+DOTRACE("Togl::loadBitmapFonti");
+  rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
+                                           GLUtil::NamedFont(fontnumber)));
+}
 
 
 void Togl::overlayDisplayFunc(Togl::OverlayCallback* proc)
