@@ -2,7 +2,7 @@
 // iostl.cc
 // Rob Peters
 // created: Sat Mar 13 15:21:33 1999
-// written: Tue Mar 16 19:40:14 1999
+// written: Thu Apr  8 18:00:45 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,8 @@ IOResult serializeVecInt(ostream &os, const vector<int>& vec) {
   for (int i = 0; i < vec.size(); i++) {
     os << vec[i] << sep;
   }
-  return checkStream(os);
+  if (os.bad()) throw OutputError(typeid(*this).name());
+  return IO_OK;
 }
 
 IOResult deserializeVecInt(istream &is, vector<int>& vec) {
@@ -30,7 +31,8 @@ IOResult deserializeVecInt(istream &is, vector<int>& vec) {
   for (int i = 0; i < size; i++) {
     is >> vec[i];
   }
-  return checkStream(is);
+  if (is.bad()) throw InputError(typeid(*this).name());
+  return IO_OK;
 }
 
 static const char vcid_iostl_cc[] = "$Header$";
