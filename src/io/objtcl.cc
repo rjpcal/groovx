@@ -201,7 +201,7 @@ DOTRACE("Obj_Init");
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Obj", "$Revision$");
   Tcl::defGenericObjCmds<Util::Object>(pkg);
 
-  pkg->defGetter("refCount", &Util::Object::refCount);
+  pkg->defGetter("refCount", &Util::Object::dbg_RefCount);
   pkg->defAction("incrRefCount", &Util::Object::incrRefCount);
   pkg->defAction("decrRefCount", &Util::Object::decrRefCount);
 

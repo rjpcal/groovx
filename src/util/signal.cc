@@ -145,7 +145,7 @@ DOTRACE("Util::SignalBase::doEmit");
            /* incr in loop */)
         {
           dbgEval(3, typeid(**ii).name());
-          dbgEvalNL(3, (*ii)->refCount());
+          dbgEvalNL(3, (*ii)->dbg_RefCount());
           dbgEvalNL(3, (*ii)->exists());
           if ((*ii)->exists())
             {
