@@ -47,7 +47,6 @@
 #include "util/error.h"
 #include "util/iter.h"
 #include "util/log.h"
-#include "util/minivec.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -176,9 +175,7 @@ DOTRACE("ExptDriver::readFrom");
 
   reader.readValue("currentBlockIdx", iolegacySequencePos());
 
-  iolegacyElements().clear();
-  IO::ReadUtils::readObjectSeq<Element>(
-           reader, "blocks", std::back_inserter(iolegacyElements()));
+  ElementContainer::legacyReadElements(reader, "blocks");
 
   if (svid < 4)
     {
@@ -209,9 +206,7 @@ DOTRACE("ExptDriver::writeTo");
 
   writer.writeValue("currentBlockIdx", iolegacySequencePos());
 
-  IO::WriteUtils::writeObjectSeq(writer, "blocks",
-                                 iolegacyElements().begin(),
-                                 iolegacyElements().end());
+  ElementContainer::legacyWriteElements(writer, "blocks");
 
   writer.writeOwnedObject("doWhenComplete", rep->doWhenComplete);
 }

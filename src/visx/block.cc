@@ -38,7 +38,6 @@
 #include "io/writeutils.h"
 
 #include "util/log.h"
-#include "util/minivec.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -93,8 +92,7 @@ DOTRACE("Block::readFrom");
 
   int svid = reader.ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
-  IO::ReadUtils::readObjectSeq<Element>
-    (reader, "trialSeq", std::back_inserter(iolegacyElements()));
+  ElementContainer::legacyReadElements(reader, "trialSeq");
 
   reader.readValue("randSeed", iolegacyRandSeed());
   reader.readValue("curTrialSeqdx", iolegacySequencePos());
@@ -117,9 +115,7 @@ DOTRACE("Block::writeTo");
   writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
                               "Try grsh0.8a7");
 
-  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-                                 iolegacyElements().begin(),
-                                 iolegacyElements().end());
+  ElementContainer::legacyWriteElements(writer, "trialSeq");
 
   writer.writeValue("randSeed", iolegacyRandSeed());
   writer.writeValue("curTrialSeqdx", iolegacySequencePos());

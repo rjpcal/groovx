@@ -360,8 +360,28 @@ DOTRACE("ElementContainer::ensureNotComplete");
     }
 }
 
-minivec<Util::Ref<Element> >& ElementContainer::iolegacyElements() const
-{ return rep->elements; }
+void ElementContainer::legacyReadElements(IO::Reader& reader,
+                                          const char* name)
+{
+DOTRACE("ElementContainer::legacyReadElements");
+
+  minivec<Ref<Element> > new_elements;
+
+  IO::ReadUtils::readObjectSeq<Element>
+    (reader, name, std::back_inserter(new_elements));
+
+  rep->elements.swap(new_elements);
+}
+
+void ElementContainer::legacyWriteElements(IO::Writer& writer,
+                                           const char* name) const
+{
+DOTRACE("ElementContainer::legacyWriteElements");
+
+  IO::WriteUtils::writeObjectSeq(writer, name,
+                                 rep->elements.begin(),
+                                 rep->elements.end());
+}
 
 int& ElementContainer::iolegacyRandSeed() const
 { return rep->randSeed; }

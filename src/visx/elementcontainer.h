@@ -39,8 +39,6 @@ namespace Util
   template <class T> class SoftRef;
 }
 
-template <class T> class minivec;
-
 /// A base class for all composite visual experiment elements.
 /** These might include "blocks" and "experiments". */
 class ElementContainer: public Element
@@ -132,8 +130,11 @@ protected:
   /// Throw an exception if there are not valid children still pending.
   void ensureNotComplete() const;
 
-  /// Raw data access needed to support the legacy IO format.
-  minivec<Util::Ref<Element> >& iolegacyElements() const;
+  /// Read elements from reader.
+  void legacyReadElements(IO::Reader& reader, const char* name);
+  /// Write elements to writer.
+  void legacyWriteElements(IO::Writer& writer, const char* name) const;
+
   /// Raw data access needed to support the legacy IO format.
   int& iolegacyRandSeed() const;
   /// Raw data access needed to support the legacy IO format.
