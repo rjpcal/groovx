@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Oct 13 11:16:43 1999
+// written: Tue Oct 19 13:09:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -237,6 +237,13 @@ DOTRACE("PtrList<T>::insertAt");
   if (id >= itsVec.size()) {
     itsVec.resize(id+RESIZE_CHUNK, NULL);
   }
+
+  // Check to see if we are attempting to insert the same object that
+  // is already at location 'id'; if so, we return immediately, since
+  // nothing needs to be done (in particular, we had better not delete
+  // the "previous" object and then hold on the "new" pointer, since
+  // the "new" pointer would then be dangling).
+  if (itsVec[id] == ptr) return;
 
   delete itsVec[id];
   itsVec[id] = ptr;
