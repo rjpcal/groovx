@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 06:40:19 2001
+// written: Wed Aug 15 10:25:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,57 +162,6 @@ DOTRACE("Face::grRender");
   glMatrixMode(GL_MODELVIEW);
 
   //
-  // Set up for drawing eyes.
-  //
-
-  // Generate the eyeball scales on the basis of the eye aspect. The
-  // eye aspect should range from 0.0 to 1.0 to control the eyeball x
-  // and y scales from 0.1 to 0.185. The x and y scales are always at
-  // opposite points within this range.
-  const double eye_aspect = getEyeAspect();
-  const GLdouble eyeball_x_scale = 0.1*eye_aspect     + 0.185*(1-eye_aspect);
-  const GLdouble eyeball_y_scale = 0.1*(1-eye_aspect) + 0.185*eye_aspect;
-
-  // The absolute scale of the pupil.
-  static const GLdouble pupil_x_scale_abs = 0.07;
-  static const GLdouble pupil_y_scale_abs = 0.07;
-
-  // The scale of the pupil relative to the eyeball scale. These
-  // values are computed since it is more efficient in the drawing
-  // routine to do an additional scale for the pupils after having
-  // drawn the eyeballs, rather than to pop the modelview matrix after
-  // the eyeballs and push a new matrix for the pupils. But, maybe
-  // this is the sort of optimization that OpenGL would make on its
-  // own in a display list.
-  const GLdouble pupil_x_scale = pupil_x_scale_abs/eyeball_x_scale;
-  const GLdouble pupil_y_scale = pupil_y_scale_abs/eyeball_y_scale;
-
-  // Calculate the x position for the eyes
-  const double eye_x = Util::abs(eyeDistance())/2.0;
-
-  // Create a quadric obj to use for calling gluDisk(). This disk will
-  // be used to render the eyeballs and the pupils.
-  GLUquadricObj* qobj = gluNewQuadric();
-  gluQuadricDrawStyle(qobj, GLU_SILHOUETTE);
-  static const int num_slices = 20;
-  static const int num_loops = 1;
-  static const GLdouble outer_radius = 0.5;
-
-  // Draw eyes.
-  for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
-    {
-      glPushMatrix();
-      glTranslatef(eye_pos * eye_x, eyeHeight(), 0.0);
-      glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
-      gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-      glScalef(pupil_x_scale, pupil_y_scale, 1.0);
-      gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-      glPopMatrix();
-    }
-
-  gluDeleteQuadric(qobj);
-
-  //
   // Draw face outline.
   //
 
@@ -235,22 +184,79 @@ DOTRACE("Face::grRender");
       glEnd();
     }
 
-  //
-  // Draw nose and mouth.
-  //
+  {
+    Gfx::Canvas::StateSaver saver(canvas);
 
-  // Calculate the y positions for the top and bottom of the nose
-  // bottom always <= 0.0
-  // top always >= 0.0
-  const double nose_bottom_y = -Util::abs(noseLength())/2.0;
-  const double nose_top_y = -nose_bottom_y;
+    glTranslated(0.0, getVertOffset(), 0.0);
 
-  glBegin(GL_LINES);
-  glVertex2f(theirMouth_x[0], mouthHeight());
-  glVertex2f(theirMouth_x[1], mouthHeight());
-  glVertex2f(theirNose_x, nose_bottom_y);
-  glVertex2f(theirNose_x, nose_top_y);
-  glEnd();
+    //
+    // Set up for drawing eyes.
+    //
+
+    // Generate the eyeball scales on the basis of the eye aspect. The
+    // eye aspect should range from 0.0 to 1.0 to control the eyeball
+    // x and y scales from 0.1 to 0.185. The x and y scales are always
+    // at opposite points within this range.
+    const double eye_aspect = getEyeAspect();
+    const GLdouble eyeball_x_scale = 0.1*eye_aspect     + 0.185*(1-eye_aspect);
+    const GLdouble eyeball_y_scale = 0.1*(1-eye_aspect) + 0.185*eye_aspect;
+
+    // The absolute scale of the pupil.
+    static const GLdouble pupil_x_scale_abs = 0.07;
+    static const GLdouble pupil_y_scale_abs = 0.07;
+
+    // The scale of the pupil relative to the eyeball scale. These
+    // values are computed since it is more efficient in the drawing
+    // routine to do an additional scale for the pupils after having
+    // drawn the eyeballs, rather than to pop the modelview matrix
+    // after the eyeballs and push a new matrix for the pupils. But,
+    // maybe this is the sort of optimization that OpenGL would make
+    // on its own in a display list.
+    const GLdouble pupil_x_scale = pupil_x_scale_abs/eyeball_x_scale;
+    const GLdouble pupil_y_scale = pupil_y_scale_abs/eyeball_y_scale;
+
+    // Calculate the x position for the eyes
+    const double eye_x = Util::abs(eyeDistance())/2.0;
+
+    // Create a quadric obj to use for calling gluDisk(). This disk
+    // will be used to render the eyeballs and the pupils.
+    GLUquadricObj* qobj = gluNewQuadric();
+    gluQuadricDrawStyle(qobj, GLU_SILHOUETTE);
+    static const int num_slices = 20;
+    static const int num_loops = 1;
+    static const GLdouble outer_radius = 0.5;
+
+    // Draw eyes.
+    for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
+      {
+        Gfx::Canvas::StateSaver eyesaver(canvas);
+
+        glTranslated(eye_pos * eye_x, eyeHeight(), 0.0);
+        glScaled(eyeball_x_scale, eyeball_y_scale, 1.0);
+        gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+        glScaled(pupil_x_scale, pupil_y_scale, 1.0);
+        gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+      }
+
+    gluDeleteQuadric(qobj);
+
+    //
+    // Draw nose and mouth.
+    //
+
+    // Calculate the y positions for the top and bottom of the nose
+    // bottom always <= 0.0
+    // top always >= 0.0
+    const double nose_bottom_y = -Util::abs(noseLength())/2.0;
+    const double nose_top_y = -nose_bottom_y;
+
+    glBegin(GL_LINES);
+    glVertex2d(theirMouth_x[0], mouthHeight());
+    glVertex2d(theirMouth_x[1], mouthHeight());
+    glVertex2d(theirNose_x, nose_bottom_y);
+    glVertex2d(theirNose_x, nose_top_y);
+    glEnd();
+  }
 
   if (have_antialiasing)
     {
