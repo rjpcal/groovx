@@ -397,11 +397,17 @@ namespace Tcl
   inline shared_ptr<Command> makeGenericCmd
                                (Tcl::Interp& interp, Functor f,
                                 const char* cmd_name,
-                                const char* usage, int nargs)
+                                const char* usage, int nargs,
+                                const char* src_file_name,
+                                int src_line_no)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
     return Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
-                         cmd_name, usage, nargs+1);
+                         cmd_name, usage, nargs+1,
+                         -1 /*default for objc_max*/,
+                         false /*default for exact_objc*/,
+                         src_file_name,
+                         src_line_no);
   }
 
 
@@ -412,12 +418,18 @@ namespace Tcl
   inline shared_ptr<Command> makeGenericVecCmd
                                (Tcl::Interp& interp, Functor f,
                                 const char* cmd_name, const char* usage,
-                                int nargs, unsigned int keyarg)
+                                int nargs, unsigned int keyarg,
+                                const char* src_file_name,
+                                int src_line_no)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
     shared_ptr<Command> cmd =
       Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
-                    cmd_name, usage, nargs+1);
+                    cmd_name, usage, nargs+1,
+                    -1 /*default for objc_max*/,
+                    false /*default for exact_objc*/,
+                    src_file_name,
+                    src_line_no);
     Tcl::useVecDispatch(*cmd, keyarg);
     return cmd;
   }
@@ -434,10 +446,14 @@ namespace Tcl
   template <class Func>
   inline shared_ptr<Command> makeCmd
                               (Tcl::Interp& interp, Func f,
-                               const char* cmd_name, const char* usage)
+                               const char* cmd_name, const char* usage,
+                               const char* src_file_name,
+                               int src_line_no)
   {
-    return makeGenericCmd(interp, buildTclFunctor(f), cmd_name, usage,
-                          Util::FuncTraits<Func>::numArgs);
+    return makeGenericCmd
+      (interp, buildTclFunctor(f), cmd_name, usage,
+       Util::FuncTraits<Func>::numArgs,
+       src_file_name, src_line_no);
   }
 
 // ####################################################################
@@ -447,10 +463,14 @@ namespace Tcl
   inline shared_ptr<Command> makeVecCmd
                               (Tcl::Interp& interp, Func f,
                                const char* cmd_name, const char* usage,
-                               unsigned int keyarg=1)
+                               unsigned int keyarg /*default is 1*/,
+                               const char* src_file_name,
+                               int src_line_no)
   {
-    return makeGenericVecCmd(interp, buildTclFunctor(f), cmd_name, usage,
-                             Util::FuncTraits<Func>::numArgs, keyarg);
+    return makeGenericVecCmd
+      (interp, buildTclFunctor(f), cmd_name, usage,
+       Util::FuncTraits<Func>::numArgs, keyarg,
+       src_file_name, src_line_no);
   }
 
 } // end namespace Tcl

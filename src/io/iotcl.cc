@@ -49,22 +49,24 @@ DOTRACE("Io_Init");
 
   PKG_CREATE(interp, "IO", "$Revision$");
   pkg->inheritPkg("Obj");
-  Tcl::defGenericObjCmds<IO::IoObject>(pkg);
+  Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
 
-  pkg->defVec( "writeLGX", "objref(s)", IO::writeLGX );
-  pkg->defVec( "readLGX", "objref(s) string(s)", IO::readLGX );
+  const unsigned int keyarg = 1;
 
-  pkg->defVec( "writeASW", "objref(s)", IO::writeASW );
-  pkg->defVec( "readASW", "objref(s) string(s)", IO::readASW );
-  pkg->def( "saveASW", "objref filename", IO::saveASW );
-  pkg->def( "loadASW", "objref filename", IO::loadASW );
-  pkg->def( "retrieveASW", "filename", IO::retrieveASW );
+  pkg->defVec( "writeLGX", "objref(s)", IO::writeLGX, keyarg, SRC_POS );
+  pkg->defVec( "readLGX", "objref(s) string(s)", IO::readLGX, keyarg, SRC_POS );
 
-  pkg->defVec( "writeGVX", "objref(s)", IO::writeGVX );
-  pkg->def( "saveGVX", "objref filename", IO::saveGVX );
-  pkg->def( "loadGVX", "filename", IO::loadGVX );
+  pkg->defVec( "writeASW", "objref(s)", IO::writeASW, keyarg, SRC_POS );
+  pkg->defVec( "readASW", "objref(s) string(s)", IO::readASW, keyarg, SRC_POS );
+  pkg->def( "saveASW", "objref filename", IO::saveASW, SRC_POS );
+  pkg->def( "loadASW", "objref filename", IO::loadASW, SRC_POS );
+  pkg->def( "retrieveASW", "filename", IO::retrieveASW, SRC_POS );
 
-  pkg->def( "xmlDebug", "filename", IO::xmlDebug );
+  pkg->defVec( "writeGVX", "objref(s)", IO::writeGVX, keyarg, SRC_POS );
+  pkg->def( "saveGVX", "objref filename", IO::saveGVX, SRC_POS );
+  pkg->def( "loadGVX", "filename", IO::loadGVX, SRC_POS );
+
+  pkg->def( "xmlDebug", "filename", IO::xmlDebug, SRC_POS );
 
   PKG_RETURN;
 }
@@ -77,11 +79,12 @@ DOTRACE("Outputfile_Init");
   PKG_CREATE(interp, "OutputFile", "$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defCreator<OutputFile>(pkg);
-  Tcl::defGenericObjCmds<IO::IoObject>(pkg);
+  Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
 
   pkg->defAttrib("filename",
                  &OutputFile::getFilename,
-                 &OutputFile::setFilename);
+                 &OutputFile::setFilename,
+                 SRC_POS);
 
   PKG_RETURN;
 }

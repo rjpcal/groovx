@@ -77,14 +77,14 @@ int Gtrace_Init(Tcl_Interp* interp)
 DOTRACE("Gtrace_Init");
 
   PKG_CREATE(interp, "Gtrace", "$Revision$");
-  pkg->def("::gtrace", "on_off", &Util::Trace::setGlobalTrace);
-  pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace);
-  pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
-  pkg->def("maxDepth", "", &Util::Trace::getMaxLevel);
-  pkg->def("::dbglevelg", "global_level", &Debug::setGlobalLevel);
-  pkg->def("::dbglevel", "key level", &setOneLevel);
-  pkg->def("::dbglevelc", "filename level", &setOneLevelc);
-  pkg->def("::dbgkey", "filename", &Debug::lookupKey);
+  pkg->def("::gtrace", "on_off", &Util::Trace::setGlobalTrace, SRC_POS);
+  pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace, SRC_POS);
+  pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel, SRC_POS);
+  pkg->def("maxDepth", "", &Util::Trace::getMaxLevel, SRC_POS);
+  pkg->def("::dbglevelg", "global_level", &Debug::setGlobalLevel, SRC_POS);
+  pkg->def("::dbglevel", "key level", &setOneLevel, SRC_POS);
+  pkg->def("::dbglevelc", "filename level", &setOneLevelc, SRC_POS);
+  pkg->def("::dbgkey", "filename", &Debug::lookupKey, SRC_POS);
 
   PKG_RETURN;
 }
@@ -95,8 +95,8 @@ int Prof_Init(Tcl_Interp* interp)
 DOTRACE("Prof_Init");
 
   PKG_CREATE(interp, "Prof", "$Revision$");
-  pkg->def("summary", "", &profSummary);
-  pkg->def("reset", "", &Util::Prof::resetAllProfData);
+  pkg->def("summary", "", &profSummary, SRC_POS);
+  pkg->def("reset", "", &Util::Prof::resetAllProfData, SRC_POS);
 
   PKG_RETURN;
 }

@@ -77,13 +77,17 @@ namespace Tcl
     }
   };
 
-  void defGenericObjCmds(Pkg* pkg, shared_ptr<ObjCaster> caster);
+  void defGenericObjCmds(Pkg* pkg, shared_ptr<ObjCaster> caster,
+                         const char* src_file_name,
+                         int src_line_no);
 
   template <class C>
-  void defGenericObjCmds(Pkg* pkg)
+  void defGenericObjCmds(Pkg* pkg,
+                         const char* src_file_name,
+                         int src_line_no)
   {
     shared_ptr<ObjCaster> caster(new CObjCaster<C>);
-    defGenericObjCmds(pkg, caster);
+    defGenericObjCmds(pkg, caster, src_file_name, src_line_no);
   }
 
   template <class C>

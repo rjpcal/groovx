@@ -55,7 +55,10 @@ public:
                               const char* name) throw();
 
   /// Find the command for the given name, making a new one if necessary.
-  static CommandGroup* make(Tcl::Interp& interp, const fstring& cmd_name);
+  static CommandGroup* make(Tcl::Interp& interp,
+                            const fstring& cmd_name,
+                            const char* src_file_name,
+                            int src_line_no);
 
   void add(shared_ptr<Tcl::Command> p);
 
@@ -70,7 +73,8 @@ private:
   class Impl;
   Impl* const rep;
 
-  CommandGroup(Tcl::Interp& interp, const fstring& cmd_name);
+  CommandGroup(Tcl::Interp& interp, const fstring& cmd_name,
+               const char* src_file_name, int src_line_no);
   ~CommandGroup() throw();
 
   CommandGroup(const CommandGroup&); // not implemented

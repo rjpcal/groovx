@@ -138,12 +138,14 @@ shared_ptr<Tcl::Command> Tcl::Command::make(
           Tcl::Interp& interp,
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
-          int objc_min, int objc_max, bool exact_objc)
+          int objc_min, int objc_max, bool exact_objc,
+          const char* src_file_name, int src_line_no)
 {
 DOTRACE("Tcl::Command::make");
 
   CommandGroup* const group =
-    Tcl::CommandGroup::make(interp, cmd_name);
+    Tcl::CommandGroup::make(interp, cmd_name,
+                            src_file_name, src_line_no);
 
   Assert(group != 0);
 
@@ -153,12 +155,13 @@ DOTRACE("Tcl::Command::make");
                                        exact_objc) );
 
   // We don't want to have to keep 'group' as a member of Tcl::Command
-  // since it involves circular references -- Tcl::CommandGroup keeps a
-  // list of Tcl::Command objects, so we'd prefer not to have a
-  // back-reference here. If it becomes necessary to keep a back-reference,
-  // then there needs to be a way for Tcl::CommandGroup to notify its
-  // Tcl::Command list that it is destructing, so that the Tcl::Command
-  // objects can "forget" their back-reference.
+  // since it involves circular references -- Tcl::CommandGroup keeps
+  // a list of Tcl::Command objects, so we'd prefer not to have a
+  // back-reference here. If it becomes necessary to keep a
+  // back-reference, then there needs to be a way for
+  // Tcl::CommandGroup to notify its Tcl::Command list that it is
+  // destructing, so that the Tcl::Command objects can "forget" their
+  // back-reference.
   group->add(cmd);
 
   return cmd;

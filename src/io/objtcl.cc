@@ -175,14 +175,15 @@ DOTRACE("Objdb_Init");
 
   pkg->onExit( &dbClearOnExit );
 
-  pkg->def( "clear", 0, &dbClear );
-  pkg->def( "purge", 0, &dbPurge );
-  pkg->def( "release", 0, &dbRelease );
-  pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects );
-  pkg->def( "loadObjects", "filename", Util::bindLast(&loadObjects, ALL) );
-  pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects );
+  pkg->def( "clear", 0, &dbClear, SRC_POS );
+  pkg->def( "purge", 0, &dbPurge, SRC_POS );
+  pkg->def( "release", 0, &dbRelease, SRC_POS );
+  pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
+  pkg->def( "loadObjects", "filename", Util::bindLast(&loadObjects, ALL), SRC_POS );
+  pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
   pkg->def( "saveObjects", "objids filename",
-            Util::bindLast(&saveObjects, true) );
+            Util::bindLast(&saveObjects, true),
+            SRC_POS );
 
   PKG_RETURN;
 }
@@ -193,20 +194,21 @@ int Obj_Init(Tcl_Interp* interp)
 DOTRACE("Obj_Init");
 
   PKG_CREATE(interp, "Obj", "$Revision$");
-  Tcl::defGenericObjCmds<Util::Object>(pkg);
+  Tcl::defGenericObjCmds<Util::Object>(pkg, SRC_POS);
 
-  pkg->defGetter("refCount", &Util::Object::dbg_RefCount);
-  pkg->defAction("incrRefCount", &Util::Object::incrRefCount);
-  pkg->defAction("decrRefCount", &Util::Object::decrRefCount);
+  pkg->defGetter("refCount", &Util::Object::dbg_RefCount, SRC_POS);
+  pkg->defAction("incrRefCount", &Util::Object::incrRefCount, SRC_POS);
+  pkg->defAction("decrRefCount", &Util::Object::decrRefCount, SRC_POS);
 
-  pkg->defGetter( "type", "objref(s)", &Util::Object::objTypename );
-  pkg->defGetter( "realType", "objref(s)", &Util::Object::realTypename );
+  pkg->defGetter( "type", "objref(s)", &Util::Object::objTypename, SRC_POS );
+  pkg->defGetter( "realType", "objref(s)", &Util::Object::realTypename, SRC_POS );
 
-  pkg->def( "new", "typename", &objNew );
+  pkg->def( "new", "typename", &objNew, SRC_POS );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
-             Util::bindLast(&objNewArgs, Tcl::Interp(interp)) );
-  pkg->def( "newarr", "typename array_size=1", &objNewArr );
-  pkg->def( "delete", "objref(s)", &objDelete );
+            Util::bindLast(&objNewArgs, Tcl::Interp(interp)),
+            SRC_POS );
+  pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
+  pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
   pkg->eval("proc new {args} { eval Obj::new $args }\n"
             "\n"

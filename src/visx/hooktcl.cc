@@ -331,22 +331,22 @@ int Hook_Init(Tcl_Interp* interp)
 {
   PKG_CREATE(interp, "Hook", "$Revision$");
 
-  pkg->def( "::hook", "", HookTcl::hook );
-  pkg->def( "::memUsage", 0, HookTcl::memUsage );
+  pkg->def( "::hook", "", HookTcl::hook, SRC_POS );
+  pkg->def( "::memUsage", 0, HookTcl::memUsage, SRC_POS );
 
   Tcl_RegisterObjType(&genericObjType);
 
-  pkg->def( "::myobj", "val", MyObj::make );
-  pkg->def( "::myinfo", "obj", MyObj::info );
+  pkg->def( "::myobj", "val", MyObj::make, SRC_POS );
+  pkg->def( "::myinfo", "obj", MyObj::info, SRC_POS );
 
-  pkg->def( "::getData", 0, getData );
-  pkg->def( "::setData", "list", setData );
+  pkg->def( "::getData", 0, getData, SRC_POS );
+  pkg->def( "::setData", "list", setData, SRC_POS );
 
-  pkg->def( "::getArray", 0, getArray );
-  pkg->def( "::getArraySize", 0, getArraySize );
-  pkg->def( "::setArray", "list", setArray );
+  pkg->def( "::getArray", 0, getArray, SRC_POS );
+  pkg->def( "::getArraySize", 0, getArraySize, SRC_POS );
+  pkg->def( "::setArray", "list", setArray, SRC_POS );
 
-  pkg->def( "::dictGet", "dict key", dictGet );
+  pkg->def( "::dictGet", "dict key", dictGet, SRC_POS );
 
   PKG_RETURN;
 }

@@ -40,15 +40,22 @@ namespace Tcl
 {
   class Pkg;
 
-  void defField(Pkg* pkg, const Field& field);
-  void defAllFields(Pkg* pkg, const FieldMap& fmap);
+  void defField(Pkg* pkg, const Field& field,
+                const char* src_file_name,
+                int src_line_no);
+  void defAllFields(Pkg* pkg, const FieldMap& fmap,
+                    const char* src_file_name,
+                    int src_line_no);
 
   template <class C>
-  void defFieldContainer(Pkg* pkg)
+  void defFieldContainer(Pkg* pkg,
+                         const char* src_file_name,
+                         int src_line_no)
   {
-    Tcl::defGenericObjCmds<C>(pkg);
+    Tcl::defGenericObjCmds<C>(pkg, src_file_name, src_line_no);
 
-    Tcl::defAllFields(pkg, C::classFields());
+    Tcl::defAllFields(pkg, C::classFields(),
+                      src_file_name, src_line_no);
   }
 }
 

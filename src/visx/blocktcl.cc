@@ -45,7 +45,7 @@ DOTRACE("Block_Init");
 
   PKG_CREATE(interp, "Block", "$Revision$");
   pkg->inheritPkg("ElementContainer");
-  Tcl::defGenericObjCmds<Block>(pkg);
+  Tcl::defGenericObjCmds<Block>(pkg, SRC_POS);
   Tcl::defCreator<Block>(pkg);
 
   Tcl::defTracing(pkg, Block::tracer);

@@ -61,7 +61,8 @@ namespace
 class Tcl::CommandGroup::Impl
 {
 public:
-  Impl(Tcl::Interp& intp, const fstring& cmd_name) :
+  Impl(Tcl::Interp& intp, const fstring& cmd_name,
+       const char* src_file_name, int src_line_no) :
     interp(intp),
     cmdToken(Tcl_CreateObjCommand(interp.intp(),
                                   cmd_name.c_str(),
@@ -74,7 +75,7 @@ public:
     initialCmdName(getFullCommandName(intp, cmdToken)),
     cmdList(),
     profName("tcl/", cmd_name),
-    prof(profName.c_str())
+    prof(profName.c_str(), src_file_name, src_line_no)
   {}
 
   ~Impl() throw() {}
@@ -137,8 +138,10 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
 }
 
 Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
-                                const fstring& cmd_name) :
-  rep(new Impl(interp, cmd_name))
+                                const fstring& cmd_name,
+                                const char* src_file_name,
+                                int src_line_no) :
+  rep(new Impl(interp, cmd_name, src_file_name, src_line_no))
 {
 DOTRACE("Tcl::CommandGroup::CommandGroup");
 
@@ -220,7 +223,9 @@ DOTRACE("Tcl::CommandGroup::lookup");
 }
 
 Tcl::CommandGroup* Tcl::CommandGroup::make(Tcl::Interp& interp,
-                                           const fstring& cmd_name)
+                                           const fstring& cmd_name,
+                                           const char* src_file_name,
+                                           int src_line_no)
 {
 DOTRACE("Tcl::CommandGroup::make");
   CommandGroup* const c =
@@ -230,7 +235,7 @@ DOTRACE("Tcl::CommandGroup::make");
     return c;
 
   // else...
-  return new CommandGroup(interp, cmd_name);
+  return new CommandGroup(interp, cmd_name, src_file_name, src_line_no);
 }
 
 void Tcl::CommandGroup::add(shared_ptr<Tcl::Command> p)

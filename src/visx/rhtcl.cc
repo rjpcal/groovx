@@ -152,7 +152,7 @@ DOTRACE("Responsehandler_Init");
 
   PKG_CREATE(interp, "ResponseHandler", "$Revision$");
   pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<ResponseHandler>(pkg);
+  Tcl::defGenericObjCmds<ResponseHandler>(pkg, SRC_POS);
   pkg->namespaceAlias("Rh");
 
   PKG_RETURN;
@@ -168,31 +168,39 @@ DOTRACE("Eventresponsehdlr_Init");
   pkg->inheritPkg("ResponseHandler");
   Tcl::defTracing(pkg, EventResponseHdlr::tracer);
 
-  Tcl::defGenericObjCmds<EventResponseHdlr>(pkg);
+  Tcl::defGenericObjCmds<EventResponseHdlr>(pkg, SRC_POS);
 
   pkg->defAction("abortInvalidResponses",
-                 &EventResponseHdlr::abortInvalidResponses);
+                 &EventResponseHdlr::abortInvalidResponses,
+                 SRC_POS);
   pkg->defAction("ignoreInvalidResponses",
-                 &EventResponseHdlr::ignoreInvalidResponses);
+                 &EventResponseHdlr::ignoreInvalidResponses,
+                 SRC_POS);
   pkg->defAttrib("useFeedback",
                  &EventResponseHdlr::getUseFeedback,
-                 &EventResponseHdlr::setUseFeedback);
+                 &EventResponseHdlr::setUseFeedback,
+                 SRC_POS);
   pkg->defSetter("inputResponseMap",
-                 &EventResponseHdlr::setInputResponseMap);
+                 &EventResponseHdlr::setInputResponseMap,
+                 SRC_POS);
   pkg->defAttrib("feedbackMap",
                  &EventResponseHdlr::getFeedbackMap,
-                 &EventResponseHdlr::setFeedbackMap);
+                 &EventResponseHdlr::setFeedbackMap,
+                 SRC_POS);
   pkg->defAttrib("eventSequence",
                  &EventResponseHdlr::getEventSequence,
-                 &EventResponseHdlr::setEventSequence);
+                 &EventResponseHdlr::setEventSequence,
+                 SRC_POS);
   pkg->defAttrib("bindingSubstitution",
                  &EventResponseHdlr::getBindingSubstitution,
-                 &EventResponseHdlr::setBindingSubstitution);
-  pkg->def("responseProc", "", &EventResponseHdlr::getResponseProc);
-  pkg->def("responseProc", "args body", &EventResponseHdlr::setResponseProc);
+                 &EventResponseHdlr::setBindingSubstitution,
+                 SRC_POS);
+  pkg->def("responseProc", "", &EventResponseHdlr::getResponseProc, SRC_POS);
+  pkg->def("responseProc", "args body", &EventResponseHdlr::setResponseProc, SRC_POS);
   pkg->defAttrib("maxResponses",
                  &EventResponseHdlr::getMaxResponses,
-                 &EventResponseHdlr::setMaxResponses);
+                 &EventResponseHdlr::setMaxResponses,
+                 SRC_POS);
 
   pkg->namespaceAlias("EventRh");
 
@@ -207,7 +215,7 @@ DOTRACE("Kbdresponsehdlr_Init");
   PKG_CREATE(interp, "KbdResponseHdlr", "$Revision$");
   Tcl::defCreator<KbdResponseHdlr>(pkg);
   pkg->inheritPkg("EventResponseHdlr");
-  Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg);
+  Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg, SRC_POS);
 
   pkg->namespaceAlias("KbdRh");
 
@@ -222,7 +230,7 @@ DOTRACE("Nullresponsehdlr_Init");
   PKG_CREATE(interp, "NullResponseHdlr", "$Revision$");
   Tcl::defCreator<NullResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
-  Tcl::defGenericObjCmds<NullResponseHdlr>(pkg);
+  Tcl::defGenericObjCmds<NullResponseHdlr>(pkg, SRC_POS);
   pkg->namespaceAlias("NullRh");
 
   PKG_RETURN;
@@ -235,10 +243,12 @@ DOTRACE("Serialrh_Init");
 
   PKG_CREATE(interp, "SerialRh", "$Revision$");
   pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
-            Util::bindFirst(&startSerial, interp) );
+            Util::bindFirst(&startSerial, interp),
+            SRC_POS );
   pkg->def( "SerialRh::SerialRh", "",
             Util::bindLast(Util::bindFirst(&startSerial, interp),
-                           "/dev/tty0p0") );
+                           "/dev/tty0p0"),
+            SRC_POS );
 
   PKG_RETURN;
 }

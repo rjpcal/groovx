@@ -44,9 +44,9 @@ DOTRACE("Gabor_Init");
 
   PKG_CREATE(interp, "Gabor", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<Gabor>(pkg);
+  Tcl::defFieldContainer<Gabor>(pkg, SRC_POS);
   Tcl::defCreator<Gabor>(pkg);
-  pkg->def("saveImage", "objref filename", &Gabor::saveImage);
+  pkg->def("saveImage", "objref filename", &Gabor::saveImage, SRC_POS);
 
   PKG_RETURN;
 }
@@ -58,11 +58,12 @@ DOTRACE("Gaborarray_Init");
 
   PKG_CREATE(interp, "GaborArray", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<GaborArray>(pkg);
+  Tcl::defFieldContainer<GaborArray>(pkg, SRC_POS);
   Tcl::defCreator<GaborArray>(pkg);
-  pkg->def("saveImage", "objref filename", &GaborArray::saveImage);
+  pkg->def("saveImage", "objref filename", &GaborArray::saveImage, SRC_POS);
   pkg->def("saveContourOnlyImage", "objref filename",
-           &GaborArray::saveContourOnlyImage);
+           &GaborArray::saveContourOnlyImage,
+           SRC_POS);
 
   PKG_RETURN;
 }

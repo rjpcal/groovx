@@ -58,29 +58,37 @@ DOTRACE("Timinghdlr_Init");
   PKG_CREATE(interp, "TimingHdlr", "$Revision$");
   Tcl::defCreator<TimingHdlr>(pkg);
   pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<TimingHdlr>(pkg);
+  Tcl::defGenericObjCmds<TimingHdlr>(pkg, SRC_POS);
 
   pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::IMMEDIATE) );
+            Util::bindLast(&addNewEvent, TimingHdlr::IMMEDIATE),
+            SRC_POS );
   pkg->def( "addStartEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::FROM_START) );
+            Util::bindLast(&addNewEvent, TimingHdlr::FROM_START),
+            SRC_POS );
   pkg->def( "addResponseEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::FROM_RESPONSE) );
+            Util::bindLast(&addNewEvent, TimingHdlr::FROM_RESPONSE),
+            SRC_POS );
   pkg->def( "addAbortEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::FROM_ABORT) );
+            Util::bindLast(&addNewEvent, TimingHdlr::FROM_ABORT),
+            SRC_POS );
 
   pkg->def( "addImmediateEvent", "th_id event_id",
             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::IMMEDIATE) );
+                           TimingHdlr::IMMEDIATE),
+            SRC_POS );
   pkg->def( "addStartEvent", "th_id event_id",
             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::FROM_START) );
+                           TimingHdlr::FROM_START),
+            SRC_POS );
   pkg->def( "addResponseEvent", "th_id event_id",
             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::FROM_RESPONSE) );
+                           TimingHdlr::FROM_RESPONSE),
+            SRC_POS );
   pkg->def( "addAbortEvent", "th_id event_id",
             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::FROM_ABORT) );
+                           TimingHdlr::FROM_ABORT),
+            SRC_POS );
 
   pkg->namespaceAlias("Th");
 
@@ -95,20 +103,24 @@ DOTRACE("Timinghandler_Init");
   PKG_CREATE(interp, "TimingHandler", "$Revision$");
   Tcl::defCreator<TimingHandler>(pkg);
   pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<TimingHandler>(pkg);
+  Tcl::defGenericObjCmds<TimingHandler>(pkg, SRC_POS);
 
   pkg->defAttrib("abortWait",
                  &TimingHandler::getAbortWait,
-                 &TimingHandler::setAbortWait);
+                 &TimingHandler::setAbortWait,
+                 SRC_POS);
   pkg->defAttrib("interTrialInterval",
                  &TimingHandler::getInterTrialInterval,
-                 &TimingHandler::setInterTrialInterval);
+                 &TimingHandler::setInterTrialInterval,
+                 SRC_POS);
   pkg->defAttrib("stimDur",
                  &TimingHandler::getStimDur,
-                 &TimingHandler::setStimDur);
+                 &TimingHandler::setStimDur,
+                 SRC_POS);
   pkg->defAttrib("timeout",
                  &TimingHandler::getTimeout,
-                 &TimingHandler::setTimeout);
+                 &TimingHandler::setTimeout,
+                 SRC_POS);
 
   pkg->namespaceAlias("SimpleTh");
 

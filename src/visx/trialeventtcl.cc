@@ -80,9 +80,9 @@ DOTRACE("Trialevent_Init");
 
   PKG_CREATE(interp, "TrialEvent", "$Revision$");
   pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<TrialEvent>(pkg);
+  Tcl::defGenericObjCmds<TrialEvent>(pkg, SRC_POS);
 
-  pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
+  pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay, SRC_POS);
 
   addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
   addEventType(interp, &makeDrawEvent, "DrawEvent");
@@ -124,10 +124,12 @@ DOTRACE("Filewriteevent_Init");
 
   pkg->defAttrib("file",
                  &FileWriteEvent::getFile,
-                 &FileWriteEvent::setFile);
+                 &FileWriteEvent::setFile,
+                 SRC_POS);
   pkg->defAttrib("byte",
                  &FileWriteEvent::getByte,
-                 &FileWriteEvent::setByte);
+                 &FileWriteEvent::setByte,
+                 SRC_POS);
 
   PKG_RETURN;
 }
@@ -141,8 +143,8 @@ DOTRACE("Genericevent_Init");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<GenericEvent>(pkg);
 
-  pkg->defGetter("callback", &GenericEvent::getCallback);
-  pkg->defSetter("callback", &GenericEvent::setCallback);
+  pkg->defGetter("callback", &GenericEvent::getCallback, SRC_POS);
+  pkg->defSetter("callback", &GenericEvent::setCallback, SRC_POS);
 
   PKG_RETURN;
 }
@@ -156,11 +158,11 @@ DOTRACE("Multievent_Init");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<MultiEvent>(pkg);
 
-  pkg->defGetter("events", &MultiEvent::getEvents);
-  pkg->def("addEvent", "<this> event_id", &MultiEvent::addEvent);
-  pkg->def("addEvents", "<this> event_id(s)", &addEvents);
-  pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt);
-  pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents);
+  pkg->defGetter("events", &MultiEvent::getEvents, SRC_POS);
+  pkg->def("addEvent", "<this> event_id", &MultiEvent::addEvent, SRC_POS);
+  pkg->def("addEvents", "<this> event_id(s)", &addEvents, SRC_POS);
+  pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt, SRC_POS);
+  pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents, SRC_POS);
 
   PKG_RETURN;
 }

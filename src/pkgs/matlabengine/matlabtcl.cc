@@ -147,10 +147,10 @@ int Matlabengine_Init(Tcl_Interp* interp)
 DOTRACE("Matlabengine_Init");
 
   PKG_CREATE(interp, "MatlabEngine", "$Revision$");
-  Tcl::defGenericObjCmds<MatlabEngine>(pkg);
+  Tcl::defGenericObjCmds<MatlabEngine>(pkg, SRC_POS);
 
-  pkg->def( "eval", "engine_id command", &MatlabEngine::evalString );
-  pkg->def( "get", "engine_id mtx_name", &MatlabEngine::getMtx );
+  pkg->def( "eval", "engine_id command", &MatlabEngine::evalString, SRC_POS );
+  pkg->def( "get", "engine_id mtx_name", &MatlabEngine::getMtx, SRC_POS );
 
   pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
   pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");

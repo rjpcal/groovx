@@ -62,7 +62,7 @@ DOTRACE("Face_Init");
   PKG_CREATE(interp, "Face", "$Revision$");
 
   pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<Face>(pkg);
+  Tcl::defFieldContainer<Face>(pkg, SRC_POS);
   Tcl::defCreator<Face>(pkg);
 
   Util::ObjFactory::theOne().registerCreatorFunc( &makeInnerFace,
@@ -81,7 +81,7 @@ DOTRACE("Cloneface_Init");
 
   PKG_CREATE(interp, "CloneFace", "$Revision$");
   pkg->inheritPkg("Face");
-  Tcl::defFieldContainer<CloneFace>(pkg);
+  Tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
   Tcl::defCreator<CloneFace>(pkg);
 
   PKG_RETURN;

@@ -43,7 +43,7 @@ DOTRACE("Fixpt_Init");
 
   PKG_CREATE(interp, "FixPt", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<FixPt>(pkg);
+  Tcl::defFieldContainer<FixPt>(pkg, SRC_POS);
   Tcl::defCreator<FixPt>(pkg);
 
   PKG_RETURN;

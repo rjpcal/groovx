@@ -46,25 +46,25 @@ DOTRACE("Tkwidget_Init");
   PKG_CREATE(interp, "TkWidget", "$Revision$");
 
   pkg->inheritPkg("Obj");
-  Tcl::defGenericObjCmds<Tcl::TkWidget>(pkg);
+  Tcl::defGenericObjCmds<Tcl::TkWidget>(pkg, SRC_POS);
 
-  pkg->def( "bind", "event_sequence binding_script", &Tcl::TkWidget::bind );
+  pkg->def( "bind", "event_sequence binding_script", &Tcl::TkWidget::bind, SRC_POS );
 
-  pkg->defAttrib("cursor", &Tcl::TkWidget::getCursor, &Tcl::TkWidget::setCursor);
-  pkg->defAction("destroy", &Tcl::TkWidget::destroyWidget);
-  pkg->defAction("grabKeyboard", &Tcl::TkWidget::grabKeyboard);
-  pkg->defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
-  pkg->defAction("maximize", &Tcl::TkWidget::maximize);
-  pkg->defAction("minimize", &Tcl::TkWidget::minimize);
-  pkg->defGetter("pathname", &Tcl::TkWidget::pathname);
-  pkg->defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
-  pkg->defAction("unpack", &Tcl::TkWidget::unpack);
-  pkg->def("repack", "pack_args", &Tcl::TkWidget::repack);
-  pkg->def("warpPointer", "objref x y", &Tcl::TkWidget::warpPointer);
-  pkg->defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
-  pkg->defAction("winInfo", &Tcl::TkWidget::winInfo);
+  pkg->defAttrib("cursor", &Tcl::TkWidget::getCursor, &Tcl::TkWidget::setCursor, SRC_POS);
+  pkg->defAction("destroy", &Tcl::TkWidget::destroyWidget, SRC_POS);
+  pkg->defAction("grabKeyboard", &Tcl::TkWidget::grabKeyboard, SRC_POS);
+  pkg->defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight, SRC_POS);
+  pkg->defAction("maximize", &Tcl::TkWidget::maximize, SRC_POS);
+  pkg->defAction("minimize", &Tcl::TkWidget::minimize, SRC_POS);
+  pkg->defGetter("pathname", &Tcl::TkWidget::pathname, SRC_POS);
+  pkg->defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch, SRC_POS);
+  pkg->defAction("unpack", &Tcl::TkWidget::unpack, SRC_POS);
+  pkg->def("repack", "pack_args", &Tcl::TkWidget::repack, SRC_POS);
+  pkg->def("warpPointer", "objref x y", &Tcl::TkWidget::warpPointer, SRC_POS);
+  pkg->defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth, SRC_POS);
+  pkg->defAction("winInfo", &Tcl::TkWidget::winInfo, SRC_POS);
 
-  pkg->defAction("hook", &Tcl::TkWidget::hook);
+  pkg->defAction("hook", &Tcl::TkWidget::hook, SRC_POS);
 
   PKG_RETURN;
 }

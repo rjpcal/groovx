@@ -184,79 +184,100 @@ public:
 
 
   template <class Func>
-  inline void def(const char* cmd_name, const char* usage, Func f)
+  inline void def(const char* cmd_name, const char* usage, Func f,
+                  const char* src_file_name, int src_line_no)
   {
-    makeCmd(interp(), f, makePkgCmdName(cmd_name), usage);
+    makeCmd(interp(), f, makePkgCmdName(cmd_name), usage,
+            src_file_name, src_line_no);
   }
 
   template <class Func>
   inline void defVec(const char* cmd_name, const char* usage, Func f,
-                     unsigned int keyarg=1)
+                     unsigned int keyarg /*default is 1*/,
+                     const char* src_file_name, int src_line_no)
   {
-    makeVecCmd(interp(), f, makePkgCmdName(cmd_name), usage, keyarg);
+    makeVecCmd(interp(), f, makePkgCmdName(cmd_name), usage, keyarg,
+               src_file_name, src_line_no);
   }
 
   template <class Func>
   inline void defRaw(const char* cmd_name, unsigned int nargs,
-                     const char* usage, Func f)
+                     const char* usage, Func f,
+                     const char* src_file_name, int src_line_no)
   {
-    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name), usage, nargs);
+    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name), usage, nargs,
+                   src_file_name, src_line_no);
   }
 
   template <class Func>
   inline void defVecRaw(const char* cmd_name, unsigned int nargs,
                         const char* usage, Func f,
-                        unsigned int keyarg=1)
+                        unsigned int keyarg /*default is 1*/,
+                        const char* src_file_name, int src_line_no)
   {
     makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
-                      usage, nargs, keyarg);
+                      usage, nargs, keyarg,
+                      src_file_name, src_line_no);
   }
 
   template <class C>
-  void defAction(const char* cmd_name, void (C::* actionFunc) ())
+  void defAction(const char* cmd_name, void (C::* actionFunc) (),
+                 const char* src_file_name, int src_line_no)
   {
-    defVec( cmd_name, actionUsage(""), actionFunc );
+    defVec( cmd_name, actionUsage(""), actionFunc, 1,
+            src_file_name, src_line_no );
   }
 
   template <class C>
-  void defAction(const char* cmd_name, void (C::* actionFunc) () const)
+  void defAction(const char* cmd_name, void (C::* actionFunc) () const,
+                 const char* src_file_name, int src_line_no)
   {
-    defVec( cmd_name, actionUsage(""), actionFunc );
+    defVec( cmd_name, actionUsage(""), actionFunc, 1,
+            src_file_name, src_line_no );
   }
 
   template <class C, class T>
   void defGetter(const char* cmd_name, const char* usage,
-                 T (C::* getterFunc) () const)
+                 T (C::* getterFunc) () const,
+                 const char* src_file_name, int src_line_no)
   {
-    defVec( cmd_name, getterUsage(usage), getterFunc );
+    defVec( cmd_name, getterUsage(usage), getterFunc, 1,
+            src_file_name, src_line_no );
   }
 
   template <class C, class T>
-  void defGetter(const char* cmd_name, T (C::* getterFunc) () const)
+  void defGetter(const char* cmd_name, T (C::* getterFunc) () const,
+                 const char* src_file_name, int src_line_no)
   {
-    defVec( cmd_name, getterUsage(""), getterFunc );
+    defVec( cmd_name, getterUsage(""), getterFunc, 1,
+            src_file_name, src_line_no );
   }
 
   template <class C, class T>
   void defSetter(const char* cmd_name, const char* usage,
-                 void (C::* setterFunc) (T))
+                 void (C::* setterFunc) (T),
+                 const char* src_file_name, int src_line_no)
   {
-    defVec( cmd_name, setterUsage(usage), setterFunc );
+    defVec( cmd_name, setterUsage(usage), setterFunc, 1,
+            src_file_name, src_line_no );
   }
 
   template <class C, class T>
-  void defSetter(const char* cmd_name, void (C::* setterFunc) (T))
+  void defSetter(const char* cmd_name, void (C::* setterFunc) (T),
+                 const char* src_file_name, int src_line_no)
   {
-    defVec( cmd_name, setterUsage(""), setterFunc );
+    defVec( cmd_name, setterUsage(""), setterFunc, 1,
+            src_file_name, src_line_no );
   }
 
   template <class C, class T>
   void defAttrib(const char* cmd_name,
                  T (C::* getterFunc) () const,
-                 void (C::* setterFunc) (T))
+                 void (C::* setterFunc) (T),
+                 const char* src_file_name, int src_line_no)
   {
-    defGetter( cmd_name, getterFunc );
-    defSetter( cmd_name, setterFunc );
+    defGetter( cmd_name, getterFunc, src_file_name, src_line_no );
+    defSetter( cmd_name, setterFunc, src_file_name, src_line_no );
   }
 
   /// Control whether packages should be verbose as they start up.
@@ -317,6 +338,11 @@ catch(...)                                      \
   pkg->handleLiveException();                   \
 }                                               \
 return 1;
+
+
+/// This macro can be used to capture the current source filename and line-number.
+#define SRC_POS  __FILE__, __LINE__
+
 
 static const char vcid_tclpkg_h[] = "$Header$";
 #endif // !TCLPKG_H_DEFINED

@@ -55,31 +55,39 @@ DOTRACE("Trial_Init");
   pkg->inheritPkg("Element");
   Tcl::defTracing(pkg, Trial::tracer);
 
-  Tcl::defFieldContainer<Trial>(pkg);
+  Tcl::defFieldContainer<Trial>(pkg, SRC_POS);
   Tcl::defCreator<Trial>(pkg);
 
-  pkg->defSetter("addNode", &Trial::addNode);
-  pkg->defGetter("avgResponse", &Trial::avgResponse);
-  pkg->defGetter("avgRespTime", &Trial::avgRespTime);
-  pkg->defAction("clearObjs", &Trial::clearObjs);
-  pkg->defAction("clearResponses", &Trial::clearResponses);
+  pkg->defSetter("addNode", &Trial::addNode, SRC_POS);
+  pkg->defGetter("avgResponse", &Trial::avgResponse, SRC_POS);
+  pkg->defGetter("avgRespTime", &Trial::avgRespTime, SRC_POS);
+  pkg->defAction("clearObjs", &Trial::clearObjs, SRC_POS);
+  pkg->defAction("clearResponses", &Trial::clearResponses, SRC_POS);
   pkg->defAttrib("correctResponse",
-                 &Trial::getCorrectResponse, &Trial::setCorrectResponse);
+                 &Trial::getCorrectResponse,
+                 &Trial::setCorrectResponse,
+                 SRC_POS);
   pkg->defAttrib("currentNode",
-                 &Trial::getCurrentNode, &Trial::setCurrentNode);
-  pkg->defAttrib("info", &Trial::vxInfo, &Trial::setInfo);
-  pkg->defGetter("lastResponse", &Trial::lastResponse);
-  pkg->defAction("nextNode", &Trial::trNextNode);
-  pkg->defGetter("nodes", &Trial::nodes);
-  pkg->defGetter("numResponses", &Trial::numResponses);
-  pkg->defGetter("responses", &Trial::responses);
+                 &Trial::getCurrentNode,
+                 &Trial::setCurrentNode,
+                 SRC_POS);
+  pkg->defAttrib("info", &Trial::vxInfo, &Trial::setInfo, SRC_POS);
+  pkg->defGetter("lastResponse", &Trial::lastResponse, SRC_POS);
+  pkg->defAction("nextNode", &Trial::trNextNode, SRC_POS);
+  pkg->defGetter("nodes", &Trial::nodes, SRC_POS);
+  pkg->defGetter("numResponses", &Trial::numResponses, SRC_POS);
+  pkg->defGetter("responses", &Trial::responses, SRC_POS);
   pkg->defAttrib("responseHdlr",
-                 &Trial::getResponseHandler, &Trial::setResponseHandler);
-  pkg->defGetter("stdInfo", &Trial::stdInfo);
+                 &Trial::getResponseHandler,
+                 &Trial::setResponseHandler,
+                 SRC_POS);
+  pkg->defGetter("stdInfo", &Trial::stdInfo, SRC_POS);
   pkg->defAttrib("timingHdlr",
-                 &Trial::getTimingHdlr, &Trial::setTimingHdlr);
+                 &Trial::getTimingHdlr,
+                 &Trial::setTimingHdlr,
+                 SRC_POS);
   // FIXME this is redundant with Element::trialType
-  pkg->defAttrib("type", &Trial::trialType, &Trial::setType);
+  pkg->defAttrib("type", &Trial::trialType, &Trial::setType, SRC_POS);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 

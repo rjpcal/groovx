@@ -103,7 +103,8 @@ public:
           Tcl::Interp& interp,
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
-          int objc_min=0, int objc_max=-1, bool exact_objc=false);
+          int objc_min, int objc_max, bool exact_objc,
+          const char* src_file_name, int src_line_no);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   ~Command() throw();

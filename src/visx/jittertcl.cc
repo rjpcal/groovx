@@ -46,10 +46,11 @@ DOTRACE("Jitter_Init");
 
   PKG_CREATE(interp, "Jitter", "$Revision$");
   pkg->inheritPkg("GxTransform");
-  Tcl::defGenericObjCmds<Jitter>(pkg);
+  Tcl::defGenericObjCmds<Jitter>(pkg, SRC_POS);
 
   pkg->defVec( "setJitter", "posid x_jitter y_jitter r_jitter",
-               &Jitter::setJitter );
+               &Jitter::setJitter, 1,
+               SRC_POS );
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Jitter::make);
 

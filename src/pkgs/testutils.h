@@ -95,7 +95,7 @@ namespace
 #define TEST_REQUIRE_APPROX(expr1, expr2, tol) \
   testRequireApproxImpl(expr1, expr2, tol, #expr1, #expr2, __FILE__, __LINE__)
 
-#define DEF_TEST(pkg, func) pkg->def(#func, "", &func)
+#define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
 static const char vcid_testutils_h[] = "$Header$";
 #endif // !TESTUTILS_H_DEFINED

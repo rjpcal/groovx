@@ -293,8 +293,10 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Prof::Prof(const char* s)  throw():
-  itsFuncName(s)
+Util::Prof::Prof(const char* s, const char* fname, int lineno)  throw():
+  itsFuncName(s),
+  itsSourceFileName(fname),
+  itsSourceLineNo(lineno)
 {
   reset();
 
@@ -356,6 +358,16 @@ void Util::Prof::addChildTime(const Util::Time& t) throw()
 const char* Util::Prof::name() const throw()
 {
   return itsFuncName;
+}
+
+const char* Util::Prof::srcFileName() const throw()
+{
+  return itsSourceFileName;
+}
+
+int Util::Prof::srcLineNo() const throw()
+{
+  return itsSourceLineNo;
 }
 
 double Util::Prof::totalTime() const throw()

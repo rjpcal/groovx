@@ -43,7 +43,7 @@ DOTRACE("Maskhatch_Init");
 
   PKG_CREATE(interp, "MaskHatch", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<MaskHatch>(pkg);
+  Tcl::defFieldContainer<MaskHatch>(pkg, SRC_POS);
   Tcl::defCreator<MaskHatch>(pkg);
 
   PKG_RETURN;

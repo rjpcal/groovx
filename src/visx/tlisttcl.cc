@@ -50,25 +50,33 @@ DOTRACE("Tlist_Init");
 
   PKG_CREATE(interp, "Tlist", "$Revision$");
   pkg->def( "createPreview", "objids num_cols_hint use_text_labels",
-            &TlistUtils::createPreview );
+            &TlistUtils::createPreview,
+            SRC_POS );
   pkg->def( "createPreview", "objids",
-            Util::bindLast(Util::bindLast(&TlistUtils::createPreview, true), -1) );
+            Util::bindLast(Util::bindLast(&TlistUtils::createPreview,
+                                          true), -1),
+            SRC_POS );
 
   pkg->def( "dealSingles", "objid(s) posid",
-            &TlistUtils::dealSingles );
+            &TlistUtils::dealSingles,
+            SRC_POS );
   pkg->def( "dealPairs", "objids1 objids2 posid1 posid2",
-            &TlistUtils::dealPairs );
+            &TlistUtils::dealPairs,
+            SRC_POS );
   pkg->def( "dealTriads", "objids posid1 posid2 posid3",
-            &TlistUtils::dealTriads );
+            &TlistUtils::dealTriads,
+            SRC_POS );
 
   pkg->def( "loadObjidFile", "objid_file objids posids num_lines=-1",
-            &TlistUtils::loadObjidFile );
+            &TlistUtils::loadObjidFile,
+            SRC_POS );
   pkg->def( "loadObjidFile", "objid_file objids posids",
-            Util::bindLast(&TlistUtils::loadObjidFile, -1) );
+            Util::bindLast(&TlistUtils::loadObjidFile, -1),
+            SRC_POS );
 
-  pkg->def( "write_responses", "filename", &TlistUtils::writeResponses );
-  pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix );
-  pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab );
+  pkg->def( "write_responses", "filename", &TlistUtils::writeResponses, SRC_POS );
+  pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix, SRC_POS );
+  pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab, SRC_POS );
 
   PKG_RETURN;
 }

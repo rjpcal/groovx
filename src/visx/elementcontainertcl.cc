@@ -64,24 +64,25 @@ DOTRACE("Elementcontainer_Init");
 
   PKG_CREATE(interp, "ElementContainer", "$Revision$");
   pkg->inheritPkg("Element");
-  Tcl::defGenericObjCmds<Element>(pkg);
+  Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 
   pkg->def("addElement", "objref element_id",
-           Util::bindLast(Util::memFunc(&ElementContainer::addElement), 1));
+           Util::bindLast(Util::memFunc(&ElementContainer::addElement), 1),
+           SRC_POS);
 
   pkg->def("addElements", "objref element_id(s)",
-           Util::bindLast(&addElementIds, 1));
+           Util::bindLast(&addElementIds, 1), SRC_POS);
 
   pkg->def("addElements", "objref element_id(s) repeat=1",
-           &addElementIds);
+           &addElementIds, SRC_POS);
 
-  pkg->defGetter("currentElement", &ElementContainer::currentElement);
-  pkg->defGetter("isComplete", &ElementContainer::isComplete);
-  pkg->defGetter("numCompleted", &ElementContainer::numCompleted);
-  pkg->defGetter("numElements", &ElementContainer::numElements);
-  pkg->defAction("clearElements", &ElementContainer::clearElements);
-  pkg->defSetter("shuffle", "objref rand_seed", &ElementContainer::shuffle);
-  pkg->defGetter("elements", &ElementContainer::getElements);
+  pkg->defGetter("currentElement", &ElementContainer::currentElement, SRC_POS);
+  pkg->defGetter("isComplete", &ElementContainer::isComplete, SRC_POS);
+  pkg->defGetter("numCompleted", &ElementContainer::numCompleted, SRC_POS);
+  pkg->defGetter("numElements", &ElementContainer::numElements, SRC_POS);
+  pkg->defAction("clearElements", &ElementContainer::clearElements, SRC_POS);
+  pkg->defSetter("shuffle", "objref rand_seed", &ElementContainer::shuffle, SRC_POS);
+  pkg->defGetter("elements", &ElementContainer::getElements, SRC_POS);
 
   PKG_RETURN;
 }

@@ -80,27 +80,27 @@ DOTRACE("Toglet_Init");
   pkg->onExit( &clearOnExit );
 
   pkg->inheritPkg("TkWidget");
-  Tcl::defGenericObjCmds<Toglet>(pkg);
+  Tcl::defGenericObjCmds<Toglet>(pkg, SRC_POS);
 
   Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::make );
   Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::makeToplevel,
                                                   "TopToglet" );
 
-  pkg->def( "current", "toglet_id", &Toglet::setCurrent );
-  pkg->def( "current", 0, &Toglet::getCurrent );
-  pkg->def( "defaultParent", "parent", &Toglet::defaultParent );
-  pkg->def( "see", "gxnode_id", &see );
+  pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
+  pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );
+  pkg->def( "defaultParent", "parent", &Toglet::defaultParent, SRC_POS );
+  pkg->def( "see", "gxnode_id", &see, SRC_POS );
 
-  pkg->defSetter("allowRefresh", &Toglet::allowRefresh);
-  pkg->defSetter("animate", "objref(s) frames_per_second", &Toglet::animate);
-  pkg->defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
-  pkg->defAction("clearscreen", &Toglet::fullClearscreen);
-  pkg->defSetter("hold", "objref(s) hold_on?", &Toglet::setHold);
-  pkg->defSetter("setVisible", "objref(s) visibility", &Toglet::setVisibility);
-  pkg->defAttrib("size", &Toglet::size, &Toglet::setSize);
-  pkg->defAction("swapBuffers", &Toglet::swapBuffers);
-  pkg->defAction("takeFocus", &Toglet::takeFocus);
-  pkg->defAction("undraw", &Toglet::undraw);
+  pkg->defSetter("allowRefresh", &Toglet::allowRefresh, SRC_POS);
+  pkg->defSetter("animate", "objref(s) frames_per_second", &Toglet::animate, SRC_POS);
+  pkg->defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera, SRC_POS);
+  pkg->defAction("clearscreen", &Toglet::fullClearscreen, SRC_POS);
+  pkg->defSetter("hold", "objref(s) hold_on?", &Toglet::setHold, SRC_POS);
+  pkg->defSetter("setVisible", "objref(s) visibility", &Toglet::setVisibility, SRC_POS);
+  pkg->defAttrib("size", &Toglet::size, &Toglet::setSize, SRC_POS);
+  pkg->defAction("swapBuffers", &Toglet::swapBuffers, SRC_POS);
+  pkg->defAction("takeFocus", &Toglet::takeFocus, SRC_POS);
+  pkg->defAction("undraw", &Toglet::undraw, SRC_POS);
 
   Toglet::make();
 

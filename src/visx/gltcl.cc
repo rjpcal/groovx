@@ -491,74 +491,74 @@ DOTRACE("Gl_Init");
 
   using Util::bindFirst;
 
-  pkg->def( "::glBegin", "mode", glBegin );
-  pkg->def( "::glBlendFunc", "sfactor dfactor", glBlendFunc );
-  pkg->def( "::glCallList", "list", glCallList );
-  pkg->def( "::glClear", "mask_bits", glClear );
-  pkg->def( "::glClearColor", "red green blue alpha", glClearColor );
-  pkg->def( "::glClearIndex", "index", glClearIndex );
-  pkg->def( "::glColor", "red green blue", glColor3d );
-  pkg->def( "::glColor", "red green blue alpha", glColor4d );
-  pkg->def( "::glDeleteLists", "list_id range", glDeleteLists );
-  pkg->def( "::glDisable", "capability", glDisable );
-  pkg->def( "::glDrawBuffer", "mode", glDrawBuffer );
-  pkg->def( "::glEnable", "capability", glEnable );
-  pkg->def( "::glEnd", 0, glEnd );
-  pkg->def( "::glEndList", 0, glEndList );
-  pkg->def( "::glExtensions", 0, bindFirst(GLTcl::getString, GL_EXTENSIONS));
-  pkg->def( "::glFinish", 0, glFinish );
-  pkg->def( "::glFlush", 0, glFlush );
-  pkg->def( "::glFrustum", "left right bottom top zNear zFar", glFrustum );
-  pkg->def( "::glGenLists", "range", glGenLists );
-  pkg->def( "::glGetError", 0, GLTcl::checkGL );
-  pkg->def( "::glIndexi", "index", glIndexi );
-  pkg->def( "::glIsList", "list_id", glIsList );
-  pkg->def( "::glLineWidth", "width", glLineWidth );
-  pkg->def( "::glListBase", "base", glListBase );
-  pkg->def( "::glLoadIdentity", 0, glLoadIdentity );
-  pkg->def( "::glLoadMatrix", "4x4_column_major_matrix", GLTcl::loadMatrix );
-  pkg->def( "::glMatrixMode", "mode", glMatrixMode );
-  pkg->def( "::glNewList", "list_id mode", glNewList );
-  pkg->def( "::glOrtho", "left right bottom top zNear zFar", glOrtho );
-  pkg->def( "::glPolygonMode", "face mode", glPolygonMode );
-  pkg->def( "::glPointSize", "size", glPointSize );
-  pkg->def( "::glPopMatrix", 0, glPopMatrix );
-  pkg->def( "::glPushMatrix", 0, glPushMatrix );
-  pkg->def( "::glRasterPos2d", "x y", glRasterPos2d );
-  pkg->def( "::glRenderer", 0, bindFirst(GLTcl::getString, GL_RENDERER));
-  pkg->def( "::glRotate", "angle_in_degrees x y z", glRotated );
-  pkg->def( "::glScale", "x y z", glScaled );
-  pkg->def( "::glTranslate", "x y z", glTranslated );
-  pkg->def( "::glVendor", 0, bindFirst(GLTcl::getString, GL_VENDOR));
-  pkg->def( "::glVersion", 0, bindFirst(GLTcl::getString, GL_VERSION));
-  pkg->def( "::glVertex2", "x y", glVertex2d );
-  pkg->def( "::glVertex3", "x y z", glVertex3d );
-  pkg->def( "::glVertex4", "x y z w", glVertex4d );
+  pkg->def( "::glBegin", "mode", glBegin, SRC_POS );
+  pkg->def( "::glBlendFunc", "sfactor dfactor", glBlendFunc, SRC_POS );
+  pkg->def( "::glCallList", "list", glCallList, SRC_POS );
+  pkg->def( "::glClear", "mask_bits", glClear, SRC_POS );
+  pkg->def( "::glClearColor", "red green blue alpha", glClearColor, SRC_POS );
+  pkg->def( "::glClearIndex", "index", glClearIndex, SRC_POS );
+  pkg->def( "::glColor", "red green blue", glColor3d, SRC_POS );
+  pkg->def( "::glColor", "red green blue alpha", glColor4d, SRC_POS );
+  pkg->def( "::glDeleteLists", "list_id range", glDeleteLists, SRC_POS );
+  pkg->def( "::glDisable", "capability", glDisable, SRC_POS );
+  pkg->def( "::glDrawBuffer", "mode", glDrawBuffer, SRC_POS );
+  pkg->def( "::glEnable", "capability", glEnable, SRC_POS );
+  pkg->def( "::glEnd", 0, glEnd, SRC_POS );
+  pkg->def( "::glEndList", 0, glEndList, SRC_POS );
+  pkg->def( "::glExtensions", 0, bindFirst(GLTcl::getString, GL_EXTENSIONS), SRC_POS);
+  pkg->def( "::glFinish", 0, glFinish, SRC_POS );
+  pkg->def( "::glFlush", 0, glFlush, SRC_POS );
+  pkg->def( "::glFrustum", "left right bottom top zNear zFar", glFrustum, SRC_POS );
+  pkg->def( "::glGenLists", "range", glGenLists, SRC_POS );
+  pkg->def( "::glGetError", 0, GLTcl::checkGL, SRC_POS );
+  pkg->def( "::glIndexi", "index", glIndexi, SRC_POS );
+  pkg->def( "::glIsList", "list_id", glIsList, SRC_POS );
+  pkg->def( "::glLineWidth", "width", glLineWidth, SRC_POS );
+  pkg->def( "::glListBase", "base", glListBase, SRC_POS );
+  pkg->def( "::glLoadIdentity", 0, glLoadIdentity, SRC_POS );
+  pkg->def( "::glLoadMatrix", "4x4_column_major_matrix", GLTcl::loadMatrix, SRC_POS );
+  pkg->def( "::glMatrixMode", "mode", glMatrixMode, SRC_POS );
+  pkg->def( "::glNewList", "list_id mode", glNewList, SRC_POS );
+  pkg->def( "::glOrtho", "left right bottom top zNear zFar", glOrtho, SRC_POS );
+  pkg->def( "::glPolygonMode", "face mode", glPolygonMode, SRC_POS );
+  pkg->def( "::glPointSize", "size", glPointSize, SRC_POS );
+  pkg->def( "::glPopMatrix", 0, glPopMatrix, SRC_POS );
+  pkg->def( "::glPushMatrix", 0, glPushMatrix, SRC_POS );
+  pkg->def( "::glRasterPos2d", "x y", glRasterPos2d, SRC_POS );
+  pkg->def( "::glRenderer", 0, bindFirst(GLTcl::getString, GL_RENDERER), SRC_POS);
+  pkg->def( "::glRotate", "angle_in_degrees x y z", glRotated, SRC_POS );
+  pkg->def( "::glScale", "x y z", glScaled, SRC_POS );
+  pkg->def( "::glTranslate", "x y z", glTranslated, SRC_POS );
+  pkg->def( "::glVendor", 0, bindFirst(GLTcl::getString, GL_VENDOR), SRC_POS);
+  pkg->def( "::glVersion", 0, bindFirst(GLTcl::getString, GL_VERSION), SRC_POS);
+  pkg->def( "::glVertex2", "x y", glVertex2d, SRC_POS );
+  pkg->def( "::glVertex3", "x y z", glVertex3d, SRC_POS );
+  pkg->def( "::glVertex4", "x y z w", glVertex4d, SRC_POS );
 #if defined(GL_PLATFORM_GLX)
-  pkg->def( "::glXWaitX", 0, glXWaitX );
-  pkg->def( "::glXWaitGL", 0, glXWaitGL );
+  pkg->def( "::glXWaitX", 0, glXWaitX, SRC_POS );
+  pkg->def( "::glXWaitGL", 0, glXWaitGL, SRC_POS );
 #endif
   pkg->def( "::gluLookAt", "eyeX eyeY eyeZ targX targY targZ upX upY upZ",
-            GLTcl::lookAt );
+            GLTcl::lookAt, SRC_POS );
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
-            gluPerspective );
+            gluPerspective, SRC_POS );
 
 #ifndef BROKEN_TEMPLATE_FUNCTIONS
-  pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
-  pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
-  pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
+  pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean>, SRC_POS );
+  pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble>, SRC_POS );
+  pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint>, SRC_POS );
 #else
-  pkg->def( "::glGetBoolean", "param_name", GLTcl::getBoolean );
-  pkg->def( "::glGetDouble", "param_name", GLTcl::getDouble );
-  pkg->def( "::glGetInteger", "param_name", GLTcl::getInt );
+  pkg->def( "::glGetBoolean", "param_name", GLTcl::getBoolean, SRC_POS );
+  pkg->def( "::glGetDouble", "param_name", GLTcl::getDouble, SRC_POS );
+  pkg->def( "::glGetInteger", "param_name", GLTcl::getInt, SRC_POS );
 #endif
 
-  pkg->def( "::antialias", "on_off", GLTcl::antialias );
-  pkg->def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine );
-  pkg->def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine );
-  pkg->def( "::lineInfo", 0, GLTcl::lineInfo );
-  pkg->def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum );
-  pkg->def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll );
+  pkg->def( "::antialias", "on_off", GLTcl::antialias, SRC_POS );
+  pkg->def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine, SRC_POS );
+  pkg->def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine, SRC_POS );
+  pkg->def( "::lineInfo", 0, GLTcl::lineInfo, SRC_POS );
+  pkg->def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum, SRC_POS );
+  pkg->def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll, SRC_POS );
 
   PKG_RETURN;
 }

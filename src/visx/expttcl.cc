@@ -114,28 +114,33 @@ DOTRACE("Exptdriver_Init");
   PKG_CREATE(interp, "ExptDriver", "$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defCreator<ExptDriver>(pkg);
-  Tcl::defGenericObjCmds<ExptDriver>(pkg);
+  Tcl::defGenericObjCmds<ExptDriver>(pkg, SRC_POS);
 
   Tcl::defTracing(pkg, ExptDriver::tracer);
 
-  pkg->def( "begin", "expt_id", &beginExpt );
-  pkg->def( "waitStartKey", "expt_id <event>", &waitStartKey );
+  pkg->def( "begin", "expt_id", &beginExpt, SRC_POS );
+  pkg->def( "waitStartKey", "expt_id <event>", &waitStartKey, SRC_POS );
 
   pkg->defAttrib("autosaveFile",
-                 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+                 &ExptDriver::getAutosaveFile,
+                 &ExptDriver::setAutosaveFile,
+                 SRC_POS);
   pkg->defAttrib("autosavePeriod",
                  &ExptDriver::getAutosavePeriod,
-                 &ExptDriver::setAutosavePeriod);
-  pkg->defAction("claimLogFile", &ExptDriver::claimLogFile);
+                 &ExptDriver::setAutosavePeriod,
+                 SRC_POS);
+  pkg->defAction("claimLogFile", &ExptDriver::claimLogFile, SRC_POS);
   pkg->defAttrib("filePrefix",
-                 &ExptDriver::getFilePrefix, &ExptDriver::setFilePrefix);
-  pkg->defGetter("infoLog", &ExptDriver::getInfoLog);
-  pkg->def("pause", "expt_id", &fakePause);
-  pkg->defAction("storeData", &ExptDriver::storeData);
+                 &ExptDriver::getFilePrefix,
+                 &ExptDriver::setFilePrefix,
+                 SRC_POS);
+  pkg->defGetter("infoLog", &ExptDriver::getInfoLog, SRC_POS);
+  pkg->def("pause", "expt_id", &fakePause, SRC_POS);
+  pkg->defAction("storeData", &ExptDriver::storeData, SRC_POS);
   // FIXME this conflicts with Element::widget
-  pkg->defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
-  pkg->defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
-  pkg->defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
+  pkg->defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget, SRC_POS);
+  pkg->defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete, SRC_POS);
+  pkg->defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete, SRC_POS);
 
   PKG_RETURN;
 }

@@ -56,15 +56,15 @@ DOTRACE("Sound_Init");
   pkg->onExit(&Sound::closeSound);
 
   pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<Sound>(pkg);
+  Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Sound::make);
 
-  pkg->def( "haveAudio", 0, &Sound::haveSound );
+  pkg->def( "haveAudio", 0, &Sound::haveSound, SRC_POS );
 
-  pkg->defAction("play", &Sound::play);
-  pkg->defAction("forceLoad", &Sound::forceLoad);
-  pkg->defAttrib("file", &Sound::getFile, &Sound::setFile);
+  pkg->defAction("play", &Sound::play, SRC_POS);
+  pkg->defAction("forceLoad", &Sound::forceLoad, SRC_POS);
+  pkg->defAttrib("file", &Sound::getFile, &Sound::setFile, SRC_POS);
 
   bool haveSound = Sound::initSound();
 

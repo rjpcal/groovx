@@ -92,16 +92,18 @@ DOTRACE("Misc_Init");
   PKG_CREATE(interp, "Misc", "$Revision$");
 
   pkg->def( "::rand", "min max",
-            bindFirst(memFunc(&Urand::fdrawRange), &generator) );
+            bindFirst(memFunc(&Urand::fdrawRange), &generator),
+            SRC_POS );
   pkg->def( "::srand", "seed",
-            bindFirst(memFunc(&Urand::seed), &generator) );
+            bindFirst(memFunc(&Urand::seed), &generator),
+            SRC_POS );
 
   // use the standard library sleep() to sleep a specified # of seconds
   //
   // performance: performance is pretty good, considering that we're on
   // a seconds timescale with this command. It seems to use an extra
   // 9msec more than the specified delay
-  pkg->def( "::sleep", "secs", &::sleep );
+  pkg->def( "::sleep", "secs", &::sleep, SRC_POS );
 
   // use the standard library usleep() to sleep a specified # of microseconds
   //
@@ -109,7 +111,7 @@ DOTRACE("Misc_Init");
   // additional 9000usec more than the specified delay, unless the
   // specified number is < 10000, in which case this command invariably
   // takes ~19000 us (ugh)
-  pkg->def( "::usleep", "usecs", &::usleep );
+  pkg->def( "::usleep", "usecs", &::usleep, SRC_POS );
 
   // use the standard library usleep() to repeatedly sleep a specified #
   // of microseconds
@@ -118,11 +120,11 @@ DOTRACE("Misc_Init");
   // here. It is typically an extra 10000usec per loop iteration, but
   // again, as in usleepCmd, there seemse to be a minimum of ~20000usec
   // per iteration, even if the specified delay is 1.
-  pkg->def( "::usleepr", "usecs reps", &usleepr );
+  pkg->def( "::usleepr", "usecs reps", &usleepr, SRC_POS );
 
-  pkg->def( "::bt", "", &backTrace );
+  pkg->def( "::bt", "", &backTrace, SRC_POS );
 
-  pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage );
+  pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage, SRC_POS );
 
   PKG_RETURN;
 }

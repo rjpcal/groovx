@@ -128,17 +128,25 @@ DOTRACE("Tcl::FieldsLister::operator()");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::defField(Tcl::Pkg* pkg, const Field& field)
+void Tcl::defField(Tcl::Pkg* pkg, const Field& field,
+                   const char* src_file_name,
+                   int src_line_no)
 {
 DOTRACE("Tcl::defField");
 
+  const unsigned int keyarg = 1;
+
   pkg->defVec( field.name().c_str(), "objref(s)",
-               Util::bindFirst(getField, field) );
+               Util::bindFirst(getField, field), keyarg,
+               src_file_name, src_line_no );
   pkg->defVec( field.name().c_str(), "objref(s) new_val(s)",
-               Util::bindFirst(setField, field) );
+               Util::bindFirst(setField, field), keyarg,
+               src_file_name, src_line_no );
 }
 
-void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap)
+void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap,
+                       const char* src_file_name,
+                       int src_line_no)
 {
 DOTRACE("Tcl::defAllFields");
 
@@ -146,13 +154,15 @@ DOTRACE("Tcl::defAllFields");
     {
       for (FieldMap::Iterator itr(fmap->ioFields()); itr.isValid(); ++itr)
         {
-          defField(pkg, *itr);
+          defField(pkg, *itr, src_file_name, src_line_no);
         }
     }
 
-  pkg->defRaw( "fields", 0, "", FieldsLister(fieldmap, false) );
+  pkg->defRaw( "fields", 0, "", FieldsLister(fieldmap, false),
+               src_file_name, src_line_no );
 
-  pkg->defRaw( "allFields", 0, "", FieldsLister(fieldmap, true) );
+  pkg->defRaw( "allFields", 0, "", FieldsLister(fieldmap, true),
+               src_file_name, src_line_no );
 }
 
 static const char vcid_fieldpkg_cc[] = "$Header$";

@@ -61,9 +61,10 @@ DOTRACE("Fish_Init");
 
   Tcl::defTracing(pkg, Fish::tracer);
 
-  Tcl::defFieldContainer<Fish>(pkg);
+  Tcl::defFieldContainer<Fish>(pkg, SRC_POS);
 
-  pkg->defVec( "make", "spline_file coord_file index", &makeFish );
+  pkg->defVec( "make", "spline_file coord_file index", &makeFish, 1,
+               SRC_POS );
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
 

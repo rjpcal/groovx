@@ -48,15 +48,15 @@ DOTRACE("Element_Init");
 
   PKG_CREATE(interp, "Element", "$Revision$");
   pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<Element>(pkg);
+  Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 
-  pkg->defGetter("widget", &Element::getWidget);
-  pkg->defGetter("trialType", &Element::trialType);
-  pkg->defGetter("lastResponse", &Element::lastResponse);
-  pkg->defGetter("info", &Element::vxInfo);
-  pkg->defAction("halt", &Element::vxHalt);
-  pkg->defAction("undo", &Element::vxUndo);
-  pkg->defAction("reset", &Element::vxReset);
+  pkg->defGetter("widget", &Element::getWidget, SRC_POS);
+  pkg->defGetter("trialType", &Element::trialType, SRC_POS);
+  pkg->defGetter("lastResponse", &Element::lastResponse, SRC_POS);
+  pkg->defGetter("info", &Element::vxInfo, SRC_POS);
+  pkg->defAction("halt", &Element::vxHalt, SRC_POS);
+  pkg->defAction("undo", &Element::vxUndo, SRC_POS);
+  pkg->defAction("reset", &Element::vxReset, SRC_POS);
 
   PKG_RETURN;
 }
