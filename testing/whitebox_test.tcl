@@ -1,6 +1,6 @@
 ##############################################################################
 ###
-### blackbox tests
+### whitebox tests
 ### Rob Peters
 ### 24-Jun-2002
 ### $Id$
@@ -9,6 +9,7 @@
 
 set pkgs {
     Fstringtest
+    Signaltest
     Vectwotest
 }
 
