@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jul 19 15:56:17 2001
+// written: Sat Jul 21 19:11:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,6 +111,8 @@ public:
   virtual void edResumeExpt();
   virtual void edClearExpt();
   virtual void edResetExpt();
+
+  void pause();
 
   /** This saves the experiment file and a summary-of-responses file
       under unique filenames based on the date and time. */
