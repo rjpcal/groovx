@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu May 17 10:26:20 2001
+// written: Sun May 27 06:53:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,29 +40,9 @@ namespace SoundTcl {
   const char* ok_sound_file = "/audio/saw50_500Hz_300ms.au";
   const char* err_sound_file = "/audio/saw50_350Hz_300ms.au";
 
-  class SoundCmd;
   class HaveAudioCmd;
   class SoundPkg;
 }
-
-//---------------------------------------------------------------------
-//
-// SoundTcl::SoundCmd --
-//
-//---------------------------------------------------------------------
-
-class SoundTcl::SoundCmd : public Tcl::TclCmd {
-public:
-  SoundCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 const char* filename = getCstringFromArg(1);
-
-	 IdItem<Sound> sound(Sound::newPlatformSound(filename));
-	 returnInt(sound.id());
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -129,7 +109,6 @@ public:
 		}
 	 }
 
-	 addCommand( new SoundCmd(interp, "Sound::Sound") );
 	 addCommand( new HaveAudioCmd(interp, "Sound::haveAudio") );
 	 declareCAction("play", &Sound::play);
 	 declareCAttrib("file", &Sound::getFile, &Sound::setFile);
