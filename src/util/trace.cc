@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu May 15 16:25:16 2003
+// written: Thu May 15 16:37:24 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -487,13 +487,17 @@ void Util::Trace::printIn() throw()
 
   if (n < MAX_TRACE_LEVEL)
     {
-      if (n > 0)
+      for (unsigned int i = 0; i < n; ++i)
         {
-          for (unsigned int i=0; i+1 < n; ++i)
-            {
-              STD_IO::cerr << "|   ";
-            }
-          STD_IO::cerr << "|-->> ";
+          STD_IO::cerr << "|   ";
+        }
+      // Test whether n has 1, 2, or >3 digits
+      if (n < 10)
+        STD_IO::cerr << n << "-->> ";
+      else if (n < 100)
+        STD_IO::cerr << n << "->> ";
+      else
+        STD_IO::cerr << n << ">> ";
 
       STD_IO::cerr << itsProf.name();
 
@@ -514,14 +518,11 @@ void Util::Trace::printOut() throw()
 
   if (n < MAX_TRACE_LEVEL)
     {
-      if (n > 0)
+      for (unsigned int i = 0; i < n; ++i)
         {
-          for (unsigned int i=0; i+1 < n; ++i)
-            {
-              STD_IO::cerr << "|   ";
-            }
-          STD_IO::cerr << "| <<--";
+          STD_IO::cerr << "|   ";
         }
+      STD_IO::cerr << "| <<--";
 
       STD_IO::cerr << itsProf.name();
 
