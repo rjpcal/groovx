@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Sep 25 08:54:44 2000
+// written: Mon Sep 25 09:52:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(ExptDriver* owner, Tcl_Interp* interp);
+  Impl(int argc, char** argv, ExptDriver* owner, Tcl_Interp* interp);
   ~Impl();
 
   //////////////////////
@@ -275,7 +275,8 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
+ExptDriver::Impl::Impl(int argc, char** argv,
+							  ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
   itsHostname(""),
@@ -294,6 +295,16 @@ ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   //  ,itsManagedObjects()
 {
 DOTRACE("ExptDriver::Impl::Impl");
+
+  dynamic_string cmd_line("command line: ");
+
+  for (int i = 0; i < argc; ++i) {
+	 cmd_line.append(argv[i]);
+	 cmd_line.append(" ");
+  }
+
+  addLogInfo(cmd_line.c_str());
+
   Tcl_Preserve(itsInterp);
 }
 
@@ -856,6 +867,9 @@ DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
 void ExptDriver::Impl::edEndExpt() {
 DOTRACE("ExptDriver::Impl::edEndExpt");
   noteElapsedTime();
+
+  addLogInfo("Experiment complete.");
+
   storeData();
   doUponCompletion();		  // Call the user-defined callback
 }
@@ -981,8 +995,8 @@ DOTRACE("ExptDriver::Impl::storeData");
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::ExptDriver(Tcl_Interp* interp) :
-  itsImpl(new Impl(this, interp))
+ExptDriver::ExptDriver(int argc, char** argv, Tcl_Interp* interp) :
+  itsImpl(new Impl(argc, argv, this, interp))
 {
 DOTRACE("ExptDriver::ExptDriver");
 }

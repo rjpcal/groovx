@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed May 24 07:15:45 2000
+// written: Mon Sep 25 09:40:03 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -18,6 +18,11 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+
+namespace {
+  int LOCAL_ARGC = 0;
+  char** LOCAL_ARGV = 0;
+}
 
 // Forward declarations of package init procedures
 extern "C" {
@@ -91,15 +96,15 @@ PkgName_PkgProc Names_Procs[] = {
 
 class TclApp : public GrshApp {
 public:
-  TclApp(Tcl_Interp* interp);
+  TclApp(int argc, char** argv, Tcl_Interp* interp);
 
   int status() const { return itsStatus; }
 private:
   int itsStatus;
 };
 
-TclApp::TclApp(Tcl_Interp* interp) : 
-  GrshApp(interp),
+TclApp::TclApp(int argc, char** argv, Tcl_Interp* interp) : 
+  GrshApp(argc, argv, interp),
   itsStatus(TCL_OK)
 {
 DOTRACE("TclApp::TclApp(Tcl_Interp*)");
@@ -125,11 +130,13 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 // initialize all the necessary packages
 int Tcl_AppInit(Tcl_Interp* interp) {
 DOTRACE("Tcl_AppInit");
-  static TclApp theApp(interp);
+  static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
   return theApp.status();
 }
 
 int main(int argc, char** argv) {
+  LOCAL_ARGC = argc;
+  LOCAL_ARGV = argv;
   Tk_Main(argc, argv, Tcl_AppInit);
   return 0;
 }
