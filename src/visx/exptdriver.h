@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Apr  3 17:44:31 2002
+// written: Wed Sep 11 15:11:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ private:
   ExptDriver& operator=(const ExptDriver&);
 
   /// Construct with the applications Tcl interpreter.
-  ExptDriver(int argc, char** argv, Tcl_Interp* interp);
+  ExptDriver();
 
 public:
 
@@ -64,8 +64,7 @@ public:
       member functions. */
   static Util::Tracer tracer;
 
-  static ExptDriver* make(int argc, char** argv, Tcl_Interp* interp)
-    { return new ExptDriver(argc, argv, interp); }
+  static ExptDriver* make() { return new ExptDriver; }
 
   /// Virtual destructor.
   virtual ~ExptDriver();

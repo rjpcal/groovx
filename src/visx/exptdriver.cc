@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Apr 30 10:12:17 2002
+// written: Wed Sep 11 15:16:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,7 @@
 
 #include "visx/exptdriver.h"
 
-#include "visx/block.h"
-#include "visx/tlistutils.h"
+#include "grsh/grsh.h"
 
 #include "gwt/widget.h"
 
@@ -28,6 +27,7 @@
 
 #include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
+#include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
 
@@ -38,6 +38,9 @@
 #include "util/minivec.h"
 #include "util/ref.h"
 #include "util/strings.h"
+
+#include "visx/block.h"
+#include "visx/tlistutils.h"
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
@@ -69,7 +72,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(int argc, char** argv, ExptDriver* owner, Tcl_Interp* interp);
+  Impl(ExptDriver* owner);
   ~Impl();
 
   //////////////////////
@@ -184,10 +187,9 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::Impl::Impl(int argc, char** argv,
-                       ExptDriver* owner, Tcl_Interp* interp) :
+ExptDriver::Impl::Impl(ExptDriver* owner) :
   itsOwner(owner),
-  itsInterp(interp),
+  itsInterp(Tcl::Main::safeInterp()),
   itsWidget(),
   itsHostname(""),
   itsSubject(""),
@@ -198,10 +200,13 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsAutosavePeriod(10),
   itsBlocks(),
   itsCurrentBlockIdx(0),
-  itsErrorHandler(interp),
-  itsDoWhenComplete(new Tcl::ProcWrapper(interp))
+  itsErrorHandler(itsInterp.intp()),
+  itsDoWhenComplete(new Tcl::ProcWrapper(itsInterp))
 {
 DOTRACE("ExptDriver::Impl::Impl");
+
+  int argc = Grsh::argc();
+  char** argv = Grsh::argv();
 
   fstring cmd_line("command line: ");
 
@@ -493,8 +498,8 @@ DOTRACE("ExptDriver::Impl::storeData");
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::ExptDriver(int argc, char** argv, Tcl_Interp* interp) :
-  itsImpl(new Impl(argc, argv, this, interp))
+ExptDriver::ExptDriver() :
+  itsImpl(new Impl(this))
 {
 DOTRACE("ExptDriver::ExptDriver");
 }

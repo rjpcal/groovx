@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Sep 11 14:54:30 2002
+// written: Wed Sep 11 15:16:44 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -19,8 +19,6 @@
 
 #include "visx/block.h"
 #include "visx/exptdriver.h"
-
-#include "grsh/grsh.h"
 
 #include "gwt/widget.h"
 
@@ -157,8 +155,7 @@ public:
   ExpPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Exp", "$Revision$")
   {
-    theExptDriver = Ref<ExptDriver>
-      (ExptDriver::make(Grsh::argc(), Grsh::argv(), interp));
+    theExptDriver = Ref<ExptDriver>(ExptDriver::make());
 
     Tcl::defGenericObjCmds<ExptDriver>(this);
 
@@ -209,18 +206,6 @@ public:
 //
 //---------------------------------------------------------------------
 
-namespace
-{
-  Tcl_Interp* exptCreateInterp = 0;
-
-  ExptDriver* makeExptDriver()
-  {
-    Assert(exptCreateInterp != 0);
-
-    return ExptDriver::make(Grsh::argc(), Grsh::argv(), exptCreateInterp);
-  }
-}
-
 extern "C"
 int Expt_Init(Tcl_Interp* interp)
 {
@@ -228,9 +213,7 @@ DOTRACE("Expt_Init");
 
   Tcl::Pkg* pkg = new ExptTcl::ExpPkg(interp);
 
-  exptCreateInterp = interp;
-
-  Util::ObjFactory::theOne().registerCreatorFunc( makeExptDriver );
+  Util::ObjFactory::theOne().registerCreatorFunc(&ExptDriver::make);
   Util::ObjFactory::theOne().registerAlias( "ExptDriver", "Expt" );
 
   return pkg->initStatus();
