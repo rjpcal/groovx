@@ -46,6 +46,7 @@ namespace Tcl
 {
   class Interp;
 
+  /// Different error-handling strategies for Tcl::Interp::eval().
   enum ErrorStrategy
     {
       THROW_ERROR,
@@ -53,13 +54,12 @@ namespace Tcl
     };
 }
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Tcl::Interp provides a wrapper around calls to the Tcl interpreter.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+
+//  ####################################################################
+/// Tcl::Interp provides a wrapper around calls to the Tcl interpreter.
+/** The advantage over using the raw Tcl C API is that certain error
+    conditions are handled in a more C++-ish way, by throwing
+    exceptions. */
 
 class Tcl::Interp
 {
@@ -77,18 +77,37 @@ public:
   void forgetInterp();
   void destroy();
 
-  // Packages
+  /// Wrapper around Tcl_PkgProvide().
   void pkgProvide(const char* name, const char* version);
 
-  // Expressions
+  /// Evaluate the given expression, return its result as a bool.
   bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
 
-  // Evaluating code
+  /// Evaluates code.
+  /** If strategy is THROW_ERROR, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE_ERROR, then
+      a return value of true indicates a successful evaluation, and a
+      return value of false indicates an error during evaluation. */
   bool eval(const char* code, ErrorStrategy strategy = THROW_ERROR);
+
+  /// Evaluates code.
+  /** If strategy is THROW_ERROR, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE_ERROR, then
+      a return value of true indicates a successful evaluation, and a
+      return value of false indicates an error during evaluation. */
   bool eval(const fstring& code, ErrorStrategy strategy = THROW_ERROR);
+
+  /// Evaluates code.
+  /** If strategy is THROW_ERROR, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE_ERROR, then
+      a return value of true indicates a successful evaluation, and a
+      return value of false indicates an error during evaluation. */
   bool eval(const Tcl::ObjPtr& code, ErrorStrategy strategy = THROW_ERROR);
 
+  /// Evaluate the tcl code in the named file.
+  /** Returns true on success, or false on failure. */
   bool evalFile(const char* fname);
+
   void sourceRCFile();
 
   // Result
