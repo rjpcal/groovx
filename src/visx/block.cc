@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Nov 14 14:57:43 2000
+// written: Tue Nov 28 15:30:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -319,13 +319,6 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->currentTrialItem()->
              trDoTrial(*(expt.getWidget()), expt.getErrorHandler(), *this);
-}
-
-void Block::drawTrialHook() {
-DOTRACE("Block::drawTrialHook");
-  if (isComplete()) return;
-
-  itsImpl->getExpt().edSetCurrentTrial(currentTrial());
 }
 
 void Block::abortTrial() {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Fri Nov 10 17:03:53 2000
+// written: Tue Nov 28 15:30:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,12 +129,6 @@ public:
   /** Does whatever is necessary at the beginning of a trial, and
       restarts the response time timer. */
   virtual void beginTrial(Experiment& expt);
-
-  /** The current trial is drawn. The index of the current trial is
-		not changed until a call either to processResponse, abortTrial,
-		or endTrial; thus, multiple calls in a row to drawTrial will
-		simply show the same trial repeatedly. */
-  virtual void drawTrialHook();
 
   /** Aborts the current trial of the experiment. The current (to be
       aborted) trial is put at the end of the trial sequence in the
