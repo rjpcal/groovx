@@ -70,21 +70,8 @@ protected:
   }
 };
 
-namespace {
-  Tcl_Obj* nullObject () {
-    static Tcl_Obj* obj = 0;
-    if (obj == 0) {
-      obj = Tcl_NewObj();
-      Tcl_IncrRefCount(obj);
-    }
-    return obj;
-  }
-
-  void dummyDeleteProc(ClientData clientData) {
-    Tcl::TclCmd* cmd = static_cast<Tcl::TclCmd*>(clientData);
-    delete cmd;
-  }
-
+namespace
+{
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
