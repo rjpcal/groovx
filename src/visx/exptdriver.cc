@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct  9 19:45:25 2000
+// written: Wed Oct 11 11:12:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,8 +132,6 @@ private:
 
   dynamic_string makeUniqueFileExtension() const;
 
-  void edRaiseBackgroundError(const char* msg) const;
-
   //////////////////////////
   // ExptDriver delegands //
   //////////////////////////
@@ -174,7 +172,7 @@ public:
   }
 
   Util::ErrorHandler& getErrorHandler()
-	 { return itsErrorHandler; }
+	 { return itsErrHandler; }
 
   GWT::Widget* getWidget()
 	 { return ObjTogl::theToglConfig(); }
@@ -227,33 +225,7 @@ private:
 
   mutable dynamic_string itsDoUponCompletionBody;
 
-  class EDErrorHandler : public Util::ErrorHandler
-  {
-  private:
-	 EDErrorHandler(const EDErrorHandler&);
-	 EDErrorHandler& operator=(const EDErrorHandler&);
-
-  public:
-	 EDErrorHandler(ExptDriver::Impl* edi) : itsEDI(edi) {}
-
-	 virtual void handleUnknownError()
-		{ itsEDI->edRaiseBackgroundError("an error of unknown type occurred"); }
-
-	 virtual void handleError(Error&) { handleUnknownError(); }
-
-	 virtual void handleErrorWithMsg(ErrorWithMsg& err)
-		{ itsEDI->edRaiseBackgroundError(err.msg_cstr()); }
-
-	 virtual void handleMsg(const char* msg)
-		{ itsEDI->edRaiseBackgroundError(msg); }
-
-  private:
-	 ExptDriver::Impl* itsEDI;
-  };
-
-  friend class EDErrorHandler;
-
-  EDErrorHandler itsErrorHandler;
+  mutable Tcl::BkdErrorHandler itsErrHandler;
 
 //   struct ManagedObject {
 // 	 ManagedObject(const string& n, IO::IoObject* obj) :
@@ -289,7 +261,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsDummyThId(0),
   itsTimer(),
   itsDoUponCompletionBody(),
-  itsErrorHandler(this)
+  itsErrHandler(interp)
   //  ,itsManagedObjects()
 {
 DOTRACE("ExptDriver::Impl::Impl");
@@ -320,7 +292,7 @@ DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
 						 "            {info procs doUponCompletion}  ]");
 
   if (tclresult != TCL_OK) {
-	 edRaiseBackgroundError("error getting procs in doesDoUponCompletionExist");
+	 itsErrHandler.handleMsg("error getting procs in doesDoUponCompletionExist");
 	 return false;
   }
 
@@ -330,7 +302,7 @@ DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
 										  &llength);
 
   if (tclresult != TCL_OK) {
-	 edRaiseBackgroundError("error reading result in doesDoUponCompletionExist");
+	 itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");
 	 return false;
   }
 
@@ -381,7 +353,7 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 	 writeASW(getAutosaveFile().c_str());
   }
   catch (Tcl::TclError& err) {
-	 edRaiseBackgroundError(err.msg_cstr());
+	 itsErrHandler.handleMsg(err.msg_cstr());
   }
 }
 
@@ -419,7 +391,7 @@ DOTRACE("ExptDriver::Impl::assertIds");
   }
 
   // ...one of the validity checks failed, so generate an error+message
-  edRaiseBackgroundError("invalid Block id in ExptDriver::assertIds()");
+  itsErrHandler.handleMsg("invalid Block id in ExptDriver::assertIds()");
 
   // ...and halt any of the participants for which we have valid id's
   edHaltExpt();
@@ -468,7 +440,7 @@ DOTRACE("ExptDriver::Impl::safeTclGlobalEval");
 
   // else...
   dynamic_string msg = "error while evaluating "; msg += script;
-  edRaiseBackgroundError(msg.c_str());
+  itsErrHandler.handleMsg(msg.c_str());
   return false;
 }
 
@@ -847,18 +819,6 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
   doUponCompletion();		  // Call the user-defined callback
 }
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edRaiseBackgroundError --
-//
-//---------------------------------------------------------------------
-
-void ExptDriver::Impl::edRaiseBackgroundError(const char* msg) const {
-DOTRACE("ExptDriver::Impl::edRaiseBackgroundError");
-  Tcl_AppendResult(itsInterp, msg, (char*) 0);
-  Tcl_BackgroundError(itsInterp);
-}
-
 //--------------------------------------------------------------------
 //
 // ExptDriver::read --
@@ -945,18 +905,18 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 int error2 =
 		System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
 	 if (error1 != 0 || error2 != 0) {
-		edRaiseBackgroundError("error during System::chmod");
+		itsErrHandler.handleMsg("error during System::chmod");
 		return;
 	 }
 
 	 addLogInfo("Experiment saved.");
   }
   catch (IO::IoError& err) {
-	 edRaiseBackgroundError(err.msg_cstr());
+	 itsErrHandler.handleMsg(err.msg_cstr());
 	 return;
   }
   catch (Tcl::TclError& err) {
-	 edRaiseBackgroundError(err.msg_cstr());
+	 itsErrHandler.handleMsg(err.msg_cstr());
 	 return;
   }
 }
