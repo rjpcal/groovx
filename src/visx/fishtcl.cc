@@ -32,12 +32,12 @@
 
 #include "io/fieldpkg.h"
 
-#include "visx/fish.h"
-
 #include "tcl/objpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
+
+#include "visx/fish.h"
 
 #include "util/trace.h"
 
@@ -61,11 +61,9 @@ DOTRACE("Fish_Init");
 
   Tcl::defTracing(pkg, Fish::tracer);
 
-  Tcl::defGenericObjCmds<Fish>(pkg);
+  Tcl::defFieldContainer<Fish>(pkg);
 
   pkg->defVec( "make", "spline_file coord_file index", &makeFish );
-
-  Tcl::defAllFields(pkg, Fish::classFields());
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
 
