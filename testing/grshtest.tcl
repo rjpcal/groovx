@@ -77,7 +77,7 @@ proc rand_cmp {a1 a2} { return [expr round(200*rand() - 100.0)] }
 set permuted_files [lsort -command rand_cmp $files]
 
 foreach file $permuted_files {
-    IO::clear
+    IoDb::clear
 	 if { [lindex $file 1] == $::RUN_IF_EQUAL } {
 		  testfile ${TEST_DIR}/[lindex $file 0]
 	 }
