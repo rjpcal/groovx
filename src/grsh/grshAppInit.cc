@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Dec  6 21:51:10 1999
+// written: Tue Dec  7 11:59:02 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -14,6 +14,8 @@
 #include <iostream.h>
 #include <tk.h>
 #include <togl.h>
+
+#include "grshapp.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -87,19 +89,17 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Trial",    Trial_Init     }
 };
 
-class TclApp {
+class TclApp : public GrshApp {
 public:
   TclApp(Tcl_Interp* interp) : 
-	 itsInterp(interp), 
+	 GrshApp(interp),
 	 itsStatus(TCL_OK)
   {
   DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
-    int result;
-
     for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
 		//		cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
-		result = Names_Procs[i].PkgProc(itsInterp);
+		int result = Names_Procs[i].PkgProc(interp);
 		if (result != TCL_OK) { itsStatus = result; }
 	 }
 
@@ -115,7 +115,6 @@ public:
 
   int status() const { return itsStatus; }
 private:
-  Tcl_Interp* itsInterp;
   int itsStatus;
 };
 
