@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:13:16 1999
-// written: Thu May 10 12:04:43 2001
+// written: Thu May 17 16:40:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,13 +22,13 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-IO::IoObject* IO::IoMgr::newIO(const char* type) {
+IdItem<IO::IoObject> IO::IoMgr::newIO(const char* type) {
   return newIO(fixed_string(type));
 }
 
-IO::IoObject* IO::IoMgr::newIO(const fixed_string& type) {
+IdItem<IO::IoObject> IO::IoMgr::newIO(const fixed_string& type) {
 DOTRACE("IO::IoMgr::newIO(const fixed_string&)");
-  return IO::IoFactory::theOne().newCheckedObject(type);
+  return IdItem<IO::IoObject>(IO::IoFactory::theOne().newCheckedObject(type));
 }
 
 static const char vcid_iomgr_cc[] = "$Header$";
