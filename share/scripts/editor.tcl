@@ -666,7 +666,9 @@ itcl::body Editor::init {parent objtype } {
 	GxCylinder \
 	GxDrawStyle \
 	GxColor \
+	GxLighting \
 	GxLine \
+	GxMaterial \
 	GxSeparator \
 	GxSphere \
 	House \
