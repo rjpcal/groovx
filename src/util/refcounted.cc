@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Wed Mar 19 17:58:52 2003
+// written: Thu May 15 16:32:56 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,6 +40,8 @@
 #else
 #  include <climits>
 #endif
+
+#include <typeinfo>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -190,7 +192,10 @@ void Util::RefCounted::incrRefCount() const
 void Util::RefCounted::decrRefCount() const
 {
   if (itsRefCounts->releaseStrong() == 0)
-    delete this;
+    {
+      dbgEvalNL(3, typeid(*this).name());
+      delete this;
+    }
 }
 
 void Util::RefCounted::decrRefCountNoDelete() const
