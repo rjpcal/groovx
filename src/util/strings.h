@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu Nov  2 17:15:54 2000
+// written: Thu Nov  2 17:33:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,6 +127,12 @@ private:
 	 ~Rep();
 
 	 int itsRefCount;
+
+	 // Class-specific operator new.
+	 void* operator new(size_t bytes);
+
+	 // Class-specific operator delete.
+	 void operator delete(void* space);
 
   public:
 	 static Rep* make(const char* text) { return new Rep(text); }
