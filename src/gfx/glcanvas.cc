@@ -121,6 +121,7 @@ public:
     glx(glx_),
     modelviewCache(),
     projectionCache(),
+    viewportCache(),
     checkFrequency(100),
     checkCounter(0)
   {
@@ -184,6 +185,7 @@ public:
   shared_ptr<GlWindowInterface> glx;
   std::vector<txform> modelviewCache;
   std::vector<txform> projectionCache;
+  geom::rect<int> viewportCache;
   int checkFrequency;
   mutable int checkCounter;
 };
@@ -331,11 +333,8 @@ DOTRACE("GLCanvas::worldFromScreen3");
 geom::rect<int> GLCanvas::getScreenViewport() const
 {
 DOTRACE("GLCanvas::getScreenViewport");
-  GLint viewport[4];
-  glGetIntegerv(GL_VIEWPORT, viewport);
 
-  return geom::rect<int>::lbwh(viewport[0], viewport[1],
-                               viewport[2], viewport[3]);
+  return rep->viewportCache;
 }
 
 
@@ -526,6 +525,8 @@ DOTRACE("GLCanvas::viewport");
       dbg_eval(2, viewport[2]);
       dbg_eval_nl(2, viewport[3]);
     }
+
+  rep->viewportCache = geom::rect<int>::lbwh(x, y, w, h);
 }
 
 void GLCanvas::orthographic(const geom::rect<double>& bounds,
