@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed May 31 13:06:39 2000
+// written: Wed May 31 13:10:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -275,6 +275,12 @@ DOTRACE("TimingHdlr::addEvent");
   default:
 	 break;
   }
+
+  // This is necessary to prevent a resource leak, since this function
+  // unconditionally assumes ownership of 'event'; if it does not make
+  // it onto one of the lists then we must get rid of it now.
+  delete event;
+
   return -1;
 }
 
