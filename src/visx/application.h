@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 10:55:51 1999
-// written: Tue Dec  7 11:53:41 1999
+// written: Tue Feb 15 16:45:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ class Experiment;
     nobody has yet called Application::installApp(). */
 class NoAppError : public ErrorWithMsg {
 public:
+  /// Construct with an informative message \a msg.
   NoAppError(const string& msg = "") : ErrorWithMsg(msg) {}
 };
 
@@ -45,6 +46,7 @@ protected:
   static void installApp(Application* theApp);
 
 public:
+  /// Virtual destructor ensures correct destruction of subclasses.
   virtual ~Application();
 
   /** Provides global access to the singleton Application.
