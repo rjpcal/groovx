@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Oct 27 13:22:39 2000
+// written: Fri Oct 27 15:34:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -387,8 +387,6 @@ DOTRACE("IoPtrList::getCheckedPtrBase");
 
 int IoPtrList::insertPtrBase(IO::IoObject* ptr) {
 DOTRACE("IoPtrList::insertPtrBase");
-
-  ensureCorrectType(ptr); 
 
   return itsImpl->insertPtrBase(ptr);
 }
