@@ -110,9 +110,10 @@ namespace
   DOTRACE("parsePbmMode456");
     DebugEvalNL(data.byteCount());
     is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
-    if (is.eof())
-      throw Util::Error("eof encountered in parsePbmMode456");
-    if (is.fail())
+    unsigned int numread = is.gcount();
+    if (numread < data.byteCount())
+      throw Util::Error("stream underflow in parsePbmMode456");
+    if (is.fail() && !is.eof())
       throw Util::Error("input stream failed in parsePbmMode456");
   }
 }
