@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Nov 13 13:08:58 2002
+// written: Wed Nov 13 13:36:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@
 
 #include "gfx/gxaligner.h"
 #include "gfx/gxbin.h"
+#include "gfx/gxbounds.h"
 #include "gfx/gxscaler.h"
 
 #include "gx/box.h"
 
 #include "visx/grobj.h"
-#include "visx/grobjbbox.h"
 
 #include "visx/bitmapcachenode.h"
 #include "visx/glcachenode.h"
@@ -67,7 +67,7 @@ public:
   int itsCategory;
 
   Util::Ref<GrObjNode> itsNativeNode;
-  Util::Ref<GrObjBBox> itsBB;
+  Util::Ref<GxBounds> itsBB;
   Util::Ref<GLCacheNode> itsGLCache;
   Util::Ref<BitmapCacheNode> itsBitmapCache;
   Util::Ref<GxAligner> itsAligner;
@@ -84,7 +84,7 @@ public:
   GrObjImpl(GrObj* obj) :
     itsCategory(-1),
     itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
-    itsBB(new GrObjBBox(itsNativeNode), Util::PRIVATE),
+    itsBB(new GxBounds(itsNativeNode), Util::PRIVATE),
     itsGLCache(new GLCacheNode(itsBB), Util::PRIVATE),
     itsBitmapCache(new BitmapCacheNode(itsGLCache), Util::PRIVATE),
     itsAligner(new GxAligner(itsBitmapCache), Util::PRIVATE),

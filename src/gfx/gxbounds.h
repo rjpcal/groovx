@@ -1,30 +1,30 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grobjbbox.h
+// gxbounds.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Thu Jul 19 09:06:14 2001
-// written: Wed Nov 13 12:36:51 2002
+// created: Wed Nov 13 13:34:26 2002
+// written: Wed Nov 13 13:34:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROBJBBOX_H_DEFINED
-#define GROBJBBOX_H_DEFINED
+#ifndef GXBOUNDS_H_DEFINED
+#define GXBOUNDS_H_DEFINED
 
 #include "gfx/gxbin.h"
 
-class GrObjBBox : public GxBin
+class GxBounds : public GxBin
 {
 private:
-  GrObjBBox(const GrObjBBox&);
-  GrObjBBox& operator=(const GrObjBBox&);
+  GxBounds(const GxBounds&);
+  GxBounds& operator=(const GxBounds&);
 
 public:
-  GrObjBBox(Util::SoftRef<GxNode> child);
+  GxBounds(Util::SoftRef<GxNode> child);
 
-  virtual ~GrObjBBox();
+  virtual ~GxBounds();
 
   bool isVisible() const { return isItVisible; }
   void setVisible(bool val) { isItVisible = val; }
@@ -49,5 +49,5 @@ private:
   mutable unsigned short itsMask;
 };
 
-static const char vcid_grobjbbox_h[] = "$Header$";
-#endif // !GROBJBBOX_H_DEFINED
+static const char vcid_gxbounds_h[] = "$Header$";
+#endif // !GXBOUNDS_H_DEFINED

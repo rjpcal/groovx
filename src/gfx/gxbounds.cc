@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grobjbbox.cc
+// gxbounds.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Thu Jul 19 10:45:53 2001
-// written: Wed Nov 13 12:38:10 2002
+// created: Wed Nov 13 13:34:18 2002
+// written: Wed Nov 13 13:34:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROBJBBOX_CC_DEFINED
-#define GROBJBBOX_CC_DEFINED
+#ifndef GXBOUNDS_CC_DEFINED
+#define GXBOUNDS_CC_DEFINED
 
-#include "visx/grobjbbox.h"
+#include "gxbounds.h"
 
 #include "gfx/canvas.h"
 
@@ -24,7 +24,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-GrObjBBox::GrObjBBox(Util::SoftRef<GxNode> child) :
+GxBounds::GxBounds(Util::SoftRef<GxNode> child) :
   GxBin(child),
   isItVisible(false),
   itsPixelBorder(4),
@@ -32,12 +32,12 @@ GrObjBBox::GrObjBBox(Util::SoftRef<GxNode> child) :
   itsMask(0x3333)     // 0011001100110011
 {}
 
-GrObjBBox::~GrObjBBox() {}
+GxBounds::~GxBounds() {}
 
-void GrObjBBox::getBoundingCube(Gfx::Box<double>& cube,
-                                Gfx::Canvas& canvas) const
+void GxBounds::getBoundingCube(Gfx::Box<double>& cube,
+			       Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjBBox::getBoundingCube");
+DOTRACE("GxBounds::getBoundingCube");
 
   child()->getBoundingCube(cube, canvas);
 
@@ -51,9 +51,9 @@ DOTRACE("GrObjBBox::getBoundingCube");
   cube.scale(1.0 + border_pixels/100.0);
 }
 
-void GrObjBBox::draw(Gfx::Canvas& canvas) const
+void GxBounds::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjBBox::draw");
+DOTRACE("GxBounds::draw");
 
   child()->draw(canvas);
 
@@ -96,5 +96,5 @@ DOTRACE("GrObjBBox::draw");
     }
 }
 
-static const char vcid_grobjbbox_cc[] = "$Header$";
-#endif // !GROBJBBOX_CC_DEFINED
+static const char vcid_gxbounds_cc[] = "$Header$";
+#endif // !GXBOUNDS_CC_DEFINED
