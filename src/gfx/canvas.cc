@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Wed Jul  3 16:11:52 2002
+// written: Tue Nov  5 07:30:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,6 +125,23 @@ DOTRACE("Gfx::Canvas::drawNurbsCurve");
   for (unsigned int i = 0; i < bz.size(); ++i)
     {
       drawBezier4(bz[i].pt0, bz[i].pt1, bz[i].pt2, bz[i].pt3, 20);
+    }
+}
+
+void Gfx::Canvas::begin(Gfx::Canvas::VertexStyle s)
+{
+  switch (s)
+    {
+    case POINTS:         beginPoints(); break;
+    case LINES:          beginLines(); break;
+    case LINE_STRIP:     beginLineStrip(); break;
+    case LINE_LOOP:      beginLineLoop(); break;
+    case TRIANGLES:      beginTriangles(); break;
+    case TRIANGLE_STRIP: beginTriangleStrip(); break;
+    case TRIANGLE_FAN:   beginTriangleFan(); break;
+    case QUADS:          beginQuads(); break;
+    case QUAD_STRIP:     beginQuadStrip(); break;
+    case POLYGON:        beginPolygon(); break;
     }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Sep 25 18:51:51 2002
+// written: Tue Nov  5 07:24:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,6 +99,13 @@ public:
     Saver(Canvas& canvas) :
       itsCanvas(canvas)
     { (itsCanvas.*doit)(); }
+
+    /** Save the state of \a canvas. Its state will be restored to the
+        saved state when the \c MatrixSaver is destroyed. */
+    template <class Arg>
+    Saver(Canvas& canvas, Arg a) :
+      itsCanvas(canvas)
+    { (itsCanvas.*doit)(a); }
 
     /// Destroy the \c MatrixSaver and restore the state of the \c Canvas.
     ~Saver()
@@ -239,6 +246,22 @@ public:
   virtual void beginQuads() = 0;
   virtual void beginQuadStrip() = 0;
   virtual void beginPolygon() = 0;
+
+  enum VertexStyle
+    {
+      POINTS,
+      LINES,
+      LINE_STRIP,
+      LINE_LOOP,
+      TRIANGLES,
+      TRIANGLE_STRIP,
+      TRIANGLE_FAN,
+      QUADS,
+      QUAD_STRIP,
+      POLYGON
+    };
+
+  void begin(VertexStyle s);
 
   virtual void vertex2(const Gfx::Vec2<double>& v) = 0;
   virtual void vertex3(const Gfx::Vec3<double>& v) = 0;
