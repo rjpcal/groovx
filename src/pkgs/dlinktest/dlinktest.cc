@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 10 18:16:43 2001
-// written: Fri Sep 14 11:16:20 2001
+// written: Fri Sep 14 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,6 +132,8 @@ DOTRACE("Dlinktest_Init");
   DEF_TEST(pkg, testFindSuccess);
   DEF_TEST(pkg, testFindFailure);
   DEF_TEST(pkg, testClear);
+
+  return pkg->initStatus();
 }
 
 static const char vcid_dlinktest_cc[] = "$Header$";
