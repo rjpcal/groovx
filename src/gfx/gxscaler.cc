@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:32 2002
-// written: Thu Nov 14 17:31:14 2002
+// written: Thu Nov 14 17:56:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,7 @@ void GxScaler::setMode(Mode new_mode)
 DOTRACE("GxScaler::setMode");
 
   itsMode = new_mode;
+  this->sigNodeChanged.emit();
 }
 
 void GxScaler::setWidth(double new_width)
@@ -68,6 +69,8 @@ void GxScaler::setWidth(double new_width)
     {
       itsHeightFactor *= change_factor;
     }
+
+  this->sigNodeChanged.emit();
 }
 
 void GxScaler::setHeight(double new_height)
@@ -90,6 +93,8 @@ void GxScaler::setHeight(double new_height)
     {
       itsWidthFactor *= change_factor;
     }
+
+  this->sigNodeChanged.emit();
 }
 
 void GxScaler::setAspectRatio(double new_aspect_ratio)
@@ -105,6 +110,20 @@ void GxScaler::setAspectRatio(double new_aspect_ratio)
   // aspect ratio
 
   itsWidthFactor *= change_factor;
+
+  this->sigNodeChanged.emit();
+}
+
+void GxScaler::setWidthFactor(double f)
+{
+  itsWidthFactor = f;
+  this->sigNodeChanged.emit();
+}
+
+void GxScaler::setHeightFactor(double f)
+{
+  itsHeightFactor = f;
+  this->sigNodeChanged.emit();
 }
 
 void GxScaler::setMaxDim(double new_max_dimension)
@@ -115,6 +134,8 @@ void GxScaler::setMaxDim(double new_max_dimension)
 
   itsWidthFactor *= scaling_factor;
   itsHeightFactor *= scaling_factor;
+
+  this->sigNodeChanged.emit();
 }
 
 double GxScaler::aspectRatio() const

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:27 2002
-// written: Thu Nov 14 17:30:58 2002
+// written: Thu Nov 14 17:56:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,8 +65,8 @@ public:
 
   void setAspectRatio(double new_aspect_ratio);
 
-  void setWidthFactor(double f) { itsWidthFactor = f; }
-  void setHeightFactor(double f) { itsHeightFactor = f; }
+  void setWidthFactor(double f);
+  void setHeightFactor(double f);
 
   double scaledWidth() const;
   double scaledHeight() const;
