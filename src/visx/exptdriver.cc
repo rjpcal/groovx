@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Nov 23 15:21:04 1999
+// written: Wed Nov 24 12:44:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -790,6 +790,7 @@ void ExptDriver::Impl::edEndTrial() {
 
   TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
   
+  responseHandler().rhEndTrial();
   block().endTrial();
 
   if ( needAutosave() ) { doAutosave(); }
