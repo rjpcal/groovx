@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu May 25 15:47:55 2000
+// written: Wed Oct  4 10:45:07 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -51,6 +51,7 @@ namespace ObjTogl {
   class BindCmd;
   class DumpCmapCmd;
   class DumpEpsCmd;
+  class HoldCmd;
   class InitedCmd;
   class LoadFontCmd;
   class LoadFontiCmd;
@@ -190,6 +191,31 @@ protected:
     const char* filename = getCstringFromArg(1);
 
     getItem()->writeEpsFile(filename);
+  }
+};
+
+//--------------------------------------------------------------------
+//
+// ObjTogl::HoldCmd --
+//
+// Make a specified trial the widget's current trial, and draw it in
+// the OpenGL window. The widget's visibility is set to true.
+//
+//--------------------------------------------------------------------
+
+class ObjTogl::HoldCmd : public Tcl::TclItemCmd<ToglConfig> {
+public:
+  HoldCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "hold_on?", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 bool hold_on = getBoolFromArg(1);
+
+	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
+
+	 if (widg != 0) {
+		widg->setHold(hold_on);
+	 }
   }
 };
 
@@ -457,6 +483,7 @@ public:
     addCommand( new DestroyCmd    (interp, "Togl::destroy") );
     addCommand( new DumpCmapCmd   (this, "Togl::dumpCmap") );
     addCommand( new DumpEpsCmd    (this, "Togl::dumpEps") );
+	 addCommand( new HoldCmd       (this, "Togl::hold") );
     addCommand( new InitCmd       (interp, "Togl::init") );
     addCommand( new InitedCmd     (interp, "Togl::inited") );
     addCommand( new LoadFontCmd   (this, "Togl::loadFont") );
