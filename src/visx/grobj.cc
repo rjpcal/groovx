@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 16:33:37 2001
+// written: Fri Aug 10 17:22:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -244,6 +244,7 @@ void GrObj::setRenderMode(Gmodes::RenderMode mode) {
 DOTRACE("GrObj::setRenderMode");
 
   itsImpl->itsRenderer.setMode(mode);
+  itsImpl->itsGLCache->setMode(mode);
   sendStateChangeMsg();
 }
 
@@ -251,6 +252,7 @@ void GrObj::setUnRenderMode(Gmodes::RenderMode mode) {
 DOTRACE("GrObj::setUnRenderMode");
 
   itsImpl->itsRenderer.setUnMode(mode);
+  itsImpl->itsGLCache->setUnMode(mode);
   sendStateChangeMsg();
 }
 
@@ -279,19 +281,23 @@ DOTRACE("GrObj::receiveDestroyMsg");
 // actions //
 /////////////
 
-void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const {
-  itsImpl->itsRenderer.saveBitmapCache(itsImpl, canvas, filename);
+void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
+{
+  itsImpl->itsRenderer.saveBitmapCache(itsImpl->itsGLCache.get(), itsImpl,
+                                       canvas, filename);
 }
 
-void GrObj::update(Gfx::Canvas& canvas) const {
-  itsImpl->itsRenderer.update(itsImpl, canvas);
+void GrObj::update(Gfx::Canvas& canvas) const
+{
 }
 
-void GrObj::draw(Gfx::Canvas& canvas) const {
+void GrObj::draw(Gfx::Canvas& canvas) const
+{
   itsImpl->draw(canvas);
 }
 
-void GrObj::undraw(Gfx::Canvas& canvas) const {
+void GrObj::undraw(Gfx::Canvas& canvas) const
+{
   itsImpl->undraw(canvas);
 }
 

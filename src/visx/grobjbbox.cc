@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Aug 10 16:36:11 2001
+// written: Fri Aug 10 17:19:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ DOTRACE("GrObjBBox::gnodeDraw");
 
   if (!itsIsVisible) return;
 
-  Rect<double> bounds = child()->gnodeBoundingBox(canvas);
+  Rect<double> bounds = gnodeBoundingBox(canvas);
 
   glPushAttrib(GL_LINE_BIT);
   {

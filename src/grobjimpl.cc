@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 16:35:14 2001
+// written: Fri Aug 10 17:28:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,9 +46,10 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 GrObjImpl::GrObjImpl(GrObj* obj) :
-  itsObjNode(new GrObjNode(obj)),
   itsCategory(-1),
-  itsBB(new GrObjBBox(this, itsObjNode)),
+  itsObjNode(new GrObjNode(obj)),
+  itsGLCache(new GLCacheNode(itsObjNode)),
+  itsBB(new GrObjBBox(this, itsGLCache)),
   itsScaler(),
   itsAligner(),
   itsRenderer()
@@ -75,6 +76,7 @@ DOTRACE("GrObjImpl::readFrom");
   {
     int temp;
     reader->readValue("GrObj::renderMode", temp);
+    itsGLCache->setMode(temp);
     itsRenderer.setMode(temp);
   }
 
@@ -87,6 +89,7 @@ DOTRACE("GrObjImpl::readFrom");
   {
     int temp;
     reader->readValue("GrObj::unRenderMode", temp);
+    itsGLCache->setUnMode(temp);
     itsRenderer.setUnMode(temp);
   }
 
@@ -150,21 +153,16 @@ void GrObjImpl::draw(Gfx::Canvas& canvas) const
 DOTRACE("GrObjImpl::draw");
   canvas.throwIfError("before GrObj::draw");
 
-  bool objectDrawn = itsRenderer.update(this, canvas);
-
   Rect<double> bbox = itsObjNode->gnodeBoundingBox(canvas);
 
-  if ( !objectDrawn )
-    {
-      Gfx::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::StateSaver state(canvas);
 
-      itsScaler.doScaling(canvas);
-      itsAligner.doAlignment(canvas, bbox);
+  itsScaler.doScaling(canvas);
+  itsAligner.doAlignment(canvas, bbox);
 
-      itsRenderer.render(itsObjNode.get(), canvas);
+  itsRenderer.render(itsGLCache.get(), this, canvas);
 
-      itsBB->gnodeDraw(canvas);
-    }
+  itsBB->gnodeDraw(canvas);
 
   canvas.throwIfError("during GrObj::draw");
 }
@@ -172,34 +170,6 @@ DOTRACE("GrObjImpl::draw");
 void GrObjImpl::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjImpl::undraw");
-  canvas.throwIfError("before GrObj::undraw");
-
-  switch (itsRenderer.getUnMode())
-    {
-    case Gmodes::DIRECT_RENDER:
-    case Gmodes::SWAP_FORE_BACK:
-      undrawDirectRender(canvas);
-      break;
-    case Gmodes::CLEAR_BOUNDING_BOX:
-      undrawClearBoundingBox(canvas);
-      break;
-    default:
-      break;
-    }
-
-  canvas.throwIfError("during GrObj::undraw");
-}
-
-void GrObjImpl::invalidateCaches()
-{
-DOTRACE("GrObjImpl::invalidateCaches");
-  itsRenderer.invalidate();
-}
-
-void GrObjImpl::undrawDirectRender(Gfx::Canvas& canvas) const
-{
-DOTRACE("GrObjImpl::undrawDirectRender");
-
   Gfx::Canvas::StateSaver state(canvas);
 
   Rect<double> bbox = itsObjNode->gnodeBoundingBox(canvas);
@@ -207,24 +177,16 @@ DOTRACE("GrObjImpl::undrawDirectRender");
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
-  itsRenderer.unrender(itsObjNode.get(), canvas);
+  itsRenderer.unrender(itsGLCache.get(), canvas);
 
   itsBB->gnodeUndraw(canvas);
 }
 
-void GrObjImpl::undrawClearBoundingBox(Gfx::Canvas& canvas) const
+void GrObjImpl::invalidateCaches()
 {
-DOTRACE("GrObjImpl::undrawClearBoundingBox");
-
-  Rect<double> world_pos = itsBB->gnodeBoundingBox(canvas);
-
-  Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
-
-  // Add an extra one-pixel border around the rect
-  screen_pos.widenByStep(itsBB->pixelBorder());
-  screen_pos.heightenByStep(itsBB->pixelBorder());
-
-  canvas.clearColorBuffer(screen_pos);
+DOTRACE("GrObjImpl::invalidateCaches");
+  itsGLCache->invalidate();
+  itsRenderer.invalidate();
 }
 
 static const char vcid_grobjimpl_cc[] = "$Header$";

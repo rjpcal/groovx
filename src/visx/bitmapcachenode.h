@@ -33,8 +33,6 @@ public:
 
   static fstring BITMAP_CACHE_DIR;
 
-  void callList() const;
-
   void setMode(Gmodes::RenderMode new_mode);
 
   Gmodes::RenderMode getMode() const { return itsMode; }
@@ -45,15 +43,13 @@ public:
 
   void setCacheFilename(const fstring& name);
 
-  // Returns true if the object was rendered to the screen as part
-  // of the update, false otherwise
-  bool update(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
+  void render(const Gnode* node, const GrObjImpl* obj,
+				  Gfx::Canvas& canvas) const;
 
-  void render(const Gnode* node, Gfx::Canvas& canvas) const;
+  void unrender(const Gnode* node, Gfx::Canvas& canvas) const;
 
-  void unrender(const Gnode* obj, Gfx::Canvas& canvas) const;
-
-  void saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
+  void saveBitmapCache(const Gnode* node, const GrObjImpl* obj,
+							  Gfx::Canvas& canvas,
                        const char* filename) const;
 
   Gmodes::RenderMode getUnMode() const { return itsUnMode; }
@@ -65,7 +61,6 @@ private:
 
   mutable fstring itsCacheFilename;
 
-  mutable int itsDisplayList;   // OpenGL display list that draws the object
   mutable shared_ptr<BitmapRep> itsBitmapCache;
 
   fstring fullCacheFilename() const
@@ -76,12 +71,10 @@ private:
       return result;
     }
 
-  // This function updates the cached OpenGL display list.
-  void recompileIfNeeded(const Gnode* node, Gfx::Canvas& canvas) const;
-
   // This function updates the cached bitmap, and returns a true if
   // the bitmap was actually recached, and false if nothing was done.
-  bool recacheBitmapIfNeeded(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
+  bool recacheBitmapIfNeeded(const Gnode* node,
+									  const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_grobjrenderer_h[] = "$Header$";

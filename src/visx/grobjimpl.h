@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 16:31:01 2001
+// written: Fri Aug 10 17:18:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 #include "grobjbbox.h"
 #include "grobjrenderer.h"
 #include "grobjscaler.h"
+
+#include "glcachenode.h"
 
 class GrObjNode : public Gnode {
   borrowed_ptr<GrObj> itsObj;
@@ -68,16 +70,18 @@ public:
 
   void invalidateCaches();
 
-  void undrawDirectRender(Gfx::Canvas& canvas) const;
-  void undrawClearBoundingBox(Gfx::Canvas& canvas) const;
+//    void undrawDirectRender(Gfx::Canvas& canvas) const;
+//    void undrawClearBoundingBox(Gfx::Canvas& canvas) const;
 
   //
   // Data members
   //
 
-  shared_ptr<GrObjNode> itsObjNode;
-
   int itsCategory;
+
+  shared_ptr<GrObjNode> itsObjNode;
+  shared_ptr<GLCacheNode> itsGLCache;
+
   shared_ptr<GrObjBBox> itsBB;
   GrObjScaler itsScaler;
   GrObjAligner itsAligner;
