@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Thu Feb  7 13:32:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,17 +32,18 @@
 
 namespace
 {
-  FreeList<string_rep> repList;
+  FreeList<string_rep>* repList;
 }
 
 void* string_rep::operator new(size_t bytes)
 {
-  return repList.allocate(bytes);
+  if (repList == 0) repList = new FreeList<string_rep>;
+  return repList->allocate(bytes);
 }
 
 void string_rep::operator delete(void* space)
 {
-  repList.deallocate(space);
+  repList->deallocate(space);
 }
 
 void string_rep::realloc(std::size_t capacity)
