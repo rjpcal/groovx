@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Jul 22 15:14:37 2002
+// written: Mon Jul 22 16:38:02 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -17,6 +17,7 @@
 
 #include "system/demangle.h"
 
+#include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
@@ -27,7 +28,6 @@
 #include <iostream>
 #include <tk.h>
 #include <typeinfo>
-#include <unistd.h>
 
 #include "util/trace.h"
 
@@ -182,24 +182,24 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
-{
-  // Just an ugly hack to communicate argc+argv from main() into
-  // Grsh_AppInit()
-  int LOCAL_ARGC = 0;
-  char** LOCAL_ARGV = 0;
-}
 
-// procedure to initialize a TclApp
-extern "C"
-int Grsh_AppInit(Tcl_Interp* interp)
+///////////////////////////////////////////////////////////////////////
+//
+// main() procedure
+//
+///////////////////////////////////////////////////////////////////////
+
+int main(int argc, char** argv)
 {
-DOTRACE("Grsh_AppInit");
+  Tcl::Main app(argc, argv);
+
   try
     {
-      Tcl::Interp safeIntp(interp);
-      static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, safeIntp);
-      return theApp.status();
+      Tcl::Interp safeIntp(app.interp());
+      TclApp theApp(argc, argv, safeIntp);
+
+      app.run();
+      return 0;
     }
   catch (Util::Error& err)
     {
@@ -218,319 +218,8 @@ DOTRACE("Grsh_AppInit");
       std::cerr << "uncaught exception of unknown type" << '\n';
     }
 
-  exit(-1);
-
-  /* can't get here, but placate compiler: */ return TCL_ERROR;
-}
-
-namespace my
-{
-
-typedef struct ThreadSpecificData {
-  Tcl_Interp *interp;         /* Interpreter for this thread. */
-  Tcl_DString command;        /* Used to assemble lines of terminal input
-                               * into Tcl commands. */
-  Tcl_DString line;           /* Used to read the next line from the
-                               * terminal input. */
-  int tty;                    /* Non-zero means standard input is a
-                               * terminal-like device.  Zero means it's
-                               * a file. */
-} ThreadSpecificData;
-Tcl_ThreadDataKey dataKey;
-
-/*
- *----------------------------------------------------------------------
- *
- * Prompt --
- *
- *      Issue a prompt on standard output, or invoke a script
- *      to issue the prompt.
- *
- * Results:
- *      None.
- *
- * Side effects:
- *      A prompt gets output, and a Tcl script may be evaluated
- *      in interp.
- *
- *----------------------------------------------------------------------
- */
-
-void Prompt(Tcl_Interp* interp, int partial)
-{
-  Tcl_Obj *promptCmd;
-  int code;
-  Tcl_Channel outChannel, errChannel;
-
-  promptCmd = Tcl_GetVar2Ex(interp,
-                            const_cast<char*>
-                              (partial ? "tcl_prompt2" : "tcl_prompt1"),
-                            NULL, TCL_GLOBAL_ONLY);
-  if (promptCmd == NULL) {
-  defaultPrompt:
-    if (!partial) {
-
-      /*
-       * We must check that outChannel is a real channel - it
-       * is possible that someone has transferred stdout out of
-       * this interpreter with "interp transfer".
-       */
-
-      outChannel = Tcl_GetChannel(interp, "stdout", NULL);
-      if (outChannel != (Tcl_Channel) NULL) {
-        Tcl_WriteChars(outChannel, "% ", 2);
-      }
-    }
-  } else {
-    code = Tcl_EvalObjEx(interp, promptCmd, TCL_EVAL_GLOBAL);
-    if (code != TCL_OK) {
-      Tcl_AddErrorInfo(interp,
-                       "\n    (script that generates prompt)");
-      /*
-       * We must check that errChannel is a real channel - it
-       * is possible that someone has transferred stderr out of
-       * this interpreter with "interp transfer".
-       */
-
-      errChannel = Tcl_GetChannel(interp, "stderr", NULL);
-      if (errChannel != (Tcl_Channel) NULL) {
-        Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-        Tcl_WriteChars(errChannel, "\n", 1);
-      }
-      goto defaultPrompt;
-    }
-  }
-  outChannel = Tcl_GetChannel(interp, "stdout", NULL);
-  if (outChannel != (Tcl_Channel) NULL) {
-    Tcl_Flush(outChannel);
-  }
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * StdinProc --
- *
- *      This procedure is invoked by the event dispatcher whenever
- *      standard input becomes readable.  It grabs the next line of
- *      input characters, adds them to a command being assembled, and
- *      executes the command if it's complete.
- *
- * Results:
- *      None.
- *
- * Side effects:
- *      Could be almost arbitrary, depending on the command that's
- *      typed.
- *
- *----------------------------------------------------------------------
- */
-
-void StdinProc(ClientData clientData, int /*mask*/)
-{
-  static int gotPartial = 0;
-  char *cmd;
-  int code, count;
-  Tcl_Channel chan = (Tcl_Channel) clientData;
-  ThreadSpecificData *tsdPtr = (ThreadSpecificData *)
-    Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
-  Tcl_Interp *interp = tsdPtr->interp;
-
-  count = Tcl_Gets(chan, &tsdPtr->line);
-
-  if (count < 0) {
-    if (!gotPartial) {
-      if (tsdPtr->tty) {
-        Tcl_Exit(0);
-      } else {
-        Tcl_DeleteChannelHandler(chan, StdinProc, (ClientData) chan);
-      }
-      return;
-    }
-  }
-
-  (void) Tcl_DStringAppend(&tsdPtr->command, Tcl_DStringValue(
-                                                              &tsdPtr->line), -1);
-  cmd = Tcl_DStringAppend(&tsdPtr->command, "\n", -1);
-  Tcl_DStringFree(&tsdPtr->line);
-  if (!Tcl_CommandComplete(cmd)) {
-    gotPartial = 1;
-    goto prompt;
-  }
-  gotPartial = 0;
-
-  /*
-   * Disable the stdin channel handler while evaluating the command;
-   * otherwise if the command re-enters the event loop we might
-   * process commands from stdin before the current command is
-   * finished.  Among other things, this will trash the text of the
-   * command being evaluated.
-   */
-
-  Tcl_CreateChannelHandler(chan, 0, StdinProc, (ClientData) chan);
-  code = Tcl_RecordAndEval(interp, cmd, TCL_EVAL_GLOBAL);
-
-  chan = Tcl_GetStdChannel(TCL_STDIN);
-  if (chan) {
-    Tcl_CreateChannelHandler(chan, TCL_READABLE, StdinProc,
-                             (ClientData) chan);
-  }
-  Tcl_DStringFree(&tsdPtr->command);
-  if (Tcl_GetStringResult(interp)[0] != '\0') {
-    if ((code != TCL_OK) || (tsdPtr->tty)) {
-      chan = Tcl_GetStdChannel(TCL_STDOUT);
-      if (chan) {
-        Tcl_WriteObj(chan, Tcl_GetObjResult(interp));
-        Tcl_WriteChars(chan, "\n", 1);
-      }
-    }
-  }
-
-  /*
-   * Output a prompt.
-   */
-
- prompt:
-  if (tsdPtr->tty) {
-    Prompt(interp, gotPartial);
-  }
-  Tcl_ResetResult(interp);
-}
-
-}
-
-int main(int argc, char** argv)
-{
-  LOCAL_ARGC = argc;
-  LOCAL_ARGV = argv;
-
-  Tcl_AppInitProc* appInitProc = Grsh_AppInit;
-  Tcl_Interp* interp = Tcl_CreateInterp();
-
-  my::ThreadSpecificData* tsdPtr = (my::ThreadSpecificData *)
-    Tcl_GetThreadData(&my::dataKey, sizeof(my::ThreadSpecificData));
-
-  Tcl_FindExecutable(argv[0]);
-  tsdPtr->interp = interp;
-
-  /*
-   * Parse command-line arguments.  If the next argument doesn't start with
-   * a "-" then strip it off and use it as the name of a script file to
-   * process.
-   */
-
-  const char* fileName = 0;
-
-  if ((argc > 1) && (argv[1][0] != '-')) {
-    fileName = argv[1];
-    argc--;
-    argv++;
-  }
-
-  /*
-   * Make command-line arguments available in the Tcl variables "argc"
-   * and "argv".
-   */
-
-  char* args = Tcl_Merge(argc-1, (const char **)argv+1);
-  Tcl_DString argString;
-  Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-  Tcl_SetVar(interp, const_cast<char*>("argv"),
-             Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-  Tcl_DStringFree(&argString);
-  ckfree(args);
-
-  char buf[TCL_INTEGER_SPACE];
-  sprintf(buf, "%d", argc-1);
-
-  if (fileName == NULL) {
-    Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-  } else {
-    fileName = Tcl_ExternalToUtfDString(NULL, fileName, -1, &argString);
-  }
-  Tcl_SetVar(interp, const_cast<char*>("argc"), buf, TCL_GLOBAL_ONLY);
-  Tcl_SetVar(interp, const_cast<char*>("argv0"), Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-
-  /*
-   * Set the "tcl_interactive" variable.
-   */
-
-  tsdPtr->tty = isatty(0);
-
-  Tcl_SetVar(interp, const_cast<char*>("tcl_interactive"),
-             ((fileName == NULL) && tsdPtr->tty) ? "1" : "0", TCL_GLOBAL_ONLY);
-
-  /*
-   * Invoke application-specific initialization.
-   */
-
-  if ((*appInitProc)(interp) != TCL_OK) {
-    std::cerr << Tcl_GetStringResult(interp)
-              << "\nApplication initialization failed\n";
-  }
-
-  /*
-   * Invoke the script specified on the command line, if any.
-   */
-
-  if (fileName != NULL) {
-    Tcl_ResetResult(interp);
-    int code = Tcl_EvalFile(interp, fileName);
-    if (code != TCL_OK) {
-      /*
-       * The following statement guarantees that the errorInfo
-       * variable is set properly.
-       */
-
-      Tcl_AddErrorInfo(interp, "");
-      std::cerr << Tcl_GetVar(interp, const_cast<char*>("errorInfo"),
-                              TCL_GLOBAL_ONLY)
-                << "\nError in startup script\n";
-      Tcl_DeleteInterp(interp);
-      Tcl_Exit(1);
-    }
-    tsdPtr->tty = 0;
-  } else {
-
-    /*
-     * Evaluate the .rc file, if one has been specified.
-     */
-
-    Tcl_SourceRCFile(interp);
-
-    /*
-     * Establish a channel handler for stdin.
-     */
-
-    Tcl_Channel inChannel = Tcl_GetStdChannel(TCL_STDIN);
-    if (inChannel) {
-      Tcl_CreateChannelHandler(inChannel, TCL_READABLE, my::StdinProc,
-                               (ClientData) inChannel);
-    }
-    if (tsdPtr->tty) {
-      my::Prompt(interp, 0);
-    }
-  }
-  Tcl_DStringFree(&argString);
-
-  Tcl_Channel outChannel = Tcl_GetStdChannel(TCL_STDOUT);
-  if (outChannel) {
-    Tcl_Flush(outChannel);
-  }
-  Tcl_DStringInit(&tsdPtr->command);
-  Tcl_DStringInit(&tsdPtr->line);
-  Tcl_ResetResult(interp);
-
-  /*
-   * Loop infinitely, waiting for commands to execute.  When there
-   * are no windows left, Tk_MainLoop returns and we exit.
-   */
-
-  Tk_MainLoop();
-  Tcl_DeleteInterp(interp);
-  Tcl_Exit(0);
-
-  return 0;
+  // if we got here, then some error occurred
+  return -1;
 }
 
 static const char vcid_grshAppInit_cc[] = "$Header$";
