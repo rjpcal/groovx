@@ -88,6 +88,9 @@ public:
 
 class FieldImpl
 {
+protected:
+  static void throwNotAllowed(const char* what);
+
 public:
   virtual ~FieldImpl();
 
@@ -259,6 +262,8 @@ public:
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
   {
+	 if (itsSetter == 0) throwNotAllowed("set");
+
     C& cobj = dynamic_cast<C&>(*obj);
 
     (cobj.*itsSetter)(new_val.get(Util::TypeCue<T>()));
@@ -266,6 +271,8 @@ public:
 
   virtual shared_ptr<Value> get(const FieldContainer* obj) const
   {
+	 if (itsGetter == 0) throwNotAllowed("get");
+
     const C& cobj = dynamic_cast<const C&>(*obj);
 
     return shared_ptr<Value>(new TValue<T>((cobj.*itsGetter)()));
@@ -274,6 +281,8 @@ public:
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
+	 if (itsSetter == 0) throwNotAllowed("read");
+
     C& cobj = dynamic_cast<C&>(*obj);
 
     T temp;
@@ -284,6 +293,8 @@ public:
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {
+	 if (itsGetter == 0) throwNotAllowed("write");
+
     const C& cobj = dynamic_cast<const C&>(*obj);
 
     writer->writeValue(name.c_str(), (cobj.*itsGetter)());
@@ -293,8 +304,9 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Field. We make one info object per property per class. This
- * class has no virtuals... it can be allocated in a builtin array.
+ * Field. We make one Field object per property per class. This class
+ * has no virtuals... it can be allocated in a builtin array, which
+ * can then be used to construct a FieldMap.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -317,10 +329,12 @@ public:
   //
 
   static const unsigned int NEW_GROUP = 1 << 0;
-  static const unsigned int TRANSIENT = 1 << 1; // otherwise, "persistent"
-  static const unsigned int STRING    = 1 << 2; // otherwise, "numeric"
-  static const unsigned int MULTI     = 1 << 3; // otherwise, "single"
-  static const unsigned int CHECKED   = 1 << 4; // otherwise, "unchecked"
+  static const unsigned int TRANSIENT = 1 << 1; // otherwise, persistent
+  static const unsigned int STRING    = 1 << 2; // otherwise, numeric
+  static const unsigned int MULTI     = 1 << 3; // otherwise, single-valued
+  static const unsigned int CHECKED   = 1 << 4; // otherwise, unchecked
+  static const unsigned int NO_GET    = 1 << 5; // otherwise, allow get
+  static const unsigned int NO_SET    = 1 << 6; // otherwise, allow set
 
   unsigned int flags() const    { return itsFlags; }
 
@@ -338,25 +352,63 @@ public:
   bool isChecked() const        { return   itsFlags & CHECKED ; }
   bool isUnchecked() const      { return !(itsFlags & CHECKED); }
 
+  bool allowGet() const         { return !(itsFlags & NO_GET); }
+  bool allowSet() const         { return !(itsFlags & NO_SET); }
+
   struct ValueType {};
+
+  /**
+	* Make a FieldImpl from a member-pointer-to-data
+	**/
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
   makeImpl(T C::* member_ptr,
-			  const Deref<T>::Type& min, const Deref<T>::Type& max, bool check)
+           const Deref<T>::Type& min, const Deref<T>::Type& max, bool check)
   {
     return shared_ptr<FieldImpl>
       (new DataMemberFieldImpl<C,T>
        (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max, check)));
   }
 
+  /**
+	* Make a FieldImpl from a getter/setter pair of
+	* member-pointer-to-functions
+	**/
+
   template <class C, class T>
   static shared_ptr<FieldImpl>
   makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs,
-			  const T& /* min */, const T& /* max */, bool /* check */)
+           const T& /* min */, const T& /* max */, bool /* check */)
   {
     return shared_ptr<FieldImpl>
       (new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
+  }
+
+  /**
+	* Make a read-only FieldImpl from a getter member-pointer-to-function
+	**/
+
+  template <class C, class T>
+  static shared_ptr<FieldImpl>
+  makeImpl(T (C::* getter)() const,
+           const T& /* min */, const T& /* max */, bool /* check */)
+  {
+    return shared_ptr<FieldImpl>
+      (new FuncMemberFieldImpl<C,T>(getter, 0));
+  }
+
+  /**
+	* Make a write-only FieldImpl from a setter member-pointer-to-function
+	**/
+
+  template <class C, class T>
+  static shared_ptr<FieldImpl>
+  makeImpl(void (C::* setter)(T),
+           const T& /* min */, const T& /* max */, bool /* check */)
+  {
+    return shared_ptr<FieldImpl>
+      (new FuncMemberFieldImpl<C,T>(0, setter));
   }
 
   static shared_ptr<FieldImpl> makeImpl(shared_ptr<FieldImpl> ptr)
@@ -367,7 +419,7 @@ public:
   template <class C, class V>
   Field(const fstring& name, ValueType, V C::* value_ptr,
         const fstring& def, const fstring& min,
-		  const fstring& max, const fstring& res,
+        const fstring& max, const fstring& res,
         unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
@@ -398,22 +450,26 @@ public:
   const fstring& max() const { return itsMax; }
   const fstring& res() const { return itsRes; }
 
+  /// Set the value of this field for \a obj.
   void setValue(FieldContainer* obj, const Value& new_val) const
   {
     itsFieldImpl->set(obj, new_val);
   }
 
+  /// Get the value of this field for \a obj.
   shared_ptr<Value> getValue(const FieldContainer* obj) const
   {
     return itsFieldImpl->get(obj);
   }
 
+  /// Read this field for \a obj from \a reader.
   void readValueFrom(FieldContainer* obj,
                      IO::Reader* reader, const fstring& name) const
   {
     itsFieldImpl->readValueFrom(obj, reader, name);
   }
 
+  /// Write this field for \a obj to \a writer.
   void writeValueTo(const FieldContainer* obj,
                     IO::Writer* writer, const fstring& name) const
   {
