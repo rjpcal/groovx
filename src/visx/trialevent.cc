@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Jan 25 17:26:01 2002
+// written: Thu Jan 31 10:16:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,14 @@
 
 #include "visx/trialevent.h"
 
+#include "visx/grshapp.h"
 #include "visx/trialbase.h"
 
 #include "gfx/canvas.h"
 
 #include "gwt/widget.h"
 
+#include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -345,6 +347,43 @@ DOTRACE("ClearBufferEvent::invoke");
   Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     widget->clearscreen();
+}
+
+GenericEvent::GenericEvent(int msec) :
+  TrialEvent(msec),
+  itsCallback(new Tcl::ProcWrapper
+              (dynamic_cast<GrshApp&>(Application::theApp()).getInterp()))
+{}
+
+GenericEvent::~GenericEvent() {}
+
+void GenericEvent::readFrom(IO::Reader* reader)
+{
+  reader->readOwnedObject("callback", itsCallback);
+
+  reader->readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+}
+
+void GenericEvent::writeTo(IO::Writer* writer) const
+{
+  writer->writeOwnedObject("callback", itsCallback);
+
+  writer->writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+}
+
+fstring GenericEvent::getCallback() const
+{
+  return itsCallback->fullSpec();
+}
+
+void GenericEvent::setCallback(const fstring& script)
+{
+  itsCallback->define("", script);
+}
+
+void GenericEvent::invoke(TrialBase& /*trial*/)
+{
+  itsCallback->invoke("");
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";
