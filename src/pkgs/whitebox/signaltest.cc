@@ -113,6 +113,36 @@ namespace
     sig2.emit(); TEST_REQUIRE_EQ(v0, 6);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 7);
   }
+
+  void testCyclicSignalSlotChain()
+  {
+    // This test is to make sure that we don't let ourselves get into
+    // infinite loops even if there are cyclic patterns of connections
+    // between signals and slots. This is implemented with
+    // Util::SignalBase::Impl::isItEmitting, which is locked by
+    // Util::SignalBase::Impl::Lock on entry to
+    // Util::SignalBase::doEmit().
+
+    Util::Signal0 sig1;
+    Util::Signal0 sig2;
+    Util::Signal0 sig3;
+
+    sig3.connect(&v0_callback); // sig3 --> v0 callback
+    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0 callback
+    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0 callback
+
+    sig3.connect(sig1.slot()); // sig1 --> sig2 --> sig3 --> v0 callback
+                               //  ^                 |
+                               //  |                 |
+                               //  +-----------------+
+
+    v0 = 0;
+    TEST_REQUIRE_EQ(v0, 0);
+
+    sig1.emit(); TEST_REQUIRE_EQ(v0, 1);
+    sig2.emit(); TEST_REQUIRE_EQ(v0, 2);
+    sig3.emit(); TEST_REQUIRE_EQ(v0, 3);
+  }
 }
 
 extern "C"
@@ -124,6 +154,7 @@ DOTRACE("Signaltest_Init");
 
   DEF_TEST(pkg, testSlotAdapterFreeFunc0);
   DEF_TEST(pkg, testSignalSlotChain);
+  DEF_TEST(pkg, testCyclicSignalSlotChain);
 
   PKG_RETURN;
 }
