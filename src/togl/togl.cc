@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 00:50:26 2000
+// written: Thu May 25 01:03:37 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -143,6 +143,11 @@ public:
   int height() const { return itsHeight; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
+
+  unsigned long allocColor(float red, float green, float blue) const;
+  void freeColor(unsigned long pixel) const;
+  void setColor(unsigned long index,
+					 float red, float green, float blue) const;
 
 private:
   void eventProc(XEvent* eventPtr);
@@ -595,10 +600,10 @@ int Togl_Configure(Tcl_Interp *interp, Togl* togl,
 }
 
 
-int Togl_Widget(ClientData clientData, Tcl_Interp *interp,
+int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
 					 int argc, char *argv[])
 {
-DOTRACE("<togl.cc>::Togl_Widget");
+DOTRACE("<togl.cc>::Togl_WidgetCmd");
   Togl* togl = (Togl*)clientData;
   int result = TCL_OK;
 
@@ -797,89 +802,23 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
 }
 
 
-/// XXX
-
 unsigned long Togl_AllocColor( const Togl* togl,
                                float red, float green, float blue )
 {
-DOTRACE("<togl.cc>::Togl_AllocColor");
-  XColor xcol;
-  int exact;
-
-  if (togl->itsRgbaFlag) {
-	 fprintf(stderr,"Error: Togl_AllocColor illegal in RGBA mode.\n");
-	 return 0;
-  }
-  /* TODO: maybe not... */
-  if (togl->itsPrivateCmapFlag) {
-	 fprintf(stderr,"Error: Togl_FreeColor illegal with private colormap\n");
-	 return 0;
-  }
-
-  xcol.red   = (short) (red   * 65535.0);
-  xcol.green = (short) (green * 65535.0);
-  xcol.blue  = (short) (blue  * 65535.0);
-
-  noFaultXAllocColor( Tk_Display(togl->itsTkWin), Tk_Colormap(togl->itsTkWin),
-							 Tk_Visual(togl->itsTkWin)->map_entries, &xcol, &exact );
-
-
-  /* for EPS output */
-  togl->itsEpsRedMap[ xcol.pixel] = xcol.red / 65535.0;
-  togl->itsEpsGreenMap[ xcol.pixel] = xcol.green / 65535.0;
-  togl->itsEpsBlueMap[ xcol.pixel] = xcol.blue / 65535.0;
-
-  return xcol.pixel;
+  return togl->allocColor(red, green, blue);
 }
-
 
 
 void Togl_FreeColor( const Togl* togl, unsigned long pixel )
 {
-DOTRACE("<togl.cc>::Togl_FreeColor");
-  if (togl->itsRgbaFlag) {
-	 fprintf(stderr,"Error: Togl_AllocColor illegal in RGBA mode.\n");
-	 return;
-  }
-  /* TODO: maybe not... */
-  if (togl->itsPrivateCmapFlag) {
-	 fprintf(stderr,"Error: Togl_FreeColor illegal with private colormap\n");
-	 return;
-  }
-
-  XFreeColors( Tk_Display(togl->itsTkWin), Tk_Colormap(togl->itsTkWin),
-					&pixel, 1, 0 );
+  togl->freeColor(pixel);
 }
-
 
 
 void Togl_SetColor( const Togl* togl,
                     unsigned long index, float red, float green, float blue )
 {
-DOTRACE("<togl.cc>::Togl_SetColor");
-  XColor xcol;
-
-  if (togl->itsRgbaFlag) {
-	 fprintf(stderr,"Error: Togl_AllocColor illegal in RGBA mode.\n");
-	 return;
-  }
-  if (!togl->itsPrivateCmapFlag) {
-	 fprintf(stderr,"Error: Togl_SetColor requires a private colormap\n");
-	 return;
-  }
-
-  xcol.pixel = index;
-  xcol.red   = (short) (red   * 65535.0);
-  xcol.green = (short) (green * 65535.0);
-  xcol.blue  = (short) (blue  * 65535.0);
-  xcol.flags = DoRed | DoGreen | DoBlue;
-
-  XStoreColor( Tk_Display(togl->itsTkWin), Tk_Colormap(togl->itsTkWin), &xcol );
-
-  /* for EPS output */
-  togl->itsEpsRedMap[ xcol.pixel] = xcol.red / 65535.0;
-  togl->itsEpsGreenMap[ xcol.pixel] = xcol.green / 65535.0;
-  togl->itsEpsBlueMap[ xcol.pixel] = xcol.blue / 65535.0;
+  togl->setColor(index, red, green, blue);
 }
 
 
@@ -889,6 +828,8 @@ static GLuint ListBase[MAX_FONTS];
 static GLuint ListCount[MAX_FONTS];
 
 
+
+/// XXX
 
 /*
  * Load the named bitmap font as a sequence of bitmaps in a display list.
@@ -1760,7 +1701,7 @@ DOTRACE("Togl::Togl");
 
   /* Create command event handler */
   itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
-											  Togl_Widget,
+											  Togl_WidgetCmd,
 											  static_cast<ClientData>(this),
 											  Togl::dummyWidgetCmdDeletedProc);
 
@@ -1981,6 +1922,81 @@ DOTRACE("Togl::findTogl");
 	 t = t->itsNext;
   }
   return NULL;
+}
+
+unsigned long Togl::allocColor(float red, float green, float blue) const {
+DOTRACE("Togl::allocColor");
+  XColor xcol;
+  int exact;
+
+  if (itsRgbaFlag) {
+	 fprintf(stderr,"Error: Togl_AllocColor illegal in RGBA mode.\n");
+	 return 0;
+  }
+  /* TODO: maybe not... */
+  if (itsPrivateCmapFlag) {
+	 fprintf(stderr,"Error: Togl_FreeColor illegal with private colormap\n");
+	 return 0;
+  }
+
+  xcol.red   = (short) (red   * 65535.0);
+  xcol.green = (short) (green * 65535.0);
+  xcol.blue  = (short) (blue  * 65535.0);
+
+  noFaultXAllocColor( Tk_Display(itsTkWin), Tk_Colormap(itsTkWin),
+							 Tk_Visual(itsTkWin)->map_entries, &xcol, &exact );
+
+
+  /* for EPS output */
+  itsEpsRedMap[ xcol.pixel] = xcol.red / 65535.0;
+  itsEpsGreenMap[ xcol.pixel] = xcol.green / 65535.0;
+  itsEpsBlueMap[ xcol.pixel] = xcol.blue / 65535.0;
+
+  return xcol.pixel;
+}
+
+void Togl::freeColor(unsigned long pixel) const {
+DOTRACE("Togl::freeColor");
+  if (itsRgbaFlag) {
+	 fprintf(stderr,"Error: Togl_AllocColor illegal in RGBA mode.\n");
+	 return;
+  }
+  /* TODO: maybe not... */
+  if (itsPrivateCmapFlag) {
+	 fprintf(stderr,"Error: Togl_FreeColor illegal with private colormap\n");
+	 return;
+  }
+
+  XFreeColors( Tk_Display(itsTkWin), Tk_Colormap(itsTkWin),
+					&pixel, 1, 0 );
+}
+
+void Togl::setColor(unsigned long index,
+						  float red, float green, float blue) const {
+DOTRACE("Togl::setColor");
+  XColor xcol;
+
+  if (itsRgbaFlag) {
+	 fprintf(stderr,"Error: Togl_AllocColor illegal in RGBA mode.\n");
+	 return;
+  }
+  if (!itsPrivateCmapFlag) {
+	 fprintf(stderr,"Error: Togl_SetColor requires a private colormap\n");
+	 return;
+  }
+
+  xcol.pixel = index;
+  xcol.red   = (short) (red   * 65535.0);
+  xcol.green = (short) (green * 65535.0);
+  xcol.blue  = (short) (blue  * 65535.0);
+  xcol.flags = DoRed | DoGreen | DoBlue;
+
+  XStoreColor( Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &xcol );
+
+  /* for EPS output */
+  itsEpsRedMap[xcol.pixel] = xcol.red / 65535.0;
+  itsEpsGreenMap[xcol.pixel] = xcol.green / 65535.0;
+  itsEpsBlueMap[xcol.pixel] = xcol.blue / 65535.0;
 }
 
 void Togl::eventProc(XEvent* eventPtr) {
