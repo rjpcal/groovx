@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Mar 29 23:22:18 2000
+// written: Mon May 22 13:59:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -138,11 +138,12 @@ DOTRACE("ToglConfig::~ToglConfig");
   Togl_SetClientData(itsWidget, static_cast<ClientData>(0));
   Togl_SetReshapeFunc(itsWidget, 0);
   Togl_SetDisplayFunc(itsWidget, 0);
-  itsWidget = 0;
 
   Tk_Window tkwin = Togl_TkWin(itsWidget);
   Tk_DeleteEventHandler(tkwin, ButtonPressMask, dummyEventProc,
 								static_cast<void*>(this));
+
+  itsWidget = 0;
 }
 
 ///////////////
