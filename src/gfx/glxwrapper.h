@@ -30,8 +30,6 @@
 #ifndef GLXWRAPPER_H_DEFINED
 #define GLXWRAPPER_H_DEFINED
 
-#include "util/ref.h"
-
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
