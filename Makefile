@@ -262,16 +262,16 @@ ALL_PROD_OPTIONS = $(COMMON_OPTIONS) $(PROD_OPTIM) $(PROD_OPTIONS)
 ALL_DEBUG_OPTIONS = $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FLAGS)
 
 $(GRSH)/%.o : %.cc
-	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+	time $(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
 
 $(UTIL)/%.o : util/%.cc
-	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+	time $(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
 
 $(GRSH)/%.do : %.cc
-	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
+	time $(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 $(UTIL)/%.do : util/%.cc
-	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
+	time $(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 #-------------------------------------------------------------------------
 #
@@ -371,6 +371,13 @@ $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
 #-------------------------------------------------------------------------
 
 #
+# level -1 headers (this are here to show dependencies, but the macros
+# are not defined to actually refer to anything, since they are
+# assumed to be never-changing).
+#
+STRINGFWD_H = 
+
+#
 # level 0 headers
 #
 BEZIER_H = bezier.h
@@ -378,10 +385,10 @@ BMAPDATA_H = bmapdata.h
 BMAPRENDERER_H = bmaprenderer.h
 CANVAS_H = canvas.h
 DEBUG_H = util/debug.h
-DEMANGLE_H = demangle.h
+DEMANGLE_H = $(STRINGFWD_H) demangle.h
 DUMBPTR_H = dumbptr.h
 ERRMSG_H = errmsg.h
-ERROR_H = util/error.h
+ERROR_H = $(STRINGFWD_H) util/error.h
 EXPERIMENT_H = experiment.h
 IOSTL_H = iostl.h
 IOUTILS_H = ioutils.h
@@ -395,7 +402,7 @@ POSLISTTCL_H = poslisttcl.h
 RAND_H = rand.h
 RANDUTILS_H = randutils.h
 STOPWATCH_H = stopwatch.h
-SYSTEM_H = system.h
+SYSTEM_H = $(STRINGFWD_H) system.h
 TCLDLIST_H = tcldlist.h
 TCLLINK_H = tcllink.h
 TCLOBJLOCK_H = tclobjlock.h
@@ -411,18 +418,18 @@ WIDGET_H = widget.h
 #
 APPLICATION_H = $(ERROR_H) application.h
 BITMAPREP_H = $(BMAPDATA_H) bitmaprep.h
-FACTORY_H = $(ERROR_H) $(DEMANGLE_H) factory.h
+FACTORY_H = $(STRINGFWD_H) $(ERROR_H) $(DEMANGLE_H) factory.h
 GLBMAPRENDERER_H = $(BMAPRENDERER_H) glbmaprenderer.h
 GLCANVAS_H = $(CANVAS_H) glcanvas.h
-IO_H = $(ERROR_H) io.h
-PBM_H = $(ERROR_H) $(BMAPDATA_H) pbm.h
-READER_H = $(ERROR_H) reader.h
+IO_H = $(STRINGFWD_H) $(ERROR_H) io.h
+PBM_H = $(STRINGFWD_H) $(ERROR_H) $(BMAPDATA_H) pbm.h
+READER_H = $(STRINGFWD_H) $(ERROR_H) reader.h
 RECT_H = $(POINT_H) rect.h
-TCLERROR_H = $(ERROR_H) tclerror.h
+TCLERROR_H = $(STRINGFWD_H) $(ERROR_H) tclerror.h
 TCLITEMPKGBASE_H = $(TCLPKG_H) tclitempkgbase.h
-VALUE_H = $(ERROR_H) value.h
+VALUE_H = $(STRINGFWD_H) $(ERROR_H) value.h
 VOIDPTRLIST_H = $(ERROR_H) voidptrlist.h
-WRITER_H = $(ERROR_H) writer.h
+WRITER_H = $(STRINGFWD_H) $(ERROR_H) writer.h
 XBMAPRENDERER_H = $(BMAPRENDERER_H) xbmaprenderer.h
 
 #
@@ -430,7 +437,7 @@ XBMAPRENDERER_H = $(BMAPRENDERER_H) xbmaprenderer.h
 #
 ASCIISTREAMWRITER_H = $(WRITER_H) asciistreamwriter.h
 BLOCK_H = $(IO_H) $(STOPWATCH_H) block.h
-EXPTDRIVER_H = $(IO_H) $(ERROR_H) $(EXPERIMENT_H) exptdriver.h
+EXPTDRIVER_H = $(IO_H) $(STRINGFWD_H) $(ERROR_H) $(EXPERIMENT_H) exptdriver.h
 GROBJ_H = $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) $(TRACER_H) grobj.h
 GRSHAPP_H = $(APPLICATION_H) $(ERROR_H) grshapp.h
 IOFACTORY_H = $(FACTORY_H) $(IO_H) iofactory.h
@@ -438,9 +445,9 @@ IOPTRLIST_H = $(VOIDPTRLIST_H) $(IO_H) ioptrlist.h
 POSITION_H = $(IO_H) position.h
 PROPERTY_H = $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
 RESPONSEHANDLER_H = $(IO_H) responsehandler.h 
-SOUND_H = $(ERROR_H) $(IO_H) sound.h
+SOUND_H = $(STRINGFWD_H) $(ERROR_H) $(IO_H) sound.h
 SUBJECT_H = $(IO_H) subject.h
-TCLEVALCMD_H = $(TCLOBJLOCK_H) $(TCLERROR_H) tclevalcmd.h
+TCLEVALCMD_H = $(STRINGFWD_H) $(TCLOBJLOCK_H) $(TCLERROR_H) tclevalcmd.h
 TCLVALUE_H = $(VALUE_H) tclvalue.h
 TIMINGHDLR_H = $(IO_H) $(STOPWATCH_H) timinghdlr.h
 TOGLCONFIG_H = $(RECT_H) $(WIDGET_H) toglconfig.h
@@ -453,7 +460,7 @@ WRITEUTILS_H = $(WRITER_H) writeutils.h
 #
 ASCIISTREAMREADER_H = $(READER_H) asciistreamreader.h
 BITMAP_H = $(GROBJ_H) bitmap.h
-EVENTRESPONSEHDLR_H = $(RESPONSEHANDLER_H) eventresponsehdlr.h
+EVENTRESPONSEHDLR_H = $(STRINGFWD_H) $(RESPONSEHANDLER_H) eventresponsehdlr.h
 FACE_H = $(GROBJ_H) $(PROPERTY_H) face.h
 FISH_H = $(GROBJ_H) $(PROPERTY_H) $(TRACER_H) fish.h
 FIXPT_H = $(GROBJ_H) $(PROPERTY_H) fixpt.h
@@ -469,7 +476,7 @@ MORPHYFACE_H = $(GROBJ_H) $(PROPERTY_H) morphyface.h
 NULLRESPONSEHDLR_H = $(RESPONSEHANDLER_H) nullresponsehdlr.h
 PTRLIST_H = $(DUMBPTR_H) $(IOPTRLIST_H) ptrlist.h
 READUTILS_H = $(READER_H) $(IO_H) readutils.h
-TCLCMD_H = $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
+TCLCMD_H = $(STRINGFWD_H) $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
 TIMINGHANDLER_H = $(TIMINGHDLR_H) timinghandler.h
 TLISTWIDGET_H = $(TOGLCONFIG_H) tlistwidget.h
 
@@ -479,7 +486,7 @@ TLISTWIDGET_H = $(TOGLCONFIG_H) tlistwidget.h
 BLOCKLIST_H = $(PTRLIST_H) blocklist.h
 CLONEFACE_H = $(FACE_H) cloneface.h
 GLBITMAP_H = $(BITMAP_H) glbitmap.h
-KBDRESPONSEHDLR_H = $(EVENTRESPONSEHDLR_H) kbdresponsehdlr.h
+KBDRESPONSEHDLR_H = $(STRINGFWD_H) $(EVENTRESPONSEHDLR_H) kbdresponsehdlr.h
 OBJLIST_H = $(PTRLIST_H) objlist.h
 POSLIST_H = $(PTRLIST_H) poslist.h
 PTRLIST_CC = $(PTRLIST_H) $(DEMANGLE_H) ptrlist.cc
@@ -581,7 +588,8 @@ FACETCL_CC = $(CLONEFACE_H) $(IOMGR_H) $(OBJLIST_H) $(FACE_H) \
 
 FACTORY_CC = $(FACTORY_H) factory.cc
 
-FISH_CC = $(FISH_H) $(ERROR_H) $(READER_H) $(RECT_H) $(WRITER_H) \
+FISH_CC = $(FISH_H) $(ERROR_H) \
+	$(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) fish.cc
 
 FISHTCL_CC = $(IOFACTORY_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) \
@@ -593,7 +601,8 @@ FIXPT_CC = $(FIXPT_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 FIXPTTCL_CC = $(OBJLIST_H) $(FIXPT_H) $(PROPITEMPKG_H) \
 	$(TRACE_H) fixpttcl.cc
 
-GABOR_CC = $(GABOR_H) $(RANDUTILS_H) $(READER_H) $(RECT_H) $(WRITER_H) \
+GABOR_CC = $(GABOR_H) \
+	$(RANDUTILS_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) gabor.cc
 
 GABORTCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(GABOR_H) $(TRACE_H) gabortcl.cc
@@ -653,8 +662,8 @@ KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) \
 
 LISTPKG_CC = $(LISTPKG_H) $(TRACE_H) listpkg.cc
 
-MASKHATCH_CC = $(MASKHATCH_H) $(READER_H) $(RECT_H) $(WRITER_H) \
-	$(TRACE_H) $(DEBUG_H) maskhatch.cc
+MASKHATCH_CC = $(MASKHATCH_H) $(READER_H) \
+	$(RECT_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) maskhatch.cc
 
 MASKTCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MASKHATCH_H) \
 	$(TRACE_H) masktcl.cc
@@ -662,7 +671,8 @@ MASKTCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MASKHATCH_H) \
 MISCTCL_CC = $(RANDUTILS_H) misctcl.cc
 
 MORPHYFACE_CC = $(MORPHYFACE_H) $(BEZIER_H) $(CANVAS_H) \
-	$(READER_H) $(RECT_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) morphyface.cc
+	$(READER_H) $(RECT_H) \
+	$(WRITER_H) $(TRACE_H) $(DEBUG_H) morphyface.cc
 
 MORPHYFACETCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MORPHYFACE_H) \
 	$(TRACE_H) morphyfacetcl.cc
@@ -699,7 +709,7 @@ POSLIST_CC = $(POSLIST_H) $(TRACE_H) $(DEBUG_H) \
 
 POSLISTTCL_CC = $(POSLIST_H) $(LISTPKG_H) $(TRACE_H) poslisttcl.cc
 
-PROPERTY_CC = $(PROPERTY_H) property.cc
+PROPERTY_CC = $(PROPERTY_H) $(READER_H) $(WRITER_H) property.cc
 
 READER_CC = $(READER_H) reader.cc
 
@@ -994,3 +1004,6 @@ ldeps: cdeps
 backup:
 	tclsh Backup.tcl
 
+depend:
+	makedepend -DACC_COMPILER -fDepends -I/opt/aCC/include -I/usr \
+	 -I/opt/aCC/include/iostream -I/cit/rjpeters/include -I./util *.cc
