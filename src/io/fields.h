@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Sun Nov  3 09:10:50 2002
+// written: Wed Nov 13 12:15:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,6 +88,19 @@ namespace
   }
 }
 
+namespace FieldAux
+{
+  /// A drop-in replacement for dynamic_cast for FieldContainers.
+  /** The difference from dynamic_cast is that this cast function allows us
+      to "cast" to a FieldContainer's subobject as returned by its child()
+      function. */
+  template <class C, class F>
+  inline C& cast(F& p);
+
+  void throwNotAllowed(const char* what);
+  void throwBadCast();
+}
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -100,9 +113,6 @@ namespace
 
 class FieldImpl
 {
-protected:
-  static void throwNotAllowed(const char* what);
-
 public:
   virtual ~FieldImpl();
 
@@ -157,7 +167,7 @@ public:
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
-    C& cobj = dynamic_cast<C&>(*obj);
+    C& cobj = FieldAux::cast<C>(*obj);
 
     DerefT raw = new_val.template as<DerefT>();
 
@@ -167,7 +177,7 @@ public:
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
-    const C& cobj = dynamic_cast<const C&>(*obj);
+    const C& cobj = FieldAux::cast<const C>(*obj);
 
     return Tcl::toTcl(dereference(cobj, itsDataMember));
   }
@@ -175,7 +185,7 @@ public:
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
-    C& cobj = dynamic_cast<C&>(*obj);
+    C& cobj = FieldAux::cast<C>(*obj);
 
     reader->readValue(name, dereference(cobj, itsDataMember));
   }
@@ -183,7 +193,7 @@ public:
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {
-    const C& cobj = dynamic_cast<const C&>(*obj);
+    const C& cobj = FieldAux::cast<const C>(*obj);
 
     writer->writeValue(name.c_str(), dereference(cobj, itsDataMember));
   }
@@ -205,7 +215,7 @@ public:
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
-    C& cobj = dynamic_cast<C&>(*obj);
+    C& cobj = FieldAux::cast<C>(*obj);
 
     fstring sval = new_val.template as<fstring>();
 
@@ -214,7 +224,7 @@ public:
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
-    const C& cobj = dynamic_cast<const C&>(*obj);
+    const C& cobj = FieldAux::cast<const C>(*obj);
 
     const Value& val = dereference(cobj, itsValueMember);
 
@@ -224,7 +234,7 @@ public:
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
-    C& cobj = dynamic_cast<C&>(*obj);
+    C& cobj = FieldAux::cast<C>(*obj);
 
     reader->readValueObj(name, dereference(cobj, itsValueMember));
   }
@@ -232,7 +242,7 @@ public:
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {
-    const C& cobj = dynamic_cast<const C&>(*obj);
+    const C& cobj = FieldAux::cast<const C>(*obj);
 
     writer->writeValueObj(name.c_str(), dereference(cobj, itsValueMember));
   }
@@ -262,9 +272,9 @@ public:
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
-    if (itsSetter == 0) throwNotAllowed("set");
+    if (itsSetter == 0) FieldAux::throwNotAllowed("set");
 
-    C& cobj = dynamic_cast<C&>(*obj);
+    C& cobj = FieldAux::cast<C>(*obj);
 
     typedef typename Util::TypeTraits<T>::StackT StackT;
 
@@ -273,9 +283,9 @@ public:
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
-    if (itsGetter == 0) throwNotAllowed("get");
+    if (itsGetter == 0) FieldAux::throwNotAllowed("get");
 
-    const C& cobj = dynamic_cast<const C&>(*obj);
+    const C& cobj = FieldAux::cast<const C>(*obj);
 
     return Tcl::toTcl((cobj.*itsGetter)());
   }
@@ -283,9 +293,9 @@ public:
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
-    if (itsSetter == 0) throwNotAllowed("read");
+    if (itsSetter == 0) FieldAux::throwNotAllowed("read");
 
-    C& cobj = dynamic_cast<C&>(*obj);
+    C& cobj = FieldAux::cast<C>(*obj);
 
     typedef typename Util::TypeTraits<T>::StackT StackT;
 
@@ -297,9 +307,9 @@ public:
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {
-    if (itsGetter == 0) throwNotAllowed("write");
+    if (itsGetter == 0) FieldAux::throwNotAllowed("write");
 
-    const C& cobj = dynamic_cast<const C&>(*obj);
+    const C& cobj = FieldAux::cast<const C>(*obj);
 
     writer->writeValue(name.c_str(), (cobj.*itsGetter)());
   }
@@ -580,8 +590,27 @@ public:
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;
 
   const FieldMap& fields() const { return *itsFieldMap; }
+
+  /// Get this container's child, if any. Default implementation returns null.
+  virtual FieldContainer* child() const;
 };
 
+template <class C, class F>
+inline C& FieldAux::cast(F& p)
+{
+  C* result = dynamic_cast<C*>(&p);
+
+  if (result == 0)
+    {
+      F* child = p.child();
+      if (child != 0)
+        result = &(FieldAux::cast<C>(*child));
+      else
+        FieldAux::throwBadCast();
+    }
+
+  return *result;
+}
 
 static const char vcid_fields_h[] = "$Header$";
 #endif // !FIELDS_H_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Fri Jan 18 16:07:06 2002
+// written: Wed Nov 13 12:10:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,13 +26,18 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-FieldImpl::~FieldImpl() {}
-
-void FieldImpl::throwNotAllowed(const char* what)
+void FieldAux::throwNotAllowed(const char* what)
 {
   throw Util::Error(fstring("'", what, "' operation "
                             "not allowed for that field"));
 }
+
+void FieldAux::throwBadCast()
+{
+  throw Util::Error("couldn't cast FieldContainer to target type");
+}
+
+FieldImpl::~FieldImpl() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -188,6 +193,12 @@ DOTRACE("FieldContainer::writeFieldsTo");
       if (!itr->isTransient())
         itr->writeValueTo(this, writer, itr->name());
     }
+}
+
+FieldContainer* FieldContainer::child() const
+{
+DOTRACE("FieldContainer::child");
+  return 0;
 }
 
 static const char vcid_fields_cc[] = "$Header$";
