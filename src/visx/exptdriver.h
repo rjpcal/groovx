@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Mon Jan 20 12:43:34 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,8 +112,6 @@ public:
 
   /// Return the Canvas for the Widget in which the experiment is running.
   Gfx::Canvas& getCanvas() const;
-
-  Tcl_Interp* getInterp() const;
 
   /// Begin the experiment.
   void edBeginExpt();
