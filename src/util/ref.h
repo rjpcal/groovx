@@ -32,19 +32,6 @@
 template <class T> class IdItem;
 template <class T> class MaybeIdItem;
 
-template <class Container, class T>
-class IdItemInserter {
-public:
-  Container& itsContainer;
-
-  IdItemInserter(Container& c) : itsContainer(c) {}
-
-  IdItemInserter& operator=(T* obj);
-
-  IdItemInserter& operator*() { return *this; }
-  IdItemInserter& operator++() { return *this; }
-};
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -89,11 +76,6 @@ public:
 
   PtrHandle<T> handle() const { return itsHandle; }
   IO::UID id() const { return itsHandle->id(); }
-
-
-  template <class Container>
-  static IdItemInserter<Container, T> makeInserter(Container& c)
-	 { return IdItemInserter<Container, T>(c); }
 };
 
 template <class To, class Fr>
@@ -104,26 +86,6 @@ IdItem<To> dynamicCast(IdItem<Fr> p)
   return IdItem<To>(&t);
 }
 
-template <class Container, class T>
-inline IdItemInserter<Container, T>&
-IdItemInserter<Container, T>::operator=(T* obj)
-{
-  itsContainer.push_back(IdItem<T>(obj));
-  return *this;
-}
-
-template <class Container, class T>
-class MIdItemInserter {
-public:
-  Container& itsContainer;
-
-  MIdItemInserter(Container& c) : itsContainer(c) {}
-
-  MIdItemInserter& operator=(T* obj);
-
-  MIdItemInserter& operator*() { return *this; }
-  MIdItemInserter& operator++() { return *this; }
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -220,17 +182,6 @@ public:
 
   NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
   IO::UID id() const { return itsId; }
-
-
-  //
-  // Related types
-  //
-
-  typedef T ValueType;
-
-  template <class Container>
-  static MIdItemInserter<Container, T> makeInserter(Container& c)
-	 { return MIdItemInserter<Container, T>(c); }
 };
 
 template <class To, class Fr>
@@ -243,14 +194,6 @@ MaybeIdItem<To> dynamicCast(MaybeIdItem<Fr> p)
 		return MaybeIdItem<To>(&t, p.id());
 	 }
   return MaybeIdItem<To>((To*)0, p.id());
-}
-
-template <class Container, class T>
-inline MIdItemInserter<Container, T>&
-MIdItemInserter<Container, T>::operator=(T* obj)
-{
-  itsContainer.push_back(MaybeIdItem<T>(obj));
-  return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////
