@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep  9 12:02:11 2002
+// written: Mon Sep  9 16:51:25 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -38,7 +38,7 @@
 
 #include "util/trace.h"
 
-#ifdef __GNUC__ < 3
+#if defined(__GNUC__) && __GNUC__ < 3
 #  define BROKEN_TEMPLATE_HACK
 #endif
 
