@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sun Oct  8 16:54:00 2000
+// written: Sun Oct  8 17:02:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ private:
   T* itsPtr;
 
 public:
-  MasterPtr(T* ptr);
+  explicit MasterPtr(T* ptr);
   virtual ~MasterPtr();
 
   T* getPtr() { return itsPtr; }
@@ -155,6 +155,16 @@ public:
       destroyed. */
   void insertAt(int id, T* ptr)
 	 { VoidPtrList::insertVoidPtrAt(id, new MasterPtr<T>(ptr)); }
+
+  /// Insert \a ptr into the list, and return its id.
+  int insert(MasterPtr<T>* master)
+	 { return VoidPtrList::insertVoidPtr(master); }
+
+  /** Insert \a ptr into the list at index \a id. If an object
+      previously existed at index \a id, that object will be properly
+      destroyed. */
+  void insertAt(int id, MasterPtr<T>* master)
+	 { VoidPtrList::insertVoidPtrAt(id, master); }
 
 protected:
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
