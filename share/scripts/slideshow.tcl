@@ -12,8 +12,21 @@ itcl::class Playlist {
     private variable itsIdx
     private variable itsWidget
     private variable itsPixmap
+    private variable itsMatch
 
-    constructor { fname widget } {
+    constructor { argv widget } {
+	set fname [lindex $argv end]
+
+	set itsMatch "*"
+
+	for {set i 0} {$i < [llength $argv]} {incr i} {
+	    switch -- [lindex $argv $i] {
+		-match {
+		    set itsMatch [lindex $argv [expr $i+1]]
+		}
+	    }
+	}
+
 	if { [file isdirectory $fname] } {
 	    set itsListFile ${fname}/.playlist
 
@@ -31,8 +44,21 @@ itcl::class Playlist {
 	}
 
 	set fd [open $itsListFile r]
-	set itsList [lrange [split [read $fd] "\n"] 0 end-1]
+	set items [lrange [split [read $fd] "\n"] 0 end-1]
 	close $fd
+
+	set i 0
+	set N [llength $items]
+	foreach item $items {
+	    incr i
+	    if { [string match $itsMatch $item] } {
+		lappend itsList $item
+	    }
+	    if { [expr $i % 100] == 0 } {
+		puts -nonewline "$i of $N ...\r"
+		flush stdout
+	    }
+	}
 
 	set itsIdx 0
 	set itsWidget $widget
@@ -147,34 +173,30 @@ proc updateText {} {
     set ::FILENAME [$::PLAYLIST status]
 }
 
--> [Toglet::current] destroy
-
-set t [new Toglet]
-
-set PLAYLIST [Playlist PLAYLIST [lindex $argv end] $t]
-
 set DELAY 4000
 
 set LOOP_HANDLE 0
+
+# PLAYLIST is the name of the global Playlist object
 
 frame .f
 
 button .f.loop -text "loop" -command looper
 button .f.noloop -text "stop loop" -command {after cancel $::LOOP_HANDLE}
 
-button .f.shuffler -text "shuffle" -command {$::PLAYLIST shuffle}
-button .f.sorter -text "sort" -command {$::PLAYLIST sort}
+button .f.shuffler -text "shuffle" -command {PLAYLIST shuffle}
+button .f.sorter -text "sort" -command {PLAYLIST sort}
 
 button .f.hide -text "hide" -command hide
 
-button .f.rot90 -text "rotate cw" -command {$::PLAYLIST rotate 90}
-button .f.rot270 -text "rotate ccw" -command {$::PLAYLIST rotate 270}
+button .f.rot90 -text "rotate cw" -command {PLAYLIST rotate 90}
+button .f.rot270 -text "rotate ccw" -command {PLAYLIST rotate 270}
 
 iwidgets::spinner .f.spinner -width 0 -fixed 0 \
     -command spinInput  -labelvariable FILENAME \
     -decrement {spinPic -1} -increment {spinPic 1}
 
-bind Canvas <ButtonRelease> {$::PLAYLIST show}
+bind Canvas <ButtonRelease> {PLAYLIST show}
 
 pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.rot90 .f.rot270 \
     .f.spinner \
@@ -182,8 +204,14 @@ pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.rot90 .f.rot270 \
 
 pack .f -side top
 
--> $t bind <ButtonPress-1> {spinPic -1; $::PLAYLIST show}
--> $t bind <ButtonPress-3> {spinPic 1; $::PLAYLIST show}
+-> [Toglet::current] destroy
+
+set t [new Toglet]
+
+set PLAYLIST [Playlist PLAYLIST $argv $t]
+
+-> $t bind <ButtonPress-1> {spinPic -1; PLAYLIST show}
+-> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
 
 -> $t height 975
 -> $t width 1400
@@ -193,4 +221,4 @@ pack .f -side top
 update
 
 updateText
-$::PLAYLIST show
+PLAYLIST show
