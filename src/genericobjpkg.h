@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Oct 26 09:17:52 2000
+// written: Fri Oct 27 15:41:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ public:
   List& theList() { return itsList; }
 
   virtual C* getCItemFromId(int id) {
-	 typename List::SharedPtr item(id);
+	 IdItem<typename List::BaseType> item(id);
 	 // will throw bad_cast if cast fails
 	 C& p = dynamic_cast<C&>(*item);
 	 return &p;
@@ -179,7 +179,7 @@ public:
 protected:
   virtual void invoke() {
 	 C* newObject = C::make();
-	 typedef typename List::SharedPtr ItemType;
+	 typedef IdItem<typename List::BaseType> ItemType;
 	 ItemType item(newObject, ItemType::Insert());
 	 returnInt(item.id());
   }
