@@ -3,7 +3,7 @@
 // bmapdata.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jan 20 00:37:03 2000
-// written: Mon Mar  6 19:24:37 2000
+// written: Tue Mar  7 15:30:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,29 @@
 
 #include "bmapdata.h"
 
-#include <algorithm>
 #include <cstring>				  // for memcpy
 
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope stuff
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+
+template <class T>
+inline void swap(T& t1, T& t2)
+  {
+	 T t2_copy = t2;
+	 t2 = t1;
+	 t1 = t2_copy;
+  }
+
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -43,7 +60,7 @@ public:
   int itsByteAlignment;
   dynamic_block<unsigned char> itsBytes;
 
-  mutable auto_ptr<UpdateFunc> itsUpdater;
+  mutable shared_ptr<UpdateFunc> itsUpdater;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -182,16 +199,10 @@ DOTRACE("BmapData::swap");
  
   itsImpl->itsBytes.swap(other.itsImpl->itsBytes);
 
-#ifdef ACC_COMPILER
-#define std
-#endif
-  std::swap(itsImpl->itsWidth, other.itsImpl->itsWidth);
-  std::swap(itsImpl->itsHeight, other.itsImpl->itsHeight);
-  std::swap(itsImpl->itsBitsPerPixel, other.itsImpl->itsBitsPerPixel);
-  std::swap(itsImpl->itsByteAlignment, other.itsImpl->itsByteAlignment);
-#ifdef ACC_COMPILER
-#undef std
-#endif
+  ::swap(itsImpl->itsWidth, other.itsImpl->itsWidth);
+  ::swap(itsImpl->itsHeight, other.itsImpl->itsHeight);
+  ::swap(itsImpl->itsBitsPerPixel, other.itsImpl->itsBitsPerPixel);
+  ::swap(itsImpl->itsByteAlignment, other.itsImpl->itsByteAlignment);
 }
 
 void BmapData::swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
@@ -201,19 +212,13 @@ DOTRACE("BmapData::swap");
 
   itsImpl->itsBytes.swap(bytes);
 
-#ifdef ACC_COMPILER
-#define std
-#endif
-  std::swap(itsImpl->itsWidth, width);
-  std::swap(itsImpl->itsHeight, height);
-  std::swap(itsImpl->itsBitsPerPixel, bits_per_pixel);
-  std::swap(itsImpl->itsByteAlignment, byte_alignment);
-#ifdef ACC_COMPILER
-#undef std
-#endif
+  ::swap(itsImpl->itsWidth, width);
+  ::swap(itsImpl->itsHeight, height);
+  ::swap(itsImpl->itsBitsPerPixel, bits_per_pixel);
+  ::swap(itsImpl->itsByteAlignment, byte_alignment);
 }
 
-void BmapData::queueUpdate(auto_ptr<UpdateFunc> updater) const {
+void BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const {
 DOTRACE("BmapData::queueUpdate");
   itsImpl->itsUpdater = updater;
 }
@@ -225,7 +230,8 @@ DOTRACE("BmapData::updateIfNeeded");
 		// This steals the updater from itsImpl->itsUpdater, so that we can
 		// avoid endless recursion if updateIfNeeded is called again
 		// as part of the updating.
-		auto_ptr<UpdateFunc> tempUpdater(itsImpl->itsUpdater);
+		shared_ptr<UpdateFunc> tempUpdater(itsImpl->itsUpdater);
+		itsImpl->itsUpdater.reset(0);
 
 		tempUpdater->update(const_cast<BmapData&>(*this));
 	 }

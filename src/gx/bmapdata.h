@@ -3,7 +3,7 @@
 // bmapdata.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jan 19 17:25:51 2000
-// written: Mon Mar  6 19:11:45 2000
+// written: Tue Mar  7 15:19:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 #include "util/arrays.h"
 #endif
 
-#ifndef MEMORY_DEFINED
-#include <memory>
-#define MEMORY_DEFINED
+#ifndef POINTERS_H_DEFINED
+#include "util/pointers.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -128,7 +127,7 @@ public:
 
   /** Queues the update given by \a updater. The \c update() function
       will be called only when the bitmap data must be accessed. */
-  void queueUpdate(auto_ptr<UpdateFunc> updater) const;
+  void queueUpdate(shared_ptr<UpdateFunc> updater) const;
 
   
   /// Forces any pending update to be called.
