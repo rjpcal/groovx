@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 17:41:18 2002
+// written: Mon Aug  5 18:34:25 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -33,8 +33,9 @@
 #include "togl/tkutil.h"
 #include "togl/x11util.h"
 
-// Standard C headers
-// #include <cstdlib>
+#include "util/error.h"
+#include "util/pointers.h"
+
 #include <cstring>
 
 // X Window System headers
@@ -51,12 +52,43 @@
 #include <tk.h>
 #include <tkInt.h> // needed to access "dispPtr->winTable" field of TkWindow
 
-#include "util/error.h"
-#include "util/pointers.h"
-
 #include "util/trace.h"
 #include "util/debug.h"
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// ToglOpts definition (plain-old-data struct)
+//
+///////////////////////////////////////////////////////////////////////
+
+struct ToglOpts
+{
+  void toDefaults()
+  {
+    width = 0;
+    height = 0;
+    time = 0;
+    privateCmapFlag = 0;
+    overlayFlag = 0;
+    cursor = None;
+    glx.toDefaults();
+  }
+
+  int width;
+  int height;
+  int time;
+  int privateCmapFlag;
+  int overlayFlag;
+  Tk_Cursor cursor;          /* The widget's cursor */
+  GlxOpts glx;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope declarations
+//
+///////////////////////////////////////////////////////////////////////
 
 namespace
 {
@@ -74,172 +106,13 @@ namespace
   Togl_Callback* DefaultTimerProc = NULL;
   ClientData DefaultClientData = NULL;
 
-  inline int TCL_ERR(Tcl_Interp* interp, const char* msg)
-    {
-      Tcl_ResetResult(interp);
-      Tcl_AppendResult(interp, msg, NULL);
-      return TCL_ERROR;
-    }
-
   const Togl::Impl* currentImpl = 0;
-}
 
-struct ToglOpts
-{
-  void toDefaults()
-  {
-    width = 0;
-    height = 0;
-    time = 0;
-    privateCmapFlag = 0;
-    overlayFlag = 0;
-#ifndef NO_TK_CURSOR
-    cursor = None;
-#endif
-    glx.toDefaults();
-  }
+  int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
+                     int objc, Tcl_Obj* const objv[]);
 
-  int width;
-  int height;
-  int time;
-  int privateCmapFlag;
-  int overlayFlag;
-#ifndef NO_TK_CURSOR
-  Tk_Cursor cursor;          /* The widget's cursor */
-#endif
-  GlxOpts glx;
-};
+  // Tk option database machinery for Togl:
 
-class Togl::Impl
-{
-private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
-
-public:
-  Togl* itsOwner;
-
-  shared_ptr<GlxWrapper> itsGlx;
-  Display* itsDisplay;
-  Tk_Window itsTkWin;
-  Tcl_Interp* itsInterp;
-  Tcl_Command itsWidgetCmd;
-
-  Tcl_TimerToken itsTimerHandler;
-
-  ToglOpts itsOpts;
-
-  ClientData itsClientData;
-
-  bool itsUpdatePending;
-
-  Togl_Callback* itsDisplayProc;
-  Togl_Callback* itsReshapeProc;
-  Togl_Callback* itsDestroyProc;
-  Togl_Callback* itsTimerProc;
-
-  GlxOverlay* itsOverlay;
-
-
-  Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
-  ~Impl();
-
-  int configure(int objc, Tcl_Obj* const objv[]);
-
-  void makeCurrent() const;
-
-  // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
-  static void dummyDestroyProc(char* clientData);
-  static void dummyEventProc(ClientData clientData, XEvent* eventPtr);
-  static void dummyWidgetCmdDeletedProc(ClientData clientData);
-  static void dummyTimerCallback(ClientData clientData);
-  static void dummyRenderCallback(ClientData clientData);
-
-  void setDisplayFunc(Togl_Callback* proc) { itsDisplayProc = proc; }
-  void setReshapeFunc(Togl_Callback* proc) { itsReshapeProc = proc; }
-  void setDestroyFunc(Togl_Callback* proc) { itsDestroyProc = proc; }
-
-  void requestRedisplay()
-  {
-    if (!itsUpdatePending)
-      {
-        Tk_DoWhenIdle( dummyRenderCallback, static_cast<ClientData>(this) );
-        itsUpdatePending = true;
-      }
-  }
-
-  void requestReconfigure();
-
-  void swapBuffers() const
-  {
-    if (itsOpts.glx.doubleFlag)
-      {
-        glXSwapBuffers( itsDisplay, windowId() );
-      }
-    else
-      {
-        glFlush();
-      }
-  }
-
-  int width() const { return itsOpts.width; }
-  int height() const { return itsOpts.height; }
-  bool isRgba() const { return itsOpts.glx.rgbaFlag; }
-  bool isDoubleBuffered() const { return itsOpts.glx.doubleFlag; }
-  unsigned int bitsPerPixel() const { return itsGlx->visInfo()->depth; }
-  bool hasPrivateCmap() const { return itsOpts.privateCmapFlag; }
-  Tcl_Interp* interp() const { return itsInterp; }
-  Tk_Window tkWin() const { return itsTkWin; }
-  const char* pathname() const { return Tk_PathName(itsTkWin); }
-
-  void ensureSharedColormap(const char* what) const
-  {
-    if (itsOpts.glx.rgbaFlag)
-      {
-        throw Util::Error(fstring(what, " not allowed in RGBA mode"));
-      }
-
-    if (itsOpts.privateCmapFlag)
-      {
-        throw Util::Error(fstring(what, " not allowed with private colormap"));
-      }
-  }
-
-  unsigned long allocColor(float red, float green, float blue) const;
-  void freeColor(unsigned long pixel) const;
-  void setColor(unsigned long index,
-                float red, float green, float blue) const;
-
-  void useLayer(int layer);
-
-  ClientData getClientData() const { return itsClientData; }
-  void setClientData(ClientData clientData) { itsClientData = clientData; }
-
-  Display* display() const { return itsDisplay; }
-  Screen* screen() const { return Tk_Screen(itsTkWin); }
-  int screenNumber() const { return Tk_ScreenNumber(itsTkWin); }
-  Colormap colormap() const { return Tk_Colormap(itsTkWin); }
-  Window windowId() const { return Tk_WindowId(itsTkWin); }
-
-  int dumpToEpsFile(const char* filename, int inColor,
-                    void (*user_redraw)( const Togl* )) const;
-
-private:
-  void eventProc(XEvent* eventPtr);
-  void widgetCmdDeletedProc();
-  void makeWindowExist(); // throws a Util::Error on failure
-  void setupOverlay(); // throws a Util::Error on failure
-};
-
-
-
-
-/*
- * Setup Togl widget configuration options:
- */
-
-namespace
-{
   const int TOGL_GLX_OPTION = 0x1;
 
   Tk_OptionTable toglOptionTable = 0;
@@ -325,10 +198,8 @@ namespace
     {TK_OPTION_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
      (char*)"false", -1, Tk_Offset(ToglOpts, overlayFlag), 0, NULL, 0},
 
-#ifndef NO_TK_CURSOR
     { TK_OPTION_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
       (char*)"", -1, Tk_Offset(ToglOpts, cursor), TK_OPTION_NULL_OK, NULL , 0},
-#endif
 
     {TK_OPTION_INT, (char*)"-time", (char*)"time", (char*)"Time",
      (char*)DEFAULT_TIME, -1, Tk_Offset(ToglOpts, time), 0, NULL, 0},
@@ -338,340 +209,122 @@ namespace
   };
 }
 
-
-
-
-void Togl_CreateFunc( Togl_Callback *proc )
-  { DefaultCreateProc = proc; }
-
-void Togl_DisplayFunc( Togl_Callback *proc )
-  { DefaultDisplayProc = proc; }
-
-void Togl_ReshapeFunc( Togl_Callback *proc )
-  { DefaultReshapeProc = proc; }
-
-void Togl_DestroyFunc( Togl_Callback *proc )
-  { DefaultDestroyProc = proc; }
-
-void Togl_TimerFunc( Togl_Callback *proc )
-  { DefaultTimerProc = proc; }
-
-
-/*
- * Reset default callback pointers to NULL.
- */
-void Togl_ResetDefaultCallbacks( void )
-{
-DOTRACE("<togl.cc>::Togl_ResetDefaultCallbacks");
-  DefaultCreateProc = NULL;
-  DefaultDisplayProc = NULL;
-  DefaultReshapeProc = NULL;
-  DefaultDestroyProc = NULL;
-  DefaultTimerProc = NULL;
-  DefaultClientData = NULL;
-}
-
-void Togl::setDisplayFunc( Togl_Callback *proc )
-  { rep->setDisplayFunc(proc); }
-
-void Togl::setReshapeFunc( Togl_Callback *proc )
-  { rep->setReshapeFunc(proc); }
-
-void Togl::setDestroyFunc( Togl_Callback *proc )
-  { rep->setDestroyFunc(proc); }
-
-int Togl::configure(int objc, Tcl_Obj* const objv[])
-  { return rep->configure(objc, objv); }
-
-void Togl::makeCurrent() const
-  { rep->makeCurrent(); }
-
-void Togl::requestRedisplay()
-  { rep->requestRedisplay(); }
-
-void Togl::requestReconfigure()
-  { rep->requestReconfigure(); }
-
-void Togl::swapBuffers() const
-  { rep->swapBuffers(); }
-
-int Togl::width() const
-  { return rep->width(); }
-
-int Togl::height() const
-  { return rep->height(); }
-
-bool Togl::isRgba() const
-  { return rep->isRgba(); }
-
-bool Togl::isDoubleBuffered() const
-  { return rep->isDoubleBuffered(); }
-
-unsigned int Togl::bitsPerPixel() const
-  { return rep->bitsPerPixel(); }
-
-bool Togl::hasPrivateCmap() const
-  { return rep->hasPrivateCmap(); }
-
-Tcl_Interp* Togl::interp() const
-  { return rep->interp(); }
-
-Tk_Window Togl::tkWin() const
-  { return rep->tkWin(); }
-
-const char* Togl::pathname() const
-  { return rep->pathname(); }
-
-int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
-                   int objc, Tcl_Obj* const objv[])
-{
-DOTRACE("<togl.cc>::Togl_WidgetCmd");
-  Togl::Impl* impl = static_cast<Togl::Impl*>(clientData);
-  int result = TCL_OK;
-
-  if (objc < 2)
-    {
-      Tcl_AppendResult(interp, "wrong # args: should be \"",
-                       Tcl_GetString(objv[0]), " ?options?\"", NULL);
-      return TCL_ERROR;
-    }
-
-  Tk_Preserve((ClientData)impl);
-
-  if (strcmp(Tcl_GetString(objv[1]), "configure") == 0)
-    {
-      if (objc == 2)
-        {
-          /* Return list of all configuration parameters */
-          Tcl_Obj* objResult =
-            Tk_GetOptionInfo(interp, (char*) &impl->itsOpts, toglOptionTable,
-                             (Tcl_Obj*)NULL, impl->tkWin());
-          if (objResult != 0)
-            {
-              Tcl_SetObjResult(interp, objResult);
-            }
-          else
-            {
-              result = TCL_ERROR;
-            }
-        }
-      else if (objc == 3)
-        {
-          if (strcmp(Tcl_GetString(objv[2]),"-extensions")==0)
-            {
-              /* Return a list of OpenGL extensions available */
-              Tcl_SetResult(interp, (char*) glGetString(GL_EXTENSIONS),
-                            TCL_STATIC);
-              result = TCL_OK;
-            }
-          else
-            {
-              /* Return a specific configuration parameter */
-              Tcl_Obj* objResult =
-                Tk_GetOptionInfo(interp, (char*) &impl->itsOpts, toglOptionTable,
-                                 objv[2], impl->tkWin());
-              if (objResult != 0)
-                {
-                  Tcl_SetObjResult(interp, objResult);
-                }
-              else
-                {
-                  result = TCL_ERROR;
-                }
-            }
-        }
-      else
-        {
-          /* Execute a configuration change */
-          result = impl->configure(objc-2, objv+2);
-        }
-    }
-  else if (strcmp(Tcl_GetString(objv[1]), "render") == 0)
-    {
-      /* force the widget to be redrawn */
-      Togl::Impl::dummyRenderCallback(static_cast<ClientData>(impl));
-    }
-  else if (strcmp(Tcl_GetString(objv[1]), "swapbuffers") == 0)
-    {
-      /* force the widget to be redrawn */
-      impl->swapBuffers();
-    }
-  else if (strcmp(Tcl_GetString(objv[1]), "makecurrent") == 0)
-    {
-      /* force the widget to be redrawn */
-      impl->makeCurrent();
-    }
-  else
-    {
-      Tcl_AppendResult(interp, "Togl: Unknown option: ",
-                       Tcl_GetString(objv[1]), NULL);
-      result = TCL_ERROR;
-    }
-
-  Tk_Release((ClientData)impl);
-  return result;
-}
-
-
-
-unsigned long Togl::allocColor( float red, float green, float blue ) const
-  { return rep->allocColor(red, green, blue); }
-
-void Togl::freeColor( unsigned long pixel ) const
-  { rep->freeColor(pixel); }
-
-void Togl::setColor( unsigned long index,
-                     float red, float green, float blue ) const
-  { rep->setColor(index, red, green, blue); }
-
-GLuint Togl::loadBitmapFont( const char *fontname ) const
-  { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin), fontname); }
-
-GLuint Togl::loadBitmapFonti( int fontnumber ) const
-  { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
-                                  GLUtil::NamedFont(fontnumber)); }
-
-void Togl::unloadBitmapFont( GLuint fontbase ) const
-  { GLUtil::unloadBitmapFont(fontbase); }
-
-
-void Togl::overlayDisplayFunc( Togl_OverlayCallback *proc )
-{
-DOTRACE("Togl::OverlayDisplayFunc");
-  if (rep->itsOverlay)
-    rep->itsOverlay->setDisplayProc(proc, static_cast<void*>(this));
-}
-
-void Togl::useLayer( int layer )
-  { rep->useLayer(layer); }
-
-void Togl::showOverlay()
-  { if (rep->itsOverlay) rep->itsOverlay->show(); }
-
-void Togl::hideOverlay()
-  { if (rep->itsOverlay) rep->itsOverlay->hide(); }
-
-void Togl::requestOverlayRedisplay()
-  { if (rep->itsOverlay) rep->itsOverlay->requestRedisplay(); }
-
-int Togl::existsOverlay() const
-{
-DOTRACE("Togl::existsOverlay");
-  return rep->itsOpts.overlayFlag;
-}
-
-int Togl::getOverlayTransparentValue() const
-{
-DOTRACE("Togl::getOverlayTransparentValue");
-  return rep->itsOverlay ? rep->itsOverlay->transparentPixel() : -1;
-}
-
-bool Togl::isMappedOverlay() const
-{
-DOTRACE("Togl::isMappedOverlay");
-  return (rep->itsOverlay && rep->itsOverlay->isMapped());
-}
-
-unsigned long Togl::allocColorOverlay( float red, float green,
-                                       float blue ) const
-{
-DOTRACE("Togl::allocColorOverlay");
-  return rep->itsOverlay
-    ? rep->itsOverlay->allocColor(red, green, blue)
-    : (unsigned long) -1;
-}
-
-void Togl::freeColorOverlay( unsigned long pixel ) const
-{
-DOTRACE("Togl::freeColorOverlay");
-  if (rep->itsOverlay)
-    rep->itsOverlay->freeColor(pixel);
-}
-
-
-/*
- * User client data
- */
-
-void Togl::defaultClientData( ClientData clientData )
-{
-DOTRACE("Togl::defaultClientData");
-  DefaultClientData = clientData;
-}
-
-ClientData Togl::getClientData() const
-  { return rep->getClientData(); }
-
-
-void Togl::setClientData( ClientData clientData )
-  { rep->setClientData(clientData); }
-
-
-
-/*
- * X11-only functions
- * Contributed by Miguel A. De Riera Pasenau (miguel@DALILA.UPC.ES)
- */
-
-Display* Togl::display() const
-  { return rep->display(); }
-
-Screen* Togl::screen() const
-  { return rep->screen(); }
-
-int Togl::screenNumber() const
-  { return rep->screenNumber(); }
-
-Colormap Togl::colormap() const
-  { return rep->colormap(); }
-
-Window Togl::windowId() const
-  { return rep->windowId(); }
-
-int Togl::dumpToEpsFile( const char *filename, int inColor,
-                         void (*user_redraw)( const Togl* )) const
-  { return rep->dumpToEpsFile(filename, inColor, user_redraw); }
-
-
 ///////////////////////////////////////////////////////////////////////
 //
-// Togl member definitions
+// Togl::Impl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-Togl::Togl(Tcl_Interp* interp, const char* pathname) :
-  rep(new Impl(this, interp, pathname))
+class Togl::Impl
 {
-DOTRACE("Togl::Togl");
-}
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
 
-Togl::~Togl()
-{
-DOTRACE("Togl::~Togl");
-  delete rep;
-}
+public:
+  Togl* itsOwner;
+  Tcl_Interp* itsInterp;
+  Tk_Window itsTkWin;
+  Display* itsDisplay;
+  ToglOpts itsOpts;
+  shared_ptr<GlxWrapper> itsGlx;
+  Tcl_Command itsWidgetCmd;
 
+  bool itsUpdatePending;
+  ClientData itsClientData;
+  Togl_Callback* itsUserDisplayProc;
+  Togl_Callback* itsUserReshapeProc;
+  Togl_Callback* itsUserDestroyProc;
+  Togl_Callback* itsUserTimerProc;
+  Tcl_TimerToken itsTimerToken;
+
+  GlxOverlay* itsOverlay;
+
+
+  Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
+  ~Impl();
+
+  int configure(int objc, Tcl_Obj* const objv[]);
+
+  void makeCurrent() const;
+
+  // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
+  static void cDestroyCallback(char* clientData);
+  static void cEventCallback(ClientData clientData, XEvent* eventPtr);
+  static void cWidgetCmdDeletedCallback(ClientData clientData);
+  static void cTimerCallback(ClientData clientData);
+  static void cRenderCallback(ClientData clientData);
+
+  void setDisplayFunc(Togl_Callback* proc) { itsUserDisplayProc = proc; }
+  void setReshapeFunc(Togl_Callback* proc) { itsUserReshapeProc = proc; }
+  void setDestroyFunc(Togl_Callback* proc) { itsUserDestroyProc = proc; }
+
+  void requestRedisplay();
+  void requestReconfigure();
+  void swapBuffers() const;
+
+  void ensureSharedColormap(const char* what) const;
+
+  unsigned long allocColor(float red, float green, float blue) const;
+  void freeColor(unsigned long pixel) const;
+  void setColor(unsigned long index, float red, float green, float blue) const;
+
+  void useLayer(int layer);
+
+  Window windowId() const { return Tk_WindowId(itsTkWin); }
+
+private:
+  void eventProc(XEvent* eventPtr);
+  void widgetCmdDeletedProc();
+  void makeWindowExist(); // throws a Util::Error on failure
+  void setupOverlay(); // throws a Util::Error on failure
+};
+
+
+//---------------------------------------------------------------------
+//
+// Togl::Impl::Impl
+//
 //     * Creates a new window
 //     * Creates an 'Togl' data structure
 //     * Creates an event handler for this window
 //     * Creates a command that handles this object
 //     * Configures this Togl for the given arguments
+//
+//---------------------------------------------------------------------
+
+namespace
+{
+  class TkWinGuard
+  {
+  private:
+    Tk_Window tkWin;
+    bool dismissed;
+
+  public:
+    TkWinGuard(Tk_Window w) : tkWin(w), dismissed(false) {}
+    ~TkWinGuard() { if (!dismissed) Tk_DestroyWindow(tkWin); }
+    void dismiss() { dismissed = true; }
+  };
+}
 
 Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsOwner(owner),
-
-  itsGlx(0),
-  itsDisplay(0),
-  itsTkWin(0),
   itsInterp(interp),
+  itsTkWin(0),
+  itsDisplay(0),
+  itsOpts(),
+  itsGlx(0),
   itsWidgetCmd(0),
-  itsTimerHandler(0),
-  itsClientData(DefaultClientData),
+
   itsUpdatePending(false),
-  itsDisplayProc(DefaultDisplayProc),
-  itsReshapeProc(DefaultReshapeProc),
-  itsDestroyProc(DefaultDestroyProc),
-  itsTimerProc(DefaultTimerProc),
+  itsClientData(DefaultClientData),
+  itsUserDisplayProc(DefaultDisplayProc),
+  itsUserReshapeProc(DefaultReshapeProc),
+  itsUserDestroyProc(DefaultDestroyProc),
+  itsUserTimerProc(DefaultTimerProc),
+  itsTimerToken(0),
+
   itsOverlay(0)
 {
 DOTRACE("Togl::Impl::Impl");
@@ -680,14 +333,16 @@ DOTRACE("Togl::Impl::Impl");
   // Create the window
   //
 
-  Tk_Window mainwin = Tk_MainWindow(interp);
-  itsTkWin = Tk_CreateWindowFromPath(itsInterp, mainwin,
+  itsTkWin = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
                                      const_cast<char*>(pathname),
                                      (char *) 0);
+
   if (itsTkWin == NULL)
     {
       throw Util::Error("Togl constructor couldn't create Tk_Window");
     }
+
+  TkWinGuard guard(itsTkWin); // destroys the widget in case of exception
 
   itsDisplay = Tk_Display( itsTkWin );
 
@@ -707,7 +362,6 @@ DOTRACE("Togl::Impl::Impl");
   if (Tk_InitOptions(interp, reinterpret_cast<char*>(&itsOpts),
                      toglOptionTable, itsTkWin) == TCL_ERROR)
     {
-      Tk_DestroyWindow(itsTkWin);
       throw Util::Error(fstring("Togl couldn't initialize options:\n",
                                 Tcl_GetStringResult(itsInterp)));
     }
@@ -720,15 +374,7 @@ DOTRACE("Togl::Impl::Impl");
 
   Assert(itsGlx.get() == 0);
 
-  try
-    {
-      makeWindowExist();
-    }
-  catch (...)
-    {
-      Tk_DestroyWindow(itsTkWin);
-      throw;
-    }
+  makeWindowExist();
 
   //
   // Set up handlers
@@ -737,23 +383,26 @@ DOTRACE("Togl::Impl::Impl");
   itsWidgetCmd = Tcl_CreateObjCommand(itsInterp, Tk_PathName(itsTkWin),
                                       Togl_WidgetCmd,
                                       static_cast<ClientData>(this),
-                                      Togl::Impl::dummyWidgetCmdDeletedProc);
+                                      &cWidgetCmdDeletedCallback);
 
   Tk_CreateEventHandler(itsTkWin,
                         ExposureMask | StructureNotifyMask,
-                        Togl::Impl::dummyEventProc,
+                        &cEventCallback,
                         static_cast<ClientData>(this));
 
-  if (itsTimerProc)
+  if (itsUserTimerProc)
     {
-      Tk_CreateTimerHandler( itsOpts.time, Togl::Impl::dummyTimerCallback,
-                             static_cast<ClientData>(this) );
+      itsTimerToken =
+        Tcl_CreateTimerHandler( itsOpts.time, &cTimerCallback,
+                                static_cast<ClientData>(this) );
     }
 
   if (DefaultCreateProc)
     {
       DefaultCreateProc(itsOwner);
     }
+
+  guard.dismiss();
 
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 }
@@ -764,9 +413,9 @@ DOTRACE("Togl::Impl::~Impl");
 
   Tk_FreeConfigOptions((char*) &itsOpts, toglOptionTable, itsTkWin);
 
-  if (itsDestroyProc)
+  if (itsUserDestroyProc)
     {
-      itsDestroyProc(itsOwner);
+      itsUserDestroyProc(itsOwner);
     }
 
   delete itsOverlay;
@@ -813,15 +462,6 @@ DOTRACE("Togl::Impl::configure");
   return TCL_OK;
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// Togl::Impl::makeCurrent
-//
-//   Bind the OpenGL rendering context to the specified
-//   Togl widget.
-//
-///////////////////////////////////////////////////////////////////////
-
 void Togl::Impl::makeCurrent() const
 {
 DOTRACE("Togl::Impl::makeCurrent");
@@ -837,52 +477,57 @@ DOTRACE("Togl::Impl::makeCurrent");
 
 
 // Gets called when an Togl widget is destroyed.
-void Togl::Impl::dummyDestroyProc(char* clientData)
+void Togl::Impl::cDestroyCallback(char* clientData)
 {
-DOTRACE("Togl::Impl::dummyDestroyProc");
+DOTRACE("Togl::Impl::cDestroyCallback");
   Impl* impl = reinterpret_cast<Impl*>(clientData);
   delete impl->itsOwner;
 }
 
-void Togl::Impl::dummyEventProc(ClientData clientData, XEvent* eventPtr)
+void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr)
 {
   Impl* impl = static_cast<Impl*>(clientData);
   impl->eventProc(eventPtr);
 }
 
-void Togl::Impl::dummyWidgetCmdDeletedProc(ClientData clientData)
+void Togl::Impl::cWidgetCmdDeletedCallback(ClientData clientData)
 {
   Impl* impl = static_cast<Impl*>(clientData);
   impl->widgetCmdDeletedProc();
 }
 
-// Gets called from Tk_CreateTimerHandler.
-void Togl::Impl::dummyTimerCallback(ClientData clientData)
+void Togl::Impl::cTimerCallback(ClientData clientData)
 {
-DOTRACE("Togl::Impl::dummyTimerCallback");
+DOTRACE("Togl::Impl::cTimerCallback");
   Impl* impl = static_cast<Impl*>(clientData);
-  impl->itsTimerProc(impl->itsOwner);
-  impl->itsTimerHandler =
-    Tcl_CreateTimerHandler( impl->itsOpts.time, dummyTimerCallback,
+  impl->itsUserTimerProc(impl->itsOwner);
+  impl->itsTimerToken =
+    Tcl_CreateTimerHandler( impl->itsOpts.time, cTimerCallback,
                             static_cast<ClientData>(impl) );
 }
 
-// Called when the widget's contents must be redrawn.  Basically, we
-// just call the user's render callback function.
-//
-// Note that the parameter type is ClientData so this function can be
-// passed to Tk_DoWhenIdle().
-void Togl::Impl::dummyRenderCallback(ClientData clientData)
+// Called when the widget's contents must be redrawn.
+void Togl::Impl::cRenderCallback(ClientData clientData)
 {
-DOTRACE("Togl::Impl::dummyRenderCallback");
+DOTRACE("Togl::Impl::cRenderCallback");
   Impl* impl = static_cast<Impl*>(clientData);
 
-  if (impl->itsDisplayProc)
+  if (impl->itsUserDisplayProc)
     {
       impl->makeCurrent();
-      impl->itsDisplayProc(impl->itsOwner);
+      impl->itsUserDisplayProc(impl->itsOwner);
     }
   impl->itsUpdatePending = false;
+}
+
+void Togl::Impl::requestRedisplay()
+{
+DOTRACE("Togl::Impl::requestRedisplay");
+  if (!itsUpdatePending)
+    {
+      Tk_DoWhenIdle( cRenderCallback, static_cast<ClientData>(this) );
+      itsUpdatePending = true;
+    }
 }
 
 void Togl::Impl::requestReconfigure()
@@ -900,9 +545,9 @@ DOTRACE("Togl::Impl::requestReconfigure");
       makeCurrent();
     }
 
-  if (itsReshapeProc)
+  if (itsUserReshapeProc)
     {
-      itsReshapeProc(itsOwner);
+      itsUserReshapeProc(itsOwner);
     }
   else
     {
@@ -916,13 +561,40 @@ DOTRACE("Togl::Impl::requestReconfigure");
     }
 }
 
+void Togl::Impl::swapBuffers() const
+{
+DOTRACE("Togl::Impl::swapBuffers");
+  if (itsOpts.glx.doubleFlag)
+    {
+      glXSwapBuffers( itsDisplay, windowId() );
+    }
+  else
+    {
+      glFlush();
+    }
+}
+
+void Togl::Impl::ensureSharedColormap(const char* what) const
+{
+DOTRACE("Togl::Impl::ensureSharedColormap");
+  if (itsOpts.glx.rgbaFlag)
+    {
+      throw Util::Error(fstring(what, " not allowed in RGBA mode"));
+    }
+
+  if (itsOpts.privateCmapFlag)
+    {
+      throw Util::Error(fstring(what, " not allowed with private colormap"));
+    }
+}
+
 unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::allocColor");
 
   ensureSharedColormap("Togl::allocColor");
 
-  return X11Util::noFaultXAllocColor(itsDisplay, colormap(),
+  return X11Util::noFaultXAllocColor(itsDisplay, Tk_Colormap(itsTkWin),
                                      Tk_Visual(itsTkWin)->map_entries,
                                      red, green, blue);
 }
@@ -933,7 +605,7 @@ DOTRACE("Togl::Impl::freeColor");
 
   ensureSharedColormap("Togl::freeColor");
 
-  XFreeColors(itsDisplay, colormap(), &pixel, 1, 0);
+  XFreeColors(itsDisplay, Tk_Colormap(itsTkWin), &pixel, 1, 0);
 }
 
 void Togl::Impl::setColor(unsigned long index,
@@ -951,7 +623,7 @@ DOTRACE("Togl::Impl::setColor");
   xcol.blue  = (short) (blue  * 65535.0);
   xcol.flags = DoRed | DoGreen | DoBlue;
 
-  XStoreColor( itsDisplay, colormap(), &xcol );
+  XStoreColor( itsDisplay, Tk_Colormap(itsTkWin), &xcol );
 }
 
 void Togl::Impl::useLayer(int layer)
@@ -972,18 +644,6 @@ DOTRACE("Togl::Impl::useLayer");
           /* error */
         }
     }
-}
-
-int Togl::Impl::dumpToEpsFile(const char* filename, int inColor,
-                              void (*user_redraw)( const Togl* )) const
-{
-DOTRACE("Togl::Impl::dumpToEpsFile");
-
-  user_redraw(itsOwner);
-
-  glFlush();
-
-  return GLUtil::generateEPS( filename, inColor, itsOpts.width, itsOpts.height);
 }
 
 void Togl::Impl::eventProc(XEvent* eventPtr)
@@ -1021,20 +681,20 @@ DOTRACE("Togl::Impl::eventProc");
           Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
           itsWidgetCmd = 0;
         }
-      if (itsTimerProc != 0)
+      if (itsUserTimerProc != 0)
         {
-          Tcl_DeleteTimerHandler(itsTimerHandler);
-          itsTimerProc = 0;
+          Tcl_DeleteTimerHandler(itsTimerToken);
+          itsUserTimerProc = 0;
         }
       if (itsUpdatePending)
         {
-          Tcl_CancelIdleCall(Togl::Impl::dummyRenderCallback,
+          Tcl_CancelIdleCall(Togl::Impl::cRenderCallback,
                              static_cast<ClientData>(this));
           itsUpdatePending = 0;
         }
 
       Tcl_EventuallyFree( static_cast<ClientData>(this),
-                          Togl::Impl::dummyDestroyProc );
+                          Togl::Impl::cDestroyCallback );
 
       break;
     default:
@@ -1043,28 +703,20 @@ DOTRACE("Togl::Impl::eventProc");
     }
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// Togl::Impl::widgetCmdDeletedProc
-//
-// This procedure could be invoked either because the window was destroyed
-// and the command was then deleted (in which case itsTkWin is NULL) or
-// because the command was deleted, and then this procedure destroys the
-// widget.
-//
-///////////////////////////////////////////////////////////////////////
-
 void Togl::Impl::widgetCmdDeletedProc()
 {
 DOTRACE("Togl::Impl::widgetCmdDeletedProc");
-  /*
-   */
+
+  // This procedure could be invoked either because the window was
+  // destroyed and the command was then deleted (in which case itsTkWin is
+  // NULL) or because the command was deleted, and then this procedure
+  // destroys the widget.
 
   if (itsTkWin != 0)
     {
       Tk_DeleteEventHandler(itsTkWin,
                             ExposureMask | StructureNotifyMask,
-                            Togl::Impl::dummyEventProc,
+                            Togl::Impl::cEventCallback,
                             static_cast<ClientData>(this));
 
       if (itsOverlay)
@@ -1082,15 +734,6 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
       itsTkWin = 0;
     }
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// Togl::Impl::makeWindowExist
-//
-//   Modified version of Tk_MakeWindowExist.
-//   Creates an OpenGL window for the Togl widget.
-//
-///////////////////////////////////////////////////////////////////////
 
 void Togl::Impl::makeWindowExist()
 {
@@ -1169,19 +812,267 @@ DOTRACE("Togl::Impl::setupOverlay");
 
 ///////////////////////////////////////////////////////////////////////
 //
+// Togl member function definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Togl::Togl(Tcl_Interp* interp, const char* pathname) :
+  rep(new Impl(this, interp, pathname))
+{
+DOTRACE("Togl::Togl");
+}
+
+Togl::~Togl()
+{
+DOTRACE("Togl::~Togl");
+  delete rep;
+}
+
+void Togl::setDefaultCreateFunc(Togl_Callback* p) { DefaultCreateProc = p; }
+void Togl::setDefaultDisplayFunc(Togl_Callback* p) { DefaultDisplayProc = p; }
+void Togl::setDefaultReshapeFunc(Togl_Callback* p) { DefaultReshapeProc = p; }
+void Togl::setDefaultDestroyFunc(Togl_Callback* p) { DefaultDestroyProc = p; }
+void Togl::setDefaultTimerFunc(Togl_Callback* p) { DefaultTimerProc = p; }
+
+void Togl::resetDefaultCallbacks()
+{
+DOTRACE("Togl::resetDefaultCallbacks");
+  DefaultCreateProc = 0;
+  DefaultDisplayProc = 0;
+  DefaultReshapeProc = 0;
+  DefaultDestroyProc = 0;
+  DefaultTimerProc = 0;
+  DefaultClientData = 0;
+}
+
+void Togl::setDisplayFunc(Togl_Callback* proc) { rep->setDisplayFunc(proc); }
+void Togl::setReshapeFunc(Togl_Callback* proc) { rep->setReshapeFunc(proc); }
+void Togl::setDestroyFunc(Togl_Callback* proc) { rep->setDestroyFunc(proc); }
+
+int Togl::configure(int objc, Tcl_Obj* const objv[])
+  { return rep->configure(objc, objv); }
+
+void Togl::makeCurrent() const          { rep->makeCurrent(); }
+void Togl::requestRedisplay()           { rep->requestRedisplay(); }
+void Togl::requestReconfigure()         { rep->requestReconfigure(); }
+void Togl::swapBuffers() const          { rep->swapBuffers(); }
+int Togl::width() const                 { return rep->itsOpts.width; }
+int Togl::height() const                { return rep->itsOpts.height; }
+bool Togl::isRgba() const               { return rep->itsOpts.glx.rgbaFlag; }
+bool Togl::isDoubleBuffered() const     { return rep->itsOpts.glx.doubleFlag; }
+unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
+bool Togl::hasPrivateCmap() const       { return rep->itsOpts.privateCmapFlag; }
+Tcl_Interp* Togl::interp() const        { return rep->itsInterp; }
+Tk_Window Togl::tkWin() const           { return rep->itsTkWin; }
+const char* Togl::pathname() const      { return Tk_PathName(rep->itsTkWin); }
+
+unsigned long Togl::allocColor( float red, float green, float blue ) const
+  { return rep->allocColor(red, green, blue); }
+
+void Togl::freeColor( unsigned long pixel ) const
+  { rep->freeColor(pixel); }
+
+void Togl::setColor( unsigned long index,
+                     float red, float green, float blue ) const
+  { rep->setColor(index, red, green, blue); }
+
+GLuint Togl::loadBitmapFont( const char *fontname ) const
+  { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin), fontname); }
+
+GLuint Togl::loadBitmapFonti( int fontnumber ) const
+  { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
+                                  GLUtil::NamedFont(fontnumber)); }
+
+void Togl::unloadBitmapFont( GLuint fontbase ) const
+  { GLUtil::unloadBitmapFont(fontbase); }
+
+
+void Togl::overlayDisplayFunc(Togl_OverlayCallback* proc)
+{
+DOTRACE("Togl::OverlayDisplayFunc");
+  if (rep->itsOverlay)
+    rep->itsOverlay->setDisplayProc(proc, static_cast<void*>(this));
+}
+
+void Togl::useLayer( int layer )
+  { rep->useLayer(layer); }
+
+void Togl::showOverlay()
+  { if (rep->itsOverlay) rep->itsOverlay->show(); }
+
+void Togl::hideOverlay()
+  { if (rep->itsOverlay) rep->itsOverlay->hide(); }
+
+void Togl::requestOverlayRedisplay()
+  { if (rep->itsOverlay) rep->itsOverlay->requestRedisplay(); }
+
+int Togl::existsOverlay() const
+{
+DOTRACE("Togl::existsOverlay");
+  return rep->itsOpts.overlayFlag;
+}
+
+int Togl::getOverlayTransparentValue() const
+{
+DOTRACE("Togl::getOverlayTransparentValue");
+  return rep->itsOverlay ? rep->itsOverlay->transparentPixel() : -1;
+}
+
+bool Togl::isMappedOverlay() const
+{
+DOTRACE("Togl::isMappedOverlay");
+  return (rep->itsOverlay && rep->itsOverlay->isMapped());
+}
+
+unsigned long Togl::allocColorOverlay( float red, float green,
+                                       float blue ) const
+{
+DOTRACE("Togl::allocColorOverlay");
+  return rep->itsOverlay
+    ? rep->itsOverlay->allocColor(red, green, blue)
+    : (unsigned long) -1;
+}
+
+void Togl::freeColorOverlay( unsigned long pixel ) const
+{
+DOTRACE("Togl::freeColorOverlay");
+  if (rep->itsOverlay)
+    rep->itsOverlay->freeColor(pixel);
+}
+
+void Togl::defaultClientData( ClientData clientData )
+{
+DOTRACE("Togl::defaultClientData");
+  DefaultClientData = clientData;
+}
+
+ClientData Togl::getClientData() const { return rep->itsClientData; }
+void Togl::setClientData(ClientData p) { rep->itsClientData = p; }
+
+Display* Togl::display() const  { return Tk_Display(rep->itsTkWin); }
+Screen* Togl::screen() const    { return Tk_Screen(rep->itsTkWin); }
+int Togl::screenNumber() const  { return Tk_ScreenNumber(rep->itsTkWin); }
+Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
+Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
+
+int Togl::dumpToEpsFile( const char *filename, int inColor,
+                         void (*user_redraw)( const Togl* )) const
+{
+DOTRACE("Togl::dumpToEpsFile");
+
+  user_redraw(this);
+  glFlush();
+
+  return GLUtil::generateEPS(filename, inColor, width(), height());
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // Togl Tcl package
 //
 ///////////////////////////////////////////////////////////////////////
 
 namespace
 {
+  int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
+                     int objc, Tcl_Obj* const objv[])
+  {
+   DOTRACE("<togl.cc>::Togl_WidgetCmd");
+
+    Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
+    int result = TCL_OK;
+
+    if (objc < 2)
+      {
+        Tcl_AppendResult(interp, "wrong # args: should be \"",
+                         Tcl_GetString(objv[0]), " ?options?\"", NULL);
+        return TCL_ERROR;
+      }
+
+    Tk_Preserve((ClientData)rep);
+
+    if (strcmp(Tcl_GetString(objv[1]), "configure") == 0)
+      {
+        if (objc == 2)
+          {
+            /* Return list of all configuration parameters */
+            Tcl_Obj* objResult =
+              Tk_GetOptionInfo(interp, (char*) &rep->itsOpts, toglOptionTable,
+                               (Tcl_Obj*)NULL, rep->itsTkWin);
+            if (objResult != 0)
+              {
+                Tcl_SetObjResult(interp, objResult);
+              }
+            else
+              {
+                result = TCL_ERROR;
+              }
+          }
+        else if (objc == 3)
+          {
+            if (strcmp(Tcl_GetString(objv[2]),"-extensions") == 0)
+              {
+                /* Return a list of OpenGL extensions available */
+                Tcl_SetResult(interp, (char*) glGetString(GL_EXTENSIONS),
+                              TCL_STATIC);
+                result = TCL_OK;
+              }
+            else
+              {
+                /* Return a specific configuration parameter */
+                Tcl_Obj* objResult =
+                  Tk_GetOptionInfo(interp, (char*) &rep->itsOpts,
+                                   toglOptionTable, objv[2], rep->itsTkWin);
+                if (objResult != 0)
+                  {
+                    Tcl_SetObjResult(interp, objResult);
+                  }
+                else
+                  {
+                    result = TCL_ERROR;
+                  }
+              }
+          }
+        else
+          {
+            /* Execute a configuration change */
+            result = rep->configure(objc-2, objv+2);
+          }
+      }
+    else if (strcmp(Tcl_GetString(objv[1]), "render") == 0)
+      {
+        /* force the widget to be redrawn */
+        Togl::Impl::cRenderCallback(static_cast<ClientData>(rep));
+      }
+    else if (strcmp(Tcl_GetString(objv[1]), "swapbuffers") == 0)
+      {
+        /* force the widget to be redrawn */
+        rep->swapBuffers();
+      }
+    else if (strcmp(Tcl_GetString(objv[1]), "makecurrent") == 0)
+      {
+        /* force the widget to be redrawn */
+        rep->makeCurrent();
+      }
+    else
+      {
+        Tcl_AppendResult(interp, "Togl: Unknown option: ",
+                         Tcl_GetString(objv[1]), NULL);
+        result = TCL_ERROR;
+      }
+
+    Tk_Release((ClientData)rep);
+    return result;
+  }
+
   int ToglCmd(ClientData, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
   {
     DOTRACE("ToglCmd");
     if (objc <= 1)
       {
-        return TCL_ERR(interp,
-                       "wrong # args: should be \"pathName read filename\"");
+        Tcl_AppendResult(interp, "wrong # args: should be "
+                         "\"pathName command ?options?\"", NULL);
+        return TCL_ERROR;
       }
 
     /* Create Togl data structure */
