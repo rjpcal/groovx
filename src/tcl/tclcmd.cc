@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Jul 10 18:26:50 2001
+// written: Tue Jul 10 18:44:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -627,29 +627,16 @@ DOTRACE("Tcl::ListIteratorBase::swap");
   local_swap(itsIndex, other.itsIndex);
 }
 
-template <class T>
-T Tcl::ListIterator<T>::operator*() const
+Tcl_Obj* Tcl::ListIteratorBase::current() const
 {
-DOTRACE("Tcl::ListIterator::operator*");
-  if (itsIndex >= itsElementCount)
+DOTRACE("Tcl::ListIteratorBase::current");
+  if (!isValid())
     throw TclError("index is too large");
 
   DebugEval((void*)itsInterp); DebugEval(itsIndex);
   DebugEvalNL(itsListElements[itsIndex]);
 
-  return TclCmd::getValFromObj(itsInterp, itsListElements[itsIndex], (T*)0);
-}
-
-// Explicit instantiation requests
-namespace Tcl {
-  template class ListIterator<bool>;
-  template class ListIterator<int>;
-  template class ListIterator<unsigned int>;
-  template class ListIterator<long>;
-  template class ListIterator<unsigned long>;
-  template class ListIterator<double>;
-  template class ListIterator<const char*>;
-  template class ListIterator<TclValue>;
+  return itsListElements[itsIndex];
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri May 18 17:27:02 2001
+// written: Tue Jul 10 18:43:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,29 +53,41 @@ public:
   ListIteratorBase& operator=(const ListIteratorBase& other);
 
   ListIteratorBase& operator++()
-	 { ++itsIndex; return *this; }
+    { ++itsIndex; return *this; }
 
   ListIteratorBase operator++(int)
-	 { ListIteratorBase temp(*this); ++itsIndex; return temp; }
+    { ListIteratorBase temp(*this); ++itsIndex; return temp; }
 
   difference_type operator-(const ListIteratorBase& other) const
-	 {
-		if (this->itsIndex > other.itsIndex)
-		  return int(this->itsIndex - other.itsIndex);
-		else
-		  return -(int(other.itsIndex - this->itsIndex));
-	 }
+    {
+      if (this->itsIndex > other.itsIndex)
+        return int(this->itsIndex - other.itsIndex);
+      else
+        return -(int(other.itsIndex - this->itsIndex));
+    }
 
   bool operator==(const ListIteratorBase& other) const
-	 { return (itsIndex == other.itsIndex && itsList == other.itsList); }
+    { return (itsIndex == other.itsIndex && itsList == other.itsList); }
 
   bool operator!=(const ListIteratorBase& other) const
-	 { return (itsIndex != other.itsIndex || itsList != other.itsList); }
+    { return (itsIndex != other.itsIndex || itsList != other.itsList); }
+
+  bool isValid() const
+    { return itsIndex < itsElementCount; }
+
+  bool hasMore() const
+    { return itsIndex < (itsElementCount-1); }
+
+  bool nelems() const
+    { return itsElementCount; }
 
 private:
   void swap(ListIteratorBase& other);
 
 protected:
+  // Throws an exception if the index is out of range
+  Tcl_Obj* current() const;
+
   Tcl_Interp* itsInterp;
   Tcl_Obj* itsList;
   Tcl_Obj** itsListElements;
@@ -97,7 +109,7 @@ template <class T>
 class ListIterator : public ListIteratorBase {
 public:
   ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN) :
-	 ListIteratorBase(interp, aList, pos) {}
+    ListIteratorBase(interp, aList, pos) {}
 
   typedef T value_type;
 
@@ -115,7 +127,7 @@ public:
  * behavior to be placed in base classes. The \c TclCmd class itself
  * takes care of such things as checking the argument count, and
  * issuing an error message if the argument count is incorrect.
- * 
+ *
  * Most of the interface of \c TclCmd is \c protected, as it is
  * intended to be used in the implementation of invoke. This interface
  * provides functions such as \c getIntFromArg() and
@@ -135,14 +147,14 @@ public:
 class Tcl::TclCmd {
 public:
   /** Construct with basic properties for the command. If \a
-		exact_objc is true, then the \a objc of a command invocation is
-		required to be exactly equal either \a objc_min or \a objc_max;
-		if it is false, then \a objc must be between \a objc_min and \a
-		objc_max, inclusive. If the value given for \a objc_max is
-		negative, then the maximum objc will be set to the same value as
-		\a objc_min. */
-  TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage, 
-			int objc_min=0, int objc_max=-1, bool exact_objc=false);
+      exact_objc is true, then the \a objc of a command invocation is
+      required to be exactly equal either \a objc_min or \a objc_max;
+      if it is false, then \a objc must be between \a objc_min and \a
+      objc_max, inclusive. If the value given for \a objc_max is
+      negative, then the maximum objc will be set to the same value as
+      \a objc_min. */
+  TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
+         int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~TclCmd();
@@ -198,15 +210,15 @@ public:
       argn. The templated type must be assignable from const char*. */
   template <class Str>
   Str getStringTypeFromArg(int argn, Str* /* dummy */ = 0)
-	 {
-		return Str(getCstringFromArg(argn));
-	 }
+    {
+      return Str(getCstringFromArg(argn));
+    }
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
   template <class T>
   T getValFromArg(int argn, T* /*dummy*/=0)
-	 { return getValFromObj(itsInterp, itsObjv[argn], (T*)0); }
+    { return getValFromObj(itsInterp, itsObjv[argn], (T*)0); }
 
   //---------------------------------------------------------------------
   //
@@ -222,23 +234,23 @@ public:
   /** Attempts to convert argument number \a argn into a Tcl list, and
       if successful, returns the number of elements in that list. */
   unsigned int getSequenceLengthOfArg(int argn)
-	 {
-		return safeListLength(itsObjv[argn]);
-	 }
+    {
+      return safeListLength(itsObjv[argn]);
+    }
 
   /** Attempts to convert argument number \a argn into a sequence of
       elements of type \c T, and inserts these through the insert
       iterator \a itr. */
   template <class T, class Iterator>
   void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */) {
-	 Tcl_Obj** elements;
-	 int count;
-	 safeSplitList(itsObjv[argn], &count, &elements);
+    Tcl_Obj** elements;
+    int count;
+    safeSplitList(itsObjv[argn], &count, &elements);
 
-	 for (int i = 0; i < count; ++i) {
-		*itr = getValFromObj(itsInterp, elements[i], (T*)0);
-		++itr;
-	 }
+    for (int i = 0; i < count; ++i) {
+      *itr = getValFromObj(itsInterp, elements[i], (T*)0);
+      ++itr;
+    }
   }
 
   /** Attempts to convert argument number \a argn into a sequence of
@@ -246,14 +258,14 @@ public:
       itr. The iterator must come from a sequence of TclValue's. */
   template <class Iterator>
   void getValSequenceFromArg(int argn, Iterator itr) {
-	 Tcl_Obj** elements;
-	 int count;
-	 safeSplitList(itsObjv[argn], &count, &elements);
+    Tcl_Obj** elements;
+    int count;
+    safeSplitList(itsObjv[argn], &count, &elements);
 
-	 for (int i = 0; i < count; ++i) {
-		*itr = TclValue(itsInterp, elements[i]);
-		++itr;
-	 }
+    for (int i = 0; i < count; ++i) {
+      *itr = TclValue(itsInterp, elements[i]);
+      ++itr;
+    }
   }
 
   /** Attempts to convert argument number \a argn into a Tcl list, and
@@ -261,9 +273,9 @@ public:
       that list. */
   template <class T>
   ListIterator<T> beginOfArg(int argn, T* /*dummy*/=0)
-	 {
-		return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::BEGIN);
-	 }
+    {
+      return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::BEGIN);
+    }
 
 
   /** Attempts to convert argument number \a argn into a Tcl list, and
@@ -271,9 +283,9 @@ public:
       one-past-the-end element of that list. */
   template <class T>
   ListIterator<T> endOfArg(int argn, T* /*dummy*/=0)
-	 {
-		return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::END);
-	 }
+    {
+      return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::END);
+    }
 
   //---------------------------------------------------------------------
   //
@@ -337,9 +349,9 @@ public:
       templated type must have a c_str() function returning const char*. */
   template <class Str>
   void returnStringType(const Str& val)
-	 {
-		returnCstring(Util::StringTraits<Str>::c_str(val));
-	 }
+    {
+      returnCstring(Util::StringTraits<Str>::c_str(val));
+    }
 
 
   /// Append to the result a list element with the generic \c Value \a val.
@@ -374,17 +386,17 @@ public:
       const char*. */
   template <class Str>
   void lappendStringType(Str val)
-	 {
-		lappendVal(Util::StringTraits<Str>::c_str(val));
-	 }
+    {
+      lappendVal(Util::StringTraits<Str>::c_str(val));
+    }
 
   /// Return the sequence of values referred to by the range [\a begin, \a end).
   template <class Itr>
   void returnSequence(Itr begin, Itr end) {
-	 while (begin != end) {
-		lappendVal(*begin);
-		++begin;
-	 }
+    while (begin != end) {
+      lappendVal(*begin);
+      ++begin;
+    }
   }
 
   /** \c ResultAppender is an inserter (as well as an output iterator)
@@ -393,29 +405,29 @@ public:
   template <class T>
   class ResultAppender {
   public:
-	 /// Construct with a \c TclCmd whose result should be appended to.
-	 ResultAppender(TclCmd* aCmd) :
-		itsCmd(aCmd) {}
-	 /// Copy constructor.
-	 ResultAppender(const ResultAppender& other) :
-		itsCmd(other.itsCmd) {}
-	 /// Assignment operator.
-	 ResultAppender& operator=(const ResultAppender& other)
-		{ itsCmd = other.itsCmd; return *this; }
+    /// Construct with a \c TclCmd whose result should be appended to.
+    ResultAppender(TclCmd* aCmd) :
+      itsCmd(aCmd) {}
+    /// Copy constructor.
+    ResultAppender(const ResultAppender& other) :
+      itsCmd(other.itsCmd) {}
+    /// Assignment operator.
+    ResultAppender& operator=(const ResultAppender& other)
+      { itsCmd = other.itsCmd; return *this; }
 
-	 /// Output assignment: \a val will be appended to the \c TclCmd's result.
-	 ResultAppender& operator=(const T& val)
-		{ itsCmd->lappendVal(val); return *this; }
+    /// Output assignment: \a val will be appended to the \c TclCmd's result.
+    ResultAppender& operator=(const T& val)
+      { itsCmd->lappendVal(val); return *this; }
 
-	 /// Dereference.
-	 ResultAppender& operator*() { return *this; }
-	 /// Pre-increment.
-	 ResultAppender& operator++() { return *this; }
-	 /// Post-increment.
-	 ResultAppender operator++(int) { return *this; }
+    /// Dereference.
+    ResultAppender& operator*() { return *this; }
+    /// Pre-increment.
+    ResultAppender& operator++() { return *this; }
+    /// Post-increment.
+    ResultAppender operator++(int) { return *this; }
 
   private:
-	 TclCmd* itsCmd;
+    TclCmd* itsCmd;
   };
 
   template <class T> friend class ResultAppender;
@@ -423,7 +435,7 @@ public:
   /// Return a \c ResultAppender of the given type for this \c TclCmd.
   template <class T>
   ResultAppender<T> resultAppender(T* /*dummy*/=0)
-	 { return ResultAppender<T>(this); }
+    { return ResultAppender<T>(this); }
 
 protected:
   Tcl_Interp* interp() { return itsInterp; }
@@ -434,12 +446,12 @@ private:
 
   /// The procedure that is actually registered with the Tcl C API.
   static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
-									 int objc, Tcl_Obj *const objv[]);
+                            int objc, Tcl_Obj *const objv[]);
 
   int invokeTemplate();
 
   static void safeSplitList(Tcl_Obj* obj, int* count_return,
-									 Tcl_Obj*** elements_return);
+                            Tcl_Obj*** elements_return);
 
   static unsigned int safeListLength(Tcl_Obj* obj);
 
@@ -472,6 +484,20 @@ private:
 
   int itsResult;
 };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Inline method definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline T Tcl::ListIterator<T>::operator*() const
+{
+  return TclCmd::getValFromObj(itsInterp, current(), (T*)0);
+}
+
 
 static const char vcid_tclcmd_h[] = "$Header$";
 #endif // !TCLCMD_H_DEFINED
