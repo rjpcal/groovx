@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:45:52 2001
-// written: Wed Aug 29 16:49:07 2001
+// written: Thu Aug 30 10:37:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,9 @@ const FieldMap& GxColor::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("rgba", Field::ValueType(), &GxColor::rgbaColor, 0., 0., 0., 0.,
-          Field::NEW_GROUP)
+    Field("rgba", Field::ValueType(), &GxColor::rgbaColor,
+          "0.0 0.0 0.0 0.0", "0.0 0.0 0.0 0.0", "1.0 1.0 1.0 1.0",
+          "0.01 0.01 0.01 0.01", Field::NEW_GROUP)
   };
 
   static FieldMap GXCOLOR_FIELDS(FIELD_ARRAY);

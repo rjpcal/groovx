@@ -364,9 +364,10 @@ public:
     return ptr;
   }
 
-  template <class T, class C, class V>
+  template <class C, class V>
   Field(const fstring& name, ValueType, V C::* value_ptr,
-        const T& def, const T& min, const T& max, const T& res,
+        const fstring& def, const fstring& min,
+		  const fstring& max, const fstring& res,
         unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
