@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 17 07:15:05 2001
+// written: Sat May 19 08:44:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,11 +25,6 @@
 #include "io/iodecls.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDLIB_DEFINED)
-#include <cstdlib>
-#define CSTDLIB_DEFINED
-#endif
-
 class fixed_string;
 
 ///////////////////////////////////////////////////////////////////////
@@ -46,20 +41,6 @@ class fixed_string;
 ///////////////////////////////////////////////////////////////////////
 
 class IO::IoObject : public RefCounted {
-protected:
-  /** Class-specific operator new; protected to ensure that clients
-      use factory functions. */
-  void* operator new(size_t bytes);
-
-#ifndef GCC_COMPILER
-protected:
-#else
-public:
-#endif
-  /** Class-specific operator delete; private since deletion should
-      only happen in RefCounted::decrRefCount. */
-  void operator delete(void* space, size_t bytes);
-
 protected:
   /// Default constructor
   IoObject();
