@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 18:12:54 2002
+// written: Mon Mar  4 19:42:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -581,6 +581,20 @@ DOTRACE("Mtx::resize");
       Mtx newsize(mrowsNew, ncolsNew, ZEROS);
       this->swap(newsize);
     }
+}
+
+Mtx Mtx::contig() const
+{
+DOTRACE("Mtx::contig");
+  if (mrows() == rowstride())
+    return *this;
+
+  Mtx result(this->mrows(), this->ncols(), NO_INIT);
+
+  std::copy(this->colmaj_begin(), this->colmaj_end(),
+            result.colmaj_begin_nc());
+
+  return result;
 }
 
 void Mtx::print() const

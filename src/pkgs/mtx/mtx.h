@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 18:12:34 2002
+// written: Mon Mar  4 20:09:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,12 +102,15 @@ public:
   ColRange(int first, int count) : Range(first, count) {}
 };
 
+inline Range range(int i) { return Range(i, 1); }
 inline Range range(int begin, int end) { return Range(begin, end-begin); }
 inline Range range_n(int begin, int count) { return Range(begin, count); }
 
+inline RowRange row_range(int r) { return RowRange(r, 1); }
 inline RowRange row_range(int begin, int end) { return RowRange(begin, end-begin); }
 inline RowRange row_range_n(int begin, int count) { return RowRange(begin, count); }
 
+inline ColRange col_range(int c) { return ColRange(c, 1); }
 inline ColRange col_range(int begin, int end) { return ColRange(begin, end-begin); }
 inline ColRange col_range_n(int begin, int count) { return ColRange(begin, count); }
 
@@ -350,6 +353,9 @@ public:
 
   void reshape(int mr, int nc);
 
+  MtxSpecs as_shape(int mr, int nc) const
+  { MtxSpecs result(*this); result.reshape(mr, nc); return result; }
+
   void selectRows(const RowRange& rng);
   void selectCols(const ColRange& rng);
 
@@ -392,7 +398,7 @@ public:
   int offsetFromStorage(int elem) const
   { return offset_ + offsetFromStart(elem); }
 
-protected:
+private:
   int mrows_;
   int rowstride_;
   int ncols_;
@@ -842,6 +848,12 @@ public:
   // cycle if the new dimensions are the same as the current dimensions.
   void resize(int mrowsNew, int ncolsNew);
 
+  /** Makes sure that the data are in contiguous storage; if called on a
+      submatrix, contig() will make a new matrix of the proper size and copy
+      the elements there; otherwise, it will just return the current
+      matrix. */
+  Mtx contig() const;
+
   mxArray* makeMxArray() const;
 
 
@@ -913,6 +925,8 @@ public:
     return Mtx(this->specs().subRows(rr).subCols(cc), this->data_);
   }
 
+  Mtx as_shape(int mr, int nc) const
+  { return Mtx(this->specs().as_shape(mr, nc), this->data_); }
 
   Slice row(int r) const
     { return Slice(*this, offsetFromStorage(r,0), rowstride(), ncols()); }
