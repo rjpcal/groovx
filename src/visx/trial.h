@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 15:44:28 2002
+// written: Wed Dec  4 17:02:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,8 +79,6 @@ public:
 
   virtual int lastResponse() const;
 
-  virtual void undoLastResponse();
-
   unsigned int numResponses() const;
 
   void clearResponses();
@@ -105,15 +103,18 @@ public:
   // actions //
   /////////////
 
-  virtual void trDoTrial(const Util::SoftRef<Toglet>& widget,
-                         Util::ErrorHandler& errhdlr, Block& block);
+  virtual void run(const Util::SoftRef<Toglet>& widget,
+                   Util::ErrorHandler& errhdlr, Block& block);
+
+  virtual void halt();
+
+  virtual void undoPrevious();
 
   virtual double trElapsedMsec();
 
   virtual void trAbortTrial();
   virtual void trEndTrial();
   virtual void trNextTrial();
-  virtual void trHaltExpt();
   virtual void trResponseSeen();
   virtual void trRecordResponse(Response& response);
   virtual void trAllowResponses();

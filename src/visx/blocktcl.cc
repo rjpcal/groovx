@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Dec  4 15:41:57 2002
+// written: Wed Dec  4 16:54:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,11 +60,11 @@ DOTRACE("Block_Init");
   pkg->defVec("addTrialIds", "item_id(s) trial_id(s) repeat=1", &addTrialIds );
 
   pkg->defGetter("currentTrial", &Block::currentTrial);
-  pkg->defGetter("currentTrialType", &Block::currentTrialType);
+  pkg->defGetter("currentTrialType", &Block::trialType);
   pkg->defGetter("isComplete", &Block::isComplete);
   pkg->defGetter("numCompleted", &Block::numCompleted);
   pkg->defGetter("numTrials", &Block::numTrials);
-  pkg->defGetter("prevResponse", &Block::prevResponse);
+  pkg->defGetter("prevResponse", &Block::lastResponse);
   pkg->defAction("removeAllTrials", &Block::removeAllTrials);
   pkg->defAction("reset", &Block::resetBlock);
   pkg->defSetter("shuffle", "item_id rand_seed", &Block::shuffle);

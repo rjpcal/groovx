@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Dec  4 15:45:50 2002
+// written: Wed Dec  4 17:03:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ DOTRACE("Trial_Init");
   pkg->defAttrib("timingHdlr",
                  &Trial::getTimingHdlr, &Trial::setTimingHdlr);
   pkg->defAttrib("type", &Trial::trialType, &Trial::setType);
-  pkg->defAction("undoLastResponse", &Trial::undoLastResponse);
+  pkg->defAction("undoLastResponse", &Trial::undoPrevious);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 

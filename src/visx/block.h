@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Dec  4 15:41:27 2002
+// written: Wed Dec  4 17:09:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@ namespace Util
   template <class T> class Ref;
   template <class T> class SoftRef;
 }
-
-class TrialBase;
 
 class Experiment;
 
@@ -48,7 +46,7 @@ class fstring;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Block : public Element, public IO::IoObject
+class Block : public IO::IoObject
 {
 public:
   /** This tracer dynamically controls the tracing of Block member
@@ -71,7 +69,7 @@ public:
   virtual ~Block();
 
   /// Add the specified trialid to the block, 'repeat' number of times.
-  void addTrial(Util::Ref<TrialBase> trial, int repeat=1);
+  void addTrial(Util::Ref<Element> trial, int repeat=1);
 
   /// Randomly permute the sequence of trialids.
   /** @param seed used as the random seed for the shuffle. */
@@ -84,6 +82,20 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  //
+  // Element interface
+  //
+
+  /// Returns the integer type of the current element.
+  virtual int trialType() const;
+
+  /// Returns a human-readable description of the current trial.
+  /** This description may include trial's id, the trial's type, the id's
+      of the objects that are displayed in the trial, the categories of
+      those objects, and the number of completed trials and number of total
+      trials. */
+  virtual fstring status() const;
+
   ///////////////
   // accessors //
   ///////////////
@@ -92,7 +104,7 @@ public:
   int numTrials() const;
 
   /// Returns an iterator to all the trials contained in the Block.
-  Util::FwdIter<Util::Ref<TrialBase> > trials() const;
+  Util::FwdIter<Util::Ref<Element> > trials() const;
 
   /// Returns the number of trials that have been successfully completed.
   /** This number will not include trials that have been aborted either due
@@ -100,27 +112,16 @@ public:
   int numCompleted() const;
 
   /// Get the trial id (an index into Tlist) of the current trial.
-  Util::SoftRef<TrialBase> currentTrial() const;
-
-  /// Returns the integer type of the current trial.
-  /** (That is, the result of TrialBase::trialType(). */
-  int currentTrialType() const;
+  Util::SoftRef<Element> currentTrial() const;
 
   /// Returns the last valid response recorded in the Block.
   /** But note that "valid" does not necessarily mean "correct". */
-  int prevResponse() const;
+  int lastResponse() const;
 
   /// Returns true if the block is complete, false otherwise.
   /** The block is considered complete if all trials in the trial sequence
       have finished successfully. */
   bool isComplete() const;
-
-  /// Returns a human-readable description of the current trial.
-  /** This description may include trial's id, the trial's type, the id's
-      of the objects that are displayed in the trial, the categories of
-      those objects, and the number of completed trials and number of total
-      trials. */
-  virtual fstring status() const;
 
   /////////////
   // actions //
@@ -141,7 +142,7 @@ public:
   /// Records a response to the current trial in the Block.
   /** Also, prepares the Block for the next trial. The response is recorded
       for the current trial, and the Block's trial sequence index is
-      incremented. Also, the next call to prevResponse will return the
+      incremented. Also, the next call to lastResponse will return the
       response that was recorded in the present command. */
   void processResponse(const Response& response);
 

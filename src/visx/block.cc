@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  4 15:45:42 2002
+// written: Wed Dec  4 17:04:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "visx/experiment.h"
 #include "visx/response.h"
-#include "visx/trialbase.h"
 
 #include "io/reader.h"
 #include "io/readutils.h"
@@ -72,7 +71,7 @@ public:
     {}
 
   // Ordered sequence of indexes into the Tlist
-  typedef minivec<Ref<TrialBase> > TrialSeqType;
+  typedef minivec<Ref<Element> > TrialSeqType;
   TrialSeqType itsTrialSequence;
 
   int itsRandSeed;              // Random seed used to create itsTrialSequence
@@ -93,7 +92,7 @@ public:
       return *itsExperiment;
     }
 
-  Ref<TrialBase> currentTrial()
+  Ref<Element> currentTrial()
     {
       Precondition(hasCurrentTrial());
 
@@ -140,7 +139,7 @@ Block::~Block()
   delete itsImpl;
 }
 
-void Block::addTrial(Ref<TrialBase> trial, int repeat)
+void Block::addTrial(Ref<Element> trial, int repeat)
 {
 DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i)
@@ -181,7 +180,7 @@ DOTRACE("Block::readFrom");
   int svid = reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
   itsImpl->itsTrialSequence.clear();
-  IO::ReadUtils::readObjectSeq<TrialBase>(
+  IO::ReadUtils::readObjectSeq<Element>(
         reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
@@ -224,9 +223,9 @@ DOTRACE("Block::numTrials");
   return itsImpl->itsTrialSequence.size();
 }
 
-Util::FwdIter<Util::Ref<TrialBase> > Block::trials() const
+Util::FwdIter<Util::Ref<Element> > Block::trials() const
 {
-  return Util::FwdIter<Util::Ref<TrialBase> >
+  return Util::FwdIter<Util::Ref<Element> >
     (itsImpl->itsTrialSequence.begin(),
      itsImpl->itsTrialSequence.end());
 }
@@ -237,17 +236,17 @@ DOTRACE("Block::numCompleted");
   return itsImpl->itsCurTrialSeqIdx;
 }
 
-Util::SoftRef<TrialBase> Block::currentTrial() const
+Util::SoftRef<Element> Block::currentTrial() const
 {
 DOTRACE("Block::currentTrial");
-  if (isComplete()) return Util::SoftRef<TrialBase>();
+  if (isComplete()) return Util::SoftRef<Element>();
 
   return itsImpl->currentTrial();
 }
 
-int Block::currentTrialType() const
+int Block::trialType() const
 {
-DOTRACE("Block::currentTrialType");
+DOTRACE("Block::trialType");
   if (isComplete()) return -1;
 
   dbgEvalNL(3, itsImpl->currentTrial()->trialType());
@@ -255,9 +254,9 @@ DOTRACE("Block::currentTrialType");
   return itsImpl->currentTrial()->trialType();
 }
 
-int Block::prevResponse() const
+int Block::lastResponse() const
 {
-DOTRACE("Block::prevResponse");
+DOTRACE("Block::lastResponse");
 
   dbgEval(9, itsImpl->itsCurTrialSeqIdx);
   dbgEvalNL(9, itsImpl->itsTrialSequence.size());
@@ -265,7 +264,7 @@ DOTRACE("Block::prevResponse");
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
       itsImpl->itsTrialSequence.size() == 0) return -1;
 
-  Ref<TrialBase> prev_trial =
+  Ref<Element> prev_trial =
     itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
   return prev_trial->lastResponse();
 }
@@ -322,7 +321,7 @@ DOTRACE("Block::beginTrial");
   itsImpl->setExpt(expt);
 
   itsImpl->currentTrial()->
-             trDoTrial(expt.getWidget(), expt.getErrorHandler(), *this);
+             run(expt.getWidget(), expt.getErrorHandler(), *this);
 }
 
 void Block::abortTrial()
@@ -332,7 +331,7 @@ DOTRACE("Block::abortTrial");
 
   // Remember the trial that we are about to abort so we can store it
   // at the end of the sequence.
-  Ref<TrialBase> aborted_trial = itsImpl->currentTrial();
+  Ref<Element> aborted_trial = itsImpl->currentTrial();
 
   // Erase the aborted trial from the sequence. Subsequent trials will
   // slide up to fill in the gap.
@@ -400,7 +399,7 @@ void Block::haltExpt()
 DOTRACE("Block::haltExpt");
 
   if ( itsImpl->itsHasBegun && !isComplete() )
-    itsImpl->currentTrial()->trHaltExpt();
+    itsImpl->currentTrial()->halt();
 }
 
 void Block::undoPrevTrial()
@@ -418,7 +417,7 @@ DOTRACE("Block::undoPrevTrial");
   // ...and erase the last response given to that trial
   if ( itsImpl->hasCurrentTrial() )
     {
-      itsImpl->currentTrial()->undoLastResponse();
+      itsImpl->currentTrial()->undoPrevious();
     }
 }
 

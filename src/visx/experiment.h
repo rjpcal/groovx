@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed Dec  4 15:42:54 2002
+// written: Wed Dec  4 17:05:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ class Response;
 class Toglet;
 
 /// Protocol class that represents psychophysical experiments.
-class Experiment : public Element
+class Experiment
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
