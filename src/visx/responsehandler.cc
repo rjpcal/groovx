@@ -3,7 +3,7 @@
 // responsehandler.cc
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Sun Jun 27 16:54:48 1999
+// written: Mon Nov  8 16:32:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-ResponseHandler::ResponseHandler() :
-  itsInterp(0)
+ResponseHandler::ResponseHandler()
 {
 DOTRACE("ResponseHandler::ResponseHandler");
 }
