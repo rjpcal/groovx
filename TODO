@@ -114,6 +114,8 @@
     boost::shared_ptr -- 15KLOC (to replace util/pointers.h)
                       -- compile time up ~20% from 5:15 to 6:16
 
+    std::valarray -- 30KLOC
+
     std::auto_ptr -- 10KLOC
     boost::type_traits -- 5.5KLOC (to replace util/traits.h)
     boost::signal -- 55KLOC
