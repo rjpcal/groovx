@@ -37,6 +37,9 @@ test "ExptTcl-Expt::begin" "too many args" {
 	 Expt::begin junk
 } {^wrong \# args: should be "Expt::begin"$}
 test "ExptTcl-Expt::begin" "normal use" {
+	 Expt::clear
+	 set block [Block::Block]
+	 Expt::addBlock $block
 	 Expt::begin
 	 Expt::stop
 } {^$}
@@ -127,11 +130,12 @@ test "ExptTcl-Expt::begin" "general sanity test" {
 	 Trial::timingHdlr $trial $thid
 	 Trial::responseHdlr $trial $rhid
 
-	 Expt::clear
-
 	 BlockList::reset
 	 set block [Block::Block]
 	 Block::addTrialIds $block $trial
+
+	 Expt::clear
+	 Expt::addBlock $block
 
 	 namespace eval ::Expt {
 		  proc doUponCompletion {} { set ::DONE "complete" }
