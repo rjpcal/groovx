@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Dec  4 18:09:05 2002
+// written: Wed Dec  4 18:25:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@ namespace Util
   template <class T> class Ref;
   template <class T> class SoftRef;
 }
-
-class Experiment;
 
 class Response;
 

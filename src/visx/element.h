@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Wed Dec  4 18:21:18 2002
+// written: Wed Dec  4 18:29:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@ namespace Util
   template <class T> class SoftRef;
 };
 
-class Block;
 class Response;
 class Toglet;
 
@@ -42,7 +41,7 @@ public:
   /// Return an \c ErrorHandler that can deal with error messages.
   virtual Util::ErrorHandler& getErrorHandler() const = 0;
 
-  /// Return the Widget in which the element is running.
+  /// Return the Widget in which the experiment is running.
   virtual const Util::SoftRef<Toglet>& getWidget() const = 0;
 
   virtual int trialType() const = 0;

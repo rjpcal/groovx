@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Dec  4 18:01:41 2002
+// written: Wed Dec  4 18:25:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,6 @@ namespace Util
   class ErrorHandler;
 };
 
-class Experiment;
 class TrialBase;
 
 struct Tcl_TimerToken_;
