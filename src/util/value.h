@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Tue Sep 28 11:20:46 1999
+// written: Wed Sep 29 11:55:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,31 +20,78 @@
 #include "error.h"
 #endif
 
+class ValueError : public ErrorWithMsg {
+public:
+  ValueError(const string& msg="");
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Value abstract class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ValueError : public ErrorWithMsg {
-public:
-  ValueError(const string& msg="");
-};
-
 class Value {
 public:
 
-  enum Type { INT, LONG, BOOL, DOUBLE, CSTRING, STRING };
+  virtual ~Value();
 
-  virtual Type getNativeType() = 0;
+  enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, STRING, UNKNOWN };
 
-  virtual int getInt() = 0;
-  virtual long getLong() = 0;
-  virtual bool getBool() = 0;
-  virtual double getDouble() = 0;
-  virtual const char* getCstring() = 0;
-  virtual string getString() = 0;
+  virtual Type getNativeType() const = 0;
+
+  // Two sets of functions are provided to allow values to be
+  // retrieved either as the return value, or as a reference
+  // argument. Depending on a subclass's implementation, one or the
+  // other type of function may be more efficient.
+
+  virtual int getInt() const = 0;
+  virtual long getLong() const = 0;
+  virtual bool getBool() const = 0;
+  virtual double getDouble() const = 0;
+  virtual const char* getCstring() const = 0;
+  virtual string getString() const = 0;
+
+  virtual void get(int& val) const = 0;
+  virtual void get(long& val) const = 0;
+  virtual void get(bool& val) const = 0;
+  virtual void get(double& val) const = 0;
+  virtual void get(const char*& val) const = 0;
+  virtual void get(string& val) const = 0;
 }; 
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// TValue template class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class TValue : public Value {
+public:
+  TValue(const T& val) : itsVal(val) {}
+
+  virtual ~TValue ();
+
+  virtual Type getNativeType() const;
+
+  virtual int getInt() const;
+  virtual long getLong() const;
+  virtual bool getBool() const;
+  virtual double getDouble() const;
+  virtual const char* getCstring() const;
+  virtual string getString() const;
+
+  virtual void get(int& val) const;
+  virtual void get(long& val) const;
+  virtual void get(bool& val) const;
+  virtual void get(double& val) const;
+  virtual void get(const char*& val) const;
+  virtual void get(string& val) const;
+
+  T itsVal;
+};
 
 static const char vcid_value_h[] = "$Header$";
 #endif // !VALUE_H_DEFINED
