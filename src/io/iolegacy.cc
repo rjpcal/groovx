@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu Aug  9 07:06:04 2001
+// written: Mon Aug 20 15:07:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,14 +230,10 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
 //   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
 
-  fstring new_string; new_string.make_space(numchars);
+  fstring new_string;
+  new_string.readsome(itsImpl->itsInStream, (unsigned int) numchars);
 
-  if ( numchars > 0 )
-    {
-      itsImpl->itsInStream.read(new_string.data(), numchars);
-      itsImpl->throwIfError(name);
-    }
-  new_string.data()[numchars] = '\0';
+  itsImpl->throwIfError(name);
 
   return new_string;
 }
