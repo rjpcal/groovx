@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Aug  6 15:46:18 2002
+// written: Wed Aug  7 15:32:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,6 @@
 
 #define LOCAL_PROF
 #include "util/trace.h"
-
-#include "util/minivec.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -34,19 +32,19 @@
 
 namespace
 {
-  template <unsigned int N>
-  class FixedStack
+  template <typename T, unsigned int N>
+  class static_stack
   {
   public:
-    FixedStack() throw() : vec(), top(0) {}
+    static_stack() throw() : vec(), top(0) {}
 
-    FixedStack(const FixedStack& other) throw() :
+    static_stack(const static_stack& other) throw() :
       vec(), top(0)
     {
       *this = other;
     }
 
-    FixedStack& operator=(const FixedStack& other) throw()
+    static_stack& operator=(const static_stack& other) throw()
     {
       for (unsigned int i = 0; i < other.top; ++i)
         {
@@ -58,7 +56,9 @@ namespace
 
     unsigned int size() const throw() { return top; }
 
-    bool push(Util::Prof* p) throw()
+    static unsigned int capacity() throw() { return N; }
+
+    bool push(T p) throw()
     {
       if (top >= N)
         return false;
@@ -73,13 +73,24 @@ namespace
       --top;
     }
 
-    Util::Prof* at(unsigned int i) const throw()
+    T at(unsigned int i) const throw()
     {
       return (i < top) ? vec[i] : 0;
     }
 
+    T operator[](unsigned int i) const throw() { return at(i); }
+
+    typedef       T*       iterator;
+    typedef const T* const_iterator;
+
+    iterator begin() throw() { return &vec[0]; }
+    iterator end()   throw() { return &vec[0] + N; }
+
+    const_iterator begin() const throw() { return &vec[0]; }
+    const_iterator end()   const throw() { return &vec[0] + N; }
+
   private:
-    Util::Prof* vec[N];
+    T vec[N];
     unsigned int top;
   };
 }
@@ -92,7 +103,7 @@ namespace
 
 struct Util::BackTrace::Impl
 {
-  FixedStack<256> vec;
+  static_stack<Util::Prof*, 256> vec;
 };
 
 Util::BackTrace::BackTrace() throw() :
@@ -229,7 +240,7 @@ namespace
       }
   }
 
-  typedef minivec<Util::Prof*> ProfVec;
+  typedef static_stack<Util::Prof*, 2048> ProfVec;
 
   ProfVec& allProfs() throw()
   {
@@ -255,7 +266,7 @@ Util::Prof::Prof(const char* s)  throw():
   itsTotalTime.tv_sec = 0;
   itsTotalTime.tv_usec = 0;
 
-  allProfs().push_back(this);
+  allProfs().push(this);
 }
 
 Util::Prof::~Prof() throw()
