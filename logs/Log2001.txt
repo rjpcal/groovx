@@ -62,3 +62,77 @@ ref-counts are zero. And we can allow subclasses (such as IoProxy) to
 choose not to be automatically inserted in the IoDb, by the addition
 of a "doInsert" argument to the IoObject constructor that defaults to
 true.
+
++-----
+|
+| (27-May-2001) Split IoObject into two parts: (1) defines the concept
+| of having a UID which can be used to communicate about C++ objects
+| with Tcl, and (2) the actual concept of being serializable. Some
+| classes would benefit from (1) (such as Canvas/Widget) but would not
+| need (2). Part (1) would probably move into the Util package.
+| 
+| OK, for better or worse I made a mother-of-all-base-classes
+| Util::Object, which inherits from RefCounted and provides the UID
+| functionality.
+| 
+| (6-June-2001) The rest of this refactoring is now done, as
+| IO::IoFactory has gone to Util::ObjFactory, IO::IoMgr to Util::ObjMgr,
+| and IoDb now stores Util::Object*'s. IdItem is also moved to util/.
+|
++-----
+
++-----
+|
+| (12-Jun-2001, done 13-Jun-2001) Can we get weak references going? This
+| would solve the problem of the disappearing Togl widget. My idea:
+| 
+|   (done) get rid of PtrHandle and NullablePtrHandle; these are
+| 			basically used only in Ref and MaybeRef
+| 
+|   (done) Add a virtual function isVolatile() to RefCounted... this
+| 			defaults to returning false, but classes like Toglet can
+| 			override to return true.
+| 
+|   (done) Don't allow strong ref's to be made upon volatile objects.
+| 
+|   (done) Add a WeakRef class in parallel with Ref and MaybeRef. Or
+| 			perhaps MaybeRef can be merged into WeakRef, so that the new
+| 			class allows a null pointee, and will take a weak ref if a
+| 			strong ref is not available.
+|
++-----
+
++-----
+|
+| (4-Jun-2001, done 15-Jun-2001) Should ditch the idea of singleton Expt
+| and Togl objects... things would be easier without them.
+| 
+| (done 6-Jun-2001) ExptDriver should own a GWT::Widget.
+| 
+| (done 6-Jun-2001) OK, now I've renamed ToglConfig to Toglet, and
+| generally rearranged things so that we can have multiple Toglet's in
+| existence at once.
+| 
+| (done 6-Jun-2001) Hmm... there's is a bit of a problem with Togl,
+| since we can't totally control the lifetime with ref-counting, since
+| the widget can be destroyed at any time by closing the app's
+| window. For now I can decouple the lifetime of the Toglet from the
+| lifetime of the actual X Window... window creation could still be done
+| with a Togl::init, and when the X Window is destroyed, we call back to
+| Toglet to let it set itsTogl* to 0.
+| 
+| (done 11-Jun-2001) Removed the global dependence on a singleton
+| experiment by removing Application::getExperiment() (although it was
+| replaced by Application::getCanvas(), mostly for the benefit of
+| Bitmap's who need access to a Canvas to do screen/world translation).
+|
++-----
+
+(6-Jun-2001, done 15-Jun-2001) Allow name aliasing in Factory? This
+would help to allow backward compatibility for the serialization
+system...
+
+(28-Mar-2000, done 15-Jun-2001) The Togl widget can take over its own
+event dispatching by calling Tk_CreateEventHandler; then we can add
+event bindings to the widget using C++ only, without having to use Tcl
+script code.
