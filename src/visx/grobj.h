@@ -238,6 +238,12 @@ private:
   const fstring& getCacheFilename() const;
   void setCacheFilename(const fstring& name);
 
+  double getWidthFactor() const;
+  void setWidthFactor(double val);
+
+  double getHeightFactor() const;
+  void setHeightFactor(double val);
+
   GrObj(const GrObj&);
   GrObj& operator=(const GrObj&);
 
