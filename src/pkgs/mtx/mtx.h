@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Mar 15 13:35:02 2001
+// written: Thu Mar 15 15:52:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ class MtxIter {
   int stride;
   double* stop;
 
-  MtxIter(double* d, int s, int n) : data(d), stride(s), stop(d + s*n) {}
+  MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n);
 
   friend class Slice;
   friend class Mtx;
@@ -115,13 +115,15 @@ protected:
   int itsStride;
   int itsNelems;
 
-  const double* data() const;
+  const double* dataStart() const;
+  ptrdiff_t dataOffset(int i) const { return itsStride*i; }
+  const double* address(int i) const { return dataStart() + dataOffset(i); }
 
-  const double* address(int i) const { return data() + itsStride*i; }
+  ptrdiff_t storageOffset(int i) const { return itsOffset + itsStride*i; }
 
   friend class Mtx;
 
-  ConstSlice(const Mtx& owner, const double* d, int s, int n);
+  ConstSlice(const Mtx& owner, ptrdiff_t offset, int s, int n);
 
 public:
 
@@ -148,12 +150,12 @@ public:
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return ConstSlice(itsOwner, address(first), itsStride, n);
+	 return ConstSlice(itsOwner, storageOffset(first), itsStride, n);
   }
 
   ConstSlice leftmost(int n) const
   {
-	 return ConstSlice(itsOwner, data(), itsStride, n);
+	 return ConstSlice(itsOwner, storageOffset(0), itsStride, n);
   }
 
   //
@@ -161,7 +163,7 @@ public:
   //
 
   MtxConstIter begin() const
-    { return MtxConstIter(data(), itsStride, itsNelems); }
+    { return MtxConstIter(dataStart(), itsStride, itsNelems); }
 
 
   //
@@ -191,27 +193,21 @@ public:
 class Slice : public ConstSlice {
   friend class Mtx;
 
-  double* data();
-  double* address(int i) { return data() + itsStride*i; }
-
-  Slice(Mtx& m, double* d, int s, int n) :
-	 ConstSlice(m,d,s,n) {}
+  Slice(Mtx& m, ptrdiff_t o, int s, int n) : ConstSlice(m,o,s,n) {}
 
 public:
-
-  double& operator[](int i) { return *(address(i)); }
 
   Slice rightmost(int n)
   {
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return Slice(itsOwner, address(first), itsStride, n);
+	 return Slice(itsOwner, storageOffset(first), itsStride, n);
   }
 
   Slice leftmost(int n)
   {
-	 return Slice(itsOwner, data(), itsStride, n);
+	 return Slice(itsOwner, storageOffset(0), itsStride, n);
   }
 
   Slice& operator=(const ConstSlice& other);
@@ -219,6 +215,12 @@ public:
   //
   // Functions
   //
+
+  void apply(double func(double))
+  {
+	 for (MtxIter i = begin(); i.hasMore(); ++i)
+		*i = func(*i);
+  }
 
   template <class F>
   void apply(F func)
@@ -234,7 +236,7 @@ public:
   //
 
   MtxIter begin()
-    { return MtxIter(data(), itsStride, itsNelems); }
+    { return MtxIter(itsOwner, storageOffset(0), itsStride, itsNelems); }
 };
 
 
@@ -323,15 +325,15 @@ public:
   //
 
   Slice row(int r)
-    { return Slice(*this, itsImpl.address(r,0),
+    { return Slice(*this, itsImpl.offsetFromStorage(r,0),
 						 itsImpl.rowstride(), itsImpl.ncols()); }
 
   ConstSlice row(int r) const
-    { return ConstSlice(*this, itsImpl.address(r,0),
+    { return ConstSlice(*this, itsImpl.offsetFromStorage(r,0),
 								itsImpl.rowstride(), itsImpl.ncols()); }
 
   MtxIter rowIter(int r)
-    { return MtxIter(itsImpl.address(r,0),
+    { return MtxIter(*this, itsImpl.offsetFromStorage(r,0),
 							itsImpl.rowstride(), itsImpl.ncols()); }
 
   MtxConstIter rowIter(int r) const
@@ -343,15 +345,16 @@ public:
 
 
   Slice column(int c)
-    { return Slice(*this, itsImpl.address(0,c),
+    { return Slice(*this, itsImpl.offsetFromStorage(0,c),
 						 itsImpl.colstride(), mrows()); }
 
   ConstSlice column(int c) const
-    { return ConstSlice(*this, itsImpl.address(0,c),
+    { return ConstSlice(*this, itsImpl.offsetFromStorage(0,c),
 								itsImpl.colstride(), mrows()); }
 
   MtxIter colIter(int c)
-    { return MtxIter(itsImpl.address(0,c), itsImpl.colstride(), mrows()); }
+    { return MtxIter(*this, itsImpl.offsetFromStorage(0,c),
+							itsImpl.colstride(), mrows()); }
 
   MtxConstIter colIter(int c) const
     { return MtxConstIter(itsImpl.address(0,c), itsImpl.colstride(), mrows()); }
@@ -377,6 +380,8 @@ private:
 
   const double* dataStorage() const { return itsImpl.dataStorage(); }
   double* dataStorage() { return itsImpl.dataStorage(); }
+
+  friend class MtxIter;
 
   friend class ConstSlice;
   friend class Slice;
@@ -501,15 +506,7 @@ private:
 		  }
     }
 
-	 void makeUnique()
-	 {
-		if ( !storage_->isUnique() )
-		  {
-			 ptrdiff_t offset = start_ - storage_->itsData;
-			 DataBlock::makeUnique(storage_);
-			 start_ = storage_->itsData + offset;
-		  }
-	 }
+	 void makeUnique();
 
 	 const double* dataStorage() const { return storage_->itsData; }
 	 double* dataStorage() { return storage_->itsData; }
@@ -554,17 +551,14 @@ inline double& ElemProxy::operator/=(double d)
 inline ElemProxy::operator double() { return m.itsImpl.at(i); }
 
 
-inline const double* ConstSlice::data() const
+inline const double* ConstSlice::dataStart() const
 { return itsOwner.dataStorage() + itsOffset; }
 
-inline ConstSlice::ConstSlice(const Mtx& owner,
-										const double* d, int s, int n) :
+inline ConstSlice::ConstSlice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
   itsOwner(const_cast<Mtx&>(owner)),
-  itsOffset(d - owner.dataStorage()),
+  itsOffset(offset),
   itsStride(s),
   itsNelems(n) {}
-
-inline double* Slice::data() { return itsOwner.dataStorage() + itsOffset; }
 
 
 

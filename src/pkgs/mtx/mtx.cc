@@ -19,7 +19,6 @@
 
 #include "libmatlb.h"
 
-#define LOCAL_TRACE
 #include "trace.h"
 
 namespace {
@@ -44,6 +43,18 @@ Slice& Slice::operator=(const ConstSlice& other)
     *lhs = *rhs;
 
   return *this;
+}
+
+MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
+  data(0), stride(0), stop(0)
+{
+  // Make sure that the data storage is unique since this is a
+  // non-const iterator
+  m.makeUnique();
+
+  data = m.dataStorage() + storageOffset;
+  stride = s;
+  stop = data + s*n;
 }
 
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
@@ -73,6 +84,17 @@ void Mtx::MtxImpl::selectRowRange(int r, int nr)
   mrows_ = nr;
 }
 
+void Mtx::MtxImpl::makeUnique()
+{
+  if ( !storage_->isUnique() )
+	 {
+		DOTRACE("Mtx::MtxImpl::makeUnique");
+		ptrdiff_t offset = start_ - storage_->itsData;
+  		DataBlock::makeUnique(storage_);
+		start_ = storage_->itsData + offset;
+	 }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Mtx member definitions
@@ -86,7 +108,7 @@ const Mtx& Mtx::emptyMtx()
 }
 
 Mtx::Mtx(const ConstSlice& s) :
-  itsImpl(s.data(), s.nelems(), 1, BORROW)
+  itsImpl(s.dataStart(), s.nelems(), 1, BORROW)
 {
   if (s.itsStride != 1)
     throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
@@ -145,12 +167,15 @@ void Mtx::VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
 
   MtxConstIter veciter = vec.begin();
 
-  for (int col = 0; col < mtx.ncols(); ++col)
-    result[col] = innerProduct(veciter, mtx.colIter(col));
+  MtxIter resultIter = result.begin();
+
+  for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
+    *resultIter = innerProduct(veciter, mtx.colIter(col));
 }
 
 void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("Mtx::assign_MMmul");
   if ( (m1.ncols() != m2.mrows()) ||
 		 (this->ncols() != m2.ncols()) )
 	 throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
