@@ -80,15 +80,12 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * PtrList is templatized container that stores pointers and owns
- * (memory-manages) the objects to which the pointers refer. PtrList
- * is responsible for the memory management of all the objects to
- * which it holds pointers. The pointers are accessed by integer
- * indices into the PtrList. There are no operations on the capacity
- * of PtrList; any necessary resizing is done when necessary in an
- * insert call. PtrList is what Jeff Alger (in C++ for Real
- * Programmers) calls a "teenage mutable serializable indexed ninja
- * collection".
+ * PtrList is templatized container that stores reference counted
+ * smart pointers. Objects are accessed by integer indices into
+ * the PtrList. There are no operations on the capacity of PtrList;
+ * any necessary resizing is done when necessary in an insert
+ * call. PtrList is what Jeff Alger (in C++ for Real Programmers)
+ * calls a "teenage mutable serializable indexed ninja collection".
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -99,10 +96,7 @@ public:
   /// Construct and reserve space for \a size objects.
   PtrList (int size);
 
-  /** Virtual destructor calls \c clear(), according to the
-      requirement of \c VoidPtrList, to ensure no memory
-      leaks. Further subclasses of \c PtrList do not need to call \c
-      clear() from their destructors. */
+  /// Virtual destructor.
   virtual ~PtrList();
 
   //////////////
@@ -111,6 +105,7 @@ public:
 
   typedef T* Ptr;
 
+  /// A reference-counted handle to type T.
   typedef PtrHandle<T> SharedPtr;
 
   ///////////////
@@ -150,9 +145,8 @@ public:
   int insert(T* ptr)
 	 { return VoidPtrList::insertVoidPtr(new MasterPtr<T>(ptr)); }
 
-  /** Insert \a ptr into the list at index \a id. If an object
-      previously existed at index \a id, that object will be properly
-      destroyed. */
+  /** Insert \a ptr into the list at index \a id. An exception will be
+      thrown if an object already exists at index \a id. */
   void insertAt(int id, T* ptr)
 	 { VoidPtrList::insertVoidPtrAt(id, new MasterPtr<T>(ptr)); }
 
@@ -160,9 +154,8 @@ public:
   int insert(MasterPtr<T>* master)
 	 { return VoidPtrList::insertVoidPtr(master); }
 
-  /** Insert \a ptr into the list at index \a id. If an object
-      previously existed at index \a id, that object will be properly
-      destroyed. */
+  /** Insert \a ptr into the list at index \a id. An exception will be
+      thrown if an object already exists at index \a id. */
   void insertAt(int id, MasterPtr<T>* master)
 	 { VoidPtrList::insertVoidPtrAt(id, master); }
 
@@ -170,9 +163,8 @@ public:
   int insert(PtrHandle<T> handle)
 	 { return VoidPtrList::insertVoidPtr(handle.masterPtr()); }
 
-  /** Insert \a ptr into the list at index \a id. If an object
-      previously existed at index \a id, that object will be properly
-      destroyed. */
+  /** Insert \a ptr into the list at index \a id. An exception will be
+      thrown if an object already exists at index \a id. */
   void insertAt(int id, PtrHandle<T> handle)
 	 { VoidPtrList::insertVoidPtrAt(id, handle.masterPtr()); }
 
@@ -181,6 +173,8 @@ protected:
       \a T replaced with the the typename of the actual template argument. */
   virtual const char* alternateIoTags() const;
 
+  /** Reimplemented from \c IoPtrList to return an MasterPtr<T>* that
+      points to \a obj. */
   virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const;
 };
 
