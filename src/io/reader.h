@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Sep 27 14:45:22 2000
+// written: Thu Sep 28 20:15:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,9 +83,6 @@ public:
   /// Read the \c double attribute associated with the tag \a name.
   virtual double readDouble(const char* name) = 0;
 
-  /// Read the C-style string (\c char*) attribute associated with the tag \a name.
-  virtual char* readCstring(const char* name) = 0;
-
   /// Read the \c Value attribute associated with the tag \a name.
   virtual void readValueObj(const char* name, Value& value) = 0;
 
@@ -120,6 +117,10 @@ public:
 		object. In either case, the function returns the object that was
 		actually used as the root object. */
   virtual IO::IoObject* readRoot(IO::IoObject* root=0) = 0;
+
+protected:
+  /// Read the C-style string (\c char*) attribute associated with the tag \a name.
+  virtual char* readCstring(const char* name) = 0;
 };
 
 static const char vcid_reader_h[] = "$Header$";

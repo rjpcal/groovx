@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Wed Sep 27 14:42:45 2000
+// written: Thu Sep 28 20:16:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,6 @@ public:
   virtual int readInt(const char* name);
   virtual bool readBool(const char* name);
   virtual double readDouble(const char* name);
-  virtual char* readCstring(const char* name);
   virtual void readValueObj(const char* name, Value& value);
 
   virtual IO::IoObject* readObject(const char* name);
@@ -68,6 +67,9 @@ public:
   virtual void readBaseClass(const char* baseClassName, IO::IoObject* basePart);
 
   virtual IO::IoObject* readRoot(IO::IoObject* root=0);
+
+protected:
+  virtual char* readCstring(const char* name);
 
 private:
   class Impl;
