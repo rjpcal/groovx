@@ -19,11 +19,15 @@
 VERSION := 0.8a2
 EXTRA_STATISTICS := 0
 
+TCLTK_VERSION := 8.2
+
 #-------------------------------------------------------------------------
 #
 # Platform selection
 #
 #-------------------------------------------------------------------------
+
+ETAGS := etags
 
 ifeq ($(ARCH),hp9000s700)
 	PLATFORM := hp9000s700
@@ -39,7 +43,6 @@ ifeq ($(ARCH),irix6)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 	DEFAULT_TARGET := grsh
-	ETAGS := etags
 endif
 
 #-------------------------------------------------------------------------
@@ -58,7 +61,11 @@ DOC := ./doc
 IDEP := ./idep
 SCRIPTS := ./scripts
 
-BIN_DIR := $(HOME)/local/$(ARCH)/bin
+LOCAL_ARCH := $(HOME)/local/$(ARCH)
+
+BIN_DIR := $(LOCAL_ARCH)/bin
+
+LOCAL_LIB_DIR := $(LOCAL_ARCH)/lib
 
 #-------------------------------------------------------------------------
 #
@@ -68,17 +75,19 @@ BIN_DIR := $(HOME)/local/$(ARCH)/bin
 
 ifeq ($(COMPILER),aCC)
 	CC := time aCC
-#	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
-#		-e '/Warning.*usr.include./,/\^\^*/d'
-	FILTER := 
-	ARCH_FLAGS := +w +W829,740,8006,818,655,392,495,469,361,749,416 \
-		-DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS -Dstd= -DSTD_IO=
-	DEPOPTIONS := -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
-		-I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
-		-I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src \
-		-I./scripts/spoofdep
+#	FILTER := 
+	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
+		-e '/Warning.*usr.include./,/\^\^*/d'
+# 361 == wrongly complains about falling off end of non-void function
+# 392 == 'Conversion unnecessary; expression was already of type...'
+	COMPILER_SWITCHES := +w +W361,392
+	ARCH_CPP_DEFINES := -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
+		-Dstd= -DSTD_IO= -DHAVE_ZSTREAM
+	ARCH_MAKEDEP_INCLUDES := -I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
+		-I/opt/graphics/OpenGL/include -I./scripts/spoofdep
+	STL_INCLUDE_DIR := 
 
-	DEBUG_OPTIONS := +O1 +Z +p
+	DEBUG_OPTIONS := -g1 +Z +p
 	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
 
 	PROD_OPTIONS := +O2 +Z +p
@@ -94,12 +103,14 @@ endif
 ifeq ($(COMPILER),MIPSpro)
 	CC := time /opt/MIPSpro/bin/CC
 	FILTER := 
-	ARCH_FLAGS := -n32 -DMIPSPRO_COMPILER -DIRIX6 -ptused -no_prelink \
-		-DSTD_IO= -DPRESTANDARD_IOSTREAMS \
+	COMPILER_SWITCHES := -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
-	DEPOPTIONS := -DMIPSPRO_COMPILER -DIRIX6 -DPRESTANDARD_IOSTREAMS \
-		-I/usr/include/CC -I/cit/rjpeters/include/cppheaders \
-		-I/cit/rjpeters/include -I./src -I./scripts/spoofdep
+	ARCH_CPP_DEFINES := -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+
+	ARCH_MAKEDEP_INCLUDES := -I/usr/include/CC \
+		-I/cit/rjpeters/include/cppheaders
+
+	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
 
 	DEBUG_OPTIONS := -g -O0
 	DEBUG_LINK_OPTIONS :=
@@ -124,10 +135,12 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*In method/d;' \
 		-e '/g++-3.*At top level/d;' \
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
-	ARCH_FLAGS := -Wall -W -Wsign-promo -Weffc++ -DGCC_COMPILER -DIRIX6
-	DEPOPTIONS := -DGCC_COMPILER -DIRIX6 \
-		-I/cit/rjpeters/gcc/include/g++-3 -I/cit/rjpeters/include -I./src \
-		-I./scripts/spoofdep
+	COMPILER_SWITCHES := -Wall -W -Wsign-promo -Weffc++
+	ARCH_CPP_DEFINES := -DGCC_COMPILER -DIRIX6
+
+	ARCH_MAKEDEP_INCLUDES := -I/cit/rjpeters/gcc/include/g++-3
+
+	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
 
 	DEBUG_OPTIONS := -g -O0
 	DEBUG_LINK_OPTIONS :=
@@ -142,50 +155,48 @@ ifeq ($(COMPILER),g++)
 	STATLIB_CMD := ar rus
 endif
 
+CPP_DEFINES := $(ARCH_CPP_DEFINES)
+MAKEDEP_INCLUDES := $(ARCH_MAKEDEP_INCLUDES) -I./scripts/spoofdep
+
 #-------------------------------------------------------------------------
 #
 # Directories to search for include files and code libraries
 #
 #-------------------------------------------------------------------------
 
-
-STL_INCLUDE_DIR := 
-ifeq ($(COMPILER),g++)
-	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
-endif
-ifeq ($(COMPILER),MIPSpro)
-	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
-endif
-
-INCLUDE_DIRS := -I$(HOME)/include -I$(SRC) $(STL_INCLUDE_DIR)
+MY_INCLUDE_PATH := -I$(LOCAL_ARCH)/include -I$(HOME)/include -I$(SRC) \
+	$(STL_INCLUDE_DIR)
 
 ifeq ($(ARCH),hp9000s700)
+	AUDIO_LIB := -lAlib
+	ZSTREAM_LIB := -lzstream
+
 	OPENGL_LIB_DIR := -L/opt/graphics/OpenGL/lib
 	AUDIO_LIB_DIR := -L/opt/audio/lib
-	AUDIO_LIB := -lAlib
 	RPATH_DIR := 
-	LOCAL_LIB_DIR := $(HOME)/lib/$(ARCH)
 endif
 ifeq ($(ARCH),irix6)
+	AUDIO_LIB := -laudio -laudiofile
+	ZSTREAM_LIB := 
+
 	OPENGL_LIB_DIR :=
 	AUDIO_LIB_DIR :=
-	AUDIO_LIB := -laudio -laudiofile
 	RPATH_DIR := -Wl,-rpath,$(LIB)
-	LOCAL_LIB_DIR := $(HOME)/local/$(ARCH)/lib
 endif
 
-LIB_DIRS :=  -L$(LIB) \
+MY_LIB_PATH :=  -L$(LIB) \
 	-L$(LOCAL_LIB_DIR) \
 	$(OPENGL_LIB_DIR) \
 	$(AUDIO_LIB_DIR) \
 	$(RPATH_DIR)
 
 LIBRARIES := \
-	-lGLU \
-	-lGL \
-	-ltk -ltcl -lXmu \
-	-lX11 -lXext \
-	-lm $(AUDIO_LIB)
+	-lGLU -lGL \
+	-ltk -ltcl \
+	-lXmu -lX11 -lXext \
+	$(ZSTREAM_LIB) \
+	$(AUDIO_LIB) \
+	-lm
 
 #-------------------------------------------------------------------------
 #
@@ -196,15 +207,6 @@ LIBRARIES := \
 GRSH_MAIN_OBJ := $(OBJ)/grshAppInit.do
 
 GRSH_STATIC_OBJS := \
-
-# My intent is that libvisx should contain the core classes for the
-# experiment framework, and that libgrsh should contain the
-# application-specific subclasses (like Face, House, etc.). But there
-# are some bizarre problems on HPUX that give crashes from OpenGL,
-# which are very sensitive to the link order. So for now, all the
-# GL-related objects go into libgrsh, and everything else into libvisx.
-
-GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/bitmap.do \
 	$(OBJ)/bitmaprep.do \
 	$(OBJ)/face.do \
@@ -229,9 +231,20 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/xbitmap.do \
 	$(OBJ)/xbmaprenderer.do \
 
+# My intent is that libvisx should contain the core classes for the
+# experiment framework, and that libgrsh should contain the
+# application-specific subclasses (like Face, House, etc.). But there
+# are some bizarre problems on HPUX that give crashes from OpenGL,
+# which are very sensitive to the link order. So for now, all the
+# GL-related objects go into libgrsh, and everything else into libvisx.
+
+# Ah, well, now the HP-OpenGL bug is rearing its ugly head again, so
+# I'll have to go back to statically linking the OpenGL stuff.
+
+GRSH_DYNAMIC_OBJS := \
+
 
 VISX_OBJS := \
-	$(OBJ)/application.do \
 	$(OBJ)/bitmaptcl.do \
 	$(OBJ)/block.do \
 	$(OBJ)/blocklist.do \
@@ -253,7 +266,6 @@ VISX_OBJS := \
 	$(OBJ)/grshapp.do \
 	$(OBJ)/gtexttcl.do \
 	$(OBJ)/housetcl.do \
-	$(OBJ)/ioptrlist.do \
 	$(OBJ)/jittertcl.do \
 	$(OBJ)/kbdresponsehdlr.do \
 	$(OBJ)/masktcl.do \
@@ -285,16 +297,20 @@ VISX_OBJS := \
 	$(OBJ)/trialbase.do \
 	$(OBJ)/trialevent.do \
 	$(OBJ)/trialtcl.do \
-	$(OBJ)/voidptrlist.do \
 
 APPWORKS_OBJS := \
+	$(OBJ)/application.do \
 	$(OBJ)/factory.do \
+	$(OBJ)/ioptrlist.do \
+	$(OBJ)/masterptr.do \
+	$(OBJ)/ptrlistbase.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
 	$(OBJ)/io/asciistreamreader.do \
 	$(OBJ)/io/asciistreamwriter.do \
 	$(OBJ)/io/io.do \
 	$(OBJ)/io/iofactory.do \
+	$(OBJ)/io/iolegacy.do \
 	$(OBJ)/io/iomgr.do \
 	$(OBJ)/io/property.do \
 	$(OBJ)/io/reader.do \
@@ -303,6 +319,7 @@ APPWORKS_OBJS := \
 	$(OBJ)/io/writeutils.do \
 	$(OBJ)/system/demangle.do \
 	$(OBJ)/system/system.do \
+	$(OBJ)/util/debug.do \
 	$(OBJ)/util/error.do \
 	$(OBJ)/util/errorhandler.do \
 	$(OBJ)/util/observable.do \
@@ -311,6 +328,7 @@ APPWORKS_OBJS := \
 	$(OBJ)/util/strings.do \
 	$(OBJ)/util/trace.do \
 	$(OBJ)/util/value.do \
+
 
 TCLWORKS_OBJS := \
 	$(OBJ)/tcl/listpkg.do \
@@ -349,8 +367,7 @@ DEBUG_LIBVISX := $(LIB)/libvisx.d.$(DEBUGLIB_EXT)
 DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(DEBUGLIB_EXT)
 DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(DEBUGLIB_EXT)
 
-ALL_DEBUG_LIBS := $(DEBUG_LIBGRSH) $(DEBUG_LIBVISX) \
-	$(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
+ALL_DEBUG_LIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
 
 ALL_DEBUG_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_DEBUG_LIBS))
 ALL_DEBUG_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_DEBUG_LIBS))
@@ -372,7 +389,7 @@ PROD_DEFS := -DASSERT -DINVARIANT
 
 PROD_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ:.do=.o)
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
-PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
+#PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
 PROD_VISX_OBJS := $(DEBUG_VISX_OBJS:.do=.o)
 PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
 PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
@@ -381,13 +398,12 @@ PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 
-PROD_LIBGRSH := $(LIB)/libgrsh$(VERSION).$(PRODLIB_EXT)
+#PROD_LIBGRSH := $(LIB)/libgrsh$(VERSION).$(PRODLIB_EXT)
 PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(PRODLIB_EXT)
 PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(PRODLIB_EXT)
 PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(PRODLIB_EXT)
 
-ALL_PROD_LIBS := $(PROD_LIBGRSH) $(PROD_LIBVISX) \
-	$(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
+ALL_PROD_LIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
 
 ALL_PROD_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_PROD_LIBS))
 ALL_PROD_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_PROD_LIBS))
@@ -398,7 +414,7 @@ ALL_PROD_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_PROD_LIBS))
 #
 #-------------------------------------------------------------------------
 
-COMMON_OPTIONS := $(ARCH_FLAGS) $(INCLUDE_DIRS)
+COMMON_OPTIONS := $(COMPILER_SWITCHES) $(CPP_DEFINES) $(MY_INCLUDE_PATH)
 
 ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIONS) $(PROD_DEFS)
 ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIONS) $(DEBUG_DEFS)
@@ -434,21 +450,25 @@ default: $(DEFAULT_TARGET)
 testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
 
+DEBUG_CMDLINE := $(DEBUG_LINK_OPTIONS) $(DEBUG_GRSH_STATIC_OBJS) \
+	 $(DEBUG_GRSH_MAIN_OBJ) $(DEBUG_AUX_OBJ) \
+	$(MY_LIB_PATH) -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
+
 $(DEBUG_TARGET): $(DEBUG_GRSH_MAIN_OBJ) \
 		$(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
-	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
-	 $(DEBUG_GRSH_MAIN_OBJ) $(DEBUG_AUX_OBJ) \
-	$(LIB_DIRS) -lgrsh.d -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
+	$(CC) -o $@ $(DEBUG_CMDLINE)
 
 grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
+PROD_CMDLINE := $(PROD_LINK_OPTIONS) $(PROD_GRSH_STATIC_OBJS) \
+	$(PROD_GRSH_MAIN_OBJ) $(MY_LIB_PATH) \
+	-lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
+	$(LIBRARIES) \
+
 $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 		$(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
-	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
-	$(PROD_GRSH_MAIN_OBJ) $(LIB_DIRS) \
-	-lgrsh$(VERSION) -lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
-	$(LIBRARIES) \
+	$(CC) -o $@ $(PROD_CMDLINE)
 
 #-------------------------------------------------------------------------
 #
@@ -463,7 +483,7 @@ $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 	$(STATLIB_CMD) $@ $^
 
 $(DEBUG_LIBGRSH):      $(DEBUG_GRSH_DYNAMIC_OBJS)
-$(PROD_LIBGRSH):       $(PROD_GRSH_DYNAMIC_OBJS)
+#$(PROD_LIBGRSH):       $(PROD_GRSH_DYNAMIC_OBJS)
 $(DEBUG_LIBVISX):      $(DEBUG_VISX_OBJS)
 $(PROD_LIBVISX):       $(PROD_VISX_OBJS)
 $(DEBUG_LIBTCLWORKS):  $(DEBUG_TCLWORKS_OBJS)
@@ -499,6 +519,8 @@ DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
 MAKEDEP := $(SCRIPTS)/makedep
+
+DEPOPTIONS := $(CPP_DEFINES) $(MY_INCLUDE_PATH) $(MAKEDEP_INCLUDES)
 
 $(DEP)/%.d : $(SRC)/%.cc
 	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $< > $@
@@ -585,3 +607,4 @@ ldeps: cdeps
 
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
+
