@@ -170,6 +170,9 @@ will be needed, and then they can be phased out.
    to them through an fstring". Aha... just needed a bit of template
    metaprogramming a la "Loki" here.
 
+* (4-Nov-2002, done 5-Nov-2002) Dynamically-sized array-Value objects?
+  OK, TArrayValue<T> fits the bill here, holding a minivec<T>.
+
 * (9-Nov-2002, done 13-Nov-2002) GLUtil just has font functions
   Make a new font class? Or move this stuff into Gtext? Yes, yes, yes. OK,
   GLUtil is history. We have a GxFont class now, with raster-font and
@@ -248,3 +251,29 @@ will be needed, and then they can be phased out.
    autoUpdate (determines if scene is automatically redrawn upon Expose or
    Resize events)... [Later] OK, now I have GxCamera, GxFixedScaleCamera,
    GxPerspectiveCamera, and GxPsyphyCamera, among others.
+
+* (16-May-2000, nix 22-Nov-2002) Make bitmap caching more fluent
+
+  Need to have a way to explicitly represent GrObj's with
+  cached-bitmap-file representations... this way we can have access both to
+  a GrObj's semantic properties (i.e. face width, nose length, etc.)  while
+  still accessing it in a bitmap form. This would involve a command to
+  cache a GrObj to file, given a filename, and then the object should
+  automatically load that file when it is deserialized at a later time.
+
+  [Later] OK, as of now it really looks like bitmap caching is not going to
+  be much of an issue. It was mainly needed on really old+slow hp machines
+  whose OpenGL implementations ran like molasses.
+
+* (28-Sep-2000, nix 22-Nov-2002) irix core dump
+  Why does irix occasionally core-dump during Face testing in
+  GrObj::invalidateCaches()? [Later] Who knows? Who cares?
+
+* (14-Dec-1999, nix 22-Nov-2002) Bitmap::grab{Screen,World}Rect needs a Canvas&?
+  [Later] OK, this one sounds totally out of date.
+
+* (3-Sep-2001, done 22-Nov-2002) class-based inheritance of Tcl commands
+  We don't need multiple TclCmd objects, instead we just need to register
+  the same TclCmd object under multiple names. [Later] OK, we can basically
+  achieve this kind of inheritance by just making use of Tcl's ability to
+  import/export commands from namespaces.

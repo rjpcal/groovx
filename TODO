@@ -9,6 +9,12 @@
 
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
 
+* (22-Nov-2002) Finish cleaning out the src/visx tree.
+
+  Sound stuff should move somewhere else... maybe to src/system?
+  gtracetcl.cc belongs elsewhere ... maybe src/tcl?
+  [ok] Subject class has never been used at all ... trash it?
+
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
 
@@ -27,8 +33,6 @@
   FieldMap could change if its child object changes. How do we keep Tcl,
   for example, abreast of such changes?
 
-* (4-Nov-2002) Dynamically-sized array-Value objects?
-
 * (2-Jul-2002) new project name?
 
 OO framework
@@ -44,18 +48,13 @@ OO framework
   cooler
   noodle
 
-Psychophysics experiments
+Psychophysics experiments -- groovx groovx groovx -- is this "the one"?
 
   fovx - fovex - fovee
-
   grove - grovx - groovx
-
   gruve - gruuv
-
   focal
-
   focus
-
   acuity
 
 * (13-Sep-2002) Hacks to work around broken MIPSpro compiler
@@ -158,10 +157,6 @@ remembers this fact until its next redisplay comes around, rather than
 immediately redisplaying the scene. Widget could have a maxRefreshRate
 attrib, instead of allowRefresh; then "maxRefreshRate 0" would be
 equivalent to "allowRefresh false".
-
-* (3-Sep-2001) class-based inheritance of Tcl commands
-we don't need multiple TclCmd objects, instead we just need to register the
-same TclCmd object under multiple names.
 
 * (6-Jun-2001) refactoring Trial/TimingHdlr/ResponseHandler
 
@@ -283,13 +278,6 @@ could/should really be implemented in terms of iterators that iterate over
 the elements in the stream. Then transferring elements to/from a local
 container is just a simple std::copy type of operation.
 
-* (28-Sep-2000) irix core dump
-Why does irix occasionally core-dump during Face testing in
-GrObj::invalidateCaches()?
-
-
-* (23-Sep-2000) use XBlackPixel/XWhitePixel in Togl setup
-
 * (7-Jul-2000) Adding an 'itsCorrectVal' member to Response
 Should this value be serialized? We don't have a good way to do versioning
 of Value types that are written/read with printTo() and
@@ -351,16 +339,6 @@ factor in order to adjust for past errors.
 ** (15-May-2000) Trial's should know their desired length
 and give feedback to their TimingHdlr's so that the TimingHdlr's can do a
 multiplicative scaling to compensate.
-
-* (16-May-2000) GOAL #7 Make bitmap caching a more fluent part of the software
-
-Need to have a way to explicitly represent GrObj's with cached-bitmap-file
-representations... this way we can have access both to a GrObj's semantic
-properties (i.e. face width, nose length, etc.)  while still accessing it
-in a bitmap form. This would involve a command to cache a GrObj to file,
-given a filename, and then the object should automatically load that file
-when it is deserialized at a later time.
-
 
 * (29-Nov-1999) How to automate the data analysis?
 
@@ -432,8 +410,6 @@ the entire duration).
 1) Need to maintain a do_expt script in each subject's directory. 2) Need
 to make sure that autosave file is writable by rjp_subject, and if not, use
 a different filename. (Maybe use temp filename generating facility of OS?).
-
-* (14-Dec-1999) Need Canvas& argument to Bitmap::grabScreenRect/grabWorldRect
 
 * (17-Nov-1999) matlab automation for data analysis?
 by opening a pipe to a Matlab process from within Tcl?
