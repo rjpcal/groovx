@@ -197,6 +197,13 @@ $(DEP)/altdeps: $(SCRIPTS)/cppdeps.tcl $(SCRIPTS)/deps.tcl $(DEP)/.timestamp $(A
 depcheck: $(DEP)/cppdepends $(DEP)/altdeps
 	diff $(DEP)/cppdepends $(DEP)/altdeps > /dev/null
 
+.PHONY: deptime
+deptime: $(SCRIPTS)/cppdeps $(DEP)/altdeps
+	/usr/bin/time -f "%e %U %S" -o deptime -a \
+	 $(SCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $(DEP)/cppdepends
+	cat deptime
+	diff $(DEP)/cppdepends $(DEP)/altdeps
+
 # dependencies of package shlib's on object files
 
 $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
