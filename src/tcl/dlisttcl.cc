@@ -83,6 +83,50 @@ namespace DlistTcl
 
   //---------------------------------------------------------------------
   //
+  // Cyclically shift the elements of the list leftward by n steps.
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List cycle_left(Tcl::List source_list, unsigned int n)
+  {
+    n = n % source_list.length();
+
+    if (n == 0)
+      return source_list;
+
+    Tcl::List result;
+
+    for (unsigned int i = n; i < source_list.length(); ++i)
+      {
+        result.append(source_list.at(i));
+      }
+
+    for (unsigned int i = 0; i < n; ++i)
+      {
+        result.append(source_list.at(i));
+      }
+
+    return result;
+  }
+
+  //---------------------------------------------------------------------
+  //
+  // Cyclically shift the elements of the list rightward by n steps.
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List cycle_right(Tcl::List source_list, unsigned int n)
+  {
+    n = n % source_list.length();
+
+    if (n == 0)
+      return source_list;
+
+    return cycle_left(source_list, source_list.length() - n);
+  }
+
+  //---------------------------------------------------------------------
+  //
   // Returns the n'th element of the list; generates an error if n is
   // out of range.
   //
@@ -394,6 +438,8 @@ DOTRACE("Dlist_Init");
   PKG_CREATE(interp, "dlist", "$Revision$");
 
   pkg->def( "choose", "source_list index_list", &DlistTcl::choose );
+  pkg->def( "cycle_left", "source_list n", &DlistTcl::cycle_left );
+  pkg->def( "cycle_right", "source_list n", &DlistTcl::cycle_right );
   pkg->def( "index", "list index", &DlistTcl::index );
   pkg->def( "not", "source_list", &DlistTcl::not_ );
   pkg->def( "ones", "num_ones", &DlistTcl::ones );
