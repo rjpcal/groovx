@@ -3,7 +3,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed May 12 19:16:00 1999
+// written: Sun Jun 20 17:02:11 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -77,10 +77,8 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
   if (Tcl_ListObjLength(interp, objv[2], &idx_len) != TCL_OK) return TCL_ERROR;
 
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(src_len);
-  DUMP_VAL2(idx_len);
-#endif
+  DebugEval(src_len);
+  DebugEvalNL(idx_len);
 
   // make a new list to hold the result
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
@@ -89,16 +87,16 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
   Tcl_Obj *idx_elem, *src_elem;
 
   // loop over elements in the index list
-  for (int i = 0; i < idx_len; i++) {
+  for (int i = 0; i < idx_len; ++i) {
     // get the idx_list element into idx_elem
     if (Tcl_ListObjIndex(interp, objv[2], i, &idx_elem) != TCL_OK)
       return TCL_ERROR;
     // get an int from idx_elem
     if (Tcl_GetIntFromObj(interp, idx_elem, &index) != TCL_OK)
       return TCL_ERROR;
-#ifdef LOCAL_DEBUG
-    DUMP_VAL2(index);
-#endif
+
+    DebugEvalNL(index);
+
 	 // Check index for valid value
 	 if (index < 0 || index >= src_len) {
 		err_message(interp, objv, "index out of range");
@@ -138,9 +136,7 @@ DOTRACE("Tcldlist::dlist_notCmd");
   int src_len;
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
 
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(src_len);
-#endif
+  DebugEvalNL(src_len);
 
   // make a new Tcl list to store the result
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
@@ -151,7 +147,7 @@ DOTRACE("Tcldlist::dlist_notCmd");
   Tcl_Obj* src_elem;
 
   // loop over the source list
-  for (int i = 0; i < src_len; i++) {
+  for (int i = 0; i < src_len; ++i) {
     // get the next list element and get an int from it
     if (Tcl_ListObjIndex(interp, objv[1], i, &src_elem) != TCL_OK)
       return TCL_ERROR;
@@ -192,7 +188,7 @@ DOTRACE("Tcldlist::dlist_onesCmd");
 
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
   Tcl_Obj* one_obj = Tcl_NewIntObj(1);
-  for (int i = 0; i < num_ones; i++) {
+  for (int i = 0; i < num_ones; ++i) {
     if (Tcl_ListObjAppendElement(interp, list_out, one_obj) != TCL_OK)
       return TCL_ERROR;
   }
@@ -227,10 +223,9 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
 
   // get a random int between 0 and (src_len-1), inclusive
   int randnum = int ( (double(rand()) / RAND_MAX) * src_len );
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(src_len);
-  DUMP_VAL2(randnum);
-#endif
+
+  DebugEval(src_len);
+  DebugEvalNL(randnum);
 
   // get the appropriate list element...
   Tcl_Obj* chosen;
@@ -265,7 +260,7 @@ DOTRACE("Tcldlist::dlist_rangeCmd");
   if (Tcl_GetIntFromObj(interp, objv[2], &end) != TCL_OK) return TCL_ERROR;
 
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
-  for (int i = begin; i <= end; i++) {
+  for (int i = begin; i <= end; ++i) {
     if (Tcl_ListObjAppendElement(interp, list_out, Tcl_NewIntObj(i)) != TCL_OK)
       return TCL_ERROR;
   }
@@ -306,17 +301,16 @@ DOTRACE("Tcldlist::dlist_repeatCmd");
   
   // find the minimum of the two lists' lengths
   int min_len = (src_len < tim_len) ? src_len : tim_len;
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(src_len);
-  DUMP_VAL1(tim_len);
-  DUMP_VAL2(min_len);
-#endif
+
+  DebugEval(src_len);
+  DebugEval(tim_len);
+  DebugEvalNL(min_len);
 
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
 
   int times;
   Tcl_Obj *src_elem, *tim_elem;
-  for (int t = 0; t < min_len; t++) { // loop over times_list
+  for (int t = 0; t < min_len; ++t) { // loop over times_list
     // get the next element from times_list into tim_elem
     if (Tcl_ListObjIndex(interp, objv[2], t, &tim_elem) != TCL_OK)
       return TCL_ERROR;
@@ -326,7 +320,7 @@ DOTRACE("Tcldlist::dlist_repeatCmd");
     if (Tcl_ListObjIndex(interp, objv[1], t, &src_elem) != TCL_OK)
       return TCL_ERROR;
     // append src_elem to the output list
-    for (int r = 0; r < times; r++)
+    for (int r = 0; r < times; ++r)
       Tcl_ListObjAppendElement(interp, list_out, src_elem);
   }
   // make the interpreter's result point to the output list
@@ -362,10 +356,8 @@ DOTRACE("Tcldlist::dlist_selectCmd");
     return TCL_ERROR;
   }
 
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(src_len);
-  DUMP_VAL2(flg_len);
-#endif
+  DebugEval(src_len);
+  DebugEvalNL(flg_len);
 
   // make a new Tcl list to hold the result
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
@@ -374,7 +366,7 @@ DOTRACE("Tcldlist::dlist_selectCmd");
   Tcl_Obj *src_elem, *flg_elem;
 
   // loop over the source list
-  for (int i = 0; i < src_len; i++) {
+  for (int i = 0; i < src_len; ++i) {
     // get the next element in flag_list and get an int from it
     if (Tcl_ListObjIndex(interp, objv[2], i, &flg_elem) != TCL_OK) 
       return TCL_ERROR;
@@ -424,7 +416,7 @@ DOTRACE("Tcldlist::dlist_sumCmd");
   Tcl_Obj* src_elem;
 
   // loop over objects in list
-  for (int i = 0; i < src_len; i++) {
+  for (int i = 0; i < src_len; ++i) {
     // put next list element at src_elem
     if (Tcl_ListObjIndex(interp, objv[1], i, &src_elem) != TCL_OK)
       return TCL_ERROR;
@@ -445,9 +437,9 @@ DOTRACE("Tcldlist::dlist_sumCmd");
         return TCL_ERROR;
       sum += next_d;
     }
-#ifdef LOCAL_DEBUG
-    DUMP_VAL2(sum);
-#endif
+
+    DebugEvalNL(sum);
+
   }
   if ( is_double == 0 )         // we have an int result
     Tcl_SetObjResult(interp, Tcl_NewIntObj( (int) sum ));
@@ -479,7 +471,7 @@ DOTRACE("Tcldlist::dlist_zerosCmd");
 
   Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
   Tcl_Obj* zero_obj = Tcl_NewIntObj(0);
-  for (int i = 0; i < num_ones; i++) {
+  for (int i = 0; i < num_ones; ++i) {
     if (Tcl_ListObjAppendElement(interp, list_out, zero_obj) != TCL_OK)
       return TCL_ERROR;
   }
@@ -493,25 +485,25 @@ DOTRACE("Tcldlist::dlist_zerosCmd");
 //
 //--------------------------------------------------------------------
 
-int Tcldlist::Tcldlist_Init(Tcl_Interp* interp) {
-DOTRACE("Tcldlist::Tcldlist_Init");
-  Tcl_CreateObjCommand(interp, "dlist_choose", dlist_chooseCmd,
+int Tcldlist_Init(Tcl_Interp* interp) {
+DOTRACE("Tcldlist_Init");
+  Tcl_CreateObjCommand(interp, "dlist_choose", Tcldlist::dlist_chooseCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_ones", dlist_onesCmd,
+  Tcl_CreateObjCommand(interp, "dlist_ones", Tcldlist::dlist_onesCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_zeros", dlist_zerosCmd,
+  Tcl_CreateObjCommand(interp, "dlist_zeros", Tcldlist::dlist_zerosCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_sum", dlist_sumCmd,
+  Tcl_CreateObjCommand(interp, "dlist_sum", Tcldlist::dlist_sumCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_range", dlist_rangeCmd,
+  Tcl_CreateObjCommand(interp, "dlist_range", Tcldlist::dlist_rangeCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_repeat", dlist_repeatCmd,
+  Tcl_CreateObjCommand(interp, "dlist_repeat", Tcldlist::dlist_repeatCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_select", dlist_selectCmd,
+  Tcl_CreateObjCommand(interp, "dlist_select", Tcldlist::dlist_selectCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_not", dlist_notCmd,
+  Tcl_CreateObjCommand(interp, "dlist_not", Tcldlist::dlist_notCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "dlist_pickone", dlist_pickoneCmd,
+  Tcl_CreateObjCommand(interp, "dlist_pickone", Tcldlist::dlist_pickoneCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   
   Tcl_PkgProvide(interp, "Tcldlist", "1.6");

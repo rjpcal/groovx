@@ -3,7 +3,7 @@
 // tcldlist.h
 // Rob Peters
 // created: Dec-98
-// written: Thu May 27 20:17:30 1999
+// written: Sun Jun 20 17:13:37 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -27,9 +27,7 @@
 struct Tcl_Interp;
 typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 
-namespace Tcldlist {
-  Tcl_PackageInitProc Tcldlist_Init;
-}
+extern "C" Tcl_PackageInitProc Tcldlist_Init;
 
 static const char vcid_tcldlist_h[] = "$Id$";
 #endif // !TCLDLIST_H_DEFINED
