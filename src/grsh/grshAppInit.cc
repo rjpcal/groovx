@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed May 17 15:55:28 2000
+// written: Mon May 22 11:50:16 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -91,34 +91,36 @@ PkgName_PkgProc Names_Procs[] = {
 
 class TclApp : public GrshApp {
 public:
-  TclApp(Tcl_Interp* interp) : 
-	 GrshApp(interp),
-	 itsStatus(TCL_OK)
-  {
-  DOTRACE("TclApp::TclApp(Tcl_Interp*)");
-
-    for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
-#ifdef LOCAL_TRACE		
-		cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
-#endif
-		int result = Names_Procs[i].PkgProc(interp);
-		if (result != TCL_OK) { itsStatus = result; }
-	 }
-
-	 // set prompt to "cmd[n]% " where cmd is the name of the program,
-	 // and n is the history event number
-	 Tcl_SetVar(interp, "tcl_prompt1", 
-					"puts -nonewline \"$argv0\\[[history nextid]\\]% \"",
-					TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
-	 
-	 // specifies a file to be 'source'd upon startup
-	 Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
-  }
+  TclApp(Tcl_Interp* interp);
 
   int status() const { return itsStatus; }
 private:
   int itsStatus;
 };
+
+TclApp::TclApp(Tcl_Interp* interp) : 
+  GrshApp(interp),
+  itsStatus(TCL_OK)
+{
+DOTRACE("TclApp::TclApp(Tcl_Interp*)");
+
+  for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
+#ifdef LOCAL_TRACE		
+	 cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
+#endif
+	 int result = Names_Procs[i].PkgProc(interp);
+	 if (result != TCL_OK) { itsStatus = result; }
+  }
+
+  // set prompt to "cmd[n]% " where cmd is the name of the program,
+  // and n is the history event number
+  Tcl_SetVar(interp, "tcl_prompt1", 
+				 "puts -nonewline \"$argv0\\[[history nextid]\\]% \"",
+				 TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+	 
+  // specifies a file to be 'source'd upon startup
+  Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
+}
 
 // initialize all the necessary packages
 int Tcl_AppInit(Tcl_Interp* interp) {
