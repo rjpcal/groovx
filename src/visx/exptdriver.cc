@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct 23 12:53:04 2000
+// written: Mon Oct 23 18:16:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ Util::Tracer ExptDriver::tracer;
 
 namespace {
 
-  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 2;
+  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 3;
 
 #ifdef TIME_TRACE
   inline void TimeTraceNL(const char* loc, int msec) {
@@ -525,11 +525,17 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 void ExptDriver::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("ExptDriver::Impl::readFrom");
 
-  reader->readOwnedObject("theObjList", &ObjList::theObjList());
-  reader->readOwnedObject("thePosList", &PosList::thePosList());
-  reader->readOwnedObject("theTlist", &Tlist::theTlist());
-  reader->readOwnedObject("theRhList", &RhList::theRhList());
-  reader->readOwnedObject("theThList", &ThList::theThList());
+  IO::VersionId svid = reader->readSerialVersionId();
+
+  if (svid < 3)
+	 {
+		reader->readOwnedObject("theObjList", &ObjList::theObjList());
+		reader->readOwnedObject("thePosList", &PosList::thePosList());
+		reader->readOwnedObject("theTlist", &Tlist::theTlist());
+		reader->readOwnedObject("theRhList", &RhList::theRhList());
+		reader->readOwnedObject("theThList", &ThList::theThList());
+	 }
+
   reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
 
   reader->readValue("hostname", itsHostname);
@@ -538,7 +544,6 @@ DOTRACE("ExptDriver::Impl::readFrom");
   reader->readValue("endDate", itsEndDate);
   reader->readValue("autosaveFile", itsAutosaveFile);
 
-  IO::VersionId svid = reader->readSerialVersionId();
   if (svid >= 1)
 	 reader->readValue("autosavePeriod", itsAutosavePeriod);
 
@@ -556,11 +561,15 @@ DOTRACE("ExptDriver::Impl::readFrom");
 void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::writeTo");
 
-  writer->writeOwnedObject("theObjList", &ObjList::theObjList());
-  writer->writeOwnedObject("thePosList", &PosList::thePosList());
-  writer->writeOwnedObject("theTlist", &Tlist::theTlist());
-  writer->writeOwnedObject("theRhList", &RhList::theRhList());
-  writer->writeOwnedObject("theThList", &ThList::theThList());
+  if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
+	 {
+		writer->writeOwnedObject("theObjList", &ObjList::theObjList());
+		writer->writeOwnedObject("thePosList", &PosList::thePosList());
+		writer->writeOwnedObject("theTlist", &Tlist::theTlist());
+		writer->writeOwnedObject("theRhList", &RhList::theRhList());
+		writer->writeOwnedObject("theThList", &ThList::theThList());
+	 }
+
   writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
 
   writer->writeValue("hostname", itsHostname);
