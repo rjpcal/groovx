@@ -499,6 +499,21 @@ else
    AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
 fi
 
+###
+
+AC_MSG_CHECKING([where to install html documentation])
+
+AC_ARG_WITH(htmldoc,
+	    [AC_HELP_STRING([--with-htmldoc=DIR],
+			    [specify where to install html documentation])],
+	    ,
+	    with_htmldoc=${HOME}/www/grsh)
+
+AC_MSG_RESULT($with_htmldoc)
+
+AC_SUBST(with_htmldoc)
+
 AC_CONFIG_FILES([Makefile:Makefile.in])
+AC_CONFIG_FILES([doc/DoxyConfig:doc/DoxyConfig.in])
 
 AC_OUTPUT()

@@ -59,21 +59,6 @@ LIBS            := @LIBS@ @X_EXTRA_LIBS@
 
 #-------------------------------------------------------------------------
 #
-# Rules to rebuild the Makefile from the configure script
-#
-#-------------------------------------------------------------------------
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck
-
-Makefile: Makefile.in config.status
-	./config.status --file=Makefile:Makefile.in
-
-#-------------------------------------------------------------------------
-#
 # Directories for different file types
 #
 #-------------------------------------------------------------------------
@@ -86,6 +71,24 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
+
+#-------------------------------------------------------------------------
+#
+# Rules to rebuild files from the configure script
+#
+#-------------------------------------------------------------------------
+
+configure: configure.in
+	autoconf
+
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status --file=Makefile:Makefile.in
+
+$(DOC)/DoxyConfig: $(DOC)/DoxyConfig.in config.status
+	./config.status --file=$(DOC)/DoxyConfig:$(DOC)/DoxyConfig.in
 
 #-------------------------------------------------------------------------
 #
@@ -269,9 +272,9 @@ count:
 count_sort: $(ALL_SRCS)
 	@wc $(ALL_SRCS) | sort -n | tee $(LOGS)/count_sort
 
-docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_SRCS)
+docs: $(DOC)/DoxyConfig $(DOC)/*.doc $(ALL_SRCS)
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
-	chmod -R og+r ~/www/grsh
+	chmod -R og+r $(HOME)/www/grsh
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
