@@ -404,7 +404,6 @@ endif
 #-------------------------------------------------------------------------
 
 all: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
-	echo $(PKG_LIBS)
 	$(EXECUTABLE) ./testing/grshtest.tcl
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
@@ -481,8 +480,9 @@ include $(DEP_FILE)
 
 PKG_DEP_FILE := $(DEP)/pkgdepends
 
+.PHONY: $(PKG_DEP_FILE)
 $(PKG_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	time src/pkgs/buildPkgDeps.tcl
+	src/pkgs/buildPkgDeps.tcl
 
 include $(PKG_DEP_FILE)
 
@@ -529,7 +529,7 @@ clean:
 
 # Make clean, and also remove all debug object files
 cleaner: clean
-	rm -f $(OBJ)/*$(OBJ_EXT) $(OBJ)/*/*$(OBJ_EXT) \
+	rm -f $(OBJ)/*$(OBJ_EXT) $(OBJ)/*/*$(OBJ_EXT) $(OBJ)/*/*/*$(OBJ_EXT) \
 	 $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
 
 # Count the lines in all source files
