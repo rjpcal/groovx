@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Jun 12 17:10:34 2001
+// written: Sat Jun 16 18:40:32 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -43,6 +43,7 @@ extern "C" {
   Tcl_PackageInitProc Fish_Init;
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Gabor_Init;
+  Tcl_PackageInitProc Gltcl_Init;
   Tcl_PackageInitProc Grobj_Init;
   Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc Gx_Init;
@@ -59,7 +60,6 @@ extern "C" {
   Tcl_PackageInitProc Sound_Init;
   Tcl_PackageInitProc Subject_Init;
   Tcl_PackageInitProc Tcldlist_Init;
-  Tcl_PackageInitProc Tclgl_Init;
   Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
   Tcl_PackageInitProc Togl_Init;
@@ -89,6 +89,7 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Fish",     Fish_Init      }
   , { "Fixpt",    Fixpt_Init     }
   , { "Gabor",    Gabor_Init     }
+  , { "Gltcl",    Gltcl_Init     }
   , { "Grobj",    Grobj_Init     }
   , { "Gtext",    Gtext_Init     }
   , { "Gx",       Gx_Init        }
@@ -105,7 +106,6 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Sound",    Sound_Init     }
   , { "Subject",  Subject_Init   }
   , { "Tcldlist", Tcldlist_Init  }
-  , { "Tclgl",    Tclgl_Init     }
   , { "Th",       Th_Init        }
   , { "Tlist",    Tlist_Init     }
   , { "Trial",    Trial_Init     }
