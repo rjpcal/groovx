@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Feb  7 15:48:09 2002
+// written: Thu Feb 21 16:27:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -167,12 +167,12 @@ double Util::Prof::avgTime() const
   return itsCallCount > 0 ? (totalTime() / itsCallCount) : 0.0;
 }
 
-void Util::Prof::printProfData(ostream& os) const
+void Util::Prof::printProfData(std::ostream& os) const
 {
-  os << setw(14) << long(avgTime()) << '\t'
-     << setw(5) << count() << '\t'
-     << setw(14) << long(totalTime()) << '\t'
-     << itsFuncName << endl;
+  os << std::setw(14) << long(avgTime()) << '\t'
+     << std::setw(5) << count() << '\t'
+     << std::setw(14) << long(totalTime()) << '\t'
+     << itsFuncName << std::endl;
 }
 
 void Util::Prof::printAtExit(bool yes_or_no)
@@ -242,7 +242,7 @@ void Util::Trace::setMaxLevel(unsigned int lev)
   MAX_TRACE_LEVEL = lev;
 }
 
-void Util::Trace::printStackTrace(ostream& os)
+void Util::Trace::printStackTrace(std::ostream& os)
 {
   os << "stack trace:\n";
 
@@ -254,7 +254,7 @@ void Util::Trace::printStackTrace(ostream& os)
       os << "\t[" << i << "] " << callStack()[ri]->name() << '\n';
     }
 
-  os << flush;
+  os << std::flush;
 }
 
 void Util::Trace::printStackTrace()
