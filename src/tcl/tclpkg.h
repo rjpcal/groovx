@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Mar 30 08:29:17 2000
+// written: Wed May 31 00:09:56 2000
 // $Id$
 //
 //
@@ -192,32 +192,20 @@ public:
 protected:
   template <class T>
   void declareGetter(const char* cmd_name, Getter<T>* getter,
-							const char* usage = 0)
-  { declareGetter_(this, cmd_name, getter, usage); }
-  
+							const char* usage = 0);
+
   template <class T>
   void declareSetter(const char* cmd_name, Setter<T>* setter,
-							const char* usage = 0)
-  { declareSetter_(this, cmd_name, setter, usage); }
+							const char* usage = 0);
 
   template <class T>
   void declareAttrib(const char* attrib_name, Attrib<T>* attrib,
-							const char* usage = 0)
-  { declareAttrib_(this, attrib_name, attrib, usage); }
+							const char* usage = 0);
 
   void declareAction(const char* action_name, Action* action,
 							const char* usage = 0);
 
 private:
-  template <class T>
-  static void declareGetter_(TclItemPkg*, const char*, Getter<T>*, const char*);
-
-  template <class T>
-  static void declareSetter_(TclItemPkg*, const char*, Setter<T>*, const char*);
-
-  template <class T>
-  static void declareAttrib_(TclItemPkg*, const char*, Attrib<T>*, const char*);
-
   void instantiate();
 
   int itsItemArgn;

@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu Mar 30 08:29:18 2000
+// written: Wed May 31 00:13:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,55 +33,55 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-// NOTE: aCC won't compile these static TclItemPkg functions if they
-// are defined inside a namespace Tcl {} block. So, as a workaround,
-// we must define them at global scope, using explicit Tcl:: qualifiers
+// NOTE: aCC won't compile these TclItemPkg functions if they are
+// defined inside a namespace Tcl {} block. So, as a workaround, we
+// must define them at global scope, using explicit Tcl:: qualifiers
 
 template <class T>
-void Tcl::TclItemPkg::declareGetter_(TclItemPkg* pkg, const char* cmd_name,
-												 Getter<T>* getter, const char* usage) {
-  pkg->addCommand(
-         new Tcl::TVecGetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name), 
-											  getter, usage, pkg->itsItemArgn)
+void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
+												Getter<T>* getter, const char* usage) {
+  addCommand(
+         new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name), 
+											  getter, usage, itsItemArgn)
 			);
 }
 
 template <class T>
-void Tcl::TclItemPkg::declareSetter_(TclItemPkg* pkg, const char* cmd_name,
-												 Setter<T>* setter, const char* usage) {
-  pkg->addCommand(
-		   new Tcl::TVecSetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name),
-											  setter, usage, pkg->itsItemArgn)
+void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
+												Setter<T>* setter, const char* usage) {
+  addCommand(
+		   new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
+											  setter, usage, itsItemArgn)
 			);
 }
 
 template <class T>
-void Tcl::TclItemPkg::declareAttrib_(TclItemPkg* pkg, const char* attrib_name,
-												 Attrib<T>* attrib, const char* usage) {
-  pkg->addCommand(
-			new Tcl::TVecAttribCmd<T>(pkg, pkg->makePkgCmdName(attrib_name),
-											  attrib, usage, pkg->itsItemArgn)
+void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
+												Attrib<T>* attrib, const char* usage) {
+  addCommand(
+			new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
+											  attrib, usage, itsItemArgn)
 			);
 }
 
 void Tcl::TclItemPkg::instantiate() {
-  declareGetter_(this, 0, (Getter<int>*) 0, 0);
-  declareGetter_(this, 0, (Getter<bool>*) 0, 0);
-  declareGetter_(this, 0, (Getter<double>*) 0, 0);
-  declareGetter_(this, 0, (Getter<const char*>*) 0, 0);
-  declareGetter_(this, 0, (Getter<const fixed_string&>*) 0, 0);
+  declareGetter(0, (Getter<int>*) 0, 0);
+  declareGetter(0, (Getter<bool>*) 0, 0);
+  declareGetter(0, (Getter<double>*) 0, 0);
+  declareGetter(0, (Getter<const char*>*) 0, 0);
+  declareGetter(0, (Getter<const fixed_string&>*) 0, 0);
 
-  declareSetter_(this, 0, (Setter<int>*) 0, 0);
-  declareSetter_(this, 0, (Setter<bool>*) 0, 0);
-  declareSetter_(this, 0, (Setter<double>*) 0, 0);
-  declareSetter_(this, 0, (Setter<const char*>*) 0, 0);
-  declareSetter_(this, 0, (Setter<const fixed_string&>*) 0, 0);
+  declareSetter(0, (Setter<int>*) 0, 0);
+  declareSetter(0, (Setter<bool>*) 0, 0);
+  declareSetter(0, (Setter<double>*) 0, 0);
+  declareSetter(0, (Setter<const char*>*) 0, 0);
+  declareSetter(0, (Setter<const fixed_string&>*) 0, 0);
 
-  declareAttrib_(this, 0, (Attrib<int>*) 0, 0);
-  declareAttrib_(this, 0, (Attrib<bool>*) 0, 0);
-  declareAttrib_(this, 0, (Attrib<double>*) 0, 0);
-  declareAttrib_(this, 0, (Attrib<const char*>*) 0, 0);
-  declareAttrib_(this, 0, (Attrib<const fixed_string&>*) 0, 0);
+  declareAttrib(0, (Attrib<int>*) 0, 0);
+  declareAttrib(0, (Attrib<bool>*) 0, 0);
+  declareAttrib(0, (Attrib<double>*) 0, 0);
+  declareAttrib(0, (Attrib<const char*>*) 0, 0);
+  declareAttrib(0, (Attrib<const fixed_string&>*) 0, 0);
 }
 
 void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
