@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Mon Dec  6 13:58:38 1999
+// written: Mon Feb 21 09:03:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,79 +73,83 @@ class EventResponseHdlr : public ResponseHandler {
 public:
   /// Default constructor.
   EventResponseHdlr(const string& input_response_map="");
-  ///
+
+  /// Virtual destructor.
   virtual ~EventResponseHdlr();
 
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
   // manipulators/accessors
 
-  ///
   virtual void setInterp(Tcl_Interp* interp);
 
-  ///
+  /// Returns the current input response map.
   const string& getInputResponseMap() const;
-  ///
-  void setInputResponseMap(const string& s);
 
-  ///
+  /// Use \a responseMap as the current input response map.
+  void setInputResponseMap(const string& responseMap);
+
+  /// Queries whether feedback will be given.
   bool getUseFeedback() const;
-  ///
+
+  /// Changes whether feedback will be given.
   void setUseFeedback(bool val);
 
-  ///
+  /// Returns the current feedback map. 
   const char* getFeedbackMap() const;
-  ///
-  void setFeedbackMap(const char* feedback_string);
 
-  ///
+  /// Use \a feedbackMap as the current feedback map.
+  void setFeedbackMap(const char* feedbackMap);
+
+  /** Returns the event sequence which is currently attended for
+      responses. The event sequence is specified in the format used
+      in a Tk bind command. */
   const string& getEventSequence() const;
-  ///
+
+  /** Use \a seq as the binding sequence to be attended for
+      responses. The event sequence should be specified in the format
+      used in a Tk bind command. */
   void setEventSequence(const string& seq);
 
-  ///
+  /** Returns the current binding substitution. This will be in the
+      format used in a Tk binding script (i.e. a percent sign
+      followed by the appropriate character). */
   const string& getBindingSubstitution() const;
-  ///
+
+  /** Use \a sub as the current binding substitution. This must be in
+      the format used in a Tk binding script (i.e. a percent sign
+      followed by the appropriate character). When a response matching
+      the event sequence specified by \c setEventSequence() is seen,
+      the binding substitution will be evaluated, and checked for
+      matches in the input response map to determine the integer
+      response value. */
   void setBindingSubstitution(const string& sub);
 
-  /** @name   Expt event sequence actions  */
-  //@{
-  ///
   virtual void rhBeginTrial(Experiment* expt) const;
-  ///
   virtual void rhAbortTrial(Experiment* expt) const;
-  ///
   virtual void rhEndTrial(Experiment* expt) const;
-  ///
   virtual void rhHaltExpt(Experiment* expt) const;
-  //@}
 
 protected:
-  /** @name  Old IO functions  
-	*
-	* These deprecated functions are provided for compatibility with
-	* old KbdResponseHdlr interface--these functions ignore the
-	* eventSequence and bindingSubstitution fields
-	*
-	**/
-  //@{
-  ///
+  /** This deprecated function is provided for compatibility with old
+      \c KbdResponseHdlr interface, since the eventSequence and
+      bindingSubstitution fields are ignored. */
   void oldSerialize(ostream &os, IOFlag flag) const;
-  ///
+
+  /** This deprecated function is provided for compatibility with old
+      \c KbdResponseHdlr interface, since the eventSequence and
+      bindingSubstitution fields are ignored. */
   void oldDeserialize(istream &is, IOFlag flag);
-  ///
+
+  /** This deprecated function is provided for compatibility with old
+      \c KbdResponseHdlr interface, since the eventSequence and
+      bindingSubstitution fields are ignored. */
   int oldCharCount() const;
-  //@}
 
 private:
   class Impl;
