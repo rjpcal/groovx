@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Apr  2 11:52:00 2002
+// written: Mon Jun 24 12:29:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
+#include "gx/txform.h"
 #include "gx/vec2.h"
 #include "gx/vec3.h"
 
@@ -352,6 +353,11 @@ DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
 }
 
+void GLCanvas::transform(const Gfx::Txform& tx)
+{
+DOTRACE("GLCanvas::transform");
+  glMultMatrixd(tx.colMajorData());
+}
 
 void GLCanvas::drawPixels(const Gfx::BmapData& data,
                           const Gfx::Vec2<double>& world_pos,

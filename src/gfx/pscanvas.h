@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:18:49 2001
-// written: Mon Feb 25 10:39:45 2002
+// written: Mon Jun 24 12:28:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,6 +79,8 @@ public:
   virtual void translate(const Gfx::Vec3<double>& v);
   virtual void scale(const Gfx::Vec3<double>& v);
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees);
+
+  virtual void transform(const Gfx::Txform& tx);
 
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Jun 21 14:30:49 2002
+// written: Mon Jun 24 12:30:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,6 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include <GL/gl.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -220,7 +218,7 @@ DOTRACE("Position::draw");
   else
     {
       DOTRACE("Position::draw::custom-transform");
-      glMultMatrixd(rep->getTxform().colMajorData());
+      canvas.transform(rep->getTxform());
     }
 
   rep->tr = translation;

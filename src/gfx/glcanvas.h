@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Feb 25 10:33:15 2002
+// written: Mon Jun 24 12:28:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,6 +77,7 @@ public:
   virtual void scale(const Gfx::Vec3<double>& v);
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees);
 
+  virtual void transform(const Gfx::Txform& tx);
 
 
   virtual void drawPixels(const Gfx::BmapData& data,

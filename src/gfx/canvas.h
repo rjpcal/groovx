@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Feb 25 10:32:35 2002
+// written: Mon Jun 24 12:28:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@ namespace Gfx
   class BmapData;
   class Canvas;
   class RgbaColor;
+  class Txform;
   template <class V> class Rect;
   template <class V> class Vec2;
   template <class V> class Vec3;
@@ -164,6 +165,8 @@ public:
   virtual void translate(const Gfx::Vec3<double>& v) = 0;
   virtual void scale(const Gfx::Vec3<double>& v) = 0;
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees) = 0;
+
+  virtual void transform(const Gfx::Txform& tx) = 0;
 
   ///////////////////////////////////////////////////////////////////////
   //
