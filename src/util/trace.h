@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Feb  8 17:44:14 2000
+// written: Tue Feb  8 17:54:29 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -64,7 +64,12 @@ const char* const TRACE_TAB = "  ";
 //                long           tv_usec;  /* and microseconds */
 //            };
 
-class Prof {
+namespace Util {
+  class Prof;
+  class Trace;
+}
+
+class Util::Prof {
 public:
   Prof(const char* s) : funcName(s), callCount(0) {
 	 totalTime.tv_sec = 0;
@@ -97,7 +102,7 @@ private:
   timeval totalTime;
 };
 
-class Trace {
+class Util::Trace {
 public:
   Trace(Prof& p, bool useMsg) : prof(p), giveTraceMsg(useMsg) {
 	 if (giveTraceMsg) {
@@ -132,7 +137,8 @@ private:
   const bool giveTraceMsg;
 };
 
-#    define DOTRACE(x) static Prof P__(x); Trace T__(P__, DYNAMIC_TRACE_EXPR);
+#    define DOTRACE(x) static Util::Prof P__(x); \
+                       Util::Trace T__(P__, DYNAMIC_TRACE_EXPR);
 
 #else // !defined(LOCAL_PROF)
 

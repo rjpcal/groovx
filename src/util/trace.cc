@@ -2,7 +2,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Feb  8 17:44:24 2000
+// written: Tue Feb  8 19:16:16 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ int MAX_TRACE_LEVEL = 6;
 
 int TRACE_LEVEL = 0;
 
-Prof::~Prof() { 
+Util::Prof::~Prof() {
   cout << setw(10) << long(avgTime()) << " " << setw(5) << count()
 		 << " " << setw(12) << long(avgTime()) * count()
 		 << " " << funcName << endl;
