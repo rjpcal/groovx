@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Sat Dec  4 02:02:05 1999
+// written: Mon Dec  6 20:05:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@
 #ifndef VALUE_H_DEFINED
 #include "value.h"
 #endif
+
+class Canvas;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -159,8 +161,8 @@ public:
   // actions //
   /////////////
 
-  void trDraw(bool flush) const;
-  void trUndraw(bool flush) const;
+  void trDraw(Canvas& canvas, bool flush) const;
+  void trUndraw(Canvas& canvas, bool flush) const;
 
 private:
   ObjGrp itsIdPairs;
