@@ -380,7 +380,7 @@ neat:
 	find . -name \*~ -exec rm -f {} \;
 	find . -name \#~ -exec rm -f {} \;
 	find . -name .\#\* -exec rm -f {} \;
-	rm -f ./expt*2003.asw ./resp*2003 ./core*
+	rm -f ./*2004.asw ./*2004.resp ./core*
 
 # Make neat, and also remove all intermediate build files
 cleaner: neat
