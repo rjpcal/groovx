@@ -61,7 +61,7 @@ namespace
 
   fstring backTrace()
   {
-    const Util::BackTrace& bt = Util::Error::lastBackTrace();
+    const rutz::backtrace& bt = Util::Error::lastBackTrace();
 
     return bt.format();
   }

@@ -49,7 +49,7 @@ void* operator new(size_t bytes)
 {
   TOTAL += bytes;
   printf("%d bytes  ", (int) bytes);
-  Util::BackTrace::current().print();
+  rutz::backtrace::current().print();
   return malloc(bytes);
 }
 

@@ -46,21 +46,21 @@ DBG_REGISTER
 
 namespace
 {
-  static Util::BackTrace* last = 0;
+  static rutz::backtrace* last = 0;
 }
 
 Util::Error::Error(const FilePosition& pos) :
   std::exception(),
   itsInfo(),
   itsPos(pos),
-  itsBackTrace(new BackTrace(Util::BackTrace::current()))
+  itsBackTrace(new rutz::backtrace(rutz::backtrace::current()))
 {
 DOTRACE("Util::Error::Error()");
 
   dbgDump(4, itsInfo);
 
   if (last == 0)
-    last = new BackTrace(*itsBackTrace);
+    last = new rutz::backtrace(*itsBackTrace);
   else
     *last = *itsBackTrace;
 
@@ -74,14 +74,14 @@ Util::Error::Error(const fstring& msg, const FilePosition& pos) :
   std::exception(),
   itsInfo(msg),
   itsPos(pos),
-  itsBackTrace(new BackTrace(Util::BackTrace::current()))
+  itsBackTrace(new rutz::backtrace(rutz::backtrace::current()))
 {
 DOTRACE("Util::Error::Error(fstring)");
 
   dbgDump(4, itsInfo);
 
   if (last == 0)
-    last = new BackTrace(*itsBackTrace);
+    last = new rutz::backtrace(*itsBackTrace);
   else
     *last = *itsBackTrace;
 
@@ -102,7 +102,8 @@ DOTRACE("Util::Error::Error(copy)");
   dbgDump(4, itsInfo);
 
   if (other.itsBackTrace != 0)
-    itsBackTrace = new (std::nothrow) BackTrace(*other.itsBackTrace);
+    itsBackTrace =
+      new (std::nothrow) rutz::backtrace(*other.itsBackTrace);
 }
 
 Util::Error::~Error() throw()
@@ -119,7 +120,7 @@ const char* Util::Error::what() const throw()
   return itsInfo.c_str();
 }
 
-const Util::BackTrace& Util::Error::lastBackTrace()
+const rutz::backtrace& Util::Error::lastBackTrace()
 {
   if (last == 0)
     last = new BackTrace();

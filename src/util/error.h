@@ -37,9 +37,13 @@
 
 #include <exception>
 
+namespace rutz
+{
+  class backtrace;
+}
+
 namespace Util
 {
-  class BackTrace;
   class Error;
 }
 
@@ -77,17 +81,17 @@ public:
   const FilePosition& srcPos() const throw() { return itsPos; }
 
   /// Get the stack back trace associated with this exception.
-  const BackTrace& backTrace() const throw() { return *itsBackTrace; }
+  const rutz::backtrace& backTrace() const throw() { return *itsBackTrace; }
 
   /// Get the most recently back trace used in constructing a Util::Error.
-  static const BackTrace& lastBackTrace();
+  static const rutz::backtrace& lastBackTrace();
 
 private:
   Error& operator=(const Error& other);
 
   fstring itsInfo;
   FilePosition itsPos;
-  const BackTrace* itsBackTrace;
+  const rutz::backtrace* itsBackTrace;
 };
 
 static const char vcid_error_h[] = "$Header$";

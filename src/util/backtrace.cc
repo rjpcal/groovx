@@ -48,46 +48,46 @@ DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Util::BackTrace member definitions
+// rutz::backtrace member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct Util::BackTrace::Impl
+struct rutz::backtrace::impl
 {
   static_stack<rutz::prof*, 256> vec;
 };
 
-Util::BackTrace::BackTrace() throw() :
-  rep(new (std::nothrow) Impl)
+rutz::backtrace::backtrace() throw() :
+  rep(new (std::nothrow) impl)
 {
   if (rep == 0)
     Panic("memory allocation failed");
 }
 
-Util::BackTrace::BackTrace(const BackTrace& other) throw() :
-  rep(new (std::nothrow) Impl(*other.rep))
+rutz::backtrace::backtrace(const backtrace& other) throw() :
+  rep(new (std::nothrow) impl(*other.rep))
 {
   if (rep == 0)
     Panic("memory allocation failed");
 }
 
-Util::BackTrace& Util::BackTrace::operator=(const BackTrace& other) throw()
+rutz::backtrace& rutz::backtrace::operator=(const backtrace& other) throw()
 {
   *rep = *other.rep;
   return *this;
 }
 
-Util::BackTrace::~BackTrace() throw()
+rutz::backtrace::~backtrace() throw()
 {
   delete rep;
 }
 
-Util::BackTrace& Util::BackTrace::current() throw()
+rutz::backtrace& rutz::backtrace::current() throw()
 {
-  static Util::BackTrace* ptr = 0;
+  static rutz::backtrace* ptr = 0;
   if (ptr == 0)
     {
-      ptr = new (std::nothrow) Util::BackTrace;
+      ptr = new (std::nothrow) rutz::backtrace;
 
       if (ptr == 0)
         Panic("memory allocation failed");
@@ -95,32 +95,32 @@ Util::BackTrace& Util::BackTrace::current() throw()
   return *ptr;
 }
 
-bool Util::BackTrace::push(rutz::prof* p) throw()
+bool rutz::backtrace::push(rutz::prof* p) throw()
 {
   return rep->vec.push(p);
 }
 
-void Util::BackTrace::pop() throw()
+void rutz::backtrace::pop() throw()
 {
   rep->vec.pop();
 }
 
-unsigned int Util::BackTrace::size() const throw()
+unsigned int rutz::backtrace::size() const throw()
 {
   return rep->vec.size();
 }
 
-rutz::prof* Util::BackTrace::top() const throw()
+rutz::prof* rutz::backtrace::top() const throw()
 {
   return rep->vec.top();
 }
 
-rutz::prof* Util::BackTrace::at(unsigned int i) const throw()
+rutz::prof* rutz::backtrace::at(unsigned int i) const throw()
 {
   return rep->vec.at(i);
 }
 
-void Util::BackTrace::print() const throw()
+void rutz::backtrace::print() const throw()
 {
   fprintf(stderr, "stack trace:\n");
 
@@ -136,7 +136,7 @@ void Util::BackTrace::print() const throw()
     }
 }
 
-void Util::BackTrace::print(STD_IO::ostream& os) const throw()
+void rutz::backtrace::print(STD_IO::ostream& os) const throw()
 {
   os.exceptions(STD_IO::ios::goodbit);
 
@@ -156,7 +156,7 @@ void Util::BackTrace::print(STD_IO::ostream& os) const throw()
   os << std::flush;
 }
 
-fstring Util::BackTrace::format() const
+fstring rutz::backtrace::format() const
 {
   if (rep->vec.size() == 0) return fstring();
 

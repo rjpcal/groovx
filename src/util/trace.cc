@@ -329,7 +329,7 @@ rutz::trace::trace(prof& p, bool useMsg) throw() :
   if (GLOBAL_TRACE || m_should_print_msg)
     print_in();
 
-  m_should_pop = Util::BackTrace::current().push(&p);
+  m_should_pop = rutz::backtrace::current().push(&p);
 
   m_start = get_now_time();
 }
@@ -342,7 +342,7 @@ rutz::trace::~trace() throw()
 
   if (m_should_pop)
     {
-      Util::BackTrace& c = Util::BackTrace::current();
+      rutz::backtrace& c = rutz::backtrace::current();
       c.pop();
       rutz::prof* parent = c.top();
       if (parent != 0)
@@ -355,7 +355,7 @@ rutz::trace::~trace() throw()
 
 void rutz::trace::print_in() throw()
 {
-  const unsigned int n = Util::BackTrace::current().size();
+  const unsigned int n = rutz::backtrace::current().size();
 
   if (n < MAX_TRACE_LEVEL)
     {
@@ -386,7 +386,7 @@ void rutz::trace::print_in() throw()
 
 void rutz::trace::print_out() throw()
 {
-  const unsigned int n = Util::BackTrace::current().size();
+  const unsigned int n = rutz::backtrace::current().size();
 
   if (n < MAX_TRACE_LEVEL)
     {
@@ -408,7 +408,7 @@ void rutz::trace::print_out() throw()
         }
     }
 
-  if (Util::BackTrace::current().size() == 0)
+  if (rutz::backtrace::current().size() == 0)
     STD_IO::cerr << '\n';
 }
 

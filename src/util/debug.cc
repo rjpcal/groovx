@@ -99,35 +99,35 @@ EVAL_IMPL(fstring);
 void Debug::PanicImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Panic (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
-  Util::BackTrace::current().print();
+  rutz::backtrace::current().print();
   abort();
 }
 
 void Debug::AssertImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Assertion failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
-  Util::BackTrace::current().print();
+  rutz::backtrace::current().print();
   abort();
 }
 
 void Debug::PreconditionImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Precondition failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
-  Util::BackTrace::current().print();
+  rutz::backtrace::current().print();
   abort();
 }
 
 void Debug::PostconditionImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Postcondition failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
-  Util::BackTrace::current().print();
+  rutz::backtrace::current().print();
   abort();
 }
 
 void Debug::InvariantImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Invariant failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
-  Util::BackTrace::current().print();
+  rutz::backtrace::current().print();
   abort();
 }
 

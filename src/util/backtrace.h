@@ -40,34 +40,30 @@ class ostream;
 
 class fstring;
 
-namespace Util
-{
-  class BackTrace;
-}
-
 namespace rutz
 {
+  class backtrace;
   class prof;
 }
 
 /// Represents an instantaneous state of the call stack.
-class Util::BackTrace
+class rutz::backtrace
 {
 public:
   /// Default construct an empty call stack.
-  BackTrace() throw();
+  backtrace() throw();
 
   /// Copy constructor.
-  BackTrace(const BackTrace& other) throw();
+  backtrace(const backtrace& other) throw();
 
   /// Assignment operator.
-  BackTrace& operator=(const BackTrace& other) throw();
+  backtrace& operator=(const backtrace& other) throw();
 
   /// Destructor.
-  ~BackTrace() throw();
+  ~backtrace() throw();
 
   /// Access the current call stack.
-  static BackTrace& current() throw();
+  static backtrace& current() throw();
 
   /// Push a new element onto the call stack. Returns true if successful.
   bool push(rutz::prof* p) throw();
@@ -97,8 +93,8 @@ public:
   fstring format() const;
 
 private:
-  struct Impl;
-  Impl* const rep;
+  struct impl;
+  impl* const rep;
 };
 
 static const char vcid_backtrace_h[] = "$Header$";
