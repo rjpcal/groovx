@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Fri Oct 20 14:07:36 2000
+// written: Fri Nov  3 12:16:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
   virtual IO::IoObject* readRoot(IO::IoObject* root=0);
 
 protected:
-  virtual char* readCstring(const char* name);
+  virtual fixed_string readStringImpl(const char* name);
 
 private:
   class Impl;

@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Thu Sep 28 20:16:14 2000
+// written: Fri Nov  3 12:16:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ public:
   virtual IO::IoObject* readRoot(IO::IoObject* root=0);
 
 protected:
-  virtual char* readCstring(const char* name);
+  virtual fixed_string readStringImpl(const char* name);
 
 private:
   class Impl;
