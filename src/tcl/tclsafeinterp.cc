@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Sat Dec 14 17:34:40 2002
+// written: Sun Dec 15 14:10:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,15 @@
 
 #include "tcl/tclsafeinterp.h"
 
+#include "system/demangle.h"
+
 #include "tcl/tclerror.h"
 
 #include "util/strings.h"
 
+#include <exception>
 #include <tcl.h>
+#include <typeinfo>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -64,6 +68,8 @@ DOTRACE("Tcl::Interp::Interp(const Interp&)");
 
 Tcl::Interp::~Interp()
 {
+DOTRACE("Tcl::Interp::~Interp");
+
   if (itsInterp != 0)
     Tcl_DontCallWhenDeleted(itsInterp, interpDeleteProc,
                             static_cast<ClientData>(this));
@@ -207,9 +213,16 @@ DOTRACE("Tcl::Interp::resetResult");
 
 void Tcl::Interp::appendResult(const char* msg) const
 {
-DOTRACE("Tcl::Interp::appendResult");
+DOTRACE("Tcl::Interp::appendResult(const char*)");
 
   Tcl_AppendResult(intp(), msg, (char*)0);
+}
+
+void Tcl::Interp::appendResult(const fstring& msg) const
+{
+DOTRACE("Tcl::Interp::appendResult(const fstring&)");
+
+  Tcl_AppendResult(intp(), msg.c_str(), (char*)0);
 }
 
 Tcl_Obj* Tcl::Interp::getObjResult() const
@@ -319,6 +332,33 @@ DOTRACE("Tcl::Interp::linkBoolean");
     throw TclError("error while linking boolean variable");
 }
 
+namespace
+{
+  void errMessage(Tcl::Interp& interp, const char* where,
+                  const char* err_msg)
+    {
+      if (!interp.hasInterp()) return;
+
+      interp.appendResult(fstring(where, ": ", err_msg));
+    }
+
+  void errMessage(Tcl::Interp& interp, const char* where,
+                  const std::type_info& exc_type, const char* what=0)
+    {
+      if (!interp.hasInterp()) return;
+
+      fstring msg(where, ": an error of type ");
+      msg.append( demangle_cstr(exc_type.name()) );
+      msg.append( " occurred" );
+      if (what)
+        {
+          msg.append( ": " );
+          msg.append( what );
+        }
+      interp.appendResult(msg);
+    }
+}
+
 void Tcl::Interp::handleLiveException(const char* where,
                                       bool withBkgdError) throw()
 {
@@ -330,21 +370,31 @@ DOTRACE("Tcl::Interp::handleLiveException");
     }
   catch (Util::Error& err)
     {
-      if (hasInterp())
+      dbgPrintNL(3, "caught (Util::Error&)");
+
+      if ( !err.msg().is_empty() )
         {
-          Tcl_AppendResult(itsInterp, where, ": ", err.msg_cstr(), (char*) 0);
+          dbgDump(4, err.msg());
+          errMessage(*this, where, err.msg_cstr());
         }
+      else
+        {
+          errMessage(*this, where, typeid(err));
+        }
+    }
+  catch (std::exception& err)
+    {
+      dbgPrintNL(3, "caught (std::exception&)");
+      errMessage(*this, where, typeid(err), err.what());
     }
   catch (...)
     {
-      if (hasInterp())
-        {
-          Tcl_AppendResult(itsInterp, where, ": ",
-                           "an error of unknown type occurred", (char*) 0);
-        }
+      dbgPrintNL(3, "caught (...)");
+
+      errMessage(*this, where, "an error of unknown type occurred");
     }
 
-  if (withBkgdError && hasInterp())
+  if (withBkgdError)
     backgroundError();
 }
 
@@ -376,6 +426,22 @@ DOTRACE("Tcl::Interp::hasCommand");
   Tcl_CmdInfo info;
   int result = Tcl_GetCommandInfo(intp(), cmd_name, &info);
   return (result != 0);
+}
+
+void Tcl::Interp::deleteCommand(const char* cmd_name)
+{
+DOTRACE("Tcl::Interp::deleteCommand");
+
+  // We must check if the interp has been tagged for deletion already,
+  // since if it is then we must not attempt to use it to delete a Tcl
+  // command (this results in "called Tcl_HashEntry on deleted table"). Not
+  // deleting the command in that case does not cause a resource leak,
+  // however, since the Tcl_Interp as part if its own destruction will
+  // delete all commands associated with it.
+  if ( !interpDeleted() )
+    {
+      Tcl_DeleteCommand(intp(), cmd_name);
+    }
 }
 
 fstring Tcl::Interp::getProcBody(const char* proc_name)

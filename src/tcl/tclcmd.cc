@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sat Dec 14 17:54:36 2002
+// written: Sun Dec 15 14:06:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,13 @@
 
 #include "tcl/tclcmd.h"
 
-#include "system/demangle.h"
-
 #include "tcl/tclerror.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/strings.h"
 
 #include <tcl.h>
-#include <exception>
 #include <set>
-#include <typeinfo>
 
 #define TRACE_USE_COUNT
 
@@ -46,27 +42,6 @@ class HelpCmd;
 
 namespace
 {
-  inline void errMessage(Tcl_Interp* interp, const fstring& cmd_name,
-                         const char* err_msg)
-    {
-      Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-                             cmd_name.c_str(), ": ", err_msg, (char *) NULL);
-    }
-
-  inline void errMessage(Tcl_Interp* interp, const fstring& cmd_name,
-                         const std::type_info& exc_type, const char* what=0)
-    {
-      fstring msg = "an error of type ";
-      msg.append( demangle_cstr(exc_type.name()) );
-      msg.append( " occurred" );
-      if (what)
-        {
-          msg.append( ": " );
-          msg.append( what );
-        }
-      errMessage(interp, cmd_name, msg.c_str());
-    }
-
   // Holds the set of the addresses of all valid Tcl::Command objects (this is
   // managed in Tcl::Command's constructor+destructor)
   std::set<ClientData>* cxxCommands = 0;
@@ -113,13 +88,13 @@ Tcl::Dispatcher::~Dispatcher() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::DefaultDispatcher
+// DefaultDispatcher
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace Tcl
+namespace
 {
-  class DefaultDispatcher : public Dispatcher
+  class DefaultDispatcher : public Tcl::Dispatcher
   {
   public:
     virtual void dispatch(Tcl::Interp& interp,
@@ -130,12 +105,9 @@ namespace Tcl
       cmd.invoke(ctx);
     }
   };
-}
 
-namespace
-{
-  shared_ptr<Tcl::DefaultDispatcher>
-    theDefaultDispatcher(new Tcl::DefaultDispatcher);
+  shared_ptr<DefaultDispatcher>
+    theDefaultDispatcher(new DefaultDispatcher);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -155,8 +127,7 @@ protected:
   {
     const char* cmd_name = ctx.getValFromArg<const char*>(1);
 
-    Tcl::Interp intp(ctx.interp()); // FIXME
-    Tcl::Command* cmd = lookupCmd(intp, cmd_name);
+    Tcl::Command* cmd = lookupCmd(ctx.interp(), cmd_name);
 
     if (cmd == 0)
       throw Util::Error("no such Tcl::Command");
@@ -210,24 +181,17 @@ public:
 
       removeSelfFromOverloads();
 
-      // We must check if the Tcl_Interp* has been tagged for deletion
-      // already, since if it is then we must not attempt to use it to
-      // delete a Tcl command (this results in "called Tcl_HashEntry
-      // on deleted table"). Not deleting the command in that case
-      // does not cause a resource leak, however, since the Tcl_Interp
-      // as part if its own destruction will delete all commands
-      // associated with it.
-
-      if ( !itsInterp.interpDeleted() )
+      try
         {
-          try
-            {
-              Tcl_DeleteCommand(itsInterp.intp(), itsCmdName.c_str());
-            }
-          catch (Util::Error& err)
-            { dbgEvalNL(3, err.msg_cstr()); }
-          catch (...)
-            { dbgPrintNL(3, "an unknown error occurred"); }
+          itsInterp.deleteCommand(itsCmdName.c_str());
+        }
+      catch (Util::Error& err)
+        {
+          dbgEvalNL(3, err.msg_cstr());
+        }
+      catch (...)
+        {
+          dbgPrintNL(3, "an unknown error occurred");
         }
     }
 
@@ -263,7 +227,7 @@ private:
     // under the same name as us (which may not be the case of that cmd was
     // the target of renaming or namespace importing, etc.)
     if ( previousCmd != 0 &&
-         previousCmd->itsImpl->cmdName() == this->cmdName() )
+         previousCmd->rep->cmdName() == this->cmdName() )
       {
         addAsOverloadOf(previousCmd);
       }
@@ -293,7 +257,7 @@ private:
 
   void addAsOverloadOf(Command* other)
   {
-    Impl* last = other->itsImpl;
+    Impl* last = other->rep;
 
     while (last->itsOverload != 0)
       last = last->itsOverload;
@@ -398,33 +362,35 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Tcl::Command::Impl::invokeCallback(ClientData clientData, Tcl_Interp* intp,
-                                       int s_objc, Tcl_Obj *const objv[])
+int Tcl::Command::Impl::invokeCallback(ClientData clientData,
+                                       Tcl_Interp*, /* use our own Tcl::Interp */
+                                       int s_objc,
+                                       Tcl_Obj *const objv[])
 {
 DOTRACE("Tcl::Command::Impl::invokeCallback");
 
-  Impl* theImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
+  Impl* rep = static_cast<Tcl::Command*>(clientData)->rep;
 
   Assert(s_objc >= 0);
 
   unsigned int objc = (unsigned int) s_objc;
 
+  Tcl::Interp& interp = rep->itsInterp;
+
   // catch all possible exceptions since this is a callback from C
   try
     {
-      theImpl->onInvoke();
-
-      Tcl::Interp& interp = theImpl->itsInterp;
+      rep->onInvoke();
 
       // Look for an overload that matches...
-      while ( theImpl->rejectsObjc(objc) )
+      while ( rep->rejectsObjc(objc) )
         {
-          theImpl = theImpl->getOverload();
+          rep = rep->getOverload();
 
           // If we run out of potential overloads, abort the command.
-          if ( theImpl == 0 )
+          if ( rep == 0 )
             {
-              Impl* originalImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
+              Impl* originalImpl = static_cast<Tcl::Command*>(clientData)->rep;
               interp.resetResult();
               interp.appendResult(originalImpl->warnUsage().c_str());
               return TCL_ERROR;
@@ -432,32 +398,12 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
         }
 
       // ...and try the matching overload
-      theImpl->itsDispatcher->dispatch(interp, objc, objv, *(theImpl->itsOwner));
+      rep->itsDispatcher->dispatch(interp, objc, objv, *(rep->itsOwner));
       return TCL_OK;
-    }
-  catch (Util::Error& err)
-    {
-      dbgPrintNL(3, "caught (Util::Error&)");
-      if ( !err.msg().is_empty() )
-        {
-          dbgDump(4, err.msg());
-          errMessage(intp, theImpl->cmdName(), err.msg_cstr());
-        }
-      else
-        {
-          errMessage(intp, theImpl->cmdName(), typeid(err));
-        }
-    }
-  catch (std::exception& err)
-    {
-      dbgPrintNL(3, "caught (std::exception&)");
-      errMessage(intp, theImpl->cmdName(), typeid(err), err.what());
     }
   catch (...)
     {
-      dbgPrintNL(3, "caught (...)");
-      errMessage(intp, theImpl->cmdName(),
-                 "an error of unknown type occurred");
+      interp.handleLiveException(rep->cmdName().c_str(), false);
     }
 
   return TCL_ERROR;
@@ -472,8 +418,8 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
 Tcl::Command::Command(Tcl::Interp& interp,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc) :
-  itsImpl(new Impl(this, interp, cmd_name, usage,
-                   objc_min, objc_max, exact_objc))
+  rep(new Impl(this, interp, cmd_name, usage,
+               objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
 
@@ -492,31 +438,31 @@ DOTRACE("Tcl::Command::~Command");
 
   cxxCommands->erase(static_cast<ClientData>(this));
 
-  delete itsImpl;
+  delete rep;
 }
 
 const fstring& Tcl::Command::name() const
 {
 DOTRACE("Tcl::Command::name");
-  return itsImpl->cmdName();
+  return rep->cmdName();
 }
 
 fstring Tcl::Command::usage() const
 {
 DOTRACE("Tcl::Command::usage");
-  return itsImpl->usage();
+  return rep->usage();
 }
 
 shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const
 {
 DOTRACE("Tcl::Command::getDispatcher");
-  return itsImpl->itsDispatcher;
+  return rep->itsDispatcher;
 }
 
 void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
 {
 DOTRACE("Tcl::Command::setDispatcher");
-  itsImpl->itsDispatcher = dpx;
+  rep->itsDispatcher = dpx;
 }
 
 

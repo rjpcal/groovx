@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Sat Dec 14 17:34:42 2002
+// written: Sun Dec 15 13:46:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +74,7 @@ public:
   // Result
   void resetResult() const;
   void appendResult(const char* msg) const;
+  void appendResult(const fstring& msg) const;
 
   template <class T>
   T getResult() const
@@ -113,6 +114,7 @@ public:
 
   // Commands/procedures
   bool hasCommand(const char* cmd_name) const;
+  void deleteCommand(const char* cmd_name);
 
   fstring getProcBody(const char* proc_name);
   void createProc(const char* namesp, const char* proc_name,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sat Dec 14 17:52:23 2002
+// written: Sun Dec 15 14:14:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
-struct Tcl_Interp;
 struct Tcl_Obj;
 
 class fstring;
@@ -99,7 +98,7 @@ private:
 
   class Impl;
   friend class Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 ///////////////////////////////////////////////////////////////////////
