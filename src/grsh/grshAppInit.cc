@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Jul 10 13:17:58 2001
+// written: Wed Jul 11 18:14:42 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -36,6 +36,7 @@
 extern "C" {
   Tcl_PackageInitProc Bitmap_Init;
   Tcl_PackageInitProc Block_Init;
+  Tcl_PackageInitProc Dlist_Init;
   Tcl_PackageInitProc Expt_Init;
   Tcl_PackageInitProc Expttest_Init;
   Tcl_PackageInitProc Face_Init;
@@ -60,7 +61,6 @@ extern "C" {
   Tcl_PackageInitProc Rh_Init;
   Tcl_PackageInitProc Sound_Init;
   Tcl_PackageInitProc Subject_Init;
-  Tcl_PackageInitProc Tcldlist_Init;
   Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
   Tcl_PackageInitProc Togl_Init;
@@ -84,6 +84,7 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Togl",     Togl_Init      }
   , { "Bitmap",   Bitmap_Init    }
   , { "Block",    Block_Init     }
+  , { "Dlist",    Dlist_Init     }
   , { "Expt",     Expt_Init      }
   , { "Expttest", Expttest_Init  }
   , { "Face",     Face_Init      }
@@ -108,7 +109,6 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Rh",       Rh_Init        }
   , { "Sound",    Sound_Init     }
   , { "Subject",  Subject_Init   }
-  , { "Tcldlist", Tcldlist_Init  }
   , { "Th",       Th_Init        }
   , { "Tlist",    Tlist_Init     }
   , { "Trial",    Trial_Init     }
