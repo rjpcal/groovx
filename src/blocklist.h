@@ -3,7 +3,7 @@
 // blocklist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:16 1999
-// written: Sat Jun 26 12:48:01 1999
+// written: Mon Jul  5 14:59:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,6 @@ protected:
   BlockList(int size);
 public:
   static BlockList& theBlockList();
-
-  virtual ~BlockList();
 };
 
 static const char vcid_blocklist_h[] = "$Header$";
