@@ -126,12 +126,12 @@ DOTRACE("GLCanvas::screenFromWorld3");
   glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
   glGetIntegerv(GL_VIEWPORT, current_viewport);
 
-  double screen_x, screen_y, screen_z;
+  vec3d screen_pos;
 
   GLint status =
     gluProject(world_pos.x(), world_pos.y(), world_pos.z(),
                current_mv_matrix, current_proj_matrix, current_viewport,
-               &screen_x, &screen_y, &screen_z);
+               &screen_pos.x(), &screen_pos.y(), &screen_pos.z());
 
   dbg_eval_nl(3, status);
 
@@ -139,7 +139,11 @@ DOTRACE("GLCanvas::screenFromWorld3");
     throw rutz::error("GLCanvas::screenFromWorld3(): gluProject error",
                       SRC_POS);
 
-  return vec3i(int(screen_x), int(screen_y), int(screen_z));
+  dbg_dump(3, world_pos);
+  dbg_dump(3, screen_pos);
+  dbg_dump(3, vec3i(screen_pos));
+
+  return vec3i(screen_pos);
 }
 
 vec3d GLCanvas::worldFromScreen3(const vec3i& screen_pos) const
