@@ -3,7 +3,7 @@
 // gxseparator.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu Nov  2 13:35:56 2000
+// written: Thu Nov  2 14:34:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,34 @@ class GxSeparator::Impl {
   Impl& operator=(const Impl&);
 
 public:
-  Impl() {}
+  Impl(GxSeparator* owner) : itsOwner(owner) {}
   ~Impl() {}
+
+  bool contains(GxNode* other) const
+	 {
+		if (itsOwner == other) return true;
+
+		for(VecType::const_iterator
+				itr = itsChildren.begin(),
+				end = itsChildren.end();
+			 itr != end;
+			 ++itr)
+		  {
+			 if ((*itr)->contains(other)) return true;
+		  }
+
+		return false;
+	 }
+
+  void ensureNoCycle(GxNode* other) const
+	 {
+		if (other->contains(itsOwner))
+		  {
+			 throw ErrorWithMsg("couldn't add node without generating a cycle");
+		  }
+	 }
+
+  GxSeparator* itsOwner;
 
   typedef minivec<IdItem<GxNode> > VecType;
   VecType itsChildren;
@@ -42,7 +68,7 @@ DOTRACE("GxSeparator::make");
 }
 
 GxSeparator::GxSeparator() :
-  itsImpl(new Impl)
+  itsImpl(new Impl(this))
 {
 DOTRACE("GxSeparator::GxSeparator");
 }
@@ -67,14 +93,24 @@ DOTRACE("GxSeparator::writeTo");
 											  itsImpl->itsChildren.end());
 }
 
-GxSeparator::ChildId GxSeparator::addChild(int ioId) {
+GxSeparator::ChildId GxSeparator::addChild(int ioUid) {
 DOTRACE("GxSeparator::addChild");
-  itsImpl->itsChildren.push_back(IdItem<GxNode>(ioId)); 
+
+  IdItem<GxNode> item(ioUid);
+
+  itsImpl->ensureNoCycle(item.get());
+
+  itsImpl->itsChildren.push_back(item);
   return (itsImpl->itsChildren.size() - 1);
 }
 
-void GxSeparator::insertChild(int ioId, ChildId at_index) {
+void GxSeparator::insertChild(int ioUid, ChildId at_index) {
 DOTRACE("GxSeparator::insertChild");
+
+  IdItem<GxNode> item(ioUid);
+
+  itsImpl->ensureNoCycle(item.get());
+
   if (at_index < 0)
 	 at_index = 0;
 
@@ -82,7 +118,7 @@ DOTRACE("GxSeparator::insertChild");
 	 at_index = itsImpl->itsChildren.size();
 
   itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
-										IdItem<GxNode>(ioId));
+										item);
 }
 
 void GxSeparator::removeChildId(ChildId index) {
@@ -91,15 +127,15 @@ DOTRACE("GxSeparator::removeChildId");
 	 itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 }
 
-void GxSeparator::removeChildItem(int ioId) {
-DOTRACE("GxSeparator::removeChildItem");
+void GxSeparator::removeChildUid(int io_uid) {
+DOTRACE("GxSeparator::removeChildUid");
   for(Impl::VecType::iterator
 		  itr = itsImpl->itsChildren.begin(),
 		  end = itsImpl->itsChildren.end();
 		itr != end;
 		++itr)
 	 {
-		if ( (*itr)->id() == ioId )
+		if ( (*itr)->id() == io_uid )
 		  {
 			 itsImpl->itsChildren.erase(itr);
 			 break;
@@ -133,6 +169,11 @@ DOTRACE("GxSeparator::beginChildren");
 GxSeparator::ChildItr GxSeparator::endChildren() const {
 DOTRACE("GxSeparator::endChildren");
   return itsImpl->itsChildren.end();
+}
+
+bool GxSeparator::contains(GxNode* other) const {
+DOTRACE("GxSeparator::contains");
+  return itsImpl->contains(other);
 }
 
 void GxSeparator::draw(GWT::Canvas& canvas) const {
