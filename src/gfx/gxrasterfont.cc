@@ -34,8 +34,6 @@
 
 #include "util/pointers.h"
 
-#include "util/debug.h"
-DBG_REGISTER
 #include "util/trace.h"
 
 GxRasterFont::~GxRasterFont() throw()
@@ -55,14 +53,12 @@ DOTRACE("GxRasterFont::make[glx]");
 
 #elif defined(GL_PLATFORM_AGL)
 
-#include "util/error.h"
+#include "gfx/aglrasterfont.h"
 
 shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
 {
 DOTRACE("GxRasterFont::make[agl]");
-  throw Util::Error("GxRasterFont not supported for Apple OpenGL");
-  return shared_ptr<GxRasterFont>(0);
-  (void)fontname;
+  return shared_ptr<GxRasterFont>(new AglRasterFont(fontname));
 }
 
 #else
