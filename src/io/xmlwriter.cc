@@ -185,7 +185,13 @@ DOTRACE("XMLWriter::writeDouble");
 void XMLWriter::writeValueObj(const char* name, const Value& value)
 {
 DOTRACE("XMLWriter::writeValueObj");
-  writeBasicType<const Value&>(name, value, value.getNativeTypeName().c_str());
+  indent();
+  itsBuf << "<valobj"
+         << " type=\"" << value.getNativeTypeName() << "\""
+         << " name=\"" << name << "\""
+         << " value=\"";
+  value.printTo(itsBuf);
+  itsBuf << "\"/>\n";
 }
 
 void XMLWriter::writeObject(const char* name,
