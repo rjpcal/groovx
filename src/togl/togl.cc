@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 20:49:48 2002
+// written: Wed Nov 20 20:57:56 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -61,11 +61,11 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Togl* itsOwner;
-  const Tk_Window itsTkWin;
-  Util::SoftRef<GLCanvas> itsCanvas;
+  Togl* owner;
+  const Tk_Window tkWin;
+  Util::SoftRef<GLCanvas> canvas;
 
-  bool itsPrivateCmapFlag;
+  bool privateCmapFlag;
 
   Impl(Togl* owner);
   ~Impl() throw() {}
@@ -73,10 +73,6 @@ public:
   static Window cClassCreateProc(Tk_Window tkwin,
                                  Window parent,
                                  ClientData clientData);
-
-  void swapBuffers() const;
-
-  Togl::Color queryColor(unsigned int color_index) const;
 };
 
 
@@ -94,12 +90,12 @@ Tk_ClassProcs toglProcs =
 //
 //---------------------------------------------------------------------
 
-Togl::Impl::Impl(Togl* owner) :
-  itsOwner(owner),
-  itsTkWin(owner->tkWin()),
-  itsCanvas(),
+Togl::Impl::Impl(Togl* p) :
+  owner(p),
+  tkWin(owner->tkWin()),
+  canvas(),
 
-  itsPrivateCmapFlag(false)
+  privateCmapFlag(false)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -107,43 +103,13 @@ DOTRACE("Togl::Impl::Impl");
   // Get the window mapped onscreen
   //
 
-  Tk_GeometryRequest(itsTkWin, itsOwner->width(), itsOwner->height());
+  Tk_GeometryRequest(tkWin, owner->width(), owner->height());
 
-  Tk_SetClassProcs(itsTkWin, &toglProcs, static_cast<ClientData>(this));
+  Tk_SetClassProcs(tkWin, &toglProcs, static_cast<ClientData>(this));
 
-  Tk_MakeWindowExist(itsTkWin);
+  Tk_MakeWindowExist(tkWin);
 
-  Tk_MapWindow(itsTkWin);
-}
-
-void Togl::Impl::swapBuffers() const
-{
-DOTRACE("Togl::Impl::swapBuffers");
-
-  itsCanvas->glxFlush(Tk_WindowId(itsTkWin));
-}
-
-Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
-{
-  XColor col;
-
-  col.pixel = color_index;
-  XQueryColor(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &col);
-
-  Togl::Color color;
-
-  color.pixel = (unsigned int)col.pixel;
-#ifdef HAVE_LIMITS
-  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
-#else
-  const unsigned short usmax = USHRT_MAX;
-#endif
-
-  color.red   = double(col.red)   / usmax;
-  color.green = double(col.green) / usmax;
-  color.blue  = double(col.blue)  / usmax;
-
-  return color;
+  Tk_MapWindow(tkWin);
 }
 
 namespace
@@ -189,14 +155,14 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
 
   Display* dpy = Tk_Display(tkwin);
 
-  rep->itsCanvas = Util::SoftRef<GLCanvas>(GLCanvas::make(dpy));
+  rep->canvas = Util::SoftRef<GLCanvas>(GLCanvas::make(dpy));
 
-  Visual* visual = rep->itsCanvas->visual();
-  int screen = rep->itsCanvas->screen();
-  int depth = rep->itsCanvas->bitsPerPixel();
+  Visual* visual = rep->canvas->visual();
+  int screen = rep->canvas->screen();
+  int depth = rep->canvas->bitsPerPixel();
 
   Colormap cmap = findColormap(dpy, visual, screen,
-                               rep->itsPrivateCmapFlag);
+                               rep->privateCmapFlag);
 
   // Make sure Tk knows to switch to the new colormap when the cursor is over
   // this window when running in color index mode.
@@ -216,8 +182,8 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   Window win = XCreateWindow(dpy,
                              parent,
                              0, 0,
-                             rep->itsOwner->width(),
-                             rep->itsOwner->height(),
+                             rep->owner->width(),
+                             rep->owner->height(),
                              0, depth,
                              InputOutput, visual,
                              CWBorderPixel | CWColormap | CWEventMask,
@@ -230,19 +196,19 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   XSelectInput(dpy, win, ALL_EVENTS_MASK);
 
   // Bind the context to the window and make it the current context
-  rep->itsCanvas->makeCurrent(win);
+  rep->canvas->makeCurrent(win);
 
-  if (rep->itsCanvas->isRgba())
+  if (rep->canvas->isRgba())
     {
       DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
-      rep->itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      rep->itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+      rep->canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      rep->canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     {
       // FIXME use XBlackPixel(), XWhitePixel() here?
-      rep->itsCanvas->setColorIndex(0);
-      rep->itsCanvas->setClearColorIndex(1);
+      rep->canvas->setColorIndex(0);
+      rep->canvas->setClearColorIndex(1);
     }
 
   return win;
@@ -271,22 +237,53 @@ void Togl::displayCallback()
 {
 DOTRACE("Togl::displayCallback");
 
-  rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin));
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
   fullRender();
 }
 
-void Togl::makeCurrent() const    { rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
-void Togl::swapBuffers()          { rep->swapBuffers(); }
-bool Togl::hasPrivateCmap() const { return rep->itsPrivateCmapFlag; }
+void Togl::makeCurrent() const
+{
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+}
+
+void Togl::swapBuffers()
+{
+  rep->canvas->glxFlush(Tk_WindowId(rep->tkWin));
+}
+
+bool Togl::hasPrivateCmap() const
+{
+  return rep->privateCmapFlag;
+}
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
-  { return rep->queryColor(color_index); }
+{
+  XColor col;
+
+  col.pixel = color_index;
+  XQueryColor(Tk_Display(rep->tkWin), Tk_Colormap(rep->tkWin), &col);
+
+  Togl::Color color;
+
+  color.pixel = (unsigned int)col.pixel;
+#ifdef HAVE_LIMITS
+  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
+#else
+  const unsigned short usmax = USHRT_MAX;
+#endif
+
+  color.red   = double(col.red)   / usmax;
+  color.green = double(col.green) / usmax;
+  color.blue  = double(col.blue)  / usmax;
+
+  return color;
+}
 
 Gfx::Canvas& Togl::getCanvas() const
 {
 DOTRACE("Togl::getCanvas");
   makeCurrent();
-  return *(rep->itsCanvas);
+  return *(rep->canvas);
 }
 
 static const char vcid_togl_cc[] = "$Header$";
