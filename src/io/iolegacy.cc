@@ -227,7 +227,6 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 	 }
   new_string.data()[numchars] = '\0';
 
-  Postcondition(new_string.length() == numchars);
   return new_string;
 }
 
@@ -238,31 +237,28 @@ DOTRACE("IO::LegacyReader::readValueObj");
   itsImpl->throwIfError(name);
 }
 
-IdItem<IO::IoObject> IO::LegacyReader::readObject(const fixed_string& name)
-{
-  return IdItem<IO::IoObject>(readObjectImpl(name));
+IdItem<IO::IoObject>
+IO::LegacyReader::readObject(const fixed_string& name) {
+DOTRACE("IO::LegacyReader::readObject");
+  return IdItem<IO::IoObject>(readMaybeObject(name));
 }
 
-MaybeIdItem<IO::IoObject> IO::LegacyReader::readMaybeObject(const fixed_string& name)
-{
-  return MaybeIdItem<IO::IoObject>(readObjectImpl(name));
-}
-
-IO::IoObject* IO::LegacyReader::readObjectImpl(const fixed_string& name) {
-DOTRACE("IO::LegacyReader::readObjectImpl");
+MaybeIdItem<IO::IoObject>
+IO::LegacyReader::readMaybeObject(const fixed_string& name) {
+DOTRACE("IO::LegacyReader::readMaybeObject");
   DebugEval(name);
   fixed_string type;
   itsImpl->itsInStream >> type; DebugEval(type);
 
   if (type == "NULL")
 	 {
-		return 0;
+		return MaybeIdItem<IO::IoObject>();
 	 }
 
-  IO::IoObject* obj = IO::IoMgr::newIO(type);
+  IdItem<IO::IoObject> obj(IO::IoMgr::newIO(type));
   DebugEvalNL(obj->ioTypename());
 
-  itsImpl->inflateObject(name, obj);
+  itsImpl->inflateObject(name, obj.get());
 
   return obj;
 }
@@ -288,7 +284,7 @@ DOTRACE("IO::LegacyReader::readBaseClass");
 IdItem<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* root) {
 DOTRACE("IO::LegacyReader::readRoot");
   if (root == 0) {
-	 return IdItem<IO::IoObject>(readObjectImpl("rootObject"));
+	 return readObject("rootObject");
   }
   DebugEvalNL(root->ioTypename());
 
@@ -305,6 +301,10 @@ DOTRACE("IO::LegacyReader::readRoot");
 ///////////////////////////////////////////////////////////////////////
 
 class IO::LegacyWriter::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(IO::LegacyWriter* owner, STD_IO::ostream& os, bool write_bases) :
 	 itsOwner(owner),
