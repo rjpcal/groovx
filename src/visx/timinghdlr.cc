@@ -43,6 +43,7 @@
 #include "util/log.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
+#include "util/stopwatch.h"
 
 #include <algorithm>
 #include <vector>
@@ -91,7 +92,7 @@ public:
   EventGroup responseEvents;
   EventGroup abortEvents;
 
-  mutable StopWatch timer;
+  mutable rutz::stopwatch timer;
 
   EventGroup& eventsAt(TimePoint time_point)
   {

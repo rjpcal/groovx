@@ -34,21 +34,26 @@
 
 #include "util/time.h"
 
+namespace rutz
+{
+  class stopwatch;
+}
+
 /// Tracks elapsed wall-clock time.
-class StopWatch
+class rutz::stopwatch
 {
 public:
   /// Default constructor.
-  StopWatch() : itsStartTime() { restart(); }
+  stopwatch() : m_start_time() { restart(); }
 
   /// Reset the start time to the current time.
   void restart()
-    { itsStartTime = rutz::time::wall_clock_now(); }
+    { m_start_time = rutz::time::wall_clock_now(); }
 
   /// Get the time elapsed between start and stop times.
   rutz::time elapsed(const rutz::time& stop) const
   {
-    return stop - itsStartTime;
+    return stop - m_start_time;
   }
 
   /// Get the time elapsed between start and now.
@@ -58,7 +63,7 @@ public:
     }
 
 private:
-  rutz::time itsStartTime;
+  rutz::time m_start_time;
 };
 
 static const char vcid_stopwatch_h[] = "$Header$";

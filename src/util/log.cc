@@ -55,7 +55,7 @@ namespace
     ScopeInfo(const fstring& name) : itsName(name), itsTimer() {}
 
     fstring itsName;
-    StopWatch itsTimer;
+    rutz::stopwatch itsTimer;
 
     void print(std::ostream& os, const rutz::time& now) const
     {

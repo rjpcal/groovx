@@ -34,8 +34,6 @@
 
 #include "io/io.h"
 
-#include "util/stopwatch.h"
-
 namespace Util
 {
   template <class T> class Ref;

@@ -37,7 +37,6 @@
 
 #include "tcl/tcltimer.h"
 
-#include "util/stopwatch.h"
 #include "util/ref.h"
 
 #include <vector>

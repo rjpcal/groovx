@@ -79,7 +79,7 @@ private:
   bool isItRepeating;
 
   // Diagnostics
-  mutable StopWatch itsStopWatch;
+  mutable rutz::stopwatch itsStopWatch;
 };
 
 static const char vcid_timer_h[] = "$Header$";
