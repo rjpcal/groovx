@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Fri Sep 29 14:43:23 2000
+// written: Sat Oct  7 17:25:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ class Response;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Trial : public TrialBase, public virtual IO::IoObject {
+class Trial : public TrialBase {
 public:
   //////////////////
   // nested types //

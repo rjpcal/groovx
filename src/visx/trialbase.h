@@ -3,13 +3,17 @@
 // trialbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jan 25 18:41:19 2000
-// written: Fri Jul  7 15:47:08 2000
+// written: Sat Oct  7 17:24:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIALBASE_H_DEFINED
 #define TRIALBASE_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
+#include "io/io.h"
+#endif
 
 namespace GWT {
   class Canvas;
@@ -27,7 +31,7 @@ class Response;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialBase {
+class TrialBase : public virtual IO::IoObject {
 public:
   virtual ~TrialBase();
 
