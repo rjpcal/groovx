@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sun Sep  9 15:25:34 2001
+// written: Sun Sep  9 16:54:06 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -22,6 +22,8 @@
 #include "util/algo.h"
 
 #include "util/trace.h"
+#define LOCAL_ASSERT
+#include "util/debug.h"
 
 
 namespace DlistTcl
@@ -52,6 +54,8 @@ namespace DlistTcl
         // corresponding list element and appending it to the output list
         result.append(source_list.at(index));
       }
+
+    Assert(result.length() == index_list.length());
 
     return result;
   }
@@ -89,6 +93,8 @@ namespace DlistTcl
         else
           result.append(zero);
       }
+
+    Assert(result.length() == source_list.length());
 
     return result;
   }
@@ -226,6 +232,8 @@ namespace DlistTcl
         Tcl::List sub(src.at(i));
         result.append(sub.at(slice));
       }
+
+    Assert(result.length() == src.length());
 
     return result;
   }
