@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Fri Aug 10 14:53:54 2001
+// written: Fri Aug 10 18:42:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,20 +34,40 @@ void GrObjScaler::setMode(Gmodes::ScalingMode new_mode)
 DOTRACE("GrObjScaler::setMode");
   if (itsMode == new_mode) return;
 
-  switch (new_mode) {
-  case Gmodes::NATIVE_SCALING:
-    itsMode = new_mode;
+  itsMode = new_mode;
 
-    itsWidthFactor = 1.0;
-    itsHeightFactor = 1.0;
-    break;
+  if (itsMode == Gmodes::NATIVE_SCALING)
+    {
+      itsWidthFactor = 1.0;
+      itsHeightFactor = 1.0;
+    }
+}
 
-  case Gmodes::MAINTAIN_ASPECT_SCALING:
-  case Gmodes::FREE_SCALING:
-    itsMode = new_mode;
-    break;
+void GrObjScaler::gnodeDraw(Gfx::Canvas& canvas) const
+{
+  Gfx::Canvas::StateSaver state(canvas);
 
-  } // end switch
+  doScaling(canvas);
+
+  child()->gnodeDraw(canvas);
+}
+
+void GrObjScaler::gnodeUndraw(Gfx::Canvas& canvas) const
+{
+  Gfx::Canvas::StateSaver state(canvas);
+
+  doScaling(canvas);
+
+  child()->gnodeUndraw(canvas);
+}
+
+Rect<double> GrObjScaler::gnodeBoundingBox(Gfx::Canvas& canvas) const
+{
+  Rect<double> bounds = child()->gnodeBoundingBox(canvas);
+
+  bounds.scale(Point<double>(itsWidthFactor, itsHeightFactor));
+
+  return bounds;
 }
 
 static const char vcid_grobjscaler_cc[] = "$Header$";

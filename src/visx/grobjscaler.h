@@ -14,19 +14,15 @@
 #define GROBJSCALER_H_DEFINED
 
 #include "gmodes.h"
-
+#include "gnode.h"
 #include "rect.h"
 
 #include "util/algo.h"
 
-namespace Gfx
-{
-  class Canvas;
-}
-
-class GrObjScaler {
+class GrObjScaler : public Gnode {
 public:
-  GrObjScaler() :
+  GrObjScaler(shared_ptr<Gnode> child) :
+	 Gnode(child),
     itsMode(Gmodes::NATIVE_SCALING),
     itsWidthFactor(1.0),
     itsHeightFactor(1.0)
@@ -119,11 +115,11 @@ public:
     return max(scaledWidth(native_bbox), scaledHeight(native_bbox));
   }
 
-  void transformRect(Rect<double>& box)
-  {
-    box.widenByFactor(itsWidthFactor);
-    box.heightenByFactor(itsHeightFactor);
-  }
+  virtual void gnodeDraw(Gfx::Canvas& canvas) const;
+
+  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
+
+  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
   Gmodes::ScalingMode itsMode;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 18:24:39 2001
+// written: Fri Aug 10 18:43:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,27 +102,27 @@ DOTRACE("GrObj::getBoundingBox");
 Gmodes::ScalingMode GrObj::getScalingMode() const
 {
 DOTRACE("GrObj::getScalingMode");
-  return itsImpl->itsScaler.getMode();
+  return itsImpl->itsScaler->getMode();
 }
 
 double GrObj::getWidth() const {
 DOTRACE("GrObj::getWidth");
-  return itsImpl->itsScaler.scaledWidth(grGetBoundingBox());
+  return itsImpl->itsScaler->scaledWidth(grGetBoundingBox());
 }
 
 double GrObj::getHeight() const {
 DOTRACE("GrObj::getHeight");
-  return itsImpl->itsScaler.scaledHeight(grGetBoundingBox());
+  return itsImpl->itsScaler->scaledHeight(grGetBoundingBox());
 }
 
 double GrObj::getAspectRatio() const {
 DOTRACE("GrObj::getAspectRatio");
-  return itsImpl->itsScaler.aspectRatio();
+  return itsImpl->itsScaler->aspectRatio();
 }
 
 double GrObj::getMaxDimension() const {
 DOTRACE("GrObj::getMaxDimension");
-  return itsImpl->itsScaler.scaledMaxDim(grGetBoundingBox());
+  return itsImpl->itsScaler->scaledMaxDim(grGetBoundingBox());
 }
 
 Gmodes::AlignmentMode GrObj::getAlignmentMode() const {
@@ -177,35 +177,35 @@ void GrObj::setScalingMode(Gmodes::ScalingMode val)
 {
 DOTRACE("GrObj::setScalingMode");
 
-  itsImpl->itsScaler.setMode(val);
+  itsImpl->itsScaler->setMode(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setWidth(double val) {
 DOTRACE("GrObj::setWidth");
 
-  itsImpl->itsScaler.setWidth(val, grGetBoundingBox());
+  itsImpl->itsScaler->setWidth(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
 void GrObj::setHeight(double val) {
 DOTRACE("GrObj::setHeight");
 
-  itsImpl->itsScaler.setHeight(val, grGetBoundingBox());
+  itsImpl->itsScaler->setHeight(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
 void GrObj::setAspectRatio(double val) {
 DOTRACE("GrObj::setAspectRatio");
 
-  itsImpl->itsScaler.setAspectRatio(val);
+  itsImpl->itsScaler->setAspectRatio(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setMaxDimension(double val) {
 DOTRACE("GrObj::setMaxDimension");
 
-  itsImpl->itsScaler.setMaxDim(val, grGetBoundingBox());
+  itsImpl->itsScaler->setMaxDim(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 

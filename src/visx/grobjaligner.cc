@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Fri Aug 10 18:21:57 2001
+// written: Fri Aug 10 18:36:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,13 @@ void GrObjAligner::gnodeUndraw(Gfx::Canvas& canvas) const
 
 Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
-  return child()->gnodeBoundingBox(canvas);
+  Rect<double> bounds = child()->gnodeBoundingBox(canvas);
+
+  Point<double> center = getCenter(bounds.width(), bounds.height());
+
+  bounds.setCenter(center);
+
+  return bounds;
 }
 
 

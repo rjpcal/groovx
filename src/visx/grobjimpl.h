@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 18:22:39 2001
+// written: Fri Aug 10 18:42:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,8 +80,8 @@ public:
   shared_ptr<GrObjBBox> itsBB;
   shared_ptr<GLCacheNode> itsGLCache;
   shared_ptr<GrObjAligner> itsAligner;
+  shared_ptr<GrObjScaler> itsScaler;
 
-  GrObjScaler itsScaler;
   BitmapCacheNode itsBitmapCache;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 18:25:17 2001
+// written: Fri Aug 10 18:43:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ GrObjImpl::GrObjImpl(GrObj* obj) :
   itsBB(new GrObjBBox(itsNativeNode)),
   itsGLCache(new GLCacheNode(itsBB)),
   itsAligner(new GrObjAligner(itsGLCache)),
-  itsScaler(),
+  itsScaler(new GrObjScaler(itsAligner)),
   itsBitmapCache()
 {};
 
@@ -101,11 +101,11 @@ DOTRACE("GrObjImpl::readFrom");
   {
     int temp;
     reader->readValue("GrObj::scalingMode", temp);
-    itsScaler.setMode(temp);
+    itsScaler->setMode(temp);
   }
 
-  reader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
-  reader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
+  reader->readValue("GrObj::widthFactor", itsScaler->itsWidthFactor);
+  reader->readValue("GrObj::heightFactor", itsScaler->itsHeightFactor);
 
   reader->readValue("GrObj::alignmentMode", itsAligner->itsMode);
   reader->readValue("GrObj::centerX", itsAligner->itsCenter.x());
@@ -131,9 +131,9 @@ DOTRACE("GrObjImpl::writeTo");
 
   writer->writeValue("GrObj::bbVisibility", itsBB->isVisible());
 
-  writer->writeValue("GrObj::scalingMode", itsScaler.getMode());
-  writer->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
-  writer->writeValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
+  writer->writeValue("GrObj::scalingMode", itsScaler->getMode());
+  writer->writeValue("GrObj::widthFactor", itsScaler->itsWidthFactor);
+  writer->writeValue("GrObj::heightFactor", itsScaler->itsHeightFactor);
 
   writer->writeValue("GrObj::alignmentMode", itsAligner->itsMode);
   writer->writeValue("GrObj::centerX", itsAligner->itsCenter.x());
@@ -150,15 +150,11 @@ DOTRACE("GrObjImpl::writeTo");
 void GrObjImpl::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjImpl::draw");
-  canvas.throwIfError("before GrObj::draw");
-
   Gfx::Canvas::StateSaver state(canvas);
 
-  itsScaler.doScaling(canvas);
+//    itsScaler->doScaling(canvas);
 
-  itsBitmapCache.render(itsAligner.get(), canvas);
-
-  canvas.throwIfError("during GrObj::draw");
+  itsBitmapCache.render(itsScaler.get(), canvas);
 }
 
 void GrObjImpl::undraw(Gfx::Canvas& canvas) const
@@ -166,9 +162,9 @@ void GrObjImpl::undraw(Gfx::Canvas& canvas) const
 DOTRACE("GrObjImpl::undraw");
   Gfx::Canvas::StateSaver state(canvas);
 
-  itsScaler.doScaling(canvas);
+//    itsScaler->doScaling(canvas);
 
-  itsBitmapCache.unrender(itsAligner.get(), canvas);
+  itsBitmapCache.unrender(itsScaler.get(), canvas);
 }
 
 void GrObjImpl::invalidateCaches()
