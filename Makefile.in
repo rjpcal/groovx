@@ -212,21 +212,30 @@ include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
-all: TAGS install_scripts build check
-
-GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
+STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
 
-build: $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
+$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
+	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
-$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	time $(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+.PHONY: build install_scripts install check all
+
+# Have to put these components in a strict dependence hierarchy, since some
+# versions of make (e.g. under Darwin) don't reliably run targets in their
+# order in the dependency list. Thus any specific ordering requirements
+# must be reflected explicitly in target-dependency relationships.
+
+build: TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
 install_scripts: $(exec_prefix)/bin/.timestamp
 	cp share/scripts/*.tcl $(exec_prefix)/bin
 
-check:
+install: install_scripts build
+
+check: install
 	$(EXECUTABLE) ./testing/grshtest.tcl
+
+all: check
 
 #-------------------------------------------------------------------------
 #
@@ -286,11 +295,14 @@ TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
 
 DISTNAME := $(PACKAGE_TARNAME)_$(shell date +%Y%m%d)
+CVS_ROOT := $(shell cat ./CVS/Root)
+CVS_REPO := $(shell cat ./CVS/Repository)
 
 export:
 	echo $(DISTNAME)
 	mkdir -p snapshots
-	cvs -d `cat ./CVS/Root` export -r HEAD -d snapshots/$(DISTNAME) grsh
-	rm -r snapshots/$(DISTNAME)/logs
-	cd snapshots/$(DISTNAME); autoconf
-	cd snapshots; tar cfz $(DISTNAME).tar.gz $(DISTNAME)
+	cd snapshots && \
+	  cvs -z3 -d $(CVS_ROOT) export -r HEAD -d $(DISTNAME) $(CVS_REPO) \
+	  && rm -r $(DISTNAME)/logs/* \
+	  && (cd $(DISTNAME) && autoconf) \
+	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
