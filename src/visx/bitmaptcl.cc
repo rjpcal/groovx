@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Sep  8 13:19:17 1999
+// written: Tue Sep 28 18:49:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define BITMAPTCL_CC_DEFINED
 
 #include <tcl.h>
+#include <string>
+#include <cstring>
 
 #include "bitmap.h"
 #include "glbitmap.h"
@@ -28,6 +30,11 @@
 
 namespace BitmapTcl {
   class LoadPbmCmd;
+  class LoadPbmGzCmd;
+  class WritePbmCmd;
+  class WritePbmGzCmd;
+  class GrabScreenRectCmd;
+  class GrabWorldRectCmd;
   class BitmapPkg;
 }
 
@@ -59,6 +66,158 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// BitmapTcl::LoadPbmGzCmd --
+//
+//---------------------------------------------------------------------
+
+class BitmapTcl::LoadPbmGzCmd : public TclItemCmd<Bitmap> {
+public:
+  LoadPbmGzCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Bitmap>(pkg, cmd_name,
+							  "bitmap_id filename(without .gz extension)"
+							  "?temp_filename=.temp.pbm?",
+							  3, 4),
+	 itsInterp(pkg->interp()) {}
+protected:
+  virtual void invoke() {
+	 Bitmap* bm = getItem();
+ 	 const char* filename = getCstringFromArg(2);
+	 const char* tempfilename =
+		(objc() >= 4) ? getCstringFromArg(3) : ".temp.pbm";
+
+	 // zcat the file to a temp file
+	 string cmd = "exec gunzip -c ";
+	 cmd += filename;
+	 cmd += ".gz > ";
+	 cmd += tempfilename;
+	 vector<char> cmd_cstr(cmd.length()+1);
+	 strcpy(&cmd_cstr[0], cmd.c_str());
+	 int result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
+
+	 if (result != TCL_OK) {
+		throw TclError("error gunzip-ing file");
+	 }
+
+	 // load the file
+	 bm->loadPbmFile(tempfilename);
+
+	 // remove the temp file
+	 cmd = "exec rm ";
+	 cmd += tempfilename;
+	 cmd_cstr.resize(cmd.length()+1);
+	 strcpy(&cmd_cstr[0], cmd.c_str());
+	 result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
+
+	 if (result != TCL_OK) {
+		throw TclError("error removing temp file");
+	 }
+
+  }
+
+private:
+  Tcl_Interp* itsInterp;
+};
+
+//---------------------------------------------------------------------
+//
+// BitmapTcl::WritePbmCmd --
+//
+//---------------------------------------------------------------------
+
+class BitmapTcl::WritePbmCmd : public TclItemCmd<Bitmap> {
+public:
+  WritePbmCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
+protected:
+  virtual void invoke() {
+	 Bitmap* bm = getItem();
+	 const char* filename = getCstringFromArg(2);
+	 bm->writePbmFile(filename);
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// BitmapTcl::WritePbmGzCmd --
+//
+//---------------------------------------------------------------------
+
+class BitmapTcl::WritePbmGzCmd : public TclItemCmd<Bitmap> {
+public:
+  WritePbmGzCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Bitmap>(pkg, cmd_name,
+							  "bitmap_id filename(without .gz extension)", 3, 3),
+	 itsInterp(pkg->interp()) {}
+protected:
+  virtual void invoke() {
+	 Bitmap* bm = getItem();
+	 const char* filename = getCstringFromArg(2);
+
+	 // write the file
+	 bm->writePbmFile(filename);
+
+	 // gzip the file
+	 string cmd = "exec gzip ";
+	 cmd += filename;
+	 vector<char> cmd_cstr(cmd.length()+1);
+	 strcpy(&cmd_cstr[0], cmd.c_str());
+	 int result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
+
+	 if (result != TCL_OK) {
+		throw TclError("error gzip-ing file");
+	 }
+  }
+
+private:
+  Tcl_Interp* itsInterp;
+};
+
+//---------------------------------------------------------------------
+//
+// BitmapTcl::GrabScreenRectCmd --
+//
+//---------------------------------------------------------------------
+
+class BitmapTcl::GrabScreenRectCmd : public TclItemCmd<Bitmap> {
+public:
+  GrabScreenRectCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
+protected:
+  virtual void invoke() {
+	 int l = getIntFromArg(2);
+	 int t = getIntFromArg(3);
+	 int r = getIntFromArg(4);
+	 int b = getIntFromArg(5);
+
+	 Bitmap* bm = getItem();
+	 bm->grabScreenRect(l, t, r, b);
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// BitmapTcl::GrabWorldRectCmd --
+//
+//---------------------------------------------------------------------
+
+class BitmapTcl::GrabWorldRectCmd : public TclItemCmd<Bitmap> {
+public:
+  GrabWorldRectCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
+protected:
+  virtual void invoke() {
+	 double l = getDoubleFromArg(2);
+	 double t = getDoubleFromArg(3);
+	 double r = getDoubleFromArg(4);
+	 double b = getDoubleFromArg(5);
+
+	 Bitmap* bm = getItem();
+	 bm->grabWorldRect(l, t, r, b);
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // BitmapTcl::BitmapPkg class definition
 //
 //---------------------------------------------------------------------
@@ -70,6 +229,11 @@ public:
 													  "Bitmap", "1.1")
   {
 	 addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
+	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz") );
+	 addCommand( new WritePbmCmd(this, "Bitmap::writePbm") );
+	 addCommand( new WritePbmGzCmd(this, "Bitmap::writePbmGz") );
+	 addCommand( new GrabScreenRectCmd(this, "Bitmap::grabScreenRect") );
+	 addCommand( new GrabWorldRectCmd(this, "Bitmap::grabWorldRect") );
 	 declareCAction("flipContrast", &Bitmap::flipContrast);
 	 declareCAction("flipVertical", &Bitmap::flipVertical);
 	 declareCAction("center", &Bitmap::center);
