@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Fri Jan 18 16:07:02 2002
+// written: Thu Jun  6 18:19:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,6 +82,8 @@ void GLCacheNode::setMode(Gmodes::RenderMode new_mode)
 
   if (itsMode != new_mode)
     invalidate();
+
+  itsMode = new_mode;
 }
 
 static const char vcid_glcachenode_cc[] = "$Header$";
