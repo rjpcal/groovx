@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Sun Aug 26 08:35:15 2001
+// written: Thu Aug 30 15:06:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ DOTRACE("Tcl::VecCmd::rawInvoke");
     }
   else // (ncalls == 0)
     {
-      throw Tcl::TclError("key argument was empty");
+      ;// do nothing, so we gracefully handle empty lists
     }
 }
 
