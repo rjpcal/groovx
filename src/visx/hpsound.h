@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Oct 27 18:29:34 2000
+// written: Sun Oct 29 18:25:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,12 @@ namespace HPSOUND_CC_LOCAL {
   Audio* theAudio = 0;
 
   static long audioErrorHandler(Audio* audio, AErrorEvent *errEvent) {
+  DOTRACE("audioErrorhandler");
+
 	 static char buf[128];
 	 AGetErrorText(audio, errEvent->error_code, buf, 127);
+
+	 DebugEvalNL(buf);
 
 	 SoundError err("HP Audio Error: ");
 	 err.appendMsg(buf);
@@ -82,6 +86,19 @@ public:
 
   virtual fixed_string ioTypename() const { return "Sound"; }
 
+  void swap(HpAudioSound& other)
+    {
+		itsFilename.swap(other.itsFilename);
+
+		SBucket* otherSBucket = other.itsSBucket;
+		other.itsSBucket = this->itsSBucket;
+		this->itsSBucket = otherSBucket;
+
+		SBPlayParams otherParams = other.itsPlayParams;
+		other.itsPlayParams = this->itsPlayParams;
+		this->itsPlayParams = otherParams;
+    }
+
 private:
   fixed_string itsFilename;
   SBucket* itsSBucket;
@@ -95,7 +112,9 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 HpAudioSound::HpAudioSound(const char* filename) :
-  itsSBucket(NULL)
+  itsFilename(""),
+  itsSBucket(0),
+  itsPlayParams()
 {
 DOTRACE("HpAudioSound::HpAudioSound");
   if ( !theAudio ) { throw SoundError("invalid HP audio server connection"); }
@@ -111,8 +130,26 @@ DOTRACE("HpAudioSound::HpAudioSound");
   itsPlayParams.duration.type = ATTFullLength;
   itsPlayParams.event_mask = 0;
 
-  if (filename != 0)
-	 setFile(filename);
+  if (filename != 0 && filename[0] != '\0')
+	 {
+		if ( !theAudio )
+		  { throw SoundError("invalid audio server connection"); }
+
+		STD_IO::ifstream ifs(filename);
+		if (ifs.fail()) {
+		  throw SoundFilenameError(filename);
+		}
+		ifs.close();
+
+		AFileFormat fileFormat = AFFUnknown;
+		AudioAttrMask AttribsMask = 0;
+		AudioAttributes Attribs;
+
+		itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
+										fileFormat, AttribsMask, &Attribs, NULL);
+
+		itsFilename = filename;
+	 }
 }
 
 HpAudioSound::~HpAudioSound() {
@@ -127,6 +164,9 @@ void HpAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("HpAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
+
+  DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
+
   if (!itsFilename.empty())
 	 setFile(itsFilename.c_str());
 }
@@ -147,27 +187,9 @@ DOTRACE("HpAudioSound::play");
 	
 void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
-  if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
 
-  STD_IO::ifstream ifs(filename);
-  if (ifs.fail()) {
-	 throw SoundFilenameError(filename);
-  }
-  ifs.close();
-  itsFilename = filename;
-
-  if (itsSBucket) {
-	 ADestroySBucket( theAudio, itsSBucket, NULL);
-	 itsSBucket = 0;
-  }
-
-  AFileFormat fileFormat = AFFUnknown;
-  AudioAttrMask AttribsMask = 0;
-  AudioAttributes Attribs;
-
-  itsSBucket = ALoadAFile(theAudio, const_cast<char *>(itsFilename.c_str()),
-								  fileFormat, AttribsMask,
-								  &Attribs, NULL);
+  HpAudioSound new_sound(filename); 
+  this->swap(new_sound);
 }
 
 
