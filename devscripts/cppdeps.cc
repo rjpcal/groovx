@@ -135,10 +135,17 @@ namespace
     string result = s;
 
     // Remove a leading directory prefix if necessary
-    if (result.compare(0, pfx.length(), pfx) == 0)
+    if (pfx.length() > 0)
       {
-        // We add +1 because we also want to strip the '/'
-        result.erase(0, pfx.length() + 1);
+        if (result.compare(0, pfx.length(), pfx) == 0)
+          {
+            result.erase(0, pfx.length());
+
+            // Now we've stripped off the non-zero-length prefix, we
+            // might also need to strip a '/' component
+            if (result.length() > 0 && result[0] == '/')
+              result.erase(0, 1);
+          }
       }
 
     return result;
@@ -1112,11 +1119,29 @@ namespace
         ++cfg.nest_level;
         const dep_list_t& indirect = (*i)->get_nested_cdeps();
         --cfg.nest_level;
+        if (cfg.verbosity >= NOISY)
+          {
+            for (dep_list_t::const_iterator
+                   itr = indirect.begin(), end = indirect.end();
+                 itr != end;
+                 ++itr)
+              cfg.info() << (*i)->name() << " --> (direct) " << (*itr)->name() << '\n';
+          }
         dep_set.insert(indirect.begin(), indirect.end());
       }
 
     assert(this->m_nested_cdeps.empty());
     this->m_nested_cdeps.assign(dep_set.begin(), dep_set.end());
+
+    if (cfg.verbosity >= NOISY)
+      {
+        for (dep_list_t::const_iterator
+               itr = this->m_nested_cdeps.begin(),
+               end = this->m_nested_cdeps.end();
+             itr != end;
+             ++itr)
+          cfg.info() << this->name() << " --> (nested) " << (*itr)->name() << '\n';
+      }
 
     this->m_nested_cdeps_done = true;
     this->m_cdep_parse_state = COMPLETE;
