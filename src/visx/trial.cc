@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat May 19 15:22:00 2001
+// written: Sat May 19 15:52:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -240,11 +240,11 @@ DOTRACE("Trial::Impl::writeTo");
   writer->ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
 										 "Try grsh0.8a3");
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "gxObjects",
-											  itsGxNodes.begin(), itsGxNodes.end());
+  IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
+											itsGxNodes.begin(), itsGxNodes.end());
 
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
-										 itsResponses.begin(), itsResponses.end());
+											  itsResponses.begin(), itsResponses.end());
 
   writer->writeValue("correctResponse", itsCorrectResponse);
 

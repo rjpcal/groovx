@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 17 15:04:43 2001
+// written: Sat May 19 15:52:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,17 +155,17 @@ DOTRACE("TimingHdlr::writeTo");
   writer->ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
 										 "Try grsh0.8a4");
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "immediateEvents",
-								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
+  IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
+	 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "startEvents",
-								 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
+  IO::WriteUtils::writeObjectSeq(writer, "startEvents",
+	 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "responseEvents",
-								 itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
+  IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
+    itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "abortEvents",
-								 itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
+  IO::WriteUtils::writeObjectSeq(writer, "abortEvents",
+    itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
 }
 
 ///////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Sat May 19 15:17:30 2001
+// written: Sat May 19 15:52:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,8 +69,8 @@ public:
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeSmartPtrSeq(IO::Writer* writer, const char* name,
-										 Itr begin, Itr end, bool skip_count=false)
+  static void writeObjectSeq(IO::Writer* writer, const char* name,
+									  Itr begin, Itr end, bool skip_count=false)
 	 {
 		if (!skip_count) {
 		  writer->writeValue(makeSeqCountString(name),

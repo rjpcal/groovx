@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu May 17 15:04:16 2001
+// written: Sat May 19 15:52:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -559,8 +559,8 @@ DOTRACE("ExptDriver::Impl::writeTo");
 
   writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "blocks",
-											  itsBlocks.begin(), itsBlocks.end());
+  IO::WriteUtils::writeObjectSeq(writer, "blocks",
+											itsBlocks.begin(), itsBlocks.end());
 
   updateDoUponCompletionBody();
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);

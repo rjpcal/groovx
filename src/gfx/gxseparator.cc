@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu May 17 15:05:29 2001
+// written: Sat May 19 15:52:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,9 +89,9 @@ DOTRACE("GxSeparator::readFrom");
 
 void GxSeparator::writeTo(IO::Writer* writer) const {
 DOTRACE("GxSeparator::writeTo");
-  IO::WriteUtils::writeSmartPtrSeq(writer, "children",
-											  itsImpl->itsChildren.begin(),
-											  itsImpl->itsChildren.end());
+  IO::WriteUtils::writeObjectSeq(writer, "children",
+											itsImpl->itsChildren.begin(),
+											itsImpl->itsChildren.end());
 }
 
 GxSeparator::ChildId GxSeparator::addChild(IO::UID ioUid) {

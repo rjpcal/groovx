@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu May 17 14:38:09 2001
+// written: Sat May 19 15:52:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -193,9 +193,9 @@ DOTRACE("Block::writeTo");
   writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 1,
 										 "Try grsh0.8a3");
 
-  IO::WriteUtils::writeSmartPtrSeq(writer, "trialSeq",
-											  itsImpl->itsTrialSequence.begin(),
-											  itsImpl->itsTrialSequence.end());
+  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
+											itsImpl->itsTrialSequence.begin(),
+											itsImpl->itsTrialSequence.end());
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
