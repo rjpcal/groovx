@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Nov 13 12:56:53 2002
+// written: Wed Nov 20 17:00:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,8 +38,7 @@ DOTRACE("XBitmap::make");
 }
 
 XBitmap::XBitmap() :
-  XRHolder(make_shared(new XBmapRenderer())),
-  Bitmap(itsRenderer)
+  Bitmap()
 {
 DOTRACE("XBitmap::XBitmap");
   setUsingZoom(false);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Nov 13 12:51:27 2002
+// written: Wed Nov 20 17:02:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 
 namespace
 {
-  const IO::VersionId GLBITMAP_SERIAL_VERSION_ID = 2;
+  const IO::VersionId GLBITMAP_SERIAL_VERSION_ID = 3;
 }
 
 GLBitmap* GLBitmap::make()
@@ -34,8 +34,7 @@ DOTRACE("GLBitmap::make");
 }
 
 GLBitmap::GLBitmap() :
-  GLRHolder(make_shared(new GLBmapRenderer())),
-  Bitmap(itsRenderer)
+  Bitmap()
 {
 DOTRACE("GLBitmap::GLBitmap");
   setUsingZoom(true);
@@ -56,11 +55,13 @@ void GLBitmap::readFrom(IO::Reader* reader)
 {
 DOTRACE("GLBitmap::readFrom");
 
-  reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
+  int svid = reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
 
-  bool val;
-  reader->readValue("usingGlBitmap", val);
-  itsRenderer->setUsingGlBitmap(val);
+  if (svid <= 2)
+    {
+      bool val;
+      reader->readValue("usingGlBitmap", val);
+    }
 
   reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
 }
@@ -69,32 +70,10 @@ void GLBitmap::writeTo(IO::Writer* writer) const
 {
 DOTRACE("GLBitmap::writeTo");
 
-  writer->ensureWriteVersionId("GLBitmap", GLBITMAP_SERIAL_VERSION_ID, 2,
+  writer->ensureWriteVersionId("GLBitmap", GLBITMAP_SERIAL_VERSION_ID, 3,
                                "Try grsh0.8a4");
 
-  writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
-
   writer->writeBaseClass("Bitmap", IO::makeConstProxy<Bitmap>(this));
-}
-
-bool GLBitmap::getUsingGlBitmap() const
-{
-DOTRACE("GLBitmap::getUsingGlBitmap");
-  return itsRenderer->getUsingGlBitmap();
-}
-
-void GLBitmap::setUsingGlBitmap(bool val)
-{
-DOTRACE("GLBitmap::setUsingGlBitmap");
-  itsRenderer->setUsingGlBitmap(val);
-
-  // glPixelZoom() does not work with glBitmap()
-  if (itsRenderer->getUsingGlBitmap())
-    {
-      setUsingZoom(false);
-    }
-
-  this->sigNodeChanged.emit();
 }
 
 static const char vcid_glbitmap_cc[] = "$Header$";

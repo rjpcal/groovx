@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 20 16:11:36 2002
+// written: Wed Nov 20 17:08:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,15 +32,13 @@
 #include "util/strings.h"
 #include "util/pointers.h"
 
-#include "visx/bmaprenderer.h"
-
 #include "util/trace.h"
 
 namespace
 {
   Gfx::Vec2<double> defaultZoom(1.0, 1.0);
 
-  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 3;
+  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 4;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -110,25 +108,25 @@ DOTRACE("ImageUpdater::update");
 class BitmapImpl
 {
 public:
-  BitmapImpl(shared_ptr<BmapRenderer> renderer) :
-    itsRenderer(renderer),
+  BitmapImpl() :
     itsFilename(),
     itsZoom(1.0, 1.0),
+    itsData(),
     itsUsingZoom(false),
     itsContrastFlip(false),
     itsVerticalFlip(false),
     itsPurgeable(false),
-    itsData()
+    itsAsBitmap(false)
   {}
 
-  shared_ptr<BmapRenderer> itsRenderer;
   fstring itsFilename;
   Gfx::Vec2<double> itsZoom;
+  mutable Gfx::BmapData itsData;
   bool itsUsingZoom;
   bool itsContrastFlip;
   bool itsVerticalFlip;
   bool itsPurgeable;
-  mutable Gfx::BmapData itsData;
+  bool itsAsBitmap;
 
   void queueImage(const char* filename)
   {
@@ -168,18 +166,24 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
+Bitmap::Bitmap() :
   GxShapeKit(),
-  itsImpl(new BitmapImpl(renderer))
+  rep(new BitmapImpl)
 {
 DOTRACE("Bitmap::Bitmap");
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
 }
 
+Bitmap* Bitmap::make()
+{
+DOTRACE("Bitmap::make");
+  return new Bitmap;
+}
+
 Bitmap::~Bitmap()
 {
 DOTRACE("Bitmap::~Bitmap");
-  delete itsImpl;
+  delete rep;
 }
 
 IO::VersionId Bitmap::serialVersionId() const
@@ -194,46 +198,51 @@ DOTRACE("Bitmap::readFrom");
 
   int svid = reader->ensureReadVersionId("Bitmap", 2, "Try grsh0.8a7");
 
-  reader->readValue("filename", itsImpl->itsFilename);
-  reader->readValue("zoomX", itsImpl->itsZoom.x());
-  reader->readValue("zoomY", itsImpl->itsZoom.y());
-  reader->readValue("usingZoom", itsImpl->itsUsingZoom);
-  reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
-  reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
+  reader->readValue("filename", rep->itsFilename);
+  reader->readValue("zoomX", rep->itsZoom.x());
+  reader->readValue("zoomY", rep->itsZoom.y());
+  reader->readValue("usingZoom", rep->itsUsingZoom);
+  reader->readValue("contrastFlip", rep->itsContrastFlip);
+  reader->readValue("verticalFlip", rep->itsVerticalFlip);
 
-  if (svid > 2)
-    reader->readValue("purgeable", itsImpl->itsPurgeable);
+  if (svid >= 3)
+    reader->readValue("purgeable", rep->itsPurgeable);
 
-  if ( itsImpl->itsFilename.is_empty() )
+  if (svid >= 4)
+    reader->readValue("asBitmap", rep->itsAsBitmap);
+
+  if ( rep->itsFilename.is_empty() )
     {
-      itsImpl->itsData.clear();
+      rep->itsData.clear();
     }
   else
     {
-      queueImage(itsImpl->itsFilename.c_str());
+      queueImage(rep->itsFilename.c_str());
     }
 
-  // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid >= 4)
+    reader->readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  else
+    reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Bitmap::writeTo(IO::Writer* writer) const
 {
 DOTRACE("Bitmap::writeTo");
 
-  writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 2,
+  writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 4,
                                "Try grsh0.8a7");
 
-  writer->writeValue("filename", itsImpl->itsFilename);
-  writer->writeValue("zoomX", itsImpl->itsZoom.x());
-  writer->writeValue("zoomY", itsImpl->itsZoom.y());
-  writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
-  writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
-  writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
-  writer->writeValue("purgeable", itsImpl->itsPurgeable);
+  writer->writeValue("filename", rep->itsFilename);
+  writer->writeValue("zoomX", rep->itsZoom.x());
+  writer->writeValue("zoomY", rep->itsZoom.y());
+  writer->writeValue("usingZoom", rep->itsUsingZoom);
+  writer->writeValue("contrastFlip", rep->itsContrastFlip);
+  writer->writeValue("verticalFlip", rep->itsVerticalFlip);
+  writer->writeValue("purgeable", rep->itsPurgeable);
+  writer->writeValue("asBitmap", rep->itsAsBitmap);
 
-  // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer->writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 /////////////
@@ -244,9 +253,9 @@ void Bitmap::loadImage(const char* filename)
 {
 DOTRACE("Bitmap::loadImage");
 
-  ImgFile::load(filename, itsImpl->itsData);
+  ImgFile::load(filename, rep->itsData);
 
-  itsImpl->itsFilename = filename;
+  rep->itsFilename = filename;
 
   this->sigNodeChanged.emit();
 }
@@ -255,7 +264,7 @@ void Bitmap::queueImage(const char* filename)
 {
 DOTRACE("Bitmap::queueImage");
 
-  itsImpl->queueImage(filename);
+  rep->queueImage(filename);
 
   this->sigNodeChanged.emit();
 }
@@ -264,7 +273,7 @@ void Bitmap::saveImage(const char* filename) const
 {
 DOTRACE("Bitmap::saveImage");
 
-  ImgFile::save(filename, itsImpl->itsData);
+  ImgFile::save(filename, rep->itsData);
 }
 
 void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
@@ -273,13 +282,13 @@ DOTRACE("Bitmap::grabScreenRect");
 
   Gfx::Canvas& canvas = Gfx::Canvas::current();
 
-  canvas.grabPixels(rect, itsImpl->itsData);
+  canvas.grabPixels(rect, rep->itsData);
 
-  itsImpl->itsFilename = "";
+  rep->itsFilename = "";
 
-  itsImpl->itsContrastFlip = false;
-  itsImpl->itsVerticalFlip = false;
-  itsImpl->itsZoom = defaultZoom;
+  rep->itsContrastFlip = false;
+  rep->itsVerticalFlip = false;
+  rep->itsZoom = defaultZoom;
 
   this->sigNodeChanged.emit();
 }
@@ -303,8 +312,8 @@ DOTRACE("Bitmap::flipContrast");
 
   // Toggle itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
-  itsImpl->itsContrastFlip = !(itsImpl->itsContrastFlip);
-  itsImpl->itsData.flipContrast();
+  rep->itsContrastFlip = !(rep->itsContrastFlip);
+  rep->itsData.flipContrast();
 
   this->sigNodeChanged.emit();
 }
@@ -313,8 +322,8 @@ void Bitmap::flipVertical()
 {
 DOTRACE("Bitmap::flipVertical");
 
-  itsImpl->itsVerticalFlip = !(itsImpl->itsVerticalFlip);
-  itsImpl->itsData.flipVertical();
+  rep->itsVerticalFlip = !(rep->itsVerticalFlip);
+  rep->itsData.flipVertical();
 
   this->sigNodeChanged.emit();
 }
@@ -323,16 +332,22 @@ void Bitmap::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Bitmap::grRender");
 
-  itsImpl->itsRenderer->doRender(canvas,
-                                 itsImpl->itsData,
-                                 Gfx::Vec2<double>(),
-                                 getZoom());
+  Gfx::Vec2<double> world_pos;
+
+  if (rep->itsData.bitsPerPixel() == 1 && rep->itsAsBitmap)
+    {
+      canvas.drawBitmap(rep->itsData, world_pos);
+    }
+  else
+    {
+      canvas.drawPixels(rep->itsData, world_pos, getZoom());
+    }
 
   if (isPurgeable())
     {
       // This const_cast is OK because we aren't changing the observable
       // state; we're just re-queuing the current filename
-      const_cast<BitmapImpl*>(itsImpl)->purge();
+      const_cast<BitmapImpl*>(rep)->purge();
     }
 }
 
@@ -355,32 +370,58 @@ DOTRACE("Bitmap::grGetBoundingBox");
 }
 
 Gfx::Vec2<int> Bitmap::size() const
-  { return itsImpl->itsData.size(); }
+  { return rep->itsData.size(); }
 
 Gfx::Vec2<double> Bitmap::getZoom() const
-  { return itsImpl->itsUsingZoom ? itsImpl->itsZoom : defaultZoom; }
+  { return rep->itsUsingZoom ? rep->itsZoom : defaultZoom; }
 
 bool Bitmap::getUsingZoom() const
-  { return itsImpl->itsUsingZoom; }
+  { return rep->itsUsingZoom; }
 
 bool Bitmap::isPurgeable() const
-  { return itsImpl->itsPurgeable; }
+  { return rep->itsPurgeable; }
 
 const char* Bitmap::filename() const
-  { return itsImpl->itsFilename.c_str(); }
+  { return rep->itsFilename.c_str(); }
+
+bool Bitmap::getAsBitmap() const
+{
+DOTRACE("Bitmap::getAsBitmap");
+  return rep->itsAsBitmap;
+}
 
 //////////////////
 // manipulators //
 //////////////////
 
 void Bitmap::setZoom(Gfx::Vec2<double> zoom)
-  { itsImpl->itsZoom = zoom; this->sigNodeChanged.emit(); }
+  { rep->itsZoom = zoom; this->sigNodeChanged.emit(); }
 
 void Bitmap::setUsingZoom(bool val)
-  { itsImpl->itsUsingZoom = val; this->sigNodeChanged.emit(); }
+{
+  rep->itsUsingZoom = val;
+
+  // glPixelZoom() does not work with glBitmap()
+  if (rep->itsUsingZoom)
+    rep->itsAsBitmap = false;
+
+  this->sigNodeChanged.emit();
+}
 
 void Bitmap::setPurgeable(bool val)
-  { itsImpl->itsPurgeable = val; this->sigNodeChanged.emit(); }
+  { rep->itsPurgeable = val; this->sigNodeChanged.emit(); }
+
+void Bitmap::setAsBitmap(bool val)
+{
+DOTRACE("Bitmap::setAsBitmap");
+  rep->itsAsBitmap = val;
+
+  // glPixelZoom() does not work with glBitmap()
+  if (rep->itsAsBitmap)
+    rep->itsUsingZoom = false;
+
+  this->sigNodeChanged.emit();
+}
 
 static const char vcid_bitmap_cc[] = "$Header$";
 #endif // !BITMAP_CC_DEFINED

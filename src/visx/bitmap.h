@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 20 16:45:07 2002
+// written: Wed Nov 20 16:50:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@ namespace Gfx
 
 class BitmapImpl;
 
-class BmapRenderer;
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -41,14 +39,17 @@ class BmapRenderer;
 
 class Bitmap : public GxShapeKit
 {
-public:
-
   //////////////
   // creators //
   //////////////
 
+protected:
   /// Create an empty bitmap.
-  Bitmap(shared_ptr<BmapRenderer> renderer);
+  Bitmap();
+
+public:
+  /// Default creator.
+  static Bitmap* make();
 
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Bitmap();
@@ -117,6 +118,9 @@ public:
   /// Get the name (if any) of the file associated with this bitmap image.
   const char* filename() const;
 
+  /** Query whether the image will be rendered as 1-bit bitmap. */
+  bool getAsBitmap() const;
+
   //////////////////
   // manipulators //
   //////////////////
@@ -130,12 +134,11 @@ public:
   /// Change whether the image data are purgeable.
   void setPurgeable(bool val);
 
+  /// Change whether the image will be rendered as a 1-bit bitmap.
+  void setAsBitmap(bool val);
+
 protected:
   /// Implements the \c GxShapeKit rendering operation.
-  /** The rendering is delegated to the \c BmapRenderer passed to the
-      constructor. Therefore, subclasses of \c Bitmap should not override
-      \c grRender(), but should instead provide a specialized \c
-      BmapRenderer. */
   virtual void grRender(Gfx::Canvas& canvas) const;
 
   virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
