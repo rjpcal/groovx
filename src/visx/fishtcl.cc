@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Fri Nov 10 17:04:01 2000
+// written: Mon Nov 13 21:57:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "io/iofactory.h"
 
+#include "tcl/fieldpkg.h"
 #include "tcl/listitempkg.h"
 #include "tcl/tracertcl.h"
 
@@ -57,7 +58,7 @@ public:
 	 Tcl::addTracing(this, Fish::tracer);
 
 	 addCommand( new FishCmd(interp, "Fish::Fish") );
-	 declareAllProperties();
+	 Tcl::declareAllFields(this, Fish::classFields());
   }
 };
 
