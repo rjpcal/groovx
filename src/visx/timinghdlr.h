@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Sat Jul 21 20:23:34 2001
+// written: Sat Jul 21 21:08:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,11 +20,6 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
 #include "util/stopwatch.h"
 #endif
-
-namespace GWT
-{
-  class Widget;
-}
 
 namespace Util
 {
@@ -82,8 +77,7 @@ public:
   // actions //
   /////////////
 
-  virtual void thBeginTrial(Util::WeakRef<GWT::Widget> widget,
-                            Util::ErrorHandler& eh, TrialBase& trial);
+  virtual void thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh);
   virtual void thResponseSeen();
   virtual void thAbortTrial();
 

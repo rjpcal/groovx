@@ -17,8 +17,6 @@
 
 #include "trialevent.h"
 
-#include "gwt/widget.h"
-
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
@@ -61,7 +59,6 @@ public:
     itsResponseEvents(),
     itsAbortEvents(),
     itsTimer(),
-    itsWidget(),
     itsErrorHandler(0),
     itsTrial(0)
     {}
@@ -76,7 +73,6 @@ public:
   mutable StopWatch itsTimer;
 
 private:
-  Util::WeakRef<GWT::Widget> itsWidget;
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
@@ -88,8 +84,7 @@ public:
   void thHaltExpt();
   void thAbortTrial();
   void thResponseSeen();
-  void thBeginTrial(Util::WeakRef<GWT::Widget> widget,
-                    Util::ErrorHandler& eh, TrialBase& trial);
+  void thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -270,12 +265,11 @@ void TimingHdlr::Impl::scheduleAll(EventGroup& events)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsTrial != 0);
-  Precondition(itsWidget.isValid());
   Precondition(itsErrorHandler != 0);
 
   for (size_t i = 0; i < events.size(); ++i)
     {
-      events[i]->schedule(itsWidget, *itsErrorHandler, *itsTrial);
+      events[i]->schedule(*itsTrial, *itsErrorHandler);
     }
 }
 
@@ -294,14 +288,12 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::thBeginTrial(Util::WeakRef<GWT::Widget> widget,
-                                    Util::ErrorHandler& eh, TrialBase& trial)
+void TimingHdlr::Impl::thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh)
 {
 DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
   itsTimer.restart();
 
-  itsWidget = widget;
   itsErrorHandler = &eh;
   itsTrial = &trial;
 
@@ -351,9 +343,8 @@ void TimingHdlr::thAbortTrial()
 void TimingHdlr::thResponseSeen()
   { itsImpl->thResponseSeen(); }
 
-void TimingHdlr::thBeginTrial(Util::WeakRef<GWT::Widget> widget,
-                              Util::ErrorHandler& eh, TrialBase& trial)
-  { itsImpl->thBeginTrial(widget, eh, trial); }
+void TimingHdlr::thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh)
+  { itsImpl->thBeginTrial(trial, eh); }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";
 #endif // !TIMINGHDLR_CC_DEFINED
