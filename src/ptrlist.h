@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Thu May 27 20:05:23 1999
+// written: Thu Jun 10 20:39:09 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -83,13 +83,13 @@ public:
   // manipulators //
   //////////////////
 
-  int insert(T* ptr);
+  virtual int insert(T* ptr);
   // Add ptr at the next available location, and return the index
   // where it was inserted. If necessary, the list will be expanded to
   // make room for the ptr. The PtrList now assumes control of the
   // memory management for the object *ptr.
 
-  void insertAt(int id, T* ptr);
+  virtual void insertAt(int id, T* ptr);
   // Add obj at index 'id', destroying any the object was previously
   // pointed to from that that location. The list will be expanded if
   // 'id' exceeds the size of the list. If id is < 0, the function
