@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri May 18 17:02:37 2001
+// written: Fri May 18 17:10:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,13 @@ DOTRACE("GLBitmap::make");
 
 GLBitmap::GLBitmap() :
   GLRHolder(make_shared(new GLBmapRenderer())),
-  Bitmap(itsRenderer)
+  Bitmap(
+#ifndef ACC_COMPILER
+			itsRenderer
+#else
+			shared_ptr<BmapRenderer>(itsRenderer)
+#endif
+			)  
 {
 DOTRACE("GLBitmap::GLBitmap");
   init();
@@ -46,7 +52,13 @@ DOTRACE("GLBitmap::GLBitmap");
 
 GLBitmap::GLBitmap(const char* filename) :
   GLRHolder(make_shared(new GLBmapRenderer())),
-  Bitmap(itsRenderer, filename)
+  Bitmap(
+#ifndef ACC_COMPILER
+			itsRenderer
+#else
+			shared_ptr<BmapRenderer>(itsRenderer)
+#endif
+			, filename)
 {
 DOTRACE("GLBitmap::GLBitmap");
   init(); 

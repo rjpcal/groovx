@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri May 18 17:01:56 2001
+// written: Fri May 18 17:10:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,13 @@ DOTRACE("XBitmap::make");
 
 XBitmap::XBitmap() :
   XRHolder(make_shared(new XBmapRenderer())),
-  Bitmap(itsRenderer)
+  Bitmap(
+#ifndef ACC_COMPILER
+			itsRenderer
+#else
+			shared_ptr<BmapRenderer>(itsRenderer)
+#endif
+			)  
 {
 DOTRACE("XBitmap::XBitmap");
   init();
@@ -49,7 +55,13 @@ DOTRACE("XBitmap::XBitmap");
 
 XBitmap::XBitmap(const char* filename) :
   XRHolder(make_shared(new XBmapRenderer())),
-  Bitmap(itsRenderer, filename)
+  Bitmap(
+#ifndef ACC_COMPILER
+			itsRenderer
+#else
+			shared_ptr<BmapRenderer>(itsRenderer)
+#endif
+			, filename)
 {
 DOTRACE("XBitmap::XBitmap");
   init();
