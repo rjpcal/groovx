@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Aug 20 12:19:38 2001
+// written: Mon Aug 20 13:34:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,15 @@
 #include "util/tostring.h"
 #endif
 
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -220,6 +229,18 @@ public:
     do_append(part4); return *this;
   }
 
+  //
+  // Input/Output
+  //
+
+  void read(STD_IO::istream& is);
+
+  void write(STD_IO::ostream& os) const;
+
+  void readline(STD_IO::istream& is);
+
+  void readline(STD_IO::istream& is, char eol);
+
 private:
   void do_append(Util::CharData cdata)
   { append_text(cdata.len, cdata.text); }
@@ -277,23 +298,25 @@ inline bool operator==(const fstring& lhs, const fstring& rhs)
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
-#endif
+inline STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str)
+{
+  str.read(is); return is;
+}
 
-STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str);
+inline STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str)
+{
+  str.write(os); return os;
+}
 
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str);
+inline STD_IO::istream& getline(STD_IO::istream& is, fstring& str)
+{
+  str.readline(is); return is;
+}
 
-STD_IO::istream& getline(STD_IO::istream& is, fstring& str);
-
-STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol);
+inline STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol)
+{
+  str.readline(is, eol); return is;
+}
 
 static const char vcid_strings_h[] = "$Header$";
 #endif // !STRINGS_H_DEFINED
