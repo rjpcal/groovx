@@ -38,10 +38,13 @@ namespace Tcl
     Tcl::defGenericObjCmds<C>(pkg);
 
     Tcl::defAllFields(pkg, C::classFields());
-
-    Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
   }
 
+  template <class C>
+  void defCreator(Pkg*)
+  {
+    Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
+  }
 }
 
 static const char vcid_fieldpkg_h[] = "$Header$";
