@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Oct 20 10:07:46 1999
+// written: Tue Nov  2 14:18:09 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -259,20 +259,6 @@ protected:
   int grDisplayList() const;
   // This function returns the id of the OpenGL display list that
   // should be compiled in grRecompile.
-
-  private: void grNewList() const;
-  // This function deletes any previous display list, allocates a new
-  // display list, and checks that the allocation actually succeeded.
-
-  private: void grRecompile() const;
-  // This function updates the cached OpenGL display list.
-
-  private: void grRecacheBitmap() const;
-  // This function updates the cached bitmap.
-
-  private: void grDoScaling() const;
-
-  private: void grDoAlignment() const;
 
   friend class GrObjImpl;
 private:
