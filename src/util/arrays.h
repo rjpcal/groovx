@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Thu May 10 12:04:36 2001
+// written: Wed Jul 11 13:20:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,18 +60,18 @@ struct static_block {
   const_reference operator[](size_type n) const { return data[n]; }
 
   reference at(size_type n)
-	 {
-		if ( n >= N )
-		  throw Util::out_of_range();
-		return data[n];
-	 }
+    {
+      if ( n >= N )
+        throw Util::out_of_range();
+      return data[n];
+    }
 
   const_reference at(size_type n) const
-	 {
-		if ( n >= N )
-		  throw Util::out_of_range();
-		return data[n];
-	 }
+    {
+      if ( n >= N )
+        throw Util::out_of_range();
+      return data[n];
+    }
 
   size_type size() const { return N; }
 
@@ -80,11 +80,11 @@ struct static_block {
   bool empty() const { return (N == 0); }
 
   void swap(static_block& other)
-	 {
-		static_block other_copy = other;
-		other = *this;
-		*this = other_copy;
-	 }
+    {
+      static_block other_copy = other;
+      other = *this;
+      *this = other_copy;
+    }
 
   T data[N];
 };
@@ -107,6 +107,19 @@ private:
 
   fixed_block<T>& operator=(const fixed_block<T>& other);
 
+  template <class Itr>
+  void assign(Itr thatitr, Itr thatend)
+    {
+      iterator thisitr = begin(), thisend = end();
+
+      while (thatitr != thatend && thisitr != thisend)
+        {
+          *thisitr = *thatitr;
+          ++thisitr;
+          ++thatitr;
+        }
+    }
+
 public:
 
   typedef T value_type;
@@ -125,6 +138,12 @@ public:
   fixed_block(size_type n) : N(n), data(new T[N]) {}
   ~fixed_block() { delete [] data; }
 
+  template <class Itr>
+  fixed_block(Itr itr, Itr end) : N(end-itr), data(new T[N])
+    {
+      assign(itr, end);
+    }
+
   iterator begin() { return data; }
   iterator end() { return data+N; }
 
@@ -135,18 +154,18 @@ public:
   const_reference operator[](size_type n) const { return data[n]; }
 
   reference at(size_type n)
-	 {
-		if ( n >= N )
-		  throw Util::out_of_range();
-		return data[n];
-	 }
+    {
+      if ( n >= N )
+        throw Util::out_of_range();
+      return data[n];
+    }
 
   const_reference at(size_type n) const
-	 {
-		if ( n >= N )
-		  throw Util::out_of_range();
-		return data[n];
-	 }
+    {
+      if ( n >= N )
+        throw Util::out_of_range();
+      return data[n];
+    }
 
   size_type size() const { return N; }
 
@@ -155,15 +174,15 @@ public:
   bool empty() const { return (N == 0); }
 
   void swap(fixed_block& other)
-	 {
-		size_type other_N = other.N;
-		other.N = this->N;
-		this->N = other_N;
+    {
+      size_type other_N = other.N;
+      other.N = this->N;
+      this->N = other_N;
 
-		T* other_data = other.data;
-		other.data = this->data;
-		this->data = other_data;
-	 }
+      T* other_data = other.data;
+      other.data = this->data;
+      this->data = other_data;
+    }
 
 private:
   size_type N;
@@ -201,17 +220,17 @@ public:
   dynamic_block(size_type n = 0) : N(n), data(new T[N]) {}
 
   dynamic_block(const dynamic_block<T>& other) :
-	 N(other.N), data(new T[N])
-	 {
-		assign_varsize(other, *this);
-	 }
+    N(other.N), data(new T[N])
+    {
+      assign_varsize(other, *this);
+    }
 
   dynamic_block<T>& operator=(const dynamic_block<T>& other)
-	 {
-		dynamic_block temp(other);
-		this->swap(temp);
-		return *this;
-	 }
+    {
+      dynamic_block temp(other);
+      this->swap(temp);
+      return *this;
+    }
 
   ~dynamic_block() { delete [] data; }
 
@@ -225,18 +244,18 @@ public:
   const_reference operator[](size_type n) const { return data[n]; }
 
   reference at(size_type n)
-	 {
-		if ( n >= N )
-		  throw Util::out_of_range();
-		return data[n];
-	 }
+    {
+      if ( n >= N )
+        throw Util::out_of_range();
+      return data[n];
+    }
 
   const_reference at(size_type n) const
-	 {
-		if ( n >= N )
-		  throw Util::out_of_range();
-		return data[n];
-	 }
+    {
+      if ( n >= N )
+        throw Util::out_of_range();
+      return data[n];
+    }
 
   size_type size() const { return N; }
 
@@ -245,49 +264,49 @@ public:
   bool empty() const { return (N == 0); }
 
   void swap(dynamic_block& other)
-	 {
-		size_type other_N = other.N;
-		other.N = this->N;
-		this->N = other_N;
+    {
+      size_type other_N = other.N;
+      other.N = this->N;
+      this->N = other_N;
 
-		T* other_data = other.data;
-		other.data = this->data;
-		this->data = other_data;
-	 }
+      T* other_data = other.data;
+      other.data = this->data;
+      this->data = other_data;
+    }
 
   void resize(size_type new_size)
-	 {
-		dynamic_block temp(new_size);
-		assign_varsize(*this, temp);
-		this->swap(temp);
-	 }
+    {
+      dynamic_block temp(new_size);
+      assign_varsize(*this, temp);
+      this->swap(temp);
+    }
 
   template <class RandomAccessIterator>
   void assign(RandomAccessIterator start, RandomAccessIterator finish)
-	 {
-		int num = finish-start;
-		if (num < 0) 
-		  {
-			 resize(0);
-			 return;
-		  }
-		resize(num);
-		iterator ii = begin();
-		while (start != finish)
-		  *ii++ = *start++;
-	 }
+    {
+      int num = finish-start;
+      if (num < 0)
+        {
+          resize(0);
+          return;
+        }
+      resize(num);
+      iterator ii = begin();
+      while (start != finish)
+        *ii++ = *start++;
+    }
 
 private:
   static void assign_varsize(const dynamic_block& b_from, dynamic_block& b_to)
-	 {
-		const_iterator from = b_from.begin();
-		iterator to = b_to.begin();
+    {
+      const_iterator from = b_from.begin();
+      iterator to = b_to.begin();
 
-		while(from != b_from.end() && to != b_to.end())
-		  {
-			 *to++ = *from++;
-		  }
-	 }
+      while(from != b_from.end() && to != b_to.end())
+        {
+          *to++ = *from++;
+        }
+    }
 
   size_type N;
   T* data;
