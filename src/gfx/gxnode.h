@@ -3,7 +3,7 @@
 // gxnode.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov  1 18:26:45 2000
-// written: Wed Nov  1 18:31:58 2000
+// written: Thu Nov  2 13:50:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,14 @@ public:
 
   /// Get the value of the user-defined category. Default returns -1.
   virtual int getCategory() const;
+
+  /** Returns true if \a other is contained within this node in the
+      scene graph. The default implementation (for leaf nodes) returns
+      true only if this == other. For composite nodes, the function
+      will check recursively is \a other is contained within the
+      composite structure. This function is used to avoid generated
+      cycles in the scene graph. */
+  virtual bool contains(GxNode* other) const;
 
   /// Draw the object on \a canvas.
   virtual void draw(GWT::Canvas& canvas) const = 0;

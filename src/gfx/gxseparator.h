@@ -3,7 +3,7 @@
 // gxseparator.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu Nov  2 13:35:18 2000
+// written: Thu Nov  2 13:51:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,8 @@ public:
 
   ChildItr beginChildren() const;
   ChildItr endChildren() const;
+
+  virtual bool contains(GxNode* other) const;
 
   /// Draw all of the contained objects on \a canvas.
   virtual void draw(GWT::Canvas& canvas) const;

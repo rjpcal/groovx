@@ -3,7 +3,7 @@
 // gxnode.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov  1 18:27:15 2000
-// written: Wed Nov  1 18:32:34 2000
+// written: Thu Nov  2 13:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,11 @@ DOTRACE("GxNode::~GxNode");
 int GxNode::getCategory() const {
 DOTRACE("GxNode::getCategory");
   return -1;
+}
+
+bool GxNode::contains(GxNode* other) const {
+DOTRACE("GxNode::contains");
+  return (this == other);
 }
 
 static const char vcid_gxnode_cc[] = "$Header$";
