@@ -43,7 +43,9 @@ namespace geom
   class vec2
   {
   public:
-    vec2(V x=0, V y=0) : xx(x), yy(y) {}
+    vec2()         : xx(),  yy()  {} // default is zero-init
+
+    vec2(V x, V y) : xx(x), yy(y) {}
 
     template <class U>
     explicit vec2(const vec2<U>& other) : xx(V(other.x())), yy(V(other.y())) {}
