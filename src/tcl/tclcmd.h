@@ -33,6 +33,8 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
+#include "util/pointers.h"
+
 typedef struct Tcl_Obj Tcl_Obj;
 
 class fstring;
@@ -41,11 +43,23 @@ template <class T> class shared_ptr;
 
 namespace Tcl
 {
+  class Callback;
   class Command;
   class Context;
   class Dispatcher;
   class Interp;
 }
+
+class Tcl::Callback
+{
+public:
+  virtual ~Callback() throw();
+
+  /// Abstract function performs this command's specific functionality.
+  /** The \c Context& argument allows Tcl command arguments to be
+      retrieved, and allows the interpreter's result to be set.*/
+  virtual void invoke(Context& ctx) = 0;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -77,7 +91,7 @@ namespace Tcl
 
 class Tcl::Command
 {
-public:
+protected:
   /** Construct with basic properties for the command. If \a
       exact_objc is true, then the \a objc of a command invocation is
       required to be exactly equal either \a objc_min or \a objc_max;
@@ -85,11 +99,26 @@ public:
       objc_max, inclusive. If the value given for \a objc_max is
       negative, then the maximum objc will be set to the same value as
       \a objc_min. */
-  Command(Tcl::Interp& interp, const char* cmd_name, const char* usage,
+  Command(Tcl::Interp& interp,
+          shared_ptr<Tcl::Callback> callback,
+          const char* cmd_name, const char* usage,
           int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
+public:
+  static shared_ptr<Command> make(
+          Tcl::Interp& interp,
+          shared_ptr<Tcl::Callback> callback,
+          const char* cmd_name, const char* usage,
+          int objc_min=0, int objc_max=-1, bool exact_objc=false)
+  {
+    return shared_ptr<Command>(new Command(interp, callback,
+                                           cmd_name, usage,
+                                           objc_min, objc_max,
+                                           exact_objc));
+  }
+
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~Command() throw();
+  ~Command() throw();
 
   /// Returns the command registered name.
   const fstring& name() const;
@@ -103,10 +132,8 @@ public:
   /// Check if the given argument count is unacceptable.
   bool rejectsObjc(unsigned int objc) const;
 
-  /// Abstract function performs this command's specific functionality.
-  /** The \c Context& argument allows Tcl command arguments to be
-      retrieved, and allows the interpreter's result to be set.*/
-  virtual void invoke(Context& ctx) = 0;
+  /// Delegate to the Tcl::Callback object passed to the constructor.
+  void invoke(Context& ctx);
 
   /// Get the current Tcl::Dispatcher for this command.
   shared_ptr<Dispatcher> getDispatcher() const;
@@ -115,8 +142,8 @@ public:
   void setDispatcher(shared_ptr<Dispatcher> dpx);
 
 private:
-  Command(const Command&);
-  Command& operator=(const Command&);
+  Command(const Command&); // not implemented
+  Command& operator=(const Command&); // not implemented
 
   class Impl;
   Impl* const rep;

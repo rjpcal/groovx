@@ -339,26 +339,18 @@ namespace Tcl
 /// GenericCmd implements Tcl::Command using a held functor.
 
   template <class R, class Functor>
-  class GenericCmd : public Command
+  class GenericCallback : public Callback
   {
   protected:
-    GenericCmd<R, Functor>(Tcl::Interp& interp, Functor f,
-                           const char* cmd_name,
-                           const char* usage, int nargs) :
-      Command(interp, cmd_name, usage, nargs+1),
-      itsHeldFunc(f)
-    {}
+    GenericCallback<R, Functor>(Functor f) : itsHeldFunc(f) {}
 
   public:
-    static shared_ptr<GenericCmd> make(Tcl::Interp& interp, Functor f,
-                                       const char* cmd_name,
-                                       const char* usage, int nargs)
+    static shared_ptr<Callback> make(Functor f)
     {
-      return shared_ptr<GenericCmd>(new GenericCmd(interp, f, cmd_name,
-                                                   usage, nargs));
+      return shared_ptr<Callback>(new GenericCallback(f));
     }
 
-    virtual ~GenericCmd() throw() {}
+    virtual ~GenericCallback() throw() {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
@@ -374,26 +366,18 @@ namespace Tcl
 /// Specialization for functors with void return types.
 
   template <class Functor>
-  class GenericCmd<void, Functor> : public Command
+  class GenericCallback<void, Functor> : public Callback
   {
   protected:
-    GenericCmd<void, Functor>(Tcl::Interp& interp, Functor f,
-                              const char* cmd_name,
-                              const char* usage, int nargs) :
-      Command(interp, cmd_name, usage, nargs+1),
-      itsHeldFunc(f)
-    {}
+    GenericCallback<void, Functor>(Functor f) : itsHeldFunc(f) {}
 
   public:
-    static shared_ptr<GenericCmd> make(Tcl::Interp& interp, Functor f,
-                                       const char* cmd_name,
-                                       const char* usage, int nargs)
+    static shared_ptr<Callback> make(Functor f)
     {
-      return shared_ptr<GenericCmd>(new GenericCmd(interp, f, cmd_name,
-                                                   usage, nargs));
+      return shared_ptr<Callback>(new GenericCallback(f));
     }
 
-    virtual ~GenericCmd() throw() {}
+    virtual ~GenericCallback() throw() {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
@@ -416,8 +400,8 @@ namespace Tcl
                                 const char* usage, int nargs)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
-    return GenericCmd<Retn_t, Functor>::make
-      (interp, f, cmd_name, usage, nargs);
+    return Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
+                         cmd_name, usage, nargs+1);
   }
 
 
@@ -431,8 +415,9 @@ namespace Tcl
                                 int nargs, unsigned int keyarg)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
-    shared_ptr<Command> cmd = GenericCmd<Retn_t, Functor>::make
-      (interp, f, cmd_name, usage, nargs);
+    shared_ptr<Command> cmd =
+      Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
+                    cmd_name, usage, nargs+1);
     Tcl::useVecDispatch(cmd.get(), keyarg); // FIXME avoid get()
     return cmd;
   }

@@ -44,6 +44,14 @@ DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
+// Tcl::Callback
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl::Callback::~Callback() throw() {}
+
+///////////////////////////////////////////////////////////////////////
+//
 // Tcl::Dispatcher
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,8 +95,11 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(const char* cmd_name, const char* usg,
-       int objc_min, int objc_max, bool exact_objc) :
+  Impl(shared_ptr<Tcl::Callback> cback,
+       const char* cmd_name, const char* usg,
+       int objc_min, int objc_max, bool exact_objc)
+    :
+    callback(cback),
     dispatcher(theDefaultDispatcher),
     usage(usg ? usg : ""),
     objcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
@@ -100,6 +111,7 @@ public:
   ~Impl() throw() {}
 
   // These are set once per command object
+  shared_ptr<Tcl::Callback> callback;
   shared_ptr<Tcl::Dispatcher> dispatcher;
   const fstring usage;
   const unsigned int objcMin;
@@ -115,10 +127,11 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::Command::Command(Tcl::Interp& interp,
+                      shared_ptr<Tcl::Callback> callback,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc)
   :
-  rep(new Impl(cmd_name, usage, objc_min, objc_max, exact_objc))
+  rep(new Impl(callback, cmd_name, usage, objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
 
@@ -169,6 +182,11 @@ DOTRACE("Tcl::Command::rawUsage");
   if (!rep->usage.is_empty())
     result.append(" ", rep->usage);
   return result;
+}
+
+void Tcl::Command::invoke(Context& ctx)
+{
+  rep->callback->invoke(ctx);
 }
 
 shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const
