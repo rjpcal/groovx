@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Jul 22 16:38:02 2002
+// written: Mon Jul 22 16:55:20 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -127,95 +127,63 @@ PackageInfo DELAYED_PKGS[] = {};
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TclApp class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class TclApp : public GrshApp
-{
-public:
-  TclApp(int argc, char** argv, Tcl::Interp& interp);
-
-  int status() const { return itsStatus; }
-private:
-  int itsStatus;
-};
-
-TclApp::TclApp(int argc, char** argv, Tcl::Interp& interp) :
-  GrshApp(argc, argv, interp.intp()),
-  itsStatus(TCL_OK)
-{
-DOTRACE("TclApp::TclApp(Tcl_Interp*)");
-
-  {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
-    {
-#ifdef LOCAL_TRACE
-      std::cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
-#endif
-      int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
-      if (result != TCL_OK)
-        {
-          itsStatus = result;
-          std::cerr << "initialization failed: "
-                    << IMMEDIATE_PKGS[i].pkgName << '\n';
-          fstring msg = interp.getResult<const char*>();
-          if ( !msg.is_empty() )
-            std::cerr << '\t' << msg << '\n';
-          interp.resetResult();
-        }
-    }
-  }
-
-  // set prompt to "cmd[n]% " where cmd is the name of the program,
-  // and n is the history event number
-  interp.setGlobalVar("tcl_prompt1",
-                      "puts -nonewline \"([history nextid]) $argv0> \"");
-
-  // specifies a file to be 'source'd upon startup
-  interp.setGlobalVar("tcl_rcFileName", "./grsh_startup.tcl");
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// main
-//
-///////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// main() procedure
+// main procedure
 //
 ///////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
 {
-  Tcl::Main app(argc, argv);
-
   try
     {
+      Tcl::Main app(argc, argv);
+
+      GrshApp grshApp(argc, argv, app.interp());
+
       Tcl::Interp safeIntp(app.interp());
-      TclApp theApp(argc, argv, safeIntp);
+
+      for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
+        {
+#ifdef LOCAL_TRACE
+          std::cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
+#endif
+          int result = IMMEDIATE_PKGS[i].pkgInitProc(app.interp());
+          if (result != TCL_OK)
+            {
+              std::cerr << "initialization failed: "
+                        << IMMEDIATE_PKGS[i].pkgName << '\n';
+              fstring msg = safeIntp.getResult<const char*>();
+              if ( !msg.is_empty() )
+                std::cerr << '\t' << msg << '\n';
+              safeIntp.resetResult();
+            }
+        }
+
+      // set prompt to "cmd[n]% " where cmd is the name of the program,
+      // and n is the history event number
+      safeIntp.setGlobalVar("tcl_prompt1",
+                    "puts -nonewline \"([history nextid]) $argv0> \"");
+
+      // specifies a file to be 'source'd upon startup
+      safeIntp.setGlobalVar("tcl_rcFileName", "./grsh_startup.tcl");
 
       app.run();
       return 0;
     }
   catch (Util::Error& err)
     {
-      std::cerr << "uncaught Error: " << err.msg_cstr() << '\n';
+      std::cerr << "caught in main: Error ("
+                << demangle_cstr(typeid(err).name())
+                << "): " << err.msg_cstr() << '\n';
     }
   catch (std::exception& err)
     {
-      std::cerr << "uncaught std::exception of type "
+      std::cerr << "caught in main: std::exception ("
                 << demangle_cstr(typeid(err).name())
-                << " occurred: "
-                << err.what()
-                << '\n';
+                << "): " << err.what() << '\n';
     }
   catch (...)
     {
-      std::cerr << "uncaught exception of unknown type" << '\n';
+      std::cerr << "caught in main: (an exception of unknown type)\n";
     }
 
   // if we got here, then some error occurred
