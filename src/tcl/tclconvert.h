@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Wed Jun 26 12:31:12 2002
+// written: Mon Nov  4 10:48:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,65 +13,85 @@
 #ifndef TCLCONVERT_H_DEFINED
 #define TCLCONVERT_H_DEFINED
 
-struct Tcl_Obj;
+#include "util/traits.h"
 
-template <class T>
-struct TypeCue
-{
-  typedef T Type;
-};
+class fstring;
+class Value;
+struct Tcl_Obj;
 
 namespace Tcl
 {
+  class List;
   class ObjPtr;
 
   /// Trait class for extracting an appropriate return-type from T.
   template <class T>
   struct Return
   {
-    typedef T Type;
+    // This machinery is simple to set up the rule that we want to convert
+    // all Value subclasses via strings. All other types are converted
+    // directly.
+    typedef typename Util::SelectIf<Util::IsSubSuper<T, Value>::result,
+                                    fstring, T>::Type Type;
+  };
+
+  /// Specialization of Tcl::Return for const T.
+  template <class T>
+  struct Return<const T>
+  {
+    typedef typename Util::SelectIf<Util::IsSubSuper<T, Value>::result,
+                                    fstring, T>::Type Type;
   };
 
   /// Specialization of Tcl::Return for const T&.
   template <class T>
   struct Return<const T&>
   {
-    typedef T Type;
+    typedef typename Util::SelectIf<Util::IsSubSuper<T, Value>::result,
+                                    fstring, T>::Type Type;
   };
 
-  ///////////////////////////////////////////////////////////////////////
-  /**
-   *
-   * This struct template is the foundation for the interface between
-   * C++ and Tcl. Tcl::Convert has two functions, fromTcl() and
-   * toTcl(), which translate C++ objects from and to Tcl objects (in
-   * the form of Tcl_Obj*'s). Specializations for the basic numeric
-   * and string types are provided in the implementation file, along
-   * with specializations for Tcl types such as Tcl::List. Clients can
-   * also provide their own specializations for other types. In
-   * particular, Tcl::MemFunctor's convert Util::Object's to and from
-   * Tcl by using their Util::UID's as handles.
-   *
-   **/
-  ///////////////////////////////////////////////////////////////////////
+  //
+  // Functions for converting from Tcl objects to C++ types.
+  //
+
+  Tcl_Obj*      fromTcl(Tcl_Obj* obj, Tcl_Obj**);
+  Tcl::ObjPtr   fromTcl(Tcl_Obj* obj, Tcl::ObjPtr*);
+  int           fromTcl(Tcl_Obj* obj, int*);
+  unsigned int  fromTcl(Tcl_Obj* obj, unsigned int*);
+  long          fromTcl(Tcl_Obj* obj, long*);
+  unsigned long fromTcl(Tcl_Obj* obj, unsigned long*);
+  bool          fromTcl(Tcl_Obj* obj, bool*);
+  double        fromTcl(Tcl_Obj* obj, double*);
+  float         fromTcl(Tcl_Obj* obj, float*);
+  const char*   fromTcl(Tcl_Obj* obj, const char**);
+  fstring       fromTcl(Tcl_Obj* obj, fstring*);
+  Tcl::List     fromTcl(Tcl_Obj* obj, Tcl::List*);
 
   template <class T>
-  struct Convert
+  inline typename Return<T>::Type toNative( Tcl_Obj* obj )
   {
-    /// Convert the Tcl object to C++.
-    static typename Return<T>::Type   fromTcl( Tcl_Obj* obj );
+    return fromTcl(obj, (typename Return<T>::Type*)0);
+  }
 
-    /// Convert the C++ object to Tcl.
-    static Tcl::ObjPtr                  toTcl( T val );
-  };
+  //
+  // Functions for converting from C++ types to Tcl objects.
+  //
 
-  /// Specialization for (trivially) extracting Tcl_Obj* from Tcl_Obj*.
-  template <>
-  Tcl_Obj*  Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj );
-
-  /// Specialization for (trivially) converting Tcl_Obj* to Tcl::ObjPtr.
-  template <>
-  Tcl::ObjPtr Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val );
+  Tcl::ObjPtr toTcl(Tcl_Obj* val);
+  Tcl::ObjPtr toTcl(long val);
+  Tcl::ObjPtr toTcl(unsigned long val);
+  Tcl::ObjPtr toTcl(int val);
+  Tcl::ObjPtr toTcl(unsigned int val);
+  Tcl::ObjPtr toTcl(unsigned char val);
+  Tcl::ObjPtr toTcl(bool val);
+  Tcl::ObjPtr toTcl(double val);
+  Tcl::ObjPtr toTcl(float val);
+  Tcl::ObjPtr toTcl(const char* val);
+  Tcl::ObjPtr toTcl(const fstring& val);
+  Tcl::ObjPtr toTcl(const Value& val);
+  Tcl::ObjPtr toTcl(Tcl::List listObj);
+  Tcl::ObjPtr toTcl(Tcl::ObjPtr val);
 }
 
 static const char vcid_tclconvert_h[] = "$Header$";

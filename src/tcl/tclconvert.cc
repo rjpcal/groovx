@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Thu Sep 12 15:09:03 2002
+// written: Sun Nov  3 09:10:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,34 +80,21 @@ namespace
   }
 }
 
-template <>
-Tcl_Obj* Tcl::Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj ) { return obj; }
-
-template <>
-Tcl::ObjPtr Tcl::Convert<Tcl::ObjPtr>::fromTcl( Tcl_Obj* obj ) { return obj; }
-
-template <>
-Tcl::ObjPtr Tcl::Convert<const Tcl::ObjPtr&>::fromTcl( Tcl_Obj* obj )
-{ return obj; }
-
-template <>
-Tcl::ObjPtr Tcl::Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val )
-{
-  Tcl::ObjPtr result;
-  result = val;
-  return result;
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // (Tcl --> C++) fromTcl specializations
 //
 ///////////////////////////////////////////////////////////////////////
 
-template <>
-int Tcl::Convert<int>::fromTcl(Tcl_Obj* obj)
+Tcl_Obj* Tcl::fromTcl(Tcl_Obj* obj, Tcl_Obj**)
+{ return obj; }
+
+Tcl::ObjPtr Tcl::fromTcl(Tcl_Obj* obj, Tcl::ObjPtr*)
+{ return obj; }
+
+int Tcl::fromTcl(Tcl_Obj* obj, int*)
 {
-DOTRACE("Tcl::Convert<int>::fromTcl");
+DOTRACE("Tcl::fromTcl(int*)");
 
   int val;
 
@@ -121,22 +108,20 @@ DOTRACE("Tcl::Convert<int>::fromTcl");
   return val;
 }
 
-template <>
-unsigned int Tcl::Convert<unsigned int>::fromTcl(Tcl_Obj* obj)
+unsigned int Tcl::fromTcl(Tcl_Obj* obj, unsigned int*)
 {
-DOTRACE("Tcl::Convert<unsigned int>::fromTcl");
+DOTRACE("Tcl::fromTcl(unsigned int*)");
 
-  int sval = Convert<int>::fromTcl(obj);
+  int sval = fromTcl(obj, (int*)0);
 
   ensurePositive(sval);
 
   return (unsigned int) sval;
 }
 
-template <>
-long Tcl::Convert<long>::fromTcl(Tcl_Obj* obj)
+long Tcl::fromTcl(Tcl_Obj* obj, long*)
 {
-DOTRACE("Tcl::Convert<long>::fromTcl");
+DOTRACE("Tcl::fromTcl(long*)");
 
   long val;
 
@@ -150,22 +135,20 @@ DOTRACE("Tcl::Convert<long>::fromTcl");
   return val;
 }
 
-template <>
-unsigned long Tcl::Convert<unsigned long>::fromTcl(Tcl_Obj* obj)
+unsigned long Tcl::fromTcl(Tcl_Obj* obj, unsigned long*)
 {
-DOTRACE("Tcl::Convert<unsigned long>::fromTcl");
+DOTRACE("Tcl::fromTcl(unsigned long*)");
 
-  long sval = Convert<long>::fromTcl(obj);
+  long sval = fromTcl(obj, (long*)0);
 
   ensurePositive(sval);
 
   return (unsigned long) sval;
 }
 
-template <>
-bool Tcl::Convert<bool>::fromTcl(Tcl_Obj* obj)
+bool Tcl::fromTcl(Tcl_Obj* obj, bool*)
 {
-DOTRACE("Tcl::Convert<bool>::fromTcl");
+DOTRACE("Tcl::fromTcl(bool*)");
 
   int int_val;
 
@@ -179,10 +162,9 @@ DOTRACE("Tcl::Convert<bool>::fromTcl");
   return bool(int_val);
 }
 
-template <>
-double Tcl::Convert<double>::fromTcl(Tcl_Obj* obj)
+double Tcl::fromTcl(Tcl_Obj* obj, double*)
 {
-DOTRACE("Tcl::Convert<double>::fromTcl");
+DOTRACE("Tcl::fromTcl(double*)");
 
   double val;
 
@@ -196,26 +178,23 @@ DOTRACE("Tcl::Convert<double>::fromTcl");
   return val;
 }
 
-template <>
-float Tcl::Convert<float>::fromTcl(Tcl_Obj* obj)
+float Tcl::fromTcl(Tcl_Obj* obj, float*)
 {
-DOTRACE("Tcl::Convert<float>::fromTcl");
+DOTRACE("Tcl::fromTcl(float*)");
 
-  return float(Convert<double>::fromTcl(obj));
+  return float(fromTcl(obj, (double*)0));
 }
 
-template <>
-const char* Tcl::Convert<const char*>::fromTcl(Tcl_Obj* obj)
+const char* Tcl::fromTcl(Tcl_Obj* obj, const char**)
 {
-DOTRACE("Tcl::Convert<const char*>::fromTcl");
+DOTRACE("Tcl::fromTcl(const char**)");
 
   return Tcl_GetString(obj);
 }
 
-template <>
-fstring Tcl::Convert<fstring>::fromTcl(Tcl_Obj* obj)
+fstring Tcl::fromTcl(Tcl_Obj* obj, fstring*)
 {
-DOTRACE("Tcl::Convert<fstring>::fromTcl");
+DOTRACE("Tcl::fromTcl(fstring*)");
 
   int length;
 
@@ -226,18 +205,9 @@ DOTRACE("Tcl::Convert<fstring>::fromTcl");
   return fstring(Util::CharData(text, (unsigned int) length));
 }
 
-template <>
-fstring Tcl::Convert<const fstring&>::fromTcl(Tcl_Obj* obj)
+Tcl::List Tcl::fromTcl(Tcl_Obj* obj, Tcl::List*)
 {
-DOTRACE("Tcl::Convert<fstring>::fromTcl");
-
-  return Convert<fstring>::fromTcl(obj);
-}
-
-template <>
-Tcl::List Tcl::Convert<Tcl::List>::fromTcl(Tcl_Obj* obj)
-{
-DOTRACE("Tcl::Convert<Tcl::List>::fromTcl");
+DOTRACE("Tcl::fromTcl(Tcl::List*)");
 
   return Tcl::List(obj);
 }
@@ -249,136 +219,109 @@ DOTRACE("Tcl::Convert<Tcl::List>::fromTcl");
 //
 ///////////////////////////////////////////////////////////////////////
 
-template <>
-Tcl::ObjPtr Tcl::Convert<long>::toTcl(long val)
+Tcl::ObjPtr Tcl::toTcl(Tcl_Obj* val)
 {
-DOTRACE("Tcl::Convert<long>::toTcl");
+DOTRACE("Tcl::toTcl(Tcl_Obj*)");
+  Tcl::ObjPtr result;
+  result = val;
+  return result;
+}
+
+Tcl::ObjPtr Tcl::toTcl(long val)
+{
+DOTRACE("Tcl::toTcl(long)");
 
   return Tcl_NewLongObj(val);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<unsigned long>::toTcl(unsigned long val)
+Tcl::ObjPtr Tcl::toTcl(unsigned long val)
 {
-DOTRACE("Tcl::Convert<unsigned long>::toTcl");
+DOTRACE("Tcl::toTcl(unsigned long)");
 
   long sval(val);
 
   ensurePositive(sval);
 
-  return Convert<long>::toTcl(sval);
+  return Tcl_NewLongObj(sval);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<int>::toTcl(int val)
+Tcl::ObjPtr Tcl::toTcl(int val)
 {
-DOTRACE("Tcl::Convert<int>::toTcl");
+DOTRACE("Tcl::toTcl(int)");
 
   return Tcl_NewIntObj(val);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<unsigned int>::toTcl(unsigned int val)
+Tcl::ObjPtr Tcl::toTcl(unsigned int val)
 {
-DOTRACE("Tcl::Convert<unsigned int>::toTcl");
+DOTRACE("Tcl::toTcl(unsigned int)");
 
   int sval(val);
 
   ensurePositive(sval);
 
-  return Convert<int>::toTcl(sval);
+  return Tcl_NewIntObj(sval);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<unsigned char>::toTcl(unsigned char val)
+Tcl::ObjPtr Tcl::toTcl(unsigned char val)
 {
-DOTRACE("Tcl::Convert<unsigne char>::toTcl");
+DOTRACE("Tcl::toTcl(unsigne char)");
 
-  return Convert<unsigned int>::toTcl(val);
+  return Tcl_NewIntObj(val);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<bool>::toTcl(bool val)
+Tcl::ObjPtr Tcl::toTcl(bool val)
 {
-DOTRACE("Tcl::Convert<bool>::toTcl");
+DOTRACE("Tcl::toTcl(bool)");
 
   return Tcl_NewBooleanObj(val);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<double>::toTcl(double val)
+Tcl::ObjPtr Tcl::toTcl(double val)
 {
-DOTRACE("Tcl::Convert<double>::toTcl");
+DOTRACE("Tcl::toTcl(double)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<float>::toTcl(float val)
+Tcl::ObjPtr Tcl::toTcl(float val)
 {
-DOTRACE("Tcl::Convert<float>::toTcl");
+DOTRACE("Tcl::toTcl(float)");
 
-  return Convert<double>::toTcl(val);
+  return Tcl_NewDoubleObj(val);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<const char*>::toTcl(const char* val)
+Tcl::ObjPtr Tcl::toTcl(const char* val)
 {
-DOTRACE("Tcl::Convert<const char*>::toTcl");
+DOTRACE("Tcl::toTcl(const char*)");
 
   return Tcl_NewStringObj(val, -1);
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<char*>::toTcl(char* val)
+Tcl::ObjPtr Tcl::toTcl(const fstring& val)
 {
-  return Convert<const char*>::toTcl(val);
-}
-
-template <>
-Tcl::ObjPtr Tcl::Convert<const fstring&>::toTcl(const fstring& val)
-{
-DOTRACE("Tcl::Convert<const fstring&>::toTcl");
+DOTRACE("Tcl::toTcl(const fstring&)");
 
   return Tcl_NewStringObj(val.c_str(), val.length());
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<fstring>::toTcl(fstring val)
+Tcl::ObjPtr Tcl::toTcl(const Value& val)
 {
-  return Convert<const fstring&>::toTcl(val);
+DOTRACE("Tcl::toTcl(const Value&)");
+
+  return Tcl_NewStringObj(val.getCstring(), -1);
 }
 
-namespace Tcl
+Tcl::ObjPtr Tcl::toTcl(Tcl::List listObj)
 {
-  // FIXME FIXME FIXME !!!
-  template <>
-  struct Return<const Value&>
-  {
-    typedef void Type;
-  };
-}
-
-template <>
-Tcl::ObjPtr Tcl::Convert<const Value&>::toTcl(const Value& val)
-{
-DOTRACE("Tcl::Convert<const Value&>::toTcl");
-
-  return Tcl::ObjPtr(val.getCstring());
-}
-
-template <>
-Tcl::ObjPtr Tcl::Convert<Tcl::List>::toTcl(Tcl::List listObj)
-{
-DOTRACE("Tcl::Convert<Tcl::List>::toTcl");
+DOTRACE("Tcl::toTcl(Tcl::List)");
 
   return listObj.asObj();
 }
 
-template <>
-Tcl::ObjPtr Tcl::Convert<Tcl::ObjPtr>::toTcl(Tcl::ObjPtr val)
+Tcl::ObjPtr Tcl::toTcl(Tcl::ObjPtr val)
 {
-DOTRACE("Tcl::Convert<Tcl::ObjPtr>::toTcl");
+DOTRACE("Tcl::toTcl(Tcl::ObjPtr)");
 
   return val;
 }
