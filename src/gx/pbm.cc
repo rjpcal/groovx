@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Wed Mar 19 17:55:57 2003
+// written: Fri May  2 15:33:00 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -184,13 +184,18 @@ void Pbm::load(STD_IO::istream& is, Gfx::BmapData& data)
 DOTRACE("Pbm::load");
   if (is.fail())
     {
-      throw Util::Error("input stream failed before reading pbm file");
+      throw Util::Error("input stream failed before reading pnm file");
+    }
+
+  if (is.peek() == EOF)
+    {
+      throw Util::Error("input stream empty while reading pnm file");
     }
 
   int c = is.get();
   if (c != 'P')
     {
-      throw Util::Error(fstring("bad magic number while reading pbm file: ", c));
+      throw Util::Error(fstring("bad magic number while reading pnm file: ", c));
     }
 
   int mode;
@@ -227,7 +232,7 @@ DOTRACE("Pbm::load");
   c = is.get();
   if ( !isspace(c) )
     {
-      throw Util::Error("missing whitespace while reading pbm file");
+      throw Util::Error("missing whitespace while reading pnm file");
     }
 
   Gfx::BmapData new_data(extent, bit_depth, 1);
