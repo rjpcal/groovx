@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 12:54:50 2002
+// written: Tue Sep 17 13:30:12 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -189,9 +189,7 @@ private:
 
 public:
   Togl* itsOwner;
-  Tcl_Interp* itsInterp;
   const Tk_Window itsTkWin;
-  Display* itsDisplay;
   shared_ptr<ToglOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
 
@@ -221,8 +219,6 @@ public:
 
   void loadFontList(GLuint newListBase);
 
-  Window windowId() const { return Tk_WindowId(itsTkWin); }
-
   Gfx::Canvas& canvas() const { return itsGlx->canvas(); }
 
 private:
@@ -244,9 +240,7 @@ private:
 
 Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
   itsOwner(owner),
-  itsInterp(interp),
   itsTkWin(owner->tkWin()),
-  itsDisplay(0),
   itsOpts(new ToglOpts),
   itsGlx(0),
 
@@ -259,8 +253,6 @@ DOTRACE("Togl::Impl::Impl");
   //
   // Configure the widget
   //
-
-  itsDisplay = Tk_Display( itsTkWin );
 
   Tk_SetClass(itsTkWin, (char*)"Togl");
 
@@ -279,7 +271,7 @@ DOTRACE("Togl::Impl::Impl");
                      toglOptionTable, itsTkWin) == TCL_ERROR)
     {
       throw Util::Error(fstring("Togl couldn't initialize options:\n",
-                                Tcl_GetStringResult(itsInterp)));
+                                Tcl_GetStringResult(interp)));
     }
 
   //
@@ -287,8 +279,6 @@ DOTRACE("Togl::Impl::Impl");
   //
 
   Tk_GeometryRequest(itsTkWin, itsOwner->width(), itsOwner->height());
-
-  Assert(itsGlx.get() == 0);
 
   makeWindowExist();
 
@@ -299,22 +289,22 @@ DOTRACE("Togl::Impl::Impl");
   if (itsOpts->time > 0)
     {
       itsTimerToken =
-        Tcl_CreateTimerHandler( itsOpts->time, &cTimerCallback,
-                                static_cast<ClientData>(this) );
+        Tcl_CreateTimerHandler(itsOpts->time, &cTimerCallback,
+                               static_cast<ClientData>(this));
     }
 
   //
   // Set up canvas
   //
 
-  if ( itsOpts->glx.rgbaFlag )
+  if (itsOpts->glx.rgbaFlag)
     {
       itsGlx->canvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
       itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     { // not using rgba
-      if ( itsOpts->privateCmapFlag )
+      if (itsOpts->privateCmapFlag)
         {
           itsGlx->canvas().setColorIndex(0);
           itsGlx->canvas().setClearColorIndex(1);
@@ -350,7 +340,7 @@ Tcl_Obj* Togl::Impl::cget(Tcl_Obj* param) const
 DOTRACE("Togl::Impl::cget");
 
   Tcl_Obj* objResult =
-    Tk_GetOptionInfo(itsInterp,
+    Tk_GetOptionInfo(itsOwner->interp(),
                      reinterpret_cast<char*>(itsOpts.get()),
                      toglOptionTable,
                      param, itsTkWin);
@@ -373,7 +363,8 @@ DOTRACE("Togl::Impl::configure");
 
   int mask = 0;
 
-  if (Tk_SetOptions(itsInterp, reinterpret_cast<char*>(itsOpts.get()),
+  if (Tk_SetOptions(itsOwner->interp(),
+                    reinterpret_cast<char*>(itsOpts.get()),
                     toglOptionTable, objc, objv, itsTkWin,
                     (Tk_SavedOptions*) 0, &mask)
       == TCL_ERROR)
@@ -402,7 +393,7 @@ DOTRACE("Togl::Impl::cTimerCallback");
     }
   catch (...)
     {
-      Tcl::Interp(rep->itsInterp).handleLiveException("cTimerCallback", true);
+      Tcl::Interp(rep->itsOwner->interp()).handleLiveException("cTimerCallback", true);
     }
 
   Tcl_Release(clientData);
@@ -413,7 +404,7 @@ void Togl::Impl::swapBuffers() const
 DOTRACE("Togl::Impl::swapBuffers");
   if (itsOpts->glx.doubleFlag)
     {
-      glXSwapBuffers( itsDisplay, windowId() );
+      glXSwapBuffers(Tk_Display(itsTkWin), Tk_WindowId(itsTkWin));
     }
   else
     {
@@ -441,7 +432,8 @@ DOTRACE("Togl::Impl::allocColor");
 
   ensureSharedColormap("Togl::allocColor");
 
-  return X11Util::noFaultXAllocColor(itsDisplay, Tk_Colormap(itsTkWin),
+  return X11Util::noFaultXAllocColor(Tk_Display(itsTkWin),
+                                     Tk_Colormap(itsTkWin),
                                      Tk_Visual(itsTkWin)->map_entries,
                                      red, green, blue);
 }
@@ -452,7 +444,7 @@ DOTRACE("Togl::Impl::freeColor");
 
   ensureSharedColormap("Togl::freeColor");
 
-  XFreeColors(itsDisplay, Tk_Colormap(itsTkWin), &pixel, 1, 0);
+  XFreeColors(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &pixel, 1, 0);
 }
 
 void Togl::Impl::setColor(unsigned long index,
@@ -470,7 +462,7 @@ DOTRACE("Togl::Impl::setColor");
   xcol.blue  = (short) (blue  * 65535.0);
   xcol.flags = DoRed | DoGreen | DoBlue;
 
-  XStoreColor( itsDisplay, Tk_Colormap(itsTkWin), &xcol );
+  XStoreColor(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &xcol);
 }
 
 void Togl::Impl::setColor(const Togl::Color& color) const
@@ -499,11 +491,10 @@ void Togl::Impl::queryColor(unsigned int color_index, Color& color) const
 {
 DOTRACE("Togl::Impl::queryColor");
 
-  Colormap cmap = Tk_Colormap(itsTkWin);
   XColor col;
 
   col.pixel = color_index;
-  XQueryColor(itsDisplay, cmap, &col);
+  XQueryColor(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &col);
 
   color.pixel = (unsigned int)col.pixel;
 #ifdef HAVE_LIMITS
@@ -542,16 +533,18 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   TkUtil::destroyWindow(itsTkWin);
 
+  Display* dpy = Tk_Display(itsTkWin);
+
   int dummy;
-  if (!glXQueryExtension(itsDisplay, &dummy, &dummy))
+  if (!glXQueryExtension(dpy, &dummy, &dummy))
     {
       throw Util::Error("Togl: X server has no OpenGL GLX extension");
     }
 
-  itsGlx.reset(GlxWrapper::make(itsDisplay, itsOpts->glx));
+  itsGlx.reset(GlxWrapper::make(dpy, itsOpts->glx));
 
   Colormap cmap =
-    X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
+    X11Util::findColormap(dpy, itsGlx->visInfo(),
                           itsOpts->glx.rgbaFlag, itsOpts->privateCmapFlag);
 
   TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
@@ -559,13 +552,13 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   if (!itsOpts->glx.rgbaFlag)
     {
-      X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
+      X11Util::hackInstallColormap(dpy, Tk_WindowId(itsTkWin), cmap);
     }
 
   Tk_MapWindow(itsTkWin);
 
   // Bind the context to the window and make it the current context
-  itsGlx->makeCurrent(windowId());
+  itsGlx->makeCurrent(Tk_WindowId(itsTkWin));
 
   // Check for a single/double buffering snafu
   if (itsOpts->glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
@@ -573,7 +566,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
       // We requested single buffering but had to accept a double buffered
       // visual.  Set the GL draw buffer to be the front buffer to
       // simulate single buffering.
-      glDrawBuffer( GL_FRONT );
+      glDrawBuffer(GL_FRONT);
     }
 }
 
@@ -602,13 +595,15 @@ void Togl::displayCallback()
 {
 DOTRACE("Togl::displayCallback");
 
-  rep->itsGlx->makeCurrent(rep->windowId());
+  rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin));
   fullRender();
 }
 
 void Togl::reshapeCallback()
 {
 DOTRACE("Togl::reshapeCallback");
+
+  makeCurrent();
 
   glViewport(0, 0, width(), height());
 }
@@ -624,17 +619,17 @@ Tcl_Obj* Togl::cget(Tcl_Obj* param) const
 void Togl::configure(int objc, Tcl_Obj* const objv[])
   { rep->configure(objc, objv); }
 
-void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(rep->windowId()); }
+void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
 void Togl::swapBuffers()                { rep->swapBuffers(); }
 bool Togl::isRgba() const               { return rep->itsOpts->glx.rgbaFlag; }
 bool Togl::isDoubleBuffered() const     { return rep->itsOpts->glx.doubleFlag; }
 unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
 bool Togl::hasPrivateCmap() const       { return rep->itsOpts->privateCmapFlag; }
 
-unsigned long Togl::allocColor( float red, float green, float blue ) const
+unsigned long Togl::allocColor(float red, float green, float blue) const
   { return rep->allocColor(red, green, blue); }
 
-void Togl::freeColor( unsigned long pixel ) const
+void Togl::freeColor(unsigned long pixel) const
   { rep->freeColor(pixel); }
 
 void Togl::setColor(unsigned long index,
