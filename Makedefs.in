@@ -13,4 +13,8 @@ with_tcltk := @with_tcltk@
 prefix := @prefix@
 exec_prefix := @exec_prefix@
 
+CXXFLAGS := @CXXFLAGS@
+
 DEFS := @DEFS@
+
+LIBS := @LIBS@
