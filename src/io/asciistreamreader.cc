@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Jun  1 13:25:48 2000
+// written: Wed Jul 19 19:40:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ DOTRACE("Escape::readAndUnEscape");
 			 !(brace_level == 0 && ch == STRING_ENDER) )
 	 {
 		if (itr >= stop)
-		  throw ("AsciiStreamReader exceeded read buffer capacity");
+		  throw IO::ReadError("AsciiStreamReader exceeded read buffer capacity");
 		if (ch != '\\')
 		  {
 			 if (ch == '{') ++brace_level;
@@ -531,44 +531,53 @@ DOTRACE("AsciiStreamReader::readSerialVersionId");
 
 char AsciiStreamReader::readChar(const char* name) {
 DOTRACE("AsciiStreamReader::readChar");
+  DebugEvalNL(name); 
   return itsImpl.readBasicType(name, (char*) 0);
 }
 
 int AsciiStreamReader::readInt(const char* name) {
 DOTRACE("AsciiStreamReader::readInt");
+  DebugEvalNL(name); 
   return itsImpl.readBasicType(name, (int*) 0);
 }
 
 bool AsciiStreamReader::readBool(const char* name) {
 DOTRACE("AsciiStreamReader::readBool");
+  DebugEvalNL(name); 
   return bool(itsImpl.readBasicType(name, (int*) 0));
 }
 
 double AsciiStreamReader::readDouble(const char* name) {
 DOTRACE("AsciiStreamReader::readDouble");
+  DebugEvalNL(name); 
   return itsImpl.readBasicType(name, (double*) 0);
 }
 
 // XXX this may leak!
 char* AsciiStreamReader::readCstring(const char* name) {
+  DebugEvalNL(name); 
   return itsImpl.readStringType(name);
 }
 
 void AsciiStreamReader::readValueObj(const char* name, Value& value) {
+  DebugEvalNL(name); 
   itsImpl.readValueObj(name, value); 
 }
 
 IO::IoObject* AsciiStreamReader::readObject(const char* attrib_name) {
+  DebugEvalNL(attrib_name); 
   return itsImpl.readObject(attrib_name);
 }
 
 void AsciiStreamReader::readOwnedObject(const char* name, IO::IoObject* obj) {
+  DebugEvalNL(name); 
   itsImpl.readOwnedObject(name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
   const char* baseClassName, IO::IoObject* basePart
   ) {
+  DebugEvalNL(baseClassName); 
   itsImpl.readBaseClass(this, baseClassName, basePart);
 }
 
