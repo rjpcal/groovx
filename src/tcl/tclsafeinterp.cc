@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 14:48:27 2001
+// written: Mon Jul 16 14:58:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -143,6 +143,15 @@ void Tcl::SafeInterp::clearEventQueue() {
 DOTRACE("Tcl::SafeInterp::clearEventQueue");
   while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
     { /* Empty loop body */ }
+}
+
+bool Tcl::SafeInterp::hasCommand(const char* cmd_name) const {
+DOTRACE("Tcl::SafeInterp::hasCommand");
+  Tcl_CmdInfo info;
+  int result = Tcl_GetCommandInfo(itsInterp,
+                                  const_cast<char*>(cmd_name),
+                                  &info);
+  return (result != 0);
 }
 
 void Tcl::SafeInterp::handleError(const char* msg) const {

@@ -82,6 +82,9 @@ public:
   // Events
   static void clearEventQueue();
 
+  // Commands/procedures
+  bool hasCommand(const char* cmd_name) const;
+
 private:
   Tcl_Obj* getObjResult() const;
   Tcl_Obj* getObjGlobalVar(const char* name1, const char* name2) const;
