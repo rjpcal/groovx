@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Wed Mar 22 16:47:03 2000
+// written: Thu Mar 23 11:33:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,8 +58,6 @@ public:
   void write(const char* filename) const;
 
 private:
-  void init();
-
   void readStream(istream& is);
 
   void parseMode1(istream& is);
