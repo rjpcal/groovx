@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Mon Nov 25 15:09:58 2002
+// written: Mon Nov 25 19:01:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,27 @@ namespace Util
   class Slot0;
   template <class C, class MF> class SlotAdapter0;
   class Signal0;
+
+#if 0
+template <class R>
+class Marshal
+{
+  R val;
+
+public:
+  Marshal() : val() {}
+
+  typedef R InType;
+  typedef R OutType;
+
+  bool marshal(const InType& in)
+  {
+    val = in;
+  }
+
+  OutType value() const { return val; }
+};
+#endif
 
 class SlotBase : public virtual Util::Object
 {
@@ -94,6 +115,78 @@ public:
     if (itsObject.isValid())
       (itsObject.get()->*itsMemFunc)();
   }
+};
+
+template <class C, class MF>
+inline Util::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
+{
+  return Util::SoftRef<Slot0>(SlotAdapter0<C, MF>::make(obj, mf),
+                             Util::STRONG,
+                             Util::PRIVATE);
+};
+
+//  ###################################################################
+//  ===================================================================
+
+template <class P1>
+struct CallData1
+{
+  CallData1(P1 i1) : p1(i1) {}
+  P1 p1;
+};
+
+template <class P1>
+class Slot1 : public SlotBase
+{
+public:
+  /// Default constructor.
+  Slot1() {}
+
+  /// Virtual destructor.
+  virtual ~Slot1() {}
+
+  template<class C, class MF>
+  static Util::SoftRef<Slot1<P1> > make(C* obj, MF mf);
+
+  virtual void call(P1 p1) = 0;
+
+  /// Unpacks any parameters and then calls the implementation.
+  virtual void doCall(void* params)
+  {
+    CallData1<P1>* data = static_cast<CallData1<P1>*>(params);
+    call(data->p1);
+  }
+};
+
+template <class P1, class C, class MF>
+class SlotAdapter1 : public Slot1<P1>
+{
+  Util::SoftRef<C> itsObject;
+  MF itsMemFunc;
+
+  SlotAdapter1(C* obj, MF mf) :
+    itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
+
+public:
+  static SlotAdapter1<P1, C, MF>* make(C* obj, MF mf)
+  { return new SlotAdapter1<P1, C, MF>(obj, mf); }
+
+  virtual bool exists() const { return itsObject.isValid(); }
+
+  virtual void call(P1 p1)
+  {
+    if (itsObject.isValid())
+      (itsObject.get()->*itsMemFunc)(p1);
+  }
+};
+
+template <class P1>
+template <class C, class MF>
+inline Util::SoftRef<Slot1<P1> > Slot1<P1>::make(C* obj, MF mf)
+{
+  return Util::SoftRef<Slot1<P1> >(SlotAdapter1<P1, C, MF>::make(obj, mf),
+                                   Util::STRONG,
+                                   Util::PRIVATE);
 };
 
 
@@ -175,17 +268,33 @@ private:
 };
 
 
-//  ###################################################################
-//  ===================================================================
-
-// Inline function definitions
-
-template <class C, class MF>
-inline Util::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
+template <class P1>
+class Signal1 : public SignalBase
 {
-  return Util::SoftRef<Slot0>(SlotAdapter0<C, MF>::make(obj, mf),
-                             Util::STRONG,
-                             Util::PRIVATE);
+public:
+  Signal1() {}
+
+  virtual ~Signal1() {}
+
+  void connect(Util::SoftRef<Slot1<P1> > slot)
+  { SignalBase::doConnect(slot); }
+
+  template <class C, class MF>
+  void connect(C* obj, MF mem_func)
+  { connect(Slot1<P1>::make(obj, mem_func)); }
+
+  void disconnect(Util::SoftRef<Slot1<P1> > slot)
+  { SignalBase::doDisconnect(slot); }
+
+  void emit(P1 p1) const
+  {
+    CallData1<P1> dat( p1 );
+    SignalBase::doEmit(static_cast<void*>(&dat));
+  }
+
+private:
+  Signal1(const Signal1&);
+  Signal1& operator=(const Signal1&);
 };
 
 } // end namespace Util
