@@ -87,9 +87,7 @@ ifeq ($(ARCH),i686)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-# display lists don't work at present with i686/linux/mesa
-
-	DEFS += -DBROKEN_GL_DISPLAY_LISTS -march=i686
+	CXXFLAGS += -march=i686
 endif
 
 ifeq ($(ARCH),ppc)
@@ -330,7 +328,7 @@ $(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 		--depfile $@ \
 		--objdir $(OBJ)/pkgs \
 		--pkgdir $(SRC)/pkgs \
-		--libdir $(exec_prefix)/lib/visx
+		--libdir $(VISX_LIB_DIR)
 
 include $(PKG_DEP_FILE)
 
