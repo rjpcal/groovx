@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Wed Aug 22 11:41:41 2001
+// written: Fri Aug 24 16:59:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,6 +116,7 @@ public:
 private:
   void doFlush(Gfx::Canvas& canvas)
   {
+    DOTRACE("GWT::Widget::Impl::doFlush");
     if (canvas.isDoubleBuffered())
       {
         itsOwner->swapBuffers();
