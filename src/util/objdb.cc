@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Oct 22 15:58:52 2000
+// written: Tue Oct 24 13:41:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ DOTRACE("IoPtrList::readFrom");
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
-		insertPtrBaseAt(i, ioBlock[i]);
+		insertPtrBase(ioBlock[i]);
 	 }
 }
 
