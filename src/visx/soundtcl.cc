@@ -59,6 +59,7 @@ public:
     if (!haveSound)
       {
         interp.appendResult("SoundPkg: couldn't initialize sound system");
+        setInitStatusError();
       }
     else
       {
