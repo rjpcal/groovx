@@ -19,97 +19,97 @@ test "FaceTcl-Face::Face" "no possible error" {} $BLANK $no_test
 set EPS 0.00001 ;# floating-point precision required of next four commands
 set faceid [Face::Face] ;# guaranteed face id for next operations
 
-### eyeHgtCmd ###
-test "FaceTcl-eyeHgt" "too few args" {
-	 Face::eyeHgt
-} {^wrong \# args: should be "Face::eyeHgt item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-eyeHgt" "too many args" {
-	 Face::eyeHgt j u n
-} {^wrong \# args: should be "Face::eyeHgt item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-eyeHgt" "normal use set" {
-	 Face::eyeHgt $::faceid 2.0 
+### eyeHeightCmd ###
+test "FaceTcl-eyeHeight" "too few args" {
+	 Face::eyeHeight
+} {^wrong \# args: should be "Face::eyeHeight item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-eyeHeight" "too many args" {
+	 Face::eyeHeight j u n
+} {^wrong \# args: should be "Face::eyeHeight item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-eyeHeight" "normal use set" {
+	 Face::eyeHeight $::faceid 2.0 
 } {^$}
-test "FaceTcl-eyeHgt" "normal use query" {
+test "FaceTcl-eyeHeight" "normal use query" {
 	 set val1 1.234
-	 Face::eyeHgt $::faceid $val1
-	 set val2 [Face::eyeHgt $::faceid]
+	 Face::eyeHeight $::faceid $val1
+	 set val2 [Face::eyeHeight $::faceid]
 	 expr abs($val2-$val1) < $::EPS
 } {^1$}
-test "FaceTcl-eyeHgt" "error from nun-numeric input" {
-    Face::eyeHgt $::faceid junk
+test "FaceTcl-eyeHeight" "error from nun-numeric input" {
+    Face::eyeHeight $::faceid junk
 } {expected floating-point number but got "junk"}
-test "FaceTcl-eyeHgt" "error from bad objid" {
-    Face::eyeHgt -1
-} {Face::eyeHgt: an error of type InvalidIdError occurred}
+test "FaceTcl-eyeHeight" "error from bad objid" {
+    Face::eyeHeight -1
+} {Face::eyeHeight: an error of type InvalidIdError occurred}
 
-### eyeDistCmd ###
-test "FaceTcl-eyeDist" "too few args" {
-	 Face::eyeDist
-} {^wrong \# args: should be "Face::eyeDist item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-eyeDist" "too many args" {
-	 Face::eyeDist j u n
-} {^wrong \# args: should be "Face::eyeDist item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-eyeDist" "normal use set" {
-	 Face::eyeDist $::faceid 2.0 
+### eyeDistanceCmd ###
+test "FaceTcl-eyeDistance" "too few args" {
+	 Face::eyeDistance
+} {^wrong \# args: should be "Face::eyeDistance item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-eyeDistance" "too many args" {
+	 Face::eyeDistance j u n
+} {^wrong \# args: should be "Face::eyeDistance item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-eyeDistance" "normal use set" {
+	 Face::eyeDistance $::faceid 2.0 
 } {^$}
-test "FaceTcl-eyeDist" "normal use query" {
+test "FaceTcl-eyeDistance" "normal use query" {
 	 set val1 1.357
-	 Face::eyeDist $::faceid $val1
-	 set val2 [Face::eyeDist $::faceid]
+	 Face::eyeDistance $::faceid $val1
+	 set val2 [Face::eyeDistance $::faceid]
 	 expr abs($val2-$val1) < $::EPS
 } {^1$}
-test "FaceTcl-eyeDist" "error from nun-numeric input" {
-    Face::eyeDist $::faceid junk
+test "FaceTcl-eyeDistance" "error from nun-numeric input" {
+    Face::eyeDistance $::faceid junk
 } {expected floating-point number but got "junk"}
-test "FaceTcl-eyeDist" "error from bad objid" {
-    Face::eyeDist -1
-} {Face::eyeDist: an error of type InvalidIdError occurred}
+test "FaceTcl-eyeDistance" "error from bad objid" {
+    Face::eyeDistance -1
+} {Face::eyeDistance: an error of type InvalidIdError occurred}
 
-### noseLenCmd ###
-test "FaceTcl-noseLen" "too few args" {
-	 Face::noseLen
-} {^wrong \# args: should be "Face::noseLen item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-noseLen" "too many args" {
-	 Face::noseLen j u n
-} {^wrong \# args: should be "Face::noseLen item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-noseLen" "normal use set" {
-	 Face::noseLen $::faceid 2.0 
+### noseLengthCmd ###
+test "FaceTcl-noseLength" "too few args" {
+	 Face::noseLength
+} {^wrong \# args: should be "Face::noseLength item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-noseLength" "too many args" {
+	 Face::noseLength j u n
+} {^wrong \# args: should be "Face::noseLength item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-noseLength" "normal use set" {
+	 Face::noseLength $::faceid 2.0 
 } {^$}
-test "FaceTcl-noseLen" "normal use query" {
+test "FaceTcl-noseLength" "normal use query" {
 	 set val1 0.246
-	 Face::noseLen $::faceid $val1
-	 set val2 [Face::noseLen $::faceid]
+	 Face::noseLength $::faceid $val1
+	 set val2 [Face::noseLength $::faceid]
 	 expr abs($val2-$val1) < $::EPS
 } {^1$}
-test "FaceTcl-noseLen" "error from nun-numeric input" {
-    Face::noseLen $::faceid junk
+test "FaceTcl-noseLength" "error from nun-numeric input" {
+    Face::noseLength $::faceid junk
 } {expected floating-point number but got "junk"}
-test "FaceTcl-noseLen" "error from bad objid" {
-    Face::noseLen -1
-} {Face::noseLen: an error of type InvalidIdError occurred}
+test "FaceTcl-noseLength" "error from bad objid" {
+    Face::noseLength -1
+} {Face::noseLength: an error of type InvalidIdError occurred}
 
-### mouthHgtCmd ###
-test "FaceTcl-mouthHgt" "too few args" {
-	 Face::mouthHgt
-} {^wrong \# args: should be "Face::mouthHgt item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-mouthHgt" "too many args" {
-	 Face::mouthHgt j u n
-} {^wrong \# args: should be "Face::mouthHgt item_id\(s\) \?new_value\(s\)\?"$}
-test "FaceTcl-mouthHgt" "normal use set" {
-	 Face::mouthHgt $::faceid 2.0 
+### mouthHeightCmd ###
+test "FaceTcl-mouthHeight" "too few args" {
+	 Face::mouthHeight
+} {^wrong \# args: should be "Face::mouthHeight item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-mouthHeight" "too many args" {
+	 Face::mouthHeight j u n
+} {^wrong \# args: should be "Face::mouthHeight item_id\(s\) \?new_value\(s\)\?"$}
+test "FaceTcl-mouthHeight" "normal use set" {
+	 Face::mouthHeight $::faceid 2.0 
 } {^$}
-test "FaceTcl-mouthHgt" "normal use query" {
+test "FaceTcl-mouthHeight" "normal use query" {
 	 set val1 9.876
-	 Face::mouthHgt $::faceid $val1
-	 set val2 [Face::mouthHgt $::faceid]
+	 Face::mouthHeight $::faceid $val1
+	 set val2 [Face::mouthHeight $::faceid]
 	 expr abs($val2-$val1) < $::EPS
 } {^1$}
-test "FaceTcl-mouthHgt" "error from nun-numeric input" {
-    Face::mouthHgt $::faceid junk
+test "FaceTcl-mouthHeight" "error from nun-numeric input" {
+    Face::mouthHeight $::faceid junk
 } {expected floating-point number but got "junk"}
-test "FaceTcl-mouthHgt" "error from bad objid" {
-    Face::mouthHgt -1
-} {Face::mouthHgt: an error of type InvalidIdError occurred}
+test "FaceTcl-mouthHeight" "error from bad objid" {
+    Face::mouthHeight -1
+} {Face::mouthHeight: an error of type InvalidIdError occurred}
 
 unset faceid
 ObjList::reset
@@ -203,10 +203,10 @@ test "FaceTcl-Face::destringify" "error from wrong type" {
 } {Face::destringify: object not of correct type}
 test "FaceTcl-Face::destringify" "stringify/destringify check" {
 	 set faceid [Face::Face]
-	 Face::noseLen $faceid -1.2
-	 Face::mouthHgt $faceid -0.6
-	 Face::eyeHgt $faceid 0.4
-	 Face::eyeDist $faceid 0.6
+	 Face::noseLength $faceid -1.2
+	 Face::mouthHeight $faceid -0.6
+	 Face::eyeHeight $faceid 0.4
+	 Face::eyeDistance $faceid 0.6
 	 set str1 [Face::stringify $faceid]
 
 	 set faceid2 [Face::Face]
