@@ -91,31 +91,11 @@ void Block::readFrom(IO::Reader& reader)
 {
 DOTRACE("Block::readFrom");
 
-  int svid = reader.ensureReadVersionId("Block", 1, "Try groovx0.8a3");
+  reader.ensureReadVersionId("Block", 3,
+                             "Try cvs tag xml_conversion_20040526");
 
-  if (svid < 3)
-    {
-      ElementContainer::legacyReadElements(reader, "trialSeq");
-
-      reader.readValue("randSeed", iolegacyRandSeed());
-      reader.readValue("curTrialSeqdx", iolegacySequencePos());
-
-      if (svid < 2)
-        {
-          bool dummy;
-          reader.readValue("verbose", dummy);
-        }
-    }
-  else
-    {
-      reader.readBaseClass("ElementContainer",
-                           IO::makeProxy<ElementContainer>(this));
-    }
-
-  if (numCompleted() > numElements())
-    {
-      throw Util::Error("Block");
-    }
+  reader.readBaseClass("ElementContainer",
+                       IO::makeProxy<ElementContainer>(this));
 }
 
 void Block::writeTo(IO::Writer& writer) const
@@ -124,11 +104,6 @@ DOTRACE("Block::writeTo");
 
   writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 3,
                               "Try groovx0.8a7");
-
-//   ElementContainer::legacyWriteElements(writer, "trialSeq");
-
-//   writer.writeValue("randSeed", iolegacyRandSeed());
-//   writer.writeValue("curTrialSeqdx", iolegacySequencePos());
 
   writer.writeBaseClass("ElementContainer",
                         IO::makeConstProxy<ElementContainer>(this));

@@ -88,20 +88,14 @@ void Jitter::readFrom(IO::Reader& reader)
 {
 DOTRACE("Jitter::readFrom");
 
-  int svid = reader.ensureReadVersionId("Jitter", 2, "Try groovx0.8a4");
+  reader.ensureReadVersionId("Jitter", 3,
+                             "Try cvs tag xml_conversion_20040526");
 
   reader.readValue("jitterX", itsXJitter);
   reader.readValue("jitterY", itsYJitter);
   reader.readValue("jitterR", itsRJitter);
 
-  if (svid < 3)
-    {
-      reader.readBaseClass("Position", IO::makeProxy<GxTransform>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxTransform", IO::makeProxy<GxTransform>(this));
-    }
+  reader.readBaseClass("GxTransform", IO::makeProxy<GxTransform>(this));
 }
 
 void Jitter::writeTo(IO::Writer& writer) const

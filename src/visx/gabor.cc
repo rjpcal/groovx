@@ -139,18 +139,12 @@ void Gabor::readFrom(IO::Reader& reader)
 {
 DOTRACE("Gabor::readFrom");
 
-  int svid = reader.ensureReadVersionId("Gabor", 1, "Try groovx0.8a4");
+  reader.ensureReadVersionId("Gabor", 2,
+                             "Try cvs tag xml_conversion_20040526");
 
   readFieldsFrom(reader, classFields());
 
-  if (svid < 2)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Gabor::writeTo(IO::Writer& writer) const

@@ -214,7 +214,8 @@ void GxPixmap::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPixmap::readFrom");
 
-  int svid = reader.ensureReadVersionId("GxPixmap", 2, "Try groovx0.8a7");
+  reader.ensureReadVersionId("GxPixmap", 4,
+                             "Try cvs tag xml_conversion_20040526");
 
   reader.readValue("filename", rep->itsFilename);
   reader.readValue("zoomX", rep->itsZoom.x());
@@ -222,12 +223,8 @@ DOTRACE("GxPixmap::readFrom");
   reader.readValue("usingZoom", rep->itsUsingZoom);
   reader.readValue("contrastFlip", rep->itsContrastFlip);
   reader.readValue("verticalFlip", rep->itsVerticalFlip);
-
-  if (svid >= 3)
-    reader.readValue("purgeable", rep->itsPurgeable);
-
-  if (svid >= 4)
-    reader.readValue("asBitmap", rep->itsAsBitmap);
+  reader.readValue("purgeable", rep->itsPurgeable);
+  reader.readValue("asBitmap", rep->itsAsBitmap);
 
   if ( rep->itsFilename.is_empty() )
     {
@@ -238,10 +235,7 @@ DOTRACE("GxPixmap::readFrom");
       queueImage(rep->itsFilename.c_str());
     }
 
-  if (svid >= 4)
-    reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-  else
-    reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void GxPixmap::writeTo(IO::Writer& writer) const

@@ -97,19 +97,13 @@ void GxText::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxText::readFrom");
 
-  int svid = reader.ensureReadVersionId("GxText", 2, "Try groovx0.8a4");
+  reader.ensureReadVersionId("GxText", 3,
+                             "Try cvs tag xml_conversion_20040526");
 
   reader.readValue("text", itsText);
   reader.readValue("strokeWidth", itsStrokeWidth);
 
-  if (svid < 3)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void GxText::writeTo(IO::Writer& writer) const

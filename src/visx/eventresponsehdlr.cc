@@ -299,32 +299,20 @@ void EventResponseHdlr::readFrom(IO::Reader& reader)
 {
 DOTRACE("EventResponseHdlr::readFrom");
 
-  const int svid = reader.ensureReadVersionId("EventResponseHdlr", 0,
-                                              "Try groovx0.8a7");
+  reader.ensureReadVersionId("EventResponseHdlr", 2,
+                             "Try cvs tag xml_conversion_20040526");
 
   rep->becomeInactive();
 
-  if (svid < 2)
-    {
-      fstring rmap;
-      reader.readValue("inputResponseMap", rmap);
-      setInputResponseMap(rmap);
-    }
-
-  {
-    fstring fmap;
-    reader.readValue("feedbackMap", fmap);
-    rep->itsFeedbackMap.set(fmap);
-  }
+  fstring fmap;
+  reader.readValue("feedbackMap", fmap);
+  rep->itsFeedbackMap.set(fmap);
 
   reader.readValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
   reader.readValue("eventSequence", rep->itsEventSequence);
   reader.readValue("bindingSubstitution", rep->itsBindingSubstitution);
 
-  if (svid >= 2)
-    {
-      reader.readOwnedObject("responseProc", rep->itsResponseProc);
-    }
+  reader.readOwnedObject("responseProc", rep->itsResponseProc);
 }
 
 void EventResponseHdlr::writeTo(IO::Writer& writer) const
@@ -342,6 +330,7 @@ DOTRACE("EventResponseHdlr::writeTo");
   writer.writeOwnedObject("responseProc", rep->itsResponseProc);
 }
 
+// FIXME XML still need this?
 void EventResponseHdlr::setInputResponseMap(const fstring& s)
 {
 DOTRACE("EventResponseHdlr::setInputResponseMap");

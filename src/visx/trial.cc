@@ -222,7 +222,8 @@ DOTRACE("Trial::readFrom");
 
   rep->becomeInactive();
 
-  const int svid = reader.ensureReadVersionId("Trial", 4, "Try groovx0.8a4");
+  reader.ensureReadVersionId("Trial", 5,
+                             "Try cvs tag xml_conversion_20040526");
 
   rep->gxNodes.clear();
   IO::ReadUtils::readObjectSeq<GxNode>
@@ -239,8 +240,7 @@ DOTRACE("Trial::readFrom");
   rep->rh = dynamicCast<ResponseHandler>(reader.readMaybeObject("rh"));
   rep->th = dynamicCast<TimingHdlr>(reader.readMaybeObject("th"));
 
-  if (svid >= 5)
-    reader.readValue("info", rep->info);
+  reader.readValue("info", rep->info);
 }
 
 void Trial::writeTo(IO::Writer& writer) const

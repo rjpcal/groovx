@@ -261,18 +261,12 @@ void MorphyFace::readFrom(IO::Reader& reader)
 {
 DOTRACE("MorphyFace::readFrom");
 
-  int svid = reader.ensureReadVersionId("MorphyFace", 1, "Try groovx0.8a4");
+  reader.ensureReadVersionId("MorphyFace", 2,
+                             "Try cvs tag xml_conversion_20040526");
 
   readFieldsFrom(reader, classFields());
 
-  if (svid < 2)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void MorphyFace::writeTo(IO::Writer& writer) const

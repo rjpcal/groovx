@@ -173,7 +173,8 @@ void ExptDriver::readFrom(IO::Reader& reader)
 {
 DOTRACE("ExptDriver::readFrom");
 
-  int svid = reader.ensureReadVersionId("ExptDriver", 3, "Try groovx0.8a3");
+  reader.ensureReadVersionId("ExptDriver", 6,
+                             "Try cvs tag xml_conversion_20040526");
 
   reader.readValue("hostname", rep->hostname);
   reader.readValue("subject", rep->subject);
@@ -182,67 +183,18 @@ DOTRACE("ExptDriver::readFrom");
   reader.readValue("autosaveFile", rep->autosaveFile);
   reader.readValue("autosavePeriod", rep->autosavePeriod);
   reader.readValue("infoLog", rep->infoLog);
+  reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
+  reader.readValue("filePrefix", rep->filePrefix);
 
-  if (svid < 6)
-    {
-      reader.readValue("currentBlockIdx", iolegacySequencePos());
-
-      ElementContainer::legacyReadElements(reader, "blocks");
-    }
-
-  if (svid < 4)
-    {
-      fstring proc_body;
-      reader.readValue("doUponCompletionScript", proc_body);
-      rep->doWhenComplete->define("", proc_body);
-    }
-  else
-    {
-      reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
-    }
-
-  if (svid == 4)
-    {
-      // Oops... I added the "filePrefix" attribute without bumping the
-      // serialVersionId from 4 to 5... therefore some v4 files have a
-      // "filePrefix" and others don't. So we have to just attempt reading
-      // it and be ready to catch a "no such attribute" exception.
-      try
-        {
-          reader.readValue("filePrefix", rep->filePrefix);
-        }
-      catch (Util::Error& err)
-        {
-          if (strncmp(err.msg().c_str(),
-                      "no attribute named 'filePrefix' for ExptDriver",
-                      46) == 0)
-            {
-              // eat the exception
-              rep->filePrefix = "expt";
-            }
-          else
-            {
-              throw;
-            }
-        }
-    }
-  else if (svid >= 5)
-    {
-      reader.readValue("filePrefix", rep->filePrefix);
-    }
-
-  if (svid >= 6)
-    {
-      reader.readBaseClass("ElementContainer",
-                           IO::makeProxy<ElementContainer>(this));
-    }
+  reader.readBaseClass("ElementContainer",
+                       IO::makeProxy<ElementContainer>(this));
 }
 
 void ExptDriver::writeTo(IO::Writer& writer) const
 {
 DOTRACE("ExptDriver::writeTo");
 
-  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 5,
+  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 6,
                               "Try groovx0.8a7");
 
   writer.writeValue("hostname", rep->hostname);
@@ -252,11 +204,6 @@ DOTRACE("ExptDriver::writeTo");
   writer.writeValue("autosaveFile", rep->autosaveFile);
   writer.writeValue("autosavePeriod", rep->autosavePeriod);
   writer.writeValue("infoLog", rep->infoLog);
-
-//   writer.writeValue("currentBlockIdx", iolegacySequencePos());
-
-//   ElementContainer::legacyWriteElements(writer, "blocks");
-
   writer.writeOwnedObject("doWhenComplete", rep->doWhenComplete);
   writer.writeValue("filePrefix", rep->filePrefix);
 

@@ -55,8 +55,6 @@
 #include "gfx/recttcl.h"
 
 #include "io/fieldpkg.h"
-#include "io/ioproxy.h"
-#include "io/reader.h"
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
@@ -120,37 +118,6 @@ namespace GxTcl
   }
 #endif
 }
-
-// This class is for backward-compatibility, to allow us to deserialize
-// XBitmap and GLBitmap objects from old expt files.
-class CompatBitmap : public GxPixmap
-{
-public:
-  bool isGL;
-
-  CompatBitmap(bool gl) : GxPixmap(), isGL(gl) {}
-
-  static CompatBitmap* makeGL() { return new CompatBitmap(true); }
-  static CompatBitmap* makeX() { return new CompatBitmap(false); }
-
-  // no writeTo() or serialVersionId() overrides since we just want
-  // GxPixmap's versions
-
-  virtual fstring objTypename() const { return fstring("GxPixmap"); }
-
-  virtual void readFrom(IO::Reader& reader)
-  {
-    int svid = reader.ensureReadVersionId("CompatBitmap", 2, "Try groovx0.8a4");
-
-    if (isGL && svid <= 2)
-      {
-        bool dummy;
-        reader.readValue("usingGlBitmap", dummy);
-      }
-
-    reader.readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
-  }
-};
 
 extern "C"
 int Gxnode_Init(Tcl_Interp* interp)
@@ -428,10 +395,6 @@ DOTRACE("Gxpixmap_Init");
   pkg->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
   pkg->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
   pkg->defSetter("zoomTo", &GxPixmap::zoomTo);
-
-  // For GLBitmap/XBitmap backward-compatibility
-  Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeGL, "GLBitmap");
-  Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeX, "XBitmap");
 
   PKG_RETURN;
 }

@@ -302,18 +302,12 @@ void Fish::readFrom(IO::Reader& reader)
 {
 DOTRACE("Fish::readFrom");
 
-  int svid = reader.ensureReadVersionId("Fish", 3, "Try groovx0.8a7");
+  reader.ensureReadVersionId("Fish", 4,
+                             "Try cvs tag xml_conversion_20040526");
 
   readFieldsFrom(reader, classFields());
 
-  if (svid < 4)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Fish::writeTo(IO::Writer& writer) const

@@ -268,18 +268,12 @@ void House::readFrom(IO::Reader& reader)
 {
 DOTRACE("House::readFrom");
 
-  int svid = reader.ensureReadVersionId("House", 2, "Try groovx0.8a4");
+  reader.ensureReadVersionId("House", 3,
+                             "Try cvs tag xml_conversion_20040526");
 
   readFieldsFrom(reader, classFields());
 
-  if (svid < 3)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void House::writeTo(IO::Writer& writer) const

@@ -102,18 +102,12 @@ void MaskHatch::readFrom(IO::Reader& reader)
 {
 DOTRACE("MaskHatch::readFrom");
 
-  int svid = reader.ensureReadVersionId("MaskHatch", 2, "Try groovx0.8a4");
+  reader.ensureReadVersionId("MaskHatch", 3,
+                             "Try cvs tag xml_conversion_20040526");
 
   readFieldsFrom(reader, classFields());
 
-  if (svid < 3)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void MaskHatch::writeTo(IO::Writer& writer) const

@@ -132,18 +132,12 @@ void Face::readFrom(IO::Reader& reader)
 {
 DOTRACE("Face::readFrom");
 
-  int svid = reader.ensureReadVersionId("Face", 1, "Try groovx0.8a4");
+  reader.ensureReadVersionId("Face", 2,
+                             "Try cvs tag xml_conversion_20040526");
 
   readFieldsFrom(reader, classFields());
 
-  if (svid < 2)
-    {
-      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
-    }
-  else
-    {
-      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
-    }
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Face::writeTo(IO::Writer& writer) const
