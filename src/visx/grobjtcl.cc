@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Nov 14 17:25:12 2002
+// written: Thu Nov 14 19:01:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
+#include "gfx/recttcl.h"
 
 #include "gx/rect.h"
 
@@ -25,7 +26,6 @@
 #include "tcl/tracertcl.h"
 
 #include "visx/grobj.h"
-#include "visx/recttcl.h"
 
 #include "util/trace.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu Apr 25 09:49:31 2002
+// written: Thu Nov 14 19:01:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,11 @@
 #ifndef BITMAPTCL_CC_DEFINED
 #define BITMAPTCL_CC_DEFINED
 
+#include "gfx/recttcl.h"
+
 #include "visx/bitmap.h"
 #include "visx/glbitmap.h"
 #include "visx/pointtcl.h"
-#include "visx/recttcl.h"
 #include "visx/xbitmap.h"
 
 #include "util/objfactory.h"
