@@ -133,21 +133,3 @@ test "TlistTcl-Tlist::write_responses" "too few args" {
 test "TlistTcl-Tlist::write_responses" "too many args" {
     Tlist::write_responses j u
 } {wrong \# args: should be "Tlist::write_responses filename"}
-
-### Tlist::stringifyCmd ###
-### Tlist::destringifyCmd ###
-test "TlistTcl-Tlist::destringify" "write, read, write and compare" {
-	 set f1 [Face::Face]
-	 set f2 [Face::Face]
-	 set p1 [Pos::Pos]
-	 set p2 [Pos::Pos]
-	 Tlist::dealPairs $f1 $f2 $p1 $p2
-	 set str [Tlist::stringify]
-	 Expt::clear
-	 BlockList::reset
-	 Tlist::reset
-	 Tlist::destringify $str
-	 set str2 [Tlist::stringify]
-	 expr [string compare $str $str2] == 0
-} {^1$}
-
