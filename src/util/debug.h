@@ -3,7 +3,7 @@
 // debug.h
 // Rob Peters
 // created: Jan-99
-// written: Thu May 27 19:35:09 1999
+// written: Wed Jun 16 15:08:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,8 @@
 #  define DUMP_VAL2(expr) cerr << #expr << " == " << (expr) << endl;
 #  define DebugEval(expr) cerr << #expr << " == " << (expr) << ", ";
 #  define DebugEvalNL(expr) cerr << #expr << " == " << (expr) << endl;
-#  define DebugPrint(str) cerr << expr << " ";
-#  define DebugPrintNL(str) cerr << str << " " << endl;
+#  define DebugPrint(expr) cerr << expr << " ";
+#  define DebugPrintNL(expr) cerr << expr << " " << endl;
 #else
 #  define DUMP_VAL1(expr) {}
 #  define DUMP_VAL2(expr) {}
