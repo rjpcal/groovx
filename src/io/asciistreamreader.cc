@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Nov  8 12:47:58 1999
+// written: Thu Nov 11 12:10:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,6 +152,8 @@ public:
 
   IO* readObject(const string& attrib_name);
 
+  void readOwnedObject(const string& name, IO* obj);
+
   void initAttributes();
 
   IO* readRoot(IO* given_root);
@@ -196,6 +198,26 @@ DOTRACE("AsciiStreamReader::Impl::readObject");
   }
 
   return itsCreatedObjects[id];
+}
+
+void AsciiStreamReader::Impl::readOwnedObject(
+  const string& attrib_name, IO* obj
+  ) {
+DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
+
+  assertAttribExists(attrib_name);
+
+  istrstream ist(itsAttribs[attrib_name].value.c_str());
+  unsigned long id;
+  ist >> id;
+
+  if ( id == 0 )
+	 { throw ReadError("owned object had object id of 0"); }
+
+  if ( hasBeenCreated(id) )
+	 { throw ReadError("'owned object' was already created"); }
+
+  itsCreatedObjects[id] = obj;
 }
 
 void AsciiStreamReader::Impl::initAttributes() {
@@ -343,6 +365,10 @@ DOTRACE("AsciiStreamReader::readValueObj");
 
 IO* AsciiStreamReader::readObject(const string& attrib_name) {
   return itsImpl.readObject(attrib_name);
+}
+
+void AsciiStreamReader::readOwnedObject(const string& name, IO* obj) {
+  itsImpl.readOwnedObject(name, obj);
 }
 
 IO* AsciiStreamReader::readRoot(IO* given_root) {
