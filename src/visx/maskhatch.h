@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Nov 10 17:03:52 2000
+// written: Sat Nov 11 10:30:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,10 +62,10 @@ public:
   static const PInfo& getPropertyInfo(unsigned int i);
 
   /// The number of lines that will be rendered in each direction.
-  CTBoundedProperty<MaskHatch, int, 0, 1000, 1> numLines;
+  TBoundedProperty<int, 0, 1000, 1> numLines;
 
   /// The pixel-width of each line.
-  CTBoundedProperty<MaskHatch, int, 0, 1000, 1> lineWidth;
+  TBoundedProperty<int, 0, 1000, 1> lineWidth;
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
