@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Apr  2 16:49:26 2002
+// written: Wed Jun 12 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ class Toglet : public Tcl::TkWidget
 {
 protected:
   Toglet(Tcl_Interp* interp,
-         int config_argc=0, char** config_argv=0,
+         int config_argc=0, const char** config_argv=0,
          bool pack=true);
 
 public:

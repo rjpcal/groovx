@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Jun  6 17:26:47 2002
+// written: Wed Jun 12 14:11:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -299,7 +299,7 @@ DOTRACE("Toglet::Sizer::reconfigure");
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(Tcl_Interp* interp,
-               int config_argc, char** config_argv,
+               int config_argc, const char** config_argv,
                bool pack) :
   Tcl::TkWidget(),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),

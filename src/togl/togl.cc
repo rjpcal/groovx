@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu Jun  6 18:02:24 2002
+// written: Wed Jun 12 14:41:48 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -65,11 +65,11 @@
 namespace
 {
   // Defaults
-  char*  DEFAULT_WIDTH     = "400";
-  char*  DEFAULT_HEIGHT    = "400";
-  char*  DEFAULT_IDENT     = "";
-  char*  DEFAULT_FONTNAME  = "fixed";
-  char*  DEFAULT_TIME      = "1";
+  const char*  DEFAULT_WIDTH     = "400";
+  const char*  DEFAULT_HEIGHT    = "400";
+  const char*  DEFAULT_IDENT     = "";
+  const char*  DEFAULT_FONTNAME  = "fixed";
+  const char*  DEFAULT_TIME      = "1";
 
   inline int TCL_ERR(Tcl_Interp* interp, const char* msg)
     {
@@ -95,10 +95,10 @@ private:
 
 public:
   Impl(Togl* owner, Tcl_Interp* interp,
-       const char* pathname, int config_argc, char** config_argv);
-  virtual ~Impl();
+       const char* pathname, int config_argc, const char** config_argv);
+  ~Impl();
 
-  int configure(Tcl_Interp* interp, int argc, char* argv[], int flags);
+  int configure(Tcl_Interp* interp, int argc, const char* argv[], int flags);
 
   void makeCurrent() const;
 
@@ -298,108 +298,107 @@ static void free_default_color_cells( Display *display, Colormap colormap);
 
 
 
-
 /*
  * Setup Togl widget configuration options:
  */
 
 static Tk_ConfigSpec configSpecs[] =
 {
-  {TK_CONFIG_PIXELS, "-height", "height", "Height",
-   DEFAULT_HEIGHT, Tk_Offset(Togl::Impl, itsHeight), 0, NULL},
+  {TK_CONFIG_PIXELS, (char*)"-height", (char*)"height", (char*)"Height",
+   (char*)DEFAULT_HEIGHT, Tk_Offset(Togl::Impl, itsHeight), 0, NULL},
 
-  {TK_CONFIG_PIXELS, "-width", "width", "Width",
-   DEFAULT_WIDTH, Tk_Offset(Togl::Impl, itsWidth), 0, NULL},
+  {TK_CONFIG_PIXELS, (char*)"-width", (char*)"width", (char*)"Width",
+   (char*)DEFAULT_WIDTH, Tk_Offset(Togl::Impl, itsWidth), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-rgba", "rgba", "Rgba",
+  {TK_CONFIG_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
 #ifndef NO_RGBA
-   "true",
+   (char*)"true",
 #else
-   "false",
+   (char*)"false",
 #endif
    Tk_Offset(Togl::Impl, itsRgbaFlag), 0, NULL},
 
-  {TK_CONFIG_INT, "-redsize", "redsize", "RedSize",
-   "1", Tk_Offset(Togl::Impl, itsRgbaRed), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-redsize", (char*)"redsize", (char*)"RedSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsRgbaRed), 0, NULL},
 
-  {TK_CONFIG_INT, "-greensize", "greensize", "GreenSize",
-   "1", Tk_Offset(Togl::Impl, itsRgbaGreen), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-greensize", (char*)"greensize", (char*)"GreenSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsRgbaGreen), 0, NULL},
 
-  {TK_CONFIG_INT, "-bluesize", "bluesize", "BlueSize",
-   "1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-double", "double", "Double",
+  {TK_CONFIG_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
 #ifndef NO_DOUBLE_BUFFER
-   "true",
+   (char*)"true",
 #else
-   "false",
+   (char*)"false",
 #endif
    Tk_Offset(Togl::Impl, itsDoubleFlag), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-depth", "depth", "Depth",
-   "false", Tk_Offset(Togl::Impl, itsDepthFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
+   (char*)"false", Tk_Offset(Togl::Impl, itsDepthFlag), 0, NULL},
 
-  {TK_CONFIG_INT, "-depthsize", "depthsize", "DepthSize",
-   "1", Tk_Offset(Togl::Impl, itsDepthSize), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsDepthSize), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-accum", "accum", "Accum",
-   "false", Tk_Offset(Togl::Impl, itsAccumFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
+   (char*)"false", Tk_Offset(Togl::Impl, itsAccumFlag), 0, NULL},
 
-  {TK_CONFIG_INT, "-accumredsize", "accumredsize", "AccumRedSize",
-   "1", Tk_Offset(Togl::Impl, itsAccumRed), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-accumredsize", (char*)"accumredsize", (char*)"AccumRedSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsAccumRed), 0, NULL},
 
-  {TK_CONFIG_INT, "-accumgreensize", "accumgreensize", "AccumGreenSize",
-   "1", Tk_Offset(Togl::Impl, itsAccumGreen), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-accumgreensize", (char*)"accumgreensize", (char*)"AccumGreenSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsAccumGreen), 0, NULL},
 
-  {TK_CONFIG_INT, "-accumbluesize", "accumbluesize", "AccumBlueSize",
-   "1", Tk_Offset(Togl::Impl, itsAccumBlue), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-accumbluesize", (char*)"accumbluesize", (char*)"AccumBlueSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsAccumBlue), 0, NULL},
 
-  {TK_CONFIG_INT, "-accumalphasize", "accumalphasize", "AccumAlphaSize",
-   "1", Tk_Offset(Togl::Impl, itsAccumAlpha), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-accumalphasize", (char*)"accumalphasize", (char*)"AccumAlphaSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsAccumAlpha), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-alpha", "alpha", "Alpha",
-   "false", Tk_Offset(Togl::Impl, itsAlphaFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-alpha", (char*)"alpha", (char*)"Alpha",
+   (char*)"false", Tk_Offset(Togl::Impl, itsAlphaFlag), 0, NULL},
 
-  {TK_CONFIG_INT, "-alphasize", "alphasize", "AlphaSize",
-   "1", Tk_Offset(Togl::Impl, itsAlphaSize), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-alphasize", (char*)"alphasize", (char*)"AlphaSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsAlphaSize), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-stencil", "stencil", "Stencil",
-   "false", Tk_Offset(Togl::Impl, itsStencilFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-stencil", (char*)"stencil", (char*)"Stencil",
+   (char*)"false", Tk_Offset(Togl::Impl, itsStencilFlag), 0, NULL},
 
-  {TK_CONFIG_INT, "-stencilsize", "stencilsize", "StencilSize",
-   "1", Tk_Offset(Togl::Impl, itsStencilSize), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-stencilsize", (char*)"stencilsize", (char*)"StencilSize",
+   (char*)"1", Tk_Offset(Togl::Impl, itsStencilSize), 0, NULL},
 
-  {TK_CONFIG_INT, "-auxbuffers", "auxbuffers", "AuxBuffers",
-   "0", Tk_Offset(Togl::Impl, itsAuxNumber), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-auxbuffers", (char*)"auxbuffers", (char*)"AuxBuffers",
+   (char*)"0", Tk_Offset(Togl::Impl, itsAuxNumber), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-privatecmap", "privateCmap", "PrivateCmap",
-   "false", Tk_Offset(Togl::Impl, itsPrivateCmapFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
+   (char*)"false", Tk_Offset(Togl::Impl, itsPrivateCmapFlag), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-overlay", "overlay", "Overlay",
-   "false", Tk_Offset(Togl::Impl, itsOverlayFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
+   (char*)"false", Tk_Offset(Togl::Impl, itsOverlayFlag), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-stereo", "stereo", "Stereo",
-   "false", Tk_Offset(Togl::Impl, itsStereoFlag), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-stereo", (char*)"stereo", (char*)"Stereo",
+   (char*)"false", Tk_Offset(Togl::Impl, itsStereoFlag), 0, NULL},
 
 #ifndef NO_TK_CURSOR
-  { TK_CONFIG_ACTIVE_CURSOR, "-cursor", "cursor", "Cursor",
-    "", Tk_Offset(Togl::Impl, itsCursor), TK_CONFIG_NULL_OK, NULL },
+  { TK_CONFIG_ACTIVE_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
+    (char*)"", Tk_Offset(Togl::Impl, itsCursor), TK_CONFIG_NULL_OK, NULL },
 #endif
 
-  {TK_CONFIG_INT, "-time", "time", "Time",
-   DEFAULT_TIME, Tk_Offset(Togl::Impl, itsTime), 0, NULL},
+  {TK_CONFIG_INT, (char*)"-time", (char*)"time", (char*)"Time",
+   (char*)DEFAULT_TIME, Tk_Offset(Togl::Impl, itsTime), 0, NULL},
 
-  {TK_CONFIG_STRING, "-sharelist", "sharelist", "ShareList",
+  {TK_CONFIG_STRING, (char*)"-sharelist", (char*)"sharelist", (char*)"ShareList",
    NULL, Tk_Offset(Togl::Impl, itsShareList), 0, NULL},
 
-  {TK_CONFIG_STRING, "-sharecontext", "sharecontext", "ShareContext",
+  {TK_CONFIG_STRING, (char*)"-sharecontext", (char*)"sharecontext", (char*)"ShareContext",
    NULL, Tk_Offset(Togl::Impl, itsShareContext), 0, NULL},
 
-  {TK_CONFIG_STRING, "-ident", "ident", "Ident",
-   DEFAULT_IDENT, Tk_Offset(Togl::Impl, itsIdent), 0, NULL},
+  {TK_CONFIG_STRING, (char*)"-ident", (char*)"ident", (char*)"Ident",
+   (char*)DEFAULT_IDENT, Tk_Offset(Togl::Impl, itsIdent), 0, NULL},
 
-  {TK_CONFIG_BOOLEAN, "-indirect", "indirect", "Indirect",
-   "false", Tk_Offset(Togl::Impl, itsIndirect), 0, NULL},
+  {TK_CONFIG_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
+   (char*)"false", Tk_Offset(Togl::Impl, itsIndirect), 0, NULL},
 
   {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
    (char *) NULL, 0, 0, NULL}
@@ -558,7 +557,7 @@ void Togl::setReshapeFunc( Togl_Callback *proc )
 void Togl::setDestroyFunc( Togl_Callback *proc )
   { itsImpl->setDestroyFunc(proc); }
 
-int Togl::configure(Tcl_Interp *interp, int argc, char *argv[], int flags)
+int Togl::configure(Tcl_Interp *interp, int argc, const char *argv[], int flags)
   { return itsImpl->configure(interp, argc, argv, flags); }
 
 void Togl::makeCurrent() const
@@ -664,7 +663,9 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
       else
         {
           /* Execute a configuration change */
-          result = impl->configure(interp, argc-2, argv+2, TK_CONFIG_ARGV_ONLY);
+          result = impl->configure(interp, argc-2,
+                                   const_cast<const char**>(argv+2),
+                                   TK_CONFIG_ARGV_ONLY);
         }
     }
   else if (!strncmp(argv[1], "render", Util::max((std::size_t)1,
@@ -1174,7 +1175,7 @@ int Togl::dumpToEpsFile( const char *filename, int inColor,
 ///////////////////////////////////////////////////////////////////////
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname,
-           int config_argc, char** config_argv) :
+           int config_argc, const char** config_argv) :
   itsImpl(new Impl(this, interp, pathname, config_argc, config_argv))
 {
 DOTRACE("Togl::Togl");
@@ -1193,7 +1194,8 @@ DOTRACE("Togl::~Togl");
 //     * Configures this Togl for the given arguments
 
 Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
-                 const char* pathname, int config_argc, char** config_argv) :
+                 const char* pathname,
+                 int config_argc, const char** config_argv) :
   itsOwner(owner),
 
   itsNext(NULL),
@@ -1279,7 +1281,7 @@ DOTRACE("Togl::Impl::Impl");
 
   itsDisplay = Tk_Display( itsTkWin );
 
-  Tk_SetClass(itsTkWin, "Togl");
+  Tk_SetClass(itsTkWin, (char*)"Togl");
 
   // Configure the widget
   if (config_argc > 0 )
@@ -1372,7 +1374,8 @@ DOTRACE("Togl::Impl::~Impl");
 //
 //---------------------------------------------------------------------
 
-int Togl::Impl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags)
+int Togl::Impl::configure(Tcl_Interp* interp,
+                          int argc, const char* argv[], int flags)
 {
 DOTRACE("Togl::Impl::configure");
 
@@ -1395,7 +1398,8 @@ DOTRACE("Togl::Impl::configure");
   int oldAuxNumber   = itsAuxNumber;
 
   if (Tk_ConfigureWidget(interp, itsTkWin, configSpecs,
-                         argc, argv, (char *)this, flags) == TCL_ERROR)
+                         argc, const_cast<char**>(argv),
+                         reinterpret_cast<char *>(this), flags) == TCL_ERROR)
     {
       return TCL_ERROR;
     }
@@ -2679,7 +2683,7 @@ DOTRACE("ToglTcl::ToglCmd");
   /* Create Togl data structure */
   try
     {
-      new Togl(interp, argv[1], argc-2, argv+2);
+      new Togl(interp, argv[1], argc-2, const_cast<const char**>(argv+2));
     }
   catch (...)
     {
