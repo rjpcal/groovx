@@ -14,6 +14,15 @@ namespace eval List {
 
 variable TEST_DEFINED 1
 
+proc purgeAll {} {
+	 BlockList::reset
+	 Tlist::reset
+	 RhList::reset
+	 ThList::reset
+	 ObjList::reset
+	 PosList::reset
+}
+
 proc testList { packagename listname baseclass subclass1 subclass2 } {
     set testObj(packagename) $packagename
     set testObj(listname) $listname
@@ -43,17 +52,22 @@ proc testResetCmd { objname } {
     eval ::test $testname {"too many args"} {"
             $cmdname junk
     "} {$usage}
-    eval ::test $testname {"check number of objects -> 0"} {"
+    eval ::test $testname {"check number of objects"} {"
+        $cmdname
+        set before_count \[${this(listname)}::count\]
         ${this(subclass1)}::${this(subclass1)}
         ${this(subclass2)}::${this(subclass2)}
         $cmdname
-        ${this(listname)}::count
+        set after_count \[${this(listname)}::count\]
+		  return \[expr \$before_count - \$after_count\]
     "} {"^0$"}
-    eval ::test $testname {"check first vacant -> 0"} {"
-        ${this(subclass1)}::${this(subclass1)}
+    eval ::test $testname {"check first vacant"} {"
+        $cmdname       
+        set before_vacant_id \[${this(subclass1)}::${this(subclass1)}\]
         ${this(subclass2)}::${this(subclass2)}
         $cmdname       
-        ${this(subclass1)}::${this(subclass1)}
+        set after_vacant_id \[${this(subclass1)}::${this(subclass1)}\]
+		  return \[expr \$before_vacant_id - \$after_vacant_id\]
     "} {"^0$"}
 }
 
@@ -69,9 +83,11 @@ proc testCountCmd { objname } {
     "} {$usage}
     eval ::test $testname {"normal use"} {"
         ${this(listname)}::reset
+	     set before_count \[$cmdname\]
         ${this(subclass1)}::${this(subclass1)}
         ${this(subclass2)}::${this(subclass2)}
-        $cmdname
+        set after_count \[$cmdname\]
+		  return \[expr \$after_count - \$before_count\]
     "} {"^2$"}
 } 
 
@@ -111,16 +127,14 @@ proc testGetValidIdsCmd { objname } {
 	 eval ::test $testname {"normal use on filled list"} {"
 	     ${this(listname)}::reset
         ${this(subclass1)}::${this(subclass1)}
-        ${this(subclass1)}::${this(subclass1)}
+        set remove_me \[${this(subclass1)}::${this(subclass1)}\]
         ${this(subclass2)}::${this(subclass2)}
-		  ${this(listname)}::remove 1
-		  $cmdname
-	 "} {"^0 2$"}
-
-	 eval ::test $testname {"normal use on empty list"} {"
-	     ${this(listname)}::reset
-		  $cmdname
-	 "} {"^$"}
+		  ${this(listname)}::remove \$remove_me
+		  set count \[${this(listname)}::count\]
+		  set num_ids \[llength \[$cmdname\]\]
+		  set removed_id \[lsearch -exact \[$cmdname\] \$remove_me\]
+		  return \"\[expr \$count - \$num_ids\] \$removed_id\"
+	 "} {"^0 -1$"}
 }
 
 proc testIsValidIdCmd { objname } {
@@ -152,6 +166,8 @@ proc testIsValidIdCmd { objname } {
 
 proc testStringifyCmd { objname } {
     upvar $objname this
+
+	 purgeAll
 
     set stringify "${this(listname)}::stringify"
     set destringify "${this(listname)}::destringify"
@@ -190,6 +206,8 @@ proc testStringifyCmd { objname } {
 proc testDestringifyCmd { objname } {
     upvar $objname this
 
+	 purgeAll
+
     set stringify "${this(listname)}::stringify"
     set destringify "${this(listname)}::destringify"
     set usage "wrong \# args: should be \"$destringify string\""
@@ -215,6 +233,8 @@ proc testDestringifyCmd { objname } {
 
 proc testWriteCmd { objname } {
     upvar $objname this
+
+	 purgeAll
 
     set writecmd "${this(listname)}::write"
     set readcmd "${this(listname)}::read"
@@ -252,6 +272,8 @@ proc testWriteCmd { objname } {
 
 proc testReadCmd { objname } {
     upvar $objname this
+
+	 purgeAll
 
     set writecmd "${this(listname)}::write"
     set readcmd "${this(listname)}::read"
