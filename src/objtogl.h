@@ -3,7 +3,7 @@
 // objtogl.h
 // Rob Peters
 // created: Nov-98
-// written: Tue Jul  6 14:42:09 1999
+// written: Tue Nov  9 13:17:43 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -17,6 +17,7 @@
 class ToglConfig;
 
 namespace ObjTogl {
+  bool toglHasBeenCreated();
   ToglConfig* theToglConfig();
 }
 

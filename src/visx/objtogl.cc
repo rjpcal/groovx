@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Nov  3 18:09:10 1999
+// written: Tue Nov  9 13:18:11 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -95,6 +95,11 @@ public:
     glClear(GL_COLOR_BUFFER_BIT);
   }
 };
+
+bool ObjTogl::toglHasBeenCreated() {
+DOTRACE("ObjTogl::toglHasBeenCreated");
+  return toglCreated;
+}
 
 ToglConfig* ObjTogl::theToglConfig() {
 DOTRACE("ObjTogl::theToglConfig");
