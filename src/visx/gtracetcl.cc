@@ -25,6 +25,8 @@ DOTRACE("Gtrace_Init");
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Gtrace", "$Revision$");
   pkg->def("::gtrace", "on_off", &Util::Trace::setGlobalTrace);
   pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace);
+  pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
+  pkg->def("maxDepth", "", &Util::Trace::getMaxLevel);
 
   return pkg->initStatus();
 }
