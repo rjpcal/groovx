@@ -32,15 +32,14 @@
 
 #include "gaborarray.h"
 
-#include "gx/geom.h"
+#include "gfx/canvas.h"
+#include "gfx/gxaligner.h"
 
 #include "gx/bbox.h"
 #include "gx/bmapdata.h"
+#include "gx/geom.h"
 #include "gx/imgfile.h"
 #include "gx/rect.h"
-
-#include "gfx/canvas.h"
-#include "gfx/gxaligner.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -62,8 +61,6 @@ using namespace Gfx;
 
 namespace
 {
-  const double SQRT3 = 1.73205080757;
-
   const int MAX_GABOR_NUMBER = 1800;
 }
 
@@ -84,6 +81,7 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
   itsSizeY(sizeY),
   itsGridSpacing(gridSpacing),
   itsMinSpacing(minSpacing),
+  itsFillResolution(15.0),
 
   itsThetaSeed(0),
   itsPhaseSeed(0),
@@ -120,6 +118,7 @@ const FieldMap& GaborArray::classFields()
     Field("sizeY", &GaborArray::itsSizeY, 512, 16, 2048, 16),
     Field("gridSpacing", &GaborArray::itsGridSpacing, 48., 1., 200., 1.),
     Field("minSpacing", &GaborArray::itsMinSpacing, 36., 1., 200., 1.),
+    Field("fillResolution", &GaborArray::itsFillResolution, 15., 1., 50., 1.),
 
     Field("thetaSeed", &GaborArray::itsThetaSeed, 0, 0, 20000, 1),
     Field("phaseSeed", &GaborArray::itsPhaseSeed, 0, 0, 20000, 1),
@@ -238,7 +237,8 @@ DOTRACE("GaborArray::updateBackg");
       && itsSizeX.ok()
       && itsSizeY.ok()
       && itsGridSpacing.ok()
-      && itsMinSpacing.ok())
+      && itsMinSpacing.ok()
+      && itsFillResolution.ok())
     return;
 
   itsTotalNumber = itsForegNumber;
@@ -300,6 +300,7 @@ DOTRACE("GaborArray::updateBackg");
   itsSizeY.save();
   itsGridSpacing.save();
   itsMinSpacing.save();
+  itsFillResolution.save();
 
   itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
@@ -451,7 +452,7 @@ DOTRACE("GaborArray::backgHexGrid");
   // lay down a hexagonal grid of elements
 
   const double dx = itsGridSpacing;
-  const double dy = SQRT3 * itsGridSpacing / 2.0;
+  const double dy = sqrt(3.0) * itsGridSpacing / 2.0;
 
   const int nx = int((itsSizeX - itsMinSpacing) / dx - 0.5);
   const int ny = int((itsSizeY - itsMinSpacing) / dy);
@@ -477,9 +478,7 @@ void GaborArray::backgFill() const
 {
 DOTRACE("GaborArray::backgFill");
 
-  const double tryFillArea = 6.0;
-
-  const double dx = sqrt(tryFillArea);
+  const double dx = itsMinSpacing / itsFillResolution;
 
   const double halfX = 0.5 * itsSizeX;
   const double halfY = 0.5 * itsSizeY;
@@ -490,8 +489,8 @@ DOTRACE("GaborArray::backgFill");
         tryPush(Element(x, y, 0.0, Element::OUTSIDE));
       }
 
-  const double backgAveSpacing = sqrt(2.0*itsSizeX*itsSizeY/(SQRT3*itsTotalNumber));
-  printf(" %d elements, ave spacing %f\n", itsTotalNumber, backgAveSpacing);
+  const double spacing = sqrt(2.0*itsSizeX*itsSizeY/(sqrt(3.0)*itsTotalNumber));
+  printf(" %d elements, ave spacing %f\n", itsTotalNumber, spacing);
 }
 
 void GaborArray::backgJitter(Util::Urand& urand) const

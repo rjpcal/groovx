@@ -128,6 +128,7 @@ private:
   Cached<int> itsSizeY;
   Cached<double> itsGridSpacing;
   Cached<double> itsMinSpacing;
+  Cached<double> itsFillResolution;
 
   Cached<int> itsThetaSeed;
   Cached<int> itsPhaseSeed;
