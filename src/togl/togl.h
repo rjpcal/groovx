@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 12:11:16 2002
+// written: Mon Sep 16 12:50:24 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -73,6 +73,7 @@ public:
 
   // Miscellaneous
   int configure(int objc, Tcl_Obj* const objv[]);
+  int handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
   void makeCurrent() const;
   void requestRedisplay();
   void requestReconfigure();

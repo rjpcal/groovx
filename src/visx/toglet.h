@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Sep 11 15:21:51 2002
+// written: Mon Sep 16 12:51:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #endif
 
 struct Tcl_Interp;
+struct Tcl_Obj;
 
 class TogletImpl;
 
@@ -59,6 +60,8 @@ public:
   virtual Gfx::Canvas& getCanvas();
 
   // manipulators
+  int handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+
   static void defaultParent(const char* pathname);
 
   void destroyWidget();

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 12:29:06 2002
+// written: Mon Sep 16 13:31:08 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -101,9 +101,6 @@ namespace
   Togl::Callback* DefaultDestroyProc = NULL;
   Togl::Callback* DefaultTimerProc = NULL;
   ClientData DefaultClientData = NULL;
-
-  int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
-                     int objc, Tcl_Obj* const objv[]);
 
   // Tk option database machinery for Togl:
 
@@ -224,7 +221,6 @@ public:
   Display* itsDisplay;
   shared_ptr<ToglOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
-  Tcl_Command itsCmdToken;
 
   bool itsUpdatePending;
   bool itsShutdownRequested;
@@ -242,10 +238,11 @@ public:
 
   int configure(int objc, Tcl_Obj* const objv[]);
 
+  int handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
   static void cEventuallyFreeCallback(char* clientData);
   static void cEventCallback(ClientData clientData, XEvent* eventPtr);
-  static void cWidgetCmdDeletedCallback(ClientData clientData);
   static void cTimerCallback(ClientData clientData);
   static void cRenderCallback(ClientData clientData);
 
@@ -311,7 +308,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsDisplay(0),
   itsOpts(new ToglOpts),
   itsGlx(0),
-  itsCmdToken(0),
 
   itsUpdatePending(false),
   itsShutdownRequested(false),
@@ -377,11 +373,6 @@ DOTRACE("Togl::Impl::Impl");
   // Set up handlers
   //
 
-  itsCmdToken = Tcl_CreateObjCommand(itsInterp, Tk_PathName(itsTkWin),
-                                     Togl_WidgetCmd,
-                                     static_cast<ClientData>(this),
-                                     &cWidgetCmdDeletedCallback);
-
   Tk_CreateEventHandler(itsTkWin,
                         ExposureMask | StructureNotifyMask,
                         &cEventCallback,
@@ -431,7 +422,6 @@ Togl::Impl::~Impl() throw()
 {
 DOTRACE("Togl::Impl::~Impl");
 
-  Assert(itsCmdToken != 0);
   Assert(itsTkWin != 0);
 
   if (itsUserDestroyProc)
@@ -449,12 +439,56 @@ DOTRACE("Togl::Impl::~Impl");
       delete itsOverlay;
     }
 
-  Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
-
   Tk_FreeConfigOptions(reinterpret_cast<char*>(itsOpts.get()),
                        toglOptionTable, itsTkWin);
 
   Tk_DestroyWindow(itsTkWin);
+}
+
+//---------------------------------------------------------------------
+//
+// Process a configure read- and/or write-request
+//
+//---------------------------------------------------------------------
+
+int Togl::Impl::handleConfigure(Tcl_Interp* interp,
+                                int objc, Tcl_Obj* const objv[])
+{
+DOTRACE("Togl::Impl::handleConfigure");
+
+  int result = TCL_OK;
+
+  if (objc == 0)
+    {
+      /* Return list of all configuration parameters */
+      Tcl_Obj* objResult =
+        Tk_GetOptionInfo(interp,
+                         reinterpret_cast<char*>(itsOpts.get()),
+                         toglOptionTable,
+                         (Tcl_Obj*)NULL, itsTkWin);
+
+      if (objResult != 0) Tcl_SetObjResult(interp, objResult);
+      else                result = TCL_ERROR;
+    }
+  else if (objc == 1)
+    {
+      /* Return a specific configuration parameter */
+      Tcl_Obj* objResult =
+        Tk_GetOptionInfo(interp,
+                         reinterpret_cast<char*>(itsOpts.get()),
+                         toglOptionTable,
+                         objv[0], itsTkWin);
+
+      if (objResult != 0) Tcl_SetObjResult(interp, objResult);
+      else                result = TCL_ERROR;
+    }
+  else
+    {
+      /* Execute a configuration change */
+      result = configure(objc, objv);
+    }
+
+  return result;
 }
 
 //---------------------------------------------------------------------
@@ -515,15 +549,6 @@ void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr)
   Impl* rep = static_cast<Impl*>(clientData);
   Tcl_Preserve(clientData);
   rep->eventProc(eventPtr);
-  Tcl_Release(clientData);
-}
-
-void Togl::Impl::cWidgetCmdDeletedCallback(ClientData clientData)
-{
-DOTRACE("Togl::Impl::cWidgetCmdDeletedCallback");
-  Impl* rep = static_cast<Impl*>(clientData);
-  Tcl_Preserve(clientData);
-  rep->requestShutdown();
   Tcl_Release(clientData);
 }
 
@@ -850,6 +875,9 @@ void Togl::setDestroyFunc(Togl::Callback* proc) { rep->setDestroyFunc(proc); }
 int Togl::configure(int objc, Tcl_Obj* const objv[])
   { return rep->configure(objc, objv); }
 
+int Togl::handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
+  { return rep->handleConfigure(interp, objc, objv); }
+
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(windowId()); }
 void Togl::requestRedisplay()           { rep->requestRedisplay(); }
 void Togl::requestReconfigure()         { rep->requestReconfigure(); }
@@ -964,63 +992,6 @@ Gfx::Canvas& Togl::getCanvas() const { return rep->itsGlx->canvas(); }
 // Togl Tcl package
 //
 ///////////////////////////////////////////////////////////////////////
-
-namespace
-{
-  int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
-                     int objc, Tcl_Obj* const objv[])
-  {
-   DOTRACE("<togl.cc>::Togl_WidgetCmd");
-
-    Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
-    int result = TCL_OK;
-
-    Tcl_Preserve(clientData);
-
-    if (objc == 1)
-      {
-        /* Return list of all configuration parameters */
-        Tcl_Obj* objResult =
-          Tk_GetOptionInfo(interp,
-                           reinterpret_cast<char*>(rep->itsOpts.get()),
-                           toglOptionTable,
-                           (Tcl_Obj*)NULL, rep->itsTkWin);
-        if (objResult != 0)
-          {
-            Tcl_SetObjResult(interp, objResult);
-          }
-        else
-          {
-            result = TCL_ERROR;
-          }
-      }
-    else if (objc == 2)
-      {
-        /* Return a specific configuration parameter */
-        Tcl_Obj* objResult =
-          Tk_GetOptionInfo(interp,
-                           reinterpret_cast<char*>(rep->itsOpts.get()),
-                           toglOptionTable,
-                           objv[1], rep->itsTkWin);
-        if (objResult != 0)
-          {
-            Tcl_SetObjResult(interp, objResult);
-          }
-        else
-          {
-            result = TCL_ERROR;
-          }
-      }
-    else
-      {
-        /* Execute a configuration change */
-        result = rep->configure(objc-1, objv+1);
-      }
-
-    Tcl_Release(clientData);
-    return result;
-  }
-}
 
 extern "C" int Togl_Init(Tcl_Interp *interp)
 {

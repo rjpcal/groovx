@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 12:14:37 2002
+// written: Mon Sep 16 12:52:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -540,6 +540,12 @@ DOTRACE("Toglet::getCanvas");
 //////////////////
 // manipulators //
 //////////////////
+
+int Toglet::handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
+{
+DOTRACE("Toglet::handleConfigure");
+  return rep->togl->handleConfigure(interp, objc, objv);
+}
 
 void Toglet::defaultParent(const char* pathname)
 {
