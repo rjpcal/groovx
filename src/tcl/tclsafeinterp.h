@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Sun Aug  5 19:25:13 2001
+// written: Mon Aug  6 13:02:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public:
   Interp(Tcl_Interp* interp);
   ~Interp();
 
-  bool hasInterp() const { return itsInterp != 0; }
+  bool hasInterp() const throw() { return itsInterp != 0; }
   Tcl_Interp* intp() const;
 
   void forgetInterp();
@@ -83,6 +83,11 @@ public:
     return Tcl::Convert<typename Cue::Type>::fromTcl
       (getObjGlobalVar(name1, name2));
   }
+
+  // Errors
+  void handleLiveException(const char* where,
+                           bool withBkgdError = false) throw();
+  void backgroundError() throw();
 
   // Events
   static void clearEventQueue();

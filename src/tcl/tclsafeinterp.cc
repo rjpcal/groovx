@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Sun Aug  5 19:24:29 2001
+// written: Mon Aug  6 13:02:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -177,6 +177,43 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
     }
 
   return obj;
+}
+
+void Tcl::Interp::handleLiveException(const char* where,
+                                      bool withBkgdError) throw()
+{
+DOTRACE("Tcl::Interp::handleLiveException");
+
+  try
+    {
+      throw;
+    }
+  catch (ErrorWithMsg& err)
+    {
+      if (hasInterp())
+        {
+          Tcl_AppendResult(itsInterp, where, ": ", err.msg_cstr(), (char*) 0);
+        }
+    }
+  catch (...)
+    {
+      if (hasInterp())
+        {
+          Tcl_AppendResult(itsInterp, where, ": ",
+                           "an error of unknown type occurred", (char*) 0);
+        }
+    }
+
+  if (withBkgdError && hasInterp())
+    backgroundError();
+}
+
+void Tcl::Interp::backgroundError() throw()
+{
+DOTRACE("Tcl::Interp::backgroundError");
+
+  if (hasInterp())
+    Tcl_BackgroundError(itsInterp);
 }
 
 void Tcl::Interp::clearEventQueue()
