@@ -125,6 +125,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<0, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<0, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)
@@ -140,6 +141,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<1, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<1, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)
@@ -156,6 +158,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<2, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<2, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)
@@ -172,6 +175,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<3, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<3, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)
@@ -188,6 +192,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<4, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<4, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)
@@ -205,6 +210,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<5, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<5, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)
@@ -222,6 +228,7 @@ namespace Tcl
   template <class R, class Func>
   struct Functor<6, R, Func> : public FunctorBase<Func>
   {
+  public:
     Functor<6, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
     R operator()(Tcl::Context& ctx)

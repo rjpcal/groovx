@@ -55,6 +55,8 @@ namespace
 
 struct Util::Signal::SigImpl : public Util::VolatileObject
 {
+public:
+
   SigImpl() :
     itsSlots(),
     slotEmitSelf(Util::Slot::make(this, & SigImpl::receive)),
