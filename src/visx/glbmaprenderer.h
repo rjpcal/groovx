@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Aug  8 08:07:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,15 +41,9 @@ public:
   virtual ~GLBmapRenderer();
 
   virtual void doRender(GWT::Canvas& canvas,
-								unsigned char* bytes,
-								double x_pos,
-								double y_pos,
-								int width,
-								int height,
-								int bits_per_pixel,
-								int byte_alignment,
-								double zoom_x,
-								double zoom_y) const;
+                        const BmapData& data,
+                        const Point<double>& world_pos,
+                        const Point<double>& zoom) const;
 
   /// Query whether \c glBitmap() will be used to render the bitmap data.
   bool getUsingGlBitmap() const { return itsUsingGlBitmap; }

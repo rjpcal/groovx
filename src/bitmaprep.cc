@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Jul 19 09:29:50 2001
+// written: Wed Aug  8 08:24:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "bmapdata.h"
 #include "bmaprenderer.h"
 #include "pbm.h"
+#include "point.h"
 #include "rect.h"
 
 #include "io/io.h"
@@ -27,6 +28,7 @@
 
 #include "gwt/canvas.h"
 
+#include "util/algo.h"
 #include "util/pointers.h"
 #include "util/strings.h"
 
@@ -38,18 +40,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  template <class T>
-  inline T abs(const T& val)
-    { return (val < 0) ? -val : val; }
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -66,8 +56,8 @@ public:
   Impl(shared_ptr<BmapRenderer> renderer, const char* filename="") :
     itsRenderer(renderer),
     itsFilename(filename),
-    itsRasterX(0.0), itsRasterY(0.0),
-    itsZoomX(0.0), itsZoomY(0.0),
+    itsRasterPos(0.0, 0.0),
+    itsZoom(0.0, 0.0),
     itsUsingZoom(false),
     itsContrastFlip(false),
     itsVerticalFlip(false),
@@ -77,10 +67,8 @@ public:
   shared_ptr<BmapRenderer> itsRenderer;
 
   fixed_string itsFilename;
-  double itsRasterX;
-  double itsRasterY;
-  double itsZoomX;
-  double itsZoomY;
+  Point<double> itsRasterPos;
+  Point<double> itsZoom;
   bool itsUsingZoom;
   bool itsContrastFlip;
   bool itsVerticalFlip;
@@ -153,8 +141,8 @@ DOTRACE("BitmapRep::~BitmapRep");
 
 void BitmapRep::init() {
 DOTRACE("BitmapRep::init");
-  itsImpl->itsRasterX = itsImpl->itsRasterY = 0.0;
-  itsImpl->itsZoomX = itsImpl->itsZoomY = 1.0;
+  itsImpl->itsRasterPos.set(0.0, 0.0);
+  itsImpl->itsZoom.set(1.0, 1.0);
   itsImpl->itsUsingZoom = false;
   itsImpl->itsContrastFlip = false;
   itsImpl->itsVerticalFlip = false;
@@ -166,10 +154,10 @@ void BitmapRep::readFrom(IO::Reader* reader) {
 DOTRACE("BitmapRep::readFrom");
 
   reader->readValue("filename", itsImpl->itsFilename);
-  reader->readValue("rasterX", itsImpl->itsRasterX);
-  reader->readValue("rasterY", itsImpl->itsRasterY);
-  reader->readValue("zoomX", itsImpl->itsZoomX);
-  reader->readValue("zoomY", itsImpl->itsZoomY);
+  reader->readValue("rasterX", itsImpl->itsRasterPos.x());
+  reader->readValue("rasterY", itsImpl->itsRasterPos.y());
+  reader->readValue("zoomX", itsImpl->itsZoom.x());
+  reader->readValue("zoomY", itsImpl->itsZoom.y());
   reader->readValue("usingZoom", itsImpl->itsUsingZoom);
   reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
   reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
@@ -186,10 +174,10 @@ void BitmapRep::writeTo(IO::Writer* writer) const {
 DOTRACE("BitmapRep::writeTo");
 
   writer->writeValue("filename", itsImpl->itsFilename);
-  writer->writeValue("rasterX", itsImpl->itsRasterX);
-  writer->writeValue("rasterY", itsImpl->itsRasterY);
-  writer->writeValue("zoomX", itsImpl->itsZoomX);
-  writer->writeValue("zoomY", itsImpl->itsZoomY);
+  writer->writeValue("rasterX", itsImpl->itsRasterPos.x());
+  writer->writeValue("rasterY", itsImpl->itsRasterPos.y());
+  writer->writeValue("zoomX", itsImpl->itsZoom.x());
+  writer->writeValue("zoomY", itsImpl->itsZoom.y());
   writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
   writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
   writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
@@ -273,7 +261,7 @@ DOTRACE("BitmapRep::grabScreenRect");
 
   init();
 
-  BmapData newData( rect.width(), abs(rect.height()), 1, 1 );
+  BmapData newData( rect.width(), Util::abs(rect.height()), 1, 1 );
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glReadPixels(rect.left(), rect.bottom(), newData.width(), newData.height(),
@@ -345,31 +333,25 @@ DOTRACE("BitmapRep::center");
 
   Rect<double> world_pos = canvas.getWorldFromScreen(screen_pos);
 
-  GLdouble screen_width = abs(world_pos.width());
-  GLdouble screen_height = abs(world_pos.height());
+  Point<double> screen_extent = world_pos.extent().abs();
 
-  DebugEval(screen_width); DebugEvalNL(screen_height);
+  itsImpl->itsRasterPos = screen_extent/(-2.0);
 
-  itsImpl->itsRasterX = -screen_width/2.0;
-  itsImpl->itsRasterY = -screen_height/2.0;
-
-  itsImpl->itsRasterX *= abs(itsImpl->itsZoomX);
-  itsImpl->itsRasterY *= abs(itsImpl->itsZoomY);
+  itsImpl->itsRasterPos *= itsImpl->itsZoom.abs();
 }
 
-void BitmapRep::render(GWT::Canvas& canvas) const {
+void BitmapRep::render(GWT::Canvas& canvas) const
+{
 DOTRACE("BitmapRep::render");
 
   itsImpl->itsRenderer->doRender(canvas,
-                        itsImpl->itsData.bytesPtr(),
-                        itsImpl->itsRasterX, itsImpl->itsRasterY,
-                        itsImpl->itsData.width(), itsImpl->itsData.height(),
-                        itsImpl->itsData.bitsPerPixel(),
-                        itsImpl->itsData.byteAlignment(),
-                        itsImpl->itsZoomX, itsImpl->itsZoomY);
+                                 itsImpl->itsData,
+                                 itsImpl->itsRasterPos,
+                                 itsImpl->itsZoom);
 }
 
-void BitmapRep::unRender(GWT::Canvas& canvas) const {
+void BitmapRep::unRender(GWT::Canvas& canvas) const
+{
 DOTRACE("BitmapRep::unRender");
 
   Rect<double> world_rect = grGetBoundingBox();
@@ -383,7 +365,7 @@ DOTRACE("BitmapRep::unRender");
                                   screen_pos.left(),
                                   screen_pos.bottom(),
                                   screen_pos.width(),
-                                  abs(screen_pos.height()) );
+                                  Util::abs(screen_pos.height()) );
 }
 
 ///////////////
@@ -396,27 +378,25 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   Rect<double> bbox;
 
   // Object coordinates for the lower left corner
-  bbox.left() = itsImpl->itsRasterX;
-  bbox.bottom() = itsImpl->itsRasterY;
+  bbox.setBottomLeft(itsImpl->itsRasterPos);
 
   // Get screen coordinates for the lower left corner
   GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-  Point<int> screen_point =
-    canvas.getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
+  Point<int> screen_point = canvas.getScreenFromWorld(itsImpl->itsRasterPos);
 
-  if (itsImpl->itsZoomX < 0.0)
+  if (itsImpl->itsZoom.x() < 0.0)
     {
-      screen_point.x() += int(width()*itsImpl->itsZoomX);
+      screen_point.x() += int(width()*itsImpl->itsZoom.x());
     }
-  if (itsImpl->itsZoomY < 0.0)
+  if (itsImpl->itsZoom.y() < 0.0)
     {
-      screen_point.y() += int(height()*itsImpl->itsZoomY);
+      screen_point.y() += int(height()*itsImpl->itsZoom.y());
     }
 
   // Move the point to the upper right corner
-  screen_point += Point<double>(width()*abs(itsImpl->itsZoomX),
-                                height()*abs(itsImpl->itsZoomY));
+  screen_point += Point<double>(width()*Util::abs(itsImpl->itsZoom.x()),
+                                height()*Util::abs(itsImpl->itsZoom.y()));
 
   bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
 
@@ -445,22 +425,22 @@ DOTRACE("BitmapRep::height");
 
 double BitmapRep::getRasterX() const {
 DOTRACE("BitmapRep::getRasterX");
-  return itsImpl->itsRasterX;
+  return itsImpl->itsRasterPos.x();
 }
 
 double BitmapRep::getRasterY() const {
 DOTRACE("BitmapRep::getRasterY");
-  return itsImpl->itsRasterY;
+  return itsImpl->itsRasterPos.y();
 }
 
 double BitmapRep::getZoomX() const {
 DOTRACE("BitmapRep::getZoomX");
-  return itsImpl->itsZoomX;
+  return itsImpl->itsZoom.x();
 }
 
 double BitmapRep::getZoomY() const {
 DOTRACE("BitmapRep::getZoomY");
-  return itsImpl->itsZoomY;
+  return itsImpl->itsZoom.y();
 }
 
 bool BitmapRep::getUsingZoom() const {
@@ -474,34 +454,36 @@ DOTRACE("BitmapRep::getUsingZoom");
 
 void BitmapRep::setRasterX(double val) {
 DOTRACE("BitmapRep::setRasterX");
-  itsImpl->itsRasterX = val;
+  itsImpl->itsRasterPos.x() = val;
 }
 
 void BitmapRep::setRasterY(double val) {
 DOTRACE("BitmapRep::setRasterY");
-  itsImpl->itsRasterY = val;
+  itsImpl->itsRasterPos.y() = val;
 }
 
 void BitmapRep::setZoomX(double val) {
 DOTRACE("BitmapRep::setZoomX");
   if (!itsImpl->itsUsingZoom) return;
 
-  itsImpl->itsZoomX = val;
+  itsImpl->itsZoom.x() = val;
 }
 
 void BitmapRep::setZoomY(double val) {
 DOTRACE("BitmapRep::setZoomY");
-  itsImpl->itsZoomY = val;
+  if (!itsImpl->itsUsingZoom) return;
+
+  itsImpl->itsZoom.y() = val;
 }
 
 void BitmapRep::setUsingZoom(bool val) {
 DOTRACE("BitmapRep::setUsingZoom");
   itsImpl->itsUsingZoom = val;
 
-  if (!itsImpl->itsUsingZoom) {
-    itsImpl->itsZoomX = 1.0;
-    itsImpl->itsZoomY = 1.0;
-  }
+  if (!itsImpl->itsUsingZoom)
+    {
+      itsImpl->itsZoom.set(1.0, 1.0);
+    }
 }
 
 void BitmapRep::clearBytes() {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 16:51:34 1999
-// written: Mon Jun 11 15:08:16 2001
+// written: Wed Aug  8 08:04:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,14 @@
 #ifndef BMAPRENDERER_H_DEFINED
 #define BMAPRENDERER_H_DEFINED
 
-namespace GWT {
+namespace GWT
+{
   class Canvas;
 }
+
+class BmapData;
+
+template <class V> class Point;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -32,26 +37,20 @@ public:
   virtual ~BmapRenderer();
 
   /** This is the operation that subclasses must implement to do the
-		actual rendering of the bitmap data. All of the information
-		needed to do the rendering is passed as arguments to the
-		function. */
+      actual rendering of the bitmap data. All of the information
+      needed to do the rendering is passed as arguments to the
+      function. */
   virtual void doRender(GWT::Canvas& canvas,
-								unsigned char* /* bytes */,
-								double /* x_pos */,
-								double /* y_pos */,
-								int /* width */,
-								int /* height */,
-								int /* bits_per_pixel */,
-								int /* byte_alignment */,
-								double /* zoom_x */,
-								double /* zoom_y */) const = 0;
+                        const BmapData& data,
+                        const Point<double>& world_pos,
+                        const Point<double>& zoom) const = 0;
 
   /** This is the operation that subclasses should override if they
       need to provide a special unrendering method. A default no-op
       implementation is provided. */
   virtual void doUndraw(GWT::Canvas& canvas,
-					  int /*winRasterX*/, int /*winRasterY*/,
-					  int /*winWidthX*/, int /*winHeightY*/) const;
+                        int winRasterX, int winRasterY,
+                        int winWidthX, int winHeightY) const;
 
   /** This operation should be called by clients after every change to
       the bitmap data. The default implementation provided by Bitmap
