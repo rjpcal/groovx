@@ -120,6 +120,47 @@ esac
 AC_SUBST(SHLIB_EXT)
 AC_SUBST(STATLIB_EXT)
 
+### Check whether virtual base classes are OK
+
+AC_MSG_CHECKING([whether virtual base classes are properly implemented])
+
+AC_TRY_RUN([void* p1 = 0; void* p2 = 0;
+
+struct A {
+  virtual ~A() {};
+  virtual void foo() { delete this; }
+  int i;
+};
+
+struct B : public virtual A {
+  virtual ~B() { p2 = (void*)this; }
+};
+
+int main()
+{
+  B* b = new B;
+  p1 = (void*)b;
+  b->foo();
+
+  return (p1 == p2) ? 0 : 1;
+}],
+[AC_MSG_RESULT(yes)],
+[AC_MSG_RESULT(no);
+ AC_MSG_ERROR([$CXX has a broken implementation of virtual base classes])])
+
+### Check various template peculiarities
+
+AC_MSG_CHECKING([whether we can take the address of template functions])
+
+AC_TRY_COMPILE([namespace Q {
+  template <class T>
+  void foo(T) {}
+}
+template <class F> void bar(F) {}
+],
+[bar(Q::foo<int>); bar(Q::foo<double>);],
+[AC_MSG_RESULT(yes)], [AC_DEFINE(BROKEN_TEMPLATE_FUNCTIONS) AC_MSG_RESULT(no)])
+
 ### Check c++ name mangling
 
 AC_MSG_CHECKING([whether typeinfo::name() gives a mangled typename])
@@ -142,25 +183,6 @@ int main()
 ],
 [AC_DEFINE(NO_TYPENAME_MANGLING,1) AC_MSG_RESULT(no)],
 AC_MSG_RESULT(yes))
-
-dnl Checks for libraries.
-
-dnl Checks for header files.
-AC_PATH_XTRA
-
-### Check for audio header files and libraries
-
-AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream],,,-)
-AC_CHECK_HEADER([dmedia/audio.h],
-		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
-		 LIBS="$LIBS -laudio -laudiofile"],,-)
-
-AC_CHECK_HEADER([Alib.h],
-		[AC_DEFINE(HAVE_ALIB_H,1) LIBS="$LIBS -lAlib"],,-)
-
-AC_CHECK_HEADER([esd.h],
-		[AC_DEFINE(HAVE_ESD_H,1)
-		 LIBS="$LIBS -lesd -laudiofile"],,-)
 
 ### Check support for c++ iostreams
 
@@ -190,18 +212,24 @@ else
    AC_DEFINE(STD_IO, [])
 fi
 
-### Check various template peculiarities
+dnl Checks for libraries.
 
-AC_MSG_CHECKING([whether we can take the address of template functions])
+dnl Checks for header files.
+AC_PATH_XTRA
 
-AC_TRY_COMPILE([namespace Q {
-  template <class T>
-  void foo(T) {}
-}
-template <class F> void bar(F) {}
-],
-[bar(Q::foo<int>); bar(Q::foo<double>);],
-[AC_MSG_RESULT(yes)], [AC_DEFINE(BROKEN_TEMPLATE_FUNCTIONS) AC_MSG_RESULT(no)])
+### Check for audio header files and libraries
+
+AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream],,,-)
+AC_CHECK_HEADER([dmedia/audio.h],
+		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
+		 LIBS="$LIBS -laudio -laudiofile"],,-)
+
+AC_CHECK_HEADER([Alib.h],
+		[AC_DEFINE(HAVE_ALIB_H,1) LIBS="$LIBS -lAlib"],,-)
+
+AC_CHECK_HEADER([esd.h],
+		[AC_DEFINE(HAVE_ESD_H,1)
+		 LIBS="$LIBS -lesd -laudiofile"],,-)
 
 ###
 
