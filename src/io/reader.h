@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu Mar 30 12:15:58 2000
+// written: Thu Jun  1 12:22:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,8 @@ class IO::ReadError : public ErrorWithMsg {
 public:
   /// Construct with a descriptive message \a msg.
   ReadError(const char* msg);
+
+  virtual ~ReadError();
 };
 
 

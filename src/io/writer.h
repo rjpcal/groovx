@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Thu Mar 30 12:15:58 2000
+// written: Thu Jun  1 12:22:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,8 @@ class IO::WriteError : public ErrorWithMsg {
 public:
   /// Construct with a descriptive message \a msg.
   WriteError(const char* msg);
+
+  virtual ~WriteError();
 };
 
 ///////////////////////////////////////////////////////////////////////

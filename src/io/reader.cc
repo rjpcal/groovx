@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Thu Mar 30 09:47:06 2000
+// written: Thu Jun  1 12:22:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@ IO::ReadError::ReadError(const char* msg) :
 {
   appendMsg(msg);
 }
+
+IO::ReadError::~ReadError() {}
 
 IO::Reader::~Reader() {}
 
