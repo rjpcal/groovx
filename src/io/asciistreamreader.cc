@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue May 14 19:54:37 2002
+// written: Thu Jun  6 17:47:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-#if defined(IRIX6) || defined(HP9000S700)
+#if defined(SHORTEN_SYMBOL_NAMES)
 #define AsciiStreamReader ASR
 #endif
 
@@ -657,7 +657,7 @@ Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
   return itsImpl.readRoot(this, given_root);
 }
 
-#if defined(IRIX6) || defined(HP9000S700)
+#if defined(SHORTEN_SYMBOL_NAMES)
 #undef AsciiStreamReader
 #endif
 

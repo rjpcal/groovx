@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Tue May 14 19:56:58 2002
+// written: Thu Jun  6 17:50:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-#if defined(IRIX6) || defined(HP9000S700)
+#if defined(SHORTEN_SYMBOL_NAMES)
 #define AsciiStreamWriter ASW
 #endif
 
@@ -361,7 +361,7 @@ void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
   itsImpl.writeRoot(root);
 }
 
-#if defined(IRIX6) || defined(HP9000S700)
+#if defined(SHORTEN_SYMBOL_NAMES)
 #undef AsciiStreamWriter
 #endif
 

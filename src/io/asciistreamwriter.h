@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Fri Jan 18 16:06:57 2002
+// written: Thu Jun  6 17:50:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class ostream;
 // re-introduces AsciiStreamWriter as a typedef for ASW, so that
 // client code should be able to use the typename AsciiStreamWriter in
 // all cases.
-#if defined(IRIX6) || defined(HP9000S700)
+#if defined(SHORTEN_SYMBOL_NAMES)
 #define AsciiStreamWriter ASW
 #endif
 
@@ -86,7 +86,7 @@ private:
 
 
 // The second part of the hack to shorten mangled names.
-#if defined(IRIX6) || defined(HP9000S700)
+#if defined(SHORTEN_SYMBOL_NAMES)
 #undef AsciiStreamWriter
 typedef ASW AsciiStreamWriter;
 #endif
