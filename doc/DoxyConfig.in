@@ -363,9 +363,9 @@ INPUT                  = ./doc \
                          ./src/gwt \
                          ./src/gx \
                          ./src/io \
+                         ./src/pkgs \
                          ./src/pkgs/hashtest \
                          ./src/pkgs/matlabengine \
-                         ./src/pkgs/minivectest \
                          ./src/pkgs/mtx \
                          ./src/pkgs/whitebox \
                          ./src/system \
@@ -381,7 +381,7 @@ INPUT                  = ./doc \
 # *.h++ *.idl *.odl
 
 FILE_PATTERNS          = *.h \
-			 *.cc \
+                         *.cc \
                          *.doc
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
