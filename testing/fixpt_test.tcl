@@ -35,7 +35,7 @@ test "FixptTcl-length" "error from non-numeric input" {
 } {^FixPt::length: expected floating-point number but got "junk"$}
 test "FixptTcl-length" "error from bad objid" {
     FixPt::length -1 1.0
-} {^FixPt::length: attempt to access invalid id '.*' in}
+} {^FixPt::length: attempted to access invalid object.*}
 test "FixptTcl-length" "error from wrong type" {
     set f [Obj::new Face]
 	 FixPt::length $f 1.0
@@ -56,7 +56,7 @@ test "FixptTcl-width" "error from non-numeric input" {
 } {^FixPt::width: expected integer but got "junk"$}
 test "FixptTcl-width" "error from bad objid" {
     FixPt::width -1 5
-} {^FixPt::width: attempt to access invalid id '.*' in}
+} {^FixPt::width: attempted to access invalid object.*}
 test "FixptTcl-width" "error from wrong type" {
     set f [Obj::new Face]
 	 FixPt::width $f 5

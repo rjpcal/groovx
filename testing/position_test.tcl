@@ -44,7 +44,7 @@ test "PositionTcl-Pos::rotationAxis" "error on non-numeric input" {
 } {Pos::rotationAxis: }
 test "PositionTcl-Pos::rotationAxis" "error on bad posid" {
     Pos::rotationAxis -1 {1 1 1}
-} {Pos::rotationAxis: attempt to access invalid id '.*' in}
+} {Pos::rotationAxis: attempted to access invalid object.*}
 
 ### Pos::scaling ###
 test "PositionTcl-Pos::scaling" "too few args" {
@@ -61,7 +61,7 @@ test "PositionTcl-Pos::scaling" "error on non-numeric input" {
 } {Pos::scaling: }
 test "PositionTcl-Pos::scaling" "error on bad posid" {
     Pos::scaling -1 {-1.2 1.0 1.0}
-} {Pos::scaling: attempt to access invalid id '.*' in}
+} {Pos::scaling: attempted to access invalid object.*}
 
 ### Pos::translation ###
 test "PositionTcl-Pos::translation" "too few args" {
@@ -78,7 +78,7 @@ test "PositionTcl-Pos::translation" "error on non-numeric input" {
 } {Pos::translation: }
 test "PositionTcl-Pos::translation" "error on bad posid" {
     Pos::translation -1 {1 1 1}
-} {Pos::translation: attempt to access invalid id '.*' in}
+} {Pos::translation: attempted to access invalid object.*}
 
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
@@ -94,7 +94,7 @@ test "PositionTcl-IO::stringify" "normal use" {
 } "Position @$::INT"
 test "PositionTcl-IO::stringify" "error on bad posid" { 
     IO::stringify -1
-} {IO::stringify: attempt to access invalid id '.*' in}
+} {IO::stringify: attempted to access invalid object.*}
 test "PositionTcl-IO::stringify" "error on non-integral posid" {
     IO::stringify 1.5
 } {expected integer but got "1\.5"}
@@ -113,10 +113,10 @@ test "PositionTcl-IO::type" "normal use on Jitter" {
 } {Jitter}
 test "PositionTcl-IO::type" "error on too small posid" {
 	 IO::type -1
-} {IO::type: attempt to access invalid id '.*' in}
+} {IO::type: attempted to access invalid object.*}
 test "PositionTcl-IO::type" "error on too large" {
 	 IO::type 10000
-} {IO::type: attempt to access invalid id '.*' in}
+} {IO::type: attempted to access invalid object.*}
 
 unset pos
 
