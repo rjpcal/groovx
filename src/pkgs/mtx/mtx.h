@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 14 17:15:35 2001
+// written: Wed Mar 14 17:23:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,53 @@ public:
   double& operator/=(double d);
 
   operator double();
+};
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Mtx iterators
+//
+///////////////////////////////////////////////////////////////////////
+
+class MtxConstIter {
+  const double* data;
+  const double* stop;
+  int stride;
+
+  MtxConstIter(const double* d, int s, int n) :
+	 data(d), stride(s), stop(d + s*n) {}
+
+  friend class ConstSlice;
+  friend class Mtx;
+
+public:
+
+  double operator*() const { return *data; }
+
+  MtxConstIter& operator++() { data += stride; return *this; }
+
+  bool hasMore() const { return data < stop; }
+};
+
+
+class MtxIter {
+  double* data;
+  int stride;
+  double* stop;
+
+  MtxIter(double* d, int s, int n) : data(d), stride(s), stop(d + s*n) {}
+
+  friend class Slice;
+  friend class Mtx;
+
+public:
+
+  double& operator*() { return *data; }
+
+  MtxIter& operator++() { data += stride; return *this; }
+
+  bool hasMore() const { return data < stop; }
 };
 
 
@@ -113,28 +160,8 @@ public:
   // Iteration
   //
 
-  class ConstIterator {
-	 const double* data;
-	 const double* stop;
-	 int stride;
-
-	 ConstIterator(const double* d, int s, int n) :
-		data(d), stride(s), stop(d + s*n) {}
-
-	 friend class ConstSlice;
-	 friend class Mtx;
-
-  public:
-
-	 double operator*() const { return *data; }
-
-	 ConstIterator& operator++() { data += stride; return *this; }
-
-	 bool hasMore() const { return data < stop; }
-  };
-
-  ConstIterator begin() const
-    { return ConstIterator(data(), itsStride, itsNelems); }
+  MtxConstIter begin() const
+    { return MtxConstIter(data(), itsStride, itsNelems); }
 
 
   //
@@ -144,23 +171,13 @@ public:
   double sum() const
   {
 	 double s = 0.0;
-	 for (ConstIterator i = begin(); i.hasMore(); ++i)
+	 for (MtxConstIter i = begin(); i.hasMore(); ++i)
 		s += *i;
 	 return s;
   }
 
   double mean() const
     { return sum()/itsNelems; }
-
-  static double dot(ConstSlice::ConstIterator s1, ConstSlice::ConstIterator s2)
-  {
-	 double result = 0.0;
-
-	 for (; s1.hasMore(); ++s1, ++s2)
-		result += (*s1) * (*s2);
-
-	 return result;
-  }
 };
 
 
@@ -206,7 +223,7 @@ public:
   template <class F>
   void apply(F func)
   {
-	 for (Iterator i = begin(); i.hasMore(); ++i)
+	 for (MtxIter i = begin(); i.hasMore(); ++i)
 		*i = func(*i);
   }
 
@@ -216,27 +233,8 @@ public:
   // Iteration
   //
 
-  class Iterator {
-	 double* data;
-	 int stride;
-	 double* stop;
-
-	 Iterator(double* d, int s, int n) : data(d), stride(s), stop(d + s*n) {}
-
-	 friend class Slice;
-	 friend class Mtx;
-
-  public:
-
-	 double& operator*() { return *data; }
-
-	 Iterator& operator++() { data += stride; return *this; }
-
-	 bool hasMore() const { return data < stop; }
-  };
-
-  Iterator begin()
-    { return Iterator(data(), itsStride, itsNelems); }
+  MtxIter begin()
+    { return MtxIter(data(), itsStride, itsNelems); }
 };
 
 
@@ -352,11 +350,11 @@ public:
   ConstSlice row(int r) const
     { return ConstSlice(storage_, address(r,0), rowstride_, ncols_); }
 
-  Slice::Iterator rowIter(int r)
-    { return Slice::Iterator(address(r,0), rowstride_, ncols_); }
+  MtxIter rowIter(int r)
+    { return MtxIter(address(r,0), rowstride_, ncols_); }
 
-  ConstSlice::ConstIterator rowIter(int r) const
-    { return ConstSlice::ConstIterator(address(r,0), rowstride_, ncols_); }
+  MtxConstIter rowIter(int r) const
+    { return MtxConstIter(address(r,0), rowstride_, ncols_); }
 
 
   Mtx rows(int r, int nr) const;
@@ -368,11 +366,11 @@ public:
   ConstSlice column(int c) const
     { return ConstSlice(storage_, address(0,c), colstride_, mrows_); }
 
-  Slice::Iterator colIter(int c)
-    { return Slice::Iterator(address(0,c), colstride_, mrows_); }
+  MtxIter colIter(int c)
+    { return MtxIter(address(0,c), colstride_, mrows_); }
 
-  ConstSlice::ConstIterator colIter(int c) const
-    { return ConstSlice::ConstIterator(address(0,c), colstride_, mrows_); }
+  MtxConstIter colIter(int c) const
+    { return MtxConstIter(address(0,c), colstride_, mrows_); }
 
 
 
@@ -484,6 +482,25 @@ inline ConstSlice::ConstSlice(DataBlock* const& storage,
   itsNelems(n) {}
 
 inline double* Slice::data() { return itsStorage->itsData + itsOffset; }
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Inline free functions
+//
+///////////////////////////////////////////////////////////////////////
+
+
+static double innerProduct(MtxConstIter s1, MtxConstIter s2)
+{
+  double result = 0.0;
+
+  for (; s1.hasMore(); ++s1, ++s2)
+	 result += (*s1) * (*s2);
+
+  return result;
+}
 
 static const char vcid_keanu_h[] = "$Header$";
 #endif // !KEANU_H_DEFINED

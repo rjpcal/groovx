@@ -38,9 +38,9 @@ Slice& Slice::operator=(const ConstSlice& other)
   if (itsNelems != other.nelems())
     throw ErrorWithMsg("dimension mismatch in Slice::operator=");
 
-  ConstIterator rhs = other.begin();
+  MtxConstIter rhs = other.begin();
 
-  for (Iterator lhs = begin(); lhs.hasMore(); ++lhs, ++rhs)
+  for (MtxIter lhs = begin(); lhs.hasMore(); ++lhs, ++rhs)
     *lhs = *rhs;
 
   return *this;
@@ -167,10 +167,10 @@ void Mtx::VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
        (result.nelems() != mtx.ncols()) )
     throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
 
-  ConstSlice::ConstIterator veciter = vec.begin();
+  MtxConstIter veciter = vec.begin();
 
   for (int col = 0; col < mtx.ncols(); ++col)
-    result[col] = Slice::dot(veciter, mtx.colIter(col));
+    result[col] = innerProduct(veciter, mtx.colIter(col));
 }
 
 void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
@@ -181,12 +181,12 @@ void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
 
   for (int n = 0; n < mrows(); ++n)
     {
-		Slice::Iterator rowElement = this->rowIter(n);
+		MtxIter rowElement = this->rowIter(n);
 
-		ConstSlice::ConstIterator veciter = m1.rowIter(n);
+		MtxConstIter veciter = m1.rowIter(n);
 
 		for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
-		  *rowElement = Slice::dot(veciter, m2.colIter(col));
+		  *rowElement = innerProduct(veciter, m2.colIter(col));
     }
 }
 
