@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Mar 15 15:56:40 2001
+// written: Thu Mar 15 16:18:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ class MtxConstIter {
   MtxConstIter(const double* d, int s, int n) :
 	 data(d), stride(s), stop(d + s*n) {}
 
-  friend class ConstSlice;
+  friend class Slice;
   friend class Mtx;
 
 public:
@@ -95,20 +95,11 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ConstSlice class definition
-//
-// We need separate classes for const slice references and non-const
-// slice references. This is because the non-const should not
-// increment the ref count of the underlying storage, allowing writes
-// to pass through to the originating matrix.
+// Slice class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-
-class ConstSlice {
-private:
-  ConstSlice& operator=(const ConstSlice& other); // not implemented
-
+class Slice {
 protected:
   Mtx& itsOwner;
   ptrdiff_t itsOffset;
@@ -123,14 +114,11 @@ protected:
 
   friend class Mtx;
 
-  ConstSlice(const Mtx& owner, ptrdiff_t offset, int s, int n);
+  Slice(const Mtx& owner, ptrdiff_t offset, int s, int n);
 
 public:
 
-  // Forms a dummy empty slice
-  ConstSlice();
-
-  ConstSlice(const ConstSlice& other) :
+  Slice(const Slice& other) :
 	 itsOwner(other.itsOwner),
 	 itsOffset(other.itsOffset),
 	 itsStride(other.itsStride),
@@ -145,29 +133,31 @@ public:
 
   int nelems() const { return itsNelems; }
 
-  ConstSlice rightmost(int n) const
+  Slice rightmost(int n) const
   {
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return ConstSlice(itsOwner, storageOffset(first), itsStride, n);
+	 return Slice(itsOwner, storageOffset(first), itsStride, n);
   }
 
-  ConstSlice leftmost(int n) const
+  Slice leftmost(int n) const
   {
-	 return ConstSlice(itsOwner, storageOffset(0), itsStride, n);
+	 return Slice(itsOwner, storageOffset(0), itsStride, n);
   }
 
   //
   // Iteration
   //
 
+  MtxIter beginNC()
+    { return MtxIter(itsOwner, storageOffset(0), itsStride, itsNelems); }
+
   MtxConstIter begin() const
     { return MtxConstIter(dataStart(), itsStride, itsNelems); }
 
-
   //
-  // Functions
+  // Const functions
   //
 
   double sum() const
@@ -180,40 +170,10 @@ public:
 
   double mean() const
     { return sum()/itsNelems; }
-};
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// Slice class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-
-class Slice : public ConstSlice {
-  friend class Mtx;
-
-  Slice(Mtx& m, ptrdiff_t o, int s, int n) : ConstSlice(m,o,s,n) {}
-
-public:
-
-  Slice rightmostNC(int n)
-  {
-	 int first = itsNelems - n;
-	 if (first < 0) first = 0;
-
-	 return Slice(itsOwner, storageOffset(first), itsStride, n);
-  }
-
-  Slice leftmostNC(int n)
-  {
-	 return Slice(itsOwner, storageOffset(0), itsStride, n);
-  }
-
-  Slice& operator=(const ConstSlice& other);
 
   //
-  // Functions
+  // Non-const functions
   //
 
   void apply(double func(double))
@@ -231,14 +191,9 @@ public:
 
   void operator/=(double div) { apply(Div(div)); }
 
-  //
-  // Iteration
-  //
-
-  MtxIter beginNC()
-    { return MtxIter(itsOwner, storageOffset(0), itsStride, itsNelems); }
+  // This is assignment of value, not reference
+  Slice& operator=(const Slice& other);
 };
-
 
 
 
@@ -270,7 +225,7 @@ public:
 
   Mtx(int mrows, int ncols) : itsImpl(mrows, ncols) {}
 
-  Mtx(const ConstSlice& s);
+  Mtx(const Slice& s);
 
   Mtx(const Mtx& other) : itsImpl(other.itsImpl) {}
 
@@ -324,13 +279,9 @@ public:
   // Slices, submatrices
   //
 
-  Slice row(int r)
+  Slice row(int r) const
     { return Slice(*this, itsImpl.offsetFromStorage(r,0),
 						 itsImpl.rowstride(), itsImpl.ncols()); }
-
-  ConstSlice row(int r) const
-    { return ConstSlice(*this, itsImpl.offsetFromStorage(r,0),
-								itsImpl.rowstride(), itsImpl.ncols()); }
 
   MtxIter rowIter(int r)
     { return MtxIter(*this, itsImpl.offsetFromStorage(r,0),
@@ -344,13 +295,9 @@ public:
   Mtx rows(int r, int nr) const;
 
 
-  Slice column(int c)
+  Slice column(int c) const
     { return Slice(*this, itsImpl.offsetFromStorage(0,c),
 						 itsImpl.colstride(), mrows()); }
-
-  ConstSlice column(int c) const
-    { return ConstSlice(*this, itsImpl.offsetFromStorage(0,c),
-								itsImpl.colstride(), mrows()); }
 
   MtxIter colIter(int c)
     { return MtxIter(*this, itsImpl.offsetFromStorage(0,c),
@@ -369,7 +316,7 @@ public:
     { itsImpl.apply(func); }
 
   // result = vec * mtx;
-  static void VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
+  static void VMmul_assign(const Slice& vec, const Mtx& mtx,
 									Slice& result);
 
   // this = m1 * m2;
@@ -383,7 +330,6 @@ private:
 
   friend class MtxIter;
 
-  friend class ConstSlice;
   friend class Slice;
 
   class MtxImpl {
@@ -551,10 +497,10 @@ inline double& ElemProxy::operator/=(double d)
 inline ElemProxy::operator double() { return m.itsImpl.at(i); }
 
 
-inline const double* ConstSlice::dataStart() const
+inline const double* Slice::dataStart() const
 { return itsOwner.dataStorage() + itsOffset; }
 
-inline ConstSlice::ConstSlice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
+inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
   itsOwner(const_cast<Mtx&>(owner)),
   itsOffset(offset),
   itsStride(s),

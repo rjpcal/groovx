@@ -21,18 +21,7 @@
 
 #include "trace.h"
 
-namespace {
-  Mtx dummyMtx(0,0);
-}
-
-ConstSlice::ConstSlice() :
-  itsOwner(dummyMtx),
-  itsOffset(0),
-  itsStride(1),
-  itsNelems(0)
-{}
-
-Slice& Slice::operator=(const ConstSlice& other)
+Slice& Slice::operator=(const Slice& other)
 {
   if (itsNelems != other.nelems())
     throw ErrorWithMsg("dimension mismatch in Slice::operator=");
@@ -107,7 +96,7 @@ const Mtx& Mtx::emptyMtx()
   return m;
 }
 
-Mtx::Mtx(const ConstSlice& s) :
+Mtx::Mtx(const Slice& s) :
   itsImpl(s.dataStart(), s.nelems(), 1, BORROW)
 {
   if (s.itsStride != 1)
@@ -149,7 +138,7 @@ Mtx Mtx::rows(int r, int nr) const
   return result;
 }
 
-void Mtx::VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
+void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
 							  Slice& result)
 {
   // e.g mrows == vec.nelems == 3   ncols == 4
