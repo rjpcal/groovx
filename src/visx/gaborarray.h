@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Mon May 12 13:33:13 2003
+// written: Mon May 12 14:20:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -49,7 +49,7 @@ namespace Gfx
 class GaborArray : public GxShapeKit
 {
 public:
-  GaborArray(double gaborPeriod = 15.0, double gaborSigma = 7.5,
+  GaborArray(double gaborPeriod_ = 15.0, double gaborSigma_ = 7.5,
              int foregNumber = 24, double foregSpacing = 45.0,
              int sizeX_ = 512, int sizeY_ = 512,
              double backgIniSpacing_ = 48.0,
@@ -68,7 +68,8 @@ protected:
 
 private:
   const Snake snake;
-  const GaborSet gabors;
+  const double gaborPeriod;
+  const double gaborSigma;
   const int sizeX;
   const int sizeY;
   const double halfX;

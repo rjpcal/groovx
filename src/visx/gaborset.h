@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:29 2003
-// written: Mon May 12 13:33:08 2003
+// written: Mon May 12 14:25:37 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -31,16 +31,39 @@
 #ifndef GABORSET_H_DEFINED
 #define GABORSET_H_DEFINED
 
-const int GABOR_MAX_ORIENT = 64;
-const int GABOR_MAX_PHASE = 8;
+#include "gx/geom.h"
+
+#include <cmath>
+
+struct GaborSpec
+{
+  /// Construct with given values.
+  /** Some values may be discretized into a (smallish) finite number of
+      possible values to minimize the total number of GaborPatch objects
+      that have to be created. */
+  GaborSpec(double s, double o, double t, double p, double c);
+
+  /// Comparison operator for sorting and associative arrays.
+  bool operator<(const GaborSpec& x) const;
+
+  const double theta;     ///< Orientation of primary axis
+  const double phi;       ///< Phase angle of grating
+  const double sigma;     ///< Std dev of gaussian mask
+  const double omega;     ///< Spatial frequency of grating
+  const double contrast;  ///< [0..1]
+};
 
 class GaborPatch
 {
 public:
-  GaborPatch(double sigma, double omega, double theta,
-             double phi, double contrast);
+  GaborPatch(const GaborSpec& spec);
 
   ~GaborPatch() { delete [] itsData; }
+
+  static const GaborPatch& lookup(const GaborSpec& s);
+
+  static const GaborPatch& lookup(double sigma, double omega,
+                                  double theta, double phi, double contrast);
 
   int size() const { return itsSize; }
 
@@ -50,27 +73,10 @@ public:
 
 private:
   const int itsSize;
-  const double itsSigma;
-  const double itsOmega;
-  const double itsTheta;
-  const double itsPhi;
-  const double itsContrast;
   double* const itsData;
 
   GaborPatch(const GaborPatch&);
   GaborPatch& operator=(const GaborPatch&);
-};
-
-class GaborSet
-{
-public:
-  GaborSet(double period, double sigma);
-  ~GaborSet();
-
-  const GaborPatch& getPatch(double theta, double phi) const;
-
-private:
-  GaborPatch* Patch[GABOR_MAX_ORIENT][GABOR_MAX_PHASE];
 };
 
 static const char vcid_gaborset_h[] = "$Header$";

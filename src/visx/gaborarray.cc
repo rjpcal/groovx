@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 13:33:23 2003
+// written: Mon May 12 14:22:22 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -219,14 +219,15 @@ void GaborArray::dumpFrame() const
     }
 }
 
-GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
+GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
                        int foregNumber, double foregSpacing,
                        int sizeX_, int sizeY_,
                        double backgIniSpacing_,
                        double backgMinSpacing_)
   :
   snake(foregNumber, foregSpacing),
-  gabors(gaborPeriod, gaborSigma),
+  gaborPeriod(gaborPeriod_),
+  gaborSigma(gaborSigma_),
   sizeX(sizeX_),
   sizeY(sizeY_),
   halfX(0.5*sizeX),
@@ -283,7 +284,8 @@ void GaborArray::renderInto(BmapData& data) const
       const int xcenter = int(array[i].pos.x() + sizeX / 2.0 + 0.5);
       const int ycenter = int(array[i].pos.y() + sizeY / 2.0 + 0.5);
 
-      const GaborPatch& p = gabors.getPatch(theta, phi);
+      const GaborPatch& p =
+        GaborPatch::lookup(gaborSigma, 2*M_PI/gaborPeriod, theta, phi, 1.0);
 
       // bottom left:
       const int x0 = xcenter - p.size() / 2;

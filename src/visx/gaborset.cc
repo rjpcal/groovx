@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:35 2003
-// written: Mon May 12 13:34:40 2003
+// written: Mon May 12 14:42:12 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,35 +33,63 @@
 
 #include "gaborset.h"
 
-#include "gx/geom.h"
-
-#include <cmath>
+#include <map>
 
 #include "util/trace.h"
 
 namespace
 {
-  const double DELTA_THETA    = M_PI / GABOR_MAX_ORIENT;
-  const double DELTA_PHASE    = 2 * M_PI / GABOR_MAX_PHASE;
+  typedef std::map<GaborSpec, GaborPatch*> MapType;
+  MapType theMap;
+
+  const int NUM_THETA = 64;
+  const int NUM_PHASE = 8;
+  const double DELTA_THETA = M_PI / NUM_THETA;
+  const double DELTA_PHASE = 2 * M_PI / NUM_PHASE;
 }
 
-GaborPatch::GaborPatch(double sigma, double omega, double theta,
-                       double phi, double contrast)
+GaborSpec::GaborSpec(double s, double o, double t, double p, double c) :
+  theta(DELTA_THETA * (int(zerotopi(t)/DELTA_THETA + 0.5) % NUM_THETA)),
+  phi(DELTA_PHASE * (int(zerototwopi(p)/DELTA_PHASE + 0.5) % NUM_PHASE)),
+  sigma(s),
+  omega(o),
+  contrast(c)
+{}
+
+bool GaborSpec::operator<(const GaborSpec& x) const
+{
+  if (theta < x.theta) return true;
+  else if (theta == x.theta)
+    {
+      if (phi < x.phi) return true;
+      else if (phi == x.phi)
+        {
+          if (sigma < x.sigma) return true;
+          else if (sigma == x.sigma)
+            {
+              if (omega < x.omega) return true;
+              else if (omega == x.omega)
+                {
+                  return contrast < x.contrast;
+                }
+            }
+        }
+    }
+
+  return false;
+}
+
+GaborPatch::GaborPatch(const GaborSpec& spec)
   :
-  itsSize(int(8*sigma + 0.5)),
-  itsSigma(sigma),
-  itsOmega(omega),
-  itsTheta(theta),
-  itsPhi(phi),
-  itsContrast(contrast),
+  itsSize(int(8*spec.sigma + 0.5)),
   itsData(new double[itsSize*itsSize])
 {
 DOTRACE("GaborPatch::GaborPatch");
 
-  const double ssqr  = 2.*sigma*sigma;
+  const double ssqr  = 2.*spec.sigma*spec.sigma;
 
-  const double cos_theta = cos(theta);
-  const double sin_theta = sin(theta);
+  const double cos_theta = cos(spec.theta);
+  const double sin_theta = sin(spec.theta);
 
   double* ptr = itsData;
 
@@ -78,51 +106,35 @@ DOTRACE("GaborPatch::GaborPatch");
 
           const double dsqr  = (dx*dx + dy*dy) / ssqr;
 
-          const double sinus = cos(omega * dx + phi);
+          const double sinus = cos(spec.omega * dx + spec.phi);
 
           const double gauss = exp(-dsqr);
-          *ptr++ = contrast * sinus * gauss;
+          *ptr++ = spec.contrast * sinus * gauss;
         }
     }
 }
 
-GaborSet::GaborSet(double period, double sigma)
+const GaborPatch& GaborPatch::lookup(const GaborSpec& spec)
 {
-DOTRACE("GaborSet::GaborSet");
+DOTRACE("GaborPatch::lookup");
 
-  const double omega = 2 * M_PI / period;
+  GaborPatch*& patch = theMap[spec];
 
-  for (int n = 0; n < GABOR_MAX_ORIENT; ++n)
-    for (int m=0; m < GABOR_MAX_PHASE; ++m)
-      {
-        Patch[n][m] = new GaborPatch(sigma,
-                                     omega,
-                                     n * DELTA_THETA,
-                                     m * DELTA_PHASE,
-                                     /* contrast */ 1.0);
-      }
+  if (patch == 0)
+    {
+      patch = new GaborPatch(spec);
+    }
+
+  return *patch;
 }
 
-GaborSet::~GaborSet()
+const GaborPatch& GaborPatch::lookup(double sigma, double omega,
+                                     double theta, double phi,
+                                     double contrast)
 {
-DOTRACE("GaborSet::~GaborSet");
+  GaborSpec spec(sigma, omega, theta, phi, contrast);
 
-  for (int i=0; i<GABOR_MAX_ORIENT; ++i)
-    for (int j=0; j<GABOR_MAX_PHASE; ++j)
-      delete Patch[i][j];
-}
-
-const GaborPatch& GaborSet::getPatch(double theta, double phi) const
-{
-DOTRACE("GaborSet::getPatch");
-
-  theta = zerotopi(theta);
-  phi = zerototwopi(phi);
-
-  const int itheta = int(theta/DELTA_THETA + 0.5);
-  const int iphi   = int(phi/DELTA_PHASE + 0.5);
-
-  return *(Patch[itheta % GABOR_MAX_ORIENT][iphi % GABOR_MAX_PHASE]);
+  return lookup(spec);
 }
 
 static const char vcid_gaborset_cc[] = "$Header$";
