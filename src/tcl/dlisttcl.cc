@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Thu Sep 13 11:31:15 2001
+// written: Tue Nov  6 15:28:14 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -29,18 +29,18 @@
 namespace DlistTcl
 {
 
-//--------------------------------------------------------------------
-//
-// This command takes two lists as arguments, and uses the integers in
-// the second (index) list to return a permutation of the elements in
-// the first (source) list
-//
-// Example:
-//      dlist_choose { 3 5 7 } { 2 0 1 }
-// returns
-//      7 3 5
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // This command takes two lists as arguments, and uses the integers in
+  // the second (index) list to return a permutation of the elements in
+  // the first (source) list
+  //
+  // Example:
+  //      dlist_choose { 3 5 7 } { 2 0 1 }
+  // returns
+  //      7 3 5
+  //
+  //--------------------------------------------------------------------
 
   Tcl::List choose(Tcl::List source_list, Tcl::List index_list)
   {
@@ -60,25 +60,25 @@ namespace DlistTcl
     return result;
   }
 
-//---------------------------------------------------------------------
-//
-// Returns the n'th element of the list; generates an error if n is
-// out of range.
-//
-//---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  //
+  // Returns the n'th element of the list; generates an error if n is
+  // out of range.
+  //
+  //---------------------------------------------------------------------
 
   Tcl::ObjPtr index(Tcl::List source_list, unsigned int n)
   {
     return source_list.at(n);
   }
 
-//--------------------------------------------------------------------
-//
-// This command takes as its argument a single list containing only
-// integers, and returns a list in which each element is the logical
-// negation of its corresponding element in the source list.
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // This command takes as its argument a single list containing only
+  // integers, and returns a list in which each element is the logical
+  // negation of its corresponding element in the source list.
+  //
+  //--------------------------------------------------------------------
 
   Tcl::List not_(Tcl::List source_list)
   {
@@ -99,12 +99,12 @@ namespace DlistTcl
     return result;
   }
 
-//--------------------------------------------------------------------
-//
-// this command produces a list of ones of the length specified by its
-// lone argument
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // this command produces a list of ones of the length specified by its
+  // lone argument
+  //
+  //--------------------------------------------------------------------
 
   Tcl::List ones(unsigned int num_ones)
   {
@@ -114,12 +114,12 @@ namespace DlistTcl
     return result;
   }
 
-//--------------------------------------------------------------------
-//
-// This commmand returns a single element chosen at random
-// from the source list
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // This commmand returns a single element chosen at random
+  // from the source list
+  //
+  //--------------------------------------------------------------------
 
   Tcl::ObjPtr pickone(Tcl::List source_list)
   {
@@ -131,38 +131,52 @@ namespace DlistTcl
     return source_list.at(Util::randRange(0u, source_list.length()));
   }
 
-//--------------------------------------------------------------------
-//
-// this command produces an ordered list of all integers between begin
-// and end, inclusive.
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // this command produces an ordered list of all integers between begin
+  // and end, inclusive.
+  //
+  //--------------------------------------------------------------------
 
-  Tcl::List range(int begin, int end)
+  Tcl::List range(int begin, int end, int step)
   {
     Tcl::List result;
 
-    for (int i = begin; i <= end; ++i)
+    if (step == 0)
       {
-        result.append(i);
+        // special case: if step is 0, we return an empty list
+      }
+    else if (step > 0)
+      {
+        for (int i = begin; i <= end; i += step)
+          {
+            result.append(i);
+          }
+      }
+    else // step < 0
+      {
+        for (int i = begin; i >= end; i += step)
+          {
+            result.append(i);
+          }
       }
 
     return result;
   }
 
-//--------------------------------------------------------------------
-//
-// This command taks two lists as arguments. Each element from the
-// first (source) list is appended to the result multiple times; the
-// number of times is determined by the corresponding integer found in
-// the second (times) list.
-//
-// For example:
-//      dlist_repeat { 4 5 6 } { 1 2 3 }
-// returns
-//      4 5 5 6 6 6
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // This command taks two lists as arguments. Each element from the
+  // first (source) list is appended to the result multiple times; the
+  // number of times is determined by the corresponding integer found in
+  // the second (times) list.
+  //
+  // For example:
+  //      dlist_repeat { 4 5 6 } { 1 2 3 }
+  // returns
+  //      4 5 5 6 6 6
+  //
+  //--------------------------------------------------------------------
 
   Tcl::List repeat(Tcl::List source_list, Tcl::List times_list)
   {
@@ -180,13 +194,13 @@ namespace DlistTcl
     return result;
   }
 
-//--------------------------------------------------------------------
-//
-// This command takes two lists as arguments, using the binary flags
-// in the second (flags) list to choose which elements from the first
-// (source) list should be appended to the output list
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // This command takes two lists as arguments, using the binary flags
+  // in the second (flags) list to choose which elements from the first
+  // (source) list should be appended to the output list
+  //
+  //--------------------------------------------------------------------
 
   Tcl::List select(Tcl::List source_list, Tcl::List flags_list)
   {
@@ -213,11 +227,11 @@ namespace DlistTcl
     return result;
   }
 
-//---------------------------------------------------------------------
-//
-// dlist::slice
-//
-//---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  //
+  // dlist::slice
+  //
+  //---------------------------------------------------------------------
 
   Tcl::List slice(Tcl::List src, unsigned int slice)
   {
@@ -234,13 +248,13 @@ namespace DlistTcl
     return result;
   }
 
-//--------------------------------------------------------------------
-//
-// this command sums the numbers in a list, trying to return an int
-// result if possible, but returning a double result if any doubles
-// are found in the source list
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // this command sums the numbers in a list, trying to return an int
+  // result if possible, but returning a double result if any doubles
+  // are found in the source list
+  //
+  //--------------------------------------------------------------------
 
   Tcl::ObjPtr sum(Tcl::List source_list)
   {
@@ -277,12 +291,12 @@ namespace DlistTcl
       return dsum;
   }
 
-//--------------------------------------------------------------------
-//
-// this command produces a list of zeros of the length specified by its
-// lone argument
-//
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
+  //
+  // this command produces a list of zeros of the length specified by its
+  // lone argument
+  //
+  //--------------------------------------------------------------------
 
   Tcl::List zeros(unsigned int num_zeros)
   {
@@ -307,7 +321,8 @@ DOTRACE("Dlist_Init");
   pkg->def( "not", "source_list", &DlistTcl::not_ );
   pkg->def( "ones", "num_ones", &DlistTcl::ones );
   pkg->def( "pickone", "source_list", &DlistTcl::pickone );
-  pkg->def( "range", "begin end", &DlistTcl::range );
+  pkg->def( "range", "begin end ?step=1?", &DlistTcl::range );
+  pkg->def( "range", "begin end", Util::bindLast(&DlistTcl::range, 1) );
   pkg->def( "repeat", "source_list times_list", &DlistTcl::repeat );
   pkg->def( "select", "source_list flags_list", &DlistTcl::select );
   pkg->def( "slice", "list n", &DlistTcl::slice );
