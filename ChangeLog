@@ -183,3 +183,6 @@ will be needed, and then they can be phased out.
 * (done 20-Nov-2002) Rename GrObj --> GxShapeKit
 
 * (done 20-Nov-2002) Rename Position --> GxTransform
+
+* (9-Nov-2002, done 20-Nov-2002) X11Util just has findColormap()
+  Moved this back into Togl.
