@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Dec  6 20:34:52 1999
+// written: Mon Dec  6 21:22:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,8 @@ public:
   virtual bool isRgba() const = 0;
   virtual bool isColorIndex() const = 0;
   virtual bool isDoubleBuffered() const = 0;
+
+  virtual void swapForeBack() const = 0;
 
 //    virtual void pushState() const = 0;
 //    virtual void popState() const = 0;

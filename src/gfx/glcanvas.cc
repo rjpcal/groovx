@@ -3,7 +3,7 @@
 // glcanvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Dec  6 20:31:05 1999
+// written: Mon Dec  6 21:23:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,6 +137,25 @@ DOTRACE("GLCanvas::isDoubleBuffered");
   return (val == GL_TRUE);
 }
 
+void GLCanvas::swapForeBack() const {
+DOTRACE("GLCanvas::swapForeBack");
+  if ( Canvas::theCanvas().isRgba() ) {
+	 GLdouble foreground[4];
+	 GLdouble background[4];
+	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
+	 glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+	 glColor4dv(background);
+	 glClearColor(foreground[0], foreground[1],
+					  foreground[2], foreground[3]);
+  }
+  else {
+	 GLint foreground, background;
+	 glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+	 glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+	 glIndexi(background);
+	 glClearIndex(foreground);
+  }
+}
 
 void GLCanvas::pushState() const {
   glMatrixMode(GL_MODELVIEW);

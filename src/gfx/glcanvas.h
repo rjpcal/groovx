@@ -3,7 +3,7 @@
 // glcanvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Dec  6 20:30:51 1999
+// written: Mon Dec  6 21:22:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,13 @@ public:
   virtual bool isRgba() const;
   virtual bool isColorIndex() const;
   virtual bool isDoubleBuffered() const;
+
+  /** Swaps the foreground and background colors, in a way that is
+      appropriate to color-index/RGBA modes. In order to be able to
+      unswap the colors, this function should normally be preceded by
+      glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT), so that a
+      call to glPopAttrib() will then unswap the colors. */
+  virtual void swapForeBack() const;
 
   virtual void pushState() const;
   virtual void popState() const;
