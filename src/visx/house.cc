@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Aug 16 11:03:41 2001
+// written: Sat Aug 18 08:13:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ namespace
 
 const FieldMap& House::classFields()
 {
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("storyAspectRatio",
           &House::itsStoryAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
@@ -176,10 +176,7 @@ const FieldMap& House::classFields()
     Field("chimneyHeight", &House::itsChimneyHeight, 0.5, 0.05, 2.0, 0.1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                               &GrObj::classFields());
+  static FieldMap HOUSE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
 
   return HOUSE_FIELDS;
 }

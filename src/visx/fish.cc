@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Aug 16 11:03:41 2001
+// written: Sat Aug 18 08:12:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ struct Fish::EndPt {
 
 const FieldMap& Fish::classFields()
 {
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("category", &Fish::itsFishCategory, 0, 0, 10, 1, true),
     Field("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
@@ -114,10 +114,7 @@ const FieldMap& Fish::classFields()
     Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                              &GrObj::classFields());
+  static FieldMap FISH_FIELDS(FIELD_ARRAY, &GrObj::classFields());
 
   return FISH_FIELDS;
 }

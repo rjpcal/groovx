@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Aug 16 11:03:41 2001
+// written: Sat Aug 18 08:13:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,10 +43,7 @@ const FieldMap& MaskHatch::classFields()
           &MaskHatch::itsLineWidth, 1, 0, 25, 1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(Field);
-
-  static FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS,
-                              &GrObj::classFields());
+  static FieldMap MASK_FIELDS(MASK_FINFOS, &GrObj::classFields());
 
   return MASK_FIELDS;
 }

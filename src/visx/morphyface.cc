@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Aug 16 11:03:24 2001
+// written: Sat Aug 18 08:13:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ const FieldMap& MorphyFace::classFields()
 {
   typedef MorphyFace MF;
 
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("category", &MF::itsMfaceCategory, 0, 0, 10, 1, true),
 
@@ -176,10 +176,7 @@ const FieldMap& MorphyFace::classFields()
     Field("mouthCurvature", &MF::itsMouthCurvature, 0.6, -2.0, 2.0, 0.1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                               &GrObj::classFields());
+  static FieldMap MFACE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
 
   return MFACE_FIELDS;
 }

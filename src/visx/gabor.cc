@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Aug 16 11:03:41 2001
+// written: Sat Aug 18 08:12:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ const Gabor::ColorMode Gabor::BW_DITHER_RECT;
 
 const FieldMap& Gabor::classFields()
 {
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, true),
     Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
@@ -61,10 +61,7 @@ const FieldMap& Gabor::classFields()
     Field("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                               &GrObj::classFields());
+  static FieldMap GABOR_FIELDS(FIELD_ARRAY, &GrObj::classFields());
 
   return GABOR_FIELDS;
 }

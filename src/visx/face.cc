@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug 16 11:03:24 2001
+// written: Sat Aug 18 08:11:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ namespace
 
 const FieldMap& Face::classFields()
 {
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("category", &Face::itsFaceCategory, 0, 0, 10, 1, true),
     Field("eyeHeight", &Face::itsEyeHeight, 0.6, -1.2, 1.2, 0.01),
@@ -69,10 +69,7 @@ const FieldMap& Face::classFields()
     Field("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                              &GrObj::classFields());
+  static FieldMap FACE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
 
   return FACE_FIELDS;
 }

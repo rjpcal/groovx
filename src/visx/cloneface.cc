@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Aug 15 19:40:32 2001
+// written: Sat Aug 18 08:12:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,16 +33,13 @@
 
 const FieldMap& CloneFace::classFields()
 {
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("eyeAspect", &CloneFace::itsEyeAspect, 0.0, 0.0, 1.0, 0.05, true),
     Field("vertOffset", &CloneFace::itsVertOffset, 0.0, -0.1, 0.1, 0.01)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                                   &Face::classFields());
+  static FieldMap CLONEFACE_FIELDS(FIELD_ARRAY, &Face::classFields());
 
   return CLONEFACE_FIELDS;
 }

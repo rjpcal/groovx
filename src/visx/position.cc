@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 15 19:42:08 2001
+// written: Sat Aug 18 08:13:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ struct PositionImpl {
 
 const FieldMap& Position::classFields()
 {
-  static const Field FINFOS[] =
+  static const Field FIELD_ARRAY[] =
   {
     Field("translation", Field::ValueType(), &Position::translation, 0., 0., 0., 0., true),
     Field("scaling", Field::ValueType(), &Position::scaling, 0., 0., 0., 0.),
@@ -67,9 +67,7 @@ const FieldMap& Position::classFields()
     Field("rotationAngle", &Position::itsRotationAngle, 0., 0., 360., 1.)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  static FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  static FieldMap POS_FIELDS(FIELD_ARRAY);
 
   return POS_FIELDS;
 }

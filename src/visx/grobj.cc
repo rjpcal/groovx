@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 17 10:36:10 2001
+// written: Sat Aug 18 08:12:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ namespace
 {
 #define GETSET(type, attr) std::make_pair(&type::get##attr, &type::set##attr)
 
-  const Field FINFOS[] =
+  const Field FIELD_ARRAY[] =
   {
     Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1, true),
 
@@ -50,9 +50,7 @@ namespace
   };
 #undef GETSET
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
-
-  FieldMap GROBJ_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap GROBJ_FIELDS(FIELD_ARRAY);
 }
 
 ///////////////////////////////////////////////////////////////////////
