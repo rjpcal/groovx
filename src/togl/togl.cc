@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jul 30 11:20:35 2002
+// written: Tue Jul 30 18:05:17 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -81,6 +81,50 @@ KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
 EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
 VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
+class GlxWrapper
+{
+public:
+  GlxWrapper(Display* dpy, XVisualInfo* visinfo, bool direct,
+             GlxWrapper* share = 0) :
+    context(0),
+    itsDisplay(dpy),
+    itsVisInfo(visinfo)
+  {
+    context = glXCreateContext(dpy,
+                               visinfo,
+                               share ? share->context : None,
+                               direct ? GL_TRUE : GL_FALSE);
+
+    DebugEvalNL(context);
+
+    if (context == 0)
+      {
+        throw Util::Error("could not create GL rendering context");
+      }
+  }
+
+  ~GlxWrapper()
+  {
+    glXDestroyContext(itsDisplay, context);
+    context = 0;
+  }
+
+  bool isDirect() const
+  {
+    return glXIsDirect(itsDisplay, context) == True ? true : false;
+  }
+
+  void makeCurrent(Window win) const
+  {
+    glXMakeCurrent(itsDisplay, win, context);
+  }
+
+  GLXContext context;      /* Normal planes GLX context */
+
+private:
+  Display* itsDisplay;
+  XVisualInfo* itsVisInfo;
+};
 
 class Togl::Impl
 {
@@ -189,7 +233,6 @@ private:
   int checkForGLX();
   int setupVisInfoAndContext();
   void buildAttribList(int* attrib_list, int ci_depth, int dbl_flag);
-  void setupGLXContext();
   void createWindow();
   Window findParent();
   Colormap findColormap();
@@ -203,7 +246,7 @@ public:
 
   Togl* itsOwner;
 
-  GLXContext itsGLXContext;      /* Normal planes GLX context */
+  GlxWrapper* itsGlx;
   Display* itsDisplay;     /* X's token for the window's display. */
   Tk_Window  itsTkWin;     /* Tk window structure */
   Window itsWindowId;
@@ -1048,7 +1091,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
                  int config_argc, const char** config_argv) :
   itsOwner(owner),
 
-  itsGLXContext(NULL),
+  itsGlx(0),
   itsDisplay(0),
   itsTkWin(0),
   itsWindowId(0),
@@ -1152,7 +1195,7 @@ DOTRACE("Togl::Impl::Impl");
   // If OpenGL window wasn't already created by configure() we
   // create it now.  We can tell by checking if the GLX context has
   // been initialized.
-  if (!itsGLXContext)
+  if (itsGlx == 0)
     {
       if (makeWindowExist() == TCL_ERROR)
         {
@@ -1201,6 +1244,8 @@ DOTRACE("Togl::Impl::~Impl");
     {
       itsDestroyProc(itsOwner);
     }
+
+  delete itsGlx;
 }
 
 //---------------------------------------------------------------------
@@ -1286,9 +1331,8 @@ DOTRACE("Togl::Impl::makeCurrent");
   if ( this != currentImpl )
     {
       DOTRACE("Togl::Impl::makeCurrent-change context");
-      glXMakeCurrent( itsDisplay,
-                      windowId(),
-                      itsGLXContext );
+
+      itsGlx->makeCurrent(windowId());
       currentImpl = this;
     }
 }
@@ -1607,9 +1651,7 @@ DOTRACE("Togl::Impl::useLayer");
         }
       else if (layer==TOGL_NORMAL)
         {
-          glXMakeCurrent( itsDisplay,
-                          windowId(),
-                          itsGLXContext );
+          itsGlx->makeCurrent(windowId());
         }
       else
         {
@@ -1788,10 +1830,10 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
     }
 
   /* NEW in togl 1.5 beta 3 */
-  if (itsGLXContext)
+  if (itsGlx)
     {
-      glXDestroyContext( itsDisplay, itsGLXContext );
-      itsGLXContext = NULL;
+      delete itsGlx;
+      itsGlx = 0;
     }
   if (itsOverlayCtx)
     {
@@ -1928,24 +1970,27 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
     }
 
   // Create a new OpenGL rendering context.
-  setupGLXContext();   DebugEvalNL(itsGLXContext);
+  Assert( itsGlx == 0 );
 
-  if (itsGLXContext == NULL)
+  try
     {
-      return TCL_ERR(itsInterp, "could not create rendering context");
+      itsGlx = new GlxWrapper(itsDisplay, itsVisInfo, !itsIndirect);
+    }
+  catch (Util::Error& err)
+    {
+      return TCL_ERR(itsInterp, err.msg_cstr());
     }
 
   // Make sure we don't try to use a depth buffer with indirect rendering
-  if ( glXIsDirect(itsDisplay, itsGLXContext) == False &&
-       itsDepthFlag == true )
+  if ( !itsGlx->isDirect() && itsDepthFlag == true )
     {
-      glXDestroyContext(itsDisplay, itsGLXContext);
-      itsGLXContext = 0;
+      delete itsGlx;
+      itsGlx = 0;
       itsDepthFlag = false;
       return setupVisInfoAndContext();
     }
 
-  itsIndirect = glXIsDirect(itsDisplay, itsGLXContext);
+  itsIndirect = !itsGlx->isDirect();
 
   return TCL_OK;
 }
@@ -2019,14 +2064,6 @@ DOTRACE("Togl::Impl::buildAttribList");
     }
 
   attrib_list[attrib_count++] = None;
-}
-
-void Togl::Impl::setupGLXContext()
-{
-DOTRACE("Togl::Impl::setupGLXContext");
-  int directCtx = itsIndirect ? GL_FALSE : GL_TRUE;
-
-  itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
 }
 
 void Togl::Impl::createWindow()
@@ -2281,7 +2318,7 @@ DOTRACE("Togl::Impl::setupOverlay");
   /* NEW in Togl 1.5 beta 3 */
   /* share display lists with normal layer context */
   itsOverlayCtx = glXCreateContext( itsDisplay, visinfo,
-                                    itsGLXContext, !itsIndirect );
+                                    itsGlx->context, !itsIndirect );
 
   XSetWindowAttributes swa;
   swa.colormap = XCreateColormap( itsDisplay,
