@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Mon Aug 13 12:17:29 2001
+// written: Wed Aug 15 13:27:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,15 +32,8 @@ DOTRACE("GrObjScaler::doScaling");
 void GrObjScaler::setMode(Gmodes::ScalingMode new_mode)
 {
 DOTRACE("GrObjScaler::setMode");
-  if (itsMode == new_mode) return;
 
   itsMode = new_mode;
-
-  if (itsMode == Gmodes::NATIVE_SCALING)
-    {
-      itsWidthFactor = 1.0;
-      itsHeightFactor = 1.0;
-    }
 }
 
 void GrObjScaler::gnodeDraw(Gfx::Canvas& canvas) const
