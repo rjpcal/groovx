@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:24 2002
-// written: Tue Sep 17 21:24:20 2002
+// written: Wed Nov 13 14:39:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,10 @@
 #ifndef GLUTIL_H_DEFINED
 #define GLUTIL_H_DEFINED
 
-#include <X11/Xlib.h>
-
 namespace GLUtil
 {
   // Returns the starting index of a series of GL display lists
-  unsigned int loadBitmapFont(Display* dpy, const char* fontname);
+  unsigned int loadBitmapFont(const char* fontname);
 
   enum NamedFont
   {
@@ -32,7 +30,7 @@ namespace GLUtil
     BITMAP_HELVETICA_18
   };
 
-  unsigned int loadBitmapFont(Display* dpy, NamedFont font);
+  unsigned int loadBitmapFont(NamedFont font);
 
   void unloadBitmapFont(unsigned int fontbase);
 }

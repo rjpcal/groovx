@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Nov 12 17:40:06 2002
+// written: Wed Nov 13 14:39:48 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -298,15 +298,13 @@ unsigned int Togl::loadDefaultFont() const
 unsigned int Togl::loadBitmapFont(const char* fontname) const
 {
 DOTRACE("Togl::loadBitmapFont");
-  return rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
-                                                  fontname));
+  return rep->loadFontList(GLUtil::loadBitmapFont(fontname));
 }
 
 unsigned int Togl::loadBitmapFonti(int fontnumber) const
 {
 DOTRACE("Togl::loadBitmapFonti");
-  return rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
-                                                  GLUtil::NamedFont(fontnumber)));
+  return rep->loadFontList(GLUtil::loadBitmapFont(GLUtil::NamedFont(fontnumber)));
 }
 
 Gfx::Canvas& Togl::getCanvas() const
