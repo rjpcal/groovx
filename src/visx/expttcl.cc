@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Dec  2 15:31:42 1999
+// written: Tue Dec  7 11:42:46 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -21,6 +21,7 @@
 
 #include "asciistreamreader.h"
 #include "asciistreamwriter.h"
+#include "grshapp.h"
 #include "tclevalcmd.h"
 #include "exptdriver.h"
 #include "tclitempkg.h"
@@ -290,6 +291,14 @@ public:
 	 declareCAction("reset", &ExptDriver::edResetExpt);
 	 declareCAction("stop", &ExptDriver::edHaltExpt);
 	 declareCAction("storeData", &ExptDriver::storeData);
+
+	 // Install the experiment into the application
+	 Application& app = Application::theApp();
+	 GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
+
+	 if (grshapp != 0) {
+		grshapp->installExperiment(&itsExptDriver);
+	 }
   }
 
   virtual IO& getIoFromId(int) { return itsExptDriver; }
