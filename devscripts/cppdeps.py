@@ -27,7 +27,11 @@ class DirectIncludeMap:
         includes = filter(os.path.isfile, deps)
 
         if not len(includes) == len(deps):
-            print >>sys.stderr, 'missing dependencies in file: ', file
+            sys.stderr.write("missing dependencies in file: %s\n" % file)
+            for dep in deps:
+                if os.path.isfile(dep):
+                    continue
+                sys.stderr.write("\t'%s'\n" % dep)
 
         self.itsIncludes[file] = includes
 
