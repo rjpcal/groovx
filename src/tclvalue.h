@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Jul 11 09:35:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,9 @@
 #endif
 
 struct Tcl_Obj;
-struct Tcl_Interp;
 
-namespace Tcl {
+namespace Tcl
+{
   class TclValue;
 }
 
@@ -37,21 +37,21 @@ namespace Tcl {
 class Tcl::TclValue : public Value {
 public:
   /// Construct from a Tcl object \a obj.
-  TclValue(Tcl_Interp* interp, Tcl_Obj* obj);
+  TclValue(Tcl_Obj* obj);
 
   /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, int val);
+  TclValue(int val);
   /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, long val);
+  TclValue(long val);
   /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, bool val);
+  TclValue(bool val);
   /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, double val);
+  TclValue(double val);
   /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, const char* val);
+  TclValue(const char* val);
 
   /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, const Value& val);
+  TclValue(const Value& val);
 
   /// Copy constructor.
   TclValue(const TclValue& rhs);
@@ -67,11 +67,11 @@ public:
 
   /// Assignment operator.
   TclValue& operator=(const TclValue& other)
-	 { setObj(other.itsObj); return *this; }
+    { setObj(other.itsObj); return *this; }
 
   /// Assignment from raw \c Tcl_Obj*.
   TclValue& operator=(Tcl_Obj* obj)
-	 { setObj(obj); return *this; }
+    { setObj(obj); return *this; }
 
   virtual Value* clone() const;
 
@@ -95,7 +95,6 @@ public:
   virtual void get(const char*& val) const;
 
 private:
-  mutable Tcl_Interp* itsInterp;
   mutable Tcl_Obj* itsObj;
 };
 
