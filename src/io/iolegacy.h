@@ -23,10 +23,21 @@
 #include "io/writer.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSTREAM_H_DEFINED)
-#include <iostream.h>
-#define IOSTREAM_H_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
+
+///////////////////////////////////////////////////////////////////////
+//
+// Forward class declarations
+//
+///////////////////////////////////////////////////////////////////////
 
 namespace IO {
   class LegacyReader;
@@ -38,15 +49,19 @@ namespace IO {
   enum LegacyStringMode { GETLINE_NEWLINE, GETLINE_TAB, CHAR_COUNT };
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// IO::LegacyReader class definition
+//
+///////////////////////////////////////////////////////////////////////
+
 class IO::LegacyReader : public IO::Reader {
 public:
   LegacyReader(STD_IO::istream& is, IO::IOFlag flag);
   virtual ~LegacyReader();
 
-  STD_IO::istream& input() { return itsInStream; }
-  IO::IOFlag flags() const { return itsFlags; }
-
-  void setFlags(IO::IOFlag new_flags) { itsFlags = new_flags; }
+  IO::IOFlag flags() const;
 
   void throwIfError(const char* type);
 
@@ -76,39 +91,28 @@ protected:
   virtual char* readCstring(const char* name);
 
 private:
-  STD_IO::istream& itsInStream;
-  IO::IOFlag itsFlags;
-  LegacyStringMode itsStringMode;
+  friend class IO::LRFlagJanitor;
+  void setFlags(IO::IOFlag new_flags);
+
+  class Impl;
+  friend class Impl;
+
+  Impl* const itsImpl;
 };
 
-class IO::LRFlagJanitor {
-public:
-  LRFlagJanitor(IO::LegacyReader& rdr, IO::IOFlag new_flags) :
-	 itsReader(rdr),
-	 itsOldFlags(rdr.flags())
-  {
-	 itsReader.setFlags(new_flags);
-  }
 
-  ~LRFlagJanitor()
-  {
-	 itsReader.setFlags(itsOldFlags);
-  }
-
-private:
-  IO::LegacyReader& itsReader;
-  IO::IOFlag itsOldFlags;
-};
+///////////////////////////////////////////////////////////////////////
+//
+// IO::LegacyWriter class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class IO::LegacyWriter : public IO::Writer {
 public:
   LegacyWriter(STD_IO::ostream& os, IO::IOFlag flag);
   virtual ~LegacyWriter();
 
-  STD_IO::ostream& output() { return itsOutStream; }
-  IO::IOFlag flags() const { return itsFlags; }
-
-  void setFlags(IO::IOFlag new_flags) { itsFlags = new_flags; }
+  IO::IOFlag flags() const;
 
   void throwIfError(const char* type);
 
@@ -136,12 +140,40 @@ protected:
   virtual void writeCstring(const char* name, const char* val);
 
 private:
-  STD_IO::ostream& itsOutStream;
-  IO::IOFlag itsFlags;
-  char itsFieldSeparator[8];
-  LegacyStringMode itsStringMode;
+  friend class IO::LWFlagJanitor;
+  void setFlags(IO::IOFlag new_flags);
+
+  class Impl;
+  friend class Impl;
+
+  Impl* const itsImpl;
 };
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// FlagJanitors class definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+class IO::LRFlagJanitor {
+public:
+  LRFlagJanitor(IO::LegacyReader& rdr, IO::IOFlag new_flags) :
+	 itsReader(rdr),
+	 itsOldFlags(rdr.flags())
+  {
+	 itsReader.setFlags(new_flags);
+  }
+
+  ~LRFlagJanitor()
+  {
+	 itsReader.setFlags(itsOldFlags);
+  }
+
+private:
+  IO::LegacyReader& itsReader;
+  IO::IOFlag itsOldFlags;
+};
 
 class IO::LWFlagJanitor {
 public:
