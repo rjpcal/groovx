@@ -174,8 +174,9 @@ DOTRACE("Gfx::Canvas::drawBezierFill4");
   end();
 }
 
-void Gfx::Canvas::drawNurbsCurve(const dynamic_block<float>& knots,
-                                 const dynamic_block<Gfx::Vec3<float> >& pts)
+void Gfx::Canvas::drawNurbsCurve
+  (const rutz::dynamic_block<float>& knots,
+   const rutz::dynamic_block<Gfx::Vec3<float> >& pts)
 {
 DOTRACE("Gfx::Canvas::drawNurbsCurve");
 
@@ -188,7 +189,7 @@ DOTRACE("Gfx::Canvas::drawNurbsCurve");
 
   unsigned int nbz = nctrl - 3;
 
-  dynamic_block<BezData> bz(nbz);
+  rutz::dynamic_block<BezData> bz(nbz);
 
   for (unsigned int k = 0; k < nbz; ++k)
     {

@@ -49,15 +49,15 @@
 class Bezier
 {
 private:
-  dynamic_block<double> R;      // control points
+  rutz::dynamic_block<double> R;      // control points
 
   // coefficients of the Bezier polynomial
   // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
-  dynamic_block<double> c0;
+  rutz::dynamic_block<double> c0;
 
   // coefficients of the derivative polynomial
   // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
-  dynamic_block<double> c1;
+  rutz::dynamic_block<double> c1;
 
   double uMin_;    // value of u in [0,1] which gives the minimum
   double uMax_;  // value of u in [0,1] which gives the maximum
@@ -92,10 +92,10 @@ public:
       will be examined when searching for the extrema. If extrema_res
       is < 0 (the default value), a default number of subdivisions
       will be used. */
-  Bezier(const dynamic_block<double>& RR, int extrema_res=-1);
+  Bezier(const rutz::dynamic_block<double>& RR, int extrema_res=-1);
 
   /// Reset the control points,
-  void setCtrlPnts(const dynamic_block<double>& RR, int extrema_res=-1);
+  void setCtrlPnts(const rutz::dynamic_block<double>& RR, int extrema_res=-1);
 
 
   /// Evaluate the Bezier curve for a given u in [0, 1]
@@ -118,7 +118,7 @@ public:
   double valMax() { return valMax_; }
 };
 
-Bezier::Bezier(const dynamic_block<double>& RR, int extrema_res) :
+Bezier::Bezier(const rutz::dynamic_block<double>& RR, int extrema_res) :
   R(),
   c0(),
   c1(),
@@ -130,7 +130,7 @@ Bezier::Bezier(const dynamic_block<double>& RR, int extrema_res) :
   setCtrlPnts(RR, extrema_res);
 }
 
-void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res)
+void Bezier::setCtrlPnts(const rutz::dynamic_block<double>& RR, int extrema_res)
 {
   R = RR;
   c0.resize(RR.size());

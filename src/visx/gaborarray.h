@@ -145,7 +145,7 @@ private:
   Cached<double> itsContrastJitter;
 
   mutable int itsTotalNumber;
-  mutable fixed_block<GaborArrayElement> itsArray;
+  mutable rutz::fixed_block<GaborArrayElement> itsArray;
   mutable shared_ptr<Gfx::BmapData> itsBmap;
 
   bool itsDumpingFrames;

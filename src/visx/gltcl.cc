@@ -293,7 +293,7 @@ namespace GLTcl
         throw Util::Error("invalid or unsupported enumerant", SRC_POS);
       }
 
-    fixed_block<T> theVals(theInfo->num_values);
+    rutz::fixed_block<T> theVals(theInfo->num_values);
     extractValues(theInfo->param_tag, &(theVals[0]));
     Tcl::List result;
     result.appendRange(theVals.begin(), theVals.end());
@@ -320,8 +320,8 @@ namespace GLTcl
 
 void GLTcl::loadMatrix(Tcl::List entries)
 {
-  fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
-                               entries.end<GLdouble>());
+  rutz::fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
+                                     entries.end<GLdouble>());
 
   if (matrix.size() != 16)
     {

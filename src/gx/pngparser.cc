@@ -216,7 +216,7 @@ DOTRACE("PngParser::parse");
                          nchannels*8, // bits_per_pixel
                          1); // byte_alignment
 
-  fixed_block<png_bytep> row_pointers(height);
+  rutz::fixed_block<png_bytep> row_pointers(height);
 
   for (int i = 0; i < height; ++i)
     {
@@ -324,7 +324,7 @@ DOTRACE("PngWriter::write");
 
   const int height = data.height();
 
-  fixed_block<png_bytep> row_pointers(height);
+  rutz::fixed_block<png_bytep> row_pointers(height);
 
   for (int i = 0; i < height; ++i)
     {

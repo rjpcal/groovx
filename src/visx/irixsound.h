@@ -63,7 +63,7 @@ public:
 
 private:
   ALconfig itsAudioConfig;
-  dynamic_block<unsigned char> itsSamples;
+  rutz::dynamic_block<unsigned char> itsSamples;
   AFframecount itsFrameCount;
 };
 

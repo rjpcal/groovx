@@ -70,7 +70,7 @@ public:
 
 private:
   const int itsLength;
-  fixed_block<Gfx::Vec2<double> > itsElem;
+  rutz::fixed_block<Gfx::Vec2<double> > itsElem;
 
   Gfx::Vec2<double>& elem(int i)
   {

@@ -107,7 +107,7 @@ public:
   Gfx::Vec2<int> extent;
   int bitsPerPixel;
   int byteAlignment;
-  dynamic_block<unsigned char> bytes;
+  rutz::dynamic_block<unsigned char> bytes;
   RowOrder rowOrder;
 
   mutable shared_ptr<UpdateFunc> updater;
@@ -277,7 +277,7 @@ DOTRACE("Gfx::BmapData::flipVertical");
   int bytes_per_row = rep->bytesPerRow();
   int num_bytes = rep->byteCount();
 
-  dynamic_block<unsigned char> new_bytes(num_bytes);
+  rutz::dynamic_block<unsigned char> new_bytes(num_bytes);
 
   for (int row = 0; row < rep->extent.y(); ++row)
     {
@@ -374,7 +374,7 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   const int npos = nsubimg_x * nsubimg_y;
 
-  fixed_block<int> newpos(npos);
+  rutz::fixed_block<int> newpos(npos);
   for (int i = 0; i < npos; ++i)
     {
       newpos[i] = i;

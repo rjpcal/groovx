@@ -308,8 +308,8 @@ Util::UID TlistUtils::createPreview(Tcl::List objid_list,
                                     int num_cols_hint = -1,
                                     bool text_labels = true)
 {
-  fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
-                                objid_list.end<Util::UID>());
+  rutz::fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
+                                      objid_list.end<Util::UID>());
 
   return doCreatePreview(Gfx::Canvas::current(), &objids[0], objids.size(),
                          num_cols_hint, text_labels);
@@ -422,8 +422,8 @@ Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Util::UID posid1,
     {2, 1, 0}
   };
 
-  fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
-                                objid_list.end<Util::UID>());
+  rutz::fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
+                                      objid_list.end<Util::UID>());
 
   Util::UID base_triad[3];
 
@@ -483,11 +483,11 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   // whether we will read only num_lines lines from the stream.
   bool read_to_eof = (num_lines < 0);
 
-  fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
-                                objid_list.end<Util::UID>());
+  rutz::fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
+                                      objid_list.end<Util::UID>());
 
-  fixed_block<Util::UID> posids(posid_list.begin<Util::UID>(),
-                                posid_list.end<Util::UID>());
+  rutz::fixed_block<Util::UID> posids(posid_list.begin<Util::UID>(),
+                                      posid_list.end<Util::UID>());
 
   STD_IO::ifstream ifs(objid_file);
 

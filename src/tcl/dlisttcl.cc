@@ -341,7 +341,7 @@ namespace Dlist
 
     maxdist -= 0.0001;
 
-    fixed_block<unsigned int> slots(N);
+    rutz::fixed_block<unsigned int> slots(N);
 
     for (unsigned int i = 0; i < slots.size()-1; ++i)
       slots[i] = i+1;
@@ -413,11 +413,11 @@ namespace Dlist
     if (N < 2)
       throw Util::Error("N must be at least 2 to make a permutation", SRC_POS);
 
-    fixed_block<bool> used(N);
+    rutz::fixed_block<bool> used(N);
     for (unsigned int i = 0; i < N; ++i)
       used[i] = false;
 
-    fixed_block<unsigned int> slots(N);
+    rutz::fixed_block<unsigned int> slots(N);
 
     // fill slots[0] ... slots[N-2]
     for (unsigned int i = 0; i < N-1; ++i)
@@ -573,8 +573,8 @@ namespace Dlist
 
   Tcl::List shuffle(Tcl::List src, int seed)
   {
-    fixed_block<Tcl::ObjPtr> objs(src.begin<Tcl::ObjPtr>(),
-                                  src.end<Tcl::ObjPtr>());
+    rutz::fixed_block<Tcl::ObjPtr> objs(src.begin<Tcl::ObjPtr>(),
+                                        src.end<Tcl::ObjPtr>());
 
     rutz::urand generator(seed);
 

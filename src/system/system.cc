@@ -110,7 +110,7 @@ DOTRACE("unixcall::getcwd");
   ErrnoSaver saver;
 
   const int INIT_SIZE = 256;
-  dynamic_block<char> buf(INIT_SIZE);
+  rutz::dynamic_block<char> buf(INIT_SIZE);
 
   while ( ::getcwd(&buf[0], buf.size()) == 0 )
     {

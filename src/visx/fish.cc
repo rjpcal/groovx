@@ -99,9 +99,9 @@ struct Fish::Part
     itsCoord(0.0)
   {}
 
-  dynamic_block<float> itsKnots;
+  rutz::dynamic_block<float> itsKnots;
 
-  dynamic_block<Vec3f> itsCtrlPnts;
+  rutz::dynamic_block<Vec3f> itsCtrlPnts;
 
   // -- end points --
 
@@ -117,8 +117,10 @@ struct Fish::Part
   template <std::size_t N1, std::size_t N2>
   void reset(float const (&knots)[N1], Vec3f const (&points)[N2])
   {
-    itsKnots.assign(array_begin(knots), array_end(knots));
-    itsCtrlPnts.assign(array_begin(points), array_end(points));
+    itsKnots.assign(rutz::array_begin(knots),
+                    rutz::array_end(knots));
+    itsCtrlPnts.assign(rutz::array_begin(points),
+                       rutz::array_end(points));
     itsCoord = 0.0;
   }
 };
@@ -492,7 +494,7 @@ DOTRACE("Fish::grRender");
       if (inColor)
         canvas.setColor(colors[i]);
 
-      dynamic_block<Vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
+      rutz::dynamic_block<Vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
 
       // Set the coefficients at the break point to a linear sum of
       // the two corresponding endpoints

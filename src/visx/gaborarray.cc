@@ -194,7 +194,7 @@ DOTRACE("GaborArray::saveContourOnlyImage");
 
   const int npix = itsSizeX*itsSizeY;
 
-  fixed_block<double> win(npix);
+  rutz::fixed_block<double> win(npix);
 
   for (int i = 0; i < npix; ++i)
     win[i] = 0.0;
@@ -400,7 +400,7 @@ DOTRACE("GaborArray::generateBmap");
 
   const int npix = itsSizeX*itsSizeY;
 
-  fixed_block<double> win(npix);
+  rutz::fixed_block<double> win(npix);
 
   for (int i = 0; i < npix; ++i)
     win[i] = 0.0;

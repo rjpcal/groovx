@@ -34,7 +34,10 @@
 
 #include "util/object.h"
 
-template <class T> class dynamic_block;
+namespace rutz
+{
+  template <class T> class dynamic_block;
+}
 
 class fstring;
 
@@ -334,10 +337,12 @@ public:
                                unsigned int subdivisions);
 
   /// Draw a NURBS curve.
-  /** The default implementation splits the NURBS curve into 4-pt Bezier
-      curve components, and then draws those with drawBezier4(). */
-  virtual void drawNurbsCurve(const dynamic_block<float>& knots,
-                              const dynamic_block<Gfx::Vec3<float> >& pts);
+  /** The default implementation splits the NURBS curve into 4-pt
+      Bezier curve components, and then draws those with
+      drawBezier4(). */
+  virtual void drawNurbsCurve
+    (const rutz::dynamic_block<float>& knots,
+     const rutz::dynamic_block<Gfx::Vec3<float> >& pts);
 
   virtual void beginPoints(const char* comment="") = 0;         ///< Start a series of points vertices.
   virtual void beginLines(const char* comment="") = 0;          ///< Start a set of lines.
