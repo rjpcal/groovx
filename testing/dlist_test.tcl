@@ -64,7 +64,7 @@ test "Tcldlist-dlist_pickone" "norm1" {
 } {[13579]}
 test "Tcldlist-dlist_pickone" "norm2" {
      dlist_pickone {0 3.4 -2.6 str {list list}}
-} {0|3\.4|-2\.6|str|\{list list\}}
+} {0|3\.4|-2\.6|str|list list}
 test "Tcldlist-dlist_pickone" "error" {
      dlist_pickone {}
 } {dlist_pickone: source_list is empty}
