@@ -56,7 +56,14 @@ namespace geom
   public:
     box() : xx(), yy(), zz() {}
 
-    box(const geom::rect<V>& rect) :
+    box(const geom::span<V>& x,
+        const geom::span<V>& y,
+        const geom::span<V>& z)
+      :
+      xx(x), yy(y), zz(z)
+    {}
+
+    explicit box(const geom::rect<V>& rect) :
       xx(rect.x_span()),
       yy(rect.y_span()),
       zz()
@@ -154,11 +161,11 @@ namespace geom
       return (xx.is_void() || yy.is_void() || zz.is_void());
     }
 
-    void unionize(const box<V>& other)
+    box<V> union_with(const box<V>& other) const
     {
-      xx = xx.union_with(other);
-      yy = yy.union_with(other);
-      zz = zz.union_with(other);
+      return box<V>(xx.union_with(other.xx),
+                    yy.union_with(other.yy),
+                    zz.union_with(other.zz));
     }
 
     void merge(const geom::vec2<V>& p)

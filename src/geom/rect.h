@@ -189,10 +189,10 @@ namespace geom
 
     bool is_void() const { return (xx.is_void() || yy.is_void()); }
 
-    void unionize(const rect<V>& other)
+    rect<V> union_with(const rect<V>& other) const
     {
-      xx = xx.union_with(other);
-      yy = yy.union_with(other);
+      return rect<V>(xx.union_with(other.x_span()),
+                     yy.union_with(other.y_span()));
     }
 
     void debug_dump() const throw()
