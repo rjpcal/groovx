@@ -57,8 +57,8 @@ namespace eval depconf {
 
 namespace eval cdeps {
 
-    variable sys_regex "^#\\s*include\\s*(?:\"|<)(\[^ \]?)(?:\"|>)"
-    variable user_regex "^#\\s*include\\s*\"(\[^ \]*?)\""
+    variable sys_regex "#\\s*include\\s*(?:\"|<)(\[^ \]?)(?:\"|>)"
+    variable user_regex "#\\s*include\\s*\"(\[^ \]*?)\""
 
     proc grep_all_1st_submatches {str exp} {
 	set res [list]
@@ -198,6 +198,11 @@ namespace eval cdeps {
     proc batch_print { src_dir obj_dir search_path } {
 	set src_dir [depconf::trim_dirname $src_dir]
 	set obj_dir [depconf::trim_dirname $obj_dir]
+
+	# Add an empty "directory name" to the search path... this
+	# essentially includes the current working directory to the search
+	# path.
+	lappend search_path ""
 
 	batch_build $src_dir $search_path
 
