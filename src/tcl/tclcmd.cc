@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Jun 17 08:28:21 2001
+// written: Tue Jun 19 15:14:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,7 +118,8 @@ public:
 #ifdef TRACE_USE_COUNT
       if (USE_COUNT_STREAM->good())
         {
-          *USE_COUNT_STREAM << itsCmdName << " " << itsUseCount << endl;
+          *USE_COUNT_STREAM << itsCmdName << " "
+                            << itsUseCount << STD_IO::endl;
         }
 #endif
     }
