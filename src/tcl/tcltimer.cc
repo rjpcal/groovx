@@ -69,9 +69,9 @@ DOTRACE("Tcl::Timer::schedule");
 
   dbgEvalNL(3, itsMsecDelay);
 
-  // If the requested delay is zero -- i.e., immediate -- then don't bother
-  // creater a timer handler. Instead, generate a direct invocation; this
-  // saves a trip into the event loop and back.
+  // If the requested delay is zero -- i.e., immediate -- then don't
+  // bother creater a timer handler. Instead, generate a direct
+  // invocation; this saves a trip into the event loop and back.
   if (itsMsecDelay == 0)
     {
       dummyCallback(static_cast<ClientData>(this));
@@ -115,7 +115,8 @@ DOTRACE("Tcl::Timer::dummyCallback");
     }
   catch(...)
     {
-      Tcl::Main::interp().handleLiveException("Tcl::Timer callback", true);
+      Tcl::Main::interp().handleLiveException("Tcl::Timer callback",
+                                              true);
     }
 }
 
