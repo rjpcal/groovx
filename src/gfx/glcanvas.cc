@@ -75,13 +75,15 @@ public:
   shared_ptr<GlWindowInterface> glx;
 };
 
-GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx) :
+GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts,
+                   shared_ptr<GlWindowInterface> glx) :
   rep(new Impl(opts, glx))
 {
 DOTRACE("GLCanvas::GLCanvas");
 }
 
-GLCanvas* GLCanvas::make(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx)
+GLCanvas* GLCanvas::make(shared_ptr<GlxOpts> opts,
+                         shared_ptr<GlWindowInterface> glx)
 {
 DOTRACE("GLCanvas::make");
   return new GLCanvas(opts, glx);
@@ -476,15 +478,16 @@ DOTRACE("GLCanvas::rasterPos");
     }
   else
     {
-      // OK... in this case, our desired raster position actually falls
-      // outside the onscreen viewport. If we just called glRasterPos()
-      // with that position, it would recognize it as an invalid point and
-      // then subsequent glDrawPixels() calls would fail. To trick OpenGL
-      // in using the position we want, we first do a glRasterPos() to some
-      // valid position -- in this case, we pick the lower left corner of
-      // the viewport with coords (0,0). Then we do a glBitmap() call whose
-      // only purpose is to use the "xmove" and "ymove" arguments to adjust
-      // the raster position.
+      // OK... in this case, our desired raster position actually
+      // falls outside the onscreen viewport. If we just called
+      // glRasterPos() with that position, it would recognize it as an
+      // invalid point and then subsequent glDrawPixels() calls would
+      // fail. To trick OpenGL in using the position we want, we first
+      // do a glRasterPos() to some valid position -- in this case, we
+      // pick the lower left corner of the viewport with coords
+      // (0,0). Then we do a glBitmap() call whose only purpose is to
+      // use the "xmove" and "ymove" arguments to adjust the raster
+      // position.
       const Vec2d lower_left = worldFromScreen(Vec2i(0,0));
       glRasterPos2d(lower_left.x(), lower_left.y());
       glBitmap(0, 0, 0.0f, 0.0f,
@@ -522,13 +525,15 @@ DOTRACE("GLCanvas::drawPixels");
     {
       if (isRgba())
         {
-          glDrawPixels(data.width(), data.height(), GL_LUMINANCE,
-                       GL_UNSIGNED_BYTE, static_cast<GLvoid*>(data.bytesPtr()));
+          glDrawPixels(data.width(), data.height(),
+                       GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                       static_cast<GLvoid*>(data.bytesPtr()));
         }
       else
         {
-          glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX,
-                       GL_UNSIGNED_BYTE, static_cast<GLvoid*>(data.bytesPtr()));
+          glDrawPixels(data.width(), data.height(),
+                       GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
+                       static_cast<GLvoid*>(data.bytesPtr()));
         }
     }
   else if (data.bitsPerPixel() == 1)
@@ -567,10 +572,11 @@ DOTRACE("GLCanvas::grabPixels");
 
   const int pixel_alignment = 1;
 
-  // NOTE: we can't just use GLCanvas::bitsPerPixel() here, since that won't
-  // work in the case of a 16-bit color buffer; in that case, we are still in
-  // RGBA mode, so glReadPixels() will return one byte per color component
-  // (i.e. 24 bits per pixel) regardless of the actual color buffer depth.
+  // NOTE: we can't just use GLCanvas::bitsPerPixel() here, since that
+  // won't work in the case of a 16-bit color buffer; in that case, we
+  // are still in RGBA mode, so glReadPixels() will return one byte
+  // per color component (i.e. 24 bits per pixel) regardless of the
+  // actual color buffer depth.
   const int bmap_bits_per_pixel = isRgba() ? 24 : 8;
 
   Gfx::BmapData new_data(bounds.size(),
@@ -581,7 +587,8 @@ DOTRACE("GLCanvas::grabPixels");
   glPushAttrib(GL_PIXEL_MODE_BIT);
   {
     glReadBuffer(GL_FRONT);
-    glReadPixels(bounds.left(), bounds.bottom(), bounds.width(), bounds.height(),
+    glReadPixels(bounds.left(), bounds.bottom(),
+                 bounds.width(), bounds.height(),
                  (isRgba() ? GL_RGB : GL_COLOR_INDEX),
                  GL_UNSIGNED_BYTE, new_data.bytesPtr());
   }
@@ -625,7 +632,8 @@ DOTRACE("GLCanvas::drawRect");
           rect.top());
 }
 
-void GLCanvas::drawCircle(double inner_radius, double outer_radius, bool fill,
+void GLCanvas::drawCircle(double inner_radius, double outer_radius,
+                          bool fill,
                           unsigned int slices, unsigned int loops)
 {
 DOTRACE("GLCanvas::drawCircle");
