@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Wed Mar 29 22:05:41 2000
+// written: Fri May 12 17:20:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "tlistwidget.h"
 
 #include "tlist.h"
-#include "trial.h"
+#include "trialbase.h"
 
 #include "gwt/canvas.h"
 
