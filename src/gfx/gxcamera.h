@@ -99,7 +99,7 @@ public:
   /// Default constructor.
   GxFixedRectCamera() :
     GxCamera(),
-    itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
+    itsRect(Gfx::rectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
   virtual void readFrom(IO::Reader* /*reader*/) {}
@@ -124,7 +124,7 @@ public:
   /// Default constructor.
   GxMinRectCamera() :
     GxCamera(),
-    itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
+    itsRect(Gfx::rectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
   virtual void readFrom(IO::Reader* /*reader*/) {}

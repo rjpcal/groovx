@@ -146,7 +146,7 @@ namespace
     const double b = -1 * (h / 2.0) / ppu;
     const double t =      (h / 2.0) / ppu;
 
-    canvas.orthographic(Gfx::RectLTRB<double>(l, t, r, b), -10.0, 10.0);
+    canvas.orthographic(Gfx::rectLTRB<double>(l, t, r, b), -10.0, 10.0);
   }
 }
 

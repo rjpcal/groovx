@@ -196,11 +196,8 @@ Rect<int> GLCanvas::getScreenViewport() const
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
-  Rect<int> screen_rect;
-  screen_rect.setXYWH(viewport[0], viewport[1],
-                      viewport[2], viewport[3]);
-
-  return screen_rect;
+  return rectLBWH<int>(viewport[0], viewport[1],
+                       viewport[2], viewport[3]);
 }
 
 Rect<double> GLCanvas::getWorldViewport() const

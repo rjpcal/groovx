@@ -129,7 +129,7 @@ void MaskHatch::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MaskHatch::grGetBoundingBox");
 
-  bbox.drawRect(Gfx::RectLBWH<double>(0.0, 0.0, 1.0, 1.0));
+  bbox.drawRect(Gfx::rectLBWH<double>(0.0, 0.0, 1.0, 1.0));
 }
 
 void MaskHatch::grRender(Gfx::Canvas& canvas) const

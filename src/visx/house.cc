@@ -82,7 +82,7 @@ namespace
   {
     DOTRACE("House::drawDoor");
     // Draw 1x1 door with bottom line centered on (0,0)
-    canvas.drawRect(Gfx::RectLBWH<double>(-0.5, 0.0, 1.0, 1.0));
+    canvas.drawRect(Gfx::rectLBWH<double>(-0.5, 0.0, 1.0, 1.0));
 
     Gfx::LinesBlock block(canvas);
 
@@ -94,7 +94,7 @@ namespace
   {
     DOTRACE("House::drawStoryFrame");
     // Draw 1x1 story frame centered on (0,0)
-    canvas.drawRect(Gfx::RectLBWH<double>(-0.5, -0.5, 1.0, 1.0));
+    canvas.drawRect(Gfx::rectLBWH<double>(-0.5, -0.5, 1.0, 1.0));
   }
 
   void drawTriangleRoof(Gfx::Canvas& canvas)

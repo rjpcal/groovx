@@ -186,10 +186,9 @@ DOTRACE("Gabor::grGetBoundingBox");
   const Vec2i size(itsResolution * itsPointSize,
                    itsResolution * itsPointSize);
 
-  Rect<int> screen_rect;
-  screen_rect.setXYWH(screen_origin, size);
+  const Rect<int> screen_rect = Rect<int>().setXYWH(screen_origin, size);
 
-  Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  const Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
   bbox.drawRect(world_rect);
 }

@@ -42,7 +42,7 @@ namespace Tcl
   inline Gfx::Rect<T> fromTcl(Tcl_Obj* obj, Gfx::Rect<T>*)
   {
     Tcl::List listObj(obj);
-    return Gfx::RectLTRB<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
+    return Gfx::rectLTRB<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
                             listObj.get(2, (T*)0), listObj.get(3, (T*)0));
   }
 

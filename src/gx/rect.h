@@ -38,11 +38,6 @@ namespace Gfx
 {
   template <class V> class Rect;
 
-  // These are utility classes that just expose a constructor that
-  // takes arguments in the order specified by the mnemonic
-  template <class V> class RectLTRB;
-  template <class V> class RectLBWH;
-
 // ####################################################################
 
 /// Rect represents rectangles in two-dimensional space.
@@ -110,51 +105,54 @@ public:
   //
 
   /// Set four corners from x-left/y-top/x-right/y-bottom values.
-  void setLTRB(V L, V T, V R, V B)
-    { ll = L; tt = T; rr = R; bb = B; }
+  Rect<V>& setLTRB(V L, V T, V R, V B)
+    { ll = L; tt = T; rr = R; bb = B; return *this; }
 
   /// Set four corners from x-left/x-right/y-bottom/y-top values.
-  void setLRBT(V L, V R, V B, V T)
-    { ll = L; rr = R; bb = B; tt = T; }
+  Rect<V>& setLRBT(V L, V R, V B, V T)
+    { ll = L; rr = R; bb = B; tt = T; return *this; }
 
   /// Set four corners from x-left/y-bottom/x-width/y-height values.
-  void setXYWH(V x, V y, V w, V h)
+  Rect<V>& setXYWH(V x, V y, V w, V h)
   {
     ll = x;
     bb = y;
     rr = ll+Util::abs(w);
     tt = bb+Util::abs(h);
+    return *this;
   }
 
   /// Set four corners from lower-left corner and width+height values.
-  void setXYWH(const Gfx::Vec2<V>& xy, const Gfx::Vec2<V>& wh)
+  Rect<V>& setXYWH(const Gfx::Vec2<V>& xy, const Gfx::Vec2<V>& wh)
   {
     ll = xy.x();
     bb = xy.y();
     rr = ll+Util::abs(wh.x());
     tt = bb+Util::abs(wh.y());
+    return *this;
   }
 
   /// Set four corners from positions of two diagonally-opposed corners.
-  void setCorners(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
+  Rect<V>& setCorners(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
   {
     ll = Util::min(p1.x(), p2.x());
     rr = Util::max(p1.x(), p2.x());
     bb = Util::min(p1.y(), p2.y());
     tt = Util::max(p1.y(), p2.y());
+    return *this;
   }
 
-  void setBottomLeft(const Gfx::Vec2<V>& point)
-    { ll = point.x(); bb = point.y(); }
+  Rect<V>& setBottomLeft(const Gfx::Vec2<V>& point)
+    { ll = point.x(); bb = point.y(); return *this; }
 
-  void setBottomRight(const Gfx::Vec2<V>& point)
-    { rr = point.x(); bb = point.y(); }
+  Rect<V>& setBottomRight(const Gfx::Vec2<V>& point)
+    { rr = point.x(); bb = point.y(); return *this; }
 
-  void setTopLeft(const Gfx::Vec2<V>& point)
-    { ll = point.x(); tt = point.y(); }
+  Rect<V>& setTopLeft(const Gfx::Vec2<V>& point)
+    { ll = point.x(); tt = point.y(); return *this; }
 
-  void setTopRight(const Gfx::Vec2<V>& point)
-    { rr = point.x(); tt = point.y(); }
+  Rect<V>& setTopRight(const Gfx::Vec2<V>& point)
+    { rr = point.x(); tt = point.y(); return *this; }
 
   void addWidth(V w)
   {
@@ -220,29 +218,19 @@ private:
 };
 
 
-/// Helper for building Rect's with left/top/right/bottom arguments.
+/// Factory for building Rect's with left/top/right/bottom arguments.
 template <class V>
-class RectLTRB : public Rect<V>
+Rect<V> rectLTRB(V l, V t, V r, V b)
 {
-public:
-  RectLTRB(V l, V t, V r, V b) :
-    Rect<V>()
-  {
-    setLTRB(l, t, r, b);
-  }
-};
+  return Rect<V>().setLTRB(l, t, r, b);
+}
 
-/// Helper for building Rect's with left/bottom/width/height arguments.
+/// Factory for building Rect's with left/bottom/width/height arguments.
 template <class V>
-class RectLBWH : public Rect<V>
+Rect<V> rectLBWH(V l, V b, V w, V h)
 {
-public:
-  RectLBWH(V l, V b, V w, V h) :
-    Rect<V>()
-  {
-    setXYWH(l, b, w, h);
-  }
-};
+  return Rect<V>().setXYWH(l, b, w, h);
+}
 
 } // end namespace Gfx
 
