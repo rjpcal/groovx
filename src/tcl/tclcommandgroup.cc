@@ -94,12 +94,12 @@ public:
 
   typedef std::list<rutz::shared_ptr<Tcl::Command> > List;
 
-  Tcl::Interp interp;
+  Tcl::Interp       interp;
   const Tcl_Command cmdToken;
-  const fstring initialCmdName;
-  List cmdList;
-  const fstring profName;
-  rutz::prof prof;
+  const fstring     initialCmdName;
+  List              cmdList;
+  const fstring     profName;
+  rutz::prof        prof;
 
   fstring usageWarning(const fstring& argv0) const;
 
