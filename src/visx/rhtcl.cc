@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 16 10:23:16 2001
+// written: Mon Jul 16 12:19:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace SerialRhTcl {
+namespace SerialRhTcl
+{
   class SerialEventSource;
   class SerialRhCmd;
   class SerialRhPkg;
@@ -114,35 +115,28 @@ private:
   SerialEventSource& operator=(const SerialEventSource&);
 };
 
-class SerialRhTcl::SerialRhCmd : public Tcl::TclCmd {
-public:
-  SerialRhCmd(Tcl::TclPkg* pkg) :
-    Tcl::TclCmd(pkg->interp(), pkg->makePkgCmdName("SerialRh"),
-           "?serial_device = /dev/tty0p0", 1, 2),
-    itsEventSource(0)
-    {}
+namespace SerialRhTcl
+{
+  shared_ptr<SerialEventSource> theEventSource;
 
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-    {
-      const char* device = ctx.objc() >= 2 ? ctx.getCstringFromArg(1) : "/dev/tty0p0";
+  void startSerial(Tcl::Context& ctx)
+  {
+    const char* device = ctx.objc() >= 2 ?
+      ctx.getCstringFromArg(1) : "/dev/tty0p0";
 
-      itsEventSource.reset(new SerialEventSource(ctx.interp(), device));
-    }
+    theEventSource.reset(new SerialEventSource(ctx.interp(), device));
+  }
+}
 
-private:
-  SerialRhCmd(const SerialRhCmd&);
-  SerialRhCmd& operator=(const SerialRhCmd&);
-
-  shared_ptr<SerialEventSource> itsEventSource;
-};
-
-class SerialRhTcl::SerialRhPkg : public Tcl::TclPkg {
+class SerialRhTcl::SerialRhPkg : public Tcl::TclItemPkg {
 public:
   SerialRhPkg(Tcl_Interp* interp) :
-    Tcl::TclPkg(interp, "SerialRh", "$Revision$")
+    Tcl::TclItemPkg(interp, "SerialRh", "$Revision$")
     {
-      addCommand( new SerialRhCmd(this) );
+      defRaw( &SerialRhTcl::startSerial, "SerialRh::SerialRh",
+              "device=/dev/tty0p0", 1 );
+      defRaw( &SerialRhTcl::startSerial, "SerialRh::SerialRh",
+              0, 0 );
     }
 };
 
@@ -152,7 +146,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace EventRhTcl {
+namespace EventRhTcl
+{
   class EventRhPkg;
 }
 
