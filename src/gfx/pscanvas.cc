@@ -371,8 +371,7 @@ public:
 
   void rotate(const Vec3d& axis, double angle)
   {
-    Txform rotation(Vec3d(0, 0, 0), Vec3d(1, 1, 1), axis, angle);
-    state().txform.transform(rotation);
+    state().txform.rotate(axis, angle);
   }
 
   // NOTE: these next four functions must be non-templates in order to avoid
@@ -869,10 +868,10 @@ DOTRACE("Gfx::PSCanvas::rotate");
   rep->rotate(axis, angle_in_degrees);
 }
 
-void Gfx::PSCanvas::transform(const Txform& /*tx*/)
+void Gfx::PSCanvas::transform(const Txform& tx)
 {
 DOTRACE("Gfx::PSCanvas::transform");
-  rep->raiseError("transform() operation not supported");
+  rep->state().txform.transform(tx);
 }
 
 
