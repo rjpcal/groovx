@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Tue Nov 28 14:03:29 2000
+// written: Tue Nov 28 14:12:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,20 @@ template <class T> class MaybeIdItem;
 
 class TrialBase;
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * GWT::Widget is the base widget class.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
 class GWT::Widget {
 public:
+  /// Default constructor
+  Widget();
+
+  /// Virtual destructor.
   virtual ~Widget();
 
   virtual Canvas* getCanvas() = 0;
