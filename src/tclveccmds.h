@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Tue Dec  7 18:21:09 1999
+// written: Tue Dec  7 19:17:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@
 #include "tclcmd.h"
 #endif
 
-class TclItemPkg;
-
 template <class T> class Getter;
 template <class T> class Setter;
 template <class T> class Attrib;
@@ -30,6 +28,8 @@ class Action;
 
 
 namespace Tcl {
+
+class TclItemPkg;
 
 ///////////////////////////////////////////////////////////////////////
 /**
