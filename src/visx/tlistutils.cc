@@ -77,6 +77,12 @@ namespace
     const double world_width = world_viewport.width();
     const double world_height = world_viewport.height();
 
+    if (world_width <= 0.0)
+      throw rutz::error("invalid rect (width was <= 0)", SRC_POS);
+
+    if (world_height <= 0.0)
+      throw rutz::error("invalid rect (height was <= 0)", SRC_POS);
+
     const double window_area = world_width*world_height;
     const double parcel_area = window_area/objids_size;
     const double raw_parcel_side = sqrt(parcel_area);
