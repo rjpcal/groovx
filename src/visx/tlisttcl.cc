@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Dec 15 17:45:28 1999
+// written: Sun Jan 16 23:00:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #include <tcl.h>
 #include <vector>
 
+#include "application.h"
+#include "experiment.h"
 #include "tlist.h"
 #include "tclcmd.h"
 #include "listpkg.h"
@@ -81,8 +83,10 @@ protected:
 	 int pixel_width = arg(2).getInt();
 	 int pixel_height = arg(3).getInt();
 
-	 int previewid =
-		TlistUtils::createPreview(theTlist, objids, pixel_width, pixel_height);
+	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+
+	 int previewid = TlistUtils::createPreview(theTlist, *canvas, objids,
+															 pixel_width, pixel_height);
 
 	 returnInt(previewid);
   }
