@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:53:27 2002
+// written: Sat Nov 23 17:46:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,9 @@
 
 #include "tcl/tkwidget.h"
 
-class GxNode;
 class GxCamera;
-
-class Scene;
+class GxNode;
+class GxScene;
 
 namespace Gfx
 {
@@ -77,7 +76,7 @@ public:
   virtual void reshapeCallback(int width, int height);
 
 
-  virtual void undraw();
+  void undraw();
 
   /** "Bare-bones rendering": only render the current object; the caller is
       expected to take care of clearing the color buffer first and flushing
@@ -122,7 +121,7 @@ private:
   Toglet& operator=(const Toglet&); // no assignment operator
 
   Impl* const rep;
-  Scene* const itsScene;
+  GxScene* const itsScene;
 };
 
 static const char vcid_toglet_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:53:49 2002
+// written: Sat Nov 23 17:52:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,18 +16,14 @@
 #include "toglet.h"
 
 #include "gfx/glcanvas.h"
-#include "gfx/gxcamera.h"
-#include "gfx/gxemptynode.h"
-#include "gfx/gxnode.h"
+#include "gfx/gxscene.h"
 
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclmain.h"
-#include "tcl/tcltimer.h"
 
 #include "util/ref.h"
 #include "util/strings.h"
-#include "util/volatileobject.h"
 
 #include <tk.h>
 #include <X11/Xlib.h>
@@ -40,164 +36,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-class Scene : public Util::VolatileObject
-{
-public:
-  Scene(Util::SoftRef<Gfx::Canvas> canvas) :
-    itsCanvas(canvas),
-    itsDrawNode(GxEmptyNode::make()),
-    itsUndrawNode(GxEmptyNode::make()),
-    isItVisible(false),
-    itsCamera(new GxFixedScaleCamera()),
-    isItHolding(false),
-    isItRefreshing(true),
-    isItRefreshed(false),
-    itsTimer(100, true),
-    slotNodeChanged(Util::Slot::make(this, &Scene::onNodeChange))
-  {
-    itsTimer.sigTimeOut.connect(this, &Scene::fullRender);
-    itsCamera->sigNodeChanged.connect(slotNodeChanged);
-  }
-
-  void undraw();
-
-  void render();
-
-  void fullRender();
-
-  void clearscreen()
-  {
-    itsCanvas->clearColorBuffer();
-    setDrawable(Util::Ref<GxNode>(GxEmptyNode::make()));
-    itsUndrawNode = Util::Ref<GxNode>(GxEmptyNode::make());
-    isItVisible = false;
-  }
-
-  void fullClearscreen()
-  {
-    clearscreen();
-    itsCanvas->flushOutput();
-  }
-
-  void setVisibility(bool val)
-  {
-    isItVisible = val;
-    if ( !isItVisible )
-      {
-        fullClearscreen();
-      }
-  }
-
-  void setCamera(const Ref<GxCamera>& cam)
-  {
-    itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
-
-    itsCamera = cam;
-
-    itsCamera->sigNodeChanged.connect(slotNodeChanged);
-  }
-
-  void setDrawable(const Ref<GxNode>& node)
-  {
-    itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);
-
-    itsDrawNode = node;
-
-    itsDrawNode->sigNodeChanged.connect(slotNodeChanged);
-  }
-
-  void flushChanges()
-  {
-    if (isItRefreshing && !isItRefreshed)
-      fullRender();
-  }
-
-  void onNodeChange()
-  {
-    isItRefreshed = false;
-    flushChanges();
-  }
-
-  void reshape(int width, int height)
-  {
-    itsCamera->reshape(width, height);
-  }
-
-private:
-  Scene(const Scene&);
-  Scene& operator=(const Scene&);
-
-  Util::SoftRef<Gfx::Canvas> itsCanvas;
-  Util::Ref<GxNode> itsDrawNode;
-  Util::Ref<GxNode> itsUndrawNode;
-  bool isItVisible;
-
-public:
-  Util::Ref<GxCamera> itsCamera;
-  bool isItHolding;
-  bool isItRefreshing;
-  bool isItRefreshed;
-
-  Tcl::Timer itsTimer;
-
-  Util::Ref<Util::Slot> slotNodeChanged;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// Scene member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-void Scene::render()
-{
-DOTRACE("Scene::render");
-
-  try
-    {
-      Gfx::MatrixSaver msaver(*itsCanvas);
-      Gfx::AttribSaver asaver(*itsCanvas);
-
-      itsCamera->draw(*itsCanvas);
-      itsDrawNode->draw(*itsCanvas);
-      itsUndrawNode = itsDrawNode;
-
-      isItRefreshed = true;
-    }
-  catch (...)
-    {
-      // Here, something failed during rendering, so just go invisible
-      setVisibility(false);
-    }
-}
-
-void Scene::fullRender()
-{
-DOTRACE("Scene::fullRender");
-
-  // (1) Clear the screen (but only if we are not "holding")
-  if( !isItHolding )
-    {
-      itsCanvas->clearColorBuffer();
-    }
-
-  // (2) Render the current object
-  if ( isItVisible )
-    {
-      render();
-    }
-
-  // (3) Flush the graphics stream
-  itsCanvas->flushOutput();
-}
-
-void Scene::undraw()
-{
-DOTRACE("Scene::undraw");
-  itsUndrawNode->undraw(*itsCanvas);
-  itsCanvas->flushOutput();
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -356,7 +194,7 @@ namespace
 Toglet::Toglet(bool pack) :
   Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
   rep(new Impl(this)),
-  itsScene(new Scene(rep->canvas))
+  itsScene(new GxScene(rep->canvas))
 {
 DOTRACE("Toglet::Toglet");
 
@@ -446,21 +284,20 @@ DOTRACE("Toglet::setVisibility");
 void Toglet::setHold(bool hold_on)
 {
 DOTRACE("Toglet::setHold");
-  itsScene->isItHolding = hold_on;
+  itsScene->setHold(hold_on);
 }
 
 void Toglet::allowRefresh(bool allow)
 {
 DOTRACE("Toglet::allowRefresh");
-  itsScene->isItRefreshing = allow;
-  itsScene->flushChanges();
+  itsScene->allowRefresh(allow);
 }
 
 const Util::Ref<GxCamera>& Toglet::getCamera() const
 {
 DOTRACE("Toglet::getCamera");
 
-  return itsScene->itsCamera;
+  return itsScene->getCamera();
 }
 
 void Toglet::setCamera(const Util::Ref<GxCamera>& cam)
@@ -468,7 +305,6 @@ void Toglet::setCamera(const Util::Ref<GxCamera>& cam)
 DOTRACE("Toglet::setCamera");
 
   itsScene->setCamera(cam);
-  fullRender();
 }
 
 void Toglet::setDrawable(const Ref<GxNode>& node)
@@ -479,16 +315,7 @@ DOTRACE("Toglet::setDrawable");
 
 void Toglet::animate(unsigned int framesPerSecond)
 {
-DOTRACE("Toglet::animate");
-  if (framesPerSecond == 0)
-    {
-      itsScene->itsTimer.cancel();
-    }
-  else
-    {
-      itsScene->itsTimer.setDelayMsec(1000/framesPerSecond);
-      itsScene->itsTimer.schedule();
-    }
+  itsScene->animate(framesPerSecond);
 }
 
 Toglet::Color Toglet::queryColor(unsigned int color_index) const
