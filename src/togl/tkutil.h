@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 15:07:44 2002
-// written: Mon Aug  5 19:43:42 2002
+// written: Tue Aug  6 12:55:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,9 @@ public:
 
   /// Request the X window to be displayed.
   static void destroyWindow(Tk_Window tkWin) throw();
+
+  static void addWindow(Tk_Window tkWin, Window win);
+  static void forgetWindow(Tk_Window tkWin, Window win);
 
 private:
   static Window findParent(Tk_Window tkWin) throw();
