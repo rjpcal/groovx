@@ -39,36 +39,36 @@ deal with the Tcl result. Instead, all calls to invoke() are
 wrapped in a try block that catches any exceptions, and returns a
 suitable error message to the Tcl command line.
 
-<li><b>IO::IoObject</b>: The base class for most domain-level
-objects. Provides persistence facilities, and provides a unique
-integer id for each object. IO::IoObject's are reference counted for
-automatic memory management, and are generally passed around via
-PtrHandle's, which automatically manage the reference count.
+<li><b>Util::Object</b>: The base class for most domain-level
+objects. Provides a unique integer id for each object. Util::Object's
+are reference counted for automatic memory management, and are
+generally passed around via Util::Ref's or Util::WeakRef's, which
+automatically manage the reference count. Subclass IO::IoObject
+provides persistence facilities.
 
-<li><b>IoDb</b>: A database for storing IO::IoObject's, which can be
-accessed by the objects' unique id's. This association between unique
-id's and objects allows Tcl scripts to easily to refer to objects
-using the unique id's.
+<li><b>Util::ObjDb</b>: A database for storing Util::Object's, which
+can be accessed by the objects' unique id's. This association between
+unique id's and objects allows Tcl scripts to easily to refer to
+objects using the unique id's.
 
-<li><b>Tcl::TclPkg</b>: A base class that manages a set of
-Tcl::TclCmd's, stores a namespace name, and calls Tcl_PkgProvide
-appropriately. Most interesting are the subclasses of
-Tcl::TclPkg. These can handle many of the details of actually
-creating the Tcl::TclCmd's necessary to expose a class's operations
-and attributes to Tcl. For example, a template ListPkg can generate
-all the commands necessary to expose a PtrList to Tcl. The
-Tcl::ListItemPkg template provides some utility functionality for
-subclasses that handle a type stored in a PtrList. For example,
-Tcl::ListItemPkg provides a 'T* getItem()' function, which gets an
-int from the relevant Tcl commmand parameter, and returns a T* at
-that index from that index in the appropriate PtrList (or throws an
-exception if the id is invalid). In addition, item operations can
-be vectorized: a sequence of item id's can be passed in, and then
-either an operation can be applied to all the items, or a
-particular property can be fetched from all the items to return an
-sequence of values, or all of the items can have a property set to
-a new value at once. This greatly reduces the overhead involved in
-calling functions via the script interface.
+<li><b>Tcl::Pkg</b>: A base class that manages a set of Tcl::TclCmd's,
+stores a namespace name, and calls Tcl_PkgProvide appropriately. Most
+interesting are the subclasses of Tcl::Pkg. These can handle many of
+the details of actually creating the Tcl::TclCmd's necessary to expose
+a class's operations and attributes to Tcl. For example, a template
+ListPkg can generate all the commands necessary to expose a PtrList to
+Tcl. The Tcl::ListItemPkg template provides some utility functionality
+for subclasses that handle a type stored in a PtrList. For example,
+Tcl::ListItemPkg provides a 'T* getItem()' function, which gets an int
+from the relevant Tcl commmand parameter, and returns a T* at that
+index from that index in the appropriate PtrList (or throws an
+exception if the id is invalid). In addition, item operations can be
+vectorized: a sequence of item id's can be passed in, and then either
+an operation can be applied to all the items, or a particular property
+can be fetched from all the items to return an sequence of values, or
+all of the items can have a property set to a new value at once. This
+greatly reduces the overhead involved in calling functions via the
+script interface.
 
 <li><b>Field/Value</b>: Value's provide an interface between the
 untyped world of Tcl, and the strongly typed world of C++. The
