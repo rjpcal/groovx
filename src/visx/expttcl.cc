@@ -190,24 +190,17 @@ private:
 class ExptTcl::ExpPkg : public Tcl::GenericObjPkg<ExptDriver>
 {
 private:
-  class ExptFetcher : public Tcl::IoFetcher {
-  public:
-    virtual IO::IoObject& getIoFromId(int) { return *theExptDriver; }
-  };
-
-  ExptFetcher itsExptFetcher;
 
 public:
   ExpPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$"),
-    itsExptFetcher()
+    Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$")
   {
     theExptDriver = Ref<ExptDriver>
       (ExptDriver::make(Application::theApp().argc(),
                         Application::theApp().argv(),
                         interp));
 
-    Tcl::TclItemPkg::addIoCommands(&itsExptFetcher);
+    Tcl::TclItemPkg::addIoCommands();
 
     Tcl::addTracing(this, ExptDriver::tracer);
 

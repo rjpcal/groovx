@@ -160,20 +160,15 @@ namespace Tcl
       }
   }
 
-class IoObjectPkg : public GenericObjPkg<IO::IoObject>,
-                    public IoFetcher
+class IoObjectPkg : public GenericObjPkg<IO::IoObject>
 {
 public:
   IoObjectPkg(Tcl_Interp* interp) :
     GenericObjPkg<IO::IoObject>(interp, "IO", "$Revision$")
   {
-    TclItemPkg::addIoCommands(this);
+    TclItemPkg::addIoCommands();
 
     declareCGetter("type", &IO::IoObject::ioTypename);
-  }
-
-  virtual IO::IoObject& getIoFromId(int id) {
-    return dynamic_cast<IO::IoObject&>( *(getCItemFromId(id)) );
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Fri Jul 13 11:32:24 2001
+// written: Mon Jul 16 06:50:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJFUNCTOR_H_DEFINED)
+#include "tcl/objfunctor.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKGBASE_H_DEFINED)
@@ -84,7 +88,6 @@ public:
   /// Factory function.
   static shared_ptr<Getter<int> > make(Getter_f s)
     { return shared_ptr<Getter<int> >(new CGetter(s)); }
-//      { return shared_ptr<Getter<int> >(static_cast<Getter<int> >(new CGetter(s))); }
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual int get(void *item) const {
@@ -273,28 +276,8 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace Tcl {
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * IoFetcher class definition
- *
- * This class exists to provide an interface for retrieving
- * IO::IoObject's from integer id's.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class IoFetcher {
-protected:
-  IoFetcher();
-
-public:
-  virtual ~IoFetcher();
-
-  virtual IO::IoObject& getIoFromId(int id) = 0;
-};
+namespace Tcl
+{
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -306,19 +289,13 @@ public:
 
 class TclItemPkgBase : public TclPkg, public ItemFetcher {
 public:
-  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version,
-                 int item_argn);
+  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version);
 
   virtual ~TclItemPkgBase();
 
   virtual void* getItemFromId(int id) = 0;
 
   virtual void* getItemFromContext(Context& ctx);
-
-  int itemArgn() const { return itsItemArgn; }
-
-private:
-  int itsItemArgn;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -331,8 +308,7 @@ private:
 
 class TclItemPkg : public TclItemPkgBase {
 public:
-  TclItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-             int item_argn=1);
+  TclItemPkg(Tcl_Interp* interp, const char* name, const char* version);
 
   virtual ~TclItemPkg();
 
@@ -356,7 +332,9 @@ protected:
   void declareAction(const char* action_name, shared_ptr<Action> action,
                      const char* usage = 0);
 
-  void addIoCommands(IoFetcher* fetcher);
+  void addIoCommands();
+
+  static const char* actionUsage(const char* usage);
 
 private:
   void instantiate();
@@ -373,9 +351,8 @@ private:
 template <class C>
 class CTclItemPkg : public TclItemPkg {
 public:
-  CTclItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-              int item_argn=1) :
-    TclItemPkg(interp, name, version, item_argn) {}
+  CTclItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
+    TclItemPkg(interp, name, version) {}
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
                       const char* usage = 0)
@@ -383,6 +360,7 @@ public:
       declareAction(cmd_name,
                     shared_ptr<Action>(new CAction<C>(actionFunc)),
                     usage);
+//        Tcl::defVec( this, actionFunc, cmd_name, actionUsage(usage) );
     }
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
@@ -448,11 +426,11 @@ protected:
   virtual void invoke(Context& ctx) = 0;
 
   C* getItem(Context& ctx) {
-    int id = itsPkg->itemArgn() ? ctx.getIntFromArg(itsPkg->itemArgn()) : -1;
+    int id = ctx.getIntFromArg(1);
     return itsPkg->getCItemFromId(id);
   }
 
-  int afterItemArg(int n) { return itsPkg->itemArgn() + n; }
+  int afterItemArg(int n) { return n+1; }
 
 private:
   TclItemCmd(const TclItemCmd&);

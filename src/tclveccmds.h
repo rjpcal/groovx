@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Fri Jul 13 11:34:11 2001
+// written: Mon Jul 16 06:22:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ class TVecGetterCmd : public Tcl::VecCmd {
 public:
   TVecGetterCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                 shared_ptr<Getter<ValType> > getter,
-                const char* usage, unsigned int item_argn);
+                const char* usage);
 
   virtual ~TVecGetterCmd();
 
@@ -77,7 +77,6 @@ private:
   TVecGetterCmd& operator=(const TVecGetterCmd&);
 
   ItemFetcher* itsFetcher;
-  int itsItemArgn;
   shared_ptr< Getter<ValType> > itsGetter;
 };
 
@@ -98,7 +97,7 @@ public:
 
   TVecSetterCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                  shared_ptr<Setter<value_type> > setter,
-                 const char* usage, unsigned int item_argn);
+                 const char* usage);
 
   virtual ~TVecSetterCmd();
 
@@ -109,8 +108,6 @@ private:
   TVecSetterCmd& operator=(const TVecSetterCmd&);
 
   ItemFetcher* itsFetcher;
-  int itsItemArgn;
-  int itsValArgn;
   shared_ptr< Setter<value_type> > itsSetter;
 };
 
@@ -128,7 +125,7 @@ class Tcl::VecActionCmd : public Tcl::VecCmd {
 public:
   VecActionCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                shared_ptr<Action> action,
-               const char* usage, unsigned int item_argn);
+               const char* usage);
   virtual ~VecActionCmd();
 
 protected:
@@ -140,7 +137,6 @@ private:
 
   ItemFetcher* itsFetcher;
   shared_ptr<Action> itsAction;
-  int itsItemArgn;
 };
 
 static const char vcid_tclveccmds_h[] = "$Header$";

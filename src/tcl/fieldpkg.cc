@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Sun Jul 15 22:07:35 2001
+// written: Mon Jul 16 06:42:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,17 +33,14 @@ namespace Tcl
 
   class FieldContainerFetcher : public Tcl::ItemFetcher {
   public:
-    FieldContainerFetcher(int item_argn) : itsItemArgn(item_argn) {}
+    FieldContainerFetcher() {}
 
     virtual void* getItemFromContext(Tcl::Context& ctx)
     {
-      int id = ctx.getIntFromArg(itsItemArgn);
+      int id = ctx.getIntFromArg(1);
       Ref<FieldContainer> item(id);
       return static_cast<void*>(item.get());
     }
-
-  private:
-    int itsItemArgn;
   };
 
   class FieldAttrib : public Getter<TclValue>, public Setter<TclValue> {
@@ -148,7 +145,7 @@ void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) {
 DOTRACE("Tcl::declareField");
 
   static shared_ptr<FieldContainerFetcher>
-    fetcher1(new FieldContainerFetcher(1));
+    fetcher1(new FieldContainerFetcher);
 
   shared_ptr<FieldAttrib> attrib(new FieldAttrib(finfo));
 
@@ -157,16 +154,14 @@ DOTRACE("Tcl::declareField");
                          fetcher1.get(),
                          pkg->makePkgCmdName(finfo.name().c_str()),
                          attrib,
-                         0, /* for default usage string */
-                         1) );
+                         0 /* for default usage string */) );
 
   pkg->addCommand( new TVecSetterCmd<TclValue>(
                          pkg->interp(),
                          fetcher1.get(),
                          pkg->makePkgCmdName(finfo.name().c_str()),
                          attrib,
-                         0, /* for default usage string */
-                         1) );
+                         0 /* for default usage string */) );
 }
 
 void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){

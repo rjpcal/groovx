@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Jul 12 13:23:43 2001
+// written: Mon Jul 16 07:10:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,24 +45,24 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name,
-                                const char* usage, int objc) :
-  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name)
+  :
+  TclCmd(interp, cmd_name, "item_id", 2) {}
 
 Tcl::StringifyCmd::~StringifyCmd() {}
 
 void Tcl::StringifyCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::StringifyCmd::invoke");
-  IO::IoObject& io = getIO(ctx);
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
 
-  DebugEval(typeid(io).name());
+  DebugEval(typeid(*item).name());
 
   ostrstream ost;
 
   try {
     IO::LegacyWriter writer(ost);
-    writer.writeRoot(&io);
+    writer.writeRoot(item.get());
     ost << '\0';
   }
   catch (IO::IoError& err) {
@@ -92,9 +92,9 @@ DOTRACE("Tcl::StringifyCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name,
-                                    const char* usage, int objc) :
-  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name)
+  :
+  TclCmd(interp, cmd_name, "item_id string", 3) {}
 
 Tcl::DestringifyCmd::~DestringifyCmd() {}
 
@@ -109,7 +109,10 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
   istrstream ist(buf);
 
   IO::LegacyReader reader(ist);
-  reader.readRoot(&(getIO(ctx)));
+
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+
+  reader.readRoot(item.get());
 }
 
 
@@ -119,24 +122,24 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name,
-                        const char* usage, int objc) :
-  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name)
+  :
+  TclCmd(interp, cmd_name, "item_id", 2) {}
 
 Tcl::WriteCmd::~WriteCmd() {}
 
 void Tcl::WriteCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::WriteCmd::invoke");
-  IO::IoObject& io = getIO(ctx);
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
 
   ostrstream ost;
 
-  DebugEval(typeid(io).name());
+  DebugEval(typeid(*item).name());
 
   try {
     AsciiStreamWriter writer(ost);
-    writer.writeRoot(&io);
+    writer.writeRoot(item.get());
     ost << '\0';
   }
   catch (IO::IoError& err) {
@@ -166,23 +169,23 @@ DOTRACE("Tcl::WriteCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name,
-                      const char* usage, int objc) :
-  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name)
+  :
+  TclCmd(interp, cmd_name, "item_id string", 3) {}
 
 Tcl::ReadCmd::~ReadCmd() {}
 
 void Tcl::ReadCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::ReadCmd::invoke");
-  IO::IoObject& io = getIO(ctx);
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
 
   const char* str = ctx.getCstringFromArg(ctx.objc() - 1);
 
   istrstream ist(str);
 
   AsciiStreamReader reader(ist);
-  reader.readRoot(&io);
+  reader.readRoot(item.get());
 }
 
 
@@ -192,17 +195,17 @@ DOTRACE("Tcl::ReadCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
-                            const char* usage, int objc) :
-  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name)
+  :
+  TclCmd(interp, cmd_name, "item_id filename", 3) {}
 
 Tcl::ASWSaveCmd::~ASWSaveCmd() {}
 
 void Tcl::ASWSaveCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::ASWSaveCmd::invoke");
-  IO::IoObject& io = getIO(ctx);
-  fixed_string filename = getFilename(ctx);
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  fixed_string filename = ctx.getCstringFromArg(2);
 
   STD_IO::ofstream ofs(filename.c_str());
   if ( ofs.fail() ) {
@@ -223,11 +226,11 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
     STD_IO::ostream os(&buf);
 
     AsciiStreamWriter writer(os);
-    writer.writeRoot(&io);
+    writer.writeRoot(item.get());
   }
   else {
     AsciiStreamWriter writer(ofs);
-    writer.writeRoot(&io);
+    writer.writeRoot(item.get());
   }
 }
 
@@ -238,23 +241,18 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::ASRLoadCmd::ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name,
-                            const char* usage, int objc) :
-  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+Tcl::ASRLoadCmd::ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name)
+  :
+  TclCmd(interp, cmd_name, "item_id filename", 3) {}
 
 Tcl::ASRLoadCmd::~ASRLoadCmd() {}
-
-void Tcl::ASRLoadCmd::beforeLoadHook() {}
-void Tcl::ASRLoadCmd::afterLoadHook() {}
 
 void Tcl::ASRLoadCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::ASRLoadCmd::invoke");
 
-  beforeLoadHook();
-
-  IO::IoObject& io = getIO(ctx);
-  fixed_string filename = getFilename(ctx);
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  fixed_string filename = ctx.getCstringFromArg(2);
 
   STD_IO::ifstream ifs(filename.c_str());
   if ( ifs.fail() ) {
@@ -275,14 +273,12 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
     STD_IO::istream is(&buf);
 
     AsciiStreamReader reader(is);
-    reader.readRoot(&io);
+    reader.readRoot(item.get());
   }
   else {
     AsciiStreamReader reader(ifs);
-    reader.readRoot(&io);
+    reader.readRoot(item.get());
   }
-
-  afterLoadHook();
 }
 
 static const char vcid_stringifycmd_cc[] = "$Header$";

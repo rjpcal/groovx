@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Fri Jul 13 12:17:09 2001
+// written: Mon Jul 16 06:44:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,14 +37,12 @@ Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(Tcl_Interp* interp,
                                            ItemFetcher* fetcher,
                                            const char* cmd_name,
                                            shared_ptr<Getter<ValType> > getter,
-                                           const char* usage,
-                                           unsigned int item_argn) :
+                                           const char* usage) :
   VecCmd(interp, cmd_name,
-         usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
-         item_argn,
-         item_argn+1, item_argn+1),
+         usage ? usage : "item_id(s)",
+         1,
+         2, 2),
   itsFetcher(fetcher),
-  itsItemArgn(item_argn),
   itsGetter(getter)
 {
 DOTRACE("Tcl::TVecGetterCmd<>::TVecGetterCmd");
@@ -88,16 +86,13 @@ Tcl::TVecSetterCmd<T>::TVecSetterCmd(
   Tcl_Interp* interp,
   ItemFetcher* fetcher, const char* cmd_name,
   shared_ptr<Setter<value_type> > setter,
-  const char* usage, unsigned int item_argn
+  const char* usage
 ) :
   VecCmd(interp, cmd_name,
-         usage ? usage : (item_argn ?
-                          "item_id(s) new_value(s)" : "new_value"),
-         item_argn,
-         item_argn+2, item_argn+2),
+         usage ? usage : "item_id(s) new_value(s)",
+         1,
+         3, 3),
   itsFetcher(fetcher),
-  itsItemArgn(item_argn),
-  itsValArgn(item_argn+1),
   itsSetter(setter)
 {
 DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
@@ -111,7 +106,7 @@ void Tcl::TVecSetterCmd<T>::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::TVecSetterCmd<>::invoke");
   void* item = itsFetcher->getItemFromContext(ctx);
-  stack_type val = ctx.getValFromArg(itsValArgn, (stack_type*)0);
+  stack_type val = ctx.getValFromArg(2, (stack_type*)0);
   itsSetter->set(item, val);
 }
 
@@ -138,15 +133,13 @@ namespace Tcl
 Tcl::VecActionCmd::VecActionCmd(Tcl_Interp* interp,
                                 ItemFetcher* fetcher, const char* cmd_name,
                                 shared_ptr<Action> action,
-                                const char* usage,
-                                unsigned int item_argn) :
+                                const char* usage) :
   VecCmd(interp, cmd_name,
-         usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
-         item_argn,
-         item_argn+1, item_argn+1),
+         usage ? usage : "item_id(s)",
+         1,
+         2, 2),
   itsFetcher(fetcher),
-  itsAction(action),
-  itsItemArgn(item_argn)
+  itsAction(action)
 {
 DOTRACE("Tcl::VecActionCmd::VecActionCmd");
 }
