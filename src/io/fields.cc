@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Nov 15 08:37:23 2000
+// written: Thu Nov 16 12:13:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ template class TPtrField<double>;
 
 class FieldMap::Impl {
 public:
-  typedef map<fixed_string, const FieldInfo*> MapType;
+  typedef std::map<fixed_string, const FieldInfo*> MapType;
   MapType itsNameMap;
   const FieldInfo* itsIoBegin;
   const FieldInfo* itsIoEnd;
@@ -198,7 +198,7 @@ const FieldInfo& FieldMap::info(const fixed_string& name) const {
 
 class FieldMap::ItrImpl {
 public:
-  typedef map<fixed_string, const FieldInfo*> MapType;
+  typedef std::map<fixed_string, const FieldInfo*> MapType;
 
   ItrImpl(MapType::const_iterator i) : itsItr(i) {}
 
