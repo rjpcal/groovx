@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 13:26:28 2002
+// written: Mon Sep 16 17:42:41 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -124,20 +124,19 @@ namespace ObjTogl
     toglet->fullRender();
   }
 
-  void configure(Tcl::Context& ctx)
+  Tcl_Obj* cget(SoftRef<Toglet> toglet)
   {
-    SoftRef<Toglet> toglet = ctx.getValFromArg(1, TypeCue<SoftRef<Toglet> >());
-
-    toglet->handleConfigure(ctx.interp(), 0, 0);
+    return toglet->cget(0);
   }
 
-  void configure2(Tcl::Context& ctx)
+  Tcl_Obj* cget2(SoftRef<Toglet> toglet, Tcl_Obj* param)
   {
-    SoftRef<Toglet> toglet = ctx.getValFromArg(1, TypeCue<SoftRef<Toglet> >());
+    return toglet->cget(param);
+  }
 
-    Tcl::List args = ctx.getValFromArg(2, TypeCue<Tcl::List>());
-
-    toglet->handleConfigure(ctx.interp(), args.length(), args.elements());
+  void configure(SoftRef<Toglet> toglet, Tcl::List args)
+  {
+    toglet->configure(args.length(), args.elements());
   }
 
   class TogletPkg;
@@ -158,8 +157,9 @@ public:
     Tcl::defGenericObjCmds<Toglet>(this);
 
     def( "bind", "event_sequence binding_script", &Toglet::bind );
-    defRaw( "configure", 1, "toglet_id", &ObjTogl::configure );
-    defRaw( "configure", 2, "toglet_id {...}", &ObjTogl::configure2 );
+    def( "cget", "toglet_id", &ObjTogl::cget );
+    def( "cget", "toglet_id param_name", &ObjTogl::cget2 );
+    def( "configure", "toglet_id {param1 value1 ?...?}", &ObjTogl::configure );
     def( "currentToglet", "toglet_id", &ObjTogl::setCurrentTogl );
     def( "currentToglet", 0, &ObjTogl::getCurrentTogl );
     def( "defaultParent", "parent", &Toglet::defaultParent );
