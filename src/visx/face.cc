@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Nov 10 17:27:06 2000
+// written: Mon Nov 13 21:13:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,12 +34,6 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data 
@@ -57,20 +51,17 @@ namespace {
 
   const string_literal ioTag("Face");
 
-  const Face::PInfo PINFOS[] = {
-	 Face::PInfo("category", SGI_IDIOT_CAST(Property Face::*, &Face::faceCategory)
-					 , 0, 10, 1, true),
-	 Face::PInfo("eyeHeight", SGI_IDIOT_CAST(Property Face::*, &Face::eyeHeight),
-					 -1.2, 1.2, 0.1),
-	 Face::PInfo("eyeDistance", SGI_IDIOT_CAST(Property Face::*, &Face::eyeDistance),
-					 0.0, 1.8, 0.1),
-	 Face::PInfo("noseLength", SGI_IDIOT_CAST(Property Face::*, &Face::noseLength),
-					 -0.0, 3.0, 0.1),
-	 Face::PInfo("mouthHeight", SGI_IDIOT_CAST(Property Face::*, &Face::mouthHeight),
-					 -1.2, 1.2, 0.1)
+  const FieldInfo FINFOS[] = {
+	 FieldInfo("category", &Face::faceCategory, 0, 0, 10, 1, true),
+	 FieldInfo("eyeHeight", &Face::eyeHeight, 0.6, -1.2, 1.2, 0.1),
+	 FieldInfo("eyeDistance", &Face::eyeDistance, 0.4, 0.0, 1.8, 0.1),
+	 FieldInfo("noseLength", &Face::noseLength, 0.4, -0.0, 3.0, 0.1),
+	 FieldInfo("mouthHeight", &Face::mouthHeight, 0.8, -1.2, 1.2, 0.1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Face::PInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -83,17 +74,20 @@ namespace {
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
+const FieldMap& Face::classFields() { return FACE_FIELDS; }
+
 Face* Face::make() {
 DOTRACE("Face::make");
   return new Face;
 }
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
-  faceCategory(categ),
-  eyeHeight(eh),
-  eyeDistance(es),
-  noseLength(nl),
-  mouthHeight(mh)
+  FieldContainer(FACE_FIELDS),
+  faceCategory(this, categ),
+  eyeHeight(this, eh),
+  eyeDistance(this, es),
+  noseLength(this, nl),
+  mouthHeight(this, mh)
 {
 DOTRACE("Face::Face");
   Invariant(check());
@@ -112,10 +106,7 @@ DOTRACE("Face::serialVersionId");
 void Face::readFrom(IO::Reader* reader) {
 DOTRACE("Face::readFrom");
 
-  for (size_t i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name(),
-								 const_cast<Value&>(get(PINFOS[i].property())));
-  }
+  readFieldsFrom(reader); 
 
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid == 0)
@@ -130,9 +121,7 @@ DOTRACE("Face::readFrom");
 void Face::writeTo(IO::Writer* writer) const {
 DOTRACE("Face::writeTo");
 
-  for (size_t i = 0; i < NUM_PINFOS; ++i) {
-	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
+  writeFieldsTo(writer);
 
   if (FACE_SERIAL_VERSION_ID == 0)
 	 GrObj::writeTo(writer);
@@ -141,22 +130,6 @@ DOTRACE("Face::writeTo");
 		IO::ConstIoProxy<GrObj> baseclass(this);
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Properties
-//
-///////////////////////////////////////////////////////////////////////
-
-unsigned int Face::numPropertyInfos() {
-DOTRACE("Face::numPropertyInfos");
-  return NUM_PINFOS;
-}
-
-const Face::PInfo& Face::getPropertyInfo(unsigned int i) {
-DOTRACE("Face::getPropertyInfo");
-  return PINFOS[i];
 }
 
 ///////////////////////////////////////////////////////////////////////
