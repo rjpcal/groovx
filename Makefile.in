@@ -274,8 +274,8 @@ count_sort: $(ALL_SRCS)
 	@wc $(ALL_SRCS) | sort -n | tee $(LOGS)/count_sort
 
 docs: $(DOC)/DoxyConfig $(DOC)/*.doc $(ALL_SRCS)
-	(doxygen $(DOC)/DoxyConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
-	chmod -R og+r $(with_htmldoc)
+	time (doxygen $(DOC)/DoxyConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
+	time chmod -R og+r $(with_htmldoc)
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
