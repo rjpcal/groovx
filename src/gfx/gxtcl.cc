@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Nov 20 16:10:45 2002
+// written: Thu Nov 21 12:10:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 #include "gfx/gxline.h"
 #include "gfx/gxmaterial.h"
 #include "gfx/gxnode.h"
+#include "gfx/gxpixmap.h"
 #include "gfx/gxpointset.h"
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
@@ -32,12 +33,18 @@
 #include "gfx/pscanvas.h"
 #include "gfx/recttcl.h"
 
+#include "io/ioproxy.h"
+#include "io/reader.h"
+
 #include "tcl/fieldpkg.h"
 #include "tcl/itertcl.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
+
+// FIXME move this file to gfx/
+#include "visx/pointtcl.h"
 
 #include "util/trace.h"
 
@@ -94,6 +101,64 @@ namespace GxTcl
   }
 #endif
 }
+
+namespace
+{
+  const IO::VersionId XBITMAP_SVID = 2;
+  const IO::VersionId GLBITMAP_SVID = 3;
+}
+
+class XBitmap : public Bitmap
+{
+public:
+  XBitmap() : Bitmap() {}
+
+  static XBitmap* make() { return new XBitmap; }
+
+  virtual ~XBitmap() {}
+
+  virtual fstring ioTypename() const { return fstring("Bitmap"); }
+
+  virtual IO::VersionId serialVersionId() const { return XBITMAP_SVID; }
+
+  virtual void readFrom(IO::Reader* reader)
+  {
+    reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
+
+    reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
+  }
+
+  // no writeTo() override since we just want Bitmap's writeTo()
+};
+
+class GLBitmap : public Bitmap
+{
+public:
+  GLBitmap() : Bitmap() {}
+
+  static GLBitmap* make() { return new GLBitmap; }
+
+  virtual ~GLBitmap() {}
+
+  virtual fstring ioTypename() const { return fstring("Bitmap"); }
+
+  virtual IO::VersionId serialVersionId() const { return GLBITMAP_SVID; }
+
+  virtual void readFrom(IO::Reader* reader)
+  {
+    int svid = reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
+
+    if (svid <= 2)
+      {
+        bool val;
+        reader->readValue("usingGlBitmap", val);
+      }
+
+    reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
+  }
+
+  // no writeTo() override since we just want Bitmap's writeTo()
+};
 
 extern "C"
 int Gx_Init(Tcl_Interp* interp)
@@ -241,6 +306,36 @@ DOTRACE("Gx_Init");
   pkg14->linkVarCopy("GxShapeKit::ARBITRARY_ON_CENTER", GxAligner::ARBITRARY_ON_CENTER);
 
   status = pkg14->combineStatus(status);
+
+  // Bitmap
+  Tcl::Pkg* pkg15 = new Tcl::Pkg(interp, "Bitmap", "$Revision$");
+  pkg15->inherit("GxShapeKit");
+  Tcl::defCreator<Bitmap>(pkg15);
+  Tcl::defGenericObjCmds<Bitmap>(pkg15);
+
+  pkg15->defGetter( "filename", &Bitmap::filename );
+  pkg15->defVec( "loadImage", "item_id(s) filename(s)", &Bitmap::loadImage );
+  pkg15->defVec( "queueImage", "item_id(s) filename(s)", &Bitmap::queueImage );
+  pkg15->defVec( "saveImage", "item_id(s) filename(s)", &Bitmap::saveImage );
+  pkg15->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
+                 &Bitmap::grabScreenRect );
+  pkg15->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
+                 &Bitmap::grabWorldRect );
+  pkg15->defAction("flipContrast", &Bitmap::flipContrast);
+  pkg15->defAction("flipVertical", &Bitmap::flipVertical);
+  pkg15->defGetter("size", &Bitmap::size);
+  pkg15->defAttrib("zoom", &Bitmap::getZoom, &Bitmap::setZoom);
+  pkg15->defAttrib("usingZoom", &Bitmap::getUsingZoom, &Bitmap::setUsingZoom);
+  pkg15->defAttrib("purgeable", &Bitmap::isPurgeable, &Bitmap::setPurgeable);
+  pkg15->defAttrib("asBitmap", &Bitmap::getAsBitmap, &Bitmap::setAsBitmap);
+
+  // GLBitmap for backward-compatibility
+  Tcl::defCreator<GLBitmap>(pkg15);
+
+  // XBitmap for backward-compatability
+  Tcl::defCreator<XBitmap>(pkg15);
+
+  status = pkg15->combineStatus(status);
 
   return status;
 }
