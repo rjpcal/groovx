@@ -44,7 +44,6 @@ PACKAGE_VERSION := @PACKAGE_VERSION@
 prefix          := @prefix@
 exec_prefix     := @exec_prefix@
 matlab_lib      := @matlab_lib@
-EXECUTABLE      := @EXECUTABLE@
 CXX             := @CXX@
 SHLIB_CMD       := @SHLIB_CMD@
 STATLIB_CMD     := @STATLIB_CMD@
@@ -215,6 +214,8 @@ ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
 
+EXECUTABLE := $(exec_prefix)/bin/groovx$(PACKAGE_VERSION)
+
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
@@ -231,6 +232,7 @@ install_scripts: $(exec_prefix)/bin/.timestamp
 	cp share/scripts/*.tcl $(exec_prefix)/bin
 
 install: install_scripts build
+	ln -s -f groovx$(PACKAGE_VERSION) $(exec_prefix)/bin/groovx
 
 check: install
 	$(EXECUTABLE) ./testing/grshtest.tcl
