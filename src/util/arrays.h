@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Jul 11 13:20:14 2001
+// written: Wed Jul 11 13:29:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -293,7 +293,11 @@ public:
       resize(num);
       iterator ii = begin();
       while (start != finish)
-        *ii++ = *start++;
+        {
+          *ii = *start;
+          ++ii;
+          ++start;
+        }
     }
 
 private:
