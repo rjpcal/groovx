@@ -30,11 +30,9 @@
 #ifndef GLXOPTS_H_DEFINED
 #define GLXOPTS_H_DEFINED
 
-class GlxAttribs;
-
 template <class T> class shared_ptr;
 
-/// Setup options for controlling the OpenGL-X11 interface.
+/// Setup options for controlling the OpenGL-windowsystem interface.
 struct GlxOpts
 {
   /// Construct with default values.
