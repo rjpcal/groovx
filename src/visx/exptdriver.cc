@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon May 22 18:40:25 2000
+// written: Fri Jul 14 16:35:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ private:
 
   void getSubjectKey(fixed_string& subjectkey_out) const;
 
-  fixed_string makeUniqueFileExtension() const;
+  dynamic_string makeUniqueFileExtension() const;
 
   void edRaiseBackgroundError(const char* msg) const;
 
@@ -497,7 +497,7 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
   subjectkey_out = key;
 }
 
-fixed_string ExptDriver::Impl::makeUniqueFileExtension() const {
+dynamic_string ExptDriver::Impl::makeUniqueFileExtension() const {
 DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
   // Format the current time into a unique filename extension
@@ -505,8 +505,25 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
         "clock format [clock seconds] -format %H%M%d%b%Y",
 		  Tcl::TclEvalCmd::THROW_EXCEPTION);
 
+  static dynamic_string previous_result = "";
+  static char tag[2] = {'a', '\0'};
+
   uniqueFilenameCmd.invoke(itsInterp);
-  return Tcl_GetStringResult(itsInterp);
+
+  dynamic_string current_result = Tcl_GetStringResult(itsInterp);
+
+  if (current_result.equals(previous_result)) {
+	 ++tag[0];
+	 if (tag[0] > 'z') tag[0] = 'a';
+
+	 current_result.append(tag);
+  }
+  else {
+	 previous_result = current_result;
+	 tag[0] = 'a';
+  }
+
+  return current_result;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -892,7 +909,7 @@ DOTRACE("ExptDriver::Impl::storeData");
   try {
 	 getCurrentTimeDateString(itsEndDate);
 
-	 fixed_string unique_file_extension = makeUniqueFileExtension();
+	 dynamic_string unique_file_extension = makeUniqueFileExtension();
 
 	 // Write the main experiment file
 	 dynamic_string expt_filename = "expt";
