@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Fri May 11 21:27:46 2001
+// written: Sat May 12 09:24:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,6 +87,9 @@ protected:
 private:
   template <class T>
   static const char* num2str(T x);
+
+  class Impl;
+  friend class Impl;
 
   dynamic_string* itsInfo;
 };
