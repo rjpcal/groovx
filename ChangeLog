@@ -4615,3 +4615,5 @@
 
   src/gfx/pointtcl
   src/gfx/recttcl
+
+* (done 20-Oct-2004) move sound stuff into src/media/

@@ -7,8 +7,6 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (20-Oct-2004) move sound stuff into src/media/
-
 * (20-Oct-2004) make media/imgfile not depend on Nub::log
 
 * (15-Oct-2004) make a DebugScheduler that can be used in TimingHdlr
