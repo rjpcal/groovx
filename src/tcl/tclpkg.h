@@ -52,7 +52,7 @@ class Tcl::Pkg : public PkgBase
 public:
   Pkg(Tcl_Interp* interp, const char* pkg_name, const char* version);
 
-  virtual ~Pkg();
+  virtual ~Pkg() throw();
 
   template <class Func>
   inline void def(const char* cmd_name, const char* usage, Func f)

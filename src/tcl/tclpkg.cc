@@ -46,7 +46,7 @@ Tcl::Pkg::Pkg(Tcl_Interp* interp, const char* name, const char* version) :
   Tcl::PkgBase(interp, name, version)
 {}
 
-Tcl::Pkg::~Pkg() {}
+Tcl::Pkg::~Pkg() throw() {}
 
 const char* Tcl::Pkg::actionUsage(const char* usage)
 {
