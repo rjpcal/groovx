@@ -122,15 +122,15 @@ DOTRACE("Jpeg::load");
   SETJMP_TRY(jpeg_create_decompress(&cinfo));
 
   // 2. Specify the source of the compressed data (i.e., the input file)
-  FILE* ff = fopen(filename, "rb");
+  aux.infile = fopen(filename, "rb");
 
-  if (ff == 0)
+  if (aux.infile == 0)
     {
       throw Util::Error(fstring("couldn't open '", filename, "' for reading"));
     }
 
 
-  SETJMP_TRY(jpeg_stdio_src(&cinfo, ff));
+  SETJMP_TRY(jpeg_stdio_src(&cinfo, aux.infile));
 
   // 3. Call jpeg_read_header() to obtain image info
   SETJMP_TRY(jpeg_read_header(&cinfo, TRUE));
