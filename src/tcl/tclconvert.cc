@@ -127,7 +127,7 @@ unsigned int Tcl::fromTcl(Tcl_Obj* obj, unsigned int*)
 {
 DOTRACE("Tcl::fromTcl(unsigned int*)");
 
-  int sval = fromTcl(obj, (int*)0);
+  int sval = fromTcl(obj, static_cast<int*>(0));
 
   if (sval < 0)
     {
@@ -136,7 +136,7 @@ DOTRACE("Tcl::fromTcl(unsigned int*)");
                                 "\" (value was negative)"), SRC_POS);
     }
 
-  return (unsigned int) sval;
+  return static_cast<unsigned int>(sval);
 }
 
 long Tcl::fromTcl(Tcl_Obj* obj, long*)
@@ -256,7 +256,7 @@ float Tcl::fromTcl(Tcl_Obj* obj, float*)
 {
 DOTRACE("Tcl::fromTcl(float*)");
 
-  return float(fromTcl(obj, (double*)0));
+  return float(fromTcl(obj, static_cast<double*>(0)));
 }
 
 const char* Tcl::fromTcl(Tcl_Obj* obj, const char**)
@@ -276,7 +276,7 @@ DOTRACE("Tcl::fromTcl(fstring*)");
 
   ASSERT(length >= 0);
 
-  return fstring(rutz::char_range(text, (unsigned int) length));
+  return fstring(rutz::char_range(text, static_cast<unsigned int>(length)));
 }
 
 Tcl::Dict Tcl::fromTcl(Tcl_Obj* obj, Tcl::Dict*)

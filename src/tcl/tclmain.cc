@@ -196,7 +196,8 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
   itsSafeInterp.setGlobalVar("argc", Tcl::toTcl(argc-1));
 
-  char* args = Tcl_Merge(argc-1, (const char **)argv+1);
+  char* args = Tcl_Merge(argc-1,
+                         const_cast<const char**>(argv+1));
   itsSafeInterp.setGlobalVar("argv", Tcl::toTcl(args));
   Tcl_Free(args);
 
@@ -359,7 +360,8 @@ DOTRACE("Tcl::MainImpl::handleLine");
           else
             {
               Tcl_DeleteChannelHandler(itsInChannel,
-                                       &stdinProc, (ClientData) 0);
+                                       &stdinProc,
+                                       static_cast<ClientData>(0));
             }
         }
       return;
@@ -406,7 +408,8 @@ DOTRACE("Tcl::MainImpl::execCommand");
   // finished.  Among other things, this will trash the text of the
   // command being evaluated.
 
-  Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc, (ClientData) 0);
+  Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc,
+                           static_cast<ClientData>(0));
 
   bool should_display_result = false;
 
@@ -502,7 +505,8 @@ DOTRACE("Tcl::MainImpl::execCommand");
   if (itsInChannel)
     {
       Tcl_CreateChannelHandler(itsInChannel, TCL_READABLE,
-                               &stdinProc, (ClientData) 0);
+                               &stdinProc,
+                               static_cast<ClientData>(0));
     }
 
   itsCommand.clear();
@@ -569,7 +573,8 @@ DOTRACE("Tcl::MainImpl::run");
       if (itsInChannel)
         {
           Tcl_CreateChannelHandler(itsInChannel, TCL_READABLE,
-                                   &MainImpl::stdinProc, (ClientData)0);
+                                   &MainImpl::stdinProc,
+                                   static_cast<ClientData>(0));
         }
       if (isItInteractive)
         {

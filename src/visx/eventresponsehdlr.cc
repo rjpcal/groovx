@@ -192,7 +192,7 @@ public:
   {
     Nub::log( fstring("binding to ", itsCallbackName) );
 
-    fstring script(itsCallbackName, ' ', (int)itsOwner->id());
+    fstring script(itsCallbackName, ' ', itsOwner->id());
     script.append(" [list ", itsBindingSubstitution, ']');
 
     itsState.reset(new ActiveState(this, widget, trial,

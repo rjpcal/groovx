@@ -103,7 +103,7 @@ void GxDrawStyle::draw(Gfx::Canvas& canvas) const
   canvas.setPolygonFill(polygonFill);
   canvas.setPointSize(pointSize);
   canvas.setLineWidth(lineWidth);
-  canvas.setLineStipple((unsigned short)linePattern);
+  canvas.setLineStipple(static_cast<unsigned short>(linePattern));
 }
 
 static const char vcid_gxdrawstyle_cc[] = "$Header$";

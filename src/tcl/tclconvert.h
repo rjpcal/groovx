@@ -109,7 +109,7 @@ namespace Tcl
   template <class T>
   inline typename Return<T>::Type toNative( Tcl_Obj* obj )
   {
-    return fromTcl(obj, (typename Return<T>::Type*)0);
+    return fromTcl(obj, static_cast<typename Return<T>::Type*>(0));
   }
 
   //

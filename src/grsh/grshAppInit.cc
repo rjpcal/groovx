@@ -322,9 +322,10 @@ DOTRACE("main");
 
       for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
         {
-          Tcl_StaticPackage((Tcl_Interp*) 0, // 0 means this package hasn't
-                                             // yet been loaded into any
-                                             // interpreter
+          Tcl_StaticPackage(static_cast<Tcl_Interp*>(0),
+                            // (Tcl_Interp*) 0 means this package
+                            // hasn't yet been loaded into any
+                            // interpreter
                             DELAYED_PKGS[i].pkgName,
                             DELAYED_PKGS[i].pkgInitProc,
                             0);

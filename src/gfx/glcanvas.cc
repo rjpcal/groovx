@@ -496,7 +496,7 @@ DOTRACE("GLCanvas::rasterPos");
       glBitmap(0, 0, 0.0f, 0.0f,
                screen_pos.x(),
                screen_pos.y(),
-               (const GLubyte*) 0);
+               static_cast<const GLubyte*>(0));
     }
 }
 
@@ -826,7 +826,7 @@ DOTRACE("GLCanvas::drawRasterText");
           glBitmap(0, 0, 0.0f, 0.0f,
                    0,                               // x shift
                    -1 * font.rasterHeight() * line, // y shift
-                   (const GLubyte*) 0);
+                   static_cast<const GLubyte*>(0));
         }
 
       glCallLists( len, GL_BYTE, p );

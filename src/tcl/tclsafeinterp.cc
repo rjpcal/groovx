@@ -242,14 +242,14 @@ void Tcl::Interp::appendResult(const char* msg) const
 {
 DOTRACE("Tcl::Interp::appendResult(const char*)");
 
-  Tcl_AppendResult(intp(), msg, (char*)0);
+  Tcl_AppendResult(intp(), msg, static_cast<char*>(0));
 }
 
 void Tcl::Interp::appendResult(const fstring& msg) const
 {
 DOTRACE("Tcl::Interp::appendResult(const fstring&)");
 
-  Tcl_AppendResult(intp(), msg.c_str(), (char*)0);
+  Tcl_AppendResult(intp(), msg.c_str(), static_cast<char*>(0));
 }
 
 Tcl_Obj* Tcl::Interp::getObjResult() const

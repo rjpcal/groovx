@@ -129,7 +129,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
   glXUseXFont(itsFontInfo->fid,
               first,
               itsListCount,
-              (int) itsListBase+first);
+              static_cast<int>(itsListBase+first));
 
 #if 0
   // for debugging

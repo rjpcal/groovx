@@ -206,7 +206,7 @@ DOTRACE("GxScene::animate");
     }
   else
     {
-      itsTimer.setDelayMsec((unsigned int)(1000.0/framesPerSecond));
+      itsTimer.setDelayMsec(static_cast<unsigned int>(1000.0/framesPerSecond));
       itsTimer.schedule(itsScheduler);
     }
 }

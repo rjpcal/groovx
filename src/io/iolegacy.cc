@@ -277,7 +277,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
     }
 
   fstring new_string;
-  new_string.readsome(rep->itsInStream, (unsigned int) numchars);
+  new_string.readsome(rep->itsInStream, static_cast<unsigned int>(numchars));
 
   rep->throwIfError(name, SRC_POS);
 

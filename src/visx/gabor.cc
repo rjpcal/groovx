@@ -237,9 +237,11 @@ DOTRACE("Gabor::getBmapData");
 
   media::bmap_data data(size, bits_per_pixel, 1);
 
-  unsigned char* bytes = data.bytes_ptr();
+  typedef unsigned char ubyte;
 
-  unsigned char* bytes_end = bytes + data.byte_count();
+  ubyte* bytes = data.bytes_ptr();
+
+  ubyte* bytes_end = bytes + data.byte_count();
 
   for (int y_pos = 0; y_pos < itsResolution; ++y_pos)
     {
@@ -267,22 +269,22 @@ DOTRACE("Gabor::getBmapData");
 
           if ( itsColorMode == GRAYSCALE )
             {
-              *bytes++ = (unsigned char)
+              *bytes++ = ubyte
                 ((itsFgTint.color().r() * gabor +
                   itsBgTint.color().r() * (1-gabor)) * 255);
-              *bytes++ = (unsigned char)
+              *bytes++ = ubyte
                 ((itsFgTint.color().g() * gabor +
                   itsBgTint.color().g() * (1-gabor)) * 255);
-              *bytes++ = (unsigned char)
+              *bytes++ = ubyte
                 ((itsFgTint.color().b() * gabor +
                   itsBgTint.color().b() * (1-gabor)) * 255);
-              *bytes++ = (unsigned char)
+              *bytes++ = ubyte
                 ((itsFgTint.color().a() * gabor +
                   itsBgTint.color().a() * (1-gabor)) * 255);
             }
           else if ( itsColorMode == COLOR_INDEX )
             {
-              *bytes++ = (unsigned char) (gabor * 255);
+              *bytes++ = ubyte(gabor * 255);
             }
           else if ( itsColorMode == BW_DITHER_POINT ||
                     itsColorMode == BW_DITHER_RECT )

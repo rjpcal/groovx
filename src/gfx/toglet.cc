@@ -106,9 +106,9 @@ public:
 Tk_ClassProcs Toglet::Impl::classProcs =
   {
     sizeof(Tk_ClassProcs),
-    (Tk_ClassWorldChangedProc*) 0,
+    static_cast<Tk_ClassWorldChangedProc*>(0),
     Toglet::Impl::cClassCreateProc,
-    (Tk_ClassModalProc*) 0,
+    static_cast<Tk_ClassModalProc*>(0),
   };
 
 
@@ -215,7 +215,7 @@ Toglet::~Toglet() throw()
 {
 DOTRACE("Toglet::~Toglet");
 
-  dbg_eval_nl(3, (void*)this);
+  dbg_eval_nl(3, this);
 
   delete rep;
 }

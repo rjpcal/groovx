@@ -286,7 +286,7 @@ DOTRACE("AsciiStreamReader::readStringImpl");
     }
 
   fstring new_string;
-  new_string.readsome(ist, (unsigned int) len);
+  new_string.readsome(ist, static_cast<unsigned int>(len));
 
   if (ist.fail())
     {

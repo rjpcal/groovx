@@ -378,7 +378,7 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
         }
     }
 
-  unsigned int objc = (unsigned int) s_objc;
+  unsigned int objc = static_cast<unsigned int>(s_objc);
 
   // catch all possible exceptions since this is a callback from C
   try

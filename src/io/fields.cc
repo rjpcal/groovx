@@ -110,7 +110,9 @@ const FieldMap* FieldMap::emptyFieldMap()
 {
   static const FieldMap* emptyMap = 0;
   if (emptyMap == 0)
-    emptyMap = new FieldMap((Field*)0, (Field*)0, (FieldMap*)0);
+    emptyMap = new FieldMap(static_cast<Field*>(0),
+                            static_cast<Field*>(0),
+                            static_cast<FieldMap*>(0));
   return emptyMap;
 }
 

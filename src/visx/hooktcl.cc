@@ -193,7 +193,7 @@ DOTRACE("genericSetFromAnyProc");
 
 Tcl_ObjType genericObjType =
   {
-    (char*)"generic",
+    const_cast<char*>("generic"),
     genericFreeInternalRepProc,
     genericDupInternalRepProc,
     genericUpdateStringProc,
@@ -262,12 +262,12 @@ public:
     MyObj* gobj =
       static_cast<MyObj*>(p->internalRep.otherValuePtr);
 
-    dbg_eval_nl(3, (void*)p);
+    dbg_eval_nl(3, p);
     dbg_eval_nl(3, p->typePtr ? p->typePtr->name : "");
     dbg_eval_nl(3, p->refCount);
     dbg_eval_nl(3, p->bytes);
     dbg_eval_nl(3, p->length);
-    dbg_eval_nl(3, (void*)gobj);
+    dbg_eval_nl(3, gobj);
     dbg_eval_nl(3, gobj->value);
     dbg_eval_nl(3, MyObj::counter);
   }

@@ -77,9 +77,10 @@ DOTRACE("media::esd_sound_rep::esd_sound_rep");
 
   // We just use afOpenFile to ensure that the filename refers to
   // a readable+valid file
-  AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
+  AFfilehandle audiofile = afOpenFile(filename, "r",
+                                      static_cast<AFfilesetup>(0));
 
-  if (audiofile == AF_NULL_FILEHANDLE)
+  if (audiofile == 0)
     {
       throw rutz::error(rutz::fstring("couldn't open sound file '",
                                       filename, "'"), SRC_POS);

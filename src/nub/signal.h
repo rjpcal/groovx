@@ -361,7 +361,7 @@ namespace Nub
     { SignalBase::doDisconnect(slot); }
 
     /// Trigger all of this object's Slots.
-    void emit() const { SignalBase::doEmit((void*)0); }
+    void emit() const { SignalBase::doEmit(static_cast<void*>(0)); }
 
     /// Returns a slot which when called will cause this Signal to emit().
     Nub::SoftRef<Slot0> slot() const { return slotEmitSelf; }

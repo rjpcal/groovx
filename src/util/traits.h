@@ -93,7 +93,7 @@ namespace rutz
   template <class sub, class super>
   struct is_sub_super
   {
-    enum { sz = sizeof(type_match<super>::foo((sub*)0)) };
+    enum { sz = sizeof(type_match<super>::foo(static_cast<sub*>(0))) };
 
     enum
       {

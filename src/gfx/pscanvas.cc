@@ -519,7 +519,7 @@ public:
 
   void setdash(unsigned short bit_pattern)
   {
-    dbg_eval_nl(3, (void*) int(bit_pattern));
+    dbg_eval_nl(3, reinterpret_cast<void*>(int(bit_pattern)));
 
     bool prev_bit = (0x8000 & bit_pattern);
 

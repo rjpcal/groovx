@@ -81,7 +81,7 @@ namespace GLTcl
   // Just converts to char from unsigned char
   const char* getString(GLenum name)
   {
-    return (const char*) glGetString(name);
+    return reinterpret_cast<const char*>(glGetString(name));
   }
 
 #define NAMEVAL(x) #x, x
@@ -139,7 +139,8 @@ namespace GLTcl
     int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
     for (int i = 0; i < num_params; ++i)
       {
-        pkg->linkVarCopy(theAttribs[i].param_name, (int)theAttribs[i].param_tag);
+        pkg->linkVarCopy(theAttribs[i].param_name,
+                         static_cast<int>(theAttribs[i].param_tag));
         theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
       }
   }
@@ -253,7 +254,7 @@ namespace GLTcl
     int num_enums = sizeof(theEnums) / sizeof(NameVal);
     for (int i = 0; i < num_enums; ++i)
       {
-        pkg->linkVarCopy(theEnums[i].name, (int)theEnums[i].val);
+        pkg->linkVarCopy(theEnums[i].name, theEnums[i].val);
       }
   }
 

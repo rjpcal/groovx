@@ -106,8 +106,8 @@ public:
     callback(cback),
     dispatcher(theDefaultDispatcher),
     usage(usg ? usg : ""),
-    objcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
-    objcMax( (objc_max > 0) ? (unsigned int) objc_max : objcMin),
+    objcMin(objc_min < 0 ? 0 : static_cast<unsigned int>(objc_min)),
+    objcMax(objc_max > 0 ? static_cast<unsigned int>(objc_max) : objcMin),
     exactObjc(exact_objc)
   {}
 

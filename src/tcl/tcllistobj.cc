@@ -72,7 +72,7 @@ DOTRACE("Tcl::List::split");
     }
 
   ASSERT(count >= 0);
-  itsLength = (unsigned int) count;
+  itsLength = static_cast<unsigned int>(count);
 }
 
 void Tcl::List::doAppend(const Tcl::ObjPtr& obj, unsigned int times)
@@ -119,7 +119,7 @@ DOTRACE("Tcl::List::getLength");
 
   ASSERT(len >= 0);
 
-  return (unsigned int) len;
+  return static_cast<unsigned int>(len);
 }
 
 static const char vcid_tcllistobj_cc[] = "$Header$";

@@ -386,7 +386,7 @@ namespace
 
     virtual Ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
     {
-      ASSERT(0); return Ref<IO::IoObject>((IO::IoObject*)0);
+      ASSERT(0); return Ref<IO::IoObject>(static_cast<IO::IoObject*>(0));
     }
 
     void inflate(IO::IoObject& obj)

@@ -132,7 +132,7 @@ GxTransform::GxTransform() :
 {
 DOTRACE("GxTransform::GxTransform");
 
-  dbg_eval_nl(3, (void *) rep);
+  dbg_eval_nl(3, rep);
 
   setFieldMap(GxTransform::classFields());
 }
