@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Fri May 11 16:29:34 2001
+// written: Thu Sep 13 11:51:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,38 +19,41 @@
 #include <cstdlib>
 #include <cstring>
 
-#define LOCAL_ASSERT
 #include "util/debug.h"
 #include "util/trace.h"
 
-namespace {
-  struct FreeNode {
+namespace
+{
+  struct FreeNode
+  {
     FreeNode* next;
   };
 
   FreeNode* fsFreeList = 0;
 }
 
-class SharedDataBlock : public DataBlock {
+class SharedDataBlock : public DataBlock
+{
 public:
   SharedDataBlock(int length) :
     DataBlock(new double[length], length)
   {
-	 DOTRACE("SharedDataBlock::SharedDataBlock");
-	 DebugEval(this); DebugEvalNL(itsData);
+    DOTRACE("SharedDataBlock::SharedDataBlock");
+    DebugEval(this); DebugEvalNL(itsData);
   }
 
   virtual ~SharedDataBlock()
   {
-	 DOTRACE("SharedDataBlock::~SharedDataBlock");
-	 DebugEval(this); DebugEvalNL(itsData);
-	 delete [] itsData;
+    DOTRACE("SharedDataBlock::~SharedDataBlock");
+    DebugEval(this); DebugEvalNL(itsData);
+    delete [] itsData;
   }
 
   virtual bool isUnique() const { return refCount() <= 1; }
 };
 
-class BorrowedDataBlock : public DataBlock {
+class BorrowedDataBlock : public DataBlock
+{
 public:
   BorrowedDataBlock(double* borrowedData, unsigned int dataLength) :
     DataBlock(borrowedData, dataLength)
@@ -63,7 +66,8 @@ public:
   virtual bool isUnique() const { return false; }
 };
 
-class ReferredDataBlock : public DataBlock {
+class ReferredDataBlock : public DataBlock
+{
 public:
   ReferredDataBlock(double* borrowedData, unsigned int dataLength) :
     DataBlock(borrowedData, dataLength)
@@ -75,7 +79,8 @@ public:
   virtual bool isUnique() const { return refCount() <= 1; }
 };
 
-void* DataBlock::operator new(size_t bytes) {
+void* DataBlock::operator new(size_t bytes)
+{
 DOTRACE("DataBlock::operator new");
 
   Assert(bytes == sizeof(DataBlock));
@@ -86,7 +91,8 @@ DOTRACE("DataBlock::operator new");
   return (void*)node;
 }
 
-void DataBlock::operator delete(void* space) {
+void DataBlock::operator delete(void* space)
+{
 DOTRACE("DataBlock::operator delete");
 
   ((FreeNode*)space)->next = fsFreeList;
@@ -106,7 +112,8 @@ DataBlock::~DataBlock()
 DOTRACE("DataBlock::~DataBlock");
 }
 
-DataBlock* DataBlock::getEmptyDataBlock() {
+DataBlock* DataBlock::getEmptyDataBlock()
+{
 DOTRACE("DataBlock::getEmptyDataBlock");
   static DataBlock* empty_rep = 0;
   if (empty_rep == 0)
@@ -131,7 +138,8 @@ DOTRACE("DataBlock::makeDataCopy");
   return p;
 }
 
-DataBlock* DataBlock::makeBlank(int length) {
+DataBlock* DataBlock::makeBlank(int length)
+{
 DOTRACE("DataBlock::makeBlank");
   if (length <= 0)
     return getEmptyDataBlock();
@@ -159,18 +167,18 @@ void DataBlock::makeUnique(DataBlock*& rep)
   if (rep->isUnique()) return;
 
   {
-	 DOTRACE("DataBlock::makeUnique");
+    DOTRACE("DataBlock::makeUnique");
 
-	 DataBlock* rep_copy = makeDataCopy(rep->itsData, rep->itsLength);
+    DataBlock* rep_copy = makeDataCopy(rep->itsData, rep->itsLength);
 
-	 // do the swap
+    // do the swap
 
-	 rep->decrRefCount();
-	 rep_copy->incrRefCount();
+    rep->decrRefCount();
+    rep_copy->incrRefCount();
 
-	 rep = rep_copy;
+    rep = rep_copy;
 
-	 Postcondition(rep->itsRefCount == 1);
+    Postcondition(rep->itsRefCount == 1);
   }
 }
 
