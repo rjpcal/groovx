@@ -7,6 +7,8 @@
 ###
 ##############################################################################
 
+if { [catch {package require Sound}] != 0 } { return }
+
 # Check if audio is connected; if not, we skip the sound tests.
 #set AUDIO [Sound::haveAudio]
 set AUDIO 0							  ;# disable sound tests
