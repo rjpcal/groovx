@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Dec 11 15:48:06 2000
+// written: Mon Dec 11 17:21:38 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -43,7 +43,6 @@ extern "C" {
   Tcl_PackageInitProc Mask_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
-  Tcl_PackageInitProc Objlist_Init;
   Tcl_PackageInitProc Objtogl_Init;
   Tcl_PackageInitProc Pos_Init;
   Tcl_PackageInitProc Rh_Init;
@@ -89,7 +88,6 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Mask",     Mask_Init      }
   , { "Misc",     Misc_Init      }
   , { "Morphyface",Morphyface_Init}
-  , { "Objlist",  Objlist_Init   }
   , { "Objtogl",  Objtogl_Init   }
   , { "Pos",      Pos_Init       }
   , { "Rh",       Rh_Init        }
