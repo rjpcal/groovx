@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Oct 24 15:42:53 2000
+// written: Tue Oct 24 22:47:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ DOTRACE("Block::readFrom");
   Assert(svid >= 1);
 
   vector<TrialBase*> trials;
-  IO::ReadUtils::template readObjectSeq<TrialBase>(
+  IO::ReadUtils::readObjectSeq<TrialBase>(
 								reader, "trialSeq", std::back_inserter(trials));
 
   itsImpl->itsTrialSequence.clear();

@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Oct 24 15:36:22 2000
+// written: Tue Oct 24 22:48:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -528,7 +528,7 @@ DOTRACE("ExptDriver::Impl::readFrom");
   reader->readValue("currentBlockIdx", itsCurrentBlockIdx);
 
   std::vector<Block*> blocks;
-  IO::ReadUtils::template readObjectSeq<Block>(
+  IO::ReadUtils::readObjectSeq<Block>(
 							  reader, "blocks", std::back_inserter(blocks));
 
   itsBlocks.clear();

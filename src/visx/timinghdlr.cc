@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Oct 20 17:44:29 2000
+// written: Tue Oct 24 22:49:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,19 +139,19 @@ DOTRACE("TimingHdlr::readFrom");
 	 }
 
   itsImpl->deleteAll(itsImpl->itsImmediateEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "immediateEvents",
+  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
 								std::back_inserter(itsImpl->itsImmediateEvents));
 
   itsImpl->deleteAll(itsImpl->itsStartEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "startEvents",
+  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "startEvents",
 								std::back_inserter(itsImpl->itsStartEvents));
 
   itsImpl->deleteAll(itsImpl->itsResponseEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "responseEvents",
+  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "responseEvents",
 								std::back_inserter(itsImpl->itsResponseEvents));
 
   itsImpl->deleteAll(itsImpl->itsAbortEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "abortEvents",
+  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "abortEvents",
 								std::back_inserter(itsImpl->itsAbortEvents));
 }
 

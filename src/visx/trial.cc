@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Oct 24 10:38:15 2000
+// written: Tue Oct 24 22:49:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -224,21 +224,21 @@ DOTRACE("Trial::Impl::readFrom");
   itsPositions.clear();
 
   std::vector<GrObj*> grobjs;
-  IO::ReadUtils::template readObjectSeq<GrObj>(
+  IO::ReadUtils::readObjectSeq<GrObj>(
 							reader, "grobjs", std::back_inserter(grobjs));
 
   for (int i=0; i < grobjs.size(); ++i)
 	 itsGrObjs.push_back(NullableItemWithId<GrObj>(grobjs[i]));
 
   std::vector<Position*> positions;
-  IO::ReadUtils::template readObjectSeq<Position>(
+  IO::ReadUtils::readObjectSeq<Position>(
 							reader, "positions", std::back_inserter(positions));
 
   for (int j = 0; j < positions.size(); ++j)
 	 itsPositions.push_back(NullableItemWithId<Position>(positions[j]));
 
   itsResponses.clear();
-  IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
+  IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
 									  std::back_inserter(itsResponses));
 
   reader->readValue("correctResponse", itsCorrectResponse);
