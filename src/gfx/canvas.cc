@@ -222,12 +222,12 @@ DOTRACE("Gfx::Canvas::drawNurbsCurve");
       float d3 = t[k+1] - t[k];  // == 0 when k == 0 (first iteration)
       float d = t[k+3] - t[k];
 
-      bz[k].pt1 = (pts[k+2] *  d3     + pts[k+1] * (d1+d2)) / d;
-      bz[k].pt2 = (pts[k+2] * (d2+d3) + pts[k+1] *  d1    ) / d;
+      bz[k].pt1 = vec3d((pts[k+2] *  d3     + pts[k+1] * (d1+d2)) / d);
+      bz[k].pt2 = vec3d((pts[k+2] * (d2+d3) + pts[k+1] *  d1    ) / d);
 
       if (k == 0)
         {
-          bz[k].pt0 = pts[k];
+          bz[k].pt0 = vec3d(pts[k]);
         }
       else
         {
@@ -237,7 +237,7 @@ DOTRACE("Gfx::Canvas::drawNurbsCurve");
 
       if (k == (nbz-1))
         {
-          bz[k].pt3 = pts[k+3];
+          bz[k].pt3 = vec3d(pts[k+3]);
         }
 
     }

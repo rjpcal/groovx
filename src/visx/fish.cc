@@ -543,7 +543,7 @@ DOTRACE("Fish::grRender");
               Gfx::PointsBlock block(canvas);
               for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
                 {
-                  canvas.vertex3(ctrlpnts[i]);
+                  canvas.vertex3(vec3d(ctrlpnts[i]));
                 }
             }
           else
