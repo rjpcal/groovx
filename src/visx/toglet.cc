@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Sep 11 15:28:49 2002
+// written: Thu Sep 12 18:04:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -347,6 +347,10 @@ TogletImpl::TogletImpl(Toglet* owner, Util::UID uid)
 
 TogletImpl::~TogletImpl()
 {
+DOTRACE("TogletImpl::~TogletImpl");
+  DebugEvalNL(this);
+  DebugEvalNL(togl);
+
   Assert(togl != 0);
 
   togl->setClientData(static_cast<ClientData>(0));
@@ -471,6 +475,9 @@ DOTRACE("Toglet::Toglet");
 Toglet::~Toglet()
 {
 DOTRACE("Toglet::~Toglet");
+
+  DebugEvalNL((void*)this);
+  DebugEvalNL((void*)rep);
 
   delete rep;
 }
