@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Sep 29 20:27:49 1999
+// written: Thu Sep 30 11:09:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,6 +79,11 @@ protected:
 
   TValue<T> itsVal;
 };
+
+template <>
+void TProperty<bool>::deserialize(istream& is, IOFlag) {
+  int temp; is >> temp; itsVal.itsVal = bool(temp);
+}
 
 template <class C, class T>
 class CTProperty : public TProperty<T> { 
