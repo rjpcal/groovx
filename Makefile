@@ -346,7 +346,11 @@ $(PKG_DEP_FILE).deps: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 	touch $@
 
 $(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
-	src/pkgs/buildPkgDeps.tcl $@
+	src/pkgs/buildPkgDeps.tcl \
+		--depfile $@ \
+		--objdir $(OBJ)/pkgs \
+		--pkgdir $(SRC)/pkgs \
+		--libdir $(exec_prefix)/lib/visx
 
 include $(PKG_DEP_FILE)
 
