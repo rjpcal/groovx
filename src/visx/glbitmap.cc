@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Mon Sep 20 09:57:21 1999
+// written: Mon Sep 20 11:52:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,24 +119,24 @@ void GLBitmap::doRender(unsigned char* bytes,
 								int width,
 								int height,
 								int bits_per_pixel,
+								int byte_alignment,
 								double zoom_x,
 								double zoom_y) const {
 DOTRACE("GLBitmap::doRender");
   glRasterPos2d(x_pos, y_pos);
   glPixelZoom(zoom_x, zoom_y);
   
+  glPixelStorei(GL_UNPACK_ALIGNMENT, byte_alignment);
+
   if (bits_per_pixel == 24) {
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	 glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE,
 					  static_cast<GLvoid*>(bytes));
   }
   else if (bits_per_pixel == 8) {
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	 glDrawPixels(width, height, GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
 					  static_cast<GLvoid*>(bytes));
   }
   else if (bits_per_pixel == 1) {
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	 if (itsUsingGlBitmap) {
 		glBitmap(width, height, 0.0, 0.0, 0.0, 0.0,
 					static_cast<GLubyte*>(bytes));

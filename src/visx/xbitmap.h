@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Sep  8 13:16:30 1999
+// written: Mon Sep 20 11:53:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ public:
 											  int /* width */,
 											  int /* height */,
 											  int /* bits_per_pixel */,
+											  int /* byte_alignment */,
 											  double /* zoom_x */,
 											  double /* zoom_y */) const;
 
