@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Tue Nov 28 14:25:15 2000
+// written: Tue Nov 28 15:26:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,11 +57,6 @@ public:
   virtual void trHaltExpt() = 0;
   virtual void trResponseSeen() = 0;
   virtual void trRecordResponse(Response& response) = 0;
-  virtual void trDrawTrial() const = 0;
-  virtual void trUndrawTrial() const = 0;
-
-  virtual void trDraw(GWT::Canvas& canvas, bool flush) const = 0;
-  virtual void trUndraw(GWT::Canvas& canvas, bool flush) const = 0;
 
   virtual void installSelf(GWT::Widget& widget) const = 0;
 };

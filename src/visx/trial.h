@@ -139,11 +139,6 @@ public:
   virtual void trHaltExpt();
   virtual void trResponseSeen();
   virtual void trRecordResponse(Response& response);
-  virtual void trDrawTrial() const;
-  virtual void trUndrawTrial() const;
-
-  virtual void trDraw(GWT::Canvas& canvas, bool flush) const;
-  virtual void trUndraw(GWT::Canvas& canvas, bool flush) const;
 
   virtual void installSelf(GWT::Widget& widget) const;
 
