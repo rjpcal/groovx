@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar 13 18:32:52 2001
+// written: Wed Mar 14 12:57:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,16 +58,18 @@ private:
   ConstSlice& operator=(const ConstSlice& other); // not implemented
 
 protected:
-  double* itsData;
+  DataBlock*& itsStorage;
+  ptrdiff_t itsOffset;
   int itsStride;
   int itsNelems;
 
-  const double* address(int i) const { return itsData + itsStride*i; }
+  const double* data() const;
+
+  const double* address(int i) const { return data() + itsStride*i; }
 
   friend class Mtx;
 
-  ConstSlice(const double* d, int s, int n) :
-	 itsData(const_cast<double*>(d)), itsStride(s), itsNelems(n) {}
+  ConstSlice(DataBlock* const& storage, const double* d, int s, int n);
 
 public:
 
@@ -75,7 +77,8 @@ public:
   ConstSlice();
 
   ConstSlice(const ConstSlice& other) :
-	 itsData(other.itsData),
+	 itsStorage(other.itsStorage),
+	 itsOffset(other.itsOffset),
 	 itsStride(other.itsStride),
 	 itsNelems(other.itsNelems)
   {}
@@ -93,12 +96,12 @@ public:
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return ConstSlice(address(first), itsStride, n);
+	 return ConstSlice(itsStorage, address(first), itsStride, n);
   }
 
   ConstSlice leftmost(int n) const
   {
-	 return ConstSlice(itsData, itsStride, n);
+	 return ConstSlice(itsStorage, data(), itsStride, n);
   }
 
   //
@@ -151,7 +154,7 @@ public:
   };
 
   ConstIterator begin() const
-    { return ConstIterator(itsData, itsStride); }
+    { return ConstIterator(data(), itsStride); }
   ConstIterator end() const
     { return ConstIterator(address(itsNelems), itsStride); }
 };
@@ -165,14 +168,13 @@ public:
 
 
 class Slice : public ConstSlice {
-  Mtx& itsOrigin;
-
   friend class Mtx;
 
-  double* address(int i) { return itsData + itsStride*i; }
+  double* data();
+  double* address(int i) { return data() + itsStride*i; }
 
-  Slice(Mtx& m, double* d, int s, int n) :
-	 ConstSlice(d,s,n), itsOrigin(m) {}
+  Slice(DataBlock*& m, double* d, int s, int n) :
+	 ConstSlice(m,d,s,n) {}
 
 public:
 
@@ -183,12 +185,12 @@ public:
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return Slice(itsOrigin, address(first), itsStride, n);
+	 return Slice(itsStorage, address(first), itsStride, n);
   }
 
   Slice leftmost(int n)
   {
-	 return Slice(itsOrigin, itsData, itsStride, n);
+	 return Slice(itsStorage, data(), itsStride, n);
   }
 
   Slice& operator=(const ConstSlice& other);
@@ -232,7 +234,7 @@ public:
   };
 
   Iterator begin()
-    { return Iterator(itsData, itsStride); }
+    { return Iterator(data(), itsStride); }
   Iterator end()
     { return Iterator(address(itsNelems), itsStride); }
 };
@@ -261,7 +263,7 @@ private:
 
   void swap(Mtx& other)
   {
-	 doswap(block_, other.block_);
+	 doswap(storage_, other.storage_);
 	 doswap(mrows_, other.mrows_);
 	 doswap(ncols_, other.ncols_);
 	 doswap(start_, other.start_);
@@ -286,12 +288,12 @@ public:
   Mtx(const ConstSlice& s);
 
   Mtx(const Mtx& other) :
-	 block_(other.block_),
+	 storage_(other.storage_),
 	 mrows_(other.mrows_),
 	 ncols_(other.ncols_),
 	 start_(other.start_)
   {
-	 block_->incrRefCount();
+	 storage_->incrRefCount();
   }
 
   ~Mtx();
@@ -318,9 +320,9 @@ public:
 
   friend class ElemProxy;
 
-  ElemProxy at(int row, int col) { return ElemProxy(*this, index(row, col)); }
+  ElemProxy at(int row, int col) { return ElemProxy(*this, offsetFromStart(row, col)); }
 
-  double at(int row, int col) const { return start_[index(row, col)]; }
+  double at(int row, int col) const { return start_[offsetFromStart(row, col)]; }
 
   ElemProxy at(int elem) { return ElemProxy(*this, elem); }
 
@@ -341,19 +343,19 @@ public:
   //
 
   Slice row(int r)
-    { return Slice(*this, address(r,0), mrows_, ncols_); }
+    { return Slice(storage_, address(r,0), mrows_, ncols_); }
 
   ConstSlice row(int r) const
-    { return ConstSlice(address(r,0), mrows_, ncols_); }
+    { return ConstSlice(storage_, address(r,0), mrows_, ncols_); }
 
   Slice column(int c)
-    { return Slice(*this, address(0,c), 1, mrows_); }
+    { return Slice(storage_, address(0,c), 1, mrows_); }
 
   ConstSlice column(int c) const
-    { return ConstSlice(address(0,c), 1, mrows_); }
+    { return ConstSlice(storage_, address(0,c), 1, mrows_); }
 
   Slice asSlice()
-    { return Slice(*this, start_, 1, nelems()); }
+    { return Slice(storage_, start_, 1, nelems()); }
 
 
   //
@@ -374,11 +376,22 @@ public:
 private:
   void makeUnique();
 
-  int index(int row, int col) const { return row + (col*mrows_); }
-  double* address(int row, int col) { return start_ + index(row, col); }
-  const double* address(int row, int col) const { return start_ + index(row, col); }
+  ptrdiff_t offsetFromStorage(int row, int col) const
+    { return (start_ - storage_->itsData) + offsetFromStart(row, col); }
 
-  DataBlock* block_;
+  int offsetFromStart(int row, int col) const
+    { return row + (col*mrows_); }
+
+  double* address(int row, int col)
+    { return start_ + offsetFromStart(row, col); }
+
+  const double* address(int row, int col) const
+    { return start_ + offsetFromStart(row, col); }
+
+  friend class ConstSlice;
+  friend class Slice;
+
+  DataBlock* storage_;
   int mrows_;
   int ncols_;
   double* start_;
@@ -410,6 +423,19 @@ inline double& ElemProxy::operator/=(double d)
 { return (uniqueRef() /= d); }
 
 inline ElemProxy::operator double() { return m.start_[i]; }
+
+
+inline const double* ConstSlice::data() const
+{ return itsStorage->itsData + itsOffset; }
+
+inline ConstSlice::ConstSlice(DataBlock* const& storage,
+										const double* d, int s, int n) :
+  itsStorage(const_cast<DataBlock*&>(storage)),
+  itsOffset(d - storage->itsData),
+  itsStride(s),
+  itsNelems(n) {}
+
+inline double* Slice::data() { return itsStorage->itsData + itsOffset; }
 
 static const char vcid_keanu_h[] = "$Header$";
 #endif // !KEANU_H_DEFINED

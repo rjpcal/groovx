@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar 13 16:57:35 2001
+// written: Wed Mar 14 12:48:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,11 +23,12 @@
 #include "trace.h"
 
 namespace {
-  double dummyData = 0.0;
+  Mtx dummyMtx(0,0);
 }
 
 ConstSlice::ConstSlice() :
-  itsData(&dummyData),
+  itsStorage(dummyMtx.storage_),
+  itsOffset(0),
   itsStride(1),
   itsNelems(0)
 {}
@@ -54,15 +55,15 @@ Slice& Slice::operator=(const ConstSlice& other)
 void Mtx::initialize(double* data, int mrows, int ncols, StoragePolicy s)
 {
   if (s == COPY)
-	 block_ = DataBlock::makeDataCopy(data, mrows*ncols);
+	 storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
   else
-	 block_ = DataBlock::makeBorrowed(data, mrows*ncols);
+	 storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
 
   mrows_ = mrows;
   ncols_ = ncols;
-  start_ = block_->itsData;
+  start_ = storage_->itsData;
 
-  block_->incrRefCount();
+  storage_->incrRefCount();
 }
 
 Mtx::Mtx(mxArray* a, StoragePolicy s)
@@ -71,12 +72,12 @@ Mtx::Mtx(mxArray* a, StoragePolicy s)
 }
 
 Mtx::Mtx(int mrows, int ncols) :
-  block_(DataBlock::makeBlank(mrows*ncols)),
+  storage_(DataBlock::makeBlank(mrows*ncols)),
   mrows_(mrows),
   ncols_(ncols),
-  start_(block_->itsData)
+  start_(storage_->itsData)
 {
-  block_->incrRefCount();
+  storage_->incrRefCount();
 }  
 
 Mtx::Mtx(const ConstSlice& s)
@@ -84,12 +85,12 @@ Mtx::Mtx(const ConstSlice& s)
   if (s.itsStride != 1)
 	 throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
 
-  initialize(s.itsData, s.nelems(), 1, BORROW);
+  initialize(s.data(), s.nelems(), 1, BORROW);
 }
 
 Mtx::~Mtx()
 {
-  block_->decrRefCount();
+  storage_->decrRefCount();
 }
 
 mxArray* Mtx::makeMxArray() const
@@ -148,11 +149,11 @@ void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
 
 void Mtx::makeUnique()
 {
-  if ( !block_->isUnique() )
+  if ( !storage_->isUnique() )
 	 {
-		ptrdiff_t offset = start_ - block_->itsData;
-		DataBlock::makeUnique(block_);
-		start_ = block_->itsData + offset;
+		ptrdiff_t offset = start_ - storage_->itsData;
+		DataBlock::makeUnique(storage_);
+		start_ = storage_->itsData + offset;
 	 }
 }
 
