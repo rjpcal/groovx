@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Nov  2 09:10:44 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -364,7 +364,7 @@ DOTRACE("Trial::Impl::description");
 
     Assert(itsGxNodes[j].get() != 0);
 
-    ost << " " << itsGxNodes[j]->getCategory();
+    ost << " " << itsGxNodes[j]->category();
   }
 
   ost << '\0';

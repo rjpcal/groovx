@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Nov  2 13:06:53 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ public:
 						 &GrObj::getAspectRatio, &GrObj::setAspectRatio);
 	 declareCAttrib("bbVisibility",
 						 &GrObj::getBBVisibility, &GrObj::setBBVisibility);
-	 declareCAttrib("category", &GrObj::getCategory, &GrObj::setCategory);
+	 declareCAttrib("category", &GrObj::category, &GrObj::setCategory);
 	 declareCAttrib("centerX", &GrObj::getCenterX, &GrObj::setCenterX);
 	 declareCAttrib("centerY", &GrObj::getCenterY, &GrObj::setCenterY);
 	 declareCAttrib("height", &GrObj::getHeight, &GrObj::setHeight);

@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Fri Oct 20 17:30:04 2000
+// written: Thu Nov  2 14:56:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,10 +63,10 @@ public:
 
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  CTProperty<MorphyFace, int> category;
+  CTProperty<MorphyFace, int> mfaceCategory;
 
-  virtual int getCategory() const { return category.getNative(); }
-  virtual void setCategory(int val) { category.setNative(val); }
+  virtual int category() const { return mfaceCategory.getNative(); }
+  virtual void setCategory(int val) { mfaceCategory.setNative(val); }
   
   CTProperty<MorphyFace, double> faceWidth;
     ///< The width of the face.

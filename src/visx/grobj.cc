@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Oct 18 22:12:48 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,9 +171,9 @@ DOTRACE("GrObj::getCenterY");
   return itsImpl->getCenterY();
 }
 
-int GrObj::getCategory() const {
-DOTRACE("GrObj::getCategory");
-  return itsImpl->getCategory();
+int GrObj::category() const {
+DOTRACE("GrObj::category");
+  return itsImpl->category();
 }
 
 GrObj::GrObjRenderMode GrObj::getRenderMode() const {

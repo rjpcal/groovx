@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Nov  2 08:49:11 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ protected:
 
 		  t->add(*itr, posid);
 		  IdItem<GxNode> obj(*itr);
-		  t->setType(obj->getCategory());
+		  t->setType(obj->category());
 
 		  lappendVal(trial.id());
 		}

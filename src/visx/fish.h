@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Oct 20 18:13:08 2000
+// written: Thu Nov  2 14:58:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,10 +85,10 @@ public:
 
   /** The category of the fish. The semantics of \a category are
       defined by the client. */
-  CTProperty<Fish, int> category;
+  CTProperty<Fish, int> fishCategory;
 
-  virtual int getCategory() const { return category.getNative(); }
-  virtual void setCategory(int val) { category.setNative(val); }
+  virtual int category() const { return fishCategory.getNative(); }
+  virtual void setCategory(int val) { fishCategory.setNative(val); }
 
   /// Controls the shape of the dorsal fin.
   CTPtrProperty<Fish, double> dorsalFinCoord;

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Oct 20 16:51:27 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ namespace {
   const string_literal ioTag("Face");
 
   const Face::PInfo PINFOS[] = {
-	 Face::PInfo("category", SGI_IDIOT_CAST(Property Face::*, &Face::category)
+	 Face::PInfo("category", SGI_IDIOT_CAST(Property Face::*, &Face::faceCategory)
 					 , 0, 10, 1, true),
 	 Face::PInfo("eyeHeight", SGI_IDIOT_CAST(Property Face::*, &Face::eyeHeight),
 					 -1.2, 1.2, 0.1),
@@ -87,7 +87,7 @@ DOTRACE("Face::make");
 }
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
-  category(categ),
+  faceCategory(categ),
   eyeHeight(eh),
   eyeDistance(es),
   noseLength(nl),
@@ -304,14 +304,14 @@ DOTRACE("Face::grHasBoundingBox");
   return true;
 }
 
-int Face::getCategory() const {
-DOTRACE("Face::getCategory");
-  return category.getNative();
+int Face::category() const {
+DOTRACE("Face::category");
+  return faceCategory.getNative();
 }
 
 void Face::setCategory(int val) {
 DOTRACE("Face::setCategory");
-  category.setNative(val);
+  faceCategory.setNative(val);
 }
 
 const double* Face::getCtrlPnts() const {

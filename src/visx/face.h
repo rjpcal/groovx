@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Oct 20 17:18:32 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
 
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  CTProperty<Face, int> category;
+  CTProperty<Face, int> faceCategory;
 
   /// The height of the eyes above the vertical midline of the face.
   CTProperty<Face, double> eyeHeight;
@@ -82,7 +82,7 @@ public:
   // accessors //
   ///////////////
 
-  virtual int getCategory() const;
+  virtual int category() const;
 
 protected:
   /// Returns an array of Bezier control points for face outline.

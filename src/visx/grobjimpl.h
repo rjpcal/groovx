@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Thu Oct 19 14:04:54 2000
+// written: Thu Nov  2 14:56:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -366,7 +366,7 @@ public:
   double getMaxDimension() const
 	 { return max(finalWidth(), finalHeight()); }
 
-  int getCategory() const { return itsCategory; }
+  int category() const { return itsCategory; }
   void setCategory(int val) { itsCategory = val; }
 
   void invalidateCaches();

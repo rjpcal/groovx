@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Nov  1 18:28:10 2000
+// written: Thu Nov  2 14:56:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ public:
   double getCenterY() const;
 
   /// Returns the value of the user-defined category.
-  virtual int getCategory() const;
+  virtual int category() const;
 
   /// Returns the current rendering mode.
   GrObjRenderMode getRenderMode() const;

@@ -3,7 +3,7 @@
 // gxnode.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov  1 18:27:15 2000
-// written: Thu Nov  2 13:50:52 2000
+// written: Thu Nov  2 15:00:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,8 @@ GxNode::~GxNode() {
 DOTRACE("GxNode::~GxNode");
 }
 
-int GxNode::getCategory() const {
-DOTRACE("GxNode::getCategory");
+int GxNode::category() const {
+DOTRACE("GxNode::category");
   return -1;
 }
 
