@@ -11,6 +11,8 @@ DEFAULT_MODE := @DEFAULT_MODE@
 prefix := @prefix@
 exec_prefix := @exec_prefix@
 
+OBJEXT := @OBJEXT@
+
 CPPFLAGS := @CPPFLAGS@ @X_CFLAGS@
 
 CXXFLAGS := @CXXFLAGS@
