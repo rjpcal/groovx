@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Jan 19 15:33:22 2002
+// written: Mon Jan 21 12:34:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ namespace Gfx
   template <class V> class Vec2;
 }
 
-class BitmapRep;
+class BitmapImpl;
 
 class BmapRenderer;
 
@@ -140,7 +140,7 @@ private:
   Bitmap(const Bitmap&);
   Bitmap& operator=(const Bitmap&);
 
-  BitmapRep* const itsImpl;
+  BitmapImpl* const itsImpl;
 };
 
 static const char vcid_bitmap_h[] = "$Header$";
