@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Apr  3 15:25:48 2003
+// written: Tue May 13 09:58:38 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -200,8 +200,8 @@ Gfx::Rect<int> GLCanvas::getScreenViewport() const
   glGetIntegerv(GL_VIEWPORT, viewport);
 
   Gfx::Rect<int> screen_rect;
-  screen_rect.setRectXYWH(viewport[0], viewport[1],
-                          viewport[2], viewport[3]);
+  screen_rect.setXYWH(viewport[0], viewport[1],
+                      viewport[2], viewport[3]);
 
   return screen_rect;
 }

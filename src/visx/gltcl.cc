@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Mar 19 18:00:25 2003
+// written: Tue May 13 09:58:38 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -460,7 +460,7 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
   Gfx::BmapData data;
 
   Gfx::Rect<int> bounds;
-  bounds.setRectXYWH(x,y,w,h);
+  bounds.setXYWH(x,y,w,h);
 
   Gfx::Canvas::current().grabPixels(bounds, data);
 
