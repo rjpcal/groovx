@@ -525,4 +525,5 @@ export: snapshots/.timestamp
 	cvs -d `cat ./CVS/Root` export -r HEAD -d snapshots/$(SNAPSHOT) grsh
 	rm -r snapshots/$(SNAPSHOT)/logs
 	rm -r snapshots/$(SNAPSHOT)/old_src
+	rm -r snapshots/$(SNAPSHOT)/future_src
 	cd snapshots; tar cfz $(SNAPSHOT).tar.gz $(SNAPSHOT)
