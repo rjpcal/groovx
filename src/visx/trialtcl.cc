@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Fri Jul  7 15:32:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,8 @@ public:
 	 declareCGetter("avgRespTime", &Trial::avgRespTime);
 	 declareCAction("clearObjs", &Trial::clearObjs);
 	 declareCAction("clearResponses", &Trial::clearResponses);
+	 declareCAttrib("correctResponse",
+						 &Trial::getCorrectResponse, &Trial::setCorrectResponse);
 	 declareCGetter("description", &Trial::description);
 	 declareCGetter("lastResponse", &Trial::lastResponse);
 	 declareCGetter("numResponses", &Trial::numResponses);
