@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 17:30:59 2002
+// written: Mon Mar  4 18:12:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -490,7 +490,35 @@ MtxBase<Data>::~MtxBase() {}
 
 template class MtxBase<DataHolder>;
 
-// template class MtxBase<DataHolderRef>;
+template class MtxBase<DataHolderRef>;
+
+///////////////////////////////////////////////////////////////////////
+//
+// SubMtxRef member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+SubMtxRef& SubMtxRef::operator=(const SubMtxRef& other)
+{
+  if (this->nelems() != other.nelems())
+    throw Util::Error("SubMtxRef::operator=(): dimension mismatch");
+
+  std::copy(other.colmaj_begin(), other.colmaj_end(),
+            this->colmaj_begin_nc());
+
+  return *this;
+}
+
+SubMtxRef& SubMtxRef::operator=(const Mtx& other)
+{
+  if (this->nelems() != other.nelems())
+    throw Util::Error("SubMtxRef::operator=(): dimension mismatch");
+
+  std::copy(other.colmaj_begin(), other.colmaj_end(),
+            this->colmaj_begin_nc());
+
+  return *this;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
