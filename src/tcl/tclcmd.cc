@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri May 11 22:04:25 2001
+// written: Fri May 18 18:53:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,32 @@ extern Tcl_ObjType	tclStringType;
 //
 ///////////////////////////////////////////////////////////////////////
 
+class HelpCmd : public Tcl::TclCmd {
+public:
+  HelpCmd(Tcl_Interp* interp) :
+	 Tcl::TclCmd(interp, "?", "commandName", 2, 2) {}
+
+protected:
+  virtual void invoke()
+  {
+	 fixed_string cmd_name(getCstringFromArg(1));
+	 Tcl_CmdInfo cmd_info;
+	 int result = Tcl_GetCommandInfo(interp(), cmd_name.data(), &cmd_info);
+	 if (result != 1)
+		throw ErrorWithMsg("no such command");
+
+	 Tcl::TclCmd* cmd =
+		dynamic_cast<TclCmd*>(static_cast<TclCmd*>(cmd_info.objClientData));
+
+	 if (!cmd)
+		throw ErrorWithMsg("no such TclCmd");
+
+	 dynamic_string cmd_usage(cmd_name.c_str());
+	 cmd_usage.append(" ").append(cmd->usage());
+	 returnCstring(cmd_usage.c_str());
+  }
+};
+
 namespace {
   Tcl_Obj* nullObject () {
 	 static Tcl_Obj* obj = 0;
@@ -73,6 +99,9 @@ namespace {
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
+
+  HelpCmd* helpCmd = 0;
+  bool firstTime = true;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,13 +156,17 @@ DOTRACE("Tcl::TclCmd::TclCmd");
 							  invokeCallback,
 							  static_cast<ClientData> (this),
 							  (Tcl_CmdDeleteProc*) NULL);
+
+  if (firstTime)
+	 {
+		firstTime = false;
+		helpCmd = new HelpCmd(interp);
+	 }
 }
 
-void Tcl::TclCmd::usage() {
+const char* Tcl::TclCmd::usage() {
 DOTRACE("Tcl::TclCmd::usage");
-  Tcl_WrongNumArgs(itsInterp, 1, itsObjv, 
-						 const_cast<char*>(itsUsage));
-  itsResult = TCL_ERROR;
+  return itsUsage; 
 }
 
 void Tcl::TclCmd::errorMessage(const char* msg) {
@@ -443,7 +476,8 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
 		 ((theCmd->itsExactObjc == false) &&
 		  (objc < theCmd->itsObjcMin || objc > theCmd->itsObjcMax)) ) {
 
-	 theCmd->usage();
+	 Tcl_WrongNumArgs(theCmd->itsInterp, 1, theCmd->itsObjv,
+							const_cast<char*>(theCmd->itsUsage));
 	 theCmd->itsResult = TCL_ERROR;
 	 return TCL_ERROR;
   }
