@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Mon Mar 12 17:41:44 2001
+// written: Tue Mar 13 12:02:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,12 +26,12 @@ bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
 
 void Num::linearCombo(const ConstSlice& vec,
-							 const ConstSlice* m2rows, int m2mrows,
+							 const Mtx& mtx,
 							 double* result)
 {
 DOTRACE("Num::linearCombo");
 
-  // e.g m2mrows == 3   m2ncols == 4
+  // e.g mtx.mrows == vec.nelems == 3   mtx.ncols == 4
   //
   //               | e11  e12  e13  e14 |
   // [w1 w2 w3] *  | e21  e22  e23  e24 | = 
@@ -40,17 +40,16 @@ DOTRACE("Num::linearCombo");
   //
   // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
 
-  if (vec.nelems() != m2mrows)
+  if (vec.nelems() != mtx.mrows())
 	 throw ErrorWithMsg("dimension mismatch in linearCombo");
 
-  int m2ncols = m2rows[0].nelems(); 
 
-  for (int col = 0; col < m2ncols; ++col)
+  for (int col = 0; col < mtx.ncols(); ++col)
 	 {
 		result[col] = 0.0;
-		for (int row = 0; row < m2mrows; ++row)
-		  {
-			 result[col] += vec[row] * (m2rows[row][col]);
+  		for (int row = 0; row < mtx.mrows(); ++row)
+  		  {
+  			 result[col] += vec[row] * mtx.at(row,col);
 		  }
 	 }
 }

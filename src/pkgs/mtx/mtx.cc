@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar 12 19:18:54 2001
+// written: Tue Mar 13 11:55:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,17 @@
 
 #define NO_TRACE
 #include "trace.h"
+
+Slice& Slice::operator=(const ConstSlice& other)
+{
+  if (itsNelems != other.nelems())
+	 throw ErrorWithMsg("dimension mismatch in Slice::operator=");
+
+  ConstIterator rhs = other.begin();
+
+  for (Iterator lhs = begin(), stop = end(); lhs != stop; ++lhs, ++rhs)
+	 *lhs = *rhs;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

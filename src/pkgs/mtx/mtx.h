@@ -86,7 +86,7 @@ public:
   static double dot(const ConstSlice& s1, const ConstSlice& s2)
   {
 	 double result = 0.0;
-	 const int n = s1.itsNelems > s2.itsNelems ? s1.itsNelems : s2.itsNelems;
+	 const int n = s1.itsNelems;
 	 for (int i = 0; i < n; ++i)
 		result += s1[i] * s2[i];
 	 return result;
@@ -149,7 +149,7 @@ public:
 	 return Slice(itsData, itsStride, n);
   }
 
-  Slice& operator=(const Slice& other);
+  Slice& operator=(const ConstSlice& other);
 
   //
   // Functions

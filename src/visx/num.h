@@ -16,6 +16,7 @@
 #include <cmath>
 
 class ConstSlice;
+class Mtx;
 
 class Num {
 public:
@@ -53,7 +54,7 @@ public:
   static const double SQRT_2;
 
   static void linearCombo(const ConstSlice& vec,
-								  const ConstSlice* m2rows, int m2mrows,
+								  const Mtx& mtx,
 								  double* result);
 
 private:
