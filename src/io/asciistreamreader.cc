@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Mar 10 19:45:44 2000
+// written: Sat Mar 11 23:09:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "value.h"
 #include "util/arrays.h"
 
-#include <cctype>
+// #include <cctype>
 #include <iostream.h>
 #include <strstream.h>
 #include <map>
@@ -36,6 +36,21 @@
 #ifdef ACC_COMPILER
 #define NO_IOS_EXCEPTIONS
 #endif
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope stuff
+//
+///////////////////////////////////////////////////////////////////////
+
+class AttributeReadError : public ReadError {
+public:
+  AttributeReadError(const string& attrib_name) :
+	 ReadError("input failed while reading attribute: ")
+	 {
+		appendMsg(attrib_name.c_str());
+	 }
+};
 
 namespace {
   const char STRING_ENDER = '^';
@@ -71,10 +86,10 @@ private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
+  // Creators
 public:
   Impl(AsciiStreamReader* owner, istream& is) :
-	 itsOwner(owner), itsBuf(is), itsCreatedObjects(), itsAttribs(),
-	 itsValueBuffer(4096)
+	 itsBuf(is), itsObjects(), itsAttribs()
 #ifndef NO_IOS_EXCEPTIONS
 	 , itsOriginalExceptionState(itsBuf.exceptions())
 #endif
@@ -91,72 +106,126 @@ public:
 #endif
 	 }
 
+  // Nested types
+public:
 
-  AsciiStreamReader* itsOwner;
+  class ObjectMap {
+  private:
+	 map<unsigned long, IO*> itsMap;
 
-  istream& itsBuf;
+  public:
+	 ObjectMap() : itsMap() {}
 
-  map<unsigned long, IO*> itsCreatedObjects;
-  
+	 bool hasBeenCreated(unsigned long id) {
+		return (itsMap[id] != 0);
+	 }
+
+	 // This returns the object for the given id; the object must
+	 // already have been created, otherwise an exception will be thrown.
+	 IO* getObject(unsigned long id)
+		{
+		  if ( !hasBeenCreated(id) )
+			 throw ReadError("no object was found for the given id");
+
+		  return itsMap[id];
+		}
+
+	 // This will create an object for the id if one has not yet been
+	 // created, then return the object for that id.
+	 IO* fetchObject(const char* type, unsigned long id) {
+		if ( !hasBeenCreated(id) )
+		  {
+			 IO* obj = IoMgr::newIO(type);
+
+			 // If there was a problem within IoMgr::newIO(), it will throw
+			 // an exception, so we should never pass this point with a
+			 // NULL obj.
+			 DebugEvalNL((void*) obj);
+			 Assert(obj != 0);
+
+			 itsMap[id] = obj;
+		  }
+
+		Assert(itsMap[id] != 0);
+		return itsMap[id];
+	 }
+
+	 void assignObjectForId(unsigned long id, IO* object)
+		{
+		  if ( hasBeenCreated(id) )
+			 throw ReadError("object has already been created");
+
+		  itsMap[id] = object;
+		}
+
+	 void clear() { itsMap.clear(); }
+  };
+
   struct Attrib {
 	 Attrib(const char* t=0, const char* v=0) :
 		type(t ? t : ""), value(v ? v : "") {}
+
 	 Attrib(const string& t, const string& v) : type(t), value(v) {}
+
 	 string type;
 	 string value;
   };
 
-  map<string, Attrib> itsAttribs;
+  class AttribMap {
+  private:
+	 map<string, Attrib> itsMap;
 
-  fixed_block<char> itsValueBuffer;
+  public:
+	 AttribMap() : itsMap() {}
+
+	 const Attrib& operator[](const string& attrib_name)
+		{
+		  if ( itsMap[attrib_name].type.empty() )
+			 {
+				ReadError err("invalid attribute name: ");
+				err.appendMsg(attrib_name.c_str());
+				throw err;
+			 }
+
+		  return itsMap[attrib_name];
+		}
+
+	 void clear() { itsMap.clear(); }
+
+	 void assign(const string& attrib_name,
+					 const char* type, const char* value)
+		{
+		  Attrib& attrib = itsMap[attrib_name];
+		  attrib.type = type;
+		  attrib.value = value;    DebugEvalNL(attrib.value);
+		  unEscape(attrib.value);  DebugEvalNL(attrib.value);
+		}
+  };
+
+  // Data members
+private:
+  istream& itsBuf;
+  ObjectMap itsObjects;
+  AttribMap itsAttribs;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
 #endif
 
-  // Helpers
-  bool hasBeenCreated(unsigned long id) {
-	 return (itsCreatedObjects[id] != 0);
-  }
-
-  void assertAttribExists(const string& attrib_name) {
-	 if ( itsAttribs[attrib_name].type == "" ) {
-		string msg = "invalid attribute name: ";
-		msg += attrib_name;
-		throw ReadError(msg.c_str());
-	 }
-  }
-
-  const string& getTypeOfAttrib(const string& attrib_name) {
-	 assertAttribExists(attrib_name);
-	 return itsAttribs[attrib_name].type;
-  }
-
-  void makeObjectFromTypeForId(const char* type, unsigned long id) {
-	 IO* obj = IoMgr::newIO(type);
-
-	 // If there was a problem within IoMgr::newIO(), it will throw an
-	 // exception, so we should never pass this point with a NULL obj.
-	 DebugEvalNL((void*) obj);
-	 Assert(obj != 0);
-
-	 itsCreatedObjects[id] = obj;
-  }
-
-  int eatWhitespace() {
-	 int c=0;
-	 while ( isspace(itsBuf.peek()) ) { itsBuf.get(); ++c; }
-	 return c;
-  }
-
-  // Delegands
+  // Delegands -- this is the public interface that AsciiStreamReader
+  // forwards to in implementing its own member functions.
 public:
   template <class T>
   T readBasicType(const string& name, T* /* dummy */) {
-	 T return_val;
 	 istrstream ist(itsAttribs[name].value.c_str());
+
+	 T return_val;
 	 ist >> return_val;
-	 DebugEval(itsAttribs[name].value); DebugEvalNL(return_val);
+	 DebugEval(itsAttribs.[name].value); DebugEvalNL(return_val);
+
+	 if (ist.fail())
+		throw AttributeReadError(name);
+
 	 return return_val;
   }
 
@@ -171,7 +240,7 @@ public:
 
   void initAttributes();
 
-  IO* readRoot(IO* given_root);
+  IO* readRoot(Reader* reader, IO* given_root);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -183,39 +252,46 @@ public:
 char* AsciiStreamReader::Impl::readStringType(const string& name) {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
-  assertAttribExists(name); 
-
   istrstream ist(itsAttribs[name].value.c_str());
 
   int len;
   ist >> len;                     DebugEvalNL(len);
   ist.get(); // ignore one char of whitespace after the length
 
+  if (len < 0)
+	 throw ReadError("found a negative length for a string attribute");
+
   char* new_cstring = new char[len+1];
-  ist.read(new_cstring, len);
+  if (len > 0)
+	 ist.read(new_cstring, len);
   new_cstring[len] = '\0';
 
-  DebugEval(itsAttribs[name].value); DebugEvalNL(new_cstring);
+  if (ist.fail())
+	 {
+		delete [] new_cstring;
+		throw AttributeReadError(name);
+	 }  
+
+  DebugEval(itsAttribs.[name].value); DebugEvalNL(new_cstring);
   return new_cstring;
 }
 
 IO* AsciiStreamReader::Impl::readObject(const string& attrib_name) {
 DOTRACE("AsciiStreamReader::Impl::readObject");
 
-  assertAttribExists(attrib_name);
+  const Attrib& attrib = itsAttribs[attrib_name];
 
-  istrstream ist(itsAttribs[attrib_name].value.c_str());
+  istrstream ist(attrib.value.c_str());
   unsigned long id;
   ist >> id;
 
+  if (ist.fail())
+	 throw AttributeReadError(attrib_name);
+
   if (id == 0) { return 0; }
 
-  // Create a new object for this id, if necessary:
-  if ( !hasBeenCreated(id) ) {
-	 makeObjectFromTypeForId(getTypeOfAttrib(attrib_name).c_str(), id);
-  }
-
-  return itsCreatedObjects[id];
+  // Return the object for this id, creating a new object if necessary:
+  return itsObjects.fetchObject(attrib.type.c_str(), id);
 }
 
 void AsciiStreamReader::Impl::readValueObj(
@@ -224,11 +300,12 @@ void AsciiStreamReader::Impl::readValueObj(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readValueObj");
 
-  assertAttribExists(attrib_name);
-
   istrstream ist(itsAttribs[attrib_name].value.c_str());
 
   ist >> value;
+
+  if (ist.fail())
+	 throw AttributeReadError(attrib_name);
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
@@ -236,19 +313,17 @@ void AsciiStreamReader::Impl::readOwnedObject(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
-  assertAttribExists(attrib_name);
-
   istrstream ist(itsAttribs[attrib_name].value.c_str());
   unsigned long id;
   ist >> id;
 
+  if (ist.fail())
+	 throw AttributeReadError(attrib_name);
+
   if ( id == 0 )
 	 { throw ReadError("owned object had object id of 0"); }
 
-  if ( hasBeenCreated(id) )
-	 { throw ReadError("'owned object' was already created"); }
-
-  itsCreatedObjects[id] = obj;
+  itsObjects.assignObjectForId(id, obj);
 }
 
 void AsciiStreamReader::Impl::initAttributes() {
@@ -256,44 +331,39 @@ DOTRACE("AsciiStreamReader::Impl::initAttributes");
   itsAttribs.clear();
 
   int attrib_count;
-  itsBuf >> attrib_count;
+  itsBuf >> attrib_count;    DebugEvalNL(attrib_count);
 
-  DebugEvalNL(attrib_count);
+  if (attrib_count < 0)
+	 throw ReadError("found a negative attribute count");
 
   if ( itsBuf.fail() )
 	 throw ReadError("input failed while reading attribute count");
 
   char type[64], name[64], equal[16];
 
+  static fixed_block<char> value_buffer(4096);;
+
   for (int i = 0; i < attrib_count; ++i) {
 
-	 itsBuf >> type >> name >> equal;
-	 DebugEval(type); DebugEval(name); 
+	 itsBuf >> type >> name >> equal;   DebugEval(type); DebugEval(name); 
 
 	 if ( itsBuf.fail() )
 		throw ReadError("input failed while reading attribute type and name");
 
-	 Attrib& attrib = itsAttribs[name];
-	 attrib.type = type;
-
-  	 itsBuf.getline(&itsValueBuffer[0], itsValueBuffer.size(), STRING_ENDER);
-	 if ( itsBuf.gcount() >= (itsValueBuffer.size() - 1) ) {
+  	 itsBuf.getline(&value_buffer[0], value_buffer.size(), STRING_ENDER);
+	 if ( itsBuf.gcount() >= (value_buffer.size() - 1) ) {
 		throw ReadError("value buffer overflow in "
 							 "AsciiStreamReader::initAttributes");
 	 }
 
-	 attrib.value = &itsValueBuffer[0];
-	 DebugEvalNL(attrib.value);
-
-	 unEscape(attrib.value);
-	 DebugEvalNL(attrib.value);
+	 itsAttribs.assign(name, type, &value_buffer[0]);
   }
 }
 
-IO* AsciiStreamReader::Impl::readRoot(IO* given_root) {
+IO* AsciiStreamReader::Impl::readRoot(Reader* reader, IO* given_root) {
 DOTRACE("AsciiStreamReader::Impl::readRoot");
 
-  itsCreatedObjects.clear();
+  itsObjects.clear();
 
   bool haveReadRoot = false;
   unsigned long rootid;
@@ -313,28 +383,23 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 		rootid = id;
 		
 		if (given_root != 0) 
-		  { itsCreatedObjects[rootid] = given_root; }
+		  itsObjects.assignObjectForId(rootid, given_root);
 
 		haveReadRoot = true;
 	 }
 
-	 if ( !hasBeenCreated(id) ) {
-		makeObjectFromTypeForId(type, id);
-	 }
-
-	 obj = itsCreatedObjects[id];
+	 obj = itsObjects.fetchObject(type, id);
 	 
 	 initAttributes();
-	 obj->readFrom(itsOwner);
+	 obj->readFrom(reader);
 
-	 itsBuf >> bracket;
-	 eatWhitespace();
+	 itsBuf >> bracket >> ws;
 
 	 if ( itsBuf.fail() )
 		throw ReadError("input failed while parsing ending bracket");
   }
 
-  return itsCreatedObjects[rootid];
+  return itsObjects.getObject(rootid);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -394,11 +459,7 @@ void AsciiStreamReader::readOwnedObject(const char* name, IO* obj) {
 }
 
 IO* AsciiStreamReader::readRoot(IO* given_root) {
-  return itsImpl.readRoot(given_root);
-}
-
-int AsciiStreamReader::eatWhitespace() {
-  return itsImpl.eatWhitespace();
+  return itsImpl.readRoot(this, given_root);
 }
 
 #if defined(IRIX6) || defined(HP9000S700)
