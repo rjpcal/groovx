@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Dec  8 01:09:19 1999
+// written: Wed Feb 16 09:19:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,6 +150,8 @@ DOTRACE("Tcl::TclValue::getObj");
 
 void Tcl::TclValue::setObj(Tcl_Obj* obj) {
 DOTRACE("Tcl::TclValue::setObj");
+  if (itsObj == obj) return; 
+
   Tcl_DecrRefCount(itsObj);
 
   itsObj = obj;
