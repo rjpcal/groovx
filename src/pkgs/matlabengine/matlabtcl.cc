@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Fri Jul 13 17:34:15 2001
+// written: Mon Jul 16 10:29:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "mtxobj.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 
 #include "util/error.h"
@@ -100,15 +100,18 @@ namespace MatlabTcl
   class MatlabPkg;
 }
 
-class MatlabTcl::MatlabPkg : public Tcl::GenericObjPkg<MatlabEngine> {
+class MatlabTcl::MatlabPkg : public Tcl::TclItemPkg {
 public:
   MatlabPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<MatlabEngine>(interp, "MatlabEngine", "$Revision$")
+    Tcl::TclItemPkg(interp, "MatlabEngine", "$Revision$")
   {
-    Tcl::def( this, &MatlabEngine::evalString,
-              "meval", "engine_id command" );
-    Tcl::def( this, &MatlabEngine::getMtx,
-              "getMtx", "engine_id mtx_name" );
+    Tcl::defGenericObjCmds<MatlabEngine>(this);
+
+    def( &MatlabEngine::evalString, "eval", "engine_id command" );
+    def( &MatlabEngine::getMtx, "get", "engine_id mtx_name" );
+
+    eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
+    eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:23:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "mtxobj.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 
 #include "util/objfactory.h"
 
@@ -26,11 +26,13 @@ namespace MtxTcl
   class MtxPkg;
 }
 
-class MtxTcl::MtxPkg : public Tcl::GenericObjPkg<MtxObj> {
+class MtxTcl::MtxPkg : public Tcl::TclItemPkg {
 public:
   MtxPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<MtxObj>(interp, "Mtx", "$Revision$")
+    Tcl::TclItemPkg(interp, "Mtx", "$Revision$")
   {
+    Tcl::defGenericObjCmds<MtxObj>(this);
+
     defAction<MtxObj>("print", &Mtx::print);
 
     defGetter<MtxObj, int>("mrows", &Mtx::mrows);

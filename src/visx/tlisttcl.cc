@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Jul 13 18:33:38 2001
+// written: Mon Jul 16 10:37:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,7 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "tcl/objfunctor.h"
-#include "tcl/tclpkg.h"
+#include "tcl/tclitempkg.h"
 
 #include "util/arrays.h"
 #include "util/ref.h"
@@ -289,32 +288,32 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
 //
 //---------------------------------------------------------------------
 
-class TlistTcl::TlistPkg : public Tcl::TclPkg {
+class TlistTcl::TlistPkg : public Tcl::TclItemPkg {
 public:
   TlistPkg(Tcl_Interp* interp) :
-    Tcl::TclPkg(interp, "Tlist", "$Revision$")
+    Tcl::TclItemPkg(interp, "Tlist", "$Revision$")
   {
-    Tcl::def( this, &TlistTcl::createPreview,
-              "Tlist::createPreview", "objids pixel_width pixel_height" );
+    def( &TlistTcl::createPreview,
+         "createPreview", "objids pixel_width pixel_height" );
 
-    Tcl::def( this, &TlistTcl::dealSingles,
-              "Tlist::dealSingles", "objid(s) posid" );
-    Tcl::def( this, &TlistTcl::dealPairs,
-              "Tlist::dealPairs", "objids1 objids2 posid1 posid2" );
-    Tcl::def( this, &TlistTcl::dealTriads,
-              "Tlist::dealTriads", "objids posid1 posid2 posid3" );
+    def( &TlistTcl::dealSingles,
+         "dealSingles", "objid(s) posid" );
+    def( &TlistTcl::dealPairs,
+         "dealPairs", "objids1 objids2 posid1 posid2" );
+    def( &TlistTcl::dealTriads,
+         "dealTriads", "objids posid1 posid2 posid3" );
 
-    Tcl::def( this, &TlistTcl::loadObjidFile,
-              "Tlist::loadObjidFile", "objid_file objids posids" );
-    Tcl::def( this, &TlistTcl::loadObjidFileAll,
-              "Tlist::loadObjidFile", "objid_file objids posids num_lines=-1" );
+    def( &TlistTcl::loadObjidFile,
+         "loadObjidFile", "objid_file objids posids" );
+    def( &TlistTcl::loadObjidFileAll,
+         "loadObjidFile", "objid_file objids posids num_lines=-1" );
 
-    Tcl::def( this, &TlistUtils::writeResponses,
-              "Tlist::write_responses", "filename" );
-    Tcl::def( this, &TlistUtils::writeIncidenceMatrix,
-              "Tlist::writeIncidenceMatrix", "filename" );
-    Tcl::def( this, &TlistUtils::writeMatlab,
-              "Tlist::writeMatlab", "filename" );
+    def( &TlistUtils::writeResponses,
+         "write_responses", "filename" );
+    def( &TlistUtils::writeIncidenceMatrix,
+         "writeIncidenceMatrix", "filename" );
+    def( &TlistUtils::writeMatlab,
+         "writeMatlab", "filename" );
   }
 };
 

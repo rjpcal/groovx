@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Jul 16 09:43:11 2001
+// written: Mon Jul 16 10:32:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "grobj.h"
 #include "rect.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -89,23 +89,22 @@ namespace GrobjTcl
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::GrObjPkg : public Tcl::GenericObjPkg<GrObj> {
+class GrobjTcl::GrObjPkg : public Tcl::TclItemPkg {
 public:
   GrObjPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<GrObj>(interp, "GrObj", "$Revision$")
+    Tcl::TclItemPkg(interp, "GrObj", "$Revision$")
   {
     Tcl::addTracing(this, GrObj::tracer);
 
-    Tcl::defVec( this, &GrobjTcl::boundingBox,
-                 "GrObj::boundingBox", "item_id(s)" );
-    Tcl::defVec( this, &GrobjTcl::saveBitmapCache,
-                 "GrObj::saveBitmapCache", "item_id(s) filename(s)" );
-    defAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
-    Tcl::defVec( this, &GrobjTcl::update,
-                 "GrObj::update", "item_id(s)" );
+    Tcl::defGenericObjCmds<GrObj>(this);
 
-    Tcl::def( this, &GrObj::setBitmapCacheDir,
-              "GrObj::setBitmapCacheDir", "filename" );
+    defVec( &GrobjTcl::boundingBox, "boundingBox", "item_id(s)" );
+    defVec( &GrobjTcl::saveBitmapCache,
+            "saveBitmapCache", "item_id(s) filename(s)" );
+    defAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
+    defVec( &GrobjTcl::update, "update", "item_id(s)" );
+
+    def( &GrObj::setBitmapCacheDir, "setBitmapCacheDir", "filename" );
 
     defAttrib("alignmentMode",
               &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);

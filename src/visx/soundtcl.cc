@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:30:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "application.h"
 #include "sound.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tcllink.h"
 
@@ -50,11 +50,13 @@ namespace SoundTcl
 //
 //---------------------------------------------------------------------
 
-class SoundTcl::SoundPkg : public Tcl::GenericObjPkg<Sound> {
+class SoundTcl::SoundPkg : public Tcl::TclItemPkg {
 public:
   SoundPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Sound>(interp, "Sound", "$Revision$")
+    Tcl::TclItemPkg(interp, "Sound", "$Revision$")
   {
+    Tcl::defGenericObjCmds<Sound>(this);
+
     bool haveSound = Sound::initSound();
 
     if (!haveSound) {
@@ -94,7 +96,7 @@ public:
       }
     }
 
-    Tcl::def( this, &Sound::haveSound, "Sound::haveAudio", 0 );
+    def( &Sound::haveSound, "haveAudio", 0 );
 
     defAction("play", &Sound::play);
     defAttrib("file", &Sound::getFile, &Sound::setFile);

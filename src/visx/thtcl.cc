@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:30:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "timinghdlr.h"
 #include "trialevent.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tclcmd.h"
 
@@ -60,19 +60,21 @@ namespace ThTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public Tcl::GenericObjPkg<TimingHdlr> {
+class ThTcl::ThPkg: public Tcl::TclItemPkg {
 public:
   ThPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<TimingHdlr>(interp, "Th", "$Revision$")
+    Tcl::TclItemPkg(interp, "Th", "$Revision$")
   {
-    Tcl::def( this, &ThTcl::addImmediateEvent,
-              "Th::addImmediateEvent", "th_id event_type msec_delay" );
-    Tcl::def( this, &ThTcl::addStartEvent,
-              "Th::addStartEvent", "th_id event_type msec_delay" );
-    Tcl::def( this, &ThTcl::addResponseEvent,
-              "Th::addResponseEvent", "th_id event_type msec_delay" );
-    Tcl::def( this, &ThTcl::addAbortEvent,
-              "Th::addAbortEvent", "th_id event_type msec_delay" );
+    Tcl::defGenericObjCmds<TimingHdlr>(this);
+
+    def( &ThTcl::addImmediateEvent,
+         "addImmediateEvent", "th_id event_type msec_delay" );
+    def( &ThTcl::addStartEvent,
+         "addStartEvent", "th_id event_type msec_delay" );
+    def( &ThTcl::addResponseEvent,
+         "addResponseEvent", "th_id event_type msec_delay" );
+    def( &ThTcl::addAbortEvent,
+         "addAbortEvent", "th_id event_type msec_delay" );
 
     Tcl::TclPkg::eval("namespace eval Th { "
                       "    proc autosavePeriod {id args} { "
@@ -91,12 +93,13 @@ namespace SimpleThTcl
   class SimpleThPkg;
 }
 
-class SimpleThTcl::SimpleThPkg :
-  public Tcl::GenericObjPkg<TimingHandler> {
+class SimpleThTcl::SimpleThPkg : public Tcl::TclItemPkg {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
+    Tcl::TclItemPkg(interp, "SimpleTh", "$Revision$")
   {
+    Tcl::defGenericObjCmds<TimingHandler>(this);
+
     defAttrib("abortWait",
               &TimingHandler::getAbortWait,
               &TimingHandler::setAbortWait);

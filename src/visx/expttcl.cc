@@ -25,7 +25,7 @@
 
 #include "system/system.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
@@ -187,32 +187,32 @@ private:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::ExpPkg : public Tcl::GenericObjPkg<ExptDriver>
+class ExptTcl::ExpPkg : public Tcl::TclItemPkg
 {
 private:
 
 public:
   ExpPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$")
+    Tcl::TclItemPkg(interp, "Exp", "$Revision$")
   {
     theExptDriver = Ref<ExptDriver>
       (ExptDriver::make(Application::theApp().argc(),
                         Application::theApp().argv(),
                         interp));
 
+	 Tcl::defGenericObjCmds<ExptDriver>(this);
+
     Tcl::TclItemPkg::addIoCommands();
 
     Tcl::addTracing(this, ExptDriver::tracer);
 
-    Tcl::def( this, &ExptTcl::setCurrentExpt,
-              "Exp::currentExp", "expt_id" );
-    Tcl::def( this, &ExptTcl::getCurrentExpt,
-              "Exp::currentExp", 0 );
+    def( &ExptTcl::setCurrentExpt, "currentExp", "expt_id" );
+    def( &ExptTcl::getCurrentExpt, "currentExp", 0 );
 
-    Tcl::def( this, &ExptTcl::begin, "Exp::begin", "expt_id" );
+    def( &ExptTcl::begin, "begin", "expt_id" );
     addCommand( new PauseCmd(this, "Exp::pause") );
-    Tcl::def( this, &ExptTcl::setStartCommand,
-              "Expt::setStartCommand", "expt_id start_command" );
+    def( &ExptTcl::setStartCommand,
+			"setStartCommand", "expt_id start_command" );
 
     defSetter("addBlock", &ExptDriver::addBlock);
     defAttrib("autosaveFile",
@@ -228,7 +228,7 @@ public:
     defAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
 
     TclPkg::eval("foreach cmd [info commands ::Exp::*] {"
-                 "  proc ::Expt::[namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" }\n"
+                 "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" } }\n"
                  "namespace eval Expt { namespace export * }"
                  );
   }

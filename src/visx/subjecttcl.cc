@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:23:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "subject.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 
 #include "util/objfactory.h"
 
@@ -28,11 +28,13 @@ namespace SubjectTcl {
   class SubjectPkg;
 }
 
-class SubjectTcl::SubjectPkg : public Tcl::GenericObjPkg<Subject> {
+class SubjectTcl::SubjectPkg : public Tcl::TclItemPkg {
 public:
   SubjectPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Subject>(interp, "Subject", "$Revision$")
+    Tcl::TclItemPkg(interp, "Subject", "$Revision$")
   {
+    Tcl::defGenericObjCmds<Subject>(this);
+
     defAttrib("name", &Subject::getName, &Subject::setName);
     defAttrib("directory", &Subject::getDirectory,
               &Subject::setDirectory);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:31:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ public:
   {
     Tcl::addTracing(this, Trial::tracer);
 
-    Tcl::def( this, &Trial::add, "Trial::add", "trialid objid posid" );
+    def( &Trial::add, "add", "trialid objid posid" );
 
     defSetter("addNode", &Trial::addNode);
     defGetter("avgResponse", &Trial::avgResponse);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Mon Jul 16 09:43:11 2001
+// written: Mon Jul 16 10:23:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,10 @@
 #include "xbitmap.h"
 
 #include "util/objfactory.h"
+#include "util/ref.h"
 #include "util/strings.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 
 #define NO_TRACE
@@ -53,11 +54,13 @@ namespace BitmapTcl
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::BitmapPkg : public Tcl::GenericObjPkg<Bitmap> {
+class BitmapTcl::BitmapPkg : public Tcl::TclItemPkg {
 public:
   BitmapPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Bitmap>(interp, "Bitmap", "$Revision$")
+    Tcl::TclItemPkg(interp, "Bitmap", "$Revision$")
   {
+    Tcl::defGenericObjCmds<Bitmap>(this);
+
     Tcl::defVec(this, &Bitmap::loadPbmFile,
                 "Bitmap::loadPbm", "item_id(s) filename(s)");
     Tcl::defVec(this, &BitmapTcl::loadPbmGz,
@@ -96,11 +99,13 @@ namespace GLBitmapTcl {
   class GLBitmapPkg;
 }
 
-class GLBitmapTcl::GLBitmapPkg : public Tcl::GenericObjPkg<GLBitmap> {
+class GLBitmapTcl::GLBitmapPkg : public Tcl::TclItemPkg {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<GLBitmap>(interp, "GLBitmap", "$Revision$")
+    Tcl::TclItemPkg(interp, "GLBitmap", "$Revision$")
   {
+    Tcl::defGenericObjCmds<GLBitmap>(this);
+
     defAttrib("usingGlBitmap",
               &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
   }
@@ -116,11 +121,13 @@ namespace XBitmapTcl {
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapPkg : public Tcl::GenericObjPkg<XBitmap> {
+class XBitmapTcl::XBitmapPkg : public Tcl::TclItemPkg {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<XBitmap>(interp, "XBitmap", "$Revision$")
-    {}
+    Tcl::TclItemPkg(interp, "XBitmap", "$Revision$")
+  {
+    Tcl::defGenericObjCmds<XBitmap>(this);
+  }
 };
 
 //---------------------------------------------------------------------

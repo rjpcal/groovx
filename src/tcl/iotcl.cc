@@ -16,7 +16,7 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
@@ -160,31 +160,35 @@ namespace Tcl
       }
   }
 
-class IoObjectPkg : public GenericObjPkg<IO::IoObject>
+class IoObjectPkg : public TclItemPkg
 {
 public:
   IoObjectPkg(Tcl_Interp* interp) :
-    GenericObjPkg<IO::IoObject>(interp, "IO", "$Revision$")
+    TclItemPkg(interp, "IO", "$Revision$")
   {
     TclItemPkg::addIoCommands();
+
+	 Tcl::defGenericObjCmds<IO::IoObject>(this);
 
     defGetter("type", &IO::IoObject::ioTypename);
   }
 };
 
-class ObjectPkg : public GenericObjPkg<Util::Object>
+class ObjectPkg : public TclItemPkg
 {
 public:
   ObjectPkg(Tcl_Interp* interp) :
-    GenericObjPkg<Util::Object>(interp, "Obj", "$Revision$")
+    TclItemPkg(interp, "Obj", "$Revision$")
   {
+	 Tcl::defGenericObjCmds<Util::Object>(this);
+
     defGetter("refCount", &Util::Object::refCount);
     defAction("incrRefCount", &Util::Object::incrRefCount);
     defAction("decrRefCount", &Util::Object::decrRefCount);
 
-    Tcl::def( this, &Tcl::objNew, "Obj::new", "typename array_size=1" );
-    Tcl::def( this, &Tcl::objNewOne, "Obj::new", "typename" );
-    Tcl::def( this, &Tcl::objDelete, "Obj::delete", "item_id(s)" );
+    def( &Tcl::objNew, "new", "typename array_size=1" );
+    def( &Tcl::objNewOne, "new", "typename" );
+    def( &Tcl::objDelete, "delete", "item_id(s)" );
 
     TclPkg::eval("proc new {args} { eval Obj::new $args }");
     TclPkg::eval("proc delete {args} { eval Obj::delete $args }");
@@ -196,26 +200,24 @@ public:
   }
 };
 
-class ObjDbPkg : public TclPkg {
+class ObjDbPkg : public TclItemPkg {
   static void clear() { ObjDb::theDb().clear(); }
   static void purge() { ObjDb::theDb().purge(); }
   static void release(Util::UID id) { ObjDb::theDb().release(id); }
 
 public:
   ObjDbPkg(Tcl_Interp* interp) :
-    TclPkg(interp, "ObjDb", "$Revision$")
+    TclItemPkg(interp, "ObjDb", "$Revision$")
   {
-    Tcl::def( this, &ObjDbPkg::clear, "ObjDb::clear", 0 );
-    Tcl::def( this, &ObjDbPkg::purge, "ObjDb::purge", 0 );
-    Tcl::def( this, &ObjDbPkg::release, "ObjDb::release", 0 );
-    Tcl::def( this, &IoTcl::loadObjects,
-              "ObjDb::loadObjects", "filename num_to_read=-1" );
-    Tcl::def( this, &IoTcl::loadAllObjects,
-              "ObjDb::loadObjects", "filename" );
-    Tcl::def( this, &IoTcl::saveObjects,
-              "ObjDb::saveObjects", "objids filename use_bases=yes" );
-    Tcl::def( this, &IoTcl::saveObjectsDefault,
-              "ObjDb::saveObjects", "objids filename" );
+    def( &ObjDbPkg::clear, "clear", 0 );
+    def( &ObjDbPkg::purge, "purge", 0 );
+    def( &ObjDbPkg::release, "release", 0 );
+    def( &IoTcl::loadObjects, "loadObjects", "filename num_to_read=-1" );
+    def( &IoTcl::loadAllObjects, "loadObjects", "filename" );
+    def( &IoTcl::saveObjects,
+			"saveObjects", "objids filename use_bases=yes" );
+    def( &IoTcl::saveObjectsDefault,
+			"saveObjects", "objids filename" );
 
     TclPkg::eval("namespace eval IoDb {\n"
                  "  proc clear {args} { eval ObjDb::clear $args }\n"

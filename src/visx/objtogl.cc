@@ -22,7 +22,7 @@
 
 #include "gx/gxnode.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclitempkg.h"
@@ -165,34 +165,25 @@ namespace ObjTogl
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::TogletPkg : public Tcl::GenericObjPkg<Toglet> {
+class ObjTogl::TogletPkg : public Tcl::TclItemPkg {
 public:
   TogletPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Toglet>(interp, "Toglet", "$Revision$")
+    Tcl::TclItemPkg(interp, "Toglet", "$Revision$")
   {
-    Tcl::def( this, &Toglet::bind,
-              "Toglet::bind", "event_sequence binding_script" );
-    Tcl::def( this, &ObjTogl::setCurrentTogl,
-              "Toglet::currentToglet", "toglet_id" );
-    Tcl::def( this, &ObjTogl::getCurrentTogl,
-              "Toglet::currentToglet", 0 );
-    Tcl::def( this, &Toglet::defaultParent,
-              "Toglet::defaultParent", "parent" );
-    Tcl::def( this, &ObjTogl::dumpCmap,
-              "Toglet::dumpCmap", "toglet_id start_index end_index" );
-    Tcl::def( this, &ObjTogl::dumpCmapAll,
-              "Toglet::dumpCmap", "toglet_id" );
-    Tcl::def( this, &ObjTogl::inited,
-              "Togl::inited", 0 );
-    Tcl::def( this, &ObjTogl::see,
-              "Toglet::see", "gxnode_id" );
-    Tcl::def( this, &ObjTogl::setColor,
-              "Toglet::setColor", "index r g b" );
-    Tcl::def( this, &ObjTogl::setCurTrial,
-              "Toglet::setCurTrial", "toglet_id widget_id" );
-    Tcl::def( this, &ObjTogl::setMinRect,
-              "Toglet::setMinRect", "left top right bottom" );
-    Tcl::def( this, &ObjTogl::show, "Toglet::show", "toglet_id trial_id" );
+    Tcl::defGenericObjCmds<Toglet>(this);
+
+    def( &Toglet::bind, "bind", "event_sequence binding_script" );
+    def( &ObjTogl::setCurrentTogl, "currentToglet", "toglet_id" );
+    def( &ObjTogl::getCurrentTogl, "currentToglet", 0 );
+    def( &Toglet::defaultParent, "defaultParent", "parent" );
+    def( &ObjTogl::dumpCmap, "dumpCmap", "toglet_id start_index end_index" );
+    def( &ObjTogl::dumpCmapAll, "dumpCmap", "toglet_id" );
+    Tcl::def( this, &ObjTogl::inited, "Togl::inited", 0 );
+    def( &ObjTogl::see, "see", "gxnode_id" );
+    def( &ObjTogl::setColor, "setColor", "index r g b" );
+    def( &ObjTogl::setCurTrial, "setCurTrial", "toglet_id widget_id" );
+    def( &ObjTogl::setMinRect, "setMinRect", "left top right bottom" );
+    def( &ObjTogl::show, "show", "toglet_id trial_id" );
 
     defAction("clearscreen", &Toglet::clearscreen);
     defAction("destroy", &Toglet::destroyWidget);
@@ -207,11 +198,11 @@ public:
     defSetter("scaleRect", &Toglet::scaleRect, "item_id(s) scale");
     defSetter("setFixedScale", &Toglet::setFixedScale, "item_id(s) scale");
     defSetter("setUnitAngle", &Toglet::setUnitAngle,
-				  "item_id(s) angle_in_degrees");
+              "item_id(s) angle_in_degrees");
     defSetter("setViewingDistance", &Toglet::setViewingDistIn,
-				  "item_id(s) distance_in_inches");
+              "item_id(s) distance_in_inches");
     defSetter("setVisible", &Toglet::setVisibility,
-				  "item_id(s) visibility");
+              "item_id(s) visibility");
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);

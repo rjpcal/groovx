@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Jul 16 09:43:11 2001
+// written: Mon Jul 16 10:23:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "block.h"
 #include "trialbase.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tracertcl.h"
 
@@ -55,11 +55,13 @@ namespace BlockTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public Tcl::GenericObjPkg<Block> {
+class BlockTcl::BlockPkg : public Tcl::TclItemPkg {
 public:
   BlockPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Block>(interp, "Block", "$Revision$")
+    Tcl::TclItemPkg(interp, "Block", "$Revision$")
   {
+    Tcl::defGenericObjCmds<Block>(this);
+
     Tcl::addTracing(this, Block::tracer);
 
     Tcl::defVec(this, &BlockTcl::addTrialIds1,

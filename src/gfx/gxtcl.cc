@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:31:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 
 #include "util/objfactory.h"
@@ -39,13 +39,14 @@ namespace GxTcl
   class GxNodePkg;
 }
 
-class GxTcl::GxNodePkg : public Tcl::GenericObjPkg<GxNode> {
+class GxTcl::GxNodePkg : public Tcl::TclItemPkg {
 public:
   GxNodePkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<GxNode>(interp, "GxNode", "$Revision$")
+    Tcl::TclItemPkg(interp, "GxNode", "$Revision$")
     {
-      Tcl::def( this, &GxTcl::contains,
-                "GxNode::contains", "item_id other_id" );
+      Tcl::defGenericObjCmds<GxNode>(this);
+
+      def( &GxTcl::contains, "contains", "item_id other_id" );
     }
 };
 
@@ -60,13 +61,14 @@ namespace GxTcl
   class GxSeparatorPkg;
 }
 
-class GxTcl::GxSeparatorPkg : public Tcl::GenericObjPkg<GxSeparator> {
+class GxTcl::GxSeparatorPkg : public Tcl::TclItemPkg {
 public:
   GxSeparatorPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<GxSeparator>(interp, "GxSeparator", "$Revision$")
+    Tcl::TclItemPkg(interp, "GxSeparator", "$Revision$")
     {
-      Tcl::def( this, &GxSeparator::addChild,
-                "GxSeparator::addChild", "item_id child_item_id" );
+      Tcl::defGenericObjCmds<GxSeparator>(this);
+
+      def( &GxSeparator::addChild, "addChild", "item_id child_item_id" );
       defGetter("numChildren", &GxSeparator::numChildren);
       defSetter("removeChildId", &GxSeparator::removeChildId);
       defSetter("removeChildUid", &GxSeparator::removeChildUid);

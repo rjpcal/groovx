@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Fri Jul 13 17:30:07 2001
+// written: Mon Jul 16 10:32:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "jitter.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
 
 #include "util/objfactory.h"
@@ -33,13 +33,15 @@ namespace JitterTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class JitterTcl::JitterPkg : public Tcl::GenericObjPkg<Jitter> {
+class JitterTcl::JitterPkg : public Tcl::TclItemPkg {
 public:
   JitterPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Jitter>(interp, "Jitter", "$Revision$")
+    Tcl::TclItemPkg(interp, "Jitter", "$Revision$")
   {
-    Tcl::defVec( this, &Jitter::setJitter,
-                 "Jitter::setJitter", "posid x_jitter y_jitter r_jitter" );
+    Tcl::defGenericObjCmds<Jitter>(this);
+
+    defVec( &Jitter::setJitter,
+            "setJitter", "posid x_jitter y_jitter r_jitter" );
   }
 };
 

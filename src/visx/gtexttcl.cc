@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Mon Jul 16 09:43:10 2001
+// written: Mon Jul 16 10:23:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gtext.h"
 
-#include "tcl/genericobjpkg.h"
+#include "tcl/tclitempkg.h"
 
 #include "util/objfactory.h"
 
@@ -34,11 +34,13 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public Tcl::GenericObjPkg<Gtext> {
+class GtextTcl::GtextPkg : public Tcl::TclItemPkg {
 public:
   GtextPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<Gtext>(interp, "Gtext", "$Revision$")
+    Tcl::TclItemPkg(interp, "Gtext", "$Revision$")
   {
+    Tcl::defGenericObjCmds<Gtext>(this);
+
     defAttrib("text", &Gtext::getText, &Gtext::setText);
     defAttrib("strokeWidth",
               &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
