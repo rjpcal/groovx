@@ -32,6 +32,7 @@
 
 #include "tcl/tclconvert.h"
 
+#include "tcl/tcldictobj.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclobjptr.h"
 
@@ -223,6 +224,13 @@ DOTRACE("Tcl::fromTcl(fstring*)");
   return fstring(Util::CharData(text, (unsigned int) length));
 }
 
+Tcl::Dict Tcl::fromTcl(Tcl_Obj* obj, Tcl::Dict*)
+{
+DOTRACE("Tcl::fromTcl(Tcl::Dict*)");
+
+  return Tcl::Dict(obj);
+}
+
 Tcl::List Tcl::fromTcl(Tcl_Obj* obj, Tcl::List*)
 {
 DOTRACE("Tcl::fromTcl(Tcl::List*)");
@@ -328,6 +336,13 @@ Tcl::ObjPtr Tcl::toTcl(const Value& val)
 DOTRACE("Tcl::toTcl(const Value&)");
 
   return Tcl_NewStringObj(val.getCstring(), -1);
+}
+
+Tcl::ObjPtr Tcl::toTcl(Tcl::Dict dictObj)
+{
+DOTRACE("Tcl::toTcl(Tcl::Dict)");
+
+  return dictObj.asObj();
 }
 
 Tcl::ObjPtr Tcl::toTcl(Tcl::List listObj)
