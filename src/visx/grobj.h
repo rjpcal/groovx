@@ -2,7 +2,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed May 26 12:03:29 1999
+// written: Tue Jun 15 19:44:51 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -91,6 +91,12 @@ public:
   // provided in GrObj that simply calls the display list that was
   // compiled in grRecompile. If overridden, this function should
   // render the object that is represented by the GrObj.
+
+  virtual void undraw() const;
+  // This function should arrange for the GrObj to undraw itself from
+  // the screen. The default implementation is to do the same thing as
+  // draw(), with the requirement that the caller swap the foreground
+  // and background colors first.
 
 protected:
   virtual void grRecompile() const = 0;
