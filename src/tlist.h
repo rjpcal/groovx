@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Thu May 27 18:07:46 1999
+// written: Wed Jun  9 12:08:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,13 +35,19 @@ private:
   vector<Trial *> itsTrials;
   int itsCurTrial;
   bool itsVisibility;
-public:
+
   //////////////
   // creators //
   //////////////
 
+protected:
   Tlist() : 
     itsTrials(1, NULL), itsCurTrial(0), itsVisibility(false) {}
+public:
+
+  // Returns a reference to the singleton instance of Tlist
+  static Tlist& theTlist();
+
   virtual ~Tlist();
 
   // These I/O functions write/read the entire state of the Tlist
