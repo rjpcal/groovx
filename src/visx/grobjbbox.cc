@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Thu Aug 23 09:43:26 2001
+// written: Thu Aug 23 15:33:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,19 @@ namespace
 {
   void renderRect(Gfx::Canvas& canvas, const Gfx::Rect<double>& bounds)
   {
+    static unsigned short stipple = 0x0F0F; // 0000111100001111
+
+    static unsigned short mask =    0x3333; // 0011001100110011
+
+    stipple ^= mask;
+
+    mask = ~mask;
+
     Gfx::Canvas::AttribSaver saver(canvas);
 
     glLineWidth(1.0);
     glEnable(GL_LINE_STIPPLE);
-    glLineStipple(1, 0x0F0F);
+    glLineStipple(1, stipple);
 
     canvas.drawRect(bounds);
   }
