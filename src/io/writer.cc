@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Thu May 10 12:04:43 2001
+// written: Wed Jun 20 18:32:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,6 @@
 #include "io/writer.h"
 
 #include "util/strings.h"
-
-#include <strstream.h>
 
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -31,9 +29,9 @@ IO::WriteError::WriteError(const char* msg) :
 IO::WriteError::~WriteError() {}
 
 IO::WriteVersionError::WriteVersionError(const char* classname,
-													  IO::VersionId attempted_id,
-													  IO::VersionId lowest_supported_id,
-													  const char* msg) :
+                                         IO::VersionId attempted_id,
+                                         IO::VersionId lowest_supported_id,
+                                         const char* msg) :
   ErrorWithMsg("IO::WriteVersionError: ")
 {
   appendMsg("in ", classname, ", serial version ");
@@ -48,13 +46,13 @@ IO::WriteVersionError::~WriteVersionError() {}
 IO::Writer::~Writer () {}
 
 int IO::Writer::ensureWriteVersionId(const char* name,
-												 IO::VersionId actual_version,
-												 IO::VersionId lowest_supported_version,
-												 const char* msg) {
-
+                                     IO::VersionId actual_version,
+                                     IO::VersionId lowest_supported_version,
+                                     const char* msg)
+{
   if (actual_version < lowest_supported_version)
-	 throw IO::WriteVersionError(name, actual_version,
-										  lowest_supported_version, msg);
+    throw IO::WriteVersionError(name, actual_version,
+                                lowest_supported_version, msg);
 
   Assert(actual_version >= lowest_supported_version);
 
@@ -62,47 +60,55 @@ int IO::Writer::ensureWriteVersionId(const char* name,
 }
 
 template<>
-void IO::Writer::writeValue<char>(const char* name, const char& val) {
+void IO::Writer::writeValue<char>(const char* name, const char& val)
+{
   writeChar(name, val);
 }
 
 template<>
-void IO::Writer::writeValue<int>(const char* name, const int& val) {
+void IO::Writer::writeValue<int>(const char* name, const int& val)
+{
   writeInt(name, val);
 }
 
 template<>
-void IO::Writer::writeValue<size_t>(const char* name, const size_t& val) {
+void IO::Writer::writeValue<size_t>(const char* name, const size_t& val)
+{
   writeInt(name, val);
 }
 
 template<>
-void IO::Writer::writeValue<bool>(const char* name, const bool& val) {
+void IO::Writer::writeValue<bool>(const char* name, const bool& val)
+{
   writeBool(name, val);
 }
 
 template<>
-void IO::Writer::writeValue<double>(const char* name, const double& val) {
+void IO::Writer::writeValue<double>(const char* name, const double& val)
+{
   writeDouble(name, val);
 }
 
 
 template<>
 void IO::Writer::writeValue<fixed_string>(const char* name,
-												  const fixed_string& val) {
+                                      const fixed_string& val)
+{
   writeCstring(name, val.c_str());
 }
 
 
 template<>
 void IO::Writer::writeValue<dynamic_string>(const char* name,
-													 const dynamic_string& val) {
+                                            const dynamic_string& val)
+{
   writeCstring(name, val.c_str());
 }
 
 template<>
 void IO::Writer::writeValue<Value>(const char* name,
-										  const Value& value) {
+                                   const Value& value)
+{
   writeValueObj(name, value);
 }
 
