@@ -23,7 +23,17 @@ dnl Checks for libraries.
 dnl Checks for header files.
 AC_PATH_XTRA
 
-AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream dmedia/audio.h Alib.h esd.h])
+AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream])
+AC_CHECK_HEADER([dmedia/audio.h],
+		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
+		 LIBS="$LIBS -laudio -laudiofile"])
+
+AC_CHECK_HEADER([Alib.h],
+		[AC_DEFINE(HAVE_ALIB_H,1) LIBS="$LIBS -lAlib"])
+
+AC_CHECK_HEADER([esd.h],
+		[AC_DEFINE(HAVE_ESD_H,1)
+		 LIBS="$LIBS -lesd -laudiofile"])
 
 AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
 
@@ -54,8 +64,6 @@ fi
 dnl AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-dnl AC_C_CONST
-dnl AC_C_INLINE
 dnl AC_TYPE_MODE_T
 dnl AC_TYPE_SIZE_T
 dnl AC_HEADER_TIME

@@ -80,8 +80,6 @@ ifeq ($(ARCH),irix6)
 	STATLIB_EXT := a
 
 	DEFS += -DSHORTEN_SYMBOL_NAMES
-
-	AUDIO_LIB := -laudio -laudiofile
 endif
 
 ifeq ($(ARCH),i686)
@@ -92,8 +90,6 @@ ifeq ($(ARCH),i686)
 # display lists don't work at present with i686/linux/mesa
 
 	DEFS += -DBROKEN_GL_DISPLAY_LISTS -march=i686
-
-	AUDIO_LIB := -lesd -laudiofile
 endif
 
 ifeq ($(ARCH),ppc)
@@ -101,7 +97,6 @@ ifeq ($(ARCH),ppc)
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
 	DEFS += -DESD_WORKAROUND
-	AUDIO_LIB := -lesd -laudiofile
 # The /sw/lib and /sw/include directories are managed by Fink
 	LDFLAGS += -L/sw/lib
 	CPPFLAGS += -I/sw/include
@@ -207,7 +202,6 @@ LIBS += \
 	-lXmu -lX11 -lXext \
 	-lz \
 	-lpng \
-	$(AUDIO_LIB) \
 	-lm
 
 ifeq ($(ARCH),ppc)
