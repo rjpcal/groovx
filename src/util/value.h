@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Sun Aug 26 08:35:08 2001
+// written: Thu Aug 30 16:21:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,6 +100,10 @@ public:
   /// Attempt to get a C-style string (\c char*) representation of the value.
   virtual const char* get(Util::TypeCue<const char*>) const;
 
+  /** Attempt to get an \c fstring representation of the value. Calls
+      the C-string get(). */
+  fstring get(Util::TypeCue<fstring>) const;
+
   // The default implementations of the set functions all throw
   // exceptions, so that the default case is a read-only value.
 
@@ -113,6 +117,9 @@ public:
   virtual void set(double val);
   /// Attempt to set the value from a C-style string (\c char*) representation.
   virtual void set(const char* val);
+
+  /** Attempt to set the value from an fstring. Calls the C-string set(). */
+  void set(fstring val);
 
   /// Assign \a this's value to \a other, using the native type of \a this.
   virtual void assignTo(Value& other) const = 0;

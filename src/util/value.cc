@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Sun Aug 26 08:53:51 2001
+// written: Thu Aug 30 16:23:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,11 +50,21 @@ bool Value::get(Util::TypeCue<bool>) const { raiseValueError("getBool"); return 
 double Value::get(Util::TypeCue<double>) const { raiseValueError("getDouble"); return 0.0; }
 const char* Value::get(Util::TypeCue<const char*>) const { raiseValueError("getCstring"); return ""; }
 
+fstring Value::get(Util::TypeCue<fstring>) const
+{
+  return fstring(get(Util::TypeCue<const char*>()));
+}
+
 void Value::set(int) { raiseValueError("set(int)"); }
 void Value::set(long) { raiseValueError("set(long)"); }
 void Value::set(bool) { raiseValueError("set(bool)"); }
 void Value::set(double) { raiseValueError("set(double)"); }
 void Value::set(const char*) { raiseValueError("set(const char*)"); }
+
+void Value::set(fstring val)
+{
+  set(val.c_str());
+}
 
 void Value::assignFrom(const Value& other) { other.assignTo(*this); }
 
