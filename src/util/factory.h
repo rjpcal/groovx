@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu Mar 30 12:28:53 2000
+// written: Thu Jun  1 11:51:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,9 @@
 class FactoryError : public ErrorWithMsg {
 public:
   /// Construct with an informative message \a msg.
-  FactoryError(const char* str) : ErrorWithMsg(str) {}
+  FactoryError(const char* str);
+
+  virtual ~FactoryError();
 
   static void throwForType(const char* type);
 };
@@ -227,8 +229,8 @@ public:
 
 template <class Base, class Derived>
 class FactoryRegistrar {
-protected:
-  /// Default constructor protected so that clients don't instantiate this class.
+private:
+  /// Constructor private so that clients don't instantiate this class.
   FactoryRegistrar();
 
 public:

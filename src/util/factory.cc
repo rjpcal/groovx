@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Fri Mar 10 00:41:33 2000
+// written: Thu Jun  1 11:43:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,10 @@
 namespace {
   const char* bad_create_msg = "unable to create object of type ";
 }
+
+FactoryError::FactoryError(const char* str) : ErrorWithMsg(str) {}
+
+FactoryError::~FactoryError() {}
 
 void FactoryError::throwForType(const char* type) {
   FactoryError err(bad_create_msg);
