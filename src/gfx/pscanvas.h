@@ -105,6 +105,7 @@ public:
   virtual void rotate(const geom::vec3<double>& v, double degrees);
 
   virtual void transform(const geom::txform& tx);
+  virtual void loadMatrix(const geom::txform& tx);
 
 
 

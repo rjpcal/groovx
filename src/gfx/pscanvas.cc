@@ -868,6 +868,12 @@ DOTRACE("Gfx::PSCanvas::transform");
   rep->state().txform.transform(tx);
 }
 
+void Gfx::PSCanvas::loadMatrix(const geom::txform& tx)
+{
+DOTRACE("Gfx::PSCanvas::loadMatrix");
+  rep->state().txform = tx;
+}
+
 
 void Gfx::PSCanvas::drawPixels(const media::bmap_data& /*data*/,
                                const vec3d& /*world_pos*/,

@@ -272,6 +272,9 @@ public:
   /// Apply a generic transformation to the coordinate system.
   virtual void transform(const geom::txform& tx) = 0;
 
+  /// Set the transformation matrix to the given transformation.
+  virtual void loadMatrix(const geom::txform& tx) = 0;
+
   ///////////////////////////////////////////////////////////
   //
   // Drawing

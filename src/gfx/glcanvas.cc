@@ -477,6 +477,12 @@ DOTRACE("GLCanvas::transform");
   glMultMatrixd(tx.col_major_data());
 }
 
+void GLCanvas::loadMatrix(const geom::txform& tx)
+{
+DOTRACE("GLCanvas::loadMatrix");
+  glLoadMatrixd(tx.col_major_data());
+}
+
 void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
 {
 DOTRACE("GLCanvas::rasterPos");
