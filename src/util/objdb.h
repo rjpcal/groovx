@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Aug  9 07:08:51 2001
+// written: Thu Aug 16 15:14:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,47 +88,11 @@ public:
 
     Iterator& operator++();
 
-    int getId() const;
-
-    Util::Object* getObject() const;
-  };
-
-  class IdIterator : public Iterator {
-    IdIterator();
-  public:
-    IdIterator(const Iterator& other) : Iterator(other) {}
-
-    typedef std::forward_iterator_tag iterator_category;
-    typedef int value_type;
-    typedef ptrdiff_t difference_type;
-    typedef void pointer;
-    typedef void reference;
-
-    int operator*() const { return getId(); }
-  };
-
-  class PtrIterator : public Iterator {
-    PtrIterator();
-  public:
-    PtrIterator(const Iterator& other) : Iterator(other) {}
-
-    typedef std::forward_iterator_tag iterator_category;
-    typedef Util::Object* value_type;
-    typedef ptrdiff_t difference_type;
-    typedef void pointer;
-    typedef void reference;
-
-    Util::Object* operator*() const { return getObject(); }
+    Util::Object* operator*() const;
   };
 
   Iterator begin() const;
   Iterator end() const;
-
-  IdIterator beginIds() const { return begin(); }
-  IdIterator endIds() const { return end(); }
-
-  PtrIterator beginPtrs() const { return begin(); }
-  PtrIterator endPtrs() const { return end(); }
 
   template <class T>
   class CastingIterator {
@@ -137,7 +101,7 @@ public:
 
     void advanceToValid()
     {
-      while ((itsItr != itsEnd) && (dynamic_cast<T*>(itsItr.getObject())==0))
+      while ((itsItr != itsEnd) && (dynamic_cast<T*>(*itsItr)==0))
         ++itsItr;
     }
 
@@ -154,7 +118,7 @@ public:
       { return itsItr != other.itsItr; }
 
     T* operator*() const
-      { return &(dynamic_cast<T&>(*itsItr.getObject())); }
+      { return &(dynamic_cast<T&>(**itsItr)); }
 
     T* operator->() const
       { return operator*(); }

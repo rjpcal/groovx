@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Aug  9 07:03:44 2001
+// written: Thu Aug 16 15:13:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,12 +234,7 @@ ObjDb::Iterator::operator++()
   return *this;
 }
 
-int ObjDb::Iterator::getId() const
-{
-  return (*(itsImpl->itsIter)).first;
-}
-
-Util::Object* ObjDb::Iterator::getObject() const
+Util::Object* ObjDb::Iterator::operator*() const
 {
   return (*(itsImpl->itsIter)).second.get();
 }
