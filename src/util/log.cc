@@ -100,11 +100,16 @@ DOTRACE("Util::Log::addScope");
 void Util::Log::removeScope(const fstring& name)
 {
 DOTRACE("Util::Log::removeScope");
-  for (int i = int(scopes.size()) - 1; i >= 0; --i)
+  for (int i = int(scopes.size()); i > 0; /* decr in loop body */)
     {
+      --i;
       if (scopes.at(i).itsName == name)
         {
           scopes.erase(scopes.begin() + i);
+
+          // Return immediately, since this function is intended to remove
+          // at most one scope from the stack of scopes.
+          return;
         }
     }
 }
