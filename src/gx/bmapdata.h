@@ -3,7 +3,7 @@
 // bmapdata.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jan 19 17:25:51 2000
-// written: Tue Mar  7 15:19:35 2000
+// written: Wed Mar 22 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
 
-#ifndef ARRAYS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ARRAYS_H)
 #include "util/arrays.h"
 #endif
 
-#ifndef POINTERS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H)
 #include "util/pointers.h"
 #endif
 

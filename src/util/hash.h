@@ -3,7 +3,7 @@
 // hash.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 20 08:50:34 2000
-// written: Mon Mar 20 23:46:39 2000
+// written: Wed Mar 22 16:47:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "util/arrays.h"
 #include "util/lists.h"
 
-#ifndef CSTDDEF_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF)
 #include <cstddef>
 #define CSTDDEF_DEFINED
 #endif

@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Thu Mar  9 15:34:56 2000
+// written: Wed Mar 22 16:47:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 #ifndef FISH_H_DEFINED
 #define FISH_H_DEFINED
 
-#ifndef GROBJ_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
 #include "grobj.h"
 #endif
 
-#ifndef PROPERTY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
 #include "property.h"
 #endif
 
-#ifndef TRACER_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H)
 #include "util/tracer.h"
 #endif
 

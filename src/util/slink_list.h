@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Mar 20 14:30:04 2000
+// written: Mon Mar 20 15:24:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,14 +33,16 @@ public:
   class iterator {
   private:
 	 node* nn;
-  public:
-	 iterator(node* n = 0) : nn(n) {}
 
+  public:
+	 friend class slink_list;
 	 friend class const_iterator;
 
 	 typedef T value_type;
 	 typedef T* pointer;
 	 typedef T& reference;
+
+	 iterator(node* n = 0) : nn(n) {}
 
 	 reference operator*() { return nn->val; }
 	 pointer operator->() { return &(nn->val); }
@@ -55,13 +57,16 @@ public:
   class const_iterator {
   private:
 	 node* nn;
+
   public:
-	 const_iterator(node* n = 0) : nn(n) {}
-	 const_iterator(const iterator& other) : nn (other.nn) {}
+	 friend class slink_list;
 
 	 typedef const T value_type;
 	 typedef const T* pointer;
 	 typedef const T& reference;
+
+	 const_iterator(node* n = 0) : nn(n) {}
+	 const_iterator(const iterator& other) : nn (other.nn) {}
 
 	 const_reference operator*() { return nn->val; }
 	 const_pointer operator->() { return &(nn->val); }

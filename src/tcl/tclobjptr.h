@@ -3,7 +3,7 @@
 // tclobjlock.h
 // Rob Peters
 // created: Tue May 11 13:44:19 1999
-// written: Thu Mar  9 16:59:33 2000
+// written: Wed Mar 22 16:46:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLOBJLOCK_H_DEFINED
 #define TCLOBJLOCK_H_DEFINED
 
-#ifndef TCL_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCL_H)
 #include <tcl.h>
 #define TCL_H_DEFINED
 #endif

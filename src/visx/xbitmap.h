@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Thu Mar  9 17:02:16 2000
+// written: Wed Mar 22 16:47:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef XBITMAP_H_DEFINED
 #define XBITMAP_H_DEFINED
 
-#ifndef BITMAP_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H)
 #include "bitmap.h"
 #endif
 

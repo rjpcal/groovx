@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Fri Mar 10 00:36:47 2000
+// written: Wed Mar 22 16:47:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef RHLIST_H_DEFINED
 #define RHLIST_H_DEFINED
 
-#ifndef PTRLIST_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H)
 #include "ptrlist.h"
 #endif
 

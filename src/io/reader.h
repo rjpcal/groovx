@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Mar 22 15:52:30 2000
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef READER_H_DEFINED
 #define READER_H_DEFINED
 
-#ifndef ERROR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
 #include "util/error.h"
 #endif
 

@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Wed Feb 16 07:47:42 2000
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef POSLIST_H_DEFINED
 #define POSLIST_H_DEFINED
 
-#ifndef PTRLIST_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H)
 #include "ptrlist.h"
 #endif
 

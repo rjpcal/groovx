@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Thu Mar  9 15:44:21 2000
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef POSITION_H_DEFINED
 #define POSITION_H_DEFINED
 
-#ifndef IO_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
 #include "io.h"
 #endif
 

@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Fri Jan 14 11:58:18 2000
+// written: Wed Mar 22 16:47:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TLISTWIDGET_H_DEFINED
 #define TLISTWIDGET_H_DEFINED
 
-#ifndef TOGLCONFIG_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGLCONFIG_H)
 #include "toglconfig.h"
 #endif
 

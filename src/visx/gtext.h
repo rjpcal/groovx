@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Mon Mar  6 17:54:38 2000
+// written: Wed Mar 22 16:47:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 #ifndef GTEXT_H_DEFINED
 #define GTEXT_H_DEFINED
 
-#ifndef GROBJ_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
 #include "grobj.h"
 #endif
 
-#ifndef ERROR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
 #include "util/error.h"
 #endif
 
-#ifndef STRINGS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H)
 #include "util/strings.h"
 #endif
 

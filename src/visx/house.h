@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Sat Mar  4 02:48:01 2000
+// written: Wed Mar 22 16:47:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef HOUSE_H_DEFINED
 #define HOUSE_H_DEFINED
 
-#ifndef GROBJ_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
 #include "grobj.h"
 #endif
 
-#ifndef PROPERTY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
 #include "property.h"
 #endif
 

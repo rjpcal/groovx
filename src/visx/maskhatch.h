@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Sat Mar  4 02:48:10 2000
+// written: Wed Mar 22 16:47:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef MASKHATCH_H_DEFINED
 #define MASKHATCH_H_DEFINED
 
-#ifndef GROBJ_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
 #include "grobj.h"
 #endif
 
-#ifndef PROPERTY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
 #include "property.h"
 #endif
 

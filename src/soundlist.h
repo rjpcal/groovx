@@ -3,7 +3,7 @@
 // soundlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:40 1999
-// written: Wed Feb 16 08:07:32 2000
+// written: Wed Mar 22 16:47:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef SOUNDLIST_H_DEFINED
 #define SOUNDLIST_H_DEFINED
 
-#ifndef PTRLIST_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H)
 #include "ptrlist.h"
 #endif
 

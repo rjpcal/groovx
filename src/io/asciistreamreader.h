@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Wed Mar 22 15:53:15 2000
+// written: Wed Mar 22 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef ASCIISTREAMREADER_H_DEFINED
 #define ASCIISTREAMREADER_H_DEFINED
 
-#ifndef READER_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(READER_H)
 #include "reader.h"
 #endif
 

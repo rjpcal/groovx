@@ -3,7 +3,7 @@
 // blocklist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:16 1999
-// written: Wed Feb 16 07:45:30 2000
+// written: Wed Mar 22 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef BLOCKLIST_H_DEFINED
 #define BLOCKLIST_H_DEFINED
 
-#ifndef PTRLIST_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H)
 #include "ptrlist.h"
 #endif
 

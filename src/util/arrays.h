@@ -3,7 +3,7 @@
 // arrays.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 15:56:36 2000
-// written: Sat Mar 18 10:00:23 2000
+// written: Wed Mar 22 16:47:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef ARRAYS_H_DEFINED
 #define ARRAYS_H_DEFINED
 
-#ifndef CSTDDEF_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF)
 #include <cstddef>
 #define CSTDDEF_DEFINED
 #endif

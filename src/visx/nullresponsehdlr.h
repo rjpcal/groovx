@@ -3,7 +3,7 @@
 // nullresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:35 1999
-// written: Wed Dec  1 14:37:09 1999
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef NULLRESPONSEHDLR_H_DEFINED
 #define NULLRESPONSEHDLR_H_DEFINED
 
-#ifndef RESPONSEHANDLER_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RESPONSEHANDLER_H)
 #include "responsehandler.h"
 #endif
 

@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Thu Mar  9 15:31:39 2000
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 #ifndef PROPERTY_H_DEFINED
 #define PROPERTY_H_DEFINED
 
-#ifndef IO_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
 #include "io.h"
 #endif
 
-#ifndef OBSERVABLE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H)
 #include "observable.h"
 #endif
 
-#ifndef VALUE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H)
 #include "value.h"
 #endif
 

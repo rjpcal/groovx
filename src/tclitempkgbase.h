@@ -3,7 +3,7 @@
 // tclitempkgbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Dec 16 15:25:06 1999
-// written: Wed Mar 15 10:59:37 2000
+// written: Wed Mar 22 16:46:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLITEMPKGBASE_H_DEFINED
 #define TCLITEMPKGBASE_H_DEFINED
 
-#ifndef TCLPKG_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLPKG_H)
 #include "tcl/tclpkg.h"
 #endif
 

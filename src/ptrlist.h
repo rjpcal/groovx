@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Fri Mar 17 17:09:23 2000
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef PTRLIST_H_DEFINED
 #define PTRLIST_H_DEFINED
 
-#ifndef DUMBPTR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DUMBPTR_H)
 #include "dumbptr.h"
 #endif
 
-#ifndef IOPTRLIST_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOPTRLIST_H)
 #include "ioptrlist.h"
 #endif
 

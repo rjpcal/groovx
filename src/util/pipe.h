@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Thu Mar  9 15:22:36 2000
+// written: Wed Mar 22 16:47:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,12 +11,12 @@
 #ifndef PIPE_H_DEFINED
 #define PIPE_H_DEFINED
 
-#ifndef CSTDIO_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDIO)
 #include <cstdio>
 #define CSTDIO_DEFINED
 #endif
 
-#ifndef FSTREAM_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FSTREAM_H)
 #include <fstream.h>
 #define FSTREAM_H_DEFINED
 #endif

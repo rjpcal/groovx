@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Mon Mar 13 19:05:32 2000
+// written: Wed Mar 22 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef BLOCK_H_DEFINED
 #define BLOCK_H_DEFINED
 
-#ifndef IO_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
 #include "io.h"
 #endif
 

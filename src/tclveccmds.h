@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Mar 16 14:07:50 2000
+// written: Wed Mar 22 16:46:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef TCLVECCMDS_H_DEFINED
 #define TCLVECCMDS_H_DEFINED
 
-#ifndef POINTERS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H)
 #include "util/pointers.h"
 #endif
 
-#ifndef TCLCMD_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H)
 #include "tcl/tclcmd.h"
 #endif
 

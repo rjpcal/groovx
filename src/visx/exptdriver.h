@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 15 10:19:31 2000
+// written: Wed Mar 22 16:47:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 #ifndef EXPTDRIVER_H_DEFINED
 #define EXPTDRIVER_H_DEFINED
 
-#ifndef IO_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
 #include "io.h"
 #endif
 
-#ifndef ERROR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
 #include "util/error.h"
 #endif
 
-#ifndef EXPERIMENT_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EXPERIMENT_H)
 #include "experiment.h"
 #endif
 

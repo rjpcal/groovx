@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu Mar  9 15:57:18 2000
+// written: Wed Mar 22 16:46:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLVALUE_H_DEFINED
 #define TCLVALUE_H_DEFINED
 
-#ifndef VALUE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H)
 #include "value.h"
 #endif
 

@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 10:55:51 1999
-// written: Wed Mar 15 10:19:32 2000
+// written: Wed Mar 22 16:44:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef APPLICATION_H_DEFINED
 #define APPLICATION_H_DEFINED
 
-#ifndef ERROR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
 #include "util/error.h"
 #endif
 

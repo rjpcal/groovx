@@ -3,7 +3,7 @@
 // glcanvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Feb 18 22:46:54 2000
+// written: Wed Mar 22 16:47:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef GLCANVAS_H_DEFINED
 #define GLCANVAS_H_DEFINED
 
-#ifndef CANVAS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVAS_H)
 #include "canvas.h"
 #endif
 

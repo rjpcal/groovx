@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Mar 15 10:57:29 2000
+// written: Wed Mar 22 16:47:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,16 +11,16 @@
 #ifndef LISTITEMPKG_H_DEFINED
 #define LISTITEMPKG_H_DEFINED
 
-#ifndef TYPEINFO_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO)
 #include <typeinfo>
 #define TYPEINFO_DEFINED
 #endif
 
-#ifndef TCLITEMPKG_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H)
 #include "tcl/tclitempkg.h"
 #endif
 
-#ifndef DEMANGLE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H)
 #include "demangle.h"
 #endif
 

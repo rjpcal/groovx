@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Fri Mar 10 00:33:15 2000
+// written: Wed Mar 22 16:47:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef RESPONSEHANDLER_H_DEFINED
 #define RESPONSEHANDLER_H_DEFINED
 
-#ifndef IO_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
 #include "io.h"
 #endif
 

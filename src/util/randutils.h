@@ -3,7 +3,7 @@
 // randutils.h
 // Rob Peters
 // created: Mon Mar  8 02:35:53 1999
-// written: Thu May 27 20:08:12 1999
+// written: Wed Mar 22 16:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef RANDUTILS_H_DEFINED
 #define RANDUTILS_H_DEFINED
 
-#ifndef CSTDLIB_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDLIB)
 #include <cstdlib>
 #define CSTDLIB_DEFINED
 #endif

@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Mar  4 02:47:45 2000
+// written: Wed Mar 22 16:47:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef GABOR_H_DEFINED
 #define GABOR_H_DEFINED
 
-#ifndef GROBJ_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
 #include "grobj.h"
 #endif
 
-#ifndef PROPERTY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
 #include "property.h"
 #endif
 

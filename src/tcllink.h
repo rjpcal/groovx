@@ -3,7 +3,7 @@
 // tcllink.h
 // Rob Peters
 // created: Tue May  4 19:16:47 1999
-// written: Mon Mar  6 19:04:08 2000
+// written: Wed Mar 22 16:46:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLLINK_H_DEFINED
 #define TCLLINK_H_DEFINED
 
-#ifndef ARRAYS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ARRAYS_H)
 #include "util/strings.h"
 #endif
 

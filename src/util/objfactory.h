@@ -3,7 +3,7 @@
 // iofactory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:06 1999
-// written: Fri Feb 18 22:52:43 2000
+// written: Wed Mar 22 16:47:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef IOFACTORY_H_DEFINED
 #define IOFACTORY_H_DEFINED
 
-#ifndef FACTORY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FACTORY_H)
 #include "factory.h"
 #endif
 
-#ifndef IO_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
 #include "io.h"
 #endif
 

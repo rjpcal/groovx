@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Mon Mar 20 08:19:42 2000
+// written: Wed Mar 22 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,16 +11,16 @@
 #ifndef BEZIER_H_DEFINED
 #define BEZIER_H_DEFINED
 
-#ifndef CMATH_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CMATH)
 #include <cmath>
 #define CMATH_DEFINED
 #endif
 
-#ifndef ARRAYS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ARRAYS_H)
 #include "util/arrays.h"
 #endif
 
-#ifndef LISTS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LISTS_H)
 #include "util/lists.h"
 #endif
 

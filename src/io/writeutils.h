@@ -3,7 +3,7 @@
 // writeutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:18:36 1999
-// written: Fri Mar 10 20:25:03 2000
+// written: Wed Mar 22 16:47:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef WRITEUTILS_H_DEFINED
 #define WRITEUTILS_H_DEFINED
 
-#ifndef WRITER_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WRITER_H)
 #include "writer.h"
 #endif
 

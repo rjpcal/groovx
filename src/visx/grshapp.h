@@ -3,7 +3,7 @@
 // grshapp.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:58 1999
-// written: Wed Mar 15 10:19:31 2000
+// written: Wed Mar 22 16:47:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef GRSHAPP_H_DEFINED
 #define GRSHAPP_H_DEFINED
 
-#ifndef APPLICATION_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(APPLICATION_H)
 #include "application.h"
 #endif
 
-#ifndef ERROR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
 #include "util/error.h"
 #endif
 

@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Wed Mar 15 11:11:24 2000
+// written: Wed Mar 22 16:47:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef PROPITEMPKG_H_DEFINED
 #define PROPITEMPKG_H_DEFINED
 
-#ifndef LISTITEMPKG_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LISTITEMPKG_H)
 #include "tcl/listitempkg.h"
 #endif
 
-#ifndef IOFACTORY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOFACTORY_H)
 #include "iofactory.h"
 #endif
 

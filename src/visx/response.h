@@ -3,7 +3,7 @@
 // response.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:30:04 2000
-// written: Mon Mar 13 19:44:20 2000
+// written: Wed Mar 22 16:47:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef RESPONSE_H_DEFINED
 #define RESPONSE_H_DEFINED
 
-#ifndef VALUE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H)
 #include "value.h"
 #endif
 

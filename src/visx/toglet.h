@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar  7 15:36:16 2000
+// written: Wed Mar 22 16:47:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 #ifndef TOGLCONFIG_H_DEFINED
 #define TOGLCONFIG_H_DEFINED
 
-#ifndef POINTERS_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H)
 #include "util/pointers.h"
 #endif
 
-#ifndef RECT_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H)
 #include "rect.h"
 #endif
 
-#ifndef WIDGET_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WIDGET_H)
 #include "widget.h"
 #endif
 

@@ -3,7 +3,7 @@
 // stopwatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov 18 10:24:59 1999
-// written: Fri Mar 10 00:28:35 2000
+// written: Wed Mar 22 16:47:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef STOPWATCH_H_DEFINED
 #define STOPWATCH_H_DEFINED
 
-#ifndef TIME_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TIME_H)
 #include <sys/time.h>
 #define TIME_H_DEFINED
 #endif

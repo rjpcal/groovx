@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Mar 15 10:57:57 2000
+// written: Wed Mar 22 16:46:59 2000
 // $Id$
 //
 //
@@ -12,15 +12,15 @@
 #ifndef TCLITEMPKG_H_DEFINED
 #define TCLITEMPKG_H_DEFINED
 
-#ifndef TCLITEMPKGBASE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKGBASE_H)
 #include "tcl/tclitempkgbase.h"
 #endif
 
-#ifndef TCLCMD_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H)
 #include "tcl/tclcmd.h"
 #endif
 
-#ifndef PROPERTY_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
 #include "property.h"
 #endif
 

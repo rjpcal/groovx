@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Fri Mar 10 00:44:13 2000
+// written: Wed Mar 22 16:47:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
 
-#ifndef ERROR_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
 #include "util/error.h"
 #endif
 
-#ifndef DEMANGLE_H_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H)
 #include "demangle.h"
 #endif
 
-#ifndef TYPEINFO_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO)
 #include <typeinfo>
 #define TYPEINFO_DEFINED
 #endif
