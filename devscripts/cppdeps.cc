@@ -264,7 +264,6 @@ class file_info;
 
 // Typedefs and enums
 typedef vector<file_info*>      dep_list_t;
-typedef map<string, dep_list_t> dep_map_t;
 
 enum parse_state
   {
@@ -299,7 +298,6 @@ public:
   const file_info*            source;
   bool                        literal; // if true, then don't try to look up nested includes
   parse_state                 cdep_parse_state;
-  parse_state                 ldep_parse_state;
   bool                        direct_cdeps_done;
   dep_list_t                  direct_cdeps;
   bool                        nested_cdeps_done;
@@ -320,7 +318,6 @@ private:
     source(0),
     literal(false),
     cdep_parse_state(NOT_STARTED),
-    ldep_parse_state(NOT_STARTED),
     direct_cdeps_done(false),
     direct_cdeps(),
     nested_cdeps_done(false),
@@ -1150,14 +1147,10 @@ const dep_list_t& cppdeps::get_nested_ldeps(file_info* finfo)
   if (finfo->nested_ldeps_done)
     return finfo->nested_ldeps;
 
-  if (finfo->ldep_parse_state == IN_PROGRESS)
-    {
-      cerr << "ERROR: in " << finfo->fname
-           << ": untrapped nested link-dep recursion\n";
-      exit(1);
-    }
-
-  finfo->ldep_parse_state = IN_PROGRESS;
+  // Enforce that this function is not safe for being called recursively.
+  static bool computing_ldeps = false;
+  assert(!computing_ldeps);
+  computing_ldeps = true;
 
   if (m_cfg_verbose)
     {
@@ -1209,8 +1202,8 @@ const dep_list_t& cppdeps::get_nested_ldeps(file_info* finfo)
   assert(finfo->nested_ldeps.empty());
   finfo->nested_ldeps.assign(deps_set.begin(), deps_set.end());
 
-  finfo->ldep_parse_state = COMPLETE;
   finfo->nested_ldeps_done = true;
+  computing_ldeps = false;
 
   return finfo->nested_ldeps;
 }
