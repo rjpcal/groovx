@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Oct 13 15:37:50 1999
+// written: Thu Oct 21 13:05:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,6 @@
 #ifndef GROBJTCL_CC_DEFINED
 #define GROBJTCL_CC_DEFINED
 
-#include <typeinfo>
-
-#include "demangle.h"
 #include "grobj.h"
 #include "objlist.h"
 #include "listitempkg.h"
@@ -26,7 +23,6 @@
 
 namespace GrobjTcl {
   class BoundingBoxCmd;
-  class TypeCmd;
   class GrObjPkg;
 };
 
@@ -55,23 +51,6 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// TypeCmd --
-//
-//---------------------------------------------------------------------
-
-class GrobjTcl::TypeCmd : public TclItemCmd<GrObj> {
-public:
-  TypeCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 GrObj* p = getItem();
-	 returnCstring(demangle(typeid(*p).name()).c_str());
-  }
-};
-
-//---------------------------------------------------------------------
-//
 // GrObjPkg definitions --
 //
 //---------------------------------------------------------------------
@@ -83,7 +62,6 @@ public:
 													 "GrObj", "2.5")
   {
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
-	 addCommand( new TypeCmd(this, "GrObj::type") );
 
 	 declareCAttrib("alignmentMode",
 						 &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
