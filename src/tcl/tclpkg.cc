@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Mar 21 19:59:20 2000
+// written: Thu Mar 23 19:37:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -191,6 +191,60 @@ private:
   int itsItemArgn;
 };
 
+class ItemASRLoadCmd : public ASRLoadCmd {
+public:
+  ItemASRLoadCmd(TclIoItemPkg* pkg, int item_argn) :
+	 ASRLoadCmd(pkg->interp(), pkg->makePkgCmdName("load"),
+					item_argn ? "item_id filename" : "filename",
+					item_argn+2),
+	 itsPkg(pkg),
+	 itsItemArgn(item_argn) {}
+  
+protected:
+  virtual IO& getIO() {
+	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+	 return itsPkg->getIoFromId(id);
+  }
+
+  virtual const char* getFilename() {
+	 return getCstringFromArg(itsItemArgn+1);
+  }
+
+private:
+  ItemASRLoadCmd(const ItemASRLoadCmd&);
+  ItemASRLoadCmd& operator=(const ItemASRLoadCmd&);
+
+  TclIoItemPkg* itsPkg;
+  int itsItemArgn;
+};
+
+class ItemASWSaveCmd : public ASWSaveCmd {
+public:
+  ItemASWSaveCmd(TclIoItemPkg* pkg, int item_argn) :
+	 ASWSaveCmd(pkg->interp(), pkg->makePkgCmdName("save"),
+					item_argn ? "item_id filename" : "filename",
+					item_argn+2),
+	 itsPkg(pkg),
+	 itsItemArgn(item_argn) {}
+  
+protected:
+  virtual IO& getIO() {
+	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+	 return itsPkg->getIoFromId(id);
+  }
+
+  virtual const char* getFilename() {
+	 return getCstringFromArg(itsItemArgn+1);
+  }
+
+private:
+  ItemASWSaveCmd(const ItemASWSaveCmd&);
+  ItemASWSaveCmd& operator=(const ItemASWSaveCmd&);
+
+  TclIoItemPkg* itsPkg;
+  int itsItemArgn;
+};
+
 TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name, 
                            const char* version, int item_argn) :
   TclItemPkg(interp, name, version, item_argn)
@@ -200,6 +254,9 @@ TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name,
 
   addCommand( new ItemWriteCmd(this, itemArgn()) );
   addCommand( new ItemReadCmd(this, itemArgn()) );
+
+  addCommand( new ItemASWSaveCmd(this, itemArgn()) );
+  addCommand( new ItemASRLoadCmd(this, itemArgn()) );
 }
 
 } // end namespace Tcl
