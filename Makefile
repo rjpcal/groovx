@@ -254,7 +254,8 @@ endif
 ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
 $(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
-	echo $< >> $(LOGS)/CompileStats
+	@echo $< >> $(LOGS)/CompileStats
+	@echo ""
 	$(CXX) $(ALL_CC_OPTIONS) \
 		-c $< \
 		-o $@
