@@ -9,6 +9,8 @@ PACKAGE_VERSION := @PACKAGE_VERSION@
 prefix := @prefix@
 exec_prefix := @exec_prefix@
 
+enable_matlab := @enable_matlab@
+
 EXECUTABLE := @EXECUTABLE@
 
 CXX := @CXX@
