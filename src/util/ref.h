@@ -13,10 +13,6 @@
 #ifndef REF_H_DEFINED
 #define REF_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
 #endif
@@ -96,43 +92,43 @@ private:
 
   class Handle {
   public:
-	 explicit Handle(T* master) : itsMaster(master)
-	 {
-		if (master == 0) Util::RefHelper::throwErrorWithMsg(
-									 "attempted to construct a Ref with a null pointer");
-		itsMaster->incrRefCount();
-	 }
+    explicit Handle(T* master) : itsMaster(master)
+    {
+      if (master == 0) Util::RefHelper::throwErrorWithMsg(
+                            "attempted to construct a Ref with a null pointer");
+      itsMaster->incrRefCount();
+    }
 
-	 ~Handle()
+    ~Handle()
     { itsMaster->decrRefCount(); }
 
-	 Handle(const Handle& other) : itsMaster(other.itsMaster)
+    Handle(const Handle& other) : itsMaster(other.itsMaster)
     { itsMaster->incrRefCount(); }
 
-	 template <class U> friend class Handle;
+    template <class U> friend class Handle;
 
-	 template <class U>
-	 Handle(const Handle<U>& other) : itsMaster(other.itsMaster)
+    template <class U>
+    Handle(const Handle<U>& other) : itsMaster(other.itsMaster)
     { itsMaster->incrRefCount(); }
 
-	 Handle& operator=(const Handle& other)
+    Handle& operator=(const Handle& other)
     {
       Handle otherCopy(other);
       this->swap(otherCopy);
       return *this;
     }
 
-	 T* get() const { return itsMaster; }
+    T* get() const { return itsMaster; }
 
   private:
-	 void swap(Handle& other)
+    void swap(Handle& other)
     {
       T* otherMaster = other.itsMaster;
       other.itsMaster = this->itsMaster;
       this->itsMaster = otherMaster;
     }
 
-	 T* itsMaster;
+    T* itsMaster;
   };
 
   Handle itsHandle;
@@ -182,8 +178,12 @@ Ref<To> dynamicCast(Ref<Fr> p)
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MaybeRef<T> is a wrapper of a NullablePtrHandle<T> along
- * with an integer index from a PtrList<T>.
+ * Util::MaybeRef<T> is a ref-counted smart pointer for holding
+ * RefCounted objects. However, a Util::MaybeRef<T> is not guaranteed
+ * to always point to a valid object (this must be tested with
+ * isValid() before dereferencing). Therefore, Util::MaybeRef<T> can
+ * be used with volatile RefCounted objects for which only weak
+ * references are available.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -194,83 +194,70 @@ template <class T>
 class MaybeRef {
 private:
 
-  class NullablePtrHandle {
+  // This internal helper class manages memory etc., and provides one
+  // important guarantee: it will never return an invalid pointer from
+  // get() (an exception will be raised if this would fail)
+  class WeakHandle {
+  private:
+    void acquire() { if (itsMaster != 0) itsMaster->incrRefCount(); }
+
+    void release()
+	 {
+		if (itsMaster != 0)
+		  {
+			 itsMaster->decrRefCount();
+			 itsMaster = 0;
+		  }
+	 }
+
   public:
-	 explicit NullablePtrHandle(T* master) : itsMaster(master)
+    explicit WeakHandle(T* master) : itsMaster(master)
+    { acquire(); }
+
+    ~WeakHandle()
+    { release(); }
+
+    WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster)
+    { acquire(); }
+
+    template <class U>
+    WeakHandle(const WeakHandle<U>& other) :
+      itsMaster(other.isValid() ? other.get() : 0)
+    { acquire(); }
+
+    WeakHandle& operator=(const WeakHandle& other)
     {
-      if (itsMaster != 0)
-        itsMaster->incrRefCount();
-    }
-
-	 ~NullablePtrHandle()
-    {
-      if (itsMaster != 0)
-        itsMaster->decrRefCount();
-    }
-
-	 //
-	 // Copy constructors
-	 //
-
-	 NullablePtrHandle(const NullablePtrHandle& other) : itsMaster(other.itsMaster)
-    {
-      if (itsMaster != 0)
-        itsMaster->incrRefCount();
-    }
-
-	 template <class U>
-	 NullablePtrHandle(const NullablePtrHandle<U>& other) :
-		itsMaster(other.isValid() ? other.get() : 0)
-    {
-      if (itsMaster != 0)
-        itsMaster->incrRefCount();
-    }
-
-	 //
-	 // Assignment operators
-	 //
-
-	 NullablePtrHandle& operator=(const NullablePtrHandle& other)
-    {
-      NullablePtrHandle otherCopy(other);
+      WeakHandle otherCopy(other);
       this->swap(otherCopy);
       return *this;
     }
 
 
-	 bool isValid() const { return itsMaster != 0; }
+    bool isValid() const { return itsMaster != 0; }
 
-	 void release()
-    {
-      if (itsMaster != 0)
-        itsMaster->decrRefCount();
-      itsMaster = 0;
-    }
-
-	 T* operator->() const { return get(); }
-	 T& operator*()  const { return *(get()); }
-
-	 T* get()        const { ensureValid(); return itsMaster; }
+	 // never returns an invalid pointer; throws an exception if the
+	 // pointer would be invalid
+    T* get() const { ensureValid(); return itsMaster; }
 
   private:
-	 void ensureValid() const
-	 {
-		if (itsMaster == 0)
-		  Util::RefHelper::throwErrorWithMsg(
-								"attempted to derefence an invalid WeakRef");
-	 }
+    void ensureValid() const
+    {
+      if (!isValid())
+        Util::RefHelper::throwErrorWithMsg(
+                        "attempted to derefence an invalid WeakRef");
+    }
 
-	 void swap(NullablePtrHandle& other)
+    void swap(WeakHandle& other)
     {
       T* otherMaster = other.itsMaster;
       other.itsMaster = this->itsMaster;
       this->itsMaster = otherMaster;
     }
 
-	 T* itsMaster;
+    T* itsMaster;
   };
 
-  mutable NullablePtrHandle itsHandle;
+  mutable WeakHandle itsHandle;
   Util::UID itsId;
 
   void insertItem()
@@ -279,28 +266,38 @@ private:
       RefHelper::insertItem(itsHandle.get());
   }
 
+  // This will try to refresh the handle from the id, but will just
+  // leave the object with an invalid handle if refreshing is not
+  // possible (thus a future dereference will fail).
+  void refresh() const {
+    if ( !itsHandle.isValid() )
+      {
+        if (RefHelper::isValidId(itsId)) {
+			 Ref<T> p(itsId);
+			 itsHandle = WeakHandle(p.get());
+			 if (itsId != itsHandle.get()->id())
+				Util::RefHelper::throwErrorWithMsg("assertion failed in refresh");
+		  }
+		}
+  }
+
 public:
   MaybeRef() : itsHandle(0), itsId(0) {}
 
   explicit MaybeRef(Util::UID id_) : itsHandle(0), itsId(id_) {}
 
-  explicit MaybeRef(T* master) : itsHandle(master), itsId(0)
-  {
-    if (master != 0) itsId = master->id();
-    insertItem();
-  }
+  explicit MaybeRef(T* master) : itsHandle(master),
+											itsId(master ? master->id() : 0)
+  { insertItem(); }
 
-  MaybeRef(T* master, bool /*noInsert*/) : itsHandle(master), itsId(0)
-    { if (master != 0) itsId = master->id(); }
+  MaybeRef(T* master, bool /*noInsert*/) : itsHandle(master),
+														 itsId(master ? master->id() : 0)
+  {}
 
 
   template <class U>
   MaybeRef(const MaybeRef<U>& other) :
-    itsHandle(0), itsId(other.id())
-  {
-	 if (other.isValid())
-		itsHandle = NullablePtrHandle(other.get());
-  }
+    itsHandle(other.isValid() ? other.get() : 0), itsId(other.id()) {}
 
   template <class U>
   MaybeRef(const Ref<U>& other) :
@@ -313,36 +310,8 @@ public:
 
   T* get()        const { refresh(); return itsHandle.get(); }
 
-  /** This will try to refresh the handle from the id, and will throw
-      an exception if the operation fails (if the id is invalid). */
-  void refresh() const {
-    if ( !itsHandle.isValid() )
-      {
-        Ref<T> p(itsId);
-        itsHandle = NullablePtrHandle(p.get());
-        if (itsId != itsHandle->id())
-          throw ErrorWithMsg("assertion failed in refresh");
-      }
-  }
 
-
-  /** This will try to refresh the handle from the id, but will not
-      throw an exception if the operation fails; it will just leave
-      the object with an invalid handle. */
-  void attemptRefresh() const {
-    if ( !itsHandle.isValid() )
-      {
-        if (RefHelper::isValidId(itsId)) {
-          Ref<T> p(itsId);
-          itsHandle = NullablePtrHandle(p.get());
-          if (itsId != itsHandle->id())
-            throw ErrorWithMsg("assertion failed in attemptRefresh");
-        }
-      }
-  }
-
-
-  bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
+  bool isValid() const { refresh(); return itsHandle.isValid(); }
 
   Util::UID id() const { return itsId; }
 };
