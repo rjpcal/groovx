@@ -383,6 +383,7 @@ DUMBPTR_H = dumbptr.h
 ERRMSG_H = errmsg.h
 ERROR_H = util/error.h
 EXPERIMENT_H = experiment.h
+IOSTL_H = iostl.h
 IOUTILS_H = ioutils.h
 OBJLISTTCL_H = objlisttcl.h
 OBJTOGL_H = objtogl.h
@@ -434,7 +435,6 @@ GROBJ_H = $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) $(TRACER_H) grobj.h
 GRSHAPP_H = $(APPLICATION_H) $(ERROR_H) grshapp.h
 IOFACTORY_H = $(FACTORY_H) $(IO_H) iofactory.h
 IOPTRLIST_H = $(VOIDPTRLIST_H) $(IO_H) ioptrlist.h
-IOSTL_H = $(IO_H) iostl.h
 POSITION_H = $(IO_H) position.h
 PROPERTY_H = $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
 RESPONSEHANDLER_H = $(IO_H) responsehandler.h 
@@ -638,7 +638,7 @@ IOMGR_CC = $(IOMGR_H) $(TRACE_H) $(DEBUG_H) iomgr.cc
 IOPTRLIST_CC = $(IOPTRLIST_H) $(DEMANGLE_H) $(IOMGR_H) \
 	$(READUTILS_H) $(WRITEUTILS_H) $(TRACE_H) $(DEBUG_H) ioptrlist.cc
 
-IOSTL_CC = $(IOSTL_H) iostl.cc
+IOSTL_CC = $(IOSTL_H) $(IO_H) iostl.cc
 
 IOUTILS_CC = $(IOUTILS_H) $(IO_H) ioutils.cc
 
