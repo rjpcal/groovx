@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov  3 19:09:21 1999
+// written: Thu Nov 11 14:39:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,6 +82,10 @@ public:
 
 private:
   bool doesDoUponCompletionExist() const;
+
+  void updateDoUponCompletionBody() const;
+
+  void recreateDoUponCompletionProc() const;
 
   void raiseBackgroundError(const char* msg) const;
   void raiseBackgroundError(const string& msg) const;
@@ -226,6 +230,38 @@ DOTRACE("ExptDriver::ExptImpl::doesDoUponCompletionExist");
   }
 
   return (llength > 0);
+}
+
+void ExptDriver::ExptImpl::updateDoUponCompletionBody() const {
+DOTRACE("ExptDriver::ExptImpl::updateDoUponCompletionBody");
+  if (doesDoUponCompletionExist()) {
+	 Tcl_ResetResult(itsInterp);
+	 int tclresult =
+		Tcl_GlobalEval(itsInterp,
+							"info body Expt::doUponCompletion");
+	 
+	 if (tclresult != TCL_OK) {
+		throw OutputError("couldn't get the proc body for Expt::doUponCompletion");
+	 }
+	 
+	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
+  }
+  else {
+	 itsDoUponCompletionBody = "";
+  }
+}
+
+void ExptDriver::ExptImpl::recreateDoUponCompletionProc() const {
+DOTRACE("ExptDriver::ExptImpl::recreateDoUponCompletionProc");
+  try {
+	 string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
+		+ itsDoUponCompletionBody + "} }";
+	 TclEvalCmd proc_cmd(proc_cmd_str, TclEvalCmd::THROW_EXCEPTION);
+	 proc_cmd.invoke(itsInterp);
+  }
+  catch (TclError& err) {
+	 throw InputError(err.msg());
+  }
 }
 
 void ExptDriver::ExptImpl::raiseBackgroundError(const char* msg) const {
@@ -464,21 +500,7 @@ DOTRACE("ExptDriver::ExptImpl::serialize");
 	  << itsRhId << IO::SEP
 	  << itsThId << endl;
 
-  if (doesDoUponCompletionExist()) {
-	 Tcl_ResetResult(itsInterp);
-	 int tclresult =
-		Tcl_GlobalEval(itsInterp,
-							"info body Expt::doUponCompletion");
-	 
-	 if (tclresult != TCL_OK) {
-		throw OutputError("couldn't get the proc body for Expt::doUponCompletion");
-	 }
-	 
-	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
-  }
-  else {
-	 itsDoUponCompletionBody = "";
-  }
+  updateDoUponCompletionBody();
 
   os << itsDoUponCompletionBody.length() << endl
 	  << itsDoUponCompletionBody << endl;
@@ -516,17 +538,12 @@ DOTRACE("ExptDriver::ExptImpl::serialize");
 	 buf[numchars] = '\0';
 	 
 	 itsDoUponCompletionBody = &buf[0];
-	 
-	 try {
-		string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
-		  + itsDoUponCompletionBody + "} }";
-		TclEvalCmd proc_cmd(proc_cmd_str, TclEvalCmd::THROW_EXCEPTION);
-		proc_cmd.invoke(itsInterp);
-	 }
-	 catch (TclError& err) {
-		throw InputError(err.msg());
-	 }
   }
+  else {
+	 itsDoUponCompletionBody = "";
+  }
+
+  recreateDoUponCompletionProc();
 
   if (is.fail()) throw InputError(ioTag);
 }
@@ -553,12 +570,52 @@ DOTRACE("ExptDriver::ExptImpl::charCount");
 			 + 5); // fudge factor
 }
 
-void ExptDriver::ExptImpl::readFrom(Reader* /*reader*/) {
+void ExptDriver::ExptImpl::readFrom(Reader* reader) {
 DOTRACE("ExptDriver::ExptImpl::readFrom");
+
+  reader->readOwnedObject("theObjList", &ObjList::theObjList());
+  reader->readOwnedObject("thePosList", &PosList::thePosList());
+  reader->readOwnedObject("theTlist", &Tlist::theTlist());
+  reader->readOwnedObject("theRhList", &RhList::theRhList());
+  reader->readOwnedObject("theThList", &ThList::theThList());
+  reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
+
+  reader->readValue("hostname", itsHostname);
+  reader->readValue("subject", itsSubject);
+  reader->readValue("beginDate", itsBeginDate);
+  reader->readValue("endDate", itsEndDate);
+  reader->readValue("autosaveFile", itsAutosaveFile);
+
+  reader->readValue("blockId", itsBlockId);
+  reader->readValue("rhId", itsRhId);
+  reader->readValue("thId", itsThId);
+
+  reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
+  recreateDoUponCompletionProc();
 }
 
-void ExptDriver::ExptImpl::writeTo(Writer* /*writer*/) const {
+void ExptDriver::ExptImpl::writeTo(Writer* writer) const {
 DOTRACE("ExptDriver::ExptImpl::writeTo");
+
+  writer->writeOwnedObject("theObjList", &ObjList::theObjList());
+  writer->writeOwnedObject("thePosList", &PosList::thePosList());
+  writer->writeOwnedObject("theTlist", &Tlist::theTlist());
+  writer->writeOwnedObject("theRhList", &RhList::theRhList());
+  writer->writeOwnedObject("theThList", &ThList::theThList());
+  writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
+
+  writer->writeValue("hostname", itsHostname);
+  writer->writeValue("subject", itsSubject);
+  writer->writeValue("beginDate", itsBeginDate);
+  writer->writeValue("endDate", itsEndDate);
+  writer->writeValue("autosaveFile", itsAutosaveFile);
+
+  writer->writeValue("blockId", itsBlockId);
+  writer->writeValue("rhId", itsRhId);
+  writer->writeValue("thId", itsThId);
+
+  updateDoUponCompletionBody();
+  writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
 }
 
 void ExptDriver::ExptImpl::init() {
