@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Mar 29 21:58:39 2000
+// written: Tue Oct 17 17:04:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ public:
   /// Query whether the drawable is double-buffered.
   virtual bool isDoubleBuffered() const = 0;
 
-  /// Swap the front and back buffers of a double-buffered drawable.
+  /// Swap the foreground and background colors.
   virtual void swapForeBack() const = 0;
 
   /// Flush all pending drawing requests.
