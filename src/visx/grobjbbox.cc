@@ -24,6 +24,9 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+unsigned int GrObjBBox::theirTimerCount = 0;
+Tcl::Timer GrObjBBox::theirTimer(100, true);
+
 namespace
 {
   Gfx::Rect<double> addPixelBorder(Gfx::Canvas& canvas,
@@ -38,6 +41,16 @@ namespace
 
     return result;
   }
+}
+
+GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig) :
+  Gnode(child),
+  isItVisible(false),
+  itsPixelBorder(4),
+  itsStipple(0x0F0F), // 0000111100001111
+  itsMask(0x3333)     // 0011001100110011
+{
+  theirTimer.sigTimeOut.connect(sig.slot());
 }
 
 Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const

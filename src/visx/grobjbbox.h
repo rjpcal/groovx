@@ -28,29 +28,30 @@ private:
   GrObjBBox& operator=(const GrObjBBox&);
 
 public:
-  GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig) :
-    Gnode(child),
-    isItVisible(false),
-    itsPixelBorder(4),
-    itsTimer(100, true),
-    itsStipple(0x0F0F), // 0000111100001111
-    itsMask(0x3333)     // 0011001100110011
-  {
-    itsTimer.sigTimeOut.connect(sig.slot());
-  }
+  GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig);
 
   virtual ~GrObjBBox() {}
 
   bool isVisible() const { return isItVisible; }
   void setVisible(bool val)
   {
+	 if (isItVisible == val) return;
+
     isItVisible = val;
 
 #ifdef ANIMATE_BBOX
     if (isItVisible)
-      itsTimer.schedule();
+		{
+		  ++theirTimerCount;
+		  if (theirTimerCount == 1)
+			 theirTimer.schedule();
+		}
     else
-      itsTimer.cancel();
+		{
+		  --theirTimerCount;
+		  if (theirTimerCount == 0)
+			 theirTimer.cancel();
+		}
 #endif
   }
 
@@ -66,7 +67,8 @@ private:
 
   mutable int itsPixelBorder;
 
-  Tcl::Timer itsTimer;
+  static unsigned int theirTimerCount;
+  static Tcl::Timer theirTimer;
 
   mutable unsigned short itsStipple;
   mutable unsigned short itsMask;
