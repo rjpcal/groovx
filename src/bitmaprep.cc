@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 07:12:51 2001
+// written: Fri Aug 10 07:27:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,17 +94,31 @@ public:
 
 class PbmUpdater : public BmapData::UpdateFunc {
 public:
-  PbmUpdater(const char* filename,
-              bool contrast = false, bool vertical = false) :
+  PbmUpdater(const fstring& filename, fstring& owner_filename,
+             bool contrast, bool vertical) :
     itsFilename(filename),
+    itsOwnerFilename(owner_filename),
     itsFlipContrast(contrast),
     itsFlipVertical(vertical)
-  {}
+  {
+    // If the first character of the new filename is '.', then we assume
+    // it is a temp file, and therefore we don't save this filename in
+    // itsOwnerFilename.
+    if ( itsFilename.c_str()[0] != '.' )
+      {
+        itsOwnerFilename = itsFilename;
+      }
+    else
+      {
+        itsOwnerFilename = "";
+      }
+  }
 
   virtual void update(BmapData& update_me);
 
 private:
   fstring itsFilename;
+  fstring& itsOwnerFilename;
   bool itsFlipContrast;
   bool itsFlipVertical;
 };
@@ -113,7 +127,17 @@ void PbmUpdater::update(BmapData& update_me)
 {
 DOTRACE("PbmUpdater::update");
 
-  Pbm::load(itsFilename.c_str(), update_me);
+  try
+    {
+      Pbm::load(itsFilename.c_str(), update_me);
+    }
+  // If there was an error while reading the file, it means we should
+  // forget about itsOwnerFilename
+  catch (...)
+    {
+      itsOwnerFilename = "";
+      throw;
+    }
 
   if (itsFlipContrast) { update_me.flipContrast(); }
   if (itsFlipVertical) { update_me.flipVertical(); }
@@ -205,18 +229,7 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
 
   queuePbmFile(filename);
 
-  try
-    {
-      itsImpl->itsData.updateIfNeeded();
-    }
-  // If there was an error while reading the file, it means we
-  // couldn't read the file 'filename' so we should forget about
-  // 'filename' locally
-  catch (...)
-    {
-      itsImpl->itsFilename = "";
-      throw;
-    }
+  itsImpl->itsData.updateIfNeeded();
 }
 
 void BitmapRep::queuePbmFile(const char* filename)
@@ -224,22 +237,10 @@ void BitmapRep::queuePbmFile(const char* filename)
 DOTRACE("BitmapRep::queuePbmFile");
 
   shared_ptr<BmapData::UpdateFunc> updater(
-    new PbmUpdater(filename, itsImpl->itsContrastFlip,
-                   itsImpl->itsVerticalFlip));
+    new PbmUpdater(filename, itsImpl->itsFilename,
+                   itsImpl->itsContrastFlip, itsImpl->itsVerticalFlip));
 
   itsImpl->itsData.queueUpdate(updater);
-
-  // If the first character of the new filename is '.', then we assume
-  // it is a temp file, and therefore we don't save this filename in
-  // itsImpl->itsFilename.
-  if ( filename[0] != '.' )
-    {
-      itsImpl->itsFilename = filename;
-    }
-  else
-    {
-      itsImpl->itsFilename = "";
-    }
 
   itsImpl->itsRenderer->notifyBytesChanged();
 }
