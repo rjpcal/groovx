@@ -2,7 +2,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Sun Mar 14 19:37:26 1999
+// written: Sun Mar 14 19:38:46 1999
 //
 // This package provides additional list manipulation functions using
 // object-style (rather than string-style) Tcl commands
@@ -453,7 +453,7 @@ DOTRACE("Tcldlist::Tcldlist_Init");
   Tcl_CreateObjCommand(interp, "dlist_pickone", dlist_pickoneCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   
-  Tcl_PkgProvide(interp, "Tcldlist", "$Revision$");
+  Tcl_PkgProvide(interp, "Tcldlist", "@(#)$Revision$");
   return TCL_OK;
 }
 
