@@ -532,3 +532,22 @@ directory structure. We can build a .so --> .o dependency file for
 make, based on the directory structure. And, based on #include
 "pkgs/*/*.h", we can figure out which other packages are required by a
 given package.
+
+(note 20-Sep-2001) Compile times for including standard headers, on
+1GHz PIII, g++-3.0.1:
+
+     <string>    0.440u  "util/strings.h"     0.090u
+     <vector>    0.310u  "util/minivec.h"     0.180u
+                         "util/arrays.h"      0.030u
+     <valarray>  0.993u
+     <list>      0.300u  "util/dlink_list.h"  0.080u
+                         "util/slink_list.h"  0.030u
+     <map>       0.460u
+     <set>       0.447u
+     <iostream>  1.505u  <cstdio>             0.046u
+     <istream>   1.452u
+     <fstream>   1.738u
+
+     <memory>    0.217u
+     <utility>   0.021u
+     <algorithm> 0.253u

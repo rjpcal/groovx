@@ -36,25 +36,6 @@ the cruft from the main executable and make things more modular+loadable
      dependencies for us. The only thing that the rest of the Makefile will
      depend on is the $(PROJECT_LIBS) variable.
 
-(note 20-Sep-2001) Compile times for including standard headers, on
-1GHz PIII, g++-3.0.1:
-
-     <string>    0.440u  "util/strings.h"     0.090u
-     <vector>    0.310u  "util/minivec.h"     0.180u
-                         "util/arrays.h"      0.030u
-     <valarray>  0.993u
-     <list>      0.300u  "util/dlink_list.h"  0.080u
-                         "util/slink_list.h"  0.030u
-     <map>       0.460u
-     <set>       0.447u
-     <iostream>  1.505u  <cstdio>             0.046u
-     <istream>   1.452u
-     <fstream>   1.738u
-
-     <memory>    0.217u
-     <utility>   0.021u
-     <algorithm> 0.253u
-
 (13-Sep-2001) Should be able to allow nested containment of
 FieldContainer's, in addition to inheritance.
 
@@ -231,10 +212,6 @@ just a simple std::copy type of operation.
 (28-Sep-2000) Why does irix occasionally core-dump during Face testing
 in GrObj::invalidateCaches()?
 
-(23-Sep-2000) Should have a log-file that can catch non-essential
-messages (such as the timing info that is emitted by TrialEvent
-destructors). 
-
 (23-Sep-2000) Need a platform-independent way to find black/white
 color indices (could be implemented as Togl:: functions).
 
@@ -281,11 +258,10 @@ timer events report to the block how long they requested, and how long
 they actually lasted. Then the block could adjust the requested times
 for future trial events in order to compensate.
 
-(done 14-May-2000) Implemented error-checking and adjustment in
-TrialEvent's. This gives very good accuracy (+/-1msec average per
-trial) over an experiment. Still need to control this error-checking
-from script-level, and to provide a hint to the TrialEvent at
-construction time.
+(14-May-2000) Implemented error-checking and adjustment in
+TrialEvent's. This gives very good accuracy (+/-1msec average per trial)
+over an experiment. Still need to control this error-checking from
+script-level, and to provide a hint to the TrialEvent at construction time.
 
 (15-May-2000) Need to include info about timing throughout the
 experiment object hierarchy, from Experiment, Block, and Trial, to
@@ -531,3 +507,23 @@ std::set<void*> holding the addresses of valid Tcl::Command's.
 
   Aha! need to use "c++" instead of "cc", with -lcc_dynamic, so we have:
     c++ -dynamiclib -flat_namespace -undefined suppress -o {name} -lcc_dynamic
+
+(23-Sep-2000, nix 14-June-2002) Should have a log-file that can catch
+non-essential messages (such as the timing info that is emitted by
+TrialEvent destructors). [nix this... logging is now improved somewhat with
+Util::log]
+
+(14-Jun-2002, done 17-Jun-2002) Fix dynamic loading so that we don't have
+to link in matlab stuff to the main executable, but just to the mtx
+package.
+
+Get this bogus crap:
+
+[hume 16:52 52]% testsh
+(1) testsh> package require Mtx
+couldn't load file "/cit/rjpeters/local/i686/lib/visx/mtx.so":
+ /usr/local/matlab/extern/lib/glnx86/libut.so: undefined symbol: _start
+
+Aha. Have to use the linker option --export-dynamic, so that libut.so can
+find the _start symbol which is of course defined next to wherever main()
+is defined, which would be in the executable itself.
