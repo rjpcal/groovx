@@ -329,20 +329,17 @@ AC_ARG_ENABLE(debug,
 AC_MSG_RESULT($enable_debug)
 
 if test $enable_debug = yes; then
-   DEFS="$DEFS -DPROF"
-   LIB_SUFFIX=".d${PACKAGE_VERSION}"
+   AC_DEFINE(PROF, 1)
    CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
-   EXECUTABLE=\${exec_prefix}/bin/testsh
+   AC_SUBST(LIB_SUFFIX, .d.${PACKAGE_VERSION})
+   AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/testsh)
    build=build/${ARCH}-debug
 else
-   LIB_SUFFIX=${PACKAGE_VERSION}
    CXXFLAGS="$CXXFLAGS $PROD_CXXFLAGS"
-   EXECUTABLE=\${exec_prefix}/bin/grsh${PACKAGE_VERSION}
+   AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
+   AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/grsh${PACKAGE_VERSION})
    build=build/${ARCH}-prod
 fi
-
-AC_SUBST(LIB_SUFFIX)
-AC_SUBST(EXECUTABLE)
 
 AC_MSG_CHECKING([for build directory])
 AC_MSG_RESULT($build)
