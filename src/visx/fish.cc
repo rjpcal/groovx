@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Feb  8 15:30:06 2000
+// written: Thu Feb 17 19:51:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,9 @@
 #include "rect.h"
 #include "writer.h"
 
-#define NO_TRACE
+#define DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "trace.h"
+#define LOCAL_DEBUG
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +39,8 @@ namespace {
 
   int dummy=0; // We need a dummy int to attach various CPtrProperty's
 }
+
+Util::Tracer Fish::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -83,10 +86,10 @@ struct Fish::EndPt {
 ///////////////////////////////////////////////////////////////////////
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  coord0(itsCoords[0]),
-  coord1(itsCoords[1]),
-  coord2(itsCoords[2]),
-  coord3(itsCoords[3]),
+  dorsalFinCoord(itsCoords[0]),
+  tailFinCoord(itsCoords[1]),
+  lowerFinCoord(itsCoords[2]),
+  mouthCoord(itsCoords[3]),
   currentPart(0),
   currentEndPt(0),
   endPt_Part(dummy),
@@ -294,10 +297,10 @@ DOTRACE("Fish::getPropertyInfos");
 
   if (p.size() == 0) {
 	 p.push_back(PInfo("category", &F::category, 0, 10, 1, true));
-	 p.push_back(PInfo("coord0", &F::coord0, -2.0, 2.0, 0.1));
-	 p.push_back(PInfo("coord1", &F::coord1, -2.0, 2.0, 0.1));
-	 p.push_back(PInfo("coord2", &F::coord2, -2.0, 2.0, 0.1));
-	 p.push_back(PInfo("coord3", &F::coord3, -2.0, 2.0, 0.1));
+	 p.push_back(PInfo("dorsalFinCoord", &F::dorsalFinCoord, -2.0, 2.0, 0.1));
+	 p.push_back(PInfo("tailFinCoord", &F::tailFinCoord, -2.0, 2.0, 0.1));
+	 p.push_back(PInfo("lowerFinCoord", &F::lowerFinCoord, -2.0, 2.0, 0.1));
+	 p.push_back(PInfo("mouthCoord", &F::mouthCoord, -2.0, 2.0, 0.1));
 
 	 p.push_back(PInfo("currentPart", &F::currentPart, 0, 3, 1, true));
 
@@ -425,15 +428,16 @@ DOTRACE("Fish::grRender");
 
   // Loop over fish parts
   for (int i = 0; i < 4; ++i) {
+
 	 int totcoefs = 3*(itsFishParts[i].itsCoefs[0].size());
 	 vector<GLfloat> coefs(totcoefs);
 
 	 {
 		for (size_t j = 0; j < itsFishParts[i].itsCoefs[0].size(); ++j) {
 		  for (int k = 0; k < 2; ++k) {
-			 coefs[3*j+k] = (GLfloat) itsFishParts[i].itsCoefs[k][j];
+			 coefs.at(3*j+k) = (GLfloat) itsFishParts[i].itsCoefs[k][j];
 		  }
-		  coefs[3*j+2] = (GLfloat) 0.0;
+		  coefs.at(3*j+2) = (GLfloat) 0.0;
 		}
 	 }
 
@@ -445,8 +449,8 @@ DOTRACE("Fish::grRender");
 		  float beta  = 0.5*(1+itsCoords[j]);
 		  GLfloat x = alpha*itsEndPts[j].itsX[0] + beta*itsEndPts[j].itsX[1];
 		  GLfloat y = alpha*itsEndPts[j].itsY[0] + beta*itsEndPts[j].itsY[1];
-		  coefs[3*bkpt]   = x;
-		  coefs[3*bkpt+1] = y;
+		  coefs.at(3*bkpt)   = x;
+		  coefs.at(3*bkpt+1) = y;
       }
     }
 
@@ -477,10 +481,10 @@ DOTRACE("Fish::makeIoList const");
   vec.clear();
 
   vec.push_back(&category);
-  vec.push_back(&coord0);
-  vec.push_back(&coord1);
-  vec.push_back(&coord2);
-  vec.push_back(&coord3);
+  vec.push_back(&dorsalFinCoord);
+  vec.push_back(&tailFinCoord);
+  vec.push_back(&lowerFinCoord);
+  vec.push_back(&mouthCoord);
 }
 
 
