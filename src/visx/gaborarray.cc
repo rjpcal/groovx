@@ -106,7 +106,7 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
 
   itsTotalNumber(0),
   itsArray(MAX_GABOR_NUMBER),
-  itsBmap(0),
+  itsBmap(),
 
   itsDumpingFrames(false),
   itsFrameDumpPeriod(20)

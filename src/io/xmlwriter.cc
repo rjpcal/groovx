@@ -128,7 +128,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 XMLWriter::XMLWriter(STD_IO::ostream& os) :
-  itsOwnedStream(0),
+  itsOwnedStream(),
   itsBuf(os),
   itsWrittenObjects(),
   itsNestLevel(0)

@@ -68,7 +68,7 @@ namespace
   };
 
   std::vector<ScopeInfo> scopes;
-  shared_ptr<std::ofstream> logFile(0);
+  shared_ptr<std::ofstream> logFile;
   bool copyToStdout = true;
 
   template <class Str>

@@ -185,7 +185,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 AsciiStreamWriter::AsciiStreamWriter(STD_IO::ostream& os) :
-  itsOwnedStream(0),
+  itsOwnedStream(),
   itsBuf(os),
   itsToHandleV(),
   itsWrittenObjects()

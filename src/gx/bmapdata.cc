@@ -62,7 +62,7 @@ public:
     byteAlignment(byte_alignment),
     bytes(),
     rowOrder(TOP_FIRST),
-    updater(0)
+    updater()
   {
     Precondition(extent.x() >= 0); Precondition(extent.y() >= 0);
 
@@ -319,7 +319,7 @@ DOTRACE("Gfx::BmapData::updateIfNeeded");
       // We release rep->updater before doing the update, so
       // that we avoid endless recursion if updateIfNeeded is called
       // again during the updating.
-      rep->updater.reset(0);
+      rep->updater.reset();
 
       tempUpdater->update(const_cast<Gfx::BmapData&>(*this));
     }
@@ -328,7 +328,7 @@ DOTRACE("Gfx::BmapData::updateIfNeeded");
 void Gfx::BmapData::clearQueuedUpdate() const
 {
 DOTRACE("Gfx::BmapData::clearQueuedUpdate");
-  rep->updater.reset(0);
+  rep->updater.reset();
 }
 
 void Gfx::BmapData::setRowOrder(Gfx::BmapData::RowOrder order) const

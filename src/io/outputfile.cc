@@ -43,7 +43,7 @@
 
 OutputFile::OutputFile() :
   itsFilename(""),
-  itsStream(0)
+  itsStream()
 {
 }
 
@@ -71,7 +71,7 @@ void OutputFile::setFilename(fstring fname)
 {
   if (fname.is_empty())
     {
-      itsStream.reset(0);
+      itsStream.reset();
       return;
     }
 

@@ -207,7 +207,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 AsciiStreamReader::AsciiStreamReader(STD_IO::istream& is) :
-  itsOwnedStream(0),
+  itsOwnedStream(),
   itsBuf(is),
   itsObjects(),
   itsAttribs()

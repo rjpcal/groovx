@@ -249,10 +249,10 @@ class Tcl::List::Iterator : public Tcl::List::IteratorBase
 
 public:
   Iterator(const List& owner, Pos pos = BEGIN) :
-    IteratorBase(owner, pos), itsCurrent(0) {}
+    IteratorBase(owner, pos), itsCurrent() {}
 
   Iterator(Tcl_Obj* listObj, Pos pos = BEGIN) :
-    IteratorBase(listObj, pos), itsCurrent(0) {}
+    IteratorBase(listObj, pos), itsCurrent() {}
 
   typedef T value_type;
 

@@ -112,7 +112,7 @@ DOTRACE("Sound::make");
 
 Sound::Sound(const char* filename) :
   itsFilename(""),
-  itsRep(0)
+  itsRep()
 {
 DOTRACE("Sound::Sound");
   setFile(filename);
@@ -170,7 +170,7 @@ DOTRACE("Sound::setFile");
       // itsRep is only lazily updated, so just mark it as invalid
       // here... we won't have to update it until someone actually tries to
       // play() the sound
-      itsRep.reset(0);
+      itsRep.reset();
       itsFilename = filename;
     }
 }

@@ -478,7 +478,7 @@ namespace
   public:
     TreeBuilder(std::istream& is) :
       XmlParser(is),
-      itsRoot(0),
+      itsRoot(),
       itsStack(),
       itsDepth(0),
       itsStartCount(0),
