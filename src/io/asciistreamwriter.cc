@@ -34,6 +34,7 @@
 
 #include "io/io.h"
 #include "io/ioerror.h"
+#include "io/writeidmap.h"
 #include "io/writer.h"
 
 #include "util/arrays.h"
@@ -45,6 +46,7 @@
 #include <ostream>
 #include <string>
 #include <set>
+#include <vector>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -130,19 +132,20 @@ protected:
 private:
   shared_ptr<STD_IO::ostream> itsOwnedStream;
   STD_IO::ostream& itsBuf;
-  std::set<SoftRef<const IO::IoObject> > itsToHandle;
+  mutable std::vector<SoftRef<const IO::IoObject> > itsToHandleV;
   std::set<SoftRef<const IO::IoObject> > itsWrittenObjects;
+  IO::WriteIdMap itsIdMap;
 
   bool haveMoreObjectsToHandle() const
   {
-    return !itsToHandle.empty();
+    return !itsToHandleV.empty();
   }
 
   void addObjectToBeHandled(SoftRef<const IO::IoObject> obj)
   {
     if ( !alreadyWritten(obj) )
       {
-        itsToHandle.insert(obj);
+        itsToHandleV.push_back(obj);
       }
   }
 
@@ -154,12 +157,13 @@ private:
 
   SoftRef<const IO::IoObject> getNextObjectToHandle() const
   {
-    return *(itsToHandle.begin());
+    SoftRef<const IO::IoObject> result = itsToHandleV.back();
+    itsToHandleV.pop_back();
+    return result;
   }
 
   void markObjectAsWritten(SoftRef<const IO::IoObject> obj)
   {
-    itsToHandle.erase(obj);
     itsWrittenObjects.insert(obj);
   }
 
@@ -195,7 +199,7 @@ private:
 AsciiStreamWriter::AsciiStreamWriter(STD_IO::ostream& os) :
   itsOwnedStream(0),
   itsBuf(os),
-  itsToHandle(),
+  itsToHandleV(),
   itsWrittenObjects()
 {
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
@@ -204,7 +208,7 @@ DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
 AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
   itsOwnedStream(Util::ogzopen(filename)),
   itsBuf(*itsOwnedStream),
-  itsToHandle(),
+  itsToHandleV(),
   itsWrittenObjects()
 {
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
@@ -265,7 +269,7 @@ DOTRACE("AsciiStreamWriter::writeObject");
       Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
       type = obj->objTypename();
-      id = obj->id();
+      id = itsIdMap.get(obj->id());
 
       addObjectToBeHandled(obj);
     }
@@ -299,10 +303,10 @@ DOTRACE("AsciiStreamWriter::writeBaseClass");
 void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
 {
 DOTRACE("AsciiStreamWriter::writeRoot");
-  itsToHandle.clear();
+  itsToHandleV.clear();
   itsWrittenObjects.clear();
 
-  itsToHandle.insert(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));
+  itsToHandleV.push_back(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));
 
   while ( haveMoreObjectsToHandle() )
     {
@@ -310,7 +314,8 @@ DOTRACE("AsciiStreamWriter::writeRoot");
 
       if ( !alreadyWritten(obj) )
         {
-          itsBuf << obj->objTypename().c_str() << ' ' << obj->id() << " := ";
+          itsBuf << obj->objTypename().c_str() << ' '
+                 << itsIdMap.get(obj->id()) << " := ";
           flattenObject(obj);
         }
     }
