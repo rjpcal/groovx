@@ -635,7 +635,7 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
 
   Tk_Preserve((ClientData)impl);
 
-  if (!strncmp(argv[1], "configure", Util::max((unsigned int)1,
+  if (!strncmp(argv[1], "configure", Util::max((std::size_t)1,
                                                strlen(argv[1]))))
     {
       if (argc == 2)
@@ -667,19 +667,19 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
           result = impl->configure(interp, argc-2, argv+2, TK_CONFIG_ARGV_ONLY);
         }
     }
-  else if (!strncmp(argv[1], "render", Util::max((unsigned int)1,
+  else if (!strncmp(argv[1], "render", Util::max((std::size_t)1,
                                                  strlen(argv[1]))))
     {
       /* force the widget to be redrawn */
       Togl::Impl::dummyRenderCallback(static_cast<ClientData>(impl));
     }
-  else if (!strncmp(argv[1], "swapbuffers", Util::max((unsigned int)1,
+  else if (!strncmp(argv[1], "swapbuffers", Util::max((std::size_t)1,
                                                       strlen(argv[1]))))
     {
       /* force the widget to be redrawn */
       impl->swapBuffers();
     }
-  else if (!strncmp(argv[1], "makecurrent", Util::max((unsigned int)1,
+  else if (!strncmp(argv[1], "makecurrent", Util::max((std::size_t)1,
                                                       strlen(argv[1]))))
     {
       /* force the widget to be redrawn */
