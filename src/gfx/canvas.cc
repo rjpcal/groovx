@@ -32,11 +32,12 @@
 #ifndef CANVAS_CC_DEFINED
 #define CANVAS_CC_DEFINED
 
-#include "gfx/canvas.h"
+#include "canvas.h"
+
+#include "gfx/rgbacolor.h"
 
 #include "gx/bezier4.h"
 #include "gx/box.h"
-#include "gx/rgbacolor.h"
 #include "gx/vec3.h"
 
 #include "util/arrays.h"

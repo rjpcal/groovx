@@ -34,7 +34,7 @@
 
 #include "util/multivalue.h"
 
-#include "gx/rgbacolor.h"
+#include "gfx/rgbacolor.h"
 
 /// Field class for RGBA colors.
 class GbColor : public Gfx::RgbaColor, public rutz::multi_value<double>

@@ -32,13 +32,13 @@
 #ifndef FISH_CC_DEFINED
 #define FISH_CC_DEFINED
 
-#include "visx/fish.h"
+#include "fish.h"
 
+#include "gfx/bbox.h"
 #include "gfx/canvas.h"
+#include "gfx/rgbacolor.h"
 
-#include "gx/bbox.h"
 #include "gx/rect.h"
-#include "gx/rgbacolor.h"
 #include "gx/vec3.h"
 
 #include "io/ioproxy.h"

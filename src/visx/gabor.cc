@@ -34,10 +34,10 @@
 
 #include "visx/gabor.h"
 
+#include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 
-#include "gx/bbox.h"
 #include "gx/bmapdata.h"
 #include "gx/imgfile.h"
 #include "gx/rect.h"

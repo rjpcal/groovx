@@ -34,9 +34,9 @@
 
 #include "gxscaler.h"
 
+#include "gfx/bbox.h"
 #include "gfx/canvas.h"
 
-#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/vec3.h"
 

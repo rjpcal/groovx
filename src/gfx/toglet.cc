@@ -38,8 +38,7 @@
 #include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
 #include "gfx/gxscene.h"
-
-#include "gx/rgbacolor.h"
+#include "gfx/rgbacolor.h"
 
 #include "nub/ref.h"
 

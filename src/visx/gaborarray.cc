@@ -34,10 +34,10 @@
 
 #include "gaborarray.h"
 
+#include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 
-#include "gx/bbox.h"
 #include "gx/bmapdata.h"
 #include "gx/geom.h"
 #include "gx/imgfile.h"

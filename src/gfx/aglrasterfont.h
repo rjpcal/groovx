@@ -32,10 +32,10 @@
 #ifndef AGLRASTERFONT_H_DEFINED
 #define AGLRASTERFONT_H_DEFINED
 
+#include "gfx/bbox.h"
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
 
-#include "gx/bbox.h"
 #include "gx/rect.h"
 
 #include "tcl/tcllistobj.h"

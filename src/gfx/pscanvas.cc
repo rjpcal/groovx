@@ -32,11 +32,12 @@
 #ifndef PSCANVAS_CC_DEFINED
 #define PSCANVAS_CC_DEFINED
 
-#include "gfx/pscanvas.h"
+#include "pscanvas.h"
+
+#include "gfx/rgbacolor.h"
 
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
-#include "gx/rgbacolor.h"
 #include "gx/txform.h"
 #include "gx/vec2.h"
 #include "gx/vec3.h"

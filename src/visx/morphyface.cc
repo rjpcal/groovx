@@ -34,12 +34,12 @@
 
 #include "visx/morphyface.h"
 
+#include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 #include "gfx/linestrip.h"
 
 #include "gx/bezier4.h"
-#include "gx/bbox.h"
 #include "gx/rect.h"
 #include "gx/vec3.h"
 

@@ -34,12 +34,12 @@
 
 #include "gxbounds.h"
 
+#include "gfx/bbox.h"
 #include "gfx/canvas.h"
+#include "gfx/rgbacolor.h"
 
-#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/rect.h"
-#include "gx/rgbacolor.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
