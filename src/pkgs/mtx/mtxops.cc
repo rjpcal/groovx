@@ -28,7 +28,7 @@ DOTRACE("squared");
 
   mtx result(src);
   // FIXME would be better if mtx_base had a transform() template
-  result.apply(Square());
+  result.apply(dash::square());
 
   return result;
 }
