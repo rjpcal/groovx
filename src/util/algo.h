@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Jul 22 23:31:48 2001
-// written: Wed Mar 19 17:58:04 2003
+// written: Thu Mar 20 15:33:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -34,10 +34,18 @@
 namespace Util
 {
   template <class T>
-  inline const T& max(const T& a, const T& b) { return (a > b) ? a : b; }
+  inline const T& max(const T& a, const T& b)
+  {
+    /* return (a > b) ? a : b; */ // This triggers warnings in some compilers :(
+    if (a > b) return a; return b;
+  }
 
   template <class T>
-  inline const T& min(const T& a, const T& b) { return (a < b) ? a : b; }
+  inline const T& min(const T& a, const T& b)
+  {
+    /* return (a < b) ? a : b; */ // This triggers warnings in some compilers :(
+    if (a < b) return a; return b;
+  }
 
   template <class T>
   inline T abs(const T& val)                  { return (val < 0) ? -val : val; }
