@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sun Aug 26 08:53:53 2001
+// written: Sun Sep  9 07:02:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,12 +24,10 @@
 #include "util/objfactory.h"
 #include "util/pointers.h"
 #include "util/serialport.h"
-#include "util/strings.h"
 
 #include <tk.h>
 #include <X11/Xlib.h>
 
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -40,94 +38,86 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace SerialRhTcl
+namespace
 {
-  class SerialEventSource;
-  class SerialRhCmd;
-  class SerialRhPkg;
-}
 
-class SerialRhTcl::SerialEventSource
-{
-public:
-  SerialEventSource(Tcl_Interp* interp, const char* serial_device) :
-    itsInterp(interp),
-    itsPort(serial_device)
+  class SerialEventSource
+  {
+  public:
+    SerialEventSource(Tcl_Interp* interp, const char* serial_device) :
+      itsInterp(interp),
+      itsPort(serial_device)
     {
       Tcl_CreateEventSource(setupProc, checkProc, static_cast<void*>(this));
     }
 
-  ~SerialEventSource()
+    ~SerialEventSource()
     {
       Tcl_DeleteEventSource(setupProc, checkProc, static_cast<void*>(this));
     }
 
-private:
-  Tcl_Interp* itsInterp;
-  Util::SerialPort itsPort;
+  private:
+    Tcl_Interp* itsInterp;
+    Util::SerialPort itsPort;
 
-  static void setupProc(ClientData /*clientData*/, int flags)
-  {
-    if ( !(flags & TCL_FILE_EVENTS) ) return;
+    static void setupProc(ClientData /*clientData*/, int flags)
+    {
+      if ( !(flags & TCL_FILE_EVENTS) ) return;
 
-    Tcl_Time block_time;
-    block_time.sec = 0;
-    block_time.usec = 1000;
+      Tcl_Time block_time;
+      block_time.sec = 0;
+      block_time.usec = 1000;
 
-    Tcl_SetMaxBlockTime(&block_time);
-  }
+      Tcl_SetMaxBlockTime(&block_time);
+    }
 
-  static void checkProc(ClientData clientData, int flags)
-  {
-    if ( !(flags & TCL_FILE_EVENTS) ) return;
+    static void checkProc(ClientData clientData, int flags)
+    {
+      if ( !(flags & TCL_FILE_EVENTS) ) return;
 
-    SerialEventSource* source = static_cast<SerialEventSource*>(clientData);
+      SerialEventSource* source = static_cast<SerialEventSource*>(clientData);
 
-    if ( !source->itsPort.isClosed() )
-      {
-        int n;
-        while ( (n = source->itsPort.get()) != EOF)
-          {
-            if ( n >= 'A' && n <= 'H' )
-              {
-                DebugEvalNL((n-'A'));
+      if ( !source->itsPort.isClosed() )
+        {
+          int n;
+          while ( (n = source->itsPort.get()) != EOF)
+            {
+              if ( n >= 'A' && n <= 'H' )
+                {
+                  DebugEvalNL((n-'A'));
 
-                Tk_FakeWin* tkwin = reinterpret_cast<Tk_FakeWin*>(
-                                        Tk_MainWindow(source->itsInterp));
-                Display* display = Tk_Display(tkwin);
+                  Tk_FakeWin* tkwin = reinterpret_cast<Tk_FakeWin*>(
+                                         Tk_MainWindow(source->itsInterp));
+                  Display* display = Tk_Display(tkwin);
 
-                char keystring[2] = { char(n), '\0' };
-                KeySym keysym = XStringToKeysym(keystring);
-                KeyCode keycode = XKeysymToKeycode(display, keysym);
+                  char keystring[2] = { char(n), '\0' };
+                  KeySym keysym = XStringToKeysym(keystring);
+                  KeyCode keycode = XKeysymToKeycode(display, keysym);
 
-                XEvent ev;
-                ev.xkey.type = KeyPress;
-                ev.xkey.send_event = True;
-                ev.xkey.display = display;
-                ev.xkey.window = Tk_WindowId(tkwin);
-                ev.xkey.keycode = keycode;
-                ev.xkey.state = 0;
-                Tk_QueueWindowEvent(&ev, TCL_QUEUE_TAIL);
-              }
-          }
-      }
-  }
+                  XEvent ev;
+                  ev.xkey.type = KeyPress;
+                  ev.xkey.send_event = True;
+                  ev.xkey.display = display;
+                  ev.xkey.window = Tk_WindowId(tkwin);
+                  ev.xkey.keycode = keycode;
+                  ev.xkey.state = 0;
+                  Tk_QueueWindowEvent(&ev, TCL_QUEUE_TAIL);
+                }
+            }
+        }
+    }
 
-private:
-  SerialEventSource(const SerialEventSource&);
-  SerialEventSource& operator=(const SerialEventSource&);
-};
+  private:
+    SerialEventSource(const SerialEventSource&);
+    SerialEventSource& operator=(const SerialEventSource&);
+  };
 
-namespace SerialRhTcl
-{
+
   shared_ptr<SerialEventSource> theEventSource;
 
-  void startSerial(Tcl::Context& ctx)
+  void startSerial(Tcl_Interp* interp, const char* device)
   {
-    const char* device = ctx.objc() >= 2 ?
-      ctx.getCstringFromArg(1) : "/dev/tty0p0";
-
-    theEventSource.reset(new SerialEventSource(ctx.interp(), device));
+    theEventSource.reset(new SerialEventSource(interp, device));
   }
 }
 
@@ -210,9 +200,11 @@ int Rh_Init(Tcl_Interp* interp)
   //
 
   Tcl::Pkg* pkg5 = new Tcl::Pkg(interp, "SerialRh", "$Revision$");
-  pkg5->defRaw( "SerialRh::SerialRh", 1, "device=/dev/tty0p0",
-                &SerialRhTcl::startSerial );
-  pkg5->defRaw( "SerialRh::SerialRh", 0, "", &SerialRhTcl::startSerial );
+  pkg5->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
+             Util::bindFirst(&startSerial, interp) );
+  pkg5->def( "SerialRh::SerialRh", "",
+             Util::bindLast(Util::bindFirst(&startSerial, interp),
+                            "/dev/tty0p0") );
 
   Util::ObjFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
