@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Dec  7 18:10:18 1999
+// written: Wed Dec  8 00:02:38 1999
 // $Id$
 //
 // This file defines a class TclPkg which can be used alone, or as a
@@ -44,9 +44,10 @@
 #endif
 
 namespace Tcl {
-
-class TclCmd;
-class TclError;
+  class TclCmd;
+  class TclError;
+  class TclPkg;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -54,7 +55,7 @@ class TclError;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TclPkg {
+class Tcl::TclPkg {
 public:
   TclPkg(Tcl_Interp* interp, const char* name, const char* version);
 
@@ -90,8 +91,6 @@ private:
   struct PrivateRep;
   PrivateRep* itsPrivateRep;
 };
-
-} // end namespace Tcl
 
 static const char vcid_tclpkg_h[] = "$Header$";
 #endif // !TCLPKG_H_DEFINED
