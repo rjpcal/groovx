@@ -3,7 +3,7 @@
 // arrays.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 15:56:36 2000
-// written: Mon Mar  6 19:22:35 2000
+// written: Thu Mar  9 10:30:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,6 +181,7 @@ public:
 	 {
 		dynamic_block temp(other);
 		this->swap(temp);
+		return *this;
 	 }
 
   ~dynamic_block() { delete [] data; }
