@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu Oct 21 18:12:10 1999
+// written: Thu Oct 21 18:13:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,10 +28,6 @@ public:
   // creators
   ResponseHandler();
   virtual ~ResponseHandler();
-
-  virtual void serialize(ostream &os, IOFlag flag) const = 0;
-  virtual void deserialize(istream &is, IOFlag flag) = 0;
-  virtual int charCount() const = 0;
 
   virtual void readFrom(Reader* reader) = 0;
   virtual void writeTo(Writer* writer) const = 0;
