@@ -81,7 +81,7 @@ public:
   Toglet* owner;
   const Tk_Window tkWin;
   shared_ptr<GlxOpts> opts;
-  shared_ptr<GlxWrapper> glx;
+  shared_ptr<GlWindowInterface> glx;
   Util::SoftRef<GLCanvas> canvas;
   GxScene* scene;
 
@@ -131,60 +131,9 @@ Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
 {
 DOTRACE("Toglet::Impl::cClassCreateProc");
   Toglet* toglet = static_cast<Toglet*>(clientData);
-  Toglet::Impl* rep = toglet->rep;
-  GLCanvas& canvas = *(rep->canvas);
+  GlWindowInterface& glx = *(toglet->rep->glx);
 
-  Display* dpy = Tk_Display(tkwin);
-
-  Visual* visual = rep->glx->visInfo()->visual;
-  int screen = rep->glx->visInfo()->screen;
-  int depth = canvas.bitsPerPixel();
-
-  Colormap cmap =
-    visual == DefaultVisual(dpy, screen)
-    ? DefaultColormap(dpy, screen)
-    : XCreateColormap(dpy,
-                      RootWindow(dpy, screen),
-                      visual, AllocNone);
-
-  // Make sure Tk knows to switch to the new colormap when the cursor is over
-  // this window when running in color index mode.
-  Tk_SetWindowVisual(tkwin, visual, depth, cmap);
-
-#define ALL_EVENTS_MASK \
-KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
-EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
-VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
-
-  XSetWindowAttributes atts;
-
-  atts.colormap = cmap;
-  atts.border_pixel = 0;
-  atts.event_mask = ALL_EVENTS_MASK;
-
-  unsigned long valuemask = CWBorderPixel | CWColormap | CWEventMask;
-
-  if (Tk_IsTopLevel(tkwin))
-    {
-      atts.override_redirect = true;
-      valuemask |= CWOverrideRedirect;
-    }
-
-  Window win = XCreateWindow(dpy,
-                             parent,
-                             0, 0,
-                             DEFAULT_SIZE_X,
-                             DEFAULT_SIZE_Y,
-                             0, depth,
-                             InputOutput, visual,
-                             valuemask,
-                             &atts);
-
-  Tk_ChangeWindowAttributes(tkwin, valuemask, &atts);
-
-  XSelectInput(dpy, win, ALL_EVENTS_MASK);
-
-  return win;
+  return glx.makeTkRealWindow(tkwin, parent, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -30,6 +30,8 @@
 #ifndef GLWINDOWINTERFACE_H_DEFINED
 #define GLWINDOWINTERFACE_H_DEFINED
 
+#include <tk.h>
+
 class GlWindowInterface
 {
 public:
@@ -45,8 +47,15 @@ public:
   /// Get the bit depth of the draw buffer(s).
   virtual unsigned int bitsPerPixel() const = 0;
 
+  /// Bind the rendering context to the given window.
+  virtual void makeCurrent(Window win) = 0;
+
   /// Swaps buffers if in double-buffering mode.
   virtual void swapBuffers() const = 0;
+
+  /// Instantiate an actual window-system window for the given Tk_Window.
+  virtual Window makeTkRealWindow(Tk_Window tkwin, Window parent,
+                                  int width, int height) throw() = 0;
 };
 
 static const char vcid_glwindowinterface_h[] = "$Header$";

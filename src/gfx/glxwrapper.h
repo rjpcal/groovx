@@ -72,7 +72,7 @@ public:
   virtual unsigned int bitsPerPixel() const;
 
   /// Bind the rendering context to the given window.
-  void makeCurrent(Window win);
+  virtual void makeCurrent(Window win);
 
   /// Swaps buffers if in double-buffering mode.
   virtual void swapBuffers() const;
@@ -90,6 +90,9 @@ protected:
 public:
   /// Get the associated X11 XVisualInfo.
   XVisualInfo* visInfo() const { return itsVisInfo; }
+
+  virtual Window makeTkRealWindow(Tk_Window tkwin, Window parent,
+                                  int width, int height) throw();
 };
 
 static const char vcid_glxwrapper_h[] = "$Header$";

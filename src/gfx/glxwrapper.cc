@@ -166,5 +166,62 @@ void GlxWrapper::swapBuffers() const
   glXSwapBuffers(itsDisplay, itsCurrentWin);
 }
 
+Window GlxWrapper::makeTkRealWindow(Tk_Window tkwin, Window parent,
+                                    int width, int height) throw()
+{
+DOTRACE("GlxWrapper::makeTkRealWindow");
+
+  Display* dpy = Tk_Display(tkwin);
+
+  Visual* visual = itsVisInfo->visual;
+  const int screen = itsVisInfo->screen;
+
+  Colormap cmap =
+    visual == DefaultVisual(dpy, screen)
+    ? DefaultColormap(dpy, screen)
+    : XCreateColormap(dpy,
+                      RootWindow(dpy, screen),
+                      visual, AllocNone);
+
+  // Make sure Tk knows to switch to the new colormap when the cursor is over
+  // this window when running in color index mode.
+  Tk_SetWindowVisual(tkwin, visual, itsVisInfo->depth, cmap);
+
+#define ALL_EVENTS_MASK \
+KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
+EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
+VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+
+  XSetWindowAttributes atts;
+
+  atts.colormap = cmap;
+  atts.border_pixel = 0;
+  atts.event_mask = ALL_EVENTS_MASK;
+
+  unsigned long valuemask = CWBorderPixel | CWColormap | CWEventMask;
+
+  if (Tk_IsTopLevel(tkwin))
+    {
+      atts.override_redirect = true;
+      valuemask |= CWOverrideRedirect;
+    }
+
+  Window win = XCreateWindow(dpy,
+                             parent,
+                             0, 0,
+                             width,
+                             height,
+                             0, itsVisInfo->depth,
+                             InputOutput, visual,
+                             valuemask,
+                             &atts);
+
+  Tk_ChangeWindowAttributes(tkwin, valuemask, &atts);
+
+  XSelectInput(dpy, win, ALL_EVENTS_MASK);
+
+  return win;
+}
+
 static const char vcid_glxwrapper_cc[] = "$Header$";
 #endif // !GLXWRAPPER_CC_DEFINED
