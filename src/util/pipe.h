@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Wed Feb 26 08:38:44 2003
+// written: Thu Feb 27 16:34:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
       return itsExitStatus;
     }
 
-  bool isClosed() const { return (itsFile == 0) || !itsStream.is_open(); }
+  bool isClosed() const { return (itsFile == 0) || !itsFilebuf.is_open(); }
 
   int exitStatus() const { return itsExitStatus; }
 
