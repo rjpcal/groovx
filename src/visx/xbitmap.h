@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Dec  1 20:13:06 1999
+// written: Wed Dec  1 20:15:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,9 +37,6 @@ public:
   virtual void deserialize(istream& is, IOFlag flag);
 
   virtual int charCount() const;
-
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
 
 private:
   XBmapRenderer* itsRenderer;

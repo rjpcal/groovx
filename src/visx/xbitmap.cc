@@ -102,15 +102,5 @@ DOTRACE("XBitmap::charCount");
   return 128;
 }
 
-void XBitmap::readFrom(Reader* reader) {
-DOTRACE("XBitmap::readFrom");
-  Bitmap::readFrom(reader);
-}
-
-void XBitmap::writeTo(Writer* writer) const {
-DOTRACE("XBitmap::writeTo");
-  Bitmap::writeTo(writer);
-}
-
 static const char vcid_xbitmap_cc[] = "$Header$";
 #endif // !XBITMAP_CC_DEFINED
