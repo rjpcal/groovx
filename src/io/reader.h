@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu Sep 28 20:15:28 2000
+// written: Tue Oct 24 09:40:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 namespace IO {
   class IoObject;
   class ReadError;
+  class ReadVersionError;
   class Reader;
 }
 
@@ -45,6 +46,26 @@ public:
   virtual ~ReadError();
 };
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * ReadVersionError is an exception class that can be thrown by
+ * clients of Reader if there is a problem serial version id during
+ * the read (e.g. the version is no longer supported).
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class IO::ReadVersionError : public ErrorWithMsg {
+public:
+  /// Construct with information relevant to the problem
+  ReadVersionError(const char* classname,
+						 IO::VersionId attempted_id,
+						 IO::VersionId lowest_supported_id,
+						 const char* msg);
+
+  virtual ~ReadVersionError();
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
