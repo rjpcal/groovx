@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Dec  6 22:18:17 1999
+// written: Tue Dec  7 11:48:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,6 +11,8 @@
 #ifndef GROBJTCL_CC_DEFINED
 #define GROBJTCL_CC_DEFINED
 
+#include "application.h"
+#include "experiment.h"
 #include "grobj.h"
 #include "objlist.h"
 #include "listitempkg.h"
@@ -24,12 +26,13 @@
 
 namespace GrobjTcl {
   class BoundingBoxCmd;
+  class UpdateCmd;
   class GrObjPkg;
 };
 
 //---------------------------------------------------------------------
 //
-// BoundingBoxCmd
+// BoundingBoxCmd --
 //
 //---------------------------------------------------------------------
 
@@ -52,6 +55,26 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// UpdateCmd --
+//
+//---------------------------------------------------------------------
+
+class GrobjTcl::UpdateCmd : public TclItemCmd<GrObj> {
+public:
+  UpdateCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<GrObj>(pkg, cmd_name, "item_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 if (canvas == 0) {
+		throw TclError("couldn't obtain a Canvas");
+	 }
+	 getItem()->update(*canvas);
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // GrObjPkg definitions --
 //
 //---------------------------------------------------------------------
@@ -63,6 +86,7 @@ public:
 													 "GrObj", "2.5")
   {
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
+	 addCommand( new UpdateCmd(this, "GrObj::update") );
 
 	 declareCAttrib("alignmentMode",
 						 &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
@@ -82,7 +106,6 @@ public:
 						 &GrObj::getScalingMode, &GrObj::setScalingMode);
 	 declareCAttrib("unRenderMode",
 						 &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
-//  	 declareCAction("update", &GrObj::update);
 	 declareCAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
 
 	 linkVarCopy("GrObj::GROBJ_DIRECT_RENDER", GrObj::GROBJ_DIRECT_RENDER);
