@@ -350,19 +350,20 @@ Gfx::BmapData::makeScrambled(int nsubimg_x, int nsubimg_y, int seed) const
 {
 DOTRACE("Gfx::BmapData::makeScrambled");
 
-  Gfx::BmapData result(this->size(),
+  if ( width() % nsubimg_x != 0 )
+    {
+      throw Util::Error("not an evenly divisible width");
+    }
+
+  if ( height() % nsubimg_y != 0 )
+    {
+      throw Util::Error("not an evenly divisible width");
+    }
+
+  shared_ptr<Gfx::BmapData> result
+    (new Gfx::BmapData(this->size(),
                        this->bitsPerPixel(),
-                       this->byteAlignment());
-
-  if ( result.width() % nsubimg_x != 0 )
-    {
-      throw Util::Error("not an evenly divisible width");
-    }
-
-  if ( result.height() % nsubimg_y != 0 )
-    {
-      throw Util::Error("not an evenly divisible width");
-    }
+                       this->byteAlignment()));
 
   const int npos = nsubimg_x * nsubimg_y;
 
@@ -376,10 +377,16 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   std::random_shuffle(newpos.begin(), newpos.end(), generator);
 
-  const int bytes_per_row = rep->bytesPerRow();
+  const int bytes_per_pixel = bitsPerPixel()/8;
 
-  const int size_subimg_x = result.width() / nsubimg_x * bitsPerPixel()/8;
-  const int size_subimg_y = result.height() / nsubimg_y;
+  if (bytes_per_pixel != 1 && bytes_per_pixel != 3)
+    {
+      throw Util::Error(fstring("unknown bytes-per-pixel value: ",
+                                bytes_per_pixel));
+    }
+
+  const int size_subimg_x = result->width() / nsubimg_x * bytes_per_pixel;
+  const int size_subimg_y = result->height() / nsubimg_y;
 
   for (int i = 0; i < npos; ++i)
     {
@@ -400,59 +407,56 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
       for (int y = 0; y < size_subimg_y; ++y)
         {
-          const unsigned int src_offset =
-            (rep->rowOrder == TOP_FIRST)
-            ?
-            src_fullimg_y + y
-            :
-            rep->extent.y() - 1 - (src_fullimg_y + y);
+          // NOTE: I tried hand-optimizing all this stuff to avoid calls to
+          // rowPtr()... basically optimizing all the math so that we just
+          // increment pointers in each loop iteration rather than
+          // re-compute positions afresh. But, it made no helpful
+          // difference in runtimes. So, better to keep the clean
+          // easier-to-read code here. My guess is that the best way to
+          // speed this algorithm up, if needed, would be by improving
+          // cache performance. Right now we jump around in both the src
+          // and dst images. We could speed things up by designing the
+          // algorithm so that one of src/dst gets read straight through
+          // from beginning to end.
 
           const unsigned char* src =
-            rep->bytesPtr() + src_offset * bytes_per_row + src_fullimg_x;
+            rep->rowPtr(src_fullimg_y+y) + src_fullimg_x;
 
-//           const unsigned char* src =
-//             rep->rowPtr(src_fullimg_y+y) + src_fullimg_x;
-
-          unsigned int dst_row =
+          const unsigned int dst_row =
             fliptb
             ? dst_fullimg_y+size_subimg_y-1-y
             : dst_fullimg_y+y;
 
-          const unsigned int dst_offset =
-            (rep->rowOrder == TOP_FIRST)
-            ?
-            dst_row
-            :
-            result.rep->extent.y() - 1 - dst_row;
-
-//           unsigned char* dst =
-//             result.rep->rowPtr(dst_row) + dst_fullimg_x;
-
           unsigned char* dst =
-            result.rep->bytesPtr() + dst_offset * bytes_per_row + dst_fullimg_x;
+            result->rep->rowPtr(dst_row) + dst_fullimg_x;
 
           unsigned char* dst_end = dst + size_subimg_x;
 
           if (fliplr)
             {
-              while (dst_end != dst)
+              if (bytes_per_pixel == 1)
+                while (dst_end != dst) { *--dst_end = *src++; }
+              else if (bytes_per_pixel == 3)
+                while (dst_end != dst)
+                  {
+                    *(dst_end-3) = *src++;
+                    *(dst_end-2) = *src++;
+                    *(dst_end-1) = *src++;
+                    dst_end -= 3;
+                  }
+              else
                 {
-                  *--dst_end = *src++;
+                  Assert(0);
                 }
             }
           else
             {
-              while (dst != dst_end)
-                {
-                  *dst++ = *src++;
-                }
+              while (dst != dst_end) { *dst++ = *src++; }
             }
         }
     }
 
-  shared_ptr<Gfx::BmapData> ret(new Gfx::BmapData);
-  ret->swap(result);
-  return ret;
+  return result;
 }
 
 static const char vcid_bmapdata_cc[] = "$Header$";
