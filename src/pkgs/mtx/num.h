@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Tue Feb 19 17:50:33 2002
+// written: Wed Feb 27 18:06:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,6 +110,11 @@ struct ToPow
 
   ToPow(double p_) : p(p_) {}
   double operator()(double v) { return pow(v, p); }
+};
+
+struct Square
+{
+  double operator()(double x) { return x*x; }
 };
 
 struct Min
