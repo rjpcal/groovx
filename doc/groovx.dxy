@@ -1,42 +1,42 @@
 /* $Id$ */
-/** 
+/**
 
 \mainpage The GroovX framework
 
 \author Rob Peters rjpeters at klab dot caltech dot edu
 
-\version development
-
-\warning This software is under constant revision/
-
 This project is an experimental application framework for designing
 visual psychological experiments. It is based on a model that
 includes, experiments, blocks, trials, graphic objects, timing
 handlers, and response handlers. The framework is written in C++, but
-most componenets are scriptable in Tcl.  A new C++ API wraps around
-the Tcl C API to make it easy to add scriptability to new components.
+most components are scriptable in Tcl.
 
-Rather than using preprocessing or macros to expose C++ classes to
-Tcl, I have tried to stay within the C++ language, using templates and
-inheritance to provide the meta-class information to Tcl, with very
-little additional code being required of client classes in order to
-provide this meta-level access.
+Included is a significant new C++ API wraps around the Tcl C API to
+make it easy to add scriptability to new components. Rather than using
+preprocessing or macros to expose C++ classes to Tcl, I have tried to
+stay within the C++ language, using templates and inheritance to
+provide the meta-class information to Tcl, with very little additional
+code being required of client classes in order to provide this
+meta-level access.
 
 Here are a few starting points into the framework:
 
 <ul>
-<li>Util::RefCounted and Util::RefCounts
-<li>Util::Object
-<li>Util::Ref and Util::SoftRef
-<li>ObjDb
 
-<li>Tcl::Convert
+<li>\ref TUTORIAL
+<li>\ref README
+
+<li>Nub::RefCounted and Nub::RefCounts
+<li>Nub::Object
+<li>Nub::Ref and Nub::SoftRef
+<li>Nub::ObjDb
+
 <li>Tcl::Command
 <li>Tcl::Context
-
 <li>Tcl::Pkg
 
-<li>Field and Value 
+<li>Field
+<li>rutz::value
 
 </ul>
 
