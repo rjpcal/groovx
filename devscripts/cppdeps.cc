@@ -1143,7 +1143,9 @@ void cppdeps::print_link_deps(const string& fname)
        itr != stop;
        ++itr)
     {
-      links.insert(m_cfg_link_formats.transform((*itr).target));
+      const string t = m_cfg_link_formats.transform((*itr).target);
+      if (!t.empty())
+        links.insert(t);
     }
 
   for (std::set<string>::iterator
