@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu May 17 16:55:42 2001
+// written: Sat May 26 16:31:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,6 +111,36 @@ public:
 
   PtrIterator beginPtrs() const { return begin(); }
   PtrIterator endPtrs() const { return end(); }
+
+  template <class T>
+  class CastingIterator {
+	 Iterator itsItr;
+	 const Iterator itsEnd;
+
+	 void advanceToValid()
+	 {
+		while ((itsItr != itsEnd) && (dynamic_cast<T*>(itsItr.getObject())==0))
+		  ++itsItr;
+	 }
+
+  public:
+	 CastingIterator(const Iterator& begin) :
+		itsItr(begin), itsEnd(IoDb::theDb().end()) { advanceToValid(); }
+
+	 CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
+
+	 bool operator==(const CastingIterator& other)
+	   { return itsItr == other.itsItr; }
+
+	 bool operator!=(const CastingIterator& other)
+	   { return itsItr != other.itsItr; }
+
+	 T* operator*() const
+	   { return &(dynamic_cast<T&>(*itsItr.getObject())); }
+
+	 T* operator->() const
+	   { return operator*(); }
+  };
 
   class Inserter;
   friend class Inserter;
