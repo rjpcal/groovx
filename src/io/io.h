@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 22 16:47:04 2000
+// written: Wed Mar 22 21:16:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,8 +88,11 @@ public:
       \c IO don't need to implement any formatting. */
   virtual void writeTo(Writer* writer) const = 0;
   
-  /// Returns a unique id for this object
-  unsigned long id() const;
+  /** Returns a unique id for this object. This function should NEVER
+      be overridden by public clients; it will only be overridden by
+      other classes internal to the io system, such as \c IOProxy for
+      example. */
+  virtual unsigned long id() const;
 
   /** Returns a serialization version id for the class. The default
       implementation returns zero. Classes should override this when
