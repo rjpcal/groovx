@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Sun Aug 26 08:39:37 2001
+// written: Wed Aug 29 11:49:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,31 @@
 namespace Util
 {
   class out_of_range {};
+}
+
+
+template<class T, std::size_t N>
+T* array_begin(T (&array)[N])
+{
+  return &array[0];
+}
+
+template<class T, std::size_t N>
+T* array_end(T (&array)[N])
+{
+  return &array[0]+N;
+}
+
+template<class T, std::size_t N>
+const T* array_begin(T const (&array)[N])
+{
+  return &array[0];
+}
+
+template<class T, std::size_t N>
+const T* array_end(T const (&array)[N])
+{
+  return &array[0]+N;
 }
 
 ///////////////////////////////////////////////////////////////////////
