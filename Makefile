@@ -390,14 +390,19 @@ dir_structure:
 #-------------------------------------------------------------------------
 
 
+# This build rule helps to create subdirectories that don't need to be part of
+# the CVS repository, but do need to exist to hold generated files during the
+# build process in sandboxes..
+%.timestamp:
+	@[ -d ${@D} ] || mkdir -p ${@D}
+	@[ -f $@ ] || touch $@
+
+
 # dependencies of object files on source+header files
 
 DEP_FILE := $(DEP)/alldepends.$(MODE)
 
-$(DEP):
-	mkdir -p $@
-
-$(DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS)
+$(DEP_FILE): $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	time ./pydep/pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
@@ -407,13 +412,11 @@ include $(DEP_FILE)
 
 VISX_LIB_DIR := $(LOCAL_ARCH)/lib/visx
 
-$(VISX_LIB_DIR):
-	mkdir -p $@
-
 PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
-$(PKG_DEP_FILE): $(DEP) $(VISX_LIB_DIR) $(ALL_SOURCES) $(ALL_HEADERS) \
-	Makefile src/pkgs/buildPkgDeps.tcl
+$(PKG_DEP_FILE): $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
+		$(ALL_SOURCES) $(ALL_HEADERS) \
+		Makefile src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl $@
 
 include $(PKG_DEP_FILE)
@@ -423,8 +426,8 @@ include $(PKG_DEP_FILE)
 
 LIB_DEP_FILE := $(DEP)/libdepends.$(MODE)
 
-$(LIB_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
-  Makefile $(SCRIPTS)/build_lib_rules.tcl
+$(LIB_DEP_FILE): $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
+		Makefile $(SCRIPTS)/build_lib_rules.tcl
 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(LOCAL_LIB) \
 		--libprefix libDeep \
