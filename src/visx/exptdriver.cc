@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 24 12:44:30 1999
+// written: Wed Dec  1 14:30:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ namespace {
 
 class ExptDriver::Impl {
 public:
-  Impl();
+  Impl(ExptDriver* owner);
   ~Impl();
 
   //////////////////////
@@ -167,6 +167,8 @@ public:
   //////////////////
 
 private:
+  ExptDriver* itsOwner;
+
   Tcl_Interp* itsInterp;
 
   string itsHostname;			  // Host computer on which Expt was begun
@@ -190,7 +192,8 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::Impl::Impl() :
+ExptDriver::Impl::Impl(ExptDriver* owner) :
+  itsOwner(owner),
   itsInterp(0),
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
@@ -719,7 +722,7 @@ DOTRACE("ExptDriver::Impl::edBeginTrial");
   if ( !assertIds() ) return;
 
   block().beginTrial();
-  timingHdlr().thBeginTrial();
+  timingHdlr().thBeginTrial(itsOwner);
   responseHandler().rhBeginTrial();
 }
 
@@ -740,7 +743,7 @@ DOTRACE("ExptDriver::Impl::edResponseSeen");
 
   TimeTraceNL("edResponseSeen", timingHdlr().getElapsedMsec());
 
-  timingHdlr().thResponseSeen();
+  timingHdlr().thResponseSeen(itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -776,7 +779,7 @@ DOTRACE("ExptDriver::Impl::edAbortTrial");
   
   responseHandler().rhAbortTrial();
   block().abortTrial();
-  timingHdlr().thAbortTrial();
+  timingHdlr().thAbortTrial(itsOwner);
 }
 
 //---------------------------------------------------------------------
@@ -836,7 +839,7 @@ DOTRACE("ExptDriver::Impl::edHaltExpt");
 	 responseHandler().rhHaltExpt();
   }
   if ( ThList::theThList().isValidId(itsThId) ) {
-	 timingHdlr().thHaltExpt();
+	 timingHdlr().thHaltExpt(itsOwner);
   }
 }
 
@@ -960,7 +963,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 ///////////////////////////////////////////////////////////////////////
 
 ExptDriver::ExptDriver() :
-  itsImpl(new Impl()) 
+  itsImpl(new Impl(this)) 
 {
 DOTRACE("ExptDriver::ExptDriver");
 }
