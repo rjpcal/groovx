@@ -77,9 +77,9 @@ public:
     itsFlipContrast(contrast),
     itsFlipVertical(vertical)
   {
-    // If the first character of the new filename is '.', then we assume
-    // it is a temp file, and therefore we don't save this filename in
-    // itsOwnerFilename.
+    // If the first character of the new filename is '.', then we
+    // assume it is a temp file, and therefore we don't save this
+    // filename in itsOwnerFilename.
     if ( itsFilename.c_str()[0] != '.' )
       {
         itsOwnerFilename = itsFilename;
@@ -163,11 +163,12 @@ public:
   {
     if (!itsFilename.is_empty())
       {
-        // NOTE: it's important that this functionality be separate from
-        // GxPixmap's own version of queueImage(), since that function
-        // immediately calls sigNodeChanged, which means that we notify
-        // everyone else that the data have been purged, so the bitmap
-        // might never have a chance to be drawn on the screen
+        // NOTE: it's important that this functionality be separate
+        // from GxPixmap's own version of queueImage(), since that
+        // function immediately calls sigNodeChanged, which means that
+        // we notify everyone else that the data have been purged, so
+        // the bitmap might never have a chance to be drawn on the
+        // screen
 
         itsData.clear();
 
@@ -389,8 +390,8 @@ DOTRACE("GxPixmap::grRender");
 
   if (isPurgeable())
     {
-      // This const_cast is OK because we aren't changing the observable
-      // state; we're just re-queuing the current filename
+      // This const_cast is OK because we aren't changing the
+      // observable state; we're just re-queuing the current filename
       const_cast<GxPixmapImpl*>(rep)->purge();
     }
 }
@@ -403,14 +404,14 @@ void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPixmap::grGetBoundingBox");
 
+  using Gfx::Vec2i;
+  using Gfx::Vec2d;
+
   // Get the corners in screen coordinates
+  Vec2i bottom_left = bbox.screenFromWorld(Vec2d());
+  Vec2i top_right   = Vec2d(bottom_left) + (Vec2d(size()) * getZoom());
 
-  Gfx::Vec2<int> bottom_left = bbox.screenFromWorld(Gfx::Vec2<double>());
-  Gfx::Vec2<int> top_right
-    (Gfx::Vec2<double>(bottom_left) + (Gfx::Vec2<double>(size()) * getZoom()));
-
-  bbox.vertex2(Gfx::Vec2<double>());
-
+  bbox.vertex2(Vec2d());
   bbox.vertex2(bbox.worldFromScreen(top_right));
 }
 

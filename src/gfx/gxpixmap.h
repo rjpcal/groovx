@@ -48,7 +48,7 @@ class GxPixmapImpl;
 //  ###################################################################
 //  ===================================================================
 
-/// \c GxPixmap is a subclass of \c GxShapeKit represents bitmap images.
+/// \c GxPixmap is a subclass of \c GxShapeKit for bitmap images.
 
 class GxPixmap : public GxShapeKit
 {
@@ -83,14 +83,14 @@ public:
   void loadImageStream(std::istream& ist);
 
   /// Reload bitmap data from the image file most recently loaded.
-  /** This has the effect of reverting any changes that might have been
-      made to the image data since loading. The underlying image file is
-      not affected. */
+  /** This has the effect of reverting any changes that might have
+      been made to the image data since loading. The underlying image
+      file is not affected. */
   void reload();
 
   /// Queues the image file \a filename for loading.
-  /** The image will not actually be retrieved from the file until it is
-      needed. */
+  /** The image will not actually be retrieved from the file until it
+      is needed. */
   void queueImage(const char* filename);
 
   /// Writes bitmap data to the file \a filename.
@@ -98,28 +98,29 @@ public:
   void saveImage(const char* filename) const;
 
   /// Grabs pixels from a rectangular area of the screen buffer.
-  /** The pixels are loaded into the GxPixmap's pixel array. The rectangle
-      is specified in screen coordinates. */
+  /** The pixels are loaded into the GxPixmap's pixel array. The
+      rectangle is specified in screen coordinates. */
   void grabScreenRect(const Gfx::Rect<int>& rect);
 
   /// Like grabScreen(), but grab pixels from the entire canvas window.
   void grabScreen();
 
   /// Grabs pixels from a rectangular area of the screen buffer.
-  /** The pixels are loaded into the GxPixmap's pixel array. The rectangle
-      is specified in world coordinates. */
+  /** The pixels are loaded into the GxPixmap's pixel array. The
+      rectangle is specified in world coordinates. */
   void grabWorldRect(const Gfx::Rect<double>& rect);
 
   /// Flips the luminance contrast of the bitmap data.
   /** The actual math depends on the format of the bitmap data. The
-      polarity of the contrast relative to its original value is computed
-      and stored, so that it can be maintained throughout IO operations. */
+      polarity of the contrast relative to its original value is
+      computed and stored, so that it can be maintained throughout IO
+      operations. */
   void flipContrast();
 
   /// Vertically inverts the image.
   /** The total number of vertical flips in the object's history is
-      computed and stored, so that the proper orientation polarity can be
-      maintained across IO operations. */
+      computed and stored, so that the proper orientation polarity can
+      be maintained across IO operations. */
   void flipVertical();
 
   ///////////////
@@ -136,11 +137,11 @@ public:
   bool getUsingZoom() const;
 
   /// Query whether the image data are purgeable.
-  /** If the image data are purgeable, they will be unloaded after every
-      render, and then re-queued. */
+  /** If the image data are purgeable, they will be unloaded after
+      every render, and then re-queued. */
   bool isPurgeable() const;
 
-  /// Get the name (if any) of the file associated with this bitmap image.
+  /// Get the name (if any) of the source file for this bitmap image.
   const char* filename() const;
 
   /// Query whether the image will be rendered as 1-bit bitmap.
