@@ -24,11 +24,10 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 
     variable BASE_CLASS_TESTED
 
-    set this(testbase) [expr !$BASE_CLASS_TESTED]
-    set this(testsubclass) [expr ![string equal $subclass "GxShapeKit"]]
-    set this(package) $package
-    set this(subclass) $subclass
-    if { $this(testsubclass) } {
+    set testbase [expr !$BASE_CLASS_TESTED]
+    set testsubclass [expr ![string equal $subclass "GxShapeKit"]]
+
+    if { $testsubclass } {
         if { $objid == -1 } {
             set this(objid) [eval Obj::new $subclass ]
         } else {
@@ -39,15 +38,15 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
     }
 
     if { $this(objid) > 0 } {
-        ::testReadWrite $this(package) $this(objid)
+        ::testReadWrite $package $this(objid)
     }
 
     # class::type
     set cmdname "Obj::type"
     set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
-    set testname "${this(package)}-${cmdname}"
+    set testname "${package}-${cmdname}"
 
-    if { $this(testbase) } {
+    if { $testbase } {
         eval ::test $testname {"too few args"} {"
             $cmdname
         "} {$usage}
@@ -59,19 +58,19 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
         "} {"expected.*but got"}
     }
 
-    if { $this(testsubclass) } {
-        eval ::test $testname {"normal use on $this(subclass)"} {"
+    if { $testsubclass } {
+        eval ::test $testname {"normal use on $subclass"} {"
             $cmdname $this(objid)
-        "} {$this(subclass)}
+        "} {$subclass}
     }
 
 
     # classname::category
     set cmdname "GxShapeKit::category"
     set usage "wrong \# args: should be"
-    set testname "${this(package)}-${cmdname}"
+    set testname "${package}-${cmdname}"
 
-    if { $this(testbase) } {
+    if { $testbase } {
         eval ::test $testname {"too few args"} {"
             $cmdname
         "} {$usage}
@@ -80,7 +79,7 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
         "} {$usage}
     }
 
-    if { $this(testsubclass) } {
+    if { $testsubclass } {
         eval ::test $testname {"normal use get"} {"
             GxShapeKit::category $this(objid)
         "} {"^$::INT$"}
@@ -103,9 +102,9 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 
 
     # class::draw
-    set testname "${this(package)}-draw"
+    set testname "${package}-draw"
 
-    if { $this(testsubclass) } {
+    if { $testsubclass } {
         package require Toglet
 
         eval ::test $testname {"normal use"} {"
