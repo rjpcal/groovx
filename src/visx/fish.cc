@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Mar  4 03:10:04 2000
+// written: Sat Mar  4 15:01:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <cstring>
 #include <fstream.h>
-#include <strstream.h>
 #include <vector>
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
@@ -36,54 +36,37 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Fish";
+  const char* ioTag = "Fish";
 
   int dummy=0; // We need a dummy int to attach various CPtrProperty's
 
+  typedef IO Fish::* IoMember;
 
-  void makeIoList(Fish* f, vector<IO *>& vec);
-  void makeIoList(const Fish* f, vector<const IO *>& vec);
+  const IoMember IO_MEMBERS[] = {
+	 &Fish::category,
+	 &Fish::dorsalFinCoord,
+	 &Fish::tailFinCoord,
+	 &Fish::lowerFinCoord,
+	 &Fish::mouthCoord
+  };
 
-  void makeIoList(Fish* f, vector<IO *>& vec) {
-  DOTRACE("Fish::makeIoList");
-	 makeIoList(f, reinterpret_cast<vector<const IO *> &>(vec)); 
-  }
+  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
-  void makeIoList(const Fish* f, vector<const IO *>& vec) {
-  DOTRACE("Fish::makeIoList const");
-	 vec.clear();
+  const Fish::PInfo PINFOS[] = {
+	 Fish::PInfo("category", &Fish::category, 0, 10, 1, true),
+	 Fish::PInfo("dorsalFinCoord", &Fish::dorsalFinCoord, -2.0, 2.0, 0.1),
+	 Fish::PInfo("tailFinCoord", &Fish::tailFinCoord, -2.0, 2.0, 0.1),
+	 Fish::PInfo("lowerFinCoord", &Fish::lowerFinCoord, -2.0, 2.0, 0.1),
+	 Fish::PInfo("mouthCoord", &Fish::mouthCoord, -2.0, 2.0, 0.1),
 
-	 vec.push_back(&f->category);
-	 vec.push_back(&f->dorsalFinCoord);
-	 vec.push_back(&f->tailFinCoord);
-	 vec.push_back(&f->lowerFinCoord);
-	 vec.push_back(&f->mouthCoord);
-  }
+	 Fish::PInfo("currentPart", &Fish::currentPart, 0, 3, 1, true),
 
-  const vector<Fish::PInfo>& getPropertyInfos() {
-  DOTRACE("Fish::getPropertyInfos");
+	 Fish::PInfo("currentEndPt", &Fish::currentEndPt, 0, 3, 1, true),
+	 Fish::PInfo("endPt_Part", &Fish::endPt_Part, 1, 4, 1),
+	 Fish::PInfo("endPt_Bkpt", &Fish::endPt_Bkpt, 1, 10, 1)
+  };
 
-	 static vector<Fish::PInfo> p;
-
-	 typedef Fish F;
-	 typedef Fish::PInfo P;
-
-	 if (p.size() == 0) {
-		p.push_back(P("category", &F::category, 0, 10, 1, true));
-		p.push_back(P("dorsalFinCoord", &F::dorsalFinCoord, -2.0, 2.0, 0.1));
-		p.push_back(P("tailFinCoord", &F::tailFinCoord, -2.0, 2.0, 0.1));
-		p.push_back(P("lowerFinCoord", &F::lowerFinCoord, -2.0, 2.0, 0.1));
-		p.push_back(P("mouthCoord", &F::mouthCoord, -2.0, 2.0, 0.1));
-
-		p.push_back(P("currentPart", &F::currentPart, 0, 3, 1, true));
-
-		p.push_back(P("currentEndPt", &F::currentEndPt, 0, 3, 1, true));
-		p.push_back(P("endPt_Part", &F::endPt_Part, 1, 4, 1));
-		p.push_back(P("endPt_Bkpt", &F::endPt_Bkpt, 1, 10, 1));
-	 }
-	 return p;
-  }
-
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Fish::PInfo);
 }
 
 Util::Tracer Fish::tracer;
@@ -238,11 +221,8 @@ DOTRACE("Fish::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  vector<const IO *> ioList;
-  makeIoList(this, ioList);
-  for (vector<const IO *>::const_iterator ii = ioList.begin();
-		 ii != ioList.end(); ++ii) {
-	 (*ii)->serialize(os, flag);
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 (this->*IO_MEMBERS[i]).serialize(os, flag);
   }
 
   if (os.fail()) throw OutputError(ioTag);
@@ -254,10 +234,8 @@ void Fish::deserialize(istream& is, IOFlag flag) {
 DOTRACE("Fish::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  vector<IO *> ioList;
-  makeIoList(this, ioList);
-  for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-	 (*ii)->deserialize(is, flag);
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 (this->*IO_MEMBERS[i]).deserialize(is, flag);
   }
 
   try {
@@ -274,13 +252,10 @@ DOTRACE("Fish::deserialize");
 
 int Fish::charCount() const {
 DOTRACE("Fish::charCount");
-  int result = ioTag.length() + 1;
+  int result = strlen(ioTag) + 1;
 
-  vector<const IO*> ioList;
-  makeIoList(this, ioList);
-
-  for (size_t i = 0; i < ioList.size(); ++i) {
-	 result += ioList[i]->charCount() + 1; 
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 result += (this->*IO_MEMBERS[i]).charCount() + 1;
   }
 
   result += 5;						  // fudge factor
@@ -292,10 +267,9 @@ DOTRACE("Fish::charCount");
 
 void Fish::readFrom(Reader* reader) {
 DOTRACE("Fish::readFrom");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name_cstr(),
-								 const_cast<Value&>(get(infos[i].property())));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 reader->readValueObj(PINFOS[i].name_cstr(),
+								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -303,9 +277,8 @@ DOTRACE("Fish::readFrom");
 
 void Fish::writeTo(Writer* writer) const {
 DOTRACE("Fish::writeTo");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
   GrObj::writeTo(writer);
@@ -337,12 +310,12 @@ DOTRACE("Fish::receiveStateChangeMsg");
 
 unsigned int Fish::numPropertyInfos() {
 DOTRACE("Fish::numPropertyInfos");
-  return getPropertyInfos().size();
+  return NUM_PINFOS;
 }
 
 const Fish::PInfo& Fish::getPropertyInfo(unsigned int i) {
 DOTRACE("Fish::getPropertyInfo");
-  return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 void Fish::readSplineFile(const char* splinefile) {

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Sat Mar  4 03:34:28 2000
+// written: Sat Mar  4 16:02:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,15 +23,10 @@
 #include "rect.h"
 #include "writer.h"
 
+#include <cstring>
 #include <iostream.h>           // for serialize
-#include <iomanip.h>				  // for setw in serialize
-#include <string>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <vector>
-
-#include <cctype>
-#include <cmath>
 
 #define NO_TRACE
 #include "trace.h"
@@ -46,109 +41,96 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "MorphyFace";
+  template <class T>
+  T abs(T val) { return (val < 0) ? -val : val; }
 
-  void makeIoList(MorphyFace* f, vector<IO *>& vec);
-  void makeIoList(const MorphyFace* f, vector<const IO *>& vec);
+  const char* ioTag = "MorphyFace";
 
-  void makeIoList(MorphyFace* f, vector<IO *>& vec) {
-  DOTRACE("MorphyFace::makeIoList");
-	 makeIoList(f, reinterpret_cast<vector<const IO *> &>(vec));
-  }
+  typedef IO MorphyFace::* IoMember;
 
-  void makeIoList(const MorphyFace* f, vector<const IO *>& vec) {
-  DOTRACE("MorphyFace::makeIoList const");
-	 vec.clear();
+  const IoMember IO_MEMBERS[] = {
+	 &MorphyFace::category,
 
-	 vec.push_back(&f->category);
+	 &MorphyFace::faceWidth,
+	 &MorphyFace::topWidth,
+	 &MorphyFace::bottomWidth,
+	 &MorphyFace::topHeight,
+	 &MorphyFace::bottomHeight,
 
-	 vec.push_back(&f->faceWidth);
-	 vec.push_back(&f->topWidth);
-	 vec.push_back(&f->bottomWidth);
-	 vec.push_back(&f->topHeight);
-	 vec.push_back(&f->bottomHeight);
+	 &MorphyFace::hairWidth,
+	 &MorphyFace::hairStyle,
 
-	 vec.push_back(&f->hairWidth);
-	 vec.push_back(&f->hairStyle);
+	 &MorphyFace::eyeYpos,
+	 &MorphyFace::eyeDistance,
+	 &MorphyFace::eyeHeight,
+	 &MorphyFace::eyeAspectRatio,
 
-	 vec.push_back(&f->eyeYpos);
-	 vec.push_back(&f->eyeDistance);
-	 vec.push_back(&f->eyeHeight);
-	 vec.push_back(&f->eyeAspectRatio);
+	 &MorphyFace::pupilXpos,
+	 &MorphyFace::pupilYpos,
+	 &MorphyFace::pupilSize,
+	 &MorphyFace::pupilDilation,
 
-	 vec.push_back(&f->pupilXpos);
-	 vec.push_back(&f->pupilYpos);
-	 vec.push_back(&f->pupilSize);
-	 vec.push_back(&f->pupilDilation);
+	 &MorphyFace::eyebrowXpos,
+	 &MorphyFace::eyebrowYpos,
+	 &MorphyFace::eyebrowCurvature,
+	 &MorphyFace::eyebrowAngle,
+	 &MorphyFace::eyebrowThickness,
 
-	 vec.push_back(&f->eyebrowXpos);
-	 vec.push_back(&f->eyebrowYpos);
-	 vec.push_back(&f->eyebrowCurvature);
-	 vec.push_back(&f->eyebrowAngle);
-	 vec.push_back(&f->eyebrowThickness);
+	 &MorphyFace::noseXpos,
+	 &MorphyFace::noseYpos,
+	 &MorphyFace::noseLength,
+	 &MorphyFace::noseWidth,
 
-	 vec.push_back(&f->noseXpos);
-	 vec.push_back(&f->noseYpos);
-	 vec.push_back(&f->noseLength);
-	 vec.push_back(&f->noseWidth);
+	 &MorphyFace::mouthXpos,
+	 &MorphyFace::mouthYpos,
+	 &MorphyFace::mouthWidth,
+	 &MorphyFace::mouthCurvature
+  };
 
-	 vec.push_back(&f->mouthXpos);
-	 vec.push_back(&f->mouthYpos);
-	 vec.push_back(&f->mouthWidth);
-	 vec.push_back(&f->mouthCurvature);
-  }
+  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
-  const vector<MorphyFace::PInfo>& getPropertyInfos() {
-  DOTRACE("MorphyFace::getPropertyInfos");
+  typedef MorphyFace MF;
 
-	 // just to shorten up the line lengths below
-	 typedef MorphyFace MF;
+  const MorphyFace::PInfo PINFOS[] = {
+	 MF::PInfo("category", &MF::category, 0, 10, 1, true),
 
-	 typedef MF::PInfo P;
-
-	 static vector<P> p;
-
-	 if (p.size() == 0) {
-		p.push_back(P("category", &MF::category, 0, 10, 1, true));
-
-		p.push_back(P("faceWidth", &MF::faceWidth, 1.5, 3.5, 0.1));
-		p.push_back(P("topWidth", &MF::topWidth, 0.05, 2.0, 0.05));
-		p.push_back(P("bottomWidth", &MF::bottomWidth, 0.05, 2.0, 0.05));
-		p.push_back(P("topHeight", &MF::topHeight, 0.5, 5.0, 0.25));
-		p.push_back(P("bottomHeight", &MF::bottomHeight, -5.0, -0.5, 0.25));
+	 MF::PInfo("faceWidth", &MF::faceWidth, 1.5, 3.5, 0.1),
+	 MF::PInfo("topWidth", &MF::topWidth, 0.05, 2.0, 0.05),
+	 MF::PInfo("bottomWidth", &MF::bottomWidth, 0.05, 2.0, 0.05),
+	 MF::PInfo("topHeight", &MF::topHeight, 0.5, 5.0, 0.25),
+	 MF::PInfo("bottomHeight", &MF::bottomHeight, -5.0, -0.5, 0.25),
 	 
-		p.push_back(P("hairWidth", &MF::hairWidth, 0.00, 0.5, 0.02, true));
-		p.push_back(P("hairStyle", &MF::hairStyle, 0, 1, 1));
+	 MF::PInfo("hairWidth", &MF::hairWidth, 0.00, 0.5, 0.02, true),
+	 MF::PInfo("hairStyle", &MF::hairStyle, 0, 1, 1),
 	 
-		p.push_back(P("eyeYpos", &MF::eyeYpos, -2.0, 2.0, 0.1, true));
-		p.push_back(P("eyeDistance", &MF::eyeDistance, 0.0, 5.0, 0.25));
-		p.push_back(P("eyeHeight", &MF::eyeHeight, 0.0, 2.0, 0.1));
-		p.push_back(P("eyeAspectRatio", &MF::eyeAspectRatio, 0.1, 5.0, 0.1));
+	 MF::PInfo("eyeYpos", &MF::eyeYpos, -2.0, 2.0, 0.1, true),
+	 MF::PInfo("eyeDistance", &MF::eyeDistance, 0.0, 5.0, 0.25),
+	 MF::PInfo("eyeHeight", &MF::eyeHeight, 0.0, 2.0, 0.1),
+	 MF::PInfo("eyeAspectRatio", &MF::eyeAspectRatio, 0.1, 5.0, 0.1),
 	 
-		p.push_back(P("pupilXpos", &MF::pupilXpos, -0.5, 0.5, 0.05, true));
-		p.push_back(P("pupilYpos", &MF::pupilYpos, -0.5, 0.5, 0.05));
-		p.push_back(P("pupilSize", &MF::pupilSize, 0.0, 1.0, 0.05));
-		p.push_back(P("pupilDilation", &MF::pupilDilation, 0.0, 1.0, 0.05));
+	 MF::PInfo("pupilXpos", &MF::pupilXpos, -0.5, 0.5, 0.05, true),
+	 MF::PInfo("pupilYpos", &MF::pupilYpos, -0.5, 0.5, 0.05),
+	 MF::PInfo("pupilSize", &MF::pupilSize, 0.0, 1.0, 0.05),
+	 MF::PInfo("pupilDilation", &MF::pupilDilation, 0.0, 1.0, 0.05),
 	 
-		p.push_back(P("eyebrowXpos", &MF::eyebrowXpos, -0.5, 0.5, 0.02, true));
-		p.push_back(P("eyebrowYpos", &MF::eyebrowYpos, 0.0, 1.5, 0.05));
-		p.push_back(P("eyebrowCurvature", &MF::eyebrowCurvature, -2.0, 2.0, 0.1));
-		p.push_back(P("eyebrowAngle", &MF::eyebrowAngle, -50, 50, 1));
-		p.push_back(P("eyebrowThickness", &MF::eyebrowThickness, 0.1, 4.0, 0.1));
+	 MF::PInfo("eyebrowXpos", &MF::eyebrowXpos, -0.5, 0.5, 0.02, true),
+	 MF::PInfo("eyebrowYpos", &MF::eyebrowYpos, 0.0, 1.5, 0.05),
+	 MF::PInfo("eyebrowCurvature", &MF::eyebrowCurvature, -2.0, 2.0, 0.1),
+	 MF::PInfo("eyebrowAngle", &MF::eyebrowAngle, -50, 50, 1),
+	 MF::PInfo("eyebrowThickness", &MF::eyebrowThickness, 0.1, 4.0, 0.1),
 	
-		p.push_back(P("noseXpos", &MF::noseXpos, -1.0, 1.0, 0.05, true));
-		p.push_back(P("noseYpos", &MF::noseYpos, -2.0, 2.0, 0.1));
-		p.push_back(P("noseLength", &MF::noseLength, 0.0, 2.0, 0.1));
-		p.push_back(P("noseWidth", &MF::noseWidth, 0.0, 3.0, 0.1));
+	 MF::PInfo("noseXpos", &MF::noseXpos, -1.0, 1.0, 0.05, true),
+	 MF::PInfo("noseYpos", &MF::noseYpos, -2.0, 2.0, 0.1),
+	 MF::PInfo("noseLength", &MF::noseLength, 0.0, 2.0, 0.1),
+	 MF::PInfo("noseWidth", &MF::noseWidth, 0.0, 3.0, 0.1),
 	 
-		p.push_back(P("mouthXpos", &MF::mouthXpos, -2.0, 2.0, 0.1, true));
-		p.push_back(P("mouthYpos", &MF::mouthYpos, -3.0, 1.0, 0.1));
-		p.push_back(P("mouthWidth", &MF::mouthWidth, 0.0, 5.0, 0.25));
-		p.push_back(P("mouthCurvature", &MF::mouthCurvature, -2.0, 2.0, 0.1));
+	 MF::PInfo("mouthXpos", &MF::mouthXpos, -2.0, 2.0, 0.1, true),
+	 MF::PInfo("mouthYpos", &MF::mouthYpos, -3.0, 1.0, 0.1),
+	 MF::PInfo("mouthWidth", &MF::mouthWidth, 0.0, 5.0, 0.25),
+	 MF::PInfo("mouthCurvature", &MF::mouthCurvature, -2.0, 2.0, 0.1)
+  };
 
-	 }
-	 return p;
-  }
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MF::PInfo);
 
   void draw_hairstyle1(Canvas& canvas) {
 	 const GLdouble hair_vertices[] = {
@@ -328,12 +310,10 @@ DOTRACE("MorphyFace::serialize");
 
   os << '{' << sep;
 
-  vector<const IO *> ioList;
-  makeIoList(this, ioList);
-  for (vector<const IO *>::const_iterator ii = ioList.begin(); 
-		 ii != ioList.end(); ii++) {
-	 (*ii)->serialize(os, flag);
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 (this->*IO_MEMBERS[i]).serialize(os, flag);
   }
+
   os << '}' << endl;
   if (os.fail()) throw OutputError(ioTag);
 
@@ -356,26 +336,31 @@ DOTRACE("MorphyFace::deserialize");
   }
 
   if (version == 0) {
-	 vector<IO *> ioList;
-	 makeIoList(this, ioList);
-	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-		(*ii)->deserialize(is, flag);
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).deserialize(is, flag);
 	 }
   }
   else if (version == 1) {
 	 char brace;
 	 is >> brace;
-	 if (brace != '{') { throw IoLogicError(ioTag + " missing left-brace"); }
-	 vector<IO *> ioList;
-	 makeIoList(this, ioList);
-	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-		(*ii)->deserialize(is, flag);
+	 if (brace != '{') {
+		IoLogicError err(ioTag); err.appendMsg(" missing left-brace");
+		throw err;
 	 }
+
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).deserialize(is, flag);
+	 }
+
 	 is >> brace;
-	 if (brace != '}') { throw IoLogicError(ioTag + " missing right-brace"); }
+	 if (brace != '}') {
+		IoLogicError err(ioTag); err.appendMsg(" missing right-brace");
+		throw err;
+	 }
   }
   else {
-	 throw IoLogicError(ioTag + " unknown version");
+	 IoLogicError err(ioTag); err.appendMsg(" unknown version");
+	 throw err;
   }
 
   // Mysterious bug in HP compiler (aCC) requires the following
@@ -399,7 +384,7 @@ DOTRACE("MorphyFace::deserialize");
 
 int MorphyFace::charCount() const {
 DOTRACE("MorphyFace::charCount");
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + 3 // version
 			 + 2 // brace
 			 + 128 // params
@@ -410,10 +395,9 @@ DOTRACE("MorphyFace::charCount");
 
 void MorphyFace::readFrom(Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name_cstr(),
-								 const_cast<Value&>(get(infos[i].property())));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 reader->readValueObj(PINFOS[i].name_cstr(),
+								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -421,9 +405,8 @@ DOTRACE("MorphyFace::readFrom");
 
 void MorphyFace::writeTo(Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
   GrObj::writeTo(writer);
@@ -437,12 +420,12 @@ DOTRACE("MorphyFace::writeTo");
 
 unsigned int MorphyFace::numPropertyInfos() {
 DOTRACE("MorphyFace::numPropertyInfos");
-  return getPropertyInfos().size();
+  return NUM_PINFOS;
 }
 
 const MorphyFace::PInfo& MorphyFace::getPropertyInfo(unsigned int i) {
 DOTRACE("MorphyFace::getPropertyInfo");
-  return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 

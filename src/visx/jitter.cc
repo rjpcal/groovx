@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Thu Oct 21 18:17:59 1999
+// written: Sat Mar  4 16:29:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,13 @@
 
 #include "jitter.h"
 
-#include <iostream.h>
-#include <string>
-#include <GL/gl.h>
-
 #include "randutils.h"
 #include "reader.h"
 #include "writer.h"
+
+#include <cstring>
+#include <iostream.h>
+#include <GL/gl.h>
 
 #define NO_TRACE
 #include "trace.h"
@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Jitter";
+  const char* ioTag = "Jitter";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ DOTRACE("Jitter::deserialize");
 }
 
 int Jitter::charCount() const {
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + gCharCount<double>(itsXJitter) + 1
 			 + gCharCount<double>(itsYJitter) + 1
 			 + gCharCount<double>(itsRJitter) + 1

@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Sat Mar  4 03:27:07 2000
+// written: Sat Mar  4 16:30:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,16 +17,16 @@
 #include "rect.h"
 #include "writer.h"
 
+#include <cstring>
 #include <GL/gl.h>
 #include <iostream.h>
-#include <string>
 
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
 namespace {
-  const string ioTag = "MaskHatch";
+  const char* ioTag = "MaskHatch";
 
   const MaskHatch::PInfo PINFOS[] = {
 	 MaskHatch::PInfo("numLines", &MaskHatch::numLines, 0, 25, 1, true),
@@ -68,7 +68,7 @@ DOTRACE("MaskHatch::deserialize");
 
 int MaskHatch::charCount() const {
 DOTRACE("MaskHatch::charCount");
-  return ioTag.length() + 1 + GrObj::charCount();
+  return strlen(ioTag) + 1 + GrObj::charCount();
 }
 
 void MaskHatch::readFrom(Reader* reader) {

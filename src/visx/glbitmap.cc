@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Dec  1 18:03:32 1999
+// written: Sat Mar  4 16:28:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 
 #include "glbitmap.h"
 
-#include <GL/gl.h>
-#include <string>
-
 #include "glbmaprenderer.h"
 #include "reader.h"
 #include "writer.h"
+
+#include <cstring>
+#include <GL/gl.h>
 
 #define NO_TRACE
 #include "trace.h"
@@ -26,7 +26,7 @@
 #include "debug.h"
 
 namespace {
-  const string ioTag = "GLBitmap";
+  const char* ioTag = "GLBitmap";
 
   GLBmapRenderer* tempRenderer = 0;
 }

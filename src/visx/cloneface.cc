@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Dec  1 11:39:51 1999
+// written: Sat Mar  4 16:27:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,11 @@
 
 #include "cloneface.h"
 
-#include <iostream.h>			  // for serialize
-#include <string>
-
 #include "readutils.h"
 #include "writeutils.h"
+
+#include <cstring>
+#include <iostream.h>			  // for serialize
 
 #define NO_TRACE
 #include "trace.h"
@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "CloneFace";
+  const char* ioTag = "CloneFace";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ DOTRACE("CloneFace::deserialize");
 
 int CloneFace::charCount() const {
 DOTRACE("CloneFace::charCount");
-  return ( ioTag.length() + 1  
+  return ( strlen(ioTag) + 1  
 			  + 24*6 + 1
 			  + gCharCount(itsEyeAspect) + 1
 			  + gCharCount(itsVertOffset) + 1

@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Fri Mar  3 18:28:44 2000
+// written: Sat Mar  4 16:30:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,13 @@
 
 #include "nullresponsehdlr.h"
 
-#include <string>
+#include <cstring>
 
 #define NO_TRACE
 #include "trace.h"
 
 namespace {
-  const string ioTag = "NullResponseHdlr";
+  const char* ioTag = "NullResponseHdlr";
 }
 
 NullResponseHdlr::NullResponseHdlr() {
@@ -44,7 +44,7 @@ DOTRACE("NullResponseHdlr::deserialize");
 
 int NullResponseHdlr::charCount() const {
 DOTRACE("NullResponseHdlr::charCount");
-  return ioTag.length() + 1;
+  return strlen(ioTag) + 1;
 }
 
 void NullResponseHdlr::readFrom(Reader*) {

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Mar  4 02:39:25 2000
+// written: Sat Mar  4 14:47:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,13 +18,10 @@
 #include "rect.h"
 #include "writer.h"
 
-#include <cmath>					  // for abs()
 #include <iostream.h>           // for serialize
-#include <iomanip.h>				  // for setw in serialize
-#include <string>
+#include <cstring>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -39,49 +36,36 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
+  template <class T>
+  T abs(T val)
+	 { return (val < 0) ? -val : val; }
+
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
 
-  const string ioTag = "Face";
+  const char* ioTag = "Face";
 
-  void makeIoList(Face* f, vector<IO *>& vec);
-  void makeIoList(const Face* f, vector<const IO *>& vec);
+  typedef IO Face::* IoMember;
 
-  void makeIoList(Face* f, vector<IO *>& vec) {
-  DOTRACE("Face::makeIoList");
-    makeIoList(f, reinterpret_cast<vector<const IO *> &>(vec)); 
-  }
-  
-  void makeIoList(const Face* f, vector<const IO *>& vec) {
-  DOTRACE("Face::makeIoList const");
-    vec.clear();
+  const IoMember IO_MEMBERS[] = {
+	 &Face::category,
+	 &Face::eyeHeight,
+	 &Face::eyeDistance,
+	 &Face::noseLength,
+	 &Face::mouthHeight
+  };
 
-	 vec.push_back(&f->category);
-	 vec.push_back(&f->eyeHeight);
-	 vec.push_back(&f->eyeDistance);
-	 vec.push_back(&f->noseLength);
-	 vec.push_back(&f->mouthHeight);
-  }
+  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
-  const vector<Face::PInfo>& getPropertyInfos() {
-  DOTRACE("Face::getPropertyInfos");
+  const Face::PInfo PINFOS[] = {
+	 Face::PInfo("category", &Face::category, 0, 10, 1, true),
+	 Face::PInfo("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1),
+	 Face::PInfo("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1),
+	 Face::PInfo("noseLength", &Face::noseLength, -0.0, 3.0, 0.1),
+	 Face::PInfo("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1)
+  };
 
-    static vector<Face::PInfo> p;
-
-	 typedef Face F;
-	 typedef Face::PInfo P;
-
-	 if (p.size() == 0) {
-		p.push_back(P("category", &Face::category, 0, 10, 1, true));
-		p.push_back(P("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1));
-		p.push_back(P("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1));
-		p.push_back(P("noseLength", &Face::noseLength, -0.0, 3.0, 0.1));
-		p.push_back(P("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1));
-	 }
-
-	 return p;
-  }
-
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Face::PInfo);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -131,12 +115,10 @@ DOTRACE("Face::serialize");
 
   os << '{' << sep;
 
-  vector<const IO *> ioList;
-  makeIoList(this, ioList);
-  for (vector<const IO *>::const_iterator ii = ioList.begin(); 
-		 ii != ioList.end(); ii++) {
-	 (*ii)->serialize(os, flag);
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 (this->*IO_MEMBERS[i]).serialize(os, flag);
   }
+
   os << '}' << endl;
   if (os.fail()) throw OutputError(ioTag);
 
@@ -161,10 +143,8 @@ DOTRACE("Face::deserialize");
   if (version == 0) {
 	 // Format is:
 	 // Face $category $eyeheight $eyedistance $noselength $mouthheight
-	 vector<IO *> ioList;
-	 makeIoList(this, ioList);
-	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-		(*ii)->deserialize(is, flag);
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).deserialize(is, flag);
 	 }
   }
   else if (version == 1) {
@@ -172,17 +152,24 @@ DOTRACE("Face::deserialize");
 	 // Face { $category $eyeheight $eyedistance $noselength $mouthheight }
 	 char brace;
 	 is >> brace;
-	 if (brace != '{') { throw IoLogicError(ioTag + " missing left-brace"); }
-	 vector<IO *> ioList;
-	 makeIoList(this, ioList);
-	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-		(*ii)->deserialize(is, flag);
+	 if (brace != '{') {
+		IoLogicError err(ioTag); err.appendMsg(" missing left-brace");
+		throw err;
 	 }
+
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).deserialize(is, flag);
+	 }
+
 	 is >> brace;
-	 if (brace != '}') { throw IoLogicError(ioTag + " missing right-brace"); }
+	 if (brace != '}') {
+		IoLogicError err(ioTag); err.appendMsg(" missing right-brace");
+		throw err;
+	 }
   }
   else {
-	 throw IoLogicError(ioTag + " unknown version");
+	 IoLogicError err(ioTag); err.appendMsg(" unknown version");
+	 throw err;
   }
 
   // Mysterious bug in HP compiler (aCC) requires the following
@@ -206,7 +193,7 @@ DOTRACE("Face::deserialize");
 
 int Face::charCount() const {
 DOTRACE("Face::charCount");
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + 3 // version
 			 + 2 // brace
 			 + category.charCount() + 1
@@ -221,10 +208,9 @@ DOTRACE("Face::charCount");
 
 void Face::readFrom(Reader* reader) {
 DOTRACE("Face::readFrom");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name_cstr(),
-								 const_cast<Value&>(get(infos[i].property())));
+  for (size_t i = 0; i < NUM_PINFOS; ++i) {
+	 reader->readValueObj(PINFOS[i].name_cstr(),
+								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -232,9 +218,8 @@ DOTRACE("Face::readFrom");
 
 void Face::writeTo(Writer* writer) const {
 DOTRACE("Face::writeTo");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
+  for (size_t i = 0; i < NUM_PINFOS; ++i) {
+	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
   GrObj::writeTo(writer);
@@ -248,12 +233,12 @@ DOTRACE("Face::writeTo");
 
 unsigned int Face::numPropertyInfos() {
 DOTRACE("Face::numPropertyInfos");
-  return getPropertyInfos().size();
+  return NUM_PINFOS;
 }
 
 const Face::PInfo& Face::getPropertyInfo(unsigned int i) {
 DOTRACE("Face::getPropertyInfo");
-  return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 ///////////////////////////////////////////////////////////////////////

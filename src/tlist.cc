@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Feb 16 08:04:16 2000
+// written: Sat Mar  4 16:25:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "tlist.h"
 
 #include <iostream.h>
-#include <string>
+#include <cstring>
 
 #define NO_TRACE
 #include "trace.h"
@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Tlist";
+  const char* ioTag = "Tlist";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ DOTRACE("Tlist::deserialize");
 }
 
 int Tlist::charCount() const {
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + gCharCount<int>(0) + 1
 			 + gCharCount<bool>(false) + 1
 			 + PtrList<Trial>::charCount()

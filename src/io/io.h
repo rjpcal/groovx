@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sat Mar  4 04:45:21 2000
+// written: Sat Mar  4 14:37:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,6 +117,10 @@ public:
 									const string& correctNames,
 									bool doCheck = true);
 
+  static void readTypename(istream& theStream,
+									const char* correctNames,
+									bool doCheck = true);
+
 private:
   unsigned long itsId;
 };
@@ -190,6 +194,8 @@ public:
   ///
   InputError() : IoError() {}
   ///
+  InputError(const char* str);
+  ///
   InputError(const string& str) { setMsg(str); }
   ///
   InputError(const type_info& ti) { setMsg(ti); }
@@ -204,6 +210,8 @@ class OutputError : public IoError {
 public:
   ///
   OutputError() : IoError() {}
+  ///
+  OutputError(const char* str);
   ///
   OutputError(const string& str) { setMsg(str); }
   ///
@@ -222,6 +230,8 @@ public:
   ///
   IoLogicError() : IoError() {}
   ///
+  IoLogicError(const char* str);
+  ///
   IoLogicError(const string& str) { setMsg(str); }
   ///
   IoLogicError(const type_info& ti) { setMsg(ti); }
@@ -238,6 +248,8 @@ public:
   ///
   IoValueError() : IoError() {}
   ///
+  IoValueError(const char* str);
+  ///
   IoValueError(const string& str) { setMsg(str); }
   ///
   IoValueError(const type_info& ti) { setMsg(ti); }
@@ -253,6 +265,8 @@ class IoFilenameError : public IoError {
 public:
   ///
   IoFilenameError() : IoError() {}
+  ///
+  IoFilenameError(const char* filename);
   ///
   IoFilenameError(const string& filename) { setMsg(filename); }
 };

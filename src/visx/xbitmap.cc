@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Nov 24 12:09:50 1999
+// written: Sat Mar  4 16:33:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "xbitmap.h"
 
-#include <string>
+#include <cstring>
 
 #include "xbmaprenderer.h"
 
@@ -23,7 +23,7 @@
 #include "debug.h"
 
 namespace {
-  const string ioTag = "XBitmap";
+  const char* ioTag = "XBitmap";
 
   XBmapRenderer* tempRenderer = 0;
 }

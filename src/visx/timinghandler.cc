@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Thu Oct 21 19:16:41 1999
+// written: Sat Mar  4 16:31:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,15 @@
 
 #include "trialevent.h"
 
+#include <cstring>
+
 #define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
 
 namespace {
-  const string ioTag = "TimingHandler";
+  const char* ioTag = "TimingHandler";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +68,7 @@ DOTRACE("TimingHandler::deserialize");
 
 int TimingHandler::charCount() const {
 DOTRACE("TimingHandler::charCount"); 
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + TimingHdlr::charCount()
 			 + 1); // fudge factor
 }

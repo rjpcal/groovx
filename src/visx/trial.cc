@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Feb  1 18:30:52 2000
+// written: Sat Mar  4 16:33:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,10 +12,6 @@
 #define TRIAL_CC_DEFINED
 
 #include "trial.h"
-
-#include <iostream.h>
-#include <strstream.h>
-#include <string>
 
 #include "canvas.h"
 #include "objlist.h"
@@ -26,6 +22,10 @@
 #include "readutils.h"
 #include "writer.h"
 #include "writeutils.h"
+
+#include <iostream.h>
+#include <strstream.h>
+#include <cstring>
 
 #define NO_TRACE
 #include "trace.h"
@@ -39,7 +39,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Trial";
+  const char* ioTag = "Trial";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -204,7 +204,7 @@ DOTRACE("Trial::deserialize");
 }
 
 int Trial::charCount() const {
-  int count = (ioTag.length() + 1
+  int count = (strlen(ioTag) + 1
 					+ gCharCount<int>(itsIdPairs.size()) + 1);
   for (ObjGrp::const_iterator ii = itsIdPairs.begin(); 
        ii != itsIdPairs.end(); 

@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Dec  1 11:59:58 1999
+// written: Sat Mar  4 16:30:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 
 #include "position.h"
 
-#include <iostream.h>
-#include <string>
-#include <GL/gl.h>
-
 #include "reader.h"
 #include "writer.h"
+
+#include <cstring>
+#include <iostream.h>
+#include <GL/gl.h>
 
 #define NO_TRACE
 #include "trace.h"
@@ -32,7 +32,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Position";
+  const char* ioTag = "Position";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ DOTRACE("Position::deserialize");
 }
 
 int Position::charCount() const {
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + gCharCount<double>(itsImpl->tr_x) + 1
 			 + gCharCount<double>(itsImpl->tr_y) + 1
 			 + gCharCount<double>(itsImpl->tr_z) + 1

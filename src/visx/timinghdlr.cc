@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Dec  1 14:49:42 1999
+// written: Sat Mar  4 16:32:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "trialevent.h"
 #include "writeutils.h"
 
+#include <cstring>
+
 #define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
@@ -29,7 +31,7 @@ const TimingHdlr::TimePoint TimingHdlr::FROM_RESPONSE;
 const TimingHdlr::TimePoint TimingHdlr::FROM_ABORT;
 
 namespace {
-  const string ioTag = "TimingHdlr";
+  const char* ioTag = "TimingHdlr";
 
   void scheduleAll(vector<TrialEvent*>& events, Experiment* expt) {
   DOTRACE("scheduleAll");

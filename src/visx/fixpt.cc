@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar  4 03:13:13 2000
+// written: Sat Mar  4 15:14:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,7 @@
 #include "writer.h"
 
 #include <iostream.h>
-#include <string>
 #include <GL/gl.h>
-#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -32,21 +30,14 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "FixPt";
+  const char* ioTag = "FixPt";
 
-  const vector<FixPt::PInfo>& getPropertyInfos() {
-	 static vector<FixPt::PInfo> p;
+  const FixPt::PInfo PINFOS[] = {
+		FixPt::PInfo("length", &FixPt::length, 0.0, 10.0, 0.1, true),
+		FixPt::PInfo("width", &FixPt::width, 0, 100, 1)
+  };
 
-	 typedef FixPt F;
-
-	 if (p.size() == 0) {
-		p.push_back(FixPt::PInfo("length", &F::length, 0.0, 10.0, 0.1, true));
-		p.push_back(FixPt::PInfo("width", &F::width, 0, 100, 1));
-	 }
-
-	 return p;
-  }
-
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(FixPt::PInfo);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +77,7 @@ void FixPt::deserialize(istream &is, IOFlag flag) {
 }
 
 int FixPt::charCount() const {
-  return (ioTag.length() + 1
+  return (strlen(ioTag) + 1
 			 + gCharCount<double>(length()) + 1
 			 + gCharCount<int>(width()) + 1
 			 + GrObj::charCount()
@@ -113,12 +104,12 @@ DOTRACE("FixPt::writeTo");
 
 unsigned int FixPt::numPropertyInfos() {
 DOTRACE("FixPt::numPropertyInfos");
-  return getPropertyInfos().size();
+  return NUM_PINFOS;
 }
 
 const FixPt::PInfo& FixPt::getPropertyInfo(unsigned int i) {
 DOTRACE("FixPt::getPropertyInfo");
-  return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,

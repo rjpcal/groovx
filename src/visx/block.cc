@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Feb 16 07:36:38 2000
+// written: Sat Mar  4 16:26:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,14 +12,6 @@
 #define BLOCK_CC_DEFINED
 
 #include "block.h"
-
-#include <algorithm>
-#include <functional>
-#include <iostream.h>
-#include <strstream.h>
-#include <string>
-#include <sys/time.h>
-#include <list>
 
 #include "experiment.h"
 #include "rand.h"
@@ -30,6 +22,14 @@
 #include "trial.h"
 #include "writer.h"
 #include "writeutils.h"
+
+#include <algorithm>
+#include <cstring>
+#include <functional>
+#include <iostream.h>
+#include <strstream.h>
+#include <sys/time.h>
+#include <list>
 
 #define NO_TRACE
 #include "trace.h"
@@ -44,7 +44,7 @@
 
 namespace {
   Tlist& theTlist = Tlist::theTlist();
-  const string ioTag = "Block";
+  const char* ioTag = "Block";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ DOTRACE("Block::deserialize");
 }
 
 int Block::charCount() const {
-  return (ioTag.size() + 1
+  return (strlen(ioTag) + 1
 			 + charCountVecInt(itsTrialSequence) + 1
 			 + gCharCount<int>(itsRandSeed) + 1
 			 + gCharCount<int>(itsCurTrialSeqIdx) + 1

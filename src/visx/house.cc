@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Mar  4 03:18:02 2000
+// written: Sat Mar  4 15:49:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,7 @@
 #include "writer.h"
 
 #include <iostream.h>
-#include <string>
 #include <GL/gl.h>
-#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -38,81 +36,68 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "House";
+  template <class T>
+  T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
 
-  void makeIoList(House* h, vector<IO *>& vec);
-  void makeIoList(const House* h, vector<const IO *>& vec);
+  const char* ioTag = "House";
 
-  void makeIoList(House* h, vector<IO *>& vec) {
-  DOTRACE("House::makeIoList");
-	 makeIoList(h, reinterpret_cast<vector<const IO *> &>(vec));
-  }
+  typedef IO House::* IoMember;
 
-  void makeIoList(const House* h, vector<const IO *>& vec) {
-	 DOTRACE("House::makeIoList const");
-	 vec.clear();
+  const IoMember IO_MEMBERS[] = {
+	 &House::storyAspectRatio,
+	 &House::numStories,
 
-	 vec.push_back(&h->storyAspectRatio);
-	 vec.push_back(&h->numStories);
+	 &House::doorPosition,
+	 &House::doorWidth,  // fraction of avail. space
+	 &House::doorHeight, // fraction of one story
+	 &House::doorOrientation, // left or right
 
-	 vec.push_back(&h->doorPosition);
-	 vec.push_back(&h->doorWidth);  // fraction of avail. space
-	 vec.push_back(&h->doorHeight); // fraction of one story
-	 vec.push_back(&h->doorOrientation); // left or right
+	 &House::numWindows,
+	 &House::windowWidth,	// fraction of avail. space
+	 &House::windowHeight, // fraction of one story
+	 &House::windowVertBars,
+	 &House::windowHorizBars,
 
-	 vec.push_back(&h->numWindows);
-	 vec.push_back(&h->windowWidth);	// fraction of avail. space
-	 vec.push_back(&h->windowHeight); // fraction of one story
-	 vec.push_back(&h->windowVertBars);
-	 vec.push_back(&h->windowHorizBars);
+	 &House::roofShape,
+	 &House::roofOverhang,
+	 &House::roofHeight,
+	 &House::roofColor,
 
-	 vec.push_back(&h->roofShape);
-	 vec.push_back(&h->roofOverhang);
-	 vec.push_back(&h->roofHeight);
-	 vec.push_back(&h->roofColor);
+	 &House::chimneyXPosition,
+	 &House::chimneyYPosition,
+	 &House::chimneyWidth,
+	 &House::chimneyHeight
+  };
 
-	 vec.push_back(&h->chimneyXPosition);
-	 vec.push_back(&h->chimneyYPosition);
-	 vec.push_back(&h->chimneyWidth);
-	 vec.push_back(&h->chimneyHeight);
-  }
+  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
+  const House::PInfo PINFOS[] = {
+		House::PInfo("storyAspectRatio", &House::storyAspectRatio, 0.5, 10.0, 0.05, true),
+		House::PInfo("numStories", &House::numStories, 1, 5, 1),
 
-  const vector<House::PInfo>& getPropertyInfos() {
-  DOTRACE("House::getPropertyInfos");
+		House::PInfo("doorPosition", &House::doorPosition, 0, 5, 1, true),
+		House::PInfo("doorWidth", &House::doorWidth, 0.05, 1.0, 0.05),
+		House::PInfo("doorHeight", &House::doorHeight, 0.05, 1.0, 0.05),
+		House::PInfo("doorOrientation", &House::doorOrientation, 0, 1, 1),
 
-	 static vector<House::PInfo> p;
+		House::PInfo("numWindows", &House::numWindows, 2, 6, 1, true),
+		House::PInfo("windowWidth", &House::windowWidth, 0.05, 1.0, 0.05),
+		House::PInfo("windowHeight", &House::windowHeight, 0.05, 1.0, 0.05),
+		House::PInfo("windowVertBars", &House::windowVertBars, 0, 5, 1),
+		House::PInfo("windowHorizBars", &House::windowHorizBars, 0, 5, 1),
 
-	 typedef House H;
-	 typedef House::PInfo P;
+		House::PInfo("roofShape", &House::roofShape, 0, 2, 1, true),
+		House::PInfo("roofHeight", &House::roofHeight, 0.05, 2.0, 0.05),
+		House::PInfo("roofOverhang", &House::roofOverhang, 0.0, 0.5, 0.05),
+		House::PInfo("roofColor", &House::roofColor, 0, 1, 1),
 
-	 if (p.size() == 0) {
-		p.push_back(P("storyAspectRatio", &H::storyAspectRatio, 0.5, 10.0, 0.05, true));
-		p.push_back(P("numStories", &H::numStories, 1, 5, 1));
+		House::PInfo("chimneyXPosition", &House::chimneyXPosition, -0.5, 0.5, 0.05, true),
+		House::PInfo("chimneyYPosition", &House::chimneyYPosition, 0.0, 1.0, 0.05),
+		House::PInfo("chimneyWidth", &House::chimneyWidth, 0.01, 0.30, 0.01),
+		House::PInfo("chimneyHeight", &House::chimneyHeight, 0.05, 2.0, 0.1)
+  };
 
-		p.push_back(P("doorPosition", &H::doorPosition, 0, 5, 1, true));
-		p.push_back(P("doorWidth", &H::doorWidth, 0.05, 1.0, 0.05));
-		p.push_back(P("doorHeight", &H::doorHeight, 0.05, 1.0, 0.05));
-		p.push_back(P("doorOrientation", &H::doorOrientation, 0, 1, 1));
-
-		p.push_back(P("numWindows", &H::numWindows, 2, 6, 1, true));
-		p.push_back(P("windowWidth", &H::windowWidth, 0.05, 1.0, 0.05));
-		p.push_back(P("windowHeight", &H::windowHeight, 0.05, 1.0, 0.05));
-		p.push_back(P("windowVertBars", &H::windowVertBars, 0, 5, 1));
-		p.push_back(P("windowHorizBars", &H::windowHorizBars, 0, 5, 1));
-
-		p.push_back(P("roofShape", &H::roofShape, 0, 2, 1, true));
-		p.push_back(P("roofHeight", &H::roofHeight, 0.05, 2.0, 0.05));
-		p.push_back(P("roofOverhang", &H::roofOverhang, 0.0, 0.5, 0.05));
-		p.push_back(P("roofColor", &H::roofColor, 0, 1, 1));
-
-		p.push_back(P("chimneyXPosition", &H::chimneyXPosition, -0.5, 0.5, 0.05, true));
-		p.push_back(P("chimneyYPosition", &H::chimneyYPosition, 0.0, 1.0, 0.05));
-		p.push_back(P("chimneyWidth", &H::chimneyWidth, 0.01, 0.30, 0.01));
-		p.push_back(P("chimneyHeight", &H::chimneyHeight, 0.05, 2.0, 0.1));
-	 }
-	 return p;
-  }
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(House::PInfo);
 
   void drawWindow(int num_vert_bars, int num_horiz_bars) {
 	 // Draw 1x1 window centered on (0,0)
@@ -240,11 +225,8 @@ DOTRACE("House::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  vector<const IO *> ioList;
-  makeIoList(this, ioList);
-  for (vector<const IO *>::const_iterator ii = ioList.begin();
-		 ii != ioList.end(); ++ii) {
-	 (*ii)->serialize(os, flag);
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 (this->*IO_MEMBERS[i]).serialize(os, flag);
   }
 
   if (os.fail()) throw OutputError(ioTag);
@@ -256,10 +238,8 @@ void House::deserialize(istream& is, IOFlag flag) {
 DOTRACE("House::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  vector<IO *> ioList;
-  makeIoList(this, ioList);
-  for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-	 (*ii)->deserialize(is, flag);
+  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+	 (this->*IO_MEMBERS[i]).deserialize(is, flag);
   }
 
   try {
@@ -276,10 +256,9 @@ DOTRACE("House::deserialize");
 
 void House::readFrom(Reader* reader) {
 DOTRACE("House::readFrom");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name_cstr(),
-								 const_cast<Value&>(get(infos[i].property())));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 reader->readValueObj(PINFOS[i].name_cstr(),
+								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -287,10 +266,9 @@ DOTRACE("House::readFrom");
 
 void House::writeTo(Writer* writer) const {
 DOTRACE("House::writeTo");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name_cstr(),
-								  get(infos[i].property()));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 writer->writeValueObj(PINFOS[i].name_cstr(),
+								  get(PINFOS[i].property()));
   }
 
   GrObj::writeTo(writer);
@@ -309,12 +287,12 @@ DOTRACE("House::charCount");
 
 unsigned int House::numPropertyInfos() {
 DOTRACE("House::numPropertyInfos");
-  return getPropertyInfos().size();
+  return NUM_PINFOS;
 }
 
 const House::PInfo& House::getPropertyInfo(unsigned int i) {
 DOTRACE("House::getPropertyInfo");
-  return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 ///////////////////////////////////////////////////////////////////////

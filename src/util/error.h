@@ -3,7 +3,7 @@
 // error.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:47 1999
-// written: Fri Mar  3 16:59:17 2000
+// written: Sat Mar  4 14:44:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,10 +64,10 @@ public:
   /// Get a string describing the error.
   virtual const string& msg() const;
 
-protected:
   void appendMsg(const char* addMsg);
   void appendMsg(const string& addMsg);
 
+protected:
   /// Change the informative message to \a newMessage.
   virtual void setMsg(const string& newMessage);
 

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Mar  4 03:11:13 2000
+// written: Sat Mar  4 15:38:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,37 +20,28 @@
 
 #include <GL/gl.h>
 #include <cmath>
-#include <string>
-#include <vector>
+#include <cstring>
 
 #include "trace.h"
 #include "debug.h"
 
 
 namespace {
-  const string ioTag = "Gabor";
+  const char* ioTag = "Gabor";
 
-  const vector<Gabor::PInfo>& getPropertyInfos() {
-  DOTRACE("Fish::getPropertyInfos");
+  const Gabor::PInfo PINFOS[] = {
+		Gabor::PInfo("colorMode", &Gabor::colorMode, 1, 3, 1, true),
+		Gabor::PInfo("contrast", &Gabor::contrast, 0.0, 1.0, 0.05),
+		Gabor::PInfo("spatialFreq", &Gabor::spatialFreq, 0.5, 10.0, 0.5),
+		Gabor::PInfo("phase", &Gabor::phase, -180, 179, 1),
+		Gabor::PInfo("sigma", &Gabor::sigma, 0.025, 0.5, 0.025),
+		Gabor::PInfo("aspectRatio", &Gabor::aspectRatio, 0.1, 10.0, 0.1),
+		Gabor::PInfo("orientation", &Gabor::orientation, -180, 179, 1),
+		Gabor::PInfo("resolution", &Gabor::resolution, 5, 500, 5),
+		Gabor::PInfo("pointSize", &Gabor::pointSize, 1, 25, 1)
+  };
 
-	 static vector<Gabor::PInfo> p;
-
-	 typedef Gabor G;
-	 typedef Gabor::PInfo P;
-
-	 if (p.size() == 0) {
-		p.push_back(P("colorMode", &G::colorMode, 1, 3, 1, true));
-		p.push_back(P("contrast", &G::contrast, 0.0, 1.0, 0.05));
-		p.push_back(P("spatialFreq", &G::spatialFreq, 0.5, 10.0, 0.5));
-		p.push_back(P("phase", &G::phase, -180, 179, 1));
-		p.push_back(P("sigma", &G::sigma, 0.025, 0.5, 0.025));
-		p.push_back(P("aspectRatio", &G::aspectRatio, 0.1, 10.0, 0.1));
-		p.push_back(P("orientation", &G::orientation, -180, 179, 1));
-		p.push_back(P("resolution", &G::resolution, 5, 500, 5));
-		p.push_back(P("pointSize", &G::pointSize, 1, 25, 1));
-	 }
-	 return p;
-  }
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Gabor::PInfo);
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
@@ -94,15 +85,14 @@ DOTRACE("Gabor::deserialize");
 
 int Gabor::charCount() const {
 DOTRACE("Gabor::charCount");
-  return ioTag.length() + 1 + GrObj::charCount();
+  return strlen(ioTag) + 1 + GrObj::charCount();
 }
 
 void Gabor::readFrom(Reader* reader) {
 DOTRACE("Gabor::readFrom");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name_cstr(),
-								 const_cast<Value&>(get(infos[i].property())));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 reader->readValueObj(PINFOS[i].name_cstr(),
+								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -110,9 +100,8 @@ DOTRACE("Gabor::readFrom");
 
 void Gabor::writeTo(Writer* writer) const {
 DOTRACE("Gabor::writeTo");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
   GrObj::writeTo(writer);
@@ -120,12 +109,12 @@ DOTRACE("Gabor::writeTo");
 
 unsigned int Gabor::numPropertyInfos() {
 DOTRACE("Gabor::numPropertyInfos");
-  return getPropertyInfos().size();
+  return NUM_PINFOS;
 }
 
 const Gabor::PInfo& Gabor::getPropertyInfo(unsigned int i) {
 DOTRACE("Gabors::getPropertyInfo");
-  return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 void Gabor::grGetBoundingBox(Rect<double>& bbox,
