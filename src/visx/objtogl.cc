@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 21:21:50 2001
+// written: Wed Jun  6 21:42:50 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -57,8 +57,6 @@ namespace ObjTogl {
 
   MaybeIdItem<Toglet> theWidget;
 
-  bool toglCreated = false;
-
   class BindCmd;
   class CurrentTogletCmd;
   class DumpCmapCmd;
@@ -83,11 +81,9 @@ class WidgetDestroyCallback : public Toglet::DestroyCallback {
 public:
   virtual void onDestroy(Toglet* config)
   {
-	 if (ObjTogl::theWidget.isValid() &&
-		  ObjTogl::theWidget.get() == config)
+	 if (ObjTogl::theWidget.isValid() && ObjTogl::theWidget.get() == config)
 		{
   		  ObjTogl::theWidget = MaybeIdItem<Toglet>();
-  		  ObjTogl::toglCreated = false;
 		}
   }
 };
@@ -97,7 +93,6 @@ DOTRACE("ObjTogl::setCurrentTogl");
 
   theWidget = MaybeIdItem<Toglet>(togl);
   theWidget->setDestroyCallback(new WidgetDestroyCallback);
-  toglCreated = true;
 }
 
 //---------------------------------------------------------------------
@@ -195,7 +190,7 @@ public:
     Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
-    returnBool(ObjTogl::toglCreated);
+    returnBool(ObjTogl::theWidget.isValid());
   }
 };
 
@@ -380,7 +375,7 @@ public:
   }
 
   virtual ~ObjToglPkg() {
-	 if (toglCreated) {
+	 if (ObjTogl::theWidget.isValid()) {
   		ObjTogl::theWidget->setVisibility(false);
 	 }
   }
