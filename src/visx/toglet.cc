@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Jun 15 17:41:21 2001
+// written: Wed Jun 20 18:22:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@
 #include <GL/gl.h>
 #include <tk.h>
 #include <cmath>
-#include <strstream.h>
 
 #ifndef GCC_COMPILER
 #  include <limits>
@@ -44,15 +43,13 @@
 #include "util/debug.h"
 
 namespace {
-  char buf[64];
-
   const char* widgetName(Util::UID id)
   {
-    ostrstream ost(buf, 63);
+    static dynamic_string buf;
+    buf = ".togl_private";
+    buf.append(int(id));
 
-    ost << ".togl_private" << id << '\0';
-
-    return buf;
+    return buf.c_str();
   }
 }
 
@@ -99,13 +96,13 @@ namespace {
   }
 
   void setIntParam(Togl* togl, const char* param, int val) {
-    const int BUF_SIZE = 256;
-    char buf[BUF_SIZE];
-    ostrstream ost(buf, BUF_SIZE);
-    ost << togl->pathname();
-    ost << " configure -" << param << ' ' << val << '\0';
+    dynamic_string builder = togl->pathname();
+    builder.append(" configure -").append(param)
+      .append(" ").append(val);
 
-    Tcl::TclEvalCmd cmd(buf, Tcl::TclEvalCmd::THROW_EXCEPTION);
+    fixed_string buf(builder.c_str());
+
+    Tcl::TclEvalCmd cmd(buf.data(), Tcl::TclEvalCmd::THROW_EXCEPTION);
     cmd.invoke(togl->interp());
   }
 }
