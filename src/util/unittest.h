@@ -43,9 +43,9 @@ DBG_REGISTER
 
 namespace rutz
 {
-  void test_require(bool expr,
-                    const char* expr_string,
-                    const rutz::file_pos& pos)
+  inline void test_require(bool expr,
+                           const char* expr_string,
+                           const rutz::file_pos& pos)
   {
     dbg_print(3, expr_string); dbg_eval_nl(3, expr);
     if (!expr)
@@ -56,11 +56,11 @@ namespace rutz
   }
 
   template <class T, class U>
-  void test_require_eq(const T& expr1,
-                       const U& expr2,
-                       const char* expr_string1,
-                       const char* expr_string2,
-                       const rutz::file_pos& pos)
+  inline void test_require_eq(const T& expr1,
+                              const U& expr2,
+                              const char* expr_string1,
+                              const char* expr_string2,
+                              const rutz::file_pos& pos)
   {
     dbg_print(3, expr_string1); dbg_eval_nl(3, expr1);
     dbg_print(3, expr_string2); dbg_eval_nl(3, expr2);
@@ -78,17 +78,17 @@ namespace rutz
 
   const double APPROX_TOL = 1e-40;
 
-  bool approx_eq(double a, double b, double tol = APPROX_TOL)
+  inline bool approx_eq(double a, double b, double tol = APPROX_TOL)
   {
     return fabs(a-b) < tol;
   }
 
-  void test_require_approx_eq(double expr1,
-                              double expr2,
-                              double tol,
-                              const char* expr_string1,
-                              const char* expr_string2,
-                              const rutz::file_pos& pos)
+  inline void test_require_approx_eq(double expr1,
+                                     double expr2,
+                                     double tol,
+                                     const char* expr_string1,
+                                     const char* expr_string2,
+                                     const rutz::file_pos& pos)
   {
     dbg_print(3, expr_string1); dbg_eval_nl(3, expr1);
     dbg_print(3, expr_string2); dbg_eval_nl(3, expr2);
