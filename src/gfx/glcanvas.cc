@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Aug 28 11:37:00 2001
+// written: Tue Aug 28 11:52:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -476,12 +476,8 @@ DOTRACE("GLCanvas::drawBezier4");
   glEnable(GL_MAP1_VERTEX_3);
   glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, points[0].data());
 
-  glBegin(GL_LINE_STRIP);
-  for (unsigned int i = 0; i <= subdivisions; ++i)
-    {
-      glEvalCoord1d((double) i / (double) subdivisions);
-    }
-  glEnd();
+  glMapGrid1d(subdivisions, 0.0, 1.0);
+  glEvalMesh1(GL_LINE, 0, subdivisions);
 }
 
 void GLCanvas::beginPoints()        { glBegin(GL_POINTS); }
