@@ -3,6 +3,23 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(18-Oct-2000) Ouch! I got bitten by a bug (? or my own problem) using
+MipsPro. The call was
+   C& p = dynamic_cast<C&>(*(itsList.getCheckedPtr(id)));
+in AbstractListItemPkg<C,List>::getCItemFromId(). The problem was that
+if the dynamic_cast threw an exception, the temporary SharedPtr
+created by getCheckedPtr() was not destroyed properly, meaning that
+the reference-counts got hosed. This is a Bad Thing. Who's right?
+Is the temporary supposed to be destroyed, or not?
+
+(18-Oct-2000) I need to think a lot more carefully in the future
+if/when changing file formats. As a one-user system, I think it is
+reasonable to consider migrating all old data over to a new format
+rather than trying to support multiple formats. Hopefully this is less
+of a problem with ASW format than with the Legacy format. I need to
+add a bunch of test cases that ensure that various old files
+(e.g. from psychophysics, fMRI) are still readable with each version.
+
 ========================================================================
 Resource management revisited 17-Oct-2000
 
@@ -102,11 +119,7 @@ trialtcl.cc
 ========================================================================
 Migrate legacy data 18-Oct-2000
 
-Should get rid of legacySrlz and legacyDesrlz once and for all
-
-I have several groups of legacy data:
-
-What to do?
+Should get rid of legacySrlz and legacyDesrlz once and for all.
 
 1-done) fMRI data -- These are not likely to ever be needed. But... I was
    able to successfully convert all of this data to ASW format.
