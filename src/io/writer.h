@@ -96,6 +96,11 @@ public:
   /// Store the \c Value attribute \a val in association with the tag \a name.
   virtual void writeValueObj(const char* name, const Value& value) = 0;
 
+  /// Store the raw data array in association with the tag \a name.
+  virtual void writeRawData(const char* name,
+                            const unsigned char* data,
+                            unsigned int length) = 0;
+
   /** @name Overloaded write functions
 
       These functions offer a set of overloads to provide compile-time
@@ -159,6 +164,12 @@ public:
 protected:
   /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
   virtual void writeCstring(const char* name, const char* val) = 0;
+
+
+  /// Base64 implementation of writeRawData() for use by subclasses.
+  void defaultWriteRawData(const char* name,
+                           const unsigned char* data,
+                           unsigned int length);
 };
 
 static const char vcid_writer_h[] = "$Header$";

@@ -34,6 +34,8 @@
 
 #include "io/reader.h"
 
+#include "util/base64.h"
+#include "util/bytearray.h"
 #include "util/error.h"
 
 #include "util/trace.h"
@@ -86,6 +88,16 @@ DOTRACE("IO::Reader::ensureReadVersionId");
   Assert(actual_version >= lowest_supported_version);
 
   return actual_version;
+}
+
+void IO::Reader::defaultReadRawData(const fstring& name,
+                                    rutz::byte_array& data)
+{
+DOTRACE("IO::Reader::defaultReadRawData");
+
+  fstring encoded = readStringImpl(name);
+  rutz::base64_decode(encoded.c_str(), encoded.length(),
+                      data.vec);
 }
 
 static const char vcid_reader_cc[] = "$Header$";

@@ -70,6 +70,10 @@ public:
   virtual void writeDouble(const char* name, double val);
   virtual void writeValueObj(const char* name, const Value& value);
 
+  virtual void writeRawData(const char* name,
+                            const unsigned char* data,
+                            unsigned int length);
+
   virtual void writeObject(const char* name,
                            Util::SoftRef<const IO::IoObject> obj);
 
@@ -186,6 +190,14 @@ DOTRACE("XMLWriter::writeValueObj");
          << " value=\"";
   value.printTo(itsBuf);
   itsBuf << "\"/>\n";
+}
+
+void XMLWriter::writeRawData(const char* name,
+                             const unsigned char* data,
+                             unsigned int length)
+{
+DOTRACE("XMLWriter::writeRawData");
+  defaultWriteRawData(name, data, length);
 }
 
 void XMLWriter::writeObject(const char* name,

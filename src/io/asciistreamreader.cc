@@ -151,6 +151,9 @@ public:
   virtual double readDouble(const fstring& name);
   virtual void readValueObj(const fstring& name, Value& value);
 
+  virtual void readRawData(const fstring& name, rutz::byte_array& data)
+  { defaultReadRawData(name, data); }
+
   virtual Util::Ref<IO::IoObject> readObject(const fstring& name);
   virtual Util::SoftRef<IO::IoObject>
     readMaybeObject(const fstring& name);

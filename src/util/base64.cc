@@ -37,6 +37,7 @@
 #include "util/error.h"
 #include "util/mappedfile.h"
 
+#include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
 
@@ -68,20 +69,36 @@ namespace
     };
 }
 
-void rutz::base64_encode(const char* src,
+void rutz::base64_encode(const unsigned char* src,
                          unsigned int src_len,
-                         std::vector<char>& dst)
+                         std::vector<char>& dst,
+                         unsigned int line_width)
 {
+DOTRACE("rutz::base64_encode");
   dst.resize(0);
-  dst.reserve((src_len/3 + 1) * 4);
+
+  if (src_len == 0) return;
+
+  unsigned int reserve_size = ((src_len+2)/3) * 4;
+  if (line_width > 0)
+    reserve_size += 2*(src_len/line_width + 2);
+  dst.reserve(reserve_size);
   int i = 0;
+  unsigned int c = 0;
   unsigned char dec3[3]; // three characters of decoded string
   unsigned char enc4[4]; // four characters of encoded string
 
-  const char* const stop = src + src_len;
-  for (const char* p = src; p < stop; ++p)
+  if (line_width > 0)
     {
-      dec3[i++] = static_cast<unsigned char>(*p);
+      dst.push_back('\n');
+      dst.push_back('\t');
+    }
+
+  const unsigned char* const stop = src + src_len;
+
+  for (const unsigned char* p = src; p < stop; ++p)
+    {
+      dec3[i++] = *p;
 
       if (i == 3)
         {
@@ -103,6 +120,15 @@ void rutz::base64_encode(const char* src,
             dst.push_back(base64_chars[enc4[i]]);
 
           i = 0;
+
+          c += 4;
+
+          if (line_width > 0 && c > line_width)
+            {
+              c = 0;
+              dst.push_back('\n');
+              dst.push_back('\t');
+            }
         }
     }
 
@@ -129,23 +155,24 @@ void rutz::base64_encode(const char* src,
       dst.push_back(base64_chars[enc4[2]]);
       dst.push_back('=');
     }
-
-  Assert((dst.size() % 4) == 0);
 }
 
 void rutz::base64_encode(const char* filename,
-                         std::vector<char>& dst)
+                         std::vector<char>& dst,
+                         unsigned int line_width)
 {
   rutz::mapped_file m(filename);
-  rutz::base64_encode(static_cast<const char*>(m.memory()),
+  rutz::base64_encode(static_cast<const unsigned char*>(m.memory()),
                       m.length(),
-                      dst);
+                      dst,
+                      line_width);
 }
 
 void rutz::base64_decode(const char* src,
                          unsigned int in_len,
-                         std::vector<char>& dst)
+                         std::vector<unsigned char>& dst)
 {
+DOTRACE("rutz::base64_decode");
   dst.resize(0);
   dst.reserve((in_len / 4) * 3);
 

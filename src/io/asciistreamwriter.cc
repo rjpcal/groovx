@@ -117,6 +117,11 @@ public:
   virtual void writeDouble(const char* name, double val);
   virtual void writeValueObj(const char* name, const Value& value);
 
+  virtual void writeRawData(const char* name,
+                            const unsigned char* data,
+                            unsigned int length)
+  { defaultWriteRawData(name, data, length); }
+
   virtual void writeObject(const char* name,
                            Util::SoftRef<const IO::IoObject> obj);
 

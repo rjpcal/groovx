@@ -34,9 +34,13 @@
 
 #include "io/writer.h"
 
+#include "util/base64.h"
 #include "util/error.h"
 #include "util/strings.h"
 
+#include <vector> // for use with rutz::base64_encode()
+
+#include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
 
@@ -83,6 +87,21 @@ int IO::Writer::ensureWriteVersionId(const char* name,
   Assert(actual_version >= lowest_supported_version);
 
   return actual_version;
+}
+
+void IO::Writer::defaultWriteRawData(const char* name,
+                                     const unsigned char* data,
+                                     unsigned int length)
+{
+DOTRACE("IO::Writer::defaultWriteRawData");
+
+  std::vector<char> encoded;
+
+  rutz::base64_encode(data, length, encoded, 60);
+
+  encoded.push_back('\0');
+
+  writeCstring(name, &encoded[0]);
 }
 
 static const char vcid_writer_cc[] = "$Header$";

@@ -67,6 +67,9 @@ public:
   virtual double readDouble(const fstring& name);
   virtual void readValueObj(const fstring& name, Value& value);
 
+  virtual void readRawData(const fstring& name, rutz::byte_array& data)
+  { defaultReadRawData(name, data); }
+
   virtual Util::Ref    <IO::IoObject>      readObject(const fstring& name);
   virtual Util::SoftRef<IO::IoObject> readMaybeObject(const fstring& name);
 
@@ -109,6 +112,10 @@ public:
   virtual void writeBool(const char* name, bool val);
   virtual void writeDouble(const char* name, double val);
   virtual void writeValueObj(const char* name, const Value& value);
+
+  virtual void writeRawData(const char* name,
+                            const unsigned char* data,
+                            unsigned int length);
 
   virtual void writeObject(const char* name,
                            Util::SoftRef<const IO::IoObject> obj);

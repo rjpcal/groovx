@@ -87,6 +87,11 @@ rutz::imemstream::imemstream(const char* s)
   STD_IO::istream(&m_buf), m_buf(s)
 {}
 
+rutz::imemstream::imemstream(const char* s, unsigned int len)
+  :
+  STD_IO::istream(&m_buf), m_buf(s, len)
+{}
+
 rutz::icstrstream::icstrstream(const char* s)
   :
   STD_IO::istream(&m_buf), m_buf(s)

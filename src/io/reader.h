@@ -36,6 +36,11 @@
 
 #include "io/iodecls.h"
 
+namespace rutz
+{
+  class byte_array;
+}
+
 namespace Util
 {
   template <class T> class Ref;
@@ -92,6 +97,9 @@ public:
 
   /// Read the \c Value attribute associated with the tag \a name.
   virtual void readValueObj(const fstring& name, Value& value) = 0;
+
+  /// Read the raw data array associated with the tag \a name.
+  virtual void readRawData(const fstring& name, rutz::byte_array& data) = 0;
 
   /** @name Overloaded read functions
 
@@ -162,6 +170,9 @@ public:
 protected:
   /// Read the string attribute associated with the tag \a name.
   virtual fstring readStringImpl(const fstring& name) = 0;
+
+  /// Base64 implementation of readRawData() for use by subclasses.
+  void defaultReadRawData(const fstring& name, rutz::byte_array& data);
 };
 
 static const char vcid_reader_h[] = "$Header$";

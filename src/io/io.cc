@@ -49,31 +49,44 @@ DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-class DummyCountingWriter : public IO::Writer
+namespace
 {
-public:
-  DummyCountingWriter() : itsCount(0) {}
+  using namespace Util;
 
-  virtual void writeChar(const char*, char)             { ++itsCount; }
-  virtual void writeInt(const char*, int)               { ++itsCount; }
-  virtual void writeBool(const char*, bool)             { ++itsCount; }
-  virtual void writeDouble(const char*, double)         { ++itsCount; }
-  virtual void writeCstring(const char*, const char*)   { ++itsCount; }
-  virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
-  virtual void writeObject(const char*, Util::SoftRef<const IO::IoObject>)
-    { ++itsCount; }
-  virtual void writeOwnedObject(const char*, Util::Ref<const IO::IoObject>)
-    { ++itsCount; }
-  virtual void writeBaseClass(const char*, Util::Ref<const IO::IoObject>)
-    { ++itsCount; }
-  virtual void writeRoot(const IO::IoObject*) {}
+  class DummyCountingWriter : public IO::Writer
+  {
+  public:
+    DummyCountingWriter() : itsC(0) {}
 
-  void reset() { itsCount = 0; }
-  unsigned int attribCount() const { return itsCount; }
+    virtual void writeChar(const char*, char)             { ++itsC; }
+    virtual void writeInt(const char*, int)               { ++itsC; }
+    virtual void writeBool(const char*, bool)             { ++itsC; }
+    virtual void writeDouble(const char*, double)         { ++itsC; }
+    virtual void writeCstring(const char*, const char*)   { ++itsC; }
+    virtual void writeValueObj(const char*, const Value&) { ++itsC; }
 
-private:
-  unsigned int itsCount;
-};
+    virtual void writeRawData(const char*,
+                              const unsigned char*,
+                              unsigned int)               { ++itsC; }
+
+    virtual void writeObject(const char*,
+                             SoftRef<const IO::IoObject>) { ++itsC; }
+
+    virtual void writeOwnedObject(const char*,
+                                  Ref<const IO::IoObject>){ ++itsC; }
+
+    virtual void writeBaseClass(const char*,
+                                Ref<const IO::IoObject>)  { ++itsC; }
+
+    virtual void writeRoot(const IO::IoObject*) {}
+
+    void reset() { itsC = 0; }
+    unsigned int attribCount() const { return itsC; }
+
+  private:
+    unsigned int itsC;
+  };
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

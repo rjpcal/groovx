@@ -237,6 +237,10 @@ public:
   virtual void writeValueObj(const char*, const Value&) {}
   virtual void writeCstring(const char*, const char*) {}
 
+  virtual void writeRawData(const char*,
+                            const unsigned char*,
+                            unsigned int) {}
+
   virtual void writeObject(const char*,
                            Util::SoftRef<const IO::IoObject> obj)
   {

@@ -90,6 +90,9 @@ private:
 public:
   /// Construct using the given char array as the input buffer.
   imemstream(const char* s);
+
+  /// Construct using the given char array and length as the input buffer.
+  imemstream(const char* s, unsigned int len);
 };
 
 /// An input stream class based on imembuf that makes a private copy.

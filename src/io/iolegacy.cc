@@ -586,6 +586,14 @@ DOTRACE("IO::LegacyWriter::writeValueObj");
   rep->throwIfError(name);
 }
 
+void IO::LegacyWriter::writeRawData(const char* name,
+                                    const unsigned char* data,
+                                    unsigned int length)
+{
+DOTRACE("IO::LegacyWriter::writeRawData");
+  defaultWriteRawData(name, data, length);
+}
+
 void IO::LegacyWriter::writeObject(const char* name,
                                    SoftRef<const IO::IoObject> obj)
 {

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// base64.h
+// bytearray.h
 //
 // Copyright (c) 2004-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Fri Oct  8 13:44:03 2004
+// created: Fri Oct  8 16:43:32 2004
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,26 +29,18 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BASE64_H_DEFINED
-#define BASE64_H_DEFINED
+#ifndef BYTEARRAY_H_DEFINED
+#define BYTEARRAY_H_DEFINED
 
 #include <vector>
 
 namespace rutz
 {
-  void base64_encode(const unsigned char* src,
-                     unsigned int src_len,
-                     std::vector<char>& dst,
-                     unsigned int line_width = 0);
-
-  void base64_encode(const char* src_filename,
-                     std::vector<char>& dst,
-                     unsigned int line_width = 0);
-
-  void base64_decode(const char* src,
-                     unsigned int in_len,
-                     std::vector<unsigned char>& dst);
+  struct byte_array
+  {
+    std::vector<unsigned char> vec;
+  };
 }
 
-static const char vcid_base64_h[] = "$Header$";
-#endif // !BASE64_H_DEFINED
+static const char vcid_bytearray_h[] = "$Header$";
+#endif // !BYTEARRAY_H_DEFINED

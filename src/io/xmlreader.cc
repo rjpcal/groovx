@@ -350,6 +350,11 @@ namespace
       value.setFstring(vlp.itsVal);
     }
 
+    virtual void readRawData(const fstring& name, rutz::byte_array& data)
+    {
+      defaultReadRawData(name, data);
+    }
+
     virtual Ref<IO::IoObject> readObject(const fstring& name)
     {
       return readMaybeObject(name);
