@@ -3,7 +3,7 @@
 // error.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:47 1999
-// written: Sat Mar  4 14:44:02 2000
+// written: Wed Mar  8 11:07:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,9 +60,6 @@ public:
 
   /// Get a C-style string describing the error.
   virtual const char* msg_cstr() const;
-
-  /// Get a string describing the error.
-  virtual const string& msg() const;
 
   void appendMsg(const char* addMsg);
   void appendMsg(const string& addMsg);
