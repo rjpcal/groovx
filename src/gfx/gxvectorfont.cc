@@ -670,6 +670,7 @@ namespace
 
     dbg_eval_nl(3, listBase);
 
+    glNewList(listBase + 0, GL_COMPILE); glEndList();
     glNewList(listBase + 'A', GL_COMPILE); drawLetter(Adata); glEndList();
     glNewList(listBase + 'B', GL_COMPILE); drawLetter(Bdata); glEndList();
     glNewList(listBase + 'C', GL_COMPILE); drawLetter(Cdata); glEndList();
@@ -835,6 +836,7 @@ void GxVectorFont::drawText(const char* text, Gfx::Canvas& canvas) const
 {
 DOTRACE("GxVectorFont::drawText");
 
+  dbg_eval_nl(3, text);
   canvas.drawVectorText(text, *this);
 }
 
