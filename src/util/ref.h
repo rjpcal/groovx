@@ -361,12 +361,6 @@ private:
       return (itsMaster && !itsCounts) ? STRONG : WEAK;
     }
 
-    bool operator==(const WeakHandle& other) const throw()
-    {
-      this->isValid(); other.isValid(); // force update
-      return itsMaster == other.itsMaster;
-    }
-
   private:
     void acquire() const throw()
     {
@@ -462,10 +456,10 @@ public:
   bool isInvalid() const throw() { return !(isValid()); }
 
   bool operator==(const SoftRef& other) const throw()
-  { return itsHandle == other.itsHandle; }
+  { return getWeak() == other.getWeak(); }
 
   bool operator!=(const SoftRef& other) const throw()
-  { return !(operator==(other)); }
+  { return getWeak() != other.getWeak(); }
 
   /// Comparison operator for sorting, to insert in std::map or std::set, etc.
   bool operator<(const SoftRef& other) const throw()
