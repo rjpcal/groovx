@@ -62,7 +62,7 @@ public:
 
   bool isPending() const { return itsToken != 0; }
 
-  double elapsedMsec() const { return itsStopWatch.elapsedMsec(); }
+  double elapsedMsec() const { return itsStopWatch.elapsed().msec(); }
 
 private:
   static void dummyCallback(ClientData clientData) throw();

@@ -211,7 +211,7 @@ DOTRACE("TimingHdlr::getEvent");
 double TimingHdlr::getElapsedMsec() const
 {
 DOTRACE("TimingHdlr::getElapsedMsec");
-  return rep->timer.elapsedMsec();
+  return rep->timer.elapsed().msec();
 }
 
 //////////////////

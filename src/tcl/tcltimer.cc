@@ -102,7 +102,7 @@ DOTRACE("Tcl::Timer::dummyCallback");
     {
       timer->itsToken = 0;
 
-      dbgEvalNL(3, timer->itsStopWatch.elapsedMsec());
+      dbgEvalNL(3, timer->itsStopWatch.elapsed().msec());
 
       timer->sigTimeOut.emit();
 
