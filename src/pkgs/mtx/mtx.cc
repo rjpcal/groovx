@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Feb 27 15:39:58 2002
+// written: Thu Feb 28 13:11:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -586,8 +586,8 @@ namespace
   {
     Mtx result(src.mrows(), src.ncols(), Mtx::NO_INIT);
 
-    std::transform(src.begin(), src.end(),
-                   result.begin_nc(),
+    std::transform(src.colmaj_begin(), src.colmaj_end(),
+                   result.colmaj_begin_nc(),
                    op);
 
     return result;
@@ -625,9 +625,9 @@ namespace
 
     Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
 
-    std::transform(m1.begin(), m1.end(),
-                   m2.begin(),
-                   result.begin_nc(),
+    std::transform(m1.colmaj_begin(), m1.colmaj_end(),
+                   m2.colmaj_begin(),
+                   result.colmaj_begin_nc(),
                    op);
 
     return result;
