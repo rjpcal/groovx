@@ -11,7 +11,6 @@ source ${::TEST_DIR}/io_test.tcl
 
 RhList::reset
 set ::NULLRH [NullRh::NullRh]
-NullRh::keyRespPairs $::NULLRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 
 source ${::TEST_DIR}/io_test.tcl
 
