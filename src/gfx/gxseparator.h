@@ -3,7 +3,7 @@
 // gxseparator.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu Nov  2 13:20:20 2000
+// written: Thu Nov  2 13:21:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,9 @@ public:
   static GxSeparator* make();
 
   virtual ~GxSeparator();
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   typedef int ChildId;
 

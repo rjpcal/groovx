@@ -3,7 +3,7 @@
 // gxseparator.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu Nov  2 13:20:45 2000
+// written: Thu Nov  2 13:24:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,10 @@
 #include "gx/gxseparator.h"
 
 #include "gwt/canvas.h"
+
 #include "io/iditem.h"
+#include "io/readutils.h"
+#include "io/writeutils.h"
 
 #include "util/error.h"
 #include "util/minivec.h"
@@ -47,6 +50,21 @@ DOTRACE("GxSeparator::GxSeparator");
 GxSeparator::~GxSeparator() {
 DOTRACE("GxSeparator::~GxSeparator");
   delete itsImpl;
+}
+
+void GxSeparator::readFrom(IO::Reader* reader) {
+DOTRACE("GxSeparator::readFrom");
+  itsImpl->itsChildren.clear();
+  IO::ReadUtils::readObjectSeq<GxNode>(
+          reader, "children",
+			 IdItem<GxNode>::makeInserter(itsImpl->itsChildren));
+}
+
+void GxSeparator::writeTo(IO::Writer* writer) const {
+DOTRACE("GxSeparator::writeTo");
+  IO::WriteUtils::writeSmartPtrSeq(writer, "children",
+											  itsImpl->itsChildren.begin(),
+											  itsImpl->itsChildren.end());
 }
 
 GxSeparator::ChildId GxSeparator::addChild(int ioId) {
