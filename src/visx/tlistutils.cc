@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat Mar  4 02:02:15 2000
+// written: Tue Mar  7 10:30:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -415,11 +415,13 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
 	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
-	 Trial::ObjGrp objs = t->objs();
 	 
-	 for (size_t j = 0; j < objs.size(); ++j) {
-		ofs << objs[j].objid << ' ';
-	 }
+	 for (Trial::IdPairItr ii = t->beginIdPairs(), end = t->endIdPairs();
+			ii != end;
+			++ii)
+		{
+		  ofs << ii->objid << ' ';
+		}
 		
 	 ofs << t->avgResponse() << endl;
   }
