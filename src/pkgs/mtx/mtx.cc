@@ -104,7 +104,7 @@ const Mtx& Mtx::emptyMtx()
 }
 
 Mtx::Mtx(const Slice& s) :
-  itsImpl(s.dataStart(), s.nelems(), 1, BORROW)
+  itsImpl(const_cast<double*>(s.dataStart()), s.nelems(), 1, BORROW)
 {
   if (s.itsStride != 1)
     throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
