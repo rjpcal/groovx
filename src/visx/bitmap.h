@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Nov 27 11:40:03 1999
+// written: Wed Dec  1 09:54:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,8 @@
 #endif
 
 template <class V> class Rect;
+
+class BitmapRep;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -223,24 +225,10 @@ public:
 
 protected:
   /// Return a pointer to the raw bitmap data.
-  unsigned char* theBytes() const
-	 { return const_cast<unsigned char*>(&(itsBytes[0])); }
+  unsigned char* theBytes() const;
 
 private:
-  string itsFilename;
-  double itsRasterX;
-  double itsRasterY;
-  double itsZoomX;
-  double itsZoomY;
-  bool itsUsingZoom;
-  bool itsContrastFlip;
-  bool itsVerticalFlip;
-
-  vector<unsigned char> itsBytes;
-  int itsHeight;
-  int itsWidth;
-  int itsBitsPerPixel;
-  int itsByteAlignment;
+  BitmapRep* const itsImpl;
 };
 
 static const char vcid_bitmap_h[] = "$Header$";

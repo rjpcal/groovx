@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Nov 27 11:39:19 1999
+// written: Wed Dec  1 09:54:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,12 +30,57 @@
 #define LOCAL_ASSERT
 #include "debug.h"
 
+///////////////////////////////////////////////////////////////////////
+//
+// File scope declarations
+//
+///////////////////////////////////////////////////////////////////////
+
 namespace {
   const string ioTag = "Bitmap";
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Bitmap::Impl class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class BitmapRep {
+public:
+  BitmapRep() {}
+
+  BitmapRep(const char* filename) :
+	 itsFilename(filename)
+	 {}
+
+  ~BitmapRep() {}
+
+  string itsFilename;
+  double itsRasterX;
+  double itsRasterY;
+  double itsZoomX;
+  double itsZoomY;
+  bool itsUsingZoom;
+  bool itsContrastFlip;
+  bool itsVerticalFlip;
+
+  vector<unsigned char> itsBytes;
+  int itsHeight;
+  int itsWidth;
+  int itsBitsPerPixel;
+  int itsByteAlignment;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// Bitmap member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
 Bitmap::Bitmap() :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER)
+  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
+  itsImpl(new BitmapRep())
 {
 DOTRACE("Bitmap::Bitmap");
   init();
@@ -43,14 +88,15 @@ DOTRACE("Bitmap::Bitmap");
 
 Bitmap::Bitmap(const char* filename) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
-  itsFilename(filename)
+  itsImpl(new BitmapRep(filename))
 {
 DOTRACE("Bitmap::Bitmap");
   init();
 }
 
 Bitmap::Bitmap(istream& is, IOFlag flag) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER)
+  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
+  itsImpl(new BitmapRep())
 {
 DOTRACE("Bitmap::Bitmap");
   init();
@@ -59,21 +105,22 @@ DOTRACE("Bitmap::Bitmap");
 
 void Bitmap::init() {
 DOTRACE("Bitmap::init");
-  itsRasterX = itsRasterY = 0.0;
-  itsZoomX = itsZoomY = 1.0;
-  itsUsingZoom = false;
-  itsBytes.resize(1);
-  itsContrastFlip = false;
-  itsVerticalFlip = false;
+  itsImpl->itsRasterX = itsImpl->itsRasterY = 0.0;
+  itsImpl->itsZoomX = itsImpl->itsZoomY = 1.0;
+  itsImpl->itsUsingZoom = false;
+  itsImpl->itsBytes.resize(1);
+  itsImpl->itsContrastFlip = false;
+  itsImpl->itsVerticalFlip = false;
 
-  itsHeight = 1;
-  itsWidth = 1;
-  itsBitsPerPixel = 1;
-  itsByteAlignment = 1;
+  itsImpl->itsHeight = 1;
+  itsImpl->itsWidth = 1;
+  itsImpl->itsBitsPerPixel = 1;
+  itsImpl->itsByteAlignment = 1;
 }
 
 Bitmap::~Bitmap() {
 DOTRACE("Bitmap::~Bitmap");
+  delete itsImpl;
 }
 
 void Bitmap::serialize(ostream& os, IOFlag flag) const {
@@ -81,12 +128,12 @@ DOTRACE("Bitmap::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  os << itsFilename << '\t';
-  os << itsRasterX << sep << itsRasterY << sep;
-  os << itsZoomX << sep << itsZoomY << sep;
-  os << itsUsingZoom << sep;
-  os << itsContrastFlip << sep;
-  os << itsVerticalFlip << endl;
+  os << itsImpl->itsFilename << '\t';
+  os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
+  os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
+  os << itsImpl->itsUsingZoom << sep;
+  os << itsImpl->itsContrastFlip << sep;
+  os << itsImpl->itsVerticalFlip << endl;
 
   if (os.fail()) throw OutputError(ioTag);
 
@@ -98,30 +145,30 @@ DOTRACE("Bitmap::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   IO::eatWhitespace(is);
-  getline(is, itsFilename, '\t');
+  getline(is, itsImpl->itsFilename, '\t');
 
-  is >> itsRasterX >> itsRasterY;
-  is >> itsZoomX >> itsZoomY;
+  is >> itsImpl->itsRasterX >> itsImpl->itsRasterY;
+  is >> itsImpl->itsZoomX >> itsImpl->itsZoomY;
 
   int val;
   is >> val;
-  itsUsingZoom = bool(val);
+  itsImpl->itsUsingZoom = bool(val);
 
   is >> val;
-  itsContrastFlip = bool(val);
+  itsImpl->itsContrastFlip = bool(val);
 
   is >> val;
-  itsVerticalFlip = bool(val);
+  itsImpl->itsVerticalFlip = bool(val);
 
   if (is.fail()) throw InputError(ioTag);
 
   if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 
-  itsBytes.resize(1);
+  itsImpl->itsBytes.resize(1);
   bytesChangeHook(0, 0, 0, 1, 1);
 
-  if ( !itsFilename.empty() ) {
-	 loadPbmFile(itsFilename.c_str());
+  if ( !itsImpl->itsFilename.empty() ) {
+	 loadPbmFile(itsImpl->itsFilename.c_str());
   }
 }
 
@@ -132,28 +179,28 @@ DOTRACE("Bitmap::charCount");
 
 void Bitmap::readFrom(Reader* reader) {
 DOTRACE("Bitmap::readFrom");
-  reader->readValue("filename", itsFilename);
-  reader->readValue("rasterX", itsRasterX);
-  reader->readValue("rasterY", itsRasterY);
-  reader->readValue("zoomX", itsZoomX);
-  reader->readValue("zoomY", itsZoomY);
-  reader->readValue("usingZoom", itsUsingZoom);
-  reader->readValue("contrastFlip", itsContrastFlip);
-  reader->readValue("verticalFlip", itsVerticalFlip);
+  reader->readValue("filename", itsImpl->itsFilename);
+  reader->readValue("rasterX", itsImpl->itsRasterX);
+  reader->readValue("rasterY", itsImpl->itsRasterY);
+  reader->readValue("zoomX", itsImpl->itsZoomX);
+  reader->readValue("zoomY", itsImpl->itsZoomY);
+  reader->readValue("usingZoom", itsImpl->itsUsingZoom);
+  reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
+  reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
 
   GrObj::readFrom(reader);
 }
 
 void Bitmap::writeTo(Writer* writer) const {
 DOTRACE("Bitmap::writeTo");
-  writer->writeValue("filename", itsFilename);
-  writer->writeValue("rasterX", itsRasterX);
-  writer->writeValue("rasterY", itsRasterY);
-  writer->writeValue("zoomX", itsZoomX);
-  writer->writeValue("zoomY", itsZoomY);
-  writer->writeValue("usingZoom", itsUsingZoom);
-  writer->writeValue("contrastFlip", itsContrastFlip);
-  writer->writeValue("verticalFlip", itsVerticalFlip);
+  writer->writeValue("filename", itsImpl->itsFilename);
+  writer->writeValue("rasterX", itsImpl->itsRasterX);
+  writer->writeValue("rasterY", itsImpl->itsRasterY);
+  writer->writeValue("zoomX", itsImpl->itsZoomX);
+  writer->writeValue("zoomY", itsImpl->itsZoomY);
+  writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
+  writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
+  writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
 
   GrObj::writeTo(writer);
 }
@@ -167,15 +214,15 @@ DOTRACE("Bitmap::loadPbmFile(const char*)");
   // Create a Pbm object by reading pbm data from 'filename'.
   Pbm pbm(filename);
 
-  // Grab ownership of the bitmap data from pbm into this object's itsBytes.
-  pbm.grabBytes(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
-  itsFilename = filename;
+  // Grab ownership of the bitmap data from pbm into this object's itsImpl->itsBytes.
+  pbm.grabBytes(itsImpl->itsBytes, itsImpl->itsWidth, itsImpl->itsHeight, itsImpl->itsBitsPerPixel);
+  itsImpl->itsFilename = filename;
 
-  if (itsContrastFlip) { doFlipContrast(); }
-  if (itsVerticalFlip) { doFlipVertical(); }
+  if (itsImpl->itsContrastFlip) { doFlipContrast(); }
+  if (itsImpl->itsVerticalFlip) { doFlipVertical(); }
 
-  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-						itsBitsPerPixel, itsByteAlignment);
+  bytesChangeHook(&(itsImpl->itsBytes[0]), itsImpl->itsWidth, itsImpl->itsHeight,
+						itsImpl->itsBitsPerPixel, itsImpl->itsByteAlignment);
   
   sendStateChangeMsg();
 }
@@ -185,22 +232,22 @@ DOTRACE("Bitmap::loadPbmFile(istream&)");
   // Create a Pbm object by reading pbm data from 'filename'.
   Pbm pbm(is);
 
-  // Grab ownership of the bitmap data from pbm into this object's itsBytes.
-  pbm.grabBytes(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
-  itsFilename = "(direct_from_stream)";
+  // Grab ownership of the bitmap data from pbm into this object's itsImpl->itsBytes.
+  pbm.grabBytes(itsImpl->itsBytes, itsImpl->itsWidth, itsImpl->itsHeight, itsImpl->itsBitsPerPixel);
+  itsImpl->itsFilename = "(direct_from_stream)";
 
-  if (itsContrastFlip) { doFlipContrast(); }
-  if (itsVerticalFlip) { doFlipVertical(); }
+  if (itsImpl->itsContrastFlip) { doFlipContrast(); }
+  if (itsImpl->itsVerticalFlip) { doFlipVertical(); }
 
-  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-						itsBitsPerPixel, itsByteAlignment);
+  bytesChangeHook(&(itsImpl->itsBytes[0]), itsImpl->itsWidth, itsImpl->itsHeight,
+						itsImpl->itsBitsPerPixel, itsImpl->itsByteAlignment);
   
   sendStateChangeMsg(); 
 }
 
 void Bitmap::writePbmFile(const char* filename) const {
 DOTRACE("Bitmap::writePbmFile");
-  Pbm pbm(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
+  Pbm pbm(itsImpl->itsBytes, itsImpl->itsWidth, itsImpl->itsHeight, itsImpl->itsBitsPerPixel);
   pbm.write(filename);
 }
 
@@ -213,29 +260,29 @@ DOTRACE("Bitmap::grabScreenRect");
   DebugEval(rect.left()); DebugEval(rect.right());
   DebugEval(rect.bottom()); DebugEval(rect.top());
 
-  itsHeight = abs(rect.height());    DebugEvalNL(itsHeight); 
-  itsWidth = rect.width();           DebugEval(itsWidth);
-  itsBitsPerPixel = 1;
-  itsByteAlignment = 1;
+  itsImpl->itsHeight = abs(rect.height());    DebugEvalNL(itsImpl->itsHeight); 
+  itsImpl->itsWidth = rect.width();           DebugEval(itsImpl->itsWidth);
+  itsImpl->itsBitsPerPixel = 1;
+  itsImpl->itsByteAlignment = 1;
   
-  itsFilename = "";
-  itsRasterY = itsRasterX = 0.0;
-  itsZoomY = itsZoomX = 1.0;
-  itsUsingZoom = false;
-  itsContrastFlip = false;
-  itsVerticalFlip = false;
+  itsImpl->itsFilename = "";
+  itsImpl->itsRasterY = itsImpl->itsRasterX = 0.0;
+  itsImpl->itsZoomY = itsImpl->itsZoomX = 1.0;
+  itsImpl->itsUsingZoom = false;
+  itsImpl->itsContrastFlip = false;
+  itsImpl->itsVerticalFlip = false;
 
-  int num_new_bytes = (itsWidth/8 + 1) * itsHeight + 1;
+  int num_new_bytes = (itsImpl->itsWidth/8 + 1) * itsImpl->itsHeight + 1;
   Assert(num_new_bytes>0);
   vector<unsigned char> newBytes( num_new_bytes );
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glReadPixels(rect.left(), rect.bottom(), itsWidth, itsHeight,
+  glReadPixels(rect.left(), rect.bottom(), itsImpl->itsWidth, itsImpl->itsHeight,
 					GL_COLOR_INDEX, GL_BITMAP, &(newBytes[0]));
 
-  itsBytes.swap(newBytes);
-  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-						itsBitsPerPixel, itsByteAlignment);
+  itsImpl->itsBytes.swap(newBytes);
+  bytesChangeHook(&(itsImpl->itsBytes[0]), itsImpl->itsWidth, itsImpl->itsHeight,
+						itsImpl->itsBitsPerPixel, itsImpl->itsByteAlignment);
 
   sendStateChangeMsg();
 }
@@ -264,9 +311,9 @@ DOTRACE("Bitmap::bytesChangeHook");
 void Bitmap::flipContrast() {
 DOTRACE("Bitmap::flipContrast");
 
-  // Toggle itsContrastFlip so we keep track of whether the number of
+  // Toggle itsImpl->itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
-  itsContrastFlip = !itsContrastFlip;
+  itsImpl->itsContrastFlip = !itsImpl->itsContrastFlip;
 
   doFlipContrast();
 }
@@ -276,21 +323,21 @@ DOTRACE("Bitmap::doFlipContrast");
   int num_bytes = byteCount();
 
   // In this case we want to flip each bit
-  if (itsBitsPerPixel == 1) {
+  if (itsImpl->itsBitsPerPixel == 1) {
 	 for (int i = 0; i < num_bytes; ++i) {
-		itsBytes[i] ^= 0xff;
+		itsImpl->itsBytes[i] ^= 0xff;
 	 }
   }
   // In this case we want to reflect the value of each byte around the
   // middle value, 127.5
   else {
 	 for (int i = 0; i < num_bytes; ++i) {
-		itsBytes[i] = 0xff - itsBytes[i];
+		itsImpl->itsBytes[i] = 0xff - itsImpl->itsBytes[i];
 	 }
   }
 
-  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-						itsBitsPerPixel, itsByteAlignment);
+  bytesChangeHook(&(itsImpl->itsBytes[0]), itsImpl->itsWidth, itsImpl->itsHeight,
+						itsImpl->itsBitsPerPixel, itsImpl->itsByteAlignment);
 
   sendStateChangeMsg();
 }
@@ -298,7 +345,7 @@ DOTRACE("Bitmap::doFlipContrast");
 void Bitmap::flipVertical() {
 DOTRACE("Bitmap::flipVertical");
 
-  itsVerticalFlip = !itsVerticalFlip;
+  itsImpl->itsVerticalFlip = !itsImpl->itsVerticalFlip;
 
   doFlipVertical();
 }
@@ -311,17 +358,17 @@ DOTRACE("Bitmap::doFlipVertical");
   
   vector<unsigned char> new_bytes(num_bytes);
   
-  for (int row = 0; row < itsHeight; ++row) {
-	 int new_row = (itsHeight-1)-row;
+  for (int row = 0; row < itsImpl->itsHeight; ++row) {
+	 int new_row = (itsImpl->itsHeight-1)-row;
 	 memcpy(static_cast<void*> (&(new_bytes[new_row * bytes_per_row])),
-			  static_cast<void*> (&(itsBytes [row     * bytes_per_row])),
+			  static_cast<void*> (&(itsImpl->itsBytes [row     * bytes_per_row])),
 			  bytes_per_row);
   }
   
-  itsBytes.swap(new_bytes);
+  itsImpl->itsBytes.swap(new_bytes);
 
-  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-						itsBitsPerPixel, itsByteAlignment);
+  bytesChangeHook(&(itsImpl->itsBytes[0]), itsImpl->itsWidth, itsImpl->itsHeight,
+						itsImpl->itsBitsPerPixel, itsImpl->itsByteAlignment);
 
   sendStateChangeMsg();
 }
@@ -334,7 +381,7 @@ DOTRACE("Bitmap::center");
   GLdouble left_x, bottom_y, right_x, top_y;
 
   getWorldFromScreen(viewport[0], viewport[1], left_x, bottom_y);
-  getWorldFromScreen(viewport[0]+itsWidth, viewport[1]+itsHeight,
+  getWorldFromScreen(viewport[0]+itsImpl->itsWidth, viewport[1]+itsImpl->itsHeight,
 							right_x, top_y, false);
 
   GLdouble screen_width = abs(right_x - left_x);
@@ -342,23 +389,23 @@ DOTRACE("Bitmap::center");
 
   DebugEval(screen_width); DebugEvalNL(screen_height);
 
-  itsRasterX = -screen_width/2.0;
-  itsRasterY = -screen_height/2.0;
+  itsImpl->itsRasterX = -screen_width/2.0;
+  itsImpl->itsRasterY = -screen_height/2.0;
   
-  itsRasterX *= abs(itsZoomX);
-  itsRasterY *= abs(itsZoomY);
+  itsImpl->itsRasterX *= abs(itsImpl->itsZoomX);
+  itsImpl->itsRasterY *= abs(itsImpl->itsZoomY);
 
   sendStateChangeMsg();
 }
 
 void Bitmap::grRender() const {
 DOTRACE("Bitmap::grRender");
-  doRender(const_cast<unsigned char*>(&(itsBytes[0])),
-			  itsRasterX, itsRasterY,
-			  itsWidth, itsHeight,
-			  itsBitsPerPixel,
-			  itsByteAlignment,
-			  itsZoomX, itsZoomY);
+  doRender(const_cast<unsigned char*>(&(itsImpl->itsBytes[0])),
+			  itsImpl->itsRasterX, itsImpl->itsRasterY,
+			  itsImpl->itsWidth, itsImpl->itsHeight,
+			  itsImpl->itsBitsPerPixel,
+			  itsImpl->itsByteAlignment,
+			  itsImpl->itsZoomX, itsImpl->itsZoomY);
 }
 
 void Bitmap::grUnRender() const {
@@ -393,23 +440,23 @@ DOTRACE("Bitmap::grGetBoundingBox");
   border_pixels = 2;
 
   // Object coordinates for the lower left corner
-  bbox.left() = itsRasterX;
-  bbox.bottom() = itsRasterY;
+  bbox.left() = itsImpl->itsRasterX;
+  bbox.bottom() = itsImpl->itsRasterY;
 
   // Get screen coordinates for the lower left corner
   Point<int> screen_point =
-	 getScreenFromWorld(Point<double>(itsRasterX, itsRasterY));
+	 getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
 
-  if (itsZoomX < 0.0) {
-	 screen_point.x() += int(itsWidth*itsZoomX);
+  if (itsImpl->itsZoomX < 0.0) {
+	 screen_point.x() += int(itsImpl->itsWidth*itsImpl->itsZoomX);
   }
-  if (itsZoomY < 0.0) {
-	 screen_point.y() += int(itsHeight*itsZoomY);
+  if (itsImpl->itsZoomY < 0.0) {
+	 screen_point.y() += int(itsImpl->itsHeight*itsImpl->itsZoomY);
   }
 
   // Move the point to the upper right corner
-  screen_point += Point<double>(itsWidth*abs(itsZoomX),
-										  itsHeight*abs(itsZoomY));
+  screen_point += Point<double>(itsImpl->itsWidth*abs(itsImpl->itsZoomX),
+										  itsImpl->itsHeight*abs(itsImpl->itsZoomY));
 
   bbox.setTopRight(getWorldFromScreen(screen_point));
 
@@ -418,47 +465,47 @@ DOTRACE("Bitmap::grGetBoundingBox");
 
 int Bitmap::byteCount() const {
 DOTRACE("Bitmap::byteCount");
-  return bytesPerRow() * itsHeight;
+  return bytesPerRow() * itsImpl->itsHeight;
 }
 
 int Bitmap::bytesPerRow() const {
 DOTRACE("Bitmap::bytesPerRow");
-  return ( (itsWidth*itsBitsPerPixel - 1)/8 + 1 );
+  return ( (itsImpl->itsWidth*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
 }
 
 int Bitmap::width() const {
 DOTRACE("Bitmap::width");
-  return itsWidth;
+  return itsImpl->itsWidth;
 }
 
 int Bitmap::height() const {
 DOTRACE("Bitmap::height");
-  return itsHeight; 
+  return itsImpl->itsHeight; 
 }
 
 double Bitmap::getRasterX() const {
 DOTRACE("Bitmap::getRasterX");
-  return itsRasterX;
+  return itsImpl->itsRasterX;
 }
 
 double Bitmap::getRasterY() const {
 DOTRACE("Bitmap::getRasterY");
-  return itsRasterY;
+  return itsImpl->itsRasterY;
 }
 
 double Bitmap::getZoomX() const {
 DOTRACE("Bitmap::getZoomX");
-  return itsZoomX;
+  return itsImpl->itsZoomX;
 }
 
 double Bitmap::getZoomY() const {
 DOTRACE("Bitmap::getZoomY");
-  return itsZoomY;
+  return itsImpl->itsZoomY;
 }
 
 bool Bitmap::getUsingZoom() const {
 DOTRACE("Bitmap::getUsingZoom");
-  return itsUsingZoom; 
+  return itsImpl->itsUsingZoom; 
 }
 
 //////////////////
@@ -467,39 +514,42 @@ DOTRACE("Bitmap::getUsingZoom");
 
 void Bitmap::setRasterX(double val) {
 DOTRACE("Bitmap::setRasterX");
-  itsRasterX = val;
+  itsImpl->itsRasterX = val;
   sendStateChangeMsg();
 }
 
 void Bitmap::setRasterY(double val) {
 DOTRACE("Bitmap::setRasterY");
-  itsRasterY = val;
+  itsImpl->itsRasterY = val;
   sendStateChangeMsg();
 }
 
 void Bitmap::setZoomX(double val) {
 DOTRACE("Bitmap::setZoomX");
-  if (!itsUsingZoom) return;
+  if (!itsImpl->itsUsingZoom) return;
 
-  itsZoomX = val;
+  itsImpl->itsZoomX = val;
   sendStateChangeMsg();
 }
 
 void Bitmap::setZoomY(double val) {
 DOTRACE("Bitmap::setZoomY");
-  itsZoomY = val;
+  itsImpl->itsZoomY = val;
   sendStateChangeMsg();
 }
 
 void Bitmap::setUsingZoom(bool val) {
 DOTRACE("Bitmap::setUsingZoom");
-  itsUsingZoom = val; 
+  itsImpl->itsUsingZoom = val; 
 
-  if (!itsUsingZoom) {
-	 itsZoomX = 1.0;
-	 itsZoomY = 1.0;
+  if (!itsImpl->itsUsingZoom) {
+	 itsImpl->itsZoomX = 1.0;
+	 itsImpl->itsZoomY = 1.0;
   }
 }
+
+unsigned char* Bitmap::theBytes() const
+  { return const_cast<unsigned char*>(&(itsImpl->itsBytes[0])); }
 
 static const char vcid_bitmap_cc[] = "$Header$";
 #endif // !BITMAP_CC_DEFINED
