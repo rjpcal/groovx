@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu Dec  7 18:44:13 2000
+// written: Mon Dec 11 15:40:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,12 @@
 
 #include "grobj.h"
 
+#include "io/iditem.h"
+#include "io/io.h"
 #include "io/iolegacy.h"
 
-#include "tcl/listpkg.h"
 #include "tcl/stringifycmd.h"
+#include "tcl/tclpkg.h"
 
 #include <fstream.h>
 
@@ -72,7 +74,6 @@ namespace ObjlistTcl {
 		  {
 			 IdItem<IO::IoObject> item(*obj_itr);
 			 writer.writeRoot(item.get());
-//  			 os << endl;
 
 			 ++obj_itr;
 		  }
@@ -147,10 +148,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjlistTcl::ObjListPkg : public Tcl::PtrListPkg<GrObj> {
+class ObjlistTcl::ObjListPkg : public Tcl::TclPkg {
 public:
   ObjListPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<GrObj>(interp, "ObjList", "$Revision$")
+	 Tcl::TclPkg(interp, "ObjList", "$Revision$")
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
