@@ -57,7 +57,6 @@ namespace
     {
       if ( (itsObj->typePtr != target_type) && Tcl_IsShared(itsObj) )
         {
-          DOTRACE("SafeUnshared::SafeUnshared-duping");
           isItOwning = true;
           itsObj = Tcl_DuplicateObj(itsObj);
           Tcl_IncrRefCount(itsObj);
