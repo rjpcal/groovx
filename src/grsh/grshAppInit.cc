@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu May 10 12:04:47 2001
+// written: Tue May 22 11:45:11 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -37,6 +37,7 @@ extern "C" {
   Tcl_PackageInitProc Grobj_Init;
   Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc Gx_Init;
+  Tcl_PackageInitProc Hook_Init;
   Tcl_PackageInitProc House_Init;
   Tcl_PackageInitProc Io_Init;
   Tcl_PackageInitProc Jitter_Init;
@@ -82,6 +83,7 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Grobj",    Grobj_Init     }
   , { "Gtext",    Gtext_Init     }
   , { "Gx",       Gx_Init        }
+  , { "Hook",     Hook_Init      }
   , { "House",    House_Init     }
   , { "Io",       Io_Init        }
   , { "Jitter",   Jitter_Init    }
