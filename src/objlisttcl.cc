@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct 30 11:25:03 2000
+// written: Mon Oct 30 18:22:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,53 @@ namespace ObjlistTcl {
   class LoadObjectsCmd;
   class SaveObjectsCmd;
   class ObjListPkg;  
+
+  template <class ReaderType, class Inserter>
+  void readBatch(STD_IO::istream& is, int num_to_read,
+					  Inserter result_inserter)
+	 {
+		const int ALL = -1; // indicates to read all objects until eof
+
+		int num_read = 0;
+
+		is >> ws;
+
+		while ( (num_to_read == ALL || num_read < num_to_read)
+				  && (is.peek() != EOF) ) {
+
+		  // allow for whole-line comments between objects beginning with '#'
+		  if (is.peek() == '#') {
+			 is.ignore(10000000, '\n');
+			 continue;
+		  }
+
+		  ReaderType reader(is);
+		  IO::IoObject* io = reader.readRoot(0);
+
+		  IdItem<IO::IoObject> obj(io, IdItem<IO::IoObject>::Insert());
+
+		  *result_inserter = obj.id();
+		  ++result_inserter;
+
+		  ++num_read;
+
+		  is >> ws;
+		}
+	 }
+
+  template <class WriterType, class Iterator>
+  void writeBatch(STD_IO::ostream& os, Iterator obj_itr, Iterator end)
+	 {
+		while (obj_itr != end)
+		  {
+			 WriterType writer(os);
+			 IdItem<IO::IoObject> item(*obj_itr);
+			 writer.writeRoot(item.get());
+			 os << endl;
+
+			 ++obj_itr;
+		  }
+	 }
 }
 
 //---------------------------------------------------------------------
@@ -57,36 +104,8 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
 
   STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
-  
-  int num_read = 0;
 
-  ifs >> ws;
-
-  while ( (num_to_read == ALL || num_read < num_to_read)
-			 && (ifs.peek() != EOF) ) {
-
-	 // allow for whole-line comments between objects beginning with '#'
-	 if (ifs.peek() == '#') {
-		ifs.ignore(10000000, '\n');
-		continue;
-	 }
-
-	 IO::LegacyReader reader(ifs);
-	 IO::IoObject* io = reader.readRoot(0);
-
-	 GrObj* p = dynamic_cast<GrObj*>(io);
-	 if (!p) {
-		throw IO::InputError("ObjlistTcl::loadObjects");
-	 }
-
-	 IdItem<GrObj> obj(p, IdItem<GrObj>::Insert());
-
-	 lappendVal(obj.id()); // add the current objid to the Tcl result
-
-	 ++num_read;
-
-	 ifs >> ws;
-  }
+  readBatch<IO::LegacyReader>(ifs, num_to_read, resultAppender((int*)0));
 }
 
 //---------------------------------------------------------------------
@@ -115,17 +134,8 @@ protected:
 		throw err;
 	 }
 
-	 for (Tcl::ListIterator<int>
-			  itr = beginOfArg(1, (int*)0),
-			  end = endOfArg(1, (int*)0);
-			itr != end;
-			++itr)
-		{
-		  IO::LegacyWriter writer(ofs, use_bases);
-		  IdItem<GrObj> item(*itr);
-		  writer.writeRoot(item.get());
-		  ofs << endl;
-		}
+	 writeBatch<IO::LegacyWriter>(ofs, beginOfArg(1, (int*)0),
+											endOfArg(1, (int*)0));
   }
 };
 
