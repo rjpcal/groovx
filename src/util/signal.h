@@ -41,6 +41,9 @@ namespace Util
 
 class Util::Slot : public virtual Util::Object {
 public:
+  /// Default constructor.
+  Slot();
+
   /// Virtual destructor.
   virtual ~Slot();
 
