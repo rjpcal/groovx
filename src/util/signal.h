@@ -100,7 +100,7 @@ namespace Util
     /// Virtual destructor.
     virtual ~Slot0() throw();
 
-    template<class C, class MF>
+    template <class C, class MF>
     static Util::SoftRef<Slot0> make(C* obj, MF mf);
 
     static Util::SoftRef<Slot0> make(void (*freeFunc)());
@@ -202,7 +202,7 @@ namespace Util
     /// Virtual destructor.
     virtual ~Slot1() throw() {}
 
-    template<class C, class MF>
+    template <class C, class MF>
     static Util::SoftRef<Slot1<P1> > make(C* obj, MF mf);
 
     virtual void call(P1 p1) = 0;
