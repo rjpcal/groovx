@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Mar  8 16:14:50 2000
+// written: Fri Mar 10 00:56:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ TrialEvent::TrialEvent(int msec) :
   itsToken(NULL),
   itsExperiment(0),
   itsIsPending(false),
+  itsTimer(),
   itsTotalError(0),
   itsTotalAbsError(0),
   itsInvokeCount(0)

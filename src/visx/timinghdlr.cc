@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu Mar  9 17:45:02 2000
+// written: Fri Mar 10 00:53:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,14 @@
 
 class TimingHdlr::Impl {
 public:
-  Impl() : itsAutosavePeriod(10) {}
+  Impl() :
+	 itsImmediateEvents(),
+	 itsStartEvents(),
+	 itsResponseEvents(),
+	 itsAbortEvents(),
+	 itsAutosavePeriod(10),
+	 itsTimer()
+	 {}
 
   vector<TrialEvent*> itsImmediateEvents;
   vector<TrialEvent*> itsStartEvents;

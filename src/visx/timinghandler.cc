@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Sun Mar  5 20:14:09 2000
+// written: Fri Mar 10 00:51:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,11 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-TimingHandler::TimingHandler()
+TimingHandler::TimingHandler() :
+  stimdur_start_id(0),
+  timeout_start_id(0),
+  iti_response_id(0),
+  abortwait_abort_id(0)
 {
 DOTRACE("TimingHandler::TimingHandler");
   addEvent(new DrawEvent(0), IMMEDIATE);
