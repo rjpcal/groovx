@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Sun Aug 26 08:35:13 2001
+// written: Wed Sep 12 21:45:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 #ifndef IRIXSOUND_H_DEFINED
 #define IRIXSOUND_H_DEFINED
 
+#include "io/ioerror.h"
 #include "io/reader.h"
 #include "io/writer.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Sun Aug 26 08:18:24 2001
+// written: Wed Sep 12 21:43:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,6 @@
 
 #include <typeinfo>
 
-#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -98,20 +97,6 @@ fstring IO::IoObject::ioTypename() const
 DOTRACE("IO::IoObject::ioTypename");
   return demangle_cstr(typeid(*this).name());
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// IoFilenameError member function definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-IO::FilenameError::FilenameError(const char* str) :
-  Util::Error(fstring("couldn't use file '", str, "'"))
-{
-DOTRACE("IO::FilenameError::FilenameError");
-}
-
-IO::FilenameError::~FilenameError() {}
 
 static const char vcid_io_cc[] = "$Header$";
 #endif // !IO_CC_DEFINED
