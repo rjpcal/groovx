@@ -3,7 +3,7 @@
 // glcanvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:27:48 1999
-// written: Sun Jan 16 23:10:40 2000
+// written: Fri Feb 18 22:46:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,25 +47,6 @@ public:
 
   virtual void pushState() const;
   virtual void popState() const;
-
-//    virtual void translate(const Vector3<double>& v) const;
-//    virtual void scale(const Vector3<double>& v) const;
-//    virtual void rotate(const Vector3<double>& v, double angle_in_degrees) const;
-
-  virtual void beginPoints() const;
-  virtual void beginLines() const;
-  virtual void beginLineStrip() const;
-  virtual void beginLineLoop() const;
-  virtual void beginTriangles() const;
-  virtual void beginTriangleStrip() const;
-  virtual void beginTriangleFan() const;
-  virtual void beginQuads() const;
-  virtual void beginQuadStrip() const;
-  virtual void beginPolygon() const;
-
-  virtual void end() const;
-
-//    virtual void vertex(const Vector3<double>& v) const;
 };
 
 static const char vcid_glcanvas_h[] = "$Header$";
