@@ -27,14 +27,24 @@ EXTRA_STATISTICS := 0
 
 ARCH_FLAGS := 
 CC := 
+FILTER := 
 ifeq ($(ARCH),hp9000s700)
 	CC := time aCC
-	ARCH_FLAGS := -DACC_COMPILER -DHP9000S700
+	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
+		-e '/Warning.*usr.include./,/\^\^*/d'
+	ARCH_FLAGS := +w +W818,655,392,495,469,361,749,416 -DACC_COMPILER -DHP9000S700
 	SHLIB_FLAG := -b
 endif
 ifeq ($(ARCH),irix6)
 	CC := time g++
-	ARCH_FLAGS := -ansi -Wall -DGCC_COMPILER -DIRIX6
+# This filter removes warnings that are triggered by standard library files
+	FILTER := |& sed \
+		-e '/g++-3.*warning/d;' \
+		-e '/In file included.*g++-3/,/:/d;' \
+		-e '/g++-3.*In method/d;' \
+		-e '/g++-3.*At top level/d;' \
+		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
+	ARCH_FLAGS := -Wall -W -Wsign-promo -Weffc++ -DGCC_COMPILER -DIRIX6
 	SHLIB_FLAG := 
 endif
 
@@ -45,7 +55,7 @@ endif
 #-------------------------------------------------------------------------
 
 ifeq ($(ARCH),hp9000s700)
-	DEBUG_OPTIONS := +Z +p +w +W818,655,392,495,469,361,749,416
+	DEBUG_OPTIONS := +Z +p
 	DEBUG_OPTIM := +O1
 	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
 endif
@@ -306,10 +316,10 @@ ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIM) $(PROD_OPTIONS)
 ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FLAGS)
 
 $(GRSH)/%.o : %.cc
-	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+	csh -fc "($(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)) $(FILTER)"
 
 $(UTIL)/%.o : util/%.cc
-	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+	csh -fc "($(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)) $(FILTER)"
 
 $(GRSH)/%.do : %.cc
 ifeq ($(EXTRA_STATISTICS),1)
@@ -349,6 +359,7 @@ ALL_DEBUG_DEPENDS := \
 	$(DEBUG_LIBTCLWORKS)
 
 $(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
+	rm -f RawCompileOut
 	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
 	 /opt/langtools/lib/end.o \
 	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
@@ -992,9 +1003,13 @@ new: cleaner $(PROD_TARGET)
 clean:
 	rm -f *~ \#* core
 
-# Make clean, and also remove all object files
-cleaner: clean
-	rm -f *.o
+# Make clean, and also remove all debug object files
+clean_do: clean
+	rm -f $(ARCH)/*.do util/$(ARCH)/*.do
+
+# Make clean, and also remove all production object files
+clean_o: clean
+	rm -f $(ARCH)/*.o util/$(ARCH)/*.o
 
 # Generate TAGS file based on all source files
 ALL_SOURCES := *\.[ch]* util/*\.[ch]*
