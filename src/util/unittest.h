@@ -101,6 +101,8 @@ namespace rutz
                    "~= ", expr_string2, " (rhs)\n");
         msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");
         msg.append("\t     (rhs) ", expr_string2, " == ", expr2, "\n");
+        msg.append("\tallowable tolerance was: ", tol, "\n");
+        msg.append("\tactual difference was:   ", expr1-expr2, "\n");
         throw rutz::error(msg, pos);
       }
   }
