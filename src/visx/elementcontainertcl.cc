@@ -66,11 +66,14 @@ DOTRACE("Elementcontainer_Init");
   pkg->inheritPkg("Element");
   Tcl::defGenericObjCmds<Element>(pkg);
 
-  pkg->defVec("addElements", "item_id(s) element_id(s)",
-              Util::bindLast(&addElementIds, 1));
+  pkg->def("addElement", "item_id element_id",
+           Util::bindLast(Util::memFunc(&ElementContainer::addElement), 1));
 
-  pkg->defVec("addElements", "item_id(s) element_id(s) repeat=1",
-              &addElementIds);
+  pkg->def("addElements", "item_id element_id(s)",
+           Util::bindLast(&addElementIds, 1));
+
+  pkg->def("addElements", "item_id element_id(s) repeat=1",
+           &addElementIds);
 
   pkg->defGetter("currentElement", &ElementContainer::currentElement);
   pkg->defGetter("isComplete", &ElementContainer::isComplete);

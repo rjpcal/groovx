@@ -102,7 +102,7 @@ int Exptdriver_Init(Tcl_Interp* interp)
 DOTRACE("Exptdriver_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ExptDriver", "$Revision$");
-  pkg->inheritPkg("Element");
+  pkg->inheritPkg("ElementContainer");
   Tcl::defCreator<ExptDriver>(pkg);
   Tcl::defGenericObjCmds<ExptDriver>(pkg);
 
@@ -111,16 +111,11 @@ DOTRACE("Exptdriver_Init");
   pkg->def( "begin", "expt_id", &beginExpt );
   pkg->def( "waitStartKey", "expt_id", &waitStartKey );
 
-  pkg->def("addBlock", "expt_id block_id",
-           Util::bindLast(Util::memFunc(&ExptDriver::addElement), 1));
   pkg->defAttrib("autosaveFile",
                  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
   pkg->defAttrib("autosavePeriod",
                  &ExptDriver::getAutosavePeriod,
                  &ExptDriver::setAutosavePeriod);
-  pkg->defGetter("blocks", &ExptDriver::getElements);
-  pkg->defAction("clear", &ExptDriver::clearElements);
-  pkg->defGetter("currentBlock", &ExptDriver::currentElement);
   pkg->defGetter("infoLog", &ExptDriver::getInfoLog);
   pkg->defAction("pause", &ExptDriver::pause);
   pkg->defAction("storeData", &ExptDriver::storeData);

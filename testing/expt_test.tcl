@@ -40,7 +40,7 @@ test "ExptDriver::begin" "normal use" {
     set expt [new ExptDriver]
     set block [new Block]
     -> $expt widget [Toglet::current]
-    -> $expt addBlock $block
+    -> $expt addElement $block
     -> $expt begin
     -> $expt halt
     delete $expt
@@ -123,7 +123,7 @@ test "ExptDriver::begin" "general sanity test" {
 
     set expt [new ExptDriver]
     -> $expt widget [Toglet::current]
-    -> $expt addBlock $block
+    -> $expt addElement $block
 
     set ::DONE 0
     -> $expt doWhenComplete { set ::DONE 1; set ::STOP 1 }
