@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Tue Nov 28 18:43:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,15 @@
 
 #include "glcanvas.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-
-#include "util/error.h"
 #include "point.h"
 #include "rect.h"
+
+#include "gx/vec3.h"
+
+#include "util/error.h"
+
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include "util/debug.h"
 #include "util/trace.h"
@@ -183,17 +186,20 @@ DOTRACE("GLCanvas::popState");
 }
 
 
-//  void GLCanvas::translate(const Vector3<double>& v) const {
-//    glTranslate3d(v.x(), v.y(), v.z());
-//  }
+void GLCanvas::translate(const Vec3<double>& v) const {
+DOTRACE("GLCanvas::translate");
+  glTranslated(v.x(), v.y(), v.z());
+}
 
-//  void GLCanvas::scale(const Vector3<double>& v) const {
-//    glScale3d(v.x(), v.y(), v.z());
-//  }
+void GLCanvas::scale(const Vec3<double>& v) const {
+DOTRACE("GLCanvas::scale");
+  glScaled(v.x(), v.y(), v.z());
+}
 
-//  void GLCanvas::rotate(const Vector3<double>& v, double angle_in_degrees) const {
-//    glRotate(angle_in_degrees, v.x(), v.y(), v.z());
-//  }
+void GLCanvas::rotate(const Vec3<double>& v, double angle_in_degrees) const {
+DOTRACE("GLCanvas::rotate");
+  glRotated(angle_in_degrees, v.x(), v.y(), v.z());
+}
 
 #if 0
 

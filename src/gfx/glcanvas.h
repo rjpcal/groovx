@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Nov 10 17:03:53 2000
+// written: Tue Nov 28 18:41:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,10 @@ public:
 
   virtual void pushState() const;
   virtual void popState() const;
+
+  virtual void translate(const Vec3<double>& v) const;
+  virtual void scale(const Vec3<double>& v) const;
+  virtual void rotate(const Vec3<double>& v, double degrees) const;
 };
 
 static const char vcid_glcanvas_h[] = "$Header$";

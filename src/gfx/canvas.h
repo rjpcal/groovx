@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Fri Nov 10 17:03:51 2000
+// written: Tue Nov 28 18:39:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 template <class V> class Point;
 template <class V> class Rect;
+template <class V> class Vec3;
 
 namespace GWT {
   class Canvas;
@@ -104,9 +105,9 @@ public:
 	 const Canvas& itsCanvas;
   };
 
-//    virtual void translate(const Vector3<double>& v) const = 0;
-//    virtual void scale(const Vector3<double>& v) const = 0;
-//    virtual void rotate(const Vector3<double>& v, double angle_in_degrees) const = 0;
+  virtual void translate(const Vec3<double>& v) const = 0;
+  virtual void scale(const Vec3<double>& v) const = 0;
+  virtual void rotate(const Vec3<double>& v, double degrees) const = 0;
 
 //    virtual void beginPoints() const = 0;
 //    virtual void beginLines() const = 0;
