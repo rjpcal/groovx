@@ -147,9 +147,9 @@ public:
 
     Pkg::eval("proc clearscreen {} { Togl::clearscreen }\n"
               "proc see {id} { Togl::see $id }\n"
-              "proc undraw {} { Togl::undraw }\n");
-
-    Pkg::eval("foreach cmd [info commands ::Toglet::*] {\n"
+              "proc undraw {} { Togl::undraw }\n"
+              "\n"
+              "foreach cmd [info commands ::Toglet::*] {\n"
               "  namespace eval ::Togl {\n"
               "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::current\\] \\$args \""
               "  }\n"
@@ -157,6 +157,7 @@ public:
               "namespace eval ::Togl { namespace export * }"
               );
 
+    // FIXME can't ExptDriver get its widget some other way?
     Pkg::eval("Expt::widget [Toglet::current]");
   }
 
