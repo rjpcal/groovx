@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Mon Jul 12 13:05:17 1999
+// written: Mon Sep 27 14:34:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,8 @@ public:
   {
 	 addCommand( new GtextCmd(interp, "Gtext::Gtext") );
 	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);
+	 declareCAttrib("strokeWidth",
+						 &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
   }
 };
 

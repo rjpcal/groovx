@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Sep 23 11:31:31 1999
+// written: Mon Sep 27 14:31:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,9 @@ public:
   void setText(const char* text);
   const char* getText() const;
 
+  void setStrokeWidth(int width);
+  int getStrokeWidth() const;
+
 protected:
   virtual bool grGetBoundingBox(double& left, double& top,
 										  double& right, double& bottom,
@@ -53,6 +56,7 @@ protected:
 
 private:
   string itsText;
+  int itsStrokeWidth;
   mutable unsigned int itsListBase;
 };
 
