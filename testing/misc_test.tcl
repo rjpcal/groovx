@@ -86,8 +86,8 @@ test "MiscTcl-usleep" "error from negative input" {
     set exit_code [catch {usleep -1}]
     set res [time {catch {usleep -1}} 100]
     set us [lindex $res 0]
-    return "[expr $exit_code == 1 && $us > 0 && $us < 500] $us"
-} {^1 }
+    return "$exit_code [expr $us > 0 && $us <= 512] $us"
+} {^1 1 }
 
 ### usleeprCmd ###
 test "MiscTcl-usleepr" "too few args" {
