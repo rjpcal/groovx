@@ -154,7 +154,7 @@ geom::txform geom::txform::inverted() const
 {
 DOTRACE("geom::txform::inverted");
 
-  // ALGORITHM:
+  // ALGORITHM (Cramer's Rule):
 
   // 1. Compute the transpose, M' = transpose(M)
   // 2. Compute the cofactor matrix, cof(M')
