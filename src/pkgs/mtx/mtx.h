@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Jul  9 17:50:33 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 
 using namespace std;
 
-class fixed_string;
+class fstring;
 
 namespace RC // Range checking
 {
@@ -734,7 +734,8 @@ private:
 #  undef APPLY_IMPL
 #endif // APPLY_IMPL
 
-    struct Setter {
+    struct Setter
+    {
       double v;
       Setter(double v_) : v(v_) {}
       double operator()(double) { return v; }
