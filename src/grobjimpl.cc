@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 17:28:43 2001
+// written: Fri Aug 10 17:51:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,9 +47,9 @@ namespace
 
 GrObjImpl::GrObjImpl(GrObj* obj) :
   itsCategory(-1),
-  itsObjNode(new GrObjNode(obj)),
-  itsGLCache(new GLCacheNode(itsObjNode)),
-  itsBB(new GrObjBBox(this, itsGLCache)),
+  itsNativeNode(new GrObjNode(obj)),
+  itsBB(new GrObjBBox(itsNativeNode)),
+  itsGLCache(new GLCacheNode(itsBB)),
   itsScaler(),
   itsAligner(),
   itsRenderer()
@@ -153,7 +153,7 @@ void GrObjImpl::draw(Gfx::Canvas& canvas) const
 DOTRACE("GrObjImpl::draw");
   canvas.throwIfError("before GrObj::draw");
 
-  Rect<double> bbox = itsObjNode->gnodeBoundingBox(canvas);
+  Rect<double> bbox = itsNativeNode->gnodeBoundingBox(canvas);
 
   Gfx::Canvas::StateSaver state(canvas);
 
@@ -161,8 +161,6 @@ DOTRACE("GrObjImpl::draw");
   itsAligner.doAlignment(canvas, bbox);
 
   itsRenderer.render(itsGLCache.get(), this, canvas);
-
-  itsBB->gnodeDraw(canvas);
 
   canvas.throwIfError("during GrObj::draw");
 }
@@ -172,14 +170,12 @@ void GrObjImpl::undraw(Gfx::Canvas& canvas) const
 DOTRACE("GrObjImpl::undraw");
   Gfx::Canvas::StateSaver state(canvas);
 
-  Rect<double> bbox = itsObjNode->gnodeBoundingBox(canvas);
+  Rect<double> bbox = itsNativeNode->gnodeBoundingBox(canvas);
 
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
   itsRenderer.unrender(itsGLCache.get(), canvas);
-
-  itsBB->gnodeUndraw(canvas);
 }
 
 void GrObjImpl::invalidateCaches()

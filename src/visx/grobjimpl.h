@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 17:18:31 2001
+// written: Fri Aug 10 17:36:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,19 +70,16 @@ public:
 
   void invalidateCaches();
 
-//    void undrawDirectRender(Gfx::Canvas& canvas) const;
-//    void undrawClearBoundingBox(Gfx::Canvas& canvas) const;
-
   //
   // Data members
   //
 
   int itsCategory;
 
-  shared_ptr<GrObjNode> itsObjNode;
+  shared_ptr<GrObjNode> itsNativeNode;
+  shared_ptr<GrObjBBox> itsBB;
   shared_ptr<GLCacheNode> itsGLCache;
 
-  shared_ptr<GrObjBBox> itsBB;
   GrObjScaler itsScaler;
   GrObjAligner itsAligner;
   GrObjRenderer itsRenderer;

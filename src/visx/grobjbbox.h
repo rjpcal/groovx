@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Fri Aug 10 16:34:08 2001
+// written: Fri Aug 10 17:33:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,14 @@
 
 #include "gnode.h"
 
-class GrObjImpl;
-
 class GrObjBBox : public Gnode {
 private:
   GrObjBBox(const GrObjBBox&);
   GrObjBBox& operator=(const GrObjBBox&);
 
 public:
-  GrObjBBox(const GrObjImpl* owner, shared_ptr<Gnode> child) :
+  GrObjBBox(shared_ptr<Gnode> child) :
     Gnode(child),
-    itsOwner(owner),
     itsIsVisible(false),
     itsPixelBorder(4)
   {}
@@ -42,8 +39,6 @@ public:
   virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
-  const GrObjImpl* itsOwner;
-
   bool itsIsVisible;
 
   mutable int itsPixelBorder;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Fri Aug 10 17:27:40 2001
+// written: Fri Aug 10 17:52:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,9 +71,6 @@ void GLCacheNode::gnodeUndraw(Gfx::Canvas& canvas) const
       Rect<double> world_pos = gnodeBoundingBox(canvas);
 
       Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
-
-      screen_pos.widenByStep(4);
-      screen_pos.heightenByStep(4);
 
       canvas.clearColorBuffer(screen_pos);
     }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 17:22:46 2001
+// written: Fri Aug 10 17:43:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -283,6 +283,10 @@ DOTRACE("GrObj::receiveDestroyMsg");
 
 void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
 {
+  const_cast<GrObj*>(this)->setRenderMode(Gmodes::GL_BITMAP_CACHE);
+
+  draw(canvas);
+
   itsImpl->itsRenderer.saveBitmapCache(itsImpl->itsGLCache.get(), itsImpl,
                                        canvas, filename);
 }

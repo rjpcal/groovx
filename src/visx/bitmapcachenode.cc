@@ -96,22 +96,15 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
 
   Rect<double> bmapbox = node->gnodeBoundingBox(canvas);
 
+  glPushAttrib(GL_COLOR_BUFFER_BIT);
   {
-    Gfx::Canvas::StateSaver state(canvas);
+	 glDrawBuffer(GL_FRONT);
 
-    glPushAttrib(GL_COLOR_BUFFER_BIT);
-    {
-      glDrawBuffer(GL_FRONT);
+	 node->gnodeDraw(canvas);
 
-      obj->itsScaler.doScaling(canvas);
-      obj->itsAligner.doAlignment(canvas, bmapbox);
-
-      node->gnodeDraw(canvas);
-
-      itsBitmapCache->grabWorldRect(bmapbox);
-    }
-    glPopAttrib();
+	 itsBitmapCache->grabWorldRect(bmapbox);
   }
+  glPopAttrib();
 
   DebugEvalNL(itsMode);
 
@@ -174,15 +167,11 @@ void GrObjRenderer::saveBitmapCache(const Gnode* node, const GrObjImpl* obj,
 												Gfx::Canvas& canvas,
                                     const char* filename) const
 {
-  itsCacheFilename = filename;
-
-  GrObjRenderer temp;
-  temp.setMode(Gmodes::GL_BITMAP_CACHE);
-  temp.recacheBitmapIfNeeded(node, obj, canvas);
-
-  temp.itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
-
-  itsCacheFilename = filename;
+  if (itsBitmapCache.get() != 0)
+	 {
+		itsCacheFilename = filename;
+		itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
+	 }
 }
 
 static const char vcid_grobjrenderer_cc[] = "$Header$";
