@@ -129,7 +129,7 @@ proc finish {} {
 
 	 append msg "Testing complete."
     puts $msg
-    after 10000 { event generate . <KeyPress> -keysym Return }
+    after 10000 { event generate . <KeyPress> -keysym Return; exit }
 	 tk_messageBox -icon info -type ok -message $msg
 	 exit
 }
