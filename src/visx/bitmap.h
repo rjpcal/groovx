@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Jul  1 13:49:20 1999
+// written: Tue Sep  7 17:18:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,9 @@ public:
 
   int byteCount() const;
   int bytesPerRow() const;
+
+  int width() const;
+  int height() const;
 
   double getRasterX() const;
   double getRasterY() const;

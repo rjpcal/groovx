@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Jul  3 12:28:25 1999
+// written: Tue Sep  7 17:19:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,6 +122,16 @@ DOTRACE("Bitmap::bytesPerRow");
 int Bitmap::byteCount() const {
 DOTRACE("Bitmap::byteCount");
   return bytesPerRow() * itsHeight;
+}
+
+int Bitmap::width() const {
+DOTRACE("Bitmap::width");
+  return itsWidth;
+}
+
+int Bitmap::height() const {
+DOTRACE("Bitmap::height");
+  return itsHeight; 
 }
 
 void Bitmap::loadPbmFile(const char* filename) {
