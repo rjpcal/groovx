@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed May 26 21:23:04 1999
+// written: Thu Jun  3 12:41:14 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -54,6 +54,17 @@ public:
   virtual void deserialize(istream& is, IOFlag flag) = 0;
 
   virtual int charCount() const = 0;
+
+  // This function reads the next word from the istream is, and
+  // compares it to the correct names in correctNames. correctNames
+  // should consist of one or more space-separated words. If the word
+  // read from the stream does not match any of these words, and
+  // doCheck is true, an InputError is thrown with the last word in
+  // correctNames as its info. If doCheck is false, the function does
+  // nothing except read a word from the istream.
+  static void readTypename(istream& is,
+									const string& correctNames,
+									bool doCheck = true);
 };
 
 // This template function returns the number of characters needed to
