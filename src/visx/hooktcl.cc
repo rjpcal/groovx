@@ -287,244 +287,11 @@ public:
 
 int MyObj::counter = 0;
 
-#include "tcl/tcllistobj.h"
-#include "util/error.h"
-
-#include <map>
-
-class HashObj : public GenericObj
-{
-public:
-  HashObj();
-  virtual ~HashObj();
-
-  static Tcl_Obj* make();
-
-  static HashObj* convert(Tcl_Obj* obj);
-
-  virtual HashObj* clone() const;
-  virtual char* asString() const;
-
-  void insert(const fstring& key, const Tcl::ObjPtr& val)
-  {
-    itsMap.insert(MapType::value_type(key, val));
-  }
-
-  void erase(const fstring& key)
-  {
-    MapType::iterator i = itsMap.find(key);
-    if (i == itsMap.end())
-      throw Util::Error(fstring(key, ": no such key in hash"));
-    itsMap.erase(i);
-  }
-
-  unsigned int size() const { return itsMap.size(); }
-
-  bool hasKey(const fstring& key) const
-  {
-    return itsMap.find(key) != itsMap.end();
-  }
-
-  Tcl::ObjPtr get(const fstring& key) const
-  {
-    MapType::const_iterator i = itsMap.find(key);
-    if (i == itsMap.end())
-      throw Util::Error(fstring(key, ": no such key in hash"));
-    return (*i).second;
-  }
-
-  Tcl::ObjPtr keys() const;
-  Tcl::ObjPtr values() const;
-
-  Tcl::ObjPtr pairs() const;
-
-private:
-  typedef std::map<fstring, Tcl::ObjPtr> MapType;
-  MapType itsMap;
-};
-
-HashObj::HashObj()
-{
-DOTRACE("HashObj::HashObj");
-}
-
-HashObj::~HashObj()
-{
-DOTRACE("HashObj::~HashObj");
-}
-
-Tcl_Obj* HashObj::make()
-{
-DOTRACE("HashObj::make");
-
-  Tcl_Obj* objPtr = Tcl_NewObj();
-  objPtr->typePtr = &genericObjType;
-  objPtr->internalRep.otherValuePtr = new HashObj;
-
-  Tcl_InvalidateStringRep(objPtr);
-
-  return objPtr;
-}
-
-HashObj* HashObj::convert(Tcl_Obj* objPtr)
-{
-DOTRACE("HashObj::convert");
-  if (objPtr->typePtr == &genericObjType)
-    {
-      HashObj* p =
-        dynamic_cast<HashObj*>
-        (static_cast<GenericObj*>(objPtr->internalRep.otherValuePtr));
-
-      if (p) return p;
-    }
-
-  Tcl::List l(objPtr);
-
-  HashObj* p = new HashObj;
-
-  for (unsigned int i = 1; i < l.length(); i += 2)
-    {
-      p->insert(Tcl::toNative<fstring>(l.at(i-1)), l.at(i));
-    }
-
-  objPtr->internalRep.otherValuePtr = static_cast<GenericObj*>(p);
-  objPtr->typePtr = &genericObjType;
-
-  return p;
-}
-
-HashObj* HashObj::clone() const
-{
-DOTRACE("HashObj::clone");
-
-  return new HashObj(*this);
-}
-
-char* HashObj::asString() const
-{
-DOTRACE("HashObj::asString");
-
-  Tcl::List l;
-
-  for(MapType::const_iterator i = itsMap.begin(), stop = itsMap.end();
-      i != stop; ++i)
-    {
-      l.append((*i).first);
-      l.append((*i).second);
-    }
-
-  const char* s = l.asObj().as<const char*>();
-
-  char* space = stringAlloc(strlen(s) + 1);
-  strcpy(space, s);
-
-  return space;
-}
-
-Tcl::ObjPtr HashObj::keys() const
-{
-DOTRACE("HashObj::keys");
-
-  Tcl::List l;
-
-  for(MapType::const_iterator i = itsMap.begin(), stop = itsMap.end();
-      i != stop; ++i)
-    {
-      l.append((*i).first);
-    }
-
-  return l.asObj();
-}
-
-Tcl::ObjPtr HashObj::values() const
-{
-DOTRACE("HashObj::values");
-
-  Tcl::List l;
-
-  for(MapType::const_iterator i = itsMap.begin(), stop = itsMap.end();
-      i != stop; ++i)
-    {
-      l.append((*i).second);
-    }
-
-  return l.asObj();
-}
-
-Tcl::ObjPtr HashObj::pairs() const
-{
-DOTRACE("HashObj::pairs");
-
-  Tcl::List l;
-
-  for(MapType::const_iterator i = itsMap.begin(), stop = itsMap.end();
-      i != stop; ++i)
-    {
-      Tcl::List p;
-      p.append((*i).first);
-      p.append((*i).second);
-      l.append(p.asObj());
-    }
-
-  return l.asObj();
-}
-
-void HashObj_Insert(Tcl_Obj* obj, const fstring& key, Tcl::ObjPtr val)
-{
-DOTRACE("HashObj_Insert");
-
-  HashObj* p = HashObj::convert(obj);
-  p->insert(key, val);
-  Tcl_InvalidateStringRep(obj);
-}
-
-void HashObj_Erase(Tcl_Obj* obj, const fstring& key)
-{
-  HashObj* p = HashObj::convert(obj);
-  p->erase(key);
-  Tcl_InvalidateStringRep(obj);
-}
-
-unsigned int HashObj_Size(Tcl_Obj* obj)
-{
-  HashObj* p = HashObj::convert(obj);
-  return p->size();
-}
-
-bool HashObj_HasKey(Tcl_Obj* obj, const fstring& key)
-{
-  HashObj* p = HashObj::convert(obj);
-  return p->hasKey(key);
-}
-
-Tcl::ObjPtr HashObj_Get(Tcl_Obj* obj, const fstring& key)
-{
-  HashObj* p = HashObj::convert(obj);
-  return p->get(key);
-}
-
-Tcl::ObjPtr HashObj_Keys(Tcl_Obj* obj)
-{
-  HashObj* p = HashObj::convert(obj);
-  return p->keys();
-}
-
-Tcl::ObjPtr HashObj_Values(Tcl_Obj* obj)
-{
-  HashObj* p = HashObj::convert(obj);
-  return p->values();
-}
-
-Tcl::ObjPtr HashObj_Pairs(Tcl_Obj* obj)
-{
-  HashObj* p = HashObj::convert(obj);
-  return p->pairs();
-}
-
 #include "gfx/gbvec.h"
 #include "util/arrayvalue.h"
 #include "util/iter.h"
 #include "tcl/itertcl.h"
+#include "tcl/tcldictobj.h"
 
 namespace
 {
@@ -552,6 +319,11 @@ namespace
         ++iter; ++i;
       }
   }
+
+  Tcl::ObjPtr dictGet(Tcl::Dict dict, const char* key)
+  {
+    return dict.get<Tcl::ObjPtr>(key);
+  }
 }
 
 extern "C"
@@ -567,22 +339,14 @@ int Hook_Init(Tcl_Interp* interp)
   pkg->def( "::myobj", "val", MyObj::make );
   pkg->def( "::myinfo", "obj", MyObj::info );
 
-  pkg->def( "::hash::new", 0, HashObj::make );
-  pkg->def( "::hash::insert", "hash key val", HashObj_Insert );
-  pkg->def( "::hash::erase", "hash key", HashObj_Erase );
-  pkg->def( "::hash::size", "hash", HashObj_Size );
-  pkg->def( "::hash::has_key", "hash key", HashObj_HasKey );
-  pkg->def( "::hash::get", "hash key", HashObj_Get );
-  pkg->def( "::hash::keys", "hash", HashObj_Keys );
-  pkg->def( "::hash::values", "hash", HashObj_Values );
-  pkg->def( "::hash::pairs", "hash", HashObj_Pairs );
-
   pkg->def( "::getData", 0, getData );
   pkg->def( "::setData", "list", setData );
 
   pkg->def( "::getArray", 0, getArray );
   pkg->def( "::getArraySize", 0, getArraySize );
   pkg->def( "::setArray", "list", setArray );
+
+  pkg->def( "::dictGet", "dict key", dictGet );
 
   PKG_RETURN;
 }
