@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Mar  4 15:01:51 2000
+// written: Sun Mar  5 14:46:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ namespace {
 
   int dummy=0; // We need a dummy int to attach various CPtrProperty's
 
-  typedef IO Fish::* IoMember;
+  typedef Property Fish::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
 	 &Fish::category,

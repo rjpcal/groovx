@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Mar  4 14:47:07 2000
+// written: Sun Mar  5 14:54:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,15 +37,14 @@
 
 namespace {
   template <class T>
-  T abs(T val)
-	 { return (val < 0) ? -val : val; }
+  inline T abs(T val) { return (val < 0) ? -val : val; }
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
 
   const char* ioTag = "Face";
 
-  typedef IO Face::* IoMember;
+  typedef Property Face::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
 	 &Face::category,

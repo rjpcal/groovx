@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Sat Mar  4 16:02:43 2000
+// written: Sun Mar  5 14:47:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,11 +42,11 @@
 
 namespace {
   template <class T>
-  T abs(T val) { return (val < 0) ? -val : val; }
+  inline T abs(T val) { return (val < 0) ? -val : val; }
 
   const char* ioTag = "MorphyFace";
 
-  typedef IO MorphyFace::* IoMember;
+  typedef Property MorphyFace::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
 	 &MorphyFace::category,

@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Mar  4 15:49:48 2000
+// written: Sun Mar  5 14:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,11 +37,11 @@
 
 namespace {
   template <class T>
-  T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
+  inline T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
 
   const char* ioTag = "House";
 
-  typedef IO House::* IoMember;
+  typedef Property House::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
 	 &House::storyAspectRatio,
