@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Thu Jun  1 12:22:57 2000
+// written: Thu Sep 28 20:17:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,9 +74,6 @@ public:
   /// Store the \c double attribute \a val in association with the tag \a name.
   virtual void writeDouble(const char* name, double val) = 0;
 
-  /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
-  virtual void writeCstring(const char* name, const char* val) = 0;
-
   /// Store the \c Value attribute \a val in association with the tag \a name.
   virtual void writeValueObj(const char* name, const Value& value) = 0;
 
@@ -109,6 +106,10 @@ public:
       stored recursively, until there are no more remaining
       references. */
   virtual void writeRoot(const IO::IoObject* root) = 0;
+
+protected:
+  /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
+  virtual void writeCstring(const char* name, const char* val) = 0;
 };
 
 static const char vcid_writer_h[] = "$Header$";
