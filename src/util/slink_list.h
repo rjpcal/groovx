@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Mar 20 13:05:50 2000
+// written: Mon Mar 20 14:30:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,6 +129,7 @@ public:
 			 ++result;
 			 ++itr;
 		  }
+		return result;
 	 }
 
   iterator find(const T& val)
