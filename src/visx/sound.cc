@@ -145,6 +145,14 @@ DOTRACE("Sound::play");
 void Sound::setFile(const char* filename)
 {
 DOTRACE("Sound::setFile");
+  if (filename == 0 || filename[0] == '\0')
+    {
+      itsFilename = "";
+      itsRep.reset(0);
+      return;
+    }
+
+  // else, we have a non-empty filename
   itsRep.reset(newPlatformSoundRep(filename));
   itsFilename = filename;
 }
