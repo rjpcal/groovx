@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Apr 17 16:15:32 2002
+// written: Fri Jul  5 12:53:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #define GXTCL_CC_DEFINED
 
 #include "gfx/gxcolor.h"
+#include "gfx/gxcylinder.h"
 #include "gfx/gxdrawstyle.h"
 #include "gfx/gxline.h"
 #include "gfx/gxnode.h"
@@ -112,6 +113,12 @@ DOTRACE("Gx_Init");
   Tcl::defCreator<GxLine>(pkg5);
 
   status = pkg5->combineStatus(status);
+
+  Tcl::Pkg* pkg6 = new Tcl::Pkg(interp, "GxCylinder", "$Revision$");
+  Tcl::defFieldContainer<GxCylinder>(pkg6);
+  Tcl::defCreator<GxCylinder>(pkg6);
+
+  status = pkg6->combineStatus(status);
 
   return status;
 }

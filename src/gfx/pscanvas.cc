@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Tue Jun 25 14:40:53 2002
+// written: Fri Jul  5 13:22:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -831,6 +831,13 @@ DOTRACE("Gfx::PSCanvas::drawCircle");
     {
       itsImpl->stroke();
     }
+}
+
+void Gfx::PSCanvas::drawCylinder(double /*base_radius*/, double /*top_radius*/,
+                                 double /*height*/, int /*slices*/, int /*stacks*/,
+                                 bool /*fill*/)
+{
+// FIXME
 }
 
 void Gfx::PSCanvas::drawBezier4(const Gfx::Vec3<double>& p1,

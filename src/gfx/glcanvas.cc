@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Jun 25 13:52:33 2002
+// written: Fri Jul  5 13:18:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -503,8 +503,28 @@ void GLCanvas::drawCircle(double inner_radius, double outer_radius, bool fill,
 DOTRACE("GLCanvas::drawCircle");
 
   GLUquadricObj* qobj = gluNewQuadric();
+
+  if (qobj == 0)
+    throw Util::Error("couldn't allocate GLUquadric object");
+
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_SILHOUETTE);
   gluDisk(qobj, inner_radius, outer_radius, slices, loops);
+  gluDeleteQuadric(qobj);
+}
+
+void GLCanvas::drawCylinder(double base_radius, double top_radius,
+                            double height, int slices, int stacks,
+                            bool fill)
+{
+DOTRACE("GLCanvas::drawCylinder");
+
+  GLUquadric* qobj = gluNewQuadric();
+
+  if (qobj == 0)
+    throw Util::Error("couldn't allocate GLUquadric object");
+
+  gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
+  gluCylinder(qobj, base_radius, top_radius, height, slices, stacks);
   gluDeleteQuadric(qobj);
 }
 
