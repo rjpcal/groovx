@@ -11,7 +11,7 @@ package require Face
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass Face
+::testGxshapekitSubclass Face
 
 ### faceCmd ###
 test "FaceTcl-Obj::new Face" "too many args" {

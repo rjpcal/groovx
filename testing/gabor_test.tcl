@@ -11,4 +11,4 @@ package require Gabor
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass Gabor
+::testGxshapekitSubclass Gabor

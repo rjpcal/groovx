@@ -33,7 +33,7 @@ set files {
     { gl_test.tcl 1 }
     { gxpixmap_test.tcl 1 }
     { gxsep_test.tcl 1 }
-    { gxshapekit_test.tcl 1 }
+    { gxshapekitbase_test.tcl 1 }
     { gxtext_test.tcl 1 }
     { gxtransform_test.tcl 1 }
     { house_test.tcl 1 }

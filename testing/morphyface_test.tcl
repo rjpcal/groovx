@@ -11,4 +11,4 @@ package require Morphyface
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass MorphyFace
+::testGxshapekitSubclass MorphyFace
