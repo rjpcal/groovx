@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 13:38:25 2001
+// written: Mon Jul 16 13:40:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,9 @@ DOTRACE("Tcl::SafeInterp::appendResult");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::SafeInterp::setGlobalVar(const char* var_name, Tcl_Obj* var) const {
+void Tcl::SafeInterp::setGlobalVar(const char* var_name,
+                                   Tcl::ObjPtr var) const
+{
 DOTRACE("Tcl::SafeInterp::setGlobalVar");
 
   if (Tcl_SetVar2Ex(itsInterp, const_cast<char*>(var_name), /*name2*/0,

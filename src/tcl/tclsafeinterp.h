@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Mon Jul 16 13:39:17 2001
+// written: Mon Jul 16 13:40:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
 #include "tcl/tclerror.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
+#include "tcl/tclobjptr.h"
 #endif
 
 struct Tcl_Interp;
@@ -53,7 +57,7 @@ public:
   void appendResult(const char* msg) const;
 
   // Variables
-  void setGlobalVar(const char* var_name, Tcl_Obj* var) const;
+  void setGlobalVar(const char* var_name, Tcl::ObjPtr var) const;
   void unsetGlobalVar(const char* var_name) const;
 
 private:
