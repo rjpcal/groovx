@@ -69,17 +69,21 @@
        make
        make install
    
-     * iwidgets (iwidgets4.0.0.tar.gz)
+     * iwidgets (iwidgets4.0.1.tar.gz)
+
+       # again, note that iwidgets expects to still be able to find the
+         source code from the itcl/itk build, so don't remove the itcl+itk
+         sources until after you've configured and installed iwidgets
    
        cd /path/to/source
-       tar xfz iwidgets4.0.0.tar.gz
-       cd iwidgets4.0.0
+       tar xfz iwidgets4.0.1.tar.gz
+       cd iwidgets4.0.1
        ./configure  --prefix=/path/to/install \
-         --with-itcl=/path/to/source/itcl3.2.1/itcl \
-         --with-itk=/path/to/source/itcl3.2.1/itk
+         --with-itcl=/path/to/source/itcl3.2.1 \
+         --with-itk=/path/to/source/itcl3.2.1
        # no need to do "make", just do "make install"
        make install
-      
+
 
      
 
