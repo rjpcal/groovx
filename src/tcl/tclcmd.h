@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Jul  1 17:46:00 1999
+// written: Fri Jul  2 11:15:01 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -112,7 +112,7 @@ protected:
 
 private:
   template <class T>
-  void getValFromObj(Tcl_Obj* obj, T* val);
+  void getValFromObj(Tcl_Obj* obj, T& val);
 
   template <>
   void getValFromObj<int>(Tcl_Obj* obj, int& val) {
@@ -134,12 +134,12 @@ private:
   }
 
   template <>
-  void getValFromObj<int>(Tcl_Obj* obj, const char*& val) {
+  void getValFromObj<const char*>(Tcl_Obj* obj, const char*& val) {
 	 val = Tcl_GetString(obj);
   }
 
   template <>
-  void getValFromObj<int>(Tcl_Obj* obj, string& val) {
+  void getValFromObj<string>(Tcl_Obj* obj, string& val) {
 	 val = Tcl_GetString(obj);
   }
 
