@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu Nov 21 15:03:34 2002
+// written: Fri Nov 22 15:44:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace
   {
     DOTRACE("Tcl::PkgBase-exitHandler");
     Tcl::PkgBase* pkg = static_cast<Tcl::PkgBase*>(clientData);
-    dbgEvalNL(3, typeid(*pkg).name());
+    dbgEvalNL(3, pkg->pkgName());
     delete pkg;
   }
 }
