@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 12:47:26 2002
+// written: Wed Nov 13 13:47:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,12 +130,6 @@ public:
   //
   ///////////////////////////////////////////////////////////////////////
 
-  /** Changes the bitmap cache directory to \a dirname. This is where
-      bitmaps saved with \c saveBitmapCache() will be stored, and also
-      where objects will look to restore themselves from previously
-      saved bitmap caches. */
-  static void setBitmapCacheDir(const char* dirname);
-
   /// Changes whether the bounding box will be visible when the object is drawn.
   void setBBVisibility(bool visibility);
 
@@ -200,14 +194,8 @@ public:
   //
   ///////////////////////////////////////////////////////////////////////
 
-  /** Saves a bitmap cache of the object to the named file. The file
-      will be stored in the directory given to \c
-      setBitmapCacheDir(). The filename must refer to a format
-      supported by \c Pbm. */
-  void saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const;
-
-  /** Recompiles the OpenGL display list or bitmap cache, if there are
-      changes pending, otherwise does nothing. */
+  /** Recompiles the OpenGL display list, if there are changes pending,
+      otherwise does nothing. */
   void update(Gfx::Canvas& canvas) const;
 
   /** This function draws the object according to the GrRenderMode
@@ -219,9 +207,6 @@ public:
   virtual void grRender(Gfx::Canvas& canvas) const = 0;
 
 private:
-  const fstring& getCacheFilename() const;
-  void setCacheFilename(const fstring& name);
-
   double getWidthFactor() const;
   void setWidthFactor(double val);
 
