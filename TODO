@@ -7,54 +7,6 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (29-May-2003) Issues with icc 8.0 beta
-
-  * compiler error on anonymous namespace in gzstreambuf.cc
-
-    #include <iostream>
-    namespace
-    {
-      struct X : public std::iostream
-      {
-        X() : std::iostream(0) {}
-      };
-    }
-
-  * dynamic_cast disaster
-
-    #include <stdio.h>
-
-    struct A { virtual ~A() {} };
-
-    struct B : public A {};
-
-    A* noop(A* a) { return a; }
-
-    int main()
-    {
-      B b;
-
-      A* a = &b;
-      A* a2 = noop(a);
-
-      // all of these succeed except the last, which causes a segfault
-
-      B* b1 = dynamic_cast<B*>(a);        printf("1: %x\n", (void*)b1);
-      B* b2 = dynamic_cast<B*>(a2);       printf("2: %x\n", (void*)b2);
-      B* b3 = dynamic_cast<B*>(noop(a));  printf("3: %x\n", (void*)b3);
-      B& b4 = dynamic_cast<B&>(*a);       printf("4: %x\n", (void*)&b4);
-      B& b5 = dynamic_cast<B&>(*a2);      printf("5: %x\n", (void*)&b5);
-      B& b6 = dynamic_cast<B&>(*noop(a)); printf("6: %x\n", (void*)&b6);
-    }
-
-  * icc defines __GNUC__ in demangle.cc?
-
-    OK, can work around this with a autoconf test for <cxxabi.h> instead.
-
-  * premature failure of std::ofstream object in ~Prof()
-
-    OK, can use C stdio (FILE*) instead.
-
 * (25-Nov-2002) What is GWT::Widget's raison d'etre?
 
   OK, now I've got Widget cleaned out. But... now, what's its reason to
