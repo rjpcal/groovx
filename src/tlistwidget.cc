@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Jan 14 11:45:09 2000
+// written: Fri Jan 14 12:01:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,22 +20,11 @@
 #include "trace.h"
 #include "debug.h"
 
+
 namespace {
   Tlist& theTlist = Tlist::theTlist();
-
-  void safeDrawTrial(int trial, TlistWidget* widg) {
-  DOTRACE("{tlistwidget.cc}::safeDrawTrial");
-
-	 DebugPrintNL("drawing the trial...");
-	 try {
-		theTlist.getCheckedPtr(trial)->trDraw(*(widg->getCanvas()), false);
-	 }
-	 catch (InvalidIdError& err) {
-		DebugEvalNL(err.msg());
-		widg->setVisibility(false);
-	 }
-  }
 }
+
 
 TlistWidget::TlistWidget(Togl* togl, double dist, double unit_angle) :
   ToglConfig(togl, dist, unit_angle),
@@ -57,7 +46,8 @@ DOTRACE("TlistWidget::display");
 	 clearscreen();
   }
 
-  safeDrawTrial(itsCurTrial, this);
+  safeDrawTrial();
+  swapBuffers();
   getCanvas()->flushOutput();
 }
 
@@ -72,7 +62,7 @@ void TlistWidget::refresh() {
 DOTRACE("TlistWidget::refresh");
 
   getCanvas()->clearColorBuffer(); 
-  safeDrawTrial(itsCurTrial, this);
+  safeDrawTrial();
   swapBuffers();
   getCanvas()->flushOutput();
 }
@@ -90,5 +80,24 @@ DOTRACE("TlistWidget::setCurTrial");
   itsCurTrial = trial;
 }
 
+void TlistWidget::safeDrawTrial() {
+DOTRACE("TlistWidget::safeDrawTrial");
+
+  if ( !itsVisibility ) return;
+
+  if ( theTlist.isValidId(itsCurTrial) ) {
+	 try {
+		DebugPrintNL("drawing the trial...");
+		theTlist.getPtr(itsCurTrial)->trDraw(*(getCanvas()), false);
+		return;
+	 }
+	 catch (InvalidIdError& err) {
+		DebugEvalNL(err.msg());
+	 }
+  }
+
+  // Here, either the trial id or some other id was invalid
+  setVisibility(false);
+}
 static const char vcid_tlistwidget_cc[] = "$Header$";
 #endif // !TLISTWIDGET_CC_DEFINED
