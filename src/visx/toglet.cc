@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Jun 25 14:28:45 2002
+// written: Tue Jun 25 14:32:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 #include "togl/togl.h"
 
 #include "util/error.h"
+#include "util/ref.h"
 #include "util/strings.h"
 
 #include <X11/Xlib.h>
@@ -254,7 +255,7 @@ class TogletImpl
 {
 public:
   Togl* const togl;
-  scoped_ptr<Gfx::Canvas> canvas;
+  Util::Ref<Gfx::Canvas> canvas;
   scoped_ptr<TogletSizer> sizer;
   unsigned int fontListBase;
 
