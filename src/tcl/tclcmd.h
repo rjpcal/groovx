@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Mar 16 13:53:14 2000
+// written: Fri Mar 17 17:34:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ public:
   int objc() { return itsObjc; }
 
   /// Returns the argument number \a argn of the current invocation.
-  TclValue& arg(int argn);
+  TclValue arg(int argn);
 
   /// Attempts to retrieve an \c int from argument number \a argn.
   int getIntFromArg(int argn);
