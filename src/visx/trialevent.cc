@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Sat Nov 23 13:51:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,6 @@
 
 #include "gfx/canvas.h"
 
-#include "gwt/widget.h"
-
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -28,6 +26,7 @@
 #include "system/demangle.h"
 
 #include "tcl/tclmain.h"
+#include "tcl/toglet.h"
 
 #include "util/algo.h"
 #include "util/error.h"
@@ -229,7 +228,7 @@ DrawEvent::~DrawEvent() {}
 void DrawEvent::invoke(TrialBase& trial)
 {
 DOTRACE("DrawEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     {
       trial.installSelf(widget);
@@ -245,7 +244,7 @@ RenderEvent::~RenderEvent() {}
 void RenderEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     {
       trial.installSelf(widget);
@@ -302,7 +301,7 @@ UndrawEvent::~UndrawEvent() {}
 void UndrawEvent::invoke(TrialBase& trial)
 {
 DOTRACE("UndrawEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     widget->undraw();
 }
@@ -314,7 +313,7 @@ SwapBuffersEvent::~SwapBuffersEvent() {}
 void SwapBuffersEvent::invoke(TrialBase& trial)
 {
 DOTRACE("SwapBuffersEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     widget->swapBuffers();
 }
@@ -326,7 +325,7 @@ RenderBackEvent::~RenderBackEvent() {}
 void RenderBackEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderBackEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     widget->getCanvas().drawOnBackBuffer();
 }
@@ -338,7 +337,7 @@ RenderFrontEvent::~RenderFrontEvent() {}
 void RenderFrontEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderFrontEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     widget->getCanvas().drawOnFrontBuffer();
 }
@@ -350,7 +349,7 @@ ClearBufferEvent::~ClearBufferEvent() {}
 void ClearBufferEvent::invoke(TrialBase& trial)
 {
 DOTRACE("ClearBufferEvent::invoke");
-  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<Toglet> widget = trial.getWidget();
   if (widget.isValid())
     widget->clearscreen();
 }

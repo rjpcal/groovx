@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Wed Sep 25 19:03:15 2002
+// written: Sat Nov 23 13:47:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,6 @@
 
 #include "io/io.h"
 
-namespace GWT
-{
-  class Widget;
-}
-
 namespace Util
 {
   class ErrorHandler;
@@ -27,6 +22,7 @@ namespace Util
 };
 
 class Block;
+class Toglet;
 class TrialBase;
 
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +52,7 @@ public:
   /** Will be called by a \c TrialBase at the beginning of a trial. \c
       ResponseHandler subclasses implement this function to prepare
       listening for responses, etc. */
-  virtual void rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
+  virtual void rhBeginTrial(Util::SoftRef<Toglet> widget,
                             TrialBase& trial) const = 0;
 
   /** Will by called by a \c TrialBase if a trial is aborted. \c
@@ -75,7 +71,7 @@ public:
   virtual void rhHaltExpt() const = 0;
 
   /// Subclasses implement this function to attend to responses.
-  virtual void rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
+  virtual void rhAllowResponses(Util::SoftRef<Toglet> widget,
                                 TrialBase& trial) const = 0;
 
   /// Subclasses implement this function to stop attending to responses.

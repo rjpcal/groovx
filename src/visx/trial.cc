@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Nov 23 13:38:04 2002
+// written: Sat Nov 23 13:49:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,10 @@
 
 #include "gfx/gxshapekit.h"
 
-#include "gwt/widget.h"
-
 #include "io/readutils.h"
 #include "io/writeutils.h"
+
+#include "tcl/toglet.h"
 
 #include "util/errorhandler.h"
 #include "util/iter.h"
@@ -52,7 +52,7 @@ namespace
 
   struct ActiveState
   {
-    ActiveState(Block* block, SoftRef<GWT::Widget> widget,
+    ActiveState(Block* block, SoftRef<Toglet> widget,
                 Ref<ResponseHandler> rh, Ref<TimingHdlr> th) :
       itsBlock(block),
       itsWidget(widget),
@@ -63,7 +63,7 @@ namespace
     }
 
     Block* itsBlock;
-    SoftRef<GWT::Widget> itsWidget;
+    SoftRef<Toglet> itsWidget;
     Ref<ResponseHandler> itsRh;
     Ref<TimingHdlr> itsTh;
   };
@@ -111,7 +111,7 @@ public:
   bool isActive() const { return itsActiveState.get() != 0; }
   bool isInactive() const { return itsActiveState.get() == 0; }
 
-  void becomeActive(Block* block, SoftRef<GWT::Widget> widget)
+  void becomeActive(Block* block, SoftRef<Toglet> widget)
   {
     itsActiveState.reset(new ActiveState(block, widget, itsRh, itsTh));
     Util::Log::addScope("Trial");
@@ -149,7 +149,7 @@ public:
 
   void clearObjs();
 
-  void trDoTrial(Trial* self, const SoftRef<GWT::Widget>& widget,
+  void trDoTrial(Trial* self, const SoftRef<Toglet>& widget,
                  Util::ErrorHandler& errhdlr, Block& block);
   double trElapsedMsec();
   void trAbortTrial();
@@ -161,7 +161,7 @@ public:
   void trAllowResponses(Trial* self);
   void trDenyResponses();
 
-  void installSelf(SoftRef<GWT::Widget> widget) const;
+  void installSelf(SoftRef<Toglet> widget) const;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -307,7 +307,7 @@ DOTRACE("Trial::Impl::clearObjs");
 // actions //
 /////////////
 
-void Trial::Impl::trDoTrial(Trial* self, const SoftRef<GWT::Widget>& widget,
+void Trial::Impl::trDoTrial(Trial* self, const SoftRef<Toglet>& widget,
                             Util::ErrorHandler& errhdlr, Block& block)
 {
 DOTRACE("Trial::Impl::trDoTrial");
@@ -446,7 +446,7 @@ DOTRACE("Trial::Impl::trDenyResponses");
   itsActiveState->itsRh->rhDenyResponses();
 }
 
-void Trial::Impl::installSelf(SoftRef<GWT::Widget> widget) const
+void Trial::Impl::installSelf(SoftRef<Toglet> widget) const
 {
 DOTRACE("Trial::Impl::installSelf");
 
@@ -519,7 +519,7 @@ void Trial::readFrom(IO::Reader* reader)
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-SoftRef<GWT::Widget> Trial::getWidget() const
+SoftRef<Toglet> Trial::getWidget() const
 {
   Precondition( itsImpl->isActive() );
   return itsImpl->itsActiveState->itsWidget;
@@ -598,7 +598,7 @@ void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
 
-void Trial::trDoTrial(const SoftRef<GWT::Widget>& widget,
+void Trial::trDoTrial(const SoftRef<Toglet>& widget,
                       Util::ErrorHandler& errhdlr, Block& block)
   { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 
@@ -629,7 +629,7 @@ void Trial::trAllowResponses()
 void Trial::trDenyResponses()
   { itsImpl->trDenyResponses(); }
 
-void Trial::installSelf(SoftRef<GWT::Widget> widget) const
+void Trial::installSelf(SoftRef<Toglet> widget) const
   { itsImpl->installSelf(widget); }
 
 static const char vcid_trial_cc[] = "$Header$";

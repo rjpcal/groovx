@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Nov 22 17:18:23 2002
+// written: Sat Nov 23 13:50:31 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -20,8 +20,6 @@
 #include "visx/block.h"
 #include "visx/exptdriver.h"
 
-#include "gwt/widget.h"
-
 #include "system/system.h"
 
 #include "tcl/iotcl.h"
@@ -30,6 +28,7 @@
 #include "tcl/tclcode.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
+#include "tcl/toglet.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -68,7 +67,7 @@ namespace ExptTcl
   // generates the timer callbacks associated with a trial.
   void begin(Ref<ExptDriver> expt)
   {
-    Util::SoftRef<GWT::Widget> widget = expt->getWidget();
+    Util::SoftRef<Toglet> widget = expt->getWidget();
 
     // Create the begin key binding
     widget->bind("<Control-KeyPress-b>", "Togl::takeFocus; Expt::begin");
@@ -119,7 +118,7 @@ namespace ExptTcl
 
     Tcl::Interp::clearEventQueue();
 
-    Util::SoftRef<GWT::Widget> widget = ed->getWidget();
+    Util::SoftRef<Toglet> widget = ed->getWidget();
     widget->fullClearscreen();
     widget->fullClearscreen();
 
@@ -137,7 +136,7 @@ namespace ExptTcl
 
   void setStartCommand(Ref<ExptDriver> expt, const char* command)
   {
-    Util::SoftRef<GWT::Widget> widget = expt->getWidget();
+    Util::SoftRef<Toglet> widget = expt->getWidget();
 
     widget->bind("<KeyPress-s>", command);
     widget->takeFocus();

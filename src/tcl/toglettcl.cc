@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Fri Nov 22 17:17:33 2002
+// written: Sat Nov 23 13:45:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ namespace TogletTcl
 
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
-  Util::UID see(SoftRef<GWT::Widget> widg, Ref<GxNode> item)
+  Util::UID see(SoftRef<Toglet> widg, Ref<GxNode> item)
   {
     widg->setDrawable(item);
     widg->setVisibility(true);

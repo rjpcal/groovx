@@ -5,18 +5,13 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Sat Nov 23 13:36:49 2002
+// written: Sat Nov 23 13:49:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPERIMENT_H_DEFINED
 #define EXPERIMENT_H_DEFINED
-
-namespace GWT
-{
-  class Widget;
-}
 
 namespace Gfx
 {
@@ -30,6 +25,7 @@ namespace Util
 };
 
 class Response;
+class Toglet;
 
 /// Protocol class that represents psychophysical experiments.
 class Experiment
@@ -41,7 +37,7 @@ public:
   virtual Util::ErrorHandler& getErrorHandler() const = 0;
   ///< Return an \c ErrorHandler that can deal with error messages.
 
-  virtual const Util::SoftRef<GWT::Widget>& getWidget() const = 0;
+  virtual const Util::SoftRef<Toglet>& getWidget() const = 0;
   ///< Return the Widget in which the experiment is running.
 
   virtual Gfx::Canvas& getCanvas() const = 0;

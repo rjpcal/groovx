@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Sep 11 14:07:25 2002
+// written: Sat Nov 23 13:49:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,25 +15,24 @@
 
 #include "visx/eventresponsehdlr.h"
 
-#include "visx/feedbackmap.h"
-#include "visx/sound.h"
-#include "visx/response.h"
-#include "visx/trialbase.h"
-
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "gwt/widget.h"
 
 #include "tcl/tclfunctor.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
+#include "tcl/toglet.h"
 
 #include "util/log.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
+
+#include "visx/feedbackmap.h"
+#include "visx/sound.h"
+#include "visx/response.h"
+#include "visx/trialbase.h"
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"
@@ -79,7 +78,7 @@ public:
   class ActiveState
   {
   private:
-    Util::SoftRef<GWT::Widget> itsWidget;
+    Util::SoftRef<Toglet> itsWidget;
     TrialBase& itsTrial;
     fstring itsEventSequence;
     fstring itsBindingScript;
@@ -101,7 +100,7 @@ public:
     ~ActiveState() { ignore(); }
 
     ActiveState(const EventResponseHdlr::Impl* erh,
-                Util::SoftRef<GWT::Widget> widget, TrialBase& trial,
+                Util::SoftRef<Toglet> widget, TrialBase& trial,
                 const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
@@ -162,7 +161,7 @@ public:
     }
   };
 
-  void becomeActive(Util::SoftRef<GWT::Widget> widget, TrialBase& trial) const
+  void becomeActive(Util::SoftRef<Toglet> widget, TrialBase& trial) const
   {
     Util::log( fstring("binding to ", itsCmdCallback->name()) );
 
@@ -410,7 +409,7 @@ void EventResponseHdlr::setMaxResponses(unsigned int count)
 unsigned int EventResponseHdlr::getMaxResponses() const
   { return itsImpl->itsMaxResponses; }
 
-void EventResponseHdlr::rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
+void EventResponseHdlr::rhBeginTrial(Util::SoftRef<Toglet> widget,
                                      TrialBase& trial) const
 {
   Precondition( itsImpl->isInactive() );
@@ -450,7 +449,7 @@ void EventResponseHdlr::rhHaltExpt() const
   Postcondition( itsImpl->isInactive() );
 }
 
-void EventResponseHdlr::rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
+void EventResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet> widget,
                                          TrialBase& trial) const
 {
   itsImpl->becomeActive(widget, trial);

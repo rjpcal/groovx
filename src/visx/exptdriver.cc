@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat Nov 23 13:37:16 2002
+// written: Sat Nov 23 13:50:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,6 @@
 #include "visx/exptdriver.h"
 
 #include "grsh/grsh.h"
-
-#include "gwt/widget.h"
 
 #include "io/ioutil.h"
 #include "io/readutils.h"
@@ -30,6 +28,7 @@
 #include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
+#include "tcl/toglet.h"
 
 #include "util/error.h"
 #include "util/errorhandler.h"
@@ -158,7 +157,7 @@ private:
 public:
   Tcl::Interp itsInterp;
 
-  SoftRef<GWT::Widget> itsWidget;
+  SoftRef<Toglet> itsWidget;
 
   fstring itsHostname;     // Host computer on which Expt was begun
   fstring itsSubject;      // Id of subject on whom Expt was performed
@@ -562,10 +561,10 @@ void ExptDriver::setDoWhenComplete(const fstring& script)
 Util::ErrorHandler& ExptDriver::getErrorHandler() const
   { return itsImpl->itsErrorHandler; }
 
-const Util::SoftRef<GWT::Widget>& ExptDriver::getWidget() const
+const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
   { return itsImpl->itsWidget; }
 
-void ExptDriver::setWidget(const Util::SoftRef<GWT::Widget>& widg)
+void ExptDriver::setWidget(const Util::SoftRef<Toglet>& widg)
   { itsImpl->itsWidget = widg; }
 
 Gfx::Canvas& ExptDriver::getCanvas() const
