@@ -8,6 +8,7 @@
 ##############################################################################
 
 package require Bitmap
+package require Glbitmap
 package require Objlist
 package require Objtogl
 package require Tclgl
@@ -20,14 +21,14 @@ set PBMFILE $TEST_DIR/pbmfile.PPM
 
 set POS [Pos::Pos]
 
-### Bitmap::BitmapCmd ###
-test "BitmapTcl-Bitmap::Bitmap" "too many args" {
-	 Bitmap::Bitmap junk
-} {^wrong \# args: should be "Bitmap::Bitmap"$}
-test "BitmapTcl-Bitmap::Bitmap" "normal use" {
-	 set ::BITMAP [Bitmap::Bitmap]
+### GLBitmap::GLBitmapCmd ###
+test "GLBitmapTcl-GLBitmap::GLBitmap" "too many args" {
+	 GLBitmap::GLBitmap junk
+} {^wrong \# args: should be "GLBitmap::GLBitmap"$}
+test "GLBitmapTcl-GLBitmap::GLBitmap" "normal use" {
+	 set ::BITMAP [GLBitmap::GLBitmap]
 } "^${INT}$"
-test "BitmapTcl-Bitmap::Bitmap" "error" {} {^$} $no_test
+test "GLBitmapTcl-GLBitmap::GLBitmap" "error" {} {^$} $no_test
 
 ### Bitmap::loadPbmCmd ###
 test "BitmapTcl-Bitmap::loadPbm" "too few args" {
@@ -125,7 +126,7 @@ test "BitmapTcl-Bitmap::zoomX/Y" "too many args" {
 	 Bitmap::zoomY $::BITMAP 1.0 junk
 } {^wrong \# args: should be "Bitmap::zoomY item_id\(s\) \?new_value\(s\)\?"$}
 test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
-	 Bitmap::usingGlBitmap $::BITMAP no
+	 GLBitmap::usingGlBitmap $::BITMAP no
 
 	 Bitmap::zoomX $::BITMAP 0.5
 	 Bitmap::zoomY $::BITMAP 0.5
@@ -143,34 +144,34 @@ test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
 } {^1$}
 test "BitmapTcl-Bitmap::zoomX/Y" "error" {} {^$} $no_test
 
-### Bitmap::usingGlBitmapCmd ###
-test "BitmapTcl-Bitmap::usingGlBitmap" "too few args" {
-	 Bitmap::usingGlBitmap
-} {^wrong \# args: should be "Bitmap::usingGlBitmap item_id\(s\) \?new_value\(s\)\?"$}
-test "BitmapTcl-Bitmap::usingGlBitmap" "too many args" {
-	 Bitmap::usingGlBitmap $::BITMAP yes junk
-} {^wrong \# args: should be "Bitmap::usingGlBitmap item_id\(s\) \?new_value\(s\)\?"$}
-test "BitmapTcl-Bitmap::usingGlBitmap" "normal use" {
-	 Bitmap::usingGlBitmap $::BITMAP no
+### GLBitmap::usingGlBitmapCmd ###
+test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too few args" {
+	 GLBitmap::usingGlBitmap
+} {^wrong \# args: should be "GLBitmap::usingGlBitmap item_id\(s\) \?new_value\(s\)\?"$}
+test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too many args" {
+	 GLBitmap::usingGlBitmap $::BITMAP yes junk
+} {^wrong \# args: should be "GLBitmap::usingGlBitmap item_id\(s\) \?new_value\(s\)\?"$}
+test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
+	 GLBitmap::usingGlBitmap $::BITMAP no
 	 clearscreen
 	 set time1 [time {show $::BITMAP}]
 
-	 Bitmap::usingGlBitmap $::BITMAP yes
+	 GLBitmap::usingGlBitmap $::BITMAP yes
 	 clearscreen
 	 set time2 [time {show $::BITMAP}]
 	 
 	 # Rendering should always be faster with glBitmap than with glDrawPixels
 	 expr { $time1 > $time2 }
 } {^1$}
-test "BitmapTcl-Bitmap::usingGlBitmap" "error" {} {^$} $no_test
+test "GLBitmapTcl-GLBitmap::usingGlBitmap" "error" {} {^$} $no_test
 
 ### Bitmap::stringifyCmd ###
 ### Bitmap::destringifyCmd ###
 test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
 	 set str1 [Bitmap::stringify $::BITMAP]
 	 ObjList::reset
-	 set ::BITMAP [Bitmap::Bitmap]
-	 Bitmap::destringify $::BITMAP $str1
+	 set ::BITMAP [GLBitmap::GLBitmap]
+	 GLBitmap::destringify $::BITMAP $str1
 	 set str2 [Bitmap::stringify $::BITMAP]
 	 string equal $str1 $str2
 } {^1$}
