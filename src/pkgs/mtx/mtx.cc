@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Apr 17 11:12:07 2001
+// written: Wed Apr 18 13:00:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 #include "strings.h"
 
 #include <algorithm>
+#include <iostream.h>
+#include <iomanip.h>
 #include "libmatlb.h"
 
 #include "trace.h"
@@ -116,9 +118,9 @@ void Slice::print() const
 {
   for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
     {
-		mexPrintf("%7.4f   ", double(*iter));
+		cout << setw(12) << setprecision(7) << double(*iter);
     }
-  mexPrintf("\n");
+  cout << endl;
 }
 
 namespace
@@ -384,19 +386,19 @@ DOTRACE("Mtx::extractString");
 
 void Mtx::print() const
 {
-  mexPrintf("mrows = %d, ncols = %d\n", mrows(), ncols());
+  cout << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';
   for(int i = 0; i < mrows(); ++i)
     {
       for(int j = 0; j < ncols(); ++j)
-        mexPrintf("%7.4f   ", at(i,j));
-      mexPrintf("\n");
+		  cout << setw(12) << setprecision(7) << at(i,j);
+		cout << '\n';
     }
-  mexPrintf("\n");
+  cout << '\n';
 }
 
 void Mtx::print(const char* mtxName) const
 {
-  mexPrintf("%s:\n", mtxName);
+  cout << mtxName << '\n';
   print();
 }
 
