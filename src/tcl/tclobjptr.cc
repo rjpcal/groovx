@@ -62,7 +62,7 @@ const char* Tcl::ObjPtr::typeName() const
 {
   Tcl_ObjType* type = itsObj->typePtr;
 
-  return type ? type->name : "string";
+  return type ? type->name : "(none)";
 }
 
 void Tcl::ObjPtr::incrRef(Tcl_Obj* obj)
