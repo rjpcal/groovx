@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Nov 15 15:54:00 1999
+// written: Mon Nov 15 16:13:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -247,6 +247,13 @@ public:
   ///
   static Point<double> getWorldFromScreen(const Point<int>& screen_pos,
 														bool recalculate_state = true);
+
+  ///
+  static Rect<int> getScreenFromWorld(const Rect<double>& world_pos);
+  ///
+  static Rect<double> getWorldFromScreen(const Rect<int>& screen_pos);
+
+
   //@}
 
   //////////////////
