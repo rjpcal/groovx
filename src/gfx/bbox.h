@@ -80,6 +80,9 @@ public:
                       const geom::vec2<int>& size,
                       const geom::vec2<double>& zoom);
 
+  void drawScreenRect(const geom::vec2<double>& lower_left,
+                      const geom::rect<int>& screen_rect);
+
   geom::box<double> cube() const;
   geom::rect<double> rect() const;
 

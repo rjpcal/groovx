@@ -372,21 +372,14 @@ DOTRACE("AglRasterFont::bboxOf");
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  using geom::vec2i;
   using geom::vec2d;
-
-  // get screen origin;
-  const vec2i orig = vec2i(bbox.screenFromWorld2(vec2d()));
 
   const int l = orig.x();
   const int r = orig.x() + maxwid;
   const int b = orig.y() - itsFontInfo.descent + (lines - 1) * (rasterHeight());
   const int t = orig.y() + itsFontInfo.ascent;
 
-  bbox.vertex2(bbox.worldFromScreen2(vec2i(l,b)));
-  bbox.vertex2(bbox.worldFromScreen2(vec2i(r,b)));
-  bbox.vertex2(bbox.worldFromScreen2(vec2i(l,t)));
-  bbox.vertex2(bbox.worldFromScreen2(vec2i(r,t)));
+  bbox.drawScreenRect(vec2d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
 }
 
 void AglRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const

@@ -168,15 +168,21 @@ void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
                                const geom::vec2<int>& size,
                                const geom::vec2<double>& zoom)
 {
-  const vec2i screen_ll = vec2i(this->screenFromWorld2(lower_left));
-
   const geom::rect<int> screen_rect =
-    geom::rect<int>::lbwh(screen_ll, size * zoom);
+    geom::rect<int>::lbwh(vec2i::zeros(), size * zoom);
 
-  rep->merge(this->worldFromScreen2(screen_rect.bottom_left()));
-  rep->merge(this->worldFromScreen2(screen_rect.bottom_right()));
-  rep->merge(this->worldFromScreen2(screen_rect.top_left()));
-  rep->merge(this->worldFromScreen2(screen_rect.top_right()));
+  drawScreenRect(lower_left, screen_rect);
+}
+
+void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
+                               const geom::rect<int>& screen_rect)
+{
+  const vec2i o = vec2i(this->screenFromWorld2(lower_left));
+
+  rep->merge(this->worldFromScreen2(o+screen_rect.bottom_left()));
+  rep->merge(this->worldFromScreen2(o+screen_rect.bottom_right()));
+  rep->merge(this->worldFromScreen2(o+screen_rect.top_left()));
+  rep->merge(this->worldFromScreen2(o+screen_rect.top_right()));
 }
 
 geom::box<double> Gfx::Bbox::cube() const
