@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 15 11:13:02 2001
+// written: Wed Aug 15 14:41:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,35 +66,37 @@ public:
       proportional to the value of the Gabor function. */
   static const ColorMode BW_DITHER_RECT = 4;
 
+private:
   /// The current \c ColorMode used for rendering.
-  TField<ColorMode> colorMode;
+  ColorMode itsColorMode;
 
   /// Contrast of the sine grating.
-  TField<double> contrast;
+  double itsContrast;
 
   /// The spatial frequency of the sine grating, in cycles per OpenGL unit.
-  TField<double> spatialFreq;
+  double itsSpatialFreq;
 
   /// Phase of the sine grating, in degrees.
-  TField<int> phase;
+  int itsPhase;
 
   /// The base standard deviation for the Gaussian.
-  TField<double> sigma;
+  double itsSigma;
 
   /// The ratio of standard deviations width/height.
-  TField<double> aspectRatio;
+  double itsAspectRatio;
 
   /// Orientation of the sine grating, in degrees.
-  TField<int> orientation;
+  int itsOrientation;
 
   /** Number of rectangle subdivisions per OpenGL unit (note that this
       applies only when the colorMode is \a BW_DITHER_RECT). */
-  TField<int> resolution;
+  int itsResolution;
 
   /** The size of the points used when \a colorMode is either \a
       GRAYSCALE or \a BW_DITHER_POINT. */
-  TField<int> pointSize;
+  int itsPointSize;
 
+public:
   static const FieldMap& classFields();
 
 protected:

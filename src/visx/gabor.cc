@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 14:44:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,24 +39,6 @@
 
 namespace
 {
-  const FieldInfo FINFOS[] =
-  {
-    FieldInfo("colorMode", FieldInfo::OldTag(), &Gabor::colorMode, 2, 1, 4, 1, true),
-    FieldInfo("contrast", FieldInfo::OldTag(), &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
-    FieldInfo("spatialFreq", FieldInfo::OldTag(), &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
-    FieldInfo("phase", FieldInfo::OldTag(), &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
-    FieldInfo("sigma", FieldInfo::OldTag(), &Gabor::sigma, 0.15, 0.025, 0.5, 0.025),
-    FieldInfo("aspectRatio", FieldInfo::OldTag(), &Gabor::aspectRatio, 1.0, 0.1, 10.0, 0.1),
-    FieldInfo("orientation", FieldInfo::OldTag(), &Gabor::orientation, 0.0, -180.0, 179.0, 1.0),
-    FieldInfo("resolution", FieldInfo::OldTag(), &Gabor::resolution, 60, 5, 500, 1),
-    FieldInfo("pointSize", FieldInfo::OldTag(), &Gabor::pointSize, 1, 1, 25, 1)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                        &GrObj::classFields());
-
   const IO::VersionId GABOR_SERIAL_VERSION_ID = 1;
 }
 
@@ -65,7 +47,28 @@ const Gabor::ColorMode Gabor::COLOR_INDEX;
 const Gabor::ColorMode Gabor::BW_DITHER_POINT;
 const Gabor::ColorMode Gabor::BW_DITHER_RECT;
 
-const FieldMap& Gabor::classFields() { return GABOR_FIELDS; }
+const FieldMap& Gabor::classFields()
+{
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, true),
+    FieldInfo("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
+    FieldInfo("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
+    FieldInfo("phase", &Gabor::itsPhase, 0.0, -180.0, 179.0, 1.0),
+    FieldInfo("sigma", &Gabor::itsSigma, 0.15, 0.025, 0.5, 0.025),
+    FieldInfo("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
+    FieldInfo("orientation", &Gabor::itsOrientation, 0.0, -180.0, 179.0, 1.0),
+    FieldInfo("resolution", &Gabor::itsResolution, 60, 5, 500, 1),
+    FieldInfo("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                               &GrObj::classFields());
+
+  return GABOR_FIELDS;
+}
 
 Gabor* Gabor::make()
 {
@@ -74,19 +77,19 @@ DOTRACE("Gabor::make");
 }
 
 Gabor::Gabor() :
-  colorMode(1),
-  contrast(1.0),
-  spatialFreq(3.5),
-  phase(0),
-  sigma(0.15),
-  aspectRatio(1.0),
-  orientation(0),
-  resolution(116),
-  pointSize(2)
+  itsColorMode(1),
+  itsContrast(1.0),
+  itsSpatialFreq(3.5),
+  itsPhase(0),
+  itsSigma(0.15),
+  itsAspectRatio(1.0),
+  itsOrientation(0),
+  itsResolution(116),
+  itsPointSize(2)
 {
 DOTRACE("Gabor::Gabor");
 
-  setFieldMap(GABOR_FIELDS);
+  setFieldMap(Gabor::classFields());
 
   setUnRenderMode(Gmodes::CLEAR_BOUNDING_BOX);
   setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
@@ -135,8 +138,8 @@ DOTRACE("Gabor::grGetBoundingBox");
 
   Gfx::Vec2<int> screen_origin = canvas.screenFromWorld(world_origin);
 
-  Gfx::Vec2<int> size(resolution() * pointSize(),
-                      resolution() * pointSize());
+  Gfx::Vec2<int> size(itsResolution * itsPointSize,
+                      itsResolution * itsPointSize);
 
   Gfx::Rect<int> screen_rect;
   screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
@@ -148,8 +151,8 @@ DOTRACE("Gabor::grGetBoundingBox");
 void Gabor::grRender(Gfx::Canvas& canvas, DrawMode) const
 {
 DOTRACE("Gabor::grRender");
-  const double xsigma2 = sigma()*aspectRatio() * sigma()*aspectRatio() ;
-  const double ysigma2 = sigma() * sigma();
+  const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio ;
+  const double ysigma2 = itsSigma * itsSigma;
 
   const Gfx::Vec2<double> center(0.0, 0.0);
 
@@ -164,9 +167,9 @@ DOTRACE("Gabor::grRender");
   // is otherwise there to keep the total area under the curve to 1,
   // but this affects the maximum height).
 
-  double res_step = 1.0/resolution();
+  double res_step = 1.0/itsResolution;
 
-  Gfx::Vec2<int> size(resolution(), resolution());
+  Gfx::Vec2<int> size(itsResolution, itsResolution);
 
   Gfx::BmapData data(size, 8, 1);
 
@@ -174,16 +177,16 @@ DOTRACE("Gabor::grRender");
 
   unsigned char* bytes_end = bytes + data.byteCount();
 
-  for (int y_pos = 0; y_pos < resolution(); ++y_pos)
+  for (int y_pos = 0; y_pos < itsResolution; ++y_pos)
     {
       const double unrotated_y = y_pos*res_step - 0.5;
 
-      for (int x_pos = 0; x_pos < resolution(); ++x_pos)
+      for (int x_pos = 0; x_pos < itsResolution; ++x_pos)
         {
           const double unrotated_x = x_pos*res_step - 0.5;
 
           Gfx::Vec2<double> point(unrotated_x, unrotated_y);
-          point.rotateDeg(orientation());
+          point.rotateDeg(itsOrientation);
 
           point -= center;
 
@@ -192,19 +195,19 @@ DOTRACE("Gabor::grRender");
                  (point.y())*(point.y()) / (-4.0*ysigma2) );
 
           const double sin_x =
-            sin(2*PI*spatialFreq()*point.x() + phase()*PI/180.0);
+            sin(2*PI*itsSpatialFreq*point.x() + itsPhase*PI/180.0);
 
-          const double gabor = 0.5*sin_x*gauss_xy*contrast() + 0.5;
+          const double gabor = 0.5*sin_x*gauss_xy*itsContrast + 0.5;
 
           Assert( bytes < bytes_end );
 
-          if ( colorMode() == GRAYSCALE ||
-               colorMode() == COLOR_INDEX )
+          if ( itsColorMode == GRAYSCALE ||
+               itsColorMode == COLOR_INDEX )
             {
               *bytes++ = (unsigned char) (gabor * 255);
             }
-          else if ( colorMode() == BW_DITHER_POINT ||
-                    colorMode() == BW_DITHER_RECT )
+          else if ( itsColorMode == BW_DITHER_POINT ||
+                    itsColorMode == BW_DITHER_RECT )
             {
               *bytes++ = (Util::randDoubleRange(0.0, 1.0) < gabor) ? 255 : 0;
             }
@@ -212,7 +215,7 @@ DOTRACE("Gabor::grRender");
     }
 
   canvas.drawPixels(data, Gfx::Vec2<double>(0.0, 0.0),
-                    Gfx::Vec2<double>(pointSize(), pointSize()));
+                    Gfx::Vec2<double>(itsPointSize, itsPointSize));
 }
 
 static const char vcid_gabor_cc[] = "$Header$";
