@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Sep 23 13:04:38 1999
+// written: Mon Oct  4 12:59:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,11 +60,11 @@ namespace {
 
 Face::Face(double eh, double es, double nl, double mh, int categ) {
 DOTRACE("Face::Face");
-  itsCategory() = categ;
-  setEyeHgt(eh);
-  setEyeDist(es);
-  setNoseLen(nl);
-  setMouthHgt(mh);
+  category() = categ;
+  eyeHeight() = eh;
+  eyeDistance() = es;
+  noseLength() = nl;
+  mouthHeight() = mh;
   Invariant(check());
 }
 
@@ -173,13 +173,36 @@ DOTRACE("Face::charCount");
   return (ioTag.length() + 1
 			 + 3 // version
 			 + 2 // brace
-			 + itsCategory.charCount() + 1
-			 + itsEyeDistance.charCount() + 1
-			 + itsNoseLength.charCount() + 1
-			 + itsMouthHeight.charCount() + 1
-			 + itsEyeHeight.charCount() + 1
+			 + category.charCount() + 1
+			 + eyeDistance.charCount() + 1
+			 + noseLength.charCount() + 1
+			 + mouthHeight.charCount() + 1
+			 + eyeHeight.charCount() + 1
 			 + 2 // brace
 			 + 1);//fudge factor
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Properties
+//
+///////////////////////////////////////////////////////////////////////
+
+const vector<Face::PInfo>& Face::getPropertyInfos() {
+DOTRACE("Face::getPropertyInfos");
+
+  static vector<PInfo> p;
+
+  typedef Face F;
+
+  if (p.size() == 0) {
+	 p.push_back(PInfo("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1, true));
+	 p.push_back(PInfo("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1));
+	 p.push_back(PInfo("noseLength", &Face::noseLength, -0.0, 3.0, 0.1));
+	 p.push_back(PInfo("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1));
+  }
+
+  return p;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -201,13 +224,13 @@ DOTRACE("Face::grRender");
   // Calculate the x positions for the left and right eyes
   // left position always <= 0.0
   // right position always >= 0.0
-  const double left_eye_x = -abs(itsEyeDistance())/2.0;
+  const double left_eye_x = -abs(eyeDistance())/2.0;
   const double right_eye_x = -left_eye_x;
 
   // Calculate the y positions for the top and bottom of the nose
   // bottom always <= 0.0
   // top always >= 0.0
-  const double nose_bottom_y = -abs(itsNoseLength())/2.0;
+  const double nose_bottom_y = -abs(noseLength())/2.0;
   const double nose_top_y = -nose_bottom_y;
 
   // Generate the eyeball scales on the basis of the eye aspect. The
@@ -257,7 +280,7 @@ DOTRACE("Face::grRender");
   
   // Draw left eye.
   glPushMatrix();
-  glTranslatef(left_eye_x, itsEyeHeight(), 0.0); 
+  glTranslatef(left_eye_x, eyeHeight(), 0.0); 
   glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
   gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
   glScalef(pupil_x_scale, pupil_y_scale, 1.0);
@@ -266,7 +289,7 @@ DOTRACE("Face::grRender");
   
   // Draw right eye.
   glPushMatrix();
-  glTranslatef(right_eye_x, itsEyeHeight(), 0.0);
+  glTranslatef(right_eye_x, eyeHeight(), 0.0);
   glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
   gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
   glScalef(pupil_x_scale, pupil_y_scale, 1.0);
@@ -287,8 +310,8 @@ DOTRACE("Face::grRender");
   
   // Draw nose and mouth.
   glBegin(GL_LINES);
-  glVertex2f(theirMouth_x[0], itsMouthHeight());
-  glVertex2f(theirMouth_x[1], itsMouthHeight());
+  glVertex2f(theirMouth_x[0], mouthHeight());
+  glVertex2f(theirMouth_x[1], mouthHeight());
   glVertex2f(theirNose_x, nose_bottom_y);
   glVertex2f(theirNose_x, nose_top_y);
   glEnd();
@@ -340,29 +363,24 @@ DOTRACE("Face::getVertOffset");
 
 bool Face::check() const {
 DOTRACE("Face::check");
-  return (itsEyeDistance() >= 0.0 && itsNoseLength() >= 0.0);
+//   return (eyeDistance() >= 0.0 && noseLength() >= 0.0);
+  return true; 
 }
 
 void Face::makeIoList(vector<IO *>& vec) {
 DOTRACE("Face::makeIoList");
-  vec.clear();
-
-  vec.push_back(&itsCategory);
-  vec.push_back(&itsEyeHeight);
-  vec.push_back(&itsEyeDistance);
-  vec.push_back(&itsNoseLength);
-  vec.push_back(&itsMouthHeight);
+  makeIoList(reinterpret_cast<vector<const IO *> &>(vec)); 
 }
 
 void Face::makeIoList(vector<const IO *>& vec) const {
 DOTRACE("Face::makeIoList const");
   vec.clear();
 
-  vec.push_back(&itsCategory);
-  vec.push_back(&itsEyeHeight);
-  vec.push_back(&itsEyeDistance);
-  vec.push_back(&itsNoseLength);
-  vec.push_back(&itsMouthHeight);
+  vec.push_back(&category);
+  vec.push_back(&eyeHeight);
+  vec.push_back(&eyeDistance);
+  vec.push_back(&noseLength);
+  vec.push_back(&mouthHeight);
 }
 
 static const char vcid_face_cc[] = "$Header$";

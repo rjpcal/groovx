@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Sep 23 11:35:46 1999
+// written: Mon Oct  4 12:48:08 1999
 // $Id$
 //
 // The Face class is derived from GrObj. Face provides the
@@ -15,10 +15,6 @@
 
 #include <cmath>					  // for abs()
 
-#ifndef IOSTL_H_DEFINED
-#include "iostl.h"
-#endif
-
 #ifndef VECTOR_DEFINED
 #include <vector>
 #define VECTOR_DEFINED
@@ -28,13 +24,17 @@
 #include "grobj.h"
 #endif
 
+#ifndef PROPERTY_H_DEFINED
+#include "property.h"
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Face class declaration
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Face : public GrObj {
+class Face : public GrObj, public PropFriend<Face> {
 public:
   //////////////
   // creators //
@@ -54,19 +54,25 @@ public:
   
   virtual int charCount() const;
 
+  ////////////////
+  // properties //
+  ////////////////
+
+  typedef PropertyInfo<Face> PInfo;
+  static const vector<PInfo>& getPropertyInfos();
+
+  CTProperty<Face, int> category;
+
+  CTProperty<Face, double> eyeHeight;
+  CTProperty<Face, double> eyeDistance;
+  CTProperty<Face, double> noseLength;
+  CTProperty<Face, double> mouthHeight;
+
   ///////////////
   // accessors //
   ///////////////
 
-  double getEyeHgt() const { return itsEyeHeight(); }
-
-  double getEyeDist() const { return itsEyeDistance(); }
-
-  double getNoseLen() const { return itsNoseLength(); }
-
-  double getMouthHgt() const { return itsMouthHeight(); }
-  
-  virtual int getCategory() const { return itsCategory(); }
+  virtual int getCategory() const { return category.getNative(); }
 
 protected:
   virtual const double* getCtrlPnts() const;
@@ -83,12 +89,7 @@ protected:
   //////////////////
 
 public:
-  void setEyeHgt(double eh);
-  void setEyeDist(double ed);
-  void setNoseLen(double nl);
-  void setMouthHgt(double mh);
-  
-  virtual void setCategory(int val) { itsCategory() = val; }
+  virtual void setCategory(int val) { category.setNative(val); }
 
 protected:
   virtual bool grGetBoundingBox(double& left, double& top,
@@ -108,40 +109,7 @@ private:
 
   void makeIoList(vector<IO *>& vec);
   void makeIoList(vector<const IO *>& vec) const;
-
-  IoWrapper<double> itsEyeDistance;
-  IoWrapper<double> itsNoseLength;
-  IoWrapper<double> itsMouthHeight;
-  IoWrapper<double> itsEyeHeight;
-
-  IoWrapper<int> itsCategory;	  // holds an arbitrary category specification
 };
-
-///////////////////////////////////////////////////////////////////////
-//
-// Face inline member functions
-//
-///////////////////////////////////////////////////////////////////////
-
-inline void Face::setNoseLen(double nl) {
-  itsNoseLength() = abs(nl);
-  sendStateChangeMsg();
-}
-
-inline void Face::setEyeDist(double ed) {
-  itsEyeDistance() = abs(ed);
-  sendStateChangeMsg();
-}
-
-inline void Face::setEyeHgt(double eh) {
-  itsEyeHeight() = eh;
-  sendStateChangeMsg();
-}
-
-inline void Face::setMouthHgt(double mh) {
-  itsMouthHeight() = mh;
-  sendStateChangeMsg();
-}
 
 static const char vcid_face_h[] = "$Header$";
 #endif // !FACE_H_DEFINED

@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sun Oct  3 19:03:50 1999
+// written: Mon Oct  4 12:44:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,10 +133,7 @@ public:
   FacePkg(Tcl_Interp* interp) :
 	 ListItemPkg<Face, ObjList>(interp, ObjList::theObjList(), "Face", "2.5")
   {
-	 declareCAttrib("mouthHgt", &Face::getMouthHgt, &Face::setMouthHgt);
-	 declareCAttrib("noseLen", &Face::getNoseLen, &Face::setNoseLen);
-	 declareCAttrib("eyeDist", &Face::getEyeDist, &Face::setEyeDist);
-	 declareCAttrib("eyeHgt", &Face::getEyeHgt, &Face::setEyeHgt);
+	 declareAllProperties();
 
 	 addCommand( new LoadFacesCmd(interp, "Face::loadFaces") );
 	 
