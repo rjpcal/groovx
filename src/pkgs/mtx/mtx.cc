@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Sun Mar  3 14:04:10 2002
+// written: Sun Mar  3 14:15:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -451,7 +451,7 @@ void Mtx::print(const char* mtxName) const
   print();
 }
 
-Mtx Mtx::rows(const RowRange& rng) const
+Mtx Mtx::operator()(const RowRange& rng) const
 {
   Mtx result(*this);
 
@@ -475,7 +475,7 @@ void Mtx::reorderRows(const Mtx& index_)
   *this = neworder;
 }
 
-Mtx Mtx::columns(const ColRange& rng) const
+Mtx Mtx::operator()(const ColRange& rng) const
 {
   Mtx result(*this);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Sun Mar  3 14:10:08 2002
+// written: Sun Mar  3 14:14:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -795,7 +795,7 @@ public:
     { return MtxConstIter(itsImpl.address(r,0),
                           itsImpl.rowstride(), itsImpl.ncols()); }
 
-  Mtx rows(const RowRange& rng) const;
+  Mtx operator()(const RowRange& rng) const;
 
   Mtx asRow() const
     { Mtx result(*this); result.reshape(1, nelems()); return result; }
@@ -816,7 +816,7 @@ public:
     { return MtxConstIter(itsImpl.address(0,c),
                           itsImpl.colstride(), mrows()); }
 
-  Mtx columns(const ColRange& rng) const;
+  Mtx operator()(const ColRange& rng) const;
 
   Mtx asColumn() const
     { Mtx result(*this); result.reshape(nelems(), 1); return result; }
