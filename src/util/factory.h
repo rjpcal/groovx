@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Jun 30 16:16:11 1999
+// written: Wed Jun 30 17:04:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,10 @@ public:
   FactoryError() : ErrorWithMsg() {}
   FactoryError(const string& str) : ErrorWithMsg(str) {}
 };
+
+namespace {
+  const string bad_create_msg = "unable to create object of type ";
+}
 
 template <class Base>
 class CreatorBase {
@@ -71,7 +75,7 @@ public:
 
   Base* newCheckedObject(const string& type) {
 	 Base* p = newObject(type);
-	 if (p == 0) throw FactoryError();
+	 if (p == 0) throw FactoryError(bad_create_msg + type);
 	 return p;
   }
 
@@ -81,7 +85,7 @@ public:
 	 Derived* d = dynamic_cast<Derived*>(b);
 	 if (d == 0) { 
 		delete b;
-		throw FactoryError(string("unknown type \"") + type + "\"");
+		throw FactoryError(bad_create_msg + type);
 	 }
 	 return d;
   }
