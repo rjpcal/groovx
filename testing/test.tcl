@@ -56,6 +56,7 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 		  puts "==== Contents of test case:"
 		  puts $script
 	 }
+	 set ::errorInfo ""
 	 catch {eval $script} result
 	 incr ::num_tests
 	 if { [regexp -- $expected_result_regexp $result] == 1 } {
@@ -76,6 +77,10 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 		  puts $result
 		  puts "---- Result should have been:"
 		  puts $expected_result_regexp
+		  if { [string length $::errorInfo] > 0 } {
+				puts "---- ErrorInfo:"
+				puts $::errorInfo
+		  }
 		  puts "---- $package_name $test_name FAILED\n"
 #		  finish
 		  lappend ::FAILED "$package_name $test_name"
