@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Mar 30 12:15:58 2000
+// written: Tue Jun 27 16:48:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -792,7 +792,7 @@ DOTRACE("MorphyFace::grHasBoundingBox");
 
 bool MorphyFace::check() const {
 DOTRACE("MorphyFace::check");
-  return (eyeDistance() >= 0.0 && noseLength() >= 0.0);
+  return true;
 }
 
 
