@@ -17,8 +17,8 @@ test "Toglet::undraw" "too many args" {
 } {wrong \# args: should be}
 test "Toglet::undraw" "normal use" {
     set f [Obj::new Face]
-    glIndexi 1; glColor 1.0 1.0 1.0 1.0
-    glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
+    glColor 1.0 1.0 1.0 1.0
+    glClearColor 0.0 0.0 0.0 1.0
     ::clearscreen
     ::see $f
     ::undraw

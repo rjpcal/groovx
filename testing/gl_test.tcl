@@ -28,15 +28,6 @@ test "TclGL-glVertex4" "args" {
 test "TclGL-glVertex4" "normal use" {} {^$}
 test "TclGL-glVertex4" "error" {} {^$}
 
-### glIndexiCmd ###
-test "TclGL-glIndexi" "args" {
-	 glIndexi
-} {wrong \# args: should be "glIndexi index"}
-test "TclGL-glIndexi" "normal use" {
-	 glIndexi 3
-	 glGetInteger $::GL_CURRENT_INDEX
-} {^3$}
-
 ### glLineWidthCmd ###
 test "TclGL-glLineWidth" "args" {
 	 glLineWidth
