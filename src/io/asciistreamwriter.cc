@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Oct 20 12:10:47 1999
+// written: Thu Nov  4 17:04:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -195,6 +195,13 @@ DOTRACE("AsciiStreamWriter::writeRoot");
   while ( !itsImpl.itsToHandle.empty() ) {
 	 const IO* obj = itsImpl.itsToHandle.back();
 	 itsImpl.itsToHandle.pop_back();
+
+	 // Assert that we haven't already written this object, and
+	 // therefore it should not be contained in itsHandled
+	 if (itsImpl.itsHandled.find(obj) != itsImpl.itsHandled.end()) {
+		throw WriteError("error during write: "
+							  "attempted to write an object more than once");
+	 }
 
 	 itsImpl.itsBuf << demangle(typeid(*obj).name())
 						 << " " << obj->id() << " := { ";
