@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed Dec  1 10:56:47 1999
+// written: Wed Dec  1 11:14:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,9 @@
 
 class Experiment {
 public:
+  static void installExperiment(Experiment* expt);
+  static Experiment& getExperiment();
+
   virtual void draw() = 0;
   virtual void undraw() = 0;
   virtual void edSwapBuffers() = 0;
