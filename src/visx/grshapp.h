@@ -3,7 +3,7 @@
 // grshapp.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:58 1999
-// written: Thu Jun  1 13:51:25 2000
+// written: Mon Sep 25 09:18:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
 class GrshApp : public Application {
 public:
   /// Construct with the applicaton's Tcl interpreter.
-  GrshApp(Tcl_Interp* interp);
+  GrshApp(int argc, char** argv, Tcl_Interp* interp);
 
   /// Virtual destructor.
   virtual ~GrshApp();

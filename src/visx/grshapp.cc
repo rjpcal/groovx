@@ -3,7 +3,7 @@
 // grshapp.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:59 1999
-// written: Tue Sep 19 17:37:02 2000
+// written: Mon Sep 25 09:18:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ NoExptError::NoExptError(const char* msg) : ErrorWithMsg(msg) {}
 
 NoExptError::~NoExptError() {}
 
-GrshApp::GrshApp(Tcl_Interp* interp) :
-  Application(GRSH_LIB_DIR),
+GrshApp::GrshApp(int argc, char** argv, Tcl_Interp* interp) :
+  Application(argc, argv, GRSH_LIB_DIR),
   itsInterp(interp),
   itsExpt(0)
 {
