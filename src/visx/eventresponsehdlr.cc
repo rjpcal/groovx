@@ -174,7 +174,6 @@ public:
         }
       else
         {
-          itsTrial.trResponseSeen();
           itsTrial.trProcessResponse(theResponse);
           rep->itsFeedbackMap.giveFeedback(rep->itsInterp, theResponse.val());
         }

@@ -500,17 +500,6 @@ DOTRACE("Trial::vxReset");
   rep->responses.clear();
 }
 
-void Trial::trResponseSeen()
-{
-DOTRACE("Trial::trResponseSeen");
-
-  Precondition( rep->isActive() );
-
-  Util::log("trResponseSeen");
-
-  rep->activeState->th->thResponseSeen();
-}
-
 void Trial::trProcessResponse(Response& response)
 {
 DOTRACE("Trial::trProcessResponse");
@@ -518,12 +507,15 @@ DOTRACE("Trial::trProcessResponse");
   Precondition( rep->isActive() );
 
   Util::log("trProcessResponse");
+
   response.setCorrectVal(rep->correctResponse);
 
   rep->responses.push_back(response);
 
   dbgEval(3, response.correctVal());
   dbgEvalNL(3, response.val());
+
+  rep->activeState->th->thResponseSeen();
 
   // If the response was incorrect, we'll ask our parent container to
   // kindly repeat this trial

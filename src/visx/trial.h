@@ -138,7 +138,6 @@ public:
 
   double trElapsedMsec();
 
-  void trResponseSeen();
   void trProcessResponse(Response& response);
   void trAllowResponses();
   void trDenyResponses();
