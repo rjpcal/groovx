@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu May 10 12:04:46 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ DOTRACE("Pbm::setBytes");
 void Pbm::swapInto(BmapData& data) {
 DOTRACE("Pbm::swapInto");
   int dummy_alignment = 1; 
-  
+
   data.swap(itsImpl->itsBytes, itsImpl->itsImageWidth, itsImpl->itsImageHeight,
 				itsImpl->itsBitsPerPixel, dummy_alignment);
 }
@@ -273,7 +273,7 @@ DOTRACE("Pbm::readStream");
   else {
 	 itsImpl->itsMaxGrey = 1;
   }
-  
+
   DebugEvalNL(itsImpl->itsMaxGrey);
 
   // read one more character of whitespace from the stream after MaxGrey
@@ -291,7 +291,7 @@ DOTRACE("Pbm::readStream");
   case 6: itsImpl->itsBitsPerPixel = 24; break;
   default: Assert(false); break;
   }
-  
+
   int bytes_per_row = ( (itsImpl->itsImageWidth*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
   itsImpl->itsNumBytes = bytes_per_row * itsImpl->itsImageHeight;
   DebugEvalNL(itsImpl->itsNumBytes);
@@ -323,7 +323,7 @@ DOTRACE("Pbm::parseMode1");
 	 else {
 		itsImpl->itsBytes[position] = 255;
 	 }
-	 
+
 	 ++position;
   } 
 }
@@ -331,7 +331,7 @@ DOTRACE("Pbm::parseMode1");
 void Pbm::parseMode2(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode2");
   double conversion = 255.0/double(itsImpl->itsMaxGrey);
-  
+
   int position = 0;
   int val = 0;
   while (is.peek() != EOF && position < itsImpl->itsNumBytes) {
@@ -339,7 +339,7 @@ DOTRACE("Pbm::parseMode2");
 
 	 is >> val;
 	 itsImpl->itsBytes[position] = static_cast<unsigned char>(val * conversion);
-	 
+
 	 ++position;
   } 
 }

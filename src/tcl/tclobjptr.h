@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Thu May 10 12:04:36 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,14 +40,14 @@ public:
 
   /// Destructor.
   ~TclObjLock() { Tcl_DecrRefCount(itsObj); }
-  
+
   /// Copy constructor.
   TclObjLock(const TclObjLock& x) :
 	 itsObj(const_cast<Tcl_Obj*>(x.itsObj))
 	 {
 		Tcl_IncrRefCount(itsObj);
 	 }
-  
+
   /// Assignment operator from a TclObjLock.
   TclObjLock& operator=(const TclObjLock& x)
 	 {
@@ -91,31 +91,31 @@ public:
 
   /// Destructor.
   ~TclObjPtr() { Tcl_DecrRefCount(itsObj); }
-  
+
   /// Copy constructor.
   TclObjPtr(const TclObjPtr& x) :
 	 itsObj(const_cast<Tcl_Obj*>(x.itsObj))
 	 {
 		Tcl_IncrRefCount(itsObj);
 	 }
-  
+
   /// Assignment operator from TclObjPtr.
   TclObjPtr& operator=(const TclObjPtr& x)
 	 {
 		assign(x.itsObj); return *this;
 	 }
-  
+
   /// Assignment operator from Tcl_Obj*.
   TclObjPtr& operator=(Tcl_Obj* x)
 	 {
 		assign(x); return *this;
 	 }
-  
+
   typedef Tcl_Obj* Tcl_ObjPtr;
 
   /// Conversion operator to Tcl_Obj*.
   operator Tcl_ObjPtr() { return itsObj; }
-  
+
 private:
   void assign(Tcl_Obj* x)
 	 {

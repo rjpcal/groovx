@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 16:51:34 1999
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
 								int /* byte_alignment */,
 								double /* zoom_x */,
 								double /* zoom_y */) const = 0;
-  
+
   /** This is the operation that subclasses should override if they
       need to provide a special unrendering method. A default no-op
       implementation is provided. */

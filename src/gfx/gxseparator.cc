@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Wed Jun  6 15:54:58 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ public:
 
   GxSeparator* itsOwner;
 
-  typedef minivec<IdItem<GxNode> > VecType;
+  typedef minivec<Ref<GxNode> > VecType;
   VecType itsChildren;
 };
 
@@ -97,7 +97,7 @@ DOTRACE("GxSeparator::writeTo");
 GxSeparator::ChildId GxSeparator::addChild(Util::UID ioUid) {
 DOTRACE("GxSeparator::addChild");
 
-  IdItem<GxNode> item(ioUid);
+  Ref<GxNode> item(ioUid);
 
   itsImpl->ensureNoCycle(item.get());
 
@@ -108,7 +108,7 @@ DOTRACE("GxSeparator::addChild");
 void GxSeparator::insertChild(Util::UID ioUid, ChildId at_index) {
 DOTRACE("GxSeparator::insertChild");
 
-  IdItem<GxNode> item(ioUid);
+  Ref<GxNode> item(ioUid);
 
   itsImpl->ensureNoCycle(item.get());
 
@@ -146,7 +146,7 @@ DOTRACE("GxSeparator::numChildren");
   return itsImpl->itsChildren.size();
 }
 
-IdItem<GxNode> GxSeparator::getChild(ChildId index) const {
+Ref<GxNode> GxSeparator::getChild(ChildId index) const {
 DOTRACE("GxSeparator::getChild");
   if (index >= itsImpl->itsChildren.size())
 	 {

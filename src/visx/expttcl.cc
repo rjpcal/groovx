@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Mon Jun 11 14:49:19 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -223,7 +223,7 @@ public:
   }
 
 private:
-  IdItem<ExptDriver> itsExptDriver;
+  Ref<ExptDriver> itsExptDriver;
 };
 
 ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :

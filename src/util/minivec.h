@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Fri May 11 14:48:11 2001
+// written: Mon Jun 11 15:08:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ public:
 		finish = start + n;
 		end_of_storage = finish;
     }
-	
+
   //
   // Build a minivec of size n with each element set to copy of value.
   //
@@ -299,12 +299,12 @@ public:
     {
       return *(begin() + n);
     }
-  
+
   const_reference operator[] (size_type n) const 
     {
       return *(begin() + n);
     }
-  
+
   reference       at (size_type n)               
     { 
 		if (n >= size()) throw ErrorWithMsg("index out of range");

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Jun  6 19:45:42 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
 
 protected:
   virtual void invoke() {
-	 IdItem<GxNode> other(getIntFromArg(2));
+	 Ref<GxNode> other(getIntFromArg(2));
 	 GxNode* sep = getItem();
 	 returnBool(sep->contains(other.get()));
   }

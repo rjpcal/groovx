@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:25 1999
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -53,7 +53,7 @@ public:
 
   /// Returns the aspect ratio of eye outline.
   virtual double getEyeAspect() const;
-  
+
   /** Returns the amount of vertical offset applied to all internal
 		face features. */
   virtual double getVertOffset() const;

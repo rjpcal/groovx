@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Mon Jun 11 15:08:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ public:
 	 {}
 
   // Ordered sequence of indexes into the Tlist
-//   typedef std::vector<IdItem<TrialBase> > TrialSeqType;
-  typedef minivec<IdItem<TrialBase> > TrialSeqType;
+//   typedef std::vector<Ref<TrialBase> > TrialSeqType;
+  typedef minivec<Ref<TrialBase> > TrialSeqType;
   TrialSeqType itsTrialSequence;
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
@@ -93,7 +93,7 @@ public:
 		return *itsExperiment;
 	 }
 
-  IdItem<TrialBase> currentTrialItem()
+  Ref<TrialBase> currentTrialItem()
     {
 		Precondition(hasCurrentTrial());
 
@@ -139,7 +139,7 @@ Block::~Block()
   delete itsImpl;
 }
 
-void Block::addTrial(IdItem<TrialBase> trial, int repeat) {
+void Block::addTrial(Ref<TrialBase> trial, int repeat) {
 DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i) {
 	 itsImpl->itsTrialSequence.push_back(trial);
@@ -151,7 +151,7 @@ DOTRACE("Block::shuffle");
   itsImpl->itsRandSeed = seed;
 
   Util::Urand generator(seed);
-  
+
   std::random_shuffle(itsImpl->itsTrialSequence.begin(),
 							 itsImpl->itsTrialSequence.end(),
 							 generator);
@@ -244,7 +244,7 @@ DOTRACE("Block::prevResponse");
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
 		itsImpl->itsTrialSequence.size() == 0) return -1;
 
-  IdItem<TrialBase> prev_trial = 
+  Ref<TrialBase> prev_trial = 
 	 itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
   return prev_trial->lastResponse();
 }
@@ -326,7 +326,7 @@ DOTRACE("Block::abortTrial");
 
   // Remember the trial that we are about to abort so we can store it
   // at the end of the sequence.
-  IdItem<TrialBase> aborted_trial = itsImpl->currentTrialItem();
+  Ref<TrialBase> aborted_trial = itsImpl->currentTrialItem();
 
   // Erase the aborted trial from the sequence. Subsequent trials will
   // slide up to fill in the gap.
@@ -402,7 +402,7 @@ DOTRACE("Block::undoPrevTrial");
 
   // Check to make sure we've completed at least one trial
   if (itsImpl->itsCurTrialSeqIdx < 1) return;
-  
+
   // Move the counter back to the previous trial...
   --itsImpl->itsCurTrialSeqIdx;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu May 10 12:04:42 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
 	 std::string pkgname = itsPkgName;
 
 	 pkgname[0] = char(toupper(pkgname[0]));
-	 
+
 	 for (size_t i = 1; i < pkgname.length(); ++i) {
 		pkgname[i] = char(tolower(pkgname[i]));
 	 }

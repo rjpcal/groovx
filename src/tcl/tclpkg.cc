@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Sat May 26 17:48:18 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ public:
 					item_argn+2),
 	 itsFetcher(fetcher),
 	 itsItemArgn(item_argn) {}
-  
+
 protected:
   virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
@@ -274,7 +274,7 @@ public:
 					item_argn+2),
 	 itsFetcher(fetcher),
 	 itsItemArgn(item_argn) {}
-  
+
 protected:
   virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;

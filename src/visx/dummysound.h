@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Sat May 19 08:59:24 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ DOTRACE("DummySound::writeTo");
 void DummySound::play() {
 DOTRACE("DummySound::play");
 }
-	
+
 void DummySound::setFile(const char* filename) {
 DOTRACE("DummySound::setFile");
   if (filename != 0 && filename[0] != '\0')

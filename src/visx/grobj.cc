@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  8 18:46:39 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ DOTRACE("GrObj::getUnRenderMode");
 //////////////////
 // manipulators //
 //////////////////
-									
+
 void GrObj::setBitmapCacheDir(const char* dirname) {
 DOTRACE("GrObj::setBitmapCacheDir");
   Impl::setBitmapCacheDir(dirname); 

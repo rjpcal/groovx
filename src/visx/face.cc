@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun 11 13:49:08 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,10 +150,10 @@ DOTRACE("Face::grRender");
 
 	 glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
   }
-  
+
   // Prepare to push and pop modelview matrices.
   glMatrixMode(GL_MODELVIEW);
-  
+
   //
   // Set up for drawing eyes.
   //
@@ -202,7 +202,7 @@ DOTRACE("Face::grRender");
   glScalef(pupil_x_scale, pupil_y_scale, 1.0);
   gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
   glPopMatrix();
-  
+
   // Draw right eye.
   glPushMatrix();
   glTranslatef(right_eye_x, eyeHeight(), 0.0);
@@ -211,7 +211,7 @@ DOTRACE("Face::grRender");
   glScalef(pupil_x_scale, pupil_y_scale, 1.0);
   gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
   glPopMatrix();
-  
+
   gluDeleteQuadric(qobj);
 
   //
@@ -223,7 +223,7 @@ DOTRACE("Face::grRender");
   static const int num_subdivisions = 30;
   static const int nctrlsets = 2;
   const double* const ctrlpnts = getCtrlPnts();
-  
+
   glEnable(GL_MAP1_VERTEX_3);
   for (int i = 0; i < nctrlsets; ++i) {
 	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
@@ -234,7 +234,7 @@ DOTRACE("Face::grRender");
 	 }
 	 glEnd();
   }
-  
+
   //
   // Draw nose and mouth.
   //
@@ -251,7 +251,7 @@ DOTRACE("Face::grRender");
   glVertex2f(theirNose_x, nose_bottom_y);
   glVertex2f(theirNose_x, nose_top_y);
   glEnd();
-  
+
   if (have_antialiasing) {
 	 glPopAttrib();
   }

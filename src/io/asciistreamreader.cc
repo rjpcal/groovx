@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Jun  6 19:55:59 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ public:
 
   class ObjectMap {
   private:
-	 typedef std::map<unsigned long, IdItem<IO::IoObject> > MapType;
+	 typedef std::map<Util::UID, Ref<IO::IoObject> > MapType;
 	 MapType itsMap;
 
   public:
@@ -96,7 +96,7 @@ public:
 
 	 // This returns the object for the given id; the object must
 	 // already have been created, otherwise an exception will be thrown.
-	 IdItem<IO::IoObject> getObject(unsigned long id)
+	 Ref<IO::IoObject> getObject(Util::UID id)
 		{
 		  MapType::const_iterator itr = itsMap.find(id);
 		  if ( itr == itsMap.end() ) {
@@ -110,13 +110,13 @@ public:
 
 	 // This will create an object for the id if one has not yet been
 	 // created, then return the object for that id.
-	 IdItem<IO::IoObject> fetchObject(const fixed_string& type, unsigned long id)
+	 Ref<IO::IoObject> fetchObject(const fixed_string& type, Util::UID id)
 	   {
 		  MapType::const_iterator itr = itsMap.find(id);
 
 		  if ( itr == itsMap.end() )
 			 {
-				IdItem<IO::IoObject> obj(
+				Ref<IO::IoObject> obj(
                      Util::ObjMgr::newTypedObj<IO::IoObject>(type));
 
 				itsMap.insert(MapType::value_type(id, obj));
@@ -127,7 +127,7 @@ public:
 		  return (*itr).second;
 		}
 
-	 void assignObjectForId(unsigned long id, IdItem<IO::IoObject> object)
+	 void assignObjectForId(Util::UID id, Ref<IO::IoObject> object)
 		{
 		  MapType::const_iterator itr = itsMap.find(id);
 
@@ -226,7 +226,7 @@ private:
 	 }
 
   void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
-							const fixed_string& obj_tag, IdItem<IO::IoObject> obj);
+							const fixed_string& obj_tag, Ref<IO::IoObject> obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
@@ -252,16 +252,16 @@ public:
   // Returns a new dynamically allocated char array
   fixed_string readStringType(const fixed_string& name);
 
-  MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& attrib_name);
+  MaybeRef<IO::IoObject> readMaybeObject(const fixed_string& attrib_name);
 
   void readValueObj(const fixed_string& name, Value& value);
 
-  void readOwnedObject(const fixed_string& name, IdItem<IO::IoObject> obj);
+  void readOwnedObject(const fixed_string& name, Ref<IO::IoObject> obj);
 
   void readBaseClass(IO::Reader* reader, const fixed_string& baseClassName,
-							IdItem<IO::IoObject> basePart);
+							Ref<IO::IoObject> basePart);
 
-  IdItem<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
+  Ref<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -402,7 +402,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
 void AsciiStreamReader::Impl::inflateObject(
   IO::Reader* reader, STD_IO::istream& buf,
-  const fixed_string& obj_tag, IdItem<IO::IoObject> obj
+  const fixed_string& obj_tag, Ref<IO::IoObject> obj
 ) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
@@ -447,26 +447,26 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_string;
 }
 
-MaybeIdItem<IO::IoObject>
+MaybeRef<IO::IoObject>
 AsciiStreamReader::Impl::readMaybeObject(const fixed_string& attrib_name) {
 DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
 
   Attrib attrib = currentAttribs().get(attrib_name);
 
   istrstream ist(attrib.value.c_str());
-  unsigned long id;
+  Util::UID id;
   ist >> id;
 
   if (ist.fail())
 	 throw AttributeReadError(attrib_name);
 
-  if (id == 0) { return MaybeIdItem<IO::IoObject>(); }
+  if (id == 0) { return MaybeRef<IO::IoObject>(); }
 
   // Return the object for this id, creating a new object if necessary:
 #ifndef ACC_COMPILER
   return itsObjects.fetchObject(attrib.type, id);
 #else
-  return MaybeIdItem<IO::IoObject>(itsObjects.fetchObject(attrib.type, id));
+  return MaybeRef<IO::IoObject>(itsObjects.fetchObject(attrib.type, id));
 #endif
 }
 
@@ -486,13 +486,13 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  const fixed_string& attrib_name, IdItem<IO::IoObject> obj
+  const fixed_string& attrib_name, Ref<IO::IoObject> obj
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
   Attrib a = currentAttribs().get(attrib_name);
   istrstream ist(a.value.c_str());
-  unsigned long id;
+  Util::UID id;
   ist >> id;
 
   if (ist.fail())
@@ -506,7 +506,7 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
 void AsciiStreamReader::Impl::readBaseClass(
   IO::Reader* reader, const fixed_string& baseClassName,
-  IdItem<IO::IoObject> basePart
+  Ref<IO::IoObject> basePart
   ) {
 DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
@@ -521,7 +521,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
   ist >> bracket >> ws;
 }
 
-IdItem<IO::IoObject> AsciiStreamReader::Impl::readRoot(
+Ref<IO::IoObject> AsciiStreamReader::Impl::readRoot(
   IO::Reader* reader, IO::IoObject* given_root
 ) {
 DOTRACE("AsciiStreamReader::Impl::readRoot");
@@ -529,11 +529,11 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   itsObjects.clear();
 
   bool haveReadRoot = false;
-  unsigned long rootid = 0;
+  Util::UID rootid = 0;
 
   while ( itsBuf.peek() != EOF ) {
 	 char type[64], equal[16], bracket[16];
-	 unsigned long id;
+	 Util::UID id;
 
 	 itsBuf >> type >> id >> equal >> bracket;
 	 DebugEval(type); DebugEvalNL(id);
@@ -549,15 +549,15 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
 	 if ( !haveReadRoot ) {
 		rootid = id;
-		
+
 		if (given_root != 0) 
 		  itsObjects.assignObjectForId(rootid,
-												 IdItem<IO::IoObject>(given_root));
+												 Ref<IO::IoObject>(given_root));
 
 		haveReadRoot = true;
 	 }
 
-	 IdItem<IO::IoObject> obj = itsObjects.fetchObject(type, id);
+	 Ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
 
 	 inflateObject(reader, itsBuf, type, obj);
 
@@ -630,14 +630,14 @@ void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value) {
   itsImpl.readValueObj(name, value); 
 }
 
-IdItem<IO::IoObject>
+Ref<IO::IoObject>
 AsciiStreamReader::readObject(const fixed_string& name)
 {
   DebugEvalNL(attrib_name);
-  return IdItem<IO::IoObject>(itsImpl.readMaybeObject(name));
+  return Ref<IO::IoObject>(itsImpl.readMaybeObject(name));
 }
 
-MaybeIdItem<IO::IoObject>
+MaybeRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fixed_string& name)
 {
   DebugEvalNL(attrib_name);
@@ -645,19 +645,19 @@ AsciiStreamReader::readMaybeObject(const fixed_string& name)
 }
 
 void AsciiStreamReader::readOwnedObject(const fixed_string& name,
-													 IdItem<IO::IoObject> obj) {
+													 Ref<IO::IoObject> obj) {
   DebugEvalNL(name); 
   itsImpl.readOwnedObject(name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
-  const fixed_string& baseClassName, IdItem<IO::IoObject> basePart
+  const fixed_string& baseClassName, Ref<IO::IoObject> basePart
 ) {
   DebugEvalNL(baseClassName); 
   itsImpl.readBaseClass(this, baseClassName, basePart);
 }
 
-IdItem<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root) {
+Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root) {
   return itsImpl.readRoot(this, given_root);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sat Jun  9 14:26:07 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace IoTcl {
 
 		  ReaderType reader(is);
 
-		  IdItem<IO::IoObject> obj(reader.readRoot(0));
+		  Ref<IO::IoObject> obj(reader.readRoot(0));
 
 		  *result_inserter = obj.id();
 		  ++result_inserter;
@@ -75,7 +75,7 @@ namespace IoTcl {
 	 {
 		while (obj_itr != end)
 		  {
-			 IdItem<IO::IoObject> item(*obj_itr);
+			 Ref<IO::IoObject> item(*obj_itr);
 			 writer.writeRoot(item.get());
 
 			 ++obj_itr;
@@ -165,7 +165,7 @@ protected:
 
 	 if (objc() < 3)
 		{
-		  IdItem<Util::Object> item(Util::ObjMgr::newObj(type));
+		  Ref<Util::Object> item(Util::ObjMgr::newObj(type));
 		  returnInt(item.id());
 		}
 	 else
@@ -173,7 +173,7 @@ protected:
 		  int array_size = getIntFromArg(2);
 		  while (array_size-- > 0)
 			 {
-				IdItem<Util::Object> item(Util::ObjMgr::newObj(type));
+				Ref<Util::Object> item(Util::ObjMgr::newObj(type));
 				lappendVal(item.id());
 			 }
 		}

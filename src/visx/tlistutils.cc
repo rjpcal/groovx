@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat Jun  9 14:24:00 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,12 +57,12 @@ DOTRACE("TlistUtils::createPreview");
 
   fixed_block<Rect<double> > bbxs(objids_size);
 
-  IdItem<Trial> preview_trial(Trial::make());
+  Ref<Trial> preview_trial(Trial::make());
 
   double window_area = world_width*world_height;
   double parcel_area = window_area/objids_size;
   double raw_parcel_side = sqrt(parcel_area);
-	 
+
   int num_cols = int(world_width/raw_parcel_side) + 1;
 
   double parcel_side = world_width/num_cols;
@@ -74,7 +74,7 @@ DOTRACE("TlistUtils::createPreview");
 	 ++x_step;
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-	 MaybeIdItem<GrObj> obj(objids[i]);
+	 MaybeRef<GrObj> obj(objids[i]);
 	 bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
 
 	 if ( !haveBB ) {
@@ -90,19 +90,19 @@ DOTRACE("TlistUtils::createPreview");
 	 ostrstream ost(id_string, 31);
 	 ost << objids[i] << '\0';
 
-	 IdItem<Gtext> label(Gtext::make());
+	 Ref<Gtext> label(Gtext::make());
 	 label->setText(id_string);
 	 label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
 	 label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 	 label->setHeight(0.1);
 
-	 IdItem<Position> obj_pos(Position::make());
+	 Ref<Position> obj_pos(Position::make());
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
 	 obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
 	 obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-	 IdItem<Position> label_pos(Position::make());
+	 Ref<Position> label_pos(Position::make());
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
 	 label_pos->translation.vec().set(label_x, label_y, 0.0);
@@ -171,7 +171,7 @@ void TlistUtils::writeMatlab(const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
 
   STD_IO::ofstream ofs(filename);
-	 
+
   ofs.setf(ios::fixed);
   ofs.precision(2);
 

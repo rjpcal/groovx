@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Jun  8 18:46:38 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,31 +61,31 @@ namespace {
 	 FieldInfo("bottomWidth", &MF::bottomWidth, 1.0, 0.05, 2.0, 0.05),
 	 FieldInfo("topHeight", &MF::topHeight, 3.8, 0.5, 5.0, 0.25),
 	 FieldInfo("bottomHeight", &MF::bottomHeight, -3.0, -5.0, -0.5, 0.25),
-	 
+
 	 FieldInfo("hairWidth", &MF::hairWidth, 0.20, 0.00, 0.5, 0.02, true),
 	 FieldInfo("hairStyle", &MF::hairStyle, 0, 0, 1, 1),
-	 
+
 	 FieldInfo("eyeYpos", &MF::eyeYpos, 0.375, -2.0, 2.0, 0.1, true),
 	 FieldInfo("eyeDistance", &MF::eyeDistance, 2.25, 0.0, 5.0, 0.25),
 	 FieldInfo("eyeHeight", &MF::eyeHeight, 0.9, 0.0, 2.0, 0.1),
 	 FieldInfo("eyeAspectRatio", &MF::eyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
-	 
+
 	 FieldInfo("pupilXpos", &MF::pupilXpos, 0.0, -0.5, 0.5, 0.05, true),
 	 FieldInfo("pupilYpos", &MF::pupilYpos, 0.0, -0.5, 0.5, 0.05),
 	 FieldInfo("pupilSize", &MF::pupilSize, 0.6, 0.0, 1.0, 0.05),
 	 FieldInfo("pupilDilation", &MF::pupilDilation, 0.5, 0.0, 1.0, 0.05),
-	 
+
 	 FieldInfo("eyebrowXpos", &MF::eyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
 	 FieldInfo("eyebrowYpos", &MF::eyebrowYpos, 0.5, 0.0, 1.5, 0.05),
 	 FieldInfo("eyebrowCurvature", &MF::eyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
 	 FieldInfo("eyebrowAngle", &MF::eyebrowAngle, -5, -50, 50, 1),
 	 FieldInfo("eyebrowThickness", &MF::eyebrowThickness, 2.0, 0.1, 4.0, 0.1),
-	
+
 	 FieldInfo("noseXpos", &MF::noseXpos, 0.0, -1.0, 1.0, 0.05, true),
 	 FieldInfo("noseYpos", &MF::noseYpos, -0.825, -2.0, 2.0, 0.1),
 	 FieldInfo("noseLength", &MF::noseLength, 0.75, 0.0, 2.0, 0.1),
 	 FieldInfo("noseWidth", &MF::noseWidth, 1.5, 0.0, 3.0, 0.1),
-	 
+
 	 FieldInfo("mouthXpos", &MF::mouthXpos, 0.0, -2.0, 2.0, 0.1, true),
 	 FieldInfo("mouthYpos", &MF::mouthYpos, -2.0, -3.0, 1.0, 0.1),
 	 FieldInfo("mouthWidth", &MF::mouthWidth, 2.5, 0.0, 5.0, 0.25),
@@ -123,15 +123,15 @@ namespace {
 		0.091, 0.500,				  // 	 0.25 2.125
 		-0.300, 0.429,				  // 	 -0.825 1.825
 	 };
-	 
+
 	 glEnableClientState(GL_VERTEX_ARRAY);
 	 {
 		glVertexPointer(2, GL_DOUBLE, 0, hair_vertices);
-	 
+
 		glPushAttrib(GL_POLYGON_BIT);
 		{
 		  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		  
+
 		  glBegin(GL_TRIANGLE_FAN);
 		  {
 			 glArrayElement(0);
@@ -142,7 +142,7 @@ namespace {
 			 glArrayElement(5);
 		  }
 		  glEnd();
-		  
+
 		  glBegin(GL_TRIANGLE_STRIP);
 		  {
 			 glArrayElement(4);
@@ -157,7 +157,7 @@ namespace {
 			 glArrayElement(13);
 		  }
 		  glEnd();
-		  
+
 		  // Second hair line
 		  glBegin(GL_LINE_STRIP);
 		  {
@@ -167,12 +167,12 @@ namespace {
 			 glArrayElement(21);
 		  }
 		  glEnd();
-		  
+
 		  // First hair line
 		  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
 		  {
 			 canvas.swapForeBack();
-		  
+
 			 glBegin(GL_LINE_STRIP);
 			 {
 				glArrayElement(14);
@@ -183,10 +183,10 @@ namespace {
 			 glEnd();
 		  }
 		  glPopAttrib();
-		  
+
 		}
 		glPopAttrib();
-		
+
 	 }
 	 glDisableClientState(GL_VERTEX_ARRAY);
   }
@@ -388,7 +388,7 @@ DOTRACE("MorphyFace::grRender");
 
 	 glPopMatrix();
   }
-  
+
   gluDeleteQuadric(qobj);
 
   //
@@ -408,7 +408,7 @@ DOTRACE("MorphyFace::grRender");
 	 bottomWidth()*faceWidth(), bottomHeight()*4.0/3.0, 0,
 	 -bottomWidth()*faceWidth(), bottomHeight()*4.0/3.0, 0,
 	 -faceWidth(), 0.0, 0};
-  
+
   glEnable(GL_MAP1_VERTEX_3);
   for (int i = 1; i < nctrlsets; ++i) {
 	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
@@ -416,7 +416,7 @@ DOTRACE("MorphyFace::grRender");
 	 glMapGrid1d(num_subdivisions, 0.0, 1.0);
 	 glEvalMesh1(GL_LINE, 0, num_subdivisions);
   }
-  
+
   //
   // Draw nose.
   //
@@ -436,7 +436,7 @@ DOTRACE("MorphyFace::grRender");
 	   glVertex2d( 0.75, 0.5);
 	 glEnd();
   glPopMatrix();
-  
+
   //
   // Draw mouth.
   //
@@ -447,7 +447,7 @@ DOTRACE("MorphyFace::grRender");
 	  0.2, -0.833333, 0.0,
 	  0.5,  0.5,      0.0
   };
-  
+
   glPushMatrix();
     glTranslatef(mouthXpos(), mouthYpos(), 0.0);
 	 glScalef(mouthWidth(), mouthCurvature(), 1.0);
@@ -483,7 +483,7 @@ DOTRACE("MorphyFace::grRender");
 
 		double x = xbezier.eval(u);
 		double y = ybezier.eval(u);
-		
+
 		double tang_x = xbezier.evalDeriv(u);
 		double tang_y = ybezier.evalDeriv(u);
 
@@ -491,13 +491,13 @@ DOTRACE("MorphyFace::grRender");
 		// ==> normal vector = (-tang_y, tang_x)
 		double norm_x = -tang_y;
 		double norm_y = tang_x;
-		
+
 		// compute the factor needed to make a unit normal vector
 		double norm_factor = 1.0 / sqrt(norm_x*norm_x + norm_y*norm_y);
-		
+
 		hair_x_normals[i] = norm_x * norm_factor;
 		hair_y_normals[i] = norm_y * norm_factor;
-		
+
 		hair_vertices[4*i]   = // inner x value
 		  x - hair_x_normals[i]*hair_widths[i]*hairWidth();
 		hair_vertices[4*i+1] = // inner y value
@@ -508,7 +508,7 @@ DOTRACE("MorphyFace::grRender");
 		  y + hair_y_normals[i]*hair_widths[i]*hairWidth();
 	 }
   }
-  
+
   glPushAttrib(GL_POLYGON_BIT);
   {
 	 if (hairStyle() == 0) {
@@ -522,7 +522,7 @@ DOTRACE("MorphyFace::grRender");
 	 glPushMatrix();
 	 {
 		glScalef(faceWidth(), topHeight(), 1.0);
-		
+
 		glBegin(GL_QUAD_STRIP);
 		{
 		  for (int i = 0; i < num_hair_points; ++i) {
@@ -531,7 +531,7 @@ DOTRACE("MorphyFace::grRender");
 		  }
 		}
 		glEnd();
-		
+
 	 }
 	 glPopMatrix();
 
@@ -539,7 +539,7 @@ DOTRACE("MorphyFace::grRender");
 	 glPushMatrix();
 	 {
 		glScalef(-faceWidth(), topHeight(), 1.0);
-		
+
 		glBegin(GL_QUAD_STRIP);
 		{
 		  for (int i = 0; i < num_hair_points; ++i) {
@@ -548,13 +548,13 @@ DOTRACE("MorphyFace::grRender");
 		  }
 		}
 		glEnd();
-		
+
 	 }
 	 glPopMatrix();
 
   }
   glPopAttrib();
-		
+
   // Undo pushes
   if (have_antialiasing) {
 	 glPopAttrib();

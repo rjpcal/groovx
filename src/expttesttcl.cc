@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:13:41 1999
-// written: Thu May 10 12:04:48 2001
+// written: Mon Jun 11 15:08:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ int Expttest_Init(Tcl_Interp* interp) {
   static int haveTest=0;
 
   Tcl::Tcl_LinkBoolean(interp, "Expt::haveTest", &haveTest, TCL_LINK_READ_ONLY);
-  
+
   return TCL_OK;
 }
 

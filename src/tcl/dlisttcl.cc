@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu May 10 12:04:42 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -74,7 +74,7 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
     Tcl_WrongNumArgs(interp, 1, objv, "source_list index_list"); 
     return TCL_ERROR;
   }
-  
+
   int src_len, idx_len;
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
   if (Tcl_ListObjLength(interp, objv[2], &idx_len) != TCL_OK) return TCL_ERROR;
@@ -300,7 +300,7 @@ DOTRACE("Tcldlist::dlist_repeatCmd");
   int src_len, tim_len;
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
   if (Tcl_ListObjLength(interp, objv[2], &tim_len) != TCL_OK) return TCL_ERROR;
-  
+
   // find the minimum of the two lists' lengths
   int min_len = (src_len < tim_len) ? src_len : tim_len;
 
@@ -507,7 +507,7 @@ DOTRACE("Tcldlist_Init");
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "dlist_pickone", Tcldlist::dlist_pickoneCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  
+
   Tcl_PkgProvide(interp, "Tcldlist", "1.6");
   return TCL_OK;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue May 22 11:45:11 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -152,7 +152,7 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
   Tcl_SetVar(interp, "tcl_prompt1", 
 				 "puts -nonewline \"([history nextid]) $argv0> \"",
 				 TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
-	 
+
   // specifies a file to be 'source'd upon startup
   Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
 }

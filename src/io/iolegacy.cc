@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Jun  6 19:55:58 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ public:
 	 }
   }
 
-  void inflateObject(const fixed_string& name, IdItem<IO::IoObject> obj)
+  void inflateObject(const fixed_string& name, Ref<IO::IoObject> obj)
   {
 	 DebugEvalNL(name);
 
@@ -235,13 +235,13 @@ DOTRACE("IO::LegacyReader::readValueObj");
   itsImpl->throwIfError(name);
 }
 
-IdItem<IO::IoObject>
+Ref<IO::IoObject>
 IO::LegacyReader::readObject(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readObject");
-  return IdItem<IO::IoObject>(readMaybeObject(name));
+  return Ref<IO::IoObject>(readMaybeObject(name));
 }
 
-MaybeIdItem<IO::IoObject>
+MaybeRef<IO::IoObject>
 IO::LegacyReader::readMaybeObject(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readMaybeObject");
   DebugEval(name);
@@ -250,10 +250,10 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 
   if (type == "NULL")
 	 {
-		return MaybeIdItem<IO::IoObject>();
+		return MaybeRef<IO::IoObject>();
 	 }
 
-  IdItem<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
+  Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
   DebugEvalNL(obj->ioTypename());
 
   itsImpl->inflateObject(name, obj);
@@ -261,12 +261,12 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 #ifndef ACC_COMPILER
   return obj;
 #else
-  return MaybeIdItem<IO::IoObject>(obj);
+  return MaybeRef<IO::IoObject>(obj);
 #endif
 }
 
 void IO::LegacyReader::readOwnedObject(const fixed_string& name,
-													IdItem<IO::IoObject> obj) {
+													Ref<IO::IoObject> obj) {
 DOTRACE("IO::LegacyReader::readOwnedObject");
 
   itsImpl->readTypename(obj->ioTypename());
@@ -274,14 +274,14 @@ DOTRACE("IO::LegacyReader::readOwnedObject");
 }
 
 void IO::LegacyReader::readBaseClass(const fixed_string& baseClassName,
-												 IdItem<IO::IoObject> basePart) {
+												 Ref<IO::IoObject> basePart) {
 DOTRACE("IO::LegacyReader::readBaseClass");
 
   itsImpl->readTypename(basePart->ioTypename());
   itsImpl->inflateObject(baseClassName, basePart);
 }
 
-IdItem<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot) {
+Ref<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot) {
 DOTRACE("IO::LegacyReader::readRoot");
   if (givenRoot == 0) {
 	 return readObject("rootObject");
@@ -289,7 +289,7 @@ DOTRACE("IO::LegacyReader::readRoot");
 
   DebugEvalNL(givenRoot->ioTypename());
 
-  IdItem<IO::IoObject> root(givenRoot);
+  Ref<IO::IoObject> root(givenRoot);
   readOwnedObject("rootObject", root);
 
   return root;
@@ -407,7 +407,7 @@ public:
   void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
 
   void flattenObject(const char* obj_name,
-							MaybeIdItem<const IO::IoObject> obj,
+							MaybeRef<const IO::IoObject> obj,
 							bool stub_out = false)
   {
 	 if (itsIndentLevel > 0)
@@ -520,21 +520,21 @@ DOTRACE("IO::LegacyWriter::writeValueObj");
 }
 
 void IO::LegacyWriter::writeObject(const char* name,
-											  MaybeIdItem<const IO::IoObject> obj) {
+											  MaybeRef<const IO::IoObject> obj) {
 DOTRACE("IO::LegacyWriter::writeObject");
 
   itsImpl->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeOwnedObject(const char* name,
-													 IdItem<const IO::IoObject> obj) {
+													 Ref<const IO::IoObject> obj) {
 DOTRACE("IO::LegacyWriter::writeOwnedObject");
 
   itsImpl->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
-												  IdItem<const IO::IoObject> basePart) {
+												  Ref<const IO::IoObject> basePart) {
 DOTRACE("IO::LegacyWriter::writeBaseClass");
   if (itsImpl->itsWriteBases) {
 	 itsImpl->flattenObject(baseClassName, basePart);
@@ -547,7 +547,7 @@ DOTRACE("IO::LegacyWriter::writeBaseClass");
 void IO::LegacyWriter::writeRoot(const IO::IoObject* root) {
 DOTRACE("IO::LegacyWriter::writeRoot");
 
-  itsImpl->flattenObject("rootObject", MaybeIdItem<const IO::IoObject>(root, true));
+  itsImpl->flattenObject("rootObject", MaybeRef<const IO::IoObject>(root, true));
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";

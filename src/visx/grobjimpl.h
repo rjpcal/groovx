@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Jun  8 18:46:39 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ private:
 		itsFinalBBIsCurrent(false),
 		itsCachedFinalBB()
 		{}
-		
+
 	 bool bbExists() const
 		{ return itsOwner->grHasBoundingBox(); }
 
@@ -201,7 +201,7 @@ private:
 		itsCenterX(0.0),
 		itsCenterY(0.0)
 		{}
-		
+
 	 GrObj::AlignmentMode itsMode;
 	 double itsCenterX;
 	 double itsCenterY;

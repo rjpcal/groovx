@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Sat May 19 09:00:49 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ DOTRACE("HpAudioSound::play");
   if (itsSBucket)
 	 ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
 }
-	
+
 void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
 
@@ -205,7 +205,7 @@ DOTRACE("Sound::initSound");
   if (theAudio != 0) return true;
 
   ASetErrorHandler(audioErrorHandler);
-  
+
   bool retVal = false;
 
   // Open an audio connection to the default audio server, then

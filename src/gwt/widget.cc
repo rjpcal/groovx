@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Jun  5 10:58:12 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ public:
   void setHold(bool hold_on)
     { itsHoldOn = hold_on; }
 
-  void setDrawable(const IdItem<GxNode>& node)
+  void setDrawable(const Ref<GxNode>& node)
     {
 		itsDrawNode->detach(this);
 
@@ -234,7 +234,7 @@ DOTRACE("GWT::Widget::setHold");
   itsImpl->setHold(hold_on);
 }
 
-void GWT::Widget::setDrawable(const IdItem<GxNode>& node) {
+void GWT::Widget::setDrawable(const Ref<GxNode>& node) {
 DOTRACE("GWT::Widget::setDrawable");
   itsImpl->setDrawable(node);
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu May 10 12:04:36 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ public:
 	 { setObj(obj); return *this; }
 
   virtual Value* clone() const;
-  
+
   virtual Type getNativeType() const;
 
   virtual const char* getNativeTypeName() const;

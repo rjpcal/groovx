@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jun  6 09:43:17 2001
+// written: Mon Jun 11 14:49:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ public:
 		Invariant(check());
 		itsErh.ignore(itsWidget);
 
-		IdItem<Sound> p = Sound::getErrSound();
+		Ref<Sound> p = Sound::getErrSound();
 		p->play();
 	 }
 

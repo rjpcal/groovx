@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Fri May 18 16:23:43 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -208,7 +208,7 @@ public:
 	 if (creator == 0) return BasePtr();
 	 return creator->create();
   }
- 
+
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
   BasePtr newCheckedObject(const fixed_string& type) {

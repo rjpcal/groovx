@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Fri May 18 17:04:07 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
   static XBitmap* make();
 
   private: void init();
-  
+
 public:
   /// Virtual destructor.
   virtual ~XBitmap();

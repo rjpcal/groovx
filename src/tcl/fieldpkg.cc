@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Jun 11 12:10:11 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,12 +128,12 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
 		return;
 	 else if ( ids.size() == 1 )
 		{
-		  IdItem<FieldContainer> item(ids[0]);
+		  Ref<FieldContainer> item(ids[0]);
 		  returnVal( *(item->field(itsFinfo).value()) );
 		}
 	 else
 		for (size_t i = 0; i < ids.size(); ++i) {
-		  IdItem<FieldContainer> item(ids[i]);
+		  Ref<FieldContainer> item(ids[i]);
 		  lappendVal( *(item->field(itsFinfo).value()) );
 		}
 
@@ -145,7 +145,7 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
 		{
 		  TclValue val = getValFromArg(itsValArgn, (TclValue*)0);
 
-		  IdItem<FieldContainer> item(ids[0]);
+		  Ref<FieldContainer> item(ids[0]);
 		  item->field(itsFinfo).setValue(val);
 		}
 	 else
@@ -157,7 +157,7 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
 		  TclValue val = *val_itr;
 
 		  for (size_t i = 0; i < ids.size(); ++i) {
-			 IdItem<FieldContainer> item(ids[i]);
+			 Ref<FieldContainer> item(ids[i]);
 			 item->field(itsFinfo).setValue(val);
 
 			 // Only fetch a new value if there are more values to

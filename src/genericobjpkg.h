@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Jun  6 15:54:57 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ public:
 
   virtual C* getCItemFromId(int id)
     {
-		IdItem<C> item(id);
+		Util::Ref<C> item(id);
 		return item.get();
 	 }
 

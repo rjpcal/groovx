@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Thu May 10 12:04:37 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ public:
        If the name referred to a socket, fifo or device the  name
        for it is removed but processes which have the object open
        may continue to use it.
-		 
+
 		 RETURN VALUE
        On success, zero is returned.  On error, -1  is  returned,
        and errno is set appropriately. */

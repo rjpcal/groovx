@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  1 14:20:04 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ protected:
 
   /// Returns the aspect ratio of eye outline.
   virtual double getEyeAspect() const;
-  
+
   /// Returns the amount of vertical offset applied to all features.
   virtual double getVertOffset() const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Wed Jun  6 15:54:57 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
 		}
 
 		int count = 0;
-	 
+
 		while (begin != end) {
 		  writer->writeValue(makeElementNameString(name, count), *begin);
 		  ++begin;
@@ -58,7 +58,7 @@ public:
 		}
 
 		int count = 0;
-	 
+
 		while (begin != end) {
 		  writer->writeValueObj(makeElementNameString(name, count), *begin);
 		  ++begin;
@@ -78,10 +78,10 @@ public:
 		}
 
 		int count = 0;
-	 
+
 		while (begin != end) {
 		  writer->writeObject(makeElementNameString(name, count),
-									 MaybeIdItem<const IO::IoObject>(*begin));
+									 MaybeRef<const IO::IoObject>(*begin));
 		  ++begin;
 		  ++count;
 		}

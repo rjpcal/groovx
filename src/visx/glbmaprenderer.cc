@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Fri Jun  1 17:56:03 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ void GLBmapRenderer::doRender(GWT::Canvas& canvas,
 DOTRACE("GLBmapRenderer::doRender");
   glRasterPos2d(x_pos, y_pos);
   glPixelZoom(zoom_x, zoom_y);
-  
+
   glPixelStorei(GL_UNPACK_ALIGNMENT, byte_alignment);
 
   if (bits_per_pixel == 24) {

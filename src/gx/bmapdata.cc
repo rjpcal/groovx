@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Thu May 10 12:04:49 2001
+// written: Mon Jun 11 15:08:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
 	 itsBytes(),
 	 itsUpdater(0)
 	 {}
-	 
+
   int itsWidth;
   int itsHeight;
   int itsBitsPerPixel;
@@ -174,16 +174,16 @@ DOTRACE("BmapData::flipVertical");
 
   int bytes_per_row = bytesPerRow();
   int num_bytes = byteCount();
-  
+
   dynamic_block<unsigned char> new_bytes(num_bytes);
-  
+
   for (int row = 0; row < itsImpl->itsHeight; ++row) {
 	 int new_row = (itsImpl->itsHeight-1)-row;
 	 memcpy(static_cast<void*> (&(new_bytes[new_row * bytes_per_row])),
 			  static_cast<void*> (&(itsImpl->itsBytes [row     * bytes_per_row])),
 			  bytes_per_row);
   }
-  
+
   itsImpl->itsBytes.swap(new_bytes);
 }
 
@@ -201,7 +201,7 @@ DOTRACE("BmapData::clear");
 void BmapData::swap(BmapData& other) {
 DOTRACE("BmapData::swap");
   updateIfNeeded();
- 
+
   itsImpl->itsBytes.swap(other.itsImpl->itsBytes);
 
   ::swap(itsImpl->itsWidth, other.itsImpl->itsWidth);

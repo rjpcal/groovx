@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:43 1999
-// written: Thu May 10 12:04:37 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,6 +112,6 @@ private:
 };
 
 } // end namespace Tcl
- 
+
 static const char vcid_stringifycmd_h[] = "$Header$";
 #endif // !STRINGIFYCMD_H_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:39 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ public:
 	 { setCorners(p1, p2); }
 
   Rect(const Rect<V>& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
-  
+
   Rect<V>& operator=(const Rect<V>& i)
 	 { l=i.l; t=i.t; r=i.r; b=i.b; return *this; }
 

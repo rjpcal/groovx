@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,11 +118,11 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  IdItem<Trial> trial(Trial::make());
+		  Ref<Trial> trial(Trial::make());
 
 		  trial->add(*itr, posid);
 
-		  IdItem<GxNode> obj(*itr);
+		  Ref<GxNode> obj(*itr);
 		  trial->setType(obj->category());
 
 		  lappendVal(trial.id());
@@ -156,7 +156,7 @@ protected:
 			  itr2 != end2;
 			  ++itr2)
 		  {
-			 IdItem<Trial> trial(Trial::make());
+			 Ref<Trial> trial(Trial::make());
 
 			 trial->add(*itr1, posid1);
 			 trial->add(*itr2, posid2);
@@ -231,7 +231,7 @@ protected:
 
 			 // loops over p,e run through all permutations
 			 for (int p = 0; p < NUM_PERMS; ++p) {
-				IdItem<Trial> trial(Trial::make());
+				Ref<Trial> trial(Trial::make());
 				for (int e = 0; e < 3; ++e) {
 				  trial->add(base_triad[permutations[p][e]], posids[e]);
 				}
@@ -293,14 +293,14 @@ protected:
 
 		  istrstream ist(line);
 
-		  IdItem<Trial> trial(Trial::make());
-		  IdItem<GxSeparator> sep(GxSeparator::make());
+		  Ref<Trial> trial(Trial::make());
+		  Ref<GxSeparator> sep(GxSeparator::make());
 
 		  int objn = 0;
 		  int posn = 0;
 		  while (ist >> objn)
 			 {
-				IdItem<GxSeparator> innersep(GxSeparator::make());
+				Ref<GxSeparator> innersep(GxSeparator::make());
 				innersep->addChild(posids[posn]);
 				innersep->addChild(objids[objn-1]);
 				sep->addChild(innersep->id());

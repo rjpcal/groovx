@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Mon Jun 11 14:49:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  block->addTrial(IdItem<TrialBase>(*itr), repeat);
+		  block->addTrial(Ref<TrialBase>(*itr), repeat);
 		}
   }
 };

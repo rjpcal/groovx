@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu May 17 07:04:15 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 namespace GWT { class Widget; }
 namespace Util { class ErrorHandler; }
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 class TrialBase;
 class TrialEvent;
@@ -56,7 +56,7 @@ public:
   // accessors //
   ///////////////
 
-  IdItem<TrialEvent> getEvent(TimePoint time_point, int index) const;
+  Util::Ref<TrialEvent> getEvent(TimePoint time_point, int index) const;
 
   // Returns the elapsed time in milliseconds since the start of the
   // current trial
@@ -66,7 +66,7 @@ public:
   // manipulators //
   //////////////////
 
-  int addEvent(IdItem<TrialEvent> event, TimePoint time_point);
+  int addEvent(Util::Ref<TrialEvent> event, TimePoint time_point);
   int addEventByName(const char* event_type,
 							TimePoint time_point, int msec_delay);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Tue Jun  5 10:41:21 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "io/iodecls.h"
 #endif
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -55,14 +55,14 @@ public:
   void removeChildUid(Util::UID ioUid);
 
   int numChildren() const;
-  IdItem<GxNode> getChild(ChildId index) const;
+  Util::Ref<GxNode> getChild(ChildId index) const;
 
-  typedef const IdItem<GxNode>* ConstChildItr;
+  typedef const Util::Ref<GxNode>* ConstChildItr;
 
   ConstChildItr beginChildren() const;
   ConstChildItr endChildren() const;
 
-  typedef IdItem<GxNode>* ChildItr;
+  typedef Util::Ref<GxNode>* ChildItr;
 
   ChildItr beginChildren();
   ChildItr endChildren();

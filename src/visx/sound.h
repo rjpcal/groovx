@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Thu May 10 12:04:39 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "io/io.h"
 #endif
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 class SoundError : public ErrorWithMsg {
 public:
@@ -54,10 +54,10 @@ public:
   // caller is responsible for destroying the Sound object.
   static Sound* newPlatformSound(const char* soundfile);
 
-  static void setOkSound(IdItem<Sound> ok_sound);
-  static void setErrSound(IdItem<Sound> err_sound);
-  static IdItem<Sound> getOkSound();
-  static IdItem<Sound> getErrSound();
+  static void setOkSound(Util::Ref<Sound> ok_sound);
+  static void setErrSound(Util::Ref<Sound> err_sound);
+  static Util::Ref<Sound> getOkSound();
+  static Util::Ref<Sound> getErrSound();
 
   virtual ~Sound();
 

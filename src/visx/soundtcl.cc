@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,12 +90,12 @@ public:
 		static int ERR = -1;
 
 		try {
-		  IdItem<Sound> ok_sound(Sound::newPlatformSound(full_ok_file.c_str()));
+		  Ref<Sound> ok_sound(Sound::newPlatformSound(full_ok_file.c_str()));
 		  Sound::setOkSound(ok_sound);
 		  OK = ok_sound.id();
 		  linkConstVar("Sound::ok", OK);
 
-		  IdItem<Sound> err_sound(Sound::newPlatformSound(full_err_file.c_str()));
+		  Ref<Sound> err_sound(Sound::newPlatformSound(full_err_file.c_str()));
 		  Sound::setErrSound(err_sound);
 		  ERR = err_sound.id();		  
 		  linkConstVar("Sound::err", ERR);

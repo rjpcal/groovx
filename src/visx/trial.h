@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Mon Jun 11 13:54:38 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ class ostream;
 #  endif
 #endif
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 namespace GWT { class Widget; }
 
@@ -88,11 +88,11 @@ public:
   int getCorrectResponse() const;
   void setCorrectResponse(int response);
 
-  IdItem<ResponseHandler> getResponseHandler() const;
-  void setResponseHandler(IdItem<ResponseHandler> rh);
+  Util::Ref<ResponseHandler> getResponseHandler() const;
+  void setResponseHandler(Util::Ref<ResponseHandler> rh);
 
-  IdItem<TimingHdlr> getTimingHdlr() const;
-  void setTimingHdlr(IdItem<TimingHdlr> th);
+  Util::Ref<TimingHdlr> getTimingHdlr() const;
+  void setTimingHdlr(Util::Ref<TimingHdlr> th);
 
   // returns some info about relationship between objects in trial
   virtual int trialType() const;

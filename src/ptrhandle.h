@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 15:56:41 2000
-// written: Sat May 19 15:23:58 2001
+// written: Mon Jun 11 15:08:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ public:
 
   T* operator->() const { return itsMaster; }
   T& operator*()  const { return *itsMaster; }
-  
+
   T* get()        const { return itsMaster; }
 
 private:

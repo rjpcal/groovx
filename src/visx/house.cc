@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Jun  1 14:18:19 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -294,8 +294,8 @@ DOTRACE("House::grRender");
 	 glPushAttrib(GL_POLYGON_BIT);
 	 {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		
-		
+
+
 		// Loop over house stories.
 		for (int s = 0; s < numStories(); ++s) {
 		  drawStoryFrame();
@@ -326,7 +326,7 @@ DOTRACE("House::grRender");
 
 		  glTranslated(0.0, 1.0, 0.0);
 		}
-		
+
 
 		// Draw roof.
 		glTranslated(0.0, -0.5, 0.0);
@@ -343,7 +343,7 @@ DOTRACE("House::grRender");
 			 else {
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			 }
-			 
+
 			 if (roofShape() == 0) {
 				drawTriangleRoof();
 			 }
@@ -364,7 +364,7 @@ DOTRACE("House::grRender");
 		{
 		  glTranslated(chimneyXPosition(), chimneyYPosition(), 0.0);
 		  glScaled(chimneyWidth(), chimneyHeight(), 0.0);
-			 
+
 		  glPushAttrib(GL_POLYGON_BIT);
 		  {
 			 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -374,7 +374,7 @@ DOTRACE("House::grRender");
 
 		}
 		glPopMatrix();
-		
+
 	 }
 	 glPopAttrib();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jun  6 20:43:56 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 namespace IO { class IoObject; }
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -59,15 +59,15 @@ private:
   Getter_f itsGetter_f;
 };
 
-// Partial specialization of CGetter for T == IdItem<T>
+// Partial specialization of CGetter for T == Util::Ref<T>
 template <class C, class T>
-class CGetter<C, IdItem<T> > : public Getter<int> {
+class CGetter<C, Util::Ref<T> > : public Getter<int> {
 public:
   /// The type of member function pointer that will be called in \c get().
-  typedef IdItem<T> (C::* Getter_f) () const;
+  typedef Util::Ref<T> (C::* Getter_f) () const;
 
   /// Construct with a member function pointer.
-  CGetter<C, IdItem<T> >(Getter_f getter) : itsGetter_f(getter) {}
+  CGetter<C, Util::Ref<T> >(Getter_f getter) : itsGetter_f(getter) {}
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual int get(void *item) const {
@@ -76,8 +76,8 @@ public:
   }
 
 private:
-  CGetter<C, IdItem<T> >(const CGetter<C, IdItem<T> >&);
-  CGetter<C, IdItem<T> >& operator=(const CGetter<C, IdItem<T> >&);
+  CGetter<C, Util::Ref<T> >(const CGetter<C, Util::Ref<T> >&);
+  CGetter<C, Util::Ref<T> >& operator=(const CGetter<C, Util::Ref<T> >&);
 
   Getter_f itsGetter_f;
 };
@@ -111,25 +111,25 @@ private:
 };
 
 
-// Specialization of CSetter for T == IdItem<T>
+// Specialization of CSetter for T == Util::Ref<T>
 template <class C, class T>
-class CSetter<C, IdItem<T> > : public Setter<int> {
+class CSetter<C, Util::Ref<T> > : public Setter<int> {
 public:
   /// The type of member function pointer that will be called in \c set().
-  typedef void (C::* Setter_f) (IdItem<T>);
+  typedef void (C::* Setter_f) (Util::Ref<T>);
 
   /// Construct with a member function pointer.
-  CSetter<C, IdItem<T> >(Setter_f setter) : itsSetter_f(setter) {}
+  CSetter<C, Util::Ref<T> >(Setter_f setter) : itsSetter_f(setter) {}
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual void set(void* item, int val) {
 	 C* p = static_cast<C*>(item);
-	 (p->*itsSetter_f)(IdItem<T>(val));
+	 (p->*itsSetter_f)(Util::Ref<T>(val));
   }
 
 private:
-  CSetter<C, IdItem<T> >(const CSetter<C, IdItem<T> >&);
-  CSetter<C, IdItem<T> >& operator=(const CSetter<C, IdItem<T> >&);
+  CSetter<C, Util::Ref<T> >(const CSetter<C, Util::Ref<T> >&);
+  CSetter<C, Util::Ref<T> >& operator=(const CSetter<C, Util::Ref<T> >&);
 
   Setter_f itsSetter_f;
 };
@@ -235,7 +235,7 @@ public:
   virtual void* getItemFromId(int id) = 0;
 
   int itemArgn() const { return itsItemArgn; }
-  
+
 protected:
   template <class T>
   void declareGetter(const char* cmd_name, Getter<T>* getter,

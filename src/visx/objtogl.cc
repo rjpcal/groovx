@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 22:13:31 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -55,7 +55,7 @@
 
 namespace ObjTogl {
 
-  MaybeIdItem<Toglet> theWidget;
+  MaybeRef<Toglet> theWidget;
 
   class BindCmd;
   class CurrentTogletCmd;
@@ -83,7 +83,7 @@ public:
   {
 	 if (ObjTogl::theWidget.isValid() && ObjTogl::theWidget.get() == config)
 		{
-  		  ObjTogl::theWidget = MaybeIdItem<Toglet>();
+  		  ObjTogl::theWidget = MaybeRef<Toglet>();
 		}
   }
 };
@@ -91,7 +91,7 @@ public:
 void ObjTogl::setCurrentTogl(Toglet* togl) {
 DOTRACE("ObjTogl::setCurrentTogl");
 
-  theWidget = MaybeIdItem<Toglet>(togl);
+  theWidget = MaybeRef<Toglet>(togl);
   theWidget->setDestroyCallback(new WidgetDestroyCallback);
 }
 
@@ -111,7 +111,7 @@ protected:
   virtual void invoke() {
 	 const char* event_sequence = getCstringFromArg(afterItemArg(1));
 	 const char* binding_script = getCstringFromArg(afterItemArg(2));
-	 
+
 	 getItem()->bind(event_sequence, binding_script);
   }
 };
@@ -135,7 +135,7 @@ protected:
 		}
 	 else
 		{
-		  theWidget = IdItem<Toglet>( getIntFromArg(1) );
+		  theWidget = Ref<Toglet>( getIntFromArg(1) );
 		  theWidget->makeCurrent();
 		}
   }
@@ -219,7 +219,7 @@ protected:
 
 	 GWT::Widget* widg = getItem();
 
-	 widg->setDrawable(IdItem<GxNode>(id));
+	 widg->setDrawable(Ref<GxNode>(id));
 	 widg->setVisibility(true);
 
 	 widg->display();
@@ -267,7 +267,7 @@ protected:
   virtual void invoke() {
 	 int trial = getIntFromArg(afterItemArg(1));
 
-	 IdItem<TrialBase>(trial)->installSelf(*getItem());
+	 Ref<TrialBase>(trial)->installSelf(*getItem());
   }
 };
 
@@ -293,7 +293,7 @@ protected:
     // particular, we must not have right == left or top == bottom
     // since this collapses the space onto one dimension.
     if (r <= l || t <= b) { throw Tcl::TclError("invalid rect"); }
-    
+
     getItem()->setMinRectLTRB(l,t,r,b);
   }
 };
@@ -320,7 +320,7 @@ protected:
 
 	 GWT::Widget* widg = getItem();
 
-	 IdItem<TrialBase>(id)->installSelf(*widg);
+	 Ref<TrialBase>(id)->installSelf(*widg);
 	 widg->setVisibility(true);
 
 	 widg->display();

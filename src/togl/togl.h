@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Fri Jun  1 16:56:31 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -52,7 +52,7 @@
 #define TOGL_BITMAP_HELVETICA_10	5
 #define TOGL_BITMAP_HELVETICA_12	6
 #define TOGL_BITMAP_HELVETICA_18	7
- 
+
 
 /*
  * Normal and overlay plane constants

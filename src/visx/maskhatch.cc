@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Jun  8 18:46:38 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,34 +119,34 @@ DOTRACE("MaskHatch::grRender");
 	 {
 		for (int i = 0; i < numLines(); ++i) {
 		  GLdouble position = double(i)/numLines();
-		  
+
 		  // horizontal line
 		  glVertex2d(0.0, position);
 		  glVertex2d(1.0, position);
-		  
+
 		  // vertical line
 		  glVertex2d(position, 0.0);
 		  glVertex2d(position, 1.0);
-		  
+
 		  // lines with slope = 1 
 		  glVertex2d(0.0, position);
 		  glVertex2d(1.0-position, 1.0);
-		  
+
 		  glVertex2d(position, 0.0);
 		  glVertex2d(1.0, 1.0-position);
-		  
+
 		  // lines with slope = -1
 		  glVertex2d(0.0, 1.0-position);
 		  glVertex2d(1.0-position, 0.0);
-		  
+
 		  glVertex2d(position, 1.0);
 		  glVertex2d(1.0, position);
 		}
-		
+
 		// final closing lines
 		glVertex2d(0.0, 1.0);
 		glVertex2d(1.0, 1.0);
-		
+
 		glVertex2d(1.0, 0.0);
 		glVertex2d(1.0, 1.0);
 	 }

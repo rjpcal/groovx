@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ public:
       will be called only when the bitmap data must be accessed. */
   void queueUpdate(shared_ptr<UpdateFunc> updater) const;
 
-  
+
   /// Forces any pending update to be called.
   void updateIfNeeded() const;
 

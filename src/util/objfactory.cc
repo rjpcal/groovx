@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 30 15:01:02 1999
-// written: Wed Jun  6 19:46:35 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace {
 }
 
 Util::ObjFactory::ObjFactory() :
-  Factory<IdItem<Util::Object> >() {}
+  Factory<Ref<Util::Object> >() {}
 
 Util::ObjFactory::~ObjFactory() {}
 

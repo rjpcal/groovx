@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ private:
 	 for (int d = 2; d <= k; ++d) {
 		result /= d;
 	 }
-	 
+
 	 return result;
   }
 
@@ -92,7 +92,7 @@ public:
   /// Reset the control points,
   void setCtrlPnts(const dynamic_block<double>& RR, int extrema_res=-1);
 
-  
+
   /// Evaluate the Bezier curve for a given u in [0, 1]
   double eval(double u);
   /// Evaluate the derivative of the Bezier curve for a given u in [0, 1]
@@ -169,7 +169,7 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
 		extrema.push_front((current+prev)/2.0);
 	 }
   }
-  
+
   extrema.push_front(1.0);
 
   uMin_ = uMax_ = 0.0;

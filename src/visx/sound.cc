@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Jun  6 15:53:07 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,8 +28,8 @@
 #endif
 
 namespace {
-  MaybeIdItem<Sound> OK_SOUND;
-  MaybeIdItem<Sound> ERR_SOUND;
+  MaybeRef<Sound> OK_SOUND;
+  MaybeRef<Sound> ERR_SOUND;
 }
 
 SoundError::SoundError() : ErrorWithMsg() {}
@@ -38,28 +38,28 @@ SoundError::~SoundError() {}
 
 Sound::~Sound () {}
 
-void Sound::setOkSound(IdItem<Sound> ok_sound) {
+void Sound::setOkSound(Ref<Sound> ok_sound) {
 #ifndef ACC_COMPILER
   OK_SOUND = ok_sound;
 #else
-  OK_SOUND = MaybeIdItem<Sound>(ok_sound);
+  OK_SOUND = MaybeRef<Sound>(ok_sound);
 #endif
 }
 
-void Sound::setErrSound(IdItem<Sound> err_sound) {
+void Sound::setErrSound(Ref<Sound> err_sound) {
 #ifndef ACC_COMPILER
   ERR_SOUND = err_sound;
 #else
-  ERR_SOUND = MaybeIdItem<Sound>(err_sound);
+  ERR_SOUND = MaybeRef<Sound>(err_sound);
 #endif
 }
 
-IdItem<Sound> Sound::getOkSound() {
-  return IdItem<Sound>(OK_SOUND.get());
+Ref<Sound> Sound::getOkSound() {
+  return Ref<Sound>(OK_SOUND.get());
 }
 
-IdItem<Sound> Sound::getErrSound() {
-  return IdItem<Sound>(ERR_SOUND.get());
+Ref<Sound> Sound::getErrSound() {
+  return Ref<Sound>(ERR_SOUND.get());
 }
 
 static const char vcid_sound_cc[] = "$Header$";

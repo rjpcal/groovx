@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:45 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,13 +70,13 @@ DOTRACE("SubjectTcl::getSubjectFromObj");
     Tcl::err_message(interp, objv, no_subject_msg);
     return TCL_ERROR;
   }
-  
+
   theSubject = static_cast<Subject *>(Tcl_GetHashValue(theEntry));
   if (theSubject == NULL) {
     Tcl::err_message(interp, objv, no_subject_msg);
     return TCL_ERROR;
   }
-  
+
   return TCL_OK;
 }
 
@@ -84,7 +84,7 @@ int SubjectTcl::subjectCmd(ClientData clientData, Tcl_Interp* interp,
                            int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::subjectCmd");
   Tcl_HashTable* tblPtr = static_cast<Tcl_HashTable *>(clientData);
-  
+
   if (tblPtr == NULL) {
     Tcl::err_message(interp, objv, no_hash_msg);
     return TCL_ERROR;
@@ -142,7 +142,7 @@ DOTRACE("SubjectTcl::newSubjectCmd");
     Tcl::err_message(interp, objv, subject_exists_msg);
     return TCL_ERROR;
   }
-  
+
   Subject* newSubject = new Subject(subjectName,subjectDir);
   Tcl_SetHashValue(newEntry, static_cast<ClientData>(newSubject));
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Jun  6 19:53:03 2001
+// written: Mon Jun 11 14:49:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,13 +22,13 @@ class fixed_string;
 namespace Util {
   namespace ObjMgr {
 	 /// Will not return 0; will throw an exception on failure.
-	 IdItem<Util::Object> newObj(const char* type);
+	 Util::Ref<Util::Object> newObj(const char* type);
 
 	 /// Will not return 0; will throw an exception on failure.
-	 IdItem<Util::Object> newObj(const fixed_string& type);
+	 Util::Ref<Util::Object> newObj(const fixed_string& type);
 
 	 template <class T, class S>
-	 IdItem<T> newTypedObj(S type)
+	 Util::Ref<T> newTypedObj(S type)
 	 {
   		return dynamicCast<T>(newObj(type));
 	 }

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Jun  6 16:36:22 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1219,7 +1219,7 @@ static void
 stereoMakeCurrent(Display *dpy, Window win, GLXContext ctx)
 {
 DOTRACE("<togl.cc>::stereoMakeCurrent");
-  
+
   if (stereo.useSGIStereo) {
     if (dpy && (dpy != stereo.currentDisplay)) {
       int event, error;
@@ -1269,7 +1269,7 @@ Togl::stereoFrustum(GLfloat left, GLfloat right,
 {
 DOTRACE("Togl::stereoFrustum");
   GLfloat eyeShift = (eyeDist - near) * (eyeOffset / eyeDist);
-  
+
   glFrustum(left+eyeShift, right+eyeShift, bottom, top, near, far);
   glTranslatef(-eyeShift, 0.0, 0.0);
 }

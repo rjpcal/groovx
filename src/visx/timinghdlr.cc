@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Jun  6 19:55:59 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public:
 	 itsTrial(0)
 	 {}
 
-  typedef minivec<IdItem<TrialEvent> > EventGroup;
+  typedef minivec<Ref<TrialEvent> > EventGroup;
 
   EventGroup itsImmediateEvents;
   EventGroup itsStartEvents;
@@ -172,7 +172,7 @@ DOTRACE("TimingHdlr::writeTo");
 // accessors //
 ///////////////
 
-IdItem<TrialEvent> TimingHdlr::getEvent(TimePoint time_point, int index) const {
+Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point, int index) const {
 DOTRACE("TimingHdlr::getEvent");
   switch (time_point) {
   case IMMEDIATE:
@@ -190,7 +190,7 @@ DOTRACE("TimingHdlr::getEvent");
   default:
 	 break;
   }  
-  return IdItem<TrialEvent>(Util::UID(0)); // will raise an exception
+  return Ref<TrialEvent>(Util::UID(0)); // will raise an exception
 }
 
 int TimingHdlr::getElapsedMsec() const {
@@ -202,7 +202,7 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-int TimingHdlr::addEvent(IdItem<TrialEvent> event_item, TimePoint time_point) {
+int TimingHdlr::addEvent(Ref<TrialEvent> event_item, TimePoint time_point) {
 DOTRACE("TimingHdlr::addEvent");
 
   switch (time_point) {
@@ -235,7 +235,7 @@ int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
 DOTRACE("TimingHdlr::addEventByName");
 
   try {
-	 IdItem<TrialEvent> event_item(
+	 Ref<TrialEvent> event_item(
                          Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
 
 	 event_item->setDelay(msec_delay);

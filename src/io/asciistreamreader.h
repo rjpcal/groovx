@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Sat May 19 11:44:06 2001
+// written: Mon Jun 11 14:58:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,15 +64,16 @@ public:
   virtual double readDouble(const fixed_string& name);
   virtual void readValueObj(const fixed_string& name, Value& value);
 
-  virtual IdItem<IO::IoObject> readObject(const fixed_string& name);
-  virtual MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name);
+  virtual Util::Ref<IO::IoObject> readObject(const fixed_string& name);
+  virtual Util::MaybeRef<IO::IoObject>
+    readMaybeObject(const fixed_string& name);
 
   virtual void readOwnedObject(const fixed_string& name,
-										 IdItem<IO::IoObject> obj);
+										 Util::Ref<IO::IoObject> obj);
   virtual void readBaseClass(const fixed_string& baseClassName,
-									  IdItem<IO::IoObject> basePart);
+									  Util::Ref<IO::IoObject> basePart);
 
-  virtual IdItem<IO::IoObject> readRoot(IO::IoObject* root=0);
+  virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
   virtual fixed_string readStringImpl(const fixed_string& name);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Sat Jun  9 14:24:00 2001
+// written: Mon Jun 11 14:39:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ Tcl::IoCaster::IoCaster() {}
 Tcl::IoCaster::~IoCaster() {}
 
 bool Tcl::IoCaster::isMyType(int id) {
-  MaybeIdItem<Util::Object> item(id);
+  MaybeRef<Util::Object> item(id);
   return (item.isValid() && isMyType(item.get()));
 }
 

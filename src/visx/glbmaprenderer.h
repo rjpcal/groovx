@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Thu May 10 12:04:40 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ public:
 								int byte_alignment,
 								double zoom_x,
 								double zoom_y) const;
-  
+
   /// Query whether \c glBitmap() will be used to render the bitmap data.
   bool getUsingGlBitmap() const { return itsUsingGlBitmap; }
 

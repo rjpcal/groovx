@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue May 15 18:32:06 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -812,7 +812,7 @@ protected:
 
   virtual void invoke() {
 	 GLenum param_tag = getIntFromArg(1);
-	 
+
 	 const AttribInfo* theInfo = theirAttribs[param_tag];
 	 if ( theInfo == 0 ) { throw Tcl::TclError("invalid or unsupported enumerant"); }
 
@@ -1293,7 +1293,7 @@ DOTRACE("setBackgroundCmd");
     Tcl_WrongNumArgs(interp, 1, objv, "{ [index] or [R G B A] }");
     return TCL_ERROR;
   }
-  
+
   if (objc == 2) {
     int i;
     if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
@@ -1310,7 +1310,7 @@ DOTRACE("setBackgroundCmd");
 
   return TCL_OK;
 }
-  
+
 //--------------------------------------------------------------------
 //
 // TclGL::setForegroundCmd --
@@ -1334,7 +1334,7 @@ DOTRACE("setForegroundCmd");
     Tcl_WrongNumArgs(interp, 1, objv, "{ [index] or [R G B A] }");
     return TCL_ERROR;
   }
-  
+
   if (objc == 2) {
     int i;
     if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
@@ -1380,7 +1380,7 @@ DOTRACE("drawOneLineCmd");
     if (Tcl_GetDoubleFromObj(interp, objv[i], &(coord.at(i-1))) != TCL_OK)
       return TCL_ERROR;
   }
-  
+
   glBegin(GL_LINES);
   glVertex3d( coord[0], coord[1], 0.0);
   glVertex3d( coord[2], coord[3], 0.0);
@@ -1418,7 +1418,7 @@ DOTRACE("drawThickLineCmd");
     if (Tcl_GetDoubleFromObj(interp, objv[i], &(coord.at(i-1))) != TCL_OK)
       return TCL_ERROR;
   }
-  
+
   // construct the normal vector
   double a, b, c, d, norm;
   a = coord[2] - coord[0];      // (a, b) is the given vector
@@ -1427,7 +1427,7 @@ DOTRACE("drawThickLineCmd");
   norm = sqrt(a*a + b*b);       // (c, d) is the normal
   c = -b/norm*coord[4]/2;
   d = a/norm*coord[4]/2;
-  
+
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glBegin(GL_POLYGON);
   glVertex3d( coord[0]+c, coord[1]+d, 0.0);
@@ -1464,11 +1464,11 @@ DOTRACE("antialiasCmd");
     Tcl_WrongNumArgs(interp, 1, objv, "on_off");
     return TCL_ERROR;
   }
-    
+
   int on_off;
   if (Tcl_GetBooleanFromObj(interp, objv[1], &on_off) != TCL_OK) 
 	 return TCL_ERROR;
-  
+
   if (on_off == 1) {            // turn antialiasing on
     glEnable(GL_BLEND);
     glEnable(GL_POLYGON_SMOOTH);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Jun  8 18:46:39 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ namespace {
 	 {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, STROKE},
 	 {4, 3, PT}, {1, 3, PT}, {0, 2, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, END}
   };
-  
+
   CP bdata[] = {
 	 {0, 0, PT}, {0, 6, STROKE},
 	 {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, END}
@@ -363,7 +363,7 @@ namespace {
 //---------------------------------------------------------------------
 
   CP space_data[] = { {0, 0, END} };
-  
+
   CP exclamation_data[] = {
 	 {2, 6, PT}, {2, 2, STROKE},
 	 {2, 0, PT}, {2.25, 0.25, PT}, {2, 0.5, PT}, {1.75, 0.25, PT}, {2, 0, END}
@@ -462,7 +462,7 @@ namespace {
 	 {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {2, 3, PT}, {2, 2, STROKE},
 	 {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, END}
   };
-  
+
   CP at_data[] = {
 	 {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 2, PT}, {1.5, 2, PT}, {1, 2.5, PT}, {1, 3.5, PT},
                 {1.5, 4, PT}, {3, 4, PT}, {3, 2, END}
@@ -491,7 +491,7 @@ namespace {
   CP backquote_data[] = {
 	 {2, 6, PT}, {2, 5, PT}, {3, 4, END}
   };
-  
+
   CP left_curly_data[] = {
 	 {4, 6, PT}, {3, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {2.5, 3, PT}, {1.5, 3, STROKE},
 	 {2.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {3, 0, PT}, {4, 0, END}
@@ -533,11 +533,11 @@ namespace {
 		  glTranslatef(5.0, 0.0, 0.0);
 		  return;
 		}
-		
+
 		cp++;
 	 }
   }
-  
+
   GLuint getStrokeFontListBase() {
 	 static GLuint listBase = 0;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Thu May 10 12:04:44 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ namespace {
 	 XGCValues gc_values;
 	 gc_values.foreground = XWhitePixel(display,screen);
 	 gc_values.background = XBlackPixel(display,screen);
-	 
+
 	 unsigned long gc_valuemask = GCForeground | GCBackground;
 
 	 gfx_context_white = XCreateGC(display,win,gc_valuemask,&gc_values);

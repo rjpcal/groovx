@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Sat Jun  9 14:23:59 2001
+// written: Mon Jun 11 14:54:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@
 #include "io/iodecls.h"
 #endif
 
-template <class T> class IdItem;
-template <class T> class MaybeIdItem;
+namespace Util { template <class T> class Ref; }
+namespace Util { template <class T> class MaybeRef; }
 
 namespace IO {
   class IoObject;
@@ -132,22 +132,23 @@ public:
   template <class T>
   void readValue(const fixed_string& name, T& returnValue);
 
-  /** Get an \c IdItem associated with the tag \a name. A new object
+  /** Get a \c Util::Ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
       ObjDb, if necessary. */
-  virtual IdItem<IO::IoObject> readObject(const fixed_string& name) = 0;
+  virtual Util::Ref<IO::IoObject> readObject(const fixed_string& name) = 0;
 
-  /** Get a \c MaybeIdItem associated with the tag \a name. If no such
+  /** Get a \c MaybeRef associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
       the \c ObjDb, if necessary. */
-  virtual MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name) = 0;
+  virtual Util::MaybeRef<IO::IoObject> readMaybeObject(
+														 const fixed_string& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
   virtual void readOwnedObject(const fixed_string& name,
-										 IdItem<IO::IoObject> obj) = 0;
+										 Util::Ref<IO::IoObject> obj) = 0;
 
   /** Read the named base class into the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -155,14 +156,14 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
   virtual void readBaseClass(const fixed_string& baseClassName,
-									  IdItem<IO::IoObject> basePart) = 0;
+									  Util::Ref<IO::IoObject> basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
 		object. If \a root is non-null, the function will use \a root as
 		the root object. Otherwise the function will create a new root
 		object. In either case, the function returns the object that was
 		actually used as the root object. */
-  virtual IdItem<IO::IoObject> readRoot(IO::IoObject* root=0) = 0;
+  virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0) = 0;
 
 protected:
   /// Read the string attribute associated with the tag \a name.

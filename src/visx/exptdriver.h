@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun May 27 15:59:08 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ class TimingHdlr;
 
 class fixed_string;
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -91,8 +91,8 @@ public:
 		date/time-stamped. */
   void addLogInfo(const char* message);
 
-  void addBlock(IdItem<Block> block);
-  IdItem<Block> currentBlock() const;
+  void addBlock(Util::Ref<Block> block);
+  Util::Ref<Block> currentBlock() const;
 
   virtual Util::ErrorHandler& getErrorHandler();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat Jun  2 15:52:21 2001
+// written: Mon Jun 11 14:49:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,11 +44,11 @@ public:
   virtual void writeDouble(const char*, double)         { ++itsCount; }
   virtual void writeCstring(const char*, const char*)   { ++itsCount; }
   virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
-  virtual void writeObject(const char*, MaybeIdItem<const IO::IoObject>)
+  virtual void writeObject(const char*, MaybeRef<const IO::IoObject>)
     { ++itsCount; }
-  virtual void writeOwnedObject(const char*, IdItem<const IO::IoObject>)
+  virtual void writeOwnedObject(const char*, Ref<const IO::IoObject>)
     { ++itsCount; }
-  virtual void writeBaseClass(const char*, IdItem<const IO::IoObject>)
+  virtual void writeBaseClass(const char*, Ref<const IO::IoObject>)
     { ++itsCount; }
   virtual void writeRoot(const IO::IoObject*) {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Sat Jun  9 14:44:59 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -626,7 +626,7 @@ DOTRACE("Toglet::takeFocus");
 
 void Toglet::makeCurrent() {
 DOTRACE("Toglet::makeCurrent");
- 
+
   if (itsTogl) itsTogl->makeCurrent();
 }
 

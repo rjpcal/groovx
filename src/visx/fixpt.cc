@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Jun  1 14:17:25 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ void FixPt::grGetBoundingBox(Rect<double>& bbox,
 DOTRACE("FixPt::grGetBoundingBox");
   bbox.left()  = bbox.bottom() = -length()/2.0;
   bbox.right() = bbox.top()    =  length()/2.0;
-  
+
   border_pixels = 4;
 }
 
@@ -125,7 +125,7 @@ DOTRACE("FixPt::grRender");
   glVertex3f(-length()/2.0, 0.0, 0.0);
   glVertex3f(length()/2.0, 0.0, 0.0);
   glEnd();
-  
+
   glPopAttrib();
 }
 

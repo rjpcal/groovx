@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:06 1999
-// written: Wed Jun  6 19:44:30 2001
+// written: Mon Jun 11 14:49:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ namespace Util
 }
 
 /// Singleton wrapper for Factor<IO>.
-class Util::ObjFactory : public Factory<IdItem<Util::Object> > {
+class Util::ObjFactory : public Factory<Util::Ref<Util::Object> > {
 protected:
   /// Default constructor.
   ObjFactory();

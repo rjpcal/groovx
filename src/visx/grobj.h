@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  8 18:46:38 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -342,7 +342,7 @@ public:
 
   /// Change the value of the user-defined category to \a val.
   virtual void setCategory(int val);
-  
+
   /** Changes the current rendering mode to \a mode, unless the
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */

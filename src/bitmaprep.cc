@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Jun  1 14:26:57 2001
+// written: Mon Jun 11 15:08:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -353,7 +353,7 @@ DOTRACE("BitmapRep::center");
 
   itsImpl->itsRasterX = -screen_width/2.0;
   itsImpl->itsRasterY = -screen_height/2.0;
-  
+
   itsImpl->itsRasterX *= abs(itsImpl->itsZoomX);
   itsImpl->itsRasterY *= abs(itsImpl->itsZoomY);
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Thu May 10 12:04:39 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
 								int byte_alignment,
 								double zoom_x,
 								double zoom_y) const;
-  
+
   virtual void doUndraw(GWT::Canvas& canvas,
 					  int winRasterX, int winRasterY,
 					  int winWidthX, int winHeightY) const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Mon Jun 11 15:03:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,12 +139,12 @@ private:
 public:
   void writeValueObj(const char* name, const Value& value);
 
-  void writeObject(const char* name, MaybeIdItem<const IO::IoObject> obj);
+  void writeObject(const char* name, MaybeRef<const IO::IoObject> obj);
 
-  void writeOwnedObject(const char* name, IdItem<const IO::IoObject> obj);
+  void writeOwnedObject(const char* name, Ref<const IO::IoObject> obj);
 
   void writeBaseClass(const char* baseClassName,
-							 IdItem<const IO::IoObject> basePart);
+							 Ref<const IO::IoObject> basePart);
 
   template <class T>
   void writeBasicType(const char* name, T val,
@@ -244,7 +244,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
 
 void AsciiStreamWriter::Impl::writeObject(
   const char* name,
-  MaybeIdItem<const IO::IoObject> obj
+  MaybeRef<const IO::IoObject> obj
 ) {
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
 
@@ -254,7 +254,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
 	 itsBuf << obj->ioTypename().c_str() << " "
 			  << name << " := "
 			  << obj->id() << ATTRIB_ENDER;
-	 
+
 	 addObjectToBeHandled(obj.get());
   }
   else {
@@ -263,14 +263,14 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
 }
 
 void AsciiStreamWriter::Impl::writeOwnedObject(
-  const char* name, IdItem<const IO::IoObject> obj
+  const char* name, Ref<const IO::IoObject> obj
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
   writeObject(name, obj);
 }
 
 void AsciiStreamWriter::Impl::writeBaseClass(
-  const char* baseClassName, IdItem<const IO::IoObject> basePart
+  const char* baseClassName, Ref<const IO::IoObject> basePart
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
 
@@ -331,17 +331,17 @@ void AsciiStreamWriter::writeValueObj(const char* name, const Value& value) {
 }
 
 void AsciiStreamWriter::writeObject(const char* name,
-												MaybeIdItem<const IO::IoObject> obj) {
+												MaybeRef<const IO::IoObject> obj) {
   itsImpl.writeObject(name, obj);
 }
 
 void AsciiStreamWriter::writeOwnedObject(const char* name,
-													  IdItem<const IO::IoObject> obj) {
+													  Ref<const IO::IoObject> obj) {
   itsImpl.writeOwnedObject(name, obj);
 }
 
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
-													IdItem<const IO::IoObject> basePart) {
+													Ref<const IO::IoObject> basePart) {
   itsImpl.writeBaseClass(baseClassName, basePart);
 }
 

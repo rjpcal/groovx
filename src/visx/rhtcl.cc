@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ protected:
   virtual void invoke() 
 	 {
 		const char* device = objc() >= 2 ? getCstringFromArg(1) : "/dev/tty0p0";
-		  
+
 		itsEventSource = new SerialEventSource(interp(), device);
 	 }
 

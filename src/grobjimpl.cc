@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Jun  8 18:46:38 2001
+// written: Mon Jun 11 15:08:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ namespace {
 void GrObj::Impl::Scaler::doScaling() const {
 DOTRACE("GrObj::Impl::Scaler::doScaling");
   if (GrObj::NATIVE_SCALING == itsMode) return;
-	 
+
   switch (itsMode) {
   case GrObj::MAINTAIN_ASPECT_SCALING:
   case GrObj::FREE_SCALING:
@@ -143,7 +143,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 
 	 // Do the object's internal scaling and alignment, and find the
 	 // bounding box in screen coordinates
-	 
+
 	 Rect<int> screen_pos;
 
 	 {
@@ -156,16 +156,16 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 
 		screen_pos = canvas.getScreenFromWorld(getRaw());
 	 }  
-	 
+
 	 // Add a pixel border around the edges of the image...
 	 int bp = pixelBorder();
-	 
+
 	 screen_pos.widenByStep(bp);
 	 screen_pos.heightenByStep(bp);
 
 	 // ... and project back to world coordinates
 	 itsCachedFinalBB = canvas.getWorldFromScreen(screen_pos);
-	 
+
 	 // This next line is commented out to disable the caching scheme
 	 // because I don't think it really works, since changes to the
 	 // OpenGL state will screw up a cached copy of the box. What we
@@ -203,13 +203,13 @@ void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj,
 															 GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
   if (itsIsCurrent) return;
-  
+
   newList();
-  
+
   glNewList(itsDisplayList, GLCOMPILE);
   obj->grRender(canvas, GrObj::DRAW);
   glEndList();
-  
+
   postUpdated();
 }
 
@@ -219,7 +219,7 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   if (itsIsCurrent) return false;
 
   Assert(itsBitmapCache.get() != 0);
-  
+
   obj->undraw(canvas);
 
   Assert(obj->hasBB());
@@ -234,10 +234,10 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 	 glPushAttrib(GL_COLOR_BUFFER_BIT|GL_PIXEL_MODE_BIT);
 	 {
 		glDrawBuffer(GL_FRONT);
-		
+
 		obj->doScaling();
 		obj->doAlignment();
-		
+
 		obj->grRender(canvas, GrObj::DRAW);
 
 		glReadBuffer(GL_FRONT);
@@ -266,7 +266,7 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   if (GrObj::GL_BITMAP_CACHE == itsMode) {
 	 itsBitmapCache->flipContrast();
   }
-  
+
   postUpdated();
 
   return true;
@@ -361,7 +361,7 @@ DOTRACE("GrObj::Impl::Renderer::update");
   case GrObj::GLCOMPILE:
 	 recompileIfNeeded(obj, canvas);
 	 break;
-		
+
   case GrObj::GL_BITMAP_CACHE:
   case GrObj::X11_BITMAP_CACHE:
 	 objectDrawn = recacheBitmapIfNeeded(obj, canvas);
@@ -481,9 +481,9 @@ DOTRACE("GrObj::Impl::setWidth");
   if ( !hasBB() ) return;
 
   double new_width_factor = new_width / nativeWidth();
-  
+
   double change_factor = new_width_factor / itsScaler.itsWidthFactor;
-	 
+
   itsScaler.itsWidthFactor = new_width_factor;
 
   if (itsScaler.getMode() == GrObj::MAINTAIN_ASPECT_SCALING) {
@@ -686,15 +686,15 @@ DOTRACE("GrObj::Impl::invalidateCaches");
 void GrObj::Impl::doAlignment() const {
 DOTRACE("GrObj::Impl::doAlignment");
   if (GrObj::NATIVE_ALIGNMENT == itsAligner.itsMode) return;
-	 
+
   Assert(hasBB());
-	 
+
   double width = nativeWidth();
   double height = nativeHeight();
-	 
+
   // These indicate where the center of the object will go
   double centerX=0.0, centerY=0.0;
-	 
+
   switch (itsAligner.itsMode) {
   case GrObj::CENTER_ON_CENTER:
 	 centerX = 0.0; centerY = 0.0;
@@ -715,7 +715,7 @@ DOTRACE("GrObj::Impl::doAlignment");
 	 centerX = itsAligner.itsCenterX; centerY = itsAligner.itsCenterY;
 	 break;
   }
-	 
+
   glTranslated(centerX-nativeCenterX(),
 					centerY-nativeCenterY(),
 					0.0);
@@ -729,7 +729,7 @@ DOTRACE("GrObj::Impl::undrawDirectRender");
 
   doScaling();
   doAlignment();
-	 
+
   self->grRender(canvas, GrObj::UNDRAW);
 }
 
@@ -738,7 +738,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
 	 canvas.swapForeBack();
-	 
+
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
@@ -746,7 +746,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 
 		doScaling();
 		doAlignment();
-		  
+
 		if ( itsRenderer.getMode() == GrObj::GLCOMPILE ) {
 		  itsRenderer.callList();
 		}
@@ -797,7 +797,7 @@ DOTRACE("GrObj::Impl::undrawBoundingBox");
 
 		doScaling();
 		doAlignment();
-		  
+
 		grDrawBoundingBox(canvas);
 	 }
   }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sun Jun 10 16:08:27 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ class fixed_string;
  * virtually from IO::IoObject. IO::IoObject is reference counted (by
  * subclassing Util::Object), providing automatic memory management
  * when IO::IoObject's are managed with a smart pointer that manages
- * the reference count, such as PtrHandle or IdItem.
+ * the reference count, such as PtrHandle or Util::Ref.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 14:49:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "io/io.h"
 #endif
 
-template <class T> class IdItem;
+namespace Util { template <class T> class Ref; };
 
 class TrialBase;
 
@@ -65,7 +65,7 @@ public:
   virtual ~Block();
 
   /// Add the specified trialid to the block, 'repeat' number of times.
-  void addTrial(IdItem<TrialBase> trial, int repeat=1);
+  void addTrial(Util::Ref<TrialBase> trial, int repeat=1);
 
   /** Randomly permute the sequence of trialids, using seed as the
 		random seed for the shuffle. */

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Thu May 10 12:04:38 2001
+// written: Mon Jun 11 14:50:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@ namespace GWT {
 
 class GxNode;
 
-template <class T> class IdItem;
-template <class T> class MaybeIdItem;
+namespace Util { template <class T> class Ref; };
+namespace Util { template <class T> class MaybeRef; }
 
 class TrialBase;
 
@@ -59,7 +59,7 @@ public:
 
   void setHold(bool hold_on);
 
-  void setDrawable(const IdItem<GxNode>& node);
+  void setDrawable(const Util::Ref<GxNode>& node);
 
 private:
   Widget(const Widget&);

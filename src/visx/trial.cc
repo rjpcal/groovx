@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Jun 11 13:48:16 2001
+// written: Mon Jun 11 15:08:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,15 +87,15 @@ public:
 private:
   int itsCorrectResponse;
 
-  typedef minivec<IdItem<GxSeparator> > GxNodes;
+  typedef minivec<Ref<GxSeparator> > GxNodes;
   GxNodes itsGxNodes;
 
   unsigned int itsCurrentNode;
 
   minivec<Response> itsResponses;
   int itsType;
-  MaybeIdItem<ResponseHandler> itsRh;
-  MaybeIdItem<TimingHdlr> itsTh;
+  MaybeRef<ResponseHandler> itsRh;
+  MaybeRef<TimingHdlr> itsTh;
 
   TrialState itsState;
 
@@ -175,21 +175,21 @@ public:
   void setCorrectResponse(int response) { itsCorrectResponse = response; }
 
 #ifndef ACC_COMPILER
-  IdItem<ResponseHandler> getResponseHandler() const { return itsRh; }
-  void setResponseHandler(IdItem<ResponseHandler> rh) { itsRh = rh; }
+  Ref<ResponseHandler> getResponseHandler() const { return itsRh; }
+  void setResponseHandler(Ref<ResponseHandler> rh) { itsRh = rh; }
 
-  IdItem<TimingHdlr> getTimingHdlr() const { return itsTh; }
-  void setTimingHdlr(IdItem<TimingHdlr> th) { itsTh = th; }
+  Ref<TimingHdlr> getTimingHdlr() const { return itsTh; }
+  void setTimingHdlr(Ref<TimingHdlr> th) { itsTh = th; }
 #else
-  IdItem<ResponseHandler> getResponseHandler() const
-    { return IdItem<ResponseHandler>(itsRh); }
-  void setResponseHandler(IdItem<ResponseHandler> rh)
-    { itsRh = MaybeIdItem<ResponseHandler>(rh); }
+  Ref<ResponseHandler> getResponseHandler() const
+    { return Ref<ResponseHandler>(itsRh); }
+  void setResponseHandler(Ref<ResponseHandler> rh)
+    { itsRh = MaybeRef<ResponseHandler>(rh); }
 
-  IdItem<TimingHdlr> getTimingHdlr() const
-    { return IdItem<TimingHdlr>(itsTh); }
-  void setTimingHdlr(IdItem<TimingHdlr> th)
-    { itsTh = MaybeIdItem<TimingHdlr>(th); }
+  Ref<TimingHdlr> getTimingHdlr() const
+    { return Ref<TimingHdlr>(itsTh); }
+  void setTimingHdlr(Ref<TimingHdlr> th)
+    { itsTh = MaybeRef<TimingHdlr>(th); }
 #endif
 
   int trialType() const;
@@ -209,13 +209,13 @@ public:
 
   void addNode(Util::UID id)
   {
-	 IdItem<GxNode> obj(id);
+	 Ref<GxNode> obj(id);
 	 try {
-		IdItem<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
+		Ref<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
 		itsGxNodes.push_back(sep);		
 	 }
 	 catch (...) {
-		IdItem<GxSeparator> sep(GxSeparator::make());
+		Ref<GxSeparator> sep(GxSeparator::make());
 		sep->addChild(id);
 		itsGxNodes.push_back(sep);
 	 }
@@ -335,7 +335,7 @@ DOTRACE("Trial::Impl::description");
   static char buf[BUF_SIZE];
 
   ostrstream ost(buf, BUF_SIZE);
-  
+
   ost << "trial type == " << trialType()
       << ", objs ==";
 
@@ -419,7 +419,7 @@ DOTRACE("Trial::Impl::avgRespTime");
 void Trial::Impl::add(Util::UID objid, Util::UID posid) {
 DOTRACE("Trial::Impl::add");
 
-  IdItem<GxSeparator> sepitem(GxSeparator::make());
+  Ref<GxSeparator> sepitem(GxSeparator::make());
 
   sepitem->addChild(posid);
   sepitem->addChild(objid);
@@ -597,7 +597,7 @@ void Trial::Impl::installSelf(GWT::Widget& widget) const {
 DOTRACE("Trial::Impl::installSelf");
 
   if (itsCurrentNode < itsGxNodes.size())
-	 widget.setDrawable(IdItem<GxNode>(itsGxNodes[itsCurrentNode]));
+	 widget.setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
 }
 
 void Trial::Impl::undoLastResponse() {
@@ -673,17 +673,17 @@ void Trial::setCorrectResponse(int response)
   { itsImpl->setCorrectResponse(response); }
 
 
-IdItem<ResponseHandler> Trial::getResponseHandler() const
+Ref<ResponseHandler> Trial::getResponseHandler() const
   { return itsImpl->getResponseHandler(); }
 
-void Trial::setResponseHandler(IdItem<ResponseHandler> rh)
+void Trial::setResponseHandler(Ref<ResponseHandler> rh)
   { itsImpl->setResponseHandler(rh); }
 
 
-IdItem<TimingHdlr> Trial::getTimingHdlr() const
+Ref<TimingHdlr> Trial::getTimingHdlr() const
   { return itsImpl->getTimingHdlr(); }
 
-void Trial::setTimingHdlr(IdItem<TimingHdlr> th)
+void Trial::setTimingHdlr(Ref<TimingHdlr> th)
   { itsImpl->setTimingHdlr(th); }
 
 

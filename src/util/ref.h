@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Tue Jun  5 10:41:32 2001
+// written: Mon Jun 11 15:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,18 +29,22 @@
 #include "util/traits.h"
 #endif
 
+namespace Util
+{
+  template <class T> class Ref;
+  template <class T> class MaybeRef;
+}
 
-template <class T> class IdItem;
-template <class T> class MaybeIdItem;
-
+using Util::Ref;
+using Util::MaybeRef;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IdItemUtils helper functions
+// Util::RefHelper helper functions
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace IdItemUtils {
+namespace Util { namespace RefHelper {
   bool isValidId(Util::UID id);
   Util::Object* getCheckedItem(Util::UID id);
 
@@ -68,45 +72,48 @@ namespace IdItemUtils {
   template <>
   inline Util::Object* getCastedItem<Util::Object>(Util::UID id)
   { return getCheckedItem(id); }
-}
+
+}} // end namespace Util::RefHelpers
 
 
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * IdItem<T> is a wrapper of a PtrHandle<T> along with an integer
+ * Util::Ref<T> is a wrapper of a PtrHandle<T> along with an integer
  * index from a PtrList<T>.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
+namespace Util {
+
 template <class T>
-class IdItem {
+class Ref {
 private:
   PtrHandle<T> itsHandle;
 
 public:
   // Default destructor, copy constructor, operator=() are fine
 
-  explicit IdItem(Util::UID id) : itsHandle(IdItemUtils::getCastedItem<T>(id)) {}
+  explicit Ref(Util::UID id) : itsHandle(RefHelper::getCastedItem<T>(id)) {}
 
-  explicit IdItem(T* ptr) : itsHandle(ptr)
-    { IdItemUtils::insertItem(ptr); }
+  explicit Ref(T* ptr) : itsHandle(ptr)
+    { RefHelper::insertItem(ptr); }
 
-  IdItem(T* ptr, bool /*noInsert*/) : itsHandle(ptr) {}
+  Ref(T* ptr, bool /*noInsert*/) : itsHandle(ptr) {}
 
-  IdItem(PtrHandle<T> item) : itsHandle(item)
-    { IdItemUtils::insertItem(item.get()); }
+  Ref(PtrHandle<T> item) : itsHandle(item)
+    { RefHelper::insertItem(item.get()); }
 
-  IdItem(PtrHandle<T> item, bool /*noInsert*/) : itsHandle(item) {}
+  Ref(PtrHandle<T> item, bool /*noInsert*/) : itsHandle(item) {}
 
   template <class U>
-  IdItem(const IdItem<U>& other) : itsHandle(other.handle()) {}
+  Ref(const Ref<U>& other) : itsHandle(other.handle()) {}
 
-  // Will raise an exception if the MaybeIdItem is invalid
+  // Will raise an exception if the MaybeRef is invalid
   template <class U>
-  IdItem(const MaybeIdItem<U>& other);
+  Ref(const MaybeRef<U>& other);
 
   T* operator->() const { return itsHandle.get(); }
   T& operator*()  const { return *(itsHandle.get()); }
@@ -117,34 +124,36 @@ public:
   Util::UID id() const { return itsHandle->id(); }
 };
 
+// TypeTraits specialization for Util::Ref smart pointer
+
+template <class T>
+struct TypeTraits<Ref<T> > {
+  typedef T Pointee;
+};
+
+} // end namespace Util
+
 template <class To, class Fr>
-IdItem<To> dynamicCast(IdItem<Fr> p)
+Ref<To> dynamicCast(Ref<Fr> p)
 {
   Fr* f = p.get();
   To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-  return IdItem<To>(&t);
+  return Ref<To>(&t);
 }
-
-// TypeTraits specialization for IdItem smart pointer
-
-namespace Util {
-  template <class T>
-  struct TypeTraits<IdItem<T> > {
-	 typedef T Pointee;
-  };
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MaybeIdItem<T> is a wrapper of a NullablePtrHandle<T> along
+ * MaybeRef<T> is a wrapper of a NullablePtrHandle<T> along
  * with an integer index from a PtrList<T>.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
+namespace Util {
+
 template <class T>
-class MaybeIdItem {
+class MaybeRef {
 private:
   mutable NullablePtrHandle<T> itsHandle;
   Util::UID itsId;
@@ -152,40 +161,40 @@ private:
   void insertItem()
   {
 	 if (itsHandle.isValid())
-		IdItemUtils::insertItem(itsHandle.get());
+		RefHelper::insertItem(itsHandle.get());
   }
 
 public:
-  MaybeIdItem() : itsHandle(0), itsId(0) {}
+  MaybeRef() : itsHandle(0), itsId(0) {}
 
-  explicit MaybeIdItem(Util::UID id_) : itsHandle(0), itsId(id_) {}
+  explicit MaybeRef(Util::UID id_) : itsHandle(0), itsId(id_) {}
 
-  explicit MaybeIdItem(T* master) : itsHandle(master), itsId(0)
+  explicit MaybeRef(T* master) : itsHandle(master), itsId(0)
   {
 	 if (master != 0) itsId = master->id();
 	 insertItem();
   }
 
-  MaybeIdItem(T* master, bool /*noInsert*/) : itsHandle(master), itsId(0)
+  MaybeRef(T* master, bool /*noInsert*/) : itsHandle(master), itsId(0)
     { if (master != 0) itsId = master->id(); }
 
 
-  MaybeIdItem(PtrHandle<T> item) : itsHandle(item), itsId(item->id())
+  MaybeRef(PtrHandle<T> item) : itsHandle(item), itsId(item->id())
     { insertItem(); }
 
-  MaybeIdItem(PtrHandle<T> item, bool /*noInsert*/) :
+  MaybeRef(PtrHandle<T> item, bool /*noInsert*/) :
 	 itsHandle(item), itsId(item->id())
     {}
 
 
-  MaybeIdItem(NullablePtrHandle<T> item) :
+  MaybeRef(NullablePtrHandle<T> item) :
 	 itsHandle(item), itsId(0)
   {
 	 if (itsHandle.isValid()) itsId = itsHandle->id();
     insertItem();
   }
 
-  MaybeIdItem(NullablePtrHandle<T> item, bool /*noInsert*/) :
+  MaybeRef(NullablePtrHandle<T> item, bool /*noInsert*/) :
 	 itsHandle(item), itsId(0)
   {
 	 if (itsHandle.isValid()) itsId = itsHandle->id();
@@ -193,18 +202,18 @@ public:
 
 
   template <class U>
-  MaybeIdItem(const MaybeIdItem<U>& other) :
+  MaybeRef(const MaybeRef<U>& other) :
 	 itsHandle(other.handle()), itsId(other.id()) {}
 
   template <class U>
-  MaybeIdItem(const IdItem<U>& other) :
+  MaybeRef(const Ref<U>& other) :
 	 itsHandle(other.handle()), itsId(other.id()) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
   T* operator->() const { refresh(); return itsHandle.get(); }
   T& operator*()  const { refresh(); return *(itsHandle.get()); }
-  
+
   T* get()        const { refresh(); return itsHandle.get(); }
 
   /** This will try to refresh the handle from the id, and will throw
@@ -212,7 +221,7 @@ public:
   void refresh() const {
 	 if ( !itsHandle.isValid() )
 		{
-		  IdItem<T> p(itsId);
+		  Ref<T> p(itsId);
 		  itsHandle = p.handle();
 		  if (itsId != itsHandle->id())
 			 throw ErrorWithMsg("assertion failed in refresh");
@@ -226,8 +235,8 @@ public:
   void attemptRefresh() const {
 	 if ( !itsHandle.isValid() )
 		{
-		  if (IdItemUtils::isValidId(itsId)) {
-			 IdItem<T> p(itsId);
+		  if (RefHelper::isValidId(itsId)) {
+			 Ref<T> p(itsId);
 			 itsHandle = p.handle();
 			 if (itsId != itsHandle->id())
 				throw ErrorWithMsg("assertion failed in attemptRefresh");
@@ -242,26 +251,26 @@ public:
   Util::UID id() const { return itsId; }
 };
 
+// TypeTraits specialization for MaybeRef smart pointer
+
+  template <class T>
+  struct TypeTraits<MaybeRef<T> > {
+	 typedef T Pointee;
+  };
+
+} // end namespace Util
+
 template <class To, class Fr>
-MaybeIdItem<To> dynamicCast(MaybeIdItem<Fr> p)
+MaybeRef<To> dynamicCast(MaybeRef<Fr> p)
 {
   if (p.isValid())
 	 {
 		Fr* f = p.get();
 		To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-		return MaybeIdItem<To>(&t);
+		return MaybeRef<To>(&t);
 	 }
-  return MaybeIdItem<To>(p.id());
+  return MaybeRef<To>(p.id());
 }
-
-// TypeTraits specialization for MaybeIdItem smart pointer
-
-namespace Util {
-  template <class T>
-  struct TypeTraits<MaybeIdItem<T> > {
-	 typedef T Pointee;
-  };
-};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -271,7 +280,7 @@ namespace Util {
 
 template <class T>
 template <class U>
-inline IdItem<T>::IdItem(const MaybeIdItem<U>& other) :
+inline Util::Ref<T>::Ref(const MaybeRef<U>& other) :
   itsHandle(other.get())
 {}
 
