@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Sat Mar 11 23:09:08 2000
+// written: Tue Mar 14 14:12:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "value.h"
 #include "util/arrays.h"
 
-// #include <cctype>
 #include <iostream.h>
 #include <strstream.h>
 #include <map>
@@ -195,6 +194,7 @@ public:
 	 void assign(const string& attrib_name,
 					 const char* type, const char* value)
 		{
+		DOTRACE("AsciiStreamReader::Impl::AttribMap::assign");
 		  Attrib& attrib = itsMap[attrib_name];
 		  attrib.type = type;
 		  attrib.value = value;    DebugEvalNL(attrib.value);
