@@ -70,8 +70,11 @@ public:
   /// Create a Time representing current wall-clock time.
   static Time wallClockNow() throw();
 
-  /// Create a Time representing the current process's cpu usage.
-  static Time rusageNow() throw();
+  /// Create a Time representing the current process's user cpu usage.
+  static Time rusageUserNow() throw();
+
+  /// Create a Time representing the current process's sys cpu usage.
+  static Time rusageSysNow() throw();
 
   /// Reset to given seconds+microseconds values.
   void reset(unsigned long s = 0, long us = 0) throw()
