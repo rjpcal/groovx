@@ -27,7 +27,7 @@ namespace {
 }
 
 ConstSlice::ConstSlice() :
-  itsStorage(dummyMtx.storage_),
+  itsStorage(dummyMtx.itsImpl.storage_),
   itsOffset(0),
   itsStride(1),
   itsNelems(0)
@@ -46,26 +46,38 @@ Slice& Slice::operator=(const ConstSlice& other)
   return *this;
 }
 
+Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
+{
+  init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+}
+
+void Mtx::MtxImpl::reshape(int mr, int nc)
+{
+  if (mr*nc != nelems())
+    throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
+
+  if (rowstride_ != mrows_)
+    throw ErrorWithMsg("reshape not allowed for submatrix");
+
+  mrows_ = mr;
+  rowstride_ = mr;
+  ncols_ = nc;
+}
+
+void Mtx::MtxImpl::selectRowRange(int r, int nr)
+{
+  if ((r+nr) > mrows_)
+    throw ErrorWithMsg("attempted to index more rows than are available");
+
+  start_ += r;
+  mrows_ = nr;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Mtx member definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-void Mtx::initialize(double* data, int mrows, int ncols, StoragePolicy s)
-{
-  if (s == COPY)
-    storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
-  else
-    storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
-
-  mrows_ = mrows;
-  rowstride_ = mrows;
-  ncols_ = ncols;
-  start_ = storage_->itsData;
-
-  storage_->incrRefCount();
-}
 
 const Mtx& Mtx::emptyMtx()
 {
@@ -73,81 +85,45 @@ const Mtx& Mtx::emptyMtx()
   return m;
 }
 
-Mtx::Mtx(mxArray* a, StoragePolicy s)
-{
-  initialize(mxGetPr(a), mxGetM(a), mxGetN(a), s);
-}
-
-Mtx::Mtx(int mrows, int ncols) :
-  storage_(DataBlock::makeBlank(mrows*ncols)),
-  mrows_(mrows),
-  rowstride_(mrows),
-  ncols_(ncols),
-  start_(storage_->itsData)
-{
-  storage_->incrRefCount();
-}  
-
-Mtx::Mtx(const ConstSlice& s)
+Mtx::Mtx(const ConstSlice& s) :
+  itsImpl(s.data(), s.nelems(), 1, BORROW)
 {
   if (s.itsStride != 1)
     throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
-
-  initialize(s.data(), s.nelems(), 1, BORROW);
-}
-
-Mtx::~Mtx()
-{
-  storage_->decrRefCount();
 }
 
 mxArray* Mtx::makeMxArray() const
 {
-  mxArray* result_mx = mxCreateDoubleMatrix(mrows_, ncols_, mxREAL);
+  mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
 
   const int n = nelems();
 
   double* matdata = mxGetPr(result_mx);
 
   for (int i = 0; i < n; ++i)
-    matdata[i] = start_[i];
+    matdata[i] = itsImpl.at(itsImpl.offsetFromStart(i));
 
   return result_mx;
 }
 
 void Mtx::print() const
 {
-  mexPrintf("mrows = %d, ncols = %d\n", mrows_, ncols_);
-  for(int i = 0; i < mrows_; ++i)
+  mexPrintf("mrows = %d, ncols = %d\n", mrows(), ncols());
+  for(int i = 0; i < mrows(); ++i)
     {
-      for(int j = 0; j < ncols_; ++j)
+      for(int j = 0; j < ncols(); ++j)
         mexPrintf("%7.4f   ", at(i,j));
       mexPrintf("\n");
     }
   mexPrintf("\n");
 }
 
-void Mtx::reshape(int mrows, int ncols)
-{
-  if (mrows*ncols != mrows_*ncols_)
-    throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
-
-  if (rowstride_ != mrows_)
-    throw ErrorWithMsg("reshape not allowed for submatrix");
-
-  mrows_ = mrows;
-  rowstride_ = mrows;
-  ncols_ = ncols;
-}
-
 Mtx Mtx::rows(int r, int nr) const
 {
-  if ((r+nr) > mrows_)
-    throw ErrorWithMsg("attempted to index more rows than are available");
-
   Mtx result(*this);
-  result.start_ += r;
-  result.mrows_ = nr;
+
+  result.itsImpl.selectRowRange(r, nr);
+
   return result;
 }
 
@@ -187,16 +163,6 @@ void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
 
 		for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
 		  *rowElement = innerProduct(veciter, m2.colIter(col));
-    }
-}
-
-void Mtx::makeUnique()
-{
-  if ( !storage_->isUnique() )
-    {
-      ptrdiff_t offset = start_ - storage_->itsData;
-      DataBlock::makeUnique(storage_);
-      start_ = storage_->itsData + offset;
     }
 }
 
