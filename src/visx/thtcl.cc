@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Jul 21 20:19:59 2001
+// written: Sat Aug 25 22:00:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,7 @@
 
 #include "util/objfactory.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
 namespace ThTcl
 {
@@ -51,66 +48,7 @@ namespace ThTcl
   {
     return th->addEventByName(event_type, TimingHdlr::FROM_ABORT, msec);
   }
-
-  class ThPkg;
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// ThPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class ThTcl::ThPkg: public Tcl::Pkg {
-public:
-  ThPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Th", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<TimingHdlr>(this);
-
-    def( "addImmediateEvent", "th_id event_type msec_delay",
-         &ThTcl::addImmediateEvent );
-    def( "addStartEvent", "th_id event_type msec_delay",
-         &ThTcl::addStartEvent );
-    def( "addResponseEvent", "th_id event_type msec_delay",
-         &ThTcl::addResponseEvent );
-    def( "addAbortEvent", "th_id event_type msec_delay",
-         &ThTcl::addAbortEvent );
-
-    Pkg::eval("namespace eval Th { "
-              "    proc autosavePeriod {id args} { "
-              "        error {use Expt::autosavePeriod instead} } }");
-  }
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// SimpleThPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace SimpleThTcl
-{
-  class SimpleThPkg;
-}
-
-class SimpleThTcl::SimpleThPkg : public Tcl::Pkg {
-public:
-  SimpleThPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "SimpleTh", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<TimingHandler>(this);
-
-    defAttrib("abortWait",
-              &TimingHandler::getAbortWait,
-              &TimingHandler::setAbortWait);
-    defAttrib("interTrialInterval",
-              &TimingHandler::getInterTrialInterval,
-              &TimingHandler::setInterTrialInterval);
-    defAttrib("stimDur", &TimingHandler::getStimDur, &TimingHandler::setStimDur);
-    defAttrib("timeout", &TimingHandler::getTimeout, &TimingHandler::setTimeout);
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -138,8 +76,35 @@ DOTRACE("Th_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
 
-  Tcl::Pkg* pkg1 = new ThTcl::ThPkg(interp);
-  Tcl::Pkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
+  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Th", "$Revision$");
+  Tcl::defGenericObjCmds<TimingHdlr>(pkg1);
+
+  pkg1->def( "addImmediateEvent", "th_id event_type msec_delay",
+             &ThTcl::addImmediateEvent );
+  pkg1->def( "addStartEvent", "th_id event_type msec_delay",
+             &ThTcl::addStartEvent );
+  pkg1->def( "addResponseEvent", "th_id event_type msec_delay",
+             &ThTcl::addResponseEvent );
+  pkg1->def( "addAbortEvent", "th_id event_type msec_delay",
+             &ThTcl::addAbortEvent );
+
+  pkg1->eval("namespace eval Th { "
+             "    proc autosavePeriod {id args} { "
+             "        error {use Expt::autosavePeriod instead} } }");
+
+
+
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "SimpleTh", "$Revision$");
+  Tcl::defGenericObjCmds<TimingHandler>(pkg2);
+
+  pkg2->defAttrib("abortWait",
+                  &TimingHandler::getAbortWait,
+                  &TimingHandler::setAbortWait);
+  pkg2->defAttrib("interTrialInterval",
+                  &TimingHandler::getInterTrialInterval,
+                  &TimingHandler::setInterTrialInterval);
+  pkg2->defAttrib("stimDur", &TimingHandler::getStimDur, &TimingHandler::setStimDur);
+  pkg2->defAttrib("timeout", &TimingHandler::getTimeout, &TimingHandler::setTimeout);
 
   return Tcl::Pkg::initStatus(pkg1, pkg2);
 }

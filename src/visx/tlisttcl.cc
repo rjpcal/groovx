@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Aug 14 11:10:07 2001
+// written: Sat Aug 25 22:01:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,10 +29,7 @@
 #include <fstream.h>
 #include <strstream.h>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -68,15 +65,7 @@ namespace TlistTcl
     sep->addChild(obj2);
     return sep;
   }
-
-  class TlistPkg;
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// Tlist Tcl package definitions
-//
-///////////////////////////////////////////////////////////////////////
 
 //---------------------------------------------------------------------
 //
@@ -313,34 +302,6 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
   return result;
 }
 
-//---------------------------------------------------------------------
-//
-// TlistTcl::TlistPkg --
-//
-//---------------------------------------------------------------------
-
-class TlistTcl::TlistPkg : public Tcl::Pkg {
-public:
-  TlistPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Tlist", "$Revision$")
-  {
-    def( "createPreview", "objids", &TlistTcl::createPreview );
-
-    def( "dealSingles", "objid(s) posid", &TlistTcl::dealSingles );
-    def( "dealPairs", "objids1 objids2 posid1 posid2", &TlistTcl::dealPairs );
-    def( "dealTriads", "objids posid1 posid2 posid3", &TlistTcl::dealTriads );
-
-    def( "loadObjidFile", "objid_file objids posids",
-         &TlistTcl::loadObjidFile );
-    def( "loadObjidFile", "objid_file objids posids num_lines=-1",
-         &TlistTcl::loadObjidFileAll );
-
-    def( "write_responses", "filename", &TlistUtils::writeResponses );
-    def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix );
-    def( "writeMatlab", "filename", &TlistUtils::writeMatlab );
-  }
-};
-
 //--------------------------------------------------------------------
 //
 // TlistTcl::Tlist_Init --
@@ -352,7 +313,24 @@ int Tlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tlist_Init");
 
-  Tcl::Pkg* pkg = new TlistTcl::TlistPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Tlist", "$Revision$");
+  pkg->def( "createPreview", "objids", &TlistTcl::createPreview );
+
+  pkg->def( "dealSingles", "objid(s) posid",
+            &TlistTcl::dealSingles );
+  pkg->def( "dealPairs", "objids1 objids2 posid1 posid2",
+            &TlistTcl::dealPairs );
+  pkg->def( "dealTriads", "objids posid1 posid2 posid3",
+            &TlistTcl::dealTriads );
+
+  pkg->def( "loadObjidFile", "objid_file objids posids",
+            &TlistTcl::loadObjidFile );
+  pkg->def( "loadObjidFile", "objid_file objids posids num_lines=-1",
+            &TlistTcl::loadObjidFileAll );
+
+  pkg->def( "write_responses", "filename", &TlistUtils::writeResponses );
+  pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix );
+  pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab );
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Aug  9 11:42:02 2001
+// written: Sat Aug 25 21:56:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,92 +128,6 @@ namespace SerialRhTcl
   }
 }
 
-class SerialRhTcl::SerialRhPkg : public Tcl::Pkg {
-public:
-  SerialRhPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "SerialRh", "$Revision$")
-    {
-      defRaw( "SerialRh::SerialRh", 1, "device=/dev/tty0p0",
-              &SerialRhTcl::startSerial );
-      defRaw( "SerialRh::SerialRh", 0, "", &SerialRhTcl::startSerial );
-    }
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// EventRhPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace EventRhTcl
-{
-  class EventRhPkg;
-}
-
-class EventRhTcl::EventRhPkg : public Tcl::Pkg {
-public:
-  EventRhPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "EventRh", "$Revision$")
-  {
-    Tcl::defTracing(this, EventResponseHdlr::tracer);
-
-    Tcl::defGenericObjCmds<EventResponseHdlr>(this);
-
-    defAction("abortInvalidResponses",
-              &EventResponseHdlr::abortInvalidResponses);
-    defAction("ignoreInvalidResponses",
-              &EventResponseHdlr::ignoreInvalidResponses);
-    defAttrib("useFeedback",
-              &EventResponseHdlr::getUseFeedback,
-              &EventResponseHdlr::setUseFeedback);
-    defAttrib("inputResponseMap",
-              &EventResponseHdlr::getInputResponseMap,
-              &EventResponseHdlr::setInputResponseMap);
-    defAttrib("feedbackMap",
-              &EventResponseHdlr::getFeedbackMap,
-              &EventResponseHdlr::setFeedbackMap);
-    defAttrib("eventSequence",
-              &EventResponseHdlr::getEventSequence,
-              &EventResponseHdlr::setEventSequence);
-    defAttrib("bindingSubstitution",
-              &EventResponseHdlr::getBindingSubstitution,
-              &EventResponseHdlr::setBindingSubstitution);
-
-  }
-};
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// KbdRhPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace KbdRhTcl {
-  class KbdRhPkg;
-}
-
-class KbdRhTcl::KbdRhPkg : public Tcl::Pkg {
-public:
-  KbdRhPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "KbdRh", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<KbdResponseHdlr>(this);
-
-    Tcl::Pkg::eval("namespace eval KbdRh {\n"
-                   "  proc useFeedback args {\n"
-                   "    return [eval EventRh::useFeedback $args]\n"
-                   "  }\n"
-                   "  proc keyRespPairs args {\n"
-                   "    return [eval EventRh::inputResponseMap $args]\n"
-                   "  }\n"
-                   "  proc feedbackPairs args {\n"
-                   "    return [eval EventRh::feedbackMap $args]\n"
-                   "  }\n"
-                   "}\n");
-  }
-};
-
 
 //--------------------------------------------------------------------
 //
@@ -224,19 +138,78 @@ public:
 extern "C"
 int Rh_Init(Tcl_Interp* interp)
 {
-DOTRACE("Rh_Init");
+  DOTRACE("Rh_Init");
+
+  //
+  // Rh
+  //
 
   Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Rh", "$Revision$");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg1);
 
-  Tcl::Pkg* pkg2 = new EventRhTcl::EventRhPkg(interp);
+  //
+  // EventRh
+  //
 
-  Tcl::Pkg* pkg3 = new KbdRhTcl::KbdRhPkg(interp);
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "EventRh", "$Revision$");
+  Tcl::defTracing(pkg2, EventResponseHdlr::tracer);
+
+  Tcl::defGenericObjCmds<EventResponseHdlr>(pkg2);
+
+  pkg2->defAction("abortInvalidResponses",
+                  &EventResponseHdlr::abortInvalidResponses);
+  pkg2->defAction("ignoreInvalidResponses",
+                  &EventResponseHdlr::ignoreInvalidResponses);
+  pkg2->defAttrib("useFeedback",
+                  &EventResponseHdlr::getUseFeedback,
+                  &EventResponseHdlr::setUseFeedback);
+  pkg2->defAttrib("inputResponseMap",
+                  &EventResponseHdlr::getInputResponseMap,
+                  &EventResponseHdlr::setInputResponseMap);
+  pkg2->defAttrib("feedbackMap",
+                  &EventResponseHdlr::getFeedbackMap,
+                  &EventResponseHdlr::setFeedbackMap);
+  pkg2->defAttrib("eventSequence",
+                  &EventResponseHdlr::getEventSequence,
+                  &EventResponseHdlr::setEventSequence);
+  pkg2->defAttrib("bindingSubstitution",
+                  &EventResponseHdlr::getBindingSubstitution,
+                  &EventResponseHdlr::setBindingSubstitution);
+
+  //
+  // KbdRh
+  //
+
+  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "KbdRh", "$Revision$");
+  Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg3);
+
+  pkg3->eval("namespace eval KbdRh {\n"
+             "  proc useFeedback args {\n"
+             "    return [eval EventRh::useFeedback $args]\n"
+             "  }\n"
+             "  proc keyRespPairs args {\n"
+             "    return [eval EventRh::inputResponseMap $args]\n"
+             "  }\n"
+             "  proc feedbackPairs args {\n"
+             "    return [eval EventRh::feedbackMap $args]\n"
+             "  }\n"
+             "}\n");
+
+  //
+  // NullRh
+  //
 
   Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "NullRh", "$Revision$");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg4);
 
-  Tcl::Pkg* pkg5 = new SerialRhTcl::SerialRhPkg(interp);
+  //
+  // SerialRh
+  //
+
+  Tcl::Pkg* pkg5 = new Tcl::Pkg(interp, "SerialRh", "$Revision$");
+  pkg5->defRaw( "SerialRh::SerialRh", 1, "device=/dev/tty0p0",
+                &SerialRhTcl::startSerial );
+  pkg5->defRaw( "SerialRh::SerialRh", 0, "", &SerialRhTcl::startSerial );
 
   Util::ObjFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Aug 15 12:25:23 2001
+// written: Sat Aug 25 22:02:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,71 +21,42 @@
 #include "gfx/gxnode.h"
 
 #include "tcl/fieldpkg.h"
-#include "tcl/tclmemfunctor.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
-
-namespace TrialTcl
-{
-  class TrialPkg;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// TrialPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class TrialTcl::TrialPkg : public Tcl::Pkg {
-public:
-  TrialPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Trial", "$Revision$")
-  {
-    Tcl::defTracing(this, Trial::tracer);
-
-    Tcl::defFieldContainer<Trial>(this);
-    Tcl::defCreator<Trial>(this);
-
-    defSetter("addNode", &Trial::addNode);
-    defGetter("avgResponse", &Trial::avgResponse);
-    defGetter("avgRespTime", &Trial::avgRespTime);
-    defAction("clearObjs", &Trial::clearObjs);
-    defAction("clearResponses", &Trial::clearResponses);
-    defAttrib("correctResponse",
-              &Trial::getCorrectResponse, &Trial::setCorrectResponse);
-    defAttrib("currentNode",
-              &Trial::getCurrentNode, &Trial::setCurrentNode);
-    defGetter("description", &Trial::description);
-    defGetter("lastResponse", &Trial::lastResponse);
-    defAction("nextNode", &Trial::trNextNode);
-    defGetter("numResponses", &Trial::numResponses);
-    defAttrib("responseHdlr",
-              &Trial::getResponseHandler, &Trial::setResponseHandler);
-    defAttrib("timingHdlr",
-              &Trial::getTimingHdlr, &Trial::setTimingHdlr);
-    defAttrib("type", &Trial::trialType, &Trial::setType);
-    defAction("undoLastResponse", &Trial::undoLastResponse);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// Trial_Init --
-//
-//---------------------------------------------------------------------
 
 extern "C"
 int Trial_Init(Tcl_Interp* interp)
 {
 DOTRACE("Trial_Init");
 
-  Tcl::Pkg* pkg = new TrialTcl::TrialPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Trial", "$Revision$");
+  Tcl::defTracing(pkg, Trial::tracer);
+
+  Tcl::defFieldContainer<Trial>(pkg);
+  Tcl::defCreator<Trial>(pkg);
+
+  pkg->defSetter("addNode", &Trial::addNode);
+  pkg->defGetter("avgResponse", &Trial::avgResponse);
+  pkg->defGetter("avgRespTime", &Trial::avgRespTime);
+  pkg->defAction("clearObjs", &Trial::clearObjs);
+  pkg->defAction("clearResponses", &Trial::clearResponses);
+  pkg->defAttrib("correctResponse",
+                 &Trial::getCorrectResponse, &Trial::setCorrectResponse);
+  pkg->defAttrib("currentNode",
+                 &Trial::getCurrentNode, &Trial::setCurrentNode);
+  pkg->defGetter("description", &Trial::description);
+  pkg->defGetter("lastResponse", &Trial::lastResponse);
+  pkg->defAction("nextNode", &Trial::trNextNode);
+  pkg->defGetter("numResponses", &Trial::numResponses);
+  pkg->defAttrib("responseHdlr",
+                 &Trial::getResponseHandler, &Trial::setResponseHandler);
+  pkg->defAttrib("timingHdlr",
+                 &Trial::getTimingHdlr, &Trial::setTimingHdlr);
+  pkg->defAttrib("type", &Trial::trialType, &Trial::setType);
+  pkg->defAction("undoLastResponse", &Trial::undoLastResponse);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 
