@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Sat Aug 25 21:25:37 2001
+// written: Thu Sep 13 11:27:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,7 @@
 
 #include "tcl/tclpkg.h"
 
-#define LOCAL_TRACE
 #include "util/trace.h"
-#define LOCAL_DEBUG
-#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -49,28 +46,17 @@ void operator delete(void* space)
 }
 #endif
 
-#include "tcl/tcltimer.h"
-#include <iostream>
+#define LOCAL_DEBUG
+#include "util/debug.h"
+
+#undef LOCAL_DEBUG
+#include "util/debug.h"
 
 namespace HookTcl
 {
-  Tcl::Timer aTimer(1000);
-
-  class H : public Util::Object
-  {
-  public:
-    H() { aTimer.setRepeating(true); aTimer.sigTimeOut.connect(this, &H::doit); }
-
-    static H* make() { return new H; }
-
-    void doit() { std::cout << "H::doit!" << std::endl; }
-  };
-
-  Util::Ref<H> anH(H::make());
-
   void hook()
   {
-    aTimer.schedule();
+    DebugPrintNL("foo!");
   }
 
   size_t memUsage() { return TOTAL; }
@@ -80,7 +66,7 @@ extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Hook", "$Revision$");
-  pkg->def( "::hook", "variable", HookTcl::hook );
+  pkg->def( "::hook", "", HookTcl::hook );
   pkg->def( "::memUsage", 0, HookTcl::memUsage );
 
   return pkg->initStatus();
