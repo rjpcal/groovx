@@ -193,12 +193,13 @@ AglWrapper::AglWrapper(Display* dpy, GlxOpts& opts) :
 {
 DOTRACE("AglWrapper::AglWrapper");
 
-  const AGLDevice* gdevs = 0; // AGLDevice is an alias for GDHandle
-  GLint ndev = 0;
+  // AGLDevice is a typedef for GDHandle
+  AGLDevice gdev = GetMainDevice();
+  const GLint ndev = 1;
 
   AttribList attribs(opts);
 
-  itsPixFormat = aglChoosePixelFormat(gdevs, ndev, attribs.get());
+  itsPixFormat = aglChoosePixelFormat(&gdev, ndev, attribs.get());
 
   if (itsPixFormat == 0)
     throw Util::Error("couldn't choose Apple-OpenGL pixel format");
@@ -273,7 +274,19 @@ void AglWrapper::makeCurrent(Window win)
 {
 DOTRACE("AglWrapper::makeCurrent");
 
+  // AGLDrawable is a typedef for CGrafPtr
   CGrafPtr drawable = TkMacOSXGetDrawablePort(win);
+
+  if (GET_DBG_LEVEL() >= 3)
+    {
+      WindowRef macWindow = GetWindowFromPort(drawable);
+      Rect rectPort;
+      GetWindowPortBounds (macWindow, &rectPort);
+      dbgEval(0, rectPort.right);
+      dbgEvalNL(0, rectPort.left);
+      dbgEval(0, rectPort.bottom);
+      dbgEvalNL(0, rectPort.top);
+    }
 
   int status1 = aglSetDrawable(itsContext, drawable);
 
@@ -288,6 +301,16 @@ DOTRACE("AglWrapper::makeCurrent");
   int status3 = aglUpdateContext(itsContext);
 
   if (status3 == GL_FALSE)
+    throw Util::Error("couldn't update Apple-OpenGL context");
+}
+
+void AglWrapper::onReshape(int /*width*/, int /*height*/)
+{
+DOTRACE("AglWrapper::onReshape");
+
+  int status = aglUpdateContext(itsContext);
+
+  if (status == GL_FALSE)
     throw Util::Error("couldn't update Apple-OpenGL context");
 }
 

@@ -54,6 +54,9 @@ public:
   /// Bind the rendering context to the given window.
   virtual void makeCurrent(Window win) = 0;
 
+  /// Should be called when the corresponding window's geometry is changed.
+  virtual void onReshape(int width, int height) = 0;
+
   /// Swaps buffers if in double-buffering mode.
   virtual void swapBuffers() const = 0;
 

@@ -285,6 +285,7 @@ void Toglet::reshapeCallback(int width, int height)
 {
 DOTRACE("Toglet::reshapeCallback");
   makeCurrent();
+  rep->glx->onReshape(width, height);
   rep->scene->reshape(width, height);
 }
 

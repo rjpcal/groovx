@@ -276,6 +276,11 @@ DOTRACE("GlxWrapper::makeCurrent");
     }
 }
 
+void GlxWrapper::onReshape(int /*width*/, int /*height*/)
+{
+  // nothing to do here
+}
+
 bool GlxWrapper::isDoubleBuffered() const
 {
 DOTRACE("GlxWrapper::isDoubleBuffered");
