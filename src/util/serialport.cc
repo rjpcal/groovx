@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Tue Feb 25 14:06:54 2003
+// written: Wed Feb 26 16:37:01 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,11 @@
 
 #include <cstdio>
 #include <fcntl.h>
+#ifdef HAVE_ISTREAM
 #include <istream>
+#else
+#include <istream.h>
+#endif
 #include <termios.h>
 #include <unistd.h>
 
