@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Oct 24 13:07:39 2000
+// written: Fri Oct 27 16:02:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,8 +146,8 @@ DOTRACE("Th_Init");
   Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
   Tcl::TclPkg* pkg3 =
-	 new Tcl::IoPtrListPkg(interp, ThList::theThList(),
-								  "ThList", "$Revision$");
+	 new Tcl::PtrListPkg<TimingHdlr>(interp, ThList::theThList(),
+												"ThList", "$Revision$");
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
