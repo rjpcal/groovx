@@ -190,19 +190,11 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
-		--module Visx \
-		--module Gfx \
-		--module GWT \
-		--module Tcl \
-		--module IO \
-		--module Gx \
-		--module System \
-		--module Util \
-		>
+		--modules "Visx,Gfx,GWT,Tcl,IO,Gx,System,Util"
 
 $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
-	$(LIB_DEP_CMD) $@
+	$(LIB_DEP_CMD) > $@
 
 include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 
