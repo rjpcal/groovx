@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Fri May 11 15:17:50 2001
+// written: Wed Jun 20 17:27:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,64 +97,64 @@ public:
   //
 
   bool operator<(const char* other) const
-	 { return strcmp(itsRep->itsText, other) < 0; }
+    { return strcmp(itsRep->itsText, other) < 0; }
 
   template <class StrType>
   bool operator<(const StrType& other) const
-	 {
-		// Check if we are pointing to the same string
-		if (itsRep->itsText == other.c_str()) return false;
-		// ...otherwise do a string compare
-		return strcmp(itsRep->itsText, other.c_str()) < 0;
-	 }
+    {
+      // Check if we are pointing to the same string
+      if (itsRep->itsText == other.c_str()) return false;
+      // ...otherwise do a string compare
+      return strcmp(itsRep->itsText, other.c_str()) < 0;
+    }
 
   bool operator>(const char* other) const
-	 { return strcmp(itsRep->itsText, other) < 0; }
+    { return strcmp(itsRep->itsText, other) < 0; }
 
   template <class StrType>
   bool operator>(const StrType& other) const
-	 {
-		// Check if we are pointing to the same string
-		if (itsRep->itsText == other.c_str()) return false;
-		// ...otherwise do a string compare
-		return strcmp(itsRep->itsText, other.c_str()) > 0;
-	 }
+    {
+      // Check if we are pointing to the same string
+      if (itsRep->itsText == other.c_str()) return false;
+      // ...otherwise do a string compare
+      return strcmp(itsRep->itsText, other.c_str()) > 0;
+    }
 
 private:
   class Rep {
   private:
-	 Rep(const Rep& other); // not implemented
-	 Rep& operator=(const Rep& other); // not implemented
+    Rep(const Rep& other); // not implemented
+    Rep& operator=(const Rep& other); // not implemented
 
-	 // Class-specific operator new.
-	 void* operator new(size_t bytes);
+    // Class-specific operator new.
+    void* operator new(size_t bytes);
 
-	 // Class-specific operator delete.
-	 void operator delete(void* space);
+    // Class-specific operator delete.
+    void operator delete(void* space);
 
-	 friend class DummyFriend; // to eliminate compiler warning
+    friend class DummyFriend; // to eliminate compiler warning
 
-	 Rep();
-	 ~Rep();
+    Rep();
+    ~Rep();
 
-	 static Rep* getEmptyRep();
+    static Rep* getEmptyRep();
 
   public:
-	 static Rep* makeTextCopy(const char* text, int str_length);
+    static Rep* makeTextCopy(const char* text, int str_length);
 
-	 static Rep* makeBlank(int length);
+    static Rep* makeBlank(int length);
 
-	 static void makeUnique(Rep*& rep);
+    static void makeUnique(Rep*& rep);
 
-	 void incrRefCount() { ++itsRefCount; }
-	 void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+    void incrRefCount() { ++itsRefCount; }
+    void decrRefCount() { if (--itsRefCount <= 0) delete this; }
 
   private:
-	 int itsRefCount;
+    int itsRefCount;
 
   public:
-	 char* itsText;
-	 unsigned int itsLength;
+    char* itsText;
+    unsigned int itsLength;
   };
 
   Rep* itsRep;
@@ -192,12 +192,15 @@ public:
   dynamic_string& append(const fixed_string& other);
   dynamic_string& append(const dynamic_string& other);
 
+  dynamic_string& append(int number);
+  dynamic_string& append(double number);
+
   dynamic_string& operator+=(const char* text)
-	 { return append(text); }
+    { return append(text); }
   dynamic_string& operator+=(const fixed_string& other)
-	 { return append(other); }
+    { return append(other); }
   dynamic_string& operator+=(const dynamic_string& other)
-	 { return append(other); }
+    { return append(other); }
 
   bool equals(const char* other) const;
   bool equals(const string_literal& other) const;
@@ -213,25 +216,18 @@ public:
   //
 
   bool operator<(const char* other) const
-	 { return strcmp(this->c_str(), other) < 0; }
+    { return strcmp(this->c_str(), other) < 0; }
 
   template <class StrType>
   bool operator<(const StrType& other) const
-	 { return strcmp(this->c_str(), other.c_str()) < 0; }
+    { return strcmp(this->c_str(), other.c_str()) < 0; }
 
   bool operator>(const char* other) const
-	 { return strcmp(this->c_str(), other) > 0; }
+    { return strcmp(this->c_str(), other) > 0; }
 
   template <class StrType>
   bool operator>(const StrType& other) const
-	 { return strcmp(this->c_str(), other.c_str()) > 0; }
-
-protected:
-  /** This template is instantiated only for std::string, to allow
-      subclasses to get a handle to the internal representation with
-      out having to explicitly name std::string in this file. */
-  template <class StringType>
-  StringType& rep(StringType* /*dummy*/ = 0);
+    { return strcmp(this->c_str(), other.c_str()) > 0; }
 
 private:
   struct Impl;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Jun  4 11:59:00 2001
+// written: Wed Jun 20 17:30:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include <cstring>
 #include <iostream.h>
 #include <string>
+#include <strstream.h>
 
 #define NO_PROF
 #include "util/trace.h"
@@ -43,7 +44,7 @@ bool string_literal::equals(const char* other) const
 bool string_literal::equals(const string_literal& other) const
 {
   return ( itsLength == other.itsLength &&
-			  strcmp(itsText, other.itsText) == 0 );
+           strcmp(itsText, other.itsText) == 0 );
 }
 
 //---------------------------------------------------------------------
@@ -54,7 +55,7 @@ bool string_literal::equals(const string_literal& other) const
 
 namespace {
   struct FreeNode {
-	 FreeNode* next;
+    FreeNode* next;
   };
 
   FreeNode* fsFreeList = 0;
@@ -63,7 +64,7 @@ namespace {
 void* fixed_string::Rep::operator new(size_t bytes) {
   Assert(bytes == sizeof(Rep));
   if (fsFreeList == 0)
-	 return ::operator new(bytes);
+    return ::operator new(bytes);
   FreeNode* node = fsFreeList;
   fsFreeList = fsFreeList->next;
   return (void*)node;
@@ -83,27 +84,27 @@ fixed_string::Rep::~Rep() {
 fixed_string::Rep* fixed_string::Rep::getEmptyRep() {
   static Rep* empty_rep = 0;
   if (empty_rep == 0)
-	 {
-		empty_rep = new Rep;
+    {
+      empty_rep = new Rep;
 
-		empty_rep->itsRefCount = 1; 
-		empty_rep->itsLength = 0;
-		empty_rep->itsText = new char[1];
-		empty_rep->itsText[0] = '\0';
-	 }
+      empty_rep->itsRefCount = 1;
+      empty_rep->itsLength = 0;
+      empty_rep->itsText = new char[1];
+      empty_rep->itsText[0] = '\0';
+    }
 
   return empty_rep;
 }
 
 fixed_string::Rep* fixed_string::Rep::makeTextCopy(const char* text,
-																	int str_length)
+                                                   int str_length)
 {
   if (text == 0 || text[0] == '\0')
-	 return getEmptyRep();
+    return getEmptyRep();
 
   Rep* p = new Rep;
 
-  p->itsRefCount = 0; 
+  p->itsRefCount = 0;
   p->itsLength = str_length;
   p->itsText = new char[str_length+1];
 
@@ -114,7 +115,7 @@ fixed_string::Rep* fixed_string::Rep::makeTextCopy(const char* text,
 
 fixed_string::Rep* fixed_string::Rep::makeBlank(int length) {
   if (length <= 0)
-	 return getEmptyRep();
+    return getEmptyRep();
 
   Rep* p = new Rep;
 
@@ -220,23 +221,23 @@ DOTRACE("fixed_string::operator=(const fixed_string&)");
 bool fixed_string::equals(const char* other) const
 {
 DOTRACE("fixed_string::equals(const char*)");
-  return ( itsRep->itsText == other || 
-			  strcmp(itsRep->itsText, other) == 0 );
+  return ( itsRep->itsText == other ||
+           strcmp(itsRep->itsText, other) == 0 );
 }
 
 bool fixed_string::equals(const string_literal& other) const
 {
 DOTRACE("fixed_string::equals(const string_literal&");
   return ( itsRep->itsLength == other.length() &&
-			  strcmp(itsRep->itsText, other.c_str()) == 0 );
+           strcmp(itsRep->itsText, other.c_str()) == 0 );
 }
 
 bool fixed_string::equals(const fixed_string& other) const
 {
 DOTRACE("fixed_string::equals(const fixed_string&)");
   return itsRep->itsText == other.itsRep->itsText ||
-	 ( itsRep->itsLength == other.itsRep->itsLength &&
-		strcmp(itsRep->itsText, other.itsRep->itsText) == 0 );
+    ( itsRep->itsLength == other.itsRep->itsLength &&
+      strcmp(itsRep->itsText, other.itsRep->itsText) == 0 );
 }
 
 //---------------------------------------------------------------------
@@ -322,6 +323,28 @@ DOTRACE("dynamic_string::append(const dynamic_string&)");
   return *this;
 }
 
+dynamic_string& dynamic_string::append(int number)
+{
+DOTRACE("dynamic_string::append(int)");
+  const int BUF_SIZE = 64;
+  char buf[BUF_SIZE];
+  ostrstream ost(buf, BUF_SIZE);
+  ost << number << '\0';
+  itsImpl->text += buf;
+  return *this;
+}
+
+dynamic_string& dynamic_string::append(double number)
+{
+DOTRACE("dynamic_string::append(double)");
+  const int BUF_SIZE = 64;
+  char buf[BUF_SIZE];
+  ostrstream ost(buf, BUF_SIZE);
+  ost << number << '\0';
+  itsImpl->text += buf;
+  return *this;
+}
+
 bool dynamic_string::equals(const char* other) const
 {
 DOTRACE("dynamic_string::equals(const char*)");
@@ -332,14 +355,14 @@ bool dynamic_string::equals(const string_literal& other) const
 {
 DOTRACE("dynamic_string::equals(const string_literal&)");
   return ( itsImpl->text.length() == other.itsLength &&
-			  itsImpl->text == other.itsText );
+           itsImpl->text == other.itsText );
 }
 
 bool dynamic_string::equals(const fixed_string& other) const
 {
 DOTRACE("dynamic_string::equals(const fixed_string&)");
   return ( itsImpl->text.length() == other.length() &&
-			  itsImpl->text == other.c_str() );
+           itsImpl->text == other.c_str() );
 }
 
 bool dynamic_string::equals(const dynamic_string& other) const
@@ -356,12 +379,6 @@ const char* dynamic_string::c_str() const
 unsigned int dynamic_string::length() const
 {
   return itsImpl->text.length();
-}
-
-template <>
-std::string& dynamic_string::rep(std::string*)
-{
-  return itsImpl->text;
 }
 
 //---------------------------------------------------------------------
