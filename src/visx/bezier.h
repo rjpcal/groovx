@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Wed Nov 20 12:12:02 2002
+// written: Wed Nov 20 12:13:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -335,11 +335,13 @@ double Bezier4::evalDeriv(double u)
 
 double Bezier4::evalMax()
 {
+  if (!haveMinMax) computeMinMax();
   return valMax;
 }
 
 double Bezier4::evalMin()
 {
+  if (!haveMinMax) computeMinMax();
   return valMin;
 }
 
