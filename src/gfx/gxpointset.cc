@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:46:27 2002
-// written: Wed Nov  6 16:49:56 2002
+// written: Tue Nov 19 12:48:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 
 #include "io/reader.h"
@@ -74,8 +75,7 @@ DOTRACE("GxPointSet::writeTo");
 // actions //
 /////////////
 
-void GxPointSet::getBoundingCube(Gfx::Box<double>& cube,
-                                 Gfx::Canvas& canvas) const
+void GxPointSet::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPointSet::getBoundingCube");
 
@@ -90,7 +90,7 @@ DOTRACE("GxPointSet::getBoundingCube");
         mybox.merge(itsPoints.arr()[i]);
     }
 
-  cube.unionize(mybox);
+  bbox.cube.unionize(mybox);
 }
 
 void GxPointSet::draw(Gfx::Canvas& canvas) const

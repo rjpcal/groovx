@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Wed Sep 25 18:53:57 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,8 +64,7 @@ public:
   virtual bool contains(GxNode* other) const;
 
   /// Apply all of the contained objects' transformations to the cube.
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Query whether debug-mode drawing is turned on.
   bool getDebugMode() const;

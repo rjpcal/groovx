@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 14 16:59:04 2002
-// written: Thu Nov 14 17:09:40 2002
+// written: Tue Nov 19 12:50:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ public:
   virtual void readFrom(IO::Reader*);
   virtual void writeTo(IO::Writer*) const;
 
-  virtual void getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const;
+  virtual void getBoundingCube(Gfx::Bbox&) const;
 
   virtual void draw(Gfx::Canvas&) const;
 

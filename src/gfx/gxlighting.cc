@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 15:17:06 2002
-// written: Tue Jul  9 16:21:34 2002
+// written: Tue Nov 19 12:54:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ DOTRACE("GxLighting::writeTo");
 // actions //
 /////////////
 
-void GxLighting::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const
+void GxLighting::getBoundingCube(Gfx::Bbox&) const
 {}
 
 #include <GL/gl.h>

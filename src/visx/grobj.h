@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 13:47:27 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,7 @@ public:
       grGetBoundingBox(), with additional transformations to reflect the
       scaling mode, alignment mode, and pixel border values. Subclasses of
       GrObj should override grGetBoundingBox(), not getBoundingCube(). */
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */

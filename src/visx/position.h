@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Sep 25 19:02:59 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,8 +91,7 @@ public:
   /////////////
 
   /// Apply our transformation to the bbox.
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Translate, scale, and rotate.
   virtual void draw(Gfx::Canvas&) const;

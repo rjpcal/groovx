@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 16:00:32 2002
-// written: Fri Jul  5 14:11:34 2002
+// written: Tue Nov 19 12:55:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 
 #include "io/reader.h"
@@ -87,7 +88,7 @@ DOTRACE("GxLine::writeTo");
 // actions //
 /////////////
 
-void GxLine::getBoundingCube(Gfx::Box<double>& box, Gfx::Canvas&) const
+void GxLine::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxColor::getBoundingCube");
 
@@ -95,7 +96,7 @@ DOTRACE("GxColor::getBoundingCube");
 
   mybox.setCorners(start, stop);
 
-  box.unionize(mybox);
+  bbox.cube.unionize(mybox);
 }
 
 void GxLine::draw(Gfx::Canvas& canvas) const

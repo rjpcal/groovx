@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 14:03:23 2002
-// written: Wed Nov 13 14:06:38 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,8 +52,7 @@ public:
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   void invalidate();
 

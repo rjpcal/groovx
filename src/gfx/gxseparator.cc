@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Jul 30 10:49:05 2002
+// written: Tue Nov 19 12:55:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/rect.h"
 
@@ -275,17 +276,16 @@ DOTRACE("GxSeparator::contains");
   return rep->contains(other);
 }
 
-void GxSeparator::getBoundingCube(Gfx::Box<double>& bbox,
-                                  Gfx::Canvas& canvas) const
+void GxSeparator::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxSeparator::getBoundingCube");
 
-  Gfx::Box<double> mybox;
+  Gfx::Bbox mybox(bbox.canvas);
 
   if (!rep->children.empty())
     {
-      Gfx::MatrixSaver state(canvas);
-      Gfx::AttribSaver attribs(canvas);
+      Gfx::MatrixSaver state(bbox.canvas);
+      Gfx::AttribSaver attribs(bbox.canvas);
 
       for(Impl::VecType::reverse_iterator
             itr = rep->children.rbegin(),
@@ -293,11 +293,11 @@ DOTRACE("GxSeparator::getBoundingCube");
           itr != end;
           ++itr)
         {
-          (*itr)->getBoundingCube(mybox, canvas);
+          (*itr)->getBoundingCube(mybox);
         }
     }
 
-  bbox.unionize(mybox);
+  bbox.cube.unionize(mybox.cube);
 }
 
 bool GxSeparator::getDebugMode() const
@@ -324,9 +324,9 @@ DOTRACE("GxSeparator::draw");
 
   if (rep->debugMode)
     {
-      Gfx::Box<double> cube;
-      getBoundingCube(cube, canvas);
-      canvas.drawBox(cube);
+      Gfx::Bbox bbox(canvas);
+      getBoundingCube(bbox);
+      canvas.drawBox(bbox.cube);
     }
 
   if (!rep->children.empty())

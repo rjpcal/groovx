@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:46:27 2002
-// written: Fri Jul  5 14:11:34 2002
+// written: Tue Nov 19 12:54:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 
 #include "io/reader.h"
@@ -84,8 +85,7 @@ DOTRACE("GxCylinder::writeTo");
 // actions //
 /////////////
 
-void GxCylinder::getBoundingCube(Gfx::Box<double>& cube,
-                                 Gfx::Canvas& canvas) const
+void GxCylinder::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxCylinder::getBoundingCube");
 
@@ -97,7 +97,7 @@ DOTRACE("GxCylinder::getBoundingCube");
                   -maxr, maxr,
                   0.0, itsHeight);
 
-  cube.unionize(mybox);
+  bbox.cube.unionize(mybox);
 }
 
 void GxCylinder::draw(Gfx::Canvas& canvas) const

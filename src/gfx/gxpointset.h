@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:43:20 2002
-// written: Wed Nov  6 16:42:42 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,7 @@ public:
   /////////////
 
   /// Get the bounding cube for the pointset.
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Draw the pointset.
   virtual void draw(Gfx::Canvas&) const;

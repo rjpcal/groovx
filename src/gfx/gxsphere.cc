@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 14:20:08 2002
-// written: Fri Jul  5 14:25:26 2002
+// written: Tue Nov 19 12:47:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 
 #include "io/reader.h"
@@ -80,7 +81,7 @@ DOTRACE("GxSphere::writeTo");
 // actions //
 /////////////
 
-void GxSphere::getBoundingCube(Gfx::Box<double>& cube, Gfx::Canvas&) const
+void GxSphere::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxSphere::getBoundingCube");
 
@@ -90,7 +91,7 @@ DOTRACE("GxSphere::getBoundingCube");
                   -itsRadius, itsRadius,
                   -itsRadius, itsRadius);
 
-  cube.unionize(mybox);
+  bbox.cube.unionize(mybox);
 }
 
 void GxSphere::draw(Gfx::Canvas& canvas) const

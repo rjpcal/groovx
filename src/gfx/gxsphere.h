@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 14:18:59 2002
-// written: Wed Sep 25 18:53:57 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,8 +57,7 @@ public:
   /////////////
 
   /// Get the bounding cube for the sphere.
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Draw the sphere.
   virtual void draw(Gfx::Canvas&) const;

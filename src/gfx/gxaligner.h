@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:58:27 2002
-// written: Wed Nov 13 12:59:01 2002
+// written: Tue Nov 19 12:53:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,8 +75,7 @@ public:
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
 private:
   void doAlignment(Gfx::Canvas& canvas, const Gfx::Rect<double>& native) const;

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 15:53:53 2002
-// written: Wed Sep 25 18:52:44 2002
+// written: Tue Nov 19 12:43:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,8 +65,7 @@ public:
   /////////////
 
   /// Extend the bounding cube for this line.
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Draw the line.
   virtual void draw(Gfx::Canvas&) const;

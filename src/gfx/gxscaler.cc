@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:32 2002
-// written: Thu Nov 14 17:56:32 2002
+// written: Tue Nov 19 12:57:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/vec3.h"
 
@@ -177,12 +178,13 @@ void GxScaler::draw(Gfx::Canvas& canvas) const
     }
 }
 
-void GxScaler::getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const
+void GxScaler::getBoundingCube(Gfx::Bbox& bbox) const
 {
-  child()->getBoundingCube(cube, canvas);
+  child()->getBoundingCube(bbox);
 
-  cube.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+  bbox.cube.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+
+  dbgDump(2, bbox.cube);
 }
 
 static const char vcid_gxscaler_cc[] = "$Header$";

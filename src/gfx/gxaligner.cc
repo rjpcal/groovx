@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:59:04 2002
-// written: Wed Nov 13 12:59:41 2002
+// written: Tue Nov 19 12:56:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,10 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/rect.h"
+#include "gx/txform.h"
 #include "gx/vec3.h"
 
 #include "util/trace.h"
@@ -79,20 +81,20 @@ DOTRACE("GxAligner::draw");
   child()->draw(canvas);
 }
 
-void GxAligner::getBoundingCube(Gfx::Box<double>& cube,
-                                Gfx::Canvas& canvas) const
+void GxAligner::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxAligner::getBoundingCube");
 
-  Gfx::Rect<double> bounds = child()->getBoundingBox(canvas);
+  Gfx::Rect<double> bounds = child()->getBoundingBox(bbox.canvas);
 
   Gfx::Vec2<double> center = getCenter(bounds);
 
   bounds.setCenter(center);
 
-  cube.unionize(bounds);
-}
+  bbox.cube.unionize(bounds);
 
+  dbgDump(2, bbox.cube);
+}
 
 static const char vcid_gxaligner_cc[] = "$Header$";
 #endif // !GXALIGNER_CC_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:45:52 2001
-// written: Fri Jul  5 14:11:35 2002
+// written: Tue Nov 19 12:42:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ const FieldMap& GxColor::classFields()
   return GXCOLOR_FIELDS;
 }
 
-void GxColor::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const
+void GxColor::getBoundingCube(Gfx::Bbox&) const
 {
   ; // do nothing, since GxColor doesn't actually draw anything on-screen
 }

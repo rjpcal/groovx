@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:34:18 2002
-// written: Wed Nov 13 13:34:18 2002
+// written: Tue Nov 19 12:56:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
@@ -34,12 +35,11 @@ GxBounds::GxBounds(Util::SoftRef<GxNode> child) :
 
 GxBounds::~GxBounds() {}
 
-void GxBounds::getBoundingCube(Gfx::Box<double>& cube,
-			       Gfx::Canvas& canvas) const
+void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxBounds::getBoundingCube");
 
-  child()->getBoundingCube(cube, canvas);
+  child()->getBoundingCube(bbox);
 
   int border_pixels = itsPixelBorder;
 
@@ -48,7 +48,9 @@ DOTRACE("GxBounds::getBoundingCube");
 
   dbgEval(3, itsPixelBorder); dbgEvalNL(3, border_pixels);
 
-  cube.scale(1.0 + border_pixels/100.0);
+  bbox.cube.scale(1.0 + border_pixels/100.0);
+
+  dbgDump(2, bbox.cube);
 }
 
 void GxBounds::draw(Gfx::Canvas& canvas) const
@@ -59,11 +61,11 @@ DOTRACE("GxBounds::draw");
 
   if (isItVisible)
     {
-      Gfx::Box<double> cube;
-      child()->getBoundingCube(cube, canvas);
-      cube.scale(1.0 + itsPixelBorder/100.0);
+      Gfx::Bbox bbox(canvas);
+      child()->getBoundingCube(bbox);
+      bbox.cube.scale(1.0 + itsPixelBorder/100.0);
 
-      Gfx::Rect<double> bounds = cube.rect();
+      Gfx::Rect<double> bounds = bbox.cube.rect();
 
 #define ANIMATE_BBOX
 

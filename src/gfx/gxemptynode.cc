@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 14 16:59:58 2002
-// written: Thu Nov 14 17:07:23 2002
+// written: Tue Nov 19 12:50:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ GxEmptyNode::~GxEmptyNode() {}
 void GxEmptyNode::readFrom(IO::Reader*) {}
 void GxEmptyNode::writeTo(IO::Writer*) const {}
 
-void GxEmptyNode::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const {}
+void GxEmptyNode::getBoundingCube(Gfx::Bbox&) const {}
 
 void GxEmptyNode::draw(Gfx::Canvas&) const {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Tue Nov 19 12:53:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 #include "gx/rect.h"
 #include "gx/txform.h"
@@ -198,20 +199,20 @@ DOTRACE("Position::getTxform");
 // actions //
 /////////////
 
-void Position::getBoundingCube(Gfx::Box<double>& cube, Gfx::Canvas&) const
+void Position::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("Position::getBoundingCube");
 
   const Gfx::Txform& txform = getTxform();
 
-  Gfx::Vec3<double> p1 = txform.applyTo(cube.point000());
-  Gfx::Vec3<double> p2 = txform.applyTo(cube.point001());
-  Gfx::Vec3<double> p3 = txform.applyTo(cube.point010());
-  Gfx::Vec3<double> p4 = txform.applyTo(cube.point011());
-  Gfx::Vec3<double> p5 = txform.applyTo(cube.point100());
-  Gfx::Vec3<double> p6 = txform.applyTo(cube.point101());
-  Gfx::Vec3<double> p7 = txform.applyTo(cube.point110());
-  Gfx::Vec3<double> p8 = txform.applyTo(cube.point111());
+  Gfx::Vec3<double> p1 = txform.applyTo(bbox.cube.point000());
+  Gfx::Vec3<double> p2 = txform.applyTo(bbox.cube.point001());
+  Gfx::Vec3<double> p3 = txform.applyTo(bbox.cube.point010());
+  Gfx::Vec3<double> p4 = txform.applyTo(bbox.cube.point011());
+  Gfx::Vec3<double> p5 = txform.applyTo(bbox.cube.point100());
+  Gfx::Vec3<double> p6 = txform.applyTo(bbox.cube.point101());
+  Gfx::Vec3<double> p7 = txform.applyTo(bbox.cube.point110());
+  Gfx::Vec3<double> p8 = txform.applyTo(bbox.cube.point111());
 
   using Util::min;
   using Util::max;
@@ -231,7 +232,7 @@ DOTRACE("Position::getBoundingCube");
   const double z1 = max(max(max(p1.z(), p2.z()), max(p3.z(), p4.z())),
                         max(max(p5.z(), p6.z()), max(p7.z(), p8.z())));
 
-  cube.setXXYYZZ(x0, x1, y0, y1, z0, z1);
+  bbox.cube.setXXYYZZ(x0, x1, y0, y1, z0, z1);
 }
 
 void Position::draw(Gfx::Canvas& canvas) const

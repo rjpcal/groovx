@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 16:07:42 2002
-// written: Fri Jul  5 16:11:31 2002
+// written: Tue Nov 19 12:55:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("GxMaterial::writeTo");
 // actions //
 /////////////
 
-void GxMaterial::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const
+void GxMaterial::getBoundingCube(Gfx::Bbox&) const
 {}
 
 #include <GL/gl.h>

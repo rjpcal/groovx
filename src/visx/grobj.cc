@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Thu Nov 14 17:29:45 2002
+// written: Tue Nov 19 12:53:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 
 #include "io/reader.h"
@@ -53,9 +54,11 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
 
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const
-  { return cube.unionize(itsObj->grGetBoundingBox(canvas)); }
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const
+  {
+    bbox.cube.unionize(itsObj->grGetBoundingBox(bbox.canvas));
+    dbgDump(2, bbox.cube);
+  }
 };
 
 //  ###################################################################
@@ -221,12 +224,11 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
 
-void GrObj::getBoundingCube(Gfx::Box<double>& cube,
-                            Gfx::Canvas& canvas) const
+void GrObj::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GrObj::getBoundingCube");
 
-  itsImpl->itsTopNode->getBoundingCube(cube, canvas);
+  itsImpl->itsTopNode->getBoundingCube(bbox);
 }
 
 int GrObj::getScalingMode() const

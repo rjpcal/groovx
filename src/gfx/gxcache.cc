@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 14:03:42 2002
-// written: Wed Nov 13 14:05:26 2002
+// written: Tue Nov 19 12:50:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,10 +64,9 @@ void GxCache::draw(Gfx::Canvas& canvas) const
     }
 }
 
-void GxCache::getBoundingCube(Gfx::Box<double>& cube,
-                              Gfx::Canvas& canvas) const
+void GxCache::getBoundingCube(Gfx::Bbox& bbox) const
 {
-  child()->getBoundingCube(cube, canvas);
+  child()->getBoundingCube(bbox);
 }
 
 void GxCache::invalidate()
