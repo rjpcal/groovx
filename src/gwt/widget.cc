@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Wed Jun 13 17:17:22 2001
+// written: Sat Jun 23 12:45:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ public:
       if (itsVisibility == false)
         {
           undraw(itsOwner->getCanvas());
-          itsDrawNode = Util::Ref<GxNode>(EmptyNode::make());
+          setDrawable(Util::Ref<GxNode>(EmptyNode::make()));
           itsUndrawNode = Util::Ref<GxNode>(EmptyNode::make());
         }
     }
