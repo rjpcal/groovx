@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu May 17 10:30:30 2001
+// written: Wed May 23 10:34:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -183,54 +183,6 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 			 ofs << num_zeros << "  " << num_ones << endl;
 		  }
 	 }
-}
-
-int TlistUtils::loadObjidFile(const char* filename,
-										int num_lines, int offset) {
-DOTRACE("TlistUtils::loadObjidFile");
-
-  STD_IO::ifstream ifs(filename);
-  return readFromObjidsOnly(ifs, num_lines, offset);
-}
-
-int TlistUtils::readFromObjidsOnly(STD_IO::istream& is,
-											  int num_lines, int offset) {
-DOTRACE("TlistUtils::readFromObjidsOnly");
-
-  throw ErrorWithMsg("FIXME: readFromObjidsOnly");
-
-  IoDb& tlist = IoDb::theDb(); 
-
-  // FIXME this will not really do what we want anymore -- need to
-  // return a list of the trial ids that are created
-  // Remove all trials and resize itsTrials to 0
-  tlist.purge();
-
-  // Determine whether we will read to the end of the input stream, or
-  // whether we will read only num_lines lines from the stream,
-  // according to the convention set in the header file.
-  bool read_to_eof = (num_lines < 0);
-
-  const int BUF_SIZE = 200;
-  char line[BUF_SIZE];
-
-  int trial = 0;
-  while ( (read_to_eof || trial < num_lines) 
-          && is.getline(line, BUF_SIZE) ) {
-	 // Allow for whole-line comments beginning with '#'. If '#' is
-	 // seen, skip this line and continue with the next line. The trial
-	 // count is unaffected.
-	 if (line[0] == '#')
-		continue;
-	 istrstream ist(line);
-	 IdItem<Trial> t(Trial::make());
-	 t->readFromObjidsOnly(ist, offset);
-    ++trial;
-  }
-  if (is.bad()) throw IO::InputError("TlistUtils::readFromObjids");
-
-  // Return the number of trials that were loaded.
-  return trial;
 }
 
 void TlistUtils::writeMatlab(const char* filename) {
