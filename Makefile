@@ -59,7 +59,7 @@ endif
 ifeq ($(ARCH),irix6)
 	OPENGL_LIB_DIR =
 	AUDIO_LIB_DIR =
-	AUDIO_LIB = 
+	AUDIO_LIB = -laudio -laudiofile
 	RPATH_DIR = -Wl,-rpath,$(HOME)/grsh/$(ARCH)
 endif
 
