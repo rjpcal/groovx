@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Tue Feb 19 17:33:59 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,13 +45,13 @@ SharedDataBlock::SharedDataBlock(int length) :
   DataBlock(new double[length], length)
 {
   DOTRACE("SharedDataBlock::SharedDataBlock");
-  DebugEval(this); DebugEvalNL(itsData);
+  dbgEval(3, this); dbgEvalNL(3, itsData);
 }
 
 SharedDataBlock::~SharedDataBlock()
 {
   DOTRACE("SharedDataBlock::~SharedDataBlock");
-  DebugEval(this); DebugEvalNL(itsData);
+  dbgEval(3, this); dbgEvalNL(3, itsData);
   delete [] itsData;
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Fri Jul  5 14:23:04 2002
+// written: Sun Nov  3 13:41:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ public:
     double factor =
       (itsScales.back().abs().x() + itsScales.back().abs().y()) / 2.0;
 
-    DebugEvalNL(factor);
+    dbgEvalNL(3, factor);
 
     return factor;
   }
@@ -419,7 +419,7 @@ public:
 
   void setdash(unsigned short bit_pattern)
   {
-    DebugEvalNL((void*) bit_pattern);
+    dbgEvalNL(3, (void*) bit_pattern);
 
     bool prev_bit = (0x8000 & bit_pattern);
 

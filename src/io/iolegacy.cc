@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Tue May 14 19:57:10 2002
+// written: Sun Nov  3 13:41:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ public:
   {
     if (itsInStream.fail())
       {
-        DebugPrint("throwIfError for"); DebugEvalNL(type);
+        dbgPrint(3, "throwIfError for"); dbgEvalNL(3, type);
         throw IO::ReadError(type);
       }
   }
@@ -89,7 +89,7 @@ public:
         Assert(c == '@');
 
         itsInStream >> version;
-        DebugEvalNL(version);
+        dbgEvalNL(3, version);
         throwIfError("versionId");
       }
     else
@@ -106,7 +106,7 @@ public:
     itsInStream >> brace;
     if (brace != '{')
       {
-        DebugPrintNL("grabLeftBrace failed");
+        dbgPrintNL(3, "grabLeftBrace failed");
         throw IO::ReadError("missing left-brace");
       }
   }
@@ -117,14 +117,14 @@ public:
     itsInStream >> brace;
     if (brace != '}')
       {
-        DebugPrintNL("grabRightBrace failed");
+        dbgPrintNL(3, "grabRightBrace failed");
         throw IO::ReadError("missing right-brace");
       }
   }
 
   void inflateObject(const fstring& name, Ref<IO::IoObject> obj)
   {
-    DebugEvalNL(name);
+    dbgEvalNL(3, name);
 
     itsLegacyVersionId = getLegacyVersionId();
     if (itsLegacyVersionId != -1)
@@ -159,16 +159,16 @@ DOTRACE("IO::LegacyReader::~LegacyReader");
 IO::VersionId IO::LegacyReader::readSerialVersionId()
 {
 DOTRACE("IO::LegacyReader::readSerialVersionId");
-  DebugEvalNL(itsImpl->itsLegacyVersionId);
+  dbgEvalNL(3, itsImpl->itsLegacyVersionId);
   return itsImpl->itsLegacyVersionId;
 }
 
 char IO::LegacyReader::readChar(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readChar");
-  DebugEval(name);
+  dbgEval(3, name);
   char val;
-  itsImpl->itsInStream >> val;   DebugEvalNL(val);
+  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
   itsImpl->throwIfError(name);
   return val;
 }
@@ -176,9 +176,9 @@ DOTRACE("IO::LegacyReader::readChar");
 int IO::LegacyReader::readInt(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readInt");
-  DebugEval(name);
+  dbgEval(3, name);
   int val;
-  itsImpl->itsInStream >> val;   DebugEvalNL(val);
+  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
   itsImpl->throwIfError(name);
   return val;
 }
@@ -186,9 +186,9 @@ DOTRACE("IO::LegacyReader::readInt");
 bool IO::LegacyReader::readBool(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readBool");
-  DebugEval(name);
+  dbgEval(3, name);
   int val;
-  itsImpl->itsInStream >> val;   DebugEvalNL(val);
+  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
   itsImpl->throwIfError(name);
   return bool(val);
 }
@@ -196,9 +196,9 @@ DOTRACE("IO::LegacyReader::readBool");
 double IO::LegacyReader::readDouble(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readDouble");
-  DebugEval(name);
+  dbgEval(3, name);
   double val;
-  itsImpl->itsInStream >> val;   DebugEvalNL(val);
+  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
   itsImpl->throwIfError(name);
   return val;
 }
@@ -206,7 +206,7 @@ DOTRACE("IO::LegacyReader::readDouble");
 fstring IO::LegacyReader::readStringImpl(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readStringImpl");
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
 
   int numchars = 0;
   itsImpl->itsInStream >> numchars;
@@ -233,7 +233,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
   itsImpl->throwIfError(name);
 
-  DebugEvalNL(new_string);
+  dbgEvalNL(3, new_string);
 
   return new_string;
 }
@@ -241,7 +241,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 void IO::LegacyReader::readValueObj(const fstring& name, Value& value)
 {
 DOTRACE("IO::LegacyReader::readValueObj");
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   value.scanFrom(itsImpl->itsInStream);
   itsImpl->throwIfError(name);
 }
@@ -257,9 +257,9 @@ SoftRef<IO::IoObject>
 IO::LegacyReader::readMaybeObject(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readMaybeObject");
-  DebugEval(name);
+  dbgEval(3, name);
   fstring type;
-  itsImpl->itsInStream >> type; DebugEval(type);
+  itsImpl->itsInStream >> type; dbgEval(3, type);
 
   if (type == "NULL")
     {
@@ -267,7 +267,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
     }
 
   Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
-  DebugEvalNL(obj->ioTypename());
+  dbgEvalNL(3, obj->ioTypename());
 
   itsImpl->inflateObject(name, obj);
 
@@ -300,7 +300,7 @@ DOTRACE("IO::LegacyReader::readRoot");
       return readObject("rootObject");
     }
 
-  DebugEvalNL(givenRoot->ioTypename());
+  dbgEvalNL(3, givenRoot->ioTypename());
 
   Ref<IO::IoObject> root(givenRoot);
   readOwnedObject("rootObject", root);
@@ -337,7 +337,7 @@ public:
   {
     if (itsOutStream.fail())
       {
-        DebugPrint("throwIfError for"); DebugEvalNL(type);
+        dbgPrint(3, "throwIfError for"); dbgEvalNL(3, type);
         throw IO::WriteError(type);
       }
   }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Jul  5 18:42:07 2002
+// written: Wed Nov  6 17:02:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
                current_mv_matrix, current_proj_matrix, current_viewport,
                &temp_screen_x, &temp_screen_y, &dummy_z);
 
-  DebugEval(status);
+  dbgEval(3, status);
 
   if (status == GL_FALSE)
     throw Util::Error("GrObj::screenFromWorld(): gluProject error");
@@ -113,7 +113,7 @@ DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
                  current_mv_matrix, current_proj_matrix, current_viewport,
                  &world_pos.x(), &world_pos.y(), &dummy_z);
 
-  DebugEval(status);
+  dbgEval(3, status);
 
   if (status == GL_FALSE)
     throw Util::Error("GrObj::worldFromScreen(): gluUnProject error");
@@ -204,11 +204,13 @@ DOTRACE("GLCanvas::throwIfError");
 
 void GLCanvas::pushAttribs()
 {
+DOTRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 }
 
 void GLCanvas::popAttribs()
 {
+DOTRACE("GLCanvas::popAttribs");
   glPopAttrib();
 }
 
@@ -331,12 +333,14 @@ DOTRACE("GLCanvas::enableAntialiasing");
 
 void GLCanvas::pushMatrix()
 {
+DOTRACE("GLCanvas::pushMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 }
 
 void GLCanvas::popMatrix()
 {
+DOTRACE("GLCanvas::popMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 }
@@ -596,29 +600,42 @@ DOTRACE("GLCanvas::drawBezierFill4");
   glEnd();
 }
 
-void GLCanvas::beginPoints()        { glBegin(GL_POINTS); }
-void GLCanvas::beginLines()         { glBegin(GL_LINES); }
-void GLCanvas::beginLineStrip()     { glBegin(GL_LINE_STRIP); }
-void GLCanvas::beginLineLoop()      { glBegin(GL_LINE_LOOP); }
-void GLCanvas::beginTriangles()     { glBegin(GL_TRIANGLES); }
-void GLCanvas::beginTriangleStrip() { glBegin(GL_TRIANGLE_STRIP); }
-void GLCanvas::beginTriangleFan()   { glBegin(GL_TRIANGLE_FAN); }
-void GLCanvas::beginQuads()         { glBegin(GL_QUADS); }
-void GLCanvas::beginQuadStrip()     { glBegin(GL_QUAD_STRIP); }
-void GLCanvas::beginPolygon()       { glBegin(GL_POLYGON); }
+void GLCanvas::beginPoints()        {
+DOTRACE("GLCanvas::beginPoints"); glBegin(GL_POINTS); }
+void GLCanvas::beginLines()         {
+DOTRACE("GLCanvas::beginLines"); glBegin(GL_LINES); }
+void GLCanvas::beginLineStrip()     {
+DOTRACE("GLCanvas::beginLineStrip"); glBegin(GL_LINE_STRIP); }
+void GLCanvas::beginLineLoop()      {
+DOTRACE("GLCanvas::beginLineLoop"); glBegin(GL_LINE_LOOP); }
+void GLCanvas::beginTriangles()     {
+DOTRACE("GLCanvas::beginTriangles"); glBegin(GL_TRIANGLES); }
+void GLCanvas::beginTriangleStrip() {
+DOTRACE("GLCanvas::beginTriangleStrip"); glBegin(GL_TRIANGLE_STRIP); }
+void GLCanvas::beginTriangleFan()   {
+DOTRACE("GLCanvas::beginTriangleFan"); glBegin(GL_TRIANGLE_FAN); }
+void GLCanvas::beginQuads()         {
+DOTRACE("GLCanvas::beginQuads"); glBegin(GL_QUADS); }
+void GLCanvas::beginQuadStrip()     {
+DOTRACE("GLCanvas::beginQuadStrip"); glBegin(GL_QUAD_STRIP); }
+void GLCanvas::beginPolygon()       {
+DOTRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
 
 void GLCanvas::vertex2(const Gfx::Vec2<double>& v)
 {
+DOTRACE("GLCanvas::vertex2");
   glVertex2d(v.x(), v.y());
 }
 
 void GLCanvas::vertex3(const Gfx::Vec3<double>& v)
 {
+DOTRACE("GLCanvas::vertex3");
   glVertex3d(v.x(), v.y(), v.z());
 }
 
 void GLCanvas::end()
 {
+DOTRACE("GLCanvas::end");
   glEnd();
 }
 

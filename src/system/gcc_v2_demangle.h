@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 16:58:19 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ namespace
           }
         str.erase(pos, 1);
       }
-    DebugEvalNL(str);
+    dbgEvalNL(3, str);
 
     modifiers.append(array_dims);
 
@@ -119,7 +119,7 @@ namespace
         str.insert(pos, "void"); pos += 4;
         break;
       default:
-        DebugEvalNL(typecode);
+        dbgEvalNL(3, typecode);
         Assert(0);
         break;
       }
@@ -131,7 +131,7 @@ std::string gcc_v2_demangle(const std::string& in)
 DOTRACE("gcc_v2_demangle");
   std::string out=in;
 
-  DebugEvalNL(out);
+  dbgEvalNL(3, out);
 
   bool isTemplate = false;
 
@@ -149,7 +149,7 @@ DOTRACE("gcc_v2_demangle");
         {
           out.erase(0, 1);
           num_levels = munchInt(out, 0);
-          DebugEvalNL(num_levels);
+          dbgEvalNL(3, num_levels);
           Assert(out[0] == '_');
           out.erase(0, 1);
         }
@@ -172,7 +172,7 @@ DOTRACE("gcc_v2_demangle");
         }
     }
 
-  DebugEvalNL(out);
+  dbgEvalNL(3, out);
 
   if (out[pos] == 't')
     {
@@ -186,7 +186,7 @@ DOTRACE("gcc_v2_demangle");
         {
           out.erase(pos, 1);
         }
-      DebugEvalNL(out);
+      dbgEvalNL(3, out);
     }
   else
     {
@@ -197,7 +197,7 @@ DOTRACE("gcc_v2_demangle");
       // Insert left bracket
       out.insert(pos++, 1, '<');
 
-      DebugEvalNL(out);
+      dbgEvalNL(3, out);
 
       int num_parameters = munchInt(out, pos);;
 
@@ -207,7 +207,7 @@ DOTRACE("gcc_v2_demangle");
           Assert( out[pos] == 'Z' );
           out.erase(pos, 1);
 
-          DebugEvalNL(out);
+          dbgEvalNL(3, out);
 
           // Get the parameter name:
           std::string modifiers = readModifiers(out, pos);
@@ -233,14 +233,14 @@ DOTRACE("gcc_v2_demangle");
               out.insert(pos++, 1, ' ');
             }
 
-          DebugEvalNL(out);
+          dbgEvalNL(3, out);
         }
 
       // Insert right bracket
       out.insert(pos++, 1, '>');
     }
 
-  DebugEvalNL(out);
+  dbgEvalNL(3, out);
 
   return out;
 }

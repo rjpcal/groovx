@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Thu Apr 25 12:26:54 2002
+// written: Sun Nov  3 13:41:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,15 +141,15 @@ DOTRACE("PngParser::parse");
   const int width = png_get_image_width(itsPngPtr, itsInfoPtr);
   const int height = png_get_image_height(itsPngPtr, itsInfoPtr);
 
-  DebugEval(width); DebugEvalNL(height);
+  dbgEval(3, width); dbgEvalNL(3, height);
 
   const int row_bytes = png_get_rowbytes(itsPngPtr, itsInfoPtr);
 
-  DebugEvalNL(row_bytes);
+  dbgEvalNL(3, row_bytes);
 
   const int nchannels = png_get_channels(itsPngPtr, itsInfoPtr);
 
-  DebugEvalNL(nchannels);
+  dbgEvalNL(3, nchannels);
 
   Assert(row_bytes == width*nchannels);
 

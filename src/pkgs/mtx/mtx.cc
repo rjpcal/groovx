@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Sep  6 14:00:45 2002
+// written: Sun Nov  3 13:41:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace RC
 
 void RC::raiseException(const fstring& msg, const char* f, int ln)
 {
-  DebugPrintNL(msg);
+  dbgPrintNL(3, msg);
   fstring errmsg;
   errmsg.append("Range check failed in file '", f, "' at line #");
   errmsg.append(ln, ": ", msg);

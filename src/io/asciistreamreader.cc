@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Jun  6 17:47:48 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ public:
         ListType::iterator itr = itsMap.begin(), end = itsMap.end();
         while (itr != end)
           {
-            DebugEval(attrib_name); DebugEvalNL((*itr).first);
+            dbgEval(3, attrib_name); dbgEvalNL(3, (*itr).first);
             if ((*itr).first == attrib_name)
               {
                 Attrib result = (*itr).second;
@@ -223,7 +223,7 @@ public:
 
     T return_val;
     ist >> return_val;
-    DebugEval(a.value); DebugEvalNL(return_val);
+    dbgEval(3, a.value); dbgEvalNL(3, return_val);
 
     if (ist.fail())
       throw AttributeReadError(name);
@@ -354,7 +354,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   // Get the attribute count
   int attrib_count;
-  buf >> attrib_count;    DebugEvalNL(attrib_count);
+  buf >> attrib_count;    dbgEvalNL(3, attrib_count);
 
   if (attrib_count < 0)
     {
@@ -375,7 +375,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   for (int i = 0; i < attrib_count; ++i)
     {
-      buf >> type >> name >> equal;   DebugEval(type); DebugEvalNL(name);
+      buf >> type >> name >> equal;   dbgEval(3, type); dbgEvalNL(3, name);
 
       if ( buf.fail() )
         {
@@ -423,7 +423,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   istrstream ist(a.value.c_str());
 
   int len;
-  ist >> len;                     DebugEvalNL(len);
+  ist >> len;                     dbgEvalNL(3, len);
   ist.get(); // ignore one char of whitespace after the length
 
   if (len < 0)
@@ -440,7 +440,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
       throw AttributeReadError(name);
     }
 
-  DebugEval(a.value); DebugEvalNL(new_string);
+  dbgEval(3, a.value); dbgEvalNL(3, new_string);
   return new_string;
 }
 
@@ -516,7 +516,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   while ( itsBuf.peek() != EOF )
     {
       itsBuf >> type >> id >> equal >> bracket;
-      DebugEval(type); DebugEvalNL(id);
+      dbgEval(3, type); dbgEvalNL(3, id);
 
       if ( itsBuf.fail() )
         {
@@ -585,61 +585,61 @@ DOTRACE("AsciiStreamReader::readSerialVersionId");
 char AsciiStreamReader::readChar(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readChar");
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return itsImpl.template readBasicType<char>(name);
 }
 
 int AsciiStreamReader::readInt(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readInt");
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return itsImpl.template readBasicType<int>(name);
 }
 
 bool AsciiStreamReader::readBool(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readBool");
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return bool(itsImpl.template readBasicType<int>(name));
 }
 
 double AsciiStreamReader::readDouble(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readDouble");
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return itsImpl.template readBasicType<double>(name);
 }
 
 fstring AsciiStreamReader::readStringImpl(const fstring& name)
 {
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return itsImpl.readStringType(name);
 }
 
 void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 {
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   itsImpl.readValueObj(name, value);
 }
 
 Ref<IO::IoObject>
 AsciiStreamReader::readObject(const fstring& name)
 {
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return Ref<IO::IoObject>(itsImpl.readMaybeObject(name));
 }
 
 SoftRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   return itsImpl.readMaybeObject(name);
 }
 
 void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
-  DebugEvalNL(name);
+  dbgEvalNL(3, name);
   itsImpl.readOwnedObject(this, name, obj);
 }
 
@@ -648,7 +648,7 @@ void AsciiStreamReader::readBaseClass(
 )
 {
 DOTRACE("AsciiStreamReader::readBaseClass");
-  DebugEvalNL(baseClassName);
+  dbgEvalNL(3, baseClassName);
   itsImpl.readOwnedObject(this, baseClassName, basePart);
 }
 

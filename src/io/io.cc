@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Fri Jan 18 16:07:06 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ private:
 IO::IoObject::IoObject()
 {
 DOTRACE("IO::IoObject::IoObject");
-  DebugEvalNL(this);
+  dbgEvalNL(3, this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable

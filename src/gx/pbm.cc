@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Mon Sep  9 12:16:22 2002
+// written: Sun Nov  3 13:41:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ namespace
 
     while (is.peek() != EOF && position < byte_count)
       {
-        DebugEval(position);
+        dbgEval(3, position);
 
         is >> val;
         data.bytesPtr()[position] = (val == 0) ? 0 : 255;
@@ -96,7 +96,7 @@ namespace
 
     while (is.peek() != EOF && position < byte_count)
       {
-        DebugEval(position);
+        dbgEval(3, position);
 
         is >> val;
         data.bytesPtr()[position] = static_cast<unsigned char>(val * scale);
@@ -108,7 +108,7 @@ namespace
   void parsePbmMode456(STD_IO::istream& is, Gfx::BmapData& data)
   {
   DOTRACE("parsePbmMode456");
-    DebugEvalNL(data.byteCount());
+    dbgEvalNL(3, data.byteCount());
     is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
     unsigned int numread = is.gcount();
     if (numread < data.byteCount())
@@ -178,7 +178,7 @@ DOTRACE("Pbm::load");
   int mode;
 
   is >> mode;
-  DebugEvalNL(mode);
+  dbgEvalNL(3, mode);
 
   int bit_depth = bitDepthForMode(mode);
 
@@ -203,7 +203,7 @@ DOTRACE("Pbm::load");
       is >> max_grey;
     }
 
-  DebugEvalNL(max_grey);
+  dbgEvalNL(3, max_grey);
 
   // read one more character of whitespace from the stream after MaxGrey
   c = is.get();
