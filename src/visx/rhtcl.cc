@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Oct 23 23:14:22 2000
+// written: Tue Oct 24 13:06:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -244,26 +244,6 @@ public:
   }
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// RhListPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace RhListTcl {
-  class RhListPkg;
-}
-
-class RhListTcl::RhListPkg : public Tcl::IoPtrListPkg {
-public:
-  RhListPkg(Tcl_Interp* interp) :
-	 Tcl::IoPtrListPkg(interp, RhList::theRhList(), "RhList", "$Revision$")
-  {
-	 // FIXME
-// 	 RhList::theRhList().insertAt(0, RhList::Ptr(KbdResponseHdlr::make()));
-  }
-};
-
 
 //--------------------------------------------------------------------
 //
@@ -275,7 +255,8 @@ extern "C"
 int Rh_Init(Tcl_Interp* interp) {
 DOTRACE("Rh_Init");
 
-  new RhListTcl::RhListPkg(interp);
+  new Tcl::IoPtrListPkg(interp, RhList::theRhList(),
+								"RhList", "$Revision$");
 
   new Tcl::AbstractListItemPkg<ResponseHandler, RhList>(
 		  interp, RhList::theRhList(), "Rh", "$Revision$");
