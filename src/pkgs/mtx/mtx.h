@@ -36,100 +36,98 @@
 
 #include <iterator>
 
-class fstring;
-
-namespace RC // Range checking
+namespace range_checking
 {
   void geq(const void* x, const void* lim, const char* f, int ln);
   void lt(const void* x, const void* lim, const char* f, int ln);
   void leq(const void* x, const void* lim, const char* f, int ln);
-  void inHalfOpen(const void* x, const void* llim, const void* ulim,
-                  const char* f, int ln);
-  void inFullOpen(const void* x, const void* llim, const void* ulim,
-                  const char* f, int ln);
+  void in_half_open(const void* x, const void* llim, const void* ulim,
+                    const char* f, int ln);
+  void in_full_open(const void* x, const void* llim, const void* ulim,
+                    const char* f, int ln);
 
   void geq(int x, int lim, const char* f, int ln);
   void lt(int x, int lim, const char* f, int ln);
   void leq(int x, int lim, const char* f, int ln);
-  void inHalfOpen(int x, int llim, int ulim, const char* f, int ln);
-  void inFullOpen(int x, int llim, int ulim, const char* f, int ln);
+  void in_half_open(int x, int llim, int ulim, const char* f, int ln);
+  void in_full_open(int x, int llim, int ulim, const char* f, int ln);
 }
 
 #ifdef RANGE_CHECK
 // Range check
-#  define RC_geq(x,lim) RC::geq((x),(lim),__FILE__,__LINE__)
-#  define RC_less(x,lim) RC::lt((x),(lim),__FILE__,__LINE__)
-#  define RC_leq(x,lim) RC::leq((x),(lim),__FILE__,__LINE__)
-#  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__)
-#  define RC_inFullOpen(x,llim,ulim) RC::inFullOpen((x),(llim),(ulim),__FILE__,__LINE__)
+#  define RC_geq(x,lim) range_checking::geq((x),(lim),__FILE__,__LINE__)
+#  define RC_less(x,lim) range_checking::lt((x),(lim),__FILE__,__LINE__)
+#  define RC_leq(x,lim) range_checking::leq((x),(lim),__FILE__,__LINE__)
+#  define RC_in_half_open(x,llim,ulim) range_checking::in_half_open((x),(llim),(ulim),__FILE__,__LINE__)
+#  define RC_in_full_open(x,llim,ulim) range_checking::in_full_open((x),(llim),(ulim),__FILE__,__LINE__)
 
 // Range check, and return the checked value
-#  define RCR_geq(x,lim) (RC::geq((x),(lim),__FILE__,__LINE__), x)
-#  define RCR_less(x,lim) (RC::lt((x),(lim),__FILE__,__LINE__), x)
-#  define RCR_leq(x,lim) (RC::leq((x),(lim),__FILE__,__LINE__), x)
-#  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
-#  define RCR_inFullOpen(x,llim,ulim) (RC::inFullOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
+#  define RCR_geq(x,lim) (range_checking::geq((x),(lim),__FILE__,__LINE__), x)
+#  define RCR_less(x,lim) (range_checking::lt((x),(lim),__FILE__,__LINE__), x)
+#  define RCR_leq(x,lim) (range_checking::leq((x),(lim),__FILE__,__LINE__), x)
+#  define RCR_in_half_open(x,llim,ulim) (range_checking::in_half_open((x),(llim),(ulim),__FILE__,__LINE__), x)
+#  define RCR_in_full_open(x,llim,ulim) (range_checking::in_full_open((x),(llim),(ulim),__FILE__,__LINE__), x)
 
 #else // !RANGE_CHECK
 
 #  define RC_geq(x,lim)
 #  define RC_less(x,lim)
 #  define RC_leq(x,lim)
-#  define RC_inHalfOpen(x,llim,ulim)
-#  define RC_inFullOpen(x,llim,ulim)
+#  define RC_in_half_open(x,llim,ulim)
+#  define RC_in_full_open(x,llim,ulim)
 
 #  define RCR_geq(x,lim) (x)
 #  define RCR_less(x,lim) (x)
 #  define RCR_leq(x,lim) (x)
-#  define RCR_inHalfOpen(x,llim,ulim) (x)
-#  define RCR_inFullOpen(x,llim,ulim) (x)
+#  define RCR_in_half_open(x,llim,ulim) (x)
+#  define RCR_in_full_open(x,llim,ulim) (x)
 #endif
 
 // ####################################################################
 
-/// Range class represents a half-open range of indices.
+/// index_range class represents a half-open range of indices.
 
-class Range
+class index_range
 {
 private:
-  const int itsFirst;
-  const int itsCount;
+  const int m_first;
+  const int m_count;
 
 public:
-  Range(int first, int count) : itsFirst(first), itsCount(count) {}
+  index_range(int first, int count) : m_first(first), m_count(count) {}
 
-  int begin() const { return itsFirst; }
-  int end() const { return itsFirst+itsCount; }
-  int count() const { return itsCount; }
+  int begin() const { return m_first; }
+  int end() const { return m_first+m_count; }
+  int count() const { return m_count; }
 };
 
 /// A range class for row ranges only.
-class RowRange : public Range
+class row_index_range : public index_range
 {
 public:
   /// Construct with first+count.
-  RowRange(int first, int count) : Range(first, count) {}
+  row_index_range(int first, int count) : index_range(first, count) {}
 };
 
 /// A range class for column ranges only.
-class ColRange : public Range
+class col_index_range : public index_range
 {
 public:
   /// Construct with first+count.
-  ColRange(int first, int count) : Range(first, count) {}
+  col_index_range(int first, int count) : index_range(first, count) {}
 };
 
-inline Range range(int i) { return Range(i, 1); }
-inline Range range(int begin, int end) { return Range(begin, end-begin); }
-inline Range range_n(int begin, int count) { return Range(begin, count); }
+inline index_range range(int i) { return index_range(i, 1); }
+inline index_range range(int begin, int end) { return index_range(begin, end-begin); }
+inline index_range range_n(int begin, int count) { return index_range(begin, count); }
 
-inline RowRange row_range(int r) { return RowRange(r, 1); }
-inline RowRange row_range(int begin, int end) { return RowRange(begin, end-begin); }
-inline RowRange row_range_n(int begin, int count) { return RowRange(begin, count); }
+inline row_index_range row_range(int r) { return row_index_range(r, 1); }
+inline row_index_range row_range(int begin, int end) { return row_index_range(begin, end-begin); }
+inline row_index_range row_range_n(int begin, int count) { return row_index_range(begin, count); }
 
-inline ColRange col_range(int c) { return ColRange(c, 1); }
-inline ColRange col_range(int begin, int end) { return ColRange(begin, end-begin); }
-inline ColRange col_range_n(int begin, int count) { return ColRange(begin, count); }
+inline col_index_range col_range(int c) { return col_index_range(c, 1); }
+inline col_index_range col_range(int begin, int end) { return col_index_range(begin, end-begin); }
+inline col_index_range col_range_n(int begin, int count) { return col_index_range(begin, count); }
 
 
 
@@ -145,20 +143,20 @@ class Mtx;
 
 /// Generic stride-based array iterator.
 template <class T>
-class MtxIterBase
+class stride_iterator_base
 {
 protected:
-  MtxIterBase(T* d, int str, int n) :
+  stride_iterator_base(T* d, int str, int n) :
     data(d), stride(str), stop(data+str*n) {}
 
 public:
   typedef std::random_access_iterator_tag iterator_category;
 
-  MtxIterBase(const MtxIterBase& other) :
+  stride_iterator_base(const stride_iterator_base& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
 
   template <class U>
-  explicit MtxIterBase(const MtxIterBase<U>& other) :
+  explicit stride_iterator_base(const stride_iterator_base<U>& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
 
   typedef T            value_type;
@@ -166,9 +164,9 @@ public:
   typedef T*           pointer;
   typedef T&           reference;
 
-  MtxIterBase end() const { MtxIterBase e(*this); e.data = stop; return e; }
+  stride_iterator_base end() const { stride_iterator_base e(*this); e.data = stop; return e; }
 
-  bool hasMore() const { return data < stop; }
+  bool has_more() const { return data < stop; }
 
   // Dereference
 
@@ -176,42 +174,42 @@ public:
 
   // Comparison
 
-  bool operator==(const MtxIterBase& other) const { return data == other.data; }
+  bool operator==(const stride_iterator_base& other) const { return data == other.data; }
 
-  bool operator!=(const MtxIterBase& other) const { return data != other.data; }
+  bool operator!=(const stride_iterator_base& other) const { return data != other.data; }
 
-  bool operator<(const MtxIterBase& other) const { return data < other.data; }
+  bool operator<(const stride_iterator_base& other) const { return data < other.data; }
 
-  difference_type operator-(const MtxIterBase& other) const
+  difference_type operator-(const stride_iterator_base& other) const
     { return (data - other.data) / stride; }
 
   // Increment/Decrement
 
-  MtxIterBase& operator++() { data += stride; return *this; }
-  MtxIterBase& operator--() { data -= stride; return *this; }
+  stride_iterator_base& operator++() { data += stride; return *this; }
+  stride_iterator_base& operator--() { data -= stride; return *this; }
 
-  MtxIterBase operator++(int) { MtxIterBase cpy(*this); data += stride; return cpy; }
-  MtxIterBase operator--(int) { MtxIterBase cpy(*this); data -= stride; return cpy; }
+  stride_iterator_base operator++(int) { stride_iterator_base cpy(*this); data += stride; return cpy; }
+  stride_iterator_base operator--(int) { stride_iterator_base cpy(*this); data -= stride; return cpy; }
 
-  MtxIterBase& operator+=(int x) { data += x*stride; return *this; }
-  MtxIterBase& operator-=(int x) { data -= x*stride; return *this; }
+  stride_iterator_base& operator+=(int x) { data += x*stride; return *this; }
+  stride_iterator_base& operator-=(int x) { data -= x*stride; return *this; }
 
-  MtxIterBase operator+(int x) const { MtxIterBase res(*this); res += x; return res; }
-  MtxIterBase operator-(int x) const { MtxIterBase res(*this); res -= x; return res; }
+  stride_iterator_base operator+(int x) const { stride_iterator_base res(*this); res += x; return res; }
+  stride_iterator_base operator-(int x) const { stride_iterator_base res(*this); res -= x; return res; }
 
 private:
   friend class Slice;
   friend class Mtx;
 
-  template <class U> friend class MtxIterBase;
+  template <class U> friend class stride_iterator_base;
 
   T* data;
   int stride;
   T* stop;
 };
 
-typedef MtxIterBase<double> MtxIter;
-typedef MtxIterBase<const double> MtxConstIter;
+typedef stride_iterator_base<double> mtx_iter;
+typedef stride_iterator_base<const double> mtx_const_iter;
 
 
 //  ###################################################################
@@ -247,13 +245,13 @@ public:
 
   double operator[](int i) const
   {
-    RC_inHalfOpen(i, 0, itsNelems);
+    RC_in_half_open(i, 0, itsNelems);
     return *(address(i));
   }
 
   int nelems() const { return itsNelems; }
 
-  Slice operator()(const Range& rng) const;
+  Slice operator()(const index_range& rng) const;
 
   void print() const;
 
@@ -261,16 +259,16 @@ public:
   // Iteration
   //
 
-  MtxIter beginNC()
-    { return MtxIter(dataStart_nc(), itsStride, itsNelems); }
+  mtx_iter beginNC()
+    { return mtx_iter(dataStart_nc(), itsStride, itsNelems); }
 
-  MtxIter endNC()
+  mtx_iter endNC()
     { return beginNC().end(); }
 
-  MtxConstIter begin() const
-    { return MtxConstIter(dataStart(), itsStride, itsNelems); }
+  mtx_const_iter begin() const
+    { return mtx_const_iter(dataStart(), itsStride, itsNelems); }
 
-  MtxConstIter end() const
+  mtx_const_iter end() const
     { return begin().end(); }
 
   //
@@ -299,14 +297,14 @@ public:
 
   void apply(double func(double))
   {
-    for (MtxIter i = beginNC(); i.hasMore(); ++i)
+    for (mtx_iter i = beginNC(); i.has_more(); ++i)
       *i = func(*i);
   }
 
   template <class F>
   void apply(F func)
   {
-    for (MtxIter i = beginNC(); i.hasMore(); ++i)
+    for (mtx_iter i = beginNC(); i.has_more(); ++i)
       *i = func(*i);
   }
 
@@ -394,15 +392,15 @@ public:
 
   MtxSpecs as_shape(int mr, int nc) const { return as_shape(MtxShape(mr,nc)); }
 
-  void selectRows(const RowRange& rng);
-  void selectCols(const ColRange& rng);
+  void selectRows(const row_index_range& rng);
+  void selectCols(const col_index_range& rng);
 
-  MtxSpecs subRows(const RowRange& rng) const
+  MtxSpecs subRows(const row_index_range& rng) const
   {
     MtxSpecs result(*this); result.selectRows(rng); return result;
   }
 
-  MtxSpecs subCols(const ColRange& rng) const
+  MtxSpecs subCols(const col_index_range& rng) const
   {
     MtxSpecs result(*this); result.selectCols(rng); return result;
   }
@@ -425,11 +423,11 @@ public:
   int offsetFromStart(int row, int col) const
   {
     // Strictly speaking, the only valid offsets are those that pass
-    // RC_inHalfOpen(), but in order to allow "one-past-the-end" indexing
-    // for iterators etc., we use the more permissive RC_inFullOpen()
-    // instead:
-    RC_inFullOpen(row, 0, mrows());
-    RC_inFullOpen(col, 0, ncols());
+    // RC_in_half_open(), but in order to allow "one-past-the-end"
+    // indexing for iterators etc., we use the more permissive
+    // RC_in_full_open() instead:
+    RC_in_full_open(row, 0, mrows());
+    RC_in_full_open(col, 0, ncols());
 
     return row + (col*rowstride_);
   }
@@ -677,7 +675,7 @@ public:
 
     iter_base end() const { return iter_base(mtx, mtx->nelems()); }
 
-    bool hasMore() const { return elem < mtx->nelems(); }
+    bool has_more() const { return elem < mtx->nelems(); }
 
   private:
     // Need this pair of overloads to distinguish between const and
@@ -993,43 +991,43 @@ public:
   // Slices, submatrices
   //
 
-  SubMtxRef sub(const RowRange& rng)
+  SubMtxRef sub(const row_index_range& rng)
   {
     return SubMtxRef(this->specs().subRows(rng), this->data_);
   }
 
-  SubMtxRef sub(const ColRange& rng)
+  SubMtxRef sub(const col_index_range& rng)
   {
     return SubMtxRef(this->specs().subCols(rng), this->data_);
   }
 
-  SubMtxRef sub(const RowRange& rr, const ColRange& cc)
+  SubMtxRef sub(const row_index_range& rr, const col_index_range& cc)
   {
     return SubMtxRef(this->specs().subRows(rr).subCols(cc), this->data_);
   }
 
 
-  Mtx sub(const RowRange& rng) const
+  Mtx sub(const row_index_range& rng) const
   {
     return Mtx(this->specs().subRows(rng), this->data_);
   }
 
-  Mtx sub(const ColRange& rng) const
+  Mtx sub(const col_index_range& rng) const
   {
     return Mtx(this->specs().subCols(rng), this->data_);
   }
 
-  Mtx sub(const RowRange& rr, const ColRange& cc) const
+  Mtx sub(const row_index_range& rr, const col_index_range& cc) const
   {
     return Mtx(this->specs().subRows(rr).subCols(cc), this->data_);
   }
 
 
-  Mtx operator()(const RowRange& rng) const { return sub(rng); }
+  Mtx operator()(const row_index_range& rng) const { return sub(rng); }
 
-  Mtx operator()(const ColRange& rng) const { return sub(rng); }
+  Mtx operator()(const col_index_range& rng) const { return sub(rng); }
 
-  Mtx operator()(const RowRange& rr, const ColRange& cc) const
+  Mtx operator()(const row_index_range& rr, const col_index_range& cc) const
   { return sub(rr, cc); }
 
 
@@ -1042,11 +1040,11 @@ public:
   Slice row(int r) const
     { return Slice(*this, offsetFromStorage(r,0), rowstride(), ncols()); }
 
-  MtxIter rowIter(int r)
-    { return MtxIter(address_nc(r,0), rowstride(), ncols()); }
+  mtx_iter rowIter(int r)
+    { return mtx_iter(address_nc(r,0), rowstride(), ncols()); }
 
-  MtxConstIter rowIter(int r) const
-    { return MtxConstIter(address(r,0), rowstride(), ncols()); }
+  mtx_const_iter rowIter(int r) const
+    { return mtx_const_iter(address(r,0), rowstride(), ncols()); }
 
   Mtx asRow() const { return as_shape(1, nelems()); }
 
@@ -1057,11 +1055,11 @@ public:
   Slice column(int c) const
     { return Slice(*this, offsetFromStorage(0,c), colstride(), mrows()); }
 
-  MtxIter columnIter(int c)
-    { return MtxIter(address_nc(0,c), colstride(), mrows()); }
+  mtx_iter columnIter(int c)
+    { return mtx_iter(address_nc(0,c), colstride(), mrows()); }
 
-  MtxConstIter columnIter(int c) const
-    { return MtxConstIter(address(0,c), colstride(), mrows()); }
+  mtx_const_iter columnIter(int c) const
+    { return mtx_const_iter(address(0,c), colstride(), mrows()); }
 
   Mtx asColumn() const { return as_shape(nelems(), 1); }
 
@@ -1140,11 +1138,11 @@ inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
 ///////////////////////////////////////////////////////////////////////
 
 
-inline double innerProduct(MtxConstIter s1, MtxConstIter s2)
+inline double innerProduct(mtx_const_iter s1, mtx_const_iter s2)
 {
   double result = 0.0;
 
-  for (; s1.hasMore(); ++s1, ++s2)
+  for (; s1.has_more(); ++s1, ++s2)
     result += (*s1) * (*s2);
 
   return result;

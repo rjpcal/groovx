@@ -75,53 +75,59 @@ namespace
   }
 }
 
-namespace RC
+namespace range_checking
 {
   void raiseException(const fstring& msg, const char* f, int ln);
 }
 
-void RC::raiseException(const fstring& msg, const char* f, int ln)
+void range_checking::raiseException(const fstring& msg,
+                                    const char* f, int ln)
 {
   dbgPrintNL(3, msg);
   fstring errmsg;
-  errmsg.append("Range check failed in file '", f, "' at line #");
+  errmsg.append("range check failed in file '", f, "' at line #");
   errmsg.append(ln, ": ", msg);
   throw Util::Error(errmsg);
 }
 
-void RC::geq(const void* x, const void* lim, const char* f, int ln)
+void range_checking::geq(const void* x, const void* lim,
+                         const char* f, int ln)
 {
   if (x>=lim) ; // OK
   else raiseException("geq: pointer range error", f, ln);
 }
 
-void RC::lt(const void* x, const void* lim, const char* f, int ln)
+void range_checking::lt(const void* x, const void* lim,
+                        const char* f, int ln)
 {
   if (x<lim) ; // OK
   else raiseException("less: pointer range error", f, ln);
 }
 
-void RC::leq(const void* x, const void* lim, const char* f, int ln)
+void range_checking::leq(const void* x, const void* lim,
+                         const char* f, int ln)
 {
   if (x<=lim) ; // OK
   else raiseException("leq: pointer range error", f, ln);
 }
 
-void RC::inHalfOpen(const void* x, const void* llim, const void* ulim,
-                    const char* f, int ln)
+void range_checking::in_half_open(const void* x,
+                                  const void* llim, const void* ulim,
+                                  const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException("inHalfOpen: pointer range error", f, ln);
+  else raiseException("in_half_open: pointer range error", f, ln);
 }
 
-void RC::inFullOpen(const void* x, const void* llim, const void* ulim,
-                    const char* f, int ln)
+void range_checking::in_full_open(const void* x,
+                                  const void* llim, const void* ulim,
+                                  const char* f, int ln)
 {
   if (x>=llim && x<=ulim) ; // OK
-  else raiseException("inFullOpen: pointer range error", f, ln);
+  else raiseException("in_full_open: pointer range error", f, ln);
 }
 
-void RC::geq(int x, int lim, const char* f, int ln)
+void range_checking::geq(int x, int lim, const char* f, int ln)
 {
   if (x>=lim) ; // OK
   else raiseException(fstring("geq: integer range error ",
@@ -129,7 +135,7 @@ void RC::geq(int x, int lim, const char* f, int ln)
                       f, ln);
 }
 
-void RC::lt(int x, int lim, const char* f, int ln)
+void range_checking::lt(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
   else raiseException(fstring("less: integer range error ",
@@ -137,7 +143,7 @@ void RC::lt(int x, int lim, const char* f, int ln)
                       f, ln);
 }
 
-void RC::leq(int x, int lim, const char* f, int ln)
+void range_checking::leq(int x, int lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
   else raiseException(fstring("leq: integer range error ",
@@ -145,18 +151,22 @@ void RC::leq(int x, int lim, const char* f, int ln)
                       f, ln);
 }
 
-void RC::inHalfOpen(int x, int llim, int ulim, const char* f, int ln)
+void range_checking::in_half_open(int x,
+                                  int llim, int ulim,
+                                  const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException(fstring("inHalfOpen: integer range error ",
+  else raiseException(fstring("in_half_open: integer range error ",
                               x, " !in [", llim, ", ", ulim, ")"),
                       f, ln);
 }
 
-void RC::inFullOpen(int x, int llim, int ulim, const char* f, int ln)
+void range_checking::in_full_open(int x,
+                                  int llim, int ulim,
+                                  const char* f, int ln)
 {
   if (x>=llim && x<=ulim) ; // OK
-  else raiseException(fstring("inFullOpen: integer range error ",
+  else raiseException(fstring("in_full_open: integer range error ",
                               x, " !in [", llim, ", ", ulim, "]"),
                       f, ln);
 }
@@ -168,10 +178,10 @@ void RC::inFullOpen(int x, int llim, int ulim, const char* f, int ln)
 //
 ///////////////////////////////////////////////////////////////////////
 
-Slice Slice::operator()(const Range& rng) const
+Slice Slice::operator()(const index_range& rng) const
 {
 DOTRACE("Slice::operator");
-  RC_inHalfOpen(rng.begin(), 0, itsNelems);
+  RC_in_half_open(rng.begin(), 0, itsNelems);
   RC_geq(rng.count(), 0);
   RC_leq(rng.end(), itsNelems);
 
@@ -181,7 +191,7 @@ DOTRACE("Slice::operator");
 void Slice::print() const
 {
 DOTRACE("Slice::print");
-  for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
+  for(mtx_const_iter iter = begin(); iter.has_more(); ++iter)
     {
       std::cout << std::setw(12) << std::setprecision(7) << double(*iter);
     }
@@ -192,7 +202,7 @@ double Slice::sum() const
 {
 DOTRACE("Slice::sum");
   double s = 0.0;
-  for (MtxConstIter i = begin(); i.hasMore(); ++i)
+  for (mtx_const_iter i = begin(); i.has_more(); ++i)
     s += *i;
   return s;
 }
@@ -200,9 +210,9 @@ DOTRACE("Slice::sum");
 double Slice::min() const
 {
 DOTRACE("Slice::min");
-  MtxConstIter i = begin();
+  mtx_const_iter i = begin();
   double mn = *i;
-  for (; i.hasMore(); ++i)
+  for (; i.has_more(); ++i)
     if (*i < mn) mn = *i;
   return mn;
 }
@@ -210,9 +220,9 @@ DOTRACE("Slice::min");
 double Slice::max() const
 {
 DOTRACE("Slice::max");
-  MtxConstIter i = begin();
+  mtx_const_iter i = begin();
   double mx = *i;
-  for (; i.hasMore(); ++i)
+  for (; i.has_more(); ++i)
     if (*i > mx) mx = *i;
   return mx;
 }
@@ -259,8 +269,8 @@ bool Slice::operator==(const Slice& other) const
 DOTRACE("Slice::operator==(const Slice&)");
   if (itsNelems != other.itsNelems) return false;
 
-  for (MtxConstIter a = this->begin(), b = other.begin();
-       a.hasMore();
+  for (mtx_const_iter a = this->begin(), b = other.begin();
+       a.has_more();
        ++a, ++b)
     if (*a != *b) return false;
 
@@ -295,9 +305,9 @@ DOTRACE("Slice::operator+=(const Slice&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator+=");
 
-  MtxConstIter rhs = other.begin();
+  mtx_const_iter rhs = other.begin();
 
-  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
+  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++rhs)
     *lhs += *rhs;
 
   return *this;
@@ -309,9 +319,9 @@ DOTRACE("Slice::operator-=(const Slice&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator-=");
 
-  MtxConstIter rhs = other.begin();
+  mtx_const_iter rhs = other.begin();
 
-  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
+  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++rhs)
     *lhs -= *rhs;
 
   return *this;
@@ -323,9 +333,9 @@ DOTRACE("Slice::operator=(const Slice&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator=");
 
-  MtxConstIter rhs = other.begin();
+  mtx_const_iter rhs = other.begin();
 
-  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
+  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++rhs)
     *lhs = *rhs;
 
   return *this;
@@ -338,7 +348,7 @@ DOTRACE("Slice::operator=(const Mtx&)");
     throw Util::Error("dimension mismatch in Slice::operator=");
 
   int i = 0;
-  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++i)
+  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++i)
     *lhs = other.at(i);
 
   return *this;
@@ -373,7 +383,7 @@ DOTRACE("MtxSpecs::as_shape");
   return result;
 }
 
-void MtxSpecs::selectRows(const RowRange& rng)
+void MtxSpecs::selectRows(const row_index_range& rng)
 {
 DOTRACE("MtxSpecs::selectRows");
   if (rng.begin() < 0)
@@ -389,7 +399,7 @@ DOTRACE("MtxSpecs::selectRows");
   shape_ = MtxShape(rng.count(), ncols());
 }
 
-void MtxSpecs::selectCols(const ColRange& rng)
+void MtxSpecs::selectCols(const col_index_range& rng)
 {
 DOTRACE("MtxSpecs::selectCols");
   if (rng.begin() < 0)
@@ -747,7 +757,7 @@ DOTRACE("Mtx::meanRow");
 
   Mtx res(1, ncols());
 
-  MtxIter resiter = res.row(0).beginNC();
+  mtx_iter resiter = res.row(0).beginNC();
 
   for (int c = 0; c < ncols(); ++c, ++resiter)
     *resiter = column(c).mean();
@@ -761,7 +771,7 @@ DOTRACE("Mtx::meanColumn");
 
   Mtx res(mrows(), 1);
 
-  MtxIter resiter = res.column(0).beginNC();
+  mtx_iter resiter = res.column(0).beginNC();
 
   for (int r = 0; r < mrows(); ++r, ++resiter)
     *resiter = row(r).mean();
@@ -867,9 +877,9 @@ DOTRACE("Mtx::VMmul_assign");
        (result.nelems() != mtx.ncols()) )
     throw Util::Error("dimension mismatch in Mtx::VMmul_assign");
 
-  MtxConstIter veciter = vec.begin();
+  mtx_const_iter veciter = vec.begin();
 
-  MtxIter resultIter = result.beginNC();
+  mtx_iter resultIter = result.beginNC();
 
   for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
     *resultIter = innerProduct(veciter, mtx.columnIter(col));
@@ -884,9 +894,9 @@ DOTRACE("Mtx::assign_MMmul");
 
   for (int n = 0; n < mrows(); ++n)
     {
-      MtxIter rowElement = this->rowIter(n);
+      mtx_iter rowElement = this->rowIter(n);
 
-      MtxConstIter veciter = m1.rowIter(n);
+      mtx_const_iter veciter = m1.rowIter(n);
 
       for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
         *rowElement = innerProduct(veciter, m2.columnIter(col));
