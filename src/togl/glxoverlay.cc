@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug  5 17:09:31 2002
-// written: Sat Aug 10 15:20:12 2002
+// written: Mon Sep 16 11:55:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "togl/glxoverlay.h"
 
-#include "togl/glxattribs.h"
+#include "togl/glxopts.h"
 #include "togl/glxwrapper.h"
 
 #include "util/error.h"
@@ -27,8 +27,8 @@
 #include "util/trace.h"
 
 GlxOverlay::GlxOverlay(Display* dpy, Window parent,
-        bool direct, GlxWrapper* share,
-        int width, int height) :
+                       bool direct, GlxWrapper* share,
+                       int width, int height) :
   itsDisplay(dpy),
   itsGlx(0),
   itsWindow(0),
@@ -41,13 +41,15 @@ GlxOverlay::GlxOverlay(Display* dpy, Window parent,
 {
 DOTRACE("GlxOverlay::GlxOverlay");
 
-  GlxAttribs attribs;
-  attribs.colorIndex( 2 );
-  attribs.level( 1 );
-  attribs.transparent();
+  GlxOpts opts; opts.toDefaults();
+
+  opts.rgbaFlag = 0; opts.colorIndexSize = 2;
+  opts.level = 1;
+  opts.transparent = 1;
+  opts.indirect = !direct;
 
   // share display lists with normal layer context
-  itsGlx = new GlxWrapper(itsDisplay, attribs, direct, share);
+  itsGlx = new GlxWrapper(itsDisplay, opts, share);
 
 #ifdef GLX_TRANSPARENT_INDEX_EXT
   {
