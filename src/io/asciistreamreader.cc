@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Nov  4 16:48:03 1999
+// written: Fri Nov  5 10:10:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <iostream.h>
 #include <strstream.h>
 #include <map>
+#include <vector>
 
 #include "io.h"
 #include "iomgr.h"
@@ -29,6 +30,10 @@
 
 #if defined(IRIX6) || defined(HP9000S700)
 #define AsciiStreamReader ASR
+#endif
+
+#ifdef ACC_COMPILER
+#define NO_IOS_EXCEPTIONS
 #endif
 
 namespace {
@@ -62,7 +67,21 @@ namespace {
 class AsciiStreamReader::Impl {
 public:
   Impl(istream& is) :
-	 itsBuf(is), itsCreatedObjects(), itsAttribs() {}
+	 itsBuf(is), itsCreatedObjects(), itsAttribs() 
+  {
+#ifndef NO_IOS_EXCEPTIONS
+	 itsOriginalExceptionState = itsBuf.exceptions();
+	 itsBuf.exceptions( ios::badbit | ios::failbit );
+#endif
+  }
+
+  ~Impl()
+	 {
+#ifndef NO_IOS_EXCEPTIONS
+		itsBuf.exceptions(itsOriginalExceptionState);
+#endif
+	 }
+
 
   istream& itsBuf;
 
@@ -77,6 +96,10 @@ public:
   };
 
   map<string, Type_Value> itsAttribs;
+
+#ifndef NO_IOS_EXCEPTIONS
+  ios::iostate itsOriginalExceptionState;
+#endif
 };
 
 AsciiStreamReader::AsciiStreamReader (istream& is) :
@@ -132,16 +155,15 @@ DOTRACE("AsciiStreamReader::readString");
   istrstream ist(itsImpl.itsAttribs[name].value.c_str());
 
   int len;
-  ist >> len;
+  ist >> len;                     DebugEvalNL(len);
   ist.get(); // ignore one char of whitespace after the length
 
-  char* cstr = new char[len+1];
-  ist.getline(cstr, len+1, '\0');
-  string val(cstr);
-  delete [] cstr;
+  vector<char> cstr(len+1);
+  ist.read(&cstr[0], len);
+  cstr.back() = '\0';
 
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
-  return val;
+  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(&cstr[0]);
+  return string(&cstr[0]);
 }
 
 char* AsciiStreamReader::readCstring(const string& name) {
@@ -153,7 +175,8 @@ DOTRACE("AsciiStreamReader::readCstring");
   ist.get(); // ignore one char of whitespace after the length
 
   char* val = new char[len+1];
-  ist.getline(val, len+1, '\0');
+  ist.read(val, len);
+  val[len] = '\0';
 
   DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
   return val;
@@ -227,9 +250,9 @@ DOTRACE("AsciitStreamReader::readRoot");
 	 itsImpl.itsCreatedObjects[root->id()] = root;
   }
 
-  while ( !itsImpl.itsBuf.eof() ) {
+  while ( itsImpl.itsBuf.peek() != EOF ) {
 	 IO* obj = NULL;
-	 string type, equal, bracket;
+  	 string type, equal, bracket;	 
 	 unsigned long id;
 
 	 itsImpl.itsBuf >> type >> id >> equal >> bracket;
