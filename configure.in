@@ -140,6 +140,11 @@ case ${CXX}-${OS} in
 	    STATLIB_CMD="ar rus"
 	    ;;
       esac
+      AC_MSG_CHECKING([for path to libstdc++])
+      libstdcxx=`dirname \`$CXX -print-file-name=libstdc++.so\``
+      libstdcxx=`cd $libstdcxx 2> /dev/null && /bin/pwd`
+      LDFLAGS="$LDFLAGS -Wl,-rpath,$libstdcxx"
+      AC_MSG_RESULT($libstdcxx)
       cxxflags_debug="-O1 -g"
       cxxflags_prod="-O2"
       ;;
