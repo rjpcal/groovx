@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Sun Apr 25 21:10:54 1999
+// written: Sat Jul  3 13:50:54 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef PTRLIST_CC_DEFINED
@@ -18,23 +20,14 @@
 
 #include "iomgr.h"
 
-#define NO_TRACE
-#include "trace.h"
-#define LOCAL_ASSERT
-#include "debug.h"
-
 #ifndef NULL
 #define NULL 0L
 #endif
 
-// Explicit template instantiation requests
-#include "grobj.h"
-#include "position.h"
-template class PtrList<GrObj>;
-template class PtrList<Position>;
-
 ///////////////////////////////////////////////////////////////////////
+//
 // File scope declarations
+//
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
@@ -43,7 +36,9 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////////////////
+//
 // PtrList member functions
+//
 ///////////////////////////////////////////////////////////////////////
 
 //////////////
@@ -56,9 +51,9 @@ PtrList::PtrList(int size):
   itsVec(size, NULL) 
 {
 DOTRACE("PtrList::PtrList");
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(itsVec.size());
-#endif
+
+  DebugEvalNL(itsVec.size());
+
 }
 
 template <class T>
@@ -70,6 +65,8 @@ DOTRACE("PtrList::~PtrList");
 template <class T>
 void PtrList::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("PtrList::serialize");
+  static string ioTag = typeid(PtrList).name();	 
+
   if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
@@ -81,27 +78,26 @@ DOTRACE("PtrList::serialize");
   // resize later), as well as the number of non-null objects that we
   // serialize (so that deserialize knows when to stop reading).
   os << itsVec.size() << sep;
-  int num_null = 0;
-  for (vector<void *>::const_iterator ii = itsVec.begin(); 
-       ii != itsVec.end(); 
-       ii++) {
-    if (*ii == NULL) num_null++;
-  }
-  int num_non_null = itsVec.size() - num_null;
+
+  int num_non_null = PtrList::count();
   os << num_non_null << endl;
+
+  // Serialize all non-null ptr's.
   int c = 0;
-  for (int i = 0; i < itsVec.size(); i++) {
+  for (int i = 0; i < itsVec.size(); ++i) {
     if (itsVec[i] != NULL) {
       os << i << sep;
       // we must serialize the typename since deserialize requires a
       // typename in order to call the virtual constructor
-      static_cast<T *>(itsVec[i])->serialize(os, flag|TYPENAME);
-      c++;
+      itsVec[i]->serialize(os, flag|TYPENAME);
+      ++c;
     }
   }
+
   if (c != num_non_null) {
 	 throw IoLogicError(typeid(*this));
   }
+
   // itsFirstVacant
   os << itsFirstVacant << endl;
   if (os.fail()) throw OutputError(typeid(*this));
@@ -110,19 +106,14 @@ DOTRACE("PtrList::serialize");
 template <class T>
 void PtrList::deserialize(istream &is, IOFlag flag) {
 DOTRACE("PtrList::deserialize");
+  static string ioTag = typeid(PtrList).name();	 
+
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-    if (name != typeid(PtrList).name() && name != typeid(*this).name()) { 
-#ifdef LOCAL_DEBUG
-		DUMP_VAL1(name);
-		DUMP_VAL1(typeid(PtrList).name());
-		DUMP_VAL2(typeid(*this).name());
-#endif
-		throw InputError(typeid(*this));
-	 }
+  if (flag & TYPENAME) { 
+	 IO::readTypename(is, string(typeid(PtrList).name()) + " " +
+							string(typeid(*this).name()));
   }
+
   // itsVec
   clear();
   int size, num_non_null;
@@ -135,14 +126,17 @@ DOTRACE("PtrList::deserialize");
   }
   itsVec.resize(size, NULL);
   int ptrid;
-  for (int i = 0; i < num_non_null; i++) {
+  string type;
+  for (int i = 0; i < num_non_null; ++i) {
     is >> ptrid;
 	 if (ptrid < 0 || ptrid >= size) {
 		throw IoValueError(typeid(*this));
 	 }
-	 T* temp = dynamic_cast<T *>(IoMgr::newIO(is, flag));
+	 is >> type;
+	 T* temp = dynamic_cast<T *>(IoMgr::newIO(type.c_str()));
 	 if (!temp) throw InputError(typeid(T));
-    itsVec[ptrid] = temp;
+	 insertAt(ptrid, temp);
+	 temp->deserialize(is, flag & ~IO::TYPENAME);
   }
   // itsFirstVacant
   is >> itsFirstVacant;
@@ -152,42 +146,62 @@ DOTRACE("PtrList::deserialize");
   if (is.fail()) throw InputError(typeid(*this));
 }
 
+template <class T>
+int PtrList::charCount() const {
+  static string ioTag = typeid(PtrList).name();	 
+  int ch_count = ioTag.size() + 1
+	 + gCharCount<int>(itsVec.size()) + 1;
+  int num_non_null = PtrList::count();
+  ch_count += 
+	 gCharCount<int>(num_non_null) + 1;
+  
+  for (int i = 0; i < itsVec.size(); ++i) {
+	 if (itsVec[i] != NULL) {
+		ch_count += gCharCount<int>(i) + 1;
+		ch_count += itsVec[i]->charCount() + 1;
+	 }
+  }
+
+  ch_count += gCharCount<int>(itsFirstVacant) + 1;
+  return ch_count + 5;
+}
+
 ///////////////
 // accessors //
 ///////////////
 
 template <class T>
+int PtrList::capacity() const {
+DOTRACE("PtrList::capacity");
+  return itsVec.size();
+}
+
+template <class T>
 int PtrList::count() const {
 DOTRACE("PtrList::count"); 
-  int count=0;
-  for (vector<void *>::const_iterator ii = itsVec.begin(); 
-       ii != itsVec.end(); ii++) {
-    if (*ii != NULL) count++;
-  }
-  return count;
+  // Count the number of null pointers. In the STL call count, we must
+  // cast the value (NULL) so that template deduction treats it as a
+  // pointer rather than an int. Then return the number of non-null
+  // pointers, i.e. the size of the container less the number of null
+  // pointers.
+  int num_null=0;
+  ::count(itsVec.begin(), itsVec.end(),
+			 static_cast<void *>(NULL), num_null);
+  return (itsVec.size() - num_null);
 }
 
 template <class T>
 bool PtrList::isValidId(int id) const {
 DOTRACE("PtrList::isValidId");
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(id);
-  DUMP_VAL1(id>=0);
-  DUMP_VAL2(itsVec.size());
-  DUMP_VAL2(itsVec[id]);
-  DUMP_VAL2(id<itsVec.size());
-  DUMP_VAL2(itsVec[id] != NULL);
-#endif
-  return ( id >= 0 && id < itsVec.size() && itsVec[id] != NULL); 
-}
 
-template <class T>
-void PtrList::getValidIds(vector<int>& vec) const {
-DOTRACE("PtrList::getValidIds");
-  vec.clear();
-  for (int i = 0; i < itsVec.size(); i++) {
-    if (isValidId(i)) vec.push_back(i);
-  }
+  DebugEval(id);
+  DebugEval(id>=0);
+  DebugEvalNL(itsVec.size());
+  DebugEvalNL(itsVec[id]);
+  DebugEvalNL(id<itsVec.size());
+  DebugEvalNL(itsVec[id] != NULL);
+
+  return ( id >= 0 && id < itsVec.size() && itsVec[id] != NULL ); 
 }
 
 //////////////////
@@ -195,7 +209,7 @@ DOTRACE("PtrList::getValidIds");
 //////////////////
 
 template <class T>
-int PtrList::insert(T *ptr) {
+int PtrList::insert(T* ptr) {
 DOTRACE("PtrList::insert");
   int new_site = itsFirstVacant;
   insertAt(new_site, ptr);
@@ -203,7 +217,7 @@ DOTRACE("PtrList::insert");
 }
 
 template <class T>
-void PtrList::insertAt(int id, T *ptr) {
+void PtrList::insertAt(int id, T* ptr) {
 DOTRACE("PtrList::insertAt");
   if (id < 0) return;
 
@@ -211,8 +225,14 @@ DOTRACE("PtrList::insertAt");
     itsVec.resize(id+RESIZE_CHUNK, NULL);
   }
 
-  delete static_cast<T *>(itsVec[id]);
+  delete itsVec[id];
   itsVec[id] = ptr;
+
+  // It is possible that ptr is NULL, in this case, we might need to
+  // adjust itsFirstVacant if it is currently beyond than the site
+  // that we have just changed.
+  if (ptr == NULL && id < itsFirstVacant)
+	 itsFirstVacant = id;
 
   // make sure itsFirstVacant is up-to-date
   while ( (itsVec[itsFirstVacant] != NULL) &&
@@ -225,7 +245,7 @@ void PtrList::remove(int id) {
 DOTRACE("PtrList::remove");
   if (!isValidId(id)) return;
 
-  delete static_cast<T *>(itsVec[id]);
+  delete itsVec[id];
   itsVec[id] = NULL;         // reset the pointer to NULL
 
   // reset itsFirstVacant in case i would now be the first vacant
@@ -234,13 +254,12 @@ DOTRACE("PtrList::remove");
 
 template <class T>
 void PtrList::clear() {
-DOTRACE("PtrList::clear()");
-  for (vector<void *>::iterator ii = itsVec.begin(); 
-		 ii != itsVec.end(); 
-		 ii++) {
-    delete static_cast<T *>(*ii);
-    *ii = NULL;
+DOTRACE("PtrList::clear");
+  for (int i = 0; i < itsVec.size(); ++i) {
+	 delete itsVec[i];
+	 itsVec[i] = NULL;
   }
+
   itsFirstVacant = 0;
 }
 
