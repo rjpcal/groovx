@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Mar  6 10:14:22 2000
+// written: Mon Mar  6 10:17:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -282,8 +282,7 @@ DOTRACE("BitmapRep::loadPbmFile(istream&)");
 
 void BitmapRep::writePbmFile(const char* filename) const {
 DOTRACE("BitmapRep::writePbmFile");
-  Pbm pbm(itsImpl->itsData.bytesVec(), itsImpl->itsData.width(), itsImpl->itsData.height(),
-			 itsImpl->itsData.bitsPerPixel());
+  Pbm pbm(itsImpl->itsData);
 
   pbm.write(filename);
 }
