@@ -1,0 +1,101 @@
+##############################################################################
+#
+# test.tcl
+# Rob Peters
+# Jul-99
+# $Id$
+#
+##############################################################################
+
+# Multiple inclusion check
+if { [info exists TEST_TCL_DEFINED] } { return }
+set TEST_TCL_DEFINED 1
+
+set START_CLICKS [clock clicks]
+
+if { ![info exists ::VERBOSE] } { set ::VERBOSE 0 }
+if { ![info exists ::TEST_DIR] } { set ::TEST_DIR /cit/rjpeters/grsh/testing }
+
+set DATE [clock format [clock seconds] -format %H%M%d%b%Y]
+
+set num_tests 0
+set num_success 0
+set num_to_implement 0
+set num_known_bugs 0
+set num_intermittent_bugs 0
+
+
+# Flags to pass into 'flags' argument of test.
+set no_test 0
+set must_implement -1
+set skip_known_bug -2
+set normal_test 1
+set intermittent_bug 2
+set test_serialize 0
+
+# If the 'flags' argument is 0, the test is skipped.
+proc test {package_name test_name script expected_result_regexp {flags 1}} {
+	 if { $flags == $::must_implement } { incr ::num_to_implement }
+	 if { $flags == $::skip_known_bug } { incr ::num_known_bugs }
+	 if { $flags == $::intermittent_bug } { incr :: num_intermittent_bugs }
+	 if {$flags <= 0} { return }
+	 if {$::VERBOSE != 0} {
+		  puts "==== $package_name $test_name"
+	 }
+	 catch {eval $script} result
+	 incr ::num_tests
+	 if { [regexp -- $expected_result_regexp $result] == 1 } {
+		  if {$::VERBOSE != 0} { 
+				puts "---- $package_name $test_name succeeded\n"
+		  }
+		  incr ::num_success
+	 } else {
+		  if {$::VERBOSE == 0} {
+				puts "==== $package_name $test_name"
+		  }
+		  puts "==== Contents of test case:"
+		  puts $script
+		  puts "==== Result was:"
+		  puts $result
+		  puts "---- Result should have been:"
+		  puts $expected_result_regexp
+		  puts "---- $package_name $test_name FAILED\n"
+		  finish
+	 }
+}
+
+proc finish {} {
+	 set clicks_per_ms 1000
+	 set ::END_CLICKS [clock clicks]
+	 set elapsed_ms [expr ($::END_CLICKS-$::START_CLICKS) / $clicks_per_ms]
+	 set per_test [expr $::num_tests ? ($elapsed_ms/$::num_tests) : 0]
+	 set msg "$::num_success tests succeeded of $::num_tests tests attempted.
+Testing lasted $elapsed_ms msec, or $per_test msec per test.
+$::num_to_implement tests remain to be implemented.
+$::num_known_bugs known bugs were reported.
+$::num_intermittent_bugs intermittent bugs were reported.
+Testing complete."
+    puts $msg
+    after 10000 { event generate . <KeyPress> -keysym Return }
+	 tk_messageBox -icon info -type ok -message $msg
+	 exit
+}
+
+# test the test procedure
+test test test { expr {2+2} } 4
+
+# skeleton calls for new test procedures:
+### commandCmd ###
+test "package-command" "too few args" {} {^$}
+test "package-command" "too many args" {} {^$}
+test "package-command" "normal use" {} {^$}
+test "package-command" "error" {} {^$}
+
+# Helper RegExps
+set SP {[ \t]+}
+set BIT {[01]}
+set HEX {[0-9a-f]+}
+set INT {-?[0-9]+}
+set FLT {-?([0-9]+\.)?[0-9]+}
+set BLANK {^$}
+
