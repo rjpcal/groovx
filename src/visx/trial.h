@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Sun Jul 22 07:33:00 2001
+// written: Mon Aug  6 16:28:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@ namespace Util
   template <class T> class Ref;
 };
 
+class GxNode;
 class ResponseHandler;
 class TimingHdlr;
 
@@ -101,9 +102,7 @@ public:
   double avgResponse() const;
   double avgRespTime() const;
 
-  void add(Util::UID objid, Util::UID posid);
-
-  void addNode(Util::UID id);
+  void addNode(Util::Ref<GxNode> item);
 
   void trNextNode();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Thu Jul 19 21:10:47 2001
+// written: Mon Aug  6 16:42:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "responsehandler.h"
 #include "timinghdlr.h"
+
+#include "gx/gxnode.h"
 
 #include "tcl/fieldpkg.h"
 #include "tcl/tclmemfunctor.h"
@@ -48,8 +50,6 @@ public:
     Tcl::defTracing(this, Trial::tracer);
 
     Tcl::defFieldContainer<Trial>(this);
-
-    def( "add", "trialid objid posid", &Trial::add );
 
     defSetter("addNode", &Trial::addNode);
     defGetter("avgResponse", &Trial::avgResponse);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Aug  6 11:12:21 2001
+// written: Mon Aug  6 16:51:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,14 @@ namespace TlistTcl
     return loadObjidFile(objid_file, objids, posids, -1);
   }
 
+  Ref<GxSeparator> makeSepPair(Util::Ref<GxNode> obj1, Util::Ref<GxNode> obj2)
+  {
+    Ref<GxSeparator> sep(GxSeparator::make());
+    sep->addChild(obj1);
+    sep->addChild(obj2);
+    return sep;
+  }
+
   class TlistPkg;
 }
 
@@ -99,17 +107,19 @@ Tcl::List TlistTcl::dealSingles(Tcl::List objids, Util::UID posid)
 {
   Tcl::List result;
 
+  Ref<GxNode> pos(posid);
+
   for (Tcl::List::Iterator<Util::UID>
          itr = objids.begin<Util::UID>(),
          end = objids.end<Util::UID>();
        itr != end;
        ++itr)
     {
+      Ref<GxNode> obj(*itr);
+
       Ref<Trial> trial(Trial::make());
 
-      trial->add(*itr, posid);
-
-      Ref<GxNode> obj(*itr);
+      trial->addNode(makeSepPair(pos, obj));
       trial->setType(obj->category());
 
       result.append(trial.id());
@@ -128,25 +138,33 @@ Tcl::List TlistTcl::dealPairs(Tcl::List objids1, Tcl::List objids2,
 {
   Tcl::List result;
 
+  Ref<GxNode> pos1(posid1);
+  Ref<GxNode> pos2(posid2);
+
   for (Tcl::List::Iterator<Util::UID>
          itr1 = objids1.begin<Util::UID>(),
          end1 = objids1.end<Util::UID>();
        itr1 != end1;
        ++itr1)
-    for (Tcl::List::Iterator<Util::UID>
-           itr2 = objids2.begin<Util::UID>(),
-           end2 = objids2.end<Util::UID>();
-         itr2 != end2;
-       ++itr2)
-      {
-        Ref<Trial> trial(Trial::make());
+    {
+      Ref<GxSeparator> sep1(makeSepPair(pos1, Ref<GxNode>(*itr1)));
 
-        trial->add(*itr1, posid1);
-        trial->add(*itr2, posid2);
-        trial->setType(*itr1 == *itr2);
+      for (Tcl::List::Iterator<Util::UID>
+             itr2 = objids2.begin<Util::UID>(),
+             end2 = objids2.end<Util::UID>();
+           itr2 != end2;
+           ++itr2)
+        {
+          Ref<GxSeparator> sep2(makeSepPair(pos2, Ref<GxNode>(*itr2)));
 
-        result.append(trial.id());
-      }
+          Ref<Trial> trial(Trial::make());
+
+          trial->addNode(makeSepPair(sep1, sep2));
+          trial->setType(*itr1 == *itr2);
+
+          result.append(trial.id());
+        }
+    }
 
   return result;
 }
@@ -203,10 +221,22 @@ Tcl::List TlistTcl::dealTriads(Tcl::List objid_list, Util::UID posid1,
               // loops over p,e run through all permutations
               for (unsigned int p = 0; p < NUM_PERMS; ++p)
                 {
+                  Ref<GxSeparator> sep(GxSeparator::make());
+
+                  sep->addChild(makeSepPair(
+                      Ref<GxNode>(base_triad[permutations[p][0]]),
+                      Ref<GxNode>(posid1)));
+
+                  sep->addChild(makeSepPair(
+                      Ref<GxNode>(base_triad[permutations[p][1]]),
+                      Ref<GxNode>(posid2)));
+
+                  sep->addChild(makeSepPair(
+                      Ref<GxNode>(base_triad[permutations[p][2]]),
+                      Ref<GxNode>(posid3)));
+
                   Ref<Trial> trial(Trial::make());
-                  trial->add(base_triad[permutations[p][0]], posid1);
-                  trial->add(base_triad[permutations[p][1]], posid2);
-                  trial->add(base_triad[permutations[p][2]], posid3);
+                  trial->addNode(sep);
                   result.append(trial.id());
                 } // end p
             } // end itr3
@@ -274,7 +304,7 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       if (ist.fail() && !ist.eof())
         throw IO::InputError("Tlist::loadObjidFile");
 
-      trial->addNode(sep->id());
+      trial->addNode(sep);
 
       result.append(trial->id());
 
