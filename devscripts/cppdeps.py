@@ -48,6 +48,17 @@ class DirectIncludeMap:
             (newResolved, unresolved) = self.resolve(unresolved, pathCopies)
             resolved.extend(newResolved)
 
+        # If there are still some failed lookups, try looking in the
+        # "ego" directory, i.e. the one containing the source file:
+        if len(unresolved) > 0:
+            egoPath = os.path.dirname(file) + '/'
+
+            egoPathCopies = (egoPath,)*200
+
+            (newResolved, unresolved) = self.resolve(unresolved, egoPathCopies)
+            resolved.extend(newResolved)
+
+        # All attempts to resolve have failed, so issue a warning:
         if len(unresolved) > 0:
             sys.stderr.write("missing dependencies in file: %s\n" % file)
             sys.stderr.write("\twith search path: %s\n" % self.itsPaths)
