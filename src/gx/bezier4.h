@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 20 12:17:39 2002
-// written: Mon Jan 13 11:01:38 2003
+// written: Tue Feb 25 14:10:19 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,25 +48,25 @@ private:
 
 public:
   /// Construct from four control points.
-  Bezier4(double R0, double R1, double R2, double R3);
+  inline Bezier4(double R0, double R1, double R2, double R3);
 
   /// Reset the control points.
-  void setCtrlPnts(double R0, double R1, double R2, double R3);
+  inline void setCtrlPnts(double R0, double R1, double R2, double R3);
 
   /// Evaluate the Bezier curve for a given u in [0, 1]
-  double eval(double u);
+  inline double eval(double u);
   /// Evaluate the derivative of the Bezier curve for a given u in [0, 1]
-  double evalDeriv(double u);
+  inline double evalDeriv(double u);
 
   /** Returns the maximum value that the Bezier curve will take in the
       range u in [0, 1] */
-  double evalMax();
+  inline double evalMax();
   /** Returns the minimum value that the Bezier curve will take in the
       range u in [0, 1] */
-  double evalMin();
+  inline double evalMin();
 };
 
-Bezier4::Bezier4(double R0, double R1, double R2, double R3) :
+inline Bezier4::Bezier4(double R0, double R1, double R2, double R3) :
   R(),
   c0(),
   c1(),
@@ -77,7 +77,7 @@ Bezier4::Bezier4(double R0, double R1, double R2, double R3) :
   setCtrlPnts(R0, R1, R2, R3);
 }
 
-void Bezier4::computeMinMax()
+inline void Bezier4::computeMinMax()
 {
   double b2_4ac = c1[1]*c1[1] - 4*c1[0]*c1[2];
 
@@ -105,7 +105,7 @@ void Bezier4::computeMinMax()
   haveMinMax = true;
 }
 
-void Bezier4::setCtrlPnts(double R0, double R1, double R2, double R3)
+inline void Bezier4::setCtrlPnts(double R0, double R1, double R2, double R3)
 {
   haveMinMax = false;
 
@@ -126,23 +126,23 @@ void Bezier4::setCtrlPnts(double R0, double R1, double R2, double R3)
   c1[2] = 3 * c0[3];
 }
 
-double Bezier4::eval(double u)
+inline double Bezier4::eval(double u)
 {
   return (c0[0] + c0[1]*u + c0[2]*u*u + c0[3]*u*u*u);
 }
 
-double Bezier4::evalDeriv(double u)
+inline double Bezier4::evalDeriv(double u)
 {
   return (c1[0] + c1[1]*u + c1[2]*u*u);
 }
 
-double Bezier4::evalMax()
+inline double Bezier4::evalMax()
 {
   if (!haveMinMax) computeMinMax();
   return valMax;
 }
 
-double Bezier4::evalMin()
+inline double Bezier4::evalMin()
 {
   if (!haveMinMax) computeMinMax();
   return valMin;
