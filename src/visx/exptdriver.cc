@@ -53,7 +53,10 @@
 
 #include "visx/tlistutils.h"
 
+#include <cstdlib> // for getenv()
 #include <cstring> // for strncmp()
+#include <sys/stat.h> // for mode_t constants S_IRUSR etc.
+#include <unistd.h> // for sleep()
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
@@ -355,9 +358,11 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   rep->addLogInfo("Beginning experiment.");
 
+  const fstring cwd = unixcall::getcwd();
+
   rep->beginDate = Util::Time::wallClockNow().format();
-  rep->hostname = System::theSystem().getenv("HOSTNAME");
-  rep->subject = System::theSystem().getcwd();
+  rep->hostname = getenv("HOSTNAME");
+  rep->subject = cwd;
   rep->numTrialsCompleted = 0;
 
   Util::Log::reset(); // to clear any existing timer scopes
@@ -367,7 +372,7 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   Util::log(fstring("expt begin: ", rep->beginDate));
   Util::log(fstring("hostname: ", rep->hostname));
-  Util::log(fstring("cwd: ", System::theSystem().getcwd()));
+  Util::log(fstring("cwd: ", cwd));
   Util::log(fstring("cmdline: ", Tcl::Main::commandLine()));
 
   currentElement()->vxRun(*this);
@@ -413,7 +418,7 @@ DOTRACE("ExptDriver::pause");
   rep->widget->fullClearscreen();
   rep->widget->fullClearscreen();
 
-  System::theSystem().sleep(2);
+  ::sleep(2);
 
   rep->widget->fullClearscreen();
   rep->widget->fullClearscreen();
@@ -454,11 +459,10 @@ DOTRACE("ExptDriver::storeData");
   Util::log( fstring( "wrote file ", resp_filename.c_str()) );
 
   // Change file access modes to allow read-only by all
-  System::mode_t datafile_mode =
-    System::IRUSR | System::IRGRP | System::IROTH;
+  const mode_t datafile_mode = S_IRUSR | S_IRGRP | S_IROTH;
 
-  System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
-  System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
+  unixcall::chmod(expt_filename.c_str(), datafile_mode);
+  unixcall::chmod(resp_filename.c_str(), datafile_mode);
 
   rep->addLogInfo("Experiment saved.");
 }

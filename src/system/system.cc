@@ -36,13 +36,10 @@
 #include "util/error.h"
 #include "util/strings.h"
 
-#include <cerrno>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <cerrno> // for ::errno
+#include <cstdio> // for ::rename(), ::remove()
+#include <cstring> // for ::strerror()
+#include <sys/stat.h> // for ::chmod()
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -50,92 +47,57 @@ DBG_REGISTER
 
 namespace
 {
-  System* theSingleton = 0;
-
   void throwErrno(const char* where)
   {
     throw Util::Error(fstring("in \"", where, "\": ", ::strerror(errno)));
   }
 }
 
-System::System ()
+void unixcall::chmod(const char* path, mode_t mode)
 {
-DOTRACE("System::System ");
-}
-
-System& System::theSystem()
-{
-DOTRACE("System::theSystem");
-  if (theSingleton == 0)
-    {
-      theSingleton = new System;
-    }
-  return *theSingleton;
-}
-
-System::~System ()
-{
-DOTRACE("System::~System ");
-}
-
-const System::mode_t System::IRUSR;
-const System::mode_t System::IWUSR;
-const System::mode_t System::IXUSR;
-const System::mode_t System::IRGRP;
-const System::mode_t System::IWGRP;
-const System::mode_t System::IXGRP;
-const System::mode_t System::IROTH;
-const System::mode_t System::IWOTH;
-const System::mode_t System::IXOTH;
-
-void System::chmod(const char* path, mode_t mode)
-{
-DOTRACE("System::chmod");
+DOTRACE("unixcall::chmod");
 
   if ( ::chmod(path, mode) != 0 )
-    throwErrno("System::chmod");
+    throwErrno("unixcall::chmod");
 }
 
-void System::rename(const char* oldpath, const char* newpath)
+void unixcall::rename(const char* oldpath, const char* newpath)
 {
-DOTRACE("System::rename");
+DOTRACE("unixcall::rename");
 
   if ( ::rename(oldpath, newpath) != 0 )
-    throwErrno("System::rename");
+    throwErrno("unixcall::rename");
 }
 
-void System::remove(const char* pathname)
+void unixcall::remove(const char* pathname)
 {
-DOTRACE("System::remove");
+DOTRACE("unixcall::remove");
 
   if ( ::remove(pathname) != 0 )
-    throwErrno("System::remove");
+    throwErrno("unixcall::remove");
 }
 
-const char* System::getcwd()
+fstring unixcall::getcwd()
 {
-DOTRACE("System::getcwd");
+DOTRACE("unixcall::getcwd");
   const int INIT_SIZE = 256;
-  static dynamic_block<char> buf(INIT_SIZE);
+  dynamic_block<char> buf(INIT_SIZE);
 
-  while ( !::getcwd(&buf[0], buf.size()) )
-         {
-                buf.resize(buf.size() * 2);
-         }
+  errno = 0;
+  while ( ::getcwd(&buf[0], buf.size()) == 0 )
+    {
+      if (errno == ERANGE)
+        {
+          errno = 0;
+          buf.resize(buf.size() * 2);
+        }
+      else
+        {
+          throwErrno("unixcall::getcwd");
+        }
+    }
 
-  return &buf[0];
-}
-
-const char* System::getenv(const char* environment_variable)
-{
-DOTRACE("System::getenv");
-  return ::getenv(environment_variable);
-}
-
-void System::sleep(unsigned int seconds)
-{
-DOTRACE("System::sleep");
-  ::sleep(seconds);
+  return fstring(&buf[0]);
 }
 
 static const char vcid_system_cc[] = "$Header$";

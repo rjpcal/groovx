@@ -30,45 +30,13 @@
 #ifndef SYSTEM_H_DEFINED
 #define SYSTEM_H_DEFINED
 
+#include <sys/types.h>
+
 class fstring;
 
-/// Singleton class with wrappers of OS/system calls.
-class System
+/// Wrappers of OS/system calls.
+namespace unixcall
 {
-protected:
-  ///
-  System();
-public:
-
-  ///
-  virtual ~System();
-
-  ///
-  static System& theSystem();
-
-  ///
-  typedef unsigned long mode_t;
-
-  /// read by owner
-  static const mode_t IRUSR   = 00400;
-  /// write by owner
-  static const mode_t IWUSR   = 00200;
-  /// execute/search by owner
-  static const mode_t IXUSR   = 00100;
-  /// read by group
-  static const mode_t IRGRP   = 00040;
-  /// write by group
-  static const mode_t IWGRP   = 00020;
-  /// execute/search by group
-  static const mode_t IXGRP   = 00010;
-  /// read by others
-  static const mode_t IROTH   = 00004;
-  /// write by others
-  static const mode_t IWOTH   = 00002;
-  /// execute/search by others
-  static const mode_t IXOTH   = 00001;
-
-
   /**  DESCRIPTION
        The mode of the file given by path is changed.
 
@@ -147,25 +115,8 @@ public:
   */
   void remove(const char* pathname);
 
-  /** Get the absolute pathname of the current working
-      directory. Warning: the result of this function is only valid
-      until the next call to the function. */
-  const char* getcwd();
-
-  /** getenv() searches the environment list for a string of the form
-      name=value, and returns a pointer to the value in the current
-      environment if such a string is present, otherwise a NULL
-      pointer.  name can be either the desired name, null-terminated,
-      or of the form name=value, in which case getenv() uses the
-      portion to the left of the = as the search key.
-
-      getenv() returns a pointer to static data which can be overwritten by
-      subsequent calls. */
-  const char* getenv(const char* environment_variable);
-
-  /** Suspend execution of the calling process for the specified
-      number of seconds. */
-  void sleep(unsigned int seconds);
+  /// Get the absolute pathname of the current working directory.
+  fstring getcwd();
 };
 
 static const char vcid_system_h[] = "$Header$";
