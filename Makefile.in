@@ -184,16 +184,18 @@ LOCAL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc -or -name \*.C)
 # dependencies of object files on source+header files
 
 $(SCRIPTS)/cppdeps: $(SCRIPTS)/cppdeps.cc
-	$(CXX) -O2 -Wall $^ -o $@
+	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
 $(DEP)/cppdepends: $(SCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(SCRIPTS)/cppdeps --src $(SRC) --objdir $(OBJ)/ |sort> $@
+	time $(SCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $@
 
-# Old code that would run the old Tcl script and compare its output against
-# the new C++ dependency-computation script
+$(DEP)/altdeps: $(SCRIPTS)/cppdeps.tcl $(DEP)/.timestamp $(ALL_SRCS)
+	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
-#	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $(DEP)/altdeps
-#	diff $@ $(DEP)/altdeps > /dev/null
+# Run the old Tcl script and compare its output against the new C++
+# dependency-computation script
+depcheck: $(DEP)/cppdepends $(DEP)/altdeps
+	diff $(DEP)/cppdepends $(DEP)/altdeps > /dev/null
 
 # dependencies of package shlib's on object files
 
