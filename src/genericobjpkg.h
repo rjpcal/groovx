@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// listitempkg.h
+// ioitempkg.h
 //
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LISTITEMPKG_H_DEFINED
-#define LISTITEMPKG_H_DEFINED
+#ifndef IOITEMPKG_H_DEFINED
+#define IOITEMPKG_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
 #include "tcl/tclitempkg.h"
@@ -47,16 +47,16 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ItemPkg
+ * IoItemPkg
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class ItemPkg : public CTclItemPkg<C>
+class IoItemPkg : public CTclItemPkg<C>
 {
 public:
-  ItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
+  IoItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
 	 CTclItemPkg<C>(interp, name, version, 1)
   {
 	 addCommand( new IsCmd<C>(this, TclPkg::makePkgCmdName("is")));
@@ -70,5 +70,5 @@ public:
 
 } // end namespace Tcl
 
-static const char vcid_listitempkg_h[] = "$Header$";
-#endif // !LISTITEMPKG_H_DEFINED
+static const char vcid_ioitempkg_h[] = "$Header$";
+#endif // !IOITEMPKG_H_DEFINED

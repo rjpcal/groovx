@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Tue Dec  5 18:02:20 2000
+// written: Mon Dec 11 14:29:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef IOTCL_CC_DEFINED
 #define IOTCL_CC_DEFINED
 
+#include "tcl/ioitempkg.h"
 #include "tcl/listpkg.h"
-#include "tcl/listitempkg.h"
 
 #include "io/io.h"
 #include "io/iomgr.h"
@@ -146,12 +146,12 @@ protected:
   }
 };
 
-class IoItemPkg : public ItemPkg<IO::IoObject>,
+class IoObjectPkg : public IoItemPkg<IO::IoObject>,
                   public IoFetcher
 {
 public:
-  IoItemPkg(Tcl_Interp* interp) :
-	 ItemPkg<IO::IoObject>(interp, "IO", "$Revision$")
+  IoObjectPkg(Tcl_Interp* interp) :
+	 IoItemPkg<IO::IoObject>(interp, "IO", "$Revision$")
   {
 	 TclItemPkg::addIoCommands(this);
 
@@ -196,7 +196,7 @@ int Io_Init(Tcl_Interp* interp) {
 DOTRACE("Io_Init");
 
   Tcl::TclPkg* pkg1 = new Tcl::IoListPkg(interp);
-  Tcl::TclPkg* pkg2 = new Tcl::IoItemPkg(interp);
+  Tcl::TclPkg* pkg2 = new Tcl::IoObjectPkg(interp);
 
   return pkg1->combineStatus(pkg2->initStatus());
 }

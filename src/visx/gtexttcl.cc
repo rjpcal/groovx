@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -34,10 +34,10 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public Tcl::ItemPkg<Gtext> {
+class GtextTcl::GtextPkg : public Tcl::IoItemPkg<Gtext> {
 public:
   GtextPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<Gtext>(interp, "Gtext", "$Revision$")
+	 Tcl::IoItemPkg<Gtext>(interp, "Gtext", "$Revision$")
   {
 	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);
 	 declareCAttrib("strokeWidth",

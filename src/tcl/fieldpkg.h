@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 12 17:45:52 2000
-// written: Tue Nov 14 08:08:39 2000
+// written: Mon Dec 11 14:29:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 #include "io/iofactory.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LISTITEMPKG_H_DEFINED)
-#include "tcl/listitempkg.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOITEMPKG_H_DEFINED)
+#include "tcl/ioitempkg.h"
 #endif
 
 class FieldInfo;
@@ -45,10 +45,10 @@ void declareAllFields(TclItemPkg* pkg, const FieldMap& fmap);
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class FieldCntrPkg : public ItemPkg<C> {
+class FieldCntrPkg : public IoItemPkg<C> {
 public:
   FieldCntrPkg(Tcl_Interp* interp, const char* name, const char* version) :
-	 ItemPkg<C>(interp, name, version)
+	 IoItemPkg<C>(interp, name, version)
   {
 	 declareAllFields(this, C::classFields());
 	 IO::IoFactory::theOne().registerCreatorFunc(&C::make);

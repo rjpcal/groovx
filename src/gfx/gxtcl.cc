@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Nov 10 17:05:58 2000
+// written: Mon Dec 11 14:29:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 
 #include "util/trace.h"
 
@@ -46,10 +46,10 @@ protected:
   }
 };
 
-class GxTcl::GxNodePkg : public Tcl::ItemPkg<GxNode> {
+class GxTcl::GxNodePkg : public Tcl::IoItemPkg<GxNode> {
 public:
   GxNodePkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<GxNode>(interp, "GxNode", "$Revision$")
+	 Tcl::IoItemPkg<GxNode>(interp, "GxNode", "$Revision$")
 	 {
 		addCommand( new ContainsCmd(this, makePkgCmdName("contains")) );
 	 }
@@ -81,10 +81,10 @@ protected:
   }
 };
 
-class GxTcl::GxSeparatorPkg : public Tcl::ItemPkg<GxSeparator> {
+class GxTcl::GxSeparatorPkg : public Tcl::IoItemPkg<GxSeparator> {
 public:
   GxSeparatorPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<GxSeparator>(interp, "GxSeparator", "$Revision$")
+	 Tcl::IoItemPkg<GxSeparator>(interp, "GxSeparator", "$Revision$")
 	 {
 		addCommand( new AddChildCmd(this, makePkgCmdName("addChild")) );
 		declareCGetter("numChildren", &GxSeparator::numChildren);

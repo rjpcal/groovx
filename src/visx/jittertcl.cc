@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Fri Nov 10 17:27:02 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -55,10 +55,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class JitterTcl::JitterPkg : public Tcl::ItemPkg<Jitter> {
+class JitterTcl::JitterPkg : public Tcl::IoItemPkg<Jitter> {
 public:
   JitterPkg(Tcl_Interp* interp) : 
-	 Tcl::ItemPkg<Jitter>(interp, "Jitter", "$Revision$")
+	 Tcl::IoItemPkg<Jitter>(interp, "Jitter", "$Revision$")
   {
 	 addCommand( new SetJitterCmd(this, "Jitter::setJitter") );
   }

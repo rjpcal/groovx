@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Mon Nov 13 21:57:15 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "io/iofactory.h"
 
 #include "tcl/fieldpkg.h"
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/tracertcl.h"
 
 namespace FishTcl {
@@ -50,10 +50,10 @@ protected:
   }
 };
 
-class FishTcl::FishPkg : public Tcl::ItemPkg<Fish> {
+class FishTcl::FishPkg : public Tcl::IoItemPkg<Fish> {
 public:
   FishPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<Fish>(interp, "Fish", "$Revision$")
+	 Tcl::IoItemPkg<Fish>(interp, "Fish", "$Revision$")
   {
 	 Tcl::addTracing(this, Fish::tracer);
 

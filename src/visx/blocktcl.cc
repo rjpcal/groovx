@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Nov 10 17:04:02 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tracertcl.h"
@@ -141,10 +141,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public Tcl::ItemPkg<Block> {
+class BlockTcl::BlockPkg : public Tcl::IoItemPkg<Block> {
 public:
   BlockPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<Block>(interp, "Block", "$Revision$")
+	 Tcl::IoItemPkg<Block>(interp, "Block", "$Revision$")
   {
 	 Tcl::addTracing(this, Block::tracer);
 

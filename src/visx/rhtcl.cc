@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Nov 10 17:03:59 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/listpkg.h"
 #include "tcl/tracertcl.h"
 
@@ -159,10 +159,10 @@ namespace EventRhTcl {
 }
 
 class EventRhTcl::EventRhPkg :
-  public Tcl::ItemPkg<EventResponseHdlr> {
+  public Tcl::IoItemPkg<EventResponseHdlr> {
 public:
   EventRhPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<EventResponseHdlr>(interp, "EventRh", "$Revision$")
+	 Tcl::IoItemPkg<EventResponseHdlr>(interp, "EventRh", "$Revision$")
   {
 	 Tcl::addTracing(this, EventResponseHdlr::tracer);
 
@@ -201,10 +201,10 @@ namespace KbdRhTcl {
 }
 
 class KbdRhTcl::KbdRhPkg :
-  public Tcl::ItemPkg<KbdResponseHdlr> {
+  public Tcl::IoItemPkg<KbdResponseHdlr> {
 public:
   KbdRhPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<KbdResponseHdlr>(interp, "KbdRh", "$Revision$")
+	 Tcl::IoItemPkg<KbdResponseHdlr>(interp, "KbdRh", "$Revision$")
   {
 	 Tcl_Eval(interp,
 				 "namespace eval KbdRh {\n"
@@ -234,10 +234,10 @@ namespace NullRhTcl {
 }
 
 class NullRhTcl::NullRhPkg :
-  public Tcl::ItemPkg<NullResponseHdlr> {
+  public Tcl::IoItemPkg<NullResponseHdlr> {
 public:
   NullRhPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$")
+	 Tcl::IoItemPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$")
   {
 	 Tcl_Eval(interp,
 			"namespace eval NullRh {proc nullResponseHdlr {} {return NullRh}}");
@@ -257,7 +257,7 @@ DOTRACE("Rh_Init");
 
   new Tcl::PtrListPkg<ResponseHandler>(interp, "RhList", "$Revision$");
 
-  new Tcl::ItemPkg<ResponseHandler>(interp, "Rh", "$Revision$");
+  new Tcl::IoItemPkg<ResponseHandler>(interp, "Rh", "$Revision$");
 
   new EventRhTcl::EventRhPkg(interp);
   new KbdRhTcl::KbdRhPkg(interp);

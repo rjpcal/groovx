@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "grobj.h"
 #include "rect.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/tclveccmds.h"
 #include "tcl/tracertcl.h"
 
@@ -115,10 +115,10 @@ public:
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::GrObjPkg : public Tcl::ItemPkg<GrObj> {
+class GrobjTcl::GrObjPkg : public Tcl::IoItemPkg<GrObj> {
 public:
   GrObjPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<GrObj>(interp, "GrObj", "$Revision$")
+	 Tcl::IoItemPkg<GrObj>(interp, "GrObj", "$Revision$")
   {
 	 Tcl::addTracing(this, GrObj::tracer);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Fri Nov 10 17:04:02 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 
 #include "util/strings.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclobjlock.h"
 
@@ -175,10 +175,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::BitmapPkg : public Tcl::ItemPkg<Bitmap> {
+class BitmapTcl::BitmapPkg : public Tcl::IoItemPkg<Bitmap> {
 public:
   BitmapPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<Bitmap>(interp, "Bitmap", "$Revision$")
+	 Tcl::IoItemPkg<Bitmap>(interp, "Bitmap", "$Revision$")
   {
 	 addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
 	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz") );
@@ -208,10 +208,10 @@ namespace GLBitmapTcl {
   class GLBitmapPkg;
 }
 
-class GLBitmapTcl::GLBitmapPkg : public Tcl::ItemPkg<GLBitmap> {
+class GLBitmapTcl::GLBitmapPkg : public Tcl::IoItemPkg<GLBitmap> {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<GLBitmap>(interp, "GLBitmap", "$Revision$")
+	 Tcl::IoItemPkg<GLBitmap>(interp, "GLBitmap", "$Revision$")
   {
 	 declareCAttrib("usingGlBitmap",
 						 &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
@@ -228,10 +228,10 @@ namespace XBitmapTcl {
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapPkg : public Tcl::ItemPkg<XBitmap> {
+class XBitmapTcl::XBitmapPkg : public Tcl::IoItemPkg<XBitmap> {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<XBitmap>(interp, "XBitmap", "$Revision$")
+	 Tcl::IoItemPkg<XBitmap>(interp, "XBitmap", "$Revision$")
 	 {}
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
 
@@ -65,10 +65,10 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public Tcl::ItemPkg<TimingHdlr> {
+class ThTcl::ThPkg: public Tcl::IoItemPkg<TimingHdlr> {
 public:
   ThPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<TimingHdlr>(interp, "Th", "$Revision$")
+	 Tcl::IoItemPkg<TimingHdlr>(interp, "Th", "$Revision$")
   {
 	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
 										  TimingHdlr::IMMEDIATE));
@@ -98,10 +98,10 @@ namespace SimpleThTcl {
 }
 
 class SimpleThTcl::SimpleThPkg :
-  public Tcl::ItemPkg<TimingHandler> {
+  public Tcl::IoItemPkg<TimingHandler> {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
+	 Tcl::IoItemPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
   {
 	 declareCAttrib("abortWait",  
 						 &TimingHandler::getAbortWait,

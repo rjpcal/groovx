@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Fri Nov 10 17:27:05 2000
+// written: Mon Dec 11 14:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 #include "io/iofactory.h"
 
-#include "tcl/listitempkg.h"
+#include "tcl/ioitempkg.h"
 #include "tcl/listpkg.h"
 #include "tcl/tcllink.h"
 
@@ -87,10 +87,10 @@ protected:
 //---------------------------------------------------------------------
 
 class SoundTcl::SoundPkg :
-  public Tcl::ItemPkg<Sound> {
+  public Tcl::IoItemPkg<Sound> {
 public:
   SoundPkg(Tcl_Interp* interp) :
-	 Tcl::ItemPkg<Sound>(interp, "Sound", "$Revision$")
+	 Tcl::IoItemPkg<Sound>(interp, "Sound", "$Revision$")
   {
 	 bool haveSound = Sound::initSound();
 
