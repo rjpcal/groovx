@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Tue May 30 18:21:09 2000
+// written: Tue May 30 18:44:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,13 +32,20 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Property : public virtual IO::IoObject {
+class Property {
 public:
   ///
   template <class C> friend class PropFriend;
 
   ///
   virtual ~Property();
+
+  virtual void serialize(ostream& os, IO::IOFlag) const = 0;
+  virtual void deserialize(istream& is, IO::IOFlag) = 0;
+  virtual int charCount() const = 0;
+
+  virtual void readFrom(IO::Reader* reader) = 0;
+  virtual void writeTo(IO::Writer* writer) const = 0;
 
 #ifndef GCC_COMPILER
 protected:
@@ -84,7 +91,7 @@ public:
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
-  
+
 #ifndef GCC_COMPILER
 protected:
 #else
