@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun 11 15:08:17 2001
+// written: Fri Jun 22 11:50:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// File scope data 
+// File scope data
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -50,11 +50,11 @@ namespace {
   const double theirMouth_x[2] = {-0.2, 0.2};
 
   const FieldInfo FINFOS[] = {
-	 FieldInfo("category", &Face::faceCategory, 0, 0, 10, 1, true),
-	 FieldInfo("eyeHeight", &Face::eyeHeight, 0.6, -1.2, 1.2, 0.1),
-	 FieldInfo("eyeDistance", &Face::eyeDistance, 0.4, 0.0, 1.8, 0.1),
-	 FieldInfo("noseLength", &Face::noseLength, 0.4, -0.0, 3.0, 0.1),
-	 FieldInfo("mouthHeight", &Face::mouthHeight, 0.8, -1.2, 1.2, 0.1)
+    FieldInfo("category", &Face::faceCategory, 0, 0, 10, 1, true),
+    FieldInfo("eyeHeight", &Face::eyeHeight, 0.6, -1.2, 1.2, 0.01),
+    FieldInfo("eyeDistance", &Face::eyeDistance, 0.4, 0.0, 1.8, 0.01),
+    FieldInfo("noseLength", &Face::noseLength, 0.4, -0.0, 3.0, 0.01),
+    FieldInfo("mouthHeight", &Face::mouthHeight, 0.8, -1.2, 1.2, 0.01)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
@@ -117,7 +117,7 @@ void Face::writeTo(IO::Writer* writer) const {
 DOTRACE("Face::writeTo");
 
   writer->ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
@@ -140,15 +140,15 @@ DOTRACE("Face::grRender");
 
   // Enable antialiasing, if it is available
   if (have_antialiasing) {
-	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
-	 glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
+    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
+    glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
 
-	 if (mode == DRAW)
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
-	 else
-		glBlendFunc(GL_ONE, GL_ZERO); // overwrite source into destination
+    if (mode == DRAW)
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
+    else
+      glBlendFunc(GL_ONE, GL_ZERO); // overwrite source into destination
 
-	 glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
+    glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
   }
 
   // Prepare to push and pop modelview matrices.
@@ -196,7 +196,7 @@ DOTRACE("Face::grRender");
 
   // Draw left eye.
   glPushMatrix();
-  glTranslatef(left_eye_x, eyeHeight(), 0.0); 
+  glTranslatef(left_eye_x, eyeHeight(), 0.0);
   glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
   gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
   glScalef(pupil_x_scale, pupil_y_scale, 1.0);
@@ -226,13 +226,13 @@ DOTRACE("Face::grRender");
 
   glEnable(GL_MAP1_VERTEX_3);
   for (int i = 0; i < nctrlsets; ++i) {
-	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
-	 // Define a 1-d evaluator for the Bezier curves .
-	 glBegin(GL_LINE_STRIP);
-	 for (int j = 0; j <= num_subdivisions; ++j) {
-		glEvalCoord1f((GLdouble) j/ (GLdouble) num_subdivisions);
-	 }
-	 glEnd();
+    glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
+    // Define a 1-d evaluator for the Bezier curves .
+    glBegin(GL_LINE_STRIP);
+    for (int j = 0; j <= num_subdivisions; ++j) {
+      glEvalCoord1f((GLdouble) j/ (GLdouble) num_subdivisions);
+    }
+    glEnd();
   }
 
   //
@@ -253,7 +253,7 @@ DOTRACE("Face::grRender");
   glEnd();
 
   if (have_antialiasing) {
-	 glPopAttrib();
+    glPopAttrib();
   }
 }
 
@@ -262,7 +262,7 @@ DOTRACE("Face::grRender");
 ///////////////////////////////////////////////////////////////////////
 
 void Face::grGetBoundingBox(Rect<double>& bounding_box,
-									 int& border_pixels) const {
+                            int& border_pixels) const {
 DOTRACE("Face::grGetBoundingBox");
   bounding_box.left() = -0.7;
   bounding_box.right() = 0.7;
@@ -272,7 +272,7 @@ DOTRACE("Face::grGetBoundingBox");
 }
 
 bool Face::grHasBoundingBox() const {
-DOTRACE("Face::grHasBoundingBox");  
+DOTRACE("Face::grHasBoundingBox");
   return true;
 }
 
@@ -288,11 +288,11 @@ DOTRACE("Face::setCategory");
 
 const double* Face::getCtrlPnts() const {
 DOTRACE("Face::getCtrlPnts");
-  static const double ctrlpnts[] = {    -.7, 0.2, 0, // first 4 control points 
+  static const double ctrlpnts[] = {    -.7, 0.2, 0, // first 4 control points
                                        -.7, 1.4, 0,
                                        .7, 1.4, 0,
                                        .7, 0.2, 0,
-                                       .7, 0.2, 0, // second 4 control points 
+                                       .7, 0.2, 0, // second 4 control points
                                        .6, -1.7, 0,
                                        -.6, -1.7, 0,
                                        -.7, 0.2, 0};
@@ -312,7 +312,7 @@ DOTRACE("Face::getVertOffset");
 bool Face::check() const {
 DOTRACE("Face::check");
 //   return (eyeDistance() >= 0.0 && noseLength() >= 0.0);
-  return true; 
+  return true;
 }
 
 static const char vcid_face_cc[] = "$Header$";
