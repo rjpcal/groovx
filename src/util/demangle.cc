@@ -63,7 +63,9 @@ DBG_REGISTER
 
 namespace
 {
-  // FIXME why can't we make this a map<type_info, string>?
+  // why can't we make this a map<type_info, string>?
+  //   (1) gcc libstdc++ doesn't seem to have type_info::operator<()
+  //   (2) gcc libstdc++ doesn't allow copying of type_info objects
   typedef std::map<std::string, std::string> Cache;
   Cache nameCache;
 }
