@@ -39,6 +39,9 @@ namespace Png
 {
   /// Load \a data in PNG format from the file \a filename.
   void load(const char* filename, Gfx::BmapData& data);
+
+  /// Write \a data in PNG format to the file \a filename.
+  void save(const char* filename, const Gfx::BmapData& data);
 }
 
 static const char vcid_pngparser_h[] = "$Header$";

@@ -143,6 +143,7 @@ void ImgFile::save(const char* filename, const Gfx::BmapData& data)
   switch (getImageType(filename))
     {
     case PNM:  Pbm::save(filename, data); break;
+    case PNG:  Png::save(filename, data); break;
     default:
       throw Util::Error(fstring("unknown file format: ", filename));
     }

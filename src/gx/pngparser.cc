@@ -41,6 +41,11 @@ void Png::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
   throw Util::Error("png image files are not supported in this build");
 }
 
+void Png::save(const char* /*filename*/, const Gfx::BmapData& /*data*/)
+{
+  throw Util::Error("png image files are not supported in this build");
+}
+
 #else
 
 #include "gx/bmapdata.h"
@@ -227,6 +232,124 @@ DOTRACE("Png::load");
   PngParser parser;
 
   parser.parse(filename, data);
+}
+
+class PngWriter
+{
+public:
+  PngWriter() :
+    itsFile(0),
+    itsPngPtr(0),
+    itsInfoPtr(0),
+    itsEndPtr(0)
+  {}
+
+  ~PngWriter() { close(); }
+
+  void close();
+
+  void write(const char* filename, const Gfx::BmapData& data);
+
+private:
+  PngWriter(const PngWriter&);
+  PngWriter& operator=(const PngWriter&);
+
+  FILE* itsFile;
+  png_structp itsPngPtr;
+  png_infop itsInfoPtr;
+  png_infop itsEndPtr;
+};
+
+void PngWriter::close()
+{
+DOTRACE("PngWriter::close");
+  if (itsPngPtr != 0)
+    {
+      png_destroy_write_struct(itsPngPtr ? &itsPngPtr : 0,
+                              itsInfoPtr ? &itsInfoPtr : 0);
+    }
+
+  if (itsFile != 0)
+    {
+      fclose(itsFile);
+      itsFile = 0;
+    }
+}
+
+namespace
+{
+  int getColorType(const Gfx::BmapData& data)
+  {
+    switch (data.bitsPerPixel())
+      {
+      case 1: return PNG_COLOR_TYPE_GRAY; break;
+      case 8: return PNG_COLOR_TYPE_GRAY; break;
+      case 24: return PNG_COLOR_TYPE_RGB; break;
+      case 32: return PNG_COLOR_TYPE_RGB_ALPHA; break;
+      default:
+        throw Util::Error(fstring("unknown bitsPerPixel value: ",
+                                  data.bitsPerPixel()));
+      }
+    return 0; // can't happen, but placate compiler
+  }
+}
+
+void PngWriter::write(const char* filename, const Gfx::BmapData& data)
+{
+DOTRACE("PngWriter::write");
+
+  itsFile = fopen(filename, "wb");
+  if (itsFile == 0)
+    {
+      throw Util::Error(fstring("couldn't open file '",
+                                filename, "' for png writing"));
+    }
+
+  itsPngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  if (itsPngPtr == 0)
+    throw Util::Error("PNG library couldn't create write_struct");
+
+  itsInfoPtr = png_create_info_struct(itsPngPtr);
+  if (itsInfoPtr == 0)
+    {
+      throw Util::Error("PNG library couldn't create info_struct");
+    }
+
+  png_init_io(itsPngPtr, itsFile);
+
+  png_set_compression_level(itsPngPtr, 7);
+
+  png_set_IHDR(itsPngPtr, itsInfoPtr,
+               data.width(), data.height(),
+               data.bitsPerComponent(),
+               getColorType(data),
+               PNG_INTERLACE_NONE,
+               PNG_COMPRESSION_TYPE_DEFAULT,
+               PNG_FILTER_TYPE_DEFAULT);
+
+  png_write_info(itsPngPtr, itsInfoPtr);
+
+  const int height = data.height();
+
+  fixed_block<png_bytep> row_pointers(height);
+
+  for (int i = 0; i < height; ++i)
+    {
+      row_pointers[i] = static_cast<png_bytep>(data.rowPtr(i));
+    }
+
+  png_write_image(itsPngPtr, &row_pointers[0]);
+  png_write_end(itsPngPtr, itsInfoPtr);
+
+  this->close();
+}
+
+void Png::save(const char* filename, const Gfx::BmapData& data)
+{
+DOTRACE("Png::save");
+  PngWriter writer;
+
+  writer.write(filename, data);
 }
 
 #endif // HAVE_LIBPNG
