@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Sat Oct  7 20:07:29 2000
+// written: Mon Oct  9 08:34:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 
 #include "responsehandler.h"
 #include "ptrlist.cc"
+#include "masterptrt.cc"
 template class MasterPtr<ResponseHandler>;
 template class PtrList<ResponseHandler>;
 

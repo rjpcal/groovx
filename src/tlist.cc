@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Sun Oct  8 16:00:00 2000
+// written: Mon Oct  9 08:34:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,6 +101,7 @@ DOTRACE("Tlist::readFrom");
 
 #include "trialbase.h"
 #include "ptrlist.cc"
+#include "masterptrt.cc"
 template class MasterPtr<TrialBase>;
 template class PtrList<TrialBase>;
 

@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Sun Oct  8 15:57:34 2000
+// written: Mon Oct  9 08:33:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,7 @@ DOTRACE("BlockList::theBlockList");
 
 #include "block.h"
 #include "ptrlist.cc"
+#include "masterptrt.cc"
 template class PtrList<Block>;
 template class MasterPtr<Block>;
 
