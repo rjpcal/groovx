@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 19 13:49:58 2002
-// written: Tue Nov 19 18:27:17 2002
+// written: Tue Nov 26 19:27:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,6 +118,8 @@ void Gfx::Bbox::scale(const Gfx::Vec3<double>& v)
 void Gfx::Bbox::transform(const Gfx::Txform& m)
 {
   rep->txforms.back().transform(m);
+
+  dbgDump(2, rep->txforms.back());
 }
 
 void Gfx::Bbox::vertex2(const Gfx::Vec2<double>& v)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Mon Nov 25 15:12:38 2002
+// written: Tue Nov 26 19:44:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,12 @@
 
 #include "util/signal.h"
 
+#include "system/demangle.h"
+
 #include "util/dlink_list.h"
 #include "util/ref.h"
+
+#include <typeinfo>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -124,9 +128,10 @@ DOTRACE("Util::SignalBase::doEmit");
            ii != end;
            /* incr in loop */)
         {
+          dbgEval(3, typeid(**ii).name());
+          dbgEvalNL(3, (*ii)->refCount());
           if ((*ii)->exists())
             {
-              dbgEval(3, (*ii)->refCount());
               (*ii)->doCall(params);
               ++ii;
             }

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Fri Nov 22 11:39:12 2002
+// written: Tue Nov 26 19:08:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,8 @@ DOTRACE("GxPerspectiveCamera::writeTo");
 void GxPerspectiveCamera::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxPerspectiveCamera::draw");
+
+  dbgEval(2, width()); dbgEvalNL(2, height());
 
   canvas.viewport(0, 0, width(), height());
 
