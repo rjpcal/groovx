@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 14:45:43 2003
-// written: Wed May 14 14:50:26 2003
+// written: Wed May 14 15:06:39 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -41,7 +41,7 @@ struct GaborSpec
   /** Some values may be discretized into a (smallish) finite number of
       possible values to minimize the total number of GaborPatch objects
       that have to be created. */
-  GaborSpec(double s, double o, double t, double p, double c);
+  GaborSpec(double s, double o, double t, double p);
 
   /// Comparison operator for sorting and associative arrays.
   bool operator<(const GaborSpec& x) const;
@@ -50,7 +50,6 @@ struct GaborSpec
   const double phi;       ///< Phase angle of grating
   const double sigma;     ///< Std dev of gaussian mask
   const double omega;     ///< Spatial frequency of grating
-  const double contrast;  ///< [0..1]
 };
 
 /// Manages a pixmap representation of a gabor patch.
@@ -65,7 +64,7 @@ public:
   static const GaborPatch& lookup(const GaborSpec& s);
 
   static const GaborPatch& lookup(double sigma, double omega,
-                                  double theta, double phi, double contrast);
+                                  double theta, double phi);
 
   int size() const { return itsSize; }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Wed May 14 14:04:01 2003
+// written: Wed May 14 15:16:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -343,7 +343,7 @@ DOTRACE("GaborArray::updateBmap");
 
       const GaborPatch& p =
         GaborPatch::lookup(itsGaborSigma, 2*M_PI/itsGaborPeriod,
-                           theta, phi, 1.0);
+                           theta, phi);
 
       // bottom left:
       const int x0 = xcenter - p.size() / 2;

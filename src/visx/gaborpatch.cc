@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 14:45:52 2003
-// written: Wed May 14 14:55:24 2003
+// written: Wed May 14 15:05:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -50,12 +50,11 @@ namespace
   const double DELTA_PHASE = 2 * M_PI / NUM_PHASE;
 }
 
-GaborSpec::GaborSpec(double s, double o, double t, double p, double c) :
+GaborSpec::GaborSpec(double s, double o, double t, double p) :
   theta(DELTA_THETA * (int(rad_0_pi(t)/DELTA_THETA + 0.5) % NUM_THETA)),
   phi(DELTA_PHASE * (int(rad_0_2pi(p)/DELTA_PHASE + 0.5) % NUM_PHASE)),
   sigma(s),
-  omega(o),
-  contrast(c)
+  omega(o)
 {}
 
 bool GaborSpec::operator<(const GaborSpec& x) const
@@ -69,11 +68,7 @@ bool GaborSpec::operator<(const GaborSpec& x) const
           if (sigma < x.sigma) return true;
           else if (sigma == x.sigma)
             {
-              if (omega < x.omega) return true;
-              else if (omega == x.omega)
-                {
-                  return contrast < x.contrast;
-                }
+              return (omega < x.omega);
             }
         }
     }
@@ -116,10 +111,9 @@ DOTRACE("GaborPatch::lookup");
 }
 
 const GaborPatch& GaborPatch::lookup(double sigma, double omega,
-                                     double theta, double phi,
-                                     double contrast)
+                                     double theta, double phi)
 {
-  GaborSpec spec(sigma, omega, theta, phi, contrast);
+  GaborSpec spec(sigma, omega, theta, phi);
 
   return lookup(spec);
 }
@@ -152,7 +146,7 @@ double GaborPatch::compute(int x, int y) const
   const double sinus = cos(itsSpec.omega * dx + itsSpec.phi);
 
   const double gauss = exp(-dsqr);
-  return itsSpec.contrast * sinus * gauss;
+  return sinus * gauss;
 }
 
 static const char vcid_gaborpatch_cc[] = "$Header$";
