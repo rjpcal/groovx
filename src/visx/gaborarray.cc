@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 12:19:23 2003
+// written: Tue May 13 12:37:06 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -74,7 +74,10 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
                        double backgIniSpacing_,
                        double backgMinSpacing_)
   :
-  itsSeed(0),
+  itsSnakeSeed(0),
+  itsFillSeed(0),
+  itsThetaSeed(0),
+  itsPhaseSeed(0),
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
   itsSize(sizeX, sizeY),
@@ -96,8 +99,11 @@ const FieldMap& GaborArray::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("seed", &GaborArray::itsSeed, 0, 0, 2147483647, 1,
+    Field("snakeSeed", &GaborArray::itsSnakeSeed, 0, 0, 2147483647, 1,
           Field::NEW_GROUP),
+    Field("fillSeed", &GaborArray::itsFillSeed, 0, 0, 2147483647, 1),
+    Field("thetaSeed", &GaborArray::itsThetaSeed, 0, 0, 2147483647, 1),
+    Field("phaseSeed", &GaborArray::itsPhaseSeed, 0, 0, 2147483647, 1),
     Field("foregNumber", &GaborArray::itsForegNumber, 24, 1, 100, 1),
     Field("foregSpacing", &GaborArray::itsForegSpacing,
           45.0, 1.0, 100.0, 1.0),
@@ -184,9 +190,9 @@ DOTRACE("GaborArray::update");
 
   totalNumber = 0;
 
-  Util::Urand urand(itsSeed);
+  Util::Urand snakerand(itsSnakeSeed);
 
-  Snake snake(itsForegNumber, itsForegSpacing, urand);
+  Snake snake(itsForegNumber, itsForegSpacing, snakerand);
 
   // pull in elements from the snake
   for (int n = 0; n < snake.getLength(); ++n)
@@ -201,9 +207,11 @@ DOTRACE("GaborArray::update");
 
   const int diffusionCycles = 10;
 
+  Util::Urand fillrand(itsFillSeed);
+
   for (int i = 0; i < diffusionCycles; ++i)
     {
-      jitterElement(urand);
+      jitterElement(fillrand);
       fillElements();
     }
 
@@ -217,15 +225,18 @@ DOTRACE("GaborArray::update");
   for (int i = 0; i < itsSize.x()*itsSize.y(); ++i)
     win[i] = 0.0;
 
+  Util::Urand thetas(itsThetaSeed);
+  Util::Urand phases(itsPhaseSeed);
+
   for (int i = 0; i < totalNumber; ++i)
     {
-      const double phi   = 2 * M_PI * urand.fdraw();
+      const double phi   = 2 * M_PI * phases.fdraw();
 //       const double phi = 0.0;
 
       const double theta =
         (array[i].type == Element::CONTOUR)
         ? rad_0_2pi(array[i].theta + M_PI_2)
-        : 2*M_PI * urand.fdraw();
+        : 2*M_PI * thetas.fdraw();
 
       const int xcenter = int(array[i].pos.x() + itsSize.x() / 2.0 + 0.5);
       const int ycenter = int(array[i].pos.y() + itsSize.y() / 2.0 + 0.5);

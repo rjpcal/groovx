@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 12:11:27 2003
+// written: Tue May 13 12:35:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -93,7 +93,10 @@ private:
   void fillElements() const;
   void jitterElement(Util::Urand& urand) const;
 
-  int itsSeed;
+  int itsSnakeSeed;
+  int itsFillSeed;
+  int itsThetaSeed;
+  int itsPhaseSeed;
   int itsForegNumber;
   double itsForegSpacing;
   GbVec2<int> itsSize;
