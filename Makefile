@@ -54,9 +54,14 @@ MAKEFLAGS += --warn-undefined-variables
 #
 #-------------------------------------------------------------------------
 
+ifndef MODE
+	MODE := $(DEFAULT_MODE)
+endif
+
 SRC := src
-DEP := ./dep/$(ARCH)
-OBJ := obj/$(ARCH)
+BUILD := build/$(ARCH)-$(MODE)
+DEP := $(BUILD)/dep
+OBJ := $(BUILD)/obj
 LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
@@ -105,10 +110,6 @@ ifeq ($(ARCH),ppc)
 	CPPFLAGS += -I/sw/include
 endif
 
-ifndef MODE
-	MODE := $(DEFAULT_MODE)
-endif
-
 #-------------------------------------------------------------------------
 #
 # Options for compiling and linking
@@ -116,13 +117,11 @@ endif
 #-------------------------------------------------------------------------
 
 ifeq ($(MODE),debug)
-	OBJ_EXT := .do
 	LIB_SUFFIX := .d
 	DEFS += -DPROF
 endif
 
 ifeq ($(MODE),prod)
-	OBJ_EXT := .o
 	LIB_SUFFIX := $(PACKAGE_VERSION)
 endif
 
@@ -326,7 +325,7 @@ dir_structure:
 
 # dependencies of object files on source+header files
 
-DEP_FILE := $(DEP)/alldepends.$(MODE)
+DEP_FILE := $(DEP)/alldepends
 
 $(DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	touch $@
@@ -340,7 +339,7 @@ include $(DEP_FILE)
 
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
-PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
+PKG_DEP_FILE := $(DEP)/pkgdepends
 
 $(PKG_DEP_FILE).deps: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		$(ALL_SOURCES) $(ALL_HEADERS) src/pkgs/buildPkgDeps.tcl
@@ -367,7 +366,7 @@ $(exec_prefix)/lib/visx/matlabengine.so: \
 
 # dependencies of main project shlib's on object files
 
-LIB_DEP_FILE := $(DEP)/libdepends.$(MODE)
+LIB_DEP_FILE := $(DEP)/libdepends
 
 LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(exec_prefix)/lib \
@@ -375,7 +374,7 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libext $(LIB_EXT) \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
-		--objext $(OBJ_EXT) \
+		--objext .$(OBJEXT) \
 		--module Visx \
 		--module Gfx \
 		--module GWT \
@@ -418,18 +417,20 @@ ifeq ($(MODE),prod)
 	EXECUTABLE := $(exec_prefix)/bin/grsh$(PACKAGE_VERSION)
 endif
 
-all: build
-	$(EXECUTABLE) ./testing/grshtest.tcl
+all: build check
 
 build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
-GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
+GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
 
 CMDLINE := $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CXX) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
+
+check:
+	$(EXECUTABLE) ./testing/grshtest.tcl
 
 #-------------------------------------------------------------------------
 #
@@ -450,7 +451,7 @@ clean:
 
 # Make clean, and also remove all debug object files
 cleaner: clean
-	find $(OBJ) -follow -name \*$(OBJ_EXT) -exec rm -f {} \;
+	find $(OBJ) -follow -name \*.$(OBJEXT) -exec rm -f {} \;
 	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
 
 # Count the lines in all source files
