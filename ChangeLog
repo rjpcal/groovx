@@ -200,3 +200,10 @@ will be needed, and then they can be phased out.
 
   [ok] Ultimately the only purpose of Togl should be to bind a GLCanvas to a
   "physical" X window.
+
+* (done 21-Nov-2002) Put X11-rendering into GLCanvas.
+
+* (done 21-Nov-2002) Get rid of GLBitmap/XBitmap
+  OK, these are merged into bitmaptcl.cc... that's probably as far as I can
+  go for now, since I still need at least a shell of class definitions for
+  GLBitmap/XBitmap in order to be able to read old expt files.
