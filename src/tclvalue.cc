@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar  8 11:31:55 2000
+// written: Wed Mar  8 17:39:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,14 +74,6 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const char*)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, const string& val) :
-  itsInterp(interp),
-  itsObj(Tcl_NewStringObj(val.c_str(), -1))
-{
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const string&)");
-  Tcl_IncrRefCount(itsObj);
-}
-
 Tcl::TclValue::TclValue(Tcl_Interp* interp, const Value& rhs) :
   itsInterp(interp)
 {
@@ -105,9 +97,6 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const Value&)");
 	 break;
   case Value::CSTRING:
 	 itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
-	 break;
-  case Value::STRING:
-	 itsObj = Tcl_NewStringObj(rhs.getString().c_str(), -1);
 	 break;
 
   case Value::NONE:
@@ -243,11 +232,6 @@ DOTRACE("Tcl::TclValue::getCstring");
   return Tcl_GetString(itsObj);
 }
 
-string Tcl::TclValue::getString() const {
-DOTRACE("Tcl::TclValue::getString");
-  return string(Tcl_GetString(itsObj));
-}
-
 //---------------------------------------------------------------------
 //
 // Reference argument getters
@@ -292,11 +276,6 @@ DOTRACE("Tcl::TclValue::get");
 }
 
 void Tcl::TclValue::get(const char*& val) const {
-DOTRACE("Tcl::TclValue::get");
-  val = Tcl_GetString(itsObj);
-}
-
-void Tcl::TclValue::get(string& val) const {
 DOTRACE("Tcl::TclValue::get");
   val = Tcl_GetString(itsObj);
 }
