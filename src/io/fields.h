@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Sep  4 11:07:35 2001
+// written: Tue Sep  4 19:05:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -353,25 +353,29 @@ public:
   static const unsigned int CHECKED   = 1 << 4; // otherwise, unchecked
   static const unsigned int NO_GET    = 1 << 5; // otherwise, allow get
   static const unsigned int NO_SET    = 1 << 6; // otherwise, allow set
+  static const unsigned int PRIVATE   = 1 << 7; // otherwise, public
 
-  unsigned int flags() const    { return itsFlags; }
+  unsigned int flags()    const { return itsFlags; }
 
-  bool startsNewGroup() const   { return   itsFlags & NEW_GROUP; }
+  bool startsNewGroup()   const { return   itsFlags & NEW_GROUP; }
 
-  bool isTransient() const      { return   itsFlags & TRANSIENT ; }
-  bool isPersistent() const     { return !(itsFlags & TRANSIENT); }
+  bool isTransient()      const { return   itsFlags & TRANSIENT ; }
+  bool isPersistent()     const { return !(itsFlags & TRANSIENT); }
 
-  bool isString() const         { return   itsFlags & STRING ; }
-  bool isNumeric() const        { return !(itsFlags & STRING); }
+  bool isString()         const { return   itsFlags & STRING ; }
+  bool isNumeric()        const { return !(itsFlags & STRING); }
 
-  bool isMultiValued() const    { return   itsFlags & MULTI ; }
-  bool isSingleValued() const   { return !(itsFlags & MULTI); }
+  bool isMultiValued()    const { return   itsFlags & MULTI ; }
+  bool isSingleValued()   const { return !(itsFlags & MULTI); }
 
-  bool isChecked() const        { return   itsFlags & CHECKED ; }
-  bool isUnchecked() const      { return !(itsFlags & CHECKED); }
+  bool isChecked()        const { return   itsFlags & CHECKED ; }
+  bool isUnchecked()      const { return !(itsFlags & CHECKED); }
 
-  bool allowGet() const         { return !(itsFlags & NO_GET); }
-  bool allowSet() const         { return !(itsFlags & NO_SET); }
+  bool allowGet()         const { return !(itsFlags & NO_GET); }
+  bool allowSet()         const { return !(itsFlags & NO_SET); }
+
+  bool isPrivate()        const { return   itsFlags & PRIVATE ; }
+  bool isPublic()         const { return !(itsFlags & PRIVATE); }
 
   struct ValueType {};
 
