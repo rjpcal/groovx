@@ -2,7 +2,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Mar 12 13:20:28 1999
+// written: Sat Mar 13 14:43:50 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITION_H_DEFINED
@@ -52,7 +52,7 @@ public:
   void rotate() const;
 
 private:
-  PositionImpl *itsImpl;
+  PositionImpl *itsImpl;		  // opaque pointer to implementation
 };
 
 const char vcid_position_h[] = "$Id$";
