@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Jan 25 17:14:51 2002
+// written: Thu Jan 31 10:11:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,16 @@
 #include "io/io.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLPROFWRAPPER_H_DEFINED)
+#include "tcl/tclprocwrapper.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
 #include "util/stopwatch.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
+#include "util/ref.h"
 #endif
 
 namespace Util
@@ -302,6 +310,30 @@ public:
   static ClearBufferEvent* make() { return new ClearBufferEvent; }
   /// Virtual destructor.
   virtual ~ClearBufferEvent();
+protected:
+  virtual void invoke(TrialBase& trial);
+};
+
+/// TrialEvent subclass to call Canvas::clearColorBuffer().
+class GenericEvent : public TrialEvent
+{
+private:
+  Util::Ref<Tcl::ProcWrapper> itsCallback;
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  GenericEvent(int msec = 0);
+public:
+  /// Default creator.
+  static GenericEvent* make() { return new GenericEvent; }
+  /// Virtual destructor.
+  virtual ~GenericEvent();
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
+
+  fstring getCallback() const;
+  void setCallback(const fstring& script);
+
 protected:
   virtual void invoke(TrialBase& trial);
 };
