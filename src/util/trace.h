@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Mon Jan 21 12:45:21 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -138,6 +138,9 @@ public:
 
   static void setMode(Mode new_mode);
   static Mode getMode();
+
+  static bool getGlobalTrace();
+  static void setGlobalTrace(bool on_off);
 
   static void printStackTrace(); // just print on cerr
   static void printStackTrace(STD_IO::ostream& os);
