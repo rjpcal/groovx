@@ -9,16 +9,61 @@
 
 package require Iwidgets
 
+# parent
+#   parent.itsPanes
+#     parent.itsPanes.objtype (childsite)
+#       parent.itsPanes.objtype.fields (frame)
+#     parent.itsPanes.itsControls (childsite)
+#     parent.itsPanes.itsControls.viewingdist
+#     parent.itsPanes.itsControls.new
+#     parent.itsPanes.itsControls.preview
+#     parent.itsPanes.itsControls.redraw
+#     parent.itsPanes.itsControls.editobjlist
+#     parent.itsPanes.itsControls.viewobjlist
+#   parent.itsToglet
+
+itcl::class FieldControls {
+	 private variable itsObjType
+	 private variable itsNames
+	 private variable itsControls
+	 private variable itsCachedValues
+
+	 constructor {objtype} {
+		  set itsObjType $objtype
+		  set itsNames [list]
+		  foreach field [${objtype}::allFields] {
+				lappend itsNames [lindex $field 0]
+				set itsCachedValues($field) 0
+		  }
+	 }
+
+	 public method names {} { return $itsNames }
+
+	 public method addControl {name path} { set itsControls($name) $path }
+
+	 public method getControl {name} { return $itsControls($name) }
+
+	 public method getCachedVal {name} { return $itsCachedValues($name) }
+
+	 public method setCachedVal {name val} { set itsCachedValues($name) $val }
+
+	 public method update {obj} {
+		  foreach field $itsNames {
+				set val [${itsObjType}::$field $obj]
+				set control $itsControls($field)
+				$control set $val
+				set itsCachedValues($field) $val
+		  }
+	 }
+}
+
 itcl::class Editor {
 	 private variable itsPanes
 	 private variable itsControls
 	 private variable itsToglet
-	 private variable itsFieldPanes
-	 private variable itsFieldControls
 	 private variable itsObjType Face
-	 private variable itsFieldNames {}
+	 private variable itsControlsArray
 	 private variable itsUpdateInProgress 0
-	 private variable itsAttribValues
 
 	 private method standardSettings {objs} {
 		  set grobjs [dlist_select $objs [GrObj::is $objs]]
@@ -126,11 +171,11 @@ itcl::class Editor {
 
 		  set viewobj [getViewSelection]
 
-		  foreach field $itsFieldNames {
-				set val [${itsObjType}::$field $obj]
-				$itsFieldControls($field) set $val
-				set itsAttribValues($field) $val
-		  }
+		  set objtype [IO::type $obj]
+
+		  set controls $itsControlsArray($objtype)
+
+		  $controls update $obj
 
 		  # need to force the controls to update before we draw the object
 		  update
@@ -145,12 +190,14 @@ itcl::class Editor {
 	 private method setAttrib {name val} {
 		  set editobjs [getEditSelection]
 
+		  set controls $itsControlsArray($itsObjType)
+
 		  if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
-				if { $itsAttribValues($name) != $val } {
+				if { [$controls getCachedVal $name] != $val } {
 					 #puts "setting $editobjs $name to $val"
 					 Toglet::allowRefresh $itsToglet 0
 					 ${itsObjType}::$name $editobjs $val
-					 set itsAttribValues($name) $val
+					 $controls setCachedVal $name $val
 					 Toglet::allowRefresh $itsToglet 1
 				}
 
@@ -160,14 +207,16 @@ itcl::class Editor {
 
 	 private method makeFieldControls {objtype} {
 
-		  if { ![info exists itsFieldPanes($objtype)] } {
+		  if { ![info exists itsControlsArray($objtype)] } {
 				$itsPanes insert 0 $objtype
 
 				set fieldFrame [frame [$itsPanes childsite $objtype].fields]
 
-				set currentframe $fieldFrame
+				set currentframe ""
 
-				foreach field [${objtype}::allFields]  {
+				set itsControlsArray($objtype) [FieldControls #auto $objtype]
+
+				foreach field [${objtype}::allFields] {
 					 set name [lindex $field 0]
 					 set lower [lindex $field 1]
 					 set upper [lindex $field 2]
@@ -184,8 +233,6 @@ itcl::class Editor {
 
 					 set pane $currentframe
 
-					 lappend itsFieldNames $name
-
 					 scale $pane.$name -label $name -from $lower -to $upper \
 								-resolution $step -bigincrement $step \
 								-digits [string length $step] \
@@ -197,11 +244,9 @@ itcl::class Editor {
 						  $pane.$name configure -fg blue
 					 }
 
-					 set itsAttribValues($name) 0
-
 					 pack $pane.$name -side top
 
-					 set itsFieldControls($name) $pane.$name
+					 $itsControlsArray($objtype) addControl $name $pane.$name
 				}
 
 				pack $fieldFrame -fill y -side left
