@@ -35,8 +35,10 @@
 #include "backtrace.h"
 
 #include "util/staticstack.h"
+#include "util/strings.h"
 
-#include <cstdio>
+#include <cmath> // for log10()
+#include <cstdio> // for snprintf(), fprintf()
 #include <new> // for std::nothrow
 #include <ostream>
 
@@ -120,7 +122,7 @@ Util::Prof* Util::BackTrace::at(unsigned int i) const throw()
 
 void Util::BackTrace::print() const throw()
 {
-  printf("stack trace:\n");
+  fprintf(stderr, "stack trace:\n");
 
   const unsigned int end = size();
 
@@ -150,6 +152,32 @@ void Util::BackTrace::print(STD_IO::ostream& os) const throw()
     }
 
   os << std::flush;
+}
+
+fstring Util::BackTrace::format() const
+{
+  if (rep->vec.size() == 0) return fstring();
+
+  fstring result;
+
+  const int LINELEN = 256;
+  char line[LINELEN];
+
+  const int width = int(log10(rep->vec.size()-1) + 1.0);
+
+  for (unsigned int i = rep->vec.size(); i > 0; --i)
+    {
+      snprintf(&line[0], LINELEN, "[%*d] %-35s (%s:%d)\n",
+               width,
+               rep->vec.size() - i,
+               rep->vec[i-1]->name(),
+               rep->vec[i-1]->srcFileName(),
+               rep->vec[i-1]->srcLineNo());
+
+      result.append(&line[0]);
+    }
+
+  return result;
 }
 
 static const char vcid_backtrace_cc[] = "$Header$";

@@ -38,6 +38,8 @@
 class ostream;
 #endif
 
+class fstring;
+
 namespace Util
 {
   class BackTrace;
@@ -86,6 +88,9 @@ public:
 
   /// Print the call stack to the given stream.
   void print(STD_IO::ostream& os) const throw();
+
+  /// Generate a human-readable string representation of the backtrace.
+  fstring format() const;
 
 private:
   struct Impl;
