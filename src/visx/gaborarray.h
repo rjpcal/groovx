@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 10:25:46 2003
+// written: Tue May 13 10:35:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -72,6 +72,7 @@ private:
 
   void dumpFrame() const;
 
+  void killCache();
   void update() const;
   bool tryPush(const Element& e) const;
   bool tooClose(const Gfx::Vec2<double>& v, int except) const;

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 10:25:24 2003
+// written: Tue May 13 10:37:45 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -83,7 +83,7 @@ DOTRACE("GaborArray::GaborArray");
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
 
-  update();
+  sigNodeChanged.connect(this, &GaborArray::killCache);
 }
 
 void GaborArray::saveImage(const char* filename) const
@@ -120,6 +120,12 @@ DOTRACE("GaborArray::grRender");
   update();
 
   canvas.drawPixels(*itsBmap, Vec2d(0.0, 0.0), Vec2d(1.0, 1.0));
+}
+
+void GaborArray::killCache()
+{
+DOTRACE("GaborArray::killCache");
+  itsBmap.reset(0);
 }
 
 void GaborArray::update() const
