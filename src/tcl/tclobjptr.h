@@ -13,11 +13,6 @@
 #ifndef TCLOBJPTR_H_DEFINED
 #define TCLOBJPTR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCL_H_DEFINED)
-#include <tcl.h>
-#define TCL_H_DEFINED
-#endif
-
 struct Tcl_Obj;
 
 namespace Tcl {
@@ -36,16 +31,16 @@ namespace Tcl {
 class ObjPtr {
 public:
   /// Default constructor.
-  ObjPtr(Tcl_Obj* obj) : itsObj(obj) { Tcl_IncrRefCount(itsObj); }
+  ObjPtr(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
 
   /// Destructor.
-  ~ObjPtr() { Tcl_DecrRefCount(itsObj); }
+  ~ObjPtr() { decrRef(itsObj); }
 
   /// Copy constructor.
   ObjPtr(const ObjPtr& x) :
     itsObj(const_cast<Tcl_Obj*>(x.itsObj))
     {
-      Tcl_IncrRefCount(itsObj);
+      incrRef(itsObj);
     }
 
   /// Assignment operator from ObjPtr.
@@ -65,26 +60,23 @@ public:
   /// Conversion operator to Tcl_Obj*.
   operator Tcl_ObjPtr() { return itsObj; }
 
-  bool isShared() const { return Tcl_IsShared(itsObj); }
+  bool isShared() const;
   bool isUnique() const { return !isShared(); }
 
-  void ensureUnique()
-    {
-		if (isShared())
-		  {
-			 Tcl_Obj* newObj = Tcl_DuplicateObj(itsObj);
-			 assign(newObj);
-		  }
-	 }
+  void ensureUnique();
 
 private:
+  static void incrRef(Tcl_Obj* obj);
+  static void decrRef(Tcl_Obj* obj);
+
   void assign(Tcl_Obj* x)
     {
-      if (itsObj != x) {
-        Tcl_DecrRefCount(itsObj);
-        itsObj = x;
-        Tcl_IncrRefCount(itsObj);
-      }
+      if (itsObj != x)
+		  {
+			 decrRef(itsObj);
+			 itsObj = x;
+			 incrRef(itsObj);
+		  }
     }
 
   Tcl_Obj* itsObj;
