@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Mon May 12 12:42:53 2003
+// written: Mon May 12 18:50:07 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,26 +35,18 @@
 
 #include <cmath>
 
+namespace Geom
+{
+  double deg2rad(double degrees);
+  double rad2deg(double radians);
+
+  void normRad(double& radians); // FIXME dup minuspitopi
+  void normDeg(double& degrees);
+}
+
 namespace Gfx
 {
   template <class V> class Vec2;
-
-  namespace PointAlgo
-  {
-    double deg2rad(double degrees);
-    double rad2deg(double radians);
-
-    void normRad(double& radians);
-    void normDeg(double& degrees);
-
-    inline double thetaDeg(double y, double x)
-    {
-      return rad2deg(atan2(y,x));
-    }
-
-    void setPolarPoint(Vec2<double>& point,
-                       double length, double degrees);
-  }
 
 /// Gfx::Vec2 is a 2-D vector class for representing 2-D points or distances.
 template<class V>
@@ -81,6 +73,9 @@ public:
 
   void set(V x, V y) { xx = x; yy = y; }
 
+  bool operator==(const Vec2<V>& b)
+    { return x() == b.x() && y() == b.y(); }
+
   //
   // Polar coordinates
   //
@@ -98,19 +93,20 @@ public:
     yy = r * sin(theta);
   }
 
-  double thetaDeg() const { return PointAlgo::thetaDeg(yy, xx); }
+  double thetaDeg() const
+  {
+    return Geom::rad2deg(atan2(yy, xx));
+  }
 
   void setThetaDeg(double degrees)
   {
-    Vec2<double> dpoint;
-    PointAlgo::setPolarPoint(dpoint, length(), degrees);
-    operator=(dpoint);
+    setPolarRad(length(), Geom::deg2rad(degrees));
   }
 
   void rotateDeg(double degrees)
   {
     // FIXME should use a real sin(),cos() rotation matrix here?
-    PointAlgo::normDeg(degrees);
+    Geom::normDeg(degrees);
     if (degrees == 0.0)
       {
         return;
