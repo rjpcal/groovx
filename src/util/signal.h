@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 13:21:52 2001
+// written: Tue Aug 21 13:39:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ private:
 template <class C, class MF>
 class Util::ObserverAdapter : public Util::Observer
 {
-  Util::WeakRef<Util::Object> itsObject;
+  Util::WeakRef<C> itsObject;
   MF itsMemFunc;
 
   ObserverAdapter(C* obj, MF mf) : itsObject(obj, Util::WEAK), itsMemFunc(mf) {}
