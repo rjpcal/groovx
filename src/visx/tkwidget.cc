@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sun Nov  3 13:41:11 2002
+// written: Thu Nov 21 09:04:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,6 @@
 #include "util/error.h"
 #include "util/ref.h"
 #include "util/strings.h"
-
-#include "visx/xbmaprenderer.h"
 
 #include <iostream>
 #include <tcl.h>
@@ -289,7 +287,6 @@ Tcl::TkWidget::TkWidget(Tcl_Interp* interp,
   rep(new TkWidgImpl(this, interp, classname, pathname))
 {
 DOTRACE("Tcl::TkWidget::TkWidget");
-  XBmapRenderer::initClass(rep->tkWin);
 
   incrRefCount();
 }
