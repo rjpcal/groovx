@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Mar 15 10:17:31 2000
+// written: Mon Mar 20 20:25:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,14 +17,10 @@
 #include "io.h"
 #include "value.h"
 #include "util/arrays.h"
-#include "util/strings.h"
 
-#include <cstring>
 #include <iostream.h>
 #include <string>
-#include <strstream.h>
 #include <typeinfo>
-#include <vector>
 #include <set>
 
 #define NO_TRACE
@@ -40,7 +36,7 @@
 #endif
 
 namespace {
-  const char STRING_ENDER = '^';
+  const char* ATTRIB_ENDER = "^\n";
 
   void addEscapes(string& text) {
   DOTRACE("AsciiStreamWriter::Impl::addEscapes");
@@ -73,8 +69,7 @@ private:
 
 public:
   Impl(AsciiStreamWriter* owner, ostream& os) :
-	 itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects(),
-	 itsAttribs()
+	 itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects()
 #ifndef NO_IOS_EXCEPTIONS
 	 , itsOriginalExceptionState(itsBuf.exceptions())
 #endif
@@ -96,16 +91,34 @@ public:
   ostream& itsBuf;
   set<const IO *> itsToHandle;
   set<const IO *> itsWrittenObjects;
-  vector< dynamic_block<char> > itsAttribs;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
 #endif
 
+  class DummyCountingWriter : public Writer {
+  public:
+	 DummyCountingWriter() : itsCount(0) {}
+
+	 virtual void writeChar(const char*, char)             { ++itsCount; }
+	 virtual void writeInt(const char*, int)               { ++itsCount; }
+	 virtual void writeBool(const char*, bool)             { ++itsCount; }
+	 virtual void writeDouble(const char*, double)         { ++itsCount; }
+	 virtual void writeCstring(const char*, const char*)   { ++itsCount; }
+	 virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
+	 virtual void writeObject(const char*, const IO*)      { ++itsCount; }
+	 virtual void writeOwnedObject(const char*, const IO*) { ++itsCount; }
+	 virtual void writeRoot(const IO*) {}
+
+	 void reset() { itsCount = 0; }
+	 unsigned int attribCount() const { return itsCount; }
+
+  private:
+	 unsigned int itsCount;
+  };
+
   // Helper functions
 private:
-  void flushAttributes();
-
   bool haveMoreObjectsToHandle() const {
 	 return !itsToHandle.empty();
   }
@@ -131,37 +144,29 @@ private:
 
   // Delegands
 public:
-  void writeValueObj(const string_literal& name, const Value& value);
+  void writeValueObj(const char* name, const Value& value);
 
-  void writeObject(const string& name, const IO* obj);
+  void writeObject(const char* name, const IO* obj);
 
-  void writeOwnedObject(const string& name, const IO* obj);
+  void writeOwnedObject(const char* name, const IO* obj);
 
   template <class T>
-  void writeBasicType(const string_literal& name, T val,
+  void writeBasicType(const char* name, T val,
 							 const char* string_typename) {
-	 itsAttribs.push_back(dynamic_block<char>());
-	 itsAttribs.back().resize(32 + name.length());
-
-	 ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
-	 ost << string_typename << " " 
-		  << name.c_str() << " := "
-		  << val << '\0';
+	 itsBuf << string_typename << " " 
+			  << name << " := "
+			  << val << ATTRIB_ENDER;
   }
 
-  void writeStringType(const string_literal& name, const char* val,
+  void writeStringType(const char* name, const char* val,
 							  const char* string_typename) {
 	 string escaped_val(val);
 	 int val_length = escaped_val.length();
 	 addEscapes(escaped_val);
 
-	 itsAttribs.push_back(dynamic_block<char>());
-	 itsAttribs.back().resize(32 + name.length() + val_length);
-
-	 ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
-	 ost << string_typename << " "
-		  << name.c_str() << " := " 
-		  << val_length << " " << escaped_val << '\0';
+	 itsBuf << string_typename << " "
+			  << name << " := " 
+			  << val_length << " " << escaped_val << ATTRIB_ENDER;
   }
 
   void writeRoot(const IO* root);
@@ -180,6 +185,8 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 
   itsToHandle.insert(root);
 
+  DummyCountingWriter counter;
+
   while ( haveMoreObjectsToHandle() ) {
 	 const IO* obj = getNextObjectToHandle();
 
@@ -188,8 +195,12 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 	 itsBuf << demangle_cstr(typeid(*obj).name())
 			  << " " << obj->id() << " := { ";
 
+	 counter.reset();
+	 obj->writeTo(&counter);
+
+	 itsBuf << counter.attribCount() << '\n';
+
 	 obj->writeTo(itsOwner);
-	 flushAttributes();
 
 	 markObjectAsWritten(obj);
 
@@ -199,57 +210,35 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
   itsBuf.flush();
 }
 
-void AsciiStreamWriter::Impl::flushAttributes() {
-DOTRACE("AsciiStreamWriter::Impl::flushAttributes");
-
-  itsBuf << itsAttribs.size() << '\n';
-
-  for (size_t i = 0; i < itsAttribs.size(); ++i) {
-	 itsBuf << &(itsAttribs[i][0]) << STRING_ENDER << '\n';
-  }
-
-  itsAttribs.clear();
-}
-
 void AsciiStreamWriter::Impl::writeValueObj(
-  const string_literal& attrib_name,
+  const char* attrib_name,
   const Value& value
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
- 
-  itsAttribs.push_back(dynamic_block<char>());
-  itsAttribs.back().resize(256 + attrib_name.length());
 
-  ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
-
-  ost << value.getNativeTypeName() << " "
-		<< attrib_name.c_str() << " := "
-		<< value << '\0';
+  itsBuf << value.getNativeTypeName() << " "
+			<< attrib_name << " := "
+			<< value << ATTRIB_ENDER;
 }
 
-void AsciiStreamWriter::Impl::writeObject(const string& name,
+void AsciiStreamWriter::Impl::writeObject(const char* name,
 														const IO* obj) {
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
 
-  itsAttribs.push_back(dynamic_block<char>());
-  itsAttribs.back().resize(32 + name.length());
-
-  ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
-
   if (obj == 0) {
-	 ost << "NULL " << name << " := 0" << '\0';
+	 itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
   }
   else {
-	 ost << demangle_cstr(typeid(*obj).name()) << " "
-		  << name.c_str() << " := "
-		  << obj->id() << '\0';
+	 itsBuf << demangle_cstr(typeid(*obj).name()) << " "
+			  << name << " := "
+			  << obj->id() << ATTRIB_ENDER;
 	 
 	 addObjectToBeHandled(obj);
   }
 }
 
 void AsciiStreamWriter::Impl::writeOwnedObject(
-  const string& name, const IO* obj
+  const char* name, const IO* obj
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
   writeObject(name, obj); 
@@ -299,7 +288,6 @@ DOTRACE("AsciiStreamWriter::writeCstring");
 }
 
 void AsciiStreamWriter::writeValueObj(const char* name, const Value& value) {
-DOTRACE("AsciiStreamWriter::writeValueObj");
   itsImpl.writeValueObj(name, value);
 }
 
