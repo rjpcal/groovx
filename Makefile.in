@@ -523,6 +523,19 @@ $(prefix)/share/audio/saw50_350Hz_2x120ms.au	\
 $(prefix)/share/audio/saw50_350Hz_300ms.au	\
 $(prefix)/share/audio/saw50_500Hz_2x120ms.au	\
 $(prefix)/share/audio/saw50_500Hz_300ms.au	\
+$(prefix)/share/audio/saw50_A\#_466Hz_300ms.au	\
+$(prefix)/share/audio/saw50_A_440Hz_300ms.au	\
+$(prefix)/share/audio/saw50_B_493Hz_300ms.au	\
+$(prefix)/share/audio/saw50_C\#_554Hz_300ms.au	\
+$(prefix)/share/audio/saw50_C_523Hz_300ms.au	\
+$(prefix)/share/audio/saw50_D\#_622Hz_300ms.au	\
+$(prefix)/share/audio/saw50_D_587Hz_300ms.au	\
+$(prefix)/share/audio/saw50_E_329Hz_300ms.au	\
+$(prefix)/share/audio/saw50_E_659Hz_300ms.au	\
+$(prefix)/share/audio/saw50_F\#_370Hz_300ms.au	\
+$(prefix)/share/audio/saw50_F_349Hz_300ms.au	\
+$(prefix)/share/audio/saw50_G\#_415Hz_300ms.au	\
+$(prefix)/share/audio/saw50_G_392Hz_300ms.au	\
 $(prefix)/share/audio/saw75_200Hz_2x120ms.au	\
 $(prefix)/share/audio/saw75_200Hz_300ms.au	\
 $(prefix)/share/audio/saw75_350Hz_2x120ms.au	\
@@ -535,6 +548,19 @@ $(prefix)/share/audio/sin_350Hz_2x120ms.au	\
 $(prefix)/share/audio/sin_350Hz_300ms.au	\
 $(prefix)/share/audio/sin_500Hz_2x120ms.au	\
 $(prefix)/share/audio/sin_500Hz_300ms.au	\
+$(prefix)/share/audio/sin_A\#_466Hz_300ms.au	\
+$(prefix)/share/audio/sin_A_440Hz_300ms.au	\
+$(prefix)/share/audio/sin_B_493Hz_300ms.au	\
+$(prefix)/share/audio/sin_C\#_554Hz_300ms.au	\
+$(prefix)/share/audio/sin_C_523Hz_300ms.au	\
+$(prefix)/share/audio/sin_D\#_622Hz_300ms.au	\
+$(prefix)/share/audio/sin_D_587Hz_300ms.au	\
+$(prefix)/share/audio/sin_E_329Hz_300ms.au	\
+$(prefix)/share/audio/sin_E_659Hz_300ms.au	\
+$(prefix)/share/audio/sin_F\#_370Hz_300ms.au	\
+$(prefix)/share/audio/sin_F_349Hz_300ms.au	\
+$(prefix)/share/audio/sin_G\#_415Hz_300ms.au	\
+$(prefix)/share/audio/sin_G_392Hz_300ms.au
 
 $(prefix)/share/images/%.jpg: ./share/images/%.jpg
 	rm -f $@
