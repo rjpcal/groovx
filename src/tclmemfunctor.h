@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 13 09:07:00 2001
-// written: Sun Aug 26 08:35:10 2001
+// written: Fri Sep  7 13:43:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ namespace Tcl
   template <class R, class C, class P1, class P2, class P3, class P4>
   struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
   {
-    enum { numArgs = 4 };
+    enum { numArgs = 5 };
     typedef SoftRef<C> Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
