@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Fri Nov 10 17:03:50 2000
+// written: Sat Nov 11 15:16:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,9 +64,7 @@ public:
 
   virtual C* getCItemFromId(int id) {
 	 IdItem<C> item(id);
-	 // will throw bad_cast if cast fails
-	 C& p = dynamic_cast<C&>(*item);
-	 return &p;
+	 return item.get();
   }
 };
 
