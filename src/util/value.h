@@ -93,13 +93,13 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-ostream& operator<<(ostream& os, const Value& val)
+inline ostream& operator<<(ostream& os, const Value& val)
 {
   val.printTo(os);
   return os;
 }
 
-istream& operator>>(istream& is, Value& val)
+inline istream& operator>>(istream& is, Value& val)
 {
   val.scanFrom(is);
   return is;
