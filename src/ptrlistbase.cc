@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct  8 21:58:26 2000
+// written: Mon Oct  9 08:22:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define VOIDPTRLIST_CC_DEFINED
 
 #include "voidptrlist.h"
+
+#include "masterptr.h"
 
 #include "system/demangle.h"
 
@@ -39,56 +41,6 @@ InvalidIdError::~InvalidIdError() {}
 namespace {
   const int RESERVE_CHUNK = 20;
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// MasterPtrBase member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-MasterPtrBase::MasterPtrBase() :
-  itsRefCount(0)
-{
-DOTRACE("MasterPtrBase::MasterPtrBase");
-}
-
-MasterPtrBase::~MasterPtrBase()
-{
-DOTRACE("MasterPtrBase::~MasterPtrBase");
-}
-
-void MasterPtrBase::incrRefCount() {
-DOTRACE("MasterPtrBase::incrRefCount");
-  ++itsRefCount;
-}
-
-void MasterPtrBase::decrRefCount() {
-DOTRACE("MasterPtrBase::decrRefCount");
-  --itsRefCount;
-  if (itsRefCount <= 0)
-	 delete this;
-}
-
-int MasterPtrBase::refCount() const {
-DOTRACE("MasterPtrBase::refCount");
-  return itsRefCount;
-}
-
-class NullMasterPtr : public MasterPtrBase {
-public:
-  NullMasterPtr() :
-	 MasterPtrBase() {}
-
-  virtual ~NullMasterPtr() {}
-
-  virtual bool isValid() const { return false; }
-
-  virtual bool operator==(const MasterPtrBase& other)
-  { 
-	 bool otherIsNull = (dynamic_cast<const NullMasterPtr*>(&other) != 0);
-	 return otherIsNull;
-  }
-};
 
 ///////////////////////////////////////////////////////////////////////
 //
