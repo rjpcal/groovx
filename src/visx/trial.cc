@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Sat Sep 23 15:55:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,8 +79,8 @@ public:
 
 private:
   int itsCorrectResponse;
-  vector<IdPair> itsIdPairs;
-  vector<Response> itsResponses;
+  std::vector<IdPair> itsIdPairs;
+  std::vector<Response> itsResponses;
   int itsType;
   int itsRhId;
   int itsThId;
@@ -225,7 +225,7 @@ DOTRACE("Trial::Impl::serialize");
 
   // itsIdPairs
   os << itsIdPairs.size() << sep;
-  for (vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
+  for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
        ii != itsIdPairs.end(); 
        ++ii) {
     os << ii->objid << sep << ii->posid << sep << sep;
@@ -290,7 +290,7 @@ int Trial::Impl::charCount() const {
 DOTRACE("Trial::Impl::charCount");
   int count = (ioTag.length() + 1
 					+ IO::gCharCount<int>(itsIdPairs.size()) + 1);
-  for (vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
+  for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
        ii != itsIdPairs.end(); 
        ++ii) {
 	 count += (IO::gCharCount<int>(ii->objid) + 1
@@ -323,11 +323,11 @@ DOTRACE("Trial::Impl::readFrom");
 
   itsResponses.clear();
   IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
-									  back_inserter(itsResponses));
+									  std::back_inserter(itsResponses));
 
   itsIdPairs.clear();
   IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
-									  back_inserter(itsIdPairs));
+									  std::back_inserter(itsIdPairs));
 }
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
@@ -449,7 +449,7 @@ DOTRACE("Trial::Impl::numResponses");
 double Trial::Impl::avgResponse() const {
 DOTRACE("Trial::Impl::avgResponse");
   int sum = 0;
-  for (vector<Response>::const_iterator ii = itsResponses.begin();
+  for (std::vector<Response>::const_iterator ii = itsResponses.begin();
 		 ii != itsResponses.end();
 		 ++ii) {
 	 sum += ii->val();
@@ -460,7 +460,7 @@ DOTRACE("Trial::Impl::avgResponse");
 double Trial::Impl::avgRespTime() const {
 DOTRACE("Trial::Impl::avgRespTime");
   int sum = 0;
-  for (vector<Response>::const_iterator ii = itsResponses.begin();
+  for (std::vector<Response>::const_iterator ii = itsResponses.begin();
 		 ii != itsResponses.end();
 		 ++ii) {
 	 sum += ii->msec();
