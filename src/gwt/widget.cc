@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Aug 21 17:42:24 2001
+// written: Wed Aug 22 11:41:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,15 +40,14 @@ public:
 
   static EmptyNode* make()
     {
-      static EmptyNode* p = 0;
-      if (p == 0)
-        {
-          p = new EmptyNode;
-          p->incrRefCount();
-        }
-      return p;
+      return new EmptyNode;
     }
 };
+
+namespace
+{
+  Util::Ref<EmptyNode> theEmptyNode(EmptyNode::make());
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -60,8 +59,8 @@ class GWT::Widget::Impl : public Util::VolatileObject {
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),
-    itsDrawNode(EmptyNode::make()),
-    itsUndrawNode(EmptyNode::make()),
+    itsDrawNode(theEmptyNode),
+    itsUndrawNode(theEmptyNode),
     isItVisible(false),
     isItHolding(false),
     isItRefreshing(true),
@@ -87,8 +86,8 @@ public:
       {
         itsOwner->getCanvas().clearColorBuffer();
         doFlush(itsOwner->getCanvas());
-        setDrawable(Util::Ref<GxNode>(EmptyNode::make()));
-        itsUndrawNode = Util::Ref<GxNode>(EmptyNode::make());
+        setDrawable(theEmptyNode);
+        itsUndrawNode = theEmptyNode;
       }
   }
 
