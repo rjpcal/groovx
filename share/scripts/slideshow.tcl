@@ -331,10 +331,6 @@ set PLAYLIST [Playlist PLAYLIST $argv $t]
 -> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
 -> $t bind <ButtonPress-2> {jumpPic; PLAYLIST show}
 
--> $t bind <ButtonPress-1> {spinPic -1; PLAYLIST show}
--> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
--> $t bind <ButtonPress-2> {jumpPic; PLAYLIST show}
-
 -> $t bind <Key-Left> {spinPic -1; PLAYLIST show}
 -> $t bind <Key-Right> {spinPic 1; PLAYLIST show}
 -> $t bind <Key-Up> {jumpPic; PLAYLIST show}
