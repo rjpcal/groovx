@@ -2,10 +2,10 @@
 //
 // iodecls.h
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Sep 27 14:44:42 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Wed Mar 19 12:45:51 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

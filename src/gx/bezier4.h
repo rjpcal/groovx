@@ -2,10 +2,10 @@
 //
 // bezier4.h
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 20 12:17:39 2002
-// written: Tue Feb 25 14:10:19 2003
+// written: Wed Mar 19 12:45:55 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

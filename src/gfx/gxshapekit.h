@@ -2,10 +2,10 @@
 //
 // gxshapekit.h
 //
-// Copyright (c) 1998-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// written: Mon Jan 20 12:50:33 2003
+// written: Wed Mar 19 12:45:58 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // trace.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Feb 26 15:40:47 2003
+// written: Wed Mar 19 12:45:34 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

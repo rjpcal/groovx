@@ -2,10 +2,10 @@
 //
 // stdiobuf.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Feb 25 13:27:36 2003
-// written: Thu Feb 27 16:35:02 2003
+// written: Wed Mar 19 12:45:35 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

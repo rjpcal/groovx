@@ -2,10 +2,10 @@
 //
 // bmapdata.h
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Mon Jan 20 12:56:21 2003
+// written: Wed Mar 19 12:45:55 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

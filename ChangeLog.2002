@@ -3,7 +3,7 @@
 * ChangeLog 2002
   $Id$
 
-* Rob Peters <rjpeters@klab.caltech.edu>
+* Rob Peters <rjpeters at klab dot caltech dot edu>
 
 * (done 25-Jan-2002) Logging
 OK, have a simple scope nesting and timing architecture in place for

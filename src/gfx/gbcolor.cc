@@ -2,10 +2,10 @@
 //
 // gbcolor.cc
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Wed Mar 19 12:46:05 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // element.h
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Mon Jan 13 11:01:37 2003
+// written: Wed Mar 19 12:45:32 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

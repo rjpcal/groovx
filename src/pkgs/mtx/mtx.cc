@@ -2,10 +2,10 @@
 //
 // mtx.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Feb 26 16:44:12 2003
+// written: Wed Mar 19 12:45:48 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // pipe.h
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Thu Feb 27 16:34:37 2003
+// written: Wed Mar 19 12:45:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

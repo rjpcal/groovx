@@ -2,10 +2,10 @@
 //
 // gxrasterfont.cc
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Fri Mar  7 13:17:30 2003
+// written: Wed Mar 19 12:45:59 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh
 #
-# Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
+# Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 #
 # $Revision$
 

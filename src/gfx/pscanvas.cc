@@ -2,10 +2,10 @@
 //
 // pscanvas.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Mon Jan 20 13:22:30 2003
+// written: Wed Mar 19 12:45:57 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // rand.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Mar 19 12:45:37 2003
 // $Id$
 //
 // The random number generator classes here are taken from _The C++

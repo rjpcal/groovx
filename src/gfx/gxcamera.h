@@ -2,10 +2,10 @@
 //
 // gxcamera.h
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Mon Jan 13 11:01:39 2003
+// written: Wed Mar 19 12:46:03 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

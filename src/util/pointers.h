@@ -2,10 +2,10 @@
 //
 // pointers.h
 //
-// Rob Peters rjpeters@klab.caltech.edu
+// Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Wed Sep 25 18:59:44 2002
+// written: Wed Mar 19 12:45:37 2003
 // $Id$
 //
 // -------------------------------------------------------------------

@@ -2,10 +2,10 @@
 //
 // widget.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Mon Jan 13 11:13:52 2003
+// written: Wed Mar 19 12:45:56 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

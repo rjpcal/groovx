@@ -2,10 +2,10 @@
 //
 // fields.cc
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Jan 20 13:02:48 2003
+// written: Wed Mar 19 12:45:51 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

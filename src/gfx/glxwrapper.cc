@@ -2,10 +2,10 @@
 //
 // glxwrapper.cc
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Mon Jan 13 11:01:39 2003
+// written: Wed Mar 19 12:46:04 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // ioutil.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Fri Mar  7 13:19:32 2003
+// written: Wed Mar 19 12:45:50 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

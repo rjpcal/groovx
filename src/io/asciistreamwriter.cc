@@ -2,10 +2,10 @@
 //
 // asciistreamwriter.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Jan 20 13:01:16 2003
+// written: Wed Mar 19 12:45:52 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // exptdriver.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Mar 19 12:45:32 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // asciistreamreader.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Mon Jan 20 12:59:32 2003
+// written: Wed Mar 19 12:45:52 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
