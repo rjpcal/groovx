@@ -37,81 +37,74 @@ namespace eval Objtest {
     }
 
     proc testCountAllCmd { bc sc1 sc2 } {
-        set cmdname "${bc}::countAll"
-        set usage "wrong \# args: should be \"$cmdname\""
 
-        eval ::test $cmdname {"too many args"} {"
-            $cmdname junk
-        "} {$usage}
-        eval ::test $cmdname {"normal use"} {"
-            set before_count \[$cmdname\]
+        eval ::test ${bc}::countAll {"too many args"} {"
+            ${bc}::countAll junk
+        "} {"wrong \# args: should be"}
+
+        eval ::test ${bc}::countAll {"normal use"} {"
+            set before_count \[${bc}::countAll\]
             Obj::new ${sc1}
             Obj::new ${sc2}
-            set after_count \[$cmdname\]
+            set after_count \[${bc}::countAll\]
             return \[expr \$after_count - \$before_count\]
         "} {"^2$"}
     }
 
     proc testDeleteCmd { bc sc1 sc2 } {
-        set cmdname "Obj::delete"
-        set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
 
-        eval ::test $cmdname {"too few args"} {"
-            $cmdname
-        "} {$usage}
+        eval ::test Obj::delete {"too few args"} {"
+            Obj::delete
+        "} {"wrong \# args: should be"}
 
-        eval ::test $cmdname {"too many args"} {"
-            $cmdname junk junk
-        "} {$usage}
+        eval ::test Obj::delete {"too many args"} {"
+            Obj::delete junk junk
+        "} {"wrong \# args: should be"}
 
-        eval ::test $cmdname {"normal use"} {"
+        eval ::test Obj::delete {"normal use"} {"
             set id \[Obj::new ${sc1}\]
-            $cmdname \$id
+            Obj::delete \$id
             IO::is \$id
          "} {"^0$"}
     }
 
     proc testFindAllCmd { bc sc1 sc2 } {
-        set cmdname "${bc}::findAll"
-        set usage "wrong \# args: should be \"$cmdname\""
 
-        eval ::test $cmdname {"too many args"} {"
-            $cmdname junk
-        "} {$usage}
+        eval ::test ${bc}::findAll {"too many args"} {"
+            ${bc}::findAll junk
+        "} {"wrong \# args: should be"}
 
-        eval ::test $cmdname {"normal use on filled list"} {"
+        eval ::test ${bc}::findAll {"normal use on filled list"} {"
             Obj::new ${sc1}
             set remove_me \[Obj::new ${sc1}\]
             Obj::new ${sc2}
             Obj::delete \$remove_me
             set count \[${bc}::countAll\]
-            set num_ids \[llength \[$cmdname\]\]
-            set removed_id \[lsearch -exact \[$cmdname\] \$remove_me\]
+            set num_ids \[llength \[${bc}::findAll\]\]
+            set removed_id \[lsearch -exact \[${bc}::findAll\] \$remove_me\]
             return \"\[expr \$count - \$num_ids\] \$removed_id\"
         "} {"^0 -1$"}
     }
 
     proc testIsCmd { bc sc1 sc2 } {
-        set cmdname "${bc}::is"
-        set usage "wrong \# args: should be "
 
-        eval ::test $cmdname {"too few args"} {"
-            $cmdname
-        "} {$usage}
+        eval ::test ${bc}::is {"too few args"} {"
+            ${bc}::is
+        "} {"wrong \# args: should be"}
 
-        eval ::test $cmdname {"too many args"} {"
-            $cmdname 0 junk
-        "} {$usage}
+        eval ::test ${bc}::is {"too many args"} {"
+            ${bc}::is 0 junk
+        "} {"wrong \# args: should be"}
 
-        eval ::test $cmdname {"normal use on valid id"} {"
+        eval ::test ${bc}::is {"normal use on valid id"} {"
             set id \[Obj::new ${sc1}\]
-            $cmdname \$id
+            ${bc}::is \$id
         "} {"^1$"}
 
-        eval ::test $cmdname {"normal use on valid id"} {"
+        eval ::test ${bc}::is {"normal use on valid id"} {"
             set id \[Obj::new ${sc1}\]
             Obj::delete \$id
-            $cmdname \$id
+            ${bc}::is \$id
         "} {"^0$"}
     }
 
