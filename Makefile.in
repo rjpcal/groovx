@@ -258,7 +258,7 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
-		--modules "Visx,Gfx,Tcl,IO,Gx,Util,Nub"
+		--modules "Visx,Gfx,Tcl,IO,Media,Gx,Util,Nub"
 
 $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
@@ -289,10 +289,15 @@ $(exec_prefix)/lib/libDeepIO$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
 $(exec_prefix)/lib/libDeepGx$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+
+$(exec_prefix)/lib/libDeepMedia$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepNub$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 
 $(exec_prefix)/lib/libDeepGfx$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepMedia$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
@@ -300,6 +305,7 @@ $(exec_prefix)/lib/libDeepGfx$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 
 $(exec_prefix)/lib/libDeepVisx$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepMedia$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepGfx$(LIB_EXT) \
