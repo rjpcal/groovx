@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Jul 23 12:35:56 1999
+// written: Fri Jul 23 12:39:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,10 +25,8 @@
 #include "trial.h"
 #include "timeutils.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
-#define PICKY_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
