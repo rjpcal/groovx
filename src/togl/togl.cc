@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jun 18 09:39:20 2002
+// written: Tue Jun 18 09:54:30 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -110,8 +110,6 @@ public:
   static void dummyRenderCallback(ClientData clientData);
   static void dummyOverlayRenderCallback(ClientData clientData);
 
-  static Impl* findTogl(const char* ident);
-
   void setDisplayFunc(Togl_Callback* proc)
   { itsDisplayProc = proc; }
 
@@ -144,7 +142,6 @@ public:
       }
   }
 
-  char* ident() const { return itsIdent; }
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
   bool isRgba() const { return itsRgbaFlag; }
@@ -209,14 +206,9 @@ private:
   void setupEpsMaps();
   void freeEpsMaps();
 
-  void addSelfToList();
-  void removeSelfFromList();
-
 public:
 
   Togl* itsOwner;
-
-  Impl* itsNext;           /* next in linked list */
 
   GLXContext itsGLXContext;      /* Normal planes GLX context */
   Display* itsDisplay;     /* X's token for the window's display. */
@@ -252,9 +244,7 @@ public:
   int itsStereoFlag;
   int itsAuxNumber;
   int itsIndirect;
-  char* itsShareList;             /* name (ident) of Togl to share dlists with */
 
-  char* itsIdent;          /* User's identification string */
   ClientData itsClientData;      /* Pointer to user data */
 
   GLboolean itsUpdatePending;    /* Should normal planes be redrawn? */
@@ -387,12 +377,6 @@ static Tk_ConfigSpec configSpecs[] =
   {TK_CONFIG_INT, (char*)"-time", (char*)"time", (char*)"Time",
    (char*)DEFAULT_TIME, Tk_Offset(Togl::Impl, itsTime), 0, NULL},
 
-  {TK_CONFIG_STRING, (char*)"-sharelist", (char*)"sharelist", (char*)"ShareList",
-   NULL, Tk_Offset(Togl::Impl, itsShareList), 0, NULL},
-
-  {TK_CONFIG_STRING, (char*)"-ident", (char*)"ident", (char*)"Ident",
-   (char*)DEFAULT_IDENT, Tk_Offset(Togl::Impl, itsIdent), 0, NULL},
-
   {TK_CONFIG_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
    (char*)"false", Tk_Offset(Togl::Impl, itsIndirect), 0, NULL},
 
@@ -409,8 +393,6 @@ static Togl_Callback *DefaultOverlayDisplayProc = NULL;
 static Togl_Callback *DefaultTimerProc = NULL;
 static ClientData DefaultClientData = NULL;
 static Tcl_HashTable CommandTable;
-
-static Togl::Impl* ToglHead = NULL;  /* head of linked list */
 
 
 /*
@@ -583,9 +565,6 @@ void Togl::postReconfigure()
 
 void Togl::swapBuffers() const
   { itsImpl->swapBuffers(); }
-
-char* Togl::ident() const
-  { return itsImpl->ident(); }
 
 int Togl::width() const
   { return itsImpl->width(); }
@@ -1194,7 +1173,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
                  int config_argc, const char** config_argv) :
   itsOwner(owner),
 
-  itsNext(NULL),
   itsGLXContext(NULL),
   itsDisplay(0),
   itsTkWin(0),
@@ -1237,8 +1215,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsStereoFlag(0),
   itsAuxNumber(0),
   itsIndirect(GL_FALSE),
-  itsShareList(NULL),
-  itsIdent(NULL),
   itsClientData(DefaultClientData),
   itsUpdatePending(GL_FALSE),
   itsDisplayProc(DefaultDisplayProc),
@@ -1332,8 +1308,6 @@ DOTRACE("Togl::Impl::Impl");
                              static_cast<ClientData>(this) );
     }
 
-  addSelfToList();
-
   if (DefaultCreateProc)
     {
       DefaultCreateProc(itsOwner);
@@ -1358,8 +1332,6 @@ DOTRACE("Togl::Impl::~Impl");
     {
       itsDestroyProc(itsOwner);
     }
-
-  removeSelfFromList();
 }
 
 //---------------------------------------------------------------------
@@ -1521,19 +1493,6 @@ DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
   impl->itsOverlayUpdatePending = GL_FALSE;
 }
 
-
-Togl::Impl* Togl::Impl::findTogl(const char* ident)
-{
-DOTRACE("Togl::Impl::findTogl");
-  Impl* t = ToglHead;
-  while (t)
-    {
-      if (strcmp(t->itsIdent, ident) == 0)
-        return t;
-      t = t->itsNext;
-    }
-  return NULL;
-}
 
 void Togl::Impl::postReconfigure()
 {
@@ -1983,7 +1942,6 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
   /* NEW in togl 1.5 beta 3 */
   if (itsGLXContext)
     {
-      /* XXX this might be bad if two or more Togl widgets share a context */
       glXDestroyContext( itsDisplay, itsGLXContext );
       itsGLXContext = NULL;
     }
@@ -2214,23 +2172,7 @@ void Togl::Impl::setupGLXContext()
 DOTRACE("Togl::Impl::setupGLXContext");
   int directCtx = itsIndirect ? GL_FALSE : GL_TRUE;
 
-  if (itsShareList)
-    {
-      /* share display lists with existing this widget */
-      Impl* shareWith = findTogl(itsShareList);
-      GLXContext shareCtx;
-      if (shareWith)
-        shareCtx = shareWith->itsGLXContext;
-      else
-        shareCtx = None;
-      itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo,
-                                       shareCtx, directCtx);
-    }
-  else
-    {
-      /* don't share display lists */
-      itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
-    }
+  itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
 }
 
 void Togl::Impl::createWindow()
@@ -2607,37 +2549,6 @@ DOTRACE("Togl::Impl::freeEpsMaps");
   if (itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
   itsEpsRedMap = itsEpsGreenMap = itsEpsBlueMap = NULL;
   itsEpsMapSize = 0;
-}
-
-void Togl::Impl::addSelfToList()
-{
-DOTRACE("Togl::Impl::addSelfToList");
-  itsNext = ToglHead;
-  ToglHead = this;
-}
-
-void Togl::Impl::removeSelfFromList()
-{
-DOTRACE("Togl::Impl::removeSelfFromList");
-  Togl::Impl* prev = NULL;
-  Togl::Impl* pos = ToglHead;
-  while (pos)
-    {
-      if (pos == this)
-        {
-          if (prev)
-            {
-              prev->itsNext = pos->itsNext;
-            }
-          else
-            {
-              ToglHead = pos->itsNext;
-            }
-          return;
-        }
-      prev = pos;
-      pos = pos->itsNext;
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////
