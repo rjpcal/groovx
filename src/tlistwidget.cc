@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Dec  3 15:27:47 1999
+// written: Sat Dec  4 02:41:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,32 @@
 #include <GL/gl.h>
 
 #include "tlist.h"
+#include "trial.h"
 
 #include "trace.h"
 #include "debug.h"
+
+namespace {
+  Tlist& theTlist = Tlist::theTlist();
+
+  void safeDrawTrial(int trial, TlistWidget* widg) {
+  DOTRACE("{tlistwidget.cc}::safeDrawTrial");
+
+	 DebugPrintNL("drawing the trial...");
+	 try {
+		theTlist.getCheckedPtr(trial)->trDraw(false);
+	 }
+	 catch (InvalidIdError& err) {
+		DebugEvalNL(err.msg());
+		widg->setVisibility(false);
+	 }
+  }
+
+  void clearColorBuffer() {
+  DOTRACE("{tlistwidget.cc}::clearColorBuffer");
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
+}
 
 TlistWidget::TlistWidget(Togl* togl, double dist, double unit_angle) :
   ToglConfig(togl, dist, unit_angle) 
@@ -28,43 +51,46 @@ DOTRACE("TlistWidget::TlistWidget");
 
 void TlistWidget::display() {
 DOTRACE("TlistWidget::display");
-  DebugPrintNL("clearing back buffer...");
-  glClear(GL_COLOR_BUFFER_BIT);
-    
-  DebugPrintNL("drawing the trial...");
+  // First we must erase the previous current trial. We ignore any
+  // invalid id errors that occur, and simply clear the screen in
+  // this case.
   try {
-	 Tlist::theTlist().drawCurTrial();
+	 theTlist.getCheckedPtr(itsCurTrial)->trUndraw(false);
   }
-  catch (InvalidIdError& err) {
-	 DebugEvalNL(err.msg());
-	 Tlist::theTlist().setVisible(false);
+  catch (InvalidIdError&) {
+	 clearscreen();
   }
-  
-  DebugPrintNL("swapping the buffers...");
-  swapBuffers();
-  
-  DebugPrintNL("clearing back buffer...");
-  glClear(GL_COLOR_BUFFER_BIT);
+
+  safeDrawTrial(itsCurTrial, this);
+  glFlush();
 }
 
 void TlistWidget::clearscreen() {
 DOTRACE("TlistWidget::clearscreen");
-  Tlist::theTlist().setVisible(false);
-  glClear(GL_COLOR_BUFFER_BIT);
+  setVisibility(false);
+  clearColorBuffer();
   glFlush();
 }
 
 void TlistWidget::refresh() {
 DOTRACE("TlistWidget::refresh");
-  clearscreen();
-  display();
+
+  clearColorBuffer(); 
+  safeDrawTrial(itsCurTrial, this);
+  swapBuffers();
+  clearColorBuffer(); 
   glFlush();
 }
 
 void TlistWidget::undraw() {
 DOTRACE("TlistWidget::undraw");
-  Tlist::theTlist().undrawCurTrial();
-  glFlush();
+  theTlist.getCheckedPtr(itsCurTrial)->trUndraw(true);
+}
+
+void TlistWidget::setCurTrial(int trial) {
+DOTRACE("TlistWidget::setCurTrial");
+  if (theTlist.isValidId(trial))
+	 itsCurTrial = trial;
 }
 
 static const char vcid_tlistwidget_cc[] = "$Header$";
