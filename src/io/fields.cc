@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Sat May 19 21:09:12 2001
+// written: Sun Jun 10 15:50:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,8 +142,8 @@ private:
 public:
   typedef std::map<fixed_string, const FieldInfo*> MapType;
   MapType itsNameMap;
-  const FieldInfo* itsIoBegin;
-  const FieldInfo* itsIoEnd;
+  const FieldInfo* const itsIoBegin;
+  const FieldInfo* const itsIoEnd;
 
   const FieldMap* itsParent;
 
