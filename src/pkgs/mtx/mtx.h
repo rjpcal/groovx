@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 28 09:33:58 2001
+// written: Mon Apr  2 10:00:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -323,6 +323,7 @@ public:
 
   Mtx columns(int c, int nc) const;
 
+  void swapColumns(int c1, int c2);
 
   //
   // Functions
