@@ -320,7 +320,7 @@ DOTRACE("ExptDriver::getInfoLog");
 void ExptDriver::addLogInfo(const char* message)
 {
 DOTRACE("ExptDriver::addLogInfo");
-  fstring date_string = System::theSystem().formattedTime();
+  const fstring date_string = Util::Time::wallClockNow().format();
 
   rep->infoLog.append("@");
   rep->infoLog.append(date_string);
@@ -364,13 +364,15 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   addLogInfo("Beginning experiment.");
 
-  rep->beginDate = System::theSystem().formattedTime();
+  rep->beginDate = Util::Time::wallClockNow().format();
   rep->hostname = System::theSystem().getenv("HOST");
   rep->subject = System::theSystem().getcwd();
   rep->numTrialsCompleted = 0;
 
   Util::Log::reset(); // to clear any existing timer scopes
   Util::Log::addObjScope(*this);
+
+  Util::Log::setLogFilename(fstring(rep->filePrefix, ".log"));
 
   currentElement()->vxRun(*this);
 }
@@ -437,10 +439,11 @@ DOTRACE("ExptDriver::storeData");
   // The experiment and a summary of the responses to it are written to
   // files with unique filenames.
 
-  rep->endDate = System::theSystem().formattedTime();
+  const Util::Time timestamp = Util::Time::wallClockNow();
 
-  fstring unique_file_extension =
-    System::theSystem().formattedTime("_%Y%b%d_%H%M%S");
+  rep->endDate = timestamp.format();
+
+  fstring unique_file_extension = timestamp.format("_%Y%b%d_%H%M%S");
 
   // Write the main experiment file
   fstring expt_filename = rep->filePrefix;
