@@ -289,7 +289,7 @@ void Fish::readFrom(IO::Reader* reader)
 {
 DOTRACE("Fish::readFrom");
 
-  reader->ensureReadVersionId("Fish", 2, "Try grsh0.8a7");
+  reader->ensureReadVersionId("Fish", 3, "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 

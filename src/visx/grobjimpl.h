@@ -25,8 +25,6 @@
 #include "bitmapcachenode.h"
 #include "glcachenode.h"
 
-#include "io/reader.h"
-
 #include "util/volatileobject.h"
 
 class GrObjNode : public Gnode
@@ -93,47 +91,6 @@ public:
     // We connect to sigNodeChanged in order to update any caches
     // according to state changes.
     obj->sigNodeChanged.connect(this, &GrObjImpl::invalidateCaches);
-  }
-
-  void readFrom(IO::Reader* reader)
-  {
-    reader->readValue("GrObj::category", itsCategory);
-
-    {
-      int temp;
-      reader->readValue("GrObj::renderMode", temp);
-      itsGLCache->setMode(temp);
-      itsBitmapCache->setMode(temp);
-    }
-
-    {
-      fstring filename;
-      reader->readValue("GrObj::cacheFilename", filename);
-      itsBitmapCache->setCacheFilename(filename);
-    }
-
-    {
-      bool val;
-      reader->readValue("GrObj::bbVisibility", val);
-      itsBB->setVisible(val);
-    }
-
-    {
-      int temp;
-      reader->readValue("GrObj::scalingMode", temp);
-      itsScaler->setMode(temp);
-    }
-
-    {
-      reader->readValue("GrObj::widthFactor", itsScaler->itsWidthFactor);
-      reader->readValue("GrObj::heightFactor", itsScaler->itsHeightFactor);
-    }
-
-    reader->readValue("GrObj::alignmentMode", itsAligner->itsMode);
-    reader->readValue("GrObj::centerX", itsAligner->itsCenter.x());
-    reader->readValue("GrObj::centerY", itsAligner->itsCenter.y());
-
-    invalidateCaches();
   }
 
   void invalidateCaches()

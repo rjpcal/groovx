@@ -77,16 +77,9 @@ void GrObj::readFrom(IO::Reader* reader)
 {
 DOTRACE("GrObj::readFrom");
 
-  int svid = reader->ensureReadVersionId("GrObj", 1, "Try grsh0.8a7");
+  reader->ensureReadVersionId("GrObj", 3, "Try grsh0.8a7");
 
-  if (svid == 1)
-	 {
-		itsImpl->readFrom(reader);
-	 }
-  else
-	 {
-		readFieldsFrom(reader, classFields());
-	 }
+  readFieldsFrom(reader, classFields());
 }
 
 void GrObj::writeTo(IO::Writer* writer) const

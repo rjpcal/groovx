@@ -165,7 +165,7 @@ void BitmapRep::readFrom(IO::Reader* reader)
 {
 DOTRACE("BitmapRep::readFrom");
 
-  reader->ensureReadVersionId("BitmapRep", 0, "Try grsh0.8a7");
+  reader->ensureReadVersionId("BitmapRep", 1, "Try grsh0.8a7");
 
   reader->readValue("filename", itsImpl->itsFilename);
   reader->readValue("zoomX", itsImpl->itsZoom.x());
