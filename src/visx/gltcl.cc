@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Jan 22 17:01:14 2002
+// written: Mon Sep  9 12:02:11 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -37,6 +37,10 @@
 #include <map>
 
 #include "util/trace.h"
+
+#ifdef __GNUC__ < 3
+#  define BROKEN_TEMPLATE_HACK
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -246,10 +250,10 @@ namespace GLTcl
 
   template <class T>
   Tcl::List get(GLenum param_tag
-#ifdef PPC
-		, T* /*dummy*/=0
+#ifdef BROKEN_TEMPLATE_HACK
+                , T* /*dummy*/=0
 #endif
-		)
+                )
   {
     const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
@@ -264,7 +268,7 @@ namespace GLTcl
     return result;
   }
 
-#ifdef PPC
+#ifdef BROKEN_TEMPLATE_HACK
   Tcl::List getBoolean(GLenum param_tag)
   { return get<GLboolean>(param_tag, (GLboolean*) 0); }
 
@@ -501,7 +505,7 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
             gluPerspective );
 
-#ifndef PPC
+#ifndef BROKEN_TEMPLATE_HACK
   pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
   pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
   pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
