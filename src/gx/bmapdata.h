@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Tue Apr  2 11:51:05 2002
+// written: Tue Apr  2 13:21:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,6 +98,11 @@ public:
 
   /// Returns a pointer to the raw image data.
   unsigned char* bytesPtr() const;
+
+  /// Returns a pointer to the beginning of the specified row.
+  /** This takes into account whether the current RowOrder is TOP_FIRST or
+      BOTTOM_FIRST. */
+  unsigned char* rowPtr(unsigned int row) const;
 
   /// Returns a checksum of all the bytes in the image data.
   long int checkSum() const;

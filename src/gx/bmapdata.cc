@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Tue Apr  2 11:52:48 2002
+// written: Tue Apr  2 13:27:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,7 +101,21 @@ unsigned char* Gfx::BmapData::bytesPtr() const
 {
 DOTRACE("Gfx::BmapData::bytesPtr");
   updateIfNeeded();
-  return const_cast<unsigned char*>(&(itsImpl->itsBytes[0]));
+  return &(itsImpl->itsBytes[0]);
+}
+
+unsigned char* Gfx::BmapData::rowPtr(unsigned int row) const
+{
+DOTRACE("Gfx::BmapData::rowPtr");
+
+  const unsigned int offset =
+    (rowOrder() == TOP_FIRST)
+    ?
+    row
+    :
+    height() - row - 1;
+
+  return bytesPtr() + offset * bytesPerRow();
 }
 
 long int Gfx::BmapData::checkSum() const
