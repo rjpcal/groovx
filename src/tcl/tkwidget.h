@@ -35,8 +35,6 @@
 #include "nub/object.h"
 #include "nub/signal.h"
 
-struct Tcl_Interp;
-
 typedef struct Tk_Window_ *Tk_Window;
 
 namespace geom
