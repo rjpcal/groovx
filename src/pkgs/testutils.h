@@ -36,16 +36,18 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/fileposition.h"
+
 #include <cmath>
 
 namespace
 {
   void testRequireImpl(bool expr, const char* exprString,
-                       const char* file, int line)
+                       const FilePosition& pos)
   {
     if (!expr)
-      throw Util::Error(fstring(file, "@", line,
-                                ": failed test of: ",exprString), SRC_POS);
+      throw Util::Error(fstring(pos.fileName, ":", pos.lineNo,
+                                ": failed test of: ",exprString), pos);
   }
 
   template <class T, class U>
@@ -53,14 +55,14 @@ namespace
                          const U& expr2,
                          const char* exprString1,
                          const char* exprString2,
-                         const char* file, int line)
+                         const FilePosition& pos)
   {
     if (!(expr1 == expr2))
       {
-        fstring msg(file, "@", line, ": failed test:\n");
+        fstring msg(pos.fileName, ":", pos.lineNo, ": failed test:\n");
         msg.append("\texpected ", exprString1, " == ", exprString2, "\n");
         msg.append("\tgot: ", expr1, " != ", expr2);
-        throw Util::Error(msg, SRC_POS);
+        throw Util::Error(msg, pos);
       }
   }
 
@@ -76,26 +78,26 @@ namespace
                              double tol,
                              const char* exprString1,
                              const char* exprString2,
-                             const char* file, int line)
+                             const FilePosition& pos)
   {
     if (!approxEq(expr1, expr2, tol))
       {
-        fstring msg(file, "@", line, ": failed test:\n");
+        fstring msg(pos.fileName, ":", pos.lineNo, ": failed test:\n");
         msg.append("\texpected ", exprString1, " ~= ", exprString2, "\n");
         msg.append("\tgot: ", expr1, " != ", expr2);
-        throw Util::Error(msg, SRC_POS);
+        throw Util::Error(msg, pos);
       }
   }
 }
 
 #define TEST_REQUIRE(expr) \
-  testRequireImpl(bool(expr), #expr, __FILE__, __LINE__)
+  testRequireImpl(bool(expr), #expr, SRC_POS)
 
 #define TEST_REQUIRE_EQ(expr1, expr2) \
-  testRequireEqImpl(expr1, expr2, #expr1, #expr2, __FILE__, __LINE__)
+  testRequireEqImpl(expr1, expr2, #expr1, #expr2, SRC_POS)
 
 #define TEST_REQUIRE_APPROX(expr1, expr2, tol) \
-  testRequireApproxImpl(expr1, expr2, tol, #expr1, #expr2, __FILE__, __LINE__)
+  testRequireApproxImpl(expr1, expr2, tol, #expr1, #expr2, SRC_POS)
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
