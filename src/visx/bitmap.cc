@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:26:46 2001
+// written: Wed Aug  8 11:34:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,13 +98,6 @@ void Bitmap::loadPbmFile(const char* filename)
 {
 DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(filename);
-  sendStateChangeMsg();
-}
-
-void Bitmap::loadPbmData(STD_IO::istream& is)
-{
-DOTRACE("Bitmap::loadPbmData");
-  itsImpl->loadPbmData(is);
   sendStateChangeMsg();
 }
 

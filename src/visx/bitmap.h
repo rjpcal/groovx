@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Jul 19 09:39:08 2001
+// written: Wed Aug  8 11:34:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,9 +71,6 @@ public:
 public:
   /// Loads PBM bitmap data from the PBM file at \a filename.
   void loadPbmFile(const char* filename);
-
-  /// Loads PBM bitmap data from the stream \a input.
-  void loadPbmData(STD_IO::istream& input);
 
   /// Writes PBM bitmap data to the file \a filename.
   void writePbmFile(const char* filename) const;

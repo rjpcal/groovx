@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Aug  8 11:25:54 2001
+// written: Wed Aug  8 11:34:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,9 +88,6 @@ public:
       will not actually be retrieved from the file until it is
       needed. */
   void queuePbmFile(const char* filename);
-
-  /// Loads PBM bitmap data from an STD_IO::istream.
-  void loadPbmData(STD_IO::istream& is);
 
   /// Writes PBM bitmap data to the file \a filename.
   void writePbmFile(const char* filename) const;
