@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Fri Jan 18 16:07:04 2002
+// written: Thu May 23 17:04:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,10 @@
 #  include <fcntl.h>
 #endif
 #include <unistd.h>
+
+#if defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#include <ext/stdio_filebuf.h>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -71,7 +75,8 @@ DOTRACE("Util::SerialPort::SerialPort");
         { close(); return; }
 
 #if defined(GCC_COMPILER) && GCC_COMPILER >= 3
-      itsFilebuf = new std::filebuf(fdopen(filedes(), "r"), std::ios::in);
+      typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
+      itsFilebuf = new filebuf_t(fdopen(filedes(), "r"), std::ios::in);
       itsStream = new std::iostream(itsFilebuf);
 #else
       itsStream = new STD_IO::fstream;
