@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Mon Mar  6 13:01:20 2000
+// written: Tue Mar  7 16:13:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,14 +16,14 @@
 #include <iostream.h>           // for serialize
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <memory>
 
 #include "bitmaprep.h"
 #include "canvas.h"
 #include "glbmaprenderer.h"
-#include "util/error.h"
 #include "rect.h"
 #include "reader.h"
+#include "util/error.h"
+#include "util/pointers.h"
 #include "writer.h"
 #include "xbmaprenderer.h"
 
@@ -66,6 +66,11 @@ namespace {
 #  define checkForGlError(x) {}
 #endif
 
+  template <class T>
+  inline T max(const T& t1, const T& t2)
+	 {
+		return (t2 > t1) ? t2 : t1;
+	 }
 }
 
 Util::Tracer GrObj::tracer;
@@ -275,8 +280,8 @@ private:
 
 	 mutable bool itsIsCurrent;    // true if displaylist is current
 	 mutable int itsDisplayList;   // OpenGL display list that draws the object
-	 auto_ptr<BmapRenderer> itsBmapRenderer;
-	 auto_ptr<BitmapRep> itsBitmapCache;
+	 shared_ptr<BmapRenderer> itsBmapRenderer;
+	 scoped_ptr<BitmapRep> itsBitmapCache;
 
 	 // This function updates the cached OpenGL display list.
 	 void recompileIfNeeded(const GrObj::Impl* obj, Canvas& canvas) const;
