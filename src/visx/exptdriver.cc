@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov  3 13:45:03 1999
+// written: Wed Nov  3 19:09:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "exptdriver.h"
 
 #include <tcl.h>
+#include <cstring>
 #include <iostream.h>
 #include <fstream.h>
 #include <string>
@@ -66,7 +67,7 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::ExptHelper utility class
+// ExptDriver::ExptImpl utility class
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -75,9 +76,11 @@ public:
   ExptImpl(ExptDriver* owner);
   ~ExptImpl();
 
-  void serialize(ostream& os, IO::IOFlag flag) const;
-  void deserialize(istream& is, IO::IOFlag flag);
+  //////////////////////
+  // helper functions //
+  //////////////////////
 
+private:
   bool doesDoUponCompletionExist() const;
 
   void raiseBackgroundError(const char* msg) const;
@@ -85,6 +88,74 @@ public:
 
   void doAutosave();
 
+  Block& block() const;
+  ResponseHandler& responseHandler() const;
+  TimingHdlr& timingHdlr() const;
+
+  // Check the validity of all its id's, return true if all are ok,
+  // otherwise returns false, halts the experiment, and issues an
+  // error message to itsInterp.
+  bool assertIds() const;
+
+  bool needAutosave() const;
+
+  // Switches itsBlockId to the next valid block and returns true, or
+  // returns false if there are no more valid blocks.
+  bool gotoNextValidBlock();
+
+  bool safeTclGlobalEval(const char* script) const;
+
+  void doUponCompletion() const;
+
+  void noteElapsedTime() const;
+
+  void getCurrentTimeDateString(string& date_out) const;
+
+  void getHostname(string& hostname_out) const;
+
+  void getSubjectKey(string& subjectkey_out) const;
+
+  string makeUniqueFileExtension() const;
+
+  //////////////////////////
+  // ExptDriver delegands //
+  //////////////////////////
+
+public:
+  void serialize(ostream& os, IO::IOFlag flag) const;
+  void deserialize(istream& is, IO::IOFlag flag);
+
+  int charCount() const;
+
+  void readFrom(Reader* reader);
+  void writeTo(Writer* writer) const;
+
+  void init();
+
+  Tcl_Interp* getInterp() { return itsInterp; }
+  void setInterp(Tcl_Interp* interp);
+
+  const string& getAutosaveFile() const { return itsAutosaveFile; }
+  void setAutosaveFile(const string& str) { itsAutosaveFile = str; }
+
+  void draw();
+  void undraw();
+  void edSwapBuffers();
+
+  void edBeginExpt();
+  void edBeginTrial();
+  void edResponseSeen();
+  void edProcessResponse(int response);
+  void edAbortTrial();
+  void edEndTrial();
+  void edHaltExpt() const;
+  void edResetExpt();
+
+  void read(const char* filename);
+  void write(const char* filename) const;
+
+  void writeAndExit(bool quitApplication);
+  
   //////////////////
   // data members //
   //////////////////
@@ -92,75 +163,47 @@ public:
 private:
   ExptDriver* self;
 
-public:
   Tcl_Interp* itsInterp;
 
-private:
+  string itsHostname;			  // Host computer on which Expt was begun
+  string itsSubject;				  // Id of subject on whom Expt was performed
+  string itsBeginDate;			  // Date(+time) when Expt was begun
+  string itsEndDate;				  // Date(+time) when Expt was stopped
+  string itsAutosaveFile;		  // Filename used for autosaves
+
+  int itsBlockId;
+  int itsRhId;
+  int itsThId;
+
+  mutable timeval itsBeginTime;
+
   mutable string itsDoUponCompletionBody;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::ExptHelper member definitions
+// ExptDriver::ExptImpl member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 ExptDriver::ExptImpl::ExptImpl(ExptDriver* owner) :
   itsInterp(0),
+  itsAutosaveFile("__autosave_file"),
+  itsBlockId(0),
+  itsRhId(0),
+  itsThId(0),
   self(owner)
 {
+DOTRACE("ExptDriver::ExptImpl::ExptImpl");
 }
 
 ExptDriver::ExptImpl::~ExptImpl() {
-}
-
-void ExptDriver::ExptImpl::serialize(ostream& os, IO::IOFlag /*flag*/) const {
-
-  if (doesDoUponCompletionExist()) {
-	 Tcl_ResetResult(itsInterp);
-	 int tclresult =
-		Tcl_GlobalEval(itsInterp,
-							"info body Expt::doUponCompletion");
-	 
-	 if (tclresult != TCL_OK) {
-		throw OutputError("couldn't get the proc body for Expt::doUponCompletion");
-	 }
-	 
-	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
-  }
-  else {
-	 itsDoUponCompletionBody = "";
-  }
-
-  os << itsDoUponCompletionBody.length() << endl
-	  << itsDoUponCompletionBody << endl;
-}
-
-void ExptDriver::ExptImpl::deserialize(istream& is, IO::IOFlag /*flag*/) {
-  int length;
-  is >> length;
-  if (is.peek() == '\n') { is.get(); }
-
-  vector<char> buf(length+1);
-  is.read(&buf[0], length);
-  buf[length] = '\0';
-
-  itsDoUponCompletionBody = &buf[0];
-
-  string proc_cmd = "namespace eval Expt { proc doUponCompletion {} {"
-	 + itsDoUponCompletionBody + "} }";
-
-  vector<char> cmd_copy(proc_cmd.begin(), proc_cmd.end());
-  cmd_copy.push_back('\0');
- 
-  int tclresult = Tcl_GlobalEval(itsInterp, &cmd_copy[0]);
-
-  if (tclresult != TCL_OK) {
-	 throw InputError("error while reconstituting Expt::doUponCompletion");
-  }
+DOTRACE("ExptDriver::ExptImpl::~ExptImpl");
+//   Tcl_Release(itsInterp);
 }
 
 bool ExptDriver::ExptImpl::doesDoUponCompletionExist() const {
+DOTRACE("ExptDriver::ExptImpl::doesDoUponCompletionExist");
   Tcl_ResetResult(itsInterp);
   int tclresult =
 	 Tcl_GlobalEval(itsInterp,
@@ -186,16 +229,19 @@ bool ExptDriver::ExptImpl::doesDoUponCompletionExist() const {
 }
 
 void ExptDriver::ExptImpl::raiseBackgroundError(const char* msg) const {
+DOTRACE("ExptDriver::ExptImpl::raiseBackgroundError");
   Tcl_AppendResult(itsInterp, msg, (char*) 0);
   Tcl_BackgroundError(itsInterp);
 }
 
 void ExptDriver::ExptImpl::raiseBackgroundError(const string& msg) const {
+DOTRACE("ExptDriver::ExptImpl::raiseBackgroundError");
   Tcl_AppendResult(itsInterp, msg.c_str(), (char*) 0);
   Tcl_BackgroundError(itsInterp);
 }
 
 void ExptDriver::ExptImpl::doAutosave() {
+DOTRACE("ExptDriver::ExptImpl::doAutosave");
   try {
 	 DebugEvalNL(self->getAutosaveFile().c_str());
 	 self->write(self->getAutosaveFile().c_str());
@@ -205,74 +251,201 @@ void ExptDriver::ExptImpl::doAutosave() {
   }
 }
 
-///////////////////////////////////////////////////////////////////////
+Block& ExptDriver::ExptImpl::block() const {
+DOTRACE("ExptDriver::ExptImpl::block");
+  try {
+#ifdef LOCAL_DEBUG
+	 Block* block = BlockList::theBlockList().getCheckedPtr(itsBlockId);
+	 DebugEvalNL((void *) block);
+	 return *block;
+#else
+	 return *(BlockList::theBlockList().getCheckedPtr(itsBlockId));
+#endif
+  }
+  catch (InvalidIdError& err) {
+	 raiseBackgroundError(err.msg().c_str());
+  }
+}
+
+ResponseHandler& ExptDriver::ExptImpl::responseHandler() const {
+DOTRACE("ExptDriver::ExptImpl::responseHandler");
+  try {
+#ifdef LOCAL_DEBUG
+	 ResponseHandler* rh = RhList::theRhList().getCheckedPtr(itsRhId);
+	 DebugEval(itsRhId);   DebugEvalNL((void *) rh);
+	 return *rh;
+#else
+	 return *(RhList::theRhList().getCheckedPtr(itsRhId));
+#endif
+  }
+  catch (InvalidIdError& err) {
+	 raiseBackgroundError(err.msg().c_str());
+  }  
+}
+
+TimingHdlr& ExptDriver::ExptImpl::timingHdlr() const {
+DOTRACE("ExptDriver::ExptImpl::timingHdlr");
+  try {
+#ifdef LOCAL_DEBUG
+	 TimingHdlr* th = ThList::theThList().getCheckedPtr(itsThId);
+	 DebugEvalNL((void *) th);
+	 return *th;
+#else
+	 return *(ThList::theThList().getCheckedPtr(itsThId));
+#endif
+  }
+  catch (InvalidIdError& err) {
+	 raiseBackgroundError(err.msg().c_str());
+  }  
+}
+
+//---------------------------------------------------------------------
 //
-// ExptDriver creator method definitions
+// ExptDriver::assertIds --
 //
-///////////////////////////////////////////////////////////////////////
+// This function checks that the ExptDriver's block id, response
+// handler id, and timing handler id, are all valid. If they all are,
+// the function returns true as quickly as possible. If one or more of
+// the id's is invalid, the function 1) generates a background error
+// in the ExptDriver's Tcl_Interp, 2) sends a 'halt' message to any of
+// the participants for which the id *is* valid, and 3) returns false.
+//
+//---------------------------------------------------------------------
 
-ExptDriver::ExptDriver() :
-  itsAutosaveFile("__autosave_file"),
-  itsBlockId(0),
-  itsRhId(0),
-  itsThId(0),
-  itsImpl(new ExptImpl(this))
-{
-DOTRACE("ExptDriver::ExptDriver");
+inline bool ExptDriver::ExptImpl::assertIds() const {
+DOTRACE("ExptDriver::ExptImpl::assertIds");
+  if ( BlockList::theBlockList().isValidId(itsBlockId) &&
+		 RhList::theRhList().isValidId(itsRhId) &&
+		 ThList::theThList().isValidId(itsThId) ) {
+	 return true;
+  }
+
+  // ...one of the validity checks failed, so generate an error+message
+  raiseBackgroundError("invalid item id");
+
+  // ...and halt any of the participants for which we have valid id's
+  edHaltExpt();
+
+  return false;
 }
 
-ExptDriver ExptDriver::theInstance;
+//--------------------------------------------------------------------
+//
+// ExptDriver::needAutosave --
+//
+// Determine whether an autosave is necessary now. An autosave is
+// requested only if itsAutosavePeriod is positive, and the number of
+// completed trials is evenly divisible by the autosave period.
+//
+//--------------------------------------------------------------------
 
-ExptDriver& ExptDriver::theExptDriver() {
-DOTRACE("ExptDriver::theExptDriver");
-  return theInstance;
+bool ExptDriver::ExptImpl::needAutosave() const {
+DOTRACE("ExptDriver::ExptImpl::needAutosave");
+  if ( !assertIds() ) return false;
+
+  int period = timingHdlr().getAutosavePeriod();
+  return ( (period > 0) && 
+			  ((block().numCompleted() % period) == 0) &&
+			  !(itsAutosaveFile.empty()) );
 }
 
-ExptDriver::~ExptDriver() {
-DOTRACE("ExptDriver::~ExptDriver");
-//   Tcl_Release(itsImpl->itsInterp);
-  delete itsImpl; 
+bool ExptDriver::ExptImpl::gotoNextValidBlock() {
+DOTRACE("ExptDriver::ExptImpl::gotoNextValidBlock");
+  BlockList& blist = BlockList::theBlockList();
+
+  // This increments itsImpl->itsBlockId until we have either run out of
+  // Block's, or found the next valid Block
+  while ( (++itsBlockId < blist.capacity()) 
+			 && !blist.isValidId(itsBlockId) ) { /* empty loop body */ }
+  
+  return blist.isValidId(itsBlockId);
 }
 
-void ExptDriver::init() {
-DOTRACE("ExptDriver::init");
+bool ExptDriver::ExptImpl::safeTclGlobalEval(const char* script) const {
+DOTRACE("ExptDriver::ExptImpl::safeTclGlobalEval");
+  vector<char> temp_buf(script, script + strlen(script) + 1);
 
-  int result;
+  int tclresult = Tcl_GlobalEval(itsInterp, &temp_buf[0]);
 
-  // Get the current time/date
-  static TclEvalCmd dateStringCmd("clock format [clock seconds]");
+  if (tclresult == TCL_OK) return true;
 
-  result = dateStringCmd.invoke(itsImpl->itsInterp);
-  if (result != TCL_OK) throw TclError("couldn't get date");
+  // else...
+  raiseBackgroundError(string("error while evaluating ") + script);
+  return false;
+}
 
-  itsBeginDate = Tcl_GetStringResult(itsImpl->itsInterp);
+void ExptDriver::ExptImpl::doUponCompletion() const {
+DOTRACE("ExptDriver::ExptImpl::doUponCompletion");
+  if (doesDoUponCompletionExist()) {
+	 safeTclGlobalEval("Expt::doUponCompletion");
+  }
+}
 
-  // Get the hostname
-  itsHostname = Tcl_GetVar2(itsImpl->itsInterp, "env", "HOST",
-									 TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
+void ExptDriver::ExptImpl::noteElapsedTime() const {
+DOTRACE("ExptDriver::ExptImpl::noteElapsedTime");
+  cout << "expt completed in "
+		 << elapsedMsecSince(itsBeginTime)
+		 << " milliseconds\n";
+}
+
+void ExptDriver::ExptImpl::getCurrentTimeDateString(string& date_out) const {
+DOTRACE("ExptDriver::ExptImpl::getCurrentTimeDateString");
+  static TclEvalCmd dateStringCmd("clock format [clock seconds]",
+											 TclEvalCmd::THROW_EXCEPTION);
+
+  dateStringCmd.invoke(itsInterp);
+  date_out = Tcl_GetStringResult(itsInterp);
+}
+
+void ExptDriver::ExptImpl::getHostname(string& hostname_out) const {
+DOTRACE("ExptDriver::ExptImpl::getHostname");
+  char* temp = Tcl_GetVar2(itsInterp, "env", "HOST",
+									TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
+
+  if (temp == 0) { throw TclError(); }
+  hostname_out = temp;
+}
+
+void ExptDriver::ExptImpl::getSubjectKey(string& subjectkey_out) const {
+DOTRACE("ExptDriver::ExptImpl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
-  static TclEvalCmd subjectKeyCmd("file tail [pwd]");
+  static TclEvalCmd subjectKeyCmd("file tail [pwd]",
+											 TclEvalCmd::THROW_EXCEPTION);
 
-  result = subjectKeyCmd.invoke(itsImpl->itsInterp);
-  if (result != TCL_OK) throw TclError("couldn't get subject initials");
+  subjectKeyCmd.invoke(itsInterp);
 
   // Get the result, and remove an optional leading 'human_', if present
-  const char* key = Tcl_GetStringResult(itsImpl->itsInterp);
+  const char* key = Tcl_GetStringResult(itsInterp);
   if ( strncmp(key, "human_", 6) == 0 ) {
     key += 6;
   }
 
-  itsSubject = key;
-
-  itsAutosaveFile = "__autosave_file";
-  DebugEvalNL(itsAutosaveFile);
+  subjectkey_out = key;
 }
 
-void ExptDriver::serialize(ostream &os, IOFlag flag) const {
-DOTRACE("ExptDriver::serialize");
-  char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+string ExptDriver::ExptImpl::makeUniqueFileExtension() const {
+DOTRACE("ExptDriver::ExptImpl::makeUniqueFileExtension");
+
+  // Format the current time into a unique filename extension
+  static TclEvalCmd uniqueFilenameCmd(
+        "clock format [clock seconds] -format %H%M%d%b%Y",
+		  TclEvalCmd::THROW_EXCEPTION);
+
+  uniqueFilenameCmd.invoke(itsInterp);
+  return Tcl_GetStringResult(itsInterp);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// ExptDriver::ExptImpl delegand functions
+//
+///////////////////////////////////////////////////////////////////////
+
+void ExptDriver::ExptImpl::serialize(ostream& os, IO::IOFlag flag) const {
+DOTRACE("ExptDriver::ExptImpl::serialize");
+
+  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
 
   ObjList::   theObjList()   .serialize(os, flag);
   PosList::   thePosList()   .serialize(os, flag);
@@ -287,17 +460,35 @@ DOTRACE("ExptDriver::serialize");
   os << itsEndDate        << '\n';
   os << itsAutosaveFile   << '\n';
 
-  os << itsBlockId << sep
-	  << itsRhId << sep 
+  os << itsBlockId << IO::SEP
+	  << itsRhId << IO::SEP
 	  << itsThId << endl;
 
-  itsImpl->serialize(os, flag);
+  if (doesDoUponCompletionExist()) {
+	 Tcl_ResetResult(itsInterp);
+	 int tclresult =
+		Tcl_GlobalEval(itsInterp,
+							"info body Expt::doUponCompletion");
+	 
+	 if (tclresult != TCL_OK) {
+		throw OutputError("couldn't get the proc body for Expt::doUponCompletion");
+	 }
+	 
+	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
+  }
+  else {
+	 itsDoUponCompletionBody = "";
+  }
+
+  os << itsDoUponCompletionBody.length() << endl
+	  << itsDoUponCompletionBody << endl;
 
   if (os.fail()) throw OutputError(ioTag);
 }
 
-void ExptDriver::deserialize(istream &is, IOFlag flag) {
-DOTRACE("ExptDriver::deserialize");
+void ExptDriver::ExptImpl::deserialize(istream& is, IO::IOFlag flag) {
+DOTRACE("ExptDriver::ExptImpl::serialize");
+
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   ObjList::   theObjList()   .deserialize(is, flag);
@@ -315,13 +506,33 @@ DOTRACE("ExptDriver::deserialize");
 
   is >> itsBlockId >> itsRhId >> itsThId;
 
-  itsImpl->deserialize(is, flag);
+  int numchars;
+  is >> numchars;
+  if (is.peek() == '\n') { is.get(); }
+
+  if ( numchars > 0 ) {
+	 vector<char> buf(numchars+1);
+	 is.read(&buf[0], numchars);
+	 buf[numchars] = '\0';
+	 
+	 itsDoUponCompletionBody = &buf[0];
+	 
+	 try {
+		string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
+		  + itsDoUponCompletionBody + "} }";
+		TclEvalCmd proc_cmd(proc_cmd_str, TclEvalCmd::THROW_EXCEPTION);
+		proc_cmd.invoke(itsInterp);
+	 }
+	 catch (TclError& err) {
+		throw InputError(err.msg());
+	 }
+  }
 
   if (is.fail()) throw InputError(ioTag);
 }
 
-int ExptDriver::charCount() const {
-DOTRACE("ExptDriver::charCount");
+int ExptDriver::ExptImpl::charCount() const {
+DOTRACE("ExptDriver::ExptImpl::charCount");
   return (0
 			 + (ObjList::   theObjList()   .charCount()) + 1
 			 + (PosList::   thePosList()   .charCount()) + 1
@@ -337,145 +548,34 @@ DOTRACE("ExptDriver::charCount");
 			 + gCharCount<int>(itsBlockId) + 1
 			 + gCharCount<int>(itsRhId) + 1
 			 + gCharCount<int>(itsThId) + 1
+			 + gCharCount<int>(itsDoUponCompletionBody.length()) + 1
+			 + itsDoUponCompletionBody.length() + 1
 			 + 5); // fudge factor
 }
 
-void ExptDriver::readFrom(Reader* reader) {
-DOTRACE("ExptDriver::readFrom");
+void ExptDriver::ExptImpl::readFrom(Reader* /*reader*/) {
+DOTRACE("ExptDriver::ExptImpl::readFrom");
 }
 
-void ExptDriver::writeTo(Writer* writer) const {
-DOTRACE("ExptDriver::writeTo");
+void ExptDriver::ExptImpl::writeTo(Writer* /*writer*/) const {
+DOTRACE("ExptDriver::ExptImpl::writeTo");
 }
 
+void ExptDriver::ExptImpl::init() {
+DOTRACE("ExptDriver::ExptImpl::init");
 
-///////////////////////////////////////////////////////////////////////
-//
-// ExptDriver accessor + manipulator method definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl_Interp* ExptDriver::getInterp() {
-DOTRACE("ExptDriver::getInterp");
-  return itsImpl->itsInterp;
+  getCurrentTimeDateString(itsBeginDate);
+  getHostname(itsHostname);
+  getSubjectKey(itsSubject);
 }
 
-
-void ExptDriver::setInterp(Tcl_Interp* interp) {
-DOTRACE("ExptDriver::setInterp");
+void ExptDriver::ExptImpl::setInterp(Tcl_Interp* interp) {
+DOTRACE("ExptDriver::ExptImpl::setInterp");
   // itsImpl->itsInterp can only be set once
-  if (itsImpl->itsInterp == NULL) {
-	 itsImpl->itsInterp = interp;
-	 Tcl_Preserve(itsImpl->itsInterp);
+  if (itsInterp == NULL) {
+	 itsInterp = interp;
+	 Tcl_Preserve(itsInterp);
   }
-}
-
-Block& ExptDriver::block() const {
-DOTRACE("ExptDriver::block");  
-  try {
-#ifdef LOCAL_DEBUG
-	 Block* block = BlockList::theBlockList().getCheckedPtr(itsBlockId);
-	 DebugEvalNL((void *) block);
-	 return *block;
-#else
-	 return *(BlockList::theBlockList().getCheckedPtr(itsBlockId));
-#endif
-  }
-  catch (InvalidIdError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
-  }
-}
-
-ResponseHandler& ExptDriver::responseHandler() const {
-DOTRACE("ExptDriver::responseHandler");
-  try {
-#ifdef LOCAL_DEBUG
-	 ResponseHandler* rh = RhList::theRhList().getCheckedPtr(itsRhId);
-	 DebugEval(itsRhId);   DebugEvalNL((void *) rh);
-	 return *rh;
-#else
-	 return *(RhList::theRhList().getCheckedPtr(itsRhId));
-#endif
-  }
-  catch (InvalidIdError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
-  }  
-}
-
-TimingHdlr& ExptDriver::timingHdlr() const {
-DOTRACE("ExptDriver::timingHdlr");
-  try {
-#ifdef LOCAL_DEBUG
-	 TimingHdlr* th = ThList::theThList().getCheckedPtr(itsThId);
-	 DebugEvalNL((void *) th);
-	 return *th;
-#else
-	 return *(ThList::theThList().getCheckedPtr(itsThId));
-#endif
-  }
-  catch (InvalidIdError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
-  }  
-}
-
-//---------------------------------------------------------------------
-//
-// ExptDriver::assertIds --
-//
-// This function checks that the ExptDriver's block id, response
-// handler id, and timing handler id, are all valid. If they all are,
-// the function returns true as quickly as possible. If one or more of
-// the id's is invalid, the function 1) generates a background error
-// in the ExptDriver's Tcl_Interp, 2) sends a 'halt' message to any of
-// the participants for which the id *is* valid, and 3) returns false.
-//
-//---------------------------------------------------------------------
-
-inline bool ExptDriver::assertIds() const {
-DOTRACE("ExptDriver::assertIds");
-  if ( BlockList::theBlockList().isValidId(itsBlockId) &&
-		 RhList::theRhList().isValidId(itsRhId) &&
-		 ThList::theThList().isValidId(itsThId) ) {
-	 return true;
-  }
-
-  // ...one of the validity checks failed, so generate an error+message
-  itsImpl->raiseBackgroundError("invalid item id");
-
-  // ...and halt any of the participants for which we have valid id's
-  edHaltExpt();
-
-  return false;
-}
-
-const string& ExptDriver::getAutosaveFile() const {
-DOTRACE("ExptDriver::getAutosaveFile");
-  return itsAutosaveFile;
-}
-
-void ExptDriver::setAutosaveFile(const string& str) {
-DOTRACE("ExptDriver::setAutosaveFile");
-  itsAutosaveFile = str;
-}
-
-//--------------------------------------------------------------------
-//
-// ExptDriver::needAutosave --
-//
-// Determine whether an autosave is necessary now. An autosave is
-// requested only if itsAutosavePeriod is positive, and the number of
-// completed trials is evenly divisible by the autosave period.
-//
-//--------------------------------------------------------------------
-
-bool ExptDriver::needAutosave() const {
-DOTRACE("ExptDriver::needAutosave");
-  if ( !assertIds() ) return false;
-
-  int period = timingHdlr().getAutosavePeriod();
-  return ( (period > 0) && 
-			  ((block().numCompleted() % period) == 0) &&
-			  !(itsAutosaveFile.empty()) );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -490,37 +590,37 @@ DOTRACE("ExptDriver::needAutosave");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::draw() {
-DOTRACE("ExptDriver::draw");
+void ExptDriver::ExptImpl::draw() {
+DOTRACE("ExptDriver::ExptImpl::draw");
   if ( !assertIds() ) return;
 
   try {
 	 block().drawTrial();
   }
   catch (InvalidIdError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg().c_str());
   }
 }
 
-void ExptDriver::undraw() {
-DOTRACE("ExptDriver::undraw");
+void ExptDriver::ExptImpl::undraw() {
+DOTRACE("ExptDriver::ExptImpl::undraw");
   if ( !assertIds() ) return;
 
   try {
 	 block().undrawTrial();
   }
   catch (InvalidIdError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg().c_str());
   }
 }
 
-void ExptDriver::edSwapBuffers() {
-DOTRACE("ExptDriver::edSwapBuffers");
+void ExptDriver::ExptImpl::edSwapBuffers() {
+DOTRACE("ExptDriver::ExptImpl::edSwapBuffers");
   try { 
 	 ObjTogl::theToglConfig()->swapBuffers();
   }
   catch (TclError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg().c_str());
   }
 }
 
@@ -530,10 +630,10 @@ DOTRACE("ExptDriver::edSwapBuffers");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::edBeginExpt() {
-DOTRACE("ExptDriver::edBeginExpt");
+void ExptDriver::ExptImpl::edBeginExpt() {
+DOTRACE("ExptDriver::ExptImpl::edBeginExpt");
 
-  init(); 
+  init();
 
   gettimeofday(&itsBeginTime, NULL);
 
@@ -546,8 +646,8 @@ DOTRACE("ExptDriver::edBeginExpt");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::edBeginTrial() {
-DOTRACE("ExptDriver::edBeginTrial");
+void ExptDriver::ExptImpl::edBeginTrial() {
+DOTRACE("ExptDriver::ExptImpl::edBeginTrial");
   if ( !assertIds() ) return;
 
   if (block().isComplete()) return;
@@ -577,8 +677,8 @@ DOTRACE("ExptDriver::edBeginTrial");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::edResponseSeen() {
-DOTRACE("ExptDriver::edResponseSeen");
+void ExptDriver::ExptImpl::edResponseSeen() {
+DOTRACE("ExptDriver::ExptImpl::edResponseSeen");
   if ( !assertIds() ) return;
 
   TimeTraceNL("edResponseSeen", timingHdlr().getElapsedMsec());
@@ -596,8 +696,8 @@ DOTRACE("ExptDriver::edResponseSeen");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::edProcessResponse(int response) {
-DOTRACE("ExptDriver::edProcessResponse");
+void ExptDriver::ExptImpl::edProcessResponse(int response) {
+DOTRACE("ExptDriver::ExptImpl::edProcessResponse");
   if ( !assertIds() ) return;
 
   TimeTraceNL("edProcessResponse", timingHdlr().getElapsedMsec());
@@ -611,8 +711,8 @@ DOTRACE("ExptDriver::edProcessResponse");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::edAbortTrial() {
-DOTRACE("ExptDriver::edAbortTrial");
+void ExptDriver::ExptImpl::edAbortTrial() {
+DOTRACE("ExptDriver::ExptImpl::edAbortTrial");
   if ( !assertIds() ) return;
 
   TimeTraceNL("edAbortTrial", timingHdlr().getElapsedMsec());
@@ -628,58 +728,32 @@ DOTRACE("ExptDriver::edAbortTrial");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::edEndTrial() {
-DOTRACE("ExptDriver::edEndTrial");
+void ExptDriver::ExptImpl::edEndTrial() {
   if ( !assertIds() ) return;
 
   TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
   
   block().endTrial();
 
-  if ( needAutosave() ) {
-	 itsImpl->doAutosave();
-  }
+  if ( needAutosave() ) { doAutosave(); }
 
   DebugEval(block().numCompleted());
   DebugEval(block().numTrials());
   DebugEvalNL(block().isComplete());
 
-  if (block().isComplete()) {
-	 BlockList& blist = BlockList::theBlockList();
+  if ( !block().isComplete() ) {
+	 edBeginTrial();
+  }
 
-	 // This increments itsBlockId until we have either run out of
-	 // Block's, or found the next valid Block
-	 while ( (++itsBlockId < blist.capacity()) 
-				&& !blist.isValidId(itsBlockId) ) { /* empty loop body */ }
+  else {
+    bool haveMoreBlocks = gotoNextValidBlock();
 
-	 // If we've found a new valid Block, then we don't need to do
-	 // anything here since the new Block will automatically be used
-	 // when edBeginTrial is next called.
-	 if (blist.isValidId(itsBlockId)) { /* do nothing */ }
-
-	 // ...Otherwise we've run out of Block's, so write the ExptDriver
-	 // and quit.
-	 else {
-		int elapsed_msec = elapsedMsecSince(itsBeginTime);
-		cout << "expt completed in " << elapsed_msec << " milliseconds\n";
-
-		// Write but don't exit
-		ExptDriver::writeAndExit(false);
-
-		// Call the user-defined callback
-		if (itsImpl->doesDoUponCompletionExist()) {
-		  int tclresult = Tcl_GlobalEval(itsImpl->itsInterp, "Expt::doUponCompletion");
-		  if (tclresult != TCL_OK) {
-			 itsImpl->raiseBackgroundError(
-					         "error while evaluating Expt::doUponCompletion");
-		  }
-		}
-
-		return;
+	 if ( !haveMoreBlocks ) {
+		noteElapsedTime();
+		writeAndExit(false);		  // write (but don't exit)
+		doUponCompletion();		  // Call the user-defined callback
 	 }
   }    
-
-  edBeginTrial();
 }
 
 //--------------------------------------------------------------------
@@ -688,9 +762,8 @@ DOTRACE("ExptDriver::edEndTrial");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::edHaltExpt() const {
-DOTRACE("ExptDriver::edHaltExpt");
-
+void ExptDriver::ExptImpl::edHaltExpt() const {
+DOTRACE("ExptDriver::ExptImpl::edHaltExpt");
   if ( ThList::theThList().isValidId(itsThId) ) { 
 	 TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
   }
@@ -712,8 +785,8 @@ DOTRACE("ExptDriver::edHaltExpt");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::edResetExpt() {
-DOTRACE("ExptDriver::edResetExpt");
+void ExptDriver::ExptImpl::edResetExpt() {
+DOTRACE("ExptDriver::ExptImpl::edResetExpt");
   edHaltExpt();
 
   while (1) {
@@ -726,15 +799,14 @@ DOTRACE("ExptDriver::edResetExpt");
   }
 }
 
-
 //--------------------------------------------------------------------
 //
 // ExptDriver::read --
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::read(const char* filename) {
-DOTRACE("ExptDriver::read");
+void ExptDriver::ExptImpl::read(const char* filename) {
+DOTRACE("ExptDriver::ExptImpl::read");
   try {
 	 ifstream ifs(filename);
 	 if (ifs.fail()) throw IoFilenameError(filename);
@@ -752,8 +824,8 @@ DOTRACE("ExptDriver::read");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::write(const char* filename) const {
-DOTRACE("ExptDriver::write");
+void ExptDriver::ExptImpl::write(const char* filename) const {
+DOTRACE("ExptDriver::ExptImpl::write");
   try {
     ofstream ofs(filename);
     if (ofs.fail()) throw IoFilenameError(filename);
@@ -775,48 +847,35 @@ DOTRACE("ExptDriver::write");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::writeAndExit(bool quitApplication) {
-DOTRACE("ExptDriver::writeAndExit");
-  Assert(itsImpl->itsInterp != 0);
+void ExptDriver::ExptImpl::writeAndExit(bool quitApplication) {
+DOTRACE("ExptDriver::ExptImpl::writeAndExit");
+  Assert(itsInterp != 0);
 
   edHaltExpt();
 
-  // Get the current date/time and record it as the ending date for
-  // the ExptDriver.
-  static TclEvalCmd dateStringCmd("clock format [clock seconds]");
-
-  int result = dateStringCmd.invoke(itsImpl->itsInterp);
-  if (result != TCL_OK) 
-	 { itsImpl->raiseBackgroundError("error getting date string"); }
-  itsEndDate = Tcl_GetStringResult(itsImpl->itsInterp);
-
-  // Format the current time into a unique filename extension
-  static TclEvalCmd uniqueFilenameCmd(
-        "clock format [clock seconds] -format %H%M%d%b%Y");
-
-  result = uniqueFilenameCmd.invoke(itsImpl->itsInterp);
-  if (result != TCL_OK)
-	 { itsImpl->raiseBackgroundError("error creating unique filenames"); }
-  string unique_filename = Tcl_GetStringResult(itsImpl->itsInterp);
-
-  // Write the main experiment file
-  string expt_filename = string("expt") + unique_filename;
-
   try {
+	 getCurrentTimeDateString(itsEndDate);
+
+	 string unique_file_extension = makeUniqueFileExtension();
+
+	 // Write the main experiment file
+	 string expt_filename = string("expt") + unique_file_extension;
 	 write(expt_filename.c_str());
 	 cout << "wrote file " << expt_filename << endl;
-
+	 
 	 // Write the responses file
-	 string resp_filename = string("resp") + unique_filename;
+	 string resp_filename = string("resp") + unique_file_extension;
 	 TlistTcl::writeResponsesProc(resp_filename.c_str());
 	 cout << "wrote file " << resp_filename << endl;
 
   }
   catch (IoError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg().c_str());
+	 return;
   }
   catch (TclError& err) {
-	 itsImpl->raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg().c_str());
+	 return;
   }
 
   // Gracefully exit the application (or not)
@@ -824,6 +883,110 @@ DOTRACE("ExptDriver::writeAndExit");
 	 Tcl_Exit(0);
   }
 }
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ExptDriver creator method definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+ExptDriver::ExptDriver() :
+  itsImpl(new ExptImpl(this)) 
+{
+DOTRACE("ExptDriver::ExptDriver");
+}
+
+ExptDriver ExptDriver::theInstance;
+
+ExptDriver& ExptDriver::theExptDriver() {
+DOTRACE("ExptDriver::theExptDriver");
+  return theInstance;
+}
+
+ExptDriver::~ExptDriver() {
+DOTRACE("ExptDriver::~ExptDriver");
+  delete itsImpl; 
+}
+
+void ExptDriver::serialize(ostream &os, IOFlag flag) const
+  { itsImpl->serialize(os, flag); }
+
+void ExptDriver::deserialize(istream &is, IOFlag flag) 
+  { itsImpl->deserialize(is, flag); }
+
+int ExptDriver::charCount() const
+  { return itsImpl->charCount(); }
+
+void ExptDriver::readFrom(Reader* reader) 
+  { itsImpl->readFrom(reader); }
+
+void ExptDriver::writeTo(Writer* writer) const 
+  { itsImpl->writeTo(writer); }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ExptDriver accessor + manipulator method definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl_Interp* ExptDriver::getInterp() 
+  { return itsImpl->getInterp(); }
+
+
+void ExptDriver::setInterp(Tcl_Interp* interp) 
+  { itsImpl->setInterp(interp); }
+
+const string& ExptDriver::getAutosaveFile() const 
+  { return itsImpl->getAutosaveFile(); }
+
+void ExptDriver::setAutosaveFile(const string& str) 
+  { itsImpl->setAutosaveFile(str); }
+
+void ExptDriver::draw() 
+  { itsImpl->draw(); }
+
+void ExptDriver::undraw() 
+  { itsImpl->undraw(); }
+
+void ExptDriver::edSwapBuffers() 
+  { itsImpl->edSwapBuffers(); }
+
+void ExptDriver::edBeginExpt() 
+  { itsImpl->edBeginExpt(); }
+
+void ExptDriver::edBeginTrial() 
+  { itsImpl->edBeginTrial(); }
+
+void ExptDriver::edResponseSeen() 
+  { itsImpl->edResponseSeen(); }
+
+void ExptDriver::edProcessResponse(int response) 
+  { itsImpl->edProcessResponse(response); }
+
+void ExptDriver::edAbortTrial() 
+  { itsImpl->edAbortTrial(); }
+
+void ExptDriver::edEndTrial() 
+  { itsImpl->edEndTrial(); }
+
+void ExptDriver::edHaltExpt() const 
+  { itsImpl->edHaltExpt(); }
+
+void ExptDriver::edResetExpt() 
+  { itsImpl->edResetExpt(); }
+
+void ExptDriver::read(const char* filename) 
+  { itsImpl->read(filename); }
+
+void ExptDriver::write(const char* filename) const 
+  { itsImpl->write(filename); }
+
+void ExptDriver::writeAndExit(bool quitApplication) 
+  { itsImpl->writeAndExit(quitApplication); }
 
 static const char vcid_exptdriver_cc[] = "$Header$";
 #endif // !EXPTDRIVER_CC_DEFINED
