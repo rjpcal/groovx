@@ -30,21 +30,46 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
-/// Utility functions for working with batches of Trial objects.
-class TlistUtils
+#include "util/uid.h"
+
+namespace Tcl
 {
-public:
+  class List;
+}
+
+namespace Util
+{
+  template <class T> class Ref;
+}
+
+/// Utility functions for working with batches of Trial objects.
+namespace TlistUtils
+{
   /** Write a file containing a summary of the responses to each Trial
       in the ObjDb. */
-  static void writeResponses(const char* filename);
+  void writeResponses(const char* filename);
 
-  static void writeIncidenceMatrix(const char* filename);
+  void writeIncidenceMatrix(const char* filename);
 
   /** Write a matlab-readable file with one line per Trial, where each
       line contains a list of the objid's in that Trial followed by
       the average response given to that Trial. */
-  static void writeMatlab(const char* filename);
-};
+  void writeMatlab(const char* filename);
+
+  Util::UID createPreview(Tcl::List objid_list,
+                          int num_cols_hit, bool use_text_labels);
+
+  Tcl::List dealSingles(Tcl::List objids, Util::UID posid);
+
+  Tcl::List dealPairs(Tcl::List objids1, Tcl::List objids2,
+                      Util::UID posid1, Util::UID posid2);
+
+  Tcl::List dealTriads(Tcl::List objids, Util::UID posid1,
+                       Util::UID posid2, Util::UID posid3);
+
+  Tcl::List loadObjidFile(const char* objid_file, Tcl::List objids,
+                          Tcl::List posids, int num_lines);
+}
 
 static const char vcid_tlistutils_h[] = "$Header$";
 #endif // !TLISTUTILS_H_DEFINED
