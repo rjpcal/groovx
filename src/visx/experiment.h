@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Fri Nov 10 17:03:53 2000
+// written: Tue Nov 28 15:31:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,10 +61,6 @@ public:
   virtual void edResetExpt() = 0;
   /**< Reset the Experiment, restoring it to a state in which no
 	    trials have been run. */
-
-  virtual void edSetCurrentTrial(int trial) = 0;
-  /**< Changes the current trial that should be redrawn in the case
-       that a redraw or refresh event is sent to its Widget. */
 };
 
 static const char vcid_experiment_h[] = "$Header$";

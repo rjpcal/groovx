@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Nov 28 15:16:28 2000
+// written: Tue Nov 28 15:30:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -214,7 +214,6 @@ public:
   void edResumeExpt();
   void edClearExpt();
   void edResetExpt();
-  void edSetCurrentTrial(int trial);
 
   void edEndExpt();
 
@@ -695,17 +694,6 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 
 //---------------------------------------------------------------------
 //
-// ExptDriver::edSetCurrentTrial() --
-//
-//---------------------------------------------------------------------
-
-void ExptDriver::Impl::edSetCurrentTrial(int trial) {
-DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
-  IdItem<TrialBase>(trial)->installSelf(*getWidget());
-}
-
-//---------------------------------------------------------------------
-//
 // ExptDriver::edEndExpt() --
 //
 //---------------------------------------------------------------------
@@ -880,9 +868,6 @@ void ExptDriver::edClearExpt()
 
 void ExptDriver::edResetExpt()
   { itsImpl->edResetExpt(); }
-
-void ExptDriver::edSetCurrentTrial(int trial)
-  { itsImpl->edSetCurrentTrial(trial); }
 
 void ExptDriver::storeData()
   { itsImpl->storeData(); }

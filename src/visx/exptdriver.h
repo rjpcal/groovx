@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Nov 10 17:27:03 2000
+// written: Tue Nov 28 15:31:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,9 +112,6 @@ public:
   virtual void edResumeExpt();
   virtual void edClearExpt();
   virtual void edResetExpt();
-
-  /// Returns the id of the current trial
-  virtual void edSetCurrentTrial(int trial);
 
   /** This saves the experiment file and a summary-of-responses file
 		under unique filenames based on the date and time. */
