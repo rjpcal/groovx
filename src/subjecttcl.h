@@ -2,8 +2,8 @@
 // subjecttcl.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 11:24:47 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:54:07 1999
+static const char vcid_subjecttcl_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_H_DEFINED

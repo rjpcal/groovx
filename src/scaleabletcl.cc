@@ -2,8 +2,8 @@
 // scaleabletcl.cc
 // Rob Peters
 // created: Thu Mar  4 21:29:15 1999
-// written: Fri Mar 12 11:25:59 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:54:39 1999
+static const char vcid_scaleabletcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SCALEABLETCL_CC_DEFINED

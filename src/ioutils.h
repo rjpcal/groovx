@@ -2,8 +2,8 @@
 // ioutils.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 11:30:03 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:56:11 1999
+static const char vcid_ioutils_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOUTILS_H_DEFINED

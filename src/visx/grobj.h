@@ -2,8 +2,8 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 10:59:35 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:56:57 1999
+static const char vcid_grobj_h[] = "$Id$";
 //
 // This is the abstract base class for graphic objects that are to be
 // held and manipulated in ObjList's and Glist's. Classes derived from

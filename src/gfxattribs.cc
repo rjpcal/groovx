@@ -2,8 +2,8 @@
 // gfxattribs.cc
 // Rob Peters
 // created: Tue Mar  9 18:33:05 1999
-// written: Fri Mar 12 11:32:35 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:57:24 1999
+static const char vcid_gfxattribs_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GFXATTRIBS_CC_DEFINED

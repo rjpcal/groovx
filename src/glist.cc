@@ -2,8 +2,8 @@
 // glist.cc
 // Rob Peters 
 // created: Nov-98
-// written: Fri Mar 12 11:32:06 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:57:18 1999
+static const char vcid_glist_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GLIST_CC_DEFINED

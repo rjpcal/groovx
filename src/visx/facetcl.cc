@@ -2,8 +2,8 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar 12 11:33:30 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:58:04 1999
+static const char vcid_facetcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACETCL_CC_DEFINED

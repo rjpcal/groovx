@@ -2,8 +2,8 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 11:25:16 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:54:22 1999
+static const char vcid_subject_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_H_DEFINED

@@ -2,8 +2,8 @@
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 11:29:52 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:56:07 1999
+static const char vcid_misctcl_cc[] = "$Id$";
 //
 // this file contains the implementations for some simple Tcl functions
 // that are basically wrappers for standard C library functions, such

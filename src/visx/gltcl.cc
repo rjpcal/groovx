@@ -2,8 +2,8 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 11:23:21 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:53:49 1999
+static const char vcid_tclgl_cc[] = "$Id$";
 //
 // This package provides some simple Tcl functions that are wrappers
 // for C OpenGL functions. The function names, argument lists, and

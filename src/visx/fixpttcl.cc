@@ -2,8 +2,8 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 11:32:45 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:57:28 1999
+static const char vcid_fixpttcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPTTCL_CC_DEFINED

@@ -2,8 +2,8 @@
 // scaleable.cc
 // Rob Peters
 // created: Tue Mar  2 17:17:29 1999
-// written: Fri Mar 12 11:26:40 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:54:51 1999
+static const char vcid_scaleable_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SCALEABLE_CC_DEFINED

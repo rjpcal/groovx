@@ -2,8 +2,8 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 11:01:52 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:57:01 1999
+static const char vcid_grobj_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJ_CC_DEFINED

@@ -2,8 +2,8 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Mar 12 11:09:17 1999
-static const char vcid[] = "$Id";
+// written: Fri Mar 12 12:55:17 1999
+static const char vcid_position_h[] = "$Id";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITION_H_DEFINED

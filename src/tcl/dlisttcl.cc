@@ -2,8 +2,8 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 11:24:25 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:54:02 1999
+static const char vcid_tcldlist_cc[] = "$Id$";
 //
 // This package provides additional list manipulation functions using
 // object-style (rather than string-style) Tcl commands

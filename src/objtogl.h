@@ -2,8 +2,8 @@
 // objtogl.h
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 11:28:10 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:55:35 1999
+static const char vcid_objtogl_h[] = "$Id$";
 //
 // This package provides functionality that allows a Togl widget to
 // work with a Glist, controlling its display, reshaping, etc.

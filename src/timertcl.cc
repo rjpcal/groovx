@@ -2,8 +2,8 @@
 // timertcl.cc
 // Rob Peters
 // created: Wed Feb 10 19:45:00 1999
-// written: Fri Mar 12 11:21:33 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:53:16 1999
+static const char vcid_timertcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMERTCL_CC_DEFINED

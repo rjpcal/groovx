@@ -2,8 +2,8 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 08:13:30 1999
-static const char[] vcid = "$Id$";
+// written: Fri Mar 12 12:56:30 1999
+static const char[] vcid_grshAppInit_cc = "$Id$";
 //
 // This is the main application file for a Tcl/Tk application that
 // manages collections of GrObj's (graphic objects) within an

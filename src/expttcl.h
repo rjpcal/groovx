@@ -2,8 +2,8 @@
 // expttcl.h
 // Rob Peters
 // created: Mon Mar  8 03:18:35 1999
-// written: Fri Mar 12 11:17:54 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:58:21 1999
+static const char vcid_expttcl_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPTTCL_H_DEFINED

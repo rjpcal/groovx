@@ -2,8 +2,8 @@
 // misctcl.h
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 11:29:27 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:56:03 1999
+static const char vcid_misctcl_h[] = "$Id$";
 //
 // this package provides miscellaneous helper procedures for Tcl
 // including rand(), sleep(), and usleep()

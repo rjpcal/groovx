@@ -2,8 +2,8 @@
 // point.h
 // Rob Peters
 // created: Thu Jan 28 12:54:13 1999
-// written: Fri Mar 12 11:27:47 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:55:30 1999
+static const char vcid_point_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POINT_H_DEFINED

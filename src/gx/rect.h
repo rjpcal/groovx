@@ -2,8 +2,8 @@
 // rect.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 11:27:00 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:54:56 1999
+static const char vcid_rect_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RECT_H_DEFINED

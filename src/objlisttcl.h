@@ -2,8 +2,8 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 11:28:31 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:55:43 1999
+static const char vcid_objlisttcl_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLISTTCL_H_DEFINED
