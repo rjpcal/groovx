@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Thu Sep 28 11:32:16 2000
+// written: Thu Sep 28 11:44:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,15 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
+#include "system/demangle.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
+#include <typeinfo>
+#define TYPEINFO_DEFINED
 #endif
 
 namespace IO {
@@ -48,10 +57,10 @@ public:
 	 { return itsReferand->C::ioTypename(); }
 
   virtual fixed_string legacyIoTypename() const
-	 { return itsReferand->C::legacyIoTypename(); }
+	 { return demangle_cstr(typeid(C).name()); }
 
   virtual fixed_string legacyValidTypenames() const
-	 { return itsReferand->C::legacyValidTypenames(); }
+	 { return demangle_cstr(typeid(C).name()); }
 
 private:
   IoProxy(const IoProxy&);
@@ -87,10 +96,10 @@ public:
 	 { return itsReferand->C::ioTypename(); }
 
   virtual fixed_string legacyIoTypename() const
-	 { return itsReferand->C::legacyIoTypename(); }
+	 { return demangle_cstr(typeid(C).name()); }
 
   virtual fixed_string legacyValidTypenames() const
-	 { return itsReferand->C::legacyValidTypenames(); }
+	 { return demangle_cstr(typeid(C).name()); }
 
 private:
   ConstIoProxy(const ConstIoProxy&);
