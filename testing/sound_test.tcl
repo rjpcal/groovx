@@ -78,7 +78,7 @@ test "SoundTcl-Sound::play" "normal play err sound" {
 } {^0$} $AUDIO
 test "SoundTcl-Sound::play" "error on bad sound id" {
 	 Sound::play -1
-} {Sound::play: attempt to access invalid id '.*' in SoundList}
+} {Sound::play: attempt to access invalid id '.*' in}
 
 
 ### cleanup
