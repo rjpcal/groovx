@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Jan 18 16:07:06 2002
+// written: Mon Jan 28 13:20:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,6 +232,8 @@ DOTRACE("IO::LegacyReader::readStringImpl");
   new_string.readsome(itsImpl->itsInStream, (unsigned int) numchars);
 
   itsImpl->throwIfError(name);
+
+  DebugEvalNL(new_string);
 
   return new_string;
 }
