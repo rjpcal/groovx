@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Mon Dec  6 14:02:29 1999
+// written: Tue Feb  1 11:30:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,12 @@ class PtrList : public IoPtrList {
 public:
   ///
   PtrList (int size);
+
+  //////////////
+  // pointers //
+  //////////////
+
+  typedef T* Ptr;
 
   ///////////////
   // iterators //
@@ -134,11 +140,11 @@ public:
 
 public:
   ///
-  T* getPtr(int id) const throw () 
+  Ptr getPtr(int id) const throw () 
 	 { return castToT(VoidPtrList::getVoidPtr(id)); }
 
   ///
-  T* getCheckedPtr(int id) const throw (InvalidIdError)
+  Ptr getCheckedPtr(int id) const throw (InvalidIdError)
 	 { return castToT(VoidPtrList::getCheckedVoidPtr(id)); }
 
   /** Puts a list of all valid (i.e. within-range and non-null) trial
@@ -153,11 +159,11 @@ public:
   //////////////////
 
   ///
-  int insert(T* ptr)
+  int insert(Ptr ptr)
 	 { return VoidPtrList::insertVoidPtr(castFromT(ptr)); }
 
   ///
-  void insertAt(int id, T* ptr)
+  void insertAt(int id, Ptr ptr)
 	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr)); }
 
 protected:
