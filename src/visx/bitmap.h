@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:38:16 2001
+// written: Thu Aug  9 17:31:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,18 +78,7 @@ public:
   /** Grabs pixels from a rectangulur area of the screen buffer into
       the Bitmap's pixel array. The coordinates of the rectangle are
       specified in pixel values. */
-  void grabScreenRect(int left, int top, int right, int bottom);
-
-  /** Grabs pixels from a rectangulur area of the screen buffer into
-      the Bitmap's pixel array. The coordinates of the rectangle are
-      specified in pixel values. */
   void grabScreenRect(const Rect<int>& rect);
-
-  /** Grabs pixels from a rectangulur area of the screen buffer into
-      the Bitmap's pixel array. The coordinates of the rectangle are
-      specified in OpenGL coordinates. */
-  void grabWorldRect(double left, double top,
-                     double right, double bottom);
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
       the Bitmap's pixel array. The coordinates of the rectangle are

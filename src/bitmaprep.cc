@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Aug  9 16:57:41 2001
+// written: Thu Aug  9 17:31:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -251,11 +251,6 @@ DOTRACE("BitmapRep::writePbmFile");
   Pbm::save(filename, itsImpl->itsData);
 }
 
-void BitmapRep::grabScreenRect(int left, int top, int right, int bottom)
-{
-  grabScreenRect(Rect<int>(left, top, right, bottom));
-}
-
 void BitmapRep::grabScreenRect(const Rect<int>& rect)
 {
 DOTRACE("BitmapRep::grabScreenRect");
@@ -275,12 +270,6 @@ DOTRACE("BitmapRep::grabScreenRect");
   itsImpl->itsData.swap( newData );
 
   itsImpl->itsRenderer->notifyBytesChanged();
-}
-
-void BitmapRep::grabWorldRect(double left, double top,
-                           double right, double bottom)
-{
-  grabWorldRect(Rect<double>(left, top, right, bottom));
 }
 
 void BitmapRep::grabWorldRect(const Rect<double>& world_rect)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:37:58 2001
+// written: Thu Aug  9 17:31:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,15 +104,8 @@ DOTRACE("Bitmap::loadPbmFile");
 void Bitmap::writePbmFile(const char* filename) const
   { itsImpl->writePbmFile(filename); sendStateChangeMsg(); }
 
-void Bitmap::grabScreenRect(int left, int top, int right, int bottom)
-  { itsImpl->grabScreenRect(left, top, right, bottom); sendStateChangeMsg(); }
-
 void Bitmap::grabScreenRect(const Rect<int>& rect)
   { itsImpl->grabScreenRect(rect); sendStateChangeMsg(); }
-
-void Bitmap::grabWorldRect(double left, double top,
-                           double right, double bottom)
-  { itsImpl->grabWorldRect(left, top, right, bottom); sendStateChangeMsg(); }
 
 void Bitmap::grabWorldRect(const Rect<double>& world_rect)
   { itsImpl->grabWorldRect(world_rect); sendStateChangeMsg(); }

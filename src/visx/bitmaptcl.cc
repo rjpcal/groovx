@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Sun Aug  5 19:34:04 2001
+// written: Thu Aug  9 17:31:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "bitmap.h"
 #include "glbitmap.h"
+#include "recttcl.h"
 #include "xbitmap.h"
 
 #include "util/objfactory.h"
@@ -38,10 +39,10 @@ DOTRACE("Bitmap_Init");
 
   pkg1->defVec( "loadPbm", "item_id(s) filename(s)", &Bitmap::loadPbmFile );
   pkg1->defVec( "writePbm", "item_id(s) filename(s)", &Bitmap::writePbmFile );
-  pkg1->defVec( "grabScreenRect", "item_id(s) left top right bottom",
-                (void(Bitmap::*)(int,int,int,int)) &Bitmap::grabScreenRect );
-  pkg1->defVec( "grabWorldRect", "item_id(s) left top right bottom",
-                (void(Bitmap::*)(double,double,double,double)) &Bitmap::grabWorldRect );
+  pkg1->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
+                &Bitmap::grabScreenRect );
+  pkg1->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
+                &Bitmap::grabWorldRect );
   pkg1->defAction("flipContrast", &Bitmap::flipContrast);
   pkg1->defAction("flipVertical", &Bitmap::flipVertical);
   pkg1->defAction("center", &Bitmap::center);
