@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Wed Jun 13 13:15:54 2001
+// written: Thu Jun 14 14:54:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef WIDGET_H_DEFINED
 #define WIDGET_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
 
 namespace GWT {
   class Canvas;
@@ -33,7 +37,7 @@ class TrialBase;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget {
+class GWT::Widget : public virtual Util::Object {
 public:
   /// Default constructor
   Widget();
