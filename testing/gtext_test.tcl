@@ -64,7 +64,7 @@ set POS [IO::new Position]
 test "$PACKAGE-rendering" "normal render" {
 	 clearscreen
 	 set trial [Tlist::dealSingles $::GTEXT $::POS]
-	 Togl::loadFont
+	 Togl::loadDefaultFont
 	 show $trial
 	 expr {[pixelCheckSum] != 0}
 } {^1$}
