@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov 19 13:33:55 2002
+// written: Wed Nov 20 16:02:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MASKHATCH_H_DEFINED
 #define MASKHATCH_H_DEFINED
 
-#include "visx/grobj.h"
+#include "gfx/gxshapekit.h"
 
 ///////////////////////////////////////////////////////////////////////
 /**

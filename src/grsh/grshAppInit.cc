@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Nov 20 15:35:21 2002
+// written: Wed Nov 20 16:05:23 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -95,7 +95,6 @@ PackageInfo IMMEDIATE_PKGS[] =
   { "Fixpt",    Fixpt_Init     },
   { "Gabor",    Gabor_Init     },
   { "Gltcl",    Gltcl_Init     },
-  { "Grobj",    Grobj_Init     },
   { "Gtext",    Gtext_Init     },
   { "Gtrace",   Gtrace_Init    },
   { "Gx",       Gx_Init        },

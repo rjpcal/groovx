@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Tue Nov 19 13:33:55 2002
+// written: Wed Nov 20 16:02:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef GTEXT_H_DEFINED
 #define GTEXT_H_DEFINED
 
+#include "gfx/gxshapekit.h"
+
 #include "util/pointers.h"
 #include "util/strings.h"
-
-#include "visx/grobj.h"
 
 class GxFont;
 

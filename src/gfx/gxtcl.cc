@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Nov 20 15:27:12 2002
+// written: Wed Nov 20 16:04:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,8 @@
 #ifndef GXTCL_CC_DEFINED
 #define GXTCL_CC_DEFINED
 
+#include "gfx/gxaligner.h"
+#include "gfx/gxcache.h"
 #include "gfx/gxcolor.h"
 #include "gfx/gxcylinder.h"
 #include "gfx/gxdrawstyle.h"
@@ -24,6 +26,7 @@
 #include "gfx/gxpointset.h"
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
+#include "gfx/gxshapekit.h"
 #include "gfx/gxsphere.h"
 #include "gfx/gxtransform.h"
 #include "gfx/pscanvas.h"
@@ -32,6 +35,7 @@
 #include "tcl/fieldpkg.h"
 #include "tcl/itertcl.h"
 #include "tcl/tclpkg.h"
+#include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
 
@@ -78,6 +82,17 @@ namespace GxTcl
       "{debugMode 0 1 1 {BOOLEAN TRANSIENT}} ";
     return result;
   }
+
+  // This is gone for now because the bitmap cache node is gone from GrObj,
+  // but we can resurrect a cleaner saveBitmap() function pretty easily,
+  // just by captuing the screen bounds into a BmapData object and then
+  // saving that.
+#if 0
+  void saveBitmap(Util::Ref<GrObj> obj, const char* filename)
+  {
+    obj->saveBitmapCache(Gfx::Canvas::current(), filename);
+  }
+#endif
 }
 
 extern "C"
@@ -196,6 +211,36 @@ DOTRACE("Gx_Init");
   Tcl::defFieldContainer<GxTransform>(pkg13);
 
   status = pkg13->combineStatus(status);
+
+  Tcl::Pkg* pkg14 = new Tcl::Pkg(interp, "GrObj", "$Revision$");
+  pkg14->inherit("GxNode");
+
+  Tcl::defTracing(pkg14, GrObj::tracer);
+
+  Tcl::defFieldContainer<GrObj>(pkg14);
+
+#if 0
+  pkg14->defVec( "saveBitmap", "item_id(s) filename(s)", &GxTcl::saveBitmap );
+#endif
+
+  pkg14->defAttrib("category", &GrObj::category, &GrObj::setCategory);
+
+  pkg14->linkVarCopy("GrObj::DIRECT", GxCache::DIRECT);
+  pkg14->linkVarCopy("GrObj::GLCOMPILE", GxCache::GLCOMPILE);
+
+  pkg14->linkVarCopy("GrObj::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
+  pkg14->linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);
+  pkg14->linkVarCopy("GrObj::FREE_SCALING", GxScaler::FREE_SCALING);
+
+  pkg14->linkVarCopy("GrObj::NATIVE_ALIGNMENT", GxAligner::NATIVE_ALIGNMENT);
+  pkg14->linkVarCopy("GrObj::CENTER_ON_CENTER", GxAligner::CENTER_ON_CENTER);
+  pkg14->linkVarCopy("GrObj::NW_ON_CENTER", GxAligner::NW_ON_CENTER);
+  pkg14->linkVarCopy("GrObj::NE_ON_CENTER", GxAligner::NE_ON_CENTER);
+  pkg14->linkVarCopy("GrObj::SW_ON_CENTER", GxAligner::SW_ON_CENTER);
+  pkg14->linkVarCopy("GrObj::SE_ON_CENTER", GxAligner::SE_ON_CENTER);
+  pkg14->linkVarCopy("GrObj::ARBITRARY_ON_CENTER", GxAligner::ARBITRARY_ON_CENTER);
+
+  status = pkg14->combineStatus(status);
 
   return status;
 }

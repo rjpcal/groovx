@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Nov  7 18:55:31 2002
+// written: Wed Nov 20 16:02:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,12 @@
 
 #include "visx/trial.h"
 
-#include "visx/block.h"
-#include "visx/response.h"
-#include "visx/responsehandler.h"
-#include "visx/timinghdlr.h"
+#include "gfx/gxshapekit.h"
 
-#include "visx/grobj.h"
+#include "gwt/widget.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
-
-#include "gwt/widget.h"
 
 #include "util/errorhandler.h"
 #include "util/iter.h"
@@ -33,6 +28,11 @@
 #include "util/minivec.h"
 #include "util/ref.h"
 #include "util/strings.h"
+
+#include "visx/block.h"
+#include "visx/response.h"
+#include "visx/responsehandler.h"
+#include "visx/timinghdlr.h"
 
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Nov 19 13:33:55 2002
+// written: Wed Nov 20 16:02:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef FISH_H_DEFINED
 #define FISH_H_DEFINED
 
-#include "util/tracer.h"
+#include "gfx/gxshapekit.h"
 
-#include "visx/grobj.h"
+#include "util/tracer.h"
 
 ///////////////////////////////////////////////////////////////////////
 /**

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Nov 20 15:37:02 2002
+// written: Wed Nov 20 16:02:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/gxnode.h"
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
+#include "gfx/gxshapekit.h"
 #include "gfx/gxtransform.h"
 
 #include "gx/rect.h"
@@ -30,7 +31,6 @@
 #include "util/ref.h"
 
 #include "visx/gtext.h"
-#include "visx/grobj.h"
 #include "visx/tlistutils.h"
 #include "visx/trial.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue May 14 19:48:48 2002
+// written: Wed Nov 20 16:02:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,15 @@
 
 #include "visx/tlistutils.h"
 
-#include "visx/grobj.h"
-#include "visx/trial.h"
+#include "gfx/gxshapekit.h"
 
 #include "io/writer.h"
 
 #include "util/iter.h"
 #include "util/objdb.h"
 #include "util/ref.h"
+
+#include "visx/trial.h"
 
 #include <fstream>
 #include <iomanip>
