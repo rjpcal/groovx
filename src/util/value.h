@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Sep 29 11:55:04 1999
+// written: Wed Sep 29 17:25:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,8 @@ public:
   virtual ~Value();
 
   enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, STRING, UNKNOWN };
+
+  virtual Value* clone() const = 0;
 
   virtual Type getNativeType() const = 0;
 
@@ -74,6 +76,8 @@ public:
 
   virtual ~TValue ();
 
+  virtual Value* clone() const;
+  
   virtual Type getNativeType() const;
 
   virtual int getInt() const;
