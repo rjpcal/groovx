@@ -43,12 +43,10 @@ std::string demangle_impl(const char* in) { return std::string(in); }
 
 //   std::string demangle_impl(const std::string& mangled)
 
-#  if defined(__GNUC__)
-#    if __GNUC__ < 3
-#      include "util/demangle_gcc_v2.h"
-#    else
+#  if defined(HAVE_CXXABI_H)
 #      include "util/demangle_gcc_v3.h"
-#    endif
+#  elif defined(__GNUC__) && __GNUC__ < 3
+#      include "util/demangle_gcc_v2.h"
 #  elif defined(HAVE_PROG_CXXFILT)
 #    include "util/demangle_cxxfilt.h"
 #  else
