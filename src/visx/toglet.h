@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Jun 25 14:27:06 2002
+// written: Tue Jun 25 14:31:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
-#include "util/pointers.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
 #include "visx/tkwidget.h"
