@@ -106,6 +106,9 @@ public:
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl::Interp& interp() throw();
 
+  /// Trap a live exception, and write a message to the Tcl_Interp's result.
+  void handleLiveException(const char* where) throw();
+
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package name"
       except possibly for capitalization. The "namespace name" is the name
