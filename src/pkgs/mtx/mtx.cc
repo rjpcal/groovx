@@ -141,6 +141,8 @@ namespace
 
 Mtx Slice::getSortOrder() const
 {
+DOTRACE("Slice::getSortOrder");
+
   ValIndex::counter = 0;
 
   minivec<ValIndex> buf(begin(), end());
