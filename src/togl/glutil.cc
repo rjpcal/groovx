@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Wed Nov 13 14:39:22 2002
+// written: Wed Nov 13 16:47:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "togl/glutil.h"
 
-#include "gfx/gxfont.h"
+#include "gfx/gxrasterfont.h"
 
 #include "util/error.h"
 #include "util/minivec.h"
@@ -25,7 +25,7 @@
 
 namespace
 {
-  minivec<shared_ptr<GxFont> > fontInfos;
+  minivec<shared_ptr<GxRasterFont> > fontInfos;
 }
 
 unsigned int GLUtil::loadBitmapFont(const char* fontname)
@@ -33,7 +33,7 @@ unsigned int GLUtil::loadBitmapFont(const char* fontname)
 DOTRACE("GLUtil::loadBitmapFont");
 
   // Record the list base and number of display lists for unloadBitmapFont().
-  fontInfos.push_back(shared_ptr<GxFont>(new GxFont(fontname)));
+  fontInfos.push_back(shared_ptr<GxRasterFont>(new GxRasterFont(fontname)));
 
   return fontInfos.back()->listBase();
 }
@@ -80,7 +80,7 @@ void GLUtil::unloadBitmapFont(unsigned int fontbase)
 {
 DOTRACE("GLUtil::unloadBitmapFont");
 
-  for (minivec<shared_ptr<GxFont> >::iterator
+  for (minivec<shared_ptr<GxRasterFont> >::iterator
          itr = fontInfos.begin(), end = fontInfos.end();
        itr != end;
        ++itr)
