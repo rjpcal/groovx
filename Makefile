@@ -393,13 +393,6 @@ $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
 #-------------------------------------------------------------------------
 
 #
-# level -1 headers (this are here to show dependencies, but the macros
-# are not defined to actually refer to anything, since they are
-# assumed to be never-changing).
-#
-STRINGFWD_H := 
-
-#
 # level 0 headers
 #
 ARRAYS_H := util/arrays.h
@@ -408,10 +401,10 @@ BITMAPREP_H := bitmaprep.h
 BMAPRENDERER_H := bmaprenderer.h
 CANVAS_H := canvas.h
 DEBUG_H := util/debug.h
-DEMANGLE_H := $(STRINGFWD_H) demangle.h
+DEMANGLE_H := demangle.h
 DUMBPTR_H := dumbptr.h
 ERRMSG_H := errmsg.h
-ERROR_H := $(STRINGFWD_H) util/error.h
+ERROR_H := util/error.h
 EXPERIMENT_H := experiment.h
 IOSTL_H := iostl.h
 IOUTILS_H := ioutils.h
@@ -442,19 +435,19 @@ WIDGET_H := widget.h
 #
 APPLICATION_H := $(ERROR_H) application.h
 BMAPDATA_H := $(ARRAYS_H) $(POINTERS_H) bmapdata.h
-FACTORY_H := $(STRINGFWD_H) $(ERROR_H) $(DEMANGLE_H) factory.h
+FACTORY_H := $(ERROR_H) $(DEMANGLE_H) factory.h
 GLBMAPRENDERER_H := $(BMAPRENDERER_H) glbmaprenderer.h
 GLCANVAS_H := $(CANVAS_H) glcanvas.h
-IO_H := $(STRINGFWD_H) $(ERROR_H) io.h
+IO_H := $(ERROR_H) io.h
 PBM_H := $(ERROR_H) pbm.h
-READER_H := $(STRINGFWD_H) $(ERROR_H) reader.h
+READER_H := $(ERROR_H) reader.h
 RECT_H := $(POINT_H) rect.h
-TCLERROR_H := $(STRINGFWD_H) $(ERROR_H) tclerror.h
+TCLERROR_H := $(ERROR_H) tclerror.h
 TCLITEMPKGBASE_H := $(TCLPKG_H) tclitempkgbase.h
 TCLLINK_H := $(STRINGS_H) tcllink.h
-VALUE_H := $(STRINGFWD_H) $(ERROR_H) value.h
+VALUE_H := $(ERROR_H) value.h
 VOIDPTRLIST_H := $(ERROR_H) voidptrlist.h
-WRITER_H := $(STRINGFWD_H) $(ERROR_H) writer.h
+WRITER_H := $(ERROR_H) writer.h
 XBMAPRENDERER_H := $(BMAPRENDERER_H) xbmaprenderer.h
 
 #
@@ -462,7 +455,7 @@ XBMAPRENDERER_H := $(BMAPRENDERER_H) xbmaprenderer.h
 #
 ASCIISTREAMWRITER_H := $(WRITER_H) asciistreamwriter.h
 BLOCK_H := $(IO_H) $(STOPWATCH_H) block.h
-EXPTDRIVER_H := $(IO_H) $(STRINGFWD_H) $(ERROR_H) $(EXPERIMENT_H) exptdriver.h
+EXPTDRIVER_H := $(IO_H) $(ERROR_H) $(EXPERIMENT_H) exptdriver.h
 GROBJ_H := $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) $(TRACER_H) grobj.h
 GRSHAPP_H := $(APPLICATION_H) $(ERROR_H) grshapp.h
 IOFACTORY_H := $(FACTORY_H) $(IO_H) iofactory.h
@@ -472,7 +465,7 @@ PROPERTY_H := $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
 RESPONSEHANDLER_H := $(IO_H) responsehandler.h 
 SOUND_H := $(ERROR_H) $(IO_H) sound.h
 SUBJECT_H := $(STRINGS_H) $(IO_H) subject.h
-TCLEVALCMD_H := $(STRINGFWD_H) $(TCLOBJLOCK_H) $(TCLERROR_H) tclevalcmd.h
+TCLEVALCMD_H := $(TCLOBJLOCK_H) $(TCLERROR_H) tclevalcmd.h
 TCLVALUE_H := $(VALUE_H) tclvalue.h
 TIMINGHDLR_H := $(IO_H) $(STOPWATCH_H) timinghdlr.h
 TOGLCONFIG_H := $(POINTERS_H) $(RECT_H) $(WIDGET_H) toglconfig.h
@@ -503,7 +496,7 @@ MORPHYFACE_H := $(GROBJ_H) $(PROPERTY_H) morphyface.h
 NULLRESPONSEHDLR_H := $(RESPONSEHANDLER_H) nullresponsehdlr.h
 PTRLIST_H := $(DUMBPTR_H) $(IOPTRLIST_H) ptrlist.h
 READUTILS_H := $(READER_H) $(IO_H) readutils.h
-TCLCMD_H := $(STRINGFWD_H) $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
+TCLCMD_H := $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
 TIMINGHANDLER_H := $(TIMINGHDLR_H) timinghandler.h
 TLISTWIDGET_H := $(TOGLCONFIG_H) tlistwidget.h
 
@@ -585,7 +578,7 @@ CLONEFACE_CC := $(CLONEFACE_H) $(READUTILS_H) $(WRITEUTILS_H) \
 
 DEMANGLE_CC := $(DEMANGLE_H) $(TRACE_H) $(DEBUG_H) demangle.cc
 
-ERROR_CC := $(ERROR_H) $(TRACE_H) $(DEBUG_H) util/error.cc
+ERROR_CC := $(ERROR_H) $(STRINGS_H) $(TRACE_H) $(DEBUG_H) util/error.cc
 
 EVENTRESPONSEHDLR_CC := $(EVENTRESPONSEHDLR_H) $(ERROR_H) $(EXPERIMENT_H) \
 	$(SOUND_H) $(SOUNDLIST_H) $(READER_H) \
@@ -740,7 +733,8 @@ POSLIST_CC := $(POSLIST_H) $(TRACE_H) $(DEBUG_H) \
 
 POSLISTTCL_CC := $(POSLIST_H) $(LISTPKG_H) $(TRACE_H) poslisttcl.cc
 
-PROPERTY_CC := $(PROPERTY_H) $(READER_H) $(WRITER_H) $(POINTERS_H) property.cc
+PROPERTY_CC := $(PROPERTY_H) $(READER_H) $(WRITER_H) \
+	$(STRINGS_H) $(POINTERS_H) property.cc
 
 READER_CC := $(READER_H) $(STRINGS_H) reader.cc
 
