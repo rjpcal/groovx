@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Mon Sep  3 15:37:59 2001
+// written: Mon Sep  3 15:42:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ namespace Util
     template <class T>
     struct NoDeleteUnrefPolicy
     {
-      void unref(T* t) { t->decrRefCountNoDelete(); }
+      static void unref(T* t) { t->decrRefCountNoDelete(); }
     };
 
     template <class T, class UnrefPolicy>
@@ -149,10 +149,36 @@ namespace Util
  * Util::FloatingRef<T> is a ref-counted smart pointer that will NOT
  * delete its pointee when exiting scope. This can be of use to
  * clients who need to allow an object to be returned to a clean state
- * (i.e. with ref count == 0), but need to ref the object temporarily.
+ * (i.e. with ref count == 0), but need to ref the object
+ * temporarily. Since FloatingRef should only be used in restricted
+ * scopes, copying and assignment are disallowed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class FloatingRef
+{
+private:
+
+  typedef Util::RefHelper::Handle<T, Util::RefHelper::NoDeleteUnrefPolicy<T> >
+  Handle;
+
+  Handle itsHandle;
+
+  FloatingRef(const FloatingRef&);
+  FloatingRef& operator=(const FloatingRef&);
+
+public:
+  // Default dtor is fine
+
+  explicit FloatingRef(T* ptr) : itsHandle(ptr) {}
+
+  T* operator->() const { return get(); }
+  T& operator*()  const { return *(get()); }
+
+  T* get()        const { return itsHandle.get(); }
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
