@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Aug 21 11:49:46 2001
+// written: Tue Aug 21 13:54:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,8 @@ MaskHatch::MaskHatch () :
 {
 DOTRACE("MaskHatch::MaskHatch");
 
+  sigNodeChanged.connect(this, &MaskHatch::update);
+
   setFieldMap(MaskHatch::classFields());
 
   setAlignmentMode(Gmodes::CENTER_ON_CENTER);
@@ -101,10 +103,9 @@ DOTRACE("MaskHatch::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void MaskHatch::receiveSignal()
+void MaskHatch::update()
 {
   setPixelBorder(itsLineWidth/2 + 2);
-  GrObj::receiveSignal();
 }
 
 Gfx::Rect<double> MaskHatch::grGetBoundingBox() const

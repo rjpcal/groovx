@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Aug 21 11:49:45 2001
+// written: Tue Aug 21 13:53:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,8 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  static const FieldMap& classFields();
+
   ////////////////
   // properties //
   ////////////////
@@ -55,11 +57,8 @@ private:
   /// The pixel-width of each line.
   int itsLineWidth;
 
-public:
-  static const FieldMap& classFields();
-
-  /// Overridden from GrObj.
-  virtual void receiveSignal();
+  // To connect to Signal's.
+  void update();
 
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;

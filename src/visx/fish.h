@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Aug 21 13:28:41 2001
+// written: Tue Aug 21 13:48:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,11 @@ private:
   void readSplineFile(const char* splinefile);
   void readCoordFile(const char* coordfile, int index);
 
+  // Catches changes to currentPart and currentEndPt, so that we can
+  // reseat the referents of itsEndPt_Part and itsEndPt_Bkpt,
+  // respectively.
+  void updatePtrs();
+
 public:
   /// Virtual destructor.
   virtual ~Fish();
@@ -62,11 +67,6 @@ public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
-
-  /** Reimplemented from \c GrObj in order to catch changes to \c
-      currentPart and \c currentEndPt, so that we can reseat the
-      referents of \itsEndPt_Part and itsEndPt_Bkpt, respectively. */
-  virtual void receiveSignal();
 
   ////////////////
   // properties //
