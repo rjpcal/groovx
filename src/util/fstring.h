@@ -34,12 +34,7 @@
 
 #include <cstddef>
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class istream;
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace rutz
 {
@@ -367,19 +362,19 @@ namespace rutz
     //
 
     /// Set the string by reading consecutive non-whitespace characters.
-    void read(STD_IO::istream& is);
+    void read(std::istream& is);
 
     /// Set the string by reading exactly count characters.
-    void readsome(STD_IO::istream& is, unsigned int count);
+    void readsome(std::istream& is, unsigned int count);
 
     /// Write the string's contents to the ostream.
-    void write(STD_IO::ostream& os) const;
+    void write(std::ostream& os) const;
 
     /// Set the string by reading characters up until newline or EOF.
-    void readline(STD_IO::istream& is);
+    void readline(std::istream& is);
 
     /// Set the string by reading characters up until \a eol or EOF.
-    void readline(STD_IO::istream& is, char eol);
+    void readline(std::istream& is, char eol);
 
     //
     // Operators -- note that these are member functions rather than free
@@ -444,22 +439,22 @@ namespace rutz
   //
   ///////////////////////////////////////////////////////////
 
-  inline STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str)
+  inline std::istream& operator>>(std::istream& is, fstring& str)
   {
     str.read(is); return is;
   }
 
-  inline STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str)
+  inline std::ostream& operator<<(std::ostream& os, const fstring& str)
   {
     str.write(os); return os;
   }
 
-  inline STD_IO::istream& getline(STD_IO::istream& is, fstring& str)
+  inline std::istream& getline(std::istream& is, fstring& str)
   {
     str.readline(is); return is;
   }
 
-  inline STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol)
+  inline std::istream& getline(std::istream& is, fstring& str, char eol)
   {
     str.readline(is, eol); return is;
   }

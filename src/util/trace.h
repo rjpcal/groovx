@@ -55,11 +55,7 @@
 
 #include "util/time.h"
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace rutz
 {
@@ -103,7 +99,7 @@ public:
   void print_prof_data(FILE* f) const throw();
 
   /// Print this object's info to the given stream.
-  void print_prof_data(STD_IO::ostream& os) const throw();
+  void print_prof_data(std::ostream& os) const throw();
 
   /// Whether to write a profiling summary file when the program exits.
   static void print_at_exit(bool yes_or_no) throw();
@@ -115,7 +111,7 @@ public:
   static void print_all_prof_data(FILE* f) throw();
 
   /// Print all profile data to the given stream.
-  static void print_all_prof_data(STD_IO::ostream& os) throw();
+  static void print_all_prof_data(std::ostream& os) throw();
 
 private:
   prof(const prof&) throw();

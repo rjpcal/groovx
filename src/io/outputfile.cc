@@ -79,7 +79,7 @@ void OutputFile::setFilename(rutz::fstring fname)
       return;
     }
 
-  shared_ptr<STD_IO::ostream> s(new STD_IO::ofstream(fname.c_str()));
+  shared_ptr<std::ostream> s(new std::ofstream(fname.c_str()));
 
   if (s->fail())
     throw rutz::error(rutz::fstring("couldn't open '", fname,
@@ -94,7 +94,7 @@ bool OutputFile::hasStream() const
   return (itsStream.get() != 0 && !itsStream->fail());
 }
 
-STD_IO::ostream& OutputFile::stream()
+std::ostream& OutputFile::stream()
 {
   if (!hasStream())
     throw rutz::error("OutputFile object's stream is invalid", SRC_POS);

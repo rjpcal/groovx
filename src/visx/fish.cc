@@ -351,7 +351,7 @@ DOTRACE("Fish::readSplineFile");
   fstring dummy;
 
   // read in the spline knots and coefficient
-  STD_IO::ifstream ifs(splinefile);
+  std::ifstream ifs(splinefile);
   if (ifs.fail())
     {
       throw rutz::error(fstring("error opening file '",
@@ -447,7 +447,7 @@ void Fish::readCoordFile(const char* coordfile, int index)
 DOTRACE("Fish::readCoordFile");
   fstring dummy;
 
-  STD_IO::ifstream ifs(coordfile);
+  std::ifstream ifs(coordfile);
   if (ifs.fail())
     {
       throw rutz::error(fstring("error opening file '",

@@ -32,12 +32,7 @@
 #ifndef SERIALPORT_H_DEFINED
 #define SERIALPORT_H_DEFINED
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class iostream;
-class streambuf;
-#endif
+#include <iosfwd>
 
 namespace rutz
 {
@@ -70,8 +65,8 @@ private:
   serial_port& operator=(const serial_port&);
 
   int                m_filedes;
-  STD_IO::streambuf* m_filebuf;
-  STD_IO::iostream*  m_stream;
+  std::streambuf*    m_filebuf;
+  std::iostream*     m_stream;
   int                m_exit_status;
 };
 

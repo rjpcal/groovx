@@ -35,15 +35,10 @@
 #include "util/stdiobuf.h"
 
 #include <cstdio>
+#include <istream>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
-#ifdef HAVE_ISTREAM
-#  include <istream>
-#else
-#  include <istream.h>
-#endif
 
 namespace rutz
 {
@@ -62,7 +57,7 @@ public:
 
   ~shell_pipe();
 
-  STD_IO::iostream& stream() { return m_stream; }
+  std::iostream& stream() { return m_stream; }
 
   int close();
 
@@ -142,7 +137,7 @@ public:
   ~exec_pipe() throw();
 
   /// Get the stream that is linked to the child process.
-  STD_IO::iostream& stream() throw();
+  std::iostream& stream() throw();
 
   /// Close the underlying stream AND the underlying file descriptor.
   void close();
@@ -169,10 +164,10 @@ public:
   ~bidir_pipe() throw();
 
   /// Get the stream that is receiving input from the child process.
-  STD_IO::iostream& in_stream() throw();
+  std::iostream& in_stream() throw();
 
   /// Get the stream that is sending output to the child process.
-  STD_IO::iostream& out_stream() throw();
+  std::iostream& out_stream() throw();
 
   /// Close the underlying input stream file descriptor.
   void close_in();

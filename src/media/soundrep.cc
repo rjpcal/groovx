@@ -36,11 +36,7 @@
 
 #include "util/ioerror.h"
 
-#ifdef HAVE_FSTREAM
 #include <fstream>            // to check if files exist
-#else
-#include <fstream.h>
-#endif
 
 #include "util/trace.h"
 
@@ -53,7 +49,7 @@ DOTRACE("sound_rep::check_filename");
   if (filename == 0 || filename[0] == '\0')
     throw rutz::error("invalid filename", SRC_POS);
 
-  STD_IO::ifstream ifs(filename);
+  std::ifstream ifs(filename);
 
   if (ifs.fail())
     {

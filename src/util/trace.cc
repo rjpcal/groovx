@@ -83,8 +83,8 @@ namespace
   {
     static char buf[256];
 
-    STD_IO::cerr << "?" << STD_IO::flush;
-    STD_IO::cin.getline(&buf[0], 256);
+    std::cerr << "?" << std::flush;
+    std::cin.getline(&buf[0], 256);
 
     switch (buf[0])
       {
@@ -227,7 +227,7 @@ void rutz::prof::print_prof_data(FILE* file) const throw()
 
 void rutz::prof::print_prof_data(std::ostream& os) const throw()
 {
-  os.exceptions(STD_IO::ios::goodbit);
+  os.exceptions(std::ios::goodbit);
 
   os << std::setw(10) << long(avg_self_time()) << ' '
      << std::setw(6) << count() << ' '
@@ -267,7 +267,7 @@ void rutz::prof::print_all_prof_data(FILE* file) throw()
     }
 }
 
-void rutz::prof::print_all_prof_data(STD_IO::ostream& os) throw()
+void rutz::prof::print_all_prof_data(std::ostream& os) throw()
 {
   std::stable_sort(all_profs().begin(), all_profs().end(),
                    compare_total_time);
@@ -361,17 +361,17 @@ void rutz::trace::print_in() throw()
     {
       for (unsigned int i = 0; i < n; ++i)
         {
-          STD_IO::cerr << "|   ";
+          std::cerr << "|   ";
         }
       // Test whether n has 1, 2, or >3 digits
       if (n < 10)
-        STD_IO::cerr << n << "-->> ";
+        std::cerr << n << "-->> ";
       else if (n < 100)
-        STD_IO::cerr << n << "->> ";
+        std::cerr << n << "->> ";
       else
-        STD_IO::cerr << n << ">> ";
+        std::cerr << n << ">> ";
 
-      STD_IO::cerr << m_prof.context_name();
+      std::cerr << m_prof.context_name();
 
       if (rutz::trace::get_trace_mode() == STEP)
         {
@@ -379,7 +379,7 @@ void rutz::trace::print_in() throw()
         }
       else
         {
-          STD_IO::cerr << '\n';
+          std::cerr << '\n';
         }
     }
 }
@@ -392,11 +392,11 @@ void rutz::trace::print_out() throw()
     {
       for (unsigned int i = 0; i < n; ++i)
         {
-          STD_IO::cerr << "|   ";
+          std::cerr << "|   ";
         }
-      STD_IO::cerr << "| <<--";
+      std::cerr << "| <<--";
 
-      STD_IO::cerr << m_prof.context_name();
+      std::cerr << m_prof.context_name();
 
       if (rutz::trace::get_trace_mode() == STEP)
         {
@@ -404,12 +404,12 @@ void rutz::trace::print_out() throw()
         }
       else
         {
-          STD_IO::cerr << '\n';
+          std::cerr << '\n';
         }
     }
 
   if (rutz::backtrace::current().size() == 0)
-    STD_IO::cerr << '\n';
+    std::cerr << '\n';
 }
 
 static const char vcid_trace_cc[] = "$Id$ $URL$";

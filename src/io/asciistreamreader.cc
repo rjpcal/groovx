@@ -74,7 +74,7 @@ namespace
                       pos);
   }
 
-  fstring readAndUnEscape(STD_IO::istream& is)
+  fstring readAndUnEscape(std::istream& is)
   {
   DOTRACE("<asciistreamreader.cc>::readAndUnEscape");
 
@@ -141,7 +141,7 @@ namespace
 class AsciiStreamReader : public IO::Reader
 {
 public:
-  AsciiStreamReader(STD_IO::istream& is);
+  AsciiStreamReader(std::istream& is);
   AsciiStreamReader(const char* filename);
 
   virtual ~AsciiStreamReader() throw();
@@ -172,8 +172,8 @@ protected:
   virtual fstring readStringImpl(const fstring& name);
 
 private:
-  shared_ptr<STD_IO::istream> itsOwnedStream;
-  STD_IO::istream& itsBuf;
+  shared_ptr<std::istream> itsOwnedStream;
+  std::istream& itsBuf;
   IO::ObjectMap itsObjects;
   std::vector<shared_ptr<AttribMap> > itsAttribs;
 
@@ -185,7 +185,7 @@ private:
     return *(itsAttribs.back());
   }
 
-  void inflateObject(STD_IO::istream& buf,
+  void inflateObject(std::istream& buf,
                      const fstring& obj_tag, Ref<IO::IoObject> obj);
 
   template <class T>
@@ -213,7 +213,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-AsciiStreamReader::AsciiStreamReader(STD_IO::istream& is) :
+AsciiStreamReader::AsciiStreamReader(std::istream& is) :
   itsOwnedStream(),
   itsBuf(is),
   itsObjects(),
@@ -351,7 +351,7 @@ DOTRACE("AsciiStreamReader::readOwnedObject");
 
   inflateObject(ist, name, obj);
 
-  ist >> bracket >> STD_IO::ws;
+  ist >> bracket >> std::ws;
 }
 
 void AsciiStreamReader::readBaseClass(const fstring& baseClassName,
@@ -407,7 +407,7 @@ DOTRACE("AsciiStreamReader::readRoot");
 
       inflateObject(itsBuf, type, obj);
 
-      itsBuf >> bracket >> STD_IO::ws;
+      itsBuf >> bracket >> std::ws;
 
       if ( itsBuf.fail() )
         {
@@ -420,7 +420,7 @@ DOTRACE("AsciiStreamReader::readRoot");
   return itsObjects.getObject(rootid);
 }
 
-void AsciiStreamReader::inflateObject(STD_IO::istream& buf,
+void AsciiStreamReader::inflateObject(std::istream& buf,
                                       const fstring& obj_tag,
                                       Ref<IO::IoObject> obj)
 {
@@ -432,7 +432,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
   shared_ptr<AttribMap> attribMap( new AttribMap(obj_tag) );
 
   // Skip all whitespace
-  buf >> STD_IO::ws;
+  buf >> std::ws;
 
   IO::VersionId svid = 0;
 
@@ -497,7 +497,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
   itsAttribs.pop_back();
 }
 
-shared_ptr<IO::Reader> IO::makeAsciiStreamReader(STD_IO::istream& os)
+shared_ptr<IO::Reader> IO::makeAsciiStreamReader(std::istream& os)
 {
   return rutz::make_shared( new AsciiStreamReader(os) );
 }

@@ -34,23 +34,19 @@
 
 #include "util/sharedptr.h"
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace IO
 {
   class Writer;
 
-  /// Make an AsciiStream writer that writes to \c STD_IO::ostream.
+  /// Make an AsciiStream writer that writes to \c std::ostream.
   /** \c AsciiStreamWriter implements the \c IO::Writer interface, using
       nice human-readable ascii formatting. \c AsciiStreamWriter writes
       objects to an output stream in a ascii format that is readable by \c
       AsciiStreamReader. With this data format, objects may read and write
       their attributes in any order. */
-  rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(STD_IO::ostream& os);
+  rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(std::ostream& os);
 
   /// Make an AsciiStream writer that writes to the file named \a filename.
   rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(const char* filename);

@@ -54,13 +54,13 @@ namespace rutz
       return rutz::fstring("array_value");
     }
 
-    virtual void print_to(STD_IO::ostream& os) const
+    virtual void print_to(std::ostream& os) const
     {
       for (unsigned int i = 0; i < m_array.size(); ++i)
         os << m_array[i] << "   ";
     }
 
-    virtual void scan_from(STD_IO::istream& is)
+    virtual void scan_from(std::istream& is)
     {
       std::vector<T> newarray;
 

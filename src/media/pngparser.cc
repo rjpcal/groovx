@@ -59,8 +59,6 @@ void media::save_png(const char* /*filename*/, const media::bmap_data& /*data*/)
 #include "util/arrays.h"
 #include "util/error.h"
 
-#include <png.h>
-
 #include <cstdio>
 #include <png.h>
 

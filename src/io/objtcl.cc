@@ -59,7 +59,7 @@ namespace
 
   Tcl::List loadObjects(const char* file, int num_to_read)
   {
-    STD_IO::ifstream ifs(file);
+    std::ifstream ifs(file);
     if (ifs.fail())
       {
         throw rutz::error("unable to open file", SRC_POS);
@@ -67,7 +67,7 @@ namespace
 
     int num_read = 0;
 
-    ifs >> STD_IO::ws;
+    ifs >> std::ws;
 
     Tcl::List result;
 
@@ -90,7 +90,7 @@ namespace
 
         ++num_read;
 
-        ifs >> STD_IO::ws;
+        ifs >> std::ws;
       }
 
     return result;
@@ -99,7 +99,7 @@ namespace
   void saveObjects(Tcl::List objids, const char* filename,
                    bool use_bases)
   {
-    STD_IO::ofstream ofs(filename);
+    std::ofstream ofs(filename);
     if (ofs.fail())
       {
         throw rutz::error(rutz::fstring("error opening file: ",

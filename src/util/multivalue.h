@@ -47,8 +47,8 @@ namespace rutz
     /// Get a string describing the underlying native type.
     virtual rutz::fstring value_typename() const = 0;
 
-    virtual void print_to(STD_IO::ostream& os) const;
-    virtual void scan_from(STD_IO::istream& is);
+    virtual void print_to(std::ostream& os) const;
+    virtual void scan_from(std::istream& is);
 
   protected:
     /// Returns a const pointer to the start of the underlying storage.

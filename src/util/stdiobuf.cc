@@ -36,10 +36,7 @@
 
 #include "util/error.h"
 
-#ifdef HAVE_IOS
 #include <ios>
-#endif
-
 #include <unistd.h>
 
 #include "util/debug.h"

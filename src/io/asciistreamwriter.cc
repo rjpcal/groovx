@@ -108,7 +108,7 @@ namespace
 class AsciiStreamWriter : public IO::Writer
 {
 public:
-  AsciiStreamWriter(STD_IO::ostream& os);
+  AsciiStreamWriter(std::ostream& os);
 
   AsciiStreamWriter(const char* filename);
 
@@ -140,8 +140,8 @@ protected:
   virtual void writeCstring(const char* name, const char* val);
 
 private:
-  shared_ptr<STD_IO::ostream> itsOwnedStream;
-  STD_IO::ostream& itsBuf;
+  shared_ptr<std::ostream> itsOwnedStream;
+  std::ostream& itsBuf;
   mutable std::vector<SoftRef<const IO::IoObject> > itsToHandleV;
   std::set<SoftRef<const IO::IoObject> > itsWrittenObjects;
   IO::WriteIdMap itsIdMap;
@@ -194,7 +194,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-AsciiStreamWriter::AsciiStreamWriter(STD_IO::ostream& os) :
+AsciiStreamWriter::AsciiStreamWriter(std::ostream& os) :
   itsOwnedStream(),
   itsBuf(os),
   itsToHandleV(),
@@ -360,7 +360,7 @@ DOTRACE("AsciiStreamWriter::flattenObject");
   itsBuf << '}' << '\n';
 }
 
-shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(STD_IO::ostream& os)
+shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(std::ostream& os)
 {
   return rutz::make_shared(new AsciiStreamWriter(os));
 }

@@ -174,7 +174,7 @@ void TlistUtils::writeResponses(const char* filename)
 {
 DOTRACE("TlistUtils::writeResponses");
 
-  STD_IO::ofstream ofs(filename);
+  std::ofstream ofs(filename);
   const int wid = 8;
 
   // We prepend a '%' to the header line so that MATLAB can ignore
@@ -207,7 +207,7 @@ void TlistUtils::writeIncidenceMatrix(const char* filename)
 {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
 
-  STD_IO::ofstream ofs(filename);
+  std::ofstream ofs(filename);
 
   for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
        itr.is_valid();
@@ -228,9 +228,9 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 class MatlabTrialWriter : public IO::Writer
 {
 private:
-  STD_IO::ostream& itsOs;
+  std::ostream& itsOs;
 public:
-  MatlabTrialWriter(STD_IO::ostream& os) : itsOs(os) {}
+  MatlabTrialWriter(std::ostream& os) : itsOs(os) {}
 
   virtual void writeChar(const char*, char) {}
   virtual void writeInt(const char*, int) {}
@@ -284,7 +284,7 @@ void TlistUtils::writeMatlab(const char* filename)
 {
 DOTRACE("TlistUtils::writeMatlab");
 
-  STD_IO::ofstream ofs(filename);
+  std::ofstream ofs(filename);
 
   ofs.setf(std::ios::fixed);
   ofs.precision(2);
@@ -496,7 +496,7 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   rutz::fixed_block<Nub::UID> posids(posid_list.begin<Nub::UID>(),
                                      posid_list.end<Nub::UID>());
 
-  STD_IO::ifstream ifs(objid_file);
+  std::ifstream ifs(objid_file);
 
   if (ifs.fail())
     throw rutz::error(rutz::fstring("couldn't open '", objid_file,

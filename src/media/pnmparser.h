@@ -32,12 +32,7 @@
 #ifndef PBM_H_DEFINED
 #define PBM_H_DEFINED
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class istream;
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace media
 {
@@ -47,13 +42,13 @@ namespace media
   void load_pnm(const char* filename, media::bmap_data& data);
 
   /// Load \a data in PBM format from the \c std::ostream \a os.
-  void load_pnm(STD_IO::istream& is, media::bmap_data& data);
+  void load_pnm(std::istream& is, media::bmap_data& data);
 
   /// Save \a data in PBM format to the file \a filename.
   void save_pnm(const char* filename, const media::bmap_data& data);
 
   /// Save \a data in PBM format to the \c std::ostream \a os.
-  void save_pnm(STD_IO::ostream& os, const media::bmap_data& data);
+  void save_pnm(std::ostream& os, const media::bmap_data& data);
 };
 
 static const char vcid_pbm_h[] = "$Id$ $URL$";

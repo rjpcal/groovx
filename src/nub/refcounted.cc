@@ -36,11 +36,7 @@
 
 #include "util/error.h"
 
-#ifdef HAVE_LIMITS
-#  include <limits>
-#else
-#  include <climits>
-#endif
+#include <limits>
 
 #include <typeinfo>
 
@@ -51,12 +47,8 @@ DBG_REGISTER
 
 namespace
 {
-#ifdef HAVE_LIMITS
   const Nub::RefCounts::Count REFCOUNT_MAX =
     std::numeric_limits<Nub::RefCounts::Count>::max();
-#else
-  const Nub::RefCounts::Count REFCOUNT_MAX = USHRT_MAX;
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -58,25 +58,25 @@ void rutz::debug::eval(const char* what, int level,             \
                        const char* where, int line_no,          \
                        bool nl, T expr) throw()                 \
 {                                                               \
-  STD_IO::cerr.exceptions(STD_IO::ios::goodbit);                \
+  std::cerr.exceptions(std::ios::goodbit);                      \
   if (debug_line_complete)                                      \
     {                                                           \
-      STD_IO::cerr << "[" << level << "] "                      \
+      std::cerr << "[" << level << "] "                         \
                    << where << ":" << line_no << ": ";          \
     }                                                           \
   if (what)                                                     \
     {                                                           \
-      STD_IO::cerr << "(" << #T << ") " << what << " = ";       \
+      std::cerr << "(" << #T << ") " << what << " = ";          \
     }                                                           \
-  STD_IO::cerr << expr;                                         \
+  std::cerr << expr;                                            \
   if (nl)                                                       \
     {                                                           \
-      STD_IO::cerr << "\n";                                     \
+      std::cerr << "\n";                                        \
       debug_line_complete = true;                               \
     }                                                           \
   else                                                          \
     {                                                           \
-      STD_IO::cerr << ", ";                                     \
+      std::cerr << ", ";                                        \
       debug_line_complete = false;                              \
     }                                                           \
 }

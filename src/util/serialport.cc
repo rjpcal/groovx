@@ -42,11 +42,7 @@
 
 #include <cstdio>
 #include <fcntl.h>
-#ifdef HAVE_ISTREAM
 #include <istream>
-#else
-#include <istream.h>
-#endif
 #include <termios.h>
 #include <unistd.h>
 

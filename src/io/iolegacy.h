@@ -36,12 +36,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class istream;
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace IO
 {
@@ -56,7 +51,7 @@ namespace IO
 class IO::LegacyReader : public IO::Reader
 {
 public:
-  LegacyReader(STD_IO::istream& is);
+  LegacyReader(std::istream& is);
   virtual ~LegacyReader() throw();
 
   virtual IO::VersionId readSerialVersionId();
@@ -102,7 +97,7 @@ private:
 class IO::LegacyWriter : public IO::Writer
 {
 public:
-  LegacyWriter(STD_IO::ostream& os, bool write_bases=true);
+  LegacyWriter(std::ostream& os, bool write_bases=true);
   virtual ~LegacyWriter() throw();
 
   void usePrettyPrint(bool yes=true);

@@ -34,18 +34,14 @@
 
 #include "util/sharedptr.h"
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace IO
 {
   class Writer;
 
-  /// Make an XML writer that writes to \c STD_IO::ostream.
-  rutz::shared_ptr<IO::Writer> makeXMLWriter(STD_IO::ostream& os);
+  /// Make an XML writer that writes to \c std::ostream.
+  rutz::shared_ptr<IO::Writer> makeXMLWriter(std::ostream& os);
 
   /// Make an XML writer that writes to the file named \a filename.
   rutz::shared_ptr<IO::Writer> makeXMLWriter(const char* filename);

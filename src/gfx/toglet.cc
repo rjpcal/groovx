@@ -48,11 +48,7 @@
 
 #include <tk.h>
 
-#ifdef HAVE_LIMITS
-#  include <limits>
-#else
-#  include <climits>
-#endif
+#include <limits>
 
 #include "util/trace.h"
 #include "util/debug.h"

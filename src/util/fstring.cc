@@ -408,12 +408,12 @@ DOTRACE("rutz::fstring::append_range");
 //
 //---------------------------------------------------------------------
 
-void rutz::fstring::read(STD_IO::istream& is)
+void rutz::fstring::read(std::istream& is)
 {
 DOTRACE("rutz::fstring::read");
   clear();
   string_rep::make_unique(m_rep);
-  is >> STD_IO::ws;
+  is >> std::ws;
   while ( true )
     {
       int c = is.get();
@@ -428,7 +428,7 @@ DOTRACE("rutz::fstring::read");
   m_rep->add_terminator();
 }
 
-void rutz::fstring::readsome(STD_IO::istream& is, unsigned int count)
+void rutz::fstring::readsome(std::istream& is, unsigned int count)
 {
 DOTRACE("rutz::fstring::readsome");
 
@@ -437,30 +437,24 @@ DOTRACE("rutz::fstring::readsome");
       string_rep::make_unique(m_rep);
 
       m_rep->uniq_reserve(count+1);
-#ifndef PRESTANDARD_IOSTREAMS
+
       unsigned int numread = is.readsome(m_rep->uniq_data(), count);
       m_rep->uniq_set_length(numread);
-#else
-      is.read(m_rep->uniq_data(), count);
-      if (is.eof()) is.clear();
-      unsigned int numread = is.gcount();
-      m_rep->uniq_set_length(numread);
-#endif
     }
 }
 
-void rutz::fstring::write(STD_IO::ostream& os) const
+void rutz::fstring::write(std::ostream& os) const
 {
 DOTRACE("rutz::fstring::write");
   os.write(c_str(), length());
 }
 
-void rutz::fstring::readline(STD_IO::istream& is)
+void rutz::fstring::readline(std::istream& is)
 {
   readline(is, '\n');
 }
 
-void rutz::fstring::readline(STD_IO::istream& is, char eol)
+void rutz::fstring::readline(std::istream& is, char eol)
 {
 DOTRACE("rutz::fstring::readline");
   clear();

@@ -58,13 +58,13 @@ DOTRACE("Response::value_typename");
   static rutz::fstring name("Response"); return name;
 }
 
-void Response::print_to(STD_IO::ostream& os) const
+void Response::print_to(std::ostream& os) const
 {
 DOTRACE("Response::printTo");
   os << itsVal << " " << itsMsec;
 }
 
-void Response::scan_from(STD_IO::istream& is)
+void Response::scan_from(std::istream& is)
 {
 DOTRACE("Response::scan_from");
   is >> itsVal >> itsMsec;

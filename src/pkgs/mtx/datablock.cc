@@ -41,9 +41,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifdef WITH_MATLAB
-#endif
-
 #include "util/debug.h"
 DBG_REGISTER
 #include "util/trace.h"
@@ -272,20 +269,6 @@ data_holder::data_holder(data_block* d) :
 {
   m_data->incr_refcount();
 }
-
-// #ifdef WITH_MATLAB
-// data_holder::data_holder(mxArray* a, storage_policy s) :
-//   m_data(new_data_block(a, s))
-// {
-//   m_data->incr_refcount();
-// }
-
-// data_holder::data_holder(const mxArray* a, storage_policy s) :
-//   m_data(new_data_block(a, s))
-// {
-//   m_data->incr_refcount();
-// }
-// #endif
 
 data_holder::data_holder(const data_holder& other) :
   m_data(other.m_data)

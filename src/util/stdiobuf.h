@@ -33,18 +33,8 @@
 #define STDIOBUF_H_DEFINED
 
 #include <cstdio>
-
-#ifdef HAVE_STREAMBUF
 #include <streambuf>
-#else
-#include <streambuf.h>
-#endif
-
-#ifdef HAVE_ISTREAM
 #include <istream>
-#else
-#include <istream.h>
-#endif
 
 namespace rutz
 {
@@ -53,7 +43,7 @@ namespace rutz
 }
 
 /// A C++ streambuf that wraps a standard posix file descriptor.
-class rutz::stdiobuf : public STD_IO::streambuf
+class rutz::stdiobuf : public std::streambuf
 {
 private:
   int m_mode;
@@ -107,7 +97,7 @@ public:
   virtual int sync();
 };
 
-class rutz::stdiostream : public STD_IO::iostream
+class rutz::stdiostream : public std::iostream
 {
 private:
   rutz::stdiobuf m_buf;
@@ -118,7 +108,7 @@ public:
       left up to the caller (since the caller must also have been the
       one to open the FILE object). */
   stdiostream(FILE* f, int om, bool throw_exception=false) :
-    STD_IO::iostream(0),
+    std::iostream(0),
     m_buf(f, om, throw_exception)
   {
     rdbuf(&m_buf);
@@ -129,7 +119,7 @@ public:
       is left up to the caller (since the caller must also have been
       the one to open the file descriptor). */
   stdiostream(int fd, int om, bool throw_exception=false) :
-    STD_IO::iostream(0),
+    std::iostream(0),
     m_buf(fd, om, throw_exception)
   {
     rdbuf(&m_buf);

@@ -32,11 +32,7 @@
 #ifndef BACKTRACE_H_DEFINED
 #define BACKTRACE_H_DEFINED
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace rutz
 {
@@ -86,7 +82,7 @@ public:
   void print() const throw();
 
   /// Print the call stack to the given stream.
-  void print(STD_IO::ostream& os) const throw();
+  void print(std::ostream& os) const throw();
 
   /// Generate a human-readable string representation of the backtrace.
   rutz::fstring format() const;

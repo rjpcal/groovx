@@ -135,17 +135,11 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* prestandard iostreams? */
-#undef PRESTANDARD_IOSTREAMS
-
 /* enable profiling? */
 #undef PROF
 
 /* shorten symbol names? */
 #undef SHORTEN_SYMBOL_NAMES
-
-/* iostreams are in global namespace */
-#undef STD_IO
 
 /* with matlab support? */
 #undef WITH_MATLAB

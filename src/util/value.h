@@ -32,12 +32,7 @@
 #ifndef VALUE_H_DEFINED
 #define VALUE_H_DEFINED
 
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class istream;
-class ostream;
-#endif
+#include <iosfwd>
 
 namespace rutz
 {
@@ -70,11 +65,11 @@ public:
   /// Return a string giving the name of the native type.
   virtual rutz::fstring value_typename() const = 0;
 
-  /// Write the value to an \c STD_IO::ostream.
-  virtual void print_to(STD_IO::ostream& os) const = 0;
+  /// Write the value to a \c std::ostream.
+  virtual void print_to(std::ostream& os) const = 0;
 
-  /// Read the value from an \c STD_IO::istream.
-  virtual void scan_from(STD_IO::istream& is) = 0;
+  /// Read the value from a \c std::istream.
+  virtual void scan_from(std::istream& is) = 0;
 
   /// Get an \c rutz::fstring representation of the value.
   /** Builds a string stream, calls print_to(), and returns its
@@ -93,15 +88,15 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline STD_IO::ostream& operator<<(STD_IO::ostream& os,
-                                   const rutz::value& val)
+inline std::ostream& operator<<(std::ostream& os,
+                                const rutz::value& val)
 {
   val.print_to(os);
   return os;
 }
 
-inline STD_IO::istream& operator>>(STD_IO::istream& is,
-                                   rutz::value& val)
+inline std::istream& operator>>(std::istream& is,
+                                rutz::value& val)
 {
   val.scan_from(is);
   return is;

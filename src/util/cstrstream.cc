@@ -84,17 +84,17 @@ int rutz::imembuf::underflow()
 
 rutz::imemstream::imemstream(const char* s)
   :
-  STD_IO::istream(&m_buf), m_buf(s)
+  std::istream(&m_buf), m_buf(s)
 {}
 
 rutz::imemstream::imemstream(const char* s, unsigned int len)
   :
-  STD_IO::istream(&m_buf), m_buf(s, len)
+  std::istream(&m_buf), m_buf(s, len)
 {}
 
 rutz::icstrstream::icstrstream(const char* s)
   :
-  STD_IO::istream(&m_buf), m_buf(s)
+  std::istream(&m_buf), m_buf(s)
 {
   m_buf.make_owning();
 }

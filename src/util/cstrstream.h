@@ -33,18 +33,8 @@
 #define CSTRSTREAM_H_DEFINED
 
 #include <cstring>
-
-#ifdef HAVE_ISTREAM
 #include <istream>
-#else
-#include <istream.h>
-#endif
-
-#ifdef HAVE_STREAMBUF
 #include <streambuf>
-#else
-#include <streambuf.h>
-#endif
 
 namespace rutz
 {
@@ -54,7 +44,7 @@ namespace rutz
 }
 
 /// An input streambuf that reads from memory.
-class rutz::imembuf : public STD_IO::streambuf
+class rutz::imembuf : public std::streambuf
 {
 private:
   unsigned int m_len;
@@ -83,7 +73,7 @@ public:
 };
 
 /// An input stream class based on imembuf.
-class rutz::imemstream : public STD_IO::istream
+class rutz::imemstream : public std::istream
 {
 private:
   imembuf m_buf;
@@ -96,7 +86,7 @@ public:
 };
 
 /// An input stream class based on imembuf that makes a private copy.
-class rutz::icstrstream : public STD_IO::istream
+class rutz::icstrstream : public std::istream
 {
 private:
   imembuf m_buf;

@@ -136,9 +136,9 @@ void rutz::backtrace::print() const throw()
     }
 }
 
-void rutz::backtrace::print(STD_IO::ostream& os) const throw()
+void rutz::backtrace::print(std::ostream& os) const throw()
 {
-  os.exceptions(STD_IO::ios::goodbit);
+  os.exceptions(std::ios::goodbit);
 
   os << "stack trace:\n";
 

@@ -43,12 +43,8 @@
 #include "util/gzstreambuf.h"
 #include "util/sharedptr.h"
 
-#ifdef HAVE_IOSTREAM
-#  include <iostream>
-#else
-#  include <iostream.h>
-#endif
 #include <cctype>
+#include <iostream>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -86,7 +82,7 @@ namespace
     ASSERT(0); return 0; // can't happen
   }
 
-  void parse_pbm_mode_1(STD_IO::istream& is, media::bmap_data& data)
+  void parse_pbm_mode_1(std::istream& is, media::bmap_data& data)
   {
     DOTRACE("parse_pbm_mode_1");
 
@@ -106,7 +102,7 @@ namespace
       }
   }
 
-  void parse_pbm_mode_23(STD_IO::istream& is, media::bmap_data& data,
+  void parse_pbm_mode_23(std::istream& is, media::bmap_data& data,
                          int max_grey)
   {
   DOTRACE("parse_pbm_mode_23");
@@ -129,7 +125,7 @@ namespace
       }
   }
 
-  void parse_pbm_mode_456(STD_IO::istream& is, media::bmap_data& data)
+  void parse_pbm_mode_456(std::istream& is, media::bmap_data& data)
   {
   DOTRACE("parse_pbm_mode_456");
     dbg_eval_nl(3, data.byte_count());
@@ -150,13 +146,13 @@ namespace
 
 void media::save_pnm(const char* filename, const media::bmap_data& data)
 {
-  rutz::shared_ptr<STD_IO::ostream> os
+  rutz::shared_ptr<std::ostream> os
     (rutz::ogzopen(filename, std::ios::binary));
 
   save_pnm(*os, data);
 }
 
-void media::save_pnm(STD_IO::ostream& os, const media::bmap_data& data)
+void media::save_pnm(std::ostream& os, const media::bmap_data& data)
 {
 DOTRACE("media::save_pnm");
 
@@ -181,13 +177,13 @@ DOTRACE("media::save_pnm");
 
 void media::load_pnm(const char* filename, media::bmap_data& data)
 {
-  rutz::shared_ptr<STD_IO::istream> is
+  rutz::shared_ptr<std::istream> is
     (rutz::igzopen(filename, std::ios::binary));
 
   load_pnm(*is, data);
 }
 
-void media::load_pnm(STD_IO::istream& is, media::bmap_data& data)
+void media::load_pnm(std::istream& is, media::bmap_data& data)
 {
 DOTRACE("media::load_pnm");
   if (is.fail())

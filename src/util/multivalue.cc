@@ -49,7 +49,7 @@ template <class T>
 rutz::multi_value<T>::~multi_value() {}
 
 template <class T>
-void rutz::multi_value<T>::print_to(STD_IO::ostream& os) const
+void rutz::multi_value<T>::print_to(std::ostream& os) const
 {
 DOTRACE("rutz::multi_value<T>::print_to");
   const T* dat = const_begin();
@@ -64,7 +64,7 @@ DOTRACE("rutz::multi_value<T>::print_to");
 }
 
 template <class T>
-void rutz::multi_value<T>::scan_from(STD_IO::istream& is)
+void rutz::multi_value<T>::scan_from(std::istream& is)
 {
 DOTRACE("rutz::multi_value<T>::scan_from");
 

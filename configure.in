@@ -380,15 +380,6 @@ if test "$have_prog_cxxfilt" = yes; then
    AC_DEFINE(HAVE_PROG_CXXFILT,1,[do we have a 'c++filt' program?])
 fi
 
-### Check support for c++ iostreams
-
-AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iostream>]], [[std::ios_base* p;]])],
-                  [AC_MSG_RESULT(yes)],
-		  [AC_DEFINE(PRESTANDARD_IOSTREAMS,1,[prestandard iostreams?])
-                   AC_MSG_RESULT(no)])
-
 have_std_io=no
 
 AC_MSG_CHECKING([whether iostreams are in std namespace])
@@ -403,10 +394,22 @@ fi
 
 AC_MSG_RESULT($have_std_io)
 
-if test $have_std_io = yes; then
-   AC_DEFINE(STD_IO,std,[iostreams are in std namespace])
-else
-   AC_DEFINE(STD_IO,[],[iostreams are in global namespace])
+if test $have_std_io = no; then
+   AC_MSG_ERROR([the iostreams library is out of date])
+fi
+
+### Check support for c++ iostreams
+
+AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iostream>]], [[std::ios_base* p;]])],
+                  [standard_iostreams=yes],
+		  [standard_iostreams=no])
+
+AC_MSG_RESULT($standard_iostreams)
+
+if test $standard_iostreams = no; then
+   AC_MSG_ERROR([the iostreams library is out of date])
 fi
 
 ##########################################################################

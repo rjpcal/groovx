@@ -54,8 +54,8 @@ public:
 
   virtual rutz::fstring value_typename() const;
 
-  virtual void print_to(STD_IO::ostream& os) const;
-  virtual void scan_from(STD_IO::istream& is);
+  virtual void print_to(std::ostream& os) const;
+  virtual void scan_from(std::istream& is);
 
   bool shouldIgnore() const { return itsVal == IGNORE; }
 

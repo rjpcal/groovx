@@ -66,7 +66,7 @@ class IO::LegacyReader::Impl
   Impl& operator=(const Impl&);
 
 public:
-  Impl(IO::LegacyReader* owner, STD_IO::istream& is) :
+  Impl(IO::LegacyReader* owner, std::istream& is) :
     itsOwner(owner),
     itsInStream(is),
     itsLegacyVersionId(0)
@@ -87,7 +87,7 @@ public:
   }
 
   IO::LegacyReader* itsOwner;
-  STD_IO::istream& itsInStream;
+  std::istream& itsInStream;
   int itsLegacyVersionId;
 
   void readTypename(const fstring& correct_name)
@@ -194,7 +194,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::LegacyReader::LegacyReader(STD_IO::istream& is) :
+IO::LegacyReader::LegacyReader(std::istream& is) :
   rep(new Impl(this, is))
 {
 DOTRACE("IO::LegacyReader::LegacyReader");
@@ -372,7 +372,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(IO::LegacyWriter* owner, STD_IO::ostream& os, bool write_bases) :
+  Impl(IO::LegacyWriter* owner, std::ostream& os, bool write_bases) :
     itsOwner(owner),
     itsOutStream(os),
     itsWriteBases(write_bases),
@@ -395,7 +395,7 @@ public:
 
   IO::LegacyWriter* itsOwner;
 private:
-  STD_IO::ostream& itsOutStream;
+  std::ostream& itsOutStream;
 public:
   const bool itsWriteBases;
   const char itsFSep;              // field separator
@@ -405,7 +405,7 @@ public:
   bool itsIsBeginning;
   bool itsUsePrettyPrint;
 
-  STD_IO::ostream& stream()
+  std::ostream& stream()
     {
       flushWhitespace();
       itsIsBeginning = false;
@@ -529,7 +529,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 
-IO::LegacyWriter::LegacyWriter(STD_IO::ostream& os, bool write_bases) :
+IO::LegacyWriter::LegacyWriter(std::ostream& os, bool write_bases) :
   rep(new Impl(this, os, write_bases))
 {
 DOTRACE("IO::LegacyWriter::LegacyWriter");

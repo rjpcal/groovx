@@ -37,11 +37,7 @@
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
-#ifdef HAVE_IOSFWD
 #include <iosfwd>
-#else
-class ostream;
-#endif
 
 /// Wraps a std::ofstream in an IoObject.
 /** This allows a named file to be serialized across program runs, as well
@@ -70,11 +66,11 @@ public:
   bool hasStream() const;
 
   /// Get the ostream associated with this object.
-  STD_IO::ostream& stream();
+  std::ostream& stream();
 
 private:
   rutz::fstring itsFilename;
-  rutz::shared_ptr<STD_IO::ostream> itsStream;
+  rutz::shared_ptr<std::ostream> itsStream;
 };
 
 static const char vcid_outputfile_h[] = "$Id$ $URL$";

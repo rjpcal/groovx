@@ -60,7 +60,7 @@ using Nub::SoftRef;
 class XMLWriter : public IO::Writer
 {
 public:
-  XMLWriter(STD_IO::ostream& os);
+  XMLWriter(std::ostream& os);
 
   XMLWriter(const char* filename);
 
@@ -122,8 +122,8 @@ private:
 
   void writeEscaped(const char* text);
 
-  shared_ptr<STD_IO::ostream> itsOwnedStream;
-  STD_IO::ostream& itsBuf;
+  shared_ptr<std::ostream> itsOwnedStream;
+  std::ostream& itsBuf;
   std::set<Nub::UID> itsWrittenObjects;
   int itsNestLevel;
   IO::WriteIdMap itsIdMap;
@@ -135,7 +135,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-XMLWriter::XMLWriter(STD_IO::ostream& os) :
+XMLWriter::XMLWriter(std::ostream& os) :
   itsOwnedStream(),
   itsBuf(os),
   itsWrittenObjects(),
@@ -318,7 +318,7 @@ DOTRACE("XMLWriter::writeEscaped");
 }
 
 
-shared_ptr<IO::Writer> IO::makeXMLWriter(STD_IO::ostream& os)
+shared_ptr<IO::Writer> IO::makeXMLWriter(std::ostream& os)
 {
   return rutz::make_shared(new XMLWriter(os));
 }
