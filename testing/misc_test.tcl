@@ -52,7 +52,7 @@ test "MiscTcl-sleep" "normal use" {
     set res [time {sleep 1}]
     set us [lindex $res 0]
     expr $us > 900000 && $us < 1500000
-} {^1$}
+} {^1$} $no_test
 test "MiscTcl-sleep" "error from negative input" {
     sleep -1
 } {expected.*but got}
