@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Oct  6 14:16:30 1999
-// written: Mon May 12 11:27:23 2003
+// written: Wed May 14 17:12:23 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -50,6 +50,7 @@ DOTRACE("Gabor_Init");
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GaborArray", "$Revision$");
   Tcl::defFieldContainer<GaborArray>(pkg2);
   Tcl::defCreator<GaborArray>(pkg2);
+  pkg2->def("saveImage", "item_id filename", &GaborArray::saveImage);
 
   return pkg->combineStatus(pkg2->initStatus());
 }
