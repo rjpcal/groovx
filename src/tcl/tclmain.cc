@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Mon Jan 13 11:01:38 2003
+// written: Thu Feb 27 17:27:40 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -564,16 +564,19 @@ Tcl::Main::~Main()
 
 bool Tcl::Main::isInteractive()
 {
+DOTRACE("Tcl::Main::isInteractive");
   return Tcl::MainImpl::get()->isInteractive();
 }
 
 Tcl::Interp& Tcl::Main::interp()
 {
+DOTRACE("Tcl::Main::interp");
   return Tcl::MainImpl::get()->interp();
 }
 
 void Tcl::Main::run()
 {
+DOTRACE("Tcl::Main::run");
   Tcl::MainImpl::get()->run();
 }
 
