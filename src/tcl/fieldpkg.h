@@ -5,15 +5,13 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 12 17:45:52 2000
-// written: Wed Sep 25 18:56:36 2002
+// written: Wed Nov 20 15:03:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIELDPKG_H_DEFINED
 #define FIELDPKG_H_DEFINED
-
-#include "util/objfactory.h"
 
 #include "tcl/tclpkg.h"
 
@@ -22,7 +20,6 @@ class FieldMap;
 
 namespace Tcl
 {
-
   class Pkg;
 
   void defField(Pkg* pkg, const Field& field);
@@ -34,12 +31,6 @@ namespace Tcl
     Tcl::defGenericObjCmds<C>(pkg);
 
     Tcl::defAllFields(pkg, C::classFields());
-  }
-
-  template <class C>
-  void defCreator(Pkg*)
-  {
-    Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
   }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Sep 25 18:57:15 2002
+// written: Wed Nov 20 15:03:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 #ifndef TCLPKG_H_DEFINED
 #define TCLPKG_H_DEFINED
 
+#include "util/objfactory.h"
 #include "util/pointers.h"
 
 #include "tcl/tclfunctor.h"
@@ -22,6 +23,12 @@ namespace Tcl
 {
   class ObjCaster;
   class Pkg;
+
+  template <class C>
+  void defCreator(Pkg*)
+  {
+    Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
