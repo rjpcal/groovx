@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 14 16:24:33 2002
-// written: Tue Dec 10 12:12:53 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "system/demangle.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tcllistobj.h"
@@ -137,8 +136,7 @@ namespace
         cmd_str.append(obj.id());
         cmd_str.append(init_args[i]);
         cmd_str.append(init_args[i+1]);
-        Tcl::Code cmd(cmd_str.asObj(), Tcl::THROW_EXCEPTION);
-        cmd.invoke(interp);
+        interp.eval(cmd_str.asObj(), Util::ThrowingErrorHandler::get());
       }
 
     return obj;

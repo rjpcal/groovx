@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Dec 10 12:11:45 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 
 #include "system/system.h"
 
-#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
@@ -371,17 +370,16 @@ DOTRACE("ExptDriver::pause");
   // Halt the experiment, then pop up a pause window. When the user
   // dismisses the window, the experiment will resume.
 
-  Tcl::Code pauseMsgCmd
-  (Tcl::toTcl("tk_messageBox -default ok -icon info "
-              "-title \"Pause\" -type ok "
-              "-message \"Experiment paused. Click OK to continue.\";\n"),
-   Tcl::THROW_EXCEPTION);
+  fstring pauseMsgCmd
+    ("tk_messageBox -default ok -icon info "
+     "-title \"Pause\" -type ok "
+     "-message \"Experiment paused. Click OK to continue.\";\n");
 
   vxHalt();
 
   addLogInfo("Experiment paused.");
 
-  pauseMsgCmd.invoke(rep->interp);
+  rep->interp.eval(pauseMsgCmd, Util::ThrowingErrorHandler::get());
 
   Tcl::Interp::clearEventQueue();
 

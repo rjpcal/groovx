@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Tue Dec 10 12:13:40 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,14 +26,6 @@ class fstring;
 namespace Tcl
 {
   class Interp;
-
-  /// Specify what happens in case of an error during invoke()
-  enum ErrorHandlingMode
-  {
-    IGNORE_ERRORS,     // nothing is done except to return false from invoke()
-    THROW_EXCEPTION,   // an EvalError is thrown
-    BACKGROUND_ERROR   // Tcl_BackgroundError() is called
-  };
 }
 
 namespace Util
@@ -68,8 +60,9 @@ public:
   bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
 
   // Evaluating code
-  bool invoke(const Tcl::ObjPtr& code, ErrorHandlingMode mode);
-  bool invoke(const Tcl::ObjPtr& code, Util::ErrorHandler* handler);
+  bool eval(const char* code, Util::ErrorHandler* handler);
+  bool eval(const fstring& code, Util::ErrorHandler* handler);
+  bool eval(const Tcl::ObjPtr& code, Util::ErrorHandler* handler);
 
   // Result
   void resetResult() const;
@@ -108,7 +101,7 @@ public:
   // Commands/procedures
   bool hasCommand(const char* cmd_name) const;
 
-  fstring getProcBody(const char* proc_name) const;
+  fstring getProcBody(const char* proc_name);
   void createProc(const char* namesp, const char* proc_name,
                   const char* args, const char* body);
   void deleteProc(const char* namesp, const char* proc_name);

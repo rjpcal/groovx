@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Sat Nov 23 17:31:21 2002
+// written: Tue Dec 10 13:01:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@ typedef struct Tk_Window_ *Tk_Window;
 
 namespace Tcl
 {
+  class Interp;
   class TkWidget;
 }
 
@@ -39,7 +40,7 @@ class TkWidgImpl;
 class Tcl::TkWidget : public GWT::Widget
 {
 public:
-  TkWidget(Tcl_Interp* interp, const char* classname, const char* pathname);
+  TkWidget(Tcl::Interp& interp, const char* classname, const char* pathname);
   virtual ~TkWidget();
 
   void destroyWidget();
@@ -49,7 +50,7 @@ public:
   void setWidth(int w);
   void setHeight(int h);
 
-  Tcl_Interp* interp() const;
+  Tcl::Interp& interp() const;
   Tk_Window tkWin() const;
   const char* pathname() const;
   double pixelsPerInch() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Dec 10 12:12:31 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,10 @@
 
 #include "tkwidget.h"
 
-#include "tcl/tclcode.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
+#include "util/errorhandler.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -45,13 +45,13 @@ class TkWidgImpl : public Util::VolatileObject
   TkWidgImpl& operator=(const TkWidgImpl&);
 
 public:
-  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p,
+  TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
              const char* classname, const char* pathname);
 
   ~TkWidgImpl();
 
   Tcl::TkWidget* owner;
-  Tcl_Interp* interp;
+  Tcl::Interp interp;
   const Tk_Window tkWin;
 
   int width;
@@ -107,11 +107,12 @@ public:
   }
 };
 
-TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p,
+TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
                        const char* classname, const char* pathname) :
   owner(o),
   interp(p),
-  tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
+  tkWin(Tk_CreateWindowFromPath(interp.intp(),
+                                Tk_MainWindow(interp.intp()),
                                 const_cast<char*>(pathname),
                                 (char *) 0)),
   width(400),
@@ -210,7 +211,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
     }
   catch (...)
     {
-      Tcl::Interp(widg->interp()).handleLiveException("cEventCallback", true);
+      widg->rep->interp.handleLiveException("cEventCallback", true);
     }
 }
 
@@ -227,7 +228,7 @@ DOTRACE("TkWidgImpl::cRenderCallback");
     }
   catch (...)
     {
-      Tcl::Interp(widg->rep->interp).handleLiveException("cRenderCallback", true);
+      widg->rep->interp.handleLiveException("cRenderCallback", true);
     }
 }
 
@@ -237,7 +238,7 @@ DOTRACE("TkWidgImpl::cRenderCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TkWidget::TkWidget(Tcl_Interp* interp,
+Tcl::TkWidget::TkWidget(Tcl::Interp& interp,
                         const char* classname, const char* pathname) :
   rep(new TkWidgImpl(this, interp, classname, pathname))
 {
@@ -272,13 +273,13 @@ void Tcl::TkWidget::destroyWidget()
 DOTRACE("Tcl::TkWidget::destroyWidget");
 
   // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !Tcl_InterpDeleted(rep->interp) )
+  if ( !Tcl_InterpDeleted(rep->interp.intp()) )
     {
       Tk_DestroyWindow(rep->tkWin);
     }
 }
 
-Tcl_Interp* Tcl::TkWidget::interp() const
+Tcl::Interp& Tcl::TkWidget::interp() const
 {
   return rep->interp;
 }
@@ -317,11 +318,10 @@ void Tcl::TkWidget::pack()
 {
 DOTRACE("Tcl::TkWidget::pack");
 
-  fstring pack_cmd_str = "pack ";
-  pack_cmd_str.append( pathname() );
-  pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
-  Tcl::Code pack_cmd(Tcl::toTcl(pack_cmd_str), Tcl::THROW_EXCEPTION);
-  pack_cmd.invoke(rep->interp);
+  fstring pack_cmd = "pack ";
+  pack_cmd.append( pathname() );
+  pack_cmd.append( " -side left -expand 1 -fill both; update" );
+  rep->interp.eval(pack_cmd, Util::ThrowingErrorHandler::get());
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)
@@ -332,21 +332,16 @@ DOTRACE("Tcl::TkWidget::bind");
   cmd_str.append( event_sequence, " ");
   cmd_str.append("{ ", script, " }");
 
-  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::THROW_EXCEPTION);
-
-  cmd.invoke(rep->interp);
+  rep->interp.eval(cmd_str, Util::ThrowingErrorHandler::get());
 }
 
 void Tcl::TkWidget::takeFocus()
 {
 DOTRACE("Tcl::TkWidget::takeFocus");
 
-  fstring cmd_str = "focus -force ";
-  cmd_str.append( pathname() );
+  fstring cmd("focus -force ", pathname());
 
-  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::THROW_EXCEPTION);
-
-  cmd.invoke(rep->interp);
+  rep->interp.eval(cmd, Util::ThrowingErrorHandler::get());
 }
 
 void Tcl::TkWidget::requestRedisplay()

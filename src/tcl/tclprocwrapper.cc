@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:47:10 2002
-// written: Tue Dec 10 12:15:52 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
-#include "tcl/tclcode.h"
+
+#include "util/errorhandler.h"
 
 namespace
 {
@@ -82,16 +83,13 @@ bool Tcl::ProcWrapper::isNoop() const
   return (itsArgs.is_empty() && itsBody.is_empty());
 }
 
-void Tcl::ProcWrapper::invoke(const fstring& args) const
+void Tcl::ProcWrapper::invoke(const fstring& args)
 {
   if (isNoop()) return;
 
   fstring cmd(itsName, " ", args);
 
-  Tcl::Code code(Tcl::toTcl(cmd), Tcl::THROW_EXCEPTION);
-
-  // might throw if Tcl code raises an error:
-  code.invoke(itsInterp);
+  itsInterp.eval(cmd, Util::ThrowingErrorHandler::get());
 }
 
 fstring Tcl::ProcWrapper::fullSpec() const

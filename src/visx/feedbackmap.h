@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Tue Dec 10 12:11:16 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 #ifndef FEEDBACKMAP_H_DEFINED
 #define FEEDBACKMAP_H_DEFINED
 
-#include "tcl/tclcode.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclobjptr.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
+#include "util/errorhandler.h"
 #include "util/minivec.h"
 #include "util/strings.h"
 
@@ -38,7 +38,7 @@ public:
     update();
   }
 
-  void giveFeedback(const Tcl::Interp& intp, int response) const
+  void giveFeedback(Tcl::Interp& intp, int response) const
   {
     if (!itsUseFeedback) return;
 
@@ -86,14 +86,14 @@ private:
   public:
     Item(Tcl_Obj* cond, Tcl_Obj* res) :
       itsCondition(cond),
-      itsResultCmd(res, Tcl::THROW_EXCEPTION)
+      itsResultCmd(res)
     {}
 
-    bool invokeIfTrue(const Tcl::Interp& safeInterp)
+    bool invokeIfTrue(Tcl::Interp& safeInterp)
     {
       if (safeInterp.evalBooleanExpr(itsCondition))
         {
-          itsResultCmd.invoke(safeInterp);
+          safeInterp.eval(itsResultCmd, Util::ThrowingErrorHandler::get());
           return true;
         }
       return false;
@@ -101,7 +101,7 @@ private:
 
   private:
     Tcl::ObjPtr itsCondition;
-    Tcl::Code itsResultCmd;
+    Tcl::ObjPtr itsResultCmd;
   };
 
 public:

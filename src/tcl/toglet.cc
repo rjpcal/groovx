@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 18:14:13 2002
+// written: Tue Dec 10 13:09:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(bool pack) :
-  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
+  Tcl::TkWidget(Tcl::Main::safeInterp(), "Toglet", widgetName(id())),
   rep(new Impl(this))
 {
 DOTRACE("Toglet::Toglet");

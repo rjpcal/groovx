@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:41:47 2002
-// written: Wed Sep 25 18:57:24 2002
+// written: Tue Dec 10 12:54:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,10 +55,10 @@ public:
   bool isNoop() const;
 
   // Just run the code, but don't yet extract a result from the interpreter
-  void invoke(const fstring& args) const;
+  void invoke(const fstring& args);
 
   template <class T>
-  T call(const fstring& args) const
+  T call(const fstring& args)
   {
     // might throw if Tcl code raises an error:
     invoke(args);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Dec 10 12:15:36 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "tcl/tclpkgbase.h"
 
 #include "tcl/tclcmd.h"
-#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 
 #include "util/pointers.h"
@@ -50,35 +49,35 @@ namespace
 
 namespace Tcl
 {
-  inline void linkInt(Tcl_Interp* interp, const char* varName,
+  inline void linkInt(Tcl::Interp& interp, const char* varName,
                       int* addr, int flag)
   {
     dbgEvalNL(3, varName);
     fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+    if ( Tcl_LinkVar(interp.intp(), temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_INT) != TCL_OK )
       throw TclError("error while linking int variable");
   }
 
-  inline void linkDouble(Tcl_Interp* interp, const char* varName,
+  inline void linkDouble(Tcl::Interp& interp, const char* varName,
                          double* addr, int flag)
   {
     dbgEvalNL(3, varName);
     fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+    if ( Tcl_LinkVar(interp.intp(), temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_DOUBLE) != TCL_OK )
       throw TclError("error while linking double variable");
   }
 
-  inline void linkBoolean(Tcl_Interp* interp, const char* varName,
+  inline void linkBoolean(Tcl::Interp& interp, const char* varName,
                           int* addr, int flag)
   {
     dbgEvalNL(3, varName);
     fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+    if ( Tcl_LinkVar(interp.intp(), temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_BOOLEAN) != TCL_OK )
       throw TclError("error while linking boolean variable");
   }
@@ -95,7 +94,7 @@ public:
 
   ~Impl();
 
-  Tcl_Interp* interp;
+  Tcl::Interp interp;
   slink_list<shared_ptr<Command> > cmds;
   std::string pkgName;
   std::string version;
@@ -139,7 +138,7 @@ DOTRACE("Tcl::PkgBase::Impl::Impl");
     version.erase(0, version.find_first_of("0123456789"));
     version.erase(version.find_last_of("0123456789")+1, std::string::npos);
 
-    Tcl_PkgProvide(interp, pkgname.c_str(), version.c_str());
+    Tcl_PkgProvide(interp.intp(), pkgname.c_str(), version.c_str());
   }
 }
 
@@ -189,26 +188,24 @@ DOTRACE("Tcl::PkgBase::combineStatus");
 Tcl_Interp* Tcl::PkgBase::interp()
 {
 DOTRACE("Tcl::PkgBase::interp");
- return rep->interp;
+  return rep->interp.intp();
 }
 
 namespace
 {
-  void exportAll(Tcl_Interp* interp, const char* from)
+  void exportAll(Tcl::Interp& interp, const char* from)
   {
     fstring cmd("namespace eval ", from, " { namespace export * }");
 
-    Tcl::Code code(Tcl::toTcl(cmd), Tcl::THROW_EXCEPTION);
-    code.invoke(interp);
+    interp.eval(cmd, Util::ThrowingErrorHandler::get());
   }
 
-  void exportInto(Tcl_Interp* interp, const char* from, const char* to)
+  void exportInto(Tcl::Interp& interp, const char* from, const char* to)
   {
     fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::* }");
 
-    Tcl::Code code(Tcl::toTcl(cmd), Tcl::THROW_EXCEPTION);
-    code.invoke(interp);
+    interp.eval(cmd, Util::ThrowingErrorHandler::get());
   }
 }
 
@@ -265,8 +262,7 @@ void Tcl::PkgBase::eval(const char* script)
 {
 DOTRACE("Tcl::PkgBase::eval");
 
-  Tcl::Code code(Tcl::toTcl(script), Tcl::THROW_EXCEPTION);
-  code.invoke(rep->interp);
+  rep->interp.eval(script, Util::ThrowingErrorHandler::get());
 }
 
 void Tcl::PkgBase::addCommand(Command* cmd)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Tue Dec 10 12:19:22 2002
+// written: Tue Dec 10 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "tcl/tclsafeinterp.h"
 
-#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 
 #include "util/strings.h"
@@ -122,43 +121,24 @@ DOTRACE("Tcl::Interp::evalBooleanExpr");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::Interp::invoke(const Tcl::ObjPtr& code, Tcl::ErrorHandlingMode mode)
+bool Tcl::Interp::eval(const char* code, Util::ErrorHandler* handler)
 {
-DOTRACE("Tcl::Interp::invoke");
-
-  if (!hasInterp())
-    throw TclError("Tcl_Interp* was null in Tcl::Interp::invoke");
-
-  if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
-    return true;
-
-  // else, there was some error during the Tcl eval...
-
-  if (IGNORE_ERRORS != mode)
-    {
-      fstring msg("error while evaluating ", Tcl_GetString(code.obj()),
-                  ":\n", getResult<const char*>());
-
-      if (THROW_EXCEPTION == mode)
-        {
-          throw Tcl::TclError(msg);
-        }
-      else if (BACKGROUND_ERROR == mode)
-        {
-          appendResult(msg.c_str());
-          backgroundError();
-        }
-    }
-
-  return false; // to indicate error
+  Tcl::ObjPtr obj(Tcl::toTcl(code));
+  return eval(obj, handler);
 }
 
-bool Tcl::Interp::invoke(const Tcl::ObjPtr& code, Util::ErrorHandler* handler)
+bool Tcl::Interp::eval(const fstring& code, Util::ErrorHandler* handler)
 {
-DOTRACE("Tcl::Interp::invoke");
+  Tcl::ObjPtr obj(Tcl::toTcl(code));
+  return eval(obj, handler);
+}
+
+bool Tcl::Interp::eval(const Tcl::ObjPtr& code, Util::ErrorHandler* handler)
+{
+DOTRACE("Tcl::Interp::eval");
 
   if (!hasInterp())
-    throw TclError("Tcl_Interp* was null in Tcl::Interp::invoke");
+    throw TclError("Tcl_Interp* was null in Tcl::Interp::eval");
 
   if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
     return true;
@@ -310,17 +290,15 @@ DOTRACE("Tcl::Interp::hasCommand");
   return (result != 0);
 }
 
-fstring Tcl::Interp::getProcBody(const char* proc_name) const
+fstring Tcl::Interp::getProcBody(const char* proc_name)
 {
 DOTRACE("Tcl::Interp::getProcBody");
   if (hasCommand(proc_name))
     {
       resetResult();
 
-      Tcl::Code cmd(Tcl::toTcl(fstring("info body ", proc_name)),
-                    Tcl::THROW_EXCEPTION);
-
-      if (cmd.invoke(*this))
+      if (eval(fstring("info body ", proc_name),
+               Util::ThrowingErrorHandler::get()))
         {
           fstring result = getResult<const char*>();
           resetResult();
@@ -341,15 +319,14 @@ DOTRACE("Tcl::Interp::createProc");
       namesp = "::";
     }
 
-  fstring proc_cmd_str;
-  proc_cmd_str.append("namespace eval ", namesp);
-  proc_cmd_str.append(" { proc ", proc_name, " {");
+  fstring proc_cmd;
+  proc_cmd.append("namespace eval ", namesp);
+  proc_cmd.append(" { proc ", proc_name, " {");
   if (args)
-    proc_cmd_str.append(args);
-  proc_cmd_str.append("} {", body, "} }");
+    proc_cmd.append(args);
+  proc_cmd.append("} {", body, "} }");
 
-  Tcl::Code proc_cmd(Tcl::toTcl(proc_cmd_str), Tcl::THROW_EXCEPTION);
-  proc_cmd.invoke(*this);
+  eval(proc_cmd, Util::ThrowingErrorHandler::get());
 }
 
 void Tcl::Interp::deleteProc(const char* namesp, const char* proc_name)
@@ -368,8 +345,7 @@ DOTRACE("Tcl::Interp::deleteProc");
   // by renaming to the empty string "", we delete the Tcl proc
   cmd_str.append("::", proc_name, " \"\"");
 
-  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::THROW_EXCEPTION);
-  cmd.invoke(*this);
+  eval(cmd_str, Util::ThrowingErrorHandler::get());
 }
 
 void Tcl::Interp::handleError(const char* msg) const
