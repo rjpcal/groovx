@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Thu Aug 16 10:50:43 2001
+// written: Wed Aug 22 18:13:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ DOTRACE("GrObjScaler::setMode");
 
 void GrObjScaler::gnodeDraw(Gfx::Canvas& canvas) const
 {
-  Gfx::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::MatrixSaver state(canvas);
 
   doScaling(canvas);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 21 17:45:17 2001
+// written: Wed Aug 22 18:13:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ void GxSeparator::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxSeparator::draw");
 
-  Gfx::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::MatrixSaver state(canvas);
 
   for(Impl::VecType::iterator
         itr = itsImpl->itsChildren.begin(),
@@ -274,7 +274,7 @@ void GxSeparator::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxSeparator::undraw");
 
-  Gfx::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::MatrixSaver state(canvas);
 
   for(Impl::VecType::iterator
         itr = itsImpl->itsChildren.begin(),

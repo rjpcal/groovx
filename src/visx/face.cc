@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 22 15:27:46 2001
+// written: Wed Aug 22 18:13:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ DOTRACE("Face::grRender");
     }
 
   {
-    Gfx::Canvas::StateSaver saver(canvas);
+    Gfx::Canvas::MatrixSaver saver(canvas);
 
     glTranslated(0.0, getVertOffset(), 0.0);
 
@@ -223,7 +223,7 @@ DOTRACE("Face::grRender");
     // Draw eyes.
     for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
       {
-        Gfx::Canvas::StateSaver eyesaver(canvas);
+        Gfx::Canvas::MatrixSaver eyesaver(canvas);
 
         glTranslated(eye_pos * eye_x, itsEyeHeight, 0.0);
         glScaled(eyeball_x_scale, eyeball_y_scale, 1.0);
