@@ -2,8 +2,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 17:24:09 1999
-static const char vcid_objlisttcl_cc[] = "$Id$";
+// written: Sun Mar 14 21:13:24 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLISTTCL_CC_DEFINED
@@ -11,6 +10,7 @@ static const char vcid_objlisttcl_cc[] = "$Id$";
 
 #include "objlisttcl.h"
 
+#include <strstream.h>
 #include <typeinfo>
 #include <tcl.h>
 
@@ -31,6 +31,8 @@ namespace ObjlistTcl {
 
   Tcl_ObjCmdProc resetObjListCmd;
   Tcl_ObjCmdProc objTypeCmd;
+  Tcl_ObjCmdProc stringify_objlistCmd;
+  Tcl_ObjCmdProc destringify_objlistCmd;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -93,6 +95,44 @@ DOTRACE("ObjlistTcl::objTypeCmd");
   return TCL_OK;
 }
 
+int ObjlistTcl::stringify_objlistCmd(ClientData, Tcl_Interp *interp,
+												 int objc, Tcl_Obj *const objv[]) {
+DOTRACE("ObjlistTcl::stringify_objlistCmd");
+  if (objc != 1)  {
+    Tcl_WrongNumArgs(interp, 1, objv, NULL);
+    return TCL_ERROR;
+  }
+
+  ObjList *olist = getObjList();
+
+  const int BUF_SIZE = 200;
+  char buf[BUF_SIZE];
+  ostrstream ost(buf, BUF_SIZE);
+
+  olist->serialize(ost, IO::IOFlag(IO::BASES|IO::TYPENAME));
+  Tcl_SetObjResult(interp, Tcl_NewStringObj(buf, -1));
+  return TCL_OK;
+}
+
+int ObjlistTcl::destringify_objlistCmd(ClientData, Tcl_Interp *interp,
+												 int objc, Tcl_Obj *const objv[]) {
+DOTRACE("ObjlistTcl::destringify_objlistCmd");
+  if (objc != 2)  {
+    Tcl_WrongNumArgs(interp, 1, objv, "string");
+    return TCL_ERROR;
+  }
+
+  ObjList *olist = getObjList();
+
+  const char* buf = Tcl_GetString(objv[1]);
+  if (buf == NULL) return TCL_ERROR;
+
+  istrstream ist(buf);
+
+  olist->deserialize(ist, IO::IOFlag(IO::BASES|IO::TYPENAME));
+  return TCL_OK;
+}
+
 int ObjlistTcl::Objlist_Init(Tcl_Interp *interp) {
 DOTRACE("ObjlistTcl::Objlist_Init");
   static const int DEFAULT_SIZE = 100;
@@ -102,7 +142,14 @@ DOTRACE("ObjlistTcl::Objlist_Init");
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "objType", objTypeCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateObjCommand(interp, "stringify_objlist", stringify_objlistCmd,
+                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateObjCommand(interp, "destringify_objlist", destringify_objlistCmd,
+                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+
+  Tcl_PkgProvide(interp, "Objlist", "2.1");
   return TCL_OK;
 }
 
+static const char vcid_objlisttcl_cc[] = "$Id$";
 #endif // !OBJLISTTCL_CC_DEFINED
