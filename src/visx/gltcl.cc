@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Mar 15 10:59:37 2000
+// written: Wed Mar 15 18:20:02 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -20,12 +20,13 @@
 #include <GL/glu.h>
 #include <tcl.h>
 #include <cmath>                // for sqrt() in drawThickLine
-#include <vector>
 #include <map>
 
 #include "tcl/tclpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
+
+#include "util/arrays.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -841,7 +842,7 @@ protected:
   void extractValues(GLenum tag, T* vals_out);
 
   virtual void getValues(const AttribInfo* theInfo) {
-	 vector<T> theVals(theInfo->num_values);
+	 fixed_block<T> theVals(theInfo->num_values);
 	 extractValues(theInfo->param_tag, &(theVals[0]));
 	 returnSequence(theVals.begin(), theVals.end());
   }
@@ -979,11 +980,19 @@ public:
 	 GLCmd(pkg, cmd_name, "4x4_column_major_matrix", 2, 2) {}
 protected:
   virtual void invoke() {
-	 vector<GLdouble> matrix;
+	 fixed_block<GLdouble> matrix(16);
 
-	 getSequenceFromArg(1, back_inserter(matrix), (GLdouble*) 0);
+	 int i = 0;
+	 for (Tcl::ListIterator<GLdouble>
+			  itr = beginOfArg(2, (GLdouble*)0),
+			  end = endOfArg(2, (GLdouble*)0);
+			itr != end && i < matrix.size();
+			++itr, ++i)
+		{
+		  matrix[i] = *itr;
+		}
 
-	 if (matrix.size() != 16) {
+	 if (matrix.size() != i) {
 		throw Tcl::TclError("matrix must have 16 entries in column-major order");
 	 }
 
@@ -1666,8 +1675,8 @@ DOTRACE("Tclgl_Init");
   }
 
 #ifdef ACC_COMPILER
-  typeid(out_of_range);
-  typeid(length_error);
+//   typeid(out_of_range);
+//   typeid(length_error);
 #endif
 
   return TCL_OK;
