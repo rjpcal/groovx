@@ -63,6 +63,9 @@ void Png::save(const char* /*filename*/, const Gfx::BmapData& /*data*/)
 DBG_REGISTER;
 #include "util/trace.h"
 
+namespace
+{
+
 /// This class provides exception-safe cleanup for libpng.
 /** It allows us to throw exceptions during our parsing routine and be
     assured that all libpng structures are properly destroyed via
@@ -226,14 +229,6 @@ DOTRACE("PngParser::parse");
   this->close();
 }
 
-void Png::load(const char* filename, Gfx::BmapData& data)
-{
-DOTRACE("Png::load");
-  PngParser parser;
-
-  parser.parse(filename, data);
-}
-
 class PngWriter
 {
 public:
@@ -274,22 +269,19 @@ DOTRACE("PngWriter::close");
     }
 }
 
-namespace
+int getColorType(const Gfx::BmapData& data)
 {
-  int getColorType(const Gfx::BmapData& data)
-  {
-    switch (data.bitsPerPixel())
-      {
-      case 1: return PNG_COLOR_TYPE_GRAY; break;
-      case 8: return PNG_COLOR_TYPE_GRAY; break;
-      case 24: return PNG_COLOR_TYPE_RGB; break;
-      case 32: return PNG_COLOR_TYPE_RGB_ALPHA; break;
-      default:
-        throw Util::Error(fstring("unknown bitsPerPixel value: ",
-                                  data.bitsPerPixel()));
-      }
-    return 0; // can't happen, but placate compiler
-  }
+  switch (data.bitsPerPixel())
+    {
+    case 1: return PNG_COLOR_TYPE_GRAY; break;
+    case 8: return PNG_COLOR_TYPE_GRAY; break;
+    case 24: return PNG_COLOR_TYPE_RGB; break;
+    case 32: return PNG_COLOR_TYPE_RGB_ALPHA; break;
+    default:
+      throw Util::Error(fstring("unknown bitsPerPixel value: ",
+                                data.bitsPerPixel()));
+    }
+  return 0; // can't happen, but placate compiler
 }
 
 void PngWriter::write(const char* filename, const Gfx::BmapData& data)
@@ -340,6 +332,16 @@ DOTRACE("PngWriter::write");
   png_write_end(itsPngPtr, itsInfoPtr);
 
   this->close();
+}
+
+} // end anonymous namespace
+
+void Png::load(const char* filename, Gfx::BmapData& data)
+{
+DOTRACE("Png::load");
+  PngParser parser;
+
+  parser.parse(filename, data);
 }
 
 void Png::save(const char* filename, const Gfx::BmapData& data)
