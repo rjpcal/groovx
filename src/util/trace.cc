@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Aug 10 11:15:50 2002
+// written: Thu Sep 12 15:12:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,70 +30,67 @@
 #define TRACE_WALL_CLOCK_TIME
 //  #define TRACE_CPU_TIME
 
-namespace
+template <typename T, unsigned int N>
+class static_stack
 {
-  template <typename T, unsigned int N>
-  class static_stack
+public:
+  static_stack() throw() : vec(), top(0) {}
+
+  static_stack(const static_stack& other) throw() :
+    vec(), top(0)
   {
-  public:
-    static_stack() throw() : vec(), top(0) {}
+    *this = other;
+  }
 
-    static_stack(const static_stack& other) throw() :
-      vec(), top(0)
-    {
-      *this = other;
-    }
+  static_stack& operator=(const static_stack& other) throw()
+  {
+    for (unsigned int i = 0; i < other.top; ++i)
+      {
+        vec[i] = other.vec[i];
+      }
 
-    static_stack& operator=(const static_stack& other) throw()
-    {
-      for (unsigned int i = 0; i < other.top; ++i)
-        {
-          vec[i] = other.vec[i];
-        }
+    return *this;
+  }
 
-      return *this;
-    }
+  unsigned int size() const throw() { return top; }
 
-    unsigned int size() const throw() { return top; }
+  static unsigned int capacity() throw() { return N; }
 
-    static unsigned int capacity() throw() { return N; }
+  bool push(T p) throw()
+  {
+    if (top >= N)
+      return false;
 
-    bool push(T p) throw()
-    {
-      if (top >= N)
-        return false;
+    vec[top++] = p;
+    return true;
+  }
 
-      vec[top++] = p;
-      return true;
-    }
+  void pop() throw()
+  {
+    AbortIf(top == 0);
+    --top;
+  }
 
-    void pop() throw()
-    {
-      AbortIf(top == 0);
-      --top;
-    }
+  T at(unsigned int i) const throw()
+  {
+    return (i < top) ? vec[i] : 0;
+  }
 
-    T at(unsigned int i) const throw()
-    {
-      return (i < top) ? vec[i] : 0;
-    }
+  T operator[](unsigned int i) const throw() { return at(i); }
 
-    T operator[](unsigned int i) const throw() { return at(i); }
+  typedef       T*       iterator;
+  typedef const T* const_iterator;
 
-    typedef       T*       iterator;
-    typedef const T* const_iterator;
+  iterator begin() throw() { return &vec[0]; }
+  iterator end()   throw() { return &vec[0] + N; }
 
-    iterator begin() throw() { return &vec[0]; }
-    iterator end()   throw() { return &vec[0] + N; }
+  const_iterator begin() const throw() { return &vec[0]; }
+  const_iterator end()   const throw() { return &vec[0] + N; }
 
-    const_iterator begin() const throw() { return &vec[0]; }
-    const_iterator end()   const throw() { return &vec[0] + N; }
-
-  private:
-    T vec[N];
-    unsigned int top;
-  };
-}
+private:
+  T vec[N];
+  unsigned int top;
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
