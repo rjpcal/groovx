@@ -110,7 +110,7 @@ ifeq ($(PLATFORM),i686)
 
 	DEFAULT_MODE := debug
 
-	AUDIO_LIB := -lesd -laudiofile-0.2.1
+	AUDIO_LIB := -lesd -laudiofile
 endif
 
 ifeq ($(PLATFORM),ppc)
