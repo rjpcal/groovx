@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Tue Apr 10 10:06:10 2001
+// written: Thu Sep 13 11:50:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,37 +15,39 @@
 
 #include <cmath>
 
-class Num {
+class Num
+{
 public:
-  static double erfc(double x) {
-	 double z = fabs(x);
+  static double erfc(double x)
+  {
+    double z = fabs(x);
 
-	 double t = 1.0/(1.0+0.5*fabs(x));
+    double t = 1.0/(1.0+0.5*fabs(x));
 
-	 double ans =
+    double ans =
       t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+
       t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+
       t*(-0.82215223+t*0.17087277)))))))))
-		;
+      ;
 
-	 return x >= 0.0 ? ans : 2.0-ans;
+    return x >= 0.0 ? ans : 2.0-ans;
   }
 
   static double gammaln(double xx)
   {
-	 double tol = 1e-50;
+    double tol = 1e-50;
 
-	 int ival = int(xx);
+    int ival = int(xx);
 
-	 if ( (ival < TABLE_SIZE) && (xx - double(ival) < tol) )
-		{
-		  if (!filled) fillTable();
-		  return lookup[ival];
-		}
-	 else 
-		{
-		  return gammalnEngine(xx);
-		}
+    if ( (ival < TABLE_SIZE) && (xx - double(ival) < tol) )
+      {
+        if (!filled) fillTable();
+        return lookup[ival];
+      }
+    else
+      {
+        return gammalnEngine(xx);
+      }
   }
 
   // This is a speedy version of the exponential function, which
@@ -61,10 +63,10 @@ private:
 
   static void fillTable()
   {
-	 for (int i = 0; i < TABLE_SIZE; ++i)
-		lookup[i] = gammalnEngine(double(i));
+    for (int i = 0; i < TABLE_SIZE; ++i)
+      lookup[i] = gammalnEngine(double(i));
 
-	 filled = true;
+    filled = true;
   }
 
   static double gammalnEngine(double xx);
@@ -76,27 +78,29 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Mul {
+struct Mul
+{
   const double factor;
-public:
+
   Mul(double fac) : factor(fac) {}
   double operator()(double d) { return d*factor; }
 };
 
-class Div : public Mul {
-public:
+struct Div : public Mul
+{
   Div(double div) : Mul(1.0/div) {}
 };
 
-class Add {
+struct Add
+{
   const double x;
-public:
+
   Add(double x_) : x(x_) {}
   double operator()(double d) { return d + x; }
 };
 
-class Sub : public Add {
-public:
+struct Sub : public Add
+{
   Sub(double x_) : Add(-x_) {}
 };
 
