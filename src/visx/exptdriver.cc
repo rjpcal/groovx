@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 17 17:33:32 2000
+// written: Mon May 22 18:40:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,6 +179,8 @@ public:
   void edResetExpt();
   int edGetCurrentTrial() const;
   void edSetCurrentTrial(int trial);
+
+  void edEndExpt();
 
   void read(const char* filename);
   void write(const char* filename) const;
@@ -720,9 +722,7 @@ DOTRACE("ExptDriver::Impl::edNextBlock");
   bool haveMoreBlocks = gotoNextValidBlock();
 
   if ( !haveMoreBlocks ) {
-	 noteElapsedTime();
-	 storeData();
-	 doUponCompletion();		  // Call the user-defined callback
+	 edEndExpt();
   }
   else {
 	 block().beginTrial(*itsOwner);
@@ -804,6 +804,19 @@ DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
   if (widg != 0) {
 	 widg->setCurTrial(trial);
   }
+}
+
+//---------------------------------------------------------------------
+//
+// ExptDriver::edEndExpt() --
+//
+//---------------------------------------------------------------------
+
+void ExptDriver::Impl::edEndExpt() {
+DOTRACE("ExptDriver::Impl::edEndExpt");
+  noteElapsedTime();
+  storeData();
+  doUponCompletion();		  // Call the user-defined callback
 }
 
 //---------------------------------------------------------------------
