@@ -57,6 +57,26 @@ public:
   Gfx::Vec2<V> vec2() const { return Gfx::Vec2<V>(x(), y()); }
 
   //
+  // Vec3-scalar math
+  //
+
+  template <class U>
+  void scaleBy(const U& factor)
+    { x() *= factor; y() *= factor; z() *= factor; }
+
+  template <class U>
+  Vec3& operator*=(const U& factor) { scaleBy(factor); return *this; }
+
+  template <class U>
+  Vec3& operator/=(const U& factor) { scaleBy(1.0/factor); return *this; }
+
+  Vec3 operator*(const V& factor) const
+    { Vec3<V> copy(*this); copy *= factor; return copy; }
+
+  Vec3 operator/(const V& factor) const
+    { Vec3<V> copy(*this); copy /= factor; return copy; }
+
+  //
   // Vec3-Vec3 math
   //
 
