@@ -420,14 +420,12 @@ void GLCanvas::drawRect(const Gfx::Rect<double>& rect) const
 {
 DOTRACE("GLCanvas::drawRect");
 
-  glBegin(GL_LINE_LOOP);
-  {
-    glVertex2d(rect.left(), rect.bottom());
-    glVertex2d(rect.right(), rect.bottom());
-    glVertex2d(rect.right(), rect.top());
-    glVertex2d(rect.left(), rect.top());
-  }
-  glEnd();
+  Gfx::Canvas::LineLoopBlock block(*this);
+
+  vertex2(rect.bottomLeft());
+  vertex2(rect.bottomRight());
+  vertex2(rect.topRight());
+  vertex2(rect.topLeft());
 }
 
 void GLCanvas::beginPoints() const
