@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu Mar 30 09:36:41 2000
+// written: Thu Mar 30 10:02:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include "util/lists.h"
 #include "util/pointers.h"
+#include "util/strings.h"
 
 #include <tcl.h>
 #include <cctype>
@@ -167,7 +168,8 @@ DOTRACE("Tcl::TclPkg::makePkgCmdName");
 
 void Tcl::TclPkg::eval(const char* script) {
 DOTRACE("Tcl::TclPkg::eval");
-  Tcl_Eval(itsInterp, script);
+  fixed_string script_copy(script); 
+  Tcl_Eval(itsImpl->itsInterp, script_copy.data());
 }
 
 void Tcl::TclPkg::addCommand(TclCmd* cmd) {
