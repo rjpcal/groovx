@@ -3,7 +3,7 @@
 // iofactory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:06 1999
-// written: Sun Nov 21 15:55:46 1999
+// written: Fri Feb 18 22:52:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,9 @@
 /// Singleton wrapper for Factor<IO>.
 class IoFactory : public Factory<IO> {
 protected:
-  ///
+  /// Default constructor.
   IoFactory();
+
 public:
   /// Return the singleton instance.
   static IoFactory& theOne();
