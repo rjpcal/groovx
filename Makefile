@@ -16,7 +16,18 @@
 #
 ##########################################################################
 
-CC = aCC
+#-------------------------------------------------------------------------
+#
+# C++ Compiler
+#
+#-------------------------------------------------------------------------
+
+ifeq ($(ARCH),hp9000s700)
+	CC = aCC
+endif
+ifeq ($(ARCH),irix6)
+	CC = NCC
+endif
 
 #-------------------------------------------------------------------------
 #
@@ -24,13 +35,28 @@ CC = aCC
 #
 #-------------------------------------------------------------------------
 
-HOME_DIR = /cit/rjpeters
 
-INCLUDE_DIRS = -I$(HOME)/include
+ifeq ($(ARCH),irix6)
+	STL_INCLUDE_DIR = -I$(HOME)/include/stl
+else
+	STL_INCLUDE_DIR =
+endif
 
-LIB_DIRS =  -L/opt/graphics/OpenGL/lib \
+INCLUDE_DIRS = -I$(HOME)/include $(STL_INCLUDE_DIR)
+
+ifeq ($(ARCH),hp9000s700)
+	OPENGL_LIB_DIR = -L/opt/graphics/OpenGL/lib
+	AUDIO_LIB_DIR = -L/opt/audio/lib
+endif
+ifeq ($(ARCH),hp9000s7000)
+	OPENGL_LIB_DIR =
+	AUDIO_LIB_DIR =
+endif
+
+LIB_DIRS =  -L$(HOME)/grsh/$(ARCH) \
 	-L$(HOME)/lib \
-	-L/opt/audio/lib
+	$(OPENGL_LIB_DIR) \
+	$(AUDIO_LIB_DIR)
 
 LIBRARIES = \
 	-ltogl -lGLU -lGL \
@@ -45,101 +71,105 @@ LIBRARIES = \
 #-------------------------------------------------------------------------
 
 TEST_TARGET = testsh
-TEST_OPTIONS = +p +w +W818,655,392,495,469,361,749,416
-TEST_OPTIM = -g
-TEST_LINK_OPTIONS = -Wl,-B,immediate -Wl,+vallcompatwarnings
+
+ifeq ($(ARCH),hp9000s700)
+	TEST_OPTIONS = +Z +p +w +W818,655,392,495,469,361,749,416
+	TEST_OPTIM = -g
+	TEST_LINK_OPTIONS = -Wl,-B,immediate -Wl,+vallcompatwarnings
+endif
+ifeq ($(ARCH),irix6)
+	TEST_OPTIONS =
+	TEST_OPTIM =
+	TEST_LINK_OPTIONS =
+endif
 
 TEST_FLAGS = -DPROF -DASSERT -DINVARIANT -DTEST
 
-STATIC_OBJECTS = 
+STATIC_OBJECTS = \
+	$(ARCH)/bitmap.do \
+	$(ARCH)/face.do \
+	$(ARCH)/fish.do \
+	$(ARCH)/fixpt.do \
+	$(ARCH)/gabor.do \
+	$(ARCH)/glbitmap.do \
+	$(ARCH)/grobj.do \
+	$(ARCH)/grshAppInit.do \
+	$(ARCH)/gtext.do \
+	$(ARCH)/house.do \
+	$(ARCH)/jitter.do \
+	$(ARCH)/maskhatch.do \
+	$(ARCH)/morphyface.do \
+	$(ARCH)/objtogl.do \
+	$(ARCH)/position.do \
+	$(ARCH)/tclgl.do \
+	$(ARCH)/tlist.do \
+	$(ARCH)/toglconfig.do \
+	$(ARCH)/trial.do \
+	$(ARCH)/trialevent.do \
+	$(ARCH)/xbitmap.do
 
-DYNAMIC_OBJECTS = 
-
-TEST_OBJECTS =	\
-	bitmap.do \
-	bitmaptcl.sl \
-	block.sl \
-	blocklist.sl \
-	blocktcl.sl \
-	cloneface.sl \
-	error.sl \
-	exptdriver.sl \
-	expttcl.sl \
-	expttesttcl.sl \
-	face.do \
-	facetcl.sl \
-	fish.do \
-	fishtcl.sl \
-	fixpt.do \
-	fixpttcl.sl \
-	gabor.do \
-	gabortcl.sl \
-	gfxattribs.sl \
-	glbitmap.do \
-	grobj.do \
-	grobjtcl.sl \
-	grshAppInit.do \
-	gtext.do \
-	gtexttcl.sl \
-	house.do \
-	housetcl.sl \
-	id.sl \
-	io.sl \
-	iofactory.sl \
-	iomgr.sl \
-	iostl.sl \
-	ioutils.sl \
-	jitter.do \
-	jittertcl.sl \
-	kbdresponsehdlr.sl \
-	maskhatch.do \
-	masktcl.sl \
-	misctcl.sl \
-	morphyface.do \
-	morphyfacetcl.sl \
-	nullresponsehdlr.sl \
-	objlist.sl \
-	objlisttcl.sl \
-	objtogl.do \
-	observable.sl \
-	observer.sl \
-	pbm.sl \
-	position.do \
-	positiontcl.sl \
-	poslist.sl \
-	poslisttcl.sl \
-	property.sl \
-	responsehandler.sl \
-	rhlist.sl \
-	rhtcl.sl \
-	sound.sl \
-	soundlist.sl \
-	soundtcl.sl \
-	stringifycmd.sl \
-	subject.sl \
-	subjecttcl.sl \
-	tclgl.do \
-	tclcmd.sl \
-	tcldlist.sl \
-	tclerror.sl \
-	tclitempkg.sl \
-	tclpkg.sl \
-	tclvalue.sl \
-	thlist.sl \
-	thtcl.sl \
-	timinghandler.sl \
-	timinghdlr.sl \
-	tlist.do \
-	tlisttcl.sl \
-	toglconfig.do \
-	trace.sl \
-	trial.do \
-	trialtcl.sl \
-	trialevent.do \
-	value.sl \
-	xbitmap.do
-
-TEST_DEPENDS = $(TEST_OBJECTS)
+DYNAMIC_OBJECTS = \
+	$(ARCH)/bitmaptcl.do \
+	$(ARCH)/block.do \
+	$(ARCH)/blocklist.do \
+	$(ARCH)/blocktcl.do \
+	$(ARCH)/cloneface.do \
+	$(ARCH)/error.do \
+	$(ARCH)/exptdriver.do \
+	$(ARCH)/expttcl.do \
+	$(ARCH)/expttesttcl.do \
+	$(ARCH)/facetcl.do \
+	$(ARCH)/fishtcl.do \
+	$(ARCH)/fixpttcl.do \
+	$(ARCH)/gabortcl.do \
+	$(ARCH)/gfxattribs.do \
+	$(ARCH)/grobjtcl.do \
+	$(ARCH)/gtexttcl.do \
+	$(ARCH)/housetcl.do \
+	$(ARCH)/id.do \
+	$(ARCH)/io.do \
+	$(ARCH)/iofactory.do \
+	$(ARCH)/iomgr.do \
+	$(ARCH)/iostl.do \
+	$(ARCH)/ioutils.do \
+	$(ARCH)/jittertcl.do \
+	$(ARCH)/kbdresponsehdlr.do \
+	$(ARCH)/masktcl.do \
+	$(ARCH)/misctcl.do \
+	$(ARCH)/morphyfacetcl.do \
+	$(ARCH)/nullresponsehdlr.do \
+	$(ARCH)/objlist.do \
+	$(ARCH)/objlisttcl.do \
+	$(ARCH)/observable.do \
+	$(ARCH)/observer.do \
+	$(ARCH)/pbm.do \
+	$(ARCH)/positiontcl.do \
+	$(ARCH)/poslist.do \
+	$(ARCH)/poslisttcl.do \
+	$(ARCH)/property.do \
+	$(ARCH)/responsehandler.do \
+	$(ARCH)/rhlist.do \
+	$(ARCH)/rhtcl.do \
+	$(ARCH)/sound.do \
+	$(ARCH)/soundlist.do \
+	$(ARCH)/soundtcl.do \
+	$(ARCH)/stringifycmd.do \
+	$(ARCH)/subject.do \
+	$(ARCH)/subjecttcl.do \
+	$(ARCH)/tclcmd.do \
+	$(ARCH)/tcldlist.do \
+	$(ARCH)/tclerror.do \
+	$(ARCH)/tclitempkg.do \
+	$(ARCH)/tclpkg.do \
+	$(ARCH)/tclvalue.do \
+	$(ARCH)/thlist.do \
+	$(ARCH)/thtcl.do \
+	$(ARCH)/timinghandler.do \
+	$(ARCH)/timinghdlr.do \
+	$(ARCH)/tlisttcl.do \
+	$(ARCH)/trace.do \
+	$(ARCH)/trialtcl.do \
+	$(ARCH)/value.do
 
 #-------------------------------------------------------------------------
 #
@@ -148,12 +178,20 @@ TEST_DEPENDS = $(TEST_OBJECTS)
 #-------------------------------------------------------------------------
 
 PROD_TARGET = grsh0.6a2
-PROD_OPTIONS = +p
-PROD_OPTIM = +O3
-PROD_LINK_OPTIONS = -Wl,+vallcompatwarnings
 
-TEMP_1 = $(TEST_OBJECTS:.do=.o)
-PROD_OBJECTS = $(TEMP_1:.sl=.o)
+ifeq ($(ARCH),hp9000s700)
+	PROD_OPTIONS = +p +Z
+	PROD_OPTIM = +O1
+	PROD_LINK_OPTIONS = -Wl,+vallcompatwarnings
+endif
+ifeq ($(ARCH),irix6)
+	PROD_OPTIONS = 
+	PROD_OPTIM = 
+	PROD_LINK_OPTIONS = 
+endif
+
+PROD_STATIC_OBJECTS = $(STATIC_OBJECTS:.do=.o)
+PROD_DYNAMIC_OBJECTS = $(DYNAMIC_OBJECTS:.do=.o)
 
 #-------------------------------------------------------------------------
 #
@@ -161,17 +199,24 @@ PROD_OBJECTS = $(TEMP_1:.sl=.o)
 #
 #-------------------------------------------------------------------------
 
-.SUFFIXES:
-.SUFFIXES: .cc .o .do .sl
+#.SUFFIXES:
+#.SUFFIXES: .cc .o .do .sl
 
-.cc.o:
-	$(CC) $(PROD_OPTIM) $(PROD_OPTIONS) -o $*.o $(INCLUDE_DIRS) -c $*.cc
+#.cc.o:
+#	$(CC) +Z $(PROD_OPTIM) $(PROD_OPTIONS) -o $*.o $(INCLUDE_DIRS) -c $*.cc
 
-.cc.do:
-	$(CC) -c +Z $(TEST_OPTIM) $(TEST_OPTIONS) -o $*.do \
-	$(INCLUDE_DIRS) $(TEST_FLAGS) $*.cc
+#.cc.do:
+#	$(CC) -c +Z $(TEST_OPTIM) $(TEST_OPTIONS) -o $*.do \
+#	$(INCLUDE_DIRS) $(TEST_FLAGS) $*.cc
 
-.do.sl:; $(CC) -b -o $*.sl $*.do
+#.do.sl:; $(CC) -b -o $*.sl $*.do
+
+$(ARCH)/%.o : %.cc
+	$(CC) $(PROD_OPTIM) $(PROD_OPTIONS) -o $@ $(INCLUDE_DIRS) -c $<
+
+$(ARCH)/%.do : %.cc
+	$(CC) $(TEST_OPTIM) $(TEST_OPTIONS) -o $@ $(INCLUDE_DIRS) $(TEST_FLAGS) \
+	-c $<
 
 #-------------------------------------------------------------------------
 #
@@ -182,20 +227,27 @@ PROD_OBJECTS = $(TEMP_1:.sl=.o)
 testsh: TAGS $(HOME)/bin/$(ARCH)/$(TEST_TARGET)
 	$(TEST_TARGET) ./testing/grshtest.tcl
 
-$(HOME)/bin/$(ARCH)/$(TEST_TARGET): $(TEST_DEPENDS)
-	$(CC) $(TEST_LINK_OPTIONS) -o $@ $(TEST_OBJECTS) /opt/langtools/lib/end.o \
-	$(LIB_DIRS) $(LIBRARIES)
+$(HOME)/bin/$(ARCH)/$(TEST_TARGET): $(STATIC_OBJECTS) $(ARCH)/libvisx.d.sl
+	$(CC) $(TEST_LINK_OPTIONS) -o $@ $(STATIC_OBJECTS) /opt/langtools/lib/end.o \
+	$(LIB_DIRS) -lvisx.d $(LIBRARIES)
+
+libvisx.d.sl: $(DYNAMIC_OBJECTS)
+	$(CC) -b -o libvisx.d.sl $(DYNAMIC_OBJECTS)
 
 .PHONY: Prof
 Prof: testing/grshtest.tcl
 	$(TEST_TARGET) ./testing/grshtest.tcl 2> ./Prof
 	sort +3 Prof > Prof.sort
 
-grsh: $(HOME)/bin/$(ARCH)/$(PROD_TARGET)
+grsh: TAGS $(HOME)/bin/$(ARCH)/$(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
-$(HOME)/bin/$(ARCH)/$(PROD_TARGET): TAGS $(PROD_OBJECTS)
-	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_OBJECTS) $(LIB_DIRS) $(LIBRARIES)
+$(HOME)/bin/$(ARCH)/$(PROD_TARGET): $(PROD_STATIC_OBJECTS) $(ARCH)/libvisx.sl
+	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_STATIC_OBJECTS) \
+	$(LIB_DIRS) -lvisx $(LIBRARIES)
+
+libvisx.sl: $(PROD_DYNAMIC_OBJECTS)
+	$(CC) -b -o libvisx.sl $(PROD_DYNAMIC_OBJECTS)
 
 #-------------------------------------------------------------------------
 #
@@ -417,7 +469,7 @@ MORPHYFACETCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MORPHYFACE_H) \
 NULLRESPONSEHDLR_CC = $(NULLRESPONSEHDLR_H) $(EXPTDRIVER_H) \
 	$(TRACE_H) nullresponsehdlr.cc
 
-OBJLISTTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTPKG_H) \
+OBJLISTTCL_CC = $(GROBJ_H) $(IOMGR_H) $(OBJLIST_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) objlisttcl.cc
 
 PBM_CC = $(PBM_H) $(TRACE_H) $(DEBUG_H) pbm.cc
@@ -473,9 +525,10 @@ TIMINGHDLR_CC = $(TIMINGHDLR_H) $(IOMGR_H) $(TRIALEVENT_H) \
 TLIST_CC = $(TLIST_H) $(TRIAL_H) $(TRACE_H) $(DEBUG_H) \
 	$(PTRLIST_CC) tlist.cc
 
-TLISTTCL_CC = $(TLISTTCL_H) $(TLIST_H) $(TRIAL_H) $(GROBJ_H) $(POSITION_H) \
+TLISTTCL_CC = $(TLISTTCL_H) $(TLIST_H) $(TRIAL_H) $(GROBJ_H) $(GTEXT_H) \
+	$(POSITION_H) \
 	$(OBJLIST_H) $(POSLIST_H) $(OBJLISTTCL_H) $(POSLISTTCL_H) \
-	$(TCLCMD_H) $(LISTPKG_H) $(TRACE_H) $(DEBUG_H) tlisttcl.cc
+	$(TCLCMD_H) $(LISTPKG_H) $(RECT_H) $(TRACE_H) $(DEBUG_H) tlisttcl.cc
 
 TRIALEVENT_CC = $(TRIALEVENT_H) $(EXPTDRIVER_H) $(TIMEUTILS_H) \
 	$(TRACE_H) $(DEBUG_H) trialevent.cc
@@ -494,103 +547,103 @@ XBITMAP_CC = $(XBITMAP_H) $(TOGLCONFIG_H) $(OBJTOGL_H) \
 #
 #-------------------------------------------------------------------------
 
-bitmap.*[ol]: $(BITMAP_CC)
-bitmaptcl.*[ol] : $(BITMAPTCL_CC)
-block.*[ol] : $(BLOCK_CC)
-blocklist.*[ol]: $(BLOCKLIST_CC)
-blocktcl.*[ol]: $(BLOCKTCL_CC)
-cloneface.*[ol]: $(CLONEFACE_CC)
-error.*[ol]: $(ERROR_CC)
-exptdriver.*[ol]: $(EXPTDRIVER_CC)
-expttcl.*[ol]: $(EXPTTCL_CC)
-expttesttcl.*[ol]: $(EXPTTESTTCL_CC)
-face.*[ol]: $(FACE_CC)
-facetcl.*[ol]: $(FACETCL_CC)
-fish.*[ol]: $(FISH_CC)
-fishtcl.*[ol]: $(FISHTCL_CC)
-fixpt.*[ol]: $(FIXPT_CC)
-fixpttcl.*[ol]: $(FIXPTTCL_CC)
-gabor.*[ol]: $(GABOR_CC)
-gabortcl.*[ol]: $(GABORTCL_CC)
-gfxattribs.*[ol]: $(GFXATTRIBS_CC)
-glbitmap.*[ol]: $(GLBITMAP_CC)
-grobj.*[ol]: $(GROBJ_CC)
-grobjtcl.*[ol]: $(GROBJTCL_CC)
-grshAppInit.*[ol]: $(GRSHAPPINIT_CC)
-gtext.*[ol]: $(GTEXT_CC)
-gtexttcl.*[ol]: $(GTEXTTCL_CC)
-house.*[ol]: $(HOUSE_CC)
-housetcl.*[ol]: $(HOUSETCL_CC)
-id.*[ol]: $(ID_CC)
-io.*[ol]: $(IO_CC)
-iofactory.*[ol]: $(IOFACTORY_CC)
-iomgr.*[ol]: $(IOMGR_CC)
-iostl.*[ol]: $(IOSTL_CC)
-ioutils.*[ol]: $(IOUTILS_CC)
-jitter.*[ol]: $(JITTER_CC)
-jittertcl.*[ol]: $(JITTERTCL_CC)
-kbdresponsehdlr.*[ol]: $(KBDRESPONSEHDLR_CC)
-maskhatch.*[ol]: $(MASKHATCH_CC)
-masktcl.*[ol]: $(MASKTCL_CC)
-misctcl.*[ol]: $(MISCTCL_CC)
-morphyface.*[ol]: $(MORPHYFACE_CC)
-morphyfacetcl.*[ol]: $(MORPHYFACETCL_CC)
-nullresponsehdlr.*[ol]: $(NULLRESPONSEHDLR_CC)
-objlist.*[ol]: objlist.h ptrlist.h io.h iomgr.h grobj.h id.h \
+$(ARCH)/bitmap.*[ol]: $(BITMAP_CC)
+$(ARCH)/bitmaptcl.*[ol] : $(BITMAPTCL_CC)
+$(ARCH)/block.*[ol] : $(BLOCK_CC)
+$(ARCH)/blocklist.*[ol]: $(BLOCKLIST_CC)
+$(ARCH)/blocktcl.*[ol]: $(BLOCKTCL_CC)
+$(ARCH)/cloneface.*[ol]: $(CLONEFACE_CC)
+$(ARCH)/error.*[ol]: $(ERROR_CC)
+$(ARCH)/exptdriver.*[ol]: $(EXPTDRIVER_CC)
+$(ARCH)/expttcl.*[ol]: $(EXPTTCL_CC)
+$(ARCH)/expttesttcl.*[ol]: $(EXPTTESTTCL_CC)
+$(ARCH)/face.*[ol]: $(FACE_CC)
+$(ARCH)/facetcl.*[ol]: $(FACETCL_CC)
+$(ARCH)/fish.*[ol]: $(FISH_CC)
+$(ARCH)/fishtcl.*[ol]: $(FISHTCL_CC)
+$(ARCH)/fixpt.*[ol]: $(FIXPT_CC)
+$(ARCH)/fixpttcl.*[ol]: $(FIXPTTCL_CC)
+$(ARCH)/gabor.*[ol]: $(GABOR_CC)
+$(ARCH)/gabortcl.*[ol]: $(GABORTCL_CC)
+$(ARCH)/gfxattribs.*[ol]: $(GFXATTRIBS_CC)
+$(ARCH)/glbitmap.*[ol]: $(GLBITMAP_CC)
+$(ARCH)/grobj.*[ol]: $(GROBJ_CC)
+$(ARCH)/grobjtcl.*[ol]: $(GROBJTCL_CC)
+$(ARCH)/grshAppInit.*[ol]: $(GRSHAPPINIT_CC)
+$(ARCH)/gtext.*[ol]: $(GTEXT_CC)
+$(ARCH)/gtexttcl.*[ol]: $(GTEXTTCL_CC)
+$(ARCH)/house.*[ol]: $(HOUSE_CC)
+$(ARCH)/housetcl.*[ol]: $(HOUSETCL_CC)
+$(ARCH)/id.*[ol]: $(ID_CC)
+$(ARCH)/io.*[ol]: $(IO_CC)
+$(ARCH)/iofactory.*[ol]: $(IOFACTORY_CC)
+$(ARCH)/iomgr.*[ol]: $(IOMGR_CC)
+$(ARCH)/iostl.*[ol]: $(IOSTL_CC)
+$(ARCH)/ioutils.*[ol]: $(IOUTILS_CC)
+$(ARCH)/jitter.*[ol]: $(JITTER_CC)
+$(ARCH)/jittertcl.*[ol]: $(JITTERTCL_CC)
+$(ARCH)/kbdresponsehdlr.*[ol]: $(KBDRESPONSEHDLR_CC)
+$(ARCH)/maskhatch.*[ol]: $(MASKHATCH_CC)
+$(ARCH)/masktcl.*[ol]: $(MASKTCL_CC)
+$(ARCH)/misctcl.*[ol]: $(MISCTCL_CC)
+$(ARCH)/morphyface.*[ol]: $(MORPHYFACE_CC)
+$(ARCH)/morphyfacetcl.*[ol]: $(MORPHYFACETCL_CC)
+$(ARCH)/nullresponsehdlr.*[ol]: $(NULLRESPONSEHDLR_CC)
+$(ARCH)/objlist.*[ol]: objlist.h ptrlist.h io.h iomgr.h grobj.h id.h \
 	observable.h observer.h trace.h debug.h ptrlist.cc objlist.cc
-objlisttcl.*[ol]: $(OBJLISTTCL_CC)
-objtogl.*[ol]: objtogl.h gfxattribs.h tlist.h io.h \
+$(ARCH)/objlisttcl.*[ol]: $(OBJLISTTCL_CC)
+$(ARCH)/objtogl.*[ol]: objtogl.h gfxattribs.h tlist.h io.h \
 	$(TCLEVALCMD_H) $(TCLCMD_H) $(TCLITEMPKG_H) \
 	toglconfig.h rect.h trace.h debug.h objtogl.cc
-observable.*[ol]: observable.h observer.h trace.h debug.h observable.cc
-observer.*[ol]: observer.h observer.cc
-pbm.*[ol]: $(PBM_CC)
-position.*[ol]: position.h io.h trace.h debug.h position.cc
-positiontcl.*[ol]: $(POSITIONTCL_CC)
-poslist.*[ol]: poslist.h ptrlist.h id.h io.h iomgr.h position.h \
+$(ARCH)/observable.*[ol]: observable.h observer.h trace.h debug.h observable.cc
+$(ARCH)/observer.*[ol]: observer.h observer.cc
+$(ARCH)/pbm.*[ol]: $(PBM_CC)
+$(ARCH)/position.*[ol]: position.h io.h trace.h debug.h position.cc
+$(ARCH)/positiontcl.*[ol]: $(POSITIONTCL_CC)
+$(ARCH)/poslist.*[ol]: poslist.h ptrlist.h id.h io.h iomgr.h position.h \
 	debug.h trace.h ptrlist.cc poslist.cc
-poslisttcl.*[ol]: $(POSLISTTCL_CC)
-property.*[ol]: $(PROPERTY_CC)
-responsehandler.*[ol]: $(RESPONSEHANDLER_CC)
-rhlist.*[ol]: debug.h io.h ptrlist.h ptrlist.cc responsehandler.h \
+$(ARCH)/poslisttcl.*[ol]: $(POSLISTTCL_CC)
+$(ARCH)/property.*[ol]: $(PROPERTY_CC)
+$(ARCH)/responsehandler.*[ol]: $(RESPONSEHANDLER_CC)
+$(ARCH)/rhlist.*[ol]: debug.h io.h ptrlist.h ptrlist.cc responsehandler.h \
 	rhlist.h rhlist.cc trace.h
-rhtcl.*[ol]: $(RHTCL_CC)
-sound.*[ol]: $(SOUND_CC)
-soundlist.*[ol]: $(SOUNDLIST_CC)
-soundtcl.o: $(SOUNDTCL_CC)
-	$(CC) $(PROD_OPTIM) -o $*.o $(INCLUDE_DIRS) -I/opt/audio/include -c $*.cc
-soundtcl.do: $(SOUNDTCL_CC)
+$(ARCH)/rhtcl.*[ol]: $(RHTCL_CC)
+$(ARCH)/sound.*[ol]: $(SOUND_CC)
+$(ARCH)/soundlist.*[ol]: $(SOUNDLIST_CC)
+$(ARCH)/soundtcl.o: $(SOUNDTCL_CC)
+	$(CC) +Z $(PROD_OPTIM) -o $*.o $(INCLUDE_DIRS) -I/opt/audio/include -c $*.cc
+$(ARCH)/soundtcl.do: $(SOUNDTCL_CC)
 	$(CC) -c +Z $(TEST_OPTIM) -o $*.do $(INCLUDE_DIRS) -I/opt/audio/include \
-		$(TEST_FLAGS) $*.cc
-soundtcl.sl: soundtcl.do
-stringifycmd.*[ol]: $(STRINGIFYCMD_CC)
-subject.*[ol]: subject.h io.h ioutils.h trace.h debug.h subject.cc
-subjecttcl.*[ol]: errmsg.h subject.h io.h trace.h debug.h \
+	$(TEST_FLAGS) $*.cc
+$(ARCH)/soundtcl.sl: soundtcl.do
+$(ARCH)/stringifycmd.*[ol]: $(STRINGIFYCMD_CC)
+$(ARCH)/subject.*[ol]: subject.h io.h ioutils.h trace.h debug.h subject.cc
+$(ARCH)/subjecttcl.*[ol]: errmsg.h subject.h io.h trace.h debug.h \
 	subjecttcl.cc
-tcldlist.*[ol]: tcldlist.h errmsg.h trace.h debug.h tcldlist.cc
-tclcmd.*[ol]: $(TCLCMD_CC)
-tclerror.*[ol]: $(TCLERROR_CC) 
-tclgl.*[ol]: $(TCLGL_CC)
-tclitempkg.*[ol]: $(TCLITEMPKG_CC)
-tclpkg.*[ol]: $(TCLPKG_CC)
-tclvalue.*[ol]: $(TCLVALUE_CC)
-thlist.*[ol]: debug.h io.h ptrlist.h ptrlist.cc \
+$(ARCH)/tcldlist.*[ol]: tcldlist.h errmsg.h trace.h debug.h tcldlist.cc
+$(ARCH)/tclcmd.*[ol]: $(TCLCMD_CC)
+$(ARCH)/tclerror.*[ol]: $(TCLERROR_CC) 
+$(ARCH)/tclgl.*[ol]: $(TCLGL_CC)
+$(ARCH)/tclitempkg.*[ol]: $(TCLITEMPKG_CC)
+$(ARCH)/tclpkg.*[ol]: $(TCLPKG_CC)
+$(ARCH)/tclvalue.*[ol]: $(TCLVALUE_CC)
+$(ARCH)/thlist.*[ol]: debug.h io.h ptrlist.h ptrlist.cc \
 	timinghdlr.h thlist.h thlist.cc trace.h
-thtcl.*[ol]: $(THTCL_CC)
-timinghdlr.*[ol]: $(TIMINGHDLR_CC)
-timinghandler.*[ol]: timinghandler.h io.h exptdriver.h $(TRIALEVENT_H) \
+$(ARCH)/thtcl.*[ol]: $(THTCL_CC)
+$(ARCH)/timinghdlr.*[ol]: $(TIMINGHDLR_CC)
+$(ARCH)/timinghandler.*[ol]: timinghandler.h io.h exptdriver.h $(TRIALEVENT_H) \
 	trace.h debug.h timinghandler.cc
-tlist.*[ol]: $(TLIST_CC)
-tlisttcl.*[ol]: $(TLISTTCL_CC)
-toglconfig.*[ol]: toglconfig.h rect.h gfxattribs.h $(TCLEVALCMD_H) \
+$(ARCH)/tlist.*[ol]: $(TLIST_CC)
+$(ARCH)/tlisttcl.*[ol]: $(TLISTTCL_CC)
+$(ARCH)/toglconfig.*[ol]: toglconfig.h rect.h gfxattribs.h $(TCLEVALCMD_H) \
 	$(ERROR_H) $(TRACE_H) $(DEBUG_H) toglconfig.cc
-trace.*[ol]: trace.h trace.cc
-trial.*[ol]: trial.h io.h objlist.h ptrlist.h grobj.h id.h \
+$(ARCH)/trace.*[ol]: trace.h trace.cc
+$(ARCH)/trial.*[ol]: trial.h io.h objlist.h ptrlist.h grobj.h id.h \
 	observable.h observer.h poslist.h position.h trace.h debug.h trial.cc
-trialevent.*[ol]: $(TRIALEVENT_CC)
-trialtcl.*[ol]: $(TRIALTCL_CC)
-value.*[ol]: $(VALUE_CC)
-xbitmap.*[ol]: $(XBITMAP_CC)
+$(ARCH)/trialevent.*[ol]: $(TRIALEVENT_CC)
+$(ARCH)/trialtcl.*[ol]: $(TRIALTCL_CC)
+$(ARCH)/value.*[ol]: $(VALUE_CC)
+$(ARCH)/xbitmap.*[ol]: $(XBITMAP_CC)
 
 #-------------------------------------------------------------------------
 #
