@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sun Aug 26 08:35:12 2001
+// written: Tue Aug 28 09:54:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,11 @@
 namespace Gfx
 {
   template <class V> class Rect;
+
+  // These are utility classes that just expose a constructor that
+  // takes arguments in the order specified by the mnemonic
+  template <class V> class RectLTRB;
+  template <class V> class RectLBWH;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -38,8 +43,6 @@ class Gfx::Rect
 public:
   // Creators
   Rect() : ll(), tt(), rr(), bb() {} // everything inits to zero
-
-  Rect(V L, V T, V R, V B) : ll(L), tt(T), rr(R), bb(B) {}
 
   Rect(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
     { setCorners(p1, p2); }
@@ -176,6 +179,29 @@ public:
 private:
   // Data members
   V ll, tt, rr, bb;
+};
+
+
+template <class V>
+class Gfx::RectLTRB : public Gfx::Rect<V>
+{
+public:
+  RectLTRB(V l, V t, V r, V b) :
+    Gfx::Rect<V>()
+  {
+    setRectLTRB(l, t, r, b);
+  }
+};
+
+template <class V>
+class Gfx::RectLBWH : public Gfx::Rect<V>
+{
+public:
+  RectLBWH(V l, V b, V w, V h) :
+    Gfx::Rect<V>()
+  {
+    setRectXYWH(l, b, w, h);
+  }
 };
 
 static const char vcid_rect_h[] = "$Header$";
