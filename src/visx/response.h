@@ -3,7 +3,7 @@
 // response.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:30:04 2000
-// written: Fri Jul  7 15:23:17 2000
+// written: Fri Jul  7 15:44:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,7 @@ public:
   bool isCorrect() const
     { return (itsCorrectVal == ALWAYS_CORRECT) || (itsVal == itsCorrectVal); }
 
+  int correctVal() const { return itsCorrectVal; }
   int val() const { return itsVal; }
   int msec() const { return itsMsec; }
 
