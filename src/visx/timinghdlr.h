@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu Dec 19 18:23:29 2002
+// written: Thu Dec 19 19:12:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ private:
   TimingHdlr& operator=(const TimingHdlr&);
 
   class Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_timinghdlr_h[] = "$Header$";

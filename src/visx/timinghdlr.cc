@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu Dec 19 18:23:17 2002
+// written: Thu Dec 19 19:17:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,52 +55,42 @@ private:
 
 public:
   Impl() :
-    itsImmediateEvents(),
-    itsStartEvents(),
-    itsResponseEvents(),
-    itsAbortEvents(),
-    itsTimer(),
-    itsTrial(0)
+    immediateEvents(),
+    startEvents(),
+    responseEvents(),
+    abortEvents(),
+    timer(),
+    trial(0)
     {}
 
   typedef minivec<Ref<TrialEvent> > EventGroup;
 
-  EventGroup itsImmediateEvents;
-  EventGroup itsStartEvents;
-  EventGroup itsResponseEvents;
-  EventGroup itsAbortEvents;
+  EventGroup immediateEvents;
+  EventGroup startEvents;
+  EventGroup responseEvents;
+  EventGroup abortEvents;
 
-  mutable StopWatch itsTimer;
+  mutable StopWatch timer;
 
   EventGroup& eventsAt(TimePoint time_point)
   {
     switch (time_point)
       {
-      case IMMEDIATE:     return itsImmediateEvents;
-      case FROM_START:    return itsStartEvents;
-      case FROM_RESPONSE: return itsResponseEvents;
-      case FROM_ABORT:    return itsAbortEvents;
+      case IMMEDIATE:     return immediateEvents;
+      case FROM_START:    return startEvents;
+      case FROM_RESPONSE: return responseEvents;
+      case FROM_ABORT:    return abortEvents;
       }
 
-    throw Util::Error("unknown TimingHdlr::TimePoint enumerant");
-    return itsAbortEvents; // but we'll never get here
+    Assert(false);
+
+    return abortEvents; // but we'll never get here
   }
 
-  const EventGroup& eventsAt(TimePoint time_point) const
-  { return const_cast<Impl*>(this)->eventsAt(time_point); }
-
-private:
-  Trial* itsTrial;
+  Trial* trial;
 
   void scheduleAll(EventGroup& events);
   void cancelAll(EventGroup& events);
-
-public:
-  // Delegand functions
-  void thHaltExpt();
-  void thAbortTrial();
-  void thResponseSeen();
-  void thBeginTrial(Trial& trial);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,7 +117,7 @@ DOTRACE("TimingHdlr::make");
 }
 
 TimingHdlr::TimingHdlr() :
-  itsImpl(new Impl)
+  rep(new Impl)
 {
 DOTRACE("TimingHdlr::TimingHdlr");
 }
@@ -136,7 +126,7 @@ TimingHdlr::~TimingHdlr()
 {
 DOTRACE("TimingHdlr::~TimingHdlr");
 
-  delete itsImpl;
+  delete rep;
 }
 
 IO::VersionId TimingHdlr::serialVersionId() const
@@ -151,21 +141,21 @@ DOTRACE("TimingHdlr::readFrom");
 
   reader->ensureReadVersionId("TimingHdlr", 1, "Try grsh0.8a4");
 
-  itsImpl->itsImmediateEvents.clear();
+  rep->immediateEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
-            std::back_inserter(itsImpl->itsImmediateEvents));
+            std::back_inserter(rep->immediateEvents));
 
-  itsImpl->itsStartEvents.clear();
+  rep->startEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "startEvents",
-            std::back_inserter(itsImpl->itsStartEvents));
+            std::back_inserter(rep->startEvents));
 
-  itsImpl->itsResponseEvents.clear();
+  rep->responseEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "responseEvents",
-            std::back_inserter(itsImpl->itsResponseEvents));
+            std::back_inserter(rep->responseEvents));
 
-  itsImpl->itsAbortEvents.clear();
+  rep->abortEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "abortEvents",
-            std::back_inserter(itsImpl->itsAbortEvents));
+            std::back_inserter(rep->abortEvents));
 }
 
 void TimingHdlr::writeTo(IO::Writer* writer) const
@@ -176,16 +166,16 @@ DOTRACE("TimingHdlr::writeTo");
                                "Try grsh0.8a4");
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
-    itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
+    rep->immediateEvents.begin(), rep->immediateEvents.end());
 
   IO::WriteUtils::writeObjectSeq(writer, "startEvents",
-    itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
+    rep->startEvents.begin(), rep->startEvents.end());
 
   IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
-    itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
+    rep->responseEvents.begin(), rep->responseEvents.end());
 
   IO::WriteUtils::writeObjectSeq(writer, "abortEvents",
-    itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
+    rep->abortEvents.begin(), rep->abortEvents.end());
 }
 
 ///////////////
@@ -196,13 +186,13 @@ Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
                                      unsigned int index) const
 {
 DOTRACE("TimingHdlr::getEvent");
-  return itsImpl->eventsAt(time_point).at(index);
+  return rep->eventsAt(time_point).at(index);
 }
 
 double TimingHdlr::getElapsedMsec() const
 {
 DOTRACE("TimingHdlr::getElapsedMsec");
-  return itsImpl->itsTimer.elapsedMsec();
+  return rep->timer.elapsedMsec();
 }
 
 //////////////////
@@ -214,7 +204,7 @@ unsigned int TimingHdlr::addEvent(Ref<TrialEvent> event_item,
 {
 DOTRACE("TimingHdlr::addEvent");
 
-  Impl::EventGroup& events = itsImpl->eventsAt(time_point);
+  Impl::EventGroup& events = rep->eventsAt(time_point);
   events.push_back(event_item);
   return events.size() - 1;
 }
@@ -248,7 +238,7 @@ namespace
 void TimingHdlr::Impl::scheduleAll(EventGroup& events)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
-  Precondition(itsTrial != 0);
+  Precondition(trial != 0);
 
   // In order to ensure that events get scheduled in the proper order, even if
   // the whole event loop is getting bogged down, we do two things: (1) sort
@@ -262,7 +252,7 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
 
   for (size_t i = 0; i < events.size(); ++i)
     {
-      int scheduled_delay = events[i]->schedule(*itsTrial, minimum_delay);
+      int scheduled_delay = events[i]->schedule(*trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
     }
 }
@@ -282,66 +272,48 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::thBeginTrial(Trial& trial)
-{
-DOTRACE("TimingHdlr::Impl::thBeginTrial");
-
-  itsTimer.restart();
-
-  itsTrial = &trial;
-
-  cancelAll(itsResponseEvents);
-  cancelAll(itsAbortEvents);
-  scheduleAll(itsImmediateEvents);
-  scheduleAll(itsStartEvents);
-}
-
-void TimingHdlr::Impl::thResponseSeen()
-{
-DOTRACE("TimingHdlr::Impl::thResponseSeen");
-  if (itsResponseEvents.size() > 0)
-    {
-      cancelAll(itsStartEvents);
-      scheduleAll(itsResponseEvents);
-    }
-}
-
-void TimingHdlr::Impl::thAbortTrial()
-{
-DOTRACE("TimingHdlr::Impl::thAbortTrial");
-  if (itsAbortEvents.size() > 0)
-    {
-      cancelAll(itsStartEvents);
-      cancelAll(itsResponseEvents);
-      scheduleAll(itsAbortEvents);
-    }
-}
-
-void TimingHdlr::Impl::thHaltExpt()
-{
-DOTRACE("TimingHdlr::Impl::thHaltExpt");
-  cancelAll(itsStartEvents);
-  cancelAll(itsResponseEvents);
-  cancelAll(itsAbortEvents);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// TimingHdlr::Impl delegations
-//
-///////////////////////////////////////////////////////////////////////
-
 void TimingHdlr::thHaltExpt()
-  { itsImpl->thHaltExpt(); }
+{
+DOTRACE("TimingHdlr::thHaltExpt");
+  rep->cancelAll(rep->startEvents);
+  rep->cancelAll(rep->responseEvents);
+  rep->cancelAll(rep->abortEvents);
+}
 
 void TimingHdlr::thAbortTrial()
-  { itsImpl->thAbortTrial(); }
+{
+DOTRACE("TimingHdlr::thAbortTrial");
+  if (rep->abortEvents.size() > 0)
+    {
+      rep->cancelAll(rep->startEvents);
+      rep->cancelAll(rep->responseEvents);
+      rep->scheduleAll(rep->abortEvents);
+    }
+}
 
 void TimingHdlr::thResponseSeen()
-  { itsImpl->thResponseSeen(); }
+{
+DOTRACE("TimingHdlr::thResponseSeen");
+  if (rep->responseEvents.size() > 0)
+    {
+      rep->cancelAll(rep->startEvents);
+      rep->scheduleAll(rep->responseEvents);
+    }
+}
 
 void TimingHdlr::thBeginTrial(Trial& trial)
-  { itsImpl->thBeginTrial(trial); }
+{
+DOTRACE("TimingHdlr::thBeginTrial");
+
+  rep->timer.restart();
+
+  rep->trial = &trial;
+
+  rep->cancelAll(rep->responseEvents);
+  rep->cancelAll(rep->abortEvents);
+  rep->scheduleAll(rep->immediateEvents);
+  rep->scheduleAll(rep->startEvents);
+}
 
 static const char vcid_timinghdlr_cc[] = "$Header$";
 #endif // !TIMINGHDLR_CC_DEFINED
