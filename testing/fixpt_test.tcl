@@ -9,9 +9,9 @@
 
 package require Fixpt
 
-source ${::TEST_DIR}/grobj_test.tcl
+source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GrObj::testSubclass Fixpt FixPt
+GxShapeKit::testSubclass Fixpt FixPt
 
 ### Obj::new FixPt ###
 test "FixptTcl-Obj::new FixPt" "normal create" {

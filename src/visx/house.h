@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c House is a subclass of \c GrObj that is able to draw simple
+ * \c House is a subclass of \c GxShapeKit that is able to draw simple
  * line-drawn houses. The appearance of the houses is controlled by
  * many parameters, such as the number of stories in the building, the
  * number of windows per story, the height of the roof, the shape of
@@ -27,7 +27,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class House : public GrObj
+class House : public GxShapeKit
 {
 protected:
   /// Default constructor.

@@ -9,6 +9,6 @@
 
 package require Morphyface
 
-source ${::TEST_DIR}/grobj_test.tcl
+source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GrObj::testSubclass Morphyface MorphyFace
+GxShapeKit::testSubclass Morphyface MorphyFace

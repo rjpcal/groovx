@@ -9,6 +9,6 @@
 
 package require House
 
-source ${::TEST_DIR}/grobj_test.tcl
+source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GrObj::testSubclass House House
+GxShapeKit::testSubclass House House

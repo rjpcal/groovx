@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Nov 20 16:04:58 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,12 +83,12 @@ namespace GxTcl
     return result;
   }
 
-  // This is gone for now because the bitmap cache node is gone from GrObj,
-  // but we can resurrect a cleaner saveBitmap() function pretty easily,
-  // just by captuing the screen bounds into a BmapData object and then
-  // saving that.
+  // This is gone for now because the bitmap cache node is gone from
+  // GxShapeKit, but we can resurrect a cleaner saveBitmap() function
+  // pretty easily, just by captuing the screen bounds into a BmapData
+  // object and then saving that.
 #if 0
-  void saveBitmap(Util::Ref<GrObj> obj, const char* filename)
+  void saveBitmap(Util::Ref<GxShapeKit> obj, const char* filename)
   {
     obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
@@ -212,33 +212,33 @@ DOTRACE("Gx_Init");
 
   status = pkg13->combineStatus(status);
 
-  Tcl::Pkg* pkg14 = new Tcl::Pkg(interp, "GrObj", "$Revision$");
+  Tcl::Pkg* pkg14 = new Tcl::Pkg(interp, "GxShapeKit", "$Revision$");
   pkg14->inherit("GxNode");
 
-  Tcl::defTracing(pkg14, GrObj::tracer);
+  Tcl::defTracing(pkg14, GxShapeKit::tracer);
 
-  Tcl::defFieldContainer<GrObj>(pkg14);
+  Tcl::defFieldContainer<GxShapeKit>(pkg14);
 
 #if 0
   pkg14->defVec( "saveBitmap", "item_id(s) filename(s)", &GxTcl::saveBitmap );
 #endif
 
-  pkg14->defAttrib("category", &GrObj::category, &GrObj::setCategory);
+  pkg14->defAttrib("category", &GxShapeKit::category, &GxShapeKit::setCategory);
 
-  pkg14->linkVarCopy("GrObj::DIRECT", GxCache::DIRECT);
-  pkg14->linkVarCopy("GrObj::GLCOMPILE", GxCache::GLCOMPILE);
+  pkg14->linkVarCopy("GxShapeKit::DIRECT", GxCache::DIRECT);
+  pkg14->linkVarCopy("GxShapeKit::GLCOMPILE", GxCache::GLCOMPILE);
 
-  pkg14->linkVarCopy("GrObj::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
-  pkg14->linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);
-  pkg14->linkVarCopy("GrObj::FREE_SCALING", GxScaler::FREE_SCALING);
+  pkg14->linkVarCopy("GxShapeKit::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
+  pkg14->linkVarCopy("GxShapeKit::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);
+  pkg14->linkVarCopy("GxShapeKit::FREE_SCALING", GxScaler::FREE_SCALING);
 
-  pkg14->linkVarCopy("GrObj::NATIVE_ALIGNMENT", GxAligner::NATIVE_ALIGNMENT);
-  pkg14->linkVarCopy("GrObj::CENTER_ON_CENTER", GxAligner::CENTER_ON_CENTER);
-  pkg14->linkVarCopy("GrObj::NW_ON_CENTER", GxAligner::NW_ON_CENTER);
-  pkg14->linkVarCopy("GrObj::NE_ON_CENTER", GxAligner::NE_ON_CENTER);
-  pkg14->linkVarCopy("GrObj::SW_ON_CENTER", GxAligner::SW_ON_CENTER);
-  pkg14->linkVarCopy("GrObj::SE_ON_CENTER", GxAligner::SE_ON_CENTER);
-  pkg14->linkVarCopy("GrObj::ARBITRARY_ON_CENTER", GxAligner::ARBITRARY_ON_CENTER);
+  pkg14->linkVarCopy("GxShapeKit::NATIVE_ALIGNMENT", GxAligner::NATIVE_ALIGNMENT);
+  pkg14->linkVarCopy("GxShapeKit::CENTER_ON_CENTER", GxAligner::CENTER_ON_CENTER);
+  pkg14->linkVarCopy("GxShapeKit::NW_ON_CENTER", GxAligner::NW_ON_CENTER);
+  pkg14->linkVarCopy("GxShapeKit::NE_ON_CENTER", GxAligner::NE_ON_CENTER);
+  pkg14->linkVarCopy("GxShapeKit::SW_ON_CENTER", GxAligner::SW_ON_CENTER);
+  pkg14->linkVarCopy("GxShapeKit::SE_ON_CENTER", GxAligner::SE_ON_CENTER);
+  pkg14->linkVarCopy("GxShapeKit::ARBITRARY_ON_CENTER", GxAligner::ARBITRARY_ON_CENTER);
 
   status = pkg14->combineStatus(status);
 

@@ -12,13 +12,13 @@ package require Toglet
 package require Tclgl
 package require Tlist
 
-source ${::TEST_DIR}/grobj_test.tcl
+source ${::TEST_DIR}/gxshapekit_test.tcl
 
 if { ![Togl::inited] } { Togl::init; update }
 
 set ::GTEXT [Obj::new Gtext]
 Gtext::text $::GTEXT "Gtext"
-GrObj::testSubclass Gtext Gtext $::GTEXT
+GxShapeKit::testSubclass Gtext Gtext $::GTEXT
 
 
 set GTEXT -1

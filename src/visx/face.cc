@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Nov 19 17:51:01 2002
+// written: Wed Nov 20 16:11:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ const FieldMap& Face::classFields()
           Field::TRANSIENT | Field::BOOLEAN)
   };
 
-  static FieldMap FACE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
+  static FieldMap FACE_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
 
   return FACE_FIELDS;
 }
@@ -118,7 +118,8 @@ DOTRACE("Face::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Face::writeTo(IO::Writer* writer) const
@@ -130,7 +131,8 @@ DOTRACE("Face::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,14 +19,14 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Gabor is a subclass of \c GrObj for rendering psychophysical
+ * \c Gabor is a subclass of \c GxShapeKit for rendering psychophysical
  * Gabor patches. There are several rendering modes, for rendering in
  * grayscale or in black-and-white.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gabor : public GrObj
+class Gabor : public GxShapeKit
 {
 protected:
   /// Default constructor.

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov 19 17:52:38 2002
+// written: Wed Nov 20 16:11:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ const FieldMap& MaskHatch::classFields()
     Field("lineWidth", &MaskHatch::itsLineWidth, 1, 0, 25, 1, Field::CHECKED)
   };
 
-  static FieldMap MASK_FIELDS(MASK_FINFOS, &GrObj::classFields());
+  static FieldMap MASK_FIELDS(MASK_FINFOS, &GxShapeKit::classFields());
 
   return MASK_FIELDS;
 }
@@ -53,7 +53,7 @@ DOTRACE("MaskHatch::make");
 }
 
 MaskHatch::MaskHatch () :
-  GrObj(),
+  GxShapeKit(),
   itsNumLines(10),
   itsLineWidth(1)
 {
@@ -86,7 +86,8 @@ DOTRACE("MaskHatch::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void MaskHatch::writeTo(IO::Writer* writer) const
@@ -98,7 +99,8 @@ DOTRACE("MaskHatch::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void MaskHatch::update()

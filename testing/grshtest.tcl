@@ -32,9 +32,9 @@ set files {
     { fixpt_test.tcl 1 }
     { gabor_test.tcl 1 }
     { gl_test.tcl 1 }
-    { grobj_test.tcl 1 }
     { gtext_test.tcl 1 }
     { gxsep_test.tcl 1 }
+    { gxshapekit_test.tcl 1 }
     { gxtransform_test.tcl 1 }
     { house_test.tcl 1 }
     { jitter_test.tcl 1 }

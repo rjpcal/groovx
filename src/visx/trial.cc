@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ DOTRACE("Trial::Impl::description");
            tr.isValid();
            tr.next())
         {
-          const GrObj* g = dynamic_cast<const GrObj*>((*tr).get());
+          const GxShapeKit* g = dynamic_cast<const GxShapeKit*>((*tr).get());
           if (g)
             {
               objids.append(" ", g->id());

@@ -67,7 +67,7 @@ test "TlistTcl-Tlist::dealSingles" "too few args" {
 test "TlistTcl-Tlist::dealSingles" "too many args" {
     Tlist::dealSingles j u n
 } {wrong \# args: should be "Tlist::dealSingles objid\(s\) posid"}
-test "TlistTcl-Tlist::dealSingles" "normal use with several GrObj's" {
+test "TlistTcl-Tlist::dealSingles" "normal use with several GxShapeKit's" {
 	 set f1 [Obj::new Face]
 	 set f2 [Obj::new Face]
 	 set f3 [Obj::new Face]
@@ -88,7 +88,7 @@ test "TlistTcl-Tlist::dealPairs" "too few args" {
 test "TlistTcl-Tlist::dealPairs" "too many args" {
     Tlist::dealPairs j u n k y
 } {wrong \# args: should be "Tlist::dealPairs objids1 objids2 posid1 posid2"}
-test "TlistTcl-Tlist::dealPairs" "normal use on two GrObj's" {
+test "TlistTcl-Tlist::dealPairs" "normal use on two GxShapeKit's" {
 	 set o1 [Obj::new Face]
 	 set o2 [Obj::new Face]
 	 set p1 [Obj::new GxTransform]
@@ -110,7 +110,7 @@ test "TlistTcl-Tlist::dealTriads" "too few args" {
 test "TlistTcl-Tlist::dealTriads" "too many args" {
     Tlist::dealTriads a b c d e
 } {wrong \# args: should be "Tlist::dealTriads objids posid1 posid2 posid3"}
-test "TlistTcl-Tlist::dealTriads" "normal use on three GrObj's" {
+test "TlistTcl-Tlist::dealTriads" "normal use on three GxShapeKit's" {
 	 set objs "[Obj::new Face] [Obj::new Face] [Obj::new Face]"
 	 set p1 [Obj::new GxTransform]
 	 set p2 [Obj::new GxTransform]
@@ -118,7 +118,7 @@ test "TlistTcl-Tlist::dealTriads" "normal use on three GrObj's" {
 	 set trials [Tlist::dealTriads $objs $p1 $p2 $p3]
 	 llength $trials
 } {^18$}
-test "TlistTcl-Tlist::dealTriads" "normal use on two GrObj's" {
+test "TlistTcl-Tlist::dealTriads" "normal use on two GxShapeKit's" {
 	 set objs "[Obj::new Face] [Obj::new Face]"
 	 set p1 [Obj::new GxTransform]
 	 set p2 [Obj::new GxTransform]

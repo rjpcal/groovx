@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,16 +30,16 @@ class BmapRenderer;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Bitmap is an subclass of \c GrObj that manages bitmap data, but
- * does not implement a method for rendering the bitmap data to the
- * screen, since there is typically more than one way to do this. A
- * rendering method must be provided by passing a suitable \c
- * BmapRenderer to a \c Bitmap constructor.
+ * \c Bitmap is a subclass of \c GxShapeKit that manages bitmap data, but
+ * does not implement a method for rendering the bitmap data to the screen,
+ * since there is typically more than one way to do this. A rendering
+ * method must be provided by passing a suitable \c BmapRenderer to a \c
+ * Bitmap constructor.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Bitmap : public GrObj
+class Bitmap : public GxShapeKit
 {
 public:
 
@@ -131,7 +131,7 @@ public:
   void setPurgeable(bool val);
 
 protected:
-  /// Implements the \c GrObj rendering operation.
+  /// Implements the \c GxShapeKit rendering operation.
   /** The rendering is delegated to the \c BmapRenderer passed to the
       constructor. Therefore, subclasses of \c Bitmap should not override
       \c grRender(), but should instead provide a specialized \c

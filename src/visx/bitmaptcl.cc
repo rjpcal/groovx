@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu Nov 14 19:01:22 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ DOTRACE("Bitmap_Init");
 
   // Bitmap
   Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Bitmap", "$Revision$");
-  pkg1->inherit("GrObj");
+  pkg1->inherit("GxShapeKit");
   Tcl::defGenericObjCmds<Bitmap>(pkg1);
 
   pkg1->defGetter( "filename", &Bitmap::filename );

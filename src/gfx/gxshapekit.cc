@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.cc)
-// written: Wed Nov 20 15:55:14 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,23 +30,23 @@
 
 #include "util/volatileobject.h"
 
-#define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
+#define DYNAMIC_TRACE_EXPR GxShapeKit::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
 
 //  ###################################################################
 //  ===================================================================
 
-/// GxBin wrapper for the GrObj core.
+/// GxBin wrapper for the GxShapeKit core.
 
-class GrObjNode : public GxBin
+class GxShapeKitNode : public GxBin
 {
-  borrowed_ptr<GrObj> itsObj;
+  borrowed_ptr<GxShapeKit> itsObj;
 
 public:
-  GrObjNode(GrObj* obj) : GxBin(), itsObj(obj) {}
+  GxShapeKitNode(GxShapeKit* obj) : GxBin(), itsObj(obj) {}
 
-  virtual ~GrObjNode() {}
+  virtual ~GxShapeKitNode() {}
 
   virtual void readFrom(IO::Reader* /*reader*/) {};
   virtual void writeTo(IO::Writer* /*writer*/) const {};
@@ -64,13 +64,13 @@ public:
 //  ###################################################################
 //  ===================================================================
 
-/// Implementation class for GrObj.
+/// Implementation class for GxShapeKit.
 
-class GrObjImpl : public Util::VolatileObject
+class GxShapeKitImpl : public Util::VolatileObject
 {
 private:
-  GrObjImpl(const GrObjImpl&);
-  GrObjImpl& operator=(const GrObjImpl&);
+  GxShapeKitImpl(const GxShapeKitImpl&);
+  GxShapeKitImpl& operator=(const GxShapeKitImpl&);
 
 public:
 
@@ -80,7 +80,7 @@ public:
 
   int itsCategory;
 
-  Util::Ref<GrObjNode> itsNativeNode;
+  Util::Ref<GxShapeKitNode> itsNativeNode;
   Util::Ref<GxBounds> itsBB;
   Util::Ref<GxCache> itsCache;
   Util::Ref<GxAligner> itsAligner;
@@ -92,11 +92,11 @@ public:
   // Methods
   //
 
-  static GrObjImpl* make(GrObj* obj) { return new GrObjImpl(obj); }
+  static GxShapeKitImpl* make(GxShapeKit* obj) { return new GxShapeKitImpl(obj); }
 
-  GrObjImpl(GrObj* obj) :
+  GxShapeKitImpl(GxShapeKit* obj) :
     itsCategory(-1),
-    itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
+    itsNativeNode(new GxShapeKitNode(obj), Util::PRIVATE),
     itsBB(new GxBounds(itsNativeNode), Util::PRIVATE),
     itsCache(new GxCache(itsBB), Util::PRIVATE),
     itsAligner(new GxAligner(itsCache), Util::PRIVATE),
@@ -105,7 +105,7 @@ public:
   {
     // We connect to sigNodeChanged in order to update any caches
     // according to state changes.
-    obj->sigNodeChanged.connect(this, &GrObjImpl::invalidateCaches);
+    obj->sigNodeChanged.connect(this, &GxShapeKitImpl::invalidateCaches);
   }
 
   void invalidateCaches()
@@ -119,11 +119,11 @@ namespace
   const IO::VersionId GROBJ_SERIAL_VERSION_ID = 3;
 }
 
-Util::Tracer GrObj::tracer;
+Util::Tracer GxShapeKit::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObj member definitions
+// GxShapeKit member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -132,80 +132,80 @@ Util::Tracer GrObj::tracer;
 // creators //
 //////////////
 
-// GrObj default constructor
-GrObj::GrObj() :
+// GxShapeKit default constructor
+GxShapeKit::GxShapeKit() :
   FieldContainer(&sigNodeChanged),
-  itsImpl(GrObjImpl::make(this))
+  itsImpl(GxShapeKitImpl::make(this))
 {
-DOTRACE("GrObj::GrObj");
+DOTRACE("GxShapeKit::GxShapeKit");
 
-  setFieldMap(GrObj::classFields());
+  setFieldMap(GxShapeKit::classFields());
 
   // This is necessary because any representations that have been
-  // cached during the GrObj constructor will become invalid upon
+  // cached during the GxShapeKit constructor will become invalid upon
   // return to the derived class constructor.
   sigNodeChanged.emit();
 }
 
-// GrObj destructor
-GrObj::~GrObj()
+// GxShapeKit destructor
+GxShapeKit::~GxShapeKit()
 {
-DOTRACE("GrObj::~GrObj");
+DOTRACE("GxShapeKit::~GxShapeKit");
   itsImpl->destroy();
 }
 
-IO::VersionId GrObj::serialVersionId() const
+IO::VersionId GxShapeKit::serialVersionId() const
 {
-DOTRACE("GrObj::serialVersionId");
+DOTRACE("GxShapeKit::serialVersionId");
   return GROBJ_SERIAL_VERSION_ID;
 }
 
-void GrObj::readFrom(IO::Reader* reader)
+void GxShapeKit::readFrom(IO::Reader* reader)
 {
-DOTRACE("GrObj::readFrom");
+DOTRACE("GxShapeKit::readFrom");
 
-  reader->ensureReadVersionId("GrObj", 3, "Try grsh0.8a7");
+  reader->ensureReadVersionId("GxShapeKit", 3, "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 }
 
-void GrObj::writeTo(IO::Writer* writer) const
+void GxShapeKit::writeTo(IO::Writer* writer) const
 {
-DOTRACE("GrObj::writeTo");
+DOTRACE("GxShapeKit::writeTo");
 
-  writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 3,
+  writer->ensureWriteVersionId("GxShapeKit", GROBJ_SERIAL_VERSION_ID, 3,
                                "Try grsh0.8a7");
 
   writeFieldsTo(writer, classFields());
 }
 
-const FieldMap& GrObj::classFields()
+const FieldMap& GxShapeKit::classFields()
 {
 #define GETSET(type, attr) make_mypair(&type::get##attr, &type::set##attr)
 
   static const Field FIELD_ARRAY[] =
   {
-    Field("category", make_mypair(&GrObj::category, &GrObj::setCategory),
+    Field("category", make_mypair(&GxShapeKit::category, &GxShapeKit::setCategory),
           0, 0, 20, 1, Field::NEW_GROUP),
-    Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1),
-    Field("bbVisibility", GETSET(GrObj, BBVisibility),
+    Field("renderMode", GETSET(GxShapeKit, RenderMode), 1, 1, 4, 1),
+    Field("bbVisibility", GETSET(GxShapeKit, BBVisibility),
           false, false, true, true, Field::BOOLEAN),
-    Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
-    Field("widthFactor", GETSET(GrObj, WidthFactor), 1.0, 0.1, 10.0, 0.1,
+    Field("scalingMode", GETSET(GxShapeKit, ScalingMode), 1, 1, 3, 1),
+    Field("widthFactor", GETSET(GxShapeKit, WidthFactor), 1.0, 0.1, 10.0, 0.1,
           Field::PRIVATE),
-    Field("heightFactor", GETSET(GrObj, HeightFactor), 1.0, 0.1, 10.0, 0.1,
+    Field("heightFactor", GETSET(GxShapeKit, HeightFactor), 1.0, 0.1, 10.0, 0.1,
           Field::PRIVATE),
-    Field("aspectRatio", GETSET(GrObj, AspectRatio), 1.0, 0.1, 10.0, 0.1,
+    Field("aspectRatio", GETSET(GxShapeKit, AspectRatio), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("width", GETSET(GrObj, Width), 1.0, 0.1, 10.0, 0.1,
+    Field("width", GETSET(GxShapeKit, Width), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("height", GETSET(GrObj, Height), 1.0, 0.1, 10.0, 0.1,
+    Field("height", GETSET(GxShapeKit, Height), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("maxDimension", GETSET(GrObj, MaxDimension), 1.0, 0.1, 10.0, 0.1,
+    Field("maxDimension", GETSET(GxShapeKit, MaxDimension), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("alignmentMode", GETSET(GrObj, AlignmentMode), 1, 1, 7, 1),
-    Field("centerX", GETSET(GrObj, CenterX), 0.0, -10.0, 10.0, 0.1),
-    Field("centerY", GETSET(GrObj, CenterY), 0.0, -10.0, 10.0, 0.1)
+    Field("alignmentMode", GETSET(GxShapeKit, AlignmentMode), 1, 1, 7, 1),
+    Field("centerX", GETSET(GxShapeKit, CenterX), 0.0, -10.0, 10.0, 0.1),
+    Field("centerY", GETSET(GxShapeKit, CenterY), 0.0, -10.0, 10.0, 0.1)
   };
 #undef GETSET
 
@@ -218,80 +218,80 @@ const FieldMap& GrObj::classFields()
 // accessors //
 ///////////////
 
-bool GrObj::getBBVisibility() const
+bool GxShapeKit::getBBVisibility() const
 {
-DOTRACE("GrObj::getBBVisibility");
+DOTRACE("GxShapeKit::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
 
-void GrObj::getBoundingCube(Gfx::Bbox& bbox) const
+void GxShapeKit::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GrObj::getBoundingCube");
+DOTRACE("GxShapeKit::getBoundingCube");
 
   itsImpl->itsTopNode->getBoundingCube(bbox);
 }
 
-int GrObj::getScalingMode() const
+int GxShapeKit::getScalingMode() const
 {
-DOTRACE("GrObj::getScalingMode");
+DOTRACE("GxShapeKit::getScalingMode");
   return itsImpl->itsScaler->getMode();
 }
 
-double GrObj::getWidth() const
+double GxShapeKit::getWidth() const
 {
-DOTRACE("GrObj::getWidth");
+DOTRACE("GxShapeKit::getWidth");
   return itsImpl->itsScaler->scaledWidth();
 }
 
-double GrObj::getHeight() const
+double GxShapeKit::getHeight() const
 {
-DOTRACE("GrObj::getHeight");
+DOTRACE("GxShapeKit::getHeight");
   return itsImpl->itsScaler->scaledHeight();
 }
 
-double GrObj::getAspectRatio() const
+double GxShapeKit::getAspectRatio() const
 {
-DOTRACE("GrObj::getAspectRatio");
+DOTRACE("GxShapeKit::getAspectRatio");
   return itsImpl->itsScaler->aspectRatio();
 }
 
-double GrObj::getMaxDimension() const
+double GxShapeKit::getMaxDimension() const
 {
-DOTRACE("GrObj::getMaxDimension");
+DOTRACE("GxShapeKit::getMaxDimension");
   return itsImpl->itsScaler->scaledMaxDim();
 }
 
-int GrObj::getAlignmentMode() const
+int GxShapeKit::getAlignmentMode() const
 {
-DOTRACE("GrObj::getAlignmentMode");
+DOTRACE("GxShapeKit::getAlignmentMode");
   return itsImpl->itsAligner->getMode();
 }
 
-double GrObj::getCenterX() const
+double GxShapeKit::getCenterX() const
 {
-DOTRACE("GrObj::getCenterX");
+DOTRACE("GxShapeKit::getCenterX");
   return itsImpl->itsAligner->itsCenter.x();
 }
 
-double GrObj::getCenterY() const
+double GxShapeKit::getCenterY() const
 {
-DOTRACE("GrObj::getCenterY");
+DOTRACE("GxShapeKit::getCenterY");
   return itsImpl->itsAligner->itsCenter.y();
 }
 
-int GrObj::getPixelBorder() const
+int GxShapeKit::getPixelBorder() const
 {
-DOTRACE("GrObj::getPixelBorder");
+DOTRACE("GxShapeKit::getPixelBorder");
   return itsImpl->itsBB->pixelBorder();
 }
 
-int GrObj::category() const
+int GxShapeKit::category() const
 {
-DOTRACE("GrObj::category");
+DOTRACE("GxShapeKit::category");
   return itsImpl->itsCategory;
 }
 
-int GrObj::getRenderMode() const
+int GxShapeKit::getRenderMode() const
 {
   return itsImpl->itsCache->getMode();
 }
@@ -300,91 +300,91 @@ int GrObj::getRenderMode() const
 // manipulators //
 //////////////////
 
-void GrObj::setBBVisibility(bool visibility)
+void GxShapeKit::setBBVisibility(bool visibility)
 {
   itsImpl->itsBB->setVisible(visibility);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setScalingMode(int val)
+void GxShapeKit::setScalingMode(int val)
 {
-DOTRACE("GrObj::setScalingMode");
+DOTRACE("GxShapeKit::setScalingMode");
 
   itsImpl->itsScaler->setMode(val);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setWidth(double val)
+void GxShapeKit::setWidth(double val)
 {
-DOTRACE("GrObj::setWidth");
+DOTRACE("GxShapeKit::setWidth");
 
   itsImpl->itsScaler->setWidth(val);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setHeight(double val)
+void GxShapeKit::setHeight(double val)
 {
-DOTRACE("GrObj::setHeight");
+DOTRACE("GxShapeKit::setHeight");
 
   itsImpl->itsScaler->setHeight(val);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setAspectRatio(double val)
+void GxShapeKit::setAspectRatio(double val)
 {
-DOTRACE("GrObj::setAspectRatio");
+DOTRACE("GxShapeKit::setAspectRatio");
 
   itsImpl->itsScaler->setAspectRatio(val);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setMaxDimension(double val)
+void GxShapeKit::setMaxDimension(double val)
 {
-DOTRACE("GrObj::setMaxDimension");
+DOTRACE("GxShapeKit::setMaxDimension");
 
   itsImpl->itsScaler->setMaxDim(val);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setAlignmentMode(int val)
+void GxShapeKit::setAlignmentMode(int val)
 {
-DOTRACE("GrObj::setAlignmentMode");
+DOTRACE("GxShapeKit::setAlignmentMode");
 
   itsImpl->itsAligner->setMode(val);
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setCenterX(double val)
+void GxShapeKit::setCenterX(double val)
 {
-DOTRACE("GrObj::setCenterX");
+DOTRACE("GxShapeKit::setCenterX");
 
   itsImpl->itsAligner->itsCenter.x() = val;
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setCenterY(double val)
+void GxShapeKit::setCenterY(double val)
 {
-DOTRACE("GrObj::setCenterY");
+DOTRACE("GxShapeKit::setCenterY");
 
   itsImpl->itsAligner->itsCenter.y() = val;
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setPixelBorder(int pixels)
+void GxShapeKit::setPixelBorder(int pixels)
 {
-DOTRACE("GrObj::setPixelBorder");
+DOTRACE("GxShapeKit::setPixelBorder");
   itsImpl->itsBB->setPixelBorder(pixels);
 }
 
-void GrObj::setCategory(int val)
+void GxShapeKit::setCategory(int val)
 {
-DOTRACE("GrObj::setCategory");
+DOTRACE("GxShapeKit::setCategory");
   itsImpl->itsCategory = val;
 }
 
-void GrObj::setRenderMode(int mode)
+void GxShapeKit::setRenderMode(int mode)
 {
-DOTRACE("GrObj::setRenderMode");
+DOTRACE("GxShapeKit::setRenderMode");
 
   itsImpl->itsCache->setMode(mode);
   this->sigNodeChanged.emit();
@@ -395,33 +395,33 @@ DOTRACE("GrObj::setRenderMode");
 // actions //
 /////////////
 
-void GrObj::draw(Gfx::Canvas& canvas) const
+void GxShapeKit::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObj::draw");
+DOTRACE("GxShapeKit::draw");
   itsImpl->itsTopNode->draw(canvas);
 }
 
-double GrObj::getWidthFactor() const
+double GxShapeKit::getWidthFactor() const
 {
-DOTRACE("GrObj::getWidthFactor");
+DOTRACE("GxShapeKit::getWidthFactor");
   return itsImpl->itsScaler->widthFactor();
 }
 
-void GrObj::setWidthFactor(double val)
+void GxShapeKit::setWidthFactor(double val)
 {
-DOTRACE("GrObj::setWidthFactor");
+DOTRACE("GxShapeKit::setWidthFactor");
   itsImpl->itsScaler->setWidthFactor(val);
 }
 
-double GrObj::getHeightFactor() const
+double GxShapeKit::getHeightFactor() const
 {
-DOTRACE("GrObj::getHeightFactor");
+DOTRACE("GxShapeKit::getHeightFactor");
   return itsImpl->itsScaler->heightFactor();
 }
 
-void GrObj::setHeightFactor(double val)
+void GxShapeKit::setHeightFactor(double val)
 {
-DOTRACE("GrObj::setHeightFactor");
+DOTRACE("GxShapeKit::setHeightFactor");
   itsImpl->itsScaler->setHeightFactor(val);
 }
 

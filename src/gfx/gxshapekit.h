@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// written: Wed Nov 20 15:54:27 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,32 +19,33 @@
 
 #include "util/tracer.h"
 
-class GrObjImpl;
+class GxShapeKitImpl;
 
 class fstring;
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c GrObj is the abstract base class for graphic objects. GrObj*'s may be
- * stored and manipulated in ObjList's. Subclasses derived from GrObj must
- * specify the details of how their objects will be drawn, by overriding
- * the virtual function grRender(), and/or by choosing an appropriate
- * render mode with setRenderMode(). Public clients call draw() to display
- * the object. The caches that mediate the various drawing modes are kept
- * up to date by using the Signal interface. Thus, whenever a manipulator
- * changes a parameter in a derived class, it should also call
- * GrObj::sigNodeChanged.emit() to indicate that an update is needed.
+ * \c GxShapeKit is the abstract base class for graphic
+ * objects. GxShapeKit*'s may be stored and manipulated in
+ * ObjList's. Subclasses derived from GxShapeKit must specify the details
+ * of how their objects will be drawn, by overriding the virtual function
+ * grRender(), and/or by choosing an appropriate render mode with
+ * setRenderMode(). Public clients call draw() to display the object. The
+ * caches that mediate the various drawing modes are kept up to date by
+ * using the Signal interface. Thus, whenever a manipulator changes a
+ * parameter in a derived class, it should also call
+ * GxShapeKit::sigNodeChanged.emit() to indicate that an update is needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GrObj : public GxNode,
-              public FieldContainer
+class GxShapeKit : public GxNode,
+                   public FieldContainer
 {
 public:
 
-  /// This tracer dynamically controls the tracing of GrObj member functions.
+  /// This tracer dynamically controls the tracing of GxShapeKit member functions.
   static Util::Tracer tracer;
 
 
@@ -53,9 +54,9 @@ public:
   //////////////
 
   /// Default constructor
-  GrObj();
+  GxShapeKit();
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~GrObj();
+  virtual ~GxShapeKit();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -76,7 +77,8 @@ public:
   /** Overridden from GxNode. Extends the cube by the rect returned by
       grGetBoundingBox(), with additional transformations to reflect the
       scaling mode, alignment mode, and pixel border values. Subclasses of
-      GrObj should override grGetBoundingBox(), not getBoundingCube(). */
+      GxShapeKit should override grGetBoundingBox(), not
+      getBoundingCube(). */
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /** Subclasses must override this function to return the bounding
@@ -208,11 +210,11 @@ private:
   double getHeightFactor() const;
   void setHeightFactor(double val);
 
-  GrObj(const GrObj&);
-  GrObj& operator=(const GrObj&);
+  GxShapeKit(const GxShapeKit&);
+  GxShapeKit& operator=(const GxShapeKit&);
 
-  friend class GrObjImpl;
-  GrObjImpl* const itsImpl;    // opaque pointer to implementation
+  friend class GxShapeKitImpl;
+  GxShapeKitImpl* const itsImpl;    // opaque pointer to implementation
 };
 
 static const char vcid_gxshapekit_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c MaskHatch is a subclass of \c GrObj for rendering a visual mask
+ * \c MaskHatch is a subclass of \c GxShapeKit for rendering a visual mask
  * consisting of hatched lines. The pattern will contain vertical,
  * horizontal, and diagonal lines at 45-degrees left, and 45-degrees
  * right.
@@ -26,7 +26,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MaskHatch : public GrObj
+class MaskHatch : public GxShapeKit
 {
 protected:
   /// Default constructor.

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ namespace
         ++x_step;
         if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-        Ref<GrObj> obj(objids[i]);
+        Ref<GxShapeKit> obj(objids[i]);
 
         obj->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
         obj->setBBVisibility(true);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 12:00:54 2002
+// written: Wed Nov 20 16:07:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
   dbgEval(3, status);
 
   if (status == GL_FALSE)
-    throw Util::Error("GrObj::screenFromWorld(): gluProject error");
+    throw Util::Error("GLCanvas::screenFromWorld(): gluProject error");
 
   return Gfx::Vec2<int>(int(temp_screen_x), int(temp_screen_y));
 }
@@ -116,7 +116,7 @@ DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
   dbgEval(3, status);
 
   if (status == GL_FALSE)
-    throw Util::Error("GrObj::worldFromScreen(): gluUnProject error");
+    throw Util::Error("GLCanvas::worldFromScreen(): gluUnProject error");
 
   return world_pos;
 }

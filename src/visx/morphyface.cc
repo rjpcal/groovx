@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Nov 20 12:19:11 2002
+// written: Wed Nov 20 16:11:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ const FieldMap& MorphyFace::classFields()
     Field("mouthCurvature", &MF::itsMouthCurvature, 0.6, -2.0, 2.0, 0.1)
   };
 
-  static FieldMap MFACE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
+  static FieldMap MFACE_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
 
   return MFACE_FIELDS;
 }
@@ -178,7 +178,7 @@ DOTRACE("MorphyFace::make");
 }
 
 MorphyFace::MorphyFace() :
-  GrObj(),
+  GxShapeKit(),
 
   itsMfaceCategory(0),
 
@@ -245,7 +245,8 @@ DOTRACE("MorphyFace::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void MorphyFace::writeTo(IO::Writer* writer) const
@@ -257,7 +258,8 @@ DOTRACE("MorphyFace::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 

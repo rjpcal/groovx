@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,14 +18,14 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Face is a \c GrObj subclass designed for rendering Brunswik
- * faces. The faces are parameterized by nose length, mouth height,
- * eye height, and eye separation.
+ * \c Face is a \c GxShapeKit subclass designed for rendering Brunswik
+ * faces. The faces are parameterized by nose length, mouth height, eye
+ * height, and eye separation.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Face : public GrObj
+class Face : public GxShapeKit
 {
 protected:
   /// Construct with initial values for the Brunswik face parameters.
@@ -78,7 +78,7 @@ public:
 protected:
   virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
 
-  /** Reimplements the \c GrObj pure virtual function. It renders a
+  /** Reimplements the \c GxShapeKit pure virtual function. It renders a
       face with the appropriate parameters. */
   virtual void grRender(Gfx::Canvas& canvas) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov 19 17:50:39 2002
+// written: Wed Nov 20 16:11:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
-  GrObj(),
+  GxShapeKit(),
   itsImpl(new BitmapImpl(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
@@ -213,7 +213,8 @@ DOTRACE("Bitmap::readFrom");
       queueImage(itsImpl->itsFilename.c_str());
     }
 
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Bitmap::writeTo(IO::Writer* writer) const
@@ -231,7 +232,8 @@ DOTRACE("Bitmap::writeTo");
   writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
   writer->writeValue("purgeable", itsImpl->itsPurgeable);
 
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 /////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ public:
   virtual void writeObject(const char*,
                            Util::SoftRef<const IO::IoObject> obj)
   {
-    if (obj.isValid() && dynamic_cast<const GrObj*>(obj.get()) != 0)
+    if (obj.isValid() && dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
       {
         itsOs << obj->id() << ' ';
       }

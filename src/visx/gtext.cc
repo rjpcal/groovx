@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Nov 19 13:59:50 2002
+// written: Wed Nov 20 16:11:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ DOTRACE("Gtext::make");
 #include "gfx/gxrasterfont.h"
 
 Gtext::Gtext(const char* text) :
-  GrObj(),
+  GxShapeKit(),
   itsFont(GxFont::make("helvetica 34")),
 //   itsFont(GxFont::make("vector")),
 //   itsFont(GxFont::make("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
@@ -86,7 +86,8 @@ DOTRACE("Gtext::readFrom");
   reader->readValue("text", itsText);
   reader->readValue("strokeWidth", itsStrokeWidth);
 
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void Gtext::writeTo(IO::Writer* writer) const
@@ -99,7 +100,8 @@ DOTRACE("Gtext::writeTo");
   writer->writeValue("text", itsText);
   writer->writeValue("strokeWidth", itsStrokeWidth);
 
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 const FieldMap& Gtext::classFields()
@@ -117,7 +119,7 @@ const FieldMap& Gtext::classFields()
           Field::STRING | Field::TRANSIENT)
   };
 
-  static FieldMap GTEXT_FIELDS(FIELD_ARRAY, &GrObj::classFields());
+  static FieldMap GTEXT_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
 
   return GTEXT_FIELDS;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Nov 20 16:02:31 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,13 +18,13 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c MorphyFace is a subclass of \c GrObj for drawing
+ * \c MorphyFace is a subclass of \c GxShapeKit for drawing
  * highly-parameterized cartoon-style faces.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MorphyFace : public GrObj
+class MorphyFace : public GxShapeKit
 {
   //////////////
   // creators //

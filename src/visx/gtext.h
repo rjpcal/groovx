@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Nov 20 16:02:39 2002
+// written: Wed Nov 20 16:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,14 +23,14 @@ class GxFont;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Gtext is a \c GrObj subclass that renders text as a series of
+ * \c Gtext is a \c GxShapeKit subclass that renders text as a series of
  * vector graphics in OpenGL. There is only one font currently
  * available.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gtext : public GrObj
+class Gtext : public GxShapeKit
 {
 protected:
   /// Construct with an initial text string \a text.

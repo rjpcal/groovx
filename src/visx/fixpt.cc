@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Nov 19 17:58:00 2002
+// written: Wed Nov 20 16:11:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ const FieldMap& FixPt::classFields()
     Field("width", &FixPt::itsWidth, 1, 1, 100, 1)
   };
 
-  static FieldMap FIXPT_FIELDS(FIELD_ARRAY, &GrObj::classFields());
+  static FieldMap FIXPT_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
 
   return FIXPT_FIELDS;
 }
@@ -85,7 +85,8 @@ DOTRACE("FixPt::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
 void FixPt::writeTo(IO::Writer* writer) const
@@ -97,7 +98,8 @@ DOTRACE("FixPt::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+  // FIXME change to "GxShapeKit" with next version
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const

@@ -9,9 +9,9 @@
 
 package require Face
 
-source ${::TEST_DIR}/grobj_test.tcl
+source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GrObj::testSubclass Face Face
+GxShapeKit::testSubclass Face Face
 
 ### faceCmd ###
 test "FaceTcl-Obj::new Face" "too many args" {

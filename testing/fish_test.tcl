@@ -9,6 +9,6 @@
 
 package require Fish
 
-source ${::TEST_DIR}/grobj_test.tcl
+source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GrObj::testSubclass Fish Fish
+GxShapeKit::testSubclass Fish Fish

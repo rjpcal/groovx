@@ -45,7 +45,7 @@ test "BitmapTcl-Bitmap::loadImage" "too many args" {
 test "BitmapTcl-Bitmap::loadImage" "normal use" {
     Bitmap::loadImage $::BITMAP $::IMGFILE
     Bitmap::flipContrast $::BITMAP
-    GrObj::alignmentMode $::BITMAP $GrObj::CENTER_ON_CENTER
+    GxShapeKit::alignmentMode $::BITMAP $GxShapeKit::CENTER_ON_CENTER
 } {^$}
 test "BitmapTcl-Bitmap::loadImage" "error on non-existent file" {
     exec rm -rf $::TEST_DIR/nonexistent_file.ppm
@@ -105,7 +105,7 @@ test "BitmapTcl-Bitmap::flipVertical" "too many args" {
 } {^wrong \# args: should be "Bitmap::flipVertical item_id\(s\)"$}
 test "BitmapTcl-Bitmap::flipVertical" "normal use" {
 
-    GrObj::alignmentMode $::BITMAP $GrObj::CENTER_ON_CENTER
+    GxShapeKit::alignmentMode $::BITMAP $GxShapeKit::CENTER_ON_CENTER
 
     Bitmap::flipVertical $::BITMAP
     clearscreen

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Nov 20 16:05:23 2002
+// written: Wed Nov 20 16:18:49 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -48,7 +48,6 @@ extern "C"
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Gabor_Init;
   Tcl_PackageInitProc Gltcl_Init;
-  Tcl_PackageInitProc Grobj_Init;
   Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc Gx_Init;
   Tcl_PackageInitProc Gtrace_Init;
