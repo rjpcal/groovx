@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Jun 25 12:46:17 1999
+// written: Tue Oct 12 10:27:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #define TCL_H_DEFINED
 #endif
 
-#ifdef TIME_H_DEFINED
+#ifndef TIME_H_DEFINED
 #include <sys/time.h>
 #define TIME_H_DEFINED
 #endif
