@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Mar 22 16:47:01 2000
+// written: Wed Mar 22 22:01:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,6 +88,14 @@ public:
       obj. This allows the \c Writer subclass to implement the storage
       of an owned object as a contained object. */
   virtual void writeOwnedObject(const char* name, const IO* obj) = 0;
+
+  /** Write the named base class using the IO object \a obj, which
+      should be arranged to point or refer to the appropriate base
+      class part of the object. In particular, \a obj's virtual
+      functions must NOT call the fully derived versions. This effect
+      can be best accomplished with an \c IOProxy. */
+  virtual void writeBaseClass(const char* baseClassName,
+										const IO* basePart) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be
