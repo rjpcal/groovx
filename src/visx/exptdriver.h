@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 15:46:28 2002
+// written: Wed Dec  4 18:15:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver : public Experiment, public IO::IoObject
+class ExptDriver : public Experiment
 {
 private:
   /// Copy constructor not allowed
@@ -67,12 +67,42 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  //////////////////////////////
-  // Accessors + Manipulators //
-  //////////////////////////////
+  //
+  // Element interface
+  //
+
+  virtual Util::ErrorHandler& getErrorHandler() const;
+
+  virtual const Util::SoftRef<Toglet>& getWidget() const;
+
+  virtual int trialType() const;
+
+  virtual int lastResponse() const;
 
   /// Overridden from Element.
   virtual fstring status() const;
+
+  virtual void vxRun(Element& parent);
+
+  /// Halt the experiment. No more trials will be begun.
+  virtual void vxHalt() const;
+
+  virtual void vxAbort();
+
+  /// End the current trial normally, and move on to the next trial.
+  virtual void vxEndTrial();
+
+  /** Attempt to start the next block, or stop the experiment if
+      there are no more blocks. */
+  virtual void vxNext();
+
+  virtual void vxProcessResponse(Response& response);
+
+  virtual void vxUndo();
+
+  //////////////////////////////
+  // Accessors + Manipulators //
+  //////////////////////////////
 
   /// Return the name of the file currently being used for autosaves
   const fstring& getAutosaveFile() const;
@@ -100,9 +130,6 @@ public:
   fstring getDoWhenComplete() const;
   void setDoWhenComplete(const fstring& script);
 
-  virtual Util::ErrorHandler& getErrorHandler() const;
-
-  const Util::SoftRef<Toglet>& getWidget() const;
   void setWidget(const Util::SoftRef<Toglet>& widg);
 
   virtual Gfx::Canvas& getCanvas() const;
@@ -110,9 +137,7 @@ public:
   Tcl_Interp* getInterp() const;
 
   virtual void edBeginExpt();
-  virtual void edEndTrial();
-  virtual void edNextBlock();
-  virtual void edHaltExpt() const;
+
   virtual void edResumeExpt();
   virtual void edClearExpt();
   virtual void edResetExpt();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Dec  4 17:29:08 2002
+// written: Wed Dec  4 18:09:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ class fstring;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Block : public IO::IoObject
+class Block : public Element
 {
 public:
   /** This tracer dynamically controls the tracing of Block member
@@ -83,6 +83,10 @@ public:
   // Element interface
   //
 
+  virtual Util::ErrorHandler& getErrorHandler() const;
+
+  virtual const Util::SoftRef<Toglet>& getWidget() const;
+
   /// Returns the trial type of the current element.
   virtual int trialType() const;
 
@@ -91,6 +95,43 @@ public:
       id's of its subobjects, the categories of those objects, and the
       number of completed trials and number of total trials. */
   virtual fstring status() const;
+
+  /// Starts the current element.
+  /** This will be called by vxNext() as needed. */
+  void vxRun(Element& parent);
+
+  /// Undraws, aborts, and ends the current element.
+  virtual void vxHalt() const;
+
+  /// Aborts the current element.
+  /** The current (to be aborted) element is put at the end of the element
+      sequence in the Block, without recording any response for that
+      element. The next call to vxRun() will start the same element that
+      would have started if the current element had been completed
+      normally, instead of being aborted. */
+  virtual void vxAbort();
+
+  /// Undo the previous element.
+  /** The state of the experiment is restored to what it was just prior to
+      the beginning of the most recent successfully completed
+      element. Thus, the current element is changed to its previous value,
+      and the response to the most recently successfully completed element
+      is erased. After a call to vxUndo(), the next invocation of
+      vxRun() will redo the element that was undone in the present command.*/
+  virtual void vxUndo();
+
+  /// Prepares the Block to start the next element. */
+  virtual void vxEndTrial();
+
+  /// Begins the next element, moving on to the next Block if necessary.
+  virtual void vxNext();
+
+  /// Records a response to the current element in the Block.
+  /** Also, prepares the Block for the next element. The response is
+      recorded for the current element, and the Block's element sequence
+      index is incremented. Also, the next call to lastResponse will return
+      the response that was recorded in the present command. */
+  virtual void vxProcessResponse(Response& response);
 
   ///////////////
   // accessors //
@@ -122,43 +163,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-  /// Starts the current element.
-  /** This will be called by vxNext() as needed. */
-  void vxRun(Experiment& expt);
-
-  /// Aborts the current element.
-  /** The current (to be aborted) element is put at the end of the element
-      sequence in the Block, without recording any response for that
-      element. The next call to vxRun() will start the same element that
-      would have started if the current element had been completed
-      normally, instead of being aborted. */
-  void vxAbort();
-
-  /// Records a response to the current element in the Block.
-  /** Also, prepares the Block for the next element. The response is
-      recorded for the current element, and the Block's element sequence
-      index is incremented. Also, the next call to lastResponse will return
-      the response that was recorded in the present command. */
-  void processResponse(const Response& response);
-
-  /// Prepares the Block to start the next element. */
-  void vxEndTrial();
-
-  /// Begins the next element, moving on to the next Block if necessary.
-  void vxNext();
-
-  /// Undraws, aborts, and ends the current element.
-  void vxHalt();
-
-  /// Undo the previous element.
-  /** The state of the experiment is restored to what it was just prior to
-      the beginning of the most recent successfully completed
-      element. Thus, the current element is changed to its previous value,
-      and the response to the most recently successfully completed element
-      is erased. After a call to vxUndo(), the next invocation of
-      vxRun() will redo the element that was undone in the present command.*/
-  void vxUndo();
 
   /// Restore the Block to a state where none of the elements have been run.
   /** Undoes all responses to all of the elements in the Block, and resets

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Sep 25 19:03:53 2002
+// written: Wed Dec  4 18:01:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-/// TrialEvent subclass to call TrialBase::trAbortTrial().
+/// TrialEvent subclass to call TrialBase::vxAbort().
 class AbortTrialEvent : public TrialEvent
 {
 protected:
@@ -176,7 +176,7 @@ protected:
   virtual void invoke(TrialBase& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::trEndTrial().
+/// TrialEvent subclass to call TrialBase::vxEndTrial().
 class EndTrialEvent : public TrialEvent
 {
 protected:

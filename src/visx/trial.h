@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 17:25:31 2002
+// written: Wed Dec  4 18:09:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,6 @@ public:
   // accessors+manipulators //
   ////////////////////////////
 
-  virtual Util::SoftRef<Toglet> getWidget() const;
-
   int getCorrectResponse() const;
   void setCorrectResponse(int response);
 
@@ -99,24 +97,36 @@ public:
   void clearObjs();
 
 
+  //
+  // Element interface
+  //
+
+  virtual Util::ErrorHandler& getErrorHandler() const;
+
+  virtual const Util::SoftRef<Toglet>& getWidget() const;
+
+  virtual void vxRun(Element& parent);
+
+  virtual void vxHalt() const;
+
+  virtual void vxAbort();
+
+  virtual void vxEndTrial();
+
+  virtual void vxNext();
+
+  virtual void vxProcessResponse(Response& response);
+
+  virtual void vxUndo();
+
   /////////////
   // actions //
   /////////////
 
-  virtual void vxRun(const Util::SoftRef<Toglet>& widget,
-                     Util::ErrorHandler& errhdlr, Block& block);
-
-  virtual void vxHalt();
-
-  virtual void vxUndo();
-
   virtual double trElapsedMsec();
 
-  virtual void trAbortTrial();
-  virtual void trEndTrial();
   virtual void trNextTrial();
   virtual void trResponseSeen();
-  virtual void trRecordResponse(Response& response);
   virtual void trAllowResponses();
   virtual void trDenyResponses();
 

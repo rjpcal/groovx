@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  4 17:33:44 2002
+// written: Wed Dec  4 18:09:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "visx/block.h"
 
-#include "visx/experiment.h"
 #include "visx/response.h"
 
 #include "io/reader.h"
@@ -67,7 +66,7 @@ public:
     itsRandSeed(0),
     itsSequencePos(0),
     itsHasBegun(false),
-    itsExperiment(0)
+    itsParent(0)
     {}
 
   minivec<Ref<Element> > itsElements;
@@ -78,16 +77,16 @@ public:
 
   mutable bool itsHasBegun;
 
-  void setExpt(Experiment& expt)
+  void setParent(Element& expt)
     {
       Precondition( &expt != 0 );
-      itsExperiment = &expt;
+      itsParent = &expt;
     }
 
-  Experiment& getExpt()
+  Element& getParent()
     {
-      Precondition( itsExperiment != 0 );
-      return *itsExperiment;
+      Precondition( itsParent != 0 );
+      return *itsParent;
     }
 
   Ref<Element> currentElement()
@@ -107,7 +106,7 @@ public:
     }
 
 private:
-  mutable Experiment* itsExperiment;
+  mutable Element* itsParent;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -211,9 +210,107 @@ DOTRACE("Block::writeTo");
   writer->writeValue("curTrialSeqdx", itsImpl->itsSequencePos);
 }
 
-///////////////
-// accessors //
-///////////////
+///////////////////////////////////////////////////////////////////////
+//
+// Block's Element interface
+//
+///////////////////////////////////////////////////////////////////////
+
+Util::ErrorHandler& Block::getErrorHandler() const
+{
+DOTRACE("Block::getErrorHandler");
+  return itsImpl->getParent().getErrorHandler();
+}
+
+const Util::SoftRef<Toglet>& Block::getWidget() const
+{
+DOTRACE("Block::getWidget");
+  return itsImpl->getParent().getWidget();
+}
+
+int Block::trialType() const
+{
+DOTRACE("Block::trialType");
+  if (isComplete()) return -1;
+
+  dbgEvalNL(3, itsImpl->currentElement()->trialType());
+
+  return itsImpl->currentElement()->trialType();
+}
+
+fstring Block::status() const
+{
+DOTRACE("Block::status");
+  if (isComplete()) return fstring("block is complete");
+
+  fstring msg;
+  msg.append("next element ", currentElement().id(), ", ")
+    .append(itsImpl->currentElement()->status())
+    .append(", completed ", numCompleted(), " of ", numElements());
+
+  return msg;
+}
+
+void Block::vxRun(Element& parent)
+{
+DOTRACE("Block::vxRun");
+
+  if ( isComplete() ) return;
+
+  itsImpl->itsHasBegun = true;
+
+  Util::log( status() );
+
+  itsImpl->setParent(parent);
+
+  itsImpl->currentElement()->vxRun(*this);
+}
+
+void Block::vxHalt() const
+{
+DOTRACE("Block::vxHalt");
+
+  if ( itsImpl->itsHasBegun && !isComplete() )
+    itsImpl->currentElement()->vxHalt();
+}
+
+void Block::vxUndo()
+{
+DOTRACE("Block::vxUndo");
+
+  dbgEval(3, itsImpl->itsSequencePos);
+
+  // Check to make sure we've completed at least one element
+  if (itsImpl->itsSequencePos < 1) return;
+
+  // Move the counter back to the previous element...
+  --itsImpl->itsSequencePos;
+
+  // ...and erase the last response given to that element
+  if ( itsImpl->hasCurrentElement() )
+    {
+      itsImpl->currentElement()->vxUndo();
+    }
+}
+
+void Block::vxNext()
+{
+DOTRACE("Block::vxNext");
+  if ( !isComplete() )
+    {
+      vxRun(itsImpl->getParent());
+    }
+  else
+    {
+      itsImpl->getParent().vxNext();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// accessors
+//
+///////////////////////////////////////////////////////////////////////
 
 int Block::numElements() const
 {
@@ -240,16 +337,6 @@ DOTRACE("Block::currentElement");
   if (isComplete()) return Util::SoftRef<Element>();
 
   return itsImpl->currentElement();
-}
-
-int Block::trialType() const
-{
-DOTRACE("Block::trialType");
-  if (isComplete()) return -1;
-
-  dbgEvalNL(3, itsImpl->currentElement()->trialType());
-
-  return itsImpl->currentElement()->trialType();
 }
 
 int Block::lastResponse() const
@@ -287,40 +374,11 @@ DOTRACE("Block::isComplete");
           (size_t(itsImpl->itsSequencePos) >= itsImpl->itsElements.size()));
 }
 
-fstring Block::status() const
-{
-DOTRACE("Block::status");
-  if (isComplete()) return fstring("block is complete");
-
-  fstring msg;
-  msg.append("next element ", currentElement().id(), ", ")
-    .append(itsImpl->currentElement()->status())
-    .append(", completed ", numCompleted(), " of ", numElements());
-
-  return msg;
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // actions
 //
 ///////////////////////////////////////////////////////////////////////
-
-void Block::vxRun(Experiment& expt)
-{
-DOTRACE("Block::vxRun");
-
-  if ( isComplete() ) return;
-
-  itsImpl->itsHasBegun = true;
-
-  Util::log( status() );
-
-  itsImpl->setExpt(expt);
-
-  itsImpl->currentElement()->
-             vxRun(expt.getWidget(), expt.getErrorHandler(), *this);
-}
 
 void Block::vxAbort()
 {
@@ -345,9 +403,9 @@ DOTRACE("Block::vxAbort");
   --itsImpl->itsSequencePos;
 }
 
-void Block::processResponse(const Response& response)
+void Block::vxProcessResponse(Response& response)
 {
-DOTRACE("Block::processResponse");
+DOTRACE("Block::vxProcessResponse");
   if (isComplete()) return;
 
   dbgEval(3, response.correctVal());
@@ -376,47 +434,7 @@ DOTRACE("Block::vxEndTrial");
   dbgEval(3, numElements());
   dbgEvalNL(3, isComplete());
 
-  itsImpl->getExpt().edEndTrial();
-}
-
-void Block::vxNext()
-{
-DOTRACE("Block::vxNext");
-  if ( !isComplete() )
-    {
-      vxRun(itsImpl->getExpt());
-    }
-  else
-    {
-      itsImpl->getExpt().edNextBlock();
-    }
-}
-
-void Block::vxHalt()
-{
-DOTRACE("Block::vxHalt");
-
-  if ( itsImpl->itsHasBegun && !isComplete() )
-    itsImpl->currentElement()->vxHalt();
-}
-
-void Block::vxUndo()
-{
-DOTRACE("Block::vxUndo");
-
-  dbgEval(3, itsImpl->itsSequencePos);
-
-  // Check to make sure we've completed at least one element
-  if (itsImpl->itsSequencePos < 1) return;
-
-  // Move the counter back to the previous element...
-  --itsImpl->itsSequencePos;
-
-  // ...and erase the last response given to that element
-  if ( itsImpl->hasCurrentElement() )
-    {
-      itsImpl->currentElement()->vxUndo();
-    }
+  itsImpl->getParent().vxEndTrial();
 }
 
 void Block::resetBlock()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Dec  4 17:28:05 2002
+// written: Wed Dec  4 18:23:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@
 #include "util/ref.h"
 #include "util/strings.h"
 
-#include "visx/block.h"
 #include "visx/response.h"
 #include "visx/responsehandler.h"
 #include "visx/timinghdlr.h"
@@ -52,17 +51,17 @@ namespace
 
   struct ActiveState
   {
-    ActiveState(Block* block, SoftRef<Toglet> widget,
+    ActiveState(Element* parent, SoftRef<Toglet> widget,
                 Ref<ResponseHandler> rh, Ref<TimingHdlr> th) :
-      itsBlock(block),
+      itsParent(parent),
       itsWidget(widget),
       itsRh(rh),
       itsTh(th)
     {
-      Precondition(block != 0);
+      Precondition(parent != 0);
     }
 
-    Block* itsBlock;
+    Element* itsParent;
     SoftRef<Toglet> itsWidget;
     Ref<ResponseHandler> itsRh;
     Ref<TimingHdlr> itsTh;
@@ -111,9 +110,9 @@ public:
   bool isActive() const { return itsActiveState.get() != 0; }
   bool isInactive() const { return itsActiveState.get() == 0; }
 
-  void becomeActive(Block* block, SoftRef<Toglet> widget)
+  void becomeActive(Element* parent, SoftRef<Toglet> widget)
   {
-    itsActiveState.reset(new ActiveState(block, widget, itsRh, itsTh));
+    itsActiveState.reset(new ActiveState(parent, widget, itsRh, itsTh));
     Util::Log::addScope("Trial");
   }
 
@@ -149,15 +148,14 @@ public:
 
   void clearObjs();
 
-  void vxRun(Trial* self, const SoftRef<Toglet>& widget,
-             Util::ErrorHandler& errhdlr, Block& block);
+  void vxRun(Trial* self, Element& parent);
   double trElapsedMsec();
-  void trAbortTrial();
-  void trEndTrial();
+  void vxAbort();
+  void vxEndTrial();
   void trNextTrial();
   void vxHalt();
   void trResponseSeen();
-  void trRecordResponse(Response& response);
+  void vxProcessResponse(Response& response);
   void trAllowResponses(Trial* self);
   void trDenyResponses();
 
@@ -306,14 +304,18 @@ DOTRACE("Trial::Impl::clearObjs");
 // actions //
 /////////////
 
-void Trial::Impl::vxRun(Trial* self, const SoftRef<Toglet>& widget,
-                        Util::ErrorHandler& errhdlr, Block& block)
+void Trial::Impl::vxRun(Trial* self, Element& parent)
 {
 DOTRACE("Trial::Impl::vxRun");
+
   Precondition(self != 0);
+  Precondition(&parent != 0);
+
+  SoftRef<Toglet> widget = parent.getWidget();
+  Util::ErrorHandler& errhdlr = parent.getErrorHandler();
+
   Precondition(widget.isValid());
   Precondition(&errhdlr != 0);
-  Precondition(&block != 0);
 
   if ( itsRh.isInvalid() || itsTh.isInvalid() )
     {
@@ -322,7 +324,7 @@ DOTRACE("Trial::Impl::vxRun");
       return;
     }
 
-  becomeActive(&block, widget);
+  becomeActive(&parent, widget);
 
   Util::log("Trial::vxRun");
 
@@ -341,29 +343,29 @@ DOTRACE("Trial::Impl::trElapsedMsec");
   return itsActiveState->itsTh->getElapsedMsec();
 }
 
-void Trial::Impl::trAbortTrial()
+void Trial::Impl::vxAbort()
 {
-DOTRACE("Trial::Impl::trAbortTrial");
+DOTRACE("Trial::Impl::vxAbort");
 
   Precondition( isActive() );
 
-  Util::log("trAbortTrial");
+  Util::log("vxAbort");
 
   itsActiveState->itsRh->rhAbortTrial();
   itsActiveState->itsTh->thAbortTrial();
-  itsActiveState->itsBlock->vxAbort();
+  itsActiveState->itsParent->vxAbort();
 }
 
-void Trial::Impl::trEndTrial()
+void Trial::Impl::vxEndTrial()
 {
-DOTRACE("Trial::Impl::trEndTrial");
+DOTRACE("Trial::Impl::vxEndTrial");
 
   Precondition( isActive() );
 
-  Util::log("trEndTrial");
+  Util::log("Trial::vxEndTrial");
 
   itsActiveState->itsRh->rhEndTrial();
-  itsActiveState->itsBlock->vxEndTrial();
+  itsActiveState->itsParent->vxEndTrial();
 }
 
 void Trial::Impl::trNextTrial()
@@ -374,11 +376,11 @@ DOTRACE("Trial::Impl::trNextTrial");
 
   Util::log("trNextTrial");
 
-  Block* block = itsActiveState->itsBlock;
+  Element* parent = itsActiveState->itsParent;
 
   becomeInactive();
 
-  block->vxNext();
+  parent->vxNext();
 }
 
 void Trial::Impl::vxHalt()
@@ -409,18 +411,18 @@ DOTRACE("Trial::Impl::trResponseSeen");
   itsActiveState->itsTh->thResponseSeen();
 }
 
-void Trial::Impl::trRecordResponse(Response& response)
+void Trial::Impl::vxProcessResponse(Response& response)
 {
-DOTRACE("Trial::Impl::trRecordResponse");
+DOTRACE("Trial::Impl::vxProcessResponse");
 
   Precondition( isActive() );
 
-  Util::log("trRecordResponse");
+  Util::log("Trial::vxProcessResponse");
   response.setCorrectVal(itsCorrectResponse);
 
   itsResponses.push_back(response);
 
-  itsActiveState->itsBlock->processResponse(response);
+  itsActiveState->itsParent->vxProcessResponse(response);
 }
 
 void Trial::Impl::trAllowResponses(Trial* self)
@@ -518,7 +520,13 @@ void Trial::readFrom(IO::Reader* reader)
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-SoftRef<Toglet> Trial::getWidget() const
+Util::ErrorHandler& Trial::getErrorHandler() const
+{
+  Precondition( itsImpl->isActive() );
+  return itsImpl->itsActiveState->itsParent->getErrorHandler();
+}
+
+const SoftRef<Toglet>& Trial::getWidget() const
 {
   Precondition( itsImpl->isActive() );
   return itsImpl->itsActiveState->itsWidget;
@@ -597,30 +605,29 @@ void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
 
-void Trial::vxRun(const SoftRef<Toglet>& widget,
-                  Util::ErrorHandler& errhdlr, Block& block)
-  { itsImpl->vxRun(this, widget, errhdlr, block); }
+void Trial::vxRun(Element& parent)
+  { itsImpl->vxRun(this, parent); }
 
 double Trial::trElapsedMsec()
   { return itsImpl->trElapsedMsec(); }
 
-void Trial::trAbortTrial()
-  { itsImpl->trAbortTrial(); }
+void Trial::vxAbort()
+  { itsImpl->vxAbort(); }
 
-void Trial::trEndTrial()
-  { itsImpl->trEndTrial(); }
+void Trial::vxEndTrial()
+  { itsImpl->vxEndTrial(); }
 
 void Trial::trNextTrial()
   { itsImpl->trNextTrial(); }
 
-void Trial::vxHalt()
+void Trial::vxHalt() const
   { itsImpl->vxHalt(); }
 
 void Trial::trResponseSeen()
   { itsImpl->trResponseSeen(); }
 
-void Trial::trRecordResponse(Response& response)
-  { itsImpl->trRecordResponse(response); }
+void Trial::vxProcessResponse(Response& response)
+  { itsImpl->vxProcessResponse(response); }
 
 void Trial::trAllowResponses()
   { itsImpl->trAllowResponses(this); }
@@ -630,6 +637,9 @@ void Trial::trDenyResponses()
 
 void Trial::installSelf(SoftRef<Toglet> widget) const
   { itsImpl->installSelf(widget); }
+
+void Trial::vxNext()
+  { Assert(false); }
 
 static const char vcid_trial_cc[] = "$Header$";
 #endif // !TRIAL_CC_DEFINED

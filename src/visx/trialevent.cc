@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Nov 23 13:51:04 2002
+// written: Wed Dec  4 18:01:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ AbortTrialEvent::~AbortTrialEvent() {}
 void AbortTrialEvent::invoke(TrialBase& trial)
 {
 DOTRACE("AbortTrialEvent::invoke");
-  trial.trAbortTrial();
+  trial.vxAbort();
 }
 
 DrawEvent::DrawEvent(int msec) : TrialEvent(msec) {}
@@ -260,7 +260,7 @@ EndTrialEvent::~EndTrialEvent() {}
 void EndTrialEvent::invoke(TrialBase& trial)
 {
 DOTRACE("EndTrialEvent::invoke");
-  trial.trEndTrial();
+  trial.vxEndTrial();
   trial.trNextTrial();
 }
 

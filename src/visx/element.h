@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Wed Dec  4 17:25:31 2002
+// written: Wed Dec  4 18:21:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,9 +39,11 @@ class Element : public IO::IoObject
 public:
   virtual ~Element();
 
-//   virtual int numLeafs() const = 0;
+  /// Return an \c ErrorHandler that can deal with error messages.
+  virtual Util::ErrorHandler& getErrorHandler() const = 0;
 
-//   virtual bool isComplete() const = 0;
+  /// Return the Widget in which the element is running.
+  virtual const Util::SoftRef<Toglet>& getWidget() const = 0;
 
   virtual int trialType() const = 0;
 
@@ -50,10 +52,17 @@ public:
   virtual fstring status() const = 0;
 
 
-  virtual void vxRun(const Util::SoftRef<Toglet>& widget,
-                     Util::ErrorHandler& errhdlr, Block& block) = 0;
+  virtual void vxRun(Element& parent) = 0;
 
-  virtual void vxHalt() = 0;
+  virtual void vxHalt() const = 0;
+
+  virtual void vxAbort() = 0;
+
+  virtual void vxEndTrial() = 0;
+
+  virtual void vxNext() = 0;
+
+  virtual void vxProcessResponse(Response& response) = 0;
 
   virtual void vxUndo() = 0;
 };

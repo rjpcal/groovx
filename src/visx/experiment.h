@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed Dec  4 17:05:59 2002
+// written: Wed Dec  4 18:09:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ class Response;
 class Toglet;
 
 /// Protocol class that represents psychophysical experiments.
-class Experiment
+class Experiment : public Element
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
@@ -47,16 +47,6 @@ public:
 
   virtual void edBeginExpt() = 0;
   ///< Begin the experiment.
-
-  virtual void edEndTrial() = 0;
-  ///< End the current trial normally, and move on to the next trial.
-
-  virtual void edNextBlock() = 0;
-  /**< Attempt to start the next block, or stop the experiment if
-       there are no more blocks. */
-
-  virtual void edHaltExpt() const = 0;
-  ///< Halt the experiment. No more trials will be begun.
 
   virtual void edResumeExpt() = 0;
   ///< Resume the experiment after it has been halted.

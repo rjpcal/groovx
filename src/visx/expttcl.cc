@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sat Nov 23 13:50:31 2002
+// written: Wed Dec  4 18:10:03 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -110,7 +110,7 @@ namespace ExptTcl
   // resume.
   void pause(Ref<ExptDriver> ed)
   {
-    ed->edHaltExpt();
+    ed->vxHalt();
 
     ed->addLogInfo("Experiment paused.");
 
@@ -181,7 +181,7 @@ public:
     defGetter("currentBlock", &ExptDriver::currentBlock);
     defGetter("infoLog", &ExptDriver::getInfoLog);
     defAction("reset", &ExptDriver::edResetExpt);
-    defAction("stop", &ExptDriver::edHaltExpt);
+    defAction("stop", &ExptDriver::vxHalt);
     defAction("storeData", &ExptDriver::storeData);
     defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
     defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);

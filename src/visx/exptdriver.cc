@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 17:27:52 2002
+// written: Wed Dec  4 18:20:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,9 +144,9 @@ public:
     }
 
   void edBeginExpt();
-  void edEndTrial();
-  void edNextBlock();
-  void edHaltExpt() const;
+  void vxEndTrial();
+  void vxNext();
+  void vxHalt() const;
   void edResumeExpt();
   void edClearExpt();
   void edResetExpt();
@@ -352,17 +352,17 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
 }
 
 
-void ExptDriver::Impl::edEndTrial()
+void ExptDriver::Impl::vxEndTrial()
 {
-DOTRACE("ExptDriver::Impl::edEndTrial");
+DOTRACE("ExptDriver::Impl::vxEndTrial");
 
   if ( needAutosave() ) { doAutosave(); }
 }
 
 
-void ExptDriver::Impl::edNextBlock()
+void ExptDriver::Impl::vxNext()
 {
-DOTRACE("ExptDriver::Impl::edNextBlock");
+DOTRACE("ExptDriver::Impl::vxNext");
 
   ++itsCurrentBlockIdx;
 
@@ -377,9 +377,9 @@ DOTRACE("ExptDriver::Impl::edNextBlock");
 }
 
 
-void ExptDriver::Impl::edHaltExpt() const
+void ExptDriver::Impl::vxHalt() const
 {
-DOTRACE("ExptDriver::Impl::edHaltExpt");
+DOTRACE("ExptDriver::Impl::vxHalt");
 
   if ( haveValidBlock() )
     {
@@ -400,7 +400,7 @@ DOTRACE("ExptDriver::Impl::edResumeExpt");
 void ExptDriver::Impl::edClearExpt()
 {
 DOTRACE("ExptDriver::Impl::edClearExpt");
-  edHaltExpt();
+  vxHalt();
 
   itsBlocks.clear();
   itsCurrentBlockIdx = 0;
@@ -410,7 +410,7 @@ DOTRACE("ExptDriver::Impl::edClearExpt");
 void ExptDriver::Impl::edResetExpt()
 {
 DOTRACE("ExptDriver::Impl::edResetExpt");
-  edHaltExpt();
+  vxHalt();
 
   Util::log("resetting experiment");
 
@@ -460,7 +460,7 @@ void ExptDriver::Impl::storeData()
 {
 DOTRACE("ExptDriver::Impl::storeData");
 
-  edHaltExpt();
+  vxHalt();
 
   try
     {
@@ -529,12 +529,51 @@ void ExptDriver::writeTo(IO::Writer* writer) const
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver accessor + manipulator method definitions
+// ExptDriver's Element interface
 //
 ///////////////////////////////////////////////////////////////////////
 
+Util::ErrorHandler& ExptDriver::getErrorHandler() const
+  { return itsImpl->itsErrorHandler; }
+
+const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
+  { return itsImpl->itsWidget; }
+
+int ExptDriver::trialType() const
+  { return itsImpl->currentBlock()->trialType(); }
+
+int ExptDriver::lastResponse() const
+  { return itsImpl->currentBlock()->lastResponse(); }
+
 fstring ExptDriver::status() const
   { return itsImpl->status(); }
+
+void ExptDriver::vxRun(Element& /*parent*/)
+  { /* FIXME */ Assert(false); }
+
+void ExptDriver::vxHalt() const
+  { itsImpl->vxHalt(); }
+
+void ExptDriver::vxAbort()
+  { /* FIXME */ Assert(false); }
+
+void ExptDriver::vxEndTrial()
+  { itsImpl->vxEndTrial(); }
+
+void ExptDriver::vxNext()
+  { itsImpl->vxNext(); }
+
+void ExptDriver::vxProcessResponse(Response& /*response*/)
+  { /* FIXME */ Assert(false); }
+
+void ExptDriver::vxUndo()
+  { itsImpl->currentBlock()->vxUndo(); }
+
+///////////////////////////////////////////////////////////////////////
+//
+// ExptDriver accessor + manipulator method definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 const fstring& ExptDriver::getAutosaveFile() const
   { return itsImpl->itsAutosaveFile; }
@@ -569,12 +608,6 @@ fstring ExptDriver::getDoWhenComplete() const
 void ExptDriver::setDoWhenComplete(const fstring& script)
   { itsImpl->itsDoWhenComplete->define("", script); }
 
-Util::ErrorHandler& ExptDriver::getErrorHandler() const
-  { return itsImpl->itsErrorHandler; }
-
-const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
-  { return itsImpl->itsWidget; }
-
 void ExptDriver::setWidget(const Util::SoftRef<Toglet>& widg)
   { itsImpl->itsWidget = widg; }
 
@@ -586,15 +619,6 @@ Tcl_Interp* ExptDriver::getInterp() const
 
 void ExptDriver::edBeginExpt()
   { itsImpl->edBeginExpt(); }
-
-void ExptDriver::edEndTrial()
-  { itsImpl->edEndTrial(); }
-
-void ExptDriver::edNextBlock()
-  { itsImpl->edNextBlock(); }
-
-void ExptDriver::edHaltExpt() const
-  { itsImpl->edHaltExpt(); }
 
 void ExptDriver::edResumeExpt()
   { itsImpl->edResumeExpt(); }
