@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Sun Oct  3 20:07:31 1999
+// written: Thu Oct  7 16:33:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,12 @@
 #include <fstream.h>
 #include <iomanip.h>
 #include <vector>
+#include <cmath>
 
 #include "tlist.h"
 #include "trial.h"
 #include "grobj.h"
+#include "gtext.h"
 #include "position.h"
 #include "objlist.h"
 #include "poslist.h"
@@ -29,6 +31,7 @@
 #include "poslisttcl.h"
 #include "tclcmd.h"
 #include "listpkg.h"
+#include "rect.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -45,6 +48,8 @@ namespace TlistTcl {
   class ShowCmd;
   class AddObjectCmd;
   class SetCurTrialCmd;
+
+  class CreatePreviewCmd;
 
   class MakeSinglesCmd;
   class MakePairsCmd;
@@ -109,6 +114,100 @@ protected:
 	 theTlist.drawTrial(id);
 	 
 	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// CreatePreviewCmd --
+//
+//---------------------------------------------------------------------
+
+class TlistTcl::CreatePreviewCmd : public TclCmd {
+public:
+  CreatePreviewCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
+			  4, 4, false) {}
+protected:
+  virtual void invoke() {
+	 vector<int> objids;
+	 getSequenceFromArg(1, back_inserter(objids), (int*) 0);
+
+	 int pixel_width = arg(2).getInt();
+	 int pixel_height = arg(3).getInt();
+
+	 double world_width, world_height, world_origin_x, world_origin_y;
+
+	 GrObj::getWorldFromScreen(0, 0, world_origin_x, world_origin_y);
+	 GrObj::getWorldFromScreen(pixel_width, pixel_height,
+										world_width, world_height, false);
+
+	 world_width -= world_origin_x;
+	 world_height -= world_origin_y;
+
+	 vector<Rect<double> > bbxs(objids.size());
+
+	 Trial* preview = new Trial();
+	 int previewid = Tlist::theTlist().insert(preview);
+
+	 double window_area = world_width*world_height;
+	 double parcel_area = window_area/objids.size();
+	 double raw_parcel_side = sqrt(parcel_area);
+	 
+	 int num_cols = int(world_width/raw_parcel_side) + 1;
+	 //	 int num_rows = 1 + (objids.size()-1)/num_cols;
+
+	 double parcel_side = world_width/num_cols;
+
+	 int x_step = -1;
+	 int y_step = 0;
+
+	 for (int i = 0; i < objids.size(); ++i) {
+		++x_step;
+		if (x_step == num_cols) { x_step = 0; ++y_step; }
+
+		GrObj* obj = ObjList::theObjList().getCheckedPtr(objids[i]);
+		bool haveBB = obj->getBoundingBox(bbxs[i].l, bbxs[i].t,
+													 bbxs[i].r, bbxs[i].b);
+
+		if ( !haveBB ) {
+		  throw TclError("all objects must have bounding boxes");
+		}
+
+		obj->setAlignmentMode(GrObj::CENTER_ON_CENTER);
+		obj->setBBVisibility(true);
+		obj->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+		obj->setMaxDimension(0.8);
+
+		char id_string[32];
+		ostrstream ost(id_string, 31);
+		ost << objids[i] << '\0';
+
+		Gtext* label = new Gtext(id_string);
+		int label_objid = ObjList::theObjList().insert(label);
+		label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
+		label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+		label->setHeight(0.1);
+
+		Position* obj_pos = new Position();
+		int obj_posid = PosList::thePosList().insert(obj_pos);
+		double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
+		double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
+		obj_pos->setTranslate(obj_x, obj_y, 0.0);
+		obj_pos->setScale(parcel_side, parcel_side, 1.0);
+
+		Position* label_pos = new Position();
+		int label_posid = PosList::thePosList().insert(label_pos);
+		double label_x = obj_x;
+		double label_y = obj_y - 0.50*parcel_side;
+		label_pos->setTranslate(label_x, label_y, 0.0);
+		label_pos->setScale(parcel_side, parcel_side, 1.0);
+		
+		preview->add(objids[i], obj_posid);
+		preview->add(label_objid, label_posid);
+	 }
+
+	 returnInt(previewid);
   }
 };
 
@@ -631,6 +730,8 @@ public:
 	 addCommand( new ShowCmd(interp, "Tlist::show") );
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
 	 addCommand( new SetCurTrialCmd(interp, "Tlist::setCurTrial") );
+
+	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 
 	 addCommand( new MakeSinglesCmd(interp, "Tlist::makeSingles") );
 	 addCommand( new MakePairsCmd(interp, "Tlist::makePairs") );
