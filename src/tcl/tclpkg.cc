@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Mar 15 11:10:22 2000
+// written: Wed Mar 15 20:07:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,11 @@
 #include "tcl/tclcmd.h"
 #include "tcl/tclveccmds.h"
 
+#include "util/arrays.h"
 #include "util/strings.h"
 
 #include <tcl.h>
-#include <vector>
+#include <string>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -230,14 +231,15 @@ DOTRACE("Tcl::VecPropertyCmdBase::VecPropertyCmdBase");
 void Tcl::VecPropertyCmdBase::invoke() {
 DOTRACE("Tcl::VecPropertyCmdBase::invoke");
   // Fetch the item ids
-  vector<int> ids;
+  dynamic_block<int> ids(1); 
 
   if (itsItemArgn) {
-	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+	 ids.resize(getSequenceLengthOfArg(itsItemArgn));
+	 getSequenceFromArg(itsItemArgn, &ids[0], (int*) 0);
   }
   else {
 	 // -1 is the cue to use the default item
-	 ids.push_back(-1);
+	 ids.at(0) = -1;
   }
 
   // If we are getting...
@@ -251,24 +253,26 @@ DOTRACE("Tcl::VecPropertyCmdBase::invoke");
   }
   // ... or if we are setting
   else if (TclCmd::objc() == itsObjcSet) {
-	 vector<TclValue> vals;
 
-	 if (ids.size() == 1) {
-		vals.push_back(TclValue(arg(itsValArgn)));
-	 }
-	 else {
-		getValSequenceFromArg(itsValArgn, back_inserter(vals));
-	 }
+	 Tcl::ListIterator<Tcl::TclValue>
+		val_itr = beginOfArg(itsValArgn, (TclValue*)0),
+		val_end = endOfArg(itsValArgn, (TclValue*)0);
 
-	 size_t max_valn = vals.size()-1;
+	 TclValue val = *val_itr;
 
-	 for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
-		setItemIdToVal(ids[i], vals[valn]);
-		if (valn < max_valn) ++valn;
+	 for (size_t i = 0; i < ids.size(); ++i) {
+		setItemIdToVal(ids[i], val);
+
+		// Only fetch a new value if there are more values to get... if
+		// we run out of values before we run out of ids, then we just
+		// keep on using the last value in the sequence of values.
+		if (val_itr != val_end)
+		  if (++val_itr != val_end)
+			 val = *val_itr;
 	 }
   }
   // ... or ... "can't happen"
-  else { /* Assert(0); */ }
+  else {  Assert(0);  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -290,33 +294,33 @@ void Tcl::PropertiesCmdBase::invoke() {
 DOTRACE("Tcl::PropertiesCmdBase::invoke");
   if (itsPropertyList == 0) {
 
-	 vector<Tcl_Obj*> elements;
-		
 	 unsigned int num_infos = numInfos();
 
+	 fixed_block<Tcl_Obj*> elements(num_infos);
+
 	 for (size_t i = 0; i < num_infos; ++i) {
-		vector<Tcl_Obj*> sub_elements;
+		fixed_block<Tcl_Obj*> sub_elements(5);
 		  
 		// property name
-		sub_elements.push_back(Tcl_NewStringObj(getName(i), -1));
+		sub_elements.at(0) = Tcl_NewStringObj(getName(i), -1);
 		  
 		// min value
 		TclValue min(itsInterp, getMin(i));
-		sub_elements.push_back(min.getObj());
+		sub_elements.at(1) = min.getObj();
 		  
 		// max value
 		TclValue max(itsInterp, getMax(i));
-		sub_elements.push_back(max.getObj());
+		sub_elements.at(2) = max.getObj();
 		  
 		// resolution value
 		TclValue res(itsInterp, getRes(i));
-		sub_elements.push_back(res.getObj());
+		sub_elements.at(3) = res.getObj();
 		  
 		// start new group flag
-		sub_elements.push_back(Tcl_NewBooleanObj(getStartNewGroup(i)));
+		sub_elements.at(4) = Tcl_NewBooleanObj(getStartNewGroup(i));
 		  
-		elements.push_back(Tcl_NewListObj(sub_elements.size(),
-													 &(sub_elements[0])));
+ 		elements.at(i) = Tcl_NewListObj(sub_elements.size(),
+												  &(sub_elements[0]));
 	 }
 
 	 itsPropertyList = Tcl_NewListObj(elements.size(), &(elements[0]));
@@ -326,15 +330,6 @@ DOTRACE("Tcl::PropertiesCmdBase::invoke");
 
   returnVal(TclValue(itsInterp, itsPropertyList));
 }
-
-#ifdef ACC_COMPILER
-void do_nothing() { 
-  typeid(bad_alloc);
-  typeid(logic_error);
-  typeid(length_error);
-  typeid(out_of_range);
-}
-#endif
 
 static const char vcid_tclitempkg_cc[] = "$Header$";
 #endif // !TCLITEMPKG_CC_DEFINED
