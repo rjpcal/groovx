@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Sep 29 16:52:25 1999
+// written: Tue Oct 12 16:41:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -272,6 +272,8 @@ public:
            item_argn+1, item_argn+2, false),
     itsObjcGet(item_argn+1),
     itsObjcSet(item_argn+2) {}
+
+  ~TVecAttribCmd() { DOTRACE("TVecAttribCmd::~TVecAttribCmd"); }
 
 protected:
   virtual void invoke() {
