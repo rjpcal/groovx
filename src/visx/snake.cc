@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Mon May 12 12:56:53 2003
+// written: Mon May 12 13:02:19 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -253,25 +253,12 @@ namespace
 
     return drand48() <= probability;
   }
-
-  void recenter(Vec2d* nodes, const int length)
-  {
-    Vec2d c;
-
-    for (int n = 0; n < length; ++n)
-      c += nodes[n];
-
-    c /= length;
-
-    for (int n = 0; n < length; ++n)
-      nodes[n] -= c;
-  }
 }
 
 Snake::Snake(int l, double sp) :
   itsLength(l),
   itsSpacing(sp),
-  itsElem(new Vec2d[itsLength])
+  itsElem(itsLength)
 {
   const double radius = (itsLength * itsSpacing) / (2*M_PI);
 
@@ -291,13 +278,20 @@ Snake::Snake(int l, double sp) :
       this->jiggle();
     }
 
-  recenter(itsElem, itsLength);
+  // Now reset so that the center of the ring is at the origin
+  Vec2d c;
+
+  for (int n = 0; n < itsLength; ++n)
+    c += itsElem[n];
+
+  c /= itsLength;
+
+  for (int n = 0; n < itsLength; ++n)
+    itsElem[n] -= c;
 }
 
 Snake::~Snake()
-{
-  delete [] itsElem;
-}
+{}
 
 Element Snake::getElement(int n) const
 {

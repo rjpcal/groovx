@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:02 2003
-// written: Mon May 12 11:58:34 2003
+// written: Mon May 12 13:03:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -32,6 +32,8 @@
 #define SNAKE_H_DEFINED
 
 #include "gx/vec2.h"
+
+#include "util/arrays.h"
 
 struct Element
 {
@@ -65,9 +67,16 @@ public:
 private:
   const int itsLength;
   const double itsSpacing;
-  Gfx::Vec2<double>* const itsElem;
+  fixed_block<Gfx::Vec2<double> > itsElem;
 
-  Gfx::Vec2<double>& elem(int i) const
+  Gfx::Vec2<double>& elem(int i)
+  {
+    i = i % itsLength;
+    if (i < 0) i += itsLength;
+    return itsElem[i];
+  }
+
+  const Gfx::Vec2<double>& elem(int i) const
   {
     i = i % itsLength;
     if (i < 0) i += itsLength;
