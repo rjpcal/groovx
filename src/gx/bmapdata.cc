@@ -350,6 +350,8 @@ Gfx::BmapData::makeScrambled(int nsubimg_x, int nsubimg_y, int seed) const
 {
 DOTRACE("Gfx::BmapData::makeScrambled");
 
+  updateIfNeeded();
+
   if ( width() % nsubimg_x != 0 )
     {
       throw Util::Error("not an evenly divisible width");
@@ -377,13 +379,13 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   std::random_shuffle(newpos.begin(), newpos.end(), generator);
 
-  const int bytes_per_pixel = bitsPerPixel()/8;
-
-  if (bytes_per_pixel != 1 && bytes_per_pixel != 3)
+  if (rep->bitsPerPixel != 8 && rep->bitsPerPixel != 24)
     {
-      throw Util::Error(fstring("unknown bytes-per-pixel value: ",
-                                bytes_per_pixel));
+      throw Util::Error(fstring("unknown bits-per-pixel value: ",
+                                rep->bitsPerPixel));
     }
+
+  const int bytes_per_pixel = rep->bitsPerPixel/8;
 
   const int size_subimg_x = result->width() / nsubimg_x * bytes_per_pixel;
   const int size_subimg_y = result->height() / nsubimg_y;
@@ -393,14 +395,14 @@ DOTRACE("Gfx::BmapData::makeScrambled");
       const bool fliplr = generator.booldraw();
       const bool fliptb = generator.booldraw();
 
-      const int src_subimg_y = i / nsubimg_y;
-      const int src_subimg_x = i % nsubimg_y;
+      const int src_subimg_y = i / nsubimg_x;
+      const int src_subimg_x = i % nsubimg_x;
 
       const int src_fullimg_y = src_subimg_y * size_subimg_y;
       const int src_fullimg_x = src_subimg_x * size_subimg_x;
 
-      const int dst_subimg_y = newpos[i] / nsubimg_y;
-      const int dst_subimg_x = newpos[i] % nsubimg_y;
+      const int dst_subimg_y = newpos[i] / nsubimg_x;
+      const int dst_subimg_x = newpos[i] % nsubimg_x;
 
       const int dst_fullimg_y = dst_subimg_y * size_subimg_y;
       const int dst_fullimg_x = dst_subimg_x * size_subimg_x;
