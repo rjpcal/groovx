@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Sat Nov 20 20:26:28 1999
+// written: Tue Nov 30 17:21:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ DOTRACE("Block::deserialize");
   is >> itsRandSeed;
   // itsCurTrialSeqIdx
   is >> itsCurTrialSeqIdx;
-  if (itsCurTrialSeqIdx < 0 || itsCurTrialSeqIdx > itsTrialSequence.size()) {
+  if (itsCurTrialSeqIdx > itsTrialSequence.size()) {
 	 throw IoValueError(ioTag);
   }
   // itsVerbose
@@ -204,7 +204,7 @@ DOTRACE("Block::numTrials");
   return itsTrialSequence.size();
 }
 
-int Block::numCompleted() const {
+size_t Block::numCompleted() const {
 DOTRACE("Block::numCompleted");
   return itsCurTrialSeqIdx;
 }
