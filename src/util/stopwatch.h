@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 18 10:24:59 1999
-// written: Fri Jan 25 13:59:04 2002
+// written: Fri Jan 25 14:21:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,14 +24,14 @@ public:
   StopWatch() : itsStartTime() { restart(); }
 
   void restart()
-    { gettimeofday(&itsStartTime, NULL); }
+    { gettimeofday(&itsStartTime, /* timezone */ 0); }
 
   double elapsedMsec()
     {
       timeval endTime, elapsedTime;
 
       // Get ending time from previous trial
-      gettimeofday(&endTime, NULL);
+      gettimeofday(&endTime, /* timezone */ 0);
 
       // Compute elapsed time for previous trial
       elapsedTime.tv_sec = endTime.tv_sec - itsStartTime.tv_sec;
