@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat Mar  4 17:15:58 2000
+// written: Mon Mar  6 20:42:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include <string>
 #include <strstream.h>
 #include <typeinfo>
-#include <vector>
 
 #include "demangle.h"
 
