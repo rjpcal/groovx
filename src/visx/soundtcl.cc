@@ -81,7 +81,7 @@ DOTRACE("Sound_Init");
       dbgEvalNL(3, lib_dir);
 
       const fstring ok_file(lib_dir, "/audio/saw50_500Hz_300ms.au");
-      const fstring err_file(lib_dir, "/audio/saw50_350Hz_300ms.au");
+      const fstring err_file(lib_dir, "/audio/saw50_350Hz_2x120ms.au");
 
       static int OK = -1;
       static int ERR = -1;
