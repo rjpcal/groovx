@@ -3,13 +3,15 @@
 // bmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:51:34 1999
-// written: Thu Dec  2 12:50:27 1999
+// written: Mon Dec  6 21:48:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BMAPRENDERER_H_DEFINED
 #define BMAPRENDERER_H_DEFINED
+
+class Canvas;
 
 ///
 class BmapRenderer {
@@ -20,7 +22,8 @@ public:
 		actual rendering of the bitmap data. All of the information
 		needed to do the rendering is passed as arguments to the
 		function. */
-  virtual void doRender(unsigned char* /* bytes */,
+  virtual void doRender(Canvas& canvas,
+								unsigned char* /* bytes */,
 								double /* x_pos */,
 								double /* y_pos */,
 								int /* width */,
@@ -33,7 +36,7 @@ public:
   /** This is the operation that subclasses should override if they
       need to provide a special unrendering method. A default no-op
       implementation is provided. */
-  virtual void doUndraw(
+  virtual void doUndraw(Canvas& canvas,
 					  int /*winRasterX*/, int /*winRasterY*/,
 					  int /*winWidthX*/, int /*winHeightY*/) const;
 
