@@ -23,7 +23,7 @@ default: all
 ### which will generate an appropriate Makedefs file, which is included here:
 ###
 
-Makedefs: config.status
+Makedefs: Makedefs.in config.status
 	config.status --file=Makedefs
 
 config.status: configure
