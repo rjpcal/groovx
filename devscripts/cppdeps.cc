@@ -30,11 +30,13 @@
 #ifndef CPPDEPS_CC_DEFINED
 #define CPPDEPS_CC_DEFINED
 
+#include <cassert>
 #include <iostream>
-#include <vector>
-#include <string>
 #include <map>
+#include <vector>
 #include <set>
+#include <string>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -484,7 +486,8 @@ cppdeps::get_nested_includes(const string& filename)
     }
 
   include_list_t& result = m_nested_includes[filename];
-  result.insert(result.end(), includes_set.begin(), includes_set.end());
+  assert(result.empty());
+  result.assign(includes_set.begin(), includes_set.end());
 
   m_parse_states[filename] = COMPLETE;
 
