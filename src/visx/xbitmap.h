@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Oct 20 10:25:59 1999
+// written: Wed Nov 24 12:09:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 
 #ifndef BITMAP_H_DEFINED
 #include "bitmap.h"
-#endif
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
 #endif
 
 struct _XImage;
