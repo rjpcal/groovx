@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar  5 14:27:05 2002
+// written: Tue Mar  5 15:03:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -620,15 +620,6 @@ void Mtx::print(const char* mtxName) const
   print();
 }
 
-Mtx Mtx::operator()(const RowRange& rng) const
-{
-  Mtx result(*this);
-
-  result.selectRows(rng);
-
-  return result;
-}
-
 void Mtx::reorderRows(const Mtx& index_)
 {
   Mtx index(index_.asColumn());
@@ -642,15 +633,6 @@ void Mtx::reorderRows(const Mtx& index_)
     neworder.row(r) = row(int(index.at(r,0)));
 
   *this = neworder;
-}
-
-Mtx Mtx::operator()(const ColRange& rng) const
-{
-  Mtx result(*this);
-
-  result.selectCols(rng);
-
-  return result;
 }
 
 void Mtx::reorderColumns(const Mtx& index_)

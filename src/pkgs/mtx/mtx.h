@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar  5 14:26:09 2002
+// written: Tue Mar  5 14:47:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -948,6 +948,15 @@ public:
     return Mtx(this->specs().subRows(rr).subCols(cc), this->data_);
   }
 
+
+  Mtx operator()(const RowRange& rng) const { return sub(rng); }
+
+  Mtx operator()(const ColRange& rng) const { return sub(rng); }
+
+  Mtx operator()(const RowRange& rr, const ColRange& cc) const
+  { return sub(rr, cc); }
+
+
   Mtx as_shape(const MtxShape& s) const
   { return Mtx(this->specs().as_shape(s), this->data_); }
 
@@ -963,8 +972,6 @@ public:
   MtxConstIter rowIter(int r) const
     { return MtxConstIter(address(r,0), rowstride(), ncols()); }
 
-  Mtx operator()(const RowRange& rng) const;
-
   Mtx asRow() const { return as_shape(1, nelems()); }
 
   void reorderRows(const Mtx& index);
@@ -979,8 +986,6 @@ public:
 
   MtxConstIter columnIter(int c) const
     { return MtxConstIter(address(0,c), colstride(), mrows()); }
-
-  Mtx operator()(const ColRange& rng) const;
 
   Mtx asColumn() const { return as_shape(nelems(), 1); }
 
