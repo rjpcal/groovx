@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Mon Aug 13 12:17:29 2001
+// written: Wed Aug 15 17:59:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef GBVEC_H_DEFINED
 #define GBVEC_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
-#include "io/fields.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
+#include "util/value.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC3_H_DEFINED)
@@ -22,7 +22,7 @@
 #endif
 
 template <class T>
-class GbVec3 : public Field, public Value {
+class GbVec3 : public Value {
 private:
   Gfx::Vec3<T> itsData;
 
@@ -55,17 +55,7 @@ public:
   virtual const char* get(Util::TypeCue<const char*>) const;
 
   virtual void assignTo(Value& other) const;
-
-  //
-  // Field interface
-  //
-
-protected:
-  virtual void doSetValue(const Value& new_val);
-public:
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
-  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
-  virtual shared_ptr<Value> value() const;
+  virtual void assignFrom(const Value& other);
 };
 
 static const char vcid_gbvec_h[] = "$Header$";
