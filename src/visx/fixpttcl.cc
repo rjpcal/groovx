@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Oct 19 10:42:44 1999
+// written: Tue Nov  2 10:15:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,13 @@ int Fixpt_Init(Tcl_Interp* interp) {
 DOTRACE("Fixpt_Init");
 
   new PropertyListItemPkg<FixPt, ObjList>(interp, ObjList::theObjList(),
- 														"Fixpt", "$Revision$");
+ 														"FixPt", "$Revision$");
+
+  Tcl_Eval(interp,
+			  "namespace eval FixPt { namespace export * }\n"
+			  "namespace eval Fixpt { namespace import ::FixPt::*; "
+			  "    proc Fixpt {} { return [FixPt::FixPt] } }");
+
 
   FactoryRegistrar<IO, FixPt> registrar(IoFactory::theOne());
 
