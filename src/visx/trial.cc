@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Dec  6 22:26:46 1999
+// written: Tue Feb  1 17:57:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ DOTRACE("Trial::description");
   for (size_t j = 0; j < itsIdPairs.size(); ++j) {
     DebugEvalNL(itsIdPairs[j].objid);
 
-    GrObj* obj = ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
+    ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
     Assert(obj);
 
     ost << " " << obj->getCategory();
@@ -382,9 +382,9 @@ DOTRACE("Trial::clearResponses");
 void Trial::trDraw(Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trDraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    GrObj* obj =
+    ObjList::Ptr obj =
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
-    Position* pos =
+    PosList::Ptr pos =
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
     DebugEval(itsIdPairs[i].objid);
@@ -406,9 +406,9 @@ DOTRACE("Trial::trDraw");
 void Trial::trUndraw(Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trUndraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    GrObj* obj =
+    ObjList::Ptr obj =
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
-    Position* pos =
+    PosList::Ptr pos =
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
 	 {

@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Feb  1 17:53:04 2000
+// written: Tue Feb  1 17:56:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ DOTRACE("TlistUtils::createPreview");
 	 ++x_step;
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-	 GrObj* obj = ObjList::theObjList().getCheckedPtr(objids[i]);
+	 ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(objids[i]);
 	 bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
 
 	 if ( !haveBB ) {
@@ -142,7 +142,7 @@ DOTRACE("TlistUtils::makeSingles");
 	 }
 	 Tlist::Ptr t = tlist.getPtr(id);
 	 t->add(id, posid);
-	 const GrObj* obj = olist.getCheckedPtr(id);
+	 const ObjList::Ptr obj = olist.getCheckedPtr(id);
 	 t->setType(obj->getCategory());
   }
 

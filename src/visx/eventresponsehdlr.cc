@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Jan 14 15:32:57 2000
+// written: Tue Feb  1 17:55:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -476,7 +476,7 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 
   try {
 	 const int ERR_INDEX = 1;
-	 Sound* p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
+	 SoundList::Ptr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
 	 p->play();
   }
   catch (ErrorWithMsg& err) {
