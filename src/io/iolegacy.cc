@@ -89,6 +89,8 @@ public:
 
   void readTypename(const fstring& correct_name)
   {
+    DOTRACE("IO::LegacyReader::Impl::readTypename(fstring)");
+
     fstring name;
     itsInStream >> name;
 
@@ -104,6 +106,8 @@ public:
   // An override for when we have two alternative names
   void readTypename(const fstring& correct_name, const fstring& alt_name)
   {
+    DOTRACE("IO::LegacyReader::Impl::readTypename(fstring, fstring)");
+
     fstring name;
     itsInStream >> name;
 
@@ -118,6 +122,7 @@ public:
 
   int getLegacyVersionId()
   {
+    DOTRACE("IO::LegacyReader::Impl::getLegacyVersionId");
     while ( isspace(itsInStream.peek()) )
       { itsInStream.get(); }
 
@@ -164,6 +169,8 @@ public:
 
   void inflateObject(const fstring& name, Ref<IO::IoObject> obj)
   {
+    DOTRACE("IO::LegacyReader::Impl::inflateObject");
+
     dbgEvalNL(3, name);
 
     itsLegacyVersionId = getLegacyVersionId();
