@@ -1,37 +1,32 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// stringifycmd.cc
+// ioutil.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jul 18 14:13:35 2001
+// written: Thu Jul 19 14:15:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef STRINGIFYCMD_CC_DEFINED
-#define STRINGIFYCMD_CC_DEFINED
+#ifndef IOUTIL_CC_DEFINED
+#define IOUTIL_CC_DEFINED
 
-#include "tcl/stringifycmd.h"
+#include "io/ioutil.h"
 
 #include "io/asciistreamreader.h"
 #include "io/asciistreamwriter.h"
 #include "io/io.h"
 #include "io/iolegacy.h"
 
-#include "tcl/tclerror.h"
-#include "tcl/tclvalue.h"
-
-#include "util/arrays.h"
+#include "util/error.h"
 #include "util/gzstreambuf.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
-#include <cstring>
 #include <fstream.h>
 #include <strstream.h>
-#include <typeinfo>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -55,7 +50,7 @@ namespace
   }
 
   template <class Writer>
-  Tcl::ObjPtr stringWrite(Util::Ref<IO::IoObject> obj)
+  fixed_string stringWrite(Util::Ref<IO::IoObject> obj)
   {
     ostrstream ost;
 
@@ -78,7 +73,7 @@ namespace
       throw;
     }
 
-    Tcl::ObjPtr result(ost.str());
+    fixed_string result(ost.str());
 
     ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 
@@ -86,36 +81,36 @@ namespace
   }
 }
 
-Tcl::ObjPtr Tcl::stringify(Util::Ref<IO::IoObject> obj)
+fixed_string IO::stringify(Util::Ref<IO::IoObject> obj)
 {
   return stringWrite<IO::LegacyWriter>(obj);
 }
 
-Tcl::ObjPtr Tcl::write(Util::Ref<IO::IoObject> obj)
+fixed_string IO::write(Util::Ref<IO::IoObject> obj)
 {
   return stringWrite<AsciiStreamWriter>(obj);
 }
 
-void Tcl::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
+void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   istrstream ist(buf);
 
   streamRead<IO::LegacyReader>(obj, ist);
 }
 
-void Tcl::read(Util::Ref<IO::IoObject> obj, const char* buf)
+void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   istrstream ist(buf);
 
   streamRead<AsciiStreamReader>(obj, ist);
 }
 
-void Tcl::saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename)
+void IO::saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename)
 {
   STD_IO::ofstream ofs(filename.c_str());
   if ( ofs.fail() )
     {
-      Tcl::TclError err("couldn't open file ");
+      ErrorWithMsg err("couldn't open file ");
       err.appendMsg("'", filename.c_str(), "'");
       err.appendMsg("for writing");
       throw err;
@@ -136,12 +131,12 @@ void Tcl::saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename)
     }
 }
 
-void Tcl::loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename)
+void IO::loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename)
 {
   STD_IO::ifstream ifs(filename.c_str());
   if ( ifs.fail() )
     {
-      Tcl::TclError err("couldn't open file ");
+      ErrorWithMsg err("couldn't open file ");
       err.appendMsg("'", filename.c_str(), "'");
       err.appendMsg("for reading");
       throw err;
@@ -162,5 +157,5 @@ void Tcl::loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename)
     }
 }
 
-static const char vcid_stringifycmd_cc[] = "$Header$";
-#endif // !STRINGIFYCMD_CC_DEFINED
+static const char vcid_ioutil_cc[] = "$Header$";
+#endif // !IOUTIL_CC_DEFINED
