@@ -109,7 +109,7 @@ class cppdeps
   string m_strip_prefix;
 
 public:
-  cppdeps(char** argv);
+  cppdeps(int argc, char** argv);
 
   void inspect();
 
@@ -222,22 +222,57 @@ namespace
   };
 }
 
-cppdeps::cppdeps(char** argv) :
+cppdeps::cppdeps(int argc, char** argv) :
   m_check_sys_includes(false),
   m_quiet(false),
   m_output_mode(MAKEFILE_DEPS)
 {
+  if (argc == 1)
+    {
+      printf
+        ("usage: %s [options] srcdir...\n"
+         "\n"
+         "options:\n"
+         "    --includedir [dir]    specify a directory to be searched when resolving\n"
+         "                          #include \"...\" directives\n"
+         "    --sysincludedir [dir] specify a directory to be searched when resolving\n"
+         "                          #include <...> directives\n"
+         "    --objdir [dir]        specify a path prefix indicating where the object\n"
+         "                          (.o) files should be placed (the default\n"
+         "                          is no prefix, or just './')\n"
+         "    --checksys            force tracking of dependencies in #include <...>\n"
+         "                          directives (default is to not record <...> files\n"
+         "                          as dependencies)\n"
+         "    --quiet               suppress warnings\n"
+         "\n"
+         "any unrecognized command-line arguments are treated as source directories,\n"
+         "which will be searched recursively for files with C/C++ filename extensions\n"
+         "(including .c, .C, .cc, .cpp, .h, .H, .hh, .hpp)\n"
+         "\n"
+         "example:\n"
+         "\n"
+         "    %s --includedir ~/local/include/ --objdir project/obj/ ./\n"
+         "\n"
+         "    builds dependencies for all source files found recursively within the\n"
+         "    current directory (./), using ~/local/include to resolve #include's,\n"
+         "    and putting .o files into project/obj/.\n",
+         argv[0],
+         argv[0]);
+    }
+
   m_sys_ipath.push_back("/usr/include");
   m_sys_ipath.push_back("/usr/include/linux");
   m_sys_ipath.push_back("/usr/local/matlab/extern/include");
 
+  ++argv; // skip to first command-line arg
+
   while (*argv != 0)
     {
-      if (strcmp(*argv, "--include") == 0)
+      if (strcmp(*argv, "--includedir") == 0)
         {
           m_user_ipath.push_back(*++argv);
         }
-      else if (strcmp(*argv, "--sysinclude") == 0)
+      else if (strcmp(*argv, "--sysincludedir") == 0)
         {
           m_sys_ipath.push_back(*++argv);
         }
@@ -260,21 +295,6 @@ cppdeps::cppdeps(char** argv) :
       else if (strcmp(*argv, "--output-nested-includes") == 0)
         {
           m_output_mode = NESTED_INCLUDE_TREE;
-        }
-      else if (strcmp(*argv, "--src") == 0)
-        {
-          const string fname = trim_filename(*++argv);
-          if (!file_exists(fname.c_str()))
-            {
-              cerr << "ERROR: no such source file: " << fname << '\n';
-              exit(1);
-            }
-          m_src_files.push_back(fname);
-          if (is_directory(fname.c_str()))
-            {
-              m_user_ipath.push_back(fname);
-              m_strip_prefix = fname;
-            }
         }
       // treat any unrecognized arguments as src files
       else
@@ -700,7 +720,7 @@ void cppdeps::batch_build()
 
 int main(int argc, char** argv)
 {
-  cppdeps dc(argv+1);
+  cppdeps dc(argc, argv);
   dc.batch_build();
   exit(0);
 }
