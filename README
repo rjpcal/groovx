@@ -62,9 +62,10 @@ Table of contents:
    This software requires these development packages:
 
      - Tcl/Tk (version 8.5 or later)
-     - X11 windowing system
-     - OpenGL
+     - X11 windowing system OR Mac OS X's Aqua windowing system
+     - OpenGL (3-D graphics library)
      - libz (gzip library)
+     - libexpat (XML parsing library)
 
    The following additional packages are optional. The configure
    script should generally be able to detect whether you have them
@@ -73,6 +74,9 @@ Table of contents:
      - libpng (portable network graphics library)
      - libjpeg (jpeg image handling library)
      - matlab (allows running a matlab engine inside the groovx shell)
+     - libesd+libaudiofile (for simple sound file playback on Linux)
+     - Quicktime (for simple sound file playback on Mac OS X)
+     - libreadline (for command-line editing and history)
 
    The following packages are optional, but are used in some of the
    scripts that use the groovx software.
@@ -140,15 +144,15 @@ Table of contents:
 
        \code
 
-        DESTDIR                 ?= 
+        DESTDIR                 ?=
         INSTALL_ROOT            ?= ${DESTDIR}
 
         BUILD_DIR               ?= ${CURDIR}/../../build
         SYMROOT                 ?= ${BUILD_DIR}/${PROJECT}
         OBJROOT                 ?= ${SYMROOT}
 
-        EXTRA_CONFIGURE_ARGS    ?= 
-        EXTRA_MAKE_ARGS         ?= 
+        EXTRA_CONFIGURE_ARGS    ?=
+        EXTRA_MAKE_ARGS         ?=
 
         INSTALL_PATH            ?= ${HOME}/Library/Frameworks
         PREFIX                  ?= ${HOME}/local/tcl8.5a1-aqua
@@ -169,7 +173,7 @@ Table of contents:
         SYMROOT                 ?= ${BUILD_DIR}/${PROJECT}
         OBJROOT                 ?= ${SYMROOT}
 
-        EXTRA_MAKE_ARGS         ?= 
+        EXTRA_MAKE_ARGS         ?=
 
         INSTALL_PATH            ?= ${HOME}/Library/Frameworks
         APPLICATION_INSTALL_PATH ?= ${HOME}/Applications/Utilities
@@ -238,6 +242,45 @@ Table of contents:
 
            determines whether to use Aqua windows or X11 windows on a
            Mac OS X build; default is X11
+
+       - --enable-readline={no|yes} [default is yes]
+
+           whether to enable readline support, which allows for
+           command-line editing and a command history
+
+       - --enable-rgba={no|yes} [default is yes]
+
+           whether to run OpenGL graphics in rgba true-color mode
+           (instead of color-index mode)
+
+       - --enable-double-buffer={no|yes} [default is yes]
+
+           whether to run OpenGL graphics in double-buffered mode
+           (instead of single-buffer mode); double-buffering allows
+           for smoother screen redraws with less flicker and "tearing"
+
+       - --enable-direct-render={no|yes} [default is yes]
+
+           whether to run OpenGL graphics in a direct-rendering
+           context; this means that 3-D graphics calls will use the
+           hardware acceleration of the grapics card, if possible
+
+       - --enable-werror={no|yes} [default is yes]
+
+           whether to force all compiler warnings to be errors
+
+       - --with-matlab=/path/to/matlab
+
+           give the location of a matlab installation against which
+           some matlab interfaces can be built; if no matlab directory
+           is given, then only stub matlab interfaces will be set
+           up... the code will compile, but attempts to use a matlab
+           interface will trigger a run-time error
+
+       - --with-html=/path/to/html [default is ~/www/groovx/]
+
+           specifies where HTML documentation should be installed
+           during a "make docs" invocation
 
 <!--############################################################--><hr>
 
