@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Wed Sep 25 18:56:11 2002
+// written: Fri Dec 20 10:00:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "util/ref.h"
 
 #include "io/writer.h"
+
+#include "util/debug.h"
 
 namespace IO
 {
@@ -86,6 +88,8 @@ public:
 
       while (begin != end)
         {
+          dbgEval(4, count); dbgEvalNL(4, (*begin)->id());
+
           writer->writeObject(makeElementNameString(name, count).c_str(),
                               SoftRef<const IO::IoObject>(*begin));
           ++begin;
