@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Aug 27 16:26:26 2001
+// written: Mon Aug 27 17:00:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -192,53 +192,53 @@ DOTRACE("GLCanvas::throwIfError");
 }
 
 
-void GLCanvas::pushAttribs() const
+void GLCanvas::pushAttribs()
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 }
 
-void GLCanvas::popAttribs() const
+void GLCanvas::popAttribs()
 {
   glPopAttrib();
 }
 
-void GLCanvas::drawOnFrontBuffer() const
+void GLCanvas::drawOnFrontBuffer()
 {
 DOTRACE("GLCanvas::drawOnFrontBuffer");
   glDrawBuffer(GL_FRONT);
 }
 
-void GLCanvas::drawOnBackBuffer() const
+void GLCanvas::drawOnBackBuffer()
 {
 DOTRACE("GLCanvas::drawOnBackBuffer");
   glDrawBuffer(GL_BACK);
 }
 
-void GLCanvas::setColor(const Gfx::RgbaColor& rgba) const
+void GLCanvas::setColor(const Gfx::RgbaColor& rgba)
 {
 DOTRACE("GLCanvas::setColor");
   glColor4dv(rgba.data());
 }
 
-void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba) const
+void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba)
 {
 DOTRACE("GLCanvas::setClearColor");
   glClearColor(rgba.r(), rgba.g(), rgba.b(), rgba.a());
 }
 
-void GLCanvas::setColorIndex(unsigned int index) const
+void GLCanvas::setColorIndex(unsigned int index)
 {
 DOTRACE("GLCanvas::setColorIndex");
   glIndexi(index);
 }
 
-void GLCanvas::setClearColorIndex(unsigned int index) const
+void GLCanvas::setClearColorIndex(unsigned int index)
 {
 DOTRACE("GLCanvas::setClearColorIndex");
   glClearIndex(index);
 }
 
-void GLCanvas::swapForeBack() const
+void GLCanvas::swapForeBack()
 {
 DOTRACE("GLCanvas::swapForeBack");
   if ( this->isRgba() )
@@ -268,13 +268,13 @@ DOTRACE("GLCanvas::swapForeBack");
     }
 }
 
-void GLCanvas::setLineWidth(double width) const
+void GLCanvas::setLineWidth(double width)
 {
 DOTRACE("GLCanvas::setLineWidth");
   glLineWidth(width);
 }
 
-void GLCanvas::enableAntialiasing() const
+void GLCanvas::enableAntialiasing()
 {
 DOTRACE("GLCanvas::enableAntialiasing");
 
@@ -290,31 +290,31 @@ DOTRACE("GLCanvas::enableAntialiasing");
 
 
 
-void GLCanvas::pushMatrix() const
+void GLCanvas::pushMatrix()
 {
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 }
 
-void GLCanvas::popMatrix() const
+void GLCanvas::popMatrix()
 {
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 }
 
-void GLCanvas::translate(const Gfx::Vec3<double>& v) const
+void GLCanvas::translate(const Gfx::Vec3<double>& v)
 {
 DOTRACE("GLCanvas::translate");
   glTranslated(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::scale(const Gfx::Vec3<double>& v) const
+void GLCanvas::scale(const Gfx::Vec3<double>& v)
 {
 DOTRACE("GLCanvas::scale");
   glScaled(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::rotate(const Gfx::Vec3<double>& v, double angle_in_degrees) const
+void GLCanvas::rotate(const Gfx::Vec3<double>& v, double angle_in_degrees)
 {
 DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
@@ -323,7 +323,7 @@ DOTRACE("GLCanvas::rotate");
 
 void GLCanvas::drawPixels(const Gfx::BmapData& data,
                           const Gfx::Vec2<double>& world_pos,
-                          const Gfx::Vec2<double>& zoom) const
+                          const Gfx::Vec2<double>& zoom)
 {
 DOTRACE("GLCanvas::drawPixels");
 
@@ -368,7 +368,7 @@ DOTRACE("GLCanvas::drawPixels");
 }
 
 void GLCanvas::drawBitmap(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos) const
+                          const Gfx::Vec2<double>& world_pos)
 {
 DOTRACE("GLCanvas::drawBitmap");
 
@@ -378,7 +378,7 @@ DOTRACE("GLCanvas::drawBitmap");
            static_cast<GLubyte*>(data.bytesPtr()));
 }
 
-void GLCanvas::grabPixels(const Gfx::Rect<int>& bounds, Gfx::BmapData& data_out) const
+void GLCanvas::grabPixels(const Gfx::Rect<int>& bounds, Gfx::BmapData& data_out)
 {
 DOTRACE("GLCanvas::grabPixels");
 
@@ -400,13 +400,13 @@ DOTRACE("GLCanvas::grabPixels");
   data_out.swap(new_data);
 }
 
-void GLCanvas::clearColorBuffer() const
+void GLCanvas::clearColorBuffer()
 {
 DOTRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GLCanvas::clearColorBuffer(const Gfx::Rect<int>& screen_rect) const
+void GLCanvas::clearColorBuffer(const Gfx::Rect<int>& screen_rect)
 {
 DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
 
@@ -423,7 +423,7 @@ DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
   glPopAttrib();
 }
 
-void GLCanvas::drawRect(const Gfx::Rect<double>& rect) const
+void GLCanvas::drawRect(const Gfx::Rect<double>& rect)
 {
 DOTRACE("GLCanvas::drawRect");
 
@@ -435,72 +435,68 @@ DOTRACE("GLCanvas::drawRect");
   vertex2(rect.topLeft());
 }
 
-void GLCanvas::beginPoints() const
+void GLCanvas::drawCircle(double inner_radius, double outer_radius,
+                          unsigned int slices, unsigned int loops)
 {
-  glBegin(GL_POINTS);
+DOTRACE("GLCanvas::drawCircle");
+
+  GLUquadricObj* qobj = gluNewQuadric();
+  gluQuadricDrawStyle(qobj, GLU_SILHOUETTE);
+  gluDisk(qobj, inner_radius, outer_radius, slices, loops);
+  gluDeleteQuadric(qobj);
 }
 
-void GLCanvas::beginLines() const
+void GLCanvas::drawBezier4(const Gfx::Vec3<double>& p1,
+                           const Gfx::Vec3<double>& p2,
+                           const Gfx::Vec3<double>& p3,
+                           const Gfx::Vec3<double>& p4,
+                           unsigned int subdivisions)
 {
-  glBegin(GL_LINES);
-}
+DOTRACE("GLCanvas::drawBezier4");
 
-void GLCanvas::beginLineStrip() const
-{
+  Gfx::Vec3<double> points[] =
+  {
+    p1, p2, p3, p4
+  };
+
+  glEnable(GL_MAP1_VERTEX_3);
+  glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, points[0].data());
+
   glBegin(GL_LINE_STRIP);
+  for (unsigned int i = 0; i <= subdivisions; ++i)
+    {
+      glEvalCoord1d((double) i / (double) subdivisions);
+    }
+  glEnd();
 }
 
-void GLCanvas::beginLineLoop() const
-{
-  glBegin(GL_LINE_LOOP);
-}
+void GLCanvas::beginPoints()        { glBegin(GL_POINTS); }
+void GLCanvas::beginLines()         { glBegin(GL_LINES); }
+void GLCanvas::beginLineStrip()     { glBegin(GL_LINE_STRIP); }
+void GLCanvas::beginLineLoop()      { glBegin(GL_LINE_LOOP); }
+void GLCanvas::beginTriangles()     { glBegin(GL_TRIANGLES); }
+void GLCanvas::beginTriangleStrip() { glBegin(GL_TRIANGLE_STRIP); }
+void GLCanvas::beginTriangleFan()   { glBegin(GL_TRIANGLE_FAN); }
+void GLCanvas::beginQuads()         { glBegin(GL_QUADS); }
+void GLCanvas::beginQuadStrip()     { glBegin(GL_QUAD_STRIP); }
+void GLCanvas::beginPolygon()       { glBegin(GL_POLYGON); }
 
-void GLCanvas::beginTriangles() const
-{
-  glBegin(GL_TRIANGLES);
-}
-
-void GLCanvas::beginTriangleStrip() const
-{
-  glBegin(GL_TRIANGLE_STRIP);
-}
-
-void GLCanvas::beginTriangleFan() const
-{
-  glBegin(GL_TRIANGLE_FAN);
-}
-
-void GLCanvas::beginQuads() const
-{
-  glBegin(GL_QUADS);
-}
-
-void GLCanvas::beginQuadStrip() const
-{
-  glBegin(GL_QUAD_STRIP);
-}
-
-void GLCanvas::beginPolygon() const
-{
-  glBegin(GL_POLYGON);
-}
-
-void GLCanvas::vertex2(const Gfx::Vec2<double>& v) const
+void GLCanvas::vertex2(const Gfx::Vec2<double>& v)
 {
   glVertex2d(v.x(), v.y());
 }
 
-void GLCanvas::vertex3(const Gfx::Vec3<double>& v) const
+void GLCanvas::vertex3(const Gfx::Vec3<double>& v)
 {
   glVertex3d(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::end() const
+void GLCanvas::end()
 {
   glEnd();
 }
 
-void GLCanvas::flushOutput() const
+void GLCanvas::flushOutput()
 {
 DOTRACE("GLCanvas::flushOutput");
   glFlush();

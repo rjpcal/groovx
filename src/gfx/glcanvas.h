@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Aug 27 16:09:37 2001
+// written: Mon Aug 27 16:56:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,69 +43,78 @@ public:
   virtual void throwIfError(const char* where) const;
 
 
-  virtual void pushAttribs() const;
-  virtual void popAttribs() const;
+  virtual void pushAttribs();
+  virtual void popAttribs();
 
-  virtual void drawOnFrontBuffer() const;
-  virtual void drawOnBackBuffer() const;
+  virtual void drawOnFrontBuffer();
+  virtual void drawOnBackBuffer();
 
-  virtual void setColor(const Gfx::RgbaColor& rgba) const;
-  virtual void setClearColor(const Gfx::RgbaColor& rgba) const;
+  virtual void setColor(const Gfx::RgbaColor& rgba);
+  virtual void setClearColor(const Gfx::RgbaColor& rgba);
 
-  virtual void setColorIndex(unsigned int index) const;
-  virtual void setClearColorIndex(unsigned int index) const;
+  virtual void setColorIndex(unsigned int index);
+  virtual void setClearColorIndex(unsigned int index);
 
   /** Swaps the foreground and background colors, in a way that is
       appropriate to color-index/RGBA modes. */
-  virtual void swapForeBack() const;
+  virtual void swapForeBack();
 
-  virtual void setLineWidth(double width) const;
+  virtual void setLineWidth(double width);
 
-  virtual void enableAntialiasing() const;
+  virtual void enableAntialiasing();
 
 
 
-  virtual void pushMatrix() const;
-  virtual void popMatrix() const;
+  virtual void pushMatrix();
+  virtual void popMatrix();
 
-  virtual void translate(const Gfx::Vec3<double>& v) const;
-  virtual void scale(const Gfx::Vec3<double>& v) const;
-  virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const;
+  virtual void translate(const Gfx::Vec3<double>& v);
+  virtual void scale(const Gfx::Vec3<double>& v);
+  virtual void rotate(const Gfx::Vec3<double>& v, double degrees);
 
 
 
   virtual void drawPixels(const Gfx::BmapData& data,
                           const Gfx::Vec2<double>& world_pos,
-                          const Gfx::Vec2<double>& zoom) const;
+                          const Gfx::Vec2<double>& zoom);
 
   virtual void drawBitmap(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos) const;
+                          const Gfx::Vec2<double>& world_pos);
 
   virtual void grabPixels(const Gfx::Rect<int>& bounds,
-                          Gfx::BmapData& data_out) const;
+                          Gfx::BmapData& data_out);
 
-  virtual void clearColorBuffer() const;
-  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) const;
+  virtual void clearColorBuffer();
+  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect);
 
-  virtual void drawRect(const Gfx::Rect<double>& rect) const;
+  virtual void drawRect(const Gfx::Rect<double>& rect);
 
-  virtual void beginPoints() const;
-  virtual void beginLines() const;
-  virtual void beginLineStrip() const;
-  virtual void beginLineLoop() const;
-  virtual void beginTriangles() const;
-  virtual void beginTriangleStrip() const;
-  virtual void beginTriangleFan() const;
-  virtual void beginQuads() const;
-  virtual void beginQuadStrip() const;
-  virtual void beginPolygon() const;
+  virtual void drawCircle(double inner_radius, double outer_radius,
+                          unsigned int slices, unsigned int loops);
 
-  virtual void vertex2(const Gfx::Vec2<double>& v) const;
-  virtual void vertex3(const Gfx::Vec3<double>& v) const;
+  virtual void drawBezier4(const Gfx::Vec3<double>& p1,
+                           const Gfx::Vec3<double>& p2,
+                           const Gfx::Vec3<double>& p3,
+                           const Gfx::Vec3<double>& p4,
+                           unsigned int subdivisions);
 
-  virtual void end() const;
+  virtual void beginPoints();
+  virtual void beginLines();
+  virtual void beginLineStrip();
+  virtual void beginLineLoop();
+  virtual void beginTriangles();
+  virtual void beginTriangleStrip();
+  virtual void beginTriangleFan();
+  virtual void beginQuads();
+  virtual void beginQuadStrip();
+  virtual void beginPolygon();
 
-  virtual void flushOutput() const;
+  virtual void vertex2(const Gfx::Vec2<double>& v);
+  virtual void vertex3(const Gfx::Vec3<double>& v);
+
+  virtual void end();
+
+  virtual void flushOutput();
 
 private:
   GLCanvas(const GLCanvas&);
