@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Wed Jun 26 12:24:28 2002
+// written: Wed Jun 26 12:52:10 2002
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -45,7 +45,7 @@ public:
   int operator()() { return abs(draw()); }
 };
 
-// Uniform random distribution in the interval [0:n[
+/// Uniform random distribution in the interval [0:n[
 class Urand : public Randint
 {
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Wed Jun 26 11:54:33 2002
+// written: Wed Jun 26 12:51:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -295,10 +295,6 @@ namespace Util
 
 // ####################################################################
 
-/// BoundFirst wraps another functor type with a fixed first argument.
-/** BoundFirst's can be constructed with the factory function
-    bindFirst(). */
-
   template <class BaseFunctor, class Bound>
   class BoundFirst;
 
@@ -318,6 +314,10 @@ namespace Util
     typedef typename FuncTraits<BaseFunctor>::Arg8_t   Arg7_t;
     typedef                                   Null_t   Arg8_t;
   };
+
+/// BoundFirst wraps another functor type with a fixed first argument.
+/** BoundFirst's can be constructed with the factory function
+    bindFirst(). */
 
   template <class BaseFunctor, class Bound_t>
   class BoundFirst : private FuncHolder<BaseFunctor>,
@@ -404,10 +404,6 @@ namespace Util
 
 // ####################################################################
 
-/// BoundLast wraps another functor type with a fixed last argument.
-/** BoundLast objects can be constructed with the factory function
-    bindLast(). */
-
   template <class BaseFunctor, class Bound>
   class BoundLast;
 
@@ -427,6 +423,10 @@ namespace Util
     typedef typename FuncTraits<BaseFunctor>::Arg7_t   Arg7_t;
     typedef typename FuncTraits<BaseFunctor>::Arg8_t   Arg8_t;
   };
+
+/// BoundLast wraps another functor type with a fixed last argument.
+/** BoundLast objects can be constructed with the factory function
+    bindLast(). */
 
   template <class BaseFunctor, class Bound_t>
   class BoundLast : private FuncHolder<BaseFunctor>,
