@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 24 11:19:12 1999
+// written: Sat Nov 27 11:39:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -250,6 +250,15 @@ DOTRACE("Bitmap::grabWorldRect");
   Rect<int> screen_rect = GrObj::getScreenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
+}
+
+void Bitmap::bytesChangeHook(unsigned char* /* theBytes */,
+									  int /* width */,
+									  int /* height */,
+									  int /* bits_per_pixel */,
+									  int /* byte_alignment */)
+{
+DOTRACE("Bitmap::bytesChangeHook");
 }
 
 void Bitmap::flipContrast() {

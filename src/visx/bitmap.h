@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 24 12:05:54 1999
+// written: Sat Nov 27 11:40:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,14 +100,14 @@ public:
 
   protected:
   /** This operation is a hook that is called after every time that
-      the bitmap data change. The default implementation here is a
-      no-op, but subclasses may override if they need to perform
-      specific actions when that bitmap data change. */
+      the bitmap data change. The default implementation provided by
+      Bitmap is a no-op, but subclasses may override if they need to
+      perform specific actions when that bitmap data change. */
   virtual void bytesChangeHook(unsigned char* /* theBytes */,
 										 int /* width */,
 										 int /* height */,
 										 int /* bits_per_pixel */,
-										 int /* byte_alignment */) {}
+										 int /* byte_alignment */);
 
   public:
   /** Flips the luminance contrast of the bitmap data, in a way that
@@ -142,14 +142,14 @@ public:
 		needed to do the rendering is passed as arguments to the
 		function. */
   virtual void doRender(unsigned char* /* bytes */,
-											  double /* x_pos */,
-											  double /* y_pos */,
-											  int /* width */,
-											  int /* height */,
-											  int /* bits_per_pixel */,
-											  int /* byte_alignment */,
-											  double /* zoom_x */,
-											  double /* zoom_y */) const = 0;
+								double /* x_pos */,
+								double /* y_pos */,
+								int /* width */,
+								int /* height */,
+								int /* bits_per_pixel */,
+								int /* byte_alignment */,
+								double /* zoom_x */,
+								double /* zoom_y */) const = 0;
 
   public:
   /** Implements the GrObj undrawing operation. This function
@@ -173,7 +173,7 @@ public:
   protected:
   ///
   virtual bool grGetBoundingBox(Rect<double>& bounding_box,
-														 int& border_pixels) const;
+										  int& border_pixels) const;
 
 public:
   /// Get the number of bytes of image data.
