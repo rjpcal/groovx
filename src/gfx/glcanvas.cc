@@ -3,7 +3,7 @@
 // glcanvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Mar 15 10:19:31 2000
+// written: Thu Jun  1 13:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
+GLCanvas::~GLCanvas() {}
 
 Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {
   GLdouble current_mv_matrix[16];

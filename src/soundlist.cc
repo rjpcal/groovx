@@ -3,7 +3,7 @@
 // soundlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:41 1999
-// written: Mon May 15 19:31:20 2000
+// written: Thu Jun  1 13:58:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,8 @@ SoundList::SoundList(int size) : Base(size) {
 DOTRACE("SoundList::SoundList");
   // nothing
 }
+
+SoundList::~SoundList() {}
 
 SoundList SoundList::theInstance(DEFAULT_INIT_SIZE);
 

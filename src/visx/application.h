@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 10:55:51 1999
-// written: Wed Mar 29 14:07:39 2000
+// written: Thu Jun  1 13:42:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,11 @@ class Experiment;
 class NoAppError : public ErrorWithMsg {
 public:
   /// Default constructor.
-  NoAppError() : ErrorWithMsg() {}
+  NoAppError();
   /// Construct with an informative message \a msg.
-  NoAppError(const char* msg) : ErrorWithMsg(msg) {}
+  NoAppError(const char* msg);
+  /// Virtual destructor.
+  virtual ~NoAppError();
 };
 
 

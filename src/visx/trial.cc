@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed May 17 13:59:47 2000
+// written: Thu Jun  1 14:00:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,6 +176,8 @@ public:
 // Trial::IdPair member functions
 //
 ///////////////////////////////////////////////////////////////////////
+
+Trial::IdPair::~IdPair() {}
 
 Value* Trial::IdPair::clone() const {
 DOTRACE("Trial::IdPair::clone");

@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Thu Jun  1 13:52:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,10 @@
 
 class GtextError : public ErrorWithMsg {
 public:
-  GtextError(const char* str) : ErrorWithMsg(str) {}
+  /// Construct with an informative message \a msg.
+  GtextError(const char* msg);
+  /// Virtual destructor.
+  virtual ~GtextError();
 };
 
 ///////////////////////////////////////////////////////////////////////

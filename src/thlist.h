@@ -3,7 +3,7 @@
 // thlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:36 1999
-// written: Mon May 15 19:26:47 2000
+// written: Thu Jun  1 13:58:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,9 @@ private:
 protected:
   /// Construct and reserve space for \a size objects.
   ThList(int size);
+
+  /// Virtual destructor.
+  virtual ~ThList();
 
 public:
   /// Returns a reference to the singleton instance.

@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri May 12 14:28:40 2000
+// written: Thu Jun  1 13:53:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,8 @@ IoPtrList::IoPtrList(int size) :
 {
 DOTRACE("IoPtrList::IoPtrList");
 }
+
+IoPtrList::~IoPtrList() {}
 
 void IoPtrList::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("IoPtrList::serialize");

@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed May 17 14:46:10 2000
+// written: Thu Jun  1 14:19:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,8 @@ public:
   VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
 						 const char* usage, int item_argn);
 
+  virtual ~VecGetterBaseCmd();
+
 protected:
   virtual void invoke();
 
@@ -82,6 +84,8 @@ class TVecGetterCmd : public VecGetterBaseCmd {
 public:
   TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Getter<ValType>* getter,
                 const char* usage, int item_argn);
+
+  virtual ~TVecGetterCmd();
 
 protected:
   virtual void doReturnValForItem(void* item);
@@ -103,6 +107,8 @@ class VecSetterBaseCmd : public virtual TclCmd {
 public:
   VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
 						 const char* usage, int item_argn);
+
+  virtual ~VecSetterBaseCmd();
 
 protected:
   virtual void invoke();
@@ -131,6 +137,8 @@ protected:
   TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
 					  Setter<value_type>* setter, const char* usage, int item_argn);
 
+  virtual ~TrVecSetterCmd();
+
   virtual void invokeForItemArgn(int item_argn, int val_argn);
   virtual void setSingleItem(void* item, int val_argn);
 
@@ -144,6 +152,8 @@ public:
   typedef TrVecSetterCmd< SetterCmdTraits<T> > Base;
   TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
 					 Setter<T>* setter, const char* usage, int item_argn);
+
+  virtual ~TVecSetterCmd();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -159,6 +169,8 @@ class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
 					 Attrib<T>* attrib, const char* usage, int item_argn);
+
+  virtual ~TVecAttribCmd();
 
 protected:
   virtual void invoke();
@@ -182,6 +194,8 @@ class Tcl::VecActionCmd : public Tcl::TclCmd {
 public:
   VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name, Action* action,
                const char* usage, int item_argn);
+
+  virtual ~VecActionCmd();
 
 protected:
   virtual void invoke();

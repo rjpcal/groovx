@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Wed Mar 29 23:42:54 2000
+// written: Thu Jun  1 14:21:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@ ValueError::ValueError(const char* msg) :
   ErrorWithMsg(msg)
 {}
 
+ValueError::~ValueError() {}
 
 Value::~Value() {}
 

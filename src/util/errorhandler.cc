@@ -3,7 +3,7 @@
 // errorhandler.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu May 11 10:17:31 2000
-// written: Thu May 11 10:52:17 2000
+// written: Thu Jun  1 14:20:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #include "errorhandler.h"
 
 Util::ErrorHandler::~ErrorHandler() {}
+
+Util::NullErrorHandler::~NullErrorHandler() {}
 
 void Util::NullErrorHandler::handleUnknownError() {}
 void Util::NullErrorHandler::handleError(Error&) {}

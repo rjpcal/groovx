@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Mon May 15 19:31:35 2000
+// written: Thu Jun  1 13:56:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,9 @@ private:
 protected:
   /// Construct and reserve space for \a size objects.
   RhList(int size);
+
+  /// Virtual destructor.
+  virtual ~RhList();
 
 public:
   /// Returns a reference to the singleton instance.

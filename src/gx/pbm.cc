@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Mar 23 12:46:07 2000
+// written: Thu Jun  1 13:55:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,8 @@ PbmError::PbmError(const char* str) :
 {
 DOTRACE("PbmError::PbmError");
 }
+
+PbmError::~PbmError() {}
 
 ///////////////////////////////////////////////////////////////////////
 //

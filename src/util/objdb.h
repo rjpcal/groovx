@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Mar 30 10:07:25 2000
+// written: Thu Jun  1 13:53:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,9 @@ class IoPtrList : public VoidPtrList, public virtual IO::IoObject {
 public:
   /// Construct and reserve space for \a size objects.
   IoPtrList(int size);
+
+  /// Virtual destructor.
+  virtual ~IoPtrList();
 
   virtual void serialize(ostream &os, IO::IOFlag flag) const;
   virtual void deserialize(istream &is, IO::IOFlag flag);

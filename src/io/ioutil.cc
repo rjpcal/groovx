@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Mar 30 09:12:24 2000
+// written: Thu Jun  1 14:12:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,12 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
+										  const char* usage, int objc) :
+  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+Tcl::StringifyCmd::~StringifyCmd() {}
 
 void Tcl::StringifyCmd::invoke() {
 DOTRACE("Tcl::StringifyCmd::invoke");
@@ -65,6 +71,12 @@ DOTRACE("Tcl::StringifyCmd::invoke");
   returnCstring(&(buf[0]));
 }
 
+Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
+												const char* usage, int objc) :
+  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+Tcl::DestringifyCmd::~DestringifyCmd() {}
+
 void Tcl::DestringifyCmd::invoke() {
 DOTRACE("Tcl::DestringifyCmd::invoke");
 
@@ -82,6 +94,12 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
   }
   returnVoid();
 }
+
+Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name,
+								const char* usage, int objc) :
+  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+Tcl::WriteCmd::~WriteCmd() {}
 
 void Tcl::WriteCmd::invoke() {
 DOTRACE("Tcl::WriteCmd::invoke");
@@ -102,6 +120,12 @@ DOTRACE("Tcl::WriteCmd::invoke");
   returnCstring(&(buf[0]));
 }
 
+Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name,
+							 const char* usage, int objc) :
+  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+Tcl::ReadCmd::~ReadCmd() {}
+
 void Tcl::ReadCmd::invoke() {
 DOTRACE("Tcl::ReadCmd::invoke");
   IO::IoObject& io = getIO();
@@ -113,6 +137,12 @@ DOTRACE("Tcl::ReadCmd::invoke");
   AsciiStreamReader reader(ist);
   reader.readRoot(&io);
 }
+
+Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
+									 const char* usage, int objc) :
+  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+Tcl::ASWSaveCmd::~ASWSaveCmd() {}
 
 void Tcl::ASWSaveCmd::invoke() {
 DOTRACE("Tcl::ASWSaveCmd::invoke");
@@ -130,6 +160,12 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
   AsciiStreamWriter writer(ofs);
   writer.writeRoot(&io);
 }
+
+Tcl::ASRLoadCmd::ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name,
+									 const char* usage, int objc) :
+  TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+Tcl::ASRLoadCmd::~ASRLoadCmd() {}
 
 void Tcl::ASRLoadCmd::beforeLoadHook() {}
 void Tcl::ASRLoadCmd::afterLoadHook() {}

@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Thu May 11 19:53:01 2000
+// written: Thu Jun  1 13:59:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,9 @@ private:
 protected:
   /// Construct and reserve space for \a size objects.
   Tlist(int size);
+
+  /// Virtual destructor.
+  virtual ~Tlist();
 
 public:
 

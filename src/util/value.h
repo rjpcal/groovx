@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Mar 29 14:07:34 2000
+// written: Thu Jun  1 14:21:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,8 @@ public:
   ValueError();
   /// Construct with an informative message \c msg.
   ValueError(const char* msg);
+  /// Virtual destructor.
+  virtual ~ValueError();
 };
 
 ///////////////////////////////////////////////////////////////////////

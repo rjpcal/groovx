@@ -3,7 +3,7 @@
 // blocklist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:16 1999
-// written: Mon May 15 19:33:04 2000
+// written: Thu Jun  1 13:54:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,9 @@ private:
 protected:
   /// Construct and reserve space for \a size objects.
   BlockList(int size);
+
+  /// Virtual destructor.
+  virtual ~BlockList();
 
 public:
   /// Returns a reference to the singleton instance.

@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Thu May 25 14:11:59 2000
+// written: Thu Jun  1 13:59:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@ public:
   TlistWidget(Tcl_Interp* interp, const char* pathname,
 				  int config_argc, char** config_argv,
 				  double dist, double unit_angle);
+
+  virtual ~TlistWidget();
 
   virtual void display();
   virtual void clearscreen();

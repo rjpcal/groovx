@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Mon May 15 19:33:32 2000
+// written: Thu Jun  1 13:54:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,8 @@ BlockList::BlockList(int size) : Base(size) {
 DOTRACE("BlockList::BlockList");
   // nothing
 }
+
+BlockList::~BlockList() {}
 
 BlockList BlockList::theInstance(DEFAULT_INIT_SIZE);
 

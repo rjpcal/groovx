@@ -3,7 +3,7 @@
 // thlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:37 1999
-// written: Mon May 15 19:29:14 2000
+// written: Thu Jun  1 13:58:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@ ThList::ThList(int size) : Base(size)
 DOTRACE("ThList::ThList");
   //
 }
+
+ThList::~ThList() {}
 
 ThList ThList::theInstance(DEFAULT_INIT_SIZE);
 

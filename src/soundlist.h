@@ -3,7 +3,7 @@
 // soundlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:40 1999
-// written: Mon May 15 19:30:36 2000
+// written: Thu Jun  1 13:58:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,9 @@ private:
 protected:
   /// Construct and reserve space for \a size objects. 
   SoundList(int size);
+
+  /// Virtual destructor.
+  virtual ~SoundList();
 
 public:
   /// Returns a reference to the singleton instance.

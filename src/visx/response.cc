@@ -3,7 +3,7 @@
 // response.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:33:17 2000
-// written: Wed Mar 15 10:17:27 2000
+// written: Thu Jun  1 13:56:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 const int Response::INVALID_VALUE;
+
+Response::~Response() {}
 
 Value* Response::clone() const {
 DOTRACE("Response::clone");

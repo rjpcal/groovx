@@ -3,7 +3,7 @@
 // response.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:30:04 2000
-// written: Wed Mar 29 23:43:07 2000
+// written: Thu Jun  1 13:56:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@ public:
   static const int INVALID_VALUE = -1;
 
   Response(int v = -1, int m = -1) : itsVal(v), itsMsec(m) {}
+
+  virtual ~Response();
 
   virtual Value* clone() const;
   virtual Type getNativeType() const;

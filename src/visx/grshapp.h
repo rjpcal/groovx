@@ -3,7 +3,7 @@
 // grshapp.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:58 1999
-// written: Wed Mar 29 14:07:37 2000
+// written: Thu Jun  1 13:51:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,9 +30,11 @@ struct Tcl_Interp;
 class NoExptError : public ErrorWithMsg {
 public:
   /// Default constructor.
-  NoExptError() : ErrorWithMsg() {}
+  NoExptError();
   /// Construct with an appropriate message.
-  NoExptError(const char* msg) : ErrorWithMsg(msg) {}
+  NoExptError(const char* msg);
+  /// Virtual destructor.
+  virtual ~NoExptError();
 };
 
 

@@ -3,7 +3,7 @@
 // iofactory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:06 1999
-// written: Thu Mar 30 12:07:57 2000
+// written: Thu Jun  1 14:06:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,9 @@ class IO::IoFactory : public Factory<IO::IoObject> {
 protected:
   /// Default constructor.
   IoFactory();
+
+  /// Virtual destructor.
+  virtual ~IoFactory();
 
 public:
   /// Return the singleton instance.

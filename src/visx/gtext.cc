@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Mar 30 09:50:04 2000
+// written: Thu Jun  1 13:52:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,10 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+GtextError::GtextError(const char* str) : ErrorWithMsg(str) {}
+
+GtextError::~GtextError() {}
 
 namespace {
   const string_literal ioTag("Gtext");

@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed May 17 14:47:31 2000
+// written: Thu Jun  1 14:19:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,8 @@ Tcl::VecGetterBaseCmd::VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_nam
 {
 DOTRACE("Tcl::VecGetterBaseCmd::VecGetterBaseCmd");
 }
+
+Tcl::VecGetterBaseCmd::~VecGetterBaseCmd() {}
 
 void Tcl::VecGetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecGetterBaseCmd::invoke");
@@ -80,6 +82,9 @@ Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_
 {
 DOTRACE("Tcl::TVecGetterCmd<>::TVecGetterCmd");
 }
+
+template <class ValType>
+Tcl::TVecGetterCmd<ValType>::~TVecGetterCmd() {}
 
 template <class ValType>
 void Tcl::TVecGetterCmd<ValType>::doReturnValForItem(void* item) {
@@ -130,6 +135,8 @@ Tcl::VecSetterBaseCmd::VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_nam
 DOTRACE("Tcl::VecSetterBaseCmd::VecSetterBaseCmd");
 }
 
+Tcl::VecSetterBaseCmd::~VecSetterBaseCmd() {}
+
 void Tcl::VecSetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecSetterBaseCmd::invoke");
   if (itsItemArgn) {
@@ -152,6 +159,9 @@ Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
 			item_argn+2, item_argn+2)
 {}
 
+template <class T>
+Tcl::TVecSetterCmd<T>::~TVecSetterCmd() {}
+
 template <class Traits>
 Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(
   TclItemPkgBase* pkg, const char* cmd_name, Setter<value_type>* setter,
@@ -166,6 +176,9 @@ Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(
 {
 DOTRACE("Tcl::TrVecSetterCmd<>::TrVecSetterCmd");
 }
+
+template <class Traits>
+Tcl::TrVecSetterCmd<Traits>::~TrVecSetterCmd() {}
 
 template <class Traits>
 void Tcl::TrVecSetterCmd<Traits>::setSingleItem(void* item, int val_argn) {
@@ -256,6 +269,9 @@ DOTRACE("Tcl::TVecAttribCmd<>::TVecAttribCmd");
 }
 
 template <class T>
+Tcl::TVecAttribCmd<T>::~TVecAttribCmd() {}
+
+template <class T>
 void Tcl::TVecAttribCmd<T>::invoke() {
 DOTRACE("Tcl::TVecAttribCmd<>::invoke");
   if      (TclCmd::objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(); }
@@ -290,6 +306,8 @@ Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
 {
 DOTRACE("Tcl::VecActionCmd::VecActionCmd");
 }
+
+Tcl::VecActionCmd::~VecActionCmd() {}
 
 void Tcl::VecActionCmd::invoke() {
 DOTRACE("Tcl::VecActionCmd::invoke");

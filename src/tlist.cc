@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu May 11 19:55:26 2000
+// written: Thu Jun  1 13:59:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,8 @@ Tlist::Tlist(int size) :
 {
 DOTRACE("Tlist::Tlist");
 }
+
+Tlist::~Tlist() {}
 
 Tlist Tlist::theInstance(100);
 

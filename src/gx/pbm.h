@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Wed Mar 29 14:07:36 2000
+// written: Thu Jun  1 13:55:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@ public:
   PbmError();
   /// Construct with an appropriate error message \a msg.
   PbmError(const char* msg);
+  /// Virtual destructor.
+  virtual ~PbmError();
 };
 
 class Pbm {

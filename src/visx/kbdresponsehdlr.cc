@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Thu Mar 30 09:08:41 2000
+// written: Thu Jun  1 13:54:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,8 @@ KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
   setEventSequence("<KeyPress>");
   setBindingSubstitution("%K");
 }
+
+KbdResponseHdlr::~KbdResponseHdlr() {}
 
 void KbdResponseHdlr::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("KbdResponseHdlr::serialize");

@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Thu May 25 14:12:51 2000
+// written: Thu Jun  1 13:59:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,8 @@ TlistWidget::TlistWidget(Tcl_Interp* interp, const char* pathname,
 {
 DOTRACE("TlistWidget::TlistWidget");
 }
+
+TlistWidget::~TlistWidget() {}
 
 void TlistWidget::display() {
 DOTRACE("TlistWidget::display");

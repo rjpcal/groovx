@@ -3,7 +3,7 @@
 // grshapp.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:59 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Thu Jun  1 13:51:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,12 @@
 #include "grshapp.h"
 
 #include "util/trace.h"
+
+NoExptError::NoExptError() : ErrorWithMsg() {}
+
+NoExptError::NoExptError(const char* msg) : ErrorWithMsg(msg) {}
+
+NoExptError::~NoExptError() {}
 
 GrshApp::GrshApp(Tcl_Interp* interp) :
   itsInterp(interp),

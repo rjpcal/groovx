@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Thu Mar 30 08:29:17 2000
+// written: Thu Jun  1 14:12:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,9 @@ namespace Tcl {
 class StringifyCmd : public TclCmd {
 public:
   StringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
-					const char* usage, int objc) :
-	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+					const char* usage, int objc);
+
+  virtual ~StringifyCmd();
 
 protected:
   virtual IO::IoObject& getIO() = 0;
@@ -36,8 +37,9 @@ private:
 class DestringifyCmd : public TclCmd {
 public:
   DestringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
-					  const char* usage, int objc) :
-	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+					  const char* usage, int objc);
+
+  virtual ~DestringifyCmd();
 
 protected:
   virtual IO::IoObject& getIO() = 0;
@@ -49,8 +51,9 @@ private:
 class WriteCmd : public TclCmd {
 public:
   WriteCmd(Tcl_Interp* interp, const char* cmd_name,
-			  const char* usage, int objc) :
-	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+			  const char* usage, int objc);
+
+  virtual ~WriteCmd();
 
 protected:
   virtual IO::IoObject& getIO() = 0;
@@ -62,8 +65,9 @@ private:
 class ReadCmd : public TclCmd {
 public:
   ReadCmd(Tcl_Interp* interp, const char* cmd_name,
-			 const char* usage, int objc) :
-	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+			 const char* usage, int objc);
+
+  virtual ~ReadCmd();
 
 protected:
   virtual IO::IoObject& getIO() = 0;
@@ -75,8 +79,9 @@ private:
 class ASWSaveCmd : public TclCmd {
 public:
   ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
-				 const char* usage, int objc) :
-	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+				 const char* usage, int objc);
+
+  virtual ~ASWSaveCmd();
 
 protected:
   virtual IO::IoObject& getIO() = 0;
@@ -89,8 +94,9 @@ private:
 class ASRLoadCmd : public TclCmd {
 public:
   ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name,
-				 const char* usage, int objc) :
-	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+				 const char* usage, int objc);
+
+  virtual ~ASRLoadCmd();
 
 protected:
   virtual IO::IoObject& getIO() = 0;
