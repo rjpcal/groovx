@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Mar 28 09:35:03 2001
+// written: Fri Mar 30 12:43:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,13 @@ Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 void Mtx::MtxImpl::reshape(int mr, int nc)
 {
   if (mr*nc != nelems())
-    throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
+	 {
+		ErrorWithMsg err("dimension mismatch in Mtx::reshape: ");
+		err.appendMsg("current nelems == ").appendNumber(nelems())
+		  .appendMsg("; requested ")
+		  .appendNumber(mr).appendMsg("x").appendNumber(nc);
+		throw err;
+	 }
 
   if (rowstride_ != mrows_)
     throw ErrorWithMsg("reshape not allowed for submatrix");
