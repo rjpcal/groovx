@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jun  4 15:14:27 2001
+// written: Tue Jun  5 10:34:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REFCOUNTED_H_DEFINED)
-#include "util/refcounted.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
@@ -33,14 +33,14 @@ class fixed_string;
  * The IO::IoObject class defines the abstract interface for object
  * persistence. Classes which need these facilities should inherit
  * virtually from IO::IoObject. IO::IoObject is reference counted (by
- * subclassing RefCounted), providing automatic memory management when
- * IO::IoObject's are managed with a smart pointer that manages the
- * reference count, such as PtrHandle or IdItem.
+ * subclassing Util::Object), providing automatic memory management
+ * when IO::IoObject's are managed with a smart pointer that manages
+ * the reference count, such as PtrHandle or IdItem.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject : public RefCounted {
+class IO::IoObject : public Util::Object {
 protected:
   /** Default constructor. */
   IoObject();
@@ -71,10 +71,6 @@ public:
 		override this function to return a compile-time constant. */
   virtual unsigned int ioAttribCount() const;
 
-  /** Returns the unique id for this object. The unique id will always
-      be strictly positive; zero will never be a valid unique id. */
-  IO::UID id() const;
-
   /** Returns a serialization version id for the class. The default
       implementation returns zero. Classes should override this when
       they make a change that requires a change to their serialization
@@ -90,9 +86,6 @@ public:
 		typeid(*this).name(), which should very closely resemble the way
 		the object was declared in source code. */
   virtual fixed_string ioTypename() const;
-
-private:
-  unsigned long itsId;
 };
 
 

@@ -35,10 +35,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-  unsigned long idCounter = 0;
-}
-
 class DummyCountingWriter : public IO::Writer {
 public:
   DummyCountingWriter() : itsCount(0) {}
@@ -70,9 +66,9 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::IoObject::IoObject() : itsId(++idCounter) {
+IO::IoObject::IoObject() {
 DOTRACE("IO::IoObject::IoObject");
-  DebugEval(itsId); DebugEvalNL(this);
+  DebugEvalNL(this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
@@ -86,11 +82,6 @@ DOTRACE("IO::IoObject::ioAttribCount");
   counter.reset();
   this->writeTo(&counter);
   return counter.attribCount();
-}
-
-unsigned long IO::IoObject::id() const {
-DOTRACE("IO::IoObject::id");
-  return itsId;
 }
 
 IO::VersionId IO::IoObject::serialVersionId() const {
