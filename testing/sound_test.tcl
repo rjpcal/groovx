@@ -55,7 +55,7 @@ test "Sound::forceLoad" "error on bad filename" {
     return $result
 } {forceLoad: }
 
-test "Sound::forceLoad" "error on junk file" {
+test "Sound::forceLoad" "error on junk text file" {
     set s [new Sound]
     -> $s file $::TEST_DIR/junk_text_file
     catch {-> $s forceLoad} result
@@ -63,6 +63,14 @@ test "Sound::forceLoad" "error on junk file" {
     return $result
 } {forceLoad: } \
   [expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
+
+test "Sound::forceLoad" "error on junk binary file" {
+    set s [new Sound]
+    -> $s file $::TEST_DIR/junk_bin_file
+    catch {-> $s forceLoad} result
+    delete $s
+    return $result
+} {forceLoad: }
 
 ### Sound::playCmd ###
 
