@@ -223,6 +223,7 @@ GRSH_DYNAMIC_OBJS := \
 	$(GRSH)/property.do \
 	$(GRSH)/reader.do \
 	$(GRSH)/readutils.do \
+	$(GRSH)/response.do \
 	$(GRSH)/responsehandler.do \
 	$(GRSH)/rhlist.do \
 	$(GRSH)/rhtcl.do \
@@ -469,7 +470,7 @@ XBMAPRENDERER_H := $(BMAPRENDERER_H) xbmaprenderer.h
 # level 2 headers
 #
 ASCIISTREAMWRITER_H := $(WRITER_H) asciistreamwriter.h
-BLOCK_H := $(IO_H) $(STOPWATCH_H) block.h
+BLOCK_H := $(IO_H) block.h
 EXPTDRIVER_H := $(IO_H) $(ERROR_H) $(EXPERIMENT_H) exptdriver.h
 GROBJ_H := $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) $(TRACER_H) grobj.h
 GRSHAPP_H := $(APPLICATION_H) $(ERROR_H) grshapp.h
@@ -478,6 +479,7 @@ IOMGR_H := $(IO_H) iomgr.h
 IOPTRLIST_H := $(VOIDPTRLIST_H) $(IO_H) ioptrlist.h
 POSITION_H := $(IO_H) position.h
 PROPERTY_H := $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
+RESPONSE_H := $(VALUE_H) response.h
 RESPONSEHANDLER_H := $(IO_H) responsehandler.h 
 SOUND_H := $(ERROR_H) $(IO_H) sound.h
 SUBJECT_H := $(STRINGS_H) $(IO_H) subject.h
@@ -485,7 +487,7 @@ TCLEVALCMD_H := $(TCLOBJLOCK_H) $(TCLERROR_H) tclevalcmd.h
 TCLVALUE_H := $(VALUE_H) tclvalue.h
 TIMINGHDLR_H := $(IO_H) $(STOPWATCH_H) timinghdlr.h
 TOGLCONFIG_H := $(POINTERS_H) $(RECT_H) $(WIDGET_H) toglconfig.h
-TRIAL_H := $(IO_H) $(ERROR_H) $(VALUE_H) trial.h
+TRIAL_H := $(IO_H) $(VALUE_H) trial.h
 TRIALEVENT_H := $(IO_H) $(STOPWATCH_H) trialevent.h
 WRITEUTILS_H := $(WRITER_H) writeutils.h
 
@@ -494,7 +496,7 @@ WRITEUTILS_H := $(WRITER_H) writeutils.h
 #
 ASCIISTREAMREADER_H := $(READER_H) asciistreamreader.h
 BITMAP_H := $(GROBJ_H) bitmap.h
-EVENTRESPONSEHDLR_H := $(RESPONSEHANDLER_H) eventresponsehdlr.h
+EVENTRESPONSEHDLR_H := $(RESPONSEHANDLER_H) $(TRACER_H) eventresponsehdlr.h
 FACE_H := $(GROBJ_H) $(PROPERTY_H) face.h
 FISH_H := $(GROBJ_H) $(PROPERTY_H) $(TRACER_H) fish.h
 FIXPT_H := $(GROBJ_H) $(PROPERTY_H) fixpt.h
@@ -572,9 +574,9 @@ BITMAPTCL_CC := $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H)						\
 	$(OBJTOGL_H) $(LISTITEMPKG_H) $(STRINGS_H) $(SYSTEM_H) $(TCLCMD_H)	\
 	$(TCLOBJLOCK_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
 
-BLOCK_CC := $(BLOCK_H) $(EXPERIMENT_H) $(RAND_H) $(IOSTL_H) \
-	$(READER_H) $(READUTILS_H) $(STRINGS_H) $(TLIST_H) $(TRIAL_H) \
-	$(WRITER_H) $(WRITEUTILS_H) $(TRACE_H) $(DEBUG_H) block.cc
+BLOCK_CC := $(BLOCK_H) $(EXPERIMENT_H) $(RAND_H) $(IOSTL_H)						\
+	$(READER_H) $(READUTILS_H) $(RESPONSE_H) $(STRINGS_H) $(TLIST_H)			\
+	$(TRIAL_H) $(WRITER_H) $(WRITEUTILS_H) $(TRACE_H) $(DEBUG_H) block.cc
 
 BLOCKLIST_CC := $(BLOCKLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(BLOCK_H) $(PTRLIST_CC) blocklist.cc
@@ -596,16 +598,16 @@ DEMANGLE_CC := $(DEMANGLE_H) $(TRACE_H) $(DEBUG_H) demangle.cc
 ERROR_CC := $(ERROR_H) $(STRINGS_H) $(TRACE_H) $(DEBUG_H) util/error.cc
 
 EVENTRESPONSEHDLR_CC := $(EVENTRESPONSEHDLR_H) $(ERROR_H) $(EXPERIMENT_H)	\
-	$(SOUND_H) $(SOUNDLIST_H) $(READER_H) $(TCLEVALCMD_H)							\
+	$(SOUND_H) $(SOUNDLIST_H) $(READER_H) $(RESPONSE_H) $(TCLEVALCMD_H)		\
 	$(TCLOBJLOCK_H) $(ARRAYS_H) $(STRINGS_H) $(WIDGET_H) $(WRITER_H)			\
 	$(TRACE_H) $(DEBUG_H) eventresponsehdlr.cc
 
 EXPERIMENT_CC := $(EXPERIMENT_H) experiment.cc
 
-EXPTDRIVER_CC := $(EXPTDRIVER_H) $(BLOCK_H) $(TCLERROR_H) $(READER_H)	\
+EXPTDRIVER_CC := $(EXPTDRIVER_H) $(BLOCK_H) $(TCLERROR_H)					\
 	$(RESPONSEHANDLER_H) $(TCLEVALCMD_H) $(TIMINGHDLR_H) $(TLISTUTILS_H)	\
 	$(TRIAL_H) $(OBJLIST_H) $(OBJTOGL_H) $(TOGLCONFIG_H) $(POSLIST_H)		\
-	$(BLOCKLIST_H) $(RHLIST_H) $(THLIST_H) $(TLIST_H)							\
+	$(BLOCKLIST_H) $(RHLIST_H) $(THLIST_H) $(TLIST_H) $(READER_H)			\
 	$(ARRAYS_H) $(STRINGS_H) $(WRITER_H)											\
 	$(SYSTEM_H) $(STOPWATCH_H) $(TLISTWIDGET_H)									\
 	$(TRACE_H) $(DEBUG_H) exptdriver.cc
@@ -756,14 +758,16 @@ READER_CC := $(READER_H) $(STRINGS_H) reader.cc
 
 READUTILS_CC := $(READUTILS_H) $(STRINGS_H) readutils.cc
 
+RESPONSE_CC := $(RESPONSE_H) $(TRACE_H) response.cc
+
 RESPONSEHANDLER_CC := $(RESPONSEHANDLER_H) $(TRACE_H) responsehandler.cc
 
 RHLIST_CC := $(RHLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(RESPONSEHANDLER_H) $(PTRLIST_CC) rhlist.cc
 
-RHTCL_CC := $(EVENTRESPONSEHDLR_H) $(IOFACTORY_H) $(RHLIST_H) \
-	$(RESPONSEHANDLER_H) $(KBDRESPONSEHDLR_H) \
-	$(NULLRESPONSEHDLR_H) $(LISTITEMPKG_H) $(LISTPKG_H) \
+RHTCL_CC := $(EVENTRESPONSEHDLR_H) $(IOFACTORY_H) $(RHLIST_H)				\
+	$(RESPONSEHANDLER_H) $(KBDRESPONSEHDLR_H)										\
+	$(NULLRESPONSEHDLR_H) $(LISTITEMPKG_H) $(LISTPKG_H) $(TRACERTCL_H)	\
 	$(TRACE_H) $(DEBUG_H) rhtcl.cc
 
 ifeq ($(ARCH),hp9000s700)
@@ -850,9 +854,9 @@ TRACE_CC := $(TRACE_H) util/trace.cc
 TRACERTCL_CC := $(TRACERTCL_H) $(TCLCMD_H) $(TCLPKG_H) $(TRACER_H) \
 	$(DEBUG_H) tracertcl.cc
 
-TRIAL_CC := $(TRIAL_H) $(CANVAS_H) \
-	$(OBJLIST_H) $(POSLIST_H) $(GROBJ_H) $(POSITION_H) \
-	$(READER_H) $(READUTILS_H) $(STRINGS_H) $(WRITER_H) $(WRITEUTILS_H) \
+TRIAL_CC := $(TRIAL_H) $(CANVAS_H) $(OBJLIST_H) $(POSLIST_H)	\
+	$(GROBJ_H) $(POSITION_H) $(READER_H) $(READUTILS_H)			\
+	$(RESPONSE_H) $(STRINGS_H) $(WRITER_H) $(WRITEUTILS_H)		\
 	$(TRACE_H) $(DEBUG_H) trial.cc
 
 TRIALEVENT_CC := $(TRIALEVENT_H) $(CANVAS_H) $(DEMANGLE_H) $(ERROR_H) \
@@ -954,6 +958,7 @@ $(GRSH)/poslisttcl.*[ol]:        $(POSLISTTCL_CC)
 $(GRSH)/property.*[ol]:          $(PROPERTY_CC)
 $(GRSH)/reader.*[ol]:            $(READER_CC)
 $(GRSH)/readutils.*[ol]:         $(READUTILS_CC)
+$(GRSH)/response.*[ol]:          $(RESPONSE_CC)
 $(GRSH)/responsehandler.*[ol]:   $(RESPONSEHANDLER_CC)
 $(GRSH)/rhlist.*[ol]:            $(RHLIST_CC)
 $(GRSH)/rhtcl.*[ol]:             $(RHTCL_CC)
