@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Feb 14 17:51:08 2000
+// written: Wed Feb 16 16:01:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,8 +56,10 @@ private:
   ExptDriver& operator=(const ExptDriver&);
 
 public:
+  /// Construct with the applications Tcl interpreter.
   ExptDriver(Tcl_Interp* interp);
 
+  /// Virtual destructor.
   virtual ~ExptDriver();
 
   virtual void serialize(ostream &os, IOFlag flag) const;
@@ -73,6 +75,7 @@ public:
   // Accessors + Manipulators //
   //////////////////////////////
 
+  /// Return the Tcl interpreter that was passed to the constructor.
   Tcl_Interp* getInterp();
 
   /// Return the name of the file currently being used for autosaves
@@ -103,14 +106,14 @@ public:
   virtual int edGetCurrentTrial() const;
   virtual void edSetCurrentTrial(int trial);
 
-  /// Uses \c deserialize() to read an experiment from \a filename
+  /// Uses \c deserialize() to read an experiment from \a filename.
   void read(const char* filename);
 
-  /// Uses \c serialize() to write an experiment to \a filename
+  /// Uses \c serialize() to write an experiment to \a filename.
   void write(const char* filename) const;
 
   /** This saves the experiment file and a summary-of-responses file
-		under unique filenames. */
+		under unique filenames based on the date and time. */
   void storeData();
 
 private:
