@@ -62,7 +62,7 @@ Util::UID Util::Object::id() const throw()
 fstring Util::Object::realTypename() const
 {
 DOTRACE("Util::Object::realTypename");
-  return demangle_cstr(typeid(*this).name());
+  return demangle(typeid(*this).name());
 }
 
 fstring Util::Object::objTypename() const

@@ -73,7 +73,7 @@ public:
     { return itsReferand->C::serialVersionId(); }
 
   virtual fstring objTypename() const
-    { return demangle_cstr(typeid(C).name()); }
+    { return demangle(typeid(C).name()); }
 
 private:
   IoProxy(const IoProxy&);
@@ -113,7 +113,7 @@ public:
     { return itsReferand->C::serialVersionId(); }
 
   virtual fstring objTypename() const
-    { return demangle_cstr(typeid(C).name()); }
+    { return demangle(typeid(C).name()); }
 
 private:
   ConstIoProxy(const ConstIoProxy&);

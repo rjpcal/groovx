@@ -367,9 +367,9 @@ namespace
     {
       if (!interp.hasInterp()) return;
 
-      fstring msg(where, ": an error of type ");
-      msg.append( demangle_cstr(exc_type.name()) );
-      msg.append( " occurred" );
+      fstring msg(where, ": an error of type ",
+                  demangle(exc_type.name()), " occurred" );
+
       if (what)
         {
           msg.append( ": " );

@@ -30,9 +30,9 @@
 #ifndef DEMANGLE_H_DEFINED
 #define DEMANGLE_H_DEFINED
 
-// Warning: the result of this function is only valid until the next
-// call to the function.
-const char* demangle_cstr(const char* in);
+/// Returns a demangled version of the given mangled typename.
+/** The input is expected to be of the form returned by typeid(x).name(). */
+const char* demangle(const char* in);
 
 static const char vcid_demangle_h[] = "$Header$";
 #endif // !DEMANGLE_H_DEFINED

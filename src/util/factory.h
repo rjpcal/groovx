@@ -215,7 +215,7 @@ public:
   const char* registerCreatorFunc(DerivedPtr (*func) (), const char* name = 0)
   {
     if (name == 0)
-      name = demangle_cstr
+      name = demangle
         (typeid(typename Util::TypeTraits<DerivedPtr>::Pointee).name());
 
     itsMap.setPtrForName(name,

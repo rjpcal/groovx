@@ -34,7 +34,7 @@
 
 #if defined(NO_TYPENAME_MANGLING)
 
-const char* demangle_cstr(const char* in) { return in; }
+std::string demangle_impl(const char* in) { return std::string(in); }
 
 #else
 
@@ -54,6 +54,7 @@ const char* demangle_cstr(const char* in) { return in; }
 #  else
 #    error no method specified for typename demangling
 #  endif
+#endif // defined(NO_TYPENAME_MANGLING)
 
 #include <map>
 #include <string>
@@ -67,9 +68,9 @@ namespace
   Cache nameCache;
 }
 
-const char* demangle_cstr(const char* in)
+const char* demangle(const char* in)
 {
-DOTRACE("demangle_cstr");
+DOTRACE("demangle");
 
   const std::string mangled = in;
 
@@ -89,8 +90,6 @@ DOTRACE("demangle_cstr");
 
   return (*result.first).second.c_str();
 }
-
-#endif // !defined(NO_TYPENAME_MANGLING)
 
 static const char vcid_demangle_cc[] = "$Header$";
 #endif // !DEMANGLE_CC_DEFINED

@@ -342,14 +342,14 @@ DOTRACE("main");
   catch (Util::Error& err)
     {
       std::cerr << "caught in main: Error ("
-                << demangle_cstr(typeid(err).name())
+                << demangle(typeid(err).name())
                 << "): " << err.msg_cstr() << '\n';
       err.backTrace().print(std::cerr);
     }
   catch (std::exception& err)
     {
       std::cerr << "caught in main: std::exception ("
-                << demangle_cstr(typeid(err).name())
+                << demangle(typeid(err).name())
                 << "): " << err.what() << '\n';
     }
   catch (...)
