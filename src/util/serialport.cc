@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Thu Jun  6 17:22:10 2002
+// written: Mon Sep  9 11:44:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,12 +16,8 @@
 #include "util/serialport.h"
 
 #include <cstdio>
+#include <fcntl.h>
 #include <termios.h>
-#if !defined(IRIX6)
-#  include <sys/fcntl.h>
-#else
-#  include <fcntl.h>
-#endif
 #include <unistd.h>
 
 #if defined(__GNUC__) && __GNUC__ >= 3
