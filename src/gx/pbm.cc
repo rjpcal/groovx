@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Mon Mar  6 10:30:40 2000
+// written: Mon Mar  6 13:45:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ DOTRACE("PbmError::PbmError");
 
 class Pbm::Impl {
 public:
-  Impl();
+  Impl() {}
 
   void setBytes(const vector<unsigned char>& bytes,
 					 int width, int height, int bits_per_pixel);
@@ -109,6 +109,7 @@ DOTRACE("Pbm::init");
 Pbm::Pbm(const BmapData& data) :
   itsImpl( new Impl )
 {
+  init();
   setBytes(data);
 }
 
