@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 18:34:25 2002
+// written: Mon Aug  5 19:01:44 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -105,8 +105,6 @@ namespace
   Togl_Callback* DefaultDestroyProc = NULL;
   Togl_Callback* DefaultTimerProc = NULL;
   ClientData DefaultClientData = NULL;
-
-  const Togl::Impl* currentImpl = 0;
 
   int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
                      int objc, Tcl_Obj* const objv[]);
@@ -245,8 +243,6 @@ public:
   ~Impl();
 
   int configure(int objc, Tcl_Obj* const objv[]);
-
-  void makeCurrent() const;
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
   static void cDestroyCallback(char* clientData);
@@ -462,20 +458,6 @@ DOTRACE("Togl::Impl::configure");
   return TCL_OK;
 }
 
-void Togl::Impl::makeCurrent() const
-{
-DOTRACE("Togl::Impl::makeCurrent");
-
-  if ( this != currentImpl )
-    {
-      DOTRACE("Togl::Impl::makeCurrent-change context");
-
-      itsGlx->makeCurrent(windowId());
-      currentImpl = this;
-    }
-}
-
-
 // Gets called when an Togl widget is destroyed.
 void Togl::Impl::cDestroyCallback(char* clientData)
 {
@@ -510,14 +492,14 @@ DOTRACE("Togl::Impl::cTimerCallback");
 void Togl::Impl::cRenderCallback(ClientData clientData)
 {
 DOTRACE("Togl::Impl::cRenderCallback");
-  Impl* impl = static_cast<Impl*>(clientData);
+  Impl* rep = static_cast<Impl*>(clientData);
 
-  if (impl->itsUserDisplayProc)
+  if (rep->itsUserDisplayProc)
     {
-      impl->makeCurrent();
-      impl->itsUserDisplayProc(impl->itsOwner);
+      rep->itsGlx->makeCurrent(rep->windowId());
+      rep->itsUserDisplayProc(rep->itsOwner);
     }
-  impl->itsUpdatePending = false;
+  rep->itsUpdatePending = false;
 }
 
 void Togl::Impl::requestRedisplay()
@@ -542,7 +524,7 @@ DOTRACE("Togl::Impl::requestReconfigure");
       if (itsOverlay)
         itsOverlay->reconfigure(itsOpts.width, itsOpts.height);
 
-      makeCurrent();
+      itsGlx->makeCurrent(windowId());
     }
 
   if (itsUserReshapeProc)
@@ -747,7 +729,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
       throw Util::Error("Togl: X server has no OpenGL GLX extension");
     }
 
-  itsGlx.reset( GlxWrapper::make(itsDisplay, itsOpts.glx) );
+  itsGlx.reset(GlxWrapper::make(itsDisplay, itsOpts.glx));
 
   Colormap cmap =
     X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
@@ -773,7 +755,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
   TkUtil::mapWindow(itsTkWin);
 
   // Bind the context to the window and make it the current context
-  makeCurrent();
+  itsGlx->makeCurrent(windowId());
 
   // Check for a single/double buffering snafu
   if (itsOpts.glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
@@ -852,7 +834,7 @@ void Togl::setDestroyFunc(Togl_Callback* proc) { rep->setDestroyFunc(proc); }
 int Togl::configure(int objc, Tcl_Obj* const objv[])
   { return rep->configure(objc, objv); }
 
-void Togl::makeCurrent() const          { rep->makeCurrent(); }
+void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(windowId()); }
 void Togl::requestRedisplay()           { rep->requestRedisplay(); }
 void Togl::requestReconfigure()         { rep->requestReconfigure(); }
 void Togl::swapBuffers() const          { rep->swapBuffers(); }
@@ -1010,7 +992,7 @@ namespace
           }
         else if (objc == 3)
           {
-            if (strcmp(Tcl_GetString(objv[2]),"-extensions") == 0)
+            if (strcmp(Tcl_GetString(objv[2]), "-extensions") == 0)
               {
                 /* Return a list of OpenGL extensions available */
                 Tcl_SetResult(interp, (char*) glGetString(GL_EXTENSIONS),
@@ -1052,7 +1034,7 @@ namespace
     else if (strcmp(Tcl_GetString(objv[1]), "makecurrent") == 0)
       {
         /* force the widget to be redrawn */
-        rep->makeCurrent();
+        rep->itsGlx->makeCurrent(rep->windowId());
       }
     else
       {
