@@ -16,7 +16,7 @@
 #
 ##########################################################################
 
-VERSION := 0.8a4
+VERSION := 0.8a5
 EXTRA_STATISTICS := 0
 
 TCLTK_VERSION := 8.2
@@ -105,7 +105,8 @@ ifeq ($(COMPILER),MIPSpro)
 	FILTER := 
 	COMPILER_SWITCHES := -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
-	ARCH_CPP_DEFINES := -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+	ARCH_CPP_DEFINES := -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= \
+		-DPRESTANDARD_IOSTREAMS -DHAVE_ZSTREAM
 
 	ARCH_MAKEDEP_INCLUDES := -I/usr/include/CC \
 		-I/cit/rjpeters/include/cppheaders
@@ -177,7 +178,7 @@ ifeq ($(ARCH),hp9000s700)
 endif
 ifeq ($(ARCH),irix6)
 	AUDIO_LIB := -laudio -laudiofile
-	ZSTREAM_LIB := 
+	ZSTREAM_LIB := -lzstream
 
 	OPENGL_LIB_DIR :=
 	AUDIO_LIB_DIR :=
@@ -295,8 +296,14 @@ APPWORKS_OBJS := \
 	$(OBJ)/application.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
+	$(OBJ)/gx/gxnode.do \
+	$(OBJ)/gx/gxseparator.do \
+	$(OBJ)/gx/gxtcl.do \
+	$(OBJ)/gx/gxtraversal.do \
+	$(OBJ)/gx/gxvec.do \
 	$(OBJ)/io/asciistreamreader.do \
 	$(OBJ)/io/asciistreamwriter.do \
+	$(OBJ)/io/fields.do \
 	$(OBJ)/io/iditemutils.do \
 	$(OBJ)/io/io.do \
 	$(OBJ)/io/iofactory.do \
@@ -304,7 +311,6 @@ APPWORKS_OBJS := \
 	$(OBJ)/io/iomap.do \
 	$(OBJ)/io/iomgr.do \
 	$(OBJ)/io/ioptrlist.do \
-	$(OBJ)/io/property.do \
 	$(OBJ)/io/reader.do \
 	$(OBJ)/io/readutils.do \
 	$(OBJ)/io/writer.do \
@@ -326,6 +332,7 @@ APPWORKS_OBJS := \
 
 
 TCLWORKS_OBJS := \
+	$(OBJ)/tcl/fieldpkg.do \
 	$(OBJ)/tcl/iotcl.do \
 	$(OBJ)/tcl/listpkg.do \
 	$(OBJ)/tcl/misctcl.do \
@@ -574,3 +581,9 @@ ldeps: cdeps
 
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
+
+debug_benchmarks: $(DEBUG_TARGET)
+	$(DEBUG_TARGET) $(SCRIPTS)/benchmarks.tcl -output $(LOG)/benchmarks.txt
+
+prod_benchmarks: $(PROD_TARGET)
+	$(PROD_TARGET) $(SCRIPTS)/benchmarks.tcl -output $(LOG)/benchmarks.txt
