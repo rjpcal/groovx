@@ -326,6 +326,8 @@ public:
 
   void print() const;
 
+  // This version will print the given name before printing the matrix contents
+  void print(const char* mtxName) const;
 
   //
   // Data access

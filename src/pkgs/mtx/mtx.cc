@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Apr 16 15:03:12 2001
+// written: Mon Apr 16 18:06:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -338,6 +338,12 @@ void Mtx::print() const
       mexPrintf("\n");
     }
   mexPrintf("\n");
+}
+
+void Mtx::print(const char* mtxName) const
+{
+  mexPrintf("%s:\n", mtxName);
+  print();
 }
 
 Mtx Mtx::rows(int r, int nr) const
