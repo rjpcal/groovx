@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 17:57:12 2003
-// written: Mon May 12 18:58:34 2003
+// written: Mon May 12 19:16:21 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -89,6 +89,26 @@ namespace
     TEST_REQUIRE_APPROX(Vec2d( 1.0, -1.0).thetaDeg(), -45.0,     1e-20);
     TEST_REQUIRE_APPROX(Vec2d( 1.0, -0.5).thetaDeg(), -26.5651,  1e-4);
   }
+
+  void testSetThetaDeg()
+  {
+    { Vec2d v(1, 0); v.setThetaDeg(0.0);    TEST_REQUIRE_APPROX(v.x(),  1.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.000000, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(22.5);   TEST_REQUIRE_APPROX(v.x(),  0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.382683, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(45.0);   TEST_REQUIRE_APPROX(v.x(),  0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.707107, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(67.5);   TEST_REQUIRE_APPROX(v.x(),  0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.923880, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(90.0);   TEST_REQUIRE_APPROX(v.x(),  0.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  1.000000, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(112.5);  TEST_REQUIRE_APPROX(v.x(), -0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.923880, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(135.0);  TEST_REQUIRE_APPROX(v.x(), -0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.707107, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(157.5);  TEST_REQUIRE_APPROX(v.x(), -0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.382683, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(180.0);  TEST_REQUIRE_APPROX(v.x(), -1.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.000000, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(202.5);  TEST_REQUIRE_APPROX(v.x(), -0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.382683, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(225.0);  TEST_REQUIRE_APPROX(v.x(), -0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.707107, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(247.5);  TEST_REQUIRE_APPROX(v.x(), -0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.923880, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(270.0);  TEST_REQUIRE_APPROX(v.x(),  0.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -1.000000, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(292.5);  TEST_REQUIRE_APPROX(v.x(),  0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.923880, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(315.0);  TEST_REQUIRE_APPROX(v.x(),  0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.707107, 1e-4); }
+    { Vec2d v(1, 0); v.setThetaDeg(337.5);  TEST_REQUIRE_APPROX(v.x(),  0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.382683, 1e-4); }
+  }
 }
 
 extern "C"
@@ -105,6 +125,7 @@ DOTRACE("Vectwotest_Init");
   DEF_TEST(pkg, testSetLength);
   DEF_TEST(pkg, testSetPolarRad);
   DEF_TEST(pkg, testThetaDeg);
+  DEF_TEST(pkg, testSetThetaDeg);
 
   return pkg->initStatus();
 }
