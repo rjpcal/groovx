@@ -37,6 +37,7 @@ set files {
     { gtext_test.tcl 1 }
     { gxsep_test.tcl 1 }
     { house_test.tcl 1 }
+    { iodb_test.tcl 1 }
     { jitter_test.tcl 1 }
     { kbdrh_test.tcl 1 }
     { maskhatch_test.tcl 1 }
