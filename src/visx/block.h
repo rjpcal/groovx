@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Nov 30 17:15:41 1999
+// written: Tue Nov 30 17:21:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ public:
 		completed.  This number will not include trials that have been
 		aborted either due to an invalid response or due to a
 		timeout. */
-  virtual int numCompleted() const;
+  virtual size_t numCompleted() const;
 
   /// Get the trial id (an index into Tlist) of the current trial.
   virtual int currentTrial() const;
