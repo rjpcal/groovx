@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Fri Mar 23 16:34:19 2001
+// written: Sun Mar 25 17:36:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,15 @@ protected:
 public:
   static DataBlock* makeDataCopy(const double* data, int data_length);
   static DataBlock* makeBlank(int length);
+
+  // The 'data' are borrowed, but are never considered unique, so
+  // attempts to makeUnique() will always duplicate the data.
   static DataBlock* makeBorrowed(double* data, int data_length);
+
+  // The 'data' are borrowed, as in makeBorrowed(), except that the
+  // uniqueness is determined by the reference count, so it is
+  // possible to write to the data through the DataBlock.
+  static DataBlock* makeReferred(double* data, int data_length);
 
   static void makeUnique(DataBlock*& rep);
 
