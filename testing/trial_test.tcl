@@ -9,7 +9,7 @@
 
 package require Trial
 
-set TRIAL [Trial::Trial]
+set TRIAL [IO::new Trial]
 
 source ${::TEST_DIR}/io_test.tcl
 

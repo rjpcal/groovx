@@ -8,7 +8,7 @@
 ##############################################################################
 
 RhList::reset
-set ::EVENTRH [EventRh::EventRh]
+set ::EVENTRH [IO::new EventResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -17,12 +17,12 @@ IO::testDestringifyCmd EventRhTcl EventRh 1 $::EVENTRH
 IO::testWriteCmd EventRhTcl EventRh 1 $::EVENTRH
 IO::testReadCmd EventRhTcl EventRh 1 $::EVENTRH
 
-### EventRh::EventRhCmd ###
-test "EventRhTcl-EventRh::EventRh" "too many args" {
-    EventRh::EventRh junk
-} {^wrong \# args: should be "EventRh::EventRh"$}
-test "EventRhTcl-EventRh::EventRh" "normal use" {
-	 catch {EventRh::EventRh}
+### IO::new EventRh ###
+test "EventRhTcl-IO::new EventRh" "too many args" {
+    IO::new EventResponseHdlr junk
+} {^wrong \# args: should be "IO::new typename"$}
+test "EventRhTcl-IO::new EventRh" "normal use" {
+	 catch {IO::new EventResponseHdlr}
 } {^0$}
 
 ### EventRh::useFeedbackCmd ###

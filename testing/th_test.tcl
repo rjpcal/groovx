@@ -8,9 +8,9 @@
 ##############################################################################
 
 source ${::TEST_DIR}/list_test.tcl
-List::testList ThListTcl ThList Th Th SimpleTh
+List::testList ThListTcl ThList Th TimingHdlr TimingHandler
 
-set SIMPLETH [SimpleTh::SimpleTh]
+set SIMPLETH [IO::new TimingHandler]
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -19,17 +19,17 @@ IO::testDestringifyCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
 IO::testWriteCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
 IO::testReadCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
 
-set TH [Th::Th]
+set TH [IO::new TimingHdlr]
 
 IO::testStringifyCmd ThTcl Th 1 $::TH
 IO::testDestringifyCmd ThTcl Th 1 $::TH
 IO::testWriteCmd ThTcl Th 1 $::TH
 IO::testReadCmd ThTcl Th 1 $::TH
 
-### SimpleTh::timingHandlerCmd ###
-test "ThTcl-SimpleTh::SimpleTh" "too many args" {
-    SimpleTh::SimpleTh junk
-} {^wrong \# args: should be "SimpleTh::SimpleTh"$}
-test "ThTcl-SimpleTh::SimpleTh" "normal use" {
-	 catch {SimpleTh::SimpleTh}
+### IO::new TimingHandler ###
+test "ThTcl-IO::new SimpleTh" "too many args" {
+    IO::new TimingHandler junk
+} {^wrong \# args: should be "IO::new typename"$}
+test "ThTcl-IO::new TimingHandler" "normal use" {
+	 catch {IO::new TimingHandler}
 } {^0$}

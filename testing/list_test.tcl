@@ -62,8 +62,8 @@ proc testResetCmd { objname } {
     eval ::test $testname {"check number of objects"} {"
         $cmdname
         set before_count \[${this(listname)}::count\]
-        ${this(subclass1)}::${this(subclass1)}
-        ${this(subclass2)}::${this(subclass2)}
+        IO::new ${this(subclass1)}
+        IO::new ${this(subclass2)}
         $cmdname
         set after_count \[${this(listname)}::count\]
 		  return \[expr \$before_count - \$after_count\]
@@ -83,8 +83,8 @@ proc testCountCmd { objname } {
     eval ::test $testname {"normal use"} {"
         ${this(listname)}::reset
 	     set before_count \[$cmdname\]
-        ${this(subclass1)}::${this(subclass1)}
-        ${this(subclass2)}::${this(subclass2)}
+        IO::new ${this(subclass1)}
+        IO::new ${this(subclass2)}
         set after_count \[$cmdname\]
 		  return \[expr \$after_count - \$before_count\]
     "} {"^2$"}
@@ -106,7 +106,7 @@ proc testRemoveCmd { objname } {
 	 "} {$usage}
 
 	 eval ::test $testname {"normal use"} {"
-        set id \[${this(subclass1)}::${this(subclass1)}\]
+        set id \[IO::new ${this(subclass1)}\]
 	     $cmdname \$id
 	     ${this(listname)}::isValidId \$id
  	 "} {"^0$"}
@@ -125,9 +125,9 @@ proc testGetValidIdsCmd { objname } {
 
 	 eval ::test $testname {"normal use on filled list"} {"
 	     ${this(listname)}::reset
-        ${this(subclass1)}::${this(subclass1)}
-        set remove_me \[${this(subclass1)}::${this(subclass1)}\]
-        ${this(subclass2)}::${this(subclass2)}
+        IO::new ${this(subclass1)}
+        set remove_me \[IO::new ${this(subclass1)}\]
+        IO::new ${this(subclass2)}
 		  ${this(listname)}::remove \$remove_me
 		  set count \[${this(listname)}::count\]
 		  set num_ids \[llength \[$cmdname\]\]
@@ -152,12 +152,12 @@ proc testIsValidIdCmd { objname } {
 	 "} {$usage}
 
 	 eval ::test $testname {"normal use on valid id"} {"
-        set id \[${this(subclass1)}::${this(subclass1)}\]
+        set id \[IO::new ${this(subclass1)}\]
 	     $cmdname \$id
 	 "} {"^1$"}
 
 	 eval ::test $testname {"normal use on valid id"} {"
-        set id \[${this(subclass1)}::${this(subclass1)}\]
+        set id \[IO::new ${this(subclass1)}\]
 	     ${this(listname)}::remove \$id
 	     $cmdname \$id
 	 "} {"^0$"}
@@ -179,23 +179,23 @@ proc testStringifyCmd { objname } {
     eval ::test $testname {"use on empty list"} {"
         ${this(listname)}::reset
         set str \[$stringify\]
-        ${this(subclass1)}::${this(subclass1)}
-        ${this(subclass2)}::${this(subclass2)}
+        IO::new ${this(subclass1)}
+        IO::new ${this(subclass2)}
         $destringify \$str
         ${this(listname)}::count
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
         ${this(listname)}::reset
 
-        set id1 \[${this(subclass1)}::${this(subclass1)}\]
-        set id2 \[${this(subclass2)}::${this(subclass2)}\]
+        set id1 \[IO::new ${this(subclass1)}\]
+        set id2 \[IO::new ${this(subclass2)}\]
 
 	     set ids_before \[${this(listname)}::getValidIds\]
         set idx1 \[lsearch \$ids_before \$id1\]
         set idx2 \[lsearch \$ids_before \$id2\]
 
-        set type1_before \[${this(baseclass)}::type \$id1\]
-        set type2_before \[${this(baseclass)}::type \$id2\]
+        set type1_before \[IO::type \$id1\]
+        set type2_before \[IO::type \$id2\]
 
         set str \[$stringify\]
 
@@ -206,8 +206,8 @@ proc testStringifyCmd { objname } {
         set id1_after \[lindex \$ids_after \$idx1\]
         set id2_after \[lindex \$ids_after \$idx2\]
 
-        set type1_after \[${this(baseclass)}::type \$id1_after\]
-        set type2_after \[${this(baseclass)}::type \$id2_after\]
+        set type1_after \[IO::type \$id1_after\]
+        set type2_after \[IO::type \$id2_after\]
 
 	     set equal1 \[string equal \$type1_before \$type1_after\]
 	     set equal2 \[string equal \$type2_before \$type2_after\]
@@ -260,23 +260,23 @@ proc testWriteCmd { objname } {
     eval ::test $testname {"use on empty list"} {"
         ${this(listname)}::reset
         set str \[$writecmd\]
-        ${this(subclass1)}::${this(subclass1)}
-        ${this(subclass2)}::${this(subclass2)}
+        IO::new ${this(subclass1)}
+        IO::new ${this(subclass2)}
         $readcmd \$str
         ${this(listname)}::count
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
         ${this(listname)}::reset
 
-        set id1 \[${this(subclass1)}::${this(subclass1)}\]
-        set id2 \[${this(subclass2)}::${this(subclass2)}\]
+        set id1 \[IO::new ${this(subclass1)}\]
+        set id2 \[IO::new ${this(subclass2)}\]
 
 	     set ids_before \[${this(listname)}::getValidIds\]
         set idx1 \[lsearch \$ids_before \$id1\]
         set idx2 \[lsearch \$ids_before \$id2\]
 
-        set type1_before \[${this(baseclass)}::type \$id1\]
-        set type2_before \[${this(baseclass)}::type \$id2\]
+        set type1_before \[IO::type \$id1\]
+        set type2_before \[IO::type \$id2\]
 
         set str \[$writecmd\]
 
@@ -287,8 +287,8 @@ proc testWriteCmd { objname } {
         set id1_after \[lindex \$ids_after \$idx1\]
         set id2_after \[lindex \$ids_after \$idx2\]
 
-        set type1_after \[${this(baseclass)}::type \$id1_after\]
-        set type2_after \[${this(baseclass)}::type \$id2_after\]
+        set type1_after \[IO::type \$id1_after\]
+        set type2_after \[IO::type \$id2_after\]
 
 	     set equal1 \[string equal \$type1_before \$type1_after\]
 	     set equal2 \[string equal \$type2_before \$type2_after\]

@@ -10,7 +10,7 @@
 source ${::TEST_DIR}/io_test.tcl
 
 RhList::reset
-set ::KBDRH [KbdRh::KbdRh]
+set ::KBDRH [IO::new KbdResponseHdlr]
 KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 
 source ${::TEST_DIR}/io_test.tcl
@@ -20,12 +20,12 @@ IO::testDestringifyCmd KbdRhTcl KbdRh 1 $::KBDRH
 IO::testWriteCmd KbdRhTcl KbdRh 1 $::KBDRH
 IO::testReadCmd KbdRhTcl KbdRh 1 $::KBDRH
 
-### KbdRh::KbdRhCmd ###
-test "KbdRhTcl-KbdRh::KbdRh" "too many args" {
-    KbdRh::KbdRh junk
-} {^wrong \# args: should be "KbdRh::KbdRh"$}
-test "KbdRhTcl-KbdRh::KbdRh" "normal use" {
-	 catch {KbdRh::KbdRh}
+### IO::new KbdRh ###
+test "KbdRhTcl-IO::new KbdRh" "too many args" {
+    IO::new KbdResponseHdlr junk
+} {^wrong \# args: should be "IO::new typename"$}
+test "KbdRhTcl-IO::new KbdRh" "normal use" {
+	 catch {IO::new KbdResponseHdlr}
 } {^0$}
 
 ### KbdRh::useFeedbackCmd ###

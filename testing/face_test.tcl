@@ -14,16 +14,15 @@ source ${::TEST_DIR}/grobj_test.tcl
 GrObj::testSubclass Face Face
 
 ### faceCmd ###
-test "FaceTcl-Face::Face" "too many args" {
-	 Face::Face junk
-} {wrong \# args: should be "Face::Face"}
-test "FaceTcl-Face::Face" "normal face creation" {
-	 Face::Face
+test "FaceTcl-IO::new Face" "too many args" {
+	 IO::new Face junk
+} {wrong \# args: should be "IO::new typename"}
+test "FaceTcl-IO::new Face" "normal face creation" {
+	 IO::new Face
 } {[0-9]+}
-test "FaceTcl-Face::Face" "no possible error" {} $BLANK $no_test
 
 set EPS 0.00001 ;# floating-point precision required of next four commands
-set faceid [Face::Face] ;# guaranteed face id for next operations
+set faceid [IO::new Face] ;# guaranteed face id for next operations
 
 ### eyeHeightCmd ###
 test "FaceTcl-eyeHeight" "too few args" {
@@ -123,24 +122,24 @@ unset EPS
 
 ### Face::stringifyCmd ###
 test "FaceTcl-Face::stringify" "error from wrong type" {
-    set fx [FixPt::FixPt]
+    set fx [IO::new FixPt]
 	 Face::stringify $fx
 } {^Face::stringify: an error of type (std::)?bad_cast occurred:.*$}
 
 ### Face::destringifyCmd ###
 test "FaceTcl-Face::destringify" "error from wrong type" {
-    set fx [FixPt::FixPt]
+    set fx [IO::new FixPt]
 	 Face::destringify $fx junk
 } {^Face::destringify: an error of type (std::)?bad_cast occurred:.*$}
 test "FaceTcl-Face::destringify" "stringify/destringify check" {
-	 set faceid [Face::Face]
+	 set faceid [IO::new Face]
 	 Face::noseLength $faceid -1.2
 	 Face::mouthHeight $faceid -0.6
 	 Face::eyeHeight $faceid 0.4
 	 Face::eyeDistance $faceid 0.6
 	 set str1 [Face::stringify $faceid]
 
-	 set faceid2 [Face::Face]
+	 set faceid2 [IO::new Face]
 	 Face::destringify $faceid2 $str1
 	 set str2 [Face::stringify $faceid2]
 

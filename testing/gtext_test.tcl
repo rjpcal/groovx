@@ -18,7 +18,7 @@ source ${::TEST_DIR}/grobj_test.tcl
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
-set ::GTEXT [Gtext::Gtext]
+set ::GTEXT [IO::new Gtext]
 Gtext::text $::GTEXT "Gtext"
 GrObj::testSubclass Gtext Gtext $::GTEXT
 
@@ -26,16 +26,15 @@ GrObj::testSubclass Gtext Gtext $::GTEXT
 set GTEXT -1
 set PACKAGE GtextTcl
 
-### Gtext::GtextCmd ###
-test "$PACKAGE-Gtext::Gtext" "too many args" {
-	 Gtext::Gtext junk junk
-} {^wrong \# args: should be "Gtext::Gtext"$}
-test "$PACKAGE-Gtext::Gtext" "normal use" {
-	 set ::GTEXT [Gtext::Gtext]
+### IO::new Gtext ###
+test "$PACKAGE-IO::new Gtext" "too many args" {
+	 IO::new Gtext junk
+} {^wrong \# args: should be "IO::new typename"$}
+test "$PACKAGE-IO::new Gtext" "normal use" {
+	 set ::GTEXT [IO::new Gtext]
 	 Gtext::text $::GTEXT "Hello, World!"
 	 return $::GTEXT
 } "^${INT}$"
-test "$PACKAGE-Gtext::Gtext" "error" {} {^$} $no_test
 
 ### Gtext::textCmd ###
 test "$PACKAGE-Gtext::text" "too few args" {
@@ -55,13 +54,13 @@ test "$PACKAGE-Gtext::text" "error" {} {^$} $no_test
 test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
 	 set str1 [Gtext::stringify $::GTEXT]
 	 ObjList::reset
-	 set ::GTEXT [Gtext::Gtext]
+	 set ::GTEXT [IO::new Gtext]
 	 Gtext::destringify $::GTEXT $str1
 	 set str2 [Gtext::stringify $::GTEXT]
 	 string equal $str1 $str2
 } {^1$}
 
-set POS [Pos::Pos]
+set POS [IO::new Position]
 
 ### Gtext rendering ###
 test "$PACKAGE-rendering" "normal render" {

@@ -25,9 +25,9 @@ test "ObjTogl-Togl::undraw" "too many args" {
 	 Togl::undraw junk
 } {wrong \# args: should be "Togl::undraw"}
 test "ObjTogl-Togl::undraw" "normal use" {
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 set t [Trial::Trial]
+	 set f [IO::new Face]
+	 set p [IO::new Position]
+	 set t [IO::new Trial]
 	 Trial::add $t $f $p
 	 setForeground 1
 	 setBackground 0
@@ -43,9 +43,9 @@ test "ObjTogl-Togl::refresh" "too many args" {
 	 Togl::refresh junk
 } {wrong \# args: should be "Togl::refresh"}
 test "ObjTogl-Togl::refresh" "normal use" {
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 set t [Trial::Trial]
+	 set f [IO::new Face]
+	 set p [IO::new Position]
+	 set t [IO::new Trial]
 	 Trial::add $t $f $p
 	 Togl::setCurTrial $t
 	 setForeground 1
@@ -109,9 +109,9 @@ test "ObjTogl-Togl::setCurTrial" "too many args" {
     Togl::setCurTrial j u
 } {wrong \# args: should be "Togl::setCurTrial trial_id"}
 test "ObjTogl-Togl::setCurTrial" "normal use" {
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 set t [Trial::Trial]
+	 set f [IO::new Face]
+	 set p [IO::new Position]
+	 set t [IO::new Trial]
 	 Trial::add $t $f $p
 	 catch {Togl::setCurTrial $t}
 } {^0$}

@@ -17,7 +17,7 @@ package require Pos
 
 set PBMFILE $TEST_DIR/pbmfile.PPM
 
-set ::GLBITMAP [GLBitmap::GLBitmap]
+set ::GLBITMAP [IO::new GLBitmap]
 Bitmap::loadPbm $::GLBITMAP $::PBMFILE
 
 source ${::TEST_DIR}/io_test.tcl
@@ -29,16 +29,15 @@ IO::testReadCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
-set POS [Pos::Pos]
+set POS [IO::new Position]
 
-### GLBitmap::GLBitmapCmd ###
-test "GLBitmapTcl-GLBitmap::GLBitmap" "too many args" {
-	 GLBitmap::GLBitmap junk
-} {^wrong \# args: should be "GLBitmap::GLBitmap"$}
-test "GLBitmapTcl-GLBitmap::GLBitmap" "normal use" {
-	 set ::BITMAP [GLBitmap::GLBitmap]
+### IO::new GLBitmap ###
+test "GLBitmapTcl-IO::new GLBitmap" "too many args" {
+	 IO::new GLBitmap junk
+} {^wrong \# args: should be "IO::new typename"$}
+test "GLBitmapTcl-IO::new GLBitmap" "normal use" {
+	 set ::BITMAP [IO::new GLBitmap]
 } "^${INT}$"
-test "GLBitmapTcl-GLBitmap::GLBitmap" "error" {} {^$} $no_test
 
 ### Bitmap::loadPbmCmd ###
 test "BitmapTcl-Bitmap::loadPbm" "too few args" {
@@ -199,7 +198,7 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "error" {} {^$} $no_test
 test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
 	 set str1 [Bitmap::stringify $::BITMAP]
 	 ObjList::reset
-	 set ::BITMAP [GLBitmap::GLBitmap]
+	 set ::BITMAP [IO::new GLBitmap]
 	 GLBitmap::destringify $::BITMAP $str1
 	 set str2 [Bitmap::stringify $::BITMAP]
 	 string equal $str1 $str2
