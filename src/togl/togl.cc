@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 23:02:18 2002
+// written: Tue Sep 17 23:21:15 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -26,8 +26,6 @@
 
 #include "togl/togl.h"
 
-#include "gfx/canvas.h"
-
 #include "tcl/tclsafeinterp.h"
 
 #include "togl/glutil.h"
@@ -38,11 +36,8 @@
 #include "util/error.h"
 #include "util/pointers.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <GL/glx.h>
 #include <tcl.h>
 #include <tk.h>
 
@@ -235,12 +230,6 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
   Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
 
   Display* dpy = Tk_Display(tkwin);
-
-  int dummy;
-  if (!glXQueryExtension(dpy, &dummy, &dummy))
-    {
-      throw Util::Error("Togl: X server has no OpenGL GLX extension");
-    }
 
   rep->itsGlx.reset(GlxWrapper::make(dpy, *(rep->itsOpts)));
 
