@@ -24,7 +24,6 @@
 #  define NO_CPP_LIMITS
 #endif
 
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -139,7 +138,7 @@ DOTRACE("Util::RefCounted::operator delete");
 Util::RefCounted::RefCounted() : itsRefCounts(new Util::RefCounts)
 {
 DOTRACE("Util::RefCounted::RefCounted");
-  DebugEval((void*)this);
+  DebugPrint("RefCounted ctor"); DebugEvalNL((void*)this);
 
   itsRefCounts->acquireWeak();
 }
@@ -147,21 +146,18 @@ DOTRACE("Util::RefCounted::RefCounted");
 Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
+  DebugPrint("RefCounted dtor"); DebugEvalNL((void*)this);
 
   itsRefCounts->releaseWeak();
 }
 
 void Util::RefCounted::incrRefCount() const
 {
-  DebugEvalNL((void*)this);
-
   itsRefCounts->acquireStrong();
 }
 
 void Util::RefCounted::decrRefCount() const
 {
-  DebugEvalNL((void*)this);
-
   if (itsRefCounts->releaseStrong() == 0)
     delete this;
 }
