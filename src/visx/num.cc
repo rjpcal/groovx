@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Fri Mar  9 19:01:31 2001
+// written: Mon Mar 12 12:34:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "num.h"
 
-#include "rutil.h"
+#include "mtx.h"
 
 #include "trace.h"
 
