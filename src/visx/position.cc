@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu Oct 21 18:17:41 1999
+// written: Wed Dec  1 11:59:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,11 +51,11 @@ struct PositionImpl {
   rt_x(rx), rt_y(ry), rt_z(rz), rt_ang(ra),
   red(r), green(g), blue(b) {}
 
-  double tr_x, tr_y, tr_z;       // x,y,z coord shift
-  double sc_x, sc_y, sc_z;       // x,y,z scaling
-  double rt_x, rt_y, rt_z;       // vector of rotation axis
-  double rt_ang;                 // angle in degrees of rotation around axis
-  double red, blue, green;		  // RGB color values ( 0.0 <= val <= 1.0 )
+  double tr_x, tr_y, tr_z;		  // x,y,z coord shift
+  double sc_x, sc_y, sc_z;		  // x,y,z scaling
+  double rt_x, rt_y, rt_z;		  // vector of rotation axis
+  double rt_ang;					  // angle in degrees of rotation around axis
+  double red, green, blue;		  // RGB color values ( 0.0 <= val <= 1.0 )
 };
 
 ///////////////////////////////////////////////////////////////////////
