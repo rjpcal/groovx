@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:49:28 2001
-// written: Fri Jan 25 15:41:48 2002
+// written: Tue Apr 30 12:44:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace
       std::cerr << std::showpoint << std::fixed;
 #endif
       std::cerr << std::setprecision(2)
-                << itsTimer.elapsedMsec(*now) << "/ ";
+                << itsTimer.elapsedMsec(*now) << " / ";
     }
   };
 
