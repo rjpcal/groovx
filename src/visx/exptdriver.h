@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Jul 20 14:43:05 1999
+// written: Tue Aug  3 13:04:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,6 +87,8 @@ public:
   void edAbortTrial();
   void edEndTrial();
   void edHaltExpt() const;
+
+  void edResetExpt();
 
   void read(const char* filename);
   void write(const char* filename) const;

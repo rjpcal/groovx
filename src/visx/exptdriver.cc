@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jul 23 12:40:30 1999
+// written: Tue Aug  3 13:12:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -547,6 +547,23 @@ DOTRACE("ExptDriver::edHaltExpt");
 	 timingHdlr().thHaltExpt();
   }
 }
+
+//---------------------------------------------------------------------
+//
+// ExptDriver::edResetExpt() --
+//
+//---------------------------------------------------------------------
+
+void ExptDriver::edResetExpt() {
+DOTRACE("ExptDriver::edResetExpt");
+  edHaltExpt();
+
+  while ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+	 block().resetBlock();
+	 --itsBlockId;
+  }
+}
+
 
 //--------------------------------------------------------------------
 //
