@@ -52,14 +52,14 @@ namespace Nub
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c IO::Reader provides the interface that \c IO objects use to restore
- * their state in a \c readFrom() implementation. It provides the
- * inverse operations to those in \c IO::Writer. To reconstruct an object
- * tree, a client should call \c readRoot() on the root object in that
- * tree. Subclasses of \c IO::Reader will implement this interface using
- * different back ends for the actual storage medium, for example,
- * an ASCII text file, an on-screen dialog box, a relational database,
- * etc.
+ * \c IO::Reader provides the interface that \c IO objects use to
+ * restore their state in a \c readFrom() implementation. It provides
+ * the inverse operations to those in \c IO::Writer. To reconstruct an
+ * object tree, a client should call \c readRoot() on the root object
+ * in that tree. Subclasses of \c IO::Reader will implement this
+ * interface using different back ends for the actual storage medium,
+ * for example, an ASCII text file, an on-screen dialog box, a
+ * relational database, etc.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -97,10 +97,12 @@ public:
   virtual double readDouble(const rutz::fstring& name) = 0;
 
   /// Read the \c rutz::value attribute associated with the tag \a name.
-  virtual void readValueObj(const rutz::fstring& name, rutz::value& v) = 0;
+  virtual void readValueObj(const rutz::fstring& name,
+                            rutz::value& v) = 0;
 
   /// Read the raw data array associated with the tag \a name.
-  virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data) = 0;
+  virtual void readRawData(const rutz::fstring& name,
+                           rutz::byte_array& data) = 0;
 
   /** @name Overloaded read functions
 
