@@ -11,41 +11,53 @@ package require Iwidgets
 
 itcl::class Editor {
 	 private variable itsPanes
-	 private variable itsUpper
-	 private variable itsLower
+	 private variable itsControls
 	 private variable itsToglet
 	 private variable itsVisible true
-	 private variable itsFieldPane
+	 private variable itsFieldPanes
 	 private variable itsFieldControls
 	 private variable itsObjects {}
 	 private variable itsCurrentObj 0
 	 private variable itsObjType Face
 	 private variable itsFieldNames {}
 
-	 private method addNewObject {} {
-		  # create new object
-		  eval set id [new $itsObjType]
-		  GrObj::alignmentMode $id $GrObj::CENTER_ON_CENTER
-		  GrObj::scalingMode $id $GrObj::MAINTAIN_ASPECT_SCALING
-		  GrObj::unRenderMode $id $GrObj::CLEAR_BOUNDING_BOX
-		  GrObj::height $id 1.0
-
-		  lappend itsObjects $id
-		  selectObject $id
+	 private method standardSettings {objs} {
+		  GrObj::alignmentMode $objs $GrObj::CENTER_ON_CENTER
+		  GrObj::scalingMode $objs $GrObj::MAINTAIN_ASPECT_SCALING
+		  GrObj::renderMode $objs $GrObj::DIRECT_RENDER
+		  GrObj::unRenderMode $objs $GrObj::CLEAR_BOUNDING_BOX
+		  GrObj::height $objs 1.0
 	 }
 
-	 private method selectObject {id} {
-		  set itsCurrentObj $id
+	 private method addNewObject {} {
+		  # create new object
+		  eval set obj [new $itsObjType]
 
-		  $itsLower.idspinner delete 0 end
-		  $itsLower.idspinner insert 0 $itsCurrentObj
+		  standardSettings $obj
 
-		  requestDraw
+		  lappend itsObjects $obj
+		  selectObject $obj
+	 }
+
+	 private method selectObject {obj} {
+		  set itsCurrentObj $obj
+
+		  $itsControls.idspinner delete 0 end
+		  $itsControls.idspinner insert 0 $itsCurrentObj
+
+		  Toglet::setVisible $itsToglet false
 
 		  foreach field $itsFieldNames {
-				set val [${itsObjType}::$field $id]
+				set val [${itsObjType}::$field $obj]
 				$itsFieldControls($field) set $val
 		  }
+
+		  # need to force the controls to update before we draw the object
+		  update
+
+		  Toglet::setVisible $itsToglet true
+
+		  requestDraw
 	 }
 
 	 private method requestDraw {} {
@@ -79,85 +91,97 @@ itcl::class Editor {
 		  }
 	 }
 
+	 private method makeFieldControls {objtype} {
+
+		  if { ![info exists itsFieldPanes($objtype)] } {
+				$itsPanes insert 0 $objtype
+
+				set fieldFrame [frame [$itsPanes childsite $objtype].fields]
+
+				set currentframe $fieldFrame
+
+				foreach field [${objtype}::fields]  {
+					 set name [lindex $field 0]
+					 set lower [lindex $field 1]
+					 set upper [lindex $field 2]
+					 set step [lindex $field 3]
+					 set startsnewgroup [lindex $field 4]
+
+					 if {$startsnewgroup} {
+						  set currentframe [frame $fieldFrame.$name]
+						  pack $currentframe -side left -fill y -expand yes
+					 }
+
+					 set pane $currentframe
+
+					 lappend itsFieldNames $name
+
+					 scale $pane.$name -label $name -from $lower -to $upper \
+								-resolution $step -bigincrement $step \
+								-digits [string length $step] \
+								-repeatdelay 500 -repeatinterval 250 \
+								-orient horizontal \
+								-command [itcl::code $this setAttrib $name]
+
+					 pack $pane.$name -side top
+
+					 set itsFieldControls($name) $pane.$name
+				}
+
+				pack $fieldFrame -fill y -side left
+		  }
+
+		  if { ![string equal $itsObjType $objtype] } {
+				$itsPanes hide $itsObjType
+		  }
+
+		  $itsPanes show $objtype
+		  set itsObjType $objtype
+	 }
+
 	 constructor {parent objtype} {
 		  set itsObjType $objtype
 
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
 					 -width 1000 -height 600]
 
-		  $itsPanes add upper
-		  $itsPanes add lower
+		  $itsPanes add controls
 
-		  set itsLower [$itsPanes childsite lower]
-		  set itsUpper [$itsPanes childsite upper]
-
-		  $itsPanes fraction 80 20
+		  set itsControls [$itsPanes childsite controls]
 
 		  #
 		  # Set up controls
 		  #
 
-		  scale $itsLower.viewingdist -showvalue false \
+		  scale $itsControls.viewingdist -showvalue false \
 					 -from 1 -to 200 -orient horizontal \
 					 -command [itcl::code $this viewingDist]
-		  $itsLower.viewingdist set 60
-		  pack $itsLower.viewingdist -side top -fill x
+		  $itsControls.viewingdist set 60
+		  pack $itsControls.viewingdist -side top -fill x
 
-		  button $itsLower.new -text "New Object" -relief raised \
+		  button $itsControls.new -text "New Object" -relief raised \
 					 -command [itcl::code $this addNewObject]
-		  pack $itsLower.new -side left -anchor nw
+		  pack $itsControls.new -side left -anchor nw
 
-		  button $itsLower.redraw -text "Redraw" -relief raised \
+		  button $itsControls.redraw -text "Redraw" -relief raised \
 					 -command [itcl::code $this requestDraw]
-		  pack $itsLower.redraw -side left -anchor nw
+		  pack $itsControls.redraw -side left -anchor nw
 
-		  iwidgets::spinner $itsLower.idspinner \
+		  iwidgets::spinner $itsControls.idspinner \
 					 -labeltext "Object id: " -fixed 5 \
 					 -increment [itcl::code $this nextObject 1] \
 					 -decrement [itcl::code $this nextObject -1]
-		  pack $itsLower.idspinner -side left -anchor nw
+		  pack $itsControls.idspinner -side left -anchor nw
 
 		  #
 		  # Set up attribs
 		  #
 
-		  set itsFieldPane [frame [$itsPanes childsite upper].fields]
-
-		  set currentframe $itsFieldPane
-
-		  foreach field [${itsObjType}::fields]  {
-				set name [lindex $field 0]
-				set lower [lindex $field 1]
-				set upper [lindex $field 2]
-				set step [lindex $field 3]
-				set startsnewgroup [lindex $field 4]
-
-				if {$startsnewgroup} {
-					 set currentframe [frame $itsFieldPane.$name]
-					 pack $currentframe -side left -fill y -expand yes
-				}
-
-				set pane $currentframe
-
-				lappend itsFieldNames $name
-
-				scale $pane.$name -label $name -from $lower -to $upper \
-						  -resolution $step -bigincrement $step \
-						  -digits [string length $step] \
-						  -repeatdelay 500 -repeatinterval 250 \
-						  -orient horizontal \
-						  -command [itcl::code $this setAttrib $name]
-
-				pack $pane.$name -side top
-
-				set itsFieldControls($name) $pane.$name
-		  }
-
-		  pack $itsFieldPane -fill y -side right
-
-		  Toglet::defaultParent $itsUpper
+		  Toglet::defaultParent $parent
 		  set itsToglet [new Toglet]
 		  Toglet::currentToglet $itsToglet
+
+		  makeFieldControls $itsObjType
 
 		  pack $itsPanes -side left -fill both -expand yes
 
@@ -171,16 +195,18 @@ itcl::class Editor {
 	 public method loadObjects {filename} {
 		  set ids [ObjDb::loadObjects $filename]
 		  set itsObjects [${itsObjType}::findAll]
+		  standardSettings $itsObjects
 		  return [llength $ids]
 	 }
 
 	 public method loadExpt {filename} {
 		  Expt::load $filename
 		  set itsObjects [${itsObjType}::findAll]
+		  standardSettings $itsObjects
 	 }
 
 	 public method saveObjects {filename} {
-		  ObjDb::saveObjects $itsObjects $filename
+		  ObjDb::saveObjects $itsObjects $filename no
 		  return [llength $itsObjects]
 	 }
 }
@@ -202,6 +228,7 @@ itcl::class Menuapp {
 		  if { [string length $itsLoadExptDialog] == 0 } {
 				set itsLoadExptDialog [iwidgets::fileselectiondialog \
 						  ${itsFrame}.lexd -title "Load experiment" \
+						  -mask "*.asw" \
 						  -modality application]
 
 				loadExpt
@@ -220,6 +247,7 @@ itcl::class Menuapp {
 		  if { [string length $itsLoadObjDialog] == 0 } {
 				set itsLoadObjDialog [iwidgets::fileselectiondialog \
 						  ${itsFrame}.lobjd -title "Load objects" \
+						  -mask "*.obj" \
 						  -modality application]
 
 				loadObjects
@@ -238,6 +266,7 @@ itcl::class Menuapp {
 		  if { [string length $itsSaveObjDialog] == 0 } {
 				set itsSaveObjDialog [iwidgets::fileselectiondialog \
 						  ${itsFrame}.sobjd -title "Save objects" \
+						  -fileson no \
 						  -modality application]
 
 				saveObjects
