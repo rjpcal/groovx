@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 14:50:36 2001
-// written: Fri Dec 13 10:30:46 2002
+// written: Fri Dec 13 10:59:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,13 +34,14 @@ Tcl::Timer::~Timer()
   cancel();
 }
 
-
 void Tcl::Timer::schedule()
 {
 DOTRACE("Tcl::Timer::schedule");
 
+  // Cancel any possible previously pending invocation.
   cancel();
 
+  // Note the time when the current scheduling request was made.
   itsStopWatch.restart();
 
   dbgEvalNL(3, itsMsecDelay);
