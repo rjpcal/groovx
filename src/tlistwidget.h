@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Tue Oct 17 16:17:11 2000
+// written: Tue Oct 17 16:32:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,8 +44,6 @@ public:
   void setHold(bool hold_on);
 
 private:
-  void safeDrawTrial();
-
   TlistWidget(const TlistWidget&);
   TlistWidget& operator=(const TlistWidget&);
 
