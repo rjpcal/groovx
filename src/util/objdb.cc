@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Nov 21 03:10:48 1999
+// written: Tue Nov 30 17:26:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ DOTRACE("IoPtrList::serialize");
 
   // Serialize all non-null ptr's.
   int c = 0;
-  for (int i = 0; i < theVec.size(); ++i) {
+  for (size_t i = 0; i < theVec.size(); ++i) {
     if (theVec[i] != NULL) {
       os << i << sep;
       // we must serialize the typename since deserialize requires a
@@ -139,7 +139,7 @@ DOTRACE("IoPtrList::charCount");
   ch_count += 
 	 gCharCount<int>(num_non_null) + 1;
   
-  for (int i = 0; i < vec().size(); ++i) {
+  for (size_t i = 0; i < vec().size(); ++i) {
 	 if (vec()[i] != NULL) {
 		ch_count += gCharCount<int>(i) + 1;
 
@@ -166,7 +166,7 @@ DOTRACE("IoPtrList::readFrom");
   voidVec.clear();
   voidVec.resize(ioVec.size());
 
-  for (int i = 0; i < ioVec.size(); ++i)
+  for (size_t i = 0; i < ioVec.size(); ++i)
 	 if (ioVec[i] != 0) {
 		voidVec[i] = fromIOToVoid(ioVec[i]);
 		afterInsertHook(i, voidVec[i]);
@@ -180,7 +180,7 @@ DOTRACE("IoPtrList::writeTo");
 
   vector<IO*> ioVec(vec().size());
 
-  for (int i = 0; i < vec().size(); ++i)
+  for (size_t i = 0; i < vec().size(); ++i)
 	 if ( vec()[i] != 0 )
 		ioVec[i] = fromVoidToIO(vec()[i]);
 
