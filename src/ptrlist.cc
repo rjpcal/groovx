@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Jul  7 12:46:58 1999
+// written: Tue Jul 20 16:02:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,6 +142,11 @@ DOTRACE("PtrList::deserialize");
   if (itsFirstVacant < 0) {
 	 throw IoValueError(typeid(*this));
   }
+
+  // The next character after itsFirstVacant had better be a newline,
+  // and we need to remove it from the stream.
+  if ( is.get() != '\n' ) throw IoLogicError(typeid(*this));
+
   if (is.fail()) throw InputError(typeid(*this));
 }
 
