@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Dec 15 16:29:09 1999
+// written: Thu Dec 16 15:27:24 1999
 // $Id$
 //
 //
@@ -12,8 +12,8 @@
 #ifndef TCLITEMPKG_H_DEFINED
 #define TCLITEMPKG_H_DEFINED
 
-#ifndef TCLPKG_H_DEFINED
-#include "tclpkg.h"
+#ifndef TCLITEMPKGBASE_H_DEFINED
+#include "tclitempkgbase.h"
 #endif
 
 #ifndef TCLCMD_H_DEFINED
@@ -36,18 +36,6 @@ class IO;
 // Attrib template class definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class Getter {
-public:
-  virtual T get(void* item) const = 0;
-};
-
-template <class T>
-class Setter {
-public:
-  virtual void set(void* item, T val) = 0;
-};
 
 template <class C, class T>
 class CGetter : public virtual Getter<T> {
@@ -81,9 +69,6 @@ private:
   Setter_f itsSetter_f;
 };
 
-template <class T>
-class Attrib : public virtual Getter<T>, public virtual Setter<T> {};
-
 template <class C, class T>
 class CAttrib : public Attrib<T>, public CGetter<C,T>, public CSetter<C,T> {
 public:
@@ -93,11 +78,6 @@ public:
   CAttrib(Getter_f getter, Setter_f setter) :
 	 CGetter<C,T>(getter),
 	 CSetter<C,T>(setter) {}
-};
-
-class Action {
-public:
-  virtual void action(void* item) = 0;
 };
 
 template <class C>
@@ -141,57 +121,6 @@ private:
 
 namespace Tcl {
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// TclItemPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class TclItemPkg : public TclPkg {
-public:
-  TclItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-				 int item_argn=1) :
-	 TclPkg(interp, name, version), 
-	 itsItemArgn(item_argn) {}
-
-  virtual void* getItemFromId(int id) = 0;
-
-  int itemArgn() const { return itsItemArgn; }
-  
-protected:
-  template <class T>
-  void declareGetter(const char* cmd_name, Getter<T>* getter,
-							const char* usage = 0)
-  { declareGetter_(this, cmd_name, getter, usage); }
-  
-  template <class T>
-  void declareSetter(const char* cmd_name, Setter<T>* setter,
-							const char* usage = 0)
-  { declareSetter_(this, cmd_name, setter, usage); }
-
-  template <class T>
-  void declareAttrib(const char* attrib_name, Attrib<T>* attrib,
-							const char* usage = 0)
-  { declareAttrib_(this, attrib_name, attrib, usage); }
-
-  void declareAction(const char* action_name, Action* action,
-							const char* usage = 0);
-
-private:
-  template <class T>
-  static void declareGetter_(TclItemPkg*, const char*, Getter<T>*, const char*);
-
-  template <class T>
-  static void declareSetter_(TclItemPkg*, const char*, Setter<T>*, const char*);
-
-  template <class T>
-  static void declareAttrib_(TclItemPkg*, const char*, Attrib<T>*, const char*);
-
-  void instantiate();
-
-  int itsItemArgn;
-};
 
 ///////////////////////////////////////////////////////////////////////
 //
