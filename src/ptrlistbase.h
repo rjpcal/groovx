@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Thu Oct  5 18:25:17 2000
+// written: Fri Oct  6 13:26:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,6 +120,7 @@ protected:
       VoidPtrList. The default implementation is a no-op. */
   virtual void afterInsertHook(int id, void* ptr);
 
+public:
   /** Must be overridden to free the memory pointed to by ptr. */
   virtual void destroyPtr(void* ptr) = 0;
 
