@@ -6,8 +6,6 @@
 
 # $Id$
 
-package require Iwidgets
-
 namespace eval slideshow {
     proc msg { tag content } {
 	puts [format "%20s: %s" $tag $content]
@@ -106,54 +104,53 @@ proc get_dir_contents { dirname recursive {varname ""} } {
     return $result
 }
 
-itcl::class RandSeq {
-    private variable current
-    private variable next
+namespace eval randseq {
+    variable current [::rand 0.0 1.0]
+    variable next [::rand 0.0 1.0]
 
-    constructor {} {
+    proc init {} {
 	::srand [expr [clock seconds] / 2]
 
-	set current [::rand 0.0 1.0]
-	set next [::rand 0.0 1.0]
+	set randseq::current [::rand 0.0 1.0]
+	set randseq::next [::rand 0.0 1.0]
     }
 
-    public method inext { min max } {
-	set current $next
-	while { $next == $current } {
-	    set next [::rand 0.0 1.0]
+    proc inext { min max } {
+	set randseq::current $randseq::next
+	while { $randseq::next == $randseq::current } {
+	    set randseq::next [::rand 0.0 1.0]
 	}
-	return [expr int(floor(($current * ($max - $min)) + $min))]
+	return [expr int(floor(($randseq::current * ($max - $min)) + $min))]
     }
 
-    public method ipeek { min max } {
-	return [expr int(floor(($next * ($max - $min)) + $min))]
+    proc ipeek { min max } {
+	return [expr int(floor(($randseq::next * ($max - $min)) + $min))]
     }
 }
 
-itcl::class Playlist {
-    private variable itsListFile
-    private variable itsList
-    private variable itsIdx
-    private variable itsGuessNext
-    private variable itsWidget
-    private variable itsPixmap
-    private variable itsPixmapCache
-    private variable itsTransform
-    private variable itsMessage
-    private variable itsScene
-    private variable itsMatch
-    private variable itsRandSeq
-    private variable itsPurgeList
-    private variable itsMode
-    private variable itsDelCount
-    private variable itsShowCount
-    private variable itsMissCount
-    private variable itsLastSpin
+namespace eval playlist {
+    variable itsListFile
+    variable itsList
+    variable itsIdx
+    variable itsGuessNext
+    variable itsWidget
+    variable itsPixmap
+    variable itsPixmapCache
+    variable itsTransform
+    variable itsMessage
+    variable itsScene
+    variable itsMatch
+    variable itsPurgeList
+    variable itsMode
+    variable itsDelCount
+    variable itsShowCount
+    variable itsMissCount
+    variable itsLastSpin
 
-    constructor { argv widget } {
+    proc init { argv widget } {
 	set fname [lindex $argv end]
 
-	set itsMatch "*"
+	set playlist::itsMatch "*"
 
 	set doRecurse 0
 	set doFresh 0
@@ -161,7 +158,7 @@ itcl::class Playlist {
 	for {set i 0} {$i < [llength $argv]} {incr i} {
 	    switch -- [lindex $argv $i] {
 		-match {
-		    set itsMatch [lindex $argv [expr $i+1]]
+		    set playlist::itsMatch [lindex $argv [expr $i+1]]
 		}
 		-recurse {
 		    set doRecurse 1
@@ -178,36 +175,36 @@ itcl::class Playlist {
 	}
 
 	if { [file isdirectory $fname] } {
-	    set itsListFile ${fname}/.playlist
+	    set playlist::itsListFile ${fname}/.playlist
 
 	    if { $doFresh } {
-		file delete $itsListFile
+		file delete $playlist::itsListFile
 	    }
 
-	    if { ![file exists $itsListFile] } {
+	    if { ![file exists $playlist::itsListFile] } {
 		set newlist [list]
 		get_dir_contents $fname $doRecurse newlist
-		set itsList $newlist
-		$this save
+		set playlist::itsList $newlist
+		playlist::save
 	    }
 
 	} else {
-	    set itsListFile $fname
+	    set playlist::itsListFile $fname
 	}
 
-	set fd [open $itsListFile r]
+	set fd [open $playlist::itsListFile r]
 	set items [lrange [split [read $fd] "\n"] 0 end-1]
 	close $fd
 
 	set i 0
 	set N [llength $items]
-	if { [string equal $itsMatch "*"] } {
-	    set itsList $items
+	if { [string equal $playlist::itsMatch "*"] } {
+	    set playlist::itsList $items
 	} else {
 	    foreach item $items {
 		incr i
-		if { [string match $itsMatch $item] } {
-		    lappend itsList $item
+		if { [string match $playlist::itsMatch $item] } {
+		    lappend playlist::itsList $item
 		}
 		if { [expr $i % 100] == 0 } {
 		    puts -nonewline "$i of $N ...\r"
@@ -216,120 +213,120 @@ itcl::class Playlist {
 	    }
 	}
 
-	set itsIdx 0
-	set itsGuessNext 1
-	set itsWidget $widget
-	set itsPixmap [new GxPixmap]
-	-> $itsPixmap purgeable 1
-	set itsScene [new GxSeparator]
-	set itsTransform [new GxTransform]
-	set itsMessage [new GxText]
-	-> $itsMessage font "vector"
+	set playlist::itsIdx 0
+	set playlist::itsGuessNext 1
+	set playlist::itsWidget $widget
+	set playlist::itsPixmap [new GxPixmap]
+	-> $playlist::itsPixmap purgeable 1
+	set playlist::itsScene [new GxSeparator]
+	set playlist::itsTransform [new GxTransform]
+	set playlist::itsMessage [new GxText]
+	-> $playlist::itsMessage font "vector"
 
-	set itsPurgeList [list]
+	set playlist::itsPurgeList [list]
 
-	set itsRandSeq [RandSeq \#auto]
+	randseq::init
 
-	set itsMode spinning
-	set itsDelCount 0
-	set itsShowCount 0
-	set itsMissCount 0
-	set itsLastSpin 1
+	set playlist::itsMode spinning
+	set playlist::itsDelCount 0
+	set playlist::itsShowCount 0
+	set playlist::itsMissCount 0
+	set playlist::itsLastSpin 1
     }
 
-    public method save {} {
-	slideshow::msg "write playlist" $itsListFile
-	if { [file exists ${itsListFile}.bkp] } {
-	    file delete ${itsListFile}.bkp
+    proc save {} {
+	slideshow::msg "write playlist" $playlist::itsListFile
+	if { [file exists ${playlist::itsListFile}.bkp] } {
+	    file delete ${playlist::itsListFile}.bkp
 	}
-	if { [file exists $itsListFile] } {
-	    file rename $itsListFile ${itsListFile}.bkp
+	if { [file exists $playlist::itsListFile] } {
+	    file rename $playlist::itsListFile ${playlist::itsListFile}.bkp
 	}
-	set fd [open $itsListFile w]
-	puts $fd [join $itsList "\n"]
+	set fd [open $playlist::itsListFile w]
+	puts $fd [join $playlist::itsList "\n"]
 	close $fd
     }
 
-    public method spin { step } {
-	set itsIdx [expr ($itsIdx + $step) % [llength $itsList]]
+    proc spin { step } {
+	set playlist::itsIdx [expr ($playlist::itsIdx + $step) % [llength $playlist::itsList]]
 
-	set itsLastSpin $step
+	set playlist::itsLastSpin $step
 
 	set guesstep $step
 	if { $guesstep == 0 } { set guesstep 1 }
 
-	set itsGuessNext [expr ($itsIdx + $guesstep) % [llength $itsList]]
+	set playlist::itsGuessNext [expr ($playlist::itsIdx + $guesstep) % [llength $playlist::itsList]]
 
-	set itsMode "spinning"
+	set playlist::itsMode "spinning"
     }
 
-    public method jump { {oldlength -1 } {adjust 0} } {
+    proc jump { {oldlength -1 } {adjust 0} } {
 	if { $oldlength == -1 } {
-	    set oldlength [llength $itsList]
+	    set oldlength [llength $playlist::itsList]
 	}
-	set itsIdx [expr [$itsRandSeq inext 0 $oldlength] + $adjust]
-	set itsGuessNext [$itsRandSeq ipeek 0 [llength $itsList]]
-	set itsMode "jumping"
+	set playlist::itsIdx [expr [randseq::inext 0 $oldlength] + $adjust]
+	set playlist::itsGuessNext [randseq::ipeek 0 [llength $playlist::itsList]]
+	set playlist::itsMode "jumping"
     }
 
-    public method filename {} {
-	return [lindex $itsList $itsIdx]
+    proc filename {} {
+	return [lindex $playlist::itsList $playlist::itsIdx]
     }
 
-    public method status {} {
-	return "([expr $itsIdx + 1] of [llength $itsList]) [$this filename]"
+    proc status {} {
+	return "([expr $playlist::itsIdx + 1] of [llength $playlist::itsList]) [playlist::filename]"
     }
 
-    public method mode { m } { set itsMode $m }
+    proc mode { m } { set playlist::itsMode $m }
 
-    public method remove_helper { do_purge } {
-	set target [lindex $itsList $itsIdx]
-	slideshow::msg "hide file\[$itsIdx\]" $target
+    proc remove_helper { do_purge } {
+	set target [lindex $playlist::itsList $playlist::itsIdx]
+	slideshow::msg "hide file\[$playlist::itsIdx\]" $target
 	if { $do_purge } {
-	    lappend itsPurgeList $target
+	    lappend playlist::itsPurgeList $target
 	}
-	set oldlength [llength $itsList]
-	set itsList [lreplace $itsList $itsIdx $itsIdx]
-	switch -- $itsMode {
+	set oldlength [llength $playlist::itsList]
+	set playlist::itsList [lreplace $playlist::itsList $playlist::itsIdx $playlist::itsIdx]
+	switch -- $playlist::itsMode {
 	    jumping {
-		if { $itsIdx < $itsGuessNext } {
+		if { $playlist::itsIdx < $playlist::itsGuessNext } {
 		    slideshow::msg "jump offset" -1
-		    $this jump $oldlength -1
+		    playlist::jump $oldlength -1
 		} else {
 		    slideshow::msg "jump offset" 0
-		    $this jump $oldlength 0
+		    playlist::jump $oldlength 0
 		}
 	    }
 	    spinning {
-		if { $itsLastSpin == -1 } {
-		    $this spin -1
+		if { $playlist::itsLastSpin == -1 } {
+		    playlist::spin -1
 		} else {
-		    $this spin 0
+		    playlist::spin 0
 		}
 	    }
 	    default {
-		if { $itsLastSpin == -1 } {
-		    $this spin -1
+		if { $playlist::itsLastSpin == -1 } {
+		    playlist::spin -1
 		} else {
-		    $this spin 0
+		    playlist::spin 0
 		}
 	    }
 	}
     }
 
-    public method remove {} {
+    proc remove {} {
 	remove_helper 1
     }
 
-    public method remove_no_purge {} {
+    proc remove_no_purge {} {
 	remove_helper 0
     }
 
-    public method purge {} {
+    proc purge {} {
 	puts "purging..."
-	set N [llength $itsPurgeList]
+	set N [llength $playlist::itsPurgeList]
 	set n 0
-	foreach f $itsPurgeList {
+	foreach f $playlist::itsPurgeList {
 	    slideshow::msg "purging" "[incr n] of $N"
 	    if { [llength [info proc ::slideshowDeleteHook]] > 0 } {
 		slideshow::msg "deleteHook" $f
@@ -343,90 +340,90 @@ itcl::class Playlist {
 		close $fd
 		file delete $f
 	    }
-	    incr itsDelCount
+	    incr playlist::itsDelCount
 
 	    reshow 0
 	}
-	set itsPurgeList [list]
-	save
-	slideshow::msg "files deleted" $itsDelCount
-	slideshow::msg "files shown" $itsShowCount
-	slideshow::msg "cache misses" $itsMissCount
+	set playlist::itsPurgeList [list]
+	playlist::save
+	slideshow::msg "files deleted" $playlist::itsDelCount
+	slideshow::msg "files shown" $playlist::itsShowCount
+	slideshow::msg "cache misses" $playlist::itsMissCount
 	slideshow::msg "percent kept" [format "%.2f%%" \
-				[expr 100 * (1.0 - double($itsDelCount)/$itsShowCount)]]
+				[expr 100 * (1.0 - double($playlist::itsDelCount)/$playlist::itsShowCount)]]
     }
 
-    public method shuffle {} {
-	set itsList [dlist::shuffle $itsList [clock clicks]]
+    proc shuffle {} {
+	set playlist::itsList [dlist::shuffle $playlist::itsList [clock clicks]]
     }
 
-    public method sort {} {
-	set itsList [lsort -dictionary $itsList]
+    proc sort {} {
+	set playlist::itsList [lsort -dictionary $playlist::itsList]
     }
 
-    public method cachenext {} {
+    proc cachenext {} {
 
-	set i $itsGuessNext
-	set f [lindex $itsList $i]
+	set i $playlist::itsGuessNext
+	set f [lindex $playlist::itsList $i]
 	while { ![image_file_exists $f] } {
 	    slideshow::msg "no such file\[$i\]" $f
-	    set itsList [lreplace $itsList $i $i]
-	    set i [expr $i % [llength $itsList]]
-	    set f [lindex $itsList $i]
+	    set playlist::itsList [lreplace $playlist::itsList $i $i]
+	    set i [expr $i % [llength $playlist::itsList]]
+	    set f [lindex $playlist::itsList $i]
 	}
-	if { ![info exists itsPixmapCache($f)] } {
-	    set itsPixmapCache($f) [build_scaled_pixmap $f [-> $itsWidget size]]
+	if { ![info exists playlist::itsPixmapCache($f)] } {
+	    set playlist::itsPixmapCache($f) [build_scaled_pixmap $f [-> $playlist::itsWidget size]]
 	    slideshow::msg "cache insert\[$i\]" $f
 	} else {
-	    slideshow::msg "cache exists\[$i\]" "$itsPixmapCache($f) $f"
+	    slideshow::msg "cache exists\[$i\]" "$playlist::itsPixmapCache($f) $f"
 	}
     }
 
-    public method reshow { show_image } {
-	-> $itsWidget allowRefresh 0
+    proc reshow { show_image } {
+	-> $playlist::itsWidget allowRefresh 0
 
-	-> $itsScene removeAllChildren
+	-> $playlist::itsScene removeAllChildren
 	if { $show_image } {
-	    -> $itsScene addChild $itsPixmap
+	    -> $playlist::itsScene addChild $playlist::itsPixmap
 	}
-	-> $itsScene addChild $itsTransform
-	-> $itsScene addChild $itsMessage
-	-> $itsTransform translation [-> [-> $itsWidget canvas] topLeft]
-	-> $itsMessage text "[$this filename]\n[llength $itsList] c\n[llength $itsPurgeList] p\n$itsDelCount d\n$itsShowCount s\n$itsMissCount m"
-	-> $itsMessage strokeWidth 2
-	-> $itsMessage alignmentMode $GxShapeKit::NW_ON_CENTER
+	-> $playlist::itsScene addChild $playlist::itsTransform
+	-> $playlist::itsScene addChild $playlist::itsMessage
+	-> $playlist::itsTransform translation [-> [-> $playlist::itsWidget canvas] topLeft]
+	-> $playlist::itsMessage text "[playlist::filename]\n[llength $playlist::itsList] c\n[llength $playlist::itsPurgeList] p\n$playlist::itsDelCount d\n$playlist::itsShowCount s\n$playlist::itsMissCount m"
+	-> $playlist::itsMessage strokeWidth 2
+	-> $playlist::itsMessage alignmentMode $GxShapeKit::NW_ON_CENTER
 
-#	-> $itsWidget see $itsPixmap
-	-> $itsWidget see $itsScene
-	-> $itsWidget allowRefresh 1
+#	-> $playlist::itsWidget see $playlist::itsPixmap
+	-> $playlist::itsWidget see $playlist::itsScene
+	-> $playlist::itsWidget allowRefresh 1
     }
 
-    public method show {} {
-	set f [$this filename]
+    proc show {} {
+	set f [playlist::filename]
 
 	while { ![image_file_exists $f] } {
-	    slideshow::msg "no such file\[$itsIdx\]" $f
-	    set itsList [lreplace $itsList $itsIdx $itsIdx]
-	    set itsIdx [expr $itsIdx % [llength $itsList]]
-	    set f [$this filename]
+	    slideshow::msg "no such file\[$playlist::itsIdx\]" $f
+	    set playlist::itsList [lreplace $playlist::itsList $playlist::itsIdx $playlist::itsIdx]
+	    set playlist::itsIdx [expr $playlist::itsIdx % [llength $playlist::itsList]]
+	    set f [playlist::filename]
 	}
 
-	slideshow::msg "index" "$itsIdx of [llength $itsList]"
-	slideshow::msg "show file\[$itsIdx\]" $f
+	slideshow::msg "index" "$playlist::itsIdx of [llength $playlist::itsList]"
+	slideshow::msg "show file\[$playlist::itsIdx\]" $f
 
-	set old $itsPixmap
-	if { [info exists itsPixmapCache($f)] \
-		 && [GxPixmap::is $itsPixmapCache($f)] } {
-	    set itsPixmap $itsPixmapCache($f)
-	    unset itsPixmapCache($f)
-	    slideshow::msg "cache hit\[$itsIdx\]" $f
+	set old $playlist::itsPixmap
+	if { [info exists playlist::itsPixmapCache($f)] \
+		 && [GxPixmap::is $playlist::itsPixmapCache($f)] } {
+	    set playlist::itsPixmap $playlist::itsPixmapCache($f)
+	    unset playlist::itsPixmapCache($f)
+	    slideshow::msg "cache hit\[$playlist::itsIdx\]" $f
 	} else {
-	    slideshow::msg "cache miss\[$itsIdx\]" $f
-	    incr itsMissCount
-	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
+	    slideshow::msg "cache miss\[$playlist::itsIdx\]" $f
+	    incr playlist::itsMissCount
+	    set playlist::itsPixmap [build_scaled_pixmap $f [-> $playlist::itsWidget size]]
 	}
 
-	$this reshow 1
+	playlist::reshow 1
 
 	delete $old
 
@@ -436,13 +433,13 @@ itcl::class Playlist {
 
 	slideshow::msg "pixmaps" [GxPixmap::findAll]
 
-	incr itsShowCount
+	incr playlist::itsShowCount
 
-	after idle [itcl::code $this cachenext]
+	after idle playlist::cachenext
     }
 
-    public method rotate {angle} {
-	set f [$this filename]
+    proc rotate {angle} {
+	set f [playlist::filename]
 
 	if { ![file exists ${f}.orig] } {
 	    file copy $f ${f}.orig
@@ -453,7 +450,7 @@ itcl::class Playlist {
 
 	exec jpegtran -rotate $angle -copy all ${f}.tmp > $f
 
-	$this show
+	playlist::show
     }
 }
 
@@ -466,14 +463,14 @@ proc looper {} {
     after cancel $::LOOP_HANDLE
     set ::LOOP_HANDLE [after $::DELAY ::looper]
     spinPic 1
-    $::PLAYLIST show
+    playlist::show
 }
 
 proc hide {} {
-    $::PLAYLIST remove
-    $::PLAYLIST save
+    playlist::remove
+    playlist::save
     updateText
-    $::PLAYLIST show
+    playlist::show
 }
 
 proc blockInput {args} {
@@ -481,58 +478,51 @@ proc blockInput {args} {
 }
 
 proc spinInput {} {
-    $::PLAYLIST spin [.f.spinner get]
+    playlist::spin [.f.spinner get]
     updateText
-    $::PLAYLIST show
+    playlist::show
     .f.spinner clear
     return 1
 }
 
 proc spinPic {step} {
-    $::PLAYLIST spin $step
+    playlist::spin $step
 
     updateText
 }
 
 proc jumpPic {} {
-    $::PLAYLIST jump
+    playlist::jump
     updateText
 }
 
 proc updateText {} {
-    set ::FILENAME [$::PLAYLIST status]
+    set ::FILENAME [playlist::status]
 }
 
 set DELAY 4000
 
 set LOOP_HANDLE 0
 
-# PLAYLIST is the name of the global Playlist object
-
 frame .f
 
 button .f.loop -text "loop" -command looper
 button .f.noloop -text "stop loop" -command {after cancel $::LOOP_HANDLE}
 
-button .f.shuffler -text "shuffle" -command {PLAYLIST shuffle}
-button .f.sorter -text "sort" -command {PLAYLIST sort}
+button .f.shuffler -text "shuffle" -command {playlist::shuffle}
+button .f.sorter -text "sort" -command {playlist::sort}
 
 button .f.hide -text "hide" -command hide
 
-button .f.rot90 -text "rotate cw" -command {PLAYLIST rotate 90}
-button .f.rot270 -text "rotate ccw" -command {PLAYLIST rotate 270}
+button .f.rot90 -text "rotate cw" -command {playlist::rotate 90}
+button .f.rot270 -text "rotate ccw" -command {playlist::rotate 270}
 
-iwidgets::spinner .f.spinner -width 0 -fixed 0 \
-    -command spinInput  -labelvariable FILENAME \
-    -decrement {spinPic -1} -increment {spinPic 1}
-
-bind Canvas <ButtonRelease> {PLAYLIST show}
+bind Canvas <ButtonRelease> {playlist::show}
 
 pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.rot90 .f.rot270 \
-    .f.spinner \
     -side left -expand no
 
-set show_buttons [expr ![string equal [exec /usr/bin/uname] "Darwin"]]
+set show_buttons [expr ![string equal [exec uname] "Darwin"]]
 
 if { $show_buttons } {
     pack .f -side top -anchor nw -expand no
@@ -545,22 +535,22 @@ set c [new GxFixedScaleCamera]
 -> $c pixelsPerUnit 8
 -> $t camera $c
 
-set PLAYLIST [Playlist PLAYLIST $argv $t]
+playlist::init $argv $t
 
--> $t bind <ButtonPress-1> {spinPic -1; PLAYLIST show}
--> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
--> $t bind <ButtonPress-2> {jumpPic; PLAYLIST show}
+-> $t bind <ButtonPress-1> {spinPic -1; playlist::show}
+-> $t bind <ButtonPress-3> {spinPic 1; playlist::show}
+-> $t bind <ButtonPress-2> {jumpPic; playlist::show}
 
-bind all <Key-Left> {spinPic -1; PLAYLIST show}
-bind all <Key-Right> {spinPic 1; PLAYLIST show}
-bind all <Key-Up> {jumpPic; PLAYLIST show}
-bind all <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
-bind all <Key-e> {PLAYLIST remove_no_purge; updateText; PLAYLIST show}
-bind all <Key-0> {PLAYLIST remove_no_purge; updateText; PLAYLIST show}
-bind all <Shift-Key-Down> {PLAYLIST mode spinning; PLAYLIST remove; updateText; PLAYLIST show}
-bind all <Key-Return> {PLAYLIST save}
-bind all <Key-x> {PLAYLIST purge; PLAYLIST reshow 1}
-bind all <Key-Escape> { -> [Toglet::current] setVisible 0; PLAYLIST purge; exit }
+bind all <Key-Left> {spinPic -1; playlist::show}
+bind all <Key-Right> {spinPic 1; playlist::show}
+bind all <Key-Up> {jumpPic; playlist::show}
+bind all <Key-Down> {playlist::remove; updateText; playlist::show}
+bind all <Key-e> {playlist::remove_no_purge; updateText; playlist::show}
+bind all <Key-0> {playlist::remove_no_purge; updateText; playlist::show}
+bind all <Shift-Key-Down> {playlist::mode spinning; playlist::remove; updateText; playlist::show}
+bind all <Key-Return> {playlist::save}
+bind all <Key-x> {playlist::purge; playlist::reshow 1}
+bind all <Key-Escape> { -> [Toglet::current] setVisible 0; playlist::purge; exit }
 
 if { $show_buttons } {
     -> $t height [expr [winfo screenheight .] - 100]
@@ -577,4 +567,4 @@ glColor 0.7 0.7 0.1 1
 update
 
 updateText
-PLAYLIST show
+playlist::show
