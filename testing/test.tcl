@@ -47,6 +47,7 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 	 }
 	 if {$flags <= 0} { return }
 	 if {$::VERBOSE != 0} {
+		  puts "================================================================"
 		  puts "==== $package_name $test_name"
 	 }
 	 catch {eval $script} result
@@ -58,6 +59,7 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 		  incr ::num_success
 	 } else {
 		  if {$::VERBOSE == 0} {
+				puts "================================================================"
 				puts "==== $package_name $test_name"
 		  }
 		  puts "==== Contents of test case:"
