@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Jan 31 13:56:01 2002
+// written: Sat Feb  2 17:43:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 
 #include <tcl.h>
 #include <exception>
+#include <set>
 #include <typeinfo>
 
 #define TRACE_USE_COUNT
@@ -66,17 +67,31 @@ namespace
       errMessage(interp, cmd_name, msg.c_str());
     }
 
-  inline Tcl::Command* lookupCmd(Tcl_Interp* interp, const char* cmd_name)
+  // Holds the set of the addresses of all valid Tcl::Command objects (this is
+  // managed in Tcl::Command's constructor+destructor)
+  std::set<ClientData>* allCommands = 0;
+
+  Tcl::Command* lookupCmd(Tcl_Interp* interp, const char* cmd_name)
     {
-      Tcl_CmdInfo cmd_info;
-      int result = Tcl_GetCommandInfo(interp, const_cast<char*>(cmd_name),
-                                      &cmd_info);
+      if (allCommands != 0) // check if any Tcl::Command's exist yet
+        {
+          Tcl_CmdInfo cmd_info;
+          int result = Tcl_GetCommandInfo(interp,
+                                          const_cast<char*>(cmd_name),
+                                          &cmd_info);
 
-      if (result == 0)
-        return 0;
+          if (result != 0) // check if lookup succeeded
+            {
+              // if the result is found in "allCommands", then it is one of
+              // our Tcl::Command's (otherwise it is some other type of
+              // command, such as a tcl proc)
 
-      return dynamic_cast<Tcl::Command*>(
-              static_cast<Tcl::Command*>(cmd_info.objClientData));
+              if (allCommands->find(cmd_info.objClientData) !=
+                  allCommands->end())
+                return static_cast<Tcl::Command*>(cmd_info.objClientData);
+            }
+        }
+      return 0;
     }
 
 #ifdef TRACE_USE_COUNT
@@ -422,7 +437,7 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
     }
   catch (Util::Error& err)
     {
-      DebugPrintNL("catch (Util::Error&)");
+      DebugPrintNL("caught (Util::Error&)");
       if ( !err.msg().is_empty() )
         {
           errMessage(interp, theImpl->cmdName(), err.msg_cstr());
@@ -434,11 +449,12 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
     }
   catch (std::exception& err)
     {
+      DebugPrintNL("caught (std::exception&)");
       errMessage(interp, theImpl->cmdName(), typeid(err), err.what());
     }
   catch (...)
     {
-      DebugPrintNL("catch (...)");
+      DebugPrintNL("caught (...)");
       errMessage(interp, theImpl->cmdName(),
                  "an error of unknown type occurred");
     }
@@ -452,12 +468,6 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Command::~Command()
-{
-DOTRACE("Tcl::Command::~Command");
-  delete itsImpl;
-}
-
 Tcl::Command::Command(Tcl_Interp* interp,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc) :
@@ -465,6 +475,23 @@ Tcl::Command::Command(Tcl_Interp* interp,
                    objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
+
+  if (allCommands == 0)
+    {
+      allCommands = new std::set<ClientData>;
+    }
+  allCommands->insert(static_cast<ClientData>(this));
+}
+
+Tcl::Command::~Command()
+{
+DOTRACE("Tcl::Command::~Command");
+
+  Assert(allCommands != 0);
+
+  allCommands->erase(static_cast<ClientData>(this));
+
+  delete itsImpl;
 }
 
 const fstring& Tcl::Command::name() const
