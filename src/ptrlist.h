@@ -82,11 +82,13 @@ public:
   // manipulators //
   //////////////////
 
+#if 0
   /** Releases the object at index \a id. Ownership of the pointed-to
       object is transferred to the caller, and the list site at \a id
       becomes vacant. */
   Ptr release(int id) throw (InvalidIdError)
 	 { return Ptr(castToT(VoidPtrList::releaseVoidPtr(id))); }
+#endif
 
   /// Insert \a ptr into the list, and return its id.
   int insert(T* ptr)
