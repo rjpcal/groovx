@@ -32,8 +32,8 @@
 
 #include "gfx/glcanvas.h"
 
+#include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
-#include "gfx/glxwrapper.h"
 #include "gfx/gxrasterfont.h"
 #include "gfx/gxvectorfont.h"
 
@@ -59,22 +59,22 @@ using namespace Gfx;
 class GLCanvas::Impl
 {
 public:
-  Impl(shared_ptr<GlxOpts> opts_, shared_ptr<GlxWrapper> glx_) :
+  Impl(shared_ptr<GlxOpts> opts_, shared_ptr<GlWindowInterface> glx_) :
     opts(opts_),
     glx(glx_)
   {}
 
   shared_ptr<GlxOpts> opts;
-  shared_ptr<GlxWrapper> glx;
+  shared_ptr<GlWindowInterface> glx;
 };
 
-GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx) :
+GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx) :
   rep(new Impl(opts, glx))
 {
 DOTRACE("GLCanvas::GLCanvas");
 }
 
-GLCanvas* GLCanvas::make(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx)
+GLCanvas* GLCanvas::make(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx)
 {
 DOTRACE("GLCanvas::make");
   return new GLCanvas(opts, glx);

@@ -30,19 +30,24 @@
 #ifndef GLXWRAPPER_H_DEFINED
 #define GLXWRAPPER_H_DEFINED
 
+#include "gfx/glwindowinterface.h"
+
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
 class GlxOpts;
 
 /// Wraps the GLXContext mechanism.
-class GlxWrapper
+class GlxWrapper : public GlWindowInterface
 {
 private:
   Display* itsDisplay;
   XVisualInfo* itsVisInfo;
   GLXContext itsContext;
   Window itsCurrentWin;
+
+  GlxWrapper(const GlxWrapper&);
+  GlxWrapper& operator=(const GlxWrapper&);
 
 public:
   /// Construct.
@@ -52,25 +57,25 @@ public:
   static GlxWrapper* make(Display* dpy, GlxOpts& opts);
 
   /// Destructor.
-  ~GlxWrapper();
+  virtual ~GlxWrapper();
 
   /// Query whether rendering context has direct access to the hardware.
-  bool isDirect() const
+  virtual bool isDirect() const
   {
     return glXIsDirect(itsDisplay, itsContext) == True ? true : false;
   }
 
   /// Query whether the rendering context is double-buffered.
-  bool isDoubleBuffered() const;
+  virtual bool isDoubleBuffered() const;
 
   /// Get the bit depth of the draw buffer(s).
-  unsigned int bitsPerPixel() const;
+  virtual unsigned int bitsPerPixel() const;
 
   /// Bind the rendering context to the given window.
   void makeCurrent(Window win);
 
   /// Swaps buffers if in double-buffering mode.
-  void swapBuffers() const;
+  virtual void swapBuffers() const;
 
 protected:
   /// Get the associated X11 Display.

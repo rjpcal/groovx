@@ -35,7 +35,7 @@
 #include "util/volatileobject.h"
 
 class GlxOpts;
-class GlxWrapper;
+class GlWindowInterface;
 
 template <class T> class shared_ptr;
 
@@ -44,11 +44,11 @@ class GLCanvas : public Gfx::Canvas, public virtual Util::VolatileObject
 {
 protected:
   /// Construct from windowsystem options and a windowsystem wrapper.
-  GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx);
+  GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx);
 
 public:
   /// Factory function.
-  static GLCanvas* make(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx);
+  static GLCanvas* make(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx);
 
   virtual ~GLCanvas() throw();
 
