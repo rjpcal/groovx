@@ -1,20 +1,24 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // subjecttcl.h
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar 16 19:31:40 1999
+// written: Thu May 27 20:16:37 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_H_DEFINED
 #define SUBJECTTCL_H_DEFINED
 
 ///////////////////////////////////////////////////////////////////////
-// SUBJECT Tcl package declarations
+//
+// Subject Tcl package declarations
+//
 ///////////////////////////////////////////////////////////////////////
 
 struct Tcl_Interp;
-typedef int (Tcl_PackageInitProc) (Tcl_Interp *interp);
+typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 
 namespace SubjectTcl {
   Tcl_PackageInitProc Subject_Init;
