@@ -3,7 +3,7 @@
 // iotcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Oct 30 10:30:16 2000
+// written: Mon Oct 30 11:10:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #include "io/io.h"
 #include "io/iomgr.h"
+
+#include "system/demangle.h"
+
+#include <typeinfo>
 
 #define NO_TRACE
 #include "util/trace.h"
