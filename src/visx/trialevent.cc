@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Tue Dec 10 13:25:42 2002
+// written: Fri Dec 13 10:54:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,6 @@
 #include "util/log.h"
 #include "util/ref.h"
 
-#include <tcl.h>
 #include <typeinfo>
 
 #include "util/trace.h"
@@ -47,19 +46,19 @@
 ///////////////////////////////////////////////////////////////////////
 
 TrialEvent::TrialEvent(int msec) :
+  itsTimer(msec, false),
   itsRequestedDelay(msec),
-  itsToken(0),
   itsErrorHandler(0),
   itsTrial(0),
-  itsIsPending(false),
-  itsTimer(),
+  itsStopWatch(),
   itsEstimatedOffset(0.0),
-  itsActualRequest(msec),
   itsTotalOffset(0.0),
   itsTotalError(0.0),
   itsInvokeCount(0)
 {
 DOTRACE("TrialEvent::TrialEvent");
+
+  itsTimer.sigTimeOut.connect(this, &TrialEvent::invokeTemplate);
 }
 
 TrialEvent::~TrialEvent()
@@ -101,7 +100,7 @@ DOTRACE("TrialEvent::schedule");
   cancel();
 
   // Note the time when the current scheduling request was made.
-  itsTimer.restart();
+  itsStopWatch.restart();
 
   // Remember the participants
   itsErrorHandler = &errhdlr;
@@ -112,100 +111,77 @@ DOTRACE("TrialEvent::schedule");
   // invocation.
   if (itsRequestedDelay <= 0)
     {
-      itsIsPending = true;
-      itsActualRequest = 0;
       invokeTemplate();
+      return 0;
     }
   // Otherwise, set up a timer that will call the invocation after the
   // specified amount of time.
-  else
-    {
-      itsActualRequest =
-        Util::max(itsRequestedDelay + (int)itsEstimatedOffset,
-                  Util::max(minimum_msec, 0));
-      itsToken = Tcl_CreateTimerHandler(itsActualRequest,
-                                        dummyInvoke,
-                                        static_cast<ClientData>(this));
-      itsIsPending = true;
-    }
 
-  return itsActualRequest;
+  int actual_request =
+    Util::max(itsRequestedDelay + (int)itsEstimatedOffset,
+              Util::max(minimum_msec, 0));
+  itsTimer.setDelayMsec(actual_request);
+  itsTimer.schedule();
+
+  return actual_request;
 }
 
 void TrialEvent::cancel()
 {
 DOTRACE("TrialEvent::cancel");
-  // Cancel the timer handler associated with itsToken. This is a safe
-  // no-op if itsToken is NULL.
-  Tcl_DeleteTimerHandler(itsToken);
-
-  itsIsPending = false;
-  itsToken = 0;
-}
-
-void TrialEvent::dummyInvoke(ClientData clientData)
-{
-  TrialEvent* event = static_cast<TrialEvent *>(clientData);
-
-  Assert(event != 0);
-
-  Util::ErrorHandler* handler = event->itsErrorHandler;
-
-  try
-    {
-      event->invokeTemplate();
-    }
-  catch (Util::Error& err)
-    {
-      if (handler != 0) handler->handleError(err);
-    }
-  catch (...)
-    {
-      if (handler != 0)
-        handler->handleMsg
-          ("an error of unknown type occured during a TrialEvent callback");
-    }
+  itsTimer.cancel();
 }
 
 void TrialEvent::invokeTemplate()
 {
 DOTRACE("TrialEvent::invokeTemplate");
 
-  itsIsPending = false;
-  itsToken = 0;
-
-  const double msec = itsTimer.elapsedMsec();
-  const double error = itsActualRequest - msec;
-
-  fstring scopename(demangle_cstr(typeid(*this).name()), " ",
-                    IO::IoObject::id());
-
-  Util::Log::addScope(scopename);
-
-  Util::log( fstring("req ", itsRequestedDelay, " - ", -itsEstimatedOffset) );
-
-  itsTotalOffset += error;
-  itsTotalError += (itsRequestedDelay - msec);
-
-  ++itsInvokeCount;
-
-  // Positive error means we expect the event to occur sooner than expected
-  // Negative error means we expect the event to occur later than expected
-  // (round towards negative infinity)
-  const double moving_average_ratio = 1.0 / Util::min(10, itsInvokeCount);
-  itsEstimatedOffset =
-    (1.0 - moving_average_ratio) * itsEstimatedOffset +
-           moving_average_ratio  * error;
-
-  // Do the actual event callback.
-  if ( itsTrial != 0 )
+  try
     {
-      invoke(*itsTrial);
+      const double msec = itsStopWatch.elapsedMsec();
+      const double error = itsTimer.delayMsec() - msec;
+
+      fstring scopename(demangle_cstr(typeid(*this).name()), " ",
+                        IO::IoObject::id());
+
+      Util::Log::addScope(scopename);
+
+      Util::log( fstring("req ", itsRequestedDelay,
+                         " - ", -itsEstimatedOffset) );
+
+      itsTotalOffset += error;
+      itsTotalError += (itsRequestedDelay - msec);
+
+      ++itsInvokeCount;
+
+      // Positive error means we expect the event to occur sooner than expected
+      // Negative error means we expect the event to occur later than expected
+      // (round towards negative infinity)
+      const double moving_average_ratio = 1.0 / Util::min(10, itsInvokeCount);
+      itsEstimatedOffset =
+        (1.0 - moving_average_ratio) * itsEstimatedOffset +
+        moving_average_ratio  * error;
+
+      // Do the actual event callback.
+      if ( itsTrial != 0 )
+        {
+          invoke(*itsTrial);
+        }
+
+      Util::log( "event complete" );
+
+      Util::Log::removeScope(scopename);
     }
-
-  Util::log( "event complete" );
-
-  Util::Log::removeScope(scopename);
+  catch (Util::Error& err)
+    {
+      if (itsErrorHandler != 0) itsErrorHandler->handleError(err);
+    }
+  catch (...)
+    {
+      if (itsErrorHandler != 0)
+        itsErrorHandler->handleMsg
+          ("an error of unknown type occured during a TrialEvent callback");
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////

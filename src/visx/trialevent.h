@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Dec  5 15:53:41 2002
+// written: Fri Dec 13 10:53:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "io/io.h"
 
 #include "tcl/tclprocwrapper.h"
+#include "tcl/tcltimer.h"
 
 #include "util/stopwatch.h"
 #include "util/ref.h"
@@ -27,8 +28,6 @@ namespace Util
 
 class Trial;
 
-struct Tcl_TimerToken_;
-typedef struct Tcl_TimerToken_* Tcl_TimerToken;
 typedef void* ClientData;
 
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +65,7 @@ public:
   void setDelay(int msec) { itsRequestedDelay = msec; }
 
   /// Queries whether there is a pending callback to \c invoke().
-  bool isPending() const { return itsIsPending; }
+  bool isPending() const { return itsTimer.isPending(); }
 
   /** Schedules the event to occur after the requested delay, and cancels any
       previously pending events that had not yet triggered. After this call,
@@ -106,18 +105,14 @@ private:
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);
 
+  Tcl::Timer itsTimer;
   int itsRequestedDelay;
-  Tcl_TimerToken itsToken;
-
   Util::ErrorHandler* itsErrorHandler;
   Trial* itsTrial;
 
-  mutable bool itsIsPending;
-
   // Diagnostic stuff
-  mutable StopWatch itsTimer;
+  mutable StopWatch itsStopWatch;
   mutable double itsEstimatedOffset;
-  mutable int itsActualRequest;
   mutable double itsTotalOffset;
   mutable double itsTotalError;
   mutable int itsInvokeCount;
