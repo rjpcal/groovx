@@ -118,7 +118,7 @@ ifeq ($(PLATFORM),ppc)
 	ETAGS := etags
 	AUDIO_LIB :=
 	LIB_PATH += -L/usr/X11R6/lib
-	INCLUDE_PATH += -I/usr/X11R6/include                                                                                      
+	INCLUDE_PATH += -I/usr/X11R6/include
 endif
 
 ifndef MODE
@@ -199,6 +199,7 @@ endif
 ifeq ($(COMPILER),g++)
 	CC := time g++
 # This filter removes warnings that are triggered by standard library files
+ifneq ($(PLATFORM),ppc)
 	FILTER := |& sed \
 		-e '/g++-3.*warning/d;' \
 		-e '/In file included.*g++-3/,/:/d;' \
@@ -207,14 +208,13 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d' \
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
-ifneq ($(PLATFORM),ppc)
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
 endif
 	CPP_DEFINES += -DGCC_COMPILER=2 -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
 		-DFUNCTIONAL_OK
 
 ifeq ($(PLATFORM),ppc)
-	CPP_DEFINES += Dlrand48=rand
+	CPP_DEFINES += -Dlrand48=rand
 	CC_SWITCHES += -dynamic
 endif
 
