@@ -58,12 +58,13 @@ test "ExptTcl-Expt::load" "too many args" {
 } {wrong \# args: should be "Expt::load filename"}
 test "ExptTcl-Expt::load" "fMRI sample" {
 	 Togl::setVisible false
+	 Expt::clear
 	 BlockList::reset
 	 Tlist::reset
 	 ObjList::reset
 	 PosList::reset
 	 set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
-	 set ocounts {272 181 206}
+	 set ocounts {113 166 76}
 	 srand [clock clicks]
 	 set i [expr int([rand 0 3])]
     Expt::load $::TEST_DIR/[lindex $files $i]
@@ -82,6 +83,7 @@ test "ExptTcl-Expt::load" "psyphy samples" {
 	 set result ""
 
 	 for {set i 0} {$i < 3} {incr i} {
+		  Expt::clear
 		  BlockList::reset
 		  Tlist::reset
 		  ObjList::reset
