@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Mar  7 19:12:21 2000
+// written: Wed Mar  8 13:39:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #include "tclitempkg.h"
 
-#include <string>
 #include <vector>
 
 #include "tclcmd.h"
@@ -25,150 +24,6 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
-
-namespace Tcl {
-
-///////////////////////////////////////////////////////////////////////
-//
-// TGetterCmd class definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TGetterCmd : public virtual TclCmd {
-public:
-  TGetterCmd(TclItemPkg* pkg, const char* cmd_name, Getter<T>* getter,
-             const char* usage, int item_argn) :
-    TclCmd(pkg->interp(), cmd_name, 
-           usage ? usage : (item_argn ? "item_id" : NULL), 
-           item_argn+1, item_argn+1),
-    itsPkg(pkg),
-    itsGetter(getter), 
-    itsItemArgn(item_argn) {}
-
-protected:
-  virtual void invoke() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
-    void* item = itsPkg->getItemFromId(id);
-    returnVal(itsGetter->get(item));
-  }
-private:
-  TclItemPkg* itsPkg;
-  auto_ptr< Getter<T> > itsGetter;
-  int itsItemArgn;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// TSetterCmd class definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TSetterCmd : public virtual TclCmd {
-public:
-  TSetterCmd(TclItemPkg* pkg, const char* cmd_name, Setter<T>* setter,
-             const char* usage, int item_argn) :
-    TclCmd(pkg->interp(), cmd_name, 
-           usage ? usage : (item_argn ? "item_id new_value" : "new_value"), 
-           item_argn+2, item_argn+2),
-    itsPkg(pkg),
-    itsSetter(setter),
-    itsItemArgn(item_argn),
-    itsValArgn(item_argn+1) {}
-
-protected:
-  virtual void invoke() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
-    void* item = itsPkg->getItemFromId(id);
-    set(item);
-    returnVoid();
-  }
-
-private:
-  void set(void* item) {
-    T val;
-    getValFromArg(itsValArgn, val);
-    itsSetter->set(item, val);
-  }
-
-  TclItemPkg* itsPkg;
-  auto_ptr< Setter<T> > itsSetter;
-  int itsItemArgn;
-  int itsValArgn;
-};
-
-// Specialization for T=const string&, since we must declare 'val' as
-// type 'string' rather than 'const string&'.
-template<>
-void TSetterCmd<const string&>::set(void* item) {
-  string val = getStringFromArg(itsValArgn);
-  itsSetter->set(item, val);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// TAttribCmd class definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TAttribCmd : public TGetterCmd<T>, public TSetterCmd<T> {
-public:
-  TAttribCmd(TclItemPkg* pkg, const char* cmd_name, Attrib<T>* attrib,
-             const char* usage, int item_argn) :
-    TGetterCmd<T>(pkg, 0, attrib, 0, item_argn),
-    TSetterCmd<T>(pkg, 0, attrib, 0, item_argn),
-    TclCmd(pkg->interp(), cmd_name,
-           usage ? usage : (item_argn ? "item_id ?new_value?" : "?new_value?"),
-           item_argn+1, item_argn+2),
-    itsObjcGet(item_argn+1), 
-    itsObjcSet(item_argn+2) {}
-
-protected:
-
-  virtual void invoke() {
-    if      (TclCmd::objc() == itsObjcGet) { TGetterCmd<T>::invoke(); }
-    else if (TclCmd::objc() == itsObjcSet) { TSetterCmd<T>::invoke(); }
-    else         /* "can't happen */       { Assert(0); }
-  }
-
-private:
-  int itsObjcGet;
-  int itsObjcSet;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// ActionCmd class defintions
-//
-///////////////////////////////////////////////////////////////////////
-
-class ActionCmd : public TclCmd {
-public:
-  ActionCmd(TclItemPkg* pkg, const char* cmd_name, Action* action,
-            const char* usage, int item_argn) :
-    TclCmd(pkg->interp(), cmd_name, 
-           usage ? usage : (item_argn ? "item_id" : NULL),
-           item_argn+1, item_argn+1),
-    itsPkg(pkg),
-    itsAction(action),
-    itsItemArgn(item_argn) {}
-
-protected:
-  virtual void invoke() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
-    void* item = itsPkg->getItemFromId(id);
-    itsAction->action(item);
-  }
-
-private:
-  TclItemPkg* itsPkg;
-  Action* itsAction;
-  int itsItemArgn;
-};
-
-} // end namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -207,9 +62,7 @@ void Tcl::TclItemPkg::declareAttrib_(TclItemPkg* pkg, const char* attrib_name,
 			);
 }
 
-namespace Tcl {
-
-void TclItemPkg::instantiate() {
+void Tcl::TclItemPkg::instantiate() {
   declareGetter_(this, 0, (Getter<int>*) 0, 0);
   declareGetter_(this, 0, (Getter<bool>*) 0, 0);
   declareGetter_(this, 0, (Getter<double>*) 0, 0);
@@ -232,8 +85,8 @@ void TclItemPkg::instantiate() {
   declareAttrib_(this, 0, (Attrib<const fixed_string&>*) 0, 0);
 }
 
-void TclItemPkg::declareAction(const char* action_name, Action* action,
-                               const char* usage) {
+void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
+												const char* usage) {
   addCommand( new VecActionCmd(this, makePkgCmdName(action_name),
                                action, usage, itsItemArgn) );
 }
@@ -244,6 +97,8 @@ void TclItemPkg::declareAction(const char* action_name, Action* action,
 // TclIoItemPkg member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+namespace Tcl {
 
 class ItemStringifyCmd : public StringifyCmd {
 public:
