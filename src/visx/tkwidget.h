@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Tue Sep 17 11:03:12 2002
+// written: Tue Sep 17 11:35:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,10 @@ namespace Tcl
 class Tcl::TkWidget : public GWT::CanvasWidget
 {
 protected:
-  void init(Tcl_Interp* interp, Tk_Window win);
+  void init(Tk_Window win);
 
 public:
-  TkWidget();
+  TkWidget(Tcl_Interp* interp);
   virtual ~TkWidget();
 
   void destroyWidget();
@@ -60,12 +60,6 @@ public:
 
   /// Overridden from GWT::Widget.
   virtual void takeFocus();
-
-  virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
-  virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
-
-  virtual void removeButtonListeners();
-  virtual void removeKeyListeners();
 
   void hook();
 

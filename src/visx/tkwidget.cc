@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 11:04:49 2002
+// written: Tue Sep 17 11:47:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 
 #include "util/ref.h"
 #include "util/strings.h"
+
+#include "visx/xbmaprenderer.h"
 
 #include <iostream>
 #include <tcl.h>
@@ -78,40 +80,28 @@ public:
   TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p) :
     owner(o),
     interp(p),
-    tkWin(0)
+    tkWin(0),
+    shutdownRequested(false)
   {}
 
   ~TkWidgImpl()
-  {
-    destroyEventHandler(BUTTON);
-    destroyEventHandler(KEY);
-  }
+  {}
 
   Tcl::TkWidget* owner;
   Tcl_Interp* interp;
   Tk_Window tkWin;
 
+  bool shutdownRequested;
+
   enum EventType { KEY, BUTTON };
 
-  static void buttonEventProc(ClientData clientData, XEvent* rawEvent)
+  static void buttonEventProc(Tcl::TkWidget* widg, XButtonEvent* eventPtr)
   {
-    Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
-
-    Assert(rawEvent->type == ButtonPress);
-
-    XButtonEvent* eventPtr = (XButtonEvent*) rawEvent;
-
     widg->dispatchButtonEvent(eventPtr->button, eventPtr->x, eventPtr->y);
   }
 
-  static void keyEventProc(ClientData clientData, XEvent* rawEvent)
+  static void keyEventProc(Tcl::TkWidget* widg, XKeyEvent* eventPtr)
   {
-    Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
-
-    Assert(rawEvent->type == KeyPress);
-
-    XKeyEvent* eventPtr = (XKeyEvent*) rawEvent;
-
     char buf[32];
 
     bool controlPressed = eventPtr->state & ControlMask;
@@ -125,32 +115,43 @@ public:
                            controlPressed);
   }
 
-  void createEventHandler(EventType type)
+  static void cEventuallyFreeCallback(char* clientData) throw()
   {
-    switch (type)
-      {
-      case KEY:
-        Tk_CreateEventHandler(owner->tkWin(), KeyPressMask, keyEventProc,
-                              static_cast<void*>(owner));
-        break;
-      case BUTTON:
-        Tk_CreateEventHandler(owner->tkWin(), ButtonPressMask, buttonEventProc,
-                              static_cast<void*>(owner));
-        break;
-      }
+    Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+    widg->decrRefCount();
   }
 
-  void destroyEventHandler(EventType type)
+  static void cEventCallback(ClientData clientData, XEvent* rawEvent)
   {
-    switch (type)
+    Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
+
+    switch (rawEvent->type)
       {
-      case KEY:
-        Tk_DeleteEventHandler(owner->tkWin(), KeyPressMask, keyEventProc,
-                              static_cast<void*>(owner));
+      case KeyPress:
+        if (widg->hasKeyListeners())
+          keyEventProc(widg, (XKeyEvent*) rawEvent);
         break;
-      case BUTTON:
-        Tk_DeleteEventHandler(owner->tkWin(), ButtonPressMask, buttonEventProc,
-                              static_cast<void*>(owner));
+      case ButtonPress:
+        if (widg->hasButtonListeners())
+          buttonEventProc(widg, (XButtonEvent*) rawEvent);
+        break;
+      case MapNotify:
+        {
+          DOTRACE("TkWidget::cEventCallback-MapNotify");
+        }
+        break;
+      case DestroyNotify:
+        {
+          DOTRACE("TkWidget::cEventCallback-DestroyNotify");
+
+          // Idiot-check that we don't have recursive destroy calls
+          Assert(!widg->rep->shutdownRequested);
+
+          widg->rep->shutdownRequested = true;
+
+          Tcl_EventuallyFree(static_cast<ClientData>(widg),
+                             cEventuallyFreeCallback);
+        }
         break;
       }
   }
@@ -162,10 +163,19 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TkWidget::TkWidget(Tcl_Interp* interp) : rep(new TkWidgImpl(interp)) {}
+Tcl::TkWidget::TkWidget(Tcl_Interp* interp) :
+  rep(new TkWidgImpl(this, interp))
+{
+  incrRefCount();
+}
+
+#define EVENT_MASK StructureNotifyMask|KeyPressMask|ButtonPressMask
 
 Tcl::TkWidget::~TkWidget()
 {
+  Tk_DeleteEventHandler(rep->tkWin, EVENT_MASK,
+                        TkWidgImpl::cEventCallback,
+                        static_cast<void*>(this));
   delete rep;
 }
 
@@ -173,6 +183,11 @@ void Tcl::TkWidget::init(Tk_Window win)
 {
   Assert(rep->tkWin == 0);
   rep->tkWin = win;
+  XBmapRenderer::initClass(win);
+
+  Tk_CreateEventHandler(rep->tkWin, EVENT_MASK,
+                        TkWidgImpl::cEventCallback,
+                        static_cast<void*>(this));
 }
 
 void Tcl::TkWidget::destroyWidget()
@@ -260,46 +275,6 @@ DOTRACE("Tcl::TkWidget::takeFocus");
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 
   cmd.invoke(rep->interp);
-}
-
-void Tcl::TkWidget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
-{
-  if (rep && !hasButtonListeners())
-    {
-      rep->createEventHandler(TkWidgImpl::BUTTON);
-    }
-
-  GWT::Widget::addButtonListener(b);
-}
-
-void Tcl::TkWidget::addKeyListener(Util::Ref<GWT::KeyListener> k)
-{
-  if (rep && !hasKeyListeners())
-    {
-      rep->createEventHandler(TkWidgImpl::KEY);
-    }
-
-  GWT::Widget::addKeyListener(k);
-}
-
-void Tcl::TkWidget::removeButtonListeners()
-{
-  GWT::Widget::removeButtonListeners();
-
-  if (rep && !hasButtonListeners())
-    {
-      rep->destroyEventHandler(TkWidgImpl::BUTTON);
-    }
-}
-
-void Tcl::TkWidget::removeKeyListeners()
-{
-  GWT::Widget::removeKeyListeners();
-
-  if (rep && !hasKeyListeners())
-    {
-      rep->destroyEventHandler(TkWidgImpl::KEY);
-    }
 }
 
 void Tcl::TkWidget::hook()

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 11:05:41 2002
+// written: Tue Sep 17 11:45:20 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -43,8 +43,6 @@
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
-
-#include "visx/xbmaprenderer.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -211,7 +209,6 @@ public:
   int itsFontListBase;
 
   bool itsUpdatePending;
-  bool itsShutdownRequested;
 
   Tcl_TimerToken itsTimerToken;
 
@@ -224,7 +221,6 @@ public:
   void configure(int objc, Tcl_Obj* const objv[]);
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
-  static void cEventuallyFreeCallback(char* clientData) throw();
   static void cEventCallback(ClientData clientData, XEvent* eventPtr) throw();
   static void cTimerCallback(ClientData clientData) throw();
   static void cRenderCallback(ClientData clientData) throw();
@@ -295,7 +291,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsFontListBase(0),
 
   itsUpdatePending(false),
-  itsShutdownRequested(false),
 
   itsTimerToken(0),
 
@@ -467,14 +462,6 @@ DOTRACE("Togl::Impl::configure");
     setupOverlay();
 }
 
-// Gets called when an Togl widget is destroyed.
-void Togl::Impl::cEventuallyFreeCallback(char* clientData) throw()
-{
-DOTRACE("Togl::Impl::cEventuallyFreeCallback");
-  Impl* rep = reinterpret_cast<Impl*>(clientData);
-  rep->itsOwner->decrRefCount();
-}
-
 void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr) throw()
 {
   Impl* rep = static_cast<Impl*>(clientData);
@@ -546,7 +533,8 @@ DOTRACE("Togl::Impl::requestRedisplay");
 void Togl::Impl::requestReconfigure()
 {
 DOTRACE("Togl::Impl::requestReconfigure");
-  if (itsOpts->width != Tk_Width(itsTkWin) || itsOpts->height != Tk_Height(itsTkWin))
+  if (itsOpts->width != Tk_Width(itsTkWin) ||
+      itsOpts->height != Tk_Height(itsTkWin))
     {
       itsOpts->width = Tk_Width(itsTkWin);
       itsOpts->height = Tk_Height(itsTkWin);
@@ -732,24 +720,6 @@ DOTRACE("Togl::Impl::eventProc");
         requestReconfigure();
       }
       break;
-    case MapNotify:
-      {
-        DOTRACE("Togl::Impl::eventProc-MapNotify");
-      }
-      break;
-    case DestroyNotify:
-      {
-        DOTRACE("Togl::Impl::eventProc-DestroyNotify");
-
-        // Idiot-check that we don't have recursive destroy calls
-        Assert(!itsShutdownRequested);
-
-        itsShutdownRequested = true;
-
-        Tcl_EventuallyFree(static_cast<ClientData>(this),
-                           cEventuallyFreeCallback);
-      }
-      break;
     default:
       /*nothing*/
       ;
@@ -826,18 +796,14 @@ DOTRACE("Togl::Impl::setupOverlay");
 ///////////////////////////////////////////////////////////////////////
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname) :
-  Tcl::TkWidget(),
+  Tcl::TkWidget(interp),
   rep(new Impl(this, interp, pathname))
 {
 DOTRACE("Togl::Togl");
 
   TkWidget::init(rep->itsTkWin);
 
-  incrRefCount();
-
   makeCurrent();
-
-  XBmapRenderer::initClass(rep->itsTkWin);
 }
 
 Togl::~Togl()
