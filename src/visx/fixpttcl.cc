@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Dec  7 19:15:03 1999
+// written: Wed Dec 15 12:58:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #include <tcl.h>
 
 #include "fixpt.h"
-#include "iomgr.h"
 #include "objlist.h"
 #include "propitempkg.h"
 
@@ -34,9 +33,6 @@ DOTRACE("Fixpt_Init");
 			  "namespace eval FixPt { namespace export * }\n"
 			  "namespace eval Fixpt { namespace import ::FixPt::*; "
 			  "    proc Fixpt {} { return [FixPt::FixPt] } }");
-
-
-  FactoryRegistrar<IO, FixPt>::registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }
