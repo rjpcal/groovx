@@ -30,8 +30,6 @@
 #ifndef GLXOPTS_H_DEFINED
 #define GLXOPTS_H_DEFINED
 
-template <class T> class shared_ptr;
-
 /// Setup options for controlling the OpenGL-windowsystem interface.
 struct GlxOpts
 {

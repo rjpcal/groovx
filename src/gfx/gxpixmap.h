@@ -34,8 +34,6 @@
 
 #include <iosfwd>
 
-template <class T> class shared_ptr;
-
 namespace Gfx
 {
   class BmapData;
