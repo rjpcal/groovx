@@ -3,7 +3,7 @@
 // readutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Fri Mar  3 23:53:49 2000
+// written: Mon Mar  6 12:39:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,31 @@
 
 #include "readutils.h"
 
-#include <string>
+#include "strings.h"
+
 #include <strstream.h>
 
-string ReadUtils::makeNumberString(int number) {
-  char buf[16];
+namespace {
+
+const char* makeNumberString(int number) {
+  static char buf[32];
   ostrstream ost(buf, 16);
   ost << number << '\0';
   return buf;
 }
 
+}
+
 const char* ReadUtils::makeElementNameString(const char* seq_name,
 															 int element_num) {
-  static string result;
+  static dynamic_string result("");
   result = seq_name;
   result += makeNumberString(element_num);
   return result.c_str();
 }
 
 const char* ReadUtils::makeSeqCountString(const char* seq_name) {
-  static string result;
+  static dynamic_string result("");
   result = seq_name;
   result += "Count";
   return result.c_str();
