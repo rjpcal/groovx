@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Jun  5 10:40:06 2001
+// written: Tue Jun  5 14:04:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -534,8 +534,6 @@ DOTRACE("Trial::Impl::trHaltExpt");
   }
 
   getWidget().undraw();
-  trAbortTrial();
-  trEndTrial();
 
   if ( itsRh.isValid() ) {
 	 responseHandler().rhHaltExpt();
