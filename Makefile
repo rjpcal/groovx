@@ -486,7 +486,7 @@ LISTPKG_H = $(TCLITEMPKG_H) listpkg.h
 #
 # level 6 headers
 #
-PROPITEMPKG_H = $(LISTITEMPKG_H) $(IOMGR_H) propitempkg.h
+PROPITEMPKG_H = $(LISTITEMPKG_H) $(IOFACTORY_H) propitempkg.h
 
 #-------------------------------------------------------------------------
 #
@@ -508,7 +508,8 @@ BITMAPREP_CC = $(BITMAPREP_H) $(BMAPRENDERER_H) $(GLCANVAS_H) \
 	$(ERROR_H) $(IO_H) $(PBM_H) \
 	$(READER_H) $(RECT_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) bitmaprep.cc
 
-BITMAPTCL_CC = $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) $(IOMGR_H) $(OBJLIST_H) \
+BITMAPTCL_CC = $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) \
+	$(IOFACTORY_H) $(OBJLIST_H) \
 	$(OBJTOGL_H) $(LISTITEMPKG_H) $(SYSTEM_H) $(TCLCMD_H) \
 	$(TCLOBJLOCK_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
 
@@ -519,7 +520,7 @@ BLOCK_CC = $(BLOCK_H) $(RAND_H) $(IOSTL_H) $(READER_H) $(READUTILS_H) \
 BLOCKLIST_CC = $(BLOCKLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(BLOCK_H) $(PTRLIST_CC) blocklist.cc
 
-BLOCKTCL_CC = $(IOMGR_H) $(BLOCKLIST_H) $(BLOCK_H) $(TCLCMD_H) \
+BLOCKTCL_CC = $(IOFACTORY_H) $(BLOCKLIST_H) $(BLOCK_H) $(TCLCMD_H) \
 	$(LISTITEMPKG_H) $(LISTPKG_H) $(TRACE_H) $(DEBUG_H) blocktcl.cc
 
 BMAPRENDERER_CC = $(BMAPRENDERER_H) $(TRACE_H) bmaprenderer.cc
@@ -565,13 +566,13 @@ FACTORY_CC = $(FACTORY_H) factory.cc
 FISH_CC = $(FISH_H) $(ERROR_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) fish.cc
 
-FISHTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
+FISHTCL_CC = $(IOFACTORY_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
 
 FIXPT_CC = $(FIXPT_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) fixpt.cc
 
 FIXPTTCL_CC = $(OBJLIST_H) $(FIXPT_H) $(PROPITEMPKG_H) \
-	$(IOMGR_H) $(TRACE_H) fixpttcl.cc
+	$(TRACE_H) fixpttcl.cc
 
 GABOR_CC = $(GABOR_H) $(RANDUTILS_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) gabor.cc
@@ -600,7 +601,7 @@ GRSHAPPINIT_CC = $(TRACE_H) $(GRSHAPP_H) grshAppInit.cc
 GTEXT_CC = $(GTEXT_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) gtext.cc
 
-GTEXTTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(GTEXT_H) $(LISTITEMPKG_H) \
+GTEXTTCL_CC = $(IOFACTORY_H) $(OBJLIST_H) $(GTEXT_H) $(LISTITEMPKG_H) \
 	$(TRACE_H) $(DEBUG_H) gtexttcl.cc
 
 HOUSE_CC = $(HOUSE_H) $(READER_H) $(RECT_H) $(WRITER_H) \
@@ -624,7 +625,7 @@ IOUTILS_CC = $(IOUTILS_H) $(IO_H) ioutils.cc
 JITTER_CC = $(JITTER_H) $(RANDUTILS_H) $(READER_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) jitter.cc
 
-JITTERTCL_CC = $(IOMGR_H) $(JITTER_H) $(POSLIST_H) \
+JITTERTCL_CC = $(IOFACTORY_H) $(JITTER_H) $(POSLIST_H) \
 	$(LISTITEMPKG_H) $(TRACE_H) $(DEBUG_H) jittertcl.cc
 
 KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) \
@@ -668,7 +669,7 @@ PBM_CC = $(PBM_H) $(TRACE_H) $(DEBUG_H) pbm.cc
 POSITION_CC = $(POSITION_H) $(READER_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) position.cc
 
-POSITIONTCL_CC = $(DEMANGLE_H) $(IOMGR_H) $(POSITION_H) $(POSLIST_H) \
+POSITIONTCL_CC = $(IOFACTORY_H) $(POSITION_H) $(POSLIST_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) positiontcl.cc
 
 POSLIST_CC = $(POSLIST_H) $(TRACE_H) $(DEBUG_H) \
@@ -688,7 +689,7 @@ RESPONSEHANDLER_CC = $(RESPONSEHANDLER_H) $(TRACE_H) responsehandler.cc
 RHLIST_CC = $(RHLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(RESPONSEHANDLER_H) $(PTRLIST_CC) rhlist.cc
 
-RHTCL_CC = $(EVENTRESPONSEHDLR_H) $(IOMGR_H) $(RHLIST_H) \
+RHTCL_CC = $(EVENTRESPONSEHDLR_H) $(IOFACTORY_H) $(RHLIST_H) \
 	$(RESPONSEHANDLER_H) $(TCLCMD_H) $(KBDRESPONSEHDLR_H) \
 	$(NULLRESPONSEHDLR_H) $(LISTITEMPKG_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) rhtcl.cc
@@ -742,7 +743,7 @@ TCLVECCMDS_CC = $(TCLVECCMDS_H) $(TCLITEMPKG_H) $(DEBUG_H) $(TRACE_H) \
 THLIST_CC = $(THLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(TIMINGHDLR_H) $(PTRLIST_CC) thlist.cc
 
-THTCL_CC = $(IOMGR_H) $(THLIST_H) $(TCLCMD_H) $(TIMINGHDLR_H) \
+THTCL_CC = $(IOFACTORY_H) $(THLIST_H) $(TCLCMD_H) $(TIMINGHDLR_H) \
 	$(TIMINGHANDLER_H) $(TRIALEVENT_H) $(LISTITEMPKG_H) $(LISTPKG_H)\
 	 $(TRACE_H) $(DEBUG_H) thtcl.cc
 
@@ -780,7 +781,7 @@ TRIALEVENT_CC = $(TRIALEVENT_H) $(CANVAS_H) $(DEMANGLE_H) $(ERROR_H) \
 	$(EXPERIMENT_H) $(READER_H) \
 	$(WRITER_H) $(TRACE_H) $(DEBUG_H) trialevent.cc
 
-TRIALTCL_CC = $(IOMGR_H) $(TRIAL_H) $(TLIST_H) $(LISTITEMPKG_H) \
+TRIALTCL_CC = $(IOFACTORY_H) $(TRIAL_H) $(TLIST_H) $(LISTITEMPKG_H) \
 	$(TRACE_H) $(DEBUG_H) trialtcl.cc
 
 VALUE_CC = $(VALUE_H) value.cc
@@ -918,20 +919,6 @@ $(ARCH)/xbmaprenderer.*[ol]:     $(XBMAPRENDERER_CC)
 #
 #-------------------------------------------------------------------------
 
-# Compile whatever is in the test.cc file and link it
-test: test.cc
-	$(CC) $(DEBUG_LINK_OPTIONS) test.cc $(DEBUG_OBJECTS) /opt/langtools/lib/end.o \
-	$(LIB_DIRS) $(LIBRARIES)
-
-# Make html doc files for all *.h files
-html:
-	cxx2html -dir ~/www/grsh *.h
-
-
-# (This target is broken) 
-share:
-	$(CC) -c +Z $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(INCLUDE_DIRS) -c face.cc
-
 # Remove all object files and build a new production executable from scratch
 new: cleaner $(PROD_TARGET)
 
@@ -944,25 +931,25 @@ cleaner: clean
 	rm -f *.o
 
 # Generate TAGS file based on all source files
-TAGS_FILES = *\.[ch]* util/*\.[ch]*
-TAGS: $(TAGS_FILES)
+ALL_SOURCES = *\.[ch]* util/*\.[ch]*
+TAGS: $(ALL_SOURCES)
 ifeq ($(ARCH),hp9000s700)
-	echo 'etags $(TAGS_FILES)'
+	echo 'etags $(ALL_SOURCES)'
 else
-	etags $(TAGS_FILES)
+	etags $(ALL_SOURCES)
 endif
-
-# Start emacs and load all source files and Makefile
-edit: clean
-	emacs *\.[ch]* Makefile testing/grshtest.tcl Log.txt
 
 # Count the lines in all source files
 count:
-	wc -l *\.[ch]*
+	wc -l $(ALL_SOURCES)
 
 # Count the number of non-commented source lines
 ncsl:
-	NCSL *\.[ch]*
+	NCSL $(ALL_SOURCES)
+
+# Start emacs and load all source files and Makefile
+edit: clean
+	emacs $(ALL_SOURCES) Makefile testing/grshtest.tcl Log.txt
 
 docs: DoxygenConfig *.h
 	doxygen DoxygenConfig
@@ -971,7 +958,7 @@ docs: DoxygenConfig *.h
 AdepAliases: FileList *.h *.cc
 	adep -s -fFileList > AdepAliases
 
-cdeps: *.h *.cc
+cdeps: $(ALL_SOURCES)
 	cdep -iCdepSearchpath *.h *.cc > CdepDeps
 
 ldeps: cdeps
