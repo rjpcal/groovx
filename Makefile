@@ -213,7 +213,7 @@ ifeq ($(COMPILER),g++)
 	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g -O0
+		CC_SWITCHES += -g -O1
 	endif
 
 	ifeq ($(MODE),prod)
