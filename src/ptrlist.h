@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Jul  3 16:10:48 1999
+// written: Wed Jul  7 12:46:51 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -25,6 +25,21 @@
 #ifndef IO_H_DEFINED
 #include "io.h"
 #endif
+
+#ifndef ERROR_H_DEFINED
+#include "error.h"
+#endif
+
+///////////////////////////////////////////////////////////////////////
+//
+// Error classes
+//
+///////////////////////////////////////////////////////////////////////
+
+class InvalidIdError : public ErrorWithMsg {
+public:
+  InvalidIdError(const string& msg="") : ErrorWithMsg(msg) {}
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -144,10 +159,14 @@ public:
   // Returns true if 'id' is a valid index into a non-NULL T* in
   // the PtrList, given its current size.
 
-  T* getPtr (int id) const { return itsVec[id]; }
+  T* getPtr(int id) const throw () { return itsVec[id]; }
   // Return the T* at the index given by 'id'.  There is no
   // range-check performed; this must be done by the client with
   // isValidId().
+
+  T* getCheckedPtr(int id) const throw (InvalidIdError);
+  // Like getPtr(), but checks first if 'id' is a valid index, and
+  // throws an InvalidIdError if it is not.
 
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
