@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu Nov 30 16:44:27 2000
+// written: Tue Dec  5 18:02:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -182,6 +182,11 @@ public:
 	 declareCAction("clear", &IoPtrList::clear);
 	 declareCAction("purge", &IoPtrList::purge);
   }
+
+  virtual ~IoListPkg()
+    {
+		IoPtrList::theList().clearOnExit();
+	 }
 };
 
 } // end namespace Tcl
