@@ -171,8 +171,10 @@ class ObjDb::ItrImpl {
 public:
   typedef ObjDb::Impl::MapType MapType;
 
-  ItrImpl(MapType::iterator itr) : itsIter(itr) {}
+  ItrImpl(ObjDb::Impl::MapType& m, MapType::iterator itr) :
+	 itsMap(m), itsIter(itr) {}
 
+  MapType& itsMap;
   MapType::iterator itsIter;
 };
 
@@ -195,7 +197,7 @@ DOTRACE("ObjDb::Iterator::~Iterator");
 }
 
 ObjDb::Iterator::Iterator(const ObjDb::Iterator& other) :
-  itsImpl(new ItrImpl(other.itsImpl->itsIter))
+  itsImpl(new ItrImpl(*(other.itsImpl)))
 {
 DOTRACE("ObjDb::Iterator::Iterator(copy)");
 }
@@ -205,7 +207,7 @@ ObjDb::Iterator::operator=(const ObjDb::Iterator& other)
 {
 DOTRACE("ObjDb::Iterator::operator=");
   ItrImpl* old_impl = itsImpl;
-  itsImpl = new ItrImpl(other.itsImpl->itsIter);
+  itsImpl = new ItrImpl(*(other.itsImpl));
   delete old_impl;
   return *this;
 }
@@ -220,6 +222,19 @@ ObjDb::Iterator&
 ObjDb::Iterator::operator++()
 {
   ++(itsImpl->itsIter);
+
+  while (true)
+	 {
+		if (itsImpl->itsIter == itsImpl->itsMap.end()) break;
+
+		if ((*(itsImpl->itsIter)).second.isValid()) break;
+
+		ItrImpl::MapType::iterator bad = itsImpl->itsIter;
+		++(itsImpl->itsIter);
+
+		itsImpl->itsMap.erase(bad);
+	 }
+
   return *this;
 }
 
@@ -245,12 +260,12 @@ ObjDb& ObjDb::theDb() { return theInstance; }
 
 ObjDb::Iterator ObjDb::begin() const {
 DOTRACE("ObjDb::begin");
-  return Iterator(new ItrImpl(itsImpl->itsPtrMap.begin()));
+  return Iterator(new ItrImpl(itsImpl->itsPtrMap, itsImpl->itsPtrMap.begin()));
 }
 
 ObjDb::Iterator ObjDb::end() const {
 DOTRACE("ObjDb::end");
-  return Iterator(new ItrImpl(itsImpl->itsPtrMap.end()));
+  return Iterator(new ItrImpl(itsImpl->itsPtrMap, itsImpl->itsPtrMap.end()));
 }
 
 ObjDb::ObjDb() :
