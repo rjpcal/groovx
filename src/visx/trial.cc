@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct 30 11:23:58 2000
+// written: Mon Oct 30 17:35:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,8 +86,8 @@ public:
 private:
   int itsCorrectResponse;
 
-  std::vector<MaybeIdItem<GrObj> > itsGrObjs;
-  std::vector<MaybeIdItem<Position> > itsPositions;
+  std::vector<IdItem<GrObj> > itsGrObjs;
+  std::vector<IdItem<Position> > itsPositions;
 
   std::vector<Response> itsResponses;
   int itsType;
@@ -226,12 +226,12 @@ DOTRACE("Trial::Impl::readFrom");
   itsGrObjs.clear();
   IO::ReadUtils::readObjectSeq<GrObj>(
 	       reader, "grobjs",
-			 MaybeIdItem<GrObj>::makeInserter(itsGrObjs));
+			 IdItem<GrObj>::makeInserter(itsGrObjs));
 
   itsPositions.clear();
   IO::ReadUtils::readObjectSeq<Position>(
           reader, "positions",
-			 MaybeIdItem<Position>::makeInserter(itsPositions));
+			 IdItem<Position>::makeInserter(itsPositions));
 
   itsResponses.clear();
   IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
@@ -413,8 +413,8 @@ DOTRACE("Trial::Impl::avgRespTime");
 
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
-  itsGrObjs.push_back(MaybeIdItem<GrObj>(objid));
-  itsPositions.push_back(MaybeIdItem<Position>(posid));
+  itsGrObjs.push_back(IdItem<GrObj>(objid));
+  itsPositions.push_back(IdItem<Position>(posid));
 
   Invariant(itsGrObjs.size() == itsPositions.size());
 }

@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Fri Oct 27 08:52:34 2000
+// written: Mon Oct 30 17:34:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ class istream;
 #  endif
 #endif
 
-template <class T> class MaybeIdItem;
+template <class T> class IdItem;
 
 namespace GWT {
   class Canvas;
@@ -89,7 +89,7 @@ public:
   int getResponseHandler() const;
   int getTimingHdlr() const;
 
-  typedef const MaybeIdItem<GrObj>* GrObjItr;
+  typedef const IdItem<GrObj>* GrObjItr;
   GrObjItr beginGrObjs() const;
   GrObjItr endGrObjs() const;
 
