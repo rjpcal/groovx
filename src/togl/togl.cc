@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 12:50:15 2000
+// written: Thu May 25 13:19:06 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1371,11 +1371,9 @@ DOTRACE("Togl::Impl::Impl");
 	 throw TCL_ERROR;
   }
 
-  /*
-	* If OpenGL window wasn't already created by configure() we
-	* create it now.  We can tell by checking if the GLX context has
-	* been initialized.
-	*/
+  // If OpenGL window wasn't already created by configure() we
+  // create it now.  We can tell by checking if the GLX context has
+  // been initialized.
   if (!itsGLXContext) {
 	 if (makeWindowExist() == TCL_ERROR) {
 		Tk_DestroyWindow(itsTkWin);
@@ -1383,17 +1381,10 @@ DOTRACE("Togl::Impl::Impl");
 	 }
   }
 
-  /* If defined, call create callback */
   if (DefaultCreateProc) {
 	 DefaultCreateProc(itsOwner);
   }
 
-  /* If defined, call reshape proc */
-  if (itsReshapeProc) {
-	 itsReshapeProc(itsOwner);
-  }
-
-  /* If defined, setup timer */
   if (itsTimerProc) {
 	 Tk_CreateTimerHandler( itsTime, Togl::Impl::dummyTimerCallback,
 									static_cast<ClientData>(this) );
@@ -1401,7 +1392,6 @@ DOTRACE("Togl::Impl::Impl");
 
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 
-  /* Add to linked list */
   addSelfToList();
 }
 
@@ -1419,7 +1409,6 @@ DOTRACE("Togl::Impl::~Impl");
 	 itsDestroyProc(itsOwner);
   }
 
-  /* remove from linked list */
   removeSelfFromList();
 }
 
@@ -1877,6 +1866,7 @@ DOTRACE("Togl::Impl::eventProc");
 
   switch (eventPtr->type) {
   case Expose:
+	 DebugPrintNL("Expose");
 	 if (eventPtr->xexpose.count == 0) {
 		if (!itsUpdatePending && 
 			 eventPtr->xexpose.window==windowId()) {
@@ -1890,6 +1880,7 @@ DOTRACE("Togl::Impl::eventProc");
 	 }
 	 break;
   case ConfigureNotify:
+	 DebugPrintNL("ConfigureNotify");
 	 if (itsWidth != Tk_Width(itsTkWin) || itsHeight != Tk_Height(itsTkWin))
 		{
 		  itsWidth = Tk_Width(itsTkWin);
@@ -1915,8 +1906,10 @@ DOTRACE("Togl::Impl::eventProc");
 		}
 	 break;
   case MapNotify:
+	 DebugPrintNL("MapNotify");
 	 break;
   case DestroyNotify:
+	 DebugPrintNL("DestroyNotify");
 	 if (itsTkWin != NULL) {
 		itsTkWin = NULL;
 		Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
