@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Mon Aug 13 12:16:54 2001
+// written: Wed Aug 15 15:20:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ DOTRACE("Jitter::undraw");
   canvas.scale(scaling.vec());
 
   // Rotate
-  canvas.rotate(rotationAxis.vec(), rotationAngle()+itsRShift);
+  canvas.rotate(rotationAxis.vec(), itsRotationAngle+itsRShift);
 }
 
 static const char vcid_jitter_cc[] = "$Header$";

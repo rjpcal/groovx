@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 15:13:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,55 +48,6 @@
 namespace
 {
   const IO::VersionId MFACE_SERIAL_VERSION_ID = 1;
-
-  const char* ioTag = "MorphyFace";
-
-  typedef MorphyFace MF;
-
-  const FieldInfo FINFOS[] =
-  {
-    FieldInfo("category", FieldInfo::OldTag(), &MF::mfaceCategory, 0, 0, 10, 1, true),
-
-    FieldInfo("faceWidth", FieldInfo::OldTag(), &MF::faceWidth, 2.75, 1.5, 3.5, 0.1),
-    FieldInfo("topWidth", FieldInfo::OldTag(), &MF::topWidth, 1.15, 0.05, 2.0, 0.05),
-    FieldInfo("bottomWidth", FieldInfo::OldTag(), &MF::bottomWidth, 1.0, 0.05, 2.0, 0.05),
-    FieldInfo("topHeight", FieldInfo::OldTag(), &MF::topHeight, 3.8, 0.5, 5.0, 0.25),
-    FieldInfo("bottomHeight", FieldInfo::OldTag(), &MF::bottomHeight, -3.0, -5.0, -0.5, 0.25),
-
-    FieldInfo("hairWidth", FieldInfo::OldTag(), &MF::hairWidth, 0.20, 0.00, 0.5, 0.02, true),
-    FieldInfo("hairStyle", FieldInfo::OldTag(), &MF::hairStyle, 0, 0, 1, 1),
-
-    FieldInfo("eyeYpos", FieldInfo::OldTag(), &MF::eyeYpos, 0.375, -2.0, 2.0, 0.1, true),
-    FieldInfo("eyeDistance", FieldInfo::OldTag(), &MF::eyeDistance, 2.25, 0.0, 5.0, 0.25),
-    FieldInfo("eyeHeight", FieldInfo::OldTag(), &MF::eyeHeight, 0.9, 0.0, 2.0, 0.1),
-    FieldInfo("eyeAspectRatio", FieldInfo::OldTag(), &MF::eyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
-
-    FieldInfo("pupilXpos", FieldInfo::OldTag(), &MF::pupilXpos, 0.0, -0.5, 0.5, 0.05, true),
-    FieldInfo("pupilYpos", FieldInfo::OldTag(), &MF::pupilYpos, 0.0, -0.5, 0.5, 0.05),
-    FieldInfo("pupilSize", FieldInfo::OldTag(), &MF::pupilSize, 0.6, 0.0, 1.0, 0.05),
-    FieldInfo("pupilDilation", FieldInfo::OldTag(), &MF::pupilDilation, 0.5, 0.0, 1.0, 0.05),
-
-    FieldInfo("eyebrowXpos", FieldInfo::OldTag(), &MF::eyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
-    FieldInfo("eyebrowYpos", FieldInfo::OldTag(), &MF::eyebrowYpos, 0.5, 0.0, 1.5, 0.05),
-    FieldInfo("eyebrowCurvature", FieldInfo::OldTag(), &MF::eyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
-    FieldInfo("eyebrowAngle", FieldInfo::OldTag(), &MF::eyebrowAngle, -5, -50, 50, 1),
-    FieldInfo("eyebrowThickness", FieldInfo::OldTag(), &MF::eyebrowThickness, 2.0, 0.1, 4.0, 0.1),
-
-    FieldInfo("noseXpos", FieldInfo::OldTag(), &MF::noseXpos, 0.0, -1.0, 1.0, 0.05, true),
-    FieldInfo("noseYpos", FieldInfo::OldTag(), &MF::noseYpos, -0.825, -2.0, 2.0, 0.1),
-    FieldInfo("noseLength", FieldInfo::OldTag(), &MF::noseLength, 0.75, 0.0, 2.0, 0.1),
-    FieldInfo("noseWidth", FieldInfo::OldTag(), &MF::noseWidth, 1.5, 0.0, 3.0, 0.1),
-
-    FieldInfo("mouthXpos", FieldInfo::OldTag(), &MF::mouthXpos, 0.0, -2.0, 2.0, 0.1, true),
-    FieldInfo("mouthYpos", FieldInfo::OldTag(), &MF::mouthYpos, -2.0, -3.0, 1.0, 0.1),
-    FieldInfo("mouthWidth", FieldInfo::OldTag(), &MF::mouthWidth, 2.5, 0.0, 5.0, 0.25),
-    FieldInfo("mouthCurvature", FieldInfo::OldTag(), &MF::mouthCurvature, 0.6, -2.0, 2.0, 0.1)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                        &GrObj::classFields());
 
   const unsigned int NUM_HAIR_POINTS = 15;
   const double* getHairVertices(double top_width, double hair_width)
@@ -180,7 +131,58 @@ namespace
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& MorphyFace::classFields() { return MFACE_FIELDS; }
+const FieldMap& MorphyFace::classFields()
+{
+
+  typedef MorphyFace MF;
+
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("category", &MF::itsMfaceCategory, 0, 0, 10, 1, true),
+
+    FieldInfo("faceWidth", &MF::itsFaceWidth, 2.75, 1.5, 3.5, 0.1),
+    FieldInfo("topWidth", &MF::itsTopWidth, 1.15, 0.05, 2.0, 0.05),
+    FieldInfo("bottomWidth", &MF::itsBottomWidth, 1.0, 0.05, 2.0, 0.05),
+    FieldInfo("topHeight", &MF::itsTopHeight, 3.8, 0.5, 5.0, 0.25),
+    FieldInfo("bottomHeight", &MF::itsBottomHeight, -3.0, -5.0, -0.5, 0.25),
+
+    FieldInfo("hairWidth", &MF::itsHairWidth, 0.20, 0.00, 0.5, 0.02, true),
+    FieldInfo("hairStyle", &MF::itsHairStyle, 0, 0, 1, 1),
+
+    FieldInfo("eyeYpos", &MF::itsEyeYpos, 0.375, -2.0, 2.0, 0.1, true),
+    FieldInfo("eyeDistance", &MF::itsEyeDistance, 2.25, 0.0, 5.0, 0.25),
+    FieldInfo("eyeHeight", &MF::itsEyeHeight, 0.9, 0.0, 2.0, 0.1),
+    FieldInfo("eyeAspectRatio", &MF::itsEyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
+
+    FieldInfo("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, true),
+    FieldInfo("pupilYpos", &MF::itsPupilYpos, 0.0, -0.5, 0.5, 0.05),
+    FieldInfo("pupilSize", &MF::itsPupilSize, 0.6, 0.0, 1.0, 0.05),
+    FieldInfo("pupilDilation", FieldInfo::OldTag(), &MF::itsPupilDilation, 0.5, 0.0, 1.0, 0.05),
+
+    FieldInfo("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
+    FieldInfo("eyebrowYpos", &MF::itsEyebrowYpos, 0.5, 0.0, 1.5, 0.05),
+    FieldInfo("eyebrowCurvature", &MF::itsEyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
+    FieldInfo("eyebrowAngle", &MF::itsEyebrowAngle, -5, -50, 50, 1),
+    FieldInfo("eyebrowThickness", &MF::itsEyebrowThickness, 2.0, 0.1, 4.0, 0.1),
+
+    FieldInfo("noseXpos", &MF::itsNoseXpos, 0.0, -1.0, 1.0, 0.05, true),
+    FieldInfo("noseYpos", &MF::itsNoseYpos, -0.825, -2.0, 2.0, 0.1),
+    FieldInfo("noseLength", &MF::itsNoseLength, 0.75, 0.0, 2.0, 0.1),
+    FieldInfo("noseWidth", &MF::itsNoseWidth, 1.5, 0.0, 3.0, 0.1),
+
+    FieldInfo("mouthXpos", &MF::itsMouthXpos, 0.0, -2.0, 2.0, 0.1, true),
+    FieldInfo("mouthYpos", &MF::itsMouthYpos, -2.0, -3.0, 1.0, 0.1),
+    FieldInfo("mouthWidth", &MF::itsMouthWidth, 2.5, 0.0, 5.0, 0.25),
+    FieldInfo("mouthCurvature", &MF::itsMouthCurvature, 0.6, -2.0, 2.0, 0.1)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                               &GrObj::classFields());
+
+  return MFACE_FIELDS;
+}
 
 MorphyFace* MorphyFace::make()
 {
@@ -191,46 +193,46 @@ DOTRACE("MorphyFace::make");
 MorphyFace::MorphyFace() :
   GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
 
-  mfaceCategory(0),
+  itsMfaceCategory(0),
 
-  faceWidth(2.75),
-  topWidth(1.15),
-  bottomWidth(1.0),
-  topHeight(3.8),
-  bottomHeight(-3.0),
+  itsFaceWidth(2.75),
+  itsTopWidth(1.15),
+  itsBottomWidth(1.0),
+  itsTopHeight(3.8),
+  itsBottomHeight(-3.0),
 
-  hairWidth(0.15),
-  hairStyle(0),
+  itsHairWidth(0.15),
+  itsHairStyle(0),
 
-  eyeYpos(0.375),
-  eyeDistance(2.25),
-  eyeHeight(0.9),
-  eyeAspectRatio(1.555556),
+  itsEyeYpos(0.375),
+  itsEyeDistance(2.25),
+  itsEyeHeight(0.9),
+  itsEyeAspectRatio(1.555556),
 
-  pupilXpos(0.0),
-  pupilYpos(0.0),
-  pupilSize(0.6),
-  pupilDilation(0.5, 0.0, 0.999),
+  itsPupilXpos(0.0),
+  itsPupilYpos(0.0),
+  itsPupilSize(0.6),
+  itsPupilDilation(0.5, 0.0, 0.999),
 
-  eyebrowXpos(0.0),
-  eyebrowYpos(0.5),
-  eyebrowCurvature(0.8),
-  eyebrowAngle(-5),
-  eyebrowThickness(2.0),
+  itsEyebrowXpos(0.0),
+  itsEyebrowYpos(0.5),
+  itsEyebrowCurvature(0.8),
+  itsEyebrowAngle(-5),
+  itsEyebrowThickness(2.0),
 
-  noseXpos(0.0),
-  noseYpos(-0.825),
-  noseLength(0.75),
-  noseWidth(1.5),
+  itsNoseXpos(0.0),
+  itsNoseYpos(-0.825),
+  itsNoseLength(0.75),
+  itsNoseWidth(1.5),
 
-  mouthXpos(0.0),
-  mouthYpos(-2.0),
-  mouthWidth(2.5),
-  mouthCurvature(0.6)
+  itsMouthXpos(0.0),
+  itsMouthYpos(-2.0),
+  itsMouthWidth(2.5),
+  itsMouthCurvature(0.6)
 {
 DOTRACE("MorphyFace::MorphyFace");
 
-  setFieldMap(MFACE_FIELDS);
+  setFieldMap(MorphyFace::classFields());
 
   setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
   setMaxDimension(1.0);
@@ -326,15 +328,15 @@ DOTRACE("MorphyFace::grRender");
         glScalef(left_right*1.0, 1.0, 1.0);
 
         // Move to the eye position
-        glTranslatef(Util::abs(eyeDistance())/2.0, eyeYpos(), 0.0);
+        glTranslatef(Util::abs(itsEyeDistance)/2.0, itsEyeYpos, 0.0);
 
         // Draw eye outline
         for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
           {
             glPushMatrix();
             {
-              glScalef(eyeHeight()*eyeAspectRatio(),
-                       eyeHeight()*top_bottom,
+              glScalef(itsEyeHeight*itsEyeAspectRatio,
+                       itsEyeHeight*top_bottom,
                        1.0);
               glEnable(GL_MAP1_VERTEX_3);
               glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
@@ -348,16 +350,16 @@ DOTRACE("MorphyFace::grRender");
         // Draw eyebrow
         glPushMatrix();
         {
-          glTranslatef(eyebrowXpos(), eyebrowYpos(), 0.0);
-          glRotatef(eyebrowAngle(), 0.0, 0.0, 1.0);
-          glScalef(eyeHeight()*eyeAspectRatio(),
-                   eyeHeight()*eyebrowCurvature(),
+          glTranslatef(itsEyebrowXpos, itsEyebrowYpos, 0.0);
+          glRotatef(itsEyebrowAngle, 0.0, 0.0, 1.0);
+          glScalef(itsEyeHeight*itsEyeAspectRatio,
+                   itsEyeHeight*itsEyebrowCurvature,
                    1.0);
           glPushAttrib(GL_LINE_BIT);
           {
             GLdouble line_width;
             glGetDoublev(GL_LINE_WIDTH, &line_width);
-            glLineWidth(eyebrowThickness()*line_width);
+            glLineWidth(itsEyebrowThickness*line_width);
             glEnable(GL_MAP1_VERTEX_3);
             glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
             // Evaluate the 1-d Bezier curve
@@ -371,13 +373,13 @@ DOTRACE("MorphyFace::grRender");
         // Draw pupil
         glPushMatrix();
         {
-          glTranslatef(left_right*pupilXpos(), pupilYpos(), 0.0);
-          glScalef(pupilSize()*eyeHeight(),
-                   pupilSize()*eyeHeight(),
+          glTranslatef(left_right*itsPupilXpos, itsPupilYpos, 0.0);
+          glScalef(itsPupilSize*itsEyeHeight,
+                   itsPupilSize*itsEyeHeight,
                    1.0);
           static const int num_slices = 20;
           static const int num_loops = 1;
-          gluDisk(qobj, 0.5*Util::abs(pupilDilation()), 0.5,
+          gluDisk(qobj, 0.5*Util::abs(itsPupilDilation()), 0.5,
                   num_slices, num_loops);
         }
         glPopMatrix();
@@ -397,14 +399,14 @@ DOTRACE("MorphyFace::grRender");
   static const int nctrlsets = 2;
   const double ctrlpnts[] =
   {
-    -faceWidth(), 0.0,        0,        // first 4 control points
-    -topWidth()*faceWidth(),  topHeight()*4.0/3.0, 0,
-    topWidth()*faceWidth(),   topHeight()*4.0/3.0, 0,
-    faceWidth(),  0.0,        0,
-    faceWidth(), 0.0, 0, // second 4 control points
-    bottomWidth()*faceWidth(), bottomHeight()*4.0/3.0, 0,
-    -bottomWidth()*faceWidth(), bottomHeight()*4.0/3.0, 0,
-    -faceWidth(), 0.0, 0
+    -itsFaceWidth, 0.0,        0,        // first 4 control points
+    -itsTopWidth*itsFaceWidth,  itsTopHeight*4.0/3.0, 0,
+    itsTopWidth*itsFaceWidth,   itsTopHeight*4.0/3.0, 0,
+    itsFaceWidth,  0.0,        0,
+    itsFaceWidth, 0.0, 0, // second 4 control points
+    itsBottomWidth*itsFaceWidth, itsBottomHeight*4.0/3.0, 0,
+    -itsBottomWidth*itsFaceWidth, itsBottomHeight*4.0/3.0, 0,
+    -itsFaceWidth, 0.0, 0
   };
 
   glEnable(GL_MAP1_VERTEX_3);
@@ -422,8 +424,8 @@ DOTRACE("MorphyFace::grRender");
 
   glPushMatrix();
   {
-    glTranslatef(noseXpos(), noseYpos(), 0.0);
-    glScalef(Util::abs(noseWidth())/2.0, Util::abs(noseLength()), 1.0);
+    glTranslatef(itsNoseXpos, itsNoseYpos, 0.0);
+    glScalef(Util::abs(itsNoseWidth)/2.0, Util::abs(itsNoseLength), 1.0);
     glBegin(GL_LINE_STRIP);
       glVertex2d(-0.75, 0.5);
       glVertex2d(-1.0,  0.0);
@@ -452,8 +454,8 @@ DOTRACE("MorphyFace::grRender");
 
   glPushMatrix();
   {
-    glTranslatef(mouthXpos(), mouthYpos(), 0.0);
-    glScalef(mouthWidth(), mouthCurvature(), 1.0);
+    glTranslatef(itsMouthXpos, itsMouthYpos, 0.0);
+    glScalef(itsMouthWidth, itsMouthCurvature, 1.0);
     glEnable(GL_MAP1_VERTEX_3);
     glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, mouth_ctrlpnts);
     // Evaluate the 1-d Bezier curve
@@ -468,7 +470,7 @@ DOTRACE("MorphyFace::grRender");
 
   glPushAttrib(GL_POLYGON_BIT);
   {
-    if (hairStyle() == 0)
+    if (itsHairStyle == 0)
       {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       }
@@ -477,13 +479,13 @@ DOTRACE("MorphyFace::grRender");
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       }
 
-    const double* hair_vertices = getHairVertices(topWidth(), hairWidth());
+    const double* hair_vertices = getHairVertices(itsTopWidth, itsHairWidth);
 
     // Draw right side
-    drawHairStrip(hair_vertices, faceWidth(), topHeight());
+    drawHairStrip(hair_vertices, itsFaceWidth, itsTopHeight);
 
     // Draw left side
-    drawHairStrip(hair_vertices, -faceWidth(), topHeight());
+    drawHairStrip(hair_vertices, -itsFaceWidth, itsTopHeight);
   }
   glPopAttrib();
 
@@ -504,8 +506,8 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
 
-  Bezier4 xbezier_top(-1.0, -topWidth(), topWidth(), 1.0);
-  Bezier4 xbezier_bottom(1.0, bottomWidth(), -bottomWidth(), -1.0);
+  Bezier4 xbezier_top(-1.0, -itsTopWidth, itsTopWidth, 1.0);
+  Bezier4 xbezier_bottom(1.0, itsBottomWidth, -itsBottomWidth, -1.0);
 
   double top_width = xbezier_top.evalMax();
   double bottom_width = xbezier_bottom.evalMax();
@@ -516,10 +518,10 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   DebugEvalNL(max_width);
 
-  bbox.left()   = -max_width      * faceWidth() * (1 + hairWidth());
-  bbox.right()  =  max_width      * faceWidth() * (1 + hairWidth());
-  bbox.top()    =  topHeight() * (1 + hairWidth());
-  bbox.bottom() =  bottomHeight();
+  bbox.left()   = -max_width      * itsFaceWidth * (1 + itsHairWidth);
+  bbox.right()  =  max_width      * itsFaceWidth * (1 + itsHairWidth);
+  bbox.top()    =  itsTopHeight * (1 + itsHairWidth);
+  bbox.bottom() =  itsBottomHeight;
 
   return bbox;
 }

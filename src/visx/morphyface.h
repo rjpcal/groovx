@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Aug 15 11:13:11 2001
+// written: Wed Aug 15 15:13:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,76 +50,78 @@ public:
   // properties //
   ////////////////
 
+  virtual int category() const { return itsMfaceCategory; }
+  virtual void setCategory(int val) { itsMfaceCategory = val; }
+
+private:
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  TField<int> mfaceCategory;
+  int itsMfaceCategory;
 
-  virtual int category() const { return mfaceCategory(); }
-  virtual void setCategory(int val) { mfaceCategory.setNative(val); }
-
-  TField<double> faceWidth;
+  double itsFaceWidth;
     ///< The width of the face.
-  TField<double> topWidth;
-    ///< The width of the top of the face, as a fraction of \a faceWidth.
-  TField<double> bottomWidth;
-    ///< The width of the bottom of the face, as a fraction of \a faceWidth.
-  TField<double> topHeight;
+  double itsTopWidth;
+    ///< The width of the top of the face, as a fraction of \a itsFaceWidth.
+  double itsBottomWidth;
+    ///< The width of the bottom of the face, as a fraction of \a itsFaceWidth.
+  double itsTopHeight;
     ///< The height of the top of the face.
-  TField<double> bottomHeight;
+  double itsBottomHeight;
     ///< The height of the bottom of the face.
 
-  TField<double> hairWidth;
+  double itsHairWidth;
     ///< The width of the hair.
-  TField<int> hairStyle;
+  int itsHairStyle;
     ///< The style of the hair.
 
-  TField<double> eyeYpos;
+  double itsEyeYpos;
     ///< The y-position of the eyes, relative to the face midline.
-  TField<double> eyeDistance;
+  double itsEyeDistance;
     ///< The distance between the centers of the eyes.
-  TField<double> eyeHeight;
+  double itsEyeHeight;
     ///< The height of the eyes themselves.
-  TField<double> eyeAspectRatio;
+  double itsEyeAspectRatio;
     ///< The aspect ratio of the eyes (width over height).
 
-  TField<double> pupilXpos;
+  double itsPupilXpos;
     ///< The x-position of the pupils, relative to the center of the eye.
-  TField<double> pupilYpos;
+  double itsPupilYpos;
     ///< The y-position of the pupils, relative to the center of the eye.
-  TField<double> pupilSize;
+  double itsPupilSize;
     ///< The diameter of the pupils, relative to the height of the eye.
-  TBoundedField<double> pupilDilation;
+  TBoundedField<double> itsPupilDilation;
     ///< The dilation of the pupil, on a scale of [0,1).
 
-  TField<double> eyebrowXpos;
+  double itsEyebrowXpos;
     ///< The x-position of the eyebrows, relative to the eye.
-  TField<double> eyebrowYpos;
+  double itsEyebrowYpos;
     ///< The y-position of the eyebrows, relative to the top of the eye.
-  TField<double> eyebrowCurvature;
+  double itsEyebrowCurvature;
     ///< The degree of eyebrow curvature, relative to that of the eye.
-  TField<double> eyebrowAngle;
+  double itsEyebrowAngle;
     ///< The angle of image-plane rotation of the eyebrow.
-  TField<double> eyebrowThickness;
+  double itsEyebrowThickness;
     ///< The thickness of the eyebrow, relative to the default thickness.
 
-  TField<double> noseXpos;
+  double itsNoseXpos;
     ///< The x-position of the nose, relative to the face midline.
-  TField<double> noseYpos;
+  double itsNoseYpos;
     ///< The y-position of the nose, relative to the face midline.
-  TField<double> noseLength;
+  double itsNoseLength;
     ///< The length of the nose.
-  TField<double> noseWidth;
+  double itsNoseWidth;
     ///< The width of the nose.
 
-  TField<double> mouthXpos;
+  double itsMouthXpos;
     ///< The x-position of the mouth, relative to the face midline.
-  TField<double> mouthYpos;
+  double itsMouthYpos;
     ///< The y-position of the mouth, relative to the face midline.
-  TField<double> mouthWidth;
+  double itsMouthWidth;
     ///< The width of the mouth.
-  TField<double> mouthCurvature;
+  double itsMouthCurvature;
     ///< The degree of curvature of the mouth.
 
+public:
   static const FieldMap& classFields();
 
 protected:

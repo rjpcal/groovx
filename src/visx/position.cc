@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 15:19:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,18 +29,6 @@
 namespace
 {
   const IO::VersionId POS_SERIAL_VERSION_ID = 1;
-
-  const FieldInfo FINFOS[] =
-  {
-    FieldInfo("translation", FieldInfo::OldTag(), &Position::translation, 0., 0., 0., 0., true),
-    FieldInfo("scaling", FieldInfo::OldTag(), &Position::scaling, 0., 0., 0., 0.),
-    FieldInfo("rotationAxis", FieldInfo::OldTag(), &Position::rotationAxis, 0., 0., 0., 0.),
-    FieldInfo("rotationAngle", FieldInfo::OldTag(), &Position::rotationAngle, 0., 0., 360., 1.)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +59,18 @@ struct PositionImpl {
 
 const FieldMap& Position::classFields()
 {
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("translation", FieldInfo::OldTag(), &Position::translation, 0., 0., 0., 0., true),
+    FieldInfo("scaling", FieldInfo::OldTag(), &Position::scaling, 0., 0., 0., 0.),
+    FieldInfo("rotationAxis", FieldInfo::OldTag(), &Position::rotationAxis, 0., 0., 0., 0.),
+    FieldInfo("rotationAngle", &Position::itsRotationAngle, 0., 0., 360., 1.)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+
   return POS_FIELDS;
 }
 
@@ -85,14 +85,14 @@ Position::Position() :
   translation(0.0, 0.0, 0.0),
   scaling(1.0, 1.0, 1.0),
   rotationAxis(0.0, 0.0, 1.0),
-  rotationAngle(0.0),
+  itsRotationAngle(0.0),
   itsImpl(new PositionImpl)
 {
 DOTRACE("Position::Position()");
 
   DebugEvalNL((void *) itsImpl);
 
-  setFieldMap(POS_FIELDS);
+  setFieldMap(Position::classFields());
 }
 
 Position::~Position()
@@ -125,7 +125,7 @@ DOTRACE("Position::readFrom");
       reader->readValue("rotateX", rotationAxis.x());
       reader->readValue("rotateY", rotationAxis.y());
       reader->readValue("rotateZ", rotationAxis.z());
-      rotationAngle.readValueFrom(reader, "rotateAngle");
+      reader->readValue("rotateAngle", itsRotationAngle);
     }
   else
     {
@@ -154,12 +154,12 @@ void Position::draw(Gfx::Canvas& canvas) const
 DOTRACE("Position::draw");
   canvas.translate(translation.vec());
   canvas.scale(scaling.vec());
-  canvas.rotate(rotationAxis.vec(), rotationAngle());
+  canvas.rotate(rotationAxis.vec(), itsRotationAngle);
 
   itsImpl->tr = translation.vec();
   itsImpl->sc = scaling.vec();
   itsImpl->rt = rotationAxis.vec();
-  itsImpl->rt_ang = rotationAngle();
+  itsImpl->rt_ang = itsRotationAngle;
 }
 
 void Position::undraw(Gfx::Canvas& canvas) const

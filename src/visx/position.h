@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Aug 10 10:56:09 2001
+// written: Wed Aug 15 15:17:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,9 +70,11 @@ public:
   /// The axis around which the rotation is performed.
   GbVec3<double> rotationAxis;
 
+protected:
   /// The angle of rotation in degrees.
-  TField<double> rotationAngle;
+  double itsRotationAngle;
 
+public:
   static const FieldMap& classFields();
 
   /////////////
