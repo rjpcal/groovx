@@ -424,12 +424,6 @@ public:
               tp)
   {}
 
-  void insertItem()
-  {
-    if (itsHandle.isValid())
-      RefHelper::insertItem(itsHandle.get());
-  }
-
   explicit SoftRef(T* master, RefType tp = STRONG, RefVis vis = PUBLIC)
     :
     itsHandle(master,tp)
