@@ -36,6 +36,7 @@
 
 #include "util/error.h"
 #include "util/fstring.h"
+#include "util/sharedptr.h"
 
 #include <esd.h>
 
@@ -64,6 +65,52 @@ namespace media
 
 }
 
+namespace
+{
+  struct af_error_info
+  {
+  private:
+    af_error_info(const af_error_info&);
+    af_error_info& operator=(const af_error_info&);
+
+  public:
+    af_error_info() throw() : error(false), code(0) {}
+
+    void set(long v, const char* c) throw()
+    {
+      error = true;
+      code = v;
+      strncpy(&message[0], c, MSG_SIZE - 1);
+      message[MSG_SIZE - 1] = '\0';
+    }
+
+    void reset() throw() { error = false; }
+
+    rutz::fstring what() const
+    {
+      return rutz::fstring("audiofile error: ",
+                           message,
+                           " [error code = ", code, "]");
+    }
+
+    static const int MSG_SIZE = 512;
+
+    bool  error;
+    long  code;
+    char  message[MSG_SIZE];
+  };
+
+  af_error_info last_error;
+
+  void af_error_handler(long v, const char* c) throw()
+  {
+    dbg_eval_nl(3, v);
+    dbg_eval_nl(3, c);
+
+    last_error.set(v, c);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // esd_sound_rep member definitions
@@ -77,6 +124,10 @@ DOTRACE("media::esd_sound_rep::esd_sound_rep");
 
   sound_rep::check_filename(filename);
 
+  afSetErrorHandler(&af_error_handler);
+
+  last_error.reset();
+
   // We just use afOpenFile to ensure that the filename refers to
   // a readable+valid file
   AFfilehandle audiofile = afOpenFile(filename, "r",
@@ -84,16 +135,22 @@ DOTRACE("media::esd_sound_rep::esd_sound_rep");
 
   if (audiofile == 0)
     {
-      throw rutz::error(rutz::fstring("couldn't open sound file '",
-                                      filename, "'"), SRC_POS);
+      if (last_error.error == true)
+        throw rutz::error(last_error.what(), SRC_POS);
+      else
+        throw rutz::error(rutz::fstring("couldn't open sound file '",
+                                        filename, "'"), SRC_POS);
     }
 
   int close_result = afCloseFile(audiofile);
 
   if (close_result == -1)
     {
-      throw rutz::error(rutz::fstring("error closing sound file '",
-                                      filename, "'"), SRC_POS);
+      if (last_error.error == true)
+        throw rutz::error(last_error.what(), SRC_POS);
+      else
+        throw rutz::error(rutz::fstring("error closing sound file '",
+                                        filename, "'"), SRC_POS);
     }
 
   m_filename = filename;
@@ -112,12 +169,19 @@ void media::esd_sound_rep::play()
 
   dbg_eval_nl(3, fname);
 
+  last_error.reset();
+
   // open the audio file
   const AFfilehandle in_file = afOpenFile(fname, "rb", NULL);
 
   if (in_file == 0)
-    throw rutz::error(rutz::fstring("couldn't open sound file '",
-                                    fname, "'"), SRC_POS);
+    {
+      if (last_error.error == true)
+        throw rutz::error(last_error.what(), SRC_POS);
+      else
+        throw rutz::error(rutz::fstring("couldn't open sound file '",
+                                        fname, "'"), SRC_POS);
+    }
 
   // get audio file parameters
   const int frame_count = afGetFrameCount(in_file, AF_DEFAULT_TRACK);
@@ -188,7 +252,9 @@ void media::esd_sound_rep::play()
   char buf[BUF_SIZE];
   const int buf_frames = BUF_SIZE / bytes_per_frame;
 
-  int frames_read;
+  int frames_read = 0;
+
+  int total_frames_read = 0;
 
 #ifdef DEBUG_SAMPLES
   FILE* fout = fopen("samples.txt", "w");
@@ -197,6 +263,9 @@ void media::esd_sound_rep::play()
   while ((frames_read = afReadFrames(in_file, AF_DEFAULT_TRACK,
                                      buf, buf_frames)) != 0)
     {
+      if (last_error.error == true)
+        throw rutz::error(last_error.what(), SRC_POS);
+
 #ifdef DEBUG_SAMPLES
       if (fout != 0)
         for (int i = 0; i < frames_read; ++i)
@@ -210,6 +279,8 @@ void media::esd_sound_rep::play()
           }
 #endif
 
+      total_frames_read += frames_read;
+
       if (write(out_sock, buf, frames_read * bytes_per_frame) <= 0)
         break;
     }
@@ -222,8 +293,18 @@ void media::esd_sound_rep::play()
   // close up and go home
   close(out_sock);
   if (afCloseFile(in_file) != 0)
-    throw rutz::error(rutz::fstring("error closing sound file '",
-                                    fname, "'"), SRC_POS);
+    {
+      if (last_error.error == true)
+        throw rutz::error(last_error.what(), SRC_POS);
+      else
+        throw rutz::error(rutz::fstring("error closing sound file '",
+                                        fname, "'"), SRC_POS);
+    }
+
+  if (total_frames_read < frame_count)
+    {
+      dbg_print_nl(0, "low frame count; sound file is truncated?");
+    }
 }
 
 static const char vcid_esdsound_h[] = "$Header$";
