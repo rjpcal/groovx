@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 30 10:06:57 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -213,14 +213,14 @@ public:
   GrObj(GrObjRenderMode render_mode = GROBJ_GL_COMPILE,
 		  GrObjRenderMode unrender_mode = GROBJ_SWAP_FORE_BACK);
 
-  /// Construct from an istream by using deserialize.
-  GrObj(istream &is, IO::IOFlag flag);
+  /// Construct from an STD_IO::istream by using deserialize.
+  GrObj(STD_IO::istream &is, IO::IOFlag flag);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual unsigned long serialVersionId() const;

@@ -80,10 +80,10 @@ DOTRACE("GrObj::GrObj");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-GrObj::GrObj(istream& is, IO::IOFlag flag) :
+GrObj::GrObj(STD_IO::istream& is, IO::IOFlag flag) :
   itsImpl(new Impl(this))
 {
-DOTRACE("GrObj::GrObj(istream&)");
+DOTRACE("GrObj::GrObj(STD_IO::istream&)");
   deserialize(is, flag);
 
   attach(this);
@@ -100,12 +100,12 @@ DOTRACE("GrObj::~GrObj");
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-void GrObj::serialize(ostream& os, IO::IOFlag flag) const {
+void GrObj::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("GrObj::serialize");
   itsImpl->serialize(os, flag);
 }
 
-void GrObj::deserialize(istream& is, IO::IOFlag flag) {
+void GrObj::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("GrObj::deserialize");
 
   itsImpl->deserialize(is, flag); 

@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Mar 30 09:50:03 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,8 +63,8 @@ public:
   IrixAudioSound(const char* filename);
   virtual ~IrixAudioSound();
 
-  virtual void serialize(ostream& os, IO::IOFlag flag) const;
-  virtual void deserialize(istream& is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
   virtual int charCount() const;
   
   virtual void readFrom(IO::Reader* reader);
@@ -116,7 +116,7 @@ DOTRACE("IrixAudioSound::~IrixAudioSound");
   }
 }
 
-void IrixAudioSound::serialize(ostream& os, IO::IOFlag flag) const {
+void IrixAudioSound::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("IrixAudioSound::serialize");
 
   char sep = ' ';
@@ -129,7 +129,7 @@ DOTRACE("IrixAudioSound::serialize");
   if (flag & IO::BASES) { /* no bases to deal with */ }
 }
 
-void IrixAudioSound::deserialize(istream& is, IO::IOFlag flag) {
+void IrixAudioSound::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("IrixAudioSound::deserialize");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
@@ -189,7 +189,7 @@ DOTRACE("IrixAudioSound::play");
 
 void IrixAudioSound::setFile(const char* filename) {
 DOTRACE("IrixAudioSound::setFile");
-  ifstream ifs(filename);
+  STD_IO::ifstream ifs(filename);
   if (ifs.fail()) {
 	 throw SoundFilenameError(filename);
   }

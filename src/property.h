@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Fri Sep 22 18:43:55 2000
+// written: Sat Sep 23 15:32:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,8 +40,8 @@ public:
   ///
   virtual ~Property();
 
-  virtual void serialize(ostream& os, IO::IOFlag) const = 0;
-  virtual void deserialize(istream& is, IO::IOFlag) = 0;
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag) const = 0;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag) = 0;
   virtual int charCount() const = 0;
 
   virtual void readFrom(IO::Reader* reader) = 0;
@@ -84,8 +84,8 @@ public:
   ///
   template <class C> friend class PropFriend;
 
-  virtual void serialize(ostream& os, IO::IOFlag) const;
-  virtual void deserialize(istream& is, IO::IOFlag);
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag) const;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);
@@ -230,8 +230,8 @@ public:
   ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
-  virtual void serialize(ostream& os, IO::IOFlag) const ;
-  virtual void deserialize(istream& is, IO::IOFlag);
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag) const ;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,14 +37,14 @@ public:
   /// Default constructor.
   MorphyFace();
 
-  /// Construct from an \c istream using \c deserialize().
-  MorphyFace(istream &is, IO::IOFlag flag);
+  /// Construct from an \c STD_IO::istream using \c deserialize().
+  MorphyFace(STD_IO::istream &is, IO::IOFlag flag);
 
   /// Virtual destructor.
   virtual ~MorphyFace ();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual unsigned long serialVersionId() const;

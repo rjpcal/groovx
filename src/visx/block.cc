@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Sep 22 18:30:59 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ DOTRACE("Block::removeAllTrials");
   itsImpl->itsCurrentTrialId = -1;
 }
 
-void Block::serialize(ostream &os, IO::IOFlag flag) const {
+void Block::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Block::serialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
@@ -206,7 +206,7 @@ DOTRACE("Block::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Block::deserialize(istream &is, IO::IOFlag flag) {
+void Block::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Block::deserialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }

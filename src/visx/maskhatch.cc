@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Mar 30 09:50:03 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,14 +53,14 @@ DOTRACE("MaskHatch::~MaskHatch ");
   
 }
 
-void MaskHatch::serialize(ostream &os, IO::IOFlag flag) const {
+void MaskHatch::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("MaskHatch::serialize");
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
   if (os.fail()) throw IO::OutputError(ioTag);
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void MaskHatch::deserialize(istream &is, IO::IOFlag flag) {
+void MaskHatch::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("MaskHatch::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   if (is.fail()) throw IO::InputError(ioTag);

@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Aug 30 15:59:00 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,8 +69,8 @@ public:
   /// Virtual destructor.
   virtual ~ExptDriver();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual unsigned long serialVersionId() const;

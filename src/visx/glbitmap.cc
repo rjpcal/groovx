@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Thu Mar 30 09:50:04 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ DOTRACE("GLBitmap::GLBitmap");
   init(); 
 }
 
-GLBitmap::GLBitmap(istream& is, IO::IOFlag flag) :
+GLBitmap::GLBitmap(STD_IO::istream& is, IO::IOFlag flag) :
   Bitmap(tempRenderer = new GLBmapRenderer()),
   itsRenderer(tempRenderer)
 {
@@ -69,7 +69,7 @@ DOTRACE("GLBitmap::~GLBitmap");
   delete itsRenderer; 
 }
 
-void GLBitmap::serialize(ostream& os, IO::IOFlag flag) const {
+void GLBitmap::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("GLBitmap::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -81,7 +81,7 @@ DOTRACE("GLBitmap::serialize");
   if (flag & IO::BASES) { Bitmap::serialize(os, flag | IO::TYPENAME); }
 }
 
-void GLBitmap::deserialize(istream& is, IO::IOFlag flag) {
+void GLBitmap::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("GLBitmap::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 

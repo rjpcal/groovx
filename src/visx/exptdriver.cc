@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Aug 30 15:59:11 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,8 +137,8 @@ private:
   //////////////////////////
 
 public:
-  void serialize(ostream& os, IO::IOFlag flag) const;
-  void deserialize(istream& is, IO::IOFlag flag);
+  void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
+  void deserialize(STD_IO::istream& is, IO::IOFlag flag);
 
   int charCount() const;
 
@@ -530,7 +530,7 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::serialize(ostream& os, IO::IOFlag flag) const {
+void ExptDriver::Impl::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("ExptDriver::Impl::serialize");
 
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
@@ -560,7 +560,7 @@ DOTRACE("ExptDriver::Impl::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void ExptDriver::Impl::deserialize(istream& is, IO::IOFlag flag) {
+void ExptDriver::Impl::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("ExptDriver::Impl::deserialize");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
@@ -854,7 +854,7 @@ DOTRACE("ExptDriver::Impl::edRaiseBackgroundError");
 
 void ExptDriver::Impl::read(const char* filename) {
 DOTRACE("ExptDriver::Impl::read");
-  ifstream ifs(filename);
+  STD_IO::ifstream ifs(filename);
   if (ifs.fail()) throw IO::FilenameError(filename);
   deserialize(ifs, IO::BASES|IO::TYPENAME);
 }
@@ -870,7 +870,7 @@ DOTRACE("ExptDriver::Impl::write");
   cerr << "warning: this file format is deprecated, "
 		 << "and may not properly store all attributes\n";
 
-  ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename);
   if (ofs.fail()) throw IO::FilenameError(filename);
   serialize(ofs, IO::BASES|IO::TYPENAME);
 }
@@ -883,7 +883,7 @@ DOTRACE("ExptDriver::Impl::write");
 
 void ExptDriver::Impl::writeASW(const char* filename) const {
 DOTRACE("ExptDriver::Impl::write");
-  ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename);
   if (ofs.fail()) throw IO::FilenameError(filename);
   AsciiStreamWriter writer(ofs);
   writer.writeRoot(itsOwner);
@@ -964,10 +964,10 @@ DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl;
 }
 
-void ExptDriver::serialize(ostream &os, IO::IOFlag flag) const
+void ExptDriver::serialize(STD_IO::ostream &os, IO::IOFlag flag) const
   { itsImpl->serialize(os, flag); }
 
-void ExptDriver::deserialize(istream &is, IO::IOFlag flag)
+void ExptDriver::deserialize(STD_IO::istream &is, IO::IOFlag flag)
   { itsImpl->deserialize(is, flag); }
 
 int ExptDriver::charCount() const

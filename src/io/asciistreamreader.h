@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Sat Sep 23 15:12:33 2000
+// written: Sat Sep 23 15:37:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,14 @@
 #include "io/reader.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 // This is a hack to help shorten up names for assemblers on systems
@@ -43,8 +48,8 @@
 
 class AsciiStreamReader : public IO::Reader {
 public:
-  /// Construct with a connection to an open \c istream.
-  AsciiStreamReader(istream& is);
+  /// Construct with a connection to an open \c STD_IO::istream.
+  AsciiStreamReader(STD_IO::istream& is);
 
   /// Virtual destructor.
   virtual ~AsciiStreamReader();

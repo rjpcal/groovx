@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Sat Sep 23 15:12:09 2000
+// written: Sat Sep 23 15:37:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -217,23 +217,28 @@ inline bool operator==(const dynamic_string& lhs, const dynamic_string& rhs)
 //
 ///////////////////////////////////////////////////////////////////////
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
-istream& operator>>(istream& is, fixed_string& str);
-istream& operator>>(istream& is, dynamic_string& str);
+STD_IO::istream& operator>>(STD_IO::istream& is, fixed_string& str);
+STD_IO::istream& operator>>(STD_IO::istream& is, dynamic_string& str);
 
-ostream& operator<<(ostream& os, const string_literal& str);
-ostream& operator<<(ostream& os, const fixed_string& str);
-ostream& operator<<(ostream& os, const dynamic_string& str);
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const string_literal& str);
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const fixed_string& str);
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const dynamic_string& str);
 
-istream& getline(istream& is, fixed_string& str);
-istream& getline(istream& is, dynamic_string& str);
+STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str);
+STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str);
 
-istream& getline(istream& is, fixed_string& str, char eol);
-istream& getline(istream& is, dynamic_string& str, char eol);
+STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str, char eol);
+STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str, char eol);
 
 static const char vcid_strings_h[] = "$Header$";
 #endif // !STRINGS_H_DEFINED

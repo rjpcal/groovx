@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Wed May 31 18:27:34 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,15 +30,15 @@ template <class T>
 TProperty<T>::~TProperty() {}
 
 template <class T>
-void TProperty<T>::serialize(ostream& os, IO::IOFlag) const 
+void TProperty<T>::serialize(STD_IO::ostream& os, IO::IOFlag) const 
   { os << itsVal.itsVal << ' '; }
 
 template <class T>
-void TProperty<T>::deserialize(istream& is, IO::IOFlag)
+void TProperty<T>::deserialize(STD_IO::istream& is, IO::IOFlag)
   { is >> itsVal.itsVal; }
 
 template <>
-void TProperty<bool>::deserialize(istream& is, IO::IOFlag) {
+void TProperty<bool>::deserialize(STD_IO::istream& is, IO::IOFlag) {
   int temp; is >> temp; itsVal.itsVal = bool(temp);
 }
 
@@ -66,15 +66,15 @@ template <class T>
 TPtrProperty<T>::~TPtrProperty() {}
 
 template <class T>
-void TPtrProperty<T>::serialize(ostream& os, IO::IOFlag) const 
+void TPtrProperty<T>::serialize(STD_IO::ostream& os, IO::IOFlag) const 
 	 { os << itsVal() << ' '; }
 
 template <class T>
-void TPtrProperty<T>::deserialize(istream& is, IO::IOFlag)
+void TPtrProperty<T>::deserialize(STD_IO::istream& is, IO::IOFlag)
 	 { is >> itsVal(); }
 
 template <>
-void TPtrProperty<bool>::deserialize(istream& is, IO::IOFlag)
+void TPtrProperty<bool>::deserialize(STD_IO::istream& is, IO::IOFlag)
     { int temp; is >> temp; itsVal() = bool(temp); }
 
 template <class T>

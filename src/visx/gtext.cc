@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Jun  1 13:52:09 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -670,13 +670,13 @@ DOTRACE("Gtext::Gtext(const char*)");
   GrObj::setHeight(1.0);
 }
 
-Gtext::Gtext(istream& is, IO::IOFlag flag) :
+Gtext::Gtext(STD_IO::istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
   itsText(""),
   itsStrokeWidth(2),
   itsListBase(0)
 {
-DOTRACE("Gtext::Gtext(istream&, IO::IOFlag)");
+DOTRACE("Gtext::Gtext(STD_IO::istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
  
@@ -684,7 +684,7 @@ Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::serialize(ostream &os, IO::IOFlag flag) const {
+void Gtext::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Gtext::serialize");
 
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
@@ -694,7 +694,7 @@ DOTRACE("Gtext::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Gtext::deserialize(istream &is, IO::IOFlag flag) {
+void Gtext::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Gtext::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); } 
 

@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Sat Sep 23 15:06:56 2000
+// written: Sat Sep 23 15:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,14 @@
 #ifndef BITMAPREP_H_DEFINED
 #define BITMAPREP_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 class BmapRenderer;
@@ -55,9 +60,9 @@ private:
 public:
 
   /// Conforms to the \c IO interface.
-  void serialize(std::ostream& os, int flag) const;
+  void serialize(STD_IO::ostream& os, int flag) const;
   /// Conforms to the \c IO interface.
-  void deserialize(std::istream& is, int flag);
+  void deserialize(STD_IO::istream& is, int flag);
   /// Conforms to the \c IO interface.
   int charCount() const;
 
@@ -79,8 +84,8 @@ public:
       needed. */
   void queuePbmFile(const char* filename);
 
-  /// Loads PBM bitmap data from an istream.
-  void loadPbmFile(std::istream& is);
+  /// Loads PBM bitmap data from an STD_IO::istream.
+  void loadPbmFile(STD_IO::istream& is);
 
   /// Writes PBM bitmap data to the file \a filename.
   void writePbmFile(const char* filename) const;

@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Thu May 11 20:00:31 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,13 +31,13 @@ NullResponseHdlr::~NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::serialize(ostream &os, IO::IOFlag flag) const {
+void NullResponseHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("NullResponseHdlr::serialize");
 
   if (flag & IO::TYPENAME) { os << ioTag << ' '; }
 }
 
-void NullResponseHdlr::deserialize(istream &is, IO::IOFlag flag) {
+void NullResponseHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("NullResponseHdlr::deserialize");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }

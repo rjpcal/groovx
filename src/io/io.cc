@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Mon Jul 10 14:53:07 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,8 @@ IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
 }
 
-void IO::IoObject::serialize(ostream&, IO::IOFlag) const {}
-void IO::IoObject::deserialize(istream&, IO::IOFlag) {}
+void IO::IoObject::serialize(STD_IO::ostream&, IO::IOFlag) const {}
+void IO::IoObject::deserialize(STD_IO::istream&, IO::IOFlag) {}
 int IO::IoObject::charCount() const { return 0; }
 
 unsigned int IO::IoObject::ioAttribCount() const {
@@ -104,7 +104,7 @@ DOTRACE("IO::IoObject::ioTypename");
   return demangle_cstr(typeid(*this).name());
 }
 
-int IO::IoObject::eatWhitespace(istream& is) {
+int IO::IoObject::eatWhitespace(STD_IO::istream& is) {
 DOTRACE("IO::IoObject::eatWhitespace");
   int c=0;
   while ( isspace(is.peek()) )
@@ -112,7 +112,7 @@ DOTRACE("IO::IoObject::eatWhitespace");
   return c;
 }
 
-void IO::IoObject::readTypename(istream& is, const char* correctNames_cstr,
+void IO::IoObject::readTypename(STD_IO::istream& is, const char* correctNames_cstr,
 							 bool doCheck) {
 DOTRACE("IO::IoObject::readTypename");
   string correctNames = correctNames_cstr;

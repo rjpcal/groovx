@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Mar 30 09:50:04 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::serialize(ostream& os, IO::IOFlag flag) const {
+void House::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("House::serialize");
 
   char sep = ' ';
@@ -237,7 +237,7 @@ DOTRACE("House::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void House::deserialize(istream& is, IO::IOFlag flag) {
+void House::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("House::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 

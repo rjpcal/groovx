@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue May 30 16:17:54 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,8 @@ public:
   /// Virtual destructor.
   virtual ~Gabor();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Jun 26 12:15:27 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ DOTRACE("IoPtrList::IoPtrList");
 
 IoPtrList::~IoPtrList() {}
 
-void IoPtrList::serialize(ostream &os, IO::IOFlag flag) const {
+void IoPtrList::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("IoPtrList::serialize");
   fixed_string ioTag = IO::IoObject::ioTypename();
 
@@ -79,7 +79,7 @@ DOTRACE("IoPtrList::serialize");
 }
 
 
-void IoPtrList::deserialize(istream &is, IO::IOFlag flag) {
+void IoPtrList::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("IoPtrList::deserialize");
   fixed_string ioTag = IO::IoObject::ioTypename();
 
@@ -95,7 +95,7 @@ DOTRACE("IoPtrList::deserialize");
   clear();
   int size, num_non_null;
   is >> size >> num_non_null;
-  // We must check if the istream has failed in order to avoid
+  // We must check if the STD_IO::istream has failed in order to avoid
   // attempting to resize the voidVec to some crazy size.
   if (is.fail()) throw IO::InputError(ioTag.c_str());
   if ( size < 0 || num_non_null < 0 || num_non_null > size ) {

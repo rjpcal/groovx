@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Thu Jun  1 13:53:46 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@ public:
   KbdResponseHdlr(const char* key_resp_pairs);
   virtual ~KbdResponseHdlr();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   const fixed_string& getKeyRespPairs() const

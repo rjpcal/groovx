@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Jun  1 13:52:38 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,14 +52,14 @@ public:
   /// Construct with an initial text string \a text.
   Gtext(const char* text=0);
 
-  /// Construct from an \c istream using \c deserialize().
-  Gtext(istream& is, IO::IOFlag flag);
+  /// Construct from an \c STD_IO::istream using \c deserialize().
+  Gtext(STD_IO::istream& is, IO::IOFlag flag);
 
   /// Virtual destructor.
   virtual ~Gtext();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);

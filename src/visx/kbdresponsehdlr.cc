@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Thu Jun  1 13:54:01 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
 
 KbdResponseHdlr::~KbdResponseHdlr() {}
 
-void KbdResponseHdlr::serialize(ostream &os, IO::IOFlag flag) const {
+void KbdResponseHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("KbdResponseHdlr::serialize");
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
@@ -59,7 +59,7 @@ DOTRACE("KbdResponseHdlr::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 }
 
-void KbdResponseHdlr::deserialize(istream &is, IO::IOFlag flag) {
+void KbdResponseHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("KbdResponseHdlr::deserialize");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }

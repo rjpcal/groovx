@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Sep 23 14:27:44 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,14 +108,14 @@ DOTRACE("Face::Face");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-Face::Face(istream& is, IO::IOFlag flag) :
+Face::Face(STD_IO::istream& is, IO::IOFlag flag) :
   category(0),
   eyeHeight(0.6),
   eyeDistance(0.4),
   noseLength(0.4),
   mouthHeight(-0.8)
 {
-DOTRACE("Face::Face(istream&, IO::IOFlag)");
+DOTRACE("Face::Face(STD_IO::istream&, IO::IOFlag)");
   deserialize(is, flag);
   Invariant(check());
 }
@@ -127,7 +127,7 @@ DOTRACE("Face::~Face");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void Face::serialize(ostream &os, IO::IOFlag flag) const {
+void Face::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Face::serialize");
   Invariant(check());
 
@@ -149,7 +149,7 @@ DOTRACE("Face::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Face::deserialize(istream &is, IO::IOFlag flag) {
+void Face::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Face::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 

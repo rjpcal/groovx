@@ -3,7 +3,7 @@
 // response.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:30:04 2000
-// written: Fri Jul  7 15:44:42 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@ public:
   virtual Type getNativeType() const;
   virtual const char* getNativeTypeName() const;
 
-  virtual void printTo(ostream& os) const;
-  virtual void scanFrom(istream& is);
+  virtual void printTo(STD_IO::ostream& os) const;
+  virtual void scanFrom(STD_IO::istream& is);
 
   bool isValid() const { return (itsVal >= 0); }
 

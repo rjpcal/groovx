@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Jul 19 19:40:36 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,10 +60,10 @@ namespace {
 }
 
 namespace Escape {
-  void readAndUnEscape(istream& is, string& text_out);
+  void readAndUnEscape(STD_IO::istream& is, string& text_out);
 }
 
-void Escape::readAndUnEscape(istream& is, string& text_out) {
+void Escape::readAndUnEscape(STD_IO::istream& is, string& text_out) {
 DOTRACE("Escape::readAndUnEscape");
 
   int brace_level = 0;
@@ -120,7 +120,7 @@ private:
 
   // Creators
 public:
-  Impl(AsciiStreamReader* /*owner*/, istream& is) :
+  Impl(AsciiStreamReader* /*owner*/, STD_IO::istream& is) :
 	 itsBuf(is), itsObjects(), itsAttribs()
 #ifndef NO_IOS_EXCEPTIONS
 	 , itsOriginalExceptionState(itsBuf.exceptions())
@@ -208,7 +208,7 @@ public:
   public:
 	 AttribMap() : itsMap(), itsSerialVersionId(0) {}
 
-	 void readAttributes(istream& buf);
+	 void readAttributes(STD_IO::istream& buf);
 
 	 unsigned long getSerialVersionId() const { return itsSerialVersionId; }
 
@@ -244,7 +244,7 @@ public:
 
   // Data members
 private:
-  istream& itsBuf;
+  STD_IO::istream& itsBuf;
   ObjectMap itsObjects;
   slink_list<AttribMap> itsAttribs;
 
@@ -261,7 +261,7 @@ private:
 		return itsAttribs.front();
 	 }
 
-  void inflateObject(IO::Reader* reader, istream& buf, IO::IoObject* obj);
+  void inflateObject(IO::Reader* reader, STD_IO::istream& buf, IO::IoObject* obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
@@ -303,7 +303,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamReader::Impl::AttribMap::readAttributes(istream& buf) {
+void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf) {
 DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   itsMap.clear();
@@ -359,7 +359,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 ///////////////////////////////////////////////////////////////////////
 
 void AsciiStreamReader::Impl::inflateObject(IO::Reader* reader,
-														  istream& buf, IO::IoObject* obj) {
+														  STD_IO::istream& buf, IO::IoObject* obj) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
   itsAttribs.push_front(AttribMap()); 
@@ -512,7 +512,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 //
 ///////////////////////////////////////////////////////////////////////
 
-AsciiStreamReader::AsciiStreamReader (istream& is) :
+AsciiStreamReader::AsciiStreamReader (STD_IO::istream& is) :
   itsImpl( *(new Impl(this, is)) )
 {
 DOTRACE("AsciiStreamReader::AsciiStreamReader");

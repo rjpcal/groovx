@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu Mar 30 09:50:02 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,10 +75,10 @@ DOTRACE("Position::Position()");
   Invariant(check());
 }
 
-Position::Position (istream& is, IO::IOFlag flag) : 
+Position::Position (STD_IO::istream& is, IO::IOFlag flag) : 
   itsImpl(new PositionImpl)
 {
-DOTRACE("Position::Position(istream&, IO::IOFlag)");
+DOTRACE("Position::Position(STD_IO::istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
 
@@ -87,7 +87,7 @@ DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-void Position::serialize(ostream &os, IO::IOFlag flag) const {
+void Position::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Position::serialize");
   Invariant(check());
   if (flag & IO::BASES) { /* there are no bases to serialize */ }
@@ -108,7 +108,7 @@ DOTRACE("Position::serialize");
   if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void Position::deserialize(istream &is, IO::IOFlag flag) {
+void Position::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Position::deserialize");
   Invariant(check());
 

@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Sep 23 14:29:15 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
   const char* given_type  =      (objc() < 4) ?  ""   : getCstringFromArg(3);
   bool        use_bases   = bool((objc() < 5) ? false : getBoolFromArg(4));
 
-  ifstream ifs(file);
+  STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
 
   
@@ -128,7 +128,7 @@ protected:
 	 bool use_typename = objc() < 4 ? true : arg(3).getBool();
 	 bool use_bases    = objc() < 5 ? true : arg(4).getBool();
 
-	 ofstream ofs(filename);
+	 STD_IO::ofstream ofs(filename);
 	 if (ofs.fail()) {
 		Tcl::TclError err("error opening file: ");
 		err.appendMsg(filename);

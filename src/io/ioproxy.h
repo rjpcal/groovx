@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Wed May 17 13:47:00 2000
+// written: Sat Sep 23 15:32:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,10 +26,10 @@ class IoProxy : public IO::IoObject {
 public:
   IoProxy(C* ref) : itsReferand(ref) {}
 
-  virtual void serialize(ostream& os, IO::IOFlag flag) const
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const
 	 { itsReferand->C::serialize(os, flag); }
 
-  virtual void deserialize(istream& is, IO::IOFlag flag)
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag)
 	 { itsReferand->C::deserialize(is, flag); }
 
   virtual int charCount() const

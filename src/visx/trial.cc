@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Jul  7 15:54:04 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,12 +134,12 @@ private:
 public:
 
   // Delegand functions for Trial
-  void serialize(ostream &os, IO::IOFlag flag) const;
-  void deserialize(istream &is, IO::IOFlag flag);
+  void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   int charCount() const;
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
-  int readFromObjidsOnly(istream &is, int offset);
+  int readFromObjidsOnly(STD_IO::istream &is, int offset);
 
   int getCorrectResponse() const { return itsCorrectResponse; }
   int getResponseHandler() const;
@@ -200,12 +200,12 @@ DOTRACE("Trial::IdPair::getNativeTypeName");
   return "Trial::IdPair";
 }
 
-void Trial::IdPair::printTo(ostream& os) const {
+void Trial::IdPair::printTo(STD_IO::ostream& os) const {
 DOTRACE("Trial::IdPair::printTo");
   os << objid << " " << posid;
 }
 
-void Trial::IdPair::scanFrom(istream& is) {
+void Trial::IdPair::scanFrom(STD_IO::istream& is) {
 DOTRACE("Trial::IdPair::scanFrom");
   is >> objid >> posid;
 }
@@ -216,7 +216,7 @@ DOTRACE("Trial::IdPair::scanFrom");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::serialize(ostream &os, IO::IOFlag flag) const {
+void Trial::Impl::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Trial::Impl::serialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
@@ -246,7 +246,7 @@ DOTRACE("Trial::Impl::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Trial::Impl::deserialize(istream &is, IO::IOFlag flag) {
+void Trial::Impl::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Trial::Impl::deserialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
@@ -346,7 +346,7 @@ DOTRACE("Trial::Impl::writeTo");
 										 itsIdPairs.begin(), itsIdPairs.end());
 }
 
-int Trial::Impl::readFromObjidsOnly(istream &is, int offset) {
+int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {
 DOTRACE("Trial::Impl::readFromObjidsOnly");
   int posid = 0;
   int objid;
@@ -685,10 +685,10 @@ Trial::Trial() :
 DOTRACE("Trial::Trial()");
 }
 
-Trial::Trial(istream &is, IO::IOFlag flag) :
+Trial::Trial(STD_IO::istream &is, IO::IOFlag flag) :
   itsImpl( new Impl(this) )
 {
-DOTRACE("Trial::Trial(istream&, IO::IOFlag)");
+DOTRACE("Trial::Trial(STD_IO::istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
 
@@ -701,10 +701,10 @@ DOTRACE("Trial::~Trial");
 // delegations to Trial::Impl //
 ////////////////////////////////
 
-void Trial::serialize(ostream &os, IO::IOFlag flag) const
+void Trial::serialize(STD_IO::ostream &os, IO::IOFlag flag) const
   { itsImpl->serialize(os, flag); }
 
-void Trial::deserialize(istream &is, IO::IOFlag flag)
+void Trial::deserialize(STD_IO::istream &is, IO::IOFlag flag)
   { itsImpl->deserialize(is, flag); }
 
 int Trial::charCount() const
@@ -719,7 +719,7 @@ void Trial::readFrom(IO::Reader* reader)
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-int Trial::readFromObjidsOnly(istream &is, int offset)
+int Trial::readFromObjidsOnly(STD_IO::istream &is, int offset)
   { return itsImpl->readFromObjidsOnly(is, offset); }
 
 int Trial::getCorrectResponse() const

@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Thu Mar 30 09:50:04 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace {
 FixPt::FixPt(double len, int wid) : 
   length(len), width(wid) {}
 
-FixPt::FixPt(istream &is, IO::IOFlag flag) :
+FixPt::FixPt(STD_IO::istream &is, IO::IOFlag flag) :
   length(0.1), width(1)
 {
   deserialize(is, flag);
@@ -59,7 +59,7 @@ FixPt::FixPt(istream &is, IO::IOFlag flag) :
 
 FixPt::~FixPt() {}
 
-void FixPt::serialize(ostream &os, IO::IOFlag flag) const {
+void FixPt::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
@@ -70,7 +70,7 @@ void FixPt::serialize(ostream &os, IO::IOFlag flag) const {
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void FixPt::deserialize(istream &is, IO::IOFlag flag) {
+void FixPt::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> length();

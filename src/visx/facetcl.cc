@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Thu Mar 30 12:09:09 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ void FaceTcl::LoadFacesCmd::invoke() {
   bool use_virtual_ctor = false;
   if (objc() >= 4) { use_virtual_ctor = getBoolFromArg(3); }
 
-  ifstream ifs(file);
+  STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
   
   ObjList& olist = ObjList::theObjList();

@@ -3,7 +3,7 @@
 // tlistutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 02:58:20 1999
-// written: Sat Sep 23 15:12:29 2000
+// written: Sat Sep 23 15:37:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,14 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 class Tlist;
@@ -81,10 +86,10 @@ public:
   /** Reads a list of 'simple' trial descriptions which contain
 		objid's only; posid's are inferred from position int the
 		list. If num_trials is passed as < 0, the function will read to
-		the end of the istream. If offset is non-zero, it will be added
+		the end of the STD_IO::istream. If offset is non-zero, it will be added
 		to each incoming objid before it is inserted into the
 		Trial. Returns the number of trials that were loaded. */
-  static int readFromObjidsOnly(Tlist& tlist, istream& is,
+  static int readFromObjidsOnly(Tlist& tlist, STD_IO::istream& is,
 										  int num_lines, int offset = 0);
 
   /** This function adds an object/position pair (specified by their

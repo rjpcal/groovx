@@ -2,7 +2,7 @@
 // iomgr.h
 // Rob Peters
 // created: Fri Apr 23 01:12:37 1999
-// written: Sat Sep 23 15:06:04 2000
+// written: Sat Sep 23 15:37:51 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -13,16 +13,21 @@
 #include "io/io.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 namespace IO {
   namespace IoMgr {
 	 IO::IoObject* newIO(const char* type);
-	 IO::IoObject* newIO(std::istream &is, IO::IOFlag flag);
-	 IO::IoObject* newIO(const char* type, std::istream &is, IO::IOFlag flag);
+	 IO::IoObject* newIO(STD_IO::istream &is, IO::IOFlag flag);
+	 IO::IoObject* newIO(const char* type, STD_IO::istream &is, IO::IOFlag flag);
   }
 }
 

@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Thu Sep 21 20:04:42 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ Util::Trace::Mode TRACE_MODE = Util::Trace::RUN;
 namespace {
   const char* PDATA_FILE = "prof.out";
 
-  ofstream* PDATA_STREAM = new ofstream(PDATA_FILE);
+  STD_IO::ofstream* PDATA_STREAM = new STD_IO::ofstream(PDATA_FILE);
 
   void waitOnStep() {
 	 static char dummyBuffer[256];

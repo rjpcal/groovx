@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Sep 22 18:32:15 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,12 +68,12 @@ public:
   ~Impl();
 
   // Delegand functions
-  void serialize(ostream &os, IO::IOFlag flag) const;
-  void deserialize(istream &is, IO::IOFlag flag);
+  void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   int charCount() const;
 
-  void oldSerialize(ostream &os, IO::IOFlag flag) const;
-  void oldDeserialize(istream &is, IO::IOFlag flag);
+  void oldSerialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  void oldDeserialize(STD_IO::istream &is, IO::IOFlag flag);
   int oldCharCount() const;
 
   void readFrom(IO::Reader* reader);
@@ -438,7 +438,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   }
 }
 
-void EventResponseHdlr::Impl::serialize(ostream &os, IO::IOFlag flag) const {
+void EventResponseHdlr::Impl::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("EventResponseHdlr::Impl::serialize");
 
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
@@ -453,7 +453,7 @@ DOTRACE("EventResponseHdlr::Impl::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 }
 
-void EventResponseHdlr::Impl::deserialize(istream &is, IO::IOFlag flag) {
+void EventResponseHdlr::Impl::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("EventResponseHdlr::Impl::deserialize");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
@@ -476,14 +476,14 @@ DOTRACE("EventResponseHdlr::Impl::charCount");
 			+ itsBindingSubstitution.length() + 1);
 }
 
-void EventResponseHdlr::Impl::oldSerialize(ostream &os, IO::IOFlag) const {
+void EventResponseHdlr::Impl::oldSerialize(STD_IO::ostream &os, IO::IOFlag) const {
 DOTRACE("EventResponseHdlr::Impl::oldSerialize");
   os << itsInputResponseMap << endl;
   os << itsFeedbackMap << endl;
   os << itsUseFeedback << endl;
 }
 
-void EventResponseHdlr::Impl::oldDeserialize(istream &is, IO::IOFlag) {
+void EventResponseHdlr::Impl::oldDeserialize(STD_IO::istream &is, IO::IOFlag) {
 DOTRACE("EventResponseHdlr::Impl::oldDeserialize");
   // XXX This is some sort of strange platform dependency..if the next
   // character in the stream is a space (the separator following the
@@ -869,10 +869,10 @@ EventResponseHdlr::EventResponseHdlr(const char* input_response_map) :
 EventResponseHdlr::~EventResponseHdlr()
   { delete itsImpl; }
 
-void EventResponseHdlr::serialize(ostream &os, IO::IOFlag flag) const
+void EventResponseHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const
   { itsImpl->serialize(os, flag); }
 
-void EventResponseHdlr::deserialize(istream &is, IO::IOFlag flag)
+void EventResponseHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag)
   { itsImpl->deserialize(is, flag); }
 
 int EventResponseHdlr::charCount() const
@@ -947,10 +947,10 @@ void EventResponseHdlr::rhEndTrial() const
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
 
-void EventResponseHdlr::oldSerialize(ostream &os, IO::IOFlag flag) const
+void EventResponseHdlr::oldSerialize(STD_IO::ostream &os, IO::IOFlag flag) const
   { itsImpl->oldSerialize(os, flag); }
 
-void EventResponseHdlr::oldDeserialize(istream &is, IO::IOFlag flag)
+void EventResponseHdlr::oldDeserialize(STD_IO::istream &is, IO::IOFlag flag)
   { itsImpl->oldDeserialize(is, flag); }
 
 int EventResponseHdlr::oldCharCount() const

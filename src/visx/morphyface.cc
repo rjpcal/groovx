@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Jun 27 18:07:14 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -289,7 +289,7 @@ DOTRACE("MorphyFace::MorphyFace");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-MorphyFace::MorphyFace(istream& is, IO::IOFlag flag) :
+MorphyFace::MorphyFace(STD_IO::istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
 
   category(0),
@@ -329,7 +329,7 @@ MorphyFace::MorphyFace(istream& is, IO::IOFlag flag) :
   mouthWidth(2.5),
   mouthCurvature(0.6)
 {
-DOTRACE("MorphyFace::MorphyFace(istream&, IO::IOFlag)");
+DOTRACE("MorphyFace::MorphyFace(STD_IO::istream&, IO::IOFlag)");
   deserialize(is, flag);
   Invariant(check());
 }
@@ -341,7 +341,7 @@ DOTRACE("MorphyFace::~MorphyFace");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void MorphyFace::serialize(ostream &os, IO::IOFlag flag) const {
+void MorphyFace::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("MorphyFace::serialize");
   Invariant(check());
 
@@ -363,7 +363,7 @@ DOTRACE("MorphyFace::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void MorphyFace::deserialize(istream &is, IO::IOFlag flag) {
+void MorphyFace::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("MorphyFace::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 

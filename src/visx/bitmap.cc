@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Mar 30 09:50:05 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ Bitmap::Bitmap(BmapRenderer* renderer, const char* filename) :
 DOTRACE("Bitmap::Bitmap");
 }
 
-Bitmap::Bitmap(BmapRenderer* renderer, istream& is, IO::IOFlag flag) :
+Bitmap::Bitmap(BmapRenderer* renderer, STD_IO::istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer))
 {
@@ -54,7 +54,7 @@ DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-void Bitmap::serialize(ostream& os, IO::IOFlag flag) const {
+void Bitmap::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("Bitmap::serialize");
 
   itsImpl->serialize(os, flag);
@@ -62,7 +62,7 @@ DOTRACE("Bitmap::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Bitmap::deserialize(istream& is, IO::IOFlag flag) {
+void Bitmap::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("Bitmap::deserialize");
 
   itsImpl->deserialize(is, flag);
@@ -97,7 +97,7 @@ DOTRACE("Bitmap::loadPbmFile");
   sendStateChangeMsg();
 }
 
-void Bitmap::loadPbmFile(istream& is) {
+void Bitmap::loadPbmFile(STD_IO::istream& is) {
 DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(is);
   sendStateChangeMsg(); 

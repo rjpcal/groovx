@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Sep 23 15:08:40 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(averageError);
 }
 
-void TrialEvent::serialize(ostream& os, IO::IOFlag flag) const {
+void TrialEvent::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("TrialEvent::serialize");
 
   if (flag&IO::TYPENAME)
@@ -93,7 +93,7 @@ DOTRACE("TrialEvent::serialize");
   if (os.fail()) throw IO::InputError(typeid(*this));
 }
 
-void TrialEvent::deserialize(istream& is, IO::IOFlag flag) {
+void TrialEvent::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("TrialEvent::deserialize");
 
   cancel(); // cancel since the event is changing state

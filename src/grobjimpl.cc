@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Mon May 22 12:58:17 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -391,7 +391,7 @@ GrObj::Impl::~Impl() {
 DOTRACE("GrObj::Impl::~Impl");
 }
 
-void GrObj::Impl::serialize(ostream &os, IO::IOFlag flag) const {
+void GrObj::Impl::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("GrObj::Impl::serialize");
 
   DebugEvalNL(flag & IO::TYPENAME); 
@@ -418,7 +418,7 @@ DOTRACE("GrObj::Impl::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 }
 
-void GrObj::Impl::deserialize(istream &is, IO::IOFlag flag) {
+void GrObj::Impl::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("GrObj::Impl::deserialize");
 
   DebugEvalNL(flag & IO::TYPENAME); 

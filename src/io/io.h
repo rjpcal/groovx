@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sat Sep 23 15:12:02 2000
+// written: Sat Sep 23 15:37:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,14 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 class type_info;
@@ -84,12 +89,12 @@ public:
   /** The old-style function to send an object to a stream. Each
       subclass must implement its own formatting. \c writeTo() should
       be favored over \c serialize(). */
-  virtual void serialize(ostream& os, IO::IOFlag flag) const;
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
 
   /** The old-style function to read an object from a stream. Each
       subclass must implement its own formatting. \c readFrom() should
       be favored over \c deserialize(). */
-  virtual void deserialize(istream& is, IO::IOFlag flag);
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
 
   /** The old-style function to return an upper limit on the number of
       characters that will be sent to a stream by \c serialize(). Each
@@ -144,7 +149,7 @@ public:
 		theStream, until the first non-whitespace character is seen. It
 		returns the number of whitespace characters that were removed
 		from \a theStream. */
-  static int eatWhitespace(istream& theStream);
+  static int eatWhitespace(STD_IO::istream& theStream);
 
   /** This function reads the next word from \a theStream, and
       compares it to the correct names in \a correctNames. \a
@@ -154,7 +159,7 @@ public:
       with the last word in correctNames as its info. If \a doCheck is
       false, the function does nothing except read a word from \a
       theStream. */
-  static void readTypename(istream& theStream,
+  static void readTypename(STD_IO::istream& theStream,
 									const char* correctNames,
 									bool doCheck = true);
 

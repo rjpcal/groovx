@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Sat Sep 23 15:12:19 2000
+// written: Sat Sep 23 15:38:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,14 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 /**
@@ -75,11 +80,11 @@ public:
   /// Return a string giving the name of the native type.
   virtual const char* getNativeTypeName() const = 0;
 
-  /// Write the value to an \c ostream.
-  virtual void printTo(ostream& os) const;
+  /// Write the value to an \c STD_IO::ostream.
+  virtual void printTo(STD_IO::ostream& os) const;
 
-  /// Read the value from an \c istream.
-  virtual void scanFrom(istream& is);
+  /// Read the value from an \c STD_IO::istream.
+  virtual void scanFrom(STD_IO::istream& is);
 
   // Two sets of functions are provided to allow values to be
   // retrieved either as the return value, or as a reference
@@ -140,13 +145,13 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline ostream& operator<<(ostream& os, const Value& val)
+inline STD_IO::ostream& operator<<(STD_IO::ostream& os, const Value& val)
 {
   val.printTo(os);
   return os;
 }
 
-inline istream& operator>>(istream& is, Value& val)
+inline STD_IO::istream& operator>>(STD_IO::istream& is, Value& val)
 {
   val.scanFrom(is);
   return is;
@@ -186,8 +191,8 @@ public:
 
   virtual const char* getNativeTypeName() const;
 
-  virtual void printTo(ostream& os) const;
-  virtual void scanFrom(istream& is);
+  virtual void printTo(STD_IO::ostream& os) const;
+  virtual void scanFrom(STD_IO::istream& is);
 
   virtual int getInt() const;
   virtual long getLong() const;
@@ -252,8 +257,8 @@ public:
 
   virtual const char* getNativeTypeName() const;
 
-  virtual void printTo(ostream& os) const;
-  virtual void scanFrom(istream& is);
+  virtual void printTo(STD_IO::ostream& os) const;
+  virtual void scanFrom(STD_IO::istream& is);
 
   virtual int getInt() const;
   virtual long getLong() const;

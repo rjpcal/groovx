@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu May 11 20:16:59 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -313,7 +313,7 @@ DOTRACE("TlistUtils::writeResponses");
 
   DebugEvalNL(trialids.size());
 
-  ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename);
   const int wid = 8;
 
   // We prepend a '%' to the header line so that MATLAB can ignore
@@ -347,7 +347,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 	 
   DebugEvalNL(trialids.size());
 	 
-  ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename);
 	 
   for (size_t i = 0; i < trialids.size(); ++i) {
 	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
@@ -371,11 +371,11 @@ int TlistUtils::loadObjidFile(Tlist& tlist, const char* filename,
 										int num_lines, int offset) {
 DOTRACE("TlistUtils::loadObjidFile");
 
-  ifstream ifs(filename);
+  STD_IO::ifstream ifs(filename);
   return readFromObjidsOnly(tlist, ifs, num_lines, offset);
 }
 
-int TlistUtils::readFromObjidsOnly(Tlist& tlist, istream& is,
+int TlistUtils::readFromObjidsOnly(Tlist& tlist, STD_IO::istream& is,
 											  int num_lines, int offset) {
 DOTRACE("TlistUtils::readFromObjidsOnly");
   // Remove all trials and resize itsTrials to 0
@@ -416,7 +416,7 @@ DOTRACE("TlistUtils::writeMatlab");
 
   DebugEvalNL(trialids.size());
 
-  ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename);
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);

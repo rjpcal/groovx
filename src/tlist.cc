@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu Jun  1 13:59:27 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ DOTRACE("Tlist::theTlist");
 //
 //---------------------------------------------------------------------
 
-void Tlist::serialize(ostream &os, IO::IOFlag flag) const {
+void Tlist::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Tlist::serialize");
   // Always serialize the PtrList base
   if (true || flag & IO::BASES) { 
@@ -82,7 +82,7 @@ DOTRACE("Tlist::serialize");
 //
 //---------------------------------------------------------------------
 
-void Tlist::deserialize(istream &is, IO::IOFlag flag) {
+void Tlist::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Tlist::deserialize");
   // Always deserialize its PtrList<TrialBase> base
   if (true || flag & IO::BASES) {

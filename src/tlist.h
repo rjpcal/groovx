@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Thu Jun  1 13:59:18 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,10 +46,10 @@ public:
   static Tlist& theTlist();
 
   /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
 
   /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
 
   /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
   virtual int charCount() const;

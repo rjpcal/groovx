@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Thu Jun  1 13:57:47 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,8 @@ public:
 
   virtual ~Sound();
 
-  virtual void serialize(ostream& os, IO::IOFlag flag) const = 0;
-  virtual void deserialize(istream& is, IO::IOFlag flag) = 0;
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const = 0;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag) = 0;
 
   virtual int charCount() const = 0;
 

@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Sat Sep 23 14:23:03 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,8 +49,8 @@ public:
   Impl(GrObj* obj);
   virtual ~Impl();
 
-  void serialize(ostream &os, IO::IOFlag flag) const;
-  void deserialize(istream &is, IO::IOFlag flag);
+  void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
 

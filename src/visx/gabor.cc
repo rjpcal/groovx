@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue May 30 16:19:02 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,14 +72,14 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::serialize(ostream &os, IO::IOFlag flag) const {
+void Gabor::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Gabor::serialize");
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
   if (os.fail()) throw IO::OutputError(ioTag);
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Gabor::deserialize(istream &is, IO::IOFlag flag) {
+void Gabor::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Gabor::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   if (is.fail()) throw IO::InputError(ioTag);

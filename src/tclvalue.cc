@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu May 25 13:17:18 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -204,12 +204,12 @@ DOTRACE("Tcl::TclValue::getNativeTypeName");
   return type->name;
 }
 
-void Tcl::TclValue::printTo(ostream& os) const {
+void Tcl::TclValue::printTo(STD_IO::ostream& os) const {
 DOTRACE("Tcl::TclValue::printTo");
   os << Tcl_GetString(itsObj);
 }
 
-void Tcl::TclValue::scanFrom(istream& is) {
+void Tcl::TclValue::scanFrom(STD_IO::istream& is) {
 DOTRACE("Tcl::TclValue::scanFrom");
   char buf[256]; 
   is >> ws;

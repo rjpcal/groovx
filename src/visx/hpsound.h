@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Jun  1 14:40:07 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,8 +75,8 @@ public:
   HpAudioSound(const char* filename);
   virtual ~HpAudioSound();
 
-  virtual void serialize(ostream& os, IO::IOFlag flag) const;
-  virtual void deserialize(istream& is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
   virtual int charCount() const;
   
   virtual void readFrom(IO::Reader* reader);
@@ -125,7 +125,7 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   }
 }
 
-void HpAudioSound::serialize(ostream& os, IO::IOFlag flag) const {
+void HpAudioSound::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("HpAudioSound::serialize");
 
   char sep = ' ';
@@ -138,7 +138,7 @@ DOTRACE("HpAudioSound::serialize");
   if (flag & IO::BASES) { /* no bases to deal with */ }
 }
 
-void HpAudioSound::deserialize(istream& is, IO::IOFlag flag) {
+void HpAudioSound::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("HpAudioSound::deserialize");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
@@ -182,7 +182,7 @@ void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
   if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
 
-  ifstream ifs(filename);
+  STD_IO::ifstream ifs(filename);
   if (ifs.fail()) {
 	 throw SoundFilenameError(filename);
   }

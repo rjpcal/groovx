@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat Sep 23 15:07:50 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,10 +84,10 @@ private:
 public:
   void deleteAll(std::vector<TrialEvent*>& events);
 
-  void serializeVec(std::ostream& os, IO::IOFlag flag,
+  void serializeVec(STD_IO::ostream& os, IO::IOFlag flag,
 						  const std::vector<TrialEvent*>& vec);
 
-  void deserializeVec(std::istream& is, IO::IOFlag flag,
+  void deserializeVec(STD_IO::istream& is, IO::IOFlag flag,
 							 std::vector<TrialEvent*>& vec);
 
   // Delegand functions
@@ -130,7 +130,7 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::serialize(std::ostream &os, IO::IOFlag flag) const {
+void TimingHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("TimingHdlr::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 
@@ -146,7 +146,7 @@ DOTRACE("TimingHdlr::serialize");
   if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void TimingHdlr::deserialize(std::istream &is, IO::IOFlag flag) {
+void TimingHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("TimingHdlr::deserialize");
   if (flag & IO::BASES) { /* no bases to deserialize */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
@@ -301,7 +301,7 @@ DOTRACE("TimingHdlr::addEventByName");
 ///////////////////////////////////////////////////////////////////////
 
 
-void TimingHdlr::Impl::serializeVec(std::ostream& os, IO::IOFlag flag,
+void TimingHdlr::Impl::serializeVec(STD_IO::ostream& os, IO::IOFlag flag,
 												const std::vector<TrialEvent*>& vec) {
   os << vec.size() << IO::SEP;
   for (size_t i = 0; i < vec.size(); ++i) {
@@ -309,7 +309,7 @@ void TimingHdlr::Impl::serializeVec(std::ostream& os, IO::IOFlag flag,
   }
 }
 
-void TimingHdlr::Impl::deserializeVec(std::istream& is, IO::IOFlag flag,
+void TimingHdlr::Impl::deserializeVec(STD_IO::istream& is, IO::IOFlag flag,
 												  std::vector<TrialEvent*>& vec) {
   deleteAll(vec);
 

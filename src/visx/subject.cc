@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 30 09:50:02 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,14 +52,14 @@ Subject::~Subject() {
 DOTRACE("Subject::~Subject");
 }
 
-Subject::Subject(istream &is, IO::IOFlag flag) :
+Subject::Subject(STD_IO::istream &is, IO::IOFlag flag) :
   itsName(""), itsDirectory("")
 {
 DOTRACE("Subject::Subject");
   deserialize(is, flag);
 }
 
-void Subject::serialize(ostream &os, IO::IOFlag flag) const {
+void Subject::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Subject::serialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
@@ -72,7 +72,7 @@ DOTRACE("Subject::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Subject::deserialize(istream &is, IO::IOFlag flag) {
+void Subject::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Subject::deserialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }

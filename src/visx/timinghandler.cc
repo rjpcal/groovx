@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Thu Mar 30 09:50:02 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ TimingHandler::~TimingHandler() {
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-void TimingHandler::serialize(ostream &os, IO::IOFlag flag) const {
+void TimingHandler::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("TimingHandler::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -62,7 +62,7 @@ DOTRACE("TimingHandler::serialize");
   if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void TimingHandler::deserialize(istream &is, IO::IOFlag flag) {
+void TimingHandler::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("TimingHandler::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 

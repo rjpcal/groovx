@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Sat Sep 23 14:39:54 2000
+// written: Sat Sep 23 15:41:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,11 @@ class Util::Pipe {
 public:
   Pipe(const char* command, const char* mode) :
 	 itsFile(popen(command, mode)),
+#ifdef PRESTANDARD_IOSTREAMS
+	 itsStream(),
+#else
 	 itsStream(&itsFilebuf),
+#endif
 	 itsClosed(false),
 	 itsExitStatus(0)
 	 {
@@ -52,7 +56,7 @@ public:
   ~Pipe()
 	 { close(); }
 
-  std::iostream& stream() { return itsStream; }
+  STD_IO::iostream& stream() { return itsStream; }
 
   int close()
 	 {
@@ -81,7 +85,7 @@ private:
 #ifdef PRESTANDARD_IOSTREAMS
   fstream itsStream;
 #else
-  std::iostream itsStream;
+  STD_IO::iostream itsStream;
   std::filebuf itsFilebuf;
 #endif
   bool itsClosed;

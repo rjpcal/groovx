@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Fri Jul  7 15:47:27 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ public:
 	 virtual Type getNativeType() const;
 	 virtual const char* getNativeTypeName() const;
 
-	 virtual void printTo(ostream& os) const;
-	 virtual void scanFrom(istream& is);
+	 virtual void printTo(STD_IO::ostream& os) const;
+	 virtual void scanFrom(STD_IO::istream& is);
 
 	 int objid;
 	 int posid;
@@ -65,27 +65,27 @@ public:
   //////////////
 
   Trial();
-  Trial(istream &is, IO::IOFlag flag); 
+  Trial(STD_IO::istream &is, IO::IOFlag flag); 
   virtual ~Trial ();
 
   // write/read the object's state from/to an output/input stream
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
   
   virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  // this function reads from an istream that is assumed to contain
+  // this function reads from an STD_IO::istream that is assumed to contain
   // objid's only; posid's are implied by the position in the input
   // NOTE: this function reads to the end of the input stream since it
   // has no way to know when the input would be done. Thus it should
-  // be passed an istream containing only the line of interest. If
+  // be passed an STD_IO::istream containing only the line of interest. If
   // offset is non-zero, it will be added to each incoming objid
   // before the objid is inserted into the Trial. The function returns
   // the number of objid's read from the stream.
-  int readFromObjidsOnly(istream &is, int offset = 0);
+  int readFromObjidsOnly(STD_IO::istream &is, int offset = 0);
 
   ///////////////
   // accessors //

@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Thu Mar 30 12:25:16 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ DOTRACE("Jitter::Jitter");
   // empty
 }
 
-Jitter::Jitter(istream &is, IO::IOFlag flag) : 
+Jitter::Jitter(STD_IO::istream &is, IO::IOFlag flag) : 
   Position() ,
   itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
   itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
@@ -71,7 +71,7 @@ DOTRACE("Jitter::~Jitter");
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-void Jitter::serialize(ostream &os, IO::IOFlag flag) const {
+void Jitter::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("Jitter::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -87,7 +87,7 @@ DOTRACE("Jitter::serialize");
   Position::serialize(os, (flag | IO::TYPENAME));
 }
 
-void Jitter::deserialize(istream &is, IO::IOFlag flag) {
+void Jitter::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("Jitter::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 

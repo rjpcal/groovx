@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Mar 30 09:50:04 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -248,7 +248,7 @@ DOTRACE("Fish::~Fish");
   delete [] itsEndPts;
 }
 
-void Fish::serialize(ostream& os, IO::IOFlag flag) const {
+void Fish::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("Fish::serialize");
 
   char sep = ' ';
@@ -263,7 +263,7 @@ DOTRACE("Fish::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }  
 }
 
-void Fish::deserialize(istream& is, IO::IOFlag flag) {
+void Fish::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("Fish::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
@@ -358,7 +358,7 @@ DOTRACE("Fish::readSplineFile");
   dynamic_string dummy;
 
   // reads in the spline knots and coefficient
-  ifstream ifs(splinefile);
+  STD_IO::ifstream ifs(splinefile);
   if (ifs.fail()) {
 	 ErrorWithMsg err("error opening file '");
 	 err.appendMsg(splinefile, "'");
@@ -425,7 +425,7 @@ void Fish::readCoordFile(const char* coordfile, int index) {
 DOTRACE("Fish::readCoordFile");
   dynamic_string dummy;
 
-  ifstream ifs(coordfile);
+  STD_IO::ifstream ifs(coordfile);
   if (ifs.fail()) {
 	 ErrorWithMsg err("error opening file '");
 	 err.appendMsg(coordfile, "'");

@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Thu Mar 30 09:50:02 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -37,13 +37,13 @@ public:
   CloneFace();
 
   /// Construct by deserializing from a stream.
-  CloneFace(istream &is, IO::IOFlag flag);
+  CloneFace(STD_IO::istream &is, IO::IOFlag flag);
 
   /// Virtual destructor.
   virtual ~CloneFace();
   
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);

@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 30 09:50:01 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,11 +25,11 @@
 class Subject : public virtual IO::IoObject {
 public:
   Subject(const char* name, const char* dir);
-  Subject(istream &is, IO::IOFlag flag);
+  Subject(STD_IO::istream &is, IO::IOFlag flag);
   virtual ~Subject();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Jun  1 14:12:32 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
   IO::IoObject& io = getIO();
   const char* filename = getFilename();
 
-  ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename);
   if ( ofs.fail() ) {
 	 Tcl::TclError err("couldn't open file ");
 	 err.appendMsg("'", filename, "'");
@@ -178,7 +178,7 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
   IO::IoObject& io = getIO();
   const char* filename = getFilename();
 
-  ifstream ifs(filename);
+  STD_IO::ifstream ifs(filename);
   if ( ifs.fail() ) {
 	 Tcl::TclError err("couldn't open file ");
 	 err.appendMsg("'", filename, "'");

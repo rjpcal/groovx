@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Sat Sep 23 14:37:48 2000
+// written: Sat Sep 23 15:37:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,14 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 class BmapData;
@@ -40,8 +45,8 @@ public:
       as calling \c setBytes() with the same argument. */
   Pbm(const BmapData& data);
 
-  /// Construct by reading PBM format data from the \c istream \a is.
-  Pbm(std::istream& is);
+  /// Construct by reading PBM format data from the \c STD_IO::istream \a is.
+  Pbm(STD_IO::istream& is);
 
   /// Construct by reading PBM format data from the file \a filename.
   Pbm(const char* filename);
@@ -56,21 +61,21 @@ public:
       of \a data. */
   void swapInto(BmapData& data);
 
-  /// Write PBM format data to the \c ostream \a os.
-  void write(std::ostream& os) const;
+  /// Write PBM format data to the \c STD_IO::ostream \a os.
+  void write(STD_IO::ostream& os) const;
 
   /// Write PBM format data to the file \a filename.
   void write(const char* filename) const;
 
 private:
-  void readStream(std::istream& is);
+  void readStream(STD_IO::istream& is);
 
-  void parseMode1(std::istream& is);
-  void parseMode2(std::istream& is);
-  void parseMode3(std::istream& is);
-  void parseMode4(std::istream& is);
-  void parseMode5(std::istream& is);
-  void parseMode6(std::istream& is);
+  void parseMode1(STD_IO::istream& is);
+  void parseMode2(STD_IO::istream& is);
+  void parseMode3(STD_IO::istream& is);
+  void parseMode4(STD_IO::istream& is);
+  void parseMode5(STD_IO::istream& is);
+  void parseMode6(STD_IO::istream& is);
 
   Pbm(const Pbm&);
   Pbm& operator=(const Pbm&);

@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Thu Jun  1 14:37:54 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,8 @@ ValueError::~ValueError() {}
 Value::~Value() {}
 
 
-void Value::printTo(ostream&) const { raiseValueError(); }
-void Value::scanFrom(istream&) { raiseValueError(); }
+void Value::printTo(STD_IO::ostream&) const { raiseValueError(); }
+void Value::scanFrom(STD_IO::istream&) { raiseValueError(); }
 
 int Value::getInt() const { raiseValueError(); return 0; }
 long Value::getLong() const { raiseValueError(); return 0; }
@@ -69,17 +69,17 @@ template <class T>
 Value* TValue<T>::clone() const { return new TValue<T>(itsVal); }
 
 template <class T>
-void TValue<T>::printTo(ostream& os) const { os << itsVal; }
+void TValue<T>::printTo(STD_IO::ostream& os) const { os << itsVal; }
 
 template <class T>
-void TValue<T>::scanFrom(istream& is) { is >> itsVal; }
+void TValue<T>::scanFrom(STD_IO::istream& is) { is >> itsVal; }
 
 template <>
-void TValue<bool>::scanFrom(istream& is)
+void TValue<bool>::scanFrom(STD_IO::istream& is)
 { int temp; is >> temp; itsVal = bool(temp); }
 
 template <>
-void TValue<const char*>::scanFrom(istream&)
+void TValue<const char*>::scanFrom(STD_IO::istream&)
 { raiseValueError(); }
 
 template <>
@@ -176,17 +176,17 @@ template <class T>
 Value* TValuePtr<T>::clone() const { return new TValuePtr<T>(*itsValPtr); }
 
 template <class T>
-void TValuePtr<T>::printTo(ostream& os) const { os << *itsValPtr; }
+void TValuePtr<T>::printTo(STD_IO::ostream& os) const { os << *itsValPtr; }
 
 template <class T>
-void TValuePtr<T>::scanFrom(istream& is) { is >> *itsValPtr; }
+void TValuePtr<T>::scanFrom(STD_IO::istream& is) { is >> *itsValPtr; }
 
 template <>
-void TValuePtr<bool>::scanFrom(istream& is)
+void TValuePtr<bool>::scanFrom(STD_IO::istream& is)
 { int temp; is >> temp; *itsValPtr = bool(temp); }
 
 template <>
-void TValuePtr<const char*>::scanFrom(istream&)
+void TValuePtr<const char*>::scanFrom(STD_IO::istream&)
 { raiseValueError(); }
 
 template <>

@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue May 30 18:28:32 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,8 +38,8 @@ public:
   /// Construct with initial values for the Brunswik face parameters.
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
 
-  /// Construct from an \c istream using \c deserialize().
-  Face (istream &is, IO::IOFlag flag);
+  /// Construct from an \c STD_IO::istream using \c deserialize().
+  Face (STD_IO::istream &is, IO::IOFlag flag);
 
   /// Virtual destructor.
   virtual ~Face ();
@@ -47,12 +47,12 @@ public:
   /** Write the face to a stream using the format:
 	  
 	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
 
   /** Read the face from a stream using the format:
 	  
 	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   
   virtual int charCount() const;
 

@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar 29 23:43:22 2000
+// written: Sat Sep 23 15:32:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,8 @@ public:
 
   virtual const char* getNativeTypeName() const;
 
-  virtual void printTo(ostream& os) const;
-  virtual void scanFrom(istream& is);
+  virtual void printTo(STD_IO::ostream& os) const;
+  virtual void scanFrom(STD_IO::istream& is);
 
   virtual int getInt() const;
   virtual long getLong() const;

@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Fri May 12 14:26:30 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,10 +51,10 @@ DOTRACE("CloneFace::CloneFace()");
   }
 }
 
-CloneFace::CloneFace (istream& is, IO::IOFlag flag) :
+CloneFace::CloneFace (STD_IO::istream& is, IO::IOFlag flag) :
   Face(), itsEyeAspect(0.0), itsVertOffset(0.0) 
 {
-DOTRACE("CloneFace::CloneFace(istream&, IO::IOFlag)");
+DOTRACE("CloneFace::CloneFace(STD_IO::istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
 
@@ -67,7 +67,7 @@ DOTRACE("CloneFace::~CloneFace");
 // before the base class (Face) since the first thing the virtual
 // constructor sees must be the typename of the most fully derived
 // class, in order to invoke the proper constructor.
-void CloneFace::serialize(ostream &os, IO::IOFlag flag) const {
+void CloneFace::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
 DOTRACE("CloneFace::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -85,7 +85,7 @@ DOTRACE("CloneFace::serialize");
   Face::serialize(os, (flag | IO::TYPENAME));
 }
 
-void CloneFace::deserialize(istream &is, IO::IOFlag flag) {
+void CloneFace::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
 DOTRACE("CloneFace::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   

@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Sat Sep 23 14:59:04 2000
+// written: Sat Sep 23 15:42:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,10 +123,10 @@ Pbm::Pbm(const BmapData& data) :
   setBytes(data);
 }
 
-Pbm::Pbm(std::istream& is) :
+Pbm::Pbm(STD_IO::istream& is) :
   itsImpl( new Impl )
 {
-DOTRACE("Pbm::Pbm(std::istream&)");
+DOTRACE("Pbm::Pbm(STD_IO::istream&)");
   readStream(is);
 }
 
@@ -155,9 +155,13 @@ DOTRACE("Pbm::Pbm(const char*)");
   else
 	 {
 #ifdef PRESTANDARD_IOSTREAMS
+#  ifndef MIPSPRO_COMPILER
 		ifstream ifs(filename.c_str(), ios::in|ios::binary);
+#  else
+		ifstream ifs(filename.c_str(), ios::in);
+#  endif
 #else
-		std::ifstream ifs(filename.c_str(),
+		STD_IO::ifstream ifs(filename.c_str(),
 								std::ios_base::in|std::ios_base::binary);
 #endif
 		if (ifs.fail()) {
@@ -209,12 +213,12 @@ DOTRACE("Pbm::write");
 	 }
   else
 	 {
-		std::ofstream ofs(filename.c_str());
+		STD_IO::ofstream ofs(filename.c_str());
 		write(ofs);
 	 }
 }
 
-void Pbm::write(std::ostream& os) const {
+void Pbm::write(STD_IO::ostream& os) const {
 DOTRACE("Pbm::write");
   os << 'P' << itsImpl->itsMode << ' ' 
 	  << itsImpl->itsImageWidth << ' ' << itsImpl->itsImageHeight << '\n';
@@ -222,7 +226,7 @@ DOTRACE("Pbm::write");
 			  itsImpl->itsBytes.size());
 }
 
-void Pbm::readStream(std::istream& is) {
+void Pbm::readStream(STD_IO::istream& is) {
 DOTRACE("Pbm::readStream");
   if (is.fail()) {
 	 throw PbmError("input stream failed before reading pbm file");
@@ -295,7 +299,7 @@ DOTRACE("Pbm::readStream");
   }
 }
 
-void Pbm::parseMode1(std::istream& is) {
+void Pbm::parseMode1(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode1");
   int position = 0;
   int val = 0;
@@ -314,7 +318,7 @@ DOTRACE("Pbm::parseMode1");
   } 
 }
 
-void Pbm::parseMode2(std::istream& is) {
+void Pbm::parseMode2(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode2");
   double conversion = 255.0/double(itsImpl->itsMaxGrey);
   
@@ -330,24 +334,24 @@ DOTRACE("Pbm::parseMode2");
   } 
 }
 
-void Pbm::parseMode3(std::istream& is) {
+void Pbm::parseMode3(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode3");
   parseMode2(is);
 }
 
-void Pbm::parseMode4(std::istream& is) {
+void Pbm::parseMode4(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode4");
   is.read(reinterpret_cast<char*>(&(itsImpl->itsBytes[0])),
 			 itsImpl->itsNumBytes);
 }
 
-void Pbm::parseMode5(std::istream& is) {
+void Pbm::parseMode5(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode5");
   is.read(reinterpret_cast<char*>(&(itsImpl->itsBytes[0])),
 			 itsImpl->itsNumBytes);  
 }
 
-void Pbm::parseMode6(std::istream& is) {
+void Pbm::parseMode6(STD_IO::istream& is) {
 DOTRACE("Pbm::parseMode6");
   is.read(reinterpret_cast<char*>(&(itsImpl->itsBytes[0])),
 			 itsImpl->itsNumBytes);

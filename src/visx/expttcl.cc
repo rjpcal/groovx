@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Sep 21 19:44:17 2000
+// written: Sat Sep 23 15:46:49 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -28,8 +28,6 @@
 #include "tcl/tracertcl.h"
 
 #include "util/strings.h"
-
-#include <fstream.h>
 
 #define NO_TRACE
 #include "util/trace.h"

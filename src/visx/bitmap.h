@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Mar 30 10:06:50 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,14 +44,14 @@ public:
   Bitmap(BmapRenderer* renderer, const char* filename);
 
   /// Construct a Bitmap by deserializing from a stream.
-  Bitmap(BmapRenderer* renderer, istream& is, IO::IOFlag flag);
+  Bitmap(BmapRenderer* renderer, STD_IO::istream& is, IO::IOFlag flag);
 
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Bitmap();
 
-  virtual void serialize(ostream& os, IO::IOFlag flag) const;
-  virtual void deserialize(istream& is, IO::IOFlag flag);
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual void readFrom(IO::Reader* reader);
@@ -66,7 +66,7 @@ public:
   void loadPbmFile(const char* filename);
 
   /// Loads PBM bitmap data from the stream \a input.
-  void loadPbmFile(istream& input);
+  void loadPbmFile(STD_IO::istream& input);
 
   /// Writes PBM bitmap data to the file \a filename.
   void writePbmFile(const char* filename) const;

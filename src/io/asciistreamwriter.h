@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Sat Sep 23 15:11:56 2000
+// written: Sat Sep 23 15:37:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,14 @@
 #include "io/writer.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#include <iosfwd>
-#define IOSFWD_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+class ostream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 // This is a hack to help shorten up names for assemblers on systems
@@ -43,8 +48,8 @@
 
 class AsciiStreamWriter : public IO::Writer {
 public:
-  /// Construct with a connection to an open \c ostream.
-  AsciiStreamWriter(ostream& os);
+  /// Construct with a connection to an open \c STD_IO::ostream.
+  AsciiStreamWriter(STD_IO::ostream& os);
 
   /// Virtual destructor.
   virtual ~AsciiStreamWriter();

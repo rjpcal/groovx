@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu May 11 19:59:18 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,8 @@ public:
   /// Virtual destructor.
   virtual ~ResponseHandler();
 
-  virtual void serialize(ostream& os, IO::IOFlag flag) const = 0;
-  virtual void deserialize(istream& is, IO::IOFlag flag) = 0;
+  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const = 0;
+  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag) = 0;
   virtual int charCount() const = 0;
 
   virtual void readFrom(IO::Reader* reader) = 0;

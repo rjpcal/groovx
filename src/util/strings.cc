@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Tue Sep 19 17:11:10 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -228,39 +228,39 @@ string& dynamic_string::rep(string*)
 //
 //---------------------------------------------------------------------
 
-istream& operator>>(istream& is, fixed_string& str)
+STD_IO::istream& operator>>(STD_IO::istream& is, fixed_string& str)
 {
   string temp; is >> temp;
   str = temp.c_str();
   return is;
 }
 
-istream& operator>>(istream& is, dynamic_string& str)
+STD_IO::istream& operator>>(STD_IO::istream& is, dynamic_string& str)
 {
   string temp; is >> temp;
   str = temp.c_str();
   return is;
 }
 
-ostream& operator<<(ostream& os, const string_literal& str)
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const string_literal& str)
 {
   os << str.c_str();
   return os;
 }
 
-ostream& operator<<(ostream& os, const fixed_string& str)
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const fixed_string& str)
 {
   os << str.c_str();
   return os;
 }
 
-ostream& operator<<(ostream& os, const dynamic_string& str)
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const dynamic_string& str)
 {
   os << str.c_str();
   return os;
 }
 
-istream& getline(istream& is, fixed_string& str)
+STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str)
 {
   string temp;
   getline(is, temp);
@@ -268,7 +268,7 @@ istream& getline(istream& is, fixed_string& str)
   return is;
 }
 
-istream& getline(istream& is, dynamic_string& str)
+STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str)
 {
   string temp;
   getline(is, temp);
@@ -276,7 +276,7 @@ istream& getline(istream& is, dynamic_string& str)
   return is;
 }
 
-istream& getline(istream& is, fixed_string& str, char eol)
+STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str, char eol)
 {
   string temp;
   getline(is, temp, eol);
@@ -284,7 +284,7 @@ istream& getline(istream& is, fixed_string& str, char eol)
   return is;
 }
 
-istream& getline(istream& is, dynamic_string& str, char eol)
+STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str, char eol)
 {
   string temp;
   getline(is, temp, eol);

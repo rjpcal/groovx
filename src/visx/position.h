@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Sat Sep 23 15:32:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,14 +38,14 @@ public:
   /// Default constructor.
   Position();
   /// Stream constructor.
-  Position(istream &is, IO::IOFlag flag);
+  Position(STD_IO::istream &is, IO::IOFlag flag);
   ///
   virtual ~Position();
 
   ///
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
   ///
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
   ///
   virtual int charCount() const;
 

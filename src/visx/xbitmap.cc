@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Thu Mar 30 09:08:40 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ DOTRACE("XBitmap::XBitmap");
   init();
 }
 
-XBitmap::XBitmap(istream& is, IO::IOFlag flag) :
+XBitmap::XBitmap(STD_IO::istream& is, IO::IOFlag flag) :
   Bitmap(tempRenderer = new XBmapRenderer()),
   itsRenderer(tempRenderer)
 
@@ -73,7 +73,7 @@ DOTRACE("XBitmap::~XBitmap");
   delete itsRenderer; 
 }
 
-void XBitmap::serialize(ostream& os, IO::IOFlag flag) const {
+void XBitmap::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("XBitmap::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -83,7 +83,7 @@ DOTRACE("XBitmap::serialize");
   if (flag & IO::BASES) { Bitmap::serialize(os, flag | IO::TYPENAME); }
 }
 
-void XBitmap::deserialize(istream& is, IO::IOFlag flag) {
+void XBitmap::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("XBitmap::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 

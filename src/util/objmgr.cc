@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Sat Sep 23 15:32:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,8 @@ DOTRACE("IO::IoMgr::newIO(const char*)");
   return IO::IoFactory::theOne().newCheckedObject(type);
 }
 
-IO::IoObject* IO::IoMgr::newIO(istream& is, IO::IOFlag flag) {
-DOTRACE("IO::IoMgr::newIo(istream&, IO::IOFlag)");
+IO::IoObject* IO::IoMgr::newIO(STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("IO::IoMgr::newIo(STD_IO::istream&, IO::IOFlag)");
   fixed_string type;
   is >> type;
   // We must turn off the IO::TYPENAME flag since the typename has already
@@ -39,8 +39,8 @@ DOTRACE("IO::IoMgr::newIo(istream&, IO::IOFlag)");
   return newIO(type.c_str(), is, flag & ~IO::TYPENAME);
 }
 
-IO::IoObject* IO::IoMgr::newIO(const char* type, istream& is, IO::IOFlag flag) {
-DOTRACE("IO::IoMgr::newIo(const char*, istream&, IO::IOFlag)");
+IO::IoObject* IO::IoMgr::newIO(const char* type, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("IO::IoMgr::newIo(const char*, STD_IO::istream&, IO::IOFlag)");
   IO::IoObject* io = newIO(type);
   io->deserialize(is, flag);
   return io;

@@ -3,7 +3,7 @@
 // response.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:33:17 2000
-// written: Fri Jul  7 15:22:06 2000
+// written: Sat Sep 23 15:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,12 +44,12 @@ DOTRACE("Response::getNativeTypeName");
   return "Response";
 }
 
-void Response::printTo(ostream& os) const {
+void Response::printTo(STD_IO::ostream& os) const {
 DOTRACE("Response::printTo");
   os << itsVal << " " << itsMsec; 
 }
 
-void Response::scanFrom(istream& is) {
+void Response::scanFrom(STD_IO::istream& is) {
 DOTRACE("Response::scanFrom");
   is >> itsVal >> itsMsec;
 }

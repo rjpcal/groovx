@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon May 22 11:54:08 2000
+// written: Sat Sep 23 15:32:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ DOTRACE("BitmapRep::init");
   itsImpl->itsData.clear();
 }
 
-void BitmapRep::serialize(ostream& os, int flag) const {
+void BitmapRep::serialize(STD_IO::ostream& os, int flag) const {
 DOTRACE("BitmapRep::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -178,7 +178,7 @@ DOTRACE("BitmapRep::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void BitmapRep::deserialize(istream& is, int flag) {
+void BitmapRep::deserialize(STD_IO::istream& is, int flag) {
 DOTRACE("BitmapRep::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
@@ -278,8 +278,8 @@ DOTRACE("BitmapRep::queuePbmFile");
   itsImpl->itsRenderer->notifyBytesChanged();
 }
 
-void BitmapRep::loadPbmFile(istream& is) {
-DOTRACE("BitmapRep::loadPbmFile(istream&)");
+void BitmapRep::loadPbmFile(STD_IO::istream& is) {
+DOTRACE("BitmapRep::loadPbmFile(STD_IO::istream&)");
   // Create a Pbm object by reading pbm data from 'filename'.
   Pbm pbm(is);
 
