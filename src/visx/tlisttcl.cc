@@ -11,8 +11,6 @@
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
 
-#include "tlisttcl.h"
-
 #include <tcl.h>
 #include <vector>
 
