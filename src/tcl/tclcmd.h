@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Sep 29 17:44:46 1999
+// written: Thu Sep 30 11:10:00 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -37,7 +37,7 @@
 #define VECTOR_DEFINED
 #endif
 
-#ifndef VALUE_H_DEFINED
+#ifndef TCLVALUE_H_DEFINED
 #include "tclvalue.h"
 #endif
 
