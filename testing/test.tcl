@@ -34,7 +34,6 @@ set must_implement -1
 set skip_known_bug -2
 set normal_test 1
 set intermittent_bug 2
-set test_serialize 0
 
 # If the 'flags' argument is 0, the test is skipped.
 proc test {package_name test_name script expected_result_regexp {flags 1}} {
