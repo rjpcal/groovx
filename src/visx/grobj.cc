@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 19:33:41 1999
+// written: Mon Dec  6 23:14:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -252,9 +252,9 @@ private:
 
 	 // Returns true if the object was rendered to the screen as part
 	 // of the update, false otherwise
-	 bool update(const GrObj::Impl* obj) const;
+	 bool update(const GrObj::Impl* obj, Canvas& canvas) const;
 
-	 void render(const GrObj::Impl* obj) const;
+	 void render(const GrObj::Impl* obj, Canvas& canvas) const;
 
   private:
 	 GrObj::GrObjRenderMode itsMode;
@@ -265,11 +265,11 @@ private:
 	 auto_ptr<BitmapRep> itsBitmapCache;
 
 	 // This function updates the cached OpenGL display list.
-	 void recompileIfNeeded(const GrObj::Impl* obj) const;
+	 void recompileIfNeeded(const GrObj::Impl* obj, Canvas& canvas) const;
 
 	 // This function updates the cached bitmap, and returns a true if
 	 // the bitmap was actually recached, and false if nothing was done.
-	 bool recacheBitmapIfNeeded(const GrObj::Impl* obj) const;
+	 bool recacheBitmapIfNeeded(const GrObj::Impl* obj, Canvas& canvas) const;
 
 	 void postUpdated() const { itsIsCurrent = true; }
 
@@ -286,8 +286,8 @@ public:
 	 { itsRenderer.setMode(new_mode, this); }
 
 
-  void update() const;
-  void draw() const;
+  void update(Canvas& canvas) const;
+  void draw(Canvas& canvas) const;
 
   void grDrawBoundingBox() const;
 
@@ -304,11 +304,11 @@ private:
 	 GrObj::GrObjRenderMode itsMode;
   };
 
-  void undrawDirectRender() const;
-  void undrawSwapForeBack() const;
-  void undrawClearBoundingBox() const;
+  void undrawDirectRender(Canvas& canvas) const;
+  void undrawSwapForeBack(Canvas& canvas) const;
+  void undrawClearBoundingBox(Canvas& canvas) const;
 
-  void undrawBoundingBox() const;
+  void undrawBoundingBox(Canvas& canvas) const;
 
 public:
 
@@ -316,7 +316,7 @@ public:
 
   void setUnRenderMode(GrObj::GrObjRenderMode new_mode);
 
-  void undraw() const;
+  void undraw(Canvas& canvas) const;
 
   ///////////////
   // ? other ? //
@@ -337,8 +337,8 @@ public:
   // Forwards to GrObj's protected members //
   ///////////////////////////////////////////
 
-  void grRender() const { self->grRender(); }
-  void grUnRender() const { self->grUnRender(); }
+  void grRender(Canvas& canvas) const { self->grRender(canvas); }
+  void grUnRender(Canvas& canvas) const { self->grUnRender(canvas); }
 
   bool grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
 	 { return self->grGetBoundingBox(bbox, pixel_border); }
@@ -448,26 +448,28 @@ DOTRACE("GrObj::Impl::Renderer::~Renderer");
   glDeleteLists(itsDisplayList, 1);
 }
 
-void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj) const {
+void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj,
+															 Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
   if (itsIsCurrent) return;
   
   newList();
   
   glNewList(itsDisplayList, GL_COMPILE);
-  obj->grRender();
+  obj->grRender(canvas);
   glEndList();
   
   postUpdated();
 }
 
-bool GrObj::Impl::Renderer::recacheBitmapIfNeeded(const GrObj::Impl* obj) const {
+bool GrObj::Impl::Renderer::recacheBitmapIfNeeded(const GrObj::Impl* obj,
+																  Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   if (itsIsCurrent) return false;
 
   Assert(itsBitmapCache.get() != 0);
   
-  obj->undraw();
+  obj->undraw(canvas);
   
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -480,7 +482,7 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 		obj->doScaling();
 		obj->doAlignment();
 		
-		obj->grRender();
+		obj->grRender(canvas);
 		
 		Assert(obj->hasBB());
 		
@@ -559,12 +561,13 @@ DOTRACE("GrObj::Impl::Renderer::setMode");
   } // end switch
 }
 
-void GrObj::Impl::Renderer::render(const GrObj::Impl* obj) const {
+void GrObj::Impl::Renderer::render(const GrObj::Impl* obj,
+											  Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::render");
   switch (itsMode) {
 
   case GrObj::GROBJ_DIRECT_RENDER:
-	 obj->grRender();
+	 obj->grRender(canvas);
 	 break;
 
   case GrObj::GROBJ_GL_COMPILE:
@@ -574,13 +577,14 @@ DOTRACE("GrObj::Impl::Renderer::render");
   case GrObj::GROBJ_GL_BITMAP_CACHE:
   case GrObj::GROBJ_X11_BITMAP_CACHE:
 	 Assert(itsBitmapCache.get() != 0);
-	 itsBitmapCache->grRender();
+	 itsBitmapCache->grRender(canvas);
 	 break;
 
   } // end switch
 }
 
-bool GrObj::Impl::Renderer::update(const GrObj::Impl* obj) const {
+bool GrObj::Impl::Renderer::update(const GrObj::Impl* obj,
+											  Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::update");
   checkForGlError("before GrObj::update");
 
@@ -588,12 +592,12 @@ DOTRACE("GrObj::Impl::Renderer::update");
 
   switch (itsMode) {
   case GrObj::GROBJ_GL_COMPILE:
-	 recompileIfNeeded(obj);
+	 recompileIfNeeded(obj, canvas);
 	 break;
 		
   case GrObj::GROBJ_GL_BITMAP_CACHE:
   case GrObj::GROBJ_X11_BITMAP_CACHE:
-	 objectDrawn = recacheBitmapIfNeeded(obj);
+	 objectDrawn = recacheBitmapIfNeeded(obj, canvas);
 	 break;
   }
   checkForGlError("during GrObj::update");
@@ -939,12 +943,12 @@ DOTRACE("GrObj::Impl::setUnRenderMode");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObj::Impl::update() const {
+void GrObj::Impl::update(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::update");
-  itsRenderer.update(this);
+  itsRenderer.update(this, canvas);
 }
 
-void GrObj::Impl::draw() const {
+void GrObj::Impl::draw(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::draw");
   checkForGlError("before GrObj::draw");
 
@@ -952,7 +956,7 @@ DOTRACE("GrObj::Impl::draw");
 	 grDrawBoundingBox();
   }
 
-  bool objectDrawn = itsRenderer.update(this);
+  bool objectDrawn = itsRenderer.update(this, canvas);
 
   if ( !objectDrawn ) {
 	 glMatrixMode(GL_MODELVIEW);
@@ -961,26 +965,26 @@ DOTRACE("GrObj::Impl::draw");
 	   doScaling();
 		doAlignment();
 
-		itsRenderer.render(this);
+		itsRenderer.render(this, canvas);
 	 glPopMatrix();
   }
 
   checkForGlError("during GrObj::draw"); 
 }
 
-void GrObj::Impl::undraw() const {
+void GrObj::Impl::undraw(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undraw");
   checkForGlError("before GrObj::undraw");
 
   switch (itsUnRenderer.itsMode) {
-  case GrObj::GROBJ_DIRECT_RENDER:       undrawDirectRender();     break;
-  case GrObj::GROBJ_SWAP_FORE_BACK:      undrawSwapForeBack();     break;
-  case GrObj::GROBJ_CLEAR_BOUNDING_BOX:  undrawClearBoundingBox(); break;
-  default:                                /* nothing */            break;
+  case GrObj::GROBJ_DIRECT_RENDER:     undrawDirectRender(canvas);     break;
+  case GrObj::GROBJ_SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
+  case GrObj::GROBJ_CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
+  default:                             /* nothing */                  break;
   }
 
   if ( itsBB.itsIsVisible ) {
-	 undrawBoundingBox();
+	 undrawBoundingBox(canvas);
   }
 
   checkForGlError("during GrObj::undraw");
@@ -1064,7 +1068,7 @@ DOTRACE("GrObj::Impl::doScaling");
   }
 }
 
-void GrObj::Impl::undrawDirectRender() const {
+void GrObj::Impl::undrawDirectRender(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
 
@@ -1073,18 +1077,18 @@ DOTRACE("GrObj::Impl::undrawDirectRender");
 	 doScaling();
 	 doAlignment();
 	 
-	 self->grUnRender();
+	 self->grUnRender(canvas);
   }
   glPopMatrix();
 }
 
-void GrObj::Impl::undrawSwapForeBack() const {
+void GrObj::Impl::undrawSwapForeBack(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawSwapForeBack");
   glMatrixMode(GL_MODELVIEW);
 
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
-	 GrObj::swapForeBack();
+	 canvas.swapForeBack();
 	 
 	 glPushMatrix();
 	 {
@@ -1095,7 +1099,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 		  itsRenderer.callList();
 		}
 		else {
-		  self->grRender();
+		  self->grRender(canvas);
 		}
 	 }
 	 glPopMatrix();
@@ -1103,7 +1107,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
   glPopAttrib();
 }
 
-void GrObj::Impl::undrawClearBoundingBox() const {
+void GrObj::Impl::undrawClearBoundingBox(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
@@ -1113,7 +1117,7 @@ DOTRACE("GrObj::Impl::undrawClearBoundingBox");
 	 {
 		glEnable(GL_SCISSOR_TEST);
 
-		Rect<int> screen_pos = GrObj::getScreenFromWorld(world_pos);
+		Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
 
 		// Add an extra one-pixel border around the rect
 		screen_pos.widenByStep(1);
@@ -1129,13 +1133,13 @@ DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   }
 }
 
-void GrObj::Impl::undrawBoundingBox() const {
+void GrObj::Impl::undrawBoundingBox(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
-	 GrObj::swapForeBack();
+	 canvas.swapForeBack();
 
 	 glPushMatrix();
 	 {
@@ -1525,39 +1529,19 @@ DOTRACE("GrObj::receiveDestroyMsg");
 // actions //
 /////////////
 
-void GrObj::swapForeBack() {
-DOTRACE("GrObj::swapForeBack");
-  if ( Canvas::theCanvas().isRgba() ) {
-	 GLdouble foreground[4];
-	 GLdouble background[4];
-	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
-	 glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
-	 glColor4dv(background);
-	 glClearColor(foreground[0], foreground[1],
-					  foreground[2], foreground[3]);
-  }
-  else {
-	 GLint foreground, background;
-	 glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-	 glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-	 glIndexi(background);
-	 glClearIndex(foreground);
-  }
+void GrObj::update(Canvas& canvas) const {
+  itsImpl->update(canvas);
 }
 
-void GrObj::update() const {
-  itsImpl->update();
+void GrObj::draw(Canvas& canvas) const {
+  itsImpl->draw(canvas);
 }
 
-void GrObj::draw() const {
-  itsImpl->draw();
+void GrObj::undraw(Canvas& canvas) const {
+  itsImpl->undraw(canvas);
 }
 
-void GrObj::undraw() const {
-  itsImpl->undraw();
-}
-
-void GrObj::grUnRender() const {
+void GrObj::grUnRender(Canvas&) const {
 DOTRACE("GrObj::grUnRender");
   // Empty default implementation of this virtual function
 }
