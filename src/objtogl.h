@@ -2,8 +2,7 @@
 // objtogl.h
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 12:55:35 1999
-static const char vcid_objtogl_h[] = "$Id$";
+// written: Sat Mar 13 13:17:50 1999
 //
 // This package provides functionality that allows a Togl widget to
 // work with a Glist, controlling its display, reshaping, etc.
@@ -19,4 +18,5 @@ namespace ObjTogl {
   Tcl_PackageInitProc Objtogl_Init;
 }
 
+static const char vcid_objtogl_h[] = "$Id$";
 #endif // !OBJTOGL_H_DEFINED
