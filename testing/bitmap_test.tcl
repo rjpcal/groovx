@@ -159,10 +159,17 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
 ### Bitmap::stringifyCmd ###
 ### Bitmap::destringifyCmd ###
 test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
-	 set str1 [IO::stringify $::BITMAP]
-	 set ::BITMAP [Obj::new GLBitmap]
-	 IO::destringify $::BITMAP $str1
-	 set str2 [IO::stringify $::BITMAP]
+	 set b1 [Obj::new GLBitmap]
+	 Bitmap::zoom $b1 {3.0 4.5}
+
+	 set str1 [IO::stringify $b1]
+
+	 Obj::delete $b1
+
+	 set b2 [Obj::new GLBitmap]
+	 IO::destringify $b2 $str1
+	 set str2 [IO::stringify $b2]
+
 	 return "[string equal $str1 $str2] $str1 $str2"
 } {^1 }
 
