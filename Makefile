@@ -289,48 +289,26 @@ dir_structure:
 #
 #-------------------------------------------------------------------------
 
-# For each of the dependencies that get built and then "include"d into the
-# Makefile, we have to use a two-target method to get them built, in order
-# to avoid some thorny issues with time stamps etc. Without the two-step
-# method, the potential problem is the following: if we are doing either a
-# "make --assume-new" or if there is any clock skew involving one of the ,
-# then we get an infinite loop of rebuilding the file to be "include"d,
-# because after the inclusion, the entire makefile is reprocessed again,
-# which forces the included file to be rebuilt, and so on. In the two-step
-# process, the dependencies apply to a dummy file that is NOT "include"d
-# into the makefile, and then the "include"d file depends on the dummy
-# file. This avoids infinite looping.
-
 # dependencies of object files on source+header files
 
-DEP_FILE := $(DEP)/alldepends
-
-$(DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
-	touch $@
-
-$(DEP_FILE): $(DEP_FILE).deps
+$(DEP)/cppdepends: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
-include $(DEP_FILE)
+include $(DEP)/cppdepends
 
 # dependencies of package shlib's on object files
 
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
-PKG_DEP_FILE := $(DEP)/pkgdepends
-
-$(PKG_DEP_FILE).deps: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
+$(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		$(ALL_SOURCES) $(ALL_HEADERS) src/pkgs/buildPkgDeps.tcl
-	touch $@
-
-$(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 	src/pkgs/buildPkgDeps.tcl \
 		--depfile $@ \
 		--objdir $(OBJ)/pkgs \
 		--pkgdir $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR)
 
-include $(PKG_DEP_FILE)
+include $(DEP)/pkgdepends
 
 
 $(exec_prefix)/lib/visx/mtx.so: \
@@ -347,8 +325,6 @@ $(exec_prefix)/lib/visx/matlabengine.so: \
 
 
 # dependencies of main project shlib's on object files
-
-LIB_DEP_FILE := $(DEP)/libdepends
 
 LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(exec_prefix)/lib \
@@ -368,14 +344,11 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--module Util \
 		>
 
-$(LIB_DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
+$(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
 		$(SCRIPTS)/build_lib_rules.tcl
-	touch $@
-
-$(LIB_DEP_FILE): $(LIB_DEP_FILE).deps
 	$(LIB_DEP_CMD) $@
 
-include $(LIB_DEP_FILE)
+include $(DEP)/libdepends
 
 cdeps: $(ALL_SOURCES) $(ALL_HEADERS) $(LOGS)/.timestamp
 	time cdeplevels.py $(SRC) -L 1000 > $(LOGS)/cdeps
