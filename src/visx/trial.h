@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Fri Nov 10 17:27:02 2000
+// written: Tue Nov 28 14:25:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,6 +144,8 @@ public:
 
   virtual void trDraw(GWT::Canvas& canvas, bool flush) const;
   virtual void trUndraw(GWT::Canvas& canvas, bool flush) const;
+
+  virtual void installSelf(GWT::Widget& widget) const;
 
 private:
   Trial(const Trial&);
