@@ -170,7 +170,7 @@ public:
       if ( !theResponse.isValid() )
         {
           if ( rep->itsAbortInvalidResponses )
-            itsTrial.trAbort();
+            itsTrial.trAbortTrial();
         }
       else
         {
