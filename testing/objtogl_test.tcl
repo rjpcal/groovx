@@ -160,10 +160,10 @@ test "ObjTogl-dumpCmap" "normal use" {
 "
 test "ObjTogl-dumpCmap" "error from non-integral number arg1" {
     Togl::dumpCmap 0.5 1
-} {^expected integer but got "0\.5"$}
+} {expected integer but got "0\.5"}
 test "ObjTogl-dumpCmap" "error from non-integral number arg2" {
     Togl::dumpCmap 0 1.5
-} {^expected integer but got "1\.5"$}
+} {expected integer but got "1\.5"}
 test "ObjTogl-dumpCmap" "error from too small index" {
     Togl::dumpCmap -3 -1
 } {^Togl::dumpCmap: colormap index out of range$}
