@@ -185,10 +185,18 @@ public:
     modelviewCache.push_back(txform::identity());
     projectionCache.push_back(txform::identity());
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    // The following glLoadIdentity() calls are implied here; we
+    // assume that the modelview and projection matrices are both
+    // intialized to the identity matrix upon program
+    // startup. However, we CANNOT safely call them here, since the GL
+    // context may not yet be current. If it turns out that we do need
+    // this explicit initialization, then it probably should go in
+    // GlxWrapper::makeCurrent() under a flag that checks whether it's
+    // the first time.
+#if 0
+    glMatrixMode(GL_PROJECTION); glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW); glLoadIdentity();
+#endif
 
     dbg_dump(4, modelviewCache.back());
   }
