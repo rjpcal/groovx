@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Sat Oct  2 21:15:48 1999
+// written: Tue Oct  5 12:36:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,7 @@
 
 class Fish : public GrObj, public PropFriend<Fish> {
 public:
+  Fish();
   Fish(const char* splinefile, const char* coordfile, int index);
 
 private:
@@ -55,12 +56,17 @@ public:
   typedef PropertyInfo<Fish> PInfo;
   static const vector<PInfo>& getPropertyInfos();
 
-  CTBoundedProperty<Fish, int, 0, 3, 1> currentPart;
-  CTBoundedProperty<Fish, int, 0, 3, 1> currentEndPt;
+  CTProperty<Fish, int> category;
+  virtual int getCategory() const { return category.getNative(); }
+  virtual void setCategory(int val) { category.setNative(val); }
+
   CTPtrProperty<Fish, double> coord0;
   CTPtrProperty<Fish, double> coord1;
   CTPtrProperty<Fish, double> coord2;
   CTPtrProperty<Fish, double> coord3;
+
+  CTBoundedProperty<Fish, int, 0, 3, 1> currentPart;
+  CTBoundedProperty<Fish, int, 0, 3, 1> currentEndPt;
 
   /////////////
   // actions //
@@ -70,17 +76,15 @@ protected:
   virtual void grRender() const;
 
 private:
-  //////////////////
-  // nested types //
-  //////////////////
-
   struct EndPt;
-
   struct FishPart;
 
   FishPart* itsFishParts;
   EndPt* itsEndPts;
   double itsCoords[4];
+
+  void makeIoList(vector<IO *>& vec);
+  void makeIoList(vector<const IO *>& vec) const;
 };
 
 static const char vcid_fish_h[] = "$Header$";
