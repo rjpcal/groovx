@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Mar  8 16:06:34 2000
+// written: Wed Mar  8 16:09:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,7 +114,8 @@ public:
   void linkConstVar(const char* varName, char*& var) throw (TclError);
 
 protected:
-  void setInitStatus(int status);
+  void setInitStatusOk();
+  void setInitStatusError();
 
 private:
   struct Impl;
