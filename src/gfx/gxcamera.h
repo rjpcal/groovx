@@ -44,7 +44,7 @@ namespace Gfx
   class Canvas;
 }
 
-// ####################################################################
+// ########################################################
 
 /// GxCamera sets up an orthographic or perspective projection.
 

@@ -43,7 +43,7 @@ namespace rutz
   class error;
 }
 
-//  ####################################################################
+//  ########################################################
 /// \c rutz::error is a basic exception class.
 /** It carries a string message describing the error as well as
     information about the location in the source code in which the

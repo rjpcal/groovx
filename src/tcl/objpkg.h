@@ -51,7 +51,7 @@ namespace Util
   class Object;
 }
 
-// ####################################################################
+// ########################################################
 /// ObjCaster class encapsulates casts to see if objects match a given type.
 
 class Tcl::ObjCaster

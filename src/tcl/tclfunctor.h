@@ -136,7 +136,7 @@ namespace Tcl
 {
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<0> -- zero arguments
 
   template <class R, class Func>
@@ -157,7 +157,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<1> -- one argument
 
   template <class R, class Func>
@@ -179,7 +179,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<2> -- two arguments
 
   template <class R, class Func>
@@ -201,7 +201,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<3> -- three arguments
 
   template <class R, class Func>
@@ -223,7 +223,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<4> -- four arguments
 
   template <class R, class Func>
@@ -246,7 +246,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<5> -- five arguments
 
   template <class R, class Func>
@@ -269,7 +269,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<6> -- six arguments
 
   template <class R, class Func>
@@ -291,7 +291,7 @@ namespace Tcl
     }
   };
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<7> -- seven arguments
 
   template <class R, class Func>
@@ -314,7 +314,7 @@ namespace Tcl
     }
   };
 
-// ####################################################################
+// ########################################################
 /// Tcl::Functor<8> -- eight arguments
 
   template <class R, class Func>
@@ -339,7 +339,7 @@ namespace Tcl
 
 #undef EXTRACT_PARAM
 
-// ####################################################################
+// ########################################################
 /// Factory function to make Tcl::Functor's from any functor or function ptr.
 
   template <class Fptr>
@@ -352,7 +352,7 @@ namespace Tcl
   }
 
 
-// ####################################################################
+// ########################################################
 /// GenericCmd implements Tcl::Command using a held functor.
 
   template <class R, class Functor>
@@ -379,7 +379,7 @@ namespace Tcl
     Functor itsHeldFunc;
   };
 
-// ####################################################################
+// ########################################################
 /// Specialization for functors with void return types.
 
   template <class Functor>
@@ -407,7 +407,7 @@ namespace Tcl
   };
 
 
-// ####################################################################
+// ########################################################
 /// Factory function for Tcl::Command's from functors.
 
   template <class Functor>
@@ -426,7 +426,7 @@ namespace Tcl
   }
 
 
-// ####################################################################
+// ########################################################
 /// Factory function for vectorized Tcl::Command's from functors.
 
   template <class Functor>
@@ -453,7 +453,7 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-// ####################################################################
+// ########################################################
 /// Factory function for Tcl::Command's from function pointers.
 
   template <class Func>
@@ -467,7 +467,7 @@ namespace Tcl
        rutz::func_traits<Func>::num_args, src_pos);
   }
 
-// ####################################################################
+// ########################################################
 /// Factory function for vectorized Tcl::Command's from function pointers.
 
   template <class Func>

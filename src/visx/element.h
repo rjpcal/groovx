@@ -43,8 +43,8 @@ class Toglet;
 
 class fstring;
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// Element is an abstract base class for all experiment components.
 /** This conceptually includes individual trials, blocks, experiment

@@ -49,8 +49,8 @@ namespace Util
   template <class T> class FwdIter;
 }
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// \c TrialEvent represents events scheduled to occur during a \c Trial.
 
@@ -136,8 +136,8 @@ private:
 
 
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// TrialEvent subclass that does nothing in its invoke() function.
 /** Why is this useful? It may be helpful in testing the runtime
@@ -158,8 +158,8 @@ public:
   static NullTrialEvent* make() { return new NullTrialEvent; }
 };
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// TrialEvent subclass that binds to an arbitrary Trial member function.
 class TrialMemFuncEvent : public TrialEvent
@@ -191,8 +191,8 @@ private:
   fstring itsTypename;
 };
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 //  Here's a set of creator functions that return different
 //  TrialMemFuncEvent objects bound to different Trial member functions.
@@ -225,8 +225,8 @@ TrialEvent* makeClearBufferEvent();
 TrialEvent* makeFinishDrawingEvent();
 
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// TrialEvent subclass to send a single byte to an output file.
 class FileWriteEvent : public TrialEvent
@@ -264,8 +264,8 @@ private:
   int itsByte;
 };
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// TrialEvent subclass to call an arbitrary piece of Tcl code.
 class GenericEvent : public TrialEvent
@@ -296,8 +296,8 @@ private:
   Util::Ref<Tcl::ProcWrapper> itsCallback;
 };
 
-//  ###################################################################
-//  ===================================================================
+//  #######################################################
+//  =======================================================
 
 /// MultiEvent allows multiple events to be linked together in sequence.
 /** Compared with just scheduling multiple individual events, the

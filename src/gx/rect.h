@@ -40,7 +40,7 @@ namespace Gfx
 {
   template <class V> class Rect;
 
-// ####################################################################
+// ########################################################
 
 /// Rect represents rectangles in two-dimensional space.
 

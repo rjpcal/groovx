@@ -56,7 +56,7 @@ namespace Tcl
 }
 
 
-//  ####################################################################
+//  ########################################################
 /// Tcl::Interp provides a wrapper around calls to the Tcl interpreter.
 /** The advantage over using the raw Tcl C API is that certain error
     conditions are handled in a more C++-ish way, by throwing

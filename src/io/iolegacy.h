@@ -49,7 +49,7 @@ namespace IO
   class LegacyWriter;
 }
 
-// ####################################################################
+// ########################################################
 
 /// Implements the IO::Reader interface using the "legacy" data format.
 
@@ -95,7 +95,7 @@ private:
 };
 
 
-// ####################################################################
+// ########################################################
 
 /// Implements the IO::Writer interface using the "legacy" data format.
 
