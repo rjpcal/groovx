@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Mon Jul 16 10:35:05 2001
+// written: Mon Jul 16 11:41:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,23 @@ public:
   {
     addCommand( makeVecCmd(interp(), f, makePkgCmdName(cmd_name),
                            usage, keyarg) );
+  }
+
+  template <class Func>
+  inline void defRaw(Func f, const char* cmd_name,
+                     const char* usage, unsigned int nargs)
+  {
+    addCommand( makeGenericCmd(interp(), f, makePkgCmdName(cmd_name),
+                               usage, nargs) );
+  }
+
+  template <class Func>
+  inline void defVecRaw(Func f, const char* cmd_name,
+                        const char* usage, unsigned int nargs,
+                        unsigned int keyarg=1)
+  {
+    addCommand( makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
+                                  usage, nargs, keyarg) );
   }
 
   template <class C>
