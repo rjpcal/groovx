@@ -165,8 +165,7 @@ ifeq ($(COMPILER),g++)
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
-	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
-		-DFUNCTIONAL_OK
+	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
 
@@ -195,8 +194,7 @@ ifeq ($(COMPILER),ppc-g++-2)
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
-	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
-		-DFUNCTIONAL_OK
+	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	CPP_DEFINES += -Dlrand48=rand
 	CC_SWITCHES += -dynamic
@@ -220,7 +218,7 @@ ifeq ($(COMPILER),g++3)
 # Filter the compiler output...
 	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 	CC_SWITCHES += $(WARNINGS)
-	CPP_DEFINES += -DSTD_IO=std -DFUNCTIONAL_OK
+	CPP_DEFINES += -DSTD_IO=std
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -O1 -g
