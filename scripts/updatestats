@@ -1,50 +1,86 @@
-#!/bin/sh 
-# \
-exec tclsh "$0" "$@"
+#!/usr/bin/env tclsh
 
 set rawfilename "logs/CompileStats"
 set tallyfilename "logs/CompileStatsTally"
 
 proc readfile { fname } {
-	 if { ![file exists $fname] } { return }
+    if { ![file exists $fname] } { return }
 
-	 set f [open $fname r]
+    set f [open $fname r]
 
-	 while { [gets $f line] != -1 } {
-		  set name [lindex $line 0]
+    while { [gets $f line] != -1 } {
+        set name [lindex $line 0]
 
-		  set count 1
-		  if { [llength $line] > 1 } {
-				set count [lindex $line 1]
-		  }
+        set count 1
+        if { [llength $line] > 1 } {
+            set count [lindex $line 1]
+        }
 
-		  if { [info exists ::COUNTS($name)] } {
-				incr ::COUNTS($name) $count
-		  } else {
-				set ::COUNTS($name) $count
-		  }
-	 }	 
+        if { [info exists ::COUNTS($name)] } {
+            incr ::COUNTS($name) $count
+        } else {
+            set ::COUNTS($name) $count
+        }
+    }    
 
-	 close $f
+    close $f
 }
 
 proc writefile { fname } {
-	 set f [open $fname w]
+    foreach name [array names ::COUNTS] {
+	lappend stems([file tail $name]) $name
+    }
 
-	 foreach name [lsort [array names ::COUNTS]] {
-		  if { ![file exists $name] } {
-				puts "warning: '$name' no longer exists"
-		  }
-		  puts $f "$name $::COUNTS($name)"
-	 }
+    foreach name [array names stems] {
+	set files [lsort -unique $stems($name)]
+	set file_exist_count 0
+	set total_count 0
+	set existing_file ""
+	foreach f $files {
+	    if { [file exists $f] } {
+		incr file_exist_count
+		set existing_file $f
+	    }
+	    incr total_count $::COUNTS($f)
+	}
 
-	 close $f
+	if { $file_exist_count == 0 } {
+	    puts "no existing file with the given stem, need help:"
+	    puts $files
+	    exit
+	}
+
+	if { $file_exist_count > 1 } {
+	    puts "too many files with the same stem, need help:"
+	    puts $files
+	    exit
+	}
+
+	if { [llength $files] > 1} {
+	    puts "collating files:"
+	    puts "'$files' --> $existing_file"
+	}
+
+	set newcounts($existing_file) $total_count
+    }
+
+    set f [open $fname w]
+
+    foreach name [lsort [array names newcounts]] {
+        if { ![file exists $name] } {
+            error "no file named '$name'"
+        }
+        puts $f [format "%-40s %d" $name $newcounts($name)]
+    }
+
+    close $f
 }
 
 proc backup { fname } {
-	 if { [file exists $fname] } {
-		  exec mv $fname ${fname}.bkp
-	 }
+    if { [file exists $fname] } {
+	file delete ${fname}.bkp
+        exec mv $fname ${fname}.bkp
+    }
 }
 
 #
