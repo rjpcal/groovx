@@ -554,7 +554,7 @@ void Trial::installSelf(SoftRef<Toglet> widget) const
 DOTRACE("Trial::installSelf");
 
   if (rep->currentNode < rep->gxNodes.size())
-    widget->setDrawable(Ref<GxNode>(rep->gxNodes[rep->currentNode]));
+    widget->setDrawable(rep->gxNodes[rep->currentNode]);
 }
 
 static const char vcid_trial_cc[] = "$Header$";
