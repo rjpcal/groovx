@@ -1,6 +1,6 @@
 # $Id$
 
-import os, re, sys, array
+import os, re, sys, operator
 
 def sort(seq):
     seq.sort()
@@ -22,9 +22,7 @@ class DirectIncludeMap:
 
         matches = theRegex.findall(text)
 
-        pairs = zip(self.itsPathCopies[:len(matches)], matches)
-
-        deps = map("".join, pairs)
+        deps = map(operator.add, self.itsPathCopies[:len(matches)], matches)
 
         includes = filter(os.path.isfile, deps)
 
