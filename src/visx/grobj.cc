@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Feb  3 13:13:20 2000
+// written: Tue Feb  8 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,16 +21,17 @@
 #include "bitmaprep.h"
 #include "canvas.h"
 #include "glbmaprenderer.h"
-#include "error.h"
+#include "util/error.h"
 #include "rect.h"
 #include "reader.h"
 #include "writer.h"
 #include "xbmaprenderer.h"
 
-#define NO_TRACE
-#include "trace.h"
+#define LOCAL_TRACE
+#define DYNAMIC_TRACE_EXPR TRACE_IS_ON
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 #ifndef NULL
 #define NULL 0L
@@ -48,6 +49,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
+  bool TRACE_IS_ON = false;
+
   GLenum BITMAP_CACHE_BUFFER = GL_FRONT;
 #ifdef LOCAL_DEBUG
   inline void checkForGlError(const char* where) throw (GrObjError) {
@@ -62,6 +65,14 @@ namespace {
 #endif
 
 }
+
+void GrObj::traceOn() { TRACE_IS_ON = true; }
+
+void GrObj::traceOff() { TRACE_IS_ON = false; }
+
+void GrObj::traceToggle() { TRACE_IS_ON = !TRACE_IS_ON; }
+
+
 ///////////////////////////////////////////////////////////////////////
 //
 // GrObj::Impl class
@@ -176,10 +187,7 @@ private:
 		{}
 		
 	 bool bbExists() const
-		{
-		  updateRaw();
-		  return itsHasBB;
-		}
+		{ return itsOwner->grHasBoundingBox(); }
 
 	 const Rect<double>& getRaw() const;
 
@@ -349,8 +357,11 @@ public:
   void grRender(Canvas& canvas) const { self->grRender(canvas); }
   void grUnRender(Canvas& canvas) const { self->grUnRender(canvas); }
 
-  bool grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
-	 { return self->grGetBoundingBox(bbox, pixel_border); }
+  void grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
+	 { self->grGetBoundingBox(bbox, pixel_border); }
+
+  bool grHasBoundingBox() const
+	 { return self->grHasBoundingBox(); }
 
   //////////////////
   // Data members //
@@ -421,9 +432,12 @@ void GrObj::Impl::BoundingBox::updateRaw() const {
 DOTRACE("GrObj::Impl::BoundingBox::updateRaw");
   DebugEval(itsRawBBIsCurrent);
   if (!itsRawBBIsCurrent) {
-	 itsHasBB = itsOwner->grGetBoundingBox(itsCachedRawBB,
-														itsCachedPixelBorder);
-	 if (!itsHasBB) {
+	 itsHasBB = itsOwner->grHasBoundingBox();
+
+	 if (itsHasBB) {
+		itsOwner->grGetBoundingBox(itsCachedRawBB, itsCachedPixelBorder);
+	 }
+	 else {
 		itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
 		itsCachedPixelBorder = 0;
 	 }
@@ -1299,9 +1313,13 @@ DOTRACE("GrObj::getBoundingBox");
   return itsImpl->getBoundingBox(canvas, bbox);
 }
 
-bool GrObj::grGetBoundingBox(Rect<double>& /*bounding_box*/,
+void GrObj::grGetBoundingBox(Rect<double>& /*bounding_box*/,
 									  int& /* border_pixels */) const {
 DOTRACE("GrObj::grGetBoundingBox");
+}
+
+bool GrObj::grHasBoundingBox() const {
+DOTRACE("GrObj::grHasBoundingBox");
   return false;
 }
 
