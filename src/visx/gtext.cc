@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Oct  7 13:38:46 1999
+// written: Wed Oct 13 15:28:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include <GL/gl.h>
 #include <togl.h>
+#include <cctype>
 
 #include "objtogl.h"
 #include "toglconfig.h"
@@ -26,6 +27,12 @@
 
 namespace {
   const string ioTag = "Gtext";
+
+  void eatWhitespace(istream& is) {
+	 while ( isspace(is.peek()) ) {
+		is.get();
+	 }
+  }
 
 //---------------------------------------------------------------------
 //
@@ -689,6 +696,7 @@ void Gtext::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Gtext::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); } 
 
+  eatWhitespace(is);
   getline(is, itsText, '\n');
 
   if (is.fail()) throw InputError(ioTag);
