@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 18:25:52 1999
+// written: Thu Nov 18 18:43:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -550,7 +550,7 @@ DOTRACE("GrObj::Impl::deserialize");
 
   is >> itsCategory; if (is.fail()) throw InputError("after GrObj::itsCategory");
 
-  is >> temp; itsRenderer.setMode(temp);
+  is >> temp; itsRenderer.setMode(temp, this);
   if (is.fail()) throw InputError("after GrObj::itsRenderer.itsMode");
 
   is >> itsUnRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderer.itsMode");
@@ -602,7 +602,7 @@ DOTRACE("GrObj::Impl::readFrom");
   int temp;
 
   reader->readValue("GrObj::renderMode", temp);
-  itsRenderer.setMode(temp);
+  itsRenderer.setMode(temp, this);
 
   reader->readValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
 
