@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Nov 15 13:33:21 2000
+// written: Thu Nov 16 12:12:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ public:
 	 fixed_string itsObjTag;
 
 	 typedef std::pair<fixed_string, Attrib> ValueType;
-	 typedef list<ValueType> ListType;
+	 typedef std::list<ValueType> ListType;
 
 	 ListType itsMap;
 
