@@ -58,24 +58,30 @@ namespace Tcl
     // This machinery is simple to set up the rule that we want to convert
     // all Value subclasses via strings. All other types are converted
     // directly.
-    typedef typename Util::SelectIf<Util::IsSubSuper<T, Value>::result,
-                                    fstring, T>::Type Type;
+    typedef typename rutz::select_if<
+      rutz::is_sub_super<T, Value>::result,
+      fstring, T>::result_t
+    Type;
   };
 
   /// Specialization of Tcl::Return for const T.
   template <class T>
   struct Return<const T>
   {
-    typedef typename Util::SelectIf<Util::IsSubSuper<T, Value>::result,
-                                    fstring, T>::Type Type;
+    typedef typename rutz::select_if<
+      rutz::is_sub_super<T, Value>::result,
+      fstring, T>::result_t
+    Type;
   };
 
   /// Specialization of Tcl::Return for const T&.
   template <class T>
   struct Return<const T&>
   {
-    typedef typename Util::SelectIf<Util::IsSubSuper<T, Value>::result,
-                                    fstring, T>::Type Type;
+    typedef typename rutz::select_if<
+      rutz::is_sub_super<T, Value>::result,
+      fstring, T>::result_t
+    Type;
   };
 
   //

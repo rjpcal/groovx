@@ -229,7 +229,7 @@ public:
   {
     if (name == 0)
       name = demangled_name
-        (typeid(typename Util::TypeTraits<DerivedPtr>::Pointee));
+        (typeid(typename rutz::type_traits<DerivedPtr>::pointee_t));
 
     itsMap.setPtrForName(name,
                          new CreatorFromFunc<BasePtr, DerivedPtr>(func));

@@ -70,10 +70,10 @@ public:
   mutable bool changed;
 };
 
-namespace Util
+namespace rutz
 {
   template <class T>
-  struct TypeTraits<Cached<T> > : public TypeTraits<T>
+  struct type_traits<Cached<T> > : public type_traits<T>
   {};
 }
 

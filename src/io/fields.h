@@ -168,7 +168,7 @@ public:
   typedef typename PmTraits<PM>::MemType T;
 
   /// Type returned when the field is dereferenced.
-  typedef typename Util::TypeTraits<T>::DerefT DerefT;
+  typedef typename rutz::type_traits<T>::deref_t deref_t;
 
   /// Construct with a pointer-to-data-member.
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr) {}
@@ -184,7 +184,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    DerefT raw = new_val.template as<DerefT>();
+    deref_t raw = new_val.template as<deref_t>();
 
     dereference(cobj, itsDataMember) = raw;
   }
@@ -232,19 +232,19 @@ public:
   typedef typename PmTraits<PM>::MemType T;
 
   /// Type returned when the field is dereferenced.
-  typedef typename Util::TypeTraits<T>::DerefT DerefT;
+  typedef typename rutz::type_traits<T>::deref_t deref_t;
 
   /// Construct with a pointer-to-data-member and a bounds checker.
   CheckedDataMemberFieldImpl(T C::* memptr,
-                             const DerefT& min,
-                             const DerefT& max) :
+                             const deref_t& min,
+                             const deref_t& max) :
     itsDataMember(memptr),
     itsMin(min),
     itsMax(max)
   {}
 
   static shared_ptr<FieldImpl>
-  make(T C::* memptr, const DerefT& min, const DerefT& max)
+  make(T C::* memptr, const deref_t& min, const deref_t& max)
   {
     return shared_ptr<FieldImpl>
       (new CheckedDataMemberFieldImpl(memptr, min, max));
@@ -255,7 +255,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    DerefT raw = new_val.template as<DerefT>();
+    deref_t raw = new_val.template as<deref_t>();
 
     dereference(cobj, itsDataMember) = this->limit(raw);
   }
@@ -274,7 +274,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    DerefT temp;
+    deref_t temp;
 
     reader.readValue(name, temp);
 
@@ -294,14 +294,14 @@ private:
   CheckedDataMemberFieldImpl(const CheckedDataMemberFieldImpl&);
   CheckedDataMemberFieldImpl& operator=(const CheckedDataMemberFieldImpl&);
 
-  DerefT limit(const DerefT& raw) const
+  deref_t limit(const deref_t& raw) const
   {
     return rutz::clamp(raw, itsMin, itsMax);
   }
 
   T C::* itsDataMember;
-  const DerefT itsMin;
-  const DerefT itsMax;
+  const deref_t itsMin;
+  const deref_t itsMax;
 };
 
 /// ValueFieldImpl
@@ -376,9 +376,9 @@ public:
 
     C& cobj = FieldAux::cast<C>(*obj);
 
-    typedef typename Util::TypeTraits<T>::StackT StackT;
+    typedef typename rutz::type_traits<T>::stack_t stack_t;
 
-    (cobj.*itsSetter)(new_val.template as<StackT>());
+    (cobj.*itsSetter)(new_val.template as<stack_t>());
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
@@ -397,9 +397,9 @@ public:
 
     C& cobj = FieldAux::cast<C>(*obj);
 
-    typedef typename Util::TypeTraits<T>::StackT StackT;
+    typedef typename rutz::type_traits<T>::stack_t stack_t;
 
-    StackT temp;
+    stack_t temp;
     reader.readValue(name, temp);
     (cobj.*itsSetter)(temp);
   }

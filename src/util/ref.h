@@ -264,14 +264,17 @@ public:
   { return get() < other.get(); }
 };
 
-/// TypeTraits specialization for Util::Ref smart pointer
-template <class T>
-struct TypeTraits<Ref<T> >
-{
-  typedef T Pointee;
-};
-
 } // end namespace Util
+
+namespace rutz
+{
+  /// type_traits specialization for Util::Ref smart pointer
+  template <class T>
+  struct type_traits<Util::Ref<T> >
+  {
+    typedef T pointee_t;
+  };
+}
 
 template <class To, class Fr>
 Util::Ref<To> dynamicCast(Util::Ref<Fr> p)
@@ -472,14 +475,17 @@ public:
   { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
 };
 
-/// TypeTraits specialization for SoftRef smart pointer.
-template <class T>
-struct TypeTraits<SoftRef<T> >
-{
-  typedef T Pointee;
-};
-
 } // end namespace Util
+
+namespace rutz
+{
+  /// type_traits specialization for SoftRef smart pointer.
+  template <class T>
+  struct type_traits<Util::SoftRef<T> >
+  {
+    typedef T pointee_t;
+  };
+}
 
 template <class To, class Fr>
 Util::SoftRef<To> dynamicCast(Util::SoftRef<Fr> p)

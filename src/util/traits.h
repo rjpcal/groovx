@@ -32,55 +32,55 @@
 #ifndef TRAITS_H_DEFINED
 #define TRAITS_H_DEFINED
 
-namespace Util
+namespace rutz
 {
   /// Basic type traits class.
   template <class T>
-  struct TypeTraits
+  struct type_traits
   {
-    typedef T DerefT;
-    typedef T StackT;
+    typedef T deref_t;
+    typedef T stack_t;
   };
 
   /// Specialization of type traits for pointers.
   template <class T>
-  struct TypeTraits<T*>
+  struct type_traits<T*>
   {
-    typedef T Pointee;
-    typedef T DerefT;
+    typedef T pointee_t;
+    typedef T deref_t;
   };
 
   /// Specialization of type traits for references.
   template <class T>
-  struct TypeTraits<T&>
+  struct type_traits<T&>
   {
-    typedef T StackT;
+    typedef T stack_t;
   };
 
   /// Specialization of type traits for const references.
   template <class T>
-  struct TypeTraits<const T&>
+  struct type_traits<const T&>
   {
-    typedef T StackT;
+    typedef T stack_t;
   };
 
   /// Select between two types based on a compile-time constant boolean expression.
-  template <bool test, class IfTrue, class IfFalse>
-  struct SelectIf
+  template <bool test, class if_true, class if_false>
+  struct select_if
   {
-    typedef IfTrue Type;
+    typedef if_true result_t;
   };
 
-  /// Specialization of SelectIf for 'false'.
-  template <class IfTrue, class IfFalse>
-  struct SelectIf<false, IfTrue, IfFalse>
+  /// Specialization of select_if for 'false'.
+  template <class if_true, class if_false>
+  struct select_if<false, if_true, if_false>
   {
-    typedef IfFalse Type;
+    typedef if_false result_t;
   };
 
-  /// Helper class for IsSubSuper.
+  /// Helper class for is_sub_super.
   template <class T>
-  struct TypeMatch
+  struct type_match
   {
     /** dummy type */ struct s1 { char x; };
     /** dummy type */ struct s2 { s1 x[2]; };
@@ -89,40 +89,18 @@ namespace Util
     static s2 foo(...);
   };
 
-  /// Determine whether Sub derives from Super.
-  template <class Sub, class Super>
-  struct IsSubSuper
+  /// Determine whether sub derives from super.
+  template <class sub, class super>
+  struct is_sub_super
   {
-    enum { sz = sizeof(TypeMatch<Super>::foo((Sub*)0)) };
-    enum { result = (sz == sizeof(typename TypeMatch<Super>::s1)) ? 1 : 0 };
-  };
+    enum { sz = sizeof(type_match<super>::foo((sub*)0)) };
 
-  /// Basic string class.
-  template <class T>
-  struct StringTraits
-  {
-    static const char* c_str(T t) { return t.c_str(); }
-  };
-
-  /// Specialization of string traits for char*.
-  template <>
-  struct StringTraits<char*>
-  {
-    static const char* c_str(char* t) { return t; }
-  };
-
-  /// Specialization of string traits for const char*.
-  template <>
-  struct StringTraits<const char*>
-  {
-    static const char* c_str(const char* t) { return t; }
-  };
-
-  /// Specialization of string traits for char array.
-  template <unsigned int N>
-  struct StringTraits<char[N]>
-  {
-    static const char* c_str(char t[N]) { return &t[0]; }
+    enum
+      {
+        result = ((sz == sizeof(typename type_match<super>::s1))
+                  ? 1
+                  : 0)
+      };
   };
 }
 
