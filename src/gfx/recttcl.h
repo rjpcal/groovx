@@ -37,6 +37,8 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tcllistobj.h"
 
+#include "util/error.h"
+
 namespace Tcl
 {
   /// Conversion routines for Tcl object to geom::rect.
@@ -44,10 +46,18 @@ namespace Tcl
   inline geom::rect<T> fromTcl(Tcl_Obj* obj, geom::rect<T>*)
   {
     Tcl::List listObj(obj);
-    return geom::rect_ltrb<T>(listObj.get(0, (T*)0),
-                              listObj.get(1, (T*)0),
-                              listObj.get(2, (T*)0),
-                              listObj.get(3, (T*)0));
+    geom::rect<T> result = geom::rect_ltrb<T>(listObj.get(0, (T*)0),
+                                              listObj.get(1, (T*)0),
+                                              listObj.get(2, (T*)0),
+                                              listObj.get(3, (T*)0));
+
+    if (result.width() <= 0.0)
+      throw rutz::error("invalid rect (width was <= 0)", SRC_POS);
+
+    if (result.height() <= 0.0)
+      throw rutz::error("invalid rect (height was <= 0)", SRC_POS);
+
+    return result;
   }
 
   /// Conversion routine for geom::rect to Tcl::ObjPtr.
