@@ -47,6 +47,8 @@
 #include "util/traits.h"
 #include "util/value.h"
 
+#include <limits>
+
 namespace rutz
 {
   template <class T> class fwd_iter;
@@ -443,13 +445,15 @@ public:
 class Field
 {
 private:
-  const rutz::fstring itsName;
+  const rutz::fstring               itsName;
   const rutz::shared_ptr<FieldImpl> itsFieldImpl;
-  const rutz::fstring itsDefaultValue;
-  const rutz::fstring itsMin;
-  const rutz::fstring itsMax;
-  const rutz::fstring itsRes;
-  unsigned int itsFlags;
+  const rutz::fstring               itsDefaultValue;
+  const rutz::fstring               itsMin;
+  const rutz::fstring               itsMax;
+  const rutz::fstring               itsRes;
+  const unsigned int                itsFlags;
+  IO::VersionId                     itsMinVersion;
+  IO::VersionId                     itsMaxVersion;
 
 public:
 
@@ -521,7 +525,9 @@ public:
     itsMin(min),
     itsMax(max),
     itsRes(res),
-    itsFlags(flags)
+    itsFlags(flags),
+    itsMinVersion(0),
+    itsMaxVersion(std::numeric_limits<IO::VersionId>::max())
   {}
 
   /// Construct using a pointer-to-member-data.
@@ -538,7 +544,9 @@ public:
     itsMin(min),
     itsMax(max),
     itsRes(res),
-    itsFlags(flags)
+    itsFlags(flags),
+    itsMinVersion(0),
+    itsMaxVersion(std::numeric_limits<IO::VersionId>::max())
   {}
 
   /// Construct using a getter/setter pair of pointers-to-member-functions.
@@ -554,8 +562,19 @@ public:
     itsMin(min),
     itsMax(max),
     itsRes(res),
-    itsFlags(flags)
+    itsFlags(flags),
+    itsMinVersion(0),
+    itsMaxVersion(std::numeric_limits<IO::VersionId>::max())
   {}
+
+  Field& versions(IO::VersionId lo,
+                  IO::VersionId hi
+                  = std::numeric_limits<IO::VersionId>::max())
+  {
+    itsMinVersion = lo;
+    itsMaxVersion = hi;
+    return *this;
+  }
 
   /// Get the Field's name.
   const rutz::fstring& name() const { return itsName; }
@@ -568,6 +587,11 @@ public:
   const rutz::fstring& max() const { return itsMax; }
   /// Get the Field's value quantization step (only for numeric fields).
   const rutz::fstring& res() const { return itsRes; }
+
+  /// Get the minimum serial version id for this field.
+  IO::VersionId minVersion() const { return itsMinVersion; }
+  /// Get the maximum serial version id for this field.
+  IO::VersionId maxVersion() const { return itsMaxVersion; }
 
   /// Set the value of this field for \a obj.
   void setValue(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
