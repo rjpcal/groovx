@@ -6,19 +6,147 @@ $Id$
 ========================================================================
 Resource management revisited 17-Oct-2000
 
-(17-Oct-2000) Make PtrList::insert() functions return an
-ItemWithId. This is a first step to eliminating reliance on the int
-id's in the C++ side of things.
+(18-Oct-2000) Aha! I have a vision... the PtrList's do not need to be
+serialized at all... they can become merely a runtime resource that
+expose C++ objects to Tcl. This will be possible if C++ objects
+serialize not object-id's, but rather actual object references. Then
+the id's will be automatically reconstructed when the objects are read
+back in. This requires some support for master pointers in
+reader+writer. Also this is the final death blow to the LegacyWriter
+format, since we don't have any way to support reference semantics
+there. We might still be able to support LegacyReader, however.
 
-(17-Oct-2000) ItemWithId<T> could store a static PtrList<T>&, which
-would allow us to construct an ItemWithId<T> from a MasterPtr only,
-and insert this MasterPtr into the PtrList from within the ItemWithId
-structure.
+(17-Oct-2000) Only ...tcl.cc files and exptdriver.cc (?) should depend
+on the PtrList singletons and hence the "objlist.h" etc. include files.
 
 (17-Oct-2000) Move ItemWithId<T> and NullableItemWithId<T> off into
 their own component. Most C++ clients should not have to rely on
 PtrList directly, or access any of the singletons.
+
+(17-Oct-2000) Make C++ clients of getPtr() and getCheckedPtr() just
+store an ItemWithId<T> instead.
+
+block.cc (Trial)
+eventresponsehdlr.cc (Sound)
+exptdriver.cc (Block)
+objlisttcl.cc (GrObj)
+tlistutils.cc (GrObj, Trial,...)
+trial.cc (ResponseHandler, TimingHdlr)
+
+(done 17-Oct-2000) ItemWithId<T> could store a static PtrList<T>&,
+which would allow us to construct an ItemWithId<T> from a MasterPtr
+only, and insert this MasterPtr into the PtrList from within the
+ItemWithId structure. Done.
+
+(done 17-Oct-2000) Make PtrList::insert() functions return an
+ItemWithId. This is a first step to eliminating reliance on the int
+id's in the C++ side of things. Done.
+
 ------------------------------------------------------------------------
+
+blocklist.h:
+blocklist.cc
+blocktcl.cc
+exptdriver.cc
+
+objlist.h:
+bitmaptcl.cc
+exptdriver.cc
+facetcl.cc
+fishtcl.cc
+fixpttcl.cc
+gabortcl.cc
+grobjtcl.cc
+gtexttcl.cc
+housetcl.cc
+masktcl.cc
+morphyfacetcl.cc
+objlist.cc
+objlisttcl.cc
+tlistutils.cc
+
+poslist.h
+exptdriver.cc
+jittertcl.cc
+positiontcl.cc
+poslist.cc
+poslisttcl.cc
+tlistutils.cc
+
+rhlist.h:
+exptdriver.cc
+rhlist.cc
+rhtcl.cc
+trial.cc
+
+soundlist.h:
+eventresponsehdlr.cc
+soundlist.cc
+soundtcl.cc
+
+thlist.h:
+exptdriver.cc
+thlist.cc
+thtcl.cc
+trial.cc
+
+tlist.h
+block.cc
+exptdriver.cc
+tlist.cc
+tlisttcl.cc
+tlistutils.cc
+tlistwidget.cc
+trialtcl.cc
+
+========================================================================
+Migrate legacy data 18-Oct-2000
+
+Should get rid of legacySrlz and legacyDesrlz once and for all
+
+I have several groups of legacy data:
+
+What to do?
+
+1-done) fMRI data -- These are not likely to ever be needed. But... I was
+   able to successfully convert all of this data to ASW format.
+
+2-done) Psychophysics fall 1999 -- These are readable by the current
+   legacyDesrlz. Therefore, we can migrate these files to
+   AsciiStreamWriter format in a batch process.
+
+	human_ac human_em human_jl human_ne human_rl
+	also human_ok human_rp human_fg
+
+3-done) Psychophysics spring 1999 -- These are not readable by the current
+	legacyDesrlz, and have fundamental incompatibility due to the lack
+	of RhList, ThList, BlockList. Therefore, I think it's best to
+	orphan them right now. The file format is fairly straightforward if
+	I needed to pull the data out at somepoint in the future. These
+	files are also readable+writable by grsh.a1.2.2, grsh0.5a2, and
+	grsh0.5a3. I'll freeze grsh0.8a2 as is, so that I could in
+	principle restructure these files at some point to be readable by
+	grsh0.8a2, and then re-write them in ASW format.
+
+	human_ap human_aw human_cc human_ss
+
+4-done) The object definition files in faces_triads/. Do we continue to
+   support this format, or convert these to ASW somehow? Or define a
+   "new" format for GrObj's only that allows them to be read in a
+   similar way? Probably best to have a new format that is similar to
+   the sparse format now used by LegacyReader. The question is, should
+   the new format be implemented with readTo/writeFrom, or does it
+   require a separate interface? Probably we can use readTo/writeFrom,
+   especially since, this should be used mostly for GrObj's... this
+   would allow us to collapse legacySrlz and legacyDesrlz back into
+   readFrom/writeTo, since we wouldn't be trying to support an old
+   format anymore.
+
+*) Copy all legacyDesrlz/legacySrlz functions into a text document as
+	a quick way to be able to manually read older files.
+
+------------------------------------------------------------------------
+
 
 (11-Oct-2000) Put more behavior in Tcl::SafeInterp. This functionality
 would be able to be used in many places.
