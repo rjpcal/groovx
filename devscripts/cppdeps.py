@@ -119,8 +119,6 @@ class DepBuilder:
 
             self.addRecursiveDeps(fullname, fullname)
 
-    objDir = 'obj/' + os.getenv('ARCH') + '/'
-
 
     def getObjFilestem(self, ccfilename):
         parts = ccfilename.split('/')
@@ -131,7 +129,7 @@ class DepBuilder:
         (stem, ext) = os.path.splitext(stem)
         assert (ext == '.cc' or ext == '.C' or ext == '.c')
 
-        ostem = self.objDir + stem
+        ostem = self.itsObjDir + stem
 
         return ostem
 
@@ -146,12 +144,13 @@ class DepBuilder:
 
     # public interface
 
-    def __init__(self, paths):
+    def __init__(self, paths, objdir = ('obj/' + os.getenv('ARCH') + '/')):
         self.itsProjectPath = paths[0]
         self.itsFullIncludes = {}
         self.itsDirectIncludes = DirectIncludeMap(paths)
         self.itsCLevels = {}
         self.itsLLevels = {}
+        self.itsObjDir = objdir
 
     def buildDepTree(self):
         os.path.walk(self.itsProjectPath, self.visitDir, None)
