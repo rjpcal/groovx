@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Tue Aug 28 12:58:37 2001
+// written: Tue Aug 28 17:30:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -393,6 +393,12 @@ public:
     indent(); push1(w/factor); itsFstream << "setlinewidth\n";
   }
 
+  void setrgbcolor(const Gfx::RgbaColor& col)
+  {
+    indent(); push1(col.r()); push1(col.g()); push1(col.b());
+    itsFstream << "setrgbcolor\n";
+  }
+
   void push1(double v)
   {
     itsFstream << v << " ";
@@ -570,16 +576,16 @@ DOTRACE("Gfx::PSCanvas::drawOnBackBuffer");
   ;// nothing
 }
 
-void Gfx::PSCanvas::setColor(const Gfx::RgbaColor& rgba)
+void Gfx::PSCanvas::setColor(const Gfx::RgbaColor& col)
 {
 DOTRACE("Gfx::PSCanvas::setColor");
-// FIXME
+  itsImpl->setrgbcolor(col);
 }
 
-void Gfx::PSCanvas::setClearColor(const Gfx::RgbaColor& rgba)
+void Gfx::PSCanvas::setClearColor(const Gfx::RgbaColor& col)
 {
 DOTRACE("Gfx::PSCanvas::setClearColor");
-// FIXME
+//FIXME
 }
 
 void Gfx::PSCanvas::setColorIndex(unsigned int index)
