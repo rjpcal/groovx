@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Fri Oct 20 17:58:44 2000
+// written: Mon Oct 23 12:52:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,8 +122,10 @@ DOTRACE("TlistUtils::createPreview");
   return preview_trial.id();
 }
 
-int TlistUtils::makeSingles(Tlist& tlist, int posid) {
+int TlistUtils::makeSingles(int posid) {
 DOTRACE("TlistUtils::makeSingles");
+
+  Tlist& tlist = Tlist::theTlist(); 
 
   if ( !PosList::thePosList().isValidId(posid) )
 	 { throw ErrorWithMsg(bad_posid_msg); }
@@ -150,8 +152,11 @@ DOTRACE("TlistUtils::makeSingles");
   return vec.size();
 }
 
-int TlistUtils::makePairs(Tlist& tlist, int posid1, int posid2) {
+int TlistUtils::makePairs(int posid1, int posid2) {
 DOTRACE("TlistUtils::makePairs");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   if ( !PosList::thePosList().isValidId(posid1) ||
 		 !PosList::thePosList().isValidId(posid2) )
 	 { throw ErrorWithMsg(bad_posid_msg); }
@@ -182,8 +187,11 @@ DOTRACE("TlistUtils::makePairs");
   return trialid;
 }
 
-int TlistUtils::makeTriads(Tlist& tlist, int posid[]) {
+int TlistUtils::makeTriads(int posid[]) {
 DOTRACE("TlistUtils::makeTriads");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   if ( !PosList::thePosList().isValidId(posid[0]) ||
 		 !PosList::thePosList().isValidId(posid[1]) ||
 		 !PosList::thePosList().isValidId(posid[2]) ) { 
@@ -255,10 +263,12 @@ DOTRACE("TlistUtils::makeTriads");
   return trial;
 }
 
-int TlistUtils::makeSummaryTrial(Tlist& tlist,
-											int trialid, int num_cols, double scale,
+int TlistUtils::makeSummaryTrial(int trialid, int num_cols, double scale,
 											double xstep, double ystep) {
 DOTRACE("TlistUtils::makeSummaryTrial");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   ObjList& olist = ObjList::theObjList();
   int num_objs = olist.count();
 	 
@@ -304,8 +314,11 @@ DOTRACE("TlistUtils::makeSummaryTrial");
   return trialid;
 }
 
-void TlistUtils::writeResponses(Tlist& tlist, const char* filename) {
+void TlistUtils::writeResponses(const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   fixed_block<int> trialids(tlist.count());
   tlist.insertValidIds(&trialids[0]);
 
@@ -338,8 +351,11 @@ DOTRACE("TlistUtils::writeResponses");
   if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
 }
 
-void TlistUtils::writeIncidenceMatrix(Tlist& tlist, const char* filename) {
+void TlistUtils::writeIncidenceMatrix(const char* filename) {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   fixed_block<int> trialids(tlist.count());
   tlist.insertValidIds(&trialids[0]);
 	 
@@ -365,17 +381,20 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
   }
 }
 
-int TlistUtils::loadObjidFile(Tlist& tlist, const char* filename,
+int TlistUtils::loadObjidFile(const char* filename,
 										int num_lines, int offset) {
 DOTRACE("TlistUtils::loadObjidFile");
 
   STD_IO::ifstream ifs(filename);
-  return readFromObjidsOnly(tlist, ifs, num_lines, offset);
+  return readFromObjidsOnly(ifs, num_lines, offset);
 }
 
-int TlistUtils::readFromObjidsOnly(Tlist& tlist, STD_IO::istream& is,
+int TlistUtils::readFromObjidsOnly(STD_IO::istream& is,
 											  int num_lines, int offset) {
 DOTRACE("TlistUtils::readFromObjidsOnly");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   // Remove all trials and resize itsTrials to 0
   tlist.clear();
 
@@ -407,8 +426,11 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
   return trial;
 }
 
-void TlistUtils::writeMatlab(Tlist& tlist, const char* filename) {
+void TlistUtils::writeMatlab(const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   fixed_block<int> trialids(tlist.count());
   tlist.insertValidIds(&trialids[0]);
 
@@ -437,8 +459,11 @@ DOTRACE("TlistUtils::writeMatlab");
   }
 }
 
-void TlistUtils::addObject(Tlist& tlist, int trialid, int objid, int posid) {
+void TlistUtils::addObject(int trialid, int objid, int posid) {
 DOTRACE("TlistUtils::addObject");
+
+  Tlist& tlist = Tlist::theTlist(); 
+
   if ( trialid < 0 ) { throw ErrorWithMsg(bad_trial_msg); }
 
   if ( !ObjList::theObjList().isValidId(objid) )
