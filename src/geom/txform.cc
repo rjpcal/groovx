@@ -533,6 +533,7 @@ DOTRACE("geom::txform::set_col_major_data");
 void geom::txform::debug_dump() const
 {
 DOTRACE("geom::txform::debug_dump");
+  dbg_nl(0);
   dbg_print(0, m_mtx[0]); dbg_print(0, m_mtx[4]); dbg_print(0, m_mtx[8]); dbg_print_nl(0, m_mtx[12]);
   dbg_print(0, m_mtx[1]); dbg_print(0, m_mtx[5]); dbg_print(0, m_mtx[9]); dbg_print_nl(0, m_mtx[13]);
   dbg_print(0, m_mtx[2]); dbg_print(0, m_mtx[6]); dbg_print(0, m_mtx[10]); dbg_print_nl(0, m_mtx[14]);

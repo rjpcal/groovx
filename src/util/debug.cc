@@ -112,6 +112,16 @@ void rutz::debug::dump(const char* what, int level, const char* where, int line_
   debug_line_complete = false;
 }
 
+void rutz::debug::start_newline() throw()
+{
+  std::cerr.exceptions(std::ios::goodbit);
+  if (!debug_line_complete)
+    {
+      std::cerr << '\n';
+      debug_line_complete = true;
+    }
+}
+
 void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Panic (%s:%d):\n\tgot '%s'\n\n", where, line_no, what);

@@ -56,6 +56,8 @@ namespace rutz {namespace debug
 
   void dump (const char* what, int level, const char* where, int line_no) throw();
 
+  void start_newline () throw();
+
   void panic_aux         (const char* what, const char* where, int line_no) throw();
   void assert_aux        (const char* what, const char* where, int line_no) throw();
   void precondition_aux  (const char* what, const char* where, int line_no) throw();
@@ -162,6 +164,7 @@ static const char vcid_debug_h[] = "$Id$ $URL$";
 #  define dbg_print(lev, x)    do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
 #  define dbg_print_nl(lev, x) do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
 #  define dbg_dump(lev, x)     do { if (GET_DBG_LEVEL() >= lev) { rutz::debug::dump(#x, lev, __FILE__, __LINE__); (x).debug_dump(); } } while (0)
+#  define dbg_nl(lev)          do { if (GET_DBG_LEVEL() >= lev) rutz::debug::start_newline(); } while (0)
 
 #  define ASSERT(expr)        do { if ( !(expr) ) rutz::debug::assert_aux(#expr, __FILE__, __LINE__); } while(0)
 #  define INVARIANT(expr)     do { if ( !(expr) ) rutz::debug::invariant_aux(#expr, __FILE__, __LINE__); } while(0)
@@ -175,6 +178,7 @@ static const char vcid_debug_h[] = "$Id$ $URL$";
 #  define dbg_print(lev, x)    do {} while (0)
 #  define dbg_print_nl(lev, x) do {} while (0)
 #  define dbg_dump(lev, expr)  do {} while (0)
+#  define dbg_nl(lev)          do {} while (0)
 
 #  define ASSERT(x)        do {} while (0)
 #  define INVARIANT(x)     do {} while (0)
