@@ -355,7 +355,7 @@ public:
   }
 };
 
-/// A class for doing fast include-file dependency analysis.
+/// A class for doing fast dependency analysis.
 /** Several shortcuts (er, hacks...) are taken to make the parsing
     extremely fast and cheap, but at worst this makes the computed
     dependencies be unnecessarily pessimistic. For example, a #include
@@ -384,19 +384,20 @@ private:
     };
 
   // Member variables
-  vector<string>           m_user_ipath;
-  vector<string>           m_sys_ipath;
-  vector<string>           m_literal_exts;
-  vector<string>           m_src_files;
-  vector<string>           m_obj_exts;
-  string                   m_objdir;
-  bool                     m_check_sys_includes;
-  bool                     m_quiet;
-  output_mode              m_output_mode;
+  vector<string>           m_cfg_user_ipath;
+  vector<string>           m_cfg_sys_ipath;
+  vector<string>           m_cfg_literal_exts;
+  vector<string>           m_cfg_obj_exts;
+  string                   m_cfg_obj_prefix;
+  bool                     m_cfg_check_sys_deps;
+  bool                     m_cfg_quiet;
+  output_mode              m_cfg_output_mode;
 
-  dep_map_t                m_nested_includes;
-  dep_map_t                m_direct_includes;
-  dep_map_t                m_link_deps;
+  vector<string>           m_src_files;
+
+  dep_map_t                m_nested_cdeps;
+  dep_map_t                m_direct_cdeps;
+  dep_map_t                m_nested_ldeps;
 
   map<string, parse_state> m_cdep_parse_states;
   map<string, parse_state> m_ldep_parse_states;
@@ -432,9 +433,9 @@ public:
                           const vector<string>& literal,
                           dep_list_t& vec);
 
-  const dep_list_t& get_direct_includes(const string& src_fname);
-  const dep_list_t& get_nested_includes(const string& src_fname);
-  const dep_list_t& get_link_deps(const string& src_fname);
+  const dep_list_t& get_direct_cdeps(const string& src_fname);
+  const dep_list_t& get_nested_cdeps(const string& src_fname);
+  const dep_list_t& get_nested_ldeps(const string& src_fname);
 
   void print_makefile_dep(const string& current_file);
   void print_include_tree(const string& current_file);
@@ -448,9 +449,9 @@ public:
 };
 
 cppdeps::cppdeps(const int argc, char** const argv) :
-  m_check_sys_includes(false),
-  m_quiet(false),
-  m_output_mode(MAKEFILE_DEPS),
+  m_cfg_check_sys_deps(false),
+  m_cfg_quiet(false),
+  m_cfg_output_mode(MAKEFILE_DEPS),
   m_start_time(time((time_t*) 0))
 {
   bool debug = false;
@@ -496,9 +497,9 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          argv[0]);
     }
 
-  m_sys_ipath.push_back("/usr/include");
-  m_sys_ipath.push_back("/usr/include/linux");
-  m_sys_ipath.push_back("/usr/local/matlab/extern/include");
+  m_cfg_sys_ipath.push_back("/usr/include");
+  m_cfg_sys_ipath.push_back("/usr/include/linux");
+  m_cfg_sys_ipath.push_back("/usr/local/matlab/extern/include");
 
   char** arg = argv+1; // skip to first command-line arg
 
@@ -506,47 +507,47 @@ cppdeps::cppdeps(const int argc, char** const argv) :
     {
       if (strcmp(*arg, "--includedir") == 0)
         {
-          m_user_ipath.push_back(*++arg);
+          m_cfg_user_ipath.push_back(*++arg);
         }
       else if (strncmp(*arg, "-I", 2) == 0)
         {
-          m_user_ipath.push_back((*arg) + 2);
+          m_cfg_user_ipath.push_back((*arg) + 2);
         }
       else if (strcmp(*arg, "--sysincludedir") == 0)
         {
-          m_sys_ipath.push_back(*++arg);
+          m_cfg_sys_ipath.push_back(*++arg);
         }
       else if (strcmp(*arg, "--objdir") == 0)
         {
-          m_objdir = trim_trailing_slashes(*++arg);
+          m_cfg_obj_prefix = trim_trailing_slashes(*++arg);
         }
       else if (strcmp(*arg, "--checksys") == 0)
         {
-          m_check_sys_includes = true;
+          m_cfg_check_sys_deps = true;
         }
       else if (strcmp(*arg, "--quiet") == 0)
         {
-          m_quiet = true;
+          m_cfg_quiet = true;
         }
       else if (strcmp(*arg, "--output-direct-includes") == 0)
         {
-          m_output_mode = DIRECT_INCLUDE_TREE;
+          m_cfg_output_mode = DIRECT_INCLUDE_TREE;
         }
       else if (strcmp(*arg, "--output-nested-includes") == 0)
         {
-          m_output_mode = NESTED_INCLUDE_TREE;
+          m_cfg_output_mode = NESTED_INCLUDE_TREE;
         }
       else if (strcmp(*arg, "--output-link-deps") == 0)
         {
-          m_output_mode = LINK_DEPS;
+          m_cfg_output_mode = LINK_DEPS;
         }
       else if (strcmp(*arg, "--literal") == 0)
         {
-          m_literal_exts.push_back(*++arg);
+          m_cfg_literal_exts.push_back(*++arg);
         }
       else if (strcmp(*arg, "--objext") == 0)
         {
-          m_obj_exts.push_back(*++arg);
+          m_cfg_obj_exts.push_back(*++arg);
         }
       else if (strcmp(*arg, "--debug") == 0)
         {
@@ -564,7 +565,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
           m_src_files.push_back(fname);
           if (is_directory(fname.c_str()))
             {
-              m_user_ipath.push_back(fname);
+              m_cfg_user_ipath.push_back(fname);
               m_strip_prefix = fname;
             }
         }
@@ -577,8 +578,8 @@ cppdeps::cppdeps(const int argc, char** const argv) :
 
   // If the user didn't specify any object-filename extensions, then
   // we just use the default '.o'.
-  if (m_obj_exts.size() == 0)
-    m_obj_exts.push_back(".o");
+  if (m_cfg_obj_exts.size() == 0)
+    m_cfg_obj_exts.push_back(".o");
 
   if (debug)
     {
@@ -612,11 +613,11 @@ void cppdeps::inspect(char** arg0, char** argn)
   cerr << "\n";
 
   cerr << "user_ipath: ";
-  print_stringvec(cerr, m_user_ipath);
+  print_stringvec(cerr, m_cfg_user_ipath);
   cerr << "\n";
 
   cerr << "sys_ipath: ";
-  print_stringvec(cerr, m_sys_ipath);
+  print_stringvec(cerr, m_cfg_sys_ipath);
   cerr << "\n";
 
   cerr << "sources: ";
@@ -624,14 +625,14 @@ void cppdeps::inspect(char** arg0, char** argn)
   cerr << "\n";
 
   cerr << "literal_exts: ";
-  print_stringvec(cerr, m_literal_exts);
+  print_stringvec(cerr, m_cfg_literal_exts);
   cerr << "\n";
 
   cerr << "obj_exts: ";
-  print_stringvec(cerr, m_obj_exts);
+  print_stringvec(cerr, m_cfg_obj_exts);
   cerr << "\n";
 
-  cerr << "objdir: '" << m_objdir << "'\n\n";
+  cerr << "obj_prefix: '" << m_cfg_obj_prefix << "'\n\n";
 }
 
 int cppdeps::is_cc_filename(const char* fname)
@@ -735,21 +736,21 @@ bool cppdeps::resolve_one(const string& include_name,
 }
 
 const cppdeps::dep_list_t&
-cppdeps::get_direct_includes(const string& src_fname)
+cppdeps::get_direct_cdeps(const string& src_fname)
 {
   {
-    dep_map_t::iterator itr = m_direct_includes.find(src_fname);
-    if (itr != m_direct_includes.end())
+    dep_map_t::iterator itr = m_direct_cdeps.find(src_fname);
+    if (itr != m_direct_cdeps.end())
       return (*itr).second;
   }
 
   const string dirname_without_slash = get_dirname_of(src_fname);
 
-  dep_list_t& vec = m_direct_includes[src_fname];
+  dep_list_t& vec = m_direct_cdeps[src_fname];
 
   mapped_file f(src_fname.c_str());
 
-  if (f.mtime() > m_start_time && !m_quiet)
+  if (f.mtime() > m_start_time && !m_cfg_quiet)
     {
       cerr << "WARNING: for file " << src_fname << ":\n"
            << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
@@ -809,7 +810,7 @@ cppdeps::get_direct_includes(const string& src_fname)
 
       const bool is_valid_delimiter =
         (delimiter == '\"') ||
-        (delimiter == '<' && m_check_sys_includes == true);
+        (delimiter == '<' && m_cfg_check_sys_deps == true);
 
       if (!is_valid_delimiter)
         continue;
@@ -848,33 +849,33 @@ cppdeps::get_direct_includes(const string& src_fname)
       const string include_name(include_start, include_length);
 
       if (resolve_one(include_name, src_fname,
-                      dirname_without_slash, m_user_ipath,
-                      m_literal_exts, vec))
+                      dirname_without_slash, m_cfg_user_ipath,
+                      m_cfg_literal_exts, vec))
         continue;
 
-      if (m_check_sys_includes &&
+      if (m_cfg_check_sys_deps &&
           resolve_one(include_name, src_fname,
-                      dirname_without_slash, m_sys_ipath,
-                      m_literal_exts, vec))
+                      dirname_without_slash, m_cfg_sys_ipath,
+                      m_cfg_literal_exts, vec))
         continue;
 
-      if (!m_quiet)
+      if (!m_cfg_quiet)
         {
           cerr << "WARNING: in " << src_fname
                << ": couldn\'t resolve #include \""
                << include_name << "\"\n";
 
           cerr << "\twith search path: ";
-          print_stringvec(cerr, m_user_ipath);
+          print_stringvec(cerr, m_cfg_user_ipath);
           cerr << "\n";
 
-          if (m_check_sys_includes)
+          if (m_cfg_check_sys_deps)
             {
               cerr << "\and system search path: [";
-              for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
+              for (unsigned int i = 0; i < m_cfg_user_ipath.size(); ++i)
                 {
-                  cerr << "'" << m_user_ipath[i] << "'";
-                  if (i+1 < m_user_ipath.size())
+                  cerr << "'" << m_cfg_user_ipath[i] << "'";
+                  if (i+1 < m_cfg_user_ipath.size())
                     cerr << ", ";
                 }
               cerr << "]\n";
@@ -886,11 +887,11 @@ cppdeps::get_direct_includes(const string& src_fname)
 }
 
 const cppdeps::dep_list_t&
-cppdeps::get_nested_includes(const string& src_fname)
+cppdeps::get_nested_cdeps(const string& src_fname)
 {
   {
-    dep_map_t::iterator itr = m_nested_includes.find(src_fname);
-    if (itr != m_nested_includes.end())
+    dep_map_t::iterator itr = m_nested_cdeps.find(src_fname);
+    if (itr != m_nested_cdeps.end())
       return (*itr).second;
   }
 
@@ -910,11 +911,11 @@ cppdeps::get_nested_includes(const string& src_fname)
   // this turns out to be cheaper than building up the list in a
   // std::vector and then doing a big std::sort, std::unique(), and
   // vec.erase() at the end
-  std::set<dependency> includes_set;
+  std::set<dependency> dep_set;
 
-  includes_set.insert(src_fname);
+  dep_set.insert(src_fname);
 
-  const dep_list_t& direct = get_direct_includes(src_fname);
+  const dep_list_t& direct = get_direct_cdeps(src_fname);
 
   for (dep_list_t::const_iterator
          i = direct.begin(),
@@ -932,26 +933,26 @@ cppdeps::get_nested_includes(const string& src_fname)
       // files that are generated by an intermediate rule in some makefile.
       if ((*i).literal == true)
         {
-          includes_set.insert((*i).target);
+          dep_set.insert((*i).target);
           continue;
         }
 
       // Check for other recursion cycles
       if (m_cdep_parse_states[(*i).target] == IN_PROGRESS)
         {
-          if (!m_quiet)
+          if (!m_cfg_quiet)
             cerr << "WARNING: in " << src_fname
                  << ": recursive #include cycle with " << (*i).target << "\n";
           continue;
         }
 
-      const dep_list_t& indirect = get_nested_includes((*i).target);
-      includes_set.insert(indirect.begin(), indirect.end());
+      const dep_list_t& indirect = get_nested_cdeps((*i).target);
+      dep_set.insert(indirect.begin(), indirect.end());
     }
 
-  dep_list_t& result = m_nested_includes[src_fname];
+  dep_list_t& result = m_nested_cdeps[src_fname];
   assert(result.empty());
-  result.assign(includes_set.begin(), includes_set.end());
+  result.assign(dep_set.begin(), dep_set.end());
 
   m_cdep_parse_states[src_fname] = COMPLETE;
 
@@ -959,13 +960,13 @@ cppdeps::get_nested_includes(const string& src_fname)
 }
 
 const cppdeps::dep_list_t&
-cppdeps::get_link_deps(const string& src_fname_orig)
+cppdeps::get_nested_ldeps(const string& src_fname_orig)
 {
   const string src_fname = make_normpath(src_fname_orig);
 
   {
-    dep_map_t::iterator itr = m_link_deps.find(src_fname);
-    if (itr != m_link_deps.end())
+    dep_map_t::iterator itr = m_nested_ldeps.find(src_fname);
+    if (itr != m_nested_ldeps.end())
       return (*itr).second;
   }
 
@@ -982,11 +983,11 @@ cppdeps::get_link_deps(const string& src_fname_orig)
 
   deps_set.insert(src_fname);
 
-  const dep_list_t& includes = get_nested_includes(src_fname);
+  const dep_list_t& cdeps = get_nested_cdeps(src_fname);
 
   for (dep_list_t::const_iterator
-         i = includes.begin(),
-         istop = includes.end();
+         i = cdeps.begin(),
+         istop = cdeps.end();
        i != istop;
        ++i)
     {
@@ -1000,18 +1001,18 @@ cppdeps::get_link_deps(const string& src_fname_orig)
       // Check for other recursion cycles
       if (m_ldep_parse_states[ccfile] == IN_PROGRESS)
         {
-          if (!m_quiet)
+          if (!m_cfg_quiet)
             cerr << "WARNING: in " << src_fname
                  << ": recursive link-dep cycle with " << ccfile << "\n";
           continue;
         }
 
-      const dep_list_t& indirect_deps = get_link_deps(ccfile);
+      const dep_list_t& indirect_deps = get_nested_ldeps(ccfile);
 
       deps_set.insert(indirect_deps.begin(), indirect_deps.end());
     }
 
-  dep_list_t& result = m_link_deps[src_fname];
+  dep_list_t& result = m_nested_ldeps[src_fname];
   assert(result.empty());
   result.assign(deps_set.begin(), deps_set.end());
 
@@ -1040,39 +1041,39 @@ void cppdeps::print_makefile_dep(const string& fname)
       fname_stem.erase(0, m_strip_prefix.length() + 1);
     }
 
-  // Make sure that m_objdir ends with a slash if it is non-empty, so
-  // that we can join it to fname_stem and make a proper
+  // Make sure that m_cfg_obj_prefix ends with a slash if it is
+  // non-empty, so that we can join it to fname_stem and make a proper
   // pathname.
-  if (m_objdir.length() > 0
-      && m_objdir[m_objdir.length()-1] != '/')
+  if (m_cfg_obj_prefix.length() > 0
+      && m_cfg_obj_prefix[m_cfg_obj_prefix.length()-1] != '/')
     {
-      m_objdir += '/';
+      m_cfg_obj_prefix += '/';
     }
 
-  assert(m_obj_exts.size() > 0);
+  assert(m_cfg_obj_exts.size() > 0);
 
   // Use C-style stdio here since it came out running quite a bit
   // faster than iostreams, at least under g++-3.2.
   printf("%s%s%s",
-         m_objdir.c_str(),
+         m_cfg_obj_prefix.c_str(),
          fname_stem.c_str(),
-         m_obj_exts[0].c_str());
+         m_cfg_obj_exts[0].c_str());
 
-  for (unsigned int i = 1; i < m_obj_exts.size(); ++i)
+  for (unsigned int i = 1; i < m_cfg_obj_exts.size(); ++i)
     {
       printf(" %s%s%s",
-             m_objdir.c_str(),
+             m_cfg_obj_prefix.c_str(),
              fname_stem.c_str(),
-             m_obj_exts[i].c_str());
+             m_cfg_obj_exts[i].c_str());
     }
 
   printf(": ");
 
-  const dep_list_t& includes = get_nested_includes(fname);
+  const dep_list_t& cdeps = get_nested_cdeps(fname);
 
   for (dep_list_t::const_iterator
-         itr = includes.begin(),
-         stop = includes.end();
+         itr = cdeps.begin(),
+         stop = cdeps.end();
        itr != stop;
        ++itr)
     {
@@ -1092,16 +1093,16 @@ void cppdeps::print_include_tree(const string& fname)
 
   // otherwise, we do have a c++ file
 
-  const dep_list_t& includes =
-    m_output_mode == DIRECT_INCLUDE_TREE
-    ? get_direct_includes(fname)
-    : get_nested_includes(fname);
+  const dep_list_t& cdeps =
+    m_cfg_output_mode == DIRECT_INCLUDE_TREE
+    ? get_direct_cdeps(fname)
+    : get_nested_cdeps(fname);
 
   printf("%s:: ", fname.c_str());
 
   for (dep_list_t::const_iterator
-         itr = includes.begin(),
-         stop = includes.end();
+         itr = cdeps.begin(),
+         stop = cdeps.end();
        itr != stop;
        ++itr)
     {
@@ -1121,11 +1122,11 @@ void cppdeps::print_link_deps(const string& fname)
     // it's not a c++ file, so just do nothing
     return;
 
-  const dep_list_t& deps = get_link_deps(fname);
+  const dep_list_t& ldeps = get_nested_ldeps(fname);
 
   for (dep_list_t::const_iterator
-         itr = deps.begin(),
-         stop = deps.end();
+         itr = ldeps.begin(),
+         stop = ldeps.end();
        itr != stop;
        ++itr)
     {
@@ -1174,7 +1175,7 @@ void cppdeps::traverse_sources(output_func handler)
 
 void cppdeps::batch_build()
 {
-  switch (m_output_mode)
+  switch (m_cfg_output_mode)
     {
     case MAKEFILE_DEPS:
       {
