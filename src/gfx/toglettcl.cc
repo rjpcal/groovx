@@ -44,14 +44,6 @@
 #include "util/ref.h"
 
 #include "util/trace.h"
-#include "util/debug.h"
-DBG_REGISTER;
-
-///////////////////////////////////////////////////////////////////////
-//
-// TogletTcl namespace declarations
-//
-///////////////////////////////////////////////////////////////////////
 
 namespace
 {
@@ -84,11 +76,6 @@ namespace
     return dumpCmap(toglet, 0, 255);
   }
 
-  bool inited()
-  {
-    return Toglet::getCurrent().isValid();
-  }
-
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
   Util::UID see(Util::SoftRef<Toglet> widg, Util::Ref<GxNode> item)
@@ -100,80 +87,51 @@ namespace
   }
 }
 
-//---------------------------------------------------------------------
-//
-// TogletPkg class definition
-//
-//---------------------------------------------------------------------
-
-class TogletPkg : public Tcl::Pkg
-{
-public:
-  TogletPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Toglet", "$Revision$")
-  {
-    this->inheritPkg("TkWidget");
-    Tcl::defGenericObjCmds<Toglet>(this);
-
-    def( "current", "toglet_id", &Toglet::setCurrent );
-    def( "current", 0, &Toglet::getCurrent );
-    def( "defaultParent", "parent", &Toglet::defaultParent );
-    def( "dumpCmap", "toglet_id start_index end_index", &dumpCmap );
-    def( "dumpCmap", "toglet_id", &dumpCmapAll );
-    def( "inited", 0, &inited );
-    def( "see", "gxnode_id", &see );
-
-    defSetter("allowRefresh", &Toglet::allowRefresh);
-    defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
-    defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
-    defAction("clearscreen", &Toglet::fullClearscreen);
-    defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
-    defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
-    defAttrib("size", &Toglet::size, &Toglet::setSize);
-    defAction("swapBuffers", &Toglet::swapBuffers);
-    defAction("takeFocus", &Toglet::takeFocus);
-    defAction("undraw", &Toglet::undraw);
-
-    Toglet::make();
-
-    Pkg::eval("proc clearscreen {} { Togl::clearscreen }\n"
-              "proc see {id} { Togl::see $id }\n"
-              "proc undraw {} { Togl::undraw }\n"
-              "\n"
-              "foreach cmd [info commands ::Toglet::*] {\n"
-              "  namespace eval ::Togl {\n"
-              "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::current\\] \\$args \""
-              "  }\n"
-              "}\n"
-              "namespace eval ::Togl { namespace export * }"
-              );
-  }
-
-  virtual ~TogletPkg()
-  {
-    if (Toglet::getCurrent().isValid())
-      {
-        Toglet::getCurrent()->setVisibility(false);
-      }
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// Toglet_Init
-//
-//---------------------------------------------------------------------
-
 extern "C"
 int Toglet_Init(Tcl_Interp* interp)
 {
 DOTRACE("Toglet_Init");
 
-  Tcl::Pkg* pkg = new TogletPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Toglet", "$Revision$");
+
+  pkg->inheritPkg("TkWidget");
+  Tcl::defGenericObjCmds<Toglet>(pkg);
 
   Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::make );
   Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::makeToplevel,
                                                   "TopToglet" );
+
+  pkg->def( "current", "toglet_id", &Toglet::setCurrent );
+  pkg->def( "current", 0, &Toglet::getCurrent );
+  pkg->def( "defaultParent", "parent", &Toglet::defaultParent );
+  pkg->def( "dumpCmap", "toglet_id start_index end_index", &dumpCmap );
+  pkg->def( "dumpCmap", "toglet_id", &dumpCmapAll );
+  pkg->def( "see", "gxnode_id", &see );
+
+  pkg->defSetter("allowRefresh", &Toglet::allowRefresh);
+  pkg->defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
+  pkg->defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
+  pkg->defAction("clearscreen", &Toglet::fullClearscreen);
+  pkg->defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
+  pkg->defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
+  pkg->defAttrib("size", &Toglet::size, &Toglet::setSize);
+  pkg->defAction("swapBuffers", &Toglet::swapBuffers);
+  pkg->defAction("takeFocus", &Toglet::takeFocus);
+  pkg->defAction("undraw", &Toglet::undraw);
+
+  Toglet::make();
+
+  pkg->eval("proc clearscreen {} { Togl::clearscreen }\n"
+            "proc see {id} { Togl::see $id }\n"
+            "proc undraw {} { Togl::undraw }\n"
+            "\n"
+            "foreach cmd [info commands ::Toglet::*] {\n"
+            "  namespace eval ::Togl {\n"
+            "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::current\\] \\$args \""
+            "  }\n"
+            "}\n"
+            "namespace eval ::Togl { namespace export * }"
+            );
 
   return pkg->initStatus();
 }
