@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jun 13 15:16:01 2001
+// written: Wed Jul 11 11:01:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ protected:
     int msec = getIntFromArg(3);
 
     int eventid = th->addEventByName(event_type, itsTimePoint, msec);
-    returnInt(eventid);
+    returnVal(eventid);
   }
 private:
   TimingHdlr::TimePoint itsTimePoint;

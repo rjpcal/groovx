@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Thu May 10 12:04:46 2001
+// written: Wed Jul 11 11:03:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,22 +51,22 @@ void operator delete(void* space)
 class MemUsageCmd : public Tcl::TclCmd {
 public:
   MemUsageCmd(Tcl_Interp* interp) :
-	 Tcl::TclCmd(interp, "memUsage", "", 1, 1, false) {}
+    Tcl::TclCmd(interp, "memUsage", "", 1, 1, false) {}
 
 protected:
   virtual void invoke() {
-	 returnVal(TOTAL);
+    returnVal(TOTAL);
   }
 };
 
 class HookCmd : public Tcl::TclCmd {
 public:
   HookCmd(Tcl_Interp* interp) :
-	 Tcl::TclCmd(interp, "hook", "", 0, 10000, false) {}
+    Tcl::TclCmd(interp, "hook", "", 0, 10000, false) {}
 
 protected:
   virtual void invoke() {
-	 returnCstring("Hello, World!");
+    returnVal("Hello, World!");
   }
 };
 
@@ -74,10 +74,10 @@ protected:
 class HookPkg : public Tcl::TclPkg {
 public:
   HookPkg(Tcl_Interp* interp) :
-	 Tcl::TclPkg(interp, "Hook", "$Revision$")
+    Tcl::TclPkg(interp, "Hook", "$Revision$")
   {
-	 addCommand(new HookCmd(interp));
-	 addCommand(new MemUsageCmd(interp));
+    addCommand(new HookCmd(interp));
+    addCommand(new MemUsageCmd(interp));
   }
 };
 

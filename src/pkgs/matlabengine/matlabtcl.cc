@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Tue Jul 10 13:17:26 2001
+// written: Wed Jul 11 11:03:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ protected:
   virtual void invoke() {
     MatlabEngine* eng = getItem();
     const char* cmd = getCstringFromArg(2);
-    returnCstring(eng->evalString(cmd));
+    returnVal(eng->evalString(cmd));
   }
 };
 
@@ -125,7 +125,7 @@ protected:
   virtual void invoke() {
     MatlabEngine* eng = getItem();
     const char* name = getCstringFromArg(2);
-    returnInt(eng->getMtx(name)->id());
+    returnVal(eng->getMtx(name)->id());
   }
 };
 

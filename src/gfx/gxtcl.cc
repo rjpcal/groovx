@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Jun 13 15:16:01 2001
+// written: Wed Jul 11 11:02:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ protected:
   virtual void invoke() {
     Ref<GxNode> other(getIntFromArg(2));
     GxNode* sep = getItem();
-    returnBool(sep->contains(other.get()));
+    returnVal(sep->contains(other.get()));
   }
 };
 
@@ -77,7 +77,7 @@ protected:
     int child = getIntFromArg(2);
     GxSeparator* sep = getItem();
     int child_id = sep->addChild(child);
-    returnInt(child_id);
+    returnVal(child_id);
   }
 };
 

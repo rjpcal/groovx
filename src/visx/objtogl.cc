@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Jun 22 09:36:16 2001
+// written: Wed Jul 11 11:02:50 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -129,7 +129,7 @@ protected:
   virtual void invoke() {
     if (objc() < 2)
       {
-        returnInt(theWidget.id());
+        returnVal(theWidget.id());
       }
     else
       {
@@ -193,7 +193,7 @@ public:
     Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
-    returnBool(ObjTogl::theWidget.isValid());
+    returnVal(ObjTogl::theWidget.isValid());
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jul 11 10:18:16 2001
+// written: Wed Jul 11 11:03:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
     throw;
   }
 
-  returnCstring(ost.str());
+  returnVal(ost.str());
 
   ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
@@ -153,7 +153,7 @@ DOTRACE("Tcl::WriteCmd::invoke");
     throw;
   }
 
-  returnCstring(ost.str());
+  returnVal(ost.str());
 
   ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }

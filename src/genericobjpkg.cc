@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Fri Jun 15 15:32:32 2001
+// written: Wed Jul 11 11:03:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ Tcl::IsCmd::~IsCmd() {}
 
 void Tcl::IsCmd::invoke() {
   int id = TclCmd::getIntFromArg(1);
-  returnBool(itsCaster->isIdMyType(id));
+  returnVal(itsCaster->isIdMyType(id));
 }
 
 //---------------------------------------------------------------------
@@ -83,9 +83,9 @@ void Tcl::CountAllCmd::invoke() {
       if (itsCaster->isMyType(*itr))
         ++count;
     }
-  returnInt(count);
+  returnVal(count);
 #else
-  returnInt(std::count_if(theDb.beginPtrs(), theDb.endPtrs(),
+  returnVal(std::count_if(theDb.beginPtrs(), theDb.endPtrs(),
                           std::bind1st(std::mem_fun(&ObjCaster::isMyType),
                                        itsCaster)));
 #endif

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 11 10:17:33 2001
+// written: Wed Jul 11 11:02:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ protected:
     if (objc() < 3)
       {
         WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
-        returnInt(item.id());
+        returnVal(item.id());
       }
     else
       {
