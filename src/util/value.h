@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Thu Jun  1 14:21:35 2000
+// written: Sat Sep 23 15:12:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,10 @@
 #include "util/error.h"
 #endif
 
-class istream;
-class ostream;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#include <iosfwd>
+#define IOSFWD_DEFINED
+#endif
 
 /**
  *

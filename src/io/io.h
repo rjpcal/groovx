@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Jul 10 14:38:08 2000
+// written: Sat Sep 23 15:12:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,10 @@
 #include "util/error.h"
 #endif
 
-class istream;
-class ostream;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#include <iosfwd>
+#define IOSFWD_DEFINED
+#endif
 
 class type_info;
 

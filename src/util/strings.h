@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu Mar 23 11:40:53 2000
+// written: Sat Sep 23 15:12:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -217,8 +217,10 @@ inline bool operator==(const dynamic_string& lhs, const dynamic_string& rhs)
 //
 ///////////////////////////////////////////////////////////////////////
 
-class istream;
-class ostream;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#include <iosfwd>
+#define IOSFWD_DEFINED
+#endif
 
 istream& operator>>(istream& is, fixed_string& str);
 istream& operator>>(istream& is, dynamic_string& str);

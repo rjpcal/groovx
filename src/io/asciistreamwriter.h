@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Thu Mar 30 10:07:09 2000
+// written: Sat Sep 23 15:11:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,10 @@
 #include "io/writer.h"
 #endif
 
-class ostream;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#include <iosfwd>
+#define IOSFWD_DEFINED
+#endif
 
 // This is a hack to help shorten up names for assemblers on systems
 // that need short identifier names. A typedef at the end of this file

@@ -3,7 +3,7 @@
 // tlistutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 02:58:20 1999
-// written: Thu May 11 20:25:08 2000
+// written: Sat Sep 23 15:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,10 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
-class istream;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#include <iosfwd>
+#define IOSFWD_DEFINED
+#endif
 
 class Tlist;
 
