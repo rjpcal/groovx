@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Thu Feb 14 11:55:27 2002
+// written: Tue Feb 19 14:14:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,9 @@
 class DataBlock
 {
 private:
+  int itsRefCount;
+
+
   DataBlock(const DataBlock& other); // not implemented
   DataBlock& operator=(const DataBlock& other); // not implemented
 
@@ -25,7 +28,11 @@ private:
 
   friend class DummyFriend; // to eliminate compiler warning
 
+
 protected:
+  double* const itsData;
+  unsigned int const itsLength;
+
   DataBlock(double* data, unsigned int len);
   virtual ~DataBlock();
 
@@ -34,6 +41,8 @@ protected:
 
   // Class-specific operator delete.
   void operator delete(void* space);
+
+  int refCount() const { return itsRefCount; }
 
 public:
   static DataBlock* makeDataCopy(const double* data, int data_length);
@@ -55,15 +64,11 @@ public:
 
   virtual bool isUnique() const = 0;
 
-protected:
-  int refCount() const { return itsRefCount; }
 
-private:
-  int itsRefCount;
+  const double* data()    const { return itsData; }
+        double* data_nc()       { return itsData; }
 
-public:
-  double* const itsData;
-  unsigned int const itsLength;
+  unsigned int  length()  const { return itsLength; }
 };
 
 static const char vcid_datablock_h[] = "$Header$";
