@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:36 1999
-// written: Wed Jun  6 09:44:18 2001
+// written: Sat Jul 21 20:10:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,52 +15,69 @@
 
 #include "nullresponsehdlr.h"
 
+#include "gwt/widget.h"
+
+#include "util/ref.h"
+
 #define NO_TRACE
 #include "util/trace.h"
 
-NullResponseHdlr* NullResponseHdlr::make() {
+NullResponseHdlr* NullResponseHdlr::make()
+{
 DOTRACE("NullResponseHdlr::make");
   return new NullResponseHdlr;
 }
 
-NullResponseHdlr::NullResponseHdlr() {
+NullResponseHdlr::NullResponseHdlr()
+{
 DOTRACE("NullResponseHdlr::NullResponseHdlr");
 }
 
-NullResponseHdlr::~NullResponseHdlr() {
+NullResponseHdlr::~NullResponseHdlr()
+{
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::readFrom(IO::Reader*) {
+void NullResponseHdlr::readFrom(IO::Reader*)
+{
 DOTRACE("NullResponseHdlr::readFrom");
 }
 
-void NullResponseHdlr::writeTo(IO::Writer*) const {
+void NullResponseHdlr::writeTo(IO::Writer*) const
+{
 DOTRACE("NullResponseHdlr::writeTo");
 }
 
 // actions
-void NullResponseHdlr::rhBeginTrial(GWT::Widget&, TrialBase&) const {
+void NullResponseHdlr::rhBeginTrial(Util::WeakRef<GWT::Widget>,
+                                    TrialBase&) const
+{
 DOTRACE("NullResponseHdlr::rhBeginTrial");
 }
 
-void NullResponseHdlr::rhAbortTrial()  const {
+void NullResponseHdlr::rhAbortTrial()  const
+{
 DOTRACE("NullResponseHdlr::rhAbortTrial");
 }
 
-void NullResponseHdlr::rhEndTrial() const {
+void NullResponseHdlr::rhEndTrial() const
+{
 DOTRACE("NullResponseHdlr::rhEndTrial");
 }
 
-void NullResponseHdlr::rhHaltExpt() const {
+void NullResponseHdlr::rhHaltExpt() const
+{
 DOTRACE("NullResponseHdlr::rhHaltExpt");
 }
 
-void NullResponseHdlr::rhAllowResponses(GWT::Widget&, TrialBase&) const {
+void NullResponseHdlr::rhAllowResponses(Util::WeakRef<GWT::Widget>,
+                                        TrialBase&) const
+{
 DOTRACE("NullResponseHdlr::rhAllowResponses");
 }
 
-void NullResponseHdlr::rhDenyResponses() const {
+void NullResponseHdlr::rhDenyResponses() const
+{
 DOTRACE("NullResponseHdlr::rhDenyResponses");
 }
 

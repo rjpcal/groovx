@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu Jul 19 20:49:48 2001
+// written: Sat Jul 21 20:45:40 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -129,7 +129,7 @@ namespace ObjTogl
   // window. Returns an error if the specified trial id is not valid.
   void setCurTrial(WeakRef<Toglet> toglet, Ref<TrialBase> trial)
   {
-    trial->installSelf(*toglet);
+    trial->installSelf(toglet);
   }
 
   void setMinRect(WeakRef<Toglet> toglet,
@@ -150,7 +150,7 @@ namespace ObjTogl
   // the OpenGL window. The widget's visibility is set to true.
   void show(WeakRef<Toglet> toglet, Ref<TrialBase> trial)
   {
-    trial->installSelf(*toglet);
+    trial->installSelf(toglet);
     toglet->setVisibility(true);
     toglet->display();
   }

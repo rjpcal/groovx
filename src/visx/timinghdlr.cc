@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Sat Jul 21 20:27:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "timinghdlr.h"
 
 #include "trialevent.h"
+
+#include "gwt/widget.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -36,7 +38,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   const IO::VersionId TIMINGHDLR_SERIAL_VERSION_ID = 1;
 }
 
@@ -58,7 +61,7 @@ public:
     itsResponseEvents(),
     itsAbortEvents(),
     itsTimer(),
-    itsWidget(0),
+    itsWidget(),
     itsErrorHandler(0),
     itsTrial(0)
     {}
@@ -73,7 +76,7 @@ public:
   mutable StopWatch itsTimer;
 
 private:
-  GWT::Widget* itsWidget;
+  Util::WeakRef<GWT::Widget> itsWidget;
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
@@ -85,7 +88,8 @@ public:
   void thHaltExpt();
   void thAbortTrial();
   void thResponseSeen();
-  void thBeginTrial(GWT::Widget& widget, Util::ErrorHandler& eh, TrialBase& trial);
+  void thBeginTrial(Util::WeakRef<GWT::Widget> widget,
+                    Util::ErrorHandler& eh, TrialBase& trial);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +109,8 @@ const TimingHdlr::TimePoint TimingHdlr::FROM_ABORT;
 //
 ///////////////////////////////////////////////////////////////////////
 
-TimingHdlr* TimingHdlr::make() {
+TimingHdlr* TimingHdlr::make()
+{
 DOTRACE("TimingHdlr::make");
   return new TimingHdlr;
 }
@@ -116,18 +121,21 @@ TimingHdlr::TimingHdlr() :
 DOTRACE("TimingHdlr::TimingHdlr");
 }
 
-TimingHdlr::~TimingHdlr() {
+TimingHdlr::~TimingHdlr()
+{
 DOTRACE("TimingHdlr::~TimingHdlr");
 
   delete itsImpl;
 }
 
-IO::VersionId TimingHdlr::serialVersionId() const {
+IO::VersionId TimingHdlr::serialVersionId() const
+{
 DOTRACE("TimingHdlr::serialVersionId");
   return TIMINGHDLR_SERIAL_VERSION_ID;
 }
 
-void TimingHdlr::readFrom(IO::Reader* reader) {
+void TimingHdlr::readFrom(IO::Reader* reader)
+{
 DOTRACE("TimingHdlr::readFrom");
 
   reader->ensureReadVersionId("TimingHdlr", 1, "Try grsh0.8a4");
@@ -149,7 +157,8 @@ DOTRACE("TimingHdlr::readFrom");
             std::back_inserter(itsImpl->itsAbortEvents));
 }
 
-void TimingHdlr::writeTo(IO::Writer* writer) const {
+void TimingHdlr::writeTo(IO::Writer* writer) const
+{
 DOTRACE("TimingHdlr::writeTo");
 
   writer->ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
@@ -172,7 +181,9 @@ DOTRACE("TimingHdlr::writeTo");
 // accessors //
 ///////////////
 
-Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point, int index) const {
+Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
+                                     unsigned int index) const
+{
 DOTRACE("TimingHdlr::getEvent");
   switch (time_point) {
   case IMMEDIATE:
@@ -190,10 +201,13 @@ DOTRACE("TimingHdlr::getEvent");
   default:
     break;
   }
+
+  throw ErrorWithMsg("unknown TimingHdlr::TimePoint enumerant");
   return Ref<TrialEvent>(Util::UID(0)); // will raise an exception
 }
 
-int TimingHdlr::getElapsedMsec() const {
+int TimingHdlr::getElapsedMsec() const
+{
 DOTRACE("TimingHdlr::getElapsedMsec");
   return itsImpl->itsTimer.elapsedMsec();
 }
@@ -202,46 +216,48 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-int TimingHdlr::addEvent(Ref<TrialEvent> event_item, TimePoint time_point) {
+unsigned int TimingHdlr::addEvent(Ref<TrialEvent> event_item,
+                                  TimePoint time_point)
+{
 DOTRACE("TimingHdlr::addEvent");
 
-  switch (time_point) {
-  case IMMEDIATE:
-    event_item->setDelay(0);
-    itsImpl->itsImmediateEvents.push_back(event_item);
-    return itsImpl->itsImmediateEvents.size() - 1;
-    break;
-  case FROM_START:
-    itsImpl->itsStartEvents.push_back(event_item);
-    return itsImpl->itsStartEvents.size() - 1;
-    break;
-  case FROM_RESPONSE:
-    itsImpl->itsResponseEvents.push_back(event_item);
-    return itsImpl->itsResponseEvents.size() - 1;
-    break;
-  case FROM_ABORT:
-    itsImpl->itsAbortEvents.push_back(event_item);
-    return itsImpl->itsAbortEvents.size() - 1;
-    break;
-  default:
-    break;
-  }
+  switch (time_point)
+    {
+    case IMMEDIATE:
+      event_item->setDelay(0);
+      itsImpl->itsImmediateEvents.push_back(event_item);
+      return itsImpl->itsImmediateEvents.size() - 1;
+      break;
+    case FROM_START:
+      itsImpl->itsStartEvents.push_back(event_item);
+      return itsImpl->itsStartEvents.size() - 1;
+      break;
+    case FROM_RESPONSE:
+      itsImpl->itsResponseEvents.push_back(event_item);
+      return itsImpl->itsResponseEvents.size() - 1;
+      break;
+    case FROM_ABORT:
+      itsImpl->itsAbortEvents.push_back(event_item);
+      return itsImpl->itsAbortEvents.size() - 1;
+      break;
+    default:
+      break;
+    }
 
-  return -1;
+  throw ErrorWithMsg("unknown TimingHdlr::TimePoint enumerant");
+  return 0; // we'll never get here
 }
 
-int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
-                               int msec_delay) {
+unsigned int TimingHdlr::addEventByName(const char* event_type,
+                                        TimePoint timepoint, int msec_delay)
+{
 DOTRACE("TimingHdlr::addEventByName");
 
-  try {
-    Ref<TrialEvent> event_item(
-                         Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
+  Ref<TrialEvent> event_item(
+                    Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
 
-    event_item->setDelay(msec_delay);
-    return addEvent(event_item, timepoint);
-  }
-  catch(...) { return -1; }
+  event_item->setDelay(msec_delay);
+  return addEvent(event_item, timepoint);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -250,22 +266,26 @@ DOTRACE("TimingHdlr::addEventByName");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::scheduleAll(EventGroup& events) {
+void TimingHdlr::Impl::scheduleAll(EventGroup& events)
+{
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsTrial != 0);
-  Precondition(itsWidget != 0);
+  Precondition(itsWidget.isValid());
   Precondition(itsErrorHandler != 0);
 
-  for (size_t i = 0; i < events.size(); ++i) {
-    events[i]->schedule(*itsWidget, *itsErrorHandler, *itsTrial);
-  }
+  for (size_t i = 0; i < events.size(); ++i)
+    {
+      events[i]->schedule(itsWidget, *itsErrorHandler, *itsTrial);
+    }
 }
 
-void TimingHdlr::Impl::cancelAll(EventGroup& events) {
+void TimingHdlr::Impl::cancelAll(EventGroup& events)
+{
 DOTRACE("TimingHdlr::Impl::cancelAll");
-  for (size_t i = 0; i < events.size(); ++i) {
-    events[i]->cancel();
-  }
+  for (size_t i = 0; i < events.size(); ++i)
+    {
+      events[i]->cancel();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -274,13 +294,14 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::thBeginTrial(GWT::Widget& widget,
-                                    Util::ErrorHandler& eh, TrialBase& trial) {
+void TimingHdlr::Impl::thBeginTrial(Util::WeakRef<GWT::Widget> widget,
+                                    Util::ErrorHandler& eh, TrialBase& trial)
+{
 DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
   itsTimer.restart();
 
-  itsWidget = &widget;
+  itsWidget = widget;
   itsErrorHandler = &eh;
   itsTrial = &trial;
 
@@ -290,7 +311,8 @@ DOTRACE("TimingHdlr::Impl::thBeginTrial");
   scheduleAll(itsStartEvents);
 }
 
-void TimingHdlr::Impl::thResponseSeen() {
+void TimingHdlr::Impl::thResponseSeen()
+{
 DOTRACE("TimingHdlr::Impl::thResponseSeen");
   if (itsResponseEvents.size() > 0) {
     cancelAll(itsStartEvents);
@@ -298,14 +320,16 @@ DOTRACE("TimingHdlr::Impl::thResponseSeen");
   }
 }
 
-void TimingHdlr::Impl::thAbortTrial() {
+void TimingHdlr::Impl::thAbortTrial()
+{
 DOTRACE("TimingHdlr::Impl::thAbortTrial");
   cancelAll(itsStartEvents);
   cancelAll(itsResponseEvents);
   scheduleAll(itsAbortEvents);
 }
 
-void TimingHdlr::Impl::thHaltExpt() {
+void TimingHdlr::Impl::thHaltExpt()
+{
 DOTRACE("TimingHdlr::Impl::thHaltExpt");
   cancelAll(itsStartEvents);
   cancelAll(itsResponseEvents);
@@ -327,7 +351,7 @@ void TimingHdlr::thAbortTrial()
 void TimingHdlr::thResponseSeen()
   { itsImpl->thResponseSeen(); }
 
-void TimingHdlr::thBeginTrial(GWT::Widget& widget,
+void TimingHdlr::thBeginTrial(Util::WeakRef<GWT::Widget> widget,
                               Util::ErrorHandler& eh, TrialBase& trial)
   { itsImpl->thBeginTrial(widget, eh, trial); }
 

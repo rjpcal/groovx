@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Jun  6 09:52:36 2001
+// written: Sat Jul 21 20:31:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,24 @@
 #include "io/io.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
+#include "util/ref.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
 #include "util/stopwatch.h"
 #endif
 
-namespace GWT { class Widget; }
-namespace Util { class ErrorHandler; }
+namespace GWT
+{
+  class Canvas;
+  class Widget;
+}
+
+namespace Util
+{
+  class ErrorHandler;
+};
 
 class Experiment;
 class TrialBase;
@@ -75,7 +87,8 @@ public:
       to \c cancel(). If the requested delay is negative or zero, the
       \c invoke() callback is triggered immediately without involving
       the event loop. */
-  void schedule(GWT::Widget& widget, Util::ErrorHandler& errhdlr, TrialBase& trial);
+  void schedule(Util::WeakRef<GWT::Widget> widget,
+                Util::ErrorHandler& errhdlr, TrialBase& trial);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
@@ -90,7 +103,7 @@ protected:
       take whatever specific action is desired when the callback
       triggers. The function is called internally by \c TrialEvent, so
       subclasses should not call this function directly. */
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial) = 0;
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) = 0;
 
 private:
   static void dummyInvoke(ClientData clientData);
@@ -102,7 +115,7 @@ private:
   int itsRequestedDelay;
   Tcl_TimerToken itsToken;
 
-  GWT::Widget* itsWidget;
+  Util::WeakRef<GWT::Widget> itsWidget;
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
@@ -134,7 +147,7 @@ public:
   /// Virtual destructor.
   virtual ~AbortTrialEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::installSelf() and Widget::display().
@@ -148,7 +161,7 @@ public:
   /// Virtual destructor.
   virtual ~DrawEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trEndTrial().
@@ -162,7 +175,7 @@ public:
   /// Virtual destructor.
   virtual ~EndTrialEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trNextNode().
@@ -176,7 +189,7 @@ public:
   /// Virtual destructor.
   virtual ~NextNodeEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trAllowResponses().
@@ -190,7 +203,7 @@ public:
   /// Virtual destructor.
   virtual ~AllowResponsesEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trDenyResponses().
@@ -204,7 +217,7 @@ public:
   /// Virtual destructor.
   virtual ~DenyResponsesEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Widget::undraw().
@@ -218,7 +231,7 @@ public:
   /// Virtual destructor.
   virtual ~UndrawEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Canvas::drawOnBackBuffer().
@@ -232,7 +245,7 @@ public:
   /// Virtual destructor.
   virtual ~RenderBackEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
@@ -246,7 +259,7 @@ public:
   /// Virtual destructor.
   virtual ~RenderFrontEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Widget::swapBuffers().
@@ -260,7 +273,7 @@ public:
   /// Virtual destructor.
   virtual ~SwapBuffersEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
@@ -274,7 +287,7 @@ public:
   /// Virtual destructor.
   virtual ~ClearBufferEvent();
 protected:
-  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+  virtual void invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial);
 };
 
 static const char vcid_trialevent_h[] = "$Header$";

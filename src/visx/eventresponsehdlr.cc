@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Jul 19 21:14:29 2001
+// written: Sat Jul 21 20:09:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
     virtual void onDestroy() {}
 
     static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
-                                            GWT::Widget& widget,
+                                            Util::WeakRef<GWT::Widget> widget,
                                             TrialBase& trial);
     static shared_ptr<ERHState> inactiveState();
   };
@@ -103,7 +103,7 @@ public:
   class ERHActiveState : public ERHState {
   private:
     const EventResponseHdlr::Impl& itsErh;
-    GWT::Widget& itsWidget;
+    Util::WeakRef<GWT::Widget> itsWidget;
     TrialBase& itsTrial;
 
   public:
@@ -111,7 +111,7 @@ public:
     { itsErh.ignore(itsWidget); }
 
     ERHActiveState(const EventResponseHdlr::Impl* erh,
-                   GWT::Widget& widget, TrialBase& trial) :
+                   Util::WeakRef<GWT::Widget> widget, TrialBase& trial) :
       itsErh(*erh),
       itsWidget(widget),
       itsTrial(trial)
@@ -158,7 +158,7 @@ public:
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
+  void rhBeginTrial(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) const
     {
       itsSafeIntp.clearEventQueue();
 
@@ -171,8 +171,11 @@ public:
 
   void rhHaltExpt() const { itsState->rhHaltExpt(); }
 
-  void rhAllowResponses(GWT::Widget& widget, TrialBase& trial) const
-    { itsState = ERHState::activeState(this, widget, trial); }
+  void rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
+                        TrialBase& trial) const
+    {
+      itsState = ERHState::activeState(this, widget, trial);
+    }
 
   void rhDenyResponses() const
     { itsState = ERHState::inactiveState(); }
@@ -187,16 +190,18 @@ private:
       .append(itsBindingSubstitution).append(" }");
   }
 
-  void attend(GWT::Widget& widget) const
+  void attend(Util::WeakRef<GWT::Widget> widget) const
   {
     DOTRACE("EventResponseHdlr::Impl::attend");
-    widget.bind(itsEventSequence.c_str(), getBindingScript().c_str());
+	 if (widget.isValid())
+		widget->bind(itsEventSequence.c_str(), getBindingScript().c_str());
   }
 
-  void ignore(GWT::Widget& widget) const
+  void ignore(Util::WeakRef<GWT::Widget> widget) const
   {
     DOTRACE("EventResponseHdlr::Impl::ignore");
-    widget.bind(itsEventSequence.c_str(), nullScript.c_str());
+	 if (widget.isValid())
+		widget->bind(itsEventSequence.c_str(), nullScript.c_str());
   }
 
   class PrivateHandleCmd;
@@ -278,8 +283,11 @@ private:
 
 shared_ptr<EventResponseHdlr::Impl::ERHState>
 EventResponseHdlr::Impl::ERHState::activeState(
-  const EventResponseHdlr::Impl* erh, GWT::Widget& widget, TrialBase& trial
-) {
+  const EventResponseHdlr::Impl* erh,
+  Util::WeakRef<GWT::Widget> widget,
+  TrialBase& trial
+)
+{
 DOTRACE("EventResponseHdlr::Impl::ERHState::activeState");
   return shared_ptr<ERHState>(new ERHActiveState(erh, widget, trial));
 }
@@ -458,7 +466,8 @@ void EventResponseHdlr::abortInvalidResponses()
 void EventResponseHdlr::ignoreInvalidResponses()
   { itsImpl->itsAbortInvalidResponses = false; }
 
-void EventResponseHdlr::rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
+void EventResponseHdlr::rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
+                                     TrialBase& trial) const
   { itsImpl->rhBeginTrial(widget, trial); }
 
 void EventResponseHdlr::rhAbortTrial() const
@@ -470,7 +479,7 @@ void EventResponseHdlr::rhEndTrial() const
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
 
-void EventResponseHdlr::rhAllowResponses(GWT::Widget& widget,
+void EventResponseHdlr::rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
                                          TrialBase& trial) const
   { itsImpl->rhAllowResponses(widget, trial); }
 

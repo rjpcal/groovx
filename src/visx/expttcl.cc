@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Jul 19 21:14:29 2001
+// written: Sat Jul 21 20:04:03 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -68,31 +68,31 @@ namespace ExptTcl
   // generates the timer callbacks associated with a trial.
   void begin(Ref<ExptDriver> expt)
   {
-    GWT::Widget& widget = expt->getWidget();
+    Util::WeakRef<GWT::Widget> widget = expt->getWidget();
 
     // Create the begin key binding
-    widget.bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
+    widget->bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
 
     // Create the quit key binding
-    widget.bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
+    widget->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
 
     // Create the save key binding
-    widget.bind("<Control-KeyPress-s>", "{ Expt::storeData }");
+    widget->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
 
     // Create the stop key binding
-    widget.bind("<Control-KeyPress-c>", "{ Expt::stop }");
+    widget->bind("<Control-KeyPress-c>", "{ Expt::stop }");
 
     // Create the reset key binding
-    widget.bind("<Control-KeyPress-r>", "{ Expt::reset }");
+    widget->bind("<Control-KeyPress-r>", "{ Expt::reset }");
 
     // Create the pause key binding
-    widget.bind("<KeyPress-p>", "{ Expt::pause }");
+    widget->bind("<KeyPress-p>", "{ Expt::pause }");
 
     // Destroy the experiment start key binding
-    widget.bind("<KeyPress-s>", "{}");
+    widget->bind("<KeyPress-s>", "{}");
 
     // Force the focus to the Togl widget
-    widget.takeFocus();
+    widget->takeFocus();
 
     expt->edBeginExpt();
   }
@@ -117,18 +117,18 @@ namespace ExptTcl
 
     Tcl::SafeInterp::clearEventQueue();
 
-    GWT::Widget& widget = ed->getWidget();
-    widget.clearscreen();
-    widget.swapBuffers();
-    widget.clearscreen();
-    widget.swapBuffers();
+    Util::WeakRef<GWT::Widget> widget = ed->getWidget();
+    widget->clearscreen();
+    widget->swapBuffers();
+    widget->clearscreen();
+    widget->swapBuffers();
 
     System::theSystem().sleep(2);
 
-    widget.clearscreen();
-    widget.swapBuffers();
-    widget.clearscreen();
-    widget.swapBuffers();
+    widget->clearscreen();
+    widget->swapBuffers();
+    widget->clearscreen();
+    widget->swapBuffers();
 
     Tcl::SafeInterp::clearEventQueue();
 
@@ -144,10 +144,10 @@ namespace ExptTcl
     start_command += command;
     start_command += " }";
 
-    GWT::Widget& widget = expt->getWidget();
+    Util::WeakRef<GWT::Widget> widget = expt->getWidget();
 
-    widget.bind("<KeyPress-s>", start_command.c_str());
-    widget.takeFocus();
+    widget->bind("<KeyPress-s>", start_command.c_str());
+    widget->takeFocus();
   }
 }
 
@@ -195,7 +195,7 @@ public:
     defAction("reset", &ExptDriver::edResetExpt);
     defAction("stop", &ExptDriver::edHaltExpt);
     defAction("storeData", &ExptDriver::storeData);
-    defAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
+    defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
 
     Pkg::eval("foreach cmd [info commands ::Exp::*] {"
               "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" } }\n"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Wed Jun  6 09:38:00 2001
+// written: Sat Jul 21 19:59:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,17 @@
 #include "io/io.h"
 #endif
 
-namespace GWT {
+namespace GWT
+{
   class Canvas;
   class Widget;
 }
 
-namespace Util { class ErrorHandler; }
+namespace Util
+{
+  class ErrorHandler;
+  template <class T> class WeakRef;
+};
 
 class Block;
 class Response;
@@ -46,8 +51,8 @@ public:
   virtual void undoLastResponse() = 0;
 
   // actions
-  virtual void trDoTrial(GWT::Widget& widget,
-								 Util::ErrorHandler& errhdlr, Block& block) = 0;
+  virtual void trDoTrial(Util::WeakRef<GWT::Widget> widget,
+                         Util::ErrorHandler& errhdlr, Block& block) = 0;
 
   virtual int trElapsedMsec() = 0;
 
@@ -61,7 +66,7 @@ public:
   virtual void trAllowResponses() = 0;
   virtual void trDenyResponses() = 0;
 
-  virtual void installSelf(GWT::Widget& widget) const = 0;
+  virtual void installSelf(Util::WeakRef<GWT::Widget> widget) const = 0;
 };
 
 static const char vcid_trialbase_h[] = "$Header$";
