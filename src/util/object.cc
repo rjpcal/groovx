@@ -71,5 +71,11 @@ DOTRACE("Util::Object::objTypename");
   return realTypename();
 }
 
+fstring Util::Object::uniqueName() const
+{
+DOTRACE("Util::Object::uniqueName");
+  return fstring(objTypename(), "-", id());
+}
+
 static const char vcid_object_cc[] = "$Header$";
 #endif // !OBJECT_CC_DEFINED

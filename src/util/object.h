@@ -82,6 +82,9 @@ public:
       object.  */
   virtual fstring objTypename() const;
 
+  /// Returns a short string describing the object by its typename and id.
+  fstring uniqueName() const;
+
 private:
   Util::UID itsId;
 };
