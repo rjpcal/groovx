@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar 26 09:25:48 2001
+// written: Mon Mar 26 10:04:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,6 +181,9 @@ public:
 	 return true;
   }
 
+  bool operator!=(const Slice& other) const
+  { return !(operator==(other)); }
+
   //
   // Non-const functions
   //
@@ -334,6 +337,18 @@ public:
 	 makeUnique();
 	 itsImpl.setAll(x);
   }
+
+  bool operator==(const Mtx& other) const
+  {
+	 if ( (mrows() != other.mrows()) || (ncols() != other.ncols()) )
+		return false;
+	 for (int c = 0; c < ncols(); ++c)
+		if ( column(c) != other.column(c) ) return false;
+	 return true;
+  }
+
+  bool operator!=(const Mtx& other) const
+  { return !(operator==(other)); }
 
   // result = vec * mtx;
   static void VMmul_assign(const Slice& vec, const Mtx& mtx,
