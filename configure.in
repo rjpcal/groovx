@@ -8,6 +8,24 @@ AC_INIT(GroovX, [1.0a1], [rjpeters@klab.caltech.edu])
 AC_PREREQ(2.53)
 AC_REVISION($Revision$)
 
+### New macro definitions
+
+# AC_CHECK_LIB_CXX(libname, includes, function-call,
+#                  action-on-success, action-on-fail)
+AC_DEFUN([AC_CHECK_LIB_CXX],
+	 [AC_MSG_CHECKING([for lib$1])
+	 libs_save=$LIBS
+	 LIBS="$LIBS -l$1"
+	 AC_TRY_LINK([$2], [$3], [havelib_$1=yes], [havelib_$1=no])
+	 LIBS=$libs_save
+	 if test $havelib_$1=yes; then
+	    AC_MSG_RESULT(yes)
+	    $4
+	 else
+	    AC_MSG_RESULT(no)
+	    $5
+	 fi])
+
 # If CXXFLAGS was not already set, then set it now to keep autoconf from
 # adding "-g -O2".
 
@@ -233,8 +251,6 @@ else
    AC_DEFINE(STD_IO, [])
 fi
 
-dnl Checks for libraries.
-
 ### Checks for header files.
 AC_PATH_XTRA
 
@@ -254,6 +270,28 @@ AC_CHECK_HEADER([Alib.h],
 AC_CHECK_HEADER([esd.h],
 		[AC_DEFINE(HAVE_ESD_H,1)
 		 LIBS="$LIBS -lesd -laudiofile"],,-)
+
+### Checks for libraries.
+
+AC_CHECK_LIB_CXX(m, [#include <cmath>], [sin(0.0)],
+		 [LIBS="-lm $LIBS"], [AC_MSG_ERROR(libm missing)])
+
+AC_CHECK_LIB_CXX(png, [#include <png.h>], [png_destroy_read_struct(0,0,0)],
+		 [LIBS="-lpng $LIBS"], [AC_MSG_ERROR(libpng missing)])
+
+AC_CHECK_LIB_CXX(z, [#include <zlib.h>], [gzopen(0,0)],
+		 [LIBS="-lz $LIBS"], [AC_MSG_ERROR(libz missing)])
+
+AC_CHECK_LIB_CXX(X11, [#include <X11/Xlib.h>], [XQueryColor(0,0,0)],
+		 [LIBS="-lX11 $LIBS"], [AC_MSG_ERROR(missing libX11)])
+
+AC_CHECK_LIB_CXX(GL, [#include <GL/gl.h>], [glEnd()],
+		 [LIBS="-lGL $LIBS"], [AC_MSG_ERROR(missing libGL)])
+
+AC_CHECK_LIB_CXX(GLU, [#include <GL/glu.h>], [gluErrorString(0)],
+		 [LIBS="-lGLU $LIBS"], [AC_MSG_ERROR(missing libGLU)])
+
+# add -lefence to LIBS for Electric Fence mem debugging
 
 ###
 
@@ -346,22 +384,6 @@ dnl FIXME these lines are architecture-specific
 fi
 
 AC_SUBST(enable_matlab)
-
-# AC_CHECK_LIB_CXX(libname, includes, function-call,
-#                  action-on-success, action-on-fail)
-AC_DEFUN([AC_CHECK_LIB_CXX],
-	 [AC_MSG_CHECKING([for lib$1])
-	 libs_save=$LIBS
-	 LIBS="$LIBS -l$1"
-	 AC_TRY_LINK([$2], [$3], [havelib_$1=yes], [havelib_$1=no])
-	 LIBS=$libs_save
-	 if test $havelib_$1=yes; then
-	    AC_MSG_RESULT(yes)
-	    $4
-	 else
-	    AC_MSG_RESULT(no)
-	    $5
-	 fi])
 
 ###
 

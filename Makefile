@@ -62,22 +62,6 @@ CPPFLAGS += -I$(SRC)
 
 #-------------------------------------------------------------------------
 #
-# Directories to search for include files and code libraries
-#
-#-------------------------------------------------------------------------
-
-LIBS += \
-	-lGLU -lGL \
-	-lXmu -lX11 -lXext \
-	-lz \
-	-lpng \
-	-lm
-
-# add -lefence to LIBS for Electric Fence mem debugging
-
-
-#-------------------------------------------------------------------------
-#
 # Build rules for object files
 #
 #-------------------------------------------------------------------------
