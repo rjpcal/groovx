@@ -164,6 +164,11 @@ DOTRACE("GLCanvas::flushOutput");
   glFlush();
 }
 
+void GLCanvas::clearColorBuffer() const {
+DOTRACE("GLCanvas::clearColorBuffer");
+  glClear(GL_COLOR_BUFFER_BIT); 
+}
+
 void GLCanvas::pushState() const {
 DOTRACE("GLCanvas::pushState");
   glMatrixMode(GL_MODELVIEW);

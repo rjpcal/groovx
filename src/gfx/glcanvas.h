@@ -42,6 +42,8 @@ public:
 
   virtual void flushOutput() const;
 
+  virtual void clearColorBuffer() const;
+
   virtual void pushState() const;
   virtual void popState() const;
 
