@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Sun Aug 19 09:07:35 2001
+// written: Mon Aug 20 12:19:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -220,11 +220,9 @@ public:
     do_append(part4); return *this;
   }
 
-  template <class T>
-  fstring& operator+=(const T& x) { return append(x); }
-
 private:
-  void do_append(const char* text);
+  void do_append(Util::CharData cdata)
+  { append_text(cdata.len, cdata.text); }
 
   void do_append(const fstring& other)
   { append_text(other.length(), other.c_str()); }
@@ -249,7 +247,8 @@ namespace Util
   template <>
   struct Convert<fstring>
   {
-    static const char* toString(const fstring& x) { return x.c_str(); }
+    static CharData toString(const fstring& x)
+    { return CharData(x.c_str(), x.length()); }
   };
 }
 

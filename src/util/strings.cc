@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Fri Aug 10 12:27:20 2001
+// written: Mon Aug 20 13:28:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -258,6 +258,7 @@ DOTRACE("fstring::equals(const char*)");
 bool fstring::equals(const fstring& other) const
 {
 DOTRACE("fstring::equals(const fstring&)");
+
   return c_str() == other.c_str() ||
     ( length() == other.length() &&
       strcmp(c_str(), other.c_str()) == 0 );
@@ -290,18 +291,15 @@ bool fstring::operator>(const char* other) const
   return strcmp(c_str(), other) > 0;
 }
 
-void fstring::do_append(const char* text)
-{
-DOTRACE("fstring::do_append");
-  if (text) append_text(safestrlen(text), text);
-}
-
 void fstring::append_text(std::size_t length, const char* text)
 {
 DOTRACE("fstring::append_text");
 
-  string_rep::makeUnique(itsRep);
-  itsRep->append(length, text);
+  if (length > 0)
+    {
+      string_rep::makeUnique(itsRep);
+      itsRep->append(length, text);
+    }
 }
 
 //---------------------------------------------------------------------
