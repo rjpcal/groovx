@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Nov  7 16:37:09 2002
+// written: Thu Nov 14 17:21:12 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -125,7 +125,6 @@ PackageInfo DELAYED_PKGS[] = {};
 const char*  appLibEnvVar = "GRSH_LIB_DIR";
 int          appArgc      = 0;
 char**       appArgv      = 0;
-Gfx::Canvas* appCanvas    = 0;
 
 } // end anonymous namespace
 
@@ -158,25 +157,6 @@ const char* Grsh::libraryDirectory()
 DOTRACE("Grsh::libraryDirectory");
 
   return System::theSystem().getenv(appLibEnvVar);
-}
-
-void Grsh::installCanvas(Gfx::Canvas& canvas)
-{
-DOTRACE("Grsh::installCanvas");
-
-  Assert(&canvas != 0);
-
-  appCanvas = &canvas;
-}
-
-Gfx::Canvas& Grsh::canvas()
-{
-DOTRACE("Grsh::canvas");
-
-  if (appCanvas == 0)
-    throw Util::Error("appCanvas not inited");
-
-  return *appCanvas;
 }
 
 ///////////////////////////////////////////////////////////////////////
