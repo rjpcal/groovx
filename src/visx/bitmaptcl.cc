@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Fri Aug 10 07:13:16 2001
+// written: Fri Aug 10 13:08:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,6 @@ DOTRACE("Bitmap_Init");
   pkg1->defAction("flipContrast", &Bitmap::flipContrast);
   pkg1->defAction("flipVertical", &Bitmap::flipVertical);
   pkg1->defGetter("size", &Bitmap::size);
-  pkg1->defAttrib("rasterPos", &Bitmap::getRasterPos, &Bitmap::setRasterPos);
   pkg1->defAttrib("zoom", &Bitmap::getZoom, &Bitmap::setZoom);
 
   // GLBitmap

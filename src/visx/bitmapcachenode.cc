@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Aug 10 10:46:50 2001
+// written: Fri Aug 10 13:08:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,6 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
       DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
       DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
       itsBitmapCache->grabWorldRect(bmapbox);
-      itsBitmapCache->setRasterPos(bmapbox.bottomLeft());
     }
     glPopAttrib();
   }

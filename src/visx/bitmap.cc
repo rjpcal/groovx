@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Aug 10 12:32:31 2001
+// written: Fri Aug 10 13:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,9 +126,6 @@ Rect<double> Bitmap::grGetBoundingBox() const
 Point<int> Bitmap::size() const
   { return itsImpl->size(); }
 
-Point<double> Bitmap::getRasterPos() const
-  { return itsImpl->getRasterPos(); }
-
 Point<double> Bitmap::getZoom() const
   { return itsImpl->getZoom(); }
 
@@ -138,9 +135,6 @@ bool Bitmap::getUsingZoom() const
 //////////////////
 // manipulators //
 //////////////////
-
-void Bitmap::setRasterPos(Point<double> pos)
-  { itsImpl->setRasterPos(pos); sendStateChangeMsg(); }
 
 void Bitmap::setZoom(Point<double> zoom)
   { itsImpl->setZoom(zoom); sendStateChangeMsg(); }

@@ -111,9 +111,6 @@ public:
   /// Get the image's size (x-width, y-height) in pixels.
   Point<int> size() const;
 
-  /// Get the location of the image's lower left corner.
-  Point<double> getRasterPos() const;
-
   /// Get the (x,y) factors by which the bitmap will be scaled.
   Point<double> getZoom() const;
 
@@ -123,9 +120,6 @@ public:
   //////////////////
   // manipulators //
   //////////////////
-
-  /** Change the location of the image's lower left corner to \a pos. */
-  void setRasterPos(Point<double> pos);
 
   /** Change the (x,y) factors by which the bitmap will be scaled. */
   void setZoom(Point<double> zoom);
