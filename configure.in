@@ -74,7 +74,7 @@ int main()
   return (strcmp("Q::foo<bar>", typeid(p).name()) == 0) ? 0 : 1;
 }
 ],
-[AC_MSG_RESULT(no) AC_DEFINE(NO_TYPENAME_MANGLING,1)],
+[AC_DEFINE(NO_TYPENAME_MANGLING,1) AC_MSG_RESULT(no)],
 AC_MSG_RESULT(yes))
 
 dnl Checks for libraries.
