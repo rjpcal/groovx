@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 15 11:11:53 2000
+// written: Wed Mar 15 18:06:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include <strstream.h>
 #include <cstring>
 #include <cctype>
-#include <vector>
 
 #include "cloneface.h"
 #include "iofactory.h"
@@ -72,7 +71,7 @@ void FaceTcl::LoadFacesCmd::invoke() {
   char line[BUF_SIZE];
 
   int num_read = 0;
-  vector<int> ids;
+
   try {
 	 while ( (num_to_read < 0 || num_read < num_to_read)
 				&& ifs.getline(line, BUF_SIZE)) {
@@ -110,7 +109,9 @@ void FaceTcl::LoadFacesCmd::invoke() {
 		  p = new Face(ist, IO::NO_FLAGS);
 		}
 		int objid = olist.insert(ObjList::Ptr(p));
-		ids.push_back(objid);
+
+		lappendVal(objid); // add the current objid to the Tcl result
+
 		++num_read;
 	 }
   }
@@ -119,9 +120,6 @@ void FaceTcl::LoadFacesCmd::invoke() {
 	 DebugEvalNL(err.msg_cstr());
 	 throw Tcl::TclError(err.msg_cstr());
   }
-
-  // Return the ids of all the faces created
-  returnSequence(ids.begin(), ids.end());
 }
 
 ///////////////////////////////////////////////////////////////////////
