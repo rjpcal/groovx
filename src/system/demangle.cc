@@ -3,7 +3,7 @@
 // demangle.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:19 1999
-// written: Sat Mar  4 03:00:33 2000
+// written: Wed Mar  8 15:56:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #include "demangle.h"
 
 #include <string>
+
+string demangle(const string& in);
 
 const char* demangle_cstr(const char* in) {
   static string result;
