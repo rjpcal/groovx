@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 25 09:06:51 2002
-// written: Thu Apr 25 09:38:25 2002
+// written: Thu Apr 25 13:00:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "gx/pngparser.h"
 
 #include "util/error.h"
+#include "util/log.h"
 
 #include <cctype>
 
@@ -76,6 +77,8 @@ DOTRACE("ImgFile::load");
     default:
       throw Util::Error(fstring("unknown file format: ", filename_cstr));
     }
+
+  Util::log(fstring("loaded image file ", filename_cstr));
 }
 
 void ImgFile::save(const char* filename_cstr, const Gfx::BmapData& data)
@@ -88,6 +91,8 @@ void ImgFile::save(const char* filename_cstr, const Gfx::BmapData& data)
     default:
       throw Util::Error(fstring("unknown file format: ", filename_cstr));
     }
+
+  Util::log(fstring("saved image file ", filename_cstr));
 }
 
 static const char vcid_imgfile_cc[] = "$Header$";
