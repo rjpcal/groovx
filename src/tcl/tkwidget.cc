@@ -420,8 +420,7 @@ DOTRACE("TkWidgImpl::cRenderCallback");
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cRenderCallback",
-                                            SRC_POS);
+      widg->rep->interp.handleLiveException("cRenderCallback", SRC_POS);
       widg->rep->interp.backgroundError();
     }
 }
