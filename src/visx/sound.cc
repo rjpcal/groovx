@@ -38,6 +38,8 @@
 #  include "visx/hpsound.h"
 #elif defined(HAVE_DMEDIA_AUDIO_H)
 #  include "visx/irixsound.h"
+#elif defined(HAVE_QUICKTIME_MOVIES_H)
+#  include "visx/quicktimesound.h"
 #elif defined(HAVE_ESD_H)
 #  include "visx/esdsound.h"
 #else
