@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Jun 11 14:49:18 2001
+// written: Wed Jun 13 11:15:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,47 +40,47 @@ namespace IoTcl {
 
   template <class ReaderType, class Inserter>
   void readBatch(STD_IO::istream& is, int num_to_read,
-					  Inserter result_inserter)
-	 {
-		const int ALL = -1; // indicates to read all objects until eof
+                 Inserter result_inserter)
+    {
+      const int ALL = -1; // indicates to read all objects until eof
 
-		int num_read = 0;
+      int num_read = 0;
 
-		is >> ws;
+      is >> ws;
 
-		while ( (num_to_read == ALL || num_read < num_to_read)
-				  && (is.peek() != EOF) ) {
+      while ( (num_to_read == ALL || num_read < num_to_read)
+              && (is.peek() != EOF) ) {
 
-		  // allow for whole-line comments between objects beginning with '#'
-		  if (is.peek() == '#') {
-			 is.ignore(10000000, '\n');
-			 continue;
-		  }
+        // allow for whole-line comments between objects beginning with '#'
+        if (is.peek() == '#') {
+          is.ignore(10000000, '\n');
+          continue;
+        }
 
-		  ReaderType reader(is);
+        ReaderType reader(is);
 
-		  Ref<IO::IoObject> obj(reader.readRoot(0));
+        Ref<IO::IoObject> obj(reader.readRoot(0));
 
-		  *result_inserter = obj.id();
-		  ++result_inserter;
+        *result_inserter = obj.id();
+        ++result_inserter;
 
-		  ++num_read;
+        ++num_read;
 
-		  is >> ws;
-		}
-	 }
+        is >> ws;
+      }
+    }
 
   template <class WriterType, class Iterator>
   void writeBatch(WriterType& writer, Iterator obj_itr, Iterator end)
-	 {
-		while (obj_itr != end)
-		  {
-			 Ref<IO::IoObject> item(*obj_itr);
-			 writer.writeRoot(item.get());
+    {
+      while (obj_itr != end)
+        {
+          Ref<IO::IoObject> item(*obj_itr);
+          writer.writeRoot(item.get());
 
-			 ++obj_itr;
-		  }
-	 }
+          ++obj_itr;
+        }
+    }
 }
 
 //---------------------------------------------------------------------
@@ -92,8 +92,8 @@ namespace IoTcl {
 class IoTcl::LoadObjectsCmd : public Tcl::TclCmd {
 public:
   LoadObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name,
-					 "filename ?num_to_read=-1?", 2, 3, false)
+    Tcl::TclCmd(interp, cmd_name,
+                "filename ?num_to_read=-1?", 2, 3, false)
   {}
 
 protected:
@@ -122,26 +122,26 @@ DOTRACE("IoTcl::LoadObjectsCmd::invoke");
 class IoTcl::SaveObjectsCmd : public Tcl::TclCmd {
 public:
   SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name,
-					 "objids filename ?use_bases=yes?", 3, 4)
+    Tcl::TclCmd(interp, cmd_name,
+                "objids filename ?use_bases=yes?", 3, 4)
   {}
 protected:
   virtual void invoke() {
 
-	 const char* filename = arg(2).getCstring();
+    const char* filename = arg(2).getCstring();
 
-	 bool use_bases    = objc() < 4 ? true : arg(3).getBool();
+    bool use_bases    = objc() < 4 ? true : arg(3).getBool();
 
-	 STD_IO::ofstream ofs(filename);
-	 if (ofs.fail()) {
-		Tcl::TclError err("error opening file: ");
-		err.appendMsg(filename);
-		throw err;
-	 }
+    STD_IO::ofstream ofs(filename);
+    if (ofs.fail()) {
+      Tcl::TclError err("error opening file: ");
+      err.appendMsg(filename);
+      throw err;
+    }
 
-	 IO::LegacyWriter writer(ofs, use_bases);
-	 writer.usePrettyPrint(false);
-	 writeBatch(writer, beginOfArg(1, (int*)0), endOfArg(1, (int*)0));
+    IO::LegacyWriter writer(ofs, use_bases);
+    writer.usePrettyPrint(false);
+    writeBatch(writer, beginOfArg(1, (int*)0), endOfArg(1, (int*)0));
   }
 };
 
@@ -149,114 +149,126 @@ namespace Tcl {
 
 //---------------------------------------------------------------------
 //
-// IoNewCmd
+// ObjNewCmd
 //
 //---------------------------------------------------------------------
 
-class IoNewCmd : public TclCmd {
+class ObjNewCmd : public TclCmd {
 public:
-  IoNewCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "typename ?array_size=1?", 2, 3)
-	 {}
+  ObjNewCmd(Tcl_Interp* interp, const char* cmd_name) :
+    TclCmd(interp, cmd_name, "typename ?array_size=1?", 2, 3)
+    {}
 
 protected:
   virtual void invoke() {
-	 const char* type = getCstringFromArg(1);
+    const char* type = getCstringFromArg(1);
 
-	 if (objc() < 3)
-		{
-		  Ref<Util::Object> item(Util::ObjMgr::newObj(type));
-		  returnInt(item.id());
-		}
-	 else
-		{
-		  int array_size = getIntFromArg(2);
-		  while (array_size-- > 0)
-			 {
-				Ref<Util::Object> item(Util::ObjMgr::newObj(type));
-				lappendVal(item.id());
-			 }
-		}
+    if (objc() < 3)
+      {
+        Ref<Util::Object> item(Util::ObjMgr::newObj(type));
+        returnInt(item.id());
+      }
+    else
+      {
+        int array_size = getIntFromArg(2);
+        while (array_size-- > 0)
+          {
+            Ref<Util::Object> item(Util::ObjMgr::newObj(type));
+            lappendVal(item.id());
+          }
+      }
   }
 };
 
 //---------------------------------------------------------------------
 //
-// IoDeleteCmd
+// ObjDeleteCmd
 //
 //---------------------------------------------------------------------
 
-class IoDeleteCmd : public TclCmd {
+class ObjDeleteCmd : public TclCmd {
 public:
-  IoDeleteCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "item_id(s)", 2, 2)
-	 {}
+  ObjDeleteCmd(Tcl_Interp* interp, const char* cmd_name) :
+    TclCmd(interp, cmd_name, "item_id(s)", 2, 2)
+    {}
 
 protected:
   virtual void invoke() {
-	 Tcl::ListIterator<int>
-		itr = beginOfArg(1, (int*)0),
-		stop = endOfArg(1, (int*)0);
-	 while (itr != stop)
-		{
-		  ObjDb::theDb().remove(*itr);
-		  ++itr;
-		}
+    Tcl::ListIterator<int>
+      itr = beginOfArg(1, (int*)0),
+      stop = endOfArg(1, (int*)0);
+    while (itr != stop)
+      {
+        ObjDb::theDb().remove(*itr);
+        ++itr;
+      }
   }
 };
 
 class IoObjectPkg : public IoItemPkg<IO::IoObject>,
-                  public IoFetcher
+                    public IoFetcher
 {
 public:
   IoObjectPkg(Tcl_Interp* interp) :
-	 IoItemPkg<IO::IoObject>(interp, "IO", "$Revision$")
+    IoItemPkg<IO::IoObject>(interp, "IO", "$Revision$")
   {
-	 TclItemPkg::addIoCommands(this);
+    TclItemPkg::addIoCommands(this);
 
-	 declareCGetter("type", &IO::IoObject::ioTypename);
-
-	 typedef int (IO::IoObject::* FT)() const;
-	 declareCGetter("refCount", FT(&IO::IoObject::refCount));
-	 declareCAction("incrRefCount", &IO::IoObject::incrRefCount);
-	 declareCAction("decrRefCount", &IO::IoObject::decrRefCount);
-
-	 addCommand( new IoNewCmd(interp, TclPkg::makePkgCmdName("new")));
-	 addCommand( new IoDeleteCmd(interp, TclPkg::makePkgCmdName("delete")));
-
-	 TclPkg::eval("proc new {args} { eval IO::new $args }");
-	 TclPkg::eval("proc delete {args} { eval IO::delete $args }");
+    declareCGetter("type", &IO::IoObject::ioTypename);
   }
 
   virtual IO::IoObject& getIoFromId(int id) {
-	 return dynamic_cast<IO::IoObject&>( *(getCItemFromId(id)) );
+    return dynamic_cast<IO::IoObject&>( *(getCItemFromId(id)) );
+  }
+};
+
+class ObjectPkg : public IoItemPkg<Util::Object>
+{
+public:
+  ObjectPkg(Tcl_Interp* interp) :
+    IoItemPkg<Util::Object>(interp, "Obj", "$Revision$")
+  {
+    declareCGetter("refCount", &Util::Object::refCount);
+    declareCAction("incrRefCount", &Util::Object::incrRefCount);
+    declareCAction("decrRefCount", &Util::Object::decrRefCount);
+
+    addCommand( new ObjNewCmd(interp, TclPkg::makePkgCmdName("new")));
+    addCommand( new ObjDeleteCmd(interp, TclPkg::makePkgCmdName("delete")));
+
+    TclPkg::eval("proc new {args} { eval Obj::new $args }");
+    TclPkg::eval("proc delete {args} { eval Obj::delete $args }");
+
+    TclPkg::eval("namespace eval IO {\n"
+                 "proc new {args} { eval Obj::new $args }\n"
+                 "proc delete {args} { eval Obj::delete $args }\n"
+                 "}");
   }
 };
 
 class ObjDbPkg : public CTclItemPkg<ObjDb> {
 public:
   ObjDbPkg(Tcl_Interp* interp) :
-	 CTclItemPkg<ObjDb>(interp, "ObjDb", "$Revision$", 0)
+    CTclItemPkg<ObjDb>(interp, "ObjDb", "$Revision$", 0)
   {
-	 declareCAction("clear", &ObjDb::clear);
-	 declareCAction("purge", &ObjDb::purge);
-	 declareCSetter("release", &ObjDb::release);
-	 addCommand( new IoTcl::LoadObjectsCmd(interp, "ObjDb::loadObjects") );
-	 addCommand( new IoTcl::SaveObjectsCmd(interp, "ObjDb::saveObjects") );
+    declareCAction("clear", &ObjDb::clear);
+    declareCAction("purge", &ObjDb::purge);
+    declareCSetter("release", &ObjDb::release);
+    addCommand( new IoTcl::LoadObjectsCmd(interp, "ObjDb::loadObjects") );
+    addCommand( new IoTcl::SaveObjectsCmd(interp, "ObjDb::saveObjects") );
 
-	 TclPkg::eval("namespace eval IoDb {\n"
-					  "  proc clear {args} { eval ObjDb::clear $args }\n"
-					  "  proc purge {args} { eval ObjDb::purge $args }\n"
-					  "  proc release {args} { eval ObjDb::release $args }\n"
-					  "  proc loadObjects {args} { eval ObjDb::loadObjects $args }\n"
-					  "  proc saveObjects {args} { eval ObjDb::saveObjects $args }\n"
-					  "}\n");
+    TclPkg::eval("namespace eval IoDb {\n"
+                 "  proc clear {args} { eval ObjDb::clear $args }\n"
+                 "  proc purge {args} { eval ObjDb::purge $args }\n"
+                 "  proc release {args} { eval ObjDb::release $args }\n"
+                 "  proc loadObjects {args} { eval ObjDb::loadObjects $args }\n"
+                 "  proc saveObjects {args} { eval ObjDb::saveObjects $args }\n"
+                 "}\n");
   }
 
   virtual ~ObjDbPkg()
     {
-		ObjDb::theDb().clearOnExit();
-	 }
+      ObjDb::theDb().clearOnExit();
+    }
 
   ObjDb* getCItemFromId(int)
     { return &(ObjDb::theDb()); }
@@ -269,9 +281,10 @@ int Io_Init(Tcl_Interp* interp) {
 DOTRACE("Io_Init");
 
   Tcl::TclPkg* pkg1 = new Tcl::ObjDbPkg(interp);
-  Tcl::TclPkg* pkg2 = new Tcl::IoObjectPkg(interp);
+  Tcl::TclPkg* pkg2 = new Tcl::ObjectPkg(interp);
+  Tcl::TclPkg* pkg3 = new Tcl::IoObjectPkg(interp);
 
-  return pkg1->combineStatus(pkg2->initStatus());
+  return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
 
 static const char vcid_iotcl_cc[] = "$Header$";
