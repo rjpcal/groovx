@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed May 31 18:27:23 2000
+// written: Fri Sep 22 17:56:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,9 +135,11 @@ public:
   ///
   CTProperty(const T& init = T()) : TProperty<T>(init) {}
 
-#ifndef GCC_COMPILER
+  typedef C ContainingClass;
+
+#if !defined(GCC_COMPILER)
   ///
-  friend class C;
+  friend class ContainingClass;
 #endif
 
 };
@@ -203,9 +205,11 @@ public:
   CTBoundedProperty(const T& init = T()) :
 	 TBoundedProperty<T, min, max, div>(init) {}
 
+  typedef C ContainingClass;
+
 #ifndef GCC_COMPILER
   ///
-  friend class C;
+  friend class ContainingClass;
 #endif
 
 };
@@ -283,8 +287,10 @@ public:
   ///
   CTPtrProperty(T& valRef) : TPtrProperty<T>(valRef) {}
 
+  typedef C ContainingClass;
+
 #ifndef GCC_COMPILER
-  friend class C;
+  friend class ContainingClass;
 #endif
 
 };
