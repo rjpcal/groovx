@@ -27,11 +27,11 @@ Here are a few starting points into the framework:
 <ul>
 <li>Util::RefCounted and Util::RefCounts
 <li>Util::Object
-<li>Util::Ref and Util::WeakRef
+<li>Util::Ref and Util::SoftRef
 <li>ObjDb
 
 <li>Tcl::Convert
-<li>Tcl::TclCmd
+<li>Tcl::Command
 <li>Tcl::Context
 
 <li>Tcl::Pkg
