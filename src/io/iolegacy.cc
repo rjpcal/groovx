@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Oct 20 10:35:22 2000
+// written: Fri Oct 20 14:12:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,10 +35,9 @@
 
 class IO::LegacyReader::Impl {
 public:
-  Impl(IO::LegacyReader* owner, STD_IO::istream& is, IO::IOFlag flag) :
+  Impl(IO::LegacyReader* owner, STD_IO::istream& is) :
 	 itsOwner(owner),
 	 itsInStream(is),
-	 itsFlags(flag),
 	 itsLegacyVersionId(0)
   {}
 
@@ -51,7 +50,6 @@ public:
 
   IO::LegacyReader* itsOwner;
   STD_IO::istream& itsInStream;
-  IO::IOFlag itsFlags;
   int itsLegacyVersionId;
 
   void readTypename(const fixed_string& correct_name)
@@ -133,8 +131,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::LegacyReader::LegacyReader(STD_IO::istream& is, IO::IOFlag flag) :
-  itsImpl(new Impl(this, is, flag))
+IO::LegacyReader::LegacyReader(STD_IO::istream& is) :
+  itsImpl(new Impl(this, is))
 {
 DOTRACE("IO::LegacyReader::LegacyReader");
 }
@@ -287,10 +285,10 @@ DOTRACE("IO::LegacyReader::readRoot");
 
 class IO::LegacyWriter::Impl {
 public:
-  Impl(IO::LegacyWriter* owner, STD_IO::ostream& os, IO::IOFlag flag) :
+  Impl(IO::LegacyWriter* owner, STD_IO::ostream& os, bool write_bases) :
 	 itsOwner(owner),
 	 itsOutStream(os),
-	 itsFlags(flag),
+	 itsWriteBases(write_bases),
 	 itsFSep(' ')
   {}
 
@@ -303,10 +301,11 @@ public:
 
   IO::LegacyWriter* itsOwner;
   STD_IO::ostream& itsOutStream;
-  IO::IOFlag itsFlags;
+  const bool itsWriteBases;
   const char itsFSep;				  // field separator
 
-  void flattenObject(const char* obj_name, const IO::IoObject* obj)
+  void flattenObject(const char* obj_name, const IO::IoObject* obj,
+							bool stub_out = false)
   {
 	 if (obj == 0)
 		{
@@ -320,11 +319,18 @@ public:
 	 itsOutStream << obj->ioTypename() << itsFSep;
 	 throwIfError(obj->ioTypename().c_str());
 
-	 itsOutStream << '@' << obj->serialVersionId() << " { ";
+	 itsOutStream << '@';
 
-	 obj->writeTo(itsOwner);
-
-	 itsOutStream << " } ";
+	 if (stub_out)
+		{
+		  itsOutStream << "-1 ";
+		}
+	 else
+		{
+		  itsOutStream << obj->serialVersionId() << " { ";
+		  obj->writeTo(itsOwner);
+		  itsOutStream << " } ";
+		}
 
 	 throwIfError(obj_name);
   }
@@ -337,8 +343,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 
-IO::LegacyWriter::LegacyWriter(STD_IO::ostream& os, IO::IOFlag flag) :
-  itsImpl(new Impl(this, os, flag))
+IO::LegacyWriter::LegacyWriter(STD_IO::ostream& os, bool write_bases) :
+  itsImpl(new Impl(this, os, write_bases))
 {
 DOTRACE("IO::LegacyWriter::LegacyWriter");
 }
@@ -405,8 +411,11 @@ DOTRACE("IO::LegacyWriter::writeOwnedObject");
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
 												  const IO::IoObject* basePart) {
 DOTRACE("IO::LegacyWriter::writeBaseClass");
-  if (itsImpl->itsFlags & IO::BASES) {
+  if (itsImpl->itsWriteBases) {
 	 itsImpl->flattenObject(baseClassName, basePart);
+  }
+  else {
+	 itsImpl->flattenObject(baseClassName, basePart, true);
   }
 }
 
