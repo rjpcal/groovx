@@ -61,12 +61,12 @@ DBG_REGISTER
 namespace
 {
 
-  inline Util::Time getTime() throw()
+  inline rutz::time getTime() throw()
   {
 #if defined(TRACE_WALL_CLOCK_TIME)
-    return Util::Time::wallClockNow();
+    return rutz::time::wall_clock_now();
 #elif defined(TRACE_CPU_TIME)
-    return Util::Time::rusageUserNow() + Util::Time::rusageSysNow();
+    return rutz::time::user_rusage() + rutz::time::sys_rusage();
 #else
 #  error must define either TRACE_WALL_CLOCK_TIME or TRACE_CPU_TIME
 #endif
@@ -171,13 +171,13 @@ unsigned int Util::Prof::count() const throw()
   return itsCallCount;
 }
 
-void Util::Prof::add(const Util::Time& t) throw()
+void Util::Prof::add(const rutz::time& t) throw()
 {
   itsTotalTime += t;
   ++itsCallCount;
 }
 
-void Util::Prof::addChildTime(const Util::Time& t) throw()
+void Util::Prof::addChildTime(const rutz::time& t) throw()
 {
   itsChildrenTime += t;
 }
@@ -332,8 +332,8 @@ Util::Trace::Trace(Prof& p, bool useMsg) throw() :
 
 Util::Trace::~Trace() throw()
 {
-  Util::Time finish = getTime();
-  Util::Time elapsed = finish - itsStart;
+  rutz::time finish = getTime();
+  rutz::time elapsed = finish - itsStart;
   itsProf.add(elapsed);
 
   if (itsShouldPop)

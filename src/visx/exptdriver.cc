@@ -104,7 +104,7 @@ public:
     autosavePeriod(10),
     doWhenComplete(new Tcl::ProcWrapper(interp)),
     numTrialsCompleted(0),
-    createTime(Util::Time::wallClockNow()),
+    createTime(rutz::time::wall_clock_now()),
     fileTimestamp(createTime.format("%Y%b%d_%H%M%S"))
   {}
 
@@ -112,7 +112,7 @@ public:
 
   void addLogInfo(const char* message)
   {
-    const fstring date_string = Util::Time::wallClockNow().format();
+    const fstring date_string = rutz::time::wall_clock_now().format();
 
     infoLog.append("@");
     infoLog.append(date_string);
@@ -144,7 +144,7 @@ public:
 
   unsigned int numTrialsCompleted;
 
-  Util::Time createTime;// Timestamp of when the ExptDriver is created
+  rutz::time createTime;// Timestamp of when the ExptDriver is created
   fstring fileTimestamp;// Timestamp used in filenames
 };
 
@@ -365,7 +365,7 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   const fstring cwd = unixcall::getcwd();
 
-  rep->beginDate = Util::Time::wallClockNow().format();
+  rep->beginDate = rutz::time::wall_clock_now().format();
   rep->hostname = getenv("HOSTNAME");
   rep->subject = cwd;
   rep->numTrialsCompleted = 0;
@@ -472,7 +472,7 @@ DOTRACE("ExptDriver::storeData");
   // The experiment and a summary of the responses to it are written to
   // files with unique filenames.
 
-  const Util::Time timestamp = Util::Time::wallClockNow();
+  const rutz::time timestamp = rutz::time::wall_clock_now();
 
   rep->endDate = timestamp.format();
 

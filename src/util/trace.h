@@ -79,9 +79,9 @@ public:
   /// Returns the number of calls since the last reset().
   unsigned int count() const throw();
 
-  void add(const Util::Time& t) throw();
+  void add(const rutz::time& t) throw();
 
-  void addChildTime(const Util::Time& t) throw();
+  void addChildTime(const rutz::time& t) throw();
 
   const char* name() const throw();
 
@@ -124,8 +124,8 @@ private:
   const char*  const itsSourceFileName;
   int          const itsSourceLineNo;
   unsigned int       itsCallCount;
-  Util::Time         itsTotalTime;
-  Util::Time         itsChildrenTime;
+  rutz::time         itsTotalTime;
+  rutz::time         itsChildrenTime;
 };
 
 /// Times and traces execution in and out of a lexical scope.
@@ -151,7 +151,7 @@ private:
   void printOut() throw();
 
   Prof& itsProf;
-  Util::Time itsStart;
+  rutz::time itsStart;
   const bool itsGiveTraceMsg;
   bool itsShouldPop;
 };

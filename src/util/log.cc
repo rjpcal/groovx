@@ -57,7 +57,7 @@ namespace
     fstring itsName;
     StopWatch itsTimer;
 
-    void print(std::ostream& os, const Util::Time& now) const
+    void print(std::ostream& os, const rutz::time& now) const
     {
       DOTRACE("ScopeInfo::print");
       os << itsName << " @ ";
@@ -76,7 +76,7 @@ namespace
   template <class Str>
   inline void logImpl(std::ostream& os, Str msg)
   {
-    const Util::Time now = Util::Time::wallClockNow();
+    const rutz::time now = rutz::time::wall_clock_now();
 
     for (unsigned int i = 0; i < scopes.size(); ++i)
       {
@@ -92,7 +92,7 @@ void Util::Log::reset()
 DOTRACE("Util::Log::reset");
   scopes.clear();
 
-  log(fstring("log reset ", Util::Time::wallClockNow().format()));
+  log(fstring("log reset ", rutz::time::wall_clock_now().format()));
 }
 
 void Util::Log::addScope(const fstring& name)

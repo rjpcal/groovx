@@ -34,108 +34,108 @@
 
 #include <sys/time.h>
 // struct timeval {
-//                unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
-//                long           tv_usec;  /* and microseconds */
-//            };
+//   unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
+//   long           tv_usec;  /* and microseconds */
+// };
 
 class fstring;
 
-namespace Util
+namespace rutz
 {
-  class Time;
+  class time;
 }
 
 /// A simple wrapper around timeval.
 /** All operations provide the no-throw guarantee. */
-class Util::Time
+class rutz::time
 {
 public:
   /// Construct with time=0.
-  Time() throw() : itsTimeVal()
+  time() throw() : m_timeval()
   {
     reset();
   }
 
   /// Construct from a timeval.
-  Time(const timeval& t) throw() : itsTimeVal(t) {}
+  time(const timeval& t) throw() : m_timeval(t) {}
 
   /// Construct with given seconds+microseconds values.
-  Time(unsigned long s, long us) throw() : itsTimeVal()
+  time(unsigned long s, long us) throw() : m_timeval()
   {
     reset(s, us);
   }
 
   /// Copy construct.
-  Time(const Time& x) throw() : itsTimeVal(x.itsTimeVal) {}
+  time(const time& x) throw() : m_timeval(x.m_timeval) {}
 
   /// Destruct.
-  ~Time() throw() {}
+  ~time() throw() {}
 
-  /// Create a Time representing current wall-clock time.
-  static Time wallClockNow() throw();
+  /// Create a time representing current wall-clock time.
+  static time wall_clock_now() throw();
 
-  /// Create a Time representing the current process's user cpu usage.
-  static Time rusageUserNow() throw();
+  /// Create a time representing the current process's user cpu usage.
+  static time user_rusage() throw();
 
-  /// Create a Time representing the current process's sys cpu usage.
-  static Time rusageSysNow() throw();
+  /// Create a time representing the current process's sys cpu usage.
+  static time sys_rusage() throw();
 
   /// Reset to given seconds+microseconds values.
   void reset(unsigned long s = 0, long us = 0) throw()
   {
-    itsTimeVal.tv_sec = s;
-    itsTimeVal.tv_usec = us;
+    m_timeval.tv_sec = s;
+    m_timeval.tv_usec = us;
   }
 
   /// Assignment operator.
-  Time& operator=(const Time& x) throw()
+  time& operator=(const time& x) throw()
   {
-    itsTimeVal = x.itsTimeVal;
+    m_timeval = x.m_timeval;
     return *this;
   }
 
   /// Addition operator.
-  Time operator+(const Time& t2) const throw()
+  time operator+(const time& t2) const throw()
   {
     timeval result;
-    result.tv_sec  = this->itsTimeVal.tv_sec  + t2.itsTimeVal.tv_sec;
-    result.tv_usec = this->itsTimeVal.tv_usec + t2.itsTimeVal.tv_usec;
+    result.tv_sec  = this->m_timeval.tv_sec  + t2.m_timeval.tv_sec;
+    result.tv_usec = this->m_timeval.tv_usec + t2.m_timeval.tv_usec;
 
     normalize(result);
 
-    return Time(result);
+    return time(result);
   }
 
   /// In-place addition operator.
-  Time& operator+=(const Time& t2) throw()
+  time& operator+=(const time& t2) throw()
   {
-    itsTimeVal.tv_sec  += t2.itsTimeVal.tv_sec;
-    itsTimeVal.tv_usec += t2.itsTimeVal.tv_usec;
+    m_timeval.tv_sec  += t2.m_timeval.tv_sec;
+    m_timeval.tv_usec += t2.m_timeval.tv_usec;
 
-    normalize(this->itsTimeVal);
+    normalize(this->m_timeval);
 
     return *this;
   }
 
   /// Subtraction operator.
-  Time operator-(const Time& t2) const throw()
+  time operator-(const time& t2) const throw()
   {
     timeval result;
-    result.tv_sec  = this->itsTimeVal.tv_sec  - t2.itsTimeVal.tv_sec;
-    result.tv_usec = this->itsTimeVal.tv_usec - t2.itsTimeVal.tv_usec;
+    result.tv_sec  = this->m_timeval.tv_sec  - t2.m_timeval.tv_sec;
+    result.tv_usec = this->m_timeval.tv_usec - t2.m_timeval.tv_usec;
 
     normalize(result);
 
-    return Time(result);
+    return time(result);
   }
 
   /// In-place subtraction operator.
-  Time& operator-=(const Time& t2) throw()
+  time& operator-=(const time& t2) throw()
   {
-    itsTimeVal.tv_sec  -= t2.itsTimeVal.tv_sec;
-    itsTimeVal.tv_usec -= t2.itsTimeVal.tv_usec;
+    m_timeval.tv_sec  -= t2.m_timeval.tv_sec;
+    m_timeval.tv_usec -= t2.m_timeval.tv_usec;
 
-    normalize(this->itsTimeVal);
+    normalize(this->m_timeval);
 
     return *this;
   }
@@ -143,25 +143,25 @@ public:
   /// Return time in floating-point seconds.
   double sec() const throw()
   {
-    return double(itsTimeVal.tv_sec) + itsTimeVal.tv_usec / 1000000.0;
+    return double(m_timeval.tv_sec) + m_timeval.tv_usec / 1000000.0;
   }
 
   /// Return time in floating-point milliseconds.
   double msec() const throw()
   {
-    return (itsTimeVal.tv_sec * 1000.0) + (itsTimeVal.tv_usec / 1000.0);
+    return (m_timeval.tv_sec * 1000.0) + (m_timeval.tv_usec / 1000.0);
   }
 
   /// Return time in floating-point microseconds.
   double usec() const throw()
   {
-    return (itsTimeVal.tv_sec * 1000000.0) + double(itsTimeVal.tv_usec);
+    return (m_timeval.tv_sec * 1000000.0) + double(m_timeval.tv_usec);
   }
 
   /// Return internal timeval.
   const timeval& tval() const throw()
   {
-    return itsTimeVal;
+    return m_timeval;
   }
 
   /// Return a formatted string representing the stored timeval.
@@ -305,7 +305,7 @@ private:
       }
   }
 
-  timeval itsTimeVal;
+  timeval m_timeval;
 };
 
 static const char vcid_time_h[] = "$Header$";

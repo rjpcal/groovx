@@ -43,22 +43,22 @@ public:
 
   /// Reset the start time to the current time.
   void restart()
-    { itsStartTime = Util::Time::wallClockNow(); }
+    { itsStartTime = rutz::time::wall_clock_now(); }
 
   /// Get the time elapsed between start and stop times.
-  Util::Time elapsed(const Util::Time& stop) const
+  rutz::time elapsed(const rutz::time& stop) const
   {
     return stop - itsStartTime;
   }
 
   /// Get the time elapsed between start and now.
-  Util::Time elapsed() const
+  rutz::time elapsed() const
     {
-      return elapsed(Util::Time::wallClockNow());
+      return elapsed(rutz::time::wall_clock_now());
     }
 
 private:
-  Util::Time itsStartTime;
+  rutz::time itsStartTime;
 };
 
 static const char vcid_stopwatch_h[] = "$Header$";

@@ -281,9 +281,9 @@ DOTRACE("main");
 
       Tcl::Interp& interp = app.interp();
 
-      const Util::Time ru1 = Util::Time::rusageUserNow();
-      const Util::Time rs1 = Util::Time::rusageSysNow();
-      const Util::Time wc1 = Util::Time::wallClockNow();
+      const rutz::time ru1 = rutz::time::user_rusage();
+      const rutz::time rs1 = rutz::time::sys_rusage();
+      const rutz::time wc1 = rutz::time::wall_clock_now();
 
       for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
         {
@@ -303,18 +303,18 @@ DOTRACE("main");
 
       if (Tcl::Main::isInteractive())
         {
-          const Util::Time ru = Util::Time::rusageUserNow() - ru1;
-          const Util::Time rs = Util::Time::rusageSysNow() - rs1;
-          const Util::Time wc = Util::Time::wallClockNow() - wc1;
+          const rutz::time ru = rutz::time::user_rusage() - ru1;
+          const rutz::time rs = rutz::time::sys_rusage() - rs1;
+          const rutz::time wc = rutz::time::wall_clock_now() - wc1;
 
           fprintf(stderr, "\tstartup time (tcl+tk) "
                   "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",
                   ru.sec(), rs.sec(), wc.sec());
         }
 
-      const Util::Time ru2 = Util::Time::rusageUserNow();
-      const Util::Time rs2 = Util::Time::rusageSysNow();
-      const Util::Time wc2 = Util::Time::wallClockNow();
+      const rutz::time ru2 = rutz::time::user_rusage();
+      const rutz::time rs2 = rutz::time::sys_rusage();
+      const rutz::time wc2 = rutz::time::wall_clock_now();
 
       for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
         {
@@ -360,9 +360,9 @@ DOTRACE("main");
 
       if (Tcl::Main::isInteractive())
         {
-          const Util::Time ru = Util::Time::rusageUserNow() - ru2;
-          const Util::Time rs = Util::Time::rusageSysNow() - rs2;
-          const Util::Time wc = Util::Time::wallClockNow() - wc2;
+          const rutz::time ru = rutz::time::user_rusage() - ru2;
+          const rutz::time rs = rutz::time::sys_rusage() - rs2;
+          const rutz::time wc = rutz::time::wall_clock_now() - wc2;
 
           fprintf(stderr, "\tstartup time (GroovX) "
                   "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",

@@ -39,30 +39,30 @@
 #include <sys/resource.h>
 #include <time.h>
 
-Util::Time Util::Time::wallClockNow() throw()
+rutz::time rutz::time::wall_clock_now() throw()
 {
-  Util::Time t;
-  gettimeofday(&t.itsTimeVal, /* timezone */ 0);
+  rutz::time t;
+  gettimeofday(&t.m_timeval, /* timezone */ 0);
   return t;
 }
 
-Util::Time Util::Time::rusageUserNow() throw()
+rutz::time rutz::time::user_rusage() throw()
 {
   rusage ru;
   getrusage(RUSAGE_SELF, &ru);
-  return Util::Time(ru.ru_utime);
+  return rutz::time(ru.ru_utime);
 }
 
-Util::Time Util::Time::rusageSysNow() throw()
+rutz::time rutz::time::sys_rusage() throw()
 {
   rusage ru;
   getrusage(RUSAGE_SELF, &ru);
-  return Util::Time(ru.ru_stime);
+  return rutz::time(ru.ru_stime);
 }
 
-fstring Util::Time::format(const char* formatcode) const
+fstring rutz::time::format(const char* formatcode) const
 {
-  const time_t t = time_t(itsTimeVal.tv_sec);
+  const time_t t = time_t(m_timeval.tv_sec);
 
   struct tm* tt = localtime(&t);
 
