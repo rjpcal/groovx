@@ -465,6 +465,15 @@ showpid:
 TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
 
+svn_keywords:
+	@for f in $(ALL_SRCS); do \
+	  if test "`svn propget svn:keywords $$f`" != \
+	          "Author Date Id Revision HeadURL"; then \
+	    svn propset svn:keywords \
+	                "Author Date Id Revision HeadURL" $$f; \
+	  fi; \
+	done
+
 DISTNAME := $(PACKAGE_TARNAME)_$(shell date +%Y%m%d)
 CVS_ROOT := $(shell test -e ./CVS/Root && cat ./CVS/Root)
 CVS_REPO := $(shell test -e ./CVS/Root && cat ./CVS/Repository)

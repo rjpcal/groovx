@@ -66,7 +66,7 @@ int Numtest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Numtest_Init");
 
-  PKG_CREATE(interp, "Numtest", "4.$Revision: 9231 $");
+  PKG_CREATE(interp, "Numtest", "4.$Revision$");
 
   DEF_TEST(pkg, testErfc);
 
