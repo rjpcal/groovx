@@ -113,8 +113,8 @@ public:
   unsigned char* bytesPtr() const;
 
   /// Returns a pointer to the beginning of the specified row.
-  /** This takes into account whether the current RowOrder is TOP_FIRST or
-      BOTTOM_FIRST. */
+  /** This takes into account whether the current RowOrder is
+      TOP_FIRST or BOTTOM_FIRST. */
   unsigned char* rowPtr(unsigned int row) const;
 
   /// Returns a checksum of all the bytes in the image data.
@@ -134,18 +134,18 @@ public:
 
   /// Returns the number of bits used per each pixel component.
   /** This differs from bitsPerPixel() if each pixel contains multiple
-      components (e.g. as in an RGB image): the bitsPerComponent() might be
-      8 while the bitsPerPixel() would be 24. */
+      components (e.g. as in an RGB image): the bitsPerComponent()
+      might be 8 while the bitsPerPixel() would be 24. */
   int bitsPerComponent() const;
 
   /// Returns the byte alignment of the bitmap data.
-  /** Each image row in the data will begin on a multiple of this number of
-      bytes. */
+  /** Each image row in the data will begin on a multiple of this
+      number of bytes. */
   int byteAlignment() const;
 
   /// Returns the number of bytes used by the bitmap data.
-  /** Some of these bytes may be 'filler bytes' needed to meet the storage
-      alignment requirements. */
+  /** Some of these bytes may be 'filler bytes' needed to meet the
+      storage alignment requirements. */
   unsigned int byteCount() const;
 
   /// Returns the number of bytes used per image row in the bitmap data.
@@ -173,8 +173,8 @@ public:
   void swap(BmapData& other);
 
   /// Queues the update given by \a updater.
-  /** The \c update() function will be called only when the bitmap data
-      must be accessed. */
+  /** The \c update() function will be called only when the bitmap
+      data must be accessed. */
   void queueUpdate(shared_ptr<UpdateFunc> updater) const;
 
   /// Forces any pending update to be called.
@@ -184,8 +184,8 @@ public:
   void clearQueuedUpdate() const;
 
   /// Set the row order, swapping rows around in memory if necessary.
-  /** This is a logical "const" operation since the image being represented
-      stays the same; only its representation changes. */
+  /** This is a logical "const" operation since the image being
+      represented stays the same; only its representation changes. */
   void setRowOrder(RowOrder order) const;
 
   /// Specify the row order but leave the actual memory untouched.
