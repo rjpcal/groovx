@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 17:08:24 2002
+// written: Mon Sep 16 17:39:36 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -68,8 +68,12 @@ public:
   void setDestroyFunc(Togl::Callback* proc);
 
   // Miscellaneous
-  int configure(int objc, Tcl_Obj* const objv[]);
-  int handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+
+  /// Get info about configuration parameters.
+  /** If param is null, get info about all parameters; if param is
+      non-null, get info about the parameters that it names. */
+  Tcl_Obj* cget(Tcl_Obj* param) const;
+  void configure(int objc, Tcl_Obj* const objv[]);
   void makeCurrent() const;
   void requestRedisplay();
   void requestReconfigure();

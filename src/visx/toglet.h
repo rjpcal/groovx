@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 12:51:46 2002
+// written: Mon Sep 16 17:47:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,9 +59,11 @@ public:
 
   virtual Gfx::Canvas& getCanvas();
 
-  // manipulators
-  int handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+  // configuration
+  Tcl_Obj* cget(Tcl_Obj* param) const;
+  void configure(int objc, Tcl_Obj* const objv[]);
 
+  // manipulators
   static void defaultParent(const char* pathname);
 
   void destroyWidget();

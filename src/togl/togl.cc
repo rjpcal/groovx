@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 17:25:31 2002
+// written: Mon Sep 16 17:44:11 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -218,9 +218,8 @@ public:
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
   ~Impl() throw();
 
-  int configure(int objc, Tcl_Obj* const objv[]);
-
-  int handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+  Tcl_Obj* cget(Tcl_Obj* param) const;
+  void configure(int objc, Tcl_Obj* const objv[]);
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
   static void cEventuallyFreeCallback(char* clientData);
@@ -428,58 +427,33 @@ DOTRACE("Togl::Impl::~Impl");
 
 //---------------------------------------------------------------------
 //
-// Process a configure read- and/or write-request
+// Process a configure read-request
 //
 //---------------------------------------------------------------------
 
-int Togl::Impl::handleConfigure(Tcl_Interp* interp,
-                                int objc, Tcl_Obj* const objv[])
+Tcl_Obj* Togl::Impl::cget(Tcl_Obj* param) const
 {
-DOTRACE("Togl::Impl::handleConfigure");
+DOTRACE("Togl::Impl::cget");
 
-  int result = TCL_OK;
+  Tcl_Obj* objResult =
+    Tk_GetOptionInfo(itsInterp,
+                     reinterpret_cast<char*>(itsOpts.get()),
+                     toglOptionTable,
+                     param, itsTkWin);
 
-  if (objc == 0)
-    {
-      /* Return list of all configuration parameters */
-      Tcl_Obj* objResult =
-        Tk_GetOptionInfo(interp,
-                         reinterpret_cast<char*>(itsOpts.get()),
-                         toglOptionTable,
-                         (Tcl_Obj*)NULL, itsTkWin);
+  if (objResult == 0)
+    throw Util::Error("couldn't get configuration parameters");
 
-      if (objResult != 0) Tcl_SetObjResult(interp, objResult);
-      else                result = TCL_ERROR;
-    }
-  else if (objc == 1)
-    {
-      /* Return a specific configuration parameter */
-      Tcl_Obj* objResult =
-        Tk_GetOptionInfo(interp,
-                         reinterpret_cast<char*>(itsOpts.get()),
-                         toglOptionTable,
-                         objv[0], itsTkWin);
-
-      if (objResult != 0) Tcl_SetObjResult(interp, objResult);
-      else                result = TCL_ERROR;
-    }
-  else
-    {
-      /* Execute a configuration change */
-      result = configure(objc, objv);
-    }
-
-  return result;
+  return objResult;
 }
 
 //---------------------------------------------------------------------
 //
-// It's possible to change with this function or in a script some
-// options like RGBA - ColorIndex ; Z-buffer and so on
+// Process a configure write-request
 //
 //---------------------------------------------------------------------
 
-int Togl::Impl::configure(int objc, Tcl_Obj* const objv[])
+void Togl::Impl::configure(int objc, Tcl_Obj* const objv[])
 {
 DOTRACE("Togl::Impl::configure");
 
@@ -490,26 +464,16 @@ DOTRACE("Togl::Impl::configure");
                     (Tk_SavedOptions*) 0, &mask)
       == TCL_ERROR)
     {
-      return TCL_ERROR;
+      throw Util::Error("error while setting togl widget options");
     }
 
-  try
-    {
-      // If any GLX options changed, then we have to recreate the window
-      // and GLX context
-      if (mask & TOGL_GLX_OPTION)
-        makeWindowExist();
+  // If any GLX options changed, then we have to recreate the window
+  // and GLX context
+  if (mask & TOGL_GLX_OPTION)
+    makeWindowExist();
 
-      else if (mask & TOGL_OVERLAY_OPTION)
-        setupOverlay();
-    }
-  catch (Util::Error& err)
-    {
-      Tcl_AppendResult(itsInterp, err.msg_cstr(), NULL);
-      return TCL_ERROR;
-    }
-
-  return TCL_OK;
+  else if (mask & TOGL_OVERLAY_OPTION)
+    setupOverlay();
 }
 
 // Gets called when an Togl widget is destroyed.
@@ -840,11 +804,11 @@ void Togl::setDisplayFunc(Togl::Callback* proc) { rep->setDisplayFunc(proc); }
 void Togl::setReshapeFunc(Togl::Callback* proc) { rep->setReshapeFunc(proc); }
 void Togl::setDestroyFunc(Togl::Callback* proc) { rep->setDestroyFunc(proc); }
 
-int Togl::configure(int objc, Tcl_Obj* const objv[])
-  { return rep->configure(objc, objv); }
+Tcl_Obj* Togl::cget(Tcl_Obj* param) const
+  { return rep->cget(param); }
 
-int Togl::handleConfigure(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
-  { return rep->handleConfigure(interp, objc, objv); }
+void Togl::configure(int objc, Tcl_Obj* const objv[])
+  { rep->configure(objc, objv); }
 
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(windowId()); }
 void Togl::requestRedisplay()           { rep->requestRedisplay(); }
