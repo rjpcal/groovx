@@ -3,7 +3,7 @@
 // glcanvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Dec  6 21:50:13 1999
+// written: Sun Jan 16 23:11:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,18 +23,6 @@
 #include "debug.h"
 #include "trace.h"
 
-
-namespace {
-  GLCanvas* theSingleton = 0;
-}
-
-GLCanvas& GLCanvas::theCanvas() {
-  if ( theSingleton == 0 ) {
-	 theSingleton = new GLCanvas();
-  }
-
-  return *theSingleton;
-}
 
 Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {
   GLdouble current_mv_matrix[16];

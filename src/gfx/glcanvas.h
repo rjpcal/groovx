@@ -3,7 +3,7 @@
 // glcanvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Dec  6 21:22:57 1999
+// written: Sun Jan 16 23:10:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@
 
 class GLCanvas : public Canvas {
 public:
-  static GLCanvas& theCanvas();
-
   virtual Point<int> getScreenFromWorld(const Point<double>& world_pos) const;
   virtual Point<double> getWorldFromScreen(const Point<int>& screen_pos) const;
 
