@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Aug  8 13:03:03 2001
+// written: Wed Aug  8 13:26:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ DOTRACE("Block::readFrom");
   if (itsImpl->itsCurTrialSeqIdx < 0 ||
       size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size())
     {
-      throw IO::ValueError("Block");
+      throw IO::ReadError("Block");
     }
 
   reader->readValue("verbose", itsImpl->itsVerbose);
