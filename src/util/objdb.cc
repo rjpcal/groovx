@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Mar  7 21:00:13 2000
+// written: Wed Mar  8 11:30:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,9 +93,9 @@ DOTRACE("IoPtrList::deserialize");
   is >> size >> num_non_null;
   // We must check if the istream has failed in order to avoid
   // attempting to resize the voidVec to some crazy size.
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
   if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
-	 throw IoValueError(ioTag);
+	 throw IoValueError(ioTag.c_str());
   }
   voidVecResize(size);
   int ptrid;
@@ -103,13 +103,13 @@ DOTRACE("IoPtrList::deserialize");
   for (int i = 0; i < num_non_null; ++i) {
     is >> ptrid;
 	 if (ptrid < 0 || ptrid >= size) {
-		throw IoValueError(ioTag);
+		throw IoValueError(ioTag.c_str());
 	 }
 
 	 is >> type;
 
 	 IO* obj = IoMgr::newIO(type.c_str());
-	 if (!obj) throw InputError(ioTag);
+	 if (!obj) throw InputError(ioTag.c_str());
 
 	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
 
@@ -119,15 +119,15 @@ DOTRACE("IoPtrList::deserialize");
   // itsFirstVacant
   is >> VoidPtrList::firstVacant();
   if (firstVacant() < 0) {
-	 throw IoValueError(ioTag);
+	 throw IoValueError(ioTag.c_str());
   }
 
   // The next character after itsFirstVacant had better be a newline,
   // and we need to remove it from the stream.
   if ( is.get() != '\n' )
-	 { throw IoLogicError(ioTag); }
+	 { throw IoLogicError(ioTag.c_str()); }
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 }
 
 
