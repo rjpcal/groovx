@@ -63,12 +63,14 @@ TEST_OBJECTS =	\
 	expttcl.sl \
 	expttesttcl.sl \
 	face.do facetcl.sl \
+	fish.do fishtcl.sl \
 	fixpt.do fixpttcl.sl \
 	gfxattribs.sl \
 	glbitmap.do \
 	grobj.do grobjtcl.sl \
 	grshAppInit.do \
 	gtext.do gtexttcl.sl \
+	house.do housetcl.sl \
 	id.sl \
 	io.sl \
 	iofactory.sl \
@@ -77,8 +79,9 @@ TEST_OBJECTS =	\
 	ioutils.sl \
 	jitter.do jittertcl.sl \
 	kbdresponsehdlr.sl \
+	maskhatch.do masktcl.sl \
 	misctcl.sl \
-	morphyface.do morphyfacetcl.sl\
+	morphyface.do morphyfacetcl.sl \
 	nullresponsehdlr.sl \
 	objlist.sl objlisttcl.sl \
 	objtogl.do \
@@ -87,6 +90,7 @@ TEST_OBJECTS =	\
 	pbm.sl \
 	position.do positiontcl.sl \
 	poslist.sl poslisttcl.sl \
+	property.sl \
 	responsehandler.sl \
 	rhlist.sl \
 	rhtcl.sl \
@@ -101,6 +105,7 @@ TEST_OBJECTS =	\
 	tclerror.sl \
 	tclitempkg.sl \
 	tclpkg.sl \
+	tclvalue.sl \
 	thlist.sl \
 	thtcl.sl \
 	timinghandler.sl \
@@ -110,6 +115,7 @@ TEST_OBJECTS =	\
 	trace.sl \
 	trial.do trialtcl.sl \
 	trialevent.do \
+	value.sl \
 	xbitmap.do
 
 TEST_DEPENDS = $(TEST_OBJECTS)
@@ -120,7 +126,7 @@ TEST_DEPENDS = $(TEST_OBJECTS)
 #
 #-------------------------------------------------------------------------
 
-PROD_TARGET = grsh0.6a1
+PROD_TARGET = grsh0.6a2
 PROD_OPTIONS = +p
 PROD_OPTIM = +O3
 PROD_LINK_OPTIONS = -Wl,+vallcompatwarnings
@@ -180,7 +186,10 @@ $(HOME)/bin/$(ARCH)/$(PROD_TARGET): TAGS $(PROD_OBJECTS)
 #
 #-------------------------------------------------------------------------
 
+#
 # level 0 headers
+#
+BEZIER_H = bezier.h
 DEBUG_H = debug.h
 ERRMSG_H = errmsg.h
 ERROR_H = error.h
@@ -212,59 +221,75 @@ TIMEUTILS_H = timeutils.h
 TLISTTCL_H = tlisttcl.h
 TRACE_H = trace.h
 
-# level 1
+#
+# level 1 headers
+#
 FACTORY_H = $(ERROR_H) factory.h
 IO_H = $(ERROR_H) io.h
 PBM_H = $(ERROR_H) pbm.h
 TCLERROR_H = $(ERROR_H) tclerror.h
 TCLEVALCMD_H = $(TCLOBJLOCK_H) tclevalcmd.h
 TOGLCONFIG_H = $(RECT_H) toglconfig.h
+VALUE_H = $(ERROR_H) value.h
 
+#
 # level 2 headers
+#
 BLOCK_H = $(IO_H) block.h
 EXPTDRIVER_H = $(IO_H) $(ERROR_H) exptdriver.h
 GROBJ_H = $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) grobj.h
 IOFACTORY_H = $(FACTORY_H) $(IO_H) iofactory.h
 IOSTL_H = $(IO_H) iostl.h
 POSITION_H = $(IO_H) position.h
+PROPERTY_H = $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
 PTRLIST_H = $(IO_H) $(ERROR_H) ptrlist.h
 RESPONSEHANDLER_H = $(IO_H) responsehandler.h 
 SOUND_H = $(ERROR_H) $(IO_H) sound.h
-TCLCMD_H = $(TCLERROR_H) tclcmd.h
+TCLVALUE_H = $(VALUE_H) tclvalue.h
 TIMINGHDLR_H = $(IO_H) timinghdlr.h
 TRIAL_H = $(ID_H) $(IO_H) $(ERROR_H) trial.h
 TRIALEVENT_H = $(IO_H) trialevent.h
 
-#level 3 headers
-BITMAP_H = $(GROBJ_H) bitmap.h
+#
+# level 3 headers
+#
+BITMAP_H = $(GROBJ_H) $(RECT_H) bitmap.h
 BLOCKLIST_H = $(PTRLIST_H) blocklist.h
 FACE_H = $(IOSTL_H) $(GROBJ_H) face.h
+FISH_H = $(GROBJ_H) $(PROPERTY_H) fish.h
 FIXPT_H = $(GROBJ_H) fixpt.h
 GTEXT_H = $(GROBJ_H) $(ERROR_H) gtext.h
+HOUSE_H = $(GROBJ_H) $(IOSTL_H) house.h
 IOMGR_H = $(IO_H) $(IOFACTORY_H) iomgr.h
 JITTER_H = $(POSITION_H) jitter.h
 KBDRESPONSEHDLR_H = $(RESPONSEHANDLER_H) kbdresponsehdlr.h
-MORPHYFACE_H = $(IOSTL_H) $(GROBJ_H) morphyface.h
+MASKHATCH_H = $(GROBJ_H) maskhatch.h
+MORPHYFACE_H = $(IOSTL_H) $(GROBJ_H) $(PROPERTY_H) morphyface.h
 NULLRESPONSEHDLR_H = $(RESPONSEHANDLER_H) nullresponsehdlr.h
 OBJLIST_H = $(PTRLIST_H) $(ID_H) objlist.h
 POSLIST_H = $(PTRLIST_H) $(ID_H) poslist.h
 RHLIST_H = $(PTRLIST_H) rhlist.h
 SOUNDLIST_H = $(PTRLIST_H) soundlist.h
+TCLCMD_H = $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
 THLIST_H = $(PTRLIST_H) thlist.h
-TLIST_H = $(PTRLIST_H) $(IO_H) tlist.h
-STRINGIFYCMD_H = $(TCLCMD_H) stringifycmd.h
-TCLITEMPKG_H = $(TCLPKG_H) $(TCLCMD_H) tclitempkg.h
 TIMINGHANDLER_H = $(TIMINGHDLR_H) timinghandler.h
+TLIST_H = $(PTRLIST_H) $(IO_H) tlist.h
 
-#level 4 headers
+#
+# level 4 headers
+#
 CLONEFACE_H = $(FACE_H) cloneface.h
 GLBITMAP_H = $(BITMAP_H) glbitmap.h
-LISTITEMPKG_H = $(TCLITEMPKG_H) listitempkg.h
-LISTPKG_H = $(TCLITEMPKG_H) listpkg.h
+STRINGIFYCMD_H = $(TCLCMD_H) stringifycmd.h
 PTRLIST_CC = $(PTRLIST_H) $(IOMGR_H) ptrlist.cc
+TCLITEMPKG_H = $(TCLPKG_H) $(TCLCMD_H) $(PROPERTY_H) tclitempkg.h
 XBITMAP_H = $(BITMAP_H) xbitmap.h
 
-#level 5 headers
+#
+# level 5 headers
+#
+LISTITEMPKG_H = $(TCLITEMPKG_H) listitempkg.h
+LISTPKG_H = $(TCLITEMPKG_H) listpkg.h
 
 #-------------------------------------------------------------------------
 #
@@ -272,7 +297,7 @@ XBITMAP_H = $(BITMAP_H) xbitmap.h
 #
 #-------------------------------------------------------------------------
 
-BITMAP_CC = $(BITMAP_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
+BITMAP_CC = $(BITMAP_H) $(ERROR_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
 
 BITMAPTCL_CC = $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) $(IOMGR_H) $(OBJLIST_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
@@ -288,7 +313,7 @@ BLOCKTCL_CC = $(IOMGR_H) $(BLOCKLIST_H) $(EXPT_H) $(TCLCMD_H) $(LISTITEMPKG_H) \
 
 CLONEFACE_CC = $(CLONEFACE_H) $(TRACE_H) $(DEBUG_H) cloneface.cc
 
-ERROR_CC = $(ERROR_H) $(TRACE_H) error.cc
+ERROR_CC = $(ERROR_H) $(TRACE_H) $(DEBUG_H) error.cc
 
 EXPTDRIVER_CC = $(EXPTDRIVER_H) $(TCLERROR_H) $(EXPT_H) $(OBJTOGL_H) \
 	$(TOGLCONFIG_H) \
@@ -296,17 +321,21 @@ EXPTDRIVER_CC = $(EXPTDRIVER_H) $(TCLERROR_H) $(EXPT_H) $(OBJTOGL_H) \
 	$(TRIAL_H) $(OBJLIST_H) $(POSLIST_H) $(BLOCKLIST_H) $(RHLIST_H) \
 	$(THLIST_H) $(TLIST_H) $(TIMEUTILS_H) $(TRACE_H) $(DEBUG_H) exptdriver.cc
 
-EXPTTESTTCL_CC = $(TCLLINK_H) expttesttcl.cc
-
 EXPTTCL_CC = $(EXPTTCL_H) $(TCLEVALCMD_H) $(EXPTDRIVER_H) \
 	$(TCLITEMPKG_H) $(TCLCMD_H) $(OBJTOGL_H) $(TOGLCONFIG_H) \
 	$(TRACE_H) $(DEBUG_H) expttcl.cc
+
+EXPTTESTTCL_CC = $(TCLLINK_H) expttesttcl.cc
 
 FACE_CC = $(FACE_H) $(GFXATTRIBS_H) $(TRACE_H) $(DEBUG_H) face.cc
 
 FACETCL_CC = $(FACETCL_H) $(CLONEFACE_H) $(IOMGR_H) $(OBJLIST_H) \
 	$(FACE_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) facetcl.cc
+
+FISH_CC = $(FISH_H) fish.cc
+
+FISHTCL_CC = $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
 
 FIXPT_CC = $(FIXPT_H) fixpt.cc
 
@@ -315,9 +344,10 @@ FIXPTTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(FIXPT_H) $(LISTITEMPKG_H) \
 
 GFXATTRIBS_CC = $(GFXATTRIBS_H) gfxattribs.cc
 
-GLBITMAP_CC = $(GLBITMAP_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) glbitmap.cc
+GLBITMAP_CC = $(GLBITMAP_H) $(TRACE_H) $(DEBUG_H) glbitmap.cc
 
-GROBJ_CC = $(GROBJ_H) $(ERROR_H) $(TRACE_H) $(DEBUG_H) grobj.cc
+GROBJ_CC = $(GROBJ_H) $(GLBITMAP_H) $(XBITMAP_H) \
+	$(ERROR_H) $(RECT_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
 GROBJTCL_CC = $(GROBJTCL_H) $(LISTITEMPKG_H) $(GROBJ_H) $(OBJLIST_H) grobjtcl.cc
 
@@ -328,17 +358,22 @@ GTEXT_CC = $(GTEXT_H) $(OBJTOGL_H) $(TOGLCONFIG_H) $(TRACE_H) $(DEBUG_H) gtext.c
 GTEXTTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(GTEXT_H) $(LISTITEMPKG_H) \
 	$(TRACE_H) $(DEBUG_H) gtexttcl.cc
 
+HOUSE_CC = $(HOUSE_H) $(TRACE_H) $(DEBUG_H) house.cc
+
+HOUSETCL_CC = $(HOUSE_H) $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) \
+	$(TRACE_H) $(DEBUG_H) housetcl.cc
+
 ID_CC = $(ID_H) $(OBJLIST_H) $(POSLIST_H) id.cc
 
 IO_CC = $(IO_H) $(TRACE_H) $(DEBUG_H) io.cc
 
-IOSTL_CC = $(IOSTL_H) iostl.cc
-
-IOUTILS_CC = $(IOUTILS_H) $(IO_H) ioutils.cc
-
 IOFACTORY_CC = $(IOFACTORY_H) iofactory.cc
 
 IOMGR_CC = $(IOMGR_H) $(TRACE_H) $(DEBUG_H) iomgr.cc
+
+IOSTL_CC = $(IOSTL_H) iostl.cc
+
+IOUTILS_CC = $(IOUTILS_H) $(IO_H) ioutils.cc
 
 JITTER_CC = $(JITTER_H) $(RANDUTILS_H) $(TRACE_H) $(DEBUG_H) jitter.cc
 
@@ -349,9 +384,14 @@ KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) $(EXPTDRIVER_H) \
 	$(TCLEVALCMD_H) $(OBJTOGL_H) $(TOGLCONFIG_H) $(SOUND_H) $(SOUNDLIST_H) \
 	$(TRACE_H) $(DEBUG_H) kbdresponsehdlr.cc
 
+MASKHATCH_CC = $(MASKHATCH_H) $(TRACE_H) $(DEBUG_H) maskhatch.cc
+
+MASKTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(MASKHATCH_H) \
+	$(TRACE_H) $(DEBUG_H) masktcl.cc
+
 MISCTCL_CC = $(MISCTCL_H) $(RANDUTILS_H) misctcl.cc
 
-MORPHYFACE_CC = $(MORPHYFACE_H) $(GFXATTRIBS_H) \
+MORPHYFACE_CC = $(MORPHYFACE_H) $(BEZIER_H) $(GFXATTRIBS_H) \
 	$(TRACE_H) $(DEBUG_H) morphyface.cc
 
 MORPHYFACETCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(MORPHYFACE_H) \
@@ -371,6 +411,8 @@ POSITIONTCL_CC = $(POSITIONTCL_H) $(IOMGR_H) $(POSITION_H) $(POSLIST_H) \
 POSLISTTCL_CC = $(POSLISTTCL_H) $(POSLIST_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) poslisttcl.cc
 
+PROPERTY_CC = $(PROPERTY_H) property.cc
+
 RESPONSEHANDLER_CC = $(RESPONSEHANDLER_H) $(TRACE_H) responsehandler.cc
 
 RHTCL_CC = $(IOMGR_H) $(RHLIST_H) $(RESPONSEHANDLER_H) $(TCLCMD_H) \
@@ -388,7 +430,8 @@ SOUNDTCL_CC = $(SOUNDTCL_H) $(ERRMSG_H) $(SOUNDLIST_H) $(SOUND_H) \
 STRINGIFYCMD_CC = $(STRINGIFYCMD_H) $(IO_H) \
 	$(TRACE_H) $(DEBUG_H) stringifycmd.cc
 
-TCLCMD_CC = $(TCLCMD_H) $(ERRMSG_H) $(TRACE_H) $(DEBUG_H) tclcmd.cc
+TCLCMD_CC = $(TCLCMD_H) $(ERRMSG_H) $(TCLVALUE_H) \
+	$(TRACE_H) $(DEBUG_H) tclcmd.cc
 
 TCLERROR_CC = $(TCLERROR_H) $(TRACE_H) tclerror.cc
 
@@ -398,7 +441,10 @@ TCLGL_CC = $(TCLGL_H) $(TCLPKG_H) $(TCLCMD_H) $(TCLERROR_H) \
 TCLITEMPKG_CC = $(TCLITEMPKG_H) $(TCLCMD_H) $(STRINGIFYCMD_H) \
 	$(TRACE_H) $(DEBUG_H) tclitempkg.cc
 
-TCLPKG_CC = $(TCLPKG_H) $(TCLLINK_H) $(TCLCMD_H) $(TCLERROR_H) tclpkg.cc
+TCLPKG_CC = $(TCLPKG_H) $(TCLLINK_H) $(TCLCMD_H) $(TCLERROR_H) \
+	$(TRACE_H) $(DEBUG_H) tclpkg.cc
+
+TCLVALUE_CC = $(TCLVALUE_H) $(TRACE_H) $(DEBUG_H) tclvalue.cc
 
 THTCL_CC = $(IOMGR_H) $(THLIST_H) $(TCLCMD_H) $(TIMINGHDLR_H) \
 	$(TIMINGHANDLER_H) $(TRIALEVENT_H) $(LISTITEMPKG_H) $(LISTPKG_H)\
@@ -420,7 +466,9 @@ TRIALEVENT_CC = $(TRIALEVENT_H) $(EXPTDRIVER_H) $(TIMEUTILS_H) \
 TRIALTCL_CC = $(IOMGR_H) $(TRIAL_H) $(TLIST_H) $(LISTITEMPKG_H) \
 	$(TRACE_H) $(DEBUG_H) trialtcl.cc
 
-XBITMAP_CC = $(XBITMAP_H) $(PBM_H) $(TOGLCONFIG_H) $(OBJTOGL_H) \
+VALUE_CC = $(VALUE_H) value.cc
+
+XBITMAP_CC = $(XBITMAP_H) $(TOGLCONFIG_H) $(OBJTOGL_H) \
 	$(TRACE_H) $(DEBUG_H) xbitmap.cc
 
 #-------------------------------------------------------------------------
@@ -441,6 +489,8 @@ expttcl.*[ol]: $(EXPTTCL_CC)
 expttesttcl.*[ol]: $(EXPTTESTTCL_CC)
 face.*[ol]: $(FACE_CC)
 facetcl.*[ol]: $(FACETCL_CC)
+fish.*[ol]: $(FISH_CC)
+fishtcl.*[ol]: $(FISHTCL_CC)
 fixpt.*[ol]: $(FIXPT_CC)
 fixpttcl.*[ol]: $(FIXPTTCL_CC)
 gfxattribs.*[ol]: $(GFXATTRIBS_CC)
@@ -450,6 +500,8 @@ grobjtcl.*[ol]: $(GROBJTCL_CC)
 grshAppInit.*[ol]: $(GRSHAPPINIT_CC)
 gtext.*[ol]: $(GTEXT_CC)
 gtexttcl.*[ol]: $(GTEXTTCL_CC)
+house.*[ol]: $(HOUSE_CC)
+housetcl.*[ol]: $(HOUSETCL_CC)
 id.*[ol]: $(ID_CC)
 io.*[ol]: $(IO_CC)
 iofactory.*[ol]: $(IOFACTORY_CC)
@@ -459,9 +511,12 @@ ioutils.*[ol]: $(IOUTILS_CC)
 jitter.*[ol]: $(JITTER_CC)
 jittertcl.*[ol]: $(JITTERTCL_CC)
 kbdresponsehdlr.*[ol]: $(KBDRESPONSEHDLR_CC)
+maskhatch.*[ol]: $(MASKHATCH_CC)
+masktcl.*[ol]: $(MASKTCL_CC)
 misctcl.*[ol]: $(MISCTCL_CC)
 morphyface.*[ol]: $(MORPHYFACE_CC)
 morphyfacetcl.*[ol]: $(MORPHYFACETCL_CC)
+nullresponsehdlr.*[ol]: $(NULLRESPONSEHDLR_CC)
 objlist.*[ol]: objlist.h ptrlist.h io.h iomgr.h grobj.h id.h \
 	observable.h observer.h trace.h debug.h ptrlist.cc objlist.cc
 objlisttcl.*[ol]: $(OBJLISTTCL_CC)
@@ -476,6 +531,7 @@ positiontcl.*[ol]: $(POSITIONTCL_CC)
 poslist.*[ol]: poslist.h ptrlist.h id.h io.h iomgr.h position.h \
 	debug.h trace.h ptrlist.cc poslist.cc
 poslisttcl.*[ol]: $(POSLISTTCL_CC)
+property.*[ol]: $(PROPERTY_CC)
 responsehandler.*[ol]: $(RESPONSEHANDLER_CC)
 rhlist.*[ol]: debug.h io.h ptrlist.h ptrlist.cc responsehandler.h \
 	rhlist.h rhlist.cc trace.h
@@ -493,11 +549,12 @@ subject.*[ol]: subject.h io.h ioutils.h trace.h debug.h subject.cc
 subjecttcl.*[ol]: subjecttcl.h errmsg.h subject.h io.h trace.h debug.h \
 	subjecttcl.cc
 tcldlist.*[ol]: tcldlist.h errmsg.h trace.h debug.h tcldlist.cc
-tclgl.*[ol]: tclgl.h errmsg.h trace.h debug.h tclgl.cc
 tclcmd.*[ol]: $(TCLCMD_CC)
 tclerror.*[ol]: $(TCLERROR_CC) 
+tclgl.*[ol]: $(TCLGL_CC)
 tclitempkg.*[ol]: $(TCLITEMPKG_CC)
 tclpkg.*[ol]: $(TCLPKG_CC)
+tclvalue.*[ol]: $(TCLVALUE_CC)
 thlist.*[ol]: debug.h io.h ptrlist.h ptrlist.cc \
 	timinghdlr.h thlist.h thlist.cc trace.h
 thtcl.*[ol]: $(THTCL_CC)
@@ -505,17 +562,15 @@ timinghdlr.*[ol]: $(TIMINGHDLR_CC)
 timinghandler.*[ol]: timinghandler.h io.h exptdriver.h $(TRIALEVENT_H) \
 	trace.h debug.h timinghandler.cc
 tlist.*[ol]: $(TLIST_CC)
-tlisttcl.*[ol]: tlisttcl.h tlist.h io.h trial.h \
-	id.h objlist.h ptrlist.h grobj.h \
-	observable.h observer.h poslist.h position.h objlisttcl.h \
-	poslisttcl.h errmsg.h $(TCLITEMPKG_H) $(TCLPKG_H) trace.h debug.h tlisttcl.cc
+tlisttcl.*[ol]: $(TLISTTCL_CC)
 toglconfig.*[ol]: toglconfig.h rect.h gfxattribs.h $(TCLEVALCMD_H) \
 	$(ERROR_H) $(TRACE_H) $(DEBUG_H) toglconfig.cc
 trace.*[ol]: trace.h trace.cc
 trial.*[ol]: trial.h io.h objlist.h ptrlist.h grobj.h id.h \
 	observable.h observer.h poslist.h position.h trace.h debug.h trial.cc
-trialtcl.*[ol]: $(TRIALTCL_CC)
 trialevent.*[ol]: $(TRIALEVENT_CC)
+trialtcl.*[ol]: $(TRIALTCL_CC)
+value.*[ol]: $(VALUE_CC)
 xbitmap.*[ol]: $(XBITMAP_CC)
 
 #-------------------------------------------------------------------------
