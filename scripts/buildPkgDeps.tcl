@@ -31,9 +31,13 @@ proc extractPkgReqs { contents } {
 
 proc extractPkgRevision { contents } {
 
-    set code [regexp {Revision: ([0-9\.]*)} $contents fullmatch revision]
+    if { [regexp {Revision: ([0-9\.]*)} $contents fullmatch revision] } {
+	return $revision
+    } elseif { [regexp {Id: ([^ ]+) ([0-9]+)} $contents - fname revision] } {
+	return $revision
+    }
 
-    return $revision
+    error "couldn't determine package version"
 }
 
 proc getFileContents { filename } {
@@ -80,6 +84,8 @@ proc setup_package { pkgname ccfiles libdir } {
 	set pkgtitle [string totitle $pkgname]
 
 	set contents [getFileContents $initfile]
+
+	puts "initfile is $initfile"
 
 	set revision [extractPkgRevision $contents]
 
