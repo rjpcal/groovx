@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Fri Jun 11 11:32:06 1999
+// written: Wed Jun 30 16:56:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,14 +17,20 @@
 #include <typeinfo>
 #include <string>
 
+#if 0
+#include "bitmap.h"
 #include "face.h"
 #include "cloneface.h"
 #include "fixpt.h"
 #include "position.h"
 #include "jitter.h"
-#include "expt.h"
-#include "responsehandler.h"
+#include "block.h"
+#include "kbdresponsehdlr.h"
+#include "nullresponsehdlr.h"
 #include "timinghandler.h"
+#include "timinghdlr.h"
+#include "trialevent.h"
+#endif
 
 #define NO_TRACE
 #include "trace.h"
@@ -33,8 +39,16 @@
 
 IO* IoMgr::newIO(const char* type) {
 DOTRACE("IoMgr::newIO(const char*)");
-  // GrObj's
-  if ("Face"==string(type)) {
+
+  return IoFactory::theOne().newCheckedObject(type);
+
+#if 0
+  // ObjList --> GrObj's
+  if (false) {} 
+  else if ("Bitmap"==string(type)) {
+	 return new Bitmap();
+  }
+  else if ("Face"==string(type)) {
     return new Face();
   }
   else if ("CloneFace"==string(type)) {
@@ -43,28 +57,59 @@ DOTRACE("IoMgr::newIO(const char*)");
   else if ("FixPt"==string(type)) {
     return new FixPt();
   }
-  // Position's
+  // PosList --> Position's
   else if ("Position"==string(type)) {
 	 return new Position();
   }
   else if ("Jitter"==string(type)) {
 	 return new Jitter();
   }
-  // Others
-  else if ("Expt"==string(type)) {
-	 return new Expt();
+  // BlockList --> Block's
+  else if ("Block"==string(type)) {
+	 return new Block();
   }
-  else if ("ResponseHandler"==string(type)) {
-	 return new ResponseHandler();
+  // RhList --> ResponseHandler's
+  else if ("KbdResponseHdlr"==string(type)) {
+	 return new KbdResponseHdlr();
+  }
+  // ThList --> TimingHdlr's
+  else if ("TimingHdlr"==string(type)) {
+	 return new TimingHdlr();
   }
   else if ("TimingHandler"==string(type)) {
 	 return new TimingHandler();
+  }
+  // TrialEvent's
+  else if ("AbortTrialEvent"==string(type)) {
+	 return new AbortTrialEvent();
+  }
+  else if ("DrawEvent"==string(type)) {
+	 return new DrawEvent();
+  }
+  else if ("UndrawEvent"==string(type)) {
+	 return new UndrawEvent();
+  }
+  else if ("EndTrialEvent"==string(type)) {
+	 return new EndTrialEvent();
+  }
+  else if ("SwapBuffersEvent"==string(type)) {
+	 return new SwapBuffersEvent();
+  }
+  else if ("RenderBackEvent"==string(type)) {
+	 return new RenderBackEvent();
+  }
+  else if ("RenderFrontEvent"==string(type)) {
+	 return new RenderFrontEvent();
+  }
+  else if ("ClearBufferEvent"==string(type)) {
+	 return new ClearBufferEvent();
   }
   // Oops! IoMgr doesn't recognize the typename of whatever it's
   // trying to read.
   else {
 	 throw InputError(string("IoMgr unknown typename \"") + type + "\"");
   }  
+#endif
 }
 
 IO* IoMgr::newIO(istream& is, IO::IOFlag flag) {
