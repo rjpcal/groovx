@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Tue Nov 12 17:39:45 2002
+// written: Tue Nov 12 18:17:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "togl/glutil.h"
 
 #include "util/error.h"
+#include "util/minivec.h"
+#include "util/pointers.h"
 
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -23,99 +25,94 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
-//---------------------------------------------------------------------
-//
-// Load the named bitmap font as a sequence of bitmaps in a display list.
-// fontname may be one of the predefined fonts like TOGL_BITMAP_8_BY_13, or an
-// X font name.
-//
-//---------------------------------------------------------------------
+class GxFont
+{
+public:
+  GxFont(Display* dpy, const char* fontname) :
+    itsFontInfo(0),
+    itsListBase(0),
+    itsListCount(0)
+  {
+    if (fontname == 0)
+      fontname = "fixed";
+
+    Assert( fontname != 0 );
+
+    itsFontInfo = XLoadQueryFont( dpy, fontname );
+    dbgEval(2, itsFontInfo); dbgEvalNL(2, itsFontInfo->fid);
+
+    if (itsFontInfo == 0)
+      {
+        throw Util::Error(fstring("couldn't load X font '", fontname, "'"));
+      }
+
+    const int first = itsFontInfo->min_char_or_byte2;
+    dbgEval(2, first);
+    const int last = itsFontInfo->max_char_or_byte2;
+    dbgEval(2, last);
+
+    itsListCount = last-first+1;
+    dbgEvalNL(2, itsListCount);
+
+    itsListBase = glGenLists( last+1 );
+    dbgEvalNL(2, itsListBase);
+
+    if (itsListBase==0)
+      {
+        throw Util::Error(fstring("couldn't allocate GL display lists"));
+      }
+
+    glXUseXFont(itsFontInfo->fid,
+                first,
+                itsListCount,
+                (int) itsListBase+first);
+
+#if 0
+    // for debugging
+    for (int l = first; l < first+itsListCount; ++l)
+      {
+        double p = 4*double((l-first-1)-48)/42.0 - 2.0;
+        glRasterPos2d(-1.0, p);
+        glCallList(l);
+      }
+    glFlush();
+#endif
+  }
+
+  ~GxFont()
+  {
+    glDeleteLists(itsListBase, itsListCount);
+    XFreeFontInfo(NULL, itsFontInfo, 1);
+  }
+
+  GLuint listBase() const { return itsListBase; }
+
+private:
+  XFontStruct* itsFontInfo;
+  GLuint itsListBase;
+  GLuint itsListCount;
+};
 
 namespace
 {
-  const unsigned int MAX_FONTS = 1000;
-  static GLuint ListBase[MAX_FONTS];
-  static GLuint ListCount[MAX_FONTS];
-
-  const char* const DEFAULT_FONTNAME = "fixed";
+  minivec<shared_ptr<GxFont> > fontInfos;
 }
 
 unsigned int GLUtil::loadBitmapFont(Display* dpy, const char* fontname)
 {
 DOTRACE("GLUtil::loadBitmapFont");
 
-  static int firstTime = 1;
-
-  /* Initialize the ListBase and ListCount arrays */
-  if (firstTime)
-    {
-      for (unsigned int i = 0; i < MAX_FONTS; ++i)
-        {
-          ListBase[i] = ListCount[i] = 0;
-        }
-      firstTime = 0;
-    }
-
-  if (fontname == 0)
-    fontname = DEFAULT_FONTNAME;
-
-  Assert( fontname );
-
-  XFontStruct *fontinfo = XLoadQueryFont( dpy, fontname );
-  dbgEval(2, fontinfo); dbgEvalNL(2, fontinfo->fid);
-  if (!fontinfo)
-    {
-      return 0;
-    }
-
-  const int first = fontinfo->min_char_or_byte2;
-  dbgEval(2, first);
-  const int last = fontinfo->max_char_or_byte2;
-  dbgEval(2, last);
-  const int count = last-first+1;
-  dbgEvalNL(2, count);
-
-  GLuint fontbase = glGenLists( (GLuint) (last+1) );
-  dbgEvalNL(2, fontbase);
-  if (fontbase==0)
-    {
-      return 0;
-    }
-
-  glXUseXFont( fontinfo->fid, first, count, (int) fontbase+first );
-
   // Record the list base and number of display lists for unloadBitmapFont().
-  {
-    for (unsigned int i = 0; i < MAX_FONTS; ++i)
-      {
-        if (ListBase[i]==0)
-          {
-            ListBase[i] = fontbase;
-            ListCount[i] = last+1;
-            break;
-          }
-      }
-  }
+  fontInfos.push_back(shared_ptr<GxFont>(new GxFont(dpy, fontname)));
 
-#if 0
-  // for debugging
-  for (int l = first; l < first+count; ++l)
-    {
-      double p = 4*double((l-first-1)-48)/42.0 - 2.0;
-      glRasterPos2d(-1.0, p);
-      glCallList(l);
-    }
-  glFlush();
-#endif
-
-  return fontbase;
+  return fontInfos.back()->listBase();
 }
 
 unsigned int GLUtil::loadBitmapFont(Display* dpy, NamedFont font)
 {
 DOTRACE("GLUtil::loadBitmapFont");
 
-  const char* name = DEFAULT_FONTNAME;
+  const char* name = 0;
 
   switch (font)
     {
@@ -153,16 +150,14 @@ void GLUtil::unloadBitmapFont(unsigned int fontbase)
 {
 DOTRACE("GLUtil::unloadBitmapFont");
 
-  for (unsigned int i = 0; i < MAX_FONTS; ++i)
+  for (minivec<shared_ptr<GxFont> >::iterator
+         itr = fontInfos.begin(), end = fontInfos.end();
+       itr != end;
+       ++itr)
     {
-      dbgEvalNL(3, i);
-      if (ListBase[i]==fontbase)
+      if ((*itr)->listBase() == fontbase)
         {
-          dbgEvalNL(3, fontbase);
-          dbgEval(3, ListBase[i]); dbgEvalNL(3, ListCount[i]);
-          glDeleteLists( ListBase[i], ListCount[i] );
-          ListBase[i] = ListCount[i] = 0;
-          return;
+          fontInfos.erase(itr);
         }
     }
 }
