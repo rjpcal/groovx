@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Fri Mar 10 00:29:55 2000
+// written: Fri Mar 17 17:09:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,99 +50,6 @@ public:
   //////////////
 
   typedef DumbPtr<T> Ptr;
-
-  ///////////////
-  // iterators //
-  ///////////////
-
-  ///
-  typedef T* pointer;
-  ///
-  typedef T& reference;
-  ///
-  typedef T* const_pointer;
-  ///
-  typedef T& const_reference;
-  
-  ///
-  class iterator {
-  private:
-	 int itsIndex;
-	 PtrList<T>* itsList;
-	 
-	 // The index is not checked.
-	 iterator (PtrList<T>& aList, int index) :
-		itsIndex(index),
-		itsList(&aList) {}
-
-	 // 'bool check' is a dummy argument to indicate that the index
-	 // must be checked
-	 iterator (PtrList<T>& aList, int index, bool /*check?*/) :
-		itsIndex(index),
-		itsList(&aList)
-	 {
-		while ( itsIndex > itsList->capacity() ) { --itsIndex; }
-		while ( itsIndex < -1 ) { ++itsIndex; }
-		if ( !(itsList->isValidId(itsIndex)) ) { ++*this; }
-	 }
-
-  public:
-	 friend class PtrList<T>;
-
-	 ///
-	 iterator (const iterator& rhs) :
-		itsIndex(rhs.itsIndex),
-		itsList(rhs.itsList) {}
-
-	 ///
-	 iterator& operator=(const iterator& rhs) 
-		{ itsList = rhs.itsList; itsIndex = rhs.itsIndex; return *this; }
-
-	 ///
-	 bool operator== (const iterator& x) const 
-		{ return (itsIndex == x.itsIndex) && (itsList == x.itsList); }
-	 ///
-	 bool operator!= (const iterator& x) const
-		{ return (itsIndex != x.itsIndex) || (itsList != x.itsList); }
-
-	 ///
-	 reference operator* () const { return *(itsList->getPtr(itsIndex)); } 
-
-	 ///
-	 pointer operator-> () const { return &(operator*()); }
-
-	 ///
-	 iterator& operator++ () { 
-		while ( (itsIndex<itsList->capacity()) 
-				  && !(itsList->isValidId(++itsIndex)) ) { }
-		return *this;
-	 }
-
-	 ///
-	 iterator operator++ (int)
-		{ iterator tmp = *this; ++*this; return tmp; }
-
-	 ///
-	 iterator& operator-- () {
-		while ( (itsIndex >= -1) 
-				  && !(itsList->isValidId(--itsIndex)) ) { }
-		return *this;
-	 }
-
-	 ///
-	 iterator operator-- (int)
-		{ iterator tmp = *this; --*this; return tmp; }
-
-	 ///
-	 int toInt() const { return itsIndex; }
-  };
-
-  ///
-  iterator begin() { return iterator(*this, 0); }
-  ///
-  iterator end() { return iterator(*this, capacity()); }
-  ///
-  iterator at(int index) { return iterator(*this, index, true); }
 
   ///////////////
   // accessors //
