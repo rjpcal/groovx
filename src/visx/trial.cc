@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue May 22 15:00:55 2001
+// written: Wed May 23 18:48:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -209,7 +209,7 @@ public:
 	 }
   }
 
-  void nextNode() { setCurrentNode(itsCurrentNode+1); }
+  void trNextNode() { setCurrentNode(itsCurrentNode+1); }
 
   int getCurrentNode() const { return itsCurrentNode; }
   void setCurrentNode(int nodeNumber)
@@ -739,8 +739,8 @@ void Trial::add(int objid, int posid)
 void Trial::addNode(IO::UID id)
   { itsImpl->addNode(id); }
 
-void Trial::nextNode()
-  { itsImpl->nextNode(); }
+void Trial::trNextNode()
+  { itsImpl->trNextNode(); }
 
 int Trial::getCurrentNode() const
   { return itsImpl->getCurrentNode(); }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Tue May 22 14:56:36 2001
+// written: Wed May 23 18:48:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ public:
 
   void addNode(IO::UID id);
 
-  void nextNode();
+  void trNextNode();
 
   int getCurrentNode() const;
   void setCurrentNode(int nodeNumber);
