@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Wed Mar 15 19:13:59 2000
+// written: Fri Mar 24 17:23:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,31 @@ protected:
   }
 };
 
+//---------------------------------------------------------------------
+//
+// ListItemRemoveCmd --
+//
+//---------------------------------------------------------------------
+
+class ListItemRemoveCmd : public TclItemCmd<IoPtrList> {
+public:
+  ListItemRemoveCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<IoPtrList>(pkg, cmd_name, "item_id(s)", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 IoPtrList* theList = TclItemCmd<IoPtrList>::getItem();
+
+	 Tcl::ListIterator<int>
+		itr = beginOfArg(1, (int*)0),
+		stop = endOfArg(1, (int*)0);
+	 while (itr != stop)
+		{
+		  theList->remove(*itr);
+		  ++itr;
+		}
+  }
+};
+
 } // end namespace Tcl
 
 Tcl::IoPtrListPkg::IoPtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
@@ -64,12 +89,12 @@ DOTRACE("Tcl::IoPtrListPkg::IoPtrListPkg");
 					 new CGetter<IoPtrList, int>(&IoPtrList::count));
   declareAction("reset",
 					 new CAction<IoPtrList>(&IoPtrList::clear));
-  declareSetter("remove",
-					 new CSetter<IoPtrList, int>(&IoPtrList::remove), "item_id");
   addCommand( new GetValidIdsCmd(this, 
 											TclPkg::makePkgCmdName("getValidIds")) );
   addCommand( new IsValidIdCmd(this,
 										 TclPkg::makePkgCmdName("isValidId")) );
+  addCommand( new ListItemRemoveCmd(this,
+												TclPkg::makePkgCmdName("remove")) );
 }	 
 
 IO& Tcl::IoPtrListPkg::getIoFromId(int) {
