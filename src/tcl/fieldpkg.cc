@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Jul 16 06:42:04 2001
+// written: Mon Jul 16 09:23:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,9 @@
 #include "io/fields.h"
 
 #include "tcl/tclvalue.h"
-#include "tcl/tclveccmds.h"
+#include "tcl/tclveccmd.h"
 
-#include "util/pointers.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -30,35 +28,39 @@
 
 namespace Tcl
 {
-
-  class FieldContainerFetcher : public Tcl::ItemFetcher {
+  class FieldGetterCmd : public Tcl::VecCmd {
+  private:
+    const FieldInfo& itsFinfo;
   public:
-    FieldContainerFetcher() {}
+    FieldGetterCmd(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) :
+      VecCmd(pkg->interp(), pkg->makePkgCmdName(finfo.name().c_str()),
+             "item_id(s)", 1, 2),
+      itsFinfo(finfo)
+    {}
 
-    virtual void* getItemFromContext(Tcl::Context& ctx)
+  protected:
+    virtual void invoke(Tcl::Context& ctx)
     {
-      int id = ctx.getIntFromArg(1);
-      Ref<FieldContainer> item(id);
-      return static_cast<void*>(item.get());
+      Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
+      ctx.setResult<const Value&>(*(item->field(itsFinfo).value()));
     }
   };
 
-  class FieldAttrib : public Getter<TclValue>, public Setter<TclValue> {
+  class FieldSetterCmd : public Tcl::VecCmd {
   private:
     const FieldInfo& itsFinfo;
-
   public:
-    FieldAttrib(const FieldInfo& finfo) : itsFinfo(finfo) {}
+    FieldSetterCmd(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) :
+      VecCmd(pkg->interp(), pkg->makePkgCmdName(finfo.name().c_str()),
+             "item_id(s) new_val(s)", 1, 3),
+      itsFinfo(finfo)
+    {}
 
-    virtual TclValue get(void* vitem) const
+  protected:
+    virtual void invoke(Tcl::Context& ctx)
     {
-      FieldContainer* item = static_cast<FieldContainer*>(vitem);
-      return *(item->field(itsFinfo).value());
-    }
-
-    virtual void set(void* vitem, TclValue val)
-    {
-      FieldContainer* item = static_cast<FieldContainer*>(vitem);
+      Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
+      TclValue val = ctx.getValFromArg(2, TypeCue<TclValue>());
       item->field(itsFinfo).setValue(val);
     }
   };
@@ -141,27 +143,12 @@ DOTRACE("Tcl::FieldsCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) {
+void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo)
+{
 DOTRACE("Tcl::declareField");
 
-  static shared_ptr<FieldContainerFetcher>
-    fetcher1(new FieldContainerFetcher);
-
-  shared_ptr<FieldAttrib> attrib(new FieldAttrib(finfo));
-
-  pkg->addCommand( new TVecGetterCmd<TclValue>(
-                         pkg->interp(),
-                         fetcher1.get(),
-                         pkg->makePkgCmdName(finfo.name().c_str()),
-                         attrib,
-                         0 /* for default usage string */) );
-
-  pkg->addCommand( new TVecSetterCmd<TclValue>(
-                         pkg->interp(),
-                         fetcher1.get(),
-                         pkg->makePkgCmdName(finfo.name().c_str()),
-                         attrib,
-                         0 /* for default usage string */) );
+  pkg->addCommand( new FieldGetterCmd(pkg, finfo) );
+  pkg->addCommand( new FieldSetterCmd(pkg, finfo) );
 }
 
 void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
