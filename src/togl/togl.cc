@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 15:53:59 2000
+// written: Fri May 26 14:58:07 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1361,18 +1361,7 @@ DOTRACE("Togl::Impl::Impl");
 
   Tk_SetClass(itsTkWin, "Togl");
 
-  /* Create command event handler */
-  itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
-											  Togl_WidgetCmd,
-											  static_cast<ClientData>(this),
-											  Togl::Impl::dummyWidgetCmdDeletedProc);
-
-  Tk_CreateEventHandler(itsTkWin,
-								ExposureMask | StructureNotifyMask,
-								Togl::Impl::dummyEventProc,
-								static_cast<ClientData>(this));
-
-  /* Configure Togl widget */
+  // Configure the widget
   if (config_argc > 0 ) {
 	 if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
 		Tk_DestroyWindow(itsTkWin);
@@ -1390,18 +1379,28 @@ DOTRACE("Togl::Impl::Impl");
 	 }
   }
 
-  if (DefaultCreateProc) {
-	 DefaultCreateProc(itsOwner);
-  }
+  itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
+											  Togl_WidgetCmd,
+											  static_cast<ClientData>(this),
+											  Togl::Impl::dummyWidgetCmdDeletedProc);
+
+  Tk_CreateEventHandler(itsTkWin,
+								ExposureMask | StructureNotifyMask,
+								Togl::Impl::dummyEventProc,
+								static_cast<ClientData>(this));
 
   if (itsTimerProc) {
 	 Tk_CreateTimerHandler( itsTime, Togl::Impl::dummyTimerCallback,
 									static_cast<ClientData>(this) );
   }
 
-  Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
-
   addSelfToList();
+
+  if (DefaultCreateProc) {
+	 DefaultCreateProc(itsOwner);
+  }
+
+  Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 }
 
 Togl::Impl::~Impl() {
@@ -1514,6 +1513,7 @@ DOTRACE("Togl::Impl::makeCurrent");
 
 // Gets called when an Togl widget is destroyed.
 void Togl::Impl::dummyDestroyProc(char* clientData) {
+DOTRACE("Togl::Impl::dummyDestroyProc");
   Impl* impl = reinterpret_cast<Impl*>(clientData);
   delete impl->itsOwner;
 }
