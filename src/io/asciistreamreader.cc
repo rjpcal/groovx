@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Oct 31 22:39:16 2000
+// written: Fri Nov  3 14:50:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ public:
 
 	 // This will create an object for the id if one has not yet been
 	 // created, then return the object for that id.
-	 IO::IoObject* fetchObject(const char* type, unsigned long id) {
+	 IO::IoObject* fetchObject(const fixed_string& type, unsigned long id) {
 		IO::IoObject*& itsMap_at_id = itsMap[id];
 
 		if ( itsMap_at_id == 0 )
@@ -227,8 +227,8 @@ public:
 	 IO::VersionId itsSerialVersionId;
 
   public:
-	 AttribMap(const char* obj_tag) :
-		itsObjTag(obj_tag ? obj_tag : ""), itsMap(), itsSerialVersionId(0) {}
+	 AttribMap(const fixed_string& obj_tag) :
+		itsObjTag(obj_tag), itsMap(), itsSerialVersionId(0) {}
 
 	 void readAttributes(STD_IO::istream& buf);
 
@@ -285,7 +285,7 @@ private:
 	 }
 
   void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
-							const char* obj_tag, IO::IoObject* obj);
+							const fixed_string& obj_tag, IO::IoObject* obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
@@ -308,7 +308,7 @@ public:
 	 { return currentAttribs().getSerialVersionId(); }
 
   // Returns a new dynamically allocated char array
-  char* readStringType(const fixed_string& name);
+  fixed_string readStringType(const fixed_string& name);
 
   IO::IoObject* readObject(const fixed_string& attrib_name);
 
@@ -396,7 +396,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
 void AsciiStreamReader::Impl::inflateObject(
   IO::Reader* reader, STD_IO::istream& buf,
-  const char* obj_tag, IO::IoObject* obj
+  const fixed_string& obj_tag, IO::IoObject* obj
 ) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
@@ -411,7 +411,7 @@ DOTRACE("AsciiStreamReader::Impl::inflateObject");
   itsAttribs.pop_front();
 }
 
-char* AsciiStreamReader::Impl::readStringType(const fixed_string& name) {
+fixed_string AsciiStreamReader::Impl::readStringType(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
   istrstream ist(currentAttribs()[name].value.c_str());
@@ -426,19 +426,18 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 	 throw err;
   }
 
-  char* new_cstring = new char[len+1];
+  fixed_string new_string(len+1);
   if (len > 0)
-	 ist.read(new_cstring, len);
-  new_cstring[len] = '\0';
+	 ist.read(new_string.data(), len);
+  new_string.data()[len] = '\0';
 
   if (ist.fail())
 	 {
-		delete [] new_cstring;
 		throw AttributeReadError(name);
 	 }  
 
-  DebugEval(currentAttribs()[name].value); DebugEvalNL(new_cstring);
-  return new_cstring;
+  DebugEval(currentAttribs()[name].value); DebugEvalNL(new_string);
+  return new_string;
 }
 
 IO::IoObject* AsciiStreamReader::Impl::readObject(const fixed_string& attrib_name) {
@@ -456,7 +455,7 @@ DOTRACE("AsciiStreamReader::Impl::readObject");
   if (id == 0) { return 0; }
 
   // Return the object for this id, creating a new object if necessary:
-  return itsObjects.fetchObject(attrib.type.c_str(), id);
+  return itsObjects.fetchObject(attrib.type, id);
 }
 
 void AsciiStreamReader::Impl::readValueObj(
@@ -501,7 +500,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
   ist >> bracket;
 
-  inflateObject(reader, ist, baseClassName.c_str(), basePart);
+  inflateObject(reader, ist, baseClassName, basePart);
 
   ist >> bracket >> ws;
 }
@@ -579,54 +578,54 @@ DOTRACE("AsciiStreamReader::readSerialVersionId");
   return itsImpl.readSerialVersionId();
 }
 
-char AsciiStreamReader::readChar(const char* name) {
+char AsciiStreamReader::readChar(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readChar");
   DebugEvalNL(name); 
   return itsImpl.readBasicType(name, (char*) 0);
 }
 
-int AsciiStreamReader::readInt(const char* name) {
+int AsciiStreamReader::readInt(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readInt");
   DebugEvalNL(name); 
   return itsImpl.readBasicType(name, (int*) 0);
 }
 
-bool AsciiStreamReader::readBool(const char* name) {
+bool AsciiStreamReader::readBool(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readBool");
   DebugEvalNL(name); 
   return bool(itsImpl.readBasicType(name, (int*) 0));
 }
 
-double AsciiStreamReader::readDouble(const char* name) {
+double AsciiStreamReader::readDouble(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readDouble");
   DebugEvalNL(name); 
   return itsImpl.readBasicType(name, (double*) 0);
 }
 
-// XXX this may leak!
-char* AsciiStreamReader::readCstring(const char* name) {
+fixed_string AsciiStreamReader::readStringImpl(const fixed_string& name) {
   DebugEvalNL(name); 
   return itsImpl.readStringType(name);
 }
 
-void AsciiStreamReader::readValueObj(const char* name, Value& value) {
+void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value) {
   DebugEvalNL(name); 
   itsImpl.readValueObj(name, value); 
 }
 
-IO::IoObject* AsciiStreamReader::readObject(const char* attrib_name) {
+IO::IoObject* AsciiStreamReader::readObject(const fixed_string& attrib_name) {
   DebugEvalNL(attrib_name); 
   return itsImpl.readObject(attrib_name);
 }
 
-void AsciiStreamReader::readOwnedObject(const char* name, IO::IoObject* obj) {
+void AsciiStreamReader::readOwnedObject(const fixed_string& name,
+													 IO::IoObject* obj) {
   DebugEvalNL(name); 
   itsImpl.readOwnedObject(name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
-  const char* baseClassName, IO::IoObject* basePart
-  ) {
+  const fixed_string& baseClassName, IO::IoObject* basePart
+) {
   DebugEvalNL(baseClassName); 
   itsImpl.readBaseClass(this, baseClassName, basePart);
 }

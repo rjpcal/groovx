@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Oct 20 14:12:41 2000
+// written: Fri Nov  3 15:04:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,10 @@ public:
 		DebugPrint("throwIfError for"); DebugEvalNL(type);
 		throw IO::InputError(type);
 	 }
+  }
+
+  void throwIfError(const fixed_string& type) {
+	 throwIfError(type.c_str());
   }
 
   IO::LegacyReader* itsOwner;
@@ -108,7 +112,7 @@ public:
 	 }
   }
 
-  void inflateObject(const char* name, IO::IoObject* obj)
+  void inflateObject(const fixed_string& name, IO::IoObject* obj)
   {
 	 DebugEvalNL(name);
 	 Precondition(obj != 0);
@@ -148,7 +152,7 @@ DOTRACE("IO::LegacyReader::readSerialVersionId");
   return itsImpl->itsLegacyVersionId;
 }
 
-char IO::LegacyReader::readChar(const char* name) {
+char IO::LegacyReader::readChar(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readChar");
   DebugEval(name);
   char val;
@@ -157,7 +161,7 @@ DOTRACE("IO::LegacyReader::readChar");
   return val;
 }
 
-int IO::LegacyReader::readInt(const char* name) {
+int IO::LegacyReader::readInt(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readInt");
   DebugEval(name);
   int val;
@@ -166,7 +170,7 @@ DOTRACE("IO::LegacyReader::readInt");
   return val;
 }
 
-bool IO::LegacyReader::readBool(const char* name) {
+bool IO::LegacyReader::readBool(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readBool");
   DebugEval(name);
   int val;
@@ -175,7 +179,7 @@ DOTRACE("IO::LegacyReader::readBool");
   return bool(val);
 }
 
-double IO::LegacyReader::readDouble(const char* name) {
+double IO::LegacyReader::readDouble(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readDouble");
   DebugEval(name);
   double val;
@@ -184,8 +188,8 @@ DOTRACE("IO::LegacyReader::readDouble");
   return val;
 }
 
-char* IO::LegacyReader::readCstring(const char* name) {
-DOTRACE("IO::LegacyReader::readCstring");
+fixed_string IO::LegacyReader::readStringImpl(const fixed_string& name) {
+DOTRACE("IO::LegacyReader::readStringImpl");
   DebugEvalNL(name);
 
   int numchars = 0;
@@ -193,44 +197,38 @@ DOTRACE("IO::LegacyReader::readCstring");
 
   itsImpl->throwIfError(name);
 
-  char* return_buf = 0;
+  if (numchars < 0)
+	 {
+		throw IO::LogicError("LegacyReader::readStringImpl "
+									"saw negative character count");
+	 }
 
   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
+
+  fixed_string new_string(numchars);
+
   if ( numchars > 0 )
 	 {
-		return_buf = new char[numchars+1];
-		itsImpl->itsInStream.read(&return_buf[0], numchars);
-		return_buf[numchars] = '\0';
+		itsImpl->itsInStream.read(new_string.data(), numchars);
+		itsImpl->throwIfError(name);
 	 }
-  else
-	 {
-		return_buf = new char[1];
-		return_buf[0] = '\0';
-	 }
+  new_string.data()[numchars] = '\0';
 
-  try {
-	 itsImpl->throwIfError(name);
-  }
-  catch (...) {
-	 delete [] return_buf;
-	 throw;
-  }
-
-  Postcondition(return_buf != 0);
-  return return_buf;
+  Postcondition(new_string.length() == numchars);
+  return new_string;
 }
 
-void IO::LegacyReader::readValueObj(const char* name, Value& value) {
+void IO::LegacyReader::readValueObj(const fixed_string& name, Value& value) {
 DOTRACE("IO::LegacyReader::readValueObj");
   DebugEvalNL(name);
   value.scanFrom(itsImpl->itsInStream);
   itsImpl->throwIfError(name);
 }
 
-IO::IoObject* IO::LegacyReader::readObject(const char* name) {
+IO::IoObject* IO::LegacyReader::readObject(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readObject");
   DebugEval(name);
-  dynamic_string type;
+  fixed_string type;
   itsImpl->itsInStream >> type; DebugEval(type);
 
   if (type == "NULL")
@@ -238,7 +236,7 @@ DOTRACE("IO::LegacyReader::readObject");
 		return 0;
 	 }
 
-  IO::IoObject* obj = IO::IoMgr::newIO(type.c_str());
+  IO::IoObject* obj = IO::IoMgr::newIO(type);
   DebugEvalNL(obj->ioTypename());
 
   itsImpl->inflateObject(name, obj);
@@ -246,7 +244,7 @@ DOTRACE("IO::LegacyReader::readObject");
   return obj;
 }
 
-void IO::LegacyReader::readOwnedObject(const char* name,
+void IO::LegacyReader::readOwnedObject(const fixed_string& name,
 													IO::IoObject* obj) {
 DOTRACE("IO::LegacyReader::readOwnedObject");
   Precondition(obj != 0);
@@ -255,7 +253,7 @@ DOTRACE("IO::LegacyReader::readOwnedObject");
   itsImpl->inflateObject(name, obj);
 }
 
-void IO::LegacyReader::readBaseClass(const char* baseClassName,
+void IO::LegacyReader::readBaseClass(const fixed_string& baseClassName,
 												 IO::IoObject* basePart) {
 DOTRACE("IO::LegacyReader::readBaseClass");
   Precondition(basePart != 0);
