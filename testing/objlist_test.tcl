@@ -47,8 +47,8 @@ test "ObjlistTcl-ObjList::stringify" "too many args" {
 test "ObjlistTcl-ObjList::stringify" "use on empty list" {
     ObjList::reset
 	 ObjList::stringify
-} {PtrList<GrObj> 100 0
-0}
+} "PtrList<GrObj> $::INT 0
+0"
 test "ObjlistTcl-ObjList::stringify" "use on filled list" {
 	 ObjList::reset
 	 set f [Face::Face]
