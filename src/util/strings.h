@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar 13 12:23:17 2000
+// written: Mon Mar 13 12:33:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,6 +137,65 @@ private:
   struct Impl;
   Impl* const itsImpl;
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// Overloaded operator==
+//
+///////////////////////////////////////////////////////////////////////
+
+// With const char* on left
+
+inline bool operator==(const char* lhs, const string_literal& rhs)
+  { return rhs.equals(lhs); }
+
+inline bool operator==(const char* lhs, const fixed_string& rhs)
+  { return rhs.equals(lhs); }
+
+inline bool operator==(const char* lhs, const dynamic_string& rhs)
+  { return rhs.equals(lhs); }
+
+// With string_literal on left
+
+inline bool operator==(const string_literal& lhs, const char* rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const string_literal& lhs, const string_literal& rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const string_literal& lhs, const fixed_string& rhs)
+  { return rhs.equals(lhs); }
+
+inline bool operator==(const string_literal& lhs, const dynamic_string& rhs)
+  { return rhs.equals(lhs); }
+
+// With fixed_string on left
+
+inline bool operator==(const fixed_string& lhs, const char* rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const fixed_string& lhs, const string_literal& rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const fixed_string& lhs, const fixed_string& rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const fixed_string& lhs, const dynamic_string& rhs)
+  { return rhs.equals(lhs); }
+
+// With dynamic_string on left
+
+inline bool operator==(const dynamic_string& lhs, const char* rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const dynamic_string& lhs, const string_literal& rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const dynamic_string& lhs, const fixed_string& rhs)
+  { return lhs.equals(rhs); }
+
+inline bool operator==(const dynamic_string& lhs, const dynamic_string& rhs)
+  { return lhs.equals(rhs); }
 
 ///////////////////////////////////////////////////////////////////////
 //
