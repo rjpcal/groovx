@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec 16 15:25:06 1999
-// written: Thu May 10 12:04:37 2001
+// written: Sat May 26 17:50:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ struct Tcl_Interp;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Attrib template class definitions
+// Getter/Setter/Action template functor definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -51,14 +51,6 @@ public:
       appropriate type, then call the appropriate member with \a val
       as the lone argument. */
   virtual void set(void* item, T val) = 0;
-};
-
-
-/** An abstract base class that represent an read-write attribute. */
-template <class T>
-class Attrib : public virtual Getter<T>, public virtual Setter<T> {
-public:
-  virtual ~Attrib();
 };
 
 
