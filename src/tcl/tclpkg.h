@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Fri Sep  7 15:39:44 2001
+// written: Wed Sep 12 15:48:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,8 +124,6 @@ public:
     defGetter( cmd_name, getterFunc );
     defSetter( cmd_name, setterFunc );
   }
-
-  void defIoCommands();
 
   void defGenericObjCmds(shared_ptr<ObjCaster> caster);
 

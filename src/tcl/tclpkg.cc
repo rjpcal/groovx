@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Sat Sep  8 08:54:58 2001
+// written: Wed Sep 12 15:50:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,6 @@
 #define TCLPKG_CC_DEFINED
 
 #include "tcl/tclpkg.h"
-
-#include "io/io.h"
-#include "io/ioutil.h"
 
 #include "util/iter.h"
 #include "util/objdb.h"
@@ -135,19 +132,6 @@ const char* Tcl::Pkg::setterUsage(const char* usage)
   if (usage != 0 && *usage != 0)
     return usage;
   return "item_id(s) new_value(s)";
-}
-
-void Tcl::Pkg::defIoCommands()
-{
-DOTRACE("Tcl::Pkg::defIoCommands");
-  defVec( "stringify", "item_id(s)", IO::stringify );
-  defVec( "destringify", "item_id(s) string(s)", IO::destringify );
-
-  defVec( "write", "item_id(s)", IO::write );
-  defVec( "read", "item_id(s) string(s)", IO::read );
-
-  def( "save", "item_id filename", IO::saveASW );
-  def( "load", "item_id filename", IO::loadASR );
 }
 
 void Tcl::Pkg::defGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)

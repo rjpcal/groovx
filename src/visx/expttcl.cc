@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Sep 10 17:17:41 2001
+// written: Wed Sep 12 15:50:44 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -25,6 +25,7 @@
 
 #include "system/system.h"
 
+#include "tcl/iotcl.h"
 #include "tcl/tclcode.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
@@ -164,7 +165,7 @@ public:
 
     Tcl::defGenericObjCmds<ExptDriver>(this);
 
-    Tcl::Pkg::defIoCommands();
+    Tcl::defIoCommands(this);
 
     Tcl::defTracing(this, ExptDriver::tracer);
 
