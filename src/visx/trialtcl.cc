@@ -2,7 +2,7 @@
 //
 // trialtcl.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun 21 09:51:54 1999
 // commit: $Id$

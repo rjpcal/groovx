@@ -2,7 +2,7 @@
 //
 // house.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Sep 13 12:43:15 1999
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // freelist.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jul 20 08:00:31 2001
 // commit: $Id$

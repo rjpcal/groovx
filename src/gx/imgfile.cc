@@ -2,7 +2,7 @@
 //
 // imgfile.cc
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Apr 25 09:06:51 2002
 // commit: $Id$

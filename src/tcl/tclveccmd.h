@@ -2,7 +2,7 @@
 //
 // tclveccmd.h
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul 12 12:14:43 2001
 // commit: $Id$

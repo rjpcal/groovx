@@ -2,7 +2,7 @@
 //
 // gxshapekit.cc
 //
-// Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1998-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.cc)
 // commit: $Id$

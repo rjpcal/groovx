@@ -2,7 +2,7 @@
 //
 // itertcl.h
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Aug 17 14:02:32 2001
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // stderror.h
 //
-// Copyright (c) 2003-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat May 24 13:00:28 2003
 // commit: $Id$

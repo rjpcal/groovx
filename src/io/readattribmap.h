@@ -2,7 +2,7 @@
 //
 // readattribmap.h
 //
-// Copyright (c) 2003-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 25 13:19:26 2003
 // commit: $Id$

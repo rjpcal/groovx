@@ -2,7 +2,7 @@
 //
 // datablock.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 12 18:04:40 2001
 // commit: $Id$

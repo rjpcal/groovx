@@ -2,7 +2,7 @@
 //
 // ioerror.h
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Sep 12 21:42:09 2001
 // commit: $Id$

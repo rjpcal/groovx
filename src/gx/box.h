@@ -2,7 +2,7 @@
 //
 // box.h
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jul  3 15:03:23 2002
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // tclmain.cc
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jul 22 16:34:05 2002
 // commit: $Id$

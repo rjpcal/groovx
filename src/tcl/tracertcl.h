@@ -2,7 +2,7 @@
 //
 // tracertcl.h
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2000-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Feb 17 13:32:11 2000
 // commit: $Id$

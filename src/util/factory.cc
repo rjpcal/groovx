@@ -2,7 +2,7 @@
 //
 // factory.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 20 22:37:31 1999
 // commit: $Id$

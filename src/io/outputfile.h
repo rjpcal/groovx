@@ -2,7 +2,7 @@
 //
 // outputfile.h
 //
-// Copyright (c) 2003-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri May 23 10:01:57 2003
 // $Id$

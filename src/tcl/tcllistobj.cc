@@ -2,7 +2,7 @@
 //
 // tcllistobj.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jul 11 12:32:35 2001
 // commit: $Id$

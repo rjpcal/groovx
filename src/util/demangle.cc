@@ -2,7 +2,7 @@
 //
 // demangle.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Oct 13 10:41:19 1999
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // elementtcl.cc
 //
-// Copyright (c) 2003-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 27 15:38:33 2003
 // commit: $Id$

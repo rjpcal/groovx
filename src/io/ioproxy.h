@@ -2,7 +2,7 @@
 //
 // ioproxy.h
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2000-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Mar 22 21:41:38 2000
 // commit: $Id$

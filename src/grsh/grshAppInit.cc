@@ -2,7 +2,7 @@
 //
 // grshAppInit.cc
 //
-// Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1998-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
 // commit: $Id$
@@ -243,7 +243,7 @@ DOTRACE("main");
       if (Tcl::Main::isInteractive())
         {
           std::cerr << PACKAGE_STRING << " (" << __DATE__ << ")\n"
-                    << "Copyright (c) 1998-2003 Rob Peters <rjpeters at klab dot caltech dot edu>\n"
+                    << "Copyright (c) 1998-2004 Rob Peters <rjpeters at klab dot caltech dot edu>\n"
                     << PACKAGE_NAME << " is free software, covered by the GNU General Public License, and you are\n"
                     << "welcome to change it and/or distribute copies of it under certain conditions.\n";
         }

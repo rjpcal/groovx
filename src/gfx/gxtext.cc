@@ -2,7 +2,7 @@
 //
 // gxtext.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul  1 11:54:48 1999 (as gtext.cc)
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // num.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Mar  8 16:28:26 2001
 // commit: $Id$

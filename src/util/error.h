@@ -2,7 +2,7 @@
 //
 // error.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 22 14:59:47 1999
 // commit: $Id$

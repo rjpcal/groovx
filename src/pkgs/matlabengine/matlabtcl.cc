@@ -2,7 +2,7 @@
 //
 // matlabtcl.cc
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jul 10 12:16:44 2001
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // objmgr.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Apr 23 01:12:37 1999
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // objdb.cc
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 1999-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Nov 21 00:26:29 1999
 // commit: $Id$

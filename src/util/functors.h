@@ -2,7 +2,7 @@
 //
 // functors.h
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2001-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Sep  7 15:07:16 2001
 // commit: $Id$

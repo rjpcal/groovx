@@ -2,7 +2,7 @@
 //
 // response.cc
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2000-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 13 18:33:17 2000
 // commit: $Id$

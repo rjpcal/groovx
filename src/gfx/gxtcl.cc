@@ -2,7 +2,7 @@
 //
 // gxtcl.cc
 //
-// Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2000-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov  2 14:39:14 2000
 // commit: $Id$

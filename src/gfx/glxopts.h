@@ -2,7 +2,7 @@
 //
 // glxopts.h
 //
-// Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Aug  4 16:28:37 2002
 // commit: $Id$
