@@ -491,7 +491,7 @@ DOTRACE("GLCanvas::rasterPos");
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
 
-  if (viewport.contains(vec2i(screen_pos)))
+  if (viewport.contains(screen_pos))
     {
       glRasterPos2d(world_pos.x(), world_pos.y());
     }
