@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 18:44:40 2002
+// written: Mon Sep 16 18:55:54 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -454,7 +454,7 @@ void Togl::Impl::cEventuallyFreeCallback(char* clientData) throw()
 {
 DOTRACE("Togl::Impl::cEventuallyFreeCallback");
   Impl* rep = reinterpret_cast<Impl*>(clientData);
-  delete rep->itsOwner;
+  rep->itsOwner->decrRefCount();
 }
 
 void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr) throw()
@@ -748,6 +748,8 @@ Togl::Togl(Tcl_Interp* interp, const char* pathname) :
   rep(new Impl(this, interp, pathname))
 {
 DOTRACE("Togl::Togl");
+
+  incrRefCount();
 }
 
 Togl::~Togl()

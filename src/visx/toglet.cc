@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 18:50:28 2002
+// written: Mon Sep 16 18:55:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -367,8 +367,6 @@ DOTRACE("Toglet::Toglet");
     }
 
   TkWidget::setTkWin(tkwin);
-
-  incrRefCount();
 }
 
 Toglet::~Toglet()
