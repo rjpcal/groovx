@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Thu Jul 19 21:14:29 2001
+// written: Sun Aug  5 19:06:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ public:
     update();
   }
 
-  void giveFeedback(const Tcl::SafeInterp& intp, int response) const
+  void giveFeedback(const Tcl::Interp& intp, int response) const
   {
     if (!itsUseFeedback) return;
 
@@ -84,7 +84,7 @@ private:
       itsResultCmd(res, Tcl::Code::THROW_EXCEPTION)
     {}
 
-    bool invokeIfTrue(const Tcl::SafeInterp& safeInterp)
+    bool invokeIfTrue(const Tcl::Interp& safeInterp)
     {
       if (safeInterp.evalBooleanExpr(itsCondition))
         {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Jul 19 21:14:29 2001
+// written: Sun Aug  5 19:06:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ namespace SoundTcl
 
 class SoundTcl::SoundPkg : public Tcl::Pkg {
 public:
-  SoundPkg(Tcl::SafeInterp interp) :
+  SoundPkg(Tcl::Interp interp) :
     Tcl::Pkg(interp.intp(), "Sound", "$Revision$")
   {
     Tcl::defGenericObjCmds<Sound>(this);

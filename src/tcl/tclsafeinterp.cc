@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Thu Jul 19 20:31:29 2001
+// written: Sun Aug  5 19:06:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,27 +29,27 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterp member definitions
+// Tcl::Interp member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::SafeInterp::SafeInterp(Tcl_Interp* interp) :
+Tcl::Interp::Interp(Tcl_Interp* interp) :
   itsInterp(interp)
 {
-DOTRACE("Tcl::SafeInterp::SafeInterp");
+DOTRACE("Tcl::Interp::Interp");
   Invariant(itsInterp != 0);
 }
 
-Tcl::SafeInterp::~SafeInterp() {}
+Tcl::Interp::~Interp() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterp -- Expressions
+// Tcl::Interp -- Expressions
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::SafeInterp::evalBooleanExpr(Tcl_Obj* obj) const {
-DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
+bool Tcl::Interp::evalBooleanExpr(Tcl_Obj* obj) const {
+DOTRACE("Tcl::Interp::evalBooleanExpr");
 
   int expr_result;
 
@@ -63,12 +63,12 @@ DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterp -- Interpreter
+// Tcl::Interp -- Interpreter
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::SafeInterp::interpDeleted() const {
-DOTRACE("Tcl::SafeInterp::interpDeleted");
+bool Tcl::Interp::interpDeleted() const {
+DOTRACE("Tcl::Interp::interpDeleted");
 
   Invariant(itsInterp != 0);
   return bool(Tcl_InterpDeleted(itsInterp));
@@ -76,38 +76,38 @@ DOTRACE("Tcl::SafeInterp::interpDeleted");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterp -- Result
+// Tcl::Interp -- Result
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::SafeInterp::resetResult() const {
-DOTRACE("Tcl::SafeInterp::resetResult");
+void Tcl::Interp::resetResult() const {
+DOTRACE("Tcl::Interp::resetResult");
 
   Tcl_ResetResult(itsInterp);
 }
 
-void Tcl::SafeInterp::appendResult(const char* msg) const {
-DOTRACE("Tcl::SafeInterp::appendResult");
+void Tcl::Interp::appendResult(const char* msg) const {
+DOTRACE("Tcl::Interp::appendResult");
 
   Tcl_AppendResult(itsInterp, msg, (char*)0);
 }
 
-Tcl_Obj* Tcl::SafeInterp::getObjResult() const {
-DOTRACE("Tcl::SafeInterp::getObjResult");
+Tcl_Obj* Tcl::Interp::getObjResult() const {
+DOTRACE("Tcl::Interp::getObjResult");
 
   return Tcl_GetObjResult(itsInterp);
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterp -- Variables
+// Tcl::Interp -- Variables
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::SafeInterp::setGlobalVar(const char* var_name,
+void Tcl::Interp::setGlobalVar(const char* var_name,
                                    Tcl::ObjPtr var) const
 {
-DOTRACE("Tcl::SafeInterp::setGlobalVar");
+DOTRACE("Tcl::Interp::setGlobalVar");
 
   if (Tcl_SetVar2Ex(itsInterp, const_cast<char*>(var_name), /*name2*/0,
                     var, TCL_GLOBAL_ONLY) == 0)
@@ -116,9 +116,9 @@ DOTRACE("Tcl::SafeInterp::setGlobalVar");
     }
 }
 
-void Tcl::SafeInterp::unsetGlobalVar(const char* var_name) const
+void Tcl::Interp::unsetGlobalVar(const char* var_name) const
 {
-DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
+DOTRACE("Tcl::Interp::unsetGlobalVar");
 
   if (Tcl_UnsetVar(itsInterp, const_cast<char*>(var_name),
                    TCL_GLOBAL_ONLY) != TCL_OK)
@@ -127,10 +127,10 @@ DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
     }
 }
 
-Tcl_Obj* Tcl::SafeInterp::getObjGlobalVar(const char* name1,
+Tcl_Obj* Tcl::Interp::getObjGlobalVar(const char* name1,
                                           const char* name2) const
 {
-DOTRACE("Tcl::SafeInterp::getObjGlobalVar");
+DOTRACE("Tcl::Interp::getObjGlobalVar");
   Tcl_Obj* obj = Tcl_GetVar2Ex(itsInterp,
                                const_cast<char*>(name1),
                                const_cast<char*>(name2),
@@ -144,14 +144,14 @@ DOTRACE("Tcl::SafeInterp::getObjGlobalVar");
   return obj;
 }
 
-void Tcl::SafeInterp::clearEventQueue() {
-DOTRACE("Tcl::SafeInterp::clearEventQueue");
+void Tcl::Interp::clearEventQueue() {
+DOTRACE("Tcl::Interp::clearEventQueue");
   while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
     { /* Empty loop body */ }
 }
 
-bool Tcl::SafeInterp::hasCommand(const char* cmd_name) const {
-DOTRACE("Tcl::SafeInterp::hasCommand");
+bool Tcl::Interp::hasCommand(const char* cmd_name) const {
+DOTRACE("Tcl::Interp::hasCommand");
   Tcl_CmdInfo info;
   int result = Tcl_GetCommandInfo(itsInterp,
                                   const_cast<char*>(cmd_name),
@@ -159,8 +159,8 @@ DOTRACE("Tcl::SafeInterp::hasCommand");
   return (result != 0);
 }
 
-fixed_string Tcl::SafeInterp::getProcBody(const char* proc_name) const {
-DOTRACE("Tcl::SafeInterp::getProcBody");
+fixed_string Tcl::Interp::getProcBody(const char* proc_name) const {
+DOTRACE("Tcl::Interp::getProcBody");
   if (hasCommand(proc_name))
     {
       resetResult();
@@ -187,10 +187,10 @@ DOTRACE("Tcl::SafeInterp::getProcBody");
   return "";
 }
 
-void Tcl::SafeInterp::createProc(const char* namesp, const char* proc_name,
+void Tcl::Interp::createProc(const char* namesp, const char* proc_name,
                                  const char* args, const char* body)
 {
-DOTRACE("Tcl::SafeInterp::createProc");
+DOTRACE("Tcl::Interp::createProc");
   Tcl::ObjPtr proc_cmd_str;
   if (namesp && (*namesp != '\0'))
     {
@@ -213,8 +213,8 @@ DOTRACE("Tcl::SafeInterp::createProc");
   proc_cmd.invoke(itsInterp);
 }
 
-void Tcl::SafeInterp::handleError(const char* msg) const {
-DOTRACE("Tcl::SafeInterp::handleError");
+void Tcl::Interp::handleError(const char* msg) const {
+DOTRACE("Tcl::Interp::handleError");
 
   throw TclError(msg);
 }

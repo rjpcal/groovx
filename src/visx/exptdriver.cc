@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat Jul 21 20:03:36 2001
+// written: Sun Aug  5 19:06:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ public:
 private:
   ExptDriver* itsOwner;
 
-  Tcl::SafeInterp itsInterp;
+  Tcl::Interp itsInterp;
 
 public:
   WeakRef<GWT::Widget> itsWidget;

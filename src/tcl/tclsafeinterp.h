@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Thu Jul 19 21:05:54 2001
+// written: Sun Aug  5 19:06:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,25 +32,25 @@ class fixed_string;
 
 namespace Tcl
 {
-  class SafeInterp;
+  class Interp;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::SafeInterp provides a wrapper around calls to the Tcl
+ * Tcl::Interp provides a wrapper around calls to the Tcl
  * interpreter.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::SafeInterp {
+class Tcl::Interp {
 public:
 
-  SafeInterp(Tcl_Interp* interp);
-  ~SafeInterp();
+  Interp(Tcl_Interp* interp);
+  ~Interp();
 
-  SafeInterp(const SafeInterp& other) : itsInterp(other.itsInterp) {}
+  Interp(const Interp& other) : itsInterp(other.itsInterp) {}
 
   bool hasInterp() const { return itsInterp != 0; }
   Tcl_Interp* intp() const { return itsInterp; }

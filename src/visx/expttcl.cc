@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sat Jul 21 20:04:03 2001
+// written: Sun Aug  5 19:06:57 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -115,7 +115,7 @@ namespace ExptTcl
 
     thePauseMsgCmd.invoke(ctx.interp());
 
-    Tcl::SafeInterp::clearEventQueue();
+    Tcl::Interp::clearEventQueue();
 
     Util::WeakRef<GWT::Widget> widget = ed->getWidget();
     widget->clearscreen();
@@ -130,7 +130,7 @@ namespace ExptTcl
     widget->clearscreen();
     widget->swapBuffers();
 
-    Tcl::SafeInterp::clearEventQueue();
+    Tcl::Interp::clearEventQueue();
 
     ed->addLogInfo("Resuming experiment.");
 

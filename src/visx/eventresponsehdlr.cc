@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Sat Jul 21 20:09:24 2001
+// written: Sun Aug  5 19:07:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,38 +105,38 @@ public:
     void rhHaltExpt() { ignore(); }
 
     void handleResponse(EventResponseHdlr::Impl* impl, const char* keysym)
-	 {
-		DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
+    {
+      DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 
-		Response theResponse;
+      Response theResponse;
 
-		theResponse.setMsec(itsTrial.trElapsedMsec());
+      theResponse.setMsec(itsTrial.trElapsedMsec());
 
-		itsTrial.trResponseSeen();
+      itsTrial.trResponseSeen();
 
-		ignore();
+      ignore();
 
-		theResponse.setVal(impl->itsResponseMap.valueFor(keysym));
-		DebugEvalNL(theResponse.val());
+      theResponse.setVal(impl->itsResponseMap.valueFor(keysym));
+      DebugEvalNL(theResponse.val());
 
-		if ( !theResponse.isValid() )
-		  {
-			 if ( impl->itsAbortInvalidResponses )
-				itsTrial.trAbortTrial();
-		  }
-		else
-		  {
-			 itsTrial.trRecordResponse(theResponse);
-			 impl->itsFeedbackMap.giveFeedback(impl->itsSafeIntp, theResponse.val());
-		  }
-	 }
+      if ( !theResponse.isValid() )
+        {
+          if ( impl->itsAbortInvalidResponses )
+            itsTrial.trAbortTrial();
+        }
+      else
+        {
+          itsTrial.trRecordResponse(theResponse);
+          impl->itsFeedbackMap.giveFeedback(impl->itsInterp, theResponse.val());
+        }
+    }
   };
 
   void becomeActive(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) const
   {
     dynamic_string script(itsCmdCallback->name());
     script.append(" ").append((int)itsOwner->id());
-	 script.append(" ").append(itsBindingSubstitution);
+    script.append(" ").append(itsBindingSubstitution);
 
     itsState.reset(new ERHActiveState(this, widget, trial,
                                       itsEventSequence, script.c_str()));
@@ -153,21 +153,21 @@ public:
   void writeTo(IO::Writer* writer) const;
 
   static void handleResponseCallback(Util::Ref<EventResponseHdlr> erh,
-												 const char* keysym)
+                                     const char* keysym)
   {
-	 EventResponseHdlr::Impl* impl = erh->itsImpl;
-	 Precondition( impl->isActive() );
+    EventResponseHdlr::Impl* impl = erh->itsImpl;
+    Precondition( impl->isActive() );
     impl->itsState->handleResponse(impl, keysym);
   }
 
   static const char* uniqueCmdName()
   {
-	 static dynamic_string baseName;
-	 static int cmdCounter = 0;
+    static dynamic_string baseName;
+    static int cmdCounter = 0;
 
-	 baseName = "__EventResponseHdlrPrivate::handle";
-	 baseName.append(++cmdCounter);
-	 return baseName.c_str();
+    baseName = "__EventResponseHdlrPrivate::handle";
+    baseName.append(++cmdCounter);
+    return baseName.c_str();
   }
 
   //
@@ -178,7 +178,7 @@ public:
 
   mutable scoped_ptr<ERHActiveState> itsState;
 
-  Tcl::SafeInterp itsSafeIntp;
+  Tcl::Interp itsInterp;
 
   scoped_ptr<Tcl::TclCmd> itsCmdCallback;
 
@@ -210,9 +210,9 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
                               const char* input_response_map) :
   itsOwner(owner),
   itsState(0),
-  itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
-  itsCmdCallback(Tcl::makeCmd(itsSafeIntp.intp(), &handleResponseCallback,
-										uniqueCmdName(), "<private>")),
+  itsInterp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
+  itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
+                              uniqueCmdName(), "<private>")),
   itsResponseMap(input_response_map),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
@@ -356,7 +356,7 @@ void EventResponseHdlr::rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
 {
   Precondition( itsImpl->isInactive() );
 
-  itsImpl->itsSafeIntp.clearEventQueue();
+  itsImpl->itsInterp.clearEventQueue();
 
   itsImpl->becomeActive(widget, trial);
 }
