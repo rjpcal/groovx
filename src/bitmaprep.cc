@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Dec  1 20:34:07 1999
+// written: Thu Dec  2 12:53:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ DOTRACE("BitmapRep::deserialize");
   if (is.fail()) throw InputError(ioTag);
 
   itsBytes.resize(1);
-  itsRenderer->bytesChangeHook(0, 0, 0, 1, 1);
+  itsRenderer->notifyBytesChanged();
 
   if ( !itsFilename.empty() ) {
 	 loadPbmFile(itsFilename.c_str());
@@ -154,8 +154,7 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
 
-  itsRenderer->bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-										 itsBitsPerPixel, itsByteAlignment);
+  itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::loadPbmFile(istream& is) {
@@ -170,8 +169,7 @@ DOTRACE("BitmapRep::loadPbmFile(istream&)");
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
 
-  itsRenderer->bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-										 itsBitsPerPixel, itsByteAlignment);
+  itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::writePbmFile(const char* filename) const {
@@ -210,8 +208,7 @@ DOTRACE("BitmapRep::grabScreenRect");
 					GL_COLOR_INDEX, GL_BITMAP, &(newBytes[0]));
 
   itsBytes.swap(newBytes);
-  itsRenderer->bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-										 itsBitsPerPixel, itsByteAlignment);
+  itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::grabWorldRect(double left, double top,
@@ -255,8 +252,7 @@ DOTRACE("BitmapRep::doFlipContrast");
 	 }
   }
 
-  itsRenderer->bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-										 itsBitsPerPixel, itsByteAlignment);
+  itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::flipVertical() {
@@ -284,8 +280,7 @@ DOTRACE("BitmapRep::doFlipVertical");
   
   itsBytes.swap(new_bytes);
 
-  itsRenderer->bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
-										 itsBitsPerPixel, itsByteAlignment);
+  itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::center() {

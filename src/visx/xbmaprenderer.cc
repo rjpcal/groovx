@@ -95,18 +95,22 @@ XBmapRenderer::~XBmapRenderer() {
   if (itsImage) XFree(itsImage);
 }
 
-void XBmapRenderer::doRender(unsigned char* /* bytes */,
+void XBmapRenderer::doRender(unsigned char* bytes,
 									  double x_pos,
 									  double y_pos,
 									  int width,
 									  int height,
-									  int /* bits_per_pixel */,
-									  int /* byte_alignment */,
+									  int bits_per_pixel,
+									  int byte_alignment,
 									  double /* zoom_x */,
 									  double /* zoom_y */) const {
 DOTRACE("XBmapRenderer::doRender");
 
   setupX11Stuff();
+
+  // Update the cached image if necessary
+  if (!itsIsCurrent) update(bytes, width, height,
+									 bits_per_pixel, byte_alignment);
 
   // Check if we have an image to display 
   if (itsImage == NULL) return; 
@@ -147,12 +151,19 @@ DOTRACE("XBmapRenderer::doUndraw");
   glPopAttrib();	 
 }
 
-void XBmapRenderer::bytesChangeHook(unsigned char* theBytes,
-												int width,
-												int height,
-												int bits_per_pixel,
-												int byte_alignment) {
-DOTRACE("XBmapRenderer::bytesChangeHook");
+void XBmapRenderer::notifyBytesChanged() const {
+DOTRACE("XBmapRenderer::notifyBytesChanged");
+  itsIsCurrent = false; 
+}
+
+void XBmapRenderer::update(unsigned char* theBytes,
+									int width,
+									int height,
+									int bits_per_pixel,
+									int byte_alignment) const {
+DOTRACE("XBmapRenderer::update");
+
+  if (itsIsCurrent) return; 
 
   setupX11Stuff();
 
@@ -179,6 +190,8 @@ DOTRACE("XBmapRenderer::bytesChangeHook");
 						 byte_alignment*8, /* bitmap_pad */
 						 0); /* bytes_per_line */
   }
+
+  itsIsCurrent = true;
 }
 
 static const char vcid_xbmaprenderer_cc[] = "$Header$";

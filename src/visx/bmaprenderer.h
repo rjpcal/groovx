@@ -3,7 +3,7 @@
 // bmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:51:34 1999
-// written: Wed Dec  1 17:49:33 1999
+// written: Thu Dec  2 12:50:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,15 +37,11 @@ public:
 					  int /*winRasterX*/, int /*winRasterY*/,
 					  int /*winWidthX*/, int /*winHeightY*/) const;
 
-  /** This operation is a hook that is called after every time that
-      the bitmap data change. The default implementation provided by
-      Bitmap is a no-op, but subclasses may override if they need to
-      perform specific actions when that bitmap data change. */
-  virtual void bytesChangeHook(unsigned char* /* theBytes */,
-										 int /* width */,
-										 int /* height */,
-										 int /* bits_per_pixel */,
-										 int /* byte_alignment */);
+  /** This operation should be called by clients after every change to
+      the bitmap data. The default implementation provided by Bitmap
+      is a no-op, but subclasses may override if they need to update
+      data structures when the bitmap data change. */
+  virtual void notifyBytesChanged() const;
 };
 
 static const char vcid_bmaprenderer_h[] = "$Header$";

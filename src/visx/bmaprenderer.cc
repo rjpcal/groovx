@@ -3,7 +3,7 @@
 // bmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:55:36 1999
-// written: Wed Dec  1 17:49:47 1999
+// written: Thu Dec  2 12:50:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,13 +27,9 @@ void BmapRenderer::doUndraw(
 DOTRACE("BmapRenderer::doUndraw");
 }
 
-void BmapRenderer::bytesChangeHook(unsigned char* /* theBytes */,
-											  int /* width */,
-											  int /* height */,
-											  int /* bits_per_pixel */,
-											  int /* byte_alignment */)
+void BmapRenderer::notifyBytesChanged() const
 {
-DOTRACE("BmapRenderer::bytesChangeHook");
+DOTRACE("BmapRenderer::notifyBytesChanged");
 }
 
 static const char vcid_bmaprenderer_cc[] = "$Header$";

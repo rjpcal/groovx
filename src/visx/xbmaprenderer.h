@@ -42,13 +42,17 @@ public:
 					  int winRasterX, int winRasterY,
 					  int winWidthX, int winHeightY) const;
 
-  virtual void bytesChangeHook(unsigned char* theBytes,
-										 int width,
-										 int height,
-										 int bits_per_pixel,
-										 int byte_alignment);
+  virtual void notifyBytesChanged() const;
+
 private:
-  XImage* itsImage;
+  void update(unsigned char* theBytes,
+				  int width,
+				  int height,
+				  int bits_per_pixel,
+				  int byte_alignment) const;
+
+  mutable bool itsIsCurrent;
+  mutable XImage* itsImage;
 };
 
 static const char vcid_xbmaprenderer_h[] = "$Header$";
