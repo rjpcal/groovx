@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri Jul 16 17:18:43 1999
+// written: Tue Sep 28 18:29:42 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -32,6 +32,15 @@
 #define STRING_DEFINED
 #endif
 
+#ifndef VECTOR_DEFINED
+#include <vector>
+#define VECTOR_DEFINED
+#endif
+
+#ifndef VALUE_H_DEFINED
+#include "tclvalue.h"
+#endif
+
 #ifndef TCLERROR_H_DEFINED
 #include "tclerror.h"
 #endif
@@ -40,9 +49,11 @@ class TclCmd {
 public:
   // If exact_objc is true, then the objc of a command invocation is
   // required to exactly equal either objc_min or objc_max; if it is
-  // false, then objc must be between objc_min and objc_max, inclusive.
+  // false, then objc must be between objc_min and objc_max,
+  // inclusive. If the value given for objc_max is negative, then the
+  // maximum objc will be set to the same value as objc_min.
   TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage, 
-			int objc_min=0, int objc_max=100000, bool exact_objc=false);
+			int objc_min=0, int objc_max=-1, bool exact_objc=false);
   virtual ~TclCmd();
 
   static int dummyInvoke(ClientData clientData, Tcl_Interp* interp,
@@ -56,6 +67,9 @@ protected:
   void errorMessage(const char* msg);
 
   int objc() { return itsObjc; }
+
+  void args(vector<Value*>& vec);
+  Value* arg(int argn);
 
   int    getIntFromArg(int argn);
   long   getLongFromArg(int argn);
@@ -82,6 +96,8 @@ protected:
 		*itr = val;
 	 }
   }
+
+  void returnVal(Value* return_value);
 
   void returnVoid();
   void returnError();
@@ -157,6 +173,7 @@ private:
   Tcl_Interp* itsInterp;
   int itsObjc;
   Tcl_Obj* const* itsObjv;
+  vector<TclValue> itsArgs;
 
   int itsResult;
 };
