@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Sep 25 08:43:40 2000
+// written: Mon Sep 25 09:29:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
   static Util::Tracer tracer;
 
   /// Construct with the applications Tcl interpreter.
-  ExptDriver(Tcl_Interp* interp);
+  ExptDriver(int argc, char** argv, Tcl_Interp* interp);
 
   /// Virtual destructor.
   virtual ~ExptDriver();

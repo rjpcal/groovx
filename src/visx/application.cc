@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:05:52 1999
-// written: Tue Sep 19 17:36:00 2000
+// written: Mon Sep 25 09:18:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,9 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(const char* library_env_var) :
+  Impl(int argc, char** argv, const char* library_env_var) :
+	 itsArgc(argc),
+	 itsArgv(argv),
 	 itsLibraryDir(library_env_var == 0 ?
 						0 : System::theSystem().getenv(library_env_var))
   {
@@ -46,11 +48,13 @@ public:
 	 DebugEvalNL(itsLibraryDir.c_str());
   }
 
+  int itsArgc;
+  char** itsArgv;
   fixed_string itsLibraryDir;
 };
 
-Application::Application(const char* library_env_var) :
-  itsImpl(new Impl(library_env_var))
+Application::Application(int argc, char** argv, const char* library_env_var) :
+  itsImpl(new Impl(argc, argv, library_env_var))
 {
 DOTRACE("Application::Application");
 }
@@ -73,6 +77,16 @@ DOTRACE("Application::theApp");
 	 throw NoAppError("the application has not yet been installed");
   }
   return *theSingleton;
+}
+
+int Application::argc() const {
+DOTRACE("Application::argv");
+  return itsImpl->itsArgc;
+}
+
+char** Application::argv() const {
+DOTRACE("Application::argv");
+  return itsImpl->itsArgv;
 }
 
 const char* Application::getLibraryDirectory() const {
