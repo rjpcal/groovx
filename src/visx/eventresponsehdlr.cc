@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Oct 11 16:29:42 2000
+// written: Wed Oct 11 17:37:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -418,9 +418,7 @@ private:
 	 bool isTrue(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
 		{
 		  Precondition(itsIsValid);
-		  bool result = safeInterp.evalBooleanExpr(itsCondition);
-		  Assert(safeInterp.success());
-		  return result;
+		  return safeInterp.evalBooleanExpr(itsCondition);
 		}
 
 	 void invoke(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
@@ -517,8 +515,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const char* input_response_map) :
   itsOwner(owner),
   itsState(ERHState::inactiveState()),
-  itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp(),
-				  Tcl::SafeInterp::THROW),
+  itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsTclCmdToken(0),
   itsPrivateCmdName(getUniqueCmdName().c_str()),
   itsInputResponseMap(input_response_map),
@@ -791,7 +788,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
   int num_pairs=0;
   Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
 
-  Tcl::Safe::splitList(0, pairs_list, pairs, num_pairs);
+  itsSafeIntp.splitList(pairs_list, pairs, num_pairs);
 
   Assert(num_pairs >= 0);
 
@@ -804,13 +801,13 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 	 Tcl::TclObjPtr current_pair = pairs[i];
 
 	 // Check that the length of the "pair" is really 2
-	 if (Tcl::Safe::listLength(0, current_pair) != 2) {
+	 if (itsSafeIntp.listLength(current_pair) != 2) {
 		throw ErrorWithMsg("\"pair\" did not have length 2 "
 								 "in EventResponseHdlr::updateFeedbacksIfNeeded");
 	 }
 
-  	 Tcl_Obj *condition = Tcl::Safe::listElement(0, current_pair, 0);
-  	 Tcl_Obj *result = Tcl::Safe::listElement(0, current_pair, 1);
+  	 Tcl_Obj *condition = itsSafeIntp.listElement(current_pair, 0);
+  	 Tcl_Obj *result = itsSafeIntp.listElement(current_pair, 1);
 
 	 itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
   }
@@ -839,7 +836,7 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
   int num_pairs=0;
   Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
 
-  Tcl::Safe::splitList(0, pairs_list, pairs, num_pairs);
+  itsSafeIntp.splitList(pairs_list, pairs, num_pairs);
 
   Assert(num_pairs >= 0);
   unsigned int uint_num_pairs = num_pairs;
@@ -851,18 +848,15 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 	 Tcl::TclObjPtr current_pair = pairs[i];
 
 	 // Check that the length of the "pair" is really 2
-	 if (Tcl::Safe::listLength(0, current_pair) != 2) {
+	 if (itsSafeIntp.listLength(current_pair) != 2) {
 		throw ErrorWithMsg("\"pair\" did not have length 2 "
 								 "in EventResponseHdlr::updateFeedbacksIfNeeded");
 	 }
 
-	 Tcl::TclObjPtr patternObj =
-		Tcl::Safe::listElement(0, current_pair, 0);
+	 Tcl::TclObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
+	 Tcl::TclObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
 
-	 Tcl::TclObjPtr response_valObj =
-		Tcl::Safe::listElement(0, current_pair, 1);
-
-	 int response_val = Tcl::Safe::getInt(0, response_valObj);
+	 int response_val = itsSafeIntp.getInt(response_valObj);
 
 	 itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
