@@ -51,7 +51,7 @@ OBJEXT          := @OBJEXT@
 LIB_SUFFIX      := @LIB_SUFFIX@
 SHLIB_EXT       := @SHLIB_EXT@
 STATLIB_EXT     := @STATLIB_EXT@
-CPPFLAGS        := @CPPFLAGS@
+CPPFLAGS        := @CPPFLAGS@ -include config.h
 CXXFLAGS        := @CXXFLAGS@
 DEFS            := @DEFS@
 LDFLAGS         := @LDFLAGS@
@@ -63,7 +63,6 @@ windowsystem    := @windowsystem@
 
 LIB_EXT         := $(LIB_SUFFIX).$(SHLIB_EXT)
 
-DEFS            += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
 
 #-------------------------------------------------------------------------
 #
@@ -79,6 +78,7 @@ DOC := ./doc
 SCRIPTS := ./scripts
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
+DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
 DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
 
 #-------------------------------------------------------------------------
@@ -92,6 +92,12 @@ configure: configure.in
 
 config.status: configure
 	./config.status --recheck
+
+config.h.in: configure.in
+	autoheader configure.in
+
+config.h: config.h.in config.status
+	./config.status --header=config.h:config.h.in
 
 Makefile: Makefile.in config.status
 	./config.status --file=Makefile:Makefile.in
@@ -116,7 +122,7 @@ CPPFLAGS += -I$(SRC)
 
 ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
-$(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
+$(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc config.h
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
@@ -124,7 +130,7 @@ $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 		-c $< \
 		-o $@
 
-$(OBJ)/%.$(OBJEXT) : $(SRC)/%.C
+$(OBJ)/%.$(OBJEXT) : $(SRC)/%.C config.h
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
