@@ -3,7 +3,7 @@
 // soundlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:41 1999
-// written: Tue Oct 17 11:37:21 2000
+// written: Tue Oct 17 12:11:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,12 +49,12 @@ template class MasterPtr<Sound>;
 template class PtrList<Sound>;
 
 template <>
-PtrList<Sound>& ItemWithId<Sound>::theirPtrList =
-  SoundList::theSoundList();
+PtrList<Sound>& ItemWithId<Sound>::ptrList()
+{ return SoundList::theSoundList(); }
 
 template <>
-PtrList<Sound>& NullableItemWithId<Sound>::theirPtrList =
-  SoundList::theSoundList();
+PtrList<Sound>& NullableItemWithId<Sound>::ptrList()
+{ return SoundList::theSoundList(); }
 
 static const char vcid_soundlist_cc[] = "$Header$";
 #endif // !SOUNDLIST_CC_DEFINED

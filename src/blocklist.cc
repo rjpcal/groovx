@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Tue Oct 17 11:36:42 2000
+// written: Tue Oct 17 12:09:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,12 +49,12 @@ template class PtrList<Block>;
 template class MasterPtr<Block>;
 
 template <>
-PtrList<Block>& ItemWithId<Block>::theirPtrList =
-  BlockList::theBlockList();
+PtrList<Block>& ItemWithId<Block>::ptrList()
+{ return BlockList::theBlockList(); }
 
 template <>
-PtrList<Block>& NullableItemWithId<Block>::theirPtrList =
-  BlockList::theBlockList();
+PtrList<Block>& NullableItemWithId<Block>::ptrList()
+{ return BlockList::theBlockList(); }
 
 static const char vcid_blocklist_cc[] = "$Header$";
 #endif // !BLOCKLIST_CC_DEFINED

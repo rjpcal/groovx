@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Tue Oct 17 11:37:36 2000
+// written: Tue Oct 17 12:11:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,12 +106,12 @@ template class MasterPtr<TrialBase>;
 template class PtrList<TrialBase>;
 
 template <>
-PtrList<TrialBase>& ItemWithId<TrialBase>::theirPtrList =
-  Tlist::theTlist();
+PtrList<TrialBase>& ItemWithId<TrialBase>::ptrList()
+{ return Tlist::theTlist(); }
 
 template <>
-PtrList<TrialBase>& NullableItemWithId<TrialBase>::theirPtrList =
-  Tlist::theTlist();
+PtrList<TrialBase>& NullableItemWithId<TrialBase>::ptrList()
+{ return Tlist::theTlist(); }
 
 static const char vcid_tlist_cc[] = "$Header$";
 #endif // !TLIST_CC_DEFINED

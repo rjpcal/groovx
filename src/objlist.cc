@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Oct 17 11:36:57 2000
+// written: Tue Oct 17 12:11:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,12 +52,12 @@ template class MasterPtr<GrObj>;
 template class PtrList<GrObj>;
 
 template <>
-PtrList<GrObj>& ItemWithId<GrObj>::theirPtrList =
-  ObjList::theObjList();
+PtrList<GrObj>& ItemWithId<GrObj>::ptrList()
+{ return ObjList::theObjList(); }
 
 template <>
-PtrList<GrObj>& NullableItemWithId<GrObj>::theirPtrList =
-  ObjList::theObjList();
+PtrList<GrObj>& NullableItemWithId<GrObj>::ptrList()
+{ return ObjList::theObjList(); }
 
 static const char vcid_objlist_cc[] = "$Header$";
 #endif // !OBJLIST_CC_DEFINED

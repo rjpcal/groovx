@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Tue Oct 17 11:37:05 2000
+// written: Tue Oct 17 12:11:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,12 +52,12 @@ template class MasterPtr<Position>;
 template class PtrList<Position>;
 
 template <>
-PtrList<Position>& ItemWithId<Position>::theirPtrList =
-  PosList::thePosList();
+PtrList<Position>& ItemWithId<Position>::ptrList()
+{ return PosList::thePosList(); }
 
 template <>
-PtrList<Position>& NullableItemWithId<Position>::theirPtrList =
-  PosList::thePosList();
+PtrList<Position>& NullableItemWithId<Position>::ptrList()
+{ return PosList::thePosList(); }
 
 static const char vcid_poslist_cc[] = "$Header$";
 #endif // !POSLIST_CC_DEFINED
