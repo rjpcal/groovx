@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Jul 12 11:27:20 2001
+// written: Thu Jul 12 13:06:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public:
     Tcl::TclCmd(interp, "?", "commandName", 2, 2) {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
   {
     fixed_string cmd_name(ctx.getCstringFromArg(1));
     Tcl_CmdInfo cmd_info;
@@ -118,8 +118,8 @@ public:
   Impl(const char* cmd_name, const char* usage,
        int objc_min, int objc_max, bool exact_objc) :
     itsUsage(usage),
-    itsObjcMin(objc_min),
-    itsObjcMax( (objc_max > 0) ? objc_max : objc_min),
+    itsObjcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
+    itsObjcMax( (objc_max > 0) ? (unsigned int) objc_max : itsObjcMin),
     itsExactObjc(exact_objc),
     itsCmdName(cmd_name),
     itsUseCount(0)
@@ -138,7 +138,7 @@ public:
 
   const char* usage() const { return itsUsage; }
 
-  bool allowsObjc(int objc) const
+  bool allowsObjc(unsigned int objc) const
     {
       if (itsExactObjc)
         {
@@ -148,7 +148,7 @@ public:
       return (objc >= itsObjcMin && objc <= itsObjcMax);
     }
 
-  bool rejectsObjc(int objc) const { return !allowsObjc(objc); }
+  bool rejectsObjc(unsigned int objc) const { return !allowsObjc(objc); }
 
   const fixed_string& cmdName() const { return itsCmdName; }
 
@@ -160,8 +160,8 @@ private:
 
   // These are set once per command object
   const char* const itsUsage;
-  const int itsObjcMin;
-  const int itsObjcMax;
+  const unsigned int itsObjcMin;
+  const unsigned int itsObjcMax;
   const bool itsExactObjc;
   fixed_string itsCmdName;
   int itsUseCount;
@@ -204,7 +204,7 @@ DOTRACE("Tcl::TclCmd::usage");
 }
 
 void Tcl::TclCmd::rawInvoke(Tcl_Interp* interp,
-                            int objc, Tcl_Obj* const objv[])
+                            unsigned int objc, Tcl_Obj* const objv[])
 {
 DOTRACE("Tcl::TclCmd::rawInvoke");
   Context ctx(interp, objc, objv);
@@ -212,13 +212,17 @@ DOTRACE("Tcl::TclCmd::rawInvoke");
 }
 
 int Tcl::TclCmd::invokeCallback(ClientData clientData, Tcl_Interp* interp,
-                                int objc, Tcl_Obj *const objv[])
+                                int s_objc, Tcl_Obj *const objv[])
 {
 DOTRACE("Tcl::TclCmd::invokeCallback");
 
   TclCmd* theCmd = static_cast<TclCmd*>(clientData);
 
   theCmd->itsImpl->onInvoke();
+
+  Assert(s_objc >= 0);
+
+  unsigned int objc = (unsigned int) s_objc;
 
   // Check for bad argument count, if so abort the command and return
   // TCL_ERROR...
@@ -275,24 +279,23 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::TclCmd::Context member definitions
+// Tcl::Context member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TclCmd::Context::Context(Tcl_Interp* interp,
-                              int objc,
-                              Tcl_Obj* const* objv) :
+Tcl::Context::Context(Tcl_Interp* interp,
+                      unsigned int objc, Tcl_Obj* const* objv) :
   itsInterp(interp),
   itsObjc(objc),
   itsObjv(objv)
 {}
 
-Tcl::TclCmd::Context::~Context()
+Tcl::Context::~Context()
 {}
 
-void Tcl::TclCmd::Context::setObjResult(Tcl_Obj* obj)
+void Tcl::Context::setObjResult(Tcl_Obj* obj)
 {
-DOTRACE("Tcl::TclCmd::Context::setObjResult");
+DOTRACE("Tcl::Context::setObjResult");
   Tcl_SetObjResult(itsInterp, obj);
 }
 

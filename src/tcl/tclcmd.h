@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Jul 12 11:28:57 2001
+// written: Thu Jul 12 13:03:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,7 @@ namespace Tcl
 {
   class TclValue;
   class TclCmd;
+  class Context;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -47,11 +48,8 @@ namespace Tcl
  * takes care of such things as checking the argument count, and
  * issuing an error message if the argument count is incorrect.
  *
- * \c TclCmd exposes a nested class \c Context, which is passed to \a
- * TclCmd::invoke() provides functions such as \c getIntFromArg() and
- * getCstringFromArg() for getting basic types from a command
- * argument, as well as functions such as \c setResult() for returning
- * basic types to Tcl.
+ * \c TclCmd uses class \c Context to represent the set of Tcl command
+ * arguments and the interpreter's result.
  *
  * The only C++ clients of \c TclCmd should be those who make
  * subclasses to perform specific actions, and those who instantiate
@@ -80,10 +78,10 @@ public:
   /// Returns a string describing the command's proper usage.
   virtual const char* usage();
 
-  class Context;
-
   /** This is overridden by subclasses to implement the specific
-      functionality for the command that is represented. */
+      functionality for the command that is represented. The \c
+      Context& argument allows Tcl command arguments to be retrieved,
+      and allows the interpreter's result to be set.*/
   virtual void invoke(Context& ctx) = 0;
 
 protected:
@@ -94,7 +92,8 @@ protected:
       Errors should be signaled by throwing appropriate exceptions,
       which will be caught and translated back to the Tcl interpreter
       by \a invokeCallback(). */
-  virtual void rawInvoke(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+  virtual void rawInvoke(Tcl_Interp* interp, unsigned int objc,
+                         Tcl_Obj* const objv[]);
 
 private:
   /// The procedure that is actually registered with the Tcl C API.
@@ -112,17 +111,21 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::TclCmd::Context definition
+ * \c Tcl::Context, which is passed to \a TclCmd::invoke(), provides
+ * an interface for getting values from command arguments (using
+ * functions like \c getIntFromArg() and getCstringFromArg()), and an
+ * interface for returning values to the Tcl interpreter's result
+ * (using functions such as \c setResult() and \c restultAppender()).
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclCmd::Context {
+class Tcl::Context {
 public:
   friend class TclCmd;
 
   /// Construct with a Tcl interpreter and an argument list.
-  Context(Tcl_Interp* interp, int objc, Tcl_Obj* const* objv);
+  Context(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const* objv);
 
   /// Virtual destructor.
   virtual ~Context();
@@ -131,7 +134,7 @@ public:
   Tcl_Interp* interp() const { return itsInterp; }
 
   /// Return the number of arguments in the current invocation.
-  int objc() { return itsObjc; }
+  unsigned int objc() { return itsObjc; }
 
   //---------------------------------------------------------------------
   //
@@ -140,29 +143,29 @@ public:
   //---------------------------------------------------------------------
 
   /// Attempts to retrieve an \c int from argument number \a argn.
-  int getIntFromArg(int argn)
+  int getIntFromArg(unsigned int argn)
     { return Tcl::fromTcl<int>(getObjv(argn)); }
 
   /// Attempts to retrieve a \c long from argument number \a argn.
-  long getLongFromArg(int argn)
+  long getLongFromArg(unsigned int argn)
     { return Tcl::fromTcl<long>(getObjv(argn)); }
 
   /// Attempts to retrieve a \c bool from argument number \a argn.
-  bool getBoolFromArg(int argn)
+  bool getBoolFromArg(unsigned int argn)
     { return Tcl::fromTcl<bool>(getObjv(argn)); }
 
   /// Attempts to retrieve a \c double from argument number \a argn.
-  double getDoubleFromArg(int argn)
+  double getDoubleFromArg(unsigned int argn)
     { return Tcl::fromTcl<double>(getObjv(argn)); }
 
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
-  const char* getCstringFromArg(int argn)
+  const char* getCstringFromArg(unsigned int argn)
     { return getStringFromArg(argn, (const char**) 0); }
 
   /** Attempts to retrieve an string type from argument number \a
       argn. The templated type must be assignable from const char*. */
   template <class Str>
-  Str getStringFromArg(int argn, Str* /* dummy */ = 0)
+  Str getStringFromArg(unsigned int argn, Str* /* dummy */ = 0)
     {
       return Str(Tcl::fromTcl<const char*>(getObjv(argn)));
     }
@@ -170,7 +173,7 @@ public:
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
   template <class T>
-  T getValFromArg(int argn, T* /*dummy*/=0)
+  T getValFromArg(unsigned int argn, T* /*dummy*/=0)
     {
       return Tcl::fromTcl<T>(getObjv(argn));
     }
@@ -191,7 +194,7 @@ public:
       elements of type \c T, and inserts these through the insert
       iterator \a itr. */
   template <class T, class Iterator>
-  void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */)
+  void getSequenceFromArg(unsigned int argn, Iterator itr, T* /* dummy */)
     {
       Tcl::List elements(getObjv(argn));
 
@@ -206,7 +209,7 @@ public:
       if successful, returns an iterator pointing to the beginning of
       that list. */
   template <class T>
-  List::Iterator<T> beginOfArg(int argn, T* /*dummy*/=0)
+  List::Iterator<T> beginOfArg(unsigned int argn, T* /*dummy*/=0)
     {
       return List::Iterator<T>(getObjv(argn), List::Iterator<T>::BEGIN);
     }
@@ -215,7 +218,7 @@ public:
       if successful, returns an iterator pointing to the
       one-past-the-end element of that list. */
   template <class T>
-  List::Iterator<T> endOfArg(int argn, T* /*dummy*/=0)
+  List::Iterator<T> endOfArg(unsigned int argn, T* /*dummy*/=0)
     {
       return List::Iterator<T>(getObjv(argn), List::Iterator<T>::END);
     }
@@ -292,7 +295,7 @@ public:
 
 protected:
   /// Get the n'th argument.
-  virtual Tcl_Obj* getObjv(int n) { return itsObjv[n]; }
+  virtual Tcl_Obj* getObjv(unsigned int n) { return itsObjv[n]; }
 
   /// Return a Tcl_Obj*.
   virtual void setObjResult(Tcl_Obj* obj);
@@ -301,9 +304,9 @@ private:
   Context(const Context&);
   Context& operator=(const Context&);
 
-  Tcl_Interp* itsInterp;
-  int itsObjc;
-  Tcl_Obj* const* itsObjv;
+  Tcl_Interp* const itsInterp;
+  unsigned int const itsObjc;
+  Tcl_Obj* const* const itsObjv;
 };
 
 static const char vcid_tclcmd_h[] = "$Header$";
