@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Thu Nov 21 18:01:59 2002
+// written: Sat Nov 23 13:33:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef TKWIDGET_H_DEFINED
 #define TKWIDGET_H_DEFINED
 
-#include "gwt/canvaswidget.h"
+#include "gwt/widget.h"
 
 struct Tcl_Interp;
 
@@ -36,7 +36,7 @@ class TkWidgImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget : public GWT::CanvasWidget
+class Tcl::TkWidget : public GWT::Widget
 {
 public:
   TkWidget(Tcl_Interp* interp, const char* classname, const char* pathname);
