@@ -26,6 +26,11 @@
 struct Tcl_Obj;
 struct Tcl_Interp;
 
+namespace Util
+{
+  class ErrorHandler;
+}
+
 namespace Tcl
 {
   class Code;
@@ -48,12 +53,15 @@ public:
 
   Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE);
 
+  Code(Tcl_Obj* cmd_object, Util::ErrorHandler* errHandler);
+
   int invoke(Tcl_Interp* interp);
 
 private:
   Tcl::ObjPtr itsCodeObj;
   ErrorHandlingMode itsErrorMode;
   int itsFlags;
+  Util::ErrorHandler* itsErrHandler;
 };
 
 static const char vcid_tclevalcmd_h[] = "$Header$";

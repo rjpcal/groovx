@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 14:04:15 2001
+// written: Mon Jul 16 14:13:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "tcl/tclcode.h"
 
 #include "tcl/tclerror.h"
+
+#include "util/errorhandler.h"
 
 #include <tcl.h>
 
@@ -36,16 +38,25 @@ Tcl::Code::Code() :
   itsFlags(TCL_EVAL_GLOBAL)
 {}
 
-Tcl::Code::Code(const char* tcl_cmd, ErrorHandlingMode mode = NONE) :
+Tcl::Code::Code(const char* tcl_cmd, ErrorHandlingMode mode) :
   itsCodeObj(Tcl_NewStringObj(tcl_cmd, -1)),
   itsErrorMode(mode),
-  itsFlags(TCL_EVAL_GLOBAL)
+  itsFlags(TCL_EVAL_GLOBAL),
+  itsErrorHandler(0)
 {}
 
-Tcl::Code::Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE) :
+Tcl::Code::Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode) :
   itsCodeObj(cmd_object),
   itsErrorMode(mode),
-  itsFlags(TCL_EVAL_GLOBAL)
+  itsFlags(TCL_EVAL_GLOBAL),
+  itsErrorHandler(0)
+{}
+
+Tcl::Code::Code(Tcl_Obj* cmd_object, Util::ErrorHander* handler) :
+  itsCodeObj(cmd_object),
+  itsErrorMode(NONE),
+  itsFlags(TCL_EVAL_GLOBAL),
+  itsErrorHandler(handler)
 {}
 
 int Tcl::Code::invoke(Tcl_Interp* interp)
@@ -53,26 +64,32 @@ int Tcl::Code::invoke(Tcl_Interp* interp)
   if (interp == 0)
     throw EvalError("Tcl_Interp* was null in Tcl::Code::invoke");
 
-  int tclresult = Tcl_EvalObjEx(interp, itsCodeObj, itsFlags);
-
-  if (NONE == itsErrorMode) { return tclresult; }
-
-  else {
-    if (tclresult != TCL_OK) {
+  if ( Tcl_EvalObjEx(interp, itsCodeObj, itsFlags)
+       != TCL_OK )
+    {
       EvalError err(itsCodeObj);
 
-      if (THROW_EXCEPTION == itsErrorMode) {
-        throw err;
-      }
-      else if (BACKGROUND_ERROR == itsErrorMode) {
-        Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
-        Tcl_BackgroundError(interp);
-        return tclresult;
-      }
+      if (itsErrorHandler != 0)
+        {
+          itsErrorHandler->handleErrorWithMsg(err);
+        }
+      else if (NONE == itsErrorMode)
+        {
+          return TCL_ERROR;
+        }
+      else if (THROW_EXCEPTION == itsErrorMode)
+        {
+          throw err;
+        }
+      else if (BACKGROUND_ERROR == itsErrorMode)
+        {
+          Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
+          Tcl_BackgroundError(interp);
+          return tclresult;
+        }
     }
-  }
 
-  return tclresult;
+  return TCL_OK;
 }
 
 static const char vcid_tclcode_cc[] = "$Header$";
