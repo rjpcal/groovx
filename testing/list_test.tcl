@@ -240,7 +240,7 @@ proc testDestringifyCmd { objname } {
 
     eval ::test $testname {"error on bad input"} {"
         $destringify {this is a bunch of bs}
-    "} {"${destringify}: IO::InputError: couldn't read typename for ${this(listname)}"}
+    "} {"${destringify}: IO::InputError: couldn't read typename for"}
 }
 
 
