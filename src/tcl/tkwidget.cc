@@ -40,6 +40,7 @@
 #include "util/ref.h"
 #include "util/strings.h"
 
+#include <cstdio>
 #include <iostream>
 #include <tcl.h>
 #include <tk.h>
@@ -387,6 +388,51 @@ DOTRACE("Tcl::TkWidget::destroyWidget");
     {
       Tk_DestroyWindow(rep->tkWin);
     }
+}
+
+void Tcl::TkWidget::winInfo() throw()
+{
+DOTRACE("Tcl::TkWidget::winInfo");
+
+  Display* dpy = Tk_Display(rep->tkWin);
+
+  int natoms = 0;
+  Atom* atoms = XListProperties(dpy, Tk_WindowId(rep->tkWin),
+                                &natoms);
+
+  fprintf(stderr, "%d atoms\n", natoms);
+
+  for (int i = 0; i < natoms; ++i)
+    {
+      const char* name = XGetAtomName(dpy, atoms[i]);
+
+      fprintf(stderr, "[%d] %s\n", i, name);
+
+      long long_offset = 0;
+      long long_length = 16;
+
+      Atom actual_type_return = 0;
+      int actual_format_return = 0;
+      unsigned long nitems_return = 0;
+      unsigned long bytes_after_return = 0;
+      unsigned char* prop_return = 0;
+
+      XGetWindowProperty(dpy, Tk_WindowId(rep->tkWin),
+                         atoms[i],
+                         long_offset,
+                         long_length,
+                         False,
+                         AnyPropertyType,
+                         &actual_type_return,
+                         &actual_format_return,
+                         &nitems_return,
+                         &bytes_after_return,
+                         &prop_return);
+
+      XFree(prop_return);
+    }
+
+  XFree(atoms);
 }
 
 Tcl::Interp& Tcl::TkWidget::interp() const

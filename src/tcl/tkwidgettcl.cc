@@ -62,6 +62,7 @@ DOTRACE("Tkwidget_Init");
   pkg->def("repack", "pack_args", &Tcl::TkWidget::repack);
   pkg->def("warpPointer", "item_id x y", &Tcl::TkWidget::warpPointer);
   pkg->defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
+  pkg->defAction("winInfo", &Tcl::TkWidget::winInfo);
 
   pkg->defAction("hook", &Tcl::TkWidget::hook);
 

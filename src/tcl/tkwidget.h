@@ -71,6 +71,9 @@ public:
 
   void destroyWidget();
 
+  /// Print this window's X11 tidbits to stderr.
+  void winInfo() throw();
+
   int width() const;
   int height() const;
   Gfx::Vec2<int> size() const;
