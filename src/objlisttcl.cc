@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Sun Oct  8 20:46:00 2000
+// written: Mon Oct  9 09:22:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,7 +184,7 @@ protected:
 			 if (itsSandbox.isValidId(id))
 				{
 				  PtrList<GrObj>::SharedPtr shptr = itsSandbox.getCheckedPtr(id);
-				  itsSandbox.remove(id);
+				  itsSandbox.release(id);
 				  int newid = olist.insert(shptr);
 				  lappendVal(newid);
 				}
