@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Mon Mar  6 17:53:32 2000
+// written: Thu Mar  9 17:29:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 #include "util/debug.h"
 
 namespace {
-  const string_literal ioTag = "Gtext";
+  const string_literal ioTag("Gtext");
 
 //---------------------------------------------------------------------
 //
@@ -666,6 +666,9 @@ DOTRACE("Gtext::Gtext(const char*)");
 }
 
 Gtext::Gtext(istream& is, IOFlag flag) :
+  GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
+  itsText(""),
+  itsStrokeWidth(2),
   itsListBase(0)
 {
 DOTRACE("Gtext::Gtext(istream&, IOFlag)");
