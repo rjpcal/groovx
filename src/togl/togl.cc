@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 26 15:15:58 2000
+// written: Fri Sep 29 10:36:58 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,8 +27,6 @@
 #include "togl/togl.h"
 
 #include "tcl/tclpkg.h"
-
-#include <iostream.h>
 
 // Currently support only X11
 #define X11
