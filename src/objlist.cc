@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon May 15 19:34:09 2000
+// written: Mon May 15 22:29:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,16 @@ namespace {
 }
 
 ObjList ObjList::theInstance(DEFAULT_INIT_SIZE);
+
+ObjList::ObjList(int size) : Base(size)
+{
+DOTRACE("ObjList::ObjList");
+}
+
+ObjList::~ObjList()
+{
+DOTRACE("ObjList::~ObjList");
+}
 
 ObjList& ObjList::theObjList() {
 DOTRACE("ObjList::theObjList");
