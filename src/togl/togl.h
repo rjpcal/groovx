@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Nov 20 20:52:29 2002
+// written: Wed Nov 20 21:04:34 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -61,9 +61,6 @@ public:
 
   /// Overridden from GWT::Widget.
   virtual void swapBuffers();
-
-  // Query functions
-  bool hasPrivateCmap() const;
 
   /// Simple RGB color struct for use with Togl.
   struct Color

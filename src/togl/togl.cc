@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 20:57:56 2002
+// written: Wed Nov 20 21:09:12 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -65,8 +65,6 @@ public:
   const Tk_Window tkWin;
   Util::SoftRef<GLCanvas> canvas;
 
-  bool privateCmapFlag;
-
   Impl(Togl* owner);
   ~Impl() throw() {}
 
@@ -93,9 +91,7 @@ Tk_ClassProcs toglProcs =
 Togl::Impl::Impl(Togl* p) :
   owner(p),
   tkWin(owner->tkWin()),
-  canvas(),
-
-  privateCmapFlag(false)
+  canvas()
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -112,41 +108,6 @@ DOTRACE("Togl::Impl::Impl");
   Tk_MapWindow(tkWin);
 }
 
-namespace
-{
-  Colormap findColormap(Display* dpy, Visual* visual,
-                        int screen, bool privateCmap)
-  {
-    // For RGB colormap or shared color-index colormap
-    if (!privateCmap)
-      {
-        int scrnum = DefaultScreen(dpy);
-
-        if (visual == DefaultVisual(dpy, scrnum))
-          {
-            // Just share the default colormap
-            return DefaultColormap(dpy, scrnum);
-          }
-        else
-          {
-            // Make a new read-only colormap
-            return XCreateColormap(dpy,
-                                   RootWindow(dpy, screen),
-                                   visual, AllocNone);
-          }
-      }
-
-    // For private color-index colormap
-    else
-      {
-        // Use AllocAll to get a read/write colormap
-        return XCreateColormap(dpy,
-                               RootWindow(dpy, screen),
-                               visual, AllocAll);
-      }
-  }
-}
-
 Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
                                     Window parent,
                                     ClientData clientData)
@@ -161,8 +122,12 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
   int screen = rep->canvas->screen();
   int depth = rep->canvas->bitsPerPixel();
 
-  Colormap cmap = findColormap(dpy, visual, screen,
-                               rep->privateCmapFlag);
+  Colormap cmap =
+    visual == DefaultVisual(dpy, screen)
+    ? DefaultColormap(dpy, screen)
+    : XCreateColormap(dpy,
+                      RootWindow(dpy, screen),
+                      visual, AllocNone);
 
   // Make sure Tk knows to switch to the new colormap when the cursor is over
   // this window when running in color index mode.
@@ -249,11 +214,6 @@ void Togl::makeCurrent() const
 void Togl::swapBuffers()
 {
   rep->canvas->glxFlush(Tk_WindowId(rep->tkWin));
-}
-
-bool Togl::hasPrivateCmap() const
-{
-  return rep->privateCmapFlag;
 }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
