@@ -59,26 +59,26 @@ namespace
     vec3d pt3;
   };
 
-  Gfx::Canvas* appCanvas = 0;
+  Nub::SoftRef<Gfx::Canvas> appCanvas;
 }
 
-void Gfx::Canvas::setCurrent(Gfx::Canvas& canvas)
+void Gfx::Canvas::setCurrent(Nub::SoftRef<Gfx::Canvas> canvas)
 {
 DOTRACE("Gfx::Canvas::setCurrent");
 
-  ASSERT(&canvas != 0);
+  ASSERT(canvas.isValid());
 
-  appCanvas = &canvas;
+  appCanvas = canvas;
 }
 
-Gfx::Canvas& Gfx::Canvas::current()
+Nub::SoftRef<Gfx::Canvas> Gfx::Canvas::current()
 {
 DOTRACE("Gfx::Canvas::current");
 
-  if (appCanvas == 0)
-    throw rutz::error("appCanvas not inited", SRC_POS);
+  if (!appCanvas.isValid())
+    throw rutz::error("no valid current canvas", SRC_POS);
 
-  return *appCanvas;
+  return appCanvas;
 }
 
 Gfx::Canvas::~Canvas() throw() {}

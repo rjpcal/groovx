@@ -33,6 +33,7 @@
 #define CANVAS_H_DEFINED
 
 #include "nub/object.h"
+#include "nub/ref.h"
 
 namespace rutz
 {
@@ -77,10 +78,10 @@ class Canvas : public virtual Nub::Object
 {
 public:
   /// Set the current Canvas.
-  static void setCurrent(Gfx::Canvas& canvas);
+  static void setCurrent(Nub::SoftRef<Gfx::Canvas> canvas);
 
   /// Get the current Canvas.
-  static Canvas& current();
+  static Nub::SoftRef<Gfx::Canvas> current();
 
 
   /// Virtual destructor ensures proper destruction of subclasses.

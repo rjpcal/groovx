@@ -72,7 +72,7 @@ DOTRACE("GxScaler::setMode");
 void GxScaler::setWidth(double new_width)
 {
   geom::rect<double> native_bbox =
-    child()->getBoundingBox(Gfx::Canvas::current());
+    child()->getBoundingBox(*(Gfx::Canvas::current()));
 
   double current_width = native_bbox.width() * itsWidthFactor;
 
@@ -96,7 +96,7 @@ void GxScaler::setWidth(double new_width)
 void GxScaler::setHeight(double new_height)
 {
   geom::rect<double> native_bbox =
-    child()->getBoundingBox(Gfx::Canvas::current());
+    child()->getBoundingBox(*(Gfx::Canvas::current()));
 
   double current_height = native_bbox.height() * itsHeightFactor;
 
@@ -167,14 +167,14 @@ double GxScaler::aspectRatio() const
 double GxScaler::scaledWidth() const
 {
   geom::rect<double> native_bbox =
-    child()->getBoundingBox(Gfx::Canvas::current());
+    child()->getBoundingBox(*(Gfx::Canvas::current()));
   return native_bbox.width() * itsWidthFactor;
 }
 
 double GxScaler::scaledHeight() const
 {
   geom::rect<double> native_bbox =
-    child()->getBoundingBox(Gfx::Canvas::current());
+    child()->getBoundingBox(*(Gfx::Canvas::current()));
   return native_bbox.height() * itsHeightFactor;
 }
 

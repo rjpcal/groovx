@@ -103,7 +103,7 @@ namespace GxTcl
 
   geom::rect<double> boundingBox(Nub::Ref<GxNode> obj)
   {
-    return obj->getBoundingBox(Gfx::Canvas::current());
+    return obj->getBoundingBox(*(Gfx::Canvas::current()));
   }
 
   rutz::fstring gxsepFields()

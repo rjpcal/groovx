@@ -88,7 +88,7 @@ namespace GLTcl
 
   void checkGL()
   {
-    Gfx::Canvas::current().throwIfError("checkGL", SRC_POS);
+    Gfx::Canvas::current()->throwIfError("checkGL", SRC_POS);
   }
 
   // Just converts to char from unsigned char
@@ -332,7 +332,7 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   glLoadMatrixd(&matrix[0]);
 
-  Gfx::Canvas::current().throwIfError("loadMatrix", SRC_POS);
+  Gfx::Canvas::current()->throwIfError("loadMatrix", SRC_POS);
 }
 
 //---------------------------------------------------------------------
@@ -478,7 +478,7 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
 
   const geom::rect<int> bounds = geom::rect<int>().set_lbwh(x, y, w, h);
 
-  Gfx::Canvas::current().grabPixels(bounds, data);
+  Gfx::Canvas::current()->grabPixels(bounds, data);
 
   return data.bytes_sum();
 }

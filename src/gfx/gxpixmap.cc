@@ -349,9 +349,9 @@ void GxPixmap::grabScreenRect(const geom::rect<int>& rect)
 {
 DOTRACE("GxPixmap::grabScreenRect");
 
-  Gfx::Canvas& canvas = Gfx::Canvas::current();
+  Nub::SoftRef<Gfx::Canvas> canvas = Gfx::Canvas::current();
 
-  canvas.grabPixels(rect, rep->itsData);
+  canvas->grabPixels(rect, rep->itsData);
 
   rep->itsFilename = "";
 
@@ -366,9 +366,9 @@ void GxPixmap::grabScreen()
 {
 DOTRACE("GxPixmap::grabScreen");
 
-  Gfx::Canvas& canvas = Gfx::Canvas::current();
+  Nub::SoftRef<Gfx::Canvas> canvas = Gfx::Canvas::current();
 
-  geom::rect<int> bounds = canvas.getScreenViewport();
+  geom::rect<int> bounds = canvas->getScreenViewport();
 
   grabScreenRect(bounds);
 }
@@ -377,9 +377,9 @@ void GxPixmap::grabWorldRect(const geom::rect<double>& world_rect)
 {
 DOTRACE("GxPixmap::grabWorldRect");
 
-  Gfx::Canvas& canvas = Gfx::Canvas::current();
+  Nub::SoftRef<Gfx::Canvas> canvas = Gfx::Canvas::current();
 
-  geom::rect<int> screen_rect = canvas.screenFromWorld(world_rect);
+  geom::rect<int> screen_rect = canvas->screenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
 
