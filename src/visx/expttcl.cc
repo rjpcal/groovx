@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sun Aug 26 08:38:30 2001
+// written: Sun Sep  9 07:09:56 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -106,14 +106,13 @@ namespace ExptTcl
   // Tell the ExptDriver to halt the experiment, then pop up a pause
   // window. When the user dismisses the window, the experiment will
   // resume.
-  void pause(Tcl::Context& ctx)
+  void pause(Ref<ExptDriver> ed)
   {
-    Ref<ExptDriver> ed(ctx.getValFromArg(1, TypeCue<unsigned int>()));
     ed->edHaltExpt();
 
     ed->addLogInfo("Experiment paused.");
 
-    thePauseMsgCmd.invoke(ctx.interp());
+    thePauseMsgCmd.invoke(ed->getInterp());
 
     Tcl::Interp::clearEventQueue();
 
@@ -173,7 +172,7 @@ public:
     def( "currentExp", 0, &ExptTcl::getCurrentExpt );
 
     def( "begin", "expt_id", ExptTcl::begin );
-    defRaw( "pause", 1, "expt_id", &ExptTcl::pause );
+    def( "pause", "expt_id", &ExptTcl::pause );
     def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
 
     defSetter("addBlock", &ExptDriver::addBlock);
