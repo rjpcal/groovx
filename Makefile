@@ -85,7 +85,7 @@ TEST_TARGET = testsh
 
 ifeq ($(ARCH),hp9000s700)
 	TEST_OPTIONS = +Z +p +w +W818,655,392,495,469,361,749,416
-	TEST_OPTIM = -g
+	TEST_OPTIM = +O1
 	TEST_LINK_OPTIONS = -Wl,-B,immediate -Wl,+vallcompatwarnings
 endif
 ifeq ($(ARCH),irix6)
@@ -117,9 +117,12 @@ STATIC_OBJECTS = \
 	$(ARCH)/toglconfig.do \
 	$(ARCH)/trial.do \
 	$(ARCH)/trialevent.do \
-	$(ARCH)/xbitmap.do
+	$(ARCH)/xbitmap.do \
+
 
 DYNAMIC_OBJECTS = \
+	$(ARCH)/asciistreamreader.do \
+	$(ARCH)/asciistreamwriter.do \
 	$(ARCH)/bitmaptcl.do \
 	$(ARCH)/block.do \
 	$(ARCH)/blocklist.do \
@@ -138,7 +141,6 @@ DYNAMIC_OBJECTS = \
 	$(ARCH)/grobjtcl.do \
 	$(ARCH)/gtexttcl.do \
 	$(ARCH)/housetcl.do \
-	$(ARCH)/id.do \
 	$(ARCH)/io.do \
 	$(ARCH)/iofactory.do \
 	$(ARCH)/iomgr.do \
@@ -159,6 +161,7 @@ DYNAMIC_OBJECTS = \
 	$(ARCH)/poslist.do \
 	$(ARCH)/poslisttcl.do \
 	$(ARCH)/property.do \
+	$(ARCH)/reader.do \
 	$(ARCH)/responsehandler.do \
 	$(ARCH)/rhlist.do \
 	$(ARCH)/rhtcl.do \
@@ -181,7 +184,9 @@ DYNAMIC_OBJECTS = \
 	$(ARCH)/tlisttcl.do \
 	$(ARCH)/trace.do \
 	$(ARCH)/trialtcl.do \
-	$(ARCH)/value.do
+	$(ARCH)/value.do \
+	$(ARCH)/writer.do \
+
 
 TEST_STATIC_OBJECTS = $(STATIC_OBJECTS)
 TEST_DYNAMIC_OBJECTS = $(DYNAMIC_OBJECTS) $(SOUND_OBJECTS)
@@ -301,7 +306,6 @@ DEMANGLE_H = demangle.h
 ERRMSG_H = errmsg.h
 ERROR_H = error.h
 GFXATTRIBS_H = gfxattribs.h
-ID_H = id.h
 IOUTILS_H = ioutils.h
 OBJLISTTCL_H = objlisttcl.h
 OBJTOGL_H = objtogl.h
@@ -333,10 +337,12 @@ TCLERROR_H = $(ERROR_H) tclerror.h
 TCLEVALCMD_H = $(TCLOBJLOCK_H) tclevalcmd.h
 TOGLCONFIG_H = $(RECT_H) toglconfig.h
 VALUE_H = $(ERROR_H) value.h
+WRITER_H = $(ERROR_H) writer.h
 
 #
 # level 2 headers
 #
+ASCIISTREAMWRITER_H = $(WRITER_H) asciistreamwriter.h
 BLOCK_H = $(IO_H) block.h
 EXPTDRIVER_H = $(IO_H) $(ERROR_H) exptdriver.h
 GROBJ_H = $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) grobj.h
@@ -345,17 +351,19 @@ IOSTL_H = $(IO_H) iostl.h
 POSITION_H = $(IO_H) position.h
 PROPERTY_H = $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
 PTRLIST_H = $(IO_H) $(ERROR_H) ptrlist.h
+READER_H = $(ERROR_H) $(IO_H) reader.h
 RESPONSEHANDLER_H = $(IO_H) responsehandler.h 
 SOUND_H = $(ERROR_H) $(IO_H) sound.h
 SUBJECT_H = $(IO_H) subject.h
 TCLVALUE_H = $(VALUE_H) tclvalue.h
 TIMINGHDLR_H = $(IO_H) timinghdlr.h
-TRIAL_H = $(ID_H) $(IO_H) $(ERROR_H) trial.h
+TRIAL_H = $(IO_H) $(ERROR_H) trial.h
 TRIALEVENT_H = $(IO_H) trialevent.h
 
 #
 # level 3 headers
 #
+ASCIISTREAMREADER_H = $(READER_H) asciistreamreader.h
 BITMAP_H = $(GROBJ_H) $(RECT_H) bitmap.h
 BLOCKLIST_H = $(PTRLIST_H) blocklist.h
 FACE_H = $(GROBJ_H) $(PROPERTY_H) face.h
@@ -370,8 +378,8 @@ KBDRESPONSEHDLR_H = $(RESPONSEHANDLER_H) kbdresponsehdlr.h
 MASKHATCH_H = $(GROBJ_H) $(PROPERTY_H) maskhatch.h
 MORPHYFACE_H = $(GROBJ_H) $(PROPERTY_H) morphyface.h
 NULLRESPONSEHDLR_H = $(RESPONSEHANDLER_H) nullresponsehdlr.h
-OBJLIST_H = $(PTRLIST_H) $(ID_H) objlist.h
-POSLIST_H = $(PTRLIST_H) $(ID_H) poslist.h
+OBJLIST_H = $(PTRLIST_H) objlist.h
+POSLIST_H = $(PTRLIST_H) poslist.h
 RHLIST_H = $(PTRLIST_H) rhlist.h
 SOUNDLIST_H = $(PTRLIST_H) soundlist.h
 TCLCMD_H = $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
@@ -385,7 +393,8 @@ TLIST_H = $(PTRLIST_H) $(IO_H) tlist.h
 CLONEFACE_H = $(FACE_H) cloneface.h
 GLBITMAP_H = $(BITMAP_H) glbitmap.h
 STRINGIFYCMD_H = $(TCLCMD_H) stringifycmd.h
-PTRLIST_CC = $(PTRLIST_H) $(DEMANGLE_H) $(IOMGR_H) ptrlist.cc
+PTRLIST_CC = $(PTRLIST_H) $(DEMANGLE_H) $(IOMGR_H) \
+	$(READER_H) $(WRITER_H) ptrlist.cc
 TCLITEMPKG_H = $(TCLPKG_H) $(TCLCMD_H) $(PROPERTY_H) tclitempkg.h
 XBITMAP_H = $(BITMAP_H) xbitmap.h
 
@@ -406,7 +415,14 @@ PROPITEMPKG_H = $(LISTITEMPKG_H) $(IOMGR_H) propitempkg.h
 #
 #-------------------------------------------------------------------------
 
-BITMAP_CC = $(BITMAP_H) $(ERROR_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
+ASCIISTREAMREADER_CC = $(ASCIISTREAMREADER_H) $(IO_H) $(IOMGR_H) $(VALUE_H) \
+	$(TRACE_H) $(DEBUG_H) asciistreamreader.cc
+
+ASCIISTREAMWRITER_CC = $(ASCIISTREAMWRITER_H) $(IO_H) $(VALUE_H) \
+	$(TRACE_H) $(DEBUG_H) $(DEMANGLE_H) asciistreamwriter.cc
+
+BITMAP_CC = $(BITMAP_H) $(ERROR_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) \
+	$(READER_H) $(WRITER_H) bitmap.cc
 
 BITMAPTCL_CC = $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) $(IOMGR_H) $(OBJLIST_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
@@ -438,44 +454,48 @@ EXPTTCL_CC = $(TCLEVALCMD_H) $(EXPTDRIVER_H) \
 
 EXPTTESTTCL_CC = $(TCLLINK_H) expttesttcl.cc
 
-FACE_CC = $(FACE_H) $(GFXATTRIBS_H) $(TRACE_H) $(DEBUG_H) face.cc
+FACE_CC = $(FACE_H) $(GFXATTRIBS_H) $(TRACE_H) $(DEBUG_H) \
+	$(READER_H) $(WRITER_H) face.cc
 
 FACETCL_CC = $(CLONEFACE_H) $(IOMGR_H) $(OBJLIST_H) $(FACE_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) facetcl.cc
 
-FISH_CC = $(FISH_H) $(ERROR_H) $(TRACE_H) $(DEBUG_H) fish.cc
+FISH_CC = $(FISH_H) $(ERROR_H) $(READER_H) $(WRITER_H) \
+	$(TRACE_H) $(DEBUG_H) fish.cc
 
 FISHTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
 
-FIXPT_CC = $(FIXPT_H) fixpt.cc
+FIXPT_CC = $(FIXPT_H) $(READER_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) fixpt.cc
 
-FIXPTTCL_CC = $(OBJLIST_H) $(FIXPT_H) $(PROPITEMPKG_H) $(TRACE_H) fixpttcl.cc
+FIXPTTCL_CC = $(OBJLIST_H) $(FIXPT_H) $(PROPITEMPKG_H) \
+	$(IOMGR_H) $(TRACE_H) fixpttcl.cc
 
-GABOR_CC = $(GABOR_H) $(RANDUTILS_H) $(TRACE_H) $(DEBUG_H) gabor.cc
+GABOR_CC = $(GABOR_H) $(RANDUTILS_H) $(READER_H) $(WRITER_H) \
+	$(TRACE_H) $(DEBUG_H) gabor.cc
 
 GABORTCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(GABOR_H) $(TRACE_H) gabortcl.cc
 
 GFXATTRIBS_CC = $(GFXATTRIBS_H) gfxattribs.cc
 
-GLBITMAP_CC = $(GLBITMAP_H) $(TRACE_H) $(DEBUG_H) glbitmap.cc
+GLBITMAP_CC = $(GLBITMAP_H) $(READER_H) $(WRITER_H) \
+	$(TRACE_H) $(DEBUG_H) glbitmap.cc
 
 GROBJ_CC = $(GROBJ_H) $(GFXATTRIBS_H) $(GLBITMAP_H) $(XBITMAP_H) \
-	$(ERROR_H) $(RECT_H) $(TRACE_H) $(DEBUG_H) grobj.cc
+	$(ERROR_H) $(RECT_H) $(READER_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
 GROBJTCL_CC = $(DEMANGLE_H) $(GROBJ_H) $(OBJLIST_H) $(LISTITEMPKG_H) grobjtcl.cc
 
 GRSHAPPINIT_CC = $(TRACE_H) grshAppInit.cc
 
-GTEXT_CC = $(GTEXT_H) $(OBJTOGL_H) $(TOGLCONFIG_H) $(TRACE_H) $(DEBUG_H) gtext.cc
+GTEXT_CC = $(GTEXT_H) $(OBJTOGL_H) $(TOGLCONFIG_H) \
+	$(READER_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) gtext.cc
 
 GTEXTTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(GTEXT_H) $(LISTITEMPKG_H) \
 	$(TRACE_H) $(DEBUG_H) gtexttcl.cc
 
-HOUSE_CC = $(HOUSE_H) $(TRACE_H) $(DEBUG_H) house.cc
+HOUSE_CC = $(HOUSE_H) $(READER_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) house.cc
 
 HOUSETCL_CC = $(HOUSE_H) $(OBJLIST_H) $(PROPITEMPKG_H) $(TRACE_H) housetcl.cc
-
-ID_CC = $(ID_H) $(OBJLIST_H) $(POSLIST_H) id.cc
 
 IO_CC = $(IO_H) $(DEMANGLE_H) $(TRACE_H) $(DEBUG_H) io.cc
 
@@ -496,7 +516,8 @@ KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) $(EXPTDRIVER_H) \
 	$(TCLEVALCMD_H) $(OBJTOGL_H) $(TOGLCONFIG_H) $(SOUND_H) $(SOUNDLIST_H) \
 	$(TRACE_H) $(DEBUG_H) kbdresponsehdlr.cc
 
-MASKHATCH_CC = $(MASKHATCH_H) $(TRACE_H) $(DEBUG_H) maskhatch.cc
+MASKHATCH_CC = $(MASKHATCH_H) $(READER_H) $(WRITER_H) \
+	$(TRACE_H) $(DEBUG_H) maskhatch.cc
 
 MASKTCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MASKHATCH_H) \
 	$(TRACE_H) masktcl.cc
@@ -504,7 +525,7 @@ MASKTCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MASKHATCH_H) \
 MISCTCL_CC = $(RANDUTILS_H) misctcl.cc
 
 MORPHYFACE_CC = $(MORPHYFACE_H) $(BEZIER_H) $(GFXATTRIBS_H) \
-	$(TRACE_H) $(DEBUG_H) morphyface.cc
+	$(READER_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) morphyface.cc
 
 MORPHYFACETCL_CC = $(OBJLIST_H) $(PROPITEMPKG_H) $(MORPHYFACE_H) \
 	$(TRACE_H) morphyfacetcl.cc
@@ -542,6 +563,8 @@ POSLISTTCL_CC = $(POSLIST_H) $(LISTPKG_H) \
 
 PROPERTY_CC = $(PROPERTY_H) property.cc
 
+READER_CC = $(READER_H) reader.cc
+
 RESPONSEHANDLER_CC = $(RESPONSEHANDLER_H) $(TRACE_H) responsehandler.cc
 
 RHLIST_CC = $(RHLIST_H) $(TRACE_H) $(DEBUG_H) \
@@ -566,6 +589,7 @@ SOUNDTCL_CC = $(SOUNDLIST_H) $(SOUND_H) $(LISTPKG_H) $(LISTITEMPKG_H) \
 	$(TCLLINK_H) $(TRACE_H) $(DEBUG_H) soundtcl.cc
 
 STRINGIFYCMD_CC = $(STRINGIFYCMD_H) $(IO_H) \
+	$(ASCIISTREAMREADER_H) $(ASCIISTREAMWRITER_H) \
 	$(TRACE_H) $(DEBUG_H) stringifycmd.cc
 
 SUBJECT_CC = $(SUBJECT_H) $(IOUTILS_H) $(TRACE_H) $(DEBUG_H) subject.cc
@@ -627,6 +651,8 @@ TRIALTCL_CC = $(IOMGR_H) $(TRIAL_H) $(TLIST_H) $(LISTITEMPKG_H) \
 
 VALUE_CC = $(VALUE_H) value.cc
 
+WRITER_CC = $(WRITER_H) writer.cc
+
 XBITMAP_CC = $(XBITMAP_H) $(TOGLCONFIG_H) $(OBJTOGL_H) \
 	$(TRACE_H) $(DEBUG_H) xbitmap.cc
 
@@ -636,6 +662,8 @@ XBITMAP_CC = $(XBITMAP_H) $(TOGLCONFIG_H) $(OBJTOGL_H) \
 #
 #-------------------------------------------------------------------------
 
+$(ARCH)/asciistreamreader.*[ol]: $(ASCIISTREAMREADER_CC)
+$(ARCH)/asciistreamwriter.*[ol]: $(ASCIISTREAMWRITER_CC)
 $(ARCH)/bitmap.*[ol]:            $(BITMAP_CC)
 $(ARCH)/bitmaptcl.*[ol]:         $(BITMAPTCL_CC)
 $(ARCH)/block.*[ol]:             $(BLOCK_CC)
@@ -664,7 +692,6 @@ $(ARCH)/gtext.*[ol]:             $(GTEXT_CC)
 $(ARCH)/gtexttcl.*[ol]:          $(GTEXTTCL_CC)
 $(ARCH)/house.*[ol]:             $(HOUSE_CC)
 $(ARCH)/housetcl.*[ol]:          $(HOUSETCL_CC)
-$(ARCH)/id.*[ol]:                $(ID_CC)
 $(ARCH)/io.*[ol]:                $(IO_CC)
 $(ARCH)/iofactory.*[ol]:         $(IOFACTORY_CC)
 $(ARCH)/iomgr.*[ol]:             $(IOMGR_CC)
@@ -690,6 +717,7 @@ $(ARCH)/positiontcl.*[ol]:       $(POSITIONTCL_CC)
 $(ARCH)/poslist.*[ol]:           $(POSLIST_CC)
 $(ARCH)/poslisttcl.*[ol]:        $(POSLISTTCL_CC)
 $(ARCH)/property.*[ol]:          $(PROPERTY_CC)
+$(ARCH)/reader.*[ol]:            $(READER_CC)
 $(ARCH)/responsehandler.*[ol]:   $(RESPONSEHANDLER_CC)
 $(ARCH)/rhlist.*[ol]:            $(RHLIST_CC)
 $(ARCH)/rhtcl.*[ol]:             $(RHTCL_CC)
@@ -718,6 +746,7 @@ $(ARCH)/trial.*[ol]:             $(TRIAL_CC)
 $(ARCH)/trialevent.*[ol]:        $(TRIALEVENT_CC)
 $(ARCH)/trialtcl.*[ol]:          $(TRIALTCL_CC)
 $(ARCH)/value.*[ol]:             $(VALUE_CC)
+$(ARCH)/writer.*[ol]:            $(WRITER_CC)
 $(ARCH)/xbitmap.*[ol]:           $(XBITMAP_CC)
 
 #-------------------------------------------------------------------------
@@ -749,7 +778,11 @@ cleaner: clean
 
 # Generate TAGS file based on all source files
 TAGS: *\.[ch]*
+ifeq ($(ARCH),hp9000s700)
+	echo 'etags *\.[ch]*'
+else
 	etags *\.[ch]*
+endif
 
 # Start emacs and load all source files and Makefile
 edit: clean
