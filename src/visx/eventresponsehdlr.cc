@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Wed Jun 20 17:34:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,6 @@
 #include "util/strings.h"
 
 #include <tcl.h>
-#include <strstream.h>
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"
@@ -291,15 +290,13 @@ private:
 
   fixed_string getUniqueCmdName()
     {
-      const string_literal privateHandleCmdName(
+      dynamic_string privateHandleCmdName(
         "__EventResponseHdlrPrivate::handle");
 
-      static unsigned long cmdCounter = 0;
+      static int cmdCounter = 0;
 
-      fixed_block<char> buf(privateHandleCmdName.length() + 32);
-      ostrstream ost(&buf[0], buf.size());
-      ost << privateHandleCmdName << ++cmdCounter << '\0';
-      return &buf[0];
+      privateHandleCmdName.append(++cmdCounter);
+      return privateHandleCmdName.c_str();
     }
 
   // data
