@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jan 28 11:33:18 2002
+// written: Thu Nov 21 12:23:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,11 +22,14 @@
 
 #include <tcl.h>
 
+#include "util/trace.h"
+
 class Tcl::Code::EvalError : public Tcl::TclError
 {
 public:
-  EvalError(Tcl_Obj* cmd_obj) :
-    Tcl::TclError(fstring("error while evaluating ", Tcl_GetString(cmd_obj)))
+  EvalError(Tcl_Obj* cmd_obj, const char* result) :
+    Tcl::TclError(fstring("error while evaluating ", Tcl_GetString(cmd_obj),
+                          ":\n", result))
   {}
 
   EvalError(const char* msg) :
@@ -56,37 +59,36 @@ Tcl::Code::Code(const Tcl::ObjPtr& cmd, Util::ErrorHandler* handler) :
 
 bool Tcl::Code::invoke(Tcl_Interp* interp)
 {
+DOTRACE("Tcl::Code::invoke");
+
   if (interp == 0)
     throw EvalError("Tcl_Interp* was null in Tcl::Code::invoke");
 
-  if ( Tcl_EvalObjEx(interp, itsCodeObj.obj(), itsFlags) != TCL_OK )
-    {
-      if (IGNORE_ERRORS == itsErrorMode)
-        {
-          return false;
-        }
-      else
-        {
-          EvalError err(itsCodeObj.obj());
+  if ( Tcl_EvalObjEx(interp, itsCodeObj.obj(), itsFlags) == TCL_OK )
+    return true;
 
-          if (itsErrHandler != 0)
-            {
-              itsErrHandler->handleError(err);
-            }
-          else if (THROW_EXCEPTION == itsErrorMode)
-            {
-              throw err;
-            }
-          else if (BACKGROUND_ERROR == itsErrorMode)
-            {
-              Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
-              Tcl_BackgroundError(interp);
-              return false;
-            }
+  // else, there was some error during the Tcl eval...
+
+  if (IGNORE_ERRORS != itsErrorMode)
+    {
+      EvalError err(itsCodeObj.obj(), Tcl_GetStringResult(interp));
+
+      if (itsErrHandler != 0)
+        {
+          itsErrHandler->handleError(err);
+        }
+      else if (THROW_EXCEPTION == itsErrorMode)
+        {
+          throw err;
+        }
+      else if (BACKGROUND_ERROR == itsErrorMode)
+        {
+          Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
+          Tcl_BackgroundError(interp);
         }
     }
 
-  return true;
+  return false; // to indicate error
 }
 
 bool Tcl::Code::invoke(const Tcl::Interp& interp)
