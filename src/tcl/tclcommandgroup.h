@@ -50,19 +50,18 @@ class Tcl::CommandGroup
 public:
   /// Find the command associated with a given name.
   /** Returns null if no such command. */
-  static CommandGroup* lookup(Tcl::Interp& interp, const char* name) throw();
+  static CommandGroup* lookup(Tcl::Interp& interp,
+                              const char* name) throw();
 
   /// Find the command for the given name, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp, const fstring& cmd_name);
 
   void add(shared_ptr<Tcl::Command> p);
 
-  const fstring& cmdName() const;
+  fstring cmdName() const;
 
-  /// Returns a string describing the command's proper usage, including overloads.
+  /// Returns a string giving the command's proper usage, including overloads.
   fstring usage() const;
-
-  fstring usageWarning() const;
 
   int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
 

@@ -123,7 +123,7 @@ unset EPS
 test "Face::readLGX" "error from wrong type" {
     set fx [Obj::new Face]
     -> $fx readLGX junk
-} {^IO::readLGX: .*$}
+} {readLGX: }
 test "Face::readLGX" "writeLGX/readLGX check" {
     set f [Obj::new Face]
     -> $f noseLength -1.2

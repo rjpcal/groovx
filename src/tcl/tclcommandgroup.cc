@@ -33,6 +33,7 @@
 #include "tcl/tclcommandgroup.h"
 
 #include "tcl/tclcmd.h"
+#include "tcl/tclobjptr.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"
@@ -45,13 +46,29 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+namespace
+{
+  fstring getFullCommandName(Tcl::Interp& interp, Tcl_Command token)
+  {
+    Tcl::ObjPtr result;
+    // Note, this Tcl API call requires Tcl 8.4.6 or greater (or 8.5 or
+    // greater)
+    Tcl_GetCommandFullName(interp.intp(), token, result.obj());
+    return fstring(result.as<const char*>());
+  }
+}
+
 class Tcl::CommandGroup::Impl
 {
 public:
   Impl(Tcl::Interp& intp, const fstring& cmd_name) :
     interp(intp),
-    cmdName(cmd_name),
-    cmdToken(0),
+    cmdToken(Tcl_CreateObjCommand(interp.intp(),
+                                  cmd_name.c_str(),
+                                  &cInvokeCallback,
+                                  static_cast<ClientData>(0),
+                                  &cDeleteCallback)),
+    initialCmdName(getFullCommandName(intp, cmdToken)),
     cmdList(),
     profName("tcl/", cmd_name),
     prof(profName.c_str())
@@ -62,16 +79,59 @@ public:
   typedef std::list<shared_ptr<Tcl::Command> > List;
 
   Tcl::Interp interp;
-  const fstring cmdName;
-  Tcl_Command cmdToken;
+  const Tcl_Command cmdToken;
+  const fstring initialCmdName;
   List cmdList;
   const fstring profName;
   Util::Prof prof;
+
+  fstring usageWarning(const fstring& argv0) const;
 
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 };
+
+namespace
+{
+  void appendUsage(fstring& dest, const fstring& usage)
+  {
+    if (!usage.is_empty())
+      dest.append(" ", usage);
+  }
+}
+
+fstring Tcl::CommandGroup::Impl::usageWarning(const fstring& argv0) const
+{
+DOTRACE("Tcl::CommandGroup::usageWarning");
+  fstring warning("wrong # args: should be ");
+
+  if (cmdList.size() == 1)
+    {
+      warning.append("\"", argv0);
+      appendUsage(warning, cmdList.front()->usageString());
+      warning.append("\"");
+    }
+  else
+    {
+      warning.append("one of:");
+      for (Impl::List::const_iterator
+             itr = cmdList.begin(),
+             end = cmdList.end();
+           itr != end;
+           ++itr)
+        {
+          warning.append("\n\t\"", argv0);
+          appendUsage(warning, (*itr)->usageString());
+          warning.append("\"");
+        }
+    }
+
+  if (argv0 != initialCmdName)
+    warning.append("\n(resolves to ", initialCmdName, ")");
+
+  return warning;
+}
 
 Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
                                 const fstring& cmd_name) :
@@ -80,12 +140,12 @@ Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
 DOTRACE("Tcl::CommandGroup::CommandGroup");
 
   // Register the command procedure
-  rep->cmdToken =
-    Tcl_CreateObjCommand(interp.intp(),
-                         cmd_name.c_str(),
-                         &cInvokeCallback,
-                         static_cast<ClientData>(this),
-                         &cDeleteCallback);
+  Tcl_CmdInfo info;
+  const int result = Tcl_GetCommandInfoFromToken(rep->cmdToken, &info);
+  Assert(result == 1);
+  info.objClientData = static_cast<ClientData>(this);
+  info.deleteData = static_cast<ClientData>(this);
+  Tcl_SetCommandInfoFromToken(rep->cmdToken, &info);
 
   Tcl_CreateExitHandler(&cExitCallback,
                         static_cast<ClientData>(this));
@@ -109,8 +169,6 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
 Tcl::CommandGroup::~CommandGroup() throw()
 {
 DOTRACE("Tcl::CommandGroup::~CommandGroup");
-
-  Assert( rep->cmdToken == 0 );
 
   Tcl_DeleteExitHandler(&cExitCallback,
                         static_cast<ClientData>(this));
@@ -166,18 +224,9 @@ DOTRACE("Tcl::CommandGroup::add");
   rep->cmdList.push_back(p);
 }
 
-const fstring& Tcl::CommandGroup::cmdName() const
+fstring Tcl::CommandGroup::cmdName() const
 {
-  return rep->cmdName;
-}
-
-namespace
-{
-  void appendUsage(fstring& dest, const fstring& usage)
-  {
-    if (!usage.is_empty())
-      dest.append(" ", usage);
-  }
+  return getFullCommandName(rep->interp, rep->cmdToken);
 }
 
 fstring Tcl::CommandGroup::usage() const
@@ -191,7 +240,7 @@ DOTRACE("Tcl::CommandGroup::usage");
 
   while (true)
     {
-      result.append("\t", rep->cmdName);
+      result.append("\t", cmdName());
       appendUsage(result, (*itr)->usageString());
       if (++itr != end)
         result.append("\n");
@@ -202,35 +251,6 @@ DOTRACE("Tcl::CommandGroup::usage");
   return result;
 }
 
-fstring Tcl::CommandGroup::usageWarning() const
-{
-DOTRACE("Tcl::CommandGroup::usageWarning");
-  fstring warning("wrong # args: should be ");
-
-  if (rep->cmdList.size() == 1)
-    {
-      warning.append("\"", rep->cmdName);
-      appendUsage(warning, rep->cmdList.front()->usageString());
-      warning.append("\"");
-    }
-  else
-    {
-      warning.append("one of:");
-      for (Impl::List::const_iterator
-             itr = rep->cmdList.begin(),
-             end = rep->cmdList.end();
-           itr != end;
-           ++itr)
-        {
-          warning.append("\n\t\"", rep->cmdName);
-          appendUsage(warning, (*itr)->usageString());
-          warning.append("\"");
-        }
-    }
-
-  return warning;
-}
-
 int Tcl::CommandGroup::rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
 {
 DOTRACE("Tcl::CommandGroup::rawInvoke");
@@ -239,7 +259,9 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
   // has. This way we can trace the timing of individual Tcl commands.
   Util::Trace tracer(rep->prof, DYNAMIC_TRACE_EXPR);
 
-  Assert(s_objc >= 0);
+  // Should always be at least one since there is always the command-name
+  // itself as the first argument.
+  Assert(s_objc >= 1);
 
   if (GET_DBG_LEVEL() > 1)
     {
@@ -277,14 +299,16 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
           return TCL_OK;
         }
 
+      const fstring argv0(Tcl_GetString(objv[0]));
+
       // Here, we run out of potential overloads, so abort the command.
       rep->interp.resetResult();
-      rep->interp.appendResult(usageWarning().c_str());
+      rep->interp.appendResult(rep->usageWarning(argv0).c_str());
       return TCL_ERROR;
     }
   catch (...)
     {
-      rep->interp.handleLiveException(rep->cmdName.c_str(), false);
+      rep->interp.handleLiveException(Tcl_GetString(objv[0]), false);
     }
 
   return TCL_ERROR;
@@ -308,8 +332,6 @@ void Tcl::CommandGroup::cDeleteCallback(ClientData clientData) throw()
 DOTRACE("Tcl::CommandGroup::cDeleteCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
   Assert(c != 0);
-  c->rep->cmdToken = 0; // since this callback is notifying us that the
-                        // command was deleted
   delete c;
 }
 
@@ -318,8 +340,7 @@ void Tcl::CommandGroup::cExitCallback(ClientData clientData) throw()
 DOTRACE("Tcl::CommandGroup::cExitCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
   Assert(c != 0);
-  if (c->rep->cmdToken != 0)
-    Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
+  Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
 }
 
 static const char vcid_tclcommandgroup_cc[] = "$Header$";

@@ -10,10 +10,10 @@
 ### randCmd ###
 test "MiscTcl-rand" "too few args" {
     rand
-} {wrong \# args: should be "::rand min max"}
+} {wrong \# args: should be "rand min max"}
 test "MiscTcl-rand" "too many args" {
     rand j u n
-} {wrong \# args: should be "::rand min max"}
+} {wrong \# args: should be "rand min max"}
 test "MiscTcl-rand" "normal use" {
     srand [clock seconds]
     set val [rand 0 1]
@@ -26,10 +26,10 @@ test "MiscTcl-rand" "error from non-numeric input" {
 ### srandCmd ###
 test "MiscTcl-srand" "too few args" {
     srand
-} {wrong \# args: should be "::srand seed"}
+} {wrong \# args: should be "srand seed"}
 test "MiscTcl-srand" "too few args" {
     srand j u
-} {wrong \# args: should be "::srand seed"}
+} {wrong \# args: should be "srand seed"}
 test "MiscTcl-srand" "normal use" {
     srand 10
     expr [rand 0 1] == 0.138649044093
@@ -56,7 +56,7 @@ test "MiscTcl-sleep" "normal use" {
 test "MiscTcl-sleep" "error from negative input" {
     sleep -1
 } {signed/unsigned conversion failed}
-    
+
 ### usleepCmd ###
 test "MiscTcl-usleep" "too few args" {
     usleep

@@ -56,7 +56,7 @@ test "Sound::forceLoad" "error on bad filename" {
     catch {-> $s forceLoad} result
     delete $s
     return $result
-} {^Sound::forceLoad:}
+} {forceLoad: }
 
 test "Sound::forceLoad" "error on junk file" {
     set s [new Sound]
@@ -64,7 +64,7 @@ test "Sound::forceLoad" "error on junk file" {
     catch {-> $s forceLoad} result
     delete $s
     return $result
-} {^Sound::forceLoad:} \
+} {forceLoad: } \
   [expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 ### Sound::playCmd ###
