@@ -1,9 +1,10 @@
+Makefile
+autom4te-2.53.cache
 build
-prof.out
-tclprof.out
 config.log
 config.status
-autom4te-2.53.cache
-reconfigure
 local
+prof.out
+reconfigure
+tclprof.out
 test.cc
