@@ -141,21 +141,21 @@ test "GxCamera-pixelsPerUnit" "err2" {
 
 ### unitAngle ###
 test "GxCamera-unitAngle" "args" {
-    GxFixedScaleCamera::unitAngle
+    GxPsyphyCamera::unitAngle
 } {^wrong \# args: should be}
 test "GxCamera-unitAngle" "normal use" {
-    set c [new GxFixedScaleCamera]
+    set c [new GxPsyphyCamera]
     -> $c unitAngle 2.3
     delete $c
 } {^$}
 test "GxCamera-unitAngle" "err1" {
-    set c [new GxFixedScaleCamera]
+    set c [new GxPsyphyCamera]
     catch {-> $c unitAngle 0} result
     delete $c
     set result
 } {unitAngle: unit angle must be positive$}
 test "GxCamera-unitAngle" "err2" {
-    set c [new GxFixedScaleCamera]
+    set c [new GxPsyphyCamera]
     catch {-> $c unitAngle 0} result
     delete $c
     set result
@@ -163,37 +163,22 @@ test "GxCamera-unitAngle" "err2" {
 
 ### viewingDistIn ###
 test "GxCamera-viewingDistIn" "args" {
-    GxFixedScaleCamera::viewingDistIn
+    GxPsyphyCamera::viewingDistIn
 } {^wrong \# args: should be}
 test "GxCamera-viewingDistIn" "normal use" {
-    set c [new GxFixedScaleCamera]
+    set c [new GxPsyphyCamera]
     -> $c viewingDistIn 60
     delete $c
 } {^$}
 test "GxCamera-viewingDistIn" "err1" {
-    set c [new GxFixedScaleCamera]
+    set c [new GxPsyphyCamera]
     catch {-> $c viewingDistIn 0} result
     delete $c
     set result
 } {viewingDistIn: .*$}
 test "GxCamera-viewingDistIn" "err2" {
-    set c [new GxFixedScaleCamera]
+    set c [new GxPsyphyCamera]
     catch {-> $c viewingDistIn 0} result
     delete $c
     set result
 } {viewingDistIn: .*$}
-
-### setMinRectCmd ###
-test "GxCamera-setMinRect" "args" {
-    Togl::setMinRect
-} {^wrong \# args: should be}
-test "GxCamera-setMinRect" "normal use" {
-	 catch {Togl::setMinRect -1.3 15.2 2.6 1.3}
-} {^0$}
-test "GxCamera-setMinRect" "err1" {
-    Togl::setMinRect -1 0 1 0
-} {^Toglet::setMinRect: invalid rect$}
-test "GxCamera-setMinRect" "err2" {
-    Togl::setMinRect 0 1 0 -1
-} {^Toglet::setMinRect: invalid rect$}
-
