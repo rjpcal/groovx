@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 15 11:13:16 2000
+// written: Wed Mar 15 18:03:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 
 #include <fstream.h>
 #include <cctype>
-#include <vector>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -67,7 +66,6 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
   ObjList& olist = ObjList::theObjList();
 
   int num_read = 0;
-  vector<int> ids;
 
   IO::eatWhitespace(ifs);
 
@@ -98,14 +96,13 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 	 io->deserialize(ifs, flags);
 	 
 	 int objid = olist.insert(ObjList::Ptr(p));
-	 ids.push_back(objid);
+
+	 lappendVal(objid); // add the current objid to the Tcl result
+
 	 ++num_read;
 
 	 IO::eatWhitespace(ifs);
   }
-  
-  // Return the ids of all the faces created
-  returnSequence(ids.begin(), ids.end());
 }
 
 //---------------------------------------------------------------------
@@ -122,8 +119,6 @@ public:
   {}
 protected:
   virtual void invoke() {
-	 vector<int> objids;
-	 getSequenceFromArg(1, back_inserter(objids), (int*) 0);
 
 	 const char* filename = arg(2).getCstring();
 
@@ -141,11 +136,16 @@ protected:
 	 if (use_typename) flags |= IO::TYPENAME;
 	 if (use_bases)    flags |= IO::BASES;
 
-	 for (size_t i = 0; i < objids.size(); ++i) {
-		ObjList::theObjList().getCheckedPtr(objids[i])->
-		  serialize(ofs, flags);
-		ofs << endl;
-	 }
+	 ObjList& olist = ObjList::theObjList();
+	 for (Tcl::ListIterator<int>
+			  itr = beginOfArg(1, (int*)0),
+			  end = endOfArg(1, (int*)0);
+			itr != end;
+			++itr)
+		{
+		  olist.getCheckedPtr(*itr)->serialize(ofs, flags);
+		  ofs << endl;
+		}
   }
 };
 
