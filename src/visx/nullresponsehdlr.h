@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:35 1999
-// written: Thu May 10 12:04:40 2001
+// written: Wed Jun  6 09:43:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,8 @@ public:
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
+  virtual void rhAllowResponses(GWT::Widget& widget, TrialBase& trial) const;
+  virtual void rhDenyResponses() const;
 };
 
 static const char vcid_nullresponsehdlr_h[] = "$Header$";

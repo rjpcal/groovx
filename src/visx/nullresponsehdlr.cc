@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:36 1999
-// written: Thu May 10 12:04:46 2001
+// written: Wed Jun  6 09:44:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,14 @@ DOTRACE("NullResponseHdlr::rhEndTrial");
 
 void NullResponseHdlr::rhHaltExpt() const {
 DOTRACE("NullResponseHdlr::rhHaltExpt");
+}
+
+void NullResponseHdlr::rhAllowResponses(GWT::Widget&, TrialBase&) const {
+DOTRACE("NullResponseHdlr::rhAllowResponses");
+}
+
+void NullResponseHdlr::rhDenyResponses() const {
+DOTRACE("NullResponseHdlr::rhDenyResponses");
 }
 
 static const char vcid_nullresponsehdlr_cc[] = "$Header$";
