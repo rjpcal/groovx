@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Jun  8 18:46:38 2001
+// written: Mon Jun 11 18:23:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #define GROBJTCL_CC_DEFINED
 
 #include "application.h"
-#include "experiment.h"
 #include "grobj.h"
 #include "rect.h"
 
@@ -48,10 +47,10 @@ public:
 	 Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
   virtual void invoke() {
-	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 GWT::Canvas& canvas = Application::theApp().getCanvas();
 
 	 Rect<double> bbox;
-	 bool have_box = getItem()->getBoundingBox(*canvas, bbox);
+	 bool have_box = getItem()->getBoundingBox(canvas, bbox);
 
 	 if (have_box) {
 		lappendVal(bbox.left());
@@ -72,8 +71,8 @@ class GrobjTcl::SaveBitmapCacheAction : public Setter<const char*> {
 public:
   virtual void set(void* item, const char* filename) {
 	 GrObj* obj = static_cast<GrObj*>(item);
-	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
-	 obj->saveBitmapCache(*canvas, filename);
+	 GWT::Canvas& canvas = Application::theApp().getCanvas();
+	 obj->saveBitmapCache(canvas, filename);
   }
 };
 
@@ -104,8 +103,8 @@ class GrobjTcl::Updater : public Action {
 public:
   virtual void action(void* item) {
 	 GrObj* obj = static_cast<GrObj*>(item);
-	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
-	 obj->update(*canvas);
+	 GWT::Canvas& canvas = Application::theApp().getCanvas();
+	 obj->update(canvas);
   }
 };
 

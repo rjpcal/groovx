@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Jun 11 14:49:18 2001
+// written: Mon Jun 11 18:23:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #define TLISTTCL_CC_DEFINED
 
 #include "application.h"
-#include "experiment.h"
 #include "tlistutils.h"
 #include "trial.h"
 
@@ -85,9 +84,9 @@ protected:
 	 int pixel_width = arg(2).getInt();
 	 int pixel_height = arg(3).getInt();
 
-	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-	 int previewid = TlistUtils::createPreview(*canvas,
+	 int previewid = TlistUtils::createPreview(canvas,
 															 &objids[0], objids.size(),
 															 pixel_width, pixel_height);
 

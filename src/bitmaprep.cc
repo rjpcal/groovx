@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Jun 11 15:08:18 2001
+// written: Mon Jun 11 18:27:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "application.h"
 #include "bmapdata.h"
-#include "experiment.h"
 #include "bmaprenderer.h"
 #include "pbm.h"
 #include "rect.h"
@@ -292,9 +291,9 @@ void BitmapRep::grabWorldRect(double left, double top,
 
 void BitmapRep::grabWorldRect(const Rect<double>& world_rect) {
 DOTRACE("BitmapRep::grabWorldRect");
-  GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+  GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-  Rect<int> screen_rect = canvas->getScreenFromWorld(world_rect);
+  Rect<int> screen_rect = canvas.getScreenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
 }
@@ -342,9 +341,9 @@ DOTRACE("BitmapRep::center");
   screen_pos.bottom() = viewport[1];
   screen_pos.top() = viewport[1] + itsImpl->itsData.height();
 
-  GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+  GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-  Rect<double> world_pos = canvas->getWorldFromScreen(screen_pos);
+  Rect<double> world_pos = canvas.getWorldFromScreen(screen_pos);
 
   GLdouble screen_width = abs(world_pos.width());
   GLdouble screen_height = abs(world_pos.height());
@@ -404,10 +403,10 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   bbox.bottom() = itsImpl->itsRasterY;
 
   // Get screen coordinates for the lower left corner
-  GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+  GWT::Canvas& canvas = Application::theApp().getCanvas();
 
   Point<int> screen_point =
-	 canvas->getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
+	 canvas.getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
 
   if (itsImpl->itsZoomX < 0.0) {
 	 screen_point.x() += int(width()*itsImpl->itsZoomX);
@@ -420,7 +419,7 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   screen_point += Point<double>(width()*abs(itsImpl->itsZoomX),
 										  height()*abs(itsImpl->itsZoomY));
 
-  bbox.setTopRight(canvas->getWorldFromScreen(screen_point));
+  bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
 }
 
 bool BitmapRep::grHasBoundingBox() const {
