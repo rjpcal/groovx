@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu Jun 24 18:09:45 1999
+// written: Tue Oct 12 15:16:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,9 @@ DOTRACE("IO::IO");
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
-IO::~IO() {}
+IO::~IO() {
+DOTRACE("IO::~IO");
+}
 
 unsigned long IO::id() {
 DOTRACE("IO::id");
