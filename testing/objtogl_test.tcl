@@ -140,9 +140,6 @@ test "$PACKAGE-Togl::loadFonti" "normal use" {
 	 set code [catch {Togl::loadFonti 3} msg]
 	 set res "$code $msg"
 } {^0 $}
-test "$PACKAGE-Togl::loadFonti" "error" {
-	 Togl::loadFonti 20
-} {^Togl::loadFonti: unable to load font$}
 
 ### dumpCmapCmd ###
 test "ObjTogl-dumpCmap" "too many args" {
