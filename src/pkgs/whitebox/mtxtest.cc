@@ -68,7 +68,7 @@ int Mtxtest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Mtxtest_Init");
 
-  PKG_CREATE(interp, "Mtxtest", "4.$Revision: 9246 $");
+  PKG_CREATE(interp, "Mtxtest", "4.$Revision$");
 
   DEF_TEST(pkg, testPrint);
 
