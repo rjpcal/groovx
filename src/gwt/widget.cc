@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Wed Sep  5 16:03:25 2001
+// written: Thu Sep 13 11:31:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,6 @@
 #include "util/volatileobject.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 class EmptyNode : public GxNode

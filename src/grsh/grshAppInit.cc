@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 10 17:17:39 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -28,7 +28,6 @@
 #include <exception>
 #include <typeinfo>
 
-#define NO_TRACE
 #include "util/trace.h"
 
 //

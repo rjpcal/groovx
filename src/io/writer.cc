@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Thu Aug  9 07:15:57 2001
+// written: Thu Sep 13 11:31:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "util/strings.h"
 
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 IO::WriteError::~WriteError() {}

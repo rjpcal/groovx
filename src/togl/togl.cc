@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sun Aug 26 08:53:52 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -59,9 +59,7 @@
 
 #include "util/algo.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Sep 12 15:50:44 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -35,9 +35,7 @@
 #include "util/ref.h"
 #include "util/strings.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////

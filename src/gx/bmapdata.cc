@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Sun Aug 26 08:35:16 2001
+// written: Thu Sep 13 11:32:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 
 #include <cstring>              // for memcpy
 
-#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 

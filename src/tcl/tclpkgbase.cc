@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Sun Sep  9 14:30:25 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,9 +27,7 @@
 #include <typeinfo>
 #include <string>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace

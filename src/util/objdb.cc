@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Aug 26 08:35:15 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,7 @@
 #include <typeinfo>
 #include <map>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 InvalidIdError::~InvalidIdError() {}

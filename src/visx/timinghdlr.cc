@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Mon Sep 10 17:17:38 2001
+// written: Thu Sep 13 11:32:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,7 @@
 #include "util/objmgr.h"
 #include "util/ref.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////

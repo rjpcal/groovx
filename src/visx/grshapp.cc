@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:59 1999
-// written: Mon Sep 10 17:17:39 2001
+// written: Thu Sep 13 11:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "util/error.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Mon Sep 10 17:17:41 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,7 @@
 
 #include "tcl/tclpkg.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 extern "C"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Wed Sep 12 21:45:01 2001
+// written: Thu Sep 13 11:32:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,7 @@
 
 #include <esd.h>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////

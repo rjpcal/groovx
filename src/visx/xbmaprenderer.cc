@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Mon Sep 10 17:17:37 2001
+// written: Thu Sep 13 11:32:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,9 +26,7 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace

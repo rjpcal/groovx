@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Wed Sep 12 21:57:51 2001
+// written: Thu Sep 13 11:31:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "io/reader.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 IO::ReadError::~ReadError() {}

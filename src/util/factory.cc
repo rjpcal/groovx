@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Sun Aug 26 08:53:52 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 
 #include "util/hash.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 
 void FactoryError::throwForType(const char* type)

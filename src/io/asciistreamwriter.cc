@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Sep 12 21:44:15 2001
+// written: Thu Sep 13 11:32:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,7 @@
 #include <string>
 #include <set>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 #if defined(IRIX6) || defined(HP9000S700)

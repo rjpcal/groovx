@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 18:30:47 2001
-// written: Thu Aug  9 18:41:05 2001
+// written: Thu Sep 13 11:31:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include <tcl.h>
 
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace

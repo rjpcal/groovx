@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Sun Aug 26 08:53:52 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,6 @@
 #endif
 #include <unistd.h>
 
-#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 

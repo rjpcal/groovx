@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Sep 12 21:45:14 2001
+// written: Thu Sep 13 11:32:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,7 @@
 #include <Alib.h>
 #include <fstream.h>            // to check if files exist
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////

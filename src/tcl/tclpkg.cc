@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Sep 12 15:50:02 2001
+// written: Thu Sep 13 11:31:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 #include "tcl/tcllistobj.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 //---------------------------------------------------------------------

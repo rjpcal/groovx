@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sun Aug 26 08:35:15 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,10 +20,8 @@
 #include <tk.h>
 #include <X11/Xutil.h>
 
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_DEBUG
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 #ifdef LOCAL_DEBUG

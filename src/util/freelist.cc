@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 08:00:31 2001
-// written: Mon Aug 13 11:18:03 2001
+// written: Thu Sep 13 11:31:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "util/freelist.h"
 
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 void* FreeListBase::allocate(std::size_t bytes)

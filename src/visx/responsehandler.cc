@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Mon Sep 10 17:17:38 2001
+// written: Thu Sep 13 11:32:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "visx/responsehandler.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 
 ///////////////////////////////////////////////////////////////////////

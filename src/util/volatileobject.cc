@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Aug 21 17:17:51 2001
-// written: Tue Sep  4 07:32:09 2001
+// written: Thu Sep 13 11:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "util/volatileobject.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 Util::VolatileObject::VolatileObject()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 16:58:19 2001
-// written: Sun Aug 26 08:53:51 2001
+// written: Thu Sep 13 11:31:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include <string>
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 std::string gcc_v2_demangle(const std::string& in);

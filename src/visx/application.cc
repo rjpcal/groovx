@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Mon Sep 10 17:17:41 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 #include "util/error.h"
 #include "util/strings.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 

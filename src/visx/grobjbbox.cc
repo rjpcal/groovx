@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Mon Sep 10 17:17:40 2001
+// written: Thu Sep 13 11:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 #include "gfx/rgbacolor.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace

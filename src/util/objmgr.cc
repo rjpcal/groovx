@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:13:16 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Thu Sep 13 11:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "util/objfactory.h"
 #include "util/strings.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 
 SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)

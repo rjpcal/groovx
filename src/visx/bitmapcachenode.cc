@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Mon Sep 10 17:17:41 2001
+// written: Thu Sep 13 11:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,6 @@
 #include "util/error.h"
 
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 fstring BitmapCacheNode::BITMAP_CACHE_DIR(".");
