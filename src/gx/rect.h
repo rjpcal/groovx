@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jun 26 12:29:05 2002
+// written: Wed Jul  3 16:39:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ public:
 
   bool isVoid() const { return (tt <= bb) || (rr <= ll); }
 
-  void unionize(const Rect<double>& other)
+  void unionize(const Rect<V>& other)
   {
     if (!other.isVoid())
       {
