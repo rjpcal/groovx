@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Jul 11 09:21:52 2001
+// written: Wed Jul 11 09:36:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,84 +32,75 @@
 //
 //---------------------------------------------------------------------
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, Tcl_Obj* obj) :
-  itsInterp(interp),
+Tcl::TclValue::TclValue(Tcl_Obj* obj) :
   itsObj(obj)
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, Tcl_Obj*)");
+DOTRACE("Tcl::TclValue::TclValue(Tcl_Obj*)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, int val) :
-  itsInterp(interp),
-  itsObj(Tcl_NewIntObj(val))
+Tcl::TclValue::TclValue(int val) :
+  itsObj(Tcl::toTcl<int>(val))
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, int)");
+DOTRACE("Tcl::TclValue::TclValue(int)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, long val) :
-  itsInterp(interp),
-  itsObj(Tcl_NewLongObj(val))
+Tcl::TclValue::TclValue(long val) :
+  itsObj(Tcl::toTcl<long>(val))
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, long)");
+DOTRACE("Tcl::TclValue::TclValue(long)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, bool val) :
-  itsInterp(interp),
-  itsObj(Tcl_NewBooleanObj(val))
+Tcl::TclValue::TclValue(bool val) :
+  itsObj(Tcl::toTcl<bool>(val))
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, bool)");
+DOTRACE("Tcl::TclValue::TclValue(bool)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, double val) :
-  itsInterp(interp),
-  itsObj(Tcl_NewDoubleObj(val))
+Tcl::TclValue::TclValue(double val) :
+  itsObj(Tcl::toTcl<double>(val))
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, double)");
+DOTRACE("Tcl::TclValue::TclValue(double)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, const char* val) :
-  itsInterp(interp),
-  itsObj(Tcl_NewStringObj(val, -1))
+Tcl::TclValue::TclValue(const char* val) :
+  itsObj(Tcl::toTcl<const char*>(val))
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const char*)");
+DOTRACE("Tcl::TclValue::TclValue(const char*)");
   Tcl_IncrRefCount(itsObj);
 }
 
-Tcl::TclValue::TclValue(Tcl_Interp* interp, const Value& rhs) :
-  itsInterp(interp),
+Tcl::TclValue::TclValue(const Value& rhs) :
   itsObj(0)
 {
-DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const Value&)");
+DOTRACE("Tcl::TclValue::TclValue(const Value&)");
 
   Value::Type rhs_type = rhs.getNativeType();
   DebugEvalNL(rhs_type);
 
   switch (rhs_type) {
   case Value::INT:
-    itsObj = Tcl_NewIntObj(rhs.getInt());
+    itsObj = Tcl::toTcl<int>(rhs.getInt());
     break;
   case Value::LONG:
-    itsObj = Tcl_NewLongObj(rhs.getLong());
+    itsObj = Tcl::toTcl<long>(rhs.getLong());
     break;
   case Value::BOOL:
-    itsObj = Tcl_NewBooleanObj(rhs.getBool());
+    itsObj = Tcl::toTcl<bool>(rhs.getBool());
     break;
   case Value::DOUBLE:
-    itsObj = Tcl_NewDoubleObj(rhs.getDouble());
-    break;
-  case Value::CSTRING:
-    itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
+    itsObj = Tcl::toTcl<double>(rhs.getDouble());
     break;
 
+  case Value::CSTRING:
   case Value::NONE:
   case Value::UNKNOWN:
   default:
-    itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
+    itsObj = Tcl::toTcl<const char*>(rhs.getCstring());
     break;
   }
 
@@ -123,7 +114,6 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const Value&)");
 
 Tcl::TclValue::TclValue(const TclValue& rhs) :
   Value(rhs),
-  itsInterp(rhs.itsInterp),
   itsObj(rhs.itsObj)
 {
 DOTRACE("Tcl::TclValue::TclValue");
@@ -158,7 +148,7 @@ DOTRACE("Tcl::TclValue::setObj");
 
 Value* Tcl::TclValue::clone() const {
 DOTRACE("Tcl::TclValue::clone");
-  return new TclValue(itsInterp, itsObj);
+  return new TclValue(itsObj);
 }
 
 Value::Type Tcl::TclValue::getNativeType() const {
