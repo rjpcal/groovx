@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Mon Mar  6 12:06:07 2000
+// written: Thu Mar  9 17:36:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,6 @@ public:
 							  "bitmap_id filename(without .gz extension)"
 							  "?temp_filename=.temp.pbm?",
 							  3, 4),
-	 itsInterp(pkg->interp()),
 	 itsMethod(method)
 	 {}
 protected:
@@ -97,7 +96,6 @@ private:
   void invokeUsingTempFile(Bitmap* bm,
 									const char* gzname, const char* tempfilename);
   
-  Tcl_Interp* itsInterp;
   int itsMethod;
 };
 
@@ -110,12 +108,12 @@ DOTRACE("BitmapTcl::LoadPbmGzCmd::invokeUsingTempFile");
   int argc = 5;
 
   // Open a channel to execute the command
-  Tcl_Channel chan = Tcl_OpenCommandChannel(itsInterp, argc, 
+  Tcl_Channel chan = Tcl_OpenCommandChannel(interp(), argc, 
 														  const_cast<char**>(argv),
 														  0 /* no flags */);
   if (chan == 0) { throw Tcl::TclError("error opening command channel"); }
 
-  int result = Tcl_Close(itsInterp, chan);
+  int result = Tcl_Close(interp(), chan);
   if (result != TCL_OK) { throw Tcl::TclError("error closing command channel"); }
   
   // Read the temp file
@@ -154,8 +152,8 @@ class BitmapTcl::WritePbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   WritePbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
-							  "bitmap_id filename(without .gz extension)", 3, 3),
-	 itsInterp(pkg->interp()) {}
+							  "bitmap_id filename(without .gz extension)", 3, 3)
+	 {}
 protected:
   virtual void invoke() {
 	 Bitmap* bm = getItem();
@@ -169,15 +167,12 @@ protected:
 	 cmd += filename;
 
 	 fixed_string cmd_copy(cmd.c_str());
-	 int result = Tcl_Eval(itsInterp, cmd_copy.data());
+	 int result = Tcl_Eval(interp(), cmd_copy.data());
 
 	 if (result != TCL_OK) {
 		throw Tcl::TclError("error gzip-ing file");
 	 }
   }
-
-private:
-  Tcl_Interp* itsInterp;
 };
 
 //---------------------------------------------------------------------
