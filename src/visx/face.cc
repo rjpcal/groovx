@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Nov 14 14:59:52 2000
+// written: Tue Nov 14 21:13:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("Face::make");
 }
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
-  FieldContainer(FACE_FIELDS),
+  FieldContainer(),
   faceCategory(this, categ),
   eyeHeight(this, eh),
   eyeDistance(this, es),
@@ -91,6 +91,8 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
 {
 DOTRACE("Face::Face");
   Invariant(check());
+
+  setFieldMap(FACE_FIELDS);
 }
 
 Face::~Face() {

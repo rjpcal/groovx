@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Nov 14 15:06:52 2000
+// written: Tue Nov 14 21:14:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ DOTRACE("House::make");
 }
 
 House::House() :
-  FieldContainer(HOUSE_FIELDS),
+  FieldContainer(),
   storyAspectRatio(this, 3.0),
   numStories(this, 2),
 
@@ -202,6 +202,8 @@ House::House() :
   chimneyHeight(this, 0.5)
 {
 DOTRACE("House::House");
+
+  setFieldMap(HOUSE_FIELDS);
 }
 
 House::~House() {

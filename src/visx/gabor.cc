@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Nov 14 15:02:50 2000
+// written: Tue Nov 14 21:14:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ DOTRACE("Gabor::make");
 }
 
 Gabor::Gabor() :
-  FieldContainer(GABOR_FIELDS),
+  FieldContainer(),
   colorMode(this, 2),
   contrast(this, 1.0),
   spatialFreq(this, 3.5),
@@ -76,6 +76,9 @@ Gabor::Gabor() :
   pointSize(this, 1)
 {
 DOTRACE("Gabor::Gabor");
+
+  setFieldMap(GABOR_FIELDS);
+
   GrObj::setUnRenderMode(GrObj::GROBJ_CLEAR_BOUNDING_BOX);
   GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 }

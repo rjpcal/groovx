@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov 14 15:00:42 2000
+// written: Tue Nov 14 21:13:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  FieldContainer(FISH_FIELDS),
+  FieldContainer(),
   fishCategory(this, -1),
   dorsalFinCoord(this, itsCoords[0]),
   tailFinCoord(this, itsCoords[1]),
@@ -139,6 +139,8 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsEndPts(new EndPt[4])
 {
 DOTRACE("Fish::Fish");
+
+  setFieldMap(FISH_FIELDS);
 
   if (splinefile != 0 && coordfile != 0) {
 	 readSplineFile(splinefile);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Nov 14 15:01:36 2000
+// written: Tue Nov 14 21:13:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,11 @@ DOTRACE("FixPt::make");
 }
 
 FixPt::FixPt(double len, int wid) : 
-  FieldContainer(FIXPT_FIELDS),
-  length(this, len), width(this, wid) {}
+  FieldContainer(),
+  length(this, len), width(this, wid)
+{
+  setFieldMap(FIXPT_FIELDS);
+}
 
 FixPt::~FixPt() {}
 

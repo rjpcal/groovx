@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov 14 15:09:01 2000
+// written: Tue Nov 14 21:14:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,11 +50,13 @@ DOTRACE("MaskHatch::make");
 
 MaskHatch::MaskHatch () :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
-  FieldContainer(MASK_FIELDS),
+  FieldContainer(),
   numLines(this, 10, 0, 1000),
   lineWidth(this, 1, 0, 1000)
 {
 DOTRACE("MaskHatch::MaskHatch");
+
+  setFieldMap(MASK_FIELDS);
 
   GrObj::setAlignmentMode(GrObj::CENTER_ON_CENTER);
   DebugEval(getAlignmentMode());

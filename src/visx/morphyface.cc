@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov 14 15:09:54 2000
+// written: Tue Nov 14 21:14:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -211,7 +211,7 @@ DOTRACE("MorphyFace::make");
 
 MorphyFace::MorphyFace() :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
-  FieldContainer(MFACE_FIELDS),
+  FieldContainer(),
 
   mfaceCategory(this, 0),
 
@@ -252,6 +252,8 @@ MorphyFace::MorphyFace() :
 {
 DOTRACE("MorphyFace::MorphyFace");
   Invariant(check());
+
+  setFieldMap(MFACE_FIELDS);
 }
 
 MorphyFace::~MorphyFace() {
