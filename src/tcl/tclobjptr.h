@@ -2,7 +2,7 @@
 // tclobjlock.h
 // Rob Peters
 // created: Tue May 11 13:44:19 1999
-// written: Tue Jul 20 17:10:45 1999
+// written: Wed Jul 21 15:28:15 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -34,14 +34,22 @@ namespace {
 	 TclObjPtr(const TclObjPtr& x)
 	 {
 		Tcl_DecrRefCount(itsObj);
-		itsObj=const_cast<Tcl_Obj*>(x.itsObj);
+		itsObj = const_cast<Tcl_Obj*>(x.itsObj);
 		Tcl_IncrRefCount(itsObj);
 	 }
 
 	 TclObjPtr& operator=(const TclObjPtr& x)
 	 {
 		Tcl_DecrRefCount(itsObj);
-		itsObj=const_cast<Tcl_Obj*>(x.itsObj);
+		itsObj = const_cast<Tcl_Obj*>(x.itsObj);
+		Tcl_IncrRefCount(itsObj);
+		return *this;
+	 }
+
+	 TclObjPtr& operator=(Tcl_Obj* x)
+	 {
+		Tcl_DecrRefCount(itsObj);
+		itsObj = x;
 		Tcl_IncrRefCount(itsObj);
 		return *this;
 	 }
