@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Nov 13 10:40:02 2002
+// written: Wed Nov 13 11:30:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,6 +105,13 @@ public:
     scaleX(factors.x());
     scaleY(factors.y());
     scaleZ(factors.z());
+  }
+
+  void scale(V factor)
+  {
+    scaleX(factor);
+    scaleY(factor);
+    scaleZ(factor);
   }
 
   bool isVoid() const { return (xx0>=xx1) && (yy0>=yy1) && (zz0>=zz1); }
