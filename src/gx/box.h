@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Nov 13 11:30:12 2002
+// written: Thu Nov 14 18:37:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,13 @@ public:
   V sizeY() const { return yy1 - yy0; }
   V sizeZ() const { return zz1 - zz0; }
 
+  V centerX() const { return (xx0+xx1)/V(2); }
+  V centerY() const { return (yy0+yy1)/V(2); }
+  V centerZ() const { return (zz0+zz1)/V(2); }
+
+  Gfx::Vec3<V> center() const
+  { return Gfx::Vec3<V>(centerX(), centerY(), centerZ()); }
+
   void set000(const Vec3<V>& pt) { xx0=pt.x(); yy0=pt.y(); zz0=pt.z(); }
   void set001(const Vec3<V>& pt) { xx0=pt.x(); yy0=pt.y(); zz1=pt.z(); }
   void set010(const Vec3<V>& pt) { xx0=pt.x(); yy1=pt.y(); zz0=pt.z(); }
@@ -112,6 +119,19 @@ public:
     scaleX(factor);
     scaleY(factor);
     scaleZ(factor);
+  }
+
+  void translate(const Gfx::Vec3<V>& dist)
+  {
+    xx0 += dist.x(); xx1 += dist.x();
+    yy0 += dist.y(); yy1 += dist.y();
+    zz0 += dist.z(); zz1 += dist.z();
+  }
+
+  void setCenter(const Gfx::Vec3<V>& point)
+  {
+    Gfx::Vec3<V> diff = point - center();
+    translate(diff);
   }
 
   bool isVoid() const { return (xx0>=xx1) && (yy0>=yy1) && (zz0>=zz1); }
