@@ -20,12 +20,11 @@ set VERBOSE 0
 
 ### Run test procedures
 set files {
+	 objtogl_test.tcl
 	 gl_test.tcl
-	 sound_test.tcl
 	 kbdrh_test.tcl
 	 th_test.tcl
 	 expt_test.tcl
-	 objtogl_test.tcl
 	 tlist_test.tcl
 	 block_test.tcl
 	 bitmap_test.tcl
@@ -42,13 +41,11 @@ set files {
 	 dlist_test.tcl
 	 trial_test.tcl
 	 rhlist_test.tcl
+	 sound_test.tcl
 }
 
 
-foreach file $files {
-	 puts "running ${file}..."
-	 source ${TEST_DIR}/$file
-}
+foreach file $files { testfile ${TEST_DIR}/$file }
 
 ### Compute test statistics and exit
 finish
