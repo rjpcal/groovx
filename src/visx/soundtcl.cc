@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Jul 16 15:06:32 2001
+// written: Mon Jul 16 15:15:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 
 #include "tcl/objfunctor.h"
 #include "tcl/tclitempkg.h"
-#include "tcl/tcllink.h"
 #include "tcl/tclutil.h"
 
 #include "util/objfactory.h"
