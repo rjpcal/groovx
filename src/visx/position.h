@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Oct 20 17:35:36 2000
+// written: Thu Nov  2 09:03:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef POSITION_H_DEFINED
 #define POSITION_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
+#include "gx/gxnode.h"
 #endif
 
 class PositionImpl;
@@ -24,12 +24,10 @@ class PositionImpl;
  * manipulation of the OpenGL modelview matrix. This manipulation is
  * decomposed into translation, scaling, and rotation.
  *
- * @short Base class that manipulates the OpenGL modelview matrix.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Position : public virtual IO::IoObject {
+class Position : public GxNode {
   //////////////
   // creators //
   //////////////
@@ -100,11 +98,11 @@ protected:
 
 public:
   /// Translate, scale, and rotate.
-  virtual void go() const;
+  virtual void draw(GWT::Canvas&) const;
 
-  /** Redo most recent go(). (This is useful if the behavior of go()
-      changes from one call to the next.) */
-  virtual void rego() const;
+  /** Redo most recent draw(). (This is useful if the behavior of
+      draw() changes from one call to the next.) */
+  virtual void undraw(GWT::Canvas&) const;
 
 private:
   /// Check all invariants and return true if everything is OK.

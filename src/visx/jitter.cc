@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Oct 20 17:34:16 2000
+// written: Thu Nov  2 09:05:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,14 +122,14 @@ DOTRACE("Jitter::rejitter");
   itsRShift = Util::randDoubleRange(-itsRJitter, itsRJitter);
 }
 
-void Jitter::go() const {
-DOTRACE("Jitter::go");
+void Jitter::draw(GWT::Canvas& canvas) const {
+DOTRACE("Jitter::draw");
   rejitter();
-  rego();
+  undraw(canvas);
 }
 
-void Jitter::rego() const {
-DOTRACE("Jitter::rego");
+void Jitter::undraw(GWT::Canvas&) const {
+DOTRACE("Jitter::undraw");
   // Translate
   double tx, ty, tz;
   getTranslate(tx, ty, tz);

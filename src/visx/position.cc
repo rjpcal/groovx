@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Oct 20 17:36:50 2000
+// written: Thu Nov  2 09:04:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -196,17 +196,17 @@ DOTRACE("Position::rotate");
   glRotatef(itsImpl->rt_ang, itsImpl->rt_x, itsImpl->rt_y, itsImpl->rt_z);
 }
 
-void Position::go() const {
-DOTRACE("Position::go");
+void Position::draw(GWT::Canvas&) const {
+DOTRACE("Position::draw");
   Invariant(check());
   translate();
   scale();
   rotate();
 }
 
-void Position::rego() const {
-DOTRACE("Position::rego");
-  go();
+void Position::undraw(GWT::Canvas& canvas) const {
+DOTRACE("Position::undraw");
+  draw(canvas);
 }
 
 bool Position::check() const {

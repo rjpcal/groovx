@@ -3,7 +3,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Fri Oct 20 17:33:58 2000
+// written: Thu Nov  2 09:05:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Jitter : public Position, public virtual IO::IoObject {
+class Jitter : public Position {
   //////////////
   // creators //
   //////////////
@@ -57,11 +57,11 @@ protected:
   virtual void rotate() const;
 
 public:
-  virtual void go() const;
-  virtual void rego() const;
-  // The go() inherited is fine to reuse for Jitter, but rego must be
-  // redefined for Jitter so that we duplicate the previous jittering,
-  // rather than do a new jittering.
+  virtual void draw(GWT::Canvas&) const;
+  virtual void undraw(GWT::Canvas&) const;
+  // The draw() inherited is fine to reuse for Jitter, but undraw must
+  // be redefined for Jitter so that we duplicate the previous
+  // jittering, rather than do a new jittering.
 
 private:
   void rejitter() const;
