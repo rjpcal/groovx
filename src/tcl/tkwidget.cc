@@ -82,6 +82,7 @@ public:
   Tcl::TkWidget* owner;
   Tcl::Interp interp;
   const Tk_Window tkWin;
+  Tk_Cursor cursor;
 
   bool updatePending;
   bool shutdownRequested;
@@ -124,6 +125,7 @@ TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
                                 Tk_MainWindow(interp.intp()),
                                 const_cast<char*>(pathname),
                                 topLevel ? (char*) "" : (char*) 0)),
+  cursor(0),
   updatePending(false),
   shutdownRequested(false)
 {
@@ -144,6 +146,9 @@ DOTRACE("TkWidgImpl::TkWidgImpl");
 TkWidgImpl::~TkWidgImpl() throw()
 {
 DOTRACE("TkWidgImpl::~TkWidgImpl");
+
+  if (cursor != 0)
+    Tk_FreeCursor(Tk_Display(tkWin), cursor);
 
   Tk_DeleteEventHandler(tkWin, EVENT_MASK,
                         TkWidgImpl::cEventCallback,
@@ -400,6 +405,46 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
   dbgEvalNL(3, screen_ppi);
   return screen_ppi;
+}
+
+void Tcl::TkWidget::setCursor(const char* cursor_spec)
+{
+  if (cursor_spec == 0 || cursor_spec == '\0')
+    {
+      // Empty string means to unset the cursor
+      if (rep->cursor != 0)
+        Tk_FreeCursor(Tk_Display(rep->tkWin), rep->cursor);
+
+      rep->cursor = 0;
+
+      Tk_UndefineCursor(rep->tkWin);
+    }
+  else
+    {
+      Tk_Cursor new_cursor = Tk_GetCursor(rep->interp.intp(), rep->tkWin,
+                                          cursor_spec);
+
+      if (new_cursor == 0)
+        {
+          throw Util::Error(fstring("couldn't set cursor to '",
+                                    cursor_spec, "'"));
+        }
+
+      // OK, creating the new cursor succeeded, now free the old one
+      if (rep->cursor != 0)
+        Tk_FreeCursor(Tk_Display(rep->tkWin), rep->cursor);
+
+      rep->cursor = new_cursor;
+
+      Tk_DefineCursor(rep->tkWin, rep->cursor);
+    }
+}
+
+const char* Tcl::TkWidget::getCursor() const
+{
+  return rep->cursor == 0
+    ? ""
+    : Tk_NameOfCursor(Tk_Display(rep->tkWin), rep->cursor);
 }
 
 void Tcl::TkWidget::pack()

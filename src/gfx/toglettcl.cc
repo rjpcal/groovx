@@ -128,6 +128,7 @@ public:
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
     defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
     defAction("clearscreen", &Toglet::fullClearscreen);
+    defAttrib("cursor", &Tcl::TkWidget::getCursor, &Tcl::TkWidget::setCursor);
     defAction("destroy", &Tcl::TkWidget::destroyWidget);
     defAction("grabKeyboard", &Tcl::TkWidget::grabKeyboard);
     defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
