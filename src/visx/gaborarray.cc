@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 14:22:22 2003
+// written: Mon May 12 14:53:37 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -54,7 +54,7 @@ using namespace Gfx;
 
 namespace
 {
-  const double SQRT3 = 1.7320508075;
+  const double SQRT3 = 1.73205080757;
 
   const int MAX_GABOR_NUMBER = 1800;
 }
@@ -93,6 +93,8 @@ bool GaborArray::tooClose(const Vec2d& v, int except)
 
 void GaborArray::insideElements()
 {
+DOTRACE("GaborArray::insideElements");
+
   insideNumber = snake.getLength();
 
   for (int n = 0; n < totalNumber; ++n)
@@ -131,6 +133,8 @@ void GaborArray::insideElements()
 
 void GaborArray::hexGridElements()
 {
+DOTRACE("GaborArray::hexGridElements");
+
   // lay down a hexagonal grid of elements
 
   const double dx = backgIniSpacing;
@@ -158,6 +162,8 @@ void GaborArray::hexGridElements()
 
 void GaborArray::fillElements()
 {
+DOTRACE("GaborArray::fillElements");
+
   const double tryFillArea = 6.0;
 
   const double dx = sqrt(tryFillArea);
@@ -174,6 +180,8 @@ void GaborArray::fillElements()
 
 void GaborArray::jitterElement()
 {
+DOTRACE("GaborArray::jitterElement");
+
   const double jitter = (backgMinSpacing/16.0);
 
   const int backgroundIters = 1000;
@@ -206,6 +214,8 @@ void GaborArray::jitterElement()
 
 void GaborArray::dumpFrame() const
 {
+DOTRACE("GaborArray::dumpFrame");
+
   if (0)
     {
       static int framecount = 0;
@@ -239,6 +249,8 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
   totalNumber(0),
   array(MAX_GABOR_NUMBER)
 {
+DOTRACE("GaborArray::GaborArray");
+
   // pull in elements from the snake
   for (int n = 0; n < snake.getLength(); ++n)
     {
@@ -266,6 +278,8 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
 
 void GaborArray::renderInto(BmapData& data) const
 {
+DOTRACE("GaborArray::renderInto");
+
   fixed_block<double> win(sizeX*sizeY);
 
   for (int i = 0; i < sizeX*sizeY; ++i)
@@ -320,6 +334,8 @@ void GaborArray::renderInto(BmapData& data) const
 
 void GaborArray::saveImage(const char* filename) const
 {
+DOTRACE("GaborArray::saveImage");
+
   BmapData data;
 
   renderInto(data);
