@@ -19,8 +19,8 @@
 #include <GL/glu.h>
 #include <string>
 
+#include "error.h"
 #include "toglconfig.h"
-#include "objtogl.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -36,36 +36,46 @@ namespace {
   Window win;
   int screen;
   Visual* visual;
-
-  void init_class() {
-  DOTRACE("<xbitmap.cc>::init_class");
-    ToglConfig* config = ObjTogl::theToglConfig();
-
-	 display = config->getX11Display();
-	 win = config->getX11Window();
-	 screen = config->getX11ScreenNumber();
-
-    XGCValues gc_values;
-	 gc_values.foreground = XWhitePixel(display,screen);
-	 gc_values.background = XBlackPixel(display,screen);
-	 
-	 unsigned long gc_valuemask = GCForeground | GCBackground;
-	 
-	 gfx_context_white = XCreateGC(display,win,gc_valuemask,&gc_values);
-
-	 gc_values.foreground = XBlackPixel(display,screen);
-	 gc_values.background = XWhitePixel(display,screen);
-
-	 gfx_context_black = XCreateGC(display,win,gc_valuemask,&gc_values);
-
-	 XWindowAttributes xwa;
-	 Status status = XGetWindowAttributes(display, win, &xwa);
-	 visual = xwa.visual;
-
-	 class_inited = true;
-  }
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// XBitmapError class
+//
+///////////////////////////////////////////////////////////////////////
+
+class XBitmapError : public ErrorWithMsg {
+public:
+  XBitmapError(const string& msg = "") : ErrorWithMsg(msg) {}
+};
+
+void XBitmap::initClass(const ToglConfig* config) {
+DOTRACE("XBitmap::initClass");
+  if (class_inited) return;
+
+  display = config->getX11Display();
+  win = config->getX11Window();
+  screen = config->getX11ScreenNumber();
+
+  XGCValues gc_values;
+  gc_values.foreground = XWhitePixel(display,screen);
+  gc_values.background = XBlackPixel(display,screen);
+	 
+  unsigned long gc_valuemask = GCForeground | GCBackground;
+
+  gfx_context_white = XCreateGC(display,win,gc_valuemask,&gc_values);
+
+  gc_values.foreground = XBlackPixel(display,screen);
+  gc_values.background = XWhitePixel(display,screen);
+
+  gfx_context_black = XCreateGC(display,win,gc_valuemask,&gc_values);
+
+  XWindowAttributes xwa;
+  Status status = XGetWindowAttributes(display, win, &xwa);
+  visual = xwa.visual;
+
+  class_inited = true;
+}
 
 //////////////
 // creators //
@@ -96,7 +106,7 @@ DOTRACE("XBitmap::XBitmap");
 void XBitmap::init() {
 DOTRACE("XBitmap::init");
 
-  if (!class_inited) init_class();
+  if (!class_inited) throw XBitmapError("XBitmap::initClass not yet called");
 
   GrObj::setRenderMode(GROBJ_DIRECT_RENDER);
   GrObj::setUnRenderMode(GROBJ_CLEAR_BOUNDING_BOX);
