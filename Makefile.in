@@ -224,6 +224,7 @@ $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
 install_scripts:
+	mkdir -p $(exec_prefix)/bin
 	cp share/scripts/*.tcl $(exec_prefix)/bin
 
 check:
