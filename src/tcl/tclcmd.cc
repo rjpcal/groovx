@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Nov  2 13:45:19 1999
+// written: Thu Nov 11 19:22:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,6 +148,7 @@ DOTRACE("TclCmd::returnVal");
 
 void TclCmd::returnVoid() {
 DOTRACE("TclCmd::returnVoid");
+  Tcl_ResetResult(itsInterp); 
   itsResult = TCL_OK;
 }
 
