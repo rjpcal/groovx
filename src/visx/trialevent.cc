@@ -32,8 +32,6 @@
 
 #include "visx/trialevent.h"
 
-#include "visx/trial.h"
-
 #include "gfx/canvas.h"
 #include "gfx/toglet.h"
 
@@ -48,7 +46,7 @@
 #include "util/log.h"
 #include "util/ref.h"
 
-#include <typeinfo>
+#include "visx/trial.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
