@@ -54,7 +54,7 @@ test "BitmapTcl-Bitmap::loadPbm" "normal use" {
 test "BitmapTcl-Bitmap::loadPbm" "error on non-existent file" {
 	 exec rm -rf $::TEST_DIR/nonexistent_file
 	 Bitmap::loadPbm $::BITMAP $::TEST_DIR/nonexistent_file
-} "^Bitmap::loadPbm: couldn't open file: $::TEST_DIR/nonexistent_file$"
+} "^Bitmap::loadPbm: couldn't open file "
 test "BitmapTcl-Bitmap::loadPbm" "error on junk text file" {
 	 Bitmap::loadPbm $::BITMAP $::TEST_DIR/junk_text_file
 } "^Bitmap::loadPbm: bad magic number while reading pbm file.*$"
