@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Jun 26 14:03:34 1999
+// written: Wed Oct 13 11:47:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include <typeinfo>
 #include <cstring>
 
+#include "demangle.h"
 #include "exptdriver.h"
 #include "timeutils.h"
 
@@ -68,7 +69,7 @@ DOTRACE("TrialEvent::~TrialEvent");
 void TrialEvent::serialize(ostream& os, IOFlag flag) const {
 DOTRACE("TrialEvent::serialize");
 
-  if (flag&TYPENAME) { os << typeid(*this).name() << ' '; }
+  if (flag&TYPENAME) { os << demangle(typeid(*this).name()) << ' '; }
   os << itsRequestedDelay << endl;
   if (os.fail()) throw InputError(typeid(*this));
 }
@@ -76,8 +77,8 @@ DOTRACE("TrialEvent::serialize");
 void TrialEvent::deserialize(istream& is, IOFlag flag) {
 DOTRACE("TrialEvent::deserialize");
 
-  if (flag&TYPENAME) { IO::readTypename(is, typeid(*this).name()); }
-  DebugEval(typeid(*this).name());
+  if (flag&TYPENAME) { IO::readTypename(is, demangle(typeid(*this).name())); }
+  DebugEval(demangle(typeid(*this).name()));
   is >> itsRequestedDelay;
   DebugEvalNL(itsRequestedDelay);
   if (is.fail()) throw InputError(typeid(*this));
@@ -85,7 +86,8 @@ DOTRACE("TrialEvent::deserialize");
 
 int TrialEvent::charCount() const {
 DOTRACE("TrialEvent::charCount");
-  return (strlen(typeid(*this).name()) + 1
+  string name = demangle(typeid(*this).name());
+  return ( name.length() + 1
 			 + gCharCount<int>(itsRequestedDelay) + 1
 			 + 1); // fudge factor
 }
@@ -129,7 +131,7 @@ void TrialEvent::dummyInvoke(ClientData clientData) {
 DOTRACE("TrialEvent::dummyInvoke");
   TrialEvent* event = static_cast<TrialEvent *>(clientData);
 
-  EventTraceNL(typeid(*event).name());
+  EventTraceNL(demangle(typeid(*event).name()));
 
 #ifdef EVENT_TRACE
   cerr << "    before == " << elapsedMsecSince(event->itsBeginTime) << endl;
