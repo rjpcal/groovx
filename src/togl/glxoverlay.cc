@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug  5 17:09:31 2002
-// written: Mon Sep 16 11:55:54 2002
+// written: Tue Sep 17 22:30:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ GlxOverlay::GlxOverlay(Display* dpy, Window parent,
 {
 DOTRACE("GlxOverlay::GlxOverlay");
 
-  GlxOpts opts; opts.toDefaults();
+  GlxOpts opts;
 
   opts.rgbaFlag = 0; opts.colorIndexSize = 2;
   opts.level = 1;
