@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Dec  1 22:11:21 1999
+// written: Wed Dec  1 22:24:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include <iostream.h>           // for serialize
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <memory>
 
 #include "bitmaprep.h"
 #include "gfxattribs.h"
