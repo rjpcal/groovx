@@ -22,6 +22,7 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
+#include "util/strings.h"
 
 #include <cstdlib>
 #include <exception>
@@ -155,6 +156,10 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 	  itsStatus = result;
 	  std::cerr << "initialization failed: "
 		    << IMMEDIATE_PKGS[i].pkgName << '\n';
+	  fstring msg = interp.getResult<const char*>();
+	  if ( !msg.is_empty() )
+	    std::cerr << '\t' << msg << '\n';
+	  interp.resetResult();
 	}
     }
   }
