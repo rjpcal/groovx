@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Aug 17 14:59:49 2001
+// written: Fri Aug 17 16:37:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,7 @@ public:
       Tcl::defGenericObjCmds<GxNode>(this);
 
       def( "contains", "item_id other_id", &GxTcl::contains );
+      defVec("deepChildren", "item_id(s)", &GxNode::deepChildren);
     }
 };
 
