@@ -354,6 +354,10 @@ AC_CHECK_HEADER([esd.h],
 		[AC_DEFINE(HAVE_ESD_H,1,[have esd.h?])
 		 LIBS="$LIBS -lesd -laudiofile"],,-)
 
+AC_CHECK_HEADER([QuickTime/Movies.h],
+		[AC_DEFINE(HAVE_QUICKTIME_MOVIES_H,1,[have QuickTime/Movies.h?])
+		 LIBS="$LIBS -framework QuickTime -framework Carbon"],,-)
+
 ##########################################################################
 ### Checks for libraries.
 
