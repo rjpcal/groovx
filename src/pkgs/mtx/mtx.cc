@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 12:19:42 2002
+// written: Mon Mar  4 12:28:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,6 +145,32 @@ void Slice::print() const
   std::cout << std::endl;
 }
 
+double Slice::sum() const
+{
+  double s = 0.0;
+  for (MtxConstIter i = begin(); i.hasMore(); ++i)
+    s += *i;
+  return s;
+}
+
+double Slice::min() const
+{
+  MtxConstIter i = begin();
+  double mn = *i;
+  for (; i.hasMore(); ++i)
+    if (*i < mn) mn = *i;
+  return mn;
+}
+
+double Slice::max() const
+{
+  MtxConstIter i = begin();
+  double mx = *i;
+  for (; i.hasMore(); ++i)
+    if (*i > mx) mx = *i;
+  return mx;
+}
+
 namespace
 {
   struct ValIndex
@@ -177,6 +203,18 @@ DOTRACE("Slice::getSortOrder");
     index.at(0,i) = buf[i].index;
 
   return index;
+}
+
+bool Slice::operator==(const Slice& other) const
+{
+  if (itsNelems != other.itsNelems) return false;
+
+  for (MtxConstIter a = this->begin(), b = other.begin();
+       a.hasMore();
+       ++a, ++b)
+    if (*a != *b) return false;
+
+  return true;
 }
 
 void Slice::sort()

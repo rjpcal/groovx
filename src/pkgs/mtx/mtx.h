@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 12:26:01 2002
+// written: Mon Mar  4 12:28:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -258,51 +258,18 @@ public:
   // Const functions
   //
 
-  double sum() const
-  {
-    double s = 0.0;
-    for (MtxConstIter i = begin(); i.hasMore(); ++i)
-      s += *i;
-    return s;
-  }
+  double sum() const;
+  double min() const;
+  double max() const;
 
-  double min() const
-  {
-    MtxConstIter i = begin();
-    double mn = *i;
-    for (; i.hasMore(); ++i)
-      if (*i < mn) mn = *i;
-    return mn;
-  }
-
-  double max() const
-  {
-    MtxConstIter i = begin();
-    double mx = *i;
-    for (; i.hasMore(); ++i)
-      if (*i > mx) mx = *i;
-    return mx;
-  }
-
-  double mean() const
-    { return sum()/itsNelems; }
+  double mean() const { return sum()/itsNelems; }
 
 
   // Returns an index matrix so that this->reorder(Mtx) will put the
   // Slice in sorted order
   Mtx getSortOrder() const;
 
-  bool operator==(const Slice& other) const
-  {
-    if (itsNelems != other.itsNelems) return false;
-
-    for (MtxConstIter a = this->begin(), b = other.begin();
-         a.hasMore();
-         ++a, ++b)
-      if (*a != *b) return false;
-
-    return true;
-  }
+  bool operator==(const Slice& other) const;
 
   bool operator!=(const Slice& other) const
   { return !(operator==(other)); }
