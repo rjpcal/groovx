@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Thu Jul 19 10:33:33 2001
+// written: Thu Jul 19 13:33:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "gwt/canvas.h"
 #include "gx/vec3.h"
 
+#define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 
 void GrObjAligner::doAlignment(GWT::Canvas& canvas,
