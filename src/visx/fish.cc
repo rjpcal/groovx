@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Nov  2 14:55:33 2000
+// written: Fri Nov  3 14:57:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -282,7 +282,7 @@ void Fish::readFrom(IO::Reader* reader) {
 DOTRACE("Fish::readFrom");
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name_cstr(),
+	 reader->readValueObj(PINFOS[i].name(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
   

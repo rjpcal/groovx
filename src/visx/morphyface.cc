@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Nov  2 14:54:59 2000
+// written: Fri Nov  3 14:57:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ void MorphyFace::readFrom(IO::Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name_cstr(),
+	 reader->readValueObj(PINFOS[i].name(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 

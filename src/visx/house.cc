@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Oct 20 17:27:22 2000
+// written: Fri Nov  3 14:57:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ void House::readFrom(IO::Reader* reader) {
 DOTRACE("House::readFrom");
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name_cstr(),
+	 reader->readValueObj(PINFOS[i].name(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Oct 20 17:22:19 2000
+// written: Fri Nov  3 14:57:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ void Gabor::readFrom(IO::Reader* reader) {
 DOTRACE("Gabor::readFrom");
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name_cstr(),
+	 reader->readValueObj(PINFOS[i].name(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
   

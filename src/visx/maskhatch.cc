@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Oct 20 17:36:23 2000
+// written: Fri Nov  3 14:57:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ void MaskHatch::readFrom(IO::Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
 
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
-	 reader->readValueObj(PINFOS[i].name_cstr(),
+	 reader->readValueObj(PINFOS[i].name(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 

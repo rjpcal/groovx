@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Nov  2 14:56:39 2000
+// written: Fri Nov  3 14:56:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ void Face::readFrom(IO::Reader* reader) {
 DOTRACE("Face::readFrom");
 
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name_cstr(),
+	 reader->readValueObj(PINFOS[i].name(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
