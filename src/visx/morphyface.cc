@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Jun 27 16:48:18 2000
+// written: Tue Jun 27 18:07:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -580,7 +580,7 @@ DOTRACE("MorphyFace::grRender");
 					  1.0);
 		  static const int num_slices = 20;
 		  static const int num_loops = 1;
-		  gluDisk(qobj, 0.5*pupilDilation(), 0.5, num_slices, num_loops);
+		  gluDisk(qobj, 0.5*abs(pupilDilation()), 0.5, num_slices, num_loops);
 		glPopMatrix();
 
 	 glPopMatrix();
