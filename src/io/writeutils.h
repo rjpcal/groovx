@@ -39,16 +39,14 @@ DBG_REGISTER
 
 namespace IO
 {
-
 /// Utilities for writing sequences to a \c IO::Writer.
-class WriteUtils
+namespace WriteUtils
 {
-public:
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  static void writeValueSeq(IO::Writer& writer, const fstring& name,
-                            Itr begin, Itr end, bool skip_count=false)
+  void writeValueSeq(IO::Writer& writer, const fstring& name,
+                     Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
@@ -70,8 +68,8 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
       objects of Value subtypes */
   template <class Itr>
-  static void writeValueObjSeq(IO::Writer& writer, const fstring& name,
-                               Itr begin, Itr end, bool skip_count=false)
+  void writeValueObjSeq(IO::Writer& writer, const fstring& name,
+                        Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
@@ -90,11 +88,10 @@ public:
         }
     }
 
-
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeObjectSeq(IO::Writer& writer, const fstring& name,
-                             Itr begin, Itr end, bool skip_count=false)
+  void writeObjectSeq(IO::Writer& writer, const fstring& name,
+                      Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
@@ -115,22 +112,20 @@ public:
         }
     }
 
-private:
   template <class Itr>
-  static int computeCount(Itr begin, Itr end)
+  int computeCount(Itr begin, Itr end)
     {
       int count = 0;
       while (begin != end) { ++count; ++begin; }
       return count;
     }
 
-  static fstring makeElementNameString(const fstring& seq_name,
-                                       int element_num);
+  fstring makeElementNameString(const fstring& seq_name,
+                                int element_num);
 
-  static fstring makeSeqCountString(const fstring& seq_name);
-};
+  fstring makeSeqCountString(const fstring& seq_name);
 
-} // end namespace IO
+}} // end namespace IO::WriteUtils
 
 static const char vcid_writeutils_h[] = "$Header$";
 #endif // !WRITEUTILS_H_DEFINED
