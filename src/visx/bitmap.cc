@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Dec  6 21:32:16 1999
+// written: Fri Jan 14 17:11:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,10 @@
 #define BITMAP_CC_DEFINED
 
 #include "bitmap.h"
+
+#include <cstdio>
+#include <fstream.h>
+#include <string>
 
 #include "bitmaprep.h"
 
@@ -100,6 +104,35 @@ void Bitmap::loadPbmFile(istream& is) {
 DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(is);
   sendStateChangeMsg(); 
+}
+
+void Bitmap::loadPbmGzFile(const char* filename) {
+DOTRACE("Bitmap::loadPbmFile");
+
+  string cmd("gunzip -c ");
+  cmd += filename;
+
+  class Pipe {
+  public:
+	 Pipe(const char* command, const char* mode) :
+		itsFile(popen(command, mode))
+		{}
+	 ~Pipe()
+		{ pclose(itsFile); }
+	 FILE* file() { return itsFile; }
+	 int filedes() { return fileno(itsFile); }
+
+  private:
+	 FILE* itsFile;
+  };
+
+  Pipe pipe(cmd.c_str(), "r");
+
+  ifstream ifs(pipe.filedes());
+
+  loadPbmFile(ifs);
+
+  sendStateChangeMsg();
 }
 
 void Bitmap::writePbmFile(const char* filename) const
