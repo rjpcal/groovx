@@ -13,7 +13,7 @@ proc parse_cmdline { argv } {
 	if { [string equal "--" [string range $arg 0 1]] } {
 	    set name [string toupper [string range $arg 2 end]]
 
-	    set ::${name} [lindex $argv [incr i]]
+	    lappend ::${name} [lindex $argv [incr i]]
 	}
     }
 }
