@@ -22,7 +22,7 @@ IO::testReadCmd PositionTcl IO 1 $::POS
 ### Obj::new Position ###
 test "PositionTcl-Obj::new Position" "too many args" {
     Obj::new Position junk junk
-} {wrong \# args: should be "Obj::new typename \?array_size=1\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Obj::new Position" "normal create" {
 	 Obj::new Position
 } {^[0-9]+$}

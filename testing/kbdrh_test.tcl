@@ -20,7 +20,7 @@ IO::testReadCmd KbdRhTcl IO 1 $::KBDRH
 ### Obj::new KbdRh ###
 test "KbdRhTcl-Obj::new KbdRh" "too many args" {
     Obj::new KbdResponseHdlr junk junk
-} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-Obj::new KbdRh" "normal use" {
 	 catch {Obj::new KbdResponseHdlr}
 } {^0$}

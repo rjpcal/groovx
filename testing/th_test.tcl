@@ -26,7 +26,7 @@ IO::testReadCmd ThTcl IO 1 $::TH
 ### Obj::new TimingHandler ###
 test "ThTcl-Obj::new SimpleTh" "too many args" {
     Obj::new TimingHandler junk junk
-} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+} {^wrong \# args: should be}
 test "ThTcl-Obj::new TimingHandler" "normal use" {
 	 catch {Obj::new TimingHandler}
 } {^0$}

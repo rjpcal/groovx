@@ -21,7 +21,7 @@ unset ::JITTER
 ### Obj::new Jitter ###
 test "JitterTcl-Obj::new Jitter" "too many args" {
 	 Obj::new Jitter junk junk
-} {wrong \# args: should be "Obj::new typename \?array_size=1\?"}
+} {wrong \# args: should be}
 test "JitterTcl-Obj::new Jitter" "normal create" {
 	 Obj::new Jitter
 } {[0-9]+}

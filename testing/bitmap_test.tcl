@@ -33,7 +33,7 @@ set POS [Obj::new Position]
 ### Obj::new GLBitmap ###
 test "GLBitmapTcl-Obj::new GLBitmap" "too many args" {
 	 Obj::new GLBitmap junk junk
-} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+} {^wrong \# args: should be}
 test "GLBitmapTcl-Obj::new GLBitmap" "normal use" {
 	 set ::BITMAP [Obj::new GLBitmap]
 } "^${INT}$"

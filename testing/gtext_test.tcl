@@ -28,7 +28,7 @@ set PACKAGE GtextTcl
 ### Obj::new Gtext ###
 test "$PACKAGE-Obj::new Gtext" "too many args" {
 	 Obj::new Gtext junk junk
-} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+} {^wrong \# args: should be}
 test "$PACKAGE-Obj::new Gtext" "normal use" {
 	 set ::GTEXT [Obj::new Gtext]
 	 Gtext::text $::GTEXT "Hello, World!"

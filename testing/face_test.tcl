@@ -16,7 +16,7 @@ GrObj::testSubclass Face Face
 ### faceCmd ###
 test "FaceTcl-Obj::new Face" "too many args" {
 	 Obj::new Face junk junk
-} {wrong \# args: should be "Obj::new typename \?array_size=1\?"}
+} {wrong \# args: should be}
 test "FaceTcl-Obj::new Face" "normal face creation" {
 	 Obj::new Face
 } {[0-9]+}

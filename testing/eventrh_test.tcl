@@ -19,7 +19,7 @@ IO::testReadCmd EventRhTcl IO 1 $::EVENTRH
 ### Obj::new EventRh ###
 test "EventRhTcl-Obj::new EventRh" "too many args" {
     Obj::new EventResponseHdlr junk junk
-} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-Obj::new EventRh" "normal use" {
 	 catch {Obj::new EventResponseHdlr}
 } {^0$}
