@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Mar 30 09:50:04 2000
+// written: Mon May 22 12:58:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,6 +184,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 
 GrObj::Impl::Renderer::Renderer() :
   itsMode(GrObj::GROBJ_GL_COMPILE),
+  itsCacheFilename(""),
   itsIsCurrent(false),
   itsDisplayList(-1),
   itsBmapRenderer(0),
@@ -222,8 +223,8 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 
   Assert(obj->hasBB());
 
-  Rect<double> bmapbox;
-  obj->getBoundingBox(canvas, bmapbox);
+//   Rect<double> bmapbox;
+//   obj->getBoundingBox(canvas, bmapbox);
 
   {
 	 glMatrixMode(GL_MODELVIEW);
@@ -239,11 +240,11 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 		obj->grRender(canvas);
 
 		glReadBuffer(GL_FRONT);
-// 		Rect<double> bmapbox_init = obj->getRawBB();
-// 		Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
-// 		screen_rect.widenByStep(2);
-// 		screen_rect.heightenByStep(2);
-// 		Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
+ 		Rect<double> bmapbox_init = obj->getRawBB();
+ 		Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
+ 		screen_rect.widenByStep(2);
+ 		screen_rect.heightenByStep(2);
+ 		Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
 
 		DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
 		DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
