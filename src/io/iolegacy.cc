@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu May 17 15:34:46 2001
+// written: Thu May 17 15:41:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 class IO::LegacyReader::Impl {
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(IO::LegacyReader* owner, STD_IO::istream& is) :
 	 itsOwner(owner),
@@ -341,6 +344,10 @@ private:
   class Indenter {
   private:
 	 Impl* itsOwner;
+
+	 Indenter(const Indenter&);
+	 Indenter& operator=(const Indenter&);
+
   public:
 	 Indenter(Impl* impl) : itsOwner(impl) { ++(itsOwner->itsIndentLevel); }
 	 ~Indenter() { --(itsOwner->itsIndentLevel); }
