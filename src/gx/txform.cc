@@ -207,6 +207,17 @@ DOTRACE("Gfx::Txform::scale");
 #endif
 }
 
+void Gfx::Txform::rotate(const Vec3d& rotationAxis, double rotationAngle)
+{
+DOTRACE("Gfx::Txform::rotate");
+
+  Txform rotation(Vec3d(0, 0, 0),
+                  Vec3d(1, 1, 1),
+                  rotationAxis, rotationAngle);
+
+  this->transform(rotation);
+}
+
 void Gfx::Txform::transform(const Gfx::Txform& other)
 {
 DOTRACE("Gfx::Txform::transform");
