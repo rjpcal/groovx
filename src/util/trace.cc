@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 17:58:51 2003
+// written: Fri Apr 11 00:50:53 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -104,10 +104,10 @@ public:
   typedef const T* const_iterator;
 
   iterator begin() throw() { return &vec[0]; }
-  iterator end()   throw() { return &vec[0] + N; }
+  iterator end()   throw() { return &vec[0] + sz; }
 
   const_iterator begin() const throw() { return &vec[0]; }
-  const_iterator end()   const throw() { return &vec[0] + N; }
+  const_iterator end()   const throw() { return &vec[0] + sz; }
 
 private:
   T vec[N];
