@@ -526,3 +526,8 @@ couldn't load file "/cit/rjpeters/local/i686/lib/visx/mtx.so":
 Aha. Have to use the linker option --export-dynamic, so that libut.so can
 find the _start symbol which is of course defined next to wherever main()
 is defined, which would be in the executable itself.
+
+(note 2-Jul-2002) OS X porting note. Ran into problems with tk8.4a4;
+specifically, got "could not find dynamic library libtk8.4a4.dylib" at
+runtime when trying to run testsh. The problem was in the Tk makefile,
+which failed to set the -install_name option when ld'ing the dylib.
