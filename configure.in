@@ -6,6 +6,13 @@ dnl $Revision$
 
 AC_INIT(grsh, [0.8a8], [rjpeters@klab.caltech.edu])
 
+# If CXXFLAGS was not already set, then set it now to keep autoconf from
+# adding "-g -O2".
+
+if test "${CXXFLAGS+set}" != "set" ; then
+    CXXFLAGS=""
+fi
+
 AC_MSG_CHECKING([for operating system])
 
 OS=`uname`
@@ -25,6 +32,9 @@ case $OS in
       SHLIB_EXT=so
       STATLIB_EXT=a
       AC_DEFINE(SHORTEN_SYMBOL_NAMES,1)
+      # FIXME this is assuming the use of the MIPSpro CC compiler...
+      CXXFLAGS="$CXXFLAGS -n32 -ptused -no_prelink -no_auto_include"
+      CXXFLAGS="$CXXFLAGS -LANG:std -LANG:exceptions=ON"
       ;;
    Darwin)
       need_rpath=no
@@ -39,17 +49,33 @@ esac
 
 AC_SUBST(SHLIB_EXT)
 
-# If CXXFLAGS was not already set, then set it now to keep autoconf from
-# adding "-g -O2".
-
-if test "${CXXFLAGS+set}" != "set" ; then
-    CXXFLAGS=""
-fi
-
 dnl Compiler checks.
 
 AC_LANG(C++)
 AC_PROG_CXX(g++-3 g++ c++ CC)
+
+### Check c++ name mangling
+
+AC_MSG_CHECKING([whether typeinfo::name() gives a mangled typename])
+
+AC_TRY_RUN([#include <typeinfo>
+#include <string.h>
+
+namespace Q {
+template <class T>
+  struct foo {};
+}
+
+struct bar {};
+
+int main()
+{
+  extern Q::foo<bar> p;
+  return (strcmp("Q::foo<bar>", typeid(p).name()) == 0) ? 0 : 1;
+}
+],
+[AC_MSG_RESULT(no) AC_DEFINE(NO_TYPENAME_MANGLING,1)],
+AC_MSG_RESULT(yes))
 
 dnl Checks for libraries.
 
