@@ -17,7 +17,6 @@
 
 #include "block.h"
 #include "tlistutils.h"
-#include "toglet.h"
 #include "trialbase.h"
 
 #include "gwt/widget.h"
@@ -137,8 +136,6 @@ private:
 
   void getCurrentTimeDateString(fixed_string& date_out) const;
 
-  void getHostname(fixed_string& hostname_out) const;
-
   void getSubjectKey(fixed_string& subjectkey_out) const;
 
   dynamic_string makeUniqueFileExtension() const;
@@ -187,20 +184,15 @@ public:
       return itsBlocks.at(itsCurrentBlockIdx);
     }
 
-  Util::ErrorHandler& getErrorHandler()
-    { return itsErrHandler; }
+  Util::ErrorHandler& getErrorHandler()           { return itsErrHandler; }
 
-  GWT::Widget& getWidget()
-    {
-      return *itsWidget;
-    }
+  GWT::Widget& getWidget()                        { return *itsWidget; }
 
   Util::WeakRef<GWT::Widget> widget() const       { return itsWidget; }
 
   void setWidget(Util::WeakRef<GWT::Widget> widg) { itsWidget = widg; }
 
-  GWT::Canvas& getCanvas()
-    { return getWidget().getCanvas(); }
+  GWT::Canvas& getCanvas() { return getWidget().getCanvas(); }
 
   void edBeginExpt();
   void edEndTrial();
@@ -246,12 +238,6 @@ private:
 
   mutable Tcl::BkdErrorHandler itsErrHandler;
 };
-
-// This little hack is to ensure that typeid<Toglet> is instantiated here
-#ifdef GCC_COMPILER
-#include <typeinfo>
-void dummy() { Toglet* t=0; typeid(*t); }
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -386,12 +372,6 @@ DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   date_out = itsInterp.getResult(TypeCue<const char*>());;
 }
 
-void ExptDriver::Impl::getHostname(fixed_string& hostname_out) const
-{
-DOTRACE("ExptDriver::Impl::getHostname");
-  hostname_out = itsInterp.getGlobalVar(TypeCue<const char*>(), "env", "HOST");
-}
-
 void ExptDriver::Impl::getSubjectKey(fixed_string& subjectkey_out) const {
 DOTRACE("ExptDriver::Impl::getSubjectKey");
 
@@ -403,9 +383,10 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the result, and remove an optional leading 'human_', if present
   const char* key = itsInterp.getResult(TypeCue<const char*>());
-  if ( strncmp(key, "human_", 6) == 0 ) {
-    key += 6;
-  }
+  if ( strncmp(key, "human_", 6) == 0 )
+	 {
+		key += 6;
+	 }
 
   subjectkey_out = key;
 }
@@ -512,7 +493,7 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
   addLogInfo("Beginning experiment.");
 
   getCurrentTimeDateString(itsBeginDate);
-  getHostname(itsHostname);
+  itsHostname = itsInterp.getGlobalVar(TypeCue<const char*>(), "env", "HOST");;
   getSubjectKey(itsSubject);
 
   itsTimer.restart();
