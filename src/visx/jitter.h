@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:40 1999
-// written: Thu May 10 12:04:40 2001
+// written: Fri Jul 13 17:28:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,14 @@ public:
   void setXJitter(double xj) { itsXJitter = xj; }
   void setYJitter(double yj) { itsYJitter = yj; }
   void setRJitter(double rj) { itsRJitter = rj; }
+
+  void setJitter(double xj, double yj, double rj)
+  {
+    itsXJitter = xj;
+    itsYJitter = yj;
+    itsRJitter = rj;
+  }
+
 
   /////////////
   // actions //
