@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar 15 19:49:57 2000
+// written: Thu Mar 16 12:07:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,18 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+extern Tcl_ObjType	tclBooleanType;
+extern Tcl_ObjType	tclDoubleType;
+extern Tcl_ObjType	tclIntType;
+extern Tcl_ObjType	tclListType;
+extern Tcl_ObjType	tclStringType;
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope declarations
+//
+///////////////////////////////////////////////////////////////////////
+
 namespace {
   Tcl_Obj* nullObject () {
 	 static Tcl_Obj* obj = 0;
@@ -41,7 +53,20 @@ namespace {
 	 Tcl::TclCmd* cmd = static_cast<Tcl::TclCmd*>(clientData);
 	 delete cmd;
   }
+
+  inline Tcl_Obj* checkSharing(Tcl_Obj* obj, Tcl_ObjType* target_type)
+	 {
+		if ( (obj->typePtr != target_type) && Tcl_IsShared(obj) )
+		  return Tcl_DuplicateObj(obj);
+		return obj;
+	 }
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+// TclCmd::Impl class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class Tcl::TclCmd::Impl {
 public:
@@ -50,6 +75,12 @@ public:
   bool itsArgsInited;
   vector<TclValue> itsArgs;
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// TclCmd member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 Tcl::TclCmd::~TclCmd() {
 DOTRACE("Tcl::TclCmd::~TclCmd");
@@ -112,7 +143,10 @@ DOTRACE("Tcl::TclCmd::arg");
 int Tcl::TclCmd::getIntFromArg(int argn) {
 DOTRACE("Tcl::TclCmd::getIntFromArg");
   int val;
-  if ( Tcl_GetIntFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK ) {
+
+  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclIntType);
+
+  if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) {
 	 throw TclError();
   }
   return val;
@@ -121,7 +155,10 @@ DOTRACE("Tcl::TclCmd::getIntFromArg");
 long Tcl::TclCmd::getLongFromArg(int argn) {
 DOTRACE("Tcl::TclCmd::getLongFromArg");
   long val;
-  if ( Tcl_GetLongFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK) {
+
+  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclIntType);
+
+  if ( Tcl_GetLongFromObj(itsInterp, obj, &val) != TCL_OK) {
 	 throw TclError();
   }
   return val;
@@ -130,7 +167,10 @@ DOTRACE("Tcl::TclCmd::getLongFromArg");
 bool Tcl::TclCmd::getBoolFromArg(int argn) {
 DOTRACE("Tcl::TclCmd::getBoolFromArg");
   int val;
-  if ( Tcl_GetBooleanFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK ) {
+
+  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclBooleanType);
+
+  if ( Tcl_GetBooleanFromObj(itsInterp, obj, &val) != TCL_OK ) {
 	 throw TclError();
   }
   return bool(val);
@@ -141,8 +181,11 @@ DOTRACE("Tcl::TclCmd::getDoubleFromArg");
   DebugEvalNL(Tcl_GetString(itsObjv[argn]));
 
   double val;
+
+  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclDoubleType);
+
   try {
-	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK ) {
+	 if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK ) {
 		throw TclError();
 	 }
   }
@@ -161,7 +204,11 @@ template <>
 int Tcl::TclCmd::getValFromObj<int>(
   Tcl_Interp*, Tcl_Obj* obj, int* /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<int>");
   int val;
+
+  obj = checkSharing(obj, &tclIntType);
+
   if ( Tcl_GetIntFromObj(0, obj, &val) != TCL_OK )
 	 {
 		TclError err("expected int value but got ");
@@ -175,7 +222,11 @@ template <>
 long Tcl::TclCmd::getValFromObj<long>(
   Tcl_Interp*, Tcl_Obj* obj, long* /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<long>");
   long val;
+
+  obj = checkSharing(obj, &tclIntType);
+
   if ( Tcl_GetLongFromObj(0, obj, &val) != TCL_OK )
 	 {
 		TclError err("expected long value but got ");
@@ -189,13 +240,17 @@ template <>
 bool Tcl::TclCmd::getValFromObj<bool>(
   Tcl_Interp*, Tcl_Obj* obj, bool* /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<bool>");
   int int_val;
+
+  obj = checkSharing(obj, &tclBooleanType);
+
   if ( Tcl_GetBooleanFromObj(0, obj, &int_val) != TCL_OK )
-	 {
+ 	 {
 		TclError err("expected boolean value but got ");
-		err.appendMsg("\"", Tcl_GetString(obj), "\"");
-		throw err;
-	 }
+ 		err.appendMsg("\"", Tcl_GetString(obj), "\"");
+ 		throw err;
+ 	 }
   return bool(int_val);
 }
 
@@ -203,7 +258,11 @@ template <>
 double Tcl::TclCmd::getValFromObj<double>(
   Tcl_Interp*, Tcl_Obj* obj, double* /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<double>");
   double val;
+
+  obj = checkSharing(obj, &tclDoubleType);
+
   if ( Tcl_GetDoubleFromObj(0, obj, &val) != TCL_OK )
 	 {
 		TclError err("expected double value but got ");
@@ -217,6 +276,7 @@ template <>
 const char* Tcl::TclCmd::getValFromObj<const char*>(
   Tcl_Interp*, Tcl_Obj* obj, const char** /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<const char*>");
   return Tcl_GetString(obj);
 }
 
@@ -224,6 +284,7 @@ template <>
 string Tcl::TclCmd::getValFromObj<string>(
   Tcl_Interp*, Tcl_Obj* obj, string* /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<string>");
   return Tcl_GetString(obj);
 }
 
@@ -231,11 +292,13 @@ template <>
 Tcl::TclValue Tcl::TclCmd::getValFromObj<Tcl::TclValue>(
   Tcl_Interp* interp, Tcl_Obj* obj, TclValue* /*dummy*/
 ) {
+DOTRACE("Tcl::TclCmd::getValFromObj<TclValue>");
   return TclValue(interp, obj);
 }
 
 void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,
 										  Tcl_Obj*** elements_return) {
+DOTRACE("Tcl::TclCmd::safeSplitList");
   if ( Tcl_ListObjGetElements(0, obj, count_return, elements_return)
 		 != TCL_OK)
 	 {
@@ -244,6 +307,7 @@ void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,
 }
 
 unsigned int Tcl::TclCmd::safeListLength(Tcl_Obj* obj) {
+DOTRACE("Tcl::TclCmd::safeListLength");
   int length;
   if ( Tcl_ListObjLength(0, obj, &length) != TCL_OK)
 	 {
@@ -453,6 +517,7 @@ Tcl::ListIterator<T>::ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos) 
   itsElementCount(0),
   itsIndex(0)
 {
+DOTRACE("Tcl::ListIterator::ListIterator");
   if (itsList == 0)
 	 throw TclError("attempted to construct ListIterator with null Tcl_Obj*");
 
@@ -475,12 +540,14 @@ Tcl::ListIterator<T>::ListIterator(const ListIterator& other) :
   itsElementCount(other.itsElementCount),
   itsIndex(other.itsIndex)
 {
+DOTRACE("Tcl::ListIterator::ListIterator(copy ctor)");
   Tcl_IncrRefCount(itsList);
 }
 
 template <class T>
 Tcl::ListIterator<T>::~ListIterator()
 {
+DOTRACE("Tcl::ListIterator::~ListIterator");
   Tcl_DecrRefCount(itsList);
 }
 
@@ -488,6 +555,7 @@ Tcl::ListIterator<T>::~ListIterator()
 template <class T>
 Tcl::ListIterator<T>& Tcl::ListIterator<T>::operator=(const ListIterator& other)
 {
+DOTRACE("Tcl::ListIterator::operator=");
   ListIterator other_copy(other);
   this->swap(other_copy);
   return *this;
@@ -496,8 +564,13 @@ Tcl::ListIterator<T>& Tcl::ListIterator<T>::operator=(const ListIterator& other)
 template <class T>
 T Tcl::ListIterator<T>::operator*() const
 {
+DOTRACE("Tcl::ListIterator::operator*");
   if (itsIndex >= itsElementCount)
 	 throw TclError("index is too larg");
+
+  DebugEval((void*)itsInterp); DebugEval(itsIndex);
+  DebugEvalNL(itsListElements[itsIndex]);
+
   return TclCmd::getValFromObj(itsInterp, itsListElements[itsIndex], (T*)0);
 }
 
@@ -514,6 +587,7 @@ namespace {
 template <class T>
 void Tcl::ListIterator<T>::swap(ListIterator<T>& other)
 {
+DOTRACE("Tcl::ListIterator::swap");
   local_swap(itsInterp, other.itsInterp);
   local_swap(itsList, other.itsList);
   local_swap(itsListElements, other.itsListElements);
