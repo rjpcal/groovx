@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:37:02 1999
-// written: Tue Jun  5 10:51:45 2001
+// written: Wed Jun 13 16:09:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBSERVER_H_DEFINED
 #define OBSERVER_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
 
 namespace Util
 {
@@ -32,7 +36,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Observer {
+class Util::Observer : public virtual Util::Object {
 public:
   ///
   virtual ~Observer();
