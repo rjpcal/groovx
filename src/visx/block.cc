@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed May 31 22:59:45 2000
+// written: Fri Jul  7 15:52:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -431,6 +431,15 @@ DOTRACE("Block::processResponse");
 
   if (itsImpl->itsVerbose) {
     cerr << "response: " << response << '\n';
+  }
+
+  DebugEval(response.correctVal());
+  DebugEvalNL(response.val());
+
+  if (!response.isCorrect()) {
+	 // If the response was incorrect, add the current trial to the end
+	 // of the block.
+	 addTrial(currentTrial(), 1);
   }
 }
 
