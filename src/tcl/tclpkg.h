@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Mon Jul 12 12:58:56 1999
+// written: Thu Sep 30 10:58:30 1999
 // $Id$
 //
 //
@@ -23,6 +23,10 @@
 #ifndef STRING_DEFINED
 #include <string>
 #define STRING_DEFINED
+#endif
+
+#ifndef PROPERTY_H_DEFINED
+#include "property.h"
 #endif
 
 template <class T> class Getter;
@@ -270,6 +274,8 @@ public:
 	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
   }
 
+  void declareProperty(const PropertyInfo<C>& pinfo);
+
   virtual C* getCItemFromId(int id) = 0;
   virtual void* getItemFromId(int id) {
 	 return static_cast<void*>(getCItemFromId(id));
@@ -321,11 +327,111 @@ public:
 	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
   }
 
+  void declareProperty(const PropertyInfo<C>& pinfo);
+  void declareAllProperties();
+
   virtual C* getCItemFromId(int id) = 0;
   virtual void* getItemFromId(int id) {
 	 return static_cast<void*>(getCItemFromId(id));
   }
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// CVecPropertyCmd
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class CVecPropertyCmd : public TclCmd {
+public:
+  CVecPropertyCmd(CTclIoItemPkg<C>* pkg, const PropertyInfo<C>& pinfo) :
+	 TclCmd(pkg->interp(), pkg->makePkgCmdName(pinfo.name.c_str()),
+			  (pkg->itemArgn() ? "item_id(s) ?new_value(s)?" : "?new_value?"),
+			  pkg->itemArgn()+1, pkg->itemArgn()+2, false),
+	 itsPkg(pkg),
+	 itsPropInfo(pinfo),
+	 itsItemArgn(pkg->itemArgn()),
+	 itsValArgn(pkg->itemArgn()+1),
+	 itsObjcGet(pkg->itemArgn()+1),
+	 itsObjcSet(pkg->itemArgn()+2)
+  {}
+
+protected:
+  virtual void invoke() {
+	 // Fetch the item ids
+	 vector<int> ids;
+
+	 if (itsItemArgn) {
+		getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+	 }
+	 else {
+		// -1 is the cue to use the default item
+		ids.push_back(-1);
+	 }
+
+	 // If we are getting...
+	 if (TclCmd::objc() == itsObjcGet) {
+		C* item = itsPkg->getCItemFromId(ids[0]);
+		returnVal( item->get(itsPropInfo.property) );
+		
+		for (int i = 1; i < ids.size(); ++i) {
+		  C* item = itsPkg->getCItemFromId(ids[i]);
+		  lappendVal( item->get(itsPropInfo.property) );
+		}
+
+	 }
+	 // ... or if we are setting
+	 else if (TclCmd::objc() == itsObjcSet) {
+		vector<TclValue> vals;
+
+		if (ids.size() == 1) {
+ 		  vals.push_back(TclValue(itsPkg->interp(), arg(itsValArgn)));
+		}
+		else {
+ 		  getValSequenceFromArg(itsValArgn, back_inserter(vals));
+		}
+
+		int max_valn = vals.size()-1;
+
+		for (int i = 0, valn = 0; i < ids.size(); ++i) {
+		  C* item = itsPkg->getCItemFromId(ids[i]);
+ 		  item->set(itsPropInfo.property, vals[valn]);
+		  if (valn < max_valn) ++valn;
+		}
+	 }
+	 // ... or ... "can't happen"
+	 else { /* Assert(0); */ }
+  }
+
+private:
+  CTclIoItemPkg<C>* itsPkg;
+  const PropertyInfo<C>& itsPropInfo;
+  int itsItemArgn;
+  int itsValArgn;
+  int itsObjcGet;
+  int itsObjcSet;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// CTclIoItemPkg definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+void CTclIoItemPkg::declareProperty(const PropertyInfo<C>& pinfo) {
+  addCommand( new CVecPropertyCmd<C>(this, pinfo) );
+}
+  
+template <class C>
+void CTclIoItemPkg::declareAllProperties() {
+  const vector<PropertyInfo<C> >& pinfos = C::getPropertyInfos();
+
+  for (int i = 0; i < pinfos.size(); ++i) {
+	 declareProperty(pinfos[i]);
+  }
+}
 
 static const char vcid_tclitempkg_h[] = "$Header$";
 #endif // !TCLITEMPKG_H_DEFINED
