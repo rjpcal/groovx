@@ -256,6 +256,11 @@ if test "$ANYTOPNM_PROG" != ""; then
    AC_DEFINE_UNQUOTED(ANYTOPNM_PROG,"$ANYTOPNM_PROG",[full path to anytopnm program])
 fi
 
+AC_PATH_PROG([GIFTOPNM_PROG], [giftopnm], [])
+if test "$GIFTOPNM_PROG" != ""; then
+   AC_DEFINE_UNQUOTED(GIFTOPNM_PROG,"$GIFTOPNM_PROG",[full path to giftopnm program])
+fi
+
 AC_PATH_PROGS([DOXYGEN_PROG], [doxygen], [doxygen])
 AC_SUBST(DOXYGEN_PROG)
 
