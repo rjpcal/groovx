@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Mar 15 10:22:58 2000
+// written: Wed Mar 15 20:38:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,23 +65,26 @@ DOTRACE("ErrorWithMsg::msg_cstr");
   return itsInfo->c_str();
 }
 
-void ErrorWithMsg::appendMsg(const char* addMsg) {
+ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg) {
 DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg; 
+  return *this;
 }
 
-void ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2) {
+ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2) {
 DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg1; 
   *itsInfo += addMsg2; 
+  return *this;
 }
 
-void ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2,
-									  const char* addMsg3) {
+ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2,
+												  const char* addMsg3) {
 DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg1; 
   *itsInfo += addMsg2; 
   *itsInfo += addMsg3; 
+  return *this;
 }
 
 void ErrorWithMsg::setMsg(const char* str) {
