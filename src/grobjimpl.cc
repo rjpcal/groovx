@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Wed Jul 18 15:56:33 2001
+// written: Wed Jul 18 18:19:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,49 +68,6 @@ namespace {
 #endif
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// GrObj::Impl::Scaler definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-void GrObj::Impl::Scaler::doScaling() const {
-DOTRACE("GrObj::Impl::Scaler::doScaling");
-  if (GrObj::NATIVE_SCALING == itsMode) return;
-
-  switch (itsMode) {
-  case GrObj::MAINTAIN_ASPECT_SCALING:
-  case GrObj::FREE_SCALING:
-    glScaled(itsWidthFactor, itsHeightFactor, 1.0);
-    break;
-  }
-}
-
-void GrObj::Impl::Scaler::setMode(GrObj::ScalingMode new_mode,
-                                  GrObj::Impl* obj) {
-DOTRACE("GrObj::Impl::Scaler::setMode");
-  if (itsMode == new_mode) return;
-
-  switch (new_mode) {
-  case GrObj::NATIVE_SCALING:
-    itsMode = new_mode;
-
-    itsWidthFactor = 1.0;
-    itsHeightFactor = 1.0;
-    break;
-
-  case GrObj::MAINTAIN_ASPECT_SCALING:
-  case GrObj::FREE_SCALING:
-    // These modes require a bounding box
-    if ( !obj->hasBB() ) return;
-
-    itsMode = new_mode;
-    break;
-
-  } // end switch
-}
-
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -121,58 +78,42 @@ DOTRACE("GrObj::Impl::Scaler::setMode");
 void GrObj::Impl::BoundingBox::updateRaw() const {
 DOTRACE("GrObj::Impl::BoundingBox::updateRaw");
   DebugEval(itsRawBBIsCurrent);
-  if (!itsRawBBIsCurrent) {
-    itsHasBB = itsOwner->grHasBoundingBox();
-
-    if (itsHasBB) {
+  if (!itsRawBBIsCurrent)
+    {
       itsOwner->grGetBoundingBox(itsCachedRawBB, itsCachedPixelBorder);
+      itsRawBBIsCurrent = true;
     }
-    else {
-      itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
-      itsCachedPixelBorder = 0;
-    }
-    itsRawBBIsCurrent = true;
-  }
-  DebugEvalNL(itsHasBB);
 }
 
-void GrObj::Impl::BoundingBox::updateFinal(const GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
+Rect<double> GrObj::Impl::BoundingBox::withBorder(
+  const GWT::Canvas& canvas) const
+{
+DOTRACE("GrObj::Impl::BoundingBox::withBorder");
 
-  if ( !itsFinalBBIsCurrent ) {
+  // Do the object's internal scaling and alignment, and find the
+  // bounding box in screen coordinates
 
-    // Do the object's internal scaling and alignment, and find the
-    // bounding box in screen coordinates
+  Rect<int> screen_pos;
 
-    Rect<int> screen_pos;
+  {
+    glMatrixMode(GL_MODELVIEW);
 
-    {
-      glMatrixMode(GL_MODELVIEW);
+    GWT::Canvas::StateSaver state(canvas);
 
-      GWT::Canvas::StateSaver state(canvas);
+    itsOwner->itsScaler.doScaling();
+    itsOwner->itsAligner.doAlignment(native());
 
-      itsOwner->doScaling();
-      itsOwner->doAlignment();
-
-      screen_pos = canvas.getScreenFromWorld(getRaw());
-    }
-
-    // Add a pixel border around the edges of the image...
-    int bp = pixelBorder();
-
-    screen_pos.widenByStep(bp);
-    screen_pos.heightenByStep(bp);
-
-    // ... and project back to world coordinates
-    itsCachedFinalBB = canvas.getWorldFromScreen(screen_pos);
-
-    // This next line is commented out to disable the caching scheme
-    // because I don't think it really works, since changes to the
-    // OpenGL state will screw up a cached copy of the box. What we
-    // need is a way to determine whether the OpenGL state has
-    // changed... but this might be impractical.
-//     itsFinalBBIsCurrent = true;
+    screen_pos = canvas.getScreenFromWorld(native());
   }
+
+  // Add a pixel border around the edges of the image...
+  int bp = pixelBorder();
+
+  screen_pos.widenByStep(bp);
+  screen_pos.heightenByStep(bp);
+
+  // ... and project back to world coordinates
+  return canvas.getWorldFromScreen(screen_pos);
 }
 
 
@@ -222,11 +163,6 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 
   obj->undraw(canvas);
 
-  Assert(obj->hasBB());
-
-//   Rect<double> bmapbox;
-//   obj->getBoundingBox(canvas, bmapbox);
-
   {
     glMatrixMode(GL_MODELVIEW);
     GWT::Canvas::StateSaver state(canvas);
@@ -235,8 +171,8 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
     {
       glDrawBuffer(GL_FRONT);
 
-      obj->doScaling();
-      obj->doAlignment();
+      obj->itsScaler.doScaling();
+      obj->itsAligner.doAlignment(obj->itsBB.native());
 
       obj->grRender(canvas, GrObj::DRAW);
 
@@ -292,39 +228,28 @@ DOTRACE("GrObj::Impl::Renderer::newList");
   }
 }
 
-void GrObj::Impl::Renderer::setMode(GrObj::RenderMode new_mode,
-                                    GrObj::Impl* obj) {
+void GrObj::Impl::Renderer::setMode(GrObj::RenderMode new_mode) {
 DOTRACE("GrObj::Impl::Renderer::setMode");
   // If new_mode is the same as the current render mode, then return
   // immediately (and don't send a state change message)
   if (new_mode == itsMode) return;
 
-  switch (new_mode) {
-  case GrObj::DIRECT_RENDER:
-  case GrObj::GLCOMPILE:
-    itsMode = new_mode;
-    break;
+  itsMode = new_mode;
 
-  case GrObj::GL_BITMAP_CACHE:
-  case GrObj::X11_BITMAP_CACHE:
-    // These modes require a bounding box
-    if ( !obj->hasBB() ) return;
+  switch (new_mode)
+	 {
+	 case GrObj::GL_BITMAP_CACHE:
+		itsBmapRenderer.reset(new GLBmapRenderer());
+		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
+		queueBitmapLoad();
+		break;
 
-    if (GrObj::GL_BITMAP_CACHE == new_mode) {
-      itsBmapRenderer.reset(new GLBmapRenderer());
-      itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
-    }
-    if (GrObj::X11_BITMAP_CACHE == new_mode) {
-      itsBmapRenderer.reset(new XBmapRenderer());
-      itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
-    }
-
-    queueBitmapLoad();
-
-    itsMode = new_mode;
-    break;
-
-  } // end switch
+	 case GrObj::X11_BITMAP_CACHE:
+		itsBmapRenderer.reset(new XBmapRenderer());
+		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
+		queueBitmapLoad();
+		break;
+	 }
 }
 
 void GrObj::Impl::Renderer::render(const GrObj::Impl* obj,
@@ -401,7 +326,7 @@ DOTRACE("GrObj::Impl::readFrom");
 
   int temp;
   reader->readValue("GrObj::renderMode", temp);
-  itsRenderer.setMode(temp, this);
+  itsRenderer.setMode(temp);
 
   dynamic_string filename;
   reader->readValue("GrObj::cacheFilename", filename);
@@ -412,7 +337,7 @@ DOTRACE("GrObj::Impl::readFrom");
   reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
   reader->readValue("GrObj::scalingMode", temp);
-  itsScaler.setMode(temp, this);
+  itsScaler.setMode(temp);
 
   reader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
   reader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
@@ -452,140 +377,6 @@ DOTRACE("GrObj::Impl::writeTo");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObj::Impl accessor definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-bool GrObj::Impl::getBoundingBox(const GWT::Canvas& canvas,
-                                 Rect<double>& bbox) const {
-DOTRACE("GrObj::Impl::getBoundingBox");
-
-  if ( !itsBB.bbExists() ) return false;
-
-  bbox = itsBB.getFinal(canvas);
-  DebugEval(bbox.left()); DebugEval(bbox.top());
-  DebugEval(bbox.right()); DebugEvalNL(bbox.bottom());
-  return true;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// GrObj::Impl manipulator definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-void GrObj::Impl::setWidth(double new_width) {
-DOTRACE("GrObj::Impl::setWidth");
-  if (new_width == 0.0 || new_width == finalWidth()) return;
-  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
-  if ( !hasBB() ) return;
-
-  double new_width_factor = new_width / nativeWidth();
-
-  double change_factor = new_width_factor / itsScaler.itsWidthFactor;
-
-  itsScaler.itsWidthFactor = new_width_factor;
-
-  if (itsScaler.getMode() == GrObj::MAINTAIN_ASPECT_SCALING) {
-    itsScaler.itsHeightFactor *= change_factor;
-  }
-}
-
-void GrObj::Impl::setHeight(double new_height) {
-DOTRACE("GrObj::Impl::setHeight");
-  if (new_height == 0.0 || new_height == finalHeight()) return;
-  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
-  if ( !hasBB() ) return;
-
-  double new_height_factor = new_height / nativeHeight();
-
-  double change_factor = new_height_factor / itsScaler.itsHeightFactor;
-
-  itsScaler.itsHeightFactor = new_height_factor;
-
-  if (itsScaler.getMode() == GrObj::MAINTAIN_ASPECT_SCALING) {
-    itsScaler.itsWidthFactor *= change_factor;
-  }
-}
-
-void GrObj::Impl::setAspectRatio(double new_aspect_ratio) {
-DOTRACE("GrObj::Impl::setAspectRatio");
-  if (new_aspect_ratio == 0.0 || new_aspect_ratio == aspectRatio()) return;
-  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
-  if ( !hasBB() ) return;
-
-  double change_factor = new_aspect_ratio / (aspectRatio());
-
-  // By convention, we change only the width to reflect the change in
-  // aspect ratio
-
-  itsScaler.itsWidthFactor *= change_factor;
-}
-
-void GrObj::Impl::setMaxDimension(double new_max_dimension) {
-DOTRACE("GrObj::Impl::setMaxDimension");
-  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
-  if ( !hasBB() ) return;
-
-  double scaling_factor = new_max_dimension / max(finalWidth(), finalHeight());
-
-  itsScaler.itsWidthFactor *= scaling_factor;
-  itsScaler.itsHeightFactor *= scaling_factor;
-}
-
-void GrObj::Impl::setAlignmentMode(GrObj::AlignmentMode new_mode) {
-DOTRACE("GrObj::Impl::setAlignmentMode");
-  DebugEval(new_mode);
-  DebugEvalNL(itsAligner.itsMode);
-
-  if (new_mode == itsAligner.itsMode) return;
-
-  switch (new_mode) {
-  case GrObj::NATIVE_ALIGNMENT:
-    itsAligner.itsMode = new_mode;
-    break;
-
-  case GrObj::CENTER_ON_CENTER:
-  case GrObj::NW_ON_CENTER:
-  case GrObj::NE_ON_CENTER:
-  case GrObj::SW_ON_CENTER:
-  case GrObj::SE_ON_CENTER:
-  case GrObj::ARBITRARY_ON_CENTER:
-    // These modes require a bounding box
-    if ( !hasBB() ) return;
-
-    itsAligner.itsMode = new_mode;
-    break;
-
-  } // end switch
-
-  DebugEvalNL(itsAligner.itsMode);
-}
-
-void GrObj::Impl::setUnRenderMode(GrObj::RenderMode new_mode) {
-DOTRACE("GrObj::Impl::setUnRenderMode");
-  // If new_mode is the same as the current unrender mode, then return
-  // immediately (and don't send a state change message)
-  if (new_mode == itsUnRenderer.itsMode) return;
-
-  switch (new_mode) {
-  case GrObj::DIRECT_RENDER:
-  case GrObj::SWAP_FORE_BACK:
-    itsUnRenderer.itsMode = new_mode;
-    break;
-
-  case GrObj::CLEAR_BOUNDING_BOX:
-    // These modes require a bounding box
-    if ( !hasBB() ) return;
-
-    itsUnRenderer.itsMode = new_mode;
-    break;
-
-  } // end switch
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // GrObj::Impl action definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -607,8 +398,8 @@ DOTRACE("GrObj::Impl::draw");
 
       GWT::Canvas::StateSaver state(canvas);
 
-      doScaling();
-      doAlignment();
+      itsScaler.doScaling();
+      itsAligner.doAlignment(itsBB.native());
 
       itsRenderer.render(this, canvas);
     }
@@ -645,7 +436,7 @@ DOTRACE("GrObj::Impl::undraw");
   case GrObj::DIRECT_RENDER:     undrawDirectRender(canvas);     break;
   case GrObj::SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
   case GrObj::CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
-  default:                             /* nothing */                  break;
+  default:                       /* nothing */                   break;
   }
 
   if ( itsBB.itsIsVisible ) {
@@ -657,24 +448,23 @@ DOTRACE("GrObj::Impl::undraw");
 
 void GrObj::Impl::grDrawBoundingBox(const GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::grDrawBoundingBox");
-  Rect<double> bbox;
-  if ( getBoundingBox(canvas, bbox) ) {
-    DebugPrintNL("drawing bounding box");
-    glPushAttrib(GL_LINE_BIT);
-    {
-      glLineWidth(1.0);
-      glEnable(GL_LINE_STIPPLE);
-      glLineStipple(1, 0x0F0F);
 
-      glBegin(GL_LINE_LOOP);
-        glVertex2d(bbox.left(), bbox.bottom());
-        glVertex2d(bbox.right(), bbox.bottom());
-        glVertex2d(bbox.right(), bbox.top());
-        glVertex2d(bbox.left(), bbox.top());
-      glEnd();
-    }
-    glPopAttrib();
+  Rect<double> bbox = itsBB.withBorder(canvas);
+
+  glPushAttrib(GL_LINE_BIT);
+  {
+    glLineWidth(1.0);
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(1, 0x0F0F);
+
+    glBegin(GL_LINE_LOOP);
+      glVertex2d(bbox.left(), bbox.bottom());
+      glVertex2d(bbox.right(), bbox.bottom());
+      glVertex2d(bbox.right(), bbox.top());
+      glVertex2d(bbox.left(), bbox.top());
+    glEnd();
   }
+  glPopAttrib();
 }
 
 void GrObj::Impl::invalidateCaches() {
@@ -683,23 +473,14 @@ DOTRACE("GrObj::Impl::invalidateCaches");
   itsBB.invalidate();
 }
 
-void GrObj::Impl::doAlignment() const {
-DOTRACE("GrObj::Impl::doAlignment");
-  if (GrObj::NATIVE_ALIGNMENT == itsAligner.itsMode) return;
-
-  Assert(hasBB());
-
-  itsAligner.doAlignment(nativeWidth(), nativeHeight(), nativeCenter());
-}
-
 void GrObj::Impl::undrawDirectRender(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
 
   GWT::Canvas::StateSaver state(canvas);
 
-  doScaling();
-  doAlignment();
+  itsScaler.doScaling();
+  itsAligner.doAlignment(itsBB.native());
 
   self->grRender(canvas, GrObj::UNDRAW);
 }
@@ -715,8 +496,8 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 
       GWT::Canvas::StateSaver state(canvas);
 
-      doScaling();
-      doAlignment();
+      itsScaler.doScaling();
+      itsAligner.doAlignment(itsBB.native());
 
       if ( itsRenderer.getMode() == GrObj::GLCOMPILE ) {
         itsRenderer.callList();
@@ -733,26 +514,25 @@ void GrObj::Impl::undrawClearBoundingBox(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
-  Rect<double> world_pos;
-  if ( getBoundingBox(canvas, world_pos) ) {
-    glPushAttrib(GL_SCISSOR_BIT);
-    {
-      glEnable(GL_SCISSOR_TEST);
+  Rect<double> world_pos = itsBB.withBorder(canvas);
 
-      Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
+  glPushAttrib(GL_SCISSOR_BIT);
+  {
+    glEnable(GL_SCISSOR_TEST);
 
-      // Add an extra one-pixel border around the rect
-      screen_pos.widenByStep(1);
-      screen_pos.heightenByStep(1);
+    Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
 
-      glScissor(screen_pos.left(), screen_pos.bottom(),
-                screen_pos.width(), screen_pos.height());
+    // Add an extra one-pixel border around the rect
+    screen_pos.widenByStep(itsBB.pixelBorder());
+    screen_pos.heightenByStep(itsBB.pixelBorder());
 
-      glClear(GL_COLOR_BUFFER_BIT);
-      glDisable(GL_SCISSOR_TEST);
-    }
-    glPopAttrib();
+    glScissor(screen_pos.left(), screen_pos.bottom(),
+              screen_pos.width(), screen_pos.height());
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
   }
+  glPopAttrib();
 }
 
 void GrObj::Impl::undrawBoundingBox(GWT::Canvas& canvas) const {
@@ -766,8 +546,8 @@ DOTRACE("GrObj::Impl::undrawBoundingBox");
 
       GWT::Canvas::StateSaver state(canvas);
 
-      doScaling();
-      doAlignment();
+      itsScaler.doScaling();
+      itsAligner.doAlignment(itsBB.native());
 
       grDrawBoundingBox(canvas);
     }

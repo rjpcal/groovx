@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Jul 18 15:58:04 2001
+// written: Wed Jul 18 18:31:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "bitmaprep.h"
 #include "grobj.h"
 #include "grobjaligner.h"
+#include "grobjscaler.h"
 #include "glbmaprenderer.h"
 #include "point.h"
 #include "rect.h"
@@ -72,45 +73,32 @@ private:
     BoundingBox(const GrObj::Impl* owner) :
       itsIsVisible(false),
       itsOwner(owner),
-      itsHasBB(false),
       itsRawBBIsCurrent(false),
       itsCachedRawBB(),
-      itsCachedPixelBorder(0),
-      itsFinalBBIsCurrent(false),
-      itsCachedFinalBB()
-      {}
+      itsCachedPixelBorder(0)
+    {}
 
-    bool bbExists() const
-      { return itsOwner->grHasBoundingBox(); }
-
-    const Rect<double>& getRaw() const
+    const Rect<double>& native() const
       {
         updateRaw();
         return itsCachedRawBB;
       }
 
-    const Rect<double>& getFinal(const GWT::Canvas& canvas) const
-      {
-        updateFinal(canvas);
-        return itsCachedFinalBB;
-      }
-
-    void invalidate()
-      {
-        itsRawBBIsCurrent = false;
-        itsFinalBBIsCurrent = false;
-      }
-
-  private:
-    void updateRaw() const;
-
-    void updateFinal(const GWT::Canvas& canvas) const;
+    Rect<double> withBorder(const GWT::Canvas& canvas) const;
 
     int pixelBorder() const
       {
         updateRaw();
         return itsCachedPixelBorder;
       }
+
+    void invalidate()
+      {
+        itsRawBBIsCurrent = false;
+      }
+
+  private:
+    void updateRaw() const;
 
     // data
   public:
@@ -119,34 +107,30 @@ private:
   private:
     const GrObj::Impl* const itsOwner;
 
-    mutable bool itsHasBB;
-
     mutable bool itsRawBBIsCurrent;
     mutable Rect<double> itsCachedRawBB;
     mutable int itsCachedPixelBorder;
-
-    mutable bool itsFinalBBIsCurrent;
-    mutable Rect<double> itsCachedFinalBB;
   };
 
-  double nativeWidth() const   { return itsBB.getRaw().width(); }
-  double nativeHeight() const  { return itsBB.getRaw().height(); }
+  double nativeWidth() const   { return itsBB.native().width(); }
+  double nativeHeight() const  { return itsBB.native().height(); }
 
   Point<double> nativeCenter() const
   {
     return Point<double>(nativeCenterX(), nativeCenterY());
   }
 
-  double nativeCenterX() const { return itsBB.getRaw().centerX(); }
-  double nativeCenterY() const { return itsBB.getRaw().centerY(); }
+  double nativeCenterX() const { return itsBB.native().centerX(); }
+  double nativeCenterY() const { return itsBB.native().centerY(); }
 
 public:
 
-  const Rect<double>& getRawBB() const { return itsBB.getRaw(); }
+  const Rect<double>& getRawBB() const { return itsBB.native(); }
 
-  bool hasBB() const { return itsBB.bbExists(); }
-
-  bool getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const;
+  void getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const
+  {
+	 bbox = itsBB.withBorder(canvas);
+  }
 
   bool getBBVisibility() const { return itsBB.itsIsVisible; }
 
@@ -157,64 +141,32 @@ public:
   // scaling //
   /////////////
 private:
-  class Scaler {
-  public:
-    Scaler() :
-      itsMode(GrObj::NATIVE_SCALING),
-      itsWidthFactor(1.0),
-      itsHeightFactor(1.0)
-      {}
-
-    void doScaling() const;
-    GrObj::ScalingMode getMode() const { return itsMode; }
-    void setMode(GrObj::ScalingMode new_mode, GrObj::Impl* obj);
-
-  private:
-    GrObj::ScalingMode itsMode;
-  public:
-    double itsWidthFactor;
-    double itsHeightFactor;
-  };
+  typedef GrObjScaler Scaler;
 
 public:
-  void doScaling() const
-    { itsScaler.doScaling(); }
-
-  GrObj::ScalingMode getScalingMode() const
-    { return itsScaler.getMode(); }
-
-  void setScalingMode(GrObj::ScalingMode new_mode)
-    { itsScaler.setMode(new_mode, this); }
-
-  void setWidth(double new_width);
-  void setHeight(double new_height);
-  void setAspectRatio(double new_aspect_ratio);
-  void setMaxDimension(double new_max_dimension);
-
-  double aspectRatio() const
+  void setWidth(double new_width)
   {
-    if ( !hasBB() ) return 1.0;
-    return (itsScaler.itsHeightFactor != 0.0 ?
-            itsScaler.itsWidthFactor/itsScaler.itsHeightFactor : 0.0);
+    itsScaler.setWidth(new_width, nativeWidth());
   }
 
-  ///////////////
-  // alignment //
-  ///////////////
-private:
-  typedef GrObjAligner Aligner;
+  void setHeight(double new_height)
+  {
+    itsScaler.setHeight(new_height, nativeHeight());
+  }
 
-public:
-  void doAlignment() const;
+  void setMaxDimension(double new_max_dimension)
+  {
+    itsScaler.setMaxDimension(new_max_dimension, getMaxDimension());
+  }
 
-  void setAlignmentMode(GrObj::AlignmentMode new_mode);
-  GrObj::AlignmentMode getAlignmentMode() const { return itsAligner.itsMode; }
+  double finalWidth() const
+  { return nativeWidth()*itsScaler.itsWidthFactor; }
 
-  double getCenterX() const { return itsAligner.itsCenter.x(); }
-  double getCenterY() const { return itsAligner.itsCenter.y(); }
+  double finalHeight() const
+  { return nativeHeight()*itsScaler.itsHeightFactor; }
 
-  void setCenterX(double val) { itsAligner.itsCenter.x() = val; }
-  void setCenterY(double val) { itsAligner.itsCenter.y() = val; }
+  double getMaxDimension() const
+    { return max(finalWidth(), finalHeight()); }
 
 
   ///////////////
@@ -232,7 +184,7 @@ private:
 
     void invalidate() const { itsIsCurrent = false; }
 
-    void setMode(GrObj::RenderMode new_mode, GrObj::Impl* obj);
+    void setMode(GrObj::RenderMode new_mode);
 
     GrObj::RenderMode getMode() const { return itsMode; }
 
@@ -310,7 +262,7 @@ public:
   GrObj::RenderMode getRenderMode() const
     { return itsRenderer.getMode(); }
   void setRenderMode(GrObj::RenderMode new_mode)
-    { itsRenderer.setMode(new_mode, this); }
+    { itsRenderer.setMode(new_mode); }
 
   static void setBitmapCacheDir(const char* dirname)
     { Impl::Renderer::BITMAP_CACHE_DIR = dirname; }
@@ -348,7 +300,10 @@ public:
   GrObj::RenderMode getUnRenderMode() const
     { return itsUnRenderer.itsMode; }
 
-  void setUnRenderMode(GrObj::RenderMode new_mode);
+  void setUnRenderMode(GrObj::RenderMode new_mode)
+  {
+	 itsUnRenderer.itsMode = new_mode;
+  }
 
   void undraw(GWT::Canvas& canvas) const;
 
@@ -356,14 +311,6 @@ public:
   // ? other ? //
   ///////////////
 public:
-  double finalWidth() const
-  { return nativeWidth()*itsScaler.itsWidthFactor; }
-
-  double finalHeight() const
-  { return nativeHeight()*itsScaler.itsHeightFactor; }
-
-  double getMaxDimension() const
-    { return max(finalWidth(), finalHeight()); }
 
   int category() const { return itsCategory; }
   void setCategory(int val) { itsCategory = val; }
@@ -380,19 +327,17 @@ public:
   void grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
     { self->grGetBoundingBox(bbox, pixel_border); }
 
-  bool grHasBoundingBox() const
-    { return self->grHasBoundingBox(); }
-
   //////////////////
   // Data members //
   //////////////////
 private:
   GrObj* const self;
 
+public:
   int itsCategory;
   BoundingBox itsBB;
   Scaler itsScaler;
-  Aligner itsAligner;
+  GrObjAligner itsAligner;
   Renderer itsRenderer;
   UnRenderer itsUnRenderer;
 };
