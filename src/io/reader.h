@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Tue Oct 24 09:40:16 2000
+// written: Fri Nov  3 11:51:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@ namespace IO {
 }
 
 class Value;
+
+class fixed_string;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -140,8 +142,8 @@ public:
   virtual IO::IoObject* readRoot(IO::IoObject* root=0) = 0;
 
 protected:
-  /// Read the C-style string (\c char*) attribute associated with the tag \a name.
-  virtual char* readCstring(const char* name) = 0;
+  /// Read the string attribute associated with the tag \a name.
+  virtual fixed_string readStringImpl(const char* name) = 0;
 };
 
 static const char vcid_reader_h[] = "$Header$";
