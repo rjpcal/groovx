@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar  3 17:03:27 2000
+// written: Mon Mar  6 12:19:30 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -16,6 +16,7 @@
 
 #include "objtogl.h"
 
+#include "strings.h"
 #include "tclcmd.h"
 #include "tclevalcmd.h"
 #include "tclitempkg.h"
@@ -23,10 +24,10 @@
 #include "toglconfig.h"
 #include "xbmaprenderer.h"
 
+#include <stdexcept>
 #include <strstream.h>
 #include <iomanip.h>
 #include <togl.h>
-#include <string>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -244,7 +245,11 @@ protected:
     // Eval a command to create the widget. This will cause in turn
     // call the createCallback as part of Togl's internal creation
     // procedures.
-    string create_cmd_str = string("togl ") + pathname + " " + init_args;
+    dynamic_string create_cmd_str = "togl ";
+	 create_cmd_str += pathname;
+	 create_cmd_str += " ";
+	 create_cmd_str += init_args;
+
     Tcl::TclEvalCmd create_cmd(create_cmd_str.c_str(),
 										 Tcl::TclEvalCmd::THROW_EXCEPTION);
     create_cmd.invoke(itsInterp);
@@ -261,8 +266,9 @@ protected:
 													  gl_unit_angle);
     
 	 if (pack) {
-		string pack_cmd_str =
-		  string("pack ") + pathname + " -expand 1 -fill both";
+		dynamic_string pack_cmd_str = "pack ";
+	   pack_cmd_str += pathname;
+		pack_cmd_str += " -expand 1 -fill both";
 		Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
 										 Tcl::TclEvalCmd::THROW_EXCEPTION);
 		pack_cmd.invoke(itsInterp);
