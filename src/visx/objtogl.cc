@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Aug 21 15:22:44 2001
+// written: Tue Aug 21 16:45:00 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -110,11 +110,12 @@ namespace ObjTogl
 
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
-  void see(SoftRef<GWT::Widget> widg, Ref<GxNode> item)
+  Util::UID see(SoftRef<GWT::Widget> widg, Ref<GxNode> item)
   {
     widg->setDrawable(item);
     widg->setVisibility(true);
     widg->display();
+    return item->id();
   }
 
   void setColor(SoftRef<Toglet> toglet, unsigned int i,
