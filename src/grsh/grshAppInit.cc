@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jan 18 16:07:07 2002
+// written: Mon Jan 21 12:56:52 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -48,6 +48,7 @@ extern "C"
   Tcl_PackageInitProc Grobj_Init;
   Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc Gx_Init;
+  Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Hook_Init;
   Tcl_PackageInitProc House_Init;
   Tcl_PackageInitProc Io_Init;
@@ -95,6 +96,7 @@ PackageInfo IMMEDIATE_PKGS[] =
   , { "Gltcl",    Gltcl_Init     }
   , { "Grobj",    Grobj_Init     }
   , { "Gtext",    Gtext_Init     }
+  , { "Gtrace",   Gtrace_Init    }
   , { "Gx",       Gx_Init        }
   , { "Hook",     Hook_Init      }
   , { "House",    House_Init     }
