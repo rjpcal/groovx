@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:34:18 2002
-// written: Tue Nov 19 18:00:52 2002
+// written: Tue Dec 24 20:47:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,6 @@ void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
 DOTRACE("GxBounds::getBoundingCube");
 
   int border_pixels = itsPixelBorder;
-
-  // Add extra pixels if the box itself will be visible.
-  if (isItVisible) border_pixels += 4;
 
   dbgEval(3, itsPixelBorder); dbgEvalNL(3, border_pixels);
 
