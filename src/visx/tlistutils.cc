@@ -56,8 +56,11 @@ DOTRACE("TlistUtils::writeResponses");
 
   // We prepend a '%' to the header line so that MATLAB can ignore
   // this line as a comment
-  ofs << '%' << std::setw(wid-1) << "Trial" << std::setw(wid) << "N"
-      << std::setw(wid) << "Average" << std::setw(wid) << "msec\n";
+  ofs << '%' << std::setw(wid-1) << "Trial" << " "
+      << std::setw(wid) << "N" << " "
+      << std::setw(wid) << "Average" << " "
+      << std::setw(wid) << "msec" << " "
+      << "  description\n";
 
   ofs.setf(std::ios::fixed);
   ofs.precision(2);
@@ -66,10 +69,11 @@ DOTRACE("TlistUtils::writeResponses");
        itr.isValid();
        ++itr)
     {
-      ofs << std::setw(wid) << itr->id();
-      ofs << std::setw(wid) << itr->numResponses();
-      ofs << std::setw(wid) << itr->avgResponse();
-      ofs << std::setw(wid) << itr->avgRespTime() << std::endl;
+      ofs << std::setw(wid) << itr->id() << " ";
+      ofs << std::setw(wid) << itr->numResponses() << " ";
+      ofs << std::setw(wid) << itr->avgResponse() << " ";
+      ofs << std::setw(wid) << itr->avgRespTime() << " ";
+      ofs << "% " << itr->vxInfo()  << std::endl;
     }
 
   if (ofs.fail())
