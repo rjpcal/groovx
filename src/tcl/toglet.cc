@@ -310,8 +310,11 @@ DOTRACE("Toglet::getCanvas");
 
 void Toglet::makeCurrent() const
 {
-  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
-  theCurrentToglet = Util::SoftRef<Toglet>(const_cast<Toglet*>(this));
+  if (theCurrentToglet.id() != this->id())
+    {
+      rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+      theCurrentToglet = Util::SoftRef<Toglet>(const_cast<Toglet*>(this));
+    }
 }
 
 void Toglet::displayCallback()
@@ -323,13 +326,14 @@ DOTRACE("Toglet::displayCallback");
 void Toglet::reshapeCallback(int width, int height)
 {
 DOTRACE("Toglet::reshapeCallback");
+  makeCurrent();
   rep->scene->reshape(width, height);
 }
 
 void Toglet::swapBuffers()
 {
 DOTRACE("Toglet::swapBuffers");
-  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  makeCurrent();
   rep->canvas->flushOutput();
 }
 
@@ -341,6 +345,7 @@ DOTRACE("Toglet::scene");
 
 void Toglet::render()
 {
+  makeCurrent();
   rep->scene->render();
 }
 
@@ -352,51 +357,61 @@ void Toglet::fullRender()
 
 void Toglet::clearscreen()
 {
+  makeCurrent();
   rep->scene->clearscreen();
 }
 
 void Toglet::fullClearscreen()
 {
+  makeCurrent();
   rep->scene->fullClearscreen();
 }
 
 void Toglet::undraw()
 {
+  makeCurrent();
   rep->scene->undraw();
 }
 
 void Toglet::setVisibility(bool vis)
 {
+  makeCurrent();
   rep->scene->setVisibility(vis);
 }
 
 void Toglet::setHold(bool hold_on)
 {
+  makeCurrent();
   rep->scene->setHold(hold_on);
 }
 
 void Toglet::allowRefresh(bool allow)
 {
+  makeCurrent();
   rep->scene->allowRefresh(allow);
 }
 
 const Util::Ref<GxCamera>& Toglet::getCamera() const
 {
+  makeCurrent();
   return rep->scene->getCamera();
 }
 
 void Toglet::setCamera(const Util::Ref<GxCamera>& cam)
 {
+  makeCurrent();
   rep->scene->setCamera(cam);
 }
 
 void Toglet::setDrawable(const Ref<GxNode>& node)
 {
+  makeCurrent();
   rep->scene->setDrawable(node);
 }
 
 void Toglet::animate(unsigned int framesPerSecond)
 {
+  makeCurrent();
   rep->scene->animate(framesPerSecond);
 }
 
