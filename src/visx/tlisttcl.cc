@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Dec  3 15:18:55 1999
+// written: Fri Dec  3 15:28:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,6 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace TlistTcl {
-  class ShowCmd;
   class AddObjectCmd;
   class SetCurTrialCmd;
 
@@ -79,43 +78,6 @@ namespace {
 // Tlist Tcl package definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-//--------------------------------------------------------------------
-//
-// ShowCmd --
-//
-// Make a specified trial the Tlist's current trial, and draw it in
-// the OpenGL window. The Tlist's visibility is set to true.
-//
-//--------------------------------------------------------------------
-
-class TlistTcl::ShowCmd : public TclCmd {
-public:
-  ShowCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "trial_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-  DOTRACE("ShowCmd::invoke");
-	 int id = getIntFromArg(1);
-
-	 // First we must erase the previous current trial. We ignore any
-	 // invalid id errors that occur, and simply clear the screen in
-	 // this case.
-	 try {
-		theTlist.undrawCurTrial();
-	 }
-	 catch (InvalidIdError&) {
-		theTlist.clearscreen();
-	 }
-
-	 // drawTrial(id) sets the current Trial to id, sets the Tlist's
-	 // visiblity to true, draws the Trial, and flushes the graphics to
-	 // the screen
-	 theTlist.drawTrial(id);
-	 
-	 returnVoid();
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -725,10 +687,6 @@ public:
   DOTRACE("TlistPkg::TlistPkg");
 	 declareCSetter("setVisible", &Tlist::setVisible);
 
-	 declareCAction("redraw", &Tlist::redraw);
-	 declareCAction("undraw", &Tlist::undraw);
-
-	 addCommand( new ShowCmd(interp, "Tlist::show") );
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
 	 addCommand( new SetCurTrialCmd(interp, "Tlist::setCurTrial") );
 
@@ -744,11 +702,6 @@ public:
 	 addCommand( new WriteIncidenceMatrixCmd(interp,
 														  "Tlist::writeIncidenceMatrix") );
 	 addCommand( new WriteResponsesCmd(interp, "Tlist::write_responses") );
-
-	 Tcl_Eval(interp,
-				 "proc undraw {} { Tlist::undraw }\n"
-				 "proc redraw {} { Tlist::redraw }\n"
-				 "proc show {id} { Tlist::show $id }\n");
   }
 };
 
