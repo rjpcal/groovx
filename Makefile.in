@@ -188,15 +188,15 @@ $(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $@
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs --objdir $(OBJ)/ $(SRC) |sort> $@
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
+	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
 
 # Run the old Tcl script and compare its output against the new C++
 # dependency-computation script
 depcheck: $(DEP)/cppdepends $(DEP)/altdeps
-	diff $(DEP)/cppdepends $(DEP)/altdeps > /dev/null
+	diff $(DEP)/cppdepends $(DEP)/altdeps
 
 .PHONY: deptime
 deptime: $(DEVSCRIPTS)/cppdeps $(DEP)/altdeps
