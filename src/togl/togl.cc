@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 01:17:59 2000
+// written: Thu May 25 11:31:26 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -131,7 +131,7 @@ public:
   void swapBuffers() const
 	 {
 		if (itsDoubleFlag) {
-		  glXSwapBuffers( itsDisplay, Tk_WindowId(itsTkWin) );
+		  glXSwapBuffers( itsDisplay, windowId() );
 		}
 		else {
 		  glFlush();
@@ -151,6 +151,28 @@ public:
 
   GLuint loadBitmapFont(const char* fontname) const;
   void unloadBitmapFont(GLuint fontbase) const;
+
+  void useLayer(int layer);
+  void showOverlay();
+  void hideOverlay();
+  void postOverlayRedisplay();
+  int existsOverlay() const { return itsOverlayFlag; }
+  int getOverlayTransparentValue() const { return itsOverlayTransparentPixel; }
+  int isMappedOverlay() const { return (itsOverlayFlag && itsOverlayIsMapped); }
+  unsigned long allocColorOverlay(float red, float green, float blue) const;
+  void freeColorOverlay(unsigned long pixel) const;
+
+  ClientData getClientData() const { return itsClientData; }
+  void setClientData(ClientData clientData) { itsClientData = clientData; }
+
+  Display* display() const { return itsDisplay; }
+  Screen* screen() const { return Tk_Screen(itsTkWin); }
+  int screenNumber() const { return Tk_ScreenNumber(itsTkWin); }
+  Colormap colormap() const { return Tk_Colormap(itsTkWin); }
+  Window windowId() const { return Tk_WindowId(itsTkWin); }
+
+  int dumpToEpsFile(const char* filename, int inColor,
+						  void (*user_redraw)( const Togl* )) const;
 
 private:
   void eventProc(XEvent* eventPtr);
@@ -261,7 +283,7 @@ static void free_default_color_cells( Display *display, Colormap colormap);
 #if defined(__sgi) && defined(STEREO)
 /* SGI-only stereo */
 static void stereoMakeCurrent( Display *dpy, Window win, GLXContext ctx );
-static void stereoInit( Togl* togl,int stereoEnabled );
+static void stereoInit( int stereoEnabled );
 #endif
 
 
@@ -731,79 +753,18 @@ GLuint Togl_LoadBitmapFont( const Togl* togl, const char *fontname )
 void Togl_UnloadBitmapFont( const Togl* togl, GLuint fontbase )
   { togl->unloadBitmapFont(fontbase); }
 
-/// XXX
-
-
-/*
- * Overlay functions
- */
-
 
 void Togl_UseLayer( Togl* togl, int layer )
-{
-DOTRACE("<togl.cc>::Togl_UseLayer");
-  if (togl->itsOverlayWindow) {
-	 if (layer==TOGL_OVERLAY) {
-		glXMakeCurrent( Tk_Display(togl->itsTkWin),
-							 togl->itsOverlayWindow,
-							 togl->itsOverlayCtx );
-#if defined(__sgi) && defined(STEREO)
-		stereoMakeCurrent( Tk_Display(togl->itsTkWin),
-								 togl->itsOverlayWindow,
-								 togl->itsOverlayCtx );
-#endif /* __sgi STEREO */
-	 }
-	 else if (layer==TOGL_NORMAL) {
-		glXMakeCurrent( Tk_Display(togl->itsTkWin),
-							 Tk_WindowId(togl->itsTkWin),
-							 togl->itsGLXContext );
-#if defined(__sgi) && defined(STEREO)
-		stereoMakeCurrent( Tk_Display(togl->itsTkWin),
-								 Tk_WindowId(togl->itsTkWin),
-								 togl->itsGLXContext );
-#endif /* __sgi STEREO */
-	 }
-	 else {
-		/* error */
-	 }
-  }
-}
-
+  { togl->useLayer(layer); }
 
 void Togl_ShowOverlay( Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_ShowOverlay");
-  if (togl->itsOverlayWindow) {
-	 XMapWindow( Tk_Display(togl->itsTkWin), togl->itsOverlayWindow );
-	 XInstallColormap(Tk_Display(togl->itsTkWin),togl->itsOverlayCmap);
-	 togl->itsOverlayIsMapped = 1;
-  }
-}
-
-
+  { togl->showOverlay(); }
 
 void Togl_HideOverlay( Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_HideOverlay");
-  if (togl->itsOverlayWindow && togl->itsOverlayIsMapped) {
-	 XUnmapWindow( Tk_Display(togl->itsTkWin), togl->itsOverlayWindow );
-	 togl->itsOverlayIsMapped=0;
-  }
-}
-
-
+  { togl->hideOverlay(); }
 
 void Togl_PostOverlayRedisplay( Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_PostOverlayRedisplay");
-  if (!togl->itsOverlayUpdatePending
-		&& togl->itsOverlayWindow && togl->itsOverlayDisplayProc) {
-	 Tk_DoWhenIdle( Togl::dummyOverlayRenderCallback,
-						 static_cast<ClientData>(togl) );
-	 togl->itsOverlayUpdatePending = 1;
-  }
-}
-
+  { togl->postOverlayRedisplay(); }
 
 void Togl_OverlayDisplayFunc( Togl_Callback *proc )
 {
@@ -811,56 +772,21 @@ DOTRACE("<togl.cc>::Togl_OverlayDisplayFunc");
   DefaultOverlayDisplayProc = proc;
 }
 
-
 int Togl_ExistsOverlay( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_ExistsOverlay");
-  return togl->itsOverlayFlag;
-}
-
+  { return togl->existsOverlay(); }
 
 int Togl_GetOverlayTransparentValue( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_GetOverlayTransparentValue");
-  return togl->itsOverlayTransparentPixel;
-}
-
+  { return togl->getOverlayTransparentValue(); }
 
 int Togl_IsMappedOverlay( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_IsMappedOverlay");
-  return togl->itsOverlayFlag && togl->itsOverlayIsMapped;
-}
-
+  { return togl->isMappedOverlay(); }
 
 unsigned long Togl_AllocColorOverlay( const Togl* togl,
                                       float red, float green, float blue )
-{
-DOTRACE("<togl.cc>::Togl_AllocColorOverlay");
-  if (togl->itsOverlayFlag && togl->itsOverlayCmap) {
-	 XColor xcol;
-	 xcol.red   = (short) (red* 65535.0);
-	 xcol.green = (short) (green* 65535.0);
-	 xcol.blue  = (short) (blue* 65535.0);
-	 if (!XAllocColor(Tk_Display(togl->itsTkWin),togl->itsOverlayCmap,&xcol))
-		return (unsigned long) -1;
-	 return xcol.pixel;
-  }
-  else {
-	 return (unsigned long) -1;
-  }
-}
-
+  { return togl->allocColorOverlay(red, green, blue); }
 
 void Togl_FreeColorOverlay( const Togl* togl, unsigned long pixel )
-{
-DOTRACE("<togl.cc>::Togl_FreeColorOverlay");
-
-  if (togl->itsOverlayFlag && togl->itsOverlayCmap) {
-	 XFreeColors( Tk_Display(togl->itsTkWin), togl->itsOverlayCmap,
-					  &pixel, 1, 0 );
-  }
-}
+  { togl->freeColorOverlay(pixel); }
 
 
 
@@ -874,19 +800,12 @@ DOTRACE("<togl.cc>::Togl_ClientData");
   DefaultClientData = clientData;
 }
 
-
 ClientData Togl_GetClientData( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_GetClientData");
-  return togl->itsClientData;
-}
+  { return togl->getClientData(); }
 
 
 void Togl_SetClientData( Togl* togl, ClientData clientData )
-{
-DOTRACE("<togl.cc>::Togl_SetClientData");
-  togl->itsClientData = clientData;
-}
+  { togl->setClientData(clientData); }
 
 
 
@@ -896,34 +815,19 @@ DOTRACE("<togl.cc>::Togl_SetClientData");
  */
 
 Display* Togl_Display( const Togl* togl)
-{
-DOTRACE("<togl.cc>::Togl_Display");
-  return Tk_Display(togl->itsTkWin);
-}
+  { return togl->display(); }
 
 Screen* Togl_Screen( const Togl* togl)
-{
-DOTRACE("<togl.cc>::Togl_Screen");
-  return Tk_Screen(togl->itsTkWin);
-}
+  { return togl->screen(); }
 
 int Togl_ScreenNumber( const Togl* togl)
-{
-DOTRACE("<togl.cc>::Togl_ScreenNumber");
-  return Tk_ScreenNumber(togl->itsTkWin);
-}
+  { return togl->screenNumber(); }
 
 Colormap Togl_Colormap( const Togl* togl)
-{
-DOTRACE("<togl.cc>::Togl_Colormap");
-  return Tk_Colormap(togl->itsTkWin);
-}
+  { return togl->colormap(); }
 
 Window Togl_Window( const Togl* togl)
-{
-DOTRACE("<togl.cc>::Togl_Window");
-  return Tk_WindowId(togl->itsTkWin);
-}
+  { return togl->windowId(); }
 
 #ifdef MESA_COLOR_HACK
 /*
@@ -1192,69 +1096,10 @@ DOTRACE("<togl.cc>::generateEPS");
   return 0;
 }
 
-
-/* int Togl_DumpToEpsFile( const Togl* togl, const char *filename,
-                        int inColor, void (*user_redraw)(void)) */
-/* changed by GG */
 int Togl_DumpToEpsFile( const Togl* togl, const char *filename,
                         int inColor, void (*user_redraw)( const Togl* ))
-{
-DOTRACE("<togl.cc>::Togl_DumpToEpsFile");
-  int using_mesa = 0;
-#if 0
-  Pixmap eps_pixmap;
-  GLXPixmap eps_glxpixmap;
-  XVisualInfo *vi = togl->itsVisInfo;
-  Window win = Tk_WindowId( togl->itsTkWin);
-#endif
-  Display *dpy = Tk_Display( togl->itsTkWin);
-  int retval;
-  int scrnum = Tk_ScreenNumber(togl->itsTkWin);
-  unsigned int width = togl->itsWidth, height = togl->itsHeight;
+  { togl->dumpToEpsFile(filename, inColor, user_redraw); }
 
-  if (strstr(glXQueryServerString( dpy, scrnum, GLX_VERSION ), "Mesa"))
-	 using_mesa = 1;
-  else
-	 using_mesa = 0;
-  /* I don't use Pixmap do drawn into, because the code should link
-	* with Mesa libraries and OpenGL libraries, and the which library
-	* we use at run time should not matter, but the name of the calls
-	* differs one from another:
-	* MesaGl: glXCreateGLXPixmapMESA( dpy, vi, eps_pixmap, Tk_Colormap(togl->itsTkWin))
-	* OpenGl: glXCreateGLXPixmap( dpy, vi, eps_pixmap);
-	*
-	* instead of this I read direct from back buffer of the screeen.
-	*/
-#if 0
-  eps_pixmap = XCreatePixmap( dpy, win, width, height, vi->depth);
-  if ( using_mesa) {
-	 /* eps_glxpixmap = glXCreateGLXPixmapMESA( dpy, vi, eps_pixmap, 
-		 Tk_Colormap(togl->itsTkWin)); */
-  }
-  else
-	 eps_glxpixmap = glXCreateGLXPixmap( dpy, vi, eps_pixmap);
-
-  glXMakeCurrent( dpy, eps_glxpixmap, togl->itsGLXContext);
-  user_redraw();
-#endif
-  if ( !togl->itsRgbaFlag) {
-	 glPixelMapfv( GL_PIXEL_MAP_I_TO_R, togl->itsEpsMapSize, togl->itsEpsRedMap);
-	 glPixelMapfv( GL_PIXEL_MAP_I_TO_G, togl->itsEpsMapSize, togl->itsEpsGreenMap);
-	 glPixelMapfv( GL_PIXEL_MAP_I_TO_B, togl->itsEpsMapSize, togl->itsEpsBlueMap);
-  }
-  /*  user_redraw(); */
-  user_redraw(togl);  /* changed by GG */
-  glReadBuffer( GL_FRONT);
-  /* by default it read GL_BACK in double buffer mode*/
-  glFlush();
-  retval = generateEPS( filename, inColor, width, height);
-#if 0
-  glXMakeCurrent( dpy, win, togl->itsGLXContext );
-  glXDestroyGLXPixmap( dpy, eps_glxpixmap);
-  XFreePixmap( dpy, eps_pixmap);
-#endif
-  return retval;
-}
 
 /*
  * Full screen stereo for SGI graphics
@@ -1389,7 +1234,7 @@ DOTRACE("<togl.cc>::stereoMakeCurrent");
 
 /* call before using stereo */
 static void
-stereoInit(Togl* togl,int stereoEnabled)
+stereoInit(int stereoEnabled)
 {
 DOTRACE("<togl.cc>::stereoInit");
   stereo.useSGIStereo = stereoEnabled;
@@ -1615,8 +1460,8 @@ DOTRACE("Togl::configure");
 		|| itsStencilSize != oldStencilSize
 		|| itsAuxNumber != oldAuxNumber) {
 #ifdef MESA_COLOR_HACK
-	 free_default_color_cells( Tk_Display(itsTkWin),
-										Tk_Colormap(itsTkWin) );
+	 free_default_color_cells( itsDisplay,
+										colormap() );
 #endif
 	 /* Have to recreate the window and GLX context */
 	 if (makeWindowExist()==TCL_ERROR) {
@@ -1625,7 +1470,7 @@ DOTRACE("Togl::configure");
   }
 
 #if defined(__sgi) && defined(STEREO)
-  stereoInit(this,itsStereoFlag);
+  stereoInit(itsStereoFlag);
 #endif
 
   return TCL_OK; 
@@ -1643,11 +1488,11 @@ DOTRACE("Togl::configure");
 void Togl::makeCurrent() const {
 DOTRACE("Togl::makeCurrent");
   glXMakeCurrent( itsDisplay,
-						Tk_WindowId(itsTkWin),
+						windowId(),
 						itsGLXContext );
 #if defined(__sgi) && defined(STEREO)
   stereoMakeCurrent( itsDisplay,
-							Tk_WindowId(itsTkWin),
+							windowId(),
 							itsGLXContext );
 #endif /*__sgi STEREO */
 }
@@ -1744,7 +1589,7 @@ DOTRACE("Togl::allocColor");
   xcol.green = (short) (green * 65535.0);
   xcol.blue  = (short) (blue  * 65535.0);
 
-  noFaultXAllocColor( Tk_Display(itsTkWin), Tk_Colormap(itsTkWin),
+  noFaultXAllocColor( itsDisplay, colormap(),
 							 Tk_Visual(itsTkWin)->map_entries, &xcol, &exact );
 
 
@@ -1768,7 +1613,7 @@ DOTRACE("Togl::freeColor");
 	 return;
   }
 
-  XFreeColors( Tk_Display(itsTkWin), Tk_Colormap(itsTkWin),
+  XFreeColors( itsDisplay, colormap(),
 					&pixel, 1, 0 );
 }
 
@@ -1792,7 +1637,7 @@ DOTRACE("Togl::setColor");
   xcol.blue  = (short) (blue  * 65535.0);
   xcol.flags = DoRed | DoGreen | DoBlue;
 
-  XStoreColor( Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &xcol );
+  XStoreColor( itsDisplay, colormap(), &xcol );
 
   /* for EPS output */
   itsEpsRedMap[xcol.pixel] = xcol.red / 65535.0;
@@ -1906,6 +1751,111 @@ DOTRACE("Togl::unloadBitmapFont");
   }
 }
 
+/*
+ * Overlay functions
+ */
+
+void Togl::useLayer(int layer) {
+DOTRACE("Togl::useLayer");
+  if (itsOverlayWindow) {
+	 if (layer==TOGL_OVERLAY) {
+		glXMakeCurrent( itsDisplay,
+							 itsOverlayWindow,
+							 itsOverlayCtx );
+#if defined(__sgi) && defined(STEREO)
+		stereoMakeCurrent( itsDisplay,
+								 itsOverlayWindow,
+								 itsOverlayCtx );
+#endif /* __sgi STEREO */
+	 }
+	 else if (layer==TOGL_NORMAL) {
+		glXMakeCurrent( itsDisplay,
+							 windowId(),
+							 itsGLXContext );
+#if defined(__sgi) && defined(STEREO)
+		stereoMakeCurrent( itsDisplay,
+								 windowId(),
+								 itsGLXContext );
+#endif /* __sgi STEREO */
+	 }
+	 else {
+		/* error */
+	 }
+  }
+}
+
+void Togl::showOverlay() {
+DOTRACE("Togl::showOverlay");
+  if (itsOverlayWindow) {
+	 XMapWindow( itsDisplay, itsOverlayWindow );
+	 XInstallColormap(itsDisplay, itsOverlayCmap);
+	 itsOverlayIsMapped = 1;
+  }
+}
+
+void Togl::hideOverlay() {
+DOTRACE("Togl::hideOverlay");
+  if (itsOverlayWindow && itsOverlayIsMapped) {
+	 XUnmapWindow( itsDisplay, itsOverlayWindow );
+	 itsOverlayIsMapped = 0;
+  }
+}
+
+void Togl::postOverlayRedisplay() {
+DOTRACE("Togl::postOverlayRedisplay");
+  if (!itsOverlayUpdatePending && itsOverlayWindow && itsOverlayDisplayProc)
+	 {
+		Tk_DoWhenIdle( Togl::dummyOverlayRenderCallback,
+							static_cast<ClientData>(this) );
+		itsOverlayUpdatePending = 1;
+	 }
+}
+
+unsigned long Togl::allocColorOverlay(float red, float green,
+												  float blue) const {
+DOTRACE("Togl::allocColorOverlay");
+  if (itsOverlayFlag && itsOverlayCmap) {
+	 XColor xcol;
+	 xcol.red   = (short) (red* 65535.0);
+	 xcol.green = (short) (green* 65535.0);
+	 xcol.blue  = (short) (blue* 65535.0);
+
+	 if ( !XAllocColor(itsDisplay,itsOverlayCmap,&xcol) )
+		return (unsigned long) -1;
+	 return xcol.pixel;
+  }
+  else {
+	 return (unsigned long) -1;
+  }
+}
+
+void Togl::freeColorOverlay(unsigned long pixel) const {
+DOTRACE("Togl::freeColorOverlay");
+
+  if (itsOverlayFlag && itsOverlayCmap) {
+	 XFreeColors( itsDisplay, itsOverlayCmap, &pixel, 1, 0 );
+  }
+}
+
+int Togl::dumpToEpsFile(const char* filename, int inColor,
+								void (*user_redraw)( const Togl* )) const {
+DOTRACE("Togl::dumpToEpsFile");
+
+  if ( !itsRgbaFlag) {
+	 glPixelMapfv( GL_PIXEL_MAP_I_TO_R, itsEpsMapSize, itsEpsRedMap);
+	 glPixelMapfv( GL_PIXEL_MAP_I_TO_G, itsEpsMapSize, itsEpsGreenMap);
+	 glPixelMapfv( GL_PIXEL_MAP_I_TO_B, itsEpsMapSize, itsEpsBlueMap);
+  }
+
+  user_redraw(this);
+
+  glReadBuffer( GL_FRONT); // by default it read GL_BACK in double buffer mode
+
+  glFlush();
+
+  return generateEPS( filename, inColor, itsWidth, itsHeight);
+}
+
 void Togl::eventProc(XEvent* eventPtr) {
 DOTRACE("Togl::eventProc");
 
@@ -1913,7 +1863,7 @@ DOTRACE("Togl::eventProc");
   case Expose:
 	 if (eventPtr->xexpose.count == 0) {
 		if (!itsUpdatePending && 
-			 eventPtr->xexpose.window==Tk_WindowId(itsTkWin)) {
+			 eventPtr->xexpose.window==windowId()) {
 		  Togl_PostRedisplay(this);
 		}
 		if (!itsOverlayUpdatePending && itsOverlayFlag
@@ -1928,7 +1878,7 @@ DOTRACE("Togl::eventProc");
 		{
 		  itsWidth = Tk_Width(itsTkWin);
 		  itsHeight = Tk_Height(itsTkWin);
-		  XResizeWindow(itsDisplay, Tk_WindowId(itsTkWin), itsWidth, itsHeight);
+		  XResizeWindow(itsDisplay, windowId(), itsWidth, itsHeight);
 
 		  if (itsOverlayFlag) {
 			 XResizeWindow( itsDisplay, itsOverlayWindow, itsWidth, itsHeight );
@@ -2060,7 +2010,7 @@ DOTRACE("Togl::makeWindowExist");
   issueConfigureNotify();
 
   // Request the X window to be displayed
-  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
+  XMapWindow(itsDisplay, windowId());
 
   // Bind the context to the window and make it the current context
   Togl_MakeCurrent(this);
@@ -2449,7 +2399,7 @@ DOTRACE("Togl::setupOverlay");
 
   swa.border_pixel = 0;
   swa.event_mask = ALL_EVENTS_MASK;
-  itsOverlayWindow = XCreateWindow( itsDisplay, Tk_WindowId(itsTkWin),
+  itsOverlayWindow = XCreateWindow( itsDisplay, windowId(),
 												0, 0,
 												itsWidth, itsHeight, 0,
 												visinfo->depth, InputOutput,
