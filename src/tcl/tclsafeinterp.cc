@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jan 28 13:03:42 2002
+// written: Wed Jan 30 14:09:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,18 @@ DOTRACE("Tcl::Interp::Interp");
 
   Tcl_CallWhenDeleted(itsInterp, interpDeleteProc,
                       static_cast<ClientData>(this));
+}
+
+Tcl::Interp::Interp(const Tcl::Interp& other) :
+  itsInterp(other.itsInterp)
+{
+DOTRACE("Tcl::Interp::Interp(const Interp&)");
+
+  if (itsInterp != 0)
+    {
+      Tcl_CallWhenDeleted(itsInterp, interpDeleteProc,
+                          static_cast<ClientData>(this));
+    }
 }
 
 Tcl::Interp::~Interp()
