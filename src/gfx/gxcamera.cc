@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 18:47:29 2002
+// written: Fri Nov 22 11:39:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ DOTRACE("GxPerspectiveCamera::classFields");
     Field("nearZ", &GxPerspectiveCamera::itsNearZ, 1.0, 1.0, 50.0, 0.1),
     Field("farZ", &GxPerspectiveCamera::itsFarZ, 30.0, 1.0, 50.0, 0.1),
     Field("translation", Field::ValueType(), &GxPerspectiveCamera::translation,
-          "0. 0. 0.", "-10. -10. -10.", "10. 10. 10.", "0.1 0.1 0.1",
+          "0. 0. 0.", "-50. -50. -10.", "50. 50. 50.", "0.1 0.1 0.1",
           Field::MULTI)
   };
 
