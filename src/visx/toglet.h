@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jun 12 14:11:35 2002
+// written: Tue Jun 25 14:27:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,9 @@
 #include "visx/tkwidget.h"
 #endif
 
-struct Togl;
 struct Tcl_Interp;
 
-class Toglet_Impl;
+class TogletImpl;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -98,18 +97,9 @@ private:
   Toglet(const Toglet&); // no copy constructor
   Toglet& operator=(const Toglet&); // no assignment operator
 
-  unsigned int getFontListBase() const { return itsFontListBase; }
-  void reconfigure();
+  friend class TogletImpl;
 
-  friend class Toglet_Impl;
-
-  class Sizer;
-  friend class Sizer;
-
-  Togl* const itsTogl;
-  scoped_ptr<Gfx::Canvas> itsCanvas;
-  scoped_ptr<Sizer> itsSizer;
-  unsigned int itsFontListBase;
+  TogletImpl* rep;
 };
 
 static const char vcid_toglet_h[] = "$Header$";
