@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Dec  6 21:29:37 1999
+// written: Tue Jan 11 17:13:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,6 +179,8 @@ public:
   //@}
 
 private:
+  void clearBytes();
+
   BmapRenderer* itsRenderer;
 
   string itsFilename;
