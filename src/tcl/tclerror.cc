@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:13 1999
-// written: Fri Jan 18 16:07:05 2002
+// written: Tue Dec 10 11:54:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define TCLERROR_CC_DEFINED
 
 #include "tcl/tclerror.h"
-
-#include <tcl.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -27,15 +25,14 @@ Tcl::TclError::~TclError() {}
 void Tcl::BkdErrorHandler::raiseBackgroundError(const char* msg)
 {
 DOTRACE("Tcl::BkdErrorHandler::raiseBackgroundError");
-  Tcl_AppendResult(itsInterp, msg, (char*) 0);
-  Tcl_BackgroundError(itsInterp);
+  itsInterp.appendResult(msg);
+  itsInterp.backgroundError();
 }
 
-Tcl::BkdErrorHandler::BkdErrorHandler(Tcl_Interp* interp) :
+Tcl::BkdErrorHandler::BkdErrorHandler(const Tcl::Interp& interp) :
   itsInterp(interp)
 {
 DOTRACE("Tcl::BkdErrorHandler::BkdErrorHandler");
-  Invariant(itsInterp != 0);
 }
 
 Tcl::BkdErrorHandler::~BkdErrorHandler() {}

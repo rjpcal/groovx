@@ -5,13 +5,15 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Wed Sep 25 18:56:55 2002
+// written: Tue Dec 10 11:52:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLERROR_H_DEFINED
 #define TCLERROR_H_DEFINED
+
+#include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
 #include "util/errorhandler.h"
@@ -37,7 +39,7 @@ public:
 class Tcl::BkdErrorHandler : public Util::ErrorHandler
 {
 private:
-  Tcl_Interp* itsInterp;
+  Tcl::Interp itsInterp;
 
   void raiseBackgroundError(const char* msg);
 
@@ -45,7 +47,7 @@ private:
   BkdErrorHandler& operator=(const BkdErrorHandler&);
 
 public:
-  BkdErrorHandler(Tcl_Interp* interp);
+  BkdErrorHandler(const Tcl::Interp& interp);
 
   virtual ~BkdErrorHandler();
 

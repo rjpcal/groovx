@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 18:01:52 2002
+// written: Tue Dec 10 11:53:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
     autosaveFile("__autosave_file"),
     infoLog(),
     autosavePeriod(10),
-    errorHandler(interp.intp()),
+    errorHandler(interp),
     doWhenComplete(new Tcl::ProcWrapper(interp)),
     numTrialsCompleted(0)
   {}
