@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Tue Nov  9 10:41:35 1999
+// written: Tue Dec  7 18:14:50 1999
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -29,6 +29,8 @@
 #ifndef TCLERROR_H_DEFINED
 #include "tclerror.h"
 #endif
+
+namespace Tcl {
 
 class TclEvalCmd {
 public:
@@ -77,6 +79,8 @@ private:
   ErrorHandlingMode itsErrorMode;
   int itsFlags;
 };
+
+} // end namespace Tcl
 
 static const char vcid_tclevalcmd_h[] = "$Header$";
 #endif // !TCLEVALCMD_H_DEFINED
