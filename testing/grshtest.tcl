@@ -77,13 +77,13 @@ set permuted_files [lsort -command rand_cmp $files]
 
 foreach file $permuted_files {
     ObjDb::clear
-	 if { [lindex $file 1] == $::RUN_IF_EQUAL } {
-		  testfile ${TEST_DIR}/[lindex $file 0]
-	 }
+    if { [lindex $file 1] == $::RUN_IF_EQUAL } {
+        testfile ${TEST_DIR}/[lindex $file 0]
+    }
 
-	 if { $::VERBOSE > 0 } {
-		  puts "Obj::count [Obj::countAll]"
-	 }
+    if { $::VERBOSE > 0 } {
+        puts "Obj::count [Obj::countAll]"
+    }
 }
 
 ### Compute test statistics and exit
