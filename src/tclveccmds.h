@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed May 17 14:09:23 2000
+// written: Wed May 17 14:46:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,27 +124,26 @@ private:
 template <class Traits>
 class TrVecSetterCmd : public VecSetterBaseCmd {
 protected:
-  typedef typename Traits::value_type T;
+  typedef typename Traits::value_type value_type;
   typedef typename Traits::stack_type stack_type;
   typedef typename Traits::iterator_type iterator_type;
 
-  TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Setter<T>* setter,
-                const char* usage, int item_argn);
+  TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+					  Setter<value_type>* setter, const char* usage, int item_argn);
 
   virtual void invokeForItemArgn(int item_argn, int val_argn);
   virtual void setSingleItem(void* item, int val_argn);
 
 private:
-  scoped_ptr< Setter<T> > itsSetter;
+  scoped_ptr< Setter<value_type> > itsSetter;
 };
 
 template <class T>
 class TVecSetterCmd : public TrVecSetterCmd< SetterCmdTraits<T> > {
 public:
-  typedef TVecSetterCmd::T Type;
-  typedef TrVecSetterCmd< SetterCmdTraits<Type> > Base;
+  typedef TrVecSetterCmd< SetterCmdTraits<T> > Base;
   TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-					 Setter<Type>* setter, const char* usage, int item_argn);
+					 Setter<T>* setter, const char* usage, int item_argn);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -158,9 +157,8 @@ public:
 template <class T>
 class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
-  typedef TVecAttribCmd::T Type;
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-					 Attrib<Type>* attrib, const char* usage, int item_argn);
+					 Attrib<T>* attrib, const char* usage, int item_argn);
 
 protected:
   virtual void invoke();
