@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Jul 22 18:34:18 2002
+// written: Wed Sep 11 14:24:11 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
     {
       Tcl::Main app(argc, argv);
 
-      GrshApp grshApp(argc, argv, app.interp());
+      GrshApp grshApp(argc, argv);
 
       Tcl::Interp& safeIntp = app.safeInterp();
 
@@ -174,6 +174,7 @@ int main(int argc, char** argv)
       std::cerr << "caught in main: Error ("
                 << demangle_cstr(typeid(err).name())
                 << "): " << err.msg_cstr() << '\n';
+      err.backTrace().print(std::cerr);
     }
   catch (std::exception& err)
     {
