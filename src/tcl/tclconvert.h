@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Tue May 14 19:23:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,10 +57,10 @@ namespace Tcl
   struct Convert
   {
     /// Convert the Tcl object to C++.
-    static Return<T>::Type   fromTcl( Tcl_Obj* obj );
+    static typename Return<T>::Type   fromTcl( Tcl_Obj* obj );
 
     /// Convert the C++ object to Tcl.
-    static Tcl::ObjPtr         toTcl( T val );
+    static Tcl::ObjPtr                  toTcl( T val );
   };
 
   template <>

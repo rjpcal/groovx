@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Fri Jan 18 16:06:57 2002
+// written: Tue May 14 19:27:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ template <class T>
 class BoundsChecker
 {
 public:
-  typedef Util::TypeTraits<T>::DerefT DerefT;
+  typedef typename Util::TypeTraits<T>::DerefT DerefT;
 
 private:
   BoundsChecker(const DerefT& min, const DerefT& max) :
@@ -168,7 +168,7 @@ class DataMemberFieldImpl : public FieldImpl
 {
 public:
 
-  typedef Util::TypeTraits<T>::DerefT DerefT;
+  typedef typename Util::TypeTraits<T>::DerefT DerefT;
 
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
 
@@ -286,7 +286,7 @@ public:
 
     C& cobj = dynamic_cast<C&>(*obj);
 
-    typedef Util::TypeTraits<T>::StackT StackT;
+    typedef typename Util::TypeTraits<T>::StackT StackT;
 
     (cobj.*itsSetter)(new_val.as(Util::TypeCue<StackT>()));
   }
@@ -307,7 +307,7 @@ public:
 
     C& cobj = dynamic_cast<C&>(*obj);
 
-    typedef Util::TypeTraits<T>::StackT StackT;
+    typedef typename Util::TypeTraits<T>::StackT StackT;
 
     StackT temp;
     reader->readValue(name, temp);
