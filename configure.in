@@ -13,11 +13,68 @@ if test "${CXXFLAGS+set}" != "set" ; then
     CXXFLAGS=""
 fi
 
+### Find operating system.
+
 AC_MSG_CHECKING([for operating system])
 
 OS=`uname`
 
 AC_MSG_RESULT($OS)
+
+### Find c++ compiler.
+
+AC_LANG(C++)
+AC_PROG_CXX(g++-3 g++ c++ CC)
+
+case ${CXX}-${OS} in
+   g++*)
+      CXXFLAGS="$CXXFLAGS -W -Wdeprecated -Wall"
+      CXXFLAGS="$CXXFLAGS -Wsign-promo -Wwrite-strings"
+      GCC_VERSION=`$CXX -dumpversion`
+      case $GCC_VERSION in
+         2.9*) ;;
+	 3.*) CXXFLAGS="$CXXFLAGS -Wno-system-headers" ;;
+      esac
+      case `uname -m` in
+         i686) CXXFLAGS="$CXXFLAGS -march=i686";;
+      esac
+      case $OS in
+         Darwin)
+	    CXXFLAGS="$CXXFLAGS -dynamic"
+	    # Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
+	    SHLIB_CMD="$CXX -dynamiclib -flat_namespace -undefined suppress -o"
+	    STATLIB_CMD="libtool -static -o"
+	    ;;
+	 *)
+	    SHLIB_CMD="$CXX -shared -o"
+	    STATLIB_CMD="ar rus"
+	    ;;
+      esac
+      DEBUG_CXXFLAGS="-O1 -g"
+      PROD_CXXFLAGS="-O2"
+      ;;
+   CC-IRIX)
+      CPPFLAGS="$CPPFLAGS -I$(HOME)/local/$(ARCH)/include/cppheaders"
+      CXXFLAGS="$CXXFLAGS -mips3 -n32 -ptused -no_prelink -no_auto_include"
+      CXXFLAGS="$CXXFLAGS -LANG:std -LANG:exceptions=ON"
+      DEBUG_CXXFLAGS="-g -O0"
+      # -O3 gave little improvement over -O2
+      PROD_CXXFLAGS="-O2"
+      SHLIB_CMD="$CXX -shared -Wl,-check_registry,/usr/lib32/so_locations -o"
+      STATLIB_CMD="$CXX -ar -o"
+      ;;
+   *)
+      AC_MSG_ERROR([unknown CXX-OS pair ${CXX}-${OS}])
+      ;;
+esac
+
+AC_SUBST(DEBUG_CXXFLAGS)
+AC_SUBST(PROD_CXXFLAGS)
+
+AC_SUBST(SHLIB_CMD)
+AC_SUBST(STATLIB_CMD)
+
+### Arch-specific stuff
 
 need_rpath=yes
 
@@ -26,33 +83,36 @@ case $OS in
       need_rpath=yes
       SHLIB_EXT=so
       STATLIB_EXT=a
+      # Need this to allow symbols from the executable to be accessed by loaded
+      # dynamic libraries; this is needed e.g. for the matlab libut.so library to
+      # find the "_start" symbol.
+      LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
       ;;
    IRIX)
       need_rpath=yes
       SHLIB_EXT=so
       STATLIB_EXT=a
       AC_DEFINE(SHORTEN_SYMBOL_NAMES,1)
-      # FIXME this is assuming the use of the MIPSpro CC compiler...
-      CXXFLAGS="$CXXFLAGS -n32 -ptused -no_prelink -no_auto_include"
-      CXXFLAGS="$CXXFLAGS -LANG:std -LANG:exceptions=ON"
       ;;
    Darwin)
       need_rpath=no
       SHLIB_EXT=dylib
       STATLIB_EXT=a
       AC_DEFINE(ESD_WORKAROUND,1)
+      # The /sw/lib and /sw/include directories are managed by Fink
+      CPPFLAGS="$CPPFLAGS -I/sw/include"
+
+      # We are slightly bending the rules here by putting a "-l" directive
+      # in LDFLAGS (which normally should only have "-L" directives
+      LDFLAGS="$LDFLAGS -L/sw/lib -lcc_dynamic"
       ;;
    *)
-      AC_MSG_ERROR([unknown operating system])
+      AC_MSG_ERROR([unknown operating system $OS])
       ;;
 esac
 
 AC_SUBST(SHLIB_EXT)
-
-dnl Compiler checks.
-
-AC_LANG(C++)
-AC_PROG_CXX(g++-3 g++ c++ CC)
+AC_SUBST(STATLIB_EXT)
 
 ### Check c++ name mangling
 

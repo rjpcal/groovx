@@ -70,30 +70,6 @@ CPPFLAGS += -I$(SRC)
 
 #-------------------------------------------------------------------------
 #
-# Platform selection
-#
-#-------------------------------------------------------------------------
-
-ifeq ($(ARCH),irix6)
-	COMPILER := MIPSpro
-endif
-
-ifeq ($(ARCH),i686)
-	COMPILER := g++3
-
-	CXXFLAGS += -march=i686
-endif
-
-ifeq ($(ARCH),ppc)
-	COMPILER := g++2
-
-# The /sw/lib and /sw/include directories are managed by Fink
-	LDFLAGS += -L/sw/lib
-	CPPFLAGS += -I/sw/include
-endif
-
-#-------------------------------------------------------------------------
-#
 # Options for compiling and linking
 #
 #-------------------------------------------------------------------------
@@ -109,73 +85,6 @@ endif
 
 LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
-ifeq ($(COMPILER),MIPSpro)
-	CXX := time /opt/MIPSpro/bin/CC -mips3
-	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
-		-e '/static const char vcid_/,/^ *\^$$/d'
-
-	CPPFLAGS += -I$(HOME)/local/$(ARCH)/include/cppheaders
-
-	ifeq ($(MODE),debug)
-		CXXFLAGS += -g -O0
-	endif
-
-# Tests showed that -O3 provided little improvement over -O2 for this app
-	ifeq ($(MODE),prod)
-		CXXFLAGS += -O2
-	endif
-
-	SHLIB_CMD := $(CXX) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
-	STATLIB_CMD := $(CXX) -ar -o
-endif
-
-ifeq ($(COMPILER),g++2)
-	CXX := time g++2
-	CXXFLAGS += -Wall -W -Wsign-promo
-
-	ifeq ($(MODE),debug)
-		CXXFLAGS += -g -O1
-	endif
-
-	ifeq ($(MODE),prod)
-		CXXFLAGS += -O3
-	endif
-
-ifeq ($(ARCH),ppc)
-	CXXFLAGS += -dynamic
-
-# Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
-	SHLIB_CMD := $(CXX) -dynamiclib -flat_namespace -undefined suppress -o
-	STATLIB_CMD := libtool -static -o
-else
-	SHLIB_CMD := $(CXX) -shared -o
-	STATLIB_CMD := ar rus
-endif
-endif
-
-ifeq ($(COMPILER),g++3)
-	CXX := time g++-3
-
-	CXXFLAGS += -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
-
-	ifeq ($(MODE),debug)
-		CXXFLAGS += -O1 -g
-	endif
-
-# Need this to allow symbols from the executable to be accessed by loaded
-# dynamic libraries; this is needed e.g. for the matlab libut.so library to
-# find the "_start" symbol.
-	LDFLAGS += -Wl,--export-dynamic
-
-# can't use -O3 with g++301, since we get core dumps...
-	ifeq ($(MODE),prod)
-		CXXFLAGS += -O2
-	endif
-
-	SHLIB_CMD := $(CXX) -shared -o
-	STATLIB_CMD := ar rus
-endif
-
 #-------------------------------------------------------------------------
 #
 # Directories to search for include files and code libraries
@@ -189,10 +98,6 @@ LIBS += \
 	-lz \
 	-lpng \
 	-lm
-
-ifeq ($(ARCH),ppc)
-	LIBS += -lcc_dynamic
-endif
 
 # add -lefence to LIBS for Electric Fence mem debugging
 
@@ -210,13 +115,19 @@ endif
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
+ifeq ($(MODE),debug)
+	ALL_CXXFLAGS := $(DEBUG_CXXFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
+endif
+
+ifeq ($(MODE),prod)
+	ALL_CXXFLAGS := $(PROD_CXXFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
+endif
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 	@mkdir -p $(LOGS) $(dir $@)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
-	$(CXX) $(ALL_CXXFLAGS) \
+	time $(CXX) $(ALL_CXXFLAGS) \
 		-c $< \
 		-o $@
 
@@ -224,11 +135,11 @@ $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 .SECONDARY:
 
 $(SRC)/%.precc : $(SRC)/%.cc
-	$(CXX) -E $< $(ALL_CXXFLAGS) > $@
+	time $(CXX) -E $< $(ALL_CXXFLAGS) > $@
 
 $(SRC)/%.preh : $(SRC)/%.h
 	echo "#include \"$<\"" > .temp.cc
-	$(CXX) -E .temp.cc $(ALL_CXXFLAGS) > $@
+	time $(CXX) -E .temp.cc $(ALL_CXXFLAGS) > $@
 
 #-------------------------------------------------------------------------
 #
@@ -236,23 +147,11 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
-ifneq ($(ARCH),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $(LDFLAGS) $^
-endif
-
-ifeq ($(ARCH),ppc)
-%.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $(LDFLAGS) $^ -lcc_dynamic
-endif
+	time $(SHLIB_CMD) $@ $(LDFLAGS) $^
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $@ $^
-
-# this is just a convenience target so that we don't have to specify
-# the entire pathnames of the different library targets
-lib%: $(exec_prefix)/lib/.timestamp $(exec_prefix)/lib/lib%$(LIB_EXT)
-	true
+	time $(STATLIB_CMD) $@ $^
 
 #-------------------------------------------------------------------------
 #
@@ -375,7 +274,7 @@ GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
 
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+	time $(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
 check:
 	$(EXECUTABLE) ./testing/grshtest.tcl
