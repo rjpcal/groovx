@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 17:28:21 2002
+// written: Mon Mar  4 17:30:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -524,13 +524,10 @@ const Mtx& Mtx::emptyMtx()
   return m;
 }
 
-// FIXME let's just copy the data using iterators...
 Mtx::Mtx(const Slice& s) :
-  Base(s.nelems(), 1,
-       DataHolder(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY))
+  Base(s.nelems(), 1, DataHolder(s.nelems(), 1, NO_INIT))
 {
-  if (s.itsStride != 1)
-    throw Util::Error("can't initialize Mtx from Slice with stride != 1");
+  std::copy(s.begin(), s.end(), this->colmaj_begin_nc());
 }
 
 Mtx::~Mtx() {}
