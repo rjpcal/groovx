@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu Aug 16 11:18:19 2001
+// written: Fri Aug 17 10:39:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ public:
   void widenByStep(V step) { ll -= step; rr += step; }
   void heightenByStep(V step) { bb -= step; tt += step; }
 
-  void isVoid() const { return (tt <= bb) || (rr <= ll); }
+  bool isVoid() const { return (tt <= bb) || (rr <= ll); }
 
   void unionize(const Rect<double>& other)
   {
