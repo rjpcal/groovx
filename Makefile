@@ -133,7 +133,7 @@ LIBRARIES = \
 
 # directories for object files
 GRSH = ./$(ARCH)
-UTIL = util/$(ARCH)
+UTIL = ./util/$(ARCH)
 
 GRSH_STATIC_OBJS = \
 	$(GRSH)/bitmap.do \
@@ -262,7 +262,13 @@ ALL_DEBUG_OPTIONS = $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FL
 $(GRSH)/%.o : %.cc
 	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
 
-$(GRSH)/%.do : %.cc;
+$(UTIL)/%.o : util/%.cc
+	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+
+$(GRSH)/%.do : %.cc
+	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
+
+$(UTIL)/%.do : util/%.cc
 	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 #-------------------------------------------------------------------------
