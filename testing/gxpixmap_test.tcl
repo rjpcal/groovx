@@ -52,13 +52,13 @@ test "GxPixmap-GxPixmap::loadImage" "error on junk text file" {
     catch {GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_text_file.pbm} result
     file delete -force $::TEST_DIR/junk_text_file.pbm
     return $result
-} "^GxPixmap::loadImage: bad magic number while reading pbm file.*$"
+} "^GxPixmap::loadImage: bad magic number while reading pnm file.*$"
 test "GxPixmap-GxPixmap::loadImage" "error on junk binary file" {
     file copy -force $::TEST_DIR/junk_bin_file $::TEST_DIR/junk_bin_file.pbm
     catch {GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_bin_file.pbm} result
     file delete -force $::TEST_DIR/junk_bin_file.pbm
     return $result
-} "^GxPixmap::loadImage: bad magic number while reading pbm file.*$"
+} "^GxPixmap::loadImage: bad magic number while reading pnm file.*$"
 
 ### GxPixmap rendering ###
 test "GxPixmap-rendering" "normal render" {
