@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 11 14:44:39 2002
-// written: Wed Sep 11 14:50:48 2002
+// written: Thu Nov 14 17:19:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,12 +29,6 @@ namespace Grsh
 
   /// Get the library directory specified by the relevant environment variable.
   const char* libraryDirectory();
-
-  /// Set the current Canvas.
-  void installCanvas(Gfx::Canvas& canvas);
-
-  /// Get the current Canvas.
-  Gfx::Canvas& canvas();
 }
 
 static const char vcid_grsh_h[] = "$Header$";
