@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Oct 25 07:30:59 2000
+// written: Wed Oct 25 09:44:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,8 +92,17 @@ DOTRACE("IoPtrList::writeTo");
 	 {
 		DebugEval(i);
 
-		IO::IoObject* obj = dynamic_cast<IO::IoObject*>(getPtrBase(i));
-		ioBlock[i] = obj;
+		if (isValidId(i))
+		  {
+			 IO::IoObject* obj = getCheckedPtrBase(i);
+			 Assert(obj != 0);
+			 Assert(obj->isValid());
+			 ioBlock[i] = obj;
+		  }
+		else
+		  {
+			 ioBlock[i] = 0;
+		  }
 
 		DebugEvalNL(ioBlock[i]);
 	 }
