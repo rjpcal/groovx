@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed May 17 13:58:48 2000
+// written: Sat Sep 23 15:01:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ private:
 class SerialRhTcl::SerialRhCmd : public Tcl::TclCmd {
 public:
   SerialRhCmd(Tcl::TclPkg* pkg) :
-	 TclCmd(pkg->interp(), pkg->makePkgCmdName("SerialRh"),
+	 Tcl::TclCmd(pkg->interp(), pkg->makePkgCmdName("SerialRh"),
 			  "?serial_device = /dev/tty0p0", 1, 2),
 	 itsEventSource(0)
 	 {}
@@ -141,7 +141,7 @@ private:
 class SerialRhTcl::SerialRhPkg : public Tcl::TclPkg {
 public:
   SerialRhPkg(Tcl_Interp* interp) :
-	 TclPkg(interp, "SerialRh", "$Revision$")
+	 Tcl::TclPkg(interp, "SerialRh", "$Revision$")
 	 {
 		addCommand( new SerialRhCmd(this) );
 	 }
