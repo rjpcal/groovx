@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Jun 27 16:28:55 2000
+// written: Sat Sep 23 14:29:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ protected:
 class ObjlistTcl::LoadMoreCmd : public Tcl::ASRLoadCmd {
 public:
   LoadMoreCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 ASRLoadCmd(interp, cmd_name, "filename", 2), itsSandbox(0) {}
+	 Tcl::ASRLoadCmd(interp, cmd_name, "filename", 2), itsSandbox(0) {}
 
 protected:
   virtual IO::IoObject& getIO() { return itsSandbox; }
