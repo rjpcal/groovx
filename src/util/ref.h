@@ -3,7 +3,7 @@
 // iditem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Oct 27 11:27:05 2000
+// written: Fri Oct 27 13:14:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,15 +45,11 @@ private:
   static PtrList<T>& ptrList();
 
   PtrHandle<T> itsHandle;
-  int itsId;
-
-  void check();
 
 public:
   IdItem(int id);
-  IdItem(T* master, int id_) : itsHandle(master), itsId(id_) { check(); }
-  IdItem(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_)
-    { check(); }
+  IdItem(T* master, int id_) : itsHandle(master) {}
+  IdItem(PtrHandle<T> item_, int id_) : itsHandle(item_) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -77,7 +73,7 @@ public:
   const T* get()        const { return itsHandle.get(); }
 
   PtrHandle<T> handle() const { return itsHandle; }
-  int id() const { return itsId; }
+  int id() const { return itsHandle->id(); }
 
 
   template <class Container>

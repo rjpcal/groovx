@@ -3,7 +3,7 @@
 // iditem.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:51:16 2000
-// written: Fri Oct 27 11:47:36 2000
+// written: Fri Oct 27 13:14:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,33 +22,29 @@
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-void IdItem<T>::check() {
-  Assert(itsId == itsHandle->id());
-}
-
-template <class T>
 IdItem<T>::IdItem(int id) :
-  itsHandle(ptrList().getCheckedPtr(id).handle()),
-  itsId(id)
+  itsHandle(ptrList().getCheckedPtr(id).handle())
 {}
 
 template <class T>
 IdItem<T>::IdItem(T* ptr, Insert /*dummy param*/) :
-  itsHandle(ptr),
-  itsId(ptrList().insert(itsHandle).id())
-{}
+  itsHandle(ptr)
+{
+  ptrList().insert(itsHandle);
+}
 
 template <class T>
 IdItem<T>::IdItem(PtrHandle<T> item, Insert /*dummy param*/) :
-  itsHandle(item),
-  itsId(ptrList().insert(itsHandle).id())
-{}
+  itsHandle(item)
+{
+  ptrList().insert(itsHandle);
+}
 
 template <class T>
 IdItem<T>& IdItem<T>::operator=(T* new_master)
 {
   itsHandle = PtrHandle<T>(new_master);
-  itsId = ptrList().insert(itsHandle).id();
+  ptrList().insert(itsHandle);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -64,8 +60,13 @@ void MaybeIdItem<T>::check() {
 template <class T>
 MaybeIdItem<T>::MaybeIdItem(T* master) :
   itsHandle(master),
-  itsId(master != 0 ? ptrList().insert(master).id() : -1)
-{}
+  itsId(-1)
+{
+  if (master != 0)
+	 {
+		itsId = ptrList().insert(master).id();
+	 }
+}
 
 template <class T>
 MaybeIdItem<T>::MaybeIdItem(PtrHandle<T> item) :
