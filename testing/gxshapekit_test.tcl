@@ -67,7 +67,7 @@ proc testTypeCmd { objname } {
     upvar $objname this
 
     set cmdname "Obj::type"
-    set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
+    set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
     set testname "${this(package)}-${cmdname}"
 
     if { $this(testbase) } {

@@ -153,11 +153,11 @@ namespace
     return result;
   }
 
-  void objDelete(Tcl::List item_ids)
+  void objDelete(Tcl::List objrefs)
   {
     Tcl::List::Iterator<Util::UID>
-      itr = item_ids.begin<Util::UID>(),
-      stop = item_ids.end<Util::UID>();
+      itr = objrefs.begin<Util::UID>(),
+      stop = objrefs.end<Util::UID>();
     while (itr != stop)
       {
         ObjDb::theDb().remove(*itr);
@@ -199,14 +199,14 @@ DOTRACE("Obj_Init");
   pkg->defAction("incrRefCount", &Util::Object::incrRefCount);
   pkg->defAction("decrRefCount", &Util::Object::decrRefCount);
 
-  pkg->defGetter( "type", "item_id(s)", &Util::Object::objTypename );
-  pkg->defGetter( "realType", "item_id(s)", &Util::Object::realTypename );
+  pkg->defGetter( "type", "objref(s)", &Util::Object::objTypename );
+  pkg->defGetter( "realType", "objref(s)", &Util::Object::realTypename );
 
   pkg->def( "new", "typename", &objNew );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
              Util::bindLast(&objNewArgs, Tcl::Interp(interp)) );
   pkg->def( "newarr", "typename array_size=1", &objNewArr );
-  pkg->def( "delete", "item_id(s)", &objDelete );
+  pkg->def( "delete", "objref(s)", &objDelete );
 
   pkg->eval("proc new {args} { eval Obj::new $args }\n"
             "\n"

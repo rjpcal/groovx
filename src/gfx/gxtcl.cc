@@ -128,10 +128,10 @@ DOTRACE("Gxnode_Init");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<GxNode>(pkg);
 
-  pkg->def( "contains", "item_id other_id", &GxTcl::contains );
-  pkg->defVec("deepChildren", "item_id(s)", &GxNode::deepChildren);
-  pkg->defVec("boundingBox", "item_id(s)", &GxTcl::boundingBox );
-  pkg->def( "savePS", "item_id filename", &GxTcl::savePS );
+  pkg->def( "contains", "objref other_id", &GxTcl::contains );
+  pkg->defVec("deepChildren", "objref(s)", &GxNode::deepChildren);
+  pkg->defVec("boundingBox", "objref(s)", &GxTcl::boundingBox );
+  pkg->def( "savePS", "objref filename", &GxTcl::savePS );
 
   PKG_RETURN;
 }
@@ -148,8 +148,8 @@ DOTRACE("Gxseparator_Init");
   pkg->def( "fields", "", &GxTcl::gxsepFields );
   pkg->def( "allFields", "", &GxTcl::gxsepFields );
 
-  pkg->def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
-  pkg->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
+  pkg->def( "addChild", "objref child_objref", &GxSeparator::addChild );
+  pkg->def( "addChildren", "objref children_objref(s)", &GxTcl::addChildren );
   pkg->defGetter("children", &GxSeparator::children);
   pkg->defAttrib("debugMode",
                  &GxSeparator::getDebugMode,
@@ -324,7 +324,7 @@ DOTRACE("Gxshapekit_Init");
   Tcl::defFieldContainer<GxShapeKit>(pkg);
 
 #if 0
-  pkg->defVec( "saveBitmap", "item_id(s) filename(s)", &GxTcl::saveBitmap );
+  pkg->defVec( "saveBitmap", "objref(s) filename(s)", &GxTcl::saveBitmap );
 #endif
 
   pkg->defAttrib("category", &GxShapeKit::category, &GxShapeKit::setCategory);
@@ -378,16 +378,16 @@ DOTRACE("Gxpixmap_Init");
   pkg->defGetter("filename", &GxPixmap::filename );
   pkg->defAction("flipContrast", &GxPixmap::flipContrast);
   pkg->defAction("flipVertical", &GxPixmap::flipVertical);
-  pkg->defVec("grabScreenRect", "item_id(s) {left top right bottom}",
+  pkg->defVec("grabScreenRect", "objref(s) {left top right bottom}",
               &GxPixmap::grabScreenRect );
-  pkg->defVec("grabScreen", "item_id(s)", &GxPixmap::grabScreen );
-  pkg->defVec("grabWorldRect", "item_id(s) {left top right bottom}",
+  pkg->defVec("grabScreen", "objref(s)", &GxPixmap::grabScreen );
+  pkg->defVec("grabWorldRect", "objref(s) {left top right bottom}",
               &GxPixmap::grabWorldRect );
-  pkg->defVec("loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );
+  pkg->defVec("loadImage", "objref(s) filename(s)", &GxPixmap::loadImage );
   pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
-  pkg->defVec("queueImage", "item_id(s) filename(s)", &GxPixmap::queueImage );
+  pkg->defVec("queueImage", "objref(s) filename(s)", &GxPixmap::queueImage );
   pkg->defAction("reload", &GxPixmap::reload);
-  pkg->defVec("saveImage", "item_id(s) filename(s)", &GxPixmap::saveImage );
+  pkg->defVec("saveImage", "objref(s) filename(s)", &GxPixmap::saveImage );
   pkg->defVec("scramble", "numcols numrows", &scramble1);
   pkg->defVec("scramble", "numcols numrows ?seed?", &scramble2);
   pkg->defVec("scramble", "numcols numrows ?seed moveParts flipLR flipTB?",

@@ -71,10 +71,10 @@ test "rendering" "normal render" {
 ### GxPixmap::flipContrastCmd ###
 test "GxPixmap::flipContrast" "too few args" {
     GxPixmap::flipContrast
-} {^wrong \# args: should be "GxPixmap::flipContrast item_id\(s\)"$}
+} {^wrong \# args: should be "GxPixmap::flipContrast objref\(s\)"$}
 test "GxPixmap::flipContrast" "too many args" {
     GxPixmap::flipContrast $::PIXMAP junk
-} {^wrong \# args: should be "GxPixmap::flipContrast item_id\(s\)"$}
+} {^wrong \# args: should be "GxPixmap::flipContrast objref\(s\)"$}
 test "GxPixmap::flipContrast" "normal use" {
     GxPixmap::flipContrast $::PIXMAP
     clearscreen
@@ -92,10 +92,10 @@ test "GxPixmap::flipContrast" "normal use" {
 ### GxPixmap::flipVerticalCmd ###
 test "GxPixmap::flipVertical" "too few args" {
     GxPixmap::flipVertical
-} {^wrong \# args: should be "GxPixmap::flipVertical item_id\(s\)"$}
+} {^wrong \# args: should be "GxPixmap::flipVertical objref\(s\)"$}
 test "GxPixmap::flipVertical" "too many args" {
     GxPixmap::flipVertical $::PIXMAP junk
-} {^wrong \# args: should be "GxPixmap::flipVertical item_id\(s\)"$}
+} {^wrong \# args: should be "GxPixmap::flipVertical objref\(s\)"$}
 test "GxPixmap::flipVertical" "normal use" {
 
     GxShapeKit::alignmentMode $::PIXMAP $GxShapeKit::CENTER_ON_CENTER

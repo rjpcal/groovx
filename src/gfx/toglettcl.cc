@@ -123,11 +123,11 @@ DOTRACE("Toglet_Init");
   pkg->def( "see", "gxnode_id", &see );
 
   pkg->defSetter("allowRefresh", &Toglet::allowRefresh);
-  pkg->defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
+  pkg->defSetter("animate", "objref(s) frames_per_second", &Toglet::animate);
   pkg->defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
   pkg->defAction("clearscreen", &Toglet::fullClearscreen);
-  pkg->defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
-  pkg->defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
+  pkg->defSetter("hold", "objref(s) hold_on?", &Toglet::setHold);
+  pkg->defSetter("setVisible", "objref(s) visibility", &Toglet::setVisibility);
   pkg->defAttrib("size", &Toglet::size, &Toglet::setSize);
   pkg->defAction("swapBuffers", &Toglet::swapBuffers);
   pkg->defAction("takeFocus", &Toglet::takeFocus);

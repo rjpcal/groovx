@@ -132,9 +132,9 @@ void Tcl::defField(Tcl::Pkg* pkg, const Field& field)
 {
 DOTRACE("Tcl::defField");
 
-  pkg->defVec( field.name().c_str(), "item_id(s)",
+  pkg->defVec( field.name().c_str(), "objref(s)",
                Util::bindFirst(getField, field) );
-  pkg->defVec( field.name().c_str(), "item_id(s) new_val(s)",
+  pkg->defVec( field.name().c_str(), "objref(s) new_val(s)",
                Util::bindFirst(setField, field) );
 }
 

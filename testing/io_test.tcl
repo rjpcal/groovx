@@ -15,7 +15,7 @@ namespace eval IO {
 
 variable TEST_DEFINED 1
 
-proc testWriteLGX { packagename item_id} {
+proc testWriteLGX { packagename objref} {
     set cmdname "IO::writeLGX"
     set testname "${packagename}-${cmdname}"
 
@@ -38,12 +38,12 @@ proc testWriteLGX { packagename item_id} {
     "} {"expected long value but got \"1\.5\""}
 
     eval ::test $testname {"normal use"} {"
-        set code \[catch {$cmdname $item_id} result\]
+        set code \[catch {$cmdname $objref} result\]
         return \"\$code \$result\"
     "} {^0.*$}
 }
 
-proc testReadLGX { packagename item_id} {
+proc testReadLGX { packagename objref} {
     set cmdname "IO::readLGX"
     set stringify "IO::writeLGX"
     set testname "${packagename}-${cmdname}"
@@ -67,17 +67,17 @@ proc testReadLGX { packagename item_id} {
     "} {"expected long value but got \"1\.5\""}
 
     eval ::test $testname {"normal use"} {"
-        set str \[$stringify $item_id\]
-        set code \[catch {$cmdname $item_id \$str} result\]
+        set str \[$stringify $objref\]
+        set code \[catch {$cmdname $objref \$str} result\]
         return \"\$code \$result\"
     "} {^0.*$}
     eval ::test $testname {"error on junk"} {"
-        set code \[catch {$cmdname $item_id junk} result\]
+        set code \[catch {$cmdname $objref junk} result\]
         return \"\$code \$result\"
     "} {^1.*$}
 }
 
-proc testWriteASW { packagename item_id} {
+proc testWriteASW { packagename objref} {
     set cmdname "IO::writeASW"
     set testname "${packagename}-${cmdname}"
 
@@ -100,12 +100,12 @@ proc testWriteASW { packagename item_id} {
     "} {"expected long value but got \"1\.5\""}
 
     eval ::test $testname {"normal use"} {"
-        set code \[catch {$cmdname $item_id} result\]
+        set code \[catch {$cmdname $objref} result\]
         return \"\$code \$result\"
     "} {^0.*$}
 }
 
-proc testReadASW { packagename item_id} {
+proc testReadASW { packagename objref} {
     set readcmd "IO::readASW"
     set writecmd "IO::writeASW"
     set testname "${packagename}-${readcmd}"
@@ -129,12 +129,12 @@ proc testReadASW { packagename item_id} {
     "} {"expected long value but got \"1\.5\""}
 
     eval ::test $testname {"normal use"} {"
-        set str \[$writecmd $item_id\]
-        set code \[catch {$readcmd $item_id \$str} msg\]
+        set str \[$writecmd $objref\]
+        set code \[catch {$readcmd $objref \$str} msg\]
         set result \"\$code\$msg\"
     "} {^0$}
     eval ::test $testname {"error on junk"} {"
-        set code \[catch {$readcmd $item_id junk} result\]
+        set code \[catch {$readcmd $objref junk} result\]
         return \"\$code \$result\"
     "} {^1.*$}
 }

@@ -404,21 +404,21 @@ const char* Tcl::Pkg::actionUsage(const char* usage)
 {
   if (usage != 0 && *usage != 0)
     return usage;
-  return "item_id(s)";
+  return "objref(s)";
 }
 
 const char* Tcl::Pkg::getterUsage(const char* usage)
 {
   if (usage != 0 && *usage != 0)
     return usage;
-  return "item_id(s)";
+  return "objref(s)";
 }
 
 const char* Tcl::Pkg::setterUsage(const char* usage)
 {
   if (usage != 0 && *usage != 0)
     return usage;
-  return "item_id(s) new_value(s)";
+  return "objref(s) new_value(s)";
 }
 
 static const char vcid_tclpkg_cc[] = "$Header$";

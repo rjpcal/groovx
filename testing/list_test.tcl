@@ -74,13 +74,13 @@ proc testCountAllCmd { objname } {
         set after_count \[$cmdname\]
         return \[expr \$after_count - \$before_count\]
     "} {"^2$"}
-} 
+}
 
 proc testDeleteCmd { objname } {
     upvar $objname this
 
     set cmdname "Obj::delete"
-    set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
+    set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
     set testname "${this(packagename)}-${cmdname}"
 
     eval ::test $testname {"too few args"} {"

@@ -118,7 +118,7 @@ namespace
 void Tcl::defGenericObjCmds(Tcl::Pkg* pkg, shared_ptr<Tcl::ObjCaster> caster)
 {
 DOTRACE("Tcl::defGenericObjCmds");
-  pkg->defVec( "is", "item_id(s)", Util::bindFirst(isMyType, caster) );
+  pkg->defVec( "is", "objref(s)", Util::bindFirst(isMyType, caster) );
   pkg->def( "countAll", "", Util::bindFirst(countAll, caster) );
   pkg->def( "findAll", "", Util::bindFirst(findAll, caster) );
   pkg->def( "removeAll", "", Util::bindFirst(removeAll, caster) );

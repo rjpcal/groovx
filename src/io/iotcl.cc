@@ -51,17 +51,17 @@ DOTRACE("Io_Init");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<IO::IoObject>(pkg);
 
-  pkg->defVec( "writeLGX", "item_id(s)", IO::writeLGX );
-  pkg->defVec( "readLGX", "item_id(s) string(s)", IO::readLGX );
+  pkg->defVec( "writeLGX", "objref(s)", IO::writeLGX );
+  pkg->defVec( "readLGX", "objref(s) string(s)", IO::readLGX );
 
-  pkg->defVec( "writeASW", "item_id(s)", IO::writeASW );
-  pkg->defVec( "readASW", "item_id(s) string(s)", IO::readASW );
-  pkg->def( "saveASW", "item_id filename", IO::saveASW );
-  pkg->def( "loadASW", "item_id filename", IO::loadASW );
+  pkg->defVec( "writeASW", "objref(s)", IO::writeASW );
+  pkg->defVec( "readASW", "objref(s) string(s)", IO::readASW );
+  pkg->def( "saveASW", "objref filename", IO::saveASW );
+  pkg->def( "loadASW", "objref filename", IO::loadASW );
   pkg->def( "retrieveASW", "filename", IO::retrieveASW );
 
-  pkg->defVec( "writeGVX", "item_id(s)", IO::writeGVX );
-  pkg->def( "saveGVX", "item_id filename", IO::saveGVX );
+  pkg->defVec( "writeGVX", "objref(s)", IO::writeGVX );
+  pkg->def( "saveGVX", "objref filename", IO::saveGVX );
   pkg->def( "loadGVX", "filename", IO::loadGVX );
 
   pkg->def( "xmlDebug", "filename", IO::xmlDebug );
