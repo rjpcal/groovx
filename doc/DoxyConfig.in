@@ -381,6 +381,7 @@ INPUT                  = ./doc \
 # *.h++ *.idl *.odl
 
 FILE_PATTERNS          = *.h \
+			 *.cc \
                          *.doc
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
