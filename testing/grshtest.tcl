@@ -33,6 +33,7 @@ set files {
 	 gl_test.tcl
 	 grobj_test.tcl
 	 gtext_test.tcl
+	 gxsep_test.tcl
 	 house_test.tcl
 	 jitter_test.tcl
 	 kbdrh_test.tcl
