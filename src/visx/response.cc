@@ -52,21 +52,21 @@ const int Response::IGNORE;
 
 Response::~Response() throw() {}
 
-rutz::fstring Response::getNativeTypeName() const
+rutz::fstring Response::value_typename() const
 {
-DOTRACE("Response::getNativeTypeName");
+DOTRACE("Response::value_typename");
   static rutz::fstring name("Response"); return name;
 }
 
-void Response::printTo(STD_IO::ostream& os) const
+void Response::print_to(STD_IO::ostream& os) const
 {
 DOTRACE("Response::printTo");
   os << itsVal << " " << itsMsec;
 }
 
-void Response::scanFrom(STD_IO::istream& is)
+void Response::scan_from(STD_IO::istream& is)
 {
-DOTRACE("Response::scanFrom");
+DOTRACE("Response::scan_from");
   is >> itsVal >> itsMsec;
 }
 

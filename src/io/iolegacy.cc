@@ -285,11 +285,11 @@ DOTRACE("IO::LegacyReader::readStringImpl");
   return new_string;
 }
 
-void IO::LegacyReader::readValueObj(const fstring& name, Value& value)
+void IO::LegacyReader::readValueObj(const fstring& name, rutz::value& v)
 {
 DOTRACE("IO::LegacyReader::readValueObj");
   dbg_eval_nl(3, name);
-  value.scanFrom(rep->itsInStream);
+  v.scan_from(rep->itsInStream);
   rep->throwIfError(name, SRC_POS);
 }
 
@@ -585,10 +585,10 @@ DOTRACE("IO::LegacyWriter::writeCstring");
 }
 
 void IO::LegacyWriter::writeValueObj(const char* name,
-                                     const Value& value)
+                                     const rutz::value& v)
 {
 DOTRACE("IO::LegacyWriter::writeValueObj");
-  value.printTo(rep->stream());
+  v.print_to(rep->stream());
   rep->stream() << rep->itsFSep;
   rep->throwIfError(name, SRC_POS);
 }

@@ -37,6 +37,11 @@
 
 #include "io/iodecls.h"
 
+namespace rutz
+{
+  class value;
+}
+
 namespace Util
 {
   template <class T> class Ref;
@@ -48,8 +53,6 @@ namespace IO
   class IoObject;
   class Writer;
 }
-
-class Value;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -95,8 +98,8 @@ public:
   /// Store the \c double attribute \a val in association with the tag \a name.
   virtual void writeDouble(const char* name, double val) = 0;
 
-  /// Store the \c Value attribute \a val in association with the tag \a name.
-  virtual void writeValueObj(const char* name, const Value& value) = 0;
+  /// Store the \c rutz::value attribute \a val in association with the tag \a name.
+  virtual void writeValueObj(const char* name, const rutz::value& v) = 0;
 
   /// Store the raw data array in association with the tag \a name.
   virtual void writeRawData(const char* name,
@@ -106,8 +109,9 @@ public:
   /** @name Overloaded write functions
 
       These functions offer a set of overloads to provide compile-time
-      polymorphism so that any supported type (any basic type, or Value, a
-      string type) or can be written with the same source code.
+      polymorphism so that any supported type (any basic type, or
+      rutz::value, a string type) or can be written with the same
+      source code.
   */
   //@{
 
@@ -132,8 +136,8 @@ public:
   void writeValue(const char* name, const rutz::fstring& val)
   { writeCstring(name, val.c_str()); }
 
-  void writeValue(const char* name, const Value& value)
-  { writeValueObj(name, value); }
+  void writeValue(const char* name, const rutz::value& v)
+  { writeValueObj(name, v); }
 
   //@}
 

@@ -151,7 +151,7 @@ public:
   virtual int readInt(const fstring& name);
   virtual bool readBool(const fstring& name);
   virtual double readDouble(const fstring& name);
-  virtual void readValueObj(const fstring& name, Value& value);
+  virtual void readValueObj(const fstring& name, rutz::value& v);
 
   virtual void readRawData(const fstring& name, rutz::byte_array& data)
   { defaultReadRawData(name, data); }
@@ -296,14 +296,15 @@ DOTRACE("AsciiStreamReader::readStringImpl");
   return new_string;
 }
 
-void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
+void AsciiStreamReader::readValueObj(const fstring& name,
+                                     rutz::value& v)
 {
 DOTRACE("AsciiStreamReader::readValueObj");
   dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
 
-  value.setFstring(a.value);
+  v.set_string(a.value);
 }
 
 Ref<IO::IoObject>

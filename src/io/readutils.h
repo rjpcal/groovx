@@ -81,10 +81,10 @@ namespace ReadUtils
     }
 
   /** Provides a generic interface for handling containers, sequences,
-      etc. of Value subtypes. If the count has already been read from
-      the reader, this value can be passed as \c known_count, so that
-      we avoid reading the value twice (this may be important if the
-      reader does not support random access to the attributes). */
+      etc. of rutz::value subtypes. If the count has already been read
+      from the reader, this value can be passed as \c known_count, so
+      that we avoid reading the value twice (this may be important if
+      the reader does not support random access to the attributes). */
   template <class T, class Inserter>
   inline void readValueObjSeq(IO::Reader& reader,
                               const rutz::fstring& seq_name,

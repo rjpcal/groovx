@@ -43,45 +43,28 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-Value::Value()
+rutz::value::value()
 {
-DOTRACE("Value::Value");
+DOTRACE("rutz::value::value");
 }
 
-Value::~Value()
+rutz::value::~value()
 {
-DOTRACE("Value::~Value");
+DOTRACE("rutz::value::~value");
 }
 
-const char* Value::getCstring() const
+rutz::fstring rutz::value::get_string() const
 {
-DOTRACE("Value::getCstring");
-
-  static std::string result;
-
   std::ostringstream oss;
-  printTo(oss);
+  print_to(oss);
 
-  result = oss.str();
-
-  return result.c_str();
+  return rutz::fstring(oss.str().c_str());
 }
 
-rutz::fstring Value::getFstring() const
+void rutz::value::set_string(rutz::fstring val)
 {
-  return rutz::fstring(getCstring());
-}
-
-void Value::setCstring(const char* str)
-{
-DOTRACE("Value::setCstring");
-  rutz::icstrstream ist(str);
-  scanFrom(ist);
-}
-
-void Value::setFstring(rutz::fstring val)
-{
-  setCstring(val.c_str());
+  rutz::icstrstream ist(val.c_str());
+  scan_from(ist);
 }
 
 static const char vcid_value_cc[] = "$Header$";

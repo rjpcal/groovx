@@ -42,71 +42,68 @@ class ostream;
 namespace rutz
 {
   class fstring;
+  class value;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Value defines an interface for variant-type value objects that
- * can be converted to+from a string representation. Subclasses may
- * allow conversion among types so that a value of any basic type can
- * be retrieved, or they may allow only one basic type to be
+ * \c rutz::value defines an interface for variant-type value objects
+ * that can be converted to+from a string representation. Subclasses
+ * may allow conversion among types so that a value of any basic type
+ * can be retrieved, or they may allow only one basic type to be
  * retrieved.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Value
+class rutz::value
 {
 public:
 
   /// Default constructor.
-  Value();
+  value();
 
   /// Virtual destructor ensures proper destruction of base classes.
-  virtual ~Value();
+  virtual ~value();
 
   /// Return a string giving the name of the native type.
-  virtual rutz::fstring getNativeTypeName() const = 0;
+  virtual rutz::fstring value_typename() const = 0;
 
   /// Write the value to an \c STD_IO::ostream.
-  virtual void printTo(STD_IO::ostream& os) const = 0;
+  virtual void print_to(STD_IO::ostream& os) const = 0;
 
   /// Read the value from an \c STD_IO::istream.
-  virtual void scanFrom(STD_IO::istream& is) = 0;
-
-  /// Get a C-style string (\c char*) representation of the value
-  /** Builds a string stream, calls printTo(), and returns its value. The
-      result of this function is only valid until the next call.*/
-  const char* getCstring() const;
+  virtual void scan_from(STD_IO::istream& is) = 0;
 
   /// Get an \c rutz::fstring representation of the value.
-  rutz::fstring getFstring() const;
+  /** Builds a string stream, calls print_to(), and returns its
+      value. */
+  rutz::fstring get_string() const;
 
-  /** Set the value from a C-style string (\c char*) representation,
-      by building a string stream from \a val and calling scanFrom()
-      with it. */
-  void setCstring(const char* val);
-
-  /// Set the value from an rutz::fstring. Calls the setCstring().
-  void setFstring(rutz::fstring val);
+  /// Set the value from an rutz::fstring.
+  /** Builds a string stream from \a val and calling scan_from() with
+      it. */
+  void set_string(rutz::fstring val);
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Global stream insertion/extraction operators for Value's
+// Global stream insertion/extraction operators for rutz::value
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline STD_IO::ostream& operator<<(STD_IO::ostream& os, const Value& val)
+inline STD_IO::ostream& operator<<(STD_IO::ostream& os,
+                                   const rutz::value& val)
 {
-  val.printTo(os);
+  val.print_to(os);
   return os;
 }
 
-inline STD_IO::istream& operator>>(STD_IO::istream& is, Value& val)
+inline STD_IO::istream& operator>>(STD_IO::istream& is,
+                                   rutz::value& val)
 {
-  val.scanFrom(is);
+  val.scan_from(is);
   return is;
 }
 

@@ -63,7 +63,7 @@ namespace
     virtual void writeBool(const char*, bool)             { ++itsC; }
     virtual void writeDouble(const char*, double)         { ++itsC; }
     virtual void writeCstring(const char*, const char*)   { ++itsC; }
-    virtual void writeValueObj(const char*, const Value&) { ++itsC; }
+    virtual void writeValueObj(const char*, const rutz::value&) { ++itsC; }
 
     virtual void writeRawData(const char*,
                               const unsigned char*,

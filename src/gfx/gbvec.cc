@@ -46,7 +46,7 @@ template <class T>
 GbVec2<T>::~GbVec2() {}
 
 template <class T>
-rutz::fstring GbVec2<T>::getNativeTypeName() const
+rutz::fstring GbVec2<T>::value_typename() const
 {
   return rutz::fstring("GbVec2");
 }
@@ -64,7 +64,7 @@ template <class T>
 GbVec3<T>::~GbVec3() {}
 
 template <class T>
-rutz::fstring GbVec3<T>::getNativeTypeName() const
+rutz::fstring GbVec3<T>::value_typename() const
 {
   return rutz::fstring("GbVec3");
 }

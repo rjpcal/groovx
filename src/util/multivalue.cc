@@ -49,7 +49,7 @@ template <class T>
 TMultiValue<T>::~TMultiValue() {}
 
 template <class T>
-void TMultiValue<T>::printTo(STD_IO::ostream& os) const
+void TMultiValue<T>::print_to(STD_IO::ostream& os) const
 {
 DOTRACE("TMultiValue<T>::printTo");
   const T* dat = constBegin();
@@ -64,9 +64,9 @@ DOTRACE("TMultiValue<T>::printTo");
 }
 
 template <class T>
-void TMultiValue<T>::scanFrom(STD_IO::istream& is)
+void TMultiValue<T>::scan_from(STD_IO::istream& is)
 {
-DOTRACE("TMultiValue<T>::scanFrom");
+DOTRACE("TMultiValue<T>::scan_from");
 
   if (is.fail())
     throw rutz::error("istream started out in fail state", SRC_POS);

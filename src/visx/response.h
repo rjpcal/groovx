@@ -34,8 +34,8 @@
 
 #include "util/value.h"
 
-/// A Value subclass for observers' responses in a experiment trials.
-class Response : public Value
+/// A rutz::value subclass for observers' responses in a experiment trials.
+class Response : public rutz::value
 {
 public:
   static const int INVALID_VALUE = -1;
@@ -52,10 +52,10 @@ public:
 
   virtual ~Response() throw();
 
-  virtual rutz::fstring getNativeTypeName() const;
+  virtual rutz::fstring value_typename() const;
 
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
+  virtual void print_to(STD_IO::ostream& os) const;
+  virtual void scan_from(STD_IO::istream& is);
 
   bool shouldIgnore() const { return itsVal == IGNORE; }
 

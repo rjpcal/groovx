@@ -34,19 +34,19 @@
 
 #include "util/value.h"
 
-/// A Value subclass representing a fixed-size set of homogeneous values.
+/// A rutz::value subclass representing a fixed-size set of homogeneous values.
 template <class T>
-class TMultiValue : public Value
+class TMultiValue : public rutz::value
 {
 public:
   TMultiValue(int num);
   virtual ~TMultiValue();
 
   /// Get a string describing the underlying native type.
-  virtual rutz::fstring getNativeTypeName() const = 0;
+  virtual rutz::fstring value_typename() const = 0;
 
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
+  virtual void print_to(STD_IO::ostream& os) const;
+  virtual void scan_from(STD_IO::istream& is);
 
 protected:
   /// Returns a const pointer to the start of the underlying storage.

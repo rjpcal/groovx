@@ -38,27 +38,27 @@
 #include <iomanip>
 #include <vector>
 
-/// A Value subclass representing a fixed-size set of homogeneous values.
+/// A rutz::value subclass representing a fixed-size set of homogeneous values.
 template <class T>
-class TArrayValue : public Value
+class TArrayValue : public rutz::value
 {
 public:
   TArrayValue() : itsArray() {}
-  TArrayValue(const rutz::fstring& s) { setFstring(s); }
+  TArrayValue(const rutz::fstring& s) { set_string(s); }
   virtual ~TArrayValue() {}
 
-  virtual rutz::fstring getNativeTypeName() const
+  virtual rutz::fstring value_typename() const
   {
     return rutz::fstring("TArrayValue");
   }
 
-  virtual void printTo(STD_IO::ostream& os) const
+  virtual void print_to(STD_IO::ostream& os) const
   {
     for (unsigned int i = 0; i < itsArray.size(); ++i)
       os << itsArray[i] << "   ";
   }
 
-  virtual void scanFrom(STD_IO::istream& is)
+  virtual void scan_from(STD_IO::istream& is)
   {
     std::vector<T> newarray;
 

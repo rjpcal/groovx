@@ -74,7 +74,7 @@ namespace WriteUtils
     }
 
   /** A generic interface for handling containers, sequences, etc. of
-      objects of Value subtypes */
+      objects of rutz::value subtypes */
   template <class Itr>
   void writeValueObjSeq(IO::Writer& writer, const rutz::fstring& name,
                         Itr begin, Itr end, bool skip_count=false)

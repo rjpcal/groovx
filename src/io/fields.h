@@ -319,7 +319,7 @@ template <class C, class V>
 class ValueFieldImpl : public FieldImpl
 {
 public:
-  /// Construct with a member pointer for the Value field.
+  /// Construct with a member pointer for the rutz::value field.
   ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
@@ -328,16 +328,16 @@ public:
 
     rutz::fstring sval = new_val.template as<rutz::fstring>();
 
-    dereference(cobj, itsValueMember).setFstring(sval);
+    dereference(cobj, itsValueMember).set_string(sval);
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    const Value& val = const_dereference(cobj, itsValueMember);
+    const rutz::value& v = const_dereference(cobj, itsValueMember);
 
-    return Tcl::toTcl(val);
+    return Tcl::toTcl(v);
   }
 
   virtual void readValueFrom(FieldContainer* obj,

@@ -70,7 +70,7 @@ public:
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
   virtual void writeDouble(const char* name, double val);
-  virtual void writeValueObj(const char* name, const Value& value);
+  virtual void writeValueObj(const char* name, const rutz::value& v);
 
   virtual void writeRawData(const char* name,
                             const unsigned char* data,
@@ -182,15 +182,15 @@ DOTRACE("XMLWriter::writeDouble");
   writeBasicType(name, val, "double");
 }
 
-void XMLWriter::writeValueObj(const char* name, const Value& value)
+void XMLWriter::writeValueObj(const char* name, const rutz::value& v)
 {
 DOTRACE("XMLWriter::writeValueObj");
   indent();
   itsBuf << "<valobj"
-         << " type=\"" << value.getNativeTypeName() << "\""
+         << " type=\"" << value.value_typename() << "\""
          << " name=\"" << name << "\""
          << " value=\"";
-  value.printTo(itsBuf);
+  v.print_to(itsBuf);
   itsBuf << "\"/>\n";
 }
 

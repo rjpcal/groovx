@@ -49,10 +49,10 @@ GbColor::GbColor(double r, double g, double b, double a) :
 GbColor::~GbColor() {}
 
 //
-// Value interface
+// rutz::value interface
 //
 
-rutz::fstring GbColor::getNativeTypeName() const
+rutz::fstring GbColor::value_typename() const
 {
   static rutz::fstring name("GbColor");
   return name;

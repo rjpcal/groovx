@@ -39,6 +39,8 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "tcl/tcldebugscheduler.h"
+
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/error.h"
@@ -80,7 +82,8 @@ private:
 
 public:
   Impl() :
-    scheduler(rutz::make_shared(new Tcl::TimerScheduler)),
+//     scheduler(rutz::make_shared(new Tcl::TimerScheduler)),
+    scheduler(rutz::make_shared(new Tcl::DebugScheduler)),
     immediateEvents(),
     startEvents(),
     responseEvents(),

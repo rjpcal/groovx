@@ -40,6 +40,7 @@
 namespace rutz
 {
   class byte_array;
+  class value;
 }
 
 namespace Util
@@ -47,8 +48,6 @@ namespace Util
   template <class T> class Ref;
   template <class T> class SoftRef;
 }
-
-class Value;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -97,8 +96,8 @@ public:
   /// Read the \c double attribute associated with the tag \a name.
   virtual double readDouble(const rutz::fstring& name) = 0;
 
-  /// Read the \c Value attribute associated with the tag \a name.
-  virtual void readValueObj(const rutz::fstring& name, Value& value) = 0;
+  /// Read the \c rutz::value attribute associated with the tag \a name.
+  virtual void readValueObj(const rutz::fstring& name, rutz::value& v) = 0;
 
   /// Read the raw data array associated with the tag \a name.
   virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data) = 0;
@@ -106,8 +105,9 @@ public:
   /** @name Overloaded read functions
 
       These functions offer a set of overloads to provide compile-time
-      polymorphism so that any supported type (any basic type, or Value, a
-      string type) or can be read with the same source code.
+      polymorphism so that any supported type (any basic type, or
+      rutz::value, a string type) or can be read with the same source
+      code.
   */
   //@{
 
@@ -132,7 +132,7 @@ public:
   void readValue(const rutz::fstring& name, rutz::fstring& ret)
   { ret = readStringImpl(name); }
 
-  void readValue(const rutz::fstring& name, Value& ret)
+  void readValue(const rutz::fstring& name, rutz::value& ret)
   { readValueObj(name, ret); }
 
   //@}

@@ -388,11 +388,11 @@ DOTRACE("Tcl::toTcl(const fstring&)");
   return Tcl_NewStringObj(val.c_str(), val.length());
 }
 
-Tcl::ObjPtr Tcl::toTcl(const Value& val)
+Tcl::ObjPtr Tcl::toTcl(const rutz::value& val)
 {
-DOTRACE("Tcl::toTcl(const Value&)");
+DOTRACE("Tcl::toTcl(const rutz::value&)");
 
-  return Tcl_NewStringObj(val.getCstring(), -1);
+  return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }
 
 Tcl::ObjPtr Tcl::toTcl(Tcl::Dict dictObj)

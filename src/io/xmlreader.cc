@@ -348,11 +348,11 @@ namespace
       return dlp.itsVal;
     }
 
-    virtual void readValueObj(const fstring& name, Value& value)
+    virtual void readValueObj(const fstring& name, rutz::value& v)
     {
       ElPtr el = itsElems[name];
       ValueElement& vlp = elementCast<ValueElement>(el.get(), name, SRC_POS);
-      value.setFstring(vlp.itsVal);
+      v.set_string(vlp.itsVal);
     }
 
     virtual void readRawData(const fstring& name, rutz::byte_array& data)

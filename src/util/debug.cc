@@ -98,7 +98,7 @@ EVAL_IMPL(rutz::fstring);
 
 void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
 {
-  fprintf(stderr, "Panic (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
+  fprintf(stderr, "Panic (%s:%d):\n\tgot '%s'\n\n", where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }

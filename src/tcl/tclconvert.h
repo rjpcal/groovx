@@ -34,12 +34,12 @@
 
 #include "util/traits.h"
 
-class Value;
 typedef struct Tcl_Obj Tcl_Obj;
 
 namespace rutz
 {
   class fstring;
+  class value;
   template <class T> class fwd_iter;
 }
 
@@ -59,11 +59,11 @@ namespace Tcl
   template <class T>
   struct Return
   {
-    // This machinery is simple to set up the rule that we want to convert
-    // all Value subclasses via strings. All other types are converted
-    // directly.
+    // This machinery is simple to set up the rule that we want to
+    // convert all rutz::value subclasses via strings. All other types
+    // are converted directly.
     typedef typename rutz::select_if<
-      rutz::is_sub_super<T, Value>::result,
+      rutz::is_sub_super<T, rutz::value>::result,
       rutz::fstring, T>::result_t
     Type;
   };
@@ -73,7 +73,7 @@ namespace Tcl
   struct Return<const T>
   {
     typedef typename rutz::select_if<
-      rutz::is_sub_super<T, Value>::result,
+      rutz::is_sub_super<T, rutz::value>::result,
       rutz::fstring, T>::result_t
     Type;
   };
@@ -83,7 +83,7 @@ namespace Tcl
   struct Return<const T&>
   {
     typedef typename rutz::select_if<
-      rutz::is_sub_super<T, Value>::result,
+      rutz::is_sub_super<T, rutz::value>::result,
       rutz::fstring, T>::result_t
     Type;
   };
@@ -127,7 +127,7 @@ namespace Tcl
   Tcl::ObjPtr toTcl(float val);
   Tcl::ObjPtr toTcl(const char* val);
   Tcl::ObjPtr toTcl(const rutz::fstring& val);
-  Tcl::ObjPtr toTcl(const Value& val);
+  Tcl::ObjPtr toTcl(const rutz::value& v);
   Tcl::ObjPtr toTcl(Tcl::Dict dictObj);
   Tcl::ObjPtr toTcl(Tcl::List listObj);
   Tcl::ObjPtr toTcl(Tcl::ObjPtr val);

@@ -118,7 +118,7 @@ public:
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
   virtual void writeDouble(const char* name, double val);
-  virtual void writeValueObj(const char* name, const Value& value);
+  virtual void writeValueObj(const char* name, const rutz::value& v);
 
   virtual void writeRawData(const char* name,
                             const unsigned char* data,
@@ -247,11 +247,12 @@ DOTRACE("AsciiStreamWriter::writeCstring");
   writeStringType(name, val);
 }
 
-void AsciiStreamWriter::writeValueObj(const char* name, const Value& value)
+void AsciiStreamWriter::writeValueObj(const char* name,
+                                      const rutz::value& v)
 {
 DOTRACE("AsciiStreamWriter::writeValueObj");
 
-  writeBasicType<const Value&>(name, value, value.getNativeTypeName().c_str());
+  writeBasicType<const rutz::value&>(name, v, v.value_typename().c_str());
 }
 
 void AsciiStreamWriter::writeObject(const char* name,

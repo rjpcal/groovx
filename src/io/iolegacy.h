@@ -65,7 +65,7 @@ public:
   virtual int readInt(const rutz::fstring& name);
   virtual bool readBool(const rutz::fstring& name);
   virtual double readDouble(const rutz::fstring& name);
-  virtual void readValueObj(const rutz::fstring& name, Value& value);
+  virtual void readValueObj(const rutz::fstring& name, rutz::value& v);
 
   virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data)
   { defaultReadRawData(name, data); }
@@ -111,7 +111,7 @@ public:
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
   virtual void writeDouble(const char* name, double val);
-  virtual void writeValueObj(const char* name, const Value& value);
+  virtual void writeValueObj(const char* name, const rutz::value& v);
 
   virtual void writeRawData(const char* name,
                             const unsigned char* data,

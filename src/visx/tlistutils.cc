@@ -235,7 +235,7 @@ public:
   virtual void writeInt(const char*, int) {}
   virtual void writeBool(const char*, bool) {}
   virtual void writeDouble(const char*, double) {}
-  virtual void writeValueObj(const char*, const Value&) {}
+  virtual void writeValueObj(const char*, const rutz::value&) {}
   virtual void writeCstring(const char*, const char*) {}
 
   virtual void writeRawData(const char*,
