@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 15 11:00:08 2000
+// written: Wed Mar 15 18:35:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,57 @@ typedef void* ClientData;
 namespace Tcl {
   class TclCmd;
 }
+
+
+namespace Tcl {
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * \c ListIterator is an adapter that provides an STL-style iterator
+ * interface to Tcl list objects. \c ListIterator is a model of \c
+ * input \c iterator.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class ListIterator {
+public:
+  typedef T value_type;
+
+  enum Pos { BEGIN, END };
+
+  ListIterator(Tcl_Obj* aList, Pos pos = BEGIN);
+  ListIterator(const ListIterator& other);
+  ~ListIterator();
+
+  ListIterator& operator=(const ListIterator& other);
+
+  T operator*() const;
+
+  ListIterator& operator++()
+	 { ++itsIndex; return *this; }
+
+  ListIterator operator++(int)
+	 { ListIterator temp(*this); ++itsIndex; return temp; }
+
+  bool operator==(const ListIterator& other)
+	 { return (itsIndex == other.itsIndex && itsList == other.itsList); }
+
+  bool operator!=(const ListIterator& other)
+	 { return (itsIndex != other.itsIndex || itsList != other.itsList); }
+
+private:
+  void swap(ListIterator& other);
+
+  Tcl_Obj* itsList;
+  Tcl_Obj** itsListElements;
+  unsigned int itsElementCount;
+  unsigned int itsIndex;
+};
+
+} // end namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -123,6 +174,24 @@ protected:
   void getValFromArg(int argn, T& val)
 	 { getValFromObj(itsObjv[argn], val); }
 
+  //---------------------------------------------------------------------
+  //
+  // Functions to treat the arguments of the current invocation as Tcl
+  // lists. There are two ways to handle arguments in such a way: one
+  // is to transfer the whole list through an STL-style insert
+  // iterator, and the other is to use a \c ListIterator, which
+  // iterates through a Tcl list and converts each value to a type
+  // specified by the template argument of \c ListIterator.
+  //
+  //---------------------------------------------------------------------
+
+  /** Attempts to convert argument number \a argn into a Tcl list, and
+      if successful, returns the number of elements in that list. */
+  unsigned int getSequenceLengthOfArg(int argn)
+	 {
+		return safeListLength(itsObjv[argn]);
+	 }
+
   /** Attempts to convert argument number \a argn into a sequence of
       elements of type \c T, and inserts these through the insert
       iterator \a itr. */
@@ -155,6 +224,24 @@ protected:
 	 }
   }
 
+  /** Attempts to convert argument number \a argn into a Tcl list, and
+      if successful, returns an iterator pointing to the beginning of
+      that list. */
+  template <class T>
+  ListIterator<T> beginOfArg(int argn, T* /*dummy*/=0)
+	 {
+		return ListIterator<T>(itsObjv[argn], ListIterator<T>::BEGIN);
+	 }
+
+
+  /** Attempts to convert argument number \a argn into a Tcl list, and
+      if successful, returns an iterator pointing to the
+      one-past-the-end element of that list. */
+  template <class T>
+  ListIterator<T> endOfArg(int argn, T* /*dummy*/=0)
+	 {
+		return ListIterator<T>(itsObjv[argn], ListIterator<T>::END);
+	 }
 
   //---------------------------------------------------------------------
   //
@@ -249,12 +336,16 @@ protected:
   Tcl_Interp* interp() { return itsInterp; }
 
 private:
+  template <class T> friend class ListIterator;
+
   /// The procedure that is actually registered with the Tcl C API.
   static int dummyInvoke(ClientData clientData, Tcl_Interp* interp,
 								 int objc, Tcl_Obj *const objv[]);
 
-  void safeSplitList(Tcl_Obj* obj, int* count_return,
-							Tcl_Obj*** elements_return);
+  static void safeSplitList(Tcl_Obj* obj, int* count_return,
+									 Tcl_Obj*** elements_return);
+
+  static unsigned int safeListLength(Tcl_Obj* obj);
 
   void lappendValue(const Value& val);
   void lappendInt(int val);
@@ -264,7 +355,7 @@ private:
   void lappendCstring(const char* val);
 
   template <class T>
-  void getValFromObj(Tcl_Obj* obj, T& val);
+  static void getValFromObj(Tcl_Obj* obj, T& val);
 
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
