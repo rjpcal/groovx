@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Jun 13 13:14:39 2001
+// written: Thu Jun 21 13:49:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 #include "trial.h"
 
 #include "gwt/canvas.h"
+
+#include "io/reader.h"
 
 #include "util/arrays.h"
 #include "util/error.h"
@@ -167,6 +169,50 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
     }
 }
 
+class MatlabTrialWriter : public IO::Writer {
+private:
+  STD_IO::ostream& itsOs;
+public:
+  MatlabTrialWriter(STD_IO::ostream& os) : itsOs(os) {}
+
+  virtual void writeChar(const char*, char) {}
+  virtual void writeInt(const char*, int) {}
+  virtual void writeBool(const char*, bool) {}
+  virtual void writeDouble(const char*, double) {}
+  virtual void writeValueObj(const char*, const Value&) {}
+  virtual void writeCstring(const char*, const char*) {}
+
+  virtual void writeObject(const char*,
+                           Util::WeakRef<const IO::IoObject> obj)
+  {
+    if (obj.isValid() && dynamic_cast<const GrObj*>(obj.get()) != 0)
+      {
+        itsOs << obj->id() << ' ';
+      }
+    else
+      {
+        obj->writeTo(this);
+      }
+  }
+
+  virtual void writeOwnedObject(const char* name,
+                                Util::Ref<const IO::IoObject> obj)
+  {
+    writeObject(name, obj);
+  }
+
+  virtual void writeBaseClass(const char*,
+                              Util::Ref<const IO::IoObject> basePart)
+  {
+    basePart->writeTo(this);
+  }
+
+  virtual void writeRoot(const IO::IoObject* root)
+  {
+    root->writeTo(this);
+  }
+};
+
 void TlistUtils::writeMatlab(const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
 
@@ -175,13 +221,16 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
+  MatlabTrialWriter writer(ofs);
+
   for (ObjDb::CastingIterator<Trial>
          itr = ObjDb::theDb().begin(),
          end = ObjDb::theDb().end();
        itr != end;
        ++itr)
     {
-      itr->writeMatlab(ofs);
+      writer.writeRoot(*itr);
+      ofs << itr->avgResponse() << '\n';
     }
 }
 
