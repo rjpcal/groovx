@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Nov 15 15:44:16 1999
+// written: Sat Nov 20 21:54:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@
  *
  * @memo Subclass of GrObj for drawing psychophysics fixation crosses.
  **/
+///////////////////////////////////////////////////////////////////////
 
 class FixPt : public GrObj, public PropFriend<FixPt> {
 public:
