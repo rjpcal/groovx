@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Fri Jul 13 10:28:08 2001
+// written: Mon Jul 16 08:00:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,6 +203,14 @@ fixed_string Tcl::Convert<fixed_string>::fromTcl(Tcl_Obj* obj)
 DOTRACE("Tcl::Convert<fixed_string>::fromTcl");
 
   return fixed_string(Convert<const char*>::fromTcl(obj));
+}
+
+template <>
+fixed_string Tcl::Convert<const fixed_string&>::fromTcl(Tcl_Obj* obj)
+{
+DOTRACE("Tcl::Convert<fixed_string>::fromTcl");
+
+  return Convert<fixed_string>::fromTcl(obj);
 }
 
 template <>
