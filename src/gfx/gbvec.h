@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Apr  2 14:05:04 2003
+// written: Tue May 13 10:58:24 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,7 +33,33 @@
 
 #include "util/multivalue.h"
 
+#include "gx/vec2.h"
 #include "gx/vec3.h"
+
+/// GbVec2 is a field class for holding @-D vectors/points/distances.
+template <class T>
+class GbVec2 : public Gfx::Vec2<T>,
+               public TMultiValue<T>
+{
+public:
+  /// Default constructor, or set initial 2-D coordinates.
+  GbVec2(T x_=T(), T y_=T());
+
+  /// String conversion constructor.
+  GbVec2(const fstring& s) : TMultiValue<T>(2) { setFstring(s); }
+
+  /// Virtual destructor.
+  virtual ~GbVec2();
+
+  /// Get the underlying Gfx::Vec2 value.
+        Gfx::Vec2<T>& vec()       { return *this; }
+  /// Get the underlying Gfx::Vec2 value.
+  const Gfx::Vec2<T>& vec() const { return *this; }
+
+  virtual fstring getNativeTypeName() const;
+
+  virtual const T* constBegin() const;
+};
 
 /// GbVec3 is a field class for holding 3-D vectors/points/distances.
 template <class T>

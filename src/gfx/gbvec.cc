@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Wed Mar 19 17:56:06 2003
+// written: Tue May 13 10:59:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -38,6 +38,24 @@
 #define INSTANTIATE(T)                                                  \
                                                                         \
 template <>                                                             \
+GbVec2<T>::GbVec2(T x_, T y_) :                                         \
+  Gfx::Vec2<T>(x_, y_),                                                 \
+  TMultiValue<T>(2)                                                     \
+{}                                                                      \
+                                                                        \
+template <>                                                             \
+GbVec2<T>::~GbVec2() {}                                                 \
+                                                                        \
+template <>                                                             \
+fstring GbVec2<T>::getNativeTypeName() const                            \
+{                                                                       \
+  return fstring("GbVec2");                                             \
+}                                                                       \
+                                                                        \
+template <>                                                             \
+const T* GbVec2<T>::constBegin() const { return &Gfx::Vec2<T>::x(); }   \
+                                                                        \
+template <>                                                             \
 GbVec3<T>::GbVec3(T x_, T y_, T z_) :                                   \
   Gfx::Vec3<T>(x_, y_, z_),                                             \
   TMultiValue<T>(3)                                                     \
@@ -57,6 +75,9 @@ const T* GbVec3<T>::constBegin() const { return Gfx::Vec3<T>::data(); }
 
 INSTANTIATE(int);
 INSTANTIATE(double);
+
+template class GbVec2<int>;
+template class GbVec2<double>;
 
 template class GbVec3<int>;
 template class GbVec3<double>;
