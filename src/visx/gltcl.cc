@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jun 18 13:37:00 2001
+// written: Fri Jun 22 09:28:44 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -18,6 +18,7 @@
 #ifndef GLTCL_CC_DEFINED
 #define GLTCL_CC_DEFINED
 
+#include "tcl/functor.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
@@ -55,12 +56,11 @@ namespace GLTcl {
   class glOrthoCmd;
   class gluLookAtCmd;
 
-  // Tcl functions
-  Tcl_ObjCmdProc drawOneLineCmd;
-  Tcl_ObjCmdProc drawThickLineCmd;
-  Tcl_ObjCmdProc antialiasCmd;
-  Tcl_ObjCmdProc lineInfoCmd;
-  Tcl_ObjCmdProc pixelCheckSumCmd;
+  class AntialiasCmd;
+  class DrawOneLineCmd;
+  class DrawThickLineCmd;
+  class LineInfoCmd;
+  class PixelCheckSumCmd;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -80,319 +80,6 @@ void GLTcl::checkGL() {
     throw GLError(msg);
   }
 }
-
-namespace GLTcl {
-
-  //
-  // zero arguments
-  //
-
-  template <class R>
-  class CmdP0 : public Tcl::TclCmd {
-  public:
-    typedef R (*Func)();
-
-    CmdP0<R>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-             const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 1),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      returnVal(itsFunc());
-    }
-
-  private:
-    CmdP0<R>(const CmdP0<R>&);
-    CmdP0<R>& operator=(const CmdP0<R>&);
-
-    Func itsFunc;
-  };
-
-  template <>
-  void CmdP0<void>::invoke() { itsFunc(); }
-
-
-
-  //
-  // one argument
-  //
-
-  template <class R, class P1>
-  class CmdP1 : public Tcl::TclCmd {
-  public:
-    typedef R (*Func)(P1);
-
-    CmdP1<R, P1>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                 const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 2),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      returnVal(itsFunc(p1));
-    }
-
-  private:
-    CmdP1<R, P1>(const CmdP1<R, P1>&);
-    CmdP1<R, P1>& operator=(const CmdP1<R, P1>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1>
-  class CmdP1<void, P1> : public Tcl::TclCmd {
-  public:
-    typedef void (*Func)(P1);
-
-    CmdP1<void, P1>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                    const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 2),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      itsFunc(p1);
-    }
-
-  private:
-    CmdP1<void, P1>(const CmdP1<void, P1>&);
-    CmdP1<void, P1>& operator=(const CmdP1<void, P1>&);
-
-    Func itsFunc;
-  };
-
-
-  //
-  // two arguments
-  //
-
-  template <class R, class P1, class P2>
-  class CmdP2 : public Tcl::TclCmd {
-  public:
-    typedef R (*Func)(P1, P2);
-
-    CmdP2<R, P1, P2>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                     const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 3),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      returnVal(itsFunc(p1, p2));
-    }
-
-  private:
-    CmdP2<R, P1, P2>(const CmdP2<R, P1, P2>&);
-    CmdP2<R, P1, P2>& operator=(const CmdP2<R, P1, P2>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class P2>
-  class CmdP2<void, P1, P2> : public Tcl::TclCmd {
-  public:
-    typedef void (*Func)(P1, P2);
-
-    CmdP2<void, P1, P2>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                        const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 3),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      itsFunc(p1, p2);
-    }
-
-  private:
-    CmdP2<void, P1, P2>(const CmdP2<void, P1, P2>&);
-    CmdP2<void, P1, P2>& operator=(const CmdP2<void, P1, P2>&);
-
-    Func itsFunc;
-  };
-
-
-  //
-  // three arguments
-  //
-
-  template <class R, class P1, class P2, class P3>
-  class CmdP3 : public Tcl::TclCmd {
-  public:
-    typedef R (*Func)(P1, P2, P3);
-
-    CmdP3<R, P1, P2, P3>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                         const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 4),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      returnVal(itsFunc(p1, p2, p3));
-    }
-
-  private:
-    CmdP3<R, P1, P2, P3>(const CmdP3<R, P1, P2, P3>&);
-    CmdP3<R, P1, P2, P3>& operator=(const CmdP3<R, P1, P2, P3>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class P2, class P3>
-  class CmdP3<void, P1, P2, P3> : public Tcl::TclCmd {
-  public:
-    typedef void (*Func)(P1, P2, P3);
-
-    CmdP3<void, P1, P2, P3>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                            const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 4),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      itsFunc(p1, p2, p3);
-    }
-
-  private:
-    CmdP3<void, P1, P2, P3>(const CmdP3<void, P1, P2, P3>&);
-    CmdP3<void, P1, P2, P3>& operator=(const CmdP3<void, P1, P2, P3>&);
-
-    Func itsFunc;
-  };
-
-
-  //
-  // four arguments
-  //
-
-  template <class R, class P1, class P2, class P3, class P4>
-  class CmdP4 : public Tcl::TclCmd {
-  public:
-    typedef R (*Func)(P1, P2, P3, P4);
-
-    CmdP4<R, P1, P2, P3, P4>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                             const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 5),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      P4 p4 = getValFromArg(4, (P4*)0);
-      returnVal(itsFunc(p1, p2, p3, p4));
-    }
-
-  private:
-    CmdP4<R, P1, P2, P3, P4>(const CmdP4<R, P1, P2, P3, P4>&);
-    CmdP4<R, P1, P2, P3, P4>& operator=(const CmdP4<R, P1, P2, P3, P4>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class P2, class P3, class P4>
-  class CmdP4<void, P1, P2, P3, P4> : public Tcl::TclCmd {
-  public:
-    typedef void (*Func)(P1, P2, P3, P4);
-
-    CmdP4<void, P1, P2, P3, P4>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-                                const char* usage) :
-      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 5),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke()
-    {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      P4 p4 = getValFromArg(4, (P4*)0);
-      itsFunc(p1, p2, p3, p4);
-    }
-
-  private:
-    CmdP4<void, P1, P2, P3, P4>(const CmdP4<void, P1, P2, P3, P4>&);
-    CmdP4<void, P1, P2, P3, P4>& operator=(const CmdP4<void, P1, P2, P3, P4>&);
-
-    Func itsFunc;
-  };
-
-
-  template <class Func>
-  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg, Func f,
-                              const char* cmd_name, const char* usage);
-
-  template <class R>
-  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
-                              R (*f)(),
-                              const char* cmd_name, const char* usage)
-  {
-    return new GLTcl::CmdP0<R>(pkg, f, cmd_name, usage);
-  }
-
-  template <class R, class P1>
-  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
-                              R (*f)(P1), // typename CmdP1<P1>::Func
-                              const char* cmd_name, const char* usage)
-  {
-    return new GLTcl::CmdP1<R, P1>(pkg, f, cmd_name, usage);
-  }
-
-  template <class R, class P1, class P2>
-  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
-                              R (*f)(P1, P2),
-                              const char* cmd_name, const char* usage)
-  {
-    return new GLTcl::CmdP2<R, P1, P2>(pkg, f, cmd_name, usage);
-  }
-
-  template <class R, class P1, class P2, class P3>
-  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
-                              R (*f)(P1, P2, P3),
-                              const char* cmd_name, const char* usage)
-  {
-    return new GLTcl::CmdP3<R, P1, P2, P3>(pkg, f, cmd_name, usage);
-  }
-
-  template <class R, class P1, class P2, class P3, class P4>
-  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
-                              R (*f)(P1, P2, P3, P4),
-                              const char* cmd_name, const char* usage)
-  {
-    return new GLTcl::CmdP4<R, P1, P2, P3, P4>(pkg, f, cmd_name, usage);
-  }
-
-} // end namespace GLTcl
 
 //---------------------------------------------------------------------
 //
@@ -834,176 +521,145 @@ protected:
 
 //--------------------------------------------------------------------
 //
-// GLTcl::drawOneLineCmd --
-//
-// This command takes four arguments specifying the x and y
-// coordinates of two points between which a line will be drawn.
-//
-// Results:
-// none
-//
-// Side effects:
-// The line is rendered in the OpenGL window.
-//
-//--------------------------------------------------------------------
-
-int GLTcl::drawOneLineCmd(ClientData, Tcl_Interp* interp,
-                          int objc, Tcl_Obj* const objv[]) {
-DOTRACE("drawOneLineCmd");
-  if (objc != 5) {
-    Tcl_WrongNumArgs(interp, 1, objv, "x1 y1 x2 y2");
-    return TCL_ERROR;
-  }
-
-  fixed_block<double> coord(4);
-  for (int i = 1; i < objc; ++i) {
-    if (Tcl_GetDoubleFromObj(interp, objv[i], &(coord.at(i-1))) != TCL_OK)
-      return TCL_ERROR;
-  }
-
-  glBegin(GL_LINES);
-  glVertex3d( coord[0], coord[1], 0.0);
-  glVertex3d( coord[2], coord[3], 0.0);
-  glEnd();
-  glFlush();
-
-  return TCL_OK;
-}
-
-//--------------------------------------------------------------------
-//
-// GLTcl::drawThickLineCmd --
-//
-// This command takes five arguments specifying two points and a
-// thickness. A thick "line" is drawn by drawing a filled rectangle.
-//
-// Results:
-// none.
-//
-// Side effects:
-// The line is rendered in the OpenGL window.
-//
-//--------------------------------------------------------------------
-
-int GLTcl::drawThickLineCmd(ClientData, Tcl_Interp* interp,
-                            int objc, Tcl_Obj* const objv[]) {
-DOTRACE("drawThickLineCmd");
-  if (objc != 6) {
-    Tcl_WrongNumArgs(interp, 1, objv, "x1 y1 x2 y2 thickness");
-    return TCL_ERROR;
-  }
-
-  fixed_block<double> coord(5); // fill with x1 y1 x2 y2 thickness
-  for (int i = 1; i < objc; ++i) {
-    if (Tcl_GetDoubleFromObj(interp, objv[i], &(coord.at(i-1))) != TCL_OK)
-      return TCL_ERROR;
-  }
-
-  // construct the normal vector
-  double a, b, c, d, norm;
-  a = coord[2] - coord[0];      // (a, b) is the given vector
-  b = coord[3] - coord[1];
-
-  norm = sqrt(a*a + b*b);       // (c, d) is the normal
-  c = -b/norm*coord[4]/2;
-  d = a/norm*coord[4]/2;
-
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glBegin(GL_POLYGON);
-  glVertex3d( coord[0]+c, coord[1]+d, 0.0);
-  glVertex3d( coord[0]-c, coord[1]-d, 0.0);
-
-  glVertex3d( coord[2]-c, coord[3]-d, 0.0);
-  glVertex3d( coord[2]+c, coord[3]+d, 0.0);
-  glEnd();
-  glFlush();
-
-  return TCL_OK;
-}
-
-//--------------------------------------------------------------------
-//
-// GLTcl::antialiasCmd --
+// GLTcl::AntialiasCmd --
 //
 // Turns on or off the OpenGL modes required for antialiasing lines
 // and polygons. Antialiasing works best with RGBA mode, and not so
 // well with color index mode.
 //
-// Results:
-// none.
-//
-// Side effects:
-// The necessary OpenGL modes are enabled or disabled.
-//
 //--------------------------------------------------------------------
 
-int GLTcl::antialiasCmd(ClientData, Tcl_Interp* interp,
-                        int objc, Tcl_Obj* const objv[]) {
-DOTRACE("antialiasCmd");
-  if (objc != 2) {
-    Tcl_WrongNumArgs(interp, 1, objv, "on_off");
-    return TCL_ERROR;
-  }
+class GLTcl::AntialiasCmd : public Tcl::TclCmd {
+public:
+  AntialiasCmd(Tcl_Interp* interp, const char* cmd_name) :
+    Tcl::TclCmd(interp, cmd_name, "on_off", 2)
+  {}
 
-  int on_off;
-  if (Tcl_GetBooleanFromObj(interp, objv[1], &on_off) != TCL_OK)
-    return TCL_ERROR;
+protected:
+  virtual void invoke()
+    {
+      bool on_off = getBoolFromArg(1);
 
-  if (on_off == 1) {            // turn antialiasing on
-    glEnable(GL_BLEND);
-    glEnable(GL_POLYGON_SMOOTH);
-    glEnable(GL_LINE_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }
-  else {                        // turn antialiasing off
-    glDisable(GL_BLEND);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_POLYGON_SMOOTH);
-  }
-
-  return TCL_OK;
-}
+      if (on_off) {            // turn antialiasing on
+        glEnable(GL_BLEND);
+        glEnable(GL_POLYGON_SMOOTH);
+        glEnable(GL_LINE_SMOOTH);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      }
+      else {                        // turn antialiasing off
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_POLYGON_SMOOTH);
+      }
+    }
+};
 
 //--------------------------------------------------------------------
 //
-// GLTcl::lineInfoCmd --
+// GLTcl::DrawOneLineCmd --
 //
-// Prints the LINE_WIDTH_RANGE and LINE_WIDTH_GRANULARITY for the
-// current OpenGL implementation.
-//
-// Results:
-// Returns a string describing the line parameters.
-//
-// Side effects:
-// none.
+// This command takes four arguments specifying the x and y
+// coordinates of two points between which a line will be drawn.
 //
 //--------------------------------------------------------------------
 
-int GLTcl::lineInfoCmd(ClientData, Tcl_Interp* interp,
-                       int objc, Tcl_Obj* const objv[]) {
-DOTRACE("lineInfoCmd");
-  if (objc != 1) {
-    Tcl_WrongNumArgs(interp, 1, objv, NULL);
-    return TCL_ERROR;
-  }
+class GLTcl::DrawOneLineCmd : public Tcl::TclCmd {
+public:
+  DrawOneLineCmd(Tcl_Interp* interp, const char* cmd_name) :
+    Tcl::TclCmd(interp, cmd_name, "x1 y1 x2 y2", 5)
+  {}
 
-  GLdouble range[2] = {-1.0,-1.0}, gran=-1.0;
-  glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
-  glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);
-  Tcl_Obj* r1 = Tcl_NewDoubleObj(range[0]);
-  Tcl_Obj* r2 = Tcl_NewDoubleObj(range[1]);
-  Tcl_Obj* g = Tcl_NewDoubleObj(gran);
+protected:
+  virtual void invoke()
+    {
+      fixed_block<double> coord(4);
 
-  Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-        "range = ", Tcl_GetString(r1), " ", Tcl_GetString(r2),
-        ", granularity ", Tcl_GetString(g), (char *) NULL);
+      for (int i = 0; i < 3; ++i)
+        coord.at(i) = getDoubleFromArg(i+1);
 
-  return TCL_OK;
-}
+      glBegin(GL_LINES);
+      glVertex3d( coord[0], coord[1], 0.0);
+      glVertex3d( coord[2], coord[3], 0.0);
+      glEnd();
+      glFlush();
+    }
+};
 
 //--------------------------------------------------------------------
 //
-// GLTcl::pixelCheckSumCmd --
+// GLTcl::DrawThickLineCmd --
+//
+// This command takes five arguments specifying two points and a
+// thickness. A thick "line" is drawn by drawing a filled rectangle.
+//
+//--------------------------------------------------------------------
+
+class GLTcl::DrawThickLineCmd : public Tcl::TclCmd {
+public:
+  DrawThickLineCmd(Tcl_Interp* interp, const char* cmd_name) :
+    Tcl::TclCmd(interp, cmd_name, "x1 y1 x2 y2 thickness", 6)
+  {}
+
+protected:
+  virtual void invoke()
+    {
+      fixed_block<double> coord(5); // fill with x1 y1 x2 y2 thickness
+
+      for (int i = 0; i < 4; ++i)
+        coord.at(i) = getDoubleFromArg(i+1);
+
+      // construct the normal vector
+      double a, b, c, d, norm;
+      a = coord[2] - coord[0];      // (a, b) is the given vector
+      b = coord[3] - coord[1];
+
+      norm = sqrt(a*a + b*b);       // (c, d) is the normal
+      c = -b/norm*coord[4]/2;
+      d = a/norm*coord[4]/2;
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glBegin(GL_POLYGON);
+      glVertex3d( coord[0]+c, coord[1]+d, 0.0);
+      glVertex3d( coord[0]-c, coord[1]-d, 0.0);
+
+      glVertex3d( coord[2]-c, coord[3]-d, 0.0);
+      glVertex3d( coord[2]+c, coord[3]+d, 0.0);
+      glEnd();
+      glFlush();
+    }
+};
+
+//--------------------------------------------------------------------
+//
+// GLTcl::LineInfoCmd --
+//
+// Returns a string describing the LINE_WIDTH_RANGE and
+// LINE_WIDTH_GRANULARITY for the current OpenGL implementation.
+//
+//--------------------------------------------------------------------
+
+class GLTcl::LineInfoCmd : public Tcl::TclCmd {
+public:
+  LineInfoCmd(Tcl_Interp* interp, const char* cmd_name) :
+    Tcl::TclCmd(interp, cmd_name, 0, 1)
+  {}
+
+protected:
+  virtual void invoke()
+    {
+      GLdouble range[2] = {-1.0,-1.0};
+      GLdouble gran=-1.0;
+      glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
+      glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);
+
+      lappendVal("range"); lappendVal(range[0]), lappendVal(range[1]);
+      lappendVal("granularity"); lappendVal(gran);
+    }
+};
+
+//--------------------------------------------------------------------
+//
+// GLTcl::PixelCheckSumCmd --
 //
 // This command returns the sum of the color indices of all the pixels
 // in a specified rectangle. It can be used as an easy way to see if
@@ -1015,68 +671,68 @@ DOTRACE("lineInfoCmd");
 //
 //--------------------------------------------------------------------
 
-int GLTcl::pixelCheckSumCmd(ClientData, Tcl_Interp *interp,
-                          int objc, Tcl_Obj *const objv[]) {
-DOTRACE("GLTcl::pixelCheckSumCmd");
-  if (objc != 1 && objc != 5) {
-    Tcl_WrongNumArgs(interp, 1, objv, "x y width height");
-    return TCL_ERROR;
-  }
+class GLTcl::PixelCheckSumCmd : public Tcl::TclCmd {
+public:
+  PixelCheckSumCmd(Tcl_Interp* interp, const char* cmd_name) :
+    Tcl::TclCmd(interp, cmd_name, "x y width height", 1, 5, true)
+  {}
 
-  int x,y,w,h;
-  if (objc == 5) {
-    if (Tcl_GetIntFromObj(interp, objv[1], &x) != TCL_OK) return TCL_ERROR;
-    if (Tcl_GetIntFromObj(interp, objv[2], &y) != TCL_OK) return TCL_ERROR;
-    if (Tcl_GetIntFromObj(interp, objv[3], &w) != TCL_OK) return TCL_ERROR;
-    if (Tcl_GetIntFromObj(interp, objv[4], &h) != TCL_OK) return TCL_ERROR;
-  }
-  else {
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    x = viewport[0];                             DebugEval(x);
-    y = viewport[1];                             DebugEval(y);
-    w = viewport[2];                             DebugEval(w);
-    h = viewport[3];                             DebugEvalNL(h);
-  }
-
-  GLboolean isRgba;
-  glGetBooleanv(GL_RGBA_MODE, &isRgba);
-
-  if (GL_TRUE == isRgba)
+protected:
+  virtual void invoke()
     {
-      fixed_block<GLfloat> pixels(w*h*3);
-      glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-      glPushAttrib(GL_PIXEL_MODE_BIT);
-      glReadBuffer(GL_FRONT);
-      glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
-      glPopAttrib();
-
-      GLfloat sum = 0;
-      for (unsigned int i = 0; i < pixels.size(); ++i) {
-        sum += pixels[i];
+      int x,y,w,h;
+      if (objc() == 5) {
+        x = getIntFromArg(1);
+        y = getIntFromArg(2);
+        w = getIntFromArg(3);
+        h = getIntFromArg(4);
       }
-      Tcl_SetObjResult(interp, Tcl_NewDoubleObj(sum));
-    }
-  else
-    {
-      fixed_block<GLubyte> pixels(w*h);
-      glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-      glPushAttrib(GL_PIXEL_MODE_BIT);
-      glReadBuffer(GL_FRONT);
-      glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
-      glPopAttrib();
-
-      long int sum = 0;
-      for (unsigned int i = 0; i < pixels.size(); ++i) {
-        sum += pixels[i];
+      else {
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        x = viewport[0];                             DebugEval(x);
+        y = viewport[1];                             DebugEval(y);
+        w = viewport[2];                             DebugEval(w);
+        h = viewport[3];                             DebugEvalNL(h);
       }
-      Tcl_SetObjResult(interp, Tcl_NewIntObj(sum));
-    }
 
-  return TCL_OK;
-}
+      GLboolean isRgba;
+      glGetBooleanv(GL_RGBA_MODE, &isRgba);
+
+      if (GL_TRUE == isRgba)
+        {
+          fixed_block<GLfloat> pixels(w*h*3);
+          glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+          glPushAttrib(GL_PIXEL_MODE_BIT);
+          glReadBuffer(GL_FRONT);
+          glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
+          glPopAttrib();
+
+          GLfloat sum = 0;
+          for (unsigned int i = 0; i < pixels.size(); ++i) {
+            sum += pixels[i];
+          }
+          returnVal(sum);
+        }
+      else
+        {
+          fixed_block<GLubyte> pixels(w*h);
+          glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+          glPushAttrib(GL_PIXEL_MODE_BIT);
+          glReadBuffer(GL_FRONT);
+          glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
+          glPopAttrib();
+
+          long int sum = 0;
+          for (unsigned int i = 0; i < pixels.size(); ++i) {
+            sum += pixels[i];
+          }
+          returnVal(sum);
+        }
+    }
+};
 
 //---------------------------------------------------------------------
 //
@@ -1218,39 +874,41 @@ public:
     this->linkVarCopy("GL_LINE", GL_LINE);
     this->linkVarCopy("GL_FILL", GL_FILL);
 
-    addCommand( makeCmd (this, glBegin, "glBegin", "mode") );
-    addCommand( makeCmd (this, glBlendFunc, "glBlendFunc", "sfactor dfactor") );
-    addCommand( makeCmd (this, glCallList, "glCallList", "list") );
-    addCommand( makeCmd (this, glClear, "glClear", "mask_bits") );
-    addCommand( makeCmd (this, glClearColor, "glClearColor", "red green blue alpha") );
-    addCommand( makeCmd (this, glClearIndex, "glClearIndex", "index") );
-    addCommand( makeCmd (this, glColor4d, "glColor", "red green blue alpha") );
-    addCommand( makeCmd (this, glDeleteLists, "glDeleteLists", "list_id range") );
-    addCommand( makeCmd (this, glDisable, "glDisable", "capability") );
-    addCommand( makeCmd (this, glDrawBuffer, "glDrawBuffer", "mode") );
-    addCommand( makeCmd (this, glEnable, "glEnable", "capability") );
-    addCommand( makeCmd (this, glEnd, "glEnd", 0) );
-    addCommand( makeCmd (this, glEndList, "glEndList", 0) );
-    addCommand( makeCmd (this, glFlush, "glFlush", 0) );
-    addCommand( makeCmd (this, glGenLists, "glGenLists", "range") );
-    addCommand( makeCmd (this, checkGL, "glGetError", 0) );
-    addCommand( makeCmd (this, glIndexi, "glIndexi", "index") );
-    addCommand( makeCmd (this, glIsList, "glIsList", "list_id") );
-    addCommand( makeCmd (this, glLineWidth, "glLineWidth", "width") );
-    addCommand( makeCmd (this, glListBase, "glListBase", "base") );
-    addCommand( makeCmd (this, glLoadIdentity, "glLoadIdentity", 0) );
-    addCommand( makeCmd (this, glMatrixMode, "glMatrixMode", "mode") );
-    addCommand( makeCmd (this, glNewList, "glNewList", "list_id mode") );
-    addCommand( makeCmd (this, glPolygonMode, "glPolygonMode", "face mode") );
-    addCommand( makeCmd (this, glPopMatrix, "glPopMatrix", 0) );
-    addCommand( makeCmd (this, glPushMatrix, "glPushMatrix", 0) );
-    addCommand( makeCmd (this, glRotated, "glRotate", "angle_in_degrees x y z") );
-    addCommand( makeCmd (this, glScaled, "glScale", "x y z") );
-    addCommand( makeCmd (this, glTranslated, "glTranslate", "x y z") );
-    addCommand( makeCmd (this, glVertex2d, "glVertex2", "x y") );
-    addCommand( makeCmd (this, glVertex3d, "glVertex3", "x y z") );
-    addCommand( makeCmd (this, glVertex4d, "glVertex4", "x y z w") );
-    addCommand( makeCmd (this, gluPerspective, "gluPerspective",
+    using namespace Tcl;
+
+    addCommand( makeCmd (interp, glBegin, "glBegin", "mode") );
+    addCommand( makeCmd (interp, glBlendFunc, "glBlendFunc", "sfactor dfactor") );
+    addCommand( makeCmd (interp, glCallList, "glCallList", "list") );
+    addCommand( makeCmd (interp, glClear, "glClear", "mask_bits") );
+    addCommand( makeCmd (interp, glClearColor, "glClearColor", "red green blue alpha") );
+    addCommand( makeCmd (interp, glClearIndex, "glClearIndex", "index") );
+    addCommand( makeCmd (interp, glColor4d, "glColor", "red green blue alpha") );
+    addCommand( makeCmd (interp, glDeleteLists, "glDeleteLists", "list_id range") );
+    addCommand( makeCmd (interp, glDisable, "glDisable", "capability") );
+    addCommand( makeCmd (interp, glDrawBuffer, "glDrawBuffer", "mode") );
+    addCommand( makeCmd (interp, glEnable, "glEnable", "capability") );
+    addCommand( makeCmd (interp, glEnd, "glEnd", 0) );
+    addCommand( makeCmd (interp, glEndList, "glEndList", 0) );
+    addCommand( makeCmd (interp, glFlush, "glFlush", 0) );
+    addCommand( makeCmd (interp, glGenLists, "glGenLists", "range") );
+    addCommand( makeCmd (interp, checkGL, "glGetError", 0) );
+    addCommand( makeCmd (interp, glIndexi, "glIndexi", "index") );
+    addCommand( makeCmd (interp, glIsList, "glIsList", "list_id") );
+    addCommand( makeCmd (interp, glLineWidth, "glLineWidth", "width") );
+    addCommand( makeCmd (interp, glListBase, "glListBase", "base") );
+    addCommand( makeCmd (interp, glLoadIdentity, "glLoadIdentity", 0) );
+    addCommand( makeCmd (interp, glMatrixMode, "glMatrixMode", "mode") );
+    addCommand( makeCmd (interp, glNewList, "glNewList", "list_id mode") );
+    addCommand( makeCmd (interp, glPolygonMode, "glPolygonMode", "face mode") );
+    addCommand( makeCmd (interp, glPopMatrix, "glPopMatrix", 0) );
+    addCommand( makeCmd (interp, glPushMatrix, "glPushMatrix", 0) );
+    addCommand( makeCmd (interp, glRotated, "glRotate", "angle_in_degrees x y z") );
+    addCommand( makeCmd (interp, glScaled, "glScale", "x y z") );
+    addCommand( makeCmd (interp, glTranslated, "glTranslate", "x y z") );
+    addCommand( makeCmd (interp, glVertex2d, "glVertex2", "x y") );
+    addCommand( makeCmd (interp, glVertex3d, "glVertex3", "x y z") );
+    addCommand( makeCmd (interp, glVertex4d, "glVertex4", "x y z w") );
+    addCommand( makeCmd (interp, gluPerspective, "gluPerspective",
                          "field_of_view_y aspect zNear zFar") );
 
     addCommand( new glFrustumCmd      (this, "glFrustum") );
@@ -1260,6 +918,12 @@ public:
     addCommand( new glLoadMatrixCmd   (this, "glLoadMatrix") );
     addCommand( new glOrthoCmd        (this, "glOrtho") );
     addCommand( new gluLookAtCmd      (this, "gluLookAt") );
+
+    addCommand( new AntialiasCmd      (interp, "antialias") );
+    addCommand( new DrawOneLineCmd    (interp, "drawOneLine") );
+    addCommand( new DrawThickLineCmd  (interp, "drawThickLine") );
+    addCommand( new LineInfoCmd       (interp, "lineInfo") );
+    addCommand( new PixelCheckSumCmd  (interp, "pixelCheckSum") );
   }
 };
 
@@ -1274,29 +938,6 @@ int Gltcl_Init(Tcl_Interp* interp) {
 DOTRACE("Gltcl_Init");
 
   new GLTcl::GLPkg(interp);
-
-  using namespace GLTcl;
-
-  struct CmdName_CmdProc {
-    const char* cmdName;
-    Tcl_ObjCmdProc* cmdProc;
-  };
-
-  static CmdName_CmdProc Names_Procs[] = {
-    { "drawOneLine", drawOneLineCmd },
-    { "drawThickLine", drawThickLineCmd },
-    { "antialias", antialiasCmd },
-    { "lineInfo", lineInfoCmd },
-    { "pixelCheckSum", pixelCheckSumCmd }
-  };
-
-  // Add all commands to the global namespace.
-  for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(CmdName_CmdProc); ++i) {
-    Tcl_CreateObjCommand(interp,
-                         const_cast<char *>(Names_Procs[i].cmdName),
-                         Names_Procs[i].cmdProc,
-                         (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  }
 
 #ifdef ACC_COMPILER
 //   typeid(out_of_range);
