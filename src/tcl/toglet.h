@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:04:16 2002
+// written: Sat Nov 23 14:26:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define TOGLET_H_DEFINED
 
 #include "tcl/tkwidget.h"
+
+class Scene;
 
 namespace Gfx
 {
@@ -67,6 +69,48 @@ public:
 
   Color queryColor(unsigned int color_index) const;
 
+
+
+  virtual void undraw();
+
+  /** "Bare-bones rendering": only render the current object; the caller is
+      expected to take care of clearing the color buffer first and flushing
+      the graphics stream afterwards. */
+  void render();
+
+  /** "Full-featured rendering": first clears the color buffer, then renders
+      the current object, then flushes the graphics stream and swaps buffers
+      if necessary. */
+  void fullRender();
+
+  /** "Bare-bones clearscreen": clear the color buffer and set the current
+      object to empty, but don't flush the graphics stream. */
+  void clearscreen();
+
+  /** "Full-featured clearscreen": clear the color buffer, set the current
+      object to empty, and flush the graphics stream. */
+  void fullClearscreen();
+
+  // Change the global visibility, which determines whether anything
+  // will be displayed by a "redraw" command, or by remap events sent
+  // to the screen window.
+  void setVisibility(bool vis);
+
+  void setHold(bool hold_on);
+
+  void allowRefresh(bool allow);
+
+  const Util::Ref<GxCamera>& getCamera() const;
+  void setCamera(const Util::Ref<GxCamera>& cam);
+
+  void setDrawable(const Util::Ref<GxNode>& node);
+
+  void animate(unsigned int framesPerSecond);
+
+  void onNodeChange();
+
+
+
   class Impl;
 
 private:
@@ -74,6 +118,7 @@ private:
   Toglet& operator=(const Toglet&); // no assignment operator
 
   Impl* const rep;
+  Scene* const itsScene;
 };
 
 static const char vcid_toglet_h[] = "$Header$";

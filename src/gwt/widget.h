@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Nov 23 14:16:27 2002
+// written: Sat Nov 23 14:26:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define WIDGET_H_DEFINED
 
 #include "util/object.h"
-
-class Scene;
 
 class GxCamera;
 class GxNode;
@@ -94,44 +92,6 @@ public:
 
   virtual void takeFocus() = 0;
 
-  virtual void undraw();
-
-  /** "Bare-bones rendering": only render the current object; the caller is
-      expected to take care of clearing the color buffer first and flushing
-      the graphics stream afterwards. */
-  void render();
-
-  /** "Full-featured rendering": first clears the color buffer, then renders
-      the current object, then flushes the graphics stream and swaps buffers
-      if necessary. */
-  void fullRender();
-
-  /** "Bare-bones clearscreen": clear the color buffer and set the current
-      object to empty, but don't flush the graphics stream. */
-  void clearscreen();
-
-  /** "Full-featured clearscreen": clear the color buffer, set the current
-      object to empty, and flush the graphics stream. */
-  void fullClearscreen();
-
-  // Change the global visibility, which determines whether anything
-  // will be displayed by a "redraw" command, or by remap events sent
-  // to the screen window.
-  void setVisibility(bool vis);
-
-  void setHold(bool hold_on);
-
-  void allowRefresh(bool allow);
-
-  const Util::Ref<GxCamera>& getCamera() const;
-  void setCamera(const Util::Ref<GxCamera>& cam);
-
-  void setDrawable(const Util::Ref<GxNode>& node);
-
-  void animate(unsigned int framesPerSecond);
-
-  void onNodeChange();
-
   void dispatchButtonEvent(unsigned int button, int x, int y);
   void dispatchKeyEvent(const char* keys, int x, int y,
                         bool controlPressed);
@@ -142,7 +102,6 @@ private:
 
   class Impl;
   Impl* const itsImpl;
-  Scene* const itsScene;
 };
 
 static const char vcid_widget_h[] = "$Header$";
