@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jun 20 18:22:03 2001
+// written: Fri Jun 22 09:06:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,10 +43,14 @@
 #include "util/debug.h"
 
 namespace {
+  // the main window can be specified with either PARENT = "" or "."
+  fixed_string PARENT = "";
+
   const char* widgetName(Util::UID id)
   {
     static dynamic_string buf;
-    buf = ".togl_private";
+    buf = PARENT;
+    buf.append(".togl_private");
     buf.append(int(id));
 
     return buf.c_str();
@@ -161,7 +165,7 @@ DOTRACE("Toglet::Toglet");
 
   if (pack) {
     dynamic_string pack_cmd_str = "pack ";
-    pack_cmd_str += itsTogl->pathname();
+    pack_cmd_str += pathname();
     pack_cmd_str += " -expand 1 -fill both; update";
     Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
                              Tcl::TclEvalCmd::THROW_EXCEPTION);
@@ -217,6 +221,12 @@ int Toglet::getWidth() const {
 DOTRACE("Toglet::getWidth");
 
   return itsTogl->width();
+}
+
+const char* Toglet::pathname() const {
+DOTRACE("Toglet::pathname");
+
+  return itsTogl->pathname();
 }
 
 void Toglet::queryColor(unsigned int color_index, Color& color) const {
@@ -277,6 +287,11 @@ DOTRACE("Toglet::getCanvas");
 // manipulators //
 //////////////////
 
+void Toglet::defaultParent(const char* pathname) {
+DOTRACE("Toglet::defaultParent");
+  PARENT = pathname;
+}
+
 void Toglet::destroyWidget() {
 DOTRACE("Toglet::destroyWidget");
 DebugPrintNL("Toglet::destroyWidget");
@@ -284,7 +299,7 @@ DebugPrintNL("Toglet::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(itsTogl->interp()) ) {
     dynamic_string destroy_cmd_str = "destroy ";
-    destroy_cmd_str += itsTogl->pathname();
+    destroy_cmd_str += pathname();
 
     Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
                                 Tcl::TclEvalCmd::BACKGROUND_ERROR);
@@ -434,9 +449,9 @@ void Toglet::bind(const char* event_sequence, const char* script) {
 DOTRACE("Toglet::bind");
 
   dynamic_string cmd_str = "bind ";
-  cmd_str += itsTogl->pathname(); cmd_str += " ";
-  cmd_str += event_sequence;      cmd_str += " ";
-  cmd_str += script;
+  cmd_str.append( pathname() ).append(" ");
+  cmd_str.append( event_sequence ).append(" ");
+  cmd_str.append( script );
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
                       Tcl::TclEvalCmd::THROW_EXCEPTION);
@@ -572,7 +587,7 @@ void Toglet::takeFocus() {
 DOTRACE("Toglet::takeFocus");
 
   dynamic_string cmd_str = "focus -force ";
-  cmd_str += itsTogl->pathname();
+  cmd_str.append( pathname() );
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
                       Tcl::TclEvalCmd::THROW_EXCEPTION);
