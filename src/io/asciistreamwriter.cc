@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Fri Mar  3 23:48:58 2000
+// written: Wed Mar  8 15:55:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ public:
   void writeBasicType(const string& name, T val) {
 	 vector<char> buf(32 + name.length());
 	 ostrstream ost(&buf[0], 32 + name.length());
-	 ost << demangle(typeid(T).name()) << " " 
+	 ost << demangle_cstr(typeid(T).name()) << " " 
 		  << name << " := "
 		  << val << '\0';
 	 itsAttribs.push_back(&buf[0]);
@@ -170,7 +170,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 
 	 if ( alreadyWritten(obj) ) { continue; }
 
-	 itsBuf << demangle(typeid(*obj).name())
+	 itsBuf << demangle_cstr(typeid(*obj).name())
 			  << " " << obj->id() << " := { ";
 
 	 obj->writeTo(itsOwner);
@@ -219,7 +219,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
 	 ost << "NULL " << name << " := 0" << '\0';
   }
   else {
-	 ost << demangle(typeid(*obj).name())
+	 ost << demangle_cstr(typeid(*obj).name())
 		  << " " << name << " := " << obj->id() << '\0';
 	 
 	 addObjectToBeHandled(obj);

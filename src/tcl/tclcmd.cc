@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar  8 15:39:51 2000
+// written: Wed Mar  8 15:56:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -337,7 +337,7 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 	 }
 	 else {
 		string msg = "an error of type ";
-		msg += demangle(typeid(err).name());
+		msg += demangle_cstr(typeid(err).name());
 		msg += " occurred";
 		Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
 	 }
@@ -346,14 +346,14 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
   catch (Error& err) {
  	 DebugPrintNL("catch (Error&)");
 	 string msg = "an error of type ";
-	 msg += demangle(typeid(err).name());
+	 msg += demangle_cstr(typeid(err).name());
 	 msg += " occurred";
  	 Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
  	 theCmd->itsResult = TCL_ERROR;
   }
   catch (exception& err) {
 	 string msg = "an error of type ";
-	 msg += demangle(typeid(err).name());
+	 msg += demangle_cstr(typeid(err).name());
 	 msg += " occurred: ";
 	 msg += err.what();
 	 Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
