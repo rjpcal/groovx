@@ -46,6 +46,48 @@ proc print { chan txt } {
 
 
 
+proc setup_package { pkgname ccfiles libdir } {
+
+    set shlib $libdir/${pkgname}[info sharedlibextension]
+
+    regsub -all {\.cc} $ccfiles .do files
+
+    print $::depfile "PKG_LIBS += ${shlib}\n\n"
+
+    print $::depfile "${shlib}:"
+
+    foreach file $files {
+	print $::depfile " \\\n\t${::objdir}/$file"
+    }
+
+    print $::depfile "\n\n"
+
+    set code [catch {eval exec grep -l _Init $ccfiles} initfile]
+
+    if { $code == 0 } {
+
+	if { [llength $initfile] > 1 } {
+	    error "package $pkgname has more than one Tcl_PkgInit: $initfile"
+	}
+
+	set pkgtitle [string totitle $pkgname]
+
+	set contents [getFileContents $initfile]
+
+	set revision [extractPkgRevision $contents]
+
+	set pkgreqs [extractPkgReqs $contents]
+
+	print $::indexfile "package ifneeded $pkgtitle $revision \{\n"
+
+	foreach req $pkgreqs {
+	    print $::indexfile "\tpackage require $req\n"
+	}
+
+	print $::indexfile "\tload $shlib\n\}\n"
+    }
+}
+
 #
 # Main code
 #
@@ -69,52 +111,32 @@ cd $pkgdir
 print $::depfile "PKG_LIBS := \n\n"
 
 foreach dir [glob \[a-z\]*/] {
-    set ccfiles [glob ${dir}*.cc]
 
-    set pkg [string trimright $dir /]
+    set dir [string trimright $dir "/"]
 
-    set shlib $libdir/${pkg}[info sharedlibextension]
+    if { ![string equal $dir "blackbox"] } {
 
-    regsub -all {\.cc} $ccfiles .do files
+	# For "normal" packages, we assume all the .cc files in the
+	# directory should be merged into one shlib, and the directory name
+	# becomes the package name
+	set pkgname [file tail $dir]
 
-    set objfiles [list]
+	set ccfiles [glob ${dir}/*.cc]
 
-    print $::depfile "PKG_LIBS += ${shlib}\n\n"
+	setup_package $pkgname $ccfiles $libdir
+    } else {
 
-    print $::depfile "${shlib}:"
+	# For the special case of the blackbox tests, each .cc file becomes
+	# its own package/shlib, and the package name is taken from the
+	# stem (i.e. "rootname") of the .cc filename
 
-    foreach file $files {
-	lappend objfiles ${::objdir}/$file
+	set ccfiles [glob -nocomplain ${dir}/*.cc]
 
-	print $::depfile " \\\n\t${::objdir}/$file"
-    }
+	foreach ccfile $ccfiles {
+	    set pkgname [file tail [file rootname $ccfile]]
 
-    print $::depfile "\n\n"
-
-    set ccfiles [glob ${dir}*.cc]
-    set code [catch {eval exec grep -l _Init $ccfiles} initfile]
-
-    if { $code == 0 } {
-
-	if { [llength $initfile] > 1 } {
-	    error "package $pkg has more than one Tcl_PkgInit: $initfile"
+	    setup_package $pkgname $ccfile $libdir
 	}
-
-	set pkgname [string totitle $pkg]
-
-	set contents [getFileContents $initfile]
-
-	set revision [extractPkgRevision $contents]
-
-	set pkgreqs [extractPkgReqs $contents]
-
-	print $::indexfile "package ifneeded $pkgname $revision \{\n" 
-
-	foreach req $pkgreqs {
-	    print $::indexfile "\tpackage require $req\n"
-	} 
-	
-	print $::indexfile "\tload $shlib\n\}\n"
     }
 }
 
