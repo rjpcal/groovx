@@ -2,7 +2,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Jun 30 17:58:58 1999
+// written: Tue Feb  8 17:44:24 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,8 @@
 #include "trace.h"
 
 #include <iomanip.h>
+
+int MAX_TRACE_LEVEL = 6;
 
 int TRACE_LEVEL = 0;
 
