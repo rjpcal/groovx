@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct  8 21:48:17 2000
+// written: Mon Oct  9 08:19:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 #include "util/error.h"
 #endif
 
-class VoidPtrList;
+class MasterPtrBase;
 
 /**
  *
@@ -33,38 +33,6 @@ public:
   InvalidIdError(const char* msg);
   /// Virtual destructor.
   virtual ~InvalidIdError();
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * MasterPtrBase
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class MasterPtrBase {
-private:
-  int itsRefCount;
-
-  // These are disallowed since MasterPtrBase's should always be in
-  // one-to-one correspondence with their pointee's.
-  MasterPtrBase(const MasterPtrBase& other);
-  MasterPtrBase& operator=(const MasterPtrBase& other);
-
-public:
-  MasterPtrBase();
-
-  virtual ~MasterPtrBase();
-
-  void incrRefCount();
-  void decrRefCount();
-
-  int refCount() const;
-
-  virtual bool isValid() const = 0;
-
-  virtual bool operator==(const MasterPtrBase& other) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
