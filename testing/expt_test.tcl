@@ -10,10 +10,8 @@
 package require Expt
 package require Objtogl
 package require Objlist
-package require Poslist
 package require Tlist
 package require Block
-package require Blocklist
 package require Rhlist
 package require Nullrh
 package require Thlist
