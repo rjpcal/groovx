@@ -628,7 +628,7 @@ AC_MSG_RESULT($enable_werror)
 
 if test $enable_werror = yes; then
    case ${CXX} in
-      g++*)
+      *g++*)
          CXXFLAGS="$CXXFLAGS -Werror"
 	 ;;
    esac
