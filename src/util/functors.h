@@ -250,33 +250,6 @@ namespace Util
 //  ###################################################################
 //  ===================================================================
 
-/// FuncHolder is a helper class to make pointer semantics explicit.
-/** FuncHolder helps to avoid overeager compiler warnings about holding a
-    pointer without defining dtor, copy-ctor, and operator=(). If a class
-    instead inherits privately from FuncHolder, such warnings will be
-    avoided. */
-
-//  ===================================================================
-
-  template <class Func>
-  struct FuncHolder
-  {
-    FuncHolder<Func>(Func f) : itsHeldFunc(f) {}
-
-    FuncHolder<Func>(const FuncHolder<Func>& other) :
-      itsHeldFunc(other.itsHeldFunc) {}
-
-    FuncHolder<Func>& operator=(const FuncHolder<Func>& other)
-    {
-      itsHeldFunc = other.itsHeldFunc; return *this;
-    }
-
-    Func itsHeldFunc;
-  };
-
-//  ###################################################################
-//  ===================================================================
-
   template <class F>
   class MemFunctorBase;
 
@@ -296,48 +269,50 @@ namespace Util
       operator() call, via a raw pointer or a SoftRef<>. */
 
   template <class MemFunc>
-  class MemFunctorBase : private FuncHolder<MemFunc>,
-                         public FuncTraits<MemFunctorBase<MemFunc> >
+  class MemFunctorBase : public FuncTraits<MemFunctorBase<MemFunc> >
   {
+  private:
+    MemFunc itsHeldFunc;
+
   public:
     typedef typename FuncTraits<MemFunc>::Retn_t R;
     typedef typename FuncTraits<MemFunc>::Class_t C;
 
-    MemFunctorBase(MemFunc f) : FuncHolder<MemFunc>(f) {}
+    MemFunctorBase(MemFunc f) : itsHeldFunc(f) {}
 
     /// Function-call operator for object + zero args.
     template <class Ptr>
     R operator()(Ptr obj)
     {
-      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)();
+      return (extractPtr(obj)->*itsHeldFunc)();
     }
 
     /// Function-call operator for object + one arg.
     template <class Ptr, class P1>
     R operator()(Ptr obj, P1 p1)
     {
-      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1);
+      return (extractPtr(obj)->*itsHeldFunc)(p1);
     }
 
     /// Function-call operator for object + two args.
     template <class Ptr, class P1, class P2>
     R operator()(Ptr obj, P1 p1, P2 p2)
     {
-      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1, p2);
+      return (extractPtr(obj)->*itsHeldFunc)(p1, p2);
     }
 
     /// Function-call operator for object + three args.
     template <class Ptr, class P1, class P2, class P3>
     R operator()(Ptr obj, P1 p1, P2 p2, P3 p3)
     {
-      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1, p2, p3);
+      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3);
     }
 
     /// Function-call operator for object + four args.
     template <class Ptr, class P1, class P2, class P3, class P4>
     R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
     {
-      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1, p2, p3, p4);
+      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3, p4);
     }
   };
 
@@ -491,17 +466,20 @@ namespace Util
     bindFirst(). */
 
   template <class BaseFunctor, class Bound_t>
-  class BoundFirst : private FuncHolder<BaseFunctor>,
-                     public FuncTraits<BoundFirst<BaseFunctor, Bound_t> >
+  class BoundFirst : public FuncTraits<BoundFirst<BaseFunctor, Bound_t> >
   {
+  private:
+    BaseFunctor itsHeldFunc;
+    Bound_t itsBound;
+
   public:
     BoundFirst(BaseFunctor base, Bound_t bound) :
-      FuncHolder<BaseFunctor>(base),
+      itsHeldFunc(base),
       itsBound(bound)
     {}
 
     BoundFirst(const BoundFirst& other) :
-      FuncHolder<BaseFunctor>(other),
+      itsHeldFunc(other.itsHeldFunc),
       itsBound(other.itsBound)
     {}
 
@@ -561,8 +539,6 @@ namespace Util
 
   private:
     BoundFirst& operator=(const BoundFirst&);
-
-    Bound_t itsBound;
   };
 
   /// Factory function for creating BoundFirst functors.
@@ -601,17 +577,20 @@ namespace Util
       bindLast(). */
 
   template <class BaseFunctor, class Bound_t>
-  class BoundLast : private FuncHolder<BaseFunctor>,
-                    public FuncTraits<BoundLast<BaseFunctor, Bound_t> >
+  class BoundLast : public FuncTraits<BoundLast<BaseFunctor, Bound_t> >
   {
+  private:
+    BaseFunctor itsHeldFunc;
+    Bound_t itsBound;
+
   public:
     BoundLast(BaseFunctor base, Bound_t bound) :
-      FuncHolder<BaseFunctor>(base),
+      itsHeldFunc(base),
       itsBound(bound)
     {}
 
     BoundLast(const BoundLast& other) :
-      FuncHolder<BaseFunctor>(other),
+      itsHeldFunc(other.itsHeldFunc),
       itsBound(other.itsBound)
     {}
 
@@ -671,8 +650,6 @@ namespace Util
 
   private:
     BoundLast& operator=(const BoundLast&);
-
-    Bound_t itsBound;
   };
 
   /// Factory function for creating BoundLast functors.

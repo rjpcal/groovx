@@ -117,28 +117,22 @@ namespace Util
 namespace Tcl
 {
 
-// ####################################################################
-/// Tcl::FunctorBase
-
-  template <class Func>
-  struct FunctorBase : protected Util::FuncHolder<Func>
-  {
-    FunctorBase<Func>(Func f) : Util::FuncHolder<Func>(f) {}
-  };
-
 
 // ####################################################################
 /// Tcl::Functor<0> -- zero arguments
 
   template <class R, class Func>
-  struct Functor<0, R, Func> : public FunctorBase<Func>
+  struct Functor<0, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<0, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<0, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& /*ctx*/)
     {
-      return (Util::FuncHolder<Func>::itsHeldFunc());
+      return itsHeldFunc();
     }
   };
 
@@ -147,15 +141,18 @@ namespace Tcl
 /// Tcl::Functor<1> -- one argument
 
   template <class R, class Func>
-  struct Functor<1, R, Func> : public FunctorBase<Func>
+  struct Functor<1, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<1, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<1, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1);
-      return (itsHeldFunc(p1));
+      return itsHeldFunc(p1);
     }
   };
 
@@ -164,15 +161,18 @@ namespace Tcl
 /// Tcl::Functor<2> -- two arguments
 
   template <class R, class Func>
-  struct Functor<2, R, Func> : public FunctorBase<Func>
+  struct Functor<2, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<2, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<2, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
-      return (itsHeldFunc(p1, p2));
+      return itsHeldFunc(p1, p2);
     }
   };
 
@@ -181,15 +181,18 @@ namespace Tcl
 /// Tcl::Functor<3> -- three arguments
 
   template <class R, class Func>
-  struct Functor<3, R, Func> : public FunctorBase<Func>
+  struct Functor<3, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<3, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<3, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      return (itsHeldFunc(p1, p2, p3));
+      return itsHeldFunc(p1, p2, p3);
     }
   };
 
@@ -198,16 +201,19 @@ namespace Tcl
 /// Tcl::Functor<4> -- four arguments
 
   template <class R, class Func>
-  struct Functor<4, R, Func> : public FunctorBase<Func>
+  struct Functor<4, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<4, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<4, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4);
-      return (itsHeldFunc(p1, p2, p3, p4));
+      return itsHeldFunc(p1, p2, p3, p4);
     }
   };
 
@@ -216,16 +222,19 @@ namespace Tcl
 /// Tcl::Functor<5> -- five arguments
 
   template <class R, class Func>
-  struct Functor<5, R, Func> : public FunctorBase<Func>
+  struct Functor<5, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<5, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<5, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5);
-      return (itsHeldFunc(p1, p2, p3, p4, p5));
+      return itsHeldFunc(p1, p2, p3, p4, p5);
     }
   };
 
@@ -234,16 +243,19 @@ namespace Tcl
 /// Tcl::Functor<6> -- six arguments
 
   template <class R, class Func>
-  struct Functor<6, R, Func> : public FunctorBase<Func>
+  struct Functor<6, R, Func>
   {
+  private:
+    Func itsHeldFunc;
+
   public:
-    Functor<6, R, Func>(Func f) : FunctorBase<Func>(f) {}
+    Functor<6, R, Func>(Func f) : itsHeldFunc(f) {}
 
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      return (itsHeldFunc(p1, p2, p3, p4, p5, p6));
+      return itsHeldFunc(p1, p2, p3, p4, p5, p6);
     }
   };
 
@@ -266,43 +278,48 @@ namespace Tcl
 /// GenericCmd implements Tcl::Command using a held functor.
 
   template <class R, class Functor>
-  class GenericCmd : public Command, private Util::FuncHolder<Functor>
+  class GenericCmd : public Command
   {
   public:
     GenericCmd<R, Functor>(Tcl::Interp& interp, Functor f,
                            const char* cmd_name,
                            const char* usage, int nargs) :
       Command(interp, cmd_name, usage, nargs+1),
-      Util::FuncHolder<Functor>(f)
+      itsHeldFunc(f)
     {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      R res(Util::FuncHolder<Functor>::itsHeldFunc(ctx)); ctx.setResult(res);
+      R res(itsHeldFunc(ctx)); ctx.setResult(res);
     }
+
+  private:
+    Functor itsHeldFunc;
   };
 
 // ####################################################################
 /// Specialization for functors with void return types.
 
   template <class Functor>
-  class GenericCmd<void, Functor> : public Command,
-                                    private Util::FuncHolder<Functor>
+  class GenericCmd<void, Functor> : public Command
   {
   public:
     GenericCmd<void, Functor>(Tcl::Interp& interp, Functor f,
                               const char* cmd_name,
                               const char* usage, int nargs) :
       Command(interp, cmd_name, usage, nargs+1),
-      Util::FuncHolder<Functor>(f)
+      itsHeldFunc(f)
     {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      Util::FuncHolder<Functor>::itsHeldFunc(ctx);
+      itsHeldFunc(ctx);
     }
+
+  private:
+    Functor itsHeldFunc;
   };
 
 
