@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jul  5 16:07:42 2002
-// written: Wed Mar 19 17:56:01 2003
+// written: Thu Mar 20 15:47:10 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,7 +33,7 @@
 
 #include "gfx/gxmaterial.h"
 
-#include "gfx/canvas.h"
+#include "gfx/glcanvas.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -108,6 +108,9 @@ void GxMaterial::getBoundingCube(Gfx::Bbox&) const
 void GxMaterial::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxMaterial::draw");
+
+  if (dynamic_cast<GLCanvas*>(&canvas) == 0)
+    throw Util::Error("can't use GxLighting with non-OpenGL canvas");
 
   const GLfloat specular[] =
     { specularColor.r(), specularColor.g(), specularColor.b(), specularColor.a() };
