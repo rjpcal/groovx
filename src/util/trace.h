@@ -2,8 +2,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:17:48 1999
-static const char vcid_trace_h[] = "$Id$";
+// written: Mon Mar 15 17:13:51 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRACE_H_DEFINED
@@ -58,4 +57,5 @@ private:
 #define DOTRACE(x) {}
 #endif // !LOCAL_TRACE
 
+static const char vcid_trace_h[] = "$Header$";
 #endif // !TRACE_H_DEFINED
