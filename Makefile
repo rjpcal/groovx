@@ -67,22 +67,6 @@ TMP_FILE := $(TMP_DIR)/tmpfile
 
 ETAGS := etags
 
-ifeq ($(PLATFORM),hp9000s700)
-	COMPILER := aCC
-	SHLIB_EXT := sl
-	STATLIB_EXT := a
-
-	CPP_DEFINES += -DHP9000S700 -DSHORTEN_SYMBOL_NAMES
-
-	DEFAULT_MODE := debug
-
-	ETAGS := echo "no etags"
-
-	AUDIO_LIB := -lAlib
-
-	LIB_PATH += -L/opt/graphics/OpenGL/lib -L/opt/audio/lib
-endif
-
 ifeq ($(PLATFORM),irix6)
 	COMPILER := MIPSpro
 	SHLIB_EXT := so
@@ -141,32 +125,6 @@ endif
 ifeq ($(MODE),prod)
 	OBJ_EXT := .o
 	LIB_SUFFIX := $(VERSION)
-endif
-
-ifeq ($(COMPILER),aCC)
-	CC := time aCC
-#	FILTER := 
-	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
-		-e '/Warning.*usr.include./,/\^\^*/d'
-# 361 == wrongly complains about falling off end of non-void function
-# 392 == 'Conversion unnecessary; expression was already of type...'
-	CC_SWITCHES += +w +W361,392
-	CPP_DEFINES += -DACC_COMPILER -DPRESTANDARD_IOSTREAMS -Dstd= -DSTD_IO=
-
-	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g1 +Z +p
-		LD_OPTIONS += -Wl,-B,immediate -Wl,+vallcompatwarnings
-	endif
-
-	ifeq ($(MODE),prod)
-		CC_SWITCHES += +O2 +Z +p
-		LD_OPTIONS += -Wl,+vallcompatwarnings
-	endif
-
-	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
-
-	SHLIB_CMD := $(CC) -b -o
-	STATLIB_CMD := ar rus
 endif
 
 ifeq ($(COMPILER),MIPSpro)
@@ -481,12 +439,6 @@ build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
 GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
-
-ifeq ($(MODE),debug)
-	ifeq ($(PLATFORM),hp9000s700)
-		GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
-	endif
-endif
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
