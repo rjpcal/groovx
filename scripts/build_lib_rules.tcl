@@ -1,5 +1,7 @@
 #!/usr/bin/env tclsh
 
+# $Id$
+
 set LIBDIR ""
 set LIBPREFIX ""
 set LIBEXT ""
@@ -33,15 +35,15 @@ proc process_module { module } {
 proc print_makefile_output { } {
 
     foreach lib [array names ::LIBRULES] {
-	puts -nonewline "${lib}: \\\n  "
-	puts [join $::LIBRULES($lib) " \\\n  "]
+	puts -nonewline "${lib}:   "
+	puts [join $::LIBRULES($lib) " "]
     }
 
-    puts -nonewline "PROJECT_LIBS := \\\n  "
-    puts [join $::PROJECT_LIBS " \\\n  "]
+    puts -nonewline "PROJECT_LIBS :=   "
+    puts [join $::PROJECT_LIBS " "]
 
-    puts -nonewline "PROJECT_OBJS := \\\n  "
-    puts [join $::PROJECT_OBJS " \\\n  "]
+    puts -nonewline "PROJECT_OBJS :=   "
+    puts [join $::PROJECT_OBJS " "]
 }
 
 source [file dirname [info script]]/parse_cmdline.tcl
