@@ -162,8 +162,6 @@ private:
   TkWidget(const TkWidget&);
   TkWidget& operator=(const TkWidget&);
 
-  friend class TkWidgImpl;
-
   TkWidgImpl* const rep;
 };
 
