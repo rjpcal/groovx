@@ -185,7 +185,8 @@ DOTRACE("slice::operator");
   RC_geq(rng.count(), 0);
   RC_leq(rng.end(), m_nelems);
 
-  return slice(m_owner, storage_offset(rng.begin()), m_stride, rng.count());
+  return slice(m_data_source, storage_offset(rng.begin()),
+               m_stride, rng.count());
 }
 
 void slice::print() const
@@ -540,25 +541,25 @@ template <class Data>
 void mtx_base<Data>::swap(mtx_base& other)
 {
   mtx_specs::swap(other);
-  data_.swap(other.data_);
+  m_data.swap(other.m_data);
 }
 
 template <class Data>
 mtx_base<Data>::mtx_base(const mtx_base& other) :
   mtx_specs(other),
-  data_(other.data_)
+  m_data(other.m_data)
 {}
 
 template <class Data>
 mtx_base<Data>::mtx_base(int mrows, int ncols, const Data& data) :
   mtx_specs(mrows, ncols),
-  data_(data)
+  m_data(data)
 {}
 
 template <class Data>
 mtx_base<Data>::mtx_base(const mtx_specs& specs, const Data& data) :
   mtx_specs(specs),
-  data_(data)
+  m_data(data)
 {}
 
 template <class Data>

@@ -38,6 +38,8 @@
 
 typedef struct mxArray_tag mxArray;
 
+class data_holder;
+class data_ref_holder;
 
 namespace range_checking
 {
@@ -222,7 +224,7 @@ typedef stride_iterator_base<const double> mtx_const_iter;
 class slice
 {
 protected:
-  mtx& m_owner;
+  data_holder& m_data_source;
   ptrdiff_t m_offset;
   int m_stride;
   int m_nelems;
@@ -237,6 +239,8 @@ protected:
   friend class mtx;
 
   inline slice(const mtx& owner, ptrdiff_t offset, int s, int n);
+
+  inline slice(data_holder& src, ptrdiff_t offset, int s, int n);
 
 public:
 
@@ -703,7 +707,7 @@ private:
   mtx_base& operator=(const mtx_base& other); // not allowed
 
 protected:
-  Data data_;
+  Data m_data;
 
   void swap(mtx_base& other);
 
@@ -716,13 +720,13 @@ protected:
   ~mtx_base();
 
   ptrdiff_t offset_from_storage(int r, int c) const
-  { return RCR_leq(mtx_specs::offset_from_storage(r, c), data_.storage_length()); }
+  { return RCR_leq(mtx_specs::offset_from_storage(r, c), m_data.storage_length()); }
 
   double* address_nc(int row, int col)
-  { return data_.storage_nc() + offset_from_storage(row, col); }
+  { return m_data.storage_nc() + offset_from_storage(row, col); }
 
   const double* address(int row, int col) const
-  { return data_.storage() + offset_from_storage(row, col); }
+  { return m_data.storage() + offset_from_storage(row, col); }
 
   // Does the same thing as address_nc(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" offset.
@@ -732,15 +736,15 @@ protected:
   // Does the same thing as address_nc(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" address.
   double* end_address_nc(int row, int col)
-  { return data_.storage_nc() + end_offset_from_storage(row, col); }
+  { return m_data.storage_nc() + end_offset_from_storage(row, col); }
 
   // Does the same thing as address(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" address.
   const double* end_address(int row, int col) const
-  { return data_.storage() + end_offset_from_storage(row, col); }
+  { return m_data.storage() + end_offset_from_storage(row, col); }
 
-  const double* storage() const { return data_.storage(); }
-  double* storage_nc() { return data_.storage_nc(); }
+  const double* storage() const { return m_data.storage(); }
+  double* storage_nc() { return m_data.storage_nc(); }
 
 public:
 
@@ -749,20 +753,20 @@ public:
 
   const double& at(int i) const
   {
-    RC_less(i+offset(), data_.storage_length());
-    return data_.storage()[i+offset()];
+    RC_less(i+offset(), m_data.storage_length());
+    return m_data.storage()[i+offset()];
   }
 
   double& at_nc(int i)
   {
-    RC_less(i+offset(), data_.storage_length());
-    return data_.storage_nc()[i+offset()];
+    RC_less(i+offset(), m_data.storage_length());
+    return m_data.storage_nc()[i+offset()];
   }
 
   template <class F>
   void apply(F func)
   {
-    double* p = data_.storage_nc() + offset();
+    double* p = m_data.storage_nc() + offset();
     unsigned int gap = rowgap();
 
     if (gap == 0)
@@ -927,6 +931,8 @@ public:
 
   mxArray* make_mxarray() const;
 
+  data_holder& get_data_holder() { return m_data; }
+
 
   //
   // I/O
@@ -967,33 +973,33 @@ public:
 
   sub_mtx_ref sub(const row_index_range& rng)
   {
-    return sub_mtx_ref(this->specs().sub_rows(rng), this->data_);
+    return sub_mtx_ref(this->specs().sub_rows(rng), this->m_data);
   }
 
   sub_mtx_ref sub(const col_index_range& rng)
   {
-    return sub_mtx_ref(this->specs().sub_cols(rng), this->data_);
+    return sub_mtx_ref(this->specs().sub_cols(rng), this->m_data);
   }
 
   sub_mtx_ref sub(const row_index_range& rr, const col_index_range& cc)
   {
-    return sub_mtx_ref(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
+    return sub_mtx_ref(this->specs().sub_rows(rr).sub_cols(cc), this->m_data);
   }
 
 
   mtx sub(const row_index_range& rng) const
   {
-    return mtx(this->specs().sub_rows(rng), this->data_);
+    return mtx(this->specs().sub_rows(rng), this->m_data);
   }
 
   mtx sub(const col_index_range& rng) const
   {
-    return mtx(this->specs().sub_cols(rng), this->data_);
+    return mtx(this->specs().sub_cols(rng), this->m_data);
   }
 
   mtx sub(const row_index_range& rr, const col_index_range& cc) const
   {
-    return mtx(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
+    return mtx(this->specs().sub_rows(rr).sub_cols(cc), this->m_data);
   }
 
 
@@ -1006,10 +1012,10 @@ public:
 
 
   mtx as_shape(const mtx_shape& s) const
-  { return mtx(this->specs().as_shape(s), this->data_); }
+  { return mtx(this->specs().as_shape(s), this->m_data); }
 
   mtx as_shape(int mr, int nc) const
-  { return mtx(this->specs().as_shape(mr, nc), this->data_); }
+  { return mtx(this->specs().as_shape(mr, nc), this->m_data); }
 
   slice row(int r) const
     { return slice(*this, offset_from_storage(r,0), rowstride(), ncols()); }
@@ -1080,7 +1086,7 @@ public:
   // this = m1 * m2;
   void assign_MMmul(const mtx& m1, const mtx& m2);
 
-  void make_unique() { Base::data_.make_unique(); }
+  void make_unique() { Base::m_data.make_unique(); }
 
 private:
   friend class slice;
@@ -1093,13 +1099,19 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 inline const double* slice::data_start() const
-{ return m_owner.storage() + m_offset; }
+{ return m_data_source.storage() + m_offset; }
 
 inline double* slice::data_start_nc()
-{ return m_owner.storage_nc() + m_offset; }
+{ return m_data_source.storage_nc() + m_offset; }
 
 inline slice::slice(const mtx& owner, ptrdiff_t offset, int s, int n) :
-  m_owner(const_cast<mtx&>(owner)),
+  m_data_source(const_cast<mtx&>(owner).get_data_holder()),
+  m_offset(offset),
+  m_stride(s),
+  m_nelems(n) {}
+
+inline slice::slice(data_holder& src, ptrdiff_t offset, int s, int n) :
+  m_data_source(src),
   m_offset(offset),
   m_stride(s),
   m_nelems(n) {}
