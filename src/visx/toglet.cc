@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Nov 28 14:08:57 2000
+// written: Sat Dec  2 09:50:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ ToglConfig::ToglConfig(Tcl_Interp* interp, const char* pathname,
 							  double dist, double unit_angle) :
   GWT::Widget(),
   itsCanvas(new GLCanvas),
-  itsWidget(new Togl(interp, pathname, config_argc, config_argv)),
+  itsTogl(new Togl(interp, pathname, config_argc, config_argv)),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
@@ -119,30 +119,30 @@ ToglConfig::ToglConfig(Tcl_Interp* interp, const char* pathname,
 DOTRACE("ToglConfig::ToglConfig"); 
   DebugEvalNL((void*) this);
 
-  itsWidget->setClientData(static_cast<ClientData>(this));
+  itsTogl->setClientData(static_cast<ClientData>(this));
 
-  itsWidget->setReshapeFunc(ToglConfig_Impl::dummyReshapeCallback);
-  itsWidget->setDisplayFunc(ToglConfig_Impl::dummyDisplayCallback);
-  itsWidget->setDestroyFunc(toglDestroyCallback);
+  itsTogl->setReshapeFunc(ToglConfig_Impl::dummyReshapeCallback);
+  itsTogl->setDisplayFunc(ToglConfig_Impl::dummyDisplayCallback);
+  itsTogl->setDestroyFunc(toglDestroyCallback);
   
   setUnitAngle(unit_angle);
 
-  if ( itsWidget->usesRgba() ) {
+  if ( itsTogl->usesRgba() ) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glClearColor(0.0, 0.0, 0.0, 1.0);
   }
   else { // not using rgba
-    if ( itsWidget->hasPrivateCmap() ) {
+    if ( itsTogl->hasPrivateCmap() ) {
       glClearIndex(0);
       glIndexi(1);
     }
     else {
-      glClearIndex(itsWidget->allocColor(0.0, 0.0, 0.0));
-      glIndexi(itsWidget->allocColor(1.0, 1.0, 1.0));
+      glClearIndex(itsTogl->allocColor(0.0, 0.0, 0.0));
+      glIndexi(itsTogl->allocColor(1.0, 1.0, 1.0));
     }
   }
 
-  Tk_Window tkwin = itsWidget->tkWin();
+  Tk_Window tkwin = itsTogl->tkWin();
   Tk_CreateEventHandler(tkwin, ButtonPressMask, dummyEventProc,
 								static_cast<void*>(this));
 
@@ -154,17 +154,17 @@ DOTRACE("ToglConfig::~ToglConfig");
   if (itsDestroyCallback.get() != 0)
 	 itsDestroyCallback->onDestroy(this);
 
-  itsWidget->setClientData(static_cast<ClientData>(0));
-  itsWidget->setReshapeFunc(0);
-  itsWidget->setDisplayFunc(0);
+  itsTogl->setClientData(static_cast<ClientData>(0));
+  itsTogl->setReshapeFunc(0);
+  itsTogl->setDisplayFunc(0);
 
-  Tk_Window tkwin = itsWidget->tkWin();
+  Tk_Window tkwin = itsTogl->tkWin();
   if (tkwin != 0) {
 	 Tk_DeleteEventHandler(tkwin, ButtonPressMask, dummyEventProc,
 								  static_cast<void*>(this));
   }
 
-  itsWidget = 0;
+  itsTogl = 0;
 }
 
 ///////////////
@@ -183,24 +183,24 @@ DOTRACE("ToglConfig::getMinRect");
 
 Tcl_Interp* ToglConfig::getInterp() const {
 DOTRACE("ToglConfig::getInterp");
-  return itsWidget->interp();
+  return itsTogl->interp();
 }
 
 int ToglConfig::getHeight() const {
 DOTRACE("ToglConfig::getHeight");
-  return itsWidget->height();
+  return itsTogl->height();
 }
 
 int ToglConfig::getWidth() const {
 DOTRACE("ToglConfig::getWidth");
-  return itsWidget->width();
+  return itsTogl->width();
 }
 
 void ToglConfig::queryColor(unsigned int color_index, Color& color) const {
 DOTRACE("ToglConfig::queryColor");
-  Tk_Window tkwin = itsWidget->tkWin();
+  Tk_Window tkwin = itsTogl->tkWin();
   Display* display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
-  Colormap cmap = itsWidget->colormap();
+  Colormap cmap = itsTogl->colormap();
   XColor col;
   
   col.pixel = color_index;
@@ -225,17 +225,17 @@ DOTRACE("ToglConfig::usingFixedScale");
 
 Display* ToglConfig::getX11Display() const {
 DOTRACE("getX11Display");
-  return itsWidget->display();
+  return itsTogl->display();
 }
 
 int ToglConfig::getX11ScreenNumber() const {
 DOTRACE("getX11ScreenNumber");
-  return itsWidget->screenNumber(); 
+  return itsTogl->screenNumber(); 
 }
 
 Window ToglConfig::getX11Window() const {
 DOTRACE("getX11Window");
-  return itsWidget->windowId();
+  return itsTogl->windowId();
 }
 
 GWT::Canvas* ToglConfig::getCanvas() {
@@ -251,13 +251,13 @@ void ToglConfig::destroyWidget() {
 DOTRACE("ToglConfig::destroyWidget");
 DebugPrintNL("ToglConfig::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !Tcl_InterpDeleted(itsWidget->interp()) ) {
+  if ( !Tcl_InterpDeleted(itsTogl->interp()) ) {
 	 dynamic_string destroy_cmd_str = "destroy ";
-	 destroy_cmd_str += pathname(itsWidget);
+	 destroy_cmd_str += pathname(itsTogl);
 
 	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
 										  Tcl::TclEvalCmd::BACKGROUND_ERROR);
-	 destroy_cmd.invoke(itsWidget->interp());
+	 destroy_cmd.invoke(itsTogl->interp());
   }
 }
 
@@ -285,7 +285,7 @@ DOTRACE("ToglConfig::setColor");
   }
   catch (ToglError&) { throw; }
 
-  itsWidget->setColor(color.pixel, color.red, color.green, color.blue);
+  itsTogl->setColor(color.pixel, color.red, color.green, color.blue);
 }
 
 void ToglConfig::setFixedScale(double s) {
@@ -310,7 +310,7 @@ DOTRACE("ToglConfig::setUnitAngle");
   // screen_unit_dist == 1.0 * itsFixedScale / screepPpi;
   double screen_unit_dist = tan(deg*deg_to_rad) * itsViewingDistance;
 
-  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(itsWidget->tkWin()));
+  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(itsTogl->tkWin()));
   int screen_pixel_width = XWidthOfScreen(scr);
   int screen_mm_width = XWidthMMOfScreen(scr);
   double screen_inch_width = screen_mm_width / 25.4;
@@ -352,14 +352,14 @@ void ToglConfig::setHeight(int val) {
 DOTRACE("ToglConfig::setHeight");
   // This automatically triggers a ConfigureNotify/Expose event pair
   // through the Togl/Tk machinery
-  setIntParam(itsWidget, "height", val);
+  setIntParam(itsTogl, "height", val);
 }
 
 void ToglConfig::setWidth(int val) {
 DOTRACE("ToglConfig::setWidth");
   // This automatically triggers a ConfigureNotify/Expose event pair
   // through the Togl/Tk machinery
-  setIntParam(itsWidget, "width", val);
+  setIntParam(itsTogl, "width", val);
 }
 
 ToglConfig::DestroyCallback::~DestroyCallback() {}
@@ -376,20 +376,20 @@ DOTRACE("ToglConfig::setDestroyCallback");
 void ToglConfig::bind(const char* event_sequence, const char* script) {
 DOTRACE("ToglConfig::bind");
   dynamic_string cmd_str = "bind ";
-  cmd_str += pathname(itsWidget); cmd_str += " ";
+  cmd_str += pathname(itsTogl); cmd_str += " ";
   cmd_str += event_sequence;      cmd_str += " ";
   cmd_str += script;
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
-  try { cmd.invoke(itsWidget->interp()); }
+  try { cmd.invoke(itsTogl->interp()); }
   catch (Tcl::TclError&) { throw; }
 }
 
 void ToglConfig::loadFont(const char* fontname) {
 DOTRACE("ToglConfig::loadFont");
 
-  GLuint newListBase = itsWidget->loadBitmapFont(fontname);
+  GLuint newListBase = itsTogl->loadBitmapFont(fontname);
 
   try {
 	 // Check if font loading succeeded...
@@ -404,7 +404,7 @@ DOTRACE("ToglConfig::loadFont");
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
-	 itsWidget->unloadBitmapFont(itsFontListBase);
+	 itsTogl->unloadBitmapFont(itsFontListBase);
   }
 
   // ... and point to the new font
@@ -418,7 +418,7 @@ DOTRACE("ToglConfig::loadFonti");
   // for now.
 #ifndef IRIX6
   GLuint newListBase =
-	 itsWidget->loadBitmapFont(reinterpret_cast<char*>(fontnumber));
+	 itsTogl->loadBitmapFont(reinterpret_cast<char*>(fontnumber));
 #else
   GLuint newListBase = 0*fontnumber; // this will force an exception to be thrown
 #endif
@@ -434,7 +434,7 @@ DOTRACE("ToglConfig::loadFonti");
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
-	 itsWidget->unloadBitmapFont(itsFontListBase);
+	 itsTogl->unloadBitmapFont(itsFontListBase);
   }
 
   // ... and point to the new font
@@ -483,29 +483,29 @@ DOTRACE("ToglConfig::reconfigure");
     DebugEval(itsMinRect.aspect());
     DebugEvalNL(getAspect());
 #ifdef LOCAL_DEBUG
-	 cerr << "glViewport(0, 0, " << itsWidget->width() << ", "
-			<< itsWidget->height() << ")" << endl;
+	 cerr << "glViewport(0, 0, " << itsTogl->width() << ", "
+			<< itsTogl->height() << ")" << endl;
     cerr << "glOrtho(l=" << therect.left() << ", r=" << therect.right()
          << ", b=" << therect.bottom() << ", t=" << therect.top() << ", -1.0, 1.0)" << endl;
 #endif
   } // end not usingFixedScale
 
-  itsWidget->postRedisplay();
+  itsTogl->postRedisplay();
 }
 
 void ToglConfig::swapBuffers() {
 DOTRACE("ToglConfig::swapBuffers");
-  itsWidget->swapBuffers();
+  itsTogl->swapBuffers();
 }
 
 void ToglConfig::takeFocus() {
 DOTRACE("ToglConfig::takeFocus");
   dynamic_string cmd_str = "focus -force ";
-  cmd_str += pathname(itsWidget);
+  cmd_str += pathname(itsTogl);
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
-  try { cmd.invoke(itsWidget->interp()); }
+  try { cmd.invoke(itsTogl->interp()); }
   catch (Tcl::TclError&) { throw; }
 }
 
@@ -516,7 +516,7 @@ DOTRACE("ToglConfig::writeEpsFile");
   {
 	 // Set fore/background colors to extremes for the purposes of EPS
 	 // rendering
-	 if ( itsWidget->usesRgba() ) {
+	 if ( itsTogl->usesRgba() ) {
 		glColor4d(0.0, 0.0, 0.0, 1.0);
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 	 }
@@ -531,7 +531,7 @@ DOTRACE("ToglConfig::writeEpsFile");
 	 
 	 // do the EPS dump
 	 const int rgbFlag = 0;
-	 itsWidget->dumpToEpsFile(filename, rgbFlag,
+	 itsTogl->dumpToEpsFile(filename, rgbFlag,
 									  ToglConfig_Impl::dummyEpsCallback);
   }
   glPopAttrib();

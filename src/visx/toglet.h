@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Nov 28 14:09:33 2000
+// written: Sat Dec  2 09:49:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ private:
 
   scoped_ptr<GWT::Canvas> itsCanvas;
 
-  Togl* itsWidget;
+  Togl* itsTogl;
   double itsViewingDistance;     // inches
   bool itsFixedScaleFlag;
   double itsFixedScale;
