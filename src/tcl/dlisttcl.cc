@@ -3,7 +3,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Sep 24 15:12:39 1999
+// written: Tue Dec  7 18:02:10 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -99,7 +99,7 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
 
 	 // Check index for valid value
 	 if (index < 0 || index >= src_len) {
-		err_message(interp, objv, "index out of range");
+		Tcl::err_message(interp, objv, "index out of range");
 		return TCL_ERROR;
 	 }
     // use that int as an index into source list, getting the
@@ -217,7 +217,7 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
   int src_len;
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
   if (src_len == 0) {
-    err_message(interp, objv, "source_list is empty");
+    Tcl::err_message(interp, objv, "source_list is empty");
     return TCL_ERROR;
   }
 
@@ -352,7 +352,7 @@ DOTRACE("Tcldlist::dlist_selectCmd");
   if (Tcl_ListObjLength(interp, objv[2], &flg_len) != TCL_OK) return TCL_ERROR;
 
   if (flg_len < src_len) {
-    err_message(interp, objv, "flags list must be as long as source_list");
+    Tcl::err_message(interp, objv, "flags list must be as long as source_list");
     return TCL_ERROR;
   }
 

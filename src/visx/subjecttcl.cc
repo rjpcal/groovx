@@ -2,7 +2,7 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sun Oct  3 19:41:35 1999
+// written: Tue Dec  7 18:01:10 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -62,13 +62,13 @@ DOTRACE("SubjectTcl::getSubjectFromObj");
 
   Tcl_HashEntry* theEntry = Tcl_FindHashEntry(tblPtr, subjectKey);
   if (theEntry == NULL) {
-    err_message(interp, objv, no_subject_msg);
+    Tcl::err_message(interp, objv, no_subject_msg);
     return TCL_ERROR;
   }
   
   theSubject = static_cast<Subject *>(Tcl_GetHashValue(theEntry));
   if (theSubject == NULL) {
-    err_message(interp, objv, no_subject_msg);
+    Tcl::err_message(interp, objv, no_subject_msg);
     return TCL_ERROR;
   }
   
@@ -81,7 +81,7 @@ DOTRACE("SubjectTcl::subjectCmd");
   Tcl_HashTable* tblPtr = static_cast<Tcl_HashTable *>(clientData);
   
   if (tblPtr == NULL) {
-    err_message(interp, objv, no_hash_msg);
+    Tcl::err_message(interp, objv, no_hash_msg);
     return TCL_ERROR;
   }
 
@@ -108,7 +108,7 @@ DOTRACE("SubjectTcl::subjectCmd");
       return clearCmd(tblPtr, interp, objc, objv);
     }
     else {
-      err_message(interp, objv, bad_command);
+      Tcl::err_message(interp, objv, bad_command);
       return TCL_ERROR;
     }
   }
@@ -134,7 +134,7 @@ DOTRACE("SubjectTcl::newSubjectCmd");
   int isNew;
   Tcl_HashEntry* newEntry = Tcl_CreateHashEntry(tblPtr, subjectKey, &isNew);
   if (isNew == 0) {
-    err_message(interp, objv, subject_exists_msg);
+    Tcl::err_message(interp, objv, subject_exists_msg);
     return TCL_ERROR;
   }
   

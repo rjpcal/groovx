@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Nov 11 19:22:17 1999
+// written: Tue Dec  7 18:01:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ DOTRACE("TclCmd::usage");
 
 void TclCmd::errorMessage(const char* msg) {
 DOTRACE("TclCmd::errorMessage");
-  err_message(itsInterp, itsObjv, msg);
+  Tcl::err_message(itsInterp, itsObjv, msg);
 }
 
 
@@ -297,20 +297,20 @@ DOTRACE("TclCmd::dummyInvoke");
   catch (TclError& err) {
 	 DebugPrintNL("catch (TclError&)");
 	 if (err.msg() != "") {
-		err_message(interp, theCmd->itsObjv, err.msg().c_str());
+		Tcl::err_message(interp, theCmd->itsObjv, err.msg().c_str());
 	 }
 	 theCmd->itsResult = TCL_ERROR;
   }
   catch (ErrorWithMsg& err) {
 	 DebugPrintNL("catch (ErrorWithMsg&)");
 	 if (err.msg() != "") {
-		err_message(interp, theCmd->itsObjv, err.msg().c_str());
+		Tcl::err_message(interp, theCmd->itsObjv, err.msg().c_str());
 	 }
 	 else {
 		string msg = "an error of type ";
 		msg += demangle(typeid(err).name());
 		msg += " occurred";
-		err_message(interp, theCmd->itsObjv, msg.c_str());
+		Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
 	 }
 	 theCmd->itsResult = TCL_ERROR;
   }
@@ -319,19 +319,19 @@ DOTRACE("TclCmd::dummyInvoke");
 	 string msg = "an error of type ";
 	 msg += demangle(typeid(err).name());
 	 msg += " occurred";
- 	 err_message(interp, theCmd->itsObjv, msg.c_str());
+ 	 Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
  	 theCmd->itsResult = TCL_ERROR;
   }
   catch (exception& err) {
 	 string msg = "an error of type ";
 	 msg += demangle(typeid(err).name());
 	 msg += " occurred";
-	 err_message(interp, theCmd->itsObjv, msg.c_str());
+	 Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
 	 theCmd->itsResult = TCL_ERROR;
   }
   catch (...) {
  	 DebugPrintNL("catch (...)");
- 	 err_message(interp, theCmd->itsObjv, "an error of unknown type occurred");
+ 	 Tcl::err_message(interp, theCmd->itsObjv, "an error of unknown type occurred");
  	 theCmd->itsResult = TCL_ERROR;
   }
 
