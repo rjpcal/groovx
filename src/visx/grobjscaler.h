@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Thu Aug 16 10:51:00 2001
+// written: Thu Aug 16 15:27:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public:
     double current = aspectRatio();
 
     if (new_aspect_ratio == 0.0 || new_aspect_ratio == current) return;
-    if (itsMode == Gmodes::NATIVE_SCALING) return;
+    if (itsMode != Gmodes::FREE_SCALING) return;
 
     double change_factor = new_aspect_ratio / current;
 
@@ -98,7 +98,8 @@ public:
 
   double aspectRatio() const
   {
-    return (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
+    return itsMode != Gmodes::FREE_SCALING ? 1.0 :
+      (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
   }
 
   double scaledWidth(const Gfx::Rect<double>& native_bbox)
