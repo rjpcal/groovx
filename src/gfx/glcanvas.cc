@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Nov 21 15:48:11 2002
+// written: Fri Nov 22 14:47:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,9 @@ public:
 
 GLCanvas::GLCanvas(Display* dpy) :
   rep(new Impl(dpy, (GlxWrapper*) 0))
-{}
+{
+DOTRACE("GLCanvas::GLCanvas");
+}
 
 GLCanvas* GLCanvas::make(Display* dpy)
 {
@@ -58,6 +60,7 @@ DOTRACE("GLCanvas::make");
 
 GLCanvas::~GLCanvas()
 {
+DOTRACE("GLCanvas::~GLCanvas");
   delete rep;
   rep = 0;
 }
