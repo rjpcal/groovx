@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jun 13 15:16:01 2001
+// written: Wed Jun 13 17:36:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -165,7 +165,7 @@ protected:
 
     if (objc() < 3)
       {
-        Ref<Util::Object> item(Util::ObjMgr::newObj(type));
+        WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
         returnInt(item.id());
       }
     else
@@ -173,7 +173,7 @@ protected:
         int array_size = getIntFromArg(2);
         while (array_size-- > 0)
           {
-            Ref<Util::Object> item(Util::ObjMgr::newObj(type));
+            WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
             lappendVal(item.id());
           }
       }
