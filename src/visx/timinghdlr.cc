@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 17 07:04:22 2001
+// written: Thu May 17 10:07:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "util/error.h"
 #include "util/minivec.h"
 
 #define NO_TRACE
@@ -189,7 +190,7 @@ DOTRACE("TimingHdlr::getEvent");
   default:
 	 break;
   }  
-  return IdItem<TrialEvent>((TrialEvent*)0); // will raise an exception
+  return IdItem<TrialEvent>(IO::UID(0)); // will raise an exception
 }
 
 int TimingHdlr::getElapsedMsec() const {
