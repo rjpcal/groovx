@@ -83,12 +83,15 @@ AC_LANG(C++)
 AC_PROG_CXX(g++-3 g++ c++ CC)
 
 case ${CXX}-${OS} in
-   g++*)
+   *g++*)
       CXXFLAGS="$CXXFLAGS -W -Wdeprecated -Wall"
       CXXFLAGS="$CXXFLAGS -Wsign-promo -Wwrite-strings"
+      AC_MSG_CHECKING([for g++ version])
       GCC_VERSION=`$CXX -dumpversion`
+      AC_MSG_RESULT($GCC_VERSION)
       case $GCC_VERSION in
          2.9*) ;;
+	 3.4.0) CPPFLAGS="$CPPFLAGS -Wno-system-headers -DMEMBER_TEMPLATES_BROKEN" ;;
 	 3.*) CXXFLAGS="$CXXFLAGS -Wno-system-headers" ;;
       esac
       case `uname -m` in
