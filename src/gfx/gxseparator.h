@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Mon Jun 11 14:49:17 2001
+// written: Mon Aug  6 11:09:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,10 @@
 #include "io/iodecls.h"
 #endif
 
-namespace Util { template <class T> class Ref; };
+namespace Util
+{
+  template <class T> class Ref;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -49,12 +52,12 @@ public:
 
   typedef unsigned int ChildId;
 
-  ChildId addChild(Util::UID ioUid);
-  void insertChild(Util::UID ioUid, ChildId at_index);
-  void removeChildId(ChildId index);
-  void removeChildUid(Util::UID ioUid);
+  ChildId addChild(Util::Ref<GxNode> item);
+  void insertChild(Util::Ref<GxNode> item, ChildId at_index);
+  void removeChildAt(ChildId index);
+  void removeChild(Util::Ref<GxNode> item);
 
-  int numChildren() const;
+  unsigned int numChildren() const;
   Util::Ref<GxNode> getChild(ChildId index) const;
 
   typedef const Util::Ref<GxNode>* ConstChildItr;

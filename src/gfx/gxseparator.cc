@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Jun 12 11:18:32 2001
+// written: Mon Aug  6 11:10:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,8 @@ public:
   VecType itsChildren;
 };
 
-GxSeparator* GxSeparator::make() {
+GxSeparator* GxSeparator::make()
+{
 DOTRACE("GxSeparator::make");
   return new GxSeparator;
 }
@@ -75,29 +76,31 @@ GxSeparator::GxSeparator() :
 DOTRACE("GxSeparator::GxSeparator");
 }
 
-GxSeparator::~GxSeparator() {
+GxSeparator::~GxSeparator()
+{
 DOTRACE("GxSeparator::~GxSeparator");
   delete itsImpl;
 }
 
-void GxSeparator::readFrom(IO::Reader* reader) {
+void GxSeparator::readFrom(IO::Reader* reader)
+{
 DOTRACE("GxSeparator::readFrom");
   itsImpl->itsChildren.clear();
   IO::ReadUtils::readObjectSeq<GxNode>(
           reader, "children", std::back_inserter(itsImpl->itsChildren));
 }
 
-void GxSeparator::writeTo(IO::Writer* writer) const {
+void GxSeparator::writeTo(IO::Writer* writer) const
+{
 DOTRACE("GxSeparator::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "children",
                                  itsImpl->itsChildren.begin(),
                                  itsImpl->itsChildren.end());
 }
 
-GxSeparator::ChildId GxSeparator::addChild(Util::UID ioUid) {
+GxSeparator::ChildId GxSeparator::addChild(Util::Ref<GxNode> item)
+{
 DOTRACE("GxSeparator::addChild");
-
-  Ref<GxNode> item(ioUid);
 
   itsImpl->ensureNoCycle(item.get());
 
@@ -105,10 +108,9 @@ DOTRACE("GxSeparator::addChild");
   return (itsImpl->itsChildren.size() - 1);
 }
 
-void GxSeparator::insertChild(Util::UID ioUid, ChildId at_index) {
+void GxSeparator::insertChild(Util::Ref<GxNode> item, ChildId at_index)
+{
 DOTRACE("GxSeparator::insertChild");
-
-  Ref<GxNode> item(ioUid);
 
   itsImpl->ensureNoCycle(item.get());
 
@@ -119,21 +121,26 @@ DOTRACE("GxSeparator::insertChild");
                               item);
 }
 
-void GxSeparator::removeChildId(ChildId index) {
-DOTRACE("GxSeparator::removeChildId");
+void GxSeparator::removeChildAt(ChildId index)
+{
+DOTRACE("GxSeparator::removeChildAt");
   if (index < itsImpl->itsChildren.size())
     itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 }
 
-void GxSeparator::removeChildUid(Util::UID io_uid) {
-DOTRACE("GxSeparator::removeChildUid");
+void GxSeparator::removeChild(Util::Ref<GxNode> item)
+{
+DOTRACE("GxSeparator::removeChild");
+
+  const Util::UID target = item.id();
+
   for(Impl::VecType::iterator
         itr = itsImpl->itsChildren.begin(),
         end = itsImpl->itsChildren.end();
       itr != end;
       ++itr)
     {
-      if ( (*itr)->id() == io_uid )
+      if ( (*itr)->id() == target )
         {
           itsImpl->itsChildren.erase(itr);
           break;
@@ -141,12 +148,14 @@ DOTRACE("GxSeparator::removeChildUid");
     }
 }
 
-int GxSeparator::numChildren() const {
+unsigned int GxSeparator::numChildren() const
+{
 DOTRACE("GxSeparator::numChildren");
   return itsImpl->itsChildren.size();
 }
 
-Ref<GxNode> GxSeparator::getChild(ChildId index) const {
+Ref<GxNode> GxSeparator::getChild(ChildId index) const
+{
 DOTRACE("GxSeparator::getChild");
   if (index >= itsImpl->itsChildren.size())
     {
@@ -159,32 +168,38 @@ DOTRACE("GxSeparator::getChild");
   return itsImpl->itsChildren[index];
 }
 
-GxSeparator::ConstChildItr GxSeparator::beginChildren() const {
+GxSeparator::ConstChildItr GxSeparator::beginChildren() const
+{
 DOTRACE("GxSeparator::beginChildren");
   return itsImpl->itsChildren.begin();
 }
 
-GxSeparator::ConstChildItr GxSeparator::endChildren() const {
+GxSeparator::ConstChildItr GxSeparator::endChildren() const
+{
 DOTRACE("GxSeparator::endChildren");
   return itsImpl->itsChildren.end();
 }
 
-GxSeparator::ChildItr GxSeparator::beginChildren() {
+GxSeparator::ChildItr GxSeparator::beginChildren()
+{
 DOTRACE("GxSeparator::beginChildren");
   return itsImpl->itsChildren.begin();
 }
 
-GxSeparator::ChildItr GxSeparator::endChildren() {
+GxSeparator::ChildItr GxSeparator::endChildren()
+{
 DOTRACE("GxSeparator::endChildren");
   return itsImpl->itsChildren.end();
 }
 
-bool GxSeparator::contains(GxNode* other) const {
+bool GxSeparator::contains(GxNode* other) const
+{
 DOTRACE("GxSeparator::contains");
   return itsImpl->contains(other);
 }
 
-void GxSeparator::draw(GWT::Canvas& canvas) const {
+void GxSeparator::draw(GWT::Canvas& canvas) const
+{
 DOTRACE("GxSeparator::draw");
 
   GWT::Canvas::StateSaver state(canvas);
@@ -197,7 +212,8 @@ DOTRACE("GxSeparator::draw");
     }
 }
 
-void GxSeparator::undraw(GWT::Canvas& canvas) const {
+void GxSeparator::undraw(GWT::Canvas& canvas) const
+{
 DOTRACE("GxSeparator::undraw");
 
   GWT::Canvas::StateSaver state(canvas);
