@@ -101,126 +101,99 @@ DOTRACE("media::esd_sound_rep::esd_sound_rep");
 
 media::esd_sound_rep::~esd_sound_rep() throw() {}
 
-namespace
-{
-  int my_play_stream(esd_format_t format, int rate, const char* name)
-  {
-    const char* host = getenv("ESPEAKER");
-
-    int socket_out = esd_play_stream( format, rate, host, name );
-    if ( socket_out >= 0 )
-      return socket_out;
-
-    /* if host is set, this is an error, bail out */
-    if ( host )
-      return -1;
-
-    /* go for /dev/dsp */
-    esd_audio_format = format;
-    esd_audio_rate = rate;
-    socket_out = esd_audio_open();
-
-    /* we either got it, or we didn't */
-    return socket_out;
-  }
-
-  void my_play_file(const char* filename)
-  {
-    /* open the audio file */
-    const AFfilehandle in_file = afOpenFile( filename, "rb", NULL );
-
-    if ( !in_file )
-      throw rutz::error(rutz::fstring("couldn't open sound file '",
-                                      filename, "'"), SRC_POS);
-
-    /* get audio file parameters */
-    const int frame_count = afGetFrameCount(in_file, AF_DEFAULT_TRACK);
-    const int in_channels = afGetChannels(in_file, AF_DEFAULT_TRACK);
-    const double in_rate = afGetRate(in_file, AF_DEFAULT_TRACK);
-    int in_format = -1;
-    int in_width = -1;
-    afGetSampleFormat(in_file, AF_DEFAULT_TRACK, &in_format, &in_width);
-
-    dbg_eval_nl(3, frame_count);
-
-    /* convert audiofile parameters to EsounD parameters */
-    int out_bits;
-    if ( in_width == 8 )
-      out_bits = ESD_BITS8;
-    else if ( in_width == 16 )
-      out_bits = ESD_BITS16;
-    else
-      {
-        throw rutz::error
-          (rutz::fstring("while attempting to play sound file '",
-                         filename, "': only sample widths of 8 and 16 "
-                         "are supported"), SRC_POS);
-      }
-
-    const int bytes_per_frame = ( in_width  * in_channels ) / 8;
-
-    int out_channels;
-    if ( in_channels == 1 )
-      out_channels = ESD_MONO;
-    else if ( in_channels == 2 )
-      out_channels = ESD_STEREO;
-    else
-      {
-        throw rutz::error
-          (rutz::fstring("while attempting to play sound file '",
-                         filename, "': only 1 or 2 channel samples "
-                         "are supported"), SRC_POS);
-      }
-
-    const int out_mode = ESD_STREAM;
-    const int out_func = ESD_PLAY;
-
-    const esd_format_t out_format =
-      out_bits | out_channels | out_mode | out_func;
-
-    const int out_rate = int(in_rate);
-
-    dbg_eval_nl(3, filename);
-
-    /* connect to server and play stream */
-    const int out_sock = my_play_stream(out_format, out_rate, filename);
-
-    if ( out_sock <= 0 )
-      {
-        throw rutz::error
-          (rutz::fstring("while attempting to play sound file '",
-                         filename, "': couldn't open output socket"),
-           SRC_POS);
-      }
-
-    /* play */
-    char buf[ ESD_BUF_SIZE ];
-    int frames_read;
-    int buf_frames = ESD_BUF_SIZE / bytes_per_frame;
-
-    while ((frames_read = afReadFrames(in_file, AF_DEFAULT_TRACK,
-                                       buf, buf_frames)) != 0)
-      {
-        if (write(out_sock, buf, frames_read * bytes_per_frame) <= 0)
-          break;
-      }
-
-    /* close up and go home */
-    close(out_sock);
-    if (afCloseFile(in_file) != 0)
-      throw rutz::error(rutz::fstring("error closing sound file '",
-                                      filename, "'"), SRC_POS);
-  }
-}
-
 void media::esd_sound_rep::play()
 {
   DOTRACE("media::esd_sound_rep::play");
 
-  if (!m_filename.is_empty())
+  if (m_filename.is_empty())
+    return;
+
+  const char* const fname = m_filename.c_str();
+
+  // open the audio file
+  const AFfilehandle in_file = afOpenFile(fname, "rb", NULL);
+
+  if ( !in_file )
+    throw rutz::error(rutz::fstring("couldn't open sound file '",
+                                    fname, "'"), SRC_POS);
+
+  // get audio file parameters
+  const int frame_count = afGetFrameCount(in_file, AF_DEFAULT_TRACK);
+  const int in_channels = afGetChannels(in_file, AF_DEFAULT_TRACK);
+  const double in_rate = afGetRate(in_file, AF_DEFAULT_TRACK);
+  int in_format = -1;
+  int in_width = -1;
+  afGetSampleFormat(in_file, AF_DEFAULT_TRACK, &in_format, &in_width);
+
+  dbg_eval_nl(3, frame_count);
+
+  // convert audiofile parameters to EsounD parameters
+  int out_bits;
+  if ( in_width == 8 )
+    out_bits = ESD_BITS8;
+  else if ( in_width == 16 )
+    out_bits = ESD_BITS16;
+  else
     {
-      my_play_file(m_filename.c_str());
+      throw rutz::error
+        (rutz::fstring("while attempting to play sound file '",
+                       fname, "': only sample widths of 8 and 16 "
+                       "are supported"), SRC_POS);
     }
+
+  const int bytes_per_frame = (in_width * in_channels) / 8;
+
+  int out_channels;
+  if ( in_channels == 1 )
+    out_channels = ESD_MONO;
+  else if ( in_channels == 2 )
+    out_channels = ESD_STEREO;
+  else
+    {
+      throw rutz::error
+        (rutz::fstring("while attempting to play sound file '",
+                       fname, "': only 1 or 2 channel samples "
+                       "are supported"), SRC_POS);
+    }
+
+  const int out_mode = ESD_STREAM;
+  const int out_func = ESD_PLAY;
+
+  const esd_format_t out_format =
+    out_bits | out_channels | out_mode | out_func;
+
+  const int out_rate = int(in_rate);
+
+  dbg_eval_nl(3, fname);
+
+  // connect to server
+  const int out_sock = esd_play_stream(out_format, out_rate, NULL, fname);
+
+  if (out_sock <= 0)
+    {
+      throw rutz::error
+        (rutz::fstring("while attempting to play sound file '",
+                       fname, "': couldn't open esd sound socket"),
+         SRC_POS);
+    }
+
+  // play
+  char buf[ ESD_BUF_SIZE ];
+  int frames_read;
+  int buf_frames = ESD_BUF_SIZE / bytes_per_frame;
+
+  while ((frames_read = afReadFrames(in_file, AF_DEFAULT_TRACK,
+                                     buf, buf_frames)) != 0)
+    {
+      if (write(out_sock, buf, frames_read * bytes_per_frame) <= 0)
+        break;
+    }
+
+  // close up and go home
+  close(out_sock);
+  if (afCloseFile(in_file) != 0)
+    throw rutz::error(rutz::fstring("error closing sound file '",
+                                    fname, "'"), SRC_POS);
 }
 
 static const char vcid_esdsound_h[] = "$Header$";
