@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jun 24 17:47:46 1999
+// written: Thu Jun 24 19:18:35 1999
 // $Id$
 //
 //
@@ -100,7 +100,6 @@ public:
 					int item_argn=1);
 
   virtual IO& getIoFromId(int id) = 0;
-  virtual int getBufSize() = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
