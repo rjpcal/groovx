@@ -3,7 +3,7 @@
 // grshapp.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:59 1999
-// written: Tue Dec  7 11:50:41 1999
+// written: Fri Mar 10 01:29:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include "trace.h"
 
 GrshApp::GrshApp(Tcl_Interp* interp) :
-  itsInterp(interp)
+  itsInterp(interp),
+  itsExpt(0)
 {
 DOTRACE("GrshApp::GrshApp");
   Application::installApp(this);
