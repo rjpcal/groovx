@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Mar  7 11:23:09 2000
+// written: Tue Mar  7 19:36:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include <tcl.h>
 #include <iostream.h>
 #include <fstream.h>
-#include <string>
 #include <sys/time.h>
 
 #include "block.h"
@@ -57,7 +56,7 @@
 
 namespace {
 
-  const string ioTag = "ExptDriver";
+  const string_literal ioTag = "ExptDriver";
 
 #ifdef TIME_TRACE
   inline void TimeTraceNL(const char* loc, int msec) {
@@ -91,7 +90,6 @@ private:
   void recreateDoUponCompletionProc() const;
 
   void raiseBackgroundError(const char* msg) const;
-  void raiseBackgroundError(const string& msg) const;
 
   void doAutosave();
 
@@ -118,13 +116,13 @@ private:
 
   void noteElapsedTime() const;
 
-  void getCurrentTimeDateString(string& date_out) const;
+  void getCurrentTimeDateString(fixed_string& date_out) const;
 
-  void getHostname(string& hostname_out) const;
+  void getHostname(fixed_string& hostname_out) const;
 
-  void getSubjectKey(string& subjectkey_out) const;
+  void getSubjectKey(fixed_string& subjectkey_out) const;
 
-  string makeUniqueFileExtension() const;
+  fixed_string makeUniqueFileExtension() const;
 
   //////////////////////////
   // ExptDriver delegands //
@@ -145,8 +143,9 @@ public:
 
   Tcl_Interp* getInterp() { return itsInterp; }
 
-  const string& getAutosaveFile() const { return itsAutosaveFile; }
-  void setAutosaveFile(const string& str) { itsAutosaveFile = str; }
+  const fixed_string& getAutosaveFile() const { return itsAutosaveFile; }
+
+  void setAutosaveFile(const fixed_string& str) { itsAutosaveFile = str; }
 
   Widget* getWidget()
 	 { return ObjTogl::theToglConfig(); }
@@ -183,11 +182,11 @@ private:
 
   Tcl_Interp* itsInterp;
 
-  string itsHostname;			  // Host computer on which Expt was begun
-  string itsSubject;				  // Id of subject on whom Expt was performed
-  string itsBeginDate;			  // Date(+time) when Expt was begun
-  string itsEndDate;				  // Date(+time) when Expt was stopped
-  string itsAutosaveFile;		  // Filename used for autosaves
+  fixed_string itsHostname;	  // Host computer on which Expt was begun
+  fixed_string itsSubject;		  // Id of subject on whom Expt was performed
+  fixed_string itsBeginDate;	  // Date(+time) when Expt was begun
+  fixed_string itsEndDate;		  // Date(+time) when Expt was stopped
+  fixed_string itsAutosaveFile; // Filename used for autosaves
 
   int itsBlockId;
   int itsRhId;
@@ -195,16 +194,16 @@ private:
 
   mutable StopWatch itsTimer;
 
-  mutable string itsDoUponCompletionBody;
+  mutable dynamic_string itsDoUponCompletionBody;
 
-  struct ManagedObject {
-	 ManagedObject(const string& n, IO* obj) :
-		name(n), object(obj) {}
-	 ManagedObject(const char* n, IO* obj) :
-		name(n), object(obj) {}
-	 string name;
-	 IO* object;
-  };
+//   struct ManagedObject {
+// 	 ManagedObject(const string& n, IO* obj) :
+// 		name(n), object(obj) {}
+// 	 ManagedObject(const char* n, IO* obj) :
+// 		name(n), object(obj) {}
+// 	 string name;
+// 	 IO* object;
+//   };
 
 //   vector<ManagedObject> itsManagedObjects;
 };
@@ -282,8 +281,11 @@ DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
 void ExptDriver::Impl::recreateDoUponCompletionProc() const {
 DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
   try {
-	 string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
-		+ itsDoUponCompletionBody + "} }";
+	 dynamic_string proc_cmd_str =
+		"namespace eval Expt { proc doUponCompletion {} {";
+	 proc_cmd_str += itsDoUponCompletionBody;
+	 proc_cmd_str += "} }";
+
 	 Tcl::TclEvalCmd proc_cmd(proc_cmd_str.c_str(),
 									  Tcl::TclEvalCmd::THROW_EXCEPTION);
 	 proc_cmd.invoke(itsInterp);
@@ -299,12 +301,6 @@ DOTRACE("ExptDriver::Impl::raiseBackgroundError");
   Tcl_BackgroundError(itsInterp);
 }
 
-void ExptDriver::Impl::raiseBackgroundError(const string& msg) const {
-DOTRACE("ExptDriver::Impl::raiseBackgroundError");
-  Tcl_AppendResult(itsInterp, msg.c_str(), (char*) 0);
-  Tcl_BackgroundError(itsInterp);
-}
-
 void ExptDriver::Impl::doAutosave() {
 DOTRACE("ExptDriver::Impl::doAutosave");
   try {
@@ -312,7 +308,7 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 	 write(getAutosaveFile().c_str());
   }
   catch (Tcl::TclError& err) {
-	 raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -429,7 +425,8 @@ DOTRACE("ExptDriver::Impl::safeTclGlobalEval");
   if (tclresult == TCL_OK) return true;
 
   // else...
-  raiseBackgroundError(string("error while evaluating ") + script);
+  dynamic_string msg = "error while evaluating "; msg += script;
+  raiseBackgroundError(msg.c_str());
   return false;
 }
 
@@ -447,7 +444,7 @@ DOTRACE("ExptDriver::Impl::noteElapsedTime");
 		 << " milliseconds\n";
 }
 
-void ExptDriver::Impl::getCurrentTimeDateString(string& date_out) const {
+void ExptDriver::Impl::getCurrentTimeDateString(fixed_string& date_out) const {
 DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   static Tcl::TclEvalCmd dateStringCmd("clock format [clock seconds]",
 													Tcl::TclEvalCmd::THROW_EXCEPTION);
@@ -456,7 +453,7 @@ DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   date_out = Tcl_GetStringResult(itsInterp);
 }
 
-void ExptDriver::Impl::getHostname(string& hostname_out) const {
+void ExptDriver::Impl::getHostname(fixed_string& hostname_out) const {
 DOTRACE("ExptDriver::Impl::getHostname");
   char* temp = Tcl_GetVar2(itsInterp, "env", "HOST",
 									TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
@@ -465,7 +462,7 @@ DOTRACE("ExptDriver::Impl::getHostname");
   hostname_out = temp;
 }
 
-void ExptDriver::Impl::getSubjectKey(string& subjectkey_out) const {
+void ExptDriver::Impl::getSubjectKey(fixed_string& subjectkey_out) const {
 DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
@@ -483,7 +480,7 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
   subjectkey_out = key;
 }
 
-string ExptDriver::Impl::makeUniqueFileExtension() const {
+fixed_string ExptDriver::Impl::makeUniqueFileExtension() const {
 DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
   // Format the current time into a unique filename extension
@@ -528,13 +525,13 @@ DOTRACE("ExptDriver::Impl::serialize");
   os << itsDoUponCompletionBody.length() << endl
 	  << itsDoUponCompletionBody << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 }
 
 void ExptDriver::Impl::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("ExptDriver::Impl::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   ObjList::   theObjList()   .deserialize(is, flag);
   PosList::   thePosList()   .deserialize(is, flag);
@@ -568,12 +565,12 @@ DOTRACE("ExptDriver::Impl::deserialize");
 
   recreateDoUponCompletionProc();
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 }
 
 int ExptDriver::Impl::charCount() const {
 DOTRACE("ExptDriver::Impl::charCount");
-  return (0
+  return (  ioTag.length() + 1
 			 + (ObjList::   theObjList()   .charCount()) + 1
 			 + (PosList::   thePosList()   .charCount()) + 1
 			 + (Tlist::     theTlist()     .charCount()) + 1
@@ -674,7 +671,7 @@ DOTRACE("ExptDriver::Impl::edDraw");
 	 block().drawTrial(itsOwner);
   }
   catch (InvalidIdError& err) {
-	 raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -686,7 +683,7 @@ DOTRACE("ExptDriver::Impl::edUndraw");
 	 block().undrawTrial(itsOwner);
   }
   catch (InvalidIdError& err) {
-	 raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -696,7 +693,7 @@ DOTRACE("ExptDriver::Impl::edSwapBuffers");
 	 getWidget()->swapBuffers();
   }
   catch (Tcl::TclError& err) {
-	 raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -953,15 +950,17 @@ DOTRACE("ExptDriver::Impl::storeData");
   try {
 	 getCurrentTimeDateString(itsEndDate);
 
-	 string unique_file_extension = makeUniqueFileExtension();
+	 fixed_string unique_file_extension = makeUniqueFileExtension();
 
 	 // Write the main experiment file
-	 string expt_filename = string("expt") + unique_file_extension;
+	 dynamic_string expt_filename = "expt";
+	 expt_filename += unique_file_extension;
 	 write(expt_filename.c_str());
 	 cout << "wrote file " << expt_filename << endl;
 	 
 	 // Write the responses file
-	 string resp_filename = string("resp") + unique_file_extension;
+	 dynamic_string resp_filename = "resp";
+	 resp_filename += unique_file_extension;
 	 TlistUtils::writeResponses(Tlist::theTlist(), resp_filename.c_str());
 	 cout << "wrote file " << resp_filename << endl;
 
@@ -978,11 +977,11 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 }
   }
   catch (IoError& err) {
-	 raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg_cstr());
 	 return;
   }
   catch (Tcl::TclError& err) {
-	 raiseBackgroundError(err.msg().c_str());
+	 raiseBackgroundError(err.msg_cstr());
 	 return;
   }
 }
@@ -1033,10 +1032,10 @@ Tcl_Interp* ExptDriver::getInterp()
   { return itsImpl->getInterp(); }
 
 
-const string& ExptDriver::getAutosaveFile() const 
+const fixed_string& ExptDriver::getAutosaveFile() const 
   { return itsImpl->getAutosaveFile(); }
 
-void ExptDriver::setAutosaveFile(const string& str) 
+void ExptDriver::setAutosaveFile(const fixed_string& str) 
   { itsImpl->setAutosaveFile(str); }
 
 Widget* ExptDriver::getWidget()
