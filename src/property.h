@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Thu Sep 28 10:44:56 2000
+// written: Fri Nov  3 14:40:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
 #include "util/value.h"
 #endif
+
+class fixed_string;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -312,6 +314,9 @@ public:
   virtual ~PropertyInfoBase();
 
   PropertyInfoBase& operator=(const PropertyInfoBase& other);
+
+  /// Returns a user-friendly name of the property
+  const fixed_string& name() const;
 
   /// Returns a user-friendly name of the property
   const char* name_cstr() const;
