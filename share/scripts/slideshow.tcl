@@ -12,14 +12,15 @@ proc build_scaled_pixmap { fname size } {
     set px [new GxPixmap]
     -> $px purgeable 1
 
-    set tmpfile ./tmp[incr ::TMPCOUNTER].pnm
-    eval exec anytopnm $fname \
-	| pnmscale -xysize $size \
-	> $tmpfile 2> /dev/null
+    set cmd "|anytopnm $fname | pnmscale -xysize $size"
+    puts $cmd
+    set fd [open $cmd r]
 
-    -> $px loadImage $tmpfile
+    fconfigure $fd -encoding binary -translation {binary binary}
 
-    file delete $tmpfile
+    -> $px loadImageStream $fd
+
+    catch {close $fd}
 
     return $px
 }
