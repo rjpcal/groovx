@@ -275,60 +275,59 @@ bool operator<(const dependency& i1, const dependency& i2)
   return i1.target < i2.target;
 }
 
-class link_mapping
+class formatter
 {
-  class link_spec
-  {
-  private:
-    string            m_source_prefix;
-    string            m_link_pattern;
-    string::size_type m_wildcard_pos;
-
-  public:
-    link_spec(const string& src, const string& link) :
-      m_source_prefix(src),
-      m_link_pattern(link),
-      m_wildcard_pos(link.find_first_of('*'))
-    {}
-
-    bool matches_source(const string& srcfile) const
-    {
-      return strncmp(srcfile.c_str(),
-                     m_source_prefix.c_str(),
-                     m_source_prefix.length()) == 0;
-    }
-
-    string get_link(const string& srcfile) const
-    {
-      if (m_wildcard_pos == string::npos)
-        return m_link_pattern;
-
-      // else...
-      const string::size_type suff = srcfile.find_last_of('.');
-      const string stem = srcfile.substr(0, suff);
-      string result = m_link_pattern;
-      result.replace(m_wildcard_pos, m_wildcard_pos+1,
-                     stem);
-      return result;
-    }
-  };
-
-  vector<link_spec> m_links;
+private:
+  string            m_prefix;
+  string            m_link_pattern;
+  string::size_type m_wildcard_pos;
 
 public:
-  link_mapping() : m_links() {}
+  formatter(const string& src, const string& link) :
+    m_prefix(src),
+    m_link_pattern(link),
+    m_wildcard_pos(link.find_first_of('*'))
+  {}
 
-  void append_link_spec(const string& src, const string& link_pattern)
+  bool matches(const string& srcfile) const
   {
-    m_links.push_back(link_spec(src, link_pattern));
+    return strncmp(srcfile.c_str(),
+                   m_prefix.c_str(),
+                   m_prefix.length()) == 0;
   }
 
-  string get_link_for_source(const string& srcfile) const
+  string transform(const string& srcfile) const
+  {
+    if (m_wildcard_pos == string::npos)
+      return m_link_pattern;
+
+    // else...
+    const string::size_type suff = srcfile.find_last_of('.');
+    const string stem = string(srcfile).erase(suff).substr(m_prefix.length());
+    string result = m_link_pattern;
+    result.replace(m_wildcard_pos, 1, stem);
+    return result;
+  }
+};
+
+class format_set
+{
+  vector<formatter> m_links;
+
+public:
+  format_set() : m_links() {}
+
+  void append_format(const string& src, const string& link_pattern)
+  {
+    m_links.push_back(formatter(src, link_pattern));
+  }
+
+  string transform(const string& srcfile) const
   {
     for (unsigned int i = 0; i < m_links.size(); ++i)
       {
-        if (m_links[i].matches_source(srcfile))
-          return m_links[i].get_link(srcfile);
+        if (m_links[i].matches(srcfile))
+          return m_links[i].transform(srcfile);
       }
     cerr << "no patterns matched source file: " << srcfile << '\n';
     exit(1);
@@ -372,6 +371,8 @@ private:
   vector<string>           m_cfg_header_exts;
   vector<string>           m_cfg_obj_exts;
   string                   m_cfg_obj_prefix;
+  format_set               m_cfg_exe_formats;
+  format_set               m_cfg_link_formats;
   bool                     m_cfg_check_sys_deps;
   bool                     m_cfg_quiet;
   output_mode              m_cfg_output_mode;
@@ -390,8 +391,6 @@ private:
   const time_t             m_start_time;  // so we can check to see if
                                           // any source files have
                                           // timestamps in the future
-
-  link_mapping             m_link_map;
 
 public:
   cppdeps(int argc, char** argv);
@@ -458,6 +457,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          such extension, in which case each rule emitted\n"
          "                          will have more than one target; the default is for\n"
          "                          the list of extensions to include just '.o'\n"
+         "    --exeformat\n"
          "    --checksys            force tracking of dependencies in #include <...>\n"
          "                          directives (default is to not record <...> files\n"
          "                          as dependencies)\n"
@@ -493,6 +493,9 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_header_exts.push_back(".H");
   m_cfg_header_exts.push_back(".hh");
   m_cfg_header_exts.push_back(".hpp");
+
+  m_cfg_exe_formats.append_format("./", "../bin/*.exe");
+  m_cfg_link_formats.append_format("", "*.link");
 
   char** arg = argv+1; // skip to first command-line arg
 
@@ -1113,10 +1116,12 @@ void cppdeps::print_include_tree(const string& fname)
 void cppdeps::print_link_deps(const string& fname)
 {
   string fname_stem;
-  if (!get_cc_or_h_fname_stem(fname, fname_stem))
+  if (!get_cc_fname_stem(fname, fname_stem))
     return;
 
   const dep_list_t& ldeps = get_nested_ldeps(fname);
+
+  const string exe = m_cfg_exe_formats.transform(fname);
 
   for (dep_list_t::const_iterator
          itr = ldeps.begin(),
@@ -1124,7 +1129,8 @@ void cppdeps::print_link_deps(const string& fname)
        itr != stop;
        ++itr)
     {
-      printf("%s: %s\n", fname.c_str(), (*itr).target.c_str());
+      const string link = m_cfg_link_formats.transform((*itr).target);
+      printf("%s: %s\n", exe.c_str(), link.c_str());
     }
 }
 
