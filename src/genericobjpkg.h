@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Oct 24 15:29:45 2000
+// written: Tue Oct 24 15:44:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public:
   List& theList() { return itsList; }
 
   virtual C* getCItemFromId(int id) {
-	 typename List::SharedPtr item = itsList.getCheckedPtr(id);
+	 typename List::SharedPtr item(id);
 	 // will throw bad_cast if cast fails
 	 C& p = dynamic_cast<C&>(*item);
 	 return &p;

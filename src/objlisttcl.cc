@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Oct 24 15:20:06 2000
+// written: Tue Oct 24 15:43:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ protected:
 			++itr)
 		{
 		  IO::LegacyWriter writer(ofs, use_bases);
-		  PtrList<GrObj>::SharedPtr item = olist.getCheckedPtr(*itr);
+		  ItemWithId<GrObj> item(*itr);
 		  writer.writeRoot(item.get());
 		  ofs << endl;
 		}
