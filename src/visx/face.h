@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 22 16:47:05 2000
+// written: Thu Mar 23 09:43:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,6 +56,7 @@ public:
   
   virtual int charCount() const;
 
+  virtual unsigned long serialVersionId() const;
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
 
