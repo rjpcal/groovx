@@ -3,7 +3,7 @@
 // gxseparator.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu Nov  2 14:34:48 2000
+// written: Thu Nov  2 23:58:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,15 @@ public:
   int numChildren() const;
   IdItem<GxNode> getChild(ChildId index) const;
 
-  typedef const IdItem<GxNode>* ChildItr;
+  typedef const IdItem<GxNode>* ConstChildItr;
 
-  ChildItr beginChildren() const;
-  ChildItr endChildren() const;
+  ConstChildItr beginChildren() const;
+  ConstChildItr endChildren() const;
+
+  typedef IdItem<GxNode>* ChildItr;
+
+  ChildItr beginChildren();
+  ChildItr endChildren();
 
   virtual bool contains(GxNode* other) const;
 

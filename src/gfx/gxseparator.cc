@@ -3,7 +3,7 @@
 // gxseparator.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu Nov  2 14:34:58 2000
+// written: Thu Nov  2 23:55:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,12 +161,22 @@ DOTRACE("GxSeparator::getChild");
   return itsImpl->itsChildren[index];
 }
 
-GxSeparator::ChildItr GxSeparator::beginChildren() const {
+GxSeparator::ConstChildItr GxSeparator::beginChildren() const {
 DOTRACE("GxSeparator::beginChildren");
   return itsImpl->itsChildren.begin();
 }
 
-GxSeparator::ChildItr GxSeparator::endChildren() const {
+GxSeparator::ConstChildItr GxSeparator::endChildren() const {
+DOTRACE("GxSeparator::endChildren");
+  return itsImpl->itsChildren.end();
+}
+
+GxSeparator::ChildItr GxSeparator::beginChildren() {
+DOTRACE("GxSeparator::beginChildren");
+  return itsImpl->itsChildren.begin();
+}
+
+GxSeparator::ChildItr GxSeparator::endChildren() {
 DOTRACE("GxSeparator::endChildren");
   return itsImpl->itsChildren.end();
 }
@@ -181,7 +191,7 @@ DOTRACE("GxSeparator::draw");
 
   GWT::Canvas::StateSaver state(canvas);
 
-  for(ChildItr itr = beginChildren(), end = endChildren();
+  for(ConstChildItr itr = beginChildren(), end = endChildren();
 		itr != end;
 		++itr)
 	 {
@@ -194,7 +204,7 @@ DOTRACE("GxSeparator::undraw");
 
   GWT::Canvas::StateSaver state(canvas);
 
-  for(ChildItr itr = beginChildren(), end = endChildren();
+  for(ConstChildItr itr = beginChildren(), end = endChildren();
 		itr != end;
 		++itr)
 	 {
