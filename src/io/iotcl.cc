@@ -56,8 +56,13 @@ DOTRACE("Io_Init");
   pkg->defVec( "write", "item_id(s)", IO::write );
   pkg->defVec( "read", "item_id(s) string(s)", IO::read );
 
+  pkg->defVec( "writeXML", "item_id(s)", IO::writeXML );
+
   pkg->def( "save", "item_id filename", IO::saveASW );
   pkg->def( "load", "item_id filename", IO::loadASR );
+
+  pkg->def( "saveXML", "item_id filename", IO::saveXML );
+
   pkg->def( "retrieve", "filename", IO::retrieveASR );
 
   PKG_RETURN;

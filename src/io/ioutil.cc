@@ -36,6 +36,7 @@
 #include "io/asciistreamwriter.h"
 #include "io/io.h"
 #include "io/iolegacy.h"
+#include "io/xmlwriter.h"
 
 #include "util/cstrstream.h"
 #include "util/error.h"
@@ -53,49 +54,22 @@ DBG_REGISTER;
 
 namespace
 {
-  template <class Writer>
-  void streamWrite(Util::Ref<IO::IoObject> obj, STD_IO::ostream& os)
-  {
-    Writer writer(os);
-    writer.writeRoot(obj.get());
-  }
-
   template <class Reader>
   void streamRead(Util::Ref<IO::IoObject> obj, STD_IO::istream& is)
   {
     Reader reader(is);
     reader.readRoot(obj.get());
   }
-
-  template <class Writer>
-  fstring stringWrite(Util::Ref<IO::IoObject> obj)
-  {
-    std::ostringstream ost;
-
-    try
-      {
-        streamWrite<Writer>(obj, ost);
-      }
-    catch (Util::Error& err)
-      {
-        err.msg().append(" with buffer contents ==\n",
-                         ost.str().c_str());
-
-        throw;
-      }
-
-    return fstring(ost.str().c_str());
-  }
 }
 
 fstring IO::stringify(Util::Ref<IO::IoObject> obj)
 {
-  return stringWrite<IO::LegacyWriter>(obj);
-}
+  std::ostringstream ost;
 
-fstring IO::write(Util::Ref<IO::IoObject> obj)
-{
-  return stringWrite<AsciiStreamWriter>(obj);
+  IO::LegacyWriter writer(ost);
+  writer.writeRoot(obj.get());
+
+  return fstring(ost.str().c_str());
 }
 
 void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
@@ -105,6 +79,16 @@ void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
   streamRead<IO::LegacyReader>(obj, ist);
 }
 
+fstring IO::write(Util::Ref<IO::IoObject> obj)
+{
+  std::ostringstream ost;
+
+  AsciiStreamWriter writer(ost);
+  writer.writeRoot(obj.get());
+
+  return fstring(ost.str().c_str());
+}
+
 void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   Util::icstrstream ist(buf);
@@ -112,11 +96,22 @@ void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
   streamRead<AsciiStreamReader>(obj, ist);
 }
 
+fstring IO::writeXML(Util::Ref<IO::IoObject> obj)
+{
+  std::ostringstream ost;
+
+  shared_ptr<IO::Writer> writer = IO::makeXMLWriter(ost);
+  writer->writeRoot(obj.get());
+
+  return fstring(ost.str().c_str());
+}
+
 void IO::saveASW(Util::Ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
 
-  streamWrite<AsciiStreamWriter>(obj, *os);
+  AsciiStreamWriter writer(*os);
+  writer.writeRoot(obj.get());
 }
 
 void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
@@ -124,6 +119,14 @@ void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
   shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 
   streamRead<AsciiStreamReader>(obj, *is);
+}
+
+void IO::saveXML(Util::Ref<IO::IoObject> obj, fstring filename)
+{
+  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
+
+  shared_ptr<IO::Writer> writer = IO::makeXMLWriter(*os);
+  writer->writeRoot(obj.get());
 }
 
 Util::Ref<IO::IoObject> IO::retrieveASR(fstring filename)
