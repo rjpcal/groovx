@@ -41,6 +41,8 @@
 #include "gfx/canvas.h"
 #include "gfx/toglet.h"
 
+#include "util/error.h"
+
 #include "util/trace.h"
 
 GxScaler::GxScaler() :
@@ -72,6 +74,7 @@ DOTRACE("GxScaler::setMode");
 
 void GxScaler::setWidth(double new_width)
 {
+DOTRACE("GxScaler::setWidth");
   geom::rect<double> native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
 
@@ -96,6 +99,7 @@ void GxScaler::setWidth(double new_width)
 
 void GxScaler::setHeight(double new_height)
 {
+DOTRACE("GxScaler::setHeight");
   geom::rect<double> native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
 
@@ -120,6 +124,7 @@ void GxScaler::setHeight(double new_height)
 
 void GxScaler::setAspectRatio(double new_aspect_ratio)
 {
+DOTRACE("GxScaler::setAspectRatio");
   double current = aspectRatio();
 
   if (new_aspect_ratio == 0.0 || new_aspect_ratio == current) return;
@@ -137,18 +142,21 @@ void GxScaler::setAspectRatio(double new_aspect_ratio)
 
 void GxScaler::setWidthFactor(double f)
 {
+DOTRACE("GxScaler::setWidthFactor");
   itsWidthFactor = f;
   this->sigNodeChanged.emit();
 }
 
 void GxScaler::setHeightFactor(double f)
 {
+DOTRACE("GxScaler::setHeightFactor");
   itsHeightFactor = f;
   this->sigNodeChanged.emit();
 }
 
 void GxScaler::setMaxDim(double new_max_dimension)
 {
+DOTRACE("GxScaler::setMaxDim");
   if (itsMode == NATIVE_SCALING) return;
 
   double scaling_factor = new_max_dimension / scaledMaxDim();
@@ -161,12 +169,14 @@ void GxScaler::setMaxDim(double new_max_dimension)
 
 double GxScaler::aspectRatio() const
 {
+DOTRACE("GxScaler::aspectRatio");
   return itsMode != FREE_SCALING ? 1.0 :
     (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
 }
 
 double GxScaler::scaledWidth() const
 {
+DOTRACE("GxScaler::scaledWidth");
   geom::rect<double> native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
   return native_bbox.width() * itsWidthFactor;
@@ -174,6 +184,7 @@ double GxScaler::scaledWidth() const
 
 double GxScaler::scaledHeight() const
 {
+DOTRACE("GxScaler::scaledHeight");
   geom::rect<double> native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
   return native_bbox.height() * itsHeightFactor;
@@ -181,11 +192,25 @@ double GxScaler::scaledHeight() const
 
 double GxScaler::scaledMaxDim() const
 {
+DOTRACE("GxScaler::scaledMaxDim");
   return rutz::max(scaledWidth(), scaledHeight());
+}
+
+void GxScaler::readFrom(IO::Reader&)
+{
+DOTRACE("GxScaler::readFrom");
+  throw rutz::error("GxScaler::readFrom not implemented", SRC_POS);
+}
+
+void GxScaler::writeTo(IO::Writer&) const
+{
+DOTRACE("GxScaler::writeTo");
+  throw rutz::error("GxScaler::writeTo not implemented", SRC_POS);
 }
 
 void GxScaler::draw(Gfx::Canvas& canvas) const
 {
+DOTRACE("GxScaler::draw");
   if (NATIVE_SCALING == itsMode)
     {
       child()->draw(canvas);
@@ -200,6 +225,7 @@ void GxScaler::draw(Gfx::Canvas& canvas) const
 
 void GxScaler::getBoundingCube(Gfx::Bbox& bbox) const
 {
+DOTRACE("GxScaler::getBoundingCube");
   bbox.push();
 
   if (NATIVE_SCALING != itsMode)
