@@ -84,6 +84,16 @@ public:
       doAppend(Tcl::Convert<T>::toTcl(t), times);
     }
 
+  template <class Itr>
+  void appendRange(Itr itr, Itr end)
+    {
+		while (itr != end)
+		  {
+			 append(*itr);
+			 ++itr;
+		  }
+	 }
+
   class IteratorBase;
   template <class T> class Iterator;
 
