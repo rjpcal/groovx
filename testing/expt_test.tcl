@@ -39,11 +39,13 @@ test "ExptDriver::begin" "too many args" {
 test "ExptDriver::begin" "normal use" {
     set expt [new ExptDriver]
     set block [new Block]
+    Log::copyToStdout 0
     -> $expt widget [Toglet::current]
     -> $expt addElement $block
     -> $expt begin
     -> $expt halt
     delete $expt
+    Log::copyToStdout 1
 } {^$}
 test "ExptDriver::begin" "error" {} $BLANK $no_test
 
@@ -128,11 +130,13 @@ test "ExptDriver::begin" "general sanity test" {
     set ::DONE 0
     -> $expt doWhenComplete { set ::DONE 1; set ::STOP 1 }
     after 2000 set ::STOP 1
+    Log::copyToStdout 0
     -> $expt begin
 
     vwait ::STOP
 
     -> $expt reset
+    Log::copyToStdout 1
 
     return $::DONE
 } {^1$}
