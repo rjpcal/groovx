@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sat Oct  7 11:46:42 2000
+// written: Sat Oct  7 20:03:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,74 +42,34 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////
 //
-// MasterVoidPtr member definitions
+// MasterPtrBase member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void MasterVoidPtr::swap(MasterVoidPtr& other)
+MasterPtrBase::MasterPtrBase()
 {
-DOTRACE("MasterVoidPtr::swap");
-  VoidPtrList* otherList = other.itsList;
-  other.itsList = this->itsList;
-  this->itsList = otherList;
-
-  void* otherPtr = other.itsPtr;
-  other.itsPtr = this->itsPtr;
-  this->itsPtr = otherPtr;
+DOTRACE("MasterPtrBase::MasterPtrBase");
 }
 
-MasterVoidPtr::MasterVoidPtr(VoidPtrList* vpl, void* address) :
-  itsList(vpl),
-  itsPtr(address)
+MasterPtrBase::~MasterPtrBase()
 {
-DOTRACE("MasterVoidPtr::MasterVoidPtr(VoidPtrList*, void*)");
+DOTRACE("MasterPtrBase::~MasterPtrBase");
 }
 
-MasterVoidPtr::MasterVoidPtr (const MasterVoidPtr& other) :
-  itsList(other.itsList),
-  itsPtr(other.itsPtr)
-{
-DOTRACE("MasterVoidPtr::MasterVoidPtr(const MasterVoidPtr&)");
-}
-
-MasterVoidPtr& MasterVoidPtr::operator=(const MasterVoidPtr& other) {
-DOTRACE("MasterVoidPtr::operator=");
-  MasterVoidPtr otherCopy(other);
-
-  this->swap(otherCopy);
-
-  return *this;
-}
-
-MasterVoidPtr::~MasterVoidPtr()
-{
-DOTRACE("MasterVoidPtr::~MasterVoidPtr");
-  if (itsPtr != 0) itsList->destroyPtr(itsPtr);
-  itsPtr = 0;
-}
-
-void* MasterVoidPtr::ptr() const
-{
-  DebugEvalNL(itsPtr);
-  return itsPtr;
-}
-
-bool MasterVoidPtr::isValid() const
-{
-DOTRACE("MasterVoidPtr::isValid");
-  DebugEvalNL(itsPtr);
-  DebugEvalNL(itsPtr != 0);
-  return itsPtr != 0;
-}
-
-class NullMasterPtr : public MasterVoidPtr {
+class NullMasterPtr : public MasterPtrBase {
 public:
-  NullMasterPtr(VoidPtrList* vpl) :
-	 MasterVoidPtr(vpl, 0) {}
+  NullMasterPtr() :
+	 MasterPtrBase() {}
 
   virtual ~NullMasterPtr() {}
 
-  virtual bool itsValid() const { return false; }
+  virtual bool isValid() const { return false; }
+
+  virtual bool operator==(const MasterPtrBase& other)
+  { 
+	 bool otherIsNull = (dynamic_cast<const NullMasterPtr*>(&other) != 0);
+	 return otherIsNull;
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -121,14 +81,14 @@ public:
 
 class VoidPtrHandle {
 public:
-  explicit VoidPtrHandle(VoidPtrList* vlist) :
-	 itsMaster(new NullMasterPtr(vlist)),
+  VoidPtrHandle() :
+	 itsMaster(new NullMasterPtr),
 	 itsRefCount(new int(1))
   {
 	 Assert(itsMaster != 0);
   }
 
-  explicit VoidPtrHandle(MasterVoidPtr* master) :
+  explicit VoidPtrHandle(MasterPtrBase* master) :
 	 itsMaster(master),
 	 itsRefCount(new int(1))
   {
@@ -164,7 +124,7 @@ public:
 	 return *this;
   }
 
-  MasterVoidPtr* masterPtr()
+  MasterPtrBase* masterPtr()
   {
 	 Assert(itsMaster != 0);
 	 return itsMaster;
@@ -173,7 +133,7 @@ public:
 private:
   void swap(VoidPtrHandle& other)
   {
-	 MasterVoidPtr* otherMaster = other.itsMaster;
+	 MasterPtrBase* otherMaster = other.itsMaster;
 	 other.itsMaster = this->itsMaster;
 	 this->itsMaster = otherMaster;
 
@@ -182,7 +142,7 @@ private:
 	 this->itsRefCount = otherRefCount;
   }
 
-  MasterVoidPtr* itsMaster;
+  MasterPtrBase* itsMaster;
 
   int* itsRefCount;
 };
@@ -270,7 +230,7 @@ void VoidPtrList::remove(int id) {
 DOTRACE("VoidPtrList::remove");
   if (!isValidId(id)) return;
 
-  itsImpl->itsPtrVec[id] = VoidPtrHandle(new MasterVoidPtr(this, 0));
+  itsImpl->itsPtrVec[id] = VoidPtrHandle(new NullMasterPtr);
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
@@ -281,20 +241,20 @@ DOTRACE("VoidPtrList::clear");
   DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
 	 DebugEval(i);
-  	 itsImpl->itsPtrVec[i] = VoidPtrHandle(new MasterVoidPtr(this, 0));
+  	 itsImpl->itsPtrVec[i] = VoidPtrHandle(new NullMasterPtr);
   }
 
-  itsImpl->itsPtrVec.resize(0, VoidPtrHandle(this));
+  itsImpl->itsPtrVec.resize(0, VoidPtrHandle());
 
   itsImpl->itsFirstVacant = 0;
 }
 
-MasterVoidPtr* VoidPtrList::getVoidPtr(int id) const throw () {
+MasterPtrBase* VoidPtrList::getVoidPtr(int id) const throw () {
 DOTRACE("VoidPtrList::getVoidPtr");
   return itsImpl->itsPtrVec[id].masterPtr();
 }
 
-MasterVoidPtr* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
+MasterPtrBase* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
 DOTRACE("VoidPtrList::getCheckedVoidPtr");
   if ( !isValidId(id) ) {
 	 InvalidIdError err("attempt to access invalid id '");
@@ -305,14 +265,14 @@ DOTRACE("VoidPtrList::getCheckedVoidPtr");
   return getVoidPtr(id);
 }
 
-int VoidPtrList::insertVoidPtr(MasterVoidPtr* ptr) {
+int VoidPtrList::insertVoidPtr(MasterPtrBase* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtr");
   int new_site = itsImpl->itsFirstVacant;
   insertVoidPtrAt(new_site, ptr);
   return new_site;              // return the id of the inserted void*
 }
 
-void VoidPtrList::insertVoidPtrAt(int id, MasterVoidPtr* ptr) {
+void VoidPtrList::insertVoidPtrAt(int id, MasterPtrBase* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtrAt");
   DebugEval(id); DebugEvalNL(ptr->ptr());
   if (id < 0) return;
@@ -323,7 +283,7 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
 	 itsImpl->itsPtrVec.reserve(uid+RESERVE_CHUNK);
   }
   if (uid >= itsImpl->itsPtrVec.size()) {
-    itsImpl->itsPtrVec.resize(uid+1, VoidPtrHandle(this));
+    itsImpl->itsPtrVec.resize(uid+1, VoidPtrHandle());
   }
 
   Assert(itsImpl->itsPtrVec.size() > uid);
@@ -361,7 +321,7 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
   DebugEvalNL(itsImpl->itsFirstVacant);
 }
 
-void VoidPtrList::afterInsertHook(int /* id */, MasterVoidPtr* /* ptr */) {
+void VoidPtrList::afterInsertHook(int /* id */, MasterPtrBase* /* ptr */) {
 DOTRACE("VoidPtrList::afterInsertHook");
 }
 
@@ -381,7 +341,7 @@ DOTRACE("VoidPtrList::voidVecEnd");
 void VoidPtrList::voidVecResize(unsigned int new_size) {
 DOTRACE("VoidPtrList::voidVecResize");
   if ( new_size > itsImpl->itsPtrVec.size() )
-	 itsImpl->itsPtrVec.resize(new_size, VoidPtrHandle(this));
+	 itsImpl->itsPtrVec.resize(new_size, VoidPtrHandle());
 }
 
 static const char vcid_voidptrlist_cc[] = "$Header$";
