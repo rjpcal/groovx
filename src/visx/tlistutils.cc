@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Oct 16 15:51:22 2000
+// written: Tue Oct 17 12:03:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,8 +41,7 @@ namespace {
   const char* const bad_posid_msg = "posid out of range";
 }
 
-int TlistUtils::createPreview(Tlist& tlist,
-										const GWT::Canvas& canvas,
+int TlistUtils::createPreview(const GWT::Canvas& canvas,
 										int* objids, unsigned int objids_size,
 										int pixel_width,
 										int pixel_height) {
@@ -63,8 +62,8 @@ DOTRACE("TlistUtils::createPreview");
 
   fixed_block<Rect<double> > bbxs(objids_size);
 
-  Trial* preview = new Trial();
-  int previewid = tlist.insert(Tlist::Ptr(preview));
+  Trial* preview = new Trial;
+  ItemWithId<TrialBase> preview_trial(preview, ItemWithId<TrialBase>::INSERT);
 
   double window_area = world_width*world_height;
   double parcel_area = window_area/objids_size;
@@ -98,30 +97,28 @@ DOTRACE("TlistUtils::createPreview");
 	 ost << objids[i] << '\0';
 
 	 Gtext* label = new Gtext(id_string);
-	 int label_objid = ObjList::theObjList().insert(ObjList::Ptr(label));
+	 ItemWithId<GrObj> label_obj(label, ItemWithId<GrObj>::INSERT);
 	 label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
 	 label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 	 label->setHeight(0.1);
 
-	 Position* obj_pos = new Position();
-	 int obj_posid = PosList::thePosList().insert(PosList::Ptr(obj_pos));
+	 ItemWithId<Position> obj_pos(new Position, ItemWithId<Position>::INSERT);
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
 	 obj_pos->setTranslate(obj_x, obj_y, 0.0);
 	 obj_pos->setScale(parcel_side, parcel_side, 1.0);
 
-	 Position* label_pos = new Position();
-	 int label_posid = PosList::thePosList().insert(PosList::Ptr(label_pos));
+	 ItemWithId<Position> label_pos(new Position, ItemWithId<Position>::INSERT);
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
 	 label_pos->setTranslate(label_x, label_y, 0.0);
 	 label_pos->setScale(parcel_side, parcel_side, 1.0);
-		
-	 preview->add(objids[i], obj_posid);
-	 preview->add(label_objid, label_posid);
+
+	 preview->add(objids[i], obj_pos.id());
+	 preview->add(label_obj.id(), label_pos.id());
   }
 
-  return previewid;
+  return preview_trial.id();
 }
 
 int TlistUtils::makeSingles(Tlist& tlist, int posid) {
@@ -297,9 +294,9 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 		
 	 p->setTranslate(xpos, ypos, 0.0);
 	 p->setScale(scale, scale, 1.0);
-	 int posid = plist.insert(PosList::Ptr(p));
+	 ItemWithId<Position> pos(p, ItemWithId<Position>::INSERT);
 
-	 t->add(objids[i], posid);
+	 t->add(objids[i], pos.id());
   }
 
   // Return the id of the trial generated.

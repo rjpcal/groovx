@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Tue Oct 17 11:53:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ protected:
   virtual void invoke() {
 	 if (objc() == 1) {
 		Fish* p = new Fish();
-		int objid = ObjList::theObjList().insert(ObjList::Ptr(p));
-		returnInt(objid);
+		ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
+		returnInt(obj.id());
 	 }
 	 else if (objc() == 4) {
 		const char* spline_file = arg(1).getCstring();
@@ -42,8 +42,8 @@ protected:
 		
 		Fish* p = new Fish(spline_file, coord_file, index);
 		
-		int objid = ObjList::theObjList().insert(ObjList::Ptr(p));
-		returnInt(objid);
+		ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
+		returnInt(obj.id());
 	 }
   }
 };

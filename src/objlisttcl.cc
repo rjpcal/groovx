@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  9 19:46:19 2000
+// written: Tue Oct 17 11:56:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,9 +100,9 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 	 IO::LegacyReader reader(ifs, flags);
 	 reader.readRoot(io);
 	 
-	 int objid = olist.insert(ObjList::Ptr(p));
+	 ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
 
-	 lappendVal(objid); // add the current objid to the Tcl result
+	 lappendVal(obj.id()); // add the current objid to the Tcl result
 
 	 ++num_read;
 
@@ -185,8 +185,8 @@ protected:
 				{
 				  PtrList<GrObj>::SharedPtr shptr = itsSandbox.getCheckedPtr(id);
 				  itsSandbox.release(id);
-				  int newid = olist.insert(shptr);
-				  lappendVal(newid);
+				  PtrList<GrObj>::SharedPtr newobj = olist.insert(shptr);
+				  lappendVal(newobj.id());
 				}
 		  }
 

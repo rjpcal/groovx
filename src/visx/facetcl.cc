@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sat Oct  7 13:15:05 2000
+// written: Tue Oct 17 11:55:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,9 +118,9 @@ DOTRACE("FaceTcl::LoadFacesCmd::invoke");
 
 		Assert(p != 0);
 
-  		int objid = olist.insert(ObjList::Ptr(p));
+  		ItemWithId<GrObj> item(p, ItemWithId<GrObj>::INSERT);
 
-  		lappendVal(objid); // add the current objid to the Tcl result
+  		lappendVal(item.id()); // add the current objid to the Tcl result
 
 		++num_read;
 	 }

@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Tue Sep 19 17:39:11 2000
+// written: Tue Oct 17 11:57:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ protected:
 	 const char* filename = getCstringFromArg(1);
 
 	 Sound* p = Sound::newPlatformSound(filename);
-	 int id = SoundList::theSoundList().insert(SoundList::Ptr(p));
-	 returnInt(id);
+	 ItemWithId<Sound> sound(p, ItemWithId<Sound>::INSERT);
+	 returnInt(sound.id());
   }
 };
 
