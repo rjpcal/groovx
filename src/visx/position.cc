@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Nov 19 18:25:54 2002
+// written: Tue Nov 19 18:49:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,20 +44,11 @@ struct PositionImpl
 {
   PositionImpl(Position* p) :
     owner(p),
-    tr(0.0, 0.0, 0.0),
-    sc(1.0, 1.0, 1.0),
-    rt(0.0, 0.0, 1.0),
-    rt_ang(0.0),
     txformDirty(true),
     txformCache()
   {}
 
   Position* owner;
-
-  Gfx::Vec3<double> tr;         // x,y,z coord shift
-  Gfx::Vec3<double> sc;         // x,y,z scaling
-  Gfx::Vec3<double> rt;         // vector of rotation axis
-  double rt_ang;                // angle in degrees of rotation around axis
 
   mutable bool txformDirty;
 private:
@@ -222,11 +213,6 @@ DOTRACE("Position::draw");
       DOTRACE("Position::draw::custom-transform");
       canvas.transform(rep->getTxform());
     }
-
-  rep->tr = translation;
-  rep->sc = scaling;
-  rep->rt = rotationAxis;
-  rep->rt_ang = itsRotationAngle;
 
   if (itsJackSize > 0)
     {
