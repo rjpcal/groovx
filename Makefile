@@ -22,10 +22,11 @@
 #
 #-------------------------------------------------------------------------
 
-# The base directory where things will be installed
-INSTALL_PREFIX := $(HOME)/local/$(ARCH)
+# Path to the top-level directory where this program should be installed
+INSTALL_DIR := $(HOME)/local/$(ARCH)
 
-
+# Path to the top-level directory where Tcl+Tk are installed
+TCLTK_DIR := $(HOME)/local/$(ARCH)
 
 ###
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
@@ -73,10 +74,8 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
-INCLUDE_PATH += -I$(INSTALL_PREFIX)/include -I$(SRC)
+INCLUDE_PATH += -I$(TCLTK_DIR)/include -I$(SRC)
 
-LOCAL_LIB := $(INSTALL_PREFIX)/lib
-LOCAL_BIN := $(INSTALL_PREFIX)/bin
 TMP_DIR := ./tmp/$(PLATFORM)
 TMP_FILE := $(TMP_DIR)/tmpfile
 
@@ -99,7 +98,7 @@ ifeq ($(PLATFORM),irix6)
 
 	AUDIO_LIB := -laudio -laudiofile
 
-	LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
+	LIB_PATH += -Wl,-rpath,$(INSTALL_DIR)/lib
 endif
 
 ifeq ($(PLATFORM),i686)
@@ -159,7 +158,7 @@ ifeq ($(COMPILER),MIPSpro)
 
 	CPP_DEFINES += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	INCLUDE_PATH += -I$(INSTALL_PREFIX)/include/cppheaders
+	INCLUDE_PATH += -I$(INSTALL_DIR)/include/cppheaders
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
@@ -230,7 +229,7 @@ endif
 #
 #-------------------------------------------------------------------------
 
-LIB_PATH += -L$(LOCAL_LIB)
+LIB_PATH += -L$(INSTALL_DIR)/lib -L$(TCLTK_DIR)/lib
 
 EXTERNAL_LIBS := \
 	-lGLU -lGL \
@@ -242,7 +241,7 @@ EXTERNAL_LIBS := \
 	-lm
 
 ifneq ($(PLATFORM),ppc)
-	LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
+	LIB_PATH += -Wl,-rpath,$(INSTALL_DIR)/lib
 
 	INCLUDE_PATH += -I/usr/local/matlab/extern/include
 	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
@@ -307,7 +306,7 @@ endif
 
 # this is just a convenience target so that we don't have to specify
 # the entire pathnames of the different library targets
-lib%: $(LOCAL_LIB)/lib%$(LIB_EXT)
+lib%: $(INSTALL_DIR)/lib/lib%$(LIB_EXT)
 	true
 
 #-------------------------------------------------------------------------
@@ -366,7 +365,7 @@ include $(DEP_FILE)
 
 # dependencies of package shlib's on object files
 
-VISX_LIB_DIR := $(INSTALL_PREFIX)/lib/visx
+VISX_LIB_DIR := $(INSTALL_DIR)/lib/visx
 
 PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
@@ -380,11 +379,11 @@ $(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 include $(PKG_DEP_FILE)
 
 
-$(LOCAL_LIB)/visx/mtx.so: \
+$(INSTALL_DIR)/lib/visx/mtx.so: \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
 
-$(LOCAL_LIB)/visx/matlabengine.so: \
+$(INSTALL_DIR)/lib/visx/matlabengine.so: \
 	/usr/local/matlab/extern/lib/glnx86/libeng.so \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libut.so \
@@ -398,7 +397,7 @@ $(LOCAL_LIB)/visx/matlabengine.so: \
 LIB_DEP_FILE := $(DEP)/libdepends.$(MODE)
 
 LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
-		--libdir $(LOCAL_LIB) \
+		--libdir $(INSTALL_DIR)/lib \
 		--libprefix libDeep \
 		--libext $(LIB_EXT) \
 		--srcroot $(SRC) \
@@ -440,10 +439,10 @@ ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
 ifeq ($(MODE),debug)
-	EXECUTABLE := $(LOCAL_BIN)/testsh
+	EXECUTABLE := $(INSTALL_DIR)/bin/testsh
 endif
 ifeq ($(MODE),prod)
-	EXECUTABLE := $(LOCAL_BIN)/grsh$(VERSION)
+	EXECUTABLE := $(INSTALL_DIR)/bin/grsh$(VERSION)
 endif
 
 all: build
