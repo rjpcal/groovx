@@ -61,6 +61,7 @@ DBG_REGISTER
 extern "C"
 {
   Tcl_PackageInitProc Block_Init;
+  Tcl_PackageInitProc Canvas_Init;
   Tcl_PackageInitProc Cloneface_Init;
   Tcl_PackageInitProc Dlist_Init;
   Tcl_PackageInitProc Element_Init;
@@ -74,6 +75,7 @@ extern "C"
   Tcl_PackageInitProc Gabor_Init;
   Tcl_PackageInitProc Gaborarray_Init;
   Tcl_PackageInitProc Gl_Init;
+  Tcl_PackageInitProc Glcanvas_Init;
   Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Gx_Init;
   Tcl_PackageInitProc Gxcolor_Init;
@@ -148,6 +150,7 @@ PackageInfo IMMEDIATE_PKGS[] =
 PackageInfo DELAYED_PKGS[] =
   {
     { "Block",               Block_Init,               "3.0" },
+    { "Canvas",              Canvas_Init,              "1.0" },
     { "Cloneface",           Cloneface_Init,           "2.0" },
     { "Dlist",               Dlist_Init,               "1.0" },
     { "Element",             Element_Init,             "3.0" },
@@ -162,6 +165,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Gaborarray",          Gaborarray_Init,          "1.0" },
     { "Genericevent",        Genericevent_Init,        "3.0" },
     { "Gl",                  Gl_Init,                  "1.0" },
+    { "Glcanvas",            Glcanvas_Init,            "1.0" },
     { "Gtrace",              Gtrace_Init,              "1.0" },
     { "Gx",                  Gx_Init,                  "1.0" },
     { "Gxcolor",             Gxcolor_Init,             "1.0" },
