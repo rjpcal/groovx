@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Oct 12 10:16:38 1999
+// written: Thu Oct 14 11:34:16 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -40,9 +40,7 @@ extern "C" {
   Tcl_PackageInitProc Pos_Init;
   Tcl_PackageInitProc Poslist_Init;
   Tcl_PackageInitProc Rh_Init;
-#ifndef NO_SOUND
   Tcl_PackageInitProc Sound_Init;
-#endif
   Tcl_PackageInitProc Subject_Init;
   Tcl_PackageInitProc Tcldlist_Init;
   Tcl_PackageInitProc Tclgl_Init;
@@ -80,9 +78,7 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Pos",      Pos_Init       }
   , { "PosList",  Poslist_Init   }
   , { "Rh",       Rh_Init        }
-#ifndef NO_SOUND
   , { "Sound",    Sound_Init     }
-#endif
   , { "Subject",  Subject_Init   }
   , { "Tcldlist", Tcldlist_Init  }
   , { "TclGL",    Tclgl_Init     }
