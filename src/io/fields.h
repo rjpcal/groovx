@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 21 09:27:55 2001
+// written: Tue Aug 21 09:47:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public:
 
   T limit(const T& raw)
   {
-    return Util::max(itsMin, Util::min(itsMax, raw));
+    return Util::clamp(raw, itsMin, itsMax);
   }
 };
 
