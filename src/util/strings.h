@@ -57,18 +57,16 @@ private:
 
   // Constructor builds a string_rep with ref-count 0. 'length' here
   // does NOT need to "+1" for a null-terminator
-  string_rep(std::size_t length, const char* text);
-  string_rep(std::size_t length);
+  string_rep(std::size_t length, const char* text, std::size_t alloc_size=0);
   ~string_rep();
 
   static string_rep* getEmptyRep();
 
 public:
-  static string_rep* make(std::size_t length, const char* text);
+  static string_rep* make(std::size_t length, const char* text,
+                          std::size_t alloc_size=0);
 
-  static string_rep* make(std::size_t length);
-
-  string_rep* clone() const { return new string_rep(itsLength, itsText); }
+  string_rep* clone() const;
 
   static void makeUnique(string_rep*& rep);
 
@@ -78,6 +76,8 @@ public:
   std::size_t length() const { return itsLength; }
   const char* text() const { return itsText; }
   char* data();
+
+  void clear();
 
   void append(std::size_t length, const char* text);
 
@@ -108,7 +108,6 @@ private:
 class fstring {
 public:
   fstring();
-  fstring(const char* text);
   fstring(const fstring& other);
   ~fstring();
 
@@ -116,21 +115,21 @@ public:
   fstring(const T1& part1) :
     itsRep(0)
   {
-    init(); append(part1);
+    do_init(part1);
   }
 
   template <class T1, class T2>
   fstring(const T1& part1, const T2& part2) :
     itsRep(0)
   {
-    init(); append(part1, part2);
+    do_init(part1); append(part2);
   }
 
   template <class T1, class T2, class T3>
   fstring(const T1& part1, const T2& part2, const T3& part3) :
     itsRep(0)
   {
-    init(); append(part1, part2, part3);
+    do_init(part1); append(part2, part3);
   }
 
   template <class T1, class T2, class T3, class T4>
@@ -138,7 +137,7 @@ public:
           const T4& part4) :
     itsRep(0)
   {
-    init(); append(part1, part2, part3, part4);
+    do_init(part1); append(part2, part3, part4);
   }
 
   void swap(fstring& other);
@@ -159,6 +158,8 @@ public:
   const char* c_str() const { return itsRep->text(); }
   std::size_t length() const { return itsRep->length(); }
   bool empty() const { return (length() == 0); }
+
+  void clear() { string_rep::makeUnique(itsRep); itsRep->clear(); }
 
   //
   // Substring operations
@@ -256,7 +257,13 @@ private:
 
   void append_text(std::size_t length, const char* text);
 
-  void init();
+  void init(Util::CharData cdata);
+
+  template <class T>
+  void do_init(const T& x)
+  {
+    init(Util::Convert<T>::toString(x));
+  }
 
   string_rep* itsRep;
 };
