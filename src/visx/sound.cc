@@ -51,7 +51,11 @@
 #  include "visx/dummysound.h"
 #endif
 
-#include <fstream.h>            // to check if files exist
+#ifdef HAVE_FSTREAM
+#include <fstream>            // to check if files exist
+#else
+#include <fstream.h>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
