@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Thu Feb 28 13:11:39 2002
+// written: Fri Mar  1 17:05:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -356,11 +356,14 @@ void MtxImpl::reshape(int mr, int nc)
 
 void MtxImpl::selectRowRange(int r, int nr)
 {
-  if (r < 0 || nr < 0)
-    throw Util::Error("attempted to select rows with negative indices");
+  if (r < 0)
+    throw Util::Error("selectRowRange(): row index must be >= 0");
+
+  if (nr <= 0)
+    throw Util::Error("selectRowRange(): number of rows must be > 0");
 
   if ((r+nr) > mrows_)
-    throw Util::Error("attempted to index more rows than are available");
+    throw Util::Error("selecrRowRange(): upper row index out of range");
 
   offset_ += r;
   mrows_ = nr;
@@ -368,11 +371,14 @@ void MtxImpl::selectRowRange(int r, int nr)
 
 void MtxImpl::selectColumnRange(int c, int nc)
 {
-  if (c < 0 || nc < 0)
-    throw Util::Error("attempted to select rows with negative indices");
+  if (c < 0)
+    throw Util::Error("selectColumnRange(): column index must be >= 0");
+
+  if (nc <= 0)
+    throw Util::Error("selectColumnRange(): number of columns must be > 0");
 
   if ((c+nc) > ncols_)
-    throw Util::Error("attempted to index more columns than are available");
+    throw Util::Error("selectColumnRange(): upper column index out of range");
 
   offset_ += c*rowstride_;
   ncols_ = nc;
@@ -502,12 +508,34 @@ void Mtx::swapColumns(int c1, int c2)
 
 Mtx::const_iterator Mtx::find_min() const
 {
+  if (nelems() == 0)
+    throw Util::Error("find_min(): the matrix must be non-empty");
+
   return std::min_element(begin(), end());
 }
 
 Mtx::const_iterator Mtx::find_max() const
 {
+  if (nelems() == 0)
+    throw Util::Error("find_max(): the matrix must be non-empty");
+
   return std::max_element(begin(), end());
+}
+
+double Mtx::min() const
+{
+  if (nelems() == 0)
+    throw Util::Error("min(): the matrix must be non-empty");
+
+  return *(std::min_element(colmaj_begin(), colmaj_end()));
+}
+
+double Mtx::max() const
+{
+  if (nelems() == 0)
+    throw Util::Error("max(): the matrix must be non-empty");
+
+  return *(std::max_element(colmaj_begin(), colmaj_end()));
 }
 
 double Mtx::sum() const
