@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar 15 11:00:08 2000
+// written: Wed Mar 15 20:30:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,10 @@
 
 #include "tcl/tclvalue.h"
 
+#include "util/strings.h"
+
 #include <tcl.h>
-#include <string>
+#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -158,12 +160,12 @@ DOTRACE("Tcl::TclValue::clone");
 Value::Type Tcl::TclValue::getNativeType() const {
 DOTRACE("Tcl::TclValue::getNativeType");
 
-  string type_name(getNativeTypeName());
+  string_literal type_name(getNativeTypeName());
 
-  if (type_name == "int") { return Value::INT; }
-  else if (type_name == "double") { return Value::DOUBLE; }
-  else if (type_name == "boolean") { return Value::BOOL; }
-  else if (type_name == "string") { return Value::CSTRING; }
+  if (type_name.equals("int")) { return Value::INT; }
+  else if (type_name.equals("double")) { return Value::DOUBLE; }
+  else if (type_name.equals("boolean")) { return Value::BOOL; }
+  else if (type_name.equals("string")) { return Value::CSTRING; }
   else return Value::UNKNOWN;
 }
 
@@ -215,7 +217,7 @@ bool Tcl::TclValue::getBool() const {
 DOTRACE("Tcl::TclValue::getBool");
   int val;
   if ( Tcl_GetBooleanFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 string msg = Tcl_GetStringResult(itsInterp);
+	 fixed_string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
 	 throw ValueError(msg.c_str());
   }
@@ -243,7 +245,7 @@ DOTRACE("Tcl::TclValue::getCstring");
 void Tcl::TclValue::get(int& val) const {
 DOTRACE("Tcl::TclValue::get");
   if ( Tcl_GetIntFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 string msg = Tcl_GetStringResult(itsInterp);
+	 fixed_string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
 	 throw ValueError(msg.c_str());
   }
@@ -252,7 +254,7 @@ DOTRACE("Tcl::TclValue::get");
 void Tcl::TclValue::get(long& val) const {
 DOTRACE("Tcl::TclValue::get");
   if ( Tcl_GetLongFromObj(itsInterp, itsObj, &val) != TCL_OK) {
-	 string msg = Tcl_GetStringResult(itsInterp);
+	 fixed_string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
 	 throw ValueError(msg.c_str());
   }
@@ -267,7 +269,7 @@ void Tcl::TclValue::get(double& val) const {
 DOTRACE("Tcl::TclValue::get");
   try {
 	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-		string msg = Tcl_GetStringResult(itsInterp);
+		fixed_string msg = Tcl_GetStringResult(itsInterp);
 		Tcl_ResetResult(itsInterp);
 		throw ValueError(msg.c_str());
 	 }
