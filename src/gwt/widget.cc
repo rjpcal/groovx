@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Mon Jun 11 14:49:18 2001
+// written: Mon Jun 11 18:38:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,14 +42,14 @@ public:
 
   static EmptyNode* make()
     {
-		static EmptyNode* p = 0;
-		if (p == 0)
-		  {
-			 p = new EmptyNode;
-			 p->incrRefCount();
-		  }
-		return p;
-	 }
+      static EmptyNode* p = 0;
+      if (p == 0)
+        {
+          p = new EmptyNode;
+          p->incrRefCount();
+        }
+      return p;
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -61,11 +61,11 @@ public:
 class GWT::Widget::Impl : public Util::Observer {
 public:
   Impl(GWT::Widget* owner) :
-	 itsOwner(owner),
+    itsOwner(owner),
     itsDrawNode(EmptyNode::make()),
     itsUndrawNode(EmptyNode::make()),
-	 itsVisibility(false),
-	 itsHoldOn(false)
+    itsVisibility(false),
+    itsHoldOn(false)
   {}
 
   void safeDraw(GWT::Canvas& canvas);
@@ -76,56 +76,56 @@ public:
 
   void refresh(GWT::Canvas& canvas)
     {
-		DOTRACE("GWT::Widget::Impl::refresh");
-		canvas.clearColorBuffer();
-		safeDraw(canvas);
-		doFlush(canvas);
-	 }
+      DOTRACE("GWT::Widget::Impl::refresh");
+      canvas.clearColorBuffer();
+      safeDraw(canvas);
+      doFlush(canvas);
+    }
 
   void undraw(GWT::Canvas& canvas);
 
   void setVisibility(bool val)
     {
-		itsVisibility = val;
-		if (itsVisibility == false)
-		  {
-			 undraw(*(itsOwner->getCanvas()));
-			 itsDrawNode = PtrHandle<GxNode>(EmptyNode::make());
-			 itsUndrawNode = PtrHandle<GxNode>(EmptyNode::make());
-		  }
-	 }
+      itsVisibility = val;
+      if (itsVisibility == false)
+        {
+          undraw(itsOwner->getCanvas());
+          itsDrawNode = PtrHandle<GxNode>(EmptyNode::make());
+          itsUndrawNode = PtrHandle<GxNode>(EmptyNode::make());
+        }
+    }
 
   void setHold(bool hold_on)
     { itsHoldOn = hold_on; }
 
   void setDrawable(const Ref<GxNode>& node)
     {
-		itsDrawNode->detach(this);
+      itsDrawNode->detach(this);
 
-		itsDrawNode = node.handle();
+      itsDrawNode = node.handle();
 
-		itsDrawNode->attach(this);
-	 }
+      itsDrawNode->attach(this);
+    }
 
   virtual void receiveStateChangeMsg(const Util::Observable*)
     {
-		refresh(*(itsOwner->getCanvas()));
-	 }
+      refresh(itsOwner->getCanvas());
+    }
 
   virtual void receiveDestroyMsg(const Util::Observable*) {}
 
 private:
   void doFlush(GWT::Canvas& canvas)
     {
-		if (canvas.isDoubleBuffered())
-		  {
-			 itsOwner->swapBuffers();
-		  }
-		else
-		  {
-			 canvas.flushOutput();
-		  }
-	 }
+      if (canvas.isDoubleBuffered())
+        {
+          itsOwner->swapBuffers();
+        }
+      else
+        {
+          canvas.flushOutput();
+        }
+    }
 
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -150,13 +150,13 @@ DOTRACE("GWT::Widget::Impl::safeDraw");
   if ( !itsVisibility ) return;
 
   try {
-	 DebugPrintNL("drawing the node...");
-	 itsDrawNode->draw(canvas);
-	 itsUndrawNode = itsDrawNode;
-	 return;
+    DebugPrintNL("drawing the node...");
+    itsDrawNode->draw(canvas);
+    itsUndrawNode = itsDrawNode;
+    return;
   }
   catch (ErrorWithMsg& err) {
-	 DebugEvalNL(err.msg_cstr());
+    DebugEvalNL(err.msg_cstr());
   }
 
   // Here, either the trial id or some other id was invalid
@@ -168,15 +168,15 @@ DOTRACE("GWT::Widget::Impl::display");
 
   // Only erase the previous trial if hold is off
   if( !itsHoldOn ) {
-	 // First we must erase the previous current trial. We ignore any
-	 // invalid id errors that occur, and simply clear the screen in
-	 // this case.
-	 try {
-		itsUndrawNode->undraw(canvas);
-	 }
-	 catch (...) {
-		canvas.clearColorBuffer();
-	 }
+    // First we must erase the previous current trial. We ignore any
+    // invalid id errors that occur, and simply clear the screen in
+    // this case.
+    try {
+      itsUndrawNode->undraw(canvas);
+    }
+    catch (...) {
+      canvas.clearColorBuffer();
+    }
   }
 
   safeDraw(canvas);
@@ -185,14 +185,14 @@ DOTRACE("GWT::Widget::Impl::display");
 
 void GWT::Widget::Impl::clearscreen(GWT::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::clearscreen");
-  setVisibility(false); 
+  setVisibility(false);
   canvas.clearColorBuffer();
   doFlush(canvas);
 }
 
 void GWT::Widget::Impl::undraw(GWT::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::undraw");
-  itsUndrawNode->undraw(canvas); 
+  itsUndrawNode->undraw(canvas);
   doFlush(canvas);
 }
 
@@ -213,16 +213,16 @@ GWT::Widget::~Widget() {
 }
 
 void GWT::Widget::display()
-  { itsImpl->display(*(getCanvas())); }
+  { itsImpl->display(getCanvas()); }
 
 void GWT::Widget::clearscreen()
-  { itsImpl->clearscreen(*(getCanvas())); }
+  { itsImpl->clearscreen(getCanvas()); }
 
 void GWT::Widget::refresh()
-  { itsImpl->refresh(*(getCanvas())); }
+  { itsImpl->refresh(getCanvas()); }
 
 void GWT::Widget::undraw()
-  { itsImpl->undraw(*(getCanvas())); }
+  { itsImpl->undraw(getCanvas()); }
 
 void GWT::Widget::setVisibility(bool vis) {
 DOTRACE("GWT::Widget::setVisibility");

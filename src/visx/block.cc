@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Jun 11 15:08:18 2001
+// written: Mon Jun 11 18:33:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,53 +61,53 @@ private:
 
 public:
   Impl() :
-	 itsTrialSequence(),
-	 itsRandSeed(0),
-	 itsCurTrialSeqIdx(0),
-	 itsVerbose(false),
-	 itsHasBegun(false),
-	 itsExperiment(0)
-	 {}
+    itsTrialSequence(),
+    itsRandSeed(0),
+    itsCurTrialSeqIdx(0),
+    itsVerbose(false),
+    itsHasBegun(false),
+    itsExperiment(0)
+    {}
 
   // Ordered sequence of indexes into the Tlist
 //   typedef std::vector<Ref<TrialBase> > TrialSeqType;
   typedef minivec<Ref<TrialBase> > TrialSeqType;
   TrialSeqType itsTrialSequence;
 
-  int itsRandSeed;				  // Random seed used to create itsTrialSequence
-  int itsCurTrialSeqIdx;		  // Index of the current trial
-										  // Also functions as # of completed trials
+  int itsRandSeed;              // Random seed used to create itsTrialSequence
+  int itsCurTrialSeqIdx;        // Index of the current trial
+                                // Also functions as # of completed trials
   bool itsVerbose;
 
   mutable bool itsHasBegun;
 
   void setExpt(Experiment& expt)
-	 {
-		Precondition( &expt != 0 );
-		itsExperiment = &expt;
-	 }
+    {
+      Precondition( &expt != 0 );
+      itsExperiment = &expt;
+    }
 
   Experiment& getExpt()
-	 {
-		Precondition( itsExperiment != 0 );
-		return *itsExperiment;
-	 }
+    {
+      Precondition( itsExperiment != 0 );
+      return *itsExperiment;
+    }
 
   Ref<TrialBase> currentTrialItem()
     {
-		Precondition(hasCurrentTrial());
+      Precondition(hasCurrentTrial());
 
-		return itsTrialSequence.at(itsCurTrialSeqIdx);
-	 }
+      return itsTrialSequence.at(itsCurTrialSeqIdx);
+    }
 
   bool hasCurrentTrial()
     {
-		if ( itsCurTrialSeqIdx < 0 || 
-			  (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
-		  return false;
-		else
-		  return true;
-	 }
+      if ( itsCurTrialSeqIdx < 0 ||
+           (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
+        return false;
+      else
+        return true;
+    }
 
 private:
   mutable Experiment* itsExperiment;
@@ -134,7 +134,7 @@ Block::Block() :
 DOTRACE("Block::Block");
 }
 
-Block::~Block() 
+Block::~Block()
 {
   delete itsImpl;
 }
@@ -142,7 +142,7 @@ Block::~Block()
 void Block::addTrial(Ref<TrialBase> trial, int repeat) {
 DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i) {
-	 itsImpl->itsTrialSequence.push_back(trial);
+    itsImpl->itsTrialSequence.push_back(trial);
   }
 };
 
@@ -153,8 +153,8 @@ DOTRACE("Block::shuffle");
   Util::Urand generator(seed);
 
   std::random_shuffle(itsImpl->itsTrialSequence.begin(),
-							 itsImpl->itsTrialSequence.end(),
-							 generator);
+                      itsImpl->itsTrialSequence.end(),
+                      generator);
 }
 
 void Block::removeAllTrials() {
@@ -180,8 +180,8 @@ DOTRACE("Block::readFrom");
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
   if (itsImpl->itsCurTrialSeqIdx < 0 ||
-		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-	 throw IO::ValueError("Block");
+      size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
+    throw IO::ValueError("Block");
   }
 
   reader->readValue("verbose", itsImpl->itsVerbose);
@@ -191,11 +191,11 @@ void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
 
   writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 1,
-										 "Try grsh0.8a3");
+                               "Try grsh0.8a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-											itsImpl->itsTrialSequence.begin(),
-											itsImpl->itsTrialSequence.end());
+                                 itsImpl->itsTrialSequence.begin(),
+                                 itsImpl->itsTrialSequence.end());
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
@@ -242,10 +242,10 @@ DOTRACE("Block::prevResponse");
 #endif
 
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
-		itsImpl->itsTrialSequence.size() == 0) return -1;
+      itsImpl->itsTrialSequence.size() == 0) return -1;
 
-  Ref<TrialBase> prev_trial = 
-	 itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
+  Ref<TrialBase> prev_trial =
+    itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
   return prev_trial->lastResponse();
 }
 
@@ -267,7 +267,7 @@ DOTRACE("Block::isComplete");
   // check that itsImpl->itsCurTrialSeqIdx is actually non-negative before
   // returning 'true' from this function.
   return ((itsImpl->itsCurTrialSeqIdx >= 0) &&
-			 (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
+          (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
 }
 
 const char* Block::trialDescription() const {
@@ -275,13 +275,13 @@ DOTRACE("Block::trialDescription");
   if (isComplete()) return "block is complete";
 
   const int BUF_SIZE = 200;
-  static char buf[BUF_SIZE];	  // static because the address is returned
+  static char buf[BUF_SIZE];    // static because the address is returned
 
   ostrstream ost(buf, BUF_SIZE);
   ost << "trial id == " << currentTrial() << ", ";
   ost << itsImpl->currentTrialItem()->description();
   ost << ", completed " << numCompleted()
-		<< " of " << numTrials();
+      << " of " << numTrials();
   ost << '\0';
 
   return buf;
@@ -299,7 +299,7 @@ DOTRACE("Block::setVerbose");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// actions 
+// actions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -311,13 +311,13 @@ DOTRACE("Block::beginTrial");
   itsImpl->itsHasBegun = true;
 
   if (itsImpl->itsVerbose) {
-	 cerr << trialDescription() << endl;
+    cerr << trialDescription() << endl;
   }
 
   itsImpl->setExpt(expt);
 
   itsImpl->currentTrialItem()->
-             trDoTrial(*(expt.getWidget()), expt.getErrorHandler(), *this);
+             trDoTrial(expt.getWidget(), expt.getErrorHandler(), *this);
 }
 
 void Block::abortTrial() {
@@ -331,7 +331,7 @@ DOTRACE("Block::abortTrial");
   // Erase the aborted trial from the sequence. Subsequent trials will
   // slide up to fill in the gap.
   itsImpl->itsTrialSequence.erase(
-				  itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
+              itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
 
   // Add the aborted trial to the back of the sequence.
   itsImpl->itsTrialSequence.push_back(aborted_trial);
@@ -354,12 +354,12 @@ DOTRACE("Block::processResponse");
   DebugEvalNL(response.val());
 
   if (!response.isCorrect()) {
-	 // If the response was incorrect, add a repeat of the current
-	 // trial to the block and reshuffle
-	 addTrial(itsImpl->currentTrialItem(), 1);
-	 std::random_shuffle(
-		itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
-		itsImpl->itsTrialSequence.end());
+    // If the response was incorrect, add a repeat of the current
+    // trial to the block and reshuffle
+    addTrial(itsImpl->currentTrialItem(), 1);
+    std::random_shuffle(
+      itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
+      itsImpl->itsTrialSequence.end());
   }
 }
 
@@ -380,10 +380,10 @@ DOTRACE("Block::endTrial");
 void Block::nextTrial() {
 DOTRACE("Block::nextTrial");
   if ( !isComplete() ) {
-	 beginTrial(itsImpl->getExpt());
+    beginTrial(itsImpl->getExpt());
   }
   else {
-	 itsImpl->getExpt().edNextBlock();
+    itsImpl->getExpt().edNextBlock();
   }
 }
 
@@ -392,13 +392,13 @@ void Block::haltExpt() {
 DOTRACE("Block::haltExpt");
 
   if ( itsImpl->itsHasBegun && !isComplete() )
-	 itsImpl->currentTrialItem()->trHaltExpt();
+    itsImpl->currentTrialItem()->trHaltExpt();
 }
 
 void Block::undoPrevTrial() {
 DOTRACE("Block::undoPrevTrial");
 
-  DebugEval(itsImpl->itsCurTrialSeqIdx); 
+  DebugEval(itsImpl->itsCurTrialSeqIdx);
 
   // Check to make sure we've completed at least one trial
   if (itsImpl->itsCurTrialSeqIdx < 1) return;
@@ -408,14 +408,14 @@ DOTRACE("Block::undoPrevTrial");
 
   // ...and erase the last response given to that trial
   if ( itsImpl->hasCurrentTrial() ) {
-	 itsImpl->currentTrialItem()->undoLastResponse();
+    itsImpl->currentTrialItem()->undoLastResponse();
   }
 }
 
 void Block::resetBlock() {
 DOTRACE("Block::resetBlock");
   while (itsImpl->itsCurTrialSeqIdx > 0) {
-	 undoPrevTrial();
+    undoPrevTrial();
   }
 }
 

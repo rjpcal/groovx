@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Jun  6 09:54:23 2001
+// written: Mon Jun 11 18:37:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEval(itsTotalError);
   DebugEval(itsInvokeCount);
   double averageError =
-	 itsInvokeCount ? double(itsTotalError)/itsInvokeCount : 0.0;
+    itsInvokeCount ? double(itsTotalError)/itsInvokeCount : 0.0;
   DebugEvalNL(averageError);
 }
 
@@ -98,8 +98,8 @@ DOTRACE("TrialEvent::writeTo");
 }
 
 void TrialEvent::schedule(GWT::Widget& widget,
-								  Util::ErrorHandler& errhdlr,
-								  TrialBase& trial) {
+                          Util::ErrorHandler& errhdlr,
+                          TrialBase& trial) {
 DOTRACE("TrialEvent::schedule");
   // Cancel any possible previously pending invocation.
   cancel();
@@ -116,17 +116,17 @@ DOTRACE("TrialEvent::schedule");
   // don't bother creating a timer handler. Instead, generate a direct
   // invocation.
   if (itsRequestedDelay <= 0) {
-	 itsIsPending = true;
-	 invokeTemplate();
+    itsIsPending = true;
+    invokeTemplate();
   }
   // Otherwise, set up a timer that will call the invocation after the
   // specified amount of time.
   else {
-	 itsActualRequest = itsRequestedDelay + itsEstimatedOffset;
-	 itsToken = Tcl_CreateTimerHandler(itsActualRequest,
-												  dummyInvoke, 
-												  static_cast<ClientData>(this));
-	 itsIsPending = true;
+    itsActualRequest = itsRequestedDelay + itsEstimatedOffset;
+    itsToken = Tcl_CreateTimerHandler(itsActualRequest,
+                                      dummyInvoke,
+                                      static_cast<ClientData>(this));
+    itsIsPending = true;
   }
 }
 
@@ -159,7 +159,7 @@ DOTRACE("TrialEvent::invokeTemplate");
 
 #ifdef EVENT_TRACE
   cerr << demangle_cstr(typeid(*this).name()) << ' '
-		 << IO::IoObject::id() << endl;
+       << IO::IoObject::id() << endl;
 
   cerr << "    request delay == " << itsRequestedDelay << '\n';
   cerr << "    est offset == " << itsEstimatedOffset << '\n';
@@ -178,25 +178,25 @@ DOTRACE("TrialEvent::invokeTemplate");
   // Negative error means we expect the event to occur later than expected
   // (round towards negative infinity)
   itsEstimatedOffset =
-	 int(double(itsTotalOffset)/itsInvokeCount - 0.5);
+    int(double(itsTotalOffset)/itsInvokeCount - 0.5);
 
   // Do the actual event callback.
   if ( itsWidget != 0 && itsErrorHandler != 0 && itsTrial != 0 )
-	 {
-		try
-		  {
-			 invoke(*itsWidget, *itsTrial);
-		  }
-		catch (ErrorWithMsg& err)
-		  {
-			 itsErrorHandler->handleErrorWithMsg(err);
-		  }
-		catch (...)
-		  {
-			 itsErrorHandler->handleMsg(
-				"an error of unknown type occured during a TrialEvent callback");
-		  }
-	 }
+    {
+      try
+        {
+          invoke(*itsWidget, *itsTrial);
+        }
+      catch (ErrorWithMsg& err)
+        {
+          itsErrorHandler->handleErrorWithMsg(err);
+        }
+      catch (...)
+        {
+          itsErrorHandler->handleMsg(
+            "an error of unknown type occured during a TrialEvent callback");
+        }
+    }
 
 #ifdef EVENT_TRACE
   cerr << "    after == " << itsTimer.elapsedMsec() << '\n';
@@ -224,7 +224,7 @@ DrawEvent::~DrawEvent() {}
 
 void DrawEvent::invoke(GWT::Widget& widget, TrialBase& trial) {
 DOTRACE("DrawEvent::invoke");
-  trial.installSelf(widget); 
+  trial.installSelf(widget);
   widget.setVisibility(true);
   widget.display();
 }
@@ -290,7 +290,7 @@ RenderBackEvent::~RenderBackEvent() {}
 
 void RenderBackEvent::invoke(GWT::Widget& widget, TrialBase&) {
 DOTRACE("RenderBackEvent::invoke");
-  widget.getCanvas()->drawOnBackBuffer();
+  widget.getCanvas().drawOnBackBuffer();
 }
 
 RenderFrontEvent::RenderFrontEvent(int msec) : TrialEvent(msec) {}
@@ -299,7 +299,7 @@ RenderFrontEvent::~RenderFrontEvent() {}
 
 void RenderFrontEvent::invoke(GWT::Widget& widget, TrialBase&) {
 DOTRACE("RenderFrontEvent::invoke");
-  widget.getCanvas()->drawOnFrontBuffer();
+  widget.getCanvas().drawOnFrontBuffer();
 }
 
 ClearBufferEvent::ClearBufferEvent(int msec) : TrialEvent(msec) {}
@@ -308,7 +308,7 @@ ClearBufferEvent::~ClearBufferEvent() {}
 
 void ClearBufferEvent::invoke(GWT::Widget& widget, TrialBase&) {
 DOTRACE("ClearBufferEvent::invoke");
-  widget.clearscreen(); 
+  widget.clearscreen();
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";

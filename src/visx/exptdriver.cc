@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jun 11 14:49:19 2001
+// written: Mon Jun 11 18:37:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace {
 
 #ifdef TIME_TRACE
   inline void TimeTraceNL(const char* loc, int msec) {
-	 cerr << "in " << loc << ", elapsed time == " << msec << endl;
+    cerr << "in " << loc << ", elapsed time == " << msec << endl;
   }
 #else
   inline void TimeTraceNL(const char*, int) {}
@@ -101,29 +101,29 @@ private:
   void doAutosave();
 
   bool haveValidBlock() const
-	 {
-		DebugEval(itsCurrentBlockIdx); DebugEvalNL(itsBlocks.size());
-		if ( 0 <= itsCurrentBlockIdx &&
-			  (unsigned int)itsCurrentBlockIdx < itsBlocks.size() )
-		  {
-			 return true;
-		  }
-		return false;
-	 }
+    {
+      DebugEval(itsCurrentBlockIdx); DebugEvalNL(itsBlocks.size());
+      if ( 0 <= itsCurrentBlockIdx &&
+           (unsigned int)itsCurrentBlockIdx < itsBlocks.size() )
+        {
+          return true;
+        }
+      return false;
+    }
 
   // This accessor will NOT recover if the corresponding id is
   // invalid; clients must check validity before calling the accessor.
   Block& block()
-	 {
-		Precondition( haveValidBlock() );
-		return *(itsBlocks.at(itsCurrentBlockIdx).get());
-	 }
+    {
+      Precondition( haveValidBlock() );
+      return *(itsBlocks.at(itsCurrentBlockIdx).get());
+    }
 
   const Block& block() const
-	 {
-		Precondition( haveValidBlock() );
-		return *(itsBlocks.at(itsCurrentBlockIdx).get());
-	 }
+    {
+      Precondition( haveValidBlock() );
+      return *(itsBlocks.at(itsCurrentBlockIdx).get());
+    }
 
   // Check the validity of all its id's, return true if all are ok,
   // otherwise returns false, halts the experiment, and issues an
@@ -157,7 +157,7 @@ private:
 public:
 
   IO::VersionId serialVersionId() const
-	 { return EXPTDRIVER_SERIAL_VERSION_ID; }
+    { return EXPTDRIVER_SERIAL_VERSION_ID; }
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
@@ -175,35 +175,35 @@ public:
 
   void addLogInfo(const char* message)
   {
-	 fixed_string date_string;
-	 getCurrentTimeDateString(date_string);
+    fixed_string date_string;
+    getCurrentTimeDateString(date_string);
 
-	 itsInfoLog.append("@");
-	 itsInfoLog.append(date_string);
-	 itsInfoLog.append(" ");
-	 itsInfoLog.append(message);
-	 itsInfoLog.append("\n");
+    itsInfoLog.append("@");
+    itsInfoLog.append(date_string);
+    itsInfoLog.append(" ");
+    itsInfoLog.append(message);
+    itsInfoLog.append("\n");
   }
 
   void addBlock(Ref<Block> block)
-	 { itsBlocks.push_back(block); }
+    { itsBlocks.push_back(block); }
 
   Ref<Block> currentBlock() const
-	 {
-		if ( !haveValidBlock() ) throw ErrorWithMsg("no current block exists");
-		return itsBlocks.at(itsCurrentBlockIdx);
-	 }
+    {
+      if ( !haveValidBlock() ) throw ErrorWithMsg("no current block exists");
+      return itsBlocks.at(itsCurrentBlockIdx);
+    }
 
   Util::ErrorHandler& getErrorHandler()
-	 { return itsErrHandler; }
+    { return itsErrHandler; }
 
-  GWT::Widget* getWidget()
-	 {
-		return itsWidget.get();
-	 }
+  GWT::Widget& getWidget()
+    {
+      return *itsWidget;
+    }
 
-  GWT::Canvas* getCanvas()
-	 { return getWidget()->getCanvas(); }
+  GWT::Canvas& getCanvas()
+    { return getWidget().getCanvas(); }
 
   void edBeginExpt();
   void edEndTrial();
@@ -230,10 +230,10 @@ private:
 
   Ref<Toglet> itsWidget;
 
-  fixed_string itsHostname;	  // Host computer on which Expt was begun
-  fixed_string itsSubject;		  // Id of subject on whom Expt was performed
-  fixed_string itsBeginDate;	  // Date(+time) when Expt was begun
-  fixed_string itsEndDate;		  // Date(+time) when Expt was stopped
+  fixed_string itsHostname;     // Host computer on which Expt was begun
+  fixed_string itsSubject;      // Id of subject on whom Expt was performed
+  fixed_string itsBeginDate;    // Date(+time) when Expt was begun
+  fixed_string itsEndDate;      // Date(+time) when Expt was stopped
   fixed_string itsAutosaveFile; // Filename used for autosaves
 
   dynamic_string itsInfoLog;
@@ -259,7 +259,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 ExptDriver::Impl::Impl(int argc, char** argv,
-							  ExptDriver* owner, Tcl_Interp* interp) :
+                       ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
   itsWidget(Toglet::make(interp)),
@@ -283,8 +283,8 @@ DOTRACE("ExptDriver::Impl::Impl");
   dynamic_string cmd_line("command line: ");
 
   for (int i = 0; i < argc; ++i) {
-	 cmd_line.append(argv[i]);
-	 cmd_line.append(" ");
+    cmd_line.append(argv[i]);
+    cmd_line.append(" ");
   }
 
   addLogInfo(cmd_line.c_str());
@@ -302,19 +302,19 @@ DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
   Tcl_ResetResult(itsInterp);
 
   if (!safeTclGlobalEval("llength [  namespace eval ::Expt "
-								 "            {info procs doUponCompletion}  ]"))
-	 {
-		return false;
-	 }
+                         "            {info procs doUponCompletion}  ]"))
+    {
+      return false;
+    }
 
   int llength;
   int tclresult = Tcl_GetIntFromObj(itsInterp,
-												Tcl_GetObjResult(itsInterp),
-												&llength);
+                                    Tcl_GetObjResult(itsInterp),
+                                    &llength);
 
   if (tclresult != TCL_OK) {
-	 itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");
-	 return false;
+    itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");
+    return false;
   }
 
   return (llength > 0);
@@ -323,47 +323,47 @@ DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
 void ExptDriver::Impl::updateDoUponCompletionBody() const {
 DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
   if (doesDoUponCompletionExist()) {
-	 Tcl_ResetResult(itsInterp);
+    Tcl_ResetResult(itsInterp);
 
-	 if (!safeTclGlobalEval("info body Expt::doUponCompletion"))
-		{
-		  itsDoUponCompletionBody = "";
-		  throw IO::OutputError("couldn't get the proc body for Expt::doUponCompletion");
-		}
+    if (!safeTclGlobalEval("info body Expt::doUponCompletion"))
+      {
+        itsDoUponCompletionBody = "";
+        throw IO::OutputError("couldn't get the proc body for Expt::doUponCompletion");
+      }
 
-	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
-	 Tcl_ResetResult(itsInterp);
+    itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
+    Tcl_ResetResult(itsInterp);
   }
   else {
-	 itsDoUponCompletionBody = "";
+    itsDoUponCompletionBody = "";
   }
 }
 
 void ExptDriver::Impl::recreateDoUponCompletionProc() const {
 DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
   try {
-	 dynamic_string proc_cmd_str =
-		"namespace eval Expt { proc doUponCompletion {} {";
-	 proc_cmd_str += itsDoUponCompletionBody;
-	 proc_cmd_str += "} }";
+    dynamic_string proc_cmd_str =
+      "namespace eval Expt { proc doUponCompletion {} {";
+    proc_cmd_str += itsDoUponCompletionBody;
+    proc_cmd_str += "} }";
 
-	 Tcl::TclEvalCmd proc_cmd(proc_cmd_str.c_str(),
-									  Tcl::TclEvalCmd::THROW_EXCEPTION);
-	 proc_cmd.invoke(itsInterp);
+    Tcl::TclEvalCmd proc_cmd(proc_cmd_str.c_str(),
+                             Tcl::TclEvalCmd::THROW_EXCEPTION);
+    proc_cmd.invoke(itsInterp);
   }
   catch (Tcl::TclError& err) {
-	 throw IO::InputError(err.msg_cstr());
+    throw IO::InputError(err.msg_cstr());
   }
 }
 
 void ExptDriver::Impl::doAutosave() {
 DOTRACE("ExptDriver::Impl::doAutosave");
   try {
-	 DebugEvalNL(getAutosaveFile().c_str());
-	 writeASW(getAutosaveFile().c_str());
+    DebugEvalNL(getAutosaveFile().c_str());
+    writeASW(getAutosaveFile().c_str());
   }
   catch (Tcl::TclError& err) {
-	 itsErrHandler.handleMsg(err.msg_cstr());
+    itsErrHandler.handleMsg(err.msg_cstr());
   }
 }
 
@@ -384,7 +384,7 @@ inline bool ExptDriver::Impl::assertIds() const {
 DOTRACE("ExptDriver::Impl::assertIds");
 
   if ( haveValidBlock() ) {
-	 return true;
+    return true;
   }
 
   DebugPrintNL("assertIds failed... raising background error");
@@ -413,13 +413,13 @@ DOTRACE("ExptDriver::Impl::needAutosave");
   if ( !assertIds() ) return false;
 
   return ( (itsAutosavePeriod > 0) &&
-			  ((block().numCompleted() % itsAutosavePeriod) == 0) &&
-			  !(itsAutosaveFile.empty()) );
+           ((block().numCompleted() % itsAutosavePeriod) == 0) &&
+           !(itsAutosaveFile.empty()) );
 }
 
 bool ExptDriver::Impl::gotoNextValidBlock() {
 DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
-  ++itsCurrentBlockIdx; 
+  ++itsCurrentBlockIdx;
   if ((unsigned int)itsCurrentBlockIdx < itsBlocks.size()) return true;
   return false;
 }
@@ -441,21 +441,21 @@ DOTRACE("ExptDriver::Impl::safeTclGlobalEval");
 void ExptDriver::Impl::doUponCompletion() const {
 DOTRACE("ExptDriver::Impl::doUponCompletion");
   if (doesDoUponCompletionExist()) {
-	 safeTclGlobalEval("Expt::doUponCompletion");
+    safeTclGlobalEval("Expt::doUponCompletion");
   }
 }
 
 void ExptDriver::Impl::noteElapsedTime() const {
 DOTRACE("ExptDriver::Impl::noteElapsedTime");
   cout << "expt completed in "
-		 << itsTimer.elapsedMsec()
-		 << " milliseconds\n";
+       << itsTimer.elapsedMsec()
+       << " milliseconds\n";
 }
 
 void ExptDriver::Impl::getCurrentTimeDateString(fixed_string& date_out) const {
 DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   static Tcl::TclEvalCmd dateStringCmd("clock format [clock seconds]",
-													Tcl::TclEvalCmd::THROW_EXCEPTION);
+                                       Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   dateStringCmd.invoke(itsInterp);
   date_out = Tcl_GetStringResult(itsInterp);
@@ -464,7 +464,7 @@ DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
 void ExptDriver::Impl::getHostname(fixed_string& hostname_out) const {
 DOTRACE("ExptDriver::Impl::getHostname");
   char* temp = Tcl_GetVar2(itsInterp, "env", "HOST",
-									TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
+                           TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
 
   if (temp == 0) { throw Tcl::TclError(); }
   hostname_out = temp;
@@ -475,7 +475,7 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
   static Tcl::TclEvalCmd subjectKeyCmd("file tail [pwd]",
-													Tcl::TclEvalCmd::THROW_EXCEPTION);
+                                       Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   subjectKeyCmd.invoke(itsInterp);
 
@@ -494,7 +494,7 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
   // Format the current time into a unique filename extension
   static Tcl::TclEvalCmd uniqueFilenameCmd(
         "clock format [clock seconds] -format %H%M%d%b%Y",
-		  Tcl::TclEvalCmd::THROW_EXCEPTION);
+        Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   static dynamic_string previous_result = "";
   static char tag[2] = {'a', '\0'};
@@ -504,14 +504,14 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
   dynamic_string current_result = Tcl_GetStringResult(itsInterp);
 
   if (current_result.equals(previous_result)) {
-	 ++tag[0];
-	 if (tag[0] > 'z') tag[0] = 'a';
+    ++tag[0];
+    if (tag[0] > 'z') tag[0] = 'a';
 
-	 current_result.append(tag);
+    current_result.append(tag);
   }
   else {
-	 previous_result = current_result;
-	 tag[0] = 'a';
+    previous_result = current_result;
+    tag[0] = 'a';
   }
 
   return current_result;
@@ -550,7 +550,7 @@ void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::writeTo");
 
   writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 3,
-										 "Try grsh0.8a3");
+                               "Try grsh0.8a3");
 
   writer->writeValue("hostname", itsHostname);
   writer->writeValue("subject", itsSubject);
@@ -563,7 +563,7 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
 
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
-											itsBlocks.begin(), itsBlocks.end());
+                                 itsBlocks.begin(), itsBlocks.end());
 
   updateDoUponCompletionBody();
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
@@ -620,10 +620,10 @@ DOTRACE("ExptDriver::Impl::edNextBlock");
   bool haveMoreBlocks = gotoNextValidBlock();
 
   if ( !haveMoreBlocks ) {
-	 edEndExpt();
+    edEndExpt();
   }
   else {
-	 block().beginTrial(*itsOwner);
+    block().beginTrial(*itsOwner);
   }
 }
 
@@ -637,10 +637,10 @@ void ExptDriver::Impl::edHaltExpt() const {
 DOTRACE("ExptDriver::Impl::edHaltExpt");
 
   if ( haveValidBlock() ) {
-	 // FIXME const-correctness problem -- should haltExpt be const or
-	 // non-const throughout the system???
-	 Block& nc_block = const_cast<Block&>(block());
-	 nc_block.haltExpt();
+    // FIXME const-correctness problem -- should haltExpt be const or
+    // non-const throughout the system???
+    Block& nc_block = const_cast<Block&>(block());
+    nc_block.haltExpt();
   }
 }
 
@@ -682,12 +682,12 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
   while (1) {
-	 if ( haveValidBlock() ) {
-		block().resetBlock();
-	 }
+    if ( haveValidBlock() ) {
+      block().resetBlock();
+    }
 
-	 if (itsCurrentBlockIdx > 0) { --itsCurrentBlockIdx; }
-	 else return;
+    if (itsCurrentBlockIdx > 0) { --itsCurrentBlockIdx; }
+    else return;
   }
 }
 
@@ -704,7 +704,7 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
   addLogInfo("Experiment complete.");
 
   storeData();
-  doUponCompletion();		  // Call the user-defined callback
+  doUponCompletion();        // Call the user-defined callback
 }
 
 //--------------------------------------------------------------------
@@ -734,47 +734,47 @@ void ExptDriver::Impl::storeData() {
 DOTRACE("ExptDriver::Impl::storeData");
   Precondition(itsInterp != 0);
 
-  edHaltExpt();  
+  edHaltExpt();
 
   try {
-	 getCurrentTimeDateString(itsEndDate);
+    getCurrentTimeDateString(itsEndDate);
 
-	 dynamic_string unique_file_extension = makeUniqueFileExtension();
+    dynamic_string unique_file_extension = makeUniqueFileExtension();
 
-	 // Write the main experiment file
-	 dynamic_string expt_filename = "expt";
-	 expt_filename += unique_file_extension;
-	 expt_filename += ".asw";
-	 writeASW(expt_filename.c_str());
-	 cout << "wrote file " << expt_filename << endl;
+    // Write the main experiment file
+    dynamic_string expt_filename = "expt";
+    expt_filename += unique_file_extension;
+    expt_filename += ".asw";
+    writeASW(expt_filename.c_str());
+    cout << "wrote file " << expt_filename << endl;
 
-	 // Write the responses file
-	 dynamic_string resp_filename = "resp";
-	 resp_filename += unique_file_extension;
-	 TlistUtils::writeResponses(resp_filename.c_str());
-	 cout << "wrote file " << resp_filename << endl;
+    // Write the responses file
+    dynamic_string resp_filename = "resp";
+    resp_filename += unique_file_extension;
+    TlistUtils::writeResponses(resp_filename.c_str());
+    cout << "wrote file " << resp_filename << endl;
 
-	 // Change file access modes to allow read-only by all
-	 System::mode_t datafile_mode = System::IRUSR | System::IRGRP | System::IROTH;
+    // Change file access modes to allow read-only by all
+    System::mode_t datafile_mode = System::IRUSR | System::IRGRP | System::IROTH;
 
-	 int error1 =
-		System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
-	 int error2 =
-		System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
-	 if (error1 != 0 || error2 != 0) {
-		itsErrHandler.handleMsg("error during System::chmod");
-		return;
-	 }
+    int error1 =
+      System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
+    int error2 =
+      System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
+    if (error1 != 0 || error2 != 0) {
+      itsErrHandler.handleMsg("error during System::chmod");
+      return;
+    }
 
-	 addLogInfo("Experiment saved.");
+    addLogInfo("Experiment saved.");
   }
   catch (IO::IoError& err) {
-	 itsErrHandler.handleMsg(err.msg_cstr());
-	 return;
+    itsErrHandler.handleMsg(err.msg_cstr());
+    return;
   }
   catch (Tcl::TclError& err) {
-	 itsErrHandler.handleMsg(err.msg_cstr());
-	 return;
+    itsErrHandler.handleMsg(err.msg_cstr());
+    return;
   }
 }
 
@@ -841,10 +841,10 @@ Ref<Block> ExptDriver::currentBlock() const
 Util::ErrorHandler& ExptDriver::getErrorHandler()
   { return itsImpl->getErrorHandler(); }
 
-GWT::Widget* ExptDriver::getWidget()
+GWT::Widget& ExptDriver::getWidget()
   { return itsImpl->getWidget(); }
 
-GWT::Canvas* ExptDriver::getCanvas()
+GWT::Canvas& ExptDriver::getCanvas()
   { return itsImpl->getCanvas(); }
 
 void ExptDriver::edBeginExpt()

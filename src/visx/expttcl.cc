@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Jun 11 18:20:15 2001
+// written: Mon Jun 11 18:35:35 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -74,8 +74,8 @@ namespace ExptTcl {
 class ExptTcl::BeginCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   BeginCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
-	 {}
+    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
+    {}
 protected:
   virtual void invoke();
 };
@@ -84,31 +84,31 @@ void ExptTcl::BeginCmd::invoke() {
 DOTRACE("ExptTcl::BeginCmd::beginCmd");
 
   ExptDriver* ed = getItem();
-  GWT::Widget* widget = ed->getWidget();
+  GWT::Widget& widget = ed->getWidget();
 
   // Create the begin key binding
-  widget->bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
+  widget.bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
 
   // Create the quit key binding
-  widget->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
+  widget.bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
 
   // Create the save key binding
-  widget->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
+  widget.bind("<Control-KeyPress-s>", "{ Expt::storeData }");
 
   // Create the stop key binding
-  widget->bind("<Control-KeyPress-c>", "{ Expt::stop }");
+  widget.bind("<Control-KeyPress-c>", "{ Expt::stop }");
 
   // Create the reset key binding
-  widget->bind("<Control-KeyPress-r>", "{ Expt::reset }");
+  widget.bind("<Control-KeyPress-r>", "{ Expt::reset }");
 
   // Create the pause key binding
-  widget->bind("<KeyPress-p>", "{ Expt::pause }");
+  widget.bind("<KeyPress-p>", "{ Expt::pause }");
 
   // Destroy the experiment start key binding
-  widget->bind("<KeyPress-s>", "{}");
+  widget.bind("<KeyPress-s>", "{}");
 
   // Force the focus to the Togl widget
-  widget->takeFocus();
+  widget.takeFocus();
 
   ed->edBeginExpt();
 }
@@ -126,47 +126,47 @@ DOTRACE("ExptTcl::BeginCmd::beginCmd");
 class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   PauseCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, 1, 1),
-	 itsPauseMsgCmd(
-				"tk_messageBox -default ok -icon info "
-				"-title \"Pause\" -type ok "
-				"-message \"Experiment paused. Click OK to continue.\";\n",
-				Tcl::TclEvalCmd::THROW_EXCEPTION)
+    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, 1, 1),
+    itsPauseMsgCmd(
+            "tk_messageBox -default ok -icon info "
+            "-title \"Pause\" -type ok "
+            "-message \"Experiment paused. Click OK to continue.\";\n",
+            Tcl::TclEvalCmd::THROW_EXCEPTION)
   {}
 
 protected:
   virtual void invoke() {
-	 ExptDriver* ed = getItem();
-	 ed->edHaltExpt();
+    ExptDriver* ed = getItem();
+    ed->edHaltExpt();
 
-	 ed->addLogInfo("Experiment paused.");
+    ed->addLogInfo("Experiment paused.");
 
-	 itsPauseMsgCmd.invoke(interp());
+    itsPauseMsgCmd.invoke(interp());
 
-	 // Clear the event queue
-	 while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
-		{ }
+    // Clear the event queue
+    while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
+      { }
 
-	 GWT::Widget* widget = ed->getWidget();
-	 widget->clearscreen();
-	 widget->swapBuffers();
-	 widget->clearscreen();
-	 widget->swapBuffers();
+    GWT::Widget& widget = ed->getWidget();
+    widget.clearscreen();
+    widget.swapBuffers();
+    widget.clearscreen();
+    widget.swapBuffers();
 
-	 System::theSystem().sleep(2);
+    System::theSystem().sleep(2);
 
-	 widget->clearscreen();
-	 widget->swapBuffers();
-	 widget->clearscreen();
-	 widget->swapBuffers();
+    widget.clearscreen();
+    widget.swapBuffers();
+    widget.clearscreen();
+    widget.swapBuffers();
 
-	 // Clear the event queue
-	 while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
-		{ }
+    // Clear the event queue
+    while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
+      { }
 
-	 ed->addLogInfo("Resuming experiment.");
+    ed->addLogInfo("Resuming experiment.");
 
-	 ed->edResumeExpt();
+    ed->edResumeExpt();
   }
 
 private:
@@ -183,19 +183,19 @@ private:
 class ExptTcl::SetStartCommandCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   SetStartCommandCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
+    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
 protected:
   virtual void invoke() {
-	 // Build the script to be executed when the start key is pressed
-	 dynamic_string start_command = "{ ";
-	 start_command += getCstringFromArg(1);
-	 start_command += " }";
+    // Build the script to be executed when the start key is pressed
+    dynamic_string start_command = "{ ";
+    start_command += getCstringFromArg(1);
+    start_command += " }";
 
-	 ExptDriver* ed = getItem();
-	 GWT::Widget* widget = ed->getWidget();
+    ExptDriver* ed = getItem();
+    GWT::Widget& widget = ed->getWidget();
 
-	 widget->bind("<KeyPress-s>", start_command.c_str());
-	 widget->takeFocus();
+    widget.bind("<KeyPress-s>", start_command.c_str());
+    widget.takeFocus();
   }
 };
 
@@ -206,20 +206,20 @@ protected:
 //---------------------------------------------------------------------
 
 class ExptTcl::ExptPkg : public Tcl::CTclItemPkg<ExptDriver>,
-					          public Tcl::IoFetcher
+                         public Tcl::IoFetcher
 {
 public:
   ExptPkg(Tcl_Interp* interp);
 
   virtual ~ExptPkg()
     {
-		itsExptDriver->edClearExpt();
-	 }
+      itsExptDriver->edClearExpt();
+    }
 
   virtual IO::IoObject& getIoFromId(int) { return *itsExptDriver; }
 
   virtual ExptDriver* getCItemFromId(int) {
-	 return itsExptDriver.get();
+    return itsExptDriver.get();
   }
 
 private:
@@ -229,8 +229,8 @@ private:
 ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   Tcl::CTclItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
   itsExptDriver(ExptDriver::make(Application::theApp().argc(),
-											Application::theApp().argv(),
-											interp))
+                                 Application::theApp().argv(),
+                                 interp))
 {
   DOTRACE("ExptPkg::ExptPkg");
 
@@ -244,10 +244,10 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
 
   declareCSetter("addBlock", &ExptDriver::addBlock);
   declareCAttrib("autosaveFile",
-					  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+                 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
   declareCAttrib("autosavePeriod",
-					  &ExptDriver::getAutosavePeriod,
-					  &ExptDriver::setAutosavePeriod);
+                 &ExptDriver::getAutosavePeriod,
+                 &ExptDriver::setAutosavePeriod);
   declareCAction("clear", &ExptDriver::edClearExpt);
   declareCGetter("currentBlock", &ExptDriver::currentBlock);
   declareCAction("reset", &ExptDriver::edResetExpt);
@@ -259,7 +259,7 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
 
   if (grshapp != 0) {
-	 grshapp->installCanvas(*(itsExptDriver->getCanvas()));
+    grshapp->installCanvas(itsExptDriver->getCanvas());
   }
 }
 
