@@ -18,6 +18,9 @@ namespace GWT {
   class Widget;
 }
 
+class GxNode;
+
+template <class T> class IdItem;
 template <class T> class MaybeIdItem;
 
 class TrialBase;
@@ -57,6 +60,8 @@ public:
   void setCurTrial(const MaybeIdItem<TrialBase>& item);
 
   void setHold(bool hold_on);
+
+  void setDrawable(const IdItem<GxNode>& node);
 
 private:
   Widget(const Widget&);
