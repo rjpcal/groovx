@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Sep 20 11:55:36 1999
+// written: Mon Sep 20 16:36:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,9 +48,9 @@ public:
 
   public:    void loadPbmFile(const char* filename);
 
-  public:    void grabPixelRect(int left, int top, int right, int bottom);
-  public:    void grabGLRect(double left, double top,
-									  double right, double bottom);
+  public:    void grabScreenRect(int left, int top, int right, int bottom);
+  public:    void grabWorldRect(double left, double top,
+										  double right, double bottom);
   // These routines grab pixels from a rectanglur area of the screen
   // buffer into the Bitmap's pixel array. Two functions are provided
   // so that the coordinates of the rectangle may be specified in
@@ -81,16 +81,19 @@ public:
 											  double /* zoom_x */,
 											  double /* zoom_y */) const = 0;
 
-  public:    virtual void undraw() const;
+  public:    virtual void grUnRender() const;
   protected: virtual void doUndraw(
 					  int /*winRasterX*/, int /*winRasterY*/,
-					  int /*winWidthX*/, int /*winHeightY*/) const = 0;
+					  int /*winWidthX*/, int /*winHeightY*/) const;
 
   ///////////////
   // accessors //
   ///////////////
 
 public:
+  virtual bool getBoundingBox(double& left, double& top,
+										double& right, double& bottom) const;
+
   virtual int getCategory() const { return -1; }
 
   int byteCount() const;
