@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 12:27:24 2001
+// written: Wed Jun 13 13:09:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,6 +97,10 @@ private:
     {
       if (master == 0) Util::RefHelper::throwErrorWithMsg(
                             "attempted to construct a Ref with a null pointer");
+
+      if (master->isVolatile()) Util::RefHelper::throwErrorWithMsg(
+                         "attempted to construct a Ref with a volatile object");
+
       itsMaster->incrRefCount();
     }
 
@@ -250,11 +254,9 @@ private:
 
     bool isValid() const
     {
-      if (itsMaster == 0)                             return false;
-      if (itsCounts == 0)                             return false;
-      if (itsCounts->strongCount() == 0) { release(); return false; }
+      if (itsCounts != 0 && itsCounts->strongCount() > 0) return true;
 
-      return true;
+      release(); return false;
     }
 
     T* get()        const { ensureValid(); return itsMaster; }
@@ -352,6 +354,7 @@ public:
 
 
   bool isValid() const { return itsHandle.isValid(); }
+  bool isInvalid() const { return !(isValid()); }
 
   Util::UID id() const
     { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
