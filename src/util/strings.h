@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar  6 11:54:48 2000
+// written: Mon Mar  6 12:02:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,8 @@ public:
 
   fixed_string& operator=(const char* text);
   fixed_string& operator=(const fixed_string& other);
+
+  char* data() { return itsText; }
 
   const char* c_str() const { return itsText; }
   unsigned int length() const { return itsLength; }
