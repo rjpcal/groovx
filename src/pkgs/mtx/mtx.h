@@ -452,50 +452,50 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * DataHolder class.
+ * data_holder class.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class DataHolder : public mtx_policies
+class data_holder : public mtx_policies
 {
 public:
   /// Construct with a data array, dimensions, and storage policy.
-  DataHolder(double* data, int mrows, int ncols, storage_policy s);
+  data_holder(double* data, int mrows, int ncols, storage_policy s);
 
   /// Construct empty with dimensions and an init policy.
-  DataHolder(int mrows, int ncols, init_policy p);
+  data_holder(int mrows, int ncols, init_policy p);
 
   /// Construct from a matlab array and a storage policy.
-  DataHolder(mxArray* a, storage_policy s);
+  data_holder(mxArray* a, storage_policy s);
 
-  /** With a const mxArray*, only BORROW or COPY are allowed as storage
-      policies, in order to preserve const-correctness. */
-  DataHolder(const mxArray* a, storage_policy s);
+  /** With a const mxArray*, only BORROW or COPY are allowed as
+      storage policies, in order to preserve const-correctness. */
+  data_holder(const mxArray* a, storage_policy s);
 
   /// Copy constructor.
-  DataHolder(const DataHolder& other);
+  data_holder(const data_holder& other);
 
   /// Destructor.
-  ~DataHolder();
+  ~data_holder();
 
-  /// Swap contents with another DataHolder.
-  void swap(DataHolder& other);
+  /// Swap contents with another data_holder.
+  void swap(data_holder& other);
 
   /// Make a unique copy of our data block if needed.
-  void makeUnique() { data_block::make_unique(m_data); }
+  void make_unique() { data_block::make_unique(m_data); }
 
   /// Get a pointer to const underlying data.
   const double* storage() const { return m_data->data(); }
 
   /// Get a pointer to non-const underlying data.
-  double* storage_nc() { makeUnique(); return m_data->data_nc(); }
+  double* storage_nc() { make_unique(); return m_data->data_nc(); }
 
   /// Get the allocated length of underlying data array.
-  int storageLength() const { return m_data->length(); }
+  int storage_length() const { return m_data->length(); }
 
 private:
-  DataHolder& operator=(const DataHolder&); // not allowed
+  data_holder& operator=(const data_holder&); // not allowed
 
   data_block* m_data;
 };
@@ -503,25 +503,25 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * DataHolderRef class.
+ * data_ref_holder class.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class DataHolderRef : public mtx_policies
+class data_ref_holder : public mtx_policies
 {
 public:
   /// Construct with a pointee.
-  DataHolderRef(DataHolder* ref) : ref_(ref) {}
+  data_ref_holder(data_holder* ref) : ref_(ref) {}
 
   /// Copy constructor.
-  DataHolderRef(const DataHolderRef& other) : ref_(other.ref_) {}
+  data_ref_holder(const data_ref_holder& other) : ref_(other.ref_) {}
 
   /// Destructor.
-  ~DataHolderRef() {}
+  ~data_ref_holder() {}
 
-  /// Swap contents with another DataHolderRef.
-  void swap(DataHolderRef& other);
+  /// Swap contents with another data_ref_holder.
+  void swap(data_ref_holder& other);
 
   /// Get a pointer to const underlying data.
   const double* storage() const { return ref_->storage(); }
@@ -530,55 +530,55 @@ public:
   double* storage_nc() { return ref_->storage_nc(); }
 
   /// Get the allocated length of underlying data array.
-  int storageLength() const { return ref_->storageLength(); }
+  int storage_length() const { return ref_->storage_length(); }
 
 private:
-  DataHolderRef& operator=(const DataHolderRef&); // not allowed
+  data_ref_holder& operator=(const data_ref_holder&); // not allowed
 
-  DataHolder* ref_;
+  data_holder* ref_;
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MtxBase class.
+ * mtx_base class.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class Data>
-class MtxBase : public mtx_specs, public mtx_policies
+class mtx_base : public mtx_specs, public mtx_policies
 {
 private:
-  MtxBase& operator=(const MtxBase& other); // not allowed
+  mtx_base& operator=(const mtx_base& other); // not allowed
 
 protected:
   Data data_;
 
-  void swap(MtxBase& other);
+  void swap(mtx_base& other);
 
-  MtxBase(const MtxBase& other);
+  mtx_base(const mtx_base& other);
 
-  MtxBase(int mrows, int ncols, const Data& data);
+  mtx_base(int mrows, int ncols, const Data& data);
 
-  MtxBase(const mtx_specs& specs, const Data& data);
+  mtx_base(const mtx_specs& specs, const Data& data);
 
-  ~MtxBase();
+  ~mtx_base();
 
   const double& at(int i) const
   {
-    RC_less(i+offset(), data_.storageLength());
+    RC_less(i+offset(), data_.storage_length());
     return data_.storage()[i+offset()];
   }
 
   double& at_nc(int i)
   {
-    RC_less(i+offset(), data_.storageLength());
+    RC_less(i+offset(), data_.storage_length());
     return data_.storage_nc()[i+offset()];
   }
 
   ptrdiff_t offset_from_storage(int r, int c) const
-  { return RCR_leq(mtx_specs::offset_from_storage(r, c), data_.storageLength()); }
+  { return RCR_leq(mtx_specs::offset_from_storage(r, c), data_.storage_length()); }
 
   double* address_nc(int row, int col)
   { return data_.storage_nc() + offset_from_storage(row, col); }
@@ -641,7 +641,7 @@ public:
         }
 
   template <class F>
-  void applyF(F func)
+  void apply_f(F func)
   {
     APPLY_IMPL;
   }
@@ -661,11 +661,11 @@ public:
   template <class M, class T>
   class iter_base
   {
-    M* mtx;
-    int elem;
+    M* m_src;
+    int m_index;
 
   public:
-    iter_base(M* m, int e) : mtx(m), elem(e) {}
+    iter_base(M* m, int e) : m_src(m), m_index(e) {}
 
     typedef std::random_access_iterator_tag iterator_category;
 
@@ -674,9 +674,9 @@ public:
     typedef T*           pointer;
     typedef T&           reference;
 
-    iter_base end() const { return iter_base(mtx, mtx->nelems()); }
+    iter_base end() const { return iter_base(m_src, m_src->nelems()); }
 
-    bool has_more() const { return elem < mtx->nelems(); }
+    bool has_more() const { return m_index < m_src->nelems(); }
 
   private:
     // Need this pair of overloads to distinguish between const and
@@ -689,39 +689,39 @@ public:
     static reference get_at(const MM* m, int e) { return m->at(e); }
 
   public:
-    reference operator*() const { return get_at(mtx, elem); }
+    reference operator*() const { return get_at(m_src, m_index); }
 
     // Comparison
 
-    bool operator==(const iter_base& other) const { return elem == other.elem; }
+    bool operator==(const iter_base& other) const { return m_index == other.m_index; }
 
-    bool operator!=(const iter_base& other) const { return elem != other.elem; }
+    bool operator!=(const iter_base& other) const { return m_index != other.m_index; }
 
-    bool operator<(const iter_base& other) const { return elem < other.elem; }
+    bool operator<(const iter_base& other) const { return m_index < other.m_index; }
 
     difference_type operator-(const iter_base& other) const
-      { return elem - other.elem; }
+      { return m_index - other.m_index; }
 
     // Increment/Decrement
 
-    iter_base& operator++() { ++elem; return *this; }
-    iter_base& operator--() { --elem; return *this; }
+    iter_base& operator++() { ++m_index; return *this; }
+    iter_base& operator--() { --m_index; return *this; }
 
-    iter_base operator++(int) { return iter_base(mtx, elem++); }
-    iter_base operator--(int) { return iter_base(mtx, elem--); }
+    iter_base operator++(int) { return iter_base(m_src, m_index++); }
+    iter_base operator--(int) { return iter_base(m_src, m_index--); }
 
-    iter_base& operator+=(int x) { elem += x; return *this; }
-    iter_base& operator-=(int x) { elem -= x; return *this; }
+    iter_base& operator+=(int x) { m_index += x; return *this; }
+    iter_base& operator-=(int x) { m_index -= x; return *this; }
 
-    iter_base operator+(int x) const { return iter_base(mtx, elem+x); }
-    iter_base operator-(int x) const { return iter_base(mtx, elem-x); }
+    iter_base operator+(int x) const { return iter_base(m_src, m_index+x); }
+    iter_base operator-(int x) const { return iter_base(m_src, m_index-x); }
   };
 
-  friend class iter_base<MtxBase, double>;
-  friend class iter_base<const MtxBase, const double>;
+//   friend class iter_base<mtx_base, double>;
+//   friend class iter_base<const mtx_base, const double>;
 
-  typedef iter_base<MtxBase, double> iterator;
-  typedef iter_base<const MtxBase, const double> const_iterator;
+  typedef iter_base<mtx_base, double> iterator;
+  typedef iter_base<const mtx_base, const double> const_iterator;
 
   iterator begin_nc() { return iterator(this, 0); }
   iterator end_nc() { return iterator(this, nelems()); }
@@ -734,10 +734,10 @@ public:
   template <class T>
   class colmaj_iter_base
   {
-    int itsRowgap;
-    int itsRowstride;
-    T* itsPtr;
-    T* itsCurrentEnd;
+    int m_rowgap;
+    int m_rowstride;
+    T* m_ptr;
+    T* m_current_end;
 
   public:
 
@@ -749,29 +749,29 @@ public:
     typedef T&           reference;
 
     colmaj_iter_base(int rg, int rs, T* ptr) :
-      itsRowgap(rg),
-      itsRowstride(rs),
-      itsPtr(ptr),
-      itsCurrentEnd(itsPtr+(itsRowstride-itsRowgap))
+      m_rowgap(rg),
+      m_rowstride(rs),
+      m_ptr(ptr),
+      m_current_end(m_ptr+(m_rowstride-m_rowgap))
     {}
 
-    T& operator*() const { return *itsPtr; }
+    T& operator*() const { return *m_ptr; }
 
     colmaj_iter_base& operator++()
     {
-      if (++itsPtr == itsCurrentEnd)
+      if (++m_ptr == m_current_end)
         {
-          itsPtr += itsRowgap;
-          itsCurrentEnd += itsRowstride;
+          m_ptr += m_rowgap;
+          m_current_end += m_rowstride;
         }
       return *this;
     }
 
     bool operator==(const colmaj_iter_base& other) const
-    { return itsPtr == other.itsPtr; }
+    { return m_ptr == other.m_ptr; }
 
     bool operator!=(const colmaj_iter_base& other) const
-    { return itsPtr != other.itsPtr; }
+    { return m_ptr != other.m_ptr; }
   };
 
   typedef colmaj_iter_base<double> colmaj_iter;
@@ -795,9 +795,9 @@ public:
   class rowmaj_iter_base
   {
     int m_stride;
-    T* itsCurrentStart;
-    T* itsPtr;
-    T* itsCurrentEnd;
+    T* m_current_start;
+    T* m_ptr;
+    T* m_current_end;
 
   public:
 
@@ -810,30 +810,30 @@ public:
 
     rowmaj_iter_base(int s, int ncols, T* ptr) :
       m_stride(s),
-      itsCurrentStart(ptr),
-      itsPtr(ptr),
-      itsCurrentEnd(itsPtr+(ncols*s))
+      m_current_start(ptr),
+      m_ptr(ptr),
+      m_current_end(m_ptr+(ncols*s))
     {}
 
-    T& operator*() const { return *itsPtr; }
+    T& operator*() const { return *m_ptr; }
 
     rowmaj_iter_base& operator++()
     {
-      itsPtr += m_stride;
-      if (itsPtr == itsCurrentEnd)
+      m_ptr += m_stride;
+      if (m_ptr == m_current_end)
         {
-          ++itsCurrentStart;
-          ++itsCurrentEnd;
-          itsPtr = itsCurrentStart;
+          ++m_current_start;
+          ++m_current_end;
+          m_ptr = m_current_start;
         }
       return *this;
     }
 
     bool operator==(const rowmaj_iter_base& other) const
-    { return itsPtr == other.itsPtr; }
+    { return m_ptr == other.m_ptr; }
 
     bool operator!=(const rowmaj_iter_base& other) const
-    { return itsPtr != other.itsPtr; }
+    { return m_ptr != other.m_ptr; }
   };
 
   typedef rowmaj_iter_base<double> rowmaj_iter;
@@ -864,9 +864,9 @@ public:
     double operator()(double) { return v; }
   };
 
-  void setAll(double x) { applyF(Setter(x)); }
+  void setAll(double x) { apply_f(Setter(x)); }
 
-  void clear(double x = 0.0) { applyF(Setter(x)); }
+  void clear(double x = 0.0) { apply_f(Setter(x)); }
 };
 
 
@@ -878,13 +878,13 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class SubMtxRef : public MtxBase<DataHolderRef>
+class SubMtxRef : public mtx_base<data_ref_holder>
 {
 public:
-  typedef MtxBase<DataHolderRef> Base;
+  typedef mtx_base<data_ref_holder> Base;
 
-  SubMtxRef(const mtx_specs& specs, DataHolder& ref) :
-    Base(specs, DataHolderRef(&ref))
+  SubMtxRef(const mtx_specs& specs, data_holder& ref) :
+    Base(specs, data_ref_holder(&ref))
   {}
 
   SubMtxRef& operator=(const SubMtxRef& other);
@@ -899,11 +899,11 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Mtx : public MtxBase<DataHolder>
+class Mtx : public mtx_base<data_holder>
 {
 public:
 
-  typedef MtxBase<DataHolder> Base;
+  typedef mtx_base<data_holder> Base;
 
   //
   // Constructors + Conversion
@@ -911,7 +911,7 @@ public:
 
   static const Mtx& emptyMtx();
 
-  Mtx(const mtx_specs& specs, const DataHolder& data) :
+  Mtx(const mtx_specs& specs, const data_holder& data) :
     Base(specs, data)
   {}
 
@@ -1087,10 +1087,10 @@ public:
 
   double mean() const { return sum() / nelems(); }
 
-  Mtx& operator+=(double x) { applyF(Add(x)); return *this; }
-  Mtx& operator-=(double x) { applyF(Sub(x)); return *this; }
-  Mtx& operator*=(double fac) { applyF(Mul(fac)); return *this; }
-  Mtx& operator/=(double div) { applyF(Div(div)); return *this; }
+  Mtx& operator+=(double x) { apply_f(Add(x)); return *this; }
+  Mtx& operator-=(double x) { apply_f(Sub(x)); return *this; }
+  Mtx& operator*=(double fac) { apply_f(Mul(fac)); return *this; }
+  Mtx& operator/=(double div) { apply_f(Div(div)); return *this; }
 
   Mtx& operator+=(const Mtx& other);
   Mtx& operator-=(const Mtx& other);
@@ -1107,7 +1107,7 @@ public:
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
-  void makeUnique() { Base::data_.makeUnique(); }
+  void make_unique() { Base::data_.make_unique(); }
 
 private:
   friend class slice;

@@ -417,7 +417,7 @@ DOTRACE("mtx_specs::select_cols");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// DataHolder member functions
+// data_holder member functions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -473,96 +473,96 @@ namespace
 #endif
 }
 
-DataHolder::DataHolder(double* data, int mrows, int ncols, storage_policy s) :
+data_holder::data_holder(double* data, int mrows, int ncols, storage_policy s) :
   m_data(newDataBlock(data, mrows, ncols, s))
 {
   m_data->incr_refcount();
 }
 
-DataHolder::DataHolder(int mrows, int ncols, init_policy p) :
+data_holder::data_holder(int mrows, int ncols, init_policy p) :
   m_data(newDataBlock(mrows, ncols, p))
 {
   m_data->incr_refcount();
 }
 
 #ifdef WITH_MATLAB
-DataHolder::DataHolder(mxArray* a, storage_policy s) :
+data_holder::data_holder(mxArray* a, storage_policy s) :
   m_data(newDataBlock(a, s))
 {
   m_data->incr_refcount();
 }
 
-DataHolder::DataHolder(const mxArray* a, storage_policy s) :
+data_holder::data_holder(const mxArray* a, storage_policy s) :
   m_data(newDataBlock(a, s))
 {
   m_data->incr_refcount();
 }
 #endif
 
-DataHolder::DataHolder(const DataHolder& other) :
+data_holder::data_holder(const data_holder& other) :
   m_data(other.m_data)
 {
   m_data->incr_refcount();
 }
 
-DataHolder::~DataHolder()
+data_holder::~data_holder()
 {
   m_data->decr_refcount();
 }
 
-void DataHolder::swap(DataHolder& other)
+void data_holder::swap(data_holder& other)
 {
   std::swap(m_data, other.m_data);
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// DataHolderRef definitions
+// data_ref_holder definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void DataHolderRef::swap(DataHolderRef& other)
+void data_ref_holder::swap(data_ref_holder& other)
 {
   std::swap(ref_, other.ref_);
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// MtxBase member definitions
+// mtx_base member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 template <class Data>
-void MtxBase<Data>::swap(MtxBase& other)
+void mtx_base<Data>::swap(mtx_base& other)
 {
   mtx_specs::swap(other);
   data_.swap(other.data_);
 }
 
 template <class Data>
-MtxBase<Data>::MtxBase(const MtxBase& other) :
+mtx_base<Data>::mtx_base(const mtx_base& other) :
   mtx_specs(other),
   data_(other.data_)
 {}
 
 template <class Data>
-MtxBase<Data>::MtxBase(int mrows, int ncols, const Data& data) :
+mtx_base<Data>::mtx_base(int mrows, int ncols, const Data& data) :
   mtx_specs(mrows, ncols),
   data_(data)
 {}
 
 template <class Data>
-MtxBase<Data>::MtxBase(const mtx_specs& specs, const Data& data) :
+mtx_base<Data>::mtx_base(const mtx_specs& specs, const Data& data) :
   mtx_specs(specs),
   data_(data)
 {}
 
 template <class Data>
-MtxBase<Data>::~MtxBase() {}
+mtx_base<Data>::~mtx_base() {}
 
-template class MtxBase<DataHolder>;
+template class mtx_base<data_holder>;
 
-template class MtxBase<DataHolderRef>;
+template class mtx_base<data_ref_holder>;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -602,32 +602,32 @@ DOTRACE("SubMtxRef::operator=(const Mtx&)");
 
 #ifdef WITH_MATLAB
 Mtx::Mtx(mxArray* a, storage_policy s) :
-  Base(mtx_specs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
+  Base(mtx_specs(mxGetM(a), mxGetN(a)), data_holder(a, s))
 {
 DOTRACE("Mtx::Mtx(mxArray*, storage_policy)");
 }
 
 Mtx::Mtx(const mxArray* a, storage_policy s) :
-  Base(mtx_specs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
+  Base(mtx_specs(mxGetM(a), mxGetN(a)), data_holder(a, s))
 {
 DOTRACE("Mtx::Mtx(const mxArray*, storage_policy)");
 }
 #endif
 
 Mtx::Mtx(double* data, int mrows, int ncols, storage_policy s) :
-  Base(mrows, ncols, DataHolder(data, mrows, ncols, s))
+  Base(mrows, ncols, data_holder(data, mrows, ncols, s))
 {
 DOTRACE("Mtx::Mtx(double*, int, int, storage_policy)");
 }
 
 Mtx::Mtx(int mrows, int ncols, init_policy p) :
-  Base(mrows, ncols, DataHolder(mrows, ncols, p))
+  Base(mrows, ncols, data_holder(mrows, ncols, p))
 {
 DOTRACE("Mtx::Mtx(int, int, init_policy)");
 }
 
 Mtx::Mtx(const mtx_shape& s, init_policy p) :
-  Base(s.mrows(), s.ncols(), DataHolder(s.mrows(), s.ncols(), p))
+  Base(s.mrows(), s.ncols(), data_holder(s.mrows(), s.ncols(), p))
 {
 DOTRACE("Mtx::Mtx(const mtx_shape&, init_policy)");
 }
@@ -644,7 +644,7 @@ DOTRACE("Mtx::emptyMtx");
 }
 
 Mtx::Mtx(const slice& s) :
-  Base(s.nelems(), 1, DataHolder(s.nelems(), 1, NO_INIT))
+  Base(s.nelems(), 1, data_holder(s.nelems(), 1, NO_INIT))
 {
 DOTRACE("Mtx::Mtx");
   std::copy(s.begin(), s.end(), this->colmaj_begin_nc());
