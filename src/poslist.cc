@@ -2,7 +2,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Fri Mar 12 17:26:30 1999
+// written: Fri Mar 12 17:27:31 1999
 static const char vcid_poslist_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
