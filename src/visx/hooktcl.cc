@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Tue Jul 23 15:47:40 2002
+// written: Wed Jul 31 17:55:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ void* operator new(size_t bytes)
 {
   TOTAL += bytes;
   printf("%d bytes  ", (int) bytes);
-  Util::Trace::printStackTrace();
+  Util::BackTrace::current().print();
   return malloc(bytes);
 }
 
