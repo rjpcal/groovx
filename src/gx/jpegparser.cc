@@ -50,8 +50,10 @@ void Jpeg::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
 
 #include <csetjmp>
 #include <cstdio>
+extern "C"
+{
 #include <jpeglib.h>
-
+}
 #include "util/trace.h"
 
 namespace

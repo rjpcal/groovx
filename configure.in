@@ -456,7 +456,9 @@ AC_CHECK_LIB_CXX(png,
 
 AC_CHECK_LIB_CXX(jpeg,
 		 [#include <cstdio>
-		  #include <jpeglib.h>],
+		  extern "C" {
+		  #include <jpeglib.h>
+		  }],
 		 [jpeg_create_decompress(0)],
 		 [LIBS="-ljpeg $LIBS"
 		  AC_DEFINE(HAVE_LIBJPEG,1,[libjpeg present and working?])],
