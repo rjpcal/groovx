@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Oct 13 15:04:40 1999
+// written: Thu Oct 21 19:15:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,9 @@
 
 #include "demangle.h"
 #include "exptdriver.h"
+#include "reader.h"
 #include "timeutils.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -89,6 +91,18 @@ DOTRACE("TrialEvent::charCount");
   return ( demangle(typeid(*this).name()).length() + 1
 			 + gCharCount<int>(itsRequestedDelay) + 1
 			 + 1); // fudge factor
+}
+
+void TrialEvent::readFrom(Reader* reader) {
+DOTRACE("TrialEvent::readFrom");
+
+  reader->readValue("requestedDelay", itsRequestedDelay);
+}
+
+void TrialEvent::writeTo(Writer* writer) const {
+DOTRACE("TrialEvent::writeTo");
+
+  writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
 void TrialEvent::schedule() {

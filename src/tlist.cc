@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu Oct 21 13:48:35 1999
+// written: Thu Oct 21 19:12:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,9 @@
 #include <string>
 #include <GL/gl.h>
 
+#include "reader.h"
 #include "trial.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -130,6 +132,35 @@ int Tlist::charCount() const {
 			 + gCharCount<bool>(itsVisibility) + 1
 			 + PtrList<Trial>::charCount()
 			 + 5 ); // fudge factor 5
+}
+
+void Tlist::readFrom(Reader* reader) {
+DOTRACE("Tlist::readFrom");
+
+  PtrList<Trial>::readFrom(reader);
+  reader->readValue("curTrial", itsCurTrial);
+
+  reader->readValue("visibility", itsVisibility);
+
+  // If itsCurTrial is not a valid id...
+  if ( !isValidId(itsCurTrial) ) {
+	 // ...then we throw an exception, as long as we don't have the
+	 // special case where the current trial is zero because the list
+	 // is empty
+	 if ( itsCurTrial != 0 || count() != 0 ) {
+		itsVisibility = false;
+		throw IoValueError(ioTag);
+	 }
+  }
+}
+
+void Tlist::writeTo(Writer* writer) const {
+DOTRACE("Tlist::writeTo");
+
+  PtrList<Trial>::writeTo(writer);
+
+  writer->writeValue("curTrial", itsCurTrial);
+  writer->writeValue("visibility", itsVisibility);
 }
 
 //---------------------------------------------------------------------

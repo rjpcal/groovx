@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Sat Jul  3 16:34:45 1999
+// written: Thu Oct 21 19:16:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,16 @@ DOTRACE("TimingHandler::charCount");
   return (ioTag.length() + 1
 			 + TimingHdlr::charCount()
 			 + 1); // fudge factor
+}
+
+void TimingHandler::readFrom(Reader* reader) {
+DOTRACE("TimingHandler::readFrom");
+  TimingHdlr::readFrom(reader);
+}
+
+void TimingHandler::writeTo(Writer* writer) const {
+DOTRACE("TimingHandler::writeTo");
+  TimingHdlr::writeTo(writer);
 }
 
 int TimingHandler::getAbortWait() const { 

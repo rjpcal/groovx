@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Oct  5 16:32:07 1999
+// written: Thu Oct 21 19:10:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,10 @@
 #include "timinghdlr.h"
 
 #include "iomgr.h"
+#include "reader.h"
 #include "trialevent.h"
 #include "timeutils.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -97,7 +99,7 @@ DOTRACE("TimingHdlr::deserialize");
 
   const int SIZE_SANITY_CHECK = 1000;
 
-  itsImmediateEvents.clear();
+  deleteAll(itsImmediateEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
@@ -108,7 +110,7 @@ DOTRACE("TimingHdlr::deserialize");
 	 itsImmediateEvents[i] = e;
   }
 
-  itsStartEvents.clear();
+  deleteAll(itsStartEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
@@ -119,7 +121,7 @@ DOTRACE("TimingHdlr::deserialize");
 	 itsStartEvents[i] = e;
   }
 
-  itsResponseEvents.clear();
+  deleteAll(itsResponseEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
@@ -130,7 +132,7 @@ DOTRACE("TimingHdlr::deserialize");
 	 itsResponseEvents[i] = e;
   }
 
-  itsAbortEvents.clear();
+  deleteAll(itsAbortEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
@@ -155,6 +157,44 @@ DOTRACE("TimingHdlr::charCount");
   }
 
   return 256; 
+}
+
+void TimingHdlr::readFrom(Reader* reader) {
+DOTRACE("TimingHdlr::readFrom");
+  reader->readValue("autosavePeriod", itsAutosavePeriod);
+
+  deleteAll(itsImmediateEvents);
+  reader->readObjectSeq("immediateEvents",
+								back_inserter(itsImmediateEvents), (TrialEvent*)0);
+
+  deleteAll(itsStartEvents);
+  reader->readObjectSeq("startEvents",
+								back_inserter(itsStartEvents), (TrialEvent*)0);
+
+  deleteAll(itsResponseEvents);
+  reader->readObjectSeq("responseEvents",
+								back_inserter(itsResponseEvents), (TrialEvent*)0);
+
+  deleteAll(itsAbortEvents);
+  reader->readObjectSeq("abortEvents",
+								back_inserter(itsAbortEvents), (TrialEvent*)0);
+}
+
+void TimingHdlr::writeTo(Writer* writer) const {
+DOTRACE("TimingHdlr::writeTo");
+  writer->writeValue("autosavePeriod", itsAutosavePeriod);
+
+  writer->writeObjectSeq("immediateEvents",
+								 itsImmediateEvents.begin(), itsImmediateEvents.end());
+
+  writer->writeObjectSeq("startEvents",
+								 itsStartEvents.begin(), itsStartEvents.end());
+
+  writer->writeObjectSeq("responseEvents",
+								 itsResponseEvents.begin(), itsResponseEvents.end());
+
+  writer->writeObjectSeq("abortEvents",
+								 itsAbortEvents.begin(), itsAbortEvents.end());
 }
 
 ///////////////
