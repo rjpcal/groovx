@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Feb  7 14:51:32 2002
+// written: Thu Feb  7 15:48:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,10 +99,10 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Util::Prof::Prof(const char* s) :
-  funcName(s), callCount(0), totalTime()
+  itsFuncName(s), itsCallCount(0), itsTotalTime()
 {
-  totalTime.tv_sec = 0;
-  totalTime.tv_usec = 0;
+  itsTotalTime.tv_sec = 0;
+  itsTotalTime.tv_usec = 0;
 
   allProfs().push_back(this);
 }
@@ -122,44 +122,55 @@ Util::Prof::~Prof()
     }
 }
 
-int Util::Prof::count() const { return callCount; }
+void Util::Prof::reset()
+{
+  itsCallCount = 0;
+  itsTotalTime.tv_sec = 0;
+  itsTotalTime.tv_usec = 0;
+}
+
+int Util::Prof::count() const { return itsCallCount; }
 
 void Util::Prof::add(timeval t)
 {
-  totalTime.tv_sec += t.tv_sec;
-  totalTime.tv_usec += t.tv_usec;
+  itsTotalTime.tv_sec += t.tv_sec;
+  itsTotalTime.tv_usec += t.tv_usec;
   // avoid overflow
-  while (totalTime.tv_usec >= 1000000)
+  while (itsTotalTime.tv_usec >= 1000000)
     {
-      ++(totalTime.tv_sec);
-      totalTime.tv_usec -= 1000000;
+      ++(itsTotalTime.tv_sec);
+      itsTotalTime.tv_usec -= 1000000;
     }
   // avoid underflow
-  while (totalTime.tv_usec <= -1000000)
+  while (itsTotalTime.tv_usec <= -1000000)
     {
-      --(totalTime.tv_sec);
-      totalTime.tv_usec += 1000000;
+      --(itsTotalTime.tv_sec);
+      itsTotalTime.tv_usec += 1000000;
     }
-  ++callCount;
+  ++itsCallCount;
 }
 
 const char* Util::Prof::name() const
 {
-  return funcName;
+  return itsFuncName;
+}
+
+double Util::Prof::totalTime() const
+{
+  return (double(itsTotalTime.tv_sec)*1000000 + itsTotalTime.tv_usec);
 }
 
 double Util::Prof::avgTime() const
 {
-  return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
-    / callCount;
+  return itsCallCount > 0 ? (totalTime() / itsCallCount) : 0.0;
 }
 
 void Util::Prof::printProfData(ostream& os) const
 {
   os << setw(14) << long(avgTime()) << '\t'
      << setw(5) << count() << '\t'
-     << setw(14) << long(avgTime()) * count() << '\t'
-     << funcName << endl;
+     << setw(14) << long(totalTime()) << '\t'
+     << itsFuncName << endl;
 }
 
 void Util::Prof::printAtExit(bool yes_or_no)
@@ -169,16 +180,22 @@ void Util::Prof::printAtExit(bool yes_or_no)
 
 void Util::Prof::resetAllProfData()
 {
-  for (unsigned int i = 0; i < allProfs().size(); ++i)
-    {
-      allProfs()[i]->callCount = 0;
-      allProfs()[i]->totalTime.tv_sec = 0;
-      allProfs()[i]->totalTime.tv_usec = 0;
-    }
+  std::for_each(allProfs().begin(), allProfs().end(),
+                std::mem_fun(&Util::Prof::reset));
 }
 
-void Util::Prof::printAllProfData(ostream& os)
+namespace
 {
+  bool compareTotalTime(Util::Prof* p1, Util::Prof* p2)
+  {
+    return p1->totalTime() < p2->totalTime();
+  }
+}
+
+void Util::Prof::printAllProfData(STD_IO::ostream& os)
+{
+  std::stable_sort(allProfs().begin(), allProfs().end(), compareTotalTime);
+
   for (unsigned int i = 0; i < allProfs().size(); ++i)
     {
       allProfs()[i]->printProfData(os);
