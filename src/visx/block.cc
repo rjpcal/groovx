@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 15:53:06 2002
+// written: Thu Dec  5 16:01:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -325,7 +325,9 @@ DOTRACE("Block::vxChildFinished");
   // still have additional elements to run...
   if ( !isComplete() )
     {
-      vxRun(rep->getParent());
+      Util::log( status() );
+
+      rep->currentElement()->vxRun(*this);
     }
   else
     {
