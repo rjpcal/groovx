@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Jul 21 15:19:33 1999
+// written: Fri Jul 23 12:35:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,10 @@
 #include "trial.h"
 #include "timeutils.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
+#define LOCAL_DEBUG
+#define PICKY_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
@@ -208,7 +210,7 @@ DOTRACE("Block::currentTrialType");
 int Block::prevResponse() const {
 DOTRACE("Block::prevResponse");
 
-#if 0
+#ifdef PICKY_DEBUG
   DebugEval(itsCurTrialSeqIdx);
   DebugEvalNL(itsTrialSequence.size());
 #endif
@@ -222,12 +224,22 @@ DOTRACE("Block::prevResponse");
 bool Block::isComplete() const {
 DOTRACE("Block::isComplete");
 
-#if 0
+#ifdef PICKY_DEBUG
   DebugEval(itsCurTrialSeqIdx);
   DebugEvalNL(itsTrialSequence.size());
 #endif
 
-  return (itsCurTrialSeqIdx >= itsTrialSequence.size());
+  // This is 'tricky'. The problem is that itsCurTrialSeqIdx may
+  // temporarily be negative in between an abortTrial and the
+  // corresponding endTrial. This means that we can't only compare
+  // itsCurTrialSeqIdx with itsTrialSequence.size(), because the
+  // former is signed and the latter is unsigned, forcing a
+  // 'promotion' to unsigned of the former... this makes it a huge
+  // positive number if it was actually negative. Thus, we must also
+  // check that itsCurTrialSeqIdx is actually non-negative before
+  // returning 'true' from this function.
+  return ((itsCurTrialSeqIdx >= itsTrialSequence.size()) &&
+			 (itsCurTrialSeqIdx >= 0));
 }
 
 const char* Block::trialDescription() const {
