@@ -13,6 +13,10 @@
 #ifndef FIELDS_H_DEFINED
 #define FIELDS_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
 #endif
@@ -40,6 +44,26 @@ namespace IO
 class Field;
 class FieldInfo;
 class FieldContainer;
+
+template <class T>
+class BoundsChecker {
+private:
+  BoundsChecker(const T& min, const T& max) : itsMin(min), itsMax(max) {}
+
+public:
+  const T itsMin;
+  const T itsMax;
+
+  static shared_ptr<BoundsChecker<T> > make(const T& min, const T& max)
+  {
+	 return shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max));
+  }
+
+  T limit(const T& raw)
+  {
+	 return Util::max(itsMin, Util::min(itsMax, raw));
+  }
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -94,37 +118,37 @@ namespace
   template <class C, class T>
   T& dereference(C& obj, T C::* memptr)
   {
-	 return (obj.*memptr);
+    return (obj.*memptr);
   }
 
   template <class C, class T>
   const T& dereference(const C& obj, T C::* memptr)
   {
-	 return (obj.*memptr);
-  }  
+    return (obj.*memptr);
+  }
 
   template <class C, class T>
   T& dereference(C& obj, T* C::* memptr)
   {
-	 return *(obj.*memptr);
+    return *(obj.*memptr);
   }
 
   template <class C, class T>
   const T& dereference(const C& obj, T* C::* memptr)
   {
-	 return *(obj.*memptr);
-  }  
+    return *(obj.*memptr);
+  }
 
   template <class T>
   struct Deref
   {
-	 typedef T Type;
+    typedef T Type;
   };
 
   template <class T>
   struct Deref<T*>
   {
-	 typedef T Type;
+    typedef T Type;
   };
 }
 
@@ -133,28 +157,31 @@ namespace
 /** DataAttrib */
 template <class C, class T>
 class DataAttrib : public FieldMemberPtr {
-  T C::* itsDataMember;
-
-  DataAttrib& operator=(const DataAttrib&);
-  DataAttrib(const DataAttrib&);
-
 public:
-  DataAttrib(T C::* memptr) : itsDataMember(memptr) {}
+
+  typedef Deref<T>::Type DerefT;
+
+  DataAttrib(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
+
+  DataAttrib(T C::* memptr, shared_ptr<BoundsChecker<DerefT> > checker) :
+	 itsDataMember(memptr), itsChecker(checker) {}
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
+	 DerefT raw = new_val.get(Util::TypeCue<DerefT>());
+
     dereference(cobj, itsDataMember) =
-		new_val.get(Util::TypeCue<Deref<T>::Type >());
+		itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
   }
 
   virtual shared_ptr<Value> get(const FieldContainer* obj) const
   {
     const C& cobj = dynamic_cast<const C&>(*obj);
 
-    return shared_ptr<Value>(new TValue<Deref<T>::Type >
-									  (dereference(cobj, itsDataMember)));
+    return shared_ptr<Value>(new TValue<DerefT>
+                             (dereference(cobj, itsDataMember)));
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -172,6 +199,13 @@ public:
 
     writer->writeValue(name.c_str(), dereference(cobj, itsDataMember));
   }
+
+private:
+  DataAttrib& operator=(const DataAttrib&);
+  DataAttrib(const DataAttrib&);
+
+  T C::* itsDataMember;
+  shared_ptr<BoundsChecker<DerefT> > itsChecker;
 };
 
 /** ReadWriteAttrib */
@@ -242,10 +276,22 @@ private:
   bool itsStartsNewGroup;
 
 public:
+
+  struct BoundsCheck {};
+
   template <class C, class T>
   static shared_ptr<FieldMemberPtr> makeMemPtr(T C::* member_ptr)
   {
     return shared_ptr<FieldMemberPtr>(new DataAttrib<C,T>(member_ptr));
+  }
+
+  template <class C, class T>
+  static shared_ptr<FieldMemberPtr> makeMemPtr(T C::* member_ptr,
+                                               const T& min, const T& max)
+  {
+    return shared_ptr<FieldMemberPtr>
+		(new DataAttrib<C,T>(member_ptr,
+									BoundsChecker<Deref<T>::Type>::make(min, max)));
   }
 
   template <class C, class T>
@@ -282,6 +328,19 @@ public:
             bool new_group=false) :
     itsName(name),
     itsMemberPtr(makeMemPtr(member_ptr_init)),
+    itsDefaultValue(new TValue<T>(def)),
+    itsMin(new TValue<T>(min)),
+    itsMax(new TValue<T>(max)),
+    itsRes(new TValue<T>(res)),
+    itsStartsNewGroup(new_group)
+  {}
+
+  template <class T, class M>
+  FieldInfo(const fstring& name, BoundsCheck, M member_ptr_init,
+            const T& def, const T& min, const T& max, const T& res,
+            bool new_group=false) :
+    itsName(name),
+    itsMemberPtr(makeMemPtr(member_ptr_init, min, max)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
@@ -343,40 +402,6 @@ public:
 
   virtual shared_ptr<Value> value() const = 0;
   void setValue(const Value& new_val);
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * TBoundedField template implementation of Field.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TBoundedField : public Field {
-protected:
-  virtual void doSetValue(const Value& new_val);
-
-  TBoundedField(const TBoundedField&); // not implemented
-  TBoundedField& operator=(const TBoundedField&); // not implemented
-
-public:
-  TBoundedField(const T& val, const T& min, const T& max);
-
-  virtual ~TBoundedField();
-
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
-  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
-
-  virtual shared_ptr<Value> value() const;
-
-  const T& operator()() const { return itsVal; }
-
-private:
-  T itsVal;
-  const T itsMin;
-  const T itsMax;
 };
 
 ///////////////////////////////////////////////////////////////////////

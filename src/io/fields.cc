@@ -37,51 +37,6 @@ void Field::setValue(const Value& new_val)
 }
 
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// TBoundedField member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-TBoundedField<T>::TBoundedField(const T& val, const T& min, const T& max) :
-    Field(),
-    itsVal(val),
-    itsMin(min),
-    itsMax(max)
-{}
-
-template <class T>
-TBoundedField<T>::~TBoundedField() {}
-
-template <class T>
-void TBoundedField<T>::readValueFrom(IO::Reader* reader,
-                                     const fstring& name)
-{ reader->readValue(name, itsVal); }
-
-template <class T>
-void TBoundedField<T>::writeValueTo(IO::Writer* writer,
-                                    const fstring& name) const
-{ writer->writeValue(name.c_str(), itsVal); }
-
-template <class T>
-shared_ptr<Value> TBoundedField<T>::value() const
-{ return shared_ptr<Value>(new TValue<T>(itsVal)); }
-
-template <class T>
-void TBoundedField<T>::doSetValue(const Value& new_val) {
-  T temp = new_val.get(Util::TypeCue<T>());
-  if (temp >= itsMin && temp <= itsMax)
-    itsVal = temp;
-}
-
-template class TBoundedField<int>;
-template class TBoundedField<bool>;
-template class TBoundedField<double>;
-
-
-
 ///////////////////////////////////////////////////////////////////////
 //
 // FieldMap
