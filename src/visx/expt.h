@@ -3,7 +3,7 @@
 // expt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Wed Jun  9 12:52:28 1999
+// written: Wed Jun  9 16:14:10 1999
 // $Id$
 //
 // This file defines the class Expt. Expt holds a sequence of trial
@@ -33,6 +33,7 @@
 #endif
 
 struct timeval;
+class Trial;
 
 ///////////////////////////////////////////////////////////////////////
 // Expt class
@@ -60,6 +61,8 @@ public:
   ///////////////
   // accessors //
   ///////////////
+  
+  Trial& curTrial() const;
 
   virtual int numTrials() const;
   virtual int numCompleted() const;
