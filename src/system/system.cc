@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Thu May 10 12:04:43 2001
+// written: Thu Jul 19 14:53:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,12 @@
 #include "system/system.h"
 
 #include "util/arrays.h"
+#include "util/error.h"
 
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -26,8 +29,17 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   System* theSingleton = 0;
+
+  void throwErrno(const char* where)
+  {
+    ErrorWithMsg err("in \"");
+    err.appendMsg(where, "\": ");
+    err.appendMsg(::strerror(errno));
+    throw err;
+  }
 }
 
 System::System () {
@@ -37,7 +49,7 @@ DOTRACE("System::System ");
 System& System::theSystem() {
 DOTRACE("System::theSystem");
   if (theSingleton == 0) {
-	 theSingleton = new System;
+    theSingleton = new System;
   }
   return *theSingleton;
 }
@@ -56,19 +68,26 @@ const System::mode_t System::IROTH;
 const System::mode_t System::IWOTH;
 const System::mode_t System::IXOTH;
 
-int System::chmod(const char* path, mode_t mode) {
+void System::chmod(const char* path, mode_t mode)
+{
 DOTRACE("System::chmod");
-  return ::chmod(path, mode);
+
+  if ( ::chmod(path, mode) != 0 )
+    throwErrno("System::chmod");
 }
 
-int System::rename(const char* oldpath, const char* newpath) {
+void System::rename(const char* oldpath, const char* newpath) {
 DOTRACE("System::rename");
-  return ::rename(oldpath, newpath);
+
+  if ( ::rename(oldpath, newpath) != 0 )
+    throwErrno("System::rename");
 }
 
-int System::remove(const char* pathname) {
+void System::remove(const char* pathname) {
 DOTRACE("System::remove");
-  return ::remove(pathname);
+
+  if ( ::remove(pathname) != 0 )
+    throwErrno("System::remove");
 }
 
 const char* System::getcwd() {
@@ -77,7 +96,7 @@ DOTRACE("System::getcwd");
   static dynamic_block<char> buf(INIT_SIZE);
 
   while ( !::getcwd(&buf[0], buf.size()) ) {
-	 buf.resize(buf.size() * 2);
+    buf.resize(buf.size() * 2);
   }
 
   return &buf[0];
@@ -85,7 +104,7 @@ DOTRACE("System::getcwd");
 
 const char* System::getenv(const char* environment_variable) {
 DOTRACE("System::getenv");
-  return ::getenv(environment_variable); 
+  return ::getenv(environment_variable);
 }
 
 void System::sleep(unsigned int seconds) {
