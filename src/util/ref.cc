@@ -36,7 +36,7 @@
 #include "util/objdb.h"
 #include "util/demangle.h"
 
-bool Util::RefHelper::isValidId(Util::UID id)
+bool Util::RefHelper::isValidId(Util::UID id) throw()
 {
   return ObjDb::theDb().isValidId(id);
 }

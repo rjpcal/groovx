@@ -68,7 +68,7 @@ public:
   // Check whether the iterator points to a valid spot in the map, AND
   // that it points to a still-living object. If the object has died,
   // then we erase the iterator.
-  bool isValidItr(MapType::iterator itr) const
+  bool isValidItr(MapType::iterator itr) const throw()
   {
     if (itr == itsPtrMap.end()) return false;
 
@@ -81,14 +81,14 @@ public:
     return true;
   }
 
-  int count() const
-    { return itsPtrMap.size(); }
-
-  bool isValidId(Util::UID id) const
+  bool isValidId(Util::UID id) const throw()
     {
       MapType::iterator itr = itsPtrMap.find(id);
       return isValidItr(itr);
     }
+
+  int count() const throw()
+    { return itsPtrMap.size(); }
 
   void release(Util::UID id)
     {
@@ -288,14 +288,14 @@ DOTRACE("ObjDb::~ObjDb");
   delete rep;
 }
 
-int ObjDb::count() const
+int ObjDb::count() const throw()
 {
 DOTRACE("ObjDb::count");
 
   return rep->count();
 }
 
-bool ObjDb::isValidId(Util::UID id) const
+bool ObjDb::isValidId(Util::UID id) const throw()
 {
 DOTRACE("ObjDb::isValidId");
   return rep->isValidId(id);

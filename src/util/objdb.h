@@ -123,7 +123,7 @@ public:
   //
 
   /// Returns the number of valid objects in the database.
-  int count() const;
+  int count() const throw();
 
   /// Returns true if 'id' is a valid uid.
   bool isValidId(Util::UID id) const throw();
