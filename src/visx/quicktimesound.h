@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 19 07:38:09 2003
-// written: Mon May 19 08:10:29 2003
+// written: Mon May 19 08:37:48 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,14 +17,71 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/pointers.h"
+#include "util/strings.h"
+
 #include <Carbon/Carbon.h>
 #include <QuickTime/Movies.h>
-#include <fstream>
-
-#include "util/strings.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
+
+class QuickTimeSoundRep
+{
+public:
+  QuickTimeSoundRep(const char* filename)
+  {
+    FSRef ref;
+
+    OSErr err = FSPathMakeRef(filename, &ref, 0);
+
+    if (noErr != err)
+      throw Util::Error(fstring("error in FSPathMakeRef: ", err));
+
+    FSSpec spec;
+
+    err = FSGetCatalogInfo(&ref, kFSCatInfoNone,
+                           NULL, NULL, &spec, NULL);
+
+    if (noErr != err)
+      throw Util::Error(fstring("error in FSGetCatalogInfo: ", err));
+
+    err = OpenMovieFile(&spec, &itsFileRefNum, fsRdPerm);
+
+    if (noErr != err)
+      throw Util::Error(fstring("error in OpenMovieFile: ", err));
+
+    err = NewMovieFromFile(&itsMovie, itsFileRefNum, 0, nil,
+                           newMovieActive, nil);
+
+    if (noErr != err)
+      {
+        CloseMovieFile(itsFileRefNum);
+        throw Util::Error(fstring("error in NewMovieFromFile: ", err));
+      }
+  }
+
+  ~QuickTimeSoundRep()
+  {
+    DisposeMovie(itsMovie);
+    CloseMovieFile(itsFileRefNum);
+  }
+
+  void play()
+  {
+    GoToBeginningOfMovie(itsMovie);
+
+    StartMovie(itsMovie);
+
+    while (!IsMovieDone (itsMovie))
+      {
+        MoviesTask(itsMovie, 0);
+      }
+  }
+
+  short itsFileRefNum;
+  Movie itsMovie;
+};
 
 /// QuickTimeSound plays sound files synchronously using Apple's QuickTime.
 class QuickTimeSound : public Sound
@@ -50,14 +107,9 @@ public:
 
   virtual fstring objTypename() const { return "Sound"; }
 
-  /// Swap contents with a different QuickTimeSound object.
-  void swap(QuickTimeSound& other)
-  {
-    itsFilename.swap(other.itsFilename);
-  }
-
 private:
   fstring itsFilename;
+  shared_ptr<QuickTimeSoundRep> itsRep;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +119,8 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 QuickTimeSound::QuickTimeSound(const char* filename) :
-  itsFilename("")
+  itsFilename(""),
+  itsRep(0)
 {
 DOTRACE("QuickTimeSound::QuickTimeSound");
   setFile(filename);
@@ -98,53 +151,8 @@ DOTRACE("QuickTimeSound::writeTo");
 void QuickTimeSound::play()
 {
 DOTRACE("QuickTimeSound::play");
-  FSRef ref;
-
-  OSErr err = FSPathMakeRef(itsFilename.c_str(), &ref, 0);
-
-  if (noErr != err)
-    throw Util::Error(fstring("error in FSPathMakeRef: ", err));
-
-  FSSpec theSpec;
-
-  err = FSGetCatalogInfo(&ref, kFSCatInfoNone,
-                         NULL, NULL, &theSpec, NULL);
-
-  if (noErr != err)
-    throw Util::Error(fstring("error in FSGetCatalogInfo: ", err));
-
-  short fileRefNum;
-
-  err = OpenMovieFile(&theSpec, &fileRefNum, fsRdPerm);
-
-  if (noErr != err)
-    throw Util::Error(fstring("error in OpenMovieFile: ", err));
-
-  Movie theSound;
-
-  err = NewMovieFromFile(&theSound, fileRefNum, 0, nil,
-                         newMovieActive, nil);
-
-  if (noErr != err)
-    throw Util::Error(fstring("error in NewMovieFromFile: ", err));
-
-  GoToBeginningOfMovie(theSound);
-
-  if (noErr != err)
-    throw Util::Error(fstring("error in GoToBeginningOfMovie: ", err));
-
-  StartMovie(theSound);
-
-  if (noErr == err)
-    {
-      while (!IsMovieDone (theSound))
-        {
-          MoviesTask(theSound, 0);
-        }
-    }
-
-  DisposeMovie(theSound);
-  CloseMovieFile(fileRefNum);
+  if (itsRep.get() != 0)
+    itsRep->play();
 }
 
 void QuickTimeSound::setFile(const char* filename)
@@ -152,13 +160,7 @@ void QuickTimeSound::setFile(const char* filename)
 DOTRACE("QuickTimeSound::setFile");
   if (filename != 0 && filename[0] != '\0')
     {
-      STD_IO::ifstream ifs(filename);
-      if (ifs.fail())
-        {
-          throw IO::FilenameError(filename);
-        }
-      ifs.close();
-
+      itsRep.reset(new QuickTimeSoundRep(filename));
       itsFilename = filename;
     }
 }
