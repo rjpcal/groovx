@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:05:52 1999
-// written: Tue Sep 19 17:14:23 2000
+// written: Tue Sep 19 17:36:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,9 @@
 #include "system/system.h"
 #include "util/strings.h"
 
+#define NO_TRACE
 #include "util/trace.h"
+#include "util/debug.h"
 
 namespace {
   Application* theSingleton = 0;
@@ -34,13 +36,21 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(const char* library_dir) : itsLibraryDir(library_dir) {}
+  Impl(const char* library_env_var) :
+	 itsLibraryDir(library_env_var == 0 ?
+						0 : System::theSystem().getenv(library_env_var))
+  {
+	 DebugEvalNL((void*)library_env_var);
+	 DebugEvalNL(library_env_var);
+	 DebugEvalNL(itsLibraryDir);
+	 DebugEvalNL(itsLibraryDir.c_str());
+  }
 
   fixed_string itsLibraryDir;
 };
 
 Application::Application(const char* library_env_var) :
-  itsImpl(new Impl(System::theSystem().getenv(library_env_var)))
+  itsImpl(new Impl(library_env_var))
 {
 DOTRACE("Application::Application");
 }
