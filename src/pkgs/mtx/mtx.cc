@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Apr  6 12:46:31 2001
+// written: Fri Apr  6 16:51:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "libmatlb.h"
 
 #include "trace.h"
+#include "debug.h"
 
 namespace {
   inline void domemswap(double* buf1, double* buf2,
@@ -46,6 +47,62 @@ namespace {
 		}
   }
 }
+
+namespace RC
+{
+  void raiseException(const char* msg);
+}
+
+void RC::raiseException(const char* msg)
+{
+  DebugPrintNL(msg);
+  ErrorWithMsg err("Range check: ");
+  err.appendMsg(msg);
+  throw err;
+}
+
+void RC::less(const void* x, const void* lim)
+{
+  if (x<lim) ; // OK
+  else raiseException("less: pointer range error");
+}
+
+void RC::leq(const void* x, const void* lim)
+{
+  if (x<=lim) ; // OK
+  else raiseException("leq: pointer range error");
+}
+
+void RC::inHalfOpen(const void* x, const void* llim, const void* ulim)
+{
+  if (x>=llim && x<ulim) ; // OK
+  else raiseException("inHalfOpen: pointer range error");
+}
+
+void RC::less(int x, int lim)
+{
+  if (x<lim) ; // OK
+  else raiseException("less: integer range error");
+}
+
+void RC::leq(int x, int lim)
+{
+  if (x<=lim) ; // OK
+  else raiseException("leq: integer range error");
+}
+
+void RC::inHalfOpen(int x, int llim, int ulim)
+{
+  if (x>=llim && x<ulim) ; // OK
+  else raiseException("inHalfOpen: integer range error");
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Slice member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 void Slice::print() const
 {
@@ -81,6 +138,8 @@ Slice& Slice::operator=(const Mtx& other)
   return *this;
 }
 
+
+
 MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
   data(0), stride(0), stop(0)
 {
@@ -92,6 +151,13 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
   stride = s;
   stop = data + s*n;
 }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// MtxImpl member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
@@ -122,6 +188,9 @@ void Mtx::MtxImpl::reshape(int mr, int nc)
 
 void Mtx::MtxImpl::selectRowRange(int r, int nr)
 {
+  if (r < 0 || nr < 0)
+    throw ErrorWithMsg("attempted to select rows with negative indices");
+
   if ((r+nr) > mrows_)
     throw ErrorWithMsg("attempted to index more rows than are available");
 
@@ -131,6 +200,9 @@ void Mtx::MtxImpl::selectRowRange(int r, int nr)
 
 void Mtx::MtxImpl::selectColumnRange(int c, int nc)
 {
+  if (c < 0 || nc < 0)
+    throw ErrorWithMsg("attempted to select rows with negative indices");
+
   if ((c+nc) > ncols_)
     throw ErrorWithMsg("attempted to index more columns than are available");
 
@@ -140,10 +212,10 @@ void Mtx::MtxImpl::selectColumnRange(int c, int nc)
 
 void Mtx::MtxImpl::makeUnique()
 {
-  if ( !storage_->isUnique() )
+  if ( !datablock_->isUnique() )
 	 {
 		DOTRACE("Mtx::MtxImpl::makeUnique");
-  		DataBlock::makeUnique(storage_);
+  		DataBlock::makeUnique(datablock_);
 	 }
 }
 
@@ -182,11 +254,14 @@ mxArray* Mtx::makeMxArray() const
 
 void Mtx::resize(int mrowsNew, int ncolsNew)
 {
-  if (mrows() == mrowsNew && ncols() == ncolsNew) return;
-
-  MtxImpl newImpl(mrowsNew, ncolsNew);
-
-  itsImpl.swap(newImpl);
+DOTRACE("Mtx::resize");
+  if (mrows() == mrowsNew && ncols() == ncolsNew)
+	 return;
+  else
+	 {
+		MtxImpl newImpl(mrowsNew, ncolsNew);
+		this->itsImpl.swap(newImpl);
+	 }
 }
 
 Mtx Mtx::extractStructField(mxArray* structArray, const char* fieldName,
