@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:49:28 2001
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Feb 26 08:11:02 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,7 @@ namespace
 
     void print(const timeval* now) const
     {
+      DOTRACE("ScopeInfo::print");
       std::cerr << itsName << " @ ";
 
       std::cerr.setf(std::ios::showpoint | std::ios::fixed);
@@ -58,22 +59,25 @@ namespace
     std::for_each(scopes.begin(), scopes.end(),
                   std::bind2nd(std::mem_fun_ref(&ScopeInfo::print), &now));
 
-    std::cerr << msg << '\n';
+    std::cerr << msg << std::endl;
   }
 }
 
 void Util::Log::reset()
 {
+DOTRACE("Util::Log::reset");
   scopes.clear();
 }
 
 void Util::Log::addScope(const fstring& name)
 {
+DOTRACE("Util::Log::addScope");
   scopes.push_back(ScopeInfo(name));
 }
 
 void Util::Log::removeScope(const fstring& name)
 {
+DOTRACE("Util::Log::removeScope");
   for (int i = int(scopes.size()) - 1; i > 0; --i)
     {
       if (scopes.at(i).itsName == name)
@@ -85,11 +89,13 @@ void Util::Log::removeScope(const fstring& name)
 
 void Util::log(const char* msg)
 {
+DOTRACE("Util::log");
   logImpl(msg);
 }
 
 void Util::log(const fstring& msg)
 {
+DOTRACE("Util::log");
   logImpl(msg);
 }
 
