@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Sun Jul 22 15:54:39 2001
+// written: Mon Aug  6 06:54:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,11 +28,11 @@
 #include "util/error.h"
 #include "util/objdb.h"
 #include "util/ref.h"
+#include "util/tostring.h"
 
 #include <cmath>
 #include <iostream.h>
 #include <fstream.h>
-#include <strstream.h>
 #include <iomanip.h>
 
 #include "util/trace.h"
@@ -86,12 +86,8 @@ DOTRACE("TlistUtils::createPreview");
       obj->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
       obj->setMaxDimension(0.8);
 
-      char id_string[32];
-      ostrstream ost(id_string, 31);
-      ost << objids[i] << '\0';
-
       Ref<Gtext> label(Gtext::make());
-      label->setText(id_string);
+      label->setText(Util::Convert<Util::UID>::toString(objids[i])));
       label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
       label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
       label->setHeight(0.1);
