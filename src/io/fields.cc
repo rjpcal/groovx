@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Thu Aug  9 11:52:51 2001
+// written: Tue Aug 14 18:52:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -280,21 +280,31 @@ FieldContainer::~FieldContainer() {}
 void FieldContainer::setFieldMap(const FieldMap& fields)
 { itsFieldMap = &fields; }
 
-Field& FieldContainer::field(const fstring& name)
-{ return itsFieldMap->info(name).dereference(this); }
+shared_ptr<Value> FieldContainer::getField(const fstring& name) const
+{
+  return itsFieldMap->info(name).dereference(
+            const_cast<FieldContainer*>(this)).value();
+}
 
-Field& FieldContainer::field(const FieldInfo& pinfo)
-{ return pinfo.dereference(this); }
+shared_ptr<Value> FieldContainer::getField(const FieldInfo& pinfo) const
+{
+  return pinfo.dereference(
+            const_cast<FieldContainer*>(this)).value();
+}
 
-const Field& FieldContainer::field(const fstring& name) const
-{ return itsFieldMap->info(name).dereference(
-                const_cast<FieldContainer*>(this)); }
+void FieldContainer::setField(const fstring& name, const Value& new_val)
+{
+  itsFieldMap->info(name).dereference(this).setValue(new_val, *this);
+}
 
-const Field& FieldContainer::field(const FieldInfo& pinfo) const
-{ return pinfo.dereference(const_cast<FieldContainer*>(this)); }
+void FieldContainer::setField(const FieldInfo& pinfo, const Value& new_val)
+{
+  pinfo.dereference(this).setValue(new_val, *this);
+}
 
 void FieldContainer::readFieldsFrom(IO::Reader* reader,
-                                    const FieldMap& fields) {
+                                    const FieldMap& fields)
+{
 DOTRACE("FieldContainer::readFieldsFrom");
   for (FieldMap::IoIterator
          itr = fields.ioBegin(),
@@ -302,14 +312,15 @@ DOTRACE("FieldContainer::readFieldsFrom");
        itr != end;
        ++itr)
     {
-      field(*itr).readValueFrom(reader, itr->name());
+      itr->dereference(this).readValueFrom(reader, itr->name());
     }
 
   sendStateChangeMsg();
 }
 
 void FieldContainer::writeFieldsTo(IO::Writer* writer,
-                                   const FieldMap& fields) const {
+                                   const FieldMap& fields) const
+{
 DOTRACE("FieldContainer::writeFieldsTo");
   for (FieldMap::IoIterator
          itr = fields.ioBegin(),
@@ -317,7 +328,8 @@ DOTRACE("FieldContainer::writeFieldsTo");
        itr != end;
        ++itr)
     {
-      field(*itr).writeValueTo(writer, itr->name());
+      itr->dereference(const_cast<FieldContainer*>(this))
+        .writeValueTo(writer, itr->name());
     }
 }
 

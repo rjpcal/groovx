@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Thu Aug  9 13:14:52 2001
+// written: Tue Aug 14 18:53:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -345,11 +345,11 @@ public:
 
   void setFieldMap(const FieldMap& fields);
 
-  Field& field(const fstring& name);
-  Field& field(const FieldInfo& pinfo);
+  void setField(const fstring& name, const Value& new_val);
+  void setField(const FieldInfo& pinfo, const Value& new_val);
 
-  const Field& field(const fstring& name) const;
-  const Field& field(const FieldInfo& pinfo) const;
+  shared_ptr<Value> getField(const fstring& name) const;
+  shared_ptr<Value> getField(const FieldInfo& pinfo) const;
 
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;
