@@ -42,7 +42,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 namespace
 {
@@ -200,7 +200,6 @@ DOTRACE("Tcl::Interp::eval");
       break;
     case IGNORE_ERROR:
       return false;
-      break;
     }
 
   return false; // to indicate error

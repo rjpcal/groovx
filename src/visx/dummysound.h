@@ -38,7 +38,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 /// DummySoundRep is a stub implementation of the SoundRep interface.
 class DummySoundRep : public SoundRep

@@ -53,7 +53,7 @@
 #include <X11/Xlib.h>
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 #include "util/trace.h"
 
 struct GxRasterFont::Impl

@@ -38,7 +38,7 @@ namespace Util
 {
   class Object;
   template <class T> class SoftRef;
-};
+}
 
 /**
  *

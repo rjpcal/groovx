@@ -40,7 +40,7 @@ namespace Util
 {
   template <class T> class FwdIter;
   template <class T> class Ref;
-};
+}
 
 class GxNode;
 class Response;

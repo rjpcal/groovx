@@ -55,7 +55,7 @@
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 Util::Tracer ExptDriver::tracer;
 
@@ -68,7 +68,7 @@ Util::Tracer ExptDriver::tracer;
 namespace
 {
   const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 4;
-};
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -38,7 +38,7 @@
 namespace Util
 {
   template <class T> class Ref;
-};
+}
 
 /// SoundRep is an abstract class encapsulating platform-dependent sound APIs.
 class SoundRep

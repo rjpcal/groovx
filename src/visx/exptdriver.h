@@ -50,7 +50,7 @@ namespace Util
   template <class T> class FwdIter;
   template <class T> class Ref;
   template <class T> class SoftRef;
-};
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**

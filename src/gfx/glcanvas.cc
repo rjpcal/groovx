@@ -52,7 +52,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 using namespace Gfx;
 

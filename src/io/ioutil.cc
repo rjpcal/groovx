@@ -49,7 +49,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 fstring IO::stringify(Util::Ref<IO::IoObject> obj)
 {

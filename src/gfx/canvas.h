@@ -129,16 +129,16 @@ public:
   public:
     /** Save the state of \a canvas. Its state will be restored to the
         saved state when the \c MatrixSaver is destroyed. */
-    Saver(Canvas& canvas) :
+    Saver(Canvas& canvas, const char* comment="") :
       itsCanvas(canvas)
-    { (itsCanvas.*doit)(); }
+    { (itsCanvas.*doit)(comment); }
 
     /** Save the state of \a canvas. Its state will be restored to the
         saved state when the \c MatrixSaver is destroyed. */
     template <class Arg>
-    Saver(Canvas& canvas, Arg a) :
+    Saver(Canvas& canvas, Arg a, const char* comment="") :
       itsCanvas(canvas)
-    { (itsCanvas.*doit)(a); }
+    { (itsCanvas.*doit)(a, comment); }
 
     /// Destroy the \c MatrixSaver and restore the state of the \c Canvas.
     ~Saver()
@@ -354,7 +354,7 @@ public:
 };
 
 #define BLOCK_TYPEDEF(name) \
-  typedef Canvas::Saver<&Canvas::begin##name, &Canvas::end> name##Block;
+  typedef Canvas::Saver<&Canvas::begin##name, &Canvas::end> name##Block
 
   BLOCK_TYPEDEF(Points);
   BLOCK_TYPEDEF(Lines);

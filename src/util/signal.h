@@ -147,7 +147,7 @@ inline Util::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
   return Util::SoftRef<Slot0>(SlotAdapter0<C, MF>::make(obj, mf),
                              Util::STRONG,
                              Util::PRIVATE);
-};
+}
 
 //  ###################################################################
 //  ===================================================================
@@ -225,7 +225,7 @@ inline Util::SoftRef<Slot1<P1> > Slot1<P1>::make(C* obj, MF mf)
   return Util::SoftRef<Slot1<P1> >(SlotAdapter1<P1, C, MF>::make(obj, mf),
                                    Util::STRONG,
                                    Util::PRIVATE);
-};
+}
 
 
 //  ###################################################################

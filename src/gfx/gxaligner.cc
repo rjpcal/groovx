@@ -41,7 +41,7 @@
 #include "gx/vec3.h"
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 #include "util/trace.h"
 
 GxAligner::GxAligner(Util::SoftRef<GxNode> child) :

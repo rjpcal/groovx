@@ -39,7 +39,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 namespace
 {
@@ -59,6 +59,11 @@ DOTRACE("Util::Error::Error()");
     last = new BackTrace(*itsBackTrace);
   else
     *last = *itsBackTrace;
+
+  if (GET_DBG_LEVEL() >= 4)
+    {
+      itsBackTrace->print();
+    }
 }
 
 Util::Error::Error(const fstring& msg) :
@@ -74,6 +79,11 @@ DOTRACE("Util::Error::Error(fstring)");
     last = new BackTrace(*itsBackTrace);
   else
     *last = *itsBackTrace;
+
+  if (GET_DBG_LEVEL() >= 4)
+    {
+      itsBackTrace->print();
+    }
 }
 
 Util::Error::Error(const Util::Error& other) throw() :

@@ -31,7 +31,7 @@
 #define DEBUG_CC_DEFINED
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 #include "util/strings.h"
 

@@ -45,7 +45,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 extern "C"
 int Sound_Init(Tcl_Interp* interp)

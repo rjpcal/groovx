@@ -36,7 +36,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 std::string demangle_impl(const std::string& in);
 

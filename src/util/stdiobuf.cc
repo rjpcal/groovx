@@ -41,7 +41,7 @@
 #include <unistd.h>
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 #include "util/trace.h"
 
 void Util::stdiobuf::init(int fd, int om, bool throw_exception)

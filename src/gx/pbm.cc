@@ -49,7 +49,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 namespace
 {
@@ -71,9 +71,9 @@ namespace
   {
     switch (mode)
       {
-      case 1: case 4: return 1; break; // b+w
-      case 2: case 5: return 8; break; // grayscale
-      case 3: case 6: return 24; break; // RGB
+      case 1: case 4: return 1; // b+w
+      case 2: case 5: return 8; // grayscale
+      case 3: case 6: return 24; // RGB
       }
 
     throw Util::Error(fstring("invalid Pbm mode value: ", mode));

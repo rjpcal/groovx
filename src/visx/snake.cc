@@ -41,7 +41,7 @@
 #include <cmath>
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 #include "util/trace.h"
 
 using namespace Geom;

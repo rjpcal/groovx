@@ -38,7 +38,7 @@ namespace Util
 {
   template <class T> class Ref;
   template <class T> class SoftRef;
-};
+}
 
 namespace IO
 {

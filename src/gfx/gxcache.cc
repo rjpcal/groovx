@@ -37,7 +37,7 @@
 #include "util/error.h"
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 GxCache::GxCache(Util::SoftRef<GxNode> child) :
   GxBin(child),

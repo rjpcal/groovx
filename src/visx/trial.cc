@@ -53,7 +53,7 @@
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 using Util::Ref;
 using Util::SoftRef;

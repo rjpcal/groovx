@@ -42,7 +42,7 @@
 #include <new>
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 #define TRACE_WALL_CLOCK_TIME
 //  #define TRACE_CPU_TIME
@@ -378,7 +378,7 @@ void Util::Prof::printProfData(FILE* file) const throw()
 {
   Assert(file != 0);
 
-  fprintf(file, "%10ld %6d %10ld %10ld %s\n",
+  fprintf(file, "%10ld %6u %10ld %10ld %s\n",
           long(avgTime()), count(),
           long(selfTime()), long(totalTime()),
           itsFuncName);

@@ -36,7 +36,7 @@
 #include "util/strings.h"
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 namespace IO
 {

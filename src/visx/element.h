@@ -35,7 +35,7 @@
 namespace Util
 {
   template <class T> class SoftRef;
-};
+}
 
 class Toglet;
 

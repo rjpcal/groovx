@@ -52,7 +52,7 @@
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //

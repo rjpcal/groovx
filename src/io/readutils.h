@@ -116,7 +116,7 @@ namespace ReadUtils
           ++inserter;
         }
     }
-};
+}
 
 } // end namespace IO
 

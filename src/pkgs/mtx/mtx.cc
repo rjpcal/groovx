@@ -46,7 +46,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 
 namespace
 {
@@ -424,10 +424,10 @@ namespace
       {
       case WithPolicies::BORROW:
         return DataBlock::makeBorrowed(data, mrows*ncols);
-        break;
+
       case WithPolicies::REFER:
         return DataBlock::makeReferred(data, mrows*ncols);
-        break;
+
       case WithPolicies::COPY:
       default:
         break;

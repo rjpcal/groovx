@@ -60,7 +60,7 @@ void Png::save(const char* /*filename*/, const Gfx::BmapData& /*data*/)
 #include <png.h>
 
 #include "util/debug.h"
-DBG_REGISTER;
+DBG_REGISTER
 #include "util/trace.h"
 
 namespace
@@ -273,10 +273,10 @@ int getColorType(const Gfx::BmapData& data)
 {
   switch (data.bitsPerPixel())
     {
-    case 1: return PNG_COLOR_TYPE_GRAY; break;
-    case 8: return PNG_COLOR_TYPE_GRAY; break;
-    case 24: return PNG_COLOR_TYPE_RGB; break;
-    case 32: return PNG_COLOR_TYPE_RGB_ALPHA; break;
+    case 1: return PNG_COLOR_TYPE_GRAY;
+    case 8: return PNG_COLOR_TYPE_GRAY;
+    case 24: return PNG_COLOR_TYPE_RGB;
+    case 32: return PNG_COLOR_TYPE_RGB_ALPHA;
     default:
       throw Util::Error(fstring("unknown bitsPerPixel value: ",
                                 data.bitsPerPixel()));

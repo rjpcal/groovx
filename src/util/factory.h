@@ -48,6 +48,9 @@ template <class BasePtr>
 class CreatorBase
 {
 public:
+  /// Virtual destructor.
+  virtual ~CreatorBase() {}
+
   /// Return a clone of this Creator
   virtual CreatorBase* clone() const = 0;
 
