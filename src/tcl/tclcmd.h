@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Sep 29 17:08:44 1999
+// written: Wed Sep 29 17:44:46 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -97,6 +97,7 @@ protected:
 	 }
   }
 
+  // We assume the iterator here comes from a sequence of TclValue's.
   template <class Iterator>
   void getValSequenceFromArg(int argn, Iterator itr) {
 	 Tcl_Obj** elements;
@@ -106,7 +107,7 @@ protected:
 		throw TclError();
 	 }
 	 for (int i = 0; i < count; ++i) {
-		*itr = elements[i];
+		*itr = TclValue(itsInterp, elements[i]);
 	 }
   }
 
