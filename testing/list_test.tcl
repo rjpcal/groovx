@@ -39,7 +39,7 @@ proc testList { packagename listname baseclass subclass1 subclass2 } {
 
     testResetCmd testObj
     testCountCmd testObj
-	 testRemoveCmd testObj
+	 testDeleteCmd testObj
 	 testGetValidIdsCmd testObj
 	 testIsValidIdCmd testObj
 
@@ -90,10 +90,10 @@ proc testCountCmd { objname } {
     "} {"^2$"}
 } 
 
-proc testRemoveCmd { objname } {
+proc testDeleteCmd { objname } {
     upvar $objname this
 
-    set cmdname "${this(listname)}::remove"
+    set cmdname "IO::delete"
     set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
     set testname "${this(packagename)}-${cmdname}"
 
@@ -108,7 +108,7 @@ proc testRemoveCmd { objname } {
 	 eval ::test $testname {"normal use"} {"
         set id \[IO::new ${this(subclass1)}\]
 	     $cmdname \$id
-	     ${this(listname)}::isValidId \$id
+	     IO::is \$id
  	 "} {"^0$"}
 }
 
@@ -128,7 +128,7 @@ proc testGetValidIdsCmd { objname } {
         IO::new ${this(subclass1)}
         set remove_me \[IO::new ${this(subclass1)}\]
         IO::new ${this(subclass2)}
-		  ${this(listname)}::remove \$remove_me
+		  IO::delete \$remove_me
 		  set count \[${this(listname)}::count\]
 		  set num_ids \[llength \[$cmdname\]\]
 		  set removed_id \[lsearch -exact \[$cmdname\] \$remove_me\]
@@ -139,7 +139,7 @@ proc testGetValidIdsCmd { objname } {
 proc testIsValidIdCmd { objname } {
     upvar $objname this
 
-    set cmdname "${this(listname)}::isValidId"
+    set cmdname "IO::is"
     set usage "wrong \# args: should be \"$cmdname item_id\""
     set testname "${this(packagename)}-${cmdname}"
 
@@ -158,7 +158,7 @@ proc testIsValidIdCmd { objname } {
 
 	 eval ::test $testname {"normal use on valid id"} {"
         set id \[IO::new ${this(subclass1)}\]
-	     ${this(listname)}::remove \$id
+	     IO::delete \$id
 	     $cmdname \$id
 	 "} {"^0$"}
 }
