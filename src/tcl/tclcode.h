@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Wed Jul 11 18:35:28 2001
+// written: Thu Jul 19 14:09:52 2001
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -43,9 +43,9 @@ public:
 
   enum ErrorHandlingMode
   {
-	 NONE,
-	 THROW_EXCEPTION,
-	 BACKGROUND_ERROR
+    NONE,
+    THROW_EXCEPTION,
+    BACKGROUND_ERROR
   };
 
   Code();
