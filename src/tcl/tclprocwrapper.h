@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:41:47 2002
-// written: Wed Jan 30 11:44:26 2002
+// written: Wed Jan 30 11:50:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,10 +25,6 @@
 #include "util/strings.h"
 #endif
 
-#include "io/reader.h"
-#include "io/writer.h"
-#include "tcl/tclcode.h"
-
 namespace Tcl
 {
   class ProcWrapper;
@@ -40,65 +36,34 @@ private:
   ProcWrapper(const ProcWrapper&);
   ProcWrapper& operator=(const ProcWrapper&);
 
+  // Just run the code, but don't yet extract a result from the interpreter
+  void invoke(const fstring& args) const;
+
   Tcl::Interp itsInterp;
   const fstring itsName;
   fstring itsArgs;
   fstring itsBody;
 
 public:
-  ProcWrapper(const Tcl::Interp& intp, const fstring& name) :
-    itsInterp(intp.intp()),
-    itsName(name),
-    itsArgs(),
-    itsBody()
-  {}
+  ProcWrapper(const Tcl::Interp& intp, const fstring& name);
 
-  ~ProcWrapper()
-  {
-    // We must check hasInterp() in case we are here because the application
-    // is being exited, causing the interpreter to be deleted, in which case
-    // we can't use the intrepeter (and don't need to, since it will destroy
-    // the proc on its own)
-    if (itsInterp.hasInterp())
-      {
-        if (itsInterp.hasCommand(itsName.c_str()))
-          itsInterp.deleteProc("", itsName.c_str());
-      }
-  }
+  ~ProcWrapper();
 
-  virtual void readFrom(IO::Reader* reader)
-  {
-    fstring args, body;
-    reader->readValue("args", args);
-    reader->readValue("body", body);
-    define(args, body);
-  }
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
-  virtual void writeTo(IO::Writer* writer) const
-  {
-    writer->writeValue("args", itsArgs);
-    writer->writeValue("body", itsBody);
-  }
+  /** Redefine the code chunk with a new args and body, but keeping the same
+      name as always. */
+  void define(const fstring& args, const fstring& body);
 
-  void define(const fstring& args, const fstring& body)
-  {
-    itsArgs = args;
-    itsBody = body;
-    itsInterp.createProc("", itsName.c_str(),
-                         itsArgs.c_str(), itsBody.c_str());
-  }
-
-  bool isNoop() const { return (itsArgs.is_empty() && itsBody.is_empty()); }
+  /// Query whether the code chunk is a no-op (i.e. both args+body are empty)
+  bool isNoop() const;
 
   template <class T>
   T call(const fstring& args) const
   {
-    fstring cmd = itsName; cmd.append(" ").append(args);
-
-    Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
-
     // might throw if Tcl code raises an error:
-    code.invoke(itsInterp);
+    invoke(args);
 
     // might throw if conversion to T fails:
     return itsInterp.template getResult<T>();
