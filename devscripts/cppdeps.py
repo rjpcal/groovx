@@ -1,11 +1,16 @@
 # $Id$
 
-import os, re, sys, operator
+import os, re, sys, operator, math
 
 def sort(seq):
     seq.sort()
     return seq
 
+def log2(x):
+    return math.log(x) / math.log(2)
+
+def balancedCCD(N):
+    return ( (N+1) * (log2(N+1)-1) ) + 1
 
 # DirectIncludeMap class -- maintains a cached mapping between source
 # files and lists of files that they directly include
@@ -235,13 +240,32 @@ class DepBuilder:
 
         return self.itsLLevels[file]
 
+    def doMarkLdeps(self, file, marks):
+
+        if not marks.has_key(file):
+            marks[file] = 1
+
+            for dep in sort(self.itsDirectIncludes.get(file)):
+                (stem, ext) = os.path.splitext(dep)
+                dep = stem + '.cc'
+
+                if (os.path.isfile(dep)):
+                    self.doMarkLdeps(dep, marks)
+
+    def getCD(self, file):
+        marks = {}
+        self.doMarkLdeps(file, marks)
+        return len(marks)
+
     def printOneLdepLevel(self, file, stream, marks, level, maxlevel):
 
         if not marks.has_key(file):
-            indents = '\t' * (len(marks) > 0)
+            #indents = '\t' * (len(marks) > 0)
+            indents = '\t' * level
 
-            stream.write('%s%s (%d)\n' % (indents, file,
-                                          self.getLdepLevel([], file)))
+            if (level <= maxlevel):
+                stream.write('%s%s (%d)\n' % (indents, file,
+                                              self.getLdepLevel([], file)))
 
             marks[file] = 1
 
@@ -257,18 +281,30 @@ class DepBuilder:
     def printLdepLevels(self, stream):
         backmap = {}
 
+        N = 0
+        CCD = 0
+
         for file in sort(self.itsFullIncludes.keys()):
-            level = self.getLdepLevel([], file)
-            if not backmap.has_key(level):
-                backmap[level] = []
-            backmap[level].append(file)
+            N += 1
+            density = self.getCD(file)
+            if not backmap.has_key(density):
+                backmap[density] = []
+            backmap[density].append(file)
 
         marks = {}
 
-        for level in sort(backmap.keys()):
-            for file in backmap[level]:
-                stream.write('\n\n')
+        for density in sort(backmap.keys()):
+            for file in backmap[density]:
+                stream.write('\n\n<%d> ' % density)
                 marks.clear()
-                self.printOneLdepLevel(file, stream, marks, 0, 1)
+                self.printOneLdepLevel(file, stream, marks, 0, 1000)
+                CCD += density
 
         stream.write('\n')
+
+        stream.write('N == %d\n' % N)
+        stream.write('CCD == %d\n' % CCD)
+        stream.write('ACD == %f\n' % (float(CCD)/N))
+        balanced = balancedCCD(N)
+        stream.write('CCD(tree) == %f\n' % balanced)
+        stream.write('NCCD == %f\n' % (float(CCD)/balanced))
