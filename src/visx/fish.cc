@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Aug 21 13:51:14 2001
+// written: Tue Aug 21 16:09:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ DOTRACE("Fish::Fish");
 
   this->sigNodeChanged.connect(this, &Fish::updatePtrs);
 
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void Fish::restoreToDefault()

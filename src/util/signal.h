@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 15:22:42 2001
+// written: Tue Aug 21 16:09:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
  * of Signal do not have to override any virtual functions to become
  * an Signal: all of the machinery is provided in this base
  * class. However, to conform to the expected behavior, subclasses of
- * Signal must call emitSignal() when any of their non-mutable
+ * Signal must call emit() when any of their non-mutable
  * properties changes. This in turn will call receiveSignal() on all
  * of the Slot's that are observing this Signal.
  *
@@ -88,7 +88,7 @@ public:
 
   /** Informs all this object's Slots that this Signal's state
       has changed */
-  void emitSignal() const;
+  void emit() const;
 
 private:
 

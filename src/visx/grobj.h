@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 13:46:05 2001
+// written: Tue Aug 21 16:09:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ class GrObjImpl;
  * that mediate the various drawing modes are kept up to date by using
  * the Signal interface. Thus, whenever a manipulator changes a
  * parameter in a derived class, it should also call
- * GrObj::sigNodeChanged.emitSignal() to indicate that an update is
+ * GrObj::sigNodeChanged.emit() to indicate that an update is
  * needed.
  *
  **/

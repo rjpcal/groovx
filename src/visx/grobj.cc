@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 13:45:54 2001
+// written: Tue Aug 21 16:09:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ DOTRACE("GrObj::GrObj");
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
   // return to the derived class constructor.
-  sigNodeChanged.emitSignal();
+  sigNodeChanged.emit();
 }
 
 // GrObj destructor
@@ -97,7 +97,7 @@ void GrObj::readFrom(IO::Reader* reader)
 DOTRACE("GrObj::readFrom");
 
   itsImpl->readFrom(reader);
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::writeTo(IO::Writer* writer) const
@@ -213,7 +213,7 @@ DOTRACE("GrObj::setBitmapCacheDir");
 void GrObj::setBBVisibility(bool visibility)
 {
   itsImpl->itsBB->setVisible(visibility);
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setScalingMode(Gmodes::ScalingMode val)
@@ -221,7 +221,7 @@ void GrObj::setScalingMode(Gmodes::ScalingMode val)
 DOTRACE("GrObj::setScalingMode");
 
   itsImpl->itsScaler->setMode(val);
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setWidth(double val)
@@ -229,7 +229,7 @@ void GrObj::setWidth(double val)
 DOTRACE("GrObj::setWidth");
 
   itsImpl->itsScaler->setWidth(val, grGetBoundingBox());
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setHeight(double val)
@@ -237,7 +237,7 @@ void GrObj::setHeight(double val)
 DOTRACE("GrObj::setHeight");
 
   itsImpl->itsScaler->setHeight(val, grGetBoundingBox());
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setAspectRatio(double val)
@@ -245,7 +245,7 @@ void GrObj::setAspectRatio(double val)
 DOTRACE("GrObj::setAspectRatio");
 
   itsImpl->itsScaler->setAspectRatio(val);
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setMaxDimension(double val)
@@ -253,7 +253,7 @@ void GrObj::setMaxDimension(double val)
 DOTRACE("GrObj::setMaxDimension");
 
   itsImpl->itsScaler->setMaxDim(val, grGetBoundingBox());
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setAlignmentMode(Gmodes::AlignmentMode val)
@@ -261,7 +261,7 @@ void GrObj::setAlignmentMode(Gmodes::AlignmentMode val)
 DOTRACE("GrObj::setAlignmentMode");
 
   itsImpl->itsAligner->setMode(val);
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setCenterX(double val)
@@ -269,7 +269,7 @@ void GrObj::setCenterX(double val)
 DOTRACE("GrObj::setCenterX");
 
   itsImpl->itsAligner->itsCenter.x() = val;
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setCenterY(double val)
@@ -277,7 +277,7 @@ void GrObj::setCenterY(double val)
 DOTRACE("GrObj::setCenterY");
 
   itsImpl->itsAligner->itsCenter.y() = val;
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setPixelBorder(int pixels)
@@ -298,7 +298,7 @@ DOTRACE("GrObj::setRenderMode");
 
   itsImpl->itsBitmapCache->setMode(mode);
   itsImpl->itsGLCache->setMode(mode);
-  this->sigNodeChanged.emitSignal();
+  this->sigNodeChanged.emit();
 }
 
 void GrObj::setUnRenderMode(Gmodes::RenderMode)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 15:23:43 2001
+// written: Tue Aug 21 16:09:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,9 +92,9 @@ DOTRACE("Util::Signal::connect");
   DebugEvalNL(itsImpl->itsSlots.size());
 }
 
-void Util::Signal::emitSignal() const
+void Util::Signal::emit() const
 {
-DOTRACE("Util::Signal::emitSignal");
+DOTRACE("Util::Signal::emit");
 
   for (ListType::iterator
          ii = itsImpl->itsSlots.begin(),
