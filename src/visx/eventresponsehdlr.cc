@@ -136,7 +136,7 @@ public:
 	 { ignore(); forgetWidget(); forgetTrial(); }
 
   void rhHaltExpt() const
-	 { if (itsWidget != 0) ignore(); }
+	 { if (itsWidget != 0) ignore(); forgetWidget(); forgetTrial(); }
 
   // Helper functions
 private:
