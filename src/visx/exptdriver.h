@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct 23 12:26:55 2000
+// written: Mon Oct 23 22:13:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,8 +72,6 @@ public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
-
-  virtual void manageObject(const char* name, IO::IoObject* object);
 
   //////////////////////////////
   // Accessors + Manipulators //

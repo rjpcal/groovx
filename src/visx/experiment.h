@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Thu May 11 10:53:49 2000
+// written: Mon Oct 23 22:13:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,9 +36,6 @@ public:
 
   virtual GWT::Canvas* getCanvas() = 0;
   ///< Return the Canvas for the Widget in which the experiment is running.
-
-  virtual void manageObject(const char* name, IO::IoObject* object) = 0;
-  ///< Registers an object for the Experiment to handle for serialization.
 
   virtual void edBeginExpt() = 0;
   ///< Begin the experiment.
