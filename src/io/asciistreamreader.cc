@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Nov 16 12:42:06 1999
+// written: Tue Nov 30 19:10:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace {
   void unEscape(string& text) {
   DOTRACE("<asciistreamreader.cc>::unEscape");
 	 // un-escape any special characters
-	 for (int pos = 0; pos < text.length(); ++pos) {
+	 for (size_t pos = 0; pos < text.length(); ++pos) {
 
 		if (text[pos] == '\\') {
 		  if ( (pos+1) >= text.length() ) {
