@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  1 16:01:45 2001
+// written: Mon Jun 11 13:49:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,6 @@ namespace {
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
-
-  const string_literal ioTag("Face");
 
   const FieldInfo FINFOS[] = {
 	 FieldInfo("category", &Face::faceCategory, 0, 0, 10, 1, true),
