@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Tue Jun 12 11:18:32 2001
+// written: Fri Jun 22 11:21:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -196,7 +196,9 @@ DOTRACE("Tcl::FieldsCmd::invoke");
 
     minivec<Tcl_Obj*> elements;
 
-    for (FieldMap::Iterator itr = itsFields.begin(), end = itsFields.end();
+    for (FieldMap::IoIterator
+           itr = itsFields.ioBegin(),
+           end = itsFields.ioEnd();
          itr != end;
          ++itr)
       {
