@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Mar 30 12:31:42 2000
+// written: Wed May 10 12:35:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,8 @@
 #include "exptdriver.h"
 
 #include "block.h"
-#include "responsehandler.h"
-#include "timinghdlr.h"
+// #include "responsehandler.h"
+// #include "timinghdlr.h"
 #include "tlistutils.h"
 #include "trial.h"
 #include "objlist.h"
@@ -26,6 +26,7 @@
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
+#include "trial.h"
 #include "stopwatch.h"
 #include "tlistwidget.h"
 
@@ -45,12 +46,14 @@
 #include <fstream.h>
 #include <sys/time.h>
 
-#define NO_TRACE
+#define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
 #define TIME_TRACE
+
+Util::Tracer ExptDriver::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -104,8 +107,8 @@ private:
   // These accessors will NOT recover if the corresponding id is
   // invalid; clients must check validity before calling the accessor.
   Block& block() const;
-  ResponseHandler& responseHandler() const;
-  TimingHdlr& timingHdlr() const;
+//   ResponseHandler& responseHandler() const;
+//   TimingHdlr& timingHdlr() const;
 
   // Check the validity of all its id's, return true if all are ok,
   // otherwise returns false, halts the experiment, and issues an
@@ -198,8 +201,8 @@ private:
   fixed_string itsAutosaveFile; // Filename used for autosaves
 
   int itsBlockId;
-  int itsRhId;
-  int itsThId;
+  int itsDummyRhId;
+  int itsDummyThId;
 
   mutable StopWatch itsTimer;
 
@@ -232,8 +235,8 @@ ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   itsEndDate(""),
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
-  itsRhId(0),
-  itsThId(0),
+  itsDummyRhId(0),
+  itsDummyThId(0),
   itsTimer(),
   itsDoUponCompletionBody()
   //  ,itsManagedObjects()
@@ -341,33 +344,33 @@ DOTRACE("ExptDriver::Impl::block");
 #endif
 }
 
-ResponseHandler& ExptDriver::Impl::responseHandler() const {
-DOTRACE("ExptDriver::Impl::responseHandler");
+// ResponseHandler& ExptDriver::Impl::responseHandler() const {
+// DOTRACE("ExptDriver::Impl::responseHandler");
 
-  Assert( RhList::theRhList().isValidId(itsRhId) );
+//   Assert( RhList::theRhList().isValidId(itsDummyRhId) );
 
-#ifdef LOCAL_DEBUG
-  RhList::Ptr rh = RhList::theRhList().getPtr(itsRhId);
-  DebugEval(itsRhId);   DebugEvalNL((void *) rh);
-  return *rh;
-#else
-  return *(RhList::theRhList().getPtr(itsRhId));
-#endif
-}
+// #ifdef LOCAL_DEBUG
+//   RhList::Ptr rh = RhList::theRhList().getPtr(itsDummyRhId);
+//   DebugEval(itsDummyRhId);   DebugEvalNL((void *) rh);
+//   return *rh;
+// #else
+//   return *(RhList::theRhList().getPtr(itsDummyRhId));
+// #endif
+// }
 
-TimingHdlr& ExptDriver::Impl::timingHdlr() const {
-DOTRACE("ExptDriver::Impl::timingHdlr");
+// TimingHdlr& ExptDriver::Impl::timingHdlr() const {
+// DOTRACE("ExptDriver::Impl::timingHdlr");
 
-  Assert( ThList::theThList().isValidId(itsThId) );
+//   Assert( ThList::theThList().isValidId(itsDummyThId) );
 
-#ifdef LOCAL_DEBUG
-  ThList::Ptr th = ThList::theThList().getPtr(itsThId);
-  DebugEvalNL((void *) th);
-  return *th;
-#else
-  return *(ThList::theThList().getPtr(itsThId));
-#endif
-}
+// #ifdef LOCAL_DEBUG
+//   ThList::Ptr th = ThList::theThList().getPtr(itsDummyThId);
+//   DebugEvalNL((void *) th);
+//   return *th;
+// #else
+//   return *(ThList::theThList().getPtr(itsDummyThId));
+// #endif
+// }
 
 //---------------------------------------------------------------------
 //
@@ -384,9 +387,10 @@ DOTRACE("ExptDriver::Impl::timingHdlr");
 
 inline bool ExptDriver::Impl::assertIds() const {
 DOTRACE("ExptDriver::Impl::assertIds");
-  if ( BlockList::theBlockList().isValidId(itsBlockId) &&
-		 RhList::theRhList().isValidId(itsRhId) &&
-		 ThList::theThList().isValidId(itsThId) ) {
+  if ( BlockList::theBlockList().isValidId(itsBlockId)
+// 		 && RhList::theRhList().isValidId(itsDummyRhId)
+// 		 && ThList::theThList().isValidId(itsDummyThId)
+		 ) {
 	 return true;
   }
 
@@ -404,8 +408,8 @@ DOTRACE("ExptDriver::Impl::assertIds");
 // ExptDriver::needAutosave --
 //
 // Determine whether an autosave is necessary now. An autosave is
-// requested only if itsAutosavePeriod is positive, and the number of
-// completed trials is evenly divisible by the autosave period.
+// requested only if the autosave period is positive, and the number
+// of completed trials is evenly divisible by the autosave period.
 //
 //--------------------------------------------------------------------
 
@@ -413,7 +417,11 @@ bool ExptDriver::Impl::needAutosave() const {
 DOTRACE("ExptDriver::Impl::needAutosave");
   if ( !assertIds() ) return false;
 
-  int period = timingHdlr().getAutosavePeriod();
+  if ( block().isComplete() )
+	 return false;
+
+  int period = block().getCurTrial().getAutosavePeriod();
+//   int period = timingHdlr().getAutosavePeriod();
   return ( (period > 0) && 
 			  ((block().numCompleted() % period) == 0) &&
 			  !(itsAutosaveFile.empty()) );
@@ -532,8 +540,8 @@ DOTRACE("ExptDriver::Impl::serialize");
   os << itsAutosaveFile   << '\n';
 
   os << itsBlockId << IO::SEP
-	  << itsRhId << IO::SEP
-	  << itsThId << endl;
+	  << itsDummyRhId << IO::SEP
+	  << itsDummyThId << endl;
 
   updateDoUponCompletionBody();
 
@@ -561,7 +569,7 @@ DOTRACE("ExptDriver::Impl::deserialize");
   getline(is, itsEndDate,      '\n');
   getline(is, itsAutosaveFile, '\n');
 
-  is >> itsBlockId >> itsRhId >> itsThId;
+  is >> itsBlockId >> itsDummyRhId >> itsDummyThId;
 
   int numchars;
   is >> numchars;
@@ -598,8 +606,8 @@ DOTRACE("ExptDriver::Impl::charCount");
 			 + itsEndDate.length() + 1
 			 + itsAutosaveFile.length() + 1
 			 + IO::gCharCount<int>(itsBlockId) + 1
-			 + IO::gCharCount<int>(itsRhId) + 1
-			 + IO::gCharCount<int>(itsThId) + 1
+			 + IO::gCharCount<int>(itsDummyRhId) + 1
+			 + IO::gCharCount<int>(itsDummyThId) + 1
 			 + IO::gCharCount<int>(itsDoUponCompletionBody.length()) + 1
 			 + itsDoUponCompletionBody.length() + 1
 			 + 5); // fudge factor
@@ -622,8 +630,8 @@ DOTRACE("ExptDriver::Impl::readFrom");
   reader->readValue("autosaveFile", itsAutosaveFile);
 
   reader->readValue("blockId", itsBlockId);
-  reader->readValue("rhId", itsRhId);
-  reader->readValue("thId", itsThId);
+  reader->readValue("rhId", itsDummyRhId);
+  reader->readValue("thId", itsDummyThId);
 
   reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
   recreateDoUponCompletionProc();
@@ -646,8 +654,8 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("autosaveFile", itsAutosaveFile);
 
   writer->writeValue("blockId", itsBlockId);
-  writer->writeValue("rhId", itsRhId);
-  writer->writeValue("thId", itsThId);
+  writer->writeValue("rhId", itsDummyRhId);
+  writer->writeValue("thId", itsDummyThId);
 
   updateDoUponCompletionBody();
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
@@ -739,7 +747,7 @@ DOTRACE("ExptDriver::Impl::edElapsedTrialMsec");
 
   if ( !assertIds() ) return -1;
 
-  return timingHdlr().getElapsedMsec();
+  return block().getCurTrial().trElapsedMsec(*itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -753,19 +761,13 @@ DOTRACE("ExptDriver::Impl::edBeginTrial");
   if ( !assertIds() ) return;
 
   if (block().isComplete()) return;
-  
-  TimeTraceNL("beginTrial", timingHdlr().getElapsedMsec());
-  
+
+//   TimeTraceNL("beginTrial", timingHdlr().getElapsedMsec());
+
   Trial& trial = block().getCurTrial();
-  
-  itsThId = trial.getTimingHdlr();       DebugEval(itsThId);
-  itsRhId = trial.getResponseHandler();  DebugEval(itsRhId);
-  
-  if ( !assertIds() ) return;
 
   block().beginTrial(itsOwner);
-  timingHdlr().thBeginTrial(itsOwner);
-  responseHandler().rhBeginTrial(itsOwner);
+  trial.trDoTrial(*itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -783,9 +785,10 @@ void ExptDriver::Impl::edResponseSeen() {
 DOTRACE("ExptDriver::Impl::edResponseSeen");
   if ( !assertIds() ) return;
 
-  TimeTraceNL("edResponseSeen", timingHdlr().getElapsedMsec());
+//   TimeTraceNL("edResponseSeen", timingHdlr().getElapsedMsec());
 
-  timingHdlr().thResponseSeen(itsOwner);
+//   timingHdlr().thResponseSeen(itsOwner);
+  block().getCurTrial().trResponseSeen(*itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -802,7 +805,7 @@ void ExptDriver::Impl::edProcessResponse(const Response& response) {
 DOTRACE("ExptDriver::Impl::edProcessResponse");
   if ( !assertIds() ) return;
 
-  TimeTraceNL("edProcessResponse", timingHdlr().getElapsedMsec());
+//   TimeTraceNL("edProcessResponse", timingHdlr().getElapsedMsec());
 
   block().processResponse(response, itsOwner);
 }
@@ -817,11 +820,12 @@ void ExptDriver::Impl::edAbortTrial() {
 DOTRACE("ExptDriver::Impl::edAbortTrial");
   if ( !assertIds() ) return;
 
-  TimeTraceNL("edAbortTrial", timingHdlr().getElapsedMsec());
+//   TimeTraceNL("edAbortTrial", timingHdlr().getElapsedMsec());
   
-  responseHandler().rhAbortTrial(itsOwner);
+//   responseHandler().rhAbortTrial(itsOwner);
   block().abortTrial(itsOwner);
-  timingHdlr().thAbortTrial(itsOwner);
+//   timingHdlr().thAbortTrial(itsOwner);
+  block().getCurTrial().trAbortTrial(*itsOwner);
 }
 
 //---------------------------------------------------------------------
@@ -831,11 +835,13 @@ DOTRACE("ExptDriver::Impl::edAbortTrial");
 //---------------------------------------------------------------------
 
 void ExptDriver::Impl::edEndTrial() {
+DOTRACE("ExptDriver::Impl::edEndTrial");
   if ( !assertIds() ) return;
 
-  TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
-  
-  responseHandler().rhEndTrial(itsOwner);
+//   TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
+
+//   responseHandler().rhEndTrial(itsOwner);
+  block().getCurTrial().trEndTrial(*itsOwner);
   block().endTrial(itsOwner);
 
   if ( needAutosave() ) { doAutosave(); }
@@ -870,19 +876,22 @@ void ExptDriver::Impl::edEndTrial() {
 
 void ExptDriver::Impl::edHaltExpt() const {
 DOTRACE("ExptDriver::Impl::edHaltExpt");
-  if ( ThList::theThList().isValidId(itsThId) ) { 
-	 TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
-  }
+//   if ( ThList::theThList().isValidId(itsDummyThId) ) { 
+// 	 TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
+//   }
 
   if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
 	 block().haltExpt(itsOwner);
+
+	 if ( !block().isComplete() )
+		block().getCurTrial().trHaltExpt(*itsOwner);
   }
-  if ( RhList::theRhList().isValidId(itsRhId) ) {
-	 responseHandler().rhHaltExpt(itsOwner);
-  }
-  if ( ThList::theThList().isValidId(itsThId) ) {
-	 timingHdlr().thHaltExpt(itsOwner);
-  }
+//   if ( RhList::theRhList().isValidId(itsDummyRhId) ) {
+// 	 responseHandler().rhHaltExpt(itsOwner);
+//   }
+//   if ( ThList::theThList().isValidId(itsDummyThId) ) {
+// 	 timingHdlr().thHaltExpt(itsOwner);
+//   }
 }
 
 //---------------------------------------------------------------------
