@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun  6 16:50:37 2001
+// written: Wed Jun  6 20:23:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "block.h"
 #include "tlistutils.h"
 #include "objtogl.h"
-#include "toglconfig.h"
+#include "toglet.h"
 #include "trialbase.h"
 
 #include "gwt/widget.h"
@@ -228,7 +228,7 @@ private:
 
   Tcl_Interp* itsInterp;
 
-  IdItem<ToglConfig> itsWidget;
+  IdItem<Toglet> itsWidget;
 
   fixed_string itsHostname;	  // Host computer on which Expt was begun
   fixed_string itsSubject;		  // Id of subject on whom Expt was performed
@@ -262,7 +262,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 							  ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
-  itsWidget(ToglConfig::make(interp)),
+  itsWidget(Toglet::make(interp)),
   itsHostname(""),
   itsSubject(""),
   itsBeginDate(""),

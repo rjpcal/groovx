@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 20:06:57 2001
+// written: Wed Jun  6 20:26:14 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -18,7 +18,7 @@
 
 #include "objtogl.h"
 
-#include "toglconfig.h"
+#include "toglet.h"
 #include "trialbase.h"
 
 #include "gx/gxnode.h"
@@ -36,7 +36,7 @@
 
 // This hack causes this file to be compiled into the main executable
 // (through the rules in place in the Makefile), rather than a shared
-// library, so that this file can find the typeinfo for ToglConfig.
+// library, so that this file can find the typeinfo for Toglet.
 #ifdef GCC_COMPILER
 #  include <GL/gl.h>
 #endif
@@ -58,7 +58,7 @@
 
 namespace ObjTogl {
 
-  MaybeIdItem<ToglConfig> theWidget;
+  MaybeIdItem<Toglet> theWidget;
 
   bool toglCreated = false;
   
@@ -86,25 +86,25 @@ namespace ObjTogl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
+class WidgetDestroyCallback : public Toglet::DestroyCallback {
 public:
-  virtual void onDestroy(ToglConfig* config);
+  virtual void onDestroy(Toglet* config);
 };
 
-void WidgetDestroyCallback::onDestroy(ToglConfig* config)
+void WidgetDestroyCallback::onDestroy(Toglet* config)
   {
 	 if (ObjTogl::theWidget.isValid() &&
 		  ObjTogl::theWidget.get() == config)
 		{
-  		  ObjTogl::theWidget = MaybeIdItem<ToglConfig>();
+  		  ObjTogl::theWidget = MaybeIdItem<Toglet>();
   		  ObjTogl::toglCreated = false;
 		}
   }
 
-void ObjTogl::setCurrentTogl(ToglConfig* togl) {
+void ObjTogl::setCurrentTogl(Toglet* togl) {
 DOTRACE("ObjTogl::setCurrentTogl");
 
-  theWidget = MaybeIdItem<ToglConfig>(togl);
+  theWidget = MaybeIdItem<Toglet>(togl);
   theWidget->setDestroyCallback(new WidgetDestroyCallback);
   toglCreated = true;
 }
@@ -126,9 +126,7 @@ protected:
   DOTRACE("ObjTogl::DestroyCmd::invoke");
 
     if (toglCreated) {
-      // This tells the ToglConfig to destroy itsTogl, which in turn
-      // generates a call to the destroyCallback, which in turn
-      // delete's the toglConfig.
+      // This tells the Toglet to destroy itsTogl
 		theWidget->destroyWidget();
     }
   }
@@ -140,12 +138,12 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::BindCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::BindCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  BindCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
-										  "event_sequence binding_script",
-										  pkg->itemArgn()+3) {}
+  BindCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name,
+									 "event_sequence binding_script",
+									 pkg->itemArgn()+3) {}
 protected:
   virtual void invoke() {
 	 const char* event_sequence = getCstringFromArg(afterItemArg(1));
@@ -161,12 +159,12 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::DumpCmapCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::DumpCmapCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  DumpCmapCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
-										  "?start_index=0? ?end_index=255?",
-										  pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
+  DumpCmapCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name,
+									 "?start_index=0? ?end_index=255?",
+									 pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
 protected:
   virtual void invoke() {
     int start = (objc() < 2) ? 0   : getIntFromArg(afterItemArg(1));
@@ -180,8 +178,8 @@ protected:
     const int BUF_SIZE = 64;
     char buf[BUF_SIZE];
 
-    ToglConfig* config = getItem();
-    ToglConfig::Color color;
+    Toglet* config = getItem();
+    Toglet::Color color;
 
     for (int i = start; i <= end; ++i) {
       buf[0] = '\0';
@@ -203,10 +201,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::DumpEpsCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::DumpEpsCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  DumpEpsCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "filename", pkg->itemArgn()+2) {}
+  DumpEpsCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "filename", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
     const char* filename = getCstringFromArg(afterItemArg(1));
@@ -224,10 +222,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::HoldCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::HoldCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  HoldCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "hold_on?", pkg->itemArgn()+2) {}
+  HoldCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "hold_on?", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
 	 bool hold_on = getBoolFromArg(afterItemArg(1));
@@ -277,10 +275,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::SeeCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::SeeCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  SeeCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
+  SeeCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
   DOTRACE("SeeCmd::invoke");
@@ -301,11 +299,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::SetColorCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::SetColorCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  SetColorCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "index r g b",
-										  pkg->itemArgn()+5) {}
+  SetColorCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "index r g b", pkg->itemArgn()+5) {}
+
 protected:
   virtual void invoke() {
     int i = getIntFromArg(afterItemArg(1));
@@ -313,7 +311,7 @@ protected:
     double g = getDoubleFromArg(afterItemArg(3));
     double b = getDoubleFromArg(afterItemArg(4));
 
-    getItem()->setColor(ToglConfig::Color(i, r, g, b));
+    getItem()->setColor(Toglet::Color(i, r, g, b));
   }
 };
 
@@ -328,10 +326,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::SetCurTrialCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::SetCurTrialCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  SetCurTrialCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
+  SetCurTrialCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
 	 int trial = getIntFromArg(afterItemArg(1));
@@ -346,11 +344,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::SetMinRectCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::SetMinRectCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  SetMinRectCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "left top right bottom",
-										  pkg->itemArgn()+5) {}
+  SetMinRectCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "left top right bottom",
+									 pkg->itemArgn()+5) {}
 protected:
   virtual void invoke() {
     double l = getDoubleFromArg(afterItemArg(1));
@@ -374,11 +372,11 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::SetVisibleCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::SetVisibleCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  SetVisibleCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility",
-										  pkg->itemArgn()+2) {}
+  SetVisibleCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "visibility", pkg->itemArgn()+2) {}
+
 protected:
   virtual void invoke() {
 	 bool vis = getBoolFromArg(afterItemArg(1));
@@ -396,10 +394,11 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::ShowCmd : public Tcl::TclItemCmd<ToglConfig> {
+class ObjTogl::ShowCmd : public Tcl::TclItemCmd<Toglet> {
 public:
-  ShowCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
+  ShowCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
+
 protected:
   virtual void invoke() {
   DOTRACE("ShowCmd::invoke");
@@ -420,10 +419,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::ObjToglPkg : public Tcl::CTclItemPkg<ToglConfig> {
+class ObjTogl::ObjToglPkg : public Tcl::CTclItemPkg<Toglet> {
 public:
   ObjToglPkg(Tcl_Interp* interp) :
-    Tcl::CTclItemPkg<ToglConfig>(interp, "Togl", "$Revision$", 0)
+    Tcl::CTclItemPkg<Toglet>(interp, "Togl", "$Revision$", 0)
   {
     Tcl_PkgProvide(interp, "Objtogl", "3.2");
 
@@ -441,24 +440,24 @@ public:
     addCommand( new SetVisibleCmd (this, "Togl::setVisible") );
 	 addCommand( new ShowCmd       (this, "Togl::show") );
 
-	 declareCAction("clearscreen", &ToglConfig::clearscreen);
+	 declareCAction("clearscreen", &Toglet::clearscreen);
     declareCAttrib("height",
-                   &ToglConfig::getHeight, &ToglConfig::setHeight);
-	 declareCAction("loadDefaultFont", &ToglConfig::loadDefaultFont);
-	 declareCSetter("loadFont", &ToglConfig::loadFont);
-	 declareCSetter("loadFonti", &ToglConfig::loadFonti);
-	 declareCAction("refresh", &ToglConfig::refresh);
-    declareCSetter("scaleRect", &ToglConfig::scaleRect, "scale");
-    declareCSetter("setFixedScale", &ToglConfig::setFixedScale, "scale");
-    declareCSetter("setUnitAngle", &ToglConfig::setUnitAngle,
+                   &Toglet::getHeight, &Toglet::setHeight);
+	 declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
+	 declareCSetter("loadFont", &Toglet::loadFont);
+	 declareCSetter("loadFonti", &Toglet::loadFonti);
+	 declareCAction("refresh", &Toglet::refresh);
+    declareCSetter("scaleRect", &Toglet::scaleRect, "scale");
+    declareCSetter("setFixedScale", &Toglet::setFixedScale, "scale");
+    declareCSetter("setUnitAngle", &Toglet::setUnitAngle,
                    "angle_in_degrees");
-    declareCSetter("setViewingDistance", &ToglConfig::setViewingDistIn,
+    declareCSetter("setViewingDistance", &Toglet::setViewingDistIn,
                    "distance_in_inches");
-    declareCAction("swapBuffers", &ToglConfig::swapBuffers);
-	 declareCAction("takeFocus", &ToglConfig::takeFocus);
-	 declareCAction("undraw", &ToglConfig::undraw);
-    declareCGetter("usingFixedScale", &ToglConfig::usingFixedScale);
-    declareCAttrib("width", &ToglConfig::getWidth, &ToglConfig::setWidth);
+    declareCAction("swapBuffers", &Toglet::swapBuffers);
+	 declareCAction("takeFocus", &Toglet::takeFocus);
+	 declareCAction("undraw", &Toglet::undraw);
+    declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
+    declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
 
 	 Tcl_Eval(interp,
 				 "proc clearscreen {} { Togl::clearscreen }\n"
@@ -474,7 +473,7 @@ public:
 	 }
   }
 
-  ToglConfig* getCItemFromId(int) {
+  Toglet* getCItemFromId(int) {
 	 if (!toglCreated) { throw Tcl::TclError("no valid Togl exists"); }
 	 return ObjTogl::theWidget.get();
   }
@@ -482,10 +481,10 @@ public:
 
 namespace ObjTogl { class ObjToglPkg2; }
 
-class ObjTogl::ObjToglPkg2 : public Tcl::IoItemPkg<ToglConfig> {
+class ObjTogl::ObjToglPkg2 : public Tcl::IoItemPkg<Toglet> {
 public:
   ObjToglPkg2(Tcl_Interp* interp) :
-    Tcl::IoItemPkg<ToglConfig>(interp, "Togl_", "$Revision$")
+    Tcl::IoItemPkg<Toglet>(interp, "Togl_", "$Revision$")
   {
     Tcl_PkgProvide(interp, "Objtogl", "3.2");
 
@@ -503,24 +502,24 @@ public:
     addCommand( new SetVisibleCmd (this, "Togl_::setVisible") );
 	 addCommand( new ShowCmd       (this, "Togl_::show") );
 
-	 declareCAction("clearscreen", &ToglConfig::clearscreen);
+	 declareCAction("clearscreen", &Toglet::clearscreen);
     declareCAttrib("height",
-                   &ToglConfig::getHeight, &ToglConfig::setHeight);
-	 declareCAction("loadDefaultFont", &ToglConfig::loadDefaultFont);
-	 declareCSetter("loadFont", &ToglConfig::loadFont);
-	 declareCSetter("loadFonti", &ToglConfig::loadFonti);
-	 declareCAction("refresh", &ToglConfig::refresh);
-    declareCSetter("scaleRect", &ToglConfig::scaleRect, "scale");
-    declareCSetter("setFixedScale", &ToglConfig::setFixedScale, "scale");
-    declareCSetter("setUnitAngle", &ToglConfig::setUnitAngle,
+                   &Toglet::getHeight, &Toglet::setHeight);
+	 declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
+	 declareCSetter("loadFont", &Toglet::loadFont);
+	 declareCSetter("loadFonti", &Toglet::loadFonti);
+	 declareCAction("refresh", &Toglet::refresh);
+    declareCSetter("scaleRect", &Toglet::scaleRect, "scale");
+    declareCSetter("setFixedScale", &Toglet::setFixedScale, "scale");
+    declareCSetter("setUnitAngle", &Toglet::setUnitAngle,
                    "angle_in_degrees");
-    declareCSetter("setViewingDistance", &ToglConfig::setViewingDistIn,
+    declareCSetter("setViewingDistance", &Toglet::setViewingDistIn,
                    "distance_in_inches");
-    declareCAction("swapBuffers", &ToglConfig::swapBuffers);
-	 declareCAction("takeFocus", &ToglConfig::takeFocus);
-	 declareCAction("undraw", &ToglConfig::undraw);
-    declareCGetter("usingFixedScale", &ToglConfig::usingFixedScale);
-    declareCAttrib("width", &ToglConfig::getWidth, &ToglConfig::setWidth);
+    declareCAction("swapBuffers", &Toglet::swapBuffers);
+	 declareCAction("takeFocus", &Toglet::takeFocus);
+	 declareCAction("undraw", &Toglet::undraw);
+    declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
+    declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
 
 	 Tcl_Eval(interp,
 				 "proc clearscreen_ {} { Togl_::clearscreen }\n"
@@ -546,12 +545,12 @@ public:
 namespace {
   Tcl_Interp* toglCreateInterp = 0;
 
-  ToglConfig* makeToglConfig()
+  Toglet* makeToglet()
   {
 	 if (toglCreateInterp == 0)
-		throw FactoryError("ToglConfig");
+		throw FactoryError("Toglet");
 
-	 return ToglConfig::make(toglCreateInterp);
+	 return Toglet::make(toglCreateInterp);
   }
 }
 
@@ -565,7 +564,7 @@ DOTRACE("Objtogl_Init");
 
   toglCreateInterp = interp;
 
-  Util::ObjFactory::theOne().registerCreatorFunc( makeToglConfig );
+  Util::ObjFactory::theOne().registerCreatorFunc( makeToglet );
 
   return TCL_OK;
 }

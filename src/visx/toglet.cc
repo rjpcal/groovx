@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// toglconfig.cc
+// toglet.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,10 +10,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TOGLCONFIG_CC_DEFINED
-#define TOGLCONFIG_CC_DEFINED
+#ifndef TOGLET_CC_DEFINED
+#define TOGLET_CC_DEFINED
 
-#include "toglconfig.h"
+#include "toglet.h"
 
 #include "glcanvas.h"
 #include "xbmaprenderer.h"
@@ -73,7 +73,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ToglConfig_Impl {
+class Toglet_Impl {
 public:
   static void dummyReshapeCallback(Togl* togl);
   static void dummyDisplayCallback(Togl* togl);
@@ -85,11 +85,11 @@ namespace {
   void toglDestroyCallback(Togl* togl) {
   DOTRACE("toglDestroyCallback");
 	 DebugEvalNL((void*)togl);
-	 ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
+	 Toglet* config = static_cast<Toglet*>(togl->getClientData());
 
 
 	 // We have to test that config is non-null, because if this
-	 // callback was triggered out of ToglConfig's destructor, then it
+	 // callback was triggered out of Toglet's destructor, then it
 	 // will have already set the client data for the Togl* to null.
 	 DebugEvalNL((void*)config);
 	 if (config) config->onWindowClose();
@@ -114,14 +114,14 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ToglConfig member definitions
+// Toglet member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-ToglConfig::ToglConfig(Tcl_Interp* interp,
-							  int config_argc, char** config_argv,
-							  bool pack,
-							  double dist, double unit_angle) :
+Toglet::Toglet(Tcl_Interp* interp,
+					int config_argc, char** config_argv,
+					bool pack,
+					double dist, double unit_angle) :
   GWT::Widget(),
   itsCanvas(new GLCanvas),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
@@ -132,13 +132,13 @@ ToglConfig::ToglConfig(Tcl_Interp* interp,
   itsFontListBase(0),
   itsDestroyCallback(0)
 {
-DOTRACE("ToglConfig::ToglConfig"); 
+DOTRACE("Toglet::Toglet"); 
   DebugEvalNL((void*) this);
 
   itsTogl->setClientData(static_cast<ClientData>(this));
 
-  itsTogl->setReshapeFunc(ToglConfig_Impl::dummyReshapeCallback);
-  itsTogl->setDisplayFunc(ToglConfig_Impl::dummyDisplayCallback);
+  itsTogl->setReshapeFunc(Toglet_Impl::dummyReshapeCallback);
+  itsTogl->setDisplayFunc(Toglet_Impl::dummyDisplayCallback);
   itsTogl->setDestroyFunc(toglDestroyCallback);
 
   setUnitAngle(unit_angle);
@@ -174,8 +174,8 @@ DOTRACE("ToglConfig::ToglConfig");
   }  
 }
 
-ToglConfig::~ToglConfig() {
-DOTRACE("ToglConfig::~ToglConfig");
+Toglet::~Toglet() {
+DOTRACE("Toglet::~Toglet");
 
   if (itsTogl)
 	 { 
@@ -193,8 +193,8 @@ DOTRACE("ToglConfig::~ToglConfig");
 	 }
 }
 
-void ToglConfig::onWindowClose() {
-DOTRACE("ToglConfig::onWindowClose");
+void Toglet::onWindowClose() {
+DOTRACE("Toglet::onWindowClose");
   if (itsDestroyCallback.get() != 0)
 	 itsDestroyCallback->onDestroy(this);
 
@@ -205,33 +205,33 @@ DOTRACE("ToglConfig::onWindowClose");
 // accessors //
 ///////////////
 
-double ToglConfig::getFixedScale() const {
-DOTRACE("ToglConfig::getFixedScale"); 
+double Toglet::getFixedScale() const {
+DOTRACE("Toglet::getFixedScale"); 
   return itsFixedScale; 
 }
 
-Rect<double> ToglConfig::getMinRect() const { 
-DOTRACE("ToglConfig::getMinRect");
+Rect<double> Toglet::getMinRect() const { 
+DOTRACE("Toglet::getMinRect");
   return itsMinRect;
 }
 
-Tcl_Interp* ToglConfig::getInterp() const {
-DOTRACE("ToglConfig::getInterp");
+Tcl_Interp* Toglet::getInterp() const {
+DOTRACE("Toglet::getInterp");
   return itsTogl ? itsTogl->interp() : 0;
 }
 
-int ToglConfig::getHeight() const {
-DOTRACE("ToglConfig::getHeight");
+int Toglet::getHeight() const {
+DOTRACE("Toglet::getHeight");
   return itsTogl ? itsTogl->height() : 0;
 }
 
-int ToglConfig::getWidth() const {
-DOTRACE("ToglConfig::getWidth");
+int Toglet::getWidth() const {
+DOTRACE("Toglet::getWidth");
   return itsTogl ? itsTogl->width() : 0;
 }
 
-void ToglConfig::queryColor(unsigned int color_index, Color& color) const {
-DOTRACE("ToglConfig::queryColor");
+void Toglet::queryColor(unsigned int color_index, Color& color) const {
+DOTRACE("Toglet::queryColor");
 
   if (!itsTogl) return;
 
@@ -255,28 +255,28 @@ DOTRACE("ToglConfig::queryColor");
 #endif
 }
 
-bool ToglConfig::usingFixedScale() const {
-DOTRACE("ToglConfig::usingFixedScale"); 
+bool Toglet::usingFixedScale() const {
+DOTRACE("Toglet::usingFixedScale"); 
   return itsFixedScaleFlag; 
 }
 
-Display* ToglConfig::getX11Display() const {
+Display* Toglet::getX11Display() const {
 DOTRACE("getX11Display");
   return itsTogl ? itsTogl->display() : 0;
 }
 
-int ToglConfig::getX11ScreenNumber() const {
+int Toglet::getX11ScreenNumber() const {
 DOTRACE("getX11ScreenNumber");
   return itsTogl ? itsTogl->screenNumber() : 0;
 }
 
-Window ToglConfig::getX11Window() const {
+Window Toglet::getX11Window() const {
 DOTRACE("getX11Window");
   return itsTogl ? itsTogl->windowId() : 0;
 }
 
-GWT::Canvas* ToglConfig::getCanvas() {
-DOTRACE("ToglConfig::getCanvas");
+GWT::Canvas* Toglet::getCanvas() {
+DOTRACE("Toglet::getCanvas");
 
   if (itsTogl) itsTogl->makeCurrent();
 
@@ -287,9 +287,9 @@ DOTRACE("ToglConfig::getCanvas");
 // manipulators //
 //////////////////
 
-void ToglConfig::destroyWidget() {
-DOTRACE("ToglConfig::destroyWidget");
-DebugPrintNL("ToglConfig::destroyWidget");
+void Toglet::destroyWidget() {
+DOTRACE("Toglet::destroyWidget");
+DebugPrintNL("Toglet::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( itsTogl && !Tcl_InterpDeleted(itsTogl->interp()) ) {
 	 dynamic_string destroy_cmd_str = "destroy ";
@@ -301,8 +301,8 @@ DebugPrintNL("ToglConfig::destroyWidget");
   }
 }
 
-void ToglConfig::scaleRect(double factor) {
-DOTRACE("ToglConfig::scaleRect");
+void Toglet::scaleRect(double factor) {
+DOTRACE("Toglet::scaleRect");
   try { if (factor <= 0.0) { throw ToglError("invalid scaling factor"); } }
   catch (ToglError&) { throw; }
 
@@ -312,8 +312,8 @@ DOTRACE("ToglConfig::scaleRect");
   reconfigure();
 }
 
-void ToglConfig::setColor(const Color& color) {
-DOTRACE("ToglConfig::setColor");
+void Toglet::setColor(const Color& color) {
+DOTRACE("Toglet::setColor");
 
   if (!itsTogl) return;
 
@@ -331,8 +331,8 @@ DOTRACE("ToglConfig::setColor");
   itsTogl->setColor(color.pixel, color.red, color.green, color.blue);
 }
 
-void ToglConfig::setFixedScale(double s) {
-DOTRACE("ToglConfig::setFixedScale"); 
+void Toglet::setFixedScale(double s) {
+DOTRACE("Toglet::setFixedScale"); 
   try { if (s <= 0.0) { throw ToglError("invalid scaling factor"); } }
   catch (ToglError&) { throw; }
 
@@ -342,8 +342,8 @@ DOTRACE("ToglConfig::setFixedScale");
   reconfigure();
 }
 
-void ToglConfig::setUnitAngle(double deg) {
-DOTRACE("ToglConfig::setUnitAngle");
+void Toglet::setUnitAngle(double deg) {
+DOTRACE("Toglet::setUnitAngle");
 
   if (!itsTogl) return;
 
@@ -368,8 +368,8 @@ DOTRACE("ToglConfig::setUnitAngle");
   reconfigure();
 }
 
-void ToglConfig::setViewingDistIn(double in) {
-DOTRACE("ToglConfig::setViewingDistIn"); 
+void Toglet::setViewingDistIn(double in) {
+DOTRACE("Toglet::setViewingDistIn"); 
   try {
 	 if (in <= 0.0) 
 		{ throw ToglError("viewing distance must be positive (duh)"); }
@@ -386,16 +386,16 @@ DOTRACE("ToglConfig::setViewingDistIn");
   reconfigure();
 }
 
-void ToglConfig::setMinRectLTRB(double L, double T, double R, double B) {
-DOTRACE("ToglConfig::setMinRectLTRB"); 
+void Toglet::setMinRectLTRB(double L, double T, double R, double B) {
+DOTRACE("Toglet::setMinRectLTRB"); 
   itsFixedScaleFlag = false;
   itsMinRect.setRectLTRB(L,T,R,B);
 
   reconfigure();
 }
 
-void ToglConfig::setHeight(int val) {
-DOTRACE("ToglConfig::setHeight");
+void Toglet::setHeight(int val) {
+DOTRACE("Toglet::setHeight");
 
   if (!itsTogl) return;
 
@@ -404,8 +404,8 @@ DOTRACE("ToglConfig::setHeight");
   setIntParam(itsTogl, "height", val);
 }
 
-void ToglConfig::setWidth(int val) {
-DOTRACE("ToglConfig::setWidth");
+void Toglet::setWidth(int val) {
+DOTRACE("Toglet::setWidth");
 
   if (!itsTogl) return;
 
@@ -414,10 +414,10 @@ DOTRACE("ToglConfig::setWidth");
   setIntParam(itsTogl, "width", val);
 }
 
-ToglConfig::DestroyCallback::~DestroyCallback() {}
+Toglet::DestroyCallback::~DestroyCallback() {}
 
-void ToglConfig::setDestroyCallback(DestroyCallback* callback) {
-DOTRACE("ToglConfig::setDestroyCallback");
+void Toglet::setDestroyCallback(DestroyCallback* callback) {
+DOTRACE("Toglet::setDestroyCallback");
   itsDestroyCallback.reset(callback); 
 }
 
@@ -425,8 +425,8 @@ DOTRACE("ToglConfig::setDestroyCallback");
 // actions //
 /////////////
 
-void ToglConfig::bind(const char* event_sequence, const char* script) {
-DOTRACE("ToglConfig::bind");
+void Toglet::bind(const char* event_sequence, const char* script) {
+DOTRACE("Toglet::bind");
 
   if (!itsTogl) return;
 
@@ -441,10 +441,10 @@ DOTRACE("ToglConfig::bind");
   catch (Tcl::TclError&) { throw; }
 }
 
-void ToglConfig::loadDefaultFont() { loadFont(0); }
+void Toglet::loadDefaultFont() { loadFont(0); }
 
-void ToglConfig::loadFont(const char* fontname) {
-DOTRACE("ToglConfig::loadFont");
+void Toglet::loadFont(const char* fontname) {
+DOTRACE("Toglet::loadFont");
 
   if (!itsTogl) return;
 
@@ -474,8 +474,8 @@ DOTRACE("ToglConfig::loadFont");
   itsFontListBase = newListBase;
 }
 
-void ToglConfig::loadFonti(int fontnumber) {
-DOTRACE("ToglConfig::loadFonti");
+void Toglet::loadFonti(int fontnumber) {
+DOTRACE("Toglet::loadFonti");
 
   if (!itsTogl) return;
 
@@ -502,8 +502,8 @@ DOTRACE("ToglConfig::loadFonti");
   itsFontListBase = newListBase;
 }
 
-void ToglConfig::reconfigure() {
-DOTRACE("ToglConfig::reconfigure");
+void Toglet::reconfigure() {
+DOTRACE("Toglet::reconfigure");
 
   if (!itsTogl) return;
 
@@ -557,16 +557,16 @@ DOTRACE("ToglConfig::reconfigure");
   itsTogl->postRedisplay();
 }
 
-void ToglConfig::swapBuffers() {
-DOTRACE("ToglConfig::swapBuffers");
+void Toglet::swapBuffers() {
+DOTRACE("Toglet::swapBuffers");
 
   if (!itsTogl) return;
 
   itsTogl->swapBuffers();
 }
 
-void ToglConfig::takeFocus() {
-DOTRACE("ToglConfig::takeFocus");
+void Toglet::takeFocus() {
+DOTRACE("Toglet::takeFocus");
 
   if (!itsTogl) return;
 
@@ -579,8 +579,8 @@ DOTRACE("ToglConfig::takeFocus");
   catch (Tcl::TclError&) { throw; }
 }
 
-void ToglConfig::writeEpsFile(const char* filename) {
-DOTRACE("ToglConfig::writeEpsFile");
+void Toglet::writeEpsFile(const char* filename) {
+DOTRACE("Toglet::writeEpsFile");
 
   if (!itsTogl) return;
 
@@ -604,7 +604,7 @@ DOTRACE("ToglConfig::writeEpsFile");
 	 // do the EPS dump
 	 const int rgbFlag = 0;
 	 itsTogl->dumpToEpsFile(filename, rgbFlag,
-									  ToglConfig_Impl::dummyEpsCallback);
+									Toglet_Impl::dummyEpsCallback);
   }
   glPopAttrib();
 
@@ -618,9 +618,9 @@ DOTRACE("ToglConfig::writeEpsFile");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ToglConfig_Impl::dummyReshapeCallback(Togl* togl) {
-DOTRACE("ToglConfig_Impl::dummyReshapeCallback");
-  ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
+void Toglet_Impl::dummyReshapeCallback(Togl* togl) {
+DOTRACE("Toglet_Impl::dummyReshapeCallback");
+  Toglet* config = static_cast<Toglet*>(togl->getClientData());
   DebugEvalNL((void*) config);
 
   try {
@@ -637,10 +637,10 @@ DOTRACE("ToglConfig_Impl::dummyReshapeCallback");
   }
 }
 
-void ToglConfig_Impl::dummyDisplayCallback(Togl* togl) {
-DOTRACE("ToglConfig_Impl::dummyDisplayCallback");
+void Toglet_Impl::dummyDisplayCallback(Togl* togl) {
+DOTRACE("Toglet_Impl::dummyDisplayCallback");
 
-  ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
+  Toglet* config = static_cast<Toglet*>(togl->getClientData());
   DebugEvalNL((void*) config);
 
   try {
@@ -657,9 +657,9 @@ DOTRACE("ToglConfig_Impl::dummyDisplayCallback");
   }
 }
 
-void ToglConfig_Impl::dummyEpsCallback(const Togl* togl) {
-DOTRACE("ToglConfig_Impl::dummyEpsCallback");
-  ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
+void Toglet_Impl::dummyEpsCallback(const Togl* togl) {
+DOTRACE("Toglet_Impl::dummyEpsCallback");
+  Toglet* config = static_cast<Toglet*>(togl->getClientData());
   DebugEvalNL((void*) config);
 
   try {
@@ -676,5 +676,5 @@ DOTRACE("ToglConfig_Impl::dummyEpsCallback");
   }
 }
 
-static const char vcid_toglconfig_cc[] = "$Header$";
-#endif // !TOGLCONFIG_CC_DEFINED
+static const char vcid_toglet_cc[] = "$Header$";
+#endif // !TOGLET_CC_DEFINED

@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// toglconfig.h
+// toglet.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jun  6 16:50:47 2001
+// written: Wed Jun  6 20:23:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TOGLCONFIG_H_DEFINED
-#define TOGLCONFIG_H_DEFINED
+#ifndef TOGLET_H_DEFINED
+#define TOGLET_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
@@ -33,7 +33,7 @@ struct Togl;
 struct Tcl_Interp;
 struct Tcl_Obj;
 
-class ToglConfig_Impl;
+class Toglet_Impl;
 
 #ifndef _XLIB_H_
 struct _XDisplay;
@@ -43,13 +43,13 @@ typedef unsigned long Window;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ToglConfig class definition
+// Toglet class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ToglConfig : public virtual Util::Object, public GWT::Widget {
+class Toglet : public virtual Util::Object, public GWT::Widget {
 protected:
-  ToglConfig(Tcl_Interp* interp,
+  Toglet(Tcl_Interp* interp,
 				 int config_argc=0, char** config_argv=0,
 				 bool pack=true,
 				 double dist=30.0, double unit_angle=2.05);
@@ -63,9 +63,9 @@ public:
 	 double red, green, blue;
   };
 
-  static ToglConfig* make(Tcl_Interp* interp) { return new ToglConfig(interp); }
+  static Toglet* make(Tcl_Interp* interp) { return new Toglet(interp); }
 
-  virtual ~ToglConfig();
+  virtual ~Toglet();
 
   void onWindowClose();
 
@@ -105,7 +105,7 @@ public:
   class DestroyCallback {
   public:
 	 virtual ~DestroyCallback();
-	 virtual void onDestroy(ToglConfig* config) = 0;
+	 virtual void onDestroy(Toglet* config) = 0;
   };
 
   void setDestroyCallback(DestroyCallback* callback);
@@ -122,10 +122,10 @@ public:
   void writeEpsFile(const char* filename);
 
 private:
-  ToglConfig(const ToglConfig&); // no copy constructor
-  ToglConfig& operator=(const ToglConfig&); // no assignment operator
+  Toglet(const Toglet&); // no copy constructor
+  Toglet& operator=(const Toglet&); // no assignment operator
 
-  friend class ToglConfig_Impl;
+  friend class Toglet_Impl;
 
   void reconfigure();
 
@@ -141,5 +141,5 @@ private:
   scoped_ptr<DestroyCallback> itsDestroyCallback;
 };
 
-static const char vcid_toglconfig_h[] = "$Header$";
-#endif // !TOGLCONFIG_H_DEFINED
+static const char vcid_toglet_h[] = "$Header$";
+#endif // !TOGLET_H_DEFINED
