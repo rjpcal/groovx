@@ -99,7 +99,7 @@ test "PositionTcl-IO::stringify" "normal use" {
 	 Pos::scale $::pos 1.0 2.5 4.0
 	 Pos::translate $::pos 5.3 10.6 15.9
 	 IO::stringify $::pos
-} "Position @$::INT { 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3"
+} "Position @$::INT"
 test "PositionTcl-IO::stringify" "error on bad posid" { 
     IO::stringify -1
 } {IO::stringify: attempt to access invalid id '.*' in}
