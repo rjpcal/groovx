@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Aug 15 17:59:13 2001
+// written: Wed Aug 22 17:19:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef GBVEC_H_DEFINED
 #define GBVEC_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
-#include "util/value.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MULTIVALUE_H_DEFINED)
+#include "util/multivalue.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC3_H_DEFINED)
@@ -22,40 +22,22 @@
 #endif
 
 template <class T>
-class GbVec3 : public Value {
-private:
-  Gfx::Vec3<T> itsData;
-
+class GbVec3 : public Gfx::Vec3<T>,
+               public TMultiValue<T>
+{
 public:
   GbVec3(T x_=T(), T y_=T(), T z_=T());
   virtual ~GbVec3();
 
-        T& x()       { return itsData.x(); }
-  const T& x() const { return itsData.x(); }
+  // These help to disambiguate function calls to set()
+        Gfx::Vec3<T>& vec()       { return *this; }
+  const Gfx::Vec3<T>& vec() const { return *this; }
 
-        T& y()       { return itsData.y(); }
-  const T& y() const { return itsData.y(); }
-
-        T& z()       { return itsData.z(); }
-  const T& z() const { return itsData.z(); }
-
-        Gfx::Vec3<T>& vec()       { return itsData; }
-  const Gfx::Vec3<T>& vec() const { return itsData; }
-
-  //
-  // Value interface
-  //
-
-public:
   virtual Value* clone() const;
   virtual fstring getNativeTypeName() const;
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
 
-  virtual const char* get(Util::TypeCue<const char*>) const;
-
-  virtual void assignTo(Value& other) const;
-  virtual void assignFrom(const Value& other);
+  virtual unsigned int numValues() const;
+  virtual const T* constBegin() const;
 };
 
 static const char vcid_gbvec_h[] = "$Header$";
