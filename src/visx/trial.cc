@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Jun 19 15:08:56 2001
+// written: Thu Jun 21 13:38:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,11 +31,10 @@
 #include "gwt/widget.h"
 
 #include "util/errorhandler.h"
+#include "util/log.h"
 #include "util/minivec.h"
 #include "util/ref.h"
-
-#include <iostream>
-#include <strstream.h>
+#include "util/strings.h"
 
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"
@@ -160,9 +159,9 @@ private:
 
   inline void timeTrace(const char* loc) {
 #ifdef TIME_TRACE
-    std::cerr << "in " << loc
-              << "@ elapsed time == " << timingHdlr().getElapsedMsec()
-              << std::endl;
+    Util::log() << "in " << loc
+                << "@ elapsed time == " << timingHdlr().getElapsedMsec()
+                << '\n';
 #endif
   }
 
@@ -170,8 +169,6 @@ public:
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
-
-  void writeMatlab(STD_IO::ostream& os) const;
 
   int getCorrectResponse() const { return itsCorrectResponse; }
   void setCorrectResponse(int response) { itsCorrectResponse = response; }
@@ -303,24 +300,6 @@ DOTRACE("Trial::Impl::writeTo");
   writer->writeObject("th", itsTh);
 }
 
-void Trial::Impl::writeMatlab(STD_IO::ostream& os) const {
-DOTRACE("Trial::Impl::writeMatlab");
-
-  for (GxNodes::const_iterator
-         ii = itsGxNodes.begin(),
-         end = itsGxNodes.end();
-       ii != end;
-       ++ii)
-    {
-      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
-        {
-          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
-          if (g)
-            os << g->id() << ' ';
-        }
-    }
-}
-
 ///////////////
 // accessors //
 ///////////////
@@ -333,13 +312,11 @@ DOTRACE("Trial::Impl::trialType");
 const char* Trial::Impl::description() const {
 DOTRACE("Trial::Impl::description");
 
-  const int BUF_SIZE = 200;
-  static char buf[BUF_SIZE];
+  static dynamic_string buf;
+  buf = "";
 
-  ostrstream ost(buf, BUF_SIZE);
-
-  ost << "trial type == " << trialType()
-      << ", objs ==";
+  buf.append("trial type == " ).append(trialType());
+  buf.append(", objs ==");
 
 
   {for (GxNodes::const_iterator
@@ -352,12 +329,12 @@ DOTRACE("Trial::Impl::description");
         {
           const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
           if (g)
-            ost << ' ' << g->id();
+            buf.append(" ").append(int(g->id()));
         }
     }
   }
 
-  ost << ", categories == ";
+  buf.append(", categories == ");
 
   {for (GxNodes::const_iterator
           ii = itsGxNodes.begin(),
@@ -369,14 +346,12 @@ DOTRACE("Trial::Impl::description");
         {
           const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
           if (g)
-            ost << ' ' << g->category();
+            buf.append(" ").append(g->category());
         }
     }
   }
 
-  ost << '\0';
-
-  return buf;
+  return buf.c_str();
 }
 
 int Trial::Impl::lastResponse() const {
@@ -663,9 +638,6 @@ void Trial::readFrom(IO::Reader* reader)
 
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
-
-void Trial::writeMatlab(STD_IO::ostream& os) const
-  { itsImpl->writeMatlab(os); }
 
 
 int Trial::getCorrectResponse() const
