@@ -16,100 +16,93 @@ IO::testDestringifyCmd BlockTcl IO 1 $::BLOCK
 IO::testWriteCmd BlockTcl IO 1 $::BLOCK
 IO::testReadCmd BlockTcl IO 1 $::BLOCK
 
-### Block::currentTrialCmd ###
-test "BlockTcl-Block::currentTrial" "too few args" {
-	 Block::currentTrial
-} {wrong \# args: should be "Block::currentTrial item_id\(s\)"}
-test "BlockTcl-Block::currentTrial" "too many args" {
-	 Block::currentTrial $::BLOCK junk
-} {wrong \# args: should be "Block::currentTrial item_id\(s\)"}
+### Block::currentTrial ###
+test "Block::currentTrial" "too few args" {
+    Block::currentTrial
+} {wrong \# args}
+test "Block::currentTrial" "too many args" {
+    Block::currentTrial $::BLOCK junk
+} {wrong \# args}
 
-test "BlockTcl-Block::currentTrial" "normal use on empty block" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::currentTrial $::BLOCK
+test "Block::currentTrial" "normal use on empty block" {
+    Block::removeAllTrials $::BLOCK
+    Block::currentTrial $::BLOCK
 } {^0$}
-test "BlockTcl-Block::currentTrial" "no error" {} $BLANK $no_test
 
-### Block::currentTrialTypeCmd ###
-test "BlockTcl-Block::currentTrialType" "too few args" {
-    Block::currentTrialType 
-} {wrong \# args: should be "Block::currentTrialType item_id\(s\)"}
-test "BlockTcl-Block::currentTrialType" "too many args" {
-    Block::currentTrialType $::BLOCK junk
-} {wrong \# args: should be "Block::currentTrialType item_id\(s\)"}
+### Block::trialType ###
+test "Block::trialType" "too few args" {
+    Block::trialType 
+} {wrong \# args}
+test "Block::trialType" "too many args" {
+    Block::trialType $::BLOCK junk
+} {wrong \# args}
 
-test "BlockTcl-Block::currentTrialType" "normal use on empty expt" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::currentTrialType $::BLOCK
+test "Block::trialType" "normal use on empty expt" {
+    Block::removeAllTrials $::BLOCK
+    Block::trialType $::BLOCK
 } {^-1$}
-test "BlockTcl-Block::currentTrialType" "error" {} $BLANK $no_test
 
-### Block::isCompleteCmd ###
-test "BlockTcl-Block::isComplete" "too few args" {
+### Block::isComplete ###
+test "Block::isComplete" "too few args" {
     Block::isComplete 
-} {wrong \# args: should be "Block::isComplete item_id\(s\)"}
-test "BlockTcl-Block::isComplete" "too many args" {
+} {wrong \# args}
+test "Block::isComplete" "too many args" {
     Block::isComplete $::BLOCK junk
-} {wrong \# args: should be "Block::isComplete item_id\(s\)"}
+} {wrong \# args}
 
-test "BlockTcl-Block::isComplete" "normal use on empty expt" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::isComplete $::BLOCK
+test "Block::isComplete" "normal use on empty expt" {
+    Block::removeAllTrials $::BLOCK
+    Block::isComplete $::BLOCK
 } {^1$}
-test "BlockTcl-Block::isComplete" "error" {} $BLANK $no_test
 
-### Block::numCompletedCmd ###
-test "BlockTcl-Block::numCompleted" "too few args" {
-	 Block::numCompleted
-} {wrong \# args: should be "Block::numCompleted item_id\(s\)"}
-test "BlockTcl-Block::numCompleted" "too many args" {
-	 Block::numCompleted $::BLOCK junk
-} {wrong \# args: should be "Block::numCompleted item_id\(s\)"}
+### Block::numCompleted ###
+test "Block::numCompleted" "too few args" {
+    Block::numCompleted
+} {wrong \# args}
+test "Block::numCompleted" "too many args" {
+    Block::numCompleted $::BLOCK junk
+} {wrong \# args}
 
-test "BlockTcl-Block::numCompleted" "use on empty expt" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::numCompleted $::BLOCK
+test "Block::numCompleted" "use on empty expt" {
+    Block::removeAllTrials $::BLOCK
+    Block::numCompleted $::BLOCK
 } {^0$}
-test "BlockTcl-Block::numCompleted" "no error" {} $BLANK $no_test
 
-### Block::numTrialsCmd ###
-test "BlockTcl-Block::numTrials" "too few args" {
-	 Block::numTrials 
-} {wrong \# args: should be "Block::numTrials item_id\(s\)"}
-test "BlockTcl-Block::numTrials" "too many args" {
-	 Block::numTrials $::BLOCK junk
-} {wrong \# args: should be "Block::numTrials item_id\(s\)"}
+### Block::numTrials ###
+test "Block::numTrials" "too few args" {
+    Block::numTrials 
+} {wrong \# args}
+test "Block::numTrials" "too many args" {
+    Block::numTrials $::BLOCK junk
+} {wrong \# args}
 
-test "BlockTcl-Block::numTrials" "use on empty expt" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::numTrials	$::BLOCK 
+test "Block::numTrials" "use on empty expt" {
+    Block::removeAllTrials $::BLOCK
+    Block::numTrials   $::BLOCK 
 } {^0$}
-test "BlockTcl-Block::numTrials" "no error" {} $BLANK $no_test
 
-### Block::prevResponseCmd ###
-test "BlockTcl-Block::prevResponse" "too few args" {
-	 Block::prevResponse 
-} {wrong \# args: should be "Block::prevResponse item_id\(s\)"}
-test "BlockTcl-Block::prevResponse" "too many args" {
-	 Block::prevResponse $::BLOCK junk
-} {wrong \# args: should be "Block::prevResponse item_id\(s\)"}
+### Block::lastResponse ###
+test "Block::lastResponse" "too few args" {
+    Block::lastResponse 
+} {wrong \# args}
+test "Block::lastResponse" "too many args" {
+    Block::lastResponse $::BLOCK junk
+} {wrong \# args}
 
-test "BlockTcl-Block::prevResponse" "normal use on empty expt" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::prevResponse $::BLOCK
+test "Block::lastResponse" "normal use on empty expt" {
+    Block::removeAllTrials $::BLOCK
+    Block::lastResponse $::BLOCK
 } {^\-1$}
-test "BlockTcl-Block::prevResponse" "error" {} $BLANK $no_test
 
-### Block::trialDescriptionCmd ###
-test "BlockTcl-Block::trialDescription" "too few args" {
-    Block::trialDescription 
-} {wrong \# args: should be "Block::trialDescription item_id\(s\)"}
-test "BlockTcl-Block::trialDescription" "too many args" {
-    Block::trialDescription $::BLOCK junk
-} {wrong \# args: should be "Block::trialDescription item_id\(s\)"}
+### Block::info ###
+test "Block::info" "too few args" {
+    Block::info 
+} {wrong \# args}
+test "Block::info" "too many args" {
+    Block::info $::BLOCK junk
+} {wrong \# args}
 
-test "BlockTcl-Block::trialDescription" "normal use on empty expt" {
-	 Block::removeAllTrials $::BLOCK
-	 Block::trialDescription $::BLOCK
+test "Block::info" "normal use on empty expt" {
+    Block::removeAllTrials $::BLOCK
+    Block::info $::BLOCK
 } {^complete$}
-test "BlockTcl-Block::trialDescription" "error" {} $BLANK $no_test

@@ -107,6 +107,11 @@ public:
 
   void clearObjs();
 
+  /// Returns a standard set of descriptive information.
+  /** This is here mostly for legacy reasons; this function used to be the
+      implementation of vxInfo(). */
+  fstring stdInfo() const;
+
 
   //
   // Element interface
@@ -120,7 +125,7 @@ public:
   virtual int lastResponse() const;
 
   /// Overridden from Element.
-  virtual fstring status() const;
+  virtual fstring vxInfo() const;
 
   virtual void vxRun(Element& parent);
 

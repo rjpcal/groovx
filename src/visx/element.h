@@ -71,8 +71,8 @@ public:
   /// Get the value of the last response.
   virtual int lastResponse() const = 0;
 
-  /// Get a string describing the current status of the experiment.
-  virtual fstring status() const = 0;
+  /// Get a string describing the object and/or its current state.
+  virtual fstring vxInfo() const = 0;
 
   /// Run this element with a reference to its parent.
   virtual void vxRun(Element& parent) = 0;

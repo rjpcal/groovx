@@ -42,7 +42,7 @@ test "ExptDriver::begin" "normal use" {
     -> $expt widget [Toglet::current]
     -> $expt addBlock $block
     -> $expt begin
-    -> $expt stop
+    -> $expt halt
     delete $expt
 } {^$}
 test "ExptDriver::begin" "error" {} $BLANK $no_test
@@ -101,9 +101,9 @@ test "ExptDriver::save" "too many args" {
     ExptDriver::save a b c
 } {wrong \# args: should be}
 
-### Expt::stop ###
-test "ExptDriver::stop" "too many args" {
-    ExptDriver::stop a b
+### Expt::halt ###
+test "ExptDriver::halt" "too many args" {
+    ExptDriver::halt a b
 } {^wrong \# args: should be}
 
 ### General experiment tests ###

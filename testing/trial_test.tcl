@@ -18,32 +18,32 @@ IO::testDestringifyCmd TrialTcl IO 1 $::TRIAL
 IO::testWriteCmd TrialTcl IO 1 $::TRIAL
 IO::testReadCmd TrialTcl IO 1 $::TRIAL
 
-### Trial::description ###
-test "TrialTcl-Trial::description" "use when empty" {
-    set tr [Obj::new Trial]
-    set str [Trial::description $tr]
+### Trial::stdInfo ###
+test "TrialTcl-Trial::stdInfo" "use when empty" {
+    set tr [new Trial]
+    set str [Trial::stdInfo $tr]
     regexp {objs ==([0-9 ]*),} $str fullmatch objs
     return "[llength $objs]"
 } {^0$}
 
-test "TrialTcl-Trial::description" "use with one object" {
-    set face [Obj::new Face]
-    set tr [Obj::new Trial]
+test "TrialTcl-Trial::stdInfo" "use with one object" {
+    set face [new Face]
+    set tr [new Trial]
     Trial::addNode $tr $face
-    set str [Trial::description $tr]
+    set str [Trial::stdInfo $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
     return "[expr $objs == $face] [llength $objs]"
 } {^1 1$}
 
-test "TrialTcl-Trial::description" "use with several objects" {
-    set face [Obj::new Face]
-    set fixpt [Obj::new FixPt]
-    set house [Obj::new House]
-    set tr [Obj::new Trial]
+test "TrialTcl-Trial::stdInfo" "use with several objects" {
+    set face [new Face]
+    set fixpt [new FixPt]
+    set house [new House]
+    set tr [new Trial]
     Trial::addNode $tr $face
     Trial::addNode $tr $fixpt
     Trial::addNode $tr $house
-    set str [Trial::description $tr]
+    set str [Trial::stdInfo $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
     set idx0 [lsearch -exact $objs $face]
     set idx1 [lsearch -exact $objs $fixpt]
@@ -51,21 +51,21 @@ test "TrialTcl-Trial::description" "use with several objects" {
     return "[llength $objs] $idx0 $idx1 $idx2"
 } {^3 0 1 2$}
 
-test "TrialTcl-Trial::description" "use with nested objects" {
-    set face [Obj::new Face]
-    set pos [Obj::new GxTransform]
+test "TrialTcl-Trial::stdInfo" "use with nested objects" {
+    set face [new Face]
+    set pos [new GxTransform]
 
-    set sep [Obj::new GxSeparator]
-    set fixpt [Obj::new FixPt]
-    set house [Obj::new House]
+    set sep [new GxSeparator]
+    set fixpt [new FixPt]
+    set house [new House]
     GxSeparator::addChild $sep $fixpt
     GxSeparator::addChild $sep $house
 
-    set tr [Obj::new Trial]
+    set tr [new Trial]
     Trial::addNode $tr $sep
     Trial::addNode $tr $face
 
-    set str [Trial::description $tr]
+    set str [Trial::stdInfo $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
 
     set idx0 [lsearch -exact $objs $fixpt]

@@ -107,7 +107,7 @@ void Util::Log::addObjScope(const Util::Object& obj)
 {
 DOTRACE("Util::Log::addObjScope");
 
-  const fstring scopename(obj.objTypename(), " ", obj.id());
+  const fstring scopename(obj.uniqueName());
 
   addScope(scopename);
 }
@@ -116,7 +116,7 @@ void Util::Log::removeObjScope(const Util::Object& obj)
 {
 DOTRACE("Util::Log::removeObjScope");
 
-  const fstring scopename(obj.objTypename(), " ", obj.id());
+  const fstring scopename(obj.uniqueName());
 
   removeScope(scopename);
 }

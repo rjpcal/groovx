@@ -288,38 +288,10 @@ void Trial::setType(int t)
   { rep->trialType = t; }
 
 
-fstring Trial::status() const
+fstring Trial::vxInfo() const
 {
-DOTRACE("Trial::status");
-
-  fstring objids;
-  fstring cats;
-
-  for (Impl::GxNodes::const_iterator
-         ii = rep->gxNodes.begin(),
-         end = rep->gxNodes.end();
-       ii != end;
-       ++ii)
-    {
-      for (Util::FwdIter<const Util::Ref<GxNode> > tr((*ii)->deepChildren());
-           tr.isValid();
-           tr.next())
-        {
-          const GxShapeKit* g = dynamic_cast<const GxShapeKit*>((*tr).get());
-          if (g)
-            {
-              objids.append(" ", g->id());
-              cats.append(" ", g->category());
-            }
-        }
-    }
-
-  fstring buf;
-
-  buf.append("trial type == ", rep->trialType);
-  buf.append(", objs ==", objids, ", categories == ", cats);
-
-  return buf;
+DOTRACE("Trial::vxInfo");
+  return stdInfo();
 }
 
 int Trial::lastResponse() const
@@ -414,6 +386,40 @@ void Trial::clearObjs()
 {
 DOTRACE("Trial::clearObjs");
   rep->gxNodes.clear();
+}
+
+fstring Trial::stdInfo() const
+{
+DOTRACE("Trial::stdInfo");
+
+  fstring objids;
+  fstring cats;
+
+  for (Impl::GxNodes::const_iterator
+         ii = rep->gxNodes.begin(),
+         end = rep->gxNodes.end();
+       ii != end;
+       ++ii)
+    {
+      for (Util::FwdIter<const Util::Ref<GxNode> > tr((*ii)->deepChildren());
+           tr.isValid();
+           tr.next())
+        {
+          const GxShapeKit* g = dynamic_cast<const GxShapeKit*>((*tr).get());
+          if (g)
+            {
+              objids.append(" ", g->id());
+              cats.append(" ", g->category());
+            }
+        }
+    }
+
+  fstring buf;
+
+  buf.append("trial type == ", rep->trialType);
+  buf.append(", objs ==", objids, ", categories == ", cats);
+
+  return buf;
 }
 
 

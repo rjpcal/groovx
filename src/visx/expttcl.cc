@@ -102,7 +102,7 @@ int Exptdriver_Init(Tcl_Interp* interp)
 DOTRACE("Exptdriver_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ExptDriver", "$Revision$");
-  pkg->inheritPkg("IO");
+  pkg->inheritPkg("Element");
   Tcl::defCreator<ExptDriver>(pkg);
   Tcl::defGenericObjCmds<ExptDriver>(pkg);
 
@@ -122,10 +122,9 @@ DOTRACE("Exptdriver_Init");
   pkg->defAction("clear", &ExptDriver::clearElements);
   pkg->defGetter("currentBlock", &ExptDriver::currentElement);
   pkg->defGetter("infoLog", &ExptDriver::getInfoLog);
-  pkg->defAction( "pause", &ExptDriver::pause );
-  pkg->defAction("reset", &ExptDriver::vxReset);
-  pkg->defAction("stop", &ExptDriver::vxHalt);
+  pkg->defAction("pause", &ExptDriver::pause);
   pkg->defAction("storeData", &ExptDriver::storeData);
+  // FIXME this conflicts with Element::widget
   pkg->defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
   pkg->defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
   pkg->defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);

@@ -30,9 +30,6 @@
 #ifndef BLOCKTCL_CC_DEFINED
 #define BLOCKTCL_CC_DEFINED
 
-#include "visx/block.h"
-#include "visx/element.h"
-
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tcllistobj.h"
@@ -42,6 +39,9 @@
 #include "util/iter.h"
 #include "util/objfactory.h"
 #include "util/strings.h"
+
+#include "visx/block.h"
+#include "visx/element.h"
 
 #include "util/trace.h"
 
@@ -61,14 +61,13 @@ namespace
   }
 }
 
-
 extern "C"
 int Block_Init(Tcl_Interp* interp)
 {
 DOTRACE("Block_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Block", "$Revision$");
-  pkg->inheritPkg("IO");
+  pkg->inheritPkg("Element");
   Tcl::defGenericObjCmds<Block>(pkg);
 
   Tcl::defTracing(pkg, Block::tracer);
@@ -78,17 +77,13 @@ DOTRACE("Block_Init");
   pkg->defVec("addTrialIds", "item_id(s) trial_id(s) repeat=1", &addElementIds );
 
   pkg->defGetter("currentTrial", &Block::currentElement);
-  pkg->defGetter("currentTrialType", &Block::trialType);
   pkg->defGetter("isComplete", &Block::isComplete);
   pkg->defGetter("numCompleted", &Block::numCompleted);
   pkg->defGetter("numTrials", &Block::numElements);
-  pkg->defGetter("prevResponse", &Block::lastResponse);
   pkg->defAction("removeAllTrials", &Block::clearElements);
   pkg->defAction("reset", &Block::vxReset);
   pkg->defSetter("shuffle", "item_id rand_seed", &Block::shuffle);
   pkg->defGetter("trials", &Block::getElements);
-  pkg->defGetter("trialDescription", &Block::status);
-  pkg->defAction("undoPrevTrial", &Block::vxUndo);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Block::make);
 

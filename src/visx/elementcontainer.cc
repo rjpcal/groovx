@@ -138,9 +138,9 @@ DOTRACE("ElementContainer::lastResponse");
   return prev_element->lastResponse();
 }
 
-fstring ElementContainer::status() const
+fstring ElementContainer::vxInfo() const
 {
-DOTRACE("ElementContainer::status");
+DOTRACE("ElementContainer::vxInfo");
   if (isComplete()) return fstring("complete");
 
   fstring msg("current element ", currentElement()->uniqueName(),
@@ -216,7 +216,7 @@ DOTRACE("ExptDriver::vxReturn");
     }
   else
     {
-      Util::log( status() );
+      Util::log( vxInfo() );
 
       currentElement()->vxRun(*this);
     }

@@ -52,7 +52,7 @@ int Trial_Init(Tcl_Interp* interp)
 DOTRACE("Trial_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Trial", "$Revision$");
-  pkg->inheritPkg("IO");
+  pkg->inheritPkg("Element");
   Tcl::defTracing(pkg, Trial::tracer);
 
   Tcl::defFieldContainer<Trial>(pkg);
@@ -67,17 +67,17 @@ DOTRACE("Trial_Init");
                  &Trial::getCorrectResponse, &Trial::setCorrectResponse);
   pkg->defAttrib("currentNode",
                  &Trial::getCurrentNode, &Trial::setCurrentNode);
-  pkg->defGetter("description", &Trial::status);
   pkg->defGetter("lastResponse", &Trial::lastResponse);
   pkg->defAction("nextNode", &Trial::trNextNode);
   pkg->defGetter("nodes", &Trial::nodes);
   pkg->defGetter("numResponses", &Trial::numResponses);
   pkg->defAttrib("responseHdlr",
                  &Trial::getResponseHandler, &Trial::setResponseHandler);
+  pkg->defGetter("stdInfo", &Trial::stdInfo);
   pkg->defAttrib("timingHdlr",
                  &Trial::getTimingHdlr, &Trial::setTimingHdlr);
+  // FIXME this is redundant with Element::trialType
   pkg->defAttrib("type", &Trial::trialType, &Trial::setType);
-  pkg->defAction("undoLastResponse", &Trial::vxUndo);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 

@@ -145,7 +145,7 @@ DOTRACE("Block::vxRun");
 
   Precondition( &e != 0 );
 
-  Util::log( status() );
+  Util::log( vxInfo() );
 
   itsParent = &e;
 

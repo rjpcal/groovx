@@ -67,11 +67,8 @@ public:
   /** But note that "valid" does not necessarily mean "correct". */
   virtual int lastResponse() const;
 
-  /// Returns a human-readable description of the current element.
-  /** This description includes the current element's id, its type, the
-      id's of its subobjects, the categories of those objects, and the
-      number of completed trials and number of total trials. */
-  virtual fstring status() const;
+  /// Returns a string naming the current element, plus a count of completed elements.
+  virtual fstring vxInfo() const;
 
   /// Halt the current child element.
   virtual void vxHalt() const;
