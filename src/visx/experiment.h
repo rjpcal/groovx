@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Thu Jan 27 13:40:04 2000
+// written: Wed Feb 16 15:59:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@ class IO;
 /// Protocol class that represents psychophysical experiments.
 class Experiment {
 public:
+  /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Experiment();
 
   virtual Widget* getWidget() = 0;
