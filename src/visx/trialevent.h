@@ -50,20 +50,19 @@ namespace Util
   template <class T> class FwdIter;
 }
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c TrialEvent is an abstract class that models all events that can
- * be scheduled to occur during a trial. Subclasses of \c TrialEvent
- * must override \c invoke() to perform whatever specific action that
- * type of event represents. The base class provides functionality to
- * set the requested delay time, to \c schedule() an event to occur,
- * and to \c cancel() a pending event. The timing accuracy with which
- * \c invoke() is called will depend on the accuracy of the underlying
- * system-provided event loop.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+
+/// \c TrialEvent represents events scheduled to occur during a \c Trial.
+
+/** \c TrialEvent is an abstract class that models all events that can
+    be scheduled to occur during a trial. Subclasses of \c TrialEvent
+    must override \c invoke() to perform whatever specific action that
+    type of event represents. The base class provides functionality to
+    set the requested delay time, to \c schedule() an event to occur,
+    and to \c cancel() a pending event. The timing accuracy with which
+    \c invoke() is called will depend on the accuracy of the
+    underlying system-provided event loop. */
 
 class TrialEvent : public IO::IoObject
 {
@@ -87,34 +86,36 @@ public:
   /// Queries whether there is a pending callback to \c invoke().
   bool isPending() const { return itsTimer.isPending(); }
 
-  /** Schedules the event to occur after the requested delay, and cancels any
-      previously pending events that had not yet triggered. After this call,
-      \c invoke() will be called after the requested delay (to within the
-      accuracy provided by the applications's event loop), unless there is an
-      intervening call to \c cancel(). If the requested delay is negative or
-      zero, the \c invoke() callback is triggered immediately without
-      involving the event loop. The function returns the actual delay that was
-      requested from the event loop (this may differ from the ideal delay
-      request since the TrialEvent will try to learn what the typical error is
-      between ideal/actual delays, and then compensate accordingly). Finally,
-      The minimum_msec parameter specifies a minimum delay time; this may
-      be used to ensure that proper relative ordering of TrialEvent's is
-      maintained, even if the event loop is getting slowed down overall.  */
+  /// Schedules the event to occur after the requested delay,
+  /** Cancels any previously pending events that had not yet
+      triggered. After this call, \c invoke() will be called after the
+      requested delay (to within the accuracy provided by the
+      applications's event loop), unless there is an intervening call
+      to \c cancel(). If the requested delay is negative or zero, the
+      \c invoke() callback is triggered immediately without involving
+      the event loop. The function returns the actual delay that was
+      requested from the event loop (this may differ from the ideal
+      delay request since the TrialEvent will try to learn what the
+      typical error is between ideal/actual delays, and then
+      compensate accordingly). Finally, The minimum_msec parameter
+      specifies a minimum delay time; this may be used to ensure that
+      proper relative ordering of TrialEvent's is maintained, even if
+      the event loop is getting slowed down overall.  */
   unsigned int schedule(Trial& trial, unsigned int minimum_msec = 0);
 
-  /** Cancels a pending event. That is, if \c cancel() is called after
-      \c schedule() has been called but before \c invoke() has been
-      triggered, then \c invoke() will not be called until the event
-      is rescheduled. If there is no pending event, this function does
-      nothing. */
+  /// Cancels a pending event.
+  /** That is, if \c cancel() is called after \c schedule() has been
+      called but before \c invoke() has been triggered, then \c
+      invoke() will not be called until the event is rescheduled. If
+      there is no pending event, this function does nothing. */
   void cancel();
 
 protected:
-  /** This function will be called after the requested delay after a
-      call to \c schedule(). Subclasses must override this function to
-      take whatever specific action is desired when the callback
-      triggers. The function is called internally by \c TrialEvent, so
-      subclasses should not call this function directly. */
+  /// Called after the requested delay after a call to \c schedule().
+  /** Subclasses must override this function to take whatever specific
+      action is desired when the callback triggers. The function is
+      called internally by \c TrialEvent, so subclasses should not
+      call this function directly. */
   virtual void invoke(Trial& trial) = 0;
 
 private:
@@ -140,8 +141,8 @@ private:
 //  ===================================================================
 
 /// TrialEvent subclass that does nothing in its invoke() function.
-/** Why is this useful? It may be helpful in testing the runtime overhead
-    involved in TrialEvent callbacks. */
+/** Why is this useful? It may be helpful in testing the runtime
+    overhead involved in TrialEvent callbacks. */
 class NullTrialEvent : public TrialEvent
 {
 protected:
@@ -161,7 +162,7 @@ public:
 //  ###################################################################
 //  ===================================================================
 
-/// TrialEvent subclass that just binds to an arbitrary Trial member function.
+/// TrialEvent subclass that binds to an arbitrary Trial member function.
 class TrialMemFuncEvent : public TrialEvent
 {
 public:
@@ -300,10 +301,11 @@ private:
 //  ===================================================================
 
 /// MultiEvent allows multiple events to be linked together in sequence.
-/** Compared with just scheduling multiple individual events, the advantage
-    of MultiEvent is that it does not require a trip back into the event
-    loop in between events. This allows for greater timing precision when
-    events must be executed in precise sequence. */
+/** Compared with just scheduling multiple individual events, the
+    advantage of MultiEvent is that it does not require a trip back
+    into the event loop in between events. This allows for greater
+    timing precision when events must be executed in precise
+    sequence. */
 class MultiEvent : public TrialEvent
 {
 protected:

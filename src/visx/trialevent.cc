@@ -105,17 +105,18 @@ DOTRACE("TrialEvent::writeTo");
   writer.writeValue("requestedDelay", itsRequestedDelay);
 }
 
-unsigned int TrialEvent::schedule(Trial& trial, unsigned int minimum_msec)
+unsigned int TrialEvent::schedule(Trial& trial,
+                                  unsigned int minimum_msec)
 {
 DOTRACE("TrialEvent::schedule");
 
   // Remember the participants
   itsTrial = &trial;
 
-  // Figure out the delay we want to request. If our requested delay is
-  // zero, then just leave it as is, so that we get an immediate callback
-  // from Tcl::Timer. Otherwise, adjust the request according to how much
-  // error we expect based on past observations.
+  // Figure out the delay we want to request. If our requested delay
+  // is zero, then just leave it as is, so that we get an immediate
+  // callback from Tcl::Timer. Otherwise, adjust the request according
+  // to how much error we expect based on past observations.
 
   unsigned int actual_request = 0;
 
@@ -153,10 +154,12 @@ DOTRACE("TrialEvent::invokeTemplate");
 
   ++itsInvokeCount;
 
-  // Positive error means we expect the event to occur sooner than expected
-  // Negative error means we expect the event to occur later than expected
+  // Positive error: we expect the event to occur sooner than requested
+  // Negative error: we expect the event to occur later than requested
   // (round towards negative infinity)
-  const double moving_average_ratio = 1.0 / Util::min(10, itsInvokeCount);
+  const double moving_average_ratio =
+    1.0 / Util::min(10, itsInvokeCount);
+
   itsEstimatedOffset =
     (1.0 - moving_average_ratio) * itsEstimatedOffset +
     moving_average_ratio  * error;
@@ -216,10 +219,11 @@ DOTRACE("TrialMemFuncEvent::invoke");
   (trial.*itsCallback)();
 }
 
-#define MAKE_EVENT(EventName)                                                \
-TrialEvent* make##EventName##Event()                                         \
-{                                                                            \
-  return TrialMemFuncEvent::make(&Trial::tr##EventName, #EventName "Event"); \
+#define MAKE_EVENT(EventName)                           \
+TrialEvent* make##EventName##Event()                    \
+{                                                       \
+  return TrialMemFuncEvent::make(&Trial::tr##EventName, \
+                                 #EventName "Event");   \
 }
 
 MAKE_EVENT(AbortTrial);
@@ -267,7 +271,8 @@ void FileWriteEvent::readFrom(IO::Reader& reader)
   itsFile = dynamicCast<OutputFile>(reader.readObject("file"));
   reader.readValue("byte", itsByte);
 
-  reader.readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+  reader.readBaseClass("TrialEvent",
+                       IO::makeProxy<TrialEvent>(this));
 }
 
 void FileWriteEvent::writeTo(IO::Writer& writer) const
@@ -275,7 +280,8 @@ void FileWriteEvent::writeTo(IO::Writer& writer) const
   writer.writeObject("file", itsFile);
   writer.writeValue("byte", itsByte);
 
-  writer.writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+  writer.writeBaseClass("TrialEvent",
+                        IO::makeConstProxy<TrialEvent>(this));
 }
 
 int FileWriteEvent::getByte() const
@@ -320,14 +326,16 @@ void GenericEvent::readFrom(IO::Reader& reader)
 {
   reader.readOwnedObject("callback", itsCallback);
 
-  reader.readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+  reader.readBaseClass("TrialEvent",
+                       IO::makeProxy<TrialEvent>(this));
 }
 
 void GenericEvent::writeTo(IO::Writer& writer) const
 {
   writer.writeOwnedObject("callback", itsCallback);
 
-  writer.writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+  writer.writeBaseClass("TrialEvent",
+                        IO::makeConstProxy<TrialEvent>(this));
 }
 
 fstring GenericEvent::getCallback() const
@@ -380,10 +388,12 @@ void MultiEvent::writeTo(IO::Writer& writer) const
                                  itsEvents.begin(),
                                  itsEvents.end());
 
-  writer.writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+  writer.writeBaseClass("TrialEvent",
+                        IO::makeConstProxy<TrialEvent>(this));
 }
 
-Util::FwdIter<const Util::Ref<TrialEvent> > MultiEvent::getEvents() const
+Util::FwdIter<const Util::Ref<TrialEvent> >
+MultiEvent::getEvents() const
 {
 DOTRACE("MultiEvent::getEvents");
 
