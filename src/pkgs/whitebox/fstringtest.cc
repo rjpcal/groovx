@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 24 17:14:36 2002
-// written: Mon Jun 24 17:23:29 2002
+// written: Mon Jun 24 17:40:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,8 @@ namespace
     TEST_REQUIRE(!s.is_empty());
     TEST_REQUIRE(s.length() == 12);
     TEST_REQUIRE(s.c_str() != 0);
-    TEST_REQUIRE(s.c_str()[0] == '\0');
+    TEST_REQUIRE(s.c_str()[s.length()] == '\0');
+    TEST_REQUIRE(std::strlen(s.c_str()) == s.length());
     TEST_REQUIRE(std::strcmp(s.c_str(), "hello world!") == 0);
     TEST_REQUIRE(s == "hello world!");
     TEST_REQUIRE(s != "hello world");
@@ -57,6 +58,7 @@ DOTRACE("Fstringtest_Init");
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Fstringtest", "$Revision$");
 
   DEF_TEST(pkg, testEmptyLength);
+  DEF_TEST(pkg, testConstruct1);
 
   return pkg->initStatus();
 }
