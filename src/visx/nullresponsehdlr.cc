@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Mon Nov  8 16:30:53 1999
+// written: Wed Nov 17 19:28:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,6 @@
 #define NULLRESPONSEHDLR_CC_DEFINED
 
 #include "nullresponsehdlr.h"
-
-#include "exptdriver.h"
 
 #define NO_TRACE
 #include "trace.h"
