@@ -57,6 +57,18 @@ struct Gfx::Bbox::Impl
   std::vector<geom::txform> txforms;
   bool first;
 
+  vec2d screenFromWorld2(const vec2d& world_pos) const
+  {
+    // FIXME need to install our own modelview matrix here first...
+    return canvas.screenFromWorld2(world_pos);
+  }
+
+  vec2d worldFromScreen2(const vec2i& screen_pos) const
+  {
+    // FIXME need to install our own modelview matrix here first...
+    return canvas.worldFromScreen2(screen_pos);
+  }
+
   void merge(const vec3d& v)
   {
     if (first)
@@ -103,18 +115,6 @@ void Gfx::Bbox::pop()
 {
   ASSERT(rep->txforms.size() > 1);
   rep->txforms.pop_back();
-}
-
-vec2d Gfx::Bbox::screenFromWorld2(const vec2d& world_pos) const
-{
-  // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.screenFromWorld2(world_pos);
-}
-
-vec2d Gfx::Bbox::worldFromScreen2(const vec2i& screen_pos) const
-{
-  // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.worldFromScreen2(screen_pos);
 }
 
 void Gfx::Bbox::translate(const vec3d& v)
@@ -177,12 +177,12 @@ void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
 void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
                                const geom::rect<int>& screen_rect)
 {
-  const vec2i o = vec2i(this->screenFromWorld2(lower_left));
+  const vec2i o = vec2i(rep->screenFromWorld2(lower_left));
 
-  rep->merge(this->worldFromScreen2(o+screen_rect.bottom_left()));
-  rep->merge(this->worldFromScreen2(o+screen_rect.bottom_right()));
-  rep->merge(this->worldFromScreen2(o+screen_rect.top_left()));
-  rep->merge(this->worldFromScreen2(o+screen_rect.top_right()));
+  rep->merge(rep->worldFromScreen2(o+screen_rect.bottom_left()));
+  rep->merge(rep->worldFromScreen2(o+screen_rect.bottom_right()));
+  rep->merge(rep->worldFromScreen2(o+screen_rect.top_left()));
+  rep->merge(rep->worldFromScreen2(o+screen_rect.top_right()));
 }
 
 geom::box<double> Gfx::Bbox::cube() const
