@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Oct 11 14:34:10 2000
+// written: Fri Oct 20 17:41:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ public:
   RhListPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, RhList::theRhList(), "RhList", "$Revision$")
   {
-	 RhList::theRhList().insertAt(0, RhList::Ptr(new KbdResponseHdlr()));
+	 RhList::theRhList().insertAt(0, RhList::Ptr(KbdResponseHdlr::make()));
   }
 };
 
@@ -284,9 +284,9 @@ DOTRACE("Rh_Init");
 
   new SerialRhTcl::SerialRhPkg(interp);
 
-  FactoryRegistrar<IO::IoObject, KbdResponseHdlr>   :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, NullResponseHdlr>  :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, EventResponseHdlr> :: registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
 
   return TCL_OK;
 }

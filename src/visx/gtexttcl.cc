@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Tue Oct 17 11:55:56 2000
+// written: Fri Oct 20 17:31:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,30 +24,8 @@
 #include "util/debug.h"
 
 namespace GtextTcl {
-  class GtextCmd;
   class GtextPkg;
 }
-
-//---------------------------------------------------------------------
-//
-// GtextTcl::GtextCmd --
-//
-//---------------------------------------------------------------------
-
-class GtextTcl::GtextCmd : public Tcl::TclCmd {
-public:
-  GtextCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "?text?", 1, 2, false) {}
-protected:
-  virtual void invoke() {
-	 const char* text = (objc() < 2) ? 0 : getCstringFromArg(1);
-
-	 Gtext* p = new Gtext(text);
-
-	 ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
-	 returnInt(obj.id());
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -61,7 +39,6 @@ public:
 	 Tcl::ListItemPkg<Gtext, ObjList>(interp, ObjList::theObjList(),
 												 "Gtext", "1.1")
   {
-	 addCommand( new GtextCmd(interp, "Gtext::Gtext") );
 	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);
 	 declareCAttrib("strokeWidth",
 						 &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
@@ -80,7 +57,7 @@ DOTRACE("Gtext_Init");
 
   Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp); 
 
-  FactoryRegistrar<IO::IoObject, Gtext>::registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&Gtext::make);
 
   return pkg->initStatus();
 }

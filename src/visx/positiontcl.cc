@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Fri Oct 20 17:37:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ DOTRACE("Pos_Init");
 
   Tcl::TclPkg* pkg = new PosTcl::PosPkg(interp);
 
-  FactoryRegistrar<IO::IoObject, Position>::registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&Position::make);
 
   return pkg->initStatus();
 }

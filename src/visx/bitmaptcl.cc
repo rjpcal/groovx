@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Fri Oct 20 17:26:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -249,8 +249,8 @@ DOTRACE("Bitmap_Init");
   new GLBitmapTcl::GLBitmapPkg(interp);
   new XBitmapTcl::XBitmapPkg(interp);
 
-  FactoryRegistrar<IO::IoObject, GLBitmap> :: registerWith(IO::IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, XBitmap>  :: registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&GLBitmap::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&XBitmap::make);
 
   return TCL_OK;
 }
