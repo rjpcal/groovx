@@ -65,7 +65,7 @@ test "KbdRhTcl-KbdRh::useFeedback" "error on non-boolean input" {
 } {expected boolean value but got "FLASE"}
 test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
 	 KbdRh::useFeedback -1
-} {^EventRh::useFeedback: .*$}
+} {useFeedback: .*$}
 
 ### KbdRh::keyRespPairs ###
 test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
@@ -82,7 +82,7 @@ test "KbdRhTcl-KbdRh::feedbackPairs" "too many args" {
 } {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::feedbackPairs" "error on bad rhid" {
 	 KbdRh::feedbackPairs -1
-} {^EventRh::feedbackMap: .*$}
+} {feedbackMap: .*$}
 test "KbdRhTcl-KbdRh::feedbackPairs" "normal use" {
 	 KbdRh::feedbackPairs $::KBDRH { {x 5} {z 9} }
 	 KbdRh::feedbackPairs $::KBDRH

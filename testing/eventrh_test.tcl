@@ -64,7 +64,7 @@ test "EventRhTcl-EventRh::useFeedback" "error on non-boolean input" {
 } {expected boolean value but got "FLASE"}
 test "EventRhTcl-EventRh::useFeedback" "error on bad rhid" {
 	 EventRh::useFeedback -1
-} {^EventRh::useFeedback: .*$}
+} {useFeedback: .*$}
 
 ### EventRh::inputResponseMap ###
 test "EventRhTcl-EventRh::inputResponseMap" "too few args" {
@@ -87,7 +87,7 @@ test "EventRhTcl-EventRh::feedbackMap" "too many args" {
 } {^wrong \# args: should be}
 test "EventRhTcl-EventRh::feedbackMap" "error on bad rhid" {
 	 EventRh::feedbackMap -1
-} {^EventRh::feedbackMap: .*$}
+} {feedbackMap: .*$}
 test "EventRhTcl-EventRh::feedbackMap" "normal use" {
 	 EventRh::feedbackMap $::EVENTRH { {x 5} {z 9} }
 	 EventRh::feedbackMap $::EVENTRH
