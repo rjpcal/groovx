@@ -87,6 +87,7 @@ ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS) \
 	-DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
+	@[ -d ${@D} ] || mkdir -p ${@D}
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
 	time $(CXX) $(ALL_CXXFLAGS) \
@@ -96,12 +97,13 @@ $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 # to avoid deleting any intermediate targets
 .SECONDARY:
 
-$(SRC)/%.precc : $(SRC)/%.cc
+$(SRC)/%.cc.E : $(SRC)/%.cc
 	time $(CXX) -E $< $(ALL_CXXFLAGS) > $@
 
-$(SRC)/%.preh : $(SRC)/%.h
-	echo "#include \"$<\"" > .temp.cc
-	time $(CXX) -E .temp.cc $(ALL_CXXFLAGS) > $@
+$(SRC)/%.cc.E : $(SRC)/%.h
+	echo "#include \"$<\"" > temp.cc
+	time $(CXX) -E temp.cc $(ALL_CXXFLAGS) > $@
+	rm temp.cc
 
 #-------------------------------------------------------------------------
 #
@@ -110,27 +112,12 @@ $(SRC)/%.preh : $(SRC)/%.h
 #-------------------------------------------------------------------------
 
 %.$(SHLIB_EXT):
+	@[ -d ${@D} ] || mkdir -p ${@D}
 	time $(SHLIB_CMD) $@ $(LDFLAGS) $^
 
 %.$(STATLIB_EXT):
+	@[ -d ${@D} ] || mkdir -p ${@D}
 	time $(STATLIB_CMD) $@ $^
-
-#-------------------------------------------------------------------------
-#
-# Build rules for directory structure
-#
-#-------------------------------------------------------------------------
-
-ALL_SOURCES := $(wildcard $(SRC)/[a-z]*/*.cc $(SRC)/[a-z]*/[a-z]*/*.cc)
-ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
-
-SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
-ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(DEP)
-
-.PHONY: dir_structure
-dir_structure:
-	@echo "building directory structure"
-	@for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir -p $$dr; fi; done
 
 #-------------------------------------------------------------------------
 #
@@ -138,25 +125,24 @@ dir_structure:
 #
 #-------------------------------------------------------------------------
 
+# This `find` command gets run just once, when the makefile is loaded.
+ALL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc)
+
 # dependencies of object files on source+header files
 
-$(DEP)/cppdepends: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+$(DEP)/cppdepends: $(DEP)/.timestamp $(ALL_SRCS)
 	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
-
-include $(DEP)/cppdepends
 
 # dependencies of package shlib's on object files
 
 $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
-		$(ALL_SOURCES) $(ALL_HEADERS) src/pkgs/buildPkgDeps.tcl
+		$(ALL_SRCS) src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl \
 		--depfile $@ \
 		--objdir $(OBJ)/pkgs \
 		--objext $(OBJEXT) \
 		--pkgdir $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR)
-
-include $(DEP)/pkgdepends
 
 ifneq ($(matlab_lib),)
 $(VISX_LIB_DIR)/mtx.so: \
@@ -191,11 +177,11 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--module Util \
 		>
 
-$(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
+$(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
 	$(LIB_DEP_CMD) $@
 
-include $(DEP)/libdepends
+include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 
 #-------------------------------------------------------------------------
 #
@@ -206,16 +192,7 @@ include $(DEP)/libdepends
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
-all:
-	make dir_structure
-	make TAGS
-	make install_scripts
-ifneq "$(strip $(ALL_SHLIBS))" ""
-	make $(ALL_SHLIBS)
-endif
-	make $(PKG_LIBS)
-	make $(EXECUTABLE)
-	make check
+all: TAGS install_scripts $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE) check
 
 GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
@@ -223,8 +200,7 @@ GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
-install_scripts:
-	mkdir -p $(exec_prefix)/bin
+install_scripts: $(exec_prefix)/bin/.timestamp
 	cp share/scripts/*.tcl $(exec_prefix)/bin
 
 check:
@@ -244,39 +220,37 @@ benchmarks: $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 neat:
-	find . -name \*~ -exec rm -f {} \;
-	find . -name \#~ -exec rm -f {} \;
-	find . -name .\#\* -exec rm -f {} \;
+	find . -name \*~ -exec ls -l {} \;
+	find . -name \#~ -exec ls -l {} \;
+	find . -name .\#\* -exec ls -l {} \;
 	rm -f ./expt*2003.asw ./resp*2003 ./core*
 
-# Make clean, and also remove all debug object files
+# Make neat, and also remove all intermediate build files
 cleaner: neat
-	find $(OBJ) -follow -name \*.$(OBJEXT) -exec rm -f {} \;
-	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
-	rm -f $(DEP)/*depends
+	find $(BUILD) -follow -type f -exec rm -f {} \;
 
 # Count the lines in all source files
 count:
-	wc $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/count
+	@wc $(ALL_SRCS) | sort -n | tee $(LOGS)/count
 
-count_sort: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/count_sort
+count_sort: $(ALL_SRCS)
+	@wc $(ALL_SRCS) | sort -n | tee $(LOGS)/count_sort
 
-docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
+docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_SRCS)
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
 	cd ~/www/grsh; chmod -R og+r *
 
 # Generate tags file based only on header files
-H_TAGS: $(ALL_HEADERS)
+H_TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h | etags - -o $@
 
 # Count the number of non-commented source lines
 ncsl:
-	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | tee $(LOGS)/ncsl
+	@NCSL $(ALL_SRCS) | tee $(LOGS)/ncsl
 
 # Count the number of non-commented source lines and sort
 ncsl_sort:
-	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/ncsl_sort
+	@NCSL $(ALL_SRCS) | sort -n | tee $(LOGS)/ncsl_sort
 
 obj_sizes:
 	ls -lLR $(OBJ) | grep "\.$(OBJEXT)" | sort -n +4 > obj_sizes
@@ -286,7 +260,7 @@ showpid:
 	ps -ef | grep make
 
 # Generate TAGS file based on all source files
-TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
+TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
 
 SNAPSHOT := grsh-`date +%Y_%m_%d`
