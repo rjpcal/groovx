@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 13 14:39:48 2002
+// written: Wed Nov 13 22:26:56 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -32,7 +32,6 @@
 
 #include "tcl/tclsafeinterp.h"
 
-#include "togl/glutil.h"
 #include "togl/glxopts.h"
 #include "togl/glxwrapper.h"
 #include "togl/x11util.h"
@@ -73,7 +72,6 @@ public:
   shared_ptr<GlxWrapper> itsGlx;
 
   bool itsPrivateCmapFlag;
-  int itsFontListBase;
 
   Impl(Togl* owner);
   ~Impl() throw() {}
@@ -85,8 +83,6 @@ public:
   void swapBuffers() const;
 
   Togl::Color queryColor(unsigned int color_index) const;
-
-  unsigned int loadFontList(GLuint newListBase);
 };
 
 
@@ -110,8 +106,7 @@ Togl::Impl::Impl(Togl* owner) :
   itsOpts(new GlxOpts),
   itsGlx(0),
 
-  itsPrivateCmapFlag(false),
-  itsFontListBase(0)
+  itsPrivateCmapFlag(false)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -156,27 +151,6 @@ Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
   color.blue  = double(col.blue)  / usmax;
 
   return color;
-}
-
-unsigned int Togl::Impl::loadFontList(GLuint newListBase)
-{
-DOTRACE("Togl::Impl::loadFontList");
-  // Check if font loading succeeded...
-  if (newListBase == 0)
-    {
-      throw Util::Error("unable to load font");
-    }
-
-  // ... otherwise unload the current font
-  if (itsFontListBase > 0)
-    {
-      GLUtil::unloadBitmapFont(itsFontListBase);
-    }
-
-  // ... and point to the new font
-  itsFontListBase = newListBase;
-
-  return itsFontListBase;
 }
 
 Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
@@ -289,23 +263,6 @@ bool Togl::hasPrivateCmap() const       { return rep->itsPrivateCmapFlag; }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
   { return rep->queryColor(color_index); }
-
-unsigned int Togl::loadDefaultFont() const
-{
-  return loadBitmapFont(0);
-}
-
-unsigned int Togl::loadBitmapFont(const char* fontname) const
-{
-DOTRACE("Togl::loadBitmapFont");
-  return rep->loadFontList(GLUtil::loadBitmapFont(fontname));
-}
-
-unsigned int Togl::loadBitmapFonti(int fontnumber) const
-{
-DOTRACE("Togl::loadBitmapFonti");
-  return rep->loadFontList(GLUtil::loadBitmapFont(GLUtil::NamedFont(fontnumber)));
-}
 
 Gfx::Canvas& Togl::getCanvas() const
 {

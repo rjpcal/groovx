@@ -96,27 +96,6 @@ test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
     Togl::setCurTrial 10000000
 } {Toglet::setCurTrial: attempted to access invalid object.*}
 
-### Togl::loadFontCmd ###
-test "ObjTogl-Togl::loadFont" "too many args" {
-	 Togl::loadFont fixed junk
-} {^wrong \# args: should be}
-test "ObjTogl-Togl::loadDefaultFont" "normal use" {
-	 set code [catch {Togl::loadDefaultFont} msg]
-	 set res "$code $msg"
-} {^0 }
-test "ObjTogl-Togl::loadFont" "error" {
-	 Togl::loadFont junk
-} {^Toglet::loadFont: }
-
-### Togl::loadFontiCmd ###
-test "ObjTogl-Togl::loadFonti" "too many args" {
-	 Togl::loadFonti 3 junk
-} {^wrong \# args: should be}
-test "ObjTogl-Togl::loadFonti" "normal use" {
-	 set code [catch {Togl::loadFonti 3} msg]
-	 set res "$code $msg"
-} {^0 }
-
 ### dumpCmapCmd ###
 test "ObjTogl-dumpCmap" "too many args" {
     Togl::dumpCmap junk junk junk
