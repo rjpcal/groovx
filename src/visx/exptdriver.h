@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 26 18:46:31 1999
+// written: Wed Jun  9 13:43:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ class TimingHandler;
 class ExptDriver : public virtual IO {
 public:
   // Creators
-  ExptDriver(Expt& expt, Tcl_Interp* interp);
+  ExptDriver(Tcl_Interp* interp);
   virtual ~ExptDriver();
 
   void init(int repeat, int seed, const string& date,
