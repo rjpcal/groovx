@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Tue Dec  7 18:07:27 1999
+// written: Wed Dec  8 00:00:44 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -46,8 +46,10 @@
 #endif
 
 namespace Tcl {
+  class TclCmd;
+}
 
-class TclCmd {
+class Tcl::TclCmd {
 public:
   // If exact_objc is true, then the objc of a command invocation is
   // required to exactly equal either objc_min or objc_max; if it is
@@ -168,12 +170,12 @@ private:
 };
 
 template <>
-inline void TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
+inline void Tcl::TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
   if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
 }
 
 template <>
-inline void TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
+inline void Tcl::TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
   int int_val;
   if ( Tcl_GetBooleanFromObj(itsInterp, obj, &int_val) != TCL_OK )
 	 throw TclError();
@@ -181,22 +183,23 @@ inline void TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
 }
 
 template <>
-inline void TclCmd::getValFromObj<double>(Tcl_Obj* obj, double& val) {
+inline void Tcl::TclCmd::getValFromObj<double>(Tcl_Obj* obj,
+															  double& val) {
   if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK )
 	 throw TclError();
 }
 
 template <>
-inline void TclCmd::getValFromObj<const char*>(Tcl_Obj* obj, const char*& val) {
+inline void Tcl::TclCmd::getValFromObj<const char*>(Tcl_Obj* obj,
+																	 const char*& val) {
   val = Tcl_GetString(obj);
 }
 
 template <>
-inline void TclCmd::getValFromObj<string>(Tcl_Obj* obj, string& val) {
+inline void Tcl::TclCmd::getValFromObj<string>(Tcl_Obj* obj,
+															  string& val) {
   val = Tcl_GetString(obj);
 }
-
-} // end namespace Tcl
 
 static const char vcid_tclcmd_h[] = "$Header$";
 #endif // !TCLCMD_H_DEFINED
