@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 11:50:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "system/demangle.h"
 
 #include "tcl/tclerror.h"
+#include "tcl/tclsafeinterp.h"
 #include "tcl/tclvalue.h"
 
 #include "util/strings.h"
@@ -282,42 +283,39 @@ private:
 
   Impl* getOverload() const { return itsOverload; }
 
-  void warnUsage(Tcl_Interp* interp)
+  fstring warnUsage()
   {
-    Tcl_Obj* result = Tcl_GetObjResult(interp);
-
-    Tcl_AppendToObj(result, "wrong # args: should be ", -1);
+    fstring warning("wrong # args: should be ");
 
     if ( getOverload()==0 )
       {
-        appendFullUsage(result);
+        appendFullUsage(warning);
       }
     else
       {
-        Tcl_AppendToObj(result, "one of:", -1);
+        warning.append("one of:");
         Impl* cmd = this;
         while ( cmd != 0 )
           {
-            Tcl_AppendToObj(result, "\n\t", -1);
-            cmd->appendFullUsage(result);
+            warning.append("\n\t");
+            cmd->appendFullUsage(warning);
             cmd = cmd->getOverload();
           }
       }
+
+    return warning;
   }
 
-  void appendFullUsage(Tcl_Obj* result)
+  void appendFullUsage(fstring& str)
     {
       if (itsUsage && *itsUsage != '\0')
         {
-          Tcl_AppendStringsToObj(result,
-                                 "\"", const_cast<char*>(itsCmdName.c_str()),
-                                 " ", itsUsage, "\"", (char*)0);
+          str.append("\"", itsCmdName, " ");
+          str.append(itsUsage, "\"");
         }
       else
         {
-          Tcl_AppendStringsToObj(result,
-                                 "\"", const_cast<char*>(itsCmdName.c_str()),
-                                 "\"", (char*)0);
+          str.append("\"", itsCmdName, "\"");
         }
     }
 
@@ -372,7 +370,9 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
       if ( theImpl == 0 )
         {
           Impl* originalImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
-          originalImpl->warnUsage(interp);
+          Tcl::Interp safeIntp(interp);
+          safeIntp.resetResult();
+          safeIntp.appendResult(originalImpl->warnUsage().c_str());
           return TCL_ERROR;
         }
     }

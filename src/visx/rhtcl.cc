@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 18 12:19:38 2001
+// written: Thu Aug  9 11:42:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -200,18 +200,17 @@ public:
   {
     Tcl::defGenericObjCmds<KbdResponseHdlr>(this);
 
-    Tcl_Eval(interp,
-             "namespace eval KbdRh {\n"
-             "  proc useFeedback args {\n"
-             "    return [eval EventRh::useFeedback $args]\n"
-             "  }\n"
-             "  proc keyRespPairs args {\n"
-             "    return [eval EventRh::inputResponseMap $args]\n"
-             "  }\n"
-             "  proc feedbackPairs args {\n"
-             "    return [eval EventRh::feedbackMap $args]\n"
-             "  }\n"
-             "}\n");
+    Tcl::Pkg::eval("namespace eval KbdRh {\n"
+                   "  proc useFeedback args {\n"
+                   "    return [eval EventRh::useFeedback $args]\n"
+                   "  }\n"
+                   "  proc keyRespPairs args {\n"
+                   "    return [eval EventRh::inputResponseMap $args]\n"
+                   "  }\n"
+                   "  proc feedbackPairs args {\n"
+                   "    return [eval EventRh::feedbackMap $args]\n"
+                   "  }\n"
+                   "}\n");
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Aug  8 12:27:57 2001
+// written: Thu Aug  9 11:58:23 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -18,6 +18,8 @@
 #include "grshapp.h"
 
 #include "system/demangle.h"
+
+#include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
 #include "util/log.h"
@@ -127,15 +129,15 @@ PackageInfo DELAYED_PKGS[] = {};
 
 class TclApp : public GrshApp {
 public:
-  TclApp(int argc, char** argv, Tcl_Interp* interp);
+  TclApp(int argc, char** argv, Tcl::Interp& interp);
 
   int status() const { return itsStatus; }
 private:
   int itsStatus;
 };
 
-TclApp::TclApp(int argc, char** argv, Tcl_Interp* interp) :
-  GrshApp(argc, argv, interp),
+TclApp::TclApp(int argc, char** argv, Tcl::Interp& interp) :
+  GrshApp(argc, argv, interp.intp()),
   itsStatus(TCL_OK)
 {
 DOTRACE("TclApp::TclApp(Tcl_Interp*)");
@@ -144,7 +146,7 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 #ifdef LOCAL_TRACE
     Util::log() << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
 #endif
-    int result = IMMEDIATE_PKGS[i].pkgInitProc(interp);
+    int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
     if (result != TCL_OK) { itsStatus = result; }
   }}
 
@@ -159,12 +161,11 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
   // set prompt to "cmd[n]% " where cmd is the name of the program,
   // and n is the history event number
-  Tcl_SetVar(interp, "tcl_prompt1",
-             "puts -nonewline \"([history nextid]) $argv0> \"",
-             TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+  interp.setGlobalVar("tcl_prompt1",
+                      "puts -nonewline \"([history nextid]) $argv0> \"");
 
   // specifies a file to be 'source'd upon startup
-  Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
+  interp.setGlobalVar("tcl_rcFileName", "./grsh_startup.tcl");
 }
 
 
@@ -186,7 +187,8 @@ int Tcl_AppInit(Tcl_Interp* interp)
 DOTRACE("Tcl_AppInit");
   try
     {
-      static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
+      Tcl::Interp safeIntp(interp);
+      static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, safeIntp);
       return theApp.status();
     }
   catch (Util::Error& err)
