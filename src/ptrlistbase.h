@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Oct 24 13:42:48 2000
+// written: Tue Oct 24 13:44:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,10 +107,6 @@ protected:
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
   int insertPtrBase(RefCounted* ptr);
-
-  /** This function will be called after every insertion into the
-      PtrListBase. The default implementation is a no-op. */
-  virtual void afterInsertHook(int id, RefCounted* ptr);
 
 protected:
   int& firstVacant();
