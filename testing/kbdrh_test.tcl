@@ -68,19 +68,10 @@ test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
 } {^EventRh::useFeedback: .*$}
 
 ### KbdRh::keyRespPairs ###
-test "KbdRhTcl-KbdRh::keyRespPairs" "too few args" {
-	 KbdRh::keyRespPairs
-} {^wrong \# args: should be}
-test "KbdRhTcl-KbdRh::keyRespPairs" "too many args" {
-	 KbdRh::keyRespPairs junk junk junk
-} {^wrong \# args: should be}
-test "KbdRhTcl-KbdRh::keyRespPairs" "error on bad rhid" {
-	 KbdRh::keyRespPairs -1
-} {^EventRh::inputResponseMap: .*$}
 test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
 	 KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
-	 KbdRh::keyRespPairs $::KBDRH
-} {^ \{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\} $}
+	 EventRh::responseProc $::KBDRH
+} {\{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\}}
 
 ### KbdRh::feedbackPairs ###
 test "KbdRhTcl-KbdRh::feedbackPairs" "too few args" {

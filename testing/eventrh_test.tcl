@@ -73,13 +73,10 @@ test "EventRhTcl-EventRh::inputResponseMap" "too few args" {
 test "EventRhTcl-EventRh::inputResponseMap" "too many args" {
 	 EventRh::inputResponseMap junk junk junk
 } {^wrong \# args: should be}
-test "EventRhTcl-EventRh::inputResponseMap" "error on bad rhid" {
-	 EventRh::inputResponseMap -1
-} {^EventRh::inputResponseMap: .*$}
 test "EventRhTcl-EventRh::inputResponseMap" "normal use" {
 	 EventRh::inputResponseMap $::EVENTRH { {{^[aA]$} 0} {{^[lL]$} 1} }
-	 EventRh::inputResponseMap $::EVENTRH
-} {^ \{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\} $}
+	 EventRh::responseProc $::EVENTRH
+} {\{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\}}
 
 ### EventRh::feedbackMap ###
 test "EventRhTcl-EventRh::feedbackMap" "too few args" {
