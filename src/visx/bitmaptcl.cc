@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Sat Mar  4 04:09:47 2000
+// written: Mon Mar  6 12:06:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,23 +17,17 @@
 #include "iofactory.h"
 #include "objlist.h"
 #include "listitempkg.h"
+#include "strings.h"
 #include "system.h"
 #include "tclcmd.h"
 #include "tclobjlock.h"
 
 #include <tcl.h>
-#include <tk.h>
-#include <string>
-#include <cstring>
-#include <cstdio>
-#include <fstream.h>
-#include <strstream.h>
-#include <vector>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace BitmapTcl {
   class LoadPbmCmd;
@@ -86,17 +80,16 @@ protected:
 	 const char* tempfilename =
 		(objc() >= 4) ? getCstringFromArg(3) : ".temp.pbm";
   
-	 string gzname(filename);
+	 dynamic_string gzname(filename);
 	 gzname += ".gz";
 
 	 if (itsMethod == 0) {
 		bm->loadPbmGzFile(gzname.c_str());
 	 }
 	 else {
-		vector<char> gzname_cstr(gzname.begin(), gzname.end());
-		gzname_cstr.push_back('\0');
+		fixed_string gzname_copy(gzname.c_str());
 
-		invokeUsingTempFile(bm, &gzname_cstr[0], tempfilename);
+		invokeUsingTempFile(bm, gzname_copy.data(), tempfilename);
 	 }
   }
 
@@ -172,11 +165,11 @@ protected:
 	 bm->writePbmFile(filename);
 
 	 // gzip the file
-	 string cmd = "exec gzip ";
+	 dynamic_string cmd = "exec gzip ";
 	 cmd += filename;
-	 vector<char> cmd_cstr(cmd.length()+1);
-	 strcpy(&cmd_cstr[0], cmd.c_str());
-	 int result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
+
+	 fixed_string cmd_copy(cmd.c_str());
+	 int result = Tcl_Eval(itsInterp, cmd_copy.data());
 
 	 if (result != TCL_OK) {
 		throw Tcl::TclError("error gzip-ing file");
