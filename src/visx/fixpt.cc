@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  4 16:27:13 1999
+// written: Wed Oct  6 10:44:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ bool FixPt::grGetBoundingBox(double& left, double& top,
   left  = bottom = -length()/2.0;
   right = top    =  length()/2.0;
   
-  border_pixels = width()+2;
+  border_pixels = 4;
 
   return true;
 }
