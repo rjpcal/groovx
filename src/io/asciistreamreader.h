@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Tue Oct 19 16:04:14 1999
+// written: Mon Nov  8 12:26:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,8 +58,6 @@ protected:
   int eatWhitespace();
 
 private:
-  void initAttributes();
-
   class Impl;
   Impl& itsImpl;
 };
