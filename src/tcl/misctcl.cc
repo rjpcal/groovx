@@ -32,9 +32,9 @@
 #ifndef MISCTCL_CC_DEFINED
 #define MISCTCL_CC_DEFINED
 
-// this file contains the implementations for some simple Tcl functions
-// that are basically wrappers for standard C library functions, including
-// rand(), sleep(), and usleep()
+// this file contains the implementations for some simple Tcl
+// functions that are basically wrappers for standard C library
+// functions, including rand(), sleep(), and usleep()
 
 #include "tcl/tclpkg.h"
 
@@ -82,6 +82,11 @@ namespace
 
   unsigned long get_default_seed() { return rutz::default_rand_seed; }
   void set_default_seed(unsigned long x) { rutz::default_rand_seed = x; }
+
+  fstring tcl_valuetype(Tcl::ObjPtr obj)
+  {
+    return obj.typeName();
+  }
 }
 
 extern "C"
@@ -128,6 +133,8 @@ DOTRACE("Misc_Init");
 
   pkg->def( "::default_rand_seed", "", &get_default_seed, SRC_POS );
   pkg->def( "::default_rand_seed", "seed", &set_default_seed, SRC_POS );
+
+  pkg->def( "::tcl_valuetype", "value", &tcl_valuetype, SRC_POS );
 
   pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage, SRC_POS );
 
