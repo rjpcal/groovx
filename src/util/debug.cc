@@ -89,35 +89,35 @@ EVAL_IMPL(fstring);
 
 void Debug::PanicImpl(const char* what, const char* where, int line_no)
 {
-  fprintf(stderr, "Panic: '%s' in %s line %d\n", what, where, line_no);
+  fprintf(stderr, "Panic (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
 void Debug::AssertImpl(const char* what, const char* where, int line_no)
 {
-  fprintf(stderr, "Assertion failed: '%s' in %s line %d\n", what, where, line_no);
+  fprintf(stderr, "Assertion failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
 void Debug::PreconditionImpl(const char* what, const char* where, int line_no)
 {
-  fprintf(stderr, "Precondition failed: '%s' in %s line %d\n", what, where, line_no);
+  fprintf(stderr, "Precondition failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
 void Debug::PostconditionImpl(const char* what, const char* where, int line_no)
 {
-  fprintf(stderr, "Postcondition failed: '%s' in %s line %d\n", what, where, line_no);
+  fprintf(stderr, "Postcondition failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
 void Debug::InvariantImpl(const char* what, const char* where, int line_no)
 {
-  fprintf(stderr, "Invariant failed: '%s' in %s line %d\n", what, where, line_no);
+  fprintf(stderr, "Invariant failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
