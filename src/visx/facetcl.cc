@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Oct 17 11:55:10 2000
+// written: Thu Oct 19 18:47:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,22 +98,11 @@ DOTRACE("FaceTcl::LoadFacesCmd::invoke");
 		// virtual constructor is called, and if it is not a letter, it
 		// is assumed that it is the beginning of the simple Face
 		// format, so the regular Face constructor is called.
-		char c = char(ist.peek());
-		bool saw_alpha = bool(isalpha(c));
-		if (use_virtual_ctor | saw_alpha) {
-		  DOTRACE("using virtual constructor");
-		  IO::LegacyReader lrdr(ist, IO::BASES & IO::TYPENAME);
-		  IO::IoObject* io = lrdr.readRoot();
-		  p = dynamic_cast<Face *>(io);
-		  if (p == 0) {
-			 throw IO::InputError("FaceTcl::loadFaces");
-		  }
-		}
-		else {
-		  DOTRACE("assuming Face");
-		  p = new Face;
-		  IO::LegacyReader reader(ist, IO::NO_FLAGS);
-		  reader.readRoot(p);
+		IO::LegacyReader lrdr(ist, IO::BASES);
+		IO::IoObject* io = lrdr.readRoot();
+		p = dynamic_cast<Face *>(io);
+		if (p == 0) {
+		  throw IO::InputError("FaceTcl::loadFaces");
 		}
 
 		Assert(p != 0);
