@@ -3,7 +3,7 @@
 // arrays.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 15:56:36 2000
-// written: Mon Mar  6 18:18:09 2000
+// written: Mon Mar  6 19:22:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,18 +146,14 @@ private:
 /**
  *
  * \c dynamic_block is a simple wrapper for a dynamically allocated
- * array whose size is fixed on instantiation. Copying and assignment
- * are not allowed.
+ * array whose size may change with \c resize(). Copy construction and
+ * copy assignment are allowed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
 class dynamic_block {
-private:
-  dynamic_block(const dynamic_block<T>& other);
-  dynamic_block<T>& operator=(const dynamic_block<T>& other);
-
 public:
 
   typedef T value_type;
@@ -174,6 +170,19 @@ public:
   typedef ptrdiff_t difference_type;
 
   dynamic_block(size_type n = 0) : N(n), data(new T[N]) {}
+
+  dynamic_block(const dynamic_block<T>& other) :
+	 N(other.N), data(new T[N])
+	 {
+		assign_varsize(other, *this);
+	 }
+
+  dynamic_block<T>& operator=(const dynamic_block<T>& other)
+	 {
+		dynamic_block temp(other);
+		this->swap(temp);
+	 }
+
   ~dynamic_block() { delete [] data; }
 
   void swap(dynamic_block& other)
@@ -215,16 +224,22 @@ public:
   void resize(size_type new_size)
 	 {
 		dynamic_block temp(new_size);
-		for (iterator from = this->begin(), to = temp.begin();
-			  from != this->end() && to != temp.end();
-			  ++from, ++to)
-		  {
-			 *to = *from;
-		  }
+		assign_varsize(*this, temp);
 		this->swap(temp);
 	 }
 
 private:
+  static void assign_varsize(const dynamic_block& b_from, dynamic_block& b_to)
+	 {
+		const_iterator from = b_from.begin();
+		iterator to = b_to.begin();
+
+		while(from != b_from.end() && to != b_to.end())
+		  {
+			 *to++ = *from++;
+		  }
+	 }
+
   size_type N;
   T* data;
 };
