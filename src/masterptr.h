@@ -3,7 +3,7 @@
 // masterptr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:18:28 2000
-// written: Mon Oct  9 11:41:22 2000
+// written: Mon Oct  9 11:52:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,7 +112,8 @@ public:
   explicit MasterPtr(T* ptr);
   virtual ~MasterPtr();
 
-  T* getPtr() { return itsPtr; }
+        T* getPtr()       { return itsPtr; }
+  const T* getPtr() const { return itsPtr; }
 
   virtual IO::IoObject* ioPtr() const;
 
@@ -153,8 +154,8 @@ public:
 		return *this;
 	 }
 
-  MasterPtr<T>* masterPtr()
-    { return itsMaster; }
+        MasterPtr<T>* masterPtr()       { return itsMaster; }
+  const MasterPtr<T>* masterPtr() const { return itsMaster; }
 
         T* operator->()       { return (itsMaster->getPtr()); }
   const T* operator->() const { return (itsMaster->getPtr()); }
