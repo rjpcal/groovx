@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Jul 12 09:45:20 2001
+// written: Thu Jul 12 11:27:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -285,6 +285,9 @@ Tcl::TclCmd::Context::Context(Tcl_Interp* interp,
   itsInterp(interp),
   itsObjc(objc),
   itsObjv(objv)
+{}
+
+Tcl::TclCmd::Context::~Context()
 {}
 
 void Tcl::TclCmd::Context::setObjResult(Tcl_Obj* obj)
