@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Nov 13 13:12:32 2002
+// written: Thu Nov 14 17:24:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "gfx/gxnode.h"
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
-
-#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 
@@ -169,7 +167,7 @@ Util::UID TlistTcl::createPreview(Tcl::List objid_list,
   fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
                                 objid_list.end<Util::UID>());
 
-  return doCreatePreview(Grsh::canvas(), &objids[0], objids.size(),
+  return doCreatePreview(Gfx::Canvas::current(), &objids[0], objids.size(),
                          num_cols_hint, text_labels);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Nov 12 14:09:50 2002
+// written: Thu Nov 14 17:23:47 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -19,8 +19,6 @@
 #define GLTCL_CC_DEFINED
 
 #include "gfx/canvas.h"
-
-#include "grsh/grsh.h"
 
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
@@ -61,7 +59,7 @@ namespace GLTcl
     return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
   }
 
-  void checkGL() { Grsh::canvas().throwIfError("checkGL"); }
+  void checkGL() { Gfx::Canvas::current().throwIfError("checkGL"); }
 
   // Just converts to char from unsigned char
   const char* getString(GLenum name)
@@ -300,7 +298,7 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   glLoadMatrixd(&matrix[0]);
 
-  Grsh::canvas().throwIfError("loadMatrix");
+  Gfx::Canvas::current().throwIfError("loadMatrix");
 }
 
 //---------------------------------------------------------------------
@@ -446,7 +444,7 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
   Gfx::Rect<int> bounds;
   bounds.setRectXYWH(x,y,w,h);
 
-  Grsh::canvas().grabPixels(bounds, data);
+  Gfx::Canvas::current().grabPixels(bounds, data);
 
   return data.checkSum();
 }

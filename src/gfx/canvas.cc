@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Tue Nov  5 07:30:14 2002
+// written: Thu Nov 14 17:25:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,11 @@
 #include "gfx/canvas.h"
 
 #include "gx/box.h"
+#include "gx/rgbacolor.h"
 #include "gx/vec3.h"
 
 #include "util/arrays.h"
+#include "util/error.h"
 
 #include "util/debug.h"
 #include "util/trace.h"
@@ -32,11 +34,30 @@ namespace
     Gfx::Vec3<double> pt2;
     Gfx::Vec3<double> pt3;
   };
+
+  Gfx::Canvas* appCanvas = 0;
+}
+
+void Gfx::Canvas::setCurrent(Gfx::Canvas& canvas)
+{
+DOTRACE("Gfx::Canvas::setCurrent");
+
+  Assert(&canvas != 0);
+
+  appCanvas = &canvas;
+}
+
+Gfx::Canvas& Gfx::Canvas::current()
+{
+DOTRACE("Gfx::Canvas::current");
+
+  if (appCanvas == 0)
+    throw Util::Error("appCanvas not inited");
+
+  return *appCanvas;
 }
 
 Gfx::Canvas::~Canvas() {}
-
-#include "gx/rgbacolor.h"
 
 void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Nov 13 14:06:49 2002
+// written: Thu Nov 14 17:25:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,10 @@
 #ifndef GROBJTCL_CC_DEFINED
 #define GROBJTCL_CC_DEFINED
 
+#include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
-
-#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 
@@ -35,7 +34,7 @@ namespace
 {
   Gfx::Rect<double> boundingBox(Util::Ref<GrObj> obj)
   {
-    return obj->getBoundingBox(Grsh::canvas());
+    return obj->getBoundingBox(Gfx::Canvas::current());
   }
 
   // This is gone for now because the bitmap cache node is gone from GrObj,
@@ -45,7 +44,7 @@ namespace
 #if 0
   void saveBitmap(Util::Ref<GrObj> obj, const char* filename)
   {
-    obj->saveBitmapCache(Grsh::canvas(), filename);
+    obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
 #endif
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 13 13:01:18 2002
+// written: Thu Nov 14 17:23:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@
 
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
-
-#include "grsh/grsh.h"
 
 #include "gx/bmapdata.h"
 #include "gx/imgfile.h"
@@ -270,7 +268,7 @@ void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
 {
 DOTRACE("Bitmap::grabScreenRect");
 
-  Gfx::Canvas& canvas = Grsh::canvas();
+  Gfx::Canvas& canvas = Gfx::Canvas::current();
 
   canvas.grabPixels(rect, itsImpl->itsData);
 
@@ -287,7 +285,7 @@ void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
 {
 DOTRACE("Bitmap::grabWorldRect");
 
-  Gfx::Canvas& canvas = Grsh::canvas();
+  Gfx::Canvas& canvas = Gfx::Canvas::current();
 
   Gfx::Rect<int> screen_rect = canvas.screenFromWorld(world_rect);
 

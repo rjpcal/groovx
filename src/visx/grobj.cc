@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 14:10:54 2002
+// written: Thu Nov 14 17:24:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,6 @@
 #include "gfx/gxbounds.h"
 #include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
-
-#include "grsh/grsh.h"
 
 #include "gx/box.h"
 
@@ -240,13 +238,13 @@ DOTRACE("GrObj::getScalingMode");
 double GrObj::getWidth() const
 {
 DOTRACE("GrObj::getWidth");
-  return itsImpl->itsScaler->scaledWidth(Grsh::canvas());
+  return itsImpl->itsScaler->scaledWidth(Gfx::Canvas::current());
 }
 
 double GrObj::getHeight() const
 {
 DOTRACE("GrObj::getHeight");
-  return itsImpl->itsScaler->scaledHeight(Grsh::canvas());
+  return itsImpl->itsScaler->scaledHeight(Gfx::Canvas::current());
 }
 
 double GrObj::getAspectRatio() const
@@ -258,7 +256,7 @@ DOTRACE("GrObj::getAspectRatio");
 double GrObj::getMaxDimension() const
 {
 DOTRACE("GrObj::getMaxDimension");
-  return itsImpl->itsScaler->scaledMaxDim(Grsh::canvas());
+  return itsImpl->itsScaler->scaledMaxDim(Gfx::Canvas::current());
 }
 
 int GrObj::getAlignmentMode() const
@@ -318,7 +316,7 @@ void GrObj::setWidth(double val)
 {
 DOTRACE("GrObj::setWidth");
 
-  itsImpl->itsScaler->setWidth(Grsh::canvas(), val);
+  itsImpl->itsScaler->setWidth(Gfx::Canvas::current(), val);
   this->sigNodeChanged.emit();
 }
 
@@ -326,7 +324,7 @@ void GrObj::setHeight(double val)
 {
 DOTRACE("GrObj::setHeight");
 
-  itsImpl->itsScaler->setHeight(Grsh::canvas(), val);
+  itsImpl->itsScaler->setHeight(Gfx::Canvas::current(), val);
   this->sigNodeChanged.emit();
 }
 
@@ -342,7 +340,7 @@ void GrObj::setMaxDimension(double val)
 {
 DOTRACE("GrObj::setMaxDimension");
 
-  itsImpl->itsScaler->setMaxDim(Grsh::canvas(), val);
+  itsImpl->itsScaler->setMaxDim(Gfx::Canvas::current(), val);
   this->sigNodeChanged.emit();
 }
 
