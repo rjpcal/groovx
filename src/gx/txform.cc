@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 21 14:00:54 2002
-// written: Wed Nov 20 10:32:09 2002
+// written: Tue Nov 26 19:28:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include <cmath>
 #include <cstring>
 
+#include "util/debug.h"
 #include "util/trace.h"
 
 namespace
@@ -267,6 +268,14 @@ Gfx::Vec3<double> Gfx::Txform::applyTo(const Gfx::Vec3<double>& input) const
                         output_y / output_w,
                         output_z / output_w)
     : Gfx::Vec3<double>(0.0, 0.0, 0.0);
+}
+
+void Gfx::Txform::debugDump() const
+{
+  dbgPrint(0, data[0]); dbgPrint(0, data[4]); dbgPrint(0, data[8]); dbgPrintNL(0, data[12]);
+  dbgPrint(0, data[1]); dbgPrint(0, data[5]); dbgPrint(0, data[9]); dbgPrintNL(0, data[13]);
+  dbgPrint(0, data[2]); dbgPrint(0, data[6]); dbgPrint(0, data[10]); dbgPrintNL(0, data[14]);
+  dbgPrint(0, data[3]); dbgPrint(0, data[7]); dbgPrint(0, data[11]); dbgPrintNL(0, data[15]);
 }
 
 static const char vcid_txform_cc[] = "$Header$";
