@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 21 11:43:25 2001
+// written: Tue Aug 21 15:30:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,15 +29,14 @@
 #include "util/strings.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
-#include "util/utilfwd.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
 #include "util/value.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILITY_DEFINED)
 #include <utility>
+#define UTILITY_DEFINED
+#endif
 
 namespace IO
 {
@@ -46,6 +45,12 @@ namespace IO
 }
 
 class FieldContainer;
+
+namespace Util
+{
+  template <class T> class FwdIter;
+  class Signal;
+}
 
 template <class T>
 class BoundsChecker {
