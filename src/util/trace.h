@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Thu May 27 20:24:24 1999
+// written: Tue Aug  3 18:36:09 1999
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -79,6 +79,12 @@ private:
   timeval totalTime;
 };
 
+// We must wrap the Trace class in an unnamed namespace so that when
+// an out-of-line version of ~Trace() is generated, each translation
+// unit gets a unique copy with LOCAL_TRACE compiled in or out, as
+// appropriate.
+namespace {
+
 class Trace {
 public:
   Trace(Prof& p) : prof(p) {
@@ -112,6 +118,8 @@ private:
   Prof& prof;
   timeval start, finish, elapsed;
 };
+
+} // end unnamed namepsace
 
 #define DOTRACE(x) static Prof P__(x); Trace T__(P__);
 #else // !defined(LOCAL_PROF)
