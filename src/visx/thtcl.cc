@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Oct 30 11:40:20 2000
+// written: Thu Nov  2 13:09:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ namespace ThTcl {
 
 class ThTcl::AddEventCmd : public Tcl::TclItemCmd<TimingHdlr> {
 public:
-  AddEventCmd(Tcl::TclItemPkg* pkg, const char* cmd_name,
+  AddEventCmd(Tcl::CTclItemPkg<TimingHdlr>* pkg, const char* cmd_name,
 				  TimingHdlr::TimePoint time_point) :
 	 Tcl::TclItemCmd<TimingHdlr>(pkg, cmd_name, 
 									"th_id event_type msec_delay", 4, 4),

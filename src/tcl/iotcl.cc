@@ -3,7 +3,7 @@
 // iotcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Nov  1 18:03:16 2000
+// written: Thu Nov  2 13:10:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ namespace Tcl {
 
 class IoTypeCmd : public TclItemCmd<IO::IoObject> {
 public:
-  IoTypeCmd(TclItemPkg* pkg, const char* cmd_name) :
+  IoTypeCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
 	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -52,7 +52,7 @@ protected:
 
 class IoRefCountCmd : public TclItemCmd<IO::IoObject> {
 public:
-  IoRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
+  IoRefCountCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
 	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -69,7 +69,7 @@ protected:
 
 class IoIncrRefCountCmd : public TclItemCmd<IO::IoObject> {
 public:
-  IoIncrRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
+  IoIncrRefCountCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
 	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -86,7 +86,7 @@ protected:
 
 class IoDecrRefCountCmd : public TclItemCmd<IO::IoObject> {
 public:
-  IoDecrRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
+  IoDecrRefCountCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
 	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
 protected:
   virtual void invoke() {

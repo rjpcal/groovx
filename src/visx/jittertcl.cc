@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Mon Oct 30 11:12:29 2000
+// written: Thu Nov  2 13:07:11 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -32,7 +32,7 @@ namespace JitterTcl {
 
 class JitterTcl::SetJitterCmd : public Tcl::TclItemCmd<Jitter> {
 public:
-  SetJitterCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  SetJitterCmd(Tcl::CTclItemPkg<Jitter>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Jitter>(pkg, cmd_name,
 							  "posid x_jitter y_jitter r_jitter", 5, 5) {}
 protected:

@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Mon Oct 30 11:12:29 2000
+// written: Thu Nov  2 13:09:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ namespace TrialTcl {
 
 class TrialTcl::AddCmd : public Tcl::TclItemCmd<Trial> {
 public:
-  AddCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  AddCmd(Tcl::CTclItemPkg<Trial>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
 protected:
   virtual void invoke() {

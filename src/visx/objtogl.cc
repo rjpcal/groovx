@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Oct 30 11:22:56 2000
+// written: Thu Nov  2 13:11:25 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -126,7 +126,7 @@ protected:
 
 class ObjTogl::BindCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  BindCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  BindCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
 										  "event_sequence binding_script", 3, 3) {}
 protected:
@@ -146,7 +146,7 @@ protected:
 
 class ObjTogl::DumpCmapCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  DumpCmapCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  DumpCmapCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
 										  "?start_index=0? ?end_index=255?",
 										  1, 3, false) {}
@@ -188,7 +188,7 @@ protected:
 
 class ObjTogl::DumpEpsCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  DumpEpsCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  DumpEpsCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -209,7 +209,7 @@ protected:
 
 class ObjTogl::HoldCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  HoldCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  HoldCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "hold_on?", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -316,7 +316,7 @@ protected:
 
 class ObjTogl::LoadFontCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  LoadFontCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  LoadFontCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontname?", 1, 2) {}
 protected:
   virtual void invoke() {
@@ -334,7 +334,7 @@ protected:
 
 class ObjTogl::LoadFontiCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  LoadFontiCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  LoadFontiCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontnumber?", 1, 2) {}
 protected:
   virtual void invoke() {
@@ -352,7 +352,7 @@ protected:
 
 class ObjTogl::SetColorCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetColorCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  SetColorCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "index r g b", 5, 5) {}
 protected:
   virtual void invoke() {
@@ -378,7 +378,7 @@ protected:
 
 class ObjTogl::SetCurTrialCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetCurTrialCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  SetCurTrialCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -400,7 +400,7 @@ protected:
 
 class ObjTogl::SetMinRectCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetMinRectCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  SetMinRectCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "left top right bottom", 5, 5) {}
 protected:
   virtual void invoke() {
@@ -427,7 +427,7 @@ protected:
 
 class ObjTogl::SetVisibleCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetVisibleCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  SetVisibleCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -452,7 +452,7 @@ protected:
 
 class ObjTogl::ShowCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  ShowCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  ShowCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
 protected:
   virtual void invoke() {

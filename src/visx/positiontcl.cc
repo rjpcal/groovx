@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Mon Oct 30 11:12:29 2000
+// written: Thu Nov  2 13:09:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ namespace PosTcl {
 
 class PosTcl::TranslateCmd : public Tcl::TclItemCmd<Position> {
 public:
-  TranslateCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  TranslateCmd(Tcl::CTclItemPkg<Position>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Position>(pkg, cmd_name, 
 								 "posid new_x new_y ?new_z?", 4, 5, false) {}
 protected:
@@ -61,7 +61,7 @@ protected:
 
 class PosTcl::ScaleCmd : public Tcl::TclItemCmd<Position> {
 public:
-  ScaleCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  ScaleCmd(Tcl::CTclItemPkg<Position>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Position>(pkg, cmd_name, 
 								 "posid scale_x ?scale_y? ?scale_z?", 3, 5, false) {}
 protected:
@@ -86,7 +86,7 @@ protected:
 
 class PosTcl::RotateCmd : public Tcl::TclItemCmd<Position> {
 public:
-  RotateCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  RotateCmd(Tcl::CTclItemPkg<Position>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Position>(pkg, cmd_name, 
 								 "posid angle ?rot_axis_x rot_axis_y rot_axis_z?",
 								 3, 6, true) {}

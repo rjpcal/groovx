@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Nov  1 18:01:55 2000
+// written: Thu Nov  2 13:03:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ namespace Tcl {
 template <class C>
 class IsCmd : public TclItemCmd<C> {
 public:
-  IsCmd(TclItemPkg* pkg, const char* cmd_name) :
+  IsCmd(CTclItemPkg<C>* pkg, const char* cmd_name) :
 	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
 protected:
   virtual void invoke() {

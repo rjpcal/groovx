@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Nov  1 17:39:24 2000
+// written: Thu Nov  2 13:06:34 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -69,7 +69,7 @@ namespace ExptTcl {
 
 class ExptTcl::BeginCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  BeginCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  BeginCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
 	 {}
 protected:
@@ -121,7 +121,7 @@ DOTRACE("ExptTcl::BeginCmd::beginCmd");
 
 class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  PauseCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  PauseCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, 1, 1),
 	 itsPauseMsgCmd(
 				"tk_messageBox -default ok -icon info "
@@ -178,7 +178,7 @@ private:
 
 class ExptTcl::SetStartCommandCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  SetStartCommandCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  SetStartCommandCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
 protected:
   virtual void invoke() {

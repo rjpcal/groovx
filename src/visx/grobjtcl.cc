@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Oct 30 10:18:00 2000
+// written: Thu Nov  2 13:06:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace GrobjTcl {
 
 class GrobjTcl::BoundingBoxCmd : public Tcl::TclItemCmd<GrObj> {
 public:
-  BoundingBoxCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  BoundingBoxCmd(Tcl::CTclItemPkg<GrObj>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
   virtual void invoke() {

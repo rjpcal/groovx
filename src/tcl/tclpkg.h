@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Nov  1 17:44:18 2000
+// written: Thu Nov  2 13:02:51 2000
 // $Id$
 //
 //
@@ -241,36 +241,6 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * TclItemCmd class definition
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TclItemCmd : public TclCmd {
-public:
-  TclItemCmd(TclItemPkg* pkg, const char* cmd_name, const char* usage, 
-				 int objc_min=0, int objc_max=100000, bool exact_objc=false) :
-	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc),
-	 itsPkg(pkg) {}
-protected:
-  virtual void invoke() = 0;
-
-  T* getItem() {
-	 int id = itsPkg->itemArgn() ? getIntFromArg(itsPkg->itemArgn()) : -1;
-	 return static_cast<T*>(itsPkg->getItemFromId(id));
-  }
-
-private:
-  TclItemCmd(const TclItemCmd&);
-  TclItemCmd& operator=(const TclItemCmd&);
-
-  TclItemPkg* itsPkg;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
  * CTclItemPkg class definition
  *
  **/
@@ -319,6 +289,36 @@ public:
   virtual void* getItemFromId(int id) {
 	 return static_cast<void*>(getCItemFromId(id));
   }
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * TclItemCmd class definition
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class TclItemCmd : public TclCmd {
+public:
+  TclItemCmd(CTclItemPkg<C>* pkg, const char* cmd_name, const char* usage, 
+				 int objc_min=0, int objc_max=100000, bool exact_objc=false) :
+	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc),
+	 itsPkg(pkg) {}
+protected:
+  virtual void invoke() = 0;
+
+  C* getItem() {
+	 int id = itsPkg->itemArgn() ? getIntFromArg(itsPkg->itemArgn()) : -1;
+	 return itsPkg->getCItemFromId(id);
+  }
+
+private:
+  TclItemCmd(const TclItemCmd&);
+  TclItemCmd& operator=(const TclItemCmd&);
+
+  CTclItemPkg<C>* itsPkg;
 };
 
 ///////////////////////////////////////////////////////////////////////

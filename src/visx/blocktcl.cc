@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Oct 30 11:12:30 2000
+// written: Thu Nov  2 13:06:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace BlockTcl {
 
 class BlockTcl::AddTrialsCmd : public Tcl::TclItemCmd<Block> {
 public:
-  AddTrialsCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  AddTrialsCmd(Tcl::CTclItemPkg<Block>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Block>(pkg, cmd_name, 
 							"block_id ?first_trial=-1 last_trial=-1 repeat=1?",
 							2, 5, false) {}
@@ -90,7 +90,7 @@ protected:
 
 class BlockTcl::AddTrialIdsCmd : public Tcl::TclItemCmd<Block> {
 public:
-  AddTrialIdsCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  AddTrialIdsCmd(Tcl::CTclItemPkg<Block>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Block>(pkg, cmd_name, 
 							"block_id trial_id(s) ?repeat=1?",
 							3, 4, false) {}
@@ -119,7 +119,7 @@ protected:
 
 class BlockTcl::InitCmd : public Tcl::TclItemCmd<Block> {
 public:
-  InitCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  InitCmd(Tcl::CTclItemPkg<Block>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Block>(pkg, cmd_name, "block_id repeat rand_seed", 4, 4) {}
 protected:
   virtual void invoke() {

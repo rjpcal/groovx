@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Mon Oct 30 11:12:30 2000
+// written: Thu Nov  2 13:02:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace BitmapTcl {
 
 class BitmapTcl::LoadPbmCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  LoadPbmCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  LoadPbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
   virtual void invoke() {
@@ -64,7 +64,7 @@ protected:
 
 class BitmapTcl::LoadPbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  LoadPbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  LoadPbmGzCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
 							  "bitmap_id filename(without .gz extension)",
 							  3, 3)
@@ -88,7 +88,7 @@ protected:
 
 class BitmapTcl::WritePbmCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  WritePbmCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  WritePbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
   virtual void invoke() {
@@ -106,7 +106,7 @@ protected:
 
 class BitmapTcl::WritePbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  WritePbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+  WritePbmGzCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
 							  "bitmap_id filename(without .gz extension)", 3, 3)
 	 {}
@@ -129,8 +129,9 @@ protected:
 
 class BitmapTcl::GrabScreenRectCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  GrabScreenRectCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
+  GrabScreenRectCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
+									 "bitmap_id left top right bottom", 6, 6) {}
 protected:
   virtual void invoke() {
 	 int l = getIntFromArg(2);
@@ -151,8 +152,9 @@ protected:
 
 class BitmapTcl::GrabWorldRectCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  GrabWorldRectCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
+  GrabWorldRectCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
+									 "bitmap_id left top right bottom", 6, 6) {}
 protected:
   virtual void invoke() {
 	 double l = getDoubleFromArg(2);
