@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Wed Jun 13 13:15:54 2001
+// written: Mon Aug 20 12:33:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,62 +29,70 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  static void writeValueSeq(IO::Writer* writer, const char* name,
+  static void writeValueSeq(IO::Writer* writer, const fstring& name,
                             Itr begin, Itr end, bool skip_count=false)
     {
-      if (!skip_count) {
-        writer->writeValue(makeSeqCountString(name),
-                           computeCount(begin, end));
-      }
+      if (!skip_count)
+        {
+          writer->writeValue(makeSeqCountString(name).c_str(),
+                             computeCount(begin, end));
+        }
 
       int count = 0;
 
-      while (begin != end) {
-        writer->writeValue(makeElementNameString(name, count), *begin);
-        ++begin;
-        ++count;
-      }
+      while (begin != end)
+        {
+          writer->writeValue(makeElementNameString(name, count).c_str(),
+									  *begin);
+          ++begin;
+          ++count;
+        }
     }
 
   /** A generic interface for handling containers, sequences, etc. of
       objects of Value subtypes */
   template <class Itr>
-  static void writeValueObjSeq(IO::Writer* writer, const char* name,
+  static void writeValueObjSeq(IO::Writer* writer, const fstring& name,
                                Itr begin, Itr end, bool skip_count=false)
     {
-      if (!skip_count) {
-        writer->writeValue(makeSeqCountString(name),
-                           computeCount(begin, end));
-      }
+      if (!skip_count)
+        {
+          writer->writeValue(makeSeqCountString(name).c_str(),
+                             computeCount(begin, end));
+        }
 
       int count = 0;
 
-      while (begin != end) {
-        writer->writeValueObj(makeElementNameString(name, count), *begin);
-        ++begin;
-        ++count;
-      }
+      while (begin != end)
+        {
+          writer->writeValueObj(makeElementNameString(name, count).c_str(),
+										  *begin);
+          ++begin;
+          ++count;
+        }
     }
 
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeObjectSeq(IO::Writer* writer, const char* name,
+  static void writeObjectSeq(IO::Writer* writer, const fstring& name,
                              Itr begin, Itr end, bool skip_count=false)
     {
-      if (!skip_count) {
-        writer->writeValue(makeSeqCountString(name),
-                           computeCount(begin, end));
-      }
+      if (!skip_count)
+        {
+          writer->writeValue(makeSeqCountString(name).c_str(),
+                             computeCount(begin, end));
+        }
 
       int count = 0;
 
-      while (begin != end) {
-        writer->writeObject(makeElementNameString(name, count),
-                            WeakRef<const IO::IoObject>(*begin));
-        ++begin;
-        ++count;
-      }
+      while (begin != end)
+        {
+          writer->writeObject(makeElementNameString(name, count).c_str(),
+                              WeakRef<const IO::IoObject>(*begin));
+          ++begin;
+          ++count;
+        }
     }
 
 private:
@@ -96,11 +104,10 @@ private:
       return count;
     }
 
-  // Warning: the return value of these functions is only valid up
-  // until the next call to the function.
-  static const char* makeElementNameString(const char* seq_name,
-                                           int element_num);
-  static const char* makeSeqCountString(const char* seq_name);
+  static fstring makeElementNameString(const fstring& seq_name,
+                                       int element_num);
+
+  static fstring makeSeqCountString(const fstring& seq_name);
 };
 
 } // end namespace IO

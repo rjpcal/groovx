@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Wed Aug  8 15:29:28 2001
+// written: Mon Aug 20 12:31:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,18 +22,16 @@
 #endif
 
 namespace IO {
-
 /// Utilities for reading sequences from a \c IO::Reader.
-namespace ReadUtils {
+namespace ReadUtils
+{
+  fstring makeElementNameString(const fstring& seq_name,
+                                int element_num);
 
-  // Warning: the return value of these functions is only valid up
-  // until the next call to the function.
-  const char* makeElementNameString(const char* seq_name,
-                                    int element_num);
-  const char* makeSeqCountString(const char* seq_name);
+  fstring makeSeqCountString(const fstring& seq_name);
 
   /// Get the number of elements in the stored sequence \a seq_name.
-  inline int readSequenceCount(IO::Reader* reader, const char* seq_name)
+  inline int readSequenceCount(IO::Reader* reader, const fstring& seq_name)
     {
       int count = reader->readInt(makeSeqCountString(seq_name));
       if (0 > count)
@@ -47,18 +45,19 @@ namespace ReadUtils {
       avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class T, class Inserter>
-  inline void readValueSeq(IO::Reader* reader, const char* seq_name,
+  inline void readValueSeq(IO::Reader* reader, const fstring& seq_name,
                            Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
         readSequenceCount(reader, seq_name) : known_count;
 
-      for (int i = 0; i < count; ++i) {
-        T temp;
-        reader->readValue(makeElementNameString(seq_name, i), temp);
-        *inserter = temp;
-        ++inserter;
-      }
+      for (int i = 0; i < count; ++i)
+        {
+          T temp;
+          reader->readValue(makeElementNameString(seq_name, i), temp);
+          *inserter = temp;
+          ++inserter;
+        }
     }
 
   /** Provides a generic interface for handling containers, sequences,
@@ -67,18 +66,19 @@ namespace ReadUtils {
       we avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class T, class Inserter>
-  inline void readValueObjSeq(IO::Reader* reader, const char* seq_name,
+  inline void readValueObjSeq(IO::Reader* reader, const fstring& seq_name,
                               Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
         readSequenceCount(reader, seq_name) : known_count;
 
-      for (int i = 0; i < count; ++i) {
-        T temp;
-        reader->readValueObj(makeElementNameString(seq_name, i), temp);
-        *inserter = temp;
-        ++inserter;
-      }
+      for (int i = 0; i < count; ++i)
+        {
+          T temp;
+          reader->readValueObj(makeElementNameString(seq_name, i), temp);
+          *inserter = temp;
+          ++inserter;
+        }
     }
 
   /** Provides a generic interface for handling containers, sequences,
@@ -87,18 +87,19 @@ namespace ReadUtils {
       we avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class C, class Inserter>
-  inline void readObjectSeq(IO::Reader* reader, const char* seq_name,
+  inline void readObjectSeq(IO::Reader* reader, const fstring& seq_name,
                             Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
         readSequenceCount(reader, seq_name) : known_count;
 
-      for (int i = 0; i < count; ++i) {
-        *inserter = dynamicCast<C>(
+      for (int i = 0; i < count; ++i)
+        {
+          *inserter = dynamicCast<C>(
                  reader->readObject(makeElementNameString(seq_name, i)));
 
-        ++inserter;
-      }
+          ++inserter;
+        }
     }
 };
 

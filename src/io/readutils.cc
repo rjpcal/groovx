@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Mon Aug 20 12:31:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,21 +17,19 @@
 
 #include "util/strings.h"
 
-const char* IO::ReadUtils::makeElementNameString(const char* seq_name,
-                                                 int element_num)
+fstring IO::ReadUtils::makeElementNameString(const fstring& seq_name,
+                                             int element_num)
 {
-  static fstring result("");
-  result = seq_name;
+  fstring result(seq_name);
   result.append( element_num );
-  return result.c_str();
+  return result;
 }
 
-const char* IO::ReadUtils::makeSeqCountString(const char* seq_name)
+fstring IO::ReadUtils::makeSeqCountString(const fstring& seq_name)
 {
-  static fstring result("");
-  result = seq_name;
-  result += "Count";
-  return result.c_str();
+  fstring result(seq_name);
+  result.append( "Count" );
+  return result;
 }
 
 static const char vcid_readutils_cc[] = "$Header$";
