@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Fri Apr  6 10:27:20 2001
+// written: Fri Apr  6 16:49:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 
 #define LOCAL_ASSERT
 #include "debug.h"
-#define NO_TRACE
 #include "trace.h"
 
 namespace {
@@ -36,9 +35,18 @@ class SharedDataBlock : public DataBlock {
 public:
   SharedDataBlock(int length) :
     DataBlock(new double[length], length)
-  {}
+  {
+	 DOTRACE("SharedDataBlock::SharedDataBlock");
+	 DebugEval(this); DebugEvalNL(itsData);
+  }
 
-  virtual ~SharedDataBlock() { delete [] itsData; }
+  virtual ~SharedDataBlock()
+  {
+	 DOTRACE("SharedDataBlock::~SharedDataBlock");
+	 DebugEval(this); DebugEvalNL(itsData);
+	 delete [] itsData;
+  }
+
   virtual bool isUnique() const { return refCount() <= 1; }
 };
 
@@ -93,7 +101,10 @@ DataBlock::DataBlock(double* data, unsigned int len) :
 DOTRACE("DataBlock::DataBlock");
 }
 
-DataBlock::~DataBlock() {}
+DataBlock::~DataBlock()
+{
+DOTRACE("DataBlock::~DataBlock");
+}
 
 DataBlock* DataBlock::getEmptyDataBlock() {
 DOTRACE("DataBlock::getEmptyDataBlock");
@@ -131,15 +142,20 @@ DOTRACE("DataBlock::makeBlank");
   return p;
 }
 
-DataBlock* DataBlock::makeBorrowed(double* data, int data_length) {
+DataBlock* DataBlock::makeBorrowed(double* data, int data_length)
+{
+DOTRACE("DataBlock::makeBorrowed");
   return new BorrowedDataBlock(data, data_length);
 }
 
-DataBlock* DataBlock::makeReferred(double* data, int data_length) {
+DataBlock* DataBlock::makeReferred(double* data, int data_length)
+{
+DOTRACE("DataBlock::makeReferred");
   return new ReferredDataBlock(data, data_length);
 }
 
-void DataBlock::makeUnique(DataBlock*& rep) {
+void DataBlock::makeUnique(DataBlock*& rep)
+{
   if (rep->isUnique()) return;
 
   {
