@@ -34,6 +34,11 @@ public:
 
   virtual fstring getNativeTypeName() const;
 
+  virtual void printTo(STD_IO::ostream& os) const
+  { TMultiValue<double>::doPrintTo(os); }
+  virtual void scanFrom(STD_IO::istream& is)
+  { TMultiValue<double>::doScanFrom(is); }
+
   virtual unsigned int numValues() const;
   virtual const double* constBegin() const;
 };

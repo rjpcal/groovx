@@ -21,10 +21,12 @@ template <class T>
 class TMultiValue : public Value
 {
 public:
+  virtual ~TMultiValue() {}
+
   virtual fstring getNativeTypeName() const = 0;
 
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
+  void doPrintTo(STD_IO::ostream& os) const;
+  void doScanFrom(STD_IO::istream& is);
 
 protected:
   virtual unsigned int numValues() const = 0;

@@ -35,6 +35,9 @@ public:
 
   virtual fstring getNativeTypeName() const;
 
+  virtual void printTo(STD_IO::ostream& os) const;
+  virtual void scanFrom(STD_IO::istream& is);
+
   virtual unsigned int numValues() const;
   virtual const T* constBegin() const;
 };
