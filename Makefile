@@ -109,8 +109,16 @@ ifeq ($(PLATFORM),i686)
 	AUDIO_LIB := -lesd -laudiofile-0.2.1
 endif
 
-##
 ifeq ($(PLATFORM),ppc)
+	COMPILER := g++
+	SHLIB_EXT := dylib
+	STATLIB_EXT := a
+	CPP_DEFINES += -DPPC
+	DEFAULT_MODE := debug
+	ETAGS := etags
+	AUDIO_LIB :=
+	LIB_PATH += -L/usr/X11R6/lib
+	INCLUDE_PATH += -I/usr/X11R6/include                                                                                      
 endif
 
 ifndef MODE
@@ -199,9 +207,16 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d' \
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
+ifneq ($(PLATFORM),ppc)
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
+endif
 	CPP_DEFINES += -DGCC_COMPILER=2 -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
 		-DFUNCTIONAL_OK
+
+ifeq ($(PLATFORM),ppc)
+	CPP_DEFINES += Dlrand48=rand
+	CC_SWITCHES += -dynamic
+endif
 
 	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
 
@@ -217,8 +232,18 @@ ifeq ($(COMPILER),g++)
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
+ifneq ($(PLATFORM),ppc)
 	SHLIB_CMD := $(CC) -shared -o
 	STATLIB_CMD := ar rus
+endif
+ifeq ($(PLATFORM),ppc)
+	SHLIB_CMD := libtool -dynamic -flat_namespace -undefined suppress -o
+# -install_name ${LIB_RUNTIME_DIR}/libname
+	STATLIB_CMD := libtool -static -o
+	LD_OPTIONS += -Wl,-m
+# -Wl,-multiply_defined,warning
+endif
+
 endif
 
 ifeq ($(COMPILER),g++3)
@@ -258,10 +283,12 @@ INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 LIB_PATH += -L$(LOCAL_LIB)
 LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
 
-INCLUDE_PATH += -I/usr/local/matlab/extern/include
-LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
-LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
-CPP_DEFINES += -DHAVE_MATLAB
+ifneq ($(PLATFORM),ppc)
+	INCLUDE_PATH += -I/usr/local/matlab/extern/include
+	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
+	LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
+	CPP_DEFINES += -DHAVE_MATLAB
+endif
 
 ifeq ($(PLATFORM),i686)
 	LIB_PATH += -L/usr/X11R6/lib
@@ -308,8 +335,15 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
+ifneq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
 	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
+endif
+
+ifeq ($(PLATFORM),ppc)
+%.$(SHLIB_EXT):
+	$(SHLIB_CMD) $@ $^ -lcc_dynamic
+endif
 
 %.$(STATLIB_EXT):
 	$(STATLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
