@@ -121,6 +121,7 @@ public:
   /// Function-pointer type for Canvas state-change operations.
   typedef void (Canvas::* Unmanip)();
 
+#ifndef MEMBER_TEMPLATES_BROKEN
   /** \c MatrixSaver handles saving and restoring of some part of the
       matrix state within a lexical scope, in an exception-safe manner. */
   template <Manip doit, Unmanip undoit>
@@ -150,6 +151,34 @@ public:
 
     Canvas& itsCanvas;
   };
+
+#else
+  // A macro-emulation for the Saver template class that can be used when
+  // the compiler would otherwise crash on the templates (e.g. gcc-ssa).
+
+  #define SAVER_CLASS(name, doit, undoit)                       \
+  class name                                                    \
+  {                                                             \
+  public:                                                       \
+    name(Canvas& canvas, const char* comment="") :              \
+      itsCanvas(canvas)                                         \
+    { itsCanvas.doit(comment); }                                \
+                                                                \
+    template <class Arg>                                        \
+    name(Canvas& canvas, Arg a, const char* comment="") :       \
+      itsCanvas(canvas)                                         \
+    { itsCanvas.doit(a, comment); }                             \
+                                                                \
+    ~name()                                                     \
+    { itsCanvas.undoit(); }                                     \
+                                                                \
+  private:                                                      \
+    name(const name&);                                          \
+    name& operator=(const name&);                               \
+                                                                \
+    Canvas& itsCanvas;                                          \
+  }
+#endif
 
   ///////////////////////////////////////////////////////////////////////
   //
@@ -353,8 +382,13 @@ public:
   virtual void finishDrawing();
 };
 
+#ifndef MEMBER_TEMPLATES_BROKEN
 #define BLOCK_TYPEDEF(name) \
   typedef Canvas::Saver<&Canvas::begin##name, &Canvas::end> name##Block
+#else
+#define BLOCK_TYPEDEF(name) \
+  SAVER_CLASS(name##Block, begin##name, end)
+#endif
 
   BLOCK_TYPEDEF(Points);
   BLOCK_TYPEDEF(Lines);
@@ -369,6 +403,8 @@ public:
 
 #undef BLOCK_TYPEDEF
 
+#ifndef MEMBER_TEMPLATES_BROKEN
+
   /** \c MatrixSaver handles saving and restoring of the matrix within
       a lexical scope. */
   typedef Canvas::Saver<&Canvas::pushMatrix, &Canvas::popMatrix>
@@ -378,6 +414,11 @@ public:
       attribs within a lexical scope. */
   typedef Canvas::Saver<&Canvas::pushAttribs, &Canvas::popAttribs>
   AttribSaver;
+
+#else
+  SAVER_CLASS(MatrixSaver, pushMatrix, popMatrix);
+  SAVER_CLASS(AttribSaver, pushAttribs, popAttribs);
+#endif
 
 } // end namespace Gfx
 
