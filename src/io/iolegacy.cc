@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Nov 10 17:03:57 2000
+// written: Wed Nov 15 11:46:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -205,7 +205,14 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 									"saw negative character count");
 	 }
 
-  if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
+  int c = itsImpl->itsInStream.get();
+  if (c != ' ')
+	 {
+		throw IO::LogicError("LegacyReader::readStringImpl "
+									"did not have whitespace after character count");
+	 }
+
+//   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
 
   fixed_string new_string(numchars);
 
@@ -289,7 +296,9 @@ public:
 	 itsOwner(owner),
 	 itsOutStream(os),
 	 itsWriteBases(write_bases),
-	 itsFSep(' ')
+	 itsFSep(' '),
+	 itsIndentLevel(0),
+	 itsNeedsNewline(false)
   {}
 
   void throwIfError(const char* type) {
@@ -300,37 +309,79 @@ public:
   }
 
   IO::LegacyWriter* itsOwner;
+private:
   STD_IO::ostream& itsOutStream;
+public:
   const bool itsWriteBases;
   const char itsFSep;				  // field separator
+  int itsIndentLevel;
+  bool itsNeedsNewline;
 
+  STD_IO::ostream& stream()
+	 {
+		if (itsNeedsNewline)
+		  {
+			 doNewline();
+			 itsNeedsNewline = false;
+		  }
+		return itsOutStream;
+	 }
+
+private:
+  class Indenter {
+  private:
+	 Impl* itsOwner;
+  public:
+	 Indenter(Impl* impl) : itsOwner(impl) { ++(itsOwner->itsIndentLevel); }
+	 ~Indenter() { --(itsOwner->itsIndentLevel); }
+  };
+
+  void doNewline()
+	 {
+		itsOutStream << '\n';
+		for (int i = 0; i < itsIndentLevel; ++i)
+		  itsOutStream << '\t';
+	 }
+
+  void requestNewline() { itsNeedsNewline = true; }
+
+public:
   void flattenObject(const char* obj_name, const IO::IoObject* obj,
 							bool stub_out = false)
   {
 	 if (obj == 0)
 		{
-		  itsOutStream << "NULL" << itsFSep;
+		  stream() << "NULL" << itsFSep;
 		  throwIfError(obj_name);
 		  return;
 		}
 
 	 Assert(obj != 0);
 
-	 itsOutStream << obj->ioTypename() << itsFSep;
+	 requestNewline();
+
+	 stream() << obj->ioTypename() << itsFSep;
 	 throwIfError(obj->ioTypename().c_str());
 
-	 itsOutStream << '@';
+	 stream() << '@';
 
 	 if (stub_out)
 		{
-		  itsOutStream << "-1 ";
+		  stream() << "-1 ";
 		}
 	 else
 		{
-		  itsOutStream << obj->serialVersionId() << " { ";
-		  obj->writeTo(itsOwner);
-		  itsOutStream << " } ";
+		  stream() << obj->serialVersionId() << " {";
+		  {
+			 Indenter indent(this);
+			 requestNewline();
+			 obj->writeTo(itsOwner);
+		  }
+		  requestNewline();
+		  stream() << "}";
 		}
+
+	 requestNewline();
 
 	 throwIfError(obj_name);
   }
@@ -356,33 +407,34 @@ DOTRACE("IO::LegacyWriter::~LegacyWriter");
 
 void IO::LegacyWriter::writeChar(const char* name, char val) {
 DOTRACE("IO::LegacyWriter::writeChar");
-  itsImpl->itsOutStream << val << itsImpl->itsFSep;
+  itsImpl->stream() << val << itsImpl->itsFSep;
   itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeInt(const char* name, int val) {
 DOTRACE("IO::LegacyWriter::writeInt");
-  itsImpl->itsOutStream << val << itsImpl->itsFSep;
+  itsImpl->stream() << val << itsImpl->itsFSep;
   itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeBool(const char* name, bool val) {
 DOTRACE("IO::LegacyWriter::writeBool");
-  itsImpl->itsOutStream << val << itsImpl->itsFSep;
+  itsImpl->stream() << val << itsImpl->itsFSep;
   itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeDouble(const char* name, double val) {
 DOTRACE("IO::LegacyWriter::writeDouble");
-  itsImpl->itsOutStream << val << itsImpl->itsFSep;
+  itsImpl->stream() << val << itsImpl->itsFSep;
   itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeCstring(const char* name, const char* val) {
 DOTRACE("IO::LegacyWriter::writeCstring");
 
-  itsImpl->itsOutStream << strlen(val) << '\n'
-								<< val << '\n';
+//   itsImpl->stream() << strlen(val) << '\n'
+  itsImpl->stream() << strlen(val) << " "
+						  << val << itsImpl->itsFSep;
 
   itsImpl->throwIfError(name);
 }
@@ -390,8 +442,8 @@ DOTRACE("IO::LegacyWriter::writeCstring");
 void IO::LegacyWriter::writeValueObj(const char* name,
 												 const Value& value) {
 DOTRACE("IO::LegacyWriter::writeValueObj");
-  value.printTo(itsImpl->itsOutStream);
-  itsImpl->itsOutStream << itsImpl->itsFSep;
+  value.printTo(itsImpl->stream());
+  itsImpl->stream() << itsImpl->itsFSep;
   itsImpl->throwIfError(name);
 }
 
