@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Mar 10 10:58:12 2000
+// written: Mon Mar 13 14:43:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 #include "widget.h"
 #include "writer.h"
 
-#define NO_TRACE
+#define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -43,6 +43,8 @@ namespace {
   const string_literal ioTag("EventResponseHdlr");
 
   const string_literal nullScript("{}");
+
+  Tcl::TclObjPtr theNullObject(Tcl_NewStringObj("",-1));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +82,7 @@ public:
   void setInputResponseMap(const fixed_string& s)
 	 {
 		itsInputResponseMap = s;
+		updateRegexps();
 	 }
 
   bool getUseFeedback() const
@@ -164,16 +167,13 @@ private:
   void checkedSplitList(Tcl_Obj* tcllist,
 	 Tcl_Obj**& elements_out, int& length_out) const throw(ErrorWithMsg);
 
-  Tcl_RegExp getCheckedRegexp(Tcl_Obj* patternObj) const throw(ErrorWithMsg);
-
   int getCheckedInt(Tcl_Obj* intObj) const throw(ErrorWithMsg);
 
   dynamic_string getBindingScript() const
 	 {
-		dynamic_string result = "{ ";
-		result += itsPrivateCmdName;           result += " ";
-		result += itsBindingSubstitution;      result += " }";
-		return result;
+		return dynamic_string("{ ")
+		  .append(itsPrivateCmdName).append(" ")
+		  .append(itsBindingSubstitution).append(" }");
 	 }
 
   void clearEventQueue() const throw()
@@ -221,17 +221,20 @@ private:
 
   class RegExp_ResponseVal {
   public:
-    RegExp_ResponseVal(Tcl_RegExp rx = 0, int rv = -1) :
-		itsRegexp(rx), itsRespVal(rv)
+    RegExp_ResponseVal(Tcl::TclObjPtr obj = theNullObject, int rv = -1) :
+		itsPatternObj(obj),
+		itsRespVal(rv)
 		{}
 
 	 RegExp_ResponseVal(const RegExp_ResponseVal& other) :
-		itsRegexp(other.itsRegexp), itsRespVal(other.itsRespVal)
+		itsPatternObj(other.itsPatternObj),
+		itsRespVal(other.itsRespVal)
 		{}
 
 	 RegExp_ResponseVal& operator=(const RegExp_ResponseVal& other)
 		{
-		  itsRegexp = other.itsRegexp; itsRespVal = other.itsRespVal;
+		  itsPatternObj = other.itsPatternObj;
+		  itsRespVal = other.itsRespVal;
 		  return *this;
 		}
 
@@ -242,8 +245,12 @@ private:
 		  static const int REGEX_NO_MATCH     =  0;
 		  static const int REGEX_FOUND_MATCH  =  1;
 
+		  DebugEval(string_to_match); DebugEvalNL(Tcl_GetString(itsPatternObj));
+
+		  Tcl_RegExp regexp = getCheckedRegexp(interp, itsPatternObj);
+
 		  int regex_result =
-			 Tcl_RegExpExec(interp, itsRegexp, string_to_match, string_to_match);
+			 Tcl_RegExpExec(interp, regexp, string_to_match, string_to_match);
 
 		  switch (regex_result) {
 		  case REGEX_ERROR:
@@ -264,7 +271,22 @@ private:
 	 int responseValue() { return itsRespVal; }
 
   private:
-    Tcl_RegExp itsRegexp;
+	 static Tcl_RegExp getCheckedRegexp(
+		Tcl_Interp* interp, Tcl::TclObjPtr patternObj
+		)
+		throw(ErrorWithMsg)
+		{
+		DOTRACE("EventResponseHdlr::Impl::RegExp_ResponseVal::getCheckedRegexp");
+		  const int flags = 0;
+		  Tcl_RegExp regexp = Tcl_GetRegExpFromObj(interp, patternObj, flags);
+		  if (!regexp) {
+			 throw ErrorWithMsg("error getting a Tcl_RegExp from ")
+				      .appendMsg("'", Tcl_GetString(patternObj), "'");
+		  }
+		  return regexp;
+		}
+
+	 Tcl::TclObjPtr itsPatternObj;
     int itsRespVal;
   };
 
@@ -272,9 +294,6 @@ private:
   mutable dynamic_block<RegExp_ResponseVal> itsRegexps;
 
   class Condition_Feedback {
-  private:
-	 static Tcl::TclObjPtr theNullObject;
-
   public:
 	 // This no-argument constructor puts the object in an invalid
 	 // state, which we mark with itsIsValid=false. In order for the
@@ -338,9 +357,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TclObjPtr EventResponseHdlr::Impl::Condition_Feedback::theNullObject(
-  Tcl_NewStringObj("", -1)
-);
+Util::Tracer EventResponseHdlr::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -623,7 +640,7 @@ DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
   ignore(&(getExpt()));
 
-  int response = getRespFromKeysym(keysym);
+  int response = getRespFromKeysym(keysym);       DebugEvalNL(response);
 
   if ( !isValidResponse(response) ) {
 	 getExpt().edAbortTrial();
@@ -651,7 +668,13 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
   const char* response_string = extractStringFromKeysym(keysym);
 
+  DebugEvalNL(response_string);
+
+  DebugEvalNL(itsRegexps.size());
+
   for (size_t i = 0; i < itsRegexps.size(); ++i) {
+
+	 DebugEvalNL(i);
 
 	 if (itsRegexps[i].matchesString(itsInterp, response_string)) {
 		return itsRegexps[i].responseValue();
@@ -762,13 +785,12 @@ DOTRACE("EventResponseHdlr::updateRegexps");
 		  return;
 		}
 
-		Tcl_Obj* patternObj = getCheckedListElement(current_pair, 0);
-		Tcl_RegExp regexp = getCheckedRegexp(patternObj);
+		Tcl::TclObjPtr patternObj = getCheckedListElement(current_pair, 0);
 
-		Tcl_Obj *response_valObj = getCheckedListElement(current_pair, 1);
+		Tcl::TclObjPtr response_valObj = getCheckedListElement(current_pair, 1);
 		int response_val = getCheckedInt(response_valObj);
     
-		itsRegexps.at(i) = Impl::RegExp_ResponseVal(regexp, response_val);
+		itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
 	 }
 
 	 DebugPrintNL("updateRegexps success!");
@@ -812,18 +834,6 @@ DOTRACE("EventResponseHdlr::Impl::checkedSplitList");
 										&length_out, &elements_out) != TCL_OK ) {
 	 throw ErrorWithMsg("error splitting list for EventResponseHdlr");
   }
-}
-
-Tcl_RegExp EventResponseHdlr::Impl::getCheckedRegexp(
-  Tcl_Obj* patternObj
-) const throw(ErrorWithMsg) {
-DOTRACE("EventResponseHdlr::Impl::getCheckedRegexp");
-  const int flags = 0;
-  Tcl_RegExp regexp = Tcl_GetRegExpFromObj(itsInterp, patternObj, flags);
-  if (!regexp) {
-	 throw ErrorWithMsg("error creating a Tcl_RegExp for EventResponseHdlr");
-  }
-  return regexp;
 }
 
 int EventResponseHdlr::Impl::getCheckedInt(
