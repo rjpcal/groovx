@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jul  9 13:57:28 2002
+// written: Tue Jul  9 14:06:08 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -48,7 +48,7 @@
 #endif
 #include <tcl.h>
 #include <tk.h>
-#include <tkInt.h>
+#include <tkInt.h> // needed to access "dispPtr->winTable" field of TkWindow
 
 #include "util/algo.h"
 #include "util/error.h"
