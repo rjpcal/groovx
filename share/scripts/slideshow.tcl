@@ -6,35 +6,42 @@
 
 package require Iwidgets
 
-Togl::destroy
-
 itcl::class Playlist {
-    private variable itsDir
+    private variable itsListFile
     private variable itsList
     private variable itsIdx
-    private variable itsPrev
+    private variable itsToglet
+    private variable itsPixmap
 
-    constructor { dir } {
-	set itsDir $dir
-	if { ![file exists ${dir}/.playlist] } {
-	    set names [lsort -dictionary [glob ${dir}/*]]
-	    set itsList [list]
-	    foreach n $names {
-		lappend itsList $n
+    constructor { fname widget } {
+	if { [file isdirectory $fname] } {
+	    set itsListFile ${fname}/.playlist
+
+	    if { ![file exists $itsListFile] } {
+		set names [lsort -dictionary [glob ${fname}/*]]
+		set itsList [list]
+		foreach n $names {
+		    lappend itsList $n
+		}
+		$this save
 	    }
-	    $this save
+	    
 	} else {
-	    set fd [open ${dir}/.playlist r]
-	    set itsList [lrange [split [read $fd] "\n"] 0 end-1]
-	    close $fd
+	    set itsListFile ${fname}
 	}
+
+	set fd [open $itsListFile r]
+	set itsList [lrange [split [read $fd] "\n"] 0 end-1]
+	close $fd
+	
 	set itsIdx 0
-	set itsPrev 0
+	set itsToglet $widget
+	set itsPixmap [new GxPixmap]
     }
 
     public method save {} {
 	puts "writing playlist"
-	set fd [open ${itsDir}/.playlist w]
+	set fd [open $itsListFile w]
 	puts $fd [join $itsList "\n"]
 	close $fd
     }
@@ -74,22 +81,12 @@ itcl::class Playlist {
 
 	puts $f
 
-	set b [new GxPixmap]
-	-> $b loadImage $f
-	-> $b zoomTo [Togl::size]
+	-> $itsPixmap loadImage $f
+	-> $itsPixmap zoomTo [-> $itsWidget size]
 
-	see $b
-
-	delete $itsPrev
-	set itsPrev $b
+	-> $itsWidget see $itsPixmap
     }
 }
-
-set PLAYLIST [Playlist PLAYLIST [lindex $argv end]]
-
-set DELAY 4000
-
-set LOOP_HANDLE 0
 
 proc min {a b} {
     if {$a < $b} { return $a }
@@ -109,16 +106,6 @@ proc hide {} {
     $::PLAYLIST show
 }
 
-frame .f
-
-button .f.loop -text "loop" -command looper
-button .f.noloop -text "stop loop" -command {after cancel $::LOOP_HANDLE}
-
-button .f.shuffler -text "shuffle" -command {$::PLAYLIST shuffle}
-button .f.sorter -text "sort" -command {$::PLAYLIST sort}
-
-button .f.hide -text "hide" -command hide
-
 proc blockInput {args} {
     return 0
 }
@@ -133,6 +120,26 @@ proc updateText {} {
     set ::FILENAME [$::PLAYLIST status]
 }
 
+-> [Toglet::current] destroy
+
+set t [new Toglet]
+
+set PLAYLIST [Playlist PLAYLIST [lindex $argv end] $t]
+
+set DELAY 4000
+
+set LOOP_HANDLE 0
+
+frame .f
+
+button .f.loop -text "loop" -command looper
+button .f.noloop -text "stop loop" -command {after cancel $::LOOP_HANDLE}
+
+button .f.shuffler -text "shuffle" -command {$::PLAYLIST shuffle}
+button .f.sorter -text "sort" -command {$::PLAYLIST sort}
+
+button .f.hide -text "hide" -command hide
+
 iwidgets::spinner .f.spinner -width 0 -fixed 0 \
     -validate blockInput -labelvariable FILENAME \
     -decrement {spinPic -1} -increment {spinPic 1}
@@ -143,13 +150,11 @@ pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.spinner -side left -expa
 
 pack .f -side top
 
-Toglet::currentToglet [new Toglet]
+-> $t bind <ButtonPress-1> {spinPic -1; $::PLAYLIST show}
+-> $t bind <ButtonPress-3> {spinPic 1; $::PLAYLIST show}
 
-Togl::bind <ButtonPress-1> {spinPic -1; $::PLAYLIST show}
-Togl::bind <ButtonPress-3> {spinPic 1; $::PLAYLIST show}
-
-Togl::height 975
-Togl::width 1400
+-> $t height 975
+-> $t width 1400
 
 update
 
