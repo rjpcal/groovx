@@ -291,25 +291,31 @@ public:
 
   typedef map<string, file_info*> info_map_t;
 
-  const string     fname;
-  const string     dirname_without_slash;
-  const file_info* source;
-  bool             literal; // if true, then don't try to look up nested includes
-  parse_state      cdep_parse_state;
-  parse_state      ldep_parse_state;
-  bool             direct_cdeps_done;
-  dep_list_t       direct_cdeps;
-  bool             nested_cdeps_done;
-  dep_list_t       nested_cdeps;
-  bool             direct_ldeps_done;
-  dep_list_t       direct_ldeps;
-  bool             nested_ldeps_done;
-  dep_list_t       nested_ldeps;
+  const string                fname;
+  const string::size_type     dotpos; // position of the final "."
+  const string                rootname; // filename without trailing .extension
+  const string                extension; // trailing .extension, including the "."
+  const string                dirname_without_slash;
+  const file_info*            source;
+  bool                        literal; // if true, then don't try to look up nested includes
+  parse_state                 cdep_parse_state;
+  parse_state                 ldep_parse_state;
+  bool                        direct_cdeps_done;
+  dep_list_t                  direct_cdeps;
+  bool                        nested_cdeps_done;
+  dep_list_t                  nested_cdeps;
+  bool                        direct_ldeps_done;
+  dep_list_t                  direct_ldeps;
+  bool                        nested_ldeps_done;
+  dep_list_t                  nested_ldeps;
 
 private:
   file_info(const string& t)
     :
     fname(make_normpath(t)),
+    dotpos(get_last_of(fname, '.')),
+    rootname(fname.substr(0,dotpos)),
+    extension(fname.substr(dotpos, string::npos)),
     dirname_without_slash(get_dirname_of(t)),
     source(0),
     literal(false),
@@ -324,6 +330,13 @@ private:
     nested_ldeps_done(false),
     nested_ldeps()
   {}
+
+  string::size_type get_last_of(const string& s, char c)
+  {
+    string::size_type p = s.find_last_of(c);
+    if (p == string::npos) p = s.length();
+    return p;
+  }
 
   file_info(const file_info&); // not implemented
   file_info& operator=(const file_info&); // not implemented
@@ -490,11 +503,11 @@ public:
 
   // Returns true if fname has a c++ source file extension, and
   // assigns the stem (without the extension) to 'stem'.
-  bool get_cc_fname_stem(const string& fname, string& stem) const;
+  bool is_cc_fname(const file_info* finfo) const;
 
-  // Like get_cc_fname_stem(), but also checks for header-file
+  // Like is_cc_fname(), but also checks for header-file
   // extensions (e.g., '.h').
-  bool get_cc_or_h_fname_stem(const string& fname, string& stem) const;
+  bool is_cc_or_h_fname(const file_info* finfo) const;
 
   // Find the source file that corresponds to the given header file
   string find_source_for_header(const string& header) const;
@@ -510,9 +523,9 @@ public:
   const dep_list_t& get_direct_ldeps(file_info* finfo);
   const dep_list_t& get_nested_ldeps(file_info* finfo);
 
-  void print_makefile_dep(const string& current_file);
-  void print_include_tree(const string& current_file);
-  void print_link_deps(const string& current_file);
+  void print_makefile_dep(file_info* finfo);
+  void print_include_tree(file_info* finfo);
+  void print_link_deps(file_info* finfo);
 
   void traverse_sources();
 };
@@ -773,15 +786,12 @@ void cppdeps::inspect(char** arg0, char** argn)
   cerr << "obj_prefix: '" << m_cfg_obj_prefix << "'\n\n";
 }
 
-bool cppdeps::get_cc_fname_stem(const string& fname, string& stem) const
+bool cppdeps::is_cc_fname(const file_info* finfo) const
 {
-  string::size_type p = fname.find_last_of('.');
-
   for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
     {
-      if (fname.compare(p, string::npos, m_cfg_source_exts[i]) == 0)
+      if (finfo->extension == m_cfg_source_exts[i])
         {
-          stem = fname.substr(0, p);
           return true;
         }
     }
@@ -789,24 +799,20 @@ bool cppdeps::get_cc_fname_stem(const string& fname, string& stem) const
   return false;
 }
 
-bool cppdeps::get_cc_or_h_fname_stem(const string& fname, string& stem) const
+bool cppdeps::is_cc_or_h_fname(const file_info* finfo) const
 {
-  string::size_type p = fname.find_last_of('.');
-
   for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
     {
-      if (fname.compare(p, string::npos, m_cfg_source_exts[i]) == 0)
+      if (finfo->extension == m_cfg_source_exts[i])
         {
-          stem = fname.substr(0, p);
           return true;
         }
     }
 
   for (unsigned int i = 0; i < m_cfg_header_exts.size(); ++i)
     {
-      if (fname.compare(p, string::npos, m_cfg_header_exts[i]) == 0)
+      if (finfo->extension == m_cfg_header_exts[i])
         {
-          stem = fname.substr(0, p);
           return true;
         }
     }
@@ -1212,21 +1218,22 @@ const dep_list_t& cppdeps::get_nested_ldeps(file_info* finfo)
   return finfo->nested_ldeps;
 }
 
-void cppdeps::print_makefile_dep(const string& fname)
+void cppdeps::print_makefile_dep(file_info* finfo)
 {
-  string fname_stem;
-  if (!get_cc_fname_stem(fname, fname_stem))
+  if (!is_cc_fname(finfo))
     return;
 
+  string stem = finfo->rootname;
+
   // Remove a leading directory prefix if necessary
-  if (fname_stem.compare(0, m_strip_prefix.length(),
-                         m_strip_prefix) == 0)
+  if (stem.compare(0, m_strip_prefix.length(),
+                   m_strip_prefix) == 0)
     {
-      fname_stem.erase(0, m_strip_prefix.length() + 1);
+      stem.erase(0, m_strip_prefix.length() + 1);
     }
 
   // Make sure that m_cfg_obj_prefix ends with a slash if it is
-  // non-empty, so that we can join it to fname_stem and make a proper
+  // non-empty, so that we can join it to stem and make a proper
   // pathname.
   if (m_cfg_obj_prefix.length() > 0
       && m_cfg_obj_prefix[m_cfg_obj_prefix.length()-1] != '/')
@@ -1240,20 +1247,20 @@ void cppdeps::print_makefile_dep(const string& fname)
   // faster than iostreams, at least under g++-3.2.
   printf("%s%s%s",
          m_cfg_obj_prefix.c_str(),
-         fname_stem.c_str(),
+         stem.c_str(),
          m_cfg_obj_exts[0].c_str());
 
   for (unsigned int i = 1; i < m_cfg_obj_exts.size(); ++i)
     {
       printf(" %s%s%s",
              m_cfg_obj_prefix.c_str(),
-             fname_stem.c_str(),
+             stem.c_str(),
              m_cfg_obj_exts[i].c_str());
     }
 
   printf(": ");
 
-  const dep_list_t& cdeps = get_nested_cdeps(file_info::get(fname));
+  const dep_list_t& cdeps = get_nested_cdeps(finfo);
 
   for (dep_list_t::const_iterator
          itr = cdeps.begin(),
@@ -1267,20 +1274,17 @@ void cppdeps::print_makefile_dep(const string& fname)
   printf("\n");
 }
 
-void cppdeps::print_include_tree(const string& fname)
+void cppdeps::print_include_tree(file_info* finfo)
 {
-  string fname_stem;
-  if (!get_cc_or_h_fname_stem(fname, fname_stem))
+  if (!is_cc_or_h_fname(finfo))
     return;
-
-  file_info* finfo = file_info::get(fname);
 
   const dep_list_t& cdeps =
     (m_cfg_output_mode & DIRECT_INCLUDE_TREE)
     ? get_direct_cdeps(finfo)
     : get_nested_cdeps(finfo);
 
-  printf("%s:: ", fname.c_str());
+  printf("%s:: ", finfo->fname.c_str());
 
   for (dep_list_t::const_iterator
          itr = cdeps.begin(),
@@ -1296,14 +1300,12 @@ void cppdeps::print_include_tree(const string& fname)
   printf("\n");
 }
 
-void cppdeps::print_link_deps(const string& fname)
+void cppdeps::print_link_deps(file_info* finfo)
 {
-  const string exe = m_cfg_exe_formats.transform(fname);
+  const string exe = m_cfg_exe_formats.transform(finfo->fname);
 
   if (exe.empty())
     return;
-
-  file_info* finfo = file_info::get(fname);
 
   const dep_list_t& ldeps = get_nested_ldeps(finfo);
 
@@ -1370,20 +1372,22 @@ void cppdeps::traverse_sources()
         }
       else
         {
+          file_info* finfo = file_info::get(current_file);
+
           if (m_cfg_output_mode & MAKEFILE_CDEPS)
             {
-              print_makefile_dep(current_file);
+              print_makefile_dep(finfo);
             }
 
           if ((m_cfg_output_mode & DIRECT_INCLUDE_TREE) ||
               (m_cfg_output_mode & NESTED_INCLUDE_TREE) )
             {
-              print_include_tree(current_file);
+              print_include_tree(finfo);
             }
 
           if (m_cfg_output_mode & MAKEFILE_LDEPS)
             {
-              print_link_deps(current_file);
+              print_link_deps(finfo);
             }
         }
     }
