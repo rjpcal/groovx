@@ -43,47 +43,23 @@
 
 #if defined(HAVE_ALIB_H)
 #  include "media/hpsound.h"
-
-Sound* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep(hpsound)");
-  return new HpAudioSoundRep(soundfile);
-}
+   typedef HpAudioSoundRep sound_rep_t;
 
 #elif defined(HAVE_DMEDIA_AUDIO_H)
 #  include "media/irixsound.h"
-
-Sound* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSound(irixsound)");
-  return new IrixAudioSoundRep(soundfile);
-}
+   typedef IrixAudioSoundRep sound_rep_t;
 
 #elif defined(HAVE_QUICKTIME_MOVIES_H)
 #  include "media/quicktimesound.h"
-
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep(quicktimesound)");
-  return new QuickTimeSoundRep(soundfile);
-}
+   typedef QuickTimeAudioSoundRep sound_rep_t;
 
 #elif defined(HAVE_ESD_H)
 #  include "media/esdsound.h"
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("SoundRep::newPlatformSoundRep(esdsound)");
-  return new EsdSoundRep(soundfile);
-}
+   typedef EsdSoundRep sound_rep_t;
 
 #else
 #  include "media/dummysound.h"
-
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep(dummysound)");
-  return new DummySoundRep(soundfile);
-}
+   typedef DummySoundRep sound_rep_t;
 
 #endif
 
@@ -127,6 +103,12 @@ Sound* Sound::makeFrom(const char* filename)
 {
 DOTRACE("Sound::make");
   return new Sound(filename);
+}
+
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("Sound::newPlatformSoundRep");
+  return new sound_rep_t(soundfile);
 }
 
 Sound::Sound(const char* filename) :
