@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu Jul 19 11:07:45 2001
+// written: Sun Jul 22 15:54:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,10 +38,11 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-int TlistUtils::createPreview(GWT::Canvas& canvas,
-                              int* objids, unsigned int objids_size,
-                              int pixel_width,
-                              int pixel_height) {
+Util::UID TlistUtils::createPreview(GWT::Canvas& canvas,
+                                    Util::UID* objids,
+                                    unsigned int objids_size,
+                                    int pixel_width, int pixel_height)
+{
 DOTRACE("TlistUtils::createPreview");
   Point<double> world_origin = canvas.getWorldFromScreen( Point<int>(0, 0) );
 
@@ -72,48 +73,50 @@ DOTRACE("TlistUtils::createPreview");
   int x_step = -1;
   int y_step = 0;
 
-  for (size_t i = 0; i < objids_size; ++i) {
-    ++x_step;
-    if (x_step == num_cols) { x_step = 0; ++y_step; }
+  for (size_t i = 0; i < objids_size; ++i)
+    {
+      ++x_step;
+      if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-    Ref<GrObj> obj(objids[i]);
-    obj->getBoundingBox(canvas, bbxs[i]);
+      Ref<GrObj> obj(objids[i]);
+      obj->getBoundingBox(canvas, bbxs[i]);
 
-    obj->setAlignmentMode(GrObj::CENTER_ON_CENTER);
-    obj->setBBVisibility(true);
-    obj->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
-    obj->setMaxDimension(0.8);
+      obj->setAlignmentMode(GrObj::CENTER_ON_CENTER);
+      obj->setBBVisibility(true);
+      obj->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+      obj->setMaxDimension(0.8);
 
-    char id_string[32];
-    ostrstream ost(id_string, 31);
-    ost << objids[i] << '\0';
+      char id_string[32];
+      ostrstream ost(id_string, 31);
+      ost << objids[i] << '\0';
 
-    Ref<Gtext> label(Gtext::make());
-    label->setText(id_string);
-    label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
-    label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
-    label->setHeight(0.1);
+      Ref<Gtext> label(Gtext::make());
+      label->setText(id_string);
+      label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
+      label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+      label->setHeight(0.1);
 
-    Ref<Position> obj_pos(Position::make());
-    double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
-    double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
-    obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
-    obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
+      Ref<Position> obj_pos(Position::make());
+      double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
+      double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
+      obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
+      obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-    Ref<Position> label_pos(Position::make());
-    double label_x = obj_x;
-    double label_y = obj_y - 0.50*parcel_side;
-    label_pos->translation.vec().set(label_x, label_y, 0.0);
-    label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
+      Ref<Position> label_pos(Position::make());
+      double label_x = obj_x;
+      double label_y = obj_y - 0.50*parcel_side;
+      label_pos->translation.vec().set(label_x, label_y, 0.0);
+      label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-    preview_trial->add(objids[i], obj_pos.id());
-    preview_trial->add(label.id(), label_pos.id());
-  }
+      preview_trial->add(objids[i], obj_pos.id());
+      preview_trial->add(label.id(), label_pos.id());
+    }
 
   return preview_trial.id();
 }
 
-void TlistUtils::writeResponses(const char* filename) {
+void TlistUtils::writeResponses(const char* filename)
+{
 DOTRACE("TlistUtils::writeResponses");
 
   STD_IO::ofstream ofs(filename);
@@ -142,7 +145,8 @@ DOTRACE("TlistUtils::writeResponses");
   if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
 }
 
-void TlistUtils::writeIncidenceMatrix(const char* filename) {
+void TlistUtils::writeIncidenceMatrix(const char* filename)
+{
 DOTRACE("TlistUtils::writeIncidenceMatrix");
 
   STD_IO::ofstream ofs(filename);
@@ -209,7 +213,8 @@ public:
   }
 };
 
-void TlistUtils::writeMatlab(const char* filename) {
+void TlistUtils::writeMatlab(const char* filename)
+{
 DOTRACE("TlistUtils::writeMatlab");
 
   STD_IO::ofstream ofs(filename);

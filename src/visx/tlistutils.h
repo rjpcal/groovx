@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 02:58:20 1999
-// written: Thu Jul 19 11:07:30 2001
+// written: Sun Jul 22 15:51:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,28 +13,22 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
-template <class T> class dynamic_block;
-
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
+#include "util/utilfwd.h"
 #endif
 
-namespace GWT {
+namespace GWT
+{
   class Canvas;
 }
 
+template <class T> class dynamic_block;
+
 class TlistUtils {
 public:
-  static int createPreview(GWT::Canvas& canvas,
-                           int* objids, unsigned int objids_size,
-                           int pixel_width,
-                           int pixel_height);
+  static Util::UID createPreview(GWT::Canvas& canvas,
+											Util::UID* objids, unsigned int objids_size,
+											int pixel_width, int pixel_height);
 
   /** Write a file containing a summary of the responses to each Trial
       in the Tlist. */

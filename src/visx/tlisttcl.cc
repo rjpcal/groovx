@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 18 12:05:29 2001
+// written: Sun Jul 22 15:44:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,8 +80,8 @@ namespace TlistTcl
 Util::UID TlistTcl::createPreview(Tcl::List objid_list,
                                   int pixel_width, int pixel_height)
 {
-  fixed_block<int> objids(objid_list.begin<int>(),
-                          objid_list.end<int>());
+  fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
+                                objid_list.end<Util::UID>());
 
   GWT::Canvas& canvas = Application::theApp().getCanvas();
 
@@ -102,9 +102,9 @@ Tcl::List TlistTcl::dealSingles(Tcl::List objids, Util::UID posid)
 {
   Tcl::List result;
 
-  for (Tcl::List::Iterator<int>
-         itr = objids.begin<int>(),
-         end = objids.end<int>();
+  for (Tcl::List::Iterator<Util::UID>
+         itr = objids.begin<Util::UID>(),
+         end = objids.end<Util::UID>();
        itr != end;
        ++itr)
     {
@@ -163,7 +163,7 @@ Tcl::List TlistTcl::dealPairs(Tcl::List objids1, Tcl::List objids2,
 Tcl::List TlistTcl::dealTriads(Tcl::List objid_list, Util::UID posid1,
                                Util::UID posid2, Util::UID posid3)
 {
-  const int NUM_PERMS = 18;
+  const unsigned int NUM_PERMS = 18;
   static int permutations[NUM_PERMS][3] = {
     {0, 0, 1},
     {0, 0, 2},
@@ -184,33 +184,37 @@ Tcl::List TlistTcl::dealTriads(Tcl::List objid_list, Util::UID posid1,
     {2, 0, 1},
     {2, 1, 0} };
 
-  fixed_block<int> objids(objid_list.begin<Util::UID>(),
-                          objid_list.end<Util::UID>());
+  fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
+                                objid_list.end<Util::UID>());
 
   Util::UID base_triad[3];
 
   Tcl::List result;
 
-  for (unsigned int i = 0; i < objids.size(); ++i) {
-    base_triad[0] = objids[i];
+  for (unsigned int i = 0; i < objids.size(); ++i)
+    {
+      base_triad[0] = objids[i];
 
-    for (unsigned int j = i+1; j < objids.size(); ++j) {
-      base_triad[1] = objids[j];
+      for (unsigned int j = i+1; j < objids.size(); ++j)
+        {
+          base_triad[1] = objids[j];
 
-      for (unsigned int k = j+1; k < objids.size(); ++k) {
-        base_triad[2] = objids[k];
+          for (unsigned int k = j+1; k < objids.size(); ++k)
+            {
+              base_triad[2] = objids[k];
 
-        // loops over p,e run through all permutations
-        for (int p = 0; p < NUM_PERMS; ++p) {
-          Ref<Trial> trial(Trial::make());
-            trial->add(base_triad[permutations[p][0]], posid1);
-            trial->add(base_triad[permutations[p][1]], posid2);
-            trial->add(base_triad[permutations[p][2]], posid3);
-          result.append(trial.id());
-        } // end p
-      } // end itr3
-    } // end itr2
-  } // end itr1
+              // loops over p,e run through all permutations
+              for (unsigned int p = 0; p < NUM_PERMS; ++p)
+                {
+                  Ref<Trial> trial(Trial::make());
+                  trial->add(base_triad[permutations[p][0]], posid1);
+                  trial->add(base_triad[permutations[p][1]], posid2);
+                  trial->add(base_triad[permutations[p][2]], posid3);
+                  result.append(trial.id());
+                } // end p
+            } // end itr3
+        } // end itr2
+    } // end itr1
 
   return result;
 }
