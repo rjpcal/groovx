@@ -89,6 +89,8 @@ void Util::Log::reset()
 {
 DOTRACE("Util::Log::reset");
   scopes.clear();
+
+  log(fstring("log reset ", Util::Time::wallClockNow().format()));
 }
 
 void Util::Log::addScope(const fstring& name)
