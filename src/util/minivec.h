@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Tue Feb 19 14:50:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ public:
   minivec (InputIterator first, InputIterator last)
     {
       size_type n = size_type(0);
-      distance(first, last, n);
+      std::distance(first, last, n);
       start = mv_allocate(n,(pointer)0);
       finish = MVUtils::uninitialized_copy(first, last, start);
       end_of_storage = finish;
@@ -517,8 +517,7 @@ void minivec<T>::insert (iterator position, InputIterator first,
                          InputIterator last)
 {
   if (first == last) return;
-  size_type n = size_type(0);
-  distance(first, last, n);
+  size_type n = std::distance(first, last);
   if (end_of_storage - finish >= n)
     {
       if (end() - position > n)
