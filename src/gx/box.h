@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Mon Nov  4 19:19:59 2002
+// written: Wed Nov 13 10:36:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,6 +59,10 @@ public:
   Vec3<V> point110() const { return Gfx::Vec3<V>(xx1, yy1, zz0); }
   Vec3<V> point111() const { return Gfx::Vec3<V>(xx1, yy1, zz1); }
 
+  V sizeX() const { return xx1 - xx0; }
+  V sizeY() const { return yy1 - yy0; }
+  V sizeZ() const { return zz1 - zz0; }
+
   void set000(const Vec3<V>& pt) { xx0=pt.x(); yy0=pt.y(); zz0=pt.z(); }
   void set001(const Vec3<V>& pt) { xx0=pt.x(); yy0=pt.y(); zz1=pt.z(); }
   void set010(const Vec3<V>& pt) { xx0=pt.x(); yy1=pt.y(); zz0=pt.z(); }
@@ -83,9 +87,24 @@ public:
     zz0 = Util::min(z0, z1); zz1 = Util::max(z0, z1);
   }
 
-  void setCorners(const Gfx::Vec3<double>& p1, const Gfx::Vec3<double>& p2)
+  void setCorners(const Gfx::Vec3<V>& p1, const Gfx::Vec3<V>& p2)
   {
     setAnyXXYYZZ(p1.x(), p2.x(), p1.y(), p2.y(), p1.z(), p2.z());
+  }
+
+  void sizeX(V s) const { V del = s - sizeX(); xx0-=0.5*del; xx1+=0.5*del; }
+  void sizeY(V s) const { V del = s - sizeY(); yy0-=0.5*del; yy1+=0.5*del; }
+  void sizeZ(V s) const { V del = s - sizeZ(); zz0-=0.5*del; zz1+=0.5*del; }
+
+  void scaleX(V factor) { sizeX(sizeX() * factor); }
+  void scaleY(V factor) { sizeY(sizeY() * factor); }
+  void scaleZ(V factor) { sizeZ(sizeZ() * factor); }
+
+  void scale(Gfx::Vec3<V>& factors)
+  {
+    scaleX(factors.x());
+    scaleY(factors.y());
+    scaleZ(factors.z());
   }
 
   bool isVoid() const { return (xx0>=xx1) && (yy0>=yy1) && (zz0>=zz1); }
@@ -110,7 +129,7 @@ public:
       }
   }
 
-  void merge(const Gfx::Vec3<double>& p)
+  void merge(const Gfx::Vec3<V>& p)
   {
     xx0 = Util::min(xx0, p.x());
     xx1 = Util::max(xx1, p.x());
