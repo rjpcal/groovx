@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar 12 18:53:07 2001
+// written: Mon Mar 12 19:18:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define MTX_CC_DEFINED
 
 #include "mtx.h"
+
+#include "error.h"
 
 #include "libmatlb.h"
 
@@ -85,6 +87,15 @@ void Mtx::print() const
 		mexPrintf("\n");
 	 }
   mexPrintf("\n");
+}
+
+void Mtx::reshape(int mrows, int ncols)
+{
+  if (mrows*ncols != mrows_*ncols_)
+	 throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
+
+  mrows_ = mrows;
+  ncols_ = ncols;
 }
 
 static const char vcid_mtx_cc[] = "$Header$";

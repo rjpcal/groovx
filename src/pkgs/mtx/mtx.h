@@ -187,6 +187,8 @@ public:
 
   double at(int elem) const { return start_[elem]; }
 
+  void reshape(int mrows, int ncols);
+
   int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
 
   int nelems() const { return mrows_*ncols_; }
