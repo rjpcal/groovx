@@ -82,6 +82,19 @@ namespace
             strcmp(fname, "CVS") == 0);
   }
 
+  // get the name of the directory containing fname -- the result will NOT
+  // have a trailing slash!
+  string get_dirname_of(const string& fname)
+  {
+    const string::size_type pos = fname.find_last_of('/');
+    if (pos == string::npos)
+      {
+        // no '/' was found, so the directory is the current directory
+        return string(".");
+      }
+    return fname.substr(0, pos);
+  }
+
   class mapped_file
   {
   public:
@@ -395,7 +408,7 @@ int cppdeps::is_cc_or_h_filename(const char* fname)
 bool cppdeps::resolve_one(const char* include_name,
                           int include_length,
                           const string& src_fname,
-                          const string& dirname_with_slash,
+                          const string& dirname_without_slash,
                           const vector<string>& ipath,
                           cppdeps::include_list_t& vec)
 {
@@ -412,9 +425,13 @@ bool cppdeps::resolve_one(const char* include_name,
         }
     }
 
+  assert(dirname_without_slash.length() > 0); // must be at least '.'
+  assert(dirname_without_slash[dirname_without_slash.length()-1] != '/');
+
   // Try resolving the include by using the directory containing the
   // source file currently being examined.
-  string fullpath = dirname_with_slash;
+  string fullpath = dirname_without_slash;
+  fullpath += '/';
   fullpath.append(include_name, include_length);
 
   if (file_exists(fullpath.c_str()))
@@ -446,9 +463,7 @@ cppdeps::get_direct_includes(const string& src_fname)
       return (*itr).second;
   }
 
-  string dirname_with_slash =
-    src_fname.substr(0, src_fname.find_last_of('/'));
-  dirname_with_slash += '/';
+  const string dirname_without_slash = get_dirname_of(src_fname);
 
   include_list_t& vec = m_direct_includes[src_fname];
 
@@ -527,12 +542,12 @@ cppdeps::get_direct_includes(const string& src_fname)
       const int include_length = fptr - include_name;
 
       if (resolve_one(include_name, include_length, src_fname,
-                      dirname_with_slash, m_user_ipath, vec))
+                      dirname_without_slash, m_user_ipath, vec))
         continue;
 
       if (m_check_sys_includes &&
           resolve_one(include_name, include_length, src_fname,
-                      dirname_with_slash, m_sys_ipath, vec))
+                      dirname_without_slash, m_sys_ipath, vec))
         continue;
 
       const string include_string(include_name, include_length);
