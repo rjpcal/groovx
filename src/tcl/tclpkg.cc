@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed May 31 18:45:23 2000
+// written: Wed Nov  1 17:45:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,117 +102,125 @@ void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TclIoItemPkg member definitions
+// IoFetcher member definitions and IO commands
 //
 ///////////////////////////////////////////////////////////////////////
+
+Tcl::IoFetcher::IoFetcher() {
+DOTRACE("Tcl::IoFetcher::IoFetcher");
+}
+
+Tcl::IoFetcher::~IoFetcher() {
+DOTRACE("Tcl::IoFetcher::~IoFetcher");
+}
 
 namespace Tcl {
 
 class ItemStringifyCmd : public StringifyCmd {
 public:
-  ItemStringifyCmd(TclIoItemPkg* pkg, int item_argn) :
+  ItemStringifyCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
     StringifyCmd(pkg->interp(), pkg->makePkgCmdName("stringify"), 
                  item_argn ? "item_id" : NULL,
                  item_argn+1),
-    itsPkg(pkg), 
+    itsFetcher(fetcher), 
     itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
     int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
-    return itsPkg->getIoFromId(id);
+    return itsFetcher->getIoFromId(id);
   }
 
 private:
   ItemStringifyCmd(const ItemStringifyCmd&);
   ItemStringifyCmd& operator=(const ItemStringifyCmd&);
 
-  TclIoItemPkg* itsPkg;
+  IoFetcher* itsFetcher;
   int itsItemArgn;
 };
 
 class ItemDestringifyCmd : public DestringifyCmd {
 public:
-  ItemDestringifyCmd(TclIoItemPkg* pkg, int item_argn) :
+  ItemDestringifyCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
     DestringifyCmd(pkg->interp(), pkg->makePkgCmdName("destringify"),
                    item_argn ? "item_id string" : "string", 
                    item_argn+2),
-    itsPkg(pkg),
+    itsFetcher(fetcher),
     itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
     int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
-    return itsPkg->getIoFromId(id);
+    return itsFetcher->getIoFromId(id);
   }
 
 private:
   ItemDestringifyCmd(const ItemDestringifyCmd&);
   ItemDestringifyCmd& operator=(const ItemDestringifyCmd&);
 
-  TclIoItemPkg* itsPkg;
+  IoFetcher* itsFetcher;
   int itsItemArgn;
 };
 
 class ItemWriteCmd : public WriteCmd {
 public:
-  ItemWriteCmd(TclIoItemPkg* pkg, int item_argn) :
+  ItemWriteCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
 	 WriteCmd(pkg->interp(), pkg->makePkgCmdName("write"),
 				 item_argn ? "item_id" : NULL,
 				 item_argn+1),
-	 itsPkg(pkg),
+	 itsFetcher(fetcher),
 	 itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsPkg->getIoFromId(id);
+	 return itsFetcher->getIoFromId(id);
   }
 
 private:
   ItemWriteCmd(const ItemWriteCmd&);
   ItemWriteCmd& operator=(const ItemWriteCmd&);
 
-  TclIoItemPkg* itsPkg;
+  IoFetcher* itsFetcher;
   int itsItemArgn;
 };
 
 class ItemReadCmd : public ReadCmd {
 public:
-  ItemReadCmd(TclIoItemPkg* pkg, int item_argn) :
+  ItemReadCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
 	 ReadCmd(pkg->interp(), pkg->makePkgCmdName("read"),
 				 item_argn ? "item_id string" : "string",
 				 item_argn+2),
-	 itsPkg(pkg),
+	 itsFetcher(fetcher),
 	 itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsPkg->getIoFromId(id);
+	 return itsFetcher->getIoFromId(id);
   }
 
 private:
   ItemReadCmd(const ItemReadCmd&);
   ItemReadCmd& operator=(const ItemReadCmd&);
 
-  TclIoItemPkg* itsPkg;
+  IoFetcher* itsFetcher;
   int itsItemArgn;
 };
 
 class ItemASRLoadCmd : public ASRLoadCmd {
 public:
-  ItemASRLoadCmd(TclIoItemPkg* pkg, int item_argn) :
+  ItemASRLoadCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
 	 ASRLoadCmd(pkg->interp(), pkg->makePkgCmdName("load"),
 					item_argn ? "item_id filename" : "filename",
 					item_argn+2),
-	 itsPkg(pkg),
+	 itsFetcher(fetcher),
 	 itsItemArgn(item_argn) {}
   
 protected:
   virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsPkg->getIoFromId(id);
+	 return itsFetcher->getIoFromId(id);
   }
 
   virtual const char* getFilename() {
@@ -223,23 +231,23 @@ private:
   ItemASRLoadCmd(const ItemASRLoadCmd&);
   ItemASRLoadCmd& operator=(const ItemASRLoadCmd&);
 
-  TclIoItemPkg* itsPkg;
+  IoFetcher* itsFetcher;
   int itsItemArgn;
 };
 
 class ItemASWSaveCmd : public ASWSaveCmd {
 public:
-  ItemASWSaveCmd(TclIoItemPkg* pkg, int item_argn) :
+  ItemASWSaveCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
 	 ASWSaveCmd(pkg->interp(), pkg->makePkgCmdName("save"),
 					item_argn ? "item_id filename" : "filename",
 					item_argn+2),
-	 itsPkg(pkg),
+	 itsFetcher(fetcher),
 	 itsItemArgn(item_argn) {}
   
 protected:
   virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsPkg->getIoFromId(id);
+	 return itsFetcher->getIoFromId(id);
   }
 
   virtual const char* getFilename() {
@@ -250,27 +258,23 @@ private:
   ItemASWSaveCmd(const ItemASWSaveCmd&);
   ItemASWSaveCmd& operator=(const ItemASWSaveCmd&);
 
-  TclIoItemPkg* itsPkg;
+  IoFetcher* itsFetcher;
   int itsItemArgn;
 };
 
-TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name, 
-                           const char* version, int item_argn) :
-  TclItemPkg(interp, name, version, item_argn)
-{
-  addCommand( new ItemStringifyCmd(this, itemArgn()) );
-  addCommand( new ItemDestringifyCmd(this, itemArgn()) );
-
-  addCommand( new ItemWriteCmd(this, itemArgn()) );
-  addCommand( new ItemReadCmd(this, itemArgn()) );
-
-  addCommand( new ItemASWSaveCmd(this, itemArgn()) );
-  addCommand( new ItemASRLoadCmd(this, itemArgn()) );
-}
-
-TclIoItemPkg::~TclIoItemPkg() {}
-
 } // end namespace Tcl
+
+void Tcl::TclItemPkg::addIoCommands(IoFetcher* fetcher) {
+DOTRACE("Tcl::TclItemPkg::addIoCommands");
+  addCommand( new ItemStringifyCmd(this, fetcher, itemArgn()) );
+  addCommand( new ItemDestringifyCmd(this, fetcher, itemArgn()) );
+
+  addCommand( new ItemWriteCmd(this, fetcher, itemArgn()) );
+  addCommand( new ItemReadCmd(this, fetcher, itemArgn()) );
+
+  addCommand( new ItemASWSaveCmd(this, fetcher, itemArgn()) );
+  addCommand( new ItemASRLoadCmd(this, fetcher, itemArgn()) );
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Oct  5 12:56:29 2000
+// written: Wed Nov  1 17:44:18 2000
 // $Id$
 //
 //
@@ -177,6 +177,27 @@ namespace Tcl {
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * IoFetcher class definition                                       
+ *	                                                                    
+ *	This class exists to provide an interface for retrieving
+ *	IO::IoObject's from integer id's.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class IoFetcher {
+protected:
+  IoFetcher();
+
+public:
+  virtual ~IoFetcher();
+
+  virtual IO::IoObject& getIoFromId(int id) = 0;
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
  * TclItemPkg class definition
  *
  **/
@@ -209,32 +230,12 @@ protected:
   void declareAction(const char* action_name, Action* action,
 							const char* usage = 0);
 
+  void addIoCommands(IoFetcher* fetcher);
+
 private:
   void instantiate();
 
   int itsItemArgn;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * TclIoItemPkg class definition                                       
- *	                                                                    
- *	This subclass of TclItemPkg automatically creates appropriate       
- * "stringify" and "destringify" commands in the Tcl package. To do    
- * this, it requires overriding a function to retrieve an IO reference.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class TclIoItemPkg : public TclItemPkg {
-public:
-  TclIoItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-					int item_argn=1);
-
-  virtual ~TclIoItemPkg();
-
-  virtual IO::IoObject& getIoFromId(int id) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -312,63 +313,6 @@ public:
   }
 
   void declareProperty(const PropertyInfo<C>& pinfo);
-
-  virtual C* getCItemFromId(int id) = 0;
-  virtual void* getItemFromId(int id) {
-	 return static_cast<void*>(getCItemFromId(id));
-  }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * CTclIoItemPkg class definition
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C>
-class CTclIoItemPkg : public TclIoItemPkg {
-public:
-  CTclIoItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-					 int item_argn=1) :
-	 TclIoItemPkg(interp, name, version, item_argn) 
-  {
-//    	 declareGetter("charCount", new CGetter<C, int>(&C::ioCharCount));
-  }
-
-  void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
-							 const char* usage = 0) {
-	 declareAction(cmd_name, new CAction<C>(actionFunc), usage);
-  }
-
-  void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
-							 const char* usage = 0) {
-	 declareAction(cmd_name, new CConstAction<C>(actionFunc), usage);
-  }
-
-  template <class T>
-  void declareCGetter(const char* cmd_name, T (C::* getterFunc) () const,
-							 const char* usage = 0) {
-	 declareGetter(cmd_name, new CGetter<C,T>(getterFunc), usage);
-  }
-
-  template <class T>
-  void declareCSetter(const char* cmd_name, void (C::* setterFunc) (T),
-							 const char* usage = 0) {
-	 declareSetter(cmd_name, new CSetter<C,T>(setterFunc), usage);
-  }
-
-  template <class T>
-  void declareCAttrib(const char* cmd_name,
-							 T (C::* getterFunc) () const, void (C::* setterFunc) (T),
-							 const char* usage = 0) {
- 	 declareAttrib(cmd_name,
-  						new CAttrib<C,T>(getterFunc, setterFunc),
-						usage);
-  }
-
-  void declareProperty(const PropertyInfo<C>& pinfo);
   void declareAllProperties();
 
   virtual C* getCItemFromId(int id) = 0;
@@ -411,7 +355,7 @@ protected:
 template <class C>
 class CVecPropertyCmd : public VecPropertyCmdBase {
 public:
-  CVecPropertyCmd(CTclIoItemPkg<C>* pkg, const PropertyInfo<C>& pinfo) :
+  CVecPropertyCmd(CTclItemPkg<C>* pkg, const PropertyInfo<C>& pinfo) :
 	 VecPropertyCmdBase(pkg, pinfo.name_cstr()),
 	 itsPkg(pkg),
 	 itsPropInfo(pinfo)
@@ -434,7 +378,7 @@ private:
   CVecPropertyCmd(const CVecPropertyCmd&);
   CVecPropertyCmd& operator=(const CVecPropertyCmd&);
 
-  CTclIoItemPkg<C>* itsPkg;
+  CTclItemPkg<C>* itsPkg;
   const PropertyInfo<C>& itsPropInfo;
 };
 
@@ -492,24 +436,24 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// CTclIoItemPkg out-of-line member definitions
+// CTclItemPkg out-of-line member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-void CTclIoItemPkg<C>::declareProperty(const PropertyInfo<C>& pinfo) {
+void CTclItemPkg<C>::declareProperty(const PropertyInfo<C>& pinfo) {
   addCommand( new CVecPropertyCmd<C>(this, pinfo) );
 }
 
 
 template <class C>
-void CTclIoItemPkg<C>::declareAllProperties() {
+void CTclItemPkg<C>::declareAllProperties() {
   for (unsigned int i = 0; i < C::numPropertyInfos(); ++i) {
 	 declareProperty(C::getPropertyInfo(i));
   }
 
   addCommand( new CPropertiesCmd<C>(TclPkg::interp(),
-												makePkgCmdName("properties")));
+												TclPkg::makePkgCmdName("properties")));
 }
 
 
