@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Fri Sep 29 10:32:52 2000
+// written: Fri Nov  3 15:03:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,17 @@
 
 #include "io/iofactory.h"
 
+#include "util/strings.h"
+
 #define NO_TRACE
 #include "util/trace.h"
 
 IO::IoObject* IO::IoMgr::newIO(const char* type) {
-DOTRACE("IO::IoMgr::newIO(const char*)");
+  return newIO(fixed_string(type));
+}
+
+IO::IoObject* IO::IoMgr::newIO(const fixed_string& type) {
+DOTRACE("IO::IoMgr::newIO(const fixed_string&)");
   return IO::IoFactory::theOne().newCheckedObject(type);
 }
 
