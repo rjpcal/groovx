@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Sun Nov  3 13:41:12 2002
+// written: Tue Nov 12 12:58:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,23 +93,23 @@ DOTRACE("PngParser::parse");
   int is_png = !png_sig_cmp(header, 0, nheader);
   if (!is_png)
     {
-      throw Util::Error("file was not a png image file");
+      throw Util::Error(fstring(filename, " is not a PNG image file"));
     }
 
   itsPngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
   if (itsPngPtr == 0)
-    throw Util::Error("PngParser couldn't create itsPngPtr");
+    throw Util::Error("PNG library couldn't create read_struct");
 
   itsInfoPtr = png_create_info_struct(itsPngPtr);
   if (itsInfoPtr == 0)
     {
-      throw Util::Error("PngParser couldn't create itsInfoPtr");
+      throw Util::Error("PNG library couldn't create info_struct");
     }
 
   itsEndPtr = png_create_info_struct(itsPngPtr);
   if (itsEndPtr == 0)
     {
-      throw Util::Error("PngParser couldn't create itsEndPtr");
+      throw Util::Error("PNG library couldn't create end info_struct");
     }
 
   png_init_io(itsPngPtr, itsFile);
@@ -123,7 +123,7 @@ DOTRACE("PngParser::parse");
   if (bit_depth == 16)
     png_set_strip_16(itsPngPtr);
   else if (bit_depth != 8)
-    throw Util::Error("PngParser can only handle 8-bit and 16-bit images");
+    throw Util::Error("can only handle 8-bit and 16-bit PNG images");
 
   const png_byte color_type = png_get_color_type(itsPngPtr, itsInfoPtr);
 
