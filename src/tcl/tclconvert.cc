@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Wed Jul 11 11:00:02 2001
+// written: Thu Jul 12 14:12:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclvalue.h"
+
+#include "util/strings.h"
 
 #include <tcl.h>
 
@@ -42,8 +44,8 @@ namespace
 {
   class SafeUnshared {
   private:
-    bool isItOwning;
     Tcl_Obj* itsObj;
+    bool isItOwning;
 
     SafeUnshared(const SafeUnshared&);
     SafeUnshared& operator=(const SafeUnshared&);
@@ -197,6 +199,14 @@ DOTRACE("Tcl::fromTcl<const char*>");
 }
 
 template <>
+fixed_string Tcl::fromTcl<fixed_string>(Tcl_Obj* obj)
+{
+DOTRACE("Tcl::fromTcl<fixed_string>");
+
+  return fixed_string(fromTcl<const char*>(obj));
+}
+
+template <>
 Tcl::TclValue Tcl::fromTcl<Tcl::TclValue>(Tcl_Obj* obj)
 {
 DOTRACE("Tcl::fromTcl<Tcl::TclValue>");
@@ -313,6 +323,22 @@ Tcl_Obj* Tcl::toTcl<char*>(char* val)
 DOTRACE("Tcl::toTcl<char*>");
 
   return toTcl<const char*>(val);
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<fixed_string>(fixed_string val)
+{
+DOTRACE("Tcl::toTcl<fixed_string>");
+
+  return toTcl<const char*>(val.c_str());
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<const fixed_string&>(const fixed_string& val)
+{
+DOTRACE("Tcl::toTcl<const fixed_string&>");
+
+  return toTcl<const char*>(val.c_str());
 }
 
 template <>
