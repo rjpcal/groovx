@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 10 11:06:18 1999
+// written: Fri Mar 12 10:52:08 1999
 //
 // The Face class is a derived class of Scaleable (itself derived from
 // GrObj). As such, Face*'s may be stored and manipulated in ObjList's
@@ -17,13 +17,10 @@
 #include <cmath>
 
 #ifndef IO_H_INCLUDED
-#include "io.h"
-#endif
-#ifndef SCALEABLE_H_INCLUDED
-#include "scaleable.h"
+#include "grobj.h"
 #endif
 
-class Face : public Scaleable, public virtual IO {
+class Face : public GrObj {
 public:
   Face (float eh, float es, float nl, float mh, int categ=0);
   Face (istream &is);
@@ -31,6 +28,7 @@ public:
 
   // write/read the object's state from/to an output/input stream
   virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
+  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
   
   virtual void grRecompile() const; // overrides GrObj pure virtual function
 
@@ -38,13 +36,15 @@ public:
   float getEyeDist() const { return (itsEye[1] - itsEye[0]); }
   float getNoseLen() const { return (itsNose[1] - itsNose[0]); }
   float getMouthHgt() const { return itsMouthHeight; }
-
-  int getCategory() const { return itsCategory; }
+  
+  virtual int getCategory() const { return itsCategory; }
 
   void setEyeHgt(float eh);
   void setEyeDist(float ed);
   void setNoseLen(float nl);
   void setMouthHgt(float mh);
+  
+  virtual void setCategory(int val) { itsCategory = val; }
 
 private:
   Face(const Face&);				  // copy constructor not to be used
