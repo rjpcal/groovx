@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct 23 19:35:57 2000
+// written: Tue Oct 24 10:38:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,29 +66,6 @@ private:
 
 public:
   enum TrialState { ACTIVE, INACTIVE };
-
-  class IdPair : public Value {
-  public:
-	 IdPair(int o = 0, int p = 0) : itsObjid(o), itsPosid(p) {}
-	 virtual ~IdPair() {}
-
-	 virtual Value* clone() const { return new IdPair(*this); }
-	 virtual Type getNativeType() const { return Value::UNKNOWN; }
-	 virtual const char* getNativeTypeName() const { return "Trial::IdPair"; }
-
-	 virtual void printTo(STD_IO::ostream& os) const
-		{ os << itsObjid << " " << itsPosid; }
-
-	 virtual void scanFrom(STD_IO::istream& is)
-		{ is >> itsObjid >> itsPosid; }
-
-	 int objid() const { return itsObjid; }
-	 int posid() const { return itsPosid; }
-
-  private:
-	 int itsObjid;
-	 int itsPosid;
-  };
 
   Impl(Trial*) :
 	 itsCorrectResponse(Response::ALWAYS_CORRECT),
@@ -236,127 +213,81 @@ DOTRACE("Trial::Impl::readFrom");
 
   IO::VersionId svid = reader->readSerialVersionId();
 
+  if (svid < 2)
+	 {
+		throw IO::ReadVersionError("Trial", svid, 2, "Try grsh0.8a3");
+	 }
+
+  Assert(svid >= 2);
+
   itsGrObjs.clear();
   itsPositions.clear();
 
-  if (svid >= 2)
-	 {
-		std::vector<GrObj*> grobjs;
-		IO::ReadUtils::template readObjectSeq<GrObj>(
+  std::vector<GrObj*> grobjs;
+  IO::ReadUtils::template readObjectSeq<GrObj>(
 							reader, "grobjs", std::back_inserter(grobjs));
 
-		for (int i=0; i < grobjs.size(); ++i)
-		  itsGrObjs.push_back(
-                     NullableItemWithId<GrObj>(grobjs[i]));
+  for (int i=0; i < grobjs.size(); ++i)
+	 itsGrObjs.push_back(NullableItemWithId<GrObj>(grobjs[i]));
 
-		std::vector<Position*> positions;
-		IO::ReadUtils::template readObjectSeq<Position>(
+  std::vector<Position*> positions;
+  IO::ReadUtils::template readObjectSeq<Position>(
 							reader, "positions", std::back_inserter(positions));
 
-		for (int j = 0; j < positions.size(); ++j)
-		  itsPositions.push_back(
-						   NullableItemWithId<Position>(positions[j]));
-	 }
-  else
-	 {
-		std::vector<IdPair> idpairs;
-		IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
-									  std::back_inserter(idpairs));
-
-		for (int i = 0; i < idpairs.size(); ++i)
-		  {
-			 itsGrObjs.push_back(
-             NullableItemWithId<GrObj>(idpairs[i].objid()));
-			 itsPositions.push_back(
-             NullableItemWithId<Position>(idpairs[i].posid()));
-		  }
-	 }
+  for (int j = 0; j < positions.size(); ++j)
+	 itsPositions.push_back(NullableItemWithId<Position>(positions[j]));
 
   itsResponses.clear();
   IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
 									  std::back_inserter(itsResponses));
 
-  if (svid >= 1)
-	 reader->readValue("correctResponse", itsCorrectResponse);
-  else
-	 itsCorrectResponse = Response::ALWAYS_CORRECT;
+  reader->readValue("correctResponse", itsCorrectResponse);
 
   reader->readValue("type", itsType);
 
-  if (svid >= 2)
-	 {
-		IO::IoObject* rhio = reader->readObject("rh");
-		ResponseHandler* rh = dynamic_cast<ResponseHandler*>(rhio);
-		itsRh = NullableItemWithId<ResponseHandler>(rh);
+  IO::IoObject* rhio = reader->readObject("rh");
+  ResponseHandler* rh = dynamic_cast<ResponseHandler*>(rhio);
+  itsRh = NullableItemWithId<ResponseHandler>(rh);
 
-		IO::IoObject* thio = reader->readObject("th");
-		TimingHdlr* th = dynamic_cast<TimingHdlr*>(thio);
-		itsTh = NullableItemWithId<TimingHdlr>(th);
-	 }
-  else
-	 {
-		int rhid;
-		reader->readValue("rhId", rhid);
-		itsRh = NullableItemWithId<ResponseHandler>(rhid);
-
-		int thid;
-		reader->readValue("thId", thid);
-		itsTh = NullableItemWithId<TimingHdlr>(thid);
-	 }
+  IO::IoObject* thio = reader->readObject("th");
+  TimingHdlr* th = dynamic_cast<TimingHdlr*>(thio);
+  itsTh = NullableItemWithId<TimingHdlr>(th);
 }
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
 
-  if (TRIAL_SERIAL_VERSION_ID >= 2)
+  if (TRIAL_SERIAL_VERSION_ID < 2)
 	 {
-		std::vector<const GrObj*> grobjs;
-		for (int i=0; i < itsGrObjs.size(); ++i)
-		  grobjs.push_back(itsGrObjs[i].get());
-
-		IO::WriteUtils::writeObjectSeq(writer, "grobjs",
-												 grobjs.begin(), grobjs.end());
-
-		std::vector<const Position*> positions;
-		for (int j = 0; j < itsPositions.size(); ++j)
-		  positions.push_back(itsPositions[j].get());
-
-		IO::WriteUtils::writeObjectSeq(writer, "positions",
-												 positions.begin(), positions.end());
+		throw IO::WriteVersionError("Trial", TRIAL_SERIAL_VERSION_ID, 2,
+											 "Try grsh0.8a3");
 	 }
-  else
-	 {
-		std::vector<IdPair> idpairs;
 
-		Invariant(itsGrObjs.size() == itsPositions.size());
+  Assert(TRIAL_SERIAL_VERSION_ID >= 2);
 
-		for (int i = 0; i < itsGrObjs.size(); ++i)
-		  {
-			 idpairs.push_back(IdPair(itsGrObjs[i].id(), itsPositions[i].id()));
-		  }
+  std::vector<const GrObj*> grobjs;
+  for (int i=0; i < itsGrObjs.size(); ++i)
+	 grobjs.push_back(itsGrObjs[i].get());
 
-		IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
-										 idpairs.begin(), idpairs.end());
-	 }
+  IO::WriteUtils::writeObjectSeq(writer, "grobjs",
+											grobjs.begin(), grobjs.end());
+
+  std::vector<const Position*> positions;
+  for (int j = 0; j < itsPositions.size(); ++j)
+	 positions.push_back(itsPositions[j].get());
+
+  IO::WriteUtils::writeObjectSeq(writer, "positions",
+											positions.begin(), positions.end());
 
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
 										 itsResponses.begin(), itsResponses.end());
 
-  if (TRIAL_SERIAL_VERSION_ID >= 1)
-	 writer->writeValue("correctResponse", itsCorrectResponse);
+  writer->writeValue("correctResponse", itsCorrectResponse);
 
   writer->writeValue("type", itsType);
 
-  if (TRIAL_SERIAL_VERSION_ID >= 2)
-	 {
-		writer->writeObject("rh", itsRh.isValid() ? itsRh.get() : 0);
-		writer->writeObject("th", itsTh.isValid() ? itsTh.get() : 0);
-	 }
-  else
-	 {
-		writer->writeValue("rhId", itsRh.id());
-		writer->writeValue("thId", itsTh.id());
-	 }
+  writer->writeObject("rh", itsRh.isValid() ? itsRh.get() : 0);
+  writer->writeObject("th", itsTh.isValid() ? itsTh.get() : 0);
 }
 
 int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {
@@ -412,12 +343,12 @@ DOTRACE("Trial::Impl::getTimingHdlr");
 }
 
 Trial::GrObjItr Trial::Impl::beginGrObjs() const {
-DOTRACE("Trial::Impl::beginIdPairs");
+DOTRACE("Trial::Impl::beginGrObjs");
   return &itsGrObjs[0];
 }
 
 Trial::GrObjItr Trial::Impl::endGrObjs() const {
-DOTRACE("Trial::Impl::endIdPairs");
+DOTRACE("Trial::Impl::endGrObjs");
   return beginGrObjs() + itsGrObjs.size();
 }
 
