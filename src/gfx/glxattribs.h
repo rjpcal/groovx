@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:36:13 2002
-// written: Sat Mar 29 12:56:59 2003
+// written: Tue Apr  1 18:55:12 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -39,7 +39,7 @@
 class GlxAttribs
 {
 private:
-  enum { MAXSIZE = 1000; }
+  enum { MAXSIZE = 1000 };
 
   void push(int v)
   {
