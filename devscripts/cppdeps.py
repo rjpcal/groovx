@@ -183,13 +183,17 @@ class DepBuilder:
 
         return self.itsCLevels[file]
 
-    def printOneCdepLevel(self, file, stream, indentlevel, maxindent):
+    def printOneCdepLevel(self, file, stream, marks, indentlevel, maxindent):
         indents = '\t' * indentlevel
-        stream.write('%s%s (%d)\n' % (indents, file, self.getCdepLevel(file)))
+
+        if not marks.has_key(file):
+            stream.write('%s%s (%d)\n' % (indents, file, self.getCdepLevel(file)))
+            marks[file] = 1
 
         if indentlevel < maxindent:
             for dep in sort(self.itsDirectIncludes.get(file)):
-                self.printOneCdepLevel(dep, stream, indentlevel+1, maxindent)
+                self.printOneCdepLevel(dep, stream, marks,
+                                       indentlevel+1, maxindent)
 
     def printCdepLevels(self, stream, maxlevel):
         backmap = {}
@@ -200,10 +204,13 @@ class DepBuilder:
                 backmap[level] = []
             backmap[level].append(file)
             
+        marks = {}
+
         for level in sort(backmap.keys()):
             for file in backmap[level]:
                 stream.write('\n\n')
-                self.printOneCdepLevel(file, stream, 0, maxlevel)
+                marks.clear()
+                self.printOneCdepLevel(file, stream, marks, 0, maxlevel)
 
         stream.write('\n')
 
