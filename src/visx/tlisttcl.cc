@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Jul 12 12:54:40 1999
+// written: Fri Sep 17 08:54:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,8 +93,15 @@ protected:
   DOTRACE("ShowCmd::invoke");
 	 int id = getIntFromArg(1);
 
-	 // First we must erase the previous current trial
-	 theTlist.undrawCurTrial();
+	 // First we must erase the previous current trial. We ignore any
+	 // invalid id errors that occur, and simply clear the screen in
+	 // this case.
+	 try {
+		theTlist.undrawCurTrial();
+	 }
+	 catch (InvalidIdError&) {
+		theTlist.clearscreen();
+	 }
 
 	 // drawTrial(id) sets the current Trial to id, sets the Tlist's
 	 // visiblity to true, draws the Trial, and flushes the graphics to
