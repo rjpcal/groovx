@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Mon Oct 30 10:15:52 2000
+// written: Mon Oct 30 15:28:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,77 +121,6 @@ private:
   IoPtrListPkg* itsPkg;
 };
 
-//---------------------------------------------------------------------
-//
-// IsValidIdCmd --
-//
-//---------------------------------------------------------------------
-
-class IsValidIdCmd : public TclItemCmd<IoPtrList> {
-public:
-  IsValidIdCmd(IoPtrListPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<IoPtrList>(pkg, cmd_name, "item_id", 2, 2),
-	 itsPkg(pkg)
-  {}
-
-protected:
-  virtual void invoke() {
-	 int id = TclCmd::getIntFromArg(1);
-	 IoPtrList* theList = TclItemCmd<IoPtrList>::getItem();
-	 if (theList->isValidId(id))
-		{
-		  IdItem<IO::IoObject> obj =
-			 theList->template getCheckedIoPtr<IO::IoObject>(id);
-		  returnBool(itsPkg->isMyType(obj.get()));
-		}
-	 else
-		{
-		  returnBool(false);
-		}
-  }
-private:
-  IoPtrListPkg* itsPkg;
-};
-
-//---------------------------------------------------------------------
-//
-// ListItemRemoveCmd --
-//
-//---------------------------------------------------------------------
-
-class ListItemRemoveCmd : public TclItemCmd<IoPtrList> {
-public:
-  ListItemRemoveCmd(IoPtrListPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<IoPtrList>(pkg, cmd_name, "item_id(s)", 2, 2),
-	 itsPkg(pkg)
-  {}
-
-protected:
-  virtual void invoke() {
-	 IoPtrList* theList = TclItemCmd<IoPtrList>::getItem();
-
-	 Tcl::ListIterator<int>
-		itr = beginOfArg(1, (int*)0),
-		stop = endOfArg(1, (int*)0);
-	 while (itr != stop)
-		{
-		  IdItem<IO::IoObject> obj =
-			 theList->template getCheckedIoPtr<IO::IoObject>(*itr);
-		  if (itsPkg->isMyType(obj.get()))
-			 {
-				// If it's just our IdItem + the list's reference:
-				if (obj->refCount() == 2)
-				  theList->release(*itr);
-				else
-				  theList->remove(*itr);
-			 }
-		  ++itr;
-		}
-  }
-private:
-  IoPtrListPkg* itsPkg;
-};
-
 } // end namespace Tcl
 
 Tcl::IoPtrListPkg::IoPtrListPkg(Tcl_Interp* interp,
@@ -206,11 +135,7 @@ DOTRACE("Tcl::IoPtrListPkg::IoPtrListPkg");
   
   addCommand( new GetValidIdsCmd(this, 
 											TclPkg::makePkgCmdName("getValidIds")) );
-  addCommand( new IsValidIdCmd(this,
-										 TclPkg::makePkgCmdName("isValidId")) );
-  addCommand( new ListItemRemoveCmd(this,
-												TclPkg::makePkgCmdName("remove")) );
-}	 
+}
 
 Tcl::IoPtrListPkg::~IoPtrListPkg() {}
 
