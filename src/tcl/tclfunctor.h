@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Thu Jul 12 13:23:43 2001
+// written: Thu Jul 12 18:34:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,13 +56,12 @@ namespace Tcl {
   // one argument
   //
 
-  template <class R, class P1>
+  template <class R, class P1, class Func>
   class CmdP1 : public TclCmd {
   public:
-    typedef R (*Func)(P1);
 
-    CmdP1<R, P1>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                 const char* usage) :
+    CmdP1<R, P1, Func>(Tcl_Interp* interp, Func f, const char* cmd_name,
+                       const char* usage) :
       TclCmd(interp, cmd_name, usage, 2),
       itsFunc(f)
     {}
@@ -75,19 +74,18 @@ namespace Tcl {
     }
 
   private:
-    CmdP1<R, P1>(const CmdP1<R, P1>&);
-    CmdP1<R, P1>& operator=(const CmdP1<R, P1>&);
+    CmdP1<R, P1, Func>(const CmdP1<R, P1, Func>&);
+    CmdP1<R, P1, Func>& operator=(const CmdP1<R, P1, Func>&);
 
     Func itsFunc;
   };
 
-  template <class P1>
-  class CmdP1<void, P1> : public TclCmd {
+  template <class P1, class Func>
+  class CmdP1<void, P1, Func> : public TclCmd {
   public:
-    typedef void (*Func)(P1);
 
-    CmdP1<void, P1>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                    const char* usage) :
+    CmdP1<void, P1, Func>(Tcl_Interp* interp, Func f, const char* cmd_name,
+                          const char* usage) :
       TclCmd(interp, cmd_name, usage, 2),
       itsFunc(f)
     {}
@@ -100,8 +98,8 @@ namespace Tcl {
     }
 
   private:
-    CmdP1<void, P1>(const CmdP1<void, P1>&);
-    CmdP1<void, P1>& operator=(const CmdP1<void, P1>&);
+    CmdP1<void, P1, Func>(const CmdP1<void, P1, Func>&);
+    CmdP1<void, P1, Func>& operator=(const CmdP1<void, P1, Func>&);
 
     Func itsFunc;
   };
@@ -301,7 +299,7 @@ namespace Tcl {
                          R (*f)(P1), // typename CmdP1<P1>::Func
                          const char* cmd_name, const char* usage)
   {
-    return new CmdP1<R, P1>(interp, f, cmd_name, usage);
+    return new CmdP1<R, P1, R(*)(P1)>(interp, f, cmd_name, usage);
   }
 
   template <class R, class P1, class P2>
