@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Jun 12 11:52:11 2001
+// written: Wed Jun 13 17:17:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "util/observer.h"
 #include "util/ref.h"
 
+#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -65,6 +66,10 @@ public:
     itsVisibility(false),
     itsHoldOn(false)
   {}
+
+  virtual bool isVolatile() const { return true; }
+
+  static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
   void safeDraw(GWT::Canvas& canvas);
 
@@ -201,13 +206,18 @@ DOTRACE("GWT::Widget::Impl::undraw");
 ///////////////////////////////////////////////////////////////////////
 
 GWT::Widget::Widget() :
-  itsImpl(new Impl(this))
+  itsImpl(Impl::make(this))
 {
 DOTRACE("GWT::Widget::Widget");
+
+  itsImpl->incrRefCount();
 }
 
-GWT::Widget::~Widget() {
-  delete itsImpl;
+GWT::Widget::~Widget()
+{
+DOTRACE("GWT::Widget::~Widget");
+
+  itsImpl->decrRefCount();
 }
 
 void GWT::Widget::display()
