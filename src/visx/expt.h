@@ -3,7 +3,7 @@
 // expt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Wed Jun  9 12:30:56 1999
+// written: Wed Jun  9 12:31:53 1999
 // $Id$
 //
 // This file defines the class Expt. Expt holds a sequence of trial
@@ -45,7 +45,7 @@ public:
   // creators //
   //////////////
 
-  Expt(Tlist& tlist, int repeat, int seed = 0, const string& date="", 
+  Expt(int repeat, int seed = 0, const string& date="", 
 		 const string& host="", const string& subject="");
   virtual ~Expt() {}
 
