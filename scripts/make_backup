@@ -1,6 +1,6 @@
-#!/bin/sh 
+#!/bin/csh 
 # \
-exec tclsh "$0" "$@"
+exec tclsh $0 $argv
 
 cd ~/grsh
 
