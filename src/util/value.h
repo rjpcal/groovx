@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Tue Oct 19 15:48:33 1999
+// written: Tue Nov 16 12:04:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,9 @@
 #ifndef ERROR_H_DEFINED
 #include "error.h"
 #endif
+
+class istream;
+class ostream;
 
 class ValueError : public ErrorWithMsg {
 public:
@@ -41,6 +44,10 @@ public:
   virtual Value* clone() const = 0;
 
   virtual Type getNativeType() const = 0;
+
+  // Input/Output
+  virtual void printTo(ostream& os) const = 0;
+  virtual void scanFrom(istream& is) = 0;
 
   // Two sets of functions are provided to allow values to be
   // retrieved either as the return value, or as a reference
@@ -78,6 +85,23 @@ public:
   void set(const string& val) { setString(val); }
 }; 
 
+///////////////////////////////////////////////////////////////////////
+//
+// Global stream insertion/extraction operators for Value's
+//
+///////////////////////////////////////////////////////////////////////
+
+ostream& operator<<(ostream& os, const Value& val)
+{
+  val.printTo(os);
+  return os;
+}
+
+istream& operator>>(istream& is, Value& val)
+{
+  val.scanFrom(is);
+  return is;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -95,6 +119,9 @@ public:
   virtual Value* clone() const;
   
   virtual Type getNativeType() const;
+
+  virtual void printTo(ostream& os) const;
+  virtual void scanFrom(istream& is);
 
   virtual int getInt() const;
   virtual long getLong() const;
@@ -138,6 +165,9 @@ public:
   virtual Value* clone() const;
   
   virtual Type getNativeType() const;
+
+  virtual void printTo(ostream& os) const;
+  virtual void scanFrom(istream& is);
 
   virtual int getInt() const;
   virtual long getLong() const;
