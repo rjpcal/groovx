@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Jun 25 14:32:14 2002
+// written: Wed Jul  3 16:10:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -204,13 +204,13 @@ DOTRACE("TogletSizer::reconfigure");
         const double r =      (width  / 2.0) / itsPixelsPerUnit;
         const double b = -1 * (height / 2.0) / itsPixelsPerUnit;
         const double t =      (height / 2.0) / itsPixelsPerUnit;
-        glOrtho(l, r, b, t, -1.0, 1.0);
+        glOrtho(l, r, b, t, -10.0, 10.0);
       }
       break;
     case FIXED_RECT:
       {
         glOrtho(itsRect.left(), itsRect.right(),
-                itsRect.bottom(), itsRect.top(), -1.0, 1.0);
+                itsRect.bottom(), itsRect.top(), -10.0, 10.0);
       }
       break;
     case MIN_RECT:
@@ -237,7 +237,7 @@ DOTRACE("TogletSizer::reconfigure");
           }
 
         glOrtho(port.left(), port.right(),
-                port.bottom(), port.top(), -1.0, 1.0);
+                port.bottom(), port.top(), -10.0, 10.0);
       }
       break;
     default:
