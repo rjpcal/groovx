@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 17:45:05 2002
+// written: Tue Feb 19 17:58:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -763,48 +763,13 @@ static double innerProduct(MtxConstIter s1, MtxConstIter s2)
   return result;
 }
 
-inline Mtx operator+(const Mtx& m, double x)
-{
-  Mtx result(m);
-  result += x;
-  return result;
-}
+Mtx operator+(const Mtx& m, double x);
+Mtx operator-(const Mtx& m, double x);
+Mtx operator*(const Mtx& m, double x);
+Mtx operator/(const Mtx& m, double x);
 
-inline Mtx operator-(const Mtx& m, double x)
-{
-  Mtx result(m);
-  result -= x;
-  return result;
-}
-
-inline Mtx operator*(const Mtx& m, double x)
-{
-  Mtx result(m);
-  result *= x;
-  return result;
-}
-
-inline Mtx operator/(const Mtx& m, double x)
-{
-  Mtx result(m);
-  result /= x;
-  return result;
-}
-
-
-inline Mtx operator+(const Mtx& m1, const Mtx& m2)
-{
-  Mtx result(m1);
-  result += m2;
-  return result;
-}
-
-inline Mtx operator-(const Mtx& m1, const Mtx& m2)
-{
-  Mtx result(m1);
-  result -= m2;
-  return result;
-}
+Mtx operator+(const Mtx& m1, const Mtx& m2);
+Mtx operator-(const Mtx& m1, const Mtx& m2);
 
 Mtx min(const Mtx& m1, const Mtx& m2);
 Mtx max(const Mtx& m1, const Mtx& m2);

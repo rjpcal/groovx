@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 17:51:04 2002
+// written: Tue Feb 19 18:02:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -553,6 +553,81 @@ DOTRACE("Mtx::assign_MMmul");
       for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
         *rowElement = innerProduct(veciter, m2.columnIter(col));
     }
+}
+
+Mtx operator+(const Mtx& m, double x)
+{
+  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
+
+  std::transform(m.begin(), m.end(),
+                 result.begin_nc(),
+                 std::bind2nd(std::plus<double>(), x));
+
+  return result;
+}
+
+Mtx operator-(const Mtx& m, double x)
+{
+  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
+
+  std::transform(m.begin(), m.end(),
+                 result.begin_nc(),
+                 std::bind2nd(std::minus<double>(), x));
+
+  return result;
+}
+
+Mtx operator*(const Mtx& m, double x)
+{
+  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
+
+  std::transform(m.begin(), m.end(),
+                 result.begin_nc(),
+                 std::bind2nd(std::multiplies<double>(), x));
+
+  return result;
+}
+
+Mtx operator/(const Mtx& m, double x)
+{
+  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
+
+  std::transform(m.begin(), m.end(),
+                 result.begin_nc(),
+                 std::bind2nd(std::divides<double>(), x));
+
+  return result;
+}
+
+
+Mtx operator+(const Mtx& m1, const Mtx& m2)
+{
+  if (! m1.sameSize(m2) )
+    throw Util::Error("dimension mismatch in +(Mtx, Mtx)");
+
+  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
+
+  std::transform(m1.begin(), m1.end(),
+                 m2.begin(),
+                 result.begin_nc(),
+                 std::plus<double>());
+
+  return result;
+}
+
+Mtx operator-(const Mtx& m1, const Mtx& m2)
+{
+  if (! m1.sameSize(m2) )
+    throw Util::Error("dimension mismatch in -(Mtx, Mtx)");
+
+  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
+
+  std::transform(m1.begin(), m1.end(),
+                 m2.begin(),
+                 result.begin_nc(),
+                 std::minus<double>());
+
+  return result;
 }
 
 Mtx min(const Mtx& m1, const Mtx& m2)
