@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jan 30 20:34:13 2002
+// written: Wed Jan 30 20:38:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,7 +103,12 @@ namespace
       }
   }
 
-  Tcl::List objNew(const char* type, unsigned int array_size)
+  SoftRef<Util::Object> objNew(const char* type)
+  {
+    return SoftRef<Util::Object>(Util::ObjMgr::newObj(type));
+  }
+
+  Tcl::List objNewArr(const char* type, unsigned int array_size)
   {
     Tcl::List result;
 
@@ -184,8 +189,8 @@ DOTRACE("Io_Init");
 
   pkg2->defVec( "type", "item_id(s)", &objType );
 
-  pkg2->def( "new", "typename", Util::bindLast(&objNew, 1) );
-  pkg2->def( "newarr", "typename array_size=1", &objNew );
+  pkg2->def( "new", "typename", &objNew );
+  pkg2->def( "newarr", "typename array_size=1", &objNewArr );
   pkg2->def( "delete", "item_id(s)", &objDelete );
 
   pkg2->eval("proc new {args} { eval Obj::new $args }");
