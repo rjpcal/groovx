@@ -211,3 +211,7 @@ will be needed, and then they can be phased out.
 * (done 21-Nov-2002) Rename Bitmap --> GxPixmap
 
 * (done 21-Nov-2002) Rename Gtext --> GxText
+
+* (done 21-Nov-2002) Merge Togl into Toglet
+  visx/tkwidget --> gwt/tkwidget
+  visx/toglet + togl/togl --> gwt/toglet
