@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Jun 20 18:23:57 2001
+// written: Wed Jun 20 18:26:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,6 @@
 #include "util/log.h"
 
 #include <tcl.h>
-#include <cmath>
-#include <cstring>
 #include <typeinfo>
 
 #define NO_TRACE
