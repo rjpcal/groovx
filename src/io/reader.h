@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Mar 15 10:19:31 2000
+// written: Wed Mar 22 15:52:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,10 @@ public:
 
   /// Virtual destructor allows correct destruction of subclasses.
   virtual ~Reader();
+
+  /** Returns the serialization version id that was stored with the
+      object currently being read. */
+  virtual unsigned long readSerialVersionId() = 0;
 
   /// Read the \c char attribute associated with the tag \a name.
   virtual char readChar(const char* name) = 0;
