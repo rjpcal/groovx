@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Nov 30 17:06:13 1999
+// written: Wed Dec  1 22:02:17 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -29,6 +29,7 @@
 #include "tclevalcmd.h"
 #include "tclitempkg.h"
 #include "toglconfig.h"
+#include "xbmaprenderer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -286,6 +287,8 @@ protected:
 	 }
 
     toglCreated = true;
+
+	 XBmapRenderer::initClass(Togl_TkWin(ObjTogl::widget));
 
     returnVoid();
   }
