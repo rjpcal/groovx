@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Nov 30 17:21:36 1999
+// written: Tue Nov 30 17:47:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -204,9 +204,9 @@ DOTRACE("Block::numTrials");
   return itsTrialSequence.size();
 }
 
-size_t Block::numCompleted() const {
+int Block::numCompleted() const {
 DOTRACE("Block::numCompleted");
-  return itsCurTrialSeqIdx;
+  return int(itsCurTrialSeqIdx);
 }
 
 int Block::currentTrial() const {
