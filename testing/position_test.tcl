@@ -113,7 +113,7 @@ test "PositionTcl-IO::type" "normal use on Jitter" {
 } {Jitter}
 test "PositionTcl-IO::type" "error on too small posid" {
 	 IO::type -1
-} {IO::type: attempted to access invalid object.*}
+} {IO::type: signed/unsigned.*}
 test "PositionTcl-IO::type" "error on too large" {
 	 IO::type 10000
 } {IO::type: attempted to access invalid object.*}
