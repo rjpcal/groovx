@@ -33,6 +33,7 @@
 #include "io/io.h"
 #include "io/ioutil.h"
 #include "io/outputfile.h"
+#include "io/xmlreader.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
@@ -64,6 +65,8 @@ DOTRACE("Io_Init");
   pkg->def( "saveXML", "item_id filename", IO::saveXML );
 
   pkg->def( "retrieve", "filename", IO::retrieveASR );
+
+  pkg->def( "xmlDebug", "filename", IO::xmlDebug );
 
   PKG_RETURN;
 }
