@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Jul  3 13:53:04 1999
+// written: Sat Jul  3 15:16:43 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -119,6 +119,8 @@ public:
 
 	 iterator operator-- (int)
 		{ iterator tmp = *this; --*this; return tmp; }
+
+	 int toInt() const { return itsIndex; }
   };
 
   iterator begin() { return iterator(*this, 0); }
