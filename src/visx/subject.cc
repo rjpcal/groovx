@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Sep 27 13:50:52 2000
+// written: Fri Sep 29 09:26:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,10 +20,6 @@
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
-
-#ifndef NULL
-#define NULL 0L
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -56,14 +52,10 @@ DOTRACE("Subject::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
+	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
 
-	 ostream& os = lwriter->output();
-
-	 os << itsName << endl;
-	 os << itsDirectory << endl;
-
-	 lwriter->throwIfError(ioTag.c_str());
+	 writer->writeValue("name", itsName);
+	 writer->writeValue("directory", itsDirectory);
   }
 }
 
@@ -71,14 +63,11 @@ void Subject::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Subject::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag.c_str());
 
-	 istream& is = lreader->input();
+	 lreader->setStringMode(IO::GETLINE_NEWLINE);
 
-	 getline(is, itsName, '\n');
-	 getline(is, itsDirectory, '\n');
-
-	 lreader->throwIfError(ioTag.c_str());
+	 reader->readValue("name", itsName);
+	 reader->readValue("directory", itsDirectory);
   }
 }
 

@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Wed Sep 27 13:50:53 2000
+// written: Fri Sep 29 09:22:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,14 +120,8 @@ void IrixAudioSound::legacySrlz(IO::Writer* writer) const {
 DOTRACE("IrixAudioSound::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-
-	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
-
-	 os << itsFilename << endl;
-
-	 lwriter->throwIfError(ioTag.c_str());
+	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
+	 writer->writeValue("filename", itsFilename);
   }
 }
 
@@ -135,14 +129,8 @@ void IrixAudioSound::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("IrixAudioSound::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-
-	 lreader->readTypename(ioTag.c_str());
-
-	 istream& is = lreader->input();
-
-	 getline(is, itsFilename, '\n');
-  
-	 lreader->throwIfError(ioTag.c_str());
+	 lreader->setStringMode(IO::GETLINE_NEWLINE);
+	 reader->readValue("filename", itsFilename);
 
 	 setFile(itsFilename.c_str());
   }

@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Sep 27 13:50:53 2000
+// written: Fri Sep 29 09:22:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,14 +129,8 @@ void HpAudioSound::legacySrlz(IO::Writer* writer) const {
 DOTRACE("HpAudioSound::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-
-	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
-
-	 os << itsFilename << endl;
-
-	 lwriter->throwIfError(ioTag.c_str());
+	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
+	 writer->writeValue("filename", itsFilename);
   }
 }
 
@@ -144,14 +138,8 @@ void HpAudioSound::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("HpAudioSound::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-
-	 lreader->readTypename(ioTag.c_str());
-
-	 istream& is = lreader->input();
-
-	 getline(is, itsFilename, '\n');
-  
-	 lreader->throwIfError(ioTag.c_str());
+	 lreader->setStringMode(IO::GETLINE_NEWLINE);
+	 reader->readValue("filename", itsFilename);
 
 	 setFile(itsFilename.c_str());
   }

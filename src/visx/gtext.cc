@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Fri Sep 29 09:17:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -681,11 +681,8 @@ DOTRACE("Gtext::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
-
-	 os << itsText << endl;
+	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
+	 writer->writeValue("text", itsText);
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);
@@ -696,15 +693,9 @@ void Gtext::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Gtext::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag.c_str());
 
-	 istream& is = lreader->input();
-
-	 if ( IO::SEP == is.peek() ) { is.get(); }
-
-	 getline(is, itsText, '\n');
-
-	 lreader->throwIfError(ioTag.c_str());
+	 lreader->setStringMode(IO::GETLINE_NEWLINE);
+	 reader->readValue("text", itsText);
 
 	 IO::IoProxy<GrObj> baseclass(this);
 	 lreader->readBaseClass("GrObj", &baseclass);
