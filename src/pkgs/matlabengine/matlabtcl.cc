@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Sat Aug 25 21:51:37 2001
+// written: Sat Sep  8 14:01:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,6 @@ public:
     return (result == 0) ? (itsBuf+2) : "";
   }
 
-  // NOTE! This returns a *new* mxArray, which must be freed by the caller
   Ref<MtxObj> getMtx(const char* name)
   {
     mxArray* arr = engGetArray(itsEngine, name);
