@@ -57,6 +57,9 @@ namespace geom
     vec2& operator=(const vec2<U>& other)
     { xx = other.x(); yy = other.y(); return *this; }
 
+    static vec2 zeros() { return vec2(V(0), V(0)); }
+    static vec2 ones()  { return vec2(V(1), V(1)); }
+
     V& x() { return xx; }
     V& y() { return yy; }
 

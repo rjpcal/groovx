@@ -59,6 +59,9 @@ namespace geom
     explicit vec3(const vec3<U>& other)
     { set(V(other.x()), V(other.y()), V(other.z())); }
 
+    static vec3 zeros() { return vec3(V(0), V(0), V(0)); }
+    static vec3 ones()  { return vec3(V(1), V(1), V(1)); }
+
     static vec3<V> unit_x() { return vec3<V>(1.0, 0.0, 0.0); }
     static vec3<V> unit_y() { return vec3<V>(0.0, 1.0, 0.0); }
     static vec3<V> unit_z() { return vec3<V>(0.0, 0.0, 1.0); }
