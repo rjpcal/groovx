@@ -186,15 +186,29 @@ proc testStringifyCmd { objname } {
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
         ${this(listname)}::reset
+
         set id1 \[${this(subclass1)}::${this(subclass1)}\]
         set id2 \[${this(subclass2)}::${this(subclass2)}\]
+
+	     set ids_before \[${this(listname)}::getValidIds\]
+        set idx1 \[lsearch \$ids_before \$id1\]
+        set idx2 \[lsearch \$ids_before \$id2\]
+
         set type1_before \[${this(baseclass)}::type \$id1\]
         set type2_before \[${this(baseclass)}::type \$id2\]
+
         set str \[$stringify\]
+
         ${this(listname)}::reset
         $destringify \$str
-        set type1_after \[${this(baseclass)}::type \$id1\]
-        set type2_after \[${this(baseclass)}::type \$id2\]
+
+	     set ids_after \[${this(listname)}::getValidIds\]
+        set id1_after \[lindex \$ids_after \$idx1\]
+        set id2_after \[lindex \$ids_after \$idx2\]
+
+        set type1_after \[${this(baseclass)}::type \$id1_after\]
+        set type2_after \[${this(baseclass)}::type \$id2_after\]
+
 	     set equal1 \[string equal \$type1_before \$type1_after\]
 	     set equal2 \[string equal \$type2_before \$type2_after\]
         return \"\[${this(listname)}::count\] \$equal1 \$equal2\"
@@ -253,15 +267,29 @@ proc testWriteCmd { objname } {
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
         ${this(listname)}::reset
+
         set id1 \[${this(subclass1)}::${this(subclass1)}\]
         set id2 \[${this(subclass2)}::${this(subclass2)}\]
+
+	     set ids_before \[${this(listname)}::getValidIds\]
+        set idx1 \[lsearch \$ids_before \$id1\]
+        set idx2 \[lsearch \$ids_before \$id2\]
+
         set type1_before \[${this(baseclass)}::type \$id1\]
         set type2_before \[${this(baseclass)}::type \$id2\]
+
         set str \[$writecmd\]
+
         ${this(listname)}::reset
         $readcmd \$str
-        set type1_after \[${this(baseclass)}::type \$id1\]
-        set type2_after \[${this(baseclass)}::type \$id2\]
+
+	     set ids_after \[${this(listname)}::getValidIds\]
+        set id1_after \[lindex \$ids_after \$idx1\]
+        set id2_after \[lindex \$ids_after \$idx2\]
+
+        set type1_after \[${this(baseclass)}::type \$id1_after\]
+        set type2_after \[${this(baseclass)}::type \$id2_after\]
+
 	     set equal1 \[string equal \$type1_before \$type1_after\]
 	     set equal2 \[string equal \$type2_before \$type2_after\]
         return \"\[${this(listname)}::count\] \$equal1 \$equal2\"
