@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Fri Sep  6 13:59:26 2002
+// written: Wed Sep 11 14:09:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "tcl/tclsafeinterp.h"
 
+#include <util/error.h>
 #include "util/strings.h"
 
 #include <iostream>
@@ -75,7 +76,10 @@ public:
 
   static MainImpl* get()
   {
-    Assert(theMainImpl != 0);
+    if (theMainImpl != 0)
+      {
+        throw Util::Error("no Tcl::Main object has yet been created");
+      }
 
     return theMainImpl;
   }
@@ -179,7 +183,13 @@ DOTRACE("Tcl::MainImpl::historyNext");
 //
 //---------------------------------------------------------------------
 
-void Tcl::MainImpl::doPrompt(const char* text, unsigned int length)
+void Tcl::MainImpl::doPrompt(const char* text,
+#ifdef WITH_READLINE
+                             unsigned int /*length*/
+#else
+                             unsigned int length
+#endif
+                             )
 {
 DOTRACE("Tcl::MainImpl::doPrompt");
 
@@ -526,12 +536,12 @@ Tcl::Main::Main(int argc, char** argv)
 Tcl::Main::~Main()
 {}
 
-Tcl_Interp* Tcl::Main::interp() const
+Tcl_Interp* Tcl::Main::interp()
 {
   return Tcl::MainImpl::get()->interp();
 }
 
-Tcl::Interp& Tcl::Main::safeInterp() const
+Tcl::Interp& Tcl::Main::safeInterp()
 {
   return Tcl::MainImpl::get()->safeInterp();
 }
