@@ -179,7 +179,7 @@ $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
 		$(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		$(ALL_SRCS) $(SCRIPTS)/buildPkgDeps.tcl
 	$(SCRIPTS)/buildPkgDeps.tcl \
-		--depfile $@ \
+		--depfile $(DEP)/pkgdepends \
 		--objdir $(OBJ)/pkgs \
 		--objext $(OBJEXT) \
 		--pkgsrc $(SRC)/pkgs \
