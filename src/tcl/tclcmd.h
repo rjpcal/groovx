@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Tue Nov 14 13:14:15 2000
+// written: Tue Dec 12 15:04:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -411,8 +411,10 @@ private:
   template <class T> friend class ListIterator;
 
   /// The procedure that is actually registered with the Tcl C API.
-  static int dummyInvoke(ClientData clientData, Tcl_Interp* interp,
-								 int objc, Tcl_Obj *const objv[]);
+  static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
+									 int objc, Tcl_Obj *const objv[]);
+
+  int invokeTemplate();
 
   static void safeSplitList(Tcl_Obj* obj, int* count_return,
 									 Tcl_Obj*** elements_return);
