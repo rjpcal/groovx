@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jan 30 15:28:36 2002
+// written: Wed Apr  3 17:47:42 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -26,6 +26,7 @@
 #include "system/system.h"
 
 #include "tcl/iotcl.h"
+#include "tcl/itertcl.h"
 #include "tcl/tclcode.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
@@ -176,6 +177,7 @@ public:
     defAttrib("autosavePeriod",
               &ExptDriver::getAutosavePeriod,
               &ExptDriver::setAutosavePeriod);
+    defGetter("blocks", &ExptDriver::blocks);
     defAction("clear", &ExptDriver::edClearExpt);
     defGetter("currentBlock", &ExptDriver::currentBlock);
     defGetter("infoLog", &ExptDriver::getInfoLog);

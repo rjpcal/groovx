@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jan 30 15:27:57 2002
+// written: Wed Apr  3 17:44:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@ class fstring;
 
 namespace Util
 {
+  template <class T> class FwdIter;
   template <class T> class Ref;
   template <class T> class SoftRef;
 };
@@ -96,6 +97,9 @@ public:
 
   void addBlock(Util::Ref<Block> block);
   Util::Ref<Block> currentBlock() const;
+
+  /// Returns an iterator to all the Block's contained in the experiment.
+  Util::FwdIter<Util::Ref<Block> > blocks() const;
 
   fstring getDoWhenComplete() const;
   void setDoWhenComplete(const fstring& script);

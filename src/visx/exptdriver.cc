@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jan 31 10:33:49 2002
+// written: Wed Apr  3 17:51:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@
 
 #include "util/error.h"
 #include "util/errorhandler.h"
+#include "util/iter.h"
 #include "util/log.h"
 #include "util/minivec.h"
 #include "util/ref.h"
@@ -124,6 +125,12 @@ public:
       if ( !haveValidBlock() )
         throw Util::Error("no current block exists");
       return itsBlocks.at(itsCurrentBlockIdx);
+    }
+
+  Util::FwdIter<Util::Ref<Block> > blocks()
+    {
+      return Util::FwdIter<Util::Ref<Block> >(itsBlocks.begin(),
+                                              itsBlocks.end());
     }
 
   void edBeginExpt();
@@ -531,6 +538,9 @@ void ExptDriver::addBlock(Ref<Block> block)
 
 Ref<Block> ExptDriver::currentBlock() const
   { return itsImpl->currentBlock(); }
+
+Util::FwdIter<Util::Ref<Block> > ExptDriver::blocks() const
+  { return itsImpl->blocks(); }
 
 fstring ExptDriver::getDoWhenComplete() const
   { return itsImpl->itsDoWhenComplete->fullSpec(); }
