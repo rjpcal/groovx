@@ -359,7 +359,7 @@ $(DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	touch $@
 
 $(DEP_FILE): $(DEP_FILE).deps
-	time ./pydep/pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
+	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
 
