@@ -52,6 +52,7 @@
 #if defined(GL_PLATFORM_GLX)
 #  include <GL/gl.h>
 #  include <GL/glu.h>
+#  include <GL/glx.h>
 #elif defined(GL_PLATFORM_AGL)
 #  include <AGL/gl.h>
 #  include <AGL/glu.h>
@@ -505,6 +506,7 @@ DOTRACE("Gl_Init");
   pkg->def( "::glEnd", 0, glEnd );
   pkg->def( "::glEndList", 0, glEndList );
   pkg->def( "::glExtensions", 0, bindFirst(GLTcl::getString, GL_EXTENSIONS));
+  pkg->def( "::glFinish", 0, glFinish );
   pkg->def( "::glFlush", 0, glFlush );
   pkg->def( "::glFrustum", "left right bottom top zNear zFar", glFrustum );
   pkg->def( "::glGenLists", "range", glGenLists );
@@ -532,6 +534,10 @@ DOTRACE("Gl_Init");
   pkg->def( "::glVertex2", "x y", glVertex2d );
   pkg->def( "::glVertex3", "x y z", glVertex3d );
   pkg->def( "::glVertex4", "x y z w", glVertex4d );
+#if defined(GL_PLATFORM_GLX)
+  pkg->def( "::glXWaitX", 0, glXWaitX );
+  pkg->def( "::glXWaitGL", 0, glXWaitGL );
+#endif
   pkg->def( "::gluLookAt", "eyeX eyeY eyeZ targX targY targZ upX upY upZ",
             GLTcl::lookAt );
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
