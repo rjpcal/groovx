@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 14:28:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,20 +46,6 @@ namespace
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
-
-  const FieldInfo FINFOS[] =
-  {
-    FieldInfo("category", FieldInfo::OldTag(), &Face::faceCategory, 0, 0, 10, 1, true),
-    FieldInfo("eyeHeight", FieldInfo::OldTag(), &Face::eyeHeight, 0.6, -1.2, 1.2, 0.01),
-    FieldInfo("eyeDistance", FieldInfo::OldTag(), &Face::eyeDistance, 0.4, 0.0, 1.8, 0.01),
-    FieldInfo("noseLength", FieldInfo::OldTag(), &Face::noseLength, 0.4, -0.0, 3.0, 0.01),
-    FieldInfo("mouthHeight", FieldInfo::OldTag(), &Face::mouthHeight, 0.8, -1.2, 1.2, 0.01)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                       &GrObj::classFields());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +60,20 @@ namespace
 
 const FieldMap& Face::classFields()
 {
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("category", &Face::itsFaceCategory, 0, 0, 10, 1, true),
+    FieldInfo("eyeHeight", &Face::itsEyeHeight, 0.6, -1.2, 1.2, 0.01),
+    FieldInfo("eyeDistance", &Face::itsEyeDistance, 0.4, 0.0, 1.8, 0.01),
+    FieldInfo("noseLength", &Face::itsNoseLength, 0.4, -0.0, 3.0, 0.01),
+    FieldInfo("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                              &GrObj::classFields());
+
   return FACE_FIELDS;
 }
 
@@ -84,15 +84,15 @@ DOTRACE("Face::make");
 }
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
-  faceCategory(categ),
-  eyeHeight(eh),
-  eyeDistance(es),
-  noseLength(nl),
-  mouthHeight(mh)
+  itsFaceCategory(categ),
+  itsEyeHeight(eh),
+  itsEyeDistance(es),
+  itsNoseLength(nl),
+  itsMouthHeight(mh)
 {
 DOTRACE("Face::Face");
 
-  setFieldMap(FACE_FIELDS);
+  setFieldMap(Face::classFields());
 }
 
 Face::~Face()
@@ -216,7 +216,7 @@ DOTRACE("Face::grRender");
     const GLdouble pupil_y_scale = pupil_y_scale_abs/eyeball_y_scale;
 
     // Calculate the x position for the eyes
-    const double eye_x = Util::abs(eyeDistance())/2.0;
+    const double eye_x = Util::abs(itsEyeDistance)/2.0;
 
     // Create a quadric obj to use for calling gluDisk(). This disk
     // will be used to render the eyeballs and the pupils.
@@ -231,7 +231,7 @@ DOTRACE("Face::grRender");
       {
         Gfx::Canvas::StateSaver eyesaver(canvas);
 
-        glTranslated(eye_pos * eye_x, eyeHeight(), 0.0);
+        glTranslated(eye_pos * eye_x, itsEyeHeight, 0.0);
         glScaled(eyeball_x_scale, eyeball_y_scale, 1.0);
         gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
         glScaled(pupil_x_scale, pupil_y_scale, 1.0);
@@ -247,12 +247,12 @@ DOTRACE("Face::grRender");
     // Calculate the y positions for the top and bottom of the nose
     // bottom always <= 0.0
     // top always >= 0.0
-    const double nose_bottom_y = -Util::abs(noseLength())/2.0;
+    const double nose_bottom_y = -Util::abs(itsNoseLength)/2.0;
     const double nose_top_y = -nose_bottom_y;
 
     glBegin(GL_LINES);
-    glVertex2d(theirMouth_x[0], mouthHeight());
-    glVertex2d(theirMouth_x[1], mouthHeight());
+    glVertex2d(theirMouth_x[0], itsMouthHeight);
+    glVertex2d(theirMouth_x[1], itsMouthHeight);
     glVertex2d(theirNose_x, nose_bottom_y);
     glVertex2d(theirNose_x, nose_top_y);
     glEnd();
@@ -284,13 +284,13 @@ DOTRACE("Face::grGetBoundingBox");
 int Face::category() const
 {
 DOTRACE("Face::category");
-  return faceCategory();
+  return itsFaceCategory;
 }
 
 void Face::setCategory(int val)
 {
 DOTRACE("Face::setCategory");
-  faceCategory.setNative(val);
+  itsFaceCategory = val;
 }
 
 const double* Face::getCtrlPnts() const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 11:12:12 2001
+// written: Wed Aug 15 14:26:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,22 +51,6 @@ public:
   // properties //
   ////////////////
 
-  /** The category of the face. The semantics of \a category are
-      defined by the client. */
-  TField<int> faceCategory;
-
-  /// The height of the eyes above the vertical midline of the face.
-  TField<double> eyeHeight;
-
-  /// The distance between the centers of the eyes.
-  TField<double> eyeDistance;
-
-  /// The length of the nose.
-  TField<double> noseLength;
-
-  /// The (negative) height of the mouth below the vertical midline of the face.
-  TField<double> mouthHeight;
-
   static const FieldMap& classFields();
 
   ///////////////
@@ -100,6 +84,22 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 
 private:
+  /** The category of the face. The semantics of \a category are
+      defined by the client. */
+  int itsFaceCategory;
+
+  /// The height of the eyes above the vertical midline of the face.
+  double itsEyeHeight;
+
+  /// The distance between the centers of the eyes.
+  double itsEyeDistance;
+
+  /// The length of the nose.
+  double itsNoseLength;
+
+  /// The (negative) height of the mouth below the vertical midline of the face.
+  double itsMouthHeight;
+
   Face(const Face&);
   Face& operator=(const Face&);
 };
