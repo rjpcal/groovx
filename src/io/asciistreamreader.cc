@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Mar 30 09:54:55 2000
+// written: Wed May 17 14:02:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ private:
 
   // Creators
 public:
-  Impl(AsciiStreamReader* owner, istream& is) :
+  Impl(AsciiStreamReader* /*owner*/, istream& is) :
 	 itsBuf(is), itsObjects(), itsAttribs()
 #ifndef NO_IOS_EXCEPTIONS
 	 , itsOriginalExceptionState(itsBuf.exceptions())
@@ -469,7 +469,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   itsObjects.clear();
 
   bool haveReadRoot = false;
-  unsigned long rootid;
+  unsigned long rootid = 0;
 
   while ( itsBuf.peek() != EOF ) {
 	 IO::IoObject* obj = NULL;
