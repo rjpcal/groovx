@@ -61,8 +61,7 @@ test "Sound::forceLoad" "error on junk text file" {
     catch {-> $s forceLoad} result
     delete $s
     return $result
-} {forceLoad: } \
-  [expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
+} {forceLoad: }
 
 test "Sound::forceLoad" "error on junk binary file" {
     set s [new Sound]
