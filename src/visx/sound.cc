@@ -32,7 +32,7 @@
 #ifndef SOUND_CC_DEFINED
 #define SOUND_CC_DEFINED
 
-#include "visx/sound.h"
+#include "sound.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -42,7 +42,7 @@
 #include "util/error.h"
 
 #if defined(HAVE_ALIB_H)
-#  include "visx/hpsound.h"
+#  include "media/hpsound.h"
 
 Sound* Sound::newPlatformSoundRep(const char* soundfile)
 {
@@ -51,7 +51,7 @@ DOTRACE("Sound::newPlatformSoundRep(hpsound)");
 }
 
 #elif defined(HAVE_DMEDIA_AUDIO_H)
-#  include "visx/irixsound.h"
+#  include "media/irixsound.h"
 
 Sound* Sound::newPlatformSoundRep(const char* soundfile)
 {
@@ -60,7 +60,7 @@ DOTRACE("Sound::newPlatformSound(irixsound)");
 }
 
 #elif defined(HAVE_QUICKTIME_MOVIES_H)
-#  include "visx/quicktimesound.h"
+#  include "media/quicktimesound.h"
 
 SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
 {
@@ -69,7 +69,7 @@ DOTRACE("Sound::newPlatformSoundRep(quicktimesound)");
 }
 
 #elif defined(HAVE_ESD_H)
-#  include "visx/esdsound.h"
+#  include "media/esdsound.h"
 SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
 {
 DOTRACE("SoundRep::newPlatformSoundRep(esdsound)");
@@ -77,7 +77,7 @@ DOTRACE("SoundRep::newPlatformSoundRep(esdsound)");
 }
 
 #else
-#  include "visx/dummysound.h"
+#  include "media/dummysound.h"
 
 SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
 {
