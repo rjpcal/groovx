@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Mon Jan 28 11:39:21 2002
+// written: Mon Jan 28 12:50:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,6 +105,7 @@ public:
   fstring getProcBody(const char* proc_name) const;
   void createProc(const char* namesp, const char* proc_name,
                   const char* args, const char* body);
+  void deleteProc(const char* namesp, const char* proc_name);
 
 private:
   Tcl_Obj* getObjResult() const;
