@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jun 17 10:52:41 1999
+// written: Thu Jun 24 15:23:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,16 +18,17 @@
 #include <fstream.h>
 #include <string>
 
-#include "errmsg.h"
+#include "tclerror.h"
 #include "expt.h"
 #include "responsehandler.h"
 #include "tclevalcmd.h"
-#include "timinghandler.h"
+#include "timinghdlr.h"
 #include "tlisttcl.h"
 #include "trial.h"
 #include "blocklist.h"
 #include "rhlist.h"
 #include "thlist.h"
+#include "tlist.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -71,7 +72,6 @@ ExptDriver::ExptDriver() :
   itsThId(0)
 {
 DOTRACE("ExptDriver::ExptDriver");
-  Tcl_Preserve(itsInterp);
 }
 
 ExptDriver ExptDriver::theInstance;
@@ -86,13 +86,36 @@ DOTRACE("ExptDriver::~ExptDriver");
 //   Tcl_Release(itsInterp);
 }
 
-void ExptDriver::init(int repeat, int seed, const string& date,
-							 const string& host, const string& subject) {
+void ExptDriver::init() {
 DOTRACE("ExptDriver::init");
-  itsBeginDate = date;
-  itsHostname = host;
-  itsSubject = subject;
-  expt().init(repeat, seed);
+
+  int result;
+
+  // Get the current time/date
+  static TclEvalCmd dateStringCmd("clock format [clock seconds]");
+
+  result = dateStringCmd.invoke(itsInterp);
+  if (result != TCL_OK) throw TclError("couldn't get date");
+
+  itsBeginDate = Tcl_GetStringResult(itsInterp);
+
+  // Get the hostname
+  itsHostname = Tcl_GetVar2(itsInterp, "env", "HOST",
+									 TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
+
+  // Get the subject's initials as the tail of the current directory
+  static TclEvalCmd subjectKeyCmd("file tail [pwd]");
+
+  result = subjectKeyCmd.invoke(itsInterp);
+  if (result != TCL_OK) throw TclError("couldn't get subject initials");
+
+  // Get the result, and remove an optional leading 'human_', if present
+  const char* key = Tcl_GetStringResult(itsInterp);
+  if ( strncmp(key, "human_", 6) == 0 ) {
+    key += 6;
+  }
+
+  itsSubject = key;
 
   itsAutosaveFile = "__autosave_file";
   DebugEvalNL(itsAutosaveFile);
@@ -117,7 +140,7 @@ DOTRACE("ExptDriver::serialize");
 
   os << getVerbose() << ' ';
 
-  timingHandler().serialize(os, flag);
+  timingHdlr().serialize(os, flag);
 
   if (os.fail()) throw OutputError(ioTag);
 }
@@ -145,7 +168,7 @@ DOTRACE("ExptDriver::deserialize");
 	 setVerbose(bool(aVerbose));
   }
 
-  timingHandler().deserialize(is, flag);
+  timingHdlr().deserialize(is, flag);
 
   if (is.fail()) throw InputError(ioTag);
 }
@@ -206,10 +229,10 @@ DOTRACE("ExptDriver::responseHandler");
 #endif
 }
 
-TimingHandler& ExptDriver::timingHandler() {
-DOTRACE("ExptDriver::timingHandler");
+TimingHdlr& ExptDriver::timingHdlr() {
+DOTRACE("ExptDriver::timingHdlr");
 #ifdef LOCAL_ASSERT
-  TimingHandler* th = ThList::theThList().getPtr(itsThId);
+  TimingHdlr* th = ThList::theThList().getPtr(itsThId);
   DebugEvalNL((void *) th);
   Assert(th != 0);
   return *th;
@@ -228,9 +251,9 @@ DOTRACE("ExptDriver::responseHandler const");
   return const_cast<ExptDriver *>(this)->responseHandler();
 }
 
-const TimingHandler& ExptDriver::timingHandler() const {
-DOTRACE("ExptDriver::timingHandler const");
-  return const_cast<ExptDriver *>(this)->timingHandler();
+const TimingHdlr& ExptDriver::timingHdlr() const {
+DOTRACE("ExptDriver::timingHdlr const");
+  return const_cast<ExptDriver *>(this)->timingHdlr();
 }
 
 void ExptDriver::setResponseHandler(int rhid) {
@@ -240,8 +263,8 @@ DOTRACE("ExptDriver::setResponseHandler");
   itsRhId = rhid;
 }
 
-void ExptDriver::setTimingHandler(int thid) {
-DOTRACE("ExptDriver::setTimingHandler");
+void ExptDriver::setTimingHdlr(int thid) {
+DOTRACE("ExptDriver::setTimingHdlr");
   itsThId = thid;
 }
 
@@ -263,7 +286,7 @@ void ExptDriver::setVerbose(bool val) { expt().setVerbose(val); }
 
 bool ExptDriver::needAutosave() const {
 DOTRACE("ExptDriver::needAutosave");
-  int period = timingHandler().getAutosavePeriod();
+  int period = timingHdlr().getAutosavePeriod();
   return ( (period > 0) && ((expt().numCompleted() % period) == 0) );
 }
 
@@ -272,7 +295,6 @@ DOTRACE("ExptDriver::needAutosave");
 // ExptDriver action method definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
 
 //--------------------------------------------------------------------
 //
@@ -288,15 +310,15 @@ DOTRACE("ExptDriver::edBeginTrial");
 
   Trial& trial = expt().getCurTrial();
 
-  itsThId = trial.getTimingHandler();
+  itsThId = trial.getTimingHdlr();
   DebugEval(itsThId);
 
   itsRhId = trial.getResponseHandler();
   DebugEval(itsRhId);
 
-  responseHandler().rhBeginTrial();
-  timingHandler().thBeginTrial();
   expt().beginTrial();
+  timingHdlr().thBeginTrial();
+  responseHandler().rhBeginTrial();
 }
 
 //--------------------------------------------------------------------
@@ -311,21 +333,7 @@ void ExptDriver::edAbortTrial() {
 DOTRACE("ExptDriver::edAbortTrial");
   responseHandler().rhAbortTrial();
   expt().abortTrial();
-  timingHandler().thAbortTrial();
-}
-
-//--------------------------------------------------------------------
-//
-// ExptDriver::edEndTrial --
-//
-// Tell participants to finish up this trial and prepare for the next
-// one.
-//
-//--------------------------------------------------------------------
-
-void ExptDriver::edEndTrial() {
-DOTRACE("ExptDriver::edEndTrial");
-  timingHandler().thEndTrial();
+  timingHdlr().thAbortTrial();
 }
 
 //--------------------------------------------------------------------
@@ -352,6 +360,36 @@ DOTRACE("ExptDriver::draw");
 void ExptDriver::undraw() {
 DOTRACE("ExptDriver::undraw");
   expt().undrawTrial();
+}
+
+//---------------------------------------------------------------------
+//
+// ExptDriver::edSwapBuffers --
+//
+// Swap the buffers in the Togl widget
+//
+//---------------------------------------------------------------------
+
+void ExptDriver::edSwapBuffers() {
+DOTRACE("ExptDriver::edSwapBuffers");
+  static TclEvalCmd swapCmd(".togl swapbuffers");
+  int result = swapCmd.invoke(itsInterp);
+  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
+}
+
+void ExptDriver::edClearBuffer() const {
+DOTRACE("ExptDriver::edClearBuffer");
+  Tlist::theTlist().clearBuffer();
+}
+
+void ExptDriver::edRenderBack() const {
+DOTRACE("ExptDriver::edRenderBack");
+  Tlist::theTlist().renderBack();
+}
+
+void ExptDriver::edRenderFront() const {
+DOTRACE("ExptDriver::edRenderFront");
+  Tlist::theTlist().renderFront();
 }
 
 //--------------------------------------------------------------------
@@ -382,8 +420,12 @@ DOTRACE("ExptDriver::edProcessResponse");
   if ( needAutosave() ) {
 	 DebugEvalNL(getAutosaveFile().c_str());
 
-	 int result = write(getAutosaveFile().c_str());
-	 if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
+	 try {
+		write(getAutosaveFile().c_str());
+	 }
+	 catch (TclError&) {
+		Tcl_BackgroundError(itsInterp);
+	 }
   }
 
   if (expt().isComplete()) {
@@ -391,8 +433,6 @@ DOTRACE("ExptDriver::edProcessResponse");
     ExptDriver::writeAndExit();
 	 return; // We'll never get here since writeAndExit calls exit()
   }    
-  
-  edEndTrial();
 }
 
 //--------------------------------------------------------------------
@@ -407,7 +447,7 @@ DOTRACE("ExptDriver::edProcessResponse");
 
 void ExptDriver::edHaltExpt() {
 DOTRACE("ExptDriver::edHaltExpt");
-  timingHandler().thHaltExpt();
+  timingHdlr().thHaltExpt();
 
   responseHandler().rhHaltExpt();
 
@@ -428,39 +468,49 @@ DOTRACE("ExptDriver::edHaltExpt");
 
 void ExptDriver::edResponseSeen() {
 DOTRACE("ExptDriver::edResponseSeen");
-  timingHandler().thResponseSeen();
+  timingHdlr().thResponseSeen();
 
-  expt().undrawTrial();
+  // This is commented out because undrawing the Trial on
+  // response-seen should be the responsibility of the TimingHandler.
+//   expt().undrawTrial();
+}
+
+//--------------------------------------------------------------------
+//
+// ExptDriver::read --
+//
+//--------------------------------------------------------------------
+
+void ExptDriver::read(const char* filename) {
+DOTRACE("ExptDriver::read");
+  try {
+	 ifstream ifs(filename);
+	 if (ifs.fail()) throw IoFilenameError(filename);
+	 deserialize(ifs, IO::BASES|IO::TYPENAME);
+  }
+  catch (IoError& err) {
+	 DebugEvalNL(err.msg());
+	 throw TclError(err.msg());
+  }
 }
 
 //--------------------------------------------------------------------
 //
 // ExptDriver::write --
 //
-// Write the experiment to a given filename and catch any resulting
-// IoError's, turning them into TCL_ERROR.
-//
-// Results:
-// A usual Tcl result.
-//
 //--------------------------------------------------------------------
 
-int ExptDriver::write(const char* filename) {
+void ExptDriver::write(const char* filename) const {
 DOTRACE("ExptDriver::write");
-  Assert(itsInterp != 0);
-
   try {
     ofstream ofs(filename);
     if (ofs.fail()) throw IoFilenameError(filename);
 	 serialize(ofs, IO::BASES|IO::TYPENAME);
   }
   catch (IoError& err) {
-	 DebugEvalNL(err.info().c_str());
-
-	 err_message(itsInterp, "ExptDriver::write", err.info().c_str());
-    return TCL_ERROR;
+	 DebugEvalNL(err.msg());
+	 throw TclError(err.msg());
   }
-  return TCL_OK;
 }
 
 //--------------------------------------------------------------------
@@ -476,29 +526,27 @@ DOTRACE("ExptDriver::write");
 //
 //--------------------------------------------------------------------
 
-int ExptDriver::writeAndExit() {
+void ExptDriver::writeAndExit() {
 DOTRACE("ExptDriver::writeAndExit");
   Assert(itsInterp != 0);
 
   // Get the current date/time and record it as the ending date for
   // thec current Expt.
   itsEndDate = getDateStringProc(itsInterp);
-  if (itsEndDate.size() == 0) return TCL_ERROR;
+  if (itsEndDate.size() == 0) throw TclError("couldn't get date");
 
-  // Parse the ending date for the current Expt and format into a
-  // unique filename extension
+  // Format the current time into a unique filename extension
   static TclEvalCmd uniqueFilenameCmd(
-        "clock format [clock scan [Expt::endDate]] -format %H%M%d%b%Y");
+        "clock format [clock seconds] -format %H%M%d%b%Y");
 
   int result = uniqueFilenameCmd.invoke(itsInterp);
-  if (result != TCL_OK) return result;
+  if (result != TCL_OK) throw TclError();
   string unique_filename = Tcl_GetStringResult(itsInterp);
 
   // Write the main experiment file
   string expt_filename = string("expt") + unique_filename;
 
-  result = write(expt_filename.c_str());
-  if (result != TCL_OK) return result;
+  write(expt_filename.c_str());
 
   cout << "wrote file " << expt_filename << endl;
 
@@ -507,14 +555,12 @@ DOTRACE("ExptDriver::writeAndExit");
 
   result = TlistTcl::write_responsesProc(itsInterp, NULL, 
 													  resp_filename.c_str());
-  if (result != TCL_OK) return result;
+  if (result != TCL_OK) throw TclError();
 
   cout << "wrote file " << resp_filename << endl;
 
-  // Gracefully exit the application
-  Tcl_Exit(0);
-
-  return result;
+  // Gracefully exit the application (or not)
+//   Tcl_Exit(0);
 }
 
 static const char vcid_exptdriver_cc[] = "$Header$";
