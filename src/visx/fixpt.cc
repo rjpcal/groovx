@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Aug 13 12:15:36 2001
+// written: Tue Aug 14 11:20:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,10 +34,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-  const FieldInfo FIXPT_FINFOS[] = {
-      FieldInfo("length", &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
-      FieldInfo("width", &FixPt::width, 1, 0, 100, 1)
+namespace
+{
+  const FieldInfo FIXPT_FINFOS[] =
+  {
+    FieldInfo("length", &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
+    FieldInfo("width", &FixPt::width, 1, 1, 100, 1)
   };
 
   const FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2);
@@ -51,9 +53,13 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& FixPt::classFields() { return FIXPT_FIELDS; }
+const FieldMap& FixPt::classFields()
+{
+  return FIXPT_FIELDS;
+}
 
-FixPt* FixPt::make() {
+FixPt* FixPt::make()
+{
 DOTRACE("FixPt::make");
   return new FixPt;
 }
@@ -67,12 +73,14 @@ FixPt::FixPt(double len, int wid) :
 
 FixPt::~FixPt() {}
 
-IO::VersionId FixPt::serialVersionId() const {
+IO::VersionId FixPt::serialVersionId() const
+{
 DOTRACE("FixPt::serialVersionId");
   return FIXPT_SERIAL_VERSION_ID;
 }
 
-void FixPt::readFrom(IO::Reader* reader) {
+void FixPt::readFrom(IO::Reader* reader)
+{
 DOTRACE("FixPt::readFrom");
 
   reader->ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
@@ -84,7 +92,8 @@ DOTRACE("FixPt::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void FixPt::writeTo(IO::Writer* writer) const {
+void FixPt::writeTo(IO::Writer* writer) const
+{
 DOTRACE("FixPt::writeTo");
 
   writer->ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
@@ -95,7 +104,8 @@ DOTRACE("FixPt::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-Gfx::Rect<double> FixPt::grGetBoundingBox() const {
+Gfx::Rect<double> FixPt::grGetBoundingBox() const
+{
 DOTRACE("FixPt::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
@@ -105,7 +115,8 @@ DOTRACE("FixPt::grGetBoundingBox");
   return bbox;
 }
 
-void FixPt::grRender(Gfx::Canvas&, DrawMode) const {
+void FixPt::grRender(Gfx::Canvas&, DrawMode) const
+{
 DOTRACE("FixPt::grRender");
   glPushAttrib(GL_LINE_BIT);
   glLineWidth(width());
