@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Sep 25 18:53:20 2002
+// written: Mon Nov  4 19:19:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +108,16 @@ public:
             zz1 = Util::max(zz1, other.zz1);
           }
       }
+  }
+
+  void merge(const Gfx::Vec3<double>& p)
+  {
+    xx0 = Util::min(xx0, p.x());
+    xx1 = Util::max(xx1, p.x());
+    yy0 = Util::min(yy0, p.y());
+    yy1 = Util::max(yy1, p.y());
+    zz0 = Util::min(zz0, p.z());
+    zz1 = Util::max(zz1, p.z());
   }
 };
 
