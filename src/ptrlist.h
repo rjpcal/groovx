@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Thu Jul 22 13:02:24 1999
+// written: Tue Oct 19 14:25:48 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -69,6 +69,9 @@ public:
   // the same indices as before the first serialize operation.
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ///////////////
   // iterators //
