@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Jul 18 18:07:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,68 +27,70 @@ template<class V>
 class Rect {
 public:
   // Creators
-  Rect() : l(), t(), r(), b() {}	// everything inits to zero
+  Rect() : l(), t(), r(), b() {} // everything inits to zero
 
   Rect(V L, V T, V R, V B) : l(L), t(T), r(R), b(B) {}
 
   Rect(const Point<V>& p1, const Point<V>& p2)
-	 { setCorners(p1, p2); }
+    { setCorners(p1, p2); }
 
   Rect(const Rect<V>& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
 
   Rect<V>& operator=(const Rect<V>& i)
-	 { l=i.l; t=i.t; r=i.r; b=i.b; return *this; }
+    { l=i.l; t=i.t; r=i.r; b=i.b; return *this; }
 
   // Accessors
   void getRectLTRB(V& L, V& T, V& R, V& B) const
-	 { L = l; T = t; R = r; B = b; }
+    { L = l; T = t; R = r; B = b; }
   void getRectLRBT(V& L, V& R, V& B, V& T) const
-	 { L = l; R = r; B = b; T = t; }
+    { L = l; R = r; B = b; T = t; }
 
   Point<V> bottomLeft() const
-	 { return Point<V>(l, b); }
+    { return Point<V>(l, b); }
 
   Point<V> bottomRight() const
-	 { return Point<V>(r, b); }
+    { return Point<V>(r, b); }
 
   Point<V> topLeft() const
-	 { return Point<V>(l, t); }
+    { return Point<V>(l, t); }
 
   Point<V> topRight() const
-	 { return Point<V>(r, t); }
+    { return Point<V>(r, t); }
 
   V width() const { return (r-l); }
   V height() const { return (t-b); }
   V aspect() const { return width()/height(); }
+
+  Point<V> center() const { return Point<V>(centerX(), centerY()); }
 
   V centerX() const { return (r+l)/V(2); }
   V centerY() const { return (t+b)/V(2); }
 
   // Manipulators
   void setRectLTRB(V L, V T, V R, V B)
-	 { l = L; t = T; r = R; b = B; }
+    { l = L; t = T; r = R; b = B; }
   void setRectLRBT(V L, V R, V B, V T)
-	 { l = L; r = R; b = B; t = T; }
+    { l = L; r = R; b = B; t = T; }
 
   void setCorners(const Point<V>& p1, const Point<V>& p2)
-	 {
-		l = p1.x() < p2.x() ? p1.x() : p2.x();
-		r = p1.x() > p2.x() ? p1.x() : p2.x();
-		b = p1.y() < p2.y() ? p1.y() : p2.y();
-		t = p1.y() > p2.y() ? p1.y() : p2.y();
-	 }
+    {
+      l = p1.x() < p2.x() ? p1.x() : p2.x();
+      r = p1.x() > p2.x() ? p1.x() : p2.x();
+      b = p1.y() < p2.y() ? p1.y() : p2.y();
+      t = p1.y() > p2.y() ? p1.y() : p2.y();
+    }
 
   void setBottomLeft(const Point<V>& point)
-	 { l = point.x(); b = point.y(); }
+    { l = point.x(); b = point.y(); }
 
   void setBottomRight(const Point<V>& point)
-	 { r = point.x(); b = point.y(); }
+    { r = point.x(); b = point.y(); }
 
   void setTopLeft(const Point<V>& point)
-	 { l = point.x(); t = point.y(); }
+    { l = point.x(); t = point.y(); }
 
   void setTopRight(const Point<V>& point)
-	 { r = point.x(); t = point.y(); }
+    { r = point.x(); t = point.y(); }
 
   void widenByFactor(V factor) { l *= factor; r *= factor; }
   void heightenByFactor(V factor) { t *= factor; b *= factor; }
