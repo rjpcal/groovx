@@ -125,8 +125,8 @@ test "ExptTcl-Expt::begin" "general sanity test" {
     Expt::addBlock $block
 
     set ::DONE 0
-    Expt::doWhenComplete { set ::DONE 1 }
-    after 200 set ::STOP 1
+    Expt::doWhenComplete { set ::DONE 1; set ::STOP 1 }
+    after 500 set ::STOP 1
     Expt::begin
 
     vwait ::STOP
