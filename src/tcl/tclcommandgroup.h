@@ -30,19 +30,17 @@
 #ifndef TCLCOMMANDGROUP_H_DEFINED
 #define TCLCOMMANDGROUP_H_DEFINED
 
-#include "tcl/tclsafeinterp.h"
+typedef struct Tcl_Obj Tcl_Obj;
+struct Tcl_Interp;
+typedef void* ClientData;
 
-#include "util/strings.h"
-
-#include "util/trace.h"
-
-#include <list>
-#include <tcl.h>
+class fstring;
 
 namespace Tcl
 {
   class Command;
   class CommandGroup;
+  class Interp;
 }
 
 class Tcl::CommandGroup
@@ -56,9 +54,9 @@ public:
 
   void remove(Tcl::Command* p);
 
-  Tcl::Command* first() const { return itsList.front(); }
+  Tcl::Command* first() const;
 
-  const fstring& cmdName() const { return itsCmdName; }
+  const fstring& cmdName() const;
 
   fstring usage() const;
 
@@ -67,14 +65,8 @@ public:
   int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
 
 private:
-  typedef std::list<Tcl::Command*> List;
-
-  Tcl::Interp itsInterp;
-  const fstring itsCmdName;
-  Tcl_Command itsCmdToken;
-  List itsList;
-  const fstring itsProfName;
-  Util::Prof itsProf;
+  class Impl;
+  Impl* const rep;
 
   CommandGroup(Tcl::Interp& interp, const fstring& cmd_name);
   ~CommandGroup() throw();

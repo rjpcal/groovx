@@ -33,7 +33,9 @@
 #include "tcl/tclcmd.h"
 
 #include "tcl/tclcommandgroup.h"
+#include "tcl/tclsafeinterp.h"
 
+#include "util/pointers.h"
 #include "util/strings.h"
 
 #include "util/trace.h"

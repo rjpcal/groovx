@@ -15,23 +15,52 @@
 #include "tcl/tclcommandgroup.h"
 
 #include "tcl/tclcmd.h"
+#include "tcl/tclsafeinterp.h"
+
+#include "util/strings.h"
+
+#include <list>
+#include <tcl.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
 
+class Tcl::CommandGroup::Impl
+{
+public:
+  Impl(Tcl::Interp& intp, const fstring& cmd_name) :
+    interp(intp),
+    cmdName(cmd_name),
+    cmdToken(0),
+    cmdList(),
+    profName("tcl/", cmd_name),
+    prof(profName.c_str())
+  {}
+
+  ~Impl() throw() {}
+
+  typedef std::list<Tcl::Command*> List;
+
+  Tcl::Interp interp;
+  const fstring cmdName;
+  Tcl_Command cmdToken;
+  List cmdList;
+  const fstring profName;
+  Util::Prof prof;
+
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+};
+
 Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp, const fstring& cmd_name) :
-  itsInterp(interp),
-  itsCmdName(cmd_name),
-  itsCmdToken(0),
-  itsList(),
-  itsProfName("tcl/", cmd_name),
-  itsProf(itsProfName.c_str())
+  rep(new Impl(interp, cmd_name))
 {
 DOTRACE("Tcl::CommandGroup::CommandGroup");
 
   // Register the command procedure
-  itsCmdToken =
+  rep->cmdToken =
     Tcl_CreateObjCommand(interp.intp(),
                          cmd_name.c_str(),
                          &cInvokeCallback,
@@ -44,7 +73,7 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
 
 // A destruction sequence can get triggered in a number of ways:
 /*
-   (1) remove() might be called enough times that itsList becomes empty
+   (1) remove() might be called enough times that rep->cmdList becomes empty
    (2) application exit might trigger the cExitCallback
 
    (3) the cDeleteCallback might get triggered either by explicit deletion
@@ -54,22 +83,24 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
 
    (1) it is always "safe" to destroy the Tcl_Command, in the sense that it
        can't cause any crashes... in particular, it's OK to destroy the
-       Tcl_Command even if CommandGroup::itsList is not empty; that would just
-       mean that the remaining Tcl::Command objects in itsList won't have
-       any input sent their way
+       Tcl_Command even if rep->cmdList is not empty; that would just mean that
+       the remaining Tcl::Command objects in rep->cmdList won't have any input
+       sent their way
 
    (2) however, if possible we want to wait to destroy the Tcl_Command
-       object until itsList is empty
+       object until rep->cmdList is empty
  */
 Tcl::CommandGroup::~CommandGroup() throw()
 {
 DOTRACE("Tcl::CommandGroup::~CommandGroup");
 
-  Assert( itsList.empty() );
-  Assert( itsCmdToken == 0 );
+  Assert( rep->cmdList.empty() );
+  Assert( rep->cmdToken == 0 );
 
   Tcl_DeleteExitHandler(&cExitCallback,
                         static_cast<ClientData>(this));
+
+  delete rep;
 }
 
 Tcl::CommandGroup* Tcl::CommandGroup::lookup(Tcl::Interp& interp,
@@ -116,24 +147,24 @@ DOTRACE("Tcl::CommandGroup::make");
 void Tcl::CommandGroup::add(Tcl::Command* p)
 {
 DOTRACE("Tcl::CommandGroup::add");
-  itsList.push_back(p);
+  rep->cmdList.push_back(p);
 }
 
 void Tcl::CommandGroup::remove(Tcl::Command* p)
 {
 DOTRACE("Tcl::CommandGroup::remove");
-  itsList.remove(p);
-  // itsList is used as an implicit reference-count... each time a
+  rep->cmdList.remove(p);
+  // rep->cmdList is used as an implicit reference-count... each time a
   // Tcl::Command is created, it creates a reference by calling add()
   // on its CommandGroup object, and when the Tcl::Command is destroyed,
   // it calls remove() on its CommandGroup object. So, when the CommandGroup
-  // itsList becomes empty, it is no longer referenced by any
+  // rep->cmdList becomes empty, it is no longer referenced by any
   // Tcl::Command objects and can thus be deleted.
-  if (itsList.empty())
+  if (rep->cmdList.empty())
     {
-      if (itsCmdToken != 0)
+      if (rep->cmdToken != 0)
         {
-          Tcl_DeleteCommandFromToken(itsInterp.intp(), itsCmdToken);
+          Tcl_DeleteCommandFromToken(rep->interp.intp(), rep->cmdToken);
         }
       else
         {
@@ -142,14 +173,24 @@ DOTRACE("Tcl::CommandGroup::remove");
     }
 }
 
+Tcl::Command* Tcl::CommandGroup::first() const
+{
+  return rep->cmdList.front();
+}
+
+const fstring& Tcl::CommandGroup::cmdName() const
+{
+  return rep->cmdName;
+}
+
 fstring Tcl::CommandGroup::usage() const
 {
 DOTRACE("Tcl::CommandGroup::usage");
   fstring result;
 
-  List::const_iterator
-    itr = itsList.begin(),
-    end = itsList.end();
+  Impl::List::const_iterator
+    itr = rep->cmdList.begin(),
+    end = rep->cmdList.end();
 
   while (true)
     {
@@ -168,16 +209,16 @@ fstring Tcl::CommandGroup::usageWarning() const
 DOTRACE("Tcl::CommandGroup::usageWarning");
   fstring warning("wrong # args: should be ");
 
-  if (itsList.size() == 1)
+  if (rep->cmdList.size() == 1)
     {
-      warning.append("\"", itsList.front()->rawUsage(), "\"");
+      warning.append("\"", rep->cmdList.front()->rawUsage(), "\"");
     }
   else
     {
       warning.append("one of:");
-      for (List::const_iterator
-             itr = itsList.begin(),
-             end = itsList.end();
+      for (Impl::List::const_iterator
+             itr = rep->cmdList.begin(),
+             end = rep->cmdList.end();
            itr != end;
            ++itr)
         {
@@ -194,7 +235,7 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
 
   // This is to use the separate Util::Prof object that each CommandGroup
   // has. This way we can trace the timing of individual Tcl commands.
-  Util::Trace tracer(itsProf, DYNAMIC_TRACE_EXPR);
+  Util::Trace tracer(rep->prof, DYNAMIC_TRACE_EXPR);
 
   Assert(s_objc >= 0);
 
@@ -214,9 +255,9 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
   // catch all possible exceptions since this is a callback from C
   try
     {
-      for (List::const_iterator
-             itr = itsList.begin(),
-             end = itsList.end();
+      for (Impl::List::const_iterator
+             itr = rep->cmdList.begin(),
+             end = rep->cmdList.end();
            itr != end;
            ++itr)
         {
@@ -224,24 +265,24 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
             continue;
 
           // Found a matching overload, so try it:
-          (*itr)->getDispatcher()->dispatch(itsInterp, objc, objv, **itr);
+          (*itr)->getDispatcher()->dispatch(rep->interp, objc, objv, **itr);
 
           if (GET_DBG_LEVEL() > 1)
             {
-              const char* result = itsInterp.getResult<const char*>();
+              const char* result = rep->interp.getResult<const char*>();
               dbgEvalNL(1, result);
             }
           return TCL_OK;
         }
 
       // Here, we run out of potential overloads, so abort the command.
-      itsInterp.resetResult();
-      itsInterp.appendResult(usageWarning().c_str());
+      rep->interp.resetResult();
+      rep->interp.appendResult(usageWarning().c_str());
       return TCL_ERROR;
     }
   catch (...)
     {
-      itsInterp.handleLiveException(itsCmdName.c_str(), false);
+      rep->interp.handleLiveException(rep->cmdName.c_str(), false);
     }
 
   return TCL_ERROR;
@@ -255,7 +296,7 @@ int Tcl::CommandGroup::cInvokeCallback(ClientData clientData,
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
 
   Assert(c != 0);
-  Assert(interp == c->itsInterp.intp());
+  Assert(interp == c->rep->interp.intp());
 
   return c->rawInvoke(s_objc, objv);
 }
@@ -265,9 +306,9 @@ void Tcl::CommandGroup::cDeleteCallback(ClientData clientData) throw()
 DOTRACE("Tcl::CommandGroup::cDeleteCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
   Assert(c != 0);
-  c->itsCmdToken = 0; // since this callback is notifying us that the
+  c->rep->cmdToken = 0; // since this callback is notifying us that the
                       // command was deleted
-  if (c->itsList.empty())
+  if (c->rep->cmdList.empty())
     delete c;
 }
 
@@ -276,8 +317,8 @@ void Tcl::CommandGroup::cExitCallback(ClientData clientData) throw()
 DOTRACE("Tcl::CommandGroup::cExitCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
   Assert(c != 0);
-  if (c->itsCmdToken != 0)
-    Tcl_DeleteCommandFromToken(c->itsInterp.intp(), c->itsCmdToken);
+  if (c->rep->cmdToken != 0)
+    Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
 }
 
 static const char vcid_tclcommandgroup_cc[] = "$Header$";
