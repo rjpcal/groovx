@@ -573,7 +573,7 @@ namespace
 Util::Ref<IO::IoObject> IO::loadGVX(const char* filename)
 {
 DOTRACE("IO::loadGVX");
-  shared_ptr<std::istream> ifs(Util::igzopen(filename));
+  shared_ptr<std::istream> ifs(rutz::igzopen(filename));
   TreeBuilder x(*ifs);
   x.parse();
 
@@ -584,7 +584,7 @@ DOTRACE("IO::loadGVX");
 void IO::xmlDebug(const char* filename)
 {
 DOTRACE("IO::xmlDebug");
-  shared_ptr<std::istream> ifs(Util::igzopen(filename));
+  shared_ptr<std::istream> ifs(rutz::igzopen(filename));
   TreeBuilder x(*ifs);
   x.parse();
 

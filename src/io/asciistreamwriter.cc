@@ -201,7 +201,7 @@ DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
 }
 
 AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
-  itsOwnedStream(Util::ogzopen(filename)),
+  itsOwnedStream(rutz::ogzopen(filename)),
   itsBuf(*itsOwnedStream),
   itsToHandleV(),
   itsWrittenObjects()

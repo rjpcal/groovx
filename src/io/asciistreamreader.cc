@@ -219,7 +219,7 @@ DOTRACE("AsciiStreamReader::AsciiStreamReader");
 }
 
 AsciiStreamReader::AsciiStreamReader(const char* filename) :
-  itsOwnedStream(Util::igzopen(filename)),
+  itsOwnedStream(rutz::igzopen(filename)),
   itsBuf(*itsOwnedStream),
   itsObjects(),
   itsAttribs()

@@ -38,22 +38,22 @@
 template <class T> class shared_ptr;
 class fstring;
 
-namespace Util
+namespace rutz
 {
   /// A std::streambuf implementation that handles gzip-encoded data.
   class gzstreambuf : public std::streambuf
   {
   private:
-    bool opened;
-    int mode;
-    gzFile file;
+    bool m_opened;
+    int m_mode;
+    gzFile m_gzfile;
 
     gzstreambuf(const gzstreambuf&);
     gzstreambuf& operator=(const gzstreambuf&);
 
-    static const int bufSize = 4092;
-    static const int pbackSize = 4;
-    char buffer[bufSize];
+    static const int s_buf_size = 4092;
+    static const int s_pback_size = 4;
+    char m_buf[s_buf_size];
 
     int flushoutput();
 
@@ -61,7 +61,7 @@ namespace Util
     gzstreambuf(const char* name, int om, bool throw_exception=false);
     ~gzstreambuf() { close(); }
 
-    bool is_open() { return opened; }
+    bool is_open() { return m_opened; }
 
     void ensure_open();
 

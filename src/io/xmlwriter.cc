@@ -143,7 +143,7 @@ DOTRACE("XMLWriter::XMLWriter");
 }
 
 XMLWriter::XMLWriter(const char* filename) :
-  itsOwnedStream(Util::ogzopen(filename)),
+  itsOwnedStream(rutz::ogzopen(filename)),
   itsBuf(*itsOwnedStream),
   itsWrittenObjects(),
   itsNestLevel(0)

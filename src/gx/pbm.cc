@@ -146,7 +146,7 @@ namespace
 
 void Pbm::save(const char* filename, const Gfx::BmapData& data)
 {
-  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename, std::ios::binary));
+  shared_ptr<STD_IO::ostream> os(rutz::ogzopen(filename, std::ios::binary));
 
   save(*os, data);
 }
@@ -176,7 +176,7 @@ DOTRACE("Pbm::save");
 
 void Pbm::load(const char* filename, Gfx::BmapData& data)
 {
-  shared_ptr<STD_IO::istream> is(Util::igzopen(filename, std::ios::binary));
+  shared_ptr<STD_IO::istream> is(rutz::igzopen(filename, std::ios::binary));
 
   load(*is, data);
 }
