@@ -3,7 +3,7 @@
 // randutils.h
 // Rob Peters
 // created: Mon Mar  8 02:35:53 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Thu Mar 30 12:22:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #define CSTDLIB_DEFINED
 #endif
 
-namespace {
+namespace Util {
   inline int randIntRange(int min, int max) {
     return int( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
   }
