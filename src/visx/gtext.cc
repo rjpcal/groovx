@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Feb  8 15:32:36 2000
+// written: Mon Mar  6 17:53:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,12 @@
 
 #include "gtext.h"
 
-#include <GL/gl.h>
-
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include <GL/gl.h>
+#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -25,7 +26,7 @@
 #include "util/debug.h"
 
 namespace {
-  const string ioTag = "Gtext";
+  const string_literal ioTag = "Gtext";
 
 //---------------------------------------------------------------------
 //
@@ -687,13 +688,13 @@ DOTRACE("Gtext::serialize");
 
 void Gtext::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Gtext::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); } 
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); } 
 
   if ( IO::SEP == is.peek() ) { is.get(); }
 
   getline(is, itsText, '\n');
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 
   if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 }

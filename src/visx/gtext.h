@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Fri Feb 18 09:06:16 2000
+// written: Mon Mar  6 17:54:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@
 #endif
 
 #ifndef ERROR_H_DEFINED
-#include "error.h"
+#include "util/error.h"
 #endif
 
-#ifndef STRING_DEFINED
-#include <string>
+#ifndef STRINGS_H_DEFINED
+#include "util/strings.h"
 #endif
 
 /**
@@ -31,7 +31,7 @@
 
 class GtextError : public ErrorWithMsg {
 public:
-  GtextError(const string& str = "") : ErrorWithMsg(str) {}
+  GtextError(const char* str) : ErrorWithMsg(str) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ protected:
   virtual void grRender(Canvas& canvas) const;
 
 private:
-  string itsText;
+  fixed_string itsText;
   int itsStrokeWidth;
   mutable unsigned int itsListBase;
 };
