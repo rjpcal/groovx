@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Jul  9 13:51:19 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace
   {
     DOTRACE("Tcl::PkgBase-exitHandler");
     Tcl::PkgBase* pkg = static_cast<Tcl::PkgBase*>(clientData);
-    DebugEvalNL(typeid(*pkg).name());
+    dbgEvalNL(3, typeid(*pkg).name());
     delete pkg;
   }
 }
@@ -53,7 +53,7 @@ namespace Tcl
   inline void linkInt(Tcl_Interp* interp, const char* varName,
                       int* addr, int flag)
   {
-    DebugEvalNL(varName);
+    dbgEvalNL(3, varName);
     fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
@@ -64,7 +64,7 @@ namespace Tcl
   inline void linkDouble(Tcl_Interp* interp, const char* varName,
                          double* addr, int flag)
   {
-    DebugEvalNL(varName);
+    dbgEvalNL(3, varName);
     fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
@@ -75,7 +75,7 @@ namespace Tcl
   inline void linkBoolean(Tcl_Interp* interp, const char* varName,
                           int* addr, int flag)
   {
-    DebugEvalNL(varName);
+    dbgEvalNL(3, varName);
     fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
@@ -198,7 +198,7 @@ namespace
   {
     fstring cmd("namespace eval ", from, " { namespace export * }");
 
-    Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
+    Tcl::Code code(Tcl::toTcl(cmd), Tcl::Code::THROW_EXCEPTION);
     code.invoke(interp);
   }
 
@@ -207,7 +207,7 @@ namespace
     fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::* }");
 
-    Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
+    Tcl::Code code(Tcl::toTcl(cmd), Tcl::Code::THROW_EXCEPTION);
     code.invoke(interp);
   }
 }

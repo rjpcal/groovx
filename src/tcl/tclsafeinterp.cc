@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Fri Sep  6 12:21:08 2002
+// written: Sun Nov  3 09:10:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -254,14 +254,12 @@ DOTRACE("Tcl::Interp::getProcBody");
     {
       resetResult();
 
-      Tcl::ObjPtr cmd_obj("info body ");
-      cmd_obj.append(proc_name);
-
-      Tcl::Code cmd(cmd_obj, Tcl::Code::IGNORE_ERRORS);
+      Tcl::Code cmd(Tcl::toTcl(fstring("info body ", proc_name)),
+                    Tcl::Code::IGNORE_ERRORS);
 
       if (cmd.invoke(*this))
         {
-          fstring result = getResult(TypeCue<const char*>());
+          fstring result = getResult<const char*>();
           resetResult();
           return result;
         }
@@ -292,7 +290,7 @@ DOTRACE("Tcl::Interp::createProc");
     proc_cmd_str.append(args);
   proc_cmd_str.append("} {", body, "} }");
 
-  Tcl::Code proc_cmd(proc_cmd_str, Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code proc_cmd(Tcl::toTcl(proc_cmd_str), Tcl::Code::THROW_EXCEPTION);
   proc_cmd.invoke(*this);
 }
 
@@ -312,7 +310,7 @@ DOTRACE("Tcl::Interp::deleteProc");
   // by renaming to the empty string "", we delete the Tcl proc
   cmd_str.append("::", proc_name, " \"\"");
 
-  Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::Code::THROW_EXCEPTION);
   cmd.invoke(*this);
 }
 
