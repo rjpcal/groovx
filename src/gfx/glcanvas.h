@@ -180,6 +180,9 @@ public:
 
   virtual void end();
 
+  void drawRasterText(const fstring& text, const GxFont& font);
+  void drawVectorText(const fstring& text, const GxFont& font);
+
   virtual void drawText(const fstring& text, const GxFont& font);
 
   virtual void flushOutput();
