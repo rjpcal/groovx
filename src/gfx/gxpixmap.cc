@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.cc)
-// written: Wed Mar 19 17:56:01 2003
+// written: Sat May  3 12:00:35 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -409,6 +409,9 @@ bool GxPixmap::getAsBitmap() const
 DOTRACE("GxPixmap::getAsBitmap");
   return rep->itsAsBitmap;
 }
+
+long int GxPixmap::checkSum() const
+  { return rep->itsData.checkSum(); }
 
 //////////////////
 // manipulators //

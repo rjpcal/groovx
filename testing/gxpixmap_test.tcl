@@ -182,8 +182,8 @@ test "GxPixmap::loadImage" "read PNG format" {
     -> $::PIXMAP loadImage testing/pngfile.png
     see $::PIXMAP
 
-    return [pixelCheckSum]
-} {^30483306$}
+    return "[pixelCheckSum]  [-> $::PIXMAP checkSum]"
+} {^30483306  8639262$}
 
 ### JPEG format ###
 test "GxPixmap::loadImage" "read JPEG format" {
@@ -192,8 +192,8 @@ test "GxPixmap::loadImage" "read JPEG format" {
     -> $::PIXMAP loadImage testing/jpegfile.jpg
     see $::PIXMAP
 
-    return [pixelCheckSum]
-} {^37328256$}
+    return "[pixelCheckSum]  [-> $::PIXMAP checkSum]"
+} {^37328256  8638152$}
 
 ### GIF format ###
 test "GxPixmap::loadImage" "read GIF format" {
@@ -202,8 +202,8 @@ test "GxPixmap::loadImage" "read GIF format" {
     -> $::PIXMAP loadImage testing/giffile.gif
     see $::PIXMAP
 
-    return [pixelCheckSum]
-} {^25917786$}
+    return "[pixelCheckSum]  [-> $::PIXMAP checkSum]"
+} {^25917786  8639262$}
 
 ### cleanup
 unset PIXMAP

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Mar 19 17:55:59 2003
+// written: Sat May  3 12:01:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -322,6 +322,7 @@ DOTRACE("Gx_Init");
   pkg15->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
   pkg15->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
   pkg15->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
+  pkg15->defGetter("checkSum", &GxPixmap::checkSum);
 
   // For GLBitmap/XBitmap backward-compatibility
   Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeGL, "GLBitmap");
