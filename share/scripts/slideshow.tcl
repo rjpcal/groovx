@@ -8,47 +8,122 @@ package require Iwidgets
 
 Togl::destroy
 
-set files [lsort -dictionary [glob ${argv}/*]]
+itcl::class Playlist {
+    private variable itsDir
+    private variable itsList
+    private variable itsIdx
 
-set prev 0
+    constructor { dir } {
+	set itsDir $dir
+	if { ![file exists ${dir}/.playlist] } {
+	    set names [lsort -dictionary [glob ${dir}/*]]
+	    set itsList [list]
+	    foreach n $names {
+		lappend itsList $n
+	    }
+	    $this save
+	} else {
+	    set fd [open ${dir}/.playlist r]
+	    set itsList [lrange [split [read $fd] "\n"] 0 end-1]
+	    close $fd
+	}
+	set itsIdx 0
+    }
 
-set IDX 0
+    public method save {} {
+	puts "writing playlist"
+	set fd [open ${itsDir}/.playlist w]
+	puts $fd [join $itsList "\n"]
+	close $fd
+    }
+
+    public method spin { step } {
+	incr itsIdx $step
+
+	if { $itsIdx < 0 } { set itsIdx [expr [llength $itsList]-1] }
+
+	if { $itsIdx >= [llength $itsList] } { set itsIdx 0 }
+    }
+
+    public method filename {} {
+	return [lindex $itsList $itsIdx]
+    }
+
+    public method status {} {
+	return "([expr $itsIdx + 1] of [llength $itsList]) [$this filename]"
+    }
+
+    public method remove {} {
+	set itsList [lreplace $itsList $itsIdx $itsIdx]
+	$this save
+	$this spin 0
+    }
+
+    public method shuffle {} {
+	set itsList [dlist::shuffle $itsList]
+    }
+
+    public method sort {} {
+	set itsList [lsort -dictionary $itsList]
+    }
+}
+
+set PLAYLIST [Playlist PLAYLIST [lindex $argv end]]
+
+set PREV 0
+
+set DELAY 3000
+
+set LOOP_HANDLE 0
 
 proc min {a b} {
     if {$a < $b} { return $a }
     return $b
 }
 
+proc looper {} {
+    set ::LOOP_HANDLE [after $::DELAY ::looper]
+    spinPic 1
+    showPic
+}
+
+proc hide {} {
+    $::PLAYLIST remove
+    updateText
+    showPic
+}
+
 frame .f
 
 button .f.loop -text "loop" -command looper
-button .f.noloop -text "stop loop" -command {after cancel $::AFTER}
+button .f.noloop -text "stop loop" -command {after cancel $::LOOP_HANDLE}
+
+button .f.shuffler -text "shuffle" -command {$::PLAYLIST shuffle}
+button .f.sorter -text "sort" -command {$::PLAYLIST sort}
+
+button .f.hide -text "hide" -command hide
 
 proc blockInput {args} {
     return 0
 }
 
-set WAITER 0
-
 proc spinPic {step} {
-    incr ::IDX $step
-
-    if { $::IDX < 0 } { set ::IDX [expr [llength $::files]-1] }
-
-    if { $::IDX >= [llength $::files] } { set ::IDX 0 }
+    $::PLAYLIST spin $step
 
     updateText
 }
 
-iwidgets::spinner .f.spinner -width 5 -fixed 5 \
+proc updateText {} {
+    set ::FILENAME [$::PLAYLIST status]
+}
+
+iwidgets::spinner .f.spinner -width 0 -fixed 0 \
     -validate blockInput -labelvariable FILENAME \
     -decrement {spinPic -1} -increment {spinPic 1}
 
-.f.spinner insert 0 $::IDX
-
 bind Canvas <ButtonRelease> {showPic}
 
-pack .f.loop .f.noloop .f.spinner -side left -expand yes
+pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.spinner -side left -expand yes
 
 pack .f -side top
 
@@ -60,20 +135,8 @@ Togl::bind <ButtonPress-3> {spinPic 1; showPic}
 Togl::height 975
 Togl::width 1400
 
-set prev 0
-
-proc updateText {} {
-
-    set f [lindex $::files $::IDX]
-
-    .f.spinner delete 0 end
-    .f.spinner insert 0 $::IDX
-
-    set ::FILENAME "([expr $::IDX + 1] of [llength $::files]) $f"
-}
-
 proc showPic {} {
-    set f [lindex $::files $::IDX]
+    set f [$::PLAYLIST filename]
 
     puts $f
     set b [new GxPixmap]
@@ -83,23 +146,13 @@ proc showPic {} {
     set ratio [min \
 		   [expr ([Togl::width]-10) / double([lindex $s 0])]  \
 		   [expr ([Togl::height]-10) / double([lindex $s 1]) ]]
-    set ratio [min $ratio 1.0]
+
     puts $ratio
     -> $b usingZoom 1
     -> $b zoom "$ratio $ratio"
     see $b
-    delete $::prev
-    set ::prev $b
-}
-
-set DELAY 3000
-
-set AFTER 0
-
-proc looper {} {
-    set ::AFTER [after $::DELAY ::looper]
-    spinPic 1
-    showPic
+    delete $::PREV
+    set ::PREV $b
 }
 
 updateText
