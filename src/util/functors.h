@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Fri Sep  7 17:40:04 2001
+// written: Sat Sep  8 13:48:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -336,7 +336,8 @@ namespace Util
 
     //
     // All versions of operator() are provided, but only the one that
-    // involves the correct call to itsFunc() will compile successfully
+    // involves the correct call to itsHeldFunc() will compile
+    // successfully
     //
 
     Retn_t operator()()
@@ -385,6 +386,102 @@ namespace Util
   BoundFirst<BaseFunctor, Bound_t> bindFirst(BaseFunctor base, Bound_t bound)
   {
     return BoundFirst<BaseFunctor, Bound_t>(base, bound);
+  }
+
+///////////////////////////////////////////////////////////////////////
+//
+// A BoundLast functor wraps another functor type with a fixed value
+// for its last argument. BoundLast's can be constructed with the
+// helper template function bindLast().
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class BaseFunctor, class Bound>
+  class BoundLast;
+
+  template <class BaseFunctor, class Bound>
+  struct FuncTraits<BoundLast<BaseFunctor, Bound> >
+  {
+    enum { numArgs = (FuncTraits<BaseFunctor>::numArgs-1) };
+
+    typedef typename FuncTraits<BaseFunctor>::Retn_t   Retn_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg1_t   Arg1_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg2_t   Arg2_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg3_t   Arg3_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg4_t   Arg4_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg5_t   Arg5_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg6_t   Arg6_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg7_t   Arg7_t;
+    typedef typename FuncTraits<BaseFunctor>::Arg8_t   Arg8_t;
+  };
+
+  template <class BaseFunctor, class Bound_t>
+  class BoundLast : private FuncHolder<BaseFunctor>,
+                    public FuncTraits<BoundLast<BaseFunctor, Bound_t> >
+  {
+  public:
+    BoundLast(BaseFunctor base, Bound_t bound) :
+      FuncHolder<BaseFunctor>(base),
+      itsBound(bound)
+    {}
+
+    BoundLast(const BoundLast& other) :
+      FuncHolder<BaseFunctor>(other),
+      itsBound(other.itsBound)
+    {}
+
+    //
+    // All versions of operator() are provided, but only the one that
+    // involves the correct call to itsHeldFunc() will compile
+    // successfully
+    //
+
+    Retn_t operator()()
+    {
+      return itsHeldFunc(itsBound);
+    }
+    Retn_t operator()(Arg1_t p1)
+    {
+      return itsHeldFunc(p1, itsBound);
+    }
+    Retn_t operator()(Arg1_t p1, Arg2_t p2)
+    {
+      return itsHeldFunc(p1, p2, itsBound);
+    }
+    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3)
+    {
+      return itsHeldFunc(p1, p2, p3, itsBound);
+    }
+    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4)
+    {
+      return itsHeldFunc(p1, p2, p3, p4, itsBound);
+    }
+    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4,
+                      Arg5_t p5)
+    {
+      return itsHeldFunc(p1, p2, p3, p4, p5, itsBound);
+    }
+    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4, Arg5_t p5,
+                      Arg6_t p6)
+    {
+      return itsHeldFunc(p1, p2, p3, p4, p5, p6, itsBound);
+    }
+    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4, Arg5_t p5,
+                      Arg6_t p6, Arg7_t p7)
+    {
+      return itsHeldFunc(p1, p2, p3, p4, p5, p6, p7, itsBound);
+    }
+
+  private:
+    BoundLast& operator=(const BoundLast&);
+
+    Bound_t itsBound;
+  };
+
+  template <class BaseFunctor, class Bound_t>
+  BoundLast<BaseFunctor, Bound_t> bindLast(BaseFunctor base, Bound_t bound)
+  {
+    return BoundLast<BaseFunctor, Bound_t>(base, bound);
   }
 
 } // end namespace Util
