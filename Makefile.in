@@ -218,70 +218,22 @@ $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
 		--libdir $(VISX_LIB_DIR) \
 		--pkgdirs matlabengine,mtx,whitebox
 
-$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT): \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+PKG_LIB_DEPS :=					\
+$(exec_prefix)/lib/libDeepTcl$(LIB_EXT)		\
+$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
-$(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT): \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+# Common dependencies for all package libraries:
+$(VISX_LIB_DIR)/algotest.$(SHLIB_EXT):        $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT):     $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT):             $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
 
-$(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT): \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
-
-$(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT): \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
-
+# Specialized dependencies for certain package libraries:
 $(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT): \
-	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT) \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
-
-$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT): \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
-
-$(VISX_LIB_DIR)/ilabx.$(SHLIB_EXT): \
-	$(OBJ)/ilab/ChannelBase.$(OBJEXT) \
-	$(OBJ)/ilab/Channels.$(OBJEXT) \
-	$(OBJ)/ilab/ComplexChannel.$(OBJEXT) \
-	$(OBJ)/ilab/fancynorm.$(OBJEXT) \
-	$(OBJ)/ilab/FrameSeries.$(OBJEXT) \
-	$(OBJ)/ilab/Image.$(OBJEXT) \
-	$(OBJ)/ilab/Image_ColorOps.$(OBJEXT) \
-	$(OBJ)/ilab/Image_FilterOps.$(OBJEXT) \
-	$(OBJ)/ilab/Image_MathOps.$(OBJEXT) \
-	$(OBJ)/ilab/Image_MonoOnly.$(OBJEXT) \
-	$(OBJ)/ilab/Image_ShapeOps.$(OBJEXT) \
-	$(OBJ)/ilab/Image_Transforms.$(OBJEXT) \
-	$(OBJ)/ilab/ImageSet.$(OBJEXT) \
-	$(OBJ)/ilab/ImageSet_Ops.$(OBJEXT) \
-	$(OBJ)/ilab/Jet.$(OBJEXT) \
-	$(OBJ)/ilab/LevelSpec.$(OBJEXT) \
-	$(OBJ)/ilab/log.$(OBJEXT) \
-	$(OBJ)/ilab/ModelComponent.$(OBJEXT) \
-	$(OBJ)/ilab/ModelManager.$(OBJEXT) \
-	$(OBJ)/ilab/ModelOptionDefs.$(OBJEXT) \
-	$(OBJ)/ilab/ModelParam.$(OBJEXT) \
-	$(OBJ)/ilab/ParamMap.$(OBJEXT) \
-	$(OBJ)/ilab/PbmParser.$(OBJEXT) \
-	$(OBJ)/ilab/PngParser.$(OBJEXT) \
-	$(OBJ)/ilab/PngWriter.$(OBJEXT) \
-	$(OBJ)/ilab/Pyramid_Ops.$(OBJEXT) \
-	$(OBJ)/ilab/PyrBuilder.$(OBJEXT) \
-	$(OBJ)/ilab/Raster.$(OBJEXT) \
-	$(OBJ)/ilab/saliency.$(OBJEXT) \
-	$(OBJ)/ilab/SingleChannel.$(OBJEXT) \
-	$(OBJ)/ilab/StringConversions.$(OBJEXT) \
-	$(OBJ)/ilab/VisualCortex.$(OBJEXT) \
-	$(exec_prefix)/lib/libDeepGfx$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepSystem$(LIB_EXT) \
-	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)
 
 ifneq ($(matlab_lib),)
 $(VISX_LIB_DIR)/mtx.so: \
