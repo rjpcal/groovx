@@ -185,7 +185,7 @@ void media::esd_sound_rep::play()
 
   // play
   const int BUF_SIZE = 4096;
-  char buf[BUF_SIZE ];
+  char buf[BUF_SIZE];
   const int buf_frames = BUF_SIZE / bytes_per_frame;
 
   int frames_read;
