@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Fri Jun  1 17:09:38 2001
+// written: Wed Jun  6 16:36:22 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1393,6 +1393,20 @@ DOTRACE("Togl::Impl::Impl");
 		throw TCL_ERROR;
 	 }
   }
+  else {
+	 // Generate a default argc/argv array
+	 const char* init_args = "-stereo false";
+
+	 Tcl_SplitList(interp, init_args, &config_argc, &config_argv);
+
+	 if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
+		Tk_DestroyWindow(itsTkWin);
+		throw TCL_ERROR;
+	 }
+
+	 Tcl_Free((char*) config_argv);
+  }
+
 
   // If OpenGL window wasn't already created by configure() we
   // create it now.  We can tell by checking if the GLX context has
