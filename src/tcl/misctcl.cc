@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu May 10 12:04:42 2001
+// written: Fri Jun  1 17:36:26 2001
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -17,6 +17,7 @@
 #ifndef MISCTCL_C_DEFINED
 #define MISCTCL_C_DEFINED
 
+#include "util/rand.h"
 #include "util/randutils.h"
 
 #include <tcl.h>
@@ -33,6 +34,8 @@ namespace MiscTcl {
   Tcl_ObjCmdProc sleepCmd;
   Tcl_ObjCmdProc usleepCmd;
   Tcl_ObjCmdProc usleeprCmd;
+
+  Util::Randint generator;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +53,7 @@ int MiscTcl::randCmd(ClientData, Tcl_Interp* interp,
   if (Tcl_GetDoubleFromObj(interp, objv[1], &min) != TCL_OK) return TCL_ERROR;
   if (Tcl_GetDoubleFromObj(interp, objv[2], &max) != TCL_OK) return TCL_ERROR;
 
-  double result = Util::randDoubleRange(min, max);
+  double result = min + generator.fdraw() * (max-min);
   Tcl_SetObjResult(interp, Tcl_NewDoubleObj(result));
   return TCL_OK;
 }
@@ -65,7 +68,7 @@ int MiscTcl::srandCmd(ClientData, Tcl_Interp* interp,
   int seed;
   if (Tcl_GetIntFromObj(interp, objv[1], &seed) != TCL_OK) return TCL_ERROR;
 
-  srand(seed);
+  generator.seed(seed);
   return TCL_OK;
 }
 
