@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jan 30 20:38:29 2002
+// written: Wed Jan 30 20:46:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,9 +19,11 @@
 #include "io/iolegacy.h"
 #include "io/ioutil.h"
 
+#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/objdb.h"
 #include "util/objmgr.h"
@@ -108,6 +110,24 @@ namespace
     return SoftRef<Util::Object>(Util::ObjMgr::newObj(type));
   }
 
+  SoftRef<Util::Object> objNewArgs(const char* type, Tcl::List init_args,
+                                   Tcl::Interp interp)
+  {
+    SoftRef<Util::Object> obj(Util::ObjMgr::newObj(type));
+
+    for(unsigned int i = 0; i+1 < init_args.length(); i+=2)
+      {
+        Tcl::List cmd_str;
+        cmd_str.append(init_args[i]);
+        cmd_str.append(obj.id());
+        cmd_str.append(init_args[i+1]);
+        Tcl::Code cmd(cmd_str.asObj(), Tcl::Code::THROW_EXCEPTION);
+        cmd.invoke(interp);
+      }
+
+    return obj;
+  }
+
   Tcl::List objNewArr(const char* type, unsigned int array_size)
   {
     Tcl::List result;
@@ -190,6 +210,8 @@ DOTRACE("Io_Init");
   pkg2->defVec( "type", "item_id(s)", &objType );
 
   pkg2->def( "new", "typename", &objNew );
+  pkg2->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
+             Util::bindLast(&objNewArgs, Tcl::Interp(interp)) );
   pkg2->def( "newarr", "typename array_size=1", &objNewArr );
   pkg2->def( "delete", "item_id(s)", &objDelete );
 
