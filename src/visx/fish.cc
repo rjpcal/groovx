@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Sep  1 11:10:28 2001
+// written: Mon Sep  3 10:44:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,8 +28,6 @@
 #include "util/error.h"
 #include "util/strings.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <fstream.h>
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
@@ -49,73 +47,12 @@ namespace
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
 
-  typedef Gfx::Vec3<GLfloat> Pt3;
+  typedef Gfx::Vec3<float> Pt3;
 
   const int DF_0 = 0;
   const int TF_1 = 1;
   const int LF_2 = 2;
   const int MA_3 = 3;
-
-  struct BezData
-  {
-    Gfx::Vec3<double> pt0;
-    Gfx::Vec3<double> pt1;
-    Gfx::Vec3<double> pt2;
-    Gfx::Vec3<double> pt3;
-  };
-
-  void drawBezier(Gfx::Canvas& canvas, const BezData& bz, unsigned int subdiv)
-  {
-    canvas.drawBezier4(bz.pt0, bz.pt1, bz.pt2, bz.pt3, subdiv);
-  }
-
-  void drawNurbs(Gfx::Canvas& canvas,
-                 const dynamic_block<GLfloat>& knots,
-                 const dynamic_block<Pt3>& pts)
-  {
-    const GLfloat* t = &knots[2];
-    // t points to { 0, 0, 0.17, 0.33, 0.5, 0.67, 0.83, 1, 1 }
-
-    unsigned int nctrl = pts.size();
-
-    Assert(nctrl > 4);
-
-    unsigned int nbz = nctrl - 3;
-
-    dynamic_block<BezData> bz(nbz);
-
-    for (unsigned int k = 0; k < nbz; ++k)
-      {
-        float d1 = t[k+3] - t[k+2]; // == 0 when k == nbz-1 (last iteration)
-        float d2 = t[k+2] - t[k+1];
-        float d3 = t[k+1] - t[k];  // == 0 when k == 0 (first iteration)
-        float d = t[k+3] - t[k];
-
-        bz[k].pt1 = (pts[k+2] *  d3     + pts[k+1] * (d1+d2)) / d;
-        bz[k].pt2 = (pts[k+2] * (d2+d3) + pts[k+1] *  d1    ) / d;
-
-        if (k == 0)
-          {
-            bz[k].pt0 = pts[k];
-          }
-        else
-          {
-            bz[k-1].pt3 = (bz[k-1].pt2 * d2 + bz[k].pt1 * d3) / (d2+d3);
-            bz[k].pt0 = bz[k-1].pt3;
-          }
-
-        if (k == (nbz-1))
-          {
-            bz[k].pt3 = pts[k+3];
-          }
-
-      }
-
-    for (unsigned int i = 0; i < bz.size(); ++i)
-      {
-        drawBezier(canvas, bz[i], 20);
-      }
-  }
 }
 
 Util::Tracer Fish::tracer;
@@ -125,22 +62,20 @@ Util::Tracer Fish::tracer;
 // Fish::Part struct --
 //
 // Describes one of the part of the fish (upper fin, tail, bottom fin
-// or mouth). The descripition is in terms of a spline curve, with
-// given order, number of knots and x,y coefficients.
+// or mouth) as a NURBS curves, with a knot sequence and a set of
+// control points.
 //
 ///////////////////////////////////////////////////////////////////////
 
 struct Fish::Part
 {
   Part() :
-    itsOrder(0), itsKnots(), itsCtrlPnts(),
+    itsKnots(), itsCtrlPnts(),
     itsBkpt(1), itsPt0(), itsPt1(),
     itsCoord(0.0)
   {}
 
-  GLint itsOrder;
-
-  dynamic_block<GLfloat> itsKnots;
+  dynamic_block<float> itsKnots;
 
   dynamic_block<Pt3> itsCtrlPnts;
 
@@ -156,11 +91,11 @@ struct Fish::Part
   double itsCoord;
 
   template <std::size_t N1, std::size_t N2>
-  void reset(int order, GLfloat const (&knots)[N1], Pt3 const (&points)[N2])
+  void reset(float const (&knots)[N1], Pt3 const (&points)[N2])
   {
-    itsOrder = order;
     itsKnots.assign(array_begin(knots), array_end(knots));
     itsCtrlPnts.assign(array_begin(points), array_end(points));
+    itsCoord = 0.0;
   }
 };
 
@@ -256,14 +191,14 @@ void Fish::restoreToDefault()
 {
 DOTRACE("Fish::restoreToDefault");
 
-  static const GLfloat knots[] =
+  static const float knots[] =
   {
     0.0, 0.0, 0.0, 0.0,
     0.1667, 0.3333, 0.5000, 0.6667, 0.8333,
     1.0, 1.0, 1.0, 1.0
   };
 
-  static const Pt3 coefs0[] =
+  static const Pt3 DF_coefs[] =
   {
     Pt3(-0.2856,  0.2915, 0.0),
     Pt3(-0.2140,  0.2866, 0.0),
@@ -276,7 +211,7 @@ DOTRACE("Fish::restoreToDefault");
     Pt3( 0.1597,  0.1538, 0.0),
   };
 
-  static const Pt3 coefs1[] =
+  static const Pt3 TF_coefs[] =
   {
     Pt3( 0.1597,  0.1538, 0.0),
     Pt3( 0.2992,  0.1016, 0.0),
@@ -289,7 +224,7 @@ DOTRACE("Fish::restoreToDefault");
     Pt3( 0.1573, -0.0401, 0.0),
   };
 
-  static const Pt3 coefs2[] =
+  static const Pt3 LF_coefs[] =
   {
     Pt3( 0.1573, -0.0401, 0.0),
     Pt3( 0.2494, -0.0294, 0.0),
@@ -302,7 +237,7 @@ DOTRACE("Fish::restoreToDefault");
     Pt3(-0.2844, -0.1840, 0.0),
   };
 
-  static const Pt3 coefs3[] =
+  static const Pt3 MA_coefs[] =
   {
     Pt3(-0.2844, -0.1840, 0.0),
     Pt3(-0.3492, -0.1834, 0.0),
@@ -315,31 +250,26 @@ DOTRACE("Fish::restoreToDefault");
     Pt3(-0.2856,  0.2915, 0.0),
   };
 
-  itsParts[DF_0].reset(4, knots, coefs0);
-  itsParts[TF_1].reset(4, knots, coefs1);
-  itsParts[LF_2].reset(4, knots, coefs2);
-  itsParts[MA_3].reset(4, knots, coefs3);
+  itsParts[DF_0].reset(knots, DF_coefs);
+  itsParts[TF_1].reset(knots, TF_coefs);
+  itsParts[LF_2].reset(knots, LF_coefs);
+  itsParts[MA_3].reset(knots, MA_coefs);
 
-  itsParts[0].itsBkpt = 6;
-  itsParts[0].itsPt0.set(0.2380, 0.3416, 0.0);
-  itsParts[0].itsPt1.set(-0.0236, 0.2711, 0.0);
+  itsParts[DF_0].itsBkpt = 6;
+  itsParts[DF_0].itsPt0.set(0.2380, 0.3416, 0.0);
+  itsParts[DF_0].itsPt1.set(-0.0236, 0.2711, 0.0);
 
-  itsParts[1].itsBkpt = 5;
-  itsParts[1].itsPt0.set(0.6514, -0.0305, 0.0);
-  itsParts[1].itsPt1.set(0.2433, 0.0523, 0.0);
+  itsParts[TF_1].itsBkpt = 5;
+  itsParts[TF_1].itsPt0.set(0.6514, -0.0305, 0.0);
+  itsParts[TF_1].itsPt1.set(0.2433, 0.0523, 0.0);
 
-  itsParts[2].itsBkpt = 6;
-  itsParts[2].itsPt0.set(-0.2121, 0.0083, 0.0);
-  itsParts[2].itsPt1.set(-0.1192, -0.2925, 0.0);
+  itsParts[LF_2].itsBkpt = 6;
+  itsParts[LF_2].itsPt0.set(-0.2121, 0.0083, 0.0);
+  itsParts[LF_2].itsPt1.set(-0.1192, -0.2925, 0.0);
 
-  itsParts[3].itsBkpt = 5;
-  itsParts[3].itsPt0.set(-0.7015, 0.1584, 0.0);
-  itsParts[3].itsPt1.set(-0.7022, -0.1054, 0.0);
-
-  itsParts[DF_0].itsCoord =
-    itsParts[TF_1].itsCoord =
-    itsParts[LF_2].itsCoord =
-    itsParts[MA_3].itsCoord = 0.0;
+  itsParts[MA_3].itsBkpt = 5;
+  itsParts[MA_3].itsPt0.set(-0.7015, 0.1584, 0.0);
+  itsParts[MA_3].itsPt1.set(-0.7022, -0.1054, 0.0);
 }
 
 IO::VersionId Fish::serialVersionId() const
@@ -396,8 +326,10 @@ DOTRACE("Fish::readSplineFile");
 
   for(i = 0; i < 4; ++i)
     {
+      int dummy_order;
+
       // spline number and order
-      ifs >> dummy >> splnb >> dummy >> itsParts[i].itsOrder;
+      ifs >> dummy >> splnb >> dummy >> dummy_order;
 
       // number of knots
       int nknots;
@@ -510,46 +442,9 @@ DOTRACE("Fish::grGetBoundingBox");
   return bbox;
 }
 
-namespace
-{
-  class NurbsObj
-  {
-  private:
-    NurbsObj(const NurbsObj&);
-    NurbsObj& operator=(const NurbsObj&);
-
-  public:
-    GLUnurbsObj* ptr;
-
-    NurbsObj() : ptr(0)
-    {
-      DOTRACE("Fish::grRender::NurbsObj");
-      ptr = gluNewNurbsRenderer();
-
-      if (ptr == 0)
-        {
-          throw Util::Error("couldn't allocate GLUnurbsObj");
-        }
-
-      gluNurbsProperty(ptr, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
-      gluNurbsProperty(ptr, GLU_U_STEP, 200);
-      gluNurbsProperty(ptr, GLU_V_STEP, 200);
-    }
-
-    ~NurbsObj()
-    {
-      DOTRACE("Fish::grRender::~NurbsObj");
-      gluDeleteNurbsRenderer(ptr);
-    }
-  };
-}
-
 void Fish::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Fish::grRender");
-
-  // Create and configure the NURBS object
-  NurbsObj theNurb;
 
   static Gfx::RgbaColor colors[4] =
   {
@@ -581,21 +476,7 @@ DOTRACE("Fish::grRender");
       if (bkpt < ctrlpnts.size())
         ctrlpnts[bkpt] = pt;
 
-      {
-        DOTRACE("Fish::grRender-gluNurbsCurve");
-        // Render the curve
-        gluBeginCurve(theNurb.ptr);
-        {
-          gluNurbsCurve(theNurb.ptr,
-                        itsParts[i].itsKnots.size(),
-                        &(itsParts[i].itsKnots[0]),
-                        3, ctrlpnts[0].data(),
-                        itsParts[i].itsOrder, GL_MAP1_VERTEX_3);
-        }
-        gluEndCurve(theNurb.ptr);
-      }
-
-      drawNurbs(canvas, itsParts[i].itsKnots, ctrlpnts);
+      canvas.drawNurbsCurve(itsParts[i].itsKnots, ctrlpnts);
 
       if (showControlPoints)
         {
