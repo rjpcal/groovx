@@ -3,7 +3,7 @@
 // dlink_list.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed May 31 14:24:31 2000
-// written: Fri Nov  3 09:10:26 2000
+// written: Fri Nov  3 11:02:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
 	 friend class dlink_list::const_iterator;
 
 	 void construct(const T& new_val) { new (&val) T(new_val); }
-	 void destroy() { val.~T(); }
+	 void destroy() { (&val)->~T(); }
 
 	 static node* allocate()
 		{ return static_cast<node*>(::operator new(sizeof(node))); }
@@ -156,6 +156,9 @@ private:
 
   void init()
 	 {
+#ifdef LOCAL_TRACE
+	 DOTRACE("dlink_list::init");
+#endif
 		the_node = node::allocate();
 		the_node->prev = the_node->next = the_node;
 	 }
@@ -202,6 +205,9 @@ public:
   /// Insert a new link containing \a val at a position just before \a pos.
   void insert(iterator pos, const T& val)
 	 {
+#ifdef LOCAL_TRACE
+	 DOTRACE("dlink_list::insert");
+#endif
 		// Before the function:
 
 		//               itr
@@ -230,6 +236,9 @@ public:
   /// Erase the link at \a pos.
   void erase(iterator pos)
 	 {
+#ifdef LOCAL_TRACE
+	 DOTRACE("dlink_list::erase");
+#endif
 		if (pos == end()) return;
 
 		// Before the function:
