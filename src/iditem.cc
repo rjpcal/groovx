@@ -3,7 +3,7 @@
 // iditem.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:51:16 2000
-// written: Thu Oct 26 17:51:33 2000
+// written: Fri Oct 27 11:47:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,11 @@
 // IdItem member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+template <class T>
+void IdItem<T>::check() {
+  Assert(itsId == itsHandle->id());
+}
 
 template <class T>
 IdItem<T>::IdItem(int id) :
@@ -53,6 +58,10 @@ IdItem<T>& IdItem<T>::operator=(T* new_master)
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
+void MaybeIdItem<T>::check() {
+}
+
+template <class T>
 MaybeIdItem<T>::MaybeIdItem(T* master) :
   itsHandle(master),
   itsId(master != 0 ? ptrList().insert(master).id() : -1)
@@ -70,6 +79,7 @@ void MaybeIdItem<T>::refresh() const {
 	 {
 		typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
 		itsHandle = p.handle();
+		Assert(itsId == itsHandle->id());
 	 }
 }
 
@@ -77,11 +87,11 @@ template <class T>
 void MaybeIdItem<T>::attemptRefresh() const {
   if ( !itsHandle.isValid() )
 	 {
-		try {
+		if (ptrList().isValidId(itsId)) {
 		  typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
 		  itsHandle = p.handle();
+		  Assert(itsId == itsHandle->id());
 		}
-		catch (InvalidIdError&) { /* eat the exception */ }
 	 }
 }
 
