@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Sat May 19 10:44:19 2001
+// written: Sat May 19 10:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,22 +37,22 @@
 namespace IO {
 
 template <class C>
-class IoProxy : public IO::IoObject {
+class IoProxy : public IoObject {
 protected:
-  IoProxy(C* ref) : IO::IoObject(false), itsReferand(ref) {}
+  IoProxy(C* ref) : IoObject(false), itsReferand(ref) {}
   virtual ~IoProxy() {}
 
 public:
-  static IdItem<IO::IoObject> make(C* ref)
+  static IdItem<IoObject> make(C* ref)
     { return IdItem<IoProxy>( new IoProxy(ref) ); }
 
-  virtual void readFrom(IO::Reader* reader)
+  virtual void readFrom(Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
 
-  virtual void writeTo(IO::Writer* writer) const
+  virtual void writeTo(Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
 
-  virtual IO::VersionId serialVersionId() const
+  virtual VersionId serialVersionId() const
 	 { return itsReferand->C::serialVersionId(); }
 
   virtual fixed_string ioTypename() const
@@ -62,31 +62,34 @@ private:
   IoProxy(const IoProxy&);
   IoProxy& operator=(const IoProxy&);
 
-  C* itsReferand;
+  IdItem<C> itsReferand;
 };
 
 template <class C>
-inline IdItem<IO::IoObject> makeProxy(C* ref)
+inline IdItem<IoObject> makeProxy(C* ref)
   { return IoProxy<C>::make(ref); }
 
 
 template <class C>
-class ConstIoProxy : public IO::IoObject {
+class ConstIoProxy : public IoObject {
 protected:
-  ConstIoProxy(const C* ref) : IO::IoObject(false), itsReferand(ref) {}
+  ConstIoProxy(const C* ref) :
+	 IoObject(false),
+	 itsReferand(const_cast<C*>(ref))
+  {}
   virtual ~ConstIoProxy() {}
 
 public:
-  static IdItem<IO::IoObject> make(const C* ref)
+  static IdItem<IoObject> make(const C* ref)
     { return IdItem<ConstIoProxy>( new ConstIoProxy(ref) ); }
 
-  virtual void readFrom(IO::Reader* reader)
-	 { const_cast<C*>(itsReferand)->C::readFrom(reader); }
+  virtual void readFrom(Reader* reader)
+	 { itsReferand->C::readFrom(reader); }
 
-  virtual void writeTo(IO::Writer* writer) const
+  virtual void writeTo(Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
 
-  virtual IO::VersionId serialVersionId() const
+  virtual VersionId serialVersionId() const
 	 { return itsReferand->C::serialVersionId(); }
 
   virtual fixed_string ioTypename() const
@@ -96,11 +99,11 @@ private:
   ConstIoProxy(const ConstIoProxy&);
   ConstIoProxy& operator=(const ConstIoProxy&);
 
-  const C* itsReferand;
+  IdItem<C> itsReferand;
 };
 
 template <class C>
-inline IdItem<IO::IoObject> makeConstProxy(const C* ref)
+inline IdItem<IoObject> makeConstProxy(const C* ref)
   { return ConstIoProxy<C>::make(ref); }
 
 
