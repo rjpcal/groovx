@@ -306,15 +306,15 @@ Snake::~Snake()
 DOTRACE("Snake::~Snake");
 }
 
-Element Snake::getElement(int n) const
+GaborArrayElement Snake::getElement(int n) const
 {
 DOTRACE("Snake::getElement");
 
   Assert(n < itsLength);
 
-  Element result;
+  GaborArrayElement result;
 
-  result.type = Element::CONTOUR;
+  result.type = GaborArrayElement::CONTOUR;
   result.pos.x() = 0.5 * (elem(n).x() + elem(n+1).x());
   result.pos.y() = 0.5 * (elem(n).y() + elem(n+1).y());
   result.theta = rad_0_2pi(-elem(n).angleTo(elem(n+1)));

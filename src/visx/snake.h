@@ -39,17 +39,17 @@ namespace Util
   class Urand;
 }
 
-struct Element
+struct GaborArrayElement
 {
   enum Type { OUTSIDE, INSIDE, CONTOUR };
 
-  Element() {}
+  GaborArrayElement() {}
 
-  Element(double x, double y, double th, Type t) :
+  GaborArrayElement(double x, double y, double th, Type t) :
     pos(x,y), theta(th), type(t)
   {}
 
-  Element(const Gfx::Vec2<int>& v, double th, Type t) :
+  GaborArrayElement(const Gfx::Vec2<int>& v, double th, Type t) :
     pos(v), theta(th), type(t)
   {}
 
@@ -64,7 +64,7 @@ public:
   Snake(int l, double spacing, Util::Urand& urand);
   ~Snake();
 
-  Element getElement(int n) const;
+  GaborArrayElement getElement(int n) const;
 
 private:
   const int itsLength;
