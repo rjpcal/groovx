@@ -118,60 +118,18 @@ vec2i GLCanvas::screenFromWorld2(const vec2d& world_pos) const
 {
 DOTRACE("GLCanvas::screenFromWorld2");
 
-  GLdouble current_mv_matrix[16];
-  GLdouble current_proj_matrix[16];
-  GLint current_viewport[4];
-
-  glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
-  glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
-  glGetIntegerv(GL_VIEWPORT, current_viewport);
-
-  double temp_screen_x, temp_screen_y, dummy_z;
-
-  GLint status =
-    gluProject(world_pos.x(), world_pos.y(), 0.0,
-               current_mv_matrix, current_proj_matrix, current_viewport,
-               &temp_screen_x, &temp_screen_y, &dummy_z);
-
-  dbg_eval_nl(3, status);
-
-  if (status == GL_FALSE)
-    throw rutz::error("GLCanvas::screenFromWorld2(): gluProject error",
-                      SRC_POS);
-
-  return vec2i(int(temp_screen_x), int(temp_screen_y));
+  return screenFromWorld3(vec3d(world_pos.x(),
+                                world_pos.y(),
+                                0.0)).as_vec2();
 }
 
 vec2d GLCanvas::worldFromScreen2(const vec2i& screen_pos) const
 {
 DOTRACE("GLCanvas::worldFromScreen2");
 
-  dbg_eval(3, screen_pos.x()); dbg_eval_nl(3, screen_pos.y());
-
-  GLdouble current_mv_matrix[16];
-  GLdouble current_proj_matrix[16];
-  GLint current_viewport[4];
-
-  glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
-  glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
-  glGetIntegerv(GL_VIEWPORT, current_viewport);
-
-  double dummy_z;
-
-  vec2d world_pos;
-
-  GLint status =
-    gluUnProject(screen_pos.x(), screen_pos.y(), 0,
-                 current_mv_matrix, current_proj_matrix, current_viewport,
-                 &world_pos.x(), &world_pos.y(), &dummy_z);
-
-  dbg_eval_nl(3, status);
-
-  if (status == GL_FALSE)
-    throw rutz::error("GLCanvas::worldFromScreen2(): gluUnProject error",
-                      SRC_POS);
-
-  return world_pos;
+  return worldFromScreen3(vec3i(screen_pos.x(),
+                                screen_pos.y(),
+                                0)).as_vec2();
 }
 
 vec3i GLCanvas::screenFromWorld3(const vec3d& world_pos) const
