@@ -42,59 +42,51 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
     }
 
     # class::type
-    set cmdname "Obj::type"
-    set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
-    set testname "${package}-${cmdname}"
-
     if { $testbase } {
-        eval ::test $testname {"too few args"} {"
-            $cmdname
-        "} {$usage}
-        eval ::test $testname {"too many args"} {"
-            $cmdname 0 junk
-        "} {$usage}
-        eval ::test $testname {"error from bad objid"} {"
-            $cmdname -1
+        eval ::test ${subclass}::type {"too few args"} {"
+            Obj::type
+        "} {"wrong \# args: should be"}
+        eval ::test ${subclass}::type {"too many args"} {"
+            Obj::type 0 junk
+        "} {"wrong \# args: should be"}
+        eval ::test ${subclass}::type {"error from bad objid"} {"
+            Obj::type -1
         "} {"expected.*but got"}
     }
 
     if { $testsubclass } {
-        eval ::test $testname {"normal use on $subclass"} {"
-            $cmdname $this(objid)
+        eval ::test ${subclass}::type {"normal use on $subclass"} {"
+            Obj::type $this(objid)
         "} {$subclass}
     }
 
 
     # classname::category
-    set cmdname "GxShapeKit::category"
-    set usage "wrong \# args: should be"
-    set testname "${package}-${cmdname}"
-
     if { $testbase } {
-        eval ::test $testname {"too few args"} {"
-            $cmdname
-        "} {$usage}
-        eval ::test $testname {"too many args"} {"
-            $cmdname 0 0 junk
-        "} {$usage}
+        eval ::test ${subclass}::category {"too few args"} {"
+            GxShapeKit::category
+        "} {"wrong \# args: should be"}
+        eval ::test ${subclass}::category {"too many args"} {"
+            GxShapeKit::category 0 0 junk
+        "} {"wrong \# args: should be"}
     }
 
     if { $testsubclass } {
-        eval ::test $testname {"normal use get"} {"
+        eval ::test ${subclass}::category {"normal use get"} {"
             GxShapeKit::category $this(objid)
         "} {"^$::INT$"}
-        eval ::test $testname {"normal use set"} {"
+        eval ::test ${subclass}::category {"normal use set"} {"
             GxShapeKit::category $this(objid) 34
             GxShapeKit::category $this(objid)
         "} {^34$}
-        eval ::test $testname {"normal use vector get"} {"
+        eval ::test ${subclass}::category {"normal use vector get"} {"
             GxShapeKit::category \"$this(objid) $this(objid)\"
         "} {"^${::INT}${::SP}${::INT}$"}
-        eval ::test $testname {"normal use vector set with one value"} {"
+        eval ::test ${subclass}::category {"normal use vector set with one value"} {"
             GxShapeKit::category \"$this(objid) $this(objid)\" 49
             GxShapeKit::category \"$this(objid) $this(objid)\"
         "} {"^${::INT}${::SP}${::INT}$"}
-        eval ::test $testname {"normal use vector set with many values"} {"
+        eval ::test ${subclass}::category {"normal use vector set with many values"} {"
             GxShapeKit::category \"$this(objid) $this(objid)\" \"3 7 11\"
             GxShapeKit::category \"$this(objid) $this(objid)\"
         "} {"^${::INT}${::SP}${::INT}$"}
@@ -102,12 +94,10 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 
 
     # class::draw
-    set testname "${package}-draw"
-
     if { $testsubclass } {
         package require Toglet
 
-        eval ::test $testname {"normal use"} {"
+        eval ::test ${subclass}::draw {"normal use"} {"
             glClearColor 0 0 0 0
             glColor 1 1 1 1
             clearscreen
