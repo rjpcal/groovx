@@ -120,6 +120,18 @@ namespace
     return result;
   }
 
+  string join_filename(const string& dir1, const string& dir2,
+                       const string& fname)
+  {
+    string result(dir1);
+    result.reserve(dir1.length() + 1 + dir2.length() + 1 + fname.length());
+    result += '/';
+    result += dir2;
+    result += '/';
+    result += fname;
+    return result;
+  }
+
   string trim_trailing_slashes(const string& inp)
   {
     string result = inp;
@@ -860,6 +872,27 @@ bool cppdeps::resolve_one(const string& include_name,
       vec.push_back(file_info::get(fullpath));
       vec.back()->source = finfo;
       return true;
+    }
+
+  // Try resolving the include by looking for directories in ipath,
+  // relative to the directory containing the current source file.
+  for (unsigned int i = 0; i < ipath.size(); ++i)
+    {
+      if (ipath[i].length() > 0 && ipath[i][0] == '/')
+        {
+          // it's an absolute path, so don't try to join it with the current dir
+          continue;
+        }
+
+      const string fullpath = join_filename(finfo->dirname_without_slash,
+                                            ipath[i], include_name);
+
+      if (file_exists(fullpath.c_str()))
+        {
+          vec.push_back(file_info::get(fullpath));
+          vec.back()->source = finfo;
+          return true;
+        }
     }
 
   // Try resolving the include by using the current working directory
