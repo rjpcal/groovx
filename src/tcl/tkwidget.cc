@@ -85,14 +85,14 @@ public:
   bool updatePending;
   bool shutdownRequested;
 
-  void onButtonPress(const GWT::ButtonPressEvent& ev)
+  void dbgButtonPress(const GWT::ButtonPressEvent& ev)
   {
     std::cerr << "ButtonPress: "
               << "button " << ev.button
               << " x " << ev.x << " y " << ev.y << std::endl;
   }
 
-  void onKeyPress(const GWT::KeyPressEvent& ev)
+  void dbgKeyPress(const GWT::KeyPressEvent& ev)
   {
     std::cerr << "KeyPress: "
               << "keys " << ev.keys
@@ -100,64 +100,17 @@ public:
               << " x " << ev.x << " y " << ev.y << std::endl;
   }
 
-  static void buttonEventProc(Tcl::TkWidget* widg, XButtonEvent* eventPtr)
-  {
-    const bool controlPressed = eventPtr->state & ControlMask;
-    const bool shiftPressed = eventPtr->state & ShiftMask;
+  void buttonEventProc(XButtonEvent* eventPtr);
 
-    // This is an escape hatch for top-level frameless windows gone
-    // awry... need to always provide a reliable way to iconify the window
-    // since the title bar and "minimize" button might not exist.
-    if (controlPressed && shiftPressed)
-      {
-        switch (eventPtr->button)
-          {
-          case 1: widg->minimize(); return;
-          case 3: widg->destroyWidget(); return;
-          }
-      }
-
-    GWT::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
-    widg->sigButtonPressed.emit(ev);
-  }
-
-  static void keyEventProc(Tcl::TkWidget* widg, XKeyEvent* eventPtr)
-  {
-    char buf[32];
-
-    const bool controlPressed = eventPtr->state & ControlMask;
-    eventPtr->state &= ~ControlMask;
-
-    const int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
-
-    buf[len] = '\0';
-
-    GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
-    widg->sigKeyPressed.emit(ev);
-  }
+  void keyEventProc(XKeyEvent* eventPtr);
 
   static void cEventCallback(ClientData clientData, XEvent* rawEvent) throw();
 
   static void cRenderCallback(ClientData clientData) throw();
 
-  static void cEventuallyFreeCallback(char* clientData) throw()
-  {
-    Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
-    widg->decrRefCount();
-  }
+  static void cEventuallyFreeCallback(char* clientData) throw();
 
-  static void cTakeFocusCallback(ClientData clientData) throw()
-  {
-    Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
-    try
-      {
-        widg->takeFocus();
-      }
-    catch (...)
-      {
-        widg->rep->interp.handleLiveException("cEventCallback", true);
-      }
-  }
+  static void cTakeFocusCallback(ClientData clientData) throw();
 };
 
 TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
@@ -199,6 +152,46 @@ DOTRACE("TkWidgImpl::~TkWidgImpl");
   Tk_DestroyWindow(tkWin);
 }
 
+void TkWidgImpl::buttonEventProc(XButtonEvent* eventPtr)
+{
+DOTRACE("TkWidgImpl::buttonEventProc");
+
+  const bool controlPressed = eventPtr->state & ControlMask;
+  const bool shiftPressed = eventPtr->state & ShiftMask;
+
+  // This is an escape hatch for top-level frameless windows gone
+  // awry... need to always provide a reliable way to iconify the window
+  // since the title bar and "minimize" button might not exist.
+  if (controlPressed && shiftPressed)
+    {
+      switch (eventPtr->button)
+        {
+        case 1: owner->minimize(); return;
+        case 3: owner->destroyWidget(); return;
+        }
+    }
+
+  GWT::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
+  owner->sigButtonPressed.emit(ev);
+}
+
+void TkWidgImpl::keyEventProc(XKeyEvent* eventPtr)
+{
+DOTRACE("TkWidgImpl::keyEventProc");
+
+  char buf[32];
+
+  const bool controlPressed = eventPtr->state & ControlMask;
+  eventPtr->state &= ~ControlMask;
+
+  const int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
+
+  buf[len] = '\0';
+
+  GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
+  owner->sigKeyPressed.emit(ev);
+}
+
 void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent) throw()
 {
 DOTRACE("TkWidgImpl::cEventCallback");
@@ -235,11 +228,10 @@ DOTRACE("TkWidgImpl::cEventCallback");
           widg->ungrabKeyboard();
           break;
         case KeyPress:
-          keyEventProc(widg, (XKeyEvent*) rawEvent);
+          rep->keyEventProc(reinterpret_cast<XKeyEvent*>(rawEvent));
           break;
         case ButtonPress:
-          widg->takeFocus();
-          buttonEventProc(widg, (XButtonEvent*) rawEvent);
+          rep->buttonEventProc(reinterpret_cast<XButtonEvent*>(rawEvent));
           break;
         case MapNotify:
           {
@@ -281,6 +273,27 @@ DOTRACE("TkWidgImpl::cRenderCallback");
   catch (...)
     {
       widg->rep->interp.handleLiveException("cRenderCallback", true);
+    }
+}
+
+void TkWidgImpl::cEventuallyFreeCallback(char* clientData) throw()
+{
+DOTRACE("TkWidgImpl::cEventuallyFreeCallback");
+  Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+  widg->decrRefCount();
+}
+
+void TkWidgImpl::cTakeFocusCallback(ClientData clientData) throw()
+{
+DOTRACE("TkWidgImpl::cTakeFocusCallback");
+  Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+  try
+    {
+      widg->takeFocus();
+    }
+  catch (...)
+    {
+      widg->rep->interp.handleLiveException("cEventCallback", true);
     }
 }
 
@@ -511,8 +524,8 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
 
 void Tcl::TkWidget::hook()
 {
-  sigButtonPressed.connect(rep, &TkWidgImpl::onButtonPress);
-  sigKeyPressed.connect(rep, &TkWidgImpl::onKeyPress);
+  sigButtonPressed.connect(rep, &TkWidgImpl::dbgButtonPress);
+  sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);
 }
 
 static const char vcid_tkwidget_cc[] = "$Header$";
