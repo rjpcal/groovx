@@ -119,18 +119,17 @@ namespace
 
 void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
                             shared_ptr<Tcl::ObjCaster> caster,
-                            const char* src_file_name,
-                            int src_line_no)
+                            const FilePosition& src_pos)
 {
 DOTRACE("Tcl::defGenericObjCmds");
-  pkg->defVec( "is", "objref(s)", Util::bindFirst(isMyType, caster), 1,
-               src_file_name, src_line_no );
-  pkg->def( "countAll", "", Util::bindFirst(countAll, caster),
-            src_file_name, src_line_no );
-  pkg->def( "findAll", "", Util::bindFirst(findAll, caster),
-            src_file_name, src_line_no );
-  pkg->def( "removeAll", "", Util::bindFirst(removeAll, caster),
-            src_file_name, src_line_no );
+  pkg->defVec( "is", "objref(s)",
+               Util::bindFirst(isMyType, caster), 1, src_pos );
+  pkg->def( "countAll", "",
+            Util::bindFirst(countAll, caster), src_pos );
+  pkg->def( "findAll", "",
+            Util::bindFirst(findAll, caster), src_pos );
+  pkg->def( "removeAll", "",
+            Util::bindFirst(removeAll, caster), src_pos );
 }
 
 static const char vcid_objpkg_cc[] = "$Header$";

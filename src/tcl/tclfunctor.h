@@ -40,6 +40,8 @@
 #include "util/pointers.h"
 #include "util/ref.h"
 
+struct FilePosition;
+
 namespace Tcl
 {
   /// Overload of fromTcl for Util::Ref.
@@ -400,16 +402,14 @@ namespace Tcl
                                (Tcl::Interp& interp, Functor f,
                                 const char* cmd_name,
                                 const char* usage, int nargs,
-                                const char* src_file_name,
-                                int src_line_no)
+                                const FilePosition& src_pos)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
     return Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
                          cmd_name, usage, nargs+1,
                          -1 /*default for objc_max*/,
                          false /*default for exact_objc*/,
-                         src_file_name,
-                         src_line_no);
+                         src_pos);
   }
 
 
@@ -421,8 +421,7 @@ namespace Tcl
                                (Tcl::Interp& interp, Functor f,
                                 const char* cmd_name, const char* usage,
                                 int nargs, unsigned int keyarg,
-                                const char* src_file_name,
-                                int src_line_no)
+                                const FilePosition& src_pos)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
     shared_ptr<Command> cmd =
@@ -430,8 +429,7 @@ namespace Tcl
                     cmd_name, usage, nargs+1,
                     -1 /*default for objc_max*/,
                     false /*default for exact_objc*/,
-                    src_file_name,
-                    src_line_no);
+                    src_pos);
     Tcl::useVecDispatch(*cmd, keyarg);
     return cmd;
   }
@@ -449,13 +447,11 @@ namespace Tcl
   inline shared_ptr<Command> makeCmd
                               (Tcl::Interp& interp, Func f,
                                const char* cmd_name, const char* usage,
-                               const char* src_file_name,
-                               int src_line_no)
+                               const FilePosition& src_pos)
   {
     return makeGenericCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
-       Util::FuncTraits<Func>::numArgs,
-       src_file_name, src_line_no);
+       Util::FuncTraits<Func>::numArgs, src_pos);
   }
 
 // ####################################################################
@@ -466,13 +462,11 @@ namespace Tcl
                               (Tcl::Interp& interp, Func f,
                                const char* cmd_name, const char* usage,
                                unsigned int keyarg /*default is 1*/,
-                               const char* src_file_name,
-                               int src_line_no)
+                               const FilePosition& src_pos)
   {
     return makeGenericVecCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
-       Util::FuncTraits<Func>::numArgs, keyarg,
-       src_file_name, src_line_no);
+       Util::FuncTraits<Func>::numArgs, keyarg, src_pos);
   }
 
 } // end namespace Tcl

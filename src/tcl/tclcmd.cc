@@ -141,13 +141,12 @@ shared_ptr<Tcl::Command> Tcl::Command::make(
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
           int objc_min, int objc_max, bool exact_objc,
-          const char* src_file_name, int src_line_no)
+          const FilePosition& src_pos)
 {
 DOTRACE("Tcl::Command::make");
 
   CommandGroup* const group =
-    Tcl::CommandGroup::make(interp, cmd_name,
-                            src_file_name, src_line_no);
+    Tcl::CommandGroup::make(interp, cmd_name, src_pos);
 
   Assert(group != 0);
 

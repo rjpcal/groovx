@@ -44,6 +44,7 @@
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/fileposition.h"
 #include "util/log.h"
 #include "util/pointers.h"
 #include "util/ref.h"
@@ -255,7 +256,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsCallbackName(uniqCmdName("handler")),
   itsCmdCallback(Tcl::makeCmd(itsInterp, &handleResponseCallback,
                               itsCallbackName.c_str(), "<private>",
-                              __FILE__, __LINE__)),
+                              SRC_POS)),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),

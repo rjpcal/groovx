@@ -34,7 +34,11 @@
 
 #include "tcl/tclfunctor.h"
 
+#include "util/fileposition.h"
+
 struct Tcl_Interp;
+
+struct FilePosition;
 
 template <class T> class shared_ptr;
 
@@ -187,99 +191,92 @@ public:
 
   template <class Func>
   inline void def(const char* cmd_name, const char* usage, Func f,
-                  const char* src_file_name, int src_line_no)
+                  const FilePosition& src_pos)
   {
-    makeCmd(interp(), f, makePkgCmdName(cmd_name), usage,
-            src_file_name, src_line_no);
+    makeCmd(interp(), f, makePkgCmdName(cmd_name),
+            usage, src_pos);
   }
 
   template <class Func>
   inline void defVec(const char* cmd_name, const char* usage, Func f,
                      unsigned int keyarg /*default is 1*/,
-                     const char* src_file_name, int src_line_no)
+                     const FilePosition& src_pos)
   {
-    makeVecCmd(interp(), f, makePkgCmdName(cmd_name), usage, keyarg,
-               src_file_name, src_line_no);
+    makeVecCmd(interp(), f, makePkgCmdName(cmd_name),
+               usage, keyarg, src_pos);
   }
 
   template <class Func>
   inline void defRaw(const char* cmd_name, unsigned int nargs,
                      const char* usage, Func f,
-                     const char* src_file_name, int src_line_no)
+                     const FilePosition& src_pos)
   {
-    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name), usage, nargs,
-                   src_file_name, src_line_no);
+    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name),
+                   usage, nargs, src_pos);
   }
 
   template <class Func>
   inline void defVecRaw(const char* cmd_name, unsigned int nargs,
                         const char* usage, Func f,
                         unsigned int keyarg /*default is 1*/,
-                        const char* src_file_name, int src_line_no)
+                        const FilePosition& src_pos)
   {
     makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
-                      usage, nargs, keyarg,
-                      src_file_name, src_line_no);
+                      usage, nargs, keyarg, src_pos);
   }
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) (),
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defVec( cmd_name, actionUsage(""), actionFunc, 1,
-            src_file_name, src_line_no );
+    defVec( cmd_name, actionUsage(""), actionFunc, 1, src_pos );
   }
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) () const,
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defVec( cmd_name, actionUsage(""), actionFunc, 1,
-            src_file_name, src_line_no );
+    defVec( cmd_name, actionUsage(""), actionFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defGetter(const char* cmd_name, const char* usage,
                  T (C::* getterFunc) () const,
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defVec( cmd_name, getterUsage(usage), getterFunc, 1,
-            src_file_name, src_line_no );
+    defVec( cmd_name, getterUsage(usage), getterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defGetter(const char* cmd_name, T (C::* getterFunc) () const,
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defVec( cmd_name, getterUsage(""), getterFunc, 1,
-            src_file_name, src_line_no );
+    defVec( cmd_name, getterUsage(""), getterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defSetter(const char* cmd_name, const char* usage,
                  void (C::* setterFunc) (T),
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defVec( cmd_name, setterUsage(usage), setterFunc, 1,
-            src_file_name, src_line_no );
+    defVec( cmd_name, setterUsage(usage), setterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defSetter(const char* cmd_name, void (C::* setterFunc) (T),
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defVec( cmd_name, setterUsage(""), setterFunc, 1,
-            src_file_name, src_line_no );
+    defVec( cmd_name, setterUsage(""), setterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defAttrib(const char* cmd_name,
                  T (C::* getterFunc) () const,
                  void (C::* setterFunc) (T),
-                 const char* src_file_name, int src_line_no)
+                 const FilePosition& src_pos)
   {
-    defGetter( cmd_name, getterFunc, src_file_name, src_line_no );
-    defSetter( cmd_name, setterFunc, src_file_name, src_line_no );
+    defGetter( cmd_name, getterFunc, src_pos );
+    defSetter( cmd_name, setterFunc, src_pos );
   }
 
   /// Control whether packages should be verbose as they start up.
@@ -340,10 +337,6 @@ catch(...)                                      \
   pkg->handleLiveException();                   \
 }                                               \
 return 1;
-
-
-/// This macro can be used to capture the current source filename and line-number.
-#define SRC_POS  __FILE__, __LINE__
 
 
 static const char vcid_tclpkg_h[] = "$Header$";

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// fieldpkg.h
+// fileposition.h
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2004-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sun Nov 12 17:45:52 2000
+// created: Tue Oct  5 19:58:48 2004
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,33 +29,22 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIELDPKG_H_DEFINED
-#define FIELDPKG_H_DEFINED
+#ifndef FILEPOSITION_H_DEFINED
+#define FILEPOSITION_H_DEFINED
 
-#include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
-
-class Field;
-class FieldMap;
-class FilePosition;
-
-namespace Tcl
+/// Represent a position (line number) within a source file.
+struct FilePosition
 {
-  class Pkg;
+  FilePosition(const char* file_name, int line_no) :
+    fileName(file_name), lineNo(line_no)
+  {}
 
-  void defField(Pkg* pkg, const Field& field,
-                const FilePosition& src_pos);
-  void defAllFields(Pkg* pkg, const FieldMap& fmap,
-                    const FilePosition& src_pos);
+  const char* const fileName;
+  int         const lineNo;
+};
 
-  template <class C>
-  void defFieldContainer(Pkg* pkg, const FilePosition& src_pos)
-  {
-    Tcl::defGenericObjCmds<C>(pkg, src_pos);
+/// This macro can be used to capture the current source filename and line-number.
+#define SRC_POS FilePosition(__FILE__, __LINE__)
 
-    Tcl::defAllFields(pkg, C::classFields(), src_pos);
-  }
-}
-
-static const char vcid_fieldpkg_h[] = "$Header$";
-#endif // !FIELDPKG_H_DEFINED
+static const char vcid_fileposition_h[] = "$Header$";
+#endif // !FILEPOSITION_H_DEFINED

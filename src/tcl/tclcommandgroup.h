@@ -38,6 +38,8 @@ typedef void* ClientData;
 
 class fstring;
 
+struct FilePosition;
+
 template <class T> class shared_ptr;
 
 namespace Tcl
@@ -59,8 +61,7 @@ public:
   /// Find the command for the given name, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp,
                             const fstring& cmd_name,
-                            const char* src_file_name,
-                            int src_line_no);
+                            const FilePosition& src_pos);
 
   void add(shared_ptr<Tcl::Command> p);
 
@@ -76,7 +77,7 @@ private:
   Impl* const rep;
 
   CommandGroup(Tcl::Interp& interp, const fstring& cmd_name,
-               const char* src_file_name, int src_line_no);
+               const FilePosition& src_pos);
   ~CommandGroup() throw();
 
   CommandGroup(const CommandGroup&); // not implemented

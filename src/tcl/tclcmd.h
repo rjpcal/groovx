@@ -41,6 +41,8 @@ typedef struct Tcl_Obj Tcl_Obj;
 
 class fstring;
 
+struct FilePosition;
+
 template <class T> class shared_ptr;
 
 namespace Tcl
@@ -106,7 +108,7 @@ public:
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
           int objc_min, int objc_max, bool exact_objc,
-          const char* src_file_name, int src_line_no);
+          const FilePosition& src_pos);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   ~Command() throw();

@@ -35,6 +35,8 @@
 #include "util/objfactory.h"
 #include "util/pointers.h"
 
+struct FilePosition;
+
 namespace Tcl
 {
   class ObjCaster;
@@ -80,16 +82,13 @@ namespace Tcl
   };
 
   void defGenericObjCmds(Pkg* pkg, shared_ptr<ObjCaster> caster,
-                         const char* src_file_name,
-                         int src_line_no);
+                         const FilePosition& src_pos);
 
   template <class C>
-  void defGenericObjCmds(Pkg* pkg,
-                         const char* src_file_name,
-                         int src_line_no)
+  void defGenericObjCmds(Pkg* pkg, const FilePosition& src_pos)
   {
     shared_ptr<ObjCaster> caster(new CObjCaster<C>);
-    defGenericObjCmds(pkg, caster, src_file_name, src_line_no);
+    defGenericObjCmds(pkg, caster, src_pos);
   }
 
   template <class C>
