@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Dec 16 15:38:17 1999
+// written: Thu Dec 16 17:43:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ DOTRACE("Tcl::VecSetterBaseCmd::invoke");
   }
 
   size_t num_vals;
-  void* vals = getValVec(itsValArgn, num_vals);
+  void* vals = getValVec(itsValArgn, ids.size(), num_vals);
 
   if (num_vals < 1) {
 	 throw TclError("the list of new values is empty");
@@ -165,9 +165,17 @@ DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
 }
 
 template <class T>
-void* Tcl::TVecSetterCmd<T>::getValVec(int val_argn, size_t& num_vals) {
+void* Tcl::TVecSetterCmd<T>::getValVec(int val_argn, int num_ids,
+													size_t& num_vals) {
   vector<T>* vals = new vector<T>;
-  getSequenceFromArg(val_argn, back_inserter(*vals), (T*) 0);
+  if (num_ids == 1) {
+	 T val;
+	 getValFromArg(val_argn, val);
+	 vals->push_back(val);
+  }
+  else {
+	 getSequenceFromArg(val_argn, back_inserter(*vals), (T*) 0);
+  }
   num_vals = vals->size();
   return static_cast<void*>(vals);
 }
@@ -189,9 +197,17 @@ void Tcl::TVecSetterCmd<T>::destroyValVec(void* val_vec) {
 // Specialization for T=const string&, since we must declare 'vals' as
 // type 'vector<string>' rather than 'vector<const string&>'.
 template <>
-void* Tcl::TVecSetterCmd<const string&>::getValVec(int val_argn, size_t& num_vals) {
+void* Tcl::TVecSetterCmd<const string&>::getValVec(int val_argn, int num_ids,
+																	size_t& num_vals) {
   vector<string>* vals = new vector<string>;
-  getSequenceFromArg(val_argn, back_inserter(*vals), (string*) 0);
+  if (num_ids == 1) {
+	 string val;
+	 getValFromArg(val_argn, val);
+	 vals->push_back(val);
+  }
+  else {
+	 getSequenceFromArg(val_argn, back_inserter(*vals), (string*) 0);
+  }
   num_vals = vals->size();
   return static_cast<void*>(vals);
 }
