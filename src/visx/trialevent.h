@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Mar 30 09:50:00 2000
+// written: Wed May 10 12:58:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@ typedef struct Tcl_TimerToken_* Tcl_TimerToken;
 typedef void* ClientData;
 
 class Experiment;
+class Trial;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -72,7 +73,7 @@ public:
       to \c cancel(). If the requested delay is negative or zero, the
       \c invoke() callback is triggered immediately without involving
       the event loop. */
-  void schedule(Experiment* expt);
+  void schedule(Experiment* expt, Trial* trial);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
@@ -90,10 +91,16 @@ protected:
   virtual void invoke() = 0;
 
   /** This returns the \c Experiment which was passed to the most
-      recent call to schedule. \c TrialEventError is thrown if \c
-      schedule() has never been called, or if the pointer passed most
-      recently to \c schedule() was null. */
+      recent call to \c schedule(). \c TrialEventError is thrown if \c
+      schedule() has never been called, or if the \c Experiment*
+      passed most recently to \c schedule() was null. */
   Experiment& getExperiment();
+
+  /** This returns the \c Trial which was passed to the most recent
+      call to \c schedule(). \c TrialEventError is thrown if \c
+      schedule() has never been called, or if the \c Trial* passed
+      most recently to \c schedule() was null. */
+  Trial& getTrial();
 
 private:
   static void dummyInvoke(ClientData clientData);
@@ -105,6 +112,7 @@ private:
   Tcl_TimerToken itsToken;
 
   Experiment* itsExperiment;
+  Trial* itsTrial;
 
   mutable bool itsIsPending;
 
