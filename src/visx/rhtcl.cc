@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jan 30 11:37:13 2002
+// written: Thu Jan 31 14:12:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,20 +131,24 @@ namespace
 extern "C"
 int Rh_Init(Tcl_Interp* interp)
 {
-  DOTRACE("Rh_Init");
+DOTRACE("Rh_Init");
 
   //
   // Rh
   //
 
-  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Rh", "$Revision$");
+  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "ResponseHandler", "$Revision$");
+  pkg1->inherit("IO");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg1);
+  pkg1->namespaceAlias("Rh");
 
   //
   // EventRh
   //
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "EventRh", "$Revision$");
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "EventResponseHdlr",
+                                "$Revision$");
+  pkg2->inherit("ResponseHandler");
   Tcl::defTracing(pkg2, EventResponseHdlr::tracer);
 
   Tcl::defGenericObjCmds<EventResponseHdlr>(pkg2);
@@ -173,31 +177,36 @@ int Rh_Init(Tcl_Interp* interp)
                   &EventResponseHdlr::getMaxResponses,
                   &EventResponseHdlr::setMaxResponses);
 
+  pkg2->namespaceAlias("EventRh");
+
   //
   // KbdRh
   //
 
-  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "KbdRh", "$Revision$");
+  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
+  pkg3->inherit("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg3);
 
-  pkg3->eval("namespace eval KbdRh {\n"
-             "  proc useFeedback args {\n"
-             "    return [eval EventRh::useFeedback $args]\n"
-             "  }\n"
+  pkg3->eval("namespace eval KbdResponseHdlr {\n"
              "  proc keyRespPairs args {\n"
-             "    return [eval EventRh::inputResponseMap $args]\n"
+             "    return [eval EventResponseHdlr::inputResponseMap $args]\n"
              "  }\n"
              "  proc feedbackPairs args {\n"
-             "    return [eval EventRh::feedbackMap $args]\n"
+             "    return [eval EventResponseHdlr::feedbackMap $args]\n"
              "  }\n"
              "}\n");
+
+  pkg3->namespaceAlias("KbdRh");
 
   //
   // NullRh
   //
 
-  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "NullRh", "$Revision$");
+  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "NullResponseHdlr",
+                                "$Revision$");
+  pkg4->inherit("ResponseHandler");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg4);
+  pkg4->namespaceAlias("NullRh");
 
   //
   // SerialRh
