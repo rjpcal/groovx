@@ -2,7 +2,8 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar  9 21:33:48 1999
+// written: Fri Mar 12 10:53:47 1999
+static const char vcid[] = "$Id";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_CC_DEFINED
@@ -10,6 +11,9 @@
 
 #include "fixpt.h"
 
+#include <iostream.h>
+#include <string>
+#include <typeinfo>
 #include <GL/gl.h>
 
 ///////////////////////////////////////////////////////////////////////
@@ -17,16 +21,35 @@
 ///////////////////////////////////////////////////////////////////////
 
 FixPt::FixPt(float len, int wid) : 
-  Scaleable(), itsLength(len), itsWidth(wid) {}
+  itsLength(len), itsWidth(wid) {}
 
-FixPt::FixPt(istream &is) : Scaleable(is) {
+FixPt::FixPt(istream &is) {
+  deserialize(is);
 }
 
 FixPt::~FixPt() {}
 
 IOResult FixPt::serialize(ostream &os, IOFlag flag) const {
-  Scaleable::serialize(os);
+  if (flag & IO::BASES) { GrObj::serialize(os, flag); }
+
+  char sep = ' ';
+  if (flag & IO::TYPENAME) { os << typeid(this).name() << sep; }
+
+  os << itsLength << sep;
+  os << itsWidth << endl;
   return checkStream(os);
+}
+
+IOResult FixPt::deserialize(istream &is, IOFlag flag) {
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag); }
+  if (flag & IO::TYPENAME) {
+	 string name;
+	 is >> name;
+	 if (name != string(typeid(this).name())) { return IO_ERROR; }
+  }
+  is >> itsLength;
+  is >> itsWidth;
+  return checkStream(is);
 }
 
 void FixPt::grRecompile() const {
@@ -37,11 +60,6 @@ void FixPt::grRecompile() const {
     glPushAttrib(GL_LINE_BIT);
     glLineWidth(itsWidth);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-	 doTranslate();
-	 doScale();
-
     glBegin(GL_LINES);
     glVertex3f(0.0, -itsLength/2.0, 0.0);
     glVertex3f(0.0, itsLength/2.0, 0.0);
@@ -49,7 +67,6 @@ void FixPt::grRecompile() const {
     glVertex3f(itsLength/2.0, 0.0, 0.0);
     glEnd();
     
-    glPopMatrix();
     glPopAttrib();
   glEndList();
 
@@ -57,5 +74,3 @@ void FixPt::grRecompile() const {
 }
 
 #endif // !FIXPT_CC_DEFINED
-
-
