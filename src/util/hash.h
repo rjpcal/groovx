@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Fri Jan 18 16:06:55 2002
+// written: Mon Jan 21 14:27:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,9 +156,9 @@ public:
 
     void start_next_nonempty_bucket()
       {
-        while (table_itr->empty() && table_itr < (buckets_ptr->end()-1))
+        while (table_itr->is_empty() && table_itr < (buckets_ptr->end()-1))
           ++table_itr;
-        if (table_itr->empty())
+        if (table_itr->is_empty())
           at_end = true;
         list_itr = table_itr->begin();
       }
@@ -271,7 +271,7 @@ public:
   iterator end() { return iterator(&buckets, iterator::END); }
 
   size_type size() const { return entry_count; }
-  bool empty() const { return entry_count == 0; }
+  bool is_empty() const { return entry_count == 0; }
   size_type bucket_count() const { return buckets.size(); }
   double load_factor() const { return double(size()) / bucket_count(); }
   size_type longest_chain() const

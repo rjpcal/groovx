@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Fri Jan 18 16:06:55 2002
+// written: Mon Jan 21 14:26:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ struct static_block
 
   size_type max_size() const { return size_type(-1) / sizeof(T); }
 
-  bool empty() const { return (N == 0); }
+  bool is_empty() const { return (N == 0); }
 
   void swap(static_block& other)
     {
@@ -196,7 +196,7 @@ public:
 
   size_type max_size() const { return size_type(-1) / sizeof(T); }
 
-  bool empty() const { return (N == 0); }
+  bool is_empty() const { return (N == 0); }
 
   void swap(fixed_block& other)
     {
@@ -360,7 +360,7 @@ public:
 
   size_type max_size() const { return size_type(-1) / sizeof(T); }
 
-  bool empty() const { return (N == 0); }
+  bool is_empty() const { return (N == 0); }
 
   void swap(dynamic_block& other)
     {

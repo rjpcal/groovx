@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Fri Jan 18 16:06:54 2002
+// written: Mon Jan 21 14:27:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ public:
   slink_list(const slink_list& other) :
     head(0)
     {
-      if ( !other.empty() )
+      if ( !other.is_empty() )
         {
           head = new node(other.head->val, 0);
 
@@ -186,7 +186,7 @@ public:
   const_iterator begin() const { return const_iterator(head); }
   const_iterator end()   const { return const_iterator(0); }
 
-  bool empty() const { return (head == 0); }
+  bool is_empty() const { return (head == 0); }
 
   size_type size() const
     {
@@ -216,7 +216,7 @@ public:
 
   void clear()
     {
-      while ( !empty() ) pop_front();
+      while ( !is_empty() ) pop_front();
     }
 
   void swap(slink_list& other)
