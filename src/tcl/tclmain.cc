@@ -82,7 +82,7 @@ private:
   const char* itsStartupFileName;
   const char* itsArgv0;
   Tcl_Channel itsInChannel;
-  fstring itsCommand;   // Build lines of terminal input into Tcl commands.
+  fstring itsCommand;   // Build lines of tty input into Tcl commands.
   bool itsGotPartial;
   bool isItInteractive; // True if input is a terminal-like device.
   fstring itsCommandLine; // Entire command-line as a string
@@ -120,7 +120,8 @@ public:
   {
     if (theMainImpl == 0)
       {
-        throw Util::Error("no Tcl::Main object has yet been created", SRC_POS);
+        throw Util::Error("no Tcl::Main object has yet been created",
+                          SRC_POS);
       }
 
     return theMainImpl;
@@ -173,9 +174,9 @@ DOTRACE("Tcl::MainImpl::MainImpl");
       itsCommandLine.append(" ", argv[i]);
     }
 
-  // Parse command-line arguments.  If the next argument doesn't start with
-  // a "-" then strip it off and use it as the name of a script file to
-  // process.
+  // Parse command-line arguments.  If the next argument doesn't start
+  // with a "-" then strip it off and use it as the name of a script
+  // file to process.
 
   if ((argc > 1) && (argv[1][0] != '-'))
     {
@@ -189,8 +190,8 @@ DOTRACE("Tcl::MainImpl::MainImpl");
       itsArgv0 = argv[0];
     }
 
-  // Make command-line arguments available in the Tcl variables "argc" and
-  // "argv".
+  // Make command-line arguments available in the Tcl variables "argc"
+  // and "argv".
 
   itsSafeInterp.setGlobalVar("argc", Tcl::toTcl(argc-1));
 
@@ -288,8 +289,8 @@ DOTRACE("Tcl::MainImpl::prompt");
 
 //---------------------------------------------------------------------
 //
-// Callback triggered from the readline library when it has a full line of
-// input for us to handle.
+// Callback triggered from the readline library when it has a full
+// line of input for us to handle.
 //
 //---------------------------------------------------------------------
 
@@ -310,8 +311,8 @@ DOTRACE("Tcl::MainImpl::readlineLineComplete");
 
 //---------------------------------------------------------------------
 //
-// Pull any new characters in from the input stream. Returns the number of
-// characters read from the input stream.
+// Pull any new characters in from the input stream. Returns the
+// number of characters read from the input stream.
 //
 //---------------------------------------------------------------------
 
@@ -337,8 +338,8 @@ DOTRACE("Tcl::MainImpl::grabInput");
 
 //---------------------------------------------------------------------
 //
-// Handle a complete line of input (though not necessarily a complete Tcl
-// command).
+// Handle a complete line of input (though not necessarily a complete
+// Tcl command).
 //
 //---------------------------------------------------------------------
 
@@ -399,9 +400,10 @@ void Tcl::MainImpl::execCommand()
 DOTRACE("Tcl::MainImpl::execCommand");
 
   // Disable the stdin channel handler while evaluating the command;
-  // otherwise if the command re-enters the event loop we might process
-  // commands from stdin before the current command is finished.  Among
-  // other things, this will trash the text of the command being evaluated.
+  // otherwise if the command re-enters the event loop we might
+  // process commands from stdin before the current command is
+  // finished.  Among other things, this will trash the text of the
+  // command being evaluated.
 
   Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc, (ClientData) 0);
 
@@ -409,8 +411,8 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
 #ifdef WITH_READLINE
   char* expansion = 0;
-  const int status = history_expand(const_cast<char*>(itsCommand.c_str()),
-                                    &expansion);
+  const int status =
+    history_expand(const_cast<char*>(itsCommand.c_str()), &expansion);
 #else
   char* expansion = itsCommand.data();
   const int status = 0;
@@ -443,12 +445,12 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   if (status == 0 || status == 1) // execute expansion?
     {
-      // The idea here is that we want to keep the readline history and the
-      // Tcl history in sync. Tcl's "history add" command will skip adding
-      // the string if it is empty or has whitespace only. So, we need to
-      // make that same check here before adding to the readline
-      // history. In fact, if we find that the command is empty, we can
-      // just skip executing it altogether.
+      // The idea here is that we want to keep the readline history
+      // and the Tcl history in sync. Tcl's "history add" command will
+      // skip adding the string if it is empty or has whitespace
+      // only. So, we need to make that same check here before adding
+      // to the readline history. In fact, if we find that the command
+      // is empty, we can just skip executing it altogether.
 
       // Skip over leading whitespace
       char* trimmed = expansion;
@@ -512,9 +514,9 @@ DOTRACE("Tcl::MainImpl::execCommand");
 //---------------------------------------------------------------------
 //
 // This procedure is invoked by the event dispatcher whenever standard
-// input becomes readable.  It grabs the next line of input characters,
-// adds them to a command being assembled, and executes the command if it's
-// complete.
+// input becomes readable.  It grabs the next line of input
+// characters, adds them to a command being assembled, and executes
+// the command if it's complete.
 //
 //---------------------------------------------------------------------
 
@@ -564,7 +566,7 @@ DOTRACE("Tcl::MainImpl::run");
       if (itsInChannel)
         {
           Tcl_CreateChannelHandler(itsInChannel, TCL_READABLE,
-                                   &MainImpl::stdinProc, (ClientData) 0);
+                                   &MainImpl::stdinProc, (ClientData)0);
         }
       if (isItInteractive)
         {
@@ -579,8 +581,8 @@ DOTRACE("Tcl::MainImpl::run");
     }
   itsSafeInterp.resetResult();
 
-  // Loop indefinitely, waiting for commands to execute, until there are no
-  // main windows left, then exit.
+  // Loop indefinitely, waiting for commands to execute, until there
+  // are no main windows left, then exit.
 
   while (Tk_GetNumMainWindows() > 0)
     {
