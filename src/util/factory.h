@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu Jun  1 11:51:32 2000
+// written: Fri Oct 20 16:55:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,24 @@ public:
   virtual Base* create() { return new Derived; }
 };
 
+/**
+ *
+ * CreatorFromFunc implements the CreatorBase interface by storing a
+ * pointer to function that returns an object of the appropriate type.
+ *
+ **/
+template <class Base, class Derived>
+class CreatorFromFunc : public CreatorBase<Base> {
+public:
+  typedef Derived* (*FuncType) ();
+
+  CreatorFromFunc(FuncType func) : itsFunc(func) {}
+
+  virtual Base* create() { return itsFunc(); }
+
+private:
+  FuncType itsFunc;
+};
 
 /**
  *
@@ -173,6 +191,15 @@ protected:
   Factory() : itsMap() {}
 
 public:
+  /** Registers a creation function with the factory. The factory will
+      assume ownership of the \c Creator. */
+  template <class Derived>
+  void registerCreatorFunc(Derived* (*func) ())
+  {
+	 itsMap.setPtrForName(demangle_cstr(typeid(Derived).name()),
+								 new CreatorFromFunc<Base, Derived>(func));
+  }
+
   /** Registers a new type with the factory. The class Derived must be
       a subclass of Base. */
   template <class Derived>
