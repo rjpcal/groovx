@@ -181,10 +181,10 @@ class data_ref_holder : public mtx_policies
 {
 public:
   /// Construct with a pointee.
-  data_ref_holder(data_holder* ref) : ref_(ref) {}
+  data_ref_holder(data_holder* ref) : m_ref(ref) {}
 
   /// Copy constructor.
-  data_ref_holder(const data_ref_holder& other) : ref_(other.ref_) {}
+  data_ref_holder(const data_ref_holder& other) : m_ref(other.m_ref) {}
 
   /// Destructor.
   ~data_ref_holder() {}
@@ -193,18 +193,18 @@ public:
   void swap(data_ref_holder& other);
 
   /// Get a pointer to const underlying data.
-  const double* storage() const { return ref_->storage(); }
+  const double* storage() const { return m_ref->storage(); }
 
   /// Get a pointer to non-const underlying data.
-  double* storage_nc() { return ref_->storage_nc(); }
+  double* storage_nc() { return m_ref->storage_nc(); }
 
   /// Get the allocated length of underlying data array.
-  int storage_length() const { return ref_->storage_length(); }
+  int storage_length() const { return m_ref->storage_length(); }
 
 private:
   data_ref_holder& operator=(const data_ref_holder&); // not allowed
 
-  data_holder* ref_;
+  data_holder* m_ref;
 };
 
 

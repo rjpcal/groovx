@@ -336,7 +336,7 @@ void data_holder::swap(data_holder& other)
 
 void data_ref_holder::swap(data_ref_holder& other)
 {
-  std::swap(ref_, other.ref_);
+  std::swap(m_ref, other.m_ref);
 }
 
 static const char vcid_datablock_cc[] = "$Header$";
