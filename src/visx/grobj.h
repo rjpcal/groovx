@@ -3,21 +3,16 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Sep 20 17:01:05 1999
+// written: Tue Sep 21 15:10:49 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
-// be stored and manipulated in ObjList's. Classes derived from this
-// base class must specify the details of how their objects will be
-// drawn. The pure virtual function that must be overridden in derived
-// classes is the grRecompile() function. This is the function that
-// should generate an up-to-date OpenGL display list that, when
-// called, will properly display the object. The function that should
-// actually be called to display the object is draw(). This
-// function is declared virtual and so may be overridden, but the
-// default version, which simply recompiles the display list (if
-// necessary) and then calls the display list, should be adequate in
-// most situations.
+// be stored and manipulated in ObjList's. Subclasses derived from
+// GrObj must specify the details of how their objects will be drawn,
+// by overriding the virtual functions grRender() and grUnRender(),
+// and/or by choosing appropriate render/unrender modes with
+// setRenderMode() and setUnRenderMode(). Public clients call draw()
+// or undraw() to display or hide the object.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -115,13 +110,27 @@ public:
 
   bool getBBVisibility() const;
 
-  virtual bool getBoundingBox(double& left, double& top,
-										double& right, double& bottom) const;
+  bool getBoundingBox(double& left, double& top,
+							 double& right, double& bottom) const;
+  // This will return the bounding box given by grGetBoundingBox(),
+  // except that those values will be modified to reflect internal
+  // scaling, translation, and pixel border values.
+
+  protected: virtual bool grGetBoundingBox(double& left, double& top,
+														 double& right, double& bottom,
+														 int& border_pixels) const;
   // Subclasses may override this function to fill in the parameters
   // with the bounding box in GL coordinates for the object's onscreen
   // image. The function returns true if a bounding box has provided,
   // or false if no bounding box is available. The default
   // implementation provided by GrObj returns false.
+
+  bool getMaintainAsepct() const;
+  double getWidth() const;
+  double getHeight() const;
+  double getMaxDimension() const;
+  double getCenterX() const;
+  double getCenterY() const;
 
   virtual int getCategory() const = 0;
   // getCategory and setCategory are used to manipulate some
@@ -130,8 +139,6 @@ public:
 
   GrObjRenderMode getRenderMode() const;
   GrObjRenderMode getUnRenderMode() const;
-
-  bool getUsingCompile() const;
 
   static void getScreenFromWorld(double world_x, double world_y,
 											int& screen_x, int& screen_y,
@@ -153,12 +160,17 @@ public:
 
   void setBBVisibility(bool visibility);
 
+  void setMaintainAsepct(bool val);
+  void setWidth(double val);
+  void setHeight(double val);
+  void setMaxDimension(double val);
+  void setCenterX(double val);
+  void setCenterY(double val);
+
   virtual void setCategory(int val) = 0;
   
   void setRenderMode(GrObjRenderMode mode);
   void setUnRenderMode(GrObjRenderMode mode);
-
-  void setUsingCompile(bool val);
 
   virtual void receiveStateChangeMsg(const Observable* obj);
   virtual void receiveDestroyMsg(const Observable* obj);
@@ -192,38 +204,30 @@ protected:
   // GROBJ_DIRECT_RENDER or to any of the compile or cache modes. The
   // default implementation provided by GrObj does nothing.
 
-  virtual void grRecompile() const;
-  // This function should arrange for an up-to-date GL display list to
-  // be compiled that will draw the object. This function may be
-  // overridden in the derived classes, but it defaults to simply
-  // creating a new display list, then compiling it with the effects
-  // of grRender().
-
   bool grIsCurrent() const;
   void grPostUpdated() const;
   // These functions manipulate whether the GrObj is considered
-  // current: the GrObj is current if its OpenGL display list is in
-  // correspondence with all of its parameters. Thus, whenever a
-  // manipulator changes a parameter in a derived class, it should
-  // also call sendStateChangeMsg to indicate that the display list
-  // must be recompiled. And when grRecompile has finished compiling
-  // the display list, it should call grPostUpdated to indicate that
-  // the GrObj is ready for display.
+  // current: the GrObj is current if its cached OpenGL display list
+  // or bitmap is in correspondence with all of its parameters. Thus,
+  // whenever a manipulator changes a parameter in a derived class, it
+  // should also call sendStateChangeMsg to indicate that an update is
+  // needed.
 
-  void grNewList() const;
-  // This function is to be used from grRecompile in derived classes to 
-  // get rid of old display list, allocate a new display list, and
-  // check that the allocation actually succeeded.
-
-  int grDisplayList() const { return itsDisplayList; }
+  int grDisplayList() const;
   // This function returns the id of the OpenGL display list that
   // should be compiled in grRecompile.
 
-private:
-  mutable bool itsIsCurrent;    // true if displaylist is current
-  mutable bool itsUsingCompile; // true if GrObj is to be compiled before draw
-  mutable int itsDisplayList;   // OpenGL display list that draws the object
+  private: void grNewList() const;
+  // This function deletes any previous display list, allocates a new
+  // display list, and checks that the allocation actually succeeded.
 
+  private: void grRecompile() const;
+  // This function updates the cached OpenGL display list.
+
+  private: void grRecacheBitmap() const;
+  // This function updates the cached bitmap.
+
+private:
   GrObjImpl* const itsImpl;	  // opaque pointer to implementation
 };
 
