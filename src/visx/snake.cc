@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Mon May 12 13:02:19 2003
+// written: Mon May 12 14:50:44 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,6 +40,7 @@
 #include <cmath>
 
 #include "util/debug.h"
+#include "util/trace.h"
 
 using namespace Gfx;
 
@@ -115,6 +116,7 @@ namespace
                         Vec2d* new_2, Vec2d* new_3,
                         double new_theta)
   {
+  DOTRACE("squashQuadrangle");
     {
       // Here we adjust the position of node-1 by jiggling its angle with
       // respect to node-0:
@@ -260,6 +262,8 @@ Snake::Snake(int l, double sp) :
   itsSpacing(sp),
   itsElem(itsLength)
 {
+DOTRACE("Snake::Snake");
+
   const double radius = (itsLength * itsSpacing) / (2*M_PI);
 
   const double alpha_start = 2 * M_PI * drand48();
@@ -291,10 +295,14 @@ Snake::Snake(int l, double sp) :
 }
 
 Snake::~Snake()
-{}
+{
+DOTRACE("Snake::~Snake");
+}
 
 Element Snake::getElement(int n) const
 {
+DOTRACE("Snake::getElement");
+
   Assert(n < itsLength);
 
   Element result;
@@ -342,6 +350,8 @@ Element Snake::getElement(int n) const
 
 void Snake::jiggle()
 {
+DOTRACE("Snake::jiggle");
+
   int i[4];
   pickRandom4(itsLength, i);
 
@@ -415,6 +425,8 @@ void Snake::jiggle()
 void Snake::transformPath(int i1, const Vec2d& new1,
                           int i2, const Vec2d& new2)
 {
+DOTRACE("Snake::transformPath");
+
   const Vec2d old1 = itsElem[i1];
   const Vec2d old2 = itsElem[i2];
 
