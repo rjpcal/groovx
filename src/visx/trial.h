@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Sat Jul 21 20:52:33 2001
+// written: Sun Jul 22 07:33:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
 
   virtual void undoLastResponse();
 
-  int numResponses() const;
+  unsigned int numResponses() const;
 
   void clearResponses();
 
