@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Jun 15 17:39:15 2001
+// written: Fri Jun 22 09:03:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,6 +75,7 @@ public:
   unsigned int getFontListBase() const { return itsFontListBase; }
   Tcl_Interp* getInterp() const;
   int getWidth() const;
+  const char* pathname() const;
   Color queryColor(unsigned int color_index) const {
     Color col;
     queryColor(color_index, col);
@@ -90,6 +91,8 @@ public:
   virtual GWT::Canvas& getCanvas();
 
   // manipulators
+  static void defaultParent(const char* pathname);
+
   void destroyWidget();
   void scaleRect(double factor);
   void setColor(const Color& color);
