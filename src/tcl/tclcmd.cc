@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue May 14 19:52:33 2002
+// written: Tue Jul  9 13:49:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,25 +69,23 @@ namespace
 
   // Holds the set of the addresses of all valid Tcl::Command objects (this is
   // managed in Tcl::Command's constructor+destructor)
-  std::set<ClientData>* allCommands = 0;
+  std::set<ClientData>* cxxCommands = 0;
 
   Tcl::Command* lookupCmd(Tcl_Interp* interp, const char* cmd_name)
     {
-      if (allCommands != 0) // check if any Tcl::Command's exist yet
+      if (cxxCommands != 0) // check if any Tcl::Command's exist yet
         {
           Tcl_CmdInfo cmd_info;
-          int result = Tcl_GetCommandInfo(interp,
-                                          const_cast<char*>(cmd_name),
-                                          &cmd_info);
+          int result = Tcl_GetCommandInfo(interp, cmd_name, &cmd_info);
 
           if (result != 0) // check if lookup succeeded
             {
-              // if the result is found in "allCommands", then it is one of
+              // if the result is found in "cxxCommands", then it is one of
               // our Tcl::Command's (otherwise it is some other type of
               // command, such as a tcl proc)
 
-              if (allCommands->find(cmd_info.objClientData) !=
-                  allCommands->end())
+              if (cxxCommands->find(cmd_info.objClientData) !=
+                  cxxCommands->end())
                 return static_cast<Tcl::Command*>(cmd_info.objClientData);
             }
         }
@@ -223,8 +221,7 @@ public:
         {
           try
             {
-              Tcl_DeleteCommand(itsInterp,
-                                const_cast<char*>(itsCmdName.c_str()));
+              Tcl_DeleteCommand(itsInterp, itsCmdName.c_str());
             }
           catch (Util::Error& err)
             { DebugEvalNL(err.msg_cstr()); }
@@ -272,7 +269,7 @@ private:
     else
       {
         Tcl_CreateObjCommand(interp,
-                             const_cast<char*>(itsCmdName.c_str()),
+                             itsCmdName.c_str(),
                              invokeCallback,
                              static_cast<ClientData>(itsOwner),
                              (Tcl_CmdDeleteProc*) NULL);
@@ -476,20 +473,20 @@ Tcl::Command::Command(Tcl_Interp* interp,
 {
 DOTRACE("Tcl::Command::Command");
 
-  if (allCommands == 0)
+  if (cxxCommands == 0)
     {
-      allCommands = new std::set<ClientData>;
+      cxxCommands = new std::set<ClientData>;
     }
-  allCommands->insert(static_cast<ClientData>(this));
+  cxxCommands->insert(static_cast<ClientData>(this));
 }
 
 Tcl::Command::~Command()
 {
 DOTRACE("Tcl::Command::~Command");
 
-  Assert(allCommands != 0);
+  Assert(cxxCommands != 0);
 
-  allCommands->erase(static_cast<ClientData>(this));
+  cxxCommands->erase(static_cast<ClientData>(this));
 
   delete itsImpl;
 }

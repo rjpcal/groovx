@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu Jan 31 13:36:23 2002
+// written: Tue Jul  9 13:51:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,9 +139,7 @@ DOTRACE("Tcl::PkgBase::Impl::Impl");
     itsVersion.erase(0, itsVersion.find_first_of("0123456789"));
     itsVersion.erase(itsVersion.find_last_of("0123456789")+1, std::string::npos);
 
-    Tcl_PkgProvide(interp,
-                   const_cast<char *>(pkgname.c_str()),
-                   const_cast<char *>(itsVersion.c_str()));
+    Tcl_PkgProvide(interp, pkgname.c_str(), itsVersion.c_str());
   }
 }
 

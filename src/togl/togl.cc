@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jun 18 10:30:53 2002
+// written: Tue Jul  9 13:57:28 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -304,10 +304,10 @@ static Tk_ConfigSpec configSpecs[] =
    Tk_Offset(Togl::Impl, itsDoubleFlag), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
-   (char*)"false", Tk_Offset(Togl::Impl, itsDepthFlag), 0, NULL},
+   (char*)"true", Tk_Offset(Togl::Impl, itsDepthFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsDepthSize), 0, NULL},
+   (char*)"8", Tk_Offset(Togl::Impl, itsDepthSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
    (char*)"false", Tk_Offset(Togl::Impl, itsAccumFlag), 0, NULL},
@@ -2367,33 +2367,29 @@ DOTRACE("Togl::Impl::checkDblBufferSnafu");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace ToglTcl
+namespace
 {
-  int ToglCmd(ClientData clientData, Tcl_Interp *interp,
-              int argc, char **argv);
-}
+  int ToglCmd(ClientData, Tcl_Interp *interp, int argc, char **argv)
+  {
+    DOTRACE("ToglCmd");
+    if (argc <= 1)
+      {
+        return TCL_ERR(interp,
+                       "wrong # args: should be \"pathName read filename\"");
+      }
 
-int ToglTcl::ToglCmd(ClientData, Tcl_Interp *interp,
-                     int argc, char **argv)
-{
-DOTRACE("ToglTcl::ToglCmd");
-  if (argc <= 1)
-    {
-      return TCL_ERR(interp,
-                     "wrong # args: should be \"pathName read filename\"");
-    }
+    /* Create Togl data structure */
+    try
+      {
+        new Togl(interp, argv[1], argc-2, const_cast<const char**>(argv+2));
+      }
+    catch (...)
+      {
+        return TCL_ERROR;
+      }
 
-  /* Create Togl data structure */
-  try
-    {
-      new Togl(interp, argv[1], argc-2, const_cast<const char**>(argv+2));
-    }
-  catch (...)
-    {
-      return TCL_ERROR;
-    }
-
-  return TCL_OK;
+    return TCL_OK;
+  }
 }
 
 extern "C" int Togl_Init(Tcl_Interp *interp)
@@ -2402,8 +2398,7 @@ DOTRACE("Togl_Init");
 
   Tcl_PkgProvide(interp, "Togl", TOGL_VERSION);
 
-  Tcl_CreateCommand(interp, "togl", ToglTcl::ToglCmd,
-                    (ClientData) 0, NULL);
+  Tcl_CreateCommand(interp, "togl", ToglCmd, (ClientData) 0, NULL);
 
   Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
 

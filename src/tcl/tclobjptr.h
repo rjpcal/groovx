@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Tue Jul  9 13:50:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ public:
 
   /// Copy constructor.
   ObjPtr(const ObjPtr& x) :
-    itsObj(const_cast<Tcl_Obj*>(x.itsObj))
+    itsObj(x.itsObj)
     {
       incrRef(itsObj);
     }

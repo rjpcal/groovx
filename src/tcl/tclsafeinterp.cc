@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Wed Jan 30 14:09:13 2002
+// written: Tue Jul  9 13:53:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -236,9 +236,7 @@ bool Tcl::Interp::hasCommand(const char* cmd_name) const
 {
 DOTRACE("Tcl::Interp::hasCommand");
   Tcl_CmdInfo info;
-  int result = Tcl_GetCommandInfo(intp(),
-                                  const_cast<char*>(cmd_name),
-                                  &info);
+  int result = Tcl_GetCommandInfo(intp(), cmd_name, &info);
   return (result != 0);
 }
 
