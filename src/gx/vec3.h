@@ -35,6 +35,10 @@ public:
 
   Vec3(const V* arr) { set(arr[0], arr[1], arr[2]); }
 
+  template <class U>
+  Vec3(const Vec3<U>& other)
+    { set(other.x(), other.y(), other.z()); }
+
   static Vec3<V> unitX() { return Vec3<V>(1.0, 0.0, 0.0); }
   static Vec3<V> unitY() { return Vec3<V>(0.0, 1.0, 0.0); }
   static Vec3<V> unitZ() { return Vec3<V>(0.0, 0.0, 1.0); }
