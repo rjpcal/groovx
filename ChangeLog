@@ -277,3 +277,9 @@ will be needed, and then they can be phased out.
   the same TclCmd object under multiple names. [Later] OK, we can basically
   achieve this kind of inheritance by just making use of Tcl's ability to
   import/export commands from namespaces.
+
+* (done 22-Nov-2002) Merge Tcl::PkgBase and Tcl::Pkg again?
+
+  Actually, the stuff in tclpkg.h now should go to a new "objpkg.h".
+  And I'll leave Tcl::Pkg in place since it introduces a lot of #include
+  overhead beyond Tcl::PkgBase, so it's nice to keep that isolated.
