@@ -154,14 +154,15 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too many args" {
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 	 clearscreen
-	 set time1 [time {show $::BITMAP}]
+	 set time1 [lindex [time {show $::BITMAP}] 0]
 
 	 GLBitmap::usingGlBitmap $::BITMAP yes
 	 clearscreen
-	 set time2 [time {show $::BITMAP}]
-	 
+	 set time2 [lindex [time {show $::BITMAP}] 0]
+
 	 # Rendering should always be faster with glBitmap than with glDrawPixels
 	 expr { $time1 > $time2 }
+	 
 } {^1$}
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "error" {} {^$} $no_test
 
