@@ -9,30 +9,6 @@
 
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
 
-* (13-Sep-1999) Refactoring Toglet into Widget, Camera, Canvas
-
-** (27-Nov-1999) a Window/Widget class to contain a Camera and a Canvas
-   Or does the Camera need to contain the Canvas? It seems like the Window
-   will pass a redraw request on to its Camera, which would need to have a
-   Canvas reference to pass to the graphic objects in order for them to
-   redraw themselves.
-
-** (17-Nov-1999) The Camera abstraction
-   includes some of the Toglet functionality such as perspective or
-   orthographic projection, viewing distance, viewport, and which will be
-   used by a Window/Widget to handle redraws and reconfigures. A subclass
-   of Camera can carry the Tlist functionality such as setVisible(),
-   setCurTrial(), etc. Actually, it seems there are two different parts to
-   camera: one is the object/scene that it is viewing, and the other
-   defines the sort of projection that is used.
-
-** (13-Sep-1999) Should change Toglet to a "Camera"-style interface
-   a la Open Inventor. Then different types of camera's, such as
-   orthographic or perspective projection, could be related by inheritance
-   from an abstract base class Camera. Parameters include viewing volume,
-   autoUpdate (determines if scene is automatically redrawn upon Expose or
-   Resize events)...
-
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
 

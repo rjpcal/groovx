@@ -218,3 +218,33 @@ will be needed, and then they can be phased out.
 
 * (28-Nov-2000, OK 21-Nov-2002) GxShape base for GxLine, GxRect, GxDisk, etc.
   Looks like we've pretty much met the goal behind this one.
+
+* (13-Sep-1999, done 22-Nov-2002) Refactor Toglet into Widget, Camera, Canvas
+
+** (27-Nov-1999, done 22-Nov-2002) Widget class has a Camera and a Canvas
+   Or does the Camera need to contain the Canvas? It seems like the Window
+   will pass a redraw request on to its Camera, which would need to have a
+   Canvas reference to pass to the graphic objects in order for them to
+   redraw themselves. [22-Nov-2002] Cool. Finally got this exactly how it
+   should be as above: we have GWT::Widget which has a canvas (via a
+   virtual function which is implemented by Toglet) and holds a single
+   drawable object (the "scene") and a single camera.
+
+** (17-Nov-1999, done 22-Nov-2002) The Camera abstraction
+   includes some of the Toglet functionality such as perspective or
+   orthographic projection, viewing distance, viewport, and which will be
+   used by a Window/Widget to handle redraws and reconfigures. A subclass
+   of Camera can carry the Tlist functionality such as setVisible(),
+   setCurTrial(), etc. Actually, it seems there are two different parts to
+   camera: one is the object/scene that it is viewing, and the other
+   defines the sort of projection that is used. [Later] Pfft... camera
+   doesn't need to know anything about the object/scene it is viewing; all
+   it needs to do is set up the viewport and projection matrix.
+
+** (13-Sep-1999, done 22-Nov-2002) Change Toglet to a "Camera"-style interface
+   a la Open Inventor. Then different types of camera's, such as
+   orthographic or perspective projection, could be related by inheritance
+   from an abstract base class Camera. Parameters include viewing volume,
+   autoUpdate (determines if scene is automatically redrawn upon Expose or
+   Resize events)... [Later] OK, now I have GxCamera, GxFixedScaleCamera,
+   GxPerspectiveCamera, and GxPsyphyCamera, among others.
