@@ -3,7 +3,7 @@
 // rand.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 14:09:24 1999
-// written: Thu Mar  9 17:09:24 2000
+// written: Thu Mar 30 12:18:59 2000
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -13,6 +13,8 @@
 
 #ifndef RAND_H_DEFINED
 #define RAND_H_DEFINED
+
+namespace Util {
 
 class Randint { // uniform distribution in the interval [0,max]
   unsigned long randx;
@@ -37,6 +39,8 @@ public:
 
   int operator()(int n) { int r = int(n*fdraw()); return (r==n) ? n-1 : r; }
 };
+
+}
 
 static const char vcid_rand_h[] = "$Header$";
 #endif // !RAND_H_DEFINED
