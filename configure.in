@@ -22,8 +22,8 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with GroovX; if not, write to the Free Software Foundation, Inc., 59
 dnl Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
-AC_INIT(GroovX, [1.0a1], [rjpeters at klab dot caltech dot edu])
-AC_PREREQ(2.53)
+AC_INIT([GroovX],[1.0a1],[rjpeters at klab dot caltech dot edu])
+AC_PREREQ(2.57)
 AC_REVISION($Revision$)
 
 ### New macro definitions
@@ -34,7 +34,9 @@ AC_DEFUN([AC_CHECK_LIB_CXX],
 	 [AC_MSG_CHECKING([for lib$1])
 	 libs_save=$LIBS
 	 LIBS="$LIBS -l$1"
-	 AC_TRY_LINK([$2], [$3], [havelib_$1=yes], [havelib_$1=no])
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([[$2]], [[$3]])],
+	                [havelib_$1=yes],
+			[havelib_$1=no])
 	 LIBS=$libs_save
 	 if test $havelib_$1 = yes; then
 	    AC_MSG_RESULT(yes)
@@ -264,7 +266,7 @@ AC_SUBST(DOXYGEN_PROG)
 
 AC_MSG_CHECKING([whether virtual base class address-offsets are ok])
 
-AC_TRY_RUN([void* p1 = 0; void* p2 = 0;
+AC_RUN_IFELSE([AC_LANG_SOURCE([[void* p1 = 0; void* p2 = 0;
 
 struct A {
   virtual ~A() {};
@@ -283,16 +285,16 @@ int main()
   b->foo();
 
   return (p1 == p2) ? 0 : 1;
-}],
+}]])],
 [AC_MSG_RESULT(yes)],
 [AC_MSG_RESULT(no);
- AC_MSG_ERROR([$CXX has a virtual base class address-offset bug])])
+ AC_MSG_ERROR([$CXX has a virtual base class address-offset bug])],[])
 
 ### Check for virtual inheritance constructor bug
 
 AC_MSG_CHECKING([whether construction under virtual inheritance is ok])
 
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 struct A                      { virtual ~A(); int x; };
 struct B : public virtual A   { };
 struct C : public B           { C(int); };
@@ -303,16 +305,16 @@ int main()                    { D t; return 0; }
 A::~A()                       {}
 C::C(int)                     {}
 D::D() : C(this->x)           {}
-],
+]])],
 [AC_MSG_RESULT(yes)],
 [AC_MSG_RESULT(no);
- AC_MSG_ERROR([$CXX has a virtual inheritance constructor bug])])
+ AC_MSG_ERROR([$CXX has a virtual inheritance constructor bug])],[])
 
 ### Check whether "return void" is allowed in templates
 
 AC_MSG_CHECKING([whether return void is allowed in templates])
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 template <class R>
 struct Foo
 {
@@ -323,8 +325,7 @@ struct Foo
   }
 };
 
-void baz() {}],
-[Foo<void>::bar(baz);],
+void baz() {}]], [[Foo<void>::bar(baz);]])],
 [AC_MSG_RESULT(yes)],
 [AC_MSG_RESULT(no);
  AC_MSG_ERROR([$CXX is broken: does not allow return void in templates])])
@@ -333,13 +334,13 @@ void baz() {}],
 
 AC_MSG_CHECKING([whether we can take the address of template functions])
 
-AC_TRY_COMPILE([namespace Q {
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[namespace Q {
   template <class T>
   void foo(T) {}
 }
 template <class F> void bar(F) {}
-],
-[bar(Q::foo<int>); bar(Q::foo<double>);],
+]],
+[[bar(Q::foo<int>); bar(Q::foo<double>);]])],
 [AC_MSG_RESULT(yes)],
 [AC_DEFINE(BROKEN_TEMPLATE_FUNCTIONS,1,[can take address of template funtions?])
  AC_MSG_RESULT(no)])
@@ -348,7 +349,7 @@ template <class F> void bar(F) {}
 
 AC_MSG_CHECKING([whether typeinfo::name() gives a mangled typename])
 
-AC_TRY_RUN([#include <typeinfo>
+AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <typeinfo>
 #include <string.h>
 
 namespace Q {
@@ -363,9 +364,10 @@ int main()
   extern Q::foo<bar> p;
   return (strcmp("Q::foo<bar>", typeid(p).name()) == 0) ? 0 : 1;
 }
-],
-[AC_DEFINE(NO_TYPENAME_MANGLING,1,[is typeid().name() unmangled?]) AC_MSG_RESULT(no)],
-AC_MSG_RESULT(yes))
+]])],
+[AC_DEFINE(NO_TYPENAME_MANGLING,1,[is typeid().name() unmangled?])
+ AC_MSG_RESULT(no)],
+[AC_MSG_RESULT(yes)],[])
 
 AC_CHECK_PROG(have_prog_cxxfilt, [c++filt], yes, no)
 if test "$have_prog_cxxfilt" = yes; then
@@ -376,21 +378,21 @@ fi
 
 AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
 
-AC_TRY_COMPILE([#include <iostream>], [std::ios_base* p;],
-		[AC_MSG_RESULT(yes)],
-		[AC_DEFINE(PRESTANDARD_IOSTREAMS,1,[prestandard iostreams?])
-                 AC_MSG_RESULT(no)])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iostream>]], [[std::ios_base* p;]])],
+                  [AC_MSG_RESULT(yes)],
+		  [AC_DEFINE(PRESTANDARD_IOSTREAMS,1,[prestandard iostreams?])
+                   AC_MSG_RESULT(no)])
 
 have_std_io=no
 
 AC_MSG_CHECKING([whether iostreams are in std namespace])
 
-AC_TRY_COMPILE([#include <iostream>], [std::iostream* p;],
-		have_std_io=yes)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iostream>]], [[std::iostream* p;]])],
+                  [have_std_io=yes],[])
 
 if test $have_std_io = no; then
-   AC_TRY_COMPILE([#include <iostream.h>], [std::iostream* p;],
-		   have_std_io=yes)
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iostream.h>]], [[std::iostream* p;]])],
+                     [have_std_io=yes],[])
 fi
 
 AC_MSG_RESULT($have_std_io)
@@ -734,4 +736,4 @@ AC_CONFIG_FILES([doc/DoxyConfig:doc/DoxyConfig.in])
 
 AC_CONFIG_HEADERS([config.h])
 
-AC_OUTPUT()
+AC_OUTPUT
