@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 16:40:19 2001
+// written: Wed Jun  6 17:29:31 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -32,6 +32,13 @@
 #include "util/iditem.h"
 #include "util/strings.h"
 
+// This hack causes this file to be compiled into the main executable
+// (through the rules in place in the Makefile), rather than a shared
+// library, so that this file can find the typeinfo for ToglConfig.
+#ifdef GCC_COMPILER
+#  include <GL/gl.h>
+#endif
+
 #include <tcl.h>
 #include <strstream.h>
 #include <iomanip.h>
@@ -48,7 +55,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjTogl {
-  ToglConfig* theWidget = 0;
+
+  MaybeIdItem<ToglConfig> theWidget;
 
   bool toglCreated = false;
   
@@ -68,8 +76,6 @@ namespace ObjTogl {
   class ShowCmd;
 
   class ObjToglPkg;
-
-  ToglConfig* theToglConfig();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -78,30 +84,26 @@ namespace ObjTogl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-ToglConfig* ObjTogl::theToglConfig() {
-DOTRACE("ObjTogl::theToglConfig");
-  if (!toglCreated) { throw Tcl::TclError("Togl not yet initialized"); }
-  Assert(theWidget != 0);
-  return theWidget;
-}
+class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
+public:
+  virtual void onDestroy(ToglConfig* config);
+};
 
-  class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
-  public:
-	 virtual void onDestroy(ToglConfig* config)
+void WidgetDestroyCallback::onDestroy(ToglConfig* config)
+  {
+	 if (ObjTogl::theWidget.isValid() &&
+		  ObjTogl::theWidget.get() == config)
 		{
-		  if (ObjTogl::theWidget == config)
-			 {
-				ObjTogl::theWidget = 0;
-				ObjTogl::toglCreated = false;
-			 }
+  		  ObjTogl::theWidget = MaybeIdItem<ToglConfig>();
+  		  ObjTogl::toglCreated = false;
 		}
-  };
+  }
 
 void ObjTogl::setCurrentTogl(ToglConfig* togl) {
 DOTRACE("ObjTogl::setCurrentTogl");
 
-  ObjTogl::theWidget = togl;
-  ObjTogl::theWidget->setDestroyCallback(new WidgetDestroyCallback);
+  theWidget = MaybeIdItem<ToglConfig>(togl);
+  theWidget->setDestroyCallback(new WidgetDestroyCallback);
   toglCreated = true;
 }
 
@@ -125,7 +127,7 @@ protected:
       // This tells the ToglConfig to destroy itsTogl, which in turn
       // generates a call to the destroyCallback, which in turn
       // delete's the toglConfig.
-      theWidget->destroyWidget();
+		theWidget->destroyWidget();
     }
   }
 };
@@ -462,12 +464,13 @@ public:
 
   virtual ~ObjToglPkg() {
 	 if (toglCreated) {
-		ObjTogl::theToglConfig()->setVisibility(false);
+  		ObjTogl::theWidget->setVisibility(false);
 	 }
   }
 
   ToglConfig* getCItemFromId(int) {
-    return ObjTogl::theToglConfig();
+	 if (!toglCreated) { throw Tcl::TclError("no valid Togl exists"); }
+	 return ObjTogl::theWidget.get();
   }
 };
 
