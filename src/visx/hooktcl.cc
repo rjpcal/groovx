@@ -330,10 +330,70 @@ namespace
   }
 }
 
+#include "gfx/toglet.h"
+#include "geom/rect.h"
+#include "geom/vec2.h"
+#include "geom/vec3.h"
+#include "gfx/glcanvas.h"
+#include <GL/gl.h>
+
+namespace
+{
+  void bug()
+  {
+    Nub::SoftRef<Toglet> t = Toglet::getCurrent();
+
+    using geom::rectd;
+    using geom::vec3d;
+    using geom::vec2d;
+
+    GLCanvas& canvas = dynamic_cast<GLCanvas&>(*t->getCanvas());
+
+    canvas.translate(geom::vec3d(-2.56, -2.56, 0.0));
+
+    const int SIZE = 512;
+
+    unsigned char buf[SIZE*SIZE];
+
+    unsigned char* bytes = &buf[0];
+
+    for (int y = 0; y < SIZE; ++y)
+      for (int x = 0; x < SIZE; ++x)
+        *bytes++ = (x*y) % 256;
+
+    const vec3d world_pos = vec3d::zeros();
+
+    const rectd viewport = rectd(canvas.getScreenViewport());
+
+    const vec3d screen_pos = canvas.screenFromWorld3(world_pos);
+
+    const vec3d safe_screen = vec3d(viewport.center_x(),
+                                    viewport.center_y(),
+                                    0.5);
+
+    const vec3d safe_world = canvas.worldFromScreen3(safe_screen);
+
+    glRasterPos3d(safe_world.x(), safe_world.y(), safe_world.z());
+
+    glBitmap(0, 0, 0.0f, 0.0f,
+             screen_pos.x()-safe_screen.x(),
+             screen_pos.y()-safe_screen.y(),
+             static_cast<const GLubyte*>(0));
+
+    glDrawPixels(SIZE, SIZE,
+                 GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                 static_cast<GLvoid*>(&buf[0]));
+
+    canvas.flushOutput();
+  }
+}
+
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
   PKG_CREATE(interp, "Hook", "4.$Revision$");
+
+  pkg->def( "::bug", "", &bug, SRC_POS );
 
   pkg->def( "::hook", "", HookTcl::hook, SRC_POS );
   pkg->def( "::memUsage", 0, HookTcl::memUsage, SRC_POS );
