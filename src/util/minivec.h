@@ -20,6 +20,9 @@
 namespace MVUtils {
 
   template <class T>
+	 inline void initialize__ (T& t, T val) { t = val; }
+
+  template <class T>
 	 inline const T& max (const T& a, const T& b)
 	 {
 		return  a < b ? b : a;
@@ -126,7 +129,7 @@ public:
 
 //
 // allocator_interface provides all types and typed functions.  Memory
-// allocated as raw bytes using the class provided by the Allocator
+// allocated as raw bytes using the class provided by the allocator
 // template parameter.  allocator_interface casts appropriately.
 //
 // Multiple allocator_interface objects can attach to a single 
@@ -137,26 +140,27 @@ public:
 // hard coded as T* and T&.  Partial specialization would 
 // get around this.
 //
-template <class Allocator,class T>
+
+template <class T>
 class allocator_interface 
 {
 public:
-  typedef Allocator allocator_type;
+  typedef allocator allocator_type;
   typedef T*         pointer;
   typedef const T*   const_pointer;      
   typedef T&         reference;
   typedef const T&   const_reference;
   typedef T          value_type;
-  typedef typename Allocator::size_type             size_type;
-  typedef typename Allocator::difference_type       difference_type;
+  typedef allocator::size_type             size_type;
+  typedef allocator::difference_type       difference_type;
 protected:
   allocator_type*         alloc_;
 
 public:
   allocator_interface() : alloc_(NULL) { ; }
-  allocator_interface(Allocator* a) : alloc_(a) { ; }
+  allocator_interface(allocator* a) : alloc_(a) { ; }
 
-  void alloc(Allocator* a)
+  void alloc(allocator* a)
 	 { 
 		alloc_ = a; 
 	 }   
@@ -193,7 +197,7 @@ public:
 };
 
 template <>
-class allocator_interface<allocator,void> 
+class allocator_interface<void> 
 {
 public:
   typedef void*         pointer;
@@ -226,7 +230,7 @@ public:
   virtual ~OutOfRange () { ; }
 };
 
-template <class T, class Allocator = allocator>
+template <class T>
 class minivec
 {
 public:
@@ -234,18 +238,18 @@ public:
   // Types.
   //
   typedef T                                          value_type;
-  typedef Allocator                                  allocator_type;
-  typedef typename Allocator::size_type              size_type;
-  typedef typename Allocator::difference_type        difference_type;
+  typedef allocator                                  allocator_type;
+  typedef typename allocator_interface<T>::size_type        size_type;
+  typedef typename allocator_interface<T>::difference_type  difference_type;
 
-  typedef typename allocator_interface<Allocator,T>::pointer          iterator;
-  typedef typename allocator_interface<Allocator,T>::const_pointer    const_iterator;
-  typedef typename allocator_interface<Allocator,T>::reference        reference;
-  typedef typename allocator_interface<Allocator,T>::const_reference  const_reference;
+  typedef typename allocator_interface<T>::pointer          iterator;
+  typedef typename allocator_interface<T>::const_pointer    const_iterator;
+  typedef typename allocator_interface<T>::reference        reference;
+  typedef typename allocator_interface<T>::const_reference  const_reference;
 
 protected:
-  typedef typename allocator_interface<Allocator,T>::pointer          pointer;
-  typedef typename allocator_interface<Allocator,T>::const_pointer    const_pointer;
+  typedef typename allocator_interface<T>::pointer          pointer;
+  typedef typename allocator_interface<T>::const_pointer    const_pointer;
 
 public:
   typedef reverse_iterator<const_iterator, value_type, const_reference, 
@@ -259,7 +263,7 @@ protected:
   size_type buffer_size;
   allocator_type          the_allocator;
 
-  allocator_interface<allocator_type,T> value_allocator;
+  allocator_interface<T> value_allocator;
 
   iterator start;
   iterator finish;
@@ -277,7 +281,7 @@ public:
   //
   // construct/copy/destroy
   //
-  explicit minivec (const Allocator& alloc = Allocator())
+  explicit minivec (const allocator& alloc = allocator())
 	 : start(0), finish(0), end_of_storage(0), the_allocator(alloc) 
     {
 		initialize();
@@ -287,7 +291,7 @@ public:
   // Build a minivec of size n with each element set to default for type T.
   // This requires that T have a default constructor.
   //
-  explicit minivec (size_type n, const Allocator& alloc = Allocator())
+  explicit minivec (size_type n, const allocator& alloc = allocator())
 	 : the_allocator(alloc)
     {
 		initialize();
@@ -301,7 +305,7 @@ public:
   //
   // Build a minivec of size n with each element set to copy of value.
   //
-  minivec (size_type n, const T& value, const Allocator& alloc = Allocator())
+  minivec (size_type n, const T& value, const allocator& alloc = allocator())
 	 : the_allocator(alloc)
     {
 		initialize();
@@ -311,7 +315,7 @@ public:
 		end_of_storage = finish;
     }
 
-  minivec (const minivec<T,Allocator>& x)
+  minivec (const minivec<T>& x)
     {
 		the_allocator = x.get_allocator();
 		initialize();
@@ -329,12 +333,12 @@ public:
 
   template<class InputIterator>
   minivec (InputIterator first, InputIterator last,
-			  const Allocator& alloc = Allocator())
+			  const allocator& alloc = allocator())
 	 : the_allocator(alloc)
 	 {
 		size_type n;
 		initialize();
-		__initialize(n, size_type(0));
+		MVUtils::initialize__(n, size_type(0));
 		distance(first, last, n);
 		start = value_allocator.allocate(n,(pointer)0);
 		finish = MVUtils::uninitialized_copy(first, last, start);
@@ -347,7 +351,7 @@ public:
 		value_allocator.deallocate(start);
     }
 
-  minivec<T,Allocator>& operator= (const minivec<T,Allocator>& x);
+  minivec<T>& operator= (const minivec<T>& x);
 
   template<class InputIterator> 
   void assign (InputIterator first, InputIterator last)
@@ -512,7 +516,7 @@ public:
   template<class InputIterator>
   void insert (iterator position, InputIterator first, InputIterator last);
 
-  void swap (minivec<T,Allocator>& x)
+  void swap (minivec<T>& x)
     {
 		if(the_allocator==x.the_allocator)
 		  {
@@ -530,7 +534,7 @@ public:
 		  }
 		else
 		  {
-			 minivec<T,Allocator> _x = *this;
+			 minivec<T> _x = *this;
 			 *this = x;
 			 x=_x;
 		  } 
@@ -557,14 +561,14 @@ public:
 
 }; // end class minivec
 
-template <class T, class Allocator>
-inline bool operator== (const minivec<T,Allocator>& x, const minivec<T,Allocator>& y)
+template <class T>
+inline bool operator== (const minivec<T>& x, const minivec<T>& y)
 {
     return x.size() == y.size() && equal(x.begin(), x.end(), y.begin());
 }
 
-template <class T, class Allocator>
-inline bool operator< (const minivec<T,Allocator>& x, const minivec<T,Allocator>& y)
+template <class T>
+inline bool operator< (const minivec<T>& x, const minivec<T>& y)
 {
     return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }
@@ -574,8 +578,8 @@ inline bool operator< (const minivec<T,Allocator>& x, const minivec<T,Allocator>
 // This requires that T have a default constructor.
 //
 
-template <class T, class Allocator>
-void minivec<T,Allocator>::resize (size_type new_size)
+template <class T>
+void minivec<T>::resize (size_type new_size)
 {
     T value;
     if (new_size > size())
@@ -584,8 +588,8 @@ void minivec<T,Allocator>::resize (size_type new_size)
         erase(begin() + new_size, end());
 }
 
-template <class T, class Allocator>
-void minivec<T,Allocator>::resize (size_type new_size, T value)
+template <class T>
+void minivec<T>::resize (size_type new_size, T value)
 {
     if (new_size > size())
         insert(end(), new_size - size(), value);
@@ -593,8 +597,8 @@ void minivec<T,Allocator>::resize (size_type new_size, T value)
         erase(begin() + new_size, end());
 }
 
-template <class T, class Allocator>
-minivec<T,Allocator>& minivec<T,Allocator>::operator= (const minivec<T,Allocator>& x)
+template <class T>
+minivec<T>& minivec<T>::operator= (const minivec<T>& x)
 {
     if (&x == this) return *this;
     if (x.size() > capacity())
@@ -618,8 +622,8 @@ minivec<T,Allocator>& minivec<T,Allocator>::operator= (const minivec<T,Allocator
     return *this;
 }
 
-template <class T, class Allocator>
-void minivec<T,Allocator>::insert_aux (iterator position, const T& x)
+template <class T>
+void minivec<T>::insert_aux (iterator position, const T& x)
 {
     if (finish != end_of_storage)
     {
@@ -648,8 +652,8 @@ void minivec<T,Allocator>::insert_aux (iterator position, const T& x)
     }
 }
 
-template <class T, class Allocator>
-void minivec<T,Allocator>::insert (iterator position, size_type n, const T& x)
+template <class T>
+void minivec<T>::insert (iterator position, size_type n, const T& x)
 {
     if (n == 0) return;
     if (end_of_storage - finish >= n)
@@ -683,14 +687,14 @@ void minivec<T,Allocator>::insert (iterator position, size_type n, const T& x)
     }
 }
 
-template<class T, class Allocator>
+template<class T>
 template<class InputIterator>
-void minivec<T,Allocator>::insert (iterator position, InputIterator first, 
+void minivec<T>::insert (iterator position, InputIterator first, 
 											  InputIterator last)
 {
     if (first == last) return;
     size_type n;
-    __initialize(n, size_type(0));
+    MVUtils::initialize__(n, size_type(0));
     distance(first, last, n);
     if (end_of_storage - finish >= n)
     {
