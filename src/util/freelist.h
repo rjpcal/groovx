@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 07:54:29 2001
-// written: Thu Aug  9 11:54:54 2001
+// written: Mon Aug 13 11:17:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,23 +26,27 @@ private:
   };
 
   Node* itsNodeList;
+  std::size_t itsSizeCheck;
 
   FreeListBase(const FreeListBase&);
   FreeListBase& operator=(const FreeListBase&);
 
 public:
-  FreeListBase() : itsNodeList(0) {}
+  FreeListBase(std::size_t size_check) :
+    itsNodeList(0), itsSizeCheck(size_check) {}
 
-  void* allocate(size_t bytes, size_t size_check);
+  void* allocate(std::size_t bytes);
   void deallocate(void* space);
 };
 
 template <class T>
 class FreeList : private FreeListBase {
 public:
-  void* allocate(size_t bytes)
+  FreeList() : FreeListBase(sizeof(T)) {}
+
+  void* allocate(std::size_t bytes)
   {
-    return FreeListBase::allocate(bytes, sizeof(T));
+    return FreeListBase::allocate(bytes);
   }
 
   void deallocate(void* space)
