@@ -49,11 +49,7 @@ TK_VERSION := 8.4
 
 MAKEFLAGS += --warn-undefined-variables
 
-CPP_DEFINES := $(DEFS)
 CC_SWITCHES :=
-LD_OPTIONS :=
-INCLUDE_PATH :=
-LIB_PATH :=
 
 #-------------------------------------------------------------------------
 #
@@ -76,7 +72,7 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
-INCLUDE_PATH += -I$(with_tcltk)/include -I$(SRC)
+CPPFLAGS += -I$(with_tcltk)/include -I$(SRC)
 
 TMP_DIR := ./tmp/$(PLATFORM)
 TMP_FILE := $(TMP_DIR)/tmpfile
@@ -92,13 +88,13 @@ ifeq ($(PLATFORM),irix6)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DSHORTEN_SYMBOL_NAMES
+	DEFS += -DSHORTEN_SYMBOL_NAMES
 
 	DEFAULT_MODE := prod
 
 	AUDIO_LIB := -laudio -laudiofile
 
-	LIB_PATH += -Wl,-rpath,$(exec_prefix)/lib
+	LDFLAGS += -Wl,-rpath,$(exec_prefix)/lib
 endif
 
 ifeq ($(PLATFORM),i686)
@@ -108,25 +104,25 @@ ifeq ($(PLATFORM),i686)
 
 # display lists don't work at present with i686/linux/mesa
 
-	CPP_DEFINES += -DBROKEN_GL_DISPLAY_LISTS -march=i686
+	DEFS += -DBROKEN_GL_DISPLAY_LISTS -march=i686
 
 	DEFAULT_MODE := debug
 
 	AUDIO_LIB := -lesd -laudiofile
 
-	LIB_PATH += -Wl,-rpath,$(with_tcltk)/lib
+	LDFLAGS += -Wl,-rpath,$(with_tcltk)/lib
 endif
 
 ifeq ($(PLATFORM),ppc)
 	COMPILER := g++2
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
-	CPP_DEFINES += -DESD_WORKAROUND
+	DEFS += -DESD_WORKAROUND
 	DEFAULT_MODE := debug
 	AUDIO_LIB := -lesd -laudiofile
 # The /sw/lib and /sw/include directories are managed by Fink
-	LIB_PATH += -L/usr/X11R6/lib -L/sw/lib
-	INCLUDE_PATH += -I/usr/X11R6/include -I/sw/include
+	LDFLAGS += -L/sw/lib
+	CPPFLAGS += -I/sw/include
 endif
 
 ifndef MODE
@@ -142,7 +138,7 @@ endif
 ifeq ($(MODE),debug)
 	OBJ_EXT := .do
 	LIB_SUFFIX := .d
-	CPP_DEFINES += -DPROF
+	DEFS += -DPROF
 endif
 
 ifeq ($(MODE),prod)
@@ -159,9 +155,9 @@ ifeq ($(COMPILER),MIPSpro)
 	CC_SWITCHES += -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
 
-	CPP_DEFINES += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+	DEFS += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	INCLUDE_PATH += -I$(HOME)/local/$(ARCH)/include/cppheaders
+	CPPFLAGS += -I$(HOME)/local/$(ARCH)/include/cppheaders
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
@@ -179,7 +175,7 @@ endif
 ifeq ($(COMPILER),g++2)
 	CXX := time g++2
 	CC_SWITCHES += -Wall -W -Wsign-promo
-	CPP_DEFINES += -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+	DEFS += -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O1
@@ -206,7 +202,7 @@ ifeq ($(COMPILER),g++3)
 # Filter the compiler output...
 	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 	CC_SWITCHES += $(WARNINGS)
-	CPP_DEFINES += -DSTD_IO=std
+	DEFS += -DSTD_IO=std
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -O1 -g
@@ -215,7 +211,7 @@ ifeq ($(COMPILER),g++3)
 # Need this to allow symbols from the executable to be accessed by loaded
 # dynamic libraries; this is needed e.g. for the matlab libut.so library to
 # find the "_start" symbol.
-	LD_OPTIONS += -Wl,--export-dynamic
+	LDFLAGS += -Wl,--export-dynamic
 
 # can't use -O3 with g++301, since we get core dumps...
 	ifeq ($(MODE),prod)
@@ -232,9 +228,9 @@ endif
 #
 #-------------------------------------------------------------------------
 
-LIB_PATH += -L$(exec_prefix)/lib -L$(with_tcltk)/lib
+LDFLAGS += -L$(exec_prefix)/lib -L$(with_tcltk)/lib
 
-EXTERNAL_LIBS := \
+LIBS += \
 	-lGLU -lGL \
 	-ltcl$(TCL_VERSION) -ltk$(TK_VERSION) \
 	-lXmu -lX11 -lXext \
@@ -243,29 +239,11 @@ EXTERNAL_LIBS := \
 	$(AUDIO_LIB) \
 	-lm
 
-ifeq ($(enable_readline), yes)
-	EXTERNAL_LIBS += -lreadline -ltermcap
-	CPP_DEFINES += -DWITH_READLINE
-endif
-
-ifeq ($(enable_matlab), yes)
-	LIB_PATH += -Wl,-rpath,$(exec_prefix)/lib
-
-	INCLUDE_PATH += -I/usr/local/matlab/extern/include
-	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
-	LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
-	CPP_DEFINES += -DWITH_MATLAB
-endif
-
 ifeq ($(PLATFORM),ppc)
-	EXTERNAL_LIBS += -lcc_dynamic
+	LIBS += -lcc_dynamic
 endif
 
-ifeq ($(PLATFORM),i686)
-	LIB_PATH += -L/usr/X11R6/lib
-endif
-
-# add -lefence to EXTERNAL_LIBS for Electric Fence mem debugging
+# add -lefence to LIBS for Electric Fence mem debugging
 
 
 #-------------------------------------------------------------------------
@@ -281,7 +259,7 @@ endif
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
+ALL_CC_OPTIONS := $(CC_SWITCHES) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
 	@mkdir -p $(LOGS)
@@ -317,12 +295,12 @@ $(SRC)/%.preh : $(SRC)/%.h
 
 ifneq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $(LIB_PATH) $^ && mv $(TMP_DIR)/$(notdir $@) $@
+	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $(LDFLAGS) $^ && mv $(TMP_DIR)/$(notdir $@) $@
 endif
 
 ifeq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $(LIB_PATH) $^ -lcc_dynamic
+	$(SHLIB_CMD) $@ $(LDFLAGS) $^ -lcc_dynamic
 endif
 
 %.$(STATLIB_EXT):
@@ -470,8 +448,7 @@ build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
 
-CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
-	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
+CMDLINE := $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CXX) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
