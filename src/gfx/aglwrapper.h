@@ -67,7 +67,7 @@ public:
   virtual bool isDoubleBuffered() const;
 
   /// Get the bit depth of the draw buffer(s).
-  virtual unsigned int bits_per_pixel() const;
+  virtual unsigned int bitsPerPixel() const;
 
   /// Bind the rendering context to the given window.
   virtual void makeCurrent(Window win);
@@ -314,9 +314,9 @@ DOTRACE("AglWrapper::isDoubleBuffered");
   return (value == GL_TRUE);
 }
 
-unsigned int AglWrapper::bits_per_pixel() const
+unsigned int AglWrapper::bitsPerPixel() const
 {
-DOTRACE("AglWrapper::bits_per_pixel");
+DOTRACE("AglWrapper::bitsPerPixel");
 
   GLint value = 0;
   int status = aglDescribePixelFormat(itsPixFormat, AGL_PIXEL_SIZE, &value);
