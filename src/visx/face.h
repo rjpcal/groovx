@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 30 09:50:01 2000
+// written: Tue May 30 18:28:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ public:
   // accessors //
   ///////////////
 
-  virtual int getCategory() const { return category.getNative(); }
+  virtual int getCategory() const;
 
 protected:
   /// Returns an array of Bezier control points for face outline.
@@ -110,7 +110,7 @@ protected:
   //////////////////
 
 public:
-  virtual void setCategory(int val) { category.setNative(val); }
+  virtual void setCategory(int val);
 
   protected: virtual void grGetBoundingBox(Rect<double>& bounding_box,
 														 int& border_pixels) const;

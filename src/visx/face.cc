@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 30 12:15:59 2000
+// written: Tue May 30 19:02:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -417,6 +417,16 @@ DOTRACE("Face::grGetBoundingBox");
 bool Face::grHasBoundingBox() const {
 DOTRACE("Face::grHasBoundingBox");  
   return true;
+}
+
+int Face::getCategory() const {
+DOTRACE("Face::getCategory");
+  return category.getNative();
+}
+
+void Face::setCategory(int val) {
+DOTRACE("Face::setCategory");
+  category.setNative(val);
 }
 
 const double* Face::getCtrlPnts() const {
