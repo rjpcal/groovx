@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Mar  4 15:38:45 2000
+// written: Sun Mar  5 16:15:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include <GL/gl.h>
 #include <cmath>
 #include <cstring>
+#include <iostream.h>
 
 #include "trace.h"
 #include "debug.h"

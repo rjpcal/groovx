@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Sat Mar  4 16:33:21 2000
+// written: Sun Mar  5 16:16:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "xbitmap.h"
 
-#include <cstring>
-
 #include "xbmaprenderer.h"
+
+#include <cstring>
+#include <iostream.h>
 
 #define NO_TRACE
 #include "trace.h"

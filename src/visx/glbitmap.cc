@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Sat Mar  4 16:28:05 2000
+// written: Sun Mar  5 16:15:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,9 @@
 #include "reader.h"
 #include "writer.h"
 
-#include <cstring>
 #include <GL/gl.h>
+#include <cstring>
+#include <iostream.h>
 
 #define NO_TRACE
 #include "trace.h"

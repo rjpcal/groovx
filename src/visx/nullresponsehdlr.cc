@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Sat Mar  4 16:30:29 2000
+// written: Sun Mar  5 16:16:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "nullresponsehdlr.h"
 
 #include <cstring>
+#include <iostream.h>
 
 #define NO_TRACE
 #include "trace.h"
