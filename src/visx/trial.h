@@ -1,64 +1,78 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Sun Apr 25 12:50:01 1999
+// written: Thu May 27 20:25:34 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIAL_H_DEFINED
 #define TRIAL_H_DEFINED
 
+#ifndef VECTOR_DEFINED
 #include <vector>
+#define VECTOR_DEFINED
+#endif
 
-#ifndef IO_H_INCLUDED
+#ifndef IO_H_DEFINED
 #include "io.h"
 #endif
 
-class ObjList;
-class PosList;
-class istrstream;
+#ifndef ID_H_DEFINED
+#include "id.h"
+#endif
 
 ///////////////////////////////////////////////////////////////////////
+//
 // Trial class declaration
+//
 ///////////////////////////////////////////////////////////////////////
 
 class Trial : public virtual IO {
 public:
-  //////////////
-  // typedefs //
-  //////////////
-  typedef pair<int, int> IdPair;
-  typedef vector<IdPair> ObjGrp;
-
-  /////////////
-  // structs //
-  /////////////
-  struct Response {
-	 Response(int v = -1, int m = -1) : val(v), msec(m) {}
-	 int val;
-	 int msec;
+  //////////////////
+  // nested types //
+  //////////////////
+  class Response {
+  public:
+	 Response(int v = -1, int m = -1) : itsVal(v), itsMsec(m) {}
+	 int& val() { return itsVal; }
+	 int& msec() { return itsMsec; }
+	 int val() const { return itsVal; }
+	 int msec() const { return itsMsec; }
+  private:
+	 int itsVal;
+	 int itsMsec;
   };
+
+  struct IdPair {
+	 IdPair(ObjId o, PosId p) : objid(o), posid(p) {}
+	 ObjId objid;
+	 PosId posid;
+  };
+  typedef vector<IdPair> ObjGrp;
 
   //////////////
   // creators //
   //////////////
 
-  Trial (const ObjList& olist, const PosList &plist) : 
-    itsObjList(olist), itsPosList(plist), 
+  Trial() : 
     itsIdPairs(), itsResponses(), itsType(-1) {}
-  Trial(istream &is, IOFlag flag, const ObjList& olist, const PosList &plist); 
+  Trial(istream &is, IOFlag flag); 
   virtual ~Trial () {}
 
   // write/read the object's state from/to an output/input stream
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
+  virtual int charCount() const;
   
   // this function reads from an istream that is assumed to contain
   // objid's only; posid's are implied by the position in the input
   // NOTE: this function reads to the end of the input stream since it
   // has no way to know when the input would be done. Thus it should
-  // be passed an istrstream containing only the line of interest. If
+  // be passed an istream containing only the line of interest. If
   // offset is non-zero, it will be added to each incoming objid
   // before the objid is inserted into the Trial. The function returns
   // the number of objid's read from the stream.
@@ -75,7 +89,7 @@ public:
 
   const char* description() const;
 
-  int lastResponse() const { return itsResponses.back().val; }
+  int lastResponse() const { return itsResponses.back().val(); }
 
   int numResponses() const { return itsResponses.size(); }
 
@@ -86,7 +100,7 @@ public:
   // manipulators //
   //////////////////
 
-  void add(int objid, int posid) { itsIdPairs.push_back(IdPair(objid, posid)); }
+  void add(ObjId objid, PosId posid) { itsIdPairs.push_back(IdPair(objid, posid)); }
 
   void setType(int t) { itsType = t; }
 
@@ -94,15 +108,16 @@ public:
 	 itsResponses.push_back(Response(val, msec));
   }
 
+  void undoLastResponse();
+
   /////////////
   // actions //
   /////////////
 
   void action() const;
+  void undraw() const;
 
 private:
-  const ObjList& itsObjList;
-  const PosList& itsPosList;
   ObjGrp itsIdPairs;
   vector<Response> itsResponses;
   int itsType;
