@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Nov 20 11:48:38 2002
+// written: Thu Nov 21 15:38:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,6 +166,20 @@ public:
   virtual void setLineStipple(unsigned short bit_pattern = 0xFFFF) = 0;
 
   virtual void enableAntialiasing() = 0;
+
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // Viewport and projection
+  //
+  ///////////////////////////////////////////////////////////////////////
+
+  virtual void viewport(int x, int y, int w, int h) = 0;
+
+  virtual void orthographic(const Gfx::Rect<double>& bounds,
+                            double zNear, double zFar) = 0;
+
+  virtual void perspective(double fovy, double aspect,
+                           double zNear, double zFar) = 0;
 
   ///////////////////////////////////////////////////////////////////////
   //

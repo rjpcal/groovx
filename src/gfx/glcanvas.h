@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Thu Nov 21 09:22:54 2002
+// written: Thu Nov 21 15:39:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,6 +78,15 @@ public:
 
   virtual void enableAntialiasing();
 
+
+
+  virtual void viewport(int x, int y, int w, int h);
+
+  virtual void orthographic(const Gfx::Rect<double>& bounds,
+                            double zNear, double zFar);
+
+  virtual void perspective(double fovy, double aspect,
+                           double zNear, double zFar);
 
 
   virtual void pushMatrix();
