@@ -385,6 +385,7 @@ OBJLISTTCL_H = objlisttcl.h
 OBJTOGL_H = objtogl.h
 OBSERVABLE_H = observable.h
 OBSERVER_H = observer.h
+PIPE_H = util/pipe.h
 POINT_H = point.h
 POSLISTTCL_H = poslisttcl.h
 RAND_H = rand.h
@@ -510,7 +511,7 @@ ASCIISTREAMREADER_CC = $(ASCIISTREAMREADER_H) $(IO_H) $(IOMGR_H) $(VALUE_H) \
 ASCIISTREAMWRITER_CC = $(ASCIISTREAMWRITER_H) $(IO_H) $(VALUE_H) \
 	$(TRACE_H) $(DEBUG_H) $(DEMANGLE_H) asciistreamwriter.cc
 
-BITMAP_CC = $(BITMAP_H) $(BITMAPREP_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
+BITMAP_CC = $(BITMAP_H) $(BITMAPREP_H) $(PIPE_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
 
 BITMAPREP_CC = $(BITMAPREP_H) $(BMAPRENDERER_H) $(GLCANVAS_H) \
 	$(ERROR_H) $(IO_H) $(PBM_H) \
