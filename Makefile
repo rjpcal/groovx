@@ -1,3 +1,4 @@
+TARGET = grsh.a0.1
 CC = aCC
 FLAGS = +O3
 #+O3 +Onolimit 
@@ -41,7 +42,7 @@ ALL_OBJECTS = $(OBJECTS) timertcl.o timer.o \
 
 .cc.o:; $(CC) $(FLAGS) $(OPTIM) $(INCLUDEFLAGS) -c $*.cc
 
-devsh: tags $(ALL_OBJECTS) grshAppInit.o
+$(TARGET): tags $(ALL_OBJECTS) grshAppInit.o
 	$(CC) $(FLAGS) $(OPTIM) -o $(HOME)/bin/$(ARCH)/$@ \
 	$(ALL_OBJECTS) grshAppInit.o $(LIBRARIES)
 
