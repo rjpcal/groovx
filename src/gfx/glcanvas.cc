@@ -502,10 +502,9 @@ DOTRACE("GLCanvas::rasterPos");
       // outside the viewport due to rounding errors.) Then we do a
       // glBitmap() call whose only purpose is to use the "xmove" and
       // "ymove" arguments to adjust the raster position.
-      const vec3d lower_left = worldFromScreen3(vec3d(1.0,1.0,0.0));
+      const vec3d lower_left = worldFromScreen3(vec3d(1.0,1.0,0.5));
       dbg_dump(3, lower_left);
-      // FIXME why doesn't lower_left.z() work here?
-      glRasterPos3d(lower_left.x(), lower_left.y(), 0.0);
+      glRasterPos3d(lower_left.x(), lower_left.y(), lower_left.z());
 
       if (!rasterPositionValid())
         throw rutz::error("couldn't set valid raster position", SRC_POS);
