@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Tue Nov  9 15:17:01 1999
+// written: Tue Nov  9 15:20:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,8 @@ namespace {
   const string nullScript = "{}";
 
   const string eventSequence = "<KeyPress>";
+
+  const string bindingSubstitution = "%K";
 
   unsigned long cmdCounter = 0;
 }
@@ -148,7 +150,8 @@ private:
   int getCheckedInt(Tcl_Obj* intObj) const throw(ErrorWithMsg);
 
   string getBindingScript() const
-	 { return string("{ " + itsPrivateCmdName + " %K }"); }
+	 { return string("{ " + itsPrivateCmdName + " " +
+						  bindingSubstitution + " }"); }
 
   void clearEventQueue() const throw()
 	 {
