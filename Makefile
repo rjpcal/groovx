@@ -16,10 +16,21 @@
 #
 ##########################################################################
 
+default: all
+
 ###
 ### All configuration options should be selected via the configure script,
 ### which will generate an appropriate Makedefs file, which is included here:
 ###
+
+Makedefs: config.status
+	config.status --file=Makedefs
+
+config.status: configure
+	config.status --recheck
+
+configure: configure.in
+	autoconf
 
 include Makedefs
 
@@ -32,8 +43,6 @@ include Makedefs
 # Various default values
 #
 #-------------------------------------------------------------------------
-
-default: all
 
 TCL_VERSION := 8.4
 TK_VERSION := 8.4
