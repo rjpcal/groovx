@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Tue Jun 12 11:17:13 2001
+// written: Sat Jul 21 20:22:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const IO::VersionId TIMINGHANDLER_SERIAL_VERSION_ID = 2;
 }
 
@@ -60,16 +61,19 @@ DOTRACE("TimingHandler::TimingHandler");
   abortwait_abort_id = addEventByName("EndTrialEvent", FROM_ABORT, 1000);
 }
 
-TimingHandler::~TimingHandler() {
+TimingHandler::~TimingHandler()
+{
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-IO::VersionId TimingHandler::serialVersionId() const {
+IO::VersionId TimingHandler::serialVersionId() const
+{
 DOTRACE("TimingHandler::serialVersionId");
  return TIMINGHANDLER_SERIAL_VERSION_ID;
 }
 
-void TimingHandler::readFrom(IO::Reader* reader) {
+void TimingHandler::readFrom(IO::Reader* reader)
+{
 DOTRACE("TimingHandler::readFrom");
 
   reader->ensureReadVersionId("TimingHandler", 2, "Try grsh0.8a4");
@@ -77,7 +81,8 @@ DOTRACE("TimingHandler::readFrom");
   reader->readBaseClass("TimingHdlr", IO::makeProxy<TimingHdlr>(this));
 }
 
-void TimingHandler::writeTo(IO::Writer* writer) const {
+void TimingHandler::writeTo(IO::Writer* writer) const
+{
 DOTRACE("TimingHandler::writeTo");
 
   writer->ensureWriteVersionId("TimingHandler",
@@ -86,30 +91,44 @@ DOTRACE("TimingHandler::writeTo");
   writer->writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
 }
 
-int TimingHandler::getAbortWait() const {
+int TimingHandler::getAbortWait() const
+{
   return getEvent(FROM_ABORT, abortwait_abort_id)->getDelay();
 }
-int TimingHandler::getInterTrialInterval() const {
+
+int TimingHandler::getInterTrialInterval() const
+{
   return getEvent(FROM_RESPONSE, iti_response_id)->getDelay();
 }
-int TimingHandler::getStimDur() const {
+
+int TimingHandler::getStimDur() const
+{
   return getEvent(FROM_START, stimdur_start_id)->getDelay();
 }
-int TimingHandler::getTimeout() const {
+
+int TimingHandler::getTimeout() const
+{
   return getEvent(FROM_START, timeout_start_id)->getDelay();
 }
 
-void TimingHandler::setAbortWait(int val) {
-  getEvent(FROM_ABORT, abortwait_abort_id)->setDelay(val);
+void TimingHandler::setAbortWait(int msec)
+{
+  getEvent(FROM_ABORT, abortwait_abort_id)->setDelay(msec);
 }
-void TimingHandler::setInterTrialInterval(int val) {
-  getEvent(FROM_RESPONSE, iti_response_id)->setDelay(val);
+
+void TimingHandler::setInterTrialInterval(int msec)
+{
+  getEvent(FROM_RESPONSE, iti_response_id)->setDelay(msec);
 }
-void TimingHandler::setStimDur(int val) {
-  getEvent(FROM_START, stimdur_start_id)->setDelay(val);
+
+void TimingHandler::setStimDur(int msec)
+{
+  getEvent(FROM_START, stimdur_start_id)->setDelay(msec);
 }
-void TimingHandler::setTimeout(int val) {
-  getEvent(FROM_START, timeout_start_id)->setDelay(val);
+
+void TimingHandler::setTimeout(int msec)
+{
+  getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }
 
 static const char vcid_timinghandler_cc[] = "$Header$";

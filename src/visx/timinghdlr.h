@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Sat Jul 21 20:16:10 2001
+// written: Sat Jul 21 20:23:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,19 +63,20 @@ public:
   // accessors //
   ///////////////
 
-  Util::Ref<TrialEvent> getEvent(TimePoint time_point, int index) const;
+  Util::Ref<TrialEvent> getEvent(TimePoint time_point,
+                                 unsigned int index) const;
 
-  // Returns the elapsed time in milliseconds since the start of the
-  // current trial
+  /** Returns the elapsed time in milliseconds since the start of the
+      current trial */
   int getElapsedMsec() const;
 
   //////////////////
   // manipulators //
   //////////////////
 
-  int addEvent(Util::Ref<TrialEvent> event, TimePoint time_point);
-  int addEventByName(const char* event_type,
-                     TimePoint time_point, int msec_delay);
+  unsigned int addEvent(Util::Ref<TrialEvent> event, TimePoint time_point);
+  unsigned int addEventByName(const char* event_type,
+                              TimePoint time_point, int msec_delay);
 
   /////////////
   // actions //

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 18 12:11:25 2001
+// written: Sat Jul 21 20:19:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,23 +28,26 @@
 
 namespace ThTcl
 {
-  int addImmediateEvent(Util::Ref<TimingHdlr> th, const char* event_type,
-                        int msec)
+  unsigned int addImmediateEvent(Util::Ref<TimingHdlr> th,
+                                 const char* event_type, int msec)
   {
     return th->addEventByName(event_type, TimingHdlr::IMMEDIATE, msec);
   }
-  int addStartEvent(Util::Ref<TimingHdlr> th, const char* event_type,
-                    int msec)
+
+  unsigned int addStartEvent(Util::Ref<TimingHdlr> th,
+                             const char* event_type, int msec)
   {
     return th->addEventByName(event_type, TimingHdlr::FROM_START, msec);
   }
-  int addResponseEvent(Util::Ref<TimingHdlr> th, const char* event_type,
-                       int msec)
+
+  unsigned int addResponseEvent(Util::Ref<TimingHdlr> th,
+                                const char* event_type, int msec)
   {
     return th->addEventByName(event_type, TimingHdlr::FROM_RESPONSE, msec);
   }
-  int addAbortEvent(Util::Ref<TimingHdlr> th, const char* event_type,
-                    int msec)
+
+  unsigned int addAbortEvent(Util::Ref<TimingHdlr> th,
+                             const char* event_type, int msec)
   {
     return th->addEventByName(event_type, TimingHdlr::FROM_ABORT, msec);
   }
