@@ -130,8 +130,9 @@ test "$PACKAGE-Togl::loadFont" "too many args" {
 	 Togl::loadFont fixed junk
 } {^wrong \# args: should be "Togl::loadFont \?fontname\?"$}
 test "$PACKAGE-Togl::loadFont" "normal use" {
-	 catch {Togl::loadFont}
-} {^0$}
+	 set code [catch {Togl::loadFont} msg]
+	 set res "$code $msg"
+} {^0 $}
 test "$PACKAGE-Togl::loadFont" "error" {
 	 Togl::loadFont junk
 } {^Togl::loadFont: unable to load font junk$}
@@ -141,8 +142,9 @@ test "$PACKAGE-Togl::loadFonti" "too many args" {
 	 Togl::loadFonti 3 junk
 } {^wrong \# args: should be "Togl::loadFonti \?fontnumber\?"$}
 test "$PACKAGE-Togl::loadFonti" "normal use" {
-	 catch {Togl::loadFonti 3}
-} {^0$} [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
+	 set code [catch {Togl::loadFonti 3} msg]
+	 set res "$code $msg"
+} {^0 $}
 test "$PACKAGE-Togl::loadFonti" "error" {
 	 Togl::loadFonti 20
 } {^Togl::loadFonti: unable to load font$}
