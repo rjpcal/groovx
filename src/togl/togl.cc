@@ -1,11 +1,18 @@
-/* $Id$ */
-
-/* necessary defines for Rob Peters */
-#define NO_TRACE
-#include "util/trace.h"
-
-#define X11
-#include <iostream.h>
+///////////////////////////////////////////////////////////////////////
+//
+// togl.cc
+// Rob Peters rjpeters@klab.caltech.edu
+// created: Tue May 23 13:11:59 2000
+// written: Tue May 23 13:14:07 2000
+// $Id$
+//
+// This is a modified version of the Togl widget by Brian Paul and Ben
+// Bederson; see the original copyright notice and log info below.
+//
+// Win32 support has been removed from this version, and the code has
+// been C++-ified.
+//
+///////////////////////////////////////////////////////////////////////
 
 /*
  * Togl - a Tk OpenGL widget
@@ -17,6 +24,9 @@
 
 /*
  * $Log$
+ * Revision 2.2  2000/05/23 20:15:53  rjpeters
+ * Added info about this ongoing revision of the Togl widget.
+ *
  * Revision 2.1  2000/05/23 20:11:46  rjpeters
  * *** empty log message ***
  *
@@ -71,8 +81,12 @@
  * a few more tweaks for Windows compilation
  */
 
-#ifndef TOGL_C
-#define TOGL_C
+#ifndef TOGL_CC_DEFINED
+#define TOGL_CC_DEFINED
+
+#include "togl.h"
+
+#include <iostream.h>
 
 /*
  * Currently support only X11
@@ -105,8 +119,9 @@
 #include <tcl.h>
 #include <tk.h>
 #include "tkInt.h"
-#include "togl.h"
 
+#define NO_TRACE
+#include "util/trace.h"
 
 
 /* Defaults */
@@ -2650,5 +2665,5 @@ DOTRACE("<togl.cc>::Togl_StereoFrustum");
 
 #endif /* __sgi STEREO */
 
-
-#endif /* TOGL_C */
+static const char vcid_togl_cc[] = "$Header$";
+#endif // !TOGL_CC_DEFINED
