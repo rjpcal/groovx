@@ -3,7 +3,7 @@
 // refcounted.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Oct 22 14:40:19 2000
-// written: Tue Oct 24 18:49:33 2000
+// written: Wed Oct 25 11:16:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,11 +71,6 @@ public:
 
   /// Returns the object's second (debugging) reference count.
   int refCount2() const;
-
-  /** Returns true if this is a valid object (allows an implementation
-      to return false if it represents a null object). Default
-      implementation returns true. */
-  virtual bool isValid() const;
 };
 
 static const char vcid_refcounted_h[] = "$Header$";

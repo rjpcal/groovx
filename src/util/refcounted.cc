@@ -3,7 +3,7 @@
 // refcounted.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Oct 22 14:40:28 2000
-// written: Tue Oct 24 19:51:45 2000
+// written: Wed Oct 25 11:16:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,11 +88,6 @@ DOTRACE("RefCounted::refCount1");
 int RefCounted::refCount2() const {
 DOTRACE("RefCounted::refCount2");
   return itsRefCount2;
-}
-
-bool RefCounted::isValid() const {
-DOTRACE("RefCounted::isValid");
-  return true;
 }
 
 static const char vcid_refcounted_cc[] = "$Header$";
