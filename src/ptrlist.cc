@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Oct 25 16:47:06 2000
+// written: Wed Oct 25 18:02:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,9 +49,7 @@ PtrList<T>::SharedPtr PtrList<T>::getCheckedPtr(int id) const
 template <class T>
 void PtrList<T>::ensureCorrectType(const IO::IoObject* ptr) const
 {
-  const T* t = dynamic_cast<const T*>(ptr);
-  if (t == 0)
-	 throw ErrorWithMsg("ensureCorrectType failed");
+  const T& t = dynamic_cast<const T&>(*ptr);
 }
 
 static const char vcid_ptrlist_cc[] = "$Header$";
