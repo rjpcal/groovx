@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Aug 30 16:42:12 2001
+// written: Tue Sep  4 14:40:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -865,7 +865,7 @@ DOTRACE("Gtext::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
   bbox.left() = 0.0;
-  bbox.right() = (5*itsText.length()) - 1;
+  bbox.right() = itsText.length() > 0 ? (5*itsText.length()) - 1 : 1.0;
   bbox.bottom() = -1.0;
   bbox.top() = 6.0;
   return bbox;
