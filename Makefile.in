@@ -240,7 +240,9 @@ benchmarks: $(EXECUTABLE)
 # Remove all backups, temporaries, and coredumps
 neat:
 	find . -name \*~ -exec rm -f {} \;
-	rm -f ./expt*2002.asw ./resp*2002 ./\#* ./core*
+	find . -name \#~ -exec rm -f {} \;
+	find . -name .\#\* -exec rm -f {} \;
+	rm -f ./expt*2002.asw ./resp*2002 ./core*
 
 # Make clean, and also remove all debug object files
 cleaner: neat
