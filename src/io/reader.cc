@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Wed Mar  8 17:55:16 2000
+// written: Fri Mar 10 19:59:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,12 @@
 #include "util/strings.h"
 
 #include <string>
+
+ReadError::ReadError(const char* msg) :
+  ErrorWithMsg("ReadError: ")
+{
+  appendMsg(msg);
+}
 
 Reader::~Reader() {}
 

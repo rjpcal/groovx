@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Mar  8 17:21:10 2000
+// written: Fri Mar 10 19:58:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class Value;
 class ReadError : public ErrorWithMsg {
 public:
   /// Construct with a descriptive message \a msg.
-  ReadError(const char* msg) : ErrorWithMsg(msg) {}
+  ReadError(const char* msg);
 };
 
 
