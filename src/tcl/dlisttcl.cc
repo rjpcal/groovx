@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jan 18 16:07:06 2002
+// written: Tue Apr 30 09:05:26 2002
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -159,6 +159,32 @@ namespace DlistTcl
           {
             result.append(i);
           }
+      }
+
+    return result;
+  }
+
+  //--------------------------------------------------------------------
+  //
+  // Make a series of linearly spaced values between (and including) two
+  // endpoints
+  //
+  //--------------------------------------------------------------------
+
+  Tcl::List linspace(double begin, double end, unsigned int npts)
+  {
+    Tcl::List result;
+
+    if (npts <= 2)
+      {
+        throw Tcl::TclError("npts must be at least 2");
+      }
+
+    const double skip = (end - begin) / (npts - 1);
+
+    for (unsigned int i = 0; i < npts; ++i)
+      {
+        result.append(begin + i*skip);
       }
 
     return result;
@@ -320,6 +346,7 @@ DOTRACE("Dlist_Init");
   pkg->def( "index", "list index", &DlistTcl::index );
   pkg->def( "not", "source_list", &DlistTcl::not_ );
   pkg->def( "ones", "num_ones", &DlistTcl::ones );
+  pkg->def( "linspace", "begin end npts", &DlistTcl::linspace );
   pkg->def( "pickone", "source_list", &DlistTcl::pickone );
   pkg->def( "range", "begin end ?step=1?", &DlistTcl::range );
   pkg->def( "range", "begin end", Util::bindLast(&DlistTcl::range, 1) );
