@@ -10,6 +10,9 @@
 # Multiple inclusion guard
 if { [info exists List::TEST_DEFINED] } return;
 
+package require Objtogl
+if { ![Togl::inited] } { Togl::init "-rgba false"; ::update }
+
 namespace eval List {
 
 variable TEST_DEFINED 1
