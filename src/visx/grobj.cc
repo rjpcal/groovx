@@ -68,30 +68,46 @@ namespace {
 
 class GrObjImpl {
 public:
+  //////////////
+  // creators //
+  //////////////
+
   GrObjImpl(GrObj* obj);
   ~GrObjImpl();
 
-private:
-  void updateBB() const;
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
+  // These functions write the object's state from/to an output/input
+  // stream. Both functions are defined, but are no-ops for GrObj.
 
-public:
-  // Accessors
+  virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
+
+
+  ///////////////
+  // accessors //
+  ///////////////
+
+private:
   const Rect<double>& getRawBB() const;
 
   int getBBPixelBorder() const;
 
   bool hasBB() const;
 
-  double aspectRatio() const;
-
-  double finalWidth() const;
-  double finalHeight() const;
-
   double nativeWidth() const;
   double nativeHeight() const;
 
   double nativeCenterX() const;
   double nativeCenterY() const;
+
+public:
+  double aspectRatio() const;
+
+  double finalWidth() const;
+  double finalHeight() const;
 
   bool getBoundingBox(double& left, double& top,
 							 double& right, double& bottom) const;
@@ -117,7 +133,11 @@ public:
   GrObj::GrObjRenderMode getRenderMode() const { return itsRenderMode; }
   GrObj::GrObjRenderMode getUnRenderMode() const { return itsUnRenderMode; }
 
-  // Manipulators
+
+  //////////////////
+  // manipulators //
+  //////////////////
+
   void setBBVisibility(bool visibility);
 
   void setScalingMode(GrObj::ScalingMode val);
@@ -128,10 +148,10 @@ public:
   void setMaxDimension(double val);
   void setAlignmentMode(GrObj::AlignmentMode val);
 
-  void setCenterX(double val);
-  void setCenterY(double val);
+  void setCenterX(double val) { itsCenterX = val; }
+  void setCenterY(double val) { itsCenterY = val; }
 
-  void setCategory(int val);
+  void setCategory(int val) { itsCategory = val; }
 
   void setRenderMode(GrObj::GrObjRenderMode mode);
   void setUnRenderMode(GrObj::GrObjRenderMode mode);
@@ -139,7 +159,10 @@ public:
   void postUpdated() const { itsIsCurrent = true; }
 
 
-  // Actions
+  /////////////
+  // actions //
+  /////////////
+
   void update() const;
   void draw() const;
   void undraw() const;
@@ -151,6 +174,9 @@ public:
   // display list, and checks that the allocation actually succeeded.
   void newList() const;
 
+private:
+  void updateBB() const;
+
   // This function updates the cached OpenGL display list.
   void recompile() const;
 
@@ -160,7 +186,41 @@ public:
   void doAlignment() const;
   void doScaling() const;
 
-  // Data members
+
+  //////////////////
+  // Nested types //
+  //////////////////
+
+#if 0
+  class Scaler {
+	 static auto_ptr<Scaler> createScaler(GrObj::SCALING_MODE mode);
+
+	 virtual void doScaling() const = 0;
+	 
+  };
+
+  class Aligner {
+	 static auto_ptr<Aligner> createAligner(GrObj::ALIGNMENT_MODE mode);
+
+	 virtual void doAlignment() const = 0;
+  };
+
+  class Renderer {
+	 static auto_ptr<Renderer> createRenderer(GrObj::GROBJ_RENDER_MODE mode);
+
+	 virtual void doRender() const = 0;
+  };
+
+  class Unrenderer {
+	 static auto_ptr<Unrenderer> createUnrenderer(GrObj::GROBJ_UNRENDER_MODE mode);
+
+	 virtual void doUnrender() const = 0;
+  };
+#endif
+
+  //////////////////
+  // Data members //
+  //////////////////
 private:
   GrObj* self;
 
@@ -192,7 +252,6 @@ private:
   GrObj::AlignmentMode itsAlignmentMode;
   double itsCenterX;
   double itsCenterY;
-
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -228,6 +287,95 @@ GrObjImpl::~GrObjImpl() {
 DOTRACE("GrObjImpl::~GrObjImpl");
   glDeleteLists(itsDisplayList, 1);
 }
+
+void GrObjImpl::serialize(ostream &os, IO::IOFlag flag) const {
+DOTRACE("GrObjImpl::serialize");
+
+  DebugEvalNL(flag & IO::TYPENAME); 
+
+  if (flag & IO::TYPENAME) { os << "GrObj" << IO::SEP; }
+
+  os << itsCategory << IO::SEP;
+
+  os << itsRenderMode << IO::SEP;
+  os << itsUnRenderMode << IO::SEP;
+
+  os << itsBBIsVisible << IO::SEP;
+
+  os << itsScalingMode << IO::SEP;
+  os << itsWidthFactor << IO::SEP;
+  os << itsHeightFactor << IO::SEP;
+
+  os << itsAlignmentMode << IO::SEP;
+  os << itsCenterX << IO::SEP;
+  os << itsCenterY << endl;  
+
+  if (os.fail()) throw OutputError("GrObj");
+
+  if (flag & IO::BASES) { /* no bases to serialize */ }
+}
+
+void GrObjImpl::deserialize(istream &is, IO::IOFlag flag) {
+DOTRACE("GrObjImpl::deserialize");
+
+  DebugEvalNL(flag & IO::TYPENAME); 
+
+  if (flag & IO::TYPENAME) { IO::readTypename(is, "GrObj"); }
+
+  is >> itsCategory; if (is.fail()) throw InputError("after GrObj::itsCategory");
+
+  is >> itsRenderMode; if (is.fail()) throw InputError("after GrObj::itsRenderMode");
+  is >> itsUnRenderMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderMode");
+
+  int temp;
+  is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBBIsVisible = bool(temp);
+
+  is >> itsScalingMode; if (is.fail()) throw InputError("after GrObj::itsScalingMode");
+  is >> itsWidthFactor; if (is.fail()) throw InputError("after GrObj::itsWidthFactor");
+  is >> itsHeightFactor; if (is.fail()) throw InputError("after GrObj::itsHeightFactor");
+
+  is >> itsAlignmentMode; if (is.fail()) throw InputError("after GrObj::itsAlignmentMode");
+  is >> itsCenterX; if (is.fail()) throw InputError("after GrObj::itsCenterX");
+  is >> itsCenterY; if (is.fail()) throw InputError("after GrObj::itsCenterY");
+
+  invalidateCaches();
+
+  if (is.fail()) throw InputError("GrObj");
+
+  if (flag & IO::BASES) { /* no bases to deserialize */ }
+}
+
+int GrObjImpl::charCount() const {
+DOTRACE("GrObjImpl::charCount");
+  int count = 
+	 gCharCount("GrObj") + 1
+	 + gCharCount(itsCategory) + 1
+	 
+	 + gCharCount(itsRenderMode) + 1
+	 + gCharCount(itsUnRenderMode) + 1
+	 
+	 + gCharCount(itsBBIsVisible) + 1
+	 
+	 + gCharCount(itsScalingMode) + 1
+	 + gCharCount(itsWidthFactor) + 1
+	 + gCharCount(itsHeightFactor) + 1
+	 
+	 + gCharCount(itsAlignmentMode) + 1
+	 + gCharCount(itsCenterX) + 1
+	 + gCharCount(itsCenterY) + 1
+	 + 5; // fudge factor
+  DebugEvalNL(count);
+  return count;
+}
+
+void GrObjImpl::readFrom(Reader* reader) {
+DOTRACE("GrObjImpl::readFrom");
+}
+
+void GrObjImpl::writeTo(Writer* writer) const {
+DOTRACE("GrObjImpl::writeTo");
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -423,8 +571,8 @@ DOTRACE("GrObjImpl::setAspectRatio");
 
 void GrObjImpl::setMaxDimension(double val) {
 DOTRACE("GrObjImpl::setMaxDimension");
-  if (!hasBB()) return;
   if (itsScalingMode == GrObj::NATIVE_SCALING) return;
+  if ( !hasBB() ) return;
 
   double scaling_factor = 1.0;
 
@@ -468,18 +616,6 @@ DOTRACE("GrObjImpl::setAlignmentMode");
   } // end switch
 
   DebugEvalNL(itsAlignmentMode); 
-}
-
-inline void GrObjImpl::setCenterX(double val) {
-  itsCenterX = val;
-}
-
-inline void GrObjImpl::setCenterY(double val) {
-  itsCenterY = val;
-}
-
-inline void GrObjImpl::setCategory(int val) {
-  itsCategory = val;
 }
 
 void GrObjImpl::setRenderMode(GrObj::GrObjRenderMode mode) {
@@ -935,12 +1071,15 @@ DOTRACE("GrObj::~GrObj");
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-void GrObj::serialize(ostream&, IOFlag) const {
+void GrObj::serialize(ostream& os, IOFlag flag) const {
 DOTRACE("GrObj::serialize");
+  itsImpl->serialize(os, flag);
 }
 
-void GrObj::deserialize(istream&, IOFlag) {
+void GrObj::deserialize(istream& is, IOFlag flag) {
 DOTRACE("GrObj::deserialize");
+
+  itsImpl->deserialize(is, flag); 
   sendStateChangeMsg();
 }
 
@@ -955,7 +1094,7 @@ DOTRACE("GrObj::writeTo");
 
 int GrObj::charCount() const {
 DOTRACE("GrObj::charCount");
-  return 0;
+  return itsImpl->charCount();
 }
 
 ///////////////
