@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Sep 29 15:33:07 1999
+// written: Thu Oct 14 13:11:28 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -213,6 +213,13 @@ public:
   /////////////
   // actions //
   /////////////
+
+  static void swapForeBack();
+  // Swaps the foreground and background colors, in a way that is
+  // appropriate to color-index/RGBA modes. In order to be able to
+  // unswap the colors, this function should normally be preceded by
+  // glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT), so that a
+  // call to glPopAttrib() will then unswap the colors.
 
   void update() const;
   // Recompiles the OpenGL display list or bitmap cache, if there are
