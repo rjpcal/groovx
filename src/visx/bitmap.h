@@ -188,10 +188,6 @@ public:
   void setUsingZoom(bool val);
   //@}
 
-protected:
-  /// Return a pointer to the raw bitmap data.
-  unsigned char* theBytes() const;
-
 private:
   BitmapRep* const itsImpl;
 };

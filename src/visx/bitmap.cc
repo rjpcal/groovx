@@ -184,9 +184,6 @@ public:
   void setUsingZoom(bool val);
   //@}
 
-  /// Return a pointer to the raw bitmap data.
-  unsigned char* theBytes() const;
-
 private:
   BmapRenderer* itsRenderer;
 
@@ -615,9 +612,6 @@ DOTRACE("BitmapRep::setUsingZoom");
   }
 }
 
-unsigned char* BitmapRep::theBytes() const
-  { return const_cast<unsigned char*>(&(itsBytes[0])); }
-
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -792,9 +786,6 @@ void Bitmap::setZoomY(double val)
 
 void Bitmap::setUsingZoom(bool val)
   { itsImpl->setUsingZoom(val); sendStateChangeMsg(); }
-
-unsigned char* Bitmap::theBytes() const
-  { return itsImpl->theBytes(); sendStateChangeMsg(); }
 
 static const char vcid_bitmap_cc[] = "$Header$";
 #endif // !BITMAP_CC_DEFINED
