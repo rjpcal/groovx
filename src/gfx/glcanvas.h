@@ -66,7 +66,6 @@ public:
   virtual geom::vec3<double> worldFromScreen3(const geom::vec3<int>& screen_pos) const;
 
   virtual geom::rect<int> getScreenViewport() const;
-  virtual geom::rect<double> getWorldViewport() const;
 
 
   virtual bool isRgba() const;

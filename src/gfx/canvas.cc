@@ -74,15 +74,6 @@ DOTRACE("Gfx::Canvas::screenFromWorld2");
                                 0.0)).as_vec2();
 }
 
-vec2d Gfx::Canvas::worldFromScreen2(const vec2i& screen_pos) const
-{
-DOTRACE("Gfx::Canvas::worldFromScreen2");
-
-  return worldFromScreen3(vec3i(screen_pos.x(),
-                                screen_pos.y(),
-                                0)).as_vec2();
-}
-
 geom::rect<int> Gfx::Canvas::screenBoundsFromWorldRect(const geom::rect<double>& world_pos) const
 {
 DOTRACE("Gfx::Canvas::screenBoundsFromWorldRect");

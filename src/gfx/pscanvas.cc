@@ -688,14 +688,6 @@ DOTRACE("Gfx::PSCanvas::getScreenViewport()");
   return geom::rect<int>();
 }
 
-geom::rect<double> Gfx::PSCanvas::getWorldViewport() const
-{
-DOTRACE("Gfx::PSCanvas::getWorldViewport()");
-// FIXME
-  rep->raiseError("not implemented", SRC_POS);
-  return geom::rect<double>();
-}
-
 
 bool Gfx::PSCanvas::isRgba() const
 {

@@ -94,8 +94,6 @@ DOTRACE("Canvas_Init");
   using rutz::bind_last;
   using rutz::mem_func;
 
-  pkg->defGetter("worldViewport", &Gfx::Canvas::getWorldViewport, SRC_POS);
-
   pkg->def("throwIfError", "",
            bind_last(bind_last(mem_func(&Gfx::Canvas::throwIfError), SRC_POS), ""),
            SRC_POS);

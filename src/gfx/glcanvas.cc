@@ -185,13 +185,6 @@ geom::rect<int> GLCanvas::getScreenViewport() const
                                viewport[2], viewport[3]);
 }
 
-geom::rect<double> GLCanvas::getWorldViewport() const
-{
-  const geom::rect<int> screen_vp = getScreenViewport();
-  return geom::rect<double>( worldFromScreen2(screen_vp.bottom_left()),
-                             worldFromScreen2(screen_vp.top_right()) );
-}
-
 
 bool GLCanvas::isRgba() const
 {
@@ -509,8 +502,9 @@ DOTRACE("GLCanvas::rasterPos");
       // outside the viewport due to rounding errors.) Then we do a
       // glBitmap() call whose only purpose is to use the "xmove" and
       // "ymove" arguments to adjust the raster position.
-      const vec2d lower_left = worldFromScreen2(vec2i(1,1));
+      const vec3d lower_left = worldFromScreen3(vec3i(1,1,0));
       dbg_dump(3, lower_left);
+      // FIXME do this all in 3D
       glRasterPos2d(lower_left.x(), lower_left.y());
 
       if (!rasterPositionValid())

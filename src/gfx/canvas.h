@@ -90,9 +90,6 @@ public:
   /// Convert a point from world coordinates to screen coordinates.
   geom::vec2<double> screenFromWorld2(const geom::vec2<double>& world_pos) const;
 
-  /// Convert a point from screen coordinates to world coordinates.
-  geom::vec2<double> worldFromScreen2(const geom::vec2<int>& screen_pos) const;
-
   /// Convert a point from world coordinates to screen coordinates.
   virtual geom::vec3<double> screenFromWorld3(const geom::vec3<double>& world_pos) const = 0;
 
@@ -104,9 +101,6 @@ public:
 
   /// Get the viewport rect in screen coordinates.
   virtual geom::rect<int> getScreenViewport() const = 0;
-
-  /// Get the viewport rect in world coordinates.
-  virtual geom::rect<double> getWorldViewport() const = 0;
 
 
   /// Query whether the drawable is in RGBA mode.
