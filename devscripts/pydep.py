@@ -12,13 +12,17 @@ import profile
 
 paths = [os.path.normpath(sys.argv[1])]
 
-for arg in sys.argv[2:]:
-    if arg.startswith("-I"):
-        paths.append(arg[2:])
+objdir = 'obj/' + os.getenv('ARCH') + '/';
+
+for i in range(2, len(sys.argv)):
+    if sys.argv[i].startswith("-I"):
+        paths.append(sys.argv[i][2:])
+    if sys.argv[i].startswith("--objdir"):
+        objdir = sys.argv[i+1]
 
 def go(n):
     for i in range(n):
-        b = cppdeps.DepBuilder(paths)
+        b = cppdeps.DepBuilder(paths, objdir)
         b.buildDepTree()
         b.printMakeDeps(sys.stdout)
 
