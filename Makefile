@@ -226,7 +226,7 @@ ifeq ($(COMPILER),g++)
 endif
 
 ifeq ($(COMPILER),ppc-g++-2)
-	CC := time g++
+	CC := time c++
 # This filter removes warnings that are triggered by standard library files
 	FILTER := |& sed \
 		-e '/darwin.*warning/d;' \
@@ -398,16 +398,21 @@ $(DEP):
 	mkdir -p $@
 
 $(DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS)
-	time pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
+	time ./pydep/pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
 
 
 # dependencies of package shlib's on object files
 
+VISX_LIB_DIR := $(LOCAL_ARCH)/lib/visx
+
+$(VISX_LIB_DIR):
+	mkdir -p $@
+
 PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
-$(PKG_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
+$(PKG_DEP_FILE): $(DEP) $(VISX_LIB_DIR) $(ALL_SOURCES) $(ALL_HEADERS) \
 	Makefile src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl $@
 
