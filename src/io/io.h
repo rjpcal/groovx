@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Sep 28 10:49:54 2000
+// written: Thu Oct 19 17:38:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,8 +88,6 @@ public:
 		version of \c typeid(*this).name(), which should very closely
 		resemble the way the object was declared in source code. */
   virtual fixed_string ioTypename() const;
-
-  virtual fixed_string legacyValidTypenames() const;
 
 private:
   unsigned long itsId;

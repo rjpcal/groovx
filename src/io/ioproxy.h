@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Fri Sep 29 16:43:56 2000
+// written: Thu Oct 19 17:38:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,9 +50,6 @@ public:
   virtual fixed_string ioTypename() const
 	 { return demangle_cstr(typeid(C).name()); }
 
-  virtual fixed_string legacyValidTypenames() const
-	 { return demangle_cstr(typeid(C).name()); }
-
 private:
   IoProxy(const IoProxy&);
   IoProxy& operator=(const IoProxy&);
@@ -78,9 +75,6 @@ public:
 	 { return itsReferand->C::serialVersionId(); }
 
   virtual fixed_string ioTypename() const
-	 { return demangle_cstr(typeid(C).name()); }
-
-  virtual fixed_string legacyValidTypenames() const
 	 { return demangle_cstr(typeid(C).name()); }
 
 private:

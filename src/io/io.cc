@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Fri Sep 29 14:55:44 2000
+// written: Thu Oct 19 17:37:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,11 +69,6 @@ DOTRACE("IO::IoObject::IoObject");
 // Must be defined out of line to avoid duplication of IO's vtable
 IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
-}
-
-fixed_string IO::IoObject::legacyValidTypenames() const {
-DOTRACE("IO::IoObject::legacyValidTypenames");
-  return demangle_cstr(typeid(*this).name());
 }
 
 unsigned int IO::IoObject::ioAttribCount() const {
