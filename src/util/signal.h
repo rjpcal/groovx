@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Wed Sep 25 19:00:10 2002
+// written: Mon Nov 25 10:57:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "util/object.h"
 #include "util/ref.h"
+#include "util/volatileobject.h"
 
 namespace Util
 {
@@ -22,16 +23,14 @@ namespace Util
   template <class C, class MF> class SlotAdapter;
   class Signal;
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Along with Signal, implements the Slot design pattern. An Slot can
- * be informed of changes in an Signal by calling connect() on that
- * Signal. Thereafter, the Slot will receive notifications of any
- * emit()'ed Signal's via call().
- *
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+
+/// Slot implements the Slot design pattern along with Signal.
+
+/** An Slot can be informed of changes in an Signal by calling connect() on
+    that Signal. Thereafter, the Slot will receive notifications of any
+    emit()'ed Signal's via call(). */
 
 class Slot : public virtual Util::Object
 {
@@ -54,19 +53,50 @@ public:
   virtual void call() = 0;
 };
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Along with Util::Slot, roughly implements the Observer design
- * pattern. Classes that need to notify others of changes should hold a
- * Util::Signal object by value, and call Signal::emit() when it is necessary
- * to notify observers of the change. In turn, emit() will \c call() all of
- * the Slot's that are observing this Signal.
- *
- **/
-///////////////////////////////////////////////////////////////////////
 
-class Signal
+//  ###################################################################
+//  ===================================================================
+
+/// SignalBase provides basic implementation for Signal.
+
+class SignalBase : public Util::VolatileObject
+{
+public:
+  SignalBase();
+  virtual ~SignalBase();
+
+  void receive();
+  void emit() const;
+
+  /// Add a Slot to the list of those watching this Signal.
+  void connect(Util::SoftRef<Slot> slot);
+
+  /// Remove a Slot from the list of those watching this Signal.
+  void disconnect(Util::SoftRef<Slot> slot);
+
+  /// Returns a slot which when call()'ed will cause this Signal to emit().
+  Util::SoftRef<Slot> slot() const;
+
+private:
+  SignalBase(const SignalBase&);
+  SignalBase& operator=(const SignalBase&);
+
+  class Impl;
+  Impl* rep;
+};
+
+
+//  ###################################################################
+//  ===================================================================
+
+/// Signal implements the Slot design pattern along with Slot.
+
+/** Classes that need to notify others of changes should hold a
+    Util::Signal object by value, and call Signal::emit() when it is
+    necessary to notify observers of the change. In turn, emit() will \c
+    call() all of the Slot's that are observing this Signal. */
+
+class Signal : public SignalBase
 {
 public:
   /// Default constructor.
@@ -106,14 +136,10 @@ private:
 };
 
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * SlotAdapter class implements the slot interface from a target
- * object and a member function to apply to that object.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+
+/// SlotAdapter helps build a Slot from a target object and a member function.
 
 template <class C, class MF>
 class SlotAdapter : public Slot
@@ -138,11 +164,10 @@ public:
 };
 
 
-///////////////////////////////////////////////////////////////////////
-//
+//  ###################################################################
+//  ===================================================================
+
 // Inline function definitions
-//
-///////////////////////////////////////////////////////////////////////
 
 template <class C, class MF>
 inline Util::SoftRef<Slot> Slot::make(C* obj, MF mf)

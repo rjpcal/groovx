@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Mon Nov 25 11:05:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "util/dlink_list.h"
 #include "util/ref.h"
-#include "util/volatileobject.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -40,7 +39,7 @@ DOTRACE("Util::Slot::~Slot");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Signal::SigImpl class
+// SignalBase::Impl class
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,19 +48,16 @@ namespace
   typedef Util::Ref<Util::Slot> SlotRef;
 }
 
-struct Util::Signal::SigImpl : public Util::VolatileObject
+struct Util::SignalBase::Impl
 {
 public:
-
-  SigImpl() :
+  Impl(SignalBase* owner) :
     itsSlots(),
-    slotEmitSelf(Util::Slot::make(this, & SigImpl::receive)),
+    slotEmitSelf(Util::Slot::make(owner, &SignalBase::receive)),
     isItEmitting(false)
   {}
 
-  virtual ~SigImpl() {}
-
-  static SigImpl* make() { return new SigImpl; }
+  virtual ~Impl() {}
 
   typedef dlink_list<SlotRef> ListType;
 
@@ -70,11 +66,6 @@ public:
   Util::Ref<Util::Slot> slotEmitSelf;
 
   bool isItEmitting;
-
-  void receive()
-  {
-    emit();
-  }
 
   void emit()
   {
@@ -107,10 +98,10 @@ public:
     Lock(const Lock&);
     Lock& operator=(const Lock&);
 
-    SigImpl* itsImpl;
+    Impl* itsImpl;
 
   public:
-    Lock(SigImpl* impl) :
+    Lock(Impl* impl) :
       itsImpl(impl)
     {
       Assert(itsImpl->isItEmitting == false);
@@ -125,6 +116,44 @@ public:
   };
 };
 
+Util::SignalBase::SignalBase() :
+  rep(new Impl(this))
+{}
+
+Util::SignalBase::~SignalBase()
+{
+  delete rep;
+}
+
+void Util::SignalBase::receive() { rep->emit(); }
+void Util::SignalBase::emit() const { rep->emit(); }
+
+void Util::SignalBase::disconnect(Util::SoftRef<Util::Slot> slot)
+{
+DOTRACE("Util::SignalBase::disconnect");
+  if (!slot.isValid()) return;
+
+  rep->itsSlots.remove(SlotRef(slot.get(), Util::PRIVATE));
+
+  dbgEvalNL(3, rep->itsSlots.size());
+}
+
+void Util::SignalBase::connect(Util::SoftRef<Util::Slot> slot)
+{
+DOTRACE("Util::SignalBase::connect");
+  if (!slot.isValid()) return;
+
+  rep->itsSlots.push_back(SlotRef(slot.get(), Util::PRIVATE));
+
+  dbgEvalNL(3, rep->itsSlots.size());
+}
+
+Util::SoftRef<Util::Slot> Util::SignalBase::slot() const
+{
+DOTRACE("Util::SignalBase::slot");
+  return rep->slotEmitSelf;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Signal method definitions
@@ -132,7 +161,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Util::Signal::Signal() :
-  itsImpl(SigImpl::make())
+  SignalBase()
 {
 DOTRACE("Util::Signal::Signal");
 }
@@ -140,38 +169,26 @@ DOTRACE("Util::Signal::Signal");
 Util::Signal::~Signal()
 {
 DOTRACE("Util::Signal::~Signal");
-  itsImpl->destroy();
 }
 
 void Util::Signal::disconnect(Util::SoftRef<Util::Slot> slot)
 {
-DOTRACE("Util::Signal::disconnect");
-  if (!slot.isValid()) return;
-
-  itsImpl->itsSlots.remove(SlotRef(slot.get(), Util::PRIVATE));
-
-  dbgEvalNL(3, itsImpl->itsSlots.size());
+  SignalBase::disconnect(slot);
 }
 
 void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
 {
-DOTRACE("Util::Signal::connect");
-  if (!slot.isValid()) return;
-
-  itsImpl->itsSlots.push_back(SlotRef(slot.get(), Util::PRIVATE));
-
-  dbgEvalNL(3, itsImpl->itsSlots.size());
+  SignalBase::connect(slot);
 }
 
 void Util::Signal::emit() const
 {
-  itsImpl->emit();
+  SignalBase::emit();
 }
 
 Util::SoftRef<Util::Slot> Util::Signal::slot() const
 {
-DOTRACE("Util::Signal::slot");
-  return itsImpl->slotEmitSelf;
+  return SignalBase::slot();
 }
 
 static const char vcid_signal_cc[] = "$Header$";
