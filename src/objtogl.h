@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 16:23:12 2001
+// written: Wed Jun  6 16:41:31 2001
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -16,14 +16,10 @@
 #ifndef OBJTOGL_H_DEFINED
 #define OBJTOGL_H_DEFINED
 
-namespace GWT { class Widget; }
-
-struct Tcl_Interp;
+class ToglConfig;
 
 namespace ObjTogl {
-  GWT::Widget* theGwtWidget();
-
-  GWT::Widget* initTogl(Tcl_Interp* interp);
+  void setCurrentTogl(ToglConfig* togl);
 }
 
 static const char vcid_objtogl_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun  6 16:27:30 2001
+// written: Wed Jun  6 16:41:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "block.h"
 #include "tlistutils.h"
 #include "objtogl.h"
+#include "toglconfig.h"
 #include "trialbase.h"
 
 #include "gwt/widget.h"
@@ -228,7 +229,7 @@ private:
 
   Tcl_Interp* itsInterp;
 
-  GWT::Widget* itsWidget;
+  ToglConfig* itsWidget;
 
   fixed_string itsHostname;	  // Host computer on which Expt was begun
   fixed_string itsSubject;		  // Id of subject on whom Expt was performed
@@ -262,7 +263,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 							  ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
-  itsWidget(ObjTogl::initTogl(interp)),
+  itsWidget(new ToglConfig(interp)),
   itsHostname(""),
   itsSubject(""),
   itsBeginDate(""),
@@ -277,6 +278,8 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsErrHandler(interp)
 {
 DOTRACE("ExptDriver::Impl::Impl");
+
+  ObjTogl::setCurrentTogl(itsWidget);
 
   dynamic_string cmd_line("command line: ");
 

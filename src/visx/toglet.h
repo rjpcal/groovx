@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jun  6 16:11:36 2001
+// written: Wed Jun  6 16:32:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
   };
 
   ToglConfig(Tcl_Interp* interp,
-				 int config_argc, char** config_argv,
+				 int config_argc=0, char** config_argv=0,
 				 bool pack=true,
 				 double dist=30.0, double unit_angle=2.05);
 
