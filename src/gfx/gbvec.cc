@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Wed Aug 15 18:00:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,6 @@
 #define GBVEC_CC_DEFINED
 
 #include "gfx/gbvec.h"
-
-#include "io/reader.h"
-#include "io/writer.h"
 
 #include "util/strings.h"
 
@@ -34,7 +31,6 @@ void GbVecLocal::raiseScanError() {
 
 template <class T>
 GbVec3<T>::GbVec3(T x_, T y_, T z_) :
-  Field(),
   itsData(x_, y_, z_)
 {}
 
@@ -89,30 +85,13 @@ template <class T>
 void GbVec3<T>::assignTo(Value& other) const
 { other.set(this->get(Util::TypeCue<const char*>())); }
 
-//
-// Field interface
-//
-
 template <class T>
-void GbVec3<T>::doSetValue(const Value& new_val)
+void GbVec3<T>::assignFrom(const Value& other)
 {
-  istrstream ist(new_val.get(Util::TypeCue<const char*>()));
-  DebugEvalNL(new_val.get(Util::TypeCue<const char*>()));
+  istrstream ist(other.get(Util::TypeCue<const char*>()));
+  DebugEvalNL(other.get(Util::TypeCue<const char*>()));
   scanFrom(ist);
 }
-
-template <class T>
-void GbVec3<T>::readValueFrom(IO::Reader* reader, const fstring& name)
-{ reader->readValueObj(name, *this); }
-
-template <class T>
-void GbVec3<T>::writeValueTo(IO::Writer* writer,
-                            const fstring& name) const
-{ writer->writeValueObj(name.c_str(), *this); }
-
-template <class T>
-shared_ptr<Value> GbVec3<T>::value() const
-{ return shared_ptr<Value>(this->clone()); }
 
 template class GbVec3<int>;
 template class GbVec3<double>;

@@ -61,9 +61,9 @@ const FieldMap& Position::classFields()
 {
   static const FieldInfo FINFOS[] =
   {
-    FieldInfo("translation", FieldInfo::OldTag(), &Position::translation, 0., 0., 0., 0., true),
-    FieldInfo("scaling", FieldInfo::OldTag(), &Position::scaling, 0., 0., 0., 0.),
-    FieldInfo("rotationAxis", FieldInfo::OldTag(), &Position::rotationAxis, 0., 0., 0., 0.),
+    FieldInfo("translation", FieldInfo::ValueType(), &Position::translation, 0., 0., 0., 0., true),
+    FieldInfo("scaling", FieldInfo::ValueType(), &Position::scaling, 0., 0., 0., 0.),
+    FieldInfo("rotationAxis", FieldInfo::ValueType(), &Position::rotationAxis, 0., 0., 0., 0.),
     FieldInfo("rotationAngle", &Position::itsRotationAngle, 0., 0., 360., 1.)
   };
 
