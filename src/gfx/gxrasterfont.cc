@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Wed Nov 13 22:08:03 2002
+// written: Thu Nov 14 15:25:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,15 +56,18 @@ DOTRACE("GxRasterFont::GxRasterFont");
 
   Display* dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
 
+  const char* xname = "";
+  char buf[256];
+
   if (isdigit(fontname[0]))
     {
       // e.g. 8x13, 9x15
-      rep->fontInfo = XLoadQueryFont( dpy, fontname );
+      xname = fontname;
     }
   else if (fontname[0] == '-')
     {
       // e.g. a full X font name "-adobe-..."
-      rep->fontInfo = XLoadQueryFont( dpy, fontname );
+      xname = fontname;
     }
   else
     {
@@ -77,18 +80,20 @@ DOTRACE("GxRasterFont::GxRasterFont");
       const char* weight = "medium";
       const char* slant = "r";
 
-      char xname[256];
-      snprintf(xname, 256, "-*-%s-%s-%s-*-*-%d-*-*-*-*-*-*",
+      snprintf(buf, 256, "-*-%s-%s-%s-*-*-%d-*-*-*-*-*-*-*",
                family.c_str(), weight, slant, fontsize);
-
-      rep->fontInfo = XLoadQueryFont( dpy, xname );
+      xname = buf;
     }
 
-  dbgEval(2, rep->fontInfo); dbgEvalNL(2, rep->fontInfo->fid);
+  rep->fontInfo = XLoadQueryFont( dpy, xname );
+
+  dbgEval(2, xname);
+  dbgEval(2, rep->fontInfo);
+  dbgEvalNL(2, rep->fontInfo->fid);
 
   if (rep->fontInfo == 0)
     {
-      throw Util::Error(fstring("couldn't load X font '", fontname, "'"));
+      throw Util::Error(fstring("couldn't load X font '", xname, "'"));
     }
 
   const int first = rep->fontInfo->min_char_or_byte2;
