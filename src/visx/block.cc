@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Oct 24 10:44:39 2000
+// written: Tue Oct 24 15:42:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -261,8 +261,6 @@ DOTRACE("Block::prevResponse");
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
 		itsImpl->itsTrialSequence.size() == 0) return -1;
 
-//    return theTlist.getCheckedPtr(
-//       itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1))->lastResponse();
   NullableItemWithId<TrialBase> prev_trial = 
 	 itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
   return prev_trial->lastResponse();
