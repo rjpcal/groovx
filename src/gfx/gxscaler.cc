@@ -47,6 +47,8 @@
 
 #include "util/trace.h"
 
+using geom::rectd;
+
 GxScaler::GxScaler() :
   GxBin(),
   itsMode(NATIVE_SCALING),
@@ -77,7 +79,7 @@ DOTRACE("GxScaler::setMode");
 void GxScaler::setWidth(double new_width)
 {
 DOTRACE("GxScaler::setWidth");
-  geom::rect<double> native_bbox =
+  const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
 
   double current_width = native_bbox.width() * itsWidthFactor;
@@ -102,7 +104,7 @@ DOTRACE("GxScaler::setWidth");
 void GxScaler::setHeight(double new_height)
 {
 DOTRACE("GxScaler::setHeight");
-  geom::rect<double> native_bbox =
+  const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
 
   double current_height = native_bbox.height() * itsHeightFactor;
@@ -179,7 +181,7 @@ DOTRACE("GxScaler::aspectRatio");
 double GxScaler::scaledWidth() const
 {
 DOTRACE("GxScaler::scaledWidth");
-  geom::rect<double> native_bbox =
+  const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
   return native_bbox.width() * itsWidthFactor;
 }
@@ -187,7 +189,7 @@ DOTRACE("GxScaler::scaledWidth");
 double GxScaler::scaledHeight() const
 {
 DOTRACE("GxScaler::scaledHeight");
-  geom::rect<double> native_bbox =
+  const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
   return native_bbox.height() * itsHeightFactor;
 }

@@ -46,6 +46,7 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+using geom::rectd;
 using geom::vec2d;
 using geom::vec3d;
 
@@ -55,7 +56,7 @@ GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
   itsCenter(0.0, 0.0)
 {}
 
-vec2d GxAligner::getCenter(const geom::rect<double>& b) const
+vec2d GxAligner::getCenter(const rectd& b) const
 {
 DOTRACE("GxAligner::getCenter");
   switch (itsMode)
@@ -73,8 +74,7 @@ DOTRACE("GxAligner::getCenter");
   return vec2d();
 }
 
-void GxAligner::doAlignment(Gfx::Canvas& canvas,
-                            const geom::rect<double>& native) const
+void GxAligner::doAlignment(Gfx::Canvas& canvas, const rectd& native) const
 {
 DOTRACE("GxAligner::doAlignment");
 
@@ -107,7 +107,7 @@ DOTRACE("GxAligner::getBoundingCube");
 
   child()->getBoundingCube(mybox);
 
-  geom::rect<double> bounds = mybox.rect();
+  rectd bounds = mybox.rect();
 
   const vec2d center = getCenter(bounds);
 

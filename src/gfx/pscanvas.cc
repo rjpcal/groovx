@@ -53,6 +53,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using geom::recti;
+using geom::rectd;
 using geom::vec2i;
 using geom::vec2d;
 using geom::vec3i;
@@ -680,12 +682,12 @@ DOTRACE("Gfx::PSCanvas::worldFromScreen3");
 }
 
 
-geom::rect<int> Gfx::PSCanvas::getScreenViewport() const
+recti Gfx::PSCanvas::getScreenViewport() const
 {
 DOTRACE("Gfx::PSCanvas::getScreenViewport()");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return geom::rect<int>();
+  return recti();
 }
 
 
@@ -817,7 +819,7 @@ DOTRACE("Gfx::PSCanvas::viewport");
 // FIXME
 }
 
-void Gfx::PSCanvas::orthographic(const geom::rect<double>& /*bounds*/,
+void Gfx::PSCanvas::orthographic(const rectd& /*bounds*/,
                                  double /*zNear*/, double /*zFar*/)
 {
 DOTRACE("Gfx::PSCanvas::orthographic");
@@ -890,8 +892,7 @@ DOTRACE("Gfx::PSCanvas::drawBitmap");
 // FIXME
 }
 
-void Gfx::PSCanvas::grabPixels(const geom::rect<int>&,
-                               media::bmap_data&)
+void Gfx::PSCanvas::grabPixels(const recti&, media::bmap_data&)
 {
 DOTRACE("Gfx::PSCanvas::grabPixels");
   rep->raiseError("grabPixels not possible in PostScript canvas",
@@ -904,21 +905,21 @@ DOTRACE("Gfx::PSCanvas::clearColorBuffer");
 // FIXME
 }
 
-void Gfx::PSCanvas::clearColorBuffer(const geom::rect<int>& /*screen_rect*/)
+void Gfx::PSCanvas::clearColorBuffer(const recti& /*screen_rect*/)
 {
 DOTRACE("Gfx::PSCanvas::clearColorBuffer(geom::rect)");
 // FIXME
 }
 
-void Gfx::PSCanvas::drawRect(const geom::rect<double>& rect)
+void Gfx::PSCanvas::drawRect(const rectd& r)
 {
 DOTRACE("Gfx::PSCanvas::drawRect");
 
   rep->newpath();
-  rep->moveto(rect.bottom_left());
-  rep->lineto(rect.bottom_right());
-  rep->lineto(rect.top_right());
-  rep->lineto(rect.top_left());
+  rep->moveto(r.bottom_left());
+  rep->lineto(r.bottom_right());
+  rep->lineto(r.top_right());
+  rep->lineto(r.top_left());
   rep->closepath();
   if (rep->state().polygonFill)
     rep->fill();

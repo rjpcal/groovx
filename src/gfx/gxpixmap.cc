@@ -57,6 +57,8 @@
 
 #include "util/trace.h"
 
+using geom::recti;
+using geom::rectd;
 using geom::vec3d;
 using rutz::fstring;
 
@@ -347,7 +349,7 @@ DOTRACE("GxPixmap::saveImage");
 }
 
 void GxPixmap::grabScreenRect(Nub::SoftRef<Gfx::Canvas> canvas,
-                              const geom::rect<int>& rect)
+                              const recti& rect)
 {
 DOTRACE("GxPixmap::grabScreenRect");
 
@@ -366,17 +368,17 @@ void GxPixmap::grabScreen(Nub::SoftRef<Gfx::Canvas> canvas)
 {
 DOTRACE("GxPixmap::grabScreen");
 
-  geom::rect<int> bounds = canvas->getScreenViewport();
+  recti bounds = canvas->getScreenViewport();
 
   grabScreenRect(canvas, bounds);
 }
 
 void GxPixmap::grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
-                             const geom::rect<double>& world_rect)
+                             const rectd& world_rect)
 {
 DOTRACE("GxPixmap::grabWorldRect");
 
-  geom::rect<int> screen_rect = canvas->screenBoundsFromWorldRect(world_rect);
+  recti screen_rect = canvas->screenBoundsFromWorldRect(world_rect);
 
   grabScreenRect(canvas, screen_rect);
 

@@ -50,6 +50,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using geom::rectd;
 using geom::vec2d;
 using geom::vec3d;
 
@@ -98,7 +99,7 @@ namespace
   {
     DOTRACE("House::drawDoor");
     // Draw 1x1 door with bottom line centered on (0,0)
-    canvas.drawRect(geom::rect<double>::lbwh(-0.5, 0.0, 1.0, 1.0));
+    canvas.drawRect(rectd::lbwh(-0.5, 0.0, 1.0, 1.0));
 
     Gfx::LinesBlock block(canvas, "door");
 
@@ -110,7 +111,7 @@ namespace
   {
     DOTRACE("House::drawStoryFrame");
     // Draw 1x1 story frame centered on (0,0)
-    canvas.drawRect(geom::rect<double>::lbwh(-0.5, -0.5, 1.0, 1.0));
+    canvas.drawRect(rectd::lbwh(-0.5, -0.5, 1.0, 1.0));
   }
 
   void drawTriangleRoof(Gfx::Canvas& canvas)
@@ -319,7 +320,7 @@ DOTRACE("House::grGetBoundingBox");
   const double b = -main_height/2.0 / max_dim;
   const double t =  (main_height/2.0 + extra_chimney_height) / max_dim;
 
-  bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
+  bbox.drawRect(rectd::ltrb(l,t,r,b));
 }
 
 void House::grRender(Gfx::Canvas& canvas) const

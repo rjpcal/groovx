@@ -64,6 +64,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using geom::recti;
+using geom::rectd;
 using geom::txform;
 using geom::vec2i;
 using geom::vec2d;
@@ -173,12 +175,12 @@ public:
     return projectionCache.back();
   }
 
-  shared_ptr<GlxOpts> opts;
+  shared_ptr<GlxOpts>           opts;
   shared_ptr<GlWindowInterface> glx;
-  std::vector<txform> modelviewCache;
-  std::vector<txform> projectionCache;
-  geom::rect<int> viewportCache;
-  const geom::span<double> depthrangeCache;
+  std::vector<txform>           modelviewCache;
+  std::vector<txform>           projectionCache;
+  recti                         viewportCache;
+  const geom::span<double>      depthrangeCache;
 };
 
 GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts,
@@ -220,7 +222,7 @@ DOTRACE("GLCanvas::screenFromWorld3");
 
   const txform m = rep->getModelview();
   const txform p = rep->getProjection();
-  const geom::rect<int> viewport = this->getScreenViewport();
+  const recti viewport = this->getScreenViewport();
 
   const int v[4] = { viewport.left(), viewport.bottom(),
                      viewport.width(), viewport.height() };
@@ -250,7 +252,7 @@ namespace
 {
   vec3d unproject1(const txform& modelview,
                    const txform& projection,
-                   const geom::rect<int>& viewport,
+                   const recti& viewport,
                    const vec3d& screen)
   {
     DOTRACE("unproject1");
@@ -277,7 +279,7 @@ namespace
 
   vec3d unproject2(const txform& modelview,
                    const txform& projection,
-                   const geom::rect<int>& viewport,
+                   const recti& viewport,
                    const vec3d& screen)
   {
     DOTRACE("unproject2");
@@ -301,7 +303,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
 
   const txform m = rep->getModelview();
   const txform p = rep->getProjection();
-  const geom::rect<int> v = getScreenViewport();
+  const recti v = getScreenViewport();
 
   const vec3d world2 = unproject2(m, p, v, screen_pos);
 
@@ -325,7 +327,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
 }
 
 
-geom::rect<int> GLCanvas::getScreenViewport() const
+recti GLCanvas::getScreenViewport() const
 {
 DOTRACE("GLCanvas::getScreenViewport");
 
@@ -521,10 +523,10 @@ DOTRACE("GLCanvas::viewport");
       dbg_eval_nl(2, viewport[3]);
     }
 
-  rep->viewportCache = geom::rect<int>::lbwh(x, y, w, h);
+  rep->viewportCache = recti::lbwh(x, y, w, h);
 }
 
-void GLCanvas::orthographic(const geom::rect<double>& bounds,
+void GLCanvas::orthographic(const rectd& bounds,
                             double zNear, double zFar)
 {
 DOTRACE("GLCanvas::orthographic");
@@ -629,7 +631,7 @@ void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
 {
 DOTRACE("GLCanvas::rasterPos");
 
-  const geom::rect<double> viewport = geom::rect<double>(getScreenViewport());
+  const rectd viewport = rectd(getScreenViewport());
 
   const geom::span<double> depth = rep->depthrangeCache;
 
@@ -749,7 +751,7 @@ DOTRACE("GLCanvas::drawBitmap");
            static_cast<GLubyte*>(data.bytes_ptr()));
 }
 
-void GLCanvas::grabPixels(const geom::rect<int>& bounds,
+void GLCanvas::grabPixels(const recti& bounds,
                           media::bmap_data& data_out)
 {
 DOTRACE("GLCanvas::grabPixels");
@@ -789,9 +791,9 @@ DOTRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void GLCanvas::clearColorBuffer(const geom::rect<int>& screen_rect)
+void GLCanvas::clearColorBuffer(const recti& screen_rect)
 {
-DOTRACE("GLCanvas::clearColorBuffer(geom::rect)");
+DOTRACE("GLCanvas::clearColorBuffer(geom::recti)");
 
   glPushAttrib(GL_SCISSOR_BIT);
   {
@@ -806,7 +808,7 @@ DOTRACE("GLCanvas::clearColorBuffer(geom::rect)");
   glPopAttrib();
 }
 
-void GLCanvas::drawRect(const geom::rect<double>& rect)
+void GLCanvas::drawRect(const rectd& rect)
 {
 DOTRACE("GLCanvas::drawRect");
 

@@ -47,6 +47,8 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+using geom::recti;
+using geom::rectd;
 using geom::vec2i;
 using geom::vec2d;
 using geom::vec3i;
@@ -74,24 +76,24 @@ DOTRACE("Gfx::Canvas::screenFromWorld2");
                                 0.0)).as_vec2();
 }
 
-geom::rect<int> Gfx::Canvas::screenBoundsFromWorldRect(const geom::rect<double>& world_pos) const
+recti Gfx::Canvas::screenBoundsFromWorldRect(const rectd& world_pos) const
 {
 DOTRACE("Gfx::Canvas::screenBoundsFromWorldRect");
 
   // In order to get an accurate bounding box in screen coords, we need
   // to consider all four corners in world coordinates.
-  const geom::rect<int> screen_rect
+  const recti screen_rect
     ( vec2i(screenFromWorld2(world_pos.bottom_left())),
       vec2i(screenFromWorld2(world_pos.top_right())) );
 
-  const geom::rect<int> screen_rect2
+  const recti screen_rect2
     ( vec2i(screenFromWorld2(world_pos.bottom_right())),
       vec2i(screenFromWorld2(world_pos.top_left())) );
 
   return screen_rect.union_with(screen_rect2);
 }
 
-void Gfx::Canvas::drawRect(const geom::rect<double>& rect, bool filled)
+void Gfx::Canvas::drawRect(const rectd& rect, bool filled)
 {
   Gfx::AttribSaver saver(*this);
 

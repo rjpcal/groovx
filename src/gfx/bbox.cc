@@ -45,6 +45,9 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using geom::recti;
+using geom::rectd;
+using geom::txform;
 using geom::vec2i;
 using geom::vec2d;
 using geom::vec3i;
@@ -54,13 +57,13 @@ struct Gfx::Bbox::Impl
 {
   Impl(Canvas& c) : canvas(c), cube(), txforms(), first(true)
   {
-    txforms.push_back(geom::txform::identity());
+    txforms.push_back(txform::identity());
   }
 
-  Canvas& canvas;
-  geom::box<double> cube;
-  std::vector<geom::txform> txforms;
-  bool first;
+  Canvas&             canvas;
+  geom::box<double>   cube;
+  std::vector<txform> txforms;
+  bool                first;
 
   vec3d screenFromWorld3(const vec3d& world_pos) const
   {
@@ -153,7 +156,7 @@ DOTRACE("Gfx::Bbox::scale");
   rep->txforms.back().scale(v);
 }
 
-void Gfx::Bbox::transform(const geom::txform& m)
+void Gfx::Bbox::transform(const txform& m)
 {
 DOTRACE("Gfx::Bbox::transform");
   rep->txforms.back().transform(m);
@@ -173,7 +176,7 @@ DOTRACE("Gfx::Bbox::vertex3");
   rep->merge(v);
 }
 
-void Gfx::Bbox::drawRect(const geom::rect<double>& rect)
+void Gfx::Bbox::drawRect(const rectd& rect)
 {
 DOTRACE("Gfx::Bbox::drawRect");
   rep->merge(rect.bottom_left());
@@ -195,18 +198,17 @@ DOTRACE("Gfx::Bbox::drawBox");
   rep->merge(box.point111());
 }
 
-void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
-                               const geom::vec2<int>& size,
-                               const geom::vec2<double>& zoom)
+void Gfx::Bbox::drawScreenRect(const vec3d& lower_left,
+                               const vec2i& size,
+                               const vec2d& zoom)
 {
-  const geom::rect<int> screen_rect =
-    geom::rect<int>::lbwh(vec2i::zeros(), size * zoom);
+  const recti screen_rect = recti::lbwh(vec2i::zeros(), size * zoom);
 
   drawScreenRect(lower_left, screen_rect);
 }
 
-void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
-                               const geom::rect<int>& screen_rect)
+void Gfx::Bbox::drawScreenRect(const vec3d& lower_left,
+                               const recti& screen_rect)
 {
 DOTRACE("Gfx::Bbox::drawScreenRect");
   const vec3d o = rep->screenFromWorld3(vec3d(lower_left));
@@ -223,7 +225,7 @@ DOTRACE("Gfx::Bbox::cube");
   return rep->cube;
 }
 
-geom::rect<double> Gfx::Bbox::rect() const
+rectd Gfx::Bbox::rect() const
 {
 DOTRACE("Gfx::Bbox::rect");
   return rep->cube.rect();

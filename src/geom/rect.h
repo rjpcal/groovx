@@ -209,6 +209,9 @@ namespace geom
     geom::span<V> yy;
   };
 
+  typedef rect<double> rectd;
+  typedef rect<int>    recti;
+
 } // end namespace geom
 
 static const char vcid_rect_h[] = "$Header$";
