@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Tue Oct 24 22:53:51 2000
+// written: Thu Oct 26 08:58:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +104,13 @@ namespace ReadUtils {
 
 		  else {
 			 C* obj = dynamic_cast<C*>(io);
-			 if (obj == 0) throw IO::ReadError("failed cast in readObjectSeq");
+			 if (obj == 0)
+				{
+				  IO::ReadError err("failed cast in readObjectSeq for sequence '");
+				  err.appendMsg(seq_name, "' on item number ");
+				  err.appendNumber(i);
+				  throw err;
+				}
 			 *inserter = obj;
 		  }
 
