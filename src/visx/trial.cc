@@ -162,8 +162,7 @@ public:
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
         Util::log(fstring("current node is ",
-                          gxNodes[currentNode]->objTypename(), " ",
-                          gxNodes[currentNode]->id()));
+                          gxNodes[currentNode]->uniqueName()));
       }
   }
 };
@@ -417,7 +416,7 @@ DOTRACE("Trial::stdInfo");
           const GxShapeKit* g = dynamic_cast<const GxShapeKit*>((*tr).get());
           if (g)
             {
-              objids.append(" ", g->id());
+              objids.append(" ", g->uniqueName());
               cats.append(" ", g->category());
             }
         }
