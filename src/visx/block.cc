@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Oct 20 17:28:23 2000
+// written: Mon Oct 23 11:40:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,27 +137,6 @@ DOTRACE("Block::addTrial");
   }
   itsImpl->updateCurrentTrial();
 };
-
-void Block::addTrials(int first_trial, int last_trial, int repeat) {
-DOTRACE("Block::addTrials");
-
-  // Account for the convention of using -1 to indicate 'beginning'
-  // for first_trial, and 'end' for last_trial.
-
-  if (first_trial == -1)
-	 first_trial = 0;
-
-  if (last_trial  == -1 ||
-		last_trial > theTlist.capacity())
-	 last_trial  = theTlist.capacity();
-
-  while (first_trial < last_trial)
-	 {
-		if (theTlist.isValidId(first_trial))
-		  addTrial(first_trial, repeat);
-		++first_trial;
-	 }
-}
 
 void Block::shuffle(int seed) {
 DOTRACE("Block::shuffle");

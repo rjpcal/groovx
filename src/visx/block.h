@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Fri Oct 20 17:27:57 2000
+// written: Mon Oct 23 11:39:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,12 +53,6 @@ public:
 
   /// Add the specified trialid to the block, 'repeat' number of times.
   void addTrial(int trialid, int repeat=1);
-
-  /** Add to the Block all valid trialids between first_trial and
-		last_trial, inclusive. If a boundary is set to -1, then the
-		trialid is not checked against that boundary. Each trialid is
-		added 'repeat' times. */
-  void addTrials(int first_trial=-1, int last_trial=-1, int repeat=1);
 
   /** Randomly permute the sequence of trialids, using seed as the
 		random seed for the shuffle. */
