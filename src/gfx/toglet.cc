@@ -92,8 +92,8 @@ public:
   Impl(Toglet* p);
   ~Impl() throw()
   {
-    scene->destroy();
-    canvas->destroy();
+    if (scene != 0)       scene->destroy();
+    if (canvas.isValid()) canvas->destroy();
   }
 
   static Window cClassCreateProc(Tk_Window tkwin,
@@ -134,10 +134,12 @@ Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
                                       ClientData clientData) throw()
 {
 DOTRACE("Toglet::Impl::cClassCreateProc");
-  Toglet* toglet = static_cast<Toglet*>(clientData);
-  GlWindowInterface& glx = *(toglet->rep->glx);
+  Toglet* const toglet = static_cast<Toglet*>(clientData);
+  GlWindowInterface* const glx = toglet->rep->glx.get();
 
-  return glx.makeTkRealWindow(tkwin, parent, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+  ASSERT(glx != 0);
+
+  return glx->makeTkRealWindow(tkwin, parent, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -288,6 +290,10 @@ DOTRACE("Toglet::displayCallback");
 void Toglet::reshapeCallback(int width, int height)
 {
 DOTRACE("Toglet::reshapeCallback");
+
+  ASSERT(rep->glx.get() != 0);
+  ASSERT(rep->scene != 0);
+
   makeCurrent();
   rep->glx->onReshape(width, height);
   rep->scene->reshape(width, height);
