@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Sat Dec  2 09:51:30 2000
+// written: Fri Jun  1 16:26:59 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -135,6 +135,7 @@ public:
 
   // Bitmap fonts
   GLuint loadBitmapFont( const char *fontname ) const;
+  GLuint loadBitmapFonti( int fontnumber ) const;
   void unloadBitmapFont( GLuint fontbase ) const;
 
   // Overlay functions
