@@ -41,6 +41,25 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+#if ((TCL_MAJOR_VERSION == 8) \
+      && (TCL_MINOR_VERSION >= 5)) \
+    || (TCL_MAJOR_VERSION > 8)
+#  define HAVE_TCL_DICT
+#else
+#  undef HAVE_TCL_DICT
+#endif
+
+
+#ifndef HAVE_TCL_DICT
+namespace
+{
+  void noDictError()
+  {
+    throw Util::Error("Tcl::Dict requires Tcl version >= 8.5");
+  }
+}
+#else
+
 void Tcl::Dict::doPut(const char* key, Tcl::ObjPtr val)
 {
 DOTRACE("Tcl::Dict::doPut");
@@ -70,6 +89,8 @@ DOTRACE("Tcl::Dict::doGet");
   throw Util::Error(fstring("couldn't get value from dict with key: ",
                             key));
 }
+
+#endif // defined(HAVE_TCL_DICT)
 
 static const char vcid_tcldictobj_cc[] = "$Header$";
 #endif // !TCLDICTOBJ_CC_DEFINED
