@@ -3,21 +3,10 @@ $Id$
 
 *** FRONT of priority queue ***
 
-(28-Jan-2001) Would be nice to have a reusable class that can wrap a Tcl
-procedure that can be serialized and deserialized. We are already doing this
-in practice in ExptDriver (with the doUponCompletion script) and in
-EventResponseHdlr (with the responseProc). Should be able to refactor out the
-common code. OK, I extracted TclProcWrapper from EventResponseHdlr's former
-ResponseProc class, and made it an IO::IoObject (all this after much painful
-debugging that was eventually solved by Electric Fence). Next step is to
-extract it physically, and then re-use it in ExptDrvier. This should
-eventually be a very useful and powerful class -- it's a nice interface to
-provide extensible hooks + callbacks.
-
-(25-Jan-2001) Logging goodies: log levels, and multiple log targets with
+(25-Jan-2002) Logging goodies: log levels, and multiple log targets with
 separate log levels for each?
 
-(17-Jan-2001) get automated dependencies working, so I can eliminate some of
+(17-Jan-2002) get automated dependencies working, so I can eliminate some of
 the cruft from the main executable and make things more modular+loadable
 
   (1) figure out on which .o files a given .cc file depends
@@ -90,20 +79,6 @@ remembers this fact until its next redisplay comes around, rather than
 immediately redisplaying the scene. Widget could have a maxRefreshRate
 attrib, instead of allowRefresh; then "maxRefreshRate 0" would be
 equivalent to "allowRefresh false".
-
-(24-Aug-2001) Want to have infix member function calls in Tcl, so we
-can do "$f eyeHeight 0.4" rather than "Face::eyeHeight $f 0.4". I
-don't think I'll have a problem getting the mechanics of the function
-calls set up... but the problem is, how to get Tcl commands registered
-for all of the objects? Or just resort to using "unknown"? Or... just
-set up inheritance, so that for example, the "Face" namespace in Tcl
-inherits all the commands in "GrObj", "GxNode", and "IO", for
-example. [3-Sep-2001] Hmmm, no, the real problem is not how to get Tcl
-commands registered (this could be done in the Convert::toTcl
-functions), but rather how to allow easy vectorization of commands?
-Maybe all my OO stuff could go under a Tcl cmd "with", so we can do
-"with $f eyeHeight 0.4", which would work whether $f was single- or
-multi-valued.
 
 (3-Sep-2001) Should be easy and efficient to set up class-based
 inheritance of Tcl commands; we don't need multiple TclCmd objects,
@@ -478,22 +453,65 @@ string in array, and retrieve its index.
 
 *** BACK ***
 
-(done 25-Jan-2001) Logging. OK, have a simple scope nesting and timing
+(done 25-Jan-2002) Logging. OK, have a simple scope nesting and timing
 architecture in place for logging.
 
-(done 17-Jan-2001) More efficient bitmaps (startup time, memory use) for
+(done 17-Jan-2002) More efficient bitmaps (startup time, memory use) for
 eyetracking stimulus scripts?  Things are speedier with queuePbmFile(), so
 that bitmaps are only loaded when needed, and with purgeable bitmaps, so that
 the memory is freed immediately after the bitmap is drawn. This is a
 reasonable tradeoff if each image is going to be displayed relatively few
 times compared to the overall number of images used.
 
-(done 28-Jan-2001) Implemented a first attempt at allowing responses to be
+(done 28-Jan-2002) Implemented a first attempt at allowing responses to be
 decoded by a "proc"-like Tcl code block, rather than by a regular expression
 mapping. Eventually the old regex approach can probably be encapsulated within
 the new more flexible approach.
 
-(done 28-Jan-2001) Need to allow multiple responses within a single Trial
+(done 28-Jan-2002) Need to allow multiple responses within a single Trial
 run. OK, added a "maxResponses" attribute to EventResponseHdlr so that we can
 specify an arbitrary number of responses (instead of the default, 1) to be
 allowed in each activation cycle, before the response handler goes quiet.
+
+(28-Jan-2002, done 30-Jan-2002) Would be nice to have a reusable class that
+can wrap a Tcl procedure that can be serialized and deserialized. We are
+already doing this in practice in ExptDriver (with the doUponCompletion
+script) and in EventResponseHdlr (with the responseProc). Should be able to
+refactor out the common code. OK, I extracted TclProcWrapper from
+EventResponseHdlr's former ResponseProc class, and made it an IO::IoObject
+(all this after much painful debugging that was eventually solved by Electric
+Fence). Next step is to extract it physically, and then re-use it in
+ExptDrvier. This should eventually be a very useful and powerful class -- it's
+a nice interface to provide extensible hooks + callbacks. [30-Jan] OK,
+extracted out Tcl::ProcWrapper and put it into place in ExptDriver. This is
+looking like a nice powerful tool now.
+
+(24-Aug-2001, done 31-Jan-2002) Want to have infix member function calls in
+Tcl, so we can do "$f eyeHeight 0.4" rather than "Face::eyeHeight $f 0.4". I
+don't think I'll have a problem getting the mechanics of the function calls
+set up... but the problem is, how to get Tcl commands registered for all of
+the objects? Or just resort to using "unknown"? Or... just set up inheritance,
+so that for example, the "Face" namespace in Tcl inherits all the commands in
+"GrObj", "GxNode", and "IO", for example. [3-Sep-2001] Hmmm, no, the real
+problem is not how to get Tcl commands registered (this could be done in the
+Convert::toTcl functions), but rather how to allow easy vectorization of
+commands?  Maybe all my OO stuff could go under a Tcl cmd "with", so we can do
+"with $f eyeHeight 0.4", which would work whether $f was single- or
+multi-valued. [31-Jan-2001] Could get working notation using namespace eval in
+a special oo command, perhaps named "->". Need to provide a way for Tcl::Pkg's
+to inherit() the functions in other packages. The idea would be that a Pkg
+would first inherit() all the necessary functions, then it would define its
+own functions. That way in case of a name conflict, the new function would
+overwrite ("hide") the inherited function. We could still access the
+overwritten function with an explicit qualification. Done -- added a "->"
+command that provides infix syntax. Inheritance is managed through namespace
+importing/exporting via Tcl::Pkg::inherit().
+
+(31-Jan-2002, done 1-Feb-2002) Add fstring operator!=().
+
+(30-Jan-2002, done 2-Feb-2002) Segfault on "? new". Fixed: Re-fixed the local
+function lookupCmd(), so that it won't crash if it is passed a command name
+that refers to a non-Tcl::Command command (such as a tcl proc). Apparently my
+idiom of dynamic_cast<>(static_cast<>()) was not sufficient to test whether we
+actually had a valid Tcl::Command*; instead I now just manage a
+std::set<void*> holding the addresses of valid Tcl::Command's.
