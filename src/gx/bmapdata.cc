@@ -3,7 +3,7 @@
 // bmapdata.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jan 20 00:37:03 2000
-// written: Tue Mar  7 15:30:15 2000
+// written: Tue Oct  3 13:18:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,14 +151,16 @@ DOTRACE("BmapData::flipContrast");
   // In this case we want to flip each bit
   if (itsImpl->itsBitsPerPixel == 1) {
 	 for (int i = 0; i < num_bytes; ++i) {
-		itsImpl->itsBytes[i] ^= 0xff;
+		itsImpl->itsBytes[i] =
+		  static_cast<unsigned char>(0xff ^ itsImpl->itsBytes[i]);
 	 }
   }
   // In this case we want to reflect the value of each byte around the
   // middle value, 127.5
   else {
 	 for (int i = 0; i < num_bytes; ++i) {
-		itsImpl->itsBytes[i] = 0xff - itsImpl->itsBytes[i];
+		itsImpl->itsBytes[i] =
+		  static_cast<unsigned char>(0xff - itsImpl->itsBytes[i]);
 	 }
   }
 }
