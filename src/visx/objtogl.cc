@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 18 12:59:55 2001
+// written: Thu Jul 19 20:49:48 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -206,6 +206,8 @@ public:
     defAction("undraw", &Toglet::undraw);
     defGetter("usingFixedScale", &Toglet::usingFixedScale);
     defAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
+
+    defAction("hook", &Tcl::TkWidget::hook);
 
     setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
 
