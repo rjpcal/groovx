@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Oct 21 13:26:34 1999
+// written: Tue Nov  9 16:56:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include <tcl.h>
 
+#include "eventresponsehdlr.h"
 #include "iomgr.h"
 #include "rhlist.h"
 #include "responsehandler.h"
@@ -26,6 +27,40 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// EventRhPkg class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace EventRhTcl {
+  class EventRhPkg;
+}
+
+class EventRhTcl::EventRhPkg : public ListItemPkg<EventResponseHdlr, RhList> {
+public:
+  EventRhPkg(Tcl_Interp* interp) :
+	 ListItemPkg<EventResponseHdlr, RhList>(interp, RhList::theRhList(),
+														 "EventRh", "$Revision$")
+  {
+	 declareCAttrib("useFeedback",
+						 &EventResponseHdlr::getUseFeedback,
+						 &EventResponseHdlr::setUseFeedback);
+	 declareCAttrib("inputResponseMap",
+						 &EventResponseHdlr::getInputResponseMap,
+						 &EventResponseHdlr::setInputResponseMap);
+	 declareCAttrib("feedbackMap",
+						 &EventResponseHdlr::getFeedbackMap,
+						 &EventResponseHdlr::setFeedbackMap);
+	 declareCAttrib("eventSequence",
+						 &EventResponseHdlr::getEventSequence,
+						 &EventResponseHdlr::setEventSequence);
+	 declareCAttrib("bindingSubstitution",
+						 &EventResponseHdlr::getBindingSubstitution,
+						 &EventResponseHdlr::setBindingSubstitution);
+  }
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -114,11 +149,13 @@ DOTRACE("Rh_Init");
 
   new AbstractListItemPkg<ResponseHandler, RhList>(
 		  interp, RhList::theRhList(), "Rh", "$Revision$");
+  new EventRhTcl::EventRhPkg(interp);
   new KbdRhTcl::KbdRhPkg(interp);
   new NullRhTcl::NullRhPkg(interp);
 
   FactoryRegistrar<IO, KbdResponseHdlr> registrar1(IoFactory::theOne());
   FactoryRegistrar<IO, NullResponseHdlr> registrar2(IoFactory::theOne());
+  FactoryRegistrar<IO, EventResponseHdlr> registrar3(IoFactory::theOne());
 
   return TCL_OK;
 }
