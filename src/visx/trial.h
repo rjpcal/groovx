@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Wed Aug 15 10:06:26 2001
+// written: Wed Aug 15 10:48:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 #include "io/iodecls.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ATTRIBS_H_DEFINED)
-#include "io/attribs.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRIALBASE_H_DEFINED)

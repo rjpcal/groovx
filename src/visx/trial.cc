@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug 15 10:09:56 2001
+// written: Wed Aug 15 10:51:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -476,12 +476,9 @@ DOTRACE("Trial::Impl::undoLastResponse");
 
 namespace
 {
-
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("tType",
-              shared_ptr<FieldMemberPtr>(
-                 new ReadWriteAttrib<Trial, int>(&Trial::trialType, &Trial::setType)),
+    FieldInfo("tType", std::make_pair(&Trial::trialType, &Trial::setType),
               -1, -10, 10, 1, true)
   };
 
