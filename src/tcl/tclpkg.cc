@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon May 14 16:03:20 2001
+// written: Tue May 15 18:00:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,8 +51,13 @@ template <class T>
 void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
 												Getter<T>* getter, const char* usage) {
   addCommand(
-         new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name), 
-											  make_shared(getter), usage, itsItemArgn)
+         new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name),
+#ifndef ACC_COMPILER
+											  make_shared(getter),
+#else
+											  shared_ptr<Getter<T> >(getter),
+#endif
+											  usage, itsItemArgn)
 			);
 }
 
@@ -61,7 +66,12 @@ void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
 												Setter<T>* setter, const char* usage) {
   addCommand(
 		   new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
-											  make_shared(setter), usage, itsItemArgn)
+#ifndef ACC_COMPILER
+											  make_shared(setter),
+#else
+											  shared_ptr<Setter<T> >(setter),
+#endif
+											  usage, itsItemArgn)
 			);
 }
 
@@ -70,7 +80,12 @@ void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
 												Attrib<T>* attrib, const char* usage) {
   addCommand(
 			new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
-											  make_shared(attrib), usage, itsItemArgn)
+#ifndef ACC_COMPILER
+											  make_shared(attrib),
+#else
+											  shared_ptr<Attrib<T> >(attrib),
+#endif
+											  usage, itsItemArgn)
 			);
 }
 
