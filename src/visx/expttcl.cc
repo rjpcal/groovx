@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Mar  6 12:10:43 2000
+// written: Tue Mar  7 19:11:32 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -20,7 +20,7 @@
 #include "grshapp.h"
 #include "tclevalcmd.h"
 #include "exptdriver.h"
-#include "strings.h"
+#include "util/strings.h"
 #include "tclitempkg.h"
 #include "tclcmd.h"
 #include "widget.h"
