@@ -2,8 +2,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Mar 12 12:55:17 1999
-static const char vcid_position_h[] = "$Id";
+// written: Fri Mar 12 13:08:28 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITION_H_DEFINED
@@ -56,4 +55,5 @@ private:
   PositionImpl *itsImpl;
 };
 
+static const char vcid_position_h[] = "$Id$";
 #endif // !POSITION_H_DEFINED

@@ -2,8 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 12:58:14 1999
-static const char vcid_face_h[] = "$Id$";
+// written: Fri Mar 12 13:07:55 1999
 //
 // The Face class is a derived class of Scaleable (itself derived from
 // GrObj). As such, Face*'s may be stored and manipulated in ObjList's
@@ -86,4 +85,5 @@ inline void Face::setMouthHgt(float mh) {
   itsMouthHeight = mh;
 }
 
+static const char vcid_face_h[] = "$Id$";
 #endif // !FACE_H_DEFINED

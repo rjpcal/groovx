@@ -2,8 +2,7 @@
 // ioutils.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:56:11 1999
-static const char vcid_ioutils_h[] = "$Id$";
+// written: Fri Mar 12 13:07:43 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOUTILS_H_DEFINED
@@ -27,4 +26,5 @@ void deserializeFloat(istream &is, float &i, char *type);
 
 void fatalInputError(const char* type);
 
+static const char vcid_ioutils_h[] = "$Id$";
 #endif // !IOUTILS_H_DEFINED

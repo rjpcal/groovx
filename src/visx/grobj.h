@@ -2,8 +2,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 12:56:57 1999
-static const char vcid_grobj_h[] = "$Id$";
+// written: Fri Mar 12 13:06:37 1999
 //
 // This is the abstract base class for graphic objects that are to be
 // held and manipulated in ObjList's and Glist's. Classes derived from
@@ -63,4 +62,5 @@ private:
   mutable int itsDisplayList;	  // OpenGL display list that draws the object
 };
 
+static const char vcid_grobj_h[] = "$Id$";
 #endif // !GROBJ_H_DEFINED
