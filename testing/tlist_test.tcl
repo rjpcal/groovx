@@ -75,10 +75,10 @@ test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
 } {^0$}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 	 Tlist::loadObjidFile $::TEST_DIR/junk_text_file -1 0
-} {Tlist::loadObjidFile: InputError: Trial}
+} {Tlist::loadObjidFile: IO::InputError: Trial}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
 	 Tlist::loadObjidFile $::TEST_DIR/junk_bin_file -1 0
-} {Tlist::loadObjidFile: InputError: Trial} \
+} {Tlist::loadObjidFile: IO::InputError: Trial} \
   [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 

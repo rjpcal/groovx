@@ -205,11 +205,11 @@ proc testDestringifyCmd { objname } {
 
     eval ::test $testname {"error on incomplete input"} {"
         $destringify ${this(listname)}
-    "} {"${destringify}: InputError: ${this(listname)}"}
+    "} {"${destringify}: IO::InputError: ${this(listname)}"}
 
     eval ::test $testname {"error on bad input"} {"
         $destringify {this is a bunch of bs}
-    "} {"${destringify}: InputError: couldn't read typename for ${this(listname)}"}
+    "} {"${destringify}: IO::InputError: couldn't read typename for ${this(listname)}"}
 }
 
 
