@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Oct 12 17:45:49 1999
+// written: Wed Oct 13 17:58:27 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -84,8 +84,8 @@ public:
 		Tlist::theTlist().drawCurTrial();
 	 }
 	 catch (InvalidIdError& err) {
-		Tcl_AppendResult(getInterp(), err.msg().c_str(), (char*) 0);
-		Tcl_BackgroundError(getInterp());
+		DebugEvalNL(err.msg());
+		Tlist::theTlist().setVisible(false);
 	 }
     
     DebugPrintNL("swapping the buffers...");
