@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Tue Nov 28 13:52:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,10 +145,7 @@ DOTRACE("TlistWidget::Impl::undraw");
 //
 ///////////////////////////////////////////////////////////////////////
 
-TlistWidget::TlistWidget(Tcl_Interp* interp, const char* pathname,
-								 int config_argc, char** config_argv,
-								 double dist, double unit_angle) :
-  ToglConfig(interp, pathname, config_argc, config_argv, dist, unit_angle),
+TlistWidget::TlistWidget() :
   itsImpl(new Impl)
 {
 DOTRACE("TlistWidget::TlistWidget");

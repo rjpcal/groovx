@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Dec  3 14:45:34 1999
-// written: Fri Nov 10 17:03:51 2000
+// written: Tue Nov 28 13:52:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,19 +13,17 @@
 #ifndef TLISTWIDGET_H_DEFINED
 #define TLISTWIDGET_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGLCONFIG_H_DEFINED)
-#include "toglconfig.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WIDGET_H_DEFINED)
+#include "gwt/widget.h"
 #endif
 
 template <class T> class MaybeIdItem;
 
 class TrialBase;
 
-class TlistWidget : public ToglConfig {
+class TlistWidget : public GWT::Widget {
 public:
-  TlistWidget(Tcl_Interp* interp, const char* pathname,
-				  int config_argc, char** config_argv,
-				  double dist, double unit_angle);
+  TlistWidget();
 
   virtual ~TlistWidget();
 
