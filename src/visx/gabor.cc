@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 29 16:46:42 2001
+// written: Thu Aug 30 10:17:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,11 +30,9 @@
 #include "util/randutils.h"
 
 #include <cmath>
-#include <cstring>
 
 #include "util/trace.h"
 #include "util/debug.h"
-
 
 namespace
 {
@@ -53,10 +51,10 @@ const FieldMap& Gabor::classFields()
     Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, Field::NEW_GROUP),
     Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
     Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
-    Field("phase", &Gabor::itsPhase, 0.0, -180.0, 179.0, 1.0),
+    Field("phase", &Gabor::itsPhase, 0, -180, 179, 1),
     Field("sigma", &Gabor::itsSigma, 0.15, 0.025, 0.5, 0.025),
     Field("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
-    Field("orientation", &Gabor::itsOrientation, 0.0, -180.0, 179.0, 1.0),
+    Field("orientation", &Gabor::itsOrientation, 0, -180, 179, 1),
     Field("resolution", &Gabor::itsResolution, 60, 5, 500, 1),
     Field("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1)
   };
