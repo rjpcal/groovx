@@ -41,6 +41,8 @@
 DBG_REGISTER;
 #include "util/trace.h"
 
+using namespace Gfx;
+
 namespace
 {
   void mul_mtx_4x4(const double* m1, const double* m2, double* result)
@@ -68,9 +70,9 @@ DOTRACE("Gfx::Txform::Txform");
 }
 
 
-Gfx::Txform::Txform(const Vec3<double>& translation,
-                    const Vec3<double>& scaling,
-                    const Vec3<double>& rotationAxis,
+Gfx::Txform::Txform(const Vec3d& translation,
+                    const Vec3d& scaling,
+                    const Vec3d& rotationAxis,
                     double rotationAngle)
 {
 DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
@@ -125,7 +127,7 @@ DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
   data[3]=0.0;                   data[7]=0.0;                   data[11]=0.0;                  data[15]=1.0;
 }
 
-void Gfx::Txform::translate(const Vec3<double>& t)
+void Gfx::Txform::translate(const Vec3d& t)
 {
 DOTRACE("Gfx::Txform::translate");
 
@@ -161,7 +163,7 @@ DOTRACE("Gfx::Txform::translate");
 #endif
 }
 
-void Gfx::Txform::scale(const Vec3<double>& s)
+void Gfx::Txform::scale(const Vec3d& s)
 {
 DOTRACE("Gfx::Txform::scale");
 
@@ -214,7 +216,7 @@ DOTRACE("Gfx::Txform::transform");
   mul_mtx_4x4(old_mtx.data, other.data, this->data);
 }
 
-Gfx::Vec2<double> Gfx::Txform::applyTo(const Gfx::Vec2<double>& input) const
+Vec2d Gfx::Txform::applyTo(const Vec2d& input) const
 {
   /*
         | m0 m4 m8  m12 |   | input.x |
@@ -244,11 +246,11 @@ Gfx::Vec2<double> Gfx::Txform::applyTo(const Gfx::Vec2<double>& input) const
     + data[15] * 1.0;
 
   return (output_w != 0.0)
-    ? Gfx::Vec2<double>(output_x / output_w, output_y / output_w)
-    : Gfx::Vec2<double>(0.0, 0.0);
+    ? Vec2d(output_x / output_w, output_y / output_w)
+    : Vec2d(0.0, 0.0);
 }
 
-Gfx::Vec3<double> Gfx::Txform::applyTo(const Gfx::Vec3<double>& input) const
+Vec3d Gfx::Txform::applyTo(const Vec3d& input) const
 {
   /*
         | m0 m4 m8  m12 |   | input.x |
@@ -282,10 +284,10 @@ Gfx::Vec3<double> Gfx::Txform::applyTo(const Gfx::Vec3<double>& input) const
     + data[15] * 1.0;
 
   return (output_w != 0.0)
-    ? Gfx::Vec3<double>(output_x / output_w,
-                        output_y / output_w,
-                        output_z / output_w)
-    : Gfx::Vec3<double>(0.0, 0.0, 0.0);
+    ? Vec3d(output_x / output_w,
+            output_y / output_w,
+            output_z / output_w)
+    : Vec3d(0.0, 0.0, 0.0);
 }
 
 void Gfx::Txform::debugDump() const
