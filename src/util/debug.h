@@ -2,7 +2,7 @@
 // debug.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:46:39 1999
+// written: Mon Apr 26 12:18:59 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -26,6 +26,13 @@
 #else // !LOCAL_ASSERT
 #  define Assert(x) {}
 #endif // !LOCAL_ASSERT
+
+#ifdef INVARIANT
+#  include <cassert>
+#  define Invariant(invariant) assert((invariant))
+#else // !INVARIANT
+#  define Invariant(x) {}
+#endif // !INVARIANT
 
 static const char vcid_debug_h[] = "$Id$";
 #endif // !DEBUG_H_DEFINED
