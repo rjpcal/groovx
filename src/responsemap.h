@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:35:06 2001
-// written: Thu Jul 19 16:40:08 2001
+// written: Thu Jul 19 17:02:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ class ResponseMap {
 public:
   ResponseMap(const char* rep) :
     itsStringRep(rep),
-    itsItems(),
-    isItDirty(true) {}
+    isItDirty(true),
+    itsItems() {}
 
   void set(const fixed_string& new_rep)
   {
