@@ -65,6 +65,18 @@ public:
   /// Conversion operator to Tcl_Obj*.
   operator Tcl_ObjPtr() { return itsObj; }
 
+  bool isShared() const { return Tcl_IsShared(itsObj); }
+  bool isUnique() const { return !isShared(); }
+
+  void ensureUnique()
+    {
+		if (isShared())
+		  {
+			 Tcl_Obj* newObj = Tcl_DuplicateObj(itsObj);
+			 assign(newObj);
+		  }
+	 }
+
 private:
   void assign(Tcl_Obj* x)
     {
