@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 13:53:42 2002
+// written: Thu Dec  5 14:34:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,9 +300,9 @@ DOTRACE("ExptDriver::vxAbort");
   /* FIXME */ Assert(false);
 }
 
-void ExptDriver::vxEndTrial()
+void ExptDriver::vxEndTrialHook()
 {
-DOTRACE("ExptDriver::vxEndTrial");
+DOTRACE("ExptDriver::vxEndTrialHook");
 
   if ( !rep->haveCurrentElement() )
     return;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 14:11:49 2002
+// written: Thu Dec  5 15:09:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,13 @@ Util::Tracer Block::tracer;
 namespace
 {
   IO::VersionId BLOCK_SERIAL_VERSION_ID = 2;
+
+  enum ChildStatus
+    {
+      OK,
+      INCORRECT_RESPONSE,
+      ABORTED
+    };
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +72,7 @@ public:
     elements(),
     randSeed(0),
     sequencePos(0),
-    hasBegun(false),
+    childStatus(OK),
     parent(0)
   {}
 
@@ -77,40 +84,27 @@ public:
 
   Ref<Element> currentElement()
     {
-      Precondition(hasCurrentElement());
+      Precondition(sequencePos < elements.size());
 
       return elements.at(sequencePos);
     }
 
-  bool hasCurrentElement()
-    {
-      if ( sequencePos < 0 ||
-           (unsigned int) sequencePos >= elements.size() )
-        return false;
-      else
-        return true;
-    }
-
   minivec<Ref<Element> > elements;
 
-  int randSeed;              // Random seed used to create elements
-  int sequencePos;           // Index of the current element
-                             // Also functions as # of completed elements
+  int randSeed;                 // Random seed used to create element sequence
+  unsigned int sequencePos;     // Index of the current element
+                                // Also functions as # of completed elements
 
-  mutable bool hasBegun;
+  ChildStatus childStatus;
 
-  mutable Element* parent;
+  Element* parent;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Block member functions
+// Block creators
 //
 ///////////////////////////////////////////////////////////////////////
-
-//////////////
-// creators //
-//////////////
 
 Block* Block::make()
 {
@@ -175,8 +169,7 @@ DOTRACE("Block::readFrom");
 
   reader->readValue("randSeed", rep->randSeed);
   reader->readValue("curTrialSeqdx", rep->sequencePos);
-  if (rep->sequencePos < 0 ||
-      size_t(rep->sequencePos) > rep->elements.size())
+  if (rep->sequencePos > rep->elements.size())
     {
       throw IO::ReadError("Block");
     }
@@ -231,106 +224,10 @@ DOTRACE("Block::trialType");
   return rep->currentElement()->trialType();
 }
 
-fstring Block::status() const
-{
-DOTRACE("Block::status");
-  if (isComplete()) return fstring("block is complete");
-
-  fstring msg;
-  msg.append("next element ", currentElement().id(), ", ")
-    .append(rep->currentElement()->status())
-    .append(", completed ", numCompleted(), " of ", numElements());
-
-  return msg;
-}
-
-void Block::vxRun(Element& e)
-{
-DOTRACE("Block::vxRun");
-
-  Precondition( &e != 0 );
-
-  if ( isComplete() ) return;
-
-  rep->hasBegun = true;
-
-  Util::log( status() );
-
-  rep->parent = &e;
-
-  rep->currentElement()->vxRun(*this);
-}
-
-void Block::vxHalt() const
-{
-DOTRACE("Block::vxHalt");
-
-  if ( rep->hasBegun && !isComplete() )
-    rep->currentElement()->vxHalt();
-}
-
-void Block::vxUndo()
-{
-DOTRACE("Block::vxUndo");
-
-  dbgEval(3, rep->sequencePos);
-
-  // Check to make sure we've completed at least one element
-  if (rep->sequencePos < 1) return;
-
-  // Move the counter back to the previous element...
-  --rep->sequencePos;
-
-  // ...and erase the last response given to that element
-  if ( rep->hasCurrentElement() )
-    {
-      rep->currentElement()->vxUndo();
-    }
-}
-
-void Block::vxNext()
-{
-DOTRACE("Block::vxNext");
-  if ( !isComplete() )
-    {
-      vxRun(rep->getParent());
-    }
-  else
-    {
-      rep->getParent().vxNext();
-    }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// accessors
-//
-///////////////////////////////////////////////////////////////////////
-
-int Block::numElements() const
-{
-DOTRACE("Block::numElements");
-  return rep->elements.size();
-}
-
-Util::FwdIter<Util::Ref<Element> > Block::getElements() const
-{
-  return Util::FwdIter<Util::Ref<Element> >
-    (rep->elements.begin(), rep->elements.end());
-}
-
 int Block::numCompleted() const
 {
 DOTRACE("Block::numCompleted");
   return rep->sequencePos;
-}
-
-Util::SoftRef<Element> Block::currentElement() const
-{
-DOTRACE("Block::currentElement");
-  if (isComplete()) return Util::SoftRef<Element>();
-
-  return rep->currentElement();
 }
 
 int Block::lastResponse() const
@@ -348,93 +245,154 @@ DOTRACE("Block::lastResponse");
   return prev_element->lastResponse();
 }
 
-bool Block::isComplete() const
+fstring Block::status() const
 {
-DOTRACE("Block::isComplete");
+DOTRACE("Block::status");
+  if (isComplete()) return fstring("block is complete");
 
-  dbgEval(9, rep->sequencePos);
-  dbgEvalNL(9, rep->elements.size());
+  fstring msg;
+  msg.append("next element ", currentElement().id(), ", ")
+    .append(currentElement()->status())
+    .append(", completed ", numCompleted(), " of ", numElements());
 
-  // This is 'tricky'. The problem is that rep->sequencePos may temporarily
-  // be negative in between a vxAbort and the corresponding
-  // vxEndTrial. This means that we can't only compare rep->sequencePos
-  // with rep->elements.size(), because the former is signed and the latter
-  // is unsigned, forcing a 'promotion' to unsigned of the former... this
-  // makes it a huge positive number if it was actually negative. Thus, we
-  // must also check that rep->sequencePos is actually non-negative before
-  // returning 'true' from this function.
-  return ((rep->sequencePos >= 0) &&
-          (size_t(rep->sequencePos) >= rep->elements.size()));
+  return msg;
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// actions
-//
-///////////////////////////////////////////////////////////////////////
+void Block::vxRun(Element& e)
+{
+DOTRACE("Block::vxRun");
+
+  if ( isComplete() ) return;
+
+  Precondition( &e != 0 );
+
+  rep->childStatus = OK;
+
+  Util::log( status() );
+
+  rep->parent = &e;
+
+  rep->currentElement()->vxRun(*this);
+}
+
+void Block::vxHalt() const
+{
+DOTRACE("Block::vxHalt");
+
+  if ( !isComplete() )
+    rep->currentElement()->vxHalt();
+}
 
 void Block::vxAbort()
 {
 DOTRACE("Block::vxAbort");
-  if (isComplete()) return;
 
-  // Remember the element that we are about to abort so we can store it
-  // at the end of the sequence.
-  Ref<Element> aborted_element = rep->currentElement();
+  rep->childStatus = ABORTED;
+}
 
-  // Erase the aborted element from the sequence. Subsequent elements will
-  // slide up to fill in the gap.
-  rep->elements.erase(rep->elements.begin()+rep->sequencePos);
+void Block::vxEndTrialHook()
+{
+DOTRACE("Block::vxEndTrialHook");
 
-  // Add the aborted element to the back of the sequence.
-  rep->elements.push_back(aborted_element);
+  if (rep->parent != 0)
+    rep->parent->vxEndTrialHook();
+}
 
-  // We must decrement rep->sequencePos, so that when it is
-  // incremented by vxEndTrial, the next element has slid into the
-  // position where the aborted element once was.
-  --rep->sequencePos;
+void Block::vxNext()
+{
+DOTRACE("Block::vxNext");
+  Assert( !isComplete() );
+
+  switch (rep->childStatus)
+    {
+    case OK:
+      // Move on to the next element.
+      ++rep->sequencePos;
+      break;
+
+    case INCORRECT_RESPONSE:
+      {
+        // If the response was incorrect, add a repeat of the current
+        // element to the block and reshuffle
+        addElement(rep->currentElement(), 1);
+        std::random_shuffle
+          (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
+
+        // Move on to the next element.
+        ++rep->sequencePos;
+      }
+      break;
+
+    case ABORTED:
+      {
+        // Remember the element that we are about to abort so we can
+        // store it at the end of the sequence.
+        Ref<Element> aborted_element = rep->currentElement();
+
+        // Erase the aborted element from the sequence. Subsequent
+        // elements will slide up to fill in the gap.
+        rep->elements.erase(rep->elements.begin()+rep->sequencePos);
+
+        // Add the aborted element to the back of the sequence.
+        rep->elements.push_back(aborted_element);
+
+        // Don't need to increment sequencePos here since the new trial
+        // has "slid into place" by the reshuffling we've just done.
+      }
+      break;
+
+    default:
+      Assert(false);
+    }
+
+  dbgEval(3, numCompleted());
+  dbgEval(3, numElements());
+  dbgEvalNL(3, isComplete());
+
+  // Now, after (possibly) adjusting our sequence counter, see if we have
+  // still have additional elements to run...
+  if ( !isComplete() )
+    {
+      vxRun(rep->getParent());
+    }
+  else
+    {
+      // Release our current parent, then pass control onto it.
+      Element& p = rep->getParent();
+      rep->parent = 0;
+      p.vxNext();
+    }
 }
 
 void Block::vxProcessResponse(Response& response)
 {
 DOTRACE("Block::vxProcessResponse");
-  if (isComplete()) return;
 
   dbgEval(3, response.correctVal());
   dbgEvalNL(3, response.val());
 
   if (!response.isCorrect())
     {
-      // If the response was incorrect, add a repeat of the current
-      // element to the block and reshuffle
-      addElement(rep->currentElement(), 1);
-      std::random_shuffle
-        (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
+      rep->childStatus = INCORRECT_RESPONSE;
     }
 }
 
-void Block::vxEndTrial()
+void Block::vxUndo()
 {
-DOTRACE("Block::vxEndTrial");
-  if (isComplete()) return;
+DOTRACE("Block::vxUndo");
 
-  // Prepare to start next element.
-  ++rep->sequencePos;
+  dbgEval(3, rep->sequencePos);
 
-  dbgEval(3, numCompleted());
-  dbgEval(3, numElements());
-  dbgEvalNL(3, isComplete());
+  // Check to make sure we've completed at least one element
+  if (rep->sequencePos < 1) return;
 
-  rep->getParent().vxEndTrial();
-}
+  // Move the counter back to the previous element...
+  --rep->sequencePos;
 
-void Block::resetBlock()
-{
-DOTRACE("Block::resetBlock");
-  while (rep->sequencePos > 0)
-    {
-      vxUndo();
-    }
+  Assert(rep->sequencePos < rep->elements.size());
+
+  // ...and undo that element
+  rep->currentElement()->vxUndo();
 }
 
 void Block::vxReset()
@@ -447,6 +405,42 @@ DOTRACE("Block::vxReset");
     }
 
   rep->sequencePos = 0;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Block accessors
+//
+///////////////////////////////////////////////////////////////////////
+
+int Block::numElements() const
+{
+DOTRACE("Block::numElements");
+  return rep->elements.size();
+}
+
+Util::FwdIter<Util::Ref<Element> > Block::getElements() const
+{
+  return Util::FwdIter<Util::Ref<Element> >
+    (rep->elements.begin(), rep->elements.end());
+}
+
+Util::SoftRef<Element> Block::currentElement() const
+{
+DOTRACE("Block::currentElement");
+  if (isComplete()) return Util::SoftRef<Element>();
+
+  return rep->currentElement();
+}
+
+bool Block::isComplete() const
+{
+DOTRACE("Block::isComplete");
+
+  dbgEval(9, rep->sequencePos);
+  dbgEvalNL(9, rep->elements.size());
+
+  return (rep->sequencePos >= rep->elements.size());
 }
 
 static const char vcid_block_cc[] = "$Header$";

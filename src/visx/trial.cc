@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Dec  5 14:24:59 2002
+// written: Thu Dec  5 14:35:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,7 +151,6 @@ public:
   void vxRun(Trial* self, Element& parent);
   double trElapsedMsec();
   void vxAbort();
-  void vxEndTrial();
   void vxNext();
   void vxHalt();
   void trResponseSeen();
@@ -356,27 +355,16 @@ DOTRACE("Trial::Impl::vxAbort");
   itsActiveState->itsParent->vxAbort();
 }
 
-void Trial::Impl::vxEndTrial()
-{
-DOTRACE("Trial::Impl::vxEndTrial");
-
-  Precondition( isActive() );
-
-  Util::log("Trial::vxEndTrial");
-
-  itsActiveState->itsRh->rhEndTrial();
-  itsActiveState->itsParent->vxEndTrial();
-}
-
 void Trial::Impl::vxNext()
 {
 DOTRACE("Trial::Impl::vxNext");
 
-  vxEndTrial();
-
   Precondition( isActive() );
 
   Util::log("Trial::vxNext");
+
+  itsActiveState->itsRh->rhEndTrial();
+  itsActiveState->itsParent->vxEndTrialHook();
 
   Element* parent = itsActiveState->itsParent;
 
@@ -621,9 +609,6 @@ double Trial::trElapsedMsec()
 
 void Trial::vxAbort()
   { rep->vxAbort(); }
-
-void Trial::vxEndTrial()
-  { rep->vxEndTrial(); }
 
 void Trial::vxNext()
   { rep->vxNext(); }

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Wed Dec  4 18:58:29 2002
+// written: Thu Dec  5 14:35:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,10 @@ public:
 
   virtual void vxAbort() = 0;
 
-  virtual void vxEndTrial() = 0;
+  /// Hook function that gets called each time a leaf (i.e., trial) completes.
+  /** Shouldn't be used for substantive action, but just for bookkeeping
+      such as timekeeping, autosaving, etc. Default version is a no-op. */
+  virtual void vxEndTrialHook();
 
   virtual void vxNext() = 0;
 

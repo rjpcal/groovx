@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Thu Dec  5 14:16:42 2002
+// written: Thu Dec  5 14:35:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,8 +113,6 @@ public:
   virtual void vxHalt() const;
 
   virtual void vxAbort();
-
-  virtual void vxEndTrial();
 
   virtual void vxNext();
 

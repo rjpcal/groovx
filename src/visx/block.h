@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 14:04:58 2002
+// written: Thu Dec  5 15:04:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ public:
   virtual void vxAbort();
 
   /// Prepares the Block to start the next element. */
-  virtual void vxEndTrial();
+  virtual void vxEndTrialHook();
 
   /// Begins the next element, moving on to the next Block if necessary.
   virtual void vxNext();
@@ -140,6 +140,7 @@ public:
       vxRun() will redo the element that was undone in the present command.*/
   virtual void vxUndo();
 
+  /// Reset all of the Block's child elements.
   virtual void vxReset();
 
   ///////////////
@@ -159,15 +160,6 @@ public:
   /** The block is considered complete if all elements in the sequence
       have finished successfully. */
   bool isComplete() const;
-
-  /////////////
-  // actions //
-  /////////////
-
-  /// Restore the Block to a state where none of the elements have been run.
-  /** Undoes all responses to all of the elements in the Block, and resets
-      its counter back to the beginning. */
-  void resetBlock();
 
 private:
   Block(const Block&);

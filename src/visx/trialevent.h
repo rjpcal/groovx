@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Dec  4 18:41:16 2002
+// written: Thu Dec  5 14:32:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ protected:
   virtual void invoke(Trial& trial);
 };
 
-/// TrialEvent subclass to call Trial::vxEndTrial().
+/// TrialEvent subclass to call Trial::vxNext().
 class EndTrialEvent : public TrialEvent
 {
 protected:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Dec  4 17:29:08 2002
+// written: Thu Dec  5 15:04:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ DOTRACE("Block_Init");
   pkg->defGetter("numTrials", &Block::numElements);
   pkg->defGetter("prevResponse", &Block::lastResponse);
   pkg->defAction("removeAllTrials", &Block::clearAllElements);
-  pkg->defAction("reset", &Block::resetBlock);
+  pkg->defAction("reset", &Block::vxReset);
   pkg->defSetter("shuffle", "item_id rand_seed", &Block::shuffle);
   pkg->defGetter("trials", &Block::getElements);
   pkg->defGetter("trialDescription", &Block::status);

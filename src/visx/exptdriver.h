@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 13:16:32 2002
+// written: Thu Dec  5 14:34:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ public:
   virtual void vxAbort();
 
   /// End the current trial normally, and move on to the next trial.
-  virtual void vxEndTrial();
+  virtual void vxEndTrialHook();
 
   /** Attempt to start the next element, or stop the experiment if there
       are no more element. */
