@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Sep 27 13:50:52 2000
+// written: Wed Sep 27 18:01:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,55 +82,53 @@ DOTRACE("Position::~Position");
 
 void Position::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Position::legacySrlz");
+
+  Invariant(check());
+
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 Invariant(check());
 
 	 lwriter->writeTypename(ioTag);
 
-	 ostream& os = lwriter->output();
+	 writer->writeValue("transX", itsImpl->tr_x);
+	 writer->writeValue("transY", itsImpl->tr_y);
+	 writer->writeValue("transZ", itsImpl->tr_z);
 
-	 os << itsImpl->tr_x << IO::SEP
-		 << itsImpl->tr_y << IO::SEP
-		 << itsImpl->tr_z << IO::SEP;
-	 os << itsImpl->sc_x << IO::SEP
-		 << itsImpl->sc_y << IO::SEP
-		 << itsImpl->sc_z << IO::SEP;
-	 os << itsImpl->rt_x << IO::SEP
-		 << itsImpl->rt_y << IO::SEP
-		 << itsImpl->rt_z << IO::SEP
-		 << itsImpl->rt_ang << endl;
-	 lwriter->throwIfError(ioTag);
+	 writer->writeValue("scaleX", itsImpl->sc_x);
+	 writer->writeValue("scaleY", itsImpl->sc_y);
+	 writer->writeValue("scaleZ", itsImpl->sc_z);
+
+	 writer->writeValue("rotateX", itsImpl->rt_x);
+	 writer->writeValue("rotateY", itsImpl->rt_y);
+	 writer->writeValue("rotateZ", itsImpl->rt_z);
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("rotateAngle", itsImpl->rt_ang);
   }
 }
 
 void Position::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Position::legacyDesrlz");
-  Invariant(check());
 
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 
 	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
+	 reader->readValue("transX", itsImpl->tr_x);
+	 reader->readValue("transY", itsImpl->tr_y);
+	 reader->readValue("transZ", itsImpl->tr_z);
 
-	 is >> itsImpl->tr_x;
-	 is >> itsImpl->tr_y;
-	 is >> itsImpl->tr_z;
-	 is >> itsImpl->sc_x;
-	 is >> itsImpl->sc_y;
-	 is >> itsImpl->sc_z;
-	 is >> itsImpl->rt_x;
-	 is >> itsImpl->rt_y;
-	 is >> itsImpl->rt_z;
-	 is >> itsImpl->rt_ang;
+	 reader->readValue("scaleX", itsImpl->sc_x);
+	 reader->readValue("scaleY", itsImpl->sc_y);
+	 reader->readValue("scaleZ", itsImpl->sc_z);
 
-	 DebugEval(itsImpl->tr_x);
-	 DebugEvalNL(itsImpl->rt_ang);
-
-	 lreader->throwIfError(ioTag);
+	 reader->readValue("rotateX", itsImpl->rt_x);
+	 reader->readValue("rotateY", itsImpl->rt_y);
+	 reader->readValue("rotateZ", itsImpl->rt_z);
+	 reader->readValue("rotateAngle", itsImpl->rt_ang);
   }
+
+  Invariant(check());
 }
 
 void Position::readFrom(IO::Reader* reader) {

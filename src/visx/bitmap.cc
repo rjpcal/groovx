@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Wed Sep 27 16:11:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ DOTRACE("Bitmap::legacySrlz");
 	 itsImpl->legacySrlz(writer);
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 lwriter->writeBaseClass("GrObj", &baseclass);
+	 writer->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -68,7 +68,7 @@ DOTRACE("Bitmap::legacyDesrlz");
 	 itsImpl->legacyDesrlz(reader);
 
 	 IO::IoProxy<GrObj> baseclass(this);
-	 lreader->readBaseClass("GrObj", &baseclass);
+	 reader->readBaseClass("GrObj", &baseclass);
   }
 }
 

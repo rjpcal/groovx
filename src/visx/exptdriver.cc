@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Sep 27 14:42:46 2000
+// written: Wed Sep 27 17:44:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -566,12 +566,12 @@ DOTRACE("ExptDriver::Impl::legacySrlz");
 
 	 lwriter->writeTypename(ioTag.c_str());
 
-	 ObjList::   theObjList()   .legacySrlz(writer);
-	 PosList::   thePosList()   .legacySrlz(writer);
-	 Tlist::     theTlist()     .legacySrlz(writer);
-	 RhList::    theRhList()    .legacySrlz(writer);
-	 ThList::    theThList()    .legacySrlz(writer);
-	 BlockList:: theBlockList() .legacySrlz(writer);
+	 writer->writeOwnedObject("theObjList", &ObjList::theObjList());
+	 writer->writeOwnedObject("thePosList", &PosList::thePosList());
+	 writer->writeOwnedObject("theTlist", &Tlist::theTlist());
+	 writer->writeOwnedObject("theRhList", &RhList::theRhList());
+	 writer->writeOwnedObject("theThList", &ThList::theThList());
+	 writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
 
 	 ostream& os = lwriter->output();
 
@@ -581,9 +581,10 @@ DOTRACE("ExptDriver::Impl::legacySrlz");
 	 os << itsEndDate        << '\n';
 	 os << itsAutosaveFile   << '\n';
 
-	 os << itsBlockId << IO::SEP
-		 << itsDummyRhId << IO::SEP
-		 << itsDummyThId << endl;
+	 writer->writeValue("blockId", itsBlockId);
+	 writer->writeValue("rhId", itsDummyRhId);
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("thId", itsDummyThId);
 
 	 updateDoUponCompletionBody();
 
@@ -601,12 +602,12 @@ DOTRACE("ExptDriver::Impl::legacyDesrlz");
 
 	 lreader->readTypename(ioTag.c_str());
 
-	 ObjList::   theObjList()   .legacyDesrlz(reader);
-	 PosList::   thePosList()   .legacyDesrlz(reader);
-	 Tlist::     theTlist()     .legacyDesrlz(reader);
-	 RhList::    theRhList()    .legacyDesrlz(reader);
-	 ThList::    theThList()    .legacyDesrlz(reader);
-	 BlockList:: theBlockList() .legacyDesrlz(reader);
+	 reader->readOwnedObject("theObjList", &ObjList::theObjList());
+	 reader->readOwnedObject("thePosList", &PosList::thePosList());
+	 reader->readOwnedObject("theTlist", &Tlist::theTlist());
+	 reader->readOwnedObject("theRhList", &RhList::theRhList());
+	 reader->readOwnedObject("theThList", &ThList::theThList());
+	 reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
 
 	 istream& is = lreader->input();
 
@@ -616,7 +617,9 @@ DOTRACE("ExptDriver::Impl::legacyDesrlz");
 	 getline(is, itsEndDate,      '\n');
 	 getline(is, itsAutosaveFile, '\n');
 
-	 is >> itsBlockId >> itsDummyRhId >> itsDummyThId;
+	 reader->readValue("blockId", itsBlockId);
+	 reader->readValue("rhId", itsDummyRhId);
+	 reader->readValue("thId", itsDummyThId);
 
 	 int numchars;
 	 is >> numchars;

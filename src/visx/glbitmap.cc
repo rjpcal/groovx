@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Wed Sep 27 17:35:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,14 +69,10 @@ DOTRACE("GLBitmap::legacySrlz");
 
 	 lwriter->writeTypename(ioTag);
 
-	 ostream& os = lwriter->output();
-
-	 os << itsRenderer->getUsingGlBitmap() << IO::SEP;
-
-	 lwriter->throwIfError(ioTag);
+	 writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
 	 IO::ConstIoProxy<Bitmap> baseclass(this);
-	 lwriter->writeBaseClass("Bitmap", &baseclass);
+	 writer->writeBaseClass("Bitmap", &baseclass);
   }
 }
 
@@ -86,13 +82,9 @@ DOTRACE("GLBitmap::legacyDesrlz");
   if (lreader != 0) {
 	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
-	 int val;
-	 is >> val;
-	 itsRenderer->setUsingGlBitmap(bool(val));
-
-	 lreader->throwIfError(ioTag);
+	 bool val;
+	 reader->readValue("usingGlBitmap", val); 
+	 itsRenderer->setUsingGlBitmap(val);
 
 	 IO::IoProxy<Bitmap> baseclass(this);
 	 lreader->readBaseClass("Bitmap", &baseclass);

@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Wed Sep 27 13:50:52 2000
+// written: Wed Sep 27 17:56:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,11 +54,7 @@ DOTRACE("KbdResponseHdlr::legacySrlz");
 
 	 lwriter->writeTypename(ioTag.c_str());
 
-	 ostream& os = lwriter->output();
-
 	 oldLegacySrlz(writer);
-
-	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -73,8 +69,6 @@ DOTRACE("KbdResponseHdlr::legacyDesrlz");
 
 	 setEventSequence("<KeyPress");
 	 setBindingSubstitution("%K");
-
-	 lreader->throwIfError(ioTag.c_str());
   }
 }
 

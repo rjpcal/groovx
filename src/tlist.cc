@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Sep 27 13:34:06 2000
+// written: Wed Sep 27 18:11:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,15 +67,13 @@ void Tlist::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Tlist::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
 	 // Always legacySrlz the PtrList base
 	 PtrList<TrialBase>::legacySrlz(writer);
 
 	 // Here we are spoofing the obselete data members itsCurTrial and
 	 // itsVisibility.
-	 os << int(0) << IO::SEP << bool(false) << IO::SEP;
-
-	 lwriter->throwIfError(ioTag);
+	 writer->writeValue("dummy1", int(0));
+	 writer->writeValue("dummy2", bool(false));
   }
 }
 
@@ -89,16 +87,15 @@ void Tlist::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Tlist::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 	 // Always legacyDesrlz its PtrList<TrialBase> base
 	 PtrList<TrialBase>::legacyDesrlz(reader);
 
 	 // Here we are spoofing the obselete data members itsCurTrial and
 	 // itsVisibility.
-	 int dummy1, dummy2;
-	 is >> dummy1 >> dummy2;
-
-	 lreader->throwIfError(ioTag);
+	 int dummy1;
+	 bool dummy2;
+	 reader->readValue("dummy1", dummy1);
+	 reader->readValue("dummy2", dummy2);
   }
 }
 

@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Wed Sep 27 17:04:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -280,8 +280,6 @@ DOTRACE("Fish::legacySrlz");
   if (lwriter != 0) {
 
 	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 		(this->*IO_MEMBERS[i]).legacySrlz(writer);

@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Sep 27 15:10:08 2000
+// written: Wed Sep 27 17:53:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,13 +70,10 @@ DOTRACE("Jitter::legacySrlz");
 
 	 lwriter->writeTypename(ioTag);
 
-	 ostream& os = lwriter->output();
-
-	 os << itsXJitter << IO::SEP
-		 << itsYJitter << IO::SEP
-		 << itsRJitter << endl;
-
-	 lwriter->throwIfError(ioTag);
+	 writer->writeValue("jitterX", itsXJitter);
+	 writer->writeValue("jitterY", itsYJitter);
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("jitterR", itsRJitter);
 
 	 // The base class (Position) is always legacySrlzd, regardless of flag.
 	 IO::LWFlagJanitor(*lwriter, lwriter->flags() | IO::BASES);
@@ -92,16 +89,9 @@ DOTRACE("Jitter::legacyDesrlz");
 
 	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
-	 is >> itsXJitter >> itsYJitter >> itsRJitter;
-
-	 DebugEval(flag);
-	 DebugEval(itsXJitter);
-	 DebugEval(itsYJitter);
-	 DebugEvalNL(itsRJitter);
-
-	 lreader->throwIfError(ioTag);
+	 reader->readValue("jitterX", itsXJitter);
+	 reader->readValue("jitterY", itsYJitter);
+	 reader->readValue("jitterR", itsRJitter);
 
 	 // The base class (Position) is always legacyDesrlzd, regardless of flag.
 	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
@@ -124,7 +114,7 @@ void Jitter::writeTo(IO::Writer* writer) const {
 DOTRACE("Jitter::writeTo");
 
   Position::writeTo(writer);
- 
+
   writer->writeValue("jitterX", itsXJitter);
   writer->writeValue("jitterY", itsYJitter);
   writer->writeValue("jitterR", itsRJitter);

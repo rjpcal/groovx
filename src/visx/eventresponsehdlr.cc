@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Sep 27 13:50:53 2000
+// written: Wed Sep 27 17:56:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -488,6 +488,8 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacySrlz");
 	 os << itsInputResponseMap << endl;
 	 os << itsFeedbackMap << endl;
 	 os << itsUseFeedback << endl;
+
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -525,6 +527,8 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
 		DebugEvalNL(cc);
 		throw IO::LogicError(ioTag.c_str());
 	 }
+
+	 lreader->throwIfError(ioTag.c_str());
   }
 }
 

@@ -3,7 +3,7 @@
 // Io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Sep 27 15:02:54 2000
+// written: Wed Sep 27 15:22:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,13 +81,13 @@ DOTRACE("IO::IoObject::~IoObject");
 void IO::IoObject::ioSerialize(STD_IO::ostream& os, IO::IOFlag flag) const {
 DOTRACE("IO::IoObject::ioSerialize");
   LegacyWriter writer(os, flag);
-  legacySrlz(&writer);
+  writer.writeRoot(this);
 }
 
 void IO::IoObject::ioDeserialize(STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("IO::IoObject::ioDeserialize");
   LegacyReader reader(is, flag);
-  legacyDesrlz(&reader);
+  reader.readRoot(this);
 }
 
 int IO::IoObject::ioCharCount() const {

@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Sep 27 13:49:49 2000
+// written: Wed Sep 27 16:44:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,13 +174,15 @@ DOTRACE("BitmapRep::legacySrlz");
 	 ostream& os = lwriter->output();
 
 	 os << itsImpl->itsFilename << '\t';
-	 os << itsImpl->itsRasterX << IO::SEP << itsImpl->itsRasterY << IO::SEP;
-	 os << itsImpl->itsZoomX << IO::SEP << itsImpl->itsZoomY << IO::SEP;
-	 os << itsImpl->itsUsingZoom << IO::SEP;
-	 os << itsImpl->itsContrastFlip << IO::SEP;
-	 os << itsImpl->itsVerticalFlip << endl;
 
-	 lwriter->throwIfError(ioTag.c_str());
+	 writer->writeValue("rasterX", itsImpl->itsRasterX);
+	 writer->writeValue("rasterY", itsImpl->itsRasterY);
+	 writer->writeValue("zoomX", itsImpl->itsZoomX);
+	 writer->writeValue("zoomY", itsImpl->itsZoomY);
+	 writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
+	 writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
   }
 }
 
@@ -197,20 +199,13 @@ DOTRACE("BitmapRep::legacyDesrlz");
 	 IO::IoObject::eatWhitespace(is);
 	 getline(is, itsImpl->itsFilename, '\t');
 
-	 is >> itsImpl->itsRasterX >> itsImpl->itsRasterY;
-	 is >> itsImpl->itsZoomX >> itsImpl->itsZoomY;
-
-	 int val;
-	 is >> val;
-	 itsImpl->itsUsingZoom = bool(val);
-
-	 is >> val;
-	 itsImpl->itsContrastFlip = bool(val);
-
-	 is >> val;
-	 itsImpl->itsVerticalFlip = bool(val);
-
-	 lreader->throwIfError(ioTag.c_str());
+	 reader->readValue("rasterX", itsImpl->itsRasterX);
+	 reader->readValue("rasterY", itsImpl->itsRasterY);
+	 reader->readValue("zoomX", itsImpl->itsZoomX);
+	 reader->readValue("zoomY", itsImpl->itsZoomY);
+	 reader->readValue("usingZoom", itsImpl->itsUsingZoom);
+	 reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
+	 reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
 
 	 if ( itsImpl->itsFilename.empty() ) {
 		clearBytes();

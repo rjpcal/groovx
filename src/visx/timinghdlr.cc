@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Sep 27 14:42:46 2000
+// written: Wed Sep 27 18:06:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,9 +136,7 @@ DOTRACE("TimingHdlr::legacySrlz");
 
 	 lwriter->writeTypename(ioTag);
 
-	 ostream& os = lwriter->output();
-  
-	 os << itsImpl->itsDummyAutosavePeriod << IO::SEP;
+	 writer->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
 	 itsImpl->legacySrlzVec(writer, itsImpl->itsImmediateEvents);
 	 itsImpl->legacySrlzVec(writer, itsImpl->itsStartEvents);
@@ -155,10 +153,7 @@ DOTRACE("TimingHdlr::legacyDesrlz");
   if (lreader != 0) {
 	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
-	 is >> itsImpl->itsDummyAutosavePeriod;
-	 DebugEvalNL(itsImpl->itsDummyAutosavePeriod);
+	 reader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
 	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsImmediateEvents);
 	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsStartEvents);

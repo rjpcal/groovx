@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Wed Sep 27 17:57:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,8 +70,6 @@ DOTRACE("MaskHatch::legacySrlz");
   if (lwriter != 0) {
 
 	 lwriter->writeTypename(ioTag);
-
-	 ostream& os = lwriter->output();
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);

@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Sep 27 14:37:15 2000
+// written: Wed Sep 27 17:25:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,11 +69,9 @@ void FixPt::legacySrlz(IO::Writer* writer) const {
 
 	 lwriter->writeTypename(ioTag);
 
-	 ostream& os = lwriter->output();
-
-	 os << length() << IO::SEP;
-	 os << width() << endl;
-	 lwriter->throwIfError(ioTag);
+	 writer->writeDouble("length", length());
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeInt("width", width());
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);
@@ -85,11 +83,8 @@ void FixPt::legacyDesrlz(IO::Reader* reader) {
   if (lreader != 0) {
 	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
-	 is >> length();
-	 is >> width();
-	 lreader->throwIfError(ioTag);
+	 reader->readValue("length", length());
+	 reader->readValue("width", width());
 
 	 IO::IoProxy<GrObj> baseclass(this);
 	 lreader->readBaseClass("GrObj", &baseclass);

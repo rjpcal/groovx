@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Sep 27 14:36:39 2000
+// written: Wed Sep 27 16:56:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,20 +67,17 @@ DOTRACE("CloneFace::legacySrlz");
 
 	 lwriter->writeTypename(ioTag);
 
-	 ostream& os = lwriter->output();
-
 	 for (int i = 0; i < 24; ++i) {
-		os << itsCtrlPnts[i] << IO::SEP;
+		writer->writeValue("ctrlPnt", itsCtrlPnts[i]);
 	 }
-	 os << itsEyeAspect << IO::SEP;
-	 os << itsVertOffset << IO::SEP;
 
-	 lwriter->throwIfError(ioTag);
+	 writer->writeValue("eyeAspect", itsEyeAspect);
+	 writer->writeValue("vertOffset", itsVertOffset);
 
 	 // Always legacySrlz Face, regardless of lwriter->flags()
 	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
 	 IO::ConstIoProxy<Face> baseclass(this);
-	 lwriter->writeBaseClass("Face", &baseclass);
+	 writer->writeBaseClass("Face", &baseclass);
   }
 }
 
@@ -90,27 +87,16 @@ DOTRACE("CloneFace::legacyDesrlz");
   if (lreader != 0) {
 	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
 	 for (int i = 0; i < 24; ++i) {
-		is >> itsCtrlPnts[i];
+		reader->readValue("ctrlPnt", itsCtrlPnts[i]);
 	 }
-	 is >> itsEyeAspect;
-	 is >> itsVertOffset;
-
-	 // Bug in aCC requires this rather than a simple throw; see face.cc
-	 // for further explanation.
-	 try {
-		lreader->throwIfError(ioTag);
-	 }
-	 catch (IO::IoError&) {
-		throw;
-	 }
+	 reader->readValue("eyeAspect", itsEyeAspect);
+	 reader->readValue("vertOffset", itsVertOffset);
 
 	 // Always legacyDesrlz Face, regardless of lreader->flags()
 	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
 	 IO::IoProxy<Face> baseclass(this);
-	 lreader->readBaseClass("Face", &baseclass);
+	 reader->readBaseClass("Face", &baseclass);
   }
 }
 

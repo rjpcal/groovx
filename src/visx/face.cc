@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Sep 27 14:42:46 2000
+// written: Wed Sep 27 17:03:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ DOTRACE("Face::legacySrlz");
 	 os << '{' << IO::SEP;
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+  		(this->*IO_MEMBERS[i]).legacySrlz(writer);
 	 }
 
 	 os << '}' << endl;
@@ -147,10 +147,10 @@ DOTRACE("Face::legacyDesrlz");
   if (lreader != 0) {
 	 lreader->readTypename(ioTag.c_str());
 
-	 istream& is = lreader->input();
-
-	 IO::IoObject::eatWhitespace(is);
+	 lreader->eatWhitespace();
 	 int version = 0;
+
+	 istream& is = lreader->input();
 
 	 if ( is.peek() == '@' ) {
 		int c = is.get();

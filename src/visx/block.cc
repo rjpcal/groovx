@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Sep 27 13:50:53 2000
+// written: Wed Sep 27 16:51:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,14 +188,11 @@ DOTRACE("Block::legacySrlz");
 		os << itsImpl->itsTrialSequence[i] << IO::SEP;
 	 }
 	 os << endl;
-	 // itsImpl->itsRandSeed
-	 os << itsImpl->itsRandSeed << endl;
-	 // itsImpl->itsCurTrialSeqIdx
-	 os << itsImpl->itsCurTrialSeqIdx << endl;
-	 // itsImpl->itsVerbose
-	 os << itsImpl->itsVerbose << endl;
 
-	 lwriter->throwIfError(ioTag.c_str());
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("randSeed", itsImpl->itsRandSeed);
+	 writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+	 writer->writeValue("verbose", itsImpl->itsVerbose);
   }
 }
 
@@ -219,24 +216,18 @@ DOTRACE("Block::legacyDesrlz");
 	 }
 	 lreader->throwIfError(ioTag.c_str());
 
-	 // itsImpl->itsRandSeed
-	 is >> itsImpl->itsRandSeed;
+	 reader->readValue("randSeed", itsImpl->itsRandSeed);
 
-	 // itsImpl->itsCurTrialSeqIdx
-	 is >> itsImpl->itsCurTrialSeqIdx;
+	 reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
 	 if (itsImpl->itsCurTrialSeqIdx < 0 ||
 		  size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
 		throw IO::ValueError(ioTag.c_str());
 	 }
 	 itsImpl->updateCurrentTrial();
 
-  // itsImpl->itsVerbose
-	 int val;
-	 is >> val;
-	 itsImpl->itsVerbose = bool(val);
+	 reader->readValue("verbose", itsImpl->itsVerbose);
 
 	 is.ignore(1, '\n');
-	 lreader->throwIfError(ioTag.c_str());
   }
 }
 
@@ -247,6 +238,10 @@ DOTRACE("Block::readFrom");
 		 reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  if (itsImpl->itsCurTrialSeqIdx < 0 ||
+		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
+	 throw IO::ValueError(ioTag.c_str());
+  }
   itsImpl->updateCurrentTrial();
   reader->readValue("verbose", itsImpl->itsVerbose);
 }

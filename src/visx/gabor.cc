@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Wed Sep 27 17:30:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ DOTRACE("Gabor::legacySrlz");
 	 lwriter->writeTypename(ioTag);
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 lwriter->writeBaseClass("GrObj", &baseclass);
+	 writer->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -115,7 +115,7 @@ DOTRACE("Gabor::legacyDesrlz");
 	 lreader->readTypename(ioTag);
 
 	 IO::IoProxy<GrObj> baseclass(this);
-	 lreader->readBaseClass("GrObj", &baseclass);
+	 reader->readBaseClass("GrObj", &baseclass);
   }
 }
 
