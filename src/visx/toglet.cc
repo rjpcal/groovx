@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Nov 28 13:44:38 2000
+// written: Tue Nov 28 14:08:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,6 +106,7 @@ namespace {
 ToglConfig::ToglConfig(Tcl_Interp* interp, const char* pathname,
 							  int config_argc, char** config_argv,
 							  double dist, double unit_angle) :
+  GWT::Widget(),
   itsCanvas(new GLCanvas),
   itsWidget(new Togl(interp, pathname, config_argc, config_argv)),
   itsViewingDistance(dist), 

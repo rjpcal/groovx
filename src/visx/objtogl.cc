@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Nov 10 17:27:05 2000
+// written: Tue Nov 28 14:09:49 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -18,7 +18,6 @@
 
 #include "objtogl.h"
 
-#include "tlistwidget.h"
 #include "toglconfig.h"
 #include "trialbase.h"
 
@@ -47,7 +46,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjTogl {
-  TlistWidget* theWidget = 0;
+  ToglConfig* theWidget = 0;
 
   bool toglCreated = false;
   
@@ -69,7 +68,7 @@ namespace ObjTogl {
 
   class ObjToglPkg;
 
-  TlistWidget* theTlistWidget();
+  ToglConfig* theToglConfig();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -83,16 +82,16 @@ DOTRACE("ObjTogl::toglHasBeenCreated");
   return toglCreated;
 }
 
-TlistWidget* ObjTogl::theTlistWidget() {
-DOTRACE("ObjTogl::theTlistWidget");
-  if (!toglCreated) { throw Tcl::TclError("Togl not yet initialized"); }
-  Assert(theWidget != 0);
-  return theWidget;
+GWT::Widget* ObjTogl::theGwtWidget() {
+DOTRACE("ObjTogl::theGwtWidget");
+  return theToglConfig(); 
 }
 
 ToglConfig* ObjTogl::theToglConfig() {
 DOTRACE("ObjTogl::theToglConfig");
-  return theTlistWidget(); 
+  if (!toglCreated) { throw Tcl::TclError("Togl not yet initialized"); }
+  Assert(theWidget != 0);
+  return theWidget;
 }
 
 //---------------------------------------------------------------------
@@ -217,11 +216,7 @@ protected:
   virtual void invoke() {
 	 bool hold_on = getBoolFromArg(1);
 
-	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
-
-	 if (widg != 0) {
-		widg->setHold(hold_on);
-	 }
+	 getItem()->setHold(hold_on);
   }
 };
 
@@ -272,9 +267,9 @@ DOTRACE("ObjTogl::InitCmd::invoke");
 
   // Create a new ToglConfig object with the specified conguration
   // options, viewing distance, and visual angle per GL unit
-  ObjTogl::theWidget = new TlistWidget(interp(), pathname,
-													config_argc, config_argv,
-													viewing_dist, gl_unit_angle);
+  ObjTogl::theWidget = new ToglConfig(interp(), pathname,
+												  config_argc, config_argv,
+												  viewing_dist, gl_unit_angle);
 
   Tcl_Free((char*) config_argv);
 
@@ -386,11 +381,7 @@ protected:
   virtual void invoke() {
 	 int trial = getIntFromArg(1);
 
-	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
-
-	 if (widg != 0) {
-		widg->setCurTrial(MaybeIdItem<TrialBase>(trial));
-	 }
+	 getItem()->setCurTrial(MaybeIdItem<TrialBase>(trial));
   }
 };
 
@@ -435,11 +426,7 @@ protected:
   virtual void invoke() {
 	 bool vis = getBoolFromArg(1);
 
-	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
-
-	 if (widg != 0) {
-		widg->setVisibility(vis);
-	 }
+	 getItem()->setVisibility(vis);
   }
 };
 
@@ -461,14 +448,12 @@ protected:
   DOTRACE("ShowCmd::invoke");
 	 int id = getIntFromArg(1);
 
-	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
+	 GWT::Widget* widg = getItem();
 
-	 if (widg != 0) {
-		widg->setCurTrial(MaybeIdItem<TrialBase>(id));
-		widg->setVisibility(true);
+	 widg->setCurTrial(MaybeIdItem<TrialBase>(id));
+	 widg->setVisibility(true);
 
-		widg->display();
-	 }
+	 widg->display();
   }
 };
 
@@ -524,8 +509,8 @@ public:
 				 "proc redraw {} { Togl::refresh }\n");
   }
 
-  TlistWidget* getCItemFromId(int) {
-    return ObjTogl::theTlistWidget();
+  ToglConfig* getCItemFromId(int) {
+    return ObjTogl::theToglConfig();
   }
 };
 

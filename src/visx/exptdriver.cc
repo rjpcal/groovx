@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Nov 14 14:58:43 2000
+// written: Tue Nov 28 14:09:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,9 @@
 #include "block.h"
 #include "tlistutils.h"
 #include "objtogl.h"
-#include "toglconfig.h"
-#include "tlistwidget.h"
 #include "trialbase.h"
+
+#include "gwt/widget.h"
 
 #include "io/iditem.h"
 #include "io/asciistreamwriter.h"
@@ -198,7 +198,11 @@ public:
 	 { return itsErrHandler; }
 
   GWT::Widget* getWidget()
-	 { return ObjTogl::theToglConfig(); }
+	 {
+		GWT::Widget* widg = ObjTogl::theGwtWidget();
+		Assert(widg != 0);
+		return widg;
+	 }
 
   GWT::Canvas* getCanvas()
 	 { return getWidget()->getCanvas(); }
@@ -697,12 +701,7 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 
 void ExptDriver::Impl::edSetCurrentTrial(int trial) {
 DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
-  TlistWidget* widg =
-	 dynamic_cast<TlistWidget*>(getWidget());
-
-  if (widg != 0) {
-	 widg->setCurTrial(MaybeIdItem<TrialBase>(trial));
-  }
+  getWidget()->setCurTrial(MaybeIdItem<TrialBase>(trial));
 }
 
 //---------------------------------------------------------------------

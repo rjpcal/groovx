@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Nov 10 17:27:03 2000
+// written: Tue Nov 28 14:09:48 2000
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -16,11 +16,11 @@
 #ifndef OBJTOGL_H_DEFINED
 #define OBJTOGL_H_DEFINED
 
-class ToglConfig;
+namespace GWT { class Widget; }
 
 namespace ObjTogl {
   bool toglHasBeenCreated();
-  ToglConfig* theToglConfig();
+  GWT::Widget* theGwtWidget();
 }
 
 struct Tcl_Interp;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Nov 28 13:42:26 2000
+// written: Tue Nov 28 14:09:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,11 +108,6 @@ public:
   void loadFont(const char* fontname);
   void loadFonti(int fontnumber);
   void writeEpsFile(const char* filename);
-
-  virtual void display() = 0;
-  virtual void clearscreen() = 0;
-  virtual void refresh() = 0;
-  virtual void undraw() = 0;
 
 private:
   ToglConfig(const ToglConfig&); // no copy constructor
