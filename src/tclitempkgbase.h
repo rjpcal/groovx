@@ -3,7 +3,7 @@
 // tclitempkgbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Dec 16 15:25:06 1999
-// written: Fri May 19 19:08:23 2000
+// written: Wed May 31 18:36:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ struct Tcl_Interp;
 template <class T>
 class Getter {
 public:
-  virtual ~Getter() {}
+  virtual ~Getter();
 
   /** Should be overridden by subclasses to cast \a item to the
       appropriate type, then call the appropriate member and return
@@ -43,7 +43,7 @@ public:
 template <class T>
 class Setter {
 public:
-  virtual ~Setter() {}
+  virtual ~Setter();
 
   /** Should be overridden by subclasses to cast \a item to the
       appropriate type, then call the appropriate member with \a val
@@ -54,14 +54,17 @@ public:
 
 /** An abstract base class that represent an read-write attribute. */
 template <class T>
-class Attrib : public virtual Getter<T>, public virtual Setter<T> {};
+class Attrib : public virtual Getter<T>, public virtual Setter<T> {
+public:
+  virtual ~Attrib();
+};
 
 
 /** An abstract base class for representing actions (member functions
     with no argument and no return value). */
 class Action {
 public:
-  virtual ~Action() {}
+  virtual ~Action();
 
   /** Should be overridden by subclasses to cast \a item to the
       appropriate type, then perform an appropriate action on the result. */
@@ -80,8 +83,9 @@ namespace Tcl {
 
 class TclItemPkgBase : public TclPkg {
 public:
-  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version) :
-	 TclPkg(interp, name, version) {}
+  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version);
+
+  virtual ~TclItemPkgBase();
 
   virtual void* getItemFromId(int id) = 0;
 };
