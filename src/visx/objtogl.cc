@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Jun 15 06:54:39 2001
+// written: Fri Jun 22 09:36:16 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -22,6 +22,7 @@
 
 #include "gx/gxnode.h"
 
+#include "tcl/functor.h"
 #include "tcl/genericobjpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
@@ -404,6 +405,9 @@ public:
     addCommand( new SetMinRectCmd (this, "Toglet::setMinRect") );
     addCommand( new ShowCmd       (this, "Toglet::show") );
 
+    addCommand( Tcl::makeCmd(interp, Toglet::defaultParent,
+                             "Toglet::defaultParent", "parent") );
+
     declareCAction("clearscreen", &Toglet::clearscreen);
     declareCAction("destroy", &Toglet::destroyWidget);
     declareCSetter("dumpEps", &Toglet::writeEpsFile, "item_id(s) filename");
@@ -412,6 +416,7 @@ public:
     declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
     declareCSetter("loadFont", &Toglet::loadFont);
     declareCSetter("loadFonti", &Toglet::loadFonti);
+    declareCGetter("pathname", &Toglet::pathname);
     declareCAction("refresh", &Toglet::refresh);
     declareCSetter("scaleRect", &Toglet::scaleRect, "item_id(s) scale");
     declareCSetter("setFixedScale", &Toglet::setFixedScale, "item_id(s) scale");
