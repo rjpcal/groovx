@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Tue Dec  7 13:19:08 1999
+// written: Tue Dec  7 16:25:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ protected:
 
 private:
   TclItemPkg* itsPkg;
-  Action* itsAction;
+  auto_ptr<Action> itsAction;
   int itsItemArgn;
 
 };
