@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Thu Oct 19 15:39:16 2000
+// written: Fri Oct 20 17:02:32 2000
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -32,9 +32,14 @@
 ///////////////////////////////////////////////////////////////////////
 
 class CloneFace : public Face {
-public:
+protected:
   /// Default constructor.
   CloneFace();
+
+public:
+  /// Default creation function.
+  static CloneFace* make();
+
   /// Virtual destructor.
   virtual ~CloneFace();
 
