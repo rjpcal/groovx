@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Feb 16 08:53:28 2000
+// written: Wed Mar 29 21:58:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 template <class V> class Point;
 template <class V> class Rect;
+
+namespace GWT {
+  class Canvas;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -24,7 +28,7 @@ template <class V> class Rect;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Canvas {
+class GWT::Canvas {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Canvas();
