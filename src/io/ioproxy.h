@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Wed Aug  8 20:16:37 2001
+// written: Wed Aug 22 11:01:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ protected:
 
 public:
   static Util::Ref<IoObject> make(C* ref)
-    { return Util::Ref<IoObject>( new IoProxy(ref), true ); }
+    { return Util::Ref<IoObject>( new IoProxy(ref), Util::PRIVATE ); }
 
   virtual void readFrom(Reader* reader)
     { itsReferand->C::readFrom(reader); }
@@ -78,7 +78,7 @@ protected:
 
 public:
   static Util::Ref<const IoObject> make(const C* ref)
-    { return Util::Ref<const IoObject>( new ConstIoProxy(ref), true ); }
+    { return Util::Ref<IoObject>( new ConstIoProxy(ref), Util::PRIVATE ); }
 
   virtual void readFrom(Reader* reader)
     { itsReferand->C::readFrom(reader); }
