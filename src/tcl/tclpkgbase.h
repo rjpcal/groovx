@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Thu Mar  9 16:01:45 2000
+// written: Thu Mar 30 09:40:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,6 +91,9 @@ public:
       until the next time it is called, so callers should make a copy
       of the result. */
   const char* makePkgCmdName(const char* cmd_name);
+
+  /// Does a simple \c Tcl_Eval of \a script using the package's \c Tcl_Interp.
+  void eval(const char* script);
 
   /// Adds \a cmd to the commands managed by the package.
   void addCommand(TclCmd* cmd);

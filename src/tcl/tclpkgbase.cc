@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Mon Mar 20 08:19:33 2000
+// written: Thu Mar 30 09:36:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,18 +13,18 @@
 
 #include "tcl/tclpkg.h"
 
-#include <tcl.h>
-#include <cctype>
-#include <cstring>
-#include <typeinfo>
-#include <string>
-
 #include "tcl/tcllink.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
 
 #include "util/lists.h"
 #include "util/pointers.h"
+
+#include <tcl.h>
+#include <cctype>
+#include <cstring>
+#include <typeinfo>
+#include <string>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -165,6 +165,16 @@ DOTRACE("Tcl::TclPkg::makePkgCmdName");
   return name.c_str();
 }
 
+void Tcl::TclPkg::eval(const char* script) {
+DOTRACE("Tcl::TclPkg::eval");
+  Tcl_Eval(itsInterp, script);
+}
+
+void Tcl::TclPkg::addCommand(TclCmd* cmd) {
+DOTRACE("Tcl::TclPkg::addCommand");
+  itsImpl->itsCmds.push_front(shared_ptr<TclCmd>(cmd));
+}
+
 void Tcl::TclPkg::linkVar(const char* varName, int& var) throw (Tcl::TclError) {
 DOTRACE("Tcl::TclPkg::linkVar int");
   DebugEvalNL(varName);
@@ -238,11 +248,6 @@ DOTRACE("Tcl::TclPkg::linkConstVar char*");
   if (Tcl_LinkString(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
 		!= TCL_OK)
 	 throw TclError();
-}
-
-void Tcl::TclPkg::addCommand(TclCmd* cmd) {
-DOTRACE("Tcl::TclPkg::addCommand");
-  itsImpl->itsCmds.push_front(shared_ptr<TclCmd>(cmd));
 }
 
 void Tcl::TclPkg::setInitStatusOk() {
