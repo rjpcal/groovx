@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Wed Jul 11 10:14:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,9 +37,9 @@ protected:
       returnInt(obj.id());
     }
     else if (objc() == 4) {
-      const char* spline_file = arg(1).getCstring();
-      const char* coord_file = arg(2).getCstring();
-      int index = arg(3).getInt();
+      const char* spline_file = getCstringFromArg(1);
+      const char* coord_file = getCstringFromArg(2);
+      int index = getIntFromArg(3);
 
       Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
       returnInt(obj.id());

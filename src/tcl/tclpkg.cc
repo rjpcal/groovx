@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jun 18 09:59:25 2001
+// written: Wed Jul 11 10:20:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -208,7 +208,7 @@ public:
 
 protected:
   virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -231,7 +231,7 @@ public:
 
 protected:
   virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -254,7 +254,7 @@ public:
 
 protected:
   virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -281,7 +281,7 @@ public:
 
 protected:
   virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 

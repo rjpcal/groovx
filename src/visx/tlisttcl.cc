@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Jun 12 11:17:13 2001
+// written: Wed Jul 11 10:15:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,8 +81,8 @@ protected:
 
     getSequenceFromArg(1, &objids[0], (int*) 0);
 
-    int pixel_width = arg(2).getInt();
-    int pixel_height = arg(3).getInt();
+    int pixel_width = getIntFromArg(2);
+    int pixel_height = getIntFromArg(3);
 
     GWT::Canvas& canvas = Application::theApp().getCanvas();
 
