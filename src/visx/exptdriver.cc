@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun  9 19:35:04 1999
+// written: Thu Jun 17 10:52:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,9 +21,13 @@
 #include "errmsg.h"
 #include "expt.h"
 #include "responsehandler.h"
-#include "tclobjlock.h"
+#include "tclevalcmd.h"
 #include "timinghandler.h"
 #include "tlisttcl.h"
+#include "trial.h"
+#include "blocklist.h"
+#include "rhlist.h"
+#include "thlist.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -42,11 +46,10 @@ namespace {
 
   string getDateStringProc(Tcl_Interp* interp) {
   DOTRACE("getDateStringProc");
-    static Tcl_Obj* dateStringCmdObj =
-		Tcl_NewStringObj("clock format [clock seconds]", -1);
-	 static TclObjLock lock_(dateStringCmdObj);
-	 
-	 int result = Tcl_EvalObjEx(interp, dateStringCmdObj, TCL_EVAL_GLOBAL);
+
+    static TclEvalCmd dateStringCmd("clock format [clock seconds]");
+
+	 int result = dateStringCmd.invoke(interp);
 	 if (result != TCL_OK) return string();
 	 
 	 return string(Tcl_GetStringResult(interp));
@@ -60,29 +63,36 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::ExptDriver(Tcl_Interp* interp) :
-  itsExpt( *(new Expt(0)) ),
-  itsInterp(interp),
+ExptDriver::ExptDriver() :
+  itsInterp(0),
   itsAutosaveFile("__autosave_file"),
-  itsResponseHandler( *(new ResponseHandler(*this, interp)) ),
-  itsTimingHandler( *(new TimingHandler(*this)) )
+  itsBlockId(0),
+  itsRhId(0),
+  itsThId(0)
 {
 DOTRACE("ExptDriver::ExptDriver");
   Tcl_Preserve(itsInterp);
 }
 
+ExptDriver ExptDriver::theInstance;
+
+ExptDriver& ExptDriver::theExptDriver() {
+DOTRACE("ExptDriver::theExptDriver");
+  return theInstance;
+}
+
 ExptDriver::~ExptDriver() {
 DOTRACE("ExptDriver::~ExptDriver");
-  delete &itsExpt;
-  delete &itsResponseHandler;
-  delete &itsTimingHandler;
-  Tcl_Release(itsInterp);
+//   Tcl_Release(itsInterp);
 }
 
 void ExptDriver::init(int repeat, int seed, const string& date,
 							 const string& host, const string& subject) {
 DOTRACE("ExptDriver::init");
-  itsExpt.init(repeat, seed, date, host, subject);
+  itsBeginDate = date;
+  itsHostname = host;
+  itsSubject = subject;
+  expt().init(repeat, seed);
 
   itsAutosaveFile = "__autosave_file";
   DebugEvalNL(itsAutosaveFile);
@@ -90,38 +100,44 @@ DOTRACE("ExptDriver::init");
 
 void ExptDriver::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("ExptDriver::serialize");
-  itsExpt.serialize(os, flag);
+  expt().serialize(os, flag);
 
-  os << getEndDate() << '\n';
+  // itsBeginDate
+  os << itsBeginDate << '\n';
+  // itsHostname
+  os << itsHostname << '\n';
+  // itsSubject
+  os << itsSubject << '\n';
+
+  os << itsEndDate << '\n';
 
   os << getAutosaveFile() << '\n';
 
-  itsResponseHandler.serialize(os, flag);
+  responseHandler().serialize(os, flag);
 
   os << getVerbose() << ' ';
 
-  itsTimingHandler.serialize(os, flag);
+  timingHandler().serialize(os, flag);
 
   if (os.fail()) throw OutputError(ioTag);
 }
 
 void ExptDriver::deserialize(istream &is, IOFlag flag) {
 DOTRACE("ExptDriver::deserialize");
-  itsExpt.deserialize(is, flag);
+  expt().deserialize(is, flag);
 
-  if (is.peek() != EOF) { 
-	 string aEndDate;
-	 getline(is, aEndDate, '\n');
-	 setEndDate(aEndDate);
-  }
+  // itsBeginDate
+  if (is.peek() != EOF) { getline(is, itsBeginDate, '\n'); }
+  // itsHostname
+  if (is.peek() != EOF) { getline(is, itsHostname, '\n'); }
+  // itsSubject
+  if (is.peek() != EOF) { getline(is, itsSubject, '\n'); }
 
-  if (is.peek() != EOF) {
-	 string aAutosaveFile;
-	 getline(is, aAutosaveFile, '\n');
-	 setAutosaveFile(aAutosaveFile);
-  }
+  if (is.peek() != EOF) { getline(is, itsEndDate, '\n'); }
 
-  itsResponseHandler.deserialize(is, flag);
+  if (is.peek() != EOF) { getline(is, itsAutosaveFile, '\n'); }
+
+  responseHandler().deserialize(is, flag);
 
   if (is.peek() != EOF) {
 	 int aVerbose;
@@ -129,14 +145,18 @@ DOTRACE("ExptDriver::deserialize");
 	 setVerbose(bool(aVerbose));
   }
 
-  itsTimingHandler.deserialize(is, flag);
+  timingHandler().deserialize(is, flag);
 
   if (is.fail()) throw InputError(ioTag);
 }
 
 int ExptDriver::charCount() const {
 DOTRACE("ExptDriver::charCount");
-  return 0;
+  return (0
+			 + itsBeginDate.size() + 1
+			 + itsHostname.size() + 1
+			 + itsSubject.size() + 1
+			 + 5); // fudge factor
 }
 
 
@@ -146,40 +166,90 @@ DOTRACE("ExptDriver::charCount");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const string& ExptDriver::getEndDate() const { return itsEndDate; }
+Tcl_Interp* ExptDriver::getInterp() {
+DOTRACE("ExptDriver::getInterp");
+  return itsInterp;
+}
+
+
+void ExptDriver::setInterp(Tcl_Interp* interp) {
+DOTRACE("ExptDriver::setInterp");
+  // itsInterp can only be set once
+  if (itsInterp == NULL) {
+	 itsInterp = interp;
+	 Tcl_Preserve(itsInterp);
+  }
+}
+
+Expt& ExptDriver::expt() {
+DOTRACE("ExptDriver::expt");  
+#ifdef LOCAL_ASSERT
+  Expt* expt = BlockList::theBlockList().getPtr(itsBlockId);
+  DebugEvalNL((void *) expt);
+  Assert(expt != 0);
+  return *expt;
+#else
+  return *(BlockList::theBlockList().getPtr(itsBlockId));
+#endif
+}
+
+ResponseHandler& ExptDriver::responseHandler() {
+DOTRACE("ExptDriver::responseHandler");
+#ifdef LOCAL_ASSERT
+  DebugEval(itsRhId);
+  ResponseHandler* rh = RhList::theRhList().getPtr(itsRhId);
+  DebugEvalNL((void *) rh);
+  Assert(rh != 0);
+  return *rh;
+#else
+  return *(RhList::theRhList().getPtr(itsRhId));
+#endif
+}
+
+TimingHandler& ExptDriver::timingHandler() {
+DOTRACE("ExptDriver::timingHandler");
+#ifdef LOCAL_ASSERT
+  TimingHandler* th = ThList::theThList().getPtr(itsThId);
+  DebugEvalNL((void *) th);
+  Assert(th != 0);
+  return *th;
+#else
+  return *(ThList::theThList().getPtr(itsThId));
+#endif
+}
+
+const Expt& ExptDriver::expt() const {
+DOTRACE("ExptDriver::expt const");
+  return const_cast<ExptDriver *>(this)->expt();
+}
+
+const ResponseHandler& ExptDriver::responseHandler() const {
+DOTRACE("ExptDriver::responseHandler const");
+  return const_cast<ExptDriver *>(this)->responseHandler();
+}
+
+const TimingHandler& ExptDriver::timingHandler() const {
+DOTRACE("ExptDriver::timingHandler const");
+  return const_cast<ExptDriver *>(this)->timingHandler();
+}
+
+void ExptDriver::setResponseHandler(int rhid) {
+DOTRACE("ExptDriver::setResponseHandler");
+  DebugEval(itsRhId);
+  DebugEvalNL(rhid);
+  itsRhId = rhid;
+}
+
+void ExptDriver::setTimingHandler(int thid) {
+DOTRACE("ExptDriver::setTimingHandler");
+  itsThId = thid;
+}
+
 const string& ExptDriver::getAutosaveFile() const { return itsAutosaveFile; }
-bool ExptDriver::getVerbose() const { return itsExpt.getVerbose(); }
+bool ExptDriver::getVerbose() const { return expt().getVerbose(); }
 
-int ExptDriver::getAbortWait() const { return itsTimingHandler.getAbortWait(); }
-int ExptDriver::getAutosavePeriod() const { 
-  return itsTimingHandler.getAutosavePeriod(); 
-}
-int ExptDriver::getInterTrialInterval() const { 
-  return itsTimingHandler.getInterTrialInterval(); 
-}
-int ExptDriver::getStimDur() const { return itsTimingHandler.getStimDur(); }
-int ExptDriver::getTimeout() const { return itsTimingHandler.getTimeout(); }
-
-void ExptDriver::setEndDate(const string& str) { itsEndDate = str; }
 void ExptDriver::setAutosaveFile(const string& str) { itsAutosaveFile = str; }
-void ExptDriver::setVerbose(bool val) { itsExpt.setVerbose(val); }
-
-void ExptDriver::setAbortWait(int val) { itsTimingHandler.setAbortWait(val); }
-void ExptDriver::setAutosavePeriod(int val) { itsTimingHandler.setAutosavePeriod(val); }
-void ExptDriver::setInterTrialInterval(int val) 
-{ itsTimingHandler.setInterTrialInterval(val); }
-void ExptDriver::setStimDur(int val) { itsTimingHandler.setStimDur(val); }
-void ExptDriver::setTimeout(int val) { itsTimingHandler.setTimeout(val); }
-  
-const string& ExptDriver::getKeyRespPairs() const {
-DOTRACE("ExptDriver::getKeyRespPairs");
-  return itsResponseHandler.getKeyRespPairs();
-}
-
-bool ExptDriver::getUseFeedback() const {
-DOTRACE("ExptDriver::getUseFeedback");
-  return itsResponseHandler.getUseFeedback();
-}
+void ExptDriver::setVerbose(bool val) { expt().setVerbose(val); }
 
 //--------------------------------------------------------------------
 //
@@ -193,18 +263,8 @@ DOTRACE("ExptDriver::getUseFeedback");
 
 bool ExptDriver::needAutosave() const {
 DOTRACE("ExptDriver::needAutosave");
-  return ( (getAutosavePeriod() > 0) &&
-			  ((itsExpt.numCompleted() % getAutosavePeriod()) == 0) );
-}
-
-void ExptDriver::setKeyRespPairs(const string& s) {
-DOTRACE("ExptDriver::setKeyRespPairs");
-  itsResponseHandler.setKeyRespPairs(s);
-}
-
-void ExptDriver::setUseFeedback(bool val) {
-DOTRACE("ExptDriver::setUseFeedback"); 
-  itsResponseHandler.setUseFeedback(val);
+  int period = timingHandler().getAutosavePeriod();
+  return ( (period > 0) && ((expt().numCompleted() % period) == 0) );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -224,9 +284,19 @@ DOTRACE("ExptDriver::setUseFeedback");
 
 void ExptDriver::edBeginTrial() {
 DOTRACE("ExptDriver::edBeginTrial");
-  itsResponseHandler.rhBeginTrial();
-  itsTimingHandler.thBeginTrial();
-  itsExpt.beginTrial();
+  if (expt().isComplete()) return;
+
+  Trial& trial = expt().getCurTrial();
+
+  itsThId = trial.getTimingHandler();
+  DebugEval(itsThId);
+
+  itsRhId = trial.getResponseHandler();
+  DebugEval(itsRhId);
+
+  responseHandler().rhBeginTrial();
+  timingHandler().thBeginTrial();
+  expt().beginTrial();
 }
 
 //--------------------------------------------------------------------
@@ -239,9 +309,9 @@ DOTRACE("ExptDriver::edBeginTrial");
 
 void ExptDriver::edAbortTrial() {
 DOTRACE("ExptDriver::edAbortTrial");
-  itsResponseHandler.rhAbortTrial();
-  itsExpt.abortTrial();
-  itsTimingHandler.thAbortTrial();
+  responseHandler().rhAbortTrial();
+  expt().abortTrial();
+  timingHandler().thAbortTrial();
 }
 
 //--------------------------------------------------------------------
@@ -255,7 +325,7 @@ DOTRACE("ExptDriver::edAbortTrial");
 
 void ExptDriver::edEndTrial() {
 DOTRACE("ExptDriver::edEndTrial");
-  itsTimingHandler.thEndTrial();
+  timingHandler().thEndTrial();
 }
 
 //--------------------------------------------------------------------
@@ -268,7 +338,7 @@ DOTRACE("ExptDriver::edEndTrial");
 
 void ExptDriver::draw() {
 DOTRACE("ExptDriver::draw");
-  itsExpt.drawTrial();
+  expt().drawTrial();
 }
 
 //--------------------------------------------------------------------
@@ -281,7 +351,7 @@ DOTRACE("ExptDriver::draw");
 
 void ExptDriver::undraw() {
 DOTRACE("ExptDriver::undraw");
-  itsExpt.undrawTrial();
+  expt().undrawTrial();
 }
 
 //--------------------------------------------------------------------
@@ -297,6 +367,8 @@ DOTRACE("ExptDriver::undraw");
 
 void ExptDriver::edProcessResponse(int response) {
 DOTRACE("ExptDriver::edProcessResponse");
+  Assert(itsInterp != 0);
+
   // If resp is -1, then the keypress did not match any of the regexps
   // in theRegexps, so the response was invalid, and we abort the
   // trial.
@@ -305,7 +377,7 @@ DOTRACE("ExptDriver::edProcessResponse");
     return;
   }
 
-  itsExpt.processResponse(response);
+  expt().processResponse(response);
 
   if ( needAutosave() ) {
 	 DebugEvalNL(getAutosaveFile().c_str());
@@ -314,7 +386,7 @@ DOTRACE("ExptDriver::edProcessResponse");
 	 if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
   }
 
-  if (itsExpt.isComplete()) {
+  if (expt().isComplete()) {
     cout << "expt complete" << endl;
     ExptDriver::writeAndExit();
 	 return; // We'll never get here since writeAndExit calls exit()
@@ -335,12 +407,12 @@ DOTRACE("ExptDriver::edProcessResponse");
 
 void ExptDriver::edHaltExpt() {
 DOTRACE("ExptDriver::edHaltExpt");
-  itsTimingHandler.thHaltExpt();
+  timingHandler().thHaltExpt();
 
-  itsResponseHandler.rhHaltExpt();
+  responseHandler().rhHaltExpt();
 
-  itsExpt.undrawTrial();
-  itsExpt.abortTrial();
+  expt().undrawTrial();
+  expt().abortTrial();
 }
 
 //--------------------------------------------------------------------
@@ -356,9 +428,9 @@ DOTRACE("ExptDriver::edHaltExpt");
 
 void ExptDriver::edResponseSeen() {
 DOTRACE("ExptDriver::edResponseSeen");
-  itsTimingHandler.thResponseSeen();
+  timingHandler().thResponseSeen();
 
-  itsExpt.undrawTrial();
+  expt().undrawTrial();
 }
 
 //--------------------------------------------------------------------
@@ -375,6 +447,8 @@ DOTRACE("ExptDriver::edResponseSeen");
 
 int ExptDriver::write(const char* filename) {
 DOTRACE("ExptDriver::write");
+  Assert(itsInterp != 0);
+
   try {
     ofstream ofs(filename);
     if (ofs.fail()) throw IoFilenameError(filename);
@@ -404,20 +478,19 @@ DOTRACE("ExptDriver::write");
 
 int ExptDriver::writeAndExit() {
 DOTRACE("ExptDriver::writeAndExit");
+  Assert(itsInterp != 0);
+
   // Get the current date/time and record it as the ending date for
   // thec current Expt.
-  string date = getDateStringProc(itsInterp);
-  if (!date.size()) return TCL_ERROR;
-  setEndDate(date);
+  itsEndDate = getDateStringProc(itsInterp);
+  if (itsEndDate.size() == 0) return TCL_ERROR;
 
   // Parse the ending date for the current Expt and format into a
   // unique filename extension
-  static Tcl_Obj* uniqueFilenameCmdObj = 
-    Tcl_NewStringObj("clock format [clock scan [Expt::endDate]] "
-                     "-format %H%M%d%b%Y", -1);
-  static TclObjLock lock_(uniqueFilenameCmdObj);
+  static TclEvalCmd uniqueFilenameCmd(
+        "clock format [clock scan [Expt::endDate]] -format %H%M%d%b%Y");
 
-  int result = Tcl_EvalObjEx(itsInterp, uniqueFilenameCmdObj, TCL_EVAL_GLOBAL);
+  int result = uniqueFilenameCmd.invoke(itsInterp);
   if (result != TCL_OK) return result;
   string unique_filename = Tcl_GetStringResult(itsInterp);
 
