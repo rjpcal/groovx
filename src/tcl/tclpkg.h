@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Mar  8 15:52:57 2000
+// written: Thu Mar  9 10:41:55 2000
 // $Id$
 //
 //
@@ -427,7 +427,7 @@ public:
   PropertiesCmdBase(Tcl_Interp* interp, const char* cmd_name);
 
 protected:
-  virtual int numInfos() = 0;
+  virtual unsigned int numInfos() = 0;
   virtual const char* getName(unsigned int i) = 0;
   virtual const Value& getMin(unsigned int i) = 0;
   virtual const Value& getMax(unsigned int i) = 0;
@@ -444,7 +444,7 @@ public:
 	 PropertiesCmdBase(interp, cmd_name) {}
 
 protected:
-  virtual int numInfos() { return C::numPropertyInfos(); }
+  virtual unsigned int numInfos() { return C::numPropertyInfos(); }
   virtual const char* getName(unsigned int i)
 	 { return C::getPropertyInfo(i).name_cstr(); }
   virtual const Value& getMin(unsigned int i)

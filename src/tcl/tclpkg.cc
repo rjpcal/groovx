@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Mar  8 16:54:38 2000
+// written: Thu Mar  9 10:42:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -279,7 +279,7 @@ DOTRACE("Tcl::PropertiesCmdBase::invoke");
 
 	 vector<Tcl_Obj*> elements;
 		
-	 int num_infos = numInfos();
+	 unsigned int num_infos = numInfos();
 
 	 for (size_t i = 0; i < num_infos; ++i) {
 		vector<Tcl_Obj*> sub_elements;
