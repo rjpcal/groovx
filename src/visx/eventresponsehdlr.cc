@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Jan 28 13:18:44 2002
+// written: Tue Jan 29 18:57:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,14 +67,14 @@ private:
   TclProcWrapper(const TclProcWrapper&);
   TclProcWrapper& operator=(const TclProcWrapper&);
 
-  Tcl::Interp& itsInterp;
+  Tcl::Interp itsInterp;
   const fstring itsName;
   fstring itsArgs;
   fstring itsBody;
 
 public:
-  TclProcWrapper(Tcl::Interp& intp, const fstring& name) :
-    itsInterp(intp),
+  TclProcWrapper(const Tcl::Interp& intp, const fstring& name) :
+    itsInterp(intp.intp()),
     itsName(name),
     itsArgs(),
     itsBody()
