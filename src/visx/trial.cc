@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct 23 17:11:55 2000
+// written: Mon Oct 23 19:35:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "position.h"
 #include "response.h"
 #include "responsehandler.h"
-#include "rhlist.h"
-#include "thlist.h"
 #include "timinghdlr.h"
 
 #include "io/reader.h"
@@ -98,8 +96,8 @@ public:
 	 itsPositions(),
 	 itsResponses(),
 	 itsType(-1),
-	 itsRhId(0),
-	 itsThId(0),
+	 itsRh(-1),
+	 itsTh(0),
 	 itsState(INACTIVE),
 	 itsCanvas(0),
 	 itsBlock(0)
@@ -113,8 +111,8 @@ private:
 
   std::vector<Response> itsResponses;
   int itsType;
-  int itsRhId;
-  int itsThId;
+  NullableItemWithId<ResponseHandler> itsRh;
+  NullableItemWithId<TimingHdlr> itsTh;
 
   TrialState itsState;
 
@@ -123,10 +121,11 @@ private:
 
   bool assertIdsOrHalt()
 	 {
-		if ( RhList::theRhList().isValidId(itsRhId) &&
-			  ThList::theThList().isValidId(itsThId) ) {
+		if ( itsRh.isValid() && itsTh.isValid() )
 		  return true;
-		}
+
+		DebugPrintNL("Trial::assertIdsOrHalt failed");
+		DebugEval(itsRh.id()); DebugEvalNL(itsTh.id());
 
 		trHaltExpt();
 
@@ -140,18 +139,32 @@ private:
 		return *itsCanvas;
 	 }
 
-  ResponseHandler& responseHandler() const
+  ResponseHandler& responseHandler()
 	 {
 		Precondition(itsState == ACTIVE);
-		Precondition( RhList::theRhList().isValidId(itsRhId) );
-		return *(RhList::theRhList().getPtr(itsRhId));
+		Precondition( itsRh.isValid() );
+		return *(itsRh.get());
 	 }
 
-  TimingHdlr& timingHdlr() const
+  const ResponseHandler& responseHandler() const
 	 {
 		Precondition(itsState == ACTIVE);
-		Precondition( ThList::theThList().isValidId(itsThId) );
-		return *(ThList::theThList().getPtr(itsThId));
+		Precondition( itsRh.isValid() );
+		return *(itsRh.get());
+	 }
+
+  TimingHdlr& timingHdlr()
+	 {
+		Precondition(itsState == ACTIVE);
+		Precondition( itsTh.isValid() );
+		return *(itsTh.get());
+	 }
+
+  const TimingHdlr& timingHdlr() const
+	 {
+		Precondition(itsState == ACTIVE);
+		Precondition( itsTh.isValid() );
+		return *(itsTh.get());
 	 }
 
   Block& getBlock() const
@@ -269,8 +282,27 @@ DOTRACE("Trial::Impl::readFrom");
 	 itsCorrectResponse = Response::ALWAYS_CORRECT;
 
   reader->readValue("type", itsType);
-  reader->readValue("rhId", itsRhId);
-  reader->readValue("thId", itsThId);
+
+  if (svid >= 2)
+	 {
+		IO::IoObject* rhio = reader->readObject("rh");
+		ResponseHandler* rh = dynamic_cast<ResponseHandler*>(rhio);
+		itsRh = NullableItemWithId<ResponseHandler>(rh);
+
+		IO::IoObject* thio = reader->readObject("th");
+		TimingHdlr* th = dynamic_cast<TimingHdlr*>(thio);
+		itsTh = NullableItemWithId<TimingHdlr>(th);
+	 }
+  else
+	 {
+		int rhid;
+		reader->readValue("rhId", rhid);
+		itsRh = NullableItemWithId<ResponseHandler>(rhid);
+
+		int thid;
+		reader->readValue("thId", thid);
+		itsTh = NullableItemWithId<TimingHdlr>(thid);
+	 }
 }
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
@@ -314,8 +346,17 @@ DOTRACE("Trial::Impl::writeTo");
 	 writer->writeValue("correctResponse", itsCorrectResponse);
 
   writer->writeValue("type", itsType);
-  writer->writeValue("rhId", itsRhId);
-  writer->writeValue("thId", itsThId);
+
+  if (TRIAL_SERIAL_VERSION_ID >= 2)
+	 {
+		writer->writeObject("rh", itsRh.isValid() ? itsRh.get() : 0);
+		writer->writeObject("th", itsTh.isValid() ? itsTh.get() : 0);
+	 }
+  else
+	 {
+		writer->writeValue("rhId", itsRh.id());
+		writer->writeValue("thId", itsTh.id());
+	 }
 }
 
 int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {
@@ -360,14 +401,14 @@ DOTRACE("Trial::Impl::readFromObjidsOnly");
 
 int Trial::Impl::getResponseHandler() const {
 DOTRACE("Trial::Impl::getResponseHandler");
-  DebugEvalNL(itsRhId);
-  return itsRhId;
+  DebugEvalNL(itsRh.id());
+  return itsRh.id();
 }
 
 int Trial::Impl::getTimingHdlr() const {
 DOTRACE("Trial::Impl::getTimingHdlr");
-  DebugEvalNL(itsThId);
-  return itsThId;
+  DebugEvalNL(itsTh.id());
+  return itsTh.id();
 }
 
 Trial::GrObjItr Trial::Impl::beginGrObjs() const {
@@ -473,15 +514,15 @@ DOTRACE("Trial::Impl::setType");
 void Trial::Impl::setResponseHandler(int rhid) {
 DOTRACE("Trial::Impl::setResponseHandler");
   if (rhid < 0)
-	 throw InvalidIdError("response handler id was negative");
-  itsRhId = rhid;
+	 throw ErrorWithMsg("response handler id was negative");
+  itsRh = NullableItemWithId<ResponseHandler>(rhid);
 }
 
 void Trial::Impl::setTimingHdlr(int thid) {
 DOTRACE("Trial::Impl::setTimingHdlr");
   if (thid < 0)
-	 throw InvalidIdError("timing handler id was negative");
-  itsThId = thid;
+	 throw ErrorWithMsg("timing handler id was negative");
+  itsTh = NullableItemWithId<TimingHdlr>(thid);
 }
 
 void Trial::Impl::clearResponses() {
@@ -573,7 +614,7 @@ void Trial::Impl::trHaltExpt() {
 DOTRACE("Trial::Impl::trHaltExpt");
   if (INACTIVE == itsState) return;
 
-  if ( ThList::theThList().isValidId(itsThId) ) { 
+  if ( itsTh.isValid() ) { 
 	 timeTrace("trHaltExpt");
   }
 
@@ -581,13 +622,13 @@ DOTRACE("Trial::Impl::trHaltExpt");
   trAbortTrial();
   trEndTrial();
 
-  if ( RhList::theRhList().isValidId(itsRhId) ) {
+  if ( itsRh.isValid() ) {
 	 responseHandler().rhHaltExpt();
   }
 
   // This must come last in order to ensure that we cancel any timer
   // callbacks that were scheduled in trAbortTrial().
-  if ( ThList::theThList().isValidId(itsThId) ) { 
+  if ( itsTh.isValid() ) { 
 	 timingHdlr().thHaltExpt();
   }
 
