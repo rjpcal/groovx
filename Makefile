@@ -190,12 +190,6 @@ $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
 
 include $(DEP)/libdepends
 
-cdeps: $(ALL_SOURCES) $(ALL_HEADERS) $(LOGS)/.timestamp
-	time cdeplevels.py $(SRC) -L 1000 > $(LOGS)/cdeps
-
-ldeps: $(ALL_SOURCES) $(ALL_HEADERS) $(LOGS)/.timestamp
-	time ldeplevels.py $(SRC) -L 1000 > $(LOGS)/ldeps
-
 #-------------------------------------------------------------------------
 #
 # Build rules for production and debug executables
