@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sun Sep  9 16:54:06 2001
+// written: Mon Sep 10 12:19:49 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -20,6 +20,7 @@
 #include "tcl/tclpkg.h"
 
 #include "util/algo.h"
+#include "util/randutils.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -128,11 +129,7 @@ namespace DlistTcl
         throw Tcl::TclError("source_list is empty");
       }
 
-    // pick a random int between 0 and (src_len-1), inclusive
-    unsigned int randnum = (unsigned int)
-      ( double(rand())/(double(RAND_MAX)+1.0) * source_list.length() );
-
-    return source_list.at(randnum);
+    return source_list.at(Util::randRange(0u, source_list.length()));
   }
 
 //--------------------------------------------------------------------
