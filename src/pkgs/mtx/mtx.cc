@@ -352,38 +352,6 @@ DOTRACE("Mtx::resize");
 	 }
 }
 
-Mtx Mtx::extractStructField(mxArray* structArray, const char* fieldName,
-									 int indexIntoArray)
-{
-DOTRACE("Mtx::extractStructField");
-
-  if (!structArray)
-	 throw ErrorWithMsg("mxArray* was null");
-
-  if (!mxIsStruct(structArray))
-	 throw ErrorWithMsg("mxArray* is not a struct array");
-
-  mxArray* field = mxGetField(structArray, indexIntoArray, fieldName);
-  if (!field)
-	 {
-		ErrorWithMsg err("struct array does not contain field named '");
-		err.appendMsg(fieldName).appendMsg("'");
-		throw err;
-	 }
-
-  return Mtx(field, COPY);
-}
-
-fixed_string Mtx::extractString(const mxArray* arr)
-{
-DOTRACE("Mtx::extractString");
-  fixed_string str(mxGetM(arr) * mxGetN(arr) * sizeof(mxChar));
-
-  mxGetString(arr, str.data(), str.length() + 1);
-
-  return str;
-}
-
 void Mtx::print() const
 {
   cout << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';

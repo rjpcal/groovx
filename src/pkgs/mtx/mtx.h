@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Apr 18 09:54:17 2001
+// written: Wed Apr 18 15:43:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -406,11 +406,6 @@ public:
   // declaring a new Mtx is that it will avoid a deallocate/allocate
   // cycle if the new dimensions are the same as the current dimensions.
   void resize(int mrowsNew, int ncolsNew);
-
-  static Mtx extractStructField(mxArray* structArray, const char* fieldName,
-										  int indexIntoArray = 0);
-
-  static fixed_string extractString(const mxArray* arr);
 
   mxArray* makeMxArray() const;
 
