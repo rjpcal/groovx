@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Sun Aug 19 16:38:14 2001
+// written: Mon Aug 20 08:50:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "io/io.h"
 #include "io/ioutil.h"
 
+#include "util/iter.h"
 #include "util/objdb.h"
 #include "util/object.h"
 #include "util/strings.h"
@@ -62,11 +63,7 @@ namespace Tcl
     {
       ObjDb& theDb = ObjDb::theDb();
       int count = 0;
-      for (ObjDb::Iterator
-             itr = theDb.begin(),
-             end = theDb.end();
-           itr != end;
-           ++itr)
+      for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
         {
           if (itsCaster->isMyType((*itr).getWeak()))
             ++count;
@@ -87,11 +84,7 @@ namespace Tcl
 
       Tcl::List result;
 
-      for (ObjDb::Iterator
-             itr = theDb.begin(),
-             end = theDb.end();
-           itr != end;
-           ++itr)
+      for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
         {
           if (itsCaster->isMyType((*itr).getWeak()))
             result.append((*itr).id());
@@ -110,10 +103,8 @@ namespace Tcl
     void operator()(Tcl::Context&)
     {
       ObjDb& theDb = ObjDb::theDb();
-      for (ObjDb::Iterator
-             itr = theDb.begin(),
-             end = theDb.end();
-           itr != end;
+      for (ObjDb::Iterator itr(theDb.objects());
+           itr.isValid();
            /* increment done in loop body */)
         {
           DebugEval((*itr)->id());

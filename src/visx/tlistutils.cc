@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Aug 15 10:56:44 2001
+// written: Mon Aug 20 08:48:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@
 #include "io/writer.h"
 
 #include "util/error.h"
+#include "util/iter.h"
 #include "util/objdb.h"
 #include "util/ref.h"
 #include "util/tostring.h"
@@ -123,10 +124,8 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
-  for (ObjDb::CastingIterator<Trial>
-         itr = ObjDb::theDb().begin(),
-         end = ObjDb::theDb().end();
-       itr != end;
+  for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
+       itr.isValid();
        ++itr)
     {
       ofs << setw(wid) << itr->id();
@@ -145,10 +144,8 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 
   STD_IO::ofstream ofs(filename);
 
-  for (ObjDb::CastingIterator<Trial>
-         itr = ObjDb::theDb().begin(),
-         end = ObjDb::theDb().end();
-       itr != end;
+  for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
+       itr.isValid();
        ++itr)
     {
       // Use this to make sure we don't round down when we should round up.
@@ -218,10 +215,8 @@ DOTRACE("TlistUtils::writeMatlab");
 
   MatlabTrialWriter writer(ofs);
 
-  for (ObjDb::CastingIterator<Trial>
-         itr = ObjDb::theDb().begin(),
-         end = ObjDb::theDb().end();
-       itr != end;
+  for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
+       itr.isValid();
        ++itr)
     {
       writer.writeRoot(*itr);

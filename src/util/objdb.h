@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Aug 20 08:24:27 2001
+// written: Mon Aug 20 08:52:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,56 +75,32 @@ public:
   // Iterators
   //
 
-  class Iterator {
-  private:
-    ItrImpl* itsImpl;
-  public:
-    Iterator(ItrImpl* impl);
-    ~Iterator();
-    Iterator(const Iterator& other);
-    Iterator& operator=(const Iterator& other);
+  typedef Util::FwdIter<const Util::WeakRef<Util::Object> > Iterator;
 
-    bool operator==(const Iterator& other) const;
-
-    bool operator!=(const Iterator& other) const
-      { return !(this->operator==(other)); }
-
-    Iterator& operator++();
-
-    const Util::WeakRef<Util::Object>& operator*() const;
-  };
-
-  Iterator begin() const;
-  Iterator end() const;
+  Iterator objects() const;
 
   template <class T>
   class CastingIterator {
     Iterator itsItr;
-    const Iterator itsEnd;
 
     void advanceToValid()
     {
-      while ((itsItr != itsEnd) && (dynamic_cast<T*>((*itsItr).getWeak())==0))
+      while (!itsItr.atEnd() && (dynamic_cast<T*>((*itsItr).getWeak())==0))
         ++itsItr;
     }
 
   public:
-    CastingIterator(const Iterator& begin) :
-      itsItr(begin), itsEnd(ObjDb::theDb().end()) { advanceToValid(); }
+    CastingIterator(const Iterator& begin) : itsItr(begin)
+    { advanceToValid(); }
 
     CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
 
-    bool operator==(const CastingIterator& other)
-      { return itsItr == other.itsItr; }
+    bool atEnd() const { return itsItr.atEnd(); }
+    bool isValid() const { return itsItr.isValid(); }
 
-    bool operator!=(const CastingIterator& other)
-      { return itsItr != other.itsItr; }
+    T* operator*() const { return &(dynamic_cast<T&>(**itsItr)); }
 
-    T* operator*() const
-      { return &(dynamic_cast<T&>(**itsItr)); }
-
-    T* operator->() const
-      { return operator*(); }
+    T* operator->() const { return operator*(); }
   };
 
   //
