@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Feb  1 18:09:57 2000
+// written: Mon Mar  6 12:26:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define THTCL_CC_DEFINED
 
 #include <tcl.h>
-#include <string>
 
 #include "iofactory.h"
 #include "thlist.h"
@@ -24,9 +23,9 @@
 #include "listpkg.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace ThTcl {
   class AddEventCmd;
