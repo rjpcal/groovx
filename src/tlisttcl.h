@@ -2,7 +2,8 @@
 // tlisttcl.h
 // Rob Peters
 // created: Sat Mar 13 12:37:22 1999
-// written: Sat Mar 13 13:23:59 1999
+// written: Tue Mar 16 19:22:53 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TLISTTCL_H_DEFINED
@@ -17,11 +18,9 @@ typedef int (Tcl_PackageInitProc) (Tcl_Interp *interp);
 class Tlist;
 
 namespace TlistTcl {
-  extern Tlist* theTlist;
-  inline Tlist* getTlist() { return theTlist; }
-  inline Tlist** getTlistHandle() { return &theTlist; }
+  Tlist& getTlist();
   Tcl_PackageInitProc Tlist_Init;
 }
 
-static const char vcid_tlisttcl_h[] = "$Id$";
+static const char vcid_tlisttcl_h[] = "$Header$";
 #endif // !TLISTTCL_H_DEFINED

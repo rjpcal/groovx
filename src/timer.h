@@ -2,8 +2,8 @@
 // timer.h
 // Rob Peters
 // created: Thu Feb  4 23:09:20 1999
-// written: Fri Mar 12 12:53:24 1999
-static const char vcid_timer_h[] = "$Id$";
+// written: Tue Mar 16 19:25:39 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMER_H_DEFINED
@@ -25,7 +25,8 @@ public:
   void setTime(int msec);
 
 private:
-  int itsTime;						  // time in msec
+  int itsTime;                  // time in msec
 };
 
+static const char vcid_timer_h[] = "$Id$";
 #endif // !TIMER_H_DEFINED

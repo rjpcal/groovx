@@ -2,8 +2,8 @@
 // timertcl.h
 // Rob Peters
 // created: Wed Feb 10 19:44:59 1999
-// written: Fri Mar 12 12:53:11 1999
-static const char vcid_timertcl_h[] = "$Id$";
+// written: Tue Mar 16 19:24:53 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMERTCL_H_DEFINED
@@ -20,4 +20,5 @@ namespace TimerTcl {
   int Timer_Init(Tcl_Interp *interp);
 };
 
+static const char vcid_timertcl_h[] = "$Headf: timertcl.h,v 1.3 1999/03/12 20:53:13 rjpeters Exp rjpeters $";
 #endif // !TIMERTCL_H_DEFINED

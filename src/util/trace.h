@@ -2,7 +2,8 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Mar 15 17:13:51 1999
+// written: Tue Mar 16 19:21:30 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRACE_H_DEFINED
@@ -31,22 +32,22 @@ const char *const TRACE_TAB = "  ";
 class Trace {
 public:
   Trace(string s) : str(s) {
-	 if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-		for (int i=0; i < TRACE_LEVEL; i++)
-		  cerr << TRACE_TAB;
-		cerr << "entering " << str << "...\n";
-	 }
-	 TRACE_LEVEL++;
+    if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
+      for (int i=0; i < TRACE_LEVEL; i++)
+        cerr << TRACE_TAB;
+      cerr << "entering " << str << "...\n";
+    }
+    TRACE_LEVEL++;
   }
   
   ~Trace() {
-	 TRACE_LEVEL--;
-	 if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-		for (int i=0; i < TRACE_LEVEL; i++)
-		  cerr << TRACE_TAB;
-		cerr << "leaving " << str << ".\n";
-	 }
-	 if (TRACE_LEVEL == 0) cerr << endl;
+    TRACE_LEVEL--;
+    if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
+      for (int i=0; i < TRACE_LEVEL; i++)
+        cerr << TRACE_TAB;
+      cerr << "leaving " << str << ".\n";
+    }
+    if (TRACE_LEVEL == 0) cerr << endl;
   }
 private:
   string str;

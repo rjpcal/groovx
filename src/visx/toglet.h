@@ -2,7 +2,8 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Sat Mar 13 13:16:43 1999
+// written: Tue Mar 16 19:22:23 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLCONFIG_H_DEFINED
@@ -16,7 +17,7 @@ class Tlist;
 
 class ToglConfig {
 public:
-  ToglConfig(Tlist** tlist, float dist, float unit_angle);
+  ToglConfig(const Tlist& tlist, float dist, float unit_angle);
   virtual ~ToglConfig() {}
 
   void setViewingDistIn(float in);
@@ -31,18 +32,18 @@ public:
 
   int usingFixedScale() const;
 
-  Tlist** getTlist() const;
+  const Tlist& getTlist() const;
 
 private:
-  ToglConfig(const ToglConfig&);	// no copy constructor
+  ToglConfig(const ToglConfig&); // no copy constructor
   ToglConfig& operator=(const ToglConfig&); // no assignment operator
 
-  Tlist** itsTlist_h;            // handle to a Tlist
-  float itsViewingDistance;	  // inches
+  const Tlist& itsTlist;
+  float itsViewingDistance;     // inches
   int itsFixedScaleFlag;
   float itsFixedScale;
   rect itsMinRect;
 };
 
-static const char vcid_toglconfig_h[] = "$Id$";
+static const char vcid_toglconfig_h[] = "$Header$";
 #endif // !TOGLCONFIG_H_DEFINED

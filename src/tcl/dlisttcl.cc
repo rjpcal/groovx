@@ -2,7 +2,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Mon Mar 15 16:05:48 1999
+// written: Tue Mar 16 19:27:18 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -50,9 +50,9 @@ namespace Tcldlist {
 // dlist_choose source_list index_list
 //
 // example:
-//		  dlist_choose { 3 5 7 } { 2 0 1 }
+//      dlist_choose { 3 5 7 } { 2 0 1 }
 // returns 
-//		  7 3 5
+//      7 3 5
 int Tcldlist::dlist_chooseCmd(ClientData, Tcl_Interp *interp,
                               int objc, Tcl_Obj *const objv[]) {
 DOTRACE("Tcldlist::dlist_chooseCmd");
@@ -192,7 +192,7 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
   if (src_len == 0) {
     err_message(interp, objv, ": source_list is empty");
-	 return TCL_ERROR;
+    return TCL_ERROR;
   }
 
   // get a random int between 0 and (src_len-1), inclusive
@@ -218,7 +218,7 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
 // usage:
 // dlist_range begin end
 int Tcldlist::dlist_rangeCmd(ClientData, Tcl_Interp *interp,
-									  int objc, Tcl_Obj *const objv[]) {
+                             int objc, Tcl_Obj *const objv[]) {
 DOTRACE("Tcldlist::dlist_rangeCmd");
   if (objc != 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "begin end"); 
@@ -314,7 +314,7 @@ DOTRACE("Tcldlist::dlist_selectCmd");
 
   if (flg_len < src_len) {
     err_message(interp, objv, ": flags list must be as long as source_list");
-	 return TCL_ERROR;
+    return TCL_ERROR;
   }
 
 #ifdef LOCAL_DEBUG
@@ -396,7 +396,7 @@ DOTRACE("Tcldlist::dlist_sumCmd");
       sum += next_d;
     }
 #ifdef LOCAL_DEBUG
-	 DUMP_VAL2(sum);
+    DUMP_VAL2(sum);
 #endif
   }
   if ( is_double == 0 )         // we have an int result

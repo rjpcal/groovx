@@ -2,8 +2,9 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar 12 12:51:26 1999
-static const char vcid_trace_cc[] = "$Id$";
+// written: Tue Mar 16 19:22:06 1999
 ///////////////////////////////////////////////////////////////////////
 
 int TRACE_LEVEL = 0;
+
+static const char vcid_trace_cc[] = "$Header$";

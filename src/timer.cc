@@ -2,8 +2,8 @@
 // timer.cc
 // Rob Peters
 // created: Thu Feb  4 23:09:21 1999
-// written: Fri Mar 12 12:53:35 1999
-static const char vcid_timer_cc[] = "$Id$";
+// written: Tue Mar 16 19:26:01 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMER_CC_DEFINED
@@ -31,4 +31,5 @@ void Timer::setTime(int msec) {
   itsTime = msec;
 }
 
+static const char vcid_timer_cc[] = "$Headf: timer.cc,v 1.3 1999/03/12 20:53:38 rjpeters Exp rjpeters $";
 #endif // !TIMER_CC_DEFINED

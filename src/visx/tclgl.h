@@ -2,8 +2,8 @@
 // tclgl.h
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 12:53:43 1999
-static const char vcid_tclgl_h[] = "$Id$";
+// written: Tue Mar 16 19:26:21 1999
+// $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
 // for C OpenGL functions. The function names, argument lists, and
@@ -22,4 +22,5 @@ namespace TclGL {
   Tcl_PackageInitProc Tclgl_Init;
 }
 
+static const char vcid_tclgl_h[] = "$Header$";
 #endif // !TCLGL_H_DEFINED

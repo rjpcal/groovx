@@ -2,7 +2,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar 15 16:07:01 1999
+// written: Tue Mar 16 19:26:46 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -75,7 +75,7 @@ void TclGL::glBegin_mode_init() {
 
 // Tcl functions
 int TclGL::glBeginCmd(ClientData, Tcl_Interp *interp,
-							 int objc, Tcl_Obj *const objv[]) {
+                      int objc, Tcl_Obj *const objv[]) {
 DOTRACE("glBeginCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "mode");
@@ -95,7 +95,7 @@ DOTRACE("glBeginCmd");
 }
 
 int TclGL::glEndCmd(ClientData, Tcl_Interp *interp,
-						  int objc, Tcl_Obj *const objv[]) {
+                    int objc, Tcl_Obj *const objv[]) {
 DOTRACE("glEndCmd");
   if (objc != 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
@@ -107,7 +107,7 @@ DOTRACE("glEndCmd");
 }
 
 int TclGL::glVertex3fCmd(ClientData, Tcl_Interp *interp,
-								 int objc, Tcl_Obj *const objv[]) {
+                         int objc, Tcl_Obj *const objv[]) {
 DOTRACE("glVertex3fCmd");
   if (objc != 4) {
     Tcl_WrongNumArgs(interp, 1, objv, "x y z");
@@ -124,7 +124,7 @@ DOTRACE("glVertex3fCmd");
 }
 
 int TclGL::glIndexiCmd(ClientData, Tcl_Interp *interp,
-							  int objc, Tcl_Obj *const objv[]) {
+                       int objc, Tcl_Obj *const objv[]) {
 DOTRACE("glIndexiCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "index");
@@ -154,7 +154,7 @@ DOTRACE("glLineWidthCmd");
 }
 
 int TclGL::glFlushCmd(ClientData, Tcl_Interp *interp,
-							 int objc, Tcl_Obj *const objv[]) {
+                      int objc, Tcl_Obj *const objv[]) {
 DOTRACE("glFlushCmd");
   if (objc != 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
@@ -177,13 +177,13 @@ DOTRACE("setBackgroundCmd");
   }
   
   if (objc == 2) {
-	 int i;
-	 if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
+    int i;
+    if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
     glClearIndex(i);
     return TCL_OK;
   }
   else {
-	 double r, g, b;
+    double r, g, b;
     if (Tcl_GetDoubleFromObj(interp, objv[1], &r) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[2], &g) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[3], &b) != TCL_OK) return TCL_ERROR;
@@ -204,13 +204,13 @@ DOTRACE("setForegroundCmd");
   }
   
   if (objc == 2) {
-	 int i;
+    int i;
     if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
     glIndexi(i);
     return TCL_OK;
   }
   else {
-	 double r, g, b;
+    double r, g, b;
     if (Tcl_GetDoubleFromObj(interp, objv[1], &r) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[2], &g) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[3], &b) != TCL_OK) return TCL_ERROR;
@@ -289,7 +289,7 @@ DOTRACE("drawThickLineCmd");
 // Turns on or off the GL modes required for antialiasing lines and
 // polygons.
 int TclGL::antialiasCmd(ClientData, Tcl_Interp *interp,
-								int objc, Tcl_Obj *const objv[]) {
+                        int objc, Tcl_Obj *const objv[]) {
 DOTRACE("antialiasCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "on_off");
@@ -317,7 +317,7 @@ DOTRACE("antialiasCmd");
 // Prints the LINE_WIDTH_RANGE and LINE_WIDTH_GRANULARITY for the
 // current OpenGL implementation.
 int TclGL::lineInfoCmd(ClientData, Tcl_Interp *interp,
-							  int objc, Tcl_Obj *const objv[]) {
+                       int objc, Tcl_Obj *const objv[]) {
 DOTRACE("lineInfoCmd");
   GLdouble range[2] = {-1.0,-1.0}, gran=-1.0;
   glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);

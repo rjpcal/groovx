@@ -2,8 +2,8 @@
 // tcldlist.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 12:53:57 1999
-static const char vcid_tcldlist_h[] = "$Id$";
+// written: Tue Mar 16 19:27:03 1999
+// $Id$
 //
 // This package provides additional list manipulation functions using
 // object-style (rather than string-style) Tcl commands
@@ -29,4 +29,5 @@ namespace Tcldlist {
   Tcl_PackageInitProc Tcldlist_Init;
 }
 
+static const char vcid_tcldlist_h[] = "$Id$";
 #endif // !TCLDLIST_H_DEFINED

@@ -2,7 +2,8 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Sun Mar 14 19:31:39 1999
+// written: Tue Mar 16 19:21:13 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIAL_CC_DEFINED
@@ -22,8 +23,9 @@
 #include "grobj.h"
 #include "position.h"
 
+#define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
+#define LOCAL_ASSERT
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,9 +33,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 Trial::Trial(istream &is, IOFlag flag, 
-				 const ObjList& olist, const PosList &plist) :
+             const ObjList& olist, const PosList &plist) :
   itsObjList(olist), itsPosList(plist), 
-  itsObjs(), itsResponses(), itsType(-1)
+  itsIdPairs(), itsResponses(), itsType(-1)
 {
 DOTRACE("Trial::Trial");
   deserialize(is, flag);
@@ -47,10 +49,12 @@ DOTRACE("Trial::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << typeid(Trial).name() << sep; }
 
-  // itsObjs
-  os << itsObjs.size() << sep;
-  for (ObjGrp::const_iterator ii = itsObjs.begin(); ii != itsObjs.end(); ii++) {
-	 os << (*ii).first << sep << (*ii).second << sep << sep;
+  // itsIdPairs
+  os << itsIdPairs.size() << sep;
+  for (ObjGrp::const_iterator ii = itsIdPairs.begin(); 
+       ii != itsIdPairs.end(); 
+       ii++) {
+    os << (*ii).first << sep << (*ii).second << sep << sep;
   }
   // itsResponses
   serializeVecInt(os, itsResponses);
@@ -64,19 +68,19 @@ IOResult Trial::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Trial::deserialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
   if (flag & IO::TYPENAME) {
-	 string name;
-	 is >> name;
-	 if (name != string(typeid(Trial).name())) { return IO_ERROR; }
+    string name;
+    is >> name;
+    if (name != string(typeid(Trial).name())) { return IO_ERROR; }
   }
   
-  // itsObjs
-  itsObjs.clear();
+  // itsIdPairs
+  itsIdPairs.clear();
   int size;
   is >> size;
   int objid, posid;
   for (int i = 0; i < size; i++) {
-	 is >> objid >> posid;
-	 add(objid, posid);
+    is >> objid >> posid;
+    add(objid, posid);
   }
   // itsResponses
   deserializeVecInt(is, itsResponses);
@@ -85,15 +89,23 @@ DOTRACE("Trial::deserialize");
   return checkStream(is);
 }
 
-bool Trial::readFromObjidsOnly(istrstream &is) {
+int Trial::readFromObjidsOnly(istrstream &ist, int offset) {
 DOTRACE("Trial::readFromObjidsOnly");
   int posid = 0;
   int objid;
-  while (ist >> objid) {
-	 add(objid, posid);
-	 posid++;
+  if (offset == 0) {
+    while (ist >> objid) {
+      add(objid, posid);
+      posid++;
+    }
   }
-  return posid;					  // return the number of objid's read
+  else { // offset != 0
+    while (ist >> objid) {
+      add(objid+offset, posid);
+      posid++;
+    }
+  }
+  return posid;                 // return the number of objid's read
 }
 
 const char* Trial::description() const {
@@ -104,14 +116,18 @@ DOTRACE("Trial::description");
   ostrstream ost(buf, BUF_SIZE);
   
   ost << "trial type == " << trialType()
-		<< ", objs ==";
-  for (int i = 0; i < itsObjs.size(); i++) {
-	 ost << " " << itsObjs[i].first;
+      << ", objs ==";
+  for (int i = 0; i < itsIdPairs.size(); i++) {
+    ost << " " << itsIdPairs[i].first;
   }
   ost << ", categories ==";
-  for (int j = 0; j < itsObjs.size(); j++) {
-	 GrObj *obj = itsObjList.getObj(itsObjs[j].first);
-	 ost << " " << obj->getCategory();
+  for (int j = 0; j < itsIdPairs.size(); j++) {
+    GrObj *obj = itsObjList.getObj(itsIdPairs[j].first);
+#ifdef LOCAL_DEBUG
+    DUMP_VAL2(itsIdPairs[j].first);
+#endif
+    Assert(obj);
+    ost << " " << obj->getCategory();
   }
   ost << '\0';
 
@@ -120,21 +136,25 @@ DOTRACE("Trial::description");
 
 void Trial::action() const {
 DOTRACE("Trial::action");
-  for (int i = 0; i < itsObjs.size(); i++) {
-	 GrObj *obj = itsObjList.getObj(itsObjs[i].first);
-	 Position *pos = itsPosList.getPos(itsObjs[i].second);
+  for (int i = 0; i < itsIdPairs.size(); i++) {
+    GrObj *obj = itsObjList.getObj(itsIdPairs[i].first);
+    Position *pos = itsPosList.getPos(itsIdPairs[i].second);
 #ifdef LOCAL_DEBUG
-	 DUMP_VAL1((void *) obj);
-	 DUMP_VAL2((void *) pos);
+    DUMP_VAL1(itsIdPairs[i].first);
+    DUMP_VAL2((void *) obj);
+    DUMP_VAL1(itsIdPairs[i].second);
+    DUMP_VAL2((void *) pos);
 #endif
+    Assert(obj);
+    Assert(pos);
     glMatrixMode(GL_MODELVIEW);
 
-	 glPushMatrix();
-	   pos->translate();
-		pos->scale();
-		pos->rotate();
-		obj->grAction();
-	 glPopMatrix();
+    glPushMatrix();
+      pos->translate();
+      pos->scale();
+      pos->rotate();
+      obj->grAction();
+    glPopMatrix();
   }
 }
 

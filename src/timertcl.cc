@@ -2,8 +2,8 @@
 // timertcl.cc
 // Rob Peters
 // created: Wed Feb 10 19:45:00 1999
-// written: Fri Mar 12 12:53:16 1999
-static const char vcid_timertcl_cc[] = "$Id$";
+// written: Tue Mar 16 19:25:20 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMERTCL_CC_DEFINED
@@ -21,12 +21,12 @@ static const char vcid_timertcl_cc[] = "$Id$";
 namespace TimerTcl {
   using namespace GrobjTcl;
 
-  ProcMap theProcMap;			  // maps strings to subcommand procedures
-  string theObjName;				  // the string to invoke main command
+  ProcMap theProcMap;           // maps strings to subcommand procedures
+  string theObjName;            // the string to invoke main command
 
-  GrObj* newTimer();				  // returns a new timer object
-  Tcl_ObjCmdProc timerCmd;		  // main command; delegates to subcommands
-  GrobjTcl_SubProc timeCmd;	  // subcommand to set time of timer
+  GrObj* newTimer();            // returns a new timer object
+  Tcl_ObjCmdProc timerCmd;      // main command; delegates to subcommands
+  GrobjTcl_SubProc timeCmd;     // subcommand to set time of timer
 
   int Timer_Init(Tcl_Interp *interp);  
 };
@@ -34,7 +34,7 @@ namespace TimerTcl {
 GrObj* TimerTcl::newTimer() { return new Timer; }
 
 int TimerTcl::timerCmd(ClientData clientData, Tcl_Interp *interp,
-							  int objc, Tcl_Obj *const objv[]) {
+                       int objc, Tcl_Obj *const objv[]) {
   return grobjCmd(clientData, interp, objc, objv, &newTimer, theProcMap);
 }
 
@@ -46,26 +46,26 @@ int TimerTcl::Timer_Init(Tcl_Interp *interp) {
 }
 
 int TimerTcl::timeCmd(ObjList *olist, Tcl_Interp *interp,
-								int objc, Tcl_Obj *const objv[]) {
+                        int objc, Tcl_Obj *const objv[]) {
   Timer *p = NULL;
   GrObj *g = NULL;
   int msec;
 
   if (objc != 4) {
-	 Tcl_WrongNumArgs(interp, 2, objv, "objid num_msec");
-	 return TCL_ERROR;
+    Tcl_WrongNumArgs(interp, 2, objv, "objid num_msec");
+    return TCL_ERROR;
   }
 
   // Get the object
   if ( (g = ObjlistTcl::getObjFromArg(interp, objv, olist, 2)) == NULL )
-	 return TCL_ERROR;
+    return TCL_ERROR;
 
   // Make sure it's a timer object
   p = dynamic_cast<Timer *>(g);
 
-  if ( p == NULL ) {				  // dynamic cast failed
-	 err_message(interp, objv, ObjlistTcl::wrong_type_msg);
-	 return TCL_ERROR;
+  if ( p == NULL ) {            // dynamic cast failed
+    err_message(interp, objv, ObjlistTcl::wrong_type_msg);
+    return TCL_ERROR;
   }
 
   if ( Tcl_GetIntFromObj(interp, objv[3], &msec) != TCL_OK ) return TCL_ERROR;
@@ -74,4 +74,5 @@ int TimerTcl::timeCmd(ObjList *olist, Tcl_Interp *interp,
   return TCL_OK;
 }
 
+static const char vcid_timertcl_cc[] = "$Headf: timertcl.cc,v 1.3 1999/03/12 20:53:20 rjpeters Exp rjpeters $";
 #endif // !TIMERTCL_CC_DEFINED
