@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Nov 19 18:09:56 2002
+// written: Fri Dec  6 14:45:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -587,28 +587,28 @@ char AsciiStreamReader::readChar(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readChar");
   dbgEvalNL(3, name);
-  return itsImpl.template readBasicType<char>(name);
+  return itsImpl.readBasicType<char>(name);
 }
 
 int AsciiStreamReader::readInt(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readInt");
   dbgEvalNL(3, name);
-  return itsImpl.template readBasicType<int>(name);
+  return itsImpl.readBasicType<int>(name);
 }
 
 bool AsciiStreamReader::readBool(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readBool");
   dbgEvalNL(3, name);
-  return bool(itsImpl.template readBasicType<int>(name));
+  return bool(itsImpl.readBasicType<int>(name));
 }
 
 double AsciiStreamReader::readDouble(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readDouble");
   dbgEvalNL(3, name);
-  return itsImpl.template readBasicType<double>(name);
+  return itsImpl.readBasicType<double>(name);
 }
 
 fstring AsciiStreamReader::readStringImpl(const fstring& name)

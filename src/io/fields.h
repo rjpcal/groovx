@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Nov 25 11:49:13 2002
+// written: Fri Dec  6 22:18:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,26 +128,46 @@ public:
 namespace
 {
   template <class C, class T>
-  struct deref
+  struct MatchConst
   {
-    static       T& get(      C& obj, T C::* mptr) { return (obj.*mptr); }
-    static const T& get(const C& obj, T C::* mptr) { return (obj.*mptr); }
+    typedef T Type;
   };
 
   template <class C, class T>
-  struct deref<C, T*>
+  struct MatchConst<const C, T>
   {
-    static       T& get(      C& obj, T* C::* mptr) { return *(obj.*mptr); }
-    static const T& get(const C& obj, T* C::* mptr) { return *(obj.*mptr); }
+    typedef const T Type;
   };
 
   template <class C, class T>
-  typename Util::TypeTraits<T>::DerefT&
-  dereference(C& obj, T C::* mptr) { return deref<C,T>::get(obj, mptr); }
+  struct Deref
+  {
+    typedef typename MatchConst<C,T>::Type Type;
+
+    static Type& get(C& obj, T C::* mptr) { return (obj.*mptr); }
+  };
 
   template <class C, class T>
-  const typename Util::TypeTraits<T>::DerefT&
-  dereference(const C& obj, T C::* mptr) { return deref<C,T>::get(obj, mptr); }
+  struct Deref<C, T*>
+  {
+    typedef typename MatchConst<C,T>::Type Type;
+
+    static Type& get(C& obj, T* C::* mptr) { return *(obj.*mptr); }
+  };
+
+  template <class C, class T>
+  typename Deref<C,T>::Type&
+  dereference(C& obj, T C::* mptr)
+  {
+    return Deref<C,T>::get(obj, mptr);
+  }
+
+  template <class C, class T>
+  typename Deref<const C,T>::Type&
+  const_dereference(const C& obj, T C::* mptr)
+  {
+    return Deref<const C,T>::get(obj, mptr);
+  }
 }
 
 
@@ -179,7 +199,7 @@ public:
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    return Tcl::toTcl(dereference(cobj, itsDataMember));
+    return Tcl::toTcl(const_dereference(cobj, itsDataMember));
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -195,7 +215,7 @@ public:
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer->writeValue(name.c_str(), dereference(cobj, itsDataMember));
+    writer->writeValue(name.c_str(), const_dereference(cobj, itsDataMember));
   }
 
 private:
@@ -226,7 +246,7 @@ public:
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    const Value& val = dereference(cobj, itsValueMember);
+    const Value& val = const_dereference(cobj, itsValueMember);
 
     return Tcl::toTcl(val);
   }
@@ -244,7 +264,7 @@ public:
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer->writeValueObj(name.c_str(), dereference(cobj, itsValueMember));
+    writer->writeValueObj(name.c_str(), const_dereference(cobj, itsValueMember));
   }
 
 private:
