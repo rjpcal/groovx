@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Jul 11 13:29:43 2001
+// written: Fri Jul 20 07:35:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,12 +25,10 @@ namespace Util
 
 ///////////////////////////////////////////////////////////////////////
 /**
- *
  * \c static_block is a simple wrapper around a C-style array that
  * provides an STL-style container interface, including both checked
  * and unchecked access, as well as access to the container's size
  * with the \c size() member function.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -92,11 +90,9 @@ struct static_block {
 
 ///////////////////////////////////////////////////////////////////////
 /**
- *
  * \c fixed_block is a simple wrapper for a dynamically allocated
  * array whose size is fixed on instantiation. Copying and assignment
  * are not allowed.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -192,11 +188,87 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 /**
- *
+ *  shared_array extends shared_ptr to arrays. The array pointed to is
+ *  deleted when the last shared_array pointing to it is destroyed or
+ *  reset.
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template<typename T>
+class shared_array {
+public:
+  typedef T element_type;
+
+  explicit shared_array(T* p =0) : px(p)
+  {
+    try { pn = new long(1); }  // fix: prevent leak if new throws
+    catch (...) { delete [] p; throw; }
+  }
+
+  shared_array(const shared_array& r) : px(r.px)  // never throws
+  { ++*(pn = r.pn); }
+
+  ~shared_array() { dispose(); }
+
+  shared_array& operator=(const shared_array& r)
+  {
+    if (pn != r.pn)
+      { // Q: why not px != r.px? A: fails when both px == 0
+        dispose();
+        px = r.px;
+        ++*(pn = r.pn);
+      }
+    return *this;
+  } // operator=
+
+  void reset(T* p=0)
+  {
+    if ( px == p ) return;  // fix: self-assignment safe
+    if (--*pn == 0) { delete [] px; }
+    else { // allocate new reference counter
+      try { pn = new long; }  // fix: prevent leak if new throws
+      catch (...) {
+        ++*pn;  // undo effect of --*pn above to meet effects guarantee
+        delete [] p;
+        throw;
+      } // catch
+    } // allocate new reference counter
+    *pn = 1;
+    px = p;
+  } // reset
+
+  T* get() const                     { return px; }  // never throws
+  T& operator[](std::size_t i) const { return px[i]; }  // never throws
+
+  long use_count() const             { return *pn; }  // never throws
+  bool unique() const                { return *pn == 1; }  // never throws
+
+  void swap(shared_array<T>& other)  // never throws
+  { std::swap(px,other.px); std::swap(pn,other.pn); }
+
+private:
+
+  T*     px;     // contained pointer
+  long*  pn;     // ptr to reference counter
+
+  void dispose() { if (--*pn == 0) { delete [] px; delete pn; } }
+
+};  // shared_array
+
+template<typename T>
+  inline bool operator==(const shared_array<T>& a, const shared_array<T>& b)
+    { return a.get() == b.get(); }
+
+template<typename T>
+  inline bool operator!=(const shared_array<T>& a, const shared_array<T>& b)
+    { return a.get() != b.get(); }
+
+
+///////////////////////////////////////////////////////////////////////
+/**
  * \c dynamic_block is a simple wrapper for a dynamically allocated
  * array whose size may change with \c resize(). Copy construction and
  * copy assignment are allowed.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
