@@ -25,7 +25,7 @@ EXTRA_STATISTICS := 0
 #
 #-------------------------------------------------------------------------
 
-PROJECT = $(HOME)/grsh
+PROJECT = $(HOME)/sorcery/grsh
 SRC := src
 DEP := ./dep
 OBJ := ./obj/$(ARCH)
@@ -34,6 +34,8 @@ LOG := ./logs
 DOC := ./doc
 IDEP := ./idep
 SCRIPTS := ./scripts
+
+BIN_DIR := $(HOME)/local/$(ARCH)/bin
 
 #-------------------------------------------------------------------------
 #
@@ -287,7 +289,7 @@ TCLWORKS_OBJS := \
 #
 #-------------------------------------------------------------------------
 
-DEBUG_TARGET := $(HOME)/bin/$(ARCH)/testsh
+DEBUG_TARGET := $(BIN_DIR)/testsh
 
 DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST
 
@@ -322,7 +324,7 @@ endif
 #
 #-------------------------------------------------------------------------
 
-PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh$(VERSION)
+PROD_TARGET := $(BIN_DIR)/grsh$(VERSION)
 
 PROD_DEFS := -DASSERT -DINVARIANT
 
