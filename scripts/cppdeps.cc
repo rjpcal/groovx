@@ -51,88 +51,6 @@ using std::set;
 using std::string;
 using std::cerr;
 
-struct include_spec
-{
-  include_spec(const string& t, const string& s = string())
-    : target(t), source(s)
-  {}
-
-  string target;
-  string source;
-};
-
-bool operator<(const include_spec& i1, const include_spec& i2)
-{
-  return i1.target < i2.target;
-}
-
-/// A class for doing fast include-file dependency analysis.
-/** Several shortcuts (er, hacks...) are taken to make the parsing
-    extremely fast and cheap, but at worst this makes the computed
-    dependencies be unnecessarily pessimistic. For example, a #include that
-    occurs inside a comment will still be treated as a regular #include.*/
-class cppdeps
-{
-  vector<string> m_user_ipath;
-  vector<string> m_sys_ipath;
-
-  vector<string> m_src_files;
-  string m_objdir;
-
-  typedef vector<include_spec> include_list_t;
-
-  typedef map<string, include_list_t> include_map_t;
-  include_map_t m_nested_includes;
-  include_map_t m_direct_includes;
-
-  enum parse_state
-    {
-      NOT_STARTED = 0,
-      IN_PROGRESS = 1,
-      COMPLETE = 2
-    };
-
-  map<string, parse_state> m_parse_states;
-
-  bool m_check_sys_includes;
-  bool m_quiet;
-
-  enum output_mode
-    {
-      MAKEFILE_DEPS,
-      DIRECT_INCLUDE_TREE,
-      NESTED_INCLUDE_TREE
-    };
-
-  output_mode m_output_mode;
-
-  string m_strip_prefix;
-
-public:
-  cppdeps(int argc, char** argv);
-
-  void inspect();
-
-  static string trim_filename(const string& inp);
-
-  int is_cc_filename(const char* fname);
-
-  int is_cc_or_h_filename(const char* fname);
-
-  static bool resolve_one(const char* include_name,
-                          int include_length,
-                          const string& src_fname,
-                          const string& dirname,
-                          const vector<string>& ipath,
-                          include_list_t& vec);
-
-  const include_list_t& get_direct_includes(const string& src_fname);
-
-  const include_list_t& get_nested_includes(const string& src_fname);
-
-  void batch_build();
-};
-
 namespace
 {
   // helper functions
@@ -219,8 +137,92 @@ namespace
     off_t itsLength;
     int   itsFd;
     void* itsMem;
-  };
+
+  }; // end class mapped_file
+
+} // end unnamed namespace
+
+struct include_spec
+{
+  include_spec(const string& t, const string& s = string())
+    : target(t), source(s)
+  {}
+
+  string target;
+  string source;
+};
+
+bool operator<(const include_spec& i1, const include_spec& i2)
+{
+  return i1.target < i2.target;
 }
+
+/// A class for doing fast include-file dependency analysis.
+/** Several shortcuts (er, hacks...) are taken to make the parsing
+    extremely fast and cheap, but at worst this makes the computed
+    dependencies be unnecessarily pessimistic. For example, a #include that
+    occurs inside a comment will still be treated as a regular #include.*/
+class cppdeps
+{
+  vector<string> m_user_ipath;
+  vector<string> m_sys_ipath;
+
+  vector<string> m_src_files;
+  string m_objdir;
+
+  typedef vector<include_spec> include_list_t;
+
+  typedef map<string, include_list_t> include_map_t;
+  include_map_t m_nested_includes;
+  include_map_t m_direct_includes;
+
+  enum parse_state
+    {
+      NOT_STARTED = 0,
+      IN_PROGRESS = 1,
+      COMPLETE = 2
+    };
+
+  map<string, parse_state> m_parse_states;
+
+  bool m_check_sys_includes;
+  bool m_quiet;
+
+  enum output_mode
+    {
+      MAKEFILE_DEPS,
+      DIRECT_INCLUDE_TREE,
+      NESTED_INCLUDE_TREE
+    };
+
+  output_mode m_output_mode;
+
+  string m_strip_prefix;
+
+public:
+  cppdeps(int argc, char** argv);
+
+  void inspect();
+
+  static string trim_filename(const string& inp);
+
+  int is_cc_filename(const char* fname);
+
+  int is_cc_or_h_filename(const char* fname);
+
+  static bool resolve_one(const char* include_name,
+                          int include_length,
+                          const string& src_fname,
+                          const string& dirname,
+                          const vector<string>& ipath,
+                          include_list_t& vec);
+
+  const include_list_t& get_direct_includes(const string& src_fname);
+
+  const include_list_t& get_nested_includes(const string& src_fname);
+
+  void batch_build();
+};
 
 cppdeps::cppdeps(int argc, char** argv) :
   m_check_sys_includes(false),
