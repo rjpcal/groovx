@@ -38,6 +38,7 @@
 #include "io/writeutils.h"
 
 #include "util/error.h"
+#include "util/log.h"
 #include "util/minivec.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
@@ -265,12 +266,16 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
 
   std::stable_sort(events.begin(), events.end(), cmp_delay_less);
 
-  int minimum_delay = 0;
+  unsigned int minimum_delay = 0;
 
   for (size_t i = 0; i < events.size(); ++i)
     {
-      int scheduled_delay = events[i]->schedule(*trial, minimum_delay);
+      unsigned int scheduled_delay = events[i]->schedule(*trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
+
+      fstring info("scheduled ", events[i]->objTypename(), " ",
+                   events[i]->id(), " @ ", scheduled_delay);
+      Util::log(info);
     }
 }
 
