@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Fri Jan 18 16:06:51 2002
+// written: Tue Jun 25 17:27:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef TKWIDGET_H_DEFINED
 #define TKWIDGET_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WIDGET_H_DEFINED)
-#include "gwt/widget.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVASWIDGET_H_DEFINED)
+#include "gwt/canvaswidget.h"
 #endif
 
 typedef struct Tk_Window_ *Tk_Window;
@@ -34,7 +34,7 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget : public GWT::Widget
+class Tcl::TkWidget : public GWT::CanvasWidget
 {
 protected:
   Tk_Window tkWin() const;
