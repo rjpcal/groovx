@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 14:38:13 2001
-// written: Wed Mar 27 10:45:48 2002
+// written: Fri Jun 21 11:50:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,6 +105,11 @@ DOTRACE("Gfx::PointAlgo::setPolarPoint");
 
   if ( !(quadrant & X_POS) ) { point.x() *= -1.0; }
   if ( !(quadrant & Y_POS) ) { point.y() *= -1.0; }
+}
+
+double Gfx::PointAlgo::lengthHelper(double x, double y, double z)
+{
+  return sqrt(x*x + y*y + z*z);
 }
 
 static const char vcid_point_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Fri Jan 18 16:06:57 2002
+// written: Fri Jun 21 12:07:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,9 @@ public:
   const V* data() const { return &itsData[0]; }
 
   Vec2<V> vec2() const { return Vec2<V>(x(), y()); }
+
+  double length() const
+    { return Gfx::PointAlgo::lengthHelper(x(), y(), z()); }
 
   //
   // Vec3-scalar math

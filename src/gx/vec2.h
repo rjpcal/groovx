@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Fri Jan 18 16:06:57 2002
+// written: Fri Jun 21 11:49:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,8 @@ namespace Gfx
 
     void setPolarPoint(Vec2<double>& point,
                        double length, double degrees);
+
+    double lengthHelper(double x, double y, double z = 0.0);
   }
 
 template<class V>
