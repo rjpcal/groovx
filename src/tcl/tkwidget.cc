@@ -430,6 +430,14 @@ DOTRACE("Tcl::TkWidget::maximize");
   const int h = XHeightOfScreen(Tk_Screen(rep->tkWin));
   setSize(Gfx::Vec2<int>(w, h));
 
+  Tk_Window mainWin = rep->tkWin;
+  while ( !Tk_IsTopLevel(mainWin) )
+    {
+      mainWin = Tk_Parent(mainWin);
+    }
+
+  Tk_MoveToplevelWindow(mainWin, 0, 0);
+
   grabKeyboard();
 }
 
