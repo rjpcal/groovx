@@ -82,12 +82,23 @@ public:
   Prof(const char* s);
   ~Prof();
 
+  /// Reset the call count and elapsed time to zero.
+  void reset();
+
+  /** Return the number of calls that have been made since the last
+      reset(). */
   int count() const;
 
   void add(timeval t);
 
   const char* name() const;
 
+  /** Return the total elapsed time in microseconds since the last
+      reset(). */
+  double totalTime() const;
+
+  /** Return the per-call average of the elapsed time in microseconds since
+      the last reset(). */
   double avgTime() const;
 
   void printProfData(STD_IO::ostream& os) const;
@@ -104,9 +115,9 @@ private:
   Prof(const Prof&);
   Prof& operator=(const Prof&);
 
-  const char* funcName;
-  int callCount;
-  timeval totalTime;
+  const char* itsFuncName;
+  int itsCallCount;
+  timeval itsTotalTime;
 };
 
 class Util::Trace
