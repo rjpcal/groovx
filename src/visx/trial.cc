@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Jul 21 22:32:28 2001
+// written: Sat Jul 21 22:36:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -286,44 +286,33 @@ const char* Trial::Impl::description() const
 {
 DOTRACE("Trial::Impl::description");
 
+  dynamic_string objids;
+  dynamic_string cats;
+
+  for (GxNodes::const_iterator
+         ii = itsGxNodes.begin(),
+         end = itsGxNodes.end();
+       ii != end;
+       ++ii)
+    {
+      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
+        {
+          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
+          if (g)
+            {
+              objids.append(" ").append(int(g->id()));
+              cats.append(" ").append(g->category());
+            }
+        }
+    }
+  }
+
   static dynamic_string buf;
+
   buf = "";
-
   buf.append("trial type == " ).append(trialType());
-  buf.append(", objs ==");
-
-
-  {for (GxNodes::const_iterator
-          ii = itsGxNodes.begin(),
-          end = itsGxNodes.end();
-        ii != end;
-        ++ii)
-    {
-      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
-        {
-          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
-          if (g)
-            buf.append(" ").append(int(g->id()));
-        }
-    }
-  }
-
-  buf.append(", categories == ");
-
-  {for (GxNodes::const_iterator
-          ii = itsGxNodes.begin(),
-          end = itsGxNodes.end();
-        ii != end;
-        ++ii)
-    {
-      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
-        {
-          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
-          if (g)
-            buf.append(" ").append(g->category());
-        }
-    }
-  }
+  buf.append(", objs ==").append(objids);
+  buf.append(", categories == ").append(cats);
 
   return buf.c_str();
 }
@@ -435,8 +424,8 @@ DOTRACE("Trial::Impl::trDoTrial");
   itsCurrentNode = 0;
 
   itsActiveState->itsRh->rhBeginTrial(widget, *self);
-
   itsActiveState->itsTh->thBeginTrial(*self, errhdlr);
+
   timeTrace("trDoTrial");
 }
 
