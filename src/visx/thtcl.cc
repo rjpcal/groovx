@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jan 30 20:59:28 2002
+// written: Wed Jan 30 21:22:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,8 +104,15 @@ DOTRACE("Th_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&GenericEvent::make);
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
+  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "GenericEvent", "$Revision$");
+  Tcl::defGenericObjCmds<GenericEvent>(pkg4);
+
+  pkg4->defGetter("callback", &GenericEvent::getCallback);
+  pkg4->defSetter("callback", &GenericEvent::setCallback);
+
+  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3, pkg4);
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";
