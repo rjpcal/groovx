@@ -20,6 +20,26 @@
 
   more consistent logging+debugging
 
+* (19-Jul-2004) Aqua port for Darwin
+
+  where is <GL/glx.h> used?
+
+  glxwrapper.h
+    OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
+  xbmaprenderer.cc
+    OK - not used externally
+  gxrasterfont.cc
+
+  where is <X11/Xlib.h> used?
+
+  glxwrapper.h
+    OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
+  xbmaprenderer.h
+    OK - used only in xbmaprenderer.cc
+  gxrasterfont.cc
+  rhtcl.cc
+    only used for XStringToKeysym and XKeysymToKeycode
+
 * (8-Jun-2004) Change EventResponseHdlr::feedbackMap to be a proc
 
 * (2-Jun-2004) Toglet::size doesn't work for resizing
