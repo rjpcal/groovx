@@ -19,6 +19,11 @@
 
 #include "util/algo.h"
 
+namespace Gfx
+{
+  class Canvas;
+}
+
 class GrObjScaler {
 public:
   GrObjScaler() :

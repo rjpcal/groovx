@@ -23,6 +23,11 @@ class BitmapRep;
 
 class Gnode;
 
+namespace Gfx
+{
+  class Canvas;
+}
+
 class GrObjRenderer {
 public:
   GrObjRenderer();
