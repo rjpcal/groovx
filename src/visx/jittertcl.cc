@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Wed Jul 11 14:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,6 @@ protected:
     double xj = getDoubleFromArg(2); p->setXJitter(xj);
     double yj = getDoubleFromArg(3); p->setYJitter(yj);
     double rj = getDoubleFromArg(4); p->setRJitter(rj);
-    returnVoid();
   }
 };
 

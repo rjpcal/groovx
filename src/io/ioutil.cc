@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jul 11 11:03:30 2001
+// written: Wed Jul 11 14:35:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,8 +108,6 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 
   IO::LegacyReader reader(ist);
   reader.readRoot(&(getIO()));
-
-  returnVoid();
 }
 
 
