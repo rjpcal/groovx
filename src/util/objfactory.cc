@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 30 15:01:02 1999
-// written: Thu May 10 12:04:43 2001
+// written: Fri May 18 16:26:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace {
 }
 
 IO::IoFactory::IoFactory() :
-  Factory<IO::IoObject>() {}
+  Factory<IdItem<IO::IoObject> >() {}
 
 IO::IoFactory::~IoFactory() {}
 

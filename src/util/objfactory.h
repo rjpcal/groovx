@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:06 1999
-// written: Thu May 10 12:04:37 2001
+// written: Fri May 18 16:25:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,14 @@
 #include "io/io.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "io/iditem.h"
+#endif
+
 namespace IO { class IoFactory; }
 
 /// Singleton wrapper for Factor<IO>.
-class IO::IoFactory : public Factory<IO::IoObject> {
+class IO::IoFactory : public Factory<IdItem<IO::IoObject> > {
 protected:
   /// Default constructor.
   IoFactory();

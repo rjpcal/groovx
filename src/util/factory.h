@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu May 17 16:49:02 2001
+// written: Fri May 18 16:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
+#include "util/traits.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
@@ -51,11 +55,11 @@ public:
  * function, \c create(), that returns an object of type \c Base.
  *
  **/
-template <class Base>
+template <class BasePtr>
 class CreatorBase {
 public:
-  /// Return a new object of type \c Base.
-  virtual Base* create() = 0;
+  /// Return a new pointer (or smart pointer) to type \c Base.
+  virtual BasePtr create() = 0;
 };
 
 
@@ -65,10 +69,10 @@ public:
  * pointer to function that returns an object of the appropriate type.
  *
  **/
-template <class Base, class Derived>
-class CreatorFromFunc : public CreatorBase<Base> {
+template <class BasePtr, class DerivedPtr>
+class CreatorFromFunc : public CreatorBase<BasePtr> {
 public:
-  typedef Derived* (*FuncType) ();
+  typedef DerivedPtr (*FuncType) ();
 
   CreatorFromFunc(FuncType func) : itsFunc(func) {}
 
@@ -77,7 +81,7 @@ public:
   CreatorFromFunc& operator=(const CreatorFromFunc& other)
     { itsFunc = other.itsFunc; return *this; }
 
-  virtual Base* create() { return itsFunc(); }
+  virtual BasePtr create() { return BasePtr(itsFunc()); }
 
 private:
   FuncType itsFunc;
@@ -128,14 +132,14 @@ private:
  *
  **/
 
-template<class Base>
+template<class BasePtr>
 class CreatorMap : private CreatorMapBase {
 public:
   /// Virtual destructor calls \c clear() to free all memory.
   virtual ~CreatorMap() { CreatorMapBase::clear(); }
 
   /// The type of object stored in the map.
-  typedef CreatorBase<Base> CreatorType;
+  typedef CreatorBase<BasePtr> CreatorType;
 
   /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const fixed_string& name) const
@@ -177,10 +181,10 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-template <class Base>
+template <class BasePtr>
 class Factory : public FactoryBase {
 private:
-  CreatorMap<Base> itsMap;
+  CreatorMap<BasePtr> itsMap;
 
 protected:
   /// Default constructor.
@@ -189,27 +193,28 @@ protected:
 public:
   /** Registers a creation function with the factory. The factory will
       assume ownership of the \c Creator. */
-  template <class Derived>
-  void registerCreatorFunc(Derived* (*func) ())
+  template <class DerivedPtr>
+  void registerCreatorFunc(DerivedPtr (*func) ())
   {
-	 itsMap.setPtrForName(demangle_cstr(typeid(Derived).name()),
-								 new CreatorFromFunc<Base, Derived>(func));
+	 itsMap.setPtrForName(
+       demangle_cstr(typeid(typename Util::TypeTraits<DerivedPtr>::Pointee).name()),
+		 new CreatorFromFunc<BasePtr, DerivedPtr>(func));
   }
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
-  Base* newObject(const fixed_string& type) {
-	 CreatorBase<Base>* creator = itsMap.getPtrForName(type);
-	 if (creator == 0) return 0;
+  BasePtr newObject(const fixed_string& type) {
+	 CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
+	 if (creator == 0) return BasePtr();
 	 return creator->create();
   }
  
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
-  Base* newCheckedObject(const fixed_string& type) {
-	 Base* p = newObject(type);
-	 if (p == 0) FactoryError::throwForType(type);
-	 return p;
+  BasePtr newCheckedObject(const fixed_string& type) {
+	 CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
+	 if (creator == 0) FactoryError::throwForType(type);
+	 return creator->create();
   }
 };
 
