@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sat May 19 15:24:57 2001
+// written: Sun May 27 07:24:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,12 +29,48 @@
 #include "io/iodecls.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEMUTILS_H_DEFINED)
-#include "io/iditemutils.h"
-#endif
+
+namespace IO { class IoObject; }
 
 template <class T> class IdItem;
 template <class T> class MaybeIdItem;
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// IdItemUtils helper functions
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace IdItemUtils {
+  bool isValidId(IO::UID id);
+  IO::IoObject* getCheckedItem(IO::UID id);
+
+#ifndef ACC_COMPILER
+#  define DYNCAST dynamic_cast
+#else
+  template <class T, class U>
+  T DYNCAST(U& u) { return dynamic_cast<T>(u); }
+#endif
+
+  template <class T>
+  inline T* getCastedItem(IO::UID id)
+  {
+	 IO::IoObject* obj = getCheckedItem(id);
+	 T& t = DYNCAST<T&>(*obj);
+	 return &t;
+  }
+
+#ifdef DYNCAST
+#undef DYNCAST
+#endif
+
+  template <>
+  inline IO::IoObject* getCastedItem<IO::IoObject>(IO::UID id)
+  { return getCheckedItem(id); }
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////
 /**
