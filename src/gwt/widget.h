@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Wed Sep 25 18:53:57 2002
+// written: Thu Nov 21 17:05:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,9 @@
 #define WIDGET_H_DEFINED
 
 #include "util/object.h"
+
+class GxCamera;
+class GxNode;
 
 namespace Gfx
 {
@@ -29,8 +32,6 @@ namespace GWT
 
   enum EventStatus { HANDLED, NOT_HANDLED };
 }
-
-class GxNode;
 
 namespace Util
 {
@@ -118,6 +119,9 @@ public:
   void setHold(bool hold_on);
 
   void allowRefresh(bool allow);
+
+  const Util::Ref<GxCamera>& getCamera() const;
+  void setCamera(const Util::Ref<GxCamera>& cam);
 
   void setDrawable(const Util::Ref<GxNode>& node);
 
