@@ -87,17 +87,19 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
       return;
     }
 
-  child()->gnodeUndraw(canvas);
+  Gfx::Rect<double> bmapbox = child()->gnodeBoundingBox(canvas);
+
+  Gfx::Rect<int> screen_rect = canvas.screenFromWorld(bmapbox);
 
   glPushAttrib(GL_COLOR_BUFFER_BIT);
   {
     glDrawBuffer(GL_FRONT);
 
+	 canvas.clearColorBuffer(screen_rect);
+
     child()->gnodeDraw(canvas);
   }
   glPopAttrib();
-
-  Gfx::Rect<double> bmapbox = child()->gnodeBoundingBox(canvas);
 
   itsBitmapRep->grabWorldRect(bmapbox);
 
