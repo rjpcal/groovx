@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Jan 25 13:58:12 2002
+// written: Mon Jan 28 10:53:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,10 +55,10 @@ public:
   Impl(EventResponseHdlr* owner, const char* input_response_map);
   ~Impl();
 
-  class ERHActiveState;
-  friend class ERHActiveState;
+  class ActiveState;
+  friend class ActiveState;
 
-  class ERHActiveState
+  class ActiveState
   {
   private:
     Util::SoftRef<GWT::Widget> itsWidget;
@@ -79,11 +79,11 @@ public:
     }
 
   public:
-    ~ERHActiveState() { ignore(); }
+    ~ActiveState() { ignore(); }
 
-    ERHActiveState(const EventResponseHdlr::Impl* erh,
-                   Util::SoftRef<GWT::Widget> widget, TrialBase& trial,
-                   const fstring& seq, const fstring& script) :
+    ActiveState(const EventResponseHdlr::Impl* erh,
+                Util::SoftRef<GWT::Widget> widget, TrialBase& trial,
+                const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
       itsEventSequence(seq),
@@ -105,9 +105,9 @@ public:
 
     void rhHaltExpt() { ignore(); }
 
-    void handleResponse(EventResponseHdlr::Impl* impl, const char* keysym)
+    void handleResponse(EventResponseHdlr::Impl* impl, const char* event_info)
     {
-      DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
+      DOTRACE("EventResponseHdlr::Impl::ActiveState::handleResponse");
 
       Response theResponse;
 
@@ -117,7 +117,7 @@ public:
 
       ignore();
 
-      theResponse.setVal(impl->itsResponseMap.valueFor(keysym));
+      theResponse.setVal(impl->itsResponseMap.valueFor(event_info));
       DebugEvalNL(theResponse.val());
 
       if ( !theResponse.isValid() )
@@ -139,8 +139,8 @@ public:
     script.append(" ").append((int)itsOwner->id());
     script.append(" ").append(itsBindingSubstitution);
 
-    itsState.reset(new ERHActiveState(this, widget, trial,
-                                      itsEventSequence, script.c_str()));
+    itsState.reset(new ActiveState(this, widget, trial,
+                                   itsEventSequence, script));
   }
 
   void becomeInactive() const { itsState.reset(0); }
@@ -154,11 +154,11 @@ public:
   void writeTo(IO::Writer* writer) const;
 
   static void handleResponseCallback(Util::Ref<EventResponseHdlr> erh,
-                                     const char* keysym)
+                                     const char* event_info)
   {
     EventResponseHdlr::Impl* impl = erh->itsImpl;
     Precondition( impl->isActive() );
-    impl->itsState->handleResponse(impl, keysym);
+    impl->itsState->handleResponse(impl, event_info);
   }
 
   static const char* uniqueCmdName()
@@ -177,7 +177,7 @@ public:
 
   EventResponseHdlr* itsOwner;
 
-  mutable scoped_ptr<ERHActiveState> itsState;
+  mutable scoped_ptr<ActiveState> itsState;
 
   Tcl::Interp itsInterp;
 
@@ -228,7 +228,7 @@ EventResponseHdlr::Impl::~Impl()
 DOTRACE("EventResponseHdlr::Impl::~Impl");
 
   // force the destructor to run now, rather than after ~Impl()
-  // finishes, so that the reference to *this in ERHActiveState does
+  // finishes, so that the reference to *this in ActiveState does
   // not become invalid
   itsState.reset(0);
 }
