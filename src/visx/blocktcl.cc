@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Oct 20 17:28:41 2000
+// written: Mon Oct 23 12:09:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,9 @@
 
 #include "blocklist.h"
 #include "block.h"
+
+#include "tlist.h"
+#include "trialbase.h"
 
 #include "io/iofactory.h"
 
@@ -30,6 +33,26 @@ namespace BlockTcl {
   class AddTrialIdsCmd;
   class InitCmd;
   class BlockPkg;
+
+  void addTrials(Block* block, int first_trial, int last_trial, int repeat)
+  {
+	 // Account for the convention of using -1 to indicate 'beginning'
+	 // for first_trial, and 'end' for last_trial.
+
+	 if (first_trial == -1)
+		first_trial = 0;
+
+	 if (last_trial  == -1 ||
+		  last_trial > Tlist::theTlist().capacity())
+		last_trial  = Tlist::theTlist().capacity();
+
+	 while (first_trial < last_trial)
+		{
+		  if (Tlist::theTlist().isValidId(first_trial))
+			 block->addTrial(NullableItemWithId<TrialBase>(first_trial), repeat);
+		  ++first_trial;
+		}
+  }
 }
 
 //---------------------------------------------------------------------
@@ -52,7 +75,7 @@ protected:
 	 int last_trial  = (objc() < 4) ? -1 : getIntFromArg(3);
 	 int repeat      = (objc() < 5) ?  1 : getIntFromArg(4);
 
-	 block->addTrials(first_trial, last_trial, repeat);
+	 addTrials(block, first_trial, last_trial, repeat);
   }
 };
 
@@ -80,7 +103,7 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  block->addTrial(*itr, repeat);
+		  block->addTrial(NullableItemWithId<TrialBase>(*itr), repeat);
 		}
   }
 };
@@ -102,7 +125,7 @@ protected:
 	 int repeat = getIntFromArg(2);
 	 int rand_seed = getIntFromArg(3);
 	 
-	 block->addTrials(-1, -1, repeat);
+	 addTrials(block, -1, -1, repeat);
 	 block->shuffle(rand_seed);
   }
 };
