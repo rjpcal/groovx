@@ -157,7 +157,7 @@ test "GxSepTcl-GxSeparator::removeChild" "try non-contained item" {
 
 test "GxSepTcl-GxSeparator::removeChild" "use when filled" {
 	 set gxsep [Obj::new GxSeparator]
-	 set pos [Obj::new Position]
+	 set pos [Obj::new GxTransform]
 	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $pos
 	 GxSeparator::addChild $gxsep $face
@@ -183,7 +183,7 @@ source ${::TEST_DIR}/io_test.tcl
 
 set ::GXSEP [Obj::new GxSeparator]
 set ::FACE [Obj::new Face]
-set ::POS [Obj::new Position]
+set ::POS [Obj::new GxTransform]
 
 GxSeparator::addChild $::GXSEP $::POS
 GxSeparator::addChild $::GXSEP $::FACE

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Nov 14 17:24:17 2002
+// written: Wed Nov 20 15:37:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/gxnode.h"
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
+#include "gfx/gxtransform.h"
 
 #include "gx/rect.h"
 
@@ -29,7 +30,6 @@
 #include "util/ref.h"
 
 #include "visx/gtext.h"
-#include "visx/position.h"
 #include "visx/grobj.h"
 #include "visx/tlistutils.h"
 #include "visx/trial.h"
@@ -85,7 +85,7 @@ namespace
         obj->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
         obj->setMaxDimension(0.8);
 
-        Ref<Position> obj_pos(Position::make());
+        Ref<GxTransform> obj_pos(GxTransform::make());
         double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
         double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
         obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
@@ -105,7 +105,7 @@ namespace
             label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
 
-            Ref<Position> label_pos(Position::make());
+            Ref<GxTransform> label_pos(GxTransform::make());
             double label_x = obj_x;
             double label_y = obj_y - 0.50*parcel_side;
             label_pos->translation.vec().set(label_x, label_y, 0.0);

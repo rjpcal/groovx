@@ -53,7 +53,7 @@ test "TrialTcl-Trial::description" "use with several objects" {
 
 test "TrialTcl-Trial::description" "use with nested objects" {
     set face [Obj::new Face]
-    set pos [Obj::new Position]
+    set pos [Obj::new GxTransform]
 
     set sep [Obj::new GxSeparator]
     set fixpt [Obj::new FixPt]

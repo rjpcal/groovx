@@ -35,6 +35,7 @@ set files {
     { grobj_test.tcl 1 }
     { gtext_test.tcl 1 }
     { gxsep_test.tcl 1 }
+    { gxtransform_test.tcl 1 }
     { house_test.tcl 1 }
     { jitter_test.tcl 1 }
     { kbdrh_test.tcl 1 }
@@ -45,7 +46,6 @@ set files {
     { obj_test.tcl 1 }
     { objdb_test.tcl 1 }
     { objtogl_test.tcl 1 }
-    { position_test.tcl 1 }
     { sound_test.tcl 1 }
     { subject_test.tcl 1 }
     { th_test.tcl 1 }

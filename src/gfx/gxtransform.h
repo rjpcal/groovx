@@ -1,24 +1,24 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// position.h
+// gxtransform.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Wed Mar 10 21:33:14 1999
-// written: Tue Nov 19 12:43:42 2002
+// created: Wed Nov 20 15:15:24 2002
+// written: Wed Nov 20 15:15:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef POSITION_H_DEFINED
-#define POSITION_H_DEFINED
+#ifndef GXTRANSFORM_H_DEFINED
+#define GXTRANSFORM_H_DEFINED
 
 #include "gfx/gbvec.h"
 #include "gfx/gxnode.h"
 
 #include "io/fields.h"
 
-class PositionImpl;
+class GxTransformImpl;
 
 namespace Gfx
 {
@@ -28,28 +28,28 @@ namespace Gfx
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * The Position class provides an interface for storing a particular
+ * The GxTransform class provides an interface for storing a particular
  * manipulation of the OpenGL modelview matrix. This manipulation is
  * decomposed into translation, scaling, and rotation.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Position : public GxNode, public FieldContainer
+class GxTransform : public GxNode, public FieldContainer
 {
   //////////////
   // creators //
   //////////////
 protected:
   /// Default constructor.
-  Position();
+  GxTransform();
 
 public:
   /// Default creator.
-  static Position* make();
+  static GxTransform* make();
 
   /// Virtual destructor.
-  virtual ~Position();
+  virtual ~GxTransform();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -97,16 +97,16 @@ public:
   virtual void draw(Gfx::Canvas&) const;
 
 private:
-  Position(const Position&);
-  Position& operator=(const Position&);
+  GxTransform(const GxTransform&);
+  GxTransform& operator=(const GxTransform&);
 
   void onChange();
 
   /// opaque pointer to implementation
-  PositionImpl* const rep;
+  GxTransformImpl* const rep;
 
-  friend class PositionImpl;
+  friend class GxTransformImpl;
 };
 
-const char vcid_position_h[] = "$Header$";
-#endif // !POSITION_H_DEFINED
+static const char vcid_gxtransform_h[] = "$Header$";
+#endif // !GXTRANSFORM_H_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:40 1999
-// written: Wed Sep 25 19:02:40 2002
+// written: Wed Nov 20 15:36:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef JITTER_H_DEFINED
 #define JITTER_H_DEFINED
 
-#include "visx/position.h"
+#include "gfx/gxtransform.h"
 
-/// Jitter is a Position subclass that has randomness in its position.
-class Jitter : public Position
+/// Jitter is a GxTransform subclass that has randomness in its position.
+class Jitter : public GxTransform
 {
   //////////////
   // creators //

@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// position.cc
+// gxtransform.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Wed Mar 10 21:33:15 1999
-// written: Tue Nov 19 18:49:11 2002
+// created: Wed Nov 20 15:15:50 2002
+// written: Wed Nov 20 15:16:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef POSITION_CC_DEFINED
-#define POSITION_CC_DEFINED
+#ifndef GXTRANSFORM_CC_DEFINED
+#define GXTRANSFORM_CC_DEFINED
 
-#include "visx/position.h"
+#include "gxtransform.h"
 
 #include "gfx/canvas.h"
 
@@ -36,19 +36,19 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// PositionImpl structure
+// GxTransformImpl structure
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct PositionImpl
+struct GxTransformImpl
 {
-  PositionImpl(Position* p) :
+  GxTransformImpl(GxTransform* p) :
     owner(p),
     txformDirty(true),
     txformCache()
   {}
 
-  Position* owner;
+  GxTransform* owner;
 
   mutable bool txformDirty;
 private:
@@ -72,27 +72,27 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Position member functions
+// GxTransform member functions
 //
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& Position::classFields()
+const FieldMap& GxTransform::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("translation", Field::ValueType(), &Position::translation,
+    Field("translation", Field::ValueType(), &GxTransform::translation,
           "0. 0. 0.", "-10. -10. -10.", "10. 10. 10.", "0.1 0.1 0.1",
           Field::NEW_GROUP | Field::MULTI),
-    Field("scaling", Field::ValueType(), &Position::scaling,
+    Field("scaling", Field::ValueType(), &GxTransform::scaling,
           "1. 1. 1.", "0.1 0.1 0.1", "10. 10. 10.", "0.1 0.1 0.1",
           Field::MULTI),
-    Field("rotationAxis", Field::ValueType(), &Position::rotationAxis,
+    Field("rotationAxis", Field::ValueType(), &GxTransform::rotationAxis,
           "0. 0. 1.", "-1. -1. -1.", "1. 1. 1.", "0.1 0.1 0.1", Field::MULTI),
     Field("rotationAngle",
-          &Position::itsRotationAngle, 0., 0., 360., 1.),
-    Field("mtxMode", &Position::itsMtxMode, 0, 0, 1, 1,
+          &GxTransform::itsRotationAngle, 0., 0., 360., 1.),
+    Field("mtxMode", &GxTransform::itsMtxMode, 0, 0, 1, 1,
           Field::TRANSIENT | Field::BOOLEAN),
-    Field("jackSize", &Position::itsJackSize, 0, 0, 100, 1, Field::TRANSIENT)
+    Field("jackSize", &GxTransform::itsJackSize, 0, 0, 100, 1, Field::TRANSIENT)
   };
 
   static FieldMap POS_FIELDS(FIELD_ARRAY);
@@ -100,13 +100,13 @@ const FieldMap& Position::classFields()
   return POS_FIELDS;
 }
 
-Position* Position::make()
+GxTransform* GxTransform::make()
 {
-DOTRACE("Position::make");
-  return new Position;
+DOTRACE("GxTransform::make");
+  return new GxTransform;
 }
 
-Position::Position() :
+GxTransform::GxTransform() :
   FieldContainer(&sigNodeChanged),
   translation(0.0, 0.0, 0.0),
   scaling(1.0, 1.0, 1.0),
@@ -114,32 +114,32 @@ Position::Position() :
   itsRotationAngle(0.0),
   itsMtxMode(0),
   itsJackSize(0),
-  rep(new PositionImpl(this))
+  rep(new GxTransformImpl(this))
 {
-DOTRACE("Position::Position()");
+DOTRACE("GxTransform::GxTransform");
 
   dbgEvalNL(3, (void *) rep);
 
-  setFieldMap(Position::classFields());
+  setFieldMap(GxTransform::classFields());
 
-  sigNodeChanged.connect(this, &Position::onChange);
+  sigNodeChanged.connect(this, &GxTransform::onChange);
 }
 
-Position::~Position()
+GxTransform::~GxTransform()
 {
-DOTRACE("Position::~Position");
+DOTRACE("GxTransform::~GxTransform");
   delete rep;
 }
 
-IO::VersionId Position::serialVersionId() const
+IO::VersionId GxTransform::serialVersionId() const
 {
-DOTRACE("Position::serialVersionId");
+DOTRACE("GxTransform::serialVersionId");
   return POS_SERIAL_VERSION_ID;
 }
 
-void Position::readFrom(IO::Reader* reader)
+void GxTransform::readFrom(IO::Reader* reader)
 {
-DOTRACE("Position::readFrom");
+DOTRACE("GxTransform::readFrom");
 
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid == 0)
@@ -159,17 +159,17 @@ DOTRACE("Position::readFrom");
     }
   else
     {
-      reader->ensureReadVersionId("Position", 1, "Try grsh0.8a4");
+      reader->ensureReadVersionId("GxTransform", 1, "Try grsh0.8a4");
 
       readFieldsFrom(reader, classFields());
     }
 }
 
-void Position::writeTo(IO::Writer* writer) const
+void GxTransform::writeTo(IO::Writer* writer) const
 {
-DOTRACE("Position::writeTo");
+DOTRACE("GxTransform::writeTo");
 
-  writer->ensureWriteVersionId("Position", POS_SERIAL_VERSION_ID, 1,
+  writer->ensureWriteVersionId("GxTransform", POS_SERIAL_VERSION_ID, 1,
                                "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
@@ -179,9 +179,9 @@ DOTRACE("Position::writeTo");
 // accessors //
 ///////////////
 
-const Gfx::Txform& Position::getTxform() const
+const Gfx::Txform& GxTransform::getTxform() const
 {
-DOTRACE("Position::getTxform");
+DOTRACE("GxTransform::getTxform");
 
   return rep->getTxform();
 }
@@ -190,27 +190,27 @@ DOTRACE("Position::getTxform");
 // actions //
 /////////////
 
-void Position::getBoundingCube(Gfx::Bbox& bbox) const
+void GxTransform::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("Position::getBoundingCube");
+DOTRACE("GxTransform::getBoundingCube");
 
   bbox.transform(getTxform());
 }
 
-void Position::draw(Gfx::Canvas& canvas) const
+void GxTransform::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("Position::draw");
+DOTRACE("GxTransform::draw");
 
   if (itsMtxMode == 0)
     {
-      DOTRACE("Position::draw::native-transform");
+      DOTRACE("GxTransform::draw::native-transform");
       canvas.translate(translation);
       canvas.scale(scaling);
       canvas.rotate(rotationAxis, itsRotationAngle);
     }
   else
     {
-      DOTRACE("Position::draw::custom-transform");
+      DOTRACE("GxTransform::draw::custom-transform");
       canvas.transform(rep->getTxform());
     }
 
@@ -231,10 +231,10 @@ DOTRACE("Position::draw");
     }
 }
 
-void Position::onChange()
+void GxTransform::onChange()
 {
   rep->txformDirty = true;
 }
 
-static const char vcid_position_cc[] = "$Header$";
-#endif // !POSITION_CC_DEFINED
+static const char vcid_gxtransform_cc[] = "$Header$";
+#endif // !GXTRANSFORM_CC_DEFINED

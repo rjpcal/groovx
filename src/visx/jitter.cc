@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Jul  5 14:11:34 2002
+// written: Wed Nov 20 15:35:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ DOTRACE("Jitter::make");
 }
 
 Jitter::Jitter () :
-  Position(),
+  GxTransform(),
   itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
   itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
 {
@@ -76,7 +76,8 @@ DOTRACE("Jitter::readFrom");
   reader->readValue("jitterY", itsYJitter);
   reader->readValue("jitterR", itsRJitter);
 
-  reader->readBaseClass("Position", IO::makeProxy<Position>(this));
+  // FIXME change to "GxTransform" with next version
+  reader->readBaseClass("Position", IO::makeProxy<GxTransform>(this));
 }
 
 void Jitter::writeTo(IO::Writer* writer) const
@@ -90,7 +91,8 @@ DOTRACE("Jitter::writeTo");
   writer->writeValue("jitterY", itsYJitter);
   writer->writeValue("jitterR", itsRJitter);
 
-  writer->writeBaseClass("Position", IO::makeConstProxy<Position>(this));
+  // FIXME change to "GxTransform" with next version
+  writer->writeBaseClass("Position", IO::makeConstProxy<GxTransform>(this));
 }
 
 /////////////

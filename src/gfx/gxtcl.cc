@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 14 19:04:08 2002
+// written: Wed Nov 20 15:27:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
 #include "gfx/gxsphere.h"
+#include "gfx/gxtransform.h"
 #include "gfx/pscanvas.h"
 #include "gfx/recttcl.h"
 
@@ -189,6 +190,12 @@ DOTRACE("Gx_Init");
   Tcl::defCreator<GxEmptyNode>(pkg12);
 
   status = pkg12->combineStatus(status);
+
+  Tcl::Pkg* pkg13 = new Tcl::Pkg(interp, "GxTransform", "$Revision$");
+  Tcl::defCreator<GxTransform>(pkg13, "Position");
+  Tcl::defFieldContainer<GxTransform>(pkg13);
+
+  status = pkg13->combineStatus(status);
 
   return status;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Nov 14 17:21:12 2002
+// written: Wed Nov 20 15:35:21 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -61,7 +61,6 @@ extern "C"
   Tcl_PackageInitProc Morphyface_Init;
   Tcl_PackageInitProc Obj_Init;
   Tcl_PackageInitProc Objtogl_Init;
-  Tcl_PackageInitProc Position_Init;
   Tcl_PackageInitProc Rh_Init;
   Tcl_PackageInitProc Sound_Init;
   Tcl_PackageInitProc Subject_Init;
@@ -109,7 +108,6 @@ PackageInfo IMMEDIATE_PKGS[] =
   { "Morphyface",Morphyface_Init},
   { "Obj",      Obj_Init       },
   { "Objtogl",  Objtogl_Init   },
-  { "Position", Position_Init  },
   { "Rh",       Rh_Init        },
   { "Sound",    Sound_Init     },
   { "Subject",  Subject_Init   },

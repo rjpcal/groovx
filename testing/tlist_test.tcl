@@ -8,7 +8,7 @@
 ##############################################################################
 
 package require Face
-package require Position
+package require Gxtransform
 package require Tlist
 package require Toglet
 
@@ -23,35 +23,35 @@ test "TlistTcl-Tlist::loadObjidFile" "too many args" {
 } {wrong \# args: should be}
 test "TlistTcl-Tlist::loadObjidFile" "normal read" {
 	 set objids [newarr Face 11]
-	 set posids [newarr Position 4]
+	 set posids [newarr GxTransform 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids -1]
 	 ObjDb::clear
 	 llength $trials
 } {^3$}
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines" {
 	 set objids [newarr Face 11]
-	 set posids [newarr Position 4]
+	 set posids [newarr GxTransform 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids 2]
 	 ObjDb::clear
 	 llength $trials
 } {^2$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
 	 set objids [newarr Face 11]
-	 set posids [newarr Position 4]
+	 set posids [newarr GxTransform 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/empty_file $objids $posids -1]
 	 ObjDb::clear
 	 llength $trials
 } {^0$}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 	 set o [newarr Face 11]
-	 set p [newarr Position 4]
+	 set p [newarr GxTransform 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/junk_text_file $o $p -1]
 	 ObjDb::clear
 	 llength $trials
 } {Tlist::loadObjidFile:}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
 	 set o [newarr Face 11]
-	 set p [newarr Position 4]
+	 set p [newarr GxTransform 4]
 	 set before [Trial::countAll]
 	 catch {Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1} trials
 	 set result "[llength $trials] [expr [Trial::countAll]-$before]"
@@ -71,12 +71,12 @@ test "TlistTcl-Tlist::dealSingles" "normal use with several GrObj's" {
 	 set f1 [Obj::new Face]
 	 set f2 [Obj::new Face]
 	 set f3 [Obj::new Face]
-	 set p [Obj::new Position]
+	 set p [Obj::new GxTransform]
 	 set trials [Tlist::dealSingles "$f1 $f2 $f3" $p]
 	 llength $trials
 } {^3$}
 test "TlistTcl-Tlist::dealSingles" "normal use with empty ObjList" {
-	 set p [Obj::new Position]
+	 set p [Obj::new GxTransform]
 	 set trials [Tlist::dealSingles "" $p]
 	 llength $trials
 } {^0$}
@@ -91,14 +91,14 @@ test "TlistTcl-Tlist::dealPairs" "too many args" {
 test "TlistTcl-Tlist::dealPairs" "normal use on two GrObj's" {
 	 set o1 [Obj::new Face]
 	 set o2 [Obj::new Face]
-	 set p1 [Obj::new Position]
-	 set p2 [Obj::new Position]
+	 set p1 [Obj::new GxTransform]
+	 set p2 [Obj::new GxTransform]
 	 set trials [Tlist::dealPairs "$o1 $o2" "$o1 $o2" $p1 $p2]
 	 llength $trials
 } {^4$}
 test "TlistTcl-Tlist::dealPairs" "normal use with empty objids" {
-	 set p1 [Obj::new Position]
-	 set p2 [Obj::new Position]
+	 set p1 [Obj::new GxTransform]
+	 set p2 [Obj::new GxTransform]
 	 set trials [Tlist::dealPairs "" "" $p1 $p2]
 	 llength $trials
 } {^0$}
@@ -112,22 +112,22 @@ test "TlistTcl-Tlist::dealTriads" "too many args" {
 } {wrong \# args: should be "Tlist::dealTriads objids posid1 posid2 posid3"}
 test "TlistTcl-Tlist::dealTriads" "normal use on three GrObj's" {
 	 set objs "[Obj::new Face] [Obj::new Face] [Obj::new Face]"
-	 set p1 [Obj::new Position]
-	 set p2 [Obj::new Position]
-	 set p3 [Obj::new Position]
+	 set p1 [Obj::new GxTransform]
+	 set p2 [Obj::new GxTransform]
+	 set p3 [Obj::new GxTransform]
 	 set trials [Tlist::dealTriads $objs $p1 $p2 $p3]
 	 llength $trials
 } {^18$}
 test "TlistTcl-Tlist::dealTriads" "normal use on two GrObj's" {
 	 set objs "[Obj::new Face] [Obj::new Face]"
-	 set p1 [Obj::new Position]
-	 set p2 [Obj::new Position]
-	 set p3 [Obj::new Position]
+	 set p1 [Obj::new GxTransform]
+	 set p2 [Obj::new GxTransform]
+	 set p3 [Obj::new GxTransform]
 	 set trials [Tlist::dealTriads $objs $p1 $p2 $p3]
 	 llength $trials
 } {^0$}
 test "TlistTcl-Tlist::dealTriads" "normal use on empty ObjList" {
-	 set p1 [Obj::new Position]
+	 set p1 [Obj::new GxTransform]
 	 set trials [Tlist::dealTriads "" $p1 $p1 $p1]
 	 llength $trials
 } {^0$}

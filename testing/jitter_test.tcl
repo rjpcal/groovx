@@ -42,7 +42,7 @@ test "JitterTcl-Jitter::setJitter" "error from non-numeric input" {
     Jitter::setJitter $::jit junk 1.0 1.0
 } {expected floating-point number but got "junk"}
 test "JitterTcl-Jitter::setJitter" "error from wrong type" {
-    set p [Obj::new Position]
+    set p [Obj::new GxTransform]
 	 Jitter::setJitter $p 1 1 1
 } {^Jitter::setJitter: an error of type (std::)?bad_cast occurred:.*$}
 
