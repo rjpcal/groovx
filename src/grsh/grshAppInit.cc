@@ -244,12 +244,14 @@ DOTRACE("main");
           int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
           if (result != TCL_OK)
             {
-              std::cerr << "initialization failed: "
-                        << IMMEDIATE_PKGS[i].pkgName << '\n';
+              std::cerr << "fatal initialization error (package '"
+                        << IMMEDIATE_PKGS[i].pkgName << "'):\n";
               fstring msg = interp.getResult<const char*>();
               if ( !msg.is_empty() )
                 std::cerr << '\t' << msg << '\n';
               interp.resetResult();
+
+              return 2;
             }
         }
 
@@ -298,8 +300,8 @@ DOTRACE("main");
 
           if (ver == 0)
             {
-              std::cerr << "'package require' failed: "
-                        << DELAYED_PKGS[i].pkgName << '\n';
+              std::cerr << "initialization error (package '"
+                        << DELAYED_PKGS[i].pkgName << "'):\n";
               fstring msg = interp.getResult<const char*>();
               if ( !msg.is_empty() )
                 std::cerr << '\t' << msg << '\n';
