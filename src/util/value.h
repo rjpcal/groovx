@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Fri Nov 10 17:03:47 2000
+// written: Tue Nov 14 12:49:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,6 +64,9 @@ public:
 
 class Value {
 public:
+
+  /// Default constructor.
+  Value();
 
   /// Virtual destructor ensures proper destruction of base classes.
   virtual ~Value();

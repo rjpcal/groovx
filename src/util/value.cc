@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Fri Nov 10 18:01:50 2000
+// written: Tue Nov 14 12:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "util/value.h"
 
 #include <iostream.h>
+
+#include "util/trace.h"
 
 namespace VALUE_CC_LOCAL {
   void raiseValueError() { throw ValueError(); }
@@ -33,7 +35,13 @@ ValueError::ValueError(const char* msg) :
 
 ValueError::~ValueError() {}
 
-Value::~Value() {}
+Value::Value() {
+DOTRACE("Value::Value");
+}
+
+Value::~Value() {
+DOTRACE("Value::~Value");
+}
 
 
 void Value::printTo(STD_IO::ostream&) const { raiseValueError(); }
