@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed May 31 18:52:20 2000
+// written: Mon Jul 10 14:38:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +105,17 @@ public:
       IO::Writer provides its own formatting scheme, so that subclasses of
       \c IO don't need to implement any formatting. */
   virtual void writeTo(IO::Writer* writer) const = 0;
-  
+
+  /** This function returns the number of attributes that are written
+		in the object's \c writeTo() function. The default
+		implementation simply calls writeTo() with a dummy Writer and
+		counts how many attributes are written. However, this is
+		somewhat inefficient since it defers the counting to runtime
+		when the number may in fact be known at compile time. Thus
+		subclasses may which to override this function to return a
+		compile-time constant. **/
+  virtual unsigned int ioAttribCount() const;
+
   /** Returns a unique id for this object. This function should NEVER
       be overridden by public clients; it will only be overridden by
       other classes internal to the io system, such as \c IO::IoProxy for
