@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Thu Mar 30 12:15:24 2000
+// written: Wed May 17 13:47:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,9 @@ public:
 	 { return itsReferand->C::ioTypename(); }
 
 private:
+  IoProxy(const IoProxy&);
+  IoProxy& operator=(const IoProxy&);
+
   C* itsReferand;
 };
 
