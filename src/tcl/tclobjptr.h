@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Mon Jul 16 13:19:13 2001
+// written: Mon Jul 16 17:14:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,8 @@ public:
 
   /// Conversion operator to Tcl_Obj*.
   operator Tcl_ObjPtr() { return itsObj; }
+
+  void append(Tcl::ObjPtr other);
 
   bool isShared() const;
   bool isUnique() const { return !isShared(); }
