@@ -187,7 +187,10 @@ int Util::gzstreambuf::flushoutput()
   return num;
 }
 
-namespace
+// If we use an anonymous namespace here, intel's icc 8.0 beta compiler
+// complains about "internal error: diag_message: missing symbol
+// substitutions"
+namespace Util
 {
   class gzstream : public std::iostream
   {
@@ -212,7 +215,7 @@ shared_ptr<std::ostream> Util::ogzopen(const fstring& filename,
   if (filename.ends_with(gz_ext))
     {
       return shared_ptr<std::ostream>
-        (new gzstream(filename.c_str(), std::ios::out|flags, true));
+        (new Util::gzstream(filename.c_str(), std::ios::out|flags, true));
     }
   else
     {
@@ -221,7 +224,7 @@ shared_ptr<std::ostream> Util::ogzopen(const fstring& filename,
     }
 }
 
-shared_ptr<std::ostream> Util::ogzopen(const char*filename,
+shared_ptr<std::ostream> Util::ogzopen(const char* filename,
                                        std::ios::openmode flags)
 {
   return ogzopen(fstring(filename), flags);
@@ -231,7 +234,7 @@ shared_ptr<std::istream> Util::igzopen(const char* filename,
                                        std::ios::openmode flags)
 {
   return shared_ptr<std::iostream>
-    (new gzstream(filename, std::ios::in|flags, true));
+    (new Util::gzstream(filename, std::ios::in|flags, true));
 }
 
 shared_ptr<std::istream> Util::igzopen(const fstring& filename,
