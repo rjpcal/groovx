@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Wed Mar 29 15:55:46 2000
+// written: Wed May 17 13:44:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public:
   int close()
 	 {
 		if ( !itsClosed ) {
-		  itsStream.detach();
+		  itsStream.close();
 		  itsExitStatus = pclose(itsFile);
 		  itsClosed = true;
 		}
