@@ -40,7 +40,6 @@
 
 #include "tcl/tcllistobj.h"
 
-#include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/strings.h"
 
