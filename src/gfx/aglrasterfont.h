@@ -88,7 +88,7 @@ public:
 private:
   rutz::fstring itsFontName;
   FontInfo itsFontInfo;
-  AppleFontSpec itsFontSpec;
+  const AppleFontSpec itsFontSpec;
   unsigned int itsListBase;
   unsigned int itsListCount;
 };
@@ -143,7 +143,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (err != noErr)
     {
-      throw rutz::error("aglUseFont failed", SRC_POS);
+      throw rutz::error("FetchFontInfo failed", SRC_POS);
     }
 
 #if 0
@@ -327,11 +327,27 @@ DOTRACE("AglRasterFont::bboxOf");
 
   int lines = 0;
 
-  Point numer, denom;
-  numer.h = numer.v = denom.h = denom.v = 1;
-
-  // make a copy so that we can pass a non-const poitner to StdTxMeas
+  // make a copy so that we can pass a non-const pointer to StdTxMeas
   FontInfo finfo = itsFontInfo;
+
+  CGrafPtr saveWorld;
+  GDHandle saveDevice;
+
+  static GWorldPtr gWorld = NULL;
+
+  if (gWorld == 0)
+    {
+      Rect rect = {0, 0, 1, 1};
+      SetFractEnable(0);
+
+      if (NewGWorld(&gWorld, 0, &rect, NULL, NULL, 0) != noErr)
+        {
+          throw rutz::error("NewGWorld failed", SRC_POS);
+        }
+    }
+
+  GetGWorld(&saveWorld, &saveDevice);
+  SetGWorld(gWorld, NULL);
 
   TextFont(itsFontSpec.fontID);
   TextFace(itsFontSpec.face);
@@ -340,17 +356,27 @@ DOTRACE("AglRasterFont::bboxOf");
   while (1)
     {
       int len = linelength(text);
-      int wid = StdTxMeas(len, text, &numer, &denom, &finfo);
 #if 0
-      wid = TextWidth(text, 0, len);
-      wid = 0;
+      Point numer, denom;
+      numer.h = numer.v = denom.h = denom.v = 1;
+      int wid = StdTxMeas(len, text, &numer, &denom, &finfo);
+
+      dbg_eval(2, numer.h); dbg_eval_nl(2, numer.v);
+      dbg_eval(2, denom.h); dbg_eval_nl(2, denom.v);
+#else
+      int wid = TextWidth(text, 0, len);
+#endif
+
+      int wid2 = 0;
       for (int i = 0; i < len; ++i)
         {
           int widthOfChar = CharWidth(text[i]);
-          wid += widthOfChar;
+          wid2 += widthOfChar;
           dbg_eval(4, text[i]); dbg_eval_nl(4, widthOfChar);
         }
-#endif
+
+      dbg_eval(2, wid); dbg_eval_nl(2, wid2);
+
       text += len;
       if (wid > maxwid)
         maxwid = wid;
@@ -364,21 +390,19 @@ DOTRACE("AglRasterFont::bboxOf");
       ++text;
     }
 
-  dbg_eval(2, numer.h); dbg_eval_nl(2, numer.v);
-  dbg_eval(2, denom.h); dbg_eval_nl(2, denom.v);
-
   dbg_eval(2, lines);
   dbg_eval(2, itsFontInfo.widMax);
   dbg_eval(2, asc);
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  const int l = orig.x();
-  const int r = orig.x() + maxwid;
-  const int b = orig.y() - itsFontInfo.descent + (lines - 1) * (rasterHeight());
-  const int t = orig.y() + itsFontInfo.ascent;
+  const int l = 0;
+  const int r = maxwid;
+  const int b = -itsFontInfo.descent + (lines - 1) * (rasterHeight());
+  const int t = itsFontInfo.ascent;
 
   bbox.drawScreenRect(geom::vec3d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
+  SetGWorld(saveWorld, saveDevice);
 }
 
 void AglRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const
