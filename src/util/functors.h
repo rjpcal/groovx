@@ -519,7 +519,8 @@ namespace rutz
   inline typename functor_of<fptr>::type
   build_functor(fptr f)
   {
-    return f;
+    typedef typename functor_of<fptr>::type functor_t;
+    return functor_t(f);
   }
 
   //  #######################################################
