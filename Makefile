@@ -38,14 +38,6 @@ include Makedefs
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
 ###
 
-#-------------------------------------------------------------------------
-#
-# Various default values
-#
-#-------------------------------------------------------------------------
-
-TCLTK_VERSION := 8.4
-
 MAKEFLAGS += --warn-undefined-variables
 
 #-------------------------------------------------------------------------
@@ -93,7 +85,6 @@ endif
 
 LIBS += \
 	-lGLU -lGL \
-	-ltcl$(TCLTK_VERSION) -ltk$(TCLTK_VERSION) \
 	-lXmu -lX11 -lXext \
 	-lz \
 	-lpng \

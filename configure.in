@@ -237,6 +237,13 @@ if test $need_rpath = yes; then
 fi
 LDFLAGS="$LDFLAGS -L${with_tcltk}/lib"
 
+TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
+TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
+
+AC_MSG_NOTICE([found tcl ($TCL_VERSION) and tk ($TK_VERSION)])
+
+LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
+
 ###
 
 AC_MSG_CHECKING([whether to to enable matlab support])
