@@ -514,8 +514,24 @@ namespace
       phantom_sys_deps(true),
       verbosity(NORMAL),
       output_mode(0),
-      start_time(time((time_t*) 0))
+      start_time(time((time_t*) 0)),
+      nest_level(0)
     {}
+
+    ostream& info()
+    {
+      if (this->verbosity >= NOISY)
+        for (int i = 0; i < this->nest_level; ++i) cerr << '\t';
+      return cerr;
+    }
+
+    ostream& warning()
+    {
+      if (this->verbosity >= NOISY)
+        for (int i = 0; i < this->nest_level; ++i) cerr << '\t';
+      cerr << "WARNING: ";
+      return cerr;
+    }
 
     vector<string>  user_ipath;
     vector<string>  sys_ipath;
@@ -537,6 +553,7 @@ namespace
     const time_t    start_time;  // so we can check to see if any
                                  // source files have timestamps in
                                  // the future
+    int             nest_level;
   };
 
   dep_config cfg;
@@ -563,7 +580,7 @@ namespace
   {
     bool operator()(const char* p1, const char* p2)
     {
-      return (strcmp(p1, p2) == -1);
+      return (strcmp(p1, p2) < 0);
     }
   };
 
@@ -578,21 +595,6 @@ namespace
     file_info(const string& t);
 
     bool should_prune() const;
-
-    static ostream& info()
-    {
-      if (cfg.verbosity >= NOISY)
-        for (int i = 0; i < s_nest_level; ++i) cerr << '\t';
-      return cerr;
-    }
-
-    static ostream& warning()
-    {
-      if (cfg.verbosity >= NOISY)
-        for (int i = 0; i < s_nest_level; ++i) cerr << '\t';
-      cerr << "WARNING: ";
-      return cerr;
-    }
 
     file_info(const file_info&); // not implemented
     file_info& operator=(const file_info&); // not implemented
@@ -640,8 +642,6 @@ namespace
     }
 
   private:
-    static int              s_nest_level;
-
     const string            m_fname;
     const string::size_type m_dotpos; // position of the final "."
     const string            m_rootname; // filename without trailing .extension
@@ -679,7 +679,6 @@ namespace
   //----------------------------------------------------------
 
   file_info::info_map_t file_info::s_info_map;
-  int                   file_info::s_nest_level = 0;
 
   file_info::file_info(const string& t)
     :
@@ -733,6 +732,9 @@ namespace
   {
     string fname;
     make_normpath(fname_orig, fname);
+
+    if (cfg.verbosity >= NOISY)
+      cfg.info() << "file_info normpath is " << fname << '\n';
 
     info_map_t::iterator p = s_info_map.find(fname.c_str());
     if (p != s_info_map.end())
@@ -877,13 +879,22 @@ namespace
     if (this->m_direct_cdeps_done)
       return this->m_direct_cdeps;
 
+    if (cfg.verbosity >= NOISY)
+      cfg.info() << "get_direct_cdeps for " << this->m_fname << '\n';
+
+    ++cfg.nest_level;
+
     mapped_file f(this->m_fname.c_str());
+
+    if (cfg.verbosity >= NOISY)
+      cfg.info() << "mmap @ " << f.memory()
+                 << ", length " << f.length() << '\n';
 
     if (f.mtime() > cfg.start_time && (cfg.verbosity >= NORMAL))
       {
-        warning() << "for file " << this->m_fname << ":\n"
-                  << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
-                  << "\tvs. current time  (" << string_time(cfg.start_time) << ")\n";
+        cfg.warning() << "for file " << this->m_fname << ":\n"
+                      << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
+                      << "\tvs. current time  (" << string_time(cfg.start_time) << ")\n";
       }
 
     const char* fptr = static_cast<const char*>(f.memory());
@@ -999,17 +1010,17 @@ namespace
 
         if (cfg.verbosity >= NORMAL)
           {
-            warning() << "in " << this->m_fname
-                      << ": couldn\'t resolve #include \""
-                      << include_name << "\"\n";
+            cfg.warning() << "in " << this->m_fname
+                          << ": couldn\'t resolve #include \""
+                          << include_name << "\"\n";
 
-            info() << "\twith search path: ";
+            cfg.info() << "\twith search path: ";
             print_stringvec(cerr, cfg.user_ipath);
             cerr << '\n';
 
             if (cfg.check_sys_deps)
               {
-                info() << "\tand system search path: ";
+                cfg.info() << "\tand system search path: ";
                 print_stringvec(cerr, cfg.sys_ipath);
                 cerr << '\n';
               }
@@ -1017,6 +1028,8 @@ namespace
       }
 
     this->m_direct_cdeps_done = true;
+
+    --cfg.nest_level;
 
     return this->m_direct_cdeps;
   }
@@ -1090,15 +1103,15 @@ namespace
         if ((*i)->m_cdep_parse_state == IN_PROGRESS)
           {
             if (cfg.verbosity >= NORMAL)
-              warning() << "in " << this->m_fname
-                        << ": recursive #include cycle with "
-                        << (*i)->m_fname << "\n";
+              cfg.warning() << "in " << this->m_fname
+                            << ": recursive #include cycle with "
+                            << (*i)->m_fname << "\n";
             continue;
           }
 
-        ++file_info::s_nest_level;
+        ++cfg.nest_level;
         const dep_list_t& indirect = (*i)->get_nested_cdeps();
-        --file_info::s_nest_level;
+        --cfg.nest_level;
         dep_set.insert(indirect.begin(), indirect.end());
       }
 
@@ -1126,9 +1139,9 @@ namespace
 
     set<file_info*> deps_set;
 
-    ++file_info::s_nest_level;
+    ++cfg.nest_level;
     const dep_list_t& cdeps = this->get_nested_cdeps();
-    --file_info::s_nest_level;
+    --cfg.nest_level;
 
     for (dep_list_t::const_iterator
            i = cdeps.begin(),
@@ -1169,7 +1182,7 @@ namespace
 
     if (cfg.verbosity >= NOISY)
       {
-        info() << "start ldeps for " << this->m_fname << '\n';
+        cfg.info() << "start ldeps for " << this->m_fname << '\n';
       }
 
     assert(this->m_nested_ldeps.empty());
@@ -1199,9 +1212,9 @@ namespace
             if (*itr == this)
               {
                 if (cfg.verbosity >= VERBOSE)
-                  warning() << " in " << this->m_fname
-                            << ": recursive link-dep cycle with "
-                            << f->m_fname << "\n";
+                  cfg.warning() << " in " << this->m_fname
+                                << ": recursive link-dep cycle with "
+                                << f->m_fname << "\n";
                 continue;
               }
 
@@ -1215,7 +1228,7 @@ namespace
 
     if (cfg.verbosity >= NOISY)
       {
-        info() << "...end ldeps for " << this->m_fname << '\n';
+        cfg.info() << "...end ldeps for " << this->m_fname << '\n';
       }
 
     this->m_nested_ldeps_done = true;
@@ -1244,6 +1257,7 @@ private:
 
   static const int MAKEFILE_CDEPS      = (1 << 0);
   static const int MAKEFILE_LDEPS      = (1 << 1);
+  static const int DIRECT_CDEPS        = (1 << 2);
 
   // Member variables
 
@@ -1264,6 +1278,7 @@ public:
 
   bool should_prune_directory(const char* fname) const;
 
+  void print_direct_cdeps(file_info* finfo);
   void print_makefile_dep(file_info* finfo);
   void print_link_deps(file_info* finfo);
 
@@ -1430,6 +1445,7 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--checksys") == 0)
     {
       cfg.check_sys_deps = true;
+      cfg.phantom_sys_deps = false;
       return false;
     }
   else if (strcmp(option, "--objdir") == 0)
@@ -1446,6 +1462,11 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
     {
       load_options_file(optarg);
       return true;
+    }
+  else if (strcmp(option, "--output-direct-cdeps") == 0)
+    {
+      cfg.output_mode |= DIRECT_CDEPS;
+      return false;
     }
   else if (strcmp(option, "--output-compile-deps") == 0)
     {
@@ -1582,10 +1603,42 @@ bool cppdeps::should_prune_directory(const char* fname) const
   return false;
 }
 
+void cppdeps::print_direct_cdeps(file_info* finfo)
+{
+  if (!finfo->is_cc_or_h_fname())
+    {
+      if (cfg.verbosity >= NOISY)
+        cfg.info() << finfo->name() << " is not a c++ file\n";
+      return;
+    }
+
+  printf("%s -->", finfo->name().c_str());
+
+  const dep_list_t& cdeps = finfo->get_direct_cdeps();
+
+  for (dep_list_t::const_iterator
+         itr = cdeps.begin(),
+         stop = cdeps.end();
+       itr != stop;
+       ++itr)
+    {
+      if ((*itr)->is_phantom())
+        continue;
+
+      printf(" %s", (*itr)->name().c_str());
+    }
+
+  printf("\n");
+}
+
 void cppdeps::print_makefile_dep(file_info* finfo)
 {
   if (!finfo->is_cc_file())
-    return;
+    {
+      if (cfg.verbosity >= NOISY)
+        cfg.info() << finfo->name() << " is not a c++ file\n";
+      return;
+    }
 
   const string& stem = finfo->stripped_name();
 
@@ -1732,6 +1785,11 @@ void cppdeps::traverse_sources()
 
       if (is_directory(current_file.c_str()))
         {
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "considering directory:" << current_file << '\n';
+
+          ++cfg.nest_level;
+
           errno = 0;
           DIR* d = opendir(current_file.c_str());
           if (d == 0)
@@ -1745,16 +1803,42 @@ void cppdeps::traverse_sources()
           for (dirent* e = readdir(d); e != 0; e = readdir(d))
             {
               if (should_prune_directory(e->d_name))
-                continue;
+                {
+                  if (cfg.verbosity >= NOISY)
+                    cfg.info() << "pruning file:" << e->d_name << '\n';
+
+                  continue;
+                }
+
+              if (cfg.verbosity >= NOISY)
+                cfg.info() << "adding file:" << e->d_name << '\n';
 
               files.push_back(join_filename(current_file, e->d_name));
             }
+
+          --cfg.nest_level;
+
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "finished directory:" << current_file << '\n';
 
           closedir(d);
         }
       else
         {
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "considering file:" << current_file << '\n';
+
+          ++cfg.nest_level;
+
           file_info* finfo = file_info::get(current_file);
+
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "got finfo with fname " << finfo->name() << '\n';
+
+          if (cfg.output_mode & DIRECT_CDEPS)
+            {
+              print_direct_cdeps(finfo);
+            }
 
           if (cfg.output_mode & MAKEFILE_CDEPS)
             {
@@ -1765,6 +1849,11 @@ void cppdeps::traverse_sources()
             {
               print_link_deps(finfo);
             }
+
+          --cfg.nest_level;
+
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "finished file:" << current_file << '\n';
         }
     }
 
