@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Tue May 13 12:05:22 2003
+// written: Tue May 13 13:02:28 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -260,14 +260,13 @@ namespace
   }
 }
 
-Snake::Snake(int l, double sp, Util::Urand& urand) :
+Snake::Snake(int l, double spacing, Util::Urand& urand) :
   itsLength(l),
-  itsSpacing(sp),
   itsElem(itsLength)
 {
 DOTRACE("Snake::Snake");
 
-  const double radius = (itsLength * itsSpacing) / (2*M_PI);
+  const double radius = (itsLength * spacing) / (2*M_PI);
 
   const double alpha_start = 2 * M_PI * urand.fdraw();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:02 2003
-// written: Tue May 13 12:01:16 2003
+// written: Tue May 13 13:02:46 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -62,11 +62,9 @@ struct Element
 class Snake
 {
 public:
-  Snake(int l, double sp, Util::Urand& urand);
+  Snake(int l, double spacing, Util::Urand& urand);
   ~Snake();
 
-  int getLength() const { return itsLength; }
-  double getSpacing() const { return itsSpacing; }
   Element getElement(int n) const;
 
 private:

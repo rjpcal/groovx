@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 12:57:52 2003
+// written: Tue May 13 13:03:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -193,7 +193,7 @@ DOTRACE("GaborArray::update");
   Snake snake(itsForegNumber, itsForegSpacing, snakerand);
 
   // pull in elements from the snake
-  for (int n = 0; n < snake.getLength(); ++n)
+  for (int n = 0; n < itsForegNumber; ++n)
     {
       if (!tryPush(snake.getElement(n)))
         {
@@ -213,10 +213,10 @@ DOTRACE("GaborArray::update");
       fillElements();
     }
 
-  const int insideNumber = insideElements(snake);
+  const int insideNumber = insideElements();
 
   printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
-          snake.getLength(), insideNumber, itsTotalNumber);
+         itsForegNumber, insideNumber, itsTotalNumber);
 
   fixed_block<double> win(itsSize.x()*itsSize.y());
 
@@ -307,11 +307,11 @@ bool GaborArray::tooClose(const Vec2d& v, int except) const
   return false;
 }
 
-int GaborArray::insideElements(const Snake& snake) const
+int GaborArray::insideElements() const
 {
 DOTRACE("GaborArray::insideElements");
 
-  int count = snake.getLength();
+  int count = itsForegNumber;
 
   for (int n = 0; n < itsTotalNumber; ++n)
     {
@@ -320,9 +320,9 @@ DOTRACE("GaborArray::insideElements");
 
       bool inside = true;
 
-      for (int i = 0; i < snake.getLength(); ++i)
+      for (int i = 0; i < itsForegNumber; ++i)
         {
-          const int j = (i+1) % snake.getLength();
+          const int j = (i+1) % itsForegNumber;
 
           const double Yij = itsArray[i].pos.x() - itsArray[j].pos.x();
           const double Xij = itsArray[j].pos.y() - itsArray[i].pos.y();
