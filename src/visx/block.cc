@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Jan 25 11:49:45 2000
+// written: Wed Feb 16 07:36:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,6 +65,8 @@ Block::Block() :
 {
 DOTRACE("Block::Block");
 }
+
+Block::~Block() {}
 
 void Block::addTrial(int trialid, int repeat) {
 DOTRACE("Block::addTrial");
