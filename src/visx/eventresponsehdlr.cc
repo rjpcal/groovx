@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon May 22 12:11:13 2000
+// written: Mon May 22 17:30:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -200,7 +200,7 @@ private:
 		  .append(itsBindingSubstitution).append(" }");
 	 }
 
-  void clearEventQueue() const throw()
+  void clearEventQueue() const
 	 {
 		while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
 		  { /* Empty loop body */ }
