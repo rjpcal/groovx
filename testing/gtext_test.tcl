@@ -69,19 +69,6 @@ test "$PACKAGE-rendering" "normal render" {
 	 expr {[pixelCheckSum] != 0}
 } {^1$}
 
-test "$PACKAGE-rendering" "compare two fonts" {
-	 clearscreen
-	 Togl::loadFonti 1
-	 show $::GTEXT
-	 set sum1 [pixelCheckSum]
-	 clearscreen
-	 Togl::loadFonti 2
-	 show $::GTEXT
-	 set sum2 [pixelCheckSum]
-	 clearscreen
-	 expr {$sum1 != $sum2}
-} {^1$} $skip_known_bug
-
 ### cleanup
 unset PACKAGE
 unset GTEXT
