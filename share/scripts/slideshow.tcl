@@ -144,6 +144,7 @@ itcl::class Playlist {
     private variable itsMode
     private variable itsDelCount
     private variable itsShowCount
+    private variable itsMissCount
     private variable itsLastSpin
 
     constructor { argv widget } {
@@ -225,6 +226,7 @@ itcl::class Playlist {
 	set itsMode spinning
 	set itsDelCount 0
 	set itsShowCount 0
+	set itsMissCount 0
 	set itsLastSpin 1
     }
 
@@ -254,10 +256,11 @@ itcl::class Playlist {
 	set itsMode "spinning"
     }
 
-    public method jump { {adjust 0} } {
-	set itsIdx [expr [$itsRandSeq inext 0 \
-			      [expr [llength $itsList] - $adjust]] \
-			+ $adjust]
+    public method jump { {oldlength -1 } {adjust 0} } {
+	if { $oldlength == -1 } {
+	    set oldlength [llength $itsList]
+	}
+	set itsIdx [expr [$itsRandSeq inext 0 $oldlength] + $adjust]
 	set itsGuessNext [$itsRandSeq ipeek 0 [llength $itsList]]
 	set itsMode "jumping"
     }
@@ -278,15 +281,16 @@ itcl::class Playlist {
 	if { $do_purge } {
 	    lappend itsPurgeList $target
 	}
+	set oldlength [llength $itsList]
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
 	switch -- $itsMode {
 	    jumping {
 		if { $itsIdx < $itsGuessNext } {
 		    slideshow::msg "jump offset" -1
-		    $this jump -1
+		    $this jump $oldlength -1
 		} else {
 		    slideshow::msg "jump offset" 0
-		    $this jump 0
+		    $this jump $oldlength 0
 		}
 	    }
 	    spinning {
@@ -338,6 +342,7 @@ itcl::class Playlist {
 	save
 	slideshow::msg "files deleted" $itsDelCount
 	slideshow::msg "files shown" $itsShowCount
+	slideshow::msg "cache misses" $itsMissCount
 	slideshow::msg "percent kept" [format "%.2f%%" \
 				[expr 100 * (1.0 - double($itsDelCount)/$itsShowCount)]]
     }
@@ -385,6 +390,7 @@ itcl::class Playlist {
 	    slideshow::msg "cache hit\[$itsIdx\]" $f
 	} else {
 	    slideshow::msg "cache miss\[$itsIdx\]" $f
+	    incr itsMissCount
 	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
 	}
 
