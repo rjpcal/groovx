@@ -36,9 +36,9 @@ ifeq ($(ARCH),hp9000s700)
 	SHLIB_EXT := sl
 	STATLIB_EXT := a
 
-ifndef MODE
-	MODE := debug
-endif
+	ifndef MODE
+		MODE := debug
+	endif
 
 	ETAGS := echo "no etags"
 endif
@@ -49,9 +49,9 @@ ifeq ($(ARCH),irix6)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-ifndef MODE
-	MODE := prod
-endif
+	ifndef MODE
+		MODE := prod
+	endif
 endif
 
 
@@ -80,7 +80,7 @@ LOCAL_LIB_DIR := $(LOCAL_ARCH)/lib
 
 #-------------------------------------------------------------------------
 #
-# C++ Compiler options for compiling and linking
+# Options for compiling and linking
 #
 #-------------------------------------------------------------------------
 
@@ -104,22 +104,22 @@ ifeq ($(COMPILER),aCC)
 		-e '/Warning.*usr.include./,/\^\^*/d'
 # 361 == wrongly complains about falling off end of non-void function
 # 392 == 'Conversion unnecessary; expression was already of type...'
-	CC_SWITCHES := +w +W361,392
+	CC_SWITCHES += +w +W361,392
 	CPP_DEFINES += -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
 		-Dstd= -DSTD_IO= -DHAVE_ZSTREAM
 	ARCH_MAKEDEP_INCLUDES := -I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
 		-I/opt/graphics/OpenGL/include -I./scripts/spoofdep
 	STL_INCLUDE_DIR := 
 
-ifeq ($(MODE),debug)
-	CC_SWITCHES += -g1 +Z +p
-	LD_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
-endif
+	ifeq ($(MODE),debug)
+		CC_SWITCHES += -g1 +Z +p
+		LD_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
+	endif
 
-ifeq ($(MODE),prod)
-	CC_SWITCHES += +O2 +Z +p
-	LD_OPTIONS := -Wl,+vallcompatwarnings
-endif
+	ifeq ($(MODE),prod)
+		CC_SWITCHES += +O2 +Z +p
+		LD_OPTIONS := -Wl,+vallcompatwarnings
+	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
@@ -131,7 +131,7 @@ ifeq ($(COMPILER),MIPSpro)
 	CC := time /opt/MIPSpro/bin/CC
 	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
 		-e '/static const char vcid_/,/^ *\^$$/d'
-	CC_SWITCHES := -n32 -ptused -no_prelink \
+	CC_SWITCHES += -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
 	CPP_DEFINES += -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= \
 		-DPRESTANDARD_IOSTREAMS -DHAVE_ZSTREAM
@@ -141,16 +141,16 @@ ifeq ($(COMPILER),MIPSpro)
 
 	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
 
-ifeq ($(MODE),debug)
-	CC_SWITCHES += -g -O0
-	LD_OPTIONS :=
-endif
+	ifeq ($(MODE),debug)
+		CC_SWITCHES += -g -O0
+		LD_OPTIONS :=
+	endif
 
-ifeq ($(MODE),prod)
 # Tests showed that -O3 provided little improvement over -O2 for this app
-	CC_SWITCHES += -O2
-	LD_OPTIONS :=
-endif
+	ifeq ($(MODE),prod)
+		CC_SWITCHES += -O2
+		LD_OPTIONS :=
+	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
@@ -167,22 +167,22 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*In method/d;' \
 		-e '/g++-3.*At top level/d;' \
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
-	CC_SWITCHES := -Wall -W -Wsign-promo -Weffc++
+	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
 	CPP_DEFINES += -DGCC_COMPILER -DIRIX6
 
 	ARCH_MAKEDEP_INCLUDES := -I/cit/rjpeters/gcc/include/g++-3
 
 	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
 
-ifeq ($(MODE),debug)
-	CC_SWITCHES += -g -O0
-	LD_OPTIONS :=
-endif
+	ifeq ($(MODE),debug)
+		CC_SWITCHES += -g -O0
+		LD_OPTIONS :=
+	endif
 
-ifeq ($(MODE),prod)
-	CC_SWITCHES += -O3
-	LD_OPTIONS :=
-endif
+	ifeq ($(MODE),prod)
+		CC_SWITCHES += -O3
+		LD_OPTIONS :=
+	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(STATLIB_EXT)
 
@@ -224,7 +224,7 @@ LIB_PATH :=  -L$(LIB) \
 	$(AUDIO_LIB_DIR) \
 	$(RPATH_DIR)
 
-LIBRARIES := \
+EXTERNAL_LIBS := \
 	-lGLU -lGL \
 	-ltk -ltcl \
 	-lXmu -lX11 -lXext \
@@ -248,6 +248,10 @@ LIBRARIES := \
 # Ah, well, now the HP-OpenGL bug is rearing its ugly head again, so
 # I'll have to go back to statically linking the OpenGL stuff.
 
+#
+# static objects
+#
+
 TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
 
@@ -260,11 +264,19 @@ STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 
 GRSH_STATIC_OBJS := $(STATIC_OBJS) $(TOGL_OBJS)
 
-VISX_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard src/*.cc))
-VISX_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(VISX_SRCS)))
+#
+# libDeepVision
+#
 
-LIBVISX := $(LIB)/libvisx$(LIB_EXT)
+DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard src/*.cc))
+DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(DEEPVISION_SRCS)))
+
+LIBDEEPVISION := $(LIB)/libDeepVision$(LIB_EXT)
+
+#
+# libDeepAppl
+#
 
 GWT_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gwt/*.cc)))
@@ -275,23 +287,35 @@ GX_OBJS := $(subst .cc,$(OBJ_EXT),\
 IO_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/io/*.cc)))
 
-SYS_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/sys/*.cc)))
+DEEPAPPL_OBJS := $(GWT_OBJS) $(GX_OBJS) $(IO_OBJS)
 
-UTIL_OBJS := $(subst .cc,$(OBJ_EXT),\
+LIBDEEPAPPL := $(LIB)/libDeepAppl$(LIB_EXT)
+
+#
+# libDeepUtil
+#
+
+SYS_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/system/*.cc)))
+
+DEEPUTIL_OBJS := $(SYS_OBJS) \
+	$(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/util/*.cc)))
 
-APPWORKS_OBJS := \
-	$(GWT_OBJS) $(GX_OBJS) $(IO_OBJS) $(SYS_OBJS) $(UTIL_OBJS)
+LIBDEEPUTIL := $(LIB)/libDeepUtil$(LIB_EXT)
 
-LIBAPPWORKS := $(LIB)/libappworks$(LIB_EXT)
+#
+# libDeepTcl
+#
 
-TCLWORKS_OBJS := $(subst .cc,$(OBJ_EXT),\
+DEEPTCL_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc)))
 
-LIBTCLWORKS := $(LIB)/libtclworks$(LIB_EXT)
+LIBDEEPTCL := $(LIB)/libDeepTcl$(LIB_EXT)
 
-ALL_LIBS := $(LIBVISX) $(LIBTCLWORKS) $(LIBAPPWORKS)
+
+
+PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) $(LIBDEEPAPPL) $(LIBDEEPUTIL)
 
 #-------------------------------------------------------------------------
 #
@@ -308,13 +332,13 @@ ifeq ($(MODE),prod)
 	CPP_DEFINES += -DASSERT -DINVARIANT
 endif
 
-ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_LIBS))
-ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_LIBS))
+ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
+ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
 ifeq ($(MODE),debug)
-ifeq ($(ARCH),hp9000s700)
-	GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
-endif
+	ifeq ($(ARCH),hp9000s700)
+		GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
+	endif
 endif
 
 #-------------------------------------------------------------------------
@@ -323,12 +347,11 @@ endif
 #
 #-------------------------------------------------------------------------
 
-default: $(SRC)/TAGS $(ALL_SHLIBS) $(EXECUTABLE)
+all: $(SRC)/TAGS $(ALL_SHLIBS) $(EXECUTABLE)
 	$(EXECUTABLE) ./testing/grshtest.tcl
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
-	-lvisx$(LIB_SUFFIX) -ltclworks$(LIB_SUFFIX) -lappworks$(LIB_SUFFIX) \
-	$(LIBRARIES)
+	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CC) -o $@ $(CMDLINE)
@@ -354,7 +377,7 @@ $(SRC)/%.preh : $(SRC)/%.h
 
 #-------------------------------------------------------------------------
 #
-# Build rules for production and debug shared libraries
+# Build rules for static and dynamic libraries
 #
 #-------------------------------------------------------------------------
 
@@ -364,9 +387,10 @@ $(LIB)/lib%$(LIB_SUFFIX).$(SHLIB_EXT):
 $(LIB)/lib%$(LIB_SUFFIX).$(STATLIB_EXT):
 	$(STATLIB_CMD) $@ $^
 
-$(LIBVISX):      $(VISX_OBJS)
-$(LIBTCLWORKS):  $(TCLWORKS_OBJS)
-$(LIBAPPWORKS):  $(APPWORKS_OBJS)
+$(LIBDEEPVISION): $(DEEPVISION_OBJS)
+$(LIBDEEPTCL):    $(DEEPTCL_OBJS)
+$(LIBDEEPAPPL):   $(DEEPAPPL_OBJS)
+$(LIBDEEPUTIL):   $(DEEPUTIL_OBJS)
 
 #-------------------------------------------------------------------------
 #
