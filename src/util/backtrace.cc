@@ -122,9 +122,12 @@ rutz::prof* rutz::backtrace::at(unsigned int i) const throw()
 
 void rutz::backtrace::print() const throw()
 {
-  fprintf(stderr, "stack trace:\n");
-
   const unsigned int end = size();
+
+  if (end == 0)
+    return; // don't print anything if we have an empty backtrace
+
+  fprintf(stderr, "stack trace:\n");
 
   unsigned int i = 0;
   unsigned int ri = end-1;
@@ -138,11 +141,14 @@ void rutz::backtrace::print() const throw()
 
 void rutz::backtrace::print(std::ostream& os) const throw()
 {
+  const unsigned int end = size();
+
+  if (end == 0)
+    return; // don't print anything if we have an empty backtrace
+
   os.exceptions(std::ios::goodbit);
 
   os << "stack trace:\n";
-
-  const unsigned int end = size();
 
   unsigned int i = 0;
   unsigned int ri = end-1;
