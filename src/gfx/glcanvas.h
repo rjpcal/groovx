@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Jan 23 09:46:42 2002
+// written: Mon Feb 25 10:33:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,6 +102,13 @@ public:
                            const Gfx::Vec3<double>& p3,
                            const Gfx::Vec3<double>& p4,
                            unsigned int subdivisions);
+
+  virtual void drawBezierFill4(const Gfx::Vec3<double>& center,
+                               const Gfx::Vec3<double>& p1,
+                               const Gfx::Vec3<double>& p2,
+                               const Gfx::Vec3<double>& p3,
+                               const Gfx::Vec3<double>& p4,
+                               unsigned int subdivisions);
 
   virtual void beginPoints();
   virtual void beginLines();
