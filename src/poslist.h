@@ -3,15 +3,8 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Wed Oct 20 17:59:46 1999
+// written: Wed Feb 16 07:47:42 2000
 // $Id$
-//
-// This file defines PosList, a singleton class whose instance is a
-// global repository of Position pointers. It allows Position's to be
-// uniquely identified by an posid from anywhere in the
-// application. In addition, the entire collection can be written to
-// or read from a stream. The singleton instance is retrieved with the
-// function thePosList().
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,21 +18,23 @@
 class Position;
 
 ///////////////////////////////////////////////////////////////////////
-//
-// PosList class definition
-//
+/**
+ *
+ * PosList is a singleton wrapper for \c PtrList<Position>.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
-class PosList : public PtrList<Position>, public virtual IO {
+class PosList : public PtrList<Position> {
 private:
   typedef PtrList<Position> Base;
 
 protected:
-  // Construct a list of 'size' Position*'s, initialized to NULL
-  PosList (int size) : Base(size) {}
+  /// Construct and reserve space for \a size objects.
+  PosList(int size) : Base(size) {}
 
 public:
-  // Returns a reference to the singleton instance of PosList
+  /// Returns a reference to the singleton instance.
   static PosList& thePosList();
 };
 
