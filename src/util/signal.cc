@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 16:33:43 2001
+// written: Wed Aug 22 11:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,17 +19,24 @@
 #include "util/ref.h"
 #include "util/volatileobject.h"
 
-#include <typeinfo>
-
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+#ifdef LOCAL_DEBUG
+#include <typeinfo>
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
 // Slot members
 //
 ///////////////////////////////////////////////////////////////////////
+
+Util::Slot::Slot()
+{
+DOTRACE("Util::Slot::Slot");
+}
 
 Util::Slot::~Slot()
 {
@@ -67,12 +74,12 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
 
   void receive()
   {
-	 emit();
+    emit();
   }
 
   void emit()
   {
-	 DOTRACE("Util::Signal::SigImpl::emit");
+    DOTRACE("Util::Signal::SigImpl::emit");
     if (!isItEmitting)
       {
         Lock lock(this);
@@ -81,12 +88,12 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
              ii != end;
              /* incr in loop */)
           {
+            DebugEvalNL((*ii).getWeak());
             if ((*ii).isValid() && (*ii)->exists())
               {
-					 DebugEval(typeid(*(*ii).getWeak()).name());
-					 DebugEval((*ii)->refCount());
-					 DebugEval((*ii).refType());
-					 DebugEvalNL((*ii).getWeak());
+                DebugEval(typeid(*(*ii).getWeak()).name());
+                DebugEval((*ii)->refCount());
+                DebugEvalNL((*ii).refType());
                 (*ii)->call();
                 ++ii;
               }
@@ -97,7 +104,7 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
                 itsSlots.erase(erase_me);
               }
           }
-		}
+      }
   }
 
   class Lock {
@@ -155,7 +162,7 @@ void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
 DOTRACE("Util::Signal::connect");
   if (!slot.isValid()) return;
 
-  itsImpl->itsSlots.push_back(ObsRef(slot.get(), Util::WEAK, Util::PRIVATE));
+  itsImpl->itsSlots.push_back(ObsRef(slot.get(), Util::STRONG, Util::PRIVATE));
 
   DebugEvalNL(itsImpl->itsSlots.size());
 }
