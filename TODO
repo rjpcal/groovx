@@ -7,9 +7,25 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (17-Jul-2004) Clean according to the way of UNIX!
+
+  more code reuse!!! less reinventing-the-wheel!!!
+
+  figure out how to use boost
+
+    boost::format
+    boost::function (to replace or complement util/functors.h and tcl/tclfunctor.h)
+    boost::shared_ptr (to replace util/pointers.h)
+    boost::type_traits (to replace util/traits.h)
+
+  more consistent logging+debugging
+
 * (8-Jun-2004) Change EventResponseHdlr::feedbackMap to be a proc
 
 * (2-Jun-2004) Toglet::size doesn't work for resizing
+
+  works OK unless the toplevel window has been manually resized (e.g. by
+  dragging in the window manager)
 
 * (1-Jun-2004) Serialization goodies
 
