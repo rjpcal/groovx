@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun 13 15:16:02 2001
+// written: Wed Jun 13 17:42:12 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -77,22 +77,10 @@ namespace ObjTogl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class WidgetDestroyCallback : public Toglet::DestroyCallback {
-public:
-  virtual void onDestroy(Toglet* config)
-  {
-    if (ObjTogl::theWidget.isValid() && ObjTogl::theWidget.get() == config)
-      {
-        ObjTogl::theWidget = WeakRef<Toglet>();
-      }
-  }
-};
-
 void ObjTogl::setCurrentTogl(Toglet* togl) {
 DOTRACE("ObjTogl::setCurrentTogl");
 
   theWidget = WeakRef<Toglet>(togl);
-  theWidget->setDestroyCallback(new WidgetDestroyCallback);
 }
 
 //---------------------------------------------------------------------
@@ -135,7 +123,7 @@ protected:
       }
     else
       {
-        theWidget = Ref<Toglet>( getIntFromArg(1) );
+        theWidget = WeakRef<Toglet>( getIntFromArg(1) );
         theWidget->makeCurrent();
       }
   }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Jun 12 16:54:49 2001
+// written: Wed Jun 13 17:30:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,8 +69,6 @@ public:
 
   virtual bool isVolatile() const { return true; }
 
-  void onWindowClose();
-
   // accessors
   double getAspect() const { return double(getWidth())/getHeight(); }
   double getFixedScale() const;
@@ -104,14 +102,6 @@ public:
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
 
-  class DestroyCallback {
-  public:
-    virtual ~DestroyCallback();
-    virtual void onDestroy(Toglet* config) = 0;
-  };
-
-  void setDestroyCallback(DestroyCallback* callback);
-
   // widget functions
   virtual void bind(const char* event_sequence, const char* script);
   virtual void swapBuffers();
@@ -135,14 +125,12 @@ private:
 
   scoped_ptr<GWT::Canvas> itsCanvas;
 
-  Togl* itsTogl;
+  Togl* const itsTogl;
   double itsViewingDistance;     // inches
   bool itsFixedScaleFlag;
   double itsFixedScale;
   Rect<double> itsMinRect;
   unsigned int itsFontListBase;
-
-  scoped_ptr<DestroyCallback> itsDestroyCallback;
 };
 
 static const char vcid_toglet_h[] = "$Header$";
