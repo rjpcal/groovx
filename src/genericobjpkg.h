@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Oct 12 10:29:19 1999
+// written: Thu Oct 21 13:00:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,36 @@
 #ifndef LISTITEMPKG_H_DEFINED
 #define LISTITEMPKG_H_DEFINED
 
+#ifndef TYPEINFO_DEFINED
+#include <typeinfo>
+#define TYPEINFO_DEFINED
+#endif
+
 #ifndef TCLITEMPKG_H_DEFINED
 #include "tclitempkg.h"
 #endif
+
+#ifndef DEMANGLE_H_DEFINED
+#include "demangle.h"
+#endif
+
+///////////////////////////////////////////////////////////////////////
+//
+// TypeCmd --
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class TypeCmd : public TclItemCmd<C> {
+public:
+  TypeCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 C* p = TclItemCmd<C>::getItem();
+	 returnCstring(demangle(typeid(*p).name()).c_str());
+  }
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -27,7 +54,10 @@ public:
   AbstractListItemPkg(Tcl_Interp* interp, List& aList,
 							 const char* name, const char* version) :
 	 CTclIoItemPkg<C>(interp, name, version, 1),
-	 itsList(aList) {}
+	 itsList(aList)
+  {
+	 addCommand( new TypeCmd<C>(this, TclPkg::makePkgCmdName("type")) );
+  }
 
   List& theList() { return itsList; }
 
