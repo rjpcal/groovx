@@ -125,15 +125,16 @@ test "ExptTcl-Expt::begin" "general sanity test" {
 	 Expt::clear
 	 Expt::addBlock $block
 
+	 set ::DONE 0
 	 namespace eval ::Expt {
-		  proc doUponCompletion {} { set ::DONE "complete" }
+		  proc doUponCompletion {} { set ::DONE 1 }
 	 }
-	 after 200 set ::DONE "incomplete"
+	 after 200 set ::STOP 1
 	 Expt::begin
 
-	 vwait ::DONE
+	 vwait ::STOP
 
 	 Expt::reset
 
 	 return $::DONE
-} {^complete$}
+} {^1$}
