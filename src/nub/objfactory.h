@@ -52,7 +52,7 @@ protected:
   ObjFactory();
 
   /// Virtual destructor.
-  virtual ~ObjFactory();
+  virtual ~ObjFactory() throw();
 
 public:
   /// Return the singleton instance.

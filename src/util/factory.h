@@ -97,16 +97,31 @@ namespace rutz
 
   /**
    *
-   * \c rutz::factory_base exists purely to introduce a virtual
-   * destructor into the \c rutz::factory hierarchy.
+   * Base class for factory functionality that doesn't depend on the
+   * type of the product.
    *
    **/
 
   class factory_base
   {
   public:
-    /// Virtual destructor for proper inheritance.
-    virtual ~factory_base();
+    typedef void (fallback_t)(const rutz::fstring&);
+
+    /// Default constructor sets the fallback to null.
+    factory_base() throw();
+
+    /// Virtual no-throw destructor for proper inheritance.
+    virtual ~factory_base() throw();
+
+    /// Change the fallback function.
+    void set_fallback(fallback_t* fptr) throw();
+
+  protected:
+    /// Try running the fallback function for the given type.
+    void try_fallback(const rutz::fstring& type) const;
+
+  private:
+    fallback_t* m_fallback;
   };
 
 
@@ -134,6 +149,9 @@ namespace rutz
   protected:
     /// Default constructor.
     factory() : m_map("object type") {}
+
+    /// Virtual no-throw destructor.
+    virtual ~factory() throw() {}
 
   public:
     /// Registers a creation function with the factory.
@@ -176,6 +194,13 @@ namespace rutz
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(type);
 
+      if (creator == 0)
+        {
+          factory_base::try_fallback(type);
+
+          creator = m_map.get_ptr_for_key(type);
+        }
+
       if (creator == 0) return base_t();
       return creator->create();
     }
@@ -187,6 +212,13 @@ namespace rutz
     {
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(type);
+
+      if (creator == 0)
+        {
+          factory_base::try_fallback(type);
+
+          creator = m_map.get_ptr_for_key(type);
+        }
 
       if (creator == 0) m_map.throw_for_key(type, SRC_POS);
       return creator->create();

@@ -32,6 +32,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
+#include "nub/objfactory.h"
+
 #include "tcl/tcllistobj.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclpkg.h"
@@ -227,6 +229,19 @@ PackageInfo DELAYED_PKGS[] =
     ASSERT(0);
   }
 
+  // This is a fallback function to be used by the object
+  // factory... if the factory can't figure out how to create a given
+  // type, it will call this fallback function first before giving up
+  // for good. This callback function tries to load a Tcl package
+  // named after the desired object type.
+  void factoryPkgLoader(const rutz::fstring& type)
+  {
+    dbg_eval_nl(3, type);
+
+    Tcl::Pkg::lookup(Tcl::Main::interp().intp(),
+                     type.c_str());
+  }
+
 } // end anonymous namespace
 
 ///////////////////////////////////////////////////////////////////////
@@ -284,6 +299,8 @@ DOTRACE("main");
         }
 
       Tcl::Interp& interp = app.interp();
+
+      Nub::ObjFactory::theOne().set_fallback(&factoryPkgLoader);
 
       const rutz::time ru1 = rutz::time::user_rusage();
       const rutz::time rs1 = rutz::time::sys_rusage();

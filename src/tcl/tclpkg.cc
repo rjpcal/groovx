@@ -285,17 +285,23 @@ DOTRACE("Tcl::Pkg::unloadDestroy");
   return 0; // TCL_ERROR
 }
 
-Tcl::Pkg* Tcl::Pkg::lookup(Tcl_Interp* interp, const char* name,
+Tcl::Pkg* Tcl::Pkg::lookup(Tcl_Interp* intp, const char* name,
                            const char* version) throw()
 {
 DOTRACE("Tcl::Pkg::lookup");
 
   ClientData clientData = 0;
 
-  std::string cleanName = makeCleanPkgName(name);
+  const std::string cleanName = makeCleanPkgName(name);
+
+  Tcl::Interp interp(intp);
+
+  Tcl::ObjPtr saveresult = interp.getResult<Tcl::ObjPtr>();
 
   const char* ver =
-    Tcl_PkgRequireEx(interp, cleanName.c_str(), version, 0, &clientData);
+    Tcl_PkgRequireEx(intp, cleanName.c_str(), version, 0, &clientData);
+
+  interp.setResult(saveresult);
 
   if (ver != 0)
     {

@@ -42,7 +42,7 @@ namespace
 Nub::ObjFactory::ObjFactory() :
   rutz::factory<SoftRef<Nub::Object> >() {}
 
-Nub::ObjFactory::~ObjFactory() {}
+Nub::ObjFactory::~ObjFactory() throw() {}
 
 Nub::ObjFactory& Nub::ObjFactory::theOne()
 {

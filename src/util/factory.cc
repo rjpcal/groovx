@@ -36,9 +36,31 @@
 
 #include "util/trace.h"
 
-rutz::factory_base::~factory_base()
+rutz::factory_base::factory_base() throw()
+  :
+  m_fallback(0)
+{
+DOTRACE("rutz::factory_base::factory_base");
+}
+
+rutz::factory_base::~factory_base() throw()
 {
 DOTRACE("rutz::factory_base::~factory_base");
+}
+
+void rutz::factory_base::set_fallback(fallback_t* fptr) throw()
+{
+DOTRACE("rutz::factory_base::set_fallback");
+  m_fallback = fptr;
+}
+
+void rutz::factory_base::try_fallback(const rutz::fstring& type) const
+{
+DOTRACE("rutz::factory_base::try_fallback");
+  if (m_fallback != 0)
+    {
+      (*m_fallback)(type);
+    }
 }
 
 static const char vcid_factory_cc[] = "$Id$ $URL$";
