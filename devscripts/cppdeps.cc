@@ -77,6 +77,8 @@ class cppdeps
 
   map<string, ParseState> parse_states;
 
+  bool check_sys_includes;
+
 public:
   cppdeps(char** argv);
 
@@ -86,10 +88,11 @@ public:
 
   int is_cc_filename(const char* fname);
 
-  void resolve_one(const char* include_name,
+  bool resolve_one(const char* include_name,
                    int include_length,
                    const string& filename,
                    const string& dirname,
+                   const vector<string>& ipath,
                    include_list_t& vec);
 
   const include_list_t& get_direct_includes(const string& filename);
@@ -102,6 +105,12 @@ public:
 namespace
 {
   // helper functions
+
+  bool file_exists(const char* fname)
+  {
+    struct stat statbuf;
+    return (stat(fname, &statbuf) == 0);
+  }
 
   bool is_directory(const char* fname)
   {
@@ -182,7 +191,8 @@ namespace
   };
 }
 
-cppdeps::cppdeps(char** argv)
+cppdeps::cppdeps(char** argv) :
+  check_sys_includes(false)
 {
   sys_ipath.push_back("/usr/include");
   sys_ipath.push_back("/usr/include/linux");
@@ -253,23 +263,23 @@ int cppdeps::is_cc_filename(const char* fname)
   return 0;
 }
 
-void cppdeps::resolve_one(const char* include_name,
+bool cppdeps::resolve_one(const char* include_name,
                           int include_length,
                           const string& filename,
                           const string& dirname_with_slash,
+                          const vector<string>& ipath,
                           cppdeps::include_list_t& vec)
 {
-  for (unsigned int i = 0; i < user_ipath.size(); ++i)
+  for (unsigned int i = 0; i < ipath.size(); ++i)
     {
-      string fullpath = user_ipath[i];
+      string fullpath = ipath[i];
       fullpath += '/';
       fullpath.append(include_name, include_length);
 
-      struct stat statbuf;
-      if (stat(fullpath.c_str(), &statbuf) == 0)
+      if (file_exists(fullpath.c_str()))
         {
           vec.push_back(fullpath);
-          return;
+          return true;
         }
     }
 
@@ -278,26 +288,24 @@ void cppdeps::resolve_one(const char* include_name,
   string fullpath = dirname_with_slash;
   fullpath.append(include_name, include_length);
 
-  struct stat statbuf;
-  if (stat(fullpath.c_str(), &statbuf) == 0)
+  if (file_exists(fullpath.c_str()))
     {
       vec.push_back(fullpath);
-      return;
+      return true;
     }
 
   string include_string(include_name, include_length);
 
   // Try resolving the include by using the current working directory
   // from which this program was invoked.
-  if (stat(include_string.c_str(), &statbuf) == 0)
+  if (file_exists(include_string.c_str()))
     {
       if (filename != include_string)
         vec.push_back(include_string);
-      return;
+      return true;
     }
 
-  cerr << "warning: couldn\'t resolve #include \""
-       << include_string << "\" for " << filename << "\n";
+  return false;
 }
 
 const cppdeps::include_list_t&
@@ -353,23 +361,48 @@ cppdeps::get_direct_includes(const string& filename)
       while (isspace(*fptr) && fptr < stop)
         ++fptr;
 
-      if (*fptr++ != '\"') continue;
+      const char delimiter = *fptr++;
+
+      const bool is_valid_delimiter =
+        (delimiter == '\"') ||
+        (delimiter == '<' && check_sys_includes == true);
+
+      if (!is_valid_delimiter)
+        continue;
 
       const char* const include_name = fptr;
 
-      while (*fptr != '\"' && fptr < stop)
-        ++fptr;
-
-      if (*fptr != '\"')
+      switch (delimiter)
         {
-          cerr << "found end-of-file before closing double-quote\n";
+        case '\"':
+          while (*fptr != '\"' && fptr < stop)
+            ++fptr;
+          break;
+        case '<':
+          while (*fptr != '>' && fptr < stop)
+            ++fptr;
+          break;
+        default:
+          cerr << "unknown delimiter '" << delimiter << "'\n";
+          exit(1);
+          break;
+        }
+
+      if (fptr >= stop)
+        {
+          cerr << "premature end-of-file; runaway #include directive?\n";
           exit(1);
         }
 
       const int include_length = fptr - include_name;
 
-      resolve_one(include_name, include_length, filename,
-                  dirname_with_slash, vec);
+      if (!resolve_one(include_name, include_length, filename,
+                       dirname_with_slash, user_ipath, vec))
+        {
+          const string include_string(include_name, include_length);
+          cerr << "warning: couldn\'t resolve #include \""
+               << include_string << "\" for " << filename << "\n";
+        }
     }
 
   return vec;
