@@ -22,9 +22,11 @@
 #include "util/objfactory.h"
 #include "util/ref.h"
 
-#include <engine.h>
-
 #include "util/trace.h"
+
+#ifdef HAVE_MATLAB
+
+#include <engine.h>
 
 class MatlabEngine : public Util::Object
 {
@@ -92,6 +94,32 @@ private:
   char* itsBuf;
 };
 
+#else // !HAVE+MATLAB
+
+class MatlabEngine : public Util::Object
+{
+public:
+  static MatlabEngine* make() { return new MatlabEngine; }
+
+  void noSupport()
+  {
+    throw Util::Error("matlab is not supported in this build");
+  }
+
+  const char* evalString(const char*)
+  {
+    noSupport();
+    return "can't happen";
+  }
+
+  Ref<MtxObj> getMtx(const char*)
+  {
+    noSupport();
+    return Ref<MtxObj>(new MtxObj(0,0));
+  }
+};
+
+#endif
 
 extern "C"
 int Matlabengine_Init(Tcl_Interp* interp)
