@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gabortcl.cc
+// gaborset.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Wed Oct  6 14:16:30 1999
-// written: Mon May 12 11:27:23 2003
+// created: Mon May 12 11:15:29 2003
+// written: Mon May 12 11:15:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -28,31 +28,25 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORTCL_CC_DEFINED
-#define GABORTCL_CC_DEFINED
+#ifndef GABORSET_H_DEFINED
+#define GABORSET_H_DEFINED
 
-#include "visx/gabor.h"
-#include "visx/gaborarray.h"
+const int GABOR_MAX_ORIENT = 64;
+const int GABOR_MAX_PHASE = 8;
 
-#include "tcl/fieldpkg.h"
-
-#include "util/trace.h"
-
-extern "C"
-int Gabor_Init(Tcl_Interp* interp)
+class GaborSet
 {
-DOTRACE("Gabor_Init");
+public:
+  GaborSet(double period, double sigma, int size);
+  ~GaborSet();
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Gabor", "$Revision$");
-  Tcl::defFieldContainer<Gabor>(pkg);
-  Tcl::defCreator<Gabor>(pkg);
+  int getPatchSize() const { return patchSize; }
+  const double* getPatch(double theta, double phi) const;
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GaborArray", "$Revision$");
-  Tcl::defFieldContainer<GaborArray>(pkg2);
-  Tcl::defCreator<GaborArray>(pkg2);
+private:
+  const int patchSize;
+  double* Patch[GABOR_MAX_ORIENT][GABOR_MAX_PHASE];
+};
 
-  return pkg->combineStatus(pkg2->initStatus());
-}
-
-static const char vcid_gabortcl_cc[] = "$Header$";
-#endif // !GABORTCL_CC_DEFINED
+static const char vcid_gaborset_h[] = "$Header$";
+#endif // !GABORSET_H_DEFINED

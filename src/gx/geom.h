@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gabortcl.cc
+// geom.h
 //
-// Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Wed Oct  6 14:16:30 1999
-// written: Mon May 12 11:27:23 2003
+// created: Mon May 12 11:16:03 2003
+// written: Mon May 12 11:16:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -28,31 +28,34 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORTCL_CC_DEFINED
-#define GABORTCL_CC_DEFINED
+#ifndef GEOM_H_DEFINED
+#define GEOM_H_DEFINED
 
-#include "visx/gabor.h"
-#include "visx/gaborarray.h"
+#include <math.h>
 
-#include "tcl/fieldpkg.h"
-
-#include "util/trace.h"
-
-extern "C"
-int Gabor_Init(Tcl_Interp* interp)
+inline double zerototwopi(double angle)
 {
-DOTRACE("Gabor_Init");
+  while (angle < 0.0)     angle += 2*M_PI;
+  while (angle >= 2*M_PI) angle -= 2*M_PI;
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Gabor", "$Revision$");
-  Tcl::defFieldContainer<Gabor>(pkg);
-  Tcl::defCreator<Gabor>(pkg);
-
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GaborArray", "$Revision$");
-  Tcl::defFieldContainer<GaborArray>(pkg2);
-  Tcl::defCreator<GaborArray>(pkg2);
-
-  return pkg->combineStatus(pkg2->initStatus());
+  return angle;
 }
 
-static const char vcid_gabortcl_cc[] = "$Header$";
-#endif // !GABORTCL_CC_DEFINED
+inline double minuspitopi(double angle)
+{
+  while (angle < -M_PI) angle += 2*M_PI;
+  while (angle >= M_PI) angle -= 2*M_PI;
+
+  return angle;
+}
+
+inline double zerotopi(double angle)
+{
+  while (angle < 0.0)   angle += M_PI;
+  while (angle >= M_PI) angle -= M_PI;
+
+  return angle;
+}
+
+static const char vcid_geom_h[] = "$Header$";
+#endif // !GEOM_H_DEFINED
