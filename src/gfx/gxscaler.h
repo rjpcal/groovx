@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:27 2002
-// written: Wed Nov 13 13:10:03 2002
+// written: Wed Nov 13 13:24:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,11 +62,17 @@ public:
 
   void setAspectRatio(double new_aspect_ratio);
 
+  void setWidthFactor(double f) { itsWidthFactor = f; }
+  void setHeightFactor(double f) { itsHeightFactor = f; }
+
   double scaledWidth(Gfx::Canvas& canvas);
   double scaledHeight(Gfx::Canvas& canvas);
   double scaledMaxDim(Gfx::Canvas& canvas);
 
   double aspectRatio() const;
+
+  double widthFactor() const { return itsWidthFactor; }
+  double heightFactor() const { return itsHeightFactor; }
 
   virtual void readFrom(IO::Reader* /*reader*/) {};
   virtual void writeTo(IO::Writer* /*writer*/) const {};
@@ -79,9 +85,6 @@ public:
 private:
   Mode itsMode;
 
-  void doScaling(Gfx::Canvas& canvas) const;
-
-public:
   double itsWidthFactor;
   double itsHeightFactor;
 };
