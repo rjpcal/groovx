@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Thu Aug 23 11:11:29 2001
+// written: Fri Aug 24 17:12:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 
 class GLCanvas : public Gfx::Canvas {
 public:
+  GLCanvas(bool is_rgba, bool is_doublebuffered);
+
   virtual ~GLCanvas();
 
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
@@ -81,6 +83,13 @@ public:
   virtual void throwIfError(const char* where) const;
 
   virtual void drawRect(const Gfx::Rect<double>& rect) const;
+
+private:
+  GLCanvas(const GLCanvas&);
+  GLCanvas& operator=(const GLCanvas&);
+
+  class Impl;
+  Impl* itsImpl;
 };
 
 static const char vcid_glcanvas_h[] = "$Header$";
