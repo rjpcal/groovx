@@ -50,7 +50,7 @@ namespace
 {
   const IO::VersionId ERH_SERIAL_VERSION_ID = 2;
 
-  fstring uniqueCmdName(const char* stem)
+  fstring uniqCmdName(const char* stem)
   {
     static int cmdCounter = 0;
 
@@ -61,7 +61,7 @@ namespace
   }
 }
 
-class TclProcWrapper
+class TclProcWrapper : public IO::IoObject
 {
 private:
   TclProcWrapper(const TclProcWrapper&);
@@ -88,10 +88,13 @@ public:
     // the proc on its own)
     if (itsInterp.hasInterp())
       {
-	if (itsInterp.hasCommand(itsName.c_str()))
-	  itsInterp.deleteProc("", itsName.c_str());
+        if (itsInterp.hasCommand(itsName.c_str()))
+          itsInterp.deleteProc("", itsName.c_str());
       }
   }
+
+  virtual void readFrom(IO::Reader* reader) {}
+  virtual void writeTo(IO::Writer* writer) const {}
 
   void define(const fstring& args, const fstring& body)
   {
@@ -205,14 +208,14 @@ public:
 
       Util::log( fstring("event_info: ", event_info) );
 
-      if (impl->itsResponseProc.isNoop())
+      if (impl->itsResponseProc->isNoop())
         {
           theResponse.setVal(impl->itsResponseMap.valueFor(event_info));
         }
       else
         {
           try {
-            theResponse.setVal(impl->itsResponseProc.call<int>(event_info));
+            theResponse.setVal(impl->itsResponseProc->call<int>(event_info));
           } catch (...) {
             theResponse.setVal(Response::INVALID_VALUE);
           }
@@ -284,7 +287,7 @@ public:
 
   bool itsAbortInvalidResponses;
 
-  TclProcWrapper itsResponseProc;
+  Util::Ref<TclProcWrapper> itsResponseProc;
 
   unsigned int itsMaxResponses;
 };
@@ -310,13 +313,13 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsState(0),
   itsInterp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
-                              uniqueCmdName("handler").c_str(), "<private>")),
+                              uniqCmdName("handler").c_str(), "<private>")),
   itsResponseMap(input_response_map),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
   itsAbortInvalidResponses(true),
-  itsResponseProc(itsInterp, uniqueCmdName("responseProc")),
+  itsResponseProc(new TclProcWrapper(itsInterp, uniqCmdName("responseProc"))),
   itsMaxResponses(1)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
@@ -363,7 +366,7 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
       reader->readValue("responseProcArgs", args);
       reader->readValue("responseProcBody", body);
 
-      itsResponseProc.define(args, body);
+      itsResponseProc->define(args, body);
     }
 }
 
@@ -380,8 +383,8 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
   writer->writeValue("eventSequence", itsEventSequence);
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
 
-  writer->writeValue("responseProcArgs", itsResponseProc.args());
-  writer->writeValue("responseProcBody", itsResponseProc.body());
+  writer->writeValue("responseProcArgs", itsResponseProc->args());
+  writer->writeValue("responseProcBody", itsResponseProc->body());
 }
 
 
@@ -470,7 +473,7 @@ void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
 void EventResponseHdlr::setResponseProc(const fstring& args,
                                         const fstring& body)
 {
-  itsImpl->itsResponseProc.define(args, body);
+  itsImpl->itsResponseProc->define(args, body);
 }
 
 void EventResponseHdlr::abortInvalidResponses()
