@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri Jan 18 16:06:58 2002
+// written: Wed Jul  3 15:23:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,6 +64,13 @@ public:
   virtual Util::FwdIter<const Util::Ref<GxNode> > deepChildren();
 
   virtual bool contains(GxNode* other) const;
+
+  /// Apply all of the contained objects' transformations to the bbox.
+  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
+                              Gfx::Canvas& canvas) const;
+
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
   /// Draw all of the contained objects on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const;

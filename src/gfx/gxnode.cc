@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Fri Jan 18 16:07:07 2002
+// written: Wed Jul  3 15:31:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define GXNODE_CC_DEFINED
 
 #include "gfx/gxnode.h"
+
+#include "gx/box.h"
 
 #include "util/iter.h"
 
@@ -75,6 +77,20 @@ DOTRACE("GxNode::deepChildren");
 void GxNode::getBoundingBox(Gfx::Rect<double>&, Gfx::Canvas&) const
 {
 DOTRACE("GxNode::getBoundingBox");
+}
+
+void GxNode::getBoundingCube(Gfx::Box<double>& cube,
+                             Gfx::Canvas& canvas) const
+{
+DOTRACE("GxNode::getBoundingBox");
+
+  Gfx::Rect<double> rect = cube.rect();
+
+  getBoundingBox(rect, canvas);
+
+  cube.setXXYYZZ(rect.left(), rect.right(),
+                 rect.bottom(), rect.top(),
+                 cube.z0(), cube.z1());
 }
 
 static const char vcid_gxnode_cc[] = "$Header$";

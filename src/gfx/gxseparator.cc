@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Mon Jan 21 14:29:08 2002
+// written: Wed Jul  3 16:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,9 @@
 #include "gfx/gxseparator.h"
 
 #include "gfx/canvas.h"
+
+#include "gx/box.h"
+#include "gx/rect.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -254,24 +257,67 @@ DOTRACE("GxSeparator::contains");
   return itsImpl->contains(other);
 }
 
+void GxSeparator::getBoundingBox(Gfx::Rect<double>& bbox,
+                                 Gfx::Canvas& canvas) const
+{
+DOTRACE("GxSeparator::getBoundingBox");
+
+  Gfx::Box<double> cube(bbox);
+
+  getBoundingCube(cube, canvas);
+
+  bbox = cube.rect();
+}
+
+void GxSeparator::getBoundingCube(Gfx::Box<double>& bbox,
+                                  Gfx::Canvas& canvas) const
+{
+DOTRACE("GxSeparator::getBoundingBox");
+
+  Gfx::Box<double> mybox;
+
+  if (!itsImpl->itsChildren.empty())
+    {
+      Gfx::MatrixSaver state(canvas);
+      Gfx::AttribSaver attribs(canvas);
+
+      for(Impl::VecType::reverse_iterator
+            itr = itsImpl->itsChildren.rbegin(),
+            end = itsImpl->itsChildren.rend();
+          itr != end;
+          ++itr)
+        {
+          (*itr)->getBoundingCube(mybox, canvas);
+        }
+    }
+
+  bbox.unionize(mybox);
+}
+
 void GxSeparator::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxSeparator::draw");
 
- if (!itsImpl->itsChildren.empty())
-   {
-     Gfx::MatrixSaver state(canvas);
-     Gfx::AttribSaver attribs(canvas);
+  Gfx::Box<double> cube;
 
-     for(Impl::VecType::iterator
-           itr = itsImpl->itsChildren.begin(),
-           end = itsImpl->itsChildren.end();
-         itr != end;
-         ++itr)
-       {
-         (*itr)->draw(canvas);
-       }
-   }
+  getBoundingCube(cube, canvas);
+
+  canvas.drawBox(cube);
+
+  if (!itsImpl->itsChildren.empty())
+    {
+      Gfx::MatrixSaver state(canvas);
+      Gfx::AttribSaver attribs(canvas);
+
+      for(Impl::VecType::iterator
+            itr = itsImpl->itsChildren.begin(),
+            end = itsImpl->itsChildren.end();
+          itr != end;
+          ++itr)
+        {
+          (*itr)->draw(canvas);
+        }
+    }
 }
 
 void GxSeparator::undraw(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Fri Jan 18 16:06:58 2002
+// written: Wed Jul  3 15:14:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@ namespace Gfx
 {
   class Canvas;
   template <class V> class Rect;
+  template <class V> class Box;
 }
 
 namespace Util
@@ -77,6 +78,11 @@ public:
       nothing. */
   virtual void getBoundingBox(Gfx::Rect<double>& bbox,
                               Gfx::Canvas& canvas) const;
+
+  /** Subclasses override this to transform \a bbox according to how that
+      subclass will be rendered. */
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
   /// Draw the object on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const = 0;

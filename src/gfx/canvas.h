@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Tue Jun 25 13:50:23 2002
+// written: Wed Jul  3 15:53:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@ namespace Gfx
   class Canvas;
   class RgbaColor;
   class Txform;
+  template <class V> class Box;
   template <class V> class Rect;
   template <class V> class Vec2;
   template <class V> class Vec3;
@@ -198,6 +199,8 @@ public:
   virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) = 0;
 
   virtual void drawRect(const Gfx::Rect<double>& rect) = 0;
+
+  virtual void drawBox(const Gfx::Box<double>& box);
 
   virtual void drawCircle(double inner_radius, double outer_radius, bool fill,
                           unsigned int slices, unsigned int loops) = 0;

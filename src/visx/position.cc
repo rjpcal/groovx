@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Mon Jun 24 12:30:59 2002
+// written: Wed Jul  3 16:42:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/box.h"
+#include "gx/rect.h"
 #include "gx/txform.h"
 #include "gx/vec3.h"
 
@@ -97,7 +99,8 @@ const FieldMap& Position::classFields()
     Field("rotationAngle",
           &Position::itsRotationAngle, 0., 0., 360., 1.),
     Field("mtxMode", &Position::itsMtxMode, 0, 0, 1, 1,
-          Field::TRANSIENT | Field::BOOLEAN)
+          Field::TRANSIENT | Field::BOOLEAN),
+    Field("jackSize", &Position::itsJackSize, 0, 0, 100, 1, Field::TRANSIENT)
   };
 
   static FieldMap POS_FIELDS(FIELD_ARRAY);
@@ -118,6 +121,7 @@ Position::Position() :
   rotationAxis(0.0, 0.0, 1.0),
   itsRotationAngle(0.0),
   itsMtxMode(0),
+  itsJackSize(0),
   rep(new PositionImpl(this))
 {
 DOTRACE("Position::Position()");
@@ -194,6 +198,64 @@ DOTRACE("Position::getTxform");
 // actions //
 /////////////
 
+void Position::getBoundingBox(Gfx::Rect<double>& bbox, Gfx::Canvas&) const
+{
+DOTRACE("Position::getBoundingBox");
+
+  const Gfx::Txform& txform = getTxform();
+
+  Gfx::Vec2<double> p1 = txform.applyTo(bbox.bottomLeft());
+  Gfx::Vec2<double> p2 = txform.applyTo(bbox.bottomRight());
+  Gfx::Vec2<double> p3 = txform.applyTo(bbox.topLeft());
+  Gfx::Vec2<double> p4 = txform.applyTo(bbox.topRight());
+
+  using Util::min;
+  using Util::max;
+
+  const double left = min(min(p1.x(), p2.x()), min(p3.x(), p4.x()));
+  const double right = max(max(p1.x(), p2.x()), max(p3.x(), p4.x()));
+  const double bottom = min(min(p1.y(), p2.y()), min(p3.y(), p4.y()));
+  const double top = max(max(p1.y(), p2.y()), max(p3.y(), p4.y()));
+
+  bbox.setRectLRBT(left, right, bottom, top);
+}
+
+void Position::getBoundingCube(Gfx::Box<double>& cube, Gfx::Canvas&) const
+{
+DOTRACE("Position::getBoundingCube");
+
+  const Gfx::Txform& txform = getTxform();
+
+  Gfx::Vec3<double> p1 = txform.applyTo(cube.point000());
+  Gfx::Vec3<double> p2 = txform.applyTo(cube.point001());
+  Gfx::Vec3<double> p3 = txform.applyTo(cube.point010());
+  Gfx::Vec3<double> p4 = txform.applyTo(cube.point011());
+  Gfx::Vec3<double> p5 = txform.applyTo(cube.point100());
+  Gfx::Vec3<double> p6 = txform.applyTo(cube.point101());
+  Gfx::Vec3<double> p7 = txform.applyTo(cube.point110());
+  Gfx::Vec3<double> p8 = txform.applyTo(cube.point111());
+
+  using Util::min;
+  using Util::max;
+
+  const double x0 = min(min(min(p1.x(), p2.x()), min(p3.x(), p4.x())),
+                        min(min(p5.x(), p6.x()), min(p7.x(), p8.x())));
+  const double x1 = max(max(max(p1.x(), p2.x()), max(p3.x(), p4.x())),
+                        max(max(p5.x(), p6.x()), max(p7.x(), p8.x())));
+
+  const double y0 = min(min(min(p1.y(), p2.y()), min(p3.y(), p4.y())),
+                        min(min(p5.y(), p6.y()), min(p7.y(), p8.y())));
+  const double y1 = max(max(max(p1.y(), p2.y()), max(p3.y(), p4.y())),
+                        max(max(p5.y(), p6.y()), max(p7.y(), p8.y())));
+
+  const double z0 = min(min(min(p1.z(), p2.z()), min(p3.z(), p4.z())),
+                        min(min(p5.z(), p6.z()), min(p7.z(), p8.z())));
+  const double z1 = max(max(max(p1.z(), p2.z()), max(p3.z(), p4.z())),
+                        max(max(p5.z(), p6.z()), max(p7.z(), p8.z())));
+
+  cube.setXXYYZZ(x0, x1, y0, y1, z0, z1);
+}
+
 void Position::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("Position::draw");
@@ -215,6 +277,22 @@ DOTRACE("Position::draw");
   rep->sc = scaling;
   rep->rt = rotationAxis;
   rep->rt_ang = itsRotationAngle;
+
+  if (itsJackSize > 0)
+    {
+      Gfx::LinesBlock block(canvas);
+
+      const double d = itsJackSize / 10.0;
+
+      canvas.vertex3(Gfx::Vec3<double>(-d, 0.0, 0.0));
+      canvas.vertex3(Gfx::Vec3<double>( d, 0.0, 0.0));
+
+      canvas.vertex3(Gfx::Vec3<double>(0.0, -d, 0.0));
+      canvas.vertex3(Gfx::Vec3<double>(0.0,  d, 0.0));
+
+      canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0, -d));
+      canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0,  d));
+    }
 }
 
 void Position::undraw(Gfx::Canvas& canvas) const

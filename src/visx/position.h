@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Jun 21 14:22:39 2002
+// written: Wed Jul  3 16:24:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,6 +82,8 @@ protected:
 
   int itsMtxMode;
 
+  int itsJackSize;
+
 public:
   static const FieldMap& classFields();
 
@@ -94,6 +96,14 @@ public:
   /////////////
   // actions //
   /////////////
+
+  /// Apply our transformation to the bbox.
+  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
+                              Gfx::Canvas& canvas) const;
+
+  /// Apply our transformation to the bbox.
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
   /// Translate, scale, and rotate.
   virtual void draw(Gfx::Canvas&) const;

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 21 14:00:54 2002
-// written: Fri Jun 21 14:07:33 2002
+// written: Wed Jul  3 14:35:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,6 +103,80 @@ DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
   data[1]=sy*(ry*rx*(1-c)+rz*s); data[5]=sy*(ry*ry*(1-c)+c);    data[9]=sy*(ry*rz*(1-c)-rx*s); data[13]=ty;
   data[2]=sz*(rz*rx*(1-c)-ry*s); data[6]=sz*(rz*ry*(1-c)+rx*s); data[10]=sz*(rz*rz*(1-c)+c);   data[14]=tz;
   data[3]=0.0;                   data[7]=0.0;                   data[11]=0.0;                  data[15]=1.0;
+}
+
+Gfx::Vec2<double> Gfx::Txform::applyTo(const Gfx::Vec2<double>& input) const
+{
+  /*
+        | m0 m4 m8  m12 |   | input.x |
+        | m1 m5 m9  m13 | * | input.y |
+        | m2 m6 m10 m14 |   |    0    |
+        | m3 m7 m11 m15 |   |    1    |
+   */
+
+  const double output_x =
+    data[0] * input.x()
+    + data[4] * input.y()
+    // + data[8] * 0.0
+    + data[12] * 1.0;
+
+  const double output_y =
+    data[1] * input.x()
+    + data[5] * input.y()
+    // + data[9] * 0.0
+    + data[13] * 1.0;
+
+  // output_z is forced to zero since we're returning a 2-D result
+
+  const double output_w =
+    data[3] * input.x()
+    + data[7] * input.y()
+    // + data[11] * 0.0
+    + data[15] * 1.0;
+
+  return (output_w != 0.0)
+    ? Gfx::Vec2<double>(output_x / output_w, output_y / output_w)
+    : Gfx::Vec2<double>(0.0, 0.0);
+}
+
+Gfx::Vec3<double> Gfx::Txform::applyTo(const Gfx::Vec3<double>& input) const
+{
+  /*
+        | m0 m4 m8  m12 |   | input.x |
+        | m1 m5 m9  m13 | * | input.y |
+        | m2 m6 m10 m14 |   | input.z |
+        | m3 m7 m11 m15 |   |    1    |
+   */
+
+  const double output_x =
+    data[0] * input.x()
+    + data[4] * input.y()
+    + data[8] * input.z()
+    + data[12] * 1.0;
+
+  const double output_y =
+    data[1] * input.x()
+    + data[5] * input.y()
+    + data[9] * input.z()
+    + data[13] * 1.0;
+
+  const double output_z =
+    data[2] * input.x()
+    + data[6] * input.y()
+    + data[10] * input.z()
+    + data[14] * 1.0;
+
+  const double output_w =
+    data[3] * input.x()
+    + data[7] * input.y()
+    + data[11] * input.z()
+    + data[15] * 1.0;
+
+  return (output_w != 0.0)
+    ? Gfx::Vec3<double>(output_x / output_w,
+                        output_y / output_w,
+                        output_z / output_w)
+    : Gfx::Vec3<double>(0.0, 0.0, 0.0);
 }
 
 static const char vcid_txform_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Thu May 23 17:11:54 2002
+// written: Wed Jul  3 16:11:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/box.h"
 #include "gx/vec3.h"
 
 #include "util/arrays.h"
@@ -34,6 +35,49 @@ namespace
 }
 
 Gfx::Canvas::~Canvas() {}
+
+#include "gx/rgbacolor.h"
+
+void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
+{
+  AttribSaver saver(*this);
+
+  {
+    setColor(RgbaColor(1.0, 0.0, 0.0, 1.0));
+    LineStripBlock block(*this);
+    vertex3(box.point000());
+    vertex3(box.point100());
+    vertex3(box.point110());
+    vertex3(box.point111());
+  }
+
+  {
+    setColor(RgbaColor(0.0, 1.0, 0.0, 1.0));
+    LineStripBlock block(*this);
+    vertex3(box.point001());
+    vertex3(box.point000());
+    vertex3(box.point010());
+    vertex3(box.point110());
+  }
+
+  {
+    setColor(RgbaColor(0.0, 0.0, 1.0, 1.0));
+    LineStripBlock block(*this);
+    vertex3(box.point101());
+    vertex3(box.point001());
+    vertex3(box.point011());
+    vertex3(box.point010());
+  }
+
+  {
+    setColor(RgbaColor(0.0, 0.0, 0.0, 1.0));
+    LineStripBlock block(*this);
+    vertex3(box.point011());
+    vertex3(box.point111());
+    vertex3(box.point101());
+    vertex3(box.point100());
+  }
+}
 
 void Gfx::Canvas::drawNurbsCurve(const dynamic_block<float>& knots,
                                  const dynamic_block<Gfx::Vec3<float> >& pts)
