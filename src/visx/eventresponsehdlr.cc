@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jul 11 12:05:21 2001
+// written: Thu Jul 12 18:24:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,8 +27,10 @@
 #include "gwt/widget.h"
 
 #include "tcl/convert.h"
+#include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclobjptr.h"
+#include "tcl/tcllistobj.h"
 #include "tcl/tclutil.h"
 
 #include "util/arrays.h"
@@ -55,7 +57,7 @@ namespace {
 
   const string_literal nullScript("{}");
 
-  Tcl::ObjPtr theNullObject(Tcl_NewStringObj("",-1));
+  Tcl::ObjPtr theNullObject("");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -260,18 +262,14 @@ private:
   // effect is cancelled by calling attend().
   void ignore(GWT::Widget& widget) const;
 
-  static Tcl_ObjCmdProc privateHandleCmd;
+  class PrivateHandleCmd;
+
   int getRespFromKeysym(const char* keysym) const;
   void feedback(int response) const;
   void updateFeedbacksIfNeeded() const;
   void updateRegexpsIfNeeded() const;
 
-  dynamic_string getBindingScript() const
-    {
-      return dynamic_string("{ ")
-        .append(itsPrivateCmdName).append(" ")
-        .append(itsBindingSubstitution).append(" }");
-    }
+  dynamic_string getBindingScript() const;
 
   void clearEventQueue() const
     {
@@ -289,17 +287,6 @@ private:
       return (text-1);
     }
 
-  fixed_string getUniqueCmdName()
-    {
-      dynamic_string privateHandleCmdName(
-        "__EventResponseHdlrPrivate::handle");
-
-      static int cmdCounter = 0;
-
-      privateHandleCmdName.append(++cmdCounter);
-      return privateHandleCmdName.c_str();
-    }
-
   // data
 private:
   EventResponseHdlr* itsOwner;
@@ -308,8 +295,7 @@ private:
 
   Tcl::SafeInterp itsSafeIntp;
 
-  mutable Tcl_Command itsTclCmdToken;
-  const fixed_string itsPrivateCmdName;
+  PrivateHandleCmd* itsCmdCallback;
 
   class RegExp_ResponseVal {
   public:
@@ -452,6 +438,43 @@ private:
 Util::Tracer EventResponseHdlr::tracer;
 
 
+//--------------------------------------------------------------------
+//
+// EventResponseHdlr::privateHandleCmd --
+//
+// This Tcl command gives a hook back into the C++ code from Tcl from
+// the event binding that is set up in attend().
+//
+//--------------------------------------------------------------------
+
+class EventResponseHdlr::Impl::PrivateHandleCmd : public Tcl::TclCmd {
+public:
+  PrivateHandleCmd(EventResponseHdlr::Impl* owner) :
+    Tcl::TclCmd(dynamic_cast<GrshApp&>(Application::theApp()).getInterp(),
+                getUniqueCmdName(), "<private>", 2),
+    itsOwner(*owner)
+  {}
+
+protected:
+  virtual void invoke(Tcl::Context& ctx)
+  {
+    itsOwner.itsState->handleResponse(ctx.getCstringFromArg(1));
+  }
+
+private:
+  const char* getUniqueCmdName()
+    {
+      static dynamic_string baseName;
+      static int cmdCounter = 0;
+
+      baseName = "__EventResponseHdlrPrivate::handle";
+      baseName.append(++cmdCounter);
+      return baseName.c_str();
+    }
+
+  EventResponseHdlr::Impl& itsOwner;
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // ERHState member definitions
@@ -513,8 +536,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsOwner(owner),
   itsState(ERHState::inactiveState()),
   itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
-  itsTclCmdToken(0),
-  itsPrivateCmdName(getUniqueCmdName().c_str()),
+  itsCmdCallback(new PrivateHandleCmd(this)),
   itsInputResponseMap(input_response_map),
   itsRegexps(),
   itsRegexpsAreDirty(true),
@@ -527,39 +549,12 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsAbortInvalidResponses(true)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
-
-  itsTclCmdToken =
-    Tcl_CreateObjCommand(itsSafeIntp.intp(),
-                         const_cast<char*>(itsPrivateCmdName.c_str()),
-                         privateHandleCmd, static_cast<ClientData>(this),
-                         (Tcl_CmdDeleteProc *) NULL);
 }
 
-EventResponseHdlr::Impl::~Impl() {
+EventResponseHdlr::Impl::~Impl()
+{
 DOTRACE("EventResponseHdlr::Impl::~Impl");
-
-  // We must check if the Tcl_Interp* has been tagged for deletion
-  // already, since if it is then we must not attempt to use it to
-  // delete a Tcl command (this results in "called Tcl_HashEntry on
-  // deleted table"). Not deleting the command in that case does not
-  // cause a resource leak, however, since the Tcl_Interp as part if
-  // its own destruction will delete all commands associated with it.
-
-  if ( !itsSafeIntp.interpDeleted() ) {
-    try
-      {
-        itsState->onDestroy();
-
-        DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
-
-        DebugEvalNL((void*) itsTclCmdToken);
-        Tcl_DeleteCommandFromToken(itsSafeIntp.intp(), itsTclCmdToken);
-      }
-    catch (ErrorWithMsg& err)
-      { DebugEvalNL(err.msg_cstr()); }
-    catch (...)
-      { DebugPrintNL("an unknown error occurred"); }
-  }
+  delete itsCmdCallback;
 }
 
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
@@ -595,6 +590,13 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
+dynamic_string EventResponseHdlr::Impl::getBindingScript() const
+{
+  return dynamic_string("{ ")
+	 .append(itsCmdCallback->name()).append(" ")
+	 .append(itsBindingSubstitution).append(" }");
+}
+
 void EventResponseHdlr::Impl::attend(GWT::Widget& widget) const {
 DOTRACE("EventResponseHdlr::Impl::attend");
 
@@ -605,42 +607,6 @@ void EventResponseHdlr::Impl::ignore(GWT::Widget& widget) const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
 
   widget.bind(itsEventSequence.c_str(), nullScript.c_str());
-}
-
-//--------------------------------------------------------------------
-//
-// EventResponseHdlr::privateHandleCmd --
-//
-// This Tcl command procedure gives a hook back into the C++ code from
-// Tcl from the event binding that is set up in attend().
-//
-//--------------------------------------------------------------------
-
-int EventResponseHdlr::Impl::privateHandleCmd(
-  ClientData clientData, Tcl_Interp*/*interp*/, int objc, Tcl_Obj *const objv[]
-  ) {
-DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
-  // We assert that objc is 2 because this command should only ever
-  // be invoked by a callback set up by EventResponseHdlr, which
-  // should never call this with the wrong number of args.
-  Assert(objc==2);
-
-  EventResponseHdlr::Impl* impl =
-    static_cast<EventResponseHdlr::Impl *>(clientData);
-
-  try {
-    impl->itsState->handleResponse(Tcl_GetString(objv[1]));
-  }
-  catch (ErrorWithMsg& err) {
-    impl->itsSafeIntp.appendResult(err.msg_cstr());
-    return TCL_ERROR;
-  }
-  catch (...) {
-    impl->itsSafeIntp.appendResult("an error of unknown type occurred");
-    return TCL_ERROR;
-  }
-
-  return TCL_OK;
 }
 
 
@@ -691,9 +657,10 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
   itsSafeIntp.setGlobalVar("resp_val", Tcl_NewIntObj(response));
 
   bool feedbackGiven = false;
-  for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
-    feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
-  }
+  for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i)
+    {
+      feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
+    }
 
   itsSafeIntp.unsetGlobalVar("resp_val");
 }
@@ -710,33 +677,25 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
   if (!itsFeedbacksAreDirty) return;
 
-  Tcl_Obj** pairs;
-  int num_pairs=0;
-  Tcl::ObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
+  Tcl::List pairs_list(Tcl::ObjPtr(itsFeedbackMap.c_str()));
 
-  itsSafeIntp.splitList(pairs_list, pairs, num_pairs);
-
-  Assert(num_pairs >= 0);
-
-  unsigned int uint_num_pairs = num_pairs;
+  unsigned int uint_num_pairs = pairs_list.length();
 
   itsFeedbacks.resize(uint_num_pairs);
 
-  for (unsigned int i = 0; i < uint_num_pairs; ++i) {
+  for (unsigned int i = 0; i < uint_num_pairs; ++i)
+    {
+      Tcl::List current_pair(pairs_list[i]);
 
-    Tcl::ObjPtr current_pair = pairs[i];
+      if (current_pair.length() != 2)
+        {
+          throw ErrorWithMsg("\"pair\" did not have length 2 "
+                             "in EventResponseHdlr::updateFeedbacksIfNeeded");
+        }
 
-    // Check that the length of the "pair" is really 2
-    if (itsSafeIntp.listLength(current_pair) != 2) {
-      throw ErrorWithMsg("\"pair\" did not have length 2 "
-                         "in EventResponseHdlr::updateFeedbacksIfNeeded");
+      itsFeedbacks.at(i) = Impl::Condition_Feedback(current_pair[0],
+                                                    current_pair[1]);
     }
-
-    Tcl_Obj *condition = itsSafeIntp.listElement(current_pair, 0);
-    Tcl_Obj *result = itsSafeIntp.listElement(current_pair, 1);
-
-    itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
-  }
 
   itsFeedbacksAreDirty = false;
 
@@ -754,38 +713,31 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 //--------------------------------------------------------------------
 
 void EventResponseHdlr::Impl::updateRegexpsIfNeeded() const {
-DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
+DOTRACE("EventResponseHdlr::Impl::updateRegexpsIfNeeded");
 
   if (!itsRegexpsAreDirty) return;
 
-  Tcl_Obj** pairs;
-  int num_pairs=0;
-  Tcl::ObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
+  Tcl::List pairs_list(Tcl::ObjPtr(itsInputResponseMap.c_str()));
 
-  itsSafeIntp.splitList(pairs_list, pairs, num_pairs);
-
-  Assert(num_pairs >= 0);
-  unsigned int uint_num_pairs = num_pairs;
+  unsigned int uint_num_pairs = pairs_list.length();
 
   itsRegexps.resize(uint_num_pairs);
 
-  for (unsigned int i = 0; i < uint_num_pairs; ++i) {
+  for (unsigned int i = 0; i < uint_num_pairs; ++i)
+    {
+      Tcl::List current_pair(pairs_list[i]);
 
-    Tcl::ObjPtr current_pair = pairs[i];
+      if (current_pair.length() != 2)
+        {
+          throw ErrorWithMsg("\"pair\" did not have length 2 "
+                             "in EventResponseHdlr::updateRegexpsIfNeeded");
+        }
 
-    // Check that the length of the "pair" is really 2
-    if (itsSafeIntp.listLength(current_pair) != 2) {
-      throw ErrorWithMsg("\"pair\" did not have length 2 "
-                         "in EventResponseHdlr::updateFeedbacksIfNeeded");
+      Tcl::ObjPtr patternObj = current_pair[0];
+      int response_val = current_pair.get<int>(1);
+
+      itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
     }
-
-    Tcl::ObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
-    Tcl::ObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
-
-    int response_val = Tcl::fromTcl<int>(response_valObj);
-
-    itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
-  }
 
   itsRegexpsAreDirty = false;
 
