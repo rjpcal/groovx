@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Mon Jan 20 13:08:31 2003
+// written: Mon Jan 20 13:59:35 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,12 +55,6 @@ public:
   CreatorFromFunc(FuncType func) :
     CreatorBase<BasePtr>(), itsFunc(func) {}
 
-  CreatorFromFunc(const CreatorFromFunc& other) :
-    CreatorBase<BasePtr>(), itsFunc(other.itsFunc) {}
-
-  CreatorFromFunc& operator=(const CreatorFromFunc& other)
-    { itsFunc = other.itsFunc; return *this; }
-
   virtual CreatorBase<BasePtr>* clone() const
     { return new CreatorFromFunc<BasePtr, DerivedPtr>(*this); }
 
@@ -72,20 +66,23 @@ private:
 
 /**
  *
- * \c CreatorMapBase provides a non-typesafe wrapper around \c
- * std::map. The \c killPtr() function should be overridden to delete
- * the pointer after casting it to its true type.
+ * \c AssocArray provides a non-typesafe wrapper around \c
+ * std::map. The use must provide a pointer to a function that knows how to
+ * properly destroy the actual contained objects according to their true
+ * type.
  *
  **/
 
-class CreatorMapBase
+class AssocArray
 {
 public:
+  typedef void (KillFunc) (void*);
+
   /// Default constructor.
-  CreatorMapBase();
+  AssocArray(KillFunc* f);
 
   /// Virtual destructor.
-  virtual ~CreatorMapBase();
+  ~AssocArray();
 
   /// Raise an exception reporting an unknown type.
   void throwForType(const char* type);
@@ -93,28 +90,18 @@ public:
   /// Raise an exception reporting an unknown type.
   void throwForType(const fstring& type);
 
-protected:
   /// Retrieve the object associated with the tag \a name.
   void* getPtrForName(const fstring& name) const;
 
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, void* ptr);
 
-  /// Delete the object at \a ptr.
-
-  // FIXME this would be better done by setting function pointer to an
-  // appropriate "destroy" function. Then CreatorMapBase could guarantee
-  // proper destruction since it could use the function pointer in its
-  // destructor, unlike a virtual call.
-  virtual void killPtr(void* ptr) = 0;
-
-  /** This must be called by derived class's destructors in order to
-      avoid a memory leak. */
+  /// Clear all entries, calling the kill function for each.
   void clear();
 
 private:
-  CreatorMapBase(const CreatorMapBase&);
-  CreatorMapBase& operator=(const CreatorMapBase&);
+  AssocArray(const AssocArray&);
+  AssocArray& operator=(const AssocArray&);
 
   struct Impl;
   Impl* const rep;
@@ -123,31 +110,39 @@ private:
 
 /**
  *
- * \c CreatorMap provides a typesafe wrapper around \c CreatorMapBase.
+ * \c CreatorMap provides a typesafe wrapper around \c AssocArray.
  *
  **/
 
 template<class BasePtr>
-class CreatorMap : public CreatorMapBase
+class CreatorMap
 {
 public:
-  /// Virtual destructor calls \c clear() to free all memory.
-  virtual ~CreatorMap() { CreatorMapBase::clear(); }
+  CreatorMap() : base(&killPtr) {}
 
   /// The type of object stored in the map.
   typedef CreatorBase<BasePtr> CreatorType;
 
+  /// Raise an exception reporting an unknown type.
+  void throwForType(const char* type)
+    { base.throwForType(type); }
+
+  /// Raise an exception reporting an unknown type.
+  void throwForType(const fstring& type)
+    { base.throwForType(type); }
+
   /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const fstring& name) const
-    { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
+    { return static_cast<CreatorType*>(base.getPtrForName(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, CreatorType* ptr)
-    { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
+    { base.setPtrForName(name, static_cast<void*>(ptr)); }
 
-protected:
-  /// Deletes the object at \a ptr.
-  virtual void killPtr(void* ptr)
+private:
+  AssocArray base;
+
+  static void killPtr(void* ptr)
     { delete static_cast<CreatorType*>(ptr); }
 };
 

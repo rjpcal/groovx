@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Mon Jan 20 13:06:28 2003
+// written: Mon Jan 20 13:59:45 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,27 +22,29 @@
 
 #include "util/trace.h"
 
-struct CreatorMapBase::Impl
+struct AssocArray::Impl
 {
-  Impl() : funcMap() {}
+  Impl(KillFunc* f) : funcMap(), killFunc(f) {}
 
   typedef hash_array<fstring, void*, string_hasher<fstring> > MapType;
 
   MapType funcMap;
+  KillFunc* killFunc;
 };
 
-CreatorMapBase::CreatorMapBase() :
-  rep(new Impl)
+AssocArray::AssocArray(KillFunc* f) :
+  rep(new Impl(f))
 {
-DOTRACE("CreatorMapBase::CreatorMapBase");
+DOTRACE("AssocArray::AssocArray");
 }
 
-CreatorMapBase::~CreatorMapBase()
+AssocArray::~AssocArray()
 {
-DOTRACE("CreatorMapBase::~CreatorMapBase");
+DOTRACE("AssocArray::~AssocArray");
+  clear();
 }
 
-void CreatorMapBase::throwForType(const char* type)
+void AssocArray::throwForType(const char* type)
 {
   fstring typelist("known types are:");
 
@@ -57,37 +59,37 @@ void CreatorMapBase::throwForType(const char* type)
   throw Util::Error(fstring("unknown object type '", type, "'\n", typelist));
 }
 
-void CreatorMapBase::throwForType(const fstring& type)
+void AssocArray::throwForType(const fstring& type)
 {
   throwForType(type.c_str());
 }
 
-void CreatorMapBase::clear()
+void AssocArray::clear()
 {
-DOTRACE("CreatorMapBase::clear");
+DOTRACE("AssocArray::clear");
   for (Impl::MapType::iterator ii = rep->funcMap.begin();
        ii != rep->funcMap.end();
        ++ii)
     {
-      killPtr(ii->value);
+      rep->killFunc(ii->value);
       ii->value = 0;
     }
 
   delete rep;
 }
 
-void* CreatorMapBase::getPtrForName(const fstring& name) const
+void* AssocArray::getPtrForName(const fstring& name) const
 {
-DOTRACE("CreatorMapBase::getPtrForName");
+DOTRACE("AssocArray::getPtrForName");
   return rep->funcMap[name];
 }
 
-void CreatorMapBase::setPtrForName(const char* name, void* ptr)
+void AssocArray::setPtrForName(const char* name, void* ptr)
 {
-DOTRACE("CreatorMapBase::setPtrForName");
+DOTRACE("AssocArray::setPtrForName");
   fstring sname(name);
   void*& ptr_slot = rep->funcMap[sname];
-  killPtr(ptr_slot);
+  rep->killFunc(ptr_slot);
   ptr_slot = ptr;
 }
 
