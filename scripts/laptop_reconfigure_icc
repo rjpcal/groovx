@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#"/opt/intel_cc_80/bin/icc -cxxlib-gcc"
+
+CXX="/opt/intel_cc_80/bin/icc -Wl,-rpath,/opt/intel_cc_80/lib" \
+    ./configure --prefix=/home/rjpeters/local/groovx_icc \
+    --with-tcltk=/home/rjpeters/local/tcl8.4.5 --without-matlab

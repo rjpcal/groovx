@@ -1,0 +1,8 @@
+#!/bin/sh
+
+export CXX=/usr/local/gcc-3.4.0/bin/g++
+export LD_LIBRARY_PATH="/usr/local/gcc-3.4.0/lib:${LD_LIBRARY_PATH}"
+
+./configure --prefix=/home/rjpeters/local/groovx \
+    --with-tcltk=/home/rjpeters/local/tcl8.4.5 \
+    --without-matlab
