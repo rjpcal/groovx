@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 23:21:15 2002
+// written: Wed Sep 18 13:12:19 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -68,17 +68,11 @@ public:
   shared_ptr<GlxOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
 
-  int itsTime;
   bool itsPrivateCmapFlag;
   int itsFontListBase;
 
-  Tcl_TimerToken itsTimerToken;
-
   Impl(Togl* owner);
-  ~Impl() throw();
-
-  // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
-  static void cTimerCallback(ClientData clientData) throw();
+  ~Impl() throw() {}
 
   static Window cClassCreateProc(Tk_Window tkwin,
                                  Window parent,
@@ -112,11 +106,8 @@ Togl::Impl::Impl(Togl* owner) :
   itsOpts(new GlxOpts),
   itsGlx(0),
 
-  itsTime(-1),
   itsPrivateCmapFlag(false),
-  itsFontListBase(0),
-
-  itsTimerToken(0)
+  itsFontListBase(0)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -131,47 +122,6 @@ DOTRACE("Togl::Impl::Impl");
   Tk_MakeWindowExist(itsTkWin);
 
   Tk_MapWindow(itsTkWin);
-
-  //
-  // Set up handlers
-  //
-
-  if (itsTime > 0)
-    {
-      itsTimerToken =
-        Tcl_CreateTimerHandler(itsTime, &cTimerCallback,
-                               static_cast<ClientData>(this));
-    }
-}
-
-Togl::Impl::~Impl() throw()
-{
-DOTRACE("Togl::Impl::~Impl");
-
-  Assert(itsTkWin != 0);
-
-  Tcl_DeleteTimerHandler(itsTimerToken);
-}
-
-void Togl::Impl::cTimerCallback(ClientData clientData) throw()
-{
-DOTRACE("Togl::Impl::cTimerCallback");
-  Impl* rep = static_cast<Impl*>(clientData);
-  Tcl_Preserve(clientData);
-
-  try
-    {
-      rep->itsOwner->timerCallback();
-      rep->itsTimerToken =
-        Tcl_CreateTimerHandler(rep->itsTime, cTimerCallback,
-                               static_cast<ClientData>(rep));
-    }
-  catch (...)
-    {
-      Tcl::Interp(rep->itsOwner->interp()).handleLiveException("cTimerCallback", true);
-    }
-
-  Tcl_Release(clientData);
 }
 
 void Togl::Impl::swapBuffers() const
@@ -300,11 +250,6 @@ DOTRACE("Togl::displayCallback");
 
   rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin));
   fullRender();
-}
-
-void Togl::timerCallback()
-{
-DOTRACE("Togl::timerCallback");
 }
 
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin)); }

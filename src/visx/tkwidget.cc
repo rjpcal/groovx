@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Wed Sep 18 12:47:11 2002
+// written: Wed Sep 18 13:10:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,38 +82,9 @@ class TkWidgImpl
 
 public:
   TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p,
-             const char* classname, const char* pathname) :
-    owner(o),
-    interp(p),
-    tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
-                            const_cast<char*>(pathname),
-                            (char *) 0)),
-    width(400),
-    height(400),
-    updatePending(false),
-    shutdownRequested(false)
-  {
-    if (tkWin == 0)
-      {
-        throw Util::Error("TkWidget constructor couldn't create Tk_Window");
-      }
+             const char* classname, const char* pathname);
 
-    Tk_SetClass(tkWin, classname);
-
-    Tk_CreateEventHandler(tkWin, EVENT_MASK,
-                          TkWidgImpl::cEventCallback,
-                          static_cast<void*>(owner));
-  }
-
-  ~TkWidgImpl()
-  {
-    Tk_DeleteEventHandler(tkWin, EVENT_MASK,
-                          TkWidgImpl::cEventCallback,
-                          static_cast<void*>(owner));
-
-    Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(owner));
-    Tk_DestroyWindow(tkWin);
-  }
+  ~TkWidgImpl();
 
   Tcl::TkWidget* owner;
   Tcl_Interp* interp;
@@ -121,6 +92,9 @@ public:
 
   int width;
   int height;
+
+  int timeout;
+  Tcl_TimerToken timerToken;
 
   bool updatePending;
   bool shutdownRequested;
@@ -147,30 +121,67 @@ public:
                            controlPressed);
   }
 
-  static void cRenderCallback(ClientData clientData) throw()
-  {
-    Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+  static void cEventCallback(ClientData clientData, XEvent* rawEvent);
 
-    try
-      {
-        widg->displayCallback();
-        widg->rep->updatePending = false;
-      }
-    catch (...)
-      {
-        Tcl::Interp(widg->rep->interp).handleLiveException("cRenderCallback", true);
-      }
-  }
+  static void cTimerCallback(ClientData clientData) throw();
+
+  static void cRenderCallback(ClientData clientData) throw();
 
   static void cEventuallyFreeCallback(char* clientData) throw()
   {
     Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
     widg->decrRefCount();
   }
-
-  static void cEventCallback(ClientData clientData, XEvent* rawEvent);
 };
 
+TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p,
+                       const char* classname, const char* pathname) :
+  owner(o),
+  interp(p),
+  tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
+                                const_cast<char*>(pathname),
+                                (char *) 0)),
+  width(400),
+  height(400),
+  timeout(-1),
+  timerToken(0),
+  updatePending(false),
+  shutdownRequested(false)
+{
+DOTRACE("TkWidgImpl::TkWidgImpl");
+
+  if (tkWin == 0)
+    {
+      throw Util::Error("TkWidget constructor couldn't create Tk_Window");
+    }
+
+  Tk_SetClass(tkWin, classname);
+
+  Tk_CreateEventHandler(tkWin, EVENT_MASK,
+                        TkWidgImpl::cEventCallback,
+                        static_cast<void*>(owner));
+
+  if (timeout > 0)
+    {
+      timerToken =
+        Tcl_CreateTimerHandler(timeout, &cTimerCallback,
+                               static_cast<ClientData>(owner));
+    }
+}
+
+TkWidgImpl::~TkWidgImpl()
+{
+DOTRACE("TkWidgImpl::~TkWidgImpl");
+
+  Tcl_DeleteTimerHandler(timerToken);
+
+  Tk_DeleteEventHandler(tkWin, EVENT_MASK,
+                        TkWidgImpl::cEventCallback,
+                        static_cast<void*>(owner));
+
+  Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(owner));
+  Tk_DestroyWindow(tkWin);
+}
 
 void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent)
 {
@@ -228,6 +239,42 @@ DOTRACE("TkWidgImpl::cEventCallback");
   catch (...)
     {
       Tcl::Interp(widg->interp()).handleLiveException("cEventCallback", true);
+    }
+}
+
+void TkWidgImpl::cTimerCallback(ClientData clientData) throw()
+{
+DOTRACE("TkWidgImpl::cTimerCallback");
+
+  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
+
+  try
+    {
+      widg->timerCallback();
+      widg->rep->timerToken =
+        Tcl_CreateTimerHandler(widg->rep->timeout, cTimerCallback,
+                               static_cast<ClientData>(widg));
+    }
+  catch (...)
+    {
+      Tcl::Interp(widg->interp()).handleLiveException("cTimerCallback", true);
+    }
+}
+
+void TkWidgImpl::cRenderCallback(ClientData clientData) throw()
+{
+DOTRACE("TkWidgImpl::cRenderCallback");
+
+  Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+
+  try
+    {
+      widg->displayCallback();
+      widg->rep->updatePending = false;
+    }
+  catch (...)
+    {
+      Tcl::Interp(widg->rep->interp).handleLiveException("cRenderCallback", true);
     }
 }
 
@@ -323,6 +370,11 @@ DOTRACE("Tcl::TkWidget::pack");
   pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
   Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
   pack_cmd.invoke(rep->interp);
+}
+
+void Tcl::TkWidget::timerCallback()
+{
+DOTRACE("Tcl::TkWidget::timerCallback");
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)
