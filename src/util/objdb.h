@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Nov 21 01:15:14 1999
+// written: Sun Nov 21 02:23:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,8 @@ public:
 protected:
   /// Subclasses must override this to cast the void* to an IO*.
   virtual IO* fromVoidToIO(void* ptr) const = 0;
+  /// Subclasses must override this to cast the IO* to a void*.
+  virtual void* fromIOToVoid(IO* ptr) const = 0;
 };
 
 static const char vcid_ioptrlist_h[] = "$Header$";
