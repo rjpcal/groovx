@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Thu May 10 12:04:36 2001
+// written: Tue Jun 19 14:18:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ public:
   int initStatus() const;
 
   /** Returns a Tcl status code representing the combination of the
-		current \c TclPkg's status along with \a other_status. If either
-		status represents failure, the result will also represent
-		failure, otherwise success. */
+      current \c TclPkg's status along with \a other_status. If either
+      status represents failure, the result will also represent
+      failure, otherwise success. */
   int combineStatus(int other_status) const;
 
   /// Returns true if the package was initialized successfully.
@@ -107,23 +107,23 @@ public:
   void addCommand(TclCmd* cmd);
 
   /// Links the \a var with the Tcl variable \a varName.
-  void linkVar(const char* varName, int& var) throw (TclError);
+  void linkVar(const char* varName, int& var);
   /// Links \a var with the Tcl variable \a varName.
-  void linkVar(const char* varName, double& var) throw (TclError);
+  void linkVar(const char* varName, double& var);
 
   /** Links a copy of \a var with the Tcl variable \a varName. The Tcl
       variable will be read-only.*/
-  void linkVarCopy(const char* varName, int var) throw (TclError);
+  void linkVarCopy(const char* varName, int var);
   /** Links a copy of \a var with the Tcl variable \a varName. The Tcl
       variable will be read-only.*/
-  void linkVarCopy(const char* varName, double var) throw (TclError);
+  void linkVarCopy(const char* varName, double var);
 
   /** Links \a var with the Tcl variable \a varName. The Tcl variable
       will be read_only. */
-  void linkConstVar(const char* varName, int& var) throw (TclError);
+  void linkConstVar(const char* varName, int& var);
   /** Links \a var with the Tcl variable \a varName. The Tcl variable
       will be read_only. */
-  void linkConstVar(const char* varName, double& var) throw (TclError);
+  void linkConstVar(const char* varName, double& var);
 
 protected:
   void setInitStatusOk();
