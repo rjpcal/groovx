@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 10:56:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 #include "gfx/rect.h"
 
 #include "io/reader.h"
+#include "io/writer.h"
 
 #include "util/error.h"
 #include "util/objdb.h"
