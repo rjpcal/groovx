@@ -2,7 +2,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Aug  3 17:59:20 1999
+// written: Fri Sep 10 14:23:49 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -143,6 +143,13 @@ DOTRACE("GrObj::draw");
 void GrObj::undraw() const {
 DOTRACE("GrObj::undraw");
   checkForGlError("before GrObj::undraw");
+
+  GLint foreground, background;
+  glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+  glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+  glIndexi(background);
+  glClearIndex(foreground);
+
   if (itsUsingCompile) {
 	 // Since we don't do a recompile of the display list here, we must
 	 // explicitly check that the display list is valid, since it might
@@ -154,6 +161,9 @@ DOTRACE("GrObj::undraw");
   else {
 	 grRender();
   }
+  glIndexi(foreground);
+  glClearIndex(background);
+
   checkForGlError("during GrObj::undraw");
 }
 
