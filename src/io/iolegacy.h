@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Sep 28 15:23:33 2000
+// written: Thu Sep 28 15:57:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,6 @@ public:
   void setFlags(IO::IOFlag new_flags) { itsFlags = new_flags; }
 
   void throwIfError(const char* type);
-
-  void readTypename(const char* correctNames, bool doCheck=true);
 
   int eatWhitespace();
 
