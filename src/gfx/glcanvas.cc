@@ -380,6 +380,11 @@ DOTRACE("GLCanvas::setClearColorIndex");
   glClearIndex(index);
 }
 
+void GLCanvas::setLineWidth(double width) const
+{
+DOTRACE("GLCanvas::setLineWidth");
+  glLineWidth(width);
+}
 
 void GLCanvas::translate(const Gfx::Vec3<double>& v) const
 {
@@ -424,6 +429,74 @@ DOTRACE("GLCanvas::drawRect");
   }
   glEnd();
 }
+
+void GLCanvas::beginPoints() const
+{
+  glBegin(GL_POINTS);
+}
+
+void GLCanvas::beginLines() const
+{
+  glBegin(GL_LINES);
+}
+
+void GLCanvas::beginLineStrip() const
+{
+  glBegin(GL_LINE_STRIP);
+}
+
+void GLCanvas::beginLineLoop() const
+{
+  glBegin(GL_LINE_LOOP);
+}
+
+void GLCanvas::beginTriangles() const
+{
+  glBegin(GL_TRIANGLES);
+}
+
+void GLCanvas::beginTriangleStrip() const
+{
+  glBegin(GL_TRIANGLE_STRIP);
+}
+
+void GLCanvas::beginTriangleFan() const
+{
+  glBegin(GL_TRIANGLE_FAN);
+}
+
+void GLCanvas::beginQuads() const
+{
+  glBegin(GL_QUADS);
+}
+
+void GLCanvas::beginQuadStrip() const
+{
+  glBegin(GL_QUAD_STRIP);
+}
+
+void GLCanvas::beginPolygon() const
+{
+  glBegin(GL_POLYGON);
+}
+
+
+void GLCanvas::end() const
+{
+  glEnd();
+}
+
+
+void GLCanvas::vertex2(const Gfx::Vec2<double>& v) const
+{
+  glVertex2d(v.x(), v.y());
+}
+
+void GLCanvas::vertex3(const Gfx::Vec3<double>& v) const
+{
+  glVertex3d(v.x(), v.y(), v.z());
+}
+
 
 static const char vcid_glcanvas_cc[] = "$Header$";
 #endif // !GLCANVAS_CC_DEFINED
