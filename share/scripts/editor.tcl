@@ -104,7 +104,6 @@ itcl::class Editor {
 		  set objs [getEditSelection]
 		  if { [llength $objs] > 0 } {
 				updateControls [lindex $objs 0]
-				requestDraw
 		  }
 	 }
 
@@ -210,7 +209,7 @@ itcl::class Editor {
 		  set itsObjType $objtype
 
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
-					 -width 800 -height 800]
+					 -width 900 -height 900]
 
 		  $itsPanes add controls
 
@@ -261,7 +260,7 @@ itcl::class Editor {
 
 		  makeFieldControls $itsObjType
 
-		  $itsPanes fraction 70 30
+		  $itsPanes fraction 75 25
 
 		  pack $itsPanes -side left -fill both -expand yes
 
