@@ -3,155 +3,57 @@ $Id$
 
 *** FRONT of priority queue ***
 
+========================================================================
+Resource management revisited 17-Oct-2000
+
+(17-Oct-2000) Make PtrList::insert() functions return an
+ItemWithId. This is a first step to eliminating reliance on the int
+id's in the C++ side of things.
+
+(17-Oct-2000) ItemWithId<T> could store a static PtrList<T>&, which
+would allow us to construct an ItemWithId<T> from a MasterPtr only,
+and insert this MasterPtr into the PtrList from within the ItemWithId
+structure.
+
+(17-Oct-2000) Move ItemWithId<T> and NullableItemWithId<T> off into
+their own component. Most C++ clients should not have to rely on
+PtrList directly, or access any of the singletons.
+------------------------------------------------------------------------
+
+(11-Oct-2000) Put more behavior in Tcl::SafeInterp. This functionality
+would be able to be used in many places.
+
+(8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
+to establishing CountedPtr's as a better way to manage objects between
+C++ and Tcl. Probably Reader/Writer need a special method for
+CountedPtr's. The question is how to keep track of the pointers to the
+reference counts. Or... we could put the reference count right in
+IO... Aha! Instead of AsciiStreamReader maintaining a map<unsigned
+long, IO*> during deserialization, we could use a map<unsigned long,
+CountedPtr<IO> >. However, this introduces a split from the semantics
+of readOwnedObject()... this suggests that we need a separate map for
+owned objects. As this transition will require a nearly universal
+switch to CountedPtr's, we need to provide a feasible migration route,
+perhaps by providing the ability to short-circuit CountedPtr's
+ref-counting at first.
+
+(9-Oct-2000) Could refactor EventResponseHdlr and Trial by using a
+state pattern instead of an enum TrialState.
+
 (5-Oct-2000) Add zstream to Pbm.
 
-========================================================================
-GOAL #3
+(10-Oct-2000) Start reaping the benefits of my PtrList ref-counting
+refactoring by allowing clients to lock onto their resources using
+ItemWithId<T>.
 
-Implement reference counting so that smart pointers can be used within
-C++ instead of integer id's.
+(10-Oct-2000) PtrList could do an "idiot check" on insert to make sure
+that we aren't storing the same pointer in two slots. If this happens
+with the same MasterPtr, we can just return the previous MasterPtr;
+however if it happens with two MasterPtr's pointing to the same
+object, then it is a bug which will result in memory corruption.
 
-*) Add a SharedPtr to PtrList that starts the provides reference
-   counting skeleton.
-
-*) Add a MasterVoidPtr to VoidPtrList, and turn over the control of
-   object destruction to it.
-
-*) Add a VoidPtrHandle.
-
-*) VoidPtrHandle should become ref-counting.
-
-*) MasterVoidPtr should become abstract, and we should use MasterIoPtr
-   as a concret subclass instead. Then we can dynamic_cast to/from
-   IO*'s, rather than static_cast'ing to/from void*. MasterVoidPtr
-   should not need the ptr() function anymore. 
-
-*) MasterVoidPtr can be renamed MasterPtr.
-
-*) We can remove destroyPtr() from the PtrList specification, since
-   the destruction of raw pointers can now be handled in the MasterPtr
-   hierarchy. 
-
-*) We should pass out copies of VoidPtrHandle's from
-   VoidPtrList. VoidPtrHandle can be renamed PtrHandle.
-
-*) VoidPtrList can be renamed SharedPtrList (!).
-
-(very early) figure way for ObjList and PosList to notify Trials or
-Tlist when GrObj or Position is deleted. Then Trial should remove that
-(objid, posid) pair from its list. Possibility: have GrObj and
-Position implement a Notifier interface, where clients subscribe to
-the object, then the object has a notify() procedure that sends a
-message to each of its clients. Contents of message might be "I've
-changed" or "I'm destructed". Or... have ObjList control the
-notification since Trials only know about objids and posids. PtrList
-could maintain an array of info that is parallel to the stored
-pointers. This array could contain sets of clients for each id. Have
-to think carefully about how this structure could be maintained
-through serialization.
-
-Or... do pseudo-smart pointer stuff within PtrList. Whenever some
-client is going to hold on to an id within the PtrList, it must "check
-out" the id. This would increment a reference count within the
-PtrList. Ptr's with a non-zero ref count are not allowed to be
-delete'd or overwritten. This is I guess just a simpler version of
-maintaining a list of clients--it doesn't allow for any messages to be
-sent back to the clients.
-
-On third thought, this is a deep design issue. The question is, who
-owns the GrObj's and Position's? Who can delete them?
-
-(19-Oct-1999) I'm suddenly turned off by PtrList's: 1) I just fixed a
-bug in insertAt that is equivalent to the 'check for assignment to
-self' in assignment operators, and 2) even worse, I just realized that
-it would be disastrous if the same pointer were stored at two
-locations in a PtrList... double deletion would result. This suggests
-to me that we need a more flexible and robust memory-management
-scheme, probably using reference-counted smart pointers. This will
-also eliminate a lot of "dangling id" problems that necessitated
-getCheckedPtr(id). But what sort of Tcl interface should the
-ref-counted smart-pointers have?
-
-(24-Jan-2000) OK, forget the traditional ref-counted
-pointers. Instead, we'll put the reference counting right into the
-list. This will avoid the problems with maintaining the VoidPtrList <-
-IoPtrList <- PtrList hierarchy. VoidPtrList will be able to hold the
-ref counts, and maintain the ref counting logic; it will just have to
-forward object destruction to a derived class via a virtual function,
-as it does now.
-
-Clients will use a ListItem, containing an integer id and a pointer to
-a PtrList. The ListItem's constructors and destructor will manage the
-ref counts via calls to PtrList member functions. ListItem will offer
-an operator-> so it can be used as a smart pointer.
-
-In order to hide PtrList from clients, we can define the necessary
-functions out of line.
-
-At the expense of some size, we can cache a C* inside ListItem so that
-we don't have to call a PtrList member function every time ListItem is
-used. Basically, PtrList would keep a counter that is incremented
-every time the list is modified. ListItems would maintain a const* to
-this count, and would also store the value of the counter from the
-last time their C* was cached. Then checking that the cache is current
-just involves dereferencing the const* counter and comparing it to the
-stored counter value.
-
-Problem: how to handle derived classes with a ListItem?
-
-(10-May-2000) In lieu of true reference counting with PtrList's, we
-could allow locks that clients could take that would temporarily
-prevent objects from being deleted.
-
-(5-Oct-2000) What do I want out of an improved memory management
-system?
-
-  *) be able to associate C++ objects with unique integers, and
-   retrieve the object from somewhere given the integer
-  *) ensure that the object is not destroyed until all references to
-   it and to its integer identifier are gone
-  *) provide some way for Tcl to control which objects are referenced
-   from Tcl and which are unreferenced... this probably requires a new
-   Tcl_Obj type
-  *) allow some of the conveniences of the current PtrList system,
-   like being able to retrieve a list of all valid objects of a given
-   type
-
-Is the current system fatally flawed with respect to these goals? The
-hardest part is controlling references from Tcl.
-
-One solution would just be to have the Tcl objects be typed, rather
-than just plain integers. The internal rep would be something that
-refers to the PtrList with an integer id, and disallows conversions to
-other Tcl_Obj types. However, then we wouldn't be able to do integer
-math with the id's, although we could view the id's as strings. This
-system requires a dependency on the Tcl ref-counting system.
-
-Another solution would be to require explicit control of a Tcl
-reference count from the Tcl side, with functions like
-PtrList::incrRef and PtrList::decrRef. This might require us to have
-two ref counts, one for the C++ side and one for the Tcl side, in
-order to keep things safe and sensible.
-
-... I think the first option is more sound, although it is a bit less
-convenient in the sense that it will require some changes to existing
-scripts. If I had itcl up and running, I could build an equally safe
-solution out of itcl code using the second implementation.
-
-... I tried a bit at implementing the first option, playing around
-with a new Tcl_ObjType. It seems like I don't have a good way to
-control exactly when objects are ref'd, unref'd, and when they switch
-types. So, I think I'm going to try for option two for now, by added
-two reference counts to the PtrList's, one for C++ and one for
-Tcl. Tcl scripts will have to manually control the reference counts
-for now.
-
-... Need to focus on getting more behavior into the smart pointers,
-and less in the PtrList. The PtrList has two functions: one is to
-control how id's are doled out, and the other is to maintain knowledge
-of all existing pointers of a certain type.
-
-------------------------------------------------------------------------
+(10-Oct-2000) Make the factory functions return PtrHandle's or
+MasterPtr's.
 
 ========================================================================
 "Dynamic templates" 4-Oct-2000
@@ -509,9 +411,6 @@ initialization order (eliminate tempRenderer). Same for XBitmap.
 (19-Jan-2000) Does BitmapRep really need to implement grUnRender(), or
 can we just use GrObj's GROBJ_CLEAR_BOUNDING_BOX mode?
 
-(19-Jan-2000) Auto-detect gzipped files? (Hint: how is Tcl's 'file
-extension' implemented?)
-
 (17-Jan-2000) We should have a TclVecItemCmd<C> template that parallels
 TclItemCmd<C> but can handle vectors of items. Mainly it would need a
 getItems() member that returns a reference to a vector<C*>. ... no,
@@ -520,22 +419,6 @@ there ought to be some way to get the base class to take care of most
 of the iteration, so that the subclasses just need to define what to
 do for each element. This would be similar to the way VecSetterBaseCmd
 provides a partial implementation for TVecSetterCmd.
-
-(11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
-
-(8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
-to establishing CountedPtr's as a better way to manage objects between
-C++ and Tcl. Probably Reader/Writer need a special method for
-CountedPtr's. The question is how to keep track of the pointers to the
-reference counts. Or... we could put the reference count right in
-IO... Aha! Instead of AsciiStreamReader maintaining a map<unsigned
-long, IO*> during deserialization, we could use a map<unsigned long,
-CountedPtr<IO> >. However, this introduces a split from the semantics
-of readOwnedObject()... this suggests that we need a separate map for
-owned objects. As this transition will require a nearly universal
-switch to CountedPtr's, we need to provide a feasible migration route,
-perhaps by providing the ability to short-circuit CountedPtr's
-ref-counting at first.
 
 (14-Dec-1999) Need Canvas& arguments on GrObj::getBoundingBox,
 GrObj::grGetBoundingBox, and Bitmap::grabScreenRect/grabWorldRect.
@@ -620,10 +503,6 @@ that controls not the size of the object inside the patch, but the
 size of the patch itself (i.e. how big the window onto the Gabor patch
 is).
 
-(12-Oct-1999) The SGI-related bugs start rolling in... Had to
-conditionally compile out the delete's in ~TclPkg since they were
-causing an inexplicable bug.
-
 (11-Oct-1999) Could write a Widget class that encapsulates the details
 of Tk widgets. Then we could extend with subclasses... for example one
 subclass could be designed to edit Property's of another class.
@@ -676,11 +555,6 @@ GL_PACK_ALIGNMENT defaults to 4, it is not sufficient to allocate
 avoid these problems in the future? Include a byteAlignment member in
 Bitmap, add a utility function that reallocates appropriate space for
 a given width and height.
-
-(16-Sep-1999) BUG: if somehow the current trial becomes invalid, it is
-impossible to show a new trial because the program always tries to
-undraw the current, invalid trial before drawing a new one. So there
-is no way to un-corrupt the program state.
 
 (13-Sep-1999) It is becoming more urgent to set up dynamic loading of
 Tcl modules, so that not everything must always be loaded when
@@ -843,3 +717,6 @@ FixedPosition. What would a Position subclass for moving objects look
 like?
 
 *** BACK ***
+
+(done 16-Oct-2000) NullablePtrHandle? Allows resources to be
+purged. Done. 
