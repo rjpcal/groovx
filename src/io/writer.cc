@@ -35,10 +35,9 @@
 #include "io/writer.h"
 
 #include "util/base64.h"
+#include "util/bytearray.h" // for use with rutz::base64_encode()
 #include "util/error.h"
 #include "util/strings.h"
-
-#include <vector> // for use with rutz::base64_encode()
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -98,13 +97,13 @@ void IO::Writer::defaultWriteRawData(const char* name,
 {
 DOTRACE("IO::Writer::defaultWriteRawData");
 
-  std::vector<char> encoded;
+  rutz::byte_array encoded;
 
   rutz::base64_encode(data, length, encoded, 60);
 
-  encoded.push_back('\0');
+  encoded.vec.push_back('\0');
 
-  writeCstring(name, &encoded[0]);
+  writeCstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
 }
 
 static const char vcid_writer_cc[] = "$Header$";

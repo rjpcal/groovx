@@ -32,22 +32,22 @@
 #ifndef BASE64_H_DEFINED
 #define BASE64_H_DEFINED
 
-#include <vector>
-
 namespace rutz
 {
+  class byte_array;
+
   void base64_encode(const unsigned char* src,
                      unsigned int src_len,
-                     std::vector<char>& dst,
+                     rutz::byte_array& dst,
                      unsigned int line_width = 0);
 
   void base64_encode(const char* src_filename,
-                     std::vector<char>& dst,
+                     rutz::byte_array& dst,
                      unsigned int line_width = 0);
 
   void base64_decode(const char* src,
                      unsigned int in_len,
-                     std::vector<unsigned char>& dst);
+                     rutz::byte_array& dst);
 }
 
 static const char vcid_base64_h[] = "$Header$";

@@ -34,6 +34,7 @@
 
 #include "base64.h"
 
+#include "util/bytearray.h"
 #include "util/error.h"
 #include "util/mappedfile.h"
 
@@ -73,18 +74,18 @@ namespace
 
 void rutz::base64_encode(const unsigned char* src,
                          unsigned int src_len,
-                         std::vector<char>& dst,
+                         rutz::byte_array& dst,
                          unsigned int line_width)
 {
 DOTRACE("rutz::base64_encode");
-  dst.resize(0);
+  dst.vec.resize(0);
 
   if (src_len == 0) return;
 
   unsigned int reserve_size = ((src_len+2)/3) * 4;
   if (line_width > 0)
     reserve_size += 2*(src_len/line_width + 2);
-  dst.reserve(reserve_size);
+  dst.vec.reserve(reserve_size);
   int i = 0;
   unsigned int c = 0;
   unsigned char dec3[3]; // three characters of decoded string
@@ -92,8 +93,8 @@ DOTRACE("rutz::base64_encode");
 
   if (line_width > 0)
     {
-      dst.push_back('\n');
-      dst.push_back('\t');
+      dst.vec.push_back('\n');
+      dst.vec.push_back('\t');
     }
 
   const unsigned char* const stop = src + src_len;
@@ -119,7 +120,7 @@ DOTRACE("rutz::base64_encode");
           enc4[3] = dec3[2] & 0x3f;
 
           for (i = 0; i < 4; ++i)
-            dst.push_back(base64_chars[enc4[i]]);
+            dst.vec.push_back(base64_chars[enc4[i]]);
 
           i = 0;
 
@@ -128,8 +129,8 @@ DOTRACE("rutz::base64_encode");
           if (line_width > 0 && c > line_width)
             {
               c = 0;
-              dst.push_back('\n');
-              dst.push_back('\t');
+              dst.vec.push_back('\n');
+              dst.vec.push_back('\t');
             }
         }
     }
@@ -141,10 +142,10 @@ DOTRACE("rutz::base64_encode");
       enc4[0] = (dec3[0] & 0xfc) >> 2;
       enc4[1] = (dec3[0] & 0x03) << 4;
 
-      dst.push_back(base64_chars[enc4[0]]);
-      dst.push_back(base64_chars[enc4[1]]);
-      dst.push_back('=');
-      dst.push_back('=');
+      dst.vec.push_back(base64_chars[enc4[0]]);
+      dst.vec.push_back(base64_chars[enc4[1]]);
+      dst.vec.push_back('=');
+      dst.vec.push_back('=');
     }
   else if (i == 2)
     {
@@ -152,15 +153,15 @@ DOTRACE("rutz::base64_encode");
       enc4[1] = ((dec3[0] & 0x03) << 4) + ((dec3[1] & 0xf0) >> 4);
       enc4[2] = (dec3[1] & 0x0f) << 2;
 
-      dst.push_back(base64_chars[enc4[0]]);
-      dst.push_back(base64_chars[enc4[1]]);
-      dst.push_back(base64_chars[enc4[2]]);
-      dst.push_back('=');
+      dst.vec.push_back(base64_chars[enc4[0]]);
+      dst.vec.push_back(base64_chars[enc4[1]]);
+      dst.vec.push_back(base64_chars[enc4[2]]);
+      dst.vec.push_back('=');
     }
 }
 
 void rutz::base64_encode(const char* filename,
-                         std::vector<char>& dst,
+                         rutz::byte_array& dst,
                          unsigned int line_width)
 {
   rutz::mapped_file m(filename);
@@ -172,11 +173,11 @@ void rutz::base64_encode(const char* filename,
 
 void rutz::base64_decode(const char* src,
                          unsigned int in_len,
-                         std::vector<unsigned char>& dst)
+                         rutz::byte_array& dst)
 {
 DOTRACE("rutz::base64_decode");
-  dst.resize(0);
-  dst.reserve((in_len / 4) * 3);
+  dst.vec.resize(0);
+  dst.vec.reserve((in_len / 4) * 3);
 
   int i = 0;
   unsigned char enc4[4];
@@ -198,7 +199,7 @@ DOTRACE("rutz::base64_decode");
               dec3[2] = ((enc4[2] & 0x3) << 6) + enc4[3];
 
               for (i = 0; i < 3; ++i)
-                dst.push_back(dec3[i]);
+                dst.vec.push_back(dec3[i]);
 
               i = 0;
             }
@@ -224,7 +225,7 @@ DOTRACE("rutz::base64_decode");
 
       dec3[0] = (enc4[0] << 2) + ((enc4[1] & 0x30) >> 4);
 
-      dst.push_back(dec3[0]);
+      dst.vec.push_back(dec3[0]);
     }
 
   else if (i == 3)
@@ -234,8 +235,8 @@ DOTRACE("rutz::base64_decode");
       dec3[0] = (enc4[0] << 2) + ((enc4[1] & 0x30) >> 4);
       dec3[1] = ((enc4[1] & 0xf) << 4) + ((enc4[2] & 0x3c) >> 2);
 
-      dst.push_back(dec3[0]);
-      dst.push_back(dec3[1]);
+      dst.vec.push_back(dec3[0]);
+      dst.vec.push_back(dec3[1]);
     }
 }
 

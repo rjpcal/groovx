@@ -101,7 +101,7 @@ DOTRACE("IO::Reader::defaultReadRawData");
 
   fstring encoded = readStringImpl(name);
   rutz::base64_decode(encoded.c_str(), encoded.length(),
-                      data.vec);
+                      data);
 }
 
 static const char vcid_reader_cc[] = "$Header$";
