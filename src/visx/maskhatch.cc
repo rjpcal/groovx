@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov  2 21:45:29 1999
+// written: Tue Nov  9 13:26:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include <GL/gl.h>
 #include <iostream.h>
+#include <string>
 
 #include "reader.h"
 #include "writer.h"
@@ -22,6 +23,10 @@
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
+
+namespace {
+  const string ioTag = "MaskHatch";
+}
 
 MaskHatch::MaskHatch () :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
@@ -41,13 +46,22 @@ DOTRACE("MaskHatch::~MaskHatch ");
 
 void MaskHatch::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("MaskHatch::serialize");
+  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
+  if (os.fail()) throw OutputError(ioTag);
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void MaskHatch::deserialize(istream &is, IOFlag flag) {
 DOTRACE("MaskHatch::deserialize");
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (is.fail()) throw InputError(ioTag);
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 }
 
-int MaskHatch::charCount() const { return 0 + GrObj::charCount(); }
+int MaskHatch::charCount() const {
+DOTRACE("MaskHatch::charCount");
+  return ioTag.length() + 1 + GrObj::charCount();
+}
 
 void MaskHatch::readFrom(Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
