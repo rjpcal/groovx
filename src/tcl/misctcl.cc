@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Aug 22 15:30:56 2001
+// written: Sat Sep  8 14:25:51 2001
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -20,29 +20,14 @@
 #include "tcl/tclpkg.h"
 
 #include "util/rand.h"
-#include "util/randutils.h"
 
 #include <unistd.h>
 
-///////////////////////////////////////////////////////////////////////
-//
-// MiscTcl Tcl package declarations
-//
-///////////////////////////////////////////////////////////////////////
+#include "util/trace.h"
 
-namespace MiscTcl
+namespace
 {
   Util::Randint generator;
-
-  double rand(double min, double max)
-  {
-    return min + generator.fdraw() * (max-min);
-  }
-
-  void srand(int seed)
-  {
-    generator.seed(seed);
-  }
 
   void usleepr(unsigned int usecs, unsigned int reps)
   {
@@ -54,12 +39,16 @@ namespace MiscTcl
 extern "C"
 int Misc_Init(Tcl_Interp* interp)
 {
-  using namespace MiscTcl;
+DOTRACE("Misc_Init");
+
+  using namespace Util;
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Misc", "$Revision$");
 
-  pkg->def( "::rand", "min max", &MiscTcl::rand );
-  pkg->def( "::srand", "seed", &MiscTcl::srand );
+  pkg->def( "::rand", "min max",
+            bindFirst(memFunc(&Randint::fdrawRange), &generator) );
+  pkg->def( "::srand", "seed",
+            bindFirst(memFunc(&Randint::seed), &generator) );
 
   pkg->def( "::sleep", "secs", &::sleep );
   // use the standard library sleep() to sleep a specified # of seconds
@@ -76,7 +65,7 @@ int Misc_Init(Tcl_Interp* interp)
   // specified number is < 10000, in which case this command invariably
   // takes ~19000 us (ugh)
 
-  pkg->def( "::usleepr", "usecs reps", &MiscTcl::usleepr );
+  pkg->def( "::usleepr", "usecs reps", &usleepr );
   // use the standard library usleep() to repeatedly sleep a specified #
   // of microseconds
   //
