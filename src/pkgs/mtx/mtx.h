@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Feb 27 15:40:53 2002
+// written: Wed Feb 27 17:49:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -461,10 +461,10 @@ public:
   const double* storage() const { return datablock_->data(); }
   double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
 
-private:
   int storageLength() const { return datablock_->length(); }
   unsigned int rowgap() const { return rowstride_ - mrows_; }
 
+private:
   DataBlock* datablock_;
   int mrows_;
   int rowstride_;
@@ -593,6 +593,45 @@ public:
 
   const_iterator begin() const { return const_iterator(this, 0); }
   const_iterator end() const { return const_iterator(this, nelems()); }
+
+
+  class colmaj_iter
+  {
+    int itsRowgap;
+    int itsRowstride;
+    const double* itsPtr;
+    const double* itsCurrentEnd;
+
+  public:
+    colmaj_iter(const Mtx& m, bool at_end = false) :
+      itsRowgap(m.itsImpl.rowgap()),
+      itsRowstride(m.itsImpl.rowstride()),
+      itsPtr(&*(m.columnIter(0)) +
+             (at_end ? (m.ncols() * itsRowstride) : 0)),
+      itsCurrentEnd(itsPtr+m.mrows())
+    {}
+
+    const double& operator*() const { return *itsPtr; }
+
+    colmaj_iter& operator++()
+    {
+      if (++itsPtr == itsCurrentEnd)
+        {
+          itsPtr += itsRowgap;
+          itsCurrentEnd += itsRowstride;
+        }
+      return *this;
+    }
+
+    bool operator==(const colmaj_iter& other) const
+    { return itsPtr == other.itsPtr; }
+
+    bool operator!=(const colmaj_iter& other) const
+    { return itsPtr != other.itsPtr; }
+  };
+
+  colmaj_iter colmaj_begin() const { return colmaj_iter(*this); }
+  colmaj_iter colmaj_end() const { return colmaj_iter(*this, true); }
 
   //
   // Data access
