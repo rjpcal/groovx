@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Wed Mar 19 17:58:55 2003
+// written: Tue Apr  1 18:15:18 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -51,17 +51,17 @@ public:
   //
   // Typedefs
   //
-  typedef T value_type;
+  typedef T value_type;                   ///< STL value type
 
-  typedef unsigned int size_type;
+  typedef unsigned int size_type;         ///< STL size type
 
-  typedef T* pointer;
-  typedef T& reference;
-  typedef const T* const_pointer;
-  typedef const T& const_reference;
+  typedef T* pointer;                     ///< STL pointer type
+  typedef T& reference;                   ///< STL reference type
+  typedef const T* const_pointer;         ///< STL const-pointer type
+  typedef const T& const_reference;       ///< STL const-reference type
 
-  class iterator;
-  class const_iterator;
+  class iterator;                         ///< STL iterator type
+  class const_iterator;                   ///< STL const-iterator type
 
   /// Doubly-linked node class.
   class node
@@ -75,15 +75,21 @@ public:
     friend class dlink_list::iterator;
     friend class dlink_list::const_iterator;
 
+    /// Construct our value using placement new copy construction.
     void construct(const T& new_val) { new (&val) T(new_val); }
+
+    /// Destruct our value.
     void destroy() { (&val)->~T(); }
 
+    /// Create a new node.
     static node* allocate()
       { return static_cast<node*>(::operator new(sizeof(node))); }
 
+    /// Create a new node and set up its prev/next links.
     static node* allocate(node* p, node* n)
       { node* x = allocate(); x->prev = p; x->next = n; return x; }
 
+    /// Create a new node with prev/next links and an initial element value.
     static node* allocate(const T& val, node* p, node* n)
       {
         node* x = allocate(p,n);
@@ -91,12 +97,13 @@ public:
         return x;
       }
 
+    /// Destroy a node (its element must have been destroyed first).
     static void deallocate(node* n)
       { ::operator delete(static_cast<void*>(n)); }
 
-    T val;
-    node* prev;
-    node* next;
+    T val;       ///< Element value.
+    node* prev;  ///< Backward link.
+    node* next;  ///< Forward link.
   };
 
   /// Doubly-linked list iterator.
@@ -109,29 +116,40 @@ public:
     friend class dlink_list;
     friend class const_iterator;
 
-    typedef T value_type;
-    typedef T* pointer;
-    typedef T& reference;
+    typedef T value_type;  ///< STL value type
+    typedef T* pointer;    ///< STL pointer type
+    typedef T& reference;  ///< STL reference type
 
   private:
+    /// Raw constructor only available to dlink_list itself.
     iterator(node* n) : nn(n) {}
 
   public:
+    /// Copy constructor.
     iterator(const iterator& other) : nn(other.nn) {}
 
+    /// Assignment operator.
     iterator& operator=(const iterator& other)
       { nn = other.nn; return *this; }
 
+    /// Dereferencing operator.
     reference operator*() { return nn->val; }
+    /// Dereferencing operator.
     pointer operator->() { return &(nn->val); }
 
+    /// Pre-increment operator.
     iterator& operator++() { nn = nn->next; return *this; }
+    /// Post-increment operator.
     iterator operator++(int) { iterator temp(*this); ++*this; return temp; }
 
+    /// Pre-decrement operator.
     iterator& operator--() { nn = nn->prev; return *this; }
+    /// Post-decrement operator.
     iterator operator--(int) { iterator temp(*this); ++*this; return temp; }
 
+    /// Equality operator.
     bool operator==(const iterator& other) const { return nn == other.nn; }
+    /// Inequality operator.
     bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
@@ -144,32 +162,45 @@ public:
   public:
     friend class dlink_list;
 
-    typedef const T value_type;
-    typedef const T* pointer;
-    typedef const T& reference;
+    typedef const T value_type;  ///< STL value type
+    typedef const T* pointer;    ///< STL pointer type
+    typedef const T& reference;  ///< STL reference type
 
   private:
+    /// Raw constructor only available to dlink_list itself.
     const_iterator(node* n) : nn(n) {}
 
   public:
+    /// Conversion constructor from non-const iterator.
     const_iterator(const iterator& other) : nn (other.nn) {}
 
+    /// Copy constructor.
     const_iterator(const const_iterator& other) : nn(other.nn) {}
+
+    /// Assignment operator.
     const_iterator& operator=(const const_iterator& other)
       { nn = other.nn; return *this; }
 
+    /// Dereferencing operator.
     const_reference operator*() { return nn->val; }
+    /// Dereferencing operator.
     const_pointer operator->() { return &(nn->val); }
 
+    /// Pre-increment operator.
     const_iterator& operator++() { nn = nn->next; return *this; }
+    /// Post-increment operator.
     const_iterator operator++(int)
       { const_iterator temp(*this); ++*this; return temp; }
 
+    /// Pre-decrement operator.
     const_iterator& operator--() { nn = nn->prev; return *this; }
+    /// Post-decrement operator.
     const_iterator operator--(int)
       { const_iterator temp(*this); ++*this; return temp; }
 
+    /// Equality operator.
     bool operator==(const const_iterator& other) { return nn == other.nn; }
+    /// Inequality operator.
     bool operator!=(const const_iterator& other) { return nn != other.nn; }
   };
 
@@ -190,8 +221,10 @@ private:
   //
 
 public:
+  /// Construct an empty list.
   dlink_list() : the_node(0) { init(); }
 
+  /// Copy constructor.
   dlink_list(const dlink_list& other) : the_node(0)
     {
       init();
@@ -199,8 +232,10 @@ public:
       insert_range(begin(), other.begin(), other.end());
     }
 
+  /// Destructor
   ~dlink_list() { clear(); node::deallocate(the_node); }
 
+  /// Assignment operator.
   dlink_list& operator=(const dlink_list& other)
     {
       if (this != &other)
@@ -211,12 +246,17 @@ public:
       return *this;
     }
 
+  /// Push a new value onto the front of the list.
   void push_front(const T& val)   { insert(begin(), val); }
+  /// Push a new value onto the back of the list.
   void push_back(const T& val)    { insert(end(), val); }
 
+  /// Pop the front element off of the list.
   void pop_front()                { erase(begin()); }
+  /// Pop the back element off of the list.
   void pop_back()                 { iterator tmp = end(); erase(--tmp); }
 
+  /// Insert a range of elements at the given position.
   template <class Itr>
   void insert_range(iterator pos, Itr itr, Itr stop)
     {
@@ -297,19 +337,29 @@ public:
       erase(ii);
     }
 
+  /// Get a reference to the back element.
   reference back() { return *(--end()); }
+  /// Get a const-reference to the back element.
   const_reference back() const { return *(--end()); }
 
+  /// Get a reference to the front element.
   reference front() { return *(begin()); }
+  /// Get a const-reference to the front element.
   const_reference front() const { return *(begin()); }
 
+  /// Get a start iterator.
   iterator begin()             { return iterator(the_node->next); }
+  /// Get a one-past-the-end iterator.
   iterator end()               { return iterator(the_node); }
+  /// Get a start const-iterator.
   const_iterator begin() const { return const_iterator(the_node->next); }
+  /// Get a one-past-the-end const-iterator.
   const_iterator end()   const { return const_iterator(the_node); }
 
+  /// Query if the list is empty.
   bool is_empty() const { return begin() == end(); }
 
+  /// Get the number of elements in the list (this is an O(N) operation!).
   size_type size() const
     {
       const_iterator itr(begin()), stop(end());
@@ -322,6 +372,8 @@ public:
       return result;
     }
 
+  /// Get an iterator to the first element whose value matches val.
+  /** Returns end() if no matching element is found. */
   iterator find(const T& val)
     {
       iterator itr(begin()), stop(end());
@@ -333,11 +385,15 @@ public:
       return end();
     }
 
+  /// Get a const-iterator to the first element whose value matches val.
+  /** Returns end() if no matching element is found. */
   const_iterator find(const T& val) const
     { return const_cast<dlink_list*>(this)->find(val); }
 
+  /// Remove all elements from the list.
   void clear() { while ( !is_empty() ) pop_front(); }
 
+  /// Swap contents with another dlink_list object.
   void swap(dlink_list& other)
     {
       Util::swap2(the_node, other.the_node);

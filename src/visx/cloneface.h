@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Apr 29 09:19:25 1999
-// written: Wed Mar 19 17:59:42 2003
+// written: Tue Apr  1 17:52:54 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -72,6 +72,7 @@ public:
       face features. */
   virtual double getVertOffset() const;
 
+  /// Get CloneFace's fields.
   static const FieldMap& classFields();
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Mar 19 17:55:55 2003
+// written: Tue Apr  1 18:03:48 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -59,6 +59,7 @@ template <class T>
 class BoundsChecker
 {
 public:
+  /// The type returned when the field is dereferenced.
   typedef typename Util::TypeTraits<T>::DerefT DerefT;
 
 private:
@@ -66,9 +67,10 @@ private:
     itsMin(min), itsMax(max) {}
 
 public:
-  const DerefT itsMin;
-  const DerefT itsMax;
+  const DerefT itsMin;  ///< lower bound
+  const DerefT itsMax;  ///< upper bound
 
+  /// Factory function.
   static shared_ptr<BoundsChecker<T> >
   make(const DerefT& min, const DerefT& max, bool check)
   {
@@ -77,6 +79,7 @@ public:
       shared_ptr<BoundsChecker<T> >(0);
   }
 
+  /// Bounds-limit the input value.
   DerefT limit(const DerefT& raw)
   {
     return Util::clamp(raw, itsMin, itsMax);
@@ -195,19 +198,23 @@ namespace
 
 
 
-/** DataMemberFieldImpl */
+/// DataMemberFieldImpl.
 template <class C, class T>
 class DataMemberFieldImpl : public FieldImpl
 {
 public:
 
+  /// Type returned when the field is dereferenced.
   typedef typename Util::TypeTraits<T>::DerefT DerefT;
 
+  /// Construct with a pointer-to-data-member.
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
 
+  /// Construct with a pointer-to-data-member and a bounds checker.
   DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<T> > checker) :
     itsDataMember(memptr), itsChecker(checker) {}
 
+  /// Change the value of the pointed-to data member of the given object.
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
@@ -218,6 +225,7 @@ public:
       itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
   }
 
+  /// Get the value of the pointed-to data member of the given object.
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
@@ -225,6 +233,7 @@ public:
     return Tcl::toTcl(const_dereference(cobj, itsDataMember));
   }
 
+  /// Read the value of the pointed-to data member of the given object.
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
@@ -233,6 +242,7 @@ public:
     reader->readValue(name, dereference(cobj, itsDataMember));
   }
 
+  /// Write the value of the pointed-to data member of the given object.
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Mar 19 17:58:55 2003
+// written: Tue Apr  1 17:55:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -68,14 +68,18 @@ template <class BasePtr, class DerivedPtr>
 class CreatorFromFunc : public CreatorBase<BasePtr>
 {
 public:
+  /// Creator function type.
   typedef DerivedPtr (*FuncType) ();
 
+  /// Construct with a creator function.
   CreatorFromFunc(FuncType func) :
     CreatorBase<BasePtr>(), itsFunc(func) {}
 
+  /// Clone operator.
   virtual CreatorBase<BasePtr>* clone() const
     { return new CreatorFromFunc<BasePtr, DerivedPtr>(*this); }
 
+  /// Create an object using the creator function.
   virtual BasePtr create() { return BasePtr(itsFunc()); }
 
 private:
@@ -94,6 +98,7 @@ private:
 class AssocArray
 {
 public:
+  /// Function type for destroying elements.
   typedef void (KillFunc) (void*);
 
   /// Default constructor.
@@ -136,6 +141,7 @@ template<class BasePtr>
 class CreatorMap
 {
 public:
+  /// Default constructor
   CreatorMap() : base(&killPtr) {}
 
   /// The type of object stored in the map.

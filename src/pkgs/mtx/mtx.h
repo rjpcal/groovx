@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Sat Mar 29 12:51:41 2003
+// written: Tue Apr  1 17:59:52 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -108,6 +108,7 @@ public:
 class RowRange : public Range
 {
 public:
+  /// Construct with first+count.
   RowRange(int first, int count) : Range(first, count) {}
 };
 
@@ -115,6 +116,7 @@ public:
 class ColRange : public Range
 {
 public:
+  /// Construct with first+count.
   ColRange(int first, int count) : Range(first, count) {}
 };
 
@@ -460,27 +462,38 @@ private:
 class DataHolder : public WithPolicies
 {
 public:
+  /// Construct with a data array, dimensions, and storage policy.
   DataHolder(double* data, int mrows, int ncols, StoragePolicy s);
 
+  /// Construct empty with dimensions and an init policy.
   DataHolder(int mrows, int ncols, InitPolicy p);
 
+  /// Construct from a matlab array and a storage policy.
   DataHolder(mxArray* a, StoragePolicy s);
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
   DataHolder(const mxArray* a, StoragePolicy s);
 
+  /// Copy constructor.
   DataHolder(const DataHolder& other);
 
+  /// Destructor.
   ~DataHolder();
 
+  /// Swap contents with another DataHolder.
   void swap(DataHolder& other);
 
+  /// Make a unique copy of our data block if needed.
   void makeUnique() { DataBlock::makeUnique(datablock_); }
 
+  /// Get a pointer to const underlying data.
   const double* storage() const { return datablock_->data(); }
+
+  /// Get a pointer to non-const underlying data.
   double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
 
+  /// Get the allocated length of underlying data array.
   int storageLength() const { return datablock_->length(); }
 
 private:
@@ -500,17 +513,25 @@ private:
 class DataHolderRef : public WithPolicies
 {
 public:
+  /// Construct with a pointee.
   DataHolderRef(DataHolder* ref) : ref_(ref) {}
 
+  /// Copy constructor.
   DataHolderRef(const DataHolderRef& other) : ref_(other.ref_) {}
 
+  /// Destructor.
   ~DataHolderRef() {}
 
+  /// Swap contents with another DataHolderRef.
   void swap(DataHolderRef& other);
 
+  /// Get a pointer to const underlying data.
   const double* storage() const { return ref_->storage(); }
+
+  /// Get a pointer to non-const underlying data.
   double* storage_nc() { return ref_->storage_nc(); }
 
+  /// Get the allocated length of underlying data array.
   int storageLength() const { return ref_->storageLength(); }
 
 private:

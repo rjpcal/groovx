@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Wed Mar 19 17:55:53 2003
+// written: Tue Apr  1 17:56:27 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,18 +40,14 @@ class DataBlock
 private:
   int itsRefCount;
 
-
   DataBlock(const DataBlock& other); // not implemented
   DataBlock& operator=(const DataBlock& other); // not implemented
 
   static DataBlock* getEmptyDataBlock();
 
-  friend class DummyFriend; // to eliminate compiler warning
-
-
 protected:
-  double* const itsData;
-  unsigned int const itsLength;
+  double* const itsData;          ///< Pointer to the actual storage.
+  unsigned int const itsLength;   ///< Allocated length of the storage.
 
   /// Construct with a given data array and length.
   /** No copy is made of the data array here; the DataBlock object will

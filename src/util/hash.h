@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Wed Mar 19 17:58:54 2003
+// written: Tue Apr  1 18:04:07 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -70,6 +70,7 @@ template <class key_type>
 struct default_hasher
 {
 public:
+  /// Function-call operator.
   size_t operator()(const key_type& key);
 };
 
