@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Sep 23 14:30:11 1999
+// written: Fri Sep 24 15:57:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,7 @@ public:
   /////////////
 
   public:    void loadPbmFile(const char* filename);
+  public:    void writePbmFile(const char* filename) const;
 
   public:    void grabScreenRect(int left, int top, int right, int bottom);
   public:    void grabScreenRect(const Rect<int>& rect);
