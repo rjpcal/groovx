@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 14 16:24:33 2002
-// written: Fri Jun 14 16:33:30 2002
+// written: Fri Jun 14 16:37:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "io/io.h"
 #include "io/iolegacy.h"
+
+#include "system/demangle.h"
 
 #include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
@@ -168,7 +170,7 @@ namespace
 
   fstring objType(Util::SoftRef<Util::Object> obj)
   {
-    return typeid(*obj).name();
+    return demangle_cstr(typeid(*obj).name());
   }
 }
 
