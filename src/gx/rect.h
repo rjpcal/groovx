@@ -3,7 +3,7 @@
 // rect.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Sep 23 14:27:49 1999
+// written: Wed Oct 13 09:09:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,10 @@
 template<class V>
 class Rect {
 public:
-  Rect() : l(0.0), t(0.0), r(0.0), b(0.0) {}
+  Rect() : l(), t(), r(), b() {}	// everything inits to zero
+
   Rect(V L, V T, V R, V B) : l(L), t(T), r(R), b(B) {}
+
   Rect(const Rect<V>& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
   
   V l, t, r, b;
