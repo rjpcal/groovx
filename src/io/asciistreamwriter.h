@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Mon Dec  6 13:56:51 1999
+// written: Tue Feb 15 11:06:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,52 +29,38 @@ class ostream;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * AsciiStreamWriter implements the Writer interface, serializing
- * objects to an output stream in a human-readable ascii format. With
- * this data format, objects may read and write their attributes in
- * any order.
+ * \c AsciiStreamWriter implements the \c Writer interface, using nice
+ * human-readable ascii formatting. \c AsciiStreamWriter writes
+ * objects to an output stream in a ascii format that is readable by
+ * \AsciiStreamReader. With this data format, objects may read and
+ * write their attributes in any order.
  *
- * @short Implementation of Writer that uses nice human-readable ascii
- * formatting.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class AsciiStreamWriter : public Writer {
 public:
-  ///
+  /// Construct with a connection to an open \c ostream.
   AsciiStreamWriter(ostream& os);
-  ///
+
+  /// Virtual destructor.
   virtual ~AsciiStreamWriter();
 
-  ///
   virtual void writeChar(const string& name, char val);
-  ///
   virtual void writeInt(const string& name, int val);
-  ///
   virtual void writeBool(const string& name, bool val);
-  ///
   virtual void writeDouble(const string& name, double val);
-
-  ///
   virtual void writeString(const string& name, const string& val);
-  ///
   virtual void writeCstring(const string& name, const char* val);
-
-  ///
   virtual void writeValueObj(const string& name, const Value& value);
 
-  ///
   virtual void writeObject(const string& name, const IO* obj);
-
-  ///
   virtual void writeOwnedObject(const string& name, const IO* obj);
 
-  ///
   virtual void writeRoot(const IO* root);
 
 private:
   class Impl;
-
   Impl& itsImpl;
 };
 
