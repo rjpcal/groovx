@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Tue Aug 21 15:22:42 2001
+// written: Wed Aug 22 10:45:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@
 namespace Util
 {
   enum RefType { WEAK, STRONG };
+
+  enum RefVis { PRIVATE, PUBLIC };
 
   template <class T> class Ref;
   template <class T> class SoftRef;
@@ -144,10 +146,11 @@ public:
 
   explicit Ref(Util::UID id) : itsHandle(RefHelper::getCastedItem<T>(id)) {}
 
-  explicit Ref(T* ptr) : itsHandle(ptr)
-    { RefHelper::insertItem(ptr); }
-
-  Ref(T* ptr, bool /*noInsert*/) : itsHandle(ptr) {}
+  explicit Ref(T* ptr, RefVis vis = PUBLIC) :
+    itsHandle(ptr)
+  {
+    if (vis == PUBLIC) RefHelper::insertItem(ptr);
+  }
 
   template <class U>
   Ref(const Ref<U>& other) : itsHandle(other.get()) {}
@@ -333,13 +336,11 @@ public:
               tp)
   {}
 
-  explicit SoftRef(T* master, RefType tp = STRONG) : itsHandle(master, tp)
-  { insertItem(); }
-
-  SoftRef(T* master, bool /*noInsert*/, RefType tp = STRONG) :
+  explicit SoftRef(T* master, RefType tp = STRONG, RefVis vis = PUBLIC) :
     itsHandle(master,tp)
-  {}
-
+  {
+    if (vis == PUBLIC) insertItem();
+  }
 
   template <class U>
   SoftRef(const SoftRef<U>& other) :
