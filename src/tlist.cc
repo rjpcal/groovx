@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu Jul  8 10:51:39 1999
+// written: Thu Oct 14 16:13:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -195,21 +195,8 @@ DOTRACE("Tlist::redraw");
 
 void Tlist::undraw() {
 DOTRACE("Tlist::undraw");
-  GLint foreground, background;
-
-  DebugEval(foreground); DebugEvalNL((void *) &foreground);
-  DebugEval(background); DebugEvalNL((void *) &background);
-  
-  glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-  DebugEval(foreground);
-  
-  glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-  DebugEvalNL(background);
-  
-  glIndexi(background);
   undrawCurTrial();
   glFlush();
-  glIndexi(foreground);
 }
 
 void Tlist::clearscreen() {
