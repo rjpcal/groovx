@@ -44,14 +44,14 @@ public:
   //
   ///////////////////////////////////////////////////////////
 
-  /** The symbolic constants of type \c ScalingMode provide several ways to
-      scale an object with respect to the OpenGL coordinate system. The
-      current mode can be get/set with \c getMode() and \c setMode(). The
-      default scaling mode is \c NATIVE_SCALING. */
+  /** The symbolic constants of type \c ScalingMode provide several
+      ways to scale an object with respect to the OpenGL coordinate
+      system. The current mode can be get/set with \c getMode() and \c
+      setMode(). The default scaling mode is \c NATIVE_SCALING. */
   typedef int Mode;
 
-  /** This is the default scaling mode. No additional scaling is done beyond
-      whatever happens in the subclass's \c grRender()
+  /** This is the default scaling mode. No additional scaling is done
+      beyond whatever happens in the subclass's \c grRender()
       implementation. */
   static const Mode NATIVE_SCALING           = 1;
 
