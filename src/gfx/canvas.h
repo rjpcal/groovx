@@ -116,11 +116,14 @@ public:
 
 
   /// Function-pointer type for Canvas state-change operations.
-  typedef void (Canvas::* Manip)();
+  typedef void (Canvas::* Manip)(const char*);
+
+  /// Function-pointer type for Canvas state-change operations.
+  typedef void (Canvas::* Unmanip)();
 
   /** \c MatrixSaver handles saving and restoring of some part of the
       matrix state within a lexical scope, in an exception-safe manner. */
-  template <Manip doit, Manip undoit>
+  template <Manip doit, Unmanip undoit>
   class Saver
   {
   public:
