@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Tue Nov 28 15:28:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,9 +222,11 @@ DrawEvent::DrawEvent(int msec) : TrialEvent(msec) {}
 
 DrawEvent::~DrawEvent() {}
 
-void DrawEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void DrawEvent::invoke(GWT::Widget& widget, TrialBase& trial) {
 DOTRACE("DrawEvent::invoke");
-  trial.trDrawTrial();
+  trial.installSelf(widget); 
+  widget.setVisibility(true);
+  widget.display();
 }
 
 EndTrialEvent::EndTrialEvent(int msec) : TrialEvent(msec) {}
@@ -241,9 +243,9 @@ UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}
 
 UndrawEvent::~UndrawEvent() {}
 
-void UndrawEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void UndrawEvent::invoke(GWT::Widget& widget, TrialBase&) {
 DOTRACE("UndrawEvent::invoke");
-  trial.trUndrawTrial();
+  widget.undraw();
 }
 
 SwapBuffersEvent::SwapBuffersEvent(int msec) : TrialEvent(msec) {}
