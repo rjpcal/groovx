@@ -13,10 +13,6 @@
 #ifndef TCLCMD_H_DEFINED
 #define TCLCMD_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
-#include "util/pointers.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
 #include "tcl/convert.h"
 #endif
@@ -50,6 +46,11 @@ namespace Tcl
  *
  * \c TclCmd uses class \c Context to represent the set of Tcl command
  * arguments and the interpreter's result.
+ *
+ * If more than one TclCmd is created with the same name, an
+ * overloading sequence is created. Overloading is done by argument
+ * counts. The first TclCmd in an overload sequence to match the
+ * argument count of the context will be used.
  *
  * The only C++ clients of \c TclCmd should be those who make
  * subclasses to perform specific actions, and those who instantiate
@@ -86,12 +87,6 @@ public:
       Context& argument allows Tcl command arguments to be retrieved,
       and allows the interpreter's result to be set.*/
   virtual void invoke(Context& ctx) = 0;
-
-  /** Makes \a other an overloaded version of \a this. Overloading is
-      done by argument counts. The first TclCmd in an overload
-      sequence to match the argument count of the context will be
-      used. */
-  void addOverload(Tcl_Interp* interp, shared_ptr<TclCmd> other);
 
 protected:
   /** This may be overridden by subclasses that need to provide a
