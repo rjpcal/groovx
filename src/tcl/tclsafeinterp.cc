@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 14:58:23 2001
+// written: Mon Jul 16 17:33:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,10 @@
 #define TCLUTIL_CC_DEFINED
 
 #include "tcl/tclutil.h"
+
+#include "tcl/tclcode.h"
+
+#include "util/strings.h"
 
 #include <tcl.h>
 
@@ -152,6 +156,60 @@ DOTRACE("Tcl::SafeInterp::hasCommand");
                                   const_cast<char*>(cmd_name),
                                   &info);
   return (result != 0);
+}
+
+fixed_string Tcl::SafeInterp::getProcBody(const char* proc_name) const {
+DOTRACE("Tcl::SafeInterp::getProcBody");
+  if (hasCommand(proc_name))
+    {
+      resetResult();
+
+      Tcl::ObjPtr cmd_obj("info body ");
+      cmd_obj.append(proc_name);
+
+      Tcl::Code cmd(cmd_obj, Tcl::Code::NONE);
+
+      if (cmd.invoke(itsInterp))
+        {
+          fixed_string result = getResult(TypeCue<const char*>());
+          resetResult();
+          return result;
+        }
+      else
+        {
+          Tcl::TclError err("couldn't get the proc body for ");
+          err.appendMsg("'", proc_name, "'");
+          throw err;
+        }
+    }
+
+  return "";
+}
+
+void Tcl::SafeInterp::createProc(const char* namesp, const char* proc_name,
+                                 const char* args, const char* body)
+{
+DOTRACE("Tcl::SafeInterp::createProc");
+  Tcl::ObjPtr proc_cmd_str;
+  if (namesp && (*namesp != '\0'))
+    {
+      proc_cmd_str.append("namespace eval ");
+      proc_cmd_str.append(namesp);
+      proc_cmd_str.append(" { ");
+    }
+  proc_cmd_str.append("proc ");
+  proc_cmd_str.append(proc_name);
+  proc_cmd_str.append(" {");
+  if (args)
+    proc_cmd_str.append(args);
+  proc_cmd_str.append("} {");
+  proc_cmd_str.append(body);
+  proc_cmd_str.append("} ");
+  if (namesp)
+    proc_cmd_str.append(" }");
+
+  Tcl::Code proc_cmd(proc_cmd_str, Tcl::Code::THROW_EXCEPTION);
+  proc_cmd.invoke(itsInterp);
 }
 
 void Tcl::SafeInterp::handleError(const char* msg) const {
