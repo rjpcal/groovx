@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar 13 12:33:26 2000
+// written: Mon Mar 13 14:39:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,9 +120,16 @@ public:
   dynamic_string& operator=(const fixed_string& other);
   dynamic_string& operator=(const dynamic_string& other);
 
-  dynamic_string& operator+=(const char* text);
-  dynamic_string& operator+=(const fixed_string& other);
-  dynamic_string& operator+=(const dynamic_string& other);
+  dynamic_string& append(const char* text);
+  dynamic_string& append(const fixed_string& other);
+  dynamic_string& append(const dynamic_string& other);
+
+  dynamic_string& operator+=(const char* text)
+	 { return append(text); }
+  dynamic_string& operator+=(const fixed_string& other)
+	 { return append(other); }
+  dynamic_string& operator+=(const dynamic_string& other)
+	 { return append(other); }
 
   bool equals(const char* other) const;
   bool equals(const string_literal& other) const;

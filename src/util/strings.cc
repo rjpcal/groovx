@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Mar 13 12:24:55 2000
+// written: Mon Mar 13 14:37:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,19 +163,19 @@ dynamic_string& dynamic_string::operator=(const dynamic_string& other)
   return *this;
 }
 
-dynamic_string& dynamic_string::operator+=(const char* text)
+dynamic_string& dynamic_string::append(const char* text)
 {
   itsImpl->text += text;
   return *this;
 }
 
-dynamic_string& dynamic_string::operator+=(const fixed_string& other)
+dynamic_string& dynamic_string::append(const fixed_string& other)
 {
   itsImpl->text += other.c_str();
   return *this;
 }
 
-dynamic_string& dynamic_string::operator+=(const dynamic_string& other)
+dynamic_string& dynamic_string::append(const dynamic_string& other)
 {
   itsImpl->text += other.itsImpl->text;
   return *this;
