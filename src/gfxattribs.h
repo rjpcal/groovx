@@ -2,8 +2,8 @@
 // gfxattribs.h
 // Rob Peters
 // created: Tue Mar  9 18:28:13 1999
-// written: Fri Mar 12 12:57:21 1999
-static const char vcid_gfxattribs_h[] = "$Id$";
+// written: Tue Mar 16 19:42:57 1999
+// $Id$
 //
 // This class containing only static members serves as a
 // platform-independent and low-level means for different parts of a
@@ -16,29 +16,30 @@ static const char vcid_gfxattribs_h[] = "$Id$";
 
 class GfxAttribs {
 public:
-  enum GfxFlag { NO_FLAGS					 = 0,
-					  RGBA_FLAG					 = 1 << 0,
-					  PRIVATE_CMAP_FLAG		 = 1 << 1 };
+  enum GfxFlag { NO_FLAGS               = 0,
+                 RGBA_FLAG              = 1 << 0,
+                 PRIVATE_CMAP_FLAG      = 1 << 1 };
 
   static bool usingRgba() { return isTrue(RGBA_FLAG); }
 
   static void setFlagsIf(GfxFlag flags, bool cond) {
-	 if (cond) theFlags = GfxFlag(theFlags | flags);
-	 else theFlags = GfxFlag(theFlags & ~flags);
+    if (cond) theFlags = GfxFlag(theFlags | flags);
+    else theFlags = GfxFlag(theFlags & ~flags);
   }
 
   static bool isTrue(GfxFlag flag) {
-	 return ((theFlags & flag) != 0);
+    return ((theFlags & flag) != 0);
   }
 
   static float getScreenPpi() { return theScreenPpi; }
   static void setScreenPpi(float f) { theScreenPpi = f; }
 
 private:
-  GfxAttribs ();					  // this class not to be instantiated
+  GfxAttribs ();                // this class not to be instantiated
   
   static GfxFlag theFlags;
   static float theScreenPpi;
 };
 
+static const char vcid_gfxattribs_h[] = "$Header$";
 #endif // !GFXATTRIBS_H_DEFINED

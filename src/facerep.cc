@@ -2,8 +2,8 @@
 // facerep.cc
 // Rob Peters
 // created: Thu Jan 28 12:36:13 1999
-// written: Fri Mar 12 12:58:10 1999
-static const char vcid_facerep_cc[] = "$Id$";
+// written: Tue Mar 16 19:44:50 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACEREP_CC_DEFINED
@@ -19,4 +19,5 @@ FaceRep::FaceRep () {
 
 }
 
+static const char vcid_facerep_cc[] = "$Id$";
 #endif // !FACEREP_CC_DEFINED

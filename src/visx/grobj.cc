@@ -2,8 +2,8 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 12:57:01 1999
-static const char vcid_grobj_cc[] = "$Id$";
+// written: Tue Mar 16 19:42:36 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJ_CC_DEFINED
@@ -13,7 +13,7 @@ static const char vcid_grobj_cc[] = "$Id$";
 
 #include <iostream.h>           // for serialize
 #include <GL/gl.h>
-#include <cstdlib>				  // for exit
+#include <cstdlib>              // for exit
 
 #define NO_TRACE
 #include "trace.h"
@@ -74,8 +74,9 @@ DOTRACE("GrObj::grNewList");
   itsDisplayList = glGenLists(1); 
   if (itsDisplayList == 0) {     
     cerr << "GrObj::grNewList: couldn't allocate display list\n";
-	 exit(-1);
+    exit(-1);
   }
 }
 
+static const char vcid_grobj_cc[] = "$Header$";
 #endif // !GROBJ_CC_DEFINED

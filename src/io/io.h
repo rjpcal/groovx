@@ -2,7 +2,8 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar 12 13:07:19 1999
+// written: Tue Mar 16 19:40:31 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_H_DEFINED
@@ -30,5 +31,5 @@ public:
   virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
 };
 
-static const char vcid_io_h[] = "$Id$";
+static const char vcid_io_h[] = "$Header$";
 #endif // !IO_H_DEFINED

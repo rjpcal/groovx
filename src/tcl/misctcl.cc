@@ -2,7 +2,7 @@
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar 15 15:54:45 1999
+// written: Mon Mar 15 16:09:20 1999
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -119,7 +119,7 @@ int MiscTcl::Misc_Init(Tcl_Interp *interp) {
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "usleepr", usleeprCmd,
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_PkgProvide(interp, "Misc", "1.4")
+  Tcl_PkgProvide(interp, "Misc", "1.4");
   return TCL_OK;
 }
 

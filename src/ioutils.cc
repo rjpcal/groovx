@@ -2,8 +2,8 @@
 // ioutils.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar 12 12:56:16 1999
-static const char vcid_ioutils_cc[] = "$Id$";
+// written: Tue Mar 16 19:39:45 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOUTILS_CC_DEFINED
@@ -12,7 +12,7 @@ static const char vcid_ioutils_cc[] = "$Id$";
 #include "ioutils.h"
 
 #include <iostream.h>
-#include <cstdlib>				  // for exit()
+#include <cstdlib>              // for exit()
 #include <cstring>
 #include <string>
 
@@ -26,51 +26,21 @@ IOResult serializeCstring(ostream &os, const char* str, const char sep) {
   return checkStream(os);
 }
 
-void deserializeCstring(istream &is, char*& str, char* type) {
+IOResult deserializeCstring(istream &is, char*& str) {
   int len;
   is >> len;
   if (str != NULL) 
-	 delete [] str;
+    delete [] str;
   str = new char[len+1];
   is >> str;  
-  if (checkStream(is) != IO_OK) fatalInputError(type);
+  return checkStream(is);
 }
-
-IOResult serializeInt(ostream &os, int i, const char sep) {
-  os << i << sep;
-  return checkStream(os);
-}
-
-void deserializeInt(istream &is, int &i, char *type) {
-  is >> i;
-  if (checkStream(is) != IO_OK) fatalInputError(type);
-}
-
-IOResult serializeDouble(ostream &os, double d, const char sep) {
-  os << d << sep;
-  return checkStream(os);
-}
-
-void deserializeDouble(istream &is, double &d, char *type) {
-  is >> d;
-  if (checkStream(is) != IO_OK) fatalInputError(type);
-}
-
-IOResult serializeFloat(ostream &os, float f, const char sep) {
-  os << f << sep;
-  return checkStream(os);
-}
-
-void deserializeFloat(istream &is, float &f, char *type) {
-  is >> f;
-  if (checkStream(is) != IO_OK) fatalInputError(type);
-}
-
 
 void fatalInputError(const char* type) {
   cerr << "fatal error: bad input while attempting to construct " 
-		 << type << endl;
+       << type << endl;
   exit(-1);
 }
 
+static const char vcid_ioutils_cc[] = "$Header$";
 #endif // !IOUTILS_CC_DEFINED

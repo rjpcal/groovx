@@ -2,8 +2,8 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 12:54:26 1999
-static const char vcid_subject_cc[] = "$Id$";
+// written: Tue Mar 16 19:32:51 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_CC_DEFINED
@@ -12,9 +12,15 @@ static const char vcid_subject_cc[] = "$Id$";
 #include "subject.h"
 
 #include <iostream.h>
+#include <string>
+#include <typeinfo>
 #include <cstring>
 
 #include "ioutils.h"
+
+#define NO_TRACE
+#include "trace.h"
+#include "debug.h"
 
 #ifndef NULL
 #define NULL 0L
@@ -44,17 +50,34 @@ Subject::~Subject() {
 }
 
 Subject::Subject(istream &is) {
-  deserializeCstring(is, itsName, "Subject");
-  deserializeCstring(is, itsDirectory, "Subject");
+  deserialize(is);
+  if (checkStream(is) != IO_OK) fatalInputError("Subject");
 }
 
 IOResult Subject::serialize(ostream &os, IOFlag flag) const {
-  char sep = '\t';
-  if (serializeCstring(os, itsName, sep) != IO_OK)
-    return IO_ERROR;
-  if (serializeCstring(os, itsDirectory, sep) != IO_OK)
-    return IO_ERROR;
-  return IO_OK;
+DOTRACE("Subject::serialize");
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+
+  char sep = ' ';
+  if (flag & IO::TYPENAME) { os << typeid(Subject).name() << sep; }
+
+  serializeCstring(os, itsName, sep);
+  serializeCstring(os, itsDirectory, sep);
+  return checkStream(os);
+}
+
+IOResult Subject::deserialize(istream &is, IOFlag flag) {
+DOTRACE("Subject::deserialize");
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) {
+    string name;
+    is >> name;
+    if (name != string(typeid(Subject).name())) { return IO_ERROR; }
+  }
+
+  deserializeCstring(is, itsName);
+  deserializeCstring(is, itsDirectory);
+  return checkStream(is);
 }
 
 void Subject::setName(const char* name) {
@@ -71,4 +94,5 @@ void Subject::setDirectory(const char* dir) {
   strcpy(itsDirectory, dir);
 }
 
+static const char vcid_subject_cc[] = "$Header$";
 #endif // !SUBJECT_CC_DEFINED

@@ -2,7 +2,8 @@
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Sat Mar 13 13:35:52 1999
+// written: Tue Mar 16 19:34:07 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSLISTTCL_CC_DEFINED
@@ -11,6 +12,7 @@
 #include "poslisttcl.h"
 
 #include <tcl.h>
+#include <strstream.h>
 
 #include "errmsg.h"
 #include "poslist.h"
@@ -24,58 +26,80 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace PoslistTcl {
-  // global PosList pointer
-  PosList *thePosList = NULL;
+  Tcl_ObjCmdProc stringify_poslistCmd;
+  Tcl_ObjCmdProc destringify_poslistCmd;
+}
 
-  Tcl_ObjCmdProc positionCmd;
+PosList& PoslistTcl::getPosList() {
+  static const int DEFAULT_SIZE = 10;
+  static PosList thePosList(DEFAULT_SIZE);
+  return thePosList;
 }
 
 Position* PoslistTcl::getPosFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[], 
-												PosList *plist, int argn) {
+                                    const PosList& plist, int argn) {
 DOTRACE("PoslistTcl::getPosFromArg");
   // Make sure we have a valid posid
   int id;
   if ( Tcl_GetIntFromObj(interp, objv[argn], &id) != TCL_OK ) return NULL;
 
-  if ( !plist->isValidPosid(id) ) {
+  if ( !plist.isValidPosid(id) ) {
     err_message(interp, objv, bad_posid_msg);
     return NULL;
   }
 
   // Get the position
-  return plist->getPos(id);
+  return plist.getPos(id);
 }
 
-int FaceTcl::positionCmd(ClientData, Tcl_Interp *interp,
-								 int objc, Tcl_Obj *const objv[]) {
-DOTRACE("FaceTcl::positionCmd");
-  if (objc > 1) {
+int PoslistTcl::stringify_poslistCmd(ClientData, Tcl_Interp *interp,
+                                     int objc, Tcl_Obj *const objv[]) {
+DOTRACE("PoslistTcl::stringify_poslistCmd");
+  if (objc != 1)  {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
   }
-  
-  Position *p = new Position();
-  
-  PosList *plist = PoslistTcl::getPosList();
-  int id = plist->addPos(p);
-  if (id < 0) {
-    err_message(interp, objv, cant_make_pos);
-    delete p;
+
+  const PosList& plist = getPosList();
+
+  const int BUF_SIZE = 200;
+  char buf[BUF_SIZE];
+  ostrstream ost(buf, BUF_SIZE);
+
+  plist.serialize(ost, IO::IOFlag(IO::BASES|IO::TYPENAME));
+  Tcl_SetObjResult(interp, Tcl_NewStringObj(buf, -1));
+  return TCL_OK;
+}
+
+int PoslistTcl::destringify_poslistCmd(ClientData, Tcl_Interp *interp,
+                                     int objc, Tcl_Obj *const objv[]) {
+DOTRACE("PoslistTcl::destringify_poslistCmd");
+  if (objc != 2)  {
+    Tcl_WrongNumArgs(interp, 1, objv, "string");
     return TCL_ERROR;
   }
 
-  Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
+  PosList& plist = getPosList();
+
+  const char* buf = Tcl_GetString(objv[1]);
+  if (buf == NULL) return TCL_ERROR;
+
+  istrstream ist(buf);
+
+  plist.deserialize(ist, IO::IOFlag(IO::BASES|IO::TYPENAME));
   return TCL_OK;
 }
 
 int PoslistTcl::Poslist_Init(Tcl_Interp *interp) {
 DOTRACE("PoslistTcl::Poslist_Init");
-  static const int DEFAULT_SIZE = 10;
-  PoslistTcl::thePosList = new PosList(DEFAULT_SIZE);
+  Tcl_CreateObjCommand(interp, "stringify_poslist", stringify_poslistCmd,
+                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateObjCommand(interp, "destringify_poslist", destringify_poslistCmd,
+                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
-  Tcl_CreateObjCommand(interp, "position", positionCmd,
-							  (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_PkgProvide(interp, "Poslist", "2.1");
   return TCL_OK;
 }
 
+static const char vcid_poslisttcl_cc[] = "$Header$";
 #endif // !POSLISTTCL_CC_DEFINED

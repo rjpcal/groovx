@@ -2,8 +2,8 @@
 // rect.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:54:56 1999
-static const char vcid_rect_h[] = "$Id$";
+// written: Tue Mar 16 19:33:10 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RECT_H_DEFINED
@@ -26,4 +26,5 @@ public:
   void heighten(float f) { t *=f; b *=f; }
 };
 
+static const char vcid_rect_h[] = "$Header$";
 #endif // !RECT_H_DEFINED

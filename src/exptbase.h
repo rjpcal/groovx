@@ -2,7 +2,8 @@
 // expt.h
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar 13 17:59:29 1999
+// written: Tue Mar 16 19:46:10 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPT_H_DEFINED
@@ -33,5 +34,5 @@ public:
   virtual void recordResponse(int resp) = 0;
 };
 
-static const char vcid_expt_h[] = "$Id$";
+static const char vcid_expt_h[] = "$Header$";
 #endif // !EXPT_H_DEFINED

@@ -2,7 +2,8 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Mon Mar 15 13:30:16 1999
+// written: Tue Mar 16 19:37:49 1999
+// $Id$
 //
 // The ObjList class implements a list of GrObj pointers. The
 // interface allows for management of a collection of GrObj's (i.e.,
@@ -92,12 +93,12 @@ public:
   // call the action function for the GrObj at site 'id'
 
 private:
-  ObjList(const ObjList&);		  // copy constructor not to be used
+  ObjList(const ObjList&);      // copy constructor not to be used
   ObjList& operator=(const ObjList&); // assignment operator not to be used
 
   typedef vector<GrObj *> ObjVec;
-  int itsFirstVacant;			  // smallest index of a vacant array site
-  ObjVec itsObjVec;				  // associative array from objid's to GrObj*'s
+  int itsFirstVacant;           // smallest index of a vacant array site
+  ObjVec itsObjVec;             // associative array from objid's to GrObj*'s
 };
 
 static const char vcid_objlist_h[] = "$Header$";

@@ -2,7 +2,8 @@
 // debug.h
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar 13 16:16:09 1999
+// written: Tue Mar 16 19:46:39 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef DEBUG_H_DEFINED

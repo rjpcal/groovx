@@ -2,8 +2,8 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Sat Mar 13 13:25:26 1999
-static const char vcid_objtogl_cc[] = "$Id$";
+// written: Tue Mar 16 19:37:08 1999
+// $Id$
 //
 // This package provides functionality that allows a Togl widget to
 // work with a Tlist, controlling its display, reshaping, etc.
@@ -59,20 +59,20 @@ int ObjTogl::dumpCmapCmd(struct Togl *togl, int argc, char *argv[]) {
 DOTRACE("ObjTogl::dumpCmapCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc < 2 || argc > 4) {
-	 Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-									"wrong # args: should be: \"pathname",
-									argv[1], " [start_index] [end_index]\"",
-									(char *) NULL);
-	 return TCL_ERROR;
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+                           "wrong # args: should be: \"pathname",
+                           argv[1], " [start_index] [end_index]\"",
+                           (char *) NULL);
+    return TCL_ERROR;
   }
 
   int start=0;
   int end=255;
   
   if (argc > 2)
-	 if (Tcl_GetInt(interp, argv[2], &start) != TCL_OK) return TCL_ERROR;
+    if (Tcl_GetInt(interp, argv[2], &start) != TCL_OK) return TCL_ERROR;
   if (argc > 3)
-	 if (Tcl_GetInt(interp, argv[3], &end) != TCL_OK) return TCL_ERROR;
+    if (Tcl_GetInt(interp, argv[3], &end) != TCL_OK) return TCL_ERROR;
 
   Tk_Window tkwin = Togl_TkWin(togl);
   Display *display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
@@ -141,44 +141,44 @@ DOTRACE("ObjTogl::reconfigureGL");
   glViewport(0, 0, Togl_Width(togl), Togl_Height(togl));
 
   if (config->usingFixedScale()) {
-	 float scale = config->getFixedScale();
-	 float l = -1 * (Togl_Width(togl)/2.0) / scale;
-	 float r =      (Togl_Width(togl)/2.0) / scale;
-	 float b = -1 * (Togl_Height(togl)/2.0) / scale;
-	 float t =      (Togl_Height(togl)/2.0) / scale;
-	 glOrtho(l, r, b, t, -1.0, 1.0);
+    float scale = config->getFixedScale();
+    float l = -1 * (Togl_Width(togl)/2.0) / scale;
+    float r =      (Togl_Width(togl)/2.0) / scale;
+    float b = -1 * (Togl_Height(togl)/2.0) / scale;
+    float t =      (Togl_Height(togl)/2.0) / scale;
+    glOrtho(l, r, b, t, -1.0, 1.0);
   }
 
-  else {	// not usingFixedScale (i.e. minRect instead)
+  else { // not usingFixedScale (i.e. minRect instead)
 
-	 const rect minrect = config->getMinRect(); // the minimum rect
-	 rect therect(minrect);        // the actual rect that we'll build
+    const rect minrect = config->getMinRect(); // the minimum rect
+    rect therect(minrect);        // the actual rect that we'll build
   
-	 // the desired conditions are as follows:
-	 //    (1) therect contains minrect
-	 //    (2) therect.aspect() == Togl_Aspect(togl)
-	 //    (3) therect is the smallest rectangle that meets (1) and (2)
-	 
-	 float ratio_of_aspects = minrect.aspect() / Togl_Aspect(togl);
-	 
-	 if ( ratio_of_aspects < 1 ) { // the available space is too wide...
-		therect.widen(1/ratio_of_aspects); // so use some extra width
-	 }
-	 else {                        // the available space is too tall...
-		therect.heighten(ratio_of_aspects); // and use some extra height
-	 }
-	 
-	 glOrtho(therect.l, therect.r, therect.b, therect.t, -1.0, 1.0);
-	 
+    // the desired conditions are as follows:
+    //    (1) therect contains minrect
+    //    (2) therect.aspect() == Togl_Aspect(togl)
+    //    (3) therect is the smallest rectangle that meets (1) and (2)
+    
+    float ratio_of_aspects = minrect.aspect() / Togl_Aspect(togl);
+    
+    if ( ratio_of_aspects < 1 ) { // the available space is too wide...
+      therect.widen(1/ratio_of_aspects); // so use some extra width
+    }
+    else {                        // the available space is too tall...
+      therect.heighten(ratio_of_aspects); // and use some extra height
+    }
+    
+    glOrtho(therect.l, therect.r, therect.b, therect.t, -1.0, 1.0);
+    
 #ifdef LOCAL_DEBUG
-	 cerr << "minrect: l = " << minrect.l << ", r = " << minrect.r
-			<< ", b = " << minrect.b << ", t = " << minrect.t << endl;
-	 cerr << "minrect.aspect() = " << minrect.aspect();
-	 cerr << "Togl_Aspect(togl) = " << Togl_Aspect(togl) << endl;
-	 cerr << "glViewport(0, 0, " 
-			<< Togl_Width(togl) << ", " << Togl_Height(togl) << ")" << endl;
-	 cerr << "glOrtho(l=" << therect.l << ", r=" << therect.r
-			<< ", b=" << therect.b << ", t=" << therect.t << ", -1.0, 1.0)" << endl;
+    cerr << "minrect: l = " << minrect.l << ", r = " << minrect.r
+         << ", b = " << minrect.b << ", t = " << minrect.t << endl;
+    cerr << "minrect.aspect() = " << minrect.aspect();
+    cerr << "Togl_Aspect(togl) = " << Togl_Aspect(togl) << endl;
+    cerr << "glViewport(0, 0, " 
+         << Togl_Width(togl) << ", " << Togl_Height(togl) << ")" << endl;
+    cerr << "glOrtho(l=" << therect.l << ", r=" << therect.r
+         << ", b=" << therect.b << ", t=" << therect.t << ", -1.0, 1.0)" << endl;
 #endif
   } // end not usingFixedScale
 }
@@ -188,8 +188,8 @@ DOTRACE("ObjTogl::setColorCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 6) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									"wrong # args: should be: \"pathname ",
-									argv[1], " index r g b\"", (char *) NULL);
+                           "wrong # args: should be: \"pathname ",
+                           argv[1], " index r g b\"", (char *) NULL);
     //Tcl_WrongNumArgs(interp, 2, objv, "index r g b");
     return TCL_ERROR;
   }
@@ -211,8 +211,8 @@ DOTRACE("ObjTogl::setFixedScaleCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									"wrong # args: should be \"pathname",
-									argv[1], " scale\"", (char *) NULL);
+                           "wrong # args: should be \"pathname",
+                           argv[1], " scale\"", (char *) NULL);
     //    Tcl_WrongNumArgs(interp, 2, objv, "left top right bottom");
     return TCL_ERROR;
   }
@@ -233,8 +233,8 @@ DOTRACE("ObjTogl::setMinRectCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 6) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									"wrong # args: should be \"pathname",
-									argv[1], " left top right bottom\"", (char *) NULL);
+                           "wrong # args: should be \"pathname",
+                           argv[1], " left top right bottom\"", (char *) NULL);
     return TCL_ERROR;
   }
 
@@ -256,8 +256,8 @@ DOTRACE("ObjTogl::setUnitAngleCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									"wrong # args: should be \"pathname",
-									argv[1], " angle_in_degrees\"", (char *) NULL);
+                           "wrong # args: should be \"pathname",
+                           argv[1], " angle_in_degrees\"", (char *) NULL);
     return TCL_ERROR;
   }
 
@@ -276,8 +276,8 @@ DOTRACE("ObjTogl::setViewingDistanceCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									"wrong # args: should be \"pathname",
-									argv[1], " viewing_distance\"", (char *) NULL);
+                           "wrong # args: should be \"pathname",
+                           argv[1], " viewing_distance\"", (char *) NULL);
     return TCL_ERROR;
   }
 
@@ -285,11 +285,11 @@ DOTRACE("ObjTogl::setViewingDistanceCmd");
   if (Tcl_GetDouble(interp, argv[2], &d) != TCL_OK) return TCL_ERROR;
 
   if (d <= 0.0) {
-	 Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-									"look out! you'll hurt your nose trying to view",
-									"the screen from that distance! try another value",
-									(char *) NULL);
-	 return TCL_ERROR;
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+                           "look out! you'll hurt your nose trying to view",
+                           "the screen from that distance! try another value",
+                           (char *) NULL);
+    return TCL_ERROR;
   }
 
   ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
@@ -304,8 +304,8 @@ DOTRACE("ObjTogl::scaleRectCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									"wrong # args: should be \"pathname",
-									argv[1], " scale\"", (char *) NULL);
+                           "wrong # args: should be \"pathname",
+                           argv[1], " scale\"", (char *) NULL);
     //    Tcl_WrongNumArgs(interp, 2, objv, "left top right bottom");
     return TCL_ERROR;
   }
@@ -324,7 +324,7 @@ DOTRACE("ObjTogl::scaleRectCmd");
 void ObjTogl::toglCreateCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglCreateCallback");
   // viewing distance = 30 inches, one GL unit == 2.05 degrees visual angle
-  ToglConfig *config = new ToglConfig(TlistTcl::getTlistHandle(), 30, 2.05);
+  ToglConfig *config = new ToglConfig(TlistTcl::getTlist(), 30, 2.05);
   Togl_SetClientData(togl, (ClientData) config);
 
   // check if rgba
@@ -347,18 +347,18 @@ DOTRACE("ObjTogl::toglCreateCallback");
 #endif
 
   if (GfxAttribs::isTrue(GfxAttribs::RGBA_FLAG)==true) {
-	 glColor3f(0.0, 0.0, 0.0);
-	 glClearColor(1.0, 1.0, 1.0, 1.0);
+    glColor3f(0.0, 0.0, 0.0);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
   }
   else { // not using rgba
-	 if (GfxAttribs::isTrue(GfxAttribs::PRIVATE_CMAP_FLAG)) {
-		glClearIndex(1);
-		glIndexi(0);
-	 }
-	 else {
-		glClearIndex(Togl_AllocColor(togl, 1.0, 1.0, 1.0));
-		glIndexi(Togl_AllocColor(togl, 0.0, 0.0, 0.0));
-	 }
+    if (GfxAttribs::isTrue(GfxAttribs::PRIVATE_CMAP_FLAG)) {
+      glClearIndex(1);
+      glIndexi(0);
+    }
+    else {
+      glClearIndex(Togl_AllocColor(togl, 1.0, 1.0, 1.0));
+      glIndexi(Togl_AllocColor(togl, 0.0, 0.0, 0.0));
+    }
   }
 
   glLineWidth(2.0);
@@ -373,18 +373,17 @@ DOTRACE("ObjTogl::toglDestroyCallback");
 void ObjTogl::toglDisplayCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglDisplayCallback");
   ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
-  Tlist **tlist_h = config->getTlist();
+  const Tlist& tlist = config->getTlist();
 
   glClear(GL_COLOR_BUFFER_BIT);
-  if (*tlist_h != NULL)
-    (*tlist_h)->drawCurTrial();
+  tlist.drawCurTrial();
   Togl_SwapBuffers(togl);
 }
 
 void ObjTogl::toglEpsCallback(const struct Togl *togl) {
 DOTRACE("ObjTogl::toglEpsCallback");
   ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
-  Tlist **tlist_h = config->getTlist();
+  const Tlist& tlist = config->getTlist();
 
   // save the old color indices for foreground and background
   GLint oldclear, oldindex;
@@ -394,8 +393,7 @@ DOTRACE("ObjTogl::toglEpsCallback");
   glClearIndex(255);
   glClear(GL_COLOR_BUFFER_BIT);
   glIndexi(0);
-  if (*tlist_h != NULL)
-	 (*tlist_h)->drawCurTrial();
+  tlist.drawCurTrial();
   glFlush();
   
   // restore the old color indices
@@ -425,7 +423,9 @@ DOTRACE("ObjTogl::Objtogl_Init");
   Togl_CreateCommand("setUnitAngle", setUnitAngleCmd);
   Togl_CreateCommand("setViewingDistance", setViewingDistanceCmd);
 
+  Tcl_PkgProvide(interp, "Objtogl", "2.1");
   return TCL_OK;
 }
 
+static const char vcid_objtogl_cc[] = "$Header$";
 #endif // !OBJTOGL_CC_DEFINED

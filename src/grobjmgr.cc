@@ -2,8 +2,8 @@
 // grobjmgr.cc
 // Rob Peters
 // created: Mon Mar  8 00:35:50 1999
-// written: Fri Mar 12 12:56:52 1999
-static const char vcid_grobjmgr_cc[] = "$Id$";
+// written: Tue Mar 16 19:42:01 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJMGR_CC_DEFINED
@@ -18,22 +18,25 @@ static const char vcid_grobjmgr_cc[] = "$Id$";
 #include "face.h"
 #include "fixpt.h"
 
-GrObj* GrobjMgr::newGrobj(istream &is) {
+GrObj* GrobjMgr::newGrobj(istream &is, IO::IOFlag flag) {
   string type;
   is >> type;
-  return newGrobj(type.c_str(), is);
+  // we must turn off the TYPENAME flag since the typename has already
+  // been read from the input stream by the present function
+  return newGrobj(type.c_str(), is, IO::IOFlag(flag & (~IO::TYPENAME)));
 }
 
-GrObj* GrobjMgr::newGrobj(const char* type, istream &is) {
+GrObj* GrobjMgr::newGrobj(const char* type, istream &is, IO::IOFlag flag) {
   if (string(type)==string(typeid(Face).name())) {
-	 return new Face(is);
+    return new Face(is, flag);
   }
   else if (string(type)==string(typeid(FixPt).name())) {
-	 return new FixPt(is);
+    return new FixPt(is, flag);
   }
   else {
-	 return NULL;
+    return NULL;
   }
 }
 
+static const char vcid_grobjmgr_cc[] = "$Header$";
 #endif // !GROBJMGR_CC_DEFINED

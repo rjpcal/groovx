@@ -2,7 +2,8 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Sat Mar 13 15:13:10 1999
+// written: Tue Mar 16 19:32:28 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_H_DEFINED
@@ -34,5 +35,5 @@ private:
   char *itsDirectory;
 };
 
-static const char vcid_subject_h[] = "$Id$";
+static const char vcid_subject_h[] = "$Header$";
 #endif // !SUBJECT_H_DEFINED

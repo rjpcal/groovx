@@ -2,7 +2,8 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 13:06:37 1999
+// written: Tue Mar 16 19:42:17 1999
+// $Id$
 //
 // This is the abstract base class for graphic objects that are to be
 // held and manipulated in ObjList's and Glist's. Classes derived from
@@ -58,9 +59,9 @@ protected:
   int grDisplayList() const { return itsDisplayList; }
 
 private:
-  mutable bool itsIsCurrent;	  // true if displaylist is current
-  mutable int itsDisplayList;	  // OpenGL display list that draws the object
+  mutable bool itsIsCurrent;    // true if displaylist is current
+  mutable int itsDisplayList;   // OpenGL display list that draws the object
 };
 
-static const char vcid_grobj_h[] = "$Id$";
+static const char vcid_grobj_h[] = "$Header$";
 #endif // !GROBJ_H_DEFINED

@@ -2,8 +2,8 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Sat Mar 13 13:14:52 1999
-static const char vcid_objlist_cc[] = "$Id$";
+// written: Tue Mar 16 19:38:01 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLIST_CC_DEFINED
@@ -12,6 +12,8 @@ static const char vcid_objlist_cc[] = "$Id$";
 #include "objlist.h"
 
 #include <iostream.h>
+#include <string>
+#include <typeinfo>
 #include <strstream.h>
 
 #include "randutils.h"
@@ -19,6 +21,7 @@ static const char vcid_objlist_cc[] = "$Id$";
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_ASSERT
 #include "debug.h"
 
 #ifndef NULL
@@ -38,6 +41,10 @@ namespace {
 // ObjList member functions
 ///////////////////////////////////////////////////////////////////////
 
+//////////////
+// creators //
+//////////////
+
 ObjList::ObjList(int size):
   itsFirstVacant(0), 
   itsObjVec(size, NULL) 
@@ -48,89 +55,82 @@ DOTRACE("ObjList::ObjList");
 #endif
 }
 
-ObjList::ObjList(istream &is, const char* type, 
-					  int num_objs, int grp_size, double obj_spacing, 
-					  double t_jitter, double r_jitter) : 
-  itsFirstVacant(0),
-  itsObjVec(num_objs*grp_size, NULL)
-{
-DOTRACE("ObjList::ObjList");
-  char **line_array = new char*[num_objs];
-  
-  for (int ln = 0; ln < num_objs; ln++) {
-	 line_array[ln] = new char[BUF_SIZE];
-	 is.getline(line_array[ln], BUF_SIZE);
-  }
-  
-  double x_pos = -1*(grp_size-1)*obj_spacing/2.0;
-  
-  for (int i = 0; i < grp_size; i++) {
-	 readRangeObjs(type, line_array, i*num_objs, num_objs);
-	 scaleRangeObjs(i*num_objs, num_objs, x_pos, 0.0, 1.0, 1.0, 
-						 t_jitter, r_jitter);
-	 x_pos += obj_spacing;
-  }
-  
-  for (int j = 0; j < num_objs; j++) {
-	 delete [] line_array[j];
-  }
-  delete [] line_array;
-}
-
 ObjList::~ObjList() {
 DOTRACE("ObjList::~ObjList");
   clearObjs();
 }
 
-IOResult ObjList::writeRangeObjs(ostream &os, int first, int count) const {
-DOTRACE("ObjList::writeRangeObjs");
-  int id = first;
-  for (int i = 0; i < count; i++) {
-	 itsObjVec[id+i]->serialize(os);
+IOResult ObjList::serialize(ostream &os, IOFlag flag) const {
+DOTRACE("ObjList::serialize");
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+
+  char sep = ' ';
+  if (flag & IO::TYPENAME) { os << typeid(ObjList).name() << sep; }
+
+  // itsObjVec: we will serialize only the non-null GrObj*'s in
+  // itsObjVec. In order to correctly deserialize the object later, we
+  // must write both the size of itsObjVec (in order to correctly
+  // resize later), as well as the number of non-null objects that we
+  // serialize (so that deserialize knows when to stop reading).
+  os << itsObjVec.size() << sep;
+  int num_null = 0;
+  for (ObjVec::const_iterator ii = itsObjVec.begin(); 
+       ii != itsObjVec.end(); 
+       ii++) {
+    if (*ii == NULL) num_null++;
   }
+  int num_non_null = itsObjVec.size() - num_null;
+  os << num_non_null << endl;
+  int c = 0;
+  for (int i = 0; i < itsObjVec.size(); i++) {
+    if (itsObjVec[i] != NULL) {
+      os << i << sep;
+      // we must serialize the typename since deserialize requires a
+      // typename in order to call the virtual constructor newGrobj
+      itsObjVec[i]->serialize(os, IO::IOFlag(flag|TYPENAME));
+      c++;
+    }
+  }
+  Assert(c==num_non_null);
+  // itsFirstVacant
+  os << itsFirstVacant << endl;
   return checkStream(os);
 }
 
-IOResult ObjList::readRangeObjs(istream &is, int first, int count) {
-DOTRACE("ObjList::readRangeObjs");
-  for (int i = 0; i < count; i++) {
-	 addObjAt(first+i, GrobjMgr::newGrobj(is));
+IOResult ObjList::deserialize(istream &is, IOFlag flag) {
+DOTRACE("ObjList::deserialize");
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) {
+    string name;
+    is >> name;
+    if (name != string(typeid(ObjList).name())) { return IO_ERROR; }
   }
+  // itsObjVec
+  clearObjs();
+  int size, num_non_null;
+  is >> size >> num_non_null;
+  Assert( num_non_null <= size );
+  itsObjVec.resize(size, NULL);
+  int objid;
+  for (int i = 0; i < num_non_null; i++) {
+    is >> objid;
+    itsObjVec[objid] = GrobjMgr::newGrobj(is, flag);
+  }
+  // itsFirstVacant
+  is >> itsFirstVacant;
   return checkStream(is);
 }
 
-IOResult ObjList::readRangeObjs(const char* type, istream &is, 
-										  int first, int count) {
-DOTRACE("ObjList::readRangeObjs");
-  for (int i = 0; i < count; i++) {
-	 addObjAt(first+i, GrobjMgr::newGrobj(type, is));
-  }
-  return checkStream(is);
-}
-
-void ObjList::readRangeObjs(char **line_array, int first, int count) {
-DOTRACE("ObjList::readRangeObjs");
-  for (int i = 0; i < count; i++) {
-	 istrstream ist(line_array[i]);
-	 addObjAt(first+i, GrobjMgr::newGrobj(ist));
-  }
-}
-
-void ObjList::readRangeObjs(const char* type, char **line_array, 
-									 int first, int count) {
-DOTRACE("ObjList::readRangeObjs");
-  for (int i = 0; i < count; i++) {
-	 istrstream ist(line_array[i]);
-	 addObjAt(first+i, GrobjMgr::newGrobj(type, ist));
-  }
-}
+///////////////
+// accessors //
+///////////////
 
 int ObjList::nobjs() const {
 DOTRACE("ObjList::nobjs"); 
   int count=0;
   for (ObjVec::const_iterator ii = itsObjVec.begin(); 
-		 ii != itsObjVec.end(); ii++) {
-	 if (*ii != NULL) count++;
+       ii != itsObjVec.end(); ii++) {
+    if (*ii != NULL) count++;
   }
   return count;
 }
@@ -148,6 +148,18 @@ DOTRACE("ObjList::isValidObjid");
   return ( id >= 0 && id < itsObjVec.size() && itsObjVec[id] != NULL); 
 }
 
+void ObjList::getValidObjids(vector<int>& vec) const {
+DOTRACE("ObjList::getValidObjids");
+  vec.clear();
+  for (int i = 0; i < itsObjVec.size(); i++) {
+    if (isValidObjid(i)) vec.push_back(i);
+  }
+}
+
+//////////////////
+// manipulators //
+//////////////////
+
 int ObjList::addObj(GrObj *obj) {
 DOTRACE("ObjList::addObj");
   int new_site = itsFirstVacant;
@@ -160,7 +172,7 @@ DOTRACE("ObjList::addObjAt");
   if (id < 0) return;
 
   if (id >= itsObjVec.size()) {
-	 itsObjVec.resize(id+RESIZE_CHUNK, NULL);
+    itsObjVec.resize(id+RESIZE_CHUNK, NULL);
   }
 
   delete itsObjVec[id];
@@ -168,7 +180,7 @@ DOTRACE("ObjList::addObjAt");
 
   // make sure itsFirstVacant is up-to-date
   while ( (itsObjVec[itsFirstVacant] != NULL) &&
-			 (++itsFirstVacant < itsObjVec.size()) );
+          (++itsFirstVacant < itsObjVec.size()) );
 }
 
 // this member function delete's the GrObj pointed to by itsObjVec[i]
@@ -177,7 +189,7 @@ DOTRACE("ObjList::removeObj");
   if (!isValidObjid(id)) return;
 
   delete itsObjVec[id];
-  itsObjVec[id] = NULL;			  // reset the pointer to NULL
+  itsObjVec[id] = NULL;         // reset the pointer to NULL
 
   // reset itsFirstVacant in case i would now be the first vacant
   if (itsFirstVacant > id) itsFirstVacant = id;
@@ -188,9 +200,10 @@ DOTRACE("ObjList::removeObj");
 void ObjList::clearObjs() {
 DOTRACE("ObjList::clearObjs()");
   for (ObjVec::iterator ii = itsObjVec.begin(); ii != itsObjVec.end(); ii++) {
-	 delete *ii;
-	 *ii = NULL;
+    delete *ii;
+    *ii = NULL;
   }
 }
 
+static const char vcid_objlist_cc[] = "$Header$";
 #endif // !OBJLIST_CC_DEFINED

@@ -2,7 +2,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar 15 15:57:52 1999
+// written: Mon Mar 15 17:14:17 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -32,7 +32,8 @@ namespace SubjectTcl    { Tcl_PackageInitProc Subject_Init;     }
 namespace Tcldlist      { Tcl_PackageInitProc Tcldlist_Init;    }
 namespace TclGL         { Tcl_PackageInitProc Tclgl_Init;       }
 namespace TlistTcl      { Tcl_PackageInitProc Tlist_Init;       }
-#define LOCAL_TRACE
+
+#define NO_TRACE
 #include "trace.h"
 
 int main(int argc, char **argv) {

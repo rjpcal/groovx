@@ -2,8 +2,8 @@
 // errmsg.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 12:58:37 1999
-static const char vcid_errmsg_h[] = "$Id$";
+// written: Tue Mar 16 19:46:28 1999
+// $Id$
 //
 // this provides a simple inlined function that appends a Tcl function name
 // and an error message to the interpreters result
@@ -15,17 +15,19 @@ static const char vcid_errmsg_h[] = "$Id$";
 namespace {
 
   inline void err_message(Tcl_Interp *interp, Tcl_Obj *const objv[],
-								  const char * err_msg) {
+                          const char * err_msg) {
 #if (TCL_MAJOR_VERSION > 8) || \
-	 ( (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1) )
-		Tcl_AppendObjToObj(Tcl_GetObjResult(interp), objv[0]);
-	 Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-									err_msg, (char *) NULL); 
+    ( (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1) )
+      Tcl_AppendObjToObj(Tcl_GetObjResult(interp), objv[0]);
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+                           err_msg, (char *) NULL); 
 #else
-	 Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-									Tcl_GetStringFromObj(objv[0], (int *) NULL), 
-									err_msg, (char *) NULL); 
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
+                           Tcl_GetStringFromObj(objv[0], (int *) NULL), 
+                           err_msg, (char *) NULL); 
 #endif
   }
 
 }
+
+static const char vcid_errmsg_h[] = "$Id$";

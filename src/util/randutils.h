@@ -2,7 +2,8 @@
 // randutils.h
 // Rob Peters
 // created: Mon Mar  8 02:35:53 1999
-// written: Sun Mar 14 20:32:50 1999
+// written: Tue Mar 16 19:33:24 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RANDUTILS_H_DEFINED
@@ -15,11 +16,11 @@
 
 namespace {
   inline int randIntRange(int min, int max) {
-	 return int( (double(rand()) / RAND_MAX) * (max-min) + min );
+    return int( (double(rand()) / RAND_MAX) * (max-min) + min );
   }
 
   inline double randDoubleRange(double min, double max) {
-	 return ( (double(rand()) / RAND_MAX) * (max-min) + min );
+    return ( (double(rand()) / RAND_MAX) * (max-min) + min );
   }
 }
 

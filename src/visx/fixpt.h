@@ -2,7 +2,8 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Sun Mar 14 18:18:44 1999
+// written: Tue Mar 16 19:43:36 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_H_DEFINED
@@ -40,5 +41,5 @@ private:
   int itsWidth;                  // width of crosshairs in pixels
 };
 
-static const char vcid_fixpt_h[] = "$Id$";
+static const char vcid_fixpt_h[] = "$Header$";
 #endif // !FIXPT_H_DEFINED

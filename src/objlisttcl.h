@@ -2,7 +2,8 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar 13 12:43:11 1999
+// written: Tue Mar 16 19:37:23 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLISTTCL_H_DEFINED
@@ -20,14 +21,12 @@ class GrObj;
 
 namespace ObjlistTcl {
   typedef int (ObjlistTcl_SubcmdProc) 
-	 (ObjList *olist, Tcl_Interp *interp,
-	  int objc, Tcl_Obj *const objv[]);
+    (const ObjList& olist, Tcl_Interp *interp,
+     int objc, Tcl_Obj *const objv[]);
 
-  extern ObjList *theObjList;
-  inline ObjList* getObjList() { return theObjList; }
-  inline ObjList** getObjListHandle() { return &theObjList; }
+  ObjList& getObjList();
   GrObj* getObjFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[], 
-                       ObjList *olist, int argn);
+                       const ObjList& olist, int argn);
 
   const char* const cant_make_obj = ": error creating object";
   const char* const bad_objid_msg = ": objid out of range";
@@ -36,5 +35,5 @@ namespace ObjlistTcl {
   Tcl_PackageInitProc Objlist_Init;
 }
 
-static const char vcid_objlisttcl_h[] = "$Id$";
+static const char vcid_objlisttcl_h[] = "$Header$";
 #endif // !OBJLISTTCL_H_DEFINED

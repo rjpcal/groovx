@@ -2,8 +2,8 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sun Mar 14 18:18:18 1999
-static const char vcid_face_cc[] = "$Id$";
+// written: Tue Mar 16 19:45:23 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACE_CC_DEFINED
@@ -11,7 +11,7 @@ static const char vcid_face_cc[] = "$Id$";
 
 #include "face.h"
 
-#include <iostream.h>			  // for serialize
+#include <iostream.h>           // for serialize
 #include <string>
 #include <typeinfo>
 #include <GL/gl.h>
@@ -81,9 +81,9 @@ IOResult Face::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Face::deserialize");
   if (flag & IO::BASES) { GrObj::deserialize(is, flag); }
   if (flag & IO::TYPENAME) {
-	 string name;
-	 is >> name;
-	 if (name != string(typeid(Face).name())) { return IO_ERROR; }
+    string name;
+    is >> name;
+    if (name != string(typeid(Face).name())) { return IO_ERROR; }
   }
 
   int cat;
@@ -108,31 +108,31 @@ DOTRACE("Face::grRecompile");
   static const GLdouble outer_radius = 0.5;
   static const GLdouble eyeball_x_scale = 0.185;
   static const GLdouble eyeball_y_scale = 0.1;
-  static const GLdouble pupil_x_scale = 0.3784;	// rel to eyeball scale
-  static const GLdouble pupil_y_scale = 0.7;	// rel to eyeball scale
+  static const GLdouble pupil_x_scale = 0.3784; // rel to eyeball scale
+  static const GLdouble pupil_y_scale = 0.7; // rel to eyeball scale
 
   // use these params for generating the face outline
   static const int num_subdivisions = 30;
   static const int nctrlsets = 2;
   static const float ctrlpnts[] = {    -.7, 0.2, 0, // first 4 control points 
-													-.7, 1.4, 0,
-													.7, 1.4, 0,
-													.7, 0.2, 0,
-													.7, 0.2, 0, // second 4 control points 
-													.6, -1.7, 0,
-													-.6, -1.7, 0,
-													-.7, 0.2, 0};
+                                       -.7, 1.4, 0,
+                                       .7, 1.4, 0,
+                                       .7, 0.2, 0,
+                                       .7, 0.2, 0, // second 4 control points 
+                                       .6, -1.7, 0,
+                                       -.6, -1.7, 0,
+                                       -.7, 0.2, 0};
   
   const int use_antialiasing = GfxAttribs::usingRgba();
 
   // make the big display list
   glNewList(grDisplayList(), GL_COMPILE);
     if (use_antialiasing) {
-		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
-		glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
-		glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
-	 }
+      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
+      glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
+      glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
+    }
 
     // prepare to push and pop modelview matrices
     glMatrixMode(GL_MODELVIEW);
@@ -175,12 +175,13 @@ DOTRACE("Face::grRecompile");
     glVertex2f(theirNose_x, itsNose[1]);
     glEnd();
 
-	 if (use_antialiasing) {
-		glPopAttrib();
-	 }
+    if (use_antialiasing) {
+      glPopAttrib();
+    }
   glEndList();
 
   grPostCompiled();
 }
 
+static const char vcid_face_cc[] = "$Header$";
 #endif // !FACE_CC_DEFINED

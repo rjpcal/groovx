@@ -2,8 +2,8 @@
 // grobjtcl.cc
 // Rob Peters
 // created: Wed Feb 10 19:30:37 1999
-// written: Fri Mar 12 17:10:45 1999
-static const char vcid_grobjtcl_cc[] = "$Id$";
+// written: Tue Mar 16 19:41:31 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJTCL_CC_DEFINED
@@ -22,42 +22,43 @@ static const char vcid_grobjtcl_cc[] = "$Id$";
 #include "debug.h"
 
 int GrobjTcl::grobjCmd(ClientData clientData, Tcl_Interp *interp,
-							  int objc, Tcl_Obj *const objv[], 
-							  newGrobjProc theGrobjProc, ProcMap &theProcMap) {
+                       int objc, Tcl_Obj *const objv[], 
+                       newGrobjProc theGrobjProc, ProcMap &theProcMap) {
   int id;
   
   ObjList *olist = (ObjList *) clientData;
 
   if (objc == 1) {
-	 GrObj *theObj = theGrobjProc();
-	 if ( (id = olist->addObj(theObj)) < 0) {
-		err_message(interp, objv, ObjlistTcl::cant_make_obj);
-		delete theObj;
-		return TCL_ERROR;
-	 }
-	 Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
-	 return TCL_OK;
+    GrObj *theObj = theGrobjProc();
+    if ( (id = olist->addObj(theObj)) < 0) {
+      err_message(interp, objv, ObjlistTcl::cant_make_obj);
+      delete theObj;
+      return TCL_ERROR;
+    }
+    Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
+    return TCL_OK;
   }
-  else {								  // subcommand
-	 string cmd = Tcl_GetString(objv[1]);
+  else {                        // subcommand
+    string cmd = Tcl_GetString(objv[1]);
   
-	 if ( theProcMap[cmd] == 0 ) {
-		err_message(interp, objv, bad_command);
-		return TCL_ERROR;
-	 }
-	 else {
-		return ( theProcMap[cmd](olist, interp, objc, objv) );
-	 }
+    if ( theProcMap[cmd] == 0 ) {
+      err_message(interp, objv, bad_command);
+      return TCL_ERROR;
+    }
+    else {
+      return ( theProcMap[cmd](olist, interp, objc, objv) );
+    }
   }
 }
 
 int GrobjTcl::Grobj_Init(Tcl_Interp *interp, 
-								 string theObjName, Tcl_ObjCmdProc theObjCmd) {
+                         string theObjName, Tcl_ObjCmdProc theObjCmd) {
   ObjList *olist = ObjlistTcl::getObjList();
 
   Tcl_CreateObjCommand(interp, const_cast<char *>(theObjName.c_str()), theObjCmd,
-							  (ClientData) olist, (Tcl_CmdDeleteProc *) NULL);
+                       (ClientData) olist, (Tcl_CmdDeleteProc *) NULL);
   return TCL_OK;
 }
 
+static const char vcid_grobjtcl_cc[] = "$Header$";
 #endif // !GROBJTCL_CC_DEFINED

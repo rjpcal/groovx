@@ -2,7 +2,8 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Sat Mar 13 19:12:53 1999
+// written: Tue Mar 16 19:34:27 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSLIST_H_DEFINED
@@ -24,7 +25,7 @@
 // PosList class
 ///////////////////////////////////////////////////////////////////////
 
-class PosList : public virtual IO{
+class PosList : public virtual IO {
 public:
   //////////////
   // creators //
@@ -50,7 +51,7 @@ public:
   // returns true if 'id' is a valid index into a non-NULL Position* in
   // the PosList, given its current size
 
-  Position* getPos(int id) const { return itsPosVec[id]; }
+  Position* getPos(int id) const;
   // both functions return the Position* at the index given by 'id'.
   // There is no range-checking--this must be done by the client with
   // olIsValidId().
@@ -77,13 +78,13 @@ public:
   // delete all Position's held by the list, and reset all Position*'s to NULL
 
 private:
-  PosList(const PosList&);		  // copy constructor not to be used
+  PosList(const PosList&);      // copy constructor not to be used
   PosList& operator=(const PosList&); // assignment operator not to be used
 
   typedef vector<Position *> PosVec;
-  int itsFirstVacant;			  // smallest index of a vacant array site
-  PosVec itsPosVec;				  // associative array from posid's to Position*'s
+  int itsFirstVacant;           // smallest index of a vacant array site
+  PosVec itsPosVec;             // associative array from posid's to Position*'s
 };
 
-static const char vcid_poslist_h[] = "$Id$";
+static const char vcid_poslist_h[] = "$Header$";
 #endif // !POSLIST_H_DEFINED

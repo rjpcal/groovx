@@ -2,8 +2,8 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Fri Mar 12 12:56:24 1999
-static const char vcid_io_cc[] = "$Id$";
+// written: Tue Mar 16 19:40:47 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_CC_DEFINED
@@ -23,4 +23,5 @@ IOResult checkStream(istream &is) {
 
 IOResult IO::deserialize(istream &is, IOFlag flag) { return IO_OK; }
 
+static const char vcid_io_cc[] = "$Header$";
 #endif // !IO_CC_DEFINED

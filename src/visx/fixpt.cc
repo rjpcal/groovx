@@ -2,7 +2,8 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sun Mar 14 18:19:17 1999
+// written: Tue Mar 16 19:43:52 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_CC_DEFINED
@@ -42,9 +43,9 @@ IOResult FixPt::serialize(ostream &os, IOFlag flag) const {
 IOResult FixPt::deserialize(istream &is, IOFlag flag) {
   if (flag & IO::BASES) { GrObj::deserialize(is, flag); }
   if (flag & IO::TYPENAME) {
-	 string name;
-	 is >> name;
-	 if (name != string(typeid(FixPt).name())) { return IO_ERROR; }
+    string name;
+    is >> name;
+    if (name != string(typeid(FixPt).name())) { return IO_ERROR; }
   }
   is >> itsLength;
   is >> itsWidth;
@@ -72,5 +73,5 @@ void FixPt::grRecompile() const {
   grPostCompiled();
 }
 
-static const char vcid_fixpt_cc[] = "$Id$";
+static const char vcid_fixpt_cc[] = "$Header$";
 #endif // !FIXPT_CC_DEFINED

@@ -2,7 +2,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Mar 15 16:00:02 1999
+// written: Tue Mar 16 19:43:22 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@
 
 namespace FixptTcl {
   FixPt* getFixptFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[],
-								 const ObjList& olist, int argn);
+                         const ObjList& olist, int argn);
 
   Tcl_ObjCmdProc fixptCmd;
   using ObjlistTcl::ObjlistTcl_SubcmdProc;
@@ -48,7 +48,7 @@ namespace FixptTcl {
 ///////////////////////////////////////////////////////////////////////
 
 FixPt* FixptTcl::getFixptFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[],
-											const ObjList& olist, int argn) {
+                                 const ObjList& olist, int argn) {
 DOTRACE("FixptTcl::getFixptFromArg");
   // Get the object
   GrObj *g = ObjlistTcl::getObjFromArg(interp, objv, olist, argn);
@@ -57,7 +57,7 @@ DOTRACE("FixptTcl::getFixptFromArg");
   FixPt *p = dynamic_cast<FixPt *>(g);
 
   if ( p == NULL ) {
-	 err_message(interp, objv, wrong_type_msg);
+    err_message(interp, objv, wrong_type_msg);
   }
   return p;
 }
