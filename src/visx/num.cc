@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Tue Mar 13 12:25:24 2001
+// written: Mon Mar 19 13:13:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,36 @@ DOTRACE("Num::gammalnEngine");
   ser=1.000000000190015;
   for (j=0;j<=5;j++) ser += cof[j]/++y;
   return -tmp+log(2.5066282746310005*ser/x);
+}
+
+double Num::fastexp7(double xx)
+{
+  static const double one_over[] = {
+	 1.0, /* 1/0 -- undefined, really */
+	 1.0,
+	 0.5,
+	 0.333333333333333333333333,
+	 0.25,
+	 0.2,
+	 0.166666666666666666666667,
+	 0.142857142857142857142857
+  };
+
+  return 1.0
+	 + (xx * one_over[1])
+		 * (1.0 + (xx * one_over[2])
+		  * (1.0 + (xx * one_over[3])
+			* (1.0 + (xx * one_over[4])
+			 * (1.0 + (xx * one_over[5])
+			  * (1.0 + (xx * one_over[6])
+  				* (1.0 + (xx * one_over[7])
+  					)
+				  )
+				 )
+				)
+			  )
+			 )
+	 ;
 }
 
 static const char vcid_num_cc[] = "$Header$";

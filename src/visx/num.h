@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Thu Mar 15 15:49:58 2001
+// written: Mon Mar 19 13:12:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,10 @@ public:
 		  return gammalnEngine(xx);
 		}
   }
+
+  // This is a speedy version of the exponential function, which
+  // computes the result to the seventh term of the Taylor series.
+  static double fastexp7(double xx);
 
   static const double SQRT_2;
 
