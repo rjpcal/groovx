@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 11:19:27 2002
+// written: Mon Sep 16 11:28:16 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -222,7 +222,7 @@ public:
   Tcl_Interp* itsInterp;
   Tk_Window itsTkWin;
   Display* itsDisplay;
-  ToglOpts itsOpts;
+  shared_ptr<ToglOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
   Tcl_Command itsCmdToken;
 
@@ -309,7 +309,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsInterp(interp),
   itsTkWin(0),
   itsDisplay(0),
-  itsOpts(),
+  itsOpts(new ToglOpts),
   itsGlx(0),
   itsCmdToken(0),
 
@@ -354,9 +354,9 @@ DOTRACE("Togl::Impl::Impl");
       toglOptionTable = Tk_CreateOptionTable(interp, optionSpecs);
     }
 
-  itsOpts.toDefaults();
+  itsOpts->toDefaults();
 
-  if (Tk_InitOptions(interp, reinterpret_cast<char*>(&itsOpts),
+  if (Tk_InitOptions(interp, reinterpret_cast<char*>(itsOpts.get()),
                      toglOptionTable, itsTkWin) == TCL_ERROR)
     {
       throw Util::Error(fstring("Togl couldn't initialize options:\n",
@@ -367,7 +367,7 @@ DOTRACE("Togl::Impl::Impl");
   // Get the window mapped onscreen
   //
 
-  Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
+  Tk_GeometryRequest(itsTkWin, itsOpts->width, itsOpts->height);
 
   Assert(itsGlx.get() == 0);
 
@@ -390,7 +390,7 @@ DOTRACE("Togl::Impl::Impl");
   if (itsUserTimerProc)
     {
       itsTimerToken =
-        Tcl_CreateTimerHandler( itsOpts.time, &cTimerCallback,
+        Tcl_CreateTimerHandler( itsOpts->time, &cTimerCallback,
                                 static_cast<ClientData>(this) );
     }
 
@@ -409,17 +409,17 @@ DOTRACE("Togl::Impl::Impl");
 
   itsCanvas = Util::SoftRef<GLCanvas>
     (GLCanvas::make(itsGlx->visInfo()->depth,
-                    itsOpts.glx.rgbaFlag,
+                    itsOpts->glx.rgbaFlag,
                     itsGlx->isDoubleBuffered()));
 
-  if ( itsOpts.glx.rgbaFlag )
+  if ( itsOpts->glx.rgbaFlag )
     {
       itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
       itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     { // not using rgba
-      if ( itsOpts.privateCmapFlag )
+      if ( itsOpts->privateCmapFlag )
         {
           itsCanvas->setColorIndex(0);
           itsCanvas->setClearColorIndex(1);
@@ -456,7 +456,8 @@ DOTRACE("Togl::Impl::~Impl");
 
   Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
 
-  Tk_FreeConfigOptions((char*) &itsOpts, toglOptionTable, itsTkWin);
+  Tk_FreeConfigOptions(reinterpret_cast<char*>(itsOpts.get()),
+                       toglOptionTable, itsTkWin);
 
   Tk_DestroyWindow(itsTkWin);
 }
@@ -474,7 +475,7 @@ DOTRACE("Togl::Impl::configure");
 
   int mask = 0;
 
-  if (Tk_SetOptions(itsInterp, reinterpret_cast<char *>(&itsOpts),
+  if (Tk_SetOptions(itsInterp, reinterpret_cast<char*>(itsOpts.get()),
                     toglOptionTable, objc, objv, itsTkWin,
                     (Tk_SavedOptions*) 0, &mask)
       == TCL_ERROR)
@@ -491,7 +492,7 @@ DOTRACE("Togl::Impl::configure");
       else
         {
           if (mask & TOGL_GEOM_OPTION)
-            Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
+            Tk_GeometryRequest(itsTkWin, itsOpts->width, itsOpts->height);
 
           if (mask & TOGL_OVERLAY_OPTION)
             setupOverlay();
@@ -544,7 +545,7 @@ DOTRACE("Togl::Impl::cTimerCallback");
     {
       rep->itsUserTimerProc(rep->itsOwner);
       rep->itsTimerToken =
-        Tcl_CreateTimerHandler(rep->itsOpts.time, cTimerCallback,
+        Tcl_CreateTimerHandler(rep->itsOpts->time, cTimerCallback,
                                static_cast<ClientData>(rep));
     }
   Tcl_Release(clientData);
@@ -579,14 +580,14 @@ DOTRACE("Togl::Impl::requestRedisplay");
 void Togl::Impl::requestReconfigure()
 {
 DOTRACE("Togl::Impl::requestReconfigure");
-  if (itsOpts.width != Tk_Width(itsTkWin) || itsOpts.height != Tk_Height(itsTkWin))
+  if (itsOpts->width != Tk_Width(itsTkWin) || itsOpts->height != Tk_Height(itsTkWin))
     {
-      itsOpts.width = Tk_Width(itsTkWin);
-      itsOpts.height = Tk_Height(itsTkWin);
-      XResizeWindow(itsDisplay, windowId(), itsOpts.width, itsOpts.height);
+      itsOpts->width = Tk_Width(itsTkWin);
+      itsOpts->height = Tk_Height(itsTkWin);
+      XResizeWindow(itsDisplay, windowId(), itsOpts->width, itsOpts->height);
 
       if (itsOverlay)
-        itsOverlay->reconfigure(itsOpts.width, itsOpts.height);
+        itsOverlay->reconfigure(itsOpts->width, itsOpts->height);
 
       itsGlx->makeCurrent(windowId());
     }
@@ -597,11 +598,11 @@ DOTRACE("Togl::Impl::requestReconfigure");
     }
   else
     {
-      glViewport(0, 0, itsOpts.width, itsOpts.height);
-      if (itsOpts.overlayFlag)
+      glViewport(0, 0, itsOpts->width, itsOpts->height);
+      if (itsOpts->overlayFlag)
         {
           useLayer( Overlay );
-          glViewport( 0, 0, itsOpts.width, itsOpts.height );
+          glViewport( 0, 0, itsOpts->width, itsOpts->height );
           useLayer( Normal );
         }
     }
@@ -610,7 +611,7 @@ DOTRACE("Togl::Impl::requestReconfigure");
 void Togl::Impl::swapBuffers() const
 {
 DOTRACE("Togl::Impl::swapBuffers");
-  if (itsOpts.glx.doubleFlag)
+  if (itsOpts->glx.doubleFlag)
     {
       glXSwapBuffers( itsDisplay, windowId() );
     }
@@ -623,12 +624,12 @@ DOTRACE("Togl::Impl::swapBuffers");
 void Togl::Impl::ensureSharedColormap(const char* what) const
 {
 DOTRACE("Togl::Impl::ensureSharedColormap");
-  if (itsOpts.glx.rgbaFlag)
+  if (itsOpts->glx.rgbaFlag)
     {
       throw Util::Error(fstring(what, " not allowed in RGBA mode"));
     }
 
-  if (itsOpts.privateCmapFlag)
+  if (itsOpts->privateCmapFlag)
     {
       throw Util::Error(fstring(what, " not allowed with private colormap"));
     }
@@ -744,16 +745,16 @@ DOTRACE("Togl::Impl::makeWindowExist");
       throw Util::Error("Togl: X server has no OpenGL GLX extension");
     }
 
-  itsGlx.reset(GlxWrapper::make(itsDisplay, itsOpts.glx));
+  itsGlx.reset(GlxWrapper::make(itsDisplay, itsOpts->glx));
 
   Colormap cmap =
     X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
-                          itsOpts.glx.rgbaFlag, itsOpts.privateCmapFlag);
+                          itsOpts->glx.rgbaFlag, itsOpts->privateCmapFlag);
 
   TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
-                       itsOpts.width, itsOpts.height, cmap);
+                       itsOpts->width, itsOpts->height, cmap);
 
-  if (!itsOpts.glx.rgbaFlag)
+  if (!itsOpts->glx.rgbaFlag)
     {
       X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
     }
@@ -766,7 +767,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
   itsGlx->makeCurrent(windowId());
 
   // Check for a single/double buffering snafu
-  if (itsOpts.glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
+  if (itsOpts->glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
     {
       // We requested single buffering but had to accept a double buffered
       // visual.  Set the GL draw buffer to be the front buffer to
@@ -783,12 +784,12 @@ DOTRACE("Togl::Impl::setupOverlay");
   // turning overlay on or off
   if (itsOverlay) { delete itsOverlay; itsOverlay = 0; }
 
-  if (!itsOpts.overlayFlag)
+  if (!itsOpts->overlayFlag)
     return;
 
   itsOverlay = new GlxOverlay(itsDisplay, this->windowId(),
-                              !itsOpts.glx.indirect, itsGlx.get(),
-                              itsOpts.width, itsOpts.height);
+                              !itsOpts->glx.indirect, itsGlx.get(),
+                              itsOpts->width, itsOpts->height);
 
   Assert(itsOverlay != 0);
 
@@ -858,12 +859,12 @@ void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(windowId()); 
 void Togl::requestRedisplay()           { rep->requestRedisplay(); }
 void Togl::requestReconfigure()         { rep->requestReconfigure(); }
 void Togl::swapBuffers() const          { rep->swapBuffers(); }
-int Togl::width() const                 { return rep->itsOpts.width; }
-int Togl::height() const                { return rep->itsOpts.height; }
-bool Togl::isRgba() const               { return rep->itsOpts.glx.rgbaFlag; }
-bool Togl::isDoubleBuffered() const     { return rep->itsOpts.glx.doubleFlag; }
+int Togl::width() const                 { return rep->itsOpts->width; }
+int Togl::height() const                { return rep->itsOpts->height; }
+bool Togl::isRgba() const               { return rep->itsOpts->glx.rgbaFlag; }
+bool Togl::isDoubleBuffered() const     { return rep->itsOpts->glx.doubleFlag; }
 unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
-bool Togl::hasPrivateCmap() const       { return rep->itsOpts.privateCmapFlag; }
+bool Togl::hasPrivateCmap() const       { return rep->itsOpts->privateCmapFlag; }
 Tcl_Interp* Togl::interp() const        { return rep->itsInterp; }
 Tk_Window Togl::tkWin() const           { return rep->itsTkWin; }
 const char* Togl::pathname() const      { return Tk_PathName(rep->itsTkWin); }
@@ -907,7 +908,7 @@ void Togl::requestOverlayRedisplay()
 int Togl::existsOverlay() const
 {
 DOTRACE("Togl::existsOverlay");
-  return rep->itsOpts.overlayFlag;
+  return rep->itsOpts->overlayFlag;
 }
 
 int Togl::getOverlayTransparentValue() const
@@ -980,7 +981,9 @@ namespace
           {
             /* Return list of all configuration parameters */
             Tcl_Obj* objResult =
-              Tk_GetOptionInfo(interp, (char*) &rep->itsOpts, toglOptionTable,
+              Tk_GetOptionInfo(interp,
+                               reinterpret_cast<char*>(rep->itsOpts.get()),
+                               toglOptionTable,
                                (Tcl_Obj*)NULL, rep->itsTkWin);
             if (objResult != 0)
               {
@@ -1004,8 +1007,10 @@ namespace
               {
                 /* Return a specific configuration parameter */
                 Tcl_Obj* objResult =
-                  Tk_GetOptionInfo(interp, (char*) &rep->itsOpts,
-                                   toglOptionTable, objv[2], rep->itsTkWin);
+                  Tk_GetOptionInfo(interp,
+                                   reinterpret_cast<char*>(rep->itsOpts.get()),
+                                   toglOptionTable,
+                                   objv[2], rep->itsTkWin);
                 if (objResult != 0)
                   {
                     Tcl_SetObjResult(interp, objResult);
