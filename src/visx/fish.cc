@@ -119,11 +119,10 @@ const FieldMap& Fish::classFields()
     Field("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
     Field("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
-    Field("currentPart", Field::BoundsCheck(),
-          &Fish::itsCurrentPart, 0, 0, 3, 1, Field::NEW_GROUP),
+    Field("currentPart", &Fish::itsCurrentPart, 0, 0, 3, 1,
+			 Field::NEW_GROUP | Field::CHECKED),
 
-    Field("currentEndPt", Field::BoundsCheck(),
-          &Fish::itsCurrentEndPt, 0, 0, 3, 1),
+    Field("currentEndPt", &Fish::itsCurrentEndPt, 0, 0, 3, 1, Field::CHECKED),
 
     Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
     Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Aug 29 16:48:15 2001
+// written: Thu Aug 30 10:08:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,8 +148,8 @@ const FieldMap& MorphyFace::classFields()
     Field("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, Field::NEW_GROUP),
     Field("pupilYpos", &MF::itsPupilYpos, 0.0, -0.5, 0.5, 0.05),
     Field("pupilSize", &MF::itsPupilSize, 0.6, 0.0, 1.0, 0.05),
-    Field("pupilDilation", Field::BoundsCheck(),
-          &MF::itsPupilDilation, 0.5, 0.05, 0.95, 0.05),
+    Field("pupilDilation", &MF::itsPupilDilation,
+          0.5, 0.05, 0.95, 0.05, Field::CHECKED),
 
     Field("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02,
           Field::NEW_GROUP),
