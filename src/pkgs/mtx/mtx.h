@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 13:53:32 2002
+// written: Mon Mar  4 14:21:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -347,6 +347,15 @@ public:
     offset_(other.offset_)
   {}
 
+  void swap(MtxSpecs& other);
+
+  void reshape(int mr, int nc);
+
+  void selectRows(const RowRange& rng);
+  void selectCols(const ColRange& rng);
+
+  ptrdiff_t offset() const { return offset_; }
+
   int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
   int nelems() const { return mrows_*ncols_; }
 
@@ -368,6 +377,12 @@ public:
   int offsetFromStart(int elem) const
   { return offsetFromStart(elem%mrows(), elem/mrows()); }
 
+  int offsetFromStorage(int row, int col) const
+  { return offset_ + offsetFromStart(row, col); }
+
+  int offsetFromStorage(int elem) const
+  { return offset_ + offsetFromStart(elem); }
+
 protected:
   int mrows_;
   int rowstride_;
@@ -375,6 +390,14 @@ protected:
   static const int colstride_ = 1;
   ptrdiff_t offset_;
 };
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * DataHolder class.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 class DataHolder : public WithPolicies
 {
@@ -410,10 +433,12 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MtxBase : public MtxSpecs, public DataHolder
+class MtxBase : public MtxSpecs, public WithPolicies // public DataHolder
 {
 private:
   MtxBase& operator=(const MtxBase& other); // not allowed
+
+  DataHolder data_;
 
 public:
   void swap(MtxBase& other);
@@ -424,7 +449,7 @@ public:
 
   MtxBase(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
     MtxSpecs(mrows, ncols),
-    DataHolder(data, mrows, ncols, s)
+    data_(data, mrows, ncols, s)
   {}
 
   MtxBase(mxArray* a, StoragePolicy s);
@@ -437,29 +462,24 @@ public:
 
   const double& at(int i) const
   {
-    RC_less(i+offset_, storageLength());
-    return storage()[i+offset_];
+    RC_less(i+offset(), data_.storageLength());
+    return data_.storage()[i+offset()];
   }
 
   double& at_nc(int i)
   {
-    RC_less(i+offset_, storageLength());
-    return storage_nc()[i+offset_];
+    RC_less(i+offset(), data_.storageLength());
+    return data_.storage_nc()[i+offset()];
   }
 
-  void reshape(int mrows, int ncols);
-
-  void selectRows(const RowRange& rng);
-  void selectCols(const ColRange& rng);
-
-  ptrdiff_t offsetFromStorage(int row, int col) const
-  { return RCR_leq(offset_ + offsetFromStart(row, col), storageLength()); }
+  ptrdiff_t offsetFromStorage(int r, int c) const
+  { return RCR_leq(MtxSpecs::offsetFromStorage(r, c), data_.storageLength()); }
 
   double* address_nc(int row, int col)
-  { return storage_nc() + offsetFromStorage(row, col); }
+  { return data_.storage_nc() + offsetFromStorage(row, col); }
 
   const double* address(int row, int col) const
-  { return storage() + offsetFromStorage(row, col); }
+  { return data_.storage() + offsetFromStorage(row, col); }
 
 #ifdef APPLY_IMPL
 #  error macro error
@@ -470,7 +490,7 @@ public:
   // template arguments to a single apply() template
 #define APPLY_IMPL \
  \
-      double* p = storage_nc() + offset_; \
+      double* p = data_.storage_nc() + offset(); \
       unsigned int gap = rowgap(); \
  \
       if (gap == 0) \
@@ -504,6 +524,11 @@ public:
   }
 
 #undef APPLY_IMPL
+
+  const double* storage() const { return data_.storage(); }
+  double* storage_nc() { return data_.storage_nc(); }
+
+  void makeUnique() { data_.makeUnique(); }
 };
 
 

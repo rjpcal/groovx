@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 13:53:32 2002
+// written: Mon Mar  4 14:21:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -288,6 +288,63 @@ Slice& Slice::operator=(const Mtx& other)
   return *this;
 }
 
+void MtxSpecs::swap(MtxSpecs& other)
+{
+  std::swap(mrows_, other.mrows_);
+  std::swap(rowstride_, other.rowstride_);
+  std::swap(ncols_, other.ncols_);
+  std::swap(offset_, other.offset_);
+}
+
+void MtxSpecs::reshape(int mr, int nc)
+{
+  if (mr*nc != nelems())
+    {
+      fstring msg;
+      msg.append("dimension mismatch in Mtx::reshape: ");
+      msg.append("current nelems == ", nelems(), "; requested ");
+      msg.append(mr, "x", nc);
+      throw Util::Error(msg);
+    }
+
+  if (rowstride_ != mrows_)
+    throw Util::Error("reshape not allowed for submatrix");
+
+  mrows_ = mr;
+  rowstride_ = mr;
+  ncols_ = nc;
+}
+
+void MtxSpecs::selectRows(const RowRange& rng)
+{
+  if (rng.begin() < 0)
+    throw Util::Error("selectRows(): row index must be >= 0");
+
+  if (rng.count() <= 0)
+    throw Util::Error("selectRows(): number of rows must be > 0");
+
+  if (rng.end() > mrows_)
+    throw Util::Error("selectRows(): upper row index out of range");
+
+  offset_ += rng.begin();
+  mrows_ = rng.count();
+}
+
+void MtxSpecs::selectCols(const ColRange& rng)
+{
+  if (rng.begin() < 0)
+    throw Util::Error("selectCols(): column index must be >= 0");
+
+  if (rng.count() <= 0)
+    throw Util::Error("selectCols(): number of columns must be > 0");
+
+  if (rng.end() > ncols_)
+    throw Util::Error("selectCols(): upper column index out of range");
+
+  offset_ += rng.begin()*rowstride_;
+  ncols_ = rng.count();
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // DataHolder member functions
@@ -344,16 +401,13 @@ void DataHolder::swap(DataHolder& other)
 
 void MtxBase::swap(MtxBase& other)
 {
-  std::swap(mrows_, other.mrows_);
-  std::swap(rowstride_, other.rowstride_);
-  std::swap(ncols_, other.ncols_);
-  std::swap(offset_, other.offset_);
-  DataHolder::swap(other);
+  MtxSpecs::swap(other);
+  data_.swap(other.data_);
 }
 
 MtxBase::MtxBase(const MtxBase& other) :
   MtxSpecs(other),
-  DataHolder(other)
+  data_(other.data_)
 {}
 
 namespace
@@ -367,13 +421,13 @@ namespace
 
 MtxBase::MtxBase(int mrows, int ncols, InitPolicy p) :
   MtxSpecs(mrows, ncols),
-  DataHolder(newDataBlock(mrows, ncols, p))
+  data_(newDataBlock(mrows, ncols, p))
 {}
 
 #ifdef HAVE_MATLAB
 MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
   MtxSpecs(mxGetM(a), mxGetN(a)),
-  DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
+  data_(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
   if (!mxIsDouble(a))
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
@@ -381,7 +435,7 @@ MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
 
 MtxBase::MtxBase(const mxArray* a, StoragePolicy s) :
   MtxSpecs(mxGetM(a), mxGetN(a)),
-  DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
+  data_(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
   if (s != BORROW && s != COPY)
     throw Util::Error("cannot construct a Mtx from a const mxArray* "
@@ -394,55 +448,6 @@ MtxBase::MtxBase(const mxArray* a, StoragePolicy s) :
 
 MtxBase::~MtxBase() {}
 
-void MtxBase::reshape(int mr, int nc)
-{
-  if (mr*nc != nelems())
-    {
-      fstring msg;
-      msg.append("dimension mismatch in Mtx::reshape: ");
-      msg.append("current nelems == ", nelems(), "; requested ");
-      msg.append(mr, "x", nc);
-      throw Util::Error(msg);
-    }
-
-  if (rowstride_ != mrows_)
-    throw Util::Error("reshape not allowed for submatrix");
-
-  mrows_ = mr;
-  rowstride_ = mr;
-  ncols_ = nc;
-}
-
-void MtxBase::selectRows(const RowRange& rng)
-{
-  if (rng.begin() < 0)
-    throw Util::Error("selectRows(): row index must be >= 0");
-
-  if (rng.count() <= 0)
-    throw Util::Error("selectRows(): number of rows must be > 0");
-
-  if (rng.end() > mrows_)
-    throw Util::Error("selectRows(): upper row index out of range");
-
-  offset_ += rng.begin();
-  mrows_ = rng.count();
-}
-
-void MtxBase::selectCols(const ColRange& rng)
-{
-  if (rng.begin() < 0)
-    throw Util::Error("selectCols(): column index must be >= 0");
-
-  if (rng.count() <= 0)
-    throw Util::Error("selectCols(): number of columns must be > 0");
-
-  if (rng.end() > ncols_)
-    throw Util::Error("selectCols(): upper column index out of range");
-
-  offset_ += rng.begin()*rowstride_;
-  ncols_ = rng.count();
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Mtx member definitions
@@ -451,6 +456,8 @@ void MtxBase::selectCols(const ColRange& rng)
 
 const Mtx& Mtx::emptyMtx()
 {
+  // FIXME this is probably not safe in mex files due to the improper C++
+  // static initialization/termination semantics there.
   static Mtx m(0,0);
   return m;
 }
