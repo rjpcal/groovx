@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Jun 21 14:06:27 2002
+// written: Fri Jun 21 14:24:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,17 +51,38 @@ namespace
 
 struct PositionImpl
 {
-  PositionImpl() :
+  PositionImpl(Position* p) :
+    owner(p),
     tr(0.0, 0.0, 0.0),
     sc(1.0, 1.0, 1.0),
     rt(0.0, 0.0, 1.0),
-    rt_ang(0.0)
+    rt_ang(0.0),
+    txformDirty(true),
+    txformCache()
   {}
+
+  Position* owner;
 
   Gfx::Vec3<double> tr;         // x,y,z coord shift
   Gfx::Vec3<double> sc;         // x,y,z scaling
   Gfx::Vec3<double> rt;         // vector of rotation axis
   double rt_ang;                // angle in degrees of rotation around axis
+
+  bool txformDirty;
+private:
+  mutable Gfx::Txform txformCache;
+
+public:
+  const Gfx::Txform& getTxform() const
+  {
+    if (txformDirty)
+      txformCache = Gfx::Txform(owner->translation,
+                                owner->scaling,
+                                owner->rotationAxis,
+                                owner->itsRotationAngle);
+
+    return txformCache;
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -106,19 +127,21 @@ Position::Position() :
   rotationAxis(0.0, 0.0, 1.0),
   itsRotationAngle(0.0),
   itsMtxMode(0),
-  itsImpl(new PositionImpl)
+  rep(new PositionImpl(this))
 {
 DOTRACE("Position::Position()");
 
-  DebugEvalNL((void *) itsImpl);
+  DebugEvalNL((void *) rep);
 
   setFieldMap(Position::classFields());
+
+  sigNodeChanged.connect(this, &Position::onChange);
 }
 
 Position::~Position()
 {
 DOTRACE("Position::~Position");
-  delete itsImpl;
+  delete rep;
 }
 
 IO::VersionId Position::serialVersionId() const
@@ -169,11 +192,11 @@ DOTRACE("Position::writeTo");
 // accessors //
 ///////////////
 
-Gfx::Txform Position::getTxform() const
+const Gfx::Txform& Position::getTxform() const
 {
 DOTRACE("Position::getTxform");
 
-  return Gfx::Txform(translation, scaling, rotationAxis, itsRotationAngle);
+  return rep->getTxform();
 }
 
 /////////////
@@ -194,22 +217,26 @@ DOTRACE("Position::draw");
   else
     {
       DOTRACE("Position::draw::custom-transform");
-      Gfx::Txform tsr(translation, scaling, rotationAxis, itsRotationAngle);
-      glMultMatrixd(tsr.colMajorData());
+      glMultMatrixd(rep->getTxform().colMajorData());
     }
 
-  itsImpl->tr = translation;
-  itsImpl->sc = scaling;
-  itsImpl->rt = rotationAxis;
-  itsImpl->rt_ang = itsRotationAngle;
+  rep->tr = translation;
+  rep->sc = scaling;
+  rep->rt = rotationAxis;
+  rep->rt_ang = itsRotationAngle;
 }
 
 void Position::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("Position::undraw");
-  canvas.translate(itsImpl->tr);
-  canvas.scale(itsImpl->sc);
-  canvas.rotate(itsImpl->rt, itsImpl->rt_ang);
+  canvas.translate(rep->tr);
+  canvas.scale(rep->sc);
+  canvas.rotate(rep->rt, rep->rt_ang);
+}
+
+void Position::onChange()
+{
+  rep->txformDirty = true;
 }
 
 static const char vcid_position_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Jun 21 14:06:47 2002
+// written: Fri Jun 21 14:22:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public:
   // accessors //
   ///////////////
 
-  Gfx::Txform getTxform() const;
+  const Gfx::Txform& getTxform() const;
 
   /////////////
   // actions //
@@ -106,8 +106,12 @@ private:
   Position(const Position&);
   Position& operator=(const Position&);
 
+  void onChange();
+
   /// opaque pointer to implementation
-  PositionImpl* const itsImpl;
+  PositionImpl* const rep;
+
+  friend class PositionImpl;
 };
 
 const char vcid_position_h[] = "$Header$";
