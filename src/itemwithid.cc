@@ -3,7 +3,7 @@
 // itemwithid.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:42:18 2000
-// written: Mon Oct 23 11:47:19 2000
+// written: Mon Oct 23 13:11:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "itemwithid.h"
 
+#include "util/error.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -37,6 +38,20 @@ ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
 // NullableItemWithId member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+template <class T>
+NullableItemWithId<T>::NullableItemWithId(T* master) :
+  itsHandle(master),
+  itsId(ptrList().insert(master).id())
+{
+  if (master == 0) throw ErrorWithMsg("null pointer in NullableItemWithId()");
+}
+
+template <class T>
+NullableItemWithId<T>::NullableItemWithId(PtrHandle<T> item) :
+  itsHandle(item),
+  itsId(ptrList().insert(itsHandle.get()).id())
+{}
 
 template <class T>
 void NullableItemWithId<T>::refresh() const {
