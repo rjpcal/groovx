@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Dec 16 15:38:01 1999
+// written: Thu Dec 16 17:33:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,6 +132,8 @@ private:
   int itsObjcSet;
 };
 
+} // end namespace Tcl
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -140,7 +142,11 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class VecActionCmd : public TclCmd {
+namespace Tcl {
+  class VecActionCmd;
+}
+
+class Tcl::VecActionCmd : public Tcl::TclCmd {
 public:
   VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name, Action* action,
                const char* usage, int item_argn);
@@ -154,8 +160,6 @@ private:
   int itsItemArgn;
 
 };
-
-} // end namespace Tcl
 
 static const char vcid_tclveccmds_h[] = "$Header$";
 #endif // !TCLVECCMDS_H_DEFINED
