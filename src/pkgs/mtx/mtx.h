@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Apr  6 16:34:45 2001
+// written: Tue Apr 10 10:09:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -394,11 +394,23 @@ public:
 	 itsImpl.apply(func);
   }
 
+  template <class F>
+  void apply(F func)
+  {
+	 makeUnique();
+	 itsImpl.apply(func);
+  }
+
   void setAll(double x)
   {
 	 makeUnique();
 	 itsImpl.setAll(x);
   }
+
+  Mtx& operator+=(double x) { apply(Add(x)); return *this; }
+  Mtx& operator-=(double x) { apply(Sub(x)); return *this; }
+  Mtx& operator*=(double fac) { apply(Mul(fac)); return *this; }
+  Mtx& operator/=(double div) { apply(Div(div)); return *this; }
 
   bool operator==(const Mtx& other) const
   {
