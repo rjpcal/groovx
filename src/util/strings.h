@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Fri Jul 20 08:33:37 2001
+// written: Sun Aug  5 19:52:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,11 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTRING_DEFINED)
 #include <cstring>
+#define CSTRING_DEFINED
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
+#include "util/tostring.h"
 #define CSTRING_DEFINED
 #endif
 
@@ -204,19 +209,11 @@ public:
   dynamic_string& operator=(const fixed_string& other);
   dynamic_string& operator=(const dynamic_string& other);
 
-  dynamic_string& append(const char* text);
-  dynamic_string& append(const fixed_string& other);
-  dynamic_string& append(const dynamic_string& other);
+  template <class T>
+  dynamic_string& append(const T& x);
 
-  dynamic_string& append(int number);
-  dynamic_string& append(double number);
-
-  dynamic_string& operator+=(const char* text)
-    { return append(text); }
-  dynamic_string& operator+=(const fixed_string& other)
-    { return append(other); }
-  dynamic_string& operator+=(const dynamic_string& other)
-    { return append(other); }
+  template <class T>
+  dynamic_string& operator+=(const T& x) { return append(x); }
 
   bool equals(const char* other) const;
   bool equals(const string_literal& other) const;
@@ -246,9 +243,39 @@ public:
     { return strcmp(this->c_str(), other.c_str()) > 0; }
 
 private:
+  void appendCstring(const char* text);
+
   struct Impl;
   Impl* const itsImpl;
 };
+
+
+namespace Util
+{
+  template <>
+  struct Convert<string_literal>
+  {
+    static const char* toString(const string_literal& x) { return x.c_str(); }
+  };
+
+  template <>
+  struct Convert<fixed_string>
+  {
+    static const char* toString(const fixed_string& x) { return x.c_str(); }
+  };
+
+  template <>
+  struct Convert<dynamic_string>
+  {
+    static const char* toString(const dynamic_string& x) { return x.c_str(); }
+  };
+}
+
+template <class T>
+inline dynamic_string& dynamic_string::append(const T& x)
+{
+  appendCstring(Util::Convert<T>::toString(x)); return *this;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Sun Jul 22 23:38:58 2001
+// written: Sun Aug  5 20:14:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include <cstring>
 #include <iostream.h>
 #include <string>
-#include <strstream.h>
 
 #define NO_PROF
 #include "util/trace.h"
@@ -288,47 +287,10 @@ DOTRACE("dynamic_string::operator=(const dynamic_string&)");
   return *this;
 }
 
-dynamic_string& dynamic_string::append(const char* text)
+void dynamic_string::appendCstring(const char* text)
 {
-DOTRACE("dynamic_string::append(const char*)");
+DOTRACE("dynamic_string::appendCstring");
   if (text) itsImpl->text += text;
-  return *this;
-}
-
-dynamic_string& dynamic_string::append(const fixed_string& other)
-{
-DOTRACE("dynamic_string::append(const fixed_string&)");
-  itsImpl->text += other.c_str();
-  return *this;
-}
-
-dynamic_string& dynamic_string::append(const dynamic_string& other)
-{
-DOTRACE("dynamic_string::append(const dynamic_string&)");
-  itsImpl->text += other.itsImpl->text;
-  return *this;
-}
-
-dynamic_string& dynamic_string::append(int number)
-{
-DOTRACE("dynamic_string::append(int)");
-  const int BUF_SIZE = 64;
-  char buf[BUF_SIZE];
-  ostrstream ost(buf, BUF_SIZE);
-  ost << number << '\0';
-  itsImpl->text += buf;
-  return *this;
-}
-
-dynamic_string& dynamic_string::append(double number)
-{
-DOTRACE("dynamic_string::append(double)");
-  const int BUF_SIZE = 64;
-  char buf[BUF_SIZE];
-  ostrstream ost(buf, BUF_SIZE);
-  ost << number << '\0';
-  itsImpl->text += buf;
-  return *this;
 }
 
 bool dynamic_string::equals(const char* other) const
