@@ -36,7 +36,6 @@ test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
 } {^2$} $skip_known_bug
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
 	 Tlist::loadObjidFile $::TEST_DIR/empty_file -1 0
-	 Tlist::stringify
 	 Trial::countAll
 } {^0$} $skip_known_bug
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
