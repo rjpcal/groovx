@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Fri Jan 25 10:38:22 2002
+// written: Wed Jan 30 17:14:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,14 +120,6 @@ public:
       categories of those objects, and the number of completed trials
       and number of total trials. */
   fstring trialDescription() const;
-
-  /** Query whether the trialDescription() is printed to standard
-      output at the beginning of each trial. */
-  bool getVerbose() const;
-
-  /** Change whether the trialDescription() is printed to standard
-      output at the beginning of each trial. */
-  void setVerbose(bool val);
 
   /////////////
   // actions //

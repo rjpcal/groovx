@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Jan 25 10:46:54 2002
+// written: Wed Jan 30 17:14:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,6 @@ DOTRACE("Block_Init");
   pkg->defSetter("shuffle", "item_id rand_seed", &Block::shuffle);
   pkg->defGetter("trialDescription", &Block::trialDescription);
   pkg->defAction("undoPrevTrial", &Block::undoPrevTrial);
-  pkg->defAttrib("verbose", &Block::getVerbose, &Block::setVerbose);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Block::make);
 

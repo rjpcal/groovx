@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Jan 30 16:03:54 2002
+// written: Wed Jan 30 17:17:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ Util::Tracer Block::tracer;
 
 namespace
 {
-  IO::VersionId BLOCK_SERIAL_VERSION_ID = 1;
+  IO::VersionId BLOCK_SERIAL_VERSION_ID = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,6 @@ public:
     itsTrialSequence(),
     itsRandSeed(0),
     itsCurTrialSeqIdx(0),
-    itsVerbose(false),
     itsHasBegun(false),
     itsExperiment(0)
     {}
@@ -80,7 +79,6 @@ public:
   int itsRandSeed;              // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;        // Index of the current trial
                                 // Also functions as # of completed trials
-  bool itsVerbose;
 
   mutable bool itsHasBegun;
 
@@ -181,7 +179,7 @@ void Block::readFrom(IO::Reader* reader)
 {
 DOTRACE("Block::readFrom");
 
-  reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
+  int svid = reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::readObjectSeq<TrialBase>(
@@ -195,15 +193,19 @@ DOTRACE("Block::readFrom");
       throw IO::ReadError("Block");
     }
 
-  reader->readValue("verbose", itsImpl->itsVerbose);
+  if (svid < 2)
+    {
+      bool dummy;
+      reader->readValue("verbose", dummy);
+    }
 }
 
 void Block::writeTo(IO::Writer* writer) const
 {
 DOTRACE("Block::writeTo");
 
-  writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a3");
+  writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
+                               "Try grsh0.8a7");
 
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
                                  itsImpl->itsTrialSequence.begin(),
@@ -211,7 +213,6 @@ DOTRACE("Block::writeTo");
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
-  writer->writeValue("verbose", itsImpl->itsVerbose);
 }
 
 ///////////////
@@ -293,23 +294,11 @@ DOTRACE("Block::trialDescription");
   if (isComplete()) return fstring("block is complete");
 
   fstring msg;
-  msg.append("trial id == ", currentTrial().id(), ", ")
+  msg.append("next trial ", currentTrial().id(), ", ")
     .append(itsImpl->currentTrial()->description())
     .append(", completed ", numCompleted(), " of ", numTrials());
 
   return msg;
-}
-
-bool Block::getVerbose() const
-{
-DOTRACE("Block::getVerbose");
-  return itsImpl->itsVerbose;
-}
-
-void Block::setVerbose(bool val)
-{
-DOTRACE("Block::setVerbose");
-  itsImpl->itsVerbose = val;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -326,10 +315,7 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->itsHasBegun = true;
 
-  if (itsImpl->itsVerbose)
-    {
-      Util::log( trialDescription() );
-    }
+  Util::log( trialDescription() );
 
   itsImpl->setExpt(expt);
 
@@ -364,11 +350,6 @@ void Block::processResponse(const Response& response)
 {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
-
-  if (itsImpl->itsVerbose)
-    {
-      Util::log( fstring("response: ", response.val()) );
-    }
 
   DebugEval(response.correctVal());
   DebugEvalNL(response.val());
