@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Sep 10 17:17:38 2001
+// written: Wed Sep 12 16:53:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,10 @@
 #include "visx/tlistutils.h"
 #include "visx/trial.h"
 
+#include "gfx/canvas.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
+#include "gfx/rect.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
@@ -26,10 +28,87 @@
 #include "util/arrays.h"
 #include "util/ref.h"
 
+#include "visx/gtext.h"
+#include "visx/position.h"
+#include "visx/grobj.h"
+
+#include <cmath>
 #include <fstream.h>
 #include <strstream.h>
 
 #include "util/trace.h"
+
+namespace
+{
+  Util::UID doCreatePreview(Gfx::Canvas& canvas,
+                            Util::UID* objids,
+                            unsigned int objids_size)
+  {
+    DOTRACE("<tlisttcl.cc>::doCreatePreview");
+
+    Gfx::Rect<double> world_viewport = canvas.getWorldViewport();
+
+    const double world_width = world_viewport.width();
+    const double world_height = world_viewport.height();
+
+    const double window_area = world_width*world_height;
+    const double parcel_area = window_area/objids_size;
+    const double raw_parcel_side = sqrt(parcel_area);
+
+    const int num_cols = int(world_width/raw_parcel_side) + 1;
+
+    const double parcel_side = world_width/num_cols;
+
+    Ref<GxSeparator> preview_trial(GxSeparator::make());
+
+    int x_step = -1;
+    int y_step = 0;
+
+    for (size_t i = 0; i < objids_size; ++i)
+      {
+        ++x_step;
+        if (x_step == num_cols) { x_step = 0; ++y_step; }
+
+        Ref<GrObj> obj(objids[i]);
+
+        obj->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+        obj->setBBVisibility(true);
+        obj->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+        obj->setMaxDimension(0.8);
+
+        Ref<Gtext> label(Gtext::make());
+        label->setText(fstring(objids[i]));
+        label->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+        label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+        label->setHeight(0.1);
+
+        Ref<Position> obj_pos(Position::make());
+        double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
+        double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
+        obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
+        obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
+
+        Ref<Position> label_pos(Position::make());
+        double label_x = obj_x;
+        double label_y = obj_y - 0.50*parcel_side;
+        label_pos->translation.vec().set(label_x, label_y, 0.0);
+        label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
+
+        Ref<GxSeparator> obj_pair(GxSeparator::make());
+        obj_pair->addChild(obj_pos);
+        obj_pair->addChild(obj);
+
+        Ref<GxSeparator> label_pair(GxSeparator::make());
+        label_pair->addChild(label_pos);
+        label_pair->addChild(label);
+
+        preview_trial->addChild(obj_pair);
+        preview_trial->addChild(label_pair);
+      }
+
+    return preview_trial.id();
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -74,7 +153,7 @@ Util::UID TlistTcl::createPreview(Tcl::List objid_list)
 
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-  return TlistUtils::createPreview(canvas, &objids[0], objids.size());
+  return doCreatePreview(canvas, &objids[0], objids.size());
 }
 
 //--------------------------------------------------------------------
