@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Mar 20 08:19:57 2000
+// written: Mon Mar 20 08:34:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,8 @@ public:
   public:
 	 iterator(node* n = 0) : nn(n) {}
 
+	 friend class const_iterator;
+
 	 typedef T value_type;
 	 typedef T* pointer;
 	 typedef T& reference;
@@ -48,6 +50,28 @@ public:
 
 	 bool operator==(const iterator& other) { return nn == other.nn; }
 	 bool operator!=(const iterator& other) { return nn != other.nn; }
+  };
+
+  class const_iterator {
+  private:
+	 node* nn;
+  public:
+	 const_iterator(node* n = 0) : nn(n) {}
+	 const_iterator(const iterator& other) : nn (other.nn) {}
+
+	 typedef const T value_type;
+	 typedef const T* pointer;
+	 typedef const T& reference;
+
+	 const_reference operator*() { return nn->val; }
+	 const_pointer operator->() { return &(nn->val); }
+
+	 const_iterator& operator++() { nn = nn->next; return *this; }
+	 const_iterator operator++(int)
+		{ const_iterator temp(*this); ++*this; return temp; }
+
+	 bool operator==(const const_iterator& other) { return nn == other.nn; }
+	 bool operator!=(const const_iterator& other) { return nn != other.nn; }
   };
 
   slink_list() : head(0) {}
@@ -89,22 +113,37 @@ public:
   reference front() { return head->val; }
   const_reference front() const { return head->val; }
 
-  iterator begin() { return iterator(head); }
-  iterator end() { return iterator(0); }
+  iterator begin()             { return iterator(head); }
+  iterator end()               { return iterator(0); }
+  const_iterator begin() const { return const_iterator(head); }
+  const_iterator end()   const { return const_iterator(0); }
 
   bool empty() const { return (head == 0); }
 
   size_type size() const
 	 {
-		node* n = head;
+		const_iterator itr(begin()), stop(end());
 		size_type result = 0;
-		while ( n )
+		while ( itr != stop )
 		  {
 			 ++result;
-			 n = n->next;
+			 ++itr;
 		  }
 	 }
 
+  iterator find(const T& val)
+	 {
+		iterator itr(begin()), stop(end());
+		while (itr != stop)
+		  {
+			 if (*itr == val) return itr;
+			 ++itr;
+		  }
+		return end();
+	 }
+
+  const_iterator find(const T& val) const
+	 { return const_cast<slink_list*>(this)->find(val); }
 
   void clear()
 	 {
