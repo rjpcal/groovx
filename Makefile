@@ -224,7 +224,9 @@ ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 all:
 	make dir_structure
 	make TAGS
+ifneq "$(strip $(ALL_SHLIBS))" ""
 	make $(ALL_SHLIBS)
+endif
 	make $(PKG_LIBS)
 	make $(EXECUTABLE)
 	make check
