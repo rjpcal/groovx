@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Thu Aug 23 15:02:00 2001
+// written: Sat Aug 25 21:25:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,20 +76,12 @@ namespace HookTcl
   size_t memUsage() { return TOTAL; }
 }
 
-class HookPkg : public Tcl::Pkg {
-public:
-  HookPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Hook", "$Revision$")
-  {
-    def( "::hook", "variable", HookTcl::hook );
-    def( "::memUsage", 0, HookTcl::memUsage );
-  }
-};
-
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
-  Tcl::Pkg* pkg = new HookPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Hook", "$Revision$");
+  pkg->def( "::hook", "variable", HookTcl::hook );
+  pkg->def( "::memUsage", 0, HookTcl::memUsage );
 
   return pkg->initStatus();
 }

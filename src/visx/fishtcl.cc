@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Jul 18 12:16:06 2001
+// written: Sat Aug 25 21:29:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,29 +28,20 @@ namespace FishTcl
     Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
     return obj.id();
   }
-
-  class FishPkg;
 }
-
-class FishTcl::FishPkg : public Tcl::Pkg {
-public:
-  FishPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Fish", "$Revision$")
-  {
-    Tcl::defTracing(this, Fish::tracer);
-
-    Tcl::defGenericObjCmds<Fish>(this);
-
-    defVec( "make", "spline_file coord_file index", &FishTcl::makeFish );
-
-    Tcl::defAllFields(this, Fish::classFields());
-  }
-};
 
 extern "C"
 int Fish_Init(Tcl_Interp* interp)
 {
-  Tcl::Pkg* pkg = new FishTcl::FishPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Fish", "$Revision$");
+
+  Tcl::defTracing(pkg, Fish::tracer);
+
+  Tcl::defGenericObjCmds<Fish>(pkg);
+
+  pkg->defVec( "make", "spline_file coord_file index", &FishTcl::makeFish );
+
+  Tcl::defAllFields(pkg, Fish::classFields());
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
 
