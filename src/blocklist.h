@@ -3,7 +3,7 @@
 // blocklist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:16 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Mon May 15 19:33:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ class Block;
 class BlockList : public PtrList<Block> {
 private:
   typedef PtrList<Block> Base;
+
+  static BlockList theInstance;
 
 protected:
   /// Construct and reserve space for \a size objects.

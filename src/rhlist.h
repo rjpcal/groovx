@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Mon May 15 19:31:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@ struct Tcl_Interp;
 class RhList : public PtrList<ResponseHandler> {
 private:
   typedef PtrList<ResponseHandler> Base;
+
+  static RhList theInstance;
 
 protected:
   /// Construct and reserve space for \a size objects.

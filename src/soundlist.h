@@ -3,7 +3,7 @@
 // soundlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:40 1999
-// written: Wed Mar 29 14:07:34 2000
+// written: Mon May 15 19:30:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ class Sound;
 class SoundList : public PtrList<Sound> {
 private:
   typedef PtrList<Sound> Base;
+
+  static SoundList theInstance;
 
 protected:
   /// Construct and reserve space for \a size objects. 

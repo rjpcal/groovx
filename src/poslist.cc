@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Mon May 15 18:43:08 2000
+// written: Mon May 15 19:32:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,10 +22,11 @@ namespace {
   const int DEFAULT_INIT_SIZE = 10;
 }
 
+PosList PosList::theInstance(DEFAULT_INIT_SIZE);
+
 PosList& PosList::thePosList() {
 DOTRACE("PosList::thePosList");
-  static PosList instance(DEFAULT_INIT_SIZE);
-  return instance;
+  return theInstance; 
 }
 
 ///////////////////////////////////////////////////////////////////////

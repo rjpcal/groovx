@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Mon May 15 19:32:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ class Position;
 class PosList : public PtrList<Position> {
 private:
   typedef PtrList<Position> Base;
+
+  static PosList theInstance;
 
 protected:
   /// Construct and reserve space for \a size objects.

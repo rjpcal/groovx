@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Mon May 15 18:43:41 2000
+// written: Mon May 15 19:32:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,10 +51,11 @@ RhList::RhList(int size) :
 DOTRACE("RhList::RhList");
 }
 
+RhList RhList::theInstance(DEFAULT_INIT_SIZE);
+
 RhList& RhList::theRhList() {
 DOTRACE("RhList::theRhList");
-  static RhList instance(DEFAULT_INIT_SIZE);
-  return instance;
+  return theInstance; 
 }
 
 void RhList::afterInsertHook(int /* id */, void* ptr) {
