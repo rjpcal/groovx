@@ -270,10 +270,12 @@ itcl::class Playlist {
 
     public method mode { m } { set itsMode $m }
 
-    public method remove {} {
+    public method remove_helper { do_purge } {
 	set target [lindex $itsList $itsIdx]
 	slideshow::msg "hide file" $target
-	lappend itsPurgeList $target
+	if { $do_purge } {
+	    lappend itsPurgeList $target
+	}
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
 	switch -- $itsMode {
 	    jumping {
@@ -294,6 +296,14 @@ itcl::class Playlist {
 		}
 	    }
 	}
+    }
+
+    public method remove {} {
+	remove_helper 1
+    }
+
+    public method remove_no_purge {} {
+	remove_helper 0
     }
 
     public method purge {} {
@@ -497,6 +507,7 @@ bind all <Key-Left> {spinPic -1; PLAYLIST show}
 bind all <Key-Right> {spinPic 1; PLAYLIST show}
 bind all <Key-Up> {jumpPic; PLAYLIST show}
 bind all <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
+bind all <Key-e> {PLAYLIST remove_no_purge; updateText; PLAYLIST show}
 bind all <Shift-Key-Down> {PLAYLIST mode spinning; PLAYLIST remove; updateText; PLAYLIST show}
 bind all <Key-Return> {PLAYLIST save}
 bind all <Key-x> {PLAYLIST purge}
