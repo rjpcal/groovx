@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Mar  8 17:11:45 2000
+// written: Wed Mar  8 17:14:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -355,14 +355,6 @@ DOTRACE("AsciiStreamReader::readBool");
 double AsciiStreamReader::readDouble(const char* name) {
 DOTRACE("AsciiStreamReader::readDouble");
   return itsImpl.readBasicType(name, (double*) 0);
-}
-
-string AsciiStreamReader::readString(const char* name) {
-DOTRACE("AsciiStreamReader::readString");
-  char* cstring = itsImpl.readStringType(name);
-  string return_val(cstring);
-  delete [] cstring;
-  return return_val;
 }
 
 // XXX this may leak!
