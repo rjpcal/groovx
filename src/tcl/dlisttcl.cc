@@ -3,7 +3,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Sun Jun 20 17:02:11 1999
+// written: Fri Sep 24 15:12:39 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -222,7 +222,7 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
   }
 
   // get a random int between 0 and (src_len-1), inclusive
-  int randnum = int ( (double(rand()) / RAND_MAX) * src_len );
+  int randnum = int( double(rand())/(double(RAND_MAX)+1.0) * src_len );
 
   DebugEval(src_len);
   DebugEvalNL(randnum);
