@@ -926,7 +926,10 @@ DOTRACE("Gfx::PSCanvas::drawRect");
   rep->lineto(rect.topRight());
   rep->lineto(rect.topLeft());
   rep->closepath();
-  rep->stroke();
+  if (rep->state().polygonFill)
+    rep->fill();
+  else
+    rep->stroke();
 }
 
 void Gfx::PSCanvas::drawCircle(double inner_radius, double outer_radius,
