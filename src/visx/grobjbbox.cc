@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Nov 13 10:47:20 2002
+// written: Wed Nov 13 10:55:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,10 +48,10 @@ GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child) :
 
 GrObjBBox::~GrObjBBox() {}
 
-void GrObjBBox::gnodeBoundingBox(Gfx::Box<double>& cube,
-                                 Gfx::Canvas& canvas) const
+void GrObjBBox::getBoundingCube(Gfx::Box<double>& cube,
+                                Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjBBox::gnodeBoundingBox");
+DOTRACE("GrObjBBox::getBoundingCube");
 
   // Add extra pixels if the box itself will be visible.
   int border_pixels = isItVisible ? itsPixelBorder+4 : itsPixelBorder;

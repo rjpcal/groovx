@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Wed Nov 13 10:49:32 2002
+// written: Wed Nov 13 10:55:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,8 +126,8 @@ public:
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
-  virtual void gnodeBoundingBox(Gfx::Box<double>& cube,
-                                Gfx::Canvas& canvas) const;
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
 private:
 

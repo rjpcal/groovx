@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 13:36:59 2001
-// written: Wed Nov 13 10:49:56 2002
+// written: Wed Nov 13 10:54:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,18 +43,11 @@ public:
 
   void setChild(Util::SoftRef<Gnode> child) { itsChild = child; }
 
-  virtual void gnodeBoundingBox(Gfx::Box<double>& cube,
-                                Gfx::Canvas& canvas) const = 0;
-
   virtual void readFrom(IO::Reader* /*reader*/) {};
   virtual void writeTo(IO::Writer* /*writer*/) const {};
 
   virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const
-  {
-    gnodeBoundingBox(cube, canvas);
-//     cube.unionize(gnodeBoundingBox(canvas));
-  }
+                               Gfx::Canvas& canvas) const = 0;
 
   virtual void draw(Gfx::Canvas& canvas) const = 0;
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Wed Nov 13 10:45:50 2002
+// written: Wed Nov 13 10:55:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,10 +62,10 @@ void GLCacheNode::draw(Gfx::Canvas& canvas) const
     }
 }
 
-void GLCacheNode::gnodeBoundingBox(Gfx::Box<double>& cube,
-                                   Gfx::Canvas& canvas) const
+void GLCacheNode::getBoundingCube(Gfx::Box<double>& cube,
+                                  Gfx::Canvas& canvas) const
 {
-  child()->gnodeBoundingBox(cube, canvas);
+  child()->getBoundingCube(cube, canvas);
 }
 
 void GLCacheNode::invalidate()

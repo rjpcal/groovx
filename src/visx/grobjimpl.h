@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Nov 13 10:48:52 2002
+// written: Wed Nov 13 10:55:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,8 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
 
-  virtual void gnodeBoundingBox(Gfx::Box<double>& cube,
-                                Gfx::Canvas& canvas) const
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const
   { return cube.unionize(itsObj->grGetBoundingBox(canvas)); }
 };
 

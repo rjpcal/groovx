@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Wed Nov 13 10:46:56 2002
+// written: Wed Nov 13 10:55:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,8 +49,8 @@ void GrObjAligner::draw(Gfx::Canvas& canvas) const
   child()->draw(canvas);
 }
 
-void GrObjAligner::gnodeBoundingBox(Gfx::Box<double>& cube,
-                                    Gfx::Canvas& canvas) const
+void GrObjAligner::getBoundingCube(Gfx::Box<double>& cube,
+                                   Gfx::Canvas& canvas) const
 {
   Gfx::Rect<double> bounds = child()->getBoundingBox(canvas);
 
