@@ -80,18 +80,17 @@ private:
 
   friend class DummyFriend; // to eliminate compiler warning
 
-  // length here does NOT need to include the null-terminator
-  string_rep(std::size_t length);
+  // Constructor builds a string_rep with ref-count 0. 'length' here
+  // does NOT need to "+1" for a null-terminator
+  string_rep(std::size_t length, const char* text=0);
   ~string_rep();
 
   static string_rep* getEmptyRep();
 
 public:
-  static string_rep* makeTextCopy(const char* text, std::size_t str_length);
+  static string_rep* make(std::size_t length, const char* text=0);
 
-  static string_rep* makeBlank(std::size_t length);
-
-  string_rep* clone() const; // Return a copy with ref-count 0
+  string_rep* clone() const { return new string_rep(itsLength, itsText); }
 
   static void makeUnique(string_rep*& rep);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Fri Jul 20 08:02:15 2001
+// written: Fri Jul 20 08:34:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,89 +51,68 @@ bool string_literal::equals(const string_literal& other) const
 
 //---------------------------------------------------------------------
 //
-// fixed_string::Rep member definitions
+// string_rep member definitions
 //
 //---------------------------------------------------------------------
 
 namespace
 {
-  FreeList<fixed_string::Rep> repList;
+  FreeList<string_rep> repList;
 }
 
-void* fixed_string::Rep::operator new(size_t bytes)
+void* string_rep::operator new(size_t bytes)
 {
   return repList.allocate(bytes);
 }
 
-void fixed_string::Rep::operator delete(void* space)
+void string_rep::operator delete(void* space)
 {
   repList.deallocate(space);
 }
 
-fixed_string::Rep::Rep() {}
+string_rep::string_rep(std::size_t length, const char* text) :
+  itsRefCount(0),
+  itsText(new char[length+1]),
+  itsLength(length)
+{
+  if (text)
+	 memcpy(itsText, text, itsLength+1);
+  else
+	 itsText[0] = '\0';
+}
 
-fixed_string::Rep::~Rep()
+string_rep::~string_rep()
 {
   delete [] itsText;
 }
 
-fixed_string::Rep* fixed_string::Rep::getEmptyRep() {
-  static Rep* empty_rep = 0;
+string_rep* string_rep::getEmptyRep()
+{
+  static string_rep* empty_rep = 0;
   if (empty_rep == 0)
     {
-      empty_rep = new Rep;
-
-      empty_rep->itsRefCount = 1;
-      empty_rep->itsLength = 0;
-      empty_rep->itsText = new char[1];
-      empty_rep->itsText[0] = '\0';
+      empty_rep = new string_rep(0);
+      empty_rep->incrRefCount();
     }
 
   return empty_rep;
 }
 
-fixed_string::Rep* fixed_string::Rep::makeTextCopy(const char* text,
-                                                   int str_length)
+string_rep* string_rep::make(std::size_t length, const char* text)
 {
-  if (text == 0 || text[0] == '\0')
+  if (length == 0)
     return getEmptyRep();
 
-  Rep* p = new Rep;
-
-  p->itsRefCount = 0;
-  p->itsLength = str_length;
-  p->itsText = new char[str_length+1];
-
-  memcpy(p->itsText, text, str_length+1);
+  string_rep* p = new string_rep(length, text);
 
   return p;
 }
 
-fixed_string::Rep* fixed_string::Rep::makeBlank(int length) {
-  if (length <= 0)
-    return getEmptyRep();
-
-  Rep* p = new Rep;
-
-  p->itsRefCount = 0;
-  p->itsLength = length;
-  p->itsText = new char[p->itsLength+1];
-
-  p->itsText[0] = '\0';
-
-  return p;
-}
-
-void fixed_string::Rep::makeUnique(fixed_string::Rep*& rep) {
+void string_rep::makeUnique(string_rep*& rep)
+{
   if (rep->itsRefCount <= 1) return;
 
-  Rep* new_rep = new Rep;
-
-  new_rep->itsRefCount = 0;
-  new_rep->itsLength = rep->itsLength;
-  new_rep->itsText = new char[new_rep->itsLength+1];
-
-  memcpy(new_rep->itsText, rep->itsText, new_rep->itsLength+1);
+  string_rep* new_rep = rep->clone();
 
   rep->decrRefCount();
   new_rep->incrRefCount();
@@ -149,12 +128,12 @@ void fixed_string::Rep::makeUnique(fixed_string::Rep*& rep) {
 //
 //---------------------------------------------------------------------
 
-fixed_string::fixed_string(int length) :
+fixed_string::fixed_string(std::size_t length) :
   itsRep(0)
 {
 DOTRACE("fixed_string::fixed_string(int)");
 
-  itsRep = Rep::makeBlank(length);
+  itsRep = string_rep::make(length);
 
   itsRep->incrRefCount();
 }
@@ -164,7 +143,7 @@ fixed_string::fixed_string(const char* text) :
 {
 DOTRACE("fixed_string::fixed_string(const char*)");
 
-  itsRep = Rep::makeTextCopy(text, strlen(text));
+  itsRep = string_rep::make(strlen(text), text);
 
   itsRep->incrRefCount();
 }
@@ -185,7 +164,7 @@ DOTRACE("fixed_string::~fixed_string");
 void fixed_string::swap(fixed_string& other)
 {
 DOTRACE("fixed_string::swap");
-  Rep* other_rep = other.itsRep;
+  string_rep* other_rep = other.itsRep;
   other.itsRep = this->itsRep;
   this->itsRep = other_rep;
 }
@@ -194,8 +173,8 @@ fixed_string& fixed_string::operator=(const char* text)
 {
 DOTRACE("fixed_string::operator=(const char*)");
 
-  Rep* old_rep = itsRep;
-  itsRep = Rep::makeTextCopy(text, strlen(text));
+  string_rep* old_rep = itsRep;
+  itsRep = string_rep::make(strlen(text), text);
   itsRep->incrRefCount();
   old_rep->decrRefCount();
 
@@ -206,7 +185,7 @@ fixed_string& fixed_string::operator=(const fixed_string& other)
 {
 DOTRACE("fixed_string::operator=(const fixed_string&)");
 
-  Rep* old_rep = itsRep;
+  string_rep* old_rep = itsRep;
   itsRep = other.itsRep;
   itsRep->incrRefCount();
   old_rep->decrRefCount();
