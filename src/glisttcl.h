@@ -2,8 +2,7 @@
 // glisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:57:05 1999
-static const char vcid_glisttcl_h[] = "$Id$";
+// written: Sat Mar 13 12:36:50 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GLISTTCL_H_DEFINED
@@ -23,4 +22,5 @@ namespace GlistTcl {
   Tcl_PackageInitProc Glist_Init;
 }
 
+static const char vcid_glisttcl_h[] = "$Id$";
 #endif // !GLISTTCL_H_DEFINED
