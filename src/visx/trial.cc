@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Mar 18 10:56:48 2000
+// written: Fri Mar 24 19:17:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -322,7 +322,7 @@ DOTRACE("Trial::description");
     DebugEvalNL(itsImpl->itsIdPairs[j].objid);
 
     ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(itsImpl->itsIdPairs[j].objid);
-    Assert(obj != 0);
+    Assert(obj.get() != 0);
 
     ost << " " << obj->getCategory();
   }
