@@ -61,30 +61,18 @@ public:
   virtual void play();
 
 private:
-  fstring itsFilename;
-
   ALconfig itsAudioConfig;
-  int itsNumChannels;
-  AFframecount itsFrameCount;
-  int itsSampleFormat;
-  int itsSampleWidth;
-  int itsBytesPerSample;
-  double itsSamplingRate;
   dynamic_block<unsigned char> itsSamples;
+  AFframecount itsFrameCount;
 };
 
 IrixAudioSoundRep::IrixAudioSoundRep(const char* filename) :
-  itsFilename(""),
   itsAudioConfig(alNewConfig()),
-  itsNumChannels(0),
-  itsFrameCount(0),
-  itsSampleFormat(0),
-  itsSampleWidth(0),
-  itsBytesPerSample(0),
-  itsSamplingRate(0.0),
-  itsSamples()
+  itsSamples(),
+  itsFrameCount(0)
 {
 DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
+
   if (itsAudioConfig == 0)
     throw Util::Error("error creating an ALconfig while creating Sound");
 
@@ -99,91 +87,79 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
     }
   ifs.close();
 
-  // Open itsFilename as an audio file for reading. We pass a NULL
+  // Open filename as an audio file for reading. We pass a NULL
   // AFfilesetup to indicate that file setup parameters should be
   // taken from the file itself.
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
   if (audiofile == AF_NULL_FILEHANDLE)
     {
-      throw Util::Error(fstring("couldn't open sound file ", itsFilename));
+      throw Util::Error(fstring("couldn't open sound file ", filename));
     }
-
-  // We don't actually set itsFilename to the new value until we are
-  // sure that the file exists and is readable as a sound file.
-  itsFilename = filename;
-
-  // Having reset the filename, we are past the point of no return, so
-  // we dump any old data that were in itsSamples.
-  itsSamples.resize(0);
 
   // Read important parameters from the audio file, and use them to
   // set the corresponding parameters in itsAudioConfig.
 
   // Number of audio channels (i.e. mono == 1, stereo == 2)
-  itsNumChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
-  if (itsNumChannels == -1)
+  const int numChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
+  if (numChannels == -1)
     {
       throw Util::Error(fstring("error reading the number of channels "
-                                "in sound file ", itsFilename));
+                                "in sound file ", filename));
     }
-  alSetChannels(itsAudioConfig, itsNumChannels);
+  alSetChannels(itsAudioConfig, numChannels);
 
   // Frame count
   itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
   if (itsFrameCount < 0)
     {
       throw Util::Error(fstring("error reading the frame count "
-                                "in sound file ", itsFilename));
+                                "in sound file ", filename));
     }
 
-  // Sample format and sample width
+  // Sample format and width
+  int sampleFormat = 0;
+  int sampleWidth = 0;
   afGetSampleFormat(audiofile, AF_DEFAULT_TRACK,
-                    &itsSampleFormat, &itsSampleWidth);
-  alSetSampFmt(itsAudioConfig, itsSampleFormat);
-  alSetWidth(itsAudioConfig, itsSampleWidth);
+                    &sampleFormat, &sampleWidth);
+  alSetSampFmt(itsAudioConfig, sampleFormat);
+  alSetWidth(itsAudioConfig, sampleWidth);
 
-  itsBytesPerSample = (itsSampleWidth + 7)/8;
+  // Sample size and rate
+  const int bytesPerSample = (sampleWidth + 7)/8;
 
-  // Sampling rate
-  itsSamplingRate = afGetRate(audiofile, AF_DEFAULT_TRACK);
+  const double samplingRate = afGetRate(audiofile, AF_DEFAULT_TRACK);
 
   ALpv pv;
   pv.param = AL_RATE;
-  pv.value.ll = alDoubleToFixed(itsSamplingRate);
+  pv.value.ll = alDoubleToFixed(samplingRate);
 
   alSetParams(AL_DEFAULT_DEVICE, &pv, 1);
 
-  dbgEval(3, itsNumChannels);
+  dbgEval(3, numChannels);
   dbgEval(3, itsFrameCount);
-  dbgEval(3, itsSampleWidth);
-  dbgEval(3, itsBytesPerSample);
-  dbgEval(3, itsSamplingRate);
+  dbgEval(3, sampleWidth);
+  dbgEval(3, bytesPerSample);
+  dbgEvalNL(3, samplingRate);
 
   // Allocate space for the sound samples
-  itsSamples.resize(itsFrameCount*itsNumChannels*itsBytesPerSample);
+  itsSamples.resize(itsFrameCount*numChannels*bytesPerSample);
 
-  int readResult = afReadFrames(audiofile, AF_DEFAULT_TRACK,
-                                static_cast<void*>(&itsSamples[0]),
-                                itsFrameCount);
-  dbgEvalNL(3, readResult);
+  const int readResult = afReadFrames(audiofile, AF_DEFAULT_TRACK,
+                                      static_cast<void*>(&itsSamples[0]),
+                                      itsFrameCount);
 
-  int closeResult = afCloseFile(audiofile);
+  const int closeResult = afCloseFile(audiofile);
 
-  // If the read failed, we dump any data stored in itsSamples
   if (readResult == -1)
     {
-      itsSamples.resize(0);
       throw Util::Error(fstring("error reading sound data "
-                                "from file ", itsFilename));
+                                "from file ", filename));
     }
 
-  // If the close failed, we keep the data that were read, but report
-  // the error
   if (closeResult == -1)
     {
-      throw Util::Error(fstring("error closing sound file ", itsFilename));
+      throw Util::Error(fstring("error closing sound file ", filename));
     }
-    setFile(filename);
 }
 
 IrixAudioSoundRep::~IrixAudioSoundRep()
