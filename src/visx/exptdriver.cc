@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 13:45:53 2002
+// written: Thu Dec  5 13:53:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 
 #include "system/system.h"
 
+#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
@@ -479,12 +480,6 @@ DOTRACE("ExptDriver::getCanvas");
   return rep->widget->getCanvas();
 }
 
-Tcl_Interp* ExptDriver::getInterp() const
-{
-DOTRACE("ExptDriver::getInterp");
-  return rep->interp.intp();
-}
-
 void ExptDriver::edBeginExpt()
 {
 DOTRACE("ExptDriver::edBeginExpt");
@@ -521,6 +516,42 @@ DOTRACE("ExptDriver::edClearExpt");
   rep->sequenceIdx = 0;
 }
 
+void ExptDriver::pause()
+{
+DOTRACE("ExptDriver::pause");
+
+  // Halt the experiment, then pop up a pause window. When the user
+  // dismisses the window, the experiment will resume.
+
+  Tcl::Code pauseMsgCmd
+  (Tcl::toTcl("tk_messageBox -default ok -icon info "
+              "-title \"Pause\" -type ok "
+              "-message \"Experiment paused. Click OK to continue.\";\n"),
+   Tcl::Code::THROW_EXCEPTION);
+
+  vxHalt();
+
+  addLogInfo("Experiment paused.");
+
+  pauseMsgCmd.invoke(rep->interp);
+
+  Tcl::Interp::clearEventQueue();
+
+  rep->widget->fullClearscreen();
+  rep->widget->fullClearscreen();
+
+  System::theSystem().sleep(2);
+
+  rep->widget->fullClearscreen();
+  rep->widget->fullClearscreen();
+
+  Tcl::Interp::clearEventQueue();
+
+  addLogInfo("Resuming experiment.");
+
+  edResumeExpt();
+}
+
 void ExptDriver::storeData()
 {
 DOTRACE("ExptDriver::storeData");
@@ -532,7 +563,6 @@ DOTRACE("ExptDriver::storeData");
 
   try
     {
-
       rep->endDate = System::theSystem().formattedTime();
 
       fstring unique_file_extension =

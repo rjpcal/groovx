@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Dec  4 19:08:41 2002
+// written: Thu Dec  5 13:55:08 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -17,7 +17,6 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
-#include "visx/block.h"
 #include "visx/exptdriver.h"
 
 #include "system/system.h"
@@ -25,9 +24,7 @@
 #include "tcl/iotcl.h"
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
-#include "tcl/tclcode.h"
 #include "tcl/tclpkg.h"
-#include "tcl/tclsafeinterp.h"
 #include "tcl/toglet.h"
 #include "tcl/tracertcl.h"
 
@@ -99,41 +96,6 @@ namespace ExptTcl
     expt->edBeginExpt();
   }
 
-  Tcl::Code thePauseMsgCmd
-  (Tcl::toTcl("tk_messageBox -default ok -icon info "
-              "-title \"Pause\" -type ok "
-              "-message \"Experiment paused. Click OK to continue.\";\n"),
-   Tcl::Code::THROW_EXCEPTION);
-
-  // Tell the ExptDriver to halt the experiment, then pop up a pause
-  // window. When the user dismisses the window, the experiment will
-  // resume.
-  void pause(Ref<ExptDriver> ed)
-  {
-    ed->vxHalt();
-
-    ed->addLogInfo("Experiment paused.");
-
-    thePauseMsgCmd.invoke(ed->getInterp());
-
-    Tcl::Interp::clearEventQueue();
-
-    Util::SoftRef<Toglet> widget = ed->getWidget();
-    widget->fullClearscreen();
-    widget->fullClearscreen();
-
-    System::theSystem().sleep(2);
-
-    widget->fullClearscreen();
-    widget->fullClearscreen();
-
-    Tcl::Interp::clearEventQueue();
-
-    ed->addLogInfo("Resuming experiment.");
-
-    ed->edResumeExpt();
-  }
-
   void setStartCommand(Ref<ExptDriver> expt, const char* command)
   {
     Util::SoftRef<Toglet> widget = expt->getWidget();
@@ -167,7 +129,6 @@ public:
     def( "currentExp", 0, &ExptTcl::getCurrentExpt );
 
     def( "begin", "expt_id", ExptTcl::begin );
-    def( "pause", "expt_id", &ExptTcl::pause );
     def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
 
     defSetter("addBlock", &ExptDriver::addElement);
@@ -180,6 +141,7 @@ public:
     defAction("clear", &ExptDriver::edClearExpt);
     defGetter("currentBlock", &ExptDriver::currentElement);
     defGetter("infoLog", &ExptDriver::getInfoLog);
+    defAction( "pause", &ExptDriver::pause );
     defAction("reset", &ExptDriver::vxReset);
     defAction("stop", &ExptDriver::vxHalt);
     defAction("storeData", &ExptDriver::storeData);
