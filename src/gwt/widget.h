@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Nov 23 14:26:14 2002
+// written: Sat Nov 23 14:30:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,14 +14,6 @@
 #define WIDGET_H_DEFINED
 
 #include "util/object.h"
-
-class GxCamera;
-class GxNode;
-
-namespace Gfx
-{
-  class Canvas;
-}
 
 namespace GWT
 {
@@ -75,11 +67,6 @@ public:
 
   /// Virtual destructor.
   virtual ~Widget();
-
-  virtual Gfx::Canvas& getCanvas() const = 0;
-
-  virtual int width() const = 0;
-  virtual int height() const = 0;
 
   virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
   virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
