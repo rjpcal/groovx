@@ -56,17 +56,17 @@ using std::cerr;
     occurs inside a comment will still be treated as a regular #include.*/
 class cppdeps
 {
-  vector<string> user_ipath;
-  vector<string> sys_ipath;
+  vector<string> m_user_ipath;
+  vector<string> m_sys_ipath;
 
-  string srcdir;
-  string objdir;
+  string m_srcdir;
+  string m_objdir;
 
   typedef vector<string> include_list_t;
 
   typedef map<string, include_list_t> include_map_t;
-  include_map_t nested_includes;
-  include_map_t direct_includes;
+  include_map_t m_nested_includes;
+  include_map_t m_direct_includes;
 
   enum ParseState
     {
@@ -75,9 +75,9 @@ class cppdeps
       COMPLETE = 2
     };
 
-  map<string, ParseState> parse_states;
+  map<string, ParseState> m_parse_states;
 
-  bool check_sys_includes;
+  bool m_check_sys_includes;
 
 public:
   cppdeps(char** argv);
@@ -88,12 +88,12 @@ public:
 
   int is_cc_filename(const char* fname);
 
-  bool resolve_one(const char* include_name,
-                   int include_length,
-                   const string& filename,
-                   const string& dirname,
-                   const vector<string>& ipath,
-                   include_list_t& vec);
+  static bool resolve_one(const char* include_name,
+                          int include_length,
+                          const string& filename,
+                          const string& dirname,
+                          const vector<string>& ipath,
+                          include_list_t& vec);
 
   const include_list_t& get_direct_includes(const string& filename);
 
@@ -192,27 +192,26 @@ namespace
 }
 
 cppdeps::cppdeps(char** argv) :
-  check_sys_includes(false)
+  m_check_sys_includes(false)
 {
-  sys_ipath.push_back("/usr/include");
-  sys_ipath.push_back("/usr/include/linux");
-  sys_ipath.push_back("/usr/local/matlab/extern/include");
+  m_sys_ipath.push_back("/usr/include");
+  m_sys_ipath.push_back("/usr/include/linux");
+  m_sys_ipath.push_back("/usr/local/matlab/extern/include");
 
   while (*argv != 0)
     {
       if (strcmp(*argv, "--include") == 0)
         {
-          user_ipath.push_back(*++argv);
+          m_user_ipath.push_back(*++argv);
         }
       else if (strcmp(*argv, "--src") == 0)
         {
-          string dir = trim_dirname(*++argv);
-          srcdir = dir;
-          user_ipath.push_back(dir);
+          m_srcdir = trim_dirname(*++argv);
+          m_user_ipath.push_back(m_srcdir);
         }
       else if (strcmp(*argv, "--objdir") == 0)
         {
-          objdir = trim_dirname(*++argv);
+          m_objdir = trim_dirname(*++argv);
         }
       ++argv;
     }
@@ -221,15 +220,15 @@ cppdeps::cppdeps(char** argv) :
 void cppdeps::inspect()
 {
   cerr << "user_ipath:\n";
-  for (unsigned int i = 0; i < user_ipath.size(); ++i)
-    cerr << '\t' << user_ipath[i] << '\n';
+  for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
+    cerr << '\t' << m_user_ipath[i] << '\n';
 
   cerr << "\nsys_ipath:\n";
-  for (unsigned int i = 0; i < sys_ipath.size(); ++i)
-    cerr << '\t' << sys_ipath[i] << '\n';
+  for (unsigned int i = 0; i < m_sys_ipath.size(); ++i)
+    cerr << '\t' << m_sys_ipath[i] << '\n';
 
-  cerr << "\nsrcdir: " << srcdir << '\n';
-  cerr << "\nobjdir: " << objdir << '\n';
+  cerr << "\nsrcdir: " << m_srcdir << '\n';
+  cerr << "\nobjdir: " << m_objdir << '\n';
 }
 
 string cppdeps::trim_dirname(const string& inp)
@@ -312,15 +311,15 @@ const cppdeps::include_list_t&
 cppdeps::get_direct_includes(const string& filename)
 {
   {
-    include_map_t::iterator itr = direct_includes.find(filename);
-    if (itr != direct_includes.end())
+    include_map_t::iterator itr = m_direct_includes.find(filename);
+    if (itr != m_direct_includes.end())
       return (*itr).second;
   }
 
   string dirname_with_slash = filename.substr(0, filename.find_last_of('/'));
   dirname_with_slash += '/';
 
-  include_list_t& vec = direct_includes[filename];
+  include_list_t& vec = m_direct_includes[filename];
 
   mapped_file f(filename.c_str());
 
@@ -365,7 +364,7 @@ cppdeps::get_direct_includes(const string& filename)
 
       const bool is_valid_delimiter =
         (delimiter == '\"') ||
-        (delimiter == '<' && check_sys_includes == true);
+        (delimiter == '<' && m_check_sys_includes == true);
 
       if (!is_valid_delimiter)
         continue;
@@ -397,7 +396,7 @@ cppdeps::get_direct_includes(const string& filename)
       const int include_length = fptr - include_name;
 
       if (!resolve_one(include_name, include_length, filename,
-                       dirname_with_slash, user_ipath, vec))
+                       dirname_with_slash, m_user_ipath, vec))
         {
           const string include_string(include_name, include_length);
           cerr << "warning: couldn\'t resolve #include \""
@@ -412,18 +411,18 @@ const cppdeps::include_list_t&
 cppdeps::get_nested_includes(const string& filename)
 {
   {
-    include_map_t::iterator itr = nested_includes.find(filename);
-    if (itr != nested_includes.end())
+    include_map_t::iterator itr = m_nested_includes.find(filename);
+    if (itr != m_nested_includes.end())
       return (*itr).second;
   }
 
-  if (parse_states[filename] == IN_PROGRESS)
+  if (m_parse_states[filename] == IN_PROGRESS)
     {
       cerr << "nested includes recursion " << filename << '\n';
       exit(1);
     }
 
-  parse_states[filename] = IN_PROGRESS;
+  m_parse_states[filename] = IN_PROGRESS;
 
   include_list_t vec;
 
@@ -446,10 +445,10 @@ cppdeps::get_nested_includes(const string& filename)
       vec.insert(vec.end(), indirect.begin(), indirect.end());
     }
 
-  include_list_t& result = nested_includes[filename];
+  include_list_t& result = m_nested_includes[filename];
   result.swap(vec);
 
-  parse_states[filename] = COMPLETE;
+  m_parse_states[filename] = COMPLETE;
 
   return result;
 }
@@ -458,9 +457,9 @@ void cppdeps::batch_build()
 {
   vector<string> dirs;
 
-  dirs.push_back(srcdir);
+  dirs.push_back(m_srcdir);
 
-  const unsigned int offset = srcdir.length() + 1;
+  const unsigned int offset = m_srcdir.length() + 1;
 
   while (!dirs.empty())
     {
@@ -502,7 +501,7 @@ void cppdeps::batch_build()
                   // Use C-style stdio here since it came out running quite
                   // a bit faster than iostreams, at least under g++-3.2.
                   printf("%s/%s.o: ",
-                         objdir.c_str(),
+                         m_objdir.c_str(),
                          fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
 
                   for (set<string>::const_iterator
