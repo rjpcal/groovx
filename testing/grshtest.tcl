@@ -54,7 +54,13 @@ set files {
 set others {
 }
 
-set seed [clock clicks]
+set seed_arg [lsearch -exact $argv "-seed"]
+if { $seed_arg != -1 } {
+	 set seed [lindex $argv [expr $seed_arg + 1]]
+} else {
+	 set seed [clock clicks]
+}
+
 puts "seed $seed"
 expr srand($seed)
 proc rand_cmp {a1 a2} { return [expr round(200*rand() - 100.0)] }
