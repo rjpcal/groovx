@@ -159,85 +159,11 @@ DOTRACE("Tcl::TclCmd::usage");
   return itsUsage;
 }
 
-void Tcl::TclCmd::errorMessage(const char* msg) {
-DOTRACE("Tcl::TclCmd::errorMessage");
-  Tcl::err_message(itsInterp, itsObjv, msg);
-}
-
-
-Tcl::TclValue Tcl::TclCmd::arg(int argn) {
-DOTRACE("Tcl::TclCmd::arg");
-  if (argn < 0 || argn > itsObjc) {
-    throw TclError("argument number out of range");
-  }
-
-  return TclValue(itsObjv[argn]);
-}
-
-void Tcl::TclCmd::returnVoid() {
-DOTRACE("Tcl::TclCmd::returnVoid");
-  Tcl_ResetResult(itsInterp);
-  itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::returnError() {
-DOTRACE("Tcl::TclCmd::returnError");
-  itsResult = TCL_ERROR;
-}
 
 void Tcl::TclCmd::returnTclObj(Tcl_Obj* obj) {
 DOTRACE("Tcl::TclCmd::returnTclObj");
   Tcl_SetObjResult(itsInterp, obj);
   itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::lappendValue(const Value& val) {
-DOTRACE("Tcl::TclCmd::lappendValue");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  TclValue list_element(val);
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-                                            list_element.getObj());
-  if (cmd_result != TCL_OK) throw TclError();
-}
-
-void Tcl::TclCmd::lappendInt(int val) {
-DOTRACE("Tcl::TclCmd::lappendInt");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-                                            Tcl_NewIntObj(val));
-  if (cmd_result != TCL_OK) throw TclError();
-}
-
-void Tcl::TclCmd::lappendLong(long val) {
-DOTRACE("Tcl::TclCmd::lappendLong");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-                                            Tcl_NewLongObj(val));
-  if (cmd_result != TCL_OK) throw TclError();
-}
-
-void Tcl::TclCmd::lappendBool(bool val) {
-DOTRACE("Tcl::TclCmd::lappendBool");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-                                            Tcl_NewBooleanObj(val));
-  if (cmd_result != TCL_OK) throw TclError();
-}
-
-void Tcl::TclCmd::lappendDouble(double val) {
-DOTRACE("Tcl::TclCmd::lappendDouble");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-                                            Tcl_NewDoubleObj(val));
-  if (cmd_result != TCL_OK) throw TclError();
-}
-
-void Tcl::TclCmd::lappendCstring(const char* val) {
-DOTRACE("Tcl::TclCmd::lappendCstring");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-                                            Tcl_NewStringObj(val, -1));
-  if (cmd_result != TCL_OK) throw TclError();
 }
 
 int Tcl::TclCmd::invokeCallback(ClientData clientData, Tcl_Interp* interp,
