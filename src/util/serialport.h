@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:45:35 2000
-// written: Fri Jan 18 16:06:54 2002
+// written: Thu Jun  6 17:22:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ private:
 
   int itsFiledes;
 
-#if defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#if defined(__GNUC__) && __GNUC__ >= 3
   std::filebuf* itsFilebuf;
   std::iostream* itsStream;
 #else

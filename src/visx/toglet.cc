@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Apr  2 16:53:36 2002
+// written: Thu Jun  6 17:26:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,11 +35,10 @@
 #include <tk.h>
 #include <cmath>
 
-#ifndef GCC_COMPILER
+#ifndef NO_CPP_LIMITS
 #  include <limits>
 #else
 #  include <climits>
-#  define NO_CPP_LIMITS
 #endif
 
 #include "util/trace.h"

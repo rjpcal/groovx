@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:49:28 2001
-// written: Tue Apr 30 12:44:12 2002
+// written: Thu Jun  6 17:28:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ namespace
     void print(const timeval* now) const
     {
       std::cerr << itsName << " @ ";
-#if defined(GCC_COMPILER) && GCC_COMPILER == 2
+#ifdef PRESTANDARD_IOSTREAMS
       std::cerr.setf(std::ios::showpoint | std::ios::fixed);
 #else
       std::cerr << std::showpoint << std::fixed;

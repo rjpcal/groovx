@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Fri Jan 18 16:06:54 2002
+// written: Thu Jun  6 17:22:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ public:
     itsFile(popen(command, mode)),
 #if defined(PRESTANDARD_IOSTREAMS)
     itsStream(),
-#elif defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#elif defined(__GNUC__) && __GNUC__ >= 3
     itsFilebuf(file(),std::ios::in|std::ios::out),
     itsStream(&itsFilebuf),
 #else
@@ -52,7 +52,7 @@ public:
         {
 #if defined(PRESTANDARD_IOSTREAMS)
           itsStream.attach(filedes());
-#elif !defined(GCC_COMPILER) || GCC_COMPILER < 3
+#elif !defined(__GNUC__) || __GNUC__ < 3
           itsFilebuf.open(filedes());
 #endif
         }

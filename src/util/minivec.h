@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Tue May 14 20:50:38 2002
+// written: Thu Jun  6 17:28:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #define NEW_DEFINED
 #endif
 
-#ifndef GCC_COMPILER
+#ifndef NO_CPP_LIMITS
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LIMITS_DEFINED)
 #include <limits>
 #define LIMITS_DEFINED

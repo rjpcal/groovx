@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Thu May 23 17:04:37 2002
+// written: Thu Jun  6 17:22:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 #endif
 #include <unistd.h>
 
-#if defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#if defined(__GNUC__) && __GNUC__ >= 3
 #include <ext/stdio_filebuf.h>
 #endif
 
@@ -33,7 +33,7 @@
 
 Util::SerialPort::SerialPort(const char* serial_device) :
   itsFiledes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
-#if defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#if defined(__GNUC__) && __GNUC__ >= 3
   itsFilebuf(0),
 #endif
   itsStream(0),
@@ -74,7 +74,7 @@ DOTRACE("Util::SerialPort::SerialPort");
       if ( tcsetattr( filedes(), TCSANOW, &ti) == -1 )
         { close(); return; }
 
-#if defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#if defined(__GNUC__) && __GNUC__ >= 3
       typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
       itsFilebuf = new filebuf_t(fdopen(filedes(), "r"), std::ios::in);
       itsStream = new std::iostream(itsFilebuf);
@@ -93,7 +93,7 @@ DOTRACE("Util::SerialPort::close");
       delete itsStream;
       itsStream = 0;
 
-#if defined(GCC_COMPILER) && GCC_COMPILER >= 3
+#if defined(__GNUC__) && __GNUC__ >= 3
       delete itsFilebuf;
       itsFilebuf = 0;
 #endif

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Thu May 23 16:51:57 2002
+// written: Thu Jun  6 17:20:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,9 +19,9 @@
 
 const char* demangle_cstr(const char* in) { return in; }
 
-#elif defined(GCC_COMPILER)
+#elif defined(__GNUC__)
 
-#if GCC_COMPILER < 3
+#if __GNUC__ < 3
 #  include "system/gcc_v2_demangle.h"
 
 const char* demangle_cstr(const char* in)
