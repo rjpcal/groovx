@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Mon Dec  6 13:58:14 1999
+// written: Wed Feb 16 07:38:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,15 +36,14 @@ class Experiment;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * The Block class implements a block in an experiment. It maintains a
- * sequence of trial id's, used as indices into the global singleton
- * Tlist, as well as an index for the current trial. Block is
- * responsible for computing response times, and recording the
- * response information into the Trial's. The Block is run by the
- * ExptDriver by alternately calling drawTrial() and one of
- * processResponse() or abortTrial().
+ * The Block class represents a block as a sequence of trials in an
+ * experiment. It maintains a sequence of trial id's, used as indices
+ * into the global singleton Tlist, as well as an index for the
+ * current trial. Block is responsible for computing response times,
+ * and recording the response information into the Trial's. The Block
+ * is run by the ExptDriver by alternately calling drawTrial() and one
+ * of processResponse() or abortTrial().
  *
- * @short Represents a block as a sequence of trials in an experiment.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -54,10 +53,11 @@ public:
   // creators //
   //////////////
 
-  ///
+  /// Default constructor.
   Block();
-  ///
-  virtual ~Block() {}
+
+  /// Virtual destructor ensures correct destruction of subclasses.
+  virtual ~Block();
 
   /// Add the specified trialid to the block, 'repeat' number of times.
   void addTrial(int trialid, int repeat=1);
@@ -75,23 +75,18 @@ public:
   /// Clear the Block's list of trial ids.
   void removeAllTrials();
 
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
   ///////////////
   // accessors //
   ///////////////
   
-  ///
+  /// Returns a reference to the current \c Trial.
   Trial& getCurTrial() const;
 
   /// Returns the total number of trials that will comprise the Block.
@@ -126,14 +121,13 @@ public:
       and number of total trials. */
   virtual const char* trialDescription() const;
 
-  /** Manipulate whether the trialDescription() is printed to standard
+  /** Query whether the trialDescription() is printed to standard
       output at the beginning of each trial. */
-  //@{
-  ///
   virtual bool getVerbose() const { return itsVerbose; }
-  ///
+
+  /** Change whether the trialDescription() is printed to standard
+      output at the beginning of each trial. */
   virtual void setVerbose(bool val) { itsVerbose = val; }
-  //@}
 
   /////////////
   // actions //
