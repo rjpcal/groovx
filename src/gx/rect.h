@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Nov 13 10:29:18 2002
+// written: Wed Nov 13 11:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public:
   V width() const { return (rr-ll); }
   V height() const { return (tt-bb); }
 
-  Gfx::Vec2<V> extent() const { return Gfx::Vec2<V>(width(), height()); }
+  Gfx::Vec2<V> size() const { return Gfx::Vec2<V>(width(), height()); }
 
   V aspect() const { return width()/height(); }
 
@@ -115,11 +115,8 @@ public:
   void setHeight(V h)
     { V diff = h - height(); bb -= 0.5*diff; tt += 0.5*diff; }
 
-  void widenByFactor(V factor) { setWidth(width() * factor); }
-  void heightenByFactor(V factor) { setHeight(height() * factor); }
-
-  void widenByStep(V step) { setWidth(width() + 2*step); }
-  void heightenByStep(V step) { setHeight(height() + 2*step); }
+  void scaleX(V factor) { setWidth(width() * factor); }
+  void scaleY(V factor) { setHeight(height() * factor); }
 
   void translate(const Gfx::Vec2<V>& dist)
   {
@@ -129,8 +126,8 @@ public:
 
   void scale(const Gfx::Vec2<V>& factors)
   {
-    widenByFactor(factors.x());
-    heightenByFactor(factors.y());
+    scaleX(factors.x());
+    scaleY(factors.y());
   }
 
   void setCenter(const Gfx::Vec2<V>& point)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep 11 14:52:40 2002
+// written: Wed Nov 13 11:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -357,7 +357,7 @@ DOTRACE("Bitmap::grGetBoundingBox");
 }
 
 Gfx::Vec2<int> Bitmap::size() const
-  { return itsImpl->itsData.extent(); }
+  { return itsImpl->itsData.size(); }
 
 Gfx::Vec2<double> Bitmap::getZoom() const
   { return itsImpl->itsUsingZoom ? itsImpl->itsZoom : defaultZoom; }

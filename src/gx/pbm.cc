@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Sun Nov  3 13:41:12 2002
+// written: Wed Nov 13 11:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -138,8 +138,8 @@ DOTRACE("Pbm::save");
   int mode = modeForBitDepth(data.bitsPerPixel());
 
   os << 'P' << mode
-     << ' ' << data.extent().x()
-     << ' ' << data.extent().y();
+     << ' ' << data.size().x()
+     << ' ' << data.size().y();
 
   if (mode != 1 && mode != 4)
     {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Tue Apr  2 13:27:16 2002
+// written: Wed Nov 13 11:03:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,9 +146,9 @@ DOTRACE("Gfx::BmapData::height");
   return itsImpl->itsExtent.y();
 }
 
-Gfx::Vec2<int> Gfx::BmapData::extent() const
+Gfx::Vec2<int> Gfx::BmapData::size() const
 {
-DOTRACE("Gfx::BmapData::height");
+DOTRACE("Gfx::BmapData::size");
   updateIfNeeded();
   return itsImpl->itsExtent;
 }

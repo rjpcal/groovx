@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 10:59:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,8 +31,8 @@ namespace
 
     Gfx::Rect<double> result = raw;
 
-    result.widenByFactor(1.0 + border_pixels/100.0);
-    result.heightenByFactor(1.0 + border_pixels/100.0);
+    result.scaleX(1.0 + border_pixels/100.0);
+    result.scaleY(1.0 + border_pixels/100.0);
 
     return result;
   }

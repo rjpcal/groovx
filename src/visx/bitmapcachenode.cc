@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 11:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ DOTRACE("BitmapCacheNode::getBoundingCube");
   Assert(itsBmapData.get() != 0);
 
   Gfx::Vec2<int> bottom_left = canvas.screenFromWorld(Gfx::Vec2<double>());
-  Gfx::Vec2<int> top_right = bottom_left + (itsBmapData->extent());
+  Gfx::Vec2<int> top_right = bottom_left + (itsBmapData->size());
 
   Gfx::Rect<double> bbox;
 

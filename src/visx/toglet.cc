@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Wed Nov 13 10:59:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -177,8 +177,8 @@ void TogletSizer::scaleRect(double factor)
   if (factor <= 0.0)
     throw Util::Error("invalid scaling factor");
 
-  itsRect.widenByFactor(factor);
-  itsRect.heightenByFactor(factor);
+  itsRect.scaleX(factor);
+  itsRect.scaleY(factor);
 }
 
 void TogletSizer::setPerspective(double fovy, double zNear, double zFar)
@@ -233,11 +233,11 @@ DOTRACE("TogletSizer::reconfigure");
 
         if ( ratio_of_aspects < 1 ) // the available space is too wide...
           {
-            port.widenByFactor(1/ratio_of_aspects); // so use some extra width
+            port.scaleX(1/ratio_of_aspects); // so use some extra width
           }
         else                        // the available space is too tall...
           {
-            port.heightenByFactor(ratio_of_aspects); // so use some extra height
+            port.scaleY(ratio_of_aspects); // so use some extra height
           }
 
         glOrtho(port.left(), port.right(),

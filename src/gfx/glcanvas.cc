@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov  6 17:02:14 2002
+// written: Wed Nov 13 11:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -447,7 +447,7 @@ DOTRACE("GLCanvas::grabPixels");
   // (i.e. 24 bits per pixel) regardless of the actual color buffer depth.
   const int bmap_bits_per_pixel = isRgba() ? 24 : 8;
 
-  Gfx::BmapData new_data(bounds.extent(),
+  Gfx::BmapData new_data(bounds.size(),
                          bmap_bits_per_pixel, pixel_alignment);
 
   glPixelStorei(GL_PACK_ALIGNMENT, pixel_alignment);

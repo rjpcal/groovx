@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Wed Sep 25 18:53:57 2002
+// written: Wed Nov 13 11:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,8 +108,8 @@ public:
   /// Returns the bitmap's height in pixels.
   int height() const;
 
-  /// Returns the bitmap's extent (x-width, y-height) in pixels.
-  Gfx::Vec2<int> extent() const;
+  /// Returns the bitmap's size (x-width, y-height) in pixels.
+  Gfx::Vec2<int> size() const;
 
   /// Returns the number of bits used per pixel in the bitmap.
   int bitsPerPixel() const;
