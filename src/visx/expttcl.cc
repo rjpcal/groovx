@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Aug  3 13:18:57 1999
+// written: Sun Oct  3 19:17:02 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -14,8 +14,6 @@
 
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
-
-#include "expttcl.h"
 
 #include <tcl.h>
 #include <string>
@@ -249,6 +247,8 @@ public:
 // Expt_Init --
 //
 //---------------------------------------------------------------------
+
+extern "C" Tcl_PackageInitProc Expt_Init;
 
 int Expt_Init(Tcl_Interp* interp) {
 DOTRACE("Expt_Init");

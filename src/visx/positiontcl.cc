@@ -3,15 +3,13 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Mon Jul 19 15:25:20 1999
+// written: Sun Oct  3 19:33:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITIONTCL_CC_DEFINED
 #define POSITIONTCL_CC_DEFINED
-
-#include "positiontcl.h"
 
 #include <tcl.h>
 #include <typeinfo>
@@ -154,6 +152,8 @@ public:
   }
 };
 
+
+extern "C" Tcl_PackageInitProc Pos_Init;
 
 int Pos_Init(Tcl_Interp* interp) {
 DOTRACE("Pos_Init");

@@ -3,15 +3,13 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Jul 19 16:20:23 1999
+// written: Sun Oct  3 19:39:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
-
-#include "soundtcl.h"
 
 #include <tcl.h>
 #include <map>
@@ -303,6 +301,8 @@ public:
 // Sound_Init --
 //
 //---------------------------------------------------------------------
+
+extern "C" Tcl_PackageInitProc Sound_Init;
 
 int Sound_Init(Tcl_Interp* interp) {
 DOTRACE("Sound_Init");

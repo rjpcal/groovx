@@ -3,15 +3,13 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Tue Sep 21 18:19:20 1999
+// written: Sun Oct  3 19:20:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJTCL_CC_DEFINED
 #define GROBJTCL_CC_DEFINED
-
-#include "grobjtcl.h"
 
 #include <typeinfo>
 
@@ -133,6 +131,8 @@ public:
 // Grobj_Init --
 //
 //---------------------------------------------------------------------
+
+extern "C" Tcl_PackageInitProc Grobj_Init;
 
 int Grobj_Init(Tcl_Interp* interp) {
 

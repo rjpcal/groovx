@@ -2,14 +2,12 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Jul  7 14:07:42 1999
+// written: Sun Oct  3 19:24:36 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef JITTERTCL_CC_DEFINED
 #define JITTERTCL_CC_DEFINED
-
-#include "jittertcl.h"
 
 #include <tcl.h>
 #include <strstream.h>
@@ -69,6 +67,8 @@ public:
 // Jitter_Init
 //
 //---------------------------------------------------------------------
+
+extern "C" Tcl_PackageInitProc Jitter_Init;
 
 int Jitter_Init(Tcl_Interp* interp) {
 DOTRACE("Jitter_Init");

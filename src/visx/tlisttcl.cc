@@ -3,15 +3,13 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Sep 17 08:54:42 1999
+// written: Sun Oct  3 19:45:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
-
-#include "tlisttcl.h"
 
 #include <tcl.h>
 #include <strstream.h>
@@ -657,7 +655,9 @@ public:
 //
 //--------------------------------------------------------------------
 
-int Tlist_Init(Tcl_Interp* interp) {
+extern "C" Tcl_PackageInitProc Tlist_Init;
+
+nt Tlist_Init(Tcl_Interp* interp) {
 DOTRACE("Tlist_Init");
 
   new TlistTcl::TlistPkg(interp);

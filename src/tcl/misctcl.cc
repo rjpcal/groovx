@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Sun Jun 20 18:02:38 1999
+// written: Sun Oct  3 19:28:18 1999
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
 // that are basically wrappers for standard C library functions, such
 // as rand(), sleep(), and usleep()
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MISCTCL_C_DEFINED
 #define MISCTCL_C_DEFINED
-
-#include "misctcl.h"
 
 #include <tcl.h>
 #include <cstdlib>
@@ -115,6 +115,8 @@ int MiscTcl::usleeprCmd(ClientData, Tcl_Interp* interp,
   for ( ; reps > 0; --reps) usleep(usecs);
   return TCL_OK;  
 }
+
+extern "C" Tcl_PackageInitProc Misc_Init;
 
 int Misc_Init(Tcl_Interp* interp) {
   using namespace MiscTcl;

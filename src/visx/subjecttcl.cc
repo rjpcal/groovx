@@ -2,14 +2,12 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sun Jun 20 18:11:58 1999
+// written: Sun Oct  3 19:41:35 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_CC_DEFINED
 #define SUBJECTTCL_CC_DEFINED
-
-#include "subjecttcl.h"
 
 #include <tcl.h>
 #include <cstring>
@@ -244,6 +242,8 @@ DOTRACE("SubjectTcl::clearCmd");
 
   return TCL_OK;
 }
+
+extern "C" Tcl_PackageInitProc Subject_Init;
 
 int Subject_Init(Tcl_Interp* interp) {
 DOTRACE("Subject_Init");

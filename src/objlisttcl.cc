@@ -3,15 +3,13 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Jul  7 14:27:46 1999
+// written: Sun Oct  3 19:29:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLISTTCL_CC_DEFINED
 #define OBJLISTTCL_CC_DEFINED
-
-#include "objlisttcl.h"
 
 #include "objlist.h"
 #include "listpkg.h"
@@ -42,6 +40,8 @@ public:
 // ObjlistTcl::Objlist_Init --
 //
 //---------------------------------------------------------------------
+
+extern "C" Tcl_PackageInitProc Objlist_Init;
 
 int Objlist_Init(Tcl_Interp* interp) {
 DOTRACE("Objlist_Init");
