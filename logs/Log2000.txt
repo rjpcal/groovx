@@ -1235,3 +1235,15 @@ most clients.
 | single IoDb:: namespace in Tcl.
 |
 +-----
+
+(May-1999, obsolete 11-Dec-2000) Maybe Position should be migrated to
+an abstract base class, with the current Position class becoming
+StaticPosition or FixedPosition. What would a Position subclass for
+moving objects look like? This is mooted by the presence GxNode.
+
+(28-Sep-2000, nix 13-Dec-2000) fixed_block and dynamic_block should
+have release() members, so that we can use them for exception-safe
+storage, then transfer ownership of the buffer to someone else once
+the operations are safely completed. ... [Later] Forget this, since if
+someone else wants ownership, they should just use a fixed_block or
+dynamic_block themselves.
