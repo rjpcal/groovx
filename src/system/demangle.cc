@@ -15,7 +15,7 @@
 
 #include "system/demangle.h"
 
-#if defined(MIPSPRO_COMPILER)
+#if defined(NO_TYPENAME_MANGLING)
 
 const char* demangle_cstr(const char* in) { return in; }
 
@@ -42,7 +42,7 @@ const char* demangle_cstr(const char* in)
 #endif
 
 #else
-#error no compiler macro is defined
+#error no method specified for typename demangling
 #endif // switch on compiler macro
 
 static const char vcid_demangle_cc[] = "$Header$";
