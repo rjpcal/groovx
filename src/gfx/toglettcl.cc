@@ -142,6 +142,7 @@ public:
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);
+    def("warpPointer", "item_id x y", &Tcl::TkWidget::warpPointer);
     defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
 
     defAction("hook", &Tcl::TkWidget::hook);

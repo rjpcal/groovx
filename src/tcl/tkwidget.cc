@@ -409,6 +409,7 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
 void Tcl::TkWidget::setCursor(const char* cursor_spec)
 {
+DOTRACE("Tcl::TkWidget::setCursor");
   if (cursor_spec == 0 || cursor_spec == '\0')
     {
       // Empty string means to unset the cursor
@@ -442,9 +443,20 @@ void Tcl::TkWidget::setCursor(const char* cursor_spec)
 
 const char* Tcl::TkWidget::getCursor() const
 {
+DOTRACE("Tcl::TkWidget::getCursor");
   return rep->cursor == 0
     ? ""
     : Tk_NameOfCursor(Tk_Display(rep->tkWin), rep->cursor);
+}
+
+void Tcl::TkWidget::warpPointer(int x, int y) const
+{
+DOTRACE("Tcl::TkWidget::warpPointer");
+
+  XWarpPointer(Tk_Display(rep->tkWin),
+               0, Tk_WindowId(rep->tkWin),
+               0, 0, 0, 0,
+               x, y);
 }
 
 void Tcl::TkWidget::pack()
