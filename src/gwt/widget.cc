@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Aug 21 14:52:44 2001
+// written: Tue Aug 21 17:42:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 
 #include "util/dlink_list.h"
 #include "util/ref.h"
+#include "util/volatileobject.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -55,7 +56,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget::Impl : public Util::Object {
+class GWT::Widget::Impl : public Util::VolatileObject {
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),
@@ -69,8 +70,6 @@ public:
     itsKeyListeners(),
     slotNodeChanged(Util::Slot::make(this, &Impl::onNodeChange))
   {}
-
-  virtual bool isVolatile() const { return true; }
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
@@ -110,6 +109,7 @@ public:
 
   void onNodeChange()
   {
+    DOTRACE("GWT::Widget::Impl::onNodeChange");
     isItRefreshed = false;
     flushChanges();
   }
@@ -211,15 +211,13 @@ GWT::Widget::Widget() :
   itsImpl(Impl::make(this))
 {
 DOTRACE("GWT::Widget::Widget");
-
-  itsImpl->incrRefCount();
 }
 
 GWT::Widget::~Widget()
 {
 DOTRACE("GWT::Widget::~Widget");
 
-  itsImpl->decrRefCount();
+  itsImpl->destroy();
 }
 
 void GWT::Widget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
