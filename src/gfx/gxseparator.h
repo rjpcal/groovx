@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri Nov 10 16:57:15 2000
+// written: Fri Nov 17 11:06:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,18 @@
 #endif
 
 template <class T> class IdItem;
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * GxSeparator is a subclass of GxNode that holds a list of children,
+ * and can be used to implement arbitrary tree structured hierarchies
+ * of GxNode's. GxSeparator saves the OpenGL state before drawing or
+ * undrawing its children, and restores the state when it is done
+ * handling its children.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 class GxSeparator : public GxNode {
 protected:

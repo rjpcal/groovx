@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Fri Nov 10 17:05:57 2000
+// written: Fri Nov 17 11:07:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,14 @@
 #endif
 
 namespace GWT { class Canvas; }
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * GxNode is the base class for all graphic objects.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 class GxNode : public virtual IO::IoObject {
 protected:
