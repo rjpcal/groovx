@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Wed Jul 11 09:47:28 2001
+// written: Wed Jul 11 11:00:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,12 +39,34 @@ extern Tcl_ObjType   tclStringType;
 
 namespace
 {
-  inline Tcl_Obj* checkSharing(Tcl_Obj* obj, Tcl_ObjType* target_type)
+  class SafeUnshared {
+  private:
+    bool isItOwning;
+    Tcl_Obj* itsObj;
+
+    SafeUnshared(const SafeUnshared&);
+    SafeUnshared& operator=(const SafeUnshared&);
+
+  public:
+    SafeUnshared(Tcl_Obj* obj, Tcl_ObjType* target_type) :
+      itsObj(obj), isItOwning(false)
     {
-      if ( (obj->typePtr != target_type) && Tcl_IsShared(obj) )
-        return Tcl_DuplicateObj(obj);
-      return obj;
+      if ( (itsObj->typePtr != target_type) && Tcl_IsShared(itsObj) )
+        {
+          isItOwning = true;
+          itsObj = Tcl_DuplicateObj(itsObj);
+          Tcl_IncrRefCount(itsObj);
+        }
     }
+
+    Tcl_Obj* get() const { return itsObj; }
+
+    ~SafeUnshared()
+    {
+      if (isItOwning)
+        Tcl_DecrRefCount(itsObj);
+    }
+  };
 
   template <class T>
   inline void ensurePositive(T t)
@@ -68,9 +90,9 @@ DOTRACE("Tcl::fromTcl<int>");
 
   int val;
 
-  obj = checkSharing(obj, &tclIntType);
+  SafeUnshared safeobj(obj, &tclIntType);
 
-  if ( Tcl_GetIntFromObj(0, obj, &val) != TCL_OK )
+  if ( Tcl_GetIntFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       TclError err("expected integer but got ");
       err.appendMsg("\"", Tcl_GetString(obj), "\"");
@@ -98,9 +120,9 @@ DOTRACE("Tcl::fromTcl<long>");
 
   long val;
 
-  obj = checkSharing(obj, &tclIntType);
+  SafeUnshared safeobj(obj, &tclIntType);
 
-  if ( Tcl_GetLongFromObj(0, obj, &val) != TCL_OK )
+  if ( Tcl_GetLongFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       TclError err("expected long value but got ");
       err.appendMsg("\"", Tcl_GetString(obj), "\"");
@@ -128,9 +150,9 @@ DOTRACE("Tcl::fromTcl<bool>");
 
   int int_val;
 
-  obj = checkSharing(obj, &tclBooleanType);
+  SafeUnshared safeobj(obj, &tclBooleanType);
 
-  if ( Tcl_GetBooleanFromObj(0, obj, &int_val) != TCL_OK )
+  if ( Tcl_GetBooleanFromObj(0, safeobj.get(), &int_val) != TCL_OK )
     {
       TclError err("expected boolean value but got ");
       err.appendMsg("\"", Tcl_GetString(obj), "\"");
@@ -146,9 +168,9 @@ DOTRACE("Tcl::fromTcl<double>");
 
   double val;
 
-  obj = checkSharing(obj, &tclDoubleType);
+  SafeUnshared safeobj(obj, &tclDoubleType);
 
-  if ( Tcl_GetDoubleFromObj(0, obj, &val) != TCL_OK )
+  if ( Tcl_GetDoubleFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       TclError err("expected floating-point number but got ");
       err.appendMsg("\"", Tcl_GetString(obj), "\"");
@@ -197,14 +219,6 @@ DOTRACE("Tcl::fromTcl<Tcl_Obj*>");
 ///////////////////////////////////////////////////////////////////////
 
 template <>
-Tcl_Obj* Tcl::toTcl<int>(int val)
-{
-DOTRACE("Tcl::toTcl<int>");
-
-  return Tcl_NewIntObj(val);
-}
-
-template <>
 Tcl_Obj* Tcl::toTcl<long>(long val)
 {
 DOTRACE("Tcl::toTcl<long>");
@@ -222,6 +236,34 @@ DOTRACE("Tcl::toTcl<unsigned long>");
   ensurePositive(sval);
 
   return toTcl<long>(sval);
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<int>(int val)
+{
+DOTRACE("Tcl::toTcl<int>");
+
+  return Tcl_NewIntObj(val);
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<unsigned int>(unsigned int val)
+{
+DOTRACE("Tcl::toTcl<unsigned int>");
+
+  int sval(val);
+
+  ensurePositive(sval);
+
+  return toTcl<int>(sval);
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<unsigned char>(unsigned char val)
+{
+DOTRACE("Tcl::toTcl<unsigne char>");
+
+  return toTcl<unsigned int>(val);
 }
 
 template <>
@@ -254,6 +296,32 @@ Tcl_Obj* Tcl::toTcl<const char*>(const char* val)
 DOTRACE("Tcl::toTcl<const char*>");
 
   return Tcl_NewStringObj(val, -1);
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<char*>(char* val)
+{
+DOTRACE("Tcl::toTcl<char*>");
+
+  return toTcl<const char*>(val);
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<const Value&>(const Value& val)
+{
+DOTRACE("Tcl::toTcl<const Value&>");
+
+  Tcl_Obj* obj = 0;
+
+  {
+    TclValue tval(val);
+    obj = tval.getObj();
+    ++(obj->refCount);
+  }
+
+  --(obj->refCount);
+
+  return obj;
 }
 
 template <>
