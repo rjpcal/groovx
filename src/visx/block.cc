@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Sun Aug  5 19:56:41 2001
+// written: Wed Aug  8 13:03:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,8 @@ Util::Tracer Block::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   IO::VersionId BLOCK_SERIAL_VERSION_ID = 1;
 }
 
@@ -125,7 +126,8 @@ private:
 // creators //
 //////////////
 
-Block* Block::make() {
+Block* Block::make()
+{
 DOTRACE("Block::make");
   return new Block;
 }
@@ -141,14 +143,17 @@ Block::~Block()
   delete itsImpl;
 }
 
-void Block::addTrial(Ref<TrialBase> trial, int repeat) {
+void Block::addTrial(Ref<TrialBase> trial, int repeat)
+{
 DOTRACE("Block::addTrial");
-  for (int i = 0; i < repeat; ++i) {
-    itsImpl->itsTrialSequence.push_back(trial);
-  }
+  for (int i = 0; i < repeat; ++i)
+    {
+      itsImpl->itsTrialSequence.push_back(trial);
+    }
 };
 
-void Block::shuffle(int seed) {
+void Block::shuffle(int seed)
+{
 DOTRACE("Block::shuffle");
   itsImpl->itsRandSeed = seed;
 
@@ -159,18 +164,21 @@ DOTRACE("Block::shuffle");
                       generator);
 }
 
-void Block::removeAllTrials() {
+void Block::removeAllTrials()
+{
 DOTRACE("Block::removeAllTrials");
   itsImpl->itsTrialSequence.clear();
   itsImpl->itsCurTrialSeqIdx = 0;
 }
 
-IO::VersionId Block::serialVersionId() const {
+IO::VersionId Block::serialVersionId() const
+{
 DOTRACE("Block::serialVersionId");
   return BLOCK_SERIAL_VERSION_ID;
 }
 
-void Block::readFrom(IO::Reader* reader) {
+void Block::readFrom(IO::Reader* reader)
+{
 DOTRACE("Block::readFrom");
 
   reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
@@ -182,14 +190,16 @@ DOTRACE("Block::readFrom");
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
   if (itsImpl->itsCurTrialSeqIdx < 0 ||
-      size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-    throw IO::ValueError("Block");
-  }
+      size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size())
+    {
+      throw IO::ValueError("Block");
+    }
 
   reader->readValue("verbose", itsImpl->itsVerbose);
 }
 
-void Block::writeTo(IO::Writer* writer) const {
+void Block::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Block::writeTo");
 
   writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 1,
@@ -208,24 +218,28 @@ DOTRACE("Block::writeTo");
 // accessors //
 ///////////////
 
-int Block::numTrials() const {
+int Block::numTrials() const
+{
 DOTRACE("Block::numTrials");
   return itsImpl->itsTrialSequence.size();
 }
 
-int Block::numCompleted() const {
+int Block::numCompleted() const
+{
 DOTRACE("Block::numCompleted");
   return itsImpl->itsCurTrialSeqIdx;
 }
 
-Util::WeakRef<TrialBase> Block::currentTrial() const {
+Util::WeakRef<TrialBase> Block::currentTrial() const
+{
 DOTRACE("Block::currentTrial");
   if (isComplete()) return Util::WeakRef<TrialBase>();
 
   return itsImpl->currentTrial();
 }
 
-int Block::currentTrialType() const {
+int Block::currentTrialType() const
+{
 DOTRACE("Block::currentTrialType");
   if (isComplete()) return -1;
 
@@ -234,7 +248,8 @@ DOTRACE("Block::currentTrialType");
   return itsImpl->currentTrial()->trialType();
 }
 
-int Block::prevResponse() const {
+int Block::prevResponse() const
+{
 DOTRACE("Block::prevResponse");
 
 #ifdef PICKY_DEBUG
@@ -250,7 +265,8 @@ DOTRACE("Block::prevResponse");
   return prev_trial->lastResponse();
 }
 
-bool Block::isComplete() const {
+bool Block::isComplete() const
+{
 DOTRACE("Block::isComplete");
 
 #ifdef PICKY_DEBUG
@@ -271,7 +287,8 @@ DOTRACE("Block::isComplete");
           (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
 }
 
-const char* Block::trialDescription() const {
+const char* Block::trialDescription() const
+{
 DOTRACE("Block::trialDescription");
   if (isComplete()) return "block is complete";
 
@@ -285,12 +302,14 @@ DOTRACE("Block::trialDescription");
   return descr.c_str();
 }
 
-bool Block::getVerbose() const {
+bool Block::getVerbose() const
+{
 DOTRACE("Block::getVerbose");
   return itsImpl->itsVerbose;
 }
 
-void Block::setVerbose(bool val) {
+void Block::setVerbose(bool val)
+{
 DOTRACE("Block::setVerbose");
   itsImpl->itsVerbose = val;
 }
@@ -301,7 +320,8 @@ DOTRACE("Block::setVerbose");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Block::beginTrial(Experiment& expt) {
+void Block::beginTrial(Experiment& expt)
+{
 DOTRACE("Block::beginTrial");
 
   if ( isComplete() ) return;
@@ -319,7 +339,8 @@ DOTRACE("Block::beginTrial");
              trDoTrial(expt.getWidget(), expt.getErrorHandler(), *this);
 }
 
-void Block::abortTrial() {
+void Block::abortTrial()
+{
 DOTRACE("Block::abortTrial");
   if (isComplete()) return;
 
@@ -341,7 +362,8 @@ DOTRACE("Block::abortTrial");
   --itsImpl->itsCurTrialSeqIdx;
 }
 
-void Block::processResponse(const Response& response) {
+void Block::processResponse(const Response& response)
+{
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
@@ -364,7 +386,8 @@ DOTRACE("Block::processResponse");
     }
 }
 
-void Block::endTrial() {
+void Block::endTrial()
+{
 DOTRACE("Block::endTrial");
   if (isComplete()) return;
 
@@ -378,25 +401,29 @@ DOTRACE("Block::endTrial");
   itsImpl->getExpt().edEndTrial();
 }
 
-void Block::nextTrial() {
+void Block::nextTrial()
+{
 DOTRACE("Block::nextTrial");
-  if ( !isComplete() ) {
-    beginTrial(itsImpl->getExpt());
-  }
-  else {
-    itsImpl->getExpt().edNextBlock();
-  }
+  if ( !isComplete() )
+    {
+      beginTrial(itsImpl->getExpt());
+    }
+  else
+    {
+      itsImpl->getExpt().edNextBlock();
+    }
 }
 
-
-void Block::haltExpt() {
+void Block::haltExpt()
+{
 DOTRACE("Block::haltExpt");
 
   if ( itsImpl->itsHasBegun && !isComplete() )
     itsImpl->currentTrial()->trHaltExpt();
 }
 
-void Block::undoPrevTrial() {
+void Block::undoPrevTrial()
+{
 DOTRACE("Block::undoPrevTrial");
 
   DebugEval(itsImpl->itsCurTrialSeqIdx);
@@ -414,11 +441,13 @@ DOTRACE("Block::undoPrevTrial");
     }
 }
 
-void Block::resetBlock() {
+void Block::resetBlock()
+{
 DOTRACE("Block::resetBlock");
-  while (itsImpl->itsCurTrialSeqIdx > 0) {
-    undoPrevTrial();
-  }
+  while (itsImpl->itsCurTrialSeqIdx > 0)
+    {
+      undoPrevTrial();
+    }
 }
 
 static const char vcid_block_cc[] = "$Header$";
