@@ -64,7 +64,7 @@ public:
   virtual void throwIfError(const char* where) const;
 
 
-  virtual void pushAttribs();
+  virtual void pushAttribs(const char* comment="");
   virtual void popAttribs();
 
   virtual void drawOnFrontBuffer();
@@ -98,7 +98,7 @@ public:
                            double zNear, double zFar);
 
 
-  virtual void pushMatrix();
+  virtual void pushMatrix(const char* comment="");
   virtual void popMatrix();
 
   virtual void translate(const Gfx::Vec3<double>& v);
@@ -147,16 +147,16 @@ public:
                                const Gfx::Vec3<double>& p4,
                                unsigned int subdivisions);
 
-  virtual void beginPoints();
-  virtual void beginLines();
-  virtual void beginLineStrip();
-  virtual void beginLineLoop();
-  virtual void beginTriangles();
-  virtual void beginTriangleStrip();
-  virtual void beginTriangleFan();
-  virtual void beginQuads();
-  virtual void beginQuadStrip();
-  virtual void beginPolygon();
+  virtual void beginPoints(const char* comment="");
+  virtual void beginLines(const char* comment="");
+  virtual void beginLineStrip(const char* comment="");
+  virtual void beginLineLoop(const char* comment="");
+  virtual void beginTriangles(const char* comment="");
+  virtual void beginTriangleStrip(const char* comment="");
+  virtual void beginTriangleFan(const char* comment="");
+  virtual void beginQuads(const char* comment="");
+  virtual void beginQuadStrip(const char* comment="");
+  virtual void beginPolygon(const char* comment="");
 
   virtual void vertex2(const Gfx::Vec2<double>& v);
   virtual void vertex3(const Gfx::Vec3<double>& v);

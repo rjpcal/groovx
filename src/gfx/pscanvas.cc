@@ -266,7 +266,7 @@ public:
 
     virtual void onVertex(PS* ps, const Vec2d& v)
     {
-      switch(vcount() % 3)
+      switch(vcount() % 4)
         {
         case 0:
           ps->moveto(v);
@@ -347,9 +347,12 @@ public:
       }
   }
 
-  void gsave()
+  void gsave(const char* comment)
   {
-    indent(); itsFstream << "gsave\n";
+    indent(); itsFstream << "gsave";
+    if (comment != 0 && comment[0] != '\0')
+      itsFstream << " % " << comment;
+    itsFstream << '\n';
     itsStates.push_back(state());
   }
 
@@ -593,10 +596,15 @@ public:
     throw Util::Error(fstring("PSCanvas error: ", msg));
   }
 
-  void beginPrimitive(Primitive* ptr)
+  void beginPrimitive(Primitive* ptr, const char* comment)
   {
     if (itsPrimPtr != 0)
       raiseError("in beginPrimitive, already in graphics primitive");
+
+    if (comment != 0 && comment[0] != '\0')
+      {
+        indent(); itsFstream << "% " << comment << " (begin)\n";
+      }
 
     itsPrimPtr = ptr;
     itsPrimPtr->begin(this);
@@ -728,10 +736,10 @@ DOTRACE("Gfx::PSCanvas::throwIfError");
 }
 
 
-void Gfx::PSCanvas::pushAttribs()
+void Gfx::PSCanvas::pushAttribs(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::pushAttribs");
-  rep->gsave();
+  rep->gsave(comment);
 }
 
 void Gfx::PSCanvas::popAttribs()
@@ -838,10 +846,10 @@ DOTRACE("Gfx::PSCanvas::perspective");
 }
 
 
-void Gfx::PSCanvas::pushMatrix()
+void Gfx::PSCanvas::pushMatrix(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::pushMatrix");
-  rep->gsave();
+  rep->gsave(comment);
 }
 
 void Gfx::PSCanvas::popMatrix()
@@ -974,64 +982,64 @@ DOTRACE("Gfx::PSCanvas::drawBezierFill4");
   // FIXME
 }
 
-void Gfx::PSCanvas::beginPoints()
+void Gfx::PSCanvas::beginPoints(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginPoints");
-  rep->beginPrimitive(&thePointsPrim);
+  rep->beginPrimitive(&thePointsPrim, comment);
 }
 
-void Gfx::PSCanvas::beginLines()
+void Gfx::PSCanvas::beginLines(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginLines");
-  rep->beginPrimitive(&theLinesPrim);
+  rep->beginPrimitive(&theLinesPrim, comment);
 }
 
-void Gfx::PSCanvas::beginLineStrip()
+void Gfx::PSCanvas::beginLineStrip(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginLineStrip");
-  rep->beginPrimitive(&theLineStripPrim);
+  rep->beginPrimitive(&theLineStripPrim, comment);
 }
 
-void Gfx::PSCanvas::beginLineLoop()
+void Gfx::PSCanvas::beginLineLoop(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginLineLoop");
-  rep->beginPrimitive(&theLineLoopPrim);
+  rep->beginPrimitive(&theLineLoopPrim, comment);
 }
 
-void Gfx::PSCanvas::beginTriangles()
+void Gfx::PSCanvas::beginTriangles(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginTriangles");
-  rep->beginPrimitive(&theTrianglesPrim);
+  rep->beginPrimitive(&theTrianglesPrim, comment);
 }
 
-void Gfx::PSCanvas::beginTriangleStrip()
+void Gfx::PSCanvas::beginTriangleStrip(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginTriangleStrip");
-  rep->beginPrimitive(&theTriangleStripPrim);
+  rep->beginPrimitive(&theTriangleStripPrim, comment);
 }
 
-void Gfx::PSCanvas::beginTriangleFan()
+void Gfx::PSCanvas::beginTriangleFan(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginTriangleFan");
-  rep->beginPrimitive(&theTriangleFanPrim);
+  rep->beginPrimitive(&theTriangleFanPrim, comment);
 }
 
-void Gfx::PSCanvas::beginQuads()
+void Gfx::PSCanvas::beginQuads(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginQuads");
-  rep->beginPrimitive(&theQuadsPrim);
+  rep->beginPrimitive(&theQuadsPrim, comment);
 }
 
-void Gfx::PSCanvas::beginQuadStrip()
+void Gfx::PSCanvas::beginQuadStrip(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginQuadStrip");
-  rep->beginPrimitive(&theQuadStripPrim);
+  rep->beginPrimitive(&theQuadStripPrim, comment);
 }
 
-void Gfx::PSCanvas::beginPolygon()
+void Gfx::PSCanvas::beginPolygon(const char* comment)
 {
 DOTRACE("Gfx::PSCanvas::beginPolygon");
-  rep->beginPrimitive(&thePolygonPrim);
+  rep->beginPrimitive(&thePolygonPrim, comment);
 }
 
 void Gfx::PSCanvas::vertex2(const Vec2d& v)
