@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 17:47:23 2002
+// written: Mon Sep 16 18:30:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -282,49 +282,29 @@ DOTRACE("TogletSizer::reconfigure");
 class TogletImpl
 {
 public:
-  Togl* const togl;
+  Toglet* const owner;
   scoped_ptr<TogletSizer> sizer;
   unsigned int fontListBase;
 
-  TogletImpl(Toglet* owner, Util::UID uid);
+  TogletImpl(Toglet* p);
 
   ~TogletImpl();
 
   void loadFontList(GLuint newListBase);
 
   void reconfigure();
-
-  static void reshapeCallback(Togl* togl);
-  static void displayCallback(Togl* togl);
-  static void destroyCallback(Togl* togl);
 };
 
-TogletImpl::TogletImpl(Toglet* owner, Util::UID uid)
+TogletImpl::TogletImpl(Toglet* p)
   :
-  togl(new Togl(Tcl::Main::interp(), widgetName(uid))),
+  owner(p),
   sizer(new TogletSizer),
   fontListBase(0)
-{
-  Assert(togl != 0);
-
-  togl->setClientData(static_cast<ClientData>(owner));
-
-  togl->setReshapeFunc(TogletImpl::reshapeCallback);
-  togl->setDisplayFunc(TogletImpl::displayCallback);
-  togl->setDestroyFunc(TogletImpl::destroyCallback);
-}
+{}
 
 TogletImpl::~TogletImpl()
 {
 DOTRACE("TogletImpl::~TogletImpl");
-  DebugEvalNL(this);
-  DebugEvalNL(togl);
-
-  Assert(togl != 0);
-
-  togl->setClientData(static_cast<ClientData>(0));
-  togl->setReshapeFunc(0);
-  togl->setDisplayFunc(0);
 }
 
 void TogletImpl::loadFontList(GLuint newListBase)
@@ -338,7 +318,7 @@ void TogletImpl::loadFontList(GLuint newListBase)
   // ... otherwise unload the current font
   if (fontListBase > 0)
     {
-      togl->unloadBitmapFont(fontListBase);
+      owner->unloadBitmapFont(fontListBase);
     }
 
   // ... and point to the new font
@@ -349,60 +329,11 @@ void TogletImpl::reconfigure()
 {
 DOTRACE("TogletImpl::reconfigure");
 
-  togl->makeCurrent();
+  owner->makeCurrent();
 
-  sizer->reconfigure(togl->width(), togl->height());
+  sizer->reconfigure(owner->width(), owner->height());
 
-  togl->requestRedisplay();
-}
-
-void TogletImpl::reshapeCallback(Togl* togl)
-{
-DOTRACE("TogletImpl::reshapeCallback");
-  Toglet* toglet = static_cast<Toglet*>(togl->getClientData());
-  DebugEvalNL((void*) toglet);
-
-  try
-    {
-      toglet->rep->reconfigure();
-    }
-  catch (...)
-    {
-      Tcl::Interp(togl->interp()).handleLiveException("reshapeCallback", true);
-    }
-}
-
-void TogletImpl::displayCallback(Togl* togl)
-{
-DOTRACE("TogletImpl::displayCallback");
-
-  Toglet* toglet = static_cast<Toglet*>(togl->getClientData());
-  DebugEvalNL((void*) toglet);
-
-  try
-    {
-      toglet->fullRender();
-    }
-  catch (...)
-    {
-      Tcl::Interp(togl->interp()).handleLiveException("displayCallback", true);
-    }
-}
-
-void TogletImpl::destroyCallback(Togl* togl)
-{
-  DebugEvalNL((void*)togl);
-  Toglet* toglet = static_cast<Toglet*>(togl->getClientData());
-
-
-  // We have to test that toglet is non-null, because if this
-  // callback was triggered out of Toglet's destructor, then it
-  // will have already set the client data for the Togl* to null.
-  DebugEvalNL((void*)toglet);
-  if (toglet)
-    {
-      toglet->decrRefCount();
-    }
+  owner->requestRedisplay();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -412,8 +343,9 @@ void TogletImpl::destroyCallback(Togl* togl)
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(bool pack) :
+  Togl(Tcl::Main::interp(), widgetName(id())),
   Tcl::TkWidget(),
-  rep(new TogletImpl(this, id()))
+  rep(new TogletImpl(this))
 {
 DOTRACE("Toglet::Toglet");
   DebugEvalNL((void*) this);
@@ -422,9 +354,9 @@ DOTRACE("Toglet::Toglet");
 
   setUnitAngle(default_unit_angle);
 
-  rep->togl->makeCurrent();
+  Togl::makeCurrent();
 
-  Tk_Window tkwin = rep->togl->tkWin();
+  Tk_Window tkwin = Togl::tkWin();
   XBmapRenderer::initClass(tkwin);
 
   if (pack)
@@ -433,7 +365,7 @@ DOTRACE("Toglet::Toglet");
       pack_cmd_str.append( pathname() );
       pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
       Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
-      pack_cmd.invoke(rep->togl->interp());
+      pack_cmd.invoke(Togl::interp());
     }
 
   TkWidget::setTkWin(tkwin);
@@ -458,25 +390,25 @@ DOTRACE("Toglet::~Toglet");
 Tcl_Interp* Toglet::getInterp() const
 {
 DOTRACE("Toglet::getInterp");
-  return rep->togl->interp();
+  return Togl::interp();
 }
 
 int Toglet::getHeight() const
 {
 DOTRACE("Toglet::getHeight");
-  return rep->togl->height();
+  return Togl::height();
 }
 
 int Toglet::getWidth() const
 {
 DOTRACE("Toglet::getWidth");
-  return rep->togl->width();
+  return Togl::width();
 }
 
 const char* Toglet::pathname() const
 {
 DOTRACE("Toglet::pathname");
-  return rep->togl->pathname();
+  return Togl::pathname();
 }
 
 Toglet::Color Toglet::queryColor(unsigned int color_index) const
@@ -490,9 +422,9 @@ void Toglet::queryColor(unsigned int color_index, Color& color) const
 {
 DOTRACE("Toglet::queryColor");
 
-  Tk_Window tkwin = rep->togl->tkWin();
+  Tk_Window tkwin = Togl::tkWin();
   Display* display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
-  Colormap cmap = rep->togl->colormap();
+  Colormap cmap = Togl::colormap();
   XColor col;
 
   col.pixel = color_index;
@@ -518,7 +450,7 @@ DOTRACE("Toglet::usingFixedScale");
 
 double Toglet::pixelsPerInch() const
 {
-  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(rep->togl->tkWin()));
+  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(Togl::tkWin()));
   const int screen_pixel_width = XWidthOfScreen(scr);
   const int screen_mm_width = XWidthMMOfScreen(scr);
 
@@ -533,8 +465,8 @@ double Toglet::pixelsPerInch() const
 Gfx::Canvas& Toglet::getCanvas()
 {
 DOTRACE("Toglet::getCanvas");
-  rep->togl->makeCurrent();
-  return rep->togl->getCanvas();
+  Togl::makeCurrent();
+  return Togl::getCanvas();
 }
 
 ///////////////////
@@ -545,14 +477,14 @@ Tcl_Obj* Toglet::cget(Tcl_Obj* param) const
 {
 DOTRACE("Toglet::cget");
 
-  return rep->togl->cget(param);
+  return Togl::cget(param);
 }
 
 void Toglet::configure(int objc, Tcl_Obj* const objv[])
 {
 DOTRACE("Toglet::configure");
 
-  rep->togl->configure(objc, objv);
+  Togl::configure(objc, objv);
 }
 
 //////////////////
@@ -571,14 +503,14 @@ DOTRACE("Toglet::destroyWidget");
 DebugPrintNL("Toglet::destroyWidget");
 
   // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !Tcl_InterpDeleted(rep->togl->interp()) )
+  if ( !Tcl_InterpDeleted(Togl::interp()) )
     {
       fstring destroy_cmd_str = "destroy ";
       destroy_cmd_str.append( pathname() );
 
       Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
                             Tcl::Code::BACKGROUND_ERROR);
-      destroy_cmd.invoke(rep->togl->interp());
+      destroy_cmd.invoke(Togl::interp());
     }
 }
 
@@ -603,7 +535,7 @@ DOTRACE("Toglet::setColor");
   if (color.green < 0.0 || color.green > 1.0) { throw Util::Error(bad_val_msg); }
   if (color.blue  < 0.0 || color.blue  > 1.0) { throw Util::Error(bad_val_msg); }
 
-  rep->togl->setColor(color.pixel, color.red, color.green, color.blue);
+  Togl::setColor(color.pixel, color.red, color.green, color.blue);
 }
 
 void Toglet::setPixelsPerUnit(double s)
@@ -654,7 +586,7 @@ DOTRACE("Toglet::setHeight");
 
   // This automatically triggers a ConfigureNotify/Expose event pair
   // through the Togl/Tk machinery
-  rep->togl->setHeight(val);
+  Togl::setHeight(val);
 }
 
 void Toglet::setWidth(int val)
@@ -663,7 +595,7 @@ DOTRACE("Toglet::setWidth");
 
   // This automatically triggers a ConfigureNotify/Expose event pair
   // through the Togl/Tk machinery
-  rep->togl->setWidth(val);
+  Togl::setWidth(val);
 }
 
 /////////////
@@ -680,7 +612,7 @@ DOTRACE("Toglet::bind");
 
   Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
 
-  cmd.invoke(rep->togl->interp());
+  cmd.invoke(Togl::interp());
 }
 
 void Toglet::loadDefaultFont() { loadFont(0); }
@@ -689,20 +621,20 @@ void Toglet::loadFont(const char* fontname)
 {
 DOTRACE("Toglet::loadFont");
 
-  rep->loadFontList(rep->togl->loadBitmapFont(fontname));
+  rep->loadFontList(Togl::loadBitmapFont(fontname));
 }
 
 void Toglet::loadFonti(int fontnumber)
 {
 DOTRACE("Toglet::loadFonti");
 
-  rep->loadFontList(rep->togl->loadBitmapFonti(fontnumber));
+  rep->loadFontList(Togl::loadBitmapFonti(fontnumber));
 }
 
 void Toglet::swapBuffers()
 {
 DOTRACE("Toglet::swapBuffers");
-  rep->togl->swapBuffers();
+  Togl::swapBuffers();
 }
 
 void Toglet::takeFocus()
@@ -713,27 +645,27 @@ DOTRACE("Toglet::takeFocus");
 
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 
-  cmd.invoke(rep->togl->interp());
+  cmd.invoke(Togl::interp());
 }
 
 void Toglet::makeCurrent()
 {
 DOTRACE("Toglet::makeCurrent");
-  rep->togl->makeCurrent();
-  Grsh::installCanvas(this->getCanvas());
+  Togl::makeCurrent();
+  Grsh::installCanvas(Togl::getCanvas());
 }
 
 void Toglet::writeEpsFile(const char* filename)
 {
 DOTRACE("Toglet::writeEpsFile");
-  rep->togl->makeCurrent();
+  Togl::makeCurrent();
 
   {
     Gfx::AttribSaver saver(getCanvas());
 
     // Set fore/background colors to extremes for the purposes of EPS
     // rendering
-    if ( rep->togl->isRgba() )
+    if ( Togl::isRgba() )
       {
         getCanvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
         getCanvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
@@ -757,6 +689,34 @@ DOTRACE("Toglet::writeEpsFile");
 
   // redisplay original image
   fullRender();
+}
+
+void Toglet::displayCallback()
+{
+DOTRACE("Toglet::displayCallback");
+
+  try
+    {
+      fullRender();
+    }
+  catch (...)
+    {
+      Tcl::Interp(this->interp()).handleLiveException("displayCallback", true);
+    }
+}
+
+void Toglet::reshapeCallback()
+{
+DOTRACE("Toglet::reshapeCallback");
+
+  try
+    {
+      rep->reconfigure();
+    }
+  catch (...)
+    {
+      Tcl::Interp(this->interp()).handleLiveException("reshapeCallback", true);
+    }
 }
 
 static const char vcid_toglet_cc[] = "$Header$";

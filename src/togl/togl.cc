@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 17:44:11 2002
+// written: Mon Sep 16 18:30:33 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -85,14 +85,7 @@ struct ToglOpts
 namespace
 {
   // Defaults
-  const char*  DEFAULT_TIME      = "1";
-
-  Togl::Callback* DefaultCreateProc = NULL;
-  Togl::Callback* DefaultDisplayProc = NULL;
-  Togl::Callback* DefaultReshapeProc = NULL;
-  Togl::Callback* DefaultDestroyProc = NULL;
-  Togl::Callback* DefaultTimerProc = NULL;
-  ClientData DefaultClientData = NULL;
+  const char*  DEFAULT_TIME      = "0";
 
   // Tk option database machinery for Togl:
 
@@ -206,11 +199,7 @@ public:
 
   bool itsUpdatePending;
   bool itsShutdownRequested;
-  ClientData itsClientData;
-  Togl::Callback* itsUserDisplayProc;
-  Togl::Callback* itsUserReshapeProc;
-  Togl::Callback* itsUserDestroyProc;
-  Togl::Callback* itsUserTimerProc;
+
   Tcl_TimerToken itsTimerToken;
 
   GlxOverlay* itsOverlay;
@@ -226,10 +215,6 @@ public:
   static void cEventCallback(ClientData clientData, XEvent* eventPtr);
   static void cTimerCallback(ClientData clientData);
   static void cRenderCallback(ClientData clientData);
-
-  void setDisplayFunc(Togl::Callback* proc) { itsUserDisplayProc = proc; }
-  void setReshapeFunc(Togl::Callback* proc) { itsUserReshapeProc = proc; }
-  void setDestroyFunc(Togl::Callback* proc) { itsUserDestroyProc = proc; }
 
   void requestRedisplay();
   void requestReconfigure();
@@ -291,11 +276,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
 
   itsUpdatePending(false),
   itsShutdownRequested(false),
-  itsClientData(DefaultClientData),
-  itsUserDisplayProc(DefaultDisplayProc),
-  itsUserReshapeProc(DefaultReshapeProc),
-  itsUserDestroyProc(DefaultDestroyProc),
-  itsUserTimerProc(DefaultTimerProc),
+
   itsTimerToken(0),
 
   itsOverlay(0)
@@ -358,16 +339,11 @@ DOTRACE("Togl::Impl::Impl");
                         &cEventCallback,
                         static_cast<ClientData>(this));
 
-  if (itsUserTimerProc)
+  if (itsOpts->time > 0)
     {
       itsTimerToken =
         Tcl_CreateTimerHandler( itsOpts->time, &cTimerCallback,
                                 static_cast<ClientData>(this) );
-    }
-
-  if (DefaultCreateProc)
-    {
-      DefaultCreateProc(itsOwner);
     }
 
   guard.dismiss();
@@ -403,11 +379,6 @@ Togl::Impl::~Impl() throw()
 DOTRACE("Togl::Impl::~Impl");
 
   Assert(itsTkWin != 0);
-
-  if (itsUserDestroyProc)
-    {
-      itsUserDestroyProc(itsOwner);
-    }
 
   Tcl_DeleteTimerHandler(itsTimerToken);
 
@@ -497,17 +468,12 @@ void Togl::Impl::cTimerCallback(ClientData clientData)
 DOTRACE("Togl::Impl::cTimerCallback");
   Impl* rep = static_cast<Impl*>(clientData);
   Tcl_Preserve(clientData);
-  if (rep->itsUserTimerProc == 0)
-    {
-      rep->itsTimerToken = 0;
-    }
-  else
-    {
-      rep->itsUserTimerProc(rep->itsOwner);
-      rep->itsTimerToken =
-        Tcl_CreateTimerHandler(rep->itsOpts->time, cTimerCallback,
-                               static_cast<ClientData>(rep));
-    }
+
+  rep->itsOwner->timerCallback();
+  rep->itsTimerToken =
+    Tcl_CreateTimerHandler(rep->itsOpts->time, cTimerCallback,
+                           static_cast<ClientData>(rep));
+
   Tcl_Release(clientData);
 }
 
@@ -518,12 +484,11 @@ DOTRACE("Togl::Impl::cRenderCallback");
   Impl* rep = static_cast<Impl*>(clientData);
 
   Tcl_Preserve(clientData);
-  if (rep->itsUserDisplayProc)
-    {
-      rep->itsGlx->makeCurrent(rep->windowId());
-      rep->itsUserDisplayProc(rep->itsOwner);
-    }
+
+  rep->itsGlx->makeCurrent(rep->windowId());
+  rep->itsOwner->displayCallback();
   rep->itsUpdatePending = false;
+
   Tcl_Release(clientData);
 }
 
@@ -552,20 +517,7 @@ DOTRACE("Togl::Impl::requestReconfigure");
       itsGlx->makeCurrent(windowId());
     }
 
-  if (itsUserReshapeProc)
-    {
-      itsUserReshapeProc(itsOwner);
-    }
-  else
-    {
-      glViewport(0, 0, itsOpts->width, itsOpts->height);
-      if (itsOpts->overlayFlag)
-        {
-          useLayer( Overlay );
-          glViewport( 0, 0, itsOpts->width, itsOpts->height );
-          useLayer( Normal );
-        }
-    }
+  itsOwner->reshapeCallback();
 }
 
 void Togl::Impl::swapBuffers() const
@@ -781,28 +733,28 @@ DOTRACE("Togl::~Togl");
   delete rep;
 }
 
-
-void Togl::setDefaultClientData(ClientData p)       { DefaultClientData = p; }
-void Togl::setDefaultCreateFunc(Togl::Callback* p)  { DefaultCreateProc = p; }
-void Togl::setDefaultDisplayFunc(Togl::Callback* p) { DefaultDisplayProc = p; }
-void Togl::setDefaultReshapeFunc(Togl::Callback* p) { DefaultReshapeProc = p; }
-void Togl::setDefaultDestroyFunc(Togl::Callback* p) { DefaultDestroyProc = p; }
-void Togl::setDefaultTimerFunc(Togl::Callback* p)   { DefaultTimerProc = p; }
-
-void Togl::resetDefaultCallbacks()
+void Togl::displayCallback()
 {
-DOTRACE("Togl::resetDefaultCallbacks");
-  DefaultCreateProc = 0;
-  DefaultDisplayProc = 0;
-  DefaultReshapeProc = 0;
-  DefaultDestroyProc = 0;
-  DefaultTimerProc = 0;
-  DefaultClientData = 0;
+DOTRACE("Togl::displayCallback");
 }
 
-void Togl::setDisplayFunc(Togl::Callback* proc) { rep->setDisplayFunc(proc); }
-void Togl::setReshapeFunc(Togl::Callback* proc) { rep->setReshapeFunc(proc); }
-void Togl::setDestroyFunc(Togl::Callback* proc) { rep->setDestroyFunc(proc); }
+void Togl::reshapeCallback()
+{
+DOTRACE("Togl::reshapeCallback");
+
+  glViewport(0, 0, rep->itsOpts->width, rep->itsOpts->height);
+  if (rep->itsOpts->overlayFlag)
+    {
+      useLayer( Overlay );
+      glViewport( 0, 0, rep->itsOpts->width, rep->itsOpts->height );
+      useLayer( Normal );
+    }
+}
+
+void Togl::timerCallback()
+{
+DOTRACE("Togl::timerCallback");
+}
 
 Tcl_Obj* Togl::cget(Tcl_Obj* param) const
   { return rep->cget(param); }
@@ -907,9 +859,6 @@ DOTRACE("Togl::setHeight");
   rep->itsOpts->height = h;
   Tk_GeometryRequest(rep->itsTkWin, rep->itsOpts->width, rep->itsOpts->height);
 }
-
-ClientData Togl::getClientData() const { return rep->itsClientData; }
-void Togl::setClientData(ClientData p) { rep->itsClientData = p; }
 
 Display* Togl::display() const  { return Tk_Display(rep->itsTkWin); }
 Screen* Togl::screen() const    { return Tk_Screen(rep->itsTkWin); }

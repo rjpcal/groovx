@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 17:39:36 2002
+// written: Mon Sep 16 18:30:22 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -50,22 +50,9 @@ public:
   virtual ~Togl();
 
   // Callbacks
-  typedef void (Callback) (Togl* togl);
-  typedef void (OverlayCallback) (void* togl);
-
-  // Default callback setup functions
-  static void setDefaultClientData(ClientData clientData);
-  static void setDefaultCreateFunc(Callback* proc);
-  static void setDefaultDisplayFunc(Callback* proc);
-  static void setDefaultReshapeFunc(Callback* proc);
-  static void setDefaultDestroyFunc(Callback* proc);
-  static void setDefaultTimerFunc(Callback* proc);
-  static void resetDefaultCallbacks();
-
-  // Change callbacks for existing widget
-  void setDisplayFunc(Togl::Callback* proc);
-  void setReshapeFunc(Togl::Callback* proc);
-  void setDestroyFunc(Togl::Callback* proc);
+  virtual void displayCallback();
+  virtual void reshapeCallback();
+  virtual void timerCallback();
 
   // Miscellaneous
 
@@ -109,6 +96,8 @@ public:
     };
 
   // Overlay functions
+  typedef void (OverlayCallback) (void* togl);
+
   void overlayDisplayFunc(OverlayCallback* proc);
   void useLayer(Layer layer);
   void showOverlay();
@@ -123,10 +112,6 @@ public:
   // Manipulators
   void setWidth(int w);
   void setHeight(int h);
-
-  // User client data
-  ClientData getClientData() const;
-  void setClientData(ClientData clientData);
 
   // X11-only commands
   Display* display() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 17:47:01 2002
+// written: Mon Sep 16 18:32:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,10 @@
 #include "visx/tkwidget.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGL_H_DEFINED)
+#include "togl/togl.h"
+#endif
+
 struct Tcl_Interp;
 struct Tcl_Obj;
 
@@ -26,7 +30,7 @@ class TogletImpl;
 
 /// Toglet is an OpenGL Tk widget implemented with the "Togl" library.
 
-class Toglet : public Tcl::TkWidget
+class Toglet : public Togl, public Tcl::TkWidget
 {
 protected:
   Toglet(bool pack=true);
@@ -90,6 +94,9 @@ public:
   void loadFont(const char* fontname);
   void loadFonti(int fontnumber);
   void writeEpsFile(const char* filename);
+
+  virtual void displayCallback();
+  virtual void reshapeCallback();
 
 private:
   Toglet(const Toglet&); // no copy constructor
