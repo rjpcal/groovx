@@ -3,6 +3,33 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
+
+(11-Jan-2000) Need a way to defer loading of pbm files from when
+Bitmap's are deserialized until when they are first used. This would
+require a way to for the files to be loaded on demand. It would have
+the added benefit that in an fMRI script, we would only have to load
+the bitmaps that are actually used in the experiment.
+
+(11-Jan-2000) Need to have a way for Bitmap's to store a .pbm.gz
+filename as their source, so that we avoid the problems with "can't
+find .temp.pbm" on reloading. This means that Bitmap's (and Pbm's)
+need to be able gzip-ed files on their own, without the help of Tcl.
+
+(8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
+to establishing CountedPtr's as a better way to manage objects between
+C++ and Tcl. Probably Reader/Writer need a special method for
+CountedPtr's. The question is how to keep track of the pointers to the
+reference counts. Or... we could put the reference count right in
+IO... Aha! Instead of AsciiStreamReader maintaining a map<unsigned
+long, IO*> during deserialization, we could use a map<unsigned long,
+CountedPtr<IO> >. However, this introduces a split from the semantics
+of readOwnedObject()... this suggests that we need a separate map for
+owned objects. As this transition will require a nearly universal
+switch to CountedPtr's, we need to provide a feasible migration route,
+perhaps by providing the ability to short-circuit CountedPtr's
+ref-counting at first.
+
 (16-Dec-1999) Try to fix ToglConfig::loadFonti on irix by switching
 fontnumber to a long before casting to char*.
 
@@ -84,13 +111,6 @@ TclItemPkg?
 BitmapRep with regard to the BmapRenderer... who owns it? The
 BitmapRep or the owner of BitmapRep? BitmapRep could have a
 resetRenderer() operation.
-
-(30-Nov-1999) What to do about 'control reaching end of non-void
-function' in ExptDriver::Impl::block(), responseHdlr(), and
-timingHdlr()? Probably the best is to eliminate the error checking in
-block(), responseHdlr(), and timingHdlr(), and require that the id's
-be checked with assertIds() before these functions are called. We can
-add an Assert to this effect inside block(), etc.
 
 (29-Nov-1999) TrialEvent's could internally adjust their requested
 delays so that the actual delays converge to the requested
@@ -321,9 +341,6 @@ Value) could be used in the implementation of AsciiStreamReader.
 that controls not the size of the object inside the patch, but the
 size of the patch itself (i.e. how big the window onto the Gabor patch
 is).
-
-(12-Oct-1999) Togl::loadFonti doesn't work on SGI... Seems to be a
-problem with reinterpret_cast<>.
 
 (12-Oct-1999) The SGI-related bugs start rolling in... Had to
 conditionally compile out the delete's in ~TclPkg since they were
@@ -2469,4 +2486,20 @@ source files and ftp them somewhere safe. ... Very thankfully, Anne
 was able to restore the contents of my home directory from snowball2
 after some "hardcore scraping". Hopefully I've learned a lesson
 here... backup backup backup!
+
+(30-Nov-1999, done 7-Jan-2000) What to do about 'control reaching end
+of non-void function' in ExptDriver::Impl::block(), responseHdlr(),
+and timingHdlr()? Probably the best is to eliminate the error checking
+in block(), responseHdlr(), and timingHdlr(), and require that the
+id's be checked with assertIds() before these functions are called. We
+can add an Assert to this effect inside block(), etc. Done.
+
+(11-Jan-2000, done 11-Jan-2000) Need to have quick Tcl access to the
+current trial id. Probably an Expt::currentTrial command for Tcl.
+
+(14-Jan-2000, done 14-Jan-2000) There is some weird problem with
+TlistWidget, perhaps?  Ah yes... first, we didn't initialize
+itsCurTrial and itsVisibility in the constructor, and second of all,
+we didn't check for itsVisibility in safeDrawTrial() before attempting
+to draw.
 
