@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Tue May 14 20:06:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -312,7 +312,7 @@ public:
           if ( allow_resize &&
                entry_count+1 > max_load*buckets.size() )
             {
-              resize(entry_count*grow_factor); // resize...
+              resize(size_type(entry_count*grow_factor)); // resize...
               h = hasher(entry.key) % buckets.size();
               bucket_itr = buckets.begin()+h;
             }

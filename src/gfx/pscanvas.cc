@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Mon Feb 25 10:42:04 2002
+// written: Tue May 14 19:52:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -837,11 +837,11 @@ DOTRACE("Gfx::PSCanvas::drawBezier4");
   itsImpl->bezier(p1, p2, p3, p4);
 }
 
-void Gfx::PSCanvas::drawBezierFill4(const Gfx::Vec3<double>& center,
-                                    const Gfx::Vec3<double>& p1,
-                                    const Gfx::Vec3<double>& p2,
-                                    const Gfx::Vec3<double>& p3,
-                                    const Gfx::Vec3<double>& p4,
+void Gfx::PSCanvas::drawBezierFill4(const Gfx::Vec3<double>& /*center*/,
+                                    const Gfx::Vec3<double>& /*p1*/,
+                                    const Gfx::Vec3<double>& /*p2*/,
+                                    const Gfx::Vec3<double>& /*p3*/,
+                                    const Gfx::Vec3<double>& /*p4*/,
                                     unsigned int /*subdivisions*/)
 {
 DOTRACE("Gfx::PSCanvas::drawBezierFill4");
