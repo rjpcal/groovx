@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 15:06:17 1999
+// written: Thu Nov 18 18:25:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -215,15 +215,17 @@ private:
 
 	 void setMode(GrObj::GrObjRenderMode new_mode, GrObj::Impl* obj);
 
+	 GrObj::GrObjRenderMode getMode() const { return itsMode; }
+
 	 // Returns true if the object was rendered to the screen as part
 	 // of the update, false otherwise
 	 bool update(const GrObj::Impl* obj) const;
 
 	 void render(const GrObj::Impl* obj) const;
 
+  private:
 	 GrObj::GrObjRenderMode itsMode;
 
-  private:
 	 mutable bool itsIsCurrent;    // true if displaylist is current
 	 mutable int itsDisplayList;   // OpenGL display list that draws the object
 	 Bitmap* itsBitmapCache;
@@ -246,8 +248,11 @@ private:
 
 public:
 
-  GrObj::GrObjRenderMode getRenderMode() const { return itsRenderer.itsMode; }
-  void setRenderMode(GrObj::GrObjRenderMode new_mode);
+  GrObj::GrObjRenderMode getRenderMode() const
+	 { return itsRenderer.getMode(); }
+  void setRenderMode(GrObj::GrObjRenderMode new_mode)
+	 { itsRenderer.setMode(new_mode, this); }
+
 
   void update() const;
   void draw() const;
@@ -516,7 +521,7 @@ DOTRACE("GrObj::Impl::serialize");
 
   os << itsCategory << IO::SEP;
 
-  os << itsRenderer.itsMode << IO::SEP;
+  os << itsRenderer.getMode() << IO::SEP;
   os << itsUnRenderer.itsMode << IO::SEP;
 
   os << itsBB.itsIsVisible << IO::SEP;
@@ -545,7 +550,9 @@ DOTRACE("GrObj::Impl::deserialize");
 
   is >> itsCategory; if (is.fail()) throw InputError("after GrObj::itsCategory");
 
-  is >> itsRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsRenderer.itsMode");
+  is >> temp; itsRenderer.setMode(temp);
+  if (is.fail()) throw InputError("after GrObj::itsRenderer.itsMode");
+
   is >> itsUnRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderer.itsMode");
 
   is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
@@ -571,7 +578,7 @@ DOTRACE("GrObj::Impl::charCount");
 	 gCharCount("GrObj") + 1
 	 + gCharCount(itsCategory) + 1
 	 
-	 + gCharCount(itsRenderer.itsMode) + 1
+	 + gCharCount(itsRenderer.getMode()) + 1
 	 + gCharCount(itsUnRenderer.itsMode) + 1
 	 
 	 + gCharCount(itsBB.itsIsVisible) + 1
@@ -592,7 +599,11 @@ void GrObj::Impl::readFrom(Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
   reader->readValue("GrObj::category", itsCategory);
 
-  reader->readValue("GrObj::renderMode", itsRenderer.itsMode);
+  int temp;
+
+  reader->readValue("GrObj::renderMode", temp);
+  itsRenderer.setMode(temp);
+
   reader->readValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
 
   reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
@@ -610,7 +621,7 @@ void GrObj::Impl::writeTo(Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
   writer->writeValue("GrObj::category", itsCategory);
 
-  writer->writeValue("GrObj::renderMode", itsRenderer.itsMode);
+  writer->writeValue("GrObj::renderMode", itsRenderer.getMode());
   writer->writeValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
 
   writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
@@ -809,11 +820,6 @@ DOTRACE("GrObj::Impl::setAlignmentMode");
   } // end switch
 
   DebugEvalNL(itsAligner.itsMode); 
-}
-
-void GrObj::Impl::setRenderMode(GrObj::GrObjRenderMode new_mode) {
-DOTRACE("GrObj::Impl::setRenderMode");
-  itsRenderer.setMode(new_mode, this); 
 }
 
 void GrObj::Impl::setUnRenderMode(GrObj::GrObjRenderMode new_mode) {
@@ -1048,7 +1054,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 		doScaling();
 		doAlignment();
 		  
-		if ( itsRenderer.itsMode == GrObj::GROBJ_GL_COMPILE ) {
+		if ( itsRenderer.getMode() == GrObj::GROBJ_GL_COMPILE ) {
 		  itsRenderer.callList();
 		}
 		else {
