@@ -96,6 +96,7 @@ public:
     def( "haveAudio", 0, &Sound::haveSound );
 
     defAction("play", &Sound::play);
+    defAction("forceLoad", &Sound::forceLoad);
     defAttrib("file", &Sound::getFile, &Sound::setFile);
   }
 

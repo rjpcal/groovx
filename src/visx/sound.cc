@@ -142,23 +142,36 @@ DOTRACE("Sound::writeTo");
 void Sound::play()
 {
 DOTRACE("Sound::play");
+
+  forceLoad();
+
   if (itsRep.get() != 0)
     itsRep->play();
+}
+
+void Sound::forceLoad()
+{
+DOTRACE("Sound::forceLoad");
+  // check if we have a valid filename without a corresponding valid rep
+  if (itsRep.get() == 0 && !itsFilename.is_empty())
+    itsRep.reset(newPlatformSoundRep(itsFilename.c_str()));
 }
 
 void Sound::setFile(const char* filename)
 {
 DOTRACE("Sound::setFile");
-  if (filename == 0 || filename[0] == '\0')
-    {
-      itsFilename = "";
-      itsRep.reset(0);
-      return;
-    }
 
-  // else, we have a non-empty filename
-  itsRep.reset(newPlatformSoundRep(filename));
-  itsFilename = filename;
+  if (filename == 0)
+    filename = "";
+
+  if (itsFilename != filename)
+    {
+      // itsRep is only lazily updated, so just mark it as invalid
+      // here... we won't have to update it until someone actually tries to
+      // play() the sound
+      itsRep.reset(0);
+      itsFilename = filename;
+    }
 }
 
 const char* Sound::getFile() const

@@ -84,6 +84,7 @@ public:
   static Util::Ref<Sound> getOkSound();
   static Util::Ref<Sound> getErrSound();
 
+  /// Construct with the given sound file.
   Sound(const char* filename = 0);
 
   virtual ~Sound();
@@ -91,9 +92,20 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  virtual void play();
-  virtual void setFile(const char* filename);
-  virtual const char* getFile() const;
+  /// Play the sound.
+  /** This will load the sound file from disk if it has not yet been
+      loaded; forceLoad() can be called first to avoid this additional
+      latency. */
+  void play();
+
+  /// Loaded the sound file from disk if it has not yet been loaded.
+  void forceLoad();
+
+  /// Specify a new sound file.
+  void setFile(const char* filename);
+
+  /// Get the name of the current sound file.
+  const char* getFile() const;
 
 private:
   fstring itsFilename;
