@@ -79,7 +79,7 @@ proc writefile { fname } {
 proc backup { fname } {
     if { [file exists $fname] } {
         file delete ${fname}.bkp
-        exec mv $fname ${fname}.bkp
+        file rename $fname ${fname}.bkp
     }
 }
 
@@ -96,16 +96,18 @@ readfile $rawfilename
 readfile $tallyfilename
 
 #
+# Save the new counts to a new tally file
+#
+
+writefile ${tallyfilename}.new
+
+#
 # Save backups of the old raw and tally files
 #
 
 backup $rawfilename
 backup $tallyfilename
 
-#
-# Save the new counts to a new tally file
-#
-
-writefile $tallyfilename
+file rename ${tallyfilename}.new $tallyfilename
 
 exit
