@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 11:45:20 2002
+// written: Tue Sep 17 11:52:50 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -472,7 +472,7 @@ void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr) throw()
     }
   catch (...)
     {
-      Tcl::Interp(rep->itsInterp).handleLiveException("cRenderCallback", true);
+      Tcl::Interp(rep->itsInterp).handleLiveException("cEventCallback", true);
     }
   Tcl_Release(clientData);
 }
@@ -492,7 +492,7 @@ DOTRACE("Togl::Impl::cTimerCallback");
     }
   catch (...)
     {
-      Tcl::Interp(rep->itsInterp).handleLiveException("cRenderCallback", true);
+      Tcl::Interp(rep->itsInterp).handleLiveException("cTimerCallback", true);
     }
 
   Tcl_Release(clientData);
