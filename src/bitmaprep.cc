@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Dec  2 12:53:50 1999
+// written: Mon Dec  6 20:34:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #include <cmath>					  // for abs
 
 #include "bmaprenderer.h"
-#include "canvas.h"
+#include "glcanvas.h"
 #include "error.h"
 #include "io.h"
 #include "pbm.h"
@@ -219,7 +219,7 @@ void BitmapRep::grabWorldRect(double left, double top,
 void BitmapRep::grabWorldRect(const Rect<double>& world_rect) {
 DOTRACE("BitmapRep::grabWorldRect");
   Rect<int> screen_rect =
-	 Canvas::theCanvas().getScreenFromWorld(world_rect);
+	 GLCanvas::theCanvas().getScreenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
 }
@@ -295,7 +295,7 @@ DOTRACE("BitmapRep::center");
   screen_pos.top() = viewport[1] + itsHeight;
 
   Rect<double> world_pos = 
-	 Canvas::theCanvas().getWorldFromScreen(screen_pos);
+	 GLCanvas::theCanvas().getWorldFromScreen(screen_pos);
 
   GLdouble screen_width = abs(world_pos.width());
   GLdouble screen_height = abs(world_pos.height());
@@ -325,7 +325,7 @@ DOTRACE("BitmapRep::grUnRender");
   int border_pixels;
   grGetBoundingBox(world_rect, border_pixels);
 
-  Rect<int> screen_pos = Canvas::theCanvas().getScreenFromWorld(world_rect);
+  Rect<int> screen_pos = GLCanvas::theCanvas().getScreenFromWorld(world_rect);
 
   screen_pos.widenByStep(border_pixels + 1);
   screen_pos.heightenByStep(border_pixels + 1);
@@ -352,7 +352,7 @@ DOTRACE("BitmapRep::grGetBoundingBox");
 
   // Get screen coordinates for the lower left corner
   Point<int> screen_point =
-	 Canvas::theCanvas().getScreenFromWorld(Point<double>(itsRasterX, itsRasterY));
+	 GLCanvas::theCanvas().getScreenFromWorld(Point<double>(itsRasterX, itsRasterY));
 
   if (itsZoomX < 0.0) {
 	 screen_point.x() += int(itsWidth*itsZoomX);
@@ -365,7 +365,7 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   screen_point += Point<double>(itsWidth*abs(itsZoomX),
 										  itsHeight*abs(itsZoomY));
 
-  bbox.setTopRight(Canvas::theCanvas().getWorldFromScreen(screen_point));
+  bbox.setTopRight(GLCanvas::theCanvas().getWorldFromScreen(screen_point));
 
   return true;
 }

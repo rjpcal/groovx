@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Mon Dec  6 20:18:55 1999
+// written: Mon Dec  6 20:37:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include <GL/gl.h>
 
-#include "canvas.h"
+#include "glcanvas.h"
 #include "tlist.h"
 #include "trial.h"
 
@@ -30,7 +30,7 @@ namespace {
 
 	 DebugPrintNL("drawing the trial...");
 	 try {
-		theTlist.getCheckedPtr(trial)->trDraw(Canvas::theCanvas(), false);
+		theTlist.getCheckedPtr(trial)->trDraw(GLCanvas::theCanvas(), false);
 	 }
 	 catch (InvalidIdError& err) {
 		DebugEvalNL(err.msg());
@@ -56,7 +56,7 @@ DOTRACE("TlistWidget::display");
   // invalid id errors that occur, and simply clear the screen in
   // this case.
   try {
-	 theTlist.getCheckedPtr(itsCurTrial)->trUndraw(Canvas::theCanvas(), false);
+	 theTlist.getCheckedPtr(itsCurTrial)->trUndraw(GLCanvas::theCanvas(), false);
   }
   catch (InvalidIdError&) {
 	 clearscreen();
@@ -84,7 +84,7 @@ DOTRACE("TlistWidget::refresh");
 
 void TlistWidget::undraw() {
 DOTRACE("TlistWidget::undraw");
-  theTlist.getCheckedPtr(itsCurTrial)->trUndraw(Canvas::theCanvas(), true);
+  theTlist.getCheckedPtr(itsCurTrial)->trUndraw(GLCanvas::theCanvas(), true);
 }
 
 void TlistWidget::setCurTrial(int trial) {
