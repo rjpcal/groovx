@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Thu Aug 16 10:57:27 2001
+// written: Fri Aug 24 16:54:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,8 +31,6 @@ GLCacheNode::~GLCacheNode()
 
 void GLCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
 {
-  canvas.throwIfError("before GLCacheNode::gnodeDraw");
-
   if (itsMode != Gmodes::GLCOMPILE)
     {
       child()->gnodeDraw(canvas);
@@ -61,8 +59,6 @@ void GLCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
           glEndList();
         }
     }
-
-  canvas.throwIfError("during GLCacheNode::gnodeDraw");
 }
 
 Gfx::Rect<double> GLCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
