@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri Jul  2 11:15:01 1999
+// written: Fri Jul 16 17:18:43 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -58,6 +58,7 @@ protected:
   int objc() { return itsObjc; }
 
   int    getIntFromArg(int argn);
+  long   getLongFromArg(int argn);
   bool   getBoolFromArg(int argn);
   double getDoubleFromArg(int argn);
   const char*  getCstringFromArg(int argn);
@@ -85,12 +86,14 @@ protected:
   void returnVoid();
   void returnError();
   void returnInt(int val);
+  void returnLong(long val);
   void returnBool(bool val);
   void returnDouble(double val);
   void returnCstring(const char* val);
   void returnString(const string& val);
 
   void returnVal(int val) { returnInt(val); }
+  void returnVal(long val) { returnInt(val); }
   void returnVal(bool val) { returnBool(val); }
   void returnVal(double val) { returnDouble(val); }
   void returnVal(const char* val) { returnCstring(val); }
@@ -105,6 +108,7 @@ protected:
   }
 
   void lappendVal(int val);
+  void lappendVal(long val);
   void lappendVal(bool val);
   void lappendVal(double val);
   void lappendVal(const char* val);
