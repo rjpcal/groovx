@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Sat Mar  4 16:31:50 2000
+// written: Sun Mar  5 20:14:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "trialevent.h"
 
 #include <cstring>
+#include <iostream.h>
 
 #define NO_TRACE
 #include "trace.h"
