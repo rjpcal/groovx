@@ -472,11 +472,16 @@ export:
 	  cvs -z3 -d $(CVS_ROOT) export -r HEAD -d $(DISTNAME) $(CVS_REPO) \
 	  && rm -r $(DISTNAME)/logs/* \
 	  && (cd $(DISTNAME) && autoconf) \
+	  && (cd $(DISTNAME) && echo $(DISTNAME) > SNAPSHOT) \
 	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
 
 www_export: export
-	cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/
-	chmod og+r $(HOME)/www/code/$(DISTNAME).tar.gz
+	/bin/cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/
+	/bin/chmod 444 $(HOME)/www/code/$(DISTNAME).tar.gz
+	/bin/rm -f $(HOME)/www/code/$(PACKAGE_TARNAME)_current.tar.gz
+	cd $(HOME)/www/code && /bin/ln -s \
+		$(DISTNAME).tar.gz \
+		$(PACKAGE_TARNAME)_current.tar.gz
 
 #-------------------------------------------------------------------------
 #
