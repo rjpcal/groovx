@@ -132,7 +132,7 @@ LIBRARIES = \
 #-------------------------------------------------------------------------
 
 # directories for object files
-GRSH = $(ARCH)
+GRSH = ./$(ARCH)
 UTIL = util/$(ARCH)
 
 GRSH_STATIC_OBJS = \
@@ -271,7 +271,7 @@ $(GRSH)/%.do : %.cc;
 #
 #-------------------------------------------------------------------------
 
-DEBUG_TARGET = testsh
+DEBUG_TARGET = $(HOME)/bin/$(ARCH)/testsh
 
 DEBUG_LIBVISX = $(GRSH)/libvisx.d.$(SHLIB_EXT)
 DEBUG_LIBTCLWORKS = $(GRSH)/libtclworks.d.$(SHLIB_EXT)
@@ -288,7 +288,7 @@ DEBUG_TCLWORKS_OBJS = $(TCLWORKS_OBJS)
 #
 #-------------------------------------------------------------------------
 
-PROD_TARGET = grsh0.7a2
+PROD_TARGET = $(HOME)/bin/$(ARCH)/grsh0.7a2
 
 PROD_LIBVISX = $(GRSH)/libvisx.$(SHLIB_EXT)
 PROD_LIBTCLWORKS = $(GRSH)/libtclworks.$(SHLIB_EXT)
@@ -311,7 +311,7 @@ PROD_TCLWORKS_OBJS = $(DEBUG_TCLWORKS_OBJS:.do=.o)
 #
 #-------------------------------------------------------------------------
 
-testsh: TAGS $(HOME)/bin/$(ARCH)/$(DEBUG_TARGET)
+testsh: TAGS $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
 
 ALL_DEBUG_DEPENDS = \
@@ -319,12 +319,11 @@ ALL_DEBUG_DEPENDS = \
 	$(DEBUG_LIBVISX) \
 	$(DEBUG_LIBTCLWORKS)
 
-$(HOME)/bin/$(ARCH)/$(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
-	$(CC) $(DEBUG_LINK_OPTIONS) -o $(HOME)/ftp/$@ $(DEBUG_GRSH_STATIC_OBJS) /opt/langtools/lib/end.o \
+$(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
+	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) /opt/langtools/lib/end.o \
 	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
-	mv $(HOME)/ftp/$@ $@
 
-grsh: TAGS $(HOME)/bin/$(ARCH)/$(PROD_TARGET)
+grsh: TAGS $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
 ALL_PROD_DEPENDS = \
@@ -332,7 +331,7 @@ ALL_PROD_DEPENDS = \
 	$(PROD_LIBVISX) \
 	$(PROD_LIBTCLWORKS)
 
-$(HOME)/bin/$(ARCH)/$(PROD_TARGET): $(ALL_PROD_DEPENDS)
+$(PROD_TARGET): $(ALL_PROD_DEPENDS)
 	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
 	$(LIB_DIRS) -lvisx -ltclworks $(LIBRARIES)
 
@@ -343,12 +342,10 @@ $(HOME)/bin/$(ARCH)/$(PROD_TARGET): $(ALL_PROD_DEPENDS)
 #-------------------------------------------------------------------------
 
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $(HOME)/ftp/$@ $^
-	mv $(HOME)/ftp/$@ ./$@
+	$(SHLIB_CMD) $@ $^
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $(HOME)/ftp/$@ $^
-	mv $(HOME)/ftp/$@ ./$@
+	$(STATLIB_CMD) $@ $^
 
 $(DEBUG_LIBVISX):      $(DEBUG_GRSH_DYNAMIC_OBJS)
 $(PROD_LIBVISX):       $(PROD_GRSH_DYNAMIC_OBJS)
