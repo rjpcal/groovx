@@ -19,6 +19,13 @@ IO::testDestringifyCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
 IO::testWriteCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
 IO::testReadCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
 
+set TH [Th::Th]
+
+IO::testStringifyCmd ThTcl Th 1 $::TH
+IO::testDestringifyCmd ThTcl Th 1 $::TH
+IO::testWriteCmd ThTcl Th 1 $::TH
+IO::testReadCmd ThTcl Th 1 $::TH
+
 ### SimpleTh::timingHandlerCmd ###
 test "ThTcl-SimpleTh::SimpleTh" "too many args" {
     SimpleTh::SimpleTh junk
