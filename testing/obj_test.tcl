@@ -25,18 +25,20 @@ namespace eval Objtest {
         set usage "wrong \# args: should be \"$cmdname\""
         set testname "${this(packagename)}-${cmdname}"
 
-        eval ::test $testname {"too many args"} {"
-            $cmdname junk
-        "} {$usage}
-        eval ::test $testname {"check number of objects"} {"
-            $cmdname
-            set before_count \[${this(baseclass)}::countAll\]
-            Obj::new ${this(subclass1)}
-            Obj::new ${this(subclass2)}
-            $cmdname
-            set after_count \[${this(baseclass)}::countAll\]
-            return \[expr \$before_count - \$after_count\]
-        "} {"^0$"}
+        ::test $testname "too many args" [format {
+            %s junk
+        } $cmdname] $usage
+
+        ::test $testname "check number of objects" [format {
+	    set bc %s
+            ${bc}::removeAll
+            set before_count [${bc}::countAll]
+            Obj::new %s
+            Obj::new %s
+            ${bc}::removeAll
+            set after_count [${bc}::countAll]
+            return [expr $before_count - $after_count]
+        } $this(baseclass) $this(subclass1) $this(subclass2)] {^0$}
     }
 
     proc testCountAllCmd { objname } {
