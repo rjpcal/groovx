@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Oct 13 15:28:14 1999
+// written: Thu Oct 14 15:55:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,12 +27,6 @@
 
 namespace {
   const string ioTag = "Gtext";
-
-  void eatWhitespace(istream& is) {
-	 while ( isspace(is.peek()) ) {
-		is.get();
-	 }
-  }
 
 //---------------------------------------------------------------------
 //
@@ -696,7 +690,7 @@ void Gtext::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Gtext::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); } 
 
-  eatWhitespace(is);
+  IO::eatWhitespace(is);
   getline(is, itsText, '\n');
 
   if (is.fail()) throw InputError(ioTag);

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Mon Oct  4 12:59:11 1999
+// written: Thu Oct 14 15:54:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,12 +40,6 @@ namespace {
   const double theirMouth_x[2] = {-0.2, 0.2};
 
   const string ioTag = "Face";
-
-  void eatWhitespace(istream& is) {
-	 while ( isspace(is.peek()) ) {
-		is.get();
-	 }
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +105,7 @@ void Face::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Face::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  eatWhitespace(is);
+  IO::eatWhitespace(is);
   int version = 0;
 
   if ( is.peek() == '@' ) {

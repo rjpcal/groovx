@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Oct 12 13:29:14 1999
+// written: Thu Oct 14 15:55:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,12 +43,6 @@
 
 namespace {
   const string ioTag = "MorphyFace";
-
-  void eatWhitespace(istream& is) {
-	 while ( isspace(is.peek()) ) {
-		is.get();
-	 }
-  }
 
   void draw_hairstyle1() {
 	 const GLdouble hair_vertices[] = {
@@ -245,7 +239,7 @@ void MorphyFace::deserialize(istream &is, IOFlag flag) {
 DOTRACE("MorphyFace::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  eatWhitespace(is);
+  IO::eatWhitespace(is);
   int version = 0;
 
   if ( is.peek() == '@' ) {

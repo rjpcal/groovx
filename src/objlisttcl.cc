@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct  8 15:57:25 1999
+// written: Thu Oct 14 15:56:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,12 +29,6 @@ namespace ObjlistTcl {
   class LoadObjectsCmd;
   class SaveObjectsCmd;
   class ObjListPkg;  
-
-  void eatWhitespace(istream& is) {
-	 while ( isspace(is.peek()) ) {
-		is.get();
-	 }
-  }
 }
 
 //---------------------------------------------------------------------
@@ -74,7 +68,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
   int num_read = 0;
   vector<int> ids;
 
-  eatWhitespace(ifs);
+  IO::eatWhitespace(ifs);
 
   while ( (num_to_read < 0 || num_read < num_to_read)
 			 && (ifs.peek() != EOF) ) {
@@ -102,7 +96,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 	 ids.push_back(objid);
 	 ++num_read;
 
-	 eatWhitespace(ifs);
+	 IO::eatWhitespace(ifs);
   }
   
   // Return the ids of all the faces created
