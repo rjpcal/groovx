@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Mon Aug 13 12:19:14 2001
+// written: Tue Aug 14 11:52:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 
 namespace
 {
-  void renderRect(const Gfx::Rect<double>& bounds)
+  void renderRect(Gfx::Canvas& canvas, const Gfx::Rect<double>& bounds)
   {
     glPushAttrib(GL_LINE_BIT);
     {
@@ -32,14 +32,7 @@ namespace
       glEnable(GL_LINE_STIPPLE);
       glLineStipple(1, 0x0F0F);
 
-      glBegin(GL_LINE_LOOP);
-      {
-        glVertex2d(bounds.left(), bounds.bottom());
-        glVertex2d(bounds.right(), bounds.bottom());
-        glVertex2d(bounds.right(), bounds.top());
-        glVertex2d(bounds.left(), bounds.top());
-      }
-      glEnd();
+      canvas.drawRect(bounds);
     }
     glPopAttrib();
   }
@@ -76,7 +69,7 @@ DOTRACE("GrObjBBox::gnodeDraw");
     {
       Gfx::Rect<double> bounds = gnodeBoundingBox(canvas);
 
-      renderRect(bounds);
+      renderRect(canvas, bounds);
     }
 
   child()->gnodeDraw(canvas);
@@ -90,7 +83,7 @@ DOTRACE("GrObjBBox::gnodeUndraw");
     {
       Gfx::Rect<double> bounds = gnodeBoundingBox(canvas);
 
-      renderRect(bounds);
+      renderRect(canvas, bounds);
     }
 
   child()->gnodeUndraw(canvas);
