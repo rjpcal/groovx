@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Tue Jun  5 14:07:01 2001
+// written: Mon Jul  9 13:44:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ Error::Error() {
 DOTRACE("Error::Error ");
 #ifdef LOCAL_DEBUG
   Util::Trace::printStackTrace();
-#endif 
+#endif
 }
 
 Error::~Error() {
@@ -79,25 +79,25 @@ DOTRACE("ErrorWithMsg::msg_cstr");
 
 ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg) {
 DOTRACE("ErrorWithMsg::appendMsg");
-  *itsInfo += addMsg; 
+  *itsInfo += addMsg;
   DebugEvalNL(*itsInfo);
   return *this;
 }
 
 ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2) {
 DOTRACE("ErrorWithMsg::appendMsg");
-  *itsInfo += addMsg1; 
-  *itsInfo += addMsg2; 
+  *itsInfo += addMsg1;
+  *itsInfo += addMsg2;
   DebugEvalNL(*itsInfo);
   return *this;
 }
 
 ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2,
-												  const char* addMsg3) {
+                                      const char* addMsg3) {
 DOTRACE("ErrorWithMsg::appendMsg");
-  *itsInfo += addMsg1; 
-  *itsInfo += addMsg2; 
-  *itsInfo += addMsg3; 
+  *itsInfo += addMsg1;
+  *itsInfo += addMsg2;
+  *itsInfo += addMsg3;
   DebugEvalNL(*itsInfo);
   return *this;
 }
@@ -126,11 +126,11 @@ class ErrorWithMsg::Impl {
 public:
   void dummy() // just a hack since aCC won't do explicit instantiation
   {
-	 num2str((int)0);
-	 num2str((unsigned int)0);
-	 num2str((long)0);
-	 num2str((unsigned long)0);
-	 num2str((double)0);
+    num2str((int)0);
+    num2str((unsigned int)0);
+    num2str((long)0);
+    num2str((unsigned long)0);
+    num2str((double)0);
   }
 };
 #endif
