@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Aug  8 19:01:00 2001
+// written: Wed Aug  8 20:03:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
-#include "util/tostring.h"
 #endif
 
 namespace Util
@@ -36,41 +32,40 @@ namespace Util
 class Util::Error {
 public:
   /// Default construct with an empty message string.
-  Error() : itsInfo(0), itsCount(0)
-  { init(); }
+  Error() : itsInfo() {}
 
   /** Construct with an error message. */
   template <class T1>
   Error(const T1& part1) :
-    itsInfo(0), itsCount(0)
+    itsInfo()
   {
-    init(); appendOne(part1);
+    itsInfo.append(part1);
   }
 
   /** Construct with an error message. */
   template <class T1, class T2>
   Error(const T1& part1, const T2& part2) :
-    itsInfo(0), itsCount(0)
+    itsInfo()
   {
-    init(); appendOne(part1); appendOne(part2);
+    itsInfo.append(part1); itsInfo.append(part2);
   }
 
   /** Construct with an error message. */
   template <class T1, class T2, class T3>
   Error(const T1& part1, const T2& part2, const T3& part3) :
-    itsInfo(0), itsCount(0)
+    itsInfo()
   {
-    init(); appendOne(part1); appendOne(part2); appendOne(part3);
+    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
   }
 
   /** Construct with an error message. */
   template <class T1, class T2, class T3, class T4>
   Error(const T1& part1, const T2& part2, const T3& part3,
         const T4& part4) :
-    itsInfo(0), itsCount(0)
+    itsInfo()
   {
-    init(); appendOne(part1); appendOne(part2); appendOne(part3);
-    appendOne(part4);
+    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
+    itsInfo.append(part4);
   }
 
   /// Copy constructor.
@@ -80,27 +75,30 @@ public:
   virtual ~Error();
 
   /// Get a C-style string describing the error.
-  virtual const char* msg_cstr() const;
+  const fixed_string& msg() const { return itsInfo; }
+
+  /// Get a C-style string describing the error.
+  const char* msg_cstr() const { return itsInfo.c_str(); }
 
   /** Append additional text to the error message. */
   template <class T1>
   void append(const T1& part1)
   {
-    appendOne(part1);
+    itsInfo.append(part1);
   }
 
   /** Append additional text to the error message. */
   template <class T1, class T2>
   void append(const T1& part1, const T2& part2)
   {
-    appendOne(part1); appendOne(part2);
+    itsInfo.append(part1); itsInfo.append(part2);
   }
 
   /** Append additional text to the error message. */
   template <class T1, class T2, class T3>
   void append(const T1& part1, const T2& part2, const T3& part3)
   {
-    appendOne(part1); appendOne(part2); appendOne(part3);
+    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
   }
 
   /** Append additional text to the error message. */
@@ -108,33 +106,14 @@ public:
   void append(const T1& part1, const T2& part2, const T3& part3,
               const T4& part4)
   {
-    appendOne(part1); appendOne(part2); appendOne(part3); appendOne(part4);
+    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
+    itsInfo.append(part4);
   }
-
-  void raise() { throw *this; }
-
-protected:
-  /// Change the informative message to \a newMessage.
-  virtual void setMsg(const char* newMessage);
-
-  /** Append additional text to the error message. */
-  template <class T>
-  void appendOne(const T& t)
-  {
-    doAppend(Util::Convert<T>::toString(t));
-  }
-
-  void doAppend(const char* text);
-
-  void init();
 
 private:
   Error& operator=(const Error& other);
 
-  typedef unsigned short ushort;
-
-  fixed_string* itsInfo;
-  ushort* itsCount;
+  fixed_string itsInfo;
 };
 
 #define INHERIT_ERROR_CTORS(type) \

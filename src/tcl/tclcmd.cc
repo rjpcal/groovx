@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:04:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
   catch (Util::Error& err)
     {
       DebugPrintNL("catch (Util::Error&)");
-      if ( !string_literal(err.msg_cstr()).empty() )
+      if ( !err.msg().empty() )
         {
           errMessage(interp, theImpl->cmdName(), err.msg_cstr());
         }
