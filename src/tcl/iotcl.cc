@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu May 17 11:52:23 2001
+// written: Fri May 18 18:05:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,74 +148,6 @@ namespace Tcl {
 
 //---------------------------------------------------------------------
 //
-// TypeCmd
-//
-//---------------------------------------------------------------------
-
-class IoTypeCmd : public TclItemCmd<IO::IoObject> {
-public:
-  IoTypeCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
-	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 IO::IoObject* p = TclItemCmd<IO::IoObject>::getItem();
-	 returnCstring(demangle_cstr(typeid(*p).name()));
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// RefCountCmd
-//
-//---------------------------------------------------------------------
-
-class IoRefCountCmd : public TclItemCmd<IO::IoObject> {
-public:
-  IoRefCountCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
-	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 IO::IoObject* p = TclItemCmd<IO::IoObject>::getItem();
-	 returnInt(p->refCount());
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// IncrRefCountCmd
-//
-//---------------------------------------------------------------------
-
-class IoIncrRefCountCmd : public TclItemCmd<IO::IoObject> {
-public:
-  IoIncrRefCountCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
-	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 IO::IoObject* p = TclItemCmd<IO::IoObject>::getItem();
-	 p->incrRefCount2();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// DecrRefCountCmd
-//
-//---------------------------------------------------------------------
-
-class IoDecrRefCountCmd : public TclItemCmd<IO::IoObject> {
-public:
-  IoDecrRefCountCmd(CTclItemPkg<IO::IoObject>* pkg, const char* cmd_name) :
-	 TclItemCmd<IO::IoObject>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 IO::IoObject* p = TclItemCmd<IO::IoObject>::getItem();
-	 p->decrRefCount2();
-  }
-};
-
-//---------------------------------------------------------------------
-//
 // IoNewCmd
 //
 //---------------------------------------------------------------------
@@ -270,12 +202,12 @@ public:
   {
 	 TclItemPkg::addIoCommands(this);
 
-	 addCommand( new IoTypeCmd(this, TclPkg::makePkgCmdName("type")) );
-	 addCommand( new IoRefCountCmd(this, TclPkg::makePkgCmdName("refCount")));
-	 addCommand( new IoIncrRefCountCmd(this,
-                        TclPkg::makePkgCmdName("incrRefCount")));
-	 addCommand( new IoDecrRefCountCmd(this,
-								TclPkg::makePkgCmdName("decrRefCount")));
+	 declareCGetter("type", &IO::IoObject::ioTypename);
+
+	 typedef int (IO::IoObject::* FT)() const;
+	 declareCGetter("refCount", FT(&IO::IoObject::refCount));
+	 declareCAction("incrRefCount", &IO::IoObject::incrRefCount);
+	 declareCAction("decrRefCount", &IO::IoObject::decrRefCount);
 
 	 addCommand( new IoNewCmd(interp, TclPkg::makePkgCmdName("new")));
 	 addCommand( new IoDeleteCmd(interp, TclPkg::makePkgCmdName("delete")));
