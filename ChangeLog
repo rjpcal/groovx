@@ -207,3 +207,5 @@ will be needed, and then they can be phased out.
   OK, these are merged into bitmaptcl.cc... that's probably as far as I can
   go for now, since I still need at least a shell of class definitions for
   GLBitmap/XBitmap in order to be able to read old expt files.
+
+* (done 21-Nov-2002) Rename Bitmap --> GxPixmap
