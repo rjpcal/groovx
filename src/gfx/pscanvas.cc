@@ -137,7 +137,7 @@ public:
       onBegin(ps);
     }
 
-    virtual void vertex(PS* ps, const vec2d& v)
+    virtual void vertex(PS* ps, const vec3d& v)
     {
       onVertex(ps, v);
       ++itsVcount;
@@ -154,7 +154,7 @@ public:
     unsigned int itsVcount;
 
     virtual void onBegin(PS* ps) = 0;
-    virtual void onVertex(PS* ps, const vec2d& v) = 0;
+    virtual void onVertex(PS* ps, const vec3d& v) = 0;
     virtual void onEnd(PS* ps) = 0;
   };
 
@@ -162,7 +162,7 @@ public:
   {
     virtual void onBegin(PS*) {}
 
-    virtual void onVertex(PS* ps, const vec2d& v)
+    virtual void onVertex(PS* ps, const vec3d& v)
     {
       ps->newpath(); ps->moveto(v); ps->stroke();
     }
@@ -176,7 +176,7 @@ public:
     {
       ps->newpath();
     }
-    virtual void onVertex(PS* ps, const vec2d& v)
+    virtual void onVertex(PS* ps, const vec3d& v)
     {
       if (vcount() % 2)
         {
@@ -196,7 +196,7 @@ public:
     {
       ps->newpath();
     }
-    virtual void onVertex(PS* ps, const vec2d& v)
+    virtual void onVertex(PS* ps, const vec3d& v)
     {
       if (vcount() == 0)
         {
@@ -216,7 +216,7 @@ public:
   struct LineLoopPrim : public Primitive
   {
     virtual void onBegin(PS*) {}
-    virtual void onVertex(PS* ps, const vec2d& v)
+    virtual void onVertex(PS* ps, const vec3d& v)
     {
       if (vcount() == 0)
         {
@@ -239,7 +239,7 @@ public:
     {
       ps->newpath();
     }
-    virtual void onVertex(PS* ps, const vec2d& v)
+    virtual void onVertex(PS* ps, const vec3d& v)
     {
       switch(vcount() % 3)
         {
@@ -260,14 +260,14 @@ public:
   struct TriangleStripPrim : public Primitive
   {
     virtual void onBegin(PS*) { /* FIXME */ }
-    virtual void onVertex(PS*, const vec2d&) { /* FIXME */ }
+    virtual void onVertex(PS*, const vec3d&) { /* FIXME */ }
     virtual void onEnd(PS*) { /* FIXME */ }
   };
 
   struct TriangleFanPrim : public Primitive
   {
     virtual void onBegin(PS*) { /* FIXME */ }
-    virtual void onVertex(PS*, const vec2d&) { /* FIXME */ }
+    virtual void onVertex(PS*, const vec3d&) { /* FIXME */ }
     virtual void onEnd(PS*) { /* FIXME */ }
   };
 
@@ -275,7 +275,7 @@ public:
   {
     virtual void onBegin(PS*) {}
 
-    virtual void onVertex(PS* ps, const vec2d& v)
+    virtual void onVertex(PS* ps, const vec3d& v)
     {
       switch(vcount() % 4)
         {
@@ -296,8 +296,8 @@ public:
 
   struct QuadStripPrim : public Primitive
   {
-    std::list<vec2d> itsEvenPts;
-    std::list<vec2d> itsOddPts;
+    std::list<vec3d> itsEvenPts;
+    std::list<vec3d> itsOddPts;
 
     QuadStripPrim() : itsEvenPts(), itsOddPts() {}
 
@@ -307,7 +307,7 @@ public:
       itsOddPts.clear();
     }
 
-    virtual void onVertex(PS*, const vec2d& v)
+    virtual void onVertex(PS*, const vec3d& v)
     {
       if ((vcount() % 2) == 0)
         itsEvenPts.push_back(v);
@@ -459,18 +459,18 @@ public:
 
     const double a = 4.0/3.0 * (sqrt(2.0)-1.0);
 
-    const vec2d pt1 (x+r   , y);      // right
-    const vec2d pt2 (x+r   , y+r*a);
-    const vec2d pt3 (x+r*a , y+r);
-    const vec2d pt4 (x     , y+r);    // top
-    const vec2d pt5 (x-r*a , y+r);
-    const vec2d pt6 (x-r   , y+r*a);
-    const vec2d pt7 (x-r   , y);      // left
-    const vec2d pt8 (x-r   , y-r*a);
-    const vec2d pt9 (x-r*a , y-r);
-    const vec2d pt10(x     , y-r);    // bottom
-    const vec2d pt11(x+r*a , y-r);
-    const vec2d pt12(x+r   , y-r*a);
+    const vec3d pt1 (x+r   , y ,     0.0); // right
+    const vec3d pt2 (x+r   , y+r*a , 0.0);
+    const vec3d pt3 (x+r*a , y+r ,   0.0);
+    const vec3d pt4 (x     , y+r ,   0.0); // top
+    const vec3d pt5 (x-r*a , y+r ,   0.0);
+    const vec3d pt6 (x-r   , y+r*a , 0.0);
+    const vec3d pt7 (x-r   , y ,     0.0); // left
+    const vec3d pt8 (x-r   , y-r*a , 0.0);
+    const vec3d pt9 (x-r*a , y-r ,   0.0);
+    const vec3d pt10(x     , y-r ,   0.0); // bottom
+    const vec3d pt11(x+r*a , y-r ,   0.0);
+    const vec3d pt12(x+r   , y-r*a , 0.0);
 
     if (!reverse)
       {
@@ -1043,6 +1043,12 @@ DOTRACE("Gfx::PSCanvas::beginPolygon");
 void Gfx::PSCanvas::vertex2(const vec2d& v)
 {
 DOTRACE("Gfx::PSCanvas::vertex2");
+  vertex3(vec3d(v.x(), v.y(), 0.0));
+}
+
+void Gfx::PSCanvas::vertex3(const vec3d& v)
+{
+DOTRACE("Gfx::PSCanvas::vertex3");
 
   if (rep->itsPrimPtr == 0)
     {
@@ -1051,12 +1057,6 @@ DOTRACE("Gfx::PSCanvas::vertex2");
     }
 
   rep->itsPrimPtr->vertex(rep, v);
-}
-
-void Gfx::PSCanvas::vertex3(const vec3d& v)
-{
-DOTRACE("Gfx::PSCanvas::vertex3");
-  vertex2(vec2d(v.x(), v.y()));
 }
 
 void Gfx::PSCanvas::end()
