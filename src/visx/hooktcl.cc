@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Fri Jan 18 16:07:01 2002
+// written: Wed Jan 30 17:04:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,16 +40,62 @@ void operator delete(void* space)
 }
 #endif
 
-#define LOCAL_DEBUG
-#include "util/debug.h"
+#include "util/strings.h"
 
-#include "util/dlink_list.h"
+template <class T>
+const char* sformat_partial(char x, fstring& str, const char* format,
+                            const T& arg)
+{
+  const char* p = format;
+  for (; p != '\0'; ++p)
+    {
+      if (*p == x)
+        {
+          str.append(Util::CharData(format, p - format));
+          str.append(arg);
+          return p+1;
+        }
+    }
+  return p; // here, *p == '\0'
+}
+
+template <char x, class T1, class T2>
+const char* sformat_partial(fstring& str, const char* format,
+                            const T1& arg1, const T2& arg2)
+{
+  const char* remainder = sformat_partial(x, str, format, arg1);
+  return sformat_partial(x, str, remainder, arg2);
+}
+
+template <char x, class T1, class T2, class T3>
+const char* sformat_partial(fstring& str, const char* format,
+                            const T1& arg1, const T2& arg2, const T3& arg3)
+{
+  const char* remainder = sformat_partial<x>(str, format, arg1, arg2);
+  return sformat_partial(x, str, remainder, arg3);
+}
+
+template <char x, class T>
+fstring sformat(const char* format, const T& arg)
+{
+  fstring result;
+  result.append(sformat_partial(x, result, format, arg));
+  return result;
+}
+
+template <char x, class T1, class T2>
+fstring sformat(const char* format, const T1& arg1, const T2& arg2)
+{
+  fstring result;
+  result.append(sformat_partial<x>(result, format, arg1, arg2));
+  return result;
+}
 
 namespace HookTcl
 {
-  void hook()
+  fstring hook()
   {
-    DebugEvalNL((void*)vcid_dlink_list_h);
+    return sformat<'*'>("The * is *, so there.", "value", 42);
   }
 
   size_t memUsage() { return TOTAL; }
@@ -59,7 +105,7 @@ namespace HookTcl
 #include "util/objdb.h"
 #include <tcl.h>
 
-static int categoryCmd(ClientData clientData, Tcl_Interp* interp,
+static int categoryCmd(ClientData /*clientData*/, Tcl_Interp* interp,
                        int objc, Tcl_Obj *const objv[])
 {
   try
