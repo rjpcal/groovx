@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Apr 10 10:09:04 2001
+// written: Tue Apr 10 10:29:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -372,11 +372,11 @@ public:
     { return Slice(*this, itsImpl.offsetFromStorage(0,c),
 						 itsImpl.colstride(), mrows()); }
 
-  MtxIter colIter(int c)
+  MtxIter columnIter(int c)
     { return MtxIter(*this, itsImpl.offsetFromStorage(0,c),
 							itsImpl.colstride(), mrows()); }
 
-  MtxConstIter colIter(int c) const
+  MtxConstIter columnIter(int c) const
     { return MtxConstIter(itsImpl.address(0,c), itsImpl.colstride(), mrows()); }
 
 
@@ -394,12 +394,7 @@ public:
 	 itsImpl.apply(func);
   }
 
-  template <class F>
-  void apply(F func)
-  {
-	 makeUnique();
-	 itsImpl.apply(func);
-  }
+  template <class F> void applyF(F func);
 
   void setAll(double x)
   {
@@ -407,10 +402,10 @@ public:
 	 itsImpl.setAll(x);
   }
 
-  Mtx& operator+=(double x) { apply(Add(x)); return *this; }
-  Mtx& operator-=(double x) { apply(Sub(x)); return *this; }
-  Mtx& operator*=(double fac) { apply(Mul(fac)); return *this; }
-  Mtx& operator/=(double div) { apply(Div(div)); return *this; }
+  Mtx& operator+=(double x) { applyF(Add(x)); return *this; }
+  Mtx& operator-=(double x) { applyF(Sub(x)); return *this; }
+  Mtx& operator*=(double fac) { applyF(Mul(fac)); return *this; }
+  Mtx& operator/=(double div) { applyF(Div(div)); return *this; }
 
   bool operator==(const Mtx& other) const
   {
@@ -584,7 +579,7 @@ private:
 		  }
 
 	 template <class F>
-	 void apply(F func)
+	 void applyFF(F func)
 	 {
 		APPLY_IMPL
 	 }
@@ -603,7 +598,7 @@ private:
 		double operator()(double) { return v; }
 	 };
 
-	 void setAll(double x) { apply(Setter(x)); }
+	 void setAll(double x) { applyFF(Setter(x)); }
 
 	 void makeUnique();
 
@@ -668,6 +663,12 @@ inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
   itsNelems(n) {}
 
 
+template <class F>
+void Mtx::applyF(F func)
+{
+  makeUnique();
+  itsImpl.applyFF(func);
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
