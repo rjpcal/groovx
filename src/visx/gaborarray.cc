@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Wed May 14 18:28:26 2003
+// written: Wed May 14 18:48:43 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -101,6 +101,7 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
 DOTRACE("GaborArray::GaborArray");
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
+  setPixelBorder(0);
 }
 
 const FieldMap& GaborArray::classFields()
