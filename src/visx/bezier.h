@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Thu Mar  9 15:51:29 2000
+// written: Fri Mar 10 00:24:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -242,7 +242,10 @@ public:
 Bezier4::Bezier4(double R0, double R1, double R2, double R3) :
   R(4),
   c0(4),
-  c1(3)
+  c1(3),
+  b2_4ac(0.0),
+  extremum1(0.0),
+  extremum2(0.0)
 {
   setCtrlPnts(R0, R1, R2, R3);
 }
