@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Tue Oct 10 09:14:42 2000
+// written: Wed Oct 11 14:31:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #endif
 
 class ResponseHandler;
-struct Tcl_Interp;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -43,19 +42,9 @@ public:
   /// Returns a reference to the singleton instance.
   static RhList& theRhList();
 
-  /** Reimplemented from \c PtrListBase to ensure that all owned
-      ResposneHandler's have their \c Tcl_Interp* set properly. */
-  virtual void afterInsertHook(int id, MasterPtrBase* ptr);
-
-  /** Set the \c Tcl_Interp* for the \c RhList, which it passes on to
-      all \c ResponseHandler's that it owns. */
-  void setInterp(Tcl_Interp* interp);
-
 private:
   RhList(const RhList&);
   RhList& operator=(const RhList&);
-
-  Tcl_Interp* itsInterp;
 };
 
 static const char vcid_rhlist_h[] = "$Header$";

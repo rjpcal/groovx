@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Wed Oct 11 13:31:20 2000
+// written: Wed Oct 11 14:33:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,7 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 RhList::RhList(int size) :
-  Base(size),
-  itsInterp(0)
+  Base(size)
 {
 DOTRACE("RhList::RhList");
 }
@@ -60,22 +59,6 @@ RhList RhList::theInstance(DEFAULT_INIT_SIZE);
 RhList& RhList::theRhList() {
 DOTRACE("RhList::theRhList");
   return theInstance; 
-}
-
-void RhList::afterInsertHook(int id, MasterPtrBase* /* ptr */) {
-DOTRACE("RhList::afterInsertHook");
-  SharedPtr rh = getCheckedPtr(id);
-  rh->setInterp(itsInterp);
-}
-
-void RhList::setInterp(Tcl_Interp* interp) {
-DOTRACE("RhList::setInterp");
-  itsInterp = interp;
-  for (int i = 0; i < capacity(); ++i) {
-	 if (isValidId(i)) {
-		getPtr(i)->setInterp(itsInterp);
-	 }
-  }
 }
 
 static const char vcid_rhlist_cc[] = "$Header$";
