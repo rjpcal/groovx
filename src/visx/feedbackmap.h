@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Wed Sep 25 19:01:42 2002
+// written: Sun Nov  3 09:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public:
 
     update();
 
-    intp.setGlobalVar("resp_val", response);
+    intp.setGlobalVar("resp_val", Tcl::toTcl(response));
 
     bool feedbackGiven = false;
     for (size_t i = 0; i<itsItems.size() && !feedbackGiven; ++i)
@@ -61,7 +61,7 @@ private:
   {
     if (!isItDirty) return;
 
-    Tcl::List pairs_list(Tcl::ObjPtr(itsRep.c_str()));
+    Tcl::List pairs_list(Tcl::toTcl(itsRep));
 
     itsItems.clear();
 

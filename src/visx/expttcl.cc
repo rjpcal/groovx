@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Sep 11 15:16:44 2002
+// written: Sun Nov  3 09:09:17 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -99,11 +99,11 @@ namespace ExptTcl
     expt->edBeginExpt();
   }
 
-  Tcl::Code thePauseMsgCmd(
-            "tk_messageBox -default ok -icon info "
-            "-title \"Pause\" -type ok "
-            "-message \"Experiment paused. Click OK to continue.\";\n",
-            Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code thePauseMsgCmd
+  (Tcl::toTcl("tk_messageBox -default ok -icon info "
+              "-title \"Pause\" -type ok "
+              "-message \"Experiment paused. Click OK to continue.\";\n"),
+   Tcl::Code::THROW_EXCEPTION);
 
   // Tell the ExptDriver to halt the experiment, then pop up a pause
   // window. When the user dismisses the window, the experiment will

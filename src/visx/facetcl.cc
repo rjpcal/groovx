@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Feb 25 11:56:29 2002
+// written: Sun Nov  3 09:10:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ public:
   static InnerFace* make()
   {
     InnerFace* p = new InnerFace;
-    p->setField("partsMask", 1);
+    p->setField("partsMask", Tcl::toTcl(1));
     return p;
   }
 };
@@ -37,7 +37,7 @@ public:
   static FilledFace* make()
   {
     FilledFace* p = new FilledFace;
-    p->setField("isFilled", 1);
+    p->setField("isFilled", Tcl::toTcl(1));
     return p;
   }
 };
