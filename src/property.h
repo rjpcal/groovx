@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Fri Sep 22 17:56:44 2000
+// written: Fri Sep 22 18:43:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,11 +47,7 @@ public:
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;
 
-#ifndef GCC_COMPILER
-protected:
-#else
 public:
-#endif
 
   ///
   virtual void set(const Value& val) = 0;
@@ -95,11 +91,7 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-#ifndef GCC_COMPILER
-protected:
-#else
 public:
-#endif
 
   virtual void set(const Value& new_val) { new_val.get(itsVal.itsVal); }
   virtual const Value& get() const { return itsVal; }
@@ -161,11 +153,7 @@ public:
   ///
   TBoundedProperty(const T& init=T()) : TProperty<T>(init) {}
 
-#ifndef GCC_COMPILER
-protected:
-#else
 public:
-#endif
 
   ///
   virtual void set(const Value& new_val)
@@ -237,11 +225,7 @@ public:
   ///
   template <class C> friend class PropFriend;
 
-#ifndef GCC_COMPILER
-protected:
-#else
 public:
-#endif
 
   ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
