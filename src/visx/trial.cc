@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct  2 13:10:24 2000
+// written: Thu Oct  5 18:34:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -391,7 +391,8 @@ DOTRACE("Trial::Impl::description");
   for (size_t j = 0; j < itsIdPairs.size(); ++j) {
     DebugEvalNL(itsIdPairs[j].objid);
 
-    ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
+    ObjList::SharedPtr obj =
+		ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
     Assert(obj.get() != 0);
 
     ost << " " << obj->getCategory();
@@ -616,9 +617,9 @@ DOTRACE("Trial::Impl::trUndrawTrial");
 void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trDraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ObjList::Ptr obj =
+    ObjList::SharedPtr obj =
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
-    PosList::Ptr pos =
+    PosList::SharedPtr pos =
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
     DebugEval(itsIdPairs[i].objid);
@@ -640,9 +641,9 @@ DOTRACE("Trial::Impl::trDraw");
 void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trUndraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ObjList::Ptr obj =
+    ObjList::SharedPtr obj =
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
-    PosList::Ptr pos =
+    PosList::SharedPtr pos =
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
 	 {

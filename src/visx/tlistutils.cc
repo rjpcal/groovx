@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Thu Oct  5 18:32:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ DOTRACE("TlistUtils::createPreview");
 	 ++x_step;
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-	 ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(objids[i]);
+	 ObjList::SharedPtr obj = ObjList::theObjList().getCheckedPtr(objids[i]);
 	 bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
 
 	 if ( !haveBB ) {
@@ -145,7 +145,7 @@ DOTRACE("TlistUtils::makeSingles");
 	 Trial* t = new Trial;
 	 tlist.insertAt(id, Tlist::Ptr(t));
 	 t->add(id, posid);
-	 const ObjList::Ptr obj = olist.getCheckedPtr(id);
+	 const ObjList::SharedPtr obj = olist.getCheckedPtr(id);
 	 t->setType(obj->getCategory());
   }
 
@@ -324,7 +324,7 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
+	 Tlist::SharedPtr tb = tlist.getPtr(trialids[i]);
 
 	 Trial* t = dynamic_cast<Trial*>(tb.get());
 
@@ -350,7 +350,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
   STD_IO::ofstream ofs(filename);
 	 
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
+	 Tlist::SharedPtr tb = tlist.getPtr(trialids[i]);
 
 	 Trial* t = dynamic_cast<Trial*>(tb.get());
 
@@ -421,7 +421,7 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
+	 Tlist::SharedPtr tb = tlist.getPtr(trialids[i]);
 
 	 Trial* t = dynamic_cast<Trial*>(tb.get());
 
@@ -453,7 +453,7 @@ DOTRACE("TlistUtils::addObject");
 	 tlist.insertAt(trialid, Tlist::Ptr(new Trial));
   }
 
-  Tlist::Ptr tb = tlist.getPtr(trialid);
+  Tlist::SharedPtr tb = tlist.getPtr(trialid);
 
   Trial& t = dynamic_cast<Trial&>(*(tb.get()));
 
