@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Wed Mar 15 11:12:56 2000
+// written: Wed Mar 15 19:13:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,6 @@
 #define LISTPKG_CC_DEFINED
 
 #include "tcl/listpkg.h"
-
-#include <vector>
 
 #include "util/trace.h"
 
@@ -31,10 +29,8 @@ public:
 	 TclItemCmd<IoPtrList>(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
-	 vector<int> ids;
 	 IoPtrList* theList = TclItemCmd<IoPtrList>::getItem();
-	 theList->insertValidIds(back_inserter(ids));
-	 TclCmd::returnSequence(ids.begin(), ids.end());
+	 theList->insertValidIds(resultAppender((int*)0));
   }
 };
 
