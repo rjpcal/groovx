@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 11:28:16 2002
+// written: Mon Sep 16 11:53:02 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -26,7 +26,7 @@
 
 #include "togl/togl.h"
 
-#include "gfx/glcanvas.h"
+#include "gfx/canvas.h"
 
 #include "gx/rgbacolor.h"
 
@@ -237,8 +237,6 @@ public:
 
   GlxOverlay* itsOverlay;
 
-  Util::SoftRef<GLCanvas> itsCanvas;
-
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
   ~Impl() throw();
 
@@ -268,6 +266,8 @@ public:
   void useLayer(Togl::Layer layer);
 
   Window windowId() const { return Tk_WindowId(itsTkWin); }
+
+  GLCanvas& canvas() const { return itsGlx->canvas(); }
 
 private:
   void eventProc(XEvent* eventPtr);
@@ -407,27 +407,22 @@ DOTRACE("Togl::Impl::Impl");
   // Set up canvas
   //
 
-  itsCanvas = Util::SoftRef<GLCanvas>
-    (GLCanvas::make(itsGlx->visInfo()->depth,
-                    itsOpts->glx.rgbaFlag,
-                    itsGlx->isDoubleBuffered()));
-
   if ( itsOpts->glx.rgbaFlag )
     {
-      itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+      itsGlx->canvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     { // not using rgba
       if ( itsOpts->privateCmapFlag )
         {
-          itsCanvas->setColorIndex(0);
-          itsCanvas->setClearColorIndex(1);
+          itsGlx->canvas().setColorIndex(0);
+          itsGlx->canvas().setClearColorIndex(1);
         }
       else
         {
-          itsCanvas->setColorIndex(allocColor(0.0, 0.0, 0.0));
-          itsCanvas->setClearColorIndex(allocColor(1.0, 1.0, 1.0));
+          itsGlx->canvas().setColorIndex(allocColor(0.0, 0.0, 0.0));
+          itsGlx->canvas().setClearColorIndex(allocColor(1.0, 1.0, 1.0));
         }
     }
 }
@@ -948,7 +943,7 @@ int Togl::screenNumber() const  { return Tk_ScreenNumber(rep->itsTkWin); }
 Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
 Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
 
-Gfx::Canvas& Togl::getCanvas() const { return *(rep->itsCanvas); }
+Gfx::Canvas& Togl::getCanvas() const { return rep->itsGlx->canvas(); }
 
 ///////////////////////////////////////////////////////////////////////
 //
