@@ -84,7 +84,9 @@ foreach file $permuted_files {
 		  testfile ${TEST_DIR}/[lindex $file 0]
 	 }
 
-	 puts "IO::count [IO::countAll]"
+	 if { $::VERBOSE > 0 } {
+		  puts "IO::count [IO::countAll]"
+	 }
 }
 
 ### Compute test statistics and exit
