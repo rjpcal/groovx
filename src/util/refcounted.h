@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sun Jul 22 23:29:12 2001
+// written: Sun Aug 19 16:31:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,9 +63,6 @@ protected:
 public:
   Count strongCount() { return itsStrong; }
   Count weakCount() { return itsWeak; }
-
-  bool isShared() { return (itsStrong > 1) || (itsWeak > 2); }
-  bool isUnshared() { return !isShared(); }
 
 private:
   RefCounts(const RefCounts&);
