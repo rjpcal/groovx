@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Aug 15 15:20:41 2001
+// written: Wed Aug 22 17:12:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const IO::VersionId JITTER_SERIAL_VERSION_ID = 2;
 }
 
@@ -39,7 +40,8 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-Jitter* Jitter::make() {
+Jitter* Jitter::make()
+{
 DOTRACE("Jitter::make");
   return new Jitter;
 }
@@ -53,17 +55,20 @@ DOTRACE("Jitter::Jitter");
   // empty
 }
 
-Jitter::~Jitter () {
+Jitter::~Jitter ()
+{
 DOTRACE("Jitter::~Jitter");
   // empty
 }
 
-IO::VersionId Jitter::serialVersionId() const {
+IO::VersionId Jitter::serialVersionId() const
+{
 DOTRACE("Jitter::serialVersionId");
   return JITTER_SERIAL_VERSION_ID;
 }
 
-void Jitter::readFrom(IO::Reader* reader) {
+void Jitter::readFrom(IO::Reader* reader)
+{
 DOTRACE("Jitter::readFrom");
 
   reader->ensureReadVersionId("Jitter", 2, "Try grsh0.8a4");
@@ -75,7 +80,8 @@ DOTRACE("Jitter::readFrom");
   reader->readBaseClass("Position", IO::makeProxy<Position>(this));
 }
 
-void Jitter::writeTo(IO::Writer* writer) const {
+void Jitter::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Jitter::writeTo");
 
   writer->ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
@@ -92,30 +98,33 @@ DOTRACE("Jitter::writeTo");
 // actions //
 /////////////
 
-void Jitter::rejitter() const {
+void Jitter::rejitter() const
+{
 DOTRACE("Jitter::rejitter");
   itsXShift = Util::randDoubleRange(-itsXJitter, itsXJitter);
   itsYShift = Util::randDoubleRange(-itsYJitter, itsYJitter);
   itsRShift = Util::randDoubleRange(-itsRJitter, itsRJitter);
 }
 
-void Jitter::draw(Gfx::Canvas& canvas) const {
+void Jitter::draw(Gfx::Canvas& canvas) const
+{
 DOTRACE("Jitter::draw");
   rejitter();
   undraw(canvas);
 }
 
-void Jitter::undraw(Gfx::Canvas& canvas) const {
+void Jitter::undraw(Gfx::Canvas& canvas) const
+{
 DOTRACE("Jitter::undraw");
   // Translate
-  canvas.translate(translation.vec()+
+  canvas.translate(translation +
                    Gfx::Vec3<double>(itsXShift, itsYShift, 0.0));
 
   // Scale
-  canvas.scale(scaling.vec());
+  canvas.scale(scaling);
 
   // Rotate
-  canvas.rotate(rotationAxis.vec(), itsRotationAngle+itsRShift);
+  canvas.rotate(rotationAxis, itsRotationAngle+itsRShift);
 }
 
 static const char vcid_jitter_cc[] = "$Header$";

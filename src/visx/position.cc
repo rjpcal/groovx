@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Aug 21 13:30:59 2001
+// written: Wed Aug 22 17:11:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,13 +150,13 @@ DOTRACE("Position::writeTo");
 void Position::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("Position::draw");
-  canvas.translate(translation.vec());
-  canvas.scale(scaling.vec());
-  canvas.rotate(rotationAxis.vec(), itsRotationAngle);
+  canvas.translate(translation);
+  canvas.scale(scaling);
+  canvas.rotate(rotationAxis, itsRotationAngle);
 
-  itsImpl->tr = translation.vec();
-  itsImpl->sc = scaling.vec();
-  itsImpl->rt = rotationAxis.vec();
+  itsImpl->tr = translation;
+  itsImpl->sc = scaling;
+  itsImpl->rt = rotationAxis;
   itsImpl->rt_ang = itsRotationAngle;
 }
 
