@@ -912,3 +912,143 @@ strategy to make sure that the managed objects are written in the same
 order every time (based on their ioTypename() for instance?). [Later]
 This is obsolete since we no longer depend on PtrList's in the
 serialization process.
+
+(done 1-Nov-2000) Got rid of all the unneeded io tcl commands... we
+don't need a separate stringify/destringify command for each subclass;
+instead, a single one in the IO:: tcl namespace will do just
+fine. This allowed us to get rid of TclIoItemPkg in favor of an
+addIoCommands() function in TclItemPkg, taking an IoFetcher* as an
+argument. This in turn allowed us to get rid of CTclIoItemPkg and the
+duplication that existed between it and CTclItemPkg.
+
+(3-Dec-1999, done 2-Nov-2000) I have a potential type-system loophole
+with TclItemPkg and TclItemCmd... TclItemPkg blindly casts
+TclItemCmd::getItemFromId() from void* to T*, without any guarantee
+that TclItemPkg is dealing with the correct type. Suggests we need a
+template wrapper around TclItemPkg? No... we can fix this by just
+having TclItemCmd<C> require a CTclItemPkg<C> in its constructor
+rather than a plain TclItemPkg.
+
+(24-Oct-2000, done 3-Nov-2000) Work on dlink_list... it's buggy. I
+think it needs an overhaul of the design of the head and
+tail... having these starting off at 0 is not working. OK, I did this,
+but it is still not working if I try to substitute dlink_list in
+gxtraversal.cc. ... OK, now I found this new problem -- it's with
+node::destroy(). If T was a pointer type (say, GxNode*), then calling
+val.~T() was causing the actual GxNode to be destroyed, not just the
+pointer to it. This seems to have been resolved by changing the call
+to (&val)->~T(). I tried substituting dlink_list everywhere slink_list
+was being used, and things still worked fine, so I think I'm going to
+sign off on dlink_list as passing muster for now.
+
+========================================================================
+| GOAL #2
+| done 28-Nov-2000
+| 
+| This is done, with possibilities for future development by way of
+| implementing new GxNode subclasses, such as for colors, basic shapes, etc.
+| 
+| (24-Jan-2000) Allow a more flexible description of the scene graph, a
+| la Open Inventor.
+| 
+| This is now particularly important as Trial's take on more
+| behavior... they shouldn't be used anymore as a way to store
+| combinations of objects.
+| 
+| (1-Nov-2000) borrowed from OpenInventor --
+| 
+| class GxNode : public IO::IoObject {};
+|  |
+|  +-- class GrObj : public GxNode {}; --> GxShape
+|  |
+|  +-- class GxTransformation : public GxNode {};
+|  |    |
+|  |    +-- class GxTranslation : public GxTransformation {};
+|  |    |
+|  |    +-- class GxScale : public GxTransformation {};
+|  |
+|  |
+|  +-- class GxGroup : public GxNode {};
+|       |
+|       +-- class GxSeparator : public GxGroup {};
+| 
+| Then Trial just holds one IdItem<GxNode>, and draws it on a
+| DrawEvent. Or, Trial holds a number of IdItem<GxNode>'s, and DrawEvent
+| holds an index indicating which one to draw.
+| 
+| This is probably an incompatible change with the old Trial... or maybe
+| not... we should be able to convert old Trial structures into new Gx
+| hierarchies. And the old add() interface should still work, with a bit
+| of translation.
+| 
+| (1-done) Put GxNode in place.
+| 
+| (2-done) Make GrObj derive from GxNode.
+| 
+| (3-done) Find former clients of GrObj who really only need to depend on
+|     GxNode. Trial and TlistTcl.
+| 
+| (4-done) Make Position derive from GxNode.
+| 
+| (5-done) Find Position clients who only need to depend on GxNode. Trial.
+| 
+| (6-done) Implement GxSeparator, add a Tcl package for it, and write
+|     tests for the Tcl package.
+| 
+| (7-done) getCategory() --> category()
+| 
+| (8-done) Reimplement Trial using GxNode's instead of GrObj's and
+|     Position's.
+| 
+| (9-done) Add FieldContainer. Where to put this in the inheritance
+|     hierarchy? Right now it is just a mixin class... eventually it
+|     could go before GrObj or even GxNode... this would require a
+|     coherent policy on how to handle inherited Field's.
+| 
+| (10-done) Change the semantics of Trial so that only one GxNode is
+|     drawn at a time... in the future we might allow different GxNode's
+|     to be drawn on subsequent calls to trDraw().
+| 
++-----------------------------------------------------------------------
+
+(1-Nov-2000, done 28-Nov-2000) Make PropertyContainer or
+FieldContainer a base class; then Property's can be handled through
+inheritance rather than by templates. This should reduce some code
+bloat.
+
+========================================================================
+| Goal #4
+| done 28-Nov-2000
+| 
+| (24-Jan-2000) Develop a more coherent view of the screen-update model:
+| Who gets to do it, and when?
+| 
+| (28-Nov-2000) Aha! TlistWidget should change to be a GxNodeWidget,
+| which stores a current GxNode to be drawn. Then Trial, in trDraw() and
+| trUndraw(), can install the appropriate GxNode into the widget, and
+| then request a draw or an undraw; Trial will not have to do any
+| drawing/undrawing explicitly on its own. I think this would make
+| GxNodeWidget the only place where the drawing is actually done in the
+| application.
+| 
+| (done) GxNodeWidget functionality should just go into the Widget base
+| class with the function setDrawable(GxNode& node).
+| 
+| (done) remove Block::drawTrialHook() and Experiment::edSetCurrentTrial().
+| 
+| (done) trUndrawTrial is not needed, since we can just call
+| widget.undraw(). This would apply to UndrawEvent::invoke() as well as
+| trHaltExpt(). This would mean Trial would need to store a GWT::Widget*
+| rather than a GWT::Canvas*.
+| 
+| (done) Aha! trDraw is not needed either, since we can just
+| trial.installSelf(widget) followed by widget.display()
+| 
+| (done) ToglConfig::reconfigure() should be non-virtual and private.
+| 
+| (2-Oct-2000) The first step in this is to eliminate any direct
+| attempts to draw to the screen, other than by a Widget object (such as
+| TlistWidget). Others who want the screen updated should do so
+| indirectly by requesting the widget to redraw itself.
+| 
++-----------------------------------------------------------------------
