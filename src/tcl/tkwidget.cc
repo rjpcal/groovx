@@ -191,6 +191,11 @@ namespace
                               ButtonPressMask |
                               EnterWindowMask |
                               LeaveWindowMask);
+
+  // These are just to make sure that all our clientdata casts go
+  // to/from the right types.
+  void* cast_to_void(TkWidgImpl* p) { return static_cast<void*>(p); }
+  TkWidgImpl* cast_from_void(void* p) { return static_cast<TkWidgImpl*>(p); }
 }
 
 class TkWidgImpl : public Nub::VolatileObject
@@ -229,11 +234,11 @@ public:
               << " x " << ev.x << " y " << ev.y << std::endl;
   }
 
-  void buttonEventProc(XButtonEvent* eventPtr);
+  void buttonEventProc(XButtonEvent* ev);
 
-  void keyEventProc(XKeyEvent* eventPtr);
+  void keyEventProc(XKeyEvent* ev);
 
-  static void cEventCallback(ClientData clientData, XEvent* rawEvent) throw();
+  static void cEventCallback(ClientData clientData, XEvent* ev) throw();
 
   static void cRenderCallback(ClientData clientData) throw();
 
@@ -267,7 +272,7 @@ DOTRACE("TkWidgImpl::TkWidgImpl");
 
   Tk_CreateEventHandler(tkWin, EVENT_MASK,
                         TkWidgImpl::cEventCallback,
-                        static_cast<void*>(owner));
+                        cast_to_void(this));
 }
 
 TkWidgImpl::~TkWidgImpl() throw()
@@ -279,81 +284,82 @@ DOTRACE("TkWidgImpl::~TkWidgImpl");
 
   Tk_DeleteEventHandler(tkWin, EVENT_MASK,
                         TkWidgImpl::cEventCallback,
-                        static_cast<void*>(owner));
+                        cast_to_void(this));
 
-  Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(owner));
+  Tcl_CancelIdleCall(cRenderCallback, cast_to_void(this));
   Tk_DestroyWindow(tkWin);
 }
 
-void TkWidgImpl::buttonEventProc(XButtonEvent* eventPtr)
+void TkWidgImpl::buttonEventProc(XButtonEvent* ev)
 {
 DOTRACE("TkWidgImpl::buttonEventProc");
 
-  const bool controlPressed = eventPtr->state & ControlMask;
-  const bool shiftPressed = eventPtr->state & ShiftMask;
+  const bool controlPressed = ev->state & ControlMask;
+  const bool shiftPressed = ev->state & ShiftMask;
 
   // This is an escape hatch for top-level frameless windows gone
-  // awry... need to always provide a reliable way to iconify the window
-  // since the title bar and "minimize" button might not exist.
+  // awry... need to always provide a reliable way to iconify the
+  // window since the title bar and "minimize" button might not exist.
   if (controlPressed && shiftPressed)
     {
-      switch (eventPtr->button)
+      switch (ev->button)
         {
         case 1: owner->minimize(); return;
         case 3: owner->destroyWidget(); return;
         }
     }
 
-  Tcl::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
-  owner->sigButtonPressed.emit(ev);
+  Tcl::ButtonPressEvent e = {ev->button, ev->x, ev->y};
+  owner->sigButtonPressed.emit(e);
 }
 
-void TkWidgImpl::keyEventProc(XKeyEvent* eventPtr)
+void TkWidgImpl::keyEventProc(XKeyEvent* ev)
 {
 DOTRACE("TkWidgImpl::keyEventProc");
 
-  const bool controlPressed = eventPtr->state & ControlMask;
+  const bool controlPressed = ev->state & ControlMask;
 
   // Need to save and later restore the event "state" in order that
   // subsequent processing of this event (e.g. processing by Tk "bind"
   // tables") proceeds correctly.
-  const unsigned int saveState = eventPtr->state;
+  const unsigned int saveState = ev->state;
 
-  // Turn off (temporarily) any ControlMask so that we get a more sensible
-  // output from XLookupString().
-  eventPtr->state &= ~ControlMask;
+  // Turn off (temporarily) any ControlMask so that we get a more
+  // sensible output from XLookupString().
+  ev->state &= ~ControlMask;
 
   char buf[32];
 #if defined(GL_PLATFORM_GLX)
-  const int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
+  const int len = XLookupString(ev, &buf[0], 30, 0, 0);
   buf[len] = '\0';
 #elif defined(GL_PLATFORM_AGL)
-  strncpy(buf, eventPtr->trans_chars, 31);
+  strncpy(buf, ev->trans_chars, 31);
   buf[31] = '\0';
 #endif
 
   // Restore the state
-  eventPtr->state = saveState;
+  ev->state = saveState;
 
-  Tcl::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
-  owner->sigKeyPressed.emit(ev);
+  Tcl::KeyPressEvent e = {&buf[0], ev->x, ev->y, controlPressed};
+  owner->sigKeyPressed.emit(e);
 }
 
-void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent) throw()
+void TkWidgImpl::cEventCallback(ClientData clientData,
+                                XEvent* ev) throw()
 {
 DOTRACE("TkWidgImpl::cEventCallback");
 
-  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
-  TkWidgImpl* rep = widg->rep;
+  TkWidgImpl* const rep = cast_from_void(clientData);
+  Tcl::TkWidget* const widg = rep->owner;
 
   try
     {
-      switch (rawEvent->type)
+      switch (ev->type)
         {
         case Expose:
           {
             DOTRACE("TkWidgImpl::cEventCallback-Expose");
-            if (rawEvent->xexpose.count == 0)
+            if (ev->xexpose.count == 0)
               {
                 widg->requestRedisplay();
               }
@@ -375,10 +381,10 @@ DOTRACE("TkWidgImpl::cEventCallback");
           widg->ungrabKeyboard();
           break;
         case KeyPress:
-          rep->keyEventProc(reinterpret_cast<XKeyEvent*>(rawEvent));
+          rep->keyEventProc(&(ev->xkey));
           break;
         case ButtonPress:
-          rep->buttonEventProc(reinterpret_cast<XButtonEvent*>(rawEvent));
+          rep->buttonEventProc(&(ev->xbutton));
           break;
         case MapNotify:
           {
@@ -390,11 +396,11 @@ DOTRACE("TkWidgImpl::cEventCallback");
             DOTRACE("TkWidget::cEventCallback-DestroyNotify");
 
             // Idiot-check that we don't have recursive destroy calls
-            ASSERT(!widg->rep->shutdownRequested);
+            ASSERT(!rep->shutdownRequested);
 
-            widg->rep->shutdownRequested = true;
+            rep->shutdownRequested = true;
 
-            Tcl_EventuallyFree(static_cast<ClientData>(widg),
+            Tcl_EventuallyFree(cast_to_void(rep),
                                cEventuallyFreeCallback);
           }
           break;
@@ -402,8 +408,8 @@ DOTRACE("TkWidgImpl::cEventCallback");
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cEventCallback", SRC_POS);
-      widg->rep->interp.backgroundError();
+      rep->interp.handleLiveException("cEventCallback", SRC_POS);
+      rep->interp.backgroundError();
     }
 }
 
@@ -411,39 +417,39 @@ void TkWidgImpl::cRenderCallback(ClientData clientData) throw()
 {
 DOTRACE("TkWidgImpl::cRenderCallback");
 
-  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
+  TkWidgImpl* const rep = cast_from_void(clientData);
 
   try
     {
-      widg->displayCallback();
-      widg->rep->updatePending = false;
+      rep->owner->displayCallback();
+      rep->updatePending = false;
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cRenderCallback", SRC_POS);
-      widg->rep->interp.backgroundError();
+      rep->interp.handleLiveException("cRenderCallback", SRC_POS);
+      rep->interp.backgroundError();
     }
 }
 
 void TkWidgImpl::cEventuallyFreeCallback(char* clientData) throw()
 {
 DOTRACE("TkWidgImpl::cEventuallyFreeCallback");
-  Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
-  delete widg;
+  TkWidgImpl* const rep = cast_from_void(clientData);
+  delete rep->owner;
 }
 
 void TkWidgImpl::cTakeFocusCallback(ClientData clientData) throw()
 {
 DOTRACE("TkWidgImpl::cTakeFocusCallback");
-  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
+  TkWidgImpl* const rep = cast_from_void(clientData);
   try
     {
-      widg->takeFocus();
+      rep->owner->takeFocus();
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cEventCallback", SRC_POS);
-      widg->rep->interp.backgroundError();
+      rep->interp.handleLiveException("cEventCallback", SRC_POS);
+      rep->interp.backgroundError();
     }
 }
 
@@ -581,8 +587,8 @@ DOTRACE("Tcl::TkWidget::setCursor");
     }
   else
     {
-      Tk_Cursor new_cursor = Tk_GetCursor(rep->interp.intp(), rep->tkWin,
-                                          cursor_spec);
+      Tk_Cursor new_cursor = Tk_GetCursor(rep->interp.intp(),
+                                          rep->tkWin, cursor_spec);
 
       if (new_cursor == 0)
         {
@@ -612,8 +618,8 @@ void Tcl::TkWidget::warpPointer(int x, int y) const
 {
 DOTRACE("Tcl::TkWidget::warpPointer");
 
-  // NOTE: The XWarpPointer emulation routine provided by Tk for Mac OS X
-  // Aqua currently does nothing (as of Tk 8.5a1).
+  // NOTE: The XWarpPointer emulation routine provided by Tk for Mac
+  // OS X Aqua currently does nothing (as of Tk 8.5a1).
   XWarpPointer(Tk_Display(rep->tkWin),
                0, Tk_WindowId(rep->tkWin),
                0, 0, 0, 0,
@@ -639,7 +645,8 @@ DOTRACE("Tcl::TkWidget::repack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
-      const fstring pack_cmd("pack ", pathname(), " ", options, "; update");
+      const fstring pack_cmd("pack ", pathname(), " ",
+                             options, "; update");
       rep->interp.eval(pack_cmd);
     }
 }
@@ -669,14 +676,15 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
   WindowSystem::grabKeyboard(rep->tkWin);
 
   // Oddly enough, we can't just call takeFocus() directly here. In
-  // particular, we run into problems if grabKeyboard() is called from an
-  // EnterNotify callback. In that case, if we call takeFocus() during that
-  // callback, Tk somehow seems to erase our focus request by the time
-  // control returns back to the main event loop. So, if we make the call
-  // as an idle callback instead, then we don't switch focus until after Tk
-  // is completely finished processing the EnterNotify event.
+  // particular, we run into problems if grabKeyboard() is called from
+  // an EnterNotify callback. In that case, if we call takeFocus()
+  // during that callback, Tk somehow seems to erase our focus request
+  // by the time control returns back to the main event loop. So, if
+  // we make the call as an idle callback instead, then we don't
+  // switch focus until after Tk is completely finished processing the
+  // EnterNotify event.
   Tcl_DoWhenIdle(TkWidgImpl::cTakeFocusCallback,
-                 static_cast<ClientData>(this));
+                 cast_to_void(rep));
 }
 
 void Tcl::TkWidget::ungrabKeyboard()
@@ -714,7 +722,8 @@ DOTRACE("Tcl::TkWidget::minimize");
   setSize(geom::vec2<int>(200, 200));
 }
 
-void Tcl::TkWidget::bind(const fstring& event_sequence, const fstring& script)
+void Tcl::TkWidget::bind(const fstring& event_sequence,
+                         const fstring& script)
 {
 DOTRACE("Tcl::TkWidget::bind");
 
@@ -723,9 +732,10 @@ DOTRACE("Tcl::TkWidget::bind");
 
   if (script.length() == 0)
     {
-      // If the script is the empty string, then we want to destroy the
-      // binding, so we need to actually give an empty string to the "bind"
-      // command; any empty pair of braces "{  }" will not suffice.
+      // If the script is the empty string, then we want to destroy
+      // the binding, so we need to actually give an empty string to
+      // the "bind" command; any empty pair of braces "{ }" will not
+      // suffice.
       cmd_str.append( "\"\"" );
     }
   else
@@ -740,7 +750,7 @@ void Tcl::TkWidget::takeFocus()
 {
 DOTRACE("Tcl::TkWidget::takeFocus");
 
-  fstring cmd("focus -force ", pathname());
+  const fstring cmd("focus -force ", pathname());
 
   rep->interp.eval(cmd);
 }
@@ -751,7 +761,7 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
 
   if (!rep->updatePending)
     {
-      Tcl_DoWhenIdle(TkWidgImpl::cRenderCallback, static_cast<ClientData>(this));
+      Tcl_DoWhenIdle(TkWidgImpl::cRenderCallback, cast_to_void(rep));
       rep->updatePending = true;
     }
 }
