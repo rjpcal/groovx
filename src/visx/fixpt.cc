@@ -2,8 +2,8 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 10:53:47 1999
-static const char vcid[] = "$Id";
+// written: Fri Mar 12 10:56:39 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_CC_DEFINED
