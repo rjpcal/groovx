@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sun Jul 15 08:00:45 2001
+// written: Sun Jul 15 15:31:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,15 +43,12 @@
 
 namespace IoTcl
 {
-  class LoadObjectsCmd;
-  class SaveObjectsCmd;
+  const int ALL = -1; // indicates to read all objects until eof
 
   template <class ReaderType, class Inserter>
   void readBatch(STD_IO::istream& is, int num_to_read,
                  Inserter result_inserter)
     {
-      const int ALL = -1; // indicates to read all objects until eof
-
       int num_read = 0;
 
       is >> STD_IO::ws;
@@ -89,70 +86,44 @@ namespace IoTcl
           ++obj_itr;
         }
     }
-}
 
-//---------------------------------------------------------------------
-//
-// LoadObjectsCmd --
-//
-//---------------------------------------------------------------------
-
-class IoTcl::LoadObjectsCmd : public Tcl::TclCmd {
-public:
-  LoadObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name,
-                "filename ?num_to_read=-1?", 2, 3, false)
-  {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-void IoTcl::LoadObjectsCmd::invoke(Tcl::Context& ctx)
-{
-DOTRACE("IoTcl::LoadObjectsCmd::invoke");
-  static const int ALL = -1; // indicates to read all objects until eof
-
-  const char* file        =                             ctx.getCstringFromArg(1);
-  int         num_to_read =      (ctx.objc() < 3) ? ALL   : ctx.getIntFromArg(2);
-
-  STD_IO::ifstream ifs(file);
-  if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
-
-  readBatch<IO::LegacyReader>(ifs, num_to_read, ctx.resultAppender((int*)0));
-}
-
-//---------------------------------------------------------------------
-//
-// SaveObjectsCmd --
-//
-//---------------------------------------------------------------------
-
-class IoTcl::SaveObjectsCmd : public Tcl::TclCmd {
-public:
-  SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name,
-                "objids filename ?use_bases=yes?", 3, 4)
-  {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+  Tcl::List loadObjects(const char* file, int num_to_read)
   {
-    const char* filename = ctx.getCstringFromArg(2);
+    STD_IO::ifstream ifs(file);
+    if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
 
-    bool use_bases    = ctx.objc() < 4 ? true : ctx.getBoolFromArg(3);
+    Tcl::List result;
 
+    readBatch<IO::LegacyReader>(ifs, num_to_read, result.appender());
+
+    return result;
+  }
+
+  Tcl::List loadAllObjects(const char* file)
+  {
+    return loadObjects(file, ALL);
+  }
+
+  void saveObjects(Tcl::List objids, const char* filename, bool use_bases)
+  {
     STD_IO::ofstream ofs(filename);
-    if (ofs.fail()) {
-      Tcl::TclError err("error opening file: ");
-      err.appendMsg(filename);
-      throw err;
-    }
+    if (ofs.fail())
+      {
+        Tcl::TclError err("error opening file: ");
+        err.appendMsg(filename);
+        throw err;
+      }
 
     IO::LegacyWriter writer(ofs, use_bases);
     writer.usePrettyPrint(false);
-    writeBatch(writer, ctx.beginOfArg(1, (int*)0), ctx.endOfArg(1, (int*)0));
+    writeBatch(writer, objids.begin<Util::UID>(), objids.end<Util::UID>());
   }
-};
+
+  void saveObjectsDefault(Tcl::List objids, const char* filename)
+  {
+    saveObjects(objids, filename, true);
+  }
+}
 
 namespace Tcl
 {
@@ -244,8 +215,14 @@ public:
     declareCAction("clear", &ObjDb::clear);
     declareCAction("purge", &ObjDb::purge);
     declareCSetter("release", &ObjDb::release);
-    addCommand( new IoTcl::LoadObjectsCmd(interp, "ObjDb::loadObjects") );
-    addCommand( new IoTcl::SaveObjectsCmd(interp, "ObjDb::saveObjects") );
+    Tcl::def( this, &IoTcl::loadObjects,
+              "ObjDb::loadObjects", "filename num_to_read=-1" );
+    Tcl::def( this, &IoTcl::loadAllObjects,
+              "ObjDb::loadObjects", "filename" );
+    Tcl::def( this, &IoTcl::saveObjects,
+              "ObjDb::saveObjects", "objids filename use_bases=yes" );
+    Tcl::def( this, &IoTcl::saveObjectsDefault,
+              "ObjDb::saveObjects", "objids filename" );
 
     TclPkg::eval("namespace eval IoDb {\n"
                  "  proc clear {args} { eval ObjDb::clear $args }\n"
@@ -268,7 +245,8 @@ public:
 } // end namespace Tcl
 
 extern "C"
-int Io_Init(Tcl_Interp* interp) {
+int Io_Init(Tcl_Interp* interp)
+{
 DOTRACE("Io_Init");
 
   Tcl::TclPkg* pkg1 = new Tcl::ObjDbPkg(interp);
