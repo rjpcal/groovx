@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Jul 22 16:55:20 2002
+// written: Mon Jul 22 18:34:18 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 
       GrshApp grshApp(argc, argv, app.interp());
 
-      Tcl::Interp safeIntp(app.interp());
+      Tcl::Interp& safeIntp = app.safeInterp();
 
       for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
         {
