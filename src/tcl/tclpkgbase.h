@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Jun 19 14:18:44 2001
+// written: Wed Jul 18 09:50:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,8 @@
 
 struct Tcl_Interp;
 
-#ifdef MIPSPRO_COMPILER
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
-#include "tcl/tclerror.h"
-#endif
-#endif
-
-namespace Tcl {
+namespace Tcl
+{
   class TclCmd;
   class TclError;
   class TclPkg;
@@ -80,7 +75,45 @@ public:
       current \c TclPkg's status along with \a other_status. If either
       status represents failure, the result will also represent
       failure, otherwise success. */
-  int combineStatus(int other_status) const;
+  int combineStatus(int other_status) const
+  {
+    return combineStatus(this->initStatus(), other_status);
+  }
+
+  /// Return the symbolic constant indicating initialization was ok
+  static int okStatus();
+
+  /// Return the symbolic constant indicating initialization had an error
+  static int errStatus();
+
+  /** Returns a Tcl status code representing the combination of the
+      current \a status1 with \a status2. If either status represents
+      failure, the result will also represent failure, otherwise
+      success. */
+  static int combineStatus(int status1, int status2);
+
+  /** Return the init status of \a pkg, or return okStatus() if \a pkg
+      is null */
+  static int initStatus(TclPkg* pkg)
+  {
+    return pkg ? pkg->initStatus() : okStatus();
+  }
+
+  /// Combine the init statuses of several packages.
+  static int initStatus(TclPkg* pkg1,
+                        TclPkg* pkg2,
+                        TclPkg* pkg3=0,
+                        TclPkg* pkg4=0,
+                        TclPkg* pkg5=0,
+                        TclPkg* pkg6=0)
+  {
+    return combineStatus(initStatus(pkg1),
+           combineStatus(initStatus(pkg2),
+           combineStatus(initStatus(pkg3),
+           combineStatus(initStatus(pkg4),
+           combineStatus(initStatus(pkg5),
+                         initStatus(pkg6))))));
+  }
 
   /// Returns true if the package was initialized successfully.
   bool initedOk() const;
