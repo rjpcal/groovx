@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jul 18 13:09:37 2001
+// written: Thu Jul 19 21:10:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "util/pointers.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJFUNCTOR_H_DEFINED)
-#include "tcl/objfunctor.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLMEMFUNCTOR_H_DEFINED)
+#include "tcl/tclmemfunctor.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLPKGBASE_H_DEFINED)

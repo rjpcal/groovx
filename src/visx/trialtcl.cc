@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Jul 18 12:27:38 2001
+// written: Thu Jul 19 21:10:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include "timinghdlr.h"
 
 #include "tcl/fieldpkg.h"
-#include "tcl/objfunctor.h"
+#include "tcl/tclmemfunctor.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// objfunctor.h
+// tclmemfunctor.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJFUNCTOR_H_DEFINED
-#define OBJFUNCTOR_H_DEFINED
+#ifndef TCLMEMFUNCTOR_H_DEFINED
+#define TCLMEMFUNCTOR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
@@ -210,5 +210,5 @@ namespace Tcl
 
 }
 
-static const char vcid_objfunctor_h[] = "$Header$";
-#endif // !OBJFUNCTOR_H_DEFINED
+static const char vcid_tclmemfunctor_h[] = "$Header$";
+#endif // !TCLMEMFUNCTOR_H_DEFINED
