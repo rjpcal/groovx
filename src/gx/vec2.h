@@ -70,11 +70,13 @@ public:
   // Polar coordinates
   //
 
-  V length() const { return V(sqrt(xx*xx + yy*yy)); }
+  double length() const { return sqrt(xx*xx + yy*yy); }
 
-  void setLength(V len)
+  void setLength(double len)
   {
-    scaleBy(len / length());
+    const double r = length();
+    if (r != 0.0)
+      scaleBy(len / r);
   }
 
   void setPolarRad(double r, double theta)
@@ -200,9 +202,21 @@ private:
   V yy;
 };
 
-typedef Vec2<int> Vec2i;
-typedef Vec2<float> Vec2f;
-typedef Vec2<double> Vec2d;
+  typedef Vec2<int> Vec2i;
+  typedef Vec2<float> Vec2f;
+  typedef Vec2<double> Vec2d;
+
+  template <class U>
+  Vec2<U> normalTo(const Vec2<U>& a)
+    { return Vec2<U>(-a.y(), a.x()); }
+
+  template <class U>
+  Vec2<U> makeUnitLength(const Vec2<U>& a)
+    {
+      const double r = a.length();
+      if (r == 0.0) return a;
+      return Vec2<U>(a.x()/r, a.y()/r);
+    }
 
 } // end namespace Gfx
 
