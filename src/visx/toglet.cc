@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Aug 20 12:37:01 2001
+// written: Thu Aug 23 11:17:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "glcanvas.h"
 #include "xbmaprenderer.h"
+
+#include "gfx/rgbacolor.h"
 
 #include "tcl/tclcode.h"
 #include "tcl/tclsafeinterp.h"
@@ -43,7 +45,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   // the main window can be specified with either PARENT = "" or "."
   fstring PARENT = "";
 
@@ -158,20 +161,20 @@ DOTRACE("Toglet::Toglet");
 
   if ( itsTogl->usesRgba() )
     {
-      glColor4f(1.0, 1.0, 1.0, 1.0);
-      glClearColor(0.0, 0.0, 0.0, 1.0);
+      itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     { // not using rgba
       if ( itsTogl->hasPrivateCmap() )
         {
-          glClearIndex(0);
-          glIndexi(1);
+          itsCanvas->setColorIndex(0);
+          itsCanvas->setClearColorIndex(1);
         }
       else
         {
-          glClearIndex(itsTogl->allocColor(0.0, 0.0, 0.0));
-          glIndexi(itsTogl->allocColor(1.0, 1.0, 1.0));
+          itsCanvas->setColorIndex(itsTogl->allocColor(0.0, 0.0, 0.0));
+          itsCanvas->setClearColorIndex(itsTogl->allocColor(1.0, 1.0, 1.0));
         }
     }
 
@@ -509,22 +512,7 @@ DOTRACE("Toglet::reconfigure");
 
       glOrtho(therect.left(), therect.right(),
               therect.bottom(), therect.top(), -1.0, 1.0);
-
-      DebugEval(itsMinRect.left());
-      DebugEval(itsMinRect.right());
-      DebugEval(itsMinRect.bottom());
-      DebugEvalNL(itsMinRect.top());
-      DebugEval(itsMinRect.aspect());
-      DebugEvalNL(getAspect());
-#ifdef LOCAL_DEBUG
-      STD_IO::cerr << "glViewport(0, 0, " << itsTogl->width() << ", "
-                   << itsTogl->height() << ")" << STD_IO::endl;
-      STD_IO::cerr << "glOrtho(l=" << therect.left()
-                   << ", r=" << therect.right()
-                   << ", b=" << therect.bottom()
-                   << ", t=" << therect.top() << ", -1.0, 1.0)" << STD_IO::endl;
-#endif
-    } // end !usingFixedScale
+    }
 
   itsTogl->postRedisplay();
 }
@@ -557,28 +545,30 @@ void Toglet::writeEpsFile(const char* filename)
 DOTRACE("Toglet::writeEpsFile");
   itsTogl->makeCurrent();
 
-  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
+    Gfx::Canvas::AttribSaver saver(*itsCanvas);
+
     // Set fore/background colors to extremes for the purposes of EPS
     // rendering
-    if ( itsTogl->usesRgba() ) {
-      glColor4d(0.0, 0.0, 0.0, 1.0);
-      glClearColor(1.0, 1.0, 1.0, 1.0);
-    }
-    else {
-      glIndexi(0);
-      glClearIndex(255);
-    }
+    if ( itsTogl->usesRgba() )
+      {
+        itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+        itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+      }
+    else
+      {
+        itsCanvas->setColorIndex(0);
+        itsCanvas->setClearColorIndex(255);
+      }
 
     // get a clear buffer
-    glClear(GL_COLOR_BUFFER_BIT);
+    itsCanvas->clearColorBuffer();
     swapBuffers();
 
     // do the EPS dump
     const int rgbFlag = 0;
     itsTogl->dumpToEpsFile(filename, rgbFlag, Toglet_Impl::epsCallback);
   }
-  glPopAttrib();
 
   // redisplay original image
   display();
