@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Wed Mar 19 17:55:56 2003
+// written: Mon May 12 11:49:51 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -192,6 +192,9 @@ private:
   V xx;
   V yy;
 };
+
+typedef Vec2<int> Vec2i;
+typedef Vec2<double> Vec2d;
 
 } // end namespace Gfx
 
