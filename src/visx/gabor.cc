@@ -29,7 +29,6 @@
 #include "util/algo.h"
 #include "util/randutils.h"
 
-#include <GL/gl.h>
 #include <cmath>
 #include <cstring>
 
