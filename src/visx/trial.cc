@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Jun 21 13:38:03 2001
+// written: Sat Jul 21 22:32:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@
 #include "util/errorhandler.h"
 #include "util/log.h"
 #include "util/minivec.h"
+#include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -51,10 +52,26 @@ Util::Tracer Trial::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   const IO::VersionId TRIAL_SERIAL_VERSION_ID = 4;
 
-  const char* ioTag = "Trial";
+  struct ActiveState {
+    ActiveState(Block* block, WeakRef<GWT::Widget> widget,
+                Ref<ResponseHandler> rh, Ref<TimingHdlr> th) :
+      itsBlock(block),
+      itsWidget(widget),
+      itsRh(rh),
+      itsTh(th)
+    {
+      Precondition(block != 0)
+    }
+
+    Block* itsBlock;
+    WeakRef<GWT::Widget> itsWidget;
+    Ref<ResponseHandler> itsRh;
+    Ref<TimingHdlr> itsTh;
+  };
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,8 +86,6 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  enum TrialState { ACTIVE, INACTIVE };
-
   Impl(Trial*) :
     itsCorrectResponse(Response::ALWAYS_CORRECT),
     itsGxNodes(),
@@ -79,10 +94,8 @@ public:
     itsType(-1),
     itsRh(),
     itsTh(),
-    itsState(INACTIVE),
-    itsWidget(0),
-    itsBlock(0)
-    {}
+    itsActiveState(0)
+  {}
 
 private:
   int itsCorrectResponse;
@@ -97,70 +110,25 @@ private:
   WeakRef<ResponseHandler> itsRh;
   WeakRef<TimingHdlr> itsTh;
 
-  TrialState itsState;
+public:
+  scoped_ptr<ActiveState> itsActiveState;
 
-  GWT::Widget* itsWidget;
-  Block* itsBlock;
+  bool isActive() const { return itsActiveState.get() != 0; }
+  bool isInactive() const { return itsActiveState.get() == 0; }
 
-  bool assertIdsOrHalt()
-    {
-      if ( itsRh.isValid() && itsTh.isValid() )
-        return true;
+  void becomeActive(Block* block, WeakRef<GWT::Widget> widget)
+  {
+    itsActiveState.reset(new ActiveState(block, widget, itsRh, itsTh));
+  }
 
-      DebugPrintNL("Trial::assertIdsOrHalt failed");
-      DebugEval(itsRh.id()); DebugEvalNL(itsTh.id());
+  void becomeInactive() { itsActiveState.reset(0); }
 
-      trHaltExpt();
-
-      return false;
-    }
-
-  GWT::Widget& getWidget() const
-    {
-      Precondition(itsState == ACTIVE);
-      Precondition(itsWidget != 0);
-      return *itsWidget;
-    }
-
-  ResponseHandler& responseHandler()
-    {
-      Precondition(itsState == ACTIVE);
-      Precondition( itsRh.isValid() );
-      return *(itsRh.get());
-    }
-
-  const ResponseHandler& responseHandler() const
-    {
-      Precondition(itsState == ACTIVE);
-      Precondition( itsRh.isValid() );
-      return *(itsRh.get());
-    }
-
-  TimingHdlr& timingHdlr()
-    {
-      Precondition(itsState == ACTIVE);
-      Precondition( itsTh.isValid() );
-      return *(itsTh.get());
-    }
-
-  const TimingHdlr& timingHdlr() const
-    {
-      Precondition(itsState == ACTIVE);
-      Precondition( itsTh.isValid() );
-      return *(itsTh.get());
-    }
-
-  Block& getBlock() const
-    {
-      Precondition(itsState == ACTIVE);
-      Precondition(itsBlock != 0);
-      return *itsBlock;
-    }
-
-  inline void timeTrace(const char* loc) {
+  inline void timeTrace(const char* loc)
+  {
 #ifdef TIME_TRACE
     Util::log() << "in " << loc
-                << "@ elapsed time == " << timingHdlr().getElapsedMsec()
+                << "@ elapsed time == "
+                << itsActiveState->itsTh->getElapsedMsec()
                 << '\n';
 #endif
   }
@@ -209,15 +177,17 @@ public:
   void addNode(Util::UID id)
   {
     Ref<GxNode> obj(id);
-    try {
-      Ref<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
-      itsGxNodes.push_back(sep);
-    }
-    catch (...) {
-      Ref<GxSeparator> sep(GxSeparator::make());
-      sep->addChild(id);
-      itsGxNodes.push_back(sep);
-    }
+    try
+      {
+        Ref<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
+        itsGxNodes.push_back(sep);
+      }
+    catch (...)
+      {
+        Ref<GxSeparator> sep(GxSeparator::make());
+        sep->addChild(id);
+        itsGxNodes.push_back(sep);
+      }
   }
 
   void trNextNode() { setCurrentNode(itsCurrentNode+1); }
@@ -236,7 +206,7 @@ public:
 
   void clearObjs();
 
-  void trDoTrial(Trial* self, GWT::Widget& widget,
+  void trDoTrial(Trial* self, WeakRef<GWT::Widget> widget,
                  Util::ErrorHandler& errhdlr, Block& block);
   int trElapsedMsec();
   void trAbortTrial();
@@ -248,7 +218,7 @@ public:
   void trAllowResponses(Trial* self);
   void trDenyResponses();
 
-  void installSelf(GWT::Widget& widget) const;
+  void installSelf(WeakRef<GWT::Widget> widget) const;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -257,10 +227,11 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::readFrom(IO::Reader* reader) {
+void Trial::Impl::readFrom(IO::Reader* reader)
+{
 DOTRACE("Trial::Impl::readFrom");
 
-  itsState = INACTIVE;
+  becomeInactive();
 
   reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
@@ -280,7 +251,8 @@ DOTRACE("Trial::Impl::readFrom");
   itsTh = dynamicCast<TimingHdlr>(reader->readMaybeObject("th"));
 }
 
-void Trial::Impl::writeTo(IO::Writer* writer) const {
+void Trial::Impl::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Trial::Impl::writeTo");
 
   writer->ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
@@ -304,12 +276,14 @@ DOTRACE("Trial::Impl::writeTo");
 // accessors //
 ///////////////
 
-int Trial::Impl::trialType() const {
+int Trial::Impl::trialType() const
+{
 DOTRACE("Trial::Impl::trialType");
   return itsType;
 }
 
-const char* Trial::Impl::description() const {
+const char* Trial::Impl::description() const
+{
 DOTRACE("Trial::Impl::description");
 
   static dynamic_string buf;
@@ -354,38 +328,44 @@ DOTRACE("Trial::Impl::description");
   return buf.c_str();
 }
 
-int Trial::Impl::lastResponse() const {
+int Trial::Impl::lastResponse() const
+{
 DOTRACE("Trial::Impl::lastResponse");
   return itsResponses.back().val();
 }
 
-int Trial::Impl::numResponses() const {
+int Trial::Impl::numResponses() const
+{
 DOTRACE("Trial::Impl::numResponses");
   return itsResponses.size();
 }
 
-double Trial::Impl::avgResponse() const {
+double Trial::Impl::avgResponse() const
+{
 DOTRACE("Trial::Impl::avgResponse");
   int sum = 0;
   for (minivec<Response>::const_iterator ii = itsResponses.begin();
        ii != itsResponses.end();
-       ++ii) {
-    sum += ii->val();
-  }
+       ++ii)
+    {
+      sum += ii->val();
+    }
   return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
 }
 
-double Trial::Impl::avgRespTime() const {
+double Trial::Impl::avgRespTime() const
+{
 DOTRACE("Trial::Impl::avgRespTime");
   int sum = 0;
   for (minivec<Response>::const_iterator ii = itsResponses.begin();
        ii != itsResponses.end();
-       ++ii) {
-    sum += ii->msec();
+       ++ii)
+    {
+      sum += ii->msec();
 
-    DebugEval(sum);
-    DebugEvalNL(sum/itsResponses.size());
-  }
+      DebugEval(sum);
+      DebugEvalNL(sum/itsResponses.size());
+    }
   return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
 }
 
@@ -393,7 +373,8 @@ DOTRACE("Trial::Impl::avgRespTime");
 // manipulators //
 //////////////////
 
-void Trial::Impl::add(Util::UID objid, Util::UID posid) {
+void Trial::Impl::add(Util::UID objid, Util::UID posid)
+{
 DOTRACE("Trial::Impl::add");
 
   Ref<GxSeparator> sepitem(GxSeparator::make());
@@ -401,25 +382,30 @@ DOTRACE("Trial::Impl::add");
   sepitem->addChild(posid);
   sepitem->addChild(objid);
 
-  if (itsGxNodes.size() == 0) {
-    itsGxNodes.push_back(sepitem);
-  }
-  else {
-    itsGxNodes[0]->addChild(sepitem.id());
-  }
+  if (itsGxNodes.size() == 0)
+    {
+      itsGxNodes.push_back(sepitem);
+    }
+  else
+    {
+      itsGxNodes[0]->addChild(sepitem.id());
+    }
 }
 
-void Trial::Impl::clearObjs() {
+void Trial::Impl::clearObjs()
+{
 DOTRACE("Trial::Impl::clearObjs");
   itsGxNodes.clear();
 }
 
-void Trial::Impl::setType(int t) {
+void Trial::Impl::setType(int t)
+{
 DOTRACE("Trial::Impl::setType");
   itsType = t;
 }
 
-void Trial::Impl::clearResponses() {
+void Trial::Impl::clearResponses()
+{
 DOTRACE("Trial::Impl::clearResponses");
   itsResponses.clear();
 }
@@ -428,156 +414,155 @@ DOTRACE("Trial::Impl::clearResponses");
 // actions //
 /////////////
 
-void Trial::Impl::trDoTrial(Trial* self, GWT::Widget& widget,
-                            Util::ErrorHandler& errhdlr, Block& block) {
+void Trial::Impl::trDoTrial(Trial* self, WeakRef<GWT::Widget> widget,
+                            Util::ErrorHandler& errhdlr, Block& block)
+{
 DOTRACE("Trial::Impl::trDoTrial");
   Precondition(self != 0);
-  Precondition(&widget != 0);
+  Precondition(widget.isValid());
   Precondition(&errhdlr != 0);
   Precondition(&block != 0);
 
-  itsWidget = &widget;
-  itsBlock = &block;
+  if ( itsRh.isInvalid() || itsTh.isInvalid() )
+    {
+      errhdlr.handleMsg("the trial did not have a valid timing handler "
+                        "and response handler");
+      return;
+    }
 
-  Assert(itsBlock != 0);
-  Assert(itsWidget != 0);
-
-  if ( !assertIdsOrHalt() ) return;
-
-  itsState = ACTIVE;
+  becomeActive(&block, widget);
 
   itsCurrentNode = 0;
 
-  responseHandler().rhBeginTrial(widget, *self);
+  itsActiveState->itsRh->rhBeginTrial(widget, *self);
 
-  timingHdlr().thBeginTrial(widget, errhdlr, *self);
+  itsActiveState->itsTh->thBeginTrial(*self, errhdlr);
   timeTrace("trDoTrial");
 }
 
-int Trial::Impl::trElapsedMsec() {
+int Trial::Impl::trElapsedMsec()
+{
 DOTRACE("Trial::Impl::trElapsedMsec");
-  if ( itsState == INACTIVE ) return -1;
-  if ( !assertIdsOrHalt() ) return -1;
 
-  return timingHdlr().getElapsedMsec();
+  Precondition( isActive() );
+
+  return itsActiveState->itsTh->getElapsedMsec();
 }
 
-void Trial::Impl::trAbortTrial() {
+void Trial::Impl::trAbortTrial()
+{
 DOTRACE("Trial::Impl::trAbortTrial");
-  if (INACTIVE == itsState) return;
 
-  if ( !assertIdsOrHalt() ) return;
+  Precondition( isActive() );
 
   timeTrace("trAbortTrial");
 
-  responseHandler().rhAbortTrial();
-  timingHdlr().thAbortTrial();
-
-  getBlock().abortTrial();
+  itsActiveState->itsRh->rhAbortTrial();
+  itsActiveState->itsTh->thAbortTrial();
+  itsActiveState->itsBlock->abortTrial();
 }
 
-void Trial::Impl::trEndTrial() {
+void Trial::Impl::trEndTrial()
+{
 DOTRACE("Trial::Impl::trEndTrial");
-  if (INACTIVE == itsState) return;
 
-  if ( !assertIdsOrHalt() ) return;
+  Precondition( isActive() );
 
   timeTrace("trEndTrial");
 
-  responseHandler().rhEndTrial();
-
-  getBlock().endTrial();
+  itsActiveState->itsRh->rhEndTrial();
+  itsActiveState->itsBlock->endTrial();
 }
 
-void Trial::Impl::trNextTrial() {
+void Trial::Impl::trNextTrial()
+{
 DOTRACE("Trial::Impl::trNextTrial");
-  if (INACTIVE == itsState) return;
 
-  if ( !assertIdsOrHalt() ) return;
+  Precondition( isActive() );
 
   timeTrace("trNextTrial");
 
-  // We have to getBlock() before changing to inactive state, since
-  // the invariant says we cannot getBlock() when in an inactive state.
-  Block& block = getBlock();
+  Block* block = itsActiveState->itsBlock;
 
-  itsState = INACTIVE;
+  becomeInactive();
 
-  block.nextTrial();
+  block->nextTrial();
 }
 
-void Trial::Impl::trHaltExpt() {
+void Trial::Impl::trHaltExpt()
+{
 DOTRACE("Trial::Impl::trHaltExpt");
-  if (INACTIVE == itsState) return;
 
-  if ( itsTh.isValid() ) {
-    timeTrace("trHaltExpt");
-  }
+  if (isInactive()) return;
 
-  getWidget().undraw();
+  timeTrace("trHaltExpt");
 
-  if ( itsRh.isValid() ) {
-    responseHandler().rhHaltExpt();
-  }
+  if (itsActiveState->itsWidget.isValid())
+    itsActiveState->itsWidget->undraw();
 
-  // This must come last in order to ensure that we cancel any timer
-  // callbacks that were scheduled in trAbortTrial().
-  if ( itsTh.isValid() ) {
-    timingHdlr().thHaltExpt();
-  }
+  itsActiveState->itsRh->rhHaltExpt();
+  itsActiveState->itsTh->thHaltExpt();
 
-  itsState = INACTIVE;
+  becomeInactive();
 }
 
-void Trial::Impl::trResponseSeen() {
+void Trial::Impl::trResponseSeen()
+{
 DOTRACE("Trial::Impl::trResponseSeen");
-  if (INACTIVE == itsState) return;
 
-  if ( !assertIdsOrHalt() ) return;
+  Precondition( isActive() );
 
   timeTrace("trResponseSeen");
 
-  timingHdlr().thResponseSeen();
+  itsActiveState->itsTh->thResponseSeen();
 }
 
-void Trial::Impl::trRecordResponse(Response& response) {
+void Trial::Impl::trRecordResponse(Response& response)
+{
 DOTRACE("Trial::Impl::trRecordResponse");
-  if (INACTIVE == itsState) return;
+
+  Precondition( isActive() );
 
   timeTrace("trRecordResponse");
   response.setCorrectVal(itsCorrectResponse);
 
   itsResponses.push_back(response);
 
-  getBlock().processResponse(response);
+  itsActiveState->itsBlock->processResponse(response);
 }
 
-void Trial::Impl::trAllowResponses(Trial* self) {
+void Trial::Impl::trAllowResponses(Trial* self)
+{
 DOTRACE("Trial::Impl::trAllowResponses");
-  if (INACTIVE == itsState) return;
+
+  Precondition( isActive() );
 
   timeTrace("trAllowResponses");
 
-  responseHandler().rhAllowResponses(getWidget(), *self);
+  itsActiveState->itsRh->rhAllowResponses(itsActiveState->itsWidget, *self);
 }
 
-void Trial::Impl::trDenyResponses() {
+void Trial::Impl::trDenyResponses()
+{
 DOTRACE("Trial::Impl::trDenyResponses");
-  if (INACTIVE == itsState) return;
+
+  Precondition( isActive() );
 
   timeTrace("trDenyResponses");
 
-  responseHandler().rhDenyResponses();
+  itsActiveState->itsRh->rhDenyResponses();
 }
 
-void Trial::Impl::installSelf(GWT::Widget& widget) const {
+void Trial::Impl::installSelf(WeakRef<GWT::Widget> widget) const
+{
 DOTRACE("Trial::Impl::installSelf");
 
   if (itsCurrentNode < itsGxNodes.size())
-    widget.setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
+    widget->setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
 }
 
-void Trial::Impl::undoLastResponse() {
+void Trial::Impl::undoLastResponse()
+{
 DOTRACE("Trial::Impl::undoLastResponse");
   if ( !itsResponses.empty() )
     itsResponses.pop_back();
@@ -590,8 +575,10 @@ DOTRACE("Trial::Impl::undoLastResponse");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-  const FieldInfo FINFOS[] = {
+namespace
+{
+  const FieldInfo FINFOS[] =
+  {
     FieldInfo("tType", &Trial::tType, -1, -10, 10, 1, true)
   };
 
@@ -606,7 +593,8 @@ namespace {
 
 const FieldMap& Trial::classFields() { return TRIAL_FIELDS; }
 
-Trial* Trial::make() {
+Trial* Trial::make()
+{
 DOTRACE("Trial::make");
   return new Trial;
 }
@@ -621,7 +609,8 @@ DOTRACE("Trial::Trial()");
   setFieldMap(TRIAL_FIELDS);
 }
 
-Trial::~Trial() {
+Trial::~Trial()
+{
 DOTRACE("Trial::~Trial");
   delete itsImpl;
 }
@@ -639,6 +628,11 @@ void Trial::readFrom(IO::Reader* reader)
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
+WeakRef<GWT::Widget> Trial::getWidget() const
+{
+  Precondition( itsImpl->isActive() );
+  return itsImpl->itsActiveState->itsWidget;
+}
 
 int Trial::getCorrectResponse() const
   { return itsImpl->getCorrectResponse(); }
@@ -709,7 +703,7 @@ void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
 
-void Trial::trDoTrial(GWT::Widget& widget,
+void Trial::trDoTrial(WeakRef<GWT::Widget> widget,
                       Util::ErrorHandler& errhdlr, Block& block)
   { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 
@@ -740,7 +734,7 @@ void Trial::trAllowResponses()
 void Trial::trDenyResponses()
   { itsImpl->trDenyResponses(); }
 
-void Trial::installSelf(GWT::Widget& widget) const
+void Trial::installSelf(WeakRef<GWT::Widget> widget) const
   { itsImpl->installSelf(widget); }
 
 static const char vcid_trial_cc[] = "$Header$";
