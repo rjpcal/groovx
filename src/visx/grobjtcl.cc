@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Sep 20 17:20:34 1999
+// written: Tue Sep 21 11:30:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,8 +68,6 @@ public:
 						 &GrObj::getRenderMode, &GrObj::setRenderMode);
 	 declareCAttrib("unRenderMode",
 						 &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
-	 declareCAttrib("usingCompile",
-						 &GrObj::getUsingCompile, &GrObj::setUsingCompile);
 	 declareCAction("update", &GrObj::update);
   }
 };
