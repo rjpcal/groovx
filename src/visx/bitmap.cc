@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov 23 17:49:45 1999
+// written: Wed Nov 24 11:19:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <GL/glu.h>
 #include <cctype>
 #include <cstring>				  // for memcpy
+#include <cmath>					  // for abs
 
 #include "error.h"
 #include "pbm.h"
@@ -209,7 +210,10 @@ void Bitmap::grabScreenRect(int left, int top, int right, int bottom) {
 
 void Bitmap::grabScreenRect(const Rect<int>& rect) {
 DOTRACE("Bitmap::grabScreenRect");
-  itsHeight = rect.height();         DebugEvalNL(itsHeight);
+  DebugEval(rect.left()); DebugEval(rect.right());
+  DebugEval(rect.bottom()); DebugEval(rect.top());
+
+  itsHeight = abs(rect.height());    DebugEvalNL(itsHeight); 
   itsWidth = rect.width();           DebugEval(itsWidth);
   itsBitsPerPixel = 1;
   itsByteAlignment = 1;
@@ -221,7 +225,9 @@ DOTRACE("Bitmap::grabScreenRect");
   itsContrastFlip = false;
   itsVerticalFlip = false;
 
-  vector<unsigned char> newBytes( (itsWidth/8 + 1) * itsHeight + 1);
+  int num_new_bytes = (itsWidth/8 + 1) * itsHeight + 1;
+  Assert(num_new_bytes>0);
+  vector<unsigned char> newBytes( num_new_bytes );
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glReadPixels(rect.left(), rect.bottom(), itsWidth, itsHeight,
@@ -359,7 +365,7 @@ DOTRACE("Bitmap::grUnRender");
   doUndraw( screen_pos.left(),
 				screen_pos.bottom(),
 				screen_pos.width(),
-				screen_pos.height() );
+				abs(screen_pos.height()) );
 }
 
 void Bitmap::doUndraw(int /*winRasterX*/, int /*winRasterY*/,
