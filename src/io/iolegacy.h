@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Sep 28 16:57:26 2000
+// written: Thu Sep 28 19:18:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,8 +89,6 @@ private:
   IO::IOFlag itsOldFlags;
 };
 
-  class LWFlagJanitor;
-
 class IO::LegacyWriter : public IO::Writer {
 public:
   LegacyWriter(STD_IO::ostream& os, IO::IOFlag flag);
@@ -124,7 +122,7 @@ public:
 private:
   STD_IO::ostream& itsOutStream;
   IO::IOFlag itsFlags;
-  char itsFieldSeparator;
+  char itsFieldSeparator[8];
 };
 
 
