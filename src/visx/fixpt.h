@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sat Nov 11 10:18:43 2000
+// written: Mon Nov 13 10:54:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FixPt : public GrObj, public PropFriend<FixPt> {
+class FixPt : public GrObj, public FieldContainer {
 protected:
   /// Construct with initial values for the cross length and pixel-width.
   FixPt (double len=0.1, int wid=1);
@@ -51,20 +51,13 @@ public:
   // properties //
   ////////////////
 
-  /// Info about a \c FixPt property.
-  typedef PropertyInfo<FixPt> PInfo;
-
-  /// Return the number of \c FixPt properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c FixPt property.
-  static const PInfo& getPropertyInfo(unsigned int i);
-
   /// Length of crosshairs in GL coordinates.
-  TProperty<double> length;
+  TField<double> length;
 
   /// Width of crosshairs in pixels.
-  TProperty<int> width;
+  TField<int> width;
+
+  static const FieldMap& classFields();
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
