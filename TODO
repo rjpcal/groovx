@@ -63,48 +63,50 @@
 
 ** Allow default values to be skipped in XML format.
 
-   We don't want to rely on the default values themselves to be stored in
-   the source code, since the source code might use different default
-   values from time to time. Instead we should have one set of default
-   values per XML file. This could be a big savings in file size, since
-   e.g. hundreds or thousands of GxShapeKit objects in an experiment will
-   probably all have the same values.
+   We don't want to rely on the default values themselves to be stored
+   in the source code, since the source code might use different
+   default values from time to time. Instead we should have one set of
+   default values per XML file. This could be a big savings in file
+   size, since e.g. hundreds or thousands of GxShapeKit objects in an
+   experiment will probably all have the same values.
 
-   This would require first writing the default values to the XML file the
-   first time they are seen. Then on subsequent attempts to write the
-   corresponding values, a check is made to see if the value is the
-   default, and if so, the element is not written to the output.
+   This would require first writing the default values to the XML file
+   the first time they are seen. Then on subsequent attempts to write
+   the corresponding values, a check is made to see if the value is
+   the default, and if so, the element is not written to the output.
 
-   At what API level does default-value handling appear? Can it be hidden
-   entirely within a given pair of concrete Reader+Writer classes? Or does
-   there have to be an API entry at the level of the abstract Reader+Writer
-   interfaces? Probably yes to the latter, since somewhere the top-level
-   client code has to specify what the actual default values are.
+   At what API level does default-value handling appear? Can it be
+   hidden entirely within a given pair of concrete Reader+Writer
+   classes? Or does there have to be an API entry at the level of the
+   abstract Reader+Writer interfaces? Probably yes to the latter,
+   since somewhere the top-level client code has to specify what the
+   actual default values are.
 
 ** Enumerations
 
 ** Native array/sequence handling
 
-   Or, at least let concrete Reader+Writer subclasses determine if they can
-   handle arrays specially or if they will just rely on the standard
-   implementation provided by ReadUtils+WriteUtils.
+   Or, at least let concrete Reader+Writer subclasses determine if
+   they can handle arrays specially or if they will just rely on the
+   standard implementation provided by ReadUtils+WriteUtils.
 
 ** Binary data handling
 
-   Via base64? This would allow GxPixmaps to embed their bitmaps in the
-   serialization output.
+   Via base64? This would allow GxPixmaps to embed their bitmaps in
+   the serialization output.
 
 ** Specialized URL handling
 
    So that filenames aren't just treated as plain-old-strings, but get
    tagged specially. This could then be extended to allow internet
-   resources, etc. Could also be extended to allow filenames to be stored
-   as relative paths relative to either a homedir or some other specified
-   base dir. Then when the archive is later deserialized we can accomodate
-   a change in the base dir.
+   resources, etc. Could also be extended to allow filenames to be
+   stored as relative paths relative to either a homedir or some other
+   specified base dir. Then when the archive is later deserialized we
+   can accomodate a change in the base dir.
 
-   Or maybe allow filenames to contain internal references to environment
-   variables using either bash or tcl syntax; then we could have
+   Or maybe allow filenames to contain internal references to
+   environment variables using either bash or tcl syntax; then we
+   could have
 
       ${HOME}/somedir/somefile     or    $::env(HOME)/somedir/somefile
       ${IMAGELIB}/png/foo.png      or    $::env(IMAGELIB)/png/foo.png
@@ -133,28 +135,30 @@
     gxtcl.cc GxShapeKit GxCache GxScaler GxAligner
     gltcl.cc theAttribMap
 
-  Maybe the simplest way is this. Make a big ugly global associative array
-  of enum names. Buyer beware of name clashes. Then we have the string->int
-  translators look for a string in the biguglyarray if the initial int
-  extraction fails. That would be pretty darn simple.
+  Maybe the simplest way is this. Make a big ugly global associative
+  array of enum names. Buyer beware of name clashes. Then we have the
+  string->int translators look for a string in the biguglyarray if the
+  initial int extraction fails. That would be pretty darn simple.
 
   Downside would be that we wouldn't have any reverse lookup
-  (i.e. int->string); i.e. given a command-name, figure out which enums it
-  can accept. Also, we couldn't return values to Tcl in their string form.
+  (i.e. int->string); i.e. given a command-name, figure out which
+  enums it can accept. Also, we couldn't return values to Tcl in their
+  string form.
 
   Let's see. We could have one enum-map per Tcl::Pkg. Then, have a
-  biguglyglobalvariable that points to the current enum-map. This enum map
-  would be used in the string->int translations. Plus the Tcl::Pkg could
-  have an auxiliary command to translate int values into string form. The
-  advantage here would be that we could assume that each integer value is
-  unique in a given enum-map. (Hmmm... will that really be true for the GL
-  enums?)
+  biguglyglobalvariable that points to the current enum-map. This enum
+  map would be used in the string->int translations. Plus the Tcl::Pkg
+  could have an auxiliary command to translate int values into string
+  form. The advantage here would be that we could assume that each
+  integer value is unique in a given enum-map. (Hmmm... will that
+  really be true for the GL enums?)
 
-  Maybe I should just bite the bullet and implement a real Enum type, which
-  would be like an int/string union, that could be passed to/from C++
-  functions. The callee's would be responsible for knowing where to find an
-  EnumList (or EnumTranslator) that could do the translation. Then we could
-  get the string values out to the IO files (but do we want that?).
+  Maybe I should just bite the bullet and implement a real Enum type,
+  which would be like an int/string union, that could be passed
+  to/from C++ functions. The callee's would be responsible for knowing
+  where to find an EnumList (or EnumTranslator) that could do the
+  translation. Then we could get the string values out to the IO files
+  (but do we want that?).
 
 * (22-Nov-2002) Finish cleaning out the src/visx tree.
 
@@ -166,60 +170,45 @@
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
 
-  OK, the main issue here is how to do the "cast" that is required in all
-  of the field implementations. We need to be able to cast from a
-  FieldContainer* to a C*. This is easy with inheritance, since we can just
-  use a dynamic cast. But, with containment, we need to be able to "cast"
-  to a subobject. Probably the easiest was is to provide a virtual function
-  in FieldContainer that provides access to a child, if any. Then we can
-  have a wrapper cast function that first tries dynamic_cast, and if that
-  fails, tries to cast a child subobject to the proper type.
+  OK, the main issue here is how to do the "cast" that is required in
+  all of the field implementations. We need to be able to cast from a
+  FieldContainer* to a C*. This is easy with inheritance, since we can
+  just use a dynamic cast. But, with containment, we need to be able
+  to "cast" to a subobject. Probably the easiest was is to provide a
+  virtual function in FieldContainer that provides access to a child,
+  if any. Then we can have a wrapper cast function that first tries
+  dynamic_cast, and if that fails, tries to cast a child subobject to
+  the proper type.
 
   Aha! And of course this should be recursive.
 
   One problem is that this kind of things means that a given object's
-  FieldMap could change if its child object changes. How do we keep Tcl,
-  for example, abreast of such changes?
+  FieldMap could change if its child object changes. How do we keep
+  Tcl, for example, abreast of such changes?
 
-  Another approach... allowed FieldMap to be a recursive structure. Then we
-  could have named subobjects in a FieldMap, and could specify subfields by
-  using composite names with a hierarchical part separator, such as
-  "aligner.mode". How to pair the submaps with the subobjects?
-
-* (2-Jul-2002) new project name?
-
-OO framework
-
-  hood
-  loot
-  ooze
-  poof
-  igloo
-  roost
-  scoop
-  troop
-  cooler
-  noodle
-
-Psychophysics experiments -- groovx groovx groovx -- is this "the one"? yep
+  Another approach... allowed FieldMap to be a recursive
+  structure. Then we could have named subobjects in a FieldMap, and
+  could specify subfields by using composite names with a hierarchical
+  part separator, such as "aligner.mode". How to pair the submaps with
+  the subobjects?
 
 * (13-Sep-2002) Hacks to work around broken MIPSpro compiler
 
 ** problems with template arg-dependent lookup:
 
-template <class F> struct Traits { enum { num = 1 }; };
+   template <class F> struct Traits { enum { num = 1 }; };
 
-template <int N> struct Functor {};
+   template <int N> struct Functor {};
 
-template <class F> struct Return
-{ typedef Functor<Traits<F>::num> Type; };
+   template <class F> struct Return
+   { typedef Functor<Traits<F>::num> Type; };
 
-// template <class F> Functor<Traits<F>::num> buildTclFunctor(F f);
-template <class F> typename Return<F>::Type buildTclFunctor(F f);
+   // template <class F> Functor<Traits<F>::num> buildTclFunctor(F f);
+   template <class F> typename Return<F>::Type buildTclFunctor(F f);
 
-void bar(int) {}
+   void bar(int) {}
 
-void test() { buildTclFunctor(bar); }
+   void test() { buildTclFunctor(bar); }
 
 ** return void not supported in templates
 
@@ -228,73 +217,81 @@ void test() { buildTclFunctor(bar); }
 ** no <cheader> include files so e.g. size_t not in std:: namespace
 
 * (25-Jan-2002) Logging goodies
-  log levels, and multiple log targets with separate log levels for each?
+
+  log levels, and multiple log targets with separate log levels for
+  each?
 
 * (17-Jan-2002) get automated dependencies working
 
-eliminate some of the cruft from the main executable and make things more
-modular+loadable
+  eliminate some of the cruft from the main executable and make things
+  more modular+loadable
 
-OK, in order to allow easy building of test driver executables, we need to
-be able to figure out which libraries + object files are required by the
-test script, and specify this information in a makefile-compatible format.
+  OK, in order to allow easy building of test driver executables, we
+  need to be able to figure out which libraries + object files are
+  required by the test script, and specify this information in a
+  makefile-compatible format.
 
   (1-done) Figure out on which .o files a given .cc file depends. OK,
 	   ldeps::get_batch can do this now.
 
-  (2-done) Figure out where those .o files are to be found (as individual
-           .o files, in a static archive, in a dynamic library). OK, we
-           handle this with a regexp mapping in linkdeps.tcl.
+  (2-done) Figure out where those .o files are to be found (as
+           individual .o files, in a static archive, in a dynamic
+           library). OK, we handle this with a regexp mapping in
+           linkdeps.tcl.
 
-  (3-done) Figure out what to do with a new .o file (keep it separate, or
-	   put it in a dynamic library). OK, this is handled by
+  (3-done) Figure out what to do with a new .o file (keep it separate,
+	   or put it in a dynamic library). OK, this is handled by
 	   build_lib_rules.tcl.
 
   (4) specify these results to a makefile
 
-  -- Aha! General principle: need a generic mapping from #include directives
-     to link options
+  -- Aha! General principle: need a generic mapping from #include
+     directives to link options
 
      -- local #include's just involve adding a .o file
-     -- std library #include's require nothing, since it is automatically linked
+
+     -- std library #include's require nothing, since it is
+        automatically linked
+
      -- other #include's require some kind of user defined map, such as
 	<engine.h> requires libmatlabengine
 
-  -- Start simple: let's get a script to build the LIBDEEP... targets and
-     dependencies for us. The only thing that the rest of the Makefile will
-     depend on is the $(PROJECT_LIBS) variable.
+  -- Start simple: let's get a script to build the LIBDEEP... targets
+     and dependencies for us. The only thing that the rest of the
+     Makefile will depend on is the $(PROJECT_LIBS) variable.
 
 * (4-Sep-2001) A Connection class to manage Signal/Slot connections
 
 * (24-Aug-2001) How to get animation working?
 
-I have a Tcl::Timer for generic timer callbacks now, but the problem is:
-how to inform the animated thing that it is time to stop drawing itself,
-for example when the Widget switches to displaying something else? I guess
-the appropriate model is for GxNode's the sigNodeChanged signal to indicate
-they need to be redrawn (e.g. for animation), and for the Widget to connect
-to that signal to listen for changes. Later on, we can try to optimize the
-redraws so that in an animation only the changed things are redrawn. OK,
-I've got this working now to animate the bounding boxes... but the next
-question: how to avoid excessive updates if multiple objects are on the
-screen at once? We need only one timer per scene, rather than one timer per
-object. [3-Sep-2001] Aha! GxNode's should just emit change events as
-necessary, everyone at their own rate... But, the Widget should also have a
-timer callback going, so that it redisplays itself only at some maximum
-frame rate. When it gets signals saying that GxNode's have changed, it just
-remembers this fact until its next redisplay comes around, rather than
-immediately redisplaying the scene. Widget could have a maxRefreshRate
-attrib, instead of allowRefresh; then "maxRefreshRate 0" would be
-equivalent to "allowRefresh false".
+  I have a Tcl::Timer for generic timer callbacks now, but the problem
+  is: how to inform the animated thing that it is time to stop drawing
+  itself, for example when the Widget switches to displaying something
+  else? I guess the appropriate model is for GxNode's the
+  sigNodeChanged signal to indicate they need to be redrawn (e.g. for
+  animation), and for the Widget to connect to that signal to listen
+  for changes. Later on, we can try to optimize the redraws so that in
+  an animation only the changed things are redrawn. OK, I've got this
+  working now to animate the bounding boxes... but the next question:
+  how to avoid excessive updates if multiple objects are on the screen
+  at once? We need only one timer per scene, rather than one timer per
+  object. [3-Sep-2001] Aha! GxNode's should just emit change events as
+  necessary, everyone at their own rate... But, the Widget should also
+  have a timer callback going, so that it redisplays itself only at
+  some maximum frame rate. When it gets signals saying that GxNode's
+  have changed, it just remembers this fact until its next redisplay
+  comes around, rather than immediately redisplaying the scene. Widget
+  could have a maxRefreshRate attrib, instead of allowRefresh; then
+  "maxRefreshRate 0" would be equivalent to "allowRefresh false".
 
 * (6-Jun-2001) refactoring Trial/TimingHdlr/ResponseHandler
 
-I'm getting the feeling these are starting to become inherently buggy.
+  I'm getting the feeling these are starting to become inherently buggy.
 
-For example, need to make sure I haven't broken anything by changing
-trHaltExpt() to not call trAbortTrial() and trEndTrial().
+  For example, need to make sure I haven't broken anything by changing
+  trHaltExpt() to not call trAbortTrial() and trEndTrial().
 
-Need to have a useful way of debugging TimingHdlr/Trial sequences.
+  Need to have a useful way of debugging TimingHdlr/Trial sequences.
 
 
 * (12-Jun-2001) Refactor TogletTcl into separate Toglet/TkWidget/Widget groups
@@ -304,232 +301,245 @@ Need to have a useful way of debugging TimingHdlr/Trial sequences.
 * (27-May-2001) Change Jitter to be a FieldContainer
 
 * (27-May-2001) Refactor away the list_test.tcl module
-and the dependent blocklist_test.tcl, objlist_test.tcl, etc.
+  and the dependent blocklist_test.tcl, objlist_test.tcl, etc.
 
 * (30-Nov-2000) a event type to install a GxNode?
-Now that screen-update is better controlled, we could introduce a new
-TrialEvent type that puts a GxNode into the Widget... this would give a way
-to implement visual feedback in an experiment.
+  Now that screen-update is better controlled, we could introduce a
+  new TrialEvent type that puts a GxNode into the Widget... this would
+  give a way to implement visual feedback in an experiment.
 
 * (note 30-Oct-2000) scripts as callbacks?
-The fact that we now have good unique correspondence between objects and
-ids means that there are flexible possibilities for allowing scripts as
-callbacks. For example, a callback class could have an abstract function
-that takes an object, and an implementation could pass that object to a
-script as an id.
+  The fact that we now have good unique correspondence between objects
+  and ids means that there are flexible possibilities for allowing
+  scripts as callbacks. For example, a callback class could have an
+  abstract function that takes an object, and an implementation could
+  pass that object to a script as an id.
 
 * (25-Jun-1999) how dynamic loading should work for grsh
-all of the lists, plus all of the base classes that are held by the lists,
-need to be statically (or at least permanently dynamically-) linked into
-the grsh executable. These would be the so-called 'core' modules. Any of
-the separate Tcl packages should contain the subclass (such as Face) and
-the TclPkg to work with that subclass (such as FaceTcl)... these units can
-then be loaded with the Tcl "load" command, and would be called
-'extensions'. Dependencies between any of the extensions should be
-avoided. This hierarchy urges strongly for all the base classes handled on
-the lists to be abstract. The problem right now is the issue with bus
-errors due to OpenGL calls from dynamically-linked modules--most of the
-'extensions' will use OpenGL, so this probably makes them unable to be
-dynamically loaded.
+  all of the lists, plus all of the base classes that are held by the
+  lists, need to be statically (or at least permanently dynamically-)
+  linked into the grsh executable. These would be the so-called 'core'
+  modules. Any of the separate Tcl packages should contain the
+  subclass (such as Face) and the TclPkg to work with that subclass
+  (such as FaceTcl)... these units can then be loaded with the Tcl
+  "load" command, and would be called 'extensions'. Dependencies
+  between any of the extensions should be avoided. This hierarchy
+  urges strongly for all the base classes handled on the lists to be
+  abstract. The problem right now is the issue with bus errors due to
+  OpenGL calls from dynamically-linked modules--most of the
+  'extensions' will use OpenGL, so this probably makes them unable to
+  be dynamically loaded.
 
-OK, later I've figured out that a problem with dynamic loading occurred on
-program shutdown. Apparently, shlib's loaded with Tcl's 'load' are unloaded
-before C++ static shutdown occurs... this means that virtual destructors
-for IoObject's maybe missing when the IoPtrList tries to destroy them in
-its own destructor. Now, I've just figured out that a solution is to Tcl
-exit handlers; in fact I already had the framework in place via the TclPkg
-destructor, which is called from an exit handler that is registered for
-each TclPkg. So for now I just put calls to clear the ExptDriver and the
-IoPtrList inside the ExptPkg destructor; this ensures that we don't try to
-call any IoObject destructors after the libraries are unloaded.
+  OK, later I've figured out that a problem with dynamic loading
+  occurred on program shutdown. Apparently, shlib's loaded with Tcl's
+  'load' are unloaded before C++ static shutdown occurs... this means
+  that virtual destructors for IoObject's maybe missing when the
+  IoPtrList tries to destroy them in its own destructor. Now, I've
+  just figured out that a solution is to Tcl exit handlers; in fact I
+  already had the framework in place via the TclPkg destructor, which
+  is called from an exit handler that is registered for each
+  TclPkg. So for now I just put calls to clear the ExptDriver and the
+  IoPtrList inside the ExptPkg destructor; this ensures that we don't
+  try to call any IoObject destructors after the libraries are
+  unloaded.
 
-The final step is to come up with an organized build approach using
-these package files... we need to:
-1) manage the dependencies for the shlib's,
-2) make sure the pkgIndex.tcl files are updated,
-3) maintain separate debug/production trees for the shlib's
+  The final step is to come up with an organized build approach using
+  these package files... we need to:
+  1) manage the dependencies for the shlib's,
+  2) make sure the pkgIndex.tcl files are updated,
+  3) maintain separate debug/production trees for the shlib's
 
 * (21-Sep-2000) Writer subclass for matlab export
 
-A new subclass of Writer could handle exporting data in a format suitable
-for Matlab use, perhaps. Aha! A generic FormatWriter could take arguments
-describing which fields are to go into the file. In fact, we could just
-give it a format string like this:
+  A new subclass of Writer could handle exporting data in a format
+  suitable for Matlab use, perhaps. Aha! A generic FormatWriter could
+  take arguments describing which fields are to go into the file. In
+  fact, we could just give it a format string like this:
 
-fwriter.setFormat("category eyeDistance eyeHeight noseLength mouthHeight"); 
+  fwriter.setFormat("category eyeDistance eyeHeight noseLength mouthHeight"); 
 
-and it would filter out any other data. The implementation would actually
-be similar to AsciiStreamReader, using a std::map to store attributes as
-they come in from writeTo(), then generating output from the attributes in
-the map using the format string. Easier would be to store a map from field
-names to integers, where the integers are indices into a vector of strings
-that will be printed.
+  and it would filter out any other data. The implementation would
+  actually be similar to AsciiStreamReader, using a std::map to store
+  attributes as they come in from writeTo(), then generating output
+  from the attributes in the map using the format string. Easier would
+  be to store a map from field names to integers, where the integers
+  are indices into a vector of strings that will be printed.
 
-  MapType::iterator ii = attrib_map.find(field_name);
-  if (ii != attrib_map.end())
-    {
-      int i = (*ii).second;
-      char buf[4096];
-      ostrstream ost(buf, 4096);
-      ost << val << '\0';
-      fields[i] = buf;
-    }
+    MapType::iterator ii = attrib_map.find(field_name);
+    if (ii != attrib_map.end())
+      {
+        int i = (*ii).second;
+        char buf[4096];
+        ostrstream ost(buf, 4096);
+        ost << val << '\0';
+        fields[i] = buf;
+      }
 
-then later:
+  then later:
 
-  for (int i = 0; i < fields.size(); ++i)
-    itsBuf << fields[i] << sep;
+    for (int i = 0; i < fields.size(); ++i)
+      itsBuf << fields[i] << sep;
 
-Not too much more effort would be needed to allow simple parsing of the
-format string, so that we could include both literal text, as well as
-fields to be substituted, like this:
+  Not too much more effort would be needed to allow simple parsing of
+  the format string, so that we could include both literal text, as
+  well as fields to be substituted, like this:
 
-fwriter.setFormat("c: $category ed: $eyeDistance eh: $eyeHeight");
+  fwriter.setFormat("c: $category ed: $eyeDistance eh: $eyeHeight");
 
-... on second thought, this might actually be quite a bit of work. The
-FormatWriter would still be quite useful even if it only allowed field
-substitutions. We start out using the '$' syntax, though, to allow for
-future expansion.
+  ... on second thought, this might actually be quite a bit of
+  work. The FormatWriter would still be quite useful even if it only
+  allowed field substitutions. We start out using the '$' syntax,
+  though, to allow for future expansion.
 
 * (1-Nov-2000) Event handling by a chain of command
-passing either up or down the experiment hierarchy (i.e. Expt --> Block -->
-Trial --> EventResponseHdlr or the reverse direction).
+  passing either up or down the experiment hierarchy (i.e. Expt -->
+  Block --> Trial --> EventResponseHdlr or the reverse direction).
 
 * (25-Oct-2000) ReadUtils and WriteUtils use iterators?
-could/should really be implemented in terms of iterators that iterate over
-the elements in the stream. Then transferring elements to/from a local
-container is just a simple std::copy type of operation.
+  could/should really be implemented in terms of iterators that
+  iterate over the elements in the stream. Then transferring elements
+  to/from a local container is just a simple std::copy type of
+  operation.
 
 * (7-Jul-2000) Adding an 'itsCorrectVal' member to Response
-Should this value be serialized? We don't have a good way to do versioning
-of Value types that are written/read with printTo() and
-scanFrom(). [...Later] Probably if any versioning becomes necessary, it's a
-good sign that the thing should become an IoObject, rather than a plain
-Value.
+  Should this value be serialized? We don't have a good way to do
+  versioning of Value types that are written/read with printTo() and
+  scanFrom(). [...Later] Probably if any versioning becomes necessary,
+  it's a good sign that the thing should become an IoObject, rather
+  than a plain Value.
 
 * (22-May-2000) destroy the pause keybinding when an experiment is done
-The problem is, ExptDriver shouldn't know about the names of the Tcl
-commands that run it... therefore we don't want ExptDriver to
-create/destroy bindings to "Expt::pause".
+  The problem is, ExptDriver shouldn't know about the names of the Tcl
+  commands that run it... therefore we don't want ExptDriver to
+  create/destroy bindings to "Expt::pause".
 
 * (15-May-2000) GOAL #5 Improve the overall timing accuracy of the software.
 
 ** (29-Nov-1999) adjust TrialEvent internal delays
-TrialEvent's could internally adjust their requested delays so that the
-actual delays converge to the requested delays. This would require some
-care to ensure that we don't send the entire system into an unstable
-oscillation. We'd maintain two values: itsIdealDelay, and
-itsRequestedDelay. The ideal delay remains constant, but we modify the
-requested delay based on experience to try to get the actual delay to meet
-the ideal delay. There are several strategies we could use to make these
-adjustments-- one would be to try to minimize the total timing error of the
-TrialEvent, another would be to minimize the average absolute value of the
-timing error. [Later] We could also control the timing more
-globally... where a block or experiment knows how long it is supposed to
-last, then timer events report to the block how long they requested, and
-how long they actually lasted. Then the block could adjust the requested
-times for future trial events in order to compensate.
+   TrialEvent's could internally adjust their requested delays so that
+   the actual delays converge to the requested delays. This would
+   require some care to ensure that we don't send the entire system
+   into an unstable oscillation. We'd maintain two values:
+   itsIdealDelay, and itsRequestedDelay. The ideal delay remains
+   constant, but we modify the requested delay based on experience to
+   try to get the actual delay to meet the ideal delay. There are
+   several strategies we could use to make these adjustments-- one
+   would be to try to minimize the total timing error of the
+   TrialEvent, another would be to minimize the average absolute value
+   of the timing error. [Later] We could also control the timing more
+   globally... where a block or experiment knows how long it is
+   supposed to last, then timer events report to the block how long
+   they requested, and how long they actually lasted. Then the block
+   could adjust the requested times for future trial events in order
+   to compensate.
 
 ** (14-May-2000) Implemented error-checking and adjustment in TrialEvent
-This gives very good accuracy (+/-1msec average per trial)
-over an experiment. Still need to control this error-checking from
-script-level, and to provide a hint to the TrialEvent at construction time.
+   This gives very good accuracy (+/-1msec average per trial) over an
+   experiment. Still need to control this error-checking from
+   script-level, and to provide a hint to the TrialEvent at
+   construction time.
 
 ** (15-May-2000) integrated timing info
-Need to include info about timing throughout the experiment object
-hierarchy, from Experiment, Block, and Trial, to TimingHdlr. Each object
-should know its allotted time, its expected error, and should compute its
-actual error and use this to give feedback to someone in order to improve
-future timing. Experiment and Block don't have too much control, but they
-can keep an overall view of how the timing is going, and perhaps issue a
-request for future trials to compensate their timing by a particular scale
-factor in order to adjust for past errors.
+   Need to include info about timing throughout the experiment object
+   hierarchy, from Experiment, Block, and Trial, to TimingHdlr. Each
+   object should know its allotted time, its expected error, and
+   should compute its actual error and use this to give feedback to
+   someone in order to improve future timing. Experiment and Block
+   don't have too much control, but they can keep an overall view of
+   how the timing is going, and perhaps issue a request for future
+   trials to compensate their timing by a particular scale factor in
+   order to adjust for past errors.
 
 ** (15-May-2000) Trial's should know their desired length
-and give feedback to their TimingHdlr's so that the TimingHdlr's can do a
-multiplicative scaling to compensate.
+   and give feedback to their TimingHdlr's so that the TimingHdlr's
+   can do a multiplicative scaling to compensate.
 
 * (29-Nov-1999) How to automate the data analysis?
 
-Need to bridge the gap between output of Grsh program running experiment,
-and necessary input to Matlab to process data. I think this is a possible
-route:
+  Need to bridge the gap between output of Grsh program running
+  experiment, and necessary input to Matlab to process data. I think
+  this is a possible route:
 
-      1) expt completes and saves files
+        1) expt completes and saves files
 
-      2) a Grsh script runs and processes the data further, generating
-         the data files that matlab needs, and also **generating a
-         Matlab script file (.m file)** that we can run to process the
-         data.
+        2) a groovx script runs and processes the data further,
+           generating the data files that matlab needs, and also
+           **generating a Matlab script file (.m file)** that we can
+           run to process the data.
 
-      3) Run the .m file to finish the data processing.
+        3) Run the .m file to finish the data processing.
 
-What input does this process need? We need to know the location of the
-pairs/triads experiment file, and of the classification experiment
-files.
+  What input does this process need? We need to know the location of
+  the pairs/triads experiment file, and of the classification
+  experiment files.
 
-Breakdown of classification process:
+  Breakdown of classification process:
 
-1) make incidence matrices (see make_inc_mat_mfaces_s50.m as example)
-   from resp files.
-2) run models (see run_mfaces_models.m as example)
+  1) make incidence matrices (see make_inc_mat_mfaces_s50.m as
+     example) from resp files.
 
-Important data:
+  2) run models (see run_mfaces_models.m as example)
 
-- base directory which contains subjects' individual directories
-- name of subject (encoded as directory for subject)
-- date of pairs experiment (to create pairs directory based on date)
-- name for type of objects
-- names of response files in probe experiments
+  Important data:
 
-Use case:
-1) run experiments + collect multiple data files from several subjects
-2) run mds analysis on results of similarity tasks
-3) compile subjects' overall categorization results across all clones
-4) fit various models to the categorization results
+  - base directory which contains subjects' individual directories
+  - name of subject (encoded as directory for subject)
+  - date of pairs experiment (to create pairs directory based on date)
+  - name for type of objects
+  - names of response files in probe experiments
+
+  Use case:
+  1) run experiments + collect multiple data files from several subjects
+  2) run mds analysis on results of similarity tasks
+  3) compile subjects' overall categorization results across all clones
+  4) fit various models to the categorization results
 
 * (17-Nov-1999) automate the experiment-running process
 
-[later] Aha! I see that this is just yet another level of abstraction on
-top of block/experiment etc. In fact, there might be two abstractions: one
-which defines a series of experiments to be run together as a session
-(ExperimentSession?), in which the next experiment might depend on the
-results of the previous one, and a higher level abstraction which defines a
-series of sessions (ExperimentSeries) that constitute an entire experiment,
-lasting perhaps several weeks. An ExperimentSession probably requires only
-one process, whereas an ExperimentSeries requires multiple processes to be
-run, over the course of many days/weeks (and therefore requires the help of
-some persistent data in the form of files in order to maintain itself over
-the entire duration).
+  [later] Aha! I see that this is just yet another level of
+  abstraction on top of block/experiment etc. In fact, there might be
+  two abstractions: one which defines a series of experiments to be
+  run together as a session (ExperimentSession?), in which the next
+  experiment might depend on the results of the previous one, and a
+  higher level abstraction which defines a series of sessions
+  (ExperimentSeries) that constitute an entire experiment, lasting
+  perhaps several weeks. An ExperimentSession probably requires only
+  one process, whereas an ExperimentSeries requires multiple processes
+  to be run, over the course of many days/weeks (and therefore
+  requires the help of some persistent data in the form of files in
+  order to maintain itself over the entire duration).
 
-1) 'log in' a subject ==> change to the correct directory
-2) run an experiment
-3) move the experiment data files to appropriate names and chmod appropriately
-   --> this requires ExptDriver() to provide the names of its most
-   recently saved files
-4) possibly repeat steps 2+3
-   --> We can store a file that contains a list of experiment commands
-   that should be issued. A separate file, called 'next_expt' can be
-   updated to always contain the command needed to run the next
-   experiment. When one experiment is completed, the driver rewrites
-   the 'next_expt' file appropriately.
-5) exit
+  1) 'log in' a subject ==> change to the correct directory
 
-** (22-Nov-1999) Need to get rjp_subject working.
-1) Need to maintain a do_expt script in each subject's directory. 2) Need
-to make sure that autosave file is writable by rjp_subject, and if not, use
-a different filename. (Maybe use temp filename generating facility of OS?).
+  2) run an experiment
+
+  3) move the experiment data files to appropriate names and chmod
+     appropriately
+
+     --> this requires ExptDriver() to provide the names of its most
+     recently saved files
+
+  4) possibly repeat steps 2+3
+
+     --> We can store a file that contains a list of experiment
+     commands that should be issued. A separate file, called
+     'next_expt' can be updated to always contain the command needed
+     to run the next experiment. When one experiment is completed, the
+     driver rewrites the 'next_expt' file appropriately.
+
+  5) exit
 
 * (17-Nov-1999) matlab automation for data analysis?
 by opening a pipe to a Matlab process from within Tcl?
 
 * (29-Sep-1999) Avoid unnecessary sendChangeMsg()'s
-It would be nice, in the Value/Property scheme, to be able to avoid
-triggering sendChangeMsg() when the value doesn't actually change (e.g if
-the new value was the same as the current value, or was out of bounds).
+  It would be nice, in the Value/Property scheme, to be able to avoid
+  triggering sendChangeMsg() when the value doesn't actually change
+  (e.g if the new value was the same as the current value, or was out
+  of bounds).
 
 * (15-Jun-1999) Bitmaps need to have attribs for glPixelZoom()
-and other operations that can affect pixel rendering... should these be
-placed in a separate Position subclass?
+  and other operations that can affect pixel rendering... should these
+  be placed in a separate Position subclass?
 
 * (May-1999) extract experiment+trial statistics
