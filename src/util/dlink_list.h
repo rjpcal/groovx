@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Wed Jun 13 16:23:47 2001
+// written: Sun Jul 22 23:43:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef DLINK_LIST_H_DEFINED
 #define DLINK_LIST_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(NEW_DEFINED)
 #include <new>
@@ -320,9 +324,7 @@ public:
 
   void swap(dlink_list& other)
     {
-      node* other_the_node = other.the_node;
-      other.the_node = this->the_node;
-      this->the_node = other_the_node;
+      Util::swap(the_node, other.the_node);
     }
 };
 

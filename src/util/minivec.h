@@ -379,17 +379,9 @@ public:
 
   void swap (minivec<T>& x)
     {
-      iterator x_start = x.start;
-      x.start = this->start;
-      this->start = x_start;
-
-      iterator x_finish = x.finish;
-      x.finish = this->finish;
-      this->finish = x_finish;
-
-      iterator x_end_of_storage = x.end_of_storage;
-      x.end_of_storage = this->end_of_storage;
-      this->end_of_storage = x_end_of_storage;
+		Util::swap(start, x.start);
+		Util::swap(finish, x.finish);
+		Util::swap(end_of_storage, x.end_of_storage);
     }
 
   iterator erase (iterator position)

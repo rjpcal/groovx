@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sun Jul 22 18:13:42 2001
+// written: Sun Jul 22 23:46:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef REF_H_DEFINED
 #define REF_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
@@ -127,9 +131,7 @@ private:
   private:
     void swap(Handle& other)
     {
-      T* otherMaster = other.itsMaster;
-      other.itsMaster = this->itsMaster;
-      this->itsMaster = otherMaster;
+      Util::swap(itsMaster, other.itsMaster);
     }
 
     T* itsMaster;
@@ -297,13 +299,8 @@ private:
 
     void swap(WeakHandle& other)
     {
-      T* otherMaster = other.itsMaster;
-      other.itsMaster = this->itsMaster;
-      this->itsMaster = otherMaster;
-
-      Util::RefCounts* otherCounts = other.itsCounts;
-      other.itsCounts = this->itsCounts;
-      this->itsCounts = otherCounts;
+      Util::swap(itsMaster, other.itsMaster);
+      Util::swap(itsCounts, other.itsCounts);
     }
 
     // In order to avoid storing a separate bool indicating whether we

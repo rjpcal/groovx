@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Thu Jul 19 21:02:21 2001
+// written: Sun Jul 22 23:43:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #include "util/arrays.h"
 #include "util/slink_list.h"
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
@@ -346,9 +350,7 @@ public:
   void swap(hash_array& other)
     {
       buckets.swap(other.buckets);
-      size_type other_entry_count = other.entry_count;
-      other.entry_count = this->entry_count;
-      this->entry_count = other_entry_count;
+      Util::swap(entry_count, other.entry_count);
     }
 
   void resize(size_type new_size_hint)

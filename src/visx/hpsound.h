@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Sun Jul 22 23:40:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,10 +16,11 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/algo.h"
 #include "util/strings.h"
 
 #include <Alib.h>
-#include <fstream.h>				  // to check if files exist
+#include <fstream.h>            // to check if files exist
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -38,17 +39,17 @@ namespace HPSOUND_CC_LOCAL {
   static long audioErrorHandler(Audio* audio, AErrorEvent *errEvent) {
   DOTRACE("audioErrorhandler");
 
-	 static char buf[128];
-	 AGetErrorText(audio, errEvent->error_code, buf, 127);
+    static char buf[128];
+    AGetErrorText(audio, errEvent->error_code, buf, 127);
 
-	 DebugEvalNL(buf);
+    DebugEvalNL(buf);
 
-	 SoundError err("HP Audio Error: ");
-	 err.appendMsg(buf);
-	 throw err;
+    SoundError err("HP Audio Error: ");
+    err.appendMsg(buf);
+    throw err;
 
-	 // we'll never get here, but we need to placate the compiler
-	 return 0;
+    // we'll never get here, but we need to placate the compiler
+    return 0;
   }
 }
 
@@ -67,11 +68,11 @@ class SoundFilenameError : public SoundError {
 public:
   SoundFilenameError() : SoundError() {}
   SoundFilenameError(const char* filename) :
-	 SoundError("bad or nonexistent file '")
-	 {
-		appendMsg(filename);
-		appendMsg("'");
-	 }
+    SoundError("bad or nonexistent file '")
+    {
+      appendMsg(filename);
+      appendMsg("'");
+    }
 };
 
 class HpAudioSound : public Sound {
@@ -90,15 +91,10 @@ public:
 
   void swap(HpAudioSound& other)
     {
-		itsFilename.swap(other.itsFilename);
+      itsFilename.swap(other.itsFilename);
 
-		SBucket* otherSBucket = other.itsSBucket;
-		other.itsSBucket = this->itsSBucket;
-		this->itsSBucket = otherSBucket;
-
-		SBPlayParams otherParams = other.itsPlayParams;
-		other.itsPlayParams = this->itsPlayParams;
-		this->itsPlayParams = otherParams;
+      Util::swap(itsSBucket,    other.itsSBucket);
+      Util::swap(itsPlayParams, other.itsPlayParams);
     }
 
 private:
@@ -121,11 +117,11 @@ HpAudioSound::HpAudioSound(const char* filename) :
 DOTRACE("HpAudioSound::HpAudioSound");
   if ( !theAudio ) { throw SoundError("invalid HP audio server connection"); }
 
-  itsPlayParams.pause_first = 0; 
-  itsPlayParams.start_offset.type = ATTSamples; 
+  itsPlayParams.pause_first = 0;
+  itsPlayParams.start_offset.type = ATTSamples;
   itsPlayParams.start_offset.u.samples = 0;
-  itsPlayParams.loop_count = 0; 
-  itsPlayParams.previous_transaction = 0; 
+  itsPlayParams.loop_count = 0;
+  itsPlayParams.previous_transaction = 0;
   itsPlayParams.gain_matrix = *ASimplePlayer(theAudio);
   itsPlayParams.priority = APriorityNormal;
   itsPlayParams.play_volume = AUnityGain;
@@ -138,8 +134,8 @@ DOTRACE("HpAudioSound::HpAudioSound");
 HpAudioSound::~HpAudioSound() {
 DOTRACE("HpAudioSound::~HpAudioSound");
   if ( theAudio != 0 ) {
-	 if (itsSBucket)
-		ADestroySBucket( theAudio, itsSBucket, NULL );
+    if (itsSBucket)
+      ADestroySBucket( theAudio, itsSBucket, NULL );
   }
 }
 
@@ -151,13 +147,13 @@ DOTRACE("HpAudioSound::readFrom");
   DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
 
   if (!itsFilename.empty())
-	 setFile(itsFilename.c_str());
+    setFile(itsFilename.c_str());
 }
 
 void HpAudioSound::writeTo(IO::Writer* writer) const {
 DOTRACE("HpAudioSound::writeTo");
 
-  writer->writeValue("filename", itsFilename); 
+  writer->writeValue("filename", itsFilename);
 }
 
 void HpAudioSound::play() {
@@ -165,32 +161,32 @@ DOTRACE("HpAudioSound::play");
   if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
 
   if (itsSBucket)
-	 ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
+    ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
 }
 
 void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
 
   if (filename != 0 && filename[0] != '\0')
-	 {
-		if ( !theAudio )
-		  { throw SoundError("invalid audio server connection"); }
+    {
+      if ( !theAudio )
+        { throw SoundError("invalid audio server connection"); }
 
-		STD_IO::ifstream ifs(filename);
-		if (ifs.fail()) {
-		  throw SoundFilenameError(filename);
-		}
-		ifs.close();
+      STD_IO::ifstream ifs(filename);
+      if (ifs.fail()) {
+        throw SoundFilenameError(filename);
+      }
+      ifs.close();
 
-		AFileFormat fileFormat = AFFUnknown;
-		AudioAttrMask AttribsMask = 0;
-		AudioAttributes Attribs;
+      AFileFormat fileFormat = AFFUnknown;
+      AudioAttrMask AttribsMask = 0;
+      AudioAttributes Attribs;
 
-		itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
-										fileFormat, AttribsMask, &Attribs, NULL);
+      itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
+                              fileFormat, AttribsMask, &Attribs, NULL);
 
-		itsFilename = filename;
-	 }
+      itsFilename = filename;
+    }
 }
 
 
@@ -215,12 +211,12 @@ DOTRACE("Sound::initSound");
   long status = 0;
   theAudio = AOpenAudio( const_cast<char *>(ServerName), &status );
   if ( status != 0 ) {
-	 theAudio = NULL;
-	 retVal = false;
+    theAudio = NULL;
+    retVal = false;
   }
   else {
-	 ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
-	 retVal = true;
+    ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
+    retVal = true;
   }
 
   return retVal;
@@ -234,8 +230,8 @@ DOTRACE("Sound::haveSound");
 void Sound::closeSound() {
 DOTRACE("Sound::closeSound");
   if ( theAudio ) {
-	 ACloseAudio( theAudio, NULL );
-	 theAudio = 0;
+    ACloseAudio( theAudio, NULL );
+    theAudio = 0;
   }
 }
 

@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Fri Jul 20 07:32:01 2001
+// written: Sun Jul 22 23:45:15 2001
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -23,6 +23,10 @@
 
 #ifndef POINTERS_H_DEFINED
 #define POINTERS_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
 
 template <class T>
 class borrowed_ptr {
@@ -206,12 +210,8 @@ public:
 
   void swap(shared_ptr<T>& other) throw()
     {
-      T* other_px = other.px;
-      other.px = this->px;
-      this->px = other_px;
-      long* other_pn = other.pn;
-      other.pn = this->pn;
-      this->pn = other_pn;
+      Util::swap(px, other.px);
+      Util::swap(pn, other.pn);
     }
 
 private:

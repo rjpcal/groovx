@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Thu May 10 12:04:36 2001
+// written: Sun Jul 22 23:46:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SLINK_LIST_H_DEFINED
 #define SLINK_LIST_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -45,73 +49,73 @@ public:
   //
 
   struct node {
-	 node(const T& v, node* n) : val(v), next(n) {}
+    node(const T& v, node* n) : val(v), next(n) {}
 
-	 node(const node& other) : val(other.val), next(other.next) {}
+    node(const node& other) : val(other.val), next(other.next) {}
 
-	 node& operator=(const node& other)
-	   { val = other.val; next = other.next; return *this; }
+    node& operator=(const node& other)
+      { val = other.val; next = other.next; return *this; }
 
-	 T val;
-	 node* next;
+    T val;
+    node* next;
   };
 
   class iterator {
   private:
-	 node* nn;
+    node* nn;
 
   public:
-	 friend class slink_list;
-	 friend class const_iterator;
+    friend class slink_list;
+    friend class const_iterator;
 
-	 typedef T value_type;
-	 typedef T* pointer;
-	 typedef T& reference;
+    typedef T value_type;
+    typedef T* pointer;
+    typedef T& reference;
 
-	 iterator(node* n = 0) : nn(n) {}
+    iterator(node* n = 0) : nn(n) {}
 
-	 iterator(const iterator& other) : nn(other.nn) {}
+    iterator(const iterator& other) : nn(other.nn) {}
 
-	 iterator& operator=(const iterator& other)
-	   { nn = other.nn; return *this; }
+    iterator& operator=(const iterator& other)
+      { nn = other.nn; return *this; }
 
-	 reference operator*() { return nn->val; }
-	 pointer operator->() { return &(nn->val); }
+    reference operator*() { return nn->val; }
+    pointer operator->() { return &(nn->val); }
 
-	 iterator& operator++() { nn = nn->next; return *this; }
-	 iterator operator++(int) { iterator temp(*this); ++*this; return temp; }
+    iterator& operator++() { nn = nn->next; return *this; }
+    iterator operator++(int) { iterator temp(*this); ++*this; return temp; }
 
-	 bool operator==(const iterator& other) const { return nn == other.nn; }
-	 bool operator!=(const iterator& other) const { return nn != other.nn; }
+    bool operator==(const iterator& other) const { return nn == other.nn; }
+    bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
   class const_iterator {
   private:
-	 node* nn;
+    node* nn;
 
   public:
-	 friend class slink_list;
+    friend class slink_list;
 
-	 typedef const T value_type;
-	 typedef const T* pointer;
-	 typedef const T& reference;
+    typedef const T value_type;
+    typedef const T* pointer;
+    typedef const T& reference;
 
-	 const_iterator(node* n = 0) : nn(n) {}
-	 const_iterator(const iterator& other) : nn (other.nn) {}
+    const_iterator(node* n = 0) : nn(n) {}
+    const_iterator(const iterator& other) : nn (other.nn) {}
 
-	 const_iterator(const const_iterator& other) : nn(other.nn) {}
-	 const_iterator& operator=(const const_iterator& other)
-	   { nn = other.nn; return *this; }
+    const_iterator(const const_iterator& other) : nn(other.nn) {}
+    const_iterator& operator=(const const_iterator& other)
+      { nn = other.nn; return *this; }
 
-	 const_reference operator*() { return nn->val; }
-	 const_pointer operator->() { return &(nn->val); }
+    const_reference operator*() { return nn->val; }
+    const_pointer operator->() { return &(nn->val); }
 
-	 const_iterator& operator++() { nn = nn->next; return *this; }
-	 const_iterator operator++(int)
-		{ const_iterator temp(*this); ++*this; return temp; }
+    const_iterator& operator++() { nn = nn->next; return *this; }
+    const_iterator operator++(int)
+      { const_iterator temp(*this); ++*this; return temp; }
 
-	 bool operator==(const const_iterator& other) { return nn == other.nn; }
-	 bool operator!=(const const_iterator& other) { return nn != other.nn; }
+    bool operator==(const const_iterator& other) { return nn == other.nn; }
+    bool operator!=(const const_iterator& other) { return nn != other.nn; }
   };
 
   //
@@ -121,54 +125,54 @@ public:
   slink_list() : head(0) {}
 
   slink_list(const slink_list& other) :
-	 head(0)
-	 {
-		if ( !other.empty() )
-		  {
-			 head = new node(other.head->val, 0);
+    head(0)
+    {
+      if ( !other.empty() )
+        {
+          head = new node(other.head->val, 0);
 
-			 node* other_next_node = other.head->next;
-			 node* tail = head;
-			 while (other_next_node != 0)
-				{
-				  tail->next = new node(other_next_node->val, 0);
+          node* other_next_node = other.head->next;
+          node* tail = head;
+          while (other_next_node != 0)
+            {
+              tail->next = new node(other_next_node->val, 0);
 
-				  other_next_node = other_next_node->next;
-				  tail = tail->next;
-				}
-		  }
-	 }
+              other_next_node = other_next_node->next;
+              tail = tail->next;
+            }
+        }
+    }
 
   ~slink_list() { clear(); }
 
   slink_list& operator=(const slink_list& other)
-	 {
-		slink_list other_copy(other);
-		this->swap(other_copy);
-		return *this;
-	 }
+    {
+      slink_list other_copy(other);
+      this->swap(other_copy);
+      return *this;
+    }
 
   void push_front(const T& val)
-	 {
-		node* new_node = new node(val, head);
-		head = new_node;
-	 }
+    {
+      node* new_node = new node(val, head);
+      head = new_node;
+    }
 
   void pop_front()
-	 {
-		node* new_head = head->next;
-		delete head;
-		head = new_head;
-	 }
+    {
+      node* new_head = head->next;
+      delete head;
+      head = new_head;
+    }
 
   void insert_after(iterator pos, const T& val)
-	 {
-		node* before = pos.nn;
-		node* after = before->next;
+    {
+      node* before = pos.nn;
+      node* after = before->next;
 
-		node* current = new node(val, after);
-		before->next = current;
-	 }
+      node* current = new node(val, after);
+      before->next = current;
+    }
 
   reference front() { return head->val; }
   const_reference front() const { return head->val; }
@@ -181,42 +185,40 @@ public:
   bool empty() const { return (head == 0); }
 
   size_type size() const
-	 {
-		const_iterator itr(begin()), stop(end());
-		size_type result = 0;
-		while ( itr != stop )
-		  {
-			 ++result;
-			 ++itr;
-		  }
-		return result;
-	 }
+    {
+      const_iterator itr(begin()), stop(end());
+      size_type result = 0;
+      while ( itr != stop )
+        {
+          ++result;
+          ++itr;
+        }
+      return result;
+    }
 
   iterator find(const T& val)
-	 {
-		iterator itr(begin()), stop(end());
-		while (itr != stop)
-		  {
-			 if (*itr == val) return itr;
-			 ++itr;
-		  }
-		return end();
-	 }
+    {
+      iterator itr(begin()), stop(end());
+      while (itr != stop)
+        {
+          if (*itr == val) return itr;
+          ++itr;
+        }
+      return end();
+    }
 
   const_iterator find(const T& val) const
-	 { return const_cast<slink_list*>(this)->find(val); }
+    { return const_cast<slink_list*>(this)->find(val); }
 
   void clear()
-	 {
-		while ( !empty() ) pop_front();
-	 }
+    {
+      while ( !empty() ) pop_front();
+    }
 
   void swap(slink_list& other)
-	 {
-		node* other_head = other.head;
-		other.head = this->head;
-		this->head = other_head;
-	 }
+    {
+      Util::swap(head, other.head);
+    }
 
 private:
   node* head;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Fri Jul 20 08:34:09 2001
+// written: Sun Jul 22 23:38:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "util/strings.h"
 
+#include "util/algo.h"
 #include "util/freelist.h"
 
 #include <cstring>
@@ -76,9 +77,9 @@ string_rep::string_rep(std::size_t length, const char* text) :
   itsLength(length)
 {
   if (text)
-	 memcpy(itsText, text, itsLength+1);
+    memcpy(itsText, text, itsLength+1);
   else
-	 itsText[0] = '\0';
+    itsText[0] = '\0';
 }
 
 string_rep::~string_rep()
@@ -164,9 +165,8 @@ DOTRACE("fixed_string::~fixed_string");
 void fixed_string::swap(fixed_string& other)
 {
 DOTRACE("fixed_string::swap");
-  string_rep* other_rep = other.itsRep;
-  other.itsRep = this->itsRep;
-  this->itsRep = other_rep;
+
+  Util::swap(itsRep, other.itsRep);
 }
 
 fixed_string& fixed_string::operator=(const char* text)

@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Fri Jul 20 07:35:26 2001
+// written: Sun Jul 22 23:41:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef ARRAYS_H_DEFINED
 #define ARRAYS_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
@@ -79,9 +83,7 @@ struct static_block {
 
   void swap(static_block& other)
     {
-      static_block other_copy = other;
-      other = *this;
-      *this = other_copy;
+      Util::swap(*this, other);
     }
 
   T data[N];
@@ -171,13 +173,8 @@ public:
 
   void swap(fixed_block& other)
     {
-      size_type other_N = other.N;
-      other.N = this->N;
-      this->N = other_N;
-
-      T* other_data = other.data;
-      other.data = this->data;
-      this->data = other_data;
+      Util::swap(N,    other.N);
+      Util::swap(data, other.data);
     }
 
 private:
@@ -244,7 +241,7 @@ public:
   bool unique() const                { return *pn == 1; }  // never throws
 
   void swap(shared_array<T>& other)  // never throws
-  { std::swap(px,other.px); std::swap(pn,other.pn); }
+  { Util::swap(px,other.px); Util::swap(pn,other.pn); }
 
 private:
 
@@ -337,13 +334,8 @@ public:
 
   void swap(dynamic_block& other)
     {
-      size_type other_N = other.N;
-      other.N = this->N;
-      this->N = other_N;
-
-      T* other_data = other.data;
-      other.data = this->data;
-      this->data = other_data;
+		Util::swap(N,    other.N);
+		Util::swap(data, other.data);
     }
 
   void resize(size_type new_size)
