@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Tue Feb  1 18:06:08 2000
+// written: Thu Feb 17 13:58:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "objlist.h"
 #include "listitempkg.h"
 #include "fish.h"
+#include "tracertcl.h"
 
 namespace FishTcl {
   class FishCmd;
@@ -51,8 +52,10 @@ class FishTcl::FishPkg : public Tcl::AbstractListItemPkg<Fish, ObjList> {
 public:
   FishPkg(Tcl_Interp* interp) :
 	 Tcl::AbstractListItemPkg<Fish, ObjList>(interp, ObjList::theObjList(),
-														  "Fish", "1.1")
+														  "Fish", "$Revision$")
   {
+	 addTracing(this, Fish::tracer);
+
 	 addCommand( new FishCmd(interp, "Fish::Fish") );
 	 declareAllProperties();
   }

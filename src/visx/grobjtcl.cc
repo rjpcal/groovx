@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Sun Jan 16 22:54:22 2000
+// written: Thu Feb 17 14:00:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "listitempkg.h"
 #include "rect.h"
 #include "tclveccmds.h"
+#include "tracertcl.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -82,8 +83,10 @@ class GrobjTcl::GrObjPkg : public Tcl::AbstractListItemPkg<GrObj, ObjList> {
 public:
   GrObjPkg(Tcl_Interp* interp) :
 	 Tcl::AbstractListItemPkg<GrObj, ObjList>(interp, ObjList::theObjList(),
-															"GrObj", "2.5")
+															"GrObj", "$Revision$")
   {
+	 addTracing(this, GrObj::tracer);
+
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
 	 addCommand( new Tcl::VecActionCmd(this, "GrObj::update",
 												  new Updater, "item_id(s)", 1) );
