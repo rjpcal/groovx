@@ -44,6 +44,9 @@ public:
 
   virtual void clearColorBuffer() const;
 
+  virtual void drawOnFrontBuffer() const;
+  virtual void drawOnBackBuffer() const;
+
   virtual void pushState() const;
   virtual void popState() const;
 

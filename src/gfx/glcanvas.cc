@@ -169,6 +169,16 @@ DOTRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT); 
 }
 
+void GLCanvas::drawOnFrontBuffer() const {
+DOTRACE("GLCanvas::drawOnFrontBuffer");
+  glDrawBuffer(GL_FRONT);
+}
+
+void GLCanvas::drawOnBackBuffer() const {
+DOTRACE("GLCanvas::drawOnBackBuffer");
+  glDrawBuffer(GL_BACK);
+}
+
 void GLCanvas::pushState() const {
 DOTRACE("GLCanvas::pushState");
   glMatrixMode(GL_MODELVIEW);

@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Dec  6 22:34:25 1999
+// written: Mon Dec  6 22:40:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,9 @@ public:
   virtual void flushOutput() const = 0;
 
   virtual void clearColorBuffer() const = 0;
+
+  virtual void drawOnFrontBuffer() const = 0;
+  virtual void drawOnBackBuffer() const = 0;
 
   virtual void pushState() const = 0;
   virtual void popState() const = 0;
