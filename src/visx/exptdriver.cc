@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jul 11 14:47:02 2001
+// written: Fri Jul 13 10:04:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -315,8 +315,8 @@ DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
     }
 
   try {
-    int llength = Tcl::fromTcl<int>(Tcl_GetObjResult(itsInterp));
-	 return (llength > 0);
+    int llength = Tcl::Convert<int>::fromTcl(Tcl_GetObjResult(itsInterp));
+    return (llength > 0);
   }
   catch (...) {
     itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");

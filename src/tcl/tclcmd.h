@@ -150,19 +150,19 @@ public:
 
   /// Attempts to retrieve an \c int from argument number \a argn.
   int getIntFromArg(unsigned int argn)
-    { return Tcl::fromTcl<int>(getObjv(argn)); }
+    { return Tcl::Convert<int>::fromTcl(getObjv(argn)); }
 
   /// Attempts to retrieve a \c long from argument number \a argn.
   long getLongFromArg(unsigned int argn)
-    { return Tcl::fromTcl<long>(getObjv(argn)); }
+    { return Tcl::Convert<long>::fromTcl(getObjv(argn)); }
 
   /// Attempts to retrieve a \c bool from argument number \a argn.
   bool getBoolFromArg(unsigned int argn)
-    { return Tcl::fromTcl<bool>(getObjv(argn)); }
+    { return Tcl::Convert<bool>::fromTcl(getObjv(argn)); }
 
   /// Attempts to retrieve a \c double from argument number \a argn.
   double getDoubleFromArg(unsigned int argn)
-    { return Tcl::fromTcl<double>(getObjv(argn)); }
+    { return Tcl::Convert<double>::fromTcl(getObjv(argn)); }
 
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
   const char* getCstringFromArg(unsigned int argn)
@@ -173,7 +173,7 @@ public:
   template <class Str>
   Str getStringFromArg(unsigned int argn, Str* /* dummy */ = 0)
     {
-      return Str(Tcl::fromTcl<const char*>(getObjv(argn)));
+      return Str(Tcl::Convert<const char*>::fromTcl(getObjv(argn)));
     }
 
   /** Attempt to convert argument number \a argn to type \c T, and
@@ -181,7 +181,7 @@ public:
   template <class T>
   T getValFromArg(unsigned int argn, T* /*dummy*/=0)
     {
-      return Tcl::fromTcl<T>(getObjv(argn));
+      return Tcl::Convert<T>::fromTcl(getObjv(argn));
     }
 
   //---------------------------------------------------------------------
@@ -206,7 +206,7 @@ public:
 
       for (unsigned int i = 0; i < elements.length(); ++i)
         {
-          *itr = Tcl::fromTcl<T>(elements[i]);
+          *itr = Tcl::Convert<T>::fromTcl(elements[i]);
           ++itr;
         }
     }
@@ -240,7 +240,7 @@ public:
   template <class T>
   void setResult(T t)
     {
-      setObjResult(Tcl::toTcl<T>(t));
+      setObjResult(Tcl::Convert<T>::toTcl(t));
     }
 
   /// Return the sequence of values referred to by the range [\a begin, \a end).

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Jul 11 09:36:21 2001
+// written: Fri Jul 13 10:24:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,35 +40,35 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Obj*)");
 }
 
 Tcl::TclValue::TclValue(int val) :
-  itsObj(Tcl::toTcl<int>(val))
+  itsObj(Tcl::Convert<int>::toTcl(val))
 {
 DOTRACE("Tcl::TclValue::TclValue(int)");
   Tcl_IncrRefCount(itsObj);
 }
 
 Tcl::TclValue::TclValue(long val) :
-  itsObj(Tcl::toTcl<long>(val))
+  itsObj(Tcl::Convert<long>::toTcl(val))
 {
 DOTRACE("Tcl::TclValue::TclValue(long)");
   Tcl_IncrRefCount(itsObj);
 }
 
 Tcl::TclValue::TclValue(bool val) :
-  itsObj(Tcl::toTcl<bool>(val))
+  itsObj(Tcl::Convert<bool>::toTcl(val))
 {
 DOTRACE("Tcl::TclValue::TclValue(bool)");
   Tcl_IncrRefCount(itsObj);
 }
 
 Tcl::TclValue::TclValue(double val) :
-  itsObj(Tcl::toTcl<double>(val))
+  itsObj(Tcl::Convert<double>::toTcl(val))
 {
 DOTRACE("Tcl::TclValue::TclValue(double)");
   Tcl_IncrRefCount(itsObj);
 }
 
 Tcl::TclValue::TclValue(const char* val) :
-  itsObj(Tcl::toTcl<const char*>(val))
+  itsObj(Tcl::Convert<const char*>::toTcl(val))
 {
 DOTRACE("Tcl::TclValue::TclValue(const char*)");
   Tcl_IncrRefCount(itsObj);
@@ -84,23 +84,23 @@ DOTRACE("Tcl::TclValue::TclValue(const Value&)");
 
   switch (rhs_type) {
   case Value::INT:
-    itsObj = Tcl::toTcl<int>(rhs.getInt());
+    itsObj = Tcl::Convert<int>::toTcl(rhs.getInt());
     break;
   case Value::LONG:
-    itsObj = Tcl::toTcl<long>(rhs.getLong());
+    itsObj = Tcl::Convert<long>::toTcl(rhs.getLong());
     break;
   case Value::BOOL:
-    itsObj = Tcl::toTcl<bool>(rhs.getBool());
+    itsObj = Tcl::Convert<bool>::toTcl(rhs.getBool());
     break;
   case Value::DOUBLE:
-    itsObj = Tcl::toTcl<double>(rhs.getDouble());
+    itsObj = Tcl::Convert<double>::toTcl(rhs.getDouble());
     break;
 
   case Value::CSTRING:
   case Value::NONE:
   case Value::UNKNOWN:
   default:
-    itsObj = Tcl::toTcl<const char*>(rhs.getCstring());
+    itsObj = Tcl::Convert<const char*>::toTcl(rhs.getCstring());
     break;
   }
 
@@ -195,27 +195,27 @@ DOTRACE("Tcl::TclValue::scanFrom");
 
 int Tcl::TclValue::getInt() const {
 DOTRACE("Tcl::TclValue::getInt");
-  return Tcl::fromTcl<int>(itsObj);
+  return Tcl::Convert<int>::fromTcl(itsObj);
 }
 
 long Tcl::TclValue::getLong() const {
 DOTRACE("Tcl::TclValue::getLong");
-  return Tcl::fromTcl<long>(itsObj);
+  return Tcl::Convert<long>::fromTcl(itsObj);
 }
 
 bool Tcl::TclValue::getBool() const {
 DOTRACE("Tcl::TclValue::getBool");
-  return Tcl::fromTcl<bool>(itsObj);
+  return Tcl::Convert<bool>::fromTcl(itsObj);
 }
 
 double Tcl::TclValue::getDouble() const {
 DOTRACE("Tcl::TclValue::getDouble");
-  return Tcl::fromTcl<double>(itsObj);
+  return Tcl::Convert<double>::fromTcl(itsObj);
 }
 
 const char* Tcl::TclValue::getCstring() const {
 DOTRACE("Tcl::TclValue::getCstring");
-  return Tcl::fromTcl<const char*>(itsObj);
+  return Tcl::Convert<const char*>::fromTcl(itsObj);
 }
 
 //---------------------------------------------------------------------

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Thu Jul 12 12:22:15 2001
+// written: Fri Jul 13 10:23:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,17 +69,20 @@ public:
   template <class T>
   T get(unsigned int index) const
     {
-      return Tcl::fromTcl<T>(at(index));
+      return Tcl::Convert<T>::fromTcl(at(index));
     }
 
   unsigned int size() const { update(); return itsLength; }
   unsigned int length() const { update(); return itsLength; }
 
   template <class T>
-  void append(T t) { doAppend(Tcl::toTcl<T>(t), 1); }
+  void append(T t) { doAppend(Tcl::Convert<T>::toTcl(t), 1); }
 
   template <class T>
-  void append(T t, unsigned int times) { doAppend(Tcl::toTcl<T>(t), times); }
+  void append(T t, unsigned int times)
+    {
+      doAppend(Tcl::Convert<T>::toTcl(t), times);
+    }
 
   class IteratorBase;
   template <class T> class Iterator;
@@ -201,7 +204,7 @@ public:
 
   T operator*() const
   {
-    return Tcl::fromTcl<T>(current());
+    return Tcl::Convert<T>::fromTcl(current());
   }
 };
 

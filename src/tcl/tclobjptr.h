@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Thu Jul 12 17:42:37 2001
+// written: Fri Jul 13 10:26:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ class ObjPtr {
 public:
   /// Default constructor.
   template <class T>
-  ObjPtr(T t) : itsObj(Tcl::toTcl(t)) { incrRef(itsObj); }
+  ObjPtr(T t) : itsObj(Tcl::Convert<T>::toTcl(t)) { incrRef(itsObj); }
 
   /// Destructor.
   ~ObjPtr() { decrRef(itsObj); }

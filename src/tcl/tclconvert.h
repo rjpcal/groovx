@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Wed Jul 11 09:23:18 2001
+// written: Fri Jul 13 10:25:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +19,11 @@ namespace Tcl
 {
 
   template <class T>
-  T fromTcl(Tcl_Obj* obj);
-
-  template <class T>
-  Tcl_Obj* toTcl(T val);
+  struct Convert
+  {
+    static T        fromTcl( Tcl_Obj* obj );
+    static Tcl_Obj*   toTcl( T val );
+  };
 
 }
 

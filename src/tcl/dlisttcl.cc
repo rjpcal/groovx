@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Jul 12 13:23:43 2001
+// written: Fri Jul 13 10:24:34 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -107,8 +107,8 @@ protected:
     {
       Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
 
-      Tcl::ObjPtr one(Tcl::toTcl<int>(1));
-      Tcl::ObjPtr zero(Tcl::toTcl<int>(0));
+      Tcl::ObjPtr one(Tcl::Convert<int>::toTcl(1));
+      Tcl::ObjPtr zero(Tcl::Convert<int>::toTcl(0));
       Tcl::List result;
 
       for (unsigned int i = 0; i < source_list.length(); ++i)
