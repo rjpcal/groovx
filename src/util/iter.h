@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Fri Aug 17 14:58:18 2001
+// written: Fri Aug 17 15:15:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,7 @@ public:
   T&   operator*()                  const { return itsImpl->get(); }
 
   bool atEnd()                      const { return itsImpl->atEnd(); }
+  bool isValid()                    const { return !atEnd(); }
   int  fromEnd()                    const { return itsImpl->fromEnd(); }
   bool operator==(const IterEnd_t&) const { return atEnd(); }
   bool operator!=(const IterEnd_t&) const { return !atEnd(); }
