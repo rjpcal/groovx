@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Jun 21 14:24:49 2002
+// written: Fri Jun 21 14:30:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ struct PositionImpl
   Gfx::Vec3<double> rt;         // vector of rotation axis
   double rt_ang;                // angle in degrees of rotation around axis
 
-  bool txformDirty;
+  mutable bool txformDirty;
 private:
   mutable Gfx::Txform txformCache;
 
@@ -76,10 +76,13 @@ public:
   const Gfx::Txform& getTxform() const
   {
     if (txformDirty)
-      txformCache = Gfx::Txform(owner->translation,
-                                owner->scaling,
-                                owner->rotationAxis,
-                                owner->itsRotationAngle);
+      {
+        txformCache = Gfx::Txform(owner->translation,
+                                  owner->scaling,
+                                  owner->rotationAxis,
+                                  owner->itsRotationAngle);
+        txformDirty = false;
+      }
 
     return txformCache;
   }
