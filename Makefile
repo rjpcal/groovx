@@ -25,12 +25,12 @@
 ARCH_FLAGS := 
 CC := 
 ifeq ($(ARCH),hp9000s700)
-	CC := aCC
+	CC := time aCC
 	ARCH_FLAGS := -DACC_COMPILER -DHP9000S700
 	SHLIB_FLAG := -b
 endif
 ifeq ($(ARCH),irix6)
-	CC := g++
+	CC := time g++
 	ARCH_FLAGS := -ansi -Wall -DGCC_COMPILER -DIRIX6
 	SHLIB_FLAG := 
 endif
@@ -303,16 +303,19 @@ ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIM) $(PROD_OPTIONS)
 ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FLAGS)
 
 $(GRSH)/%.o : %.cc
-	time $(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
 
 $(UTIL)/%.o : util/%.cc
-	time $(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
+	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
 
+#	$(CC) -E $< $(ALL_DEBUG_OPTIONS) > .temp.cc
+#	wc -l $<
+#	wc -l .temp.cc
 $(GRSH)/%.do : %.cc
-	time $(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
+	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 $(UTIL)/%.do : util/%.cc
-	time $(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
+	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 #-------------------------------------------------------------------------
 #
@@ -381,9 +384,9 @@ STRINGFWD_H :=
 #
 # level 0 headers
 #
+ARRAYS_H := util/arrays.h
 BEZIER_H := bezier.h
 BITMAPREP_H := bitmaprep.h
-BMAPDATA_H := bmapdata.h
 BMAPRENDERER_H := bmaprenderer.h
 CANVAS_H := canvas.h
 DEBUG_H := util/debug.h
@@ -405,9 +408,8 @@ RAND_H := rand.h
 RANDUTILS_H := randutils.h
 STOPWATCH_H := stopwatch.h
 STRINGS_H := util/strings.h
-SYSTEM_H := $(STRINGFWD_H) system.h
+SYSTEM_H := system.h
 TCLDLIST_H := tcldlist.h
-TCLLINK_H := tcllink.h
 TCLOBJLOCK_H := tclobjlock.h
 TCLPKG_H := tclpkg.h
 TLISTUTILS_H := tlistutils.h
@@ -420,6 +422,7 @@ WIDGET_H := widget.h
 # level 1 headers
 #
 APPLICATION_H := $(ERROR_H) application.h
+BMAPDATA_H := $(ARRAYS_H) bmapdata.h
 FACTORY_H := $(STRINGFWD_H) $(ERROR_H) $(DEMANGLE_H) factory.h
 GLBMAPRENDERER_H := $(BMAPRENDERER_H) glbmaprenderer.h
 GLCANVAS_H := $(CANVAS_H) glcanvas.h
@@ -429,6 +432,7 @@ READER_H := $(STRINGFWD_H) $(ERROR_H) reader.h
 RECT_H := $(POINT_H) rect.h
 TCLERROR_H := $(STRINGFWD_H) $(ERROR_H) tclerror.h
 TCLITEMPKGBASE_H := $(TCLPKG_H) tclitempkgbase.h
+TCLLINK_H := $(STRINGS_H) tcllink.h
 VALUE_H := $(STRINGFWD_H) $(ERROR_H) value.h
 VOIDPTRLIST_H := $(ERROR_H) voidptrlist.h
 WRITER_H := $(STRINGFWD_H) $(ERROR_H) writer.h
@@ -447,8 +451,8 @@ IOPTRLIST_H := $(VOIDPTRLIST_H) $(IO_H) ioptrlist.h
 POSITION_H := $(IO_H) position.h
 PROPERTY_H := $(IO_H) $(OBSERVABLE_H) $(VALUE_H) property.h
 RESPONSEHANDLER_H := $(IO_H) responsehandler.h 
-SOUND_H := $(STRINGFWD_H) $(ERROR_H) $(IO_H) sound.h
-SUBJECT_H := $(IO_H) subject.h
+SOUND_H := $(ERROR_H) $(IO_H) sound.h
+SUBJECT_H := $(STRINGS_H) $(IO_H) subject.h
 TCLEVALCMD_H := $(STRINGFWD_H) $(TCLOBJLOCK_H) $(TCLERROR_H) tclevalcmd.h
 TCLVALUE_H := $(VALUE_H) tclvalue.h
 TIMINGHDLR_H := $(IO_H) $(STOPWATCH_H) timinghdlr.h
@@ -467,11 +471,13 @@ FACE_H := $(GROBJ_H) $(PROPERTY_H) face.h
 FISH_H := $(GROBJ_H) $(PROPERTY_H) $(TRACER_H) fish.h
 FIXPT_H := $(GROBJ_H) $(PROPERTY_H) fixpt.h
 GABOR_H := $(GROBJ_H) $(PROPERTY_H) gabor.h
-GTEXT_H := $(GROBJ_H) $(ERROR_H) gtext.h
+GTEXT_H := $(GROBJ_H) $(ERROR_H) $(STRINGS_H) gtext.h
 HOUSE_H := $(GROBJ_H) $(PROPERTY_H) house.h
-HPSOUND_CC := $(TRACE_H) $(DEBUG_H) $(READER_H) $(WRITER_H) hpsound.cc
+HPSOUND_CC := $(READER_H) $(WRITER_H) $(STRINGS_H) \
+	$(TRACE_H) $(DEBUG_H) hpsound.cc
 IOMGR_H := $(IO_H) $(IOFACTORY_H) iomgr.h
-IRIXSOUND_CC := $(TRACE_H) $(DEBUG_H) $(READER_H) $(WRITER_H) irixsound.cc
+IRIXSOUND_CC := $(READER_H) $(WRITER_H) $(ARRAYS_H) $(STRINGS_H) \
+	$(TRACE_H) $(DEBUG_H) irixsound.cc
 JITTER_H := $(POSITION_H) jitter.h
 MASKHATCH_H := $(GROBJ_H) $(PROPERTY_H) maskhatch.h
 MORPHYFACE_H := $(GROBJ_H) $(PROPERTY_H) morphyface.h
@@ -491,7 +497,7 @@ GLBITMAP_H := $(BITMAP_H) glbitmap.h
 KBDRESPONSEHDLR_H := $(STRINGFWD_H) $(EVENTRESPONSEHDLR_H) kbdresponsehdlr.h
 OBJLIST_H := $(PTRLIST_H) objlist.h
 POSLIST_H := $(PTRLIST_H) poslist.h
-PTRLIST_CC := $(PTRLIST_H) $(DEMANGLE_H) ptrlist.cc
+PTRLIST_CC := $(PTRLIST_H) $(DEMANGLE_H) $(STRINGS_H) ptrlist.cc
 RHLIST_H := $(PTRLIST_H) rhlist.h
 SOUNDLIST_H := $(PTRLIST_H) soundlist.h
 STRINGIFYCMD_H := $(TCLCMD_H) stringifycmd.h
@@ -531,7 +537,8 @@ BITMAP_CC := $(BITMAP_H) $(BITMAPREP_H) $(PIPE_H) $(STRINGS_H) \
 
 BITMAPREP_CC := $(BITMAPREP_H) $(APPLICATION_H) $(BMAPDATA_H) \
 	$(EXPERIMENT_H) $(BMAPRENDERER_H) $(CANVAS_H) $(IO_H) $(PBM_H) \
-	$(READER_H) $(RECT_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) bitmaprep.cc
+	$(READER_H) $(RECT_H) $(STRINGS_H) \
+	$(WRITER_H) $(TRACE_H) $(DEBUG_H) bitmaprep.cc
 
 BITMAPTCL_CC := $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) \
 	$(IOFACTORY_H) $(OBJLIST_H) \
@@ -644,7 +651,7 @@ IO_CC := $(IO_H) $(DEMANGLE_H) $(TRACE_H) $(DEBUG_H) io.cc
 
 IOFACTORY_CC := $(IOFACTORY_H) iofactory.cc
 
-IOMGR_CC := $(IOMGR_H) $(TRACE_H) $(DEBUG_H) iomgr.cc
+IOMGR_CC := $(IOMGR_H) $(STRINGS_H) $(TRACE_H) $(DEBUG_H) iomgr.cc
 
 IOPTRLIST_CC := $(IOPTRLIST_H) $(DEMANGLE_H) $(IOMGR_H) \
 	$(READUTILS_H) $(WRITEUTILS_H) $(TRACE_H) $(DEBUG_H) ioptrlist.cc
@@ -686,7 +693,7 @@ OBJLIST_CC := $(OBJLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(GROBJ_H) $(PTRLIST_CC) objlist.cc
 
 OBJLISTTCL_CC := $(GROBJ_H) $(IOMGR_H) $(OBJLIST_H) $(LISTPKG_H) \
-	$(TRACE_H) $(DEBUG_H) objlisttcl.cc
+	$(STRINGS_H) $(TRACE_H) $(DEBUG_H) objlisttcl.cc
 
 OBJTOGL_CC := $(OBJTOGL_H) $(STRINGS_H) $(TCLCMD_H) \
 	$(TCLEVALCMD_H) $(TCLITEMPKG_H) $(TLISTWIDGET_H) \
@@ -698,7 +705,7 @@ OBSERVABLE_CC := $(OBSERVABLE_H) $(OBSERVER_H) \
 
 OBSERVER_CC := $(OBSERVER_H) $(TRACE_H) observer.cc
 
-PBM_CC := $(PBM_H) $(BMAPDATA_H) $(TRACE_H) $(DEBUG_H) pbm.cc
+PBM_CC := $(PBM_H) $(BMAPDATA_H) $(ARRAYS_H) $(TRACE_H) $(DEBUG_H) pbm.cc
 
 POSITION_CC := $(POSITION_H) $(READER_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) position.cc
@@ -713,7 +720,7 @@ POSLISTTCL_CC := $(POSLIST_H) $(LISTPKG_H) $(TRACE_H) poslisttcl.cc
 
 PROPERTY_CC := $(PROPERTY_H) $(READER_H) $(WRITER_H) property.cc
 
-READER_CC := $(READER_H) reader.cc
+READER_CC := $(READER_H) $(STRINGS_H) reader.cc
 
 READUTILS_CC := $(READUTILS_H) $(STRINGS_H) readutils.cc
 
@@ -739,9 +746,9 @@ SOUNDLIST_CC := $(SOUNDLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(SOUND_H) $(PTRLIST_CC) soundlist.cc
 
 SOUNDTCL_CC := $(SOUNDLIST_H) $(SOUND_H) $(LISTPKG_H) $(LISTITEMPKG_H) \
-	$(TCLLINK_H) $(TRACE_H) $(DEBUG_H) soundtcl.cc
+	$(TCLLINK_H) $(STRINGS_H) $(TRACE_H) $(DEBUG_H) soundtcl.cc
 
-STRINGIFYCMD_CC := $(STRINGIFYCMD_H) $(IO_H) \
+STRINGIFYCMD_CC := $(STRINGIFYCMD_H) $(IO_H) $(ARRAYS_H) \
 	$(ASCIISTREAMREADER_H) $(ASCIISTREAMWRITER_H) \
 	$(TRACE_H) $(DEBUG_H) stringifycmd.cc
 
@@ -752,7 +759,7 @@ SUBJECT_CC := $(SUBJECT_H) $(IOUTILS_H) $(READER_H) $(WRITER_H) \
 
 SUBJECTTCL_CC := $(ERRMSG_H) $(SUBJECT_H) $(TRACE_H) $(DEBUG_H) subjecttcl.cc
 
-SYSTEM_CC := $(SYSTEM_H) $(TRACE_H) $(DEBUG_H) system.cc
+SYSTEM_CC := $(SYSTEM_H) $(ARRAYS_H) $(TRACE_H) $(DEBUG_H) system.cc
 
 TCLCMD_CC := $(TCLCMD_H) $(DEMANGLE_H) $(ERRMSG_H) $(TCLVALUE_H) \
 	$(TRACE_H) $(DEBUG_H) tclcmd.cc
@@ -830,7 +837,7 @@ VOIDPTRLIST_CC := $(VOIDPTRLIST_H) $(DEMANGLE_H) \
 
 WIDGET_CC := $(WIDGET_H) widget.cc
 
-WRITER_CC := $(WRITER_H) writer.cc
+WRITER_CC := $(WRITER_H) $(STRINGS_H) writer.cc
 
 WRITEUTILS_CC := $(WRITEUTILS_H) $(STRINGS_H) writeutils.cc
 
