@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Tue Oct 24 13:08:33 2000
+// written: Tue Oct 24 15:45:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,15 +20,6 @@ PtrList<T>::PtrList(int size) :
 
 template <class T>
 PtrList<T>::~PtrList() {}
-
-template <class T>
-PtrList<T>::SharedPtr PtrList<T>::getPtr(int id) const
-    {
-		RefCounted* voidPtr = PtrListBase::getPtrBase(id);
-		// cast as reference to force an exception on error
-		T& t = dynamic_cast<T&>(*voidPtr);
-		return SharedPtr(&t, id);
-	 }
 
 template <class T>
 PtrList<T>::SharedPtr PtrList<T>::getCheckedPtr(int id) const
