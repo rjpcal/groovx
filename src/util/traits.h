@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri May 18 16:13:27 2001
-// written: Fri May 18 17:40:24 2001
+// written: Tue Aug  7 10:14:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,35 +13,45 @@
 #ifndef TRAITS_H_DEFINED
 #define TRAITS_H_DEFINED
 
-namespace Util {
-
+namespace Util
+{
   template <class T>
-  struct TypeTraits {
+  struct TypeCue
+  {
+    typedef T Type;
   };
 
   template <class T>
-  struct TypeTraits<T*> {
-	 typedef T Pointee;
+  struct TypeTraits {};
+
+  template <class T>
+  struct TypeTraits<T*>
+  {
+    typedef T Pointee;
   };
 
   template <class T>
-  struct StringTraits {
-	 static const char* c_str(T t) { return t.c_str(); }
+  struct StringTraits
+  {
+    static const char* c_str(T t) { return t.c_str(); }
   };
 
   template <>
-  struct StringTraits<char*> {
-	 static const char* c_str(char* t) { return t; }
+  struct StringTraits<char*>
+  {
+    static const char* c_str(char* t) { return t; }
   };
 
   template <>
-  struct StringTraits<const char*> {
-	 static const char* c_str(const char* t) { return t; }
+  struct StringTraits<const char*>
+  {
+    static const char* c_str(const char* t) { return t; }
   };
 
   template <unsigned int N>
-  struct StringTraits<char[N]> {
-	 static const char* c_str(char t[N]) { return &t[0]; }
+  struct StringTraits<char[N]>
+  {
+    static const char* c_str(char t[N]) { return &t[0]; }
   };
 }
 
