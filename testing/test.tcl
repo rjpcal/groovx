@@ -15,7 +15,7 @@ set START_CLICKS [clock clicks]
 
 if { ![info exists ::VERBOSE] } { set ::VERBOSE 0 }
 if { ![info exists ::TEST_DIR] } {
-    set ::TEST_DIR $env(HOME)/sorcery/grsh/testing
+    set ::TEST_DIR [file dirname [info script]]
 }
 
 set DATE [clock format [clock seconds] -format %H%M%d%b%Y]
