@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Sun Nov  3 13:41:11 2002
+// written: Sat Nov  9 21:17:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "gfx/glcanvas.h"
 
 #include "grsh/grsh.h"
-
-#include "gx/rgbacolor.h"
 
 #include "togl/glxattribs.h"
 #include "togl/glxopts.h"
@@ -96,27 +94,6 @@ DOTRACE("GlxWrapper::GlxWrapper");
 
   itsCanvas = Util::SoftRef<GLCanvas>
     (GLCanvas::make(itsVisInfo->depth, opts.rgbaFlag, isDoubleBuffered()));
-
-  if (opts.rgbaFlag)
-    {
-      itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
-    }
-  else
-    {
-      // FIXME use XBlackPixel(), XWhitePixel() here?
-      itsCanvas->setColorIndex(0);
-      itsCanvas->setClearColorIndex(1);
-    }
-
-  // Check for a single/double buffering snafu
-  if (opts.doubleFlag == 0 && isDoubleBuffered())
-    {
-      // We requested single buffering but had to accept a double buffered
-      // visual.  Set the GL draw buffer to be the front buffer to
-      // simulate single buffering.
-      glDrawBuffer(GL_FRONT);
-    }
 }
 
 GlxWrapper::~GlxWrapper()
