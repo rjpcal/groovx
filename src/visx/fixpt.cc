@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:47 2001
+// written: Sat May 19 08:21:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,8 +81,8 @@ DOTRACE("FixPt::readFrom");
 
   DebugEval(length());  DebugEvalNL(width());
 
-  IO::IoProxy<GrObj> baseclass(this);
-  reader->readBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
+  reader->readBaseClass("GrObj", baseclass.get());
 }
 
 void FixPt::writeTo(IO::Writer* writer) const {
@@ -93,8 +93,8 @@ DOTRACE("FixPt::writeTo");
 
   writeFieldsTo(writer, classFields()); 
 
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  writer->writeBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
+  writer->writeBaseClass("GrObj", baseclass.get());
 }
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,

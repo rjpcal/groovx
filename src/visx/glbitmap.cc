@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri May 18 17:10:49 2001
+// written: Sat May 19 08:21:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,8 +89,8 @@ DOTRACE("GLBitmap::readFrom");
   reader->readValue("usingGlBitmap", val); 
   itsRenderer->setUsingGlBitmap(val);
 
-  IO::IoProxy<Bitmap> baseclass(this);
-  reader->readBaseClass("Bitmap", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeProxy<Bitmap>(this));
+  reader->readBaseClass("Bitmap", baseclass.get());
 }
 
 void GLBitmap::writeTo(IO::Writer* writer) const {
@@ -101,8 +101,8 @@ DOTRACE("GLBitmap::writeTo");
 
   writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
-  IO::ConstIoProxy<Bitmap> baseclass(this);
-  writer->writeBaseClass("Bitmap", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<Bitmap>(this));
+  writer->writeBaseClass("Bitmap", baseclass.get());
 }
 
 bool GLBitmap::getUsingGlBitmap() const {

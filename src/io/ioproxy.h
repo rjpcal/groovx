@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Thu May 10 12:04:37 2001
+// written: Sat May 19 08:18:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "io/iditem.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
@@ -34,9 +38,13 @@ namespace IO {
 
 template <class C>
 class IoProxy : public IO::IoObject {
-public:
+protected:
   IoProxy(C* ref) : itsReferand(ref) {}
   virtual ~IoProxy() {}
+
+public:
+  static IdItem<IO::IoObject> make(C* ref)
+    { return IdItem<IoProxy>( new IoProxy(ref) ); }
 
   virtual void readFrom(IO::Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
@@ -58,10 +66,19 @@ private:
 };
 
 template <class C>
+inline IdItem<IO::IoObject> makeProxy(C* ref)
+  { return IoProxy<C>::make(ref); }
+
+
+template <class C>
 class ConstIoProxy : public IO::IoObject {
-public:
+protected:
   ConstIoProxy(const C* ref) : itsReferand(ref) {}
   virtual ~ConstIoProxy() {}
+
+public:
+  static IdItem<IO::IoObject> make(const C* ref)
+    { return IdItem<ConstIoProxy>( new ConstIoProxy(ref) ); }
 
   virtual void readFrom(IO::Reader* reader)
 	 { const_cast<C*>(itsReferand)->C::readFrom(reader); }
@@ -81,6 +98,11 @@ private:
 
   const C* itsReferand;
 };
+
+template <class C>
+inline IdItem<IO::IoObject> makeConstProxy(const C* ref)
+  { return ConstIoProxy<C>::make(ref); }
+
 
 } // end namespace IO
 

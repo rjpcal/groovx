@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri May 18 17:05:01 2001
+// written: Sat May 19 08:19:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ DOTRACE("Bitmap::readFrom");
 
   reader->ensureReadVersionId("Bitmap", 2, "Try grsh0.8a4");
 
-  IO::IoProxy<GrObj> baseclass(this);
-  reader->readBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
+  reader->readBaseClass("GrObj", baseclass.get());
 }
 
 void Bitmap::writeTo(IO::Writer* writer) const {
@@ -82,8 +82,8 @@ DOTRACE("Bitmap::writeTo");
   writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 2,
 										 "Try grsh0.8a4");
 
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  writer->writeBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
+  writer->writeBaseClass("GrObj", baseclass.get());
 }
 
 /////////////

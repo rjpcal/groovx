@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu May 10 12:04:46 2001
+// written: Sat May 19 08:23:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -273,8 +273,8 @@ DOTRACE("MorphyFace::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  IO::IoProxy<GrObj> baseclass(this);
-  reader->readBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
+  reader->readBaseClass("GrObj", baseclass.get());
 }
 
 void MorphyFace::writeTo(IO::Writer* writer) const {
@@ -285,8 +285,8 @@ DOTRACE("MorphyFace::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  IO::IoProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
-  writer->writeBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
+  writer->writeBaseClass("GrObj", baseclass.get());
 }
 
 

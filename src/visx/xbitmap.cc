@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri May 18 17:10:24 2001
+// written: Sat May 19 08:24:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,8 +89,8 @@ DOTRACE("XBitmap::readFrom");
 
   reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
 
-  IO::IoProxy<Bitmap> baseclass(this);
-  reader->readBaseClass("Bitmap", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeProxy<Bitmap>(this));
+  reader->readBaseClass("Bitmap", baseclass.get());
 }
 
 void XBitmap::writeTo(IO::Writer* writer) const {
@@ -99,8 +99,8 @@ DOTRACE("XBitmap::writeTo");
   writer->ensureWriteVersionId("XBitmap", XBITMAP_SERIAL_VERSION_ID, 2,
 										 "Try grsh0.8a4");
 
-  IO::ConstIoProxy<Bitmap> baseclass(this);
-  writer->writeBaseClass("Bitmap", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<Bitmap>(this));
+  writer->writeBaseClass("Bitmap", baseclass.get());
 }
 
 static const char vcid_xbitmap_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu May 10 12:04:47 2001
+// written: Sat May 19 08:22:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,8 +222,8 @@ DOTRACE("House::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  IO::IoProxy<GrObj> baseclass(this);
-  reader->readBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
+  reader->readBaseClass("GrObj", baseclass.get());
 }
 
 void House::writeTo(IO::Writer* writer) const {
@@ -234,8 +234,8 @@ DOTRACE("House::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  writer->writeBaseClass("GrObj", &baseclass);
+  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
+  writer->writeBaseClass("GrObj", baseclass.get());
 }
 
 ///////////////////////////////////////////////////////////////////////
