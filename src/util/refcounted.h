@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Tue Jun  5 10:23:47 2001
+// written: Tue Jun 12 07:22:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,50 @@
 
 namespace Util
 {
+  class RefCounts;
   class RefCounted;
 }
+
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * RefCounts is a class to hold a strong and weak ref count.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+struct Util::RefCounts {
+protected:
+  ~RefCounts();
+
+public:
+  RefCounts() : strong(0), weak(0) {}
+
+  typedef unsigned short Count;
+
+  void acquireWeak();
+  Count releaseWeak();
+
+  void acquireStrong();
+  Count releaseStrong();
+
+  Count strongCount() { return strong; }
+  Count weakCount() { return weak; }
+
+  bool isShared() { return strong > 1; }
+  bool isUnshared() { return !isShared(); }
+
+private:
+  RefCounts(const RefCounts&);
+  RefCounts& operator=(const RefCounts&);
+
+  Count strong;
+  Count weak;
+};
+
+
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -33,7 +75,7 @@ namespace Util
 
 class Util::RefCounted {
 private:
-  mutable int itsRefCount;
+  RefCounts* const itsRefCounts;
 
   // These are disallowed since RefCounted's should always be in
   // one-to-one correspondence with their pointee's.
@@ -56,12 +98,12 @@ public:
 
 protected:
   /** Virtual destructor is protected, so that we can prevent clients
-		from instantiating RefCounted's on the stack and from destroying
-		them explicitly. Instead, MasterPtr's will only be destroyed by
-		a 'delete this' call inside decrRefCount() if the reference
-		count falls to zero or below. Clients are forced to create
-		MasterPtr's dynamically using \c new, which is what we need in
-		order for 'delete this' to be valid later on. */
+      from instantiating RefCounted's on the stack and from destroying
+      them explicitly. Instead, MasterPtr's will only be destroyed by
+      a 'delete this' call inside decrRefCount() if the reference
+      count falls to zero or below. Clients are forced to create
+      MasterPtr's dynamically using \c new, which is what we need in
+      order for 'delete this' to be valid later on. */
   virtual ~RefCounted();
 
   /// Default constructor.
@@ -82,8 +124,11 @@ public:
   /// Returns true if the reference count is one or less.
   bool isUnshared() const;
 
-  /// Returns the object's reference count.
-  int refCount() const;
+  /// Returns the object's (strong) reference count.
+  RefCounts::Count refCount() const;
+
+  /// Returns the object's strong+weak reference counts.
+  RefCounts* refCounts() const;
 };
 
 static const char vcid_refcounted_h[] = "$Header$";
