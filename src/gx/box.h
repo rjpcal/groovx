@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Nov 13 10:39:32 2002
+// written: Wed Nov 13 10:40:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,9 +92,9 @@ public:
     setAnyXXYYZZ(p1.x(), p2.x(), p1.y(), p2.y(), p1.z(), p2.z());
   }
 
-  void sizeX(V s) const { V del = s - sizeX(); xx0-=0.5*del; xx1+=0.5*del; }
-  void sizeY(V s) const { V del = s - sizeY(); yy0-=0.5*del; yy1+=0.5*del; }
-  void sizeZ(V s) const { V del = s - sizeZ(); zz0-=0.5*del; zz1+=0.5*del; }
+  void sizeX(V s) { V del = s - sizeX(); xx0-=0.5*del; xx1+=0.5*del; }
+  void sizeY(V s) { V del = s - sizeY(); yy0-=0.5*del; yy1+=0.5*del; }
+  void sizeZ(V s) { V del = s - sizeZ(); zz0-=0.5*del; zz1+=0.5*del; }
 
   void scaleX(V factor) { sizeX(sizeX() * factor); }
   void scaleY(V factor) { sizeY(sizeY() * factor); }
