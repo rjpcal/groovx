@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Jan 25 10:41:13 2002
+// written: Wed Jan 30 16:03:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -293,10 +293,9 @@ DOTRACE("Block::trialDescription");
   if (isComplete()) return fstring("block is complete");
 
   fstring msg;
-  msg.append("trial id == ").append(currentTrial().id()).append(", ")
+  msg.append("trial id == ", currentTrial().id(), ", ")
     .append(itsImpl->currentTrial()->description())
-    .append(", completed ").append(numCompleted())
-    .append(" of ").append(numTrials());
+    .append(", completed ", numCompleted(), " of ", numTrials());
 
   return msg;
 }

@@ -70,7 +70,7 @@ void Tcl::ProcWrapper::invoke(const fstring& args) const
 {
   if (isNoop()) return;
 
-  fstring cmd = itsName; cmd.append(" ").append(args);
+  fstring cmd(itsName, " ", args);
 
   Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
 

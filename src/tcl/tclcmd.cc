@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Mon Jan 21 14:30:59 2002
+// written: Wed Jan 30 16:02:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -225,17 +225,15 @@ public:
 
   fstring buildUsage() const
   {
-    fstring result;
-
-    result.append("\t").append(itsCmdName);
+    fstring result("\t", itsCmdName);
 
     if (!itsUsage.is_empty())
       {
-        result.append(" ").append(itsUsage);
+        result.append(" ", itsUsage);
       }
 
     if ( itsOverload != 0 )
-      result.append("\n").append(itsOverload->buildUsage());
+      result.append("\n", itsOverload->buildUsage());
 
     return result;
   }

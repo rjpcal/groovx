@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Jan 25 15:27:00 2002
+// written: Wed Jan 30 16:07:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -239,8 +239,8 @@ DOTRACE("Trial::Impl::description");
           const GrObj* g = dynamic_cast<const GrObj*>((*tr).get());
           if (g)
             {
-              objids.append(" ").append(g->id());
-              cats.append(" ").append(g->category());
+              objids.append(" ", g->id());
+              cats.append(" ", g->category());
             }
         }
     }
@@ -248,9 +248,8 @@ DOTRACE("Trial::Impl::description");
   static fstring buf;
 
   buf = "";
-  buf.append("trial type == " ).append(itsType);
-  buf.append(", objs ==").append(objids);
-  buf.append(", categories == ").append(cats);
+  buf.append("trial type == ", itsType);
+  buf.append(", objs ==", objids, ", categories == ", cats);
 
   return buf.c_str();
 }

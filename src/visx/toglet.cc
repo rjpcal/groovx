@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jan 23 10:46:52 2002
+// written: Wed Jan 30 16:08:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,13 +113,10 @@ namespace
 {
   void setIntParam(Togl* togl, const char* param, int val)
   {
-    fstring builder = togl->pathname();
-    builder.append(" configure -").append(param)
-      .append(" ").append(val);
+    fstring cmd_str(togl->pathname(), " configure -", param);
+    cmd_str.append(" ", val);
 
-    fstring buf(builder.c_str());
-
-    Tcl::Code cmd(buf.data(), Tcl::Code::THROW_EXCEPTION);
+    Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
     cmd.invoke(togl->interp());
   }
 }
@@ -445,12 +442,11 @@ void Toglet::bind(const char* event_sequence, const char* script)
 {
 DOTRACE("Toglet::bind");
 
-  fstring cmd_str = "bind ";
-  cmd_str.append( pathname() ).append(" ");
-  cmd_str.append( event_sequence ).append(" ");
-  cmd_str.append("{ ").append( script ).append(" }");
+  fstring cmd_str("bind ", pathname(), " ");
+  cmd_str.append( event_sequence, " ");
+  cmd_str.append("{ ", script, " }");
 
-  Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
 
   cmd.invoke(itsTogl->interp());
 }
