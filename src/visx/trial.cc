@@ -456,7 +456,7 @@ DOTRACE("Trial::vxRun");
 
   rep->becomeActive(&parent, widget);
 
-  Util::log("Trial::vxRun");
+  Util::log( vxInfo() );
 
   rep->currentNode = 0;
 
