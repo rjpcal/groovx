@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu May 10 12:04:46 2001
+// written: Tue May 15 13:33:36 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -234,7 +234,7 @@ public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name,
 					 "init_args ?viewing_dist=30?"
-					 "?gl_unit_angle=2.05? ?pack=yes?", 2, 5) {}
+					 "?gl_unit_angle=2.05? ?pack=yes?", 1, 5) {}
 
 protected:
   class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
@@ -256,7 +256,9 @@ void ObjTogl::InitCmd::invoke() {
 DOTRACE("ObjTogl::InitCmd::invoke");
   if (toglCreated) { throw Tcl::TclError("Togl widget already initialized"); }
 
-  const char* init_args     =                            getCstringFromArg(1);
+  const char* dflt = "-stereo false";
+
+  const char* init_args     =      (objc() < 2) ? dflt : getCstringFromArg(1);
   int         viewing_dist  =      (objc() < 3) ? 30   : getIntFromArg(2);
   double      gl_unit_angle =      (objc() < 4) ? 2.05 : getDoubleFromArg(3);
   bool        pack          = bool((objc() < 5) ? true : getBoolFromArg(4));

@@ -15,7 +15,7 @@ package require Pos
 
 source ${::TEST_DIR}/grobj_test.tcl
 
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+if { ![Togl::inited] } { Togl::init; update }
 
 set ::GTEXT [IO::new Gtext]
 Gtext::text $::GTEXT "Gtext"
