@@ -112,7 +112,6 @@ DOTRACE("Toglet_Init");
   pkg->def("setVisible", "objref(s) visibility", &Toglet::setVisibility, SRC_POS);
   pkg->defAttrib("size", &Toglet::size, &Toglet::setSize, SRC_POS);
   pkg->defAction("swapBuffers", &Toglet::swapBuffers, SRC_POS);
-  pkg->defAction("takeFocus", &Toglet::takeFocus, SRC_POS);
   pkg->defAction("undraw", &Toglet::undraw, SRC_POS);
 
   Toglet::make();
