@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Sun Nov 21 13:11:54 1999
+// written: Mon Jan 24 13:28:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,12 +30,12 @@ Value::~Value() {}
 void Value::printTo(ostream&) const { raiseValueError(); }
 void Value::scanFrom(istream&) { raiseValueError(); }
 
-int Value::getInt() const { raiseValueError(); }
-long Value::getLong() const { raiseValueError(); }
-bool Value::getBool() const { raiseValueError(); }
-double Value::getDouble() const { raiseValueError(); }
-const char* Value::getCstring() const { raiseValueError(); }
-string Value::getString() const { raiseValueError(); }
+int Value::getInt() const { raiseValueError(); return 0; }
+long Value::getLong() const { raiseValueError(); return 0; }
+bool Value::getBool() const { raiseValueError(); return false; }
+double Value::getDouble() const { raiseValueError(); return 0.0; }
+const char* Value::getCstring() const { raiseValueError(); return ""; }
+string Value::getString() const { raiseValueError(); return ""; }
 
 void Value::get(int&) const { raiseValueError(); }
 void Value::get(long&) const { raiseValueError(); }
