@@ -97,7 +97,9 @@ namespace
     if (cmd == 0)
       throw Util::Error("no such Tcl::CommandGroup");
 
-    return cmd->usage();
+    fstring result(name, " resolves to ", cmd->cmdName(), "\n");
+    result.append(cmd->usage());
+    return result;
   }
 }
 
