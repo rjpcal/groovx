@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed Jul 11 20:56:44 2001
+// written: Thu Jul 12 14:00:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,10 @@
 #include "tcl/tclcmd.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
+#include "tcl/tclveccmd.h"
+#endif
+
 template <class T> class Getter;
 template <class T> class Setter;
 
@@ -29,22 +33,23 @@ class Action;
 class fixed_string;
 
 
-namespace Tcl {
+namespace Tcl
+{
   class VecActionCmd;
 
   template <class T>
-    struct SetterCmdTraits {
-      typedef T value_type;
-      typedef T stack_type;
-      typedef List::Iterator<T> iterator_type;
-    };
+  struct SetterCmdTraits {
+    typedef T value_type;
+    typedef T stack_type;
+    typedef List::Iterator<T> iterator_type;
+  };
 
   template <>
-    struct SetterCmdTraits<const fixed_string&> {
-      typedef const fixed_string& value_type;
-      typedef const char* stack_type;
-      typedef List::Iterator<const char*> iterator_type;
-    };
+  struct SetterCmdTraits<const fixed_string&> {
+    typedef const fixed_string& value_type;
+    typedef const char* stack_type;
+    typedef List::Iterator<const char*> iterator_type;
+  };
 }
 
 namespace Tcl {
@@ -59,7 +64,7 @@ class TclItemPkgBase;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class VecGetterBaseCmd : public virtual TclCmd {
+class VecGetterBaseCmd : public virtual Tcl::VecCmd {
 public:
   VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
                    const char* usage, int item_argn);
@@ -105,7 +110,7 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class VecSetterBaseCmd : public virtual TclCmd {
+class VecSetterBaseCmd : public virtual Tcl::VecCmd {
 public:
   VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
                    const char* usage, int item_argn);
@@ -197,7 +202,7 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecActionCmd : public Tcl::TclCmd {
+class Tcl::VecActionCmd : public Tcl::VecCmd {
 public:
   VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
                shared_ptr<Action> action,

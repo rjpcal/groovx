@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed Jul 11 20:57:45 2001
+// written: Thu Jul 12 14:06:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,10 +31,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::VecGetterBaseCmd::VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
+Tcl::VecGetterBaseCmd::VecGetterBaseCmd(TclItemPkgBase* pkg,
+                                        const char* cmd_name,
                                         const char* usage, int item_argn) :
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
+         item_argn,
          item_argn+1, item_argn+1),
   itsPkg(pkg),
   itsItemArgn(item_argn)
@@ -44,46 +46,21 @@ DOTRACE("Tcl::VecGetterBaseCmd::VecGetterBaseCmd");
 
 Tcl::VecGetterBaseCmd::~VecGetterBaseCmd() {}
 
-void Tcl::VecGetterBaseCmd::invoke(Context& ctx) {
+void Tcl::VecGetterBaseCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::VecGetterBaseCmd::invoke");
-  if (itsItemArgn) {
-    Tcl::List::Iterator<int>
-      id_itr = ctx.beginOfArg(itsItemArgn, (int*)0),
-      end    =   ctx.endOfArg(itsItemArgn, (int*)0);
-
-    // If there is only one item, we want to do a regular return
-    // rather than a list-append to the return value.
-    if ( 1 == (end - id_itr) )
-      {
-        void* item = itsPkg->getItemFromId(*id_itr);
-        doReturnValForItem(item, ctx);
-      }
-    else
-      {
-        Tcl::List result;
-
-        while (id_itr != end)
-          {
-            void* item = itsPkg->getItemFromId(*id_itr);
-            doAppendValForItem(item, result);
-            ++id_itr;
-          }
-
-        ctx.setResult(result);
-      }
-  }
-  else {
-    void* item = itsPkg->getItemFromId(-1);
-    doReturnValForItem(item, ctx);
-  }
+  void* item = itsPkg->getItemFromContext(ctx);
+  doReturnValForItem(item, ctx);
 }
 
 template <class ValType>
-Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg,
+                                           const char* cmd_name,
                                            shared_ptr<Getter<ValType> > getter,
                                            const char* usage, int item_argn) :
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
+         item_argn,
          item_argn+1, item_argn+1),
   VecGetterBaseCmd(pkg, cmd_name, usage, item_argn),
   itsGetter(getter)
@@ -96,28 +73,33 @@ Tcl::TVecGetterCmd<ValType>::~TVecGetterCmd() {}
 
 template <class ValType>
 void Tcl::TVecGetterCmd<ValType>::doReturnValForItem(void* item,
-                                                     Context& ctx) {
+                                                     Context& ctx)
+{
   ctx.setResult(itsGetter->get(item));
 }
 
 template <class ValType>
 void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item,
-                                                     Tcl::List& listObj) {
+                                                     Tcl::List& listObj)
+{
   listObj.append(itsGetter->get(item));
 }
 
 // Specializations for fixed_string
 template <>
 void Tcl::TVecGetterCmd<fixed_string>::doReturnValForItem(void* item,
-                                                          Context& ctx) {
+                                                          Context& ctx)
+{
   ctx.setResult(itsGetter->get(item).c_str());
 }
 
 template <>
 void Tcl::TVecGetterCmd<fixed_string>::doAppendValForItem(void* item,
-                                                          Tcl::List& listObj) {
+                                                          Tcl::List& listObj)
+{
   listObj.append(itsGetter->get(item).c_str());
 }
+
 template <>
 void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(
   void* item,
@@ -136,15 +118,16 @@ void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(
 
 
 // Explicit instatiation requests
-namespace Tcl {
-template class TVecGetterCmd<int>;
-template class TVecGetterCmd<unsigned int>;
-template class TVecGetterCmd<unsigned long>;
-template class TVecGetterCmd<bool>;
-template class TVecGetterCmd<double>;
-template class TVecGetterCmd<const char*>;
-template class TVecGetterCmd<fixed_string>;
-template class TVecGetterCmd<const fixed_string&>;
+namespace Tcl
+{
+  template class TVecGetterCmd<int>;
+  template class TVecGetterCmd<unsigned int>;
+  template class TVecGetterCmd<unsigned long>;
+  template class TVecGetterCmd<bool>;
+  template class TVecGetterCmd<double>;
+  template class TVecGetterCmd<const char*>;
+  template class TVecGetterCmd<fixed_string>;
+  template class TVecGetterCmd<const fixed_string&>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -153,11 +136,13 @@ template class TVecGetterCmd<const fixed_string&>;
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::VecSetterBaseCmd::VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
+Tcl::VecSetterBaseCmd::VecSetterBaseCmd(TclItemPkgBase* pkg,
+                                        const char* cmd_name,
                                         const char* usage, int item_argn) :
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ?
                           "item_id(s) new_value(s)" : "new_value"),
+         item_argn,
          item_argn+2, item_argn+2),
   itsPkg(pkg),
   itsItemArgn(item_argn),
@@ -168,13 +153,14 @@ DOTRACE("Tcl::VecSetterBaseCmd::VecSetterBaseCmd");
 
 Tcl::VecSetterBaseCmd::~VecSetterBaseCmd() {}
 
-void Tcl::VecSetterBaseCmd::invoke(Context& ctx) {
+void Tcl::VecSetterBaseCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::VecSetterBaseCmd::invoke");
   if (itsItemArgn) {
     invokeForItemArgn(ctx, itsItemArgn, itsValArgn);
   }
   else {
-    void* item = itsPkg->getItemFromId(-1);
+    void* item = itsPkg->getItemFromContext(ctx);
     setSingleItem(ctx, item, itsValArgn);
   }
 }
@@ -185,9 +171,10 @@ Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
                                      shared_ptr<Setter<T> > setter,
                                      const char* usage, int item_argn) :
   Base(pkg, cmd_name, setter, usage, item_argn),
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ?
                           "item_id(s) new_value(s)" : "new_value"),
+         item_argn,
          item_argn+2, item_argn+2)
 {}
 
@@ -200,9 +187,10 @@ Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(
   shared_ptr<Setter<value_type> > setter,
   const char* usage, int item_argn
 ) :
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ?
                           "item_id(s) new_value(s)" : "new_value"),
+         item_argn,
          item_argn+2, item_argn+2),
   VecSetterBaseCmd(pkg, cmd_name, usage, item_argn),
   itsSetter(setter)
@@ -214,73 +202,36 @@ template <class Traits>
 Tcl::TrVecSetterCmd<Traits>::~TrVecSetterCmd() {}
 
 template <class Traits>
-void Tcl::TrVecSetterCmd<Traits>::setSingleItem(Context& ctx,
-                                                void* item, int val_argn) {
+void Tcl::TrVecSetterCmd<Traits>::setSingleItem(Tcl::Context& ctx,
+                                                void* item, int val_argn)
+{
 DOTRACE("Tcl::TrVecSetterCmd<Traits>::setSingleItem");
   stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
   itsSetter->set(item, val);
 }
 
 template <class Traits>
-void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(Context& ctx,
-                                                    int item_argn, int val_argn) {
+void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(Tcl::Context& ctx,
+                                                    int item_argn, int val_argn)
+{
 DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
 
-  Tcl::List::Iterator<int>
-#ifdef LOCAL_DEBUG
-    begin  = ctx.beginOfArg(item_argn, (int*)0),
-#endif
-    id_itr = ctx.beginOfArg(item_argn, (int*)0),
-    end    =   ctx.endOfArg(item_argn, (int*)0);
-
-  int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
-
-  if (num_ids == 1) {
-    stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
-
-    while (id_itr != end)
-      {
-        void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
-        itsSetter->set(item, val);
-
-        ++id_itr;
-      }
-
-  }
-  else {
-    iterator_type
-      val_itr = ctx.beginOfArg(val_argn, (stack_type*)0),
-      val_end =   ctx.endOfArg(val_argn, (stack_type*)0);
-
-    if (val_end-val_itr < 1) {
-      throw TclError("the list of new values is empty");
-    }
-
-    while (id_itr != end)
-      {
-        DOTRACE("inner loop");
-        DebugEvalNL(id_itr - begin);
-
-        void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
-        itsSetter->set(item, *val_itr);
-
-        ++id_itr;
-        if ( (val_end - val_itr) > 1 )
-          ++val_itr;
-      }
-  }
+  void* item = pkg()->getItemFromContext(ctx);
+  stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
+  itsSetter->set(item, val);
 }
 
 
 // Explicit instatiation requests
-namespace Tcl {
-template class TVecSetterCmd<int>;
-template class TVecSetterCmd<unsigned int>;
-template class TVecSetterCmd<unsigned long>;
-template class TVecSetterCmd<bool>;
-template class TVecSetterCmd<double>;
-template class TVecSetterCmd<const char*>;
-template class TVecSetterCmd<const fixed_string&>;
+namespace Tcl
+{
+  template class TVecSetterCmd<int>;
+  template class TVecSetterCmd<unsigned int>;
+  template class TVecSetterCmd<unsigned long>;
+  template class TVecSetterCmd<bool>;
+  template class TVecSetterCmd<double>;
+  template class TVecSetterCmd<const char*>;
+  template class TVecSetterCmd<const fixed_string&>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -296,9 +247,10 @@ Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
                                      const char* usage, int item_argn) :
   TVecGetterCmd<T>(pkg, 0, getter, 0, item_argn),
   TVecSetterCmd<T>(pkg, 0, setter, 0, item_argn),
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ?
                           "item_id(s) ?new_value(s)?" : "?new_value?"),
+         item_argn,
          item_argn+1, item_argn+2, false),
   itsObjcGet(item_argn+1),
   itsObjcSet(item_argn+2)
@@ -310,7 +262,8 @@ template <class T>
 Tcl::TVecAttribCmd<T>::~TVecAttribCmd() {}
 
 template <class T>
-void Tcl::TVecAttribCmd<T>::invoke(Context& ctx) {
+void Tcl::TVecAttribCmd<T>::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::TVecAttribCmd<>::invoke");
   if      (ctx.objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(ctx); }
   else if (ctx.objc() == itsObjcSet) { TVecSetterCmd<T>::invoke(ctx); }
@@ -318,14 +271,15 @@ DOTRACE("Tcl::TVecAttribCmd<>::invoke");
 }
 
 // Explicit instatiation requests
-namespace Tcl {
-template class TVecAttribCmd<int>;
-template class TVecAttribCmd<unsigned int>;
-template class TVecAttribCmd<unsigned long>;
-template class TVecAttribCmd<bool>;
-template class TVecAttribCmd<double>;
-template class TVecAttribCmd<const char*>;
-template class TVecAttribCmd<const fixed_string&>;
+namespace Tcl
+{
+  template class TVecAttribCmd<int>;
+  template class TVecAttribCmd<unsigned int>;
+  template class TVecAttribCmd<unsigned long>;
+  template class TVecAttribCmd<bool>;
+  template class TVecAttribCmd<double>;
+  template class TVecAttribCmd<const char*>;
+  template class TVecAttribCmd<const fixed_string&>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -337,8 +291,9 @@ template class TVecAttribCmd<const fixed_string&>;
 Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
                                 shared_ptr<Action> action,
                                 const char* usage, int item_argn) :
-  TclCmd(pkg->interp(), cmd_name,
+  VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
+         item_argn,
          item_argn+1, item_argn+1),
   itsPkg(pkg),
   itsAction(action),
@@ -349,24 +304,11 @@ DOTRACE("Tcl::VecActionCmd::VecActionCmd");
 
 Tcl::VecActionCmd::~VecActionCmd() {}
 
-void Tcl::VecActionCmd::invoke(Context& ctx) {
+void Tcl::VecActionCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::VecActionCmd::invoke");
-  if (itsItemArgn) {
-    Tcl::List::Iterator<int>
-      id_itr = ctx.beginOfArg(itsItemArgn, (int*)0),
-      end    =   ctx.endOfArg(itsItemArgn, (int*)0);
-
-    while (id_itr != end)
-      {
-        void* item = itsPkg->getItemFromId(*id_itr);
-        itsAction->action(item);
-        ++id_itr;
-      }
-  }
-  else {
-    void* item = itsPkg->getItemFromId(-1);
-    itsAction->action(item);
-  }
+  void* item = itsPkg->getItemFromContext(ctx);
+  itsAction->action(item);
 }
 
 static const char vcid_tclveccmds_cc[] = "$Header$";
