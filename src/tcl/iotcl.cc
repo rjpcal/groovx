@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jan 30 20:46:38 2002
+// written: Thu Jan 31 14:45:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,8 +118,9 @@ namespace
     for(unsigned int i = 0; i+1 < init_args.length(); i+=2)
       {
         Tcl::List cmd_str;
-        cmd_str.append(init_args[i]);
+        cmd_str.append("::->");
         cmd_str.append(obj.id());
+        cmd_str.append(init_args[i]);
         cmd_str.append(init_args[i+1]);
         Tcl::Code cmd(cmd_str.asObj(), Tcl::Code::THROW_EXCEPTION);
         cmd.invoke(interp);
@@ -228,6 +229,13 @@ DOTRACE("Io_Init");
   Tcl::defGenericObjCmds<IO::IoObject>(pkg3);
   Tcl::defIoCommands(pkg3);
   pkg3->defGetter("type", &IO::IoObject::ioTypename);
+
+  pkg3->eval("proc ::-> {args} {\n"
+             "set ids [lindex $args 0]\n"
+             "set namesp [IO::type [lindex $ids 0]]\n"
+             "set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
+             "namespace eval $namesp $cmd\n"
+             "}");
 
   return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
 }
