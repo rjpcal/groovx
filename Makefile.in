@@ -59,6 +59,7 @@ LIBS            := @LIBS@ @X_EXTRA_LIBS@
 with_htmldoc    := @with_htmldoc@
 DOXYGEN_PROG    := @DOXYGEN_PROG@
 BUILD           := @BUILD@
+windowsystem    := @windowsystem@
 
 LIB_EXT         := $(LIB_SUFFIX).$(SHLIB_EXT)
 
@@ -343,8 +344,21 @@ STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 
 EXECUTABLE := $(exec_prefix)/bin/groovx$(PACKAGE_VERSION)
 
-$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
+ifneq ($(windowsystem),aqua)
+foo$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+else
+OSXAPP := $(exec_prefix)/Groovx.app/Contents/MacOS/Groovx
+$(OSXAPP): $(STATIC_OBJS) $(ALL_STATLIBS)
+	mkdir -p $(exec_prefix)/Groovx.app/Contents/MacOS
+	time $(CXX) -o $(exec_prefix)/Groovx.app/Contents/MacOS/Groovx $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+
+$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(OSXAPP)
+	rm -f $@
+	echo "#!/bin/sh" >> $@
+	echo "\"$(exec_prefix)/Groovx.app/Contents/MacOS/Groovx\" \"\$$@\"" >> $@
+	/bin/chmod +x $@
+endif
 
 $(exec_prefix)/bin/groovx: $(EXECUTABLE)
 	ln -s -f $(^F) $@
