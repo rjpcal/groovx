@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jun 13 17:30:24 2001
+// written: Thu Jun 14 14:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
-#include "util/object.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
@@ -47,7 +43,7 @@ typedef unsigned long Window;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Toglet : public virtual Util::Object, public GWT::Widget {
+class Toglet : public GWT::Widget {
 protected:
   Toglet(Tcl_Interp* interp,
              int config_argc=0, char** config_argv=0,
