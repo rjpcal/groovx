@@ -236,11 +236,9 @@ protected:
 
   ptrdiff_t storage_offset(int i) const { return m_offset + m_stride*i; }
 
-  friend class mtx;
+  friend class mtx; // so that mtx can get at slice's constructors
 
-  inline slice(const mtx& owner, ptrdiff_t offset, int s, int n);
-
-  inline slice(data_holder& src, ptrdiff_t offset, int s, int n);
+  inline slice(const data_holder& src, ptrdiff_t offset, int s, int n);
 
 public:
 
@@ -1018,7 +1016,7 @@ public:
   { return mtx(this->specs().as_shape(mr, nc), this->m_data); }
 
   slice row(int r) const
-    { return slice(*this, offset_from_storage(r,0), rowstride(), ncols()); }
+    { return slice(this->m_data, offset_from_storage(r,0), rowstride(), ncols()); }
 
   mtx_iter row_iter(int r)
     { return mtx_iter(address_nc(r,0), rowstride(), ncols()); }
@@ -1033,7 +1031,7 @@ public:
 
 
   slice column(int c) const
-    { return slice(*this, offset_from_storage(0,c), colstride(), mrows()); }
+    { return slice(this->m_data, offset_from_storage(0,c), colstride(), mrows()); }
 
   mtx_iter column_iter(int c)
     { return mtx_iter(address_nc(0,c), colstride(), mrows()); }
@@ -1104,14 +1102,12 @@ inline const double* slice::data_start() const
 inline double* slice::data_start_nc()
 { return m_data_source.storage_nc() + m_offset; }
 
-inline slice::slice(const mtx& owner, ptrdiff_t offset, int s, int n) :
-  m_data_source(const_cast<mtx&>(owner).get_data_holder()),
-  m_offset(offset),
-  m_stride(s),
-  m_nelems(n) {}
-
-inline slice::slice(data_holder& src, ptrdiff_t offset, int s, int n) :
-  m_data_source(src),
+inline slice::slice(const data_holder& src, ptrdiff_t offset,
+                    int s, int n)
+  :
+  // by doing this const_cast, slice is promising to uphold the const
+  // correctness of the data_holder
+  m_data_source(const_cast<data_holder&>(src)),
   m_offset(offset),
   m_stride(s),
   m_nelems(n) {}
