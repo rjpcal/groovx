@@ -520,25 +520,6 @@ namespace Tcl
                              FuncTraits<Func>::numArgs, keyarg);
   }
 
-///////////////////////////////////////////////////////////////////////
-//
-// versions that can be used with TclPkg's
-//
-///////////////////////////////////////////////////////////////////////
-
-  template <class Pkg, class Func>
-  inline void def(Pkg* pkg, Func f, const char* cmd_name, const char* usage)
-  {
-    pkg->addCommand( makeCmd(pkg->interp(), f, cmd_name, usage) );
-  }
-
-  template <class Pkg, class Func>
-  inline void defVec(Pkg* pkg, Func f, const char* cmd_name,
-                     const char* usage, unsigned int keyarg=1)
-  {
-    pkg->addCommand( makeVecCmd(pkg->interp(), f, cmd_name, usage, keyarg) );
-  }
-
 } // end namespace Tcl
 
 static const char vcid_functor_h[] = "$Header$";
