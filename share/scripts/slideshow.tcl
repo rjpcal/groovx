@@ -10,7 +10,7 @@ package require Iwidgets
 
 namespace eval slideshow {
     proc msg { tag content } {
-	puts [format "%15s: %s" $tag $content]
+	puts [format "%20s: %s" $tag $content]
     }
 }
 
@@ -254,8 +254,10 @@ itcl::class Playlist {
 	set itsMode "spinning"
     }
 
-    public method jump {} {
-	set itsIdx [$itsRandSeq inext 0 [llength $itsList]]
+    public method jump { {adjust 0} } {
+	set itsIdx [expr [$itsRandSeq inext 0 \
+			      [expr [llength $itsList] - $adjust]] \
+			+ $adjust]
 	set itsGuessNext [$itsRandSeq ipeek 0 [llength $itsList]]
 	set itsMode "jumping"
     }
@@ -272,14 +274,20 @@ itcl::class Playlist {
 
     public method remove_helper { do_purge } {
 	set target [lindex $itsList $itsIdx]
-	slideshow::msg "hide file" $target
+	slideshow::msg "hide file\[$itsIdx\]" $target
 	if { $do_purge } {
 	    lappend itsPurgeList $target
 	}
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
 	switch -- $itsMode {
 	    jumping {
-		$this jump
+		if { $itsIdx < $itsGuessNext } {
+		    slideshow::msg "jump offset" -1
+		    $this jump -1
+		} else {
+		    slideshow::msg "jump offset" 0
+		    $this jump 0
+		}
 	    }
 	    spinning {
 		if { $itsLastSpin == -1 } {
@@ -347,35 +355,36 @@ itcl::class Playlist {
 	set i $itsGuessNext
 	set f [lindex $itsList $i]
 	while { ![image_file_exists $f] } {
-	    slideshow::msg "no such file" $f
+	    slideshow::msg "no such file\[$i\]" $f
 	    set itsList [lreplace $itsList $i $i]
 	    set i [expr $i % [llength $itsList]]
 	    set f [lindex $itsList $i]
 	}
 	set itsPixmapCache($f) [build_scaled_pixmap $f [-> $itsWidget size]]
-	slideshow::msg "cache insert" $f
+	slideshow::msg "cache insert\[$i\]" $f
     }
 
     public method show {} {
 	set f [$this filename]
 
 	while { ![image_file_exists $f] } {
-	    slideshow::msg "no such file" $f
+	    slideshow::msg "no such file\[$itsIdx\]" $f
 	    set itsList [lreplace $itsList $itsIdx $itsIdx]
 	    set itsIdx [expr $itsIdx % [llength $itsList]]
 	    set f [$this filename]
 	}
 
 	slideshow::msg "index" "$itsIdx of [llength $itsList]"
-	slideshow::msg "show file" $f
+	slideshow::msg "show file\[$itsIdx\]" $f
 
 	set old $itsPixmap
 	if { [info exists itsPixmapCache($f)] \
 		 && [GxPixmap::is $itsPixmapCache($f)] } {
 	    set itsPixmap $itsPixmapCache($f)
 	    unset itsPixmapCache($f)
-	    slideshow::msg "cache hit" $f
+	    slideshow::msg "cache hit\[$itsIdx\]" $f
 	} else {
+	    slideshow::msg "cache miss\[$itsIdx\]" $f
 	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
 	}
 
