@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Nov  4 10:01:41 1999
+// written: Mon Nov 15 14:19:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -449,19 +449,20 @@ DOTRACE("ToglConfig::reconfigure");
       therect.heightenByFactor(ratio_of_aspects); // and use some extra height
     }
     
-    glOrtho(therect.l, therect.r, therect.b, therect.t, -1.0, 1.0);
+    glOrtho(therect.left(), therect.right(),
+				therect.bottom(), therect.top(), -1.0, 1.0);
     
-	 DebugEval(itsMinRect.l);
-	 DebugEval(itsMinRect.r);
-	 DebugEval(itsMinRect.b);
-	 DebugEvalNL(itsMinRect.t);
+	 DebugEval(itsMinRect.left());
+	 DebugEval(itsMinRect.right());
+	 DebugEval(itsMinRect.bottom());
+	 DebugEvalNL(itsMinRect.top());
     DebugEval(itsMinRect.aspect());
     DebugEvalNL(getAspect());
 #ifdef LOCAL_DEBUG
 	 cerr << "glViewport(0, 0, " << Togl_Width(itsWidget) << ", "
 			<< Togl_Height(itsWidget) << ")" << endl;
-    cerr << "glOrtho(l=" << therect.l << ", r=" << therect.r
-         << ", b=" << therect.b << ", t=" << therect.t << ", -1.0, 1.0)" << endl;
+    cerr << "glOrtho(l=" << therect.left() << ", r=" << therect.right()
+         << ", b=" << therect.bottom() << ", t=" << therect.top() << ", -1.0, 1.0)" << endl;
 #endif
   } // end not usingFixedScale
 
