@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 07:38:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -207,20 +207,8 @@ protected:
       {2, 0, 1},
       {2, 1, 0} };
 
-    Tcl::List::Iterator<int>
-      itr = ctx.beginOfArg(1, (int*)0),
-      end = ctx.endOfArg(1, (int*)0);
-
-    int id_count = end - itr;
-
-    fixed_block<int> objids(id_count);
-
-    {for (unsigned int i = 0; i < objids.size(); ++i)
-      {
-        objids[i] = *itr;
-        ++itr;
-      }
-    }
+    fixed_block<int> objids(ctx.beginOfArg(1, (int*)0),
+                            ctx.endOfArg(1, (int*)0));
 
     int base_triad[3];
 
