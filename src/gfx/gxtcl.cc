@@ -305,7 +305,7 @@ DOTRACE("Gxtransform_Init");
 
   PKG_CREATE(interp, "GxTransform", "$Revision$");
   pkg->inheritPkg("GxNode");
-  Tcl::defCreator<GxTransform>(pkg, "Position");
+  Tcl::defCreator<GxTransform>(pkg);
   Tcl::defFieldContainer<GxTransform>(pkg);
 
   PKG_RETURN;
