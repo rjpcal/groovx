@@ -825,6 +825,10 @@ public:
   static mtx uninitialized(int mrows, int ncols)
   { return uninitialized(mtx_shape(mrows, ncols)); }
 
+  static mtx from_stream(std::istream& s);
+
+  static mtx from_string(const char* s);
+
   mtx(const slice& s);
 
   mtx(const mtx& other) : Base(other) {}

@@ -49,11 +49,9 @@ namespace
       {
         const mtx m1 = rand_mtx(i, i);
 
-        rutz::fstring s = m1.as_string();
+        const rutz::fstring s = m1.as_string();
 
-        mtx m2 = mtx::empty_mtx();
-
-        m2.scan_string(s.c_str());
+        const mtx m2 = mtx::from_string(s.c_str());
 
         TEST_REQUIRE_APPROX(fabs((m2-m1).max()), 0.0, 1e-40);
       }
