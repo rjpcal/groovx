@@ -188,7 +188,7 @@ $(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs --objdir $(OBJ)/ $(SRC) |sort> $@
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC) |sort> $@
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
