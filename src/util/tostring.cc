@@ -27,7 +27,6 @@ namespace
   template <class T>
   const char* num2str_impl(const T& x)
   {
-    DOTRACE("num2str_impl");
     ostrstream ost(num2str_buf, 30);
     ost << x << '\0';
     return &num2str_buf[0];
