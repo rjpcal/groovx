@@ -148,8 +148,11 @@ public:
   void bind(const rutz::fstring& event_sequence,
             const rutz::fstring& script);
 
-  /// Overridden from GWT::Widget.
-  virtual void takeFocus();
+  /// Force the keyboard focus to go to this window.
+  void takeFocus();
+
+  /// Drop the keyboard focus back to wherever the mouse pointer is.
+  void loseFocus();
 
   void requestRedisplay();
 

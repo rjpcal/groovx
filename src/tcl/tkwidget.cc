@@ -755,6 +755,24 @@ DOTRACE("Tcl::TkWidget::takeFocus");
   rep->interp.eval(cmd);
 }
 
+void Tcl::TkWidget::loseFocus()
+{
+DOTRACE("Tcl::TkWidget::loseFocus");
+  Tk_Window toplev = rep->tkWin;
+
+  while (!Tk_IsTopLevel(toplev))
+    {
+      toplev = Tk_Parent(toplev);
+      ASSERT(toplev != 0);
+    }
+
+  const char* pathname = Tk_PathName(toplev);
+  const fstring cmd("wm iconify ", pathname,
+                    "; wm deiconify ", pathname);
+
+  rep->interp.eval(cmd);
+}
+
 void Tcl::TkWidget::requestRedisplay()
 {
 DOTRACE("Tcl::TkWidget::requestRedisplay");
