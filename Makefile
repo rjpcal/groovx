@@ -555,12 +555,7 @@ TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
 	find $(SRC) -name \*.h -or -name \*.cc | $(ETAGS) - -o $@
 
 tardist: clean
-	touch diststamp
 	cd ..; tar cvfz grsh.tar.gz grsh \
 		--exclude *.o --exclude *.do \
 		--exclude *.a --exclude *.sl \
 		--exclude *,v --exclude *~ --exclude a.out
-	rm diststamp
-
-distpatch: clean
-	cd ..; tar cvfz patch.tar.gz `find grsh -newer grsh/diststamp -type f`
