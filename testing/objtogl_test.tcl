@@ -8,7 +8,6 @@
 ##############################################################################
 
 package require Toglet
-package require Togl
 package require Face
 package require Tlist
 
