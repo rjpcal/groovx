@@ -234,6 +234,9 @@ void XMLWriter::writeRoot(const IO::IoObject* root)
 {
 DOTRACE("XMLWriter::writeRoot");
 
+  itsBuf << "<?xml version=\"1.0\"?>\n"
+         << "<!-- GroovX XML 1 -->\n";
+
   flattenObject(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)),
                 "root", "object");
 
