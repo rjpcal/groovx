@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Jul  7 15:52:52 2000
+// written: Fri Jul  7 17:11:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -437,9 +437,12 @@ DOTRACE("Block::processResponse");
   DebugEvalNL(response.val());
 
   if (!response.isCorrect()) {
-	 // If the response was incorrect, add the current trial to the end
-	 // of the block.
+	 // If the response was incorrect, add a repeat of the current
+	 // trial to the block and reshuffle
 	 addTrial(currentTrial(), 1);
+	 random_shuffle(
+		itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
+		itsImpl->itsTrialSequence.end());
   }
 }
 
