@@ -33,6 +33,7 @@
 #include "util/stderror.h"
 
 #include "util/demangle.h"
+#include "util/error.h"
 
 void Util::throwBadCast(const std::type_info& to,
                         const std::type_info& from)
