@@ -3,7 +3,7 @@
 // xbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:19:23 1999
-// written: Wed Mar 22 16:47:01 2000
+// written: Wed Mar 29 14:07:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef XBMAPRENDERER_H_DEFINED
 #define XBMAPRENDERER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BMAPRENDERER_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BMAPRENDERER_H_DEFINED)
 #include "bmaprenderer.h"
 #endif
 

@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Thu Mar 23 20:45:53 2000
+// written: Wed Mar 29 14:07:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef STRINGIFYCMD_H_DEFINED
 #define STRINGIFYCMD_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H_DEFINED)
 #include "tcl/tclcmd.h"
 #endif
 

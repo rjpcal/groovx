@@ -3,7 +3,7 @@
 // rect.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 22 16:47:03 2000
+// written: Wed Mar 29 14:07:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef RECT_H_DEFINED
 #define RECT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINT_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINT_H_DEFINED)
 #include "point.h"
 #endif
 

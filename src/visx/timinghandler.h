@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Wed Mar 22 16:47:02 2000
+// written: Wed Mar 29 14:07:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TIMINGHANDLER_H_DEFINED
 #define TIMINGHANDLER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TIMINGHDLR_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TIMINGHDLR_H_DEFINED)
 #include "timinghdlr.h"
 #endif
 

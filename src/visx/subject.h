@@ -2,19 +2,19 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Wed Mar 22 16:47:02 2000
+// written: Wed Mar 29 14:07:34 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_H_DEFINED
 #define SUBJECT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
 #define STRING_DEFINED
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io.h"
 #endif
 

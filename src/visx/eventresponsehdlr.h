@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Mar 22 16:47:05 2000
+// written: Wed Mar 29 14:07:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef EVENTRESPONSEHDLR_H_DEFINED
 #define EVENTRESPONSEHDLR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RESPONSEHANDLER_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RESPONSEHANDLER_H_DEFINED)
 #include "responsehandler.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
 #include "util/tracer.h"
 #endif
 

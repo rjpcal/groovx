@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Wed Mar 22 16:47:05 2000
+// written: Wed Mar 29 14:07:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef GLBITMAP_H_DEFINED
 #define GLBITMAP_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H_DEFINED)
 #include "bitmap.h"
 #endif
 

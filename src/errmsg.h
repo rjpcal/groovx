@@ -2,7 +2,7 @@
 // errmsg.h
 // Rob Peters
 // created: Dec-98
-// written: Wed Mar 22 16:47:00 2000
+// written: Wed Mar 29 14:07:33 2000
 // $Id$
 //
 // This file provides several simple inlined functions that append a
@@ -16,7 +16,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCL_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCL_H_DEFINED)
 #include <tcl.h>
 #define TCL_H_DEFINED
 #endif

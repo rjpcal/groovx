@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 22 16:47:00 2000
+// written: Wed Mar 29 14:07:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef TCLCMD_H_DEFINED
 #define TCLCMD_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H_DEFINED)
 #include "tcl/tclvalue.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
 #include "tcl/tclerror.h"
 #endif
 

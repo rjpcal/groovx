@@ -3,7 +3,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Wed Mar 22 16:47:04 2000
+// written: Wed Mar 29 14:07:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef JITTER_H_DEFINED
 #define JITTER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POSITION_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POSITION_H_DEFINED)
 #include "position.h"
 #endif
 

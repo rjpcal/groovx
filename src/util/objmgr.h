@@ -2,14 +2,14 @@
 // iomgr.h
 // Rob Peters
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Mar 22 16:47:04 2000
+// written: Wed Mar 29 14:07:36 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOMGR_H_DEFINED
 #define IOMGR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io.h"
 #endif
 

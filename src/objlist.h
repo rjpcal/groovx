@@ -3,7 +3,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Wed Mar 22 16:47:03 2000
+// written: Wed Mar 29 14:07:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef OBJLIST_H_DEFINED
 #define OBJLIST_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H_DEFINED)
 #include "ptrlist.h"
 #endif
 

@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 23 09:43:16 2000
+// written: Wed Mar 29 14:07:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef FACE_H_DEFINED
 #define FACE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
 #include "property.h"
 #endif
 

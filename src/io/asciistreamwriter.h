@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Wed Mar 22 23:46:04 2000
+// written: Wed Mar 29 14:07:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef ASCIISTREAMWRITER_H_DEFINED
 #define ASCIISTREAMWRITER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WRITER_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WRITER_H_DEFINED)
 #include "writer.h"
 #endif
 

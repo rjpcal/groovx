@@ -3,7 +3,7 @@
 // glbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:52:41 1999
-// written: Wed Mar 22 16:47:05 2000
+// written: Wed Mar 29 14:07:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef GLBMAPRENDERER_H_DEFINED
 #define GLBMAPRENDERER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BMAPRENDERER_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BMAPRENDERER_H_DEFINED)
 #include "bmaprenderer.h"
 #endif
 

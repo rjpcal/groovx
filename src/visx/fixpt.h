@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 22 16:47:05 2000
+// written: Wed Mar 29 14:07:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef FIXPT_H_DEFINED
 #define FIXPT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
 #include "property.h"
 #endif
 

@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Mar 22 16:47:01 2000
+// written: Wed Mar 29 14:07:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef TRIALEVENT_H_DEFINED
 #define TRIALEVENT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
 #include "stopwatch.h"
 #endif
 

@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Thu Mar 23 19:13:25 2000
+// written: Wed Mar 29 14:07:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef MORPHYFACE_H_DEFINED
 #define MORPHYFACE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
 #include "property.h"
 #endif
 

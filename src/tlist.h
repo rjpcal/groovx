@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Wed Mar 22 16:47:01 2000
+// written: Wed Mar 29 14:07:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef TLIST_H_DEFINED
 #define TLIST_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H_DEFINED)
 #include "ptrlist.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io.h"
 #endif
 

@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Wed Mar 22 16:47:04 2000
+// written: Wed Mar 29 14:07:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef KBDRESPONSEHDLR_H_DEFINED
 #define KBDRESPONSEHDLR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EVENTRESPONSEHDLR_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EVENTRESPONSEHDLR_H_DEFINED)
 #include "eventresponsehdlr.h"
 #endif
 

@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Mar 22 22:01:31 2000
+// written: Wed Mar 29 14:07:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef WRITER_H_DEFINED
 #define WRITER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H)
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
 #endif
 
