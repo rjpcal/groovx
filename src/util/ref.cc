@@ -34,6 +34,7 @@
 
 #include "util/error.h"
 #include "util/objdb.h"
+#include "util/demangle.h"
 
 bool Util::RefHelper::isValidId(Util::UID id)
 {
@@ -55,9 +56,31 @@ void Util::RefHelper::insertItemWeak(Util::Object* obj)
   ObjDb::theDb().insertObjWeak(obj);
 }
 
-void Util::RefHelper::throwError(const char* msg)
+void Util::RefHelper::throwRefNull(const std::type_info& info)
 {
-  throw Util::Error(msg);
+  throw Util::Error(fstring("attempted to construct a Ref<",
+                            demangle_cstr(info.name()),
+                            "> with a null pointer"));
+}
+
+void Util::RefHelper::throwRefUnshareable(const std::type_info& info)
+{
+  throw Util::Error(fstring("attempted to construct a Ref<",
+                            demangle_cstr(info.name()),
+                            "> with an unshareable object"));
+}
+
+void Util::RefHelper::throwSoftRefInvalid(const std::type_info& info)
+{
+  throw Util::Error(fstring("attempted to access invalid object in SoftRef<",
+                            demangle_cstr(info.name()), ">"));
+}
+
+void Util::RefHelper::throwBadCast(const std::type_info& to,
+                                   const std::type_info& from)
+{
+  throw Util::Error(fstring("failed cast to ", demangle_cstr(to.name()),
+                            " from ", demangle_cstr(from.name())));
 }
 
 static const char vcid_ref_cc[] = "$Header$";

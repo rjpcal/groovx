@@ -34,6 +34,8 @@
 #include "util/object.h"
 #include "util/traits.h"
 
+#include <typeinfo>
+
 namespace Util
 {
   enum RefType { WEAK, STRONG };
@@ -70,7 +72,11 @@ namespace Util
     void insertItem(Util::Object* obj);
     void insertItemWeak(Util::Object* obj);
 
-    void throwError(const char* msg);
+    void throwRefNull(const std::type_info& info);
+    void throwRefUnshareable(const std::type_info& msg);
+    void throwSoftRefInvalid(const std::type_info& info);
+    void throwBadCast(const std::type_info& to,
+                      const std::type_info& from);
 
     template <class T>
     inline T* getCastedItem(Util::UID id)
@@ -106,10 +112,10 @@ namespace Util
       explicit Handle(T* master) : itsMaster(master)
       {
         if (master == 0)
-          throwError("attempted to construct a Ref with a null pointer");
+          throwRefNull(typeid(T));
 
         if (master->isNotShareable())
-          throwError("attempted to construct a Ref with an unshareable object");
+          throwRefUnshareable(typeid(T));
 
         itsMaster->incrRefCount();
       }
@@ -257,8 +263,10 @@ template <class To, class Fr>
 Ref<To> dynamicCast(Ref<Fr> p)
 {
   Fr* f = p.get();
-  To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-  return Ref<To>(&t);
+  To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
+  if (t == 0)
+    Util::RefHelper::throwBadCast(typeid(To), typeid(Fr));
+  return Ref<To>(t);
 }
 
 
@@ -370,8 +378,7 @@ private:
     void ensureValid() const
     {
       if (!isValid())
-        Util::RefHelper::throwError(
-                         "attempted to access invalid object");
+        Util::RefHelper::throwSoftRefInvalid(typeid(T));
     }
 
     void swap(WeakHandle& other)
@@ -469,8 +476,10 @@ SoftRef<To> dynamicCast(SoftRef<Fr> p)
   if (p.isValid())
     {
       Fr* f = p.get();
-      To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-      return SoftRef<To>(&t);
+      To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
+      if (t == 0)
+        Util::RefHelper::throwBadCast(typeid(To), typeid(Fr));
+      return SoftRef<To>(t);
     }
   return SoftRef<To>(p.id());
 }
