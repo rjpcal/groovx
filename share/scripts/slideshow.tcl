@@ -138,6 +138,9 @@ itcl::class Playlist {
     private variable itsWidget
     private variable itsPixmap
     private variable itsPixmapCache
+    private variable itsTransform
+    private variable itsMessage
+    private variable itsScene
     private variable itsMatch
     private variable itsRandSeq
     private variable itsPurgeList
@@ -218,6 +221,10 @@ itcl::class Playlist {
 	set itsWidget $widget
 	set itsPixmap [new GxPixmap]
 	-> $itsPixmap purgeable 1
+	set itsScene [new GxSeparator]
+	set itsTransform [new GxTransform]
+	set itsMessage [new GxText]
+	-> $itsMessage font "vector"
 
 	set itsPurgeList [list]
 
@@ -337,6 +344,8 @@ itcl::class Playlist {
 		file delete $f
 	    }
 	    incr itsDelCount
+
+	    reshow 0
 	}
 	set itsPurgeList [list]
 	save
@@ -365,8 +374,31 @@ itcl::class Playlist {
 	    set i [expr $i % [llength $itsList]]
 	    set f [lindex $itsList $i]
 	}
-	set itsPixmapCache($f) [build_scaled_pixmap $f [-> $itsWidget size]]
-	slideshow::msg "cache insert\[$i\]" $f
+	if { ![info exists itsPixmapCache($f)] } {
+	    set itsPixmapCache($f) [build_scaled_pixmap $f [-> $itsWidget size]]
+	    slideshow::msg "cache insert\[$i\]" $f
+	} else {
+	    slideshow::msg "cache exists\[$i\]" "$itsPixmapCache($f) $f"
+	}
+    }
+
+    public method reshow { show_image } {
+	-> $itsWidget allowRefresh 0
+
+	-> $itsScene removeAllChildren
+	if { $show_image } {
+	    -> $itsScene addChild $itsPixmap
+	}
+	-> $itsScene addChild $itsTransform
+	-> $itsScene addChild $itsMessage
+	-> $itsTransform translation [-> [-> $itsWidget canvas] topLeft]
+	-> $itsMessage text "[$this filename]\n[llength $itsList] c\n[llength $itsPurgeList] p\n$itsDelCount d\n$itsShowCount s\n$itsMissCount m"
+	-> $itsMessage strokeWidth 2
+	-> $itsMessage alignmentMode $GxShapeKit::NW_ON_CENTER
+
+#	-> $itsWidget see $itsPixmap
+	-> $itsWidget see $itsScene
+	-> $itsWidget allowRefresh 1
     }
 
     public method show {} {
@@ -394,9 +426,7 @@ itcl::class Playlist {
 	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
 	}
 
-	-> $itsWidget allowRefresh 0
-	-> $itsWidget see $itsPixmap
-	-> $itsWidget allowRefresh 1
+	$this reshow 1
 
 	delete $old
 
@@ -511,6 +541,9 @@ if { $show_buttons } {
 -> [Toglet::current] destroy
 
 set t [new Toglet]
+set c [new GxFixedScaleCamera]
+-> $c pixelsPerUnit 8
+-> $t camera $c
 
 set PLAYLIST [Playlist PLAYLIST $argv $t]
 
@@ -523,9 +556,10 @@ bind all <Key-Right> {spinPic 1; PLAYLIST show}
 bind all <Key-Up> {jumpPic; PLAYLIST show}
 bind all <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
 bind all <Key-e> {PLAYLIST remove_no_purge; updateText; PLAYLIST show}
+bind all <Key-0> {PLAYLIST remove_no_purge; updateText; PLAYLIST show}
 bind all <Shift-Key-Down> {PLAYLIST mode spinning; PLAYLIST remove; updateText; PLAYLIST show}
 bind all <Key-Return> {PLAYLIST save}
-bind all <Key-x> {PLAYLIST purge}
+bind all <Key-x> {PLAYLIST purge; PLAYLIST reshow 1}
 bind all <Key-Escape> { -> [Toglet::current] setVisible 0; PLAYLIST purge; exit }
 
 if { $show_buttons } {
@@ -538,6 +572,7 @@ if { $show_buttons } {
 -> $t repack "-side bottom"
 
 glClearColor 0 0 0 0
+glColor 0.7 0.7 0.1 1
 
 update
 
