@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed Mar 15 10:54:11 2000
+// written: Thu Mar 16 13:27:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,9 +91,10 @@ public:
   virtual void invoke();
 
 protected:
-  virtual void* getValVec(int val_argn, int num_ids, unsigned int& num_vals) = 0;
-  virtual void setValForItem(void* item, void* val_vec, unsigned int valn) = 0;
-  virtual void destroyValVec(void* val_vec) = 0;
+  virtual void invokeForItemArgn(int item_argn, int val_argn) = 0;
+  virtual void setSingleItem(void* item, int val_argn) = 0;
+
+  TclItemPkgBase* pkg() { return itsPkg; }
 
 private:
   VecSetterBaseCmd(const VecSetterBaseCmd&);
@@ -111,9 +112,8 @@ public:
                 const char* usage, int item_argn);
 
 protected:
-  virtual void* getValVec(int val_argn, int num_ids, unsigned int& num_vals);
-  virtual void setValForItem(void* item, void* val_vec, unsigned int valn);
-  virtual void destroyValVec(void* val_vec);
+  virtual void invokeForItemArgn(int item_argn, int val_argn);
+  virtual void setSingleItem(void* item, int val_argn);
 
 private:
   scoped_ptr< Setter<T> > itsSetter;

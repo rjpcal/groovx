@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Mar 16 09:59:25 2000
+// written: Thu Mar 16 13:27:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,6 @@
 
 #include "tcl/tclitempkgbase.h"
 #include "util/strings.h"
-
-#include <vector>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -131,32 +129,13 @@ DOTRACE("Tcl::VecSetterBaseCmd::VecSetterBaseCmd");
 
 void Tcl::VecSetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecSetterBaseCmd::invoke");
-  vector<int> ids;
   if (itsItemArgn) {
-	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+	 invokeForItemArgn(itsItemArgn, itsValArgn);
   }
   else {
-	 ids.push_back(-1);
+	 void* item = itsPkg->getItemFromId(-1);
+	 setSingleItem(item, itsValArgn);
   }
-
-  unsigned int num_vals;
-  void* vals = getValVec(itsValArgn, ids.size(), num_vals);
-
-  if (num_vals < 1) {
-	 throw TclError("the list of new values is empty");
-  }
-
-  size_t max_valn = num_vals-1;
-  DebugEvalNL(max_valn);
-
-  for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
-	 DebugEval(i);
-	 void* item = itsPkg->getItemFromId(ids[i]);
-	 setValForItem(item, vals, valn);
-	 if (valn < max_valn) ++valn;
-  }
-
-  destroyValVec(vals);
 }
 
 template <class T>
@@ -174,66 +153,123 @@ DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
 }
 
 template <class T>
-void* Tcl::TVecSetterCmd<T>::getValVec(int val_argn, int num_ids,
-													unsigned int& num_vals) {
-  vector<T>* vals = new vector<T>;
+void Tcl::TVecSetterCmd<T>::setSingleItem(void* item, int val_argn) {
+DOTRACE("Tcl::TVecSetterCmd<T>::setSingleItem");
+  T val;
+  getValFromArg(val_argn, val);
+  itsSetter->set(item, val);
+}
+
+template <class T>
+void Tcl::TVecSetterCmd<T>::invokeForItemArgn(int item_argn, int val_argn) {
+DOTRACE("Tcl::TVecSetterCmd<T>::invokeForItemArgn");
+
+  Tcl::ListIterator<int>
+#ifdef LOCAL_DEBUG
+	 begin  = beginOfArg(item_argn, (int*)0),
+#endif
+	 id_itr = beginOfArg(item_argn, (int*)0),
+	 end    =   endOfArg(item_argn, (int*)0);
+
+  int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
+
   if (num_ids == 1) {
 	 T val;
 	 getValFromArg(val_argn, val);
-	 vals->push_back(val);
+
+	 while (id_itr != end)
+		{
+		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
+		  itsSetter->set(item, val);
+
+		  ++id_itr;
+		}
+
   }
   else {
-	 getSequenceFromArg(val_argn, back_inserter(*vals), (T*) 0);
+	 Tcl::ListIterator<T>
+		val_itr = beginOfArg(val_argn, (T*)0),
+		val_end =   endOfArg(val_argn, (T*)0);
+
+	 if (val_end-val_itr < 1) {
+		throw TclError("the list of new values is empty");
+	 }
+
+	 while (id_itr != end)
+		{
+		  DOTRACE("inner loop");
+		  DebugEvalNL(id_itr - begin);
+
+		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
+		  itsSetter->set(item, *val_itr);
+
+		  ++id_itr;
+		  if ( (val_end - val_itr) > 1 )
+			 ++val_itr;
+		}
   }
-  num_vals = vals->size();
-  return static_cast<void*>(vals);
 }
 
-template <class T>
-void Tcl::TVecSetterCmd<T>::setValForItem(void* item,
-														void* val_vec, unsigned int valn) {
-  vector<T>& vals = *(static_cast<vector<T>*>(val_vec));
-  itsSetter->set(item, vals[valn]);
-}
-
-template <class T>
-void Tcl::TVecSetterCmd<T>::destroyValVec(void* val_vec) {
-  vector<T>* vals = static_cast<vector<T>*>(val_vec);
-  delete vals;
-}
-
-
-// Specialization for T=const fixed_string&
 template <>
-void* Tcl::TVecSetterCmd<const fixed_string&>::getValVec(
-  int val_argn, int num_ids, unsigned int& num_vals
-) {
-  vector<fixed_string>* vals = new vector<fixed_string>;
+void Tcl::TVecSetterCmd<const fixed_string&>::setSingleItem(
+  void* item, int val_argn) {
+DOTRACE("Tcl::TVecSetterCmd<T>::setSingleItem");
+  const char* val;
+  getValFromArg(val_argn, val);
+  itsSetter->set(item, val);
+}
+
+template <>
+void Tcl::TVecSetterCmd<const fixed_string&>::invokeForItemArgn(
+  int item_argn, int val_argn) {
+DOTRACE("Tcl::TVecSetterCmd<T>::invokeForItemArgn");
+
+  Tcl::ListIterator<int>
+#ifdef LOCAL_DEBUG
+	 begin  = beginOfArg(item_argn, (int*)0),
+#endif
+	 id_itr = beginOfArg(item_argn, (int*)0),
+	 end    =   endOfArg(item_argn, (int*)0);
+
+  int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
+
   if (num_ids == 1) {
-	 vals->push_back(fixed_string());
-	 vals->back() = getCstringFromArg(val_argn);
+	 const char* val;
+	 getValFromArg(val_argn, val);
+
+	 while (id_itr != end)
+		{
+		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
+		  itsSetter->set(item, val);
+
+		  ++id_itr;
+		}
+
   }
   else {
-	 getSequenceFromArg(val_argn, back_inserter(*vals), (const char**) 0);
+	 Tcl::ListIterator<const char*>
+		val_itr = beginOfArg(val_argn, (const char**)0),
+		val_end =   endOfArg(val_argn, (const char**)0);
+
+	 if (val_end-val_itr < 1) {
+		throw TclError("the list of new values is empty");
+	 }
+
+	 while (id_itr != end)
+		{
+		  DOTRACE("inner loop");
+		  DebugEvalNL(id_itr - begin);
+
+		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
+		  itsSetter->set(item, *val_itr);
+
+		  ++id_itr;
+		  if ( (val_end - val_itr) > 1 )
+			 ++val_itr;
+		}
   }
-  num_vals = vals->size();
-  return static_cast<void*>(vals);
 }
 
-template <>
-void Tcl::TVecSetterCmd<const fixed_string&>::setValForItem(
-  void* item, void* val_vec, unsigned int valn
-) {
-  vector<fixed_string>& vals = *(static_cast<vector<fixed_string>*>(val_vec));
-  itsSetter->set(item, vals[valn]);
-}
-
-template <>
-void Tcl::TVecSetterCmd<const fixed_string&>::destroyValVec(void* val_vec)
-{
-  vector<fixed_string>* vals = static_cast<vector<fixed_string>*>(val_vec);
-  delete vals;
-}
 
 // Explicit instatiation requests
 namespace Tcl {
