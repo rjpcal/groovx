@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Mon Mar 12 20:14:23 2001
+// written: Tue Mar 13 18:06:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 #include "datablock.h"
 
 #include <cstddef>
-
 #include <cstdlib>
+#include <cstring>
 
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -26,7 +26,7 @@
 
 namespace {
   struct FreeNode {
-	 FreeNode* next;
+    FreeNode* next;
   };
 
   FreeNode* fsFreeList = 0;
@@ -35,7 +35,7 @@ namespace {
 class SharedDataBlock : public DataBlock {
 public:
   SharedDataBlock(int length) :
-	 DataBlock(new double[length], length)
+    DataBlock(new double[length], length)
   {}
 
   virtual ~SharedDataBlock() { delete [] itsData; }
@@ -44,7 +44,7 @@ public:
 class BorrowedDataBlock : public DataBlock {
 public:
   BorrowedDataBlock(double* borrowedData, unsigned int dataLength) :
-	 DataBlock(borrowedData, dataLength)
+    DataBlock(borrowedData, dataLength)
   {}
 
   virtual ~BorrowedDataBlock()
@@ -56,7 +56,7 @@ DOTRACE("DataBlock::operator new");
 
   Assert(bytes == sizeof(DataBlock));
   if (fsFreeList == 0)
-	 return ::operator new(bytes);
+    return ::operator new(bytes);
   FreeNode* node = fsFreeList;
   fsFreeList = fsFreeList->next;
   return (void*)node;
@@ -83,10 +83,10 @@ DataBlock* DataBlock::getEmptyDataBlock() {
 DOTRACE("DataBlock::getEmptyDataBlock");
   static DataBlock* empty_rep = 0;
   if (empty_rep == 0)
-	 {
-		empty_rep = new SharedDataBlock(0);
-		empty_rep->incrRefCount();
-	 }
+    {
+      empty_rep = new SharedDataBlock(0);
+      empty_rep->incrRefCount();
+    }
 
   return empty_rep;
 }
@@ -95,7 +95,7 @@ DataBlock* DataBlock::makeDataCopy(const double* data, int data_length)
 {
 DOTRACE("DataBlock::makeDataCopy");
   if (data == 0)
-	 return getEmptyDataBlock();
+    return getEmptyDataBlock();
 
   DataBlock* p = new SharedDataBlock(data_length);
 
@@ -107,9 +107,10 @@ DOTRACE("DataBlock::makeDataCopy");
 DataBlock* DataBlock::makeBlank(int length) {
 DOTRACE("DataBlock::makeBlank");
   if (length <= 0)
-	 return getEmptyDataBlock();
+    return getEmptyDataBlock();
 
   DataBlock* p = new SharedDataBlock(length);
+  memset(p->itsData, 0, length*sizeof(double));
 
   return p;
 }
