@@ -42,19 +42,19 @@ PLATFORM := $(ARCH)
 #
 #-------------------------------------------------------------------------
 
+LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
+
 PROJECT = $(HOME)/sorcery/grsh
 SRC := src
 DEP := ./dep/$(PLATFORM)
 OBJ := ./obj/$(PLATFORM)
-LIB := $(PROJECT)/lib/$(PLATFORM)
 LOGS := ./logs
 DOC := ./doc
 IDEP := ./idep
 SCRIPTS := ./scripts
 
-LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
-
-BIN_DIR := $(LOCAL_ARCH)/bin
+LOCAL_LIB := $(LOCAL_ARCH)/lib
+LOCAL_BIN := $(LOCAL_ARCH)/bin
 TMP_DIR := ./tmp/$(PLATFORM)
 
 #-------------------------------------------------------------------------
@@ -94,7 +94,7 @@ ifeq ($(PLATFORM),irix6)
 	AUDIO_LIB := -laudio -laudiofile
 	ZSTREAM_LIB := -lzstream
 
-	LIB_PATH += -Wl,-rpath,$(LIB)
+	LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
 endif
 
 ifeq ($(PLATFORM),i686)
@@ -224,7 +224,7 @@ endif
 
 INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
-LIB_PATH += -L$(LIB) -L$(LOCAL_ARCH)/lib
+LIB_PATH += -L$(LOCAL_LIB)
 
 ifeq ($(PLATFORM),i686)
 	LIB_PATH += -L/usr/X11R6/lib
@@ -278,7 +278,7 @@ DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard src/*.cc))
 DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(DEEPVISION_SRCS)))
 
-LIBDEEPVISION := $(LIB)/libDeepVision$(LIB_EXT)
+LIBDEEPVISION := $(LOCAL_LIB)/libDeepVision$(LIB_EXT)
 
 #
 # libDeepAppl
@@ -295,7 +295,7 @@ IO_OBJS := $(subst .cc,$(OBJ_EXT),\
 
 DEEPAPPL_OBJS := $(GWT_OBJS) $(GX_OBJS) $(IO_OBJS)
 
-LIBDEEPAPPL := $(LIB)/libDeepAppl$(LIB_EXT)
+LIBDEEPAPPL := $(LOCAL_LIB)/libDeepAppl$(LIB_EXT)
 
 #
 # libDeepUtil
@@ -308,7 +308,7 @@ DEEPUTIL_OBJS := $(SYS_OBJS) \
 	$(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/util/*.cc)))
 
-LIBDEEPUTIL := $(LIB)/libDeepUtil$(LIB_EXT)
+LIBDEEPUTIL := $(LOCAL_LIB)/libDeepUtil$(LIB_EXT)
 
 #
 # libDeepTcl
@@ -317,7 +317,7 @@ LIBDEEPUTIL := $(LIB)/libDeepUtil$(LIB_EXT)
 DEEPTCL_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc)))
 
-LIBDEEPTCL := $(LIB)/libDeepTcl$(LIB_EXT)
+LIBDEEPTCL := $(LOCAL_LIB)/libDeepTcl$(LIB_EXT)
 
 
 
@@ -330,11 +330,11 @@ PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) $(LIBDEEPAPPL) $(LIBDEEPUTIL)
 #-------------------------------------------------------------------------
 
 ifeq ($(MODE),debug)
-	EXECUTABLE := $(BIN_DIR)/testsh
+	EXECUTABLE := $(LOCAL_BIN)/testsh
 	CPP_DEFINES += -DPROF -DASSERT -DINVARIANT
 endif
 ifeq ($(MODE),prod)
-	EXECUTABLE := $(BIN_DIR)/grsh$(VERSION)
+	EXECUTABLE := $(LOCAL_BIN)/grsh$(VERSION)
 	CPP_DEFINES += -DPROF -DASSERT -DINVARIANT
 endif
 
@@ -406,7 +406,7 @@ $(LIBDEEPUTIL):   $(DEEPUTIL_OBJS)
 
 # this is just a convenience target so that we don't have to specify
 # the entire pathnames of the different library targets
-lib%: $(LIB)/lib%$(LIB_EXT)
+lib%: $(LOCAL_LIB)/lib%$(LIB_EXT)
 	true
 
 #-------------------------------------------------------------------------
