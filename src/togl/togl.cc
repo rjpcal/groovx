@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Fri Sep 29 10:36:58 2000
+// written: Sat Dec  2 09:52:53 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -151,6 +151,8 @@ public:
   bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
+  const char* pathname() const
+	 { return Tk_PathName(reinterpret_cast<Tk_FakeWin*>(itsTkWin)); }
 
   unsigned long allocColor(float red, float green, float blue) const;
   void freeColor(unsigned long pixel) const;
@@ -601,6 +603,8 @@ Tcl_Interp* Togl::interp() const
 Tk_Window Togl::tkWin() const
   { return itsImpl->tkWin(); }
 
+const char* Togl::pathname() const
+  { return itsImpl->pathname(); }
 
 int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
 						 int argc, char *argv[])

@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Sep 13 16:43:09 2000
+// written: Sat Dec  2 09:51:30 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -125,6 +125,7 @@ public:
   bool hasPrivateCmap() const;
   Tcl_Interp* interp() const;
   Tk_Window tkWin() const;
+  const char* pathname() const;
 
   // Color index mode
   unsigned long allocColor( float red, float green, float blue ) const;  
