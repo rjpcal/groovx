@@ -101,6 +101,7 @@ DOTRACE("GxBounds::draw");
 
       canvas.setLineWidth(1.0);
       canvas.setLineStipple(itsStipple);
+      canvas.setPolygonFill(false);
 
       canvas.drawRect(bounds);
 
