@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 16:09:26 2001
+// written: Tue Aug 21 17:43:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,8 +71,6 @@ GrObj::GrObj() :
 {
 DOTRACE("GrObj::GrObj");
 
-  itsImpl->incrRefCount();
-
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
   // return to the derived class constructor.
@@ -83,7 +81,7 @@ DOTRACE("GrObj::GrObj");
 GrObj::~GrObj()
 {
 DOTRACE("GrObj::~GrObj");
-  itsImpl->decrRefCount();
+  itsImpl->destroy();
 }
 
 IO::VersionId GrObj::serialVersionId() const
