@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Mar  3 23:48:46 2000
+// written: Mon Mar  6 17:02:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,13 +16,13 @@
 #include "io.h"
 #include "iomgr.h"
 #include "value.h"
+#include "util/arrays.h"
 
 #include <cctype>
 #include <iostream.h>
 #include <strstream.h>
 #include <map>
 #include <string>
-#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -102,7 +102,7 @@ public:
 
   map<string, Attrib> itsAttribs;
 
-  vector<char> itsValueBuffer;
+  fixed_block<char> itsValueBuffer;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
