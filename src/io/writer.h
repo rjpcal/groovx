@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Tue Nov 14 14:50:48 2000
+// written: Fri Nov 17 11:44:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,12 +92,13 @@ public:
   virtual ~Writer();
 
   /** A convenience function to ensure that the current serial version
-      is no less than the \a lowest_supported_version. If this test
-      fails, a WriteVersionError will be thrown.*/
-  void ensureWriteVersionId(const char* name,
-									 IO::VersionId actual_version,
-									 IO::VersionId lowest_supported_version,
-									 const char* msg);
+      is no less than the \a lowest_supported_version. Returns the \a
+      actual_version. If this test fails, a WriteVersionError will be
+      thrown.*/
+  int ensureWriteVersionId(const char* name,
+									IO::VersionId actual_version,
+									IO::VersionId lowest_supported_version,
+									const char* msg);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
   virtual void writeChar(const char* name, char val) = 0;

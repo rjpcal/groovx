@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Tue Nov 14 14:50:14 2000
+// written: Fri Nov 17 11:45:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,16 +47,18 @@ IO::WriteVersionError::~WriteVersionError() {}
 
 IO::Writer::~Writer () {}
 
-void IO::Writer::ensureWriteVersionId(const char* name,
-												  IO::VersionId actual_version,
-												  IO::VersionId lowest_supported_version,
-												  const char* msg) {
+int IO::Writer::ensureWriteVersionId(const char* name,
+												 IO::VersionId actual_version,
+												 IO::VersionId lowest_supported_version,
+												 const char* msg) {
 
   if (actual_version < lowest_supported_version)
 	 throw IO::WriteVersionError(name, actual_version,
 										  lowest_supported_version, msg);
 
   Assert(actual_version >= lowest_supported_version);
+
+  return actual_version;
 }
 
 template<>
