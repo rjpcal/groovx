@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Jan 18 16:07:04 2002
+// written: Thu Sep 12 15:01:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "util/objdb.h"
 
-#include "util/iter.h"
 #include "util/object.h"
 #include "util/ref.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Jun 26 12:19:50 2002
+// written: Thu Sep 12 15:01:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,10 @@
 #include "util/error.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITER_H_DEFINED)
+#include "util/iter.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UID_H_DEFINED)
 #include "util/uid.h"
 #endif
@@ -24,7 +28,6 @@
 namespace Util
 {
   class Object;
-  template <class T> class FwdIter;
   template <class T> class SoftRef;
 };
 
