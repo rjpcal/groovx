@@ -247,6 +247,17 @@ namespace
     out.readline(in, '!');
     TEST_REQUIRE_EQ(out, "marooned on\nan island");
   }
+
+  void testWrite()
+  {
+    fstring orig("blue\ncrayon\n\tskies");
+
+    std::ostringstream out;
+
+    out << orig;
+
+    TEST_REQUIRE_EQ(out.str().c_str(), fstring("blue\ncrayon\n\tskies"));
+  }
 }
 
 extern "C"
@@ -273,6 +284,7 @@ DOTRACE("Fstringtest_Init");
   DEF_TEST(pkg, testReadsome);
   DEF_TEST(pkg, testReadline1);
   DEF_TEST(pkg, testReadline2);
+  DEF_TEST(pkg, testWrite);
 
   PKG_RETURN;
 }
