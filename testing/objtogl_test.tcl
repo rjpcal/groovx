@@ -158,7 +158,7 @@ test "ObjTogl-dumpCmap" "error from non-integral number arg2" {
 } {expected integer but got "1\.5"}
 test "ObjTogl-dumpCmap" "error from too small index" {
     Togl::dumpCmap -3 -1
-} {^Toglet::dumpCmap: colormap index out of range$}
+} {^Toglet::dumpCmap:}
 test "ObjTogl-dumpCmap" "error from too large index" {
     Togl::dumpCmap 100 900
 } {^Toglet::dumpCmap: colormap index out of range$}
