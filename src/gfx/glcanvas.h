@@ -40,6 +40,8 @@ public:
       call to glPopAttrib() will then unswap the colors. */
   virtual void swapForeBack() const;
 
+  virtual void flushOutput() const;
+
   virtual void pushState() const;
   virtual void popState() const;
 

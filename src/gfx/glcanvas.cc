@@ -159,12 +159,19 @@ DOTRACE("GLCanvas::swapForeBack");
   }
 }
 
+void GLCanvas::flushOutput() const {
+DOTRACE("GLCanvas::flushOutput");
+  glFlush();
+}
+
 void GLCanvas::pushState() const {
+DOTRACE("GLCanvas::pushState");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 }
 
 void GLCanvas::popState() const {
+DOTRACE("GLCanvas::popState");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 }
