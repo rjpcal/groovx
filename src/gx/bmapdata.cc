@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Wed Aug  8 11:04:31 2001
+// written: Thu Aug  9 16:06:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,10 +41,19 @@ public:
     itsUpdater(0)
   {
     Precondition(extent.x() >= 0); Precondition(extent.y() >= 0);
-    int num_bytes = (extent.x()*bits_per_pixel/8 + 1) * extent.y()  + 1;
-    Assert(num_bytes > 0);
+
+    // If extent.x() is 0, this is still OK, since -1/8 --> -1, so the
+    // whole thing goes to 0
+    int bytes_per_row = (extent.x()*bits_per_pixel - 1)/8 + 1;
+
+    Assert(bytes_per_row >= 0);
+
+    unsigned int num_bytes = bytes_per_row * extent.y();
+
     itsBytes.resize( num_bytes );
   }
+
+  // default copy-ctor and assn-oper OK
 
   Point<int> itsExtent;
   int itsBitsPerPixel;
@@ -73,6 +82,12 @@ BmapData::BmapData(const Point<int>& extent,
   itsImpl(new Impl(extent, bits_per_pixel, byte_alignment))
 {
 DOTRACE("BmapData::BmapData");
+}
+
+BmapData::BmapData(const BmapData& other) :
+  itsImpl(new Impl(*(other.itsImpl)))
+{
+DOTRACE("BmapData::BmapData(copy)");
 }
 
 BmapData::~BmapData()
