@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 15:42:40 2002
+// written: Thu Dec  5 15:53:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@ namespace Util
   template <class T> class Ref;
   template <class T> class SoftRef;
 }
-
-class Response;
 
 class fstring;
 
@@ -105,26 +103,11 @@ public:
   /// Undraws, aborts, and ends the current element.
   virtual void vxHalt() const;
 
-  /// Aborts the current element.
-  /** The current (to be aborted) element is put at the end of the element
-      sequence in the Block, without recording any response for that
-      element. The next call to vxRun() will start the same element that
-      would have started if the current element had been completed
-      normally, instead of being aborted. */
-  virtual void vxAbort();
-
   /// Prepares the Block to start the next element. */
   virtual void vxEndTrialHook();
 
   /// Begins the next element, moving on to the next Block if necessary.
   virtual void vxChildFinished(ChildStatus s);
-
-  /// Records a response to the current element in the Block.
-  /** Also, prepares the Block for the next element. The response is
-      recorded for the current element, and the Block's element sequence
-      index is incremented. Also, the next call to lastResponse will return
-      the response that was recorded in the present command. */
-  virtual void vxProcessResponse(Response& response);
 
   /// Undo the previous element.
   /** The state of the experiment is restored to what it was just prior to

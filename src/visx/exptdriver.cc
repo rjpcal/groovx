@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:42:48 2002
+// written: Thu Dec  5 15:53:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -287,12 +287,6 @@ DOTRACE("ExptDriver::vxHalt");
     }
 }
 
-void ExptDriver::vxAbort()
-{
-DOTRACE("ExptDriver::vxAbort");
-  /* FIXME */ Assert(false);
-}
-
 void ExptDriver::vxEndTrialHook()
 {
 DOTRACE("ExptDriver::vxEndTrialHook");
@@ -334,12 +328,6 @@ DOTRACE("ExptDriver::vxChildFinished");
     {
       currentElement()->vxRun(*this);
     }
-}
-
-void ExptDriver::vxProcessResponse(Response& /*response*/)
-{
-DOTRACE("ExptDriver::vxProcessResponse");
-  /* FIXME */ Assert(false);
 }
 
 void ExptDriver::vxUndo()

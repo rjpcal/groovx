@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Thu Dec  5 15:43:07 2002
+// written: Thu Dec  5 15:55:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@ namespace Util
 };
 
 class GxNode;
+class Response;
 class ResponseHandler;
 class TimingHdlr;
 
@@ -110,11 +111,7 @@ public:
 
   virtual void vxHalt() const;
 
-  virtual void vxAbort();
-
   virtual void vxChildFinished(ChildStatus s);
-
-  virtual void vxProcessResponse(Response& response);
 
   virtual void vxUndo();
 
@@ -127,8 +124,10 @@ public:
   double trElapsedMsec();
 
   void trResponseSeen();
+  void trProcessResponse(Response& response);
   void trAllowResponses();
   void trDenyResponses();
+  void trAbort();
   void trEndTrial();
 
   void installSelf(Util::SoftRef<Toglet> widget) const;

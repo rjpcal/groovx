@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Dec  5 15:43:14 2002
+// written: Thu Dec  5 15:53:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-/// TrialEvent subclass to call Trial::vxAbort().
+/// TrialEvent subclass to call Trial::trAbort().
 class AbortTrialEvent : public TrialEvent
 {
 protected:

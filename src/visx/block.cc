@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 15:48:38 2002
+// written: Thu Dec  5 15:53:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define BLOCK_CC_DEFINED
 
 #include "visx/block.h"
-
-#include "visx/response.h"
 
 #include "io/reader.h"
 #include "io/readutils.h"
@@ -265,12 +263,6 @@ DOTRACE("Block::vxHalt");
     rep->currentElement()->vxHalt();
 }
 
-void Block::vxAbort()
-{
-DOTRACE("Block::vxAbort");
-// FIXME
-}
-
 void Block::vxEndTrialHook()
 {
 DOTRACE("Block::vxEndTrialHook");
@@ -342,12 +334,6 @@ DOTRACE("Block::vxChildFinished");
       rep->parent = 0;
       p.vxChildFinished(CHILD_OK);
     }
-}
-
-void Block::vxProcessResponse(Response&)
-{
-DOTRACE("Block::vxProcessResponse");
-// FIXME
 }
 
 void Block::vxUndo()

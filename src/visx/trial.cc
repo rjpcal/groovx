@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Dec  5 15:49:25 2002
+// written: Thu Dec  5 15:53:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,11 +152,11 @@ public:
 
   void vxRun(Trial* self, Element& parent);
   double trElapsedMsec();
-  void vxAbort();
+  void trAbort();
   void trEndTrial();
   void vxHalt();
   void trResponseSeen();
-  void vxProcessResponse(Response& response);
+  void trProcessResponse(Response& response);
   void trAllowResponses(Trial* self);
   void trDenyResponses();
 
@@ -344,18 +344,17 @@ DOTRACE("Trial::Impl::trElapsedMsec");
   return itsActiveState->itsTh->getElapsedMsec();
 }
 
-void Trial::Impl::vxAbort()
+void Trial::Impl::trAbort()
 {
-DOTRACE("Trial::Impl::vxAbort");
+DOTRACE("Trial::Impl::trAbort");
 
   Precondition( isActive() );
 
-  Util::log("vxAbort");
+  Util::log("trAbort");
 
   itsActiveState->itsStatus = CHILD_ABORTED;
   itsActiveState->itsRh->rhAbortTrial();
   itsActiveState->itsTh->thAbortTrial();
-  itsActiveState->itsParent->vxAbort();
 }
 
 void Trial::Impl::trEndTrial()
@@ -405,18 +404,16 @@ DOTRACE("Trial::Impl::trResponseSeen");
   itsActiveState->itsTh->thResponseSeen();
 }
 
-void Trial::Impl::vxProcessResponse(Response& response)
+void Trial::Impl::trProcessResponse(Response& response)
 {
-DOTRACE("Trial::Impl::vxProcessResponse");
+DOTRACE("Trial::Impl::trProcessResponse");
 
   Precondition( isActive() );
 
-  Util::log("Trial::vxProcessResponse");
+  Util::log("trProcessResponse");
   response.setCorrectVal(itsCorrectResponse);
 
   itsResponses.push_back(response);
-
-  itsActiveState->itsParent->vxProcessResponse(response);
 
   dbgEval(3, response.correctVal());
   dbgEvalNL(3, response.val());
@@ -621,8 +618,8 @@ void Trial::vxRun(Element& parent)
 double Trial::trElapsedMsec()
   { return rep->trElapsedMsec(); }
 
-void Trial::vxAbort()
-  { rep->vxAbort(); }
+void Trial::trAbort()
+  { rep->trAbort(); }
 
 void Trial::vxChildFinished(ChildStatus /*s*/)
   { Assert(false); }
@@ -636,8 +633,8 @@ void Trial::vxHalt() const
 void Trial::trResponseSeen()
   { rep->trResponseSeen(); }
 
-void Trial::vxProcessResponse(Response& response)
-  { rep->vxProcessResponse(response); }
+void Trial::trProcessResponse(Response& response)
+  { rep->trProcessResponse(response); }
 
 void Trial::trAllowResponses()
   { rep->trAllowResponses(this); }

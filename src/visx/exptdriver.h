@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:42:52 2002
+// written: Thu Dec  5 15:53:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,16 +90,12 @@ public:
   /// Halt the experiment. No more trials will be begun.
   virtual void vxHalt() const;
 
-  virtual void vxAbort();
-
   /// End the current trial normally, and move on to the next trial.
   virtual void vxEndTrialHook();
 
   /** Attempt to start the next element, or stop the experiment if there
       are no more element. */
   virtual void vxChildFinished(ChildStatus s);
-
-  virtual void vxProcessResponse(Response& response);
 
   virtual void vxUndo();
 

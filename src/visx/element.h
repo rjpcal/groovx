@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Thu Dec  5 15:40:57 2002
+// written: Thu Dec  5 15:52:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@ namespace Util
   template <class T> class SoftRef;
 };
 
-class Response;
 class Toglet;
 
 class fstring;
@@ -62,8 +61,6 @@ public:
 
   virtual void vxHalt() const = 0;
 
-  virtual void vxAbort() = 0;
-
   /// Hook function that gets called each time a leaf (i.e., trial) completes.
   /** Shouldn't be used for substantive action, but just for bookkeeping
       such as timekeeping, autosaving, etc. Default version is a no-op. */
@@ -71,8 +68,6 @@ public:
 
   /// Called when an element's child finishes running.
   virtual void vxChildFinished(ChildStatus s) = 0;
-
-  virtual void vxProcessResponse(Response& response) = 0;
 
   virtual void vxUndo() = 0;
 

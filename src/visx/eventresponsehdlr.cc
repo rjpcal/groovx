@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Dec  4 18:41:16 2002
+// written: Thu Dec  5 15:53:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,11 +151,11 @@ public:
       if ( !theResponse.isValid() )
         {
           if ( impl->itsAbortInvalidResponses )
-            itsTrial.vxAbort();
+            itsTrial.trAbort();
         }
       else
         {
-          itsTrial.vxProcessResponse(theResponse);
+          itsTrial.trProcessResponse(theResponse);
           impl->itsFeedbackMap.giveFeedback(impl->itsInterp, theResponse.val());
         }
     }
