@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Wed Jun 13 13:15:54 2001
+// written: Wed Jun 20 17:41:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #endif
 
 #ifdef PRESTANDARD_IOSTREAMS
-class istream;
 class ostream;
 #else
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
@@ -52,6 +51,9 @@ class AsciiStreamWriter : public IO::Writer {
 public:
   /// Construct with a connection to an open \c STD_IO::ostream.
   AsciiStreamWriter(STD_IO::ostream& os);
+
+  /// Convenience constructor which opens a std::fstream with \a filename.
+  AsciiStreamWriter(const char* filename);
 
   /// Virtual destructor.
   virtual ~AsciiStreamWriter();
