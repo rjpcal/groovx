@@ -366,11 +366,9 @@ WARN_LOGFILE           =
 INPUT                  = ./doc \
                          ./src/gfx \
                          ./src/grsh \
-                         ./src/gwt \
                          ./src/gx \
                          ./src/io \
                          ./src/pkgs \
-                         ./src/pkgs/hashtest \
                          ./src/pkgs/matlabengine \
                          ./src/pkgs/mtx \
                          ./src/pkgs/whitebox \
