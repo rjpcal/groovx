@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Mar 20 19:30:41 2000
+// written: Thu Mar 23 19:39:43 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -47,9 +47,6 @@ namespace ExptTcl {
   class ReadCmd;
   class SetStartCommandCmd;
   class WriteCmd;
-
-  class LoadCmd;
-  class SaveCmd;
 
   class ExptPkg;
 };
@@ -222,56 +219,6 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// LoadCmd --
-//
-//---------------------------------------------------------------------
-
-class ExptTcl::LoadCmd : public Tcl::TclItemCmd<ExptDriver> {
-public:
-  LoadCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "input_filename", 2, 2) {}
-protected:
-  virtual void invoke() {
-  DOTRACE("ExptTcl::LoadCmd::invoke");
-	 ExptDriver* ed = getItem();
-	 const char* filename = getCstringFromArg(1);
-
-	 ifstream ifs(filename);
-	 if ( ifs.fail() ) { throw Tcl::TclError("non-existent or unreadable file"); }
-
-	 AsciiStreamReader reader(ifs);
-	 reader.readRoot(ed);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// LoadCmd --
-//
-//---------------------------------------------------------------------
-
-class ExptTcl::SaveCmd : public Tcl::TclItemCmd<ExptDriver> {
-public:
-  SaveCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "output_filename", 2, 2) {}
-protected:
-  virtual void invoke() {
-  DOTRACE("ExptTcl::SaveCmd::invoke");
-	 ExptDriver* ed = getItem();
-	 const char* filename = getCstringFromArg(1);
-
-	 ofstream ofs(filename);
-	 if ( ofs.fail() ) { throw Tcl::TclError("couldn't open file for writing"); }
-
-	 AsciiStreamWriter writer(ofs);
-	 writer.writeRoot(ed);
-	 
-	 returnVoid();
-  }
-};
-
-//---------------------------------------------------------------------
-//
 // ExptPkg class defintion
 //
 //---------------------------------------------------------------------
@@ -289,9 +236,6 @@ public:
 	 addCommand( new ReadCmd(this, "Expt::read") );
 	 addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
 	 addCommand( new WriteCmd(this, "Expt::write") );
-
-	 addCommand( new LoadCmd(this, "Expt::load") );
-	 addCommand( new SaveCmd(this, "Expt::save") );
 
     declareCAttrib("autosaveFile",
 						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
