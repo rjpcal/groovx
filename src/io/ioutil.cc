@@ -93,7 +93,8 @@ void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   Util::icstrstream ist(buf);
 
-  streamRead<AsciiStreamReader>(obj, ist);
+  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(ist);
+  reader->readRoot(obj.get());
 }
 
 fstring IO::writeXML(Util::Ref<IO::IoObject> obj)
@@ -118,7 +119,8 @@ void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 
-  streamRead<AsciiStreamReader>(obj, *is);
+  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(*is);
+  reader->readRoot(obj.get());
 }
 
 void IO::saveXML(Util::Ref<IO::IoObject> obj, fstring filename)
@@ -133,8 +135,8 @@ Util::Ref<IO::IoObject> IO::retrieveASR(fstring filename)
 {
   shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 
-  AsciiStreamReader reader(*is);
-  return reader.readRoot();
+  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(*is);
+  return reader->readRoot();
 }
 
 static const char vcid_ioutil_cc[] = "$Header$";

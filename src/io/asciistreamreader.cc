@@ -33,6 +33,7 @@
 #include "io/asciistreamreader.h"
 
 #include "io/io.h"
+#include "io/reader.h"
 
 #include "util/arrays.h"
 #include "util/cstrstream.h"
@@ -55,42 +56,18 @@ DBG_REGISTER;
 using Util::Ref;
 using Util::SoftRef;
 
-#if defined(SHORTEN_SYMBOL_NAMES)
-#define AsciiStreamReader ASR
-#endif
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope stuff
-//
-///////////////////////////////////////////////////////////////////////
-
-class AttributeReadError : public Util::Error
+namespace
 {
-public:
-  AttributeReadError(const fstring& attrib_name,
-                     const fstring& attrib_value) :
-    Util::Error(fstring("error reading attribute '", attrib_name,
-                        "' with value '", attrib_value, "'"))
-  {}
-};
+  class AttributeReadError : public Util::Error
+  {
+  public:
+    AttributeReadError(const fstring& attrib_name,
+                       const fstring& attrib_value) :
+      Util::Error(fstring("error reading attribute '", attrib_name,
+                          "' with value '", attrib_value, "'"))
+    {}
+  };
 
-class AsciiStreamReader::Impl
-{
-private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
-
-  // Creators
-public:
-  Impl(STD_IO::istream& is) :
-    itsBuf(is), itsObjects(), itsAttribs()
-  {}
-
-  ~Impl() {}
-
-  // Nested types
-public:
 
   class ObjectMap
   {
@@ -154,6 +131,7 @@ public:
     void clear() { itsMap.clear(); }
   };
 
+
   struct Attrib
   {
   private:
@@ -166,6 +144,7 @@ public:
     fstring type;
     fstring value;
   };
+
 
   class AttribMap
   {
@@ -208,8 +187,6 @@ public:
       }
 
   private:
-    fstring readAndUnEscape(STD_IO::istream& is);
-
     void addNewAttrib(const fstring& attrib_name,
                       const fstring& type, const fstring& value)
       {
@@ -217,30 +194,197 @@ public:
       }
   };
 
-  // Data members
+  fstring readAndUnEscape(STD_IO::istream& is)
+  {
+  DOTRACE("<asciistreamreader.cc>::readAndUnEscape");
+
+    static const char STRING_ENDER = '^';
+
+    static fixed_block<char> READ_BUFFER(4096);
+
+    int brace_level = 0;
+
+    fixed_block<char>::iterator
+      itr = READ_BUFFER.begin(),
+      stop = READ_BUFFER.end();
+
+    int ch = 0;
+
+    while ( (ch = is.get()) != EOF &&
+            !(brace_level == 0 && ch == STRING_ENDER) )
+      {
+        if (itr >= stop)
+          {
+            READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
+            throw Util::Error(fstring("AsciiStreamReader exceeded "
+                                      "read buffer capacity\n"
+                                      "buffer contents: \n",
+                                      &(READ_BUFFER[0])));
+          }
+
+        // We only substitute in the escape sequence if we are reading at the
+        // zero-th brace level; otherwise, we leave the escape sequence in
+        // since it will eventually be parsed when the brace-nested object
+        // itself is parsed.
+        if (ch != '\\' || brace_level > 0)
+          {
+            if (ch == '{') ++brace_level;
+            if (ch == '}') --brace_level;
+            *itr++ = char(ch);
+            continue;
+          }
+        else
+          {
+            int ch2 = is.get();
+            if (ch2 == EOF || ch2 == STRING_ENDER)
+              throw Util::Error("missing character after trailing backslash");
+            switch (ch2)
+              {
+              case '\\':
+                *itr++ = '\\';
+                break;
+              case 'c':
+                *itr++ = '^';
+                break;
+              case '{':
+                *itr++ = '{';
+                break;
+              case '}':
+                *itr++ = '}';
+                break;
+              default:
+                *itr = '\0';
+                throw Util::Error
+                  (fstring("invalid escape character '", char(ch2),
+                           "' with buffer contents: ", &READ_BUFFER[0]));
+                break;
+              }
+          }
+      }
+
+    *itr = '\0';
+
+    return fstring(Util::CharData(READ_BUFFER.begin(),
+                                  itr - READ_BUFFER.begin()));
+  }
+
+  void AttribMap::readAttributes(STD_IO::istream& buf)
+  {
+  DOTRACE("AttribMap::readAttributes");
+
+    // Skip all whitespace
+    buf >> STD_IO::ws;
+
+    // Check if there is a version id in the stream
+    if (buf.peek() == 'v')
+      {
+        int ch = buf.get();  Assert(ch == 'v');
+        buf >> itsSerialVersionId;
+        if ( buf.fail() )
+          throw Util::Error("input failed while reading "
+                            "serialization version id");
+      }
+    else
+      {
+        itsSerialVersionId = 0;
+      }
+
+    // Get the attribute count
+    int attrib_count;
+    buf >> attrib_count;    dbgEvalNL(3, attrib_count);
+
+    if (attrib_count < 0)
+      {
+        throw Util::Error(fstring("found a negative attribute count: ",
+                                  attrib_count));
+      }
+
+    if ( buf.fail() )
+      {
+        throw Util::Error(fstring("input failed while reading "
+                                  "attribute count: ", attrib_count));
+      }
+
+    // Loop and load all the attributes
+    fstring type;
+    fstring name;
+    fstring equal;
+
+    for (int i = 0; i < attrib_count; ++i)
+      {
+        buf >> type >> name >> equal;   dbgEval(3, type); dbgEvalNL(3, name);
+
+        if ( buf.fail() )
+          {
+            fstring msg;
+            msg.append("input failed while reading attribute type and name\n");
+            msg.append("\ttype: ", type, "\n");
+            msg.append("\tname: ", name, "\n");
+            msg.append("\tequal: ", equal);
+            throw Util::Error(msg);
+          }
+
+        addNewAttrib(name, type, readAndUnEscape(buf));
+      }
+  }
+}
+
+// This is a hack to help shorten up names for assemblers on systems
+// that need short identifier names.
+#if defined(SHORTEN_SYMBOL_NAMES)
+#define AsciiStreamReader ASR
+#endif
+
+class AsciiStreamReader : public IO::Reader
+{
+public:
+  AsciiStreamReader(STD_IO::istream& is);
+
+  virtual ~AsciiStreamReader() throw();
+
+  virtual IO::VersionId readSerialVersionId();
+
+  virtual char readChar(const fstring& name);
+  virtual int readInt(const fstring& name);
+  virtual bool readBool(const fstring& name);
+  virtual double readDouble(const fstring& name);
+  virtual void readValueObj(const fstring& name, Value& value);
+
+  virtual Util::Ref<IO::IoObject> readObject(const fstring& name);
+  virtual Util::SoftRef<IO::IoObject>
+    readMaybeObject(const fstring& name);
+
+  virtual void readOwnedObject(const fstring& name,
+                               Util::Ref<IO::IoObject> obj);
+  virtual void readBaseClass(const fstring& baseClassName,
+                             Util::Ref<IO::IoObject> basePart);
+
+  virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
+
+protected:
+  virtual fstring readStringImpl(const fstring& name);
+
 private:
   STD_IO::istream& itsBuf;
   ObjectMap itsObjects;
   slink_list<shared_ptr<AttribMap> > itsAttribs;
 
-  // Helper functions
   AttribMap& currentAttribs()
-    {
-      if ( itsAttribs.is_empty() )
-        throw Util::Error("attempted to read attribute "
-                          "when no attribute map was active");
-      return *(itsAttribs.front());
-    }
+  {
+    if ( itsAttribs.is_empty() )
+      throw Util::Error("attempted to read attribute "
+                        "when no attribute map was active");
+    return *(itsAttribs.front());
+  }
 
-  void inflateObject(IO::Reader& reader, STD_IO::istream& buf,
+  void inflateObject(STD_IO::istream& buf,
                      const fstring& obj_tag, Ref<IO::IoObject> obj);
 
-  // Delegands -- this is the public interface that AsciiStreamReader
-  // forwards to in implementing its own member functions.
-public:
   template <class T>
   T readBasicType(const fstring& name)
   {
+    dbgEvalNL(3, name);
+
     Attrib a = currentAttribs().get(name);
     Util::icstrstream ist(a.value.c_str());
 
@@ -253,194 +397,60 @@ public:
 
     return return_val;
   }
-
-  IO::VersionId readSerialVersionId()
-    { return currentAttribs().getSerialVersionId(); }
-
-  // Returns a new dynamically allocated char array
-  fstring readStringType(const fstring& name);
-
-  SoftRef<IO::IoObject> readMaybeObject(const fstring& attrib_name);
-
-  void readValueObj(const fstring& name, Value& value);
-
-  void readOwnedObject(IO::Reader& reader,
-                       const fstring& name, Ref<IO::IoObject> obj);
-
-  Ref<IO::IoObject> readRoot(IO::Reader& reader, IO::IoObject* given_root);
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// AsciiStreamReader::Impl::AttribMap member definitions
+// AsciiStreamReader member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
+AsciiStreamReader::AsciiStreamReader (STD_IO::istream& is) :
+  itsBuf(is), itsObjects(), itsAttribs()
 {
-  const char STRING_ENDER = '^';
-
-  fixed_block<char> READ_BUFFER(4096);
+DOTRACE("AsciiStreamReader::AsciiStreamReader");
+  // nothing
 }
 
-fstring AsciiStreamReader::Impl::AttribMap::readAndUnEscape(
-  STD_IO::istream& is
-) {
-DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
-
-  int brace_level = 0;
-
-  fixed_block<char>::iterator
-    itr = READ_BUFFER.begin(),
-    stop = READ_BUFFER.end();
-
-  int ch = 0;
-
-  while ( (ch = is.get()) != EOF &&
-          !(brace_level == 0 && ch == STRING_ENDER) )
-    {
-      if (itr >= stop)
-        {
-          READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
-          throw Util::Error(fstring("AsciiStreamReader exceeded "
-                                    "read buffer capacity\n"
-                                    "buffer contents: \n",
-                                    &(READ_BUFFER[0])));
-        }
-
-      // We only substitute in the escape sequence if we are reading at the
-      // zero-th brace level; otherwise, we leave the escape sequence in
-      // since it will eventually be parsed when the brace-nested object
-      // itself is parsed.
-      if (ch != '\\' || brace_level > 0)
-        {
-          if (ch == '{') ++brace_level;
-          if (ch == '}') --brace_level;
-          *itr++ = char(ch);
-          continue;
-        }
-      else
-        {
-          int ch2 = is.get();
-          if (ch2 == EOF || ch2 == STRING_ENDER)
-            throw Util::Error("missing character after trailing backslash");
-          switch (ch2)
-            {
-            case '\\':
-              *itr++ = '\\';
-              break;
-            case 'c':
-              *itr++ = '^';
-              break;
-            case '{':
-              *itr++ = '{';
-              break;
-            case '}':
-              *itr++ = '}';
-              break;
-            default:
-              *itr = '\0';
-              throw Util::Error
-                (fstring("invalid escape character '", char(ch2),
-                         "' with buffer contents: ", &READ_BUFFER[0]));
-              break;
-            }
-        }
-    }
-
-  *itr = '\0';
-
-  return fstring(Util::CharData(READ_BUFFER.begin(),
-                                itr - READ_BUFFER.begin()));
+AsciiStreamReader::~AsciiStreamReader () throw()
+{
+DOTRACE("AsciiStreamReader::~AsciiStreamReader");
 }
 
-void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf)
+IO::VersionId AsciiStreamReader::readSerialVersionId()
 {
-DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
-
-  // Skip all whitespace
-  buf >> STD_IO::ws;
-
-  // Check if there is a version id in the stream
-  if (buf.peek() == 'v')
-    {
-      int ch = buf.get();  Assert(ch == 'v');
-      buf >> itsSerialVersionId;
-      if ( buf.fail() )
-        throw Util::Error("input failed while reading "
-                          "serialization version id");
-    }
-  else
-    {
-      itsSerialVersionId = 0;
-    }
-
-  // Get the attribute count
-  int attrib_count;
-  buf >> attrib_count;    dbgEvalNL(3, attrib_count);
-
-  if (attrib_count < 0)
-    {
-      throw Util::Error(fstring("found a negative attribute count: ",
-                                attrib_count));
-    }
-
-  if ( buf.fail() )
-    {
-      throw Util::Error(fstring("input failed while reading "
-                                "attribute count: ", attrib_count));
-    }
-
-  // Loop and load all the attributes
-  fstring type;
-  fstring name;
-  fstring equal;
-
-  for (int i = 0; i < attrib_count; ++i)
-    {
-      buf >> type >> name >> equal;   dbgEval(3, type); dbgEvalNL(3, name);
-
-      if ( buf.fail() )
-        {
-          fstring msg;
-          msg.append("input failed while reading attribute type and name\n");
-          msg.append("\ttype: ", type, "\n");
-          msg.append("\tname: ", name, "\n");
-          msg.append("\tequal: ", equal);
-          throw Util::Error(msg);
-        }
-
-      addNewAttrib(name, type, readAndUnEscape(buf));
-    }
+DOTRACE("AsciiStreamReader::readSerialVersionId");
+  return currentAttribs().getSerialVersionId();
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// AsciiStreamReader::Impl member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-void AsciiStreamReader::Impl::inflateObject(
-  IO::Reader& reader, STD_IO::istream& buf,
-  const fstring& obj_tag, Ref<IO::IoObject> obj
-)
+char AsciiStreamReader::readChar(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::Impl::inflateObject");
-
-  itsAttribs.push_front(shared_ptr<AttribMap>(new AttribMap(obj_tag)));
-
-  //   ...read the object's attributes from the stream...
-  itsAttribs.front()->readAttributes(buf);
-
-  //   ...now the object can query us for its attributes...
-  obj->readFrom(reader);
-
-  itsAttribs.pop_front();
+DOTRACE("AsciiStreamReader::readChar");
+  return readBasicType<char>(name);
 }
 
-fstring AsciiStreamReader::Impl::readStringType(const fstring& name)
+int AsciiStreamReader::readInt(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::Impl::readStringType");
+DOTRACE("AsciiStreamReader::readInt");
+  return readBasicType<int>(name);
+}
+
+bool AsciiStreamReader::readBool(const fstring& name)
+{
+DOTRACE("AsciiStreamReader::readBool");
+  return bool(readBasicType<int>(name));
+}
+
+double AsciiStreamReader::readDouble(const fstring& name)
+{
+DOTRACE("AsciiStreamReader::readDouble");
+  return readBasicType<double>(name);
+}
+
+fstring AsciiStreamReader::readStringImpl(const fstring& name)
+{
+DOTRACE("AsciiStreamReader::readStringImpl");
+  dbgEvalNL(3, name);
 
   Attrib a = currentAttribs().get(name);
   Util::icstrstream ist(a.value.c_str());
@@ -467,19 +477,42 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_string;
 }
 
-SoftRef<IO::IoObject>
-AsciiStreamReader::Impl::readMaybeObject(const fstring& attrib_name)
+void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 {
-DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
+DOTRACE("AsciiStreamReader::readValueObj");
+  dbgEvalNL(3, name);
 
-  Attrib attrib = currentAttribs().get(attrib_name);
+  Attrib a = currentAttribs().get(name);
+  Util::icstrstream ist(a.value.c_str());
+
+  ist >> value;
+
+  if (ist.fail())
+    throw AttributeReadError(name, a.value);
+}
+
+Ref<IO::IoObject>
+AsciiStreamReader::readObject(const fstring& name)
+{
+DOTRACE("AsciiStreamReader::readObject");
+  dbgEvalNL(3, name);
+  return Ref<IO::IoObject>(readMaybeObject(name));
+}
+
+SoftRef<IO::IoObject>
+AsciiStreamReader::readMaybeObject(const fstring& name)
+{
+DOTRACE("AsciiStreamReader::readMaybeObject");
+  dbgEvalNL(3, name);
+
+  Attrib attrib = currentAttribs().get(name);
 
   Util::icstrstream ist(attrib.value.c_str());
   Util::UID id;
   ist >> id;
 
   if (ist.fail())
-    throw AttributeReadError(attrib_name, attrib.value);
+    throw AttributeReadError(name, attrib.value);
 
   if (id == 0) { return SoftRef<IO::IoObject>(); }
 
@@ -487,44 +520,34 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
   return itsObjects.fetchObject(attrib.type, id);
 }
 
-void AsciiStreamReader::Impl::readValueObj(
-  const fstring& attrib_name,
-  Value& value
-  )
+void AsciiStreamReader::readOwnedObject(const fstring& name,
+                                        Ref<IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamReader::Impl::readValueObj");
+DOTRACE("AsciiStreamReader::readOwnedObject");
+  dbgEvalNL(3, name);
 
-  Attrib a = currentAttribs().get(attrib_name);
-  Util::icstrstream ist(a.value.c_str());
-
-  ist >> value;
-
-  if (ist.fail())
-    throw AttributeReadError(attrib_name, a.value);
-}
-
-void AsciiStreamReader::Impl::readOwnedObject(
-  IO::Reader& reader, const fstring& object_name, Ref<IO::IoObject> obj
-  )
-{
-DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
-
-  Attrib a = currentAttribs().get(object_name);
+  Attrib a = currentAttribs().get(name);
   Util::icstrstream ist(a.value.c_str());
   char bracket[16];
 
   ist >> bracket;
 
-  inflateObject(reader, ist, object_name, obj);
+  inflateObject(ist, name, obj);
 
   ist >> bracket >> STD_IO::ws;
 }
 
-Ref<IO::IoObject> AsciiStreamReader::Impl::readRoot(
-  IO::Reader& reader, IO::IoObject* given_root
-  )
+void AsciiStreamReader::readBaseClass(const fstring& baseClassName,
+                                      Ref<IO::IoObject> basePart)
 {
-DOTRACE("AsciiStreamReader::Impl::readRoot");
+DOTRACE("AsciiStreamReader::readBaseClass");
+  dbgEvalNL(3, baseClassName);
+  readOwnedObject(baseClassName, basePart);
+}
+
+Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
+{
+DOTRACE("AsciiStreamReader::readRoot");
 
   itsObjects.clear();
 
@@ -565,7 +588,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
       Ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
 
-      inflateObject(reader, itsBuf, type, obj);
+      inflateObject(itsBuf, type, obj);
 
       itsBuf >> bracket >> STD_IO::ws;
 
@@ -580,108 +603,33 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   return itsObjects.getObject(rootid);
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// AsciiStreamReader member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-AsciiStreamReader::AsciiStreamReader (STD_IO::istream& is) :
-  rep( new Impl(is) )
+void AsciiStreamReader::inflateObject(STD_IO::istream& buf,
+                                      const fstring& obj_tag,
+                                      Ref<IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamReader::AsciiStreamReader");
-  // nothing
+DOTRACE("AsciiStreamReader::inflateObject");
+
+  itsAttribs.push_front(shared_ptr<AttribMap>(new AttribMap(obj_tag)));
+
+  //   ...read the object's attributes from the stream...
+  itsAttribs.front()->readAttributes(buf);
+
+  //   ...now the object can query us for its attributes...
+  obj->readFrom(*this);
+
+  itsAttribs.pop_front();
 }
 
-AsciiStreamReader::~AsciiStreamReader () throw()
+shared_ptr<IO::Reader> IO::makeAsciiStreamReader(STD_IO::istream& os)
 {
-DOTRACE("AsciiStreamReader::~AsciiStreamReader");
-  delete rep;
+  return make_shared( new AsciiStreamReader(os) );
 }
 
-IO::VersionId AsciiStreamReader::readSerialVersionId()
+#if 0
+shared_ptr<IO::Reader> IO::makeAsciiStreamReader(const char* filename)
 {
-DOTRACE("AsciiStreamReader::readSerialVersionId");
-  return rep->readSerialVersionId();
+  return make_shared( new AsciiStreamReader(filename) );
 }
-
-char AsciiStreamReader::readChar(const fstring& name)
-{
-DOTRACE("AsciiStreamReader::readChar");
-  dbgEvalNL(3, name);
-  return rep->readBasicType<char>(name);
-}
-
-int AsciiStreamReader::readInt(const fstring& name)
-{
-DOTRACE("AsciiStreamReader::readInt");
-  dbgEvalNL(3, name);
-  return rep->readBasicType<int>(name);
-}
-
-bool AsciiStreamReader::readBool(const fstring& name)
-{
-DOTRACE("AsciiStreamReader::readBool");
-  dbgEvalNL(3, name);
-  return bool(rep->readBasicType<int>(name));
-}
-
-double AsciiStreamReader::readDouble(const fstring& name)
-{
-DOTRACE("AsciiStreamReader::readDouble");
-  dbgEvalNL(3, name);
-  return rep->readBasicType<double>(name);
-}
-
-fstring AsciiStreamReader::readStringImpl(const fstring& name)
-{
-  dbgEvalNL(3, name);
-  return rep->readStringType(name);
-}
-
-void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
-{
-  dbgEvalNL(3, name);
-  rep->readValueObj(name, value);
-}
-
-Ref<IO::IoObject>
-AsciiStreamReader::readObject(const fstring& name)
-{
-  dbgEvalNL(3, name);
-  return Ref<IO::IoObject>(rep->readMaybeObject(name));
-}
-
-SoftRef<IO::IoObject>
-AsciiStreamReader::readMaybeObject(const fstring& name)
-{
-  dbgEvalNL(3, name);
-  return rep->readMaybeObject(name);
-}
-
-void AsciiStreamReader::readOwnedObject(const fstring& name,
-                                        Ref<IO::IoObject> obj)
-{
-  dbgEvalNL(3, name);
-  rep->readOwnedObject(*this, name, obj);
-}
-
-void AsciiStreamReader::readBaseClass(
-  const fstring& baseClassName, Ref<IO::IoObject> basePart
-)
-{
-DOTRACE("AsciiStreamReader::readBaseClass");
-  dbgEvalNL(3, baseClassName);
-  rep->readOwnedObject(*this, baseClassName, basePart);
-}
-
-Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
-{
-  return rep->readRoot(*this, given_root);
-}
-
-#if defined(SHORTEN_SYMBOL_NAMES)
-#undef AsciiStreamReader
 #endif
 
 static const char vcid_asciistreamreader_cc[] = "$Header$";
