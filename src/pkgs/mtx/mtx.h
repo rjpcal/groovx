@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Jan 13 11:01:38 2003
+// written: Wed Feb 26 16:44:01 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ class fstring;
 namespace RC // Range checking
 {
   void geq(const void* x, const void* lim, const char* f, int ln);
-  void less(const void* x, const void* lim, const char* f, int ln);
+  void lt(const void* x, const void* lim, const char* f, int ln);
   void leq(const void* x, const void* lim, const char* f, int ln);
   void inHalfOpen(const void* x, const void* llim, const void* ulim,
                   const char* f, int ln);
@@ -32,7 +32,7 @@ namespace RC // Range checking
                   const char* f, int ln);
 
   void geq(int x, int lim, const char* f, int ln);
-  void less(int x, int lim, const char* f, int ln);
+  void lt(int x, int lim, const char* f, int ln);
   void leq(int x, int lim, const char* f, int ln);
   void inHalfOpen(int x, int llim, int ulim, const char* f, int ln);
   void inFullOpen(int x, int llim, int ulim, const char* f, int ln);
@@ -41,14 +41,14 @@ namespace RC // Range checking
 #ifdef RANGE_CHECK
 // Range check
 #  define RC_geq(x,lim) RC::geq((x),(lim),__FILE__,__LINE__)
-#  define RC_less(x,lim) RC::less((x),(lim),__FILE__,__LINE__)
+#  define RC_less(x,lim) RC::lt((x),(lim),__FILE__,__LINE__)
 #  define RC_leq(x,lim) RC::leq((x),(lim),__FILE__,__LINE__)
 #  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__)
 #  define RC_inFullOpen(x,llim,ulim) RC::inFullOpen((x),(llim),(ulim),__FILE__,__LINE__)
 
 // Range check, and return the checked value
 #  define RCR_geq(x,lim) (RC::geq((x),(lim),__FILE__,__LINE__), x)
-#  define RCR_less(x,lim) (RC::less((x),(lim),__FILE__,__LINE__), x)
+#  define RCR_less(x,lim) (RC::lt((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_leq(x,lim) (RC::leq((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
 #  define RCR_inFullOpen(x,llim,ulim) (RC::inFullOpen((x),(llim),(ulim),__FILE__,__LINE__), x)

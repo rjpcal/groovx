@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Jan 20 13:31:01 2003
+// written: Wed Feb 26 16:44:12 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ void RC::geq(const void* x, const void* lim, const char* f, int ln)
   else raiseException("geq: pointer range error", f, ln);
 }
 
-void RC::less(const void* x, const void* lim, const char* f, int ln)
+void RC::lt(const void* x, const void* lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
   else raiseException("less: pointer range error", f, ln);
@@ -111,7 +111,7 @@ void RC::geq(int x, int lim, const char* f, int ln)
                       f, ln);
 }
 
-void RC::less(int x, int lim, const char* f, int ln)
+void RC::lt(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
   else raiseException(fstring("less: integer range error ",
