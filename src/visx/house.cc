@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Sat Feb  2 16:55:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -270,22 +270,21 @@ DOTRACE("House::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
 
-  double main_width = itsStoryAspectRatio;
-  double main_height = itsNumStories + itsRoofHeight;
+  const double main_width = itsStoryAspectRatio;
+  const double main_height = itsNumStories + itsRoofHeight;
 
-  double max_dimension = max(main_height, main_width);
+  using Util::max;
 
-  bbox.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dimension;
-  bbox.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dimension;
-  bbox.bottom() = -main_height/2.0 / max_dimension;
+  const double max_dim = max(main_height, main_width);
 
-  bbox.top()    =  main_height/2.0;
-  if ( (itsChimneyYPosition + itsChimneyHeight) > itsRoofHeight )
-    {
-      bbox.top() += itsChimneyYPosition + itsChimneyHeight - itsRoofHeight;
-    }
+  bbox.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
+  bbox.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
+  bbox.bottom() = -main_height/2.0 / max_dim;
 
-  bbox.top()   /= max_dimension;
+  const double extra_chimney_height =
+    max(0.0, itsChimneyYPosition + itsChimneyHeight - itsRoofHeight);
+
+  bbox.top()    =  (main_height/2.0 + extra_chimney_height) / max_dim;
 
   return bbox;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Sat Feb  2 16:58:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -317,6 +317,9 @@ void Bezier4::setCtrlPnts(double R0, double R1, double R2, double R3)
       extremum1 = 0.0;
       extremum2 = 1.0;
     }
+
+  using Util::max;
+  using Util::min;
 
   valMin = min( min(eval(0.0), eval(1.0)),
                 min(eval(extremum1), eval(extremum2)) );
