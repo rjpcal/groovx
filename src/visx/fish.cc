@@ -35,6 +35,7 @@
 #include "gfx/canvas.h"
 
 #include "gx/bbox.h"
+#include "gx/rect.h"
 #include "gx/rgbacolor.h"
 #include "gx/vec3.h"
 
@@ -503,16 +504,34 @@ DOTRACE("Fish::grRender");
 
       if (showControlPoints)
         {
-          {
-            Gfx::AttribSaver saver(canvas);
-            canvas.setPointSize(4.0);
+          if (0)
+            {
+              // This version (using GL_POINTS) doesn't seem to work
+              // properly with Mesa under Linux; the problem is that
+              // setPointSize() (i.e. glPointSize()) doesn't actually
+              // change the size of the points that get drawn... they all
+              // end up at 1 pixel... instead we can draw the points as
+              // filled rects.
+              Gfx::AttribSaver saver(canvas);
+              canvas.setPointSize(4.0);
 
-            Gfx::PointsBlock block(canvas);
-            for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
-              {
-                canvas.vertex3(ctrlpnts[i]);
-              }
-          }
+              Gfx::PointsBlock block(canvas);
+              for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
+                {
+                  canvas.vertex3(ctrlpnts[i]);
+                }
+            }
+          else
+            {
+              Gfx::AttribSaver saver(canvas);
+              canvas.setPolygonFill(true);
+              Gfx::Rect<double> rect;
+              for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
+                {
+                  rect.setXYWH(ctrlpnts[i].x(), ctrlpnts[i].y(), 0.03, 0.03);
+                  canvas.drawRect(rect);
+                }
+            }
           {
             Gfx::LinesBlock block(canvas);
             canvas.vertex3(itsParts[i].itsPt0);
