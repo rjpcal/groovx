@@ -1,16 +1,19 @@
 ##############################################################################
 #
-# facemaker.tcl
+# editor.tcl
 # Rob Peters rjpeters@klab.caltech.edu
 # created: Apr-99
 # $Id$
 #
 ##############################################################################
 
+puts "in editor.tcl"
+
 set RGBA 0
 set DOUBLE 0
 
-if { [string equal $::env(HOST) "curie.klab.caltech.edu"] } {
+if { [string equal $::env(HOST) "curie.klab.caltech.edu"] || \
+	  [string equal $::env(HOST) "hume.klab.caltech.edu"] } {
 	 set ::DOUBLE 1
 }
 
@@ -42,10 +45,12 @@ if { [string equal $::CLASSNAME "Fish"] } {
 }
 
 if { ![Togl::inited] } {
-	 Togl::init "-rgba $::RGBA -double $::DOUBLE -width 1200 -height 1000" \
-				30 2.05 no
+	 Togl::init
+	 Togl::width 1200
+	 Togl::height 1000
+	 Togl::setViewingDistance 30
+	 Togl::setUnitAngle 2.05
 }
-#Togl::init "-rgba false -width 500 -height 800" 30 2.05 no
 pack forget .togl_private
 
 #########################################################################
