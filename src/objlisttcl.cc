@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct 20 12:16:58 2000
+// written: Fri Oct 20 14:06:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ class ObjlistTcl::LoadObjectsCmd : public Tcl::TclCmd {
 public:
   LoadObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
 	 Tcl::TclCmd(interp, cmd_name,
-					 "filename ?num_to_read=-1?", 2, 5, false)
+					 "filename ?num_to_read=-1?", 2, 3, false)
   {}
 
 protected:
@@ -80,7 +80,7 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
 		continue;
 	 }
 
-	 IO::LegacyReader reader(ifs, IO::BASES);
+	 IO::LegacyReader reader(ifs);
 	 IO::IoObject* io = reader.readRoot(0);
 
 	 GrObj* p = dynamic_cast<GrObj*>(io);
@@ -108,15 +108,14 @@ class ObjlistTcl::SaveObjectsCmd : public Tcl::TclCmd {
 public:
   SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
 	 Tcl::TclCmd(interp, cmd_name,
-					 "objids filename ?use_typename=yes? ?use_bases=yes?", 3, 5)
+					 "objids filename ?use_bases=yes?", 3, 4)
   {}
 protected:
   virtual void invoke() {
 
 	 const char* filename = arg(2).getCstring();
 
-	 bool use_typename = objc() < 4 ? true : arg(3).getBool();
-	 bool use_bases    = objc() < 5 ? true : arg(4).getBool();
+	 bool use_bases    = objc() < 4 ? true : arg(3).getBool();
 
 	 STD_IO::ofstream ofs(filename);
 	 if (ofs.fail()) {
@@ -125,10 +124,6 @@ protected:
 		throw err;
 	 }
 
-	 IO::IOFlag flags = IO::NO_FLAGS;
-	 if (use_typename) /* do nothing, LegacyWriter always uses the typename  */;
-	 if (use_bases)    flags |= IO::BASES;
-
 	 ObjList& olist = ObjList::theObjList();
 	 for (Tcl::ListIterator<int>
 			  itr = beginOfArg(1, (int*)0),
@@ -136,7 +131,7 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  IO::LegacyWriter writer(ofs, flags);
+		  IO::LegacyWriter writer(ofs, use_bases);
 		  PtrList<GrObj>::SharedPtr item = olist.getCheckedPtr(*itr);
 		  writer.writeRoot(item.get());
 		  ofs << endl;

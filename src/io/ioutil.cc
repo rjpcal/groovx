@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Oct 19 18:50:07 2000
+// written: Fri Oct 20 14:06:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
   ostrstream ost;
 
   try {
-	 IO::LegacyWriter writer(ost, IO::BASES);
+	 IO::LegacyWriter writer(ost);
 	 writer.writeRoot(&(getIO()));
 	 ost << '\0';
   }
@@ -103,7 +103,7 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 
   istrstream ist(buf);
 
-  IO::LegacyReader reader(ist, IO::BASES);
+  IO::LegacyReader reader(ist);
   reader.readRoot(&(getIO()));
 
   returnVoid();

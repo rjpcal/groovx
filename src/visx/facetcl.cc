@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Thu Oct 19 18:47:51 2000
+// written: Fri Oct 20 14:05:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ DOTRACE("FaceTcl::LoadFacesCmd::invoke");
 		// virtual constructor is called, and if it is not a letter, it
 		// is assumed that it is the beginning of the simple Face
 		// format, so the regular Face constructor is called.
-		IO::LegacyReader lrdr(ist, IO::BASES);
+		IO::LegacyReader lrdr(ist);
 		IO::IoObject* io = lrdr.readRoot();
 		p = dynamic_cast<Face *>(io);
 		if (p == 0) {

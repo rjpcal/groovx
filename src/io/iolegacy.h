@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Oct 19 18:50:28 2000
+// written: Fri Oct 20 14:07:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,30 +34,9 @@ class ostream;
 #endif
 
 namespace IO {
-  /** The symbolic constants of type \c IOFlag flags may be OR'ed
-   * together and passed to the flag argument of \c legacySrlz() or \c
-   * legacyDesrlz() to control different aspects of the formatting used
-   * to read and write objects. In general, the same flags must be
-   * used to read an object as were used to write it. */
-  typedef int IOFlag;
-
-  /// Neither the class's name or its bases will be written/read
-  const IOFlag NO_FLAGS   = 0;
-  /// The class's bases are written/read
-  const IOFlag BASES      = 1 << 1;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Forward class declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace IO {
   class LegacyReader;
   class LegacyWriter;
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -67,7 +46,7 @@ namespace IO {
 
 class IO::LegacyReader : public IO::Reader {
 public:
-  LegacyReader(STD_IO::istream& is, IO::IOFlag flag);
+  LegacyReader(STD_IO::istream& is);
   virtual ~LegacyReader();
 
   virtual IO::VersionId readSerialVersionId();
@@ -103,7 +82,7 @@ private:
 
 class IO::LegacyWriter : public IO::Writer {
 public:
-  LegacyWriter(STD_IO::ostream& os, IO::IOFlag flag);
+  LegacyWriter(STD_IO::ostream& os, bool write_bases=true);
   virtual ~LegacyWriter();
 
   virtual void writeChar(const char* name, char val);
