@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 11 10:18:48 2001
+// written: Wed Jul 11 18:28:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "system/demangle.h"
 
-#include "tcl/errmsg.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclvalue.h"
 
@@ -72,6 +71,14 @@ protected:
 
 namespace
 {
+  inline void errMessage(Tcl_Interp* interp, Tcl_Obj* const objv[],
+                         const char* err_msg)
+    {
+      Tcl_AppendObjToObj(Tcl_GetObjResult(interp), objv[0]);
+      Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+                             ": ", err_msg, (char *) NULL);
+    }
+
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
@@ -194,20 +201,20 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
   catch (TclError& err) {
     DebugPrintNL("catch (TclError&)");
     if ( !string_literal(err.msg_cstr()).empty() ) {
-      Tcl::err_message(interp, theCmd->itsObjv, err.msg_cstr());
+      errMessage(interp, theCmd->itsObjv, err.msg_cstr());
     }
     theCmd->itsResult = TCL_ERROR;
   }
   catch (ErrorWithMsg& err) {
     DebugPrintNL("catch (ErrorWithMsg&)");
     if ( !string_literal(err.msg_cstr()).empty() ) {
-      Tcl::err_message(interp, theCmd->itsObjv, err.msg_cstr());
+      errMessage(interp, theCmd->itsObjv, err.msg_cstr());
     }
     else {
       dynamic_string msg = "an error of type ";
       msg += demangle_cstr(typeid(err).name());
       msg += " occurred";
-      Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
+      errMessage(interp, theCmd->itsObjv, msg.c_str());
     }
     theCmd->itsResult = TCL_ERROR;
   }
@@ -216,7 +223,7 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
     dynamic_string msg = "an error of type ";
     msg += demangle_cstr(typeid(err).name());
     msg += " occurred";
-    Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
+    errMessage(interp, theCmd->itsObjv, msg.c_str());
     theCmd->itsResult = TCL_ERROR;
   }
   catch (std::exception& err) {
@@ -224,18 +231,18 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
     msg += demangle_cstr(typeid(err).name());
     msg += " occurred: ";
     msg += err.what();
-    Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
+    errMessage(interp, theCmd->itsObjv, msg.c_str());
     theCmd->itsResult = TCL_ERROR;
   }
   catch (const char* text) {
     dynamic_string msg = "an error occurred: ";
     msg += text;
-    Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
+    errMessage(interp, theCmd->itsObjv, msg.c_str());
     theCmd->itsResult = TCL_ERROR;
   }
   catch (...) {
     DebugPrintNL("catch (...)");
-    Tcl::err_message(interp, theCmd->itsObjv, "an error of unknown type occurred");
+    errMessage(interp, theCmd->itsObjv, "an error of unknown type occurred");
     theCmd->itsResult = TCL_ERROR;
   }
 
