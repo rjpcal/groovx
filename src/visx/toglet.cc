@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Sep 11 15:23:55 2002
+// written: Wed Sep 11 15:28:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "visx/xbmaprenderer.h"
 
 #include "gfx/glcanvas.h"
+
+#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
@@ -724,6 +726,7 @@ void Toglet::makeCurrent()
 {
 DOTRACE("Toglet::makeCurrent");
   rep->togl->makeCurrent();
+  Grsh::installCanvas(this->getCanvas());
 }
 
 void Toglet::writeEpsFile(const char* filename)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 15:25:14 2002
+// written: Wed Sep 11 15:28:33 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -20,8 +20,6 @@
 #include "visx/trialbase.h"
 
 #include "gfx/gxnode.h"
-
-#include "grsh/grsh.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -48,10 +46,6 @@ namespace ObjTogl
     DOTRACE("ObjTogl::setCurrentTogl");
 
     theWidget = toglet;
-
-    // Install the experiment into the application
-    // FIXME should this call just go inside Toglet::makeCurrent() itself?
-    Grsh::installCanvas(theWidget->getCanvas());
 
     toglet->makeCurrent();
   }
