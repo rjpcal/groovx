@@ -38,19 +38,6 @@ test "Toglet-Togl::clearscreen" "normal use" {
 	 return "[expr $p == 0] $p"
 } {^1}
 
-### Togl::showCmd ###
-test "Toglet-Togl::show" "too few args" {
-	 Togl::show
-} {wrong \# args: should be}
-test "Toglet-Togl::show" "too many args" {
-	 Togl::show j u
-} {wrong \# args: should be}
-test "Toglet-Togl::show" "normal use on invalid trial id" { 
-	 set code [catch {Togl::show -1} msg]
-	 set result "$code $msg"
-} {^1 Toglet::show:}
-test "Toglet-Togl::show" "no error" {} $BLANK $no_test
-
 ### Togl::setVisibleCmd ###
 test "Toglet-Togl::setVisible" "too few args" {
     Togl::setVisible
@@ -70,26 +57,6 @@ test "Toglet-Togl::setVisible" "unusual set on" {
 test "Toglet-Togl::setVisible" "error on non-numeric input" {
     Togl::setVisible junk
 } {expected boolean value but got "junk"}
-
-### Togl::setCurTrialCmd ###
-test "Toglet-Togl::setCurTrial" "too few args" {
-    Togl::setCurTrial
-} {wrong \# args: should be}
-test "Toglet-Togl::setCurTrial" "too many args" {
-    Togl::setCurTrial j u
-} {wrong \# args: should be}
-test "Toglet-Togl::setCurTrial" "normal use" {
-	 set f [Obj::new Face]
-	 set t [Obj::new Trial]
-	 Trial::addNode $t $f
-	 catch {Togl::setCurTrial $t}
-} {^0$}
-test "Toglet-Togl::setCurTrial" "error on too low trial id" {
-    Togl::setCurTrial -1
-} {Toglet::setCurTrial:}
-test "Toglet-Togl::setCurTrial" "error on too large trial id" {
-    Togl::setCurTrial 10000000
-} {Toglet::setCurTrial: attempted to access invalid object.*}
 
 ### dumpCmapCmd ###
 test "Toglet-dumpCmap" "too many args" {
