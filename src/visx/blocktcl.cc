@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Tue Nov 30 17:07:23 1999
+// written: Tue Nov 30 19:05:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ DOTRACE("Block_Init");
   new BlockTcl::BlockPkg(interp);
   new BlockListTcl::BlockListPkg(interp);
 
-  FactoryRegistrar<IO, Block> registrar(IoFactory::theOne());
+  FactoryRegistrar<IO, Block>::registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }

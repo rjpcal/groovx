@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:46:28 1999
-// written: Mon Sep 13 12:16:09 1999
+// written: Tue Nov 30 19:09:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("Xbitmap_Init");
 
   new XBitmapTcl::XBitmapPkg(interp);
 
-  FactoryRegistrar<IO, XBitmap> registrar(IoFactory::theOne());
+  FactoryRegistrar<IO, XBitmap>::registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }

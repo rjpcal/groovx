@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Nov  2 10:15:39 1999
+// written: Tue Nov 30 19:06:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ DOTRACE("Fixpt_Init");
 			  "    proc Fixpt {} { return [FixPt::FixPt] } }");
 
 
-  FactoryRegistrar<IO, FixPt> registrar(IoFactory::theOne());
+  FactoryRegistrar<IO, FixPt>::registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }

@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Nov  9 16:56:55 1999
+// written: Tue Nov 30 19:08:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,9 +153,9 @@ DOTRACE("Rh_Init");
   new KbdRhTcl::KbdRhPkg(interp);
   new NullRhTcl::NullRhPkg(interp);
 
-  FactoryRegistrar<IO, KbdResponseHdlr> registrar1(IoFactory::theOne());
-  FactoryRegistrar<IO, NullResponseHdlr> registrar2(IoFactory::theOne());
-  FactoryRegistrar<IO, EventResponseHdlr> registrar3(IoFactory::theOne());
+  FactoryRegistrar<IO, KbdResponseHdlr>   :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, NullResponseHdlr>  :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, EventResponseHdlr> :: registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }

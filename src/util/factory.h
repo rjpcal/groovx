@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Sat Nov 20 23:54:37 1999
+// written: Tue Nov 30 19:00:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -219,11 +219,13 @@ public:
 
 template <class Base, class Derived>
 class FactoryRegistrar {
+protected:
+  FactoryRegistrar();
 public:
-  FactoryRegistrar(Factory<Base>& theFactory)
-  {
-	 theFactory.registerType( (Derived*) 0 );
-  }
+  static void registerWith(Factory<Base>& theFactory)
+	 {
+		theFactory.registerType( (Derived*) 0 );
+	 }
 };
 
 

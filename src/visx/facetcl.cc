@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Oct  4 12:44:31 1999
+// written: Tue Nov 30 19:02:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,8 +149,8 @@ DOTRACE("Face_Init");
 
   new FaceTcl::FacePkg(interp);
 
-  FactoryRegistrar<IO, Face>             registrar1(IoFactory::theOne());
-  FactoryRegistrar<IO, CloneFace>        registrar2(IoFactory::theOne());
+  FactoryRegistrar<IO, Face>      :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, CloneFace> :: registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }

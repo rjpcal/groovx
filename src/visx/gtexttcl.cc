@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Mon Sep 27 14:34:37 1999
+// written: Tue Nov 30 19:06:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ DOTRACE("Gtext_Init");
 
   new GtextTcl::GtextPkg(interp); 
 
-  FactoryRegistrar<IO, Gtext> registrar(IoFactory::theOne());
+  FactoryRegistrar<IO, Gtext>::registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }

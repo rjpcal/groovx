@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Mon Oct  4 15:54:39 1999
+// written: Tue Nov 30 19:07:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ public:
 	 ListItemPkg<C, List>(interp, aList, name, version)
   {
 	 CTclIoItemPkg<C>::declareAllProperties();
-	 FactoryRegistrar<IO, C> registrar(IoFactory::theOne());
+	 FactoryRegistrar<IO, C>::registerWith(IoFactory::theOne());
   }
 };
 

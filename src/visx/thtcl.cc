@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 12 13:13:50 1999
+// written: Tue Nov 30 19:08:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,17 +150,17 @@ DOTRACE("Th_Init");
   new SimpleThTcl::SimpleThPkg(interp);
   new ThlistTcl::ThListPkg(interp);
 
-  FactoryRegistrar<IO, TimingHdlr> registrar1(IoFactory::theOne());
-  FactoryRegistrar<IO, TimingHandler> registrar2(IoFactory::theOne());
+  FactoryRegistrar<IO, TimingHdlr>       :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, TimingHandler>    :: registerWith(IoFactory::theOne());
 
-  FactoryRegistrar<IO, AbortTrialEvent>  registrar3(IoFactory::theOne());
-  FactoryRegistrar<IO, DrawEvent>        registrar4(IoFactory::theOne());
-  FactoryRegistrar<IO, UndrawEvent>      registrar5(IoFactory::theOne());
-  FactoryRegistrar<IO, EndTrialEvent>    registrar6(IoFactory::theOne());
-  FactoryRegistrar<IO, SwapBuffersEvent> registrar7(IoFactory::theOne());
-  FactoryRegistrar<IO, RenderBackEvent>  registrar8(IoFactory::theOne());
-  FactoryRegistrar<IO, RenderFrontEvent> registrar9(IoFactory::theOne());
-  FactoryRegistrar<IO, ClearBufferEvent> registrarA(IoFactory::theOne());
+  FactoryRegistrar<IO, AbortTrialEvent>  :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, DrawEvent>        :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, UndrawEvent>      :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, EndTrialEvent>    :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, SwapBuffersEvent> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, RenderBackEvent>  :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, RenderFrontEvent> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO, ClearBufferEvent> :: registerWith(IoFactory::theOne());
 
   return TCL_OK;
 }
