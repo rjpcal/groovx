@@ -30,8 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "system/system.h"
-
 #include "tcl/tcllistobj.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclpkg.h"
