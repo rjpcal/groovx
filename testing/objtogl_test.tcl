@@ -77,11 +77,11 @@ test "ObjTogl-Togl::show" "too many args" {
 test "ObjTogl-Togl::show" "normal use on valid trial id" {
 	 set code [catch {Togl::show 10} msg]
 	 set result "$code $msg"
-} {^1 Togl::show: invalid trial id$}
+} {^1 Togl::show: attempt to access invalid id.*in Tlist$}
 test "ObjTogl-Togl::show" "normal use on invalid trial id" { 
 	 set code [catch {Togl::show -1} msg]
 	 set result "$code $msg"
-} {^1 Togl::show: invalid trial id$}
+} {^1 Togl::show: attempt to access invalid id.*in Tlist$}
 test "ObjTogl-Togl::show" "no error" {} $BLANK $no_test
 
 ### Togl::setVisibleCmd ###
@@ -119,11 +119,11 @@ test "ObjTogl-Togl::setCurTrial" "normal use" {
 } {^0$}
 test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {
     Togl::setCurTrial -1
-} {Togl::setCurTrial: invalid trial id}
+} {Togl::setCurTrial: attempt to access invalid id.*in Tlist}
 test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
 	 Tlist::reset
     Togl::setCurTrial 10000
-} {Togl::setCurTrial: invalid trial id}
+} {Togl::setCurTrial: attempt to access invalid id.*in Tlist}
 
 ### Togl::loadFontCmd ###
 test "$PACKAGE-Togl::loadFont" "too many args" {
