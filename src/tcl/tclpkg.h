@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Dec 16 15:37:07 1999
+// written: Thu Jan  6 15:04:49 2000
 // $Id$
 //
 //
@@ -18,11 +18,6 @@
 
 #ifndef TCLCMD_H_DEFINED
 #include "tclcmd.h"
-#endif
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
 #endif
 
 #ifndef PROPERTY_H_DEFINED
