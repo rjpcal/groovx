@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Fri Jan 18 16:07:05 2002
+// written: Wed Jul 31 17:11:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,14 +17,33 @@
 
 #include "util/strings.h"
 
+#include <cstdlib>
 #include <exception>
 
 #include "util/trace.h"
 #include "util/debug.h"
 
+Util::Error::Error() :
+  itsInfo(),
+  itsBackTrace(new BackTrace(Util::BackTrace::current()))
+{
+DOTRACE("Util::Error::Error()");
+
+  Util::Trace::printStackTrace();
+}
+
+Util::Error::Error(const fstring& msg) :
+  itsInfo(msg),
+  itsBackTrace(new BackTrace(Util::BackTrace::current()))
+{
+DOTRACE("Util::Error::Error(fstring)");
+
+  Util::Trace::printStackTrace();
+}
 
 Util::Error::Error(const Util::Error& other) :
-  itsInfo(other.itsInfo)
+  itsInfo(other.itsInfo),
+  itsBackTrace(new BackTrace(*other.itsBackTrace))
 {
 DOTRACE("Util::Error::Error(copy)");
   DebugEvalNL(itsInfo);
@@ -33,6 +52,7 @@ DOTRACE("Util::Error::Error(copy)");
 Util::Error::~Error()
 {
 DOTRACE("Util::Error::~Error");
+  delete itsBackTrace;
 }
 
 static const char vcid_error_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Jul 31 15:34:20 2002
+// written: Wed Jul 31 17:11:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 namespace Util
 {
+  class BackTrace;
   class Error;
 }
 
@@ -53,10 +54,14 @@ public:
   /// Get the error message as a C-style string.
   const char* msg_cstr() const { return itsInfo.c_str(); }
 
+  /// Get the stack back trace associated with this exception.
+  const BackTrace& backTrace() const { return *itsBackTrace; }
+
 private:
   Error& operator=(const Error& other);
 
   fstring itsInfo;
+  const BackTrace* itsBackTrace;
 };
 
 static const char vcid_error_h[] = "$Header$";
