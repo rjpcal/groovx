@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Feb 18 14:19:29 2002
+// written: Tue Feb 19 13:38:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,16 +230,10 @@ Slice& Slice::operator=(const Mtx& other)
 
 
 MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
-  data(0), stride(0), stop(0)
-{
   // Make sure that the data storage is unique since this is a
   // non-const iterator
-  m.makeUnique();
-
-  data = m.storageStart() + storageOffset;
-  stride = s;
-  stop = data + s*n;
-}
+  Base(m.makeUnique().storageStart() + storageOffset, s, n)
+{}
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -251,8 +245,8 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
 #ifdef HAVE_MATLAB
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
-  if (!mxIsNumeric(a))
-    throw Util::Error("cannot construct a Mtx with a non-numeric mxArray");
+  if (!mxIsDouble(a))
+    throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
 
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }

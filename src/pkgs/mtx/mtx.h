@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// keanu.h
+// mtx.h
 //
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Feb 18 08:14:58 2002
+// written: Tue Feb 19 13:38:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef KEANU_H_DEFINED
-#define KEANU_H_DEFINED
+#ifndef MTX_H_DEFINED
+#define MTX_H_DEFINED
 
 #include "datablock.h"
 #include "num.h"
@@ -93,11 +93,29 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+template <class T>
+class MtxIterBase
+{
+public:
+  MtxIterBase(T* d, int str, int n) :
+    data(d), stride(str), stop(data+str*n) {}
 
-class MtxIter {
-  double* data;
+  MtxIterBase(const MtxIterBase& other) :
+    data(other.data), stride(other.stride), stop(other.stop) {}
+
+  template <class U>
+  MtxIterBase(const MtxIterBase<U>& other) :
+    data(other.data), stride(other.stride), stop(other.stop) {}
+
+  T* data;
   int stride;
-  double* stop;
+  T* stop;
+};
+
+
+class MtxIter : protected MtxIterBase<double>
+{
+  typedef MtxIterBase<double> Base;
 
   MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n);
 
@@ -149,20 +167,17 @@ public:
 
 
 
-class MtxConstIter {
-  const double* data;
-  int stride;
-  const double* stop;
+class MtxConstIter : protected MtxIterBase<const double>
+{
+  typedef MtxIterBase<const double> Base;
 
-  MtxConstIter(const double* d, int s, int n) :
-    data(d), stride(s), stop(d + s*n) {}
+  MtxConstIter(const double* d, int s, int n) : Base(d, s, n) {}
 
   friend class Slice;
   friend class Mtx;
 
 public:
-  MtxConstIter(const MtxIter& other) :
-    data(other.data), stride(other.stride), stop(other.stop) {}
+  MtxConstIter(const MtxIter& other) : Base(other) {}
 
   typedef random_access_iterator_tag iterator_category;
   typedef double                     value_type;
@@ -212,7 +227,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Slice {
+class Slice
+{
 protected:
   Mtx& itsOwner;
   ptrdiff_t itsOffset;
@@ -606,7 +622,7 @@ public:
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
-  void makeUnique() { itsImpl.makeUnique(); }
+  Mtx& makeUnique() { itsImpl.makeUnique(); return *this; }
 
 private:
   const double* storageStart() const { return itsImpl.storageStart(); }
@@ -911,5 +927,5 @@ inline Mtx operator-(const Mtx& m1, const Mtx& m2)
   return result;
 }
 
-static const char vcid_keanu_h[] = "$Header$";
-#endif // !KEANU_H_DEFINED
+static const char vcid_mtx_h[] = "$Header$";
+#endif // !MTX_H_DEFINED
