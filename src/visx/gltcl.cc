@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 12:25:08 2002
+// written: Tue Nov 12 14:09:50 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -499,6 +499,7 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::glPolygonMode", "face mode", glPolygonMode );
   pkg->def( "::glPopMatrix", 0, glPopMatrix );
   pkg->def( "::glPushMatrix", 0, glPushMatrix );
+  pkg->def( "::glRasterPos2d", "x y", glRasterPos2d );
   pkg->def( "::glRenderer", 0, bindFirst(GLTcl::getString, GL_RENDERER));
   pkg->def( "::glRotate", "angle_in_degrees x y z", glRotated );
   pkg->def( "::glScale", "x y z", glScaled );
