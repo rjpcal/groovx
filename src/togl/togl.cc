@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 14:28:16 2000
+// written: Wed May 24 14:45:31 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -99,7 +99,13 @@ public:
 
   int configure(Tcl_Interp* interp, int argc, char* argv[], int flags);
 
+  void makeCurrent() const;
+
+  static void dummyEventProc(ClientData clientData, XEvent* eventPtr);
+
 private:
+  void eventProc(XEvent* eventPtr);
+
   int makeWindowExist();
 
   void destroyCurrentWindow();
@@ -594,23 +600,9 @@ DOTRACE("<togl.cc>::Togl_CreateCommand");
 }
 
 
-/*
- * Togl_MakeCurrent
- *
- *   Bind the OpenGL rendering context to the specified
- *   Togl widget.
- */
 void Togl_MakeCurrent( const Togl* togl )
 {
-DOTRACE("<togl.cc>::Togl_MakeCurrent");
-  glXMakeCurrent( Tk_Display(togl->itsTkWin),
-						Tk_WindowId(togl->itsTkWin),
-						togl->itsGLXContext );
-#if defined(__sgi) && defined(STEREO)
-  stereoMakeCurrent( Tk_Display(togl->itsTkWin),
-							Tk_WindowId(togl->itsTkWin),
-							togl->itsGLXContext );
-#endif /*__sgi STEREO */
+  togl->makeCurrent();
 }
 
 
@@ -2209,6 +2201,35 @@ DOTRACE("Togl::configure");
   return TCL_OK; 
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Togl::makeCurrent
+//
+//   Bind the OpenGL rendering context to the specified
+//   Togl widget.
+//
+///////////////////////////////////////////////////////////////////////
+
+void Togl::makeCurrent() const {
+DOTRACE("Togl::makeCurrent");
+  glXMakeCurrent( itsDisplay,
+						Tk_WindowId(itsTkWin),
+						itsGLXContext );
+#if defined(__sgi) && defined(STEREO)
+  stereoMakeCurrent( itsDisplay,
+							Tk_WindowId(itsTkWin),
+							itsGLXContext );
+#endif /*__sgi STEREO */
+}
+
+void Togl::dummyEventProc(ClientData clientData, XEvent* eventPtr) {
+  Togl* togl = static_cast<Togl*>(clientData);
+  togl->eventProc(eventPtr);
+}
+
+void Togl::eventProc(XEvent* eventPtr) {
+DOTRACE("Togl::eventProc");
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
