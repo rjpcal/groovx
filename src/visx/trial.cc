@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Nov  1 18:30:02 2000
+// written: Thu Nov  2 09:10:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ private:
   int itsCorrectResponse;
 
   minivec<IdItem<GxNode> > itsGxNodes;
-  minivec<IdItem<Position> > itsPositions;
+  minivec<IdItem<GxNode> > itsPositions;
 
   minivec<Response> itsResponses;
   int itsType;
@@ -229,9 +229,9 @@ DOTRACE("Trial::Impl::readFrom");
 			 IdItem<GxNode>::makeInserter(itsGxNodes));
 
   itsPositions.clear();
-  IO::ReadUtils::readObjectSeq<Position>(
+  IO::ReadUtils::readObjectSeq<GxNode>(
           reader, "positions",
-			 IdItem<Position>::makeInserter(itsPositions));
+			 IdItem<GxNode>::makeInserter(itsPositions));
 
   itsResponses.clear();
   IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
@@ -414,7 +414,7 @@ DOTRACE("Trial::Impl::avgRespTime");
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
   itsGxNodes.push_back(IdItem<GxNode>(objid));
-  itsPositions.push_back(IdItem<Position>(posid));
+  itsPositions.push_back(IdItem<GxNode>(posid));
 
   Invariant(itsGxNodes.size() == itsPositions.size());
 }
@@ -610,7 +610,7 @@ DOTRACE("Trial::Impl::trDraw");
 
 	 { 
 		GWT::Canvas::StateSaver state(canvas);
-		itsPositions[i]->go();
+		itsPositions[i]->draw(canvas);
 		itsGxNodes[i]->draw(canvas);
 	 }
   }
@@ -630,7 +630,7 @@ DOTRACE("Trial::Impl::trUndraw");
 
 	 {
 		GWT::Canvas::StateSaver state(canvas);
-		itsPositions[i]->rego();
+		itsPositions[i]->undraw(canvas);
 		itsGxNodes[i]->undraw(canvas);
 	 }
   }
