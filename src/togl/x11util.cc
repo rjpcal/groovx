@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:32:56 2002
-// written: Tue Sep 17 21:16:36 2002
+// written: Sat Nov  9 20:52:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,11 +23,11 @@ Colormap X11Util::findColormap(Display* dpy, XVisualInfo* visInfo,
 {
 DOTRACE("X11Util::findColormap");
 
-  int scrnum = DefaultScreen(dpy);
-
   // For RGB colormap or shared color-index colormap
   if (!privateCmap)
     {
+      int scrnum = DefaultScreen(dpy);
+
       if (visInfo->visual == DefaultVisual(dpy, scrnum))
         {
           // Just share the default colormap
