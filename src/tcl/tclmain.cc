@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Nov  7 18:19:54 2002
+// written: Fri Nov 22 15:48:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,16 @@
 namespace Tcl
 {
   class MainImpl;
+}
+
+namespace
+{
+  void exitHandler(ClientData clientData)
+  {
+#ifdef WITH_READLINE
+    rl_callback_handler_remove();
+#endif
+  }
 }
 
 // Singleton implementation class for Tcl::Main
@@ -73,7 +83,10 @@ private:
 public:
   static void create(int argc, char** argv)
   {
+    Assert(theMainImpl == 0);
+
     theMainImpl = new MainImpl(argc, argv);
+    Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(0));
   }
 
   static MainImpl* get()
