@@ -680,24 +680,6 @@ DOTRACE("Gfx::PSCanvas::worldFromScreen2");
 }
 
 
-geom::rect<int> Gfx::PSCanvas::screenFromWorldRect(
-  const geom::rect<double>& /*world_pos*/) const
-{
-DOTRACE("Gfx::PSCanvas::screenFromWorldRect");
-// FIXME
-  rep->raiseError("not implemented", SRC_POS);
-  return geom::rect<int>();
-}
-
-geom::rect<double> Gfx::PSCanvas::worldFromScreenRect(
-  const geom::rect<int>& /*screen_pos*/) const
-{
-DOTRACE("Gfx::PSCanvas::worldFromScreenRect");
-// FIXME
-  rep->raiseError("not implemented", SRC_POS);
-  return geom::rect<double>();
-}
-
 geom::rect<int> Gfx::PSCanvas::getScreenViewport() const
 {
 DOTRACE("Gfx::PSCanvas::getScreenViewport()");

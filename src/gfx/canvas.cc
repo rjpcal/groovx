@@ -47,6 +47,9 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+using geom::vec2i;
+using geom::vec2d;
+using geom::vec3i;
 using geom::vec3d;
 
 namespace
@@ -61,6 +64,27 @@ namespace
 }
 
 Gfx::Canvas::~Canvas() throw() {}
+
+geom::rect<int> Gfx::Canvas::screenFromWorldRect(const geom::rect<double>& world_pos) const
+{
+DOTRACE("Gfx::Canvas::screenFromWorldRect");
+
+  geom::rect<int> screen_rect;
+  screen_rect.set_corners( screenFromWorld2(world_pos.bottom_left()),
+                           screenFromWorld2(world_pos.top_right()) +
+                           vec2i(1,1) );
+  return screen_rect;
+}
+
+geom::rect<double> Gfx::Canvas::worldFromScreenRect(const geom::rect<int>& screen_pos) const
+{
+DOTRACE("Gfx::Canvas::worldFromScreenRect");
+
+  geom::rect<double> world_rect;
+  world_rect.set_corners( worldFromScreen2(screen_pos.bottom_left()),
+                          worldFromScreen2(screen_pos.top_right()) );
+  return world_rect;
+}
 
 void Gfx::Canvas::drawRect(const geom::rect<double>& rect, bool filled)
 {

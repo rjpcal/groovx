@@ -65,9 +65,6 @@ public:
   virtual geom::vec2<int> screenFromWorld2(const geom::vec2<double>& world_pos) const;
   virtual geom::vec2<double> worldFromScreen2(const geom::vec2<int>& screen_pos) const;
 
-  virtual geom::rect<int> screenFromWorldRect(const geom::rect<double>& world_pos) const;
-  virtual geom::rect<double> worldFromScreenRect(const geom::rect<int>& screen_pos) const;
-
   virtual geom::rect<int> getScreenViewport() const;
   virtual geom::rect<double> getWorldViewport() const;
 

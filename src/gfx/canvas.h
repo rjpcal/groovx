@@ -94,10 +94,10 @@ public:
   virtual geom::vec2<double> worldFromScreen2(const geom::vec2<int>& screen_pos) const = 0;
 
   /// Convert a rect from screen coordinates to world coordinates.
-  virtual geom::rect<int> screenFromWorldRect(const geom::rect<double>& world_pos) const = 0;
+  geom::rect<int> screenFromWorldRect(const geom::rect<double>& world_pos) const;
 
   /// Convert a rect from world coordinates to screen coordinates.
-  virtual geom::rect<double> worldFromScreenRect(const geom::rect<int>& screen_pos) const = 0;
+  geom::rect<double> worldFromScreenRect(const geom::rect<int>& screen_pos) const;
 
   /// Get the viewport rect in screen coordinates.
   virtual geom::rect<int> getScreenViewport() const = 0;

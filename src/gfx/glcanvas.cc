@@ -174,27 +174,6 @@ DOTRACE("GLCanvas::worldFromScreen2");
 }
 
 
-geom::rect<int> GLCanvas::screenFromWorldRect(const geom::rect<double>& world_pos) const
-{
-DOTRACE("GLCanvas::screenFromWorldRect");
-
-  geom::rect<int> screen_rect;
-  screen_rect.set_corners( screenFromWorld2(world_pos.bottom_left()),
-                           screenFromWorld2(world_pos.top_right()) +
-                           vec2i(1,1) );
-  return screen_rect;
-}
-
-geom::rect<double> GLCanvas::worldFromScreenRect(const geom::rect<int>& screen_pos) const
-{
-DOTRACE("GLCanvas::worldFromScreenRect");
-
-  geom::rect<double> world_rect;
-  world_rect.set_corners( worldFromScreen2(screen_pos.bottom_left()),
-                          worldFromScreen2(screen_pos.top_right()) );
-  return world_rect;
-}
-
 geom::rect<int> GLCanvas::getScreenViewport() const
 {
   GLint viewport[4];
