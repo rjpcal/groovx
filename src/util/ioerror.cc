@@ -41,10 +41,10 @@ rutz::filename_error::filename_error(const char* str,
   :
   rutz::error(rutz::fstring("couldn't use file '", str, "'"), pos)
 {
-DOTRACE("IO::filename_error::filename_error");
+DOTRACE("rutz::filename_error::filename_error");
 }
 
-IO::filename_error::~filename_error() throw() {}
+rutz::filename_error::~filename_error() throw() {}
 
 static const char vcid_ioerror_cc[] = "$Header$";
 #endif // !IOERROR_CC_DEFINED
