@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 11:19:20 2000
+// written: Wed Oct 25 13:28:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,9 +120,12 @@ private:
 
   PtrListBase* itsOwner;
   int itsFirstVacant;
+
+public:
   typedef std::map<int, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
+private:
   void ensureNotDuplicate(IO::IoObject* ptr);
 
   int findPtr(IO::IoObject* ptr)
@@ -182,7 +185,6 @@ public:
   bool isValidId(int id) const
 	 {
 		DebugEval(id);
-		DebugEval(id>=0);
 		MapType::const_iterator itr = itsPtrMap.find(id);
 		return ( (itr != itsPtrMap.end()) );
 	 }
@@ -268,6 +270,78 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
+// PtrListBase::ItrImpl definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class PtrListBase::ItrImpl {
+public:
+  typedef PtrListBase::Impl::MapType MapType;
+
+  ItrImpl(MapType::iterator itr) : itsIter(itr) {}
+
+  MapType::iterator itsIter;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// PtrListBase::IdIterator member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+PtrListBase::IdIterator::IdIterator(PtrListBase::ItrImpl* impl) :
+  itsImpl(impl)
+{
+DOTRACE("PtrListBase::IdIterator::IdIterator()");
+}
+
+PtrListBase::IdIterator::~IdIterator()
+{
+DOTRACE("PtrListBase::IdIterator::~IdIterator");
+  delete itsImpl;
+}
+
+PtrListBase::IdIterator::IdIterator(const PtrListBase::IdIterator& other) :
+  itsImpl(new ItrImpl(other.itsImpl->itsIter))
+{
+DOTRACE("PtrListBase::IdIterator::IdIterator(copy)");
+}
+
+PtrListBase::IdIterator&
+PtrListBase::IdIterator::operator=(const PtrListBase::IdIterator& other)
+{
+DOTRACE("PtrListBase::IdIterator::operator=");
+  ItrImpl* old_impl = itsImpl;
+  itsImpl = new ItrImpl(other.itsImpl->itsIter);
+  delete old_impl;
+  return *this;
+}
+
+bool PtrListBase::IdIterator::operator==(
+      const PtrListBase::IdIterator& other) const
+{
+  return itsImpl->itsIter == other.itsImpl->itsIter;
+}
+
+PtrListBase::IdIterator&
+PtrListBase::IdIterator::operator++()
+{
+  ++(itsImpl->itsIter);
+  return *this;
+}
+
+int PtrListBase::IdIterator::operator*() const
+{
+  return (*(itsImpl->itsIter)).first;
+}
+
+IO::IoObject* PtrListBase::IdIterator::getObject() const
+{
+  return (*(itsImpl->itsIter)).second.ioObject();
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // PtrListBase::Impl member definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -317,6 +391,16 @@ DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 // PtrListBase member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+PtrListBase::IdIterator PtrListBase::beginIds() const {
+DOTRACE("PtrListBase::beginIds");
+  return IdIterator(new ItrImpl(itsImpl->itsPtrMap.begin()));
+}
+
+PtrListBase::IdIterator PtrListBase::endIds() const {
+DOTRACE("PtrListBase::ebdIds");
+  return IdIterator(new ItrImpl(itsImpl->itsPtrMap.end()));
+}
 
 PtrListBase::PtrListBase(int size) :
   itsImpl(new Impl(this, size))
