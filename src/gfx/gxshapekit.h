@@ -5,8 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// written: Wed May 14 18:57:32 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

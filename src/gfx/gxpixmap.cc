@@ -5,8 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.cc)
-// written: Wed May 14 18:58:14 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

@@ -5,8 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Mar 19 17:58:05 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

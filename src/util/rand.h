@@ -5,8 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Tue May 13 12:13:48 2003
-// $Id$
+// commit: $Id$
 //
 // The random number generator classes here are taken from _The C++
 // Programming Language_, 3rd ed., by Bjarne Stroustrup.

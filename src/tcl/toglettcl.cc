@@ -5,8 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Fri May 16 14:04:20 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

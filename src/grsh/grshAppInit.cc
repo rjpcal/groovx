@@ -5,8 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu May 15 16:42:02 2003
-// $Id$
+// commit: $Id$
 //
 // This is the main application file for a Tcl/Tk application that
 // runs visual experiments.

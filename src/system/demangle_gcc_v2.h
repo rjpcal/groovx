@@ -5,8 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 19 16:58:19 2001 (as gcc_v2_demangle.h)
-// written: Wed Mar 19 17:55:51 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

@@ -5,8 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul  1 11:54:48 1999 (as gtext.cc)
-// written: Wed May 14 18:58:14 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

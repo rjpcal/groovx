@@ -5,8 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.h)
-// written: Sat May  3 11:59:06 2003
-// $Id$
+// commit: $Id$
 //
 // --------------------------------------------------------------------
 //
