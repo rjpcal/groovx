@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Mon Oct 23 11:50:15 2000
+// written: Wed Oct 25 17:52:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,29 +42,19 @@ template class NullableItemWithId<ResponseHandler>;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// File scope declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  const int DEFAULT_INIT_SIZE = 10;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // RhList member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-RhList::RhList(int size) :
-  Base(size)
+RhList::RhList() :
+  Base()
 {
 DOTRACE("RhList::RhList");
 }
 
 RhList::~RhList() {}
 
-RhList RhList::theInstance(DEFAULT_INIT_SIZE);
+RhList RhList::theInstance;
 
 RhList& RhList::theRhList() {
 DOTRACE("RhList::theRhList");

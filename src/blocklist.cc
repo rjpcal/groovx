@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Mon Oct 23 11:49:02 2000
+// written: Wed Oct 25 17:51:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,18 +18,14 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
-  const int DEFAULT_INIT_SIZE = 10;
-}
-
-BlockList::BlockList(int size) : Base(size) {
+BlockList::BlockList() : Base() {
 DOTRACE("BlockList::BlockList");
   // nothing
 }
 
 BlockList::~BlockList() {}
 
-BlockList BlockList::theInstance(DEFAULT_INIT_SIZE);
+BlockList BlockList::theInstance;
 
 BlockList& BlockList::theBlockList() {
 DOTRACE("BlockList::theBlockList");

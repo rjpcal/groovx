@@ -3,7 +3,7 @@
 // thlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:37 1999
-// written: Mon Oct 23 11:50:26 2000
+// written: Wed Oct 25 17:52:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,19 +18,14 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
-  const int DEFAULT_INIT_SIZE = 10;
-}
-
-ThList::ThList(int size) : Base(size)
+ThList::ThList() : Base()
 {
 DOTRACE("ThList::ThList");
-  //
 }
 
 ThList::~ThList() {}
 
-ThList ThList::theInstance(DEFAULT_INIT_SIZE);
+ThList ThList::theInstance;
 
 ThList& ThList::theThList() {
 DOTRACE("ThList::theThList");

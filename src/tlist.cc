@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Mon Oct 23 11:50:31 2000
+// written: Wed Oct 25 17:52:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,23 +20,18 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tlist member functions
+// Tlist member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-//////////////
-// creators //
-//////////////
-
-Tlist::Tlist(int size) : 
-  PtrList<TrialBase>(size)
+Tlist::Tlist() : PtrList<TrialBase>()
 {
 DOTRACE("Tlist::Tlist");
 }
 
 Tlist::~Tlist() {}
 
-Tlist Tlist::theInstance(100);
+Tlist Tlist::theInstance;
 
 Tlist& Tlist::theTlist() {
 DOTRACE("Tlist::theTlist");

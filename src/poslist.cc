@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Mon Oct 23 11:50:10 2000
+// written: Wed Oct 25 17:52:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,13 +18,9 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
-  const int DEFAULT_INIT_SIZE = 10;
-}
+PosList PosList::theInstance;
 
-PosList PosList::theInstance(DEFAULT_INIT_SIZE);
-
-PosList::PosList(int size) : Base(size)
+PosList::PosList() : Base()
 {
 DOTRACE("PosList::PosList");
 }

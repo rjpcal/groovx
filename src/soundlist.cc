@@ -3,7 +3,7 @@
 // soundlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:41 1999
-// written: Mon Oct 23 11:50:20 2000
+// written: Wed Oct 25 17:52:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,18 +18,14 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
-  const int DEFAULT_INIT_SIZE = 10;
-}
-
-SoundList::SoundList(int size) : Base(size) {
+SoundList::SoundList() : Base() {
 DOTRACE("SoundList::SoundList");
   // nothing
 }
 
 SoundList::~SoundList() {}
 
-SoundList SoundList::theInstance(DEFAULT_INIT_SIZE);
+SoundList SoundList::theInstance;
 
 SoundList& SoundList::theSoundList() {
 DOTRACE("SoundList::theSoundList");

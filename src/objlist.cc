@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Oct 23 11:49:46 2000
+// written: Wed Oct 25 17:52:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,13 +18,9 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
-  const int DEFAULT_INIT_SIZE = 10;
-}
+ObjList ObjList::theInstance;
 
-ObjList ObjList::theInstance(DEFAULT_INIT_SIZE);
-
-ObjList::ObjList(int size) : Base(size)
+ObjList::ObjList() : Base()
 {
 DOTRACE("ObjList::ObjList");
 }
