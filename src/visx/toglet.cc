@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jul  3 16:10:20 2002
+// written: Wed Jul  3 17:29:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@
 
 #include <X11/Xlib.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 #include <tk.h>
 #include <cmath>
 
@@ -83,7 +84,8 @@ public:
     {
       FIXED_SCALE,
       FIXED_RECT,
-      MIN_RECT
+      MIN_RECT,
+      PERSPECTIVE,
     };
 
   TogletSizer(double dist = 30.0) :
@@ -108,6 +110,9 @@ public:
   // For FIXED_RECT or MIN_RECT modes:
   void scaleRect(double factor);
 
+  // For PERSPECTIVE modes:
+  void setPerspective(double fovy, double zNear, double zFar);
+
   void reconfigure(const int width, const int height);
 
 private:
@@ -128,6 +133,15 @@ private:
   double itsViewingDistance;    // inches
   double itsPixelsPerUnit;      // pixels per GLunit
   Gfx::Rect<double> itsRect;
+
+  struct Perspective
+  {
+    double fovy;
+    double zNear;
+    double zFar;
+  };
+
+  Perspective itsPerspective;
 };
 
 void TogletSizer::setPixelsPerUnit(double s)
@@ -188,6 +202,17 @@ void TogletSizer::scaleRect(double factor)
   itsRect.heightenByFactor(factor);
 }
 
+void TogletSizer::setPerspective(double fovy, double zNear, double zFar)
+{
+DOTRACE("TogletSizer::setPerspective");
+
+  itsPolicy = PERSPECTIVE;
+
+  itsPerspective.fovy = fovy;
+  itsPerspective.zNear = zNear;
+  itsPerspective.zFar = zFar;
+}
+
 void TogletSizer::reconfigure(const int width, const int height)
 {
 DOTRACE("TogletSizer::reconfigure");
@@ -238,6 +263,14 @@ DOTRACE("TogletSizer::reconfigure");
 
         glOrtho(port.left(), port.right(),
                 port.bottom(), port.top(), -10.0, 10.0);
+      }
+      break;
+    case PERSPECTIVE:
+      {
+        gluPerspective(itsPerspective.fovy,
+                       double(width) / double(height),
+                       itsPerspective.zNear,
+                       itsPerspective.zFar);
       }
       break;
     default:
@@ -604,6 +637,13 @@ void Toglet::setViewingDistIn(double inches)
 {
 DOTRACE("Toglet::setViewingDistIn");
   rep->sizer->setViewingDistIn(inches);
+  rep->reconfigure();
+}
+
+void Toglet::setPerspective(double fovy, double zNear, double zFar)
+{
+DOTRACE("Toglet::setPerspective");
+  rep->sizer->setPerspective(fovy, zNear, zFar);
   rep->reconfigure();
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Apr  2 16:55:08 2002
+// written: Wed Jul  3 17:26:47 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -156,6 +156,7 @@ public:
     def( "dumpCmap", "toglet_id start_index end_index", &ObjTogl::dumpCmap );
     def( "dumpCmap", "toglet_id", &ObjTogl::dumpCmapAll );
     def( "Togl::inited", 0, &ObjTogl::inited );
+    def( "perspective", "toglet_id fovy zNear zFar", &Toglet::setPerspective );
     def( "see", "gxnode_id", &ObjTogl::see );
     def( "setColor", "index r g b", &ObjTogl::setColor );
     def( "setCurTrial", "toglet_id widget_id", &ObjTogl::setCurTrial );

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jun 26 12:34:10 2002
+// written: Wed Jul  3 17:27:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,7 @@ public:
   void setWidth(int val);
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
+  void setPerspective(double fovy, double zNear, double zFar);
 
   // widget functions
   virtual void bind(const char* event_sequence, const char* script);
