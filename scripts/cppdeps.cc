@@ -61,7 +61,7 @@ class cppdeps
   vector<string> m_user_ipath;
   vector<string> m_sys_ipath;
 
-  string m_srcdir;
+  vector<string> m_src_files;
   string m_objdir;
 
   typedef vector<string> include_list_t;
@@ -91,12 +91,14 @@ class cppdeps
 
   output_mode m_output_mode;
 
+  string m_strip_prefix;
+
 public:
   cppdeps(char** argv);
 
   void inspect();
 
-  string trim_dirname(const string& inp);
+  static string trim_filename(const string& inp);
 
   int is_cc_filename(const char* fname);
 
@@ -224,14 +226,9 @@ cppdeps::cppdeps(char** argv) :
         {
           m_sys_ipath.push_back(*++argv);
         }
-      else if (strcmp(*argv, "--src") == 0)
-        {
-          m_srcdir = trim_dirname(*++argv);
-          m_user_ipath.push_back(m_srcdir);
-        }
       else if (strcmp(*argv, "--objdir") == 0)
         {
-          m_objdir = trim_dirname(*++argv);
+          m_objdir = trim_filename(*++argv);
         }
       else if (strcmp(*argv, "--checksys") == 0)
         {
@@ -249,6 +246,37 @@ cppdeps::cppdeps(char** argv) :
         {
           m_output_mode = NESTED_INCLUDE_TREE;
         }
+      else if (strcmp(*argv, "--src") == 0)
+        {
+          const string fname = trim_filename(*++argv);
+          if (!file_exists(fname.c_str()))
+            {
+              cerr << "ERROR: no such source file: " << fname << '\n';
+              exit(1);
+            }
+          m_src_files.push_back(fname);
+          if (is_directory(fname.c_str()))
+            {
+              m_user_ipath.push_back(fname);
+              m_strip_prefix = fname;
+            }
+        }
+      // treat any unrecognized arguments as src files
+      else
+        {
+          const string fname = trim_filename(*argv);
+          if (!file_exists(fname.c_str()))
+            {
+              cerr << "ERROR: no such source file: " << fname << '\n';
+              exit(1);
+            }
+          m_src_files.push_back(fname);
+          if (is_directory(fname.c_str()))
+            {
+              m_user_ipath.push_back(fname);
+              m_strip_prefix = fname;
+            }
+        }
       ++argv;
     }
 }
@@ -263,11 +291,14 @@ void cppdeps::inspect()
   for (unsigned int i = 0; i < m_sys_ipath.size(); ++i)
     cerr << '\t' << m_sys_ipath[i] << '\n';
 
-  cerr << "\nsrcdir: " << m_srcdir << '\n';
+  cerr << "\nsources:\n";
+  for (unsigned int i = 0; i < m_src_files.size(); ++i)
+    cerr << '\t' << m_src_files[i] << '\n';
+
   cerr << "\nobjdir: " << m_objdir << '\n';
 }
 
-string cppdeps::trim_dirname(const string& inp)
+string cppdeps::trim_filename(const string& inp)
 {
   string result = inp;
   if (result[0] == '.' && result[1] == '/')
@@ -542,11 +573,8 @@ cppdeps::get_nested_includes(const string& filename)
 
 void cppdeps::batch_build()
 {
-  vector<string> files;
-
-  files.push_back(m_srcdir);
-
-  const unsigned int offset = m_srcdir.length() + 1;
+  // start off with a copy of m_src_files
+  vector<string> files (m_src_files);
 
   while (!files.empty())
     {
@@ -589,11 +617,24 @@ void cppdeps::batch_build()
                   {
                     const include_list_t& includes = get_nested_includes(current_file);
 
+                    string stripped_filename = current_file;
+
+                    if (strncmp(current_file.c_str(),
+                                m_strip_prefix.c_str(),
+                                m_strip_prefix.length()) == 0)
+                      {
+                        const unsigned int offset = m_strip_prefix.length() + 1;
+
+                        stripped_filename =
+                          current_file.substr(offset,
+                                              current_file.length()-offset-ext_len);
+                      }
+
                     // Use C-style stdio here since it came out running quite
                     // a bit faster than iostreams, at least under g++-3.2.
                     printf("%s/%s.o: ",
                            m_objdir.c_str(),
-                           current_file.substr(offset, current_file.length()-ext_len-offset).c_str());
+                           stripped_filename.c_str());
 
                     for (include_list_t::const_iterator
                            itr = includes.begin(),
