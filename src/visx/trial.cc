@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Jun  5 14:04:20 2001
+// written: Wed Jun  6 09:07:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -466,6 +466,8 @@ DOTRACE("Trial::Impl::trDoTrial");
   if ( !assertIdsOrHalt() ) return;
 
   itsState = ACTIVE;
+
+  itsCurrentNode = 0;
 
   timingHdlr().thBeginTrial(widget, errhdlr, *self);
   timeTrace("trDoTrial"); 
