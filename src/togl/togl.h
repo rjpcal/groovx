@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Aug  5 13:12:11 2002
+// written: Mon Aug  5 13:31:59 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -26,7 +26,6 @@
 
 #include <tcl.h>
 #include <tk.h>
-#include <GL/gl.h>
 #ifdef TOGL_X11
 #include <X11/Xlib.h>
 #endif
@@ -50,7 +49,6 @@ class Togl;
 extern "C"
 {
   typedef void (Togl_Callback) (Togl* togl);
-  typedef int  (Togl_CmdProc) (Togl* togl, int argc, char *argv[]);
 
   extern int Togl_Init( Tcl_Interp *interp );
 
@@ -87,9 +85,8 @@ public:
   void setDestroyFunc( Togl_Callback *proc );
 
   // Miscellaneous
-  int configure( Tcl_Interp *interp, int argc, const char *argv[] );
+  int configure(int objc, Tcl_Obj* const objv[]);
   void makeCurrent() const;
-  static void createCommand( char *cmd_name, Togl_CmdProc *cmd_proc );
   void postRedisplay();
   void postReconfigure();
   void swapBuffers() const;
@@ -112,9 +109,9 @@ public:
                  float red, float green, float blue ) const;
 
   // Bitmap fonts
-  GLuint loadBitmapFont( const char *fontname ) const;
-  GLuint loadBitmapFonti( int fontnumber ) const;
-  void unloadBitmapFont( GLuint fontbase ) const;
+  unsigned int loadBitmapFont( const char *fontname ) const;
+  unsigned int loadBitmapFonti( int fontnumber ) const;
+  void unloadBitmapFont( unsigned int fontbase ) const;
 
   // Overlay functions
   static void overlayDisplayFunc( Togl_Callback *proc );

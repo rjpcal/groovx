@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 13:15:06 2002
+// written: Mon Aug  5 13:35:00 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -114,7 +114,7 @@ public:
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
   ~Impl();
 
-  int configure(Tcl_Interp* interp, int argc, const char* argv[]);
+  int configure(int objc, Tcl_Obj* const objv[]);
 
   void makeCurrent() const;
 
@@ -365,7 +365,6 @@ static Togl_Callback *DefaultDestroyProc = NULL;
 static Togl_Callback *DefaultOverlayDisplayProc = NULL;
 static Togl_Callback *DefaultTimerProc = NULL;
 static ClientData DefaultClientData = NULL;
-static Tcl_HashTable CommandTable;
 
 
 
@@ -409,27 +408,11 @@ void Togl::setReshapeFunc( Togl_Callback *proc )
 void Togl::setDestroyFunc( Togl_Callback *proc )
   { rep->setDestroyFunc(proc); }
 
-int Togl::configure(Tcl_Interp *interp, int argc, const char *argv[])
-  { return rep->configure(interp, argc, argv); }
+int Togl::configure(int objc, Tcl_Obj* const objv[])
+  { return rep->configure(objc, objv); }
 
 void Togl::makeCurrent() const
   { rep->makeCurrent(); }
-
-/*
- * Togl_CreateCommand
- *
- *   Declares a new C sub-command of Togl callable from Tcl.
- *   Every time the sub-command is called from Tcl, the
- *   C routine will be called with all the arguments from Tcl.
- */
-void Togl::createCommand( char *cmd_name, Togl_CmdProc *cmd_proc)
-{
-DOTRACE("Togl::createCommand");
-  int new_item;
-  Tcl_HashEntry *entry =
-    Tcl_CreateHashEntry(&CommandTable, cmd_name, &new_item);
-  Tcl_SetHashValue(entry, cmd_proc);
-}
 
 void Togl::postRedisplay()
   { rep->postRedisplay(); }
@@ -468,25 +451,24 @@ const char* Togl::pathname() const
   { return rep->pathname(); }
 
 int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
-                   int argc, char *argv[])
+                   int objc, Tcl_Obj* const objv[])
 {
 DOTRACE("<togl.cc>::Togl_WidgetCmd");
   Togl::Impl* impl = static_cast<Togl::Impl*>(clientData);
   int result = TCL_OK;
 
-  if (argc < 2)
+  if (objc < 2)
     {
       Tcl_AppendResult(interp, "wrong # args: should be \"",
-                       argv[0], " ?options?\"", NULL);
+                       Tcl_GetString(objv[0]), " ?options?\"", NULL);
       return TCL_ERROR;
     }
 
   Tk_Preserve((ClientData)impl);
 
-  if (!strncmp(argv[1], "configure", Util::max((std::size_t)1,
-                                               strlen(argv[1]))))
+  if (strcmp(Tcl_GetString(objv[1]), "configure") == 0)
     {
-      if (argc == 2)
+      if (objc == 2)
         {
           /* Return list of all configuration parameters */
           Tcl_Obj* objResult =
@@ -501,9 +483,9 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
               result = TCL_ERROR;
             }
         }
-      else if (argc == 3)
+      else if (objc == 3)
         {
-          if (strcmp(argv[2],"-extensions")==0)
+          if (strcmp(Tcl_GetString(objv[2]),"-extensions")==0)
             {
               /* Return a list of OpenGL extensions available */
               Tcl_SetResult(interp, (char*) glGetString(GL_EXTENSIONS),
@@ -513,12 +495,9 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
           else
             {
               /* Return a specific configuration parameter */
-              Tcl_Obj* optName = Tcl_NewStringObj(argv[2], -1);
-              Tcl_IncrRefCount(optName);
               Tcl_Obj* objResult =
                 Tk_GetOptionInfo(interp, (char*) &impl->itsOpts, toglOptionTable,
-                                 optName, impl->tkWin());
-              Tcl_DecrRefCount(optName);
+                                 objv[2], impl->tkWin());
               if (objResult != 0)
                 {
                   Tcl_SetObjResult(interp, objResult);
@@ -532,54 +511,29 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
       else
         {
           /* Execute a configuration change */
-          result = impl->configure(interp, argc-2,
-                                   const_cast<const char**>(argv+2));
+          result = impl->configure(objc-2, objv+2);
         }
     }
-  else if (!strncmp(argv[1], "render", Util::max((std::size_t)1,
-                                                 strlen(argv[1]))))
+  else if (strcmp(Tcl_GetString(objv[1]), "render") == 0)
     {
       /* force the widget to be redrawn */
       Togl::Impl::dummyRenderCallback(static_cast<ClientData>(impl));
     }
-  else if (!strncmp(argv[1], "swapbuffers", Util::max((std::size_t)1,
-                                                      strlen(argv[1]))))
+  else if (strcmp(Tcl_GetString(objv[1]), "swapbuffers") == 0)
     {
       /* force the widget to be redrawn */
       impl->swapBuffers();
     }
-  else if (!strncmp(argv[1], "makecurrent", Util::max((std::size_t)1,
-                                                      strlen(argv[1]))))
+  else if (strcmp(Tcl_GetString(objv[1]), "makecurrent") == 0)
     {
       /* force the widget to be redrawn */
       impl->makeCurrent();
     }
   else
     {
-      /* Probably a user-defined function */
-      Tcl_HashEntry* entry = Tcl_FindHashEntry(&CommandTable, argv[1]);
-      if (entry != NULL)
-        {
-          Togl_CmdProc* cmd_proc = (Togl_CmdProc *)Tcl_GetHashValue(entry);
-          result = cmd_proc(impl->itsOwner, argc, argv);
-        }
-      else
-        {
-          Tcl_AppendResult(interp, "Togl: Unknown option: ", argv[1], "\n",
-                           "Try: configure or render\n",
-                           "or one of the user-defined commands:\n",
-                           NULL);
-          Tcl_HashSearch search;
-          entry = Tcl_FirstHashEntry(&CommandTable, &search);
-          while (entry)
-            {
-              Tcl_AppendResult(interp, "  ",
-                               Tcl_GetHashKey(&CommandTable, entry),
-                               "\n", NULL);
-              entry = Tcl_NextHashEntry(&search);
-            }
-          result = TCL_ERROR;
-        }
+      Tcl_AppendResult(interp, "Togl: Unknown option: ",
+                       Tcl_GetString(objv[1]), NULL);
+      result = TCL_ERROR;
     }
 
   Tk_Release((ClientData)impl);
@@ -782,10 +736,10 @@ DOTRACE("Togl::Impl::Impl");
         }
     }
 
-  itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
-                                   Togl_WidgetCmd,
-                                   static_cast<ClientData>(this),
-                                   Togl::Impl::dummyWidgetCmdDeletedProc);
+  itsWidgetCmd = Tcl_CreateObjCommand(itsInterp, Tk_PathName(itsTkWin),
+                                      Togl_WidgetCmd,
+                                      static_cast<ClientData>(this),
+                                      Togl::Impl::dummyWidgetCmdDeletedProc);
 
   Tk_CreateEventHandler(itsTkWin,
                         ExposureMask | StructureNotifyMask,
@@ -825,36 +779,19 @@ DOTRACE("Togl::Impl::~Impl");
 //
 //---------------------------------------------------------------------
 
-int Togl::Impl::configure(Tcl_Interp* interp, int argc, const char* argv[])
+int Togl::Impl::configure(int objc, Tcl_Obj* const objv[])
 {
 DOTRACE("Togl::Impl::configure");
 
-  Tcl_Obj** objv = new Tcl_Obj*[argc+1];
-
-  for (int i = 0; i < argc; ++i)
-    {
-      objv[i] = Tcl_NewStringObj(argv[i], -1);
-      Tcl_IncrRefCount(objv[i]);
-    }
-
-  objv[argc] = 0;
-
   int mask = 0;
 
-  if (Tk_SetOptions(interp, reinterpret_cast<char *>(&itsOpts),
-                    toglOptionTable, argc, objv, itsTkWin,
+  if (Tk_SetOptions(itsInterp, reinterpret_cast<char *>(&itsOpts),
+                    toglOptionTable, objc, objv, itsTkWin,
                     (Tk_SavedOptions*) 0, &mask)
       == TCL_ERROR)
     {
       return TCL_ERROR;
     }
-
-  for (int i = 0; i < argc; ++i)
-    {
-      Tcl_DecrRefCount(objv[i]);
-    }
-
-  delete [] objv;
 
   Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
 
@@ -1449,10 +1386,10 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
 namespace
 {
-  int ToglCmd(ClientData, Tcl_Interp* interp, int argc, char** argv)
+  int ToglCmd(ClientData, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
   {
     DOTRACE("ToglCmd");
-    if (argc <= 1)
+    if (objc <= 1)
       {
         return TCL_ERR(interp,
                        "wrong # args: should be \"pathName read filename\"");
@@ -1461,8 +1398,8 @@ namespace
     /* Create Togl data structure */
     try
       {
-        Togl* p = new Togl(interp, argv[1]);
-        p->configure(interp, argc-2, const_cast<const char**>(argv+2));
+        Togl* p = new Togl(interp, Tcl_GetString(objv[1]));
+        p->configure(objc-2, objv+2);
       }
     catch (...)
       {
@@ -1479,9 +1416,7 @@ DOTRACE("Togl_Init");
 
   Tcl_PkgProvide(interp, "Togl", TOGL_VERSION);
 
-  Tcl_CreateCommand(interp, "togl", ToglCmd, (ClientData) 0, NULL);
-
-  Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
+  Tcl_CreateObjCommand(interp, "togl", ToglCmd, (ClientData) 0, NULL);
 
   return TCL_OK;
 }
