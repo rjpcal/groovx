@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed May 23 18:52:11 2001
+// written: Sun May 27 15:38:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,8 +79,6 @@ public:
 										  TimingHdlr::FROM_ABORT));
 
 	 Tcl::TclPkg::eval("namespace eval Th { "
-							 "    proc timingHdlr {} { return [Th] } }");
-	 Tcl::TclPkg::eval("namespace eval Th { "
 							 "    proc autosavePeriod {id args} { "
 							 "        return [eval Expt::autosavePeriod $args] } }");
   }
@@ -114,9 +112,6 @@ public:
 	 declareCAttrib("timeout",
 						 &TimingHandler::getTimeout,
 						 &TimingHandler::setTimeout);
-
-	 Tcl::TclPkg::eval("namespace eval SimpleTh { "
-							 "    proc timingHandler {} { return [SimpleTh] } }");
   }
 };
 
