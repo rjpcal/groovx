@@ -46,7 +46,7 @@ PLATFORM := $(ARCH)
 LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
 
 PROJECT = $(HOME)/sorcery/grsh
-SRC := src
+SRC := ./src
 DEP := ./dep/$(PLATFORM)
 OBJ := ./obj/$(PLATFORM)
 LOGS := ./logs
@@ -57,6 +57,7 @@ SCRIPTS := ./scripts
 LOCAL_LIB := $(LOCAL_ARCH)/lib
 LOCAL_BIN := $(LOCAL_ARCH)/bin
 TMP_DIR := ./tmp/$(PLATFORM)
+TMP_FILE := $(TMP_DIR)/tmpfile
 
 #-------------------------------------------------------------------------
 #
@@ -263,8 +264,8 @@ TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
 
 STATIC_SRCS := \
-	$(shell grep -l 'GL/gl\.h' src/*.cc) \
-	$(shell grep -l 'int main' src/*.cc)
+	$(shell grep -l 'GL/gl\.h' $(SRC)/*.cc) \
+	$(shell grep -l 'int main' $(SRC)/*.cc)
 
 STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(STATIC_SRCS)))
@@ -275,7 +276,7 @@ GRSH_STATIC_OBJS := $(STATIC_OBJS) $(TOGL_OBJS)
 # libDeepVision
 #
 
-DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard src/*.cc))
+DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard $(SRC)/*.cc))
 DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(DEEPVISION_SRCS)))
 
@@ -354,20 +355,14 @@ endif
 #
 #-------------------------------------------------------------------------
 
-all: showpid TAGS $(ALL_SHLIBS) $(EXECUTABLE)
+all: dir_structure TAGS $(ALL_SHLIBS) $(EXECUTABLE)
 	$(EXECUTABLE) ./testing/grshtest.tcl
-
-.PHONY: showpid
-showpid:
-ifeq ($(PLATFORM),i686)
-	ps -ef | grep make
-endif
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CC) -o $(TMP_DIR)/tmpfile $(CMDLINE); mv $(TMP_DIR)/tmpfile $@
+	$(CC) -o $(TMP_FILE) $(CMDLINE); mv $(TMP_FILE) $@
 
 #-------------------------------------------------------------------------
 #
@@ -395,10 +390,10 @@ $(SRC)/%.preh : $(SRC)/%.h
 #-------------------------------------------------------------------------
 
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $(TMP_DIR)/tmpfile $^; mv $(TMP_DIR)/tmpfile $@
+	$(SHLIB_CMD) $(TMP_FILE) $^; mv $(TMP_FILE) $@
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $(TMP_DIR)/tmpfile $^; mv $(TMP_DIR)/tmpfile $@
+	$(STATLIB_CMD) $(TMP_FILE) $^; mv $(TMP_FILE) $@
 
 $(LIBDEEPVISION): $(DEEPVISION_OBJS)
 $(LIBDEEPTCL):    $(DEEPTCL_OBJS)
@@ -437,12 +432,33 @@ include $(DEP_FILE)
 
 #-------------------------------------------------------------------------
 #
+# Build rules for directory structure
+#
+#-------------------------------------------------------------------------
+
+SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
+ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR)
+
+dir_structure:
+	for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir $$dr; fi; done
+
+#-------------------------------------------------------------------------
+#
 # Miscellaneous targets
 #
 #-------------------------------------------------------------------------
 
-# Remove all object files and build a new production executable from scratch
-new: cleaner $(EXECUTABLE)
+$(IDEP)/AdepAliases: $(IDEP)/FileList $(ALL_SOURCES) $(ALL_HEADERS)
+	adep -s -f$(IDEP)/FileList > $(IDEP)/AdepAliases
+
+backup:
+	tclsh $(SCRIPTS)/Backup.tcl
+
+benchmarks: $(EXECUTABLE)
+	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
+
+cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
+	cdep -i$(IDEP)/CdepSearchpath $+ > $(IDEP)/CdepDeps
 
 # Remove all backups, temporaries, and coredumps
 clean:
@@ -454,42 +470,38 @@ cleaner: clean
 	rm -f $(OBJ)/*$(OBJ_EXT) $(OBJ)/*/*$(OBJ_EXT) \
 	 $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
 
-# Generate TAGS file based on all source files
-TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
-	$(ETAGS) -fTAGS $(ALL_SOURCES) $(ALL_HEADERS)
-
-H_TAGS: $(ALL_HEADERS)
-	$(ETAGS) -fH_TAGS $(ALL_HEADERS)
-
 # Count the lines in all source files
 count:
 	wc -l $(ALL_SOURCES) $(ALL_HEADERS)
 
-# Count the number of non-commented source lines
-ncsl:
-	NCSL $(ALL_SOURCES) $(ALL_HEADERS)
-
 do_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
-
-o_sizes:
-	ls -lLR obj/$(PLATFORM) | grep "\.o" | sort -n +4 > o_sizes
 
 docs: $(DOC)/DoxygenConfig $(SRC)/*.h $(SRC)/*.doc
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
 
-$(IDEP)/AdepAliases: $(IDEP)/FileList $(ALL_SOURCES) $(ALL_HEADERS)
-	adep -s -f$(IDEP)/FileList > $(IDEP)/AdepAliases
-
-cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
-	cdep -i$(IDEP)/CdepSearchpath $+ > $(IDEP)/CdepDeps
+# Generate tags file based only on header files
+H_TAGS: $(ALL_HEADERS)
+	$(ETAGS) -fH_TAGS $(ALL_HEADERS)
 
 ldeps: cdeps
 	ldep -d$(IDEP)/CdepDeps -U./src -U./src/tcl -U./src/util  \
 		> $(IDEP)/Ldeps || /bin/true
 
-backup:
-	tclsh $(SCRIPTS)/Backup.tcl
+# Count the number of non-commented source lines
+ncsl:
+	NCSL $(ALL_SOURCES) $(ALL_HEADERS)
 
-benchmarks: $(EXECUTABLE)
-	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
+# Remove all object files and build a new production executable from scratch
+new: cleaner $(EXECUTABLE)
+
+o_sizes:
+	ls -lLR obj/$(PLATFORM) | grep "\.o" | sort -n +4 > o_sizes
+
+.PHONY: showpid
+showpid:
+	ps -ef | grep make
+
+# Generate TAGS file based on all source files
+TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
+	$(ETAGS) -fTAGS $(ALL_SOURCES) $(ALL_HEADERS)
