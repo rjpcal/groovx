@@ -96,16 +96,17 @@ ifeq ($(PLATFORM),i686)
 endif
 
 ifeq ($(PLATFORM),ppc)
-	COMPILER := ppc-g++-2
+	COMPILER := g++2
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
-	CPP_DEFINES += -DPPC
+	CPP_DEFINES += -DPPC -Dlrand48=rand
 	DEFAULT_MODE := debug
 	ETAGS := etags
 	AUDIO_LIB := -lesd -laudiofile
 # The /sw/lib and /sw/include directories are managed by Fink
 	LIB_PATH += -L/usr/X11R6/lib -L/sw/lib
 	INCLUDE_PATH += -I/usr/X11R6/include -I/sw/include
+
 endif
 
 ifndef MODE
@@ -129,8 +130,10 @@ ifeq ($(MODE),prod)
 	LIB_SUFFIX := $(VERSION)
 endif
 
+LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
+
 ifeq ($(COMPILER),MIPSpro)
-	CC := time /opt/MIPSpro/bin/CC -mips3
+	CXX := time /opt/MIPSpro/bin/CC -mips3
 	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
 		-e '/static const char vcid_/,/^ *\^$$/d'
 	CC_SWITCHES += -n32 -ptused -no_prelink \
@@ -149,23 +152,12 @@ ifeq ($(COMPILER),MIPSpro)
 		CC_SWITCHES += -O2
 	endif
 
-	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
-
-	SHLIB_CMD := $(CC) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
-	STATLIB_CMD := $(CC) -ar -o
+	SHLIB_CMD := $(CXX) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
+	STATLIB_CMD := $(CXX) -ar -o
 endif
 
-ifeq ($(COMPILER),g++)
-	CC := time g++
-# This filter removes warnings that are triggered by standard library files
-	NFILTER := |& sed \
-		-e '/g++-3.*warning/d;' \
-		-e '/In file included.*g++-3/,/:/d;' \
-		-e '/g++-3.*In method/d;' \
-		-e '/g++-3.*At top level/d;' \
-		-e '/g++-3.*In instantiation of/,/instantiated from here/d' \
-		-e '/In instantiation of/,/has a non-virtual destructor/d' \
-		-e '/has a non-virtual destructor/d'
+ifeq ($(COMPILER),g++2)
+	CXX := time g++2
 	CC_SWITCHES += -Wall -W -Wsign-promo
 	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
@@ -179,44 +171,20 @@ ifeq ($(COMPILER),g++)
 		CC_SWITCHES += -O3
 	endif
 
-	SHLIB_CMD := $(CC) -shared -o
-	STATLIB_CMD := ar rus
-	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
-endif
-
-ifeq ($(COMPILER),ppc-g++-2)
-	CC := time c++
-# This filter removes warnings that are triggered by standard library files
-	NFILTER := |& sed \
-		-e '/darwin.*warning/d;' \
-		-e '/In file included.*darwin/,/:/d;' \
-		-e '/darwin.*In method/d;' \
-		-e '/darwin.*At top level/d;' \
-		-e '/darwin.*In instantiation of/,/instantiated from here/d' \
-		-e '/In instantiation of/,/has a non-virtual destructor/d' \
-		-e '/has a non-virtual destructor/d'
-	CC_SWITCHES += -Wall -W -Wsign-promo
-	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
-
-	CPP_DEFINES += -Dlrand48=rand
+ifeq ($(PLATFORM),ppc)
 	CC_SWITCHES += -dynamic
 
-	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g -O1
-	endif
-
-	ifeq ($(MODE),prod)
-		CC_SWITCHES += -O3
-	endif
-
 # Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
-	SHLIB_CMD := c++ -dynamiclib -flat_namespace -undefined suppress -o
+	SHLIB_CMD := $(CXX) -dynamiclib -flat_namespace -undefined suppress -o
 	STATLIB_CMD := libtool -static -o
-	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
+else
+	SHLIB_CMD := $(CXX) -shared -o
+	STATLIB_CMD := ar rus
+endif
 endif
 
 ifeq ($(COMPILER),g++3)
-	CC := time g++-3.1
+	CXX := time g++-3.1
 # Filter the compiler output...
 	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 	CC_SWITCHES += $(WARNINGS)
@@ -236,9 +204,7 @@ ifeq ($(COMPILER),g++3)
 		CC_SWITCHES += -O2
 	endif
 
-	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
-
-	SHLIB_CMD := $(CC) -shared -o
+	SHLIB_CMD := $(CXX) -shared -o
 	STATLIB_CMD := ar rus
 endif
 
@@ -289,23 +255,19 @@ ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
 $(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
 	echo $< >> $(LOGS)/CompileStats
-ifdef FILTER
-	csh -fc "($(CC) -c $< -o $@ $(ALL_CC_OPTIONS)) $(FILTER)"
-else
-	$(CC) $(ALL_CC_OPTIONS) \
+	$(CXX) $(ALL_CC_OPTIONS) \
 		-c $< \
 		-o $@
-endif
 
 # to avoid deleting any intermediate targets
 .SECONDARY:
 
 $(SRC)/%.precc : $(SRC)/%.cc
-	$(CC) -E $< $(ALL_CC_OPTIONS) > $@
+	$(CXX) -E $< $(ALL_CC_OPTIONS) > $@
 
 $(SRC)/%.preh : $(SRC)/%.h
 	echo "#include \"$<\"" > .temp.cc
-	$(CC) -E .temp.cc $(ALL_CC_OPTIONS) > $@
+	$(CXX) -E .temp.cc $(ALL_CC_OPTIONS) > $@
 
 #-------------------------------------------------------------------------
 #
@@ -478,7 +440,7 @@ GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
+	$(CXX) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
 
 #-------------------------------------------------------------------------
 #
