@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jul 16 11:34:29 2001
+// written: Mon Jul 16 12:59:01 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -15,10 +15,9 @@
 #ifndef DLISTTCL_CC_DEFINED
 #define DLISTTCL_CC_DEFINED
 
-#include "tcl/objfunctor.h"
-#include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclitempkg.h"
+#include "tcl/tcllistobj.h"
 
 #include <cstdlib>
 

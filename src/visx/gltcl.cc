@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jul 16 12:12:04 2001
+// written: Mon Jul 16 13:02:36 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -18,15 +18,14 @@
 #ifndef GLTCL_CC_DEFINED
 #define GLTCL_CC_DEFINED
 
-#include "tcl/functor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclitempkg.h"
+#include "tcl/tcllistobj.h"
 
 #include "util/arrays.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <tcl.h>
 #include <cmath>                // for sqrt() in drawThickLine
 #include <map>
 
@@ -797,14 +796,14 @@ extern "C"
 int Gltcl_Init(Tcl_Interp* interp) {
 DOTRACE("Gltcl_Init");
 
-  new GLTcl::GLPkg(interp);
+  Tcl::TclPkg* pkg = new GLTcl::GLPkg(interp);
 
 #ifdef ACC_COMPILER
 //   typeid(out_of_range);
 //   typeid(length_error);
 #endif
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_gltcl_cc[] = "$Header$";

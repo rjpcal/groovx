@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sun Jul 15 15:31:16 2001
+// written: Mon Jul 16 13:00:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,10 +16,9 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
-#include "tcl/tclpkg.h"
+#include "tcl/tclitempkg.h"
+#include "tcl/tcllistobj.h"
 
 #include "util/objdb.h"
 #include "util/objmgr.h"
@@ -168,7 +167,7 @@ public:
   {
     TclItemPkg::addIoCommands();
 
-	 Tcl::defGenericObjCmds<IO::IoObject>(this);
+    Tcl::defGenericObjCmds<IO::IoObject>(this);
 
     defGetter("type", &IO::IoObject::ioTypename);
   }
@@ -180,7 +179,7 @@ public:
   ObjectPkg(Tcl_Interp* interp) :
     TclItemPkg(interp, "Obj", "$Revision$")
   {
-	 Tcl::defGenericObjCmds<Util::Object>(this);
+    Tcl::defGenericObjCmds<Util::Object>(this);
 
     defGetter("refCount", &Util::Object::refCount);
     defAction("incrRefCount", &Util::Object::incrRefCount);
@@ -215,9 +214,9 @@ public:
     def( &IoTcl::loadObjects, "loadObjects", "filename num_to_read=-1" );
     def( &IoTcl::loadAllObjects, "loadObjects", "filename" );
     def( &IoTcl::saveObjects,
-			"saveObjects", "objids filename use_bases=yes" );
+         "saveObjects", "objids filename use_bases=yes" );
     def( &IoTcl::saveObjectsDefault,
-			"saveObjects", "objids filename" );
+         "saveObjects", "objids filename" );
 
     TclPkg::eval("namespace eval IoDb {\n"
                  "  proc clear {args} { eval ObjDb::clear $args }\n"

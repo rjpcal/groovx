@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Jul 16 09:23:45 2001
+// written: Mon Jul 16 12:59:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "io/fields.h"
 
+#include "tcl/tcllistobj.h"
 #include "tcl/tclvalue.h"
 #include "tcl/tclveccmd.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Jul 16 11:37:42 2001
+// written: Mon Jul 16 12:57:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,9 @@
 #include "block.h"
 #include "trialbase.h"
 
-#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
+#include "tcl/tclitempkg.h"
+#include "tcl/tcllistobj.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jul 16 12:51:51 2001
+// written: Mon Jul 16 13:01:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "util/object.h"
 
 #include "tcl/tclitempkg.h"
-
+#include "tcl/tcllistobj.h"
 #include "tcl/stringifycmd.h"
 
 #define NO_TRACE
@@ -126,7 +126,7 @@ Tcl::IsCmd::~IsCmd() {}
 
 void Tcl::IsCmd::invoke(Tcl::Context& ctx)
 {
-  int id = ctx.getValFromArg(1, TypeCue<int>());
+  Util::UID id = ctx.getValFromArg(1, TypeCue<Util::UID>());
   ctx.setResult(itsCaster->isIdMyType(id));
 }
 

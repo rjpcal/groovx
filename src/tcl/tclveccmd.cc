@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Thu Jul 12 13:04:16 2001
+// written: Mon Jul 16 13:02:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "tcl/tclveccmd.h"
 
 #include "tcl/tclerror.h"
+#include "tcl/tcllistobj.h"
 
 #include "util/minivec.h"
 

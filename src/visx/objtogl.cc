@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Sun Jul 15 15:05:51 2001
+// written: Mon Jul 16 13:04:03 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -22,10 +22,9 @@
 
 #include "gx/gxnode.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclitempkg.h"
+#include "tcl/tcllistobj.h"
 
 #include "util/objfactory.h"
 #include "util/ref.h"

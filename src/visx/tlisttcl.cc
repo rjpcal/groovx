@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Jul 16 10:37:12 2001
+// written: Mon Jul 16 12:58:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "gx/gxseparator.h"
 
 #include "tcl/tclitempkg.h"
+#include "tcl/tcllistobj.h"
 
 #include "util/arrays.h"
 #include "util/ref.h"
