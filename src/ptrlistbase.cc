@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Thu Mar 23 20:33:49 2000
+// written: Fri Mar 24 18:51:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,9 @@
 #include <typeinfo>
 #include <vector>
 
+#define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 
@@ -102,7 +104,9 @@ DOTRACE("VoidPtrList::isValidId");
   DebugEvalNL(id<itsImpl->itsVec.size());
   DebugEvalNL(itsImpl->itsVec[id] != NULL);
 
-  return ( id >= 0 && size_t(id) < itsImpl->itsVec.size() && itsImpl->itsVec[id] != NULL ); 
+  return ( id >= 0 &&
+			  size_t(id) < itsImpl->itsVec.size() &&
+			  itsImpl->itsVec[id] != NULL ); 
 }
 
 void VoidPtrList::remove(int id) {
@@ -152,6 +156,8 @@ DOTRACE("VoidPtrList::releaseVoidPtr");
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
 
+  DebugEvalNL(itsImpl->itsFirstVacant);
+
   return ptr;
 }
 
@@ -166,22 +172,26 @@ void VoidPtrList::insertVoidPtrAt(int id, void* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtrAt");
   if (id < 0) return;
 
-  if (size_t(id) >= itsImpl->itsVec.capacity()) {
-	 itsImpl->itsVec.reserve(id+RESERVE_CHUNK);
+  size_t uid = size_t(id);
+
+  if (uid >= itsImpl->itsVec.capacity()) {
+	 itsImpl->itsVec.reserve(uid+RESERVE_CHUNK);
   }
-  if (size_t(id) >= itsImpl->itsVec.size()) {
-    itsImpl->itsVec.resize(id+1, NULL);
+  if (uid >= itsImpl->itsVec.size()) {
+    itsImpl->itsVec.resize(uid+1, NULL);
   }
+
+  Assert(itsImpl->itsVec.size() > uid);
 
   // Check to see if we are attempting to insert the same object that
   // is already at location 'id'; if so, we return immediately, since
   // nothing needs to be done (in particular, we had better not delete
   // the "previous" object and then hold on the "new" pointer, since
   // the "new" pointer would then be dangling).
-  if (itsImpl->itsVec[id] == ptr) return;
+  if (itsImpl->itsVec[uid] == ptr) return;
 
-  destroyPtr(itsImpl->itsVec[id]);
-  itsImpl->itsVec[id] = ptr;
+  destroyPtr(itsImpl->itsVec[uid]);
+  itsImpl->itsVec[uid] = ptr;
 
   // It is possible that ptr is NULL, in this case, we might need to
   // adjust itsImpl->itsFirstVacant if it is currently beyond than the site
@@ -190,10 +200,13 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
 	 itsImpl->itsFirstVacant = id;
 
   // make sure itsImpl->itsFirstVacant is up-to-date
-  while ( (itsImpl->itsVec[itsImpl->itsFirstVacant] != NULL) &&
-          (size_t(++itsImpl->itsFirstVacant) < itsImpl->itsVec.size()) );
+  while ( (size_t(itsImpl->itsFirstVacant) < itsImpl->itsVec.size()) &&
+			 (itsImpl->itsVec.at(itsImpl->itsFirstVacant) != NULL) )
+	 { ++(itsImpl->itsFirstVacant); }
 
   afterInsertHook(id, ptr);
+
+  DebugEvalNL(itsImpl->itsFirstVacant);
 }
 
 void VoidPtrList::afterInsertHook(int /* id */, void* /* ptr */) {
@@ -225,7 +238,8 @@ DOTRACE("VoidPtrList::voidVecEnd");
 
 void VoidPtrList::voidVecResize(unsigned int new_size) {
 DOTRACE("VoidPtrList::voidVecResize");
-  itsImpl->itsVec.resize(new_size, NULL); 
+  if ( new_size > itsImpl->itsVec.size() )
+	 itsImpl->itsVec.resize(new_size, 0);
 }
 
 static const char vcid_voidptrlist_cc[] = "$Header$";
