@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Thu Feb 21 14:51:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -344,6 +344,10 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
                                 posid_list.end<Util::UID>());
 
   STD_IO::ifstream ifs(objid_file);
+
+  if (ifs.fail())
+    throw Util::Error(fstring("couldn't open '", objid_file,
+                              "' for reading"));
 
   const int BUF_SIZE = 200;
   char line[BUF_SIZE];
