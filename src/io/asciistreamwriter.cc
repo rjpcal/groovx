@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Thu Nov  4 17:04:12 1999
+// written: Fri Nov  5 10:13:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,10 @@
 
 #if defined(IRIX6) || defined(HP9000S700)
 #define AsciiStreamWriter ASW
+#endif
+
+#ifdef ACC_COMPILER
+#define NO_IOS_EXCEPTIONS
 #endif
 
 namespace {
@@ -60,12 +64,29 @@ namespace {
 
 class AsciiStreamWriter::Impl {
 public:
-  Impl(ostream& os) : itsBuf(os), itsToHandle(), itsHandled() {}
+  Impl(ostream& os) : itsBuf(os), itsToHandle(), itsHandled() 
+	 {
+#ifndef NO_IOS_EXCEPTIONS
+	 itsOriginalExceptionState = itsBuf.exceptions();
+	 itsBuf.exceptions( ios::eofbit | ios::badbit | ios::failbit );
+#endif
+	 }
+
+  ~Impl()
+	 {
+#ifndef NO_IOS_EXCEPTIONS
+		itsBuf.exceptions(itsOriginalExceptionState);
+#endif
+	 }
 
   ostream& itsBuf;
   vector<const IO *> itsToHandle;
   set<const IO *> itsHandled;
   vector<string> itsAttribs;
+
+#ifndef NO_IOS_EXCEPTIONS
+  ios::iostate itsOriginalExceptionState;
+#endif
 };
 
 AsciiStreamWriter::AsciiStreamWriter (ostream& os) : 
