@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 12:40:21 2002
+// written: Thu Nov 21 12:43:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,7 @@
 #include "gfx/gxsphere.h"
 #include "gfx/gxtransform.h"
 #include "gfx/pscanvas.h"
+#include "gfx/pointtcl.h"
 #include "gfx/recttcl.h"
 
 #include "io/ioproxy.h"
@@ -42,9 +43,6 @@
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
-
-// FIXME move this file to gfx/
-#include "visx/pointtcl.h"
 
 #include "util/trace.h"
 
