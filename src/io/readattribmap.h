@@ -34,8 +34,8 @@
 
 #include "util/strings.h"
 
-#include <list>
 #include <utility>
+#include <vector>
 
 namespace IO
 {
@@ -60,7 +60,7 @@ namespace IO
     fstring itsObjTag;
 
     typedef std::pair<fstring, Attrib> ValueType;
-    typedef std::list<ValueType> ListType;
+    typedef std::vector<ValueType> ListType;
 
     ListType itsMap;
 
