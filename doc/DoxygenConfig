@@ -178,6 +178,7 @@ TAB_SIZE             = 8
 
 INPUT                = /cit/rjpeters/sorcery/grsh/src \
  /cit/rjpeters/sorcery/grsh/src/gwt \
+ /cit/rjpeters/sorcery/grsh/src/gx \
  /cit/rjpeters/sorcery/grsh/src/io \
  /cit/rjpeters/sorcery/grsh/src/system \
  /cit/rjpeters/sorcery/grsh/src/tcl \
