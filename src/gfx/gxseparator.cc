@@ -41,12 +41,12 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
-#include "util/dlink_list.h"
 #include "util/error.h"
 #include "util/iter.h"
 #include "util/ref.h"
 #include "util/volatileobject.h"
 
+#include <list>
 #include <vector>
 
 #include "util/trace.h"
@@ -271,12 +271,15 @@ public:
     return new GxSepIter(*this);
   }
 
-  virtual bool     atEnd()  const { return itsNodes.is_empty(); }
+  virtual bool     atEnd()  const { return itsNodes.empty(); }
   virtual ValType&   get()  const { return itsNodes.front(); }
   virtual void      next()        { if (!atEnd()) itsNodes.pop_front(); }
 
 private:
-  mutable dlink_list<Util::Ref<GxNode> > itsNodes;
+  // Want to use a list instead of a vector-type container here since we
+  // need both push_back() and pop_front(). Could potentially use a deque
+  // instead.
+  mutable std::list<Util::Ref<GxNode> > itsNodes;
 };
 
 Util::FwdIter<const Util::Ref<GxNode> > GxSeparator::deepChildren()
