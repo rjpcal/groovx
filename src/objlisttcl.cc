@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar  4 04:09:42 2000
+// written: Mon Mar  6 19:09:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,10 @@
 #include "iomgr.h"
 #include "objlist.h"
 #include "listpkg.h"
+#include "util/strings.h"
 
 #include <fstream.h>
 #include <cctype>
-#include <string>
 #include <vector>
 
 #define NO_TRACE
@@ -64,8 +64,6 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
   
   ObjList& olist = ObjList::theObjList();
 
-  string dummy;
-
   int num_read = 0;
   vector<int> ids;
 
@@ -76,13 +74,13 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
 	 // allow for whole-line comments between objects beginning with '#'
 	 if (ifs.peek() == '#') {
-		getline(ifs, dummy, '\n');
+		ifs.ignore(10000000, '\n');
 		continue;
 	 }
 	 
 	 bool reading_typenames = (given_type[0] == 0);
 
-	 string type;
+	 fixed_string type;
 	 if (reading_typenames) { ifs >> type; }
 	 else                   { type = given_type; }
 
@@ -132,7 +130,9 @@ protected:
 
 	 ofstream ofs(filename);
 	 if (ofs.fail()) {
-		throw Tcl::TclError(string("error opening file: ") + filename);
+		Tcl::TclError err("error opening file: ");
+		err.appendMsg(filename);
+		throw err;
 	 }
 
 	 IO::IOFlag flags = IO::NO_FLAGS;
