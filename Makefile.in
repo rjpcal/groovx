@@ -413,10 +413,10 @@ benchmarks: $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 neat:
-	find . -name \*~ -exec rm -fv {} \;
-	find . -name \#~ -exec rm -fv {} \;
-	find . -name .\#\* -exec rm -fv {} \;
-	rm -fv ./expt_2005*.{gvx,resp,log} \
+	@find . -name \*~ -exec rm -fv {} \;
+	@find . -name \#~ -exec rm -fv {} \;
+	@find . -name .\#\* -exec rm -fv {} \;
+	@rm -fv ./expt_2005*.{gvx,resp,log} \
 		prof.out \
 		tclprof.out \
 		./core*
