@@ -2,8 +2,8 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar 12 12:54:12 1999
-static const char vcid_subjecttcl_cc[] = "$Id$";
+// written: Mon Mar 15 16:04:50 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_CC_DEFINED
@@ -246,7 +246,9 @@ DOTRACE("SubjectTcl::Subject_Init");
 
   Tcl_CreateObjCommand(interp, "subject", subjectCmd,
                        (ClientData) subjectTablePtr, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_PkgProvide(interp, "Subject", "1.4");
   return TCL_OK;
 }
 
+static const char vcid_subjecttcl_cc[] = "$Header$";
 #endif // !SUBJECTTCL_CC_DEFINED

@@ -2,8 +2,8 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 12:53:49 1999
-static const char vcid_tclgl_cc[] = "$Id$";
+// written: Mon Mar 15 16:07:01 1999
+// $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
 // for C OpenGL functions. The function names, argument lists, and
@@ -368,7 +368,9 @@ DOTRACE("Tclgl_Init");
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "lineInfo", lineInfoCmd,
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_PkgProvide(interp, "Tclgl", "1.4");
   return TCL_OK;
 }
 
+static const char vcid_tclgl_cc[] = "$Header$";
 #endif // !TCLGL_CC_DEFINED
