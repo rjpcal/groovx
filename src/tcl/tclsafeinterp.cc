@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 14:02:13 2001
+// written: Mon Jul 16 14:24:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,10 +75,22 @@ DOTRACE("Tcl::SafeInterp::interpDeleted");
 //
 ///////////////////////////////////////////////////////////////////////
 
+void Tcl::SafeInterp::resetResult() const {
+DOTRACE("Tcl::SafeInterp::resetResult");
+
+  Tcl_ResetResult(itsInterp);
+}
+
 void Tcl::SafeInterp::appendResult(const char* msg) const {
 DOTRACE("Tcl::SafeInterp::appendResult");
 
   Tcl_AppendResult(itsInterp, msg, (char*)0);
+}
+
+Tcl_Obj* Tcl::SafeInterp::getObjResult() const {
+DOTRACE("Tcl::SafeInterp::getObjResult");
+
+  return Tcl_GetObjResult(itsInterp);
 }
 
 ///////////////////////////////////////////////////////////////////////
