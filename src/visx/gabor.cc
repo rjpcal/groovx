@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Aug 13 12:15:36 2001
+// written: Mon Aug 13 15:26:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #include "gabor.h"
 
+#include "application.h"
+
+#include "gfx/bmapdata.h"
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
 #include "gfx/vec2.h"
 
@@ -126,16 +130,22 @@ Gfx::Rect<double> Gabor::grGetBoundingBox() const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  Gfx::Rect<double> bbox;
-  bbox.left() = -0.5;
-  bbox.right() = 0.5;
-  bbox.bottom() = -0.5;
-  bbox.top() = 0.5;
+  Gfx::Canvas& canvas = Application::theApp().getCanvas();
+  Gfx::Vec2<double> world_origin;
 
-  return bbox;
+  Gfx::Vec2<int> screen_origin = canvas.screenFromWorld(world_origin);
+
+  Gfx::Vec2<int> size(resolution() * pointSize(),
+                      resolution() * pointSize());
+
+  Gfx::Rect<int> screen_rect;
+  screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
+                          size.x(), size.y());
+
+  return canvas.worldFromScreen(screen_rect);
 }
 
-void Gabor::grRender(Gfx::Canvas&, DrawMode) const
+void Gabor::grRender(Gfx::Canvas& canvas, DrawMode) const
 {
 DOTRACE("Gabor::grRender");
   const double xsigma2 = sigma()*aspectRatio() * sigma()*aspectRatio() ;
@@ -156,68 +166,53 @@ DOTRACE("Gabor::grRender");
 
   double res_step = 1.0/resolution();
 
-  glPushAttrib(GL_POLYGON_BIT | GL_POINT_BIT);
-  {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glPointSize(pointSize());
+  Gfx::Vec2<int> size(resolution(), resolution());
 
-    for (int x_step = 0; x_step < resolution(); ++x_step)
-      {
-        const double unrotated_x = x_step*res_step - 0.5;
+  Gfx::BmapData data(size, 8, 1);
 
-        for (int y_step = 0; y_step < resolution(); ++y_step)
-          {
-            const double unrotated_y = y_step*res_step - 0.5;
+  unsigned char* bytes = data.bytesPtr();
 
-            Gfx::Vec2<double> point(unrotated_x, unrotated_y);
-            point.rotateDeg(orientation());
+  unsigned char* bytes_end = bytes + data.byteCount();
 
-            point -= center;
+  for (int y_pos = 0; y_pos < resolution(); ++y_pos)
+    {
+      const double unrotated_y = y_pos*res_step - 0.5;
 
-            const double gauss_xy =
-              exp( (point.x())*(point.x()) / (-4.0*xsigma2) +
-                   (point.y())*(point.y()) / (-4.0*ysigma2) );
+      for (int x_pos = 0; x_pos < resolution(); ++x_pos)
+        {
+          const double unrotated_x = x_pos*res_step - 0.5;
 
-            const double sin_x =
-              sin(2*PI*spatialFreq()*point.x() + phase()*PI/180.0);
+          Gfx::Vec2<double> point(unrotated_x, unrotated_y);
+          point.rotateDeg(orientation());
 
-            const double gabor = 0.5*sin_x*gauss_xy*contrast() + 0.5;
+          point -= center;
 
-            if ( colorMode() == GRAYSCALE )
-              {
-                glColor4d(gabor, gabor, gabor, 1.0);
-                glBegin(GL_POINTS);
-                glVertex2d(unrotated_x, unrotated_y);
-                glEnd();
-              }
-            else if ( colorMode() == COLOR_INDEX )
-              {
-                glIndexd(gabor*255.0);
-                glBegin(GL_POINTS);
-                glVertex2d(unrotated_x, unrotated_y);
-                glEnd();
-              }
-            else if ( colorMode() == BW_DITHER_POINT )
-              {
-                if ( Util::randDoubleRange(0.0, 1.0) < gabor )
-                  {
-                    glBegin(GL_POINTS);
-                    glVertex2d(unrotated_x, unrotated_y);
-                    glEnd();
-                  }
-              }
-            else if ( colorMode() == BW_DITHER_RECT )
-              {
-                if ( Util::randDoubleRange(0.0, 1.0) < gabor )
-                  {
-                    glRectd(unrotated_x, unrotated_y,
-                            unrotated_x+res_step, unrotated_y+res_step);
-                  }
-              }
-          }
-      }
-  }
-  glPopAttrib();
+          const double gauss_xy =
+            exp( (point.x())*(point.x()) / (-4.0*xsigma2) +
+                 (point.y())*(point.y()) / (-4.0*ysigma2) );
+
+          const double sin_x =
+            sin(2*PI*spatialFreq()*point.x() + phase()*PI/180.0);
+
+          const double gabor = 0.5*sin_x*gauss_xy*contrast() + 0.5;
+
+          Assert( bytes < bytes_end );
+
+          if ( colorMode() == GRAYSCALE ||
+               colorMode() == COLOR_INDEX )
+            {
+              *bytes++ = (unsigned char) (gabor * 255);
+            }
+          else if ( colorMode() == BW_DITHER_POINT ||
+                    colorMode() == BW_DITHER_RECT )
+            {
+              *bytes++ = (Util::randDoubleRange(0.0, 1.0) < gabor) ? 255 : 0;
+            }
+        }
+    }
+
+  canvas.drawPixels(data, Gfx::Vec2<double>(0.0, 0.0),
+                    Gfx::Vec2<double>(pointSize(), pointSize()));
 }
 
 static const char vcid_gabor_cc[] = "$Header$";
