@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Jun 24 12:29:11 2002
+// written: Tue Jun 25 13:52:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,12 @@ public:
 GLCanvas::GLCanvas(unsigned int col_buf_bits, bool is_rgba, bool is_db) :
   itsImpl(new Impl(col_buf_bits, is_rgba, is_db))
 {}
+
+GLCanvas* GLCanvas::make(unsigned int bpp, bool is_rgba, bool is_db)
+{
+DOTRACE("GLCanvas::make");
+  return new GLCanvas(bpp, is_rgba, is_db);
+}
 
 GLCanvas::~GLCanvas()
 {
