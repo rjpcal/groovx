@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Mar 15 10:17:31 2000
+// written: Thu Mar 16 09:11:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "experiment.h"
 #include "rand.h"
-#include "iostl.h"
 #include "reader.h"
 #include "readutils.h"
 #include "response.h"
@@ -47,11 +46,43 @@
 namespace {
   Tlist& theTlist = Tlist::theTlist();
   const string_literal ioTag("Block");
+
+  void serializeVecInt(ostream &os, const vector<int>& vec) {
+	 char sep = ' ';
+	 os << vec.size() << sep << sep;
+	 for (size_t i = 0; i < vec.size(); ++i) {
+		os << vec[i] << sep;
+	 }
+	 if (os.fail()) throw OutputError("VecInt");
+  }
+
+  void deserializeVecInt(istream &is, vector<int>& vec) {
+	 int size;
+	 is >> size;
+	 if (size < 0) {
+		throw InputError("VecInt saw negative value for size");
+	 }
+	 vec.resize(size, 0);
+	 for (int i = 0; i < size; ++i) {
+		is >> vec[i];
+	 }
+	 if (is.fail()) throw InputError("VecInt");
+  }
+
+  int charCountVecInt(const vector<int>& vec) {
+	 int count = gCharCount<int>(vec.size()) + 1;
+	 for (size_t i = 0; i < vec.size(); ++i) {
+		count += gCharCount<int>(vec[i]);
+		++count;
+	 }
+	 count += 5;// fudge factor
+	 return count;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-//
+// Block::Impl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
