@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 17 10:26:37 2001
+// written: Thu May 17 15:04:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,19 +134,19 @@ DOTRACE("TimingHdlr::readFrom");
 
   itsImpl->itsImmediateEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
-				IdItem<TrialEvent>::makeInserter(itsImpl->itsImmediateEvents));
+				std::back_inserter(itsImpl->itsImmediateEvents));
 
   itsImpl->itsStartEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "startEvents",
-				IdItem<TrialEvent>::makeInserter(itsImpl->itsStartEvents));
+				std::back_inserter(itsImpl->itsStartEvents));
 
   itsImpl->itsResponseEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "responseEvents",
-				IdItem<TrialEvent>::makeInserter(itsImpl->itsResponseEvents));
+				std::back_inserter(itsImpl->itsResponseEvents));
 
   itsImpl->itsAbortEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "abortEvents",
-				IdItem<TrialEvent>::makeInserter(itsImpl->itsAbortEvents));
+				std::back_inserter(itsImpl->itsAbortEvents));
 }
 
 void TimingHdlr::writeTo(IO::Writer* writer) const {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu May 10 12:04:49 2001
+// written: Thu May 17 14:38:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,8 +175,7 @@ DOTRACE("Block::readFrom");
 
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::readObjectSeq<TrialBase>(
-        reader, "trialSeq",
-		  IdItem<TrialBase>::makeInserter(itsImpl->itsTrialSequence));
+        reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);

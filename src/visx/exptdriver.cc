@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat May 12 08:51:18 2001
+// written: Thu May 17 15:04:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -537,7 +537,7 @@ DOTRACE("ExptDriver::Impl::readFrom");
 
   itsBlocks.clear();
   IO::ReadUtils::readObjectSeq<Block>(
-           reader, "blocks", IdItem<Block>::makeInserter(itsBlocks));
+           reader, "blocks", std::back_inserter(itsBlocks));
 
   reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
   recreateDoUponCompletionProc();

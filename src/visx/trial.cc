@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 17 11:30:18 2001
+// written: Thu May 17 15:05:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -219,14 +219,12 @@ DOTRACE("Trial::Impl::readFrom");
   reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
   itsGxNodes.clear();
-
   IO::ReadUtils::readObjectSeq<GxSeparator>(
-          reader, "gxObjects",
-			 IdItem<GxSeparator>::makeInserter(itsGxNodes));
+          reader, "gxObjects", std::back_inserter(itsGxNodes));
 
   itsResponses.clear();
-  IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
-									  std::back_inserter(itsResponses));
+  IO::ReadUtils::readValueObjSeq<Response>(
+          reader, "responses", std::back_inserter(itsResponses));
 
   reader->readValue("correctResponse", itsCorrectResponse);
 

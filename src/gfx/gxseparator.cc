@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri May 11 20:52:19 2001
+// written: Thu May 17 15:05:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,8 +84,7 @@ void GxSeparator::readFrom(IO::Reader* reader) {
 DOTRACE("GxSeparator::readFrom");
   itsImpl->itsChildren.clear();
   IO::ReadUtils::readObjectSeq<GxNode>(
-          reader, "children",
-			 IdItem<GxNode>::makeInserter(itsImpl->itsChildren));
+          reader, "children", std::back_inserter(itsImpl->itsChildren));
 }
 
 void GxSeparator::writeTo(IO::Writer* writer) const {
