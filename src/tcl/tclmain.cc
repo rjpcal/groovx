@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Wed Sep 11 14:24:46 2002
+// written: Thu Sep 12 13:19:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,9 @@ private:
 
   void doPrompt(const char* text, unsigned int length);
 
-  void prompt(bool partial);
+  enum PromptType { FULL, PARTIAL };
+
+  void prompt(PromptType t);
 
   void grabInput();
 
@@ -83,6 +85,8 @@ public:
 
     return theMainImpl;
   }
+
+  bool isInteractive() const { return isItInteractive; }
 
   Tcl_Interp* interp() const { return itsSafeInterp.intp(); }
 
@@ -122,9 +126,14 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
   if ((argc > 1) && (argv[1][0] != '-'))
     {
-      itsStartupFileName = argv[1];
+      itsArgv0 = itsStartupFileName = argv[1];
       --argc;
       ++argv;
+      isItInteractive = false;
+    }
+  else
+    {
+      itsArgv0 = argv[0];
     }
 
   // Make command-line arguments available in the Tcl variables "argc" and
@@ -136,16 +145,9 @@ DOTRACE("Tcl::MainImpl::MainImpl");
   itsSafeInterp.setGlobalVar("argv", args);
   Tcl_Free(args);
 
-  itsArgv0 =
-    (itsStartupFileName == NULL)
-    ? argv[0]
-    : itsStartupFileName;
-
   itsSafeInterp.setGlobalVar("argv0", itsArgv0);
 
-  itsSafeInterp.setGlobalVar("tcl_interactive",
-                             ((itsStartupFileName == NULL) && isItInteractive)
-                             ? 1 : 0);
+  itsSafeInterp.setGlobalVar("tcl_interactive", isItInteractive ? 1 : 0);
 
 #ifdef WITH_READLINE
   using_history();
@@ -215,11 +217,11 @@ DOTRACE("Tcl::MainImpl::doPrompt");
 //
 //---------------------------------------------------------------------
 
-void Tcl::MainImpl::prompt(bool partial)
+void Tcl::MainImpl::prompt(Tcl::MainImpl::PromptType t)
 {
 DOTRACE("Tcl::MainImpl::prompt");
 
-  if (partial)
+  if (t == PARTIAL)
     {
       doPrompt("", 0);
     }
@@ -331,7 +333,7 @@ DOTRACE("Tcl::MainImpl::handleLine");
 
   if (isItInteractive)
     {
-      prompt(itsGotPartial);
+      prompt(itsGotPartial ? PARTIAL : FULL);
     }
 
   Tcl_ResetResult(interp());
@@ -484,7 +486,6 @@ DOTRACE("Tcl::MainImpl::run");
           Tcl_DeleteInterp(this->interp());
           Tcl_Exit(1);
         }
-      isItInteractive = false;
     }
   else
     {
@@ -500,7 +501,7 @@ DOTRACE("Tcl::MainImpl::run");
         }
       if (isItInteractive)
         {
-          this->prompt(false);
+          this->prompt(FULL);
         }
     }
 
@@ -535,6 +536,11 @@ Tcl::Main::Main(int argc, char** argv)
 
 Tcl::Main::~Main()
 {}
+
+bool Tcl::Main::isInteractive()
+{
+  return Tcl::MainImpl::get()->isInteractive();
+}
 
 Tcl_Interp* Tcl::Main::interp()
 {

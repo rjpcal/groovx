@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:32:01 2002
-// written: Wed Sep 11 14:08:35 2002
+// written: Thu Sep 12 13:21:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,8 @@ class Tcl::Main
 public:
   Main(int argc, char** argv);
   ~Main();
+
+  static bool isInteractive();
 
   static Tcl_Interp* interp();
 
