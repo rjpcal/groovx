@@ -1423,7 +1423,7 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       if (is_directory(fname.c_str()))
         {
           cfg.user_ipath.push_back(fname);
-          cfg.strip_prefix = fname;
+          make_normpath(fname, cfg.strip_prefix);
         }
       return true;
     }
