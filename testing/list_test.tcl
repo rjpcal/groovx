@@ -18,7 +18,6 @@ variable TEST_DEFINED 1
 
 proc purgeAll {} {
     Togl::setVisible 0
-    Expt::clear
     ObjDb::clear
 }
 
