@@ -3,7 +3,7 @@
 // id.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu May 27 18:32:00 1999
-// written: Thu May 27 19:19:47 1999
+// written: Thu Jul 22 12:52:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,12 +26,12 @@
 
 template<>
 bool Id<Position, PosList>::operator!() const {
-  return !( PosList::thePosList().isValidPosid(this->toInt()) );
+  return !( PosList::thePosList().isValidId(this->toInt()) );
 }
 
 template<>
 bool Id<GrObj, ObjList>::operator!() const {
-  return !( ObjList::theObjList().isValidObjid(this->toInt()) );
+  return !( ObjList::theObjList().isValidId(this->toInt()) );
 }
 
 //--------------------------------------------------------------------
@@ -42,12 +42,12 @@ bool Id<GrObj, ObjList>::operator!() const {
 
 template<>
 Position* Id<Position, PosList>::get() const {
-  return PosList::thePosList().getPos(this->toInt());
+  return PosList::thePosList().getPtr(this->toInt());
 }
 
 template<>
 GrObj* Id<GrObj, ObjList>::get() const {
-  return ObjList::theObjList().getObj(this->toInt());
+  return ObjList::theObjList().getPtr(this->toInt());
 }
 
 //--------------------------------------------------------------------
