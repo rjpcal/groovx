@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Tue Oct 17 11:57:31 2000
+// written: Tue Oct 24 13:03:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,16 +107,22 @@ public:
 		dynamic_string full_err_file(lib_dir);
 		full_err_file.append(err_sound_file);     DebugEvalNL(full_err_file);
 
-		static int OK = 0;
-		static int ERR = 1;
+		static int OK = -1;
+		static int ERR = -1;
 
 		try {
-		  theList().insertAt(
-			 OK, SoundList::Ptr(Sound::newPlatformSound(full_ok_file.c_str())));
+		  ItemWithId<Sound> ok_sound(
+               Sound::newPlatformSound(full_ok_file.c_str()),
+					ItemWithId<Sound>::INSERT);
+		  Sound::setOkSound(ok_sound);
+		  OK = ok_sound.id();
 		  linkConstVar("Sound::ok", OK);
 
-		  theList().insertAt(
-          ERR, SoundList::Ptr(Sound::newPlatformSound(full_err_file.c_str())));
+		  ItemWithId<Sound> err_sound(
+               Sound::newPlatformSound(full_err_file.c_str()),
+					ItemWithId<Sound>::INSERT);
+		  Sound::setErrSound(err_sound);
+		  ERR = err_sound.id();		  
 		  linkConstVar("Sound::err", ERR);
 		}
 		catch (SoundError& err) {
