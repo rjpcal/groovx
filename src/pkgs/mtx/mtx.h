@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 19 17:55:53 2003
+// written: Sat Mar 29 12:51:41 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -213,12 +213,10 @@ typedef MtxIterBase<double> MtxIter;
 typedef MtxIterBase<const double> MtxConstIter;
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// Slice class definition
-//
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
 
+/// Represents a one dimensional sub-array of a matrix.
 class Slice
 {
 protected:

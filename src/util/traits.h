@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri May 18 16:13:27 2001
-// written: Wed Mar 19 17:59:42 2003
+// written: Sat Mar 29 12:49:22 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -81,8 +81,8 @@ namespace Util
   template <class T>
   struct TypeMatch
   {
-    struct s1 { char x; };
-    struct s2 { s1 x[2]; };
+    /** dummy type */ struct s1 { char x; };
+    /** dummy type */ struct s2 { s1 x[2]; };
 
     static s1 foo(T* p);
     static s2 foo(...);

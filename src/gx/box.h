@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Mar 19 17:55:57 2003
+// written: Sat Mar 29 12:50:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,6 +40,7 @@
 namespace Gfx
 {
 
+/// Represents a 3-D rectangular box with sides parallel to the major axes.
 template <class V>
 class Box
 {

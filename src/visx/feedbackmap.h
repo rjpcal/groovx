@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Wed Mar 19 18:00:56 2003
+// written: Sat Mar 29 12:55:03 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -98,6 +98,7 @@ private:
     isItDirty = false;
   }
 
+  /// Represents a condition+feedback pairing.
   class Item
   {
   public:

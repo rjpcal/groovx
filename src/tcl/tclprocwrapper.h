@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jan 30 11:41:47 2002
-// written: Wed Mar 19 17:58:05 2003
+// written: Sat Mar 29 12:54:17 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,6 +42,7 @@ namespace Tcl
   class ProcWrapper;
 }
 
+/// A serializable wrapper for Tcl script procedures.
 class Tcl::ProcWrapper : public IO::IoObject
 {
 private:

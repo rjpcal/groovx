@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Wed Mar 19 17:56:04 2003
+// written: Sat Mar 29 13:02:25 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -65,6 +65,7 @@ private:
   int itsHeight;
 };
 
+/// Camera subclass that generates a perspective projection.
 class GxPerspectiveCamera : public GxCamera, public FieldContainer
 {
 public:
@@ -86,6 +87,7 @@ private:
   GbVec3<double> translation;
 };
 
+/// Camera subclass that keeps a fixed rectangle visible at all times.
 class GxFixedRectCamera : public GxCamera
 {
 public:
@@ -107,6 +109,7 @@ private:
   Gfx::Rect<double> itsRect;
 };
 
+/// Camera that keeps at least a given rect visible at all times.
 class GxMinRectCamera : public GxCamera
 {
 public:
@@ -128,6 +131,7 @@ private:
   Gfx::Rect<double> itsRect;
 };
 
+/// Camera that maintains a fixed world-to-screen scaling.
 class GxFixedScaleCamera : public GxCamera, public FieldContainer
 {
 public:
@@ -152,6 +156,9 @@ private:
   double itsPixelsPerUnit;
 };
 
+/// Camera that maintains a fixed world-to-screen scaling.
+/** The camera is controlled by the observer-to-screen distance and the
+    desired scaling of units per degree-of-visual-angle. */
 class GxPsyphyCamera : public GxCamera, public FieldContainer
 {
 public:

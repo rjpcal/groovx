@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 13:04:27 2002
-// written: Wed Mar 19 17:56:00 2003
+// written: Sat Mar 29 13:01:58 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,6 +37,7 @@
 
 #include "util/algo.h"
 
+/// A graphics node that optionally rescales its child object.
 class GxScaler : public GxBin
 {
 public:

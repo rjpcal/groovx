@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jul 22 16:32:01 2002
-// written: Wed Mar 19 17:58:06 2003
+// written: Sat Mar 29 12:48:15 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,6 +37,10 @@ namespace Tcl
   class Main;
 }
 
+/// Singleton class that operates the main Tcl event loop.
+/** Its responsibilities include gathering text commands from standard
+    input, dispatching window-system events, and dispatching
+    timer-callbacks and idle-callbacks. */
 class Tcl::Main
 {
 public:

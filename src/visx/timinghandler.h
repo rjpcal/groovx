@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed May 19 10:56:20 1999
-// written: Wed Mar 19 18:00:52 2003
+// written: Sat Mar 29 12:57:39 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,12 +33,10 @@
 
 #include "visx/timinghdlr.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// TimingHandler class defintion
-//
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
 
+/// A TimingHdlr subclass for an old "standard" trial sequence.
 class TimingHandler : public TimingHdlr
 {
 protected:

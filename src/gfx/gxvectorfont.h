@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 20:05:23 2002
-// written: Wed Mar 19 17:55:59 2003
+// written: Sat Mar 29 12:58:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,6 +33,7 @@
 
 #include "gfx/gxfont.h"
 
+/// A basic "blocky" vector-graphics font.
 class GxVectorFont : public GxFont
 {
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 16:44:36 2002
-// written: Wed Mar 19 17:56:00 2003
+// written: Sat Mar 29 13:01:06 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,6 +33,7 @@
 
 #include "gfx/gxfont.h"
 
+/// Builds an OpenGL raster font from an X11 font.
 class GxRasterFont : public GxFont
 {
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:36:13 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Sat Mar 29 12:56:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,12 +35,15 @@
 
 #include "util/debug.h"
 
+/// Builds a formatted data array for constructing a GLX context.
 class GlxAttribs
 {
 private:
+  enum { MAXSIZE = 1000; }
+
   void push(int v)
   {
-    Assert(next < 1000);
+    Assert(next < MAXSIZE);
     data[next++] = v;
   }
 
@@ -49,7 +52,7 @@ private:
     data[next] = None;
   }
 
-  int data[1000];
+  int data[MAXSIZE];
   int next;
 
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Wed Mar 19 17:58:54 2003
+// written: Sat Mar 29 12:35:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -278,12 +278,6 @@ namespace Util
 //  ###################################################################
 //  ===================================================================
 
-/// MemFunctorBase adapts a member function to an ordinary operator().
-/** The "this" pointer is passed through the first argument of the
-    operator() call, via a raw pointer or a SoftRef<>. */
-
-//  ===================================================================
-
   template <class F>
   class MemFunctorBase;
 
@@ -298,6 +292,10 @@ namespace Util
   template <class C>
   C* extractPtr(const SoftRef<C>& c) { return c.get(); }
 
+  /// MemFunctorBase adapts a member function to an ordinary operator().
+  /** The "this" pointer is passed through the first argument of the
+      operator() call, via a raw pointer or a SoftRef<>. */
+
   template <class MemFunc>
   class MemFunctorBase : private FuncHolder<MemFunc>,
                          public FuncTraits<MemFunctorBase<MemFunc> >
@@ -308,30 +306,35 @@ namespace Util
 
     MemFunctorBase(MemFunc f) : FuncHolder<MemFunc>(f) {}
 
+    /// Function-call operator for object + zero args.
     template <class Ptr>
     R operator()(Ptr obj)
     {
       return (extractPtr(obj)->*itsHeldFunc)();
     }
 
+    /// Function-call operator for object + one arg.
     template <class Ptr, class P1>
     R operator()(Ptr obj, P1 p1)
     {
       return (extractPtr(obj)->*itsHeldFunc)(p1);
     }
 
+    /// Function-call operator for object + two args.
     template <class Ptr, class P1, class P2>
     R operator()(Ptr obj, P1 p1, P2 p2)
     {
       return (extractPtr(obj)->*itsHeldFunc)(p1, p2);
     }
 
+    /// Function-call operator for object + three args.
     template <class Ptr, class P1, class P2, class P3>
     R operator()(Ptr obj, P1 p1, P2 p2, P3 p3)
     {
       return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3);
     }
 
+    /// Function-call operator for object + four args.
     template <class Ptr, class P1, class P2, class P3, class P4>
     R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
     {
@@ -372,69 +375,77 @@ namespace Util
 //  ###################################################################
 //  ===================================================================
 
-//  Traits structs for figuring out the right "functor" type given a
-//  function pointer.
-
+  ///  Traits struct for specifying a "functor" type given a function pointer.
   template <class Fptr>
   struct FunctorOf
   {
     typedef Fptr Type;
   };
 
+  /// Specialization for zero-arg mem func.
   template <class R, class C>
   struct FunctorOf< R (C::*)() >
   {
     typedef Util::MemFunctor<R (C::*)()> Type;
   };
 
+  /// Specialization for zero-arg const mem func.
   template <class R, class C>
   struct FunctorOf< R (C::*)() const >
   {
     typedef Util::MemFunctor<R (C::*)() const> Type;
   };
 
+  /// Specialization for one-arg mem func.
   template <class R, class C, class P1>
   struct FunctorOf< R (C::*)(P1) >
   {
     typedef Util::MemFunctor<R (C::*)(P1)> Type;
   };
 
+  /// Specialization for one-arg const mem func.
   template <class R, class C, class P1>
   struct FunctorOf< R (C::*)(P1) const >
   {
     typedef Util::MemFunctor<R (C::*)(P1) const> Type;
   };
 
+  /// Specialization for two-arg mem func.
   template <class R, class C, class P1, class P2>
   struct FunctorOf< R (C::*)(P1, P2) >
   {
     typedef Util::MemFunctor<R (C::*)(P1, P2)> Type;
   };
 
+  /// Specialization for two-arg const mem func.
   template <class R, class C, class P1, class P2>
   struct FunctorOf< R (C::*)(P1, P2) const >
   {
     typedef Util::MemFunctor<R (C::*)(P1, P2) const> Type;
   };
 
+  /// Specialization for three-arg mem func.
   template <class R, class C, class P1, class P2, class P3>
   struct FunctorOf< R (C::*)(P1, P2, P3) >
   {
     typedef Util::MemFunctor<R (C::*)(P1, P2, P3)> Type;
   };
 
+  /// Specialization for three-arg const mem func.
   template <class R, class C, class P1, class P2, class P3>
   struct FunctorOf< R (C::*)(P1, P2, P3) const >
   {
     typedef Util::MemFunctor<R (C::*)(P1, P2, P3) const> Type;
   };
 
+  /// Specialization for four-arg mem func.
   template <class R, class C, class P1, class P2, class P3, class P4>
   struct FunctorOf< R (C::*)(P1, P2, P3, P4) >
   {
     typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4)> Type;
   };
 
+  /// Specialization for four-arg const mem func.
   template <class R, class C, class P1, class P2, class P3, class P4>
   struct FunctorOf< R (C::*)(P1, P2, P3, P4) const >
   {
@@ -443,8 +454,9 @@ namespace Util
 
 
 // ####################################################################
-/// Factory function for building a "functor" from any function pointer.
+//  ===================================================================
 
+  /// Factory function for building a "functor" from any function pointer.
   template <class Fptr>
   inline typename FunctorOf<Fptr>::Type
   buildFunctor(Fptr f)

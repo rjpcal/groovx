@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 18 10:24:59 1999
-// written: Wed Mar 19 17:58:51 2003
+// written: Sat Mar 29 12:53:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,25 +33,30 @@
 
 #include <sys/time.h>
 
+/// Tracks elapsed wall-clock time.
 class StopWatch
 {
 public:
+  /// Default constructor.
   StopWatch() : itsStartTime() { restart(); }
 
+  /// Reset the start time to the current time.
   void restart()
     { gettimeofday(&itsStartTime, /* timezone */ 0); }
 
-  double elapsedMsec(const timeval& now) const
+  /// Get the number of milliseconds between start and stop times.
+  double elapsedMsec(const timeval& stop) const
     {
       timeval elapsedTime;
 
-      elapsedTime.tv_sec = now.tv_sec - itsStartTime.tv_sec;
-      elapsedTime.tv_usec = now.tv_usec - itsStartTime.tv_usec;
+      elapsedTime.tv_sec = stop.tv_sec - itsStartTime.tv_sec;
+      elapsedTime.tv_usec = stop.tv_usec - itsStartTime.tv_usec;
 
       return (double(elapsedTime.tv_sec)*1000.0 +
               double(elapsedTime.tv_usec)/1000.0);
     }
 
+  /// Get the number of milliseconds between start and now.
   double elapsedMsec() const
     {
       timeval now;

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Wed Mar 19 17:58:05 2003
+// written: Sat Mar 29 13:00:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,6 +43,7 @@ namespace Tcl
   class Timer;
 }
 
+/// Wraps a signal/slot interface around the Tcl timer callback mechansim.
 class Tcl::Timer
 {
 public:

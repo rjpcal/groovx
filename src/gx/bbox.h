@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Nov 19 12:37:16 2002
-// written: Wed Mar 19 17:55:57 2003
+// written: Sat Mar 29 12:59:52 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,6 +42,7 @@ namespace Gfx
   template <class V> class Vec3;
 }
 
+/// Computes a "shrink-wrapped" bounding box around a set of graphics primitives.
 class Gfx::Bbox
 {
 public:

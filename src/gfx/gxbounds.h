@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 13:34:26 2002
-// written: Wed Mar 19 17:56:04 2003
+// written: Sat Mar 29 12:42:46 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,6 +33,7 @@
 
 #include "gfx/gxbin.h"
 
+/// A graphic object that draws a boundary around its child object.
 class GxBounds : public GxBin
 {
 private:
@@ -40,15 +41,23 @@ private:
   GxBounds& operator=(const GxBounds&);
 
 public:
+  /// Construct with a given child object.
   GxBounds(Util::SoftRef<GxNode> child);
 
+  /// Virtual destructor.
   virtual ~GxBounds();
 
+  /// Query whether the rect boundary should be drawn.
   bool isVisible() const { return isItVisible; }
+
+  /// Set the visibility of the rect boundary.
   void setVisible(bool val) { isItVisible = val; }
 
-  void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
+  /// Query the gap between the child object and the boundary.
   int pixelBorder() const { return itsPixelBorder; }
+
+  /// Change the gap between the child object and the boundary.
+  void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
 
   virtual void readFrom(IO::Reader* /*reader*/) {};
   virtual void writeTo(IO::Writer* /*writer*/) const {};

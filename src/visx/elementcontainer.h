@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Wed Mar 19 18:00:57 2003
+// written: Sat Mar 29 12:40:48 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,12 +42,16 @@ namespace Util
 
 template <class T> class minivec;
 
+/// A base class for all composite visual experiment elements.
+/** These might include "blocks" and "experiments". */
 class ElementContainer: public Element
 {
 public:
+  /// Default constructor.
   ElementContainer();
 
-  ~ElementContainer();
+  /// Virtual destructor.
+  virtual ~ElementContainer();
 
   virtual void readFrom(IO::Reader* reader);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Feb 25 13:27:36 2003
-// written: Wed Mar 19 17:58:51 2003
+// written: Sat Mar 29 12:38:23 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -44,6 +44,7 @@ namespace Util
   class stdiobuf;
 }
 
+/// A C++ streambuf that wraps a standard posix file descriptor.
 class Util::stdiobuf : public STD_IO::streambuf
 {
 private:
@@ -74,16 +75,24 @@ public:
       to open the file descriptor). */
   stdiobuf(int fd, int om, bool throw_exception=false);
 
+  /// Destructor closes the underlying file descriptor.
   ~stdiobuf() { close(); }
 
+  /// Check whether there we have an open file descriptor.
   bool is_open() const { return itsFiledes >= 0; }
 
+  /// Close the underlying file descriptor.
   void close();
 
+  /// Get more data from the underlying file descriptor.
+  /** Called when the streambuf's buffer has run out of data. */
   virtual int underflow();
 
+  /// Send more data to the underlying file descriptor.
+  /** Called when the streambuf's buffer has become full. */
   virtual int overflow(int c);
 
+  /// Flush the current buffer contents to the underlying file descriptor.
   virtual int sync();
 };
 

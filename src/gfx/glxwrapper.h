@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Sat Mar 29 13:01:28 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -38,6 +38,7 @@
 
 class GlxOpts;
 
+/// Wraps the GLXContext mechanism.
 class GlxWrapper
 {
 private:
