@@ -291,14 +291,21 @@ DOTRACE("GlxRasterFont::bboxOf");
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  geom::rect<int> screen = bbox.screenFromWorldRect(geom::rect<double>());
+  using geom::vec2i;
+  using geom::vec2d;
 
-  const int l = screen.left();
-  const int r = screen.right() + maxwid;
-  const int b = screen.bottom() - (desc + (lines - 1) * (asc+desc));
-  const int t = screen.top() + asc;
+  // get screen origin;
+  const vec2i orig = vec2i(bbox.screenFromWorld2(vec2d()));
 
-  bbox.drawRect(bbox.worldFromScreenRect(geom::rect<int>::ltrb(l,t,r,b)));
+  const int l = orig.x();
+  const int r = orig.x() + maxwid;
+  const int b = orig.y() - (desc + (lines - 1) * (asc+desc));
+  const int t = orig.y() + asc;
+
+  bbox.vertex2(bbox.worldFromScreen2(vec2i(l,b)));
+  bbox.vertex2(bbox.worldFromScreen2(vec2i(r,b)));
+  bbox.vertex2(bbox.worldFromScreen2(vec2i(l,t)));
+  bbox.vertex2(bbox.worldFromScreen2(vec2i(r,t)));
 }
 
 void GlxRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const
