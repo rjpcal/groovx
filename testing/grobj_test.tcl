@@ -62,7 +62,7 @@ proc testSubclass { package {subclass "GrObj"} {objid -1} } {
 	 testWidthCmd testObj
 
 	 if { $testObj(testsubclass) } {
-		  ObjList::remove $testObj(objid)
+		  IO::delete $testObj(objid)
 	 }
 
 	 set BASE_CLASS_TESTED 1
@@ -204,8 +204,7 @@ proc testDrawCmd { objname } {
 		      show \$trial
 		      set pix2 \[pixelCheckSum\]
 		      Togl::setVisible false
-		      Tlist::remove \$trial
-		      PosList::remove \$pos
+		      IO::delete \"\$trial \$pos\"
 		      expr \$pix1 == \$pix2
 		  "} {"^0$"}
 	 }
