@@ -346,7 +346,7 @@ ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
 STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/groovx/*.cc)))
 
 EXECUTABLE := $(exec_prefix)/bin/groovx$(PACKAGE_VERSION)
 
