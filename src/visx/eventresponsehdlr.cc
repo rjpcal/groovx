@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue May 16 00:13:55 2000
+// written: Tue May 16 13:06:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -565,14 +565,9 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 
   ignore();
 
-  try {
-	 const int ERR_INDEX = 1;
-	 SoundList::Ptr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
-	 p->play();
-  }
-  catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg_cstr());
-  }
+  const int ERR_INDEX = 1;
+  SoundList::Ptr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
+  p->play();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -585,32 +580,14 @@ void EventResponseHdlr::Impl::attend() const {
 DOTRACE("EventResponseHdlr::Impl::attend");
   clearEventQueue();
 
-  try {
-	 getWidget().bind(itsEventSequence.c_str(),
-							getBindingScript().c_str());
-  }
-  catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg_cstr());
-  }
-  catch (...) {
-	 raiseBackgroundError("error creating event binding "
-								 "in EventResponseHdlr::attend");
-  }
+  getWidget().bind(itsEventSequence.c_str(),
+						 getBindingScript().c_str());
 }
 
 void EventResponseHdlr::Impl::ignore() const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
-  try {
-	 getWidget().bind(itsEventSequence.c_str(),
-							nullScript.c_str());
-  }
-  catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg_cstr());
-  }
-  catch (...) {
-	 raiseBackgroundError("error creating event binding "
-								 "in EventResponseHdlr::ignore");
-  }
+  getWidget().bind(itsEventSequence.c_str(),
+						 nullScript.c_str());
 }
 
 void EventResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
@@ -744,40 +721,35 @@ void EventResponseHdlr::Impl::updateFeedbacks() {
 DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
   Assert(itsInterp != 0);
 
-  try {
-	 Tcl_Obj** pairs;
-	 int num_pairs=0;
-	 Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
-	 checkedSplitList(pairs_list, pairs, num_pairs);
+  Tcl_Obj** pairs;
+  int num_pairs=0;
+  Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
+  checkedSplitList(pairs_list, pairs, num_pairs);
 
-	 Assert(num_pairs >= 0);
+  Assert(num_pairs >= 0);
 
-	 unsigned int uint_num_pairs = num_pairs;
+  unsigned int uint_num_pairs = num_pairs;
 
-	 itsFeedbacks.resize(uint_num_pairs);
+  itsFeedbacks.resize(uint_num_pairs);
 
-	 for (unsigned int i = 0; i < uint_num_pairs; ++i) {
+  for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
-		Tcl::TclObjPtr current_pair = pairs[i];
+	 Tcl::TclObjPtr current_pair = pairs[i];
 
-		// Check that the length of the "pair" is really 2
-		if (getCheckedListLength(current_pair) != 2) {
-		  raiseBackgroundError("\"pair\" did not have length 2 "
-									  "in EventResponseHdlr::updateFeedbacks");
-		  return;
-		}
-
-		Tcl_Obj *condition = getCheckedListElement(current_pair, 0);
-		Tcl_Obj *result = getCheckedListElement(current_pair, 1);
-
-		itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
+	 // Check that the length of the "pair" is really 2
+	 if (getCheckedListLength(current_pair) != 2) {
+		raiseBackgroundError("\"pair\" did not have length 2 "
+									"in EventResponseHdlr::updateFeedbacks");
+		return;
 	 }
 
-	 DebugPrintNL("updateFeedbacks success!");
+	 Tcl_Obj *condition = getCheckedListElement(current_pair, 0);
+	 Tcl_Obj *result = getCheckedListElement(current_pair, 1);
+
+	 itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
   }
-  catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg_cstr());
-  }
+
+  DebugPrintNL("updateFeedbacks success!");
 }
 
 //--------------------------------------------------------------------
@@ -794,42 +766,36 @@ void EventResponseHdlr::Impl::updateRegexps() {
 DOTRACE("EventResponseHdlr::updateRegexps");
   Assert(itsInterp != 0);
 
-  try {
-	 Tcl_Obj** pairs;
-	 int num_pairs=0;
-	 Tcl::TclObjPtr pairs_list(
-                       Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
-	 checkedSplitList(pairs_list, pairs, num_pairs);
+  Tcl_Obj** pairs;
+  int num_pairs=0;
+  Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
+  checkedSplitList(pairs_list, pairs, num_pairs);
 
-	 Assert(num_pairs >= 0);
-	 unsigned int uint_num_pairs = num_pairs;
+  Assert(num_pairs >= 0);
+  unsigned int uint_num_pairs = num_pairs;
 
-	 itsRegexps.resize(uint_num_pairs);
+  itsRegexps.resize(uint_num_pairs);
 
-	 for (unsigned int i = 0; i < uint_num_pairs; ++i) {
+  for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
-		Tcl::TclObjPtr current_pair = pairs[i];
+	 Tcl::TclObjPtr current_pair = pairs[i];
 
-		// Check that the length of the "pair" is really 2
-		if (getCheckedListLength(current_pair) != 2) {
-		  raiseBackgroundError("\"pair\" did not have length 2 "
-									  "in EventResponseHdlr::updateRegexps");
-		  return;
-		}
-
-		Tcl::TclObjPtr patternObj = getCheckedListElement(current_pair, 0);
-
-		Tcl::TclObjPtr response_valObj = getCheckedListElement(current_pair, 1);
-		int response_val = getCheckedInt(response_valObj);
-
-		itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
+	 // Check that the length of the "pair" is really 2
+	 if (getCheckedListLength(current_pair) != 2) {
+		raiseBackgroundError("\"pair\" did not have length 2 "
+									"in EventResponseHdlr::updateRegexps");
+		return;
 	 }
 
-	 DebugPrintNL("updateRegexps success!");
+	 Tcl::TclObjPtr patternObj = getCheckedListElement(current_pair, 0);
+
+	 Tcl::TclObjPtr response_valObj = getCheckedListElement(current_pair, 1);
+	 int response_val = getCheckedInt(response_valObj);
+
+	 itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
-  catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg_cstr());
-  }
+
+  DebugPrintNL("updateRegexps success!");
 }
 
 int EventResponseHdlr::Impl::getCheckedListLength(
