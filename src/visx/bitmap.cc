@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Jun 16 17:37:35 1999
+// written: Thu Jun 24 14:48:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,91 +14,176 @@
 #include "bitmap.h"
 
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <cmath>
+#include <GL/glu.h>				  // for gluProject()
+#include <cmath>					  // for abs()
 #include <cstring>				  // for memcpy
 
 #include "pbm.h"
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
+namespace {
+  const string ioTag = "Bitmap";
+}
+
 Bitmap::Bitmap() :
-  GrObj(),
-  itsRasterX(0.0), itsRasterY(0.0),
-  itsZoomX(1.0), itsZoomY(1.0),
-  itsBytes(0)
+  GrObj()
 {
 DOTRACE("Bitmap::Bitmap");
-
+  init();
 }
 
 Bitmap::Bitmap(const char* filename) :
   GrObj(),
-  itsFilename(filename),
-  itsRasterX(0.0), itsRasterY(0.0),
-  itsZoomX(1.0), itsZoomY(1.0),
-  itsBytes(0)
+  itsFilename(filename)
 {
 DOTRACE("Bitmap::Bitmap");
+  init();
 }
 
 Bitmap::Bitmap(istream& is, IOFlag flag) :
-  GrObj(is, flag),
-  itsBytes(0)
+  GrObj(is, flag)
 {
 DOTRACE("Bitmap::Bitmap");
+  init();
   deserialize(is, flag);
+}
+
+void Bitmap::init() {
+DOTRACE("Bitmap::init");
+  itsRasterX = itsRasterY = 0.0;
+  itsZoomX = itsZoomY = 1.0;
+  itsBytes = 0;
+  itsContrastFlip = false;
+  itsVerticalFlip = false;
 }
 
 Bitmap::~Bitmap() {
 DOTRACE("Bitmap::~Bitmap");
+  delete [] itsBytes;
+  itsBytes = 0;
 }
 
 void Bitmap::serialize(ostream& os, IOFlag flag) const {
 DOTRACE("Bitmap::serialize");
+  char sep = ' ';
+  if (flag & TYPENAME) { os << ioTag << sep; }
+
+  os << itsFilename << sep;
+  os << itsRasterX << sep << itsRasterY << sep;
+  os << itsZoomX << sep << itsZoomY << sep;
+  os << itsContrastFlip << sep;
+  os << itsVerticalFlip << endl;
+
+  if (os.fail()) throw OutputError(ioTag);
+
+  if (flag & BASES) { GrObj::serialize(os, flag); }
 }
 
 void Bitmap::deserialize(istream& is, IOFlag flag) {
 DOTRACE("Bitmap::deserialize");
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+
+  is >> itsFilename;
+  is >> itsRasterX >> itsRasterY;
+  is >> itsZoomX >> itsZoomY;
+  int val;
+  is >> val;
+  itsContrastFlip = bool(val);
+  is >> val;
+  itsVerticalFlip = bool(val);
+
+  if (is.fail()) throw InputError(ioTag);
+
+  if (flag & BASES) { GrObj::deserialize(is, flag); }
+
+  if ( !itsFilename.empty() ) {
+	 loadPbmFile(itsFilename.c_str());
+  }
 }
 
 int Bitmap::charCount() const {
 DOTRACE("Bitmap::charCount");
-  return 0;
+  return 128;
 }
 
 void Bitmap::loadPbmFile(const char* filename) {
 DOTRACE("Bitmap::loadPbmFile");
   itsFilename = filename;
+
   Pbm pbm(itsFilename.c_str());
   unsigned char* bytes;
   pbm.grabBytes(bytes, itsWidth, itsHeight, itsBitsPerPixel);
-  itsBytes = auto_ptr<unsigned char>(bytes);
-
+  
+  delete [] itsBytes;
+  itsBytes = bytes;
+  
+  if (itsContrastFlip) { doFlipContrast(); }
+  if (itsVerticalFlip) { doFlipVertical(); }
+  
   sendStateChangeMsg();
 }
 
 void Bitmap::flipContrast() {
 DOTRACE("Bitmap::flipContrast");
 
+  // Toggle itsContrastFlip so we keep track of whether the number of
+  // flips has been even or odd.
+  itsContrastFlip = !itsContrastFlip;
+
+  doFlipContrast();
+}
+
+void Bitmap::doFlipContrast() {
+DOTRACE("Bitmap::doFlipContrast");
   int num_bytes = (itsWidth*itsHeight*itsBitsPerPixel)/8 + 1;
-	 
+
   // In this case we want to flip each bit
   if (itsBitsPerPixel == 1) {
 	 for (int i = 0; i < num_bytes; ++i) {
-		itsBytes.get()[i] ^= 0xff;
+		itsBytes[i] ^= 0xff;
 	 }
   }
   // In this case we want to reflect the value of each byte around the
   // middle value, 127.5
   else {
 	 for (int i = 0; i < num_bytes; ++i) {
-		itsBytes.get()[i] = 0xff - itsBytes.get()[i];
+		itsBytes[i] = 0xff - itsBytes[i];
 	 }
   }
+  sendStateChangeMsg();
+}
+
+void Bitmap::flipVertical() {
+DOTRACE("Bitmap::flipVertical");
+
+  itsVerticalFlip = !itsVerticalFlip;
+
+  doFlipVertical();
+}
+
+void Bitmap::doFlipVertical() {
+DOTRACE("Bitmap::doFlipVertical");
+
+  int bytes_per_row = (itsWidth*itsBitsPerPixel)/8 + 1;
+  int num_bytes = bytes_per_row * itsHeight;
+  
+  unsigned char* new_bytes = new unsigned char[num_bytes];
+  
+  for (int row = 0; row < itsHeight; ++row) {
+	 int new_row = (itsHeight-1)-row;
+	 memcpy(static_cast<void*> (new_bytes + (new_row * bytes_per_row)),
+			  static_cast<void*> (itsBytes  + (row     * bytes_per_row)),
+			  bytes_per_row);
+  }
+  
+  delete [] itsBytes;
+  itsBytes = new_bytes;
+
   sendStateChangeMsg();
 }
 
@@ -207,20 +292,23 @@ DOTRACE("Bitmap::grRecompile");
   glNewList(grDisplayList(), GL_COMPILE);
     glRasterPos2d(itsRasterX, itsRasterY);
 	 glPixelZoom(itsZoomX, itsZoomY);
+
 	 if (itsBitsPerPixel == 24) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   		glDrawPixels(itsWidth, itsHeight, GL_RGB, GL_UNSIGNED_BYTE,
-						 static_cast<GLvoid*>(itsBytes.get()));
+						 static_cast<GLvoid*>(itsBytes));
 	 }
 	 else if (itsBitsPerPixel == 8) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
-						 static_cast<GLvoid*>(itsBytes.get()));
+						 static_cast<GLvoid*>(itsBytes));
 	 }
 	 else if (itsBitsPerPixel == 1) {
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
- 		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_BITMAP,
- 						 static_cast<GLvoid*>(itsBytes.get()));
+ 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//   		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_BITMAP,
+//   						 static_cast<GLvoid*>(itsBytes));
+ 		glBitmap(itsWidth, itsHeight, 0.0, 0.0, 0.0, 0.0,
+ 					static_cast<GLubyte*>(itsBytes));
 	 }
   glEndList();
 
