@@ -123,7 +123,8 @@ namespace geom
     const V& bottom() const { return yy.lo; }
     const V& top() const { return yy.hi; }
 
-    bool contains(const geom::vec2<V>& pt) const
+    template <class U>
+    bool contains(const geom::vec2<U>& pt) const
     { return xx.contains(pt.x()) && yy.contains(pt.y()); }
 
     //

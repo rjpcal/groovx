@@ -68,7 +68,8 @@ namespace geom
       return *this;
     }
 
-    bool contains(V val) const
+    template <class U>
+    bool contains(U val) const
     { return val >= lo && val <= hi; }
 
     V center() const
