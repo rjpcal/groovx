@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu Oct 21 23:10:22 1999
+// written: Mon Nov  8 16:31:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,9 +47,6 @@ public:
   virtual void rhBeginTrial() const = 0;
   virtual void rhAbortTrial() const = 0;
   virtual void rhHaltExpt() const = 0;
-
-protected:
-  mutable Tcl_Interp* itsInterp;
 };
 
 static const char vcid_responsehandler_h[] = "$Header$";
