@@ -179,66 +179,74 @@ namespace
   //   (1) "/./"          --> "/"
   //   (2) "somedir/../"  --> "/"
   //   (3) "//"           --> "/"
-  string make_normpath(const string& path)
+  void make_normpath(const string& path, string& normpath)
   {
-    vector<string> result;
+    typedef std::pair<string::size_type, string::size_type> subspec;
+
+    vector<subspec> subspecs;
 
     string::size_type p = 0;
+
+    string::size_type newlen = 0;
 
     for (string::size_type i = 0; i < path.size(); ++i)
       {
         if (path[i] == '/' || i+1 == path.size())
           {
-            if (i == 0) result.push_back("");
+            if (i == 0) subspecs.push_back(subspec(0,0));
             else
               {
                 string::size_type i2 = i;
+
                 if (path[i] != '/' && i+1 == path.size())
                   i2 = path.size();
-                string part(path.begin()+p, path.begin()+i2);
-                if (part == "")
+
+                const string::size_type n = (i2-p);
+
+                if (n == 0)
+                  {
+                    // do nothing, we have a double-slash '//' in the path
+                  }
+                else if (n == 1 && path.compare(p, n, ".") == 0)
                   {
                     // do nothing
                   }
-                else if (part == ".")
+                else if (n == 2 && path.compare(p, n, "..") == 0)
                   {
-                    // do nothing
-                  }
-                else if (part == "..")
-                  {
-                    if (result.size() == 0)
+                    if (subspecs.size() == 0)
                       {
                         cerr << "ERROR: used '../' at beginning of path\n";
                         exit(1);
                       }
-                    else if (result.size() == 1 && result.back() == "")
+                    else if (subspecs.size() == 1 && subspecs.back().second == 0)
                       {
                         // do nothing, here we have '/../' at beginning of path
                       }
                     else
                       {
-                        result.pop_back();
+                        newlen -= subspecs.back().second;
+                        subspecs.pop_back();
                       }
                   }
                 else
                   {
-                    result.push_back(part);
+                    subspecs.push_back(subspec(p, n));
+                    newlen += n;
                   }
               }
             p = i+1;
           }
       }
 
-    string newpath;
+    normpath.clear();
+    normpath.reserve(newlen + subspecs.size() + 1);
 
-    for (unsigned int i = 0; i < result.size(); ++i)
+    for (unsigned int i = 0; i < subspecs.size(); ++i)
       {
-        newpath += result[i];
-        if (i+1 < result.size())
-          newpath += '/';
+        normpath.append(path, subspecs[i].first, subspecs[i].second);
+        if (i+1 < subspecs.size())
+          normpath += '/';
       }
-
-    return newpath;
   }
 
   //----------------------------------------------------------
@@ -674,7 +682,8 @@ namespace
 
   file_info* file_info::get(const string& fname_orig)
   {
-    const string fname = make_normpath(fname_orig);
+    string fname;
+    make_normpath(fname_orig, fname);
 
     info_map_t::iterator p = s_info_map.find(fname.c_str());
     if (p != s_info_map.end())
