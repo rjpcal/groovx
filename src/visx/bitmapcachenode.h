@@ -14,6 +14,7 @@
 #define GROBJRENDERER_H_DEFINED
 
 #include "gmodes.h"
+#include "gnode.h"
 
 #include "util/strings.h"
 #include "util/pointers.h"
@@ -22,11 +23,6 @@ class BmapRenderer;
 class BitmapRep;
 
 class Gnode;
-
-namespace Gfx
-{
-  class Canvas;
-}
 
 class GrObjRenderer {
 public:
