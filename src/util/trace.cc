@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Oct  9 19:23:48 2000
+// written: Tue Oct 10 08:05:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ Util::Prof::~Prof() {
 void Util::Trace::printStackTrace(ostream& os) {
   os << "stack trace:\n";
   for (int i = 0; i < callStack.size(); ++i) {
-	 os << '\t' << i << ' ' << callStack[i]->name() << '\n';
+	 os << "\t[" << i << "] " << callStack[i]->name() << '\n';
   }
   os << flush;
 }
