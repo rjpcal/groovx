@@ -15,6 +15,7 @@
 
 #include "gabor.h"
 
+#include "point.h"
 #include "rect.h"
 
 #include "io/ioproxy.h"
@@ -36,7 +37,7 @@ namespace
 {
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("colorMode", &Gabor::colorMode, 2, 1, 3, 1, true),
+    FieldInfo("colorMode", &Gabor::colorMode, 2, 1, 4, 1, true),
     FieldInfo("contrast", &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
     FieldInfo("spatialFreq", &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
     FieldInfo("phase", &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
@@ -137,10 +138,10 @@ DOTRACE("Gabor::grGetBoundingBox");
 void Gabor::grRender(GWT::Canvas&, DrawMode) const
 {
 DOTRACE("Gabor::grRender");
-  double xsigma = sigma()*aspectRatio();
-  double ysigma = sigma();
-  double xmean = 0.0;
-  double ymean = 0.0;
+  const double xsigma2 = sigma()*aspectRatio() * sigma()*aspectRatio() ;
+  const double ysigma2 = sigma() * sigma();
+
+  const Point<double> center(0.0, 0.0);
 
   static const double PI = acos(-1.0);
 
@@ -162,90 +163,25 @@ DOTRACE("Gabor::grRender");
 
     for (int x_step = 0; x_step < resolution(); ++x_step)
       {
-        double unrotated_x = x_step*res_step - 0.5;
-
-        double x = unrotated_x;
+        const double unrotated_x = x_step*res_step - 0.5;
 
         for (int y_step = 0; y_step < resolution(); ++y_step)
           {
-            double unrotated_y = y_step*res_step - 0.5;
+            const double unrotated_y = y_step*res_step - 0.5;
 
-            double y = unrotated_y;
+				Point<double> point(unrotated_x, unrotated_y);
+				point.rotateDeg(orientation());
 
-            if ( orientation() != 0 )
-              {
-                if ( orientation() == 90 )
-                  {
-                    x = -unrotated_y;
-                    y = unrotated_x;
-                  }
-                else if ( orientation() == 180 )
-                  {
-                    x = -unrotated_x;
-                    y = -unrotated_y;
-                  }
-                else if ( orientation() == 270 )
-                  {
-                    x = unrotated_y;
-                    y= -unrotated_x;
-                  }
-                else
-                  {
-                    double r = sqrt(unrotated_x*unrotated_x +
-                                    unrotated_y*unrotated_y);
+				point -= center;
 
-                    double atan_y_x = atan2(unrotated_y, unrotated_x);
+            const double gauss_xy =
+				  exp( (point.x())*(point.x()) / (-4.0*xsigma2) +
+						 (point.y())*(point.y()) / (-4.0*ysigma2) );
 
-                    double new_theta = atan_y_x + orientation()*PI/180.0;
+            const double sin_x =
+				  sin(2*PI*spatialFreq()*point.x() + phase()*PI/180.0);
 
-                    while (new_theta > PI)
-                      {
-                        new_theta -= 2*PI;
-                      }
-                    while (new_theta < -PI)
-                      {
-                        new_theta += 2*PI;
-                      }
-
-                    double unscaled_new_x = 1.0;
-                    double unscaled_new_y = Util::abs(tan(new_theta));
-
-                    double scale_factor =
-                      sqrt(unscaled_new_x*unscaled_new_x +
-                           unscaled_new_y*unscaled_new_y);
-
-                    x = r * unscaled_new_x / scale_factor;
-                    y = r * unscaled_new_y / scale_factor;
-
-                    if (new_theta < -PI/2.0)
-                      {
-                        x = -x;
-                        y = -y;
-                      }
-                    else if (new_theta < 0.0)
-                      {
-                        y = -y;
-                      }
-                    else if (new_theta < PI/2.0)
-                      {
-                        ; // nothing
-                      }
-                    else
-                      {
-                        x = -x;
-                      }
-                  }
-              }
-
-            double gauss_x = exp( -1.0*(x-xmean)*(x-xmean) /
-                                  (4.0*xsigma*xsigma) );
-
-            double sin_x = sin(2*PI*spatialFreq()*x + phase()*PI/180.0);
-
-            double gauss_y = exp( -1.0*(y-ymean)*(y-ymean) /
-                                  (4.0*ysigma*ysigma) );
-
-            double gabor = 0.5*sin_x*gauss_x*gauss_y*contrast() + 0.5;
+            const double gabor = 0.5*sin_x*gauss_xy*contrast() + 0.5;
 
             if ( colorMode() == GRAYSCALE )
               {
