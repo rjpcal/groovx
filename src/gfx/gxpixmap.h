@@ -32,6 +32,8 @@
 
 #include "gfx/gxshapekit.h"
 
+#include <iosfwd>
+
 template <class T> class shared_ptr;
 
 namespace Gfx
@@ -76,6 +78,9 @@ public:
   /// Loads bitmap data from the image file at \a filename.
   /** The file must be in one of the supported image formats. */
   void loadImage(const char* filename);
+
+  /// Loads PNM data from the given input stream.
+  void loadImageStream(std::istream& ist);
 
   /// Reload bitmap data from the image file most recently loaded.
   /** This has the effect of reverting any changes that might have been

@@ -61,7 +61,9 @@
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclchannelbuf.h"
 #include "tcl/tclpkg.h"
+#include "tcl/tclsafeinterp.h"
 #include "tcl/tracertcl.h"
 
 #include "util/error.h"
@@ -388,16 +390,25 @@ DOTRACE("Gxshapekit_Init");
 
 namespace
 {
-  void scramble1(Util::SoftRef<GxPixmap> pixmap,
+  void scramble1(Util::Ref<GxPixmap> pixmap,
                  int numsubcols, int numsubrows)
   {
     pixmap->scramble(numsubcols, numsubrows, 0);
   }
 
-  void scramble2(Util::SoftRef<GxPixmap> pixmap,
+  void scramble2(Util::Ref<GxPixmap> pixmap,
                  int numsubcols, int numsubrows, int seed)
   {
     pixmap->scramble(numsubcols, numsubrows, seed);
+  }
+
+  void loadImageStream(Tcl::Context& ctx)
+  {
+    Util::Ref<GxPixmap> pixmap = ctx.getValFromArg<Util::Ref<GxPixmap> >(1);
+    const char* channame = ctx.getValFromArg<const char*>(2);
+    Tcl_Interp* interp = ctx.interp().intp();
+    shared_ptr<std::istream> ist(Tcl::ichanopen(interp, channame));
+    pixmap->loadImageStream(*ist);
   }
 }
 
@@ -422,6 +433,7 @@ DOTRACE("Gxpixmap_Init");
   pkg->defVec("grabScreen", "objref(s)", &GxPixmap::grabScreen );
   pkg->defVec("grabWorldRect", "objref(s) {left top right bottom}",
               &GxPixmap::grabWorldRect );
+  pkg->defRaw("loadImageStream", 2, "objref channame", &loadImageStream);
   pkg->defVec("loadImage", "objref(s) filename(s)", &GxPixmap::loadImage );
   pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
   pkg->defVec("queueImage", "objref(s) filename(s)", &GxPixmap::queueImage );

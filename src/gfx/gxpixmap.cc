@@ -38,6 +38,7 @@
 #include "gx/bbox.h"
 #include "gx/bmapdata.h"
 #include "gx/imgfile.h"
+#include "gx/pbm.h"
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
@@ -269,6 +270,15 @@ DOTRACE("GxPixmap::loadImage");
 
   rep->itsFilename = filename;
 
+  this->sigNodeChanged.emit();
+}
+
+void GxPixmap::loadImageStream(std::istream& ist)
+{
+DOTRACE("GxPixmap::loadImageStream");
+
+  Pbm::load(ist, rep->itsData);
+  rep->itsFilename = "";
   this->sigNodeChanged.emit();
 }
 
