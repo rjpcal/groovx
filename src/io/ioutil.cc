@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Tue Jun 12 11:17:11 2001
+// written: Wed Jun 20 10:04:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,12 +21,9 @@
 #include "io/iolegacy.h"
 
 #include "util/arrays.h"
+#include "util/gzstreambuf.h"
 #include "util/ref.h"
 #include "util/strings.h"
-
-#ifdef HAVE_ZSTREAM
-#  include <zstream.h>
-#endif
 
 #include <cstring>
 #include <fstream.h>
@@ -209,7 +206,6 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
     throw err;
   }
 
-#ifdef HAVE_ZSTREAM
   string_literal gz_ext(".gz");
 
   const char* filename_ext = filename.c_str() + filename.length() - 3;
@@ -217,19 +213,16 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
   if ( gz_ext == filename_ext ) {
     ofs.close();
 
-    ozipstream ozs(filename.c_str());
+    Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::out);
+    STD_IO::ostream os(&buf);
 
-    AsciiStreamWriter writer(ozs);
+    AsciiStreamWriter writer(os);
     writer.writeRoot(&io);
   }
   else {
     AsciiStreamWriter writer(ofs);
     writer.writeRoot(&io);
   }
-#else
-  AsciiStreamWriter writer(ofs);
-  writer.writeRoot(&io);
-#endif
 }
 
 
@@ -264,7 +257,6 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
     throw err;
   }
 
-#ifdef HAVE_ZSTREAM
   string_literal gz_ext(".gz");
 
   const char* filename_ext = filename.c_str() + filename.length() - 3;
@@ -272,19 +264,16 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
   if ( gz_ext == filename_ext ) {
     ifs.close();
 
-    izipstream izs(filename.c_str());
+    Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::in);
+    STD_IO::istream is(&buf);
 
-    AsciiStreamReader reader(izs);
+    AsciiStreamReader reader(is);
     reader.readRoot(&io);
   }
   else {
     AsciiStreamReader reader(ifs);
     reader.readRoot(&io);
   }
-#else
-  AsciiStreamReader reader(ifs);
-  reader.readRoot(&io);
-#endif
 
   afterLoadHook();
 }
