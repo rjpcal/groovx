@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Thu May 10 12:04:42 2001
+// written: Tue May 22 12:19:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,7 @@
 
 #include "util/observable.h"
 
-#include <list>
-
+#include "util/dlink_list.h"
 #include "util/observer.h"
 
 #define NO_TRACE
@@ -30,13 +29,17 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
+namespace {
+  typedef dlink_list<Observer*> ListType;
+}
+
 struct ObservableImpl {
 public:
   ObservableImpl() : itsObservers()
 	 { }
   ~ObservableImpl()
 	 { }
-  std::list<Observer *> itsObservers;
+  ListType itsObservers;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +75,7 @@ DOTRACE("Observable::detach");
 
 void Observable::sendStateChangeMsg() const {
 DOTRACE("Observable::sendStateChangeMsg");
-  for (std::list<Observer *>::iterator ii = itsImpl.itsObservers.begin();
+  for (ListType::iterator ii = itsImpl.itsObservers.begin();
 		 ii != itsImpl.itsObservers.end();
 		 ii++) {
 	 DebugEvalNL((void*)*ii);
@@ -83,7 +86,7 @@ DOTRACE("Observable::sendStateChangeMsg");
 
 void Observable::sendDestroyMsg() {
 DOTRACE("Observable::sendDestroyMsg");
-  std::list<Observer *>& theList = itsImpl.itsObservers;
+  ListType& theList = itsImpl.itsObservers;
 
   DebugEval(itsImpl.itsObservers.size());
 
