@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Wed Mar 19 17:55:56 2003
+// written: Mon May 12 11:50:45 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -115,6 +115,9 @@ public:
   Vec3 operator/(const Vec3<V>& rhs) const
     { return Vec3<V>(x() / rhs.x(), y() / rhs.y(), z() / rhs.z()); }
 };
+
+typedef Vec3<int> Vec3i;
+typedef Vec3<double> Vec3d;
 
 } // end namespace Gfx
 
