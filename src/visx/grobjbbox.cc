@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Thu Aug 16 10:50:37 2001
+// written: Thu Aug 16 11:32:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,29 +36,33 @@ namespace
     }
     glPopAttrib();
   }
+
+  Gfx::Rect<double> addPixelBorder(Gfx::Canvas& canvas,
+											  const Gfx::Rect<double>& raw,
+											  int border_pixels)
+  {
+    // Find the bounding box in screen coordinates
+    Gfx::Rect<int> screen_pos = canvas.screenFromWorld(raw);
+
+    // Add the pixel border around the edges...
+    screen_pos.widenByStep(border_pixels);
+    screen_pos.heightenByStep(border_pixels);
+
+    // ... and project back to world coordinates
+    return canvas.worldFromScreen(screen_pos);
+  }
 }
 
 Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::withBorder");
 
-  const Gfx::Rect<double> native = child()->gnodeBoundingBox(canvas);
+  // Add extra pixels if the box itself will be visible.
+  int border_pixels = itsIsVisible ? itsPixelBorder+2 : itsPixelBorder;
 
-  // Do the object's internal scaling and alignment, and find the
-  // bounding box in screen coordinates
-
-  Gfx::Rect<int> screen_pos;
-
-  screen_pos = canvas.screenFromWorld(native);
-
-  // Add a pixel border around the edges of the image...
-  int bp = pixelBorder();
-
-  screen_pos.widenByStep(bp);
-  screen_pos.heightenByStep(bp);
-
-  // ... and project back to world coordinates
-  return canvas.worldFromScreen(screen_pos);
+  return addPixelBorder(canvas,
+								child()->gnodeBoundingBox(canvas),
+								border_pixels);
 }
 
 void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const
@@ -67,7 +71,10 @@ DOTRACE("GrObjBBox::gnodeDraw");
 
   if (itsIsVisible)
     {
-      Gfx::Rect<double> bounds = gnodeBoundingBox(canvas);
+      Gfx::Rect<double> bounds = 
+        addPixelBorder(canvas,
+							  child()->gnodeBoundingBox(canvas),
+							  itsPixelBorder);
 
       renderRect(canvas, bounds);
     }
