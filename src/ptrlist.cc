@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Oct 25 18:03:49 2000
+// written: Thu Oct 26 10:45:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,13 +26,13 @@ PtrList<T>::~PtrList() {}
 template <class T>
 PtrList<T>::SharedPtr PtrList<T>::insert(T* master)
 {
-  return SharedPtr(master, PtrListBase::insertPtrBase(master));
+  return SharedPtr(master, insertPtrBase(master));
 }
 
 template <class T>
 PtrList<T>::SharedPtr PtrList<T>::getCheckedPtr(int id) const
 {
-  IO::IoObject* voidPtr = PtrListBase::getCheckedPtrBase(id);
+  IO::IoObject* voidPtr = getCheckedPtrBase(id);
   // cast as reference to force an exception on error
   T& t = dynamic_cast<T&>(*voidPtr);
   return SharedPtr(&t, id);
