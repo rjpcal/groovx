@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Fri Sep 29 15:01:57 2000
+// written: Thu Oct 19 15:39:16 2000
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -52,9 +52,6 @@ public:
   virtual double getVertOffset() const;
 
 private:
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
-
   double itsCtrlPnts[24];		  // Bezier control points for face outline
   double itsEyeAspect;			  // control aspect ratio of eye outline
   double itsVertOffset;			  // amount of vertical offset of all features
