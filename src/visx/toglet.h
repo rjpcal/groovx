@@ -110,6 +110,10 @@ private:
   double itsFixedScale;
   Rect<double> itsMinRect;
   unsigned int itsFontListBase;
+
+  bool itsUsingRgba;
+  bool itsHasPrivateCmap;
+  bool itsIsDoubleBuffered;
 };
 
 static const char vcid_toglconfig_h[] = "$Header$";
