@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Wed Oct  6 10:24:51 1999
+// written: Wed Oct  6 10:51:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,8 +45,6 @@ public:
 
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
-  // These functions write the object's state from/to an output/input
-  // stream. Both functions are defined, but are no-ops for GrObj.
 
   virtual int charCount() const;
 
