@@ -50,9 +50,6 @@ public:
   /// Construct with empty bitmap data.
   BitmapRep(shared_ptr<BmapRenderer> renderer);
 
-  /// Construct and load bitmap data from \a filename.
-  BitmapRep(shared_ptr<BmapRenderer> renderer, const char* filename);
-
   /// Non-virtual destructor implies this class is not polymorphic.
   ~BitmapRep();
 

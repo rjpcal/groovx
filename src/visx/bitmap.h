@@ -39,16 +39,15 @@ class BmapRenderer;
 ///////////////////////////////////////////////////////////////////////
 
 class Bitmap : public GrObj {
-  // Creators
 public:
+
+  //////////////
+  // creators //
+  //////////////
+
   /// Create an empty bitmap.
   Bitmap(shared_ptr<BmapRenderer> renderer);
 
-  /** Create a bitmap from a graphics file. Currently the only
-      supported file format is PBM (Portable BitMap). */
-  Bitmap(shared_ptr<BmapRenderer> renderer, const char* filename);
-
-public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Bitmap();
 

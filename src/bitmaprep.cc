@@ -58,9 +58,9 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(shared_ptr<BmapRenderer> renderer, const char* filename="") :
+  Impl(shared_ptr<BmapRenderer> renderer) :
     itsRenderer(renderer),
-    itsFilename(filename),
+    itsFilename(),
     itsRasterPos(0.0, 0.0),
     itsZoom(0.0, 0.0),
     itsUsingZoom(false),
@@ -153,13 +153,6 @@ BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer) :
   itsImpl(new Impl(renderer))
 {
 DOTRACE("BitmapRep::BitmapRep");
-}
-
-BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer, const char* filename) :
-  itsImpl(new Impl(renderer, filename))
-{
-DOTRACE("BitmapRep::BitmapRep");
-  loadPbmFile(filename);
 }
 
 BitmapRep::~BitmapRep()
