@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Oct 19 15:10:51 2000
+// written: Fri Oct 20 17:50:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,10 +45,11 @@ typedef void* ClientData;
 ///////////////////////////////////////////////////////////////////////
 
 class TrialEvent : public virtual IO::IoObject {
-public:
+protected:
   /// Construct with a requested delay of \a msec.
   TrialEvent(int msec);
 
+public:
   /// Destructor cancels any pending callback to \c invoke().
   virtual ~TrialEvent();
 
@@ -122,9 +123,12 @@ private:
 
 /// TrialEvent subclass to call TrialBase::trAbortTrial().
 class AbortTrialEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   AbortTrialEvent(int msec = 0);
+public:
+  /// Default creator.
+  static AbortTrialEvent* make() { return new AbortTrialEvent; }
   /// Virtual destructor.
   virtual ~AbortTrialEvent();
 protected:
@@ -133,9 +137,12 @@ protected:
 
 /// TrialEvent subclass to call TrialBase::trDrawTrial().
 class DrawEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   DrawEvent(int msec = 0);
+public:
+  /// Default creator.
+  static DrawEvent* make() { return new DrawEvent; }
   /// Virtual destructor.
   virtual ~DrawEvent();
 protected:
@@ -144,9 +151,12 @@ protected:
 
 /// TrialEvent subclass to call TrialBase::trEndTrial().
 class EndTrialEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   EndTrialEvent(int msec = 0);
+public:
+  /// Default creator.
+  static EndTrialEvent* make() { return new EndTrialEvent; }
   /// Virtual destructor.
   virtual ~EndTrialEvent();
 protected:
@@ -155,9 +165,12 @@ protected:
 
 /// TrialEvent subclass to call TrialBase::trUndrawTrial().
 class UndrawEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   UndrawEvent(int msec = 0);
+public:
+  /// Default creator.
+  static UndrawEvent* make() { return new UndrawEvent; }
   /// Virtual destructor.
   virtual ~UndrawEvent();
 protected:
@@ -166,9 +179,12 @@ protected:
 
 /// TrialEvent subclass to call Canvas::drawOnBackBuffer().
 class RenderBackEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderBackEvent(int msec = 0);
+public:
+  /// Default creator.
+  static RenderBackEvent* make() { return new RenderBackEvent; }
   /// Virtual destructor.
   virtual ~RenderBackEvent();
 protected:
@@ -177,9 +193,12 @@ protected:
 
 /// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
 class RenderFrontEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderFrontEvent(int msec = 0);
+public:
+  /// Default creator.
+  static RenderFrontEvent* make() { return new RenderFrontEvent; }
   /// Virtual destructor.
   virtual ~RenderFrontEvent();
 protected:
@@ -188,9 +207,12 @@ protected:
 
 /// TrialEvent subclass to call Widget::swapBuffers().
 class SwapBuffersEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   SwapBuffersEvent(int msec = 0);
+public:
+  /// Default creator.
+  static SwapBuffersEvent* make() { return new SwapBuffersEvent; }
   /// Virtual destructor.
   virtual ~SwapBuffersEvent();
 protected:
@@ -199,9 +221,12 @@ protected:
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
 class ClearBufferEvent : public TrialEvent {
-public:
+protected:
   /// Construct with a requested delay of \a msec milliseconds.
   ClearBufferEvent(int msec = 0);
+public:
+  /// Default creator.
+  static ClearBufferEvent* make() { return new ClearBufferEvent; }
   /// Virtual destructor.
   virtual ~ClearBufferEvent();
 protected:
