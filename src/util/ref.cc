@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Oct 27 17:07:31 2000
-// written: Fri Jan 18 16:07:04 2002
+// written: Fri Nov 22 15:26:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,12 +25,17 @@ bool Util::RefHelper::isValidId(Util::UID id)
 
 Util::Object* Util::RefHelper::getCheckedItem(Util::UID id)
 {
-  return ObjDb::theDb().getCheckedPtrBase(id);
+  return ObjDb::theDb().getCheckedObj(id);
 }
 
 void Util::RefHelper::insertItem(Util::Object* obj)
 {
-  ObjDb::theDb().insertPtrBase(obj);
+  ObjDb::theDb().insertObj(obj);
+}
+
+void Util::RefHelper::insertItemWeak(Util::Object* obj)
+{
+  ObjDb::theDb().insertObjWeak(obj);
 }
 
 void Util::RefHelper::throwError(const char* msg)
