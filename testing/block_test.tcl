@@ -31,7 +31,7 @@ test "Block::currentElement" "normal use on empty block" {
 
 ### Block::trialType ###
 test "Block::trialType" "too few args" {
-    Block::trialType 
+    Block::trialType
 } {wrong \# args}
 test "Block::trialType" "too many args" {
     Block::trialType $::BLOCK junk
@@ -44,7 +44,7 @@ test "Block::trialType" "normal use on empty expt" {
 
 ### Block::isComplete ###
 test "Block::isComplete" "too few args" {
-    Block::isComplete 
+    Block::isComplete
 } {wrong \# args}
 test "Block::isComplete" "too many args" {
     Block::isComplete $::BLOCK junk
@@ -70,7 +70,7 @@ test "Block::numCompleted" "use on empty expt" {
 
 ### Block::numElements ###
 test "Block::numElements" "too few args" {
-    Block::numElements 
+    Block::numElements
 } {wrong \# args}
 test "Block::numElements" "too many args" {
     Block::numElements $::BLOCK junk
@@ -78,12 +78,12 @@ test "Block::numElements" "too many args" {
 
 test "Block::numElements" "use on empty expt" {
     Block::clearElements $::BLOCK
-    Block::numElements   $::BLOCK 
+    Block::numElements   $::BLOCK
 } {^0$}
 
 ### Block::lastResponse ###
 test "Block::lastResponse" "too few args" {
-    Block::lastResponse 
+    Block::lastResponse
 } {wrong \# args}
 test "Block::lastResponse" "too many args" {
     Block::lastResponse $::BLOCK junk
@@ -96,7 +96,7 @@ test "Block::lastResponse" "normal use on empty expt" {
 
 ### Block::info ###
 test "Block::info" "too few args" {
-    Block::info 
+    Block::info
 } {wrong \# args}
 test "Block::info" "too many args" {
     Block::info $::BLOCK junk
