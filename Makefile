@@ -20,8 +20,8 @@ default: all
 
 VERSION := 0.8a8
 
-TCL_VERSION := 8.3.3
-TK_VERSION := 8.3.3
+TCL_VERSION := 8.4
+TK_VERSION := 8.4
 
 MAKEFLAGS += --warn-undefined-variables
 
@@ -224,6 +224,11 @@ ifeq ($(COMPILER),g++3)
 		CC_SWITCHES += -O1 -g
 	endif
 
+# Need this to allow symbols from the executable to be accessed by loaded
+# dynamic libraries; this is needed e.g. for the matlab libut.so library to
+# find the "_start" symbol.
+	LD_OPTIONS += -Wl,--export-dynamic
+
 # can't use -O3 with g++301, since we get core dumps...
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O2
@@ -261,8 +266,6 @@ ifneq ($(PLATFORM),ppc)
 	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
 	LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
 	CPP_DEFINES += -DHAVE_MATLAB
-
-	EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
 endif
 
 ifeq ($(PLATFORM),ppc)
@@ -310,12 +313,12 @@ $(SRC)/%.preh : $(SRC)/%.h
 
 ifneq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
+	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $(LIB_PATH) $^ && mv $(TMP_DIR)/$(notdir $@) $@
 endif
 
 ifeq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $^ -lcc_dynamic
+	$(SHLIB_CMD) $@ $(LIB_PATH) $^ -lcc_dynamic
 endif
 
 %.$(STATLIB_EXT):
@@ -379,6 +382,18 @@ $(PKG_DEP_FILE): $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 	src/pkgs/buildPkgDeps.tcl $@
 
 include $(PKG_DEP_FILE)
+
+$(LOCAL_LIB)/visx/mtx.so: \
+	/usr/local/matlab/extern/lib/glnx86/libmx.so \
+	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
+
+$(LOCAL_LIB)/visx/matlabengine.so: \
+	/usr/local/matlab/extern/lib/glnx86/libeng.so \
+	/usr/local/matlab/extern/lib/glnx86/libmx.so \
+	/usr/local/matlab/extern/lib/glnx86/libut.so \
+	/usr/local/matlab/extern/lib/glnx86/libmat.so \
+	/usr/local/matlab/extern/lib/glnx86/libmi.so \
+	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
 
 
 # dependencies of main project shlib's on object files
