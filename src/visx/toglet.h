@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 31 17:59:58 2001
+// written: Tue Jun  5 13:36:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,8 @@ public:
 				 int config_argc, char** config_argv,
 				 double dist, double unit_angle);
   virtual ~ToglConfig();
+
+  void onWindowClose();
 
   // accessors
   double getAspect() const { return double(getWidth())/getHeight(); }
