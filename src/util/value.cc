@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Thu Aug  9 07:36:49 2001
+// written: Wed Aug 15 17:57:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,8 @@ void Value::set(long) { raiseValueError("set(long)"); }
 void Value::set(bool) { raiseValueError("set(bool)"); }
 void Value::set(double) { raiseValueError("set(double)"); }
 void Value::set(const char*) { raiseValueError("set(const char*)"); }
+
+void Value::assignFrom(const Value& other) { other.assignTo(*this); }
 
 ///////////////////////////////////////////////////////////////////////
 //

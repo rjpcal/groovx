@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Thu Aug  9 07:32:49 2001
+// written: Wed Aug 15 17:56:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,6 +114,10 @@ public:
 
   /// Assign \a this's value to \a other, using the native type of \a this.
   virtual void assignTo(Value& other) const = 0;
+
+  /** Assign \a other's value to \a this. Default is to call
+      other.assignTo(this) */
+  virtual void assignFrom(const Value& other);
 };
 
 ///////////////////////////////////////////////////////////////////////
