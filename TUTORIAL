@@ -8,44 +8,52 @@
 #
 ######################################################################
 
+NOTE: If you're reading this file as a flat text file, you'll notice
+that there is some additional markup, which is used to generate an
+HTML version of this file with the doxygen tool. Nevertheless, this
+file should remain readable as plain text.
+
+/** \page TUTORIAL Miscellaneous tutorial information
+
 This tutorial began with excerpts from emails that I've written to
 help people get up and running with the groovx software; its content
-may overlap somewhat with the information in the toplevel README.
+may overlap somewhat with the information in the toplevel \ref README.
 
 Table of contents:
-1. Getting the source
-2. Building and installing the software and its dependencies
-3. Using the interactive shell 'groovx'
-4. Using the groovx shell from a script
-5. Running a sample visual experiment 'sample_expt.tcl'
-6. Getting into the C++ internals
 
+- \ref gettingsource
+- \ref buildinstall
+- \ref usinggroovx
+- \ref usingscripts
+- \ref sampleexpt
+- \ref cxxinternals
 
-######################################################################
-1. Getting the source
+<!--############################################################--><hr>
+
+\section gettingsource 1. Getting the source
 
    You can find a daily tarball of groovx here (substitute today's date
    in YYYYMMDD format for "20041004"):
 
-     http://www.klab.caltech.edu/rjpeters/code/groovx_20041004.tar.gz
+     - http://www.klab.caltech.edu/rjpeters/code/groovx_20041004.tar.gz
 
    Also, you'll need the latest alpha versions of tcl+tk in order to
    build groovx, so I've put those tarballs on my website as well:
 
-     http://www.klab.caltech.edu/rjpeters/code/tcl8.5a1-src.tar.gz
-     http://www.klab.caltech.edu/rjpeters/code/tk8.5a1-src.tar.gz
+     - http://www.klab.caltech.edu/rjpeters/code/tcl8.5a1-src.tar.gz
+     - http://www.klab.caltech.edu/rjpeters/code/tk8.5a1-src.tar.gz
 
    Optionally, if you're interested in playing around with the visual
    object editor program, you can also build itcl (incr tcl) and
    iwidgets (incr widgets), for which I also have tarballs:
 
-     http://www.klab.caltech.edu/rjpeters/code/itcl3.2.1_src.tgz
-     http://www.klab.caltech.edu/rjpeters/code/iwidgets4.0.1.tar.gz
+     - http://www.klab.caltech.edu/rjpeters/code/itcl3.2.1_src.tgz
+     - http://www.klab.caltech.edu/rjpeters/code/iwidgets4.0.1.tar.gz
 
 
+<!--############################################################--><hr>
 
-######################################################################
-2. Building and installing the software and its dependencies
+\section buildinstall 2. Building and installing the software and its dependencies
 
    Here's a quick rundown on how I would configure+install all this
    stuff.
@@ -53,6 +61,8 @@ Table of contents:
    Assuming you have all the tarballs sitting in a "$BUILD" directory
    somewhere (e.g. perhaps ~/build/), and that you'd like to install
    everything to $INSTALL (e.g. perhaps ~/local or /usr/local), then
+
+   \code
 
      ### unpack all the tarballs
 
@@ -103,14 +113,17 @@ Table of contents:
      # this will make+install everything, plus run a test suite:
      make
 
+   \endcode
+
    Note that any of the configure scripts will recognize a --help
    option (i.e. do "./configure --help"), causing the script to print
    a list of all the configure-time options that it accepts.
 
 
 
-######################################################################
-3. Using the interactive shell 'groovx'
+<!--############################################################--><hr>
+
+\section usinggroovx 3. Using the interactive shell 'groovx'
 
    The main executable program that gets built is a shell called
    'groovx'. This is essentially a custom Tcl+Tk shell, that includes
@@ -131,6 +144,8 @@ Table of contents:
    characters which you would not see or type during an actual shell
    session.
 
+   \code
+
      [sideswipe 13:26 53]$ groovx
 
      GroovX 1.0a1 (Oct  5 2004)
@@ -147,11 +162,15 @@ Table of contents:
 
      groovx>>> see $g
 
+   \endcode
+
    Now you should see the text "Hello, World" in your groovx window.
 
    As an aside, one way to get a list of all the classnames known to
    the "new" command is to call the "new" command with a bogus
    classname (such as the ever-popular "foobar"):
+
+   \code
 
      groovx>>> new foobar
      Obj::new: known types are:
@@ -218,6 +237,8 @@ Table of contents:
              UndrawEvent
      unknown object type 'foobar' (Util::Error)
 
+   \endcode
+
    Let's return to our "Hello, World" example and explore a little
    deeper. Groovx is a roughly object-oriented system (after all the
    acronym was originally conceived as a GRaphical Object-Oriented
@@ -231,18 +252,30 @@ Table of contents:
    syntactic sugar. Note that the order of arguments is different than
    in C or C++ -- there, you might say
 
+   \code
+
      ptr->someFunction()
+
+   \endcode
 
    but in groovx you'd say
 
+   \code
+
      -> $ptr someFunction"
+
+   \endcode
 
    In fact, with Tcl's extremely simple and uniform syntax, "->" is
    just a command like any other, only with a strange-looking
    name. So, the following two commands are precisely equivalent:
 
+   \code
+
      -> $object command arg1 arg2 arg3
      Class::command $object arg1 arg2 arg3
+
+   \endcode
 
    where "Class" is the class of the given $object. What "->" does is
    to look up the class of $object, and then call the command as shown
@@ -253,8 +286,12 @@ Table of contents:
 
    First, let's see what its type is:
 
+   \code
+
      groovx>>> -> $g type
      GxText
+
+   \endcode
 
    Good, that makes sense since we created it by calling "new GxText".
 
@@ -266,6 +303,8 @@ Table of contents:
    will helpfully list all possible matches. So in our case, we do the
    following to get a list of all possible commands in the GxText::
    namespace:
+
+   \code
 
      groovx>>> GxText::
      ambiguous command name "GxText::": ::GxText::alignmentMode
@@ -286,6 +325,8 @@ Table of contents:
      ::GxText::width ::GxText::widthFactor ::GxText::writeASW
      ::GxText::writeGVX ::GxText::writeLGX ::GxText::xmlDebug
 
+   \endcode
+
    So this shows us all possible commands that we can call on a GxText
    object. You'll notice that among them is ::GxText::type, the
    command that we previously used to get the type of the object.
@@ -295,10 +336,14 @@ Table of contents:
    use the command. For example, for GxText::text, you can do the
    following:
 
+   \code
+
      groovx>>> ? GxText::text
      GxText::text resolves to ::GxText::text
              ::GxText::text objref(s)
              ::GxText::text objref(s) new_val(s)
+
+   \endcode
 
    What that result tells you is that there are two syntaxes for
    calling the GxText::text command: in the first, you just call it
@@ -312,10 +357,14 @@ Table of contents:
    inherited commands will appear under their base name when looked up
    with "?". Thus:
 
+   \code
+
      groovx>>> ? GxText::type
      GxText::type resolves to ::Obj::type
      	     ::Obj::type objref(s)
      	     (defined at src/io/objtcl.cc:205)
+
+   \endcode
 
    shows that GxType::type is an inherited command, with the original
    command being Obj::type.
@@ -323,17 +372,25 @@ Table of contents:
    Similarly with GxText::loadGVX, which is inherited from
    IO::loadGVX:
 
+   \code
+
      groovx>>> ? GxText::loadGVX
      GxText::loadGVX resolves to ::IO::loadGVX
              ::IO::loadGVX filename
              (defined at src/io/iotcl.cc:69)
 
+   \endcode
+
    Finally, you can even use the "?" command to look up itself:
+
+   \code
 
      groovx 1>>> ? ?
      ? resolves to ::?
              ::? cmd_name
              (defined at src/tcl/misctcl.cc:148)
+
+   \endcode
 
    A useful tool for inspecting objects involves using the persistence
    layer built into the C++ framework. This is a generic serialization
@@ -349,6 +406,8 @@ Table of contents:
    To dump an object's contents to a string in the groovx shell, do
    the following (assuming you still have the $g object with "Hello,
    World" still sitting around):
+
+   \code
 
      groovx>>> -> $g writeGVX
      <?xml version="1.0"?>
@@ -369,6 +428,8 @@ Table of contents:
              </baseclass>
      </object>
 
+   \endcode
+
    This is a useful way to garner some insight into the internals of
    the toolkit. You'll see that GxText has "GxShapeKit" as a
    subclass. You'll also see that the text message "Hello, World" is
@@ -376,12 +437,20 @@ Table of contents:
    the following (reminder: square brackets [] in Tcl are used to
    evaluate the expression inside, and return its result):
 
+   \code
+
      groovx>>> set s [-> $g writeGVX]
+
+   \endcode
 
    Similarly, GVX output can be written to a file using saveGVX, like
    this:
 
+   \code
+
      groovx>>> -> $g saveGVX foo.gvx
+
+   \endcode
 
    You can verify the contents of the file "foo.gvx" by doing "cat
    foo.gvx" at the groovx shell prompt (in interactive mode, if Tcl
@@ -392,8 +461,12 @@ Table of contents:
    Now, to restore the contents of the foo.gvx file at a later time,
    use the IO::loadGVX command:
 
+   \code
+
      groovx>>> set g2 [IO::loadGVX foo.gvx]
      40
+
+   \endcode
 
    You can verify that $g2 now holds the same values as $g by doing
    "-> $g2 writeGVX".
@@ -402,25 +475,38 @@ Table of contents:
    most cases. For saving files, groovx will apply gzip compression if
    you give it a filename ending in .gz, like this:
 
+   \code
+
      groovx>>> -> $g saveGVX foo.gvx.gz
+
+   \endcode
 
    Verify that compression actually took place using Tcl's "file size"
    command to get the size of each file in bytes:
+
+   \code
 
      groovx>>> file size foo.gvx
      630
      groovx>>> file size foo.gvx.gz
      301
 
+   \endcode
+
    For loading files, compression is handled completely transparently:
+
+   \code
 
      groovx>>> set g3 [IO::loadGVX foo.gvx]
      groovx>>> set g4 [IO::loadGVX foo.gvx.gz]
 
+   \endcode
 
 
-######################################################################
-4. Using the groovx shell from a script
+
+<!--############################################################--><hr>
+
+\section usingscripts 4. Using the groovx shell from a script
 
    You can use the groovx shell in the "shbang" line of a
    shell-script, i.e. the first line of a script starting with
@@ -441,14 +527,19 @@ Table of contents:
      #!/path/to/installation/groovx/bin/groovx
 
 
-######################################################################
-5. Running a sample visual experiment 'sample_expt.tcl'
+<!--############################################################--><hr>
+
+\section sampleexpt 5. Running a sample visual experiment 'sample_expt.tcl'
 
    Once you've built+installed groovx, you can run some of the sample
    scripts that will now be located in $INSTALL/groovx/bin ... in
    particular, you can run this script
 
+   \code
+
      $INSTALL/groovx/bin/sample_expt.tcl
+
+   \endcode
 
    to get a sample version of my free-viewing psychophysics
    experiment. The original source for that script would be found in
@@ -461,12 +552,14 @@ Table of contents:
    to keep the experiment moving along, thought). Once the experiment
    quits, you'll be left with three files like the following:
 
-     expt_2004Oct04_192709.gvx
-     expt_2004Oct04_192709.resp
-     expt_2004Oct04_192709.log
+     - expt_2004Oct04_192709.gvx
+     - expt_2004Oct04_192709.resp
+     - expt_2004Oct04_192709.log
 
    The .gvx file is an XML file that contains the entire object tree
    of your experiment, and should begin something like the following:
+
+   \code
 
      <?xml version="1.0"?>
      <!-- GroovX XML 1 -->
@@ -489,6 +582,7 @@ Table of contents:
 
      ...
 
+   \endcode
 
    The .log file contains a verbose log of everything that happened
    during the experiment, and may be useful for debugging as well as
@@ -497,7 +591,11 @@ Table of contents:
    milliseconds) relative to various reference points; e.g. the
    following line
 
+   \code
+
      ExptDriver(19) @ 3549.279 | Trial(286) @ 44.388 | RenderBackEvent(462) @ 0.362 | entering RenderBackEvent(462)
+
+   \endcode
 
    was written at 3549ms after the start of the experiment (which was
    object number 19), and at 44ms after the start of Trial (object
@@ -505,22 +603,32 @@ Table of contents:
 
    Lines that may be of particular interest:
 
-     * lines containing 'loaded image', showing which image files were
+     - lines containing 'loaded image', showing which image files were
        loaded and when
 
-     * lines containing 'event_info', showing the raw information that
+     - lines containing 'event_info', showing the raw information that
        was gleaned from the user response:
+
+       \code
 
        ExptDriver(19) @ 8057.190 | Trial(286) @ 4552.299 | event_info: 1
 
-     * lines containing 'response val', showing how the event_info was
+       \endcode
+
+     - lines containing 'response val', showing how the event_info was
        mapped into a response value (which will ultimately be dumped out
        to the .resp file):
 
+       \code
+
        ExptDriver(19) @ 8057.439 | Trial(286) @ 4552.548 | response val: 1
+
+       \endcode
 
    Here's what an excerpt of the log file contents showing a single
    trial.
+
+   \code
 
      ExptDriver(19) @ 3517.003 | EndTrialEvent(599) @ 13.400 | Trial(286) @ 12.112 | entering Trial(286)
      ExptDriver(19) @ 3517.237 | EndTrialEvent(599) @ 13.634 | Trial(286) @ 12.346 | image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga02.jpg
@@ -625,8 +733,12 @@ Table of contents:
      ExptDriver(19) @ 8603.604 | Trial(286) @ 5098.713 | EndTrialEvent(550) @ 0.747 | leaving Trial(286)
      ExptDriver(19) @ 8603.752 | EndTrialEvent(550) @ 0.895 | current element Trial(370), completed 2 of 11
 
+   \endcode
+
    Finally, the .resp file gives a summary of the responses across all
    trials, like this:
+
+   \code
 
      %  Trial        N  Average     msec   description
           265        1     2.00  4719.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga01.jpg
@@ -641,6 +753,8 @@ Table of contents:
           454        1     1.00  5114.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga10.jpg
           603        1     0.00  2496.00 % text message 'FREE-VIEWING SEQUENCE\n\nafter each image:\n  press '1' if the region labeled '1' contained the most interesting feature\n  press '2' if the region labeled '2' contained the most interesting feature\n\n[press the spacebar to continue]'
 
+   \endcode
+
    It's in a format that is suitable for importing into matlab using
    matlab's "load", since all of the non-numeric stuff is commented
    out with the % characters. The "Trial" column shows the object
@@ -652,8 +766,9 @@ Table of contents:
 
 
 
-######################################################################
-6. Getting into the C++ internals
+<!--############################################################--><hr>
+
+\section cxxinternals 6. Exploring the C++ internals
 
    I'd like to think that I've done a decent job of keeping the C++
    code organized, but nevertheless it can be difficult to
@@ -671,10 +786,16 @@ Table of contents:
    interpreter. For example, let's try to create an unknown object
    type:
 
+   \code
+
      groovx>>> new foobar
      ...long error message...
 
+   \endcode
+
    Now, we can use "bt" to see where things went wrong:
+
+   \code
 
      groovx>>> bt
      [ 0] Util::ObjMgr::newObj(const fstring&) (src/util/objmgr.cc:47)
@@ -689,6 +810,8 @@ Table of contents:
      [ 9] Tcl::Main::run                      (src/tcl/tclmain.cc:619)
      [10] main                                (src/grsh/grshAppInit.cc:234)
 
+   \endcode
+
    Note that this "stack" is built up using various DOTRACE statements
    placed through the code, so it is NOT identical to the execution
    stack that might be reported by e.g. a debugger, since certain
@@ -699,16 +822,20 @@ Table of contents:
 
    Now, looking at the backtrace above, we can see several things:
 
-     * The top (innermost) stack location was in the
+     - The top (innermost) stack location was in the
        Util::ObjMgr::newObj function, defined at line 47 of the source
        file src/util/objmgr.cc. That line looks like this:
 
+       \code
+
          return Util::SoftRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
+
+       \endcode
 
        So, clearly to get to the real bottom of things, one would have
        to dig a bit deeper; nevertheless "bt" gets you close.
 
-     * The line containing "tcl/Obj::new"... the leading "tcl/" means
+     - The line containing "tcl/Obj::new"... the leading "tcl/" means
        that this is a stack entry that reflects a boundary point
        between the tcl script side, and the c++ implementation
        side. The portion following the "tcl/" is "Obj::new", which
@@ -718,14 +845,20 @@ Table of contents:
        to the location where the "Obj::new" tcl command is created in
        c++:
 
+       \code
+
          pkg->def( "new", "typename", &objNew, SRC_POS );
 
-     * Any lines below the "tcl/" line probably are not especially
+       \endcode
+
+     - Any lines below the "tcl/" line probably are not especially
        informative about the particular error that was generated,
        since these just give details about the operation of the
        program's main loop which, in the case of an interactively-run
        groovx shell, is just constantly polling for user input from
        the terminal. Thus the following lines:
+
+       \code
 
          [ 3] Tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
          [ 4] Tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
@@ -733,6 +866,8 @@ Table of contents:
          [ 6] Tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
          [ 7] Tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
          [ 8] Tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
+
+       \endcode
 
        reflect that tcl has found some input available on stdin
        (stdinProc and grabInput), has found that it has a complete
@@ -744,6 +879,8 @@ Table of contents:
    get the eyeHeight of the Face object stored in variable $a, but we
    accidentally type "Face::eyeHeight a" instead of "Face::eyeHeight
    $a"; then we get the following backtrace:
+
+   \code
 
      groovx>>> Face::eyeHeight a
      Face::eyeHeight: expected long value but got "a" (Util::Error)
@@ -762,6 +899,8 @@ Table of contents:
      [11] Tcl::Main::run                      (src/tcl/tclmain.cc:619)
      [12] main                                (src/grsh/grshAppInit.cc:234)
 
+   \endcode
+
    Again, the line starting with "tcl/" shows the current entry point
    from the script side back into c++ (in this case the
    Face::eyeHeight command), and, from the contents of the stack above
@@ -776,15 +915,25 @@ Table of contents:
    commands (either by using "?", or by giving the wrong number of
    arguments on purpose in order to force a usage warning):
 
+   \code
+
      groovx>>> ? IO::loadGVX
              ::IO::loadGVX filename
              (defined at src/io/iotcl.cc:67)
 
+   \endcode
+
    which points us to this:
+
+   \code
 
      pkg->def( "loadGVX", "filename", IO::loadGVX, SRC_POS );
 
+   \endcode
+
    or another example:
+
+   \code
 
      groovx>>> Face::eyeHeight
      wrong # args: should be one of:
@@ -792,6 +941,14 @@ Table of contents:
              "Face::eyeHeight objref(s) new_val(s)"
      (resolves to ::Face::eyeHeight, defined at src/visx/facetcl.cc:65)
 
+   \endcode
+
    which points us to this:
 
+   \code
+
      Tcl::defFieldContainer<Face>(pkg, SRC_POS);
+
+   \endcode
+
+**/
