@@ -19,8 +19,6 @@
 
 #include "util/strings.h"
 
-#include <typeinfo>
-
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
