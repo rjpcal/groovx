@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Fri Oct 20 11:37:15 2000
+// written: Wed Oct 25 13:56:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,14 @@ public:
 protected:
   virtual void invoke() {
 	 IoPtrList* theList = TclItemCmd<IoPtrList>::getItem();
-	 theList->insertValidIds(resultAppender((int*)0));
+	 for (IoPtrList::IdIterator
+			  itr = theList->beginIds(),
+			  end = theList->endIds();
+			itr != end;
+			++itr)
+		{
+		  lappendVal(*itr);
+		}
   }
 };
 

@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Oct 24 15:41:59 2000
+// written: Wed Oct 25 13:59:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,11 +125,6 @@ DOTRACE("TlistUtils::writeResponses");
 
   Tlist& tlist = Tlist::theTlist(); 
 
-  fixed_block<int> trialids(tlist.count());
-  tlist.insertValidIds(&trialids[0]);
-
-  DebugEvalNL(trialids.size());
-
   STD_IO::ofstream ofs(filename);
   const int wid = 8;
 
@@ -140,19 +135,22 @@ DOTRACE("TlistUtils::writeResponses");
   
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (size_t i = 0; i < trialids.size(); ++i) {
-	 NullableItemWithId<TrialBase> tb(trialids[i]);
+  for (Tlist::IdIterator
+			itr = tlist.beginIds(),
+			end = tlist.endIds();
+		 itr != end;
+		 ++itr)
+	 {
+		Trial* t = dynamic_cast<Trial*>(itr.getObject());
 
-	 Trial* t = dynamic_cast<Trial*>(tb.get());
-
-	 if ( t )
-		{
-		  ofs << setw(wid) << trialids[i];
-		  ofs << setw(wid) << t->numResponses();
-		  ofs << setw(wid) << t->avgResponse();	 
-		  ofs << setw(wid) << t->avgRespTime() << endl;
-		}
-  }
+		if ( t )
+		  {
+			 ofs << setw(wid) << *itr;
+			 ofs << setw(wid) << t->numResponses();
+			 ofs << setw(wid) << t->avgResponse();	 
+			 ofs << setw(wid) << t->avgRespTime() << endl;
+		  }
+	 }
 
   if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
 }
@@ -162,29 +160,27 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 
   Tlist& tlist = Tlist::theTlist(); 
 
-  fixed_block<int> trialids(tlist.count());
-  tlist.insertValidIds(&trialids[0]);
-	 
-  DebugEvalNL(trialids.size());
-	 
   STD_IO::ofstream ofs(filename);
-	 
-  for (size_t i = 0; i < trialids.size(); ++i) {
-	 NullableItemWithId<TrialBase> tb(trialids[i]);
 
-	 Trial* t = dynamic_cast<Trial*>(tb.get());
+  for (Tlist::IdIterator
+			itr = tlist.beginIds(),
+			end = tlist.endIds();
+		 itr != end;
+		 ++itr)
+	 {
+		Trial* t = dynamic_cast<Trial*>(itr.getObject());
 
-	 if ( t )
-		{
-		  // Use this to make sure we don't round down when we should round up.
-		  double fudge = 0.0001;
+		if ( t )
+		  {
+			 // Use this to make sure we don't round down when we should round up.
+			 double fudge = 0.0001;
 
-		  int num_zeros = int( (1.0 - t->avgResponse()) * t->numResponses() + fudge);
-		  int num_ones = t->numResponses() - num_zeros;
+			 int num_zeros = int( (1.0 - t->avgResponse()) * t->numResponses() + fudge);
+			 int num_ones = t->numResponses() - num_zeros;
 
-		  ofs << num_zeros << "  " << num_ones << endl;
-		}
-  }
+			 ofs << num_zeros << "  " << num_ones << endl;
+		  }
+	 }
 }
 
 int TlistUtils::loadObjidFile(const char* filename,
@@ -239,32 +235,31 @@ DOTRACE("TlistUtils::writeMatlab");
 
   Tlist& tlist = Tlist::theTlist(); 
 
-  fixed_block<int> trialids(tlist.count());
-  tlist.insertValidIds(&trialids[0]);
-
-  DebugEvalNL(trialids.size());
-
   STD_IO::ofstream ofs(filename);
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (size_t i = 0; i < trialids.size(); ++i) {
-	 NullableItemWithId<TrialBase> tb(trialids[i]);
 
-	 Trial* t = dynamic_cast<Trial*>(tb.get());
+  for (Tlist::IdIterator
+			itr = tlist.beginIds(),
+			end = tlist.endIds();
+		 itr != end;
+		 ++itr)
+	 {
+		Trial* t = dynamic_cast<Trial*>(itr.getObject());
 
-	 if ( t )
-		{
-		  for (Trial::GrObjItr ii = t->beginGrObjs(), end = t->endGrObjs();
-				 ii != end;
-				 ++ii)
-			 {
-				ofs << ii->id() << ' ';
-			 }
+		if ( t )
+		  {
+			 for (Trial::GrObjItr ii = t->beginGrObjs(), end = t->endGrObjs();
+					ii != end;
+					++ii)
+				{
+				  ofs << ii->id() << ' ';
+				}
 
-		  ofs << t->avgResponse() << endl;
-		}
-  }
+			 ofs << t->avgResponse() << endl;
+		  }
+	 }
 }
 
 static const char vcid_tlistutils_cc[] = "$Header$";
