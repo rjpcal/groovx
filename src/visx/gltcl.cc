@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jan 18 16:07:02 2002
+// written: Tue Jan 22 17:01:14 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -65,6 +65,10 @@ namespace GLTcl
 
 #define NAMEVAL(x) #x, x
 
+  // The point of this struct and the associated std::map is so that we can
+  // figure out how many values we should try to retrieve from an OpenGL get()
+  // call, for a given parameter which is specified by a GLenum (e.g. we
+  // should try to get 4 values for the GL_VIEWPORT param)
   struct AttribInfo
   {
     const char* param_name;
@@ -461,6 +465,7 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::glClear", "mask_bits", glClear );
   pkg->def( "::glClearColor", "red green blue alpha", glClearColor );
   pkg->def( "::glClearIndex", "index", glClearIndex );
+  pkg->def( "::glColor", "red green blue", glColor3d );
   pkg->def( "::glColor", "red green blue alpha", glColor4d );
   pkg->def( "::glDeleteLists", "list_id range", glDeleteLists );
   pkg->def( "::glDisable", "capability", glDisable );
