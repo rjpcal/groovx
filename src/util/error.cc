@@ -35,6 +35,7 @@
 #include "util/strings.h"
 
 #include <cstdlib>
+#include <new>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -72,13 +73,16 @@ DOTRACE("Util::Error::Error(fstring)");
     *last = *itsBackTrace;
 }
 
-Util::Error::Error(const Util::Error& other) :
+Util::Error::Error(const Util::Error& other) throw() :
   itsInfo(other.itsInfo),
-  itsBackTrace(new BackTrace(*other.itsBackTrace))
+  itsBackTrace(0)
 {
 DOTRACE("Util::Error::Error(copy)");
 
   dbgDump(4, itsInfo);
+
+  if (other.itsBackTrace != 0)
+    itsBackTrace = new (std::nothrow) BackTrace(*other.itsBackTrace);
 }
 
 Util::Error::~Error() throw()

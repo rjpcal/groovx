@@ -65,70 +65,6 @@ void string_rep::operator delete(void* space)
   repList->deallocate(space);
 }
 
-void string_rep::realloc(std::size_t capacity)
-{
-  Precondition(itsRefCount <= 1);
-
-  string_rep new_rep(Util::max(itsCapacity*2 + 32, capacity), 0);
-
-  new_rep.append(this->itsLength, this->itsText);
-
-  Util::swap2(itsCapacity, new_rep.itsCapacity);
-  Util::swap2(itsLength, new_rep.itsLength);
-  Util::swap2(itsText, new_rep.itsText);
-}
-
-void string_rep::reserve(std::size_t capacity)
-{
-  if (itsCapacity < capacity)
-    realloc(capacity);
-}
-
-void string_rep::add_terminator()
-{
-  itsText[itsLength] = '\0';
-}
-
-void string_rep::set_length(std::size_t length)
-{
-  Precondition(length+1 < itsCapacity);
-  itsLength = length;
-  add_terminator();
-}
-
-void string_rep::append_no_terminate(char c)
-{
-  if (itsLength + 2 <= itsCapacity)
-    {
-      itsText[itsLength++] = c;
-    }
-  else
-    {
-      realloc(itsLength + 2);
-      itsText[itsLength++] = c;
-    }
-}
-
-void string_rep::append(std::size_t length, const char* text)
-{
-  Precondition(itsRefCount <= 1);
-  Precondition(text != 0);
-
-  if (itsLength + length + 1 <= itsCapacity)
-    {
-      memcpy(itsText+itsLength, text, length);
-      itsLength += length;
-      add_terminator();
-    }
-  else
-    {
-      realloc(itsLength + length + 1);
-      append(length, text);
-    }
-
-  Postcondition(itsLength+1 <= itsCapacity);
-}
-
 string_rep::string_rep(std::size_t length, const char* text,
                        std::size_t capacity) :
   itsRefCount(0),
@@ -142,7 +78,7 @@ string_rep::string_rep(std::size_t length, const char* text,
     add_terminator();
 }
 
-string_rep::~string_rep()
+string_rep::~string_rep() throw()
 {
 DOTRACE("string_rep::~string_rep");
 
@@ -190,14 +126,14 @@ void string_rep::makeUnique(string_rep*& rep)
   Postcondition(new_rep->itsRefCount == 1);
 }
 
-char* string_rep::data()
+char* string_rep::data() throw()
 {
   Precondition(itsRefCount <= 1);
 
   return itsText;
 }
 
-void string_rep::clear()
+void string_rep::clear() throw()
 {
   Precondition(itsRefCount <= 1);
 
@@ -205,7 +141,71 @@ void string_rep::clear()
   add_terminator();
 }
 
-void string_rep::debugDump() const
+void string_rep::append_no_terminate(char c)
+{
+  if (itsLength + 2 <= itsCapacity)
+    {
+      itsText[itsLength++] = c;
+    }
+  else
+    {
+      realloc(itsLength + 2);
+      itsText[itsLength++] = c;
+    }
+}
+
+void string_rep::add_terminator() throw()
+{
+  itsText[itsLength] = '\0';
+}
+
+void string_rep::set_length(std::size_t length) throw()
+{
+  Precondition(length+1 < itsCapacity);
+  itsLength = length;
+  add_terminator();
+}
+
+void string_rep::append(std::size_t length, const char* text)
+{
+  Precondition(itsRefCount <= 1);
+  Precondition(text != 0);
+
+  if (itsLength + length + 1 <= itsCapacity)
+    {
+      memcpy(itsText+itsLength, text, length);
+      itsLength += length;
+      add_terminator();
+    }
+  else
+    {
+      realloc(itsLength + length + 1);
+      append(length, text);
+    }
+
+  Postcondition(itsLength+1 <= itsCapacity);
+}
+
+void string_rep::realloc(std::size_t capacity)
+{
+  Precondition(itsRefCount <= 1);
+
+  string_rep new_rep(Util::max(itsCapacity*2 + 32, capacity), 0);
+
+  new_rep.append(this->itsLength, this->itsText);
+
+  Util::swap2(itsCapacity, new_rep.itsCapacity);
+  Util::swap2(itsLength, new_rep.itsLength);
+  Util::swap2(itsText, new_rep.itsText);
+}
+
+void string_rep::reserve(std::size_t capacity)
+{
+  if (itsCapacity < capacity)
+    realloc(capacity);
+}
+
+void string_rep::debugDump() const throw()
 {
   dbgEvalNL(0, (void*)this);
   dbgEvalNL(0, itsRefCount);
@@ -241,14 +241,14 @@ DOTRACE("fstring::fstring");
   itsRep->incrRefCount();
 }
 
-fstring::fstring(const fstring& other) :
+fstring::fstring(const fstring& other) throw() :
   itsRep(other.itsRep)
 {
 DOTRACE("fstring::fstring(const fstring&)");
   itsRep->incrRefCount();
 }
 
-fstring::~fstring()
+fstring::~fstring() throw()
 {
 DOTRACE("fstring::~fstring");
 
@@ -258,7 +258,7 @@ DOTRACE("fstring::~fstring");
     itsRep = (string_rep*)0xdeadbeef;
 }
 
-void fstring::swap(fstring& other)
+void fstring::swap(fstring& other) throw()
 {
 DOTRACE("fstring::swap");
 
@@ -274,7 +274,7 @@ DOTRACE("fstring::operator=(const char*)");
   return *this;
 }
 
-fstring& fstring::operator=(const fstring& other)
+fstring& fstring::operator=(const fstring& other) throw()
 {
 DOTRACE("fstring::operator=(const fstring&)");
 
@@ -283,23 +283,7 @@ DOTRACE("fstring::operator=(const fstring&)");
   return *this;
 }
 
-bool fstring::equals(const char* other) const
-{
-DOTRACE("fstring::equals(const char*)");
-  return ( c_str() == other ||
-           strcmp(c_str(), other) == 0 );
-}
-
-bool fstring::equals(const fstring& other) const
-{
-DOTRACE("fstring::equals(const fstring&)");
-
-  return c_str() == other.c_str() ||
-    ( length() == other.length() &&
-      strcmp(c_str(), other.c_str()) == 0 );
-}
-
-bool fstring::ends_with(const fstring& ext) const
+bool fstring::ends_with(const fstring& ext) const throw()
 {
 DOTRACE("fstring::ends_with");
   if (ext.length() > this->length())
@@ -310,7 +294,23 @@ DOTRACE("fstring::ends_with");
   return ext.equals(this->c_str() + skip);
 }
 
-bool fstring::operator<(const char* other) const
+bool fstring::equals(const char* other) const throw()
+{
+DOTRACE("fstring::equals(const char*)");
+  return ( c_str() == other ||
+           strcmp(c_str(), other) == 0 );
+}
+
+bool fstring::equals(const fstring& other) const throw()
+{
+DOTRACE("fstring::equals(const fstring&)");
+
+  return c_str() == other.c_str() ||
+    ( length() == other.length() &&
+      strcmp(c_str(), other.c_str()) == 0 );
+}
+
+bool fstring::operator<(const char* other) const throw()
 {
 DOTRACE("fstring::operator<");
   // Check if we are pointing to the same string
@@ -319,7 +319,7 @@ DOTRACE("fstring::operator<");
   return strcmp(c_str(), other) < 0;
 }
 
-bool fstring::operator>(const char* other) const
+bool fstring::operator>(const char* other) const throw()
 {
 DOTRACE("fstring::operator>");
   // Check if we are pointing to the same string
@@ -410,7 +410,7 @@ DOTRACE("fstring::readline");
   itsRep->add_terminator();
 }
 
-void fstring::debugDump() const
+void fstring::debugDump() const throw()
 {
   dbgEvalNL(0, (void*)this);
   itsRep->debugDump();

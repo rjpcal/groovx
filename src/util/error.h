@@ -55,7 +55,7 @@ public:
   Error(const fstring& msg);
 
   /// Copy constructor.
-  Error(const Error& other);
+  Error(const Error& other) throw();
 
   /// Virtual destructor.
   virtual ~Error() throw();

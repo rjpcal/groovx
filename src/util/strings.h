@@ -68,7 +68,8 @@ private:
   // Constructor builds a string_rep with ref-count 0. 'length' here
   // does NOT need to "+1" for a null-terminator
   string_rep(std::size_t length, const char* text, std::size_t capacity=0);
-  ~string_rep();
+
+  ~string_rep() throw();
 
   static string_rep* getEmptyRep();
 
@@ -80,8 +81,9 @@ public:
 
   static void makeUnique(string_rep*& rep);
 
-  void incrRefCount() { ++itsRefCount; }
-  std::size_t decrRefCount()
+  void incrRefCount() throw() { ++itsRefCount; }
+
+  std::size_t decrRefCount() throw()
   {
     std::size_t c = --itsRefCount;
     if (c <= 0)
@@ -89,18 +91,18 @@ public:
     return c;
   }
 
-  std::size_t length() const { return itsLength; }
-  std::size_t capacity() const { return itsCapacity; }
-  const char* text() const { return itsText; }
-  char* data();
+  std::size_t length() const throw() { return itsLength; }
+  std::size_t capacity() const throw() { return itsCapacity; }
+  const char* text() const throw() { return itsText; }
+  char* data() throw();
 
-  void clear();
+  void clear() throw();
 
   void append_no_terminate(char c);
 
-  void add_terminator();
+  void add_terminator() throw();
 
-  void set_length(std::size_t length);
+  void set_length(std::size_t length) throw();
 
   void append(std::size_t length, const char* text);
 
@@ -108,7 +110,7 @@ public:
 
   void reserve(std::size_t capacity);
 
-  void debugDump() const;
+  void debugDump() const throw();
 
 private:
   unsigned int itsRefCount;
@@ -137,10 +139,10 @@ public:
   fstring();
 
   /// Copy constructor.
-  fstring(const fstring& other);
+  fstring(const fstring& other) throw();
 
   /// Destructory.
-  ~fstring();
+  ~fstring() throw();
 
   /// Construct by copying from a C-style null-terminated char array.
   fstring(const char* s) :
@@ -211,13 +213,13 @@ public:
   }
 
   /// Swap contents with another fstring object.
-  void swap(fstring& other);
+  void swap(fstring& other) throw();
 
   /// Assign from a C-style null-terminated char array.
   fstring& operator=(const char* text);
 
   /// Assignment operator.
-  fstring& operator=(const fstring& other);
+  fstring& operator=(const fstring& other) throw();
 
   /// Get a pointer to the non-const underlying data array.
   char* data()
@@ -226,13 +228,13 @@ public:
   }
 
   /// Get a pointer to the const underlying data array.
-  const char* c_str() const { return itsRep->text(); }
+  const char* c_str() const throw() { return itsRep->text(); }
 
   /// Get the number of characters in the string (NOT INCLUDING the null terminator).
-  std::size_t length() const { return itsRep->length(); }
+  std::size_t length() const throw() { return itsRep->length(); }
 
   /// Query whether the length of the string is 0.
-  bool is_empty() const { return (length() == 0); }
+  bool is_empty() const throw() { return (length() == 0); }
 
   /// Reset to an empty string.
   void clear() { string_rep::makeUnique(itsRep); itsRep->clear(); }
@@ -242,33 +244,33 @@ public:
   //
 
   /// Query whether the terminal substring matches the given string.
-  bool ends_with(const fstring& ext) const;
+  bool ends_with(const fstring& ext) const throw();
 
   //
   // Comparison operators
   //
 
   /// Query for equality with a C-style string.
-  bool equals(const char* other) const;
+  bool equals(const char* other) const throw();
   /// Query for equality with another fstring object.
-  bool equals(const fstring& other) const;
+  bool equals(const fstring& other) const throw();
 
   /// Query if string is lexicographically less-than another string.
-  bool operator<(const char* other) const;
+  bool operator<(const char* other) const throw();
 
   /// Query if string is lexicographically less-than another string.
   template <class StrType>
-  bool operator<(const StrType& other) const
+  bool operator<(const StrType& other) const throw()
   {
     return operator<(other.c_str());
   }
 
   /// Query if string is lexicographically greater-than another string.
-  bool operator>(const char* other) const;
+  bool operator>(const char* other) const throw();
 
   /// Query if string is lexicographically greater-than another string.
   template <class StrType>
-  bool operator>(const StrType& other) const
+  bool operator>(const StrType& other) const throw()
   {
     return operator>(other.c_str());
   }
@@ -352,17 +354,17 @@ public:
   //
 
   /// Equality operator.
-  bool operator==(const char* rhs) const    { return equals(rhs); }
+  bool operator==(const char* rhs)    const throw() { return equals(rhs); }
   /// Equality operator.
-  bool operator==(const fstring& rhs) const { return equals(rhs); }
+  bool operator==(const fstring& rhs) const throw() { return equals(rhs); }
 
   /// Inequality operator.
-  bool operator!=(const char* rhs) const    { return !equals(rhs); }
+  bool operator!=(const char* rhs)    const throw() { return !equals(rhs); }
   /// Inequality operator.
-  bool operator!=(const fstring& rhs) const { return !equals(rhs); }
+  bool operator!=(const fstring& rhs) const throw() { return !equals(rhs); }
 
   /// Dump contents for debugging.
-  void debugDump() const;
+  void debugDump() const throw();
 
 private:
   void do_append(const char& c)
@@ -414,12 +416,12 @@ namespace Util
 
 // operator ==
 
-inline bool operator==(const char* lhs, const fstring& rhs)
+inline bool operator==(const char* lhs, const fstring& rhs) throw()
   { return rhs.equals(lhs); }
 
 // operator !=
 
-inline bool operator!=(const char* lhs, const fstring& rhs)
+inline bool operator!=(const char* lhs, const fstring& rhs) throw()
   { return !rhs.equals(lhs); }
 
 ///////////////////////////////////////////////////////////////////////
