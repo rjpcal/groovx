@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Thu Sep 30 11:34:38 1999
+// written: Fri Oct  8 15:31:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,6 +59,9 @@ public:
 
   CTProperty<MorphyFace, int> category;
 
+  virtual int getCategory() const { return category.getNative(); }
+  virtual void setCategory(int val) { category.setNative(val); }
+  
   CTProperty<MorphyFace, double> faceWidth;
   CTProperty<MorphyFace, double> topWidth;
   CTProperty<MorphyFace, double> bottomWidth;
