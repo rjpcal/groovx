@@ -53,8 +53,11 @@ public:
   void setRectLRBT(V L, V R, V B, V T)
         { l = L; r = R; b = B; t = T; }
 
-  void widen(V f) { l *= f; r *=f; }
-  void heighten(V f) { t *=f; b *=f; }
+  void widenByFactor(V factor) { l *= factor; r *= factor; }
+  void heightenByFactor(V factor) { t *= factor; b *= factor; }
+
+  void widenByStep(V step) { l -= step; r += step; }
+  void heightenByStep(V step) { b -= step; t += step; }
 };
 
 static const char vcid_rect_h[] = "$Header$";
