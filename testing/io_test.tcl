@@ -38,10 +38,10 @@ proc testStringifyCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 				$cmdname -1
-		  "} {"${cmdname}: an error of type InvalidIdError occurred"}
+		  "} {"${cmdname}: attempt to access invalid id in .*$"}
 		  eval ::test $testname {"error from too large id"} {"
 				$cmdname 10000
-		  "} {"${cmdname}: an error of type InvalidIdError occurred"}
+		  "} {"${cmdname}: attempt to access invalid id in .*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
 		  "} {"expected integer but got \"1\.5\""}
@@ -79,10 +79,10 @@ proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 		      $cmdname -1 junk
-		  "} {"${cmdname}: an error of type InvalidIdError occurred"}
+		  "} {"${cmdname}: attempt to access invalid id in .*$"}
 		  eval ::test $testname {"error from too large id"} {"
 		      $cmdname 10000 junk
-		  "} {"${cmdname}: an error of type InvalidIdError occurred"}
+		  "} {"${cmdname}: attempt to access invalid id in .*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5 junk
 		  "} {"expected integer but got \"1\.5\""}
