@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Mar  9 17:12:13 2000
+// written: Mon Mar 13 18:47:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "position.h"
 #include "reader.h"
 #include "readutils.h"
+#include "response.h"
 #include "util/strings.h"
 #include "writer.h"
 #include "writeutils.h"
@@ -62,37 +63,6 @@ public:
   int itsRhId;
   int itsThId;
 };
-
-///////////////////////////////////////////////////////////////////////
-//
-// Trial::Response member functions
-//
-///////////////////////////////////////////////////////////////////////
-
-Value* Trial::Response::clone() const {
-DOTRACE("Trial::Response::clone");
-  return new Response(*this); 
-}
-
-Value::Type Trial::Response::getNativeType() const {
-DOTRACE("Trial::Response::getNativeType");
-  return Value::UNKNOWN;
-}
-
-const char* Trial::Response::getNativeTypeName() const {
-DOTRACE("Trial::Response::getNativeTypeName");
-  return "Trial::Response";
-}
-
-void Trial::Response::printTo(ostream& os) const {
-DOTRACE("Trial::Response::printTo");
-  os << itsVal << " " << itsMsec; 
-}
-
-void Trial::Response::scanFrom(istream& is) {
-DOTRACE("Trial::Response::scanFrom");
-  is >> itsVal >> itsMsec;
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -170,7 +140,7 @@ DOTRACE("Trial::serialize");
   // itsImpl->itsResponses
   os << itsImpl->itsResponses.size() << sep << sep;
   for (size_t i = 0; i < itsImpl->itsResponses.size(); ++i) {
-	 os << itsImpl->itsResponses[i].val() << sep << itsImpl->itsResponses[i].msec() << sep;
+	 itsImpl->itsResponses[i].printTo(os);
   }
   // itsImpl->itsType
   os << itsImpl->itsType << sep;
@@ -210,7 +180,7 @@ DOTRACE("Trial::deserialize");
   is >> resp_size;
   itsImpl->itsResponses.resize(resp_size);
   for (int j = 0; j < resp_size; ++j) {
-	 is >> itsImpl->itsResponses[j].val() >> itsImpl->itsResponses[j].msec();
+	 itsImpl->itsResponses[j].scanFrom(is);
   }
   // itsImpl->itsType
   is >> itsImpl->itsType;
@@ -425,9 +395,9 @@ DOTRACE("setTimingHdlr");
   itsImpl->itsThId = thid;
 }
 
-void Trial::recordResponse(int val, int msec) {
+void Trial::recordResponse(const Response& response) {
 DOTRACE("Trial::recordResponse"); 
-  itsImpl->itsResponses.push_back(Response(val, msec));
+  itsImpl->itsResponses.push_back(response);
 }
 
 void Trial::clearResponses() {

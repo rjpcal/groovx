@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu Mar  9 16:09:59 2000
+// written: Mon Mar 13 18:47:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,26 +15,13 @@
 #include "io.h"
 #endif
 
-#ifndef ERROR_H_DEFINED
-#include "error.h"
-#endif
-
 #ifndef VALUE_H_DEFINED
 #include "value.h"
 #endif
 
 class Canvas;
 
-///////////////////////////////////////////////////////////////////////
-//
-// TrialError class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class TrialError : public ErrorWithMsg {
-public:
-  TrialError(const char* msg) : ErrorWithMsg(msg) {}
-};
+class Response;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -47,25 +34,6 @@ public:
   //////////////////
   // nested types //
   //////////////////
-  class Response : public Value {
-  public:
-	 Response(int v = -1, int m = -1) : itsVal(v), itsMsec(m) {}
-
-	 virtual Value* clone() const;
-	 virtual Type getNativeType() const;
-	 virtual const char* getNativeTypeName() const;
-
-	 virtual void printTo(ostream& os) const;
-	 virtual void scanFrom(istream& is);
-
-	 int& val() { return itsVal; }
-	 int& msec() { return itsMsec; }
-	 int val() const { return itsVal; }
-	 int msec() const { return itsMsec; }
-  private:
-	 int itsVal;
-	 int itsMsec;
-  };
 
   struct IdPair : public Value {
 	 IdPair(int o = 0, int p = 0) : objid(o), posid(p) {}
@@ -143,7 +111,7 @@ public:
   void setResponseHandler(int rhid);
   void setTimingHdlr(int thid);
 
-  void recordResponse(int val, int msec);
+  void recordResponse(const Response& response);
 
   void undoLastResponse();
 
