@@ -5,13 +5,15 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb 25 13:27:36 2003
-// written: Wed Feb 26 09:08:26 2003
+// written: Wed Feb 26 16:37:45 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef STDIOBUF_H_DEFINED
 #define STDIOBUF_H_DEFINED
+
+#include <cstdio>
 
 #ifdef HAVE_STREAMBUF
 #include <streambuf>

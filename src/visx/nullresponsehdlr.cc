@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:36 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Feb 26 16:30:26 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define NULLRESPONSEHDLR_CC_DEFINED
 
 #include "visx/nullresponsehdlr.h"
+
+#include "tcl/toglet.h"
 
 #include "util/ref.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Mon Jan 13 11:01:38 2003
+// written: Wed Feb 26 16:31:57 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 
 #include <cctype>
 #include <cstdio>
+#include <cstring>
 #include <strstream.h>
 #include <GL/gl.h>
 #include <GL/glx.h>

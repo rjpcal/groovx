@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Feb 26 16:41:07 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "util/freelist.h"
 
 #include <cctype>
+#include <cstring>
 #include <iostream>
 
 #define NO_PROF

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Mon Jan 20 13:03:39 2003
+// written: Wed Feb 26 16:34:22 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "util/value.h"
 
 #include <cctype>
+#include <cstring>
 #include <iostream>
 
 #include "util/trace.h"
