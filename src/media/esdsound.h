@@ -194,11 +194,20 @@ namespace
       }
 
     /* play */
-    esd_send_file( out_sock, in_file, bytes_per_frame );
+    char buf[ ESD_BUF_SIZE ];
+    int frames_read;
+    int buf_frames = ESD_BUF_SIZE / bytes_per_frame;
+
+    while ((frames_read = afReadFrames(in_file, AF_DEFAULT_TRACK,
+                                       buf, buf_frames)) != 0)
+      {
+        if (write(out_sock, buf, frames_read * bytes_per_frame) <= 0)
+          break;
+      }
 
     /* close up and go home */
-    close( out_sock );
-    if ( afCloseFile ( in_file ) )
+    close(out_sock);
+    if (afCloseFile(in_file) != 0)
       throw rutz::error(rutz::fstring("error closing sound file '",
                                       filename, "'"), SRC_POS);
   }
