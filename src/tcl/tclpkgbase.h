@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Dec  8 00:02:38 1999
+// written: Wed Dec 15 15:09:47 1999
 // $Id$
 //
 // This file defines a class TclPkg which can be used alone, or as a
@@ -28,20 +28,7 @@
 #ifndef TCLPKG_H_DEFINED
 #define TCLPKG_H_DEFINED
 
-#ifndef TCL_H_DEFINED
-#include <tcl.h>
-#define TCL_H_DEFINED
-#endif
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
-#endif
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
+struct Tcl_Interp;
 
 namespace Tcl {
   class TclCmd;
@@ -61,9 +48,9 @@ public:
 
   virtual ~TclPkg();
 
-  Tcl_Interp* interp() { return itsInterp; }
-  const string& pkgName() { return itsPkgName; }
-  const string& version() { return itsVersion; }
+  Tcl_Interp* interp();
+  const char* pkgName();
+  const char* version();
 
   const char* makePkgCmdName(const char* cmd_name);
 
@@ -78,18 +65,11 @@ public:
   void linkConstVar(const char* varName, char*& var) throw (TclError);
 
 protected:
-  void addCommand(TclCmd* cmd) { itsCmds.push_back(cmd); }
+  void addCommand(TclCmd* cmd);
 
 private:
-  static void exitHandler(ClientData clientData);
-
-  Tcl_Interp* itsInterp;
-  vector<TclCmd *> itsCmds;
-  string itsPkgName;
-  string itsVersion;
-
-  struct PrivateRep;
-  PrivateRep* itsPrivateRep;
+  struct Impl;
+  Impl* itsImpl;
 };
 
 static const char vcid_tclpkg_h[] = "$Header$";
