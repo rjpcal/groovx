@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Fri Jan 18 16:07:05 2002
+// written: Fri Nov  1 12:11:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public:
 
   void flushResult()
   {
-    Tcl::Context::setObjResult(itsResult);
+    Tcl::Context::setObjResult(itsResult.asObj());
   }
 
   void next()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Sep 25 18:56:47 2002
+// written: Sun Nov  3 09:10:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,11 +160,10 @@ public:
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
-  template <class Cue>
-  typename Return<typename Cue::Type>::Type
-  getValFromArg(unsigned int argn, Cue)
+  template <class T>
+  typename Return<T>::Type getValFromArg(unsigned int argn)
     {
-      return Tcl::Convert<typename Cue::Type>::fromTcl(getObjv(argn));
+      return Tcl::toNative<T>(getObjv(argn));
     }
 
 
@@ -172,7 +171,7 @@ public:
   template <class T>
   void setResult(T t)
     {
-      setObjResult(Tcl::Convert<T>::toTcl(t));
+      setObjResult(Tcl::toTcl(t));
     }
 
   /// Get the raw objv array.

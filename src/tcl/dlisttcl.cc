@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Apr 30 09:35:44 2002
+// written: Sun Nov  3 09:10:49 2002
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -85,8 +85,8 @@ namespace DlistTcl
 
   Tcl::List not_(Tcl::List source_list)
   {
-    Tcl::ObjPtr one(Tcl::Convert<int>::toTcl(1));
-    Tcl::ObjPtr zero(Tcl::Convert<int>::toTcl(0));
+    Tcl::ObjPtr one = Tcl::toTcl(int(1));
+    Tcl::ObjPtr zero = Tcl::toTcl(int(0));
     Tcl::List result;
 
     for (unsigned int i = 0; i < source_list.length(); ++i)
@@ -345,9 +345,9 @@ namespace DlistTcl
       }
 
     if ( !seen_double )
-      return isum;
+      return Tcl::toTcl(isum);
     else
-      return dsum;
+      return Tcl::toTcl(dsum);
   }
 
   //--------------------------------------------------------------------

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Sep 25 18:57:31 2002
+// written: Sun Nov  3 09:10:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,22 +60,16 @@ public:
   void resetResult() const;
   void appendResult(const char* msg) const;
 
-  template <class Cue>
-  typename Cue::Type getResult(Cue) const
-  {
-    return Tcl::Convert<typename Cue::Type>::fromTcl(getObjResult());
-  }
-
   template <class T>
   T getResult() const
   {
-    return Tcl::Convert<T>::fromTcl(getObjResult());
+    return Tcl::toNative<T>(getObjResult());
   }
 
   template <class T>
   void setResult(const T& x)
   {
-    setObjResult(Tcl::Convert<T>::toTcl(x).obj());
+    setObjResult(Tcl::toTcl(x).obj());
   }
 
   // Variables
@@ -85,7 +79,7 @@ public:
   template <class T>
   T getGlobalVar(const char* name1, const char* name2=0) const
   {
-    return Tcl::Convert<T>::fromTcl(getObjGlobalVar(name1, name2));
+    return Tcl::toNative<T>(getObjGlobalVar(name1, name2));
   }
 
   // Errors

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Wed Sep 25 18:57:09 2002
+// written: Sun Nov  3 09:10:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,15 +40,6 @@ public:
   /// Construct with a Tcl_Obj*.
   ObjPtr(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
 
-  /// Construct with automatic conversion from a C++ type.
-  template <class T>
-  ObjPtr(T t) : itsObj(0)
-  {
-    ObjPtr temp(Tcl::Convert<T>::toTcl(t));
-    itsObj = temp.obj();
-    incrRef(itsObj);
-  }
-
   /// Destructor.
   ~ObjPtr() { decrRef(itsObj); }
 
@@ -75,20 +66,19 @@ public:
 
   Tcl_Obj* obj() const { return itsObj; }
 
-  // FIXME: really need this function?
-  template <class Cue>
-  typename Cue::Type as(Cue) const
-  {
-    return Tcl::Convert<typename Cue::Type>::fromTcl(itsObj);
-  }
-
   template <class T>
   T as() const
   {
-    return Tcl::Convert<T>::fromTcl(itsObj);
+    return Tcl::toNative<T>(itsObj);
   }
 
   void append(const Tcl::ObjPtr& other);
+
+  template <class T>
+  void append(const T& other)
+  {
+    append(Tcl::toTcl(other));
+  }
 
   bool isShared() const;
   bool isUnique() const { return !isShared(); }

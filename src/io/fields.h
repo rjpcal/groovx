@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Sep 25 18:54:10 2002
+// written: Sun Nov  3 09:10:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ public:
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
-    DerefT raw = new_val.as(Util::TypeCue<DerefT>());
+    DerefT raw = new_val.template as<DerefT>();
 
     dereference(cobj, itsDataMember) =
       itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
@@ -169,7 +169,7 @@ public:
   {
     const C& cobj = dynamic_cast<const C&>(*obj);
 
-    return Tcl::Convert<DerefT>::toTcl(dereference(cobj, itsDataMember));
+    return Tcl::toTcl(dereference(cobj, itsDataMember));
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -196,17 +196,6 @@ private:
   shared_ptr<BoundsChecker<T> > itsChecker;
 };
 
-// FIXME FIXME FIXME !!!
-
-namespace Tcl
-{
-  template <>
-  struct Return<const Value&>
-  {
-    typedef void Type;
-  };
-}
-
 /** ValueFieldImpl */
 template <class C, class V>
 class ValueFieldImpl : public FieldImpl
@@ -218,7 +207,7 @@ public:
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
-    fstring sval = new_val.as(Util::TypeCue<fstring>());
+    fstring sval = new_val.template as<fstring>();
 
     dereference(cobj, itsValueMember).setFstring(sval);
   }
@@ -229,7 +218,7 @@ public:
 
     const Value& val = dereference(cobj, itsValueMember);
 
-    return Tcl::Convert<const Value&>::toTcl(val);
+    return Tcl::toTcl(val);
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -279,7 +268,7 @@ public:
 
     typedef typename Util::TypeTraits<T>::StackT StackT;
 
-    (cobj.*itsSetter)(new_val.as(Util::TypeCue<StackT>()));
+    (cobj.*itsSetter)(new_val.template as<StackT>());
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
@@ -288,7 +277,7 @@ public:
 
     const C& cobj = dynamic_cast<const C&>(*obj);
 
-    return Tcl::Convert<T>::toTcl((cobj.*itsGetter)());
+    return Tcl::toTcl((cobj.*itsGetter)());
   }
 
   virtual void readValueFrom(FieldContainer* obj,

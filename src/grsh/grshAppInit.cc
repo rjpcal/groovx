@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 17:08:32 2002
+// written: Thu Nov  7 16:37:09 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -187,6 +187,8 @@ DOTRACE("Grsh::canvas");
 
 int main(int argc, char** argv)
 {
+DOTRACE("main");
+
   try
     {
       appArgc = argc;
@@ -221,7 +223,8 @@ int main(int argc, char** argv)
         }
 
       // specifies a file to be 'source'd upon startup
-      safeIntp.setGlobalVar("tcl_rcFileName", "./grsh_startup.tcl");
+      safeIntp.setGlobalVar("tcl_rcFileName",
+                            Tcl::toTcl("./grsh_startup.tcl"));
 
       app.run();
       return 0;

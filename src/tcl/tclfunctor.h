@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Wed Sep 25 18:57:04 2002
+// written: Sun Nov  3 09:10:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,42 +22,43 @@
 
 namespace Tcl
 {
-
-  /// Specialization of Convert for Util::Ref.
-  /** This allows us to pass Util::Ref objects to and from Tcl via the
+  /// Overload of fromTcl for Util::Ref.
+  /** This allows us to receive Util::Ref objects from Tcl via the
       Util::UID's of the referred-to objects. */
   template <class T>
-  struct Convert<Ref<T> >
+  inline Ref<T> fromTcl(Tcl_Obj* obj, Ref<T>*)
   {
-    static Ref<T> fromTcl(Tcl_Obj* obj)
-    {
-      Util::UID uid = Convert<Util::UID>::fromTcl(obj);
-      return Ref<T>(uid);
-    }
+    Util::UID uid = Tcl::toNative<Util::UID>(obj);
+    return Ref<T>(uid);
+  }
 
-    static Tcl::ObjPtr toTcl(Ref<T> obj)
-    {
-      return Convert<Util::UID>::toTcl(obj.id());
-    }
-  };
+  /// Overload of toTcl for Util::Ref.
+  /** This allows us to pass Util::Ref objects to Tcl via the Util::UID's
+      of the referred-to objects. */
+  template <class T>
+  inline Tcl::ObjPtr toTcl(Ref<T> obj)
+  {
+    return toTcl(obj.id());
+  }
 
-  /// Specialization of Convert for Util::SoftRef.
-  /** This allows us to pass Util::SoftRef objects to and from Tcl via the
+  /// Overload of fromTcl for Util::SoftRef.
+  /** This allows us to receive Util::SoftRef objects from Tcl via the
       Util::UID's of the referred-to objects. */
   template <class T>
-  struct Convert<SoftRef<T> >
+  inline SoftRef<T> fromTcl(Tcl_Obj* obj, SoftRef<T>*)
   {
-    static SoftRef<T> fromTcl(Tcl_Obj* obj)
-    {
-      Util::UID uid = Convert<Util::UID>::fromTcl(obj);
-      return SoftRef<T>(uid);
-    }
+    Util::UID uid = Tcl::toNative<Util::UID>(obj);
+    return SoftRef<T>(uid);
+  }
 
-    static Tcl::ObjPtr toTcl(SoftRef<T> obj)
-    {
-      return Convert<Util::UID>::toTcl(obj.id());
-    }
-  };
+  /// Overload of toTcl for Util::SoftRef.
+  /** This allows us to pass Util::SoftRef objects to Tcl via the
+      Util::UID's of the referred-to objects. */
+  template <class T>
+  inline Tcl::ObjPtr toTcl(SoftRef<T> obj)
+  {
+    return toTcl(obj.id());
+  }
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +79,7 @@ namespace Tcl
 
 #define EXTRACT_PARAM(N) \
   typename Util::FuncTraits<Func>::Arg##N##_t p##N = \
-  ctx.getValFromArg(N, TypeCue<typename Util::FuncTraits<Func>::Arg##N##_t>());
+  ctx.template getValFromArg<typename Util::FuncTraits<Func>::Arg##N##_t>(N);
 
   /// Generic Tcl::Functor definition.
   template <unsigned int N, class R, class Func>
