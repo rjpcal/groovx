@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Thu Aug 16 09:24:15 2001
+// written: Thu Aug 16 10:04:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,6 @@ public:
 
   virtual void display();
   virtual void clearscreen();
-  virtual void refresh();
   virtual void undraw();
 
   // Change the global visibility, which determines whether anything
