@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Wed Jun 20 10:53:45 2001
+// written: Wed Jun 20 17:14:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -167,6 +167,36 @@ namespace Util
   };
 
 }
+
+// sample test code
+
+#if 0
+#include "src/util/gzstreambuf.h"
+
+int main() {
+  {
+    Util::gzstreambuf buf("test.gz", std::ios::out);
+
+    std::ostream os(&buf);
+
+    os << "Hello, World!\n";
+  }
+
+  {
+    Util::gzstreambuf buf2("test.gz", std::ios::in);
+
+    std::istream is(&buf2);
+
+    int c;
+    while ( (c=is.get()) != EOF )
+      {
+        std::cout << char(c);
+      }
+  }
+
+  return 0;
+}
+#endif
 
 static const char vcid_gzstreambuf_h[] = "$Header$";
 #endif // !GZSTREAMBUF_H_DEFINED
