@@ -531,7 +531,7 @@ new: cleaner $(PROD_TARGET)
 
 # Remove all backups, temporaries, and coredumps
 clean:
-	rm -f ./*~ ./expt*2000.asw ./resp*2000./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
+	rm -f ./*~ ./expt*2000.asw ./resp*2000 ./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
 		$(SRC)/*~ $(SRC)/*/*~ $(SCRIPTS)/*~ ./testing/*~
 
 # Make clean, and also remove all debug object files
