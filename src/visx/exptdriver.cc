@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct 23 18:16:24 2000
+// written: Tue Oct 24 09:04:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,8 +26,9 @@
 #include "tlistwidget.h"
 #include "trialbase.h"
 
-#include "io/reader.h"
 #include "io/asciistreamwriter.h"
+#include "io/readutils.h"
+#include "io/writeutils.h"
 
 #include "system/system.h"
 
@@ -43,6 +44,7 @@
 #include <iostream.h>
 #include <fstream.h>
 #include <sys/time.h>
+#include <vector>
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
@@ -100,9 +102,24 @@ private:
 
   void doAutosave();
 
+  bool haveValidBlock() const
+	 {
+		if ( 0 <= itsCurrentBlockIdx &&
+			  itsCurrentBlockIdx < itsBlocks.size() )
+		  {
+			 return true;
+		  }
+		return false;
+	 }
+
   // This accessor will NOT recover if the corresponding id is
   // invalid; clients must check validity before calling the accessor.
-  Block& block() const;
+  Block& block() const
+	 {
+		Precondition( haveValidBlock() );
+		// FIXME const-correctness problem
+		return const_cast<Block&>(*(itsBlocks.at(itsCurrentBlockIdx).get()));
+	 }
 
   // Check the validity of all its id's, return true if all are ok,
   // otherwise returns false, halts the experiment, and issues an
@@ -111,8 +128,8 @@ private:
 
   bool needAutosave() const;
 
-  // Switches itsBlockId to the next valid block and returns true, or
-  // returns false if there are no more valid blocks.
+  // Switches itsCurrentBlockIdx to the next valid block and returns
+  // true, or returns false if there are no more valid blocks.
   bool gotoNextValidBlock();
 
   bool safeTclGlobalEval(const char* script) const;
@@ -141,7 +158,7 @@ public:
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  void manageObject(const char* name, IO::IoObject* object);
+  void includeAllBlocks();
 
   void init();
 
@@ -182,6 +199,7 @@ public:
   void edNextBlock();
   void edHaltExpt() const;
   void edResumeExpt();
+  void edClearExpt();
   void edResetExpt();
   void edSetCurrentTrial(int trial);
 
@@ -210,26 +228,15 @@ private:
 
   int itsAutosavePeriod;
 
-  int itsBlockId;
-  int itsDummyRhId;
-  int itsDummyThId;
+  std::vector<ItemWithId<Block> > itsBlocks;
+
+  int itsCurrentBlockIdx;
 
   mutable StopWatch itsTimer;
 
   mutable dynamic_string itsDoUponCompletionBody;
 
   mutable Tcl::BkdErrorHandler itsErrHandler;
-
-//   struct ManagedObject {
-// 	 ManagedObject(const string& n, IO::IoObject* obj) :
-// 		name(n), object(obj) {}
-// 	 ManagedObject(const char* n, IO::IoObject* obj) :
-// 		name(n), object(obj) {}
-// 	 string name;
-// 	 IO::IoObject* object;
-//   };
-
-//   vector<ManagedObject> itsManagedObjects;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -249,13 +256,11 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsAutosaveFile("__autosave_file"),
   itsInfoLog(),
   itsAutosavePeriod(10),
-  itsBlockId(0),
-  itsDummyRhId(0),
-  itsDummyThId(0),
+  itsBlocks(),
+  itsCurrentBlockIdx(0),
   itsTimer(),
   itsDoUponCompletionBody(),
   itsErrHandler(interp)
-  //  ,itsManagedObjects()
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
@@ -350,20 +355,6 @@ DOTRACE("ExptDriver::Impl::doAutosave");
   }
 }
 
-Block& ExptDriver::Impl::block() const {
-DOTRACE("ExptDriver::Impl::block");
-
-  Precondition( BlockList::theBlockList().isValidId(itsBlockId) );
-
-#ifdef LOCAL_DEBUG
-  BlockList::Ptr block = BlockList::theBlockList().getPtr(itsBlockId);
-  DebugEvalNL((void *) block);
-  return *block;
-#else
-  return *(BlockList::theBlockList().getPtr(itsBlockId));
-#endif
-}
-
 //---------------------------------------------------------------------
 //
 // ExptDriver::assertIds --
@@ -379,7 +370,8 @@ DOTRACE("ExptDriver::Impl::block");
 
 inline bool ExptDriver::Impl::assertIds() const {
 DOTRACE("ExptDriver::Impl::assertIds");
-  if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+
+  if ( haveValidBlock() ) {
 	 return true;
   }
 
@@ -413,14 +405,9 @@ DOTRACE("ExptDriver::Impl::needAutosave");
 
 bool ExptDriver::Impl::gotoNextValidBlock() {
 DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
-  BlockList& blist = BlockList::theBlockList();
-
-  // This increments itsImpl->itsBlockId until we have either run out of
-  // Block's, or found the next valid Block
-  while ( (++itsBlockId < blist.capacity())
-			 && !blist.isValidId(itsBlockId) ) { /* empty loop body */ }
-
-  return blist.isValidId(itsBlockId);
+  ++itsCurrentBlockIdx; 
+  if (itsCurrentBlockIdx < itsBlocks.size()) return true;
+  return false;
 }
 
 bool ExptDriver::Impl::safeTclGlobalEval(const char* script) const {
@@ -534,9 +521,8 @@ DOTRACE("ExptDriver::Impl::readFrom");
 		reader->readOwnedObject("theTlist", &Tlist::theTlist());
 		reader->readOwnedObject("theRhList", &RhList::theRhList());
 		reader->readOwnedObject("theThList", &ThList::theThList());
+		reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
 	 }
-
-  reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
 
   reader->readValue("hostname", itsHostname);
   reader->readValue("subject", itsSubject);
@@ -550,9 +536,34 @@ DOTRACE("ExptDriver::Impl::readFrom");
   if (svid >= 2)
 	 reader->readValue("infoLog", itsInfoLog);
 
-  reader->readValue("blockId", itsBlockId);
-  reader->readValue("rhId", itsDummyRhId);
-  reader->readValue("thId", itsDummyThId);
+  if (svid < 3)
+	 {
+		// FIXME this may work, but only as a temporary hack for
+		// converting old files
+		reader->readValue("blockId", itsCurrentBlockIdx);
+
+		itsBlocks.clear();
+	 }
+  else
+	 {
+		reader->readValue("currentBlockIdx", itsCurrentBlockIdx);
+
+		std::vector<Block*> blocks;
+		IO::ReadUtils::template readObjectSeq<Block>(
+							  reader, "blocks", std::back_inserter(blocks));
+
+		itsBlocks.clear();
+		for (int i = 0; i < blocks.size(); ++i)
+		  itsBlocks.push_back(ItemWithId<Block>(blocks[i],
+															 ItemWithId<Block>::INSERT));
+	 }
+
+  if (svid < 3)
+	 {
+		int dummy;
+		reader->readValue("rhId", dummy);
+		reader->readValue("thId", dummy);
+	 }
 
   reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
   recreateDoUponCompletionProc();
@@ -568,9 +579,8 @@ DOTRACE("ExptDriver::Impl::writeTo");
 		writer->writeOwnedObject("theTlist", &Tlist::theTlist());
 		writer->writeOwnedObject("theRhList", &RhList::theRhList());
 		writer->writeOwnedObject("theThList", &ThList::theThList());
+		writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
 	 }
-
-  writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
 
   writer->writeValue("hostname", itsHostname);
   writer->writeValue("subject", itsSubject);
@@ -584,17 +594,36 @@ DOTRACE("ExptDriver::Impl::writeTo");
   if (EXPTDRIVER_SERIAL_VERSION_ID >= 2)
 	 writer->writeValue("infoLog", itsInfoLog);
 
-  writer->writeValue("blockId", itsBlockId);
-  writer->writeValue("rhId", itsDummyRhId);
-  writer->writeValue("thId", itsDummyThId);
+  if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
+	 {
+		// FIXME this really shouldn't work
+		writer->writeValue("blockId", itsCurrentBlockIdx);
+	 }
+  else
+	 {
+		writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
+
+		// FIXME this is only a temporary hack to allow us to convert
+		// old files to this new format
+		const_cast<ExptDriver::Impl*>(this)->includeAllBlocks();
+
+		std::vector<const Block*> blocks;
+		for (int i = 0; i < itsBlocks.size(); ++i)
+		  blocks.push_back(itsBlocks[i].get());
+
+		IO::WriteUtils::writeObjectSeq(writer, "blocks",
+												 blocks.begin(), blocks.end());
+	 }
+
+  if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
+	 {
+		int dummy = 0;
+		writer->writeValue("rhId", dummy);
+		writer->writeValue("thId", dummy);
+	 }
 
   updateDoUponCompletionBody();
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
-}
-
-void ExptDriver::Impl::manageObject(const char* /* name */, IO::IoObject* /* object */) {
-DOTRACE("ExptDriver::Impl::manageObject");
-//   itsManagedObjects.push_back(ManagedObject(name, object));
 }
 
 void ExptDriver::Impl::init() {
@@ -603,6 +632,25 @@ DOTRACE("ExptDriver::Impl::init");
   getCurrentTimeDateString(itsBeginDate);
   getHostname(itsHostname);
   getSubjectKey(itsSubject);
+}
+
+void ExptDriver::Impl::includeAllBlocks() {
+DOTRACE("ExptDriver::Impl::includeAllBlocks");
+
+  // This makes sure that no current blocks are garbage collected when
+  // we clear itsBlocks next
+  std::vector<ItemWithId<Block> > blocks_copy(itsBlocks);
+
+  itsBlocks.clear();
+
+  BlockList& blockList = BlockList::theBlockList();
+  for (int i = 0; i < blockList.capacity(); ++i)
+	 {
+		if (blockList.isValidId(i))
+		  itsBlocks.push_back(blockList.getPtr(i));
+	 }  
+
+  itsCurrentBlockIdx = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -623,6 +671,8 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
   addLogInfo("Beginning experiment.");
 
   init();
+
+  includeAllBlocks();
 
   itsTimer.restart();
 
@@ -670,7 +720,7 @@ DOTRACE("ExptDriver::Impl::edNextBlock");
 void ExptDriver::Impl::edHaltExpt() const {
 DOTRACE("ExptDriver::Impl::edHaltExpt");
 
-  if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+  if ( haveValidBlock() ) {
 	 block().haltExpt();
   }
 }
@@ -690,6 +740,20 @@ DOTRACE("ExptDriver::Impl::edResumeExpt");
 
 //---------------------------------------------------------------------
 //
+// ExptDriver::edClearExpt --
+//
+//---------------------------------------------------------------------
+
+void ExptDriver::Impl::edClearExpt() {
+DOTRACE("ExptDriver::Impl::edClearExpt");
+  edHaltExpt();
+
+  itsBlocks.clear();
+  itsCurrentBlockIdx = 0;
+}
+
+//---------------------------------------------------------------------
+//
 // ExptDriver::edResetExpt() --
 //
 //---------------------------------------------------------------------
@@ -699,11 +763,11 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
   while (1) {
-	 if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+	 if ( haveValidBlock() ) {
 		block().resetBlock();
 	 }
 
-	 if (itsBlockId > 0) { --itsBlockId; }
+	 if (itsCurrentBlockIdx > 0) { --itsCurrentBlockIdx; }
 	 else return;
   }
 }
@@ -874,9 +938,6 @@ GWT::Widget* ExptDriver::getWidget()
 GWT::Canvas* ExptDriver::getCanvas()
   { return itsImpl->getCanvas(); }
 
-void ExptDriver::manageObject(const char* name, IO::IoObject* object)
-  { itsImpl->manageObject(name, object); }
-
 void ExptDriver::edBeginExpt()
   { itsImpl->edBeginExpt(); }
 
@@ -891,6 +952,9 @@ void ExptDriver::edHaltExpt() const
 
 void ExptDriver::edResumeExpt()
   { itsImpl->edResumeExpt(); }
+
+void ExptDriver::edClearExpt()
+  { itsImpl->edClearExpt(); }
 
 void ExptDriver::edResetExpt()
   { itsImpl->edResetExpt(); }
