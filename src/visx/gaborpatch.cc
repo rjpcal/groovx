@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 14:45:52 2003
-// written: Mon May 12 14:46:23 2003
+// written: Tue May 13 11:30:21 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,6 +37,8 @@
 
 #include "util/trace.h"
 
+using namespace Geom;
+
 namespace
 {
   typedef std::map<GaborSpec, GaborPatch*> MapType;
@@ -49,8 +51,8 @@ namespace
 }
 
 GaborSpec::GaborSpec(double s, double o, double t, double p, double c) :
-  theta(DELTA_THETA * (int(zerotopi(t)/DELTA_THETA + 0.5) % NUM_THETA)),
-  phi(DELTA_PHASE * (int(zerototwopi(p)/DELTA_PHASE + 0.5) % NUM_PHASE)),
+  theta(DELTA_THETA * (int(rad_0_pi(t)/DELTA_THETA + 0.5) % NUM_THETA)),
+  phi(DELTA_PHASE * (int(rad_0_2pi(p)/DELTA_PHASE + 0.5) % NUM_PHASE)),
   sigma(s),
   omega(o),
   contrast(c)

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 11:14:33 2003
+// written: Tue May 13 11:30:00 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -57,6 +57,7 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
+using namespace Geom;
 using namespace Gfx;
 
 namespace
@@ -218,7 +219,7 @@ DOTRACE("GaborArray::update");
 
       const double theta =
         (array[i].type == Element::CONTOUR)
-        ? zerototwopi(array[i].theta + M_PI_2)
+        ? rad_0_2pi(array[i].theta + M_PI_2)
         : array[i].theta;
 
       const int xcenter = int(array[i].pos.x() + itsSize.x() / 2.0 + 0.5);

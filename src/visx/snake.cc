@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Mon May 12 14:50:44 2003
+// written: Tue May 13 11:28:38 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,6 +42,7 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
+using namespace Geom;
 using namespace Gfx;
 
 namespace
@@ -103,10 +104,10 @@ namespace
 
   Tuple4 getAlphas(const Tuple4& theta)
   {
-    return Tuple4(zerototwopi(M_PI - theta[0] + theta[3]),
-                  zerototwopi(M_PI - theta[1] + theta[0]),
-                  zerototwopi(M_PI - theta[2] + theta[1]),
-                  zerototwopi(M_PI - theta[3] + theta[2]));
+    return Tuple4(rad_0_2pi(M_PI - theta[0] + theta[3]),
+                  rad_0_2pi(M_PI - theta[1] + theta[0]),
+                  rad_0_2pi(M_PI - theta[2] + theta[1]),
+                  rad_0_2pi(M_PI - theta[3] + theta[2]));
   }
 
   // Must return "true" in order to proceed with new nodes in jiggle().
@@ -310,7 +311,7 @@ DOTRACE("Snake::getElement");
   result.type = Element::CONTOUR;
   result.pos.x() = 0.5 * (elem(n).x() + elem(n+1).x());
   result.pos.y() = 0.5 * (elem(n).y() + elem(n+1).y());
-  result.theta = zerototwopi(-elem(n).angleTo(elem(n+1)));
+  result.theta = rad_0_2pi(-elem(n).angleTo(elem(n+1)));
 
   return result;
 }
@@ -364,10 +365,10 @@ DOTRACE("Snake::jiggle");
   const Tuple4 old_alpha = getAlphas(old_theta);
 
   const Tuple4 old_delta
-    (minuspitopi(elem(i[0]).angleTo(elem(i[0]+1)) - elem(i[0]-1).angleTo(elem(i[0]))),
-     minuspitopi(elem(i[1]).angleTo(elem(i[1]+1)) - elem(i[1]-1).angleTo(elem(i[1]))),
-     minuspitopi(elem(i[2]).angleTo(elem(i[2]+1)) - elem(i[2]-1).angleTo(elem(i[2]))),
-     minuspitopi(elem(i[3]).angleTo(elem(i[3]+1)) - elem(i[3]-1).angleTo(elem(i[3]))));
+    (rad_npi_pi(elem(i[0]).angleTo(elem(i[0]+1)) - elem(i[0]-1).angleTo(elem(i[0]))),
+     rad_npi_pi(elem(i[1]).angleTo(elem(i[1]+1)) - elem(i[1]-1).angleTo(elem(i[1]))),
+     rad_npi_pi(elem(i[2]).angleTo(elem(i[2]+1)) - elem(i[2]-1).angleTo(elem(i[2]))),
+     rad_npi_pi(elem(i[3]).angleTo(elem(i[3]+1)) - elem(i[3]-1).angleTo(elem(i[3]))));
 
   Vec2d new_pos[4];
 
