@@ -298,12 +298,6 @@ public:
   // Non-const functions
   //
 
-  void apply(double func(double))
-  {
-    for (mtx_iter i = begin_nc(); i.has_more(); ++i)
-      *i = func(*i);
-  }
-
   template <class F>
   void apply(F func)
   {
@@ -765,49 +759,31 @@ public:
     return data_.storage_nc()[i+offset()];
   }
 
-#ifdef APPLY_IMPL
-#  error macro error
-#endif // APPLY_IMPL
-
-  // This workaround is required because compilers don't seem to be
-  // able to accept both functors as well as function pointers as
-  // template arguments to a single apply() template
-#define APPLY_IMPL \
- \
-      double* p = data_.storage_nc() + offset(); \
-      unsigned int gap = rowgap(); \
- \
-      if (gap == 0) \
-        { \
-          double* end = p + nelems(); \
-          for (; p < end; ++p) \
-            *p = func(*p); \
-        } \
-      else \
-        { \
-          for (int c = 0; c < ncols(); ++c) \
-            { \
-              for (int r = 0; r < mrows(); ++r) \
-                { \
-                  *p = func(*p); \
-                  ++p; \
-                } \
-              p += gap; \
-            } \
-        }
-
   template <class F>
-  void apply_f(F func)
+  void apply(F func)
   {
-    APPLY_IMPL;
-  }
+    double* p = data_.storage_nc() + offset();
+    unsigned int gap = rowgap();
 
-  void apply(double func(double))
-  {
-    APPLY_IMPL;
+    if (gap == 0)
+      {
+        double* end = p + nelems();
+        for (; p < end; ++p)
+          *p = func(*p);
+      }
+    else
+      {
+        for (int c = 0; c < ncols(); ++c)
+          {
+            for (int r = 0; r < mrows(); ++r)
+              {
+                *p = func(*p);
+                ++p;
+              }
+            p += gap;
+          }
+      }
   }
-
-#undef APPLY_IMPL
 
   //
   // Iterators
@@ -871,7 +847,7 @@ public:
     double operator()(double) { return v; }
   };
 
-  void clear(double x = 0.0) { apply_f(Setter(x)); }
+  void clear(double x = 0.0) { apply(Setter(x)); }
 };
 
 
@@ -1092,10 +1068,10 @@ public:
 
   double mean() const { return sum() / nelems(); }
 
-  mtx& operator+=(double x) { apply_f(Add(x)); return *this; }
-  mtx& operator-=(double x) { apply_f(Sub(x)); return *this; }
-  mtx& operator*=(double fac) { apply_f(Mul(fac)); return *this; }
-  mtx& operator/=(double div) { apply_f(Div(div)); return *this; }
+  mtx& operator+=(double x) { apply(Add(x)); return *this; }
+  mtx& operator-=(double x) { apply(Sub(x)); return *this; }
+  mtx& operator*=(double fac) { apply(Mul(fac)); return *this; }
+  mtx& operator/=(double div) { apply(Div(div)); return *this; }
 
   mtx& operator+=(const mtx& other);
   mtx& operator-=(const mtx& other);

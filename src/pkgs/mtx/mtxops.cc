@@ -26,8 +26,8 @@ mtx squared(const mtx& src)
 DOTRACE("squared");
 
   mtx result(src);
-  // FIXME would be better if mtx_base had a transformF() template
-  result.apply_f(Square());
+  // FIXME would be better if mtx_base had a transform() template
+  result.apply(Square());
 
   return result;
 }
