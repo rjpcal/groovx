@@ -3,7 +3,7 @@
 // ioutils.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue May 25 13:56:59 1999
+// written: Mon Mar  6 12:14:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,7 @@
 #include "ioutils.h"
 
 #include <iostream.h>
-#include <cstdlib>              // for exit()
 #include <cstring>
-#include <string>
 
 #include "io.h"
 
