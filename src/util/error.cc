@@ -46,6 +46,7 @@ namespace
 }
 
 Util::Error::Error() :
+  std::exception(),
   itsInfo(),
   itsBackTrace(new BackTrace(Util::BackTrace::current()))
 {
@@ -60,6 +61,7 @@ DOTRACE("Util::Error::Error()");
 }
 
 Util::Error::Error(const fstring& msg) :
+  std::exception(),
   itsInfo(msg),
   itsBackTrace(new BackTrace(Util::BackTrace::current()))
 {
@@ -74,6 +76,7 @@ DOTRACE("Util::Error::Error(fstring)");
 }
 
 Util::Error::Error(const Util::Error& other) throw() :
+  std::exception(other),
   itsInfo(other.itsInfo),
   itsBackTrace(0)
 {
@@ -89,6 +92,11 @@ Util::Error::~Error() throw()
 {
 DOTRACE("Util::Error::~Error");
   delete itsBackTrace;
+}
+
+const char* Util::Error::what() const throw()
+{
+  return itsInfo.c_str();
 }
 
 const Util::BackTrace& Util::Error::lastBackTrace()

@@ -32,6 +32,8 @@
 
 #include "util/strings.h"
 
+#include <exception>
+
 namespace Util
 {
   class BackTrace;
@@ -45,7 +47,7 @@ namespace Util
  *
  **/
 
-class Util::Error
+class Util::Error : public std::exception
 {
 public:
   /// Default construct with an empty message string.
@@ -61,16 +63,16 @@ public:
   virtual ~Error() throw();
 
   /// Get the error message.
-  fstring& msg() { return itsInfo; }
+  fstring& msg() throw() { return itsInfo; }
 
   /// Get the error message.
-  const fstring& msg() const { return itsInfo; }
+  const fstring& msg() const throw() { return itsInfo; }
 
   /// Get the error message as a C-style string.
-  const char* msg_cstr() const { return itsInfo.c_str(); }
+  virtual const char* what() const throw();
 
   /// Get the stack back trace associated with this exception.
-  const BackTrace& backTrace() const { return *itsBackTrace; }
+  const BackTrace& backTrace() const throw() { return *itsBackTrace; }
 
   /// Get the most recently back trace used in constructing a Util::Error.
   static const BackTrace& lastBackTrace();
