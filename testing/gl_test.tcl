@@ -52,14 +52,14 @@ test "TclGL-glFlush" "error" {} {^$}
 ### setBackgroundCmd ###
 test "TclGL-setBackground" "args" {
 	 setBackground
-} {wrong \# args: should be "setBackground { \[index\] or \[R G B\] }"}
+} {wrong \# args: should be "setBackground { \[index\] or \[R G B A\] }"}
 test "TclGL-setBackground" "normal use" {} {^$}
 test "TclGL-setBackground" "error" {} {^$}
 
 ### setForegroundCmd ###
 test "TclGL-setForeground" "args" {
 	 setForeground
-} {wrong \# args: should be "setForeground { \[index\] or \[R G B\] }"}
+} {wrong \# args: should be "setForeground { \[index\] or \[R G B A\] }"}
 test "TclGL-setForeground" "normal use" {} {^$}
 test "TclGL-setForeground" "error" {} {^$}
 
