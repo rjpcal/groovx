@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Sep 12 12:35:36 2002
+// written: Thu Sep 12 13:20:30 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -195,6 +195,13 @@ int main(int argc, char** argv)
       appArgv = argv;
 
       Tcl::Main app(argc, argv);
+
+      if (Tcl::Main::isInteractive())
+        {
+          std::cerr << PACKAGE_STRING
+                    << "\nCopyright (c) 1998-2002 "
+                    << "Rob Peters <rjpeters@klab.caltech.edu>\n";
+        }
 
       Tcl::Interp& safeIntp = app.safeInterp();
 
