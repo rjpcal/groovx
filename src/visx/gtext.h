@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Sun Aug 26 08:35:13 2001
+// written: Thu Aug 30 16:15:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,8 @@ public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
+
+  static const FieldMap& classFields();
 
   /// Change the text string to \a text.
   void setText(const fstring& text);
