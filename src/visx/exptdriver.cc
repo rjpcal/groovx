@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun 13 15:36:36 2001
+// written: Fri Jun 15 06:26:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "block.h"
 #include "tlistutils.h"
-#include "objtogl.h"
 #include "toglet.h"
 #include "trialbase.h"
 
@@ -202,6 +201,11 @@ public:
       return *itsWidget;
     }
 
+  void setWidget(Util::UID widg)
+    {
+      itsWidget = WeakRef<GWT::Widget>(widg);
+    }
+
   GWT::Canvas& getCanvas()
     { return getWidget().getCanvas(); }
 
@@ -228,7 +232,7 @@ private:
 
   Tcl_Interp* itsInterp;
 
-  WeakRef<Toglet> itsWidget;
+  WeakRef<GWT::Widget> itsWidget;
 
   fixed_string itsHostname;     // Host computer on which Expt was begun
   fixed_string itsSubject;      // Id of subject on whom Expt was performed
@@ -268,7 +272,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
                        ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
-  itsWidget(Toglet::make(interp)),
+  itsWidget(),
   itsHostname(""),
   itsSubject(""),
   itsBeginDate(""),
@@ -283,8 +287,6 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsErrHandler(interp)
 {
 DOTRACE("ExptDriver::Impl::Impl");
-
-  ObjTogl::setCurrentTogl(itsWidget.get());
 
   dynamic_string cmd_line("command line: ");
 
@@ -849,6 +851,9 @@ Util::ErrorHandler& ExptDriver::getErrorHandler()
 
 GWT::Widget& ExptDriver::getWidget()
   { return itsImpl->getWidget(); }
+
+void ExptDriver::setWidget(Util::UID widg)
+  { itsImpl->setWidget(widg); }
 
 GWT::Canvas& ExptDriver::getCanvas()
   { return itsImpl->getCanvas(); }

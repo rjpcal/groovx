@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jun 11 18:31:45 2001
+// written: Thu Jun 14 14:57:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,11 @@ class TimingHdlr;
 
 class fixed_string;
 
-namespace Util { template <class T> class Ref; };
+namespace Util
+{
+  template <class T> class Ref;
+  template <class T> class WeakRef;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -57,7 +61,7 @@ private:
 public:
 
   /** This tracer dynamically controls the tracing of ExptDriver
-		member functions. */
+      member functions. */
   static Util::Tracer tracer;
 
   static ExptDriver* make(int argc, char** argv, Tcl_Interp* interp)
@@ -88,7 +92,7 @@ public:
   const char* getInfoLog() const;
 
   /** Add a message to the info log. The message will automatically be
-		date/time-stamped. */
+      date/time-stamped. */
   void addLogInfo(const char* message);
 
   void addBlock(Util::Ref<Block> block);
@@ -97,6 +101,7 @@ public:
   virtual Util::ErrorHandler& getErrorHandler();
 
   virtual GWT::Widget& getWidget();
+  void setWidget(Util::UID widg);
 
   virtual GWT::Canvas& getCanvas();
 
@@ -109,7 +114,7 @@ public:
   virtual void edResetExpt();
 
   /** This saves the experiment file and a summary-of-responses file
-		under unique filenames based on the date and time. */
+      under unique filenames based on the date and time. */
   void storeData();
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun 13 17:42:12 2001
+// written: Fri Jun 15 06:31:37 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -16,8 +16,7 @@
 #ifndef OBJTOGL_CC_DEFINED
 #define OBJTOGL_CC_DEFINED
 
-#include "objtogl.h"
-
+#include "grshapp.h"
 #include "toglet.h"
 #include "trialbase.h"
 
@@ -57,6 +56,8 @@ namespace ObjTogl {
 
   WeakRef<Toglet> theWidget;
 
+  void setCurrentTogl(WeakRef<Toglet> toglet);
+
   class BindCmd;
   class CurrentTogletCmd;
   class DumpCmapCmd;
@@ -77,10 +78,18 @@ namespace ObjTogl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ObjTogl::setCurrentTogl(Toglet* togl) {
+void ObjTogl::setCurrentTogl(WeakRef<Toglet> toglet) {
 DOTRACE("ObjTogl::setCurrentTogl");
 
-  theWidget = WeakRef<Toglet>(togl);
+  theWidget = toglet;
+
+  // Install the experiment into the application
+  Application& app = Application::theApp();
+  GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
+
+  if (grshapp != 0) {
+    grshapp->installCanvas(theWidget->getCanvas());
+  }
 }
 
 //---------------------------------------------------------------------
@@ -417,6 +426,10 @@ public:
     declareCAction("undraw", &Toglet::undraw);
     declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
     declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
+
+    setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
+
+    TclPkg::eval("Expt::setWidget [Toglet::currentToglet]");
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Jun 12 11:17:14 2001
+// written: Thu Jun 14 15:01:10 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -17,8 +17,8 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
+#include "application.h"
 #include "block.h"
-#include "grshapp.h"
 #include "exptdriver.h"
 
 #include "gwt/widget.h"
@@ -251,16 +251,9 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   declareCAction("clear", &ExptDriver::edClearExpt);
   declareCGetter("currentBlock", &ExptDriver::currentBlock);
   declareCAction("reset", &ExptDriver::edResetExpt);
+  declareCSetter("setWidget", &ExptDriver::setWidget);
   declareCAction("stop", &ExptDriver::edHaltExpt);
   declareCAction("storeData", &ExptDriver::storeData);
-
-  // Install the experiment into the application
-  Application& app = Application::theApp();
-  GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
-
-  if (grshapp != 0) {
-    grshapp->installCanvas(itsExptDriver->getCanvas());
-  }
 }
 
 //---------------------------------------------------------------------
