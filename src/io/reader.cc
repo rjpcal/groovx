@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Thu Aug  9 07:15:33 2001
+// written: Tue Aug 14 18:12:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 
 #include <cstddef>
 
+#include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
@@ -46,6 +47,8 @@ int IO::Reader::ensureReadVersionId(const char* name,
                                     IO::VersionId lowest_supported_version,
                                     const char* msg)
 {
+DOTRACE("IO::Reader::ensureReadVersionId");
+
   IO::VersionId actual_version = this->readSerialVersionId();
 
   if (actual_version < lowest_supported_version)
