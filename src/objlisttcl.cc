@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Sep 29 13:44:47 2000
+// written: Fri Oct  6 16:28:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,6 +161,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
+// XXX This command is disabled until I figure out how to reimplement
+// release() with a new memory management strategy
+#if 0
+
 class ObjlistTcl::LoadMoreCmd : public Tcl::ASRLoadCmd {
 public:
   LoadMoreCmd(Tcl_Interp* interp, const char* cmd_name) :
@@ -196,6 +200,8 @@ private:
   PtrList<GrObj> itsSandbox;
 };
 
+#endif
+
 //---------------------------------------------------------------------
 //
 // ObjListPkg class definition
@@ -209,7 +215,9 @@ public:
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
+#if 0
 	 addCommand( new LoadMoreCmd(interp, "ObjList::loadMore") );
+#endif
   }
 };
 
