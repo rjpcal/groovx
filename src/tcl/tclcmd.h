@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Mon Sep 10 13:26:24 2001
+// written: Mon Sep 10 13:41:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,6 +123,12 @@ private:
 class Tcl::Dispatcher
 {
 public:
+  /// Virtual destructor.
+  virtual ~Dispatcher();
+
+  /** Interprets the Tcl_Obj* arguments, sets up an appropriate
+      Tcl::Context, and calls invoke() on the \a cmd with that
+      context. */
   virtual void dispatch(Tcl_Interp* interp,
                         unsigned int objc, Tcl_Obj* const objv[],
                         Tcl::Command& cmd) = 0;
