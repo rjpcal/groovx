@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Oct  8 16:04:33 2000
+// written: Mon Oct  9 08:24:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,16 +25,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-MasterIoPtr::MasterIoPtr()
-{
-DOTRACE("MasterIoPtr::MasterIoPtr");
-}
-
-MasterIoPtr::~MasterIoPtr()
-{
-DOTRACE("MasterIoPtr::~MasterIoPtr");
-}
 
 IoPtrList::IoPtrList(int size) :
   VoidPtrList(size)
