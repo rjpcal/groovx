@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat May 26 16:24:51 2001
+// written: Sat May 26 16:50:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,16 +32,9 @@
 #include <fstream.h>
 #include <strstream.h>
 #include <iomanip.h>
-#include <cmath>
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-namespace {
-  const char* const bad_trial_msg = "invalid trial id";
-  const char* const bad_objid_msg = "objid out of range";
-  const char* const bad_posid_msg = "posid out of range";
-}
 
 int TlistUtils::createPreview(const GWT::Canvas& canvas,
 										int* objids, unsigned int objids_size,
