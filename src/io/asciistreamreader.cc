@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Sep 27 14:42:46 2000
+// written: Mon Oct  2 16:12:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ DOTRACE("Escape::readAndUnEscape");
 		  {
 			 if (ch == '{') ++brace_level;
 			 if (ch == '}') --brace_level;
-			 *itr++ = ch;
+			 *itr++ = char(ch);
 			 continue;
 		  }
 		else
@@ -481,8 +481,14 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 itsBuf >> type >> id >> equal >> bracket;
 	 DebugEval(type); DebugEvalNL(id);
 
-	 if ( itsBuf.fail() )
-		throw IO::ReadError("input failed while reading typename and object id");
+	 if ( itsBuf.fail() ) {
+		IO::ReadError err("input failed while reading typename and object id\n");
+		type[63] = '\0'; err.appendMsg("type: ", type);
+		err.appendMsg("id: "); err.appendNumber(int(id));
+		equal[15] = '\0'; err.appendMsg("equal: ", equal);
+		bracket[15] = '\0'; err.appendMsg("bracket: ", bracket);
+		throw err;
+	 }
 
 	 if ( !haveReadRoot ) {
 		rootid = id;
@@ -499,8 +505,11 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
 	 itsBuf >> bracket >> ws;
 
-	 if ( itsBuf.fail() )
-		throw IO::ReadError("input failed while parsing ending bracket");
+	 if ( itsBuf.fail() ) {
+		IO::ReadError err("input failed while parsing ending bracket");
+		bracket[15] = '\0'; err.appendMsg("bracket: ", bracket);
+		throw err;
+	 }
   }
 
   return itsObjects.getObject(rootid);
