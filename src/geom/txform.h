@@ -49,18 +49,32 @@ namespace geom
            const vec3<double>& rotation_axis,
            double rotation_angle);
 
+    /// Factory function to make an identity matrix.
+    static txform identity();
+
+    /// Factory function to make a random matrix (uniform distribution in [0,1]).
+    /** This is mainly intended for use in testing contexts. */
+    static txform random();
+
     void translate(const vec3<double>& t);
     void scale(const vec3<double>& s);
-    void rotate(const vec3<double>& rotation_axis,
-                double rotation_angle);
+    void rotate(const vec3<double>& rotation_axis, double rotation_angle);
 
     /// Equivalent to this = this x other, where 'x' is matrix multiplication.
     void transform(const geom::txform& other);
+
+    /// Get the inverse of this transformation.
+    geom::txform inverted() const;
 
     vec2<double> apply_to(const vec2<double>& input) const;
     vec3<double> apply_to(const vec3<double>& input) const;
 
     const double* col_major_data() const { return &m_mtx[0]; }
+
+    void set_col_major_data(const double* data);
+
+    double  operator[](unsigned int i) const { return m_mtx[i]; }
+    double& operator[](unsigned int i)       { return m_mtx[i]; }
 
     void debug_dump() const;
 

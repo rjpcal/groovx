@@ -36,6 +36,8 @@
 
 #include "geom/vec3.h"
 
+#include "util/rand.h"
+
 #include <cmath>
 #include <cstring>
 
@@ -128,6 +130,188 @@ DOTRACE("geom::txform::txform(tx, scl, rot)");
   m_mtx[1]=sy*(ry*rx*(1-c)+rz*s); m_mtx[5]=sy*(ry*ry*(1-c)+c);    m_mtx[9]=sy*(ry*rz*(1-c)-rx*s); m_mtx[13]=ty;
   m_mtx[2]=sz*(rz*rx*(1-c)-ry*s); m_mtx[6]=sz*(rz*ry*(1-c)+rx*s); m_mtx[10]=sz*(rz*rz*(1-c)+c);   m_mtx[14]=tz;
   m_mtx[3]=0.0;                   m_mtx[7]=0.0;                   m_mtx[11]=0.0;                  m_mtx[15]=1.0;
+}
+
+geom::txform geom::txform::identity()
+{
+DOTRACE("geom::txform::identity");
+  return txform();
+}
+
+geom::txform geom::txform::random()
+{
+DOTRACE("geom::txform::random");
+
+  static rutz::urand generator(rutz::default_rand_seed);
+
+  txform result;
+  for (int i = 0; i < 16; ++i)
+    result.m_mtx[i] = generator.fdraw_range(0.0, 1.0);
+  return result;
+}
+
+geom::txform geom::txform::inverted() const
+{
+DOTRACE("geom::txform::inverted");
+
+  // ALGORITHM:
+
+  // 1. Compute the transpose, M' = transpose(M)
+  // 2. Compute the cofactor matrix, cof(M')
+  // 3. Compute the determinant of the cofactor matrix, det(cof(M'))
+  // 4. Compute the inverse, inv(M) = cof(M')/det(cof(M'))
+
+  /*
+     |  0  4  8  C  |
+     |  1  5  9  D  |
+     |  2  6  A  E  |
+     |  3  7  B  F  |
+  */
+
+#define A 10
+#define B 11
+#define C 12
+#define D 13
+#define E 14
+#define F 15
+
+  //
+  // 1. Compute the transpose, M' = transpose(M)
+  //
+
+#define s0 (m_mtx[0])
+#define s4 (m_mtx[1])
+#define s8 (m_mtx[2])
+#define sC (m_mtx[3])
+
+#define s1 (m_mtx[4])
+#define s5 (m_mtx[5])
+#define s9 (m_mtx[6])
+#define sD (m_mtx[7])
+
+#define s2 (m_mtx[8])
+#define s6 (m_mtx[9])
+#define sA (m_mtx[A])
+#define sE (m_mtx[B])
+
+#define s3 (m_mtx[C])
+#define s7 (m_mtx[D])
+#define sB (m_mtx[E])
+#define sF (m_mtx[F])
+
+  //
+  // 2. Compute the cofactor matrix, cof(M')
+  //
+
+  double dst[16]; // destination for inverted result
+
+  /*
+     |  0  4  8  C  |
+     |  1  5  9  D  |
+     |  2  6  A  E  |
+     |  3  7  B  F  |
+  */
+
+  {
+    // We compute each of the 2x2 determinants in the following form:
+    // (upperleft*lowerright - lowerleft*upperright)
+
+    // This makes it easier to verify that we have all the correct +/-
+    // signs in the 3x3 determinants (i.e. cofactors) below.
+
+    const double tAF_BE = (sA * sF) - (sB * sE);
+    const double t9F_BD = (s9 * sF) - (sB * sD);
+    const double t9E_AD = (s9 * sE) - (sA * sD);
+    const double t8F_BC = (s8 * sF) - (sB * sC);
+    const double t8E_AC = (s8 * sE) - (sA * sC);
+    const double t8D_9C = (s8 * sD) - (s9 * sC);
+
+    dst[0]=    + tAF_BE*s5 - t9F_BD*s6 + t9E_AD*s7;
+    dst[1]=    - tAF_BE*s4 + t8F_BC*s6 - t8E_AC*s7;
+    dst[2]=    + t9F_BD*s4 - t8F_BC*s5 + t8D_9C*s7;
+    dst[3]=    - t9E_AD*s4 + t8E_AC*s5 - t8D_9C*s6;
+
+    dst[4]=    - tAF_BE*s1 + t9F_BD*s2 - t9E_AD*s3;
+    dst[5]=    + tAF_BE*s0 - t8F_BC*s2 + t8E_AC*s3;
+    dst[6]=    - t9F_BD*s0 + t8F_BC*s1 - t8D_9C*s3;
+    dst[7]=    + t9E_AD*s0 - t8E_AC*s1 + t8D_9C*s2;
+  }
+
+  /*
+     |  0  4  8  C  |
+     |  1  5  9  D  |
+     |  2  6  A  E  |
+     |  3  7  B  F  |
+  */
+
+  {
+    const double t27_36 = (s2 * s7) - (s3 * s6);
+    const double t17_35 = (s1 * s7) - (s3 * s5);
+    const double t16_25 = (s1 * s6) - (s2 * s5);
+    const double t07_34 = (s0 * s7) - (s3 * s4);
+    const double t06_24 = (s0 * s6) - (s2 * s4);
+    const double t05_14 = (s0 * s5) - (s1 * s4);
+
+    dst[8]=    + t27_36*sD - t17_35*sE + t16_25*sF;
+    dst[9]=    - t27_36*sC + t07_34*sE - t06_24*sF;
+    dst[A]=    + t17_35*sC - t07_34*sD + t05_14*sF;
+    dst[B]=    - t16_25*sC + t06_24*sD - t05_14*sE;
+
+    dst[C]=    - t27_36*s9 + t17_35*sA - t16_25*sB;
+    dst[D]=    + t27_36*s8 - t07_34*sA + t06_24*sB;
+    dst[E]=    - t17_35*s8 + t07_34*s9 - t05_14*sB;
+    dst[F]=    + t16_25*s8 - t06_24*s9 + t05_14*sA;
+  }
+
+  //
+  // 3. Compute the determinant of the cofactor matrix, det(cof(M'))
+  //
+
+  const double det = 1.0 /
+    (s0*dst[0] +
+     s1*dst[1] +
+     s2*dst[2] +
+     s3*dst[3]);
+
+#undef A
+#undef B
+#undef C
+#undef D
+#undef E
+#undef F
+
+#undef s0
+#undef s4
+#undef s8
+#undef sC
+
+#undef s1
+#undef s5
+#undef s9
+#undef sD
+
+#undef s2
+#undef s6
+#undef sA
+#undef sE
+
+#undef s3
+#undef s7
+#undef sB
+#undef sF
+
+  //
+  // 4. Compute the inverse, inv(M) = cof(M')/det(cof(M'))
+  //
+
+  geom::txform result;
+
+  for (int i = 0; i < 16; ++i)
+    {
+      result.m_mtx[i] = dst[i] * det;
+    }
+
+  return result;
 }
 
 void geom::txform::translate(const vec3d& t)
@@ -303,6 +487,12 @@ vec3d geom::txform::apply_to(const vec3d& input) const
             output_y / output_w,
             output_z / output_w)
     : vec3d(0.0, 0.0, 0.0);
+}
+
+void geom::txform::set_col_major_data(const double* data)
+{
+  for (int i = 0; i < 16; ++i)
+    m_mtx[i] = data[i];
 }
 
 void geom::txform::debug_dump() const
