@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Mon Jul  2 15:12:13 2001
+// written: Mon Jul  2 15:13:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,33 +173,31 @@ namespace Util
 
 // sample test code
 
-#if 0
-#include "src/util/gzstreambuf.h"
+//  #include "src/util/gzstreambuf.h"
 
-int main() {
-  {
-    Util::gzstreambuf buf("test.gz", std::ios::out);
+//  int main() {
+//    {
+//      Util::gzstreambuf buf("test.gz", std::ios::out);
 
-    std::ostream os(&buf);
+//      std::ostream os(&buf);
 
-    os << "Hello, World!\n";
-  }
+//      os << "Hello, World!\n";
+//    }
 
-  {
-    Util::gzstreambuf buf2("test.gz", std::ios::in);
+//    {
+//      Util::gzstreambuf buf2("test.gz", std::ios::in);
 
-    std::istream is(&buf2);
+//      std::istream is(&buf2);
 
-    int c;
-    while ( (c=is.get()) != EOF )
-      {
-        std::cout << char(c);
-      }
-  }
+//      int c;
+//      while ( (c=is.get()) != EOF )
+//        {
+//          std::cout << char(c);
+//        }
+//    }
 
-  return 0;
-}
-#endif
+//    return 0;
+//  }
 
 static const char vcid_gzstreambuf_h[] = "$Header$";
 #endif // !GZSTREAMBUF_H_DEFINED

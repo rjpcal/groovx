@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 17:00:38 2001
-// written: Tue Jun 19 17:00:38 2001
+// written: Mon Jul  2 15:14:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,25 +168,25 @@ std::string GccV3Demangler::readQualifiers() {
   std::string qual;
   while (true) {
     switch (itsBuf[itsPos]) {
-	 case 'P':
-		qual.insert(0, "*");
-		itsBuf.erase(itsPos, 1);
-		break;
-	 case 'R':
-		qual.insert(0, "&");
-		itsBuf.erase(itsPos, 1);
-		break;
-	 case 'V':
-		qual.insert(0, " volatile");
-		itsBuf.erase(itsPos, 1);
-		break;
-	 case 'K':
-		qual.insert(0, " const");
-		itsBuf.erase(itsPos, 1);
-		break;
-	 default:
-		return qual;
-	 }
+    case 'P':
+      qual.insert(0, "*");
+      itsBuf.erase(itsPos, 1);
+      break;
+    case 'R':
+      qual.insert(0, "&");
+      itsBuf.erase(itsPos, 1);
+      break;
+    case 'V':
+      qual.insert(0, " volatile");
+      itsBuf.erase(itsPos, 1);
+      break;
+    case 'K':
+      qual.insert(0, " const");
+      itsBuf.erase(itsPos, 1);
+      break;
+    default:
+      return qual;
+    }
   }
 
   return qual;
@@ -249,59 +249,56 @@ DOTRACE("gcc_v3_demangle");
 // demangling test code
 //
 
-#if 0
-#include <iostream>
-#include <exception>
-#include <typeinfo>
+//  #include <iostream>
+//  #include <exception>
+//  #include <typeinfo>
 
-#include "src/system/gcc_v3_demangle.h"
+//  #include "src/system/gcc_v3_demangle.h"
 
-void printboth(const char* n)
-{
-  std::cout << n << '\t' << gcc_v3_demangle(n) << std::endl;
-}
+//  void printboth(const char* n)
+//  {
+//    std::cout << n << '\t' << gcc_v3_demangle(n) << std::endl;
+//  }
 
-class Global { int x; };
+//  class Global { int x; };
 
-namespace Nspace { struct Nested { struct Inner {int x; }; }; }
+//  namespace Nspace { struct Nested { struct Inner {int x; }; }; }
 
-template <typename T>
-class Tplate { T x; };
+//  template <typename T>
+//  class Tplate { T x; };
 
-class i {};
+//  class i {};
 
-template <class T1, class T2>
-class Tplate2 { T1 x1; T2 x2; };
+//  template <class T1, class T2>
+//  class Tplate2 { T1 x1; T2 x2; };
 
-template <class T1>
-class Tplate3 { struct Xt {}; };
+//  template <class T1>
+//  class Tplate3 { struct Xt {}; };
 
-int main() {
-  printboth(typeid(int).name());
-  printboth(typeid(double).name());
-  printboth(typeid(i).name());
-  printboth(typeid(Global).name());
-  printboth(typeid(std::exception).name());
-  printboth(typeid(Nspace::Nested).name());
-  printboth(typeid(Nspace::Nested::Inner).name());
-  printboth(typeid(Tplate<int>).name());
-  printboth(typeid(Tplate<double>).name());
-  printboth(typeid(Tplate<Global>).name());
-  printboth(typeid(Tplate<std::exception>).name());
-  printboth(typeid(Tplate<Nspace::Nested::Inner>).name());
-  printboth(typeid(Tplate2<int, double>).name());
-  printboth(typeid(Tplate<int*>).name());
-  printboth(typeid(Tplate<Global*>).name());
-  printboth(typeid(Tplate<const int*>).name());
-  printboth(typeid(Tplate<const Global*>).name());
-  printboth(typeid(Tplate<int* const>).name());
-  printboth(typeid(Tplate<Global* const>).name());
-  printboth(typeid(Tplate<int const* const>).name());
-  printboth(typeid(Tplate<Global const* const>).name());
-  printboth(typeid(Tplate3<int>::Xt).name());
-}
-
-#endif
+//  int main() {
+//    printboth(typeid(int).name());
+//    printboth(typeid(double).name());
+//    printboth(typeid(i).name());
+//    printboth(typeid(Global).name());
+//    printboth(typeid(std::exception).name());
+//    printboth(typeid(Nspace::Nested).name());
+//    printboth(typeid(Nspace::Nested::Inner).name());
+//    printboth(typeid(Tplate<int>).name());
+//    printboth(typeid(Tplate<double>).name());
+//    printboth(typeid(Tplate<Global>).name());
+//    printboth(typeid(Tplate<std::exception>).name());
+//    printboth(typeid(Tplate<Nspace::Nested::Inner>).name());
+//    printboth(typeid(Tplate2<int, double>).name());
+//    printboth(typeid(Tplate<int*>).name());
+//    printboth(typeid(Tplate<Global*>).name());
+//    printboth(typeid(Tplate<const int*>).name());
+//    printboth(typeid(Tplate<const Global*>).name());
+//    printboth(typeid(Tplate<int* const>).name());
+//    printboth(typeid(Tplate<Global* const>).name());
+//    printboth(typeid(Tplate<int const* const>).name());
+//    printboth(typeid(Tplate<Global const* const>).name());
+//    printboth(typeid(Tplate3<int>::Xt).name());
+//  }
 
 static const char vcid_gcc_v3_demangle_h[] = "$Header$";
 #endif // !GCC_V3_DEMANGLE_H_DEFINED
