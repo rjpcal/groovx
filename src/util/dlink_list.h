@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Thu May 10 12:04:36 2001
+// written: Tue May 22 12:18:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -268,6 +268,13 @@ public:
 
 		target->destroy();
 		node::deallocate(target);
+	 }
+
+  /// Removes the first link (if any) with the value \a val.
+  void remove(const T& val)
+    {
+		iterator ii = find(val);
+		erase(ii);
 	 }
 
   reference back() { return *(--end()); }
