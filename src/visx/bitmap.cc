@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Nov 15 14:10:38 1999
+// written: Mon Nov 15 16:08:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "error.h"
 #include "pbm.h"
 #include "reader.h"
+#include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -224,10 +225,8 @@ void Bitmap::grabWorldRect(const Rect<double>& rect) {
 DOTRACE("Bitmap::grabWorldRect");
   Rect<int> screen_rect;
 
-  getScreenFromWorld(rect.left(), rect.top(),
-							screen_rect.left(), screen_rect.top());
-  getScreenFromWorld(rect.right(), rect.bottom(),
-							screen_rect.right(), screen_rect.bottom(), false);
+  screen_rect.setBottomLeft( getScreenFromWorld(rect.bottomLeft())      );
+  screen_rect.setTopRight  ( getScreenFromWorld(rect.topRight(), false) );
 
   grabScreenRect(screen_rect);
 }
@@ -333,19 +332,21 @@ DOTRACE("Bitmap::grRender");
 }
 
 void Bitmap::grUnRender() const {
-DOTRACE("Bitmap::grUnRender");
-  double world_left, world_top, world_right, world_bottom; 
-  getBoundingBox(world_left, world_top, world_right, world_bottom);
+DOTRACE("Bitmap::grUnRender"); 
+  Rect<double> world_pos;
+  getBoundingBox(world_pos);
 
-  int screen_left, screen_top, screen_right, screen_bottom;
-  getScreenFromWorld(world_left, world_top, screen_left, screen_top);
-  getScreenFromWorld(world_right, world_bottom, screen_right, screen_bottom,
-							false);
+  Rect<int> screen_pos;
+  screen_pos.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft()      ) );
+  screen_pos.setTopRight  ( getScreenFromWorld(world_pos.topRight(),  false) );
 
-  doUndraw( screen_left-1,
-				screen_bottom-1,
-				screen_right-screen_left+2,
-				screen_top-screen_bottom+2 );
+  screen_pos.widenByStep(1);
+  screen_pos.heightenByStep(1);
+
+  doUndraw( screen_pos.left(),
+				screen_pos.bottom(),
+				screen_pos.width(),
+				screen_pos.height() );
 }
 
 void Bitmap::doUndraw(int /*winRasterX*/, int /*winRasterY*/,
@@ -357,33 +358,32 @@ DOTRACE("Bitmap::doUndraw");
 // accessors //
 ///////////////
 
-bool Bitmap::grGetBoundingBox(double& left, double& top,
-										double& right, double& bottom,
+bool Bitmap::grGetBoundingBox(Rect<double>& bbox,
 										int& border_pixels) const {
 DOTRACE("Bitmap::grGetBoundingBox");
 
-  border_pixels = 2; 
+  border_pixels = 2;
 
   // Object coordinates for the lower left corner
-  left = itsRasterX;
-  bottom = itsRasterY;
+  bbox.left() = itsRasterX;
+  bbox.bottom() = itsRasterY;
 
-  // Get screen coordinates for the lower left corner, so that we can
-  // find the upper right corner in screen coordinates
-  int screen_left, screen_bottom;
-  getScreenFromWorld(itsRasterX, itsRasterY, screen_left, screen_bottom);
+  // Get screen coordinates for the lower left corner
+  Point<int> screen_point =
+	 getScreenFromWorld(Point<double>(itsRasterX, itsRasterY));
 
   if (itsZoomX < 0.0) {
-	 screen_left += int(itsWidth*itsZoomX);
+	 screen_point.x() += int(itsWidth*itsZoomX);
   }
   if (itsZoomY < 0.0) {
-	 screen_bottom += int(itsHeight*itsZoomY);
+	 screen_point.y() += int(itsHeight*itsZoomY);
   }
 
-  // Get object coordinates for the upper right corner
-  getWorldFromScreen(screen_left+itsWidth*abs(itsZoomX),
-							screen_bottom+itsHeight*abs(itsZoomY),
-							right, top);
+  // Move the point to the upper right corner
+  screen_point += Point<double>(itsWidth*abs(itsZoomX),
+										  itsHeight*abs(itsZoomY));
+
+  bbox.setTopRight(getWorldFromScreen(screen_point));
 
   return true;
 }
