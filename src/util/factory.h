@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Fri Jun 15 15:55:45 2001
+// written: Mon Jun 18 09:45:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,13 +194,6 @@ class Factory : public FactoryBase {
 private:
   CreatorMap<BasePtr> itsMap;
 
-  template <class DerivedPtr>
-  static const char* defaultName()
-  {
-    return demangle_cstr(typeid(
-      typename Util::TypeTraits<DerivedPtr>::Pointee).name());
-  }
-
 protected:
   /// Default constructor.
   Factory() : itsMap() {}
@@ -213,7 +206,7 @@ public:
   void registerCreatorFunc(DerivedPtr (*func) ())
   {
     itsMap.setPtrForName(
-       defaultName<DerivedPtr>(),
+       demangle_cstr(typeid(typename Util::TypeTraits<DerivedPtr>::Pointee).name()),
        new CreatorFromFunc<BasePtr, DerivedPtr>(func));
   }
 
