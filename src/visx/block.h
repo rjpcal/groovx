@@ -71,9 +71,6 @@ public:
   ///////////////
   // accessors //
   ///////////////
-  
-  /// Returns a reference to the current \c Trial.
-  TrialBase& getCurTrial() const;
 
   /// Returns the total number of trials that will comprise the Block.
   virtual int numTrials() const;
