@@ -261,6 +261,9 @@ $(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT): \
 	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)
 
+$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT): \
+	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)
+
 ifneq ($(matlab_lib),)
 $(VISX_LIB_DIR)/mtx.so: \
 	$(matlab_lib)/libmx.so \
