@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Oct 24 18:53:51 2000
+// written: Thu Oct 26 09:17:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ protected:
   virtual void invoke() {
 	 C* newObject = C::make();
 	 typedef typename List::SharedPtr ItemType;
-	 ItemType item(newObject, ItemType::INSERT);
+	 ItemType item(newObject, ItemType::Insert());
 	 returnInt(item.id());
   }
 private:

@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Tue Oct 24 13:03:46 2000
+// written: Thu Oct 26 09:15:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ protected:
 	 const char* filename = getCstringFromArg(1);
 
 	 Sound* p = Sound::newPlatformSound(filename);
-	 ItemWithId<Sound> sound(p, ItemWithId<Sound>::INSERT);
+	 ItemWithId<Sound> sound(p, ItemWithId<Sound>::Insert());
 	 returnInt(sound.id());
   }
 };
@@ -113,14 +113,14 @@ public:
 		try {
 		  ItemWithId<Sound> ok_sound(
                Sound::newPlatformSound(full_ok_file.c_str()),
-					ItemWithId<Sound>::INSERT);
+					ItemWithId<Sound>::Insert());
 		  Sound::setOkSound(ok_sound);
 		  OK = ok_sound.id();
 		  linkConstVar("Sound::ok", OK);
 
 		  ItemWithId<Sound> err_sound(
                Sound::newPlatformSound(full_err_file.c_str()),
-					ItemWithId<Sound>::INSERT);
+					ItemWithId<Sound>::Insert());
 		  Sound::setErrSound(err_sound);
 		  ERR = err_sound.id();		  
 		  linkConstVar("Sound::err", ERR);

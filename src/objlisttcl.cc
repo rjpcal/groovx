@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Oct 24 15:43:25 2000
+// written: Thu Oct 26 09:15:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
 		throw IO::InputError("ObjlistTcl::loadObjects");
 	 }
 
-	 ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
+	 ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::Insert());
 
 	 lappendVal(obj.id()); // add the current objid to the Tcl result
 

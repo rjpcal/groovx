@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Oct 25 13:59:10 2000
+// written: Thu Oct 26 09:16:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ DOTRACE("TlistUtils::createPreview");
   fixed_block<Rect<double> > bbxs(objids_size);
 
   Trial* preview = Trial::make();
-  ItemWithId<TrialBase> preview_trial(preview, ItemWithId<TrialBase>::INSERT);
+  ItemWithId<TrialBase> preview_trial(preview, ItemWithId<TrialBase>::Insert());
 
   double window_area = world_width*world_height;
   double parcel_area = window_area/objids_size;
@@ -96,18 +96,20 @@ DOTRACE("TlistUtils::createPreview");
 
 	 Gtext* label = Gtext::make();
 	 label->setText(id_string);
-	 ItemWithId<GrObj> label_obj(label, ItemWithId<GrObj>::INSERT);
+	 ItemWithId<GrObj> label_obj(label, ItemWithId<GrObj>::Insert());
 	 label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
 	 label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 	 label->setHeight(0.1);
 
-	 ItemWithId<Position> obj_pos(Position::make(), ItemWithId<Position>::INSERT);
+	 ItemWithId<Position> obj_pos(Position::make(),
+											ItemWithId<Position>::Insert());
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
 	 obj_pos->setTranslate(obj_x, obj_y, 0.0);
 	 obj_pos->setScale(parcel_side, parcel_side, 1.0);
 
-	 ItemWithId<Position> label_pos(Position::make(), ItemWithId<Position>::INSERT);
+	 ItemWithId<Position> label_pos(Position::make(),
+											  ItemWithId<Position>::Insert());
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
 	 label_pos->setTranslate(label_x, label_y, 0.0);
@@ -221,7 +223,7 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 	 istrstream ist(line);
 	 Trial* t = Trial::make();
 	 t->readFromObjidsOnly(ist, offset);
-	 ItemWithId<TrialBase> trialinsert(t, ItemWithId<TrialBase>::INSERT);
+	 ItemWithId<TrialBase> trialinsert(t, ItemWithId<TrialBase>::Insert());
     ++trial;
   }
   if (is.bad()) throw IO::InputError("TlistUtils::readFromObjids");
