@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Tue Nov 28 18:31:52 2000
+// written: Wed Nov 29 13:08:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ private:
   Vec3<T> itsData;
 
 public:
-  GxVec3(FieldContainer* owner);
+  GxVec3(FieldContainer* owner, double x_=0.0, double y_=0.0, double z_=0.0);
   virtual ~GxVec3();
 
         T& x()       { return itsData.x(); }
