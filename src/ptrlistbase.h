@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sat Oct  7 20:05:39 2000
+// written: Sun Oct  8 16:25:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,7 @@ public:
 
 class MasterPtrBase {
 private:
+  int itsRefCount;
 
   // These are disallowed since MasterPtrBase's should always be in
   // one-to-one correspondence with their pointee's.
@@ -55,6 +56,11 @@ public:
   MasterPtrBase();
 
   virtual ~MasterPtrBase();
+
+  void incrRefCount();
+  void decrRefCount();
+
+  int refCount() const;
 
   virtual bool isValid() const = 0;
 

@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sat Oct  7 20:03:13 2000
+// written: Sun Oct  8 16:26:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,8 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-MasterPtrBase::MasterPtrBase()
+MasterPtrBase::MasterPtrBase() :
+  itsRefCount(0)
 {
 DOTRACE("MasterPtrBase::MasterPtrBase");
 }
@@ -54,6 +55,23 @@ DOTRACE("MasterPtrBase::MasterPtrBase");
 MasterPtrBase::~MasterPtrBase()
 {
 DOTRACE("MasterPtrBase::~MasterPtrBase");
+}
+
+void MasterPtrBase::incrRefCount() {
+DOTRACE("MasterPtrBase::incrRefCount");
+  ++itsRefCount;
+}
+
+void MasterPtrBase::decrRefCount() {
+DOTRACE("MasterPtrBase::decrRefCount");
+  --itsRefCount;
+  if (itsRefCount <= 0)
+	 delete this;
+}
+
+int MasterPtrBase::refCount() const {
+DOTRACE("MasterPtrBase::refCount");
+  return itsRefCount;
 }
 
 class NullMasterPtr : public MasterPtrBase {
@@ -82,38 +100,30 @@ public:
 class VoidPtrHandle {
 public:
   VoidPtrHandle() :
-	 itsMaster(new NullMasterPtr),
-	 itsRefCount(new int(1))
+	 itsMaster(new NullMasterPtr)
   {
 	 Assert(itsMaster != 0);
+	 itsMaster->incrRefCount();
   }
 
   explicit VoidPtrHandle(MasterPtrBase* master) :
-	 itsMaster(master),
-	 itsRefCount(new int(1))
+	 itsMaster(master)
   {
 	 Assert(itsMaster != 0);
+	 itsMaster->incrRefCount();
   }
 
   ~VoidPtrHandle()
   {
 	 Assert(itsMaster != 0);
-
-	 --*itsRefCount;
-
-	 if (*itsRefCount <= 0)
-		{
-		  delete itsRefCount;
-		  delete itsMaster;
-		}
+	 itsMaster->decrRefCount();
   }
 
   VoidPtrHandle(const VoidPtrHandle& other) :
-	 itsMaster(other.itsMaster),
-	 itsRefCount(other.itsRefCount)
+	 itsMaster(other.itsMaster)
   {
 	 Assert(itsMaster != 0);
-	 ++*itsRefCount;
+	 itsMaster->incrRefCount();
   }
 
   VoidPtrHandle& operator=(const VoidPtrHandle& other)
@@ -136,15 +146,9 @@ private:
 	 MasterPtrBase* otherMaster = other.itsMaster;
 	 other.itsMaster = this->itsMaster;
 	 this->itsMaster = otherMaster;
-
-	 int* otherRefCount = other.itsRefCount;
-	 other.itsRefCount = this->itsRefCount;
-	 this->itsRefCount = otherRefCount;
   }
 
   MasterPtrBase* itsMaster;
-
-  int* itsRefCount;
 };
 
 ///////////////////////////////////////////////////////////////////////
