@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Thu Jul 19 20:15:52 2001
+// written: Sat Jul 21 18:57:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,8 +45,8 @@ public:
 
 class GWT::KeyListener : public Util::Object {
 public:
-  virtual EventStatus onKeyPress(unsigned int modifiers, const char* keys,
-                                 int x, int y) = 0;
+  virtual EventStatus onKeyPress(const char* keys, int x, int y,
+                                 bool controlPressed) = 0;
 };
 
 
@@ -96,8 +96,8 @@ public:
   void setDrawable(const Util::Ref<GxNode>& node);
 
   void dispatchButtonEvent(unsigned int button, int x, int y);
-  void dispatchKeyEvent(unsigned int modifiers, const char* keys,
-                        int x, int y);
+  void dispatchKeyEvent(const char* keys, int x, int y,
+								bool controlPressed);
 
 private:
   Widget(const Widget&);

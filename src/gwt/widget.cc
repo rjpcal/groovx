@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu Jul 19 20:44:21 2001
+// written: Sat Jul 21 18:59:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -311,8 +311,8 @@ void GWT::Widget::dispatchButtonEvent(unsigned int button, int x, int y)
     }
 }
 
-void GWT::Widget::dispatchKeyEvent(unsigned int modifiers, const char* keys,
-                                   int x, int y)
+void GWT::Widget::dispatchKeyEvent(const char* keys, int x, int y,
+                                   bool controlPressed)
 {
   for (Impl::Keys::iterator
          itr = itsImpl->itsKeyListeners.begin(),
@@ -320,7 +320,7 @@ void GWT::Widget::dispatchKeyEvent(unsigned int modifiers, const char* keys,
        itr != end;
        ++itr)
     {
-      EventStatus status = (*itr)->onKeyPress(modifiers, keys, x, y);
+      EventStatus status = (*itr)->onKeyPress(keys, x, y, controlPressed);
       if (status == HANDLED)
         break;
     }
