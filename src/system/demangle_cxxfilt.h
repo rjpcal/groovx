@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Feb 27 16:30:08 2003
-// written: Wed Mar 19 17:55:51 2003
+// written: Fri May  2 16:49:06 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -46,7 +46,7 @@ DOTRACE("demangle_impl");
 
   fstring command("c++filt ", mangled.c_str());
 
-  Util::Pipe pipe(command.c_str(), "r");
+  Util::ShellPipe pipe(command.c_str(), "r");
 
   if (pipe.isClosed())
     {

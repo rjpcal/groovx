@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Apr 25 09:06:51 2002
-// written: Fri May  2 16:31:36 2003
+// written: Fri May  2 16:51:15 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -39,14 +39,10 @@
 
 #include "util/error.h"
 #include "util/log.h"
-#include "util/stdiobuf.h"
+#include "util/pipe.h"
 
 #include <cctype>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
-#include "util/debug.h"
 #include "util/trace.h"
 
 namespace
@@ -98,171 +94,6 @@ namespace
     return UNKNOWN;
   }
 
-  class PipeFds
-  {
-  private:
-    int itsFds[2]; // reading == fds[0], writing == fds[1]
-
-  public:
-    PipeFds()
-    {
-      if (pipe(itsFds) != 0)
-        throw Util::Error("couldn't create pipe");
-    }
-
-    ~PipeFds() throw()
-    {
-      closeReader();
-      closeWriter();
-    }
-
-    int reader() const throw() { return itsFds[0]; }
-    int writer() const throw() { return itsFds[1]; }
-
-    void closeReader() throw()
-      { if (itsFds[0] >= 0) close(itsFds[0]); itsFds[0] = -1; }
-    void closeWriter() throw()
-      { if (itsFds[0] >= 0) close(itsFds[1]); itsFds[1] = -1; }
-  };
-
-  class ChildProcess
-  {
-  public:
-    ChildProcess() :
-      itsChildStatus(0),
-      itsPid(fork())
-    {
-      if (itsPid == -1)
-        throw Util::Error("couldn't fork child process");
-    }
-
-    ~ChildProcess() throw()
-    {
-      wait();
-    }
-
-    bool inParent() const throw() { return itsPid != 0; }
-
-    int wait() throw()
-    {
-      if (itsPid != 0)
-        {
-          waitpid(itsPid, &itsChildStatus, /*options*/ 0);
-          itsPid = 0;
-        }
-
-      return itsChildStatus;
-    }
-
-  private:
-    int itsChildStatus;
-    pid_t itsPid;
-  };
-
-  class ExecPipe
-  {
-  public:
-    ExecPipe(const char* m, char* const* argv) :
-      parentIsReader(isReadMode(m)),
-      fds(),
-      p(),
-      strm(0)
-    {
-      if (p.inParent())
-        {
-          if (parentIsReader)
-            {
-              fds.closeWriter();
-
-              strm = new Util::stdiostream(fds.reader(),
-                                           std::ios::in|std::ios::binary);
-            }
-          else // parent is writer
-            {
-              fds.closeReader();
-
-              strm = new Util::stdiostream(fds.writer(),
-                                           std::ios::out|std::ios::binary);
-            }
-
-          if (strm == 0)
-            throw Util::Error("couldn't open stream in parent process");
-        }
-      else // in child
-        {
-          if (parentIsReader) // ==> child is writer
-            {
-              fds.closeReader();
-
-              if (dup2(fds.writer(), STDOUT_FILENO) == -1)
-                {
-                  fprintf(stderr, "dup2 failed in child process\n");
-                  exit(-1);
-                }
-            }
-          else // parent is writer, child is reader
-            {
-              fds.closeWriter();
-
-              if (dup2(fds.reader(), STDIN_FILENO) == -1)
-                {
-                  fprintf(stderr, "dup2 failed in child process\n");
-                  exit(-1);
-                }
-            }
-
-          execv(argv[0], argv);
-
-          fprintf(stderr, "execv failed in child process\n");
-          exit(-1);
-        }
-    }
-
-    ~ExecPipe() throw()
-    {
-      delete strm;
-    }
-
-    STD_IO::iostream& stream() throw()
-    {
-      Assert(strm != 0);
-      return *strm;
-    }
-
-    int exitStatus() throw()
-    {
-      const int child_status = p.wait();
-
-      // Check if the child process exited abnormally
-      if (WIFEXITED(child_status) == 0) return -1;
-
-      // Check if the child process gave an error exit code
-      if (WEXITSTATUS(child_status) != 0) return -1;
-
-      // OK, everything looks fine
-      return 0;
-    }
-
-  private:
-    static bool isReadMode(const char* m)
-    {
-      if (m == 0) throw Util::Error("invalid read/write mode");
-      switch (m[0])
-        {
-        case 'r': return true;
-        case 'm': return false;
-        }
-
-      throw Util::Error(fstring("invalid read/write mode '", m, "'"));
-      return false; // "can't happen"
-    }
-
-    bool parentIsReader;
-    PipeFds fds;
-    ChildProcess p;
-    Util::stdiostream* strm;
-  };
-
   // A fallback function to try to read just about any image type, given
   // that the program "anytopnm" is installed on the host machine. In that
   // case, we can process the image file with anytopnm, and pipe the output
@@ -283,7 +114,7 @@ namespace
     fstring nm_copy(filename);
     char* const argv[] = { (char*) ANYTOPNM_PROG, nm_copy.data(), (char*) 0 };
 
-    ExecPipe p("r", argv);
+    Util::ExecPipe p("r", argv);
 
     Pbm::load(p.stream(), data);
 
