@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Thu May 10 12:04:36 2001
+// written: Fri May 11 21:27:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,17 +73,21 @@ public:
       appendMsg() calls can be chained together. */
   ErrorWithMsg& appendMsg(const char* addMsg1, const char* addMsg2, const char* addMsg3);
 
-  /// Append an integer to the error message.
-  ErrorWithMsg& appendNumber(int i);
-
-  /// Append a floating-point number to the error message.
-  ErrorWithMsg& appendNumber(double d);
+  /// Append a number to the error message.
+  template <class T>
+  ErrorWithMsg& appendNumber(T x)
+  {
+	 return appendMsg(num2str(x));
+  }
 
 protected:
   /// Change the informative message to \a newMessage.
   virtual void setMsg(const char* newMessage);
 
 private:
+  template <class T>
+  static const char* num2str(T x);
+
   dynamic_string* itsInfo;
 };
 
