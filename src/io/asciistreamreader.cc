@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Nov  5 10:10:53 1999
+// written: Mon Nov  8 12:47:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ namespace {
 
 class AsciiStreamReader::Impl {
 public:
-  Impl(istream& is) :
-	 itsBuf(is), itsCreatedObjects(), itsAttribs() 
+  Impl(AsciiStreamReader* owner, istream& is) :
+	 itsOwner(owner), itsBuf(is), itsCreatedObjects(), itsAttribs() 
   {
 #ifndef NO_IOS_EXCEPTIONS
 	 itsOriginalExceptionState = itsBuf.exceptions();
@@ -83,27 +83,195 @@ public:
 	 }
 
 
+  AsciiStreamReader* itsOwner;
+
   istream& itsBuf;
 
   map<unsigned long, IO*> itsCreatedObjects;
   
-  struct Type_Value {
-	 Type_Value(const char* t=0, const char* v=0) :
+  struct Attrib {
+	 Attrib(const char* t=0, const char* v=0) :
 		type(t ? t : ""), value(v ? v : "") {}
-	 Type_Value(const string& t, const string& v) : type(t), value(v) {}
+	 Attrib(const string& t, const string& v) : type(t), value(v) {}
 	 string type;
 	 string value;
   };
 
-  map<string, Type_Value> itsAttribs;
+  map<string, Attrib> itsAttribs;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
 #endif
+
+  // Helpers
+  bool hasBeenCreated(unsigned long id) {
+	 return (itsCreatedObjects[id] != 0);
+  }
+
+  void assertAttribExists(const string& attrib_name) {
+	 if ( itsAttribs[attrib_name].type == "" ) {
+		throw ReadError("invalid attribute name: " + attrib_name);
+	 }
+  }
+
+  const string& getTypeOfAttrib(const string& attrib_name) {
+	 assertAttribExists(attrib_name);
+	 return itsAttribs[attrib_name].type;
+  }
+
+  void makeObjectFromTypeForId(const string& type, unsigned long id) {
+	 IO* obj = IoMgr::newIO(type.c_str());
+
+	 // If there was a problem within IoMgr::newIO(), it will throw an
+	 // exception, so we should never pass this point with a NULL obj.
+	 DebugEvalNL((void*) obj);
+	 Assert(obj != 0);
+
+	 itsCreatedObjects[id] = obj;
+  }
+
+  int eatWhitespace() {
+	 int c=0;
+	 while ( isspace(itsBuf.peek()) ) { itsBuf.get(); ++c; }
+	 return c;
+  }
+
+  // Delegands
+public:
+  template <class T>
+  T readBasicType(const string& name, T* /* dummy */) {
+	 T return_val;
+	 istrstream ist(itsAttribs[name].value.c_str());
+	 ist >> return_val;
+	 DebugEval(itsAttribs[name].value); DebugEvalNL(return_val);
+	 return return_val;
+  }
+
+  // Returns a new dynamically allocated char array
+  char* readStringType(const string& name);
+
+  IO* readObject(const string& attrib_name);
+
+  void initAttributes();
+
+  IO* readRoot(IO* given_root);
 };
 
+///////////////////////////////////////////////////////////////////////
+//
+// AsciiStreamReader::Impl member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+char* AsciiStreamReader::Impl::readStringType(const string& name) {
+DOTRACE("AsciiStreamReader::Impl::readStringType");
+  istrstream ist(itsAttribs[name].value.c_str());
+
+  int len;
+  ist >> len;                     DebugEvalNL(len);
+  ist.get(); // ignore one char of whitespace after the length
+
+  char* new_cstring = new char[len+1];
+  ist.read(new_cstring, len);
+  new_cstring[len] = '\0';
+
+  DebugEval(itsAttribs[name].value); DebugEvalNL(new_cstring);
+  return new_cstring;
+}
+
+IO* AsciiStreamReader::Impl::readObject(const string& attrib_name) {
+DOTRACE("AsciiStreamReader::Impl::readObject");
+
+  assertAttribExists(attrib_name);
+
+  istrstream ist(itsAttribs[attrib_name].value.c_str());
+  unsigned long id;
+  ist >> id;
+
+  if (id == 0) { return 0; }
+
+  // Create a new object for this id, if necessary:
+  if ( !hasBeenCreated(id) ) {
+	 makeObjectFromTypeForId(getTypeOfAttrib(attrib_name), id);
+  }
+
+  return itsCreatedObjects[id];
+}
+
+void AsciiStreamReader::Impl::initAttributes() {
+DOTRACE("AsciiStreamReader::Impl::initAttributes");
+  itsAttribs.clear();
+
+  int attrib_count;
+  itsBuf >> attrib_count;
+
+  DebugEvalNL(attrib_count);
+
+  for (int i = 0; i < attrib_count; ++i) {
+	 string type, name, equal, value;
+
+	 itsBuf >> type >> name >> equal;
+	 getline(itsBuf, value, STRING_ENDER);
+
+	 DebugEval(type); DebugEval(name); DebugEvalNL(value);
+
+	 unEscape(value);
+
+	 DebugEvalNL(value);
+
+	 itsAttribs[name] = Attrib(type, value);
+  }
+}
+
+IO* AsciiStreamReader::Impl::readRoot(IO* given_root) {
+DOTRACE("AsciiStreamReader::Impl::readRoot");
+
+  itsCreatedObjects.clear();
+
+  bool haveReadRoot = false;
+  unsigned long rootid;
+
+  while ( itsBuf.peek() != EOF ) {
+	 IO* obj = NULL;
+  	 string type, equal, bracket;	 
+	 unsigned long id;
+
+	 itsBuf >> type >> id >> equal >> bracket;
+	 DebugEval(type); DebugEvalNL(id);
+
+	 if ( !haveReadRoot ) {
+		rootid = id;
+
+		if (given_root != 0) 
+		  { itsCreatedObjects[rootid] = given_root; }
+
+		haveReadRoot = true;
+	 }
+
+	 if ( !hasBeenCreated(id) ) {
+		makeObjectFromTypeForId(type, id);
+	 }
+
+	 obj = itsCreatedObjects[id];
+	 
+	 initAttributes();
+	 obj->readFrom(itsOwner);
+
+	 itsBuf >> bracket;
+	 eatWhitespace();
+  }
+
+  return itsCreatedObjects[rootid];
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// AsciiStreamReader member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
 AsciiStreamReader::AsciiStreamReader (istream& is) :
-  itsImpl( *(new Impl(is)) )
+  itsImpl( *(new Impl(this, is)) )
 {
 DOTRACE("AsciiStreamReader::AsciiStreamReader");
   // nothing
@@ -116,70 +284,34 @@ DOTRACE("AsciiStreamReader::~AsciiStreamReader");
 
 char AsciiStreamReader::readChar(const string& name) {
 DOTRACE("AsciiStreamReader::readChar");
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-  char val;
-  ist >> val;
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
-  return val;
+  return itsImpl.readBasicType(name, (char*) 0);
 }
 
 int AsciiStreamReader::readInt(const string& name) {
 DOTRACE("AsciiStreamReader::readInt");
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-  int val;
-  ist >> val;
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
-  return val;
+  return itsImpl.readBasicType(name, (int*) 0);
 }
 
 bool AsciiStreamReader::readBool(const string& name) {
 DOTRACE("AsciiStreamReader::readBool");
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-  int val;
-  ist >> val;
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
-  return bool(val);
+  return bool(itsImpl.readBasicType(name, (int*) 0));
 }
 
 double AsciiStreamReader::readDouble(const string& name) {
 DOTRACE("AsciiStreamReader::readDouble");
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-  double val;
-  ist >> val;
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
-  return val;
+  return itsImpl.readBasicType(name, (double*) 0);
 }
 
 string AsciiStreamReader::readString(const string& name) {
 DOTRACE("AsciiStreamReader::readString");
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-
-  int len;
-  ist >> len;                     DebugEvalNL(len);
-  ist.get(); // ignore one char of whitespace after the length
-
-  vector<char> cstr(len+1);
-  ist.read(&cstr[0], len);
-  cstr.back() = '\0';
-
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(&cstr[0]);
-  return string(&cstr[0]);
+  char* cstring = itsImpl.readStringType(name);
+  string return_val(cstring);
+  delete [] cstring;
+  return return_val;
 }
 
 char* AsciiStreamReader::readCstring(const string& name) {
-DOTRACE("AsciiStreamReader::readCstring");
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-
-  int len;
-  ist >> len;
-  ist.get(); // ignore one char of whitespace after the length
-
-  char* val = new char[len+1];
-  ist.read(val, len);
-  val[len] = '\0';
-
-  DebugEval(itsImpl.itsAttribs[name].value); DebugEvalNL(val);
-  return val;
+  return itsImpl.readStringType(name);
 }
 
 void AsciiStreamReader::readValueObj(const string& name, Value& value) {
@@ -209,109 +341,16 @@ DOTRACE("AsciiStreamReader::readValueObj");
   }
 }
 
-IO* AsciiStreamReader::readObject(const string& name) {
-DOTRACE("AsciiStreamReader::readObject");
-  IO* obj = 0;
-
-  istrstream ist(itsImpl.itsAttribs[name].value.c_str());
-  unsigned long id;
-  ist >> id;
-
-  if (id == 0) { return 0; }
-
-  // If we need to create a new object for this id:
-  if ( itsImpl.itsCreatedObjects[id] == 0 ) {
-
-	 // If 'name' is not in the itsAttribs map, then type will be
-	 // returned as an empty string. This, in turn, will cause
-	 // IoMgr::newIO() to throw an exception when it attempts to create
-	 // an object of type "".
-	 string type = itsImpl.itsAttribs[name].type;
-	 obj = IoMgr::newIO(type.c_str());
-
-	 // If there was a problem within IoMgr::newIO(), it will throw an
-	 // exception, so we should never pass this point with a NULL obj.
-	 Assert(obj != 0);
-
-	 itsImpl.itsCreatedObjects[id] = obj;
-  }
-
-  // ...otherwise we use the previously created object for this id:
-  else obj = itsImpl.itsCreatedObjects[id];
-
-  return obj;
+IO* AsciiStreamReader::readObject(const string& attrib_name) {
+  return itsImpl.readObject(attrib_name);
 }
 
-IO* AsciiStreamReader::readRoot(IO* root) {
-DOTRACE("AsciitStreamReader::readRoot");
-  itsImpl.itsCreatedObjects.clear();
-
-  if (root != 0) {
-	 itsImpl.itsCreatedObjects[root->id()] = root;
-  }
-
-  while ( itsImpl.itsBuf.peek() != EOF ) {
-	 IO* obj = NULL;
-  	 string type, equal, bracket;	 
-	 unsigned long id;
-
-	 itsImpl.itsBuf >> type >> id >> equal >> bracket;
-	 DebugEval(type); DebugEvalNL(id);
-
-	 if ( itsImpl.itsCreatedObjects[id] != 0 ) {
-		obj = itsImpl.itsCreatedObjects[id];
-	 }
-	 else {
-		obj = IoMgr::newIO(type.c_str());
-		Assert(obj != 0);
-		itsImpl.itsCreatedObjects[id] = obj;
-		if (!root) root = obj;
-	 }
-	 
-	 DebugEvalNL((void*) obj);
-	 Assert(obj != 0);
-	 
-	 initAttributes();
-	 obj->readFrom(this);
-
-	 itsImpl.itsBuf >> bracket;
-	 eatWhitespace();
-  }
-
-  return root;
-}
-
-void AsciiStreamReader::initAttributes() {
-DOTRACE("AsciiStreamReader::initAttributes");
-  itsImpl.itsAttribs.clear();
-
-  int attrib_count;
-  itsImpl.itsBuf >> attrib_count;
-
-  DebugEvalNL(attrib_count);
-
-  for (int i = 0; i < attrib_count; ++i) {
-	 string type, name, equal, value;
-
-	 itsImpl.itsBuf >> type >> name >> equal;
-	 getline(itsImpl.itsBuf, value, STRING_ENDER);
-
-	 DebugEval(type); DebugEval(name); DebugEvalNL(value);
-
-	 unEscape(value);
-
-	 DebugEvalNL(value);
-
-	 itsImpl.itsAttribs[name] = Impl::Type_Value(type, value);
-  }
+IO* AsciiStreamReader::readRoot(IO* given_root) {
+  return itsImpl.readRoot(given_root);
 }
 
 int AsciiStreamReader::eatWhitespace() {
-DOTRACE("AsciiStreamReader::eatWhitespace");
-  int c=0;
-  while ( isspace(itsImpl.itsBuf.peek()) )
-	 { itsImpl.itsBuf.get(); ++c; }
-  return c;
+  return itsImpl.eatWhitespace();
 }
 
 #if defined(IRIX6) || defined(HP9000S700)
