@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov 30 16:50:28 1999
+// written: Tue Nov 30 16:57:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -411,8 +411,6 @@ DOTRACE("Fish::grGetBoundingBox");
 
 void Fish::grRender() const {
 DOTRACE("Fish::grRender");
-  int j, k;
-
   // Create and configure the NURBS object
   GLUnurbsObj* theNurb = gluNewNurbsRenderer();
   if (theNurb == 0) {
@@ -427,15 +425,17 @@ DOTRACE("Fish::grRender");
 	 int totcoefs = 3*(itsFishParts[i].itsCoefs[0].size());
 	 vector<GLfloat> coefs(totcoefs);
 
-	 for (j = 0; j < itsFishParts[i].itsCoefs[0].size(); ++j) {
-      for (k = 0; k < 2; ++k) {
-  		  coefs[3*j+k] = (GLfloat) itsFishParts[i].itsCoefs[k][j];
-      }
-      coefs[3*j+2] = (GLfloat) 0.0;
-    }
+	 {
+		for (size_t j = 0; j < itsFishParts[i].itsCoefs[0].size(); ++j) {
+		  for (int k = 0; k < 2; ++k) {
+			 coefs[3*j+k] = (GLfloat) itsFishParts[i].itsCoefs[k][j];
+		  }
+		  coefs[3*j+2] = (GLfloat) 0.0;
+		}
+	 }
 
 	 // Fix up the coefficients at the end points
-    for (j = 0; j < 4; ++j) {
+    for (int j = 0; j < 4; ++j) {
       if ( itsEndPts[j].itsPart == (i+1) ) {
 		  int bkpt = itsEndPts[j].itsBkpt - 1; // indexing in the coefs array starts at 0
         float alpha = 0.5*(1-itsCoords[j]);
