@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Sat Mar  4 16:25:34 2000
+// written: Wed Mar  8 13:18:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,17 +62,14 @@ DOTRACE("Tlist::theTlist");
 
 void Tlist::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Tlist::serialize");
-  char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
-
   // Always serialize the PtrList base
   if (true || flag & BASES) { 
-	 PtrList<Trial>::serialize(os, flag | TYPENAME);
+	 PtrList<Trial>::serialize(os, flag);
   }
 
   // Here we are spoofing the obselete data members itsCurTrial and
   // itsVisibility.
-  os << int(0) << sep << bool(false) << sep;
+  os << int(0) << IO::SEP << bool(false) << IO::SEP;
 
   if (os.fail()) throw OutputError(ioTag);
 }
@@ -85,11 +82,9 @@ DOTRACE("Tlist::serialize");
 
 void Tlist::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Tlist::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
-
   // Always deserialize its PtrList<Trial> base
   if (true || flag & BASES) {
-	 PtrList<Trial>::deserialize(is, flag | TYPENAME);
+	 PtrList<Trial>::deserialize(is, flag);
   }
 
   // Here we are spoofing the obselete data members itsCurTrial and
