@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Nov 10 17:27:06 2000
+// written: Mon Nov 13 18:32:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,12 +28,6 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -41,14 +35,12 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const FixPt::PInfo PINFOS[] = {
-		FixPt::PInfo("length", SGI_IDIOT_CAST(Property FixPt::*, &FixPt::length),
-						 0.0, 10.0, 0.1, true),
-		FixPt::PInfo("width", SGI_IDIOT_CAST(Property FixPt::*, &FixPt::width),
-						 0, 100, 1)
+  const FieldInfo FIXPT_FINFOS[] = {
+		FieldInfo("length", &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
+		FieldInfo("width", &FixPt::width, 1, 0, 100, 1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(FixPt::PInfo);
+  const FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2);
 
   const IO::VersionId FIXPT_SERIAL_VERSION_ID = 2;
 }
@@ -59,13 +51,16 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
+const FieldMap& FixPt::classFields() { return FIXPT_FIELDS; }
+
 FixPt* FixPt::make() {
 DOTRACE("FixPt::make");
   return new FixPt;
 }
 
 FixPt::FixPt(double len, int wid) : 
-  length(len), width(wid) {}
+  FieldContainer(FIXPT_FIELDS),
+  length(this, len), width(this, wid) {}
 
 FixPt::~FixPt() {}
 
@@ -77,8 +72,7 @@ DOTRACE("FixPt::serialVersionId");
 void FixPt::readFrom(IO::Reader* reader) {
 DOTRACE("FixPt::readFrom");
 
-  reader->readValue("length", length());
-  reader->readValue("width", width());
+  readFieldsFrom(reader); 
 
   DebugEval(length());  DebugEvalNL(width());
 
@@ -95,8 +89,7 @@ DOTRACE("FixPt::readFrom");
 void FixPt::writeTo(IO::Writer* writer) const {
 DOTRACE("FixPt::writeTo");
 
-  writer->writeDouble("length", length());
-  writer->writeInt("width", width());
+  writeFieldsTo(writer); 
 
   if (FIXPT_SERIAL_VERSION_ID < 2)
 	 GrObj::writeTo(writer);
@@ -105,16 +98,6 @@ DOTRACE("FixPt::writeTo");
 		IO::ConstIoProxy<GrObj> baseclass(this);
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
-}
-
-unsigned int FixPt::numPropertyInfos() {
-DOTRACE("FixPt::numPropertyInfos");
-  return NUM_PINFOS;
-}
-
-const FixPt::PInfo& FixPt::getPropertyInfo(unsigned int i) {
-DOTRACE("FixPt::getPropertyInfo");
-  return PINFOS[i];
 }
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,
