@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu Jun 14 10:03:19 2001
+// written: Fri Jun 15 14:00:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,12 +112,20 @@ private:
     Handle(const Handle& other) : itsMaster(other.itsMaster)
     { itsMaster->incrRefCount(); }
 
-#ifdef MIPSPRO_COMPILER
+#if defined(MIPSPRO_COMPILER)
+
     template <class U> friend class Ref<U>::Handle;
 #   define HANDLE_U typename Ref<U>::Handle
+
+#elif defined(ACC_COMPILER)
+
+#   define HANDLE_U U
+
 #else
+
     template <class U> friend class Handle;
 #   define HANDLE_U Handle<U>
+
 #endif
 
     template <class U>
@@ -146,6 +154,9 @@ private:
       this->itsMaster = otherMaster;
     }
 
+#ifdef ACC_COMPILER // because we can't do template friend with aCC
+  public:
+#endif
     T* itsMaster;
   };
 
@@ -239,7 +250,7 @@ private:
     }
 
   public:
-    explicit WeakHandle(T* master, RefType tp) :
+    WeakHandle(T* master, RefType tp) :
        itsMaster(master),
        itsCounts(getCounts(master, tp))
     { acquire(); }
@@ -252,12 +263,20 @@ private:
       itsCounts(other.itsCounts)
     { acquire(); }
 
-#ifdef MIPSPRO_COMPILER
+#if defined(MIPSPRO_COMPILER)
+
     template <class U> friend class WeakRef<U>::WeakHandle;
 #   define WEAKHANDLE_U typename WeakRef<U>::WeakHandle
+
+#elif defined(ACC_COMPILER)
+
+#   define WEAKHANDLE_U U
+
 #else
+
     template <class U> friend class WeakHandle;
 #   define WEAKHANDLE_U WeakHandle<U>
+
 #endif
 
     template <class U>
@@ -335,6 +354,10 @@ private:
       other.itsCounts = this->itsCounts;
       this->itsCounts = otherCounts;
     }
+
+#ifdef ACC_COMPILER // because we can't do template friend with aCC
+  public:
+#endif
 
     // In order to avoid storing a separate bool indicating whether we
     // are using strong or weak ref's, we use the following
