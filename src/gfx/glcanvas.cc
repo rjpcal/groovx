@@ -615,12 +615,10 @@ void GLCanvas::drawRect(const Rect<double>& rect)
 {
 DOTRACE("GLCanvas::drawRect");
 
-  Gfx::LineLoopBlock block(*this);
-
-  vertex2(rect.bottomLeft());
-  vertex2(rect.bottomRight());
-  vertex2(rect.topRight());
-  vertex2(rect.topLeft());
+  glRectd(rect.left(),
+          rect.bottom(),
+          rect.right(),
+          rect.top());
 }
 
 void GLCanvas::drawCircle(double inner_radius, double outer_radius, bool fill,
