@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 17:29:31 2001
+// written: Wed Jun  6 20:06:57 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -25,11 +25,13 @@
 
 #include "io/io.h"
 
+#include "tcl/ioitempkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
 
 #include "util/iditem.h"
+#include "util/objfactory.h"
 #include "util/strings.h"
 
 // This hack causes this file to be compiled into the main executable
@@ -142,11 +144,12 @@ class ObjTogl::BindCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   BindCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
-										  "event_sequence binding_script", 3, 3) {}
+										  "event_sequence binding_script",
+										  pkg->itemArgn()+3) {}
 protected:
   virtual void invoke() {
-	 const char* event_sequence = getCstringFromArg(1);
-	 const char* binding_script = getCstringFromArg(2);
+	 const char* event_sequence = getCstringFromArg(afterItemArg(1));
+	 const char* binding_script = getCstringFromArg(afterItemArg(2));
 	 
 	 getItem()->bind(event_sequence, binding_script);
   }
@@ -163,11 +166,11 @@ public:
   DumpCmapCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
 										  "?start_index=0? ?end_index=255?",
-										  1, 3, false) {}
+										  pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
 protected:
   virtual void invoke() {
-    int start = (objc() < 2) ? 0   : getIntFromArg(1);
-    int end   = (objc() < 3) ? 255 : getIntFromArg(2);
+    int start = (objc() < 2) ? 0   : getIntFromArg(afterItemArg(1));
+    int end   = (objc() < 3) ? 255 : getIntFromArg(afterItemArg(2));
 
     if (start < 0 || end < 0 || start > 255 || end > 255) {
       static const char* const bad_index_msg = "colormap index out of range";
@@ -203,10 +206,10 @@ protected:
 class ObjTogl::DumpEpsCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   DumpEpsCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "filename", 2, 2) {}
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "filename", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
-    const char* filename = getCstringFromArg(1);
+    const char* filename = getCstringFromArg(afterItemArg(1));
 
     getItem()->writeEpsFile(filename);
   }
@@ -224,10 +227,10 @@ protected:
 class ObjTogl::HoldCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   HoldCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "hold_on?", 2, 2) {}
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "hold_on?", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
-	 bool hold_on = getBoolFromArg(1);
+	 bool hold_on = getBoolFromArg(afterItemArg(1));
 
 	 getItem()->setHold(hold_on);
   }
@@ -277,11 +280,11 @@ protected:
 class ObjTogl::SeeCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   SeeCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "item_id", 2, 2) {}
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
   DOTRACE("SeeCmd::invoke");
-	 int id = getIntFromArg(1);
+	 int id = getIntFromArg(afterItemArg(1));
 
 	 GWT::Widget* widg = getItem();
 
@@ -301,13 +304,14 @@ protected:
 class ObjTogl::SetColorCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   SetColorCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "index r g b", 5, 5) {}
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "index r g b",
+										  pkg->itemArgn()+5) {}
 protected:
   virtual void invoke() {
-    int i = getIntFromArg(1);
-    double r = getDoubleFromArg(2);
-    double g = getDoubleFromArg(3);
-    double b = getDoubleFromArg(4);
+    int i = getIntFromArg(afterItemArg(1));
+    double r = getDoubleFromArg(afterItemArg(2));
+    double g = getDoubleFromArg(afterItemArg(3));
+    double b = getDoubleFromArg(afterItemArg(4));
 
     getItem()->setColor(ToglConfig::Color(i, r, g, b));
   }
@@ -327,10 +331,10 @@ protected:
 class ObjTogl::SetCurTrialCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   SetCurTrialCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
-	 int trial = getIntFromArg(1);
+	 int trial = getIntFromArg(afterItemArg(1));
 
 	 IdItem<TrialBase>(trial)->installSelf(*getItem());
   }
@@ -345,13 +349,14 @@ protected:
 class ObjTogl::SetMinRectCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   SetMinRectCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "left top right bottom", 5, 5) {}
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "left top right bottom",
+										  pkg->itemArgn()+5) {}
 protected:
   virtual void invoke() {
-    double l = getDoubleFromArg(1);
-    double t = getDoubleFromArg(2);
-    double r = getDoubleFromArg(3);
-    double b = getDoubleFromArg(4);
+    double l = getDoubleFromArg(afterItemArg(1));
+    double t = getDoubleFromArg(afterItemArg(2));
+    double r = getDoubleFromArg(afterItemArg(3));
+    double b = getDoubleFromArg(afterItemArg(4));
 
     // Test for valid rect: right > left && top > bottom. In
     // particular, we must not have right == left or top == bottom
@@ -372,10 +377,11 @@ protected:
 class ObjTogl::SetVisibleCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   SetVisibleCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility", 2, 2) {}
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility",
+										  pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
-	 bool vis = getBoolFromArg(1);
+	 bool vis = getBoolFromArg(afterItemArg(1));
 
 	 getItem()->setVisibility(vis);
   }
@@ -393,11 +399,11 @@ protected:
 class ObjTogl::ShowCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
   ShowCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
   DOTRACE("ShowCmd::invoke");
-	 int id = getIntFromArg(1);
+	 int id = getIntFromArg(afterItemArg(1));
 
 	 GWT::Widget* widg = getItem();
 
@@ -474,17 +480,92 @@ public:
   }
 };
 
+namespace ObjTogl { class ObjToglPkg2; }
+
+class ObjTogl::ObjToglPkg2 : public Tcl::IoItemPkg<ToglConfig> {
+public:
+  ObjToglPkg2(Tcl_Interp* interp) :
+    Tcl::IoItemPkg<ToglConfig>(interp, "Togl_", "$Revision$")
+  {
+    Tcl_PkgProvide(interp, "Objtogl", "3.2");
+
+	 addCommand( new BindCmd       (this, "Togl_::bind") );
+    addCommand( new DestroyCmd    (interp, "Togl_::destroy") );
+    addCommand( new DumpCmapCmd   (this, "Togl_::dumpCmap") );
+    addCommand( new DumpEpsCmd    (this, "Togl_::dumpEps") );
+	 addCommand( new HoldCmd       (this, "Togl_::hold") );
+    addCommand( new InitCmd       (interp, "Togl_::init") );
+    addCommand( new InitedCmd     (interp, "Togl_::inited") );
+	 addCommand( new SeeCmd        (this, "Togl_::see") );
+    addCommand( new SetColorCmd   (this, "Togl_::setColor") );
+	 addCommand( new SetCurTrialCmd(this, "Togl_::setCurTrial") );
+    addCommand( new SetMinRectCmd (this, "Togl_::setMinRect") );
+    addCommand( new SetVisibleCmd (this, "Togl_::setVisible") );
+	 addCommand( new ShowCmd       (this, "Togl_::show") );
+
+	 declareCAction("clearscreen", &ToglConfig::clearscreen);
+    declareCAttrib("height",
+                   &ToglConfig::getHeight, &ToglConfig::setHeight);
+	 declareCAction("loadDefaultFont", &ToglConfig::loadDefaultFont);
+	 declareCSetter("loadFont", &ToglConfig::loadFont);
+	 declareCSetter("loadFonti", &ToglConfig::loadFonti);
+	 declareCAction("refresh", &ToglConfig::refresh);
+    declareCSetter("scaleRect", &ToglConfig::scaleRect, "scale");
+    declareCSetter("setFixedScale", &ToglConfig::setFixedScale, "scale");
+    declareCSetter("setUnitAngle", &ToglConfig::setUnitAngle,
+                   "angle_in_degrees");
+    declareCSetter("setViewingDistance", &ToglConfig::setViewingDistIn,
+                   "distance_in_inches");
+    declareCAction("swapBuffers", &ToglConfig::swapBuffers);
+	 declareCAction("takeFocus", &ToglConfig::takeFocus);
+	 declareCAction("undraw", &ToglConfig::undraw);
+    declareCGetter("usingFixedScale", &ToglConfig::usingFixedScale);
+    declareCAttrib("width", &ToglConfig::getWidth, &ToglConfig::setWidth);
+
+	 Tcl_Eval(interp,
+				 "proc clearscreen_ {} { Togl_::clearscreen }\n"
+				 "proc see_ {id} { Togl_::see $id }\n"
+				 "proc show_ {id} { Togl_::show $id }\n"
+				 "proc undraw_ {} { Togl_::undraw }\n"
+				 "proc redraw_ {} { Togl_::refresh }\n");
+  }
+
+  virtual ~ObjToglPkg2() {
+	 if (toglCreated) {
+  		ObjTogl::theWidget->setVisibility(false);
+	 }
+  }
+};
+
 //---------------------------------------------------------------------
 //
 // Objtogl_Init
 //
 //---------------------------------------------------------------------
 
+namespace {
+  Tcl_Interp* toglCreateInterp = 0;
+
+  ToglConfig* makeToglConfig()
+  {
+	 if (toglCreateInterp == 0)
+		throw FactoryError("ToglConfig");
+
+	 return ToglConfig::make(toglCreateInterp);
+  }
+}
+
 extern "C"
 int Objtogl_Init(Tcl_Interp* interp) {
 DOTRACE("Objtogl_Init");
 
   new ObjTogl::ObjToglPkg(interp); 
+
+  new ObjTogl::ObjToglPkg2(interp); 
+
+  toglCreateInterp = interp;
+
+  Util::ObjFactory::theOne().registerCreatorFunc( makeToglConfig );
 
   return TCL_OK;
 }
