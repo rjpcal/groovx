@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Sat Mar  4 03:00:50 2000
+// written: Wed Mar  8 15:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ template <class C, class List>
 class DefaultCreatorCmd : public TclCmd {
 public:
   DefaultCreatorCmd(ListItemPkg<C, List>* pkg, const char* cmd_name) :
-	 TclCmd(pkg->interp(), cmd_name, NULL, 1, 1),
+	 TclCmd(pkg->interp(), cmd_name, (char*) 0 /* usage */, 1, 1),
 	 itsPkg(pkg) {}
 protected:
   virtual void invoke() {
