@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jan 14 17:11:20 2000
+// written: Fri Jan 14 17:53:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,16 +13,15 @@
 
 #include "bitmap.h"
 
-#include <cstdio>
-#include <fstream.h>
 #include <string>
 
 #include "bitmaprep.h"
+#include "util/pipe.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -112,25 +111,9 @@ DOTRACE("Bitmap::loadPbmFile");
   string cmd("gunzip -c ");
   cmd += filename;
 
-  class Pipe {
-  public:
-	 Pipe(const char* command, const char* mode) :
-		itsFile(popen(command, mode))
-		{}
-	 ~Pipe()
-		{ pclose(itsFile); }
-	 FILE* file() { return itsFile; }
-	 int filedes() { return fileno(itsFile); }
+  Util::Pipe pipe(cmd.c_str(), "r");
 
-  private:
-	 FILE* itsFile;
-  };
-
-  Pipe pipe(cmd.c_str(), "r");
-
-  ifstream ifs(pipe.filedes());
-
-  loadPbmFile(ifs);
+  loadPbmFile(pipe.stream());
 
   sendStateChangeMsg();
 }
