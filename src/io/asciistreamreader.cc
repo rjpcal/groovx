@@ -56,19 +56,8 @@ DBG_REGISTER;
 using Util::Ref;
 using Util::SoftRef;
 
-namespace
+namespace IO
 {
-  class AttributeReadError : public Util::Error
-  {
-  public:
-    AttributeReadError(const fstring& attrib_name,
-                       const fstring& attrib_value) :
-      Util::Error(fstring("error reading attribute '", attrib_name,
-                          "' with value '", attrib_value, "'"))
-    {}
-  };
-
-
   class ObjectMap
   {
   private:
@@ -132,22 +121,23 @@ namespace
   };
 
 
-  struct Attrib
-  {
-  private:
-    Attrib(); // not implemented
-
-  public:
-    Attrib(const fstring& t, const fstring& v) :
-      type(t), value(v) {}
-
-    fstring type;
-    fstring value;
-  };
-
-
   class AttribMap
   {
+  public:
+
+    struct Attrib
+    {
+    private:
+      Attrib(); // not implemented
+
+    public:
+      Attrib(const fstring& t, const fstring& v) :
+        type(t), value(v) {}
+
+      fstring type;
+      fstring value;
+    };
+
   private:
     fstring itsObjTag;
 
@@ -162,9 +152,9 @@ namespace
     AttribMap(const fstring& obj_tag) :
       itsObjTag(obj_tag), itsMap(), itsSerialVersionId(0) {}
 
-    void readAttributes(STD_IO::istream& buf);
-
     IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
+
+    void setSerialVersionId(IO::VersionId id) { itsSerialVersionId = id; }
 
     Attrib get(const fstring& attrib_name)
       {
@@ -186,13 +176,28 @@ namespace
                                   itsObjTag.c_str()));
       }
 
-  private:
     void addNewAttrib(const fstring& attrib_name,
                       const fstring& type, const fstring& value)
       {
         itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
       }
   };
+}
+
+using IO::AttribMap;
+
+namespace
+{
+  class AttributeReadError : public Util::Error
+  {
+  public:
+    AttributeReadError(const fstring& attrib_name,
+                       const fstring& attrib_value) :
+      Util::Error(fstring("error reading attribute '", attrib_name,
+                          "' with value '", attrib_value, "'"))
+    {}
+  };
+
 
   fstring readAndUnEscape(STD_IO::istream& is)
   {
@@ -267,66 +272,6 @@ namespace
     return fstring(Util::CharData(READ_BUFFER.begin(),
                                   itr - READ_BUFFER.begin()));
   }
-
-  void AttribMap::readAttributes(STD_IO::istream& buf)
-  {
-  DOTRACE("AttribMap::readAttributes");
-
-    // Skip all whitespace
-    buf >> STD_IO::ws;
-
-    // Check if there is a version id in the stream
-    if (buf.peek() == 'v')
-      {
-        int ch = buf.get();  Assert(ch == 'v');
-        buf >> itsSerialVersionId;
-        if ( buf.fail() )
-          throw Util::Error("input failed while reading "
-                            "serialization version id");
-      }
-    else
-      {
-        itsSerialVersionId = 0;
-      }
-
-    // Get the attribute count
-    int attrib_count;
-    buf >> attrib_count;    dbgEvalNL(3, attrib_count);
-
-    if (attrib_count < 0)
-      {
-        throw Util::Error(fstring("found a negative attribute count: ",
-                                  attrib_count));
-      }
-
-    if ( buf.fail() )
-      {
-        throw Util::Error(fstring("input failed while reading "
-                                  "attribute count: ", attrib_count));
-      }
-
-    // Loop and load all the attributes
-    fstring type;
-    fstring name;
-    fstring equal;
-
-    for (int i = 0; i < attrib_count; ++i)
-      {
-        buf >> type >> name >> equal;   dbgEval(3, type); dbgEvalNL(3, name);
-
-        if ( buf.fail() )
-          {
-            fstring msg;
-            msg.append("input failed while reading attribute type and name\n");
-            msg.append("\ttype: ", type, "\n");
-            msg.append("\tname: ", name, "\n");
-            msg.append("\tequal: ", equal);
-            throw Util::Error(msg);
-          }
-
-        addNewAttrib(name, type, readAndUnEscape(buf));
-      }
-  }
 }
 
 // This is a hack to help shorten up names for assemblers on systems
@@ -366,7 +311,7 @@ protected:
 
 private:
   STD_IO::istream& itsBuf;
-  ObjectMap itsObjects;
+  IO::ObjectMap itsObjects;
   slink_list<shared_ptr<AttribMap> > itsAttribs;
 
   AttribMap& currentAttribs()
@@ -385,7 +330,7 @@ private:
   {
     dbgEvalNL(3, name);
 
-    Attrib a = currentAttribs().get(name);
+    AttribMap::Attrib a = currentAttribs().get(name);
     Util::icstrstream ist(a.value.c_str());
 
     T return_val;
@@ -452,7 +397,7 @@ fstring AsciiStreamReader::readStringImpl(const fstring& name)
 DOTRACE("AsciiStreamReader::readStringImpl");
   dbgEvalNL(3, name);
 
-  Attrib a = currentAttribs().get(name);
+  AttribMap::Attrib a = currentAttribs().get(name);
   Util::icstrstream ist(a.value.c_str());
 
   int len;
@@ -482,7 +427,7 @@ void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 DOTRACE("AsciiStreamReader::readValueObj");
   dbgEvalNL(3, name);
 
-  Attrib a = currentAttribs().get(name);
+  AttribMap::Attrib a = currentAttribs().get(name);
   Util::icstrstream ist(a.value.c_str());
 
   ist >> value;
@@ -505,7 +450,7 @@ AsciiStreamReader::readMaybeObject(const fstring& name)
 DOTRACE("AsciiStreamReader::readMaybeObject");
   dbgEvalNL(3, name);
 
-  Attrib attrib = currentAttribs().get(name);
+  AttribMap::Attrib attrib = currentAttribs().get(name);
 
   Util::icstrstream ist(attrib.value.c_str());
   Util::UID id;
@@ -526,7 +471,7 @@ void AsciiStreamReader::readOwnedObject(const fstring& name,
 DOTRACE("AsciiStreamReader::readOwnedObject");
   dbgEvalNL(3, name);
 
-  Attrib a = currentAttribs().get(name);
+  AttribMap::Attrib a = currentAttribs().get(name);
   Util::icstrstream ist(a.value.c_str());
   char bracket[16];
 
@@ -609,12 +554,71 @@ void AsciiStreamReader::inflateObject(STD_IO::istream& buf,
 {
 DOTRACE("AsciiStreamReader::inflateObject");
 
-  itsAttribs.push_front(shared_ptr<AttribMap>(new AttribMap(obj_tag)));
+  //
+  // (1) read the object's attributes from the stream...
+  //
+  shared_ptr<AttribMap> attribMap( new AttribMap(obj_tag) );
 
-  //   ...read the object's attributes from the stream...
-  itsAttribs.front()->readAttributes(buf);
+  // Skip all whitespace
+  buf >> STD_IO::ws;
 
-  //   ...now the object can query us for its attributes...
+  IO::VersionId svid = 0;
+
+  // Check if there is a version id in the stream
+  if (buf.peek() == 'v')
+    {
+      int ch = buf.get();  Assert(ch == 'v');
+      buf >> svid;
+      if ( buf.fail() )
+        throw Util::Error("input failed while reading "
+                          "serialization version id");
+    }
+
+  attribMap->setSerialVersionId(svid);
+
+  // Get the attribute count
+  int attrib_count;
+  buf >> attrib_count;    dbgEvalNL(3, attrib_count);
+
+  if (attrib_count < 0)
+    {
+      throw Util::Error(fstring("found a negative attribute count: ",
+                                attrib_count));
+    }
+
+  if ( buf.fail() )
+    {
+      throw Util::Error(fstring("input failed while reading "
+                                "attribute count: ", attrib_count));
+    }
+
+  // Loop and load all the attributes
+  fstring type;
+  fstring name;
+  fstring equal;
+
+  for (int i = 0; i < attrib_count; ++i)
+    {
+      buf >> type >> name >> equal;   dbgEval(3, type); dbgEvalNL(3, name);
+
+      if ( buf.fail() )
+        {
+          fstring msg;
+          msg.append("input failed while reading attribute type and name\n");
+          msg.append("\ttype: ", type, "\n");
+          msg.append("\tname: ", name, "\n");
+          msg.append("\tequal: ", equal);
+          throw Util::Error(msg);
+        }
+
+      attribMap->addNewAttrib(name, type, readAndUnEscape(buf));
+    }
+
+  itsAttribs.push_front(attribMap);
+
+  //
+  // (2) now the object can query us for its attributes...
+  //
   obj->readFrom(*this);
 
   itsAttribs.pop_front();
