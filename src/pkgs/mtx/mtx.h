@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar 26 10:04:04 2001
+// written: Mon Mar 26 10:31:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -357,9 +357,9 @@ public:
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
-private:
   void makeUnique() { itsImpl.makeUnique(); }
 
+private:
   const double* storageStart() const { return itsImpl.storageStart(); }
   double* storageStart() { return itsImpl.storageStart(); }
 
