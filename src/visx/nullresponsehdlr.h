@@ -3,7 +3,7 @@
 // nullresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:35 1999
-// written: Wed Nov 24 12:42:25 1999
+// written: Wed Dec  1 14:37:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,10 +31,10 @@ public:
   virtual void setInterp(Tcl_Interp* interp);
 
   // actions
-  virtual void rhBeginTrial() const;
-  virtual void rhAbortTrial() const;
-  virtual void rhEndTrial() const;
-  virtual void rhHaltExpt() const;
+  virtual void rhBeginTrial(Experiment* expt) const;
+  virtual void rhAbortTrial(Experiment* expt) const;
+  virtual void rhEndTrial(Experiment* expt) const;
+  virtual void rhHaltExpt(Experiment* expt) const;
 };
 
 static const char vcid_nullresponsehdlr_h[] = "$Header$";

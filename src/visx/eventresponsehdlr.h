@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Nov 24 12:42:12 1999
+// written: Wed Dec  1 14:38:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,13 +120,13 @@ public:
   /** @name   Expt event sequence actions  */
   //@{
   ///
-  virtual void rhBeginTrial() const;
+  virtual void rhBeginTrial(Experiment* expt) const;
   ///
-  virtual void rhAbortTrial() const;
+  virtual void rhAbortTrial(Experiment* expt) const;
   ///
-  virtual void rhEndTrial() const;
+  virtual void rhEndTrial(Experiment* expt) const;
   ///
-  virtual void rhHaltExpt() const;
+  virtual void rhHaltExpt(Experiment* expt) const;
   //@}
 
 protected:

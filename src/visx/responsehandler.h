@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed Nov 24 12:41:25 1999
+// written: Wed Dec  1 14:36:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #endif
 
 struct Tcl_Interp;
+
+class Experiment;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -64,13 +66,13 @@ public:
 	**/
   //@{
   ///
-  virtual void rhBeginTrial() const = 0;
+  virtual void rhBeginTrial(Experiment* expt) const = 0;
   ///
-  virtual void rhAbortTrial() const = 0;
+  virtual void rhAbortTrial(Experiment* expt) const = 0;
   ///
-  virtual void rhEndTrial() const = 0;
+  virtual void rhEndTrial(Experiment* expt) const = 0;
   ///
-  virtual void rhHaltExpt() const = 0;
+  virtual void rhHaltExpt(Experiment* expt) const = 0;
   //@}
 };
 
