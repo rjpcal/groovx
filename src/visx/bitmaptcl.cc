@@ -27,7 +27,6 @@
 #include "system.h"
 #include "tclcmd.h"
 #include "tclobjlock.h"
-#include "xbmaprenderer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -344,8 +343,6 @@ extern "C" Tcl_PackageInitProc Bitmap_Init;
 
 int Bitmap_Init(Tcl_Interp* interp) {
 DOTRACE("Bitmap_Init");
-
-  XBmapRenderer::initClass(Tk_MainWindow(interp));
 
   new BitmapTcl::BitmapPkg(interp);
   new GLBitmapTcl::GLBitmapPkg(interp);
