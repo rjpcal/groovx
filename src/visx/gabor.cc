@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Oct 20 10:14:02 1999
+// written: Tue Nov  9 13:13:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include <GL/gl.h>
 #include <cmath>
+#include <string>
 
 #include "randutils.h"
 #include "reader.h"
@@ -23,6 +24,10 @@
 #include "trace.h"
 #include "debug.h"
 
+
+namespace {
+  const string ioTag = "Gabor";
+}
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
 const Gabor::ColorMode Gabor::BW_DITHER_POINT;
@@ -51,14 +56,21 @@ DOTRACE("Gabor::~Gabor");
 
 void Gabor::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Gabor::serialize");
+  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
+  if (os.fail()) throw OutputError(ioTag);
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void Gabor::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Gabor::deserialize");
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (is.fail()) throw InputError(ioTag);
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 }
 
 int Gabor::charCount() const {
 DOTRACE("Gabor::charCount");
+  return ioTag.length() + 1 + GrObj::charCount();
 }
 
 void Gabor::readFrom(Reader* reader) {
