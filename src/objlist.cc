@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Jul  5 16:02:04 1999
+// written: Tue Oct 19 15:07:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 
 namespace {
   ObjList* instance = 0;
-  const int DEFAULT_INIT_SIZE = 100;
+  const int DEFAULT_INIT_SIZE = 10;
 }
 
 ObjList& ObjList::theObjList() {
