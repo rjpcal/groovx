@@ -150,7 +150,12 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
       std::cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
 #endif
       int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
-      if (result != TCL_OK) { itsStatus = result; }
+      if (result != TCL_OK)
+	{
+	  itsStatus = result;
+	  std::cerr << "initialization failed: "
+		    << IMMEDIATE_PKGS[i].pkgName << '\n';
+	}
     }
   }
 
