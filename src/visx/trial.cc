@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Sep 27 10:38:30 1999
+// written: Wed Oct 20 18:02:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,11 +109,12 @@ DOTRACE("Trial::deserialize");
   if (size < 0) {
 	 throw IoValueError(ioTag);
   }
-  ObjId objid;
-  PosId posid;
+  int objid;
+  int posid;
   for (int i = 0; i < size; ++i) {
     is >> objid >> posid;
-	 if ( !objid || !posid ) {
+	 if ( !ObjList::theObjList().isValidId(objid) ||
+			!PosList::thePosList().isValidId(posid) ) {
 		throw IoValueError(ioTag);
 	 }
     add(objid, posid);
@@ -142,8 +143,8 @@ int Trial::charCount() const {
   for (ObjGrp::const_iterator ii = itsIdPairs.begin(); 
        ii != itsIdPairs.end(); 
        ++ii) {
-	 count += (gCharCount<int>(ii->objid.toInt()) + 1
-				  + gCharCount<int>(ii->posid.toInt()) + 2);
+	 count += (gCharCount<int>(ii->objid) + 1
+				  + gCharCount<int>(ii->posid) + 2);
   }
   count += (gCharCount<int>(itsResponses.size()) + 2);
   for (int i = 0; i < itsResponses.size(); ++i) {
@@ -159,8 +160,8 @@ int Trial::charCount() const {
 
 int Trial::readFromObjidsOnly(istream &is, int offset) {
 DOTRACE("Trial::readFromObjidsOnly");
-  PosId posid = 0;
-  ObjId objid;
+  int posid = 0;
+  int objid;
   if (offset == 0) {
     while (is >> objid) {
 		if ( objid < 0) {
@@ -187,7 +188,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   if (is.fail() && !is.eof()) throw InputError(ioTag);
 
   // return the number of objid's read
-  return posid.toInt();
+  return posid;
 }
 
 ///////////////
@@ -222,7 +223,7 @@ DOTRACE("Trial::description");
   for (int j = 0; j < itsIdPairs.size(); ++j) {
     DebugEvalNL(itsIdPairs[j].objid);
 
-    GrObj* obj = itsIdPairs[j].objid.get();
+    GrObj* obj = ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
     Assert(obj);
 
     ost << " " << obj->getCategory();
@@ -289,9 +290,9 @@ void Trial::trDraw() const {
 DOTRACE("Trial::trDraw");
   for (int i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid.toInt());
+		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     Position* pos =
-		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid.toInt());
+		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
     DebugEval(itsIdPairs[i].objid);
     DebugEvalNL((void *) obj);
@@ -311,9 +312,9 @@ void Trial::trUndraw() const {
 DOTRACE("Trial::trUndraw");
   for (int i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid.toInt());
+		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     Position* pos =
-		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid.toInt());
+		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();

@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Mon Sep 27 10:32:10 1999
+// written: Wed Oct 20 17:57:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,6 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
-#endif
-
-#ifndef ID_H_DEFINED
-#include "id.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -63,9 +59,9 @@ public:
   };
 
   struct IdPair {
-	 IdPair(ObjId o, PosId p) : objid(o), posid(p) {}
-	 ObjId objid;
-	 PosId posid;
+	 IdPair(int o, int p) : objid(o), posid(p) {}
+	 int objid;
+	 int posid;
   };
   typedef vector<IdPair> ObjGrp;
 
@@ -117,7 +113,7 @@ public:
   // manipulators //
   //////////////////
 
-  void add(ObjId objid, PosId posid) {
+  void add(int objid, int posid) {
 	 itsIdPairs.push_back(IdPair(objid, posid));
   }
 
