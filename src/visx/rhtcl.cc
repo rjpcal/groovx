@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 19 17:01:50 1999
+// written: Thu Oct 21 13:26:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ class KbdRhTcl::KbdRhPkg : public ListItemPkg<KbdResponseHdlr, RhList> {
 public:
   KbdRhPkg(Tcl_Interp* interp) :
 	 ListItemPkg<KbdResponseHdlr, RhList>(interp, RhList::theRhList(),
-													  "KbdRh", "1.4")
+													  "KbdRh", "$Revision$")
   {
 	 declareCAttrib("useFeedback",
 						 &KbdResponseHdlr::getUseFeedback,
@@ -72,7 +72,7 @@ class NullRhTcl::NullRhPkg : public ListItemPkg<NullResponseHdlr, RhList> {
 public:
   NullRhPkg(Tcl_Interp* interp) :
 	 ListItemPkg<NullResponseHdlr, RhList>(
-          interp, RhList::theRhList(), "NullRh", "1.4")
+          interp, RhList::theRhList(), "NullRh", "$Revision$")
   {
 	 Tcl_Eval(interp,
 			"namespace eval NullRh {proc nullResponseHdlr {} {return NullRh}}");
@@ -92,7 +92,7 @@ namespace RhListTcl {
 class RhListTcl::RhListPkg : public ListPkg<RhList> {
 public:
   RhListPkg(Tcl_Interp* interp) :
-	 ListPkg<RhList>(interp, RhList::theRhList(), "RhList", "3.0")
+	 ListPkg<RhList>(interp, RhList::theRhList(), "RhList", "$Revision$")
   {
 	 RhList::theRhList().setInterp(interp);
 	 RhList::theRhList().insertAt(0, new KbdResponseHdlr());
@@ -111,6 +111,9 @@ int Rh_Init(Tcl_Interp* interp) {
 DOTRACE("Rh_Init");
 
   new RhListTcl::RhListPkg(interp);
+
+  new AbstractListItemPkg<ResponseHandler, RhList>(
+		  interp, RhList::theRhList(), "Rh", "$Revision$");
   new KbdRhTcl::KbdRhPkg(interp);
   new NullRhTcl::NullRhPkg(interp);
 
