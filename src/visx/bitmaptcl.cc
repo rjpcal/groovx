@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Apr  3 17:59:05 2002
+// written: Wed Apr  3 18:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ DOTRACE("Bitmap_Init");
 
   // Bitmap
   Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Bitmap", "$Revision$");
-
+  pkg1->inherit("GrObj");
   Tcl::defGenericObjCmds<Bitmap>(pkg1);
 
   pkg1->defGetter( "filename", &Bitmap::filename );
@@ -52,7 +52,7 @@ DOTRACE("Bitmap_Init");
 
   // GLBitmap
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GLBitmap", "$Revision$");
-
+  pkg2->inherit("Bitmap");
   Tcl::defGenericObjCmds<GLBitmap>(pkg2);
   pkg2->defAttrib("usingGlBitmap",
                   &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
@@ -61,7 +61,7 @@ DOTRACE("Bitmap_Init");
 
   // XBitmap
   Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "XBitmap", "$Revision$");
-
+  pkg3->inherit("Bitmap");
   Tcl::defGenericObjCmds<XBitmap>(pkg3);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&XBitmap::make);
