@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Jul  5 13:18:12 2002
+// written: Fri Jul  5 14:23:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -525,6 +525,21 @@ DOTRACE("GLCanvas::drawCylinder");
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
   gluCylinder(qobj, base_radius, top_radius, height, slices, stacks);
+  gluDeleteQuadric(qobj);
+}
+
+void GLCanvas::drawSphere(double radius, int slices, int stacks,
+                          bool fill)
+{
+DOTRACE("GLCanvas::drawSphere");
+
+  GLUquadric* qobj = gluNewQuadric();
+
+  if (qobj == 0)
+    throw Util::Error("couldn't allocate GLUquadric object");
+
+  gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
+  gluSphere(qobj, radius, slices, stacks);
   gluDeleteQuadric(qobj);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Fri Jul  5 13:22:51 2002
+// written: Fri Jul  5 14:23:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -837,7 +837,13 @@ void Gfx::PSCanvas::drawCylinder(double /*base_radius*/, double /*top_radius*/,
                                  double /*height*/, int /*slices*/, int /*stacks*/,
                                  bool /*fill*/)
 {
-// FIXME
+  // FIXME
+}
+
+void Gfx::PSCanvas::drawSphere(double /*radius*/, int /*slices*/, int /*stacks*/,
+                               bool /*fill*/)
+{
+  // FIXME
 }
 
 void Gfx::PSCanvas::drawBezier4(const Gfx::Vec3<double>& p1,
