@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Jun 17 20:22:09 1999
+// written: Thu Jul  1 13:48:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
   int getWidth() const { return itsWidth; }
 
 protected:
-  virtual void grRecompile() const;
+  virtual void grRender() const;
 
 private:
   double itsLength;               // length of crosshairs in GL coordinates
