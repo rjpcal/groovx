@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Oct  3 12:04:08 2000
+// written: Thu Oct 19 13:53:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "rect.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -68,6 +67,8 @@ namespace {
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Gabor::PInfo);
+
+  const IO::VersionId GABOR_SERIAL_VERSION_ID = 1;
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
@@ -96,35 +97,27 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Gabor::legacySrlz");
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void Gabor::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Gabor::legacyDesrlz");
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
-
-  sendStateChangeMsg();
+IO::VersionId Gabor::serialVersionId() const {
+DOTRACE("Gabor::serialVersionId");
+  return GABOR_SERIAL_VERSION_ID;
 }
 
 void Gabor::readFrom(IO::Reader* reader) {
 DOTRACE("Gabor::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
-
-  GrObj::readFrom(reader);
+  
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid == 0)
+	 GrObj::readFrom(reader);
+  else if (svid == 1)
+	 {
+		IO::IoProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 
   sendStateChangeMsg();
 }
@@ -132,17 +125,17 @@ DOTRACE("Gabor::readFrom");
 void Gabor::writeTo(IO::Writer* writer) const {
 DOTRACE("Gabor::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
-  GrObj::writeTo(writer);
+  if (GABOR_SERIAL_VERSION_ID == 0)
+	 GrObj::writeTo(writer);
+  else if (GABOR_SERIAL_VERSION_ID == 1)
+	 {
+		IO::ConstIoProxy<GrObj> baseclass(this);
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 unsigned int Gabor::numPropertyInfos() {

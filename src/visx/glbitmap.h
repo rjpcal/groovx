@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Fri Sep 29 14:36:06 2000
+// written: Thu Oct 19 13:56:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,7 @@ public:
   /// Virtual destructor.
   virtual ~GLBitmap();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -57,9 +58,6 @@ public:
 private:
   GLBitmap(const GLBitmap&);
   GLBitmap& operator=(const GLBitmap&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   GLBmapRenderer* itsRenderer;
 };

@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri Sep 29 16:08:21 2000
+// written: Thu Oct 19 14:01:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "glbmaprenderer.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -30,6 +29,8 @@
 
 namespace {
   GLBmapRenderer* tempRenderer = 0;
+
+  const IO::VersionId GLBITMAP_SERIAL_VERSION_ID = 2;
 }
 
 GLBitmap::GLBitmap() :
@@ -60,54 +61,40 @@ DOTRACE("GLBitmap::~GLBitmap");
   delete itsRenderer; 
 }
 
-void GLBitmap::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("GLBitmap::legacySrlz");
-
-  lwriter->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
-
-  IO::ConstIoProxy<Bitmap> baseclass(this);
-  lwriter->writeBaseClass("Bitmap", &baseclass);
-}
-
-void GLBitmap::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("GLBitmap::legacyDesrlz");
-
-  bool val;
-  lreader->readValue("usingGlBitmap", val); 
-  itsRenderer->setUsingGlBitmap(val);
-
-  IO::IoProxy<Bitmap> baseclass(this);
-  lreader->readBaseClass("Bitmap", &baseclass);
+IO::VersionId GLBitmap::serialVersionId() const {
+DOTRACE("GLBitmap::serialVersionId");
+  return GLBITMAP_SERIAL_VERSION_ID;
 }
 
 void GLBitmap::readFrom(IO::Reader* reader) {
 DOTRACE("GLBitmap::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
   bool val;
   reader->readValue("usingGlBitmap", val); 
   itsRenderer->setUsingGlBitmap(val);
 
-  Bitmap::readFrom(reader);
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 Bitmap::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<Bitmap> baseclass(this);
+		reader->readBaseClass("Bitmap", &baseclass);
+	 }
 }
 
 void GLBitmap::writeTo(IO::Writer* writer) const {
 DOTRACE("GLBitmap::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
-  Bitmap::writeTo(writer);
+  if (GLBITMAP_SERIAL_VERSION_ID < 2)
+	 Bitmap::writeTo(writer);
+  else if (GLBITMAP_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<Bitmap> baseclass(this);
+		writer->writeBaseClass("Bitmap", &baseclass);
+	 }
 }
 
 bool GLBitmap::getUsingGlBitmap() const {
