@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Nov 18 10:09:45 1999
+// written: Tue Nov 23 15:21:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -809,6 +809,9 @@ void ExptDriver::Impl::edEndTrial() {
 		noteElapsedTime();
 		storeData();
 		doUponCompletion();		  // Call the user-defined callback
+	 }
+	 else {
+		edBeginTrial();
 	 }
   }    
 }
