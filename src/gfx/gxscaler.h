@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:27 2002
-// written: Wed Nov 13 13:24:11 2002
+// written: Thu Nov 14 17:11:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,10 @@ public:
   static const Mode FREE_SCALING             = 3;
 
 
-  GxScaler(Util::SoftRef<GxNode> child);
+  GxScaler();
+  GxScaler(Util::Ref<GxNode> child);
+
+  static GxScaler* make();
 
   Mode getMode() const { return itsMode; }
   void setMode(Mode new_mode);

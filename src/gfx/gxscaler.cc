@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:32 2002
-// written: Wed Nov 13 13:24:09 2002
+// written: Thu Nov 14 17:12:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,12 +22,24 @@
 
 #include "util/trace.h"
 
-GxScaler::GxScaler(Util::SoftRef<GxNode> child) :
+GxScaler::GxScaler() :
+  GxBin(),
+  itsMode(NATIVE_SCALING),
+  itsWidthFactor(1.0),
+  itsHeightFactor(1.0)
+{}
+
+GxScaler::GxScaler(Util::Ref<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_SCALING),
   itsWidthFactor(1.0),
   itsHeightFactor(1.0)
 {}
+
+GxScaler* GxScaler::make()
+{
+  return new GxScaler;
+}
 
 void GxScaler::setMode(Mode new_mode)
 {
