@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Mar 19 18:00:57 2003
+// written: Tue Apr  1 18:24:54 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -46,18 +46,27 @@
 class DummySound : public Sound
 {
 public:
+  /// Construct with a named sound file.
   DummySound(const char* filename = 0);
+
+  /// Virtual destructor.
   virtual ~DummySound();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Play the sound (but this is a no-op for DummySound).
   virtual void play();
+
+  /// Set to refer to a different sound file.
   virtual void setFile(const char* filename);
+
+  /// Get the name of the associated sound file.
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
   virtual fstring ioTypename() const { return "Sound"; }
 
+  /// Swap contents with a different DummySound object.
   void swap(DummySound& other)
   {
     itsFilename.swap(other.itsFilename);

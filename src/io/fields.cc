@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Mar 19 17:55:55 2003
+// written: Tue Apr  1 18:39:47 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -112,12 +112,12 @@ const FieldMap* FieldMap::emptyFieldMap()
   return emptyMap;
 }
 
-bool FieldMap::hasParent() const
+bool FieldMap::hasParent() const throw()
 {
   return (rep->parent != 0);
 }
 
-const FieldMap* FieldMap::parent() const
+const FieldMap* FieldMap::parent() const throw()
 {
   return rep->parent;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Tue Apr  1 18:15:18 2003
+// written: Tue Apr  1 18:26:08 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -112,19 +112,17 @@ public:
   private:
     node* nn;
 
-  public:
     friend class dlink_list;
-    friend class const_iterator;
+    friend class dlink_list::const_iterator;
 
-    typedef T value_type;  ///< STL value type
-    typedef T* pointer;    ///< STL pointer type
-    typedef T& reference;  ///< STL reference type
-
-  private:
     /// Raw constructor only available to dlink_list itself.
     iterator(node* n) : nn(n) {}
 
   public:
+    typedef T value_type;  ///< STL value type
+    typedef T* pointer;    ///< STL pointer type
+    typedef T& reference;  ///< STL reference type
+
     /// Copy constructor.
     iterator(const iterator& other) : nn(other.nn) {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Wed Mar 19 18:00:57 2003
+// written: Tue Apr  1 18:32:24 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -47,18 +47,27 @@
 class EsdSound : public Sound
 {
 public:
+  /// Construct with reference to the named sound file.
   EsdSound(const char* filename = 0);
+
+  /// Virtual destructor.
   virtual ~EsdSound();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Play the sound (in this case using the ESD daemon).
   virtual void play();
+
+  /// Change to refer to a new sound file.
   virtual void setFile(const char* filename);
+
+  /// Get the name of the associated sound file.
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
   virtual fstring ioTypename() const { return "Sound"; }
 
+  /// Swap contents with another EsdSound object.
   void swap(EsdSound& other)
   {
     itsFilename.swap(other.itsFilename);

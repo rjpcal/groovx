@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Sat Mar 29 12:40:48 2003
+// written: Tue Apr  1 18:31:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -99,7 +99,10 @@ public:
   /// Add the specified element to the sequence, 'repeat' number of times.
   void addElement(Util::Ref<Element> element, unsigned int repeat = 1);
 
+  /// Set the random seed for shuffling child elements.
   void setRandSeed(int s);
+
+  /// Get the current random seed used for shuffling child elements.
   int getRandSeed() const;
 
   /// Randomly permute the sequence of elements.
@@ -127,12 +130,17 @@ public:
   bool isComplete() const;
 
 protected:
+  /// Hook function to be called when all children have been run.
   virtual void vxAllChildrenFinished() = 0;
 
+  /// Throw an exception if there are not valid children still pending.
   void ensureNotComplete() const;
 
+  /// Raw data access needed to support the legacy IO format.
   minivec<Util::Ref<Element> >& iolegacyElements() const;
+  /// Raw data access needed to support the legacy IO format.
   int& iolegacyRandSeed() const;
+  /// Raw data access needed to support the legacy IO format.
   unsigned int& iolegacySequencePos() const;
 
 private:

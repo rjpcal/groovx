@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Apr  1 18:03:48 2003
+// written: Tue Apr  1 18:46:15 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -140,13 +140,18 @@ namespace FieldAux
 class FieldImpl
 {
 public:
+  /// Virtual destructor.
   virtual ~FieldImpl();
 
+  /// Change the value of the given object's referred-to field.
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const = 0;
+  /// Get the value of the given object's referred-to field.
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const = 0;
 
+  /// Read the value of the given object's referred-to field from the IO::Reader.
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const = 0;
+  /// Write the value of the given object's referred-to field to the IO::Writer.
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const = 0;
 };
@@ -214,7 +219,7 @@ public:
   DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<T> > checker) :
     itsDataMember(memptr), itsChecker(checker) {}
 
-  /// Change the value of the pointed-to data member of the given object.
+  /// Change the value of the given object's pointed-to data member.
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
@@ -225,7 +230,7 @@ public:
       itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
   }
 
-  /// Get the value of the pointed-to data member of the given object.
+  /// Get the value of the given object's pointed-to data member.
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
@@ -233,7 +238,7 @@ public:
     return Tcl::toTcl(const_dereference(cobj, itsDataMember));
   }
 
-  /// Read the value of the pointed-to data member of the given object.
+  /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
@@ -242,7 +247,7 @@ public:
     reader->readValue(name, dereference(cobj, itsDataMember));
   }
 
-  /// Write the value of the pointed-to data member of the given object.
+  /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {
@@ -395,38 +400,53 @@ public:
   // Attribute flags
   //
 
-  static const unsigned int NEW_GROUP = 1 << 0;
-  static const unsigned int TRANSIENT = 1 << 1; // otherwise, persistent
-  static const unsigned int STRING    = 1 << 2; // otherwise, numeric
-  static const unsigned int MULTI     = 1 << 3; // otherwise, single-valued
-  static const unsigned int CHECKED   = 1 << 4; // otherwise, unchecked
-  static const unsigned int NO_GET    = 1 << 5; // otherwise, allow get
-  static const unsigned int NO_SET    = 1 << 6; // otherwise, allow set
-  static const unsigned int PRIVATE   = 1 << 7; // otherwise, public
-  static const unsigned int BOOLEAN   = 1 << 8;
+  static const unsigned int NEW_GROUP = 1 << 0; ///< field begins a new group
+  static const unsigned int TRANSIENT = 1 << 1; ///< otherwise, persistent
+  static const unsigned int STRING    = 1 << 2; ///< otherwise, numeric
+  static const unsigned int MULTI     = 1 << 3; ///< otherwise, single-valued
+  static const unsigned int CHECKED   = 1 << 4; ///< otherwise, unchecked
+  static const unsigned int NO_GET    = 1 << 5; ///< otherwise, allow get
+  static const unsigned int NO_SET    = 1 << 6; ///< otherwise, allow set
+  static const unsigned int PRIVATE   = 1 << 7; ///< otherwise, public
+  static const unsigned int BOOLEAN   = 1 << 8; ///< field is a boolean value
 
+  /// Get all flags or'ed together.
   unsigned int flags()    const { return itsFlags; }
 
+  /// Query for presence of NEW_GROUP flag.
   bool startsNewGroup()   const { return   itsFlags & NEW_GROUP; }
 
+  /// Query for presence of TRANSIENT flag.
   bool isTransient()      const { return   itsFlags & TRANSIENT ; }
+  /// Query for absence of TRANSIENT flag.
   bool isPersistent()     const { return !(itsFlags & TRANSIENT); }
 
+  /// Query for presence of STRING flag.
   bool isString()         const { return   itsFlags & STRING ; }
+  /// Query for absence of STRING flag.
   bool isNumeric()        const { return !(itsFlags & STRING); }
 
+  /// Query for presence of MULTI flag.
   bool isMultiValued()    const { return   itsFlags & MULTI ; }
+  /// Query for absence of MULTI flag.
   bool isSingleValued()   const { return !(itsFlags & MULTI); }
 
+  /// Query for presence of CHECKED flag.
   bool isChecked()        const { return   itsFlags & CHECKED ; }
+  /// Query for absence of CHECKED flag.
   bool isUnchecked()      const { return !(itsFlags & CHECKED); }
 
+  /// Query for absence of NO_GET flag.
   bool allowGet()         const { return !(itsFlags & NO_GET); }
+  /// Query for absence of NO_SET flag.
   bool allowSet()         const { return !(itsFlags & NO_SET); }
 
+  /// Query for presence of PRIVATE flag.
   bool isPrivate()        const { return   itsFlags & PRIVATE ; }
+  /// Query for absence of PRIVATE flag.
   bool isPublic()         const { return !(itsFlags & PRIVATE); }
 
+  /// Query for presence of BOOLEAN flag.
   bool isBoolean()        const { return   itsFlags & BOOLEAN; }
 
   /// Symbol class for use with Field's constructors.
@@ -485,11 +505,13 @@ public:
       (new FuncMemberFieldImpl<C,T>(0, setter));
   }
 
+  /// The trivial factory function for when we already have a FieldImpl.
   static shared_ptr<FieldImpl> makeImpl(shared_ptr<FieldImpl> ptr)
   {
     return ptr;
   }
 
+  /// Construct using a ValueFieldImpl.
   template <class C, class V>
   Field(const fstring& name, ValueType, V C::* value_ptr,
         const fstring& def, const fstring& min,
@@ -504,6 +526,7 @@ public:
     itsFlags(flags)
   {}
 
+  /// Construct using a DataMemberFieldImpl.
   template <class T, class M>
   Field(const fstring& name, M member_ptr_init,
         const T& def, const T& min, const T& max, const T& res,
@@ -517,11 +540,16 @@ public:
     itsFlags(flags)
   {}
 
+  /// Get the Field's name.
   const fstring& name() const { return itsName; }
+  /// Get the Field's default value.
   const fstring& defaultValue() const { return itsDefaultValue; }
 
+  /// Get the Field's minimum value (only for numeric fields).
   const fstring& min() const { return itsMin; }
+  /// Get the Field's maximum value (only for numeric fields).
   const fstring& max() const { return itsMax; }
+  /// Get the Field's value quantization step (only for numeric fields).
   const fstring& res() const { return itsRes; }
 
   /// Set the value of this field for \a obj.
@@ -574,6 +602,7 @@ private:
             const FieldMap* parent);
 
 public:
+  /// Construct from a sequence of Field objects.
   FieldMap(const Field* begin, const Field* end,
            const FieldMap* parent=0) :
     rep(0)
@@ -581,6 +610,7 @@ public:
     init(begin, end, parent);
   }
 
+  /// Construct from an array of Field objects.
   template<unsigned int N>
   FieldMap(Field const (&array)[N], const FieldMap* parent=0) :
     rep(0)
@@ -588,22 +618,32 @@ public:
     init(&array[0], &array[0]+N, parent);
   }
 
+  /// Destructor.
   ~FieldMap();
 
+  /// Get a pointer to an empty FieldMap.
   static const FieldMap* emptyFieldMap();
 
-  bool hasParent() const;
-  const FieldMap* parent() const;
+  /// Query whether this FieldMap has a parent.
+  bool hasParent() const throw();
 
+  /// Get this FieldMap's parent (or null if non-existent).
+  const FieldMap* parent() const throw();
+
+  /// Look up the field associated with the given name.
+  /** Parent FieldMap objects will be searched recursively. An exception
+      will be thrown if the named field is not found. */
   const Field& field(const fstring& name) const;
 
+  /// Iterator type
   typedef Util::FwdIter<const Field> Iterator;
 
-  // Iterates over the Field's in alphabetical order by name
+  /// Get an iterator that runs over the Field's in alphabetical order by name
   Iterator alphaFields() const;
 
-  // Iterates over the Field's in the order they were listed in
-  // the sequence that was passed to the FieldMap constructor.
+  /// Get an iterator that runs over the Field's in their "native" order.
+  /** The native order is the order they were listed in the sequence that
+      was passed to the FieldMap constructor. */
   Iterator ioFields() const;
 };
 
@@ -628,20 +668,31 @@ private:
   FieldContainer& operator=(const FieldContainer&);
 
 public:
+  /// Construct with an optional signal to be triggered when a field changes.
   FieldContainer(Util::Signal0* sig);
+
+  /// Virtual destructor.
   virtual ~FieldContainer();
 
+  /// Set the field map for this object.
   void setFieldMap(const FieldMap& fields);
 
+  /// Get the value associated with the named field.
   Tcl::ObjPtr getField(const fstring& name) const;
+  /// Get the value associated with the given field.
   Tcl::ObjPtr getField(const Field& field) const;
 
+  /// Set the value associated with the named field.
   void setField(const fstring& name, const Tcl::ObjPtr& new_val);
+  /// Set the value associated with the given field.
   void setField(const Field& field, const Tcl::ObjPtr& new_val);
 
+  /// Read all fields from the IO::Reader.
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
+  /// Write all fields to the IO::Writer.
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;
 
+  /// Get the FieldMap for this object.
   const FieldMap& fields() const { return *itsFieldMap; }
 
   /// Get this container's child, if any. Default implementation returns null.

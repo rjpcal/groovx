@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Wed Mar 19 18:00:57 2003
+// written: Tue Apr  1 18:46:35 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -52,8 +52,10 @@ class fstring;
 class Element : public IO::IoObject
 {
 public:
+  /// Virtual destructor.
   virtual ~Element();
 
+  /// Status type for child to tell its parent how it ended.
   enum ChildStatus
     {
       CHILD_OK,
@@ -64,15 +66,19 @@ public:
   /// Return the Widget in which the experiment is running.
   virtual const Util::SoftRef<Toglet>& getWidget() const = 0;
 
+  /// Get the user-defined "trial type".
   virtual int trialType() const = 0;
 
+  /// Get the value of the last response.
   virtual int lastResponse() const = 0;
 
+  /// Get a string describing the current status of the experiment.
   virtual fstring status() const = 0;
 
-
+  /// Run this element with a reference to its parent.
   virtual void vxRun(Element& parent) = 0;
 
+  /// Halt this element.
   virtual void vxHalt() const = 0;
 
   /// Hook function that gets called each time a leaf (i.e., trial) completes.
@@ -83,8 +89,10 @@ public:
   /// Called when an element's child finishes running.
   virtual void vxReturn(ChildStatus s) = 0;
 
+  /// Undo one trial.
   virtual void vxUndo() = 0;
 
+  /// Reset this element to the starting state.
   virtual void vxReset() = 0;
 };
 
