@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Tue Oct  5 14:10:23 1999
+// written: Thu Oct 21 19:29:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,9 @@
 
 #include <iostream.h>			  // for serialize
 #include <string>
+
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -114,6 +117,22 @@ DOTRACE("CloneFace::charCount");
 			  + gCharCount(itsVertOffset) + 1
 			  + Face::charCount()
 			  + 5 ); 
+}
+
+void CloneFace::readFrom(Reader* reader) {
+DOTRACE("CloneFace::readFrom");
+
+  reader->readValueSeq("ctrlPnts", itsCtrlPnts, (double*)0);
+  reader->readValue("eyeAspect", itsEyeAspect);
+  reader->readValue("vertOffset", itsVertOffset);
+}
+
+void CloneFace::writeTo(Writer* writer) const {
+DOTRACE("CloneFace::writeTo");
+
+  writer->writeValueSeq("ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
+  writer->writeValue("eyeAspect", itsEyeAspect);
+  writer->writeValue("vertOffset", itsVertOffset);
 }
 
 const double* CloneFace::getCtrlPnts() const {
