@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Thu Nov 21 18:18:13 2002
+// written: Thu Nov 21 18:30:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gx/rect.h"
 
+#include "gfx/gbvec.h"
 #include "gfx/gxnode.h"
 
 #include "io/fields.h"
@@ -64,6 +65,7 @@ private:
   double itsFovY;
   double itsNearZ;
   double itsFarZ;
+  GbVec3<double> translation;
 };
 
 class GxFixedRectCamera : public GxCamera

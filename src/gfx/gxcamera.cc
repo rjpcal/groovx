@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 18:18:56 2002
+// written: Thu Nov 21 18:31:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,10 @@ DOTRACE("GxPerspectiveCamera::classFields");
     Field("fovY", &GxPerspectiveCamera::itsFovY, 30.0, 1.0, 180.0, 1.0,
           Field::NEW_GROUP),
     Field("nearZ", &GxPerspectiveCamera::itsNearZ, 1.0, 1.0, 50.0, 0.1),
-    Field("farZ", &GxPerspectiveCamera::itsFarZ, 30.0, 1.0, 50.0, 0.1)
+    Field("farZ", &GxPerspectiveCamera::itsFarZ, 30.0, 1.0, 50.0, 0.1),
+    Field("translation", Field::ValueType(), &GxPerspectiveCamera::translation,
+          "0. 0. 0.", "-10. -10. -10.", "10. 10. 10.", "0.1 0.1 0.1",
+          Field::MULTI)
   };
 
   static FieldMap FIELD_MAP(FIELD_ARRAY);
@@ -72,6 +75,8 @@ DOTRACE("GxPerspectiveCamera::draw");
   canvas.perspective(itsFovY,
                      double(width()) / double(height()),
                      itsNearZ, itsFarZ);
+
+  canvas.translate(translation.vec());
 }
 
 
