@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Fri Nov 10 17:03:57 2000
+// written: Tue Nov 14 14:52:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,9 @@
 #include "io/reader.h"
 
 #include <cstddef>
+
+#define LOCAL_ASSERT
+#include "util/debug.h"
 
 IO::ReadError::ReadError(const char* msg) :
   ErrorWithMsg("IO::ReadError: ")
@@ -41,6 +44,18 @@ IO::ReadVersionError::ReadVersionError(const char* classname,
 IO::ReadVersionError::~ReadVersionError() {}
 
 IO::Reader::~Reader() {}
+
+void IO::Reader::ensureReadVersionId(const char* name,
+												 IO::VersionId lowest_supported_version,
+												 const char* msg) {
+  IO::VersionId actual_version = this->readSerialVersionId();
+
+  if (actual_version < lowest_supported_version)
+	 throw IO::ReadVersionError(name, actual_version,
+										 lowest_supported_version, msg);
+
+  Assert(actual_version >= lowest_supported_version);
+}
 
 template <>
 void IO::Reader::readValue<char>(const fixed_string& name, char& return_value) {
