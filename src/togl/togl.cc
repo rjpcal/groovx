@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 19:21:27 2002
+// written: Mon Aug  5 19:42:31 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -756,16 +756,9 @@ DOTRACE("Togl::Impl::makeWindowExist");
       X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
     }
 
-  TkUtil::setupStackingOrder(itsTkWin);
-
   setupOverlay();
 
-  // Issue a ConfigureNotify event if there were deferred changes
-  TkUtil::issueConfigureNotify(itsTkWin);
-
-  TkUtil::selectAllInput(itsTkWin);
-
-  TkUtil::mapWindow(itsTkWin);
+  Tk_MapWindow(itsTkWin);
 
   // Bind the context to the window and make it the current context
   itsGlx->makeCurrent(windowId());

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 15:09:49 2002
-// written: Sun Aug  4 16:51:39 2002
+// written: Mon Aug  5 19:43:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,42 +69,13 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 #ifdef TK_USE_INPUT_METHODS
   winPtr->inputContext = NULL;
 #endif /* TK_USE_INPUT_METHODS */
-}
 
-void TkUtil::selectAllInput(Tk_Window tkWin) throw()
-{
-DOTRACE("TkUtil::selectAllInput");
+  selectAllInput(tkWin);
 
-#define ALL_EVENTS_MASK \
-KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
-EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
-VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+  setupStackingOrder(tkWin);
 
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
-
-  XSelectInput(winPtr->display, winPtr->window, ALL_EVENTS_MASK);
-}
-
-void TkUtil::mapWindow(Tk_Window tkWin) throw()
-{
-DOTRACE("TkUtil::mapWindow");
-
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
-
-  XMapWindow(winPtr->display, winPtr->window);
-}
-
-void TkUtil::destroyWindow(Tk_Window tkWin) throw()
-{
-DOTRACE("TkUtil::destroyWindow");
-
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
-
-  if (winPtr->window != None)
-    {
-      XDestroyWindow(winPtr->display, winPtr->window);
-      winPtr->window = 0;
-    }
+  // Issue a ConfigureNotify event if there were deferred changes
+  issueConfigureNotify(tkWin);
 }
 
 Window TkUtil::findParent(Tk_Window tkWin) throw()
@@ -124,6 +95,20 @@ DOTRACE("TkUtil::findParent");
     }
 
   return winPtr->parentPtr->window;
+}
+
+void TkUtil::selectAllInput(Tk_Window tkWin) throw()
+{
+DOTRACE("TkUtil::selectAllInput");
+
+#define ALL_EVENTS_MASK \
+KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
+EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
+VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+
+  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
+
+  XSelectInput(winPtr->display, winPtr->window, ALL_EVENTS_MASK);
 }
 
 void TkUtil::setupStackingOrder(Tk_Window tkWin) throw()
@@ -212,6 +197,19 @@ DOTRACE("TkUtil::issueConfigureNotify");
         }
       event.xconfigure.override_redirect = winPtr->atts.override_redirect;
       Tk_HandleEvent(&event);
+    }
+}
+
+void TkUtil::destroyWindow(Tk_Window tkWin) throw()
+{
+DOTRACE("TkUtil::destroyWindow");
+
+  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
+
+  if (winPtr->window != None)
+    {
+      XDestroyWindow(winPtr->display, winPtr->window);
+      winPtr->window = 0;
     }
 }
 
