@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Mon Jul 16 06:23:57 2001
+// written: Mon Jul 16 09:32:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,12 +135,6 @@ public:
     addCommand( new RemoveAllCmd(interp, this,
                                  TclPkg::makePkgCmdName("removeAll")));
   }
-
-  virtual C* getCItemFromId(int id)
-    {
-      Util::WeakRef<C> item(id);
-      return item.get();
-    }
 
   virtual bool isMyType(const Util::Object* obj)
     { return (obj != 0 && dynamic_cast<const C*>(obj) != 0); }

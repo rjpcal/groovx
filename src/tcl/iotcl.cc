@@ -230,9 +230,6 @@ public:
     {
       ObjDb::theDb().clearOnExit();
     }
-
-//    ObjDb* getCItemFromId(int)
-//      { return &(ObjDb::theDb()); }
 };
 
 } // end namespace Tcl
