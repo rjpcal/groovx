@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 15:24:59 2002
+// written: Thu Nov 21 15:29:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,15 +21,11 @@
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclmain.h"
-#include "tcl/tclsafeinterp.h"
 
 #include "util/ref.h"
 #include "util/strings.h"
 
-#include <cmath>
-#include <tcl.h>
 #include <tk.h>
-
 #include <X11/Xlib.h>
 
 #ifdef HAVE_LIMITS
