@@ -373,8 +373,11 @@ public:
     { return MtxConstIter(itsImpl.address(r,0),
 								  itsImpl.rowstride(), itsImpl.ncols()); }
 
-
   Mtx rows(int r, int nr) const;
+
+  Mtx asRow() const
+    { Mtx result(*this); result.reshape(1, nelems()); return result; }
+
 
 
   Slice column(int c) const
@@ -388,8 +391,10 @@ public:
   MtxConstIter columnIter(int c) const
     { return MtxConstIter(itsImpl.address(0,c), itsImpl.colstride(), mrows()); }
 
-
   Mtx columns(int c, int nc) const;
+
+  Mtx asColumn() const
+    { Mtx result(*this); result.reshape(nelems(), 1); return result; }
 
   void swapColumns(int c1, int c2);
 
