@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Fri Mar  9 17:43:47 2001
+// written: Fri Mar  9 19:01:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ public:
 		}
   }
 
-  static const double SQRT_2 = 1.41421356237;
+  static const double SQRT_2;
 
   static void linearCombo(int nelems, const double* w, int w_stride,
 								  const Slice* elems, int dim,

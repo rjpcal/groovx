@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Fri Mar  9 17:50:42 2001
+// written: Fri Mar  9 19:01:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "rutil.h"
 
 #include "trace.h"
+
+const double Num::SQRT_2 = 1.41421356237;
 
 bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
