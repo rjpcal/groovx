@@ -100,7 +100,7 @@ namespace
   };
 
   template <class T1, class T2>
-  mypair<T1, T2> make_mypair(const T1& t1, const T2& t2)
+  inline mypair<T1, T2> make_mypair(const T1& t1, const T2& t2)
   {
     return mypair<T1,T2>(t1, t2);
   }
