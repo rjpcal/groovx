@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Sep  7 14:24:08 1999
+// written: Wed Sep 15 19:02:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #endif
 
 struct Togl;
+struct Tcl_Interp;
 struct Tcl_Obj;
 
 #ifndef _XLIB_H_
@@ -49,8 +50,10 @@ public:
   Rect<double> getMinRect() const;
   int getHeight() const;
   unsigned int getFontListBase() const { return itsFontListBase; }
+  Tcl_Interp* getInterp() const;
   int getIntParam(const char* param) const;
   Tcl_Obj* getParamValue(const char* param) const;
+  Togl* getTogl() const;
   int getWidth() const;
   Color queryColor(unsigned int color_index) const {
 	 Color col;
