@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Dec  2 13:02:15 1999
+// written: Sat Dec  4 01:49:40 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -27,6 +27,7 @@
 #include "tclcmd.h"
 #include "tclevalcmd.h"
 #include "tclitempkg.h"
+#include "tlistwidget.h"
 #include "toglconfig.h"
 #include "xbmaprenderer.h"
 
@@ -42,13 +43,11 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjTogl {
-  Togl* widget = 0;
-  ToglConfig* theConfig = 0;
+  Togl* theTogl = 0;
+  TlistWidget* theWidget = 0;
 
   bool toglCreated = false;
   
-  class TlistToglConfig;
-
   class InitCmd;
   class DestroyCmd;
 
@@ -59,9 +58,14 @@ namespace ObjTogl {
   class LoadFontCmd;
   class LoadFontiCmd;
   class SetColorCmd;
+  class SetCurTrialCmd;
   class SetMinRectCmd;
+  class SetVisibleCmd;
+  class ShowCmd;
 
   class ObjToglPkg;
+
+  TlistWidget* theTlistWidget();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -70,42 +74,21 @@ namespace ObjTogl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ObjTogl::TlistToglConfig : public ToglConfig {
-public:
-  TlistToglConfig(Togl* togl, double dist, double unit_angle) :
-    ToglConfig(togl, dist, unit_angle) {}
-
-  virtual void display() {
-    DebugPrintNL("clearing back buffer...");
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    DebugPrintNL("drawing the trial...");
-	 try {
-		Tlist::theTlist().drawCurTrial();
-	 }
-	 catch (InvalidIdError& err) {
-		DebugEvalNL(err.msg());
-		Tlist::theTlist().setVisible(false);
-	 }
-    
-    DebugPrintNL("swapping the buffers...");
-    swapBuffers();
-    
-    DebugPrintNL("clearing back buffer...");
-    glClear(GL_COLOR_BUFFER_BIT);
-  }
-};
-
 bool ObjTogl::toglHasBeenCreated() {
 DOTRACE("ObjTogl::toglHasBeenCreated");
   return toglCreated;
 }
 
+TlistWidget* ObjTogl::theTlistWidget() {
+DOTRACE("ObjTogl::theTlistWidget");
+  if (!toglCreated) { throw TclError("Togl not yet initialized"); }
+  Assert(theWidget != 0);
+  return theWidget;
+}
+
 ToglConfig* ObjTogl::theToglConfig() {
 DOTRACE("ObjTogl::theToglConfig");
-  if (!toglCreated) { throw TclError("Togl not yet initialized"); }
-  Assert(theConfig != 0);
-  return theConfig;
+  return theTlistWidget(); 
 }
 
 //---------------------------------------------------------------------
@@ -126,12 +109,12 @@ public:
 
   static void destroyCallback(struct Togl* togl) {
   DOTRACE("ObjTogl::DestroyCmd::destroyCallback");
-    if ( (togl != 0) && (togl == ObjTogl::widget) ) {
+    if ( (togl != 0) && (togl == ObjTogl::theTogl) ) {
       ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
       DebugEvalNL((void*)config);
       delete config;
-      ObjTogl::theConfig = 0;
-      ObjTogl::widget = 0;
+      ObjTogl::theWidget = 0;
+      ObjTogl::theTogl = 0;
       ObjTogl::toglCreated = false;
     }
   }
@@ -141,8 +124,8 @@ protected:
   DOTRACE("ObjTogl::DestroyCmd::invoke");
 
     if (toglCreated) {
-      // This tells the ToglConfig to destroy the widget, which in
-      // turn generates a call to the destroyCallback, which in turn
+      // This tells the ToglConfig to destroy theTogl, which in turn
+      // generates a call to the destroyCallback, which in turn
       // delete's the toglConfig.
       ObjTogl::theToglConfig()->destroyWidget();
     }
@@ -247,7 +230,7 @@ public:
 protected:
   static void createCallback(struct Togl* togl) {
     if (ObjTogl::toglCreated) { return; }
-    /* else */ ObjTogl::widget = togl;
+    /* else */ ObjTogl::theTogl = togl;
   }
 
   virtual void invoke() {
@@ -268,15 +251,14 @@ protected:
     create_cmd.invoke(itsInterp);
 
     // Make sure that widget creation and the create callback
-    // successfully set ObjTogl::widget to point to a struct Togl
-    if (ObjTogl::widget == 0) { throw TclError(); }
+    // successfully set ObjTogl::theTogl to point to a struct Togl
+    if (ObjTogl::theTogl == 0) { throw TclError(); }
 
-    // Create a new ToglConfig object using the following default
-    // settings: viewing distance = 30 inches, one GL unit == 2.05
-    // degrees visual angle
-    ObjTogl::theConfig = new TlistToglConfig(ObjTogl::widget,
-															viewing_dist,
-															gl_unit_angle);
+    // Create a new ToglConfig object with the specified viewing
+    // distance and visual angle per GL unit
+    ObjTogl::theWidget = new TlistWidget(ObjTogl::theTogl,
+													  viewing_dist,
+													  gl_unit_angle);
     
 	 if (pack) {
 		string pack_cmd_str =
@@ -287,7 +269,7 @@ protected:
 
     toglCreated = true;
 
-	 XBmapRenderer::initClass(Togl_TkWin(ObjTogl::widget));
+	 XBmapRenderer::initClass(Togl_TkWin(ObjTogl::theTogl));
 
     returnVoid();
   }
@@ -368,6 +350,36 @@ protected:
   }
 };
 
+//--------------------------------------------------------------------
+//
+// ObjTogl::SetCurTrialCmd --
+//
+// Change the Tlist's current trial to a specified trial id. The
+// current trial is the one that will be displayed by a subsequent
+// call to "redraw", or by remap events sent to the screen
+// window. Returns an error if the specified trial id is not valid.
+//
+//--------------------------------------------------------------------
+
+class ObjTogl::SetCurTrialCmd : public TclItemCmd<ToglConfig> {
+public:
+  SetCurTrialCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 int trial = getIntFromArg(1);
+
+	 if (!Tlist::theTlist().isValidId(trial))
+		{ throw TclError("invalid trial id"); }
+	 
+	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
+
+	 if (widg != 0) {
+		widg->setCurTrial(trial);
+	 }
+  }
+};
+
 //---------------------------------------------------------------------
 //
 // ObjTogl::SetMinRectCmd --
@@ -394,6 +406,58 @@ protected:
   }
 };
 
+
+//--------------------------------------------------------------------
+//
+// ObjTogl::SetVisibleCmd --
+//
+//--------------------------------------------------------------------
+
+class ObjTogl::SetVisibleCmd : public TclItemCmd<ToglConfig> {
+public:
+  SetVisibleCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 bool vis = getBoolFromArg(1);
+
+	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
+
+	 if (widg != 0) {
+		widg->setVisibility(vis);
+	 }
+  }
+};
+
+//--------------------------------------------------------------------
+//
+// ObjTogl::ShowCmd --
+//
+// Make a specified trial the Tlist's current trial, and draw it in
+// the OpenGL window. The Tlist's visibility is set to true.
+//
+//--------------------------------------------------------------------
+
+class ObjTogl::ShowCmd : public TclItemCmd<ToglConfig> {
+public:
+  ShowCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+  DOTRACE("ShowCmd::invoke");
+	 int id = getIntFromArg(1);
+
+	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
+
+	 if (widg != 0) {
+		widg->setCurTrial(id);
+		widg->setVisibility(true);
+	 }
+
+	 widg->display();
+  }
+};
+
 //---------------------------------------------------------------------
 //
 // ObjToglPkg class definition
@@ -403,7 +467,7 @@ protected:
 class ObjTogl::ObjToglPkg : public CTclItemPkg<ToglConfig> {
 public:
   ObjToglPkg(Tcl_Interp* interp) :
-    CTclItemPkg<ToglConfig>(interp, "Togl", "3.2", 0)
+    CTclItemPkg<ToglConfig>(interp, "Togl", "$Revision$", 0)
   {
     Tcl_PkgProvide(interp, "Objtogl", "3.2");
 
@@ -416,10 +480,17 @@ public:
     addCommand( new LoadFontCmd   (this, "Togl::loadFont") );
     addCommand( new LoadFontiCmd  (this, "Togl::loadFonti") );
     addCommand( new SetColorCmd   (this, "Togl::setColor") );
+	 addCommand( new SetCurTrialCmd(this, "Togl::setCurTrial") );
     addCommand( new SetMinRectCmd (this, "Togl::setMinRect") );
+    addCommand( new SetVisibleCmd (this, "Togl::setVisible") );
+	 addCommand( new ShowCmd       (this, "Togl::show") );
 
+	 declareCAction("clearscreen", &ToglConfig::clearscreen);
     declareCAttrib("height",
                    &ToglConfig::getHeight, &ToglConfig::setHeight);
+	 declareCAction("refresh", &ToglConfig::refresh);
+	 declareCAction("undraw", &ToglConfig::undraw);
+
     declareCSetter("scaleRect", &ToglConfig::scaleRect, "scale");
     declareCSetter("setFixedScale", &ToglConfig::setFixedScale, "scale");
     declareCSetter("setUnitAngle", &ToglConfig::setUnitAngle,
@@ -429,10 +500,16 @@ public:
     declareCAction("swapBuffers", &ToglConfig::swapBuffers);
     declareCGetter("usingFixedScale", &ToglConfig::usingFixedScale);
     declareCAttrib("width", &ToglConfig::getWidth, &ToglConfig::setWidth);
+
+	 Tcl_Eval(interp,
+				 "proc clearscreen {} { Togl::clearscreen }\n"
+				 "proc show {id} { Togl::show $id }\n"
+				 "proc undraw {} { Togl::undraw }\n"
+				 "proc redraw {} { Togl::refresh }\n");
   }
 
-  ToglConfig* getCItemFromId(int) {
-    return ObjTogl::theToglConfig();
+  TlistWidget* getCItemFromId(int) {
+    return ObjTogl::theTlistWidget();
   }
 };
 
