@@ -82,12 +82,12 @@ private:
 
 public:
 
-  Toglet* owner;
-  const Tk_Window tkWin;
-  shared_ptr<GlxOpts> opts;
-  shared_ptr<GlWindowInterface> glx;
-  Nub::SoftRef<GLCanvas> canvas;
-  GxScene* scene;
+  Toglet*                       const owner;
+  Tk_Window                     const tkWin;
+  shared_ptr<GlxOpts>           const opts;
+  shared_ptr<GlWindowInterface> const glx;
+  Nub::SoftRef<GLCanvas>        const canvas;
+  GxScene*                      const scene;
 
   Impl(Toglet* p);
   ~Impl() throw()
