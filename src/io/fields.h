@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Sep  3 14:15:31 2001
+// written: Tue Sep  4 11:07:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,22 +63,26 @@ namespace Util
 template <class T>
 class BoundsChecker
 {
+public:
+  typedef Util::TypeTraits<T>::DerefT DerefT;
+
 private:
-  BoundsChecker(const T& min, const T& max) : itsMin(min), itsMax(max) {}
+  BoundsChecker(const DerefT& min, const DerefT& max) :
+    itsMin(min), itsMax(max) {}
 
 public:
-  const T itsMin;
-  const T itsMax;
+  const DerefT itsMin;
+  const DerefT itsMax;
 
-  static shared_ptr<BoundsChecker<T> > make(const T& min, const T& max,
-                                            bool check)
+  static shared_ptr<BoundsChecker<T> >
+  make(const DerefT& min, const DerefT& max, bool check)
   {
     return check ?
       shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max)) :
       shared_ptr<BoundsChecker<T> >(0);
   }
 
-  T limit(const T& raw)
+  DerefT limit(const DerefT& raw)
   {
     return Util::clamp(raw, itsMin, itsMax);
   }
@@ -137,17 +141,17 @@ namespace
     return *(obj.*memptr);
   }
 
-  template <class T>
-  struct Deref
-  {
-    typedef T Type;
-  };
+//    template <class T>
+//    struct Deref
+//    {
+//      typedef T Type;
+//    };
 
-  template <class T>
-  struct Deref<T*>
-  {
-    typedef T Type;
-  };
+//    template <class T>
+//    struct Deref<T*>
+//    {
+//      typedef T Type;
+//    };
 }
 
 
@@ -158,11 +162,11 @@ class DataMemberFieldImpl : public FieldImpl
 {
 public:
 
-  typedef Deref<T>::Type DerefT;
+  typedef Util::TypeTraits<T>::DerefT DerefT;
 
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
 
-  DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<DerefT> > checker) :
+  DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<T> > checker) :
     itsDataMember(memptr), itsChecker(checker) {}
 
   virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
@@ -203,7 +207,7 @@ private:
   DataMemberFieldImpl(const DataMemberFieldImpl&);
 
   T C::* itsDataMember;
-  shared_ptr<BoundsChecker<DerefT> > itsChecker;
+  shared_ptr<BoundsChecker<T> > itsChecker;
 };
 
 /** ValueFieldImpl */
@@ -276,7 +280,9 @@ public:
 
     C& cobj = dynamic_cast<C&>(*obj);
 
-    (cobj.*itsSetter)(new_val.as(Util::TypeCue<T>()));
+    typedef Util::TypeTraits<T>::StackT StackT;
+
+    (cobj.*itsSetter)(new_val.as(Util::TypeCue<StackT>()));
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
@@ -295,7 +301,9 @@ public:
 
     C& cobj = dynamic_cast<C&>(*obj);
 
-    T temp;
+    typedef Util::TypeTraits<T>::StackT StackT;
+
+    StackT temp;
     reader->readValue(name, temp);
     (cobj.*itsSetter)(temp);
   }
@@ -371,14 +379,13 @@ public:
    * Make a FieldImpl from a member-pointer-to-data
    **/
 
-  template <class C, class T>
+  template <class C, class T, class T2>
   static shared_ptr<FieldImpl>
-  makeImpl(T C::* member_ptr,
-           const Deref<T>::Type& min, const Deref<T>::Type& max, bool check)
+  makeImpl(T C::* member_ptr, const T2& min, const T2& max, bool check)
   {
     return shared_ptr<FieldImpl>
       (new DataMemberFieldImpl<C,T>
-       (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max, check)));
+       (member_ptr, BoundsChecker<T>::make(min, max, check)));
   }
 
   /**
@@ -386,10 +393,10 @@ public:
    * member-pointer-to-functions
    **/
 
-  template <class C, class T>
+  template <class C, class T, class T2>
   static shared_ptr<FieldImpl>
   makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs,
-           const T& /* min */, const T& /* max */, bool /* check */)
+           const T2& /* min */, const T2& /* max */, bool /* check */)
   {
     return shared_ptr<FieldImpl>
       (new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
@@ -399,10 +406,10 @@ public:
    * Make a read-only FieldImpl from a getter member-pointer-to-function
    **/
 
-  template <class C, class T>
+  template <class C, class T, class T2>
   static shared_ptr<FieldImpl>
   makeImpl(T (C::* getter)() const,
-           const T& /* min */, const T& /* max */, bool /* check */)
+           const T2& /* min */, const T2& /* max */, bool /* check */)
   {
     return shared_ptr<FieldImpl>
       (new FuncMemberFieldImpl<C,T>(getter, 0));
@@ -412,10 +419,10 @@ public:
    * Make a write-only FieldImpl from a setter member-pointer-to-function
    **/
 
-  template <class C, class T>
+  template <class C, class T, class T2>
   static shared_ptr<FieldImpl>
   makeImpl(void (C::* setter)(T),
-           const T& /* min */, const T& /* max */, bool /* check */)
+           const T2& /* min */, const T2& /* max */, bool /* check */)
   {
     return shared_ptr<FieldImpl>
       (new FuncMemberFieldImpl<C,T>(0, setter));
