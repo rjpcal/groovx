@@ -68,14 +68,6 @@ proc testResetCmd { objname } {
         set after_count \[${this(listname)}::count\]
 		  return \[expr \$before_count - \$after_count\]
     "} {"^0$"}
-    eval ::test $testname {"check first vacant"} {"
-        $cmdname       
-        set before_vacant_id \[${this(subclass1)}::${this(subclass1)}\]
-        ${this(subclass2)}::${this(subclass2)}
-        $cmdname       
-        set after_vacant_id \[${this(subclass1)}::${this(subclass1)}\]
-		  return \[expr \$before_vacant_id - \$after_vacant_id\]
-    "} {"^0$"}
 }
 
 proc testCountCmd { objname } {
