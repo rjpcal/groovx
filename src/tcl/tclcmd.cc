@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 11 18:28:48 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,11 +49,11 @@ public:
     Tcl::TclCmd(interp, "?", "commandName", 2, 2) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
   {
-    fixed_string cmd_name(getCstringFromArg(1));
+    fixed_string cmd_name(ctx.getCstringFromArg(1));
     Tcl_CmdInfo cmd_info;
-    int result = Tcl_GetCommandInfo(interp(), cmd_name.data(), &cmd_info);
+    int result = Tcl_GetCommandInfo(ctx.interp(), cmd_name.data(), &cmd_info);
     if (result != 1)
       throw ErrorWithMsg("no such command");
 
@@ -65,7 +65,7 @@ protected:
 
     dynamic_string cmd_usage(cmd_name.c_str());
     cmd_usage.append(" ").append(cmd->usage());
-    returnVal(cmd_usage.c_str());
+    ctx.setResult(cmd_usage.c_str());
   }
 };
 
@@ -128,11 +128,11 @@ Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
   itsObjcMin(objc_min),
   itsObjcMax( (objc_max > 0) ? objc_max : objc_min),
   itsExactObjc(exact_objc),
-  itsInterp(0),
-  itsObjc(0),
-  itsObjv(0),
-  itsImpl(new Impl(cmd_name)),
-  itsResult(TCL_OK)
+//    itsInterp(0),
+//    itsObjc(0),
+//    itsObjv(0),
+  itsImpl(new Impl(cmd_name))
+//    ,itsResult(TCL_OK)
 {
 DOTRACE("Tcl::TclCmd::TclCmd");
   Tcl_CreateObjCommand(interp,
@@ -154,12 +154,6 @@ DOTRACE("Tcl::TclCmd::usage");
 }
 
 
-void Tcl::TclCmd::returnTclObj(Tcl_Obj* obj) {
-DOTRACE("Tcl::TclCmd::returnTclObj");
-  Tcl_SetObjResult(itsInterp, obj);
-  itsResult = TCL_OK;
-}
-
 int Tcl::TclCmd::invokeCallback(ClientData clientData, Tcl_Interp* interp,
                                 int objc, Tcl_Obj *const objv[]) {
 DOTRACE("Tcl::TclCmd::invokeCallback");
@@ -171,10 +165,12 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
 
   ++(theCmd->itsImpl->itsUseCount);
 
-  theCmd->itsInterp = interp;
-  theCmd->itsObjc = objc;
-  theCmd->itsObjv = objv;
-  theCmd->itsResult = TCL_OK;
+  shared_ptr<Context> ctx( new Context(interp, objc, objv) );
+  theCmd->itsContext = ctx;
+//    theCmd->itsInterp = interp;
+//    theCmd->itsObjc = objc;
+//    theCmd->itsObjv = objv;
+//    theCmd->itsResult = TCL_OK;
 
   DebugEval(objc);
   DebugEval(theCmd->itsObjcMin);
@@ -188,70 +184,96 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
        ((theCmd->itsExactObjc == false) &&
         (objc < theCmd->itsObjcMin || objc > theCmd->itsObjcMax)) ) {
 
-    Tcl_WrongNumArgs(theCmd->itsInterp, 1, theCmd->itsObjv,
+    Tcl_WrongNumArgs(ctx->itsInterp, 1, ctx->itsObjv,
                      const_cast<char*>(theCmd->itsUsage));
-    theCmd->itsResult = TCL_ERROR;
+    ctx->itsResult = TCL_ERROR;
     return TCL_ERROR;
   }
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
   try {
-    theCmd->invoke();
+    Context ctx(interp, objc, objv);
+    theCmd->invoke(ctx);
   }
   catch (TclError& err) {
     DebugPrintNL("catch (TclError&)");
     if ( !string_literal(err.msg_cstr()).empty() ) {
-      errMessage(interp, theCmd->itsObjv, err.msg_cstr());
+      errMessage(interp, ctx->itsObjv, err.msg_cstr());
     }
-    theCmd->itsResult = TCL_ERROR;
+    ctx->itsResult = TCL_ERROR;
   }
   catch (ErrorWithMsg& err) {
     DebugPrintNL("catch (ErrorWithMsg&)");
     if ( !string_literal(err.msg_cstr()).empty() ) {
-      errMessage(interp, theCmd->itsObjv, err.msg_cstr());
+      errMessage(interp, ctx->itsObjv, err.msg_cstr());
     }
     else {
       dynamic_string msg = "an error of type ";
       msg += demangle_cstr(typeid(err).name());
       msg += " occurred";
-      errMessage(interp, theCmd->itsObjv, msg.c_str());
+      errMessage(interp, ctx->itsObjv, msg.c_str());
     }
-    theCmd->itsResult = TCL_ERROR;
+    ctx->itsResult = TCL_ERROR;
   }
   catch (Error& err) {
     DebugPrintNL("catch (Error&)");
     dynamic_string msg = "an error of type ";
     msg += demangle_cstr(typeid(err).name());
     msg += " occurred";
-    errMessage(interp, theCmd->itsObjv, msg.c_str());
-    theCmd->itsResult = TCL_ERROR;
+    errMessage(interp, ctx->itsObjv, msg.c_str());
+    ctx->itsResult = TCL_ERROR;
   }
   catch (std::exception& err) {
     dynamic_string msg = "an error of type ";
     msg += demangle_cstr(typeid(err).name());
     msg += " occurred: ";
     msg += err.what();
-    errMessage(interp, theCmd->itsObjv, msg.c_str());
-    theCmd->itsResult = TCL_ERROR;
+    errMessage(interp, ctx->itsObjv, msg.c_str());
+    ctx->itsResult = TCL_ERROR;
   }
   catch (const char* text) {
     dynamic_string msg = "an error occurred: ";
     msg += text;
-    errMessage(interp, theCmd->itsObjv, msg.c_str());
-    theCmd->itsResult = TCL_ERROR;
+    errMessage(interp, ctx->itsObjv, msg.c_str());
+    ctx->itsResult = TCL_ERROR;
   }
   catch (...) {
     DebugPrintNL("catch (...)");
-    errMessage(interp, theCmd->itsObjv, "an error of unknown type occurred");
-    theCmd->itsResult = TCL_ERROR;
+    errMessage(interp, ctx->itsObjv, "an error of unknown type occurred");
+    ctx->itsResult = TCL_ERROR;
   }
 
 
   // cleanup
-  theCmd->itsObjc = 0;
+//    theCmd->itsObjc = 0;
 
-  DebugEvalNL(theCmd->itsResult == TCL_OK);
-  return theCmd->itsResult;
+  DebugEvalNL(ctx->itsResult == TCL_OK);
+
+  theCmd->itsContext.reset(0);
+
+  return ctx->itsResult;
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::TclCmd::Context member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl::TclCmd::Context::Context(Tcl_Interp* interp,
+                              int objc,
+                              Tcl_Obj* const* objv) :
+  itsInterp(interp),
+  itsObjc(objc),
+  itsObjv(objv),
+  itsResult(TCL_OK)
+{}
+
+void Tcl::TclCmd::Context::setObjResult(Tcl_Obj* obj) {
+DOTRACE("Tcl::TclCmd::setObjResult");
+  Tcl_SetObjResult(itsInterp, obj);
+  itsResult = TCL_OK;
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";
