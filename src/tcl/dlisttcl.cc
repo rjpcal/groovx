@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sun Nov  3 09:10:49 2002
+// written: Thu Nov 14 18:43:18 2002
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -178,7 +178,7 @@ namespace DlistTcl
   {
     Tcl::List result;
 
-    if (npts <= 2)
+    if (npts < 2)
       {
         throw Tcl::TclError("npts must be at least 2");
       }
