@@ -13,14 +13,19 @@
 
   figure out how to use boost
 
-    boost::format
-    boost::function (to replace or complement util/functors.h and tcl/tclfunctor.h)
-    boost::shared_ptr (to replace util/pointers.h)
-    boost::type_traits (to replace util/traits.h)
+    boost::format -- 34KLOC
+    boost::function -- 26KLOC (to replace or complement util/functors.h and tcl/tclfunctor.h)
+    boost::shared_ptr -- 15KLOC (to replace util/pointers.h)
+		      -- compile time up ~20% from 5:15 to 6:16
+
+    std::auto_ptr -- 10KLOC
+    boost::type_traits -- 5.5KLOC (to replace util/traits.h)
+    boost::signal -- 55KLOC
+    libsigc++ -- 25KLOC
 
   more consistent logging+debugging
 
-* (19-Jul-2004) Aqua port for Darwin
+* (19-Jul-2004) port graphics stuff to Aqua for Darwin
 
   where is <GL/glx.h> used?
 
