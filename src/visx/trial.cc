@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Wed Jun 13 13:15:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,8 +94,8 @@ private:
 
   minivec<Response> itsResponses;
   int itsType;
-  MaybeRef<ResponseHandler> itsRh;
-  MaybeRef<TimingHdlr> itsTh;
+  WeakRef<ResponseHandler> itsRh;
+  WeakRef<TimingHdlr> itsTh;
 
   TrialState itsState;
 
@@ -184,12 +184,12 @@ public:
   Ref<ResponseHandler> getResponseHandler() const
     { return Ref<ResponseHandler>(itsRh); }
   void setResponseHandler(Ref<ResponseHandler> rh)
-    { itsRh = MaybeRef<ResponseHandler>(rh); }
+    { itsRh = WeakRef<ResponseHandler>(rh); }
 
   Ref<TimingHdlr> getTimingHdlr() const
     { return Ref<TimingHdlr>(itsTh); }
   void setTimingHdlr(Ref<TimingHdlr> th)
-    { itsTh = MaybeRef<TimingHdlr>(th); }
+    { itsTh = WeakRef<TimingHdlr>(th); }
 #endif
 
   int trialType() const;

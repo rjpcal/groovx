@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Tue Jun 12 11:18:32 2001
+// written: Wed Jun 13 13:15:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ DOTRACE("IO::LegacyReader::readObject");
   return Ref<IO::IoObject>(readMaybeObject(name));
 }
 
-MaybeRef<IO::IoObject>
+WeakRef<IO::IoObject>
 IO::LegacyReader::readMaybeObject(const fixed_string& name) {
 DOTRACE("IO::LegacyReader::readMaybeObject");
   DebugEval(name);
@@ -250,7 +250,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 
   if (type == "NULL")
     {
-      return MaybeRef<IO::IoObject>();
+      return WeakRef<IO::IoObject>();
     }
 
   Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
@@ -261,7 +261,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 #ifndef ACC_COMPILER
   return obj;
 #else
-  return MaybeRef<IO::IoObject>(obj);
+  return WeakRef<IO::IoObject>(obj);
 #endif
 }
 
@@ -407,7 +407,7 @@ public:
   void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
 
   void flattenObject(const char* obj_name,
-                     MaybeRef<const IO::IoObject> obj,
+                     WeakRef<const IO::IoObject> obj,
                      bool stub_out = false)
   {
     if (itsIndentLevel > 0)
@@ -520,7 +520,7 @@ DOTRACE("IO::LegacyWriter::writeValueObj");
 }
 
 void IO::LegacyWriter::writeObject(const char* name,
-                                   MaybeRef<const IO::IoObject> obj) {
+                                   WeakRef<const IO::IoObject> obj) {
 DOTRACE("IO::LegacyWriter::writeObject");
 
   itsImpl->flattenObject(name, obj);
@@ -547,7 +547,7 @@ DOTRACE("IO::LegacyWriter::writeBaseClass");
 void IO::LegacyWriter::writeRoot(const IO::IoObject* root) {
 DOTRACE("IO::LegacyWriter::writeRoot");
 
-  itsImpl->flattenObject("rootObject", MaybeRef<const IO::IoObject>(root, true));
+  itsImpl->flattenObject("rootObject", WeakRef<const IO::IoObject>(root, true));
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";

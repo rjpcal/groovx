@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 13:09:33 2001
+// written: Wed Jun 13 13:16:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,11 +24,11 @@
 namespace Util
 {
   template <class T> class Ref;
-  template <class T> class MaybeRef;
+  template <class T> class WeakRef;
 }
 
 using Util::Ref;
-using Util::MaybeRef;
+using Util::WeakRef;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -151,9 +151,9 @@ public:
   template <class U>
   Ref(const Ref<U>& other) : itsHandle(other.get()) {}
 
-  // Will raise an exception if the MaybeRef is invalid
+  // Will raise an exception if the WeakRef is invalid
   template <class U>
-  Ref(const MaybeRef<U>& other);
+  Ref(const WeakRef<U>& other);
 
   T* operator->() const { return get(); }
   T& operator*()  const { return *(get()); }
@@ -185,12 +185,12 @@ Ref<To> dynamicCast(Ref<Fr> p)
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::MaybeRef<T> is a ref-counted smart pointer (like
+ * Util::WeakRef<T> is a ref-counted smart pointer (like
  * Util::Ref<T>) for holding RefCounted objects. Construction of a
- * Util::MaybeRef<T> is guaranteed not to fail. Because of this,
- * however, a Util::MaybeRef<T> is not guaranteed to always point to a
+ * Util::WeakRef<T> is guaranteed not to fail. Because of this,
+ * however, a Util::WeakRef<T> is not guaranteed to always point to a
  * valid object (this must be tested with isValid() before
- * dereferencing). With these characteristics, a Util::MaybeRef<T> can
+ * dereferencing). With these characteristics, a Util::WeakRef<T> can
  * be used with volatile RefCounted objects for which only weak
  * references are available.
  *
@@ -200,7 +200,7 @@ Ref<To> dynamicCast(Ref<Fr> p)
 namespace Util {
 
 template <class T>
-class MaybeRef {
+class WeakRef {
 private:
 
   // This internal helper class manages memory etc., and provides one
@@ -324,26 +324,25 @@ private:
   }
 
 public:
-  MaybeRef() : itsHandle(0) {}
+  WeakRef() : itsHandle(0) {}
 
-  explicit MaybeRef(Util::UID id) :
+  explicit WeakRef(Util::UID id) :
     itsHandle(RefHelper::isValidId(id) ?
               RefHelper::getCastedItem<T>(id) : 0)
   {}
 
-  explicit MaybeRef(T* master) : itsHandle(master)
+  explicit WeakRef(T* master) : itsHandle(master)
   { insertItem(); }
 
-  MaybeRef(T* master, bool /*noInsert*/) : itsHandle(master) {}
+  WeakRef(T* master, bool /*noInsert*/) : itsHandle(master) {}
 
 
   template <class U>
-  MaybeRef(const MaybeRef<U>& other) :
+  WeakRef(const WeakRef<U>& other) :
     itsHandle(other.isValid() ? other.get() : 0) {}
 
   template <class U>
-  MaybeRef(const Ref<U>& other) :
-    itsHandle(other.get()) {}
+  WeakRef(const Ref<U>& other) : itsHandle(other.get()) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -360,25 +359,25 @@ public:
     { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
 };
 
-// TypeTraits specialization for MaybeRef smart pointer
+// TypeTraits specialization for WeakRef smart pointer
 
   template <class T>
-  struct TypeTraits<MaybeRef<T> > {
+  struct TypeTraits<WeakRef<T> > {
     typedef T Pointee;
   };
 
 } // end namespace Util
 
 template <class To, class Fr>
-MaybeRef<To> dynamicCast(MaybeRef<Fr> p)
+WeakRef<To> dynamicCast(WeakRef<Fr> p)
 {
   if (p.isValid())
     {
       Fr* f = p.get();
       To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-      return MaybeRef<To>(&t);
+      return WeakRef<To>(&t);
     }
-  return MaybeRef<To>(p.id());
+  return WeakRef<To>(p.id());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -389,7 +388,7 @@ MaybeRef<To> dynamicCast(MaybeRef<Fr> p)
 
 template <class T>
 template <class U>
-inline Util::Ref<T>::Ref(const MaybeRef<U>& other) :
+inline Util::Ref<T>::Ref(const WeakRef<U>& other) :
   itsHandle(other.get())
 {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Mon Jun 11 14:39:43 2001
+// written: Wed Jun 13 13:15:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ Tcl::IoCaster::IoCaster() {}
 Tcl::IoCaster::~IoCaster() {}
 
 bool Tcl::IoCaster::isMyType(int id) {
-  MaybeRef<Util::Object> item(id);
+  WeakRef<Util::Object> item(id);
   return (item.isValid() && isMyType(item.get()));
 }
 
@@ -58,7 +58,7 @@ void Tcl::IsCmd::invoke() {
 //---------------------------------------------------------------------
 
 Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp, IoCaster* caster,
-										const char* cmd_name) :
+                              const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
   itsCaster(caster)
 {}
@@ -69,14 +69,14 @@ void Tcl::CountAllCmd::invoke() {
   int count = 0;
   ObjDb& theList = ObjDb::theDb();
   for (ObjDb::IdIterator
-			itr = theList.beginIds(),
-			end = theList.endIds();
-		 itr != end;
-		 ++itr)
-	 {
-		if (itsCaster->isMyType(itr.getObject()))
-		  ++count;
-	 }
+         itr = theList.beginIds(),
+         end = theList.endIds();
+       itr != end;
+       ++itr)
+    {
+      if (itsCaster->isMyType(itr.getObject()))
+        ++count;
+    }
   returnInt(count);
 }
 
@@ -87,7 +87,7 @@ void Tcl::CountAllCmd::invoke() {
 //---------------------------------------------------------------------
 
 Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, IoCaster* caster,
-									 const char* cmd_name) :
+                            const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
   itsCaster(caster)
 {}
@@ -97,14 +97,14 @@ Tcl::FindAllCmd::~FindAllCmd() {}
 void Tcl::FindAllCmd::invoke() {
   ObjDb& theList = ObjDb::theDb();
   for (ObjDb::IdIterator
-			itr = theList.beginIds(),
-			end = theList.endIds();
-		 itr != end;
-		 ++itr)
-	 {
-		if (itsCaster->isMyType(itr.getObject()))
-		  lappendVal(*itr);
-	 }
+         itr = theList.beginIds(),
+         end = theList.endIds();
+       itr != end;
+       ++itr)
+    {
+      if (itsCaster->isMyType(itr.getObject()))
+        lappendVal(*itr);
+    }
 }
 
 //---------------------------------------------------------------------
@@ -114,7 +114,7 @@ void Tcl::FindAllCmd::invoke() {
 //---------------------------------------------------------------------
 
 Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, IoCaster* caster,
-									 const char* cmd_name) :
+                            const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
   itsCaster(caster)
 {}
@@ -124,23 +124,23 @@ Tcl::RemoveAllCmd::~RemoveAllCmd() {}
 void Tcl::RemoveAllCmd::invoke() {
   ObjDb& theList = ObjDb::theDb();
   for (ObjDb::IdIterator
-			itr = theList.beginIds(),
-			end = theList.endIds();
-		 itr != end;
-		 /* increment done in loop body */)
-	 {
-		if (itsCaster->isMyType(itr.getObject()) &&
-			 itr.getObject()->isUnshared())
-		  {
-			 int remove_me = *itr;
-			 ++itr;
-			 theList.remove(remove_me);
-		  }
-		else
-		  {
-			 ++itr;
-		  }
-	 }
+         itr = theList.beginIds(),
+         end = theList.endIds();
+       itr != end;
+       /* increment done in loop body */)
+    {
+      if (itsCaster->isMyType(itr.getObject()) &&
+          itr.getObject()->isUnshared())
+        {
+          int remove_me = *itr;
+          ++itr;
+          theList.remove(remove_me);
+        }
+      else
+        {
+          ++itr;
+        }
+    }
 }
 
 static const char vcid_ioitempkg_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Mon Jun 11 14:56:04 2001
+// written: Wed Jun 13 13:15:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #endif
 
 namespace Util { template <class T> class Ref; };
-namespace Util { template <class T> class MaybeRef; }
+namespace Util { template <class T> class WeakRef; }
 
 namespace IO {
   class IoObject;
@@ -66,9 +66,9 @@ class IO::WriteVersionError : public ErrorWithMsg {
 public:
   /// Construct with information relevant to the problem
   WriteVersionError(const char* classname,
-						 IO::VersionId attempted_id,
-						 IO::VersionId lowest_supported_id,
-						 const char* msg);
+                   IO::VersionId attempted_id,
+                   IO::VersionId lowest_supported_id,
+                   const char* msg);
 
   virtual ~WriteVersionError();
 };
@@ -99,9 +99,9 @@ public:
       actual_version. If this test fails, a WriteVersionError will be
       thrown.*/
   int ensureWriteVersionId(const char* name,
-									IO::VersionId actual_version,
-									IO::VersionId lowest_supported_version,
-									const char* msg);
+                           IO::VersionId actual_version,
+                           IO::VersionId lowest_supported_version,
+                           const char* msg);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
   virtual void writeChar(const char* name, char val) = 0;
@@ -126,7 +126,7 @@ public:
 
   /// Store the \c IO object \a val in association with the tag \a name.
   virtual void writeObject(const char* name,
-									Util::MaybeRef<const IO::IoObject> obj) = 0;
+                           Util::WeakRef<const IO::IoObject> obj) = 0;
 
   /** Store the owned \c IO object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
@@ -134,7 +134,7 @@ public:
       obj. This allows the \c Writer subclass to implement the storage
       of an owned object as a contained object. */
   virtual void writeOwnedObject(const char* name,
-										  Util::Ref<const IO::IoObject> obj) = 0;
+                                Util::Ref<const IO::IoObject> obj) = 0;
 
   /** Write the named base class using the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -142,7 +142,7 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
   virtual void writeBaseClass(const char* baseClassName,
-										Util::Ref<const IO::IoObject> basePart) = 0;
+                              Util::Ref<const IO::IoObject> basePart) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be

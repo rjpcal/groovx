@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Tue Jun 12 11:17:13 2001
+// written: Wed Jun 13 13:15:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,8 +28,8 @@
 #endif
 
 namespace {
-  MaybeRef<Sound> OK_SOUND;
-  MaybeRef<Sound> ERR_SOUND;
+  WeakRef<Sound> OK_SOUND;
+  WeakRef<Sound> ERR_SOUND;
 }
 
 SoundError::SoundError() : ErrorWithMsg() {}
@@ -42,7 +42,7 @@ void Sound::setOkSound(Ref<Sound> ok_sound) {
 #ifndef ACC_COMPILER
   OK_SOUND = ok_sound;
 #else
-  OK_SOUND = MaybeRef<Sound>(ok_sound);
+  OK_SOUND = WeakRef<Sound>(ok_sound);
 #endif
 }
 
@@ -50,7 +50,7 @@ void Sound::setErrSound(Ref<Sound> err_sound) {
 #ifndef ACC_COMPILER
   ERR_SOUND = err_sound;
 #else
-  ERR_SOUND = MaybeRef<Sound>(err_sound);
+  ERR_SOUND = WeakRef<Sound>(err_sound);
 #endif
 }
 

@@ -49,7 +49,7 @@ private:
 
 public:
 
-  typedef Util::MaybeRef<Util::Object> ObjRef;
+  typedef Util::WeakRef<Util::Object> ObjRef;
 
   typedef std::map<Util::UID, ObjRef> MapType;
   mutable MapType itsPtrMap;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Jun 12 11:18:32 2001
+// written: Wed Jun 13 13:15:55 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -55,7 +55,7 @@
 
 namespace ObjTogl {
 
-  MaybeRef<Toglet> theWidget;
+  WeakRef<Toglet> theWidget;
 
   class BindCmd;
   class CurrentTogletCmd;
@@ -83,7 +83,7 @@ public:
   {
     if (ObjTogl::theWidget.isValid() && ObjTogl::theWidget.get() == config)
       {
-        ObjTogl::theWidget = MaybeRef<Toglet>();
+        ObjTogl::theWidget = WeakRef<Toglet>();
       }
   }
 };
@@ -91,7 +91,7 @@ public:
 void ObjTogl::setCurrentTogl(Toglet* togl) {
 DOTRACE("ObjTogl::setCurrentTogl");
 
-  theWidget = MaybeRef<Toglet>(togl);
+  theWidget = WeakRef<Toglet>(togl);
   theWidget->setDestroyCallback(new WidgetDestroyCallback);
 }
 

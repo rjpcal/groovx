@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Mon Jun 11 14:56:55 2001
+// written: Wed Jun 13 13:15:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,13 +63,13 @@ public:
   virtual void writeValueObj(const char* name, const Value& value);
 
   virtual void writeObject(const char* name,
-									Util::MaybeRef<const IO::IoObject> obj);
+                           Util::WeakRef<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
-										  Util::Ref<const IO::IoObject> obj);
+                                Util::Ref<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
-										Util::Ref<const IO::IoObject> basePart);
+                              Util::Ref<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 

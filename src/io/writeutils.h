@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Tue Jun 12 11:17:10 2001
+// written: Wed Jun 13 13:15:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ public:
 
       while (begin != end) {
         writer->writeObject(makeElementNameString(name, count),
-                            MaybeRef<const IO::IoObject>(*begin));
+                            WeakRef<const IO::IoObject>(*begin));
         ++begin;
         ++count;
       }

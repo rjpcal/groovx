@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Wed Jun 13 13:14:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ DOTRACE("TlistUtils::createPreview");
     ++x_step;
     if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-    MaybeRef<GrObj> obj(objids[i]);
+    Ref<GrObj> obj(objids[i]);
     bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
 
     if ( !haveBB ) {
