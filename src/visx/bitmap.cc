@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Jan 21 12:09:40 2002
+// written: Mon Jan 21 12:36:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,6 @@
 #define BITMAP_CC_DEFINED
 
 #include "visx/bitmap.h"
-
-#include "visx/bmaprenderer.h"
-// #include "visx/bitmaprep.h"
 
 #include "gfx/canvas.h"
 
@@ -29,7 +26,6 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/algo.h"
 #include "util/pointers.h"
 #include "util/strings.h"
 #include "util/pointers.h"
@@ -37,295 +33,14 @@
 #include "visx/application.h"
 #include "visx/bmaprenderer.h"
 
-#include <cctype>
-
 #include "util/trace.h"
-#include "util/debug.h"
-
-#if 1
 
 namespace
 {
   Gfx::Vec2<double> defaultZoom(1.0, 1.0);
-}
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c BitmapRep maintains data associated with a bitmap. \c BitmapRep
- * loosely implements the \c GrObj and \c IO interfaces, but does not
- * actually inherit from these classes. In fact, \c BitmapRep is used
- * as an implementation class for \c Bitmap, which delegates most of
- * its functionality to \c BitmapRep. \c BitmapRep objects must be
- * initialized with a \c BmapRenderer object, which handles the actual
- * rendering of the bitmao data onto the screen.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class BitmapRep
-{
-public:
-  /// Construct with empty bitmap data.
-  BitmapRep(shared_ptr<BmapRenderer> renderer);
-
-  /// Non-virtual destructor implies this class is not polymorphic.
-  ~BitmapRep();
-
-public:
-
-  /// Conforms to the \c IO interface.
-  void readFrom(IO::Reader* reader);
-  /// Conforms to the \c IO interface.
-  void writeTo(IO::Writer* writer) const;
-
-  /////////////
-  // actions //
-  /////////////
-
-public:
-  /// Loads PBM bitmap data from the PBM file \a filename.
-  void loadPbmFile(const char* filename);
-
-  /** Queues the PBM file \a filename for loading. The PBM bitmap data
-      will not actually be retrieved from the file until it is
-      needed. */
-  void queuePbmFile(const char* filename);
-
-  /// Writes PBM bitmap data to the file \a filename.
-  void savePbmFile(const char* filename) const;
-
-  /** Grabs pixels from a rectangulur area of the screen buffer into
-      the Bitmap's pixel array. The coordinates of the rectangle are
-      specified in pixel values. */
-  void grabScreenRect(const Gfx::Rect<int>& rect);
-
-  /** Grabs pixels from a rectangulur area of the screen buffer into
-      the Bitmap's pixel array. The coordinates of the rectangle are
-      specified in OpenGL coordinates. */
-  void grabWorldRect(const Gfx::Rect<double>& rect);
-
-  /** Flips the luminance contrast of the bitmap data, in a way that
-      may depend on the format of the bitmap data. The polarity of the
-      contrast relative to its original value is computed and stored,
-      so that it can be maintained throughout IO operations. */
-  void flipContrast();
-
-  /** Vertically inverts the image. The polarity of the orientation
-      relative to its original value is computed and stored, so that
-      it can be maintained throughout IO operations. */
-  void flipVertical();
-
-  /** Implements the rendering operation. This function delegates the
-      work to itsRenderer. */
-  void render(Gfx::Canvas& canvas) const;
-
-  ///////////////
-  // accessors //
-  ///////////////
-
-  /// Conforms to the \c GrObj interface.
-  Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const;
-
-  /// Get the image's size (x-width, y-height) in pixels.
-  Gfx::Vec2<int> size() const;
-
-  /// Get the (x,y) factors by which the bitmap will be scaled.
-  Gfx::Vec2<double> getZoom() const;
-
-  /// Query whether zooming is currently to be used.
-  bool getUsingZoom() const;
-
-  /// Query whether the image data are purgeable.
-  /** If the image data are purgeable, they will be unloaded after every
-      render, and then re-queued. */
-  bool isPurgeable() const;
-
-  //////////////////
-  // manipulators //
-  //////////////////
-
-  /** Change the (x,y) factors by which the bitmap will be scaled. */
-  void setZoom(Gfx::Vec2<double> zoom);
-
-  /// Change whether zooming will be used.
-  void setUsingZoom(bool val);
-
-  /// Change whether the image data are purgeable.
-  void setPurgeable(bool val);
-
-  class Impl
-  {
-  private:
-    Impl(const Impl&);
-    Impl& operator=(const Impl&);
-
-  public:
-    Impl(shared_ptr<BmapRenderer> renderer) :
-      itsRenderer(renderer),
-      itsFilename(),
-      itsZoom(1.0, 1.0),
-      itsUsingZoom(false),
-      itsContrastFlip(false),
-      itsVerticalFlip(false),
-      itsPurgeable(false),
-      itsData()
-    {}
-
-    const Gfx::Vec2<double>& getZoom() const
-    {
-      return itsUsingZoom ? itsZoom : defaultZoom;
-    }
-
-    shared_ptr<BmapRenderer> itsRenderer;
-
-    fstring itsFilename;
-    Gfx::Vec2<double> itsZoom;
-    bool itsUsingZoom;
-    bool itsContrastFlip;
-    bool itsVerticalFlip;
-    bool itsPurgeable;
-
-    mutable Gfx::BmapData itsData;
-  };
-
-  class Impl;
-  Impl pimpl;
-
-private:
-  BitmapRep(const BitmapRep&);
-  BitmapRep& operator=(const BitmapRep&);
-};
-
-#endif
-
-namespace
-{
   const IO::VersionId BITMAP_SERIAL_VERSION_ID = 3;
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// Bitmap member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
-  GrObj(),
-  itsImpl(new BitmapRep(renderer))
-{
-DOTRACE("Bitmap::Bitmap");
-  setAlignmentMode(Gmodes::CENTER_ON_CENTER);
-}
-
-Bitmap::~Bitmap()
-{
-DOTRACE("Bitmap::~Bitmap");
-  delete itsImpl;
-}
-
-IO::VersionId Bitmap::serialVersionId() const
-{
-DOTRACE("Bitmap::serialVersionId");
-  return BITMAP_SERIAL_VERSION_ID;
-}
-
-void Bitmap::readFrom(IO::Reader* reader)
-{
-DOTRACE("Bitmap::readFrom");
-
-  itsImpl->readFrom(reader);
-
-  reader->ensureReadVersionId("Bitmap", 2, "Try grsh0.8a4");
-
-  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
-}
-
-void Bitmap::writeTo(IO::Writer* writer) const
-{
-DOTRACE("Bitmap::writeTo");
-
-  itsImpl->writeTo(writer);
-
-  writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
-
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
-}
-
-/////////////
-// actions //
-/////////////
-
-void Bitmap::loadPbmFile(const char* filename)
-{
-DOTRACE("Bitmap::loadPbmFile");
-  itsImpl->loadPbmFile(filename);
-  this->sigNodeChanged.emit();
-}
-
-void Bitmap::queuePbmFile(const char* filename)
-  { itsImpl->queuePbmFile(filename); this->sigNodeChanged.emit(); }
-
-void Bitmap::savePbmFile(const char* filename) const
-  { itsImpl->savePbmFile(filename); this->sigNodeChanged.emit(); }
-
-void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
-  { itsImpl->grabScreenRect(rect); this->sigNodeChanged.emit(); }
-
-void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
-  { itsImpl->grabWorldRect(world_rect); this->sigNodeChanged.emit(); }
-
-void Bitmap::flipContrast()
-  { itsImpl->flipContrast(); this->sigNodeChanged.emit(); }
-
-void Bitmap::flipVertical()
-  { itsImpl->flipVertical(); this->sigNodeChanged.emit(); }
-
-void Bitmap::grRender(Gfx::Canvas& canvas) const
-{
-  itsImpl->render(canvas);
-}
-
-///////////////
-// accessors //
-///////////////
-
-Gfx::Rect<double> Bitmap::grGetBoundingBox(Gfx::Canvas& canvas) const
-  { return itsImpl->grGetBoundingBox(canvas); }
-
-Gfx::Vec2<int> Bitmap::size() const
-  { return itsImpl->size(); }
-
-Gfx::Vec2<double> Bitmap::getZoom() const
-  { return itsImpl->getZoom(); }
-
-bool Bitmap::getUsingZoom() const
-  { return itsImpl->getUsingZoom(); }
-
-bool Bitmap::isPurgeable() const
-  { return itsImpl->isPurgeable(); }
-
-//////////////////
-// manipulators //
-//////////////////
-
-void Bitmap::setZoom(Gfx::Vec2<double> zoom)
-  { itsImpl->setZoom(zoom); this->sigNodeChanged.emit(); }
-
-void Bitmap::setUsingZoom(bool val)
-  { itsImpl->setUsingZoom(val); this->sigNodeChanged.emit(); }
-
-void Bitmap::setPurgeable(bool val)
-  { itsImpl->setPurgeable(val); this->sigNodeChanged.emit(); }
-
-#if 1
-
-///////////////////////////////////////////////////////////////////////
-//
-// BitmapRep::Impl class definition
-//
-///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -387,152 +102,216 @@ DOTRACE("PbmUpdater::update");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// BitmapRep member definitions
+// BitmapImpl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer) :
-  pimpl(renderer)
+class BitmapImpl
 {
-DOTRACE("BitmapRep::BitmapRep");
+public:
+  BitmapImpl(shared_ptr<BmapRenderer> renderer) :
+    itsRenderer(renderer),
+    itsFilename(),
+    itsZoom(1.0, 1.0),
+    itsUsingZoom(false),
+    itsContrastFlip(false),
+    itsVerticalFlip(false),
+    itsPurgeable(false),
+    itsData()
+  {}
+
+  shared_ptr<BmapRenderer> itsRenderer;
+  fstring itsFilename;
+  Gfx::Vec2<double> itsZoom;
+  bool itsUsingZoom;
+  bool itsContrastFlip;
+  bool itsVerticalFlip;
+  bool itsPurgeable;
+  mutable Gfx::BmapData itsData;
+
+private:
+  BitmapImpl(const BitmapImpl&);
+  BitmapImpl& operator=(const BitmapImpl&);
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// Bitmap member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
+  GrObj(),
+  itsImpl(new BitmapImpl(renderer))
+{
+DOTRACE("Bitmap::Bitmap");
+  setAlignmentMode(Gmodes::CENTER_ON_CENTER);
 }
 
-BitmapRep::~BitmapRep()
+Bitmap::~Bitmap()
 {
-DOTRACE("BitmapRep::~BitmapRep");
+DOTRACE("Bitmap::~Bitmap");
+  delete itsImpl;
 }
 
-void BitmapRep::readFrom(IO::Reader* reader)
+IO::VersionId Bitmap::serialVersionId() const
 {
-DOTRACE("BitmapRep::readFrom");
+DOTRACE("Bitmap::serialVersionId");
+  return BITMAP_SERIAL_VERSION_ID;
+}
 
-  int svid = reader->ensureReadVersionId("BitmapRep", 2, "Try grsh0.8a7");
+void Bitmap::readFrom(IO::Reader* reader)
+{
+DOTRACE("Bitmap::readFrom");
 
-  reader->readValue("filename", pimpl.itsFilename);
-  reader->readValue("zoomX", pimpl.itsZoom.x());
-  reader->readValue("zoomY", pimpl.itsZoom.y());
-  reader->readValue("usingZoom", pimpl.itsUsingZoom);
-  reader->readValue("contrastFlip", pimpl.itsContrastFlip);
-  reader->readValue("verticalFlip", pimpl.itsVerticalFlip);
+  int svid = reader->ensureReadVersionId("Bitmap", 2, "Try grsh0.8a7");
+
+  reader->readValue("filename", itsImpl->itsFilename);
+  reader->readValue("zoomX", itsImpl->itsZoom.x());
+  reader->readValue("zoomY", itsImpl->itsZoom.y());
+  reader->readValue("usingZoom", itsImpl->itsUsingZoom);
+  reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
+  reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
 
   if (svid > 2)
-    reader->readValue("purgeable", pimpl.itsPurgeable);
+    reader->readValue("purgeable", itsImpl->itsPurgeable);
 
-  if ( pimpl.itsFilename.empty() )
+  if ( itsImpl->itsFilename.empty() )
     {
-      pimpl.itsData.clear();
+      itsImpl->itsData.clear();
     }
   else
     {
-      queuePbmFile(pimpl.itsFilename.c_str());
+      queuePbmFile(itsImpl->itsFilename.c_str());
     }
+
+  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void BitmapRep::writeTo(IO::Writer* writer) const
+void Bitmap::writeTo(IO::Writer* writer) const
 {
-DOTRACE("BitmapRep::writeTo");
+DOTRACE("Bitmap::writeTo");
 
-  writer->writeValue("filename", pimpl.itsFilename);
-  writer->writeValue("zoomX", pimpl.itsZoom.x());
-  writer->writeValue("zoomY", pimpl.itsZoom.y());
-  writer->writeValue("usingZoom", pimpl.itsUsingZoom);
-  writer->writeValue("contrastFlip", pimpl.itsContrastFlip);
-  writer->writeValue("verticalFlip", pimpl.itsVerticalFlip);
-  writer->writeValue("purgeable", pimpl.itsPurgeable);
+  writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 2,
+                               "Try grsh0.8a7");
+
+  writer->writeValue("filename", itsImpl->itsFilename);
+  writer->writeValue("zoomX", itsImpl->itsZoom.x());
+  writer->writeValue("zoomY", itsImpl->itsZoom.y());
+  writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
+  writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
+  writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
+  writer->writeValue("purgeable", itsImpl->itsPurgeable);
+
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
 /////////////
 // actions //
 /////////////
 
-void BitmapRep::loadPbmFile(const char* filename)
+void Bitmap::loadPbmFile(const char* filename)
 {
-DOTRACE("BitmapRep::loadPbmFile(const char*)");
+DOTRACE("Bitmap::loadPbmFile");
 
   queuePbmFile(filename);
 
-  pimpl.itsData.updateIfNeeded();
+  itsImpl->itsData.updateIfNeeded();
+
+  this->sigNodeChanged.emit();
 }
 
-void BitmapRep::queuePbmFile(const char* filename)
+void Bitmap::queuePbmFile(const char* filename)
 {
-DOTRACE("BitmapRep::queuePbmFile");
+DOTRACE("Bitmap::queuePbmFile");
 
-  shared_ptr<Gfx::BmapData::UpdateFunc> updater(
-    new PbmUpdater(filename, pimpl.itsFilename,
-                   pimpl.itsContrastFlip, pimpl.itsVerticalFlip));
+  shared_ptr<Gfx::BmapData::UpdateFunc> updater
+    (new PbmUpdater(filename,
+                    itsImpl->itsFilename,
+                    itsImpl->itsContrastFlip,
+                    itsImpl->itsVerticalFlip));
 
-  pimpl.itsData.queueUpdate(updater);
+  itsImpl->itsData.queueUpdate(updater);
+
+  this->sigNodeChanged.emit();
 }
 
-void BitmapRep::savePbmFile(const char* filename) const
+void Bitmap::savePbmFile(const char* filename) const
 {
-DOTRACE("BitmapRep::savePbmFile");
+DOTRACE("Bitmap::savePbmFile");
 
-  Pbm::save(filename, pimpl.itsData);
+  Pbm::save(filename, itsImpl->itsData);
 }
 
-void BitmapRep::grabScreenRect(const Gfx::Rect<int>& rect)
+void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
 {
-DOTRACE("BitmapRep::grabScreenRect");
+DOTRACE("Bitmap::grabScreenRect");
+
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-  canvas.grabPixels(rect, pimpl.itsData);
+  canvas.grabPixels(rect, itsImpl->itsData);
 
-  pimpl.itsFilename = "";
+  itsImpl->itsFilename = "";
 
-  pimpl.itsContrastFlip = false;
-  pimpl.itsVerticalFlip = false;
-  pimpl.itsZoom = defaultZoom;
+  itsImpl->itsContrastFlip = false;
+  itsImpl->itsVerticalFlip = false;
+  itsImpl->itsZoom = defaultZoom;
+
+  this->sigNodeChanged.emit();
 }
 
-void BitmapRep::grabWorldRect(const Gfx::Rect<double>& world_rect)
+void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
 {
-DOTRACE("BitmapRep::grabWorldRect");
+DOTRACE("Bitmap::grabWorldRect");
+
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
   Gfx::Rect<int> screen_rect = canvas.screenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
+
+  this->sigNodeChanged.emit();
 }
 
-void BitmapRep::flipContrast()
+void Bitmap::flipContrast()
 {
-DOTRACE("BitmapRep::flipContrast");
+DOTRACE("Bitmap::flipContrast");
 
-  // Toggle pimpl.itsContrastFlip so we keep track of whether the number of
+  // Toggle itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
-  pimpl.itsContrastFlip = !pimpl.itsContrastFlip;
+  itsImpl->itsContrastFlip = !(itsImpl->itsContrastFlip);
+  itsImpl->itsData.flipContrast();
 
-  pimpl.itsData.flipContrast();
+  this->sigNodeChanged.emit();
 }
 
-void BitmapRep::flipVertical()
+void Bitmap::flipVertical()
 {
-DOTRACE("BitmapRep::flipVertical");
+DOTRACE("Bitmap::flipVertical");
 
-  pimpl.itsVerticalFlip = !pimpl.itsVerticalFlip;
+  itsImpl->itsVerticalFlip = !(itsImpl->itsVerticalFlip);
+  itsImpl->itsData.flipVertical();
 
-  pimpl.itsData.flipVertical();
+  this->sigNodeChanged.emit();
 }
 
-void BitmapRep::render(Gfx::Canvas& canvas) const
+void Bitmap::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("BitmapRep::render");
+DOTRACE("Bitmap::grRender");
 
-  pimpl.itsRenderer->doRender(canvas,
-                                 pimpl.itsData,
+  itsImpl->itsRenderer->doRender(canvas,
+                                 itsImpl->itsData,
                                  Gfx::Vec2<double>(),
-                                 pimpl.getZoom());
+                                 getZoom());
 
-  if (pimpl.itsPurgeable)
+  if (isPurgeable())
     {
-      pimpl.itsData.clear();
+      itsImpl->itsData.clear();
 
       // This const_cast is OK because we aren't changing the observable
       // state; we're just re-queuing the current filename
-      const_cast<BitmapRep*>(this)->
-        queuePbmFile(pimpl.itsFilename.c_str());
+      const_cast<Bitmap*>(this)->
+        queuePbmFile(itsImpl->itsFilename.c_str());
     }
 }
 
@@ -540,14 +319,14 @@ DOTRACE("BitmapRep::render");
 // accessors //
 ///////////////
 
-Gfx::Rect<double> BitmapRep::grGetBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Rect<double> Bitmap::grGetBoundingBox(Gfx::Canvas& canvas) const
 {
-DOTRACE("BitmapRep::grGetBoundingBox");
+DOTRACE("Bitmap::grGetBoundingBox");
 
   // Get the corners in screen coordinates
 
   Gfx::Vec2<int> bottom_left = canvas.screenFromWorld(Gfx::Vec2<double>());
-  Gfx::Vec2<int> top_right = bottom_left + (size() * pimpl.getZoom());
+  Gfx::Vec2<int> top_right = bottom_left + (size() * getZoom());
 
   Gfx::Rect<double> bbox;
 
@@ -558,53 +337,30 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   return bbox;
 }
 
-Gfx::Vec2<int> BitmapRep::size() const
-{
-DOTRACE("BitmapRep::size");
-  return pimpl.itsData.extent();
-}
+Gfx::Vec2<int> Bitmap::size() const
+  { return itsImpl->itsData.extent(); }
 
-Gfx::Vec2<double> BitmapRep::getZoom() const
-{
-DOTRACE("BitmapRep::getZoom");
-  return pimpl.getZoom();
-}
+Gfx::Vec2<double> Bitmap::getZoom() const
+  { return itsImpl->itsUsingZoom ? itsImpl->itsZoom : defaultZoom; }
 
-bool BitmapRep::getUsingZoom() const
-{
-DOTRACE("BitmapRep::getUsingZoom");
-  return pimpl.itsUsingZoom;
-}
+bool Bitmap::getUsingZoom() const
+  { return itsImpl->itsUsingZoom; }
 
-bool BitmapRep::isPurgeable() const
-{
-DOTRACE("BitmapRep::isPurgeable");
-  return pimpl.itsPurgeable;
-}
+bool Bitmap::isPurgeable() const
+  { return itsImpl->itsPurgeable; }
 
 //////////////////
 // manipulators //
 //////////////////
 
-void BitmapRep::setZoom(Gfx::Vec2<double> zoom)
-{
-DOTRACE("BitmapRep::setZoomX");
-  pimpl.itsZoom = zoom;
-}
+void Bitmap::setZoom(Gfx::Vec2<double> zoom)
+  { itsImpl->itsZoom = zoom; this->sigNodeChanged.emit(); }
 
-void BitmapRep::setUsingZoom(bool val)
-{
-DOTRACE("BitmapRep::setUsingZoom");
-  pimpl.itsUsingZoom = val;
-}
+void Bitmap::setUsingZoom(bool val)
+  { itsImpl->itsUsingZoom = val; this->sigNodeChanged.emit(); }
 
-void BitmapRep::setPurgeable(bool val)
-{
-DOTRACE("BitmapRep::setPurgeable");
-  pimpl.itsPurgeable = val;
-}
-
-#endif
+void Bitmap::setPurgeable(bool val)
+  { itsImpl->itsPurgeable = val; this->sigNodeChanged.emit(); }
 
 static const char vcid_bitmap_cc[] = "$Header$";
 #endif // !BITMAP_CC_DEFINED
