@@ -3,7 +3,7 @@
 // response.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:30:04 2000
-// written: Thu Jun  1 13:56:05 2000
+// written: Fri Jul  7 15:23:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,10 @@
 class Response : public Value {
 public:
   static const int INVALID_VALUE = -1;
+  static const int ALWAYS_CORRECT = -2;
 
-  Response(int v = -1, int m = -1) : itsVal(v), itsMsec(m) {}
+  Response(int v = INVALID_VALUE, int m = -1, int c = ALWAYS_CORRECT) :
+	 itsVal(v), itsMsec(m), itsCorrectVal(c) {}
 
   virtual ~Response();
 
@@ -32,15 +34,20 @@ public:
 
   bool isValid() const { return (itsVal >= 0); }
 
+  bool isCorrect() const
+    { return (itsCorrectVal == ALWAYS_CORRECT) || (itsVal == itsCorrectVal); }
+
   int val() const { return itsVal; }
   int msec() const { return itsMsec; }
 
+  void setCorrectVal(int new_val) { itsCorrectVal = new_val; }
   void setVal(int new_val) { itsVal = new_val; }
   void setMsec(int new_val) { itsMsec = new_val; }
 
 private:
   int itsVal;
   int itsMsec;
+  int itsCorrectVal;
 };
 
 static const char vcid_response_h[] = "$Header$";

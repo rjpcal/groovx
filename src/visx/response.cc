@@ -3,7 +3,7 @@
 // response.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:33:17 2000
-// written: Thu Jun  1 13:56:27 2000
+// written: Fri Jul  7 15:22:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 const int Response::INVALID_VALUE;
+const int Response::ALWAYS_CORRECT;
 
 Response::~Response() {}
 
