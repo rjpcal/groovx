@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Mon Aug  5 13:16:39 2002
+// written: Mon Aug  5 19:02:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,13 @@
 
 #include "util/debug.h"
 #include "util/trace.h"
+
+namespace
+{
+  // For caching the latest subject of GlxWrapper::makeCurrent()
+  const GlxWrapper* currentGlxWrapper = 0;
+  Window currentWindow = 0;
+}
 
 void GlxWrapper::createContext(bool direct, GlxWrapper* share)
 {
@@ -110,7 +117,12 @@ void GlxWrapper::makeCurrent(Window win) const
 {
 DOTRACE("GlxWrapper::makeCurrent");
 
-  glXMakeCurrent(itsDisplay, win, itsContext);
+  if (currentGlxWrapper != this || currentWindow != win)
+    {
+      glXMakeCurrent(itsDisplay, win, itsContext);
+      currentGlxWrapper = this;
+      currentWindow = win;
+    }
 }
 
 bool GlxWrapper::isDoubleBuffered() const
