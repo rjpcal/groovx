@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Oct 27 16:02:21 2000
+// written: Mon Oct 30 11:40:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
 
-#include "ioptrlist.h"
 #include "timinghandler.h"
 #include "timinghdlr.h"
 #include "trialevent.h"
@@ -64,11 +63,10 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public Tcl::ListItemPkg<TimingHdlr, IoPtrList> {
+class ThTcl::ThPkg: public Tcl::ItemPkg<TimingHdlr> {
 public:
   ThPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<TimingHdlr, IoPtrList>(interp, IoPtrList::theList(),
-														  "Th", "$Revision$")
+	 Tcl::ItemPkg<TimingHdlr>(interp, "Th", "$Revision$")
   {
 	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
 										  TimingHdlr::IMMEDIATE));
@@ -98,11 +96,10 @@ namespace SimpleThTcl {
 }
 
 class SimpleThTcl::SimpleThPkg :
-  public Tcl::ListItemPkg<TimingHandler, IoPtrList> {
+  public Tcl::ItemPkg<TimingHandler> {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<TimingHandler, IoPtrList>(interp, IoPtrList::theList(),
-															  "SimpleTh", "$Revision$")
+	 Tcl::ItemPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
   {
 	 declareCAttrib("abortWait",  
 						 &TimingHandler::getAbortWait,
@@ -147,8 +144,7 @@ DOTRACE("Th_Init");
   Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
   Tcl::TclPkg* pkg3 =
-	 new Tcl::PtrListPkg<TimingHdlr>(interp, IoPtrList::theList(),
-												"ThList", "$Revision$");
+	 new Tcl::PtrListPkg<TimingHdlr>(interp, "ThList", "$Revision$");
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }

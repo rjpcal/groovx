@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Fri Oct 27 17:38:19 2000
+// written: Mon Oct 30 11:38:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,21 +11,12 @@
 #ifndef LISTITEMPKG_H_DEFINED
 #define LISTITEMPKG_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
-#include "system/demangle.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
 #include "tcl/tclitempkg.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "iditem.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
-#include <typeinfo>
-#define TYPEINFO_DEFINED
+#include "io/iditem.h"
 #endif
 
 namespace Tcl {
@@ -33,108 +24,40 @@ namespace Tcl {
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * TypeCmd
+ * IsCmd
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class TypeCmd : public TclItemCmd<C> {
+class IsCmd : public TclItemCmd<C> {
 public:
-  TypeCmd(TclItemPkg* pkg, const char* cmd_name) :
+  IsCmd(TclItemPkg* pkg, const char* cmd_name) :
 	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
 protected:
   virtual void invoke() {
-	 C* p = TclItemCmd<C>::getItem();
-	 returnCstring(demangle_cstr(typeid(*p).name()));
+	 int id = TclCmd::getIntFromArg(1);
+	 IdItem<IO::IoObject> item(id);
+	 returnBool(dynamic_cast<C*>(item.get()) != 0);
   }
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * RefCountCmd
+ * ItemPkg
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class RefCountCmd : public TclItemCmd<C> {
+class ItemPkg : public CTclIoItemPkg<C> {
 public:
-  RefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 C* p = TclItemCmd<C>::getItem();
-	 returnInt(p->refCount());
-  }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * IncrRefCountCmd
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C>
-class IncrRefCountCmd : public TclItemCmd<C> {
-public:
-  IncrRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 C* p = TclItemCmd<C>::getItem();
-	 p->incrRefCount2();
-  }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * DecrRefCountCmd
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C>
-class DecrRefCountCmd : public TclItemCmd<C> {
-public:
-  DecrRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 C* p = TclItemCmd<C>::getItem();
-	 p->decrRefCount2();
-  }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * AbstractListItemPkg
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C, class List>
-class AbstractListItemPkg : public CTclIoItemPkg<C> {
-public:
-  AbstractListItemPkg(Tcl_Interp* interp, List& aList,
-							 const char* name, const char* version) :
-	 CTclIoItemPkg<C>(interp, name, version, 1),
-	 itsList(aList)
+  ItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
+	 CTclIoItemPkg<C>(interp, name, version, 1)
   {
-  	 addCommand( new TypeCmd<C>(this, TclPkg::makePkgCmdName("type")) );
-	 addCommand( new RefCountCmd<C>(this, TclPkg::makePkgCmdName("refCount")));
-	 addCommand( new IncrRefCountCmd<C>(this,
-                        TclPkg::makePkgCmdName("incrRefCount")));
-	 addCommand( new DecrRefCountCmd<C>(this,
-								TclPkg::makePkgCmdName("decrRefCount")));
+	 addCommand( new IsCmd<C>(this, TclPkg::makePkgCmdName("is")));
   }
-
-  List& theList() { return itsList; }
 
   virtual C* getCItemFromId(int id) {
 	 IdItem<C> item(id);
@@ -146,64 +69,7 @@ public:
   virtual IO::IoObject& getIoFromId(int id) {
 	 return dynamic_cast<IO::IoObject&>( *(getCItemFromId(id)) );
   }
-
-private:
-  List& itsList;
 };
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * ListItemPkg is a subclass of AbstractListItemPkg for concrete list
- * items.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C, class List>
-class ListItemPkg : public AbstractListItemPkg<C, List> {
-public:
-  ListItemPkg(Tcl_Interp* interp, List& aList,
-				  const char* name, const char* version,
-				  const char* creator_cmd_name = 0);
-};
-
-/**
- *
- * DefaultCreatorCmd
- *
- **/
-
-template <class C, class List>
-class DefaultCreatorCmd : public TclCmd {
-public:
-  DefaultCreatorCmd(ListItemPkg<C, List>* pkg, const char* cmd_name) :
-	 TclCmd(pkg->interp(), cmd_name, (char*) 0 /* usage */, 1, 1),
-	 itsPkg(pkg) {}
-protected:
-  virtual void invoke() {
-	 C* newObject = C::make();
-	 typedef IdItem<C> ItemType;
-	 ItemType item(newObject, ItemType::Insert());
-	 returnInt(item.id());
-  }
-private:
-  DefaultCreatorCmd(const DefaultCreatorCmd&);
-  DefaultCreatorCmd& operator=(const DefaultCreatorCmd&);
-
-  ListItemPkg<C, List>* itsPkg;
-};
-
-template <class C, class List>
-ListItemPkg<C, List>::ListItemPkg(Tcl_Interp* interp, List& aList,
-								 const char* name, const char* version,
-								 const char* creator_cmd_name) :
-  AbstractListItemPkg<C, List>(interp, aList, name, version)
-{
-  addCommand( new DefaultCreatorCmd<C, List>(
-						  this, TclPkg::makePkgCmdName(
-									 creator_cmd_name ? creator_cmd_name : name)) );
-}
 
 } // end namespace Tcl
 
