@@ -36,7 +36,7 @@ public:
 
   // Accessors
   void getRectLTRB(V& L, V& T, V& R, V& B) const
-        { L = l; T = t; R = R; B = b; }
+        { L = l; T = t; R = r; B = b; }
   void getRectLRBT(V& L, V& R, V& B, V& T) const
         { L = l; R = r; B = b; T = t; }
 
