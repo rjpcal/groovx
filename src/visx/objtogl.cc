@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Dec  5 17:51:41 2000
+// written: Fri Dec  8 18:59:48 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -20,6 +20,8 @@
 
 #include "toglconfig.h"
 #include "trialbase.h"
+
+#include "gx/gxnode.h"
 
 #include "io/io.h"
 #include "io/iditem.h"
@@ -60,6 +62,7 @@ namespace ObjTogl {
   class InitedCmd;
   class LoadFontCmd;
   class LoadFontiCmd;
+  class SeeCmd;
   class SetColorCmd;
   class SetCurTrialCmd;
   class SetMinRectCmd;
@@ -341,6 +344,33 @@ protected:
   }
 };
 
+//--------------------------------------------------------------------
+//
+// ObjTogl::SeeCmd --
+//
+// Make a specified GxNode the widget's current drawable, and draw it
+// in the OpenGL window. The widget's visibility is set to true.
+//
+//--------------------------------------------------------------------
+
+class ObjTogl::SeeCmd : public Tcl::TclItemCmd<ToglConfig> {
+public:
+  SeeCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "item_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+  DOTRACE("SeeCmd::invoke");
+	 int id = getIntFromArg(1);
+
+	 GWT::Widget* widg = getItem();
+
+	 widg->setDrawable(IdItem<GxNode>(id));
+	 widg->setVisibility(true);
+
+	 widg->display();
+  }
+};
+
 //---------------------------------------------------------------------
 //
 // ObjTogl::SetColorCmd --
@@ -479,6 +509,7 @@ public:
     addCommand( new InitedCmd     (interp, "Togl::inited") );
     addCommand( new LoadFontCmd   (this, "Togl::loadFont") );
     addCommand( new LoadFontiCmd  (this, "Togl::loadFonti") );
+	 addCommand( new SeeCmd        (this, "Togl::see") );
     addCommand( new SetColorCmd   (this, "Togl::setColor") );
 	 addCommand( new SetCurTrialCmd(this, "Togl::setCurTrial") );
     addCommand( new SetMinRectCmd (this, "Togl::setMinRect") );
@@ -504,6 +535,7 @@ public:
 
 	 Tcl_Eval(interp,
 				 "proc clearscreen {} { Togl::clearscreen }\n"
+				 "proc see {id} { Togl::see $id }\n"
 				 "proc show {id} { Togl::show $id }\n"
 				 "proc undraw {} { Togl::undraw }\n"
 				 "proc redraw {} { Togl::refresh }\n");
