@@ -143,7 +143,9 @@ itcl::class Playlist {
 	    }
 
 	    if { ![file exists $itsListFile] } {
-		get_dir_contents $fname $doRecurse itsList
+		set newlist [list]
+		get_dir_contents $fname $doRecurse newlist
+		set itsList $newlist
 		$this save
 	    }
 
