@@ -30,16 +30,14 @@
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
 
-#include "visx/timinghandler.h"
-#include "visx/timinghdlr.h"
-#include "visx/trialevent.h"
-
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
-#include <typeinfo>
+#include "visx/timinghandler.h"
+#include "visx/timinghdlr.h"
+#include "visx/trialevent.h"
 
 #include "util/trace.h"
 
@@ -50,19 +48,6 @@ namespace
   {
     return th->addEventByName(event_type, time_point, msec);
   }
-
-  template <class EventType>
-  Tcl::Pkg* initEventType(Tcl_Interp* interp)
-  {
-    Util::ObjFactory::theOne().registerCreatorFunc(&EventType::make);
-
-    Tcl::Pkg* pkg = new Tcl::Pkg(interp,
-                                 demangle_cstr(typeid(EventType).name()),
-                                 "$Revision$");
-    pkg->inheritPkg("TrialEvent");
-
-    return pkg;
-  }
 }
 
 extern "C"
@@ -70,10 +55,8 @@ int Timinghdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Timinghdlr_Init");
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
-
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHdlr", "$Revision$");
+  Tcl::defCreator<TimingHdlr>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg);
 
@@ -110,6 +93,7 @@ int Timinghandler_Init(Tcl_Interp* interp)
 DOTRACE("Timinghandler_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHandler", "$Revision$");
+  Tcl::defCreator<TimingHandler>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHandler>(pkg);
 
@@ -127,46 +111,6 @@ DOTRACE("Timinghandler_Init");
                  &TimingHandler::setTimeout);
 
   pkg->namespaceAlias("SimpleTh");
-
-  return pkg->initStatus();
-}
-
-extern "C"
-int Trialevent_Init(Tcl_Interp* interp)
-{
-DOTRACE("Trialevent_Init");
-
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
-  pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<TrialEvent>(pkg);
-
-  pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
-
-  initEventType<AbortTrialEvent>(interp);
-  initEventType<DrawEvent>(interp);
-  initEventType<RenderEvent>(interp);
-  initEventType<UndrawEvent>(interp);
-  initEventType<EndTrialEvent>(interp);
-  initEventType<NextNodeEvent>(interp);
-  initEventType<AllowResponsesEvent>(interp);
-  initEventType<DenyResponsesEvent>(interp);
-  initEventType<SwapBuffersEvent>(interp);
-  initEventType<RenderBackEvent>(interp);
-  initEventType<RenderFrontEvent>(interp);
-  initEventType<ClearBufferEvent>(interp);
-
-  return pkg->initStatus();
-}
-
-extern "C"
-int Genericevent_Init(Tcl_Interp* interp)
-{
-DOTRACE("Genericevent_Init");
-
-  Tcl::Pkg* pkg = initEventType<GenericEvent>(interp);
-
-  pkg->defGetter("callback", &GenericEvent::getCallback);
-  pkg->defSetter("callback", &GenericEvent::setCallback);
 
   return pkg->initStatus();
 }

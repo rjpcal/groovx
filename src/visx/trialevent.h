@@ -35,10 +35,16 @@
 
 #include "tcl/tcltimer.h"
 
+#include "util/minivec.h"
 #include "util/stopwatch.h"
 #include "util/ref.h"
 
 class Trial;
+
+namespace Util
+{
+  template <class T> class FwdIter;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -130,36 +136,48 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
+//  ###################################################################
+//  ===================================================================
+
 /// TrialEvent subclass to call Trial::trAbort().
 class AbortTrialEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   AbortTrialEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~AbortTrialEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static AbortTrialEvent* make() { return new AbortTrialEvent; }
-  /// Virtual destructor.
-  virtual ~AbortTrialEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
 
-/** TrialEvent subclass to call Trial::installSelf() and
-    Widget::fullRender(). */
+//  ###################################################################
+//  ===================================================================
+
+/// TrialEvent subclass to call Trial::installSelf() and Widget::fullRender().
 class DrawEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   DrawEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~DrawEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static DrawEvent* make() { return new DrawEvent; }
-  /// Virtual destructor.
-  virtual ~DrawEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Widget::render().
 class RenderEvent : public TrialEvent
@@ -167,14 +185,19 @@ class RenderEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~RenderEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static RenderEvent* make() { return new RenderEvent; }
-  /// Virtual destructor.
-  virtual ~RenderEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Trial::trEndTrial().
 class EndTrialEvent : public TrialEvent
@@ -182,14 +205,19 @@ class EndTrialEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   EndTrialEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~EndTrialEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static EndTrialEvent* make() { return new EndTrialEvent; }
-  /// Virtual destructor.
-  virtual ~EndTrialEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Trial::trNextNode().
 class NextNodeEvent : public TrialEvent
@@ -197,14 +225,19 @@ class NextNodeEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   NextNodeEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~NextNodeEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static NextNodeEvent* make() { return new NextNodeEvent; }
-  /// Virtual destructor.
-  virtual ~NextNodeEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Trial::trAllowResponses().
 class AllowResponsesEvent : public TrialEvent
@@ -212,14 +245,19 @@ class AllowResponsesEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   AllowResponsesEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~AllowResponsesEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static AllowResponsesEvent* make() { return new AllowResponsesEvent; }
-  /// Virtual destructor.
-  virtual ~AllowResponsesEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Trial::trDenyResponses().
 class DenyResponsesEvent : public TrialEvent
@@ -227,14 +265,19 @@ class DenyResponsesEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   DenyResponsesEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~DenyResponsesEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static DenyResponsesEvent* make() { return new DenyResponsesEvent; }
-  /// Virtual destructor.
-  virtual ~DenyResponsesEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Widget::undraw().
 class UndrawEvent : public TrialEvent
@@ -242,14 +285,19 @@ class UndrawEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   UndrawEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~UndrawEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static UndrawEvent* make() { return new UndrawEvent; }
-  /// Virtual destructor.
-  virtual ~UndrawEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Canvas::drawOnBackBuffer().
 class RenderBackEvent : public TrialEvent
@@ -257,14 +305,19 @@ class RenderBackEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderBackEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~RenderBackEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static RenderBackEvent* make() { return new RenderBackEvent; }
-  /// Virtual destructor.
-  virtual ~RenderBackEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
 class RenderFrontEvent : public TrialEvent
@@ -272,14 +325,19 @@ class RenderFrontEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderFrontEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~RenderFrontEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static RenderFrontEvent* make() { return new RenderFrontEvent; }
-  /// Virtual destructor.
-  virtual ~RenderFrontEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Widget::swapBuffers().
 class SwapBuffersEvent : public TrialEvent
@@ -287,14 +345,19 @@ class SwapBuffersEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   SwapBuffersEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~SwapBuffersEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static SwapBuffersEvent* make() { return new SwapBuffersEvent; }
-  /// Virtual destructor.
-  virtual ~SwapBuffersEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
 class ClearBufferEvent : public TrialEvent
@@ -302,28 +365,33 @@ class ClearBufferEvent : public TrialEvent
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   ClearBufferEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~ClearBufferEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
 public:
   /// Default creator.
   static ClearBufferEvent* make() { return new ClearBufferEvent; }
-  /// Virtual destructor.
-  virtual ~ClearBufferEvent() throw();
-protected:
-  virtual void invoke(Trial& trial);
 };
+
+//  ###################################################################
+//  ===================================================================
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
 class GenericEvent : public TrialEvent
 {
-private:
-  Util::Ref<Tcl::ProcWrapper> itsCallback;
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   GenericEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~GenericEvent() throw();
+
 public:
   /// Default creator.
   static GenericEvent* make() { return new GenericEvent; }
-  /// Virtual destructor.
-  virtual ~GenericEvent() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -336,6 +404,51 @@ public:
 
 protected:
   virtual void invoke(Trial& trial);
+
+private:
+  Util::Ref<Tcl::ProcWrapper> itsCallback;
+};
+
+//  ###################################################################
+//  ===================================================================
+
+/// MultiEvent allows multiple events to be linked together in sequence.
+/** Compared with just scheduling multiple individual events, the advantage
+    of MultiEvent is that it does not require a trip back into the event
+    loop in between events. This allows for greater timing precision when
+    events must be executed in precise sequence. */
+class MultiEvent : public TrialEvent
+{
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  MultiEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~MultiEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
+public:
+  /// Default creator.
+  static MultiEvent* make() { return new MultiEvent; }
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
+
+  /// Returns an iterator to all the events in the sequence.
+  Util::FwdIter<const Util::Ref<TrialEvent> > getEvents() const;
+
+  /// Add a new event and return its index in the sequence.
+  unsigned int addEvent(Util::Ref<TrialEvent> event);
+
+  /// Erase the event at the given index.
+  void eraseEventAt(unsigned int index);
+
+  /// Erase all events in the sequence.
+  void clearEvents();
+
+private:
+  minivec<Util::Ref<TrialEvent> > itsEvents;
 };
 
 static const char vcid_trialevent_h[] = "$Header$";

@@ -37,12 +37,15 @@
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
+#include "io/readutils.h"
 #include "io/writer.h"
+#include "io/writeutils.h"
 
 #include "tcl/tclmain.h"
 
 #include "util/algo.h"
 #include "util/error.h"
+#include "util/iter.h"
 #include "util/log.h"
 #include "util/ref.h"
 
@@ -350,6 +353,74 @@ void GenericEvent::setCallback(const fstring& script)
 void GenericEvent::invoke(Trial& /*trial*/)
 {
   itsCallback->invoke("");
+}
+
+MultiEvent::MultiEvent(unsigned int msec) :
+  TrialEvent(msec),
+  itsEvents()
+{}
+
+MultiEvent::~MultiEvent() throw() {}
+
+void MultiEvent::invoke(Trial& trial)
+{
+  for (unsigned int i = 0; i < itsEvents.size(); ++i)
+    {
+      itsEvents[i]->setDelay(0);
+      itsEvents[i]->schedule(trial);
+    }
+}
+
+void MultiEvent::readFrom(IO::Reader* reader)
+{
+  minivec<Util::Ref<TrialEvent> > newEvents;
+
+  IO::ReadUtils::readObjectSeq<TrialEvent>
+    (reader, "events", std::back_inserter(newEvents));
+
+  itsEvents.swap(newEvents);
+
+  reader->readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+}
+
+void MultiEvent::writeTo(IO::Writer* writer) const
+{
+  IO::WriteUtils::writeObjectSeq(writer, "events",
+                                 itsEvents.begin(),
+                                 itsEvents.end());
+
+  writer->writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+}
+
+Util::FwdIter<const Util::Ref<TrialEvent> > MultiEvent::getEvents() const
+{
+DOTRACE("MultiEvent::getEvents");
+
+  return Util::FwdIter<const Util::Ref<TrialEvent> >
+    (itsEvents.begin(), itsEvents.end());
+}
+
+unsigned int MultiEvent::addEvent(Util::Ref<TrialEvent> event)
+{
+DOTRACE("MultiEvent::addEvent");
+  itsEvents.push_back(event);
+  Assert(itsEvents.size() >= 1);
+  return itsEvents.size() - 1;
+}
+
+void MultiEvent::eraseEventAt(unsigned int index)
+{
+DOTRACE("MultiEvent::eraseEventAt");
+  if (index >= itsEvents.size())
+    throw Util::Error("index out of bounds");
+
+  itsEvents.erase(itsEvents.begin() + index);
+}
+
+void MultiEvent::clearEvents()
+{
+DOTRACE("MultiEvent::clearEvents");
+  itsEvents.clear();
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";

@@ -97,6 +97,7 @@ extern "C"
   Tcl_PackageInitProc Maskhatch_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
+  Tcl_PackageInitProc Multievent_Init;
   Tcl_PackageInitProc Nullresponsehdlr_Init;
   Tcl_PackageInitProc Obj_Init;
   Tcl_PackageInitProc Objdb_Init;
@@ -145,7 +146,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Fixpt",               Fixpt_Init,               "2.0" },
     { "Gabor",               Gabor_Init,               "1.0" },
     { "Gaborarray",          Gaborarray_Init,          "1.0" },
-    { "Genericevent",        Genericevent_Init,        "3.0" },
+    { "Genericevent",        Genericevent_Init,        "1.0" },
     { "Gl",                  Gl_Init,                  "1.0" },
     { "Gtrace",              Gtrace_Init,              "1.0" },
     { "Gxcolor",             Gxcolor_Init,             "1.0" },
@@ -176,6 +177,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Maskhatch",           Maskhatch_Init,           "1.0" },
     { "Misc",                Misc_Init,                "1.0" },
     { "Morphyface",          Morphyface_Init,          "1.0" },
+    { "Multievent",          Multievent_Init,          "1.0" },
     { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "3.0" },
     { "Obj",                 Obj_Init,                 "1.0" },
     { "Objdb",               Objdb_Init,               "1.0" },
@@ -188,7 +190,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Tlist",               Tlist_Init,               "3.0" },
     { "Toglet",              Toglet_Init,              "1.0" },
     { "Trial",               Trial_Init,               "1.0" },
-    { "Trialevent",          Trialevent_Init,          "3.0" },
+    { "Trialevent",          Trialevent_Init,          "1.0" },
   };
 
 } // end anonymous namespace
