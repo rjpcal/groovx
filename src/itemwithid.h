@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Mon Oct 23 11:43:32 2000
+// written: Mon Oct 23 13:10:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,6 +94,10 @@ public:
 
   NullableItemWithId(const ItemWithId<T> other) :
 	 itsHandle(other.handle()), itsId(other.id()) {}
+
+  // These will cause the item to be inserted into the relevant list.
+  NullableItemWithId(T* master);
+  NullableItemWithId(PtrHandle<T> item);
 
   // Default destructor, copy constructor, operator=() are fine
 
