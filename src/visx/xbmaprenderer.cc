@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Dec  1 17:51:39 1999
+// written: Wed Dec  1 21:11:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "xbmaprenderer.h"
 
+#include <tk.h>
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -21,54 +22,72 @@
 #include "canvas.h"
 #include "error.h"
 #include "point.h"
-#include "toglconfig.h"
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
+class XBmapRendererError : public ErrorWithMsg {
+public:
+  XBmapRendererError(const string& msg = "") : ErrorWithMsg(msg) {}
+};
+
 namespace {
-  bool class_inited = false;
+  bool x11_ready = false;
 
   GC gfx_context_white, gfx_context_black;
   Display* display;
   Window win;
   int screen;
   Visual* visual;
+
+  Tk_Window theTkWin = 0;
+
+  void setupX11Stuff() {
+  DOTRACE("{xbmaprenderer.cc}::setupX11Stuff");
+	 if (x11_ready) return;
+
+    if (theTkWin == 0)
+		throw XBmapRendererError(
+          "must call XBitmap::initClass before using an XBmapRenderer");
+
+	 if (!Tk_IsMapped(reinterpret_cast<Tk_FakeWin *>(theTkWin)))
+		throw XBmapRendererError(
+          "the main window must be mapped before using an XBmapRenderer");
+
+	 display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(theTkWin));
+	 win = Tk_WindowId(reinterpret_cast<Tk_FakeWin *>(theTkWin));
+	 screen = Tk_ScreenNumber(reinterpret_cast<Tk_FakeWin *>(theTkWin));
+
+	 XGCValues gc_values;
+	 gc_values.foreground = XWhitePixel(display,screen);
+	 gc_values.background = XBlackPixel(display,screen);
+	 
+	 unsigned long gc_valuemask = GCForeground | GCBackground;
+
+	 gfx_context_white = XCreateGC(display,win,gc_valuemask,&gc_values);
+
+	 gc_values.foreground = XBlackPixel(display,screen);
+	 gc_values.background = XWhitePixel(display,screen);
+
+	 gfx_context_black = XCreateGC(display,win,gc_valuemask,&gc_values);
+
+	 XWindowAttributes xwa;
+	 Status status = XGetWindowAttributes(display, win, &xwa);
+	 visual = xwa.visual;
+
+	 x11_ready = true;
+  }
 }
 
-void XBmapRenderer::initClass(const ToglConfig* config) {
+void XBmapRenderer::initClass(Tk_Window tkwin) {
 DOTRACE("XBmapRenderer::initClass");
-  if (class_inited) return;
-
-  display = config->getX11Display();
-  win = config->getX11Window();
-  screen = config->getX11ScreenNumber();
-
-  XGCValues gc_values;
-  gc_values.foreground = XWhitePixel(display,screen);
-  gc_values.background = XBlackPixel(display,screen);
-	 
-  unsigned long gc_valuemask = GCForeground | GCBackground;
-
-  gfx_context_white = XCreateGC(display,win,gc_valuemask,&gc_values);
-
-  gc_values.foreground = XBlackPixel(display,screen);
-  gc_values.background = XWhitePixel(display,screen);
-
-  gfx_context_black = XCreateGC(display,win,gc_valuemask,&gc_values);
-
-  XWindowAttributes xwa;
-  Status status = XGetWindowAttributes(display, win, &xwa);
-  visual = xwa.visual;
-
-  class_inited = true;
+  theTkWin = tkwin;
 }
 
 XBmapRenderer::XBmapRenderer() {
-  if (!class_inited) throw ErrorWithMsg("XBitmap::initClass not yet called");
-
   itsImage = 0;
 }
 
@@ -87,12 +106,17 @@ void XBmapRenderer::doRender(unsigned char* /* bytes */,
 									  double /* zoom_y */) const {
 DOTRACE("XBmapRenderer::doRender");
 
+  setupX11Stuff();
+
   // Check if we have an image to display 
   if (itsImage == NULL) return; 
 
   // Calculate GL window coordinates of lower left corner of image
   Point<int> screen_pos =
 	 Canvas::theCanvas().getScreenFromWorld(Point<double>(x_pos, y_pos));
+
+  DebugEval(x_pos); DebugEval(y_pos);
+  DebugEval(screen_pos.x()); DebugEvalNL(screen_pos.y());
 
   // Calculate GL window coordinates for upper left corner of image
   screen_pos.y() += height;
@@ -128,6 +152,10 @@ void XBmapRenderer::bytesChangeHook(unsigned char* theBytes,
 												int height,
 												int bits_per_pixel,
 												int byte_alignment) {
+DOTRACE("XBmapRenderer::bytesChangeHook");
+
+  setupX11Stuff();
+
   if (itsImage) {
 	 XFree(itsImage);
 	 itsImage = 0;
