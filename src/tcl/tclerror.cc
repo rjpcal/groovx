@@ -3,7 +3,7 @@
 // tclerror.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:13 1999
-// written: Wed Mar 15 10:44:27 2000
+// written: Wed May 31 18:50:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@ TclError::TclError(const char* msg) :
 {
 DOTRACE("TclError::TclError");
 }
+
+TclError::~TclError() {}
 
 }
 

@@ -3,7 +3,7 @@
 // tclerror.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:26 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Wed May 31 18:50:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@ class Tcl::TclError : public ErrorWithMsg {
 public:
   TclError();
   TclError(const char* msg);
+  virtual ~TclError();
 };
 
 static const char vcid_tclerror_h[] = "$Header$";

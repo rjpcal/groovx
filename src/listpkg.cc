@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Wed May 17 14:03:46 2000
+// written: Wed May 31 18:46:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,6 +96,8 @@ DOTRACE("Tcl::IoPtrListPkg::IoPtrListPkg");
   addCommand( new ListItemRemoveCmd(this,
 												TclPkg::makePkgCmdName("remove")) );
 }	 
+
+Tcl::IoPtrListPkg::~IoPtrListPkg() {}
 
 IO::IoObject& Tcl::IoPtrListPkg::getIoFromId(int) {
 DOTRACE("Tcl::IoPtrListPkg::getIoFromId");

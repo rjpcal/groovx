@@ -3,7 +3,7 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Thu Mar 30 08:29:17 2000
+// written: Wed May 31 18:46:42 2000
 // $Id$
 //
 // This file defines a TclPkg to be used with IoPtrList's.
@@ -35,6 +35,8 @@ class Tcl::IoPtrListPkg : public Tcl::CTclIoItemPkg<IoPtrList> {
 public:
   IoPtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
 					const char* pkg_name, const char* version);
+
+  virtual ~IoPtrListPkg();
 
   virtual IO::IoObject& getIoFromId(int);
   virtual IoPtrList* getCItemFromId(int);

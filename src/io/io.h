@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Mar 30 12:15:58 2000
+// written: Wed May 31 18:52:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,6 +188,8 @@ public:
   IoError(const char* message);
   /// Construct, and call \c setMsg(typeInfo)
   IoError(const type_info& typeInfo);
+  /// Virtual destructor
+  virtual ~IoError();
 protected:
   /// Change the message associated with the exception to \a newMessage
   virtual void setMsg(const char* newMessage);
@@ -208,6 +210,8 @@ public:
   InputError(const char* str);
   ///
   InputError(const type_info& ti) { setMsg(ti); }
+  /// Virtual destructor
+  virtual ~InputError();
 };
 
 /**
@@ -223,6 +227,8 @@ public:
   OutputError(const char* str);
   ///
   OutputError(const type_info& ti) { setMsg(ti); }
+  /// Virtual destructor
+  virtual ~OutputError();
 };
 
 /**
@@ -240,6 +246,8 @@ public:
   LogicError(const char* str);
   ///
   LogicError(const type_info& ti) { setMsg(ti); }
+  /// Virtual destructor
+  virtual ~LogicError();
 };
 
 /**
@@ -256,6 +264,8 @@ public:
   ValueError(const char* str);
   ///
   ValueError(const type_info& ti) { setMsg(ti); }
+  /// Virtual destructor
+  virtual ~ValueError();
 };
 
 /**
@@ -270,6 +280,8 @@ public:
   FilenameError() : IoError() {}
   ///
   FilenameError(const char* filename);
+  /// Virtual destructor
+  virtual ~FilenameError();
 };
 
 static const char vcid_io_h[] = "$Header$";

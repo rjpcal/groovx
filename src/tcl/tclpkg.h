@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed May 31 00:31:25 2000
+// written: Wed May 31 18:45:33 2000
 // $Id$
 //
 //
@@ -184,9 +184,9 @@ namespace Tcl {
 class TclItemPkg : public TclItemPkgBase {
 public:
   TclItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-				 int item_argn=1) :
-	 TclItemPkgBase(interp, name, version), 
-	 itsItemArgn(item_argn) {}
+				 int item_argn=1);
+
+  virtual ~TclItemPkg();
 
   virtual void* getItemFromId(int id) = 0;
 
@@ -228,6 +228,8 @@ class TclIoItemPkg : public TclItemPkg {
 public:
   TclIoItemPkg(Tcl_Interp* interp, const char* name, const char* version,
 					int item_argn=1);
+
+  virtual ~TclIoItemPkg();
 
   virtual IO::IoObject& getIoFromId(int id) = 0;
 };
@@ -386,6 +388,8 @@ private:
 public:
   VecPropertyCmdBase(TclItemPkg* pkg, const char* property_name);
 
+  virtual ~VecPropertyCmdBase();
+
 protected:
   virtual const Value& getValFromItemId(int id) = 0;
   virtual void setItemIdToVal(int id, const Value& value) = 0;
@@ -439,6 +443,8 @@ private:
 
 public:
   PropertiesCmdBase(Tcl_Interp* interp, const char* cmd_name);
+
+  virtual ~PropertiesCmdBase();
 
 protected:
   virtual unsigned int numInfos() = 0;

@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu Mar 30 12:29:20 2000
+// written: Wed May 31 18:53:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -201,6 +201,8 @@ DOTRACE("IO::IoError::IoError");
   appendMsg(demangle_cstr(ti.name()));
 }
 
+IO::IoError::~IoError() {}
+
 void IO::IoError::setMsg(const char* str) {
 DOTRACE("IO::IoError::setMsg(const char*)");
   ErrorWithMsg::setMsg(demangle_cstr(typeid(*this).name()));
@@ -218,25 +220,35 @@ DOTRACE("IO::InputError::InputError");
   setMsg(str);
 }
 
+IO::InputError::~InputError() {}
+
 IO::OutputError::OutputError(const char* str) {
 DOTRACE("IO::OutputError::OutputError");
   setMsg(str);
 }
+
+IO::OutputError::~OutputError() {}
 
 IO::LogicError::LogicError(const char* str) {
 DOTRACE("IO::LogicError::LogicError");
   setMsg(str);
 }
 
+IO::LogicError::~LogicError() {}
+
 IO::ValueError::ValueError(const char* str) {
 DOTRACE("IO::ValueError::ValueError");
   setMsg(str);
 }
 
+IO::ValueError::~ValueError() {}
+
 IO::FilenameError::FilenameError(const char* str) {
 DOTRACE("IO::FilenameError::FilenameError");
   setMsg(str);
 }
+
+IO::FilenameError::~FilenameError() {}
 
 static const char vcid_io_cc[] = "$Header$";
 #endif // !IO_CC_DEFINED
