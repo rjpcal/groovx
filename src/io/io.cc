@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Oct 12 15:16:52 1999
+// written: Wed Oct 13 11:05:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include <typeinfo>
 #include <strstream.h>
 #include <vector>
+
+#include "demangle.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -134,25 +136,27 @@ DOTRACE("IoError::IoError");
 }
 
 IoError::IoError(const string& str) :
-  ErrorWithMsg(string(typeid(*this).name()) + ": " + str)
+  ErrorWithMsg(demangle(typeid(*this).name()) + ": " + str)
 {
 DOTRACE("IoError::IoError(const string&)");
 }
 
 IoError::IoError(const type_info& ti) :
-  ErrorWithMsg(string(typeid(*this).name()) + ": " + ti.name())
+  ErrorWithMsg(demangle(typeid(*this).name()) + ": " +
+					demangle(ti.name()))
 {
 DOTRACE("IoError::IoError(const type_info&)");
 }
 
 void IoError::setMsg(const string& str) {
 DOTRACE("IoError::setMsg(const string&)");
-  ErrorWithMsg::setMsg(string(typeid(*this).name()) + ": " + str);
+  ErrorWithMsg::setMsg(demangle(typeid(*this).name()) + ": " + str);
 }
 
 void IoError::setMsg(const type_info& ti) {
 DOTRACE("IoError::setMsg(const type_info&)");
-  ErrorWithMsg::setMsg(string(typeid(*this).name()) + ": " + ti.name());
+  ErrorWithMsg::setMsg(demangle(typeid(*this).name()) + ": " +
+							  demangle(ti.name()));
 }
 
 static const char vcid_io_cc[] = "$Header$";
