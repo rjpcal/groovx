@@ -40,12 +40,6 @@
 #include <map>
 #include <tcl.h>
 
-#define TRACE_USE_COUNT
-
-#ifdef TRACE_USE_COUNT
-#  include <fstream>
-#endif
-
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
@@ -82,8 +76,9 @@ namespace
     const fstring itsCmdName;
     Tcl_Command itsCmdToken;
     List itsList;
-    int itsCallCount;
     int itsRefCount;
+    const fstring itsProfName;
+    Util::Prof itsProf;
 
     Overloads(Tcl::Interp& interp, const fstring& cmd_name);
     ~Overloads() throw();
@@ -165,10 +160,6 @@ namespace
 
     int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
   };
-
-#ifdef TRACE_USE_COUNT
-  STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
-#endif
 }
 
 Overloads::Overloads(Tcl::Interp& interp, const fstring& cmd_name) :
@@ -176,8 +167,9 @@ Overloads::Overloads(Tcl::Interp& interp, const fstring& cmd_name) :
   itsCmdName(cmd_name),
   itsCmdToken(0),
   itsList(),
-  itsCallCount(0),
-  itsRefCount(0)
+  itsRefCount(0),
+  itsProfName("tcl/", cmd_name),
+  itsProf(itsProfName.c_str())
 {
 DOTRACE("Overloads::Overloads");
 
@@ -223,14 +215,6 @@ DOTRACE("Overloads::Overloads");
 Overloads::~Overloads() throw()
 {
 DOTRACE("Overloads::~Overloads");
-
-#ifdef TRACE_USE_COUNT
-  if (USE_COUNT_STREAM->good())
-    {
-      *USE_COUNT_STREAM << itsCmdName << " "
-                        << itsCallCount << STD_IO::endl;
-    }
-#endif
 
   Assert( itsList.empty() );
   Assert( itsCmdToken == 0 );
@@ -308,6 +292,10 @@ int Overloads::rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
 {
 DOTRACE("Overloads::rawInvoke");
 
+  // This is to use the separate Util::Prof object that each Overloads
+  // has. This way we can trace the timing of individual Tcl commands.
+  Util::Trace tracer(itsProf, DYNAMIC_TRACE_EXPR);
+
   Assert(s_objc >= 0);
 
   if (GET_DBG_LEVEL() > 1)
@@ -326,8 +314,6 @@ DOTRACE("Overloads::rawInvoke");
   // catch all possible exceptions since this is a callback from C
   try
     {
-      ++itsCallCount;
-
       for (Overloads::List::const_iterator
              itr = itsList.begin(),
              end = itsList.end();
