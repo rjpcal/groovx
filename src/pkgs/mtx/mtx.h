@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 14:53:16 2002
+// written: Mon Mar  4 14:54:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -539,7 +539,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Mtx : public MtxBase // public WithPolicies
+class Mtx : public MtxBase
 {
 public:
 
