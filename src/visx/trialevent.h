@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Mar  8 16:51:43 2000
+// written: Fri Mar 10 00:49:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,6 +97,9 @@ protected:
 
 private:
   static void dummyInvoke(ClientData clientData);
+
+  TrialEvent(const TrialEvent&);
+  TrialEvent& operator=(const TrialEvent&);
 
   int itsRequestedDelay;
   Tcl_TimerToken itsToken;

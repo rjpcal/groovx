@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Mon Mar  6 18:39:01 2000
+// written: Fri Mar 10 00:48:25 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -41,6 +41,9 @@ public:
   void setDirectory(const char* dir);
 
 private:
+  Subject(const Subject&);
+  Subject& operator=(const Subject&);
+
   fixed_string itsName;
   fixed_string itsDirectory;
 };
