@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Thu May 10 12:04:43 2001
+// written: Wed Jun 20 18:27:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,28 +17,17 @@
 
 #include "util/strings.h"
 
-#include <strstream.h>
-
-namespace {
-
-const char* makeNumberString(int number) {
-  static char buf[32];
-  ostrstream ost(buf, 16);
-  ost << number << '\0';
-  return buf;
-}
-
-}
-
 const char* IO::ReadUtils::makeElementNameString(const char* seq_name,
-															 int element_num) {
+																 int element_num)
+{
   static dynamic_string result("");
   result = seq_name;
-  result += makeNumberString(element_num);
+  result.append( element_num );
   return result.c_str();
 }
 
-const char* IO::ReadUtils::makeSeqCountString(const char* seq_name) {
+const char* IO::ReadUtils::makeSeqCountString(const char* seq_name)
+{
   static dynamic_string result("");
   result = seq_name;
   result += "Count";
