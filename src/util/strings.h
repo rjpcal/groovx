@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu Mar  9 16:29:25 2000
+// written: Mon Mar 13 12:23:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,6 +11,9 @@
 #ifndef STRINGS_H_DEFINED
 #define STRINGS_H_DEFINED
 
+class string_literal;
+class fixed_string;
+class dynamic_string;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -27,7 +30,13 @@
 
 class string_literal {
 public:
+  friend class fixed_string;
+  friend class dynamic_string;
+
   string_literal(const char* literal);
+
+  bool equals(const char* other) const;
+  bool equals(const string_literal& other) const;
 
   const char* c_str() const { return itsText; }
   unsigned int length() const { return itsLength; }
@@ -56,6 +65,9 @@ private:
 
 class fixed_string {
 public:
+  friend class string_literal;
+  friend class dynamic_string;
+
   fixed_string(const char* text = "");
   fixed_string(const fixed_string& other);
   ~fixed_string();
@@ -64,6 +76,10 @@ public:
 
   fixed_string& operator=(const char* text);
   fixed_string& operator=(const fixed_string& other);
+
+  bool equals(const char* other) const;
+  bool equals(const string_literal& other) const;
+  bool equals(const fixed_string& other) const;
 
   char* data() { return itsText; }
 
@@ -90,6 +106,9 @@ private:
 
 class dynamic_string {
 public:
+  friend class string_literal;
+  friend class fixed_string;
+
   dynamic_string(const char* text = "");
   dynamic_string(const fixed_string& other);
   dynamic_string(const dynamic_string& other);
@@ -104,6 +123,11 @@ public:
   dynamic_string& operator+=(const char* text);
   dynamic_string& operator+=(const fixed_string& other);
   dynamic_string& operator+=(const dynamic_string& other);
+
+  bool equals(const char* other) const;
+  bool equals(const string_literal& other) const;
+  bool equals(const fixed_string& other) const;
+  bool equals(const dynamic_string& other) const;
 
   const char* c_str() const;
   unsigned int length() const;

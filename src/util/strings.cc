@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Tue Mar  7 19:34:14 2000
+// written: Mon Mar 13 12:24:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,17 @@ string_literal::string_literal(const char* literal) :
   itsText(literal),
   itsLength(strlen(literal))
 {}
+
+bool string_literal::equals(const char* other) const
+{
+  return ( strcmp(itsText, other) == 0 );
+}
+
+bool string_literal::equals(const string_literal& other) const
+{
+  return ( itsLength == other.itsLength &&
+			  strcmp(itsText, other.itsText) == 0 );
+}
 
 //---------------------------------------------------------------------
 //
@@ -82,6 +93,23 @@ fixed_string& fixed_string::operator=(const fixed_string& other)
 		this->swap(rhs_copy);
 	 }
   return *this;
+}
+
+bool fixed_string::equals(const char* other) const
+{
+  return ( strcmp(itsText, other) == 0 );
+}
+
+bool fixed_string::equals(const string_literal& other) const
+{
+  return ( itsLength == other.itsLength &&
+			  strcmp(itsText, other.itsText) == 0 );
+}
+
+bool fixed_string::equals(const fixed_string& other) const
+{
+  return ( itsLength == other.itsLength &&
+			  strcmp(itsText, other.itsText) == 0 );
 }
 
 //---------------------------------------------------------------------
@@ -151,6 +179,28 @@ dynamic_string& dynamic_string::operator+=(const dynamic_string& other)
 {
   itsImpl->text += other.itsImpl->text;
   return *this;
+}
+
+bool dynamic_string::equals(const char* other) const
+{
+  return ( itsImpl->text == other );
+}
+
+bool dynamic_string::equals(const string_literal& other) const
+{
+  return ( itsImpl->text.length() == other.itsLength &&
+			  itsImpl->text == other.itsText );
+}
+
+bool dynamic_string::equals(const fixed_string& other) const
+{
+  return ( itsImpl->text.length() == other.itsLength &&
+			  itsImpl->text == other.itsText );
+}
+
+bool dynamic_string::equals(const dynamic_string& other) const
+{
+  return ( itsImpl->text == other.itsImpl->text );
 }
 
 const char* dynamic_string::c_str() const
