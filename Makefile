@@ -17,9 +17,10 @@
 ##########################################################################
 
 VERSION := 0.8a7
-EXTRA_STATISTICS := 0
 
 TCLTK_VERSION := 8.2
+
+MAKEFLAGS += --warn-undefined-variables
 
 #-------------------------------------------------------------------------
 #
@@ -34,16 +35,26 @@ ifeq ($(ARCH),hp9000s700)
 	COMPILER := aCC
 	SHLIB_EXT := sl
 	STATLIB_EXT := a
-	DEFAULT_TARGET := testsh
+
+ifndef MODE
+	MODE := debug
+endif
+
 	ETAGS := echo "no etags"
 endif
+
 ifeq ($(ARCH),irix6)
 	PLATFORM := irix6
 	COMPILER := MIPSpro
 	SHLIB_EXT := so
 	STATLIB_EXT := a
-	DEFAULT_TARGET := grsh
+
+ifndef MODE
+	MODE := prod
 endif
+endif
+
+
 
 #-------------------------------------------------------------------------
 #
@@ -75,6 +86,16 @@ LOCAL_LIB_DIR := $(LOCAL_ARCH)/lib
 #
 #-------------------------------------------------------------------------
 
+ifeq ($(MODE),debug)
+	OBJ_EXT := .do
+	LIB_SUFFIX := .d
+endif
+
+ifeq ($(MODE),prod)
+	OBJ_EXT := .o
+	LIB_SUFFIX := $(VERSION)
+endif
+
 ifeq ($(COMPILER),aCC)
 	CC := time aCC
 #	FILTER := 
@@ -89,14 +110,17 @@ ifeq ($(COMPILER),aCC)
 		-I/opt/graphics/OpenGL/include -I./scripts/spoofdep
 	STL_INCLUDE_DIR := 
 
-	DEBUG_OPTIONS := -g1 +Z +p
-	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
+ifeq ($(MODE),debug)
+	CC_OPTIONS := -g1 +Z +p
+	LD_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
+endif
 
-	PROD_OPTIONS := +O2 +Z +p
-	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
+ifeq ($(MODE),prod)
+	CC_OPTIONS := +O2 +Z +p
+	LD_OPTIONS := -Wl,+vallcompatwarnings
+endif
 
-	DEBUGLIB_EXT := .d.$(SHLIB_EXT)
-	PRODLIB_EXT := $(VERSION).$(SHLIB_EXT)
+	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
 	SHLIB_CMD := $(CC) -b -o
 	STATLIB_CMD := ar rus
@@ -116,15 +140,18 @@ ifeq ($(COMPILER),MIPSpro)
 
 	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
 
-	DEBUG_OPTIONS := -g -O0
-	DEBUG_LINK_OPTIONS :=
+ifeq ($(MODE),debug)
+	CC_OPTIONS := -g -O0
+	LD_OPTIONS :=
+endif
 
+ifeq ($(MODE),prod)
 # Tests showed that -O3 provided little improvement over -O2 for this app
-	PROD_OPTIONS := -O2
-	PROD_LINK_OPTIONS :=
+	CC_OPTIONS := -O2
+	LD_OPTIONS :=
+endif
 
-	DEBUGLIB_EXT := .d.$(SHLIB_EXT)
-	PRODLIB_EXT := $(VERSION).$(SHLIB_EXT)
+	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
 	SHLIB_CMD := $(CC) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
 	STATLIB_CMD := $(CC) -ar -o
@@ -146,14 +173,17 @@ ifeq ($(COMPILER),g++)
 
 	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
 
-	DEBUG_OPTIONS := -g -O0
-	DEBUG_LINK_OPTIONS :=
+ifeq ($(MODE),debug)
+	CC_OPTIONS := -g -O0
+	LD_OPTIONS :=
+endif
 
-	PROD_OPTIONS := -O3
-	PROD_LINK_OPTIONS :=
+ifeq ($(MODE),prod)
+	CC_OPTIONS := -O3
+	LD_OPTIONS :=
+endif
 
-	DEBUGLIB_EXT := .d.$(STATLIB_EXT)
-	PRODLIB_EXT := $(VERSION).$(STATLIB_EXT)
+	LIB_EXT := $(LIB_SUFFIX).$(STATLIB_EXT)
 
 	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
 	STATLIB_CMD := ar rus
@@ -218,110 +248,75 @@ LIBRARIES := \
 # Ah, well, now the HP-OpenGL bug is rearing its ugly head again, so
 # I'll have to go back to statically linking the OpenGL stuff.
 
-TOGL_SRCS := $(basename $(notdir $(wildcard $(SRC)/togl/*.cc)))
-TOGL_OBJS := $(addprefix $(OBJ)/togl/,$(TOGL_SRCS))
+TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
 
-STATIC_RAW_SRCS := \
+STATIC_SRCS := \
 	$(shell grep -l 'GL/gl\.h' src/*.cc) \
 	$(shell grep -l 'int main' src/*.cc)
-STATIC_SRCS := $(basename $(notdir $(STATIC_RAW_SRCS)))
-STATIC_OBJS := $(addprefix $(OBJ)/,$(STATIC_SRCS))
 
-GRSH_STATIC_OBJS := $(sort $(STATIC_OBJS) $(TOGL_OBJS))
+STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(STATIC_SRCS)))
 
-VISX_RAW_SRCS := $(filter-out $(STATIC_RAW_SRCS),$(wildcard src/*.cc))
-VISX_SRCS := $(basename $(notdir $(VISX_RAW_SRCS)))
-VISX_OBJS := $(addprefix $(OBJ)/,$(VISX_SRCS))
+GRSH_STATIC_OBJS := $(STATIC_OBJS) $(TOGL_OBJS)
 
+VISX_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard src/*.cc))
+VISX_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(VISX_SRCS)))
 
-GWT_SRCS := $(basename $(notdir $(wildcard $(SRC)/gwt/*.cc)))
-GWT_OBJS := $(addprefix $(OBJ)/gwt/,$(GWT_SRCS))
+LIBVISX := $(LIB)/libvisx$(LIB_EXT)
 
-GX_SRCS := $(basename $(notdir $(wildcard $(SRC)/gx/*.cc)))
-GX_OBJS := $(addprefix $(OBJ)/gx/,$(GX_SRCS))
+GWT_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gwt/*.cc)))
 
-IO_SRCS := $(basename $(notdir $(wildcard $(SRC)/io/*.cc)))
-IO_OBJS := $(addprefix $(OBJ)/io/,$(IO_SRCS))
+GX_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gx/*.cc)))
 
-SYS_SRCS := $(basename $(notdir $(wildcard $(SRC)/system/*.cc)))
-SYS_OBJS := $(addprefix $(OBJ)/system/,$(SYS_SRCS))
+IO_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/io/*.cc)))
 
-UTIL_SRCS := $(basename $(notdir $(wildcard $(SRC)/util/*.cc)))
-UTIL_OBJS := $(addprefix $(OBJ)/util/,$(UTIL_SRCS))
+SYS_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/sys/*.cc)))
+
+UTIL_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/util/*.cc)))
 
 APPWORKS_OBJS := \
 	$(GWT_OBJS) $(GX_OBJS) $(IO_OBJS) $(SYS_OBJS) $(UTIL_OBJS)
 
+LIBAPPWORKS := $(LIB)/libappworks$(LIB_EXT)
+
 TCL_SRCS := $(basename $(notdir $(wildcard $(SRC)/tcl/*.cc)))
-TCLWORKS_OBJS := $(addprefix $(OBJ)/tcl/,$(TCL_SRCS))
+TCLWORKS_OBJS := $(addsuffix $(OBJ_EXT),$(addprefix $(OBJ)/tcl/,$(TCL_SRCS)))
 
-#PACKAGES := \
-#	$(PKG)/face.sl
+LIBTCLWORKS := $(LIB)/libtclworks$(LIB_EXT)
+
+
+ALL_LIBS := $(LIBVISX) $(LIBTCLWORKS) $(LIBAPPWORKS)
 
 #-------------------------------------------------------------------------
 #
-# Info for testing/debugging executable
+# Info for executable targets
 #
 #-------------------------------------------------------------------------
 
-DEBUG_TARGET := $(BIN_DIR)/testsh
-
-DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST -DDEBUG_BUILD
-
-DEBUG_GRSH_STATIC_OBJS := $(addsuffix .do,$(GRSH_STATIC_OBJS))
-#DEBUG_GRSH_DYNAMIC_OBJS := $(addsuffix .do,$(GRSH_DYNAMIC_OBJS))
-DEBUG_VISX_OBJS := $(addsuffix .do,$(VISX_OBJS))
-DEBUG_TCLWORKS_OBJS := $(addsuffix .do,$(TCLWORKS_OBJS))
-DEBUG_APPWORKS_OBJS := $(addsuffix .do,$(APPWORKS_OBJS))
-
-#DEBUG_PACKAGES := $(subst $(PKG),$(PKG_DBG),$(PACKAGES))
-
-#DEBUG_LIBGRSH := $(LIB)/libgrsh$(DEBUGLIB_EXT)
-DEBUG_LIBVISX := $(LIB)/libvisx$(DEBUGLIB_EXT)
-DEBUG_LIBTCLWORKS := $(LIB)/libtclworks$(DEBUGLIB_EXT)
-DEBUG_LIBAPPWORKS := $(LIB)/libappworks$(DEBUGLIB_EXT)
-
-ALL_DEBUG_LIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
-
-ALL_DEBUG_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_DEBUG_LIBS))
-ALL_DEBUG_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_DEBUG_LIBS))
-
-DEBUG_AUX_OBJ :=
-ifeq ($(ARCH),hp9000s700)
-	DEBUG_AUX_OBJ := /opt/langtools/lib/end.o
+ifeq ($(MODE),debug)
+	EXECUTABLE := $(BIN_DIR)/testsh
+	CC_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST -DDEBUG_BUILD
+endif
+ifeq ($(MODE),prod)
+	EXECUTABLE := $(BIN_DIR)/grsh$(VERSION)
+	CC_DEFS := -DASSERT -DINVARIANT
 endif
 
-#-------------------------------------------------------------------------
-#
-# Info for production executable
-#
-#-------------------------------------------------------------------------
+ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_LIBS))
+ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_LIBS))
 
-PROD_TARGET := $(BIN_DIR)/grsh$(VERSION)
-
-PROD_DEFS := -DASSERT -DINVARIANT
-
-PROD_GRSH_STATIC_OBJS := $(addsuffix .o,$(GRSH_STATIC_OBJS))
-#PROD_GRSH_DYNAMIC_OBJS := $(addsuffix .o,$(GRSH_DYNAMIC_OBJS))
-PROD_VISX_OBJS := $(addsuffix .o,$(VISX_OBJS))
-PROD_TCLWORKS_OBJS := $(addsuffix .o,$(TCLWORKS_OBJS))
-PROD_APPWORKS_OBJS := $(addsuffix .o,$(APPWORKS_OBJS))
-
-#PROD_PACKAGES := $(PACKAGES)
-
-# Note: exception handling does not work with shared libraries in the
-# current version of g++ (2.95.1), so on irix6 we must make the
-# libvisx library as an archive library.
-
-#PROD_LIBGRSH := $(LIB)/libgrsh$(PRODLIB_EXT)
-PROD_LIBVISX := $(LIB)/libvisx$(PRODLIB_EXT)
-PROD_LIBTCLWORKS := $(LIB)/libtclworks$(PRODLIB_EXT)
-PROD_LIBAPPWORKS := $(LIB)/libappworks$(PRODLIB_EXT)
-
-ALL_PROD_LIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
-
-ALL_PROD_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_PROD_LIBS))
-ALL_PROD_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_PROD_LIBS))
+ifeq ($(MODE),debug)
+ifeq ($(ARCH),hp9000s700)
+	GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
+endif
+endif
 
 #-------------------------------------------------------------------------
 #
@@ -331,28 +326,18 @@ ALL_PROD_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_PROD_LIBS))
 
 COMMON_OPTIONS := $(COMPILER_SWITCHES) $(CPP_DEFINES) $(MY_INCLUDE_PATH)
 
-ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIONS) $(PROD_DEFS)
-ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIONS) $(DEBUG_DEFS)
+ALL_CC_OPTIONS := $(COMMON_OPTIONS) $(CC_OPTIONS) $(CC_DEFS)
 
-$(OBJ)/%.o : $(SRC)/%.cc
+$(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
 	echo $< >> $(LOG)/CompileStats
-	csh -fc "($(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)) $(FILTER)"
-
-$(OBJ)/%.do : $(SRC)/%.cc
-ifeq ($(EXTRA_STATISTICS),1)
-	$(CC) -E $< $(ALL_DEBUG_OPTIONS) > .temp.cc
-	wc -l $<
-	wc -l .temp.cc
-endif
-	echo $< >> $(LOG)/CompileStats
-	csh -fc "($(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)) $(FILTER)"
+	csh -fc "($(CC) -c $< -o $@ $(ALL_CC_OPTIONS)) $(FILTER)"
 
 $(SRC)/%.precc : $(SRC)/%.cc
-	$(CC) -E $< $(ALL_DEBUG_OPTIONS) > $@
+	$(CC) -E $< $(ALL_CC_OPTIONS) > $@
 
 $(SRC)/%.preh : $(SRC)/%.h
 	echo "#include \"$<\"" > .temp.cc
-	$(CC) -E .temp.cc $(ALL_DEBUG_OPTIONS) > $@
+	$(CC) -E .temp.cc $(ALL_CC_OPTIONS) > $@
 
 #-------------------------------------------------------------------------
 #
@@ -360,28 +345,16 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
-default: $(DEFAULT_TARGET)
+default: $(SRC)/TAGS $(ALL_SHLIBS) $(EXECUTABLE)
+	$(EXECUTABLE) ./testing/grshtest.tcl
 
-testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
-	$(DEBUG_TARGET) ./testing/grshtest.tcl
-
-DEBUG_CMDLINE := $(DEBUG_LINK_OPTIONS) $(DEBUG_GRSH_STATIC_OBJS) \
-	$(DEBUG_AUX_OBJ) \
-	$(MY_LIB_PATH) -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
-
-$(DEBUG_TARGET): $(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
-	$(CC) -o $@ $(DEBUG_CMDLINE)
-
-grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
-	$(PROD_TARGET) ./testing/grshtest.tcl
-
-PROD_CMDLINE := $(PROD_LINK_OPTIONS) $(PROD_GRSH_STATIC_OBJS) \
+CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) \
 	$(MY_LIB_PATH) \
-	-lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
-	$(LIBRARIES) \
+	-lvisx$(LIB_SUFFIX) -ltclworks$(LIB_SUFFIX) -lappworks$(LIB_SUFFIX) \
+	$(LIBRARIES) 
 
-$(PROD_TARGET): $(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
-	$(CC) -o $@ $(PROD_CMDLINE)
+$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
+	$(CC) -o $@ $(CMDLINE)
 
 #-------------------------------------------------------------------------
 #
@@ -395,14 +368,9 @@ $(PROD_TARGET): $(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
 %.$(STATLIB_EXT):
 	$(STATLIB_CMD) $@ $^
 
-#$(DEBUG_LIBGRSH):      $(DEBUG_GRSH_DYNAMIC_OBJS)
-#$(PROD_LIBGRSH):       $(PROD_GRSH_DYNAMIC_OBJS)
-$(DEBUG_LIBVISX):      $(DEBUG_VISX_OBJS)
-$(PROD_LIBVISX):       $(PROD_VISX_OBJS)
-$(DEBUG_LIBTCLWORKS):  $(DEBUG_TCLWORKS_OBJS)
-$(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
-$(DEBUG_LIBAPPWORKS):  $(DEBUG_APPWORKS_OBJS)
-$(PROD_LIBAPPWORKS):   $(PROD_APPWORKS_OBJS)
+$(LIBVISX):      $(VISX_OBJS)
+$(LIBTCLWORKS):  $(TCLWORKS_OBJS)
+$(LIBAPPWORKS):  $(APPWORKS_OBJS)
 
 #$(PKG)/face.sl:     $(OBJ)/face.o $(OBJ)/cloneface.o $(OBJ)/facetcl.o
 #$(PKG_DBG)/face.sl: $(OBJ)/face.do $(OBJ)/cloneface.do $(OBJ)/facetcl.do
@@ -435,7 +403,7 @@ include $(DEP_FILE)
 #-------------------------------------------------------------------------
 
 # Remove all object files and build a new production executable from scratch
-new: cleaner $(PROD_TARGET)
+new: cleaner $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 clean:
@@ -491,8 +459,5 @@ ldeps: cdeps
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
 
-debug_benchmarks: $(DEBUG_TARGET)
-	$(DEBUG_TARGET) $(SCRIPTS)/benchmarks.tcl -output $(LOG)/benchmarks.txt
-
-prod_benchmarks: $(PROD_TARGET)
-	$(PROD_TARGET) $(SCRIPTS)/benchmarks.tcl -output $(LOG)/benchmarks.txt
+benchmarks: $(EXECUTABLE)
+	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOG)/benchmarks.txt
