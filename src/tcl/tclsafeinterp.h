@@ -13,6 +13,10 @@
 #ifndef TCLUTIL_H_DEFINED
 #define TCLUTIL_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
+#include "tcl/convert.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
 #include "tcl/tclerror.h"
 #endif
@@ -54,7 +58,14 @@ public:
   bool interpDeleted() const;
 
   // Result
+  void resetResult() const;
   void appendResult(const char* msg) const;
+
+  template <class Cue>
+  typename Cue::Type getResult(Cue) const
+  {
+	 return Tcl::Convert<typename Cue::Type>::fromTcl(getObjResult());
+  }
 
   // Variables
   void setGlobalVar(const char* var_name, Tcl::ObjPtr var) const;
@@ -64,6 +75,8 @@ public:
   static void clearEventQueue();
 
 private:
+  Tcl_Obj* getObjResult() const;
+
   void handleError(const char* msg) const;
 
   SafeInterp(const SafeInterp&);
