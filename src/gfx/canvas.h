@@ -292,7 +292,8 @@ public:
   virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) = 0;
 
   /// Draw a rectangle.
-  virtual void drawRect(const Gfx::Rect<double>& rect) = 0;
+  virtual void drawRect(const Gfx::Rect<double>& rect,
+                        bool filled = false) = 0;
 
   /// Draw a cube.
   virtual void drawBox(const Gfx::Box<double>& box);
