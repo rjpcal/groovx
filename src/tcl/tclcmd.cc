@@ -80,8 +80,10 @@ namespace
 
     Tcl::Interp itsInterp;
     const fstring itsCmdName;
+    Tcl_Command itsCmdToken;
     List itsList;
-    int itsUseCount;
+    int itsCallCount;
+    int itsRefCount;
 
     Overloads(Tcl::Interp& interp, const fstring& cmd_name);
     ~Overloads() throw();
@@ -89,13 +91,50 @@ namespace
     Overloads(const Overloads&); // not implemented
     Overloads& operator=(const Overloads&); // not implemented
 
+    static int cInvokeCallback(ClientData clientData,
+                               Tcl_Interp*, /* use Overloads's own Tcl::Interp */
+                               int s_objc,
+                               Tcl_Obj *const objv[]) throw()
+    {
+      Overloads* ov = static_cast<Overloads*>(clientData);
+
+      Assert(ov != 0);
+
+      return ov->rawInvoke(s_objc, objv);
+    }
+
+    static void cDeleteCallback(ClientData clientData)
+    {
+    DOTRACE("Overloads::cDeleteCallback");
+      Overloads* ov = static_cast<Overloads*>(clientData);
+      Assert(ov != 0);
+      ov->itsCmdToken = 0; // since this callback is notifying us that the
+                           // command was deleted
+      if (ov->itsList.empty())
+        delete ov;
+    }
+
+    static void cExitCallback(ClientData clientData)
+    {
+    DOTRACE("Overloads::cExitCallback");
+      Overloads* ov = static_cast<Overloads*>(clientData);
+      Assert(ov != 0);
+      if (ov->itsCmdToken != 0)
+        Tcl_DeleteCommandFromToken(ov->itsInterp.intp(), ov->itsCmdToken);
+    }
+
   public:
     static Overloads* lookup(Tcl::Interp& interp, const fstring& cmd_name);
 
-    void add(Tcl::Command* p) { itsList.push_back(p); }
+    void add(Tcl::Command* p)
+    {
+    DOTRACE("Overloads::add");
+      itsList.push_back(p);
+    }
 
     void remove(Tcl::Command* p)
     {
+    DOTRACE("Overloads::remove");
       itsList.remove(p);
       // itsList is used as an implicit reference-count... each time a
       // Tcl::Command is created, it creates a reference by calling add()
@@ -104,7 +143,16 @@ namespace
       // itsList becomes empty, it is no longer referenced by any
       // Tcl::Command objects and can thus be deleted.
       if (itsList.empty())
-        delete this;
+        {
+          if (itsCmdToken != 0)
+            {
+              Tcl_DeleteCommandFromToken(itsInterp.intp(), itsCmdToken);
+            }
+          else
+            {
+              delete this;
+            }
+        }
     }
 
     Tcl::Command* first() const { return itsList.front(); }
@@ -118,18 +166,6 @@ namespace
     int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
   };
 
-  int cInvokeCallback(ClientData clientData,
-                      Tcl_Interp*, /* use Overloads's own Tcl::Interp */
-                      int s_objc,
-                      Tcl_Obj *const objv[]) throw()
-  {
-    Overloads* ov = static_cast<Overloads*>(clientData);
-
-    Assert(ov != 0);
-
-    return ov->rawInvoke(s_objc, objv);
-  }
-
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
@@ -138,17 +174,25 @@ namespace
 Overloads::Overloads(Tcl::Interp& interp, const fstring& cmd_name) :
   itsInterp(interp),
   itsCmdName(cmd_name),
+  itsCmdToken(0),
   itsList(),
-  itsUseCount(0)
+  itsCallCount(0),
+  itsRefCount(0)
 {
 DOTRACE("Overloads::Overloads");
 
   // Register the command procedure
-  Tcl_CreateObjCommand(interp.intp(),
-                       cmd_name.c_str(),
-                       cInvokeCallback,
-                       static_cast<ClientData>(this),
-                       (Tcl_CmdDeleteProc*) NULL);
+  itsCmdToken =
+    Tcl_CreateObjCommand(interp.intp(),
+                         cmd_name.c_str(),
+                         &cInvokeCallback,
+                         static_cast<ClientData>(this),
+                         &cDeleteCallback);
+
+  Tcl_CreateExitHandler(&cExitCallback,
+                        static_cast<ClientData>(this));
+
+  ++itsRefCount;
 
   // Make sure there isn't already an Overloads object for this cmdname
   CmdTable::iterator pos = commandTable().find(itsCmdName);
@@ -157,6 +201,25 @@ DOTRACE("Overloads::Overloads");
   commandTable().insert(CmdTable::value_type(itsCmdName, this));
 }
 
+// A destruction sequence can get triggered in a number of ways:
+/*
+   (1) remove() might be called enough times that itsList becomes empty
+   (2) application exit might trigger the cExitCallback
+
+   (3) the cDeleteCallback might get triggered either by explicit deletion
+       by the user (e.g. [rename]ing the command to the empty string "")
+
+   General principles:
+
+   (1) it is always "safe" to destroy the Tcl_Command, in the sense that it
+       can't cause any crashes... in particular, it's OK to destroy the
+       Tcl_Command even if Overloads::itsList is not empty; that would just
+       mean that the remaining Tcl::Command objects in itsList won't have
+       any input sent their way
+
+   (2) however, if possible we want to wait to destroy the Tcl_Command
+       object until itsList is empty
+ */
 Overloads::~Overloads() throw()
 {
 DOTRACE("Overloads::~Overloads");
@@ -165,18 +228,20 @@ DOTRACE("Overloads::~Overloads");
   if (USE_COUNT_STREAM->good())
     {
       *USE_COUNT_STREAM << itsCmdName << " "
-                        << itsUseCount << STD_IO::endl;
+                        << itsCallCount << STD_IO::endl;
     }
 #endif
 
   Assert( itsList.empty() );
+  Assert( itsCmdToken == 0 );
 
   CmdTable::iterator pos = commandTable().find(cmdName());
   Assert( pos != commandTable().end() );
   Assert( (*pos).second == this );
   commandTable().erase(pos);
 
-  itsInterp.deleteCommand(itsCmdName.c_str());
+  Tcl_DeleteExitHandler(&cExitCallback,
+                        static_cast<ClientData>(this));
 }
 
 Overloads* Overloads::lookup(Tcl::Interp& interp, const fstring& cmd_name)
@@ -261,7 +326,7 @@ DOTRACE("Overloads::rawInvoke");
   // catch all possible exceptions since this is a callback from C
   try
     {
-      ++itsUseCount;
+      ++itsCallCount;
 
       for (Overloads::List::const_iterator
              itr = itsList.begin(),
