@@ -661,3 +661,159 @@ etc. in MIPSpro.
 | source code... I expect I may find more in the future as well.
 | 
 +------------------------------------------------------------------------
+
+(note 18-Oct-2000) I need to think a lot more carefully in the future
+if/when changing file formats. As a one-user system, I think it is
+reasonable to consider migrating all old data over to a new format
+rather than trying to support multiple formats. Hopefully this is less
+of a problem with ASW format than with the Legacy format. I need to
+add a bunch of test cases that ensure that various old files
+(e.g. from psychophysics, fMRI) are still readable with each version.
+
+(note 25-Oct-2000) Note to self. std::map is not actually such a slow
+compiler, as long as neither of the types is std::string... only takes
+10-15 sec to compile a file std::map, even if one of the types is not
+a builtin.
+
+(25-Oct-2000, done 26-Oct-2000) Try overloading operator new+delete in
+IoObject. OK, tried this, and found with profiling that these are
+definitely *NOT* a bottleneck. Combined, they took about 0.1% of the
+runtime in a test-suite run.
+
+========================================================================
+| Resource management revisited 17-Oct-2000
+| done 27-Oct-2000
+| 
+| (1-done) Generalize Factory so it can take a creation function. Make
+|     class constructors protected and add make() creation functions
+|     instead.
+| 
+| (2-done) Aha! We can get rid of MasterPtr.... IoObject itself should
+|     handle the reference counting. Then PtrHandle<T> of different
+|     types can be assigned to each other, DynamicCast'ed, etc., since
+|     the pointee's (IoObject*'s) will be related through inheritance.
+| 
+|     In detail
+|     (done) MasterPtrBase becomes RefCounted
+|     (done) IoObject inherits from RefCounted
+|     (done) VoidPtrHandle manages RefCounted
+|     (done) PtrListBase manages RefCounted
+|     (done) PtrHandle<T> holds T* (derived from RefCounted) directly
+|     (done) NullablePtrHandle<T> holds T* directly
+|     (done) get rid of masterptrt.cc
+| 
+| (3-done) Make sure nobody is writing PtrList ids in writeTo().
+|     (done) Block
+|     (done) Trial ... this is tricky. Need to refactor the implementation
+| 		  to store two vectors of GrObj's and Position's, I think. Only
+| 		  client of beginIdPairs() is TlistUtils::writeMatlab(). That
+| 		  can change to use an iterator over the GrObj's instead. Will
+| 		  need to have a dummy IdPairSpoofer structure in the
+| 		  implementation to allow us to read older files.
+| 	 (done) ExptDriver
+| 
+| (4-done) Migrate all old experiment data-files over to this new format
+|     that will not include PtrList's. I'll make a snapshot of the
+|     system so that we can get back to the state that can convert
+|     between old+new format. Then I'll rev the project version and cut
+|     out the old format code so that the IO code doesn't get too messy.
+| 
+| (5-done) Make sure there is a snapshot of the project that can read
+|     old files (i.e. with PtrList's) but also write new files (w/o
+|     PtrList's). OK, this is grsh0.8a3.
+| 
+| (6-done) Make the IoMap. When an IoObject is constructed, we put its
+|     id+address into the map, and when it is destroyed, we remove it
+|     from the map. We need functions to iterate through the map, to
+|     test if an id is valid, to return the count of objects.
+| 
+| (7-done) A key step here is eliminating uses of insertAt(). The main
+| 	 perpetrator here is TlistUtils, whose interface needs a major
+| 	 overhaul.
+| 
+| (8-done) Make all PtrListBase functions virtual, so we can try swapping
+|     implementations at the PtrList<T> level.
+| 
+| (9-done) For debugging purposes, add a second ref-count to RefCounted,
+| 	 so that Tcl clients can manipulate a separate reference count.
+| 
+| (10-done) An important intermediate goal is the state where the PtrList's
+|     are still physically in place, but all of the id's in existence
+|     are just the plain IoId's. ... Maybe this is not really a useful
+|     stage. I think once we are at the point where this stage is
+|     feasible, we'll just be wanting to finally ditch the PtrList's.
+| 
+| (11-done) Make the C++ side independent of PtrList's. Block's need to store
+|     Trial*'s (or ItemWithId<TrialBase>'s), and ExptDriver needs to
+|     store ItemWithId<Block>'s.
+| 
+|     (done) block.cc      on tlist.h
+|     (done) exptdriver.cc on blocklist.h
+|     (done) eventresponsehdlr.cc on soundlist.h
+| 
+|     (done) tlistutils.cc on objlist.h
+|     (done) tlistutils.cc on poslist.h
+| 
+| (12-done) Fix the read/write system so we don't have to work with
+| 	 temporary containers when reading/writing member containers. Done
+| 	 -- added WriteUtils::writeSmartPtrSeq, and added special insert
+| 	 iterators for IdItem and MaybeIdItem that can work with
+| 	 ReadUtils::readObjectSeq
+| 
+| (13-done) Ditch the itsId member of IdItem, since it would always be
+| 	 the same as itsHandle->id(). MaybeIdItem needs to keep itsId,
+| 	 since this is what allows us to implement lazy fetching.
+| 
+| (14-done) Try to eliminate uses of MaybeIdItem in favor of
+| 	 IdItem. ... Yeahbut, in some cases we need to have some way to
+| 	 represent "no object". It's either this way, or generate
+| 	 NullObject classes for each base type that can fill in for a real
+| 	 object... this sounds more messy. In some cases I should be able
+| 	 to get rid of MaybeIdItem.
+| 
+| (15-done) We might be able to do away PtrList templates, in favor
+| 	 of one gigantic IoPtrList that stores everybody... with the new id
+| 	 system, there would be no id collision problem, and since most
+| 	 retrievals from a PtrList require a dynamic_cast anyway, there
+| 	 wouldn't be an extra performance hit for casting out of the
+| 	 IoPtrList. Then we could have IdItem's referring not just to the
+| 	 base-classes (i.e. GrObj, Position, TrialBase, etc.) but also to
+| 	 derived classes (e.g. Face, FixPt, Trial, etc.). What's the
+| 	 simplest possible step toward trying this? Maybe make
+| 	 getCheckedPtr() a member template function, so we can start
+| 	 specifying the type we're trying to retrieve. We'd need to have
+| 	 templated iterator types to provide different views of the
+| 	 IoPtrList. This could be a fairly simple template wrapper around
+| 	 the basic iterator.
+| 
+| (22-Oct-2000) I see the elimination of PtrList's in the
+| future. Instead we can maintain a map of ioId()'s to IoObject*'s. This
+| can be managed in the constructor+destructor for IoObject. This map
+| could be purged of refcount-0 objects on command. The map would allow
+| us to do similar operations to what the PtrList's provide now. For
+| example, find all objects of a given type.
+| 
+| (done, 18-Oct-2000) Aha! I have a vision... the PtrList's do not need
+| to be serialized at all... they can become merely a runtime resource
+| that expose C++ objects to Tcl. This will be possible if C++ objects
+| serialize not object-id's, but rather actual object references. Then
+| the id's will be automatically reconstructed when the objects are read
+| back in.
+| 
+| (done, 17-Oct-2000) Move ItemWithId<T> and NullableItemWithId<T> off
+| into their own component. Most C++ clients should not have to rely on
+| PtrList directly, or access any of the singletons.
+| 
+| (done, 17-Oct-2000) Make C++ clients of getPtr() and getCheckedPtr()
+| just store an ItemWithId<T> instead.
+| 
+| (done 17-Oct-2000) ItemWithId<T> could store a static PtrList<T>&,
+| which would allow us to construct an ItemWithId<T> from a MasterPtr
+| only, and insert this MasterPtr into the PtrList from within the
+| ItemWithId structure. Done.
+| 
+| (done 17-Oct-2000) Make PtrList::insert() functions return an
+| ItemWithId. This is a first step to eliminating reliance on the int
+| id's in the C++ side of things. Done.
+| 
++------------------------------------------------------------------------

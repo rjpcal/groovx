@@ -3,161 +3,21 @@ $Id$
 
 *** FRONT of priority queue ***
 
-========================================================================
-Resource management revisited 17-Oct-2000
+(24-Oct-2000) Work on dlink_list... it's buggy.
 
-(1-done) Generalize Factory so it can take a creation function. Make
-    class constructors protected and add make() creation functions
-    instead.
+(25-Oct-2000) ReadUtils and WriteUtils could/should really be
+implemented in terms of iterators that iterate over the elements in
+the stream. Then transferring elements to/from a local container is
+just a simple std::copy type of operation.
 
-(2-done) Aha! We can get rid of MasterPtr.... IoObject itself should
-    handle the reference counting. Then PtrHandle<T> of different
-    types can be assigned to each other, DynamicCast'ed, etc., since
-    the pointee's (IoObject*'s) will be related through inheritance.
+(27-Oct-2000) I don't think I need to include "iditem.h" in headers
+where it is just passed in/out of functions.
 
-    In detail
-    (done) MasterPtrBase becomes RefCounted
-    (done) IoObject inherits from RefCounted
-    (done) VoidPtrHandle manages RefCounted
-    (done) PtrListBase manages RefCounted
-    (done) PtrHandle<T> holds T* (derived from RefCounted) directly
-    (done) NullablePtrHandle<T> holds T* directly
-    (done) get rid of masterptrt.cc
-
-(3-done) Make sure nobody is writing PtrList ids in writeTo().
-    (done) Block
-    (done) Trial ... this is tricky. Need to refactor the implementation
-		  to store two vectors of GrObj's and Position's, I think. Only
-		  client of beginIdPairs() is TlistUtils::writeMatlab(). That
-		  can change to use an iterator over the GrObj's instead. Will
-		  need to have a dummy IdPairSpoofer structure in the
-		  implementation to allow us to read older files.
-	 (done) ExptDriver
-
-(4-done) Migrate all old experiment data-files over to this new format
-    that will not include PtrList's. I'll make a snapshot of the
-    system so that we can get back to the state that can convert
-    between old+new format. Then I'll rev the project version and cut
-    out the old format code so that the IO code doesn't get too messy.
-
-(*) Make the C++ side independent of PtrList's. Block's need to store
-    Trial*'s (or ItemWithId<TrialBase>'s), and ExptDriver needs to
-    store ItemWithId<Block>'s.
-
-    (done) block.cc      on tlist.h
-    (*) exptdriver.cc on blocklist.h
-    (*) eventresponsehdlr.cc on soundlist.h
-    (*) trial.cc      on rhlist.h
-    (*) trial.cc      on thlist.h
-
-    (*) exptdriver.cc on objlist.h (IO only)
-    (*) exptdriver.cc on poslist.h (IO only)
-    (*) exptdriver.cc on rhlist.h (IO only)
-    (*) exptdriver.cc on tlist.h (IO only)
-    (*) exptdriver.cc on thlist.h (IO only)
-    (*) tlistutils.cc on objlist.h (OK for now--no dependence in interface)
-    (*) tlistutils.cc on poslist.h (OK for now--no dependence in interface)
-    (*) tlistutils.cc on tlist.h (OK for now--no dependence in interface)
-
-(*) Make the IoMap. When an IoObject is constructed, we put its
-    id+address into the map, and when it is destroyed, we remove it
-    from the map. We need functions to iterate through the map, to
-    test if an id is valid, to return the count of objects.
-
-(*) Make the PtrList's just a simple wrapper for IoMap. In essence,
-    PtrList's provide a correspondence between an integer id and an
-    object. IoMap will do the same, therefore, we should be able to
-    reimplement PtrList's in terms of the IoMap. This will be a
-    temporary stage only, to allow us to migrate old data files.
-
-    (*) We will need a mapping (std::map?) from PtrList id's to IoMap
-        id's. 
-
-    (*) insert() should add an entry for the object's ioId().
-    (*) remove() just removes reference to the object's ioId().
-    (*) Spoof the capacity() function.
-    (*) Spoof the reset() function.
-    (*) Spoof the release() function?
-    (*) Implement isValidId().
-    (*) Implement count().
-    (*) Implement getPtr()...
-    (*) Implement readFrom()/writeTo()??? What would these do? For
-        data conversion, we need to be able to read the old
-        format. Actually, this should work fine in a naive
-        implementation... as we read the objects in from the stream,
-        they automatically go in the IoMap when they are created. Then
-        we store their ioId()'s in our PtrList id<-->ioId map.
-    (*) Implement insertValidIds().
-
-(***) An important intermediate goal is the state where the PtrList's
-    are still physically in place, but all of the id's in existence
-    are just the plain IoId's. ... Maybe this is not really a useful
-    stage. I think once we are at the point where this stage is
-    feasible, we'll just be wanting to finally ditch the PtrList's.
-
-(*) Perhaps a special IoMap iterator type would see only certain
-    subclasses of objects. This would likely be a template.
-
-(*) Expose incrRefCount and decrRefCount to the Tcl side. These
-    actually shouldn't be needed much. In most cases, a Tcl command
-    will create a new object with a ref-count of 0, and then this
-    object will immediately be added into the object hierarchy at some
-    point, causing its ref-count to be incremented (e.g. creating a
-    Face, then adding it to a Trial). This will work as long as we do
-    not purge the IoMap in between the Tcl calls.
-
-(*) Reimplement ItemWithId and NullableItemWithId in terms of IoMap.
-
-(*) Make sure there is a snapshot of the project that can read old
-    files (i.e. with PtrList's) but also write new files (w/o PtrList's).
+(*) Should PtrList's attempt to get objects out of the IoMap if the
+	 PtrList site is empty?
 
 (*) ObjList::LoadObjectCmd can be replaced with something generic that
     works for all IoObject types.
-
-(22-Oct-2000) I see the elimination of PtrList's in the
-future. Instead we can maintain a map of ioId()'s to IoObject*'s. This
-can be managed in the constructor+destructor for IoObject. This map
-could be purged of refcount-0 objects on command. The map would allow
-us to do similar operations to what the PtrList's provide now. For
-example, find all objects of a given type.
-
-(18-Oct-2000) Aha! I have a vision... the PtrList's do not need to be
-serialized at all... they can become merely a runtime resource that
-expose C++ objects to Tcl. This will be possible if C++ objects
-serialize not object-id's, but rather actual object references. Then
-the id's will be automatically reconstructed when the objects are read
-back in. This requires some support for master pointers in
-reader+writer. Also this is the final death blow to the LegacyWriter
-format, since we don't have any way to support reference semantics
-there. We might still be able to support LegacyReader, however.
-
-(17-Oct-2000) Only ...tcl.cc files and exptdriver.cc (?) should depend
-on the PtrList singletons and hence the "objlist.h" etc. include files.
-
-(17-Oct-2000) Move ItemWithId<T> and NullableItemWithId<T> off into
-their own component. Most C++ clients should not have to rely on
-PtrList directly, or access any of the singletons.
-
-(17-Oct-2000) Make C++ clients of getPtr() and getCheckedPtr() just
-store an ItemWithId<T> instead.
-
-block.cc (Trial)
-eventresponsehdlr.cc (Sound)
-exptdriver.cc (Block)
-objlisttcl.cc (GrObj)
-tlistutils.cc (GrObj, Trial,...)
-trial.cc (ResponseHandler, TimingHdlr)
-
-(done 17-Oct-2000) ItemWithId<T> could store a static PtrList<T>&,
-which would allow us to construct an ItemWithId<T> from a MasterPtr
-only, and insert this MasterPtr into the PtrList from within the
-ItemWithId structure. Done.
-
-(done 17-Oct-2000) Make PtrList::insert() functions return an
-ItemWithId. This is a first step to eliminating reliance on the int
-id's in the C++ side of things. Done.
-
-------------------------------------------------------------------------
 
 (11-Oct-2000) Put more behavior in Tcl::SafeInterp. This functionality
 would be able to be used in many places.
@@ -856,11 +716,3 @@ FixedPosition. What would a Position subclass for moving objects look
 like?
 
 *** BACK ***
-
-(note 18-Oct-2000) I need to think a lot more carefully in the future
-if/when changing file formats. As a one-user system, I think it is
-reasonable to consider migrating all old data over to a new format
-rather than trying to support multiple formats. Hopefully this is less
-of a problem with ASW format than with the Legacy format. I need to
-add a bunch of test cases that ensure that various old files
-(e.g. from psychophysics, fMRI) are still readable with each version.
