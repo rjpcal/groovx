@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Thu Jul 12 13:23:43 2001
+// written: Wed Jul 18 10:39:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,87 +15,63 @@
 
 #include "tcl/tracertcl.h"
 
-#include "tcl/tclcmd.h"
-#include "tcl/tclpkg.h"
+#include "tcl/tclitempkg.h"
+
 #include "util/tracer.h"
 
-#define LOCAL_ASSERT
-#include "util/debug.h"
-
-namespace {
+namespace
+{
   typedef void (Util::Tracer::* TraceActionFunc) ();
   typedef bool (Util::Tracer::* TraceGetterFunc) () const;
-}
 
-namespace Tcl {
+  //
+  // Template functor that runs member functions of bound Tracer's.
+  //
 
-///////////////////////////////////////////////////////////////////////
-//
-// Template command class that runs member functions of Tracer's.
-//
-///////////////////////////////////////////////////////////////////////
+  template <class FuncType>
+  struct TraceFunc
+  {
+    Util::Tracer& itsTracer;
+    FuncType itsFunc;
 
-template <class FuncType>
-class TraceCmd : public TclCmd {
-public:
-  TraceCmd(TclPkg* pkg, const char* cmd_name,
-           Util::Tracer& tracer, FuncType func) :
-    TclCmd(pkg->interp(), pkg->makePkgCmdName(cmd_name), (char*) 0, 1, 1),
-    itsTracer(tracer),
-    itsFunc(func)
+    TraceFunc(Util::Tracer& tracer, FuncType func) :
+      itsTracer(tracer),
+      itsFunc(func)
     {}
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
+    void operator()(Tcl::Context& ctx);
+  };
 
-private:
-  Util::Tracer& itsTracer;
-  FuncType itsFunc;
-};
-
-
-//---------------------------------------------------------------------
-//
-// Specializations of TraceCmd::invoke for different member function types
-//
-//---------------------------------------------------------------------
-
-// Specialization of TraceCmd::invoke for action functions
-template <>
-void TraceCmd<TraceActionFunc>::invoke(Tcl::Context& ctx)
-{
-  (itsTracer.*itsFunc)();
-}
+  // Specialization of TraceCmd::invoke for action functions
+  template <>
+  void TraceFunc<TraceActionFunc>::operator()(Tcl::Context& ctx)
+  {
+    (itsTracer.*itsFunc)();
+  }
 
 
-// Specialization of TraceCmd::invoke for getter functions
-template <>
-void TraceCmd<TraceGetterFunc>::invoke(Tcl::Context& ctx)
-{
-  ctx.setResult( (itsTracer.*itsFunc)() );
-}
+  // Specialization of TraceCmd::invoke for getter functions
+  template <>
+  void TraceFunc<TraceGetterFunc>::operator()(Tcl::Context& ctx)
+  {
+    ctx.setResult( (itsTracer.*itsFunc)() );
+  }
 
 
 } // end namespace Tcl
 
-namespace {
-
-template <class FuncType>
-inline Tcl::TclCmd* newTraceCmd(Tcl::TclPkg* pkg, const char* cmd_name,
-                                Util::Tracer& tracer, FuncType func)
+void Tcl::defTracing(Tcl::TclItemPkg* pkg, Util::Tracer& tracer)
 {
-  return new Tcl::TraceCmd<FuncType>(pkg, cmd_name, tracer, func);
-}
-
-} // end unnamed namespace
-
-void Tcl::addTracing(Tcl::TclPkg* pkg, Util::Tracer& tracer) {
   using Util::Tracer;
 
-  pkg->addCommand(newTraceCmd(pkg, "traceOn", tracer, &Tracer::on));
-  pkg->addCommand(newTraceCmd(pkg, "traceOff", tracer, &Tracer::off));
-  pkg->addCommand(newTraceCmd(pkg, "traceToggle", tracer, &Tracer::toggle));
-  pkg->addCommand(newTraceCmd(pkg, "traceStatus", tracer, &Tracer::status));
+  pkg->defRaw( TraceFunc<TraceActionFunc>(tracer, &Tracer::on),
+               "traceOn", 0, 0 );
+  pkg->defRaw( TraceFunc<TraceActionFunc>(tracer, &Tracer::off),
+               "traceOff", 0, 0 );
+  pkg->defRaw( TraceFunc<TraceActionFunc>(tracer, &Tracer::toggle),
+               "traceToggle", 0, 0 );
+  pkg->defRaw( TraceFunc<TraceGetterFunc>(tracer, &Tracer::status),
+               "traceStatus", 0, 0 );
 }
 
 static const char vcid_tracertcl_cc[] = "$Header$";
