@@ -64,9 +64,9 @@ test "ObjTogl-Togl::clearscreen" "too many args" {
 test "ObjTogl-Togl::clearscreen" "normal use" {
 	 setBackground 0
 	 Togl::clearscreen
-	 pixelCheckSum
-} {^0$}
-test "ObjTogl-Togl::clearscreen" "no error" {} $BLANK $no_test
+	 set p [pixelCheckSum]
+	 return "[expr $p == 0] $p"
+} {^1}
 
 ### Togl::showCmd ###
 test "ObjTogl-Togl::show" "too few args" {
