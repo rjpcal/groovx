@@ -3,13 +3,17 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Sep 30 11:23:13 1999
+// written: Tue Oct 12 15:46:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef HOUSE_CC_DEFINED
 #define HOUSE_CC_DEFINED
+
+#ifdef ACC_COMPILER
+#pragma OPT_LEVEL 1
+#endif
 
 #include "house.h"
 
