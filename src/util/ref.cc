@@ -15,6 +15,7 @@
 
 #include "util/ref.h"
 
+#include "util/error.h"
 #include "util/objdb.h"
 
 bool Util::RefHelper::isValidId(Util::UID id) {
@@ -27,6 +28,10 @@ Util::Object* Util::RefHelper::getCheckedItem(Util::UID id) {
 
 void Util::RefHelper::insertItem(Util::Object* obj) {
   ObjDb::theDb().insertPtrBase(obj);
+}
+
+void Util::RefHelper::throwErrorWithMsg(const char* msg) {
+  throw ErrorWithMsg(msg);
 }
 
 static const char vcid_ref_cc[] = "$Header$";
