@@ -26,12 +26,12 @@ ARCH_FLAGS =
 CC = 
 ifeq ($(ARCH),hp9000s700)
 	CC = aCC
-	ARCH_FLAGS = -DACC_COMPILER
+	ARCH_FLAGS = -DACC_COMPILER -DHP9000S700
 	SHLIB_FLAG = -b
 endif
 ifeq ($(ARCH),irix6)
 	CC = g++
-	ARCH_FLAGS = -DGCC_COMPILER -DNO_SOUND
+	ARCH_FLAGS = -DGCC_COMPILER -DIRIX6
 	SHLIB_FLAG = 
 endif
 
@@ -164,6 +164,7 @@ DYNAMIC_OBJECTS = \
 	$(ARCH)/rhtcl.do \
 	$(ARCH)/sound.do \
 	$(ARCH)/soundlist.do \
+	$(ARCH)/soundtcl.do \
 	$(ARCH)/stringifycmd.do \
 	$(ARCH)/subject.do \
 	$(ARCH)/subjecttcl.do \
@@ -181,13 +182,6 @@ DYNAMIC_OBJECTS = \
 	$(ARCH)/trace.do \
 	$(ARCH)/trialtcl.do \
 	$(ARCH)/value.do
-
-ifeq ($(ARCH),hp9000s700)
-	SOUND_OBJECTS = \
-		$(ARCH)/soundtcl.do
-else
-	SOUND_OBJECTS = 
-endif
 
 TEST_STATIC_OBJECTS = $(STATIC_OBJECTS)
 TEST_DYNAMIC_OBJECTS = $(DYNAMIC_OBJECTS) $(SOUND_OBJECTS)
@@ -331,7 +325,9 @@ TRACE_H = trace.h
 #
 FACTORY_H = $(ERROR_H) $(DEMANGLE_H) factory.h
 GCCDEMANGLE_CC = $(TRACE_H) $(DEBUG_H) gccdemangle.cc
+HPSOUND_CC = $(TRACE_H) $(DEBUG_H) hpsound.cc
 IO_H = $(ERROR_H) io.h
+IRIXSOUND_CC = $(TRACE_H) $(DEBUG_H) irixsound.cc
 PBM_H = $(ERROR_H) pbm.h
 TCLERROR_H = $(ERROR_H) tclerror.h
 TCLEVALCMD_H = $(TCLOBJLOCK_H) tclevalcmd.h
@@ -463,7 +459,7 @@ GFXATTRIBS_CC = $(GFXATTRIBS_H) gfxattribs.cc
 
 GLBITMAP_CC = $(GLBITMAP_H) $(TRACE_H) $(DEBUG_H) glbitmap.cc
 
-GROBJ_CC = $(GROBJ_H) $(GLBITMAP_H) $(XBITMAP_H) \
+GROBJ_CC = $(GROBJ_H) $(GFXATTRIBS_H) $(GLBITMAP_H) $(XBITMAP_H) \
 	$(ERROR_H) $(RECT_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
 GROBJTCL_CC = $(DEMANGLE_H) $(GROBJ_H) $(OBJLIST_H) $(LISTITEMPKG_H) grobjtcl.cc
@@ -555,13 +551,19 @@ RHTCL_CC = $(IOMGR_H) $(RHLIST_H) $(RESPONSEHANDLER_H) $(TCLCMD_H) \
 	$(KBDRESPONSEHDLR_H) $(NULLRESPONSEHDLR_H) $(LISTITEMPKG_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) rhtcl.cc
 
-SOUND_CC = $(SOUND_H) sound.cc
+ifeq ($(ARCH),hp9000s700)
+SOUND_CC = $(SOUND_H) $(HPSOUND_CC) sound.cc
+endif
+
+ifeq ($(ARCH),irix6)
+SOUND_CC = $(SOUND_H) $(IRIXSOUND_CC) sound.cc
+endif
 
 SOUNDLIST_CC = $(SOUNDLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(SOUND_H) $(PTRLIST_CC) soundlist.cc
 
-SOUNDTCL_CC = $(ERRMSG_H) $(SOUNDLIST_H) $(SOUND_H) \
-	$(LISTPKG_H) $(LISTITEMPKG_H) $(TCLLINK_H) $(TRACE_H) $(DEBUG_H) soundtcl.cc
+SOUNDTCL_CC = $(SOUNDLIST_H) $(SOUND_H) $(LISTPKG_H) $(LISTITEMPKG_H) \
+	$(TCLLINK_H) $(TRACE_H) $(DEBUG_H) soundtcl.cc
 
 STRINGIFYCMD_CC = $(STRINGIFYCMD_H) $(IO_H) \
 	$(TRACE_H) $(DEBUG_H) stringifycmd.cc
@@ -693,10 +695,7 @@ $(ARCH)/rhlist.*[ol]:            $(RHLIST_CC)
 $(ARCH)/rhtcl.*[ol]:             $(RHTCL_CC)
 $(ARCH)/sound.*[ol]:             $(SOUND_CC)
 $(ARCH)/soundlist.*[ol]:         $(SOUNDLIST_CC)
-$(ARCH)/soundtcl.o:              $(SOUNDTCL_CC)
-	$(CC) -c soundtcl.cc -o $*.o -I/opt/audio/include $(ALL_PROD_OPTIONS)
-$(ARCH)/soundtcl.do: $(SOUNDTCL_CC)
-	$(CC) -c soundtcl.cc -o $*.do -I/opt/audio/include $(ALL_TEST_OPTIONS)
+$(ARCH)/soundtcl.*[ol]:          $(SOUNDTCL_CC)
 $(ARCH)/stringifycmd.*[ol]:      $(STRINGIFYCMD_CC)
 $(ARCH)/subject.*[ol]:           $(SUBJECT_CC)
 $(ARCH)/subjecttcl.*[ol]:        $(SUBJECTTCL_CC)
