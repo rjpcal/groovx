@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Aug 22 15:30:56 2001
+// written: Thu Aug 23 11:21:31 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -65,6 +65,10 @@ namespace GLTcl
   }
 
   class glGetCmd;
+
+  GLCanvas theCanvas;
+
+  void checkGL() { theCanvas.throwIfError("checkGL"); }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -72,21 +76,6 @@ namespace GLTcl
 // GLTcl Tcl package definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-namespace GLTcl
-{
-  void checkGL();
-}
-
-void GLTcl::checkGL()
-{
-  GLenum status = glGetError();
-  if (status != GL_NO_ERROR)
-    {
-      const char* msg = reinterpret_cast<const char*>(gluErrorString(status));
-      throw Util::Error(msg);
-    }
-}
 
 //---------------------------------------------------------------------
 //
@@ -211,7 +200,8 @@ void GLTcl::loadMatrix(Tcl::List entries)
     }
 
   glLoadMatrixd(&matrix[0]);
-  checkGL();
+
+  theCanvas.throwIfError("loadMatrix");
 }
 
 //---------------------------------------------------------------------
@@ -352,14 +342,12 @@ Tcl::List GLTcl::lineInfo()
 
 long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
 {
-  GLCanvas canvas;
-
   Gfx::BmapData data;
 
   Gfx::Rect<int> bounds;
   bounds.setRectXYWH(x,y,w,h);
 
-  canvas.grabPixels(bounds, data);
+  theCanvas.grabPixels(bounds, data);
 
   return data.checkSum();
 }
