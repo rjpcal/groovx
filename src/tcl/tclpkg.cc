@@ -21,6 +21,7 @@
 
 #include "util/objdb.h"
 #include "util/object.h"
+#include "util/strings.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/stringifycmd.h"
@@ -179,14 +180,14 @@ const char* Tcl::Pkg::setterUsage(const char* usage)
 void Tcl::Pkg::defIoCommands()
 {
 DOTRACE("Tcl::Pkg::defIoCommands");
-  addCommand( new StringifyCmd(interp(), makePkgCmdName("stringify")) );
-  addCommand( new DestringifyCmd(interp(), makePkgCmdName("destringify")) );
+  defVec( "stringify", "item_id(s)", Tcl::stringify );
+  defVec( "destringify", "item_id(s) string(s)", Tcl::destringify );
 
-  addCommand( new WriteCmd(interp(), makePkgCmdName("write")) );
-  addCommand( new ReadCmd(interp(), makePkgCmdName("read")) );
+  defVec( "write", "item_id(s)", Tcl::write );
+  defVec( "read", "item_id(s) string(s)", Tcl::read );
 
-  addCommand( new ASWSaveCmd(interp(), makePkgCmdName("save")) );
-  addCommand( new ASRLoadCmd(interp(), makePkgCmdName("load")) );
+  def( "save", "item_id filename", Tcl::saveASW );
+  def( "load", "item_id filename", Tcl::loadASR );
 }
 
 void Tcl::Pkg::defGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
