@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu Nov  2 17:33:09 2000
+// written: Fri Nov  3 13:48:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,7 @@ public:
   friend class string_literal;
   friend class dynamic_string;
 
+  fixed_string(int length);
   fixed_string(const char* text = "");
   fixed_string(const fixed_string& other);
   ~fixed_string();
@@ -83,7 +84,7 @@ public:
   bool equals(const string_literal& other) const;
   bool equals(const fixed_string& other) const;
 
-  char* data() { itsRep = itsRep->makeUnique(); return itsRep->itsText; }
+  char* data() { Rep::makeUnique(itsRep); return itsRep->itsText; }
 
   const char* c_str() const { return itsRep->itsText; }
   unsigned int length() const { return itsRep->itsLength; }
@@ -123,35 +124,31 @@ private:
 	 Rep(const Rep& other); // not implemented
 	 Rep& operator=(const Rep& other); // not implemented
 
-	 Rep(const char* text);
-	 ~Rep();
-
-	 int itsRefCount;
-
 	 // Class-specific operator new.
 	 void* operator new(size_t bytes);
 
 	 // Class-specific operator delete.
 	 void operator delete(void* space);
 
+	 Rep();
+	 ~Rep();
+
+	 static Rep* getEmptyRep();
+
   public:
-	 static Rep* make(const char* text) { return new Rep(text); }
+	 static Rep* makeTextCopy(const char* text, int str_length);
+
+	 static Rep* makeBlank(int length);
+
+	 static void makeUnique(Rep*& rep);
 
 	 void incrRefCount() { ++itsRefCount; }
 	 void decrRefCount() { if (--itsRefCount <= 0) delete this; }
 
-	 Rep* makeUnique()
-		{
-		  if (itsRefCount <= 1) return this;
+  private:
+	 int itsRefCount;
 
-		  // It is safe to do this without worring about 'delete-ing
-		  // this', since the previous statement tells us that
-		  // itsRefCount is at least 2
-		  decrRefCount();
-
-		  return make(itsText);
-		}
-
+  public:
 	 char* itsText;
 	 unsigned int itsLength;
   };
