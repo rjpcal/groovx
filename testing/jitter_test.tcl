@@ -20,8 +20,8 @@ unset ::JITTER
 
 ### IO::new Jitter ###
 test "JitterTcl-IO::new Jitter" "too many args" {
-	 IO::new Jitter junk
-} {wrong \# args: should be "IO::new typename"}
+	 IO::new Jitter junk junk
+} {wrong \# args: should be "IO::new typename \?array_size=1\?"}
 test "JitterTcl-IO::new Jitter" "normal create" {
 	 IO::new Jitter
 } {[0-9]+}

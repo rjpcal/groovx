@@ -27,8 +27,8 @@ set PACKAGE GtextTcl
 
 ### IO::new Gtext ###
 test "$PACKAGE-IO::new Gtext" "too many args" {
-	 IO::new Gtext junk
-} {^wrong \# args: should be "IO::new typename"$}
+	 IO::new Gtext junk junk
+} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
 test "$PACKAGE-IO::new Gtext" "normal use" {
 	 set ::GTEXT [IO::new Gtext]
 	 Gtext::text $::GTEXT "Hello, World!"

@@ -32,8 +32,8 @@ set POS [IO::new Position]
 
 ### IO::new GLBitmap ###
 test "GLBitmapTcl-IO::new GLBitmap" "too many args" {
-	 IO::new GLBitmap junk
-} {^wrong \# args: should be "IO::new typename"$}
+	 IO::new GLBitmap junk junk
+} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
 test "GLBitmapTcl-IO::new GLBitmap" "normal use" {
 	 set ::BITMAP [IO::new GLBitmap]
 } "^${INT}$"

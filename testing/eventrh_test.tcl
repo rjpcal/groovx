@@ -18,8 +18,8 @@ IO::testReadCmd EventRhTcl IO 1 $::EVENTRH
 
 ### IO::new EventRh ###
 test "EventRhTcl-IO::new EventRh" "too many args" {
-    IO::new EventResponseHdlr junk
-} {^wrong \# args: should be "IO::new typename"$}
+    IO::new EventResponseHdlr junk junk
+} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
 test "EventRhTcl-IO::new EventRh" "normal use" {
 	 catch {IO::new EventResponseHdlr}
 } {^0$}

@@ -76,6 +76,7 @@ expr srand($seed)
 proc rand_cmp {a1 a2} { return [expr round(200*rand() - 100.0)] }
 
 set permuted_files [lsort -command rand_cmp $files]
+#set permuted_files $files
 
 foreach file $permuted_files {
     IoDb::clear

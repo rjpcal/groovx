@@ -19,8 +19,8 @@ IO::testReadCmd KbdRhTcl IO 1 $::KBDRH
 
 ### IO::new KbdRh ###
 test "KbdRhTcl-IO::new KbdRh" "too many args" {
-    IO::new KbdResponseHdlr junk
-} {^wrong \# args: should be "IO::new typename"$}
+    IO::new KbdResponseHdlr junk junk
+} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
 test "KbdRhTcl-IO::new KbdRh" "normal use" {
 	 catch {IO::new KbdResponseHdlr}
 } {^0$}

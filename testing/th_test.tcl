@@ -28,8 +28,8 @@ IO::testReadCmd ThTcl IO 1 $::TH
 
 ### IO::new TimingHandler ###
 test "ThTcl-IO::new SimpleTh" "too many args" {
-    IO::new TimingHandler junk
-} {^wrong \# args: should be "IO::new typename"$}
+    IO::new TimingHandler junk junk
+} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
 test "ThTcl-IO::new TimingHandler" "normal use" {
 	 catch {IO::new TimingHandler}
 } {^0$}
