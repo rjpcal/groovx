@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Jul 18 11:25:50 2001
+// written: Thu Jul 19 14:18:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,12 +19,14 @@
 
 #include "tcl/tclpkg.h"
 
+#include "io/io.h"
+#include "io/ioutil.h"
+
 #include "util/objdb.h"
 #include "util/object.h"
 #include "util/strings.h"
 
 #include "tcl/tcllistobj.h"
-#include "tcl/stringifycmd.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -56,21 +58,21 @@ namespace Tcl
 
     CountAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-	 void operator()(Tcl::Context& ctx)
-	 {
-		ObjDb& theDb = ObjDb::theDb();
-		int count = 0;
-		for (ObjDb::PtrIterator
-				 itr = theDb.beginPtrs(),
-				 end = theDb.endPtrs();
-			  itr != end;
-			  ++itr)
-		  {
-			 if (itsCaster->isMyType(*itr))
-				++count;
-		  }
-		ctx.setResult(count);
-	 }
+    void operator()(Tcl::Context& ctx)
+    {
+      ObjDb& theDb = ObjDb::theDb();
+      int count = 0;
+      for (ObjDb::PtrIterator
+             itr = theDb.beginPtrs(),
+             end = theDb.endPtrs();
+           itr != end;
+           ++itr)
+        {
+          if (itsCaster->isMyType(*itr))
+            ++count;
+        }
+      ctx.setResult(count);
+    }
   };
 
   struct FindAllFunc
@@ -79,24 +81,24 @@ namespace Tcl
 
     FindAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-	 void operator()(Tcl::Context& ctx)
-	 {
-		ObjDb& theDb = ObjDb::theDb();
+    void operator()(Tcl::Context& ctx)
+    {
+      ObjDb& theDb = ObjDb::theDb();
 
-		Tcl::List result;
+      Tcl::List result;
 
-		for (ObjDb::PtrIterator
-				 itr = theDb.beginPtrs(),
-				 end = theDb.endPtrs();
-			  itr != end;
-			  ++itr)
-		  {
-			 if (itsCaster->isMyType(*itr))
-				result.append(itr.getId());
-		  }
+      for (ObjDb::PtrIterator
+             itr = theDb.beginPtrs(),
+             end = theDb.endPtrs();
+           itr != end;
+           ++itr)
+        {
+          if (itsCaster->isMyType(*itr))
+            result.append(itr.getId());
+        }
 
-		ctx.setResult(result);
-	 }
+      ctx.setResult(result);
+    }
   };
 
   struct RemoveAllFunc
@@ -105,28 +107,28 @@ namespace Tcl
 
     RemoveAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-	 void operator()(Tcl::Context& ctx)
-	 {
-		ObjDb& theDb = ObjDb::theDb();
-		for (ObjDb::IdIterator
-				 itr = theDb.beginIds(),
-				 end = theDb.endIds();
-			  itr != end;
-			  /* increment done in loop body */)
-		  {
-			 if (itsCaster->isMyType(itr.getObject()) &&
-				  itr.getObject()->isUnshared())
-				{
-				  int remove_me = *itr;
-				  ++itr;
-				  theDb.remove(remove_me);
-				}
-			 else
-				{
-				  ++itr;
-				}
-		  }
-	 }
+    void operator()(Tcl::Context& ctx)
+    {
+      ObjDb& theDb = ObjDb::theDb();
+      for (ObjDb::IdIterator
+             itr = theDb.beginIds(),
+             end = theDb.endIds();
+           itr != end;
+           /* increment done in loop body */)
+        {
+          if (itsCaster->isMyType(itr.getObject()) &&
+              itr.getObject()->isUnshared())
+            {
+              int remove_me = *itr;
+              ++itr;
+              theDb.remove(remove_me);
+            }
+          else
+            {
+              ++itr;
+            }
+        }
+    }
   };
 
   struct IsFunc
@@ -135,11 +137,11 @@ namespace Tcl
 
     IsFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-	 void operator()(Tcl::Context& ctx)
-	 {
-		Util::UID id = ctx.getValFromArg(1, TypeCue<Util::UID>());
-		ctx.setResult(itsCaster->isIdMyType(id));
-	 }
+    void operator()(Tcl::Context& ctx)
+    {
+      Util::UID id = ctx.getValFromArg(1, TypeCue<Util::UID>());
+      ctx.setResult(itsCaster->isIdMyType(id));
+    }
   };
 
 }
@@ -159,35 +161,35 @@ Tcl::Pkg::~Pkg() {}
 const char* Tcl::Pkg::actionUsage(const char* usage)
 {
   if (usage != 0 && *usage != 0)
-	 return usage;
+    return usage;
   return "item_id(s)";
 }
 
 const char* Tcl::Pkg::getterUsage(const char* usage)
 {
   if (usage != 0 && *usage != 0)
-	 return usage;
+    return usage;
   return "item_id(s)";
 }
 
 const char* Tcl::Pkg::setterUsage(const char* usage)
 {
   if (usage != 0 && *usage != 0)
-	 return usage;
+    return usage;
   return "item_id(s) new_value(s)";
 }
 
 void Tcl::Pkg::defIoCommands()
 {
 DOTRACE("Tcl::Pkg::defIoCommands");
-  defVec( "stringify", "item_id(s)", Tcl::stringify );
-  defVec( "destringify", "item_id(s) string(s)", Tcl::destringify );
+  defVec( "stringify", "item_id(s)", IO::stringify );
+  defVec( "destringify", "item_id(s) string(s)", IO::destringify );
 
-  defVec( "write", "item_id(s)", Tcl::write );
-  defVec( "read", "item_id(s) string(s)", Tcl::read );
+  defVec( "write", "item_id(s)", IO::write );
+  defVec( "read", "item_id(s) string(s)", IO::read );
 
-  def( "save", "item_id filename", Tcl::saveASW );
-  def( "load", "item_id filename", Tcl::loadASR );
+  def( "save", "item_id filename", IO::saveASW );
+  def( "load", "item_id filename", IO::loadASR );
 }
 
 void Tcl::Pkg::defGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
