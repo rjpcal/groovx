@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu May 31 18:00:48 2001
+// written: Fri Jun  1 17:12:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -390,7 +390,9 @@ DOTRACE("ToglConfig::loadFont");
 
   GLuint newListBase = itsTogl->loadBitmapFont(fontname);
 
+#ifdef ACC_COMPILER
   try {
+#endif
 	 // Check if font loading succeeded...
 	 if (newListBase == 0) {
 		DebugEval(fontname);
@@ -398,8 +400,10 @@ DOTRACE("ToglConfig::loadFont");
 		err.appendMsg(fontname);
 		throw err;
 	 }
+#ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
+#endif
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
@@ -413,23 +417,19 @@ DOTRACE("ToglConfig::loadFont");
 void ToglConfig::loadFonti(int fontnumber) {
 DOTRACE("ToglConfig::loadFonti");
 
-  // This function core dumps on irix6 or i686 using g++, so we throw
-  // an error for now.
-#if !defined(IRIX6) && !defined(I686)
-  GLuint newListBase =
-	 itsTogl->loadBitmapFont(reinterpret_cast<char*>(fontnumber));
-#else
-  GLuint newListBase = 0*fontnumber; // this will force an exception to be thrown
-#endif
-
+  GLuint newListBase = itsTogl->loadBitmapFonti(fontnumber);
 
   // Check if font loading succeeded...
+#ifdef ACC_COMPILER
   try {
+#endif
 	 if (newListBase == 0) {
 		throw ToglError("unable to load font");
 	 }
+#ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
+#endif
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
