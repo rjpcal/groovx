@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Fri Aug 17 10:26:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,22 +17,31 @@
 
 #include "util/trace.h"
 
-GxNode::GxNode() {
+GxNode::GxNode()
+{
 DOTRACE("GxNode::GxNode");
 }
 
-GxNode::~GxNode() {
+GxNode::~GxNode()
+{
 DOTRACE("GxNode::~GxNode");
 }
 
-int GxNode::category() const {
+int GxNode::category() const
+{
 DOTRACE("GxNode::category");
   return -1;
 }
 
-bool GxNode::contains(GxNode* other) const {
+bool GxNode::contains(GxNode* other) const
+{
 DOTRACE("GxNode::contains");
   return (this == other);
+}
+
+void GxNode::getBoundingBox(Gfx::Rect<double>&, Gfx::Canvas&) const
+{
+DOTRACE("GxNode::getBoundingBox");
 }
 
 static const char vcid_gxnode_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug 16 11:22:21 2001
+// written: Fri Aug 17 10:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,11 +32,6 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
 #include "util/tracer.h"
 #endif
-
-namespace Gfx
-{
-  template <class V> class Rect;
-}
 
 class GrObjImpl;
 
@@ -93,10 +88,13 @@ public:
       is drawn. */
   bool getBBVisibility() const;
 
-  /** Returns the bounding box given by \c grGetBoundingBox(), with
-      additional transformations to reflect the scaling mode,
-      alignment mode, and pixel border values. */
-  Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;
+  /** Overridden from GxNode. Extends bbox by the rect returned by
+      grGetBoundingBox(), with additional transformations to reflect
+      the scaling mode, alignment mode, and pixel border
+      values. Subclasses of GrObj should override grGetBoundingBox(),
+      not boundingBox(). */
+  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
+										Gfx::Canvas& canvas) const;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */

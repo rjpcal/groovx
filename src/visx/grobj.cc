@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug 16 11:05:02 2001
+// written: Fri Aug 17 10:36:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,11 +129,11 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
 
-Gfx::Rect<double> GrObj::getBoundingBox(Gfx::Canvas& canvas) const
+void GrObj::getBoundingBox(Gfx::Rect<double>& bbox, Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
-  return itsImpl->itsTopNode->gnodeBoundingBox(canvas);
+  bbox.unionize(itsImpl->itsTopNode->gnodeBoundingBox(canvas));
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const
@@ -358,7 +358,8 @@ void GrObj::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::undraw");
 
-  Gfx::Rect<double> world_box = getBoundingBox(canvas);
+  Gfx::Rect<double> world_box;
+  getBoundingBox(world_box, canvas);
 
   Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
 
