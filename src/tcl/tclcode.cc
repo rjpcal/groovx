@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 14:20:10 2001
+// written: Mon Jul 16 14:42:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ bool Tcl::Code::invoke(Tcl_Interp* interp)
   return true;
 }
 
-bool Tcl::Code::invoke(Tcl::SafeInterp& interp)
+bool Tcl::Code::invoke(const Tcl::SafeInterp& interp)
 {
   invoke(interp.intp());
 }

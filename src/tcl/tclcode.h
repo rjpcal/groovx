@@ -60,7 +60,7 @@ public:
   bool invoke(Tcl_Interp* interp);
 
   /// Returns true on success, false on failure.
-  bool invoke(Tcl::SafeInterp& interp);
+  bool invoke(const Tcl::SafeInterp& interp);
 
 private:
   Tcl::ObjPtr itsCodeObj;
