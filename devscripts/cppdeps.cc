@@ -143,6 +143,18 @@ namespace
     return result;
   }
 
+  void strip_whitespace(string& s)
+  {
+    const string::size_type p1 = s.find_first_not_of(" \t\n");
+    const string::size_type p2 = s.find_last_not_of(" \t\n");
+
+    if (p2 != string::npos && (p2+1 < s.length()))
+      s.erase(p2+1, string::npos);
+
+    if (p1 != 0)
+      s.erase(0, p1);
+  }
+
   string trim_trailing_slashes(const string& inp)
   {
     string result = inp;
@@ -326,18 +338,40 @@ namespace
   class formatter
   {
   private:
+    string            m_group;
     string            m_prefix;
     string            m_link_pattern;
     string::size_type m_wildcard_pos;
     mutable bool      m_ever_matched;
 
   public:
-    formatter(const string& src, const string& link) :
-      m_prefix(src),
-      m_link_pattern(link),
-      m_wildcard_pos(link.find_first_of('*')),
+    formatter(string input) :
       m_ever_matched(false)
-    {}
+    {
+      string::size_type comma = input.find_first_of(',');
+      if (comma != string::npos)
+        {
+          m_group = input.substr(0, comma);
+          strip_whitespace(m_group);
+          input.erase(0, comma+1);
+        }
+
+      string::size_type colon = input.find_first_of(':');
+      if (colon == string::npos)
+        {
+          cerr << "ERROR: invalid format (missing colon): '"
+               << input << "'\n";
+          exit(1);
+        }
+
+      m_prefix = input.substr(0, colon);
+      strip_whitespace(m_prefix);
+
+      m_link_pattern = input.substr(colon+1);
+      strip_whitespace(m_link_pattern);
+
+      m_wildcard_pos = m_link_pattern.find_first_of('*');
+    }
 
     void warn_if_never_matched(const char* setname) const
     {
@@ -374,6 +408,10 @@ namespace
       result.replace(m_wildcard_pos, 1, stem);
       return result;
     }
+
+    bool has_group() const { return m_group.length() > 0; }
+
+    const string& group() const { return m_group; }
   };
 
   //----------------------------------------------------------
@@ -390,18 +428,9 @@ namespace
   public:
     format_set(const char* name) : m_links(), m_setname(name) {}
 
-    void add_format(const string& src_colon_pattern)
+    void add_format(const string& input)
     {
-      string::size_type colon = src_colon_pattern.find_first_of(':');
-      if (colon == string::npos)
-        {
-          cerr << "ERROR: invalid format (missing colon): '"
-               << src_colon_pattern << "'\n";
-          exit(1);
-        }
-      string src = src_colon_pattern.substr(0, colon);
-      string pattern = src_colon_pattern.substr(colon+1);
-      m_links.push_back(formatter(src, pattern));
+      m_links.push_back(formatter(input));
     }
 
     /// Try to find a pattern that matches srcfile, and return its transformation.
@@ -427,6 +456,25 @@ namespace
         {
           if (m_links[i-1].matches(srcfile))
             return m_links[i-1].transform(srcfile);
+        }
+      return string(); // can't happen, but placate compiler
+    }
+
+    /// Try to find a pattern that matches srcfile, and return its transformation.
+    /** If no pattern matches, return an empty string. Returns the
+        group name, if any, for the matching pattern. */
+    string transform(const string& srcfile, string& group) const
+    {
+      group.clear();
+      for (unsigned int i = m_links.size(); i > 0; --i)
+        {
+          if (m_links[i-1].matches(srcfile))
+            {
+              if (m_links[i-1].has_group())
+                group = m_links[i-1].group();
+
+              return m_links[i-1].transform(srcfile);
+            }
         }
       return string(); // can't happen, but placate compiler
     }
@@ -1577,7 +1625,8 @@ void cppdeps::print_link_deps(file_info* finfo)
   if (!finfo->is_cc_file())
     return;
 
-  const string exe = cfg.exe_formats.transform(finfo->name());
+  string group;
+  const string exe = cfg.exe_formats.transform(finfo->name(), group);
 
   if (exe.empty())
     {
@@ -1591,6 +1640,13 @@ void cppdeps::print_link_deps(file_info* finfo)
 
       return;
     }
+
+  if (!group.empty())
+    {
+      printf("%s: %s\n", group.c_str(), exe.c_str());
+    }
+
+  printf("ALLEXECS += %s\n", exe.c_str());
 
   const dep_list_t& ldeps = finfo->get_nested_ldeps();
 
