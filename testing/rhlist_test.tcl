@@ -8,4 +8,4 @@
 ##############################################################################
 
 source ${::TEST_DIR}/list_test.tcl
-List::testList RhlistTcl RhList Rh KbdRh NullRh
+List::testList RhlistTcl RhList Rh KbdResponseHdlr NullResponseHdlr
