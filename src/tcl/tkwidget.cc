@@ -346,13 +346,21 @@ Gfx::Vec2<int> Tcl::TkWidget::size() const
 void Tcl::TkWidget::setWidth(int w)
 {
 DOTRACE("Tcl::TkWidget::setWidth");
-  Tk_GeometryRequest(rep->tkWin, w, height());
+  // Need to specify Tk_ReqHeight(rep->tkWin) instead of
+  // Tk_Height(rep->tkWin), since the latter might not reflect the
+  // requested height if the event loop has not been entered since a call
+  // to setHeight().
+  Tk_GeometryRequest(rep->tkWin, w, Tk_ReqHeight(rep->tkWin));
 }
 
 void Tcl::TkWidget::setHeight(int h)
 {
 DOTRACE("Tcl::TkWidget::setHeight");
-  Tk_GeometryRequest(rep->tkWin, width(), h);
+  // Need to specify Tk_ReqWidth(rep->tkWin) instead of
+  // Tk_Width(rep->tkWin), since the latter might not reflect the
+  // requested height if the event loop has not been entered since a call
+  // to setWidth().
+  Tk_GeometryRequest(rep->tkWin, Tk_ReqWidth(rep->tkWin), h);
 }
 
 void Tcl::TkWidget::setSize(Gfx::Vec2<int> sz)
@@ -469,6 +477,28 @@ DOTRACE("Tcl::TkWidget::pack");
       pack_cmd.append( pathname() );
       pack_cmd.append( " -side left -expand 1 -fill both; update" );
       rep->interp.eval(pack_cmd);
+    }
+}
+
+void Tcl::TkWidget::repack(const char* options)
+{
+DOTRACE("Tcl::TkWidget::repack");
+
+  if (!Tk_IsTopLevel(rep->tkWin))
+    {
+      const fstring pack_cmd("pack ", pathname(), " ", options, "; update");
+      rep->interp.eval(pack_cmd);
+    }
+}
+
+void Tcl::TkWidget::unpack()
+{
+DOTRACE("Tcl::TkWidget::repack");
+
+  if (!Tk_IsTopLevel(rep->tkWin))
+    {
+      const fstring unpack_cmd("pack forget ", pathname());
+      rep->interp.eval(unpack_cmd);
     }
 }
 

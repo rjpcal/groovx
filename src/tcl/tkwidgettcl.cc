@@ -58,6 +58,8 @@ DOTRACE("Tkwidget_Init");
   pkg->defAction("minimize", &Tcl::TkWidget::minimize);
   pkg->defGetter("pathname", &Tcl::TkWidget::pathname);
   pkg->defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
+  pkg->defAction("unpack", &Tcl::TkWidget::unpack);
+  pkg->def("repack", "pack_args", &Tcl::TkWidget::repack);
   pkg->def("warpPointer", "item_id x y", &Tcl::TkWidget::warpPointer);
   pkg->defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
 

@@ -92,7 +92,16 @@ public:
   /// Move the mouse pointer (cursor) to the given coordinates within the widget.
   void warpPointer(int x, int y) const;
 
+  /// Pack this widget with default packing options.
   void pack();
+
+  /// Re-pack this widget, with optional packing options.
+  /** The options string is just an ordinary list of arguments to the Tk
+      "pack" command. */
+  void repack(const char* options);
+
+  /// Make the "packer" forget this widget.
+  void unpack();
 
   void iconify();
 
