@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed May 23 10:34:29 2001
+// written: Sat May 26 16:24:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,8 +125,6 @@ DOTRACE("TlistUtils::createPreview");
 void TlistUtils::writeResponses(const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
 
-  IoDb& tlist = IoDb::theDb(); 
-
   STD_IO::ofstream ofs(filename);
   const int wid = 8;
 
@@ -134,24 +132,20 @@ DOTRACE("TlistUtils::writeResponses");
   // this line as a comment
   ofs << '%' << setw(wid-1) << "Trial" << setw(wid) << "N" 
 		<< setw(wid) << "Average" << setw(wid) << "msec\n";
-  
+
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (IoDb::IdIterator
-			itr = tlist.beginIds(),
-			end = tlist.endIds();
+
+  for (IoDb::CastingIterator<Trial>
+			itr = IoDb::theDb().begin(),
+			end = IoDb::theDb().end();
 		 itr != end;
 		 ++itr)
 	 {
-		Trial* t = dynamic_cast<Trial*>(itr.getObject());
-
-		if ( t )
-		  {
-			 ofs << setw(wid) << *itr;
-			 ofs << setw(wid) << t->numResponses();
-			 ofs << setw(wid) << t->avgResponse();	 
-			 ofs << setw(wid) << t->avgRespTime() << endl;
-		  }
+		ofs << setw(wid) << itr->id();
+		ofs << setw(wid) << itr->numResponses();
+		ofs << setw(wid) << itr->avgResponse();	 
+		ofs << setw(wid) << itr->avgRespTime() << endl;
 	 }
 
   if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
@@ -160,51 +154,41 @@ DOTRACE("TlistUtils::writeResponses");
 void TlistUtils::writeIncidenceMatrix(const char* filename) {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
 
-  IoDb& tlist = IoDb::theDb(); 
-
   STD_IO::ofstream ofs(filename);
 
-  for (IoDb::IdIterator
-			itr = tlist.beginIds(),
-			end = tlist.endIds();
+  for (IoDb::CastingIterator<Trial>
+			itr = IoDb::theDb().begin(),
+			end = IoDb::theDb().end();
 		 itr != end;
 		 ++itr)
 	 {
-		Trial* t = dynamic_cast<Trial*>(itr.getObject());
+		// Use this to make sure we don't round down when we should round up.
+		double fudge = 0.0001;
 
-		if ( t )
-		  {
-			 // Use this to make sure we don't round down when we should round up.
-			 double fudge = 0.0001;
+		int num_zeros =
+		  int( (1.0 - itr->avgResponse()) * itr->numResponses() + fudge );
 
-			 int num_zeros = int( (1.0 - t->avgResponse()) * t->numResponses() + fudge);
-			 int num_ones = t->numResponses() - num_zeros;
+		int num_ones = itr->numResponses() - num_zeros;
 
-			 ofs << num_zeros << "  " << num_ones << endl;
-		  }
+		ofs << num_zeros << "  " << num_ones << endl;
 	 }
 }
 
 void TlistUtils::writeMatlab(const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
 
-  IoDb& tlist = IoDb::theDb(); 
-
   STD_IO::ofstream ofs(filename);
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
-  for (IoDb::IdIterator
-			itr = tlist.beginIds(),
-			end = tlist.endIds();
+  for (IoDb::CastingIterator<Trial>
+			itr = IoDb::theDb().begin(),
+			end = IoDb::theDb().end();
 		 itr != end;
 		 ++itr)
 	 {
-		Trial* t = dynamic_cast<Trial*>(itr.getObject());
-
-		if ( t )
-		  t->writeMatlab(ofs);
+		itr->writeMatlab(ofs);
 	 }
 }
 
