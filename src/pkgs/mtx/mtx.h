@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 14:41:16 2002
+// written: Tue Feb 19 15:39:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,34 +55,6 @@ namespace RC // Range checking
 #endif
 
 class Mtx;
-
-///////////////////////////////////////////////////////////////////////
-//
-// ElemProxy class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-
-class ElemProxy {
-  Mtx& m;
-  int i;
-
-  double value() const;
-  double& uniqueRef();
-
-public:
-  ElemProxy(Mtx& m_, int i_) : m(m_), i(i_) {}
-
-  double& operator=(const ElemProxy& other);
-  double& operator=(double d);
-
-  double& operator+=(double d);
-  double& operator-=(double d);
-  double& operator*=(double d);
-  double& operator/=(double d);
-
-  operator double();
-};
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -371,7 +343,7 @@ public:
   int ncols() const { return ncols_; }
   int colstride() const { return colstride_; }
 
-  double at(int i) const
+  const double& at(int i) const
   {
     RC_less(i+offset_, storageLength());
     return storage()[i+offset_];
@@ -523,22 +495,68 @@ public:
   // This version will print the given name before printing the matrix contents
   void print(const char* mtxName) const;
 
+  template <class M, class T>
+  class iter_base
+  {
+    M& mtx;
+    int elem;
+
+  public:
+    iter_base(M& m, int e) : mtx(m), elem(e) {}
+
+    typedef std::random_access_iterator_tag iterator_category;
+
+    typedef T            value_type;
+    typedef ptrdiff_t    difference_type;
+    typedef T*           pointer;
+    typedef T&           reference;
+
+    iter_base end() const { return iter_base(mtx, mtx.nelems()); }
+
+    bool hasMore() const { return elem < mtx.nelems(); }
+
+    reference operator*() const { return mtx.at(elem); }
+
+    // Comparison
+
+    bool operator==(const iter_base& other) const { return elem == other.elem; }
+
+    bool operator!=(const iter_base& other) const { return elem != other.elem; }
+
+    bool operator<(const iter_base& other) const { return elem < other.elem; }
+
+    difference_type operator-(const iter_base& other) const
+      { return elem - other.elem; }
+
+    // Increment/Decrement
+
+    iter_base& operator++() { ++elem; return *this; }
+    iter_base& operator--() { --elem; return *this; }
+
+    iter_base operator++(int) { return iter_base(mtx, elem++); }
+    iter_base operator--(int) { return iter_base(mtx, elem--); }
+
+    iter_base& operator+=(int x) { elem += x; return *this; }
+    iter_base& operator-=(int x) { elem -= x; return *this; }
+
+    iter_base operator+(int x) const { return iter_base(mtx, elem+x); }
+    iter_base operator-(int x) const { return iter_base(mtx, elem-x); }
+  };
+
   //
   // Data access
   //
 
-  friend class ElemProxy;
+  double& at(int row, int col)
+    { return itsImpl.at_nc(itsImpl.offsetFromStart(row, col)); }
 
-  ElemProxy at(int row, int col)
-    { return ElemProxy(*this, itsImpl.offsetFromStart(row, col)); }
-
-  double at(int row, int col) const
+  const double& at(int row, int col) const
     { return itsImpl.at(itsImpl.offsetFromStart(row, col)); }
 
-  ElemProxy at(int elem)
-    { return ElemProxy(*this, itsImpl.offsetFromStart(elem)); }
+  double& at(int elem)
+    { return itsImpl.at_nc(itsImpl.offsetFromStart(elem)); }
 
-  double at(int elem) const
+  const double& at(int elem) const
     { return itsImpl.at(itsImpl.offsetFromStart(elem)); }
 
   void reshape(int mrows, int ncols) { itsImpl.reshape(mrows, ncols); }
@@ -720,33 +738,6 @@ private:
 // Inline member function definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-inline double ElemProxy::value() const
-{ return m.itsImpl.at(i); }
-
-inline double& ElemProxy::uniqueRef()
-{ return m.itsImpl.at_nc(i); }
-
-inline double& ElemProxy::operator=(double d)
-{ return (uniqueRef() = d); }
-
-inline double& ElemProxy::operator=(const ElemProxy& other)
-{ return (uniqueRef() = other.value()); }
-
-inline double& ElemProxy::operator+=(double d)
-{ return (uniqueRef() += d); }
-
-inline double& ElemProxy::operator-=(double d)
-{ return (uniqueRef() -= d); }
-
-inline double& ElemProxy::operator*=(double d)
-{ return (uniqueRef() *= d); }
-
-inline double& ElemProxy::operator/=(double d)
-{ return (uniqueRef() /= d); }
-
-inline ElemProxy::operator double() { return m.itsImpl.at(i); }
-
 
 inline const double* Slice::dataStart() const
 { return itsOwner.storage() + itsOffset; }
