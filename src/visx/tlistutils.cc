@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug  6 06:54:20 2001
+// written: Mon Aug  6 08:15:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,6 @@
 
 #include "io/reader.h"
 
-#include "util/arrays.h"
 #include "util/error.h"
 #include "util/objdb.h"
 #include "util/ref.h"
@@ -46,29 +45,21 @@ Util::UID TlistUtils::createPreview(GWT::Canvas& canvas,
 DOTRACE("TlistUtils::createPreview");
   Point<double> world_origin = canvas.getWorldFromScreen( Point<int>(0, 0) );
 
-  double world_origin_x = world_origin.x();
-  double world_origin_y = world_origin.y();
-
   Point<double> world_extent =
     canvas.getWorldFromScreen( Point<int>(pixel_width, pixel_height) );
 
-  double world_width = world_extent.x();
-  double world_height = world_extent.y();
-
-  world_width -= world_origin_x;
-  world_height -= world_origin_y;
-
-  fixed_block<Rect<double> > bbxs(objids_size);
+  const double world_width = world_extent.x() - world_origin.x();
+  const double world_height = world_extent.y() - world_origin.y();
 
   Ref<Trial> preview_trial(Trial::make());
 
-  double window_area = world_width*world_height;
-  double parcel_area = window_area/objids_size;
-  double raw_parcel_side = sqrt(parcel_area);
+  const double window_area = world_width*world_height;
+  const double parcel_area = window_area/objids_size;
+  const double raw_parcel_side = sqrt(parcel_area);
 
-  int num_cols = int(world_width/raw_parcel_side) + 1;
+  const int num_cols = int(world_width/raw_parcel_side) + 1;
 
-  double parcel_side = world_width/num_cols;
+  const double parcel_side = world_width/num_cols;
 
   int x_step = -1;
   int y_step = 0;
@@ -79,7 +70,6 @@ DOTRACE("TlistUtils::createPreview");
       if (x_step == num_cols) { x_step = 0; ++y_step; }
 
       Ref<GrObj> obj(objids[i]);
-      obj->getBoundingBox(canvas, bbxs[i]);
 
       obj->setAlignmentMode(GrObj::CENTER_ON_CENTER);
       obj->setBBVisibility(true);
@@ -87,7 +77,7 @@ DOTRACE("TlistUtils::createPreview");
       obj->setMaxDimension(0.8);
 
       Ref<Gtext> label(Gtext::make());
-      label->setText(Util::Convert<Util::UID>::toString(objids[i])));
+      label->setText(Util::Convert<Util::UID>::toString(objids[i]));
       label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
       label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
       label->setHeight(0.1);
