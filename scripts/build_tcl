@@ -10,17 +10,17 @@ proc find_src { root pattern } {
 set root [file normalize [lindex $argv 0]]
 set dst [file normalize [lindex $argv 1]]
 
-set tcl_src [find_src $root tcl*/]
-set tk_src [find_src $root tk*/]
-set itcl_src [find_src $root itcl*/]
-set iwidgets_src [find_src $root iwidgets*/]
+set tcl_src [find_src $root tcl\[0-9\].*/]
+set tk_src [find_src $root tk\[0-9\].*/]
+set itcl_src [find_src $root itcl\[0-9\].*/]
+set iwidgets_src [find_src $root iwidgets\[0-9\].*/]
 
-cd $tcl_src
+cd ${tcl_src}/unix
 exec ./configure --prefix=$dst >&@ stdout
 exec make >&@ stdout
 exec make install >&@ stdout
 
-cd $tk_src
+cd ${tk_src}/unix
 exec ./configure --prefix=$dst >&@ stdout
 exec make >&@ stdout
 exec make install >&@ stdout
