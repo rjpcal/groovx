@@ -50,7 +50,7 @@ namespace geom
 
     vec3(V x_, V y_, V z_) { set(x_, y_, z_); }
 
-    vec3(const V* arr) { set(arr[0], arr[1], arr[2]); }
+    explicit vec3(const V* arr) { set(arr[0], arr[1], arr[2]); }
 
     template <class U>
     vec3(const vec3<U>& other)
