@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct  8 15:49:10 1999
+// written: Fri Oct  8 15:52:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 #include <cctype>
 #include <string>
 
+#include "grobj.h"
 #include "iomgr.h"
 #include "objlist.h"
 #include "listpkg.h"
