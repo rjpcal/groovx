@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Apr 26 14:39:14 1999
+// written: Sat May 15 15:01:41 1999
 // $Id$
 //
 // The Face class is derived from GrObj. As such, Face*'s may be
@@ -14,7 +14,15 @@
 #ifndef FACE_H_DEFINED
 #define FACE_H_DEFINED
 
-#include <cmath>
+#include <cmath>					  // for abs()
+
+#ifndef IOSTL_H_INCLUDED
+#include "iostl.h"
+#endif
+
+#ifndef VECTOR_INCLUDED
+#include <vector>
+#endif
 
 #ifndef GROBJ_H_INCLUDED
 #include "grobj.h"
@@ -30,7 +38,7 @@ public:
   // creators //
   //////////////
 
-  Face (float eh, float es, float nl, float mh, int categ=0);
+  Face (float eh=0.6, float es=0.4, float nl=0.4, float mh=-0.8, int categ=0);
   Face (istream &is, IOFlag flag);
   virtual ~Face ();
 
@@ -40,41 +48,51 @@ public:
   // output/input stream. The stream must already be connected to an
   // appropriate file or other source. The format used is:
   //
-  // [Face] category eyeHgt eyeDist noseLen mouthHgr
+  // [Face] category eyeHgt eyeDist noseLen mouthHgt
   
+  virtual int charCount() const;
+
   ///////////////
   // accessors //
   ///////////////
 
-  float getEyeHgt() const { return itsEyeheight; }
+  float getEyeHgt() const { return itsEyeHeight(); }
 
-  float getEyeDist() const { return (itsEye[1] - itsEye[0]); }
-  // Always returns a non-negative value, since itsEye[1] is always
-  // >=0.0 and itsEye[0] is always <= 0.0
+  float getEyeDist() const { return itsEyeDistance(); }
 
-  float getNoseLen() const { return (itsNose[1] - itsNose[0]); }
+  float getNoseLen() const { return itsNoseLength(); }
 
-  float getMouthHgt() const { return itsMouthHeight; }
+  float getMouthHgt() const { return itsMouthHeight(); }
   
-  virtual int getCategory() const { return itsCategory; }
+  virtual int getCategory() const { return itsCategory(); }
+
+protected:
+  virtual const float* getCtrlPnts() const;
+  // Returns an array of Bezier control points for face outline
+
+  virtual float getEyeAspect() const;
+  // Returns the aspect ratio of eye outline.
+  
+  virtual float getVertOffset() const;
+  // Returns the amount of vertical offset applied to all features.
 
   //////////////////
   // manipulators //
   //////////////////
 
+public:
   void setEyeHgt(float eh);
   void setEyeDist(float ed);
   void setNoseLen(float nl);
   void setMouthHgt(float mh);
   
-  virtual void setCategory(int val) { itsCategory = val; }
+  virtual void setCategory(int val) { itsCategory() = val; }
 
 protected:
   virtual void grRecompile() const; 
   // This overrides GrObj pure virtual function. It compiles an OpenGL
   // display list that, when called, will render a face with the
   // appropriate parameters.
-  
 
 private:
   bool check() const;
@@ -83,12 +101,20 @@ private:
   Face(const Face&);            // copy constructor not to be used
   Face& operator=(const Face&); // assignment operator not to be used
 
-  float itsEye[2];              // x positions for left, right eyes
-  float itsNose[2];             // y positions for bottom, top of nose
-  float itsMouthHeight;         // mouth height
-  float itsEyeheight;           // eyes height
+  void makeIoList(vector<IO *>& vec);
+  void makeIoList(vector<const IO *>& vec) const;
 
-  int itsCategory;				  // holds an arbitrary category specification
+//   float itsEyeDistance;
+//   float itsNoseLength;
+//   float itsMouthHeight;         // mouth height
+//   float itsEyeHeight;           // eyes height
+  IoWrapper<float> itsEyeDistance;
+  IoWrapper<float> itsNoseLength;
+  IoWrapper<float> itsMouthHeight;
+  IoWrapper<float> itsEyeHeight;
+
+  IoWrapper<int> itsCategory;	  // holds an arbitrary category specification
+//   int itsCategory;				  // holds an arbitrary category specification
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -97,24 +123,22 @@ private:
 
 inline void Face::setNoseLen(float nl) {
   grPostRecompile();
-  itsNose[0] = -abs(nl)/2.0;    // bottom, always <= 0.0
-  itsNose[1] = -itsNose[0];     // top, always >= 0.0
+  itsNoseLength() = abs(nl);
 }
 
 inline void Face::setEyeDist(float ed) {
   grPostRecompile();
-  itsEye[0] = -abs(ed)/2.0;     // left, always <= 0.0
-  itsEye[1] = -itsEye[0];       // right, always >= 0.0
+  itsEyeDistance() = abs(ed);
 }
 
 inline void Face::setEyeHgt(float eh) {
   grPostRecompile();
-  itsEyeheight = eh;
+  itsEyeHeight() = eh;
 }
 
 inline void Face::setMouthHgt(float mh) {
   grPostRecompile();
-  itsMouthHeight = mh;
+  itsMouthHeight() = mh;
 }
 
 static const char vcid_face_h[] = "$Header$";
