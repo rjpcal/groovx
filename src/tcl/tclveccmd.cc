@@ -143,7 +143,7 @@ public:
 
   virtual void dispatch(Tcl::Interp& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
-                        Tcl::Command& cmd);
+                        Tcl::Callback& callback);
 
 private:
   unsigned int itsKeyArgn;
@@ -152,7 +152,7 @@ private:
 
 void Tcl::VecDispatcher::dispatch(Tcl::Interp& interp,
                                   unsigned int objc, Tcl_Obj* const objv[],
-                                  Tcl::Command& cmd)
+                                  Tcl::Callback& callback)
 {
 DOTRACE("Tcl::VecDispatcher::dispatch");
 
@@ -164,7 +164,7 @@ DOTRACE("Tcl::VecDispatcher::dispatch");
 
       for (unsigned int c = 0; c < ncalls; ++c)
         {
-          cmd.invoke(cx);
+          callback.invoke(cx);
           cx.next();
         }
 
@@ -173,7 +173,7 @@ DOTRACE("Tcl::VecDispatcher::dispatch");
   else if (ncalls == 1)
     {
       Context cx(interp, objc, objv);
-      cmd.invoke(cx);
+      callback.invoke(cx);
     }
   else // (ncalls == 0)
     {
@@ -182,9 +182,9 @@ DOTRACE("Tcl::VecDispatcher::dispatch");
 }
 
 
-void Tcl::useVecDispatch(Tcl::Command* cmd, unsigned int key_argn)
+void Tcl::useVecDispatch(Tcl::Command& cmd, unsigned int key_argn)
 {
-  cmd->setDispatcher(shared_ptr<Tcl::Dispatcher>(new VecDispatcher(key_argn)));
+  cmd.setDispatcher(shared_ptr<Tcl::Dispatcher>(new VecDispatcher(key_argn)));
 }
 
 static const char vcid_tclveccmd_cc[] = "$Header$";

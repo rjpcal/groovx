@@ -34,7 +34,7 @@ namespace Tcl
 {
   class Command;
 
-  void useVecDispatch(Tcl::Command* cmd, unsigned int key_argn);
+  void useVecDispatch(Tcl::Command& cmd, unsigned int key_argn);
 }
 
 static const char vcid_tclveccmd_h[] = "$Header$";

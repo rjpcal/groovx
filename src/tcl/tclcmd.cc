@@ -71,10 +71,10 @@ namespace
   public:
     virtual void dispatch(Tcl::Interp& interp,
                           unsigned int objc, Tcl_Obj* const objv[],
-                          Tcl::Command& cmd)
+                          Tcl::Callback& callback)
     {
       Tcl::Context ctx(interp, objc, objv);
-      cmd.invoke(ctx);
+      callback.invoke(ctx);
     }
   };
 
@@ -184,9 +184,10 @@ DOTRACE("Tcl::Command::rawUsage");
   return result;
 }
 
-void Tcl::Command::invoke(Context& ctx)
+void Tcl::Command::call(Tcl::Interp& interp,
+                        unsigned int objc, Tcl_Obj* const objv[])
 {
-  rep->callback->invoke(ctx);
+  rep->dispatcher->dispatch(interp, objc, objv, *rep->callback);
 }
 
 shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const

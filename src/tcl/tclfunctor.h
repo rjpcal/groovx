@@ -418,7 +418,7 @@ namespace Tcl
     shared_ptr<Command> cmd =
       Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
                     cmd_name, usage, nargs+1);
-    Tcl::useVecDispatch(cmd.get(), keyarg); // FIXME avoid get()
+    Tcl::useVecDispatch(*cmd, keyarg);
     return cmd;
   }
 

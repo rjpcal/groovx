@@ -132,8 +132,9 @@ public:
   /// Check if the given argument count is unacceptable.
   bool rejectsObjc(unsigned int objc) const;
 
-  /// Delegate to the Tcl::Callback object passed to the constructor.
-  void invoke(Context& ctx);
+  /// Send arguments to its Tcl::Callback via its Tcl::Dispatcher.
+  void call(Tcl::Interp& interp,
+            unsigned int objc, Tcl_Obj* const objv[]);
 
   /// Get the current Tcl::Dispatcher for this command.
   shared_ptr<Dispatcher> getDispatcher() const;
@@ -174,7 +175,7 @@ public:
       context. */
   virtual void dispatch(Tcl::Interp& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
-                        Tcl::Command& cmd) = 0;
+                        Tcl::Callback& callback) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -265,7 +265,7 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
             continue;
 
           // Found a matching overload, so try it:
-          (*itr)->getDispatcher()->dispatch(rep->interp, objc, objv, **itr);
+          (*itr)->call(rep->interp, objc, objv);
 
           if (GET_DBG_LEVEL() > 1)
             {
