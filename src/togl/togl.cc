@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sun Sep 24 17:51:20 2000
+// written: Tue Sep 26 15:15:58 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1730,8 +1730,7 @@ DOTRACE("Togl::Impl::loadBitmapFont");
 
   /* Initialize the ListBase and ListCount arrays */
   if (FirstTime) {
-	 int i;
-	 for (i=0;i<MAX_FONTS;i++) {
+	 for (int i=0;i<MAX_FONTS;++i) {
 		ListBase[i] = ListCount[i] = 0;
 	 }
 	 FirstTime = 0;
@@ -1791,8 +1790,7 @@ DOTRACE("Togl::Impl::loadBitmapFont");
 	* for unloadBitmapFont().
 	*/
   {
-	 int i;
-	 for (i=0;i<MAX_FONTS;i++) {
+	 for (int i=0;i<MAX_FONTS;++i) {
 		if (ListBase[i]==0) {
 		  ListBase[i] = fontbase;
 		  ListCount[i] = last+1;
@@ -1808,7 +1806,10 @@ DOTRACE("Togl::Impl::loadBitmapFont");
 void Togl::Impl::unloadBitmapFont(GLuint fontbase) const {
 DOTRACE("Togl::Impl::unloadBitmapFont");
   for (int i=0; i<MAX_FONTS; ++i) {
+	 DebugEvalNL(i);
 	 if (ListBase[i]==fontbase) {
+		DebugEvalNL(fontbase);
+		DebugEval(ListBase[i]); DebugEvalNL(ListCount[i]);
 		glDeleteLists( ListBase[i], ListCount[i] );
 		ListBase[i] = ListCount[i] = 0;
 		return;
