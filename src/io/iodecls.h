@@ -39,8 +39,6 @@ namespace IO
   class Reader;
   class Writer;
 
-  class FilenameError;
-
   /// This type is used for verion ids during the read+write process.
   typedef signed long VersionId;
 }
