@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Thu Mar 30 09:50:01 2000
+// written: Sat Sep 23 14:20:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,7 +188,12 @@ public:
   void setAspectRatio(double new_aspect_ratio);
   void setMaxDimension(double new_max_dimension);
 
-  double aspectRatio() const;
+  double aspectRatio() const
+  {
+	 if ( !hasBB() ) return 1.0;
+	 return (itsScaler.itsHeightFactor != 0.0 ?
+				itsScaler.itsWidthFactor/itsScaler.itsHeightFactor : 0.0);
+  }
 
   ///////////////
   // alignment //
@@ -357,8 +362,11 @@ public:
   // ? other ? //
   ///////////////
 public:
-  double finalWidth() const;
-  double finalHeight() const;
+  double finalWidth() const
+  { return nativeWidth()*itsScaler.itsWidthFactor; }
+
+  double finalHeight() const
+  { return nativeHeight()*itsScaler.itsHeightFactor; }
 
   double getMaxDimension() const
 	 { return max(finalWidth(), finalHeight()); }
@@ -394,25 +402,6 @@ private:
   Renderer itsRenderer;
   UnRenderer itsUnRenderer;
 };
-
-///////////////////////////////////////////////////////////////////////
-//
-// GrObj::Impl inline accessor definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-inline double GrObj::Impl::aspectRatio() const {
-  if ( !hasBB() ) return 1.0;
-  return (itsScaler.itsHeightFactor != 0.0 ? itsScaler.itsWidthFactor/itsScaler.itsHeightFactor : 0.0);
-}
-
-inline double GrObj::Impl::finalWidth() const {
-  return nativeWidth()*itsScaler.itsWidthFactor;
-}
-
-inline double GrObj::Impl::finalHeight() const {
-  return nativeHeight()*itsScaler.itsHeightFactor;
-}
 
 static const char vcid_grobjimpl_h[] = "$Header$";
 #endif // !GROBJIMPL_H_DEFINED
