@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 11:47:17 2002
+// written: Tue Sep 17 12:00:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "visx/tkwidget.h"
 
 #include "tcl/tclcode.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/ref.h"
 #include "util/strings.h"
@@ -71,7 +72,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget::TkWidgImpl
+class TkWidgImpl
 {
   TkWidgImpl(const TkWidgImpl&);
   TkWidgImpl& operator=(const TkWidgImpl&);
@@ -121,41 +122,53 @@ public:
     widg->decrRefCount();
   }
 
-  static void cEventCallback(ClientData clientData, XEvent* rawEvent)
-  {
-    Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
-
-    switch (rawEvent->type)
-      {
-      case KeyPress:
-        if (widg->hasKeyListeners())
-          keyEventProc(widg, (XKeyEvent*) rawEvent);
-        break;
-      case ButtonPress:
-        if (widg->hasButtonListeners())
-          buttonEventProc(widg, (XButtonEvent*) rawEvent);
-        break;
-      case MapNotify:
-        {
-          DOTRACE("TkWidget::cEventCallback-MapNotify");
-        }
-        break;
-      case DestroyNotify:
-        {
-          DOTRACE("TkWidget::cEventCallback-DestroyNotify");
-
-          // Idiot-check that we don't have recursive destroy calls
-          Assert(!widg->rep->shutdownRequested);
-
-          widg->rep->shutdownRequested = true;
-
-          Tcl_EventuallyFree(static_cast<ClientData>(widg),
-                             cEventuallyFreeCallback);
-        }
-        break;
-      }
-  }
+  static void cEventCallback(ClientData clientData, XEvent* rawEvent);
 };
+
+
+void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent)
+{
+DOTRACE("TkWidgImpl::cEventCallback");
+
+  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
+
+  try
+    {
+      switch (rawEvent->type)
+        {
+        case KeyPress:
+          if (widg->hasKeyListeners())
+            keyEventProc(widg, (XKeyEvent*) rawEvent);
+          break;
+        case ButtonPress:
+          if (widg->hasButtonListeners())
+            buttonEventProc(widg, (XButtonEvent*) rawEvent);
+          break;
+        case MapNotify:
+          {
+            DOTRACE("TkWidget::cEventCallback-MapNotify");
+          }
+          break;
+        case DestroyNotify:
+          {
+            DOTRACE("TkWidget::cEventCallback-DestroyNotify");
+
+            // Idiot-check that we don't have recursive destroy calls
+            Assert(!widg->rep->shutdownRequested);
+
+            widg->rep->shutdownRequested = true;
+
+            Tcl_EventuallyFree(static_cast<ClientData>(widg),
+                               cEventuallyFreeCallback);
+          }
+          break;
+        }
+    }
+  catch (...)
+    {
+      Tcl::Interp(widg->interp()).handleLiveException("cEventCallback", true);
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
