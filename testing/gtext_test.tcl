@@ -16,12 +16,12 @@ package require Pos
 
 source ${::TEST_DIR}/grobj_test.tcl
 
+if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+
 set ::GTEXT [Gtext::Gtext]
 Gtext::text $::GTEXT "Gtext"
 GrObj::testSubclass Gtext Gtext $::GTEXT
 
-
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 set GTEXT -1
 set PACKAGE GtextTcl
