@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Mar 15 10:17:30 2000
+// written: Thu Mar 23 09:47:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,12 @@
 #include "face.h"
 
 #include "canvas.h"
+#include "ioproxy.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include "util/strings.h"
 
 #include <iostream.h>           // for serialize
 #include <cstring>
@@ -39,10 +42,12 @@ namespace {
   template <class T>
   inline T abs(T val) { return (val < 0) ? -val : val; }
 
+  const unsigned long FACE_SERIAL_VERSION_ID = 1;
+
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
 
-  const char* ioTag = "Face";
+  const string_literal ioTag("Face");
 
   typedef Property Face::* IoMember;
 
@@ -126,14 +131,14 @@ DOTRACE("Face::serialize");
   }
 
   os << '}' << endl;
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 
   if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void Face::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Face::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   IO::eatWhitespace(is);
   int version = 0;
@@ -159,7 +164,7 @@ DOTRACE("Face::deserialize");
 	 char brace;
 	 is >> brace;
 	 if (brace != '{') {
-		IoLogicError err(ioTag); err.appendMsg(" missing left-brace");
+		IoLogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
 		throw err;
 	 }
 
@@ -169,12 +174,12 @@ DOTRACE("Face::deserialize");
 
 	 is >> brace;
 	 if (brace != '}') {
-		IoLogicError err(ioTag); err.appendMsg(" missing right-brace");
+		IoLogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
 		throw err;
 	 }
   }
   else {
-	 IoLogicError err(ioTag); err.appendMsg(" unknown version");
+	 IoLogicError err(ioTag.c_str()); err.appendMsg(" unknown version");
 	 throw err;
   }
 
@@ -185,7 +190,7 @@ DOTRACE("Face::deserialize");
   // optimization off. Somehow adding the catch and re-throw avoids
   // the problem, without changing the program's behavior.
   try {
-	 if (is.fail()) throw InputError(ioTag);
+	 if (is.fail()) throw InputError(ioTag.c_str());
   }
   catch (IoError&) { 
 	 throw;
@@ -199,7 +204,7 @@ DOTRACE("Face::deserialize");
 
 int Face::charCount() const {
 DOTRACE("Face::charCount");
-  return (strlen(ioTag) + 1
+  return (ioTag.length() + 1
 			 + 3 // version
 			 + 2 // brace
 			 + category.charCount() + 1
@@ -212,6 +217,11 @@ DOTRACE("Face::charCount");
 			 + 1);//fudge factor
 }
 
+unsigned long Face::serialVersionId() const {
+DOTRACE("Face::serialVersionId");
+  return FACE_SERIAL_VERSION_ID;
+}
+
 void Face::readFrom(Reader* reader) {
 DOTRACE("Face::readFrom");
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
@@ -219,7 +229,14 @@ DOTRACE("Face::readFrom");
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  GrObj::readFrom(reader);
+  unsigned long svid = reader->readSerialVersionId();
+  if (svid == 0)
+	 GrObj::readFrom(reader);
+  else if (svid == 1)
+	 {
+		IOProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 }
 
 void Face::writeTo(Writer* writer) const {
@@ -228,7 +245,13 @@ DOTRACE("Face::writeTo");
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
-  GrObj::writeTo(writer);
+  if (FACE_SERIAL_VERSION_ID == 0)
+	 GrObj::writeTo(writer);
+  else if (FACE_SERIAL_VERSION_ID == 1)
+	 {
+		IOProxy<GrObj> baseclass(const_cast<Face*>(this));
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 ///////////////////////////////////////////////////////////////////////
