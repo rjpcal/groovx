@@ -52,7 +52,6 @@ ifeq ($(ARCH),hp9000s700)
 	ARCH_FLAGS := +w +W818,655,392,495,469,361,749,416 -DACC_COMPILER -DHP9000S700
 	DEPOPTIONS := -I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
 	 -I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src
-	SHLIB_FLAG := -b
 endif
 ifeq ($(ARCH),irix6)
 	CC := time g++
@@ -64,7 +63,6 @@ ifeq ($(ARCH),irix6)
 		-e '/g++-3.*At top level/d;' \
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
 	ARCH_FLAGS := -Wall -W -Wsign-promo -Weffc++ -DGCC_COMPILER -DIRIX6
-	SHLIB_FLAG := 
 endif
 
 #-------------------------------------------------------------------------
@@ -74,27 +72,19 @@ endif
 #-------------------------------------------------------------------------
 
 ifeq ($(ARCH),hp9000s700)
-	DEBUG_OPTIONS := +Z +p
-	DEBUG_OPTIM := +O1
+	DEBUG_OPTIONS := +O1 +Z +p
 	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
-endif
-ifeq ($(ARCH),irix6)
-	DEBUG_OPTIONS :=
-	DEBUG_OPTIM := -g -O1
-	DEBUG_LINK_OPTIONS :=
-endif
 
-ifeq ($(ARCH),hp9000s700)
-	PROD_OPTIONS := +p +Z
-	PROD_OPTIM := +O3
+	PROD_OPTIONS := +O3 +Z +p
 	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
 endif
 ifeq ($(ARCH),irix6)
-	PROD_OPTIONS := 
-	PROD_OPTIM := -O3
+	DEBUG_OPTIONS := -O1
+	DEBUG_LINK_OPTIONS :=
+
+	PROD_OPTIONS := -O3
 	PROD_LINK_OPTIONS := 
 endif
-
 
 #-------------------------------------------------------------------------
 #
@@ -102,15 +92,14 @@ endif
 #
 #-------------------------------------------------------------------------
 
-SHLIB_LD :=
 ifeq ($(ARCH),hp9000s700)
-	SHLIB_LD := $(CC) $(SHLIB_FLAG)
-	SHLIB_CMD := $(SHLIB_LD) -o
+	SHLIB_CMD := $(CC) -b -o
+	STATLIB_CMD := ar rus
 	SHLIB_EXT := sl
 	STATLIB_EXT := a
 endif
 ifeq ($(ARCH),irix6)
-#	SHLIB_LD := ld -n32 -shared -check_registry /usr/lib32/so_locations
+	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
 	STATLIB_CMD := ar rus
 	SHLIB_EXT := so
 	STATLIB_EXT := a
@@ -162,10 +151,6 @@ LIBRARIES := \
 # List of object files
 #
 #-------------------------------------------------------------------------
-
-# directories for object files
-GRSH := $(OBJ)
-UTIL := $(OBJ)/util
 
 GRSH_STATIC_OBJS := \
 	$(OBJ)/bitmap.do \
@@ -224,8 +209,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/iofactory.do \
 	$(OBJ)/iomgr.do \
 	$(OBJ)/ioptrlist.do \
-	$(OBJ)/iostl.do \
-	$(OBJ)/ioutils.do \
 	$(OBJ)/jittertcl.do \
 	$(OBJ)/kbdresponsehdlr.do \
 	$(OBJ)/masktcl.do \
@@ -295,7 +278,7 @@ DEBUG_TARGET := $(HOME)/bin/$(ARCH)/testsh
 DEBUG_LIBVISX := $(LIB)/libvisx.d.$(SHLIB_EXT)
 DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(SHLIB_EXT)
 
-DEBUG_FLAGS := -DPROF -DASSERT -DINVARIANT -DTEST
+DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST
 
 DEBUG_GRSH_STATIC_OBJS := $(GRSH_STATIC_OBJS)
 DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
@@ -309,16 +292,18 @@ DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
 
 PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh$(VERSION)
 
-PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
-PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
-
 # Note: exception handling does not work with shared libraries in the
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 ifeq ($(ARCH),irix6)
-	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
-	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
+	LIBEXT := $(STATLIB_EXT)
 endif
+ifeq ($(ARCH),hp9000s700)
+	LIBEXT := $(SHLIB_EXT)
+endif
+
+PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
+PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
 
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
 PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
@@ -332,8 +317,8 @@ PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
 
 COMMON_OPTIONS := $(ARCH_FLAGS) $(INCLUDE_DIRS)
 
-ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIM) $(PROD_OPTIONS) 
-ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FLAGS)
+ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIONS) 
+ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIONS) $(DEBUG_DEFS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
 	echo $(<D) >> $(LOG)/CompileStats
@@ -347,9 +332,6 @@ ifeq ($(EXTRA_STATISTICS),1)
 endif
 	echo $< >> $(LOG)/CompileStats
 	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
-
-$(DEP)/%.d : $(SRC)/%.cc
-	$(MAKEDEP) $(DEPOPTIONS) $< > $@
 
 $(SRC)/%.precc : $(SRC)/%.cc
 	$(CC) -E $< $(ALL_DEBUG_OPTIONS) > $@
@@ -373,7 +355,6 @@ ALL_DEBUG_DEPENDS := \
 	$(DEBUG_LIBTCLWORKS)
 
 $(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
-	rm -f RawCompileOut
 	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
 	 /opt/langtools/lib/end.o \
 	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
@@ -422,7 +403,25 @@ ALL_HEADERS := $(SRC)/*.h $(SRC)/util/*.h $(SRC)/tcl/*.h
 DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
-include $(ALL_DEPS)
+$(DEP)/%.d : $(SRC)/%.cc
+	$(MAKEDEP) $(DEPOPTIONS) $< > $@
+
+# One way to handle the dependencies is to have a separate .d file for
+# each source, but this can be very inefficient since it requires
+# 'makedepend' to reopen and reparse the system headers for each
+# source file... this means that remaking all the .d files for the
+# project can take on the order of 60 seconds. So, for now, we do not
+# '#include $(ALL_DEPS)'; instead we make and include one huge
+# dependency file for the whole project, named 'alldepends', and this
+# must be done every time the makefile is run. However this is quite
+# fast, and can be done in under 5 seconds.
+
+#include $(ALL_DEPS)
+
+alldepends: $(ALL_SOURCES) $(ALL_HEADERS)
+	$(MAKEDEP) $(DEPOPTIONS) $+ > $@
+
+include alldepends
 
 #-------------------------------------------------------------------------
 #
@@ -479,7 +478,8 @@ cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
 	cdep -i$(IDEP)/CdepSearchpath $+ > $(IDEP)/CdepDeps
 
 ldeps: cdeps
-	ldep -d$(IDEP)/CdepDeps -L > $(IDEP)/Ldeps
+	ldep -d$(IDEP)/CdepDeps -U./src -U./src/tcl -U./src/util  \
+		> $(IDEP)/Ldeps || /bin/true
 
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
