@@ -42,9 +42,8 @@ test "ObjTogl-Togl::refresh" "too many args" {
 } {wrong \# args: should be}
 test "ObjTogl-Togl::refresh" "normal use" {
 	 set f [Obj::new Face]
-	 set p [Obj::new Position]
 	 set t [Obj::new Trial]
-	 Trial::add $t $f $p
+	 Trial::addNode $t $f
 	 Togl::setCurTrial $t
 	 glIndexi 1
 	 glClearIndex 0
@@ -108,9 +107,8 @@ test "ObjTogl-Togl::setCurTrial" "too many args" {
 } {wrong \# args: should be}
 test "ObjTogl-Togl::setCurTrial" "normal use" {
 	 set f [Obj::new Face]
-	 set p [Obj::new Position]
 	 set t [Obj::new Trial]
-	 Trial::add $t $f $p
+	 Trial::addNode $t $f
 	 catch {Togl::setCurTrial $t}
 } {^0$}
 test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {

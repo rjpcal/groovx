@@ -189,12 +189,9 @@ proc testDrawCmd { objname } {
 		  if { ![Togl::inited] } { Togl::init; ::update }
 
 		  eval ::test $testname {"normal use"} {"
-		      set trial \[Obj::new Trial\]
-		      set pos \[Obj::new Position\]
-		      Trial::add \$trial $this(objid) \$pos
 		      clearscreen
 		      set pix1 \[pixelCheckSum\]
-		      show \$trial
+		      see $this(objid)
 		      set pix2 \[pixelCheckSum\]
 		      Togl::setVisible false
 		      expr \$pix1 == \$pix2

@@ -112,9 +112,8 @@ test "ExptTcl-Expt::begin" "general sanity test" {
 	 set rhid [Obj::new NullResponseHdlr]
 
 	 set face [Obj::new Face]
-	 set pos [Obj::new Position]
 	 set trial [Obj::new Trial]
-	 Trial::add $trial $face $pos
+	 Trial::addNode $trial $face
 
 	 Trial::timingHdlr $trial $thid
 	 Trial::responseHdlr $trial $rhid

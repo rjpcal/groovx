@@ -28,9 +28,8 @@ test "TrialTcl-Trial::description" "use when empty" {
 
 test "TrialTcl-Trial::description" "use with one object" {
     set face [Obj::new Face]
-    set pos [Obj::new Position]
     set tr [Obj::new Trial]
-    Trial::add $tr $face $pos
+    Trial::addNode $tr $face
     set str [Trial::description $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
     return "[expr $objs == $face] [llength $objs]"
@@ -38,13 +37,12 @@ test "TrialTcl-Trial::description" "use with one object" {
 
 test "TrialTcl-Trial::description" "use with several objects" {
     set face [Obj::new Face]
-    set pos [Obj::new Position]
     set fixpt [Obj::new FixPt]
     set house [Obj::new House]
     set tr [Obj::new Trial]
-    Trial::add $tr $face $pos
-    Trial::add $tr $fixpt $pos
-    Trial::add $tr $house $pos
+    Trial::addNode $tr $face
+    Trial::addNode $tr $fixpt
+    Trial::addNode $tr $house
     set str [Trial::description $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
     set idx0 [lsearch -exact $objs $face]
@@ -64,8 +62,8 @@ test "TrialTcl-Trial::description" "use with nested objects" {
     GxSeparator::addChild $sep $house
 
     set tr [Obj::new Trial]
-    Trial::add $tr $sep $pos
-    Trial::add $tr $face $pos
+    Trial::addNode $tr $sep
+    Trial::addNode $tr $face
 
     set str [Trial::description $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
