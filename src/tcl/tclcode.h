@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Tue Jun 29 11:49:56 1999
+// written: Wed Nov  3 17:51:35 1999
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -26,20 +26,48 @@
 #include "tclobjlock.h"
 #endif
 
+#ifndef TCLERROR_H_DEFINED
+#include "tclerror.h"
+#endif
+
 class TclEvalCmd {
 public:
-  TclEvalCmd(const string& tcl_cmd, int flags = TCL_EVAL_GLOBAL) :
+  enum ErrorHandlingMode { NONE, THROW_EXCEPTION, BACKGROUND_ERROR };
+
+  TclEvalCmd(const string& tcl_cmd, ErrorHandlingMode mode = NONE,
+				 int flags = TCL_EVAL_GLOBAL) :
 	 itsCmdObj(Tcl_NewStringObj(tcl_cmd.c_str(), -1)),
 	 itsLock(itsCmdObj),
+	 itsErrorMode(mode),
 	 itsFlags(flags) {}
 
   int invoke(Tcl_Interp* interp) { 
-	 return Tcl_EvalObjEx(interp, itsCmdObj, itsFlags);
+	 int tclresult = Tcl_EvalObjEx(interp, itsCmdObj, itsFlags);
+
+	 if (NONE == itsErrorMode) { return tclresult; }
+
+	 else {
+		if (tclresult != TCL_OK) {
+		  string msg("error while evaluating ");
+		  msg += Tcl_GetString(itsCmdObj);
+		  
+		  if (THROW_EXCEPTION == itsErrorMode) {
+			 throw TclError(msg);
+		  }
+		  else if (BACKGROUND_ERROR == itsErrorMode) {
+			 Tcl_AppendResult(interp, msg.c_str(), (char*) 0);
+			 Tcl_BackgroundError(interp);
+		  }
+		}
+	 }
+
+	 return tclresult;
   }
 
 private:
   Tcl_Obj* itsCmdObj;
   TclObjLock itsLock;
+  ErrorHandlingMode itsErrorMode;
   int itsFlags;
 };
 
