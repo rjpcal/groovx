@@ -391,7 +391,7 @@ neat:
 	find . -name \*~ -exec rm -f {} \;
 	find . -name \#~ -exec rm -f {} \;
 	find . -name .\#\* -exec rm -f {} \;
-	rm -f ./expt_2004*.asw ./expt_2004*.resp ./expt_2004*.log prof.out tclprof.out ./core*
+	rm -f ./expt_2004*.gvx ./expt_2004*.resp ./expt_2004*.log prof.out tclprof.out ./core*
 
 # Make neat, and also remove all intermediate build files
 cleaner: neat
