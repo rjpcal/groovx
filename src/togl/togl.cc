@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 21:16:41 2002
+// written: Tue Sep 17 21:37:41 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -230,12 +230,6 @@ private:
 //
 // Togl::Impl::Impl
 //
-//     * Creates a new window
-//     * Creates an 'Togl' data structure
-//     * Creates an event handler for this window
-//     * Creates a command that handles this object
-//     * Configures this Togl for the given arguments
-//
 //---------------------------------------------------------------------
 
 Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
@@ -249,12 +243,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
   itsTimerToken(0)
 {
 DOTRACE("Togl::Impl::Impl");
-
-  //
-  // Configure the widget
-  //
-
-  Tk_SetClass(itsTkWin, (char*)"Togl");
 
   //
   // Set up options
@@ -548,7 +536,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
 ///////////////////////////////////////////////////////////////////////
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname) :
-  Tcl::TkWidget(interp, pathname),
+  Tcl::TkWidget(interp, "Togl", pathname),
   rep(new Impl(this, interp))
 {
 DOTRACE("Togl::Togl");

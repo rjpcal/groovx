@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 12:52:56 2002
+// written: Tue Sep 17 21:38:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,13 +73,16 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+#define EVENT_MASK ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
+
 class TkWidgImpl
 {
   TkWidgImpl(const TkWidgImpl&);
   TkWidgImpl& operator=(const TkWidgImpl&);
 
 public:
-  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p, const char* pathname) :
+  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p,
+             const char* classname, const char* pathname) :
     owner(o),
     interp(p),
     tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
@@ -94,10 +97,20 @@ public:
       {
         throw Util::Error("TkWidget constructor couldn't create Tk_Window");
       }
+
+    Tk_SetClass(tkWin, classname);
+
+    Tk_CreateEventHandler(tkWin, EVENT_MASK,
+                          TkWidgImpl::cEventCallback,
+                          static_cast<void*>(owner));
   }
 
   ~TkWidgImpl()
   {
+    Tk_DeleteEventHandler(tkWin, EVENT_MASK,
+                          TkWidgImpl::cEventCallback,
+                          static_cast<void*>(owner));
+
     Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(owner));
     Tk_DestroyWindow(tkWin);
   }
@@ -224,25 +237,17 @@ DOTRACE("TkWidgImpl::cEventCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-#define EVENT_MASK ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
-
-Tcl::TkWidget::TkWidget(Tcl_Interp* interp, const char* pathname) :
-  rep(new TkWidgImpl(this, interp, pathname))
+Tcl::TkWidget::TkWidget(Tcl_Interp* interp,
+                        const char* classname, const char* pathname) :
+  rep(new TkWidgImpl(this, interp, classname, pathname))
 {
   XBmapRenderer::initClass(rep->tkWin);
-
-  Tk_CreateEventHandler(rep->tkWin, EVENT_MASK,
-                        TkWidgImpl::cEventCallback,
-                        static_cast<void*>(this));
 
   incrRefCount();
 }
 
 Tcl::TkWidget::~TkWidget()
 {
-  Tk_DeleteEventHandler(rep->tkWin, EVENT_MASK,
-                        TkWidgImpl::cEventCallback,
-                        static_cast<void*>(this));
   delete rep;
 }
 
