@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 13:49:31 2002
+// written: Mon Mar  4 13:53:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -352,7 +352,7 @@ void MtxBase::swap(MtxBase& other)
 }
 
 MtxBase::MtxBase(const MtxBase& other) :
-  MtxStorage(other),
+  MtxSpecs(other),
   DataHolder(other)
 {}
 
@@ -366,13 +366,13 @@ namespace
 }
 
 MtxBase::MtxBase(int mrows, int ncols, InitPolicy p) :
-  MtxStorage(mrows, ncols),
+  MtxSpecs(mrows, ncols),
   DataHolder(newDataBlock(mrows, ncols, p))
 {}
 
 #ifdef HAVE_MATLAB
 MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
-  MtxStorage(mxGetM(a), mxGetN(a)),
+  MtxSpecs(mxGetM(a), mxGetN(a)),
   DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
   if (!mxIsDouble(a))
@@ -380,7 +380,7 @@ MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
 }
 
 MtxBase::MtxBase(const mxArray* a, StoragePolicy s) :
-  MtxStorage(mxGetM(a), mxGetN(a)),
+  MtxSpecs(mxGetM(a), mxGetN(a)),
   DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
   if (s != BORROW && s != COPY)

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 13:50:56 2002
+// written: Mon Mar  4 13:53:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -323,24 +323,24 @@ struct WithPolicies
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MtxStorage class.
+ * MtxSpecs class.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MtxStorage
+class MtxSpecs
 {
 public:
-  MtxStorage() : mrows_(0), rowstride_(0), ncols_(0), offset_(0) {}
+  MtxSpecs() : mrows_(0), rowstride_(0), ncols_(0), offset_(0) {}
 
-  MtxStorage(int mrows, int ncols) :
+  MtxSpecs(int mrows, int ncols) :
     mrows_(mrows),
     rowstride_(mrows),
     ncols_(ncols),
     offset_(0)
   {}
 
-  MtxStorage(const MtxStorage& other) :
+  MtxSpecs(const MtxSpecs& other) :
     mrows_(other.mrows_),
     rowstride_(other.rowstride_),
     ncols_(other.ncols_),
@@ -410,7 +410,7 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MtxBase : public MtxStorage, public DataHolder
+class MtxBase : public MtxSpecs, public DataHolder
 {
 private:
   MtxBase& operator=(const MtxBase& other); // not allowed
@@ -423,7 +423,7 @@ public:
   MtxBase(int mrows, int ncols, InitPolicy p);
 
   MtxBase(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    MtxStorage(mrows, ncols),
+    MtxSpecs(mrows, ncols),
     DataHolder(data, mrows, ncols, s)
   {}
 
