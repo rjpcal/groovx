@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 10 12:04:45 2001
+// written: Wed May 16 17:52:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,25 +171,25 @@ DOTRACE("TimingHdlr::writeTo");
 // accessors //
 ///////////////
 
-TrialEvent* TimingHdlr::getEvent(TimePoint time_point, int index) const {
+IdItem<TrialEvent> TimingHdlr::getEvent(TimePoint time_point, int index) const {
 DOTRACE("TimingHdlr::getEvent");
   switch (time_point) {
   case IMMEDIATE:
-	 return itsImpl->itsImmediateEvents[index].get();
+	 return itsImpl->itsImmediateEvents.at(index);
 	 break;
   case FROM_START:
-	 return itsImpl->itsStartEvents[index].get();
+	 return itsImpl->itsStartEvents.at(index);
 	 break;
   case FROM_RESPONSE:
-	 return itsImpl->itsResponseEvents[index].get();
+	 return itsImpl->itsResponseEvents.at(index);
 	 break;
   case FROM_ABORT:
-	 return itsImpl->itsAbortEvents[index].get();
+	 return itsImpl->itsAbortEvents.at(index);
 	 break;
   default:
 	 break;
-  }
-  return 0;
+  }  
+  return IdItem<TrialEvent>((TrialEvent*)0); // will raise an exception
 }
 
 int TimingHdlr::getElapsedMsec() const {

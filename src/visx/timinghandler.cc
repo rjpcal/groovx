@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Thu May 10 12:04:45 2001
+// written: Wed May 16 17:51:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "trialevent.h"
 
+#include "io/iditem.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"

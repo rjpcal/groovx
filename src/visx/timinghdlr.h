@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu May 10 12:04:39 2001
+// written: Wed May 16 17:50:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@
 
 namespace GWT { class Widget; }
 namespace Util { class ErrorHandler; }
+
+template <class T> class IdItem;
 
 class TrialBase;
 class TrialEvent;
@@ -54,7 +56,7 @@ public:
   // accessors //
   ///////////////
 
-  TrialEvent* getEvent(TimePoint time_point, int index) const;
+  IdItem<TrialEvent> getEvent(TimePoint time_point, int index) const;
 
   // Returns the elapsed time in milliseconds since the start of the
   // current trial
