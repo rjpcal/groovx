@@ -225,7 +225,7 @@ endif
 ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
-	@mkdir -p $(LOGS)
+	@mkdir -p $(LOGS) $(dir $@)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
 	$(CXX) $(ALL_CXXFLAGS) \
@@ -305,6 +305,7 @@ $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 	src/pkgs/buildPkgDeps.tcl \
 		--depfile $@ \
 		--objdir $(OBJ)/pkgs \
+		--objext $(OBJEXT) \
 		--pkgdir $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR)
 
@@ -372,9 +373,15 @@ ifeq ($(MODE),prod)
 	EXECUTABLE := $(exec_prefix)/bin/grsh$(PACKAGE_VERSION)
 endif
 
-all: build check
+all:
+	make dir_structure
+	make TAGS
+	make $(ALL_SHLIBS)
+	make $(PKG_LIBS)
+	make $(EXECUTABLE)
+	make check
 
-build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
+#build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
 GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
