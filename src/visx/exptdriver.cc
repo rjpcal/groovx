@@ -135,8 +135,8 @@ ExptDriver::ExptDriver() :
 {
 DOTRACE("ExptDriver::ExptDriver");
 
-  int argc = Grsh::argc();
-  char** argv = Grsh::argv();
+  int argc = Tcl::Main::argc();
+  const char* const* argv = Tcl::Main::argv();
 
   fstring cmd_line("command line: ");
 

@@ -52,6 +52,12 @@ public:
 
   static void run();
 
+  /// Get the application's number of command-line arguments.
+  static int argc();
+
+  /// Get the application's command-line arguments.
+  static const char* const* argv();
+
 private:
   Main(const Main&);
   Main& operator=(const Main&);

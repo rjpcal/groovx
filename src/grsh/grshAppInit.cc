@@ -174,9 +174,6 @@ PackageInfo DELAYED_PKGS[] =
     { "Trialevent",          Trialevent_Init,          "3.0" },
   };
 
-int          appArgc      = 0;
-char**       appArgv      = 0;
-
 } // end anonymous namespace
 
 ///////////////////////////////////////////////////////////////////////
@@ -184,24 +181,6 @@ char**       appArgv      = 0;
 // namespace Grsh function definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-int Grsh::argc()
-{
-DOTRACE("Grsh::argc");
-
-  if (appArgc == 0)
-    throw Util::Error("appArgc not inited");
-  return appArgc;
-}
-
-char** Grsh::argv()
-{
-DOTRACE("Grsh::argv");
-
-  if (appArgv == 0)
-    throw Util::Error("appArgv not inited");
-  return appArgv;
-}
 
 const char* Grsh::libraryDirectory()
 {
@@ -239,9 +218,6 @@ DOTRACE("main");
               Util::Trace::setGlobalTrace(true);
             }
         }
-
-      appArgc = argc;
-      appArgv = argv;
 
       Tcl::Main app(argc, argv);
 

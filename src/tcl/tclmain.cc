@@ -71,6 +71,8 @@ class Tcl::MainImpl
 private:
   static MainImpl* theMainImpl;
 
+  int itsArgc;
+  const char** itsArgv;
   Tcl::Interp itsSafeInterp;
   const char* itsStartupFileName;
   const char* itsArgv0;
@@ -122,6 +124,10 @@ public:
 
   void run();
 
+  int argc() const { return itsArgc; }
+
+  const char* const* argv() const { return itsArgv; }
+
 #ifdef WITH_READLINE
   static void readlineLineComplete(char* line);
 #endif
@@ -136,6 +142,8 @@ Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
 //---------------------------------------------------------------------
 
 Tcl::MainImpl::MainImpl(int argc, char** argv) :
+  itsArgc(argc),
+  itsArgv(const_cast<const char**>(argv)),
   itsSafeInterp(Tcl_CreateInterp()),
   itsStartupFileName(0),
   itsArgv0(0),
@@ -595,6 +603,18 @@ void Tcl::Main::run()
 {
 DOTRACE("Tcl::Main::run");
   Tcl::MainImpl::get()->run();
+}
+
+int Tcl::Main::argc()
+{
+DOTRACE("Tcl::Main::argc");
+  return Tcl::MainImpl::get()->argc();
+}
+
+const char* const* Tcl::Main::argv()
+{
+DOTRACE("Tcl::Main::argv");
+  return Tcl::MainImpl::get()->argv();
 }
 
 static const char vcid_tclmain_cc[] = "$Header$";
