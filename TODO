@@ -7,6 +7,14 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (9-Nov-2002) Cleanup Togl helper code
+
+** GLUtil just has font functions.
+   Make a new font class? Or move this stuff into Gtext?
+
+** X11Util just has findColormap().
+   Move this back into Togl?
+
 * (4-Nov-2002) Dynamically-sized array-Value objects?
 
 * (2-Jul-2002) new project name?
