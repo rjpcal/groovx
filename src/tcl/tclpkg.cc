@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Dec  7 18:32:08 1999
+// written: Wed Dec  8 00:16:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define TCLITEMPKG_CC_DEFINED
 
 #include "tclitempkg.h"
+
+#include <string>
 
 #include "tclcmd.h"
 #include "stringifycmd.h"
