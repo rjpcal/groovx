@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Mon Mar 19 13:13:23 2001
+// written: Wed Mar 21 13:08:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,41 @@ const double Num::SQRT_2 = 1.41421356237;
 
 bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
+
+namespace {
+  double fastexpImpl(double xx)
+  {
+	 static const double one_over[] = {
+		1.0, /* 1/0 -- undefined, really */
+		1.0,
+		0.5,
+		0.333333333333333333333333,
+		0.25,
+		0.2,
+		0.166666666666666666666667,
+		0.142857142857142857142857,
+		0.125,
+		0.111111111111111111111111,
+		0.1
+	 };
+
+	 return
+		1.0 + (xx * one_over[1])
+		* (1.0 + (xx * one_over[2])
+			* (1.0 + (xx * one_over[3])
+				* (1.0 + (xx * one_over[4])
+					* (1.0 + (xx * one_over[5])
+						* (1.0 + (xx * one_over[6])
+							* (1.0 + (xx * one_over[7])
+								)
+							)
+						)
+					)
+				)
+			)
+		;
+  }
+}
 
 double Num::gammalnEngine(double xx)
 {
@@ -42,34 +77,9 @@ DOTRACE("Num::gammalnEngine");
   return -tmp+log(2.5066282746310005*ser/x);
 }
 
-double Num::fastexp7(double xx)
+double Num::fastexp7(double x)
 {
-  static const double one_over[] = {
-	 1.0, /* 1/0 -- undefined, really */
-	 1.0,
-	 0.5,
-	 0.333333333333333333333333,
-	 0.25,
-	 0.2,
-	 0.166666666666666666666667,
-	 0.142857142857142857142857
-  };
-
-  return 1.0
-	 + (xx * one_over[1])
-		 * (1.0 + (xx * one_over[2])
-		  * (1.0 + (xx * one_over[3])
-			* (1.0 + (xx * one_over[4])
-			 * (1.0 + (xx * one_over[5])
-			  * (1.0 + (xx * one_over[6])
-  				* (1.0 + (xx * one_over[7])
-  					)
-				  )
-				 )
-				)
-			  )
-			 )
-	 ;
+  return x < 0 ? 1.0/fastexpImpl(-x) : fastexpImpl(x);
 }
 
 static const char vcid_num_cc[] = "$Header$";
