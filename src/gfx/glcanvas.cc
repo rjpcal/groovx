@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 11:40:58 2002
+// written: Wed Nov 20 12:00:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,6 @@
 #include "gx/vec3.h"
 
 #include "util/error.h"
-
-#include "visx/bezier.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -558,17 +556,9 @@ void GLCanvas::drawBezier4(const Gfx::Vec3<double>& p1,
 DOTRACE("GLCanvas::drawBezier4");
 
 #if 1
-  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
-  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
-  Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
-
-  glBegin(GL_LINE_STRIP);
-  for (unsigned int i = 0; i < subdivisions; ++i)
-    {
-      double u = double(i) / double(subdivisions - 1);
-      glVertex3d(xb.eval(u), yb.eval(u), zb.eval(u));
-    }
-  glEnd();
+  // Use the generic version, since it seems to actually be faster than the
+  // glEvalMesh() approach anyway
+  Canvas::drawBezier4(p1, p2, p3, p4, subdivisions);
 
 #else
 
@@ -594,6 +584,12 @@ void GLCanvas::drawBezierFill4(const Gfx::Vec3<double>& center,
 {
 DOTRACE("GLCanvas::drawBezierFill4");
 
+  // Looks like the the OpenGL-specific version beats the generic version
+  // here, unlike for drawBezier4().
+
+#if 0
+  Canvas::drawBezierFill4(center, p1, p2, p3, p4, subdivisions);
+#else
   Gfx::Vec3<double> points[] =
   {
     p1, p2, p3, p4
@@ -616,6 +612,7 @@ DOTRACE("GLCanvas::drawBezierFill4");
       glEvalCoord1d(double(d));
     }
   glEnd();
+#endif
 }
 
 void GLCanvas::beginPoints()        {
