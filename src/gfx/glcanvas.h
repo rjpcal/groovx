@@ -56,6 +56,8 @@ public:
   virtual void translate(const Vec3<double>& v) const;
   virtual void scale(const Vec3<double>& v) const;
   virtual void rotate(const Vec3<double>& v, double degrees) const;
+
+  virtual void throwIfError(const char* where) const;
 };
 
 static const char vcid_glcanvas_h[] = "$Header$";

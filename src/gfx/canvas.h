@@ -112,6 +112,8 @@ public:
   virtual void scale(const Vec3<double>& v) const = 0;
   virtual void rotate(const Vec3<double>& v, double degrees) const = 0;
 
+  virtual void throwIfError(const char* where) const = 0;
+
 //    virtual void beginPoints() const = 0;
 //    virtual void beginLines() const = 0;
 //    virtual void beginLineStrip() const = 0;

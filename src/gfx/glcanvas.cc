@@ -224,58 +224,18 @@ DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
 }
 
-#if 0
-
-void GLCanvas::beginPoints() const {
-  glBegin(GL_POINTS);
+void GLCanvas::throwIfError(const char* where) const {
+DOTRACE("GLCanvas::throwIfError");
+  GLenum status = glGetError();
+  if (status != GL_NO_ERROR)
+	 {
+		const char* msg =
+		  reinterpret_cast<const char*>(gluErrorString(status));
+		ErrorWithMsg err("GL error: ");
+		err.appendMsg(msg, " ", where);
+		throw err;
+	 }
 }
-
-void GLCanvas::beginLines() const {
-  glBegin(GL_LINES);
-}
-
-void GLCanvas::beginLineStrip() const {
-  glBegin(GL_LINE_STRIP);
-}
-
-void GLCanvas::beginLineLoop() const {
-  glBegin(GL_LINE_LOOP);
-}
-
-void GLCanvas::beginTriangles() const {
-  glBegin(GL_TRIANGLES);
-}
-
-void GLCanvas::beginTriangleStrip() const {
-  glBegin(GL_TRIANGLE_STRIP);
-}
-
-void GLCanvas::beginTriangleFan() const {
-  glBegin(GL_TRIANGLE_FAN);
-}
-
-void GLCanvas::beginQuads() const {
-  glBegin(GL_QUADS);
-}
-
-void GLCanvas::beginQuadStrip() const {
-  glBegin(GL_QUAD_STRIP);
-}
-
-void GLCanvas::beginPolygon() const {
-  glBegin(GL_POLYGON);
-}
-
-
-void GLCanvas::end() const {
-  glEnd();
-}
-
-#endif
-
-//  void GLCanvas::vertex(const Vector3<double>& v) const {
-//    glVertex3d(v.x(), v.y(), v.z());
-//  }
 
 static const char vcid_glcanvas_cc[] = "$Header$";
 #endif // !GLCANVAS_CC_DEFINED
