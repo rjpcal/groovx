@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Tue Aug 14 21:38:06 2001
+// written: Wed Aug 15 06:48:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,7 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GxNode : public IO::IoObject,
-               public virtual Util::Observable
+class GxNode : public IO::IoObject, public Util::Observable
 {
 private:
   GxNode(const GxNode&);
