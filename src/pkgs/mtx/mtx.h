@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 11:42:59 2002
+// written: Mon Mar  4 12:07:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -233,23 +233,6 @@ public:
   }
 
   int nelems() const { return itsNelems; }
-
-  Slice rightmost(int n) const
-  {
-    RC_inHalfOpen(n, 0, itsNelems);
-
-    int first = itsNelems - n;
-    if (first < 0) first = 0;
-
-    return Slice(itsOwner, storageOffset(first), itsStride, n);
-  }
-
-  Slice leftmost(int n) const
-  {
-    RC_inHalfOpen(n, 0, itsNelems);
-
-    return Slice(itsOwner, storageOffset(0), itsStride, n);
-  }
 
   Slice operator()(const Range& rng) const;
 
