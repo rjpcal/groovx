@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// ioptrlist.cc
+// iodb.cc
 //
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Dec  5 18:09:38 2000
+// written: Mon Dec 11 17:46:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOPTRLIST_CC_DEFINED
-#define IOPTRLIST_CC_DEFINED
+#ifndef IODB_CC_DEFINED
+#define IODB_CC_DEFINED
 
-#include "io/ioptrlist.h"
+#include "io/iodb.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -31,7 +31,7 @@
 #include "util/debug.h"
 
 namespace {
-  const IO::VersionId IOPTRLIST_SERIAL_VERSION_ID = 1;
+  const IO::VersionId IODB_SERIAL_VERSION_ID = 1;
 }
 
 InvalidIdError::InvalidIdError() : ErrorWithMsg() {}
@@ -42,16 +42,16 @@ InvalidIdError::~InvalidIdError() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoPtrList::Impl definition
+// IoDb::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IoPtrList::Impl {
+class IoDb::Impl {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
-  IoPtrList* itsOwner;
+  IoDb* itsOwner;
 
 public:
 
@@ -60,7 +60,7 @@ public:
   typedef std::map<int, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
-  Impl(IoPtrList* owner) :
+  Impl(IoDb* owner) :
 	 itsOwner(owner),
 	 itsPtrMap()
 	 {}
@@ -158,7 +158,7 @@ public:
 
   int insertPtrBase(IO::IoObject* ptr)
 	 {
-	 DOTRACE("IoPtrList::Impl::insertPtrBase");
+	 DOTRACE("IoDb::Impl::insertPtrBase");
 		Precondition(ptr != 0);
 
 		// Check if the object is already in the map
@@ -181,13 +181,13 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoPtrList::ItrImpl definition
+// IoDb::ItrImpl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IoPtrList::ItrImpl {
+class IoDb::ItrImpl {
 public:
-  typedef IoPtrList::Impl::MapType MapType;
+  typedef IoDb::Impl::MapType MapType;
 
   ItrImpl(MapType::iterator itr) : itsIter(itr) {}
 
@@ -196,164 +196,164 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoPtrList::Iterator member definitions
+// IoDb::Iterator member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IoPtrList::Iterator::Iterator(IoPtrList::ItrImpl* impl) :
+IoDb::Iterator::Iterator(IoDb::ItrImpl* impl) :
   itsImpl(impl)
 {
-DOTRACE("IoPtrList::Iterator::Iterator()");
+DOTRACE("IoDb::Iterator::Iterator()");
 }
 
-IoPtrList::Iterator::~Iterator()
+IoDb::Iterator::~Iterator()
 {
-DOTRACE("IoPtrList::Iterator::~Iterator");
+DOTRACE("IoDb::Iterator::~Iterator");
   delete itsImpl;
 }
 
-IoPtrList::Iterator::Iterator(const IoPtrList::Iterator& other) :
+IoDb::Iterator::Iterator(const IoDb::Iterator& other) :
   itsImpl(new ItrImpl(other.itsImpl->itsIter))
 {
-DOTRACE("IoPtrList::Iterator::Iterator(copy)");
+DOTRACE("IoDb::Iterator::Iterator(copy)");
 }
 
-IoPtrList::Iterator&
-IoPtrList::Iterator::operator=(const IoPtrList::Iterator& other)
+IoDb::Iterator&
+IoDb::Iterator::operator=(const IoDb::Iterator& other)
 {
-DOTRACE("IoPtrList::Iterator::operator=");
+DOTRACE("IoDb::Iterator::operator=");
   ItrImpl* old_impl = itsImpl;
   itsImpl = new ItrImpl(other.itsImpl->itsIter);
   delete old_impl;
   return *this;
 }
 
-bool IoPtrList::Iterator::operator==(
-      const IoPtrList::Iterator& other) const
+bool IoDb::Iterator::operator==(
+      const IoDb::Iterator& other) const
 {
   return itsImpl->itsIter == other.itsImpl->itsIter;
 }
 
-IoPtrList::Iterator&
-IoPtrList::Iterator::operator++()
+IoDb::Iterator&
+IoDb::Iterator::operator++()
 {
   ++(itsImpl->itsIter);
   return *this;
 }
 
-int IoPtrList::Iterator::getId() const
+int IoDb::Iterator::getId() const
 {
   return (*(itsImpl->itsIter)).first;
 }
 
-IO::IoObject* IoPtrList::Iterator::getObject() const
+IO::IoObject* IoDb::Iterator::getObject() const
 {
   return (*(itsImpl->itsIter)).second.get();
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoPtrList member definitions
+// IoDb member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IoPtrList IoPtrList::theInstance;
+IoDb IoDb::theInstance;
 
-IoPtrList& IoPtrList::theList() { return theInstance; }
+IoDb& IoDb::theDb() { return theInstance; }
 
-IoPtrList::Iterator IoPtrList::begin() const {
-DOTRACE("IoPtrList::begin");
+IoDb::Iterator IoDb::begin() const {
+DOTRACE("IoDb::begin");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap.begin()));
 }
 
-IoPtrList::Iterator IoPtrList::end() const {
-DOTRACE("IoPtrList::end");
+IoDb::Iterator IoDb::end() const {
+DOTRACE("IoDb::end");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap.end()));
 }
 
-IoPtrList::IoPtrList() :
+IoDb::IoDb() :
   itsImpl(new Impl(this))
 {
-DOTRACE("IoPtrList::IoPtrList");
+DOTRACE("IoDb::IoDb");
 }
 
-IoPtrList::~IoPtrList() {
-DOTRACE("IoPtrList::~IoPtrList");
+IoDb::~IoDb() {
+DOTRACE("IoDb::~IoDb");
   delete itsImpl; 
 }
 
-IO::VersionId IoPtrList::serialVersionId() const {
-  return IOPTRLIST_SERIAL_VERSION_ID;
+IO::VersionId IoDb::serialVersionId() const {
+  return IODB_SERIAL_VERSION_ID;
 }
 
-void IoPtrList::readFrom(IO::Reader* reader) {
-DOTRACE("IoPtrList::readFrom");
+void IoDb::readFrom(IO::Reader* reader) {
+DOTRACE("IoDb::readFrom");
 
-  reader->ensureReadVersionId("IoPtrList", 1, "Try grsh0.8a3");
+  reader->ensureReadVersionId("IoDb", 1, "Try grsh0.8a3");
 
   purge();
   IO::ReadUtils::readObjectSeq<IO::IoObject>(reader, "itsVec", inserter());
 }
 
-void IoPtrList::writeTo(IO::Writer* writer) const {
-DOTRACE("IoPtrList::writeTo");
+void IoDb::writeTo(IO::Writer* writer) const {
+DOTRACE("IoDb::writeTo");
 
-  writer->ensureWriteVersionId("IoPtrList", IOPTRLIST_SERIAL_VERSION_ID, 1,
+  writer->ensureWriteVersionId("IoDb", IODB_SERIAL_VERSION_ID, 1,
 										 "Try grsh0.7a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "itsVec",
 											beginPtrs(), endPtrs());
 }
 
-int IoPtrList::count() const {
-DOTRACE("IoPtrList::count");
+int IoDb::count() const {
+DOTRACE("IoDb::count");
 
   return itsImpl->count();
 }
 
-bool IoPtrList::isValidId(int id) const {
-DOTRACE("IoPtrList::isValidId");
+bool IoDb::isValidId(int id) const {
+DOTRACE("IoDb::isValidId");
   return itsImpl->isValidId(id);
 }
 
-void IoPtrList::remove(int id) {
-DOTRACE("IoPtrList::remove");
+void IoDb::remove(int id) {
+DOTRACE("IoDb::remove");
   itsImpl->remove(id);
 }
 
-void IoPtrList::release(int id) {
-DOTRACE("IoPtrList::release");
+void IoDb::release(int id) {
+DOTRACE("IoDb::release");
   itsImpl->release(id);
 }
 
-void IoPtrList::purge() {
-DOTRACE("IoPtrList::clear");
+void IoDb::purge() {
+DOTRACE("IoDb::clear");
   DebugEvalNL(typeid(*this).name());
   itsImpl->purge();
 }
 
-void IoPtrList::clear() {
-DOTRACE("IoPtrList::clear");
+void IoDb::clear() {
+DOTRACE("IoDb::clear");
   // Call purge until no more items can be removed
   while ( itsImpl->purge() != 0 )
 	 { ; }
 }
 
-void IoPtrList::clearOnExit() {
-DOTRACE("IoPtrList::clearOnExit");
+void IoDb::clearOnExit() {
+DOTRACE("IoDb::clearOnExit");
   itsImpl->clearAll(); 
 }
 
-IO::IoObject* IoPtrList::getCheckedPtrBase(int id) throw (InvalidIdError) {
-DOTRACE("IoPtrList::getCheckedPtrBase");
+IO::IoObject* IoDb::getCheckedPtrBase(int id) throw (InvalidIdError) {
+DOTRACE("IoDb::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }
 
-int IoPtrList::insertPtrBase(IO::IoObject* ptr) {
-DOTRACE("IoPtrList::insertPtrBase");
+int IoDb::insertPtrBase(IO::IoObject* ptr) {
+DOTRACE("IoDb::insertPtrBase");
 
   return itsImpl->insertPtrBase(ptr);
 }
 
-static const char vcid_ioptrlist_cc[] = "$Header$";
-#endif // !IOPTRLIST_CC_DEFINED
+static const char vcid_iodb_cc[] = "$Header$";
+#endif // !IODB_CC_DEFINED

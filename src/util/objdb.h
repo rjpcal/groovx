@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// ioptrlist.h
+// iodb.h
 //
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOPTRLIST_H_DEFINED
-#define IOPTRLIST_H_DEFINED
+#ifndef IODB_H_DEFINED
+#define IODB_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
@@ -30,7 +30,7 @@ namespace IO { class IoObject; }
 /**
  *
  * InvalidIdError is an exception class that will be thrown from
- * IoPtrList if an attempt to use an invalid id is made in a checked
+ * IoDb if an attempt to use an invalid id is made in a checked
  * function.
  *
  **/
@@ -48,23 +48,24 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * IoPtrList.
+ * IoDb.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoPtrList : public virtual IO::IoObject {
+class IoDb : public virtual IO::IoObject {
 private:
-  static IoPtrList theInstance;
+  static IoDb theInstance;
 
   /// Default constructor makes an empty list.
-  IoPtrList();
+  IoDb();
 
 public:
   /// Virtual destructor.
-  virtual ~IoPtrList();
+  virtual ~IoDb();
 
-  static IoPtrList& theList();
+  /// Returns the singleton instance of IoDb.
+  static IoDb& theDb();
 
   //
   // IO interface
@@ -131,9 +132,9 @@ public:
   friend class Inserter;
 
   class Inserter {
-	 IoPtrList* itsList;
+	 IoDb* itsList;
   public:
-	 Inserter(IoPtrList* list_) : itsList(list_) {}
+	 Inserter(IoDb* list_) : itsList(list_) {}
 
 	 Inserter& operator=(IO::IoObject* obj)
 		{ itsList->insertPtrBase(obj); return *this; }
@@ -176,9 +177,9 @@ public:
   void clear();
 
   /** WARNING: should only be called during program exit. Does a full
-      clear of all objects held by the IoPtrList. This breaks the
-      usual semantics of IoPtrList, since it removes both shared and
-      unshared objects. */
+      clear of all objects held by the IoDb. This breaks the usual
+      semantics of IoDb, since it removes both shared and unshared
+      objects. */
   void clearOnExit();
 
   /** Return the \c IO::IoObject* at the index given by \a id. Checks
@@ -210,11 +211,11 @@ public:
 	 }
 
 private:
-  IoPtrList(const IoPtrList&);
-  IoPtrList& operator=(const IoPtrList&);
+  IoDb(const IoDb&);
+  IoDb& operator=(const IoDb&);
 
   Impl* const itsImpl;
 };
 
-static const char vcid_ioptrlist_h[] = "$Header$";
-#endif // !IOPTRLIST_H_DEFINED
+static const char vcid_iodb_h[] = "$Header$";
+#endif // !IODB_H_DEFINED

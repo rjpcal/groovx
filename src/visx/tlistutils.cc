@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Nov 29 13:00:40 2000
+// written: Mon Dec 11 17:46:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 #include "gwt/canvas.h"
 
 #include "io/iditem.h"
-#include "io/ioptrlist.h"
+#include "io/iodb.h"
 
 #include "util/arrays.h"
 #include "util/error.h"
@@ -129,7 +129,7 @@ DOTRACE("TlistUtils::createPreview");
 void TlistUtils::writeResponses(const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
 
-  IoPtrList& tlist = IoPtrList::theList(); 
+  IoDb& tlist = IoDb::theDb(); 
 
   STD_IO::ofstream ofs(filename);
   const int wid = 8;
@@ -141,7 +141,7 @@ DOTRACE("TlistUtils::writeResponses");
   
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (IoPtrList::IdIterator
+  for (IoDb::IdIterator
 			itr = tlist.beginIds(),
 			end = tlist.endIds();
 		 itr != end;
@@ -164,11 +164,11 @@ DOTRACE("TlistUtils::writeResponses");
 void TlistUtils::writeIncidenceMatrix(const char* filename) {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
 
-  IoPtrList& tlist = IoPtrList::theList(); 
+  IoDb& tlist = IoDb::theDb(); 
 
   STD_IO::ofstream ofs(filename);
 
-  for (IoPtrList::IdIterator
+  for (IoDb::IdIterator
 			itr = tlist.beginIds(),
 			end = tlist.endIds();
 		 itr != end;
@@ -203,7 +203,7 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 
   throw ErrorWithMsg("FIXME: readFromObjidsOnly");
 
-  IoPtrList& tlist = IoPtrList::theList(); 
+  IoDb& tlist = IoDb::theDb(); 
 
   // FIXME this will not really do what we want anymore -- need to
   // return a list of the trial ids that are created
@@ -241,14 +241,14 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 void TlistUtils::writeMatlab(const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
 
-  IoPtrList& tlist = IoPtrList::theList(); 
+  IoDb& tlist = IoDb::theDb(); 
 
   STD_IO::ofstream ofs(filename);
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
-  for (IoPtrList::IdIterator
+  for (IoDb::IdIterator
 			itr = tlist.beginIds(),
 			end = tlist.endIds();
 		 itr != end;

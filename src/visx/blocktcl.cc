@@ -17,7 +17,7 @@
 #include "trialbase.h"
 
 #include "io/iofactory.h"
-#include "io/ioptrlist.h"
+#include "io/iodb.h"
 
 #include "tcl/ioitempkg.h"
 #include "tcl/tclcmd.h"
@@ -44,9 +44,9 @@ namespace BlockTcl {
 
 	 bool testing_last_trial = (last_trial != -1);
 
-	 for (IoPtrList::Iterator
-			  itr = IoPtrList::theList().begin(),
-			  end = IoPtrList::theList().end();
+	 for (IoDb::Iterator
+			  itr = IoDb::theDb().begin(),
+			  end = IoDb::theDb().end();
 			itr != end;
 			++itr)
 		{

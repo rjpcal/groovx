@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Dec 11 17:22:49 2000
+// written: Mon Dec 11 17:45:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 #include "io/iomgr.h"
-#include "io/ioptrlist.h"
+#include "io/iodb.h"
 
 #include "system/demangle.h"
 
@@ -258,7 +258,7 @@ protected:
 		stop = endOfArg(1, (int*)0);
 	 while (itr != stop)
 		{
-		  IoPtrList::theList().remove(*itr);
+		  IoDb::theDb().remove(*itr);
 		  ++itr;
 		}
   }
@@ -292,29 +292,29 @@ public:
   }
 };
 
-class IoDbPkg : public CTclItemPkg<IoPtrList>,
+class IoDbPkg : public CTclItemPkg<IoDb>,
 					 public IoFetcher {
 public:
   IoDbPkg(Tcl_Interp* interp) :
-	 CTclItemPkg<IoPtrList>(interp, "IoDb", "$Revision$", 0)
+	 CTclItemPkg<IoDb>(interp, "IoDb", "$Revision$", 0)
   {
 	 TclItemPkg::addIoCommands(this);
-	 declareCAction("clear", &IoPtrList::clear);
-	 declareCAction("purge", &IoPtrList::purge);
+	 declareCAction("clear", &IoDb::clear);
+	 declareCAction("purge", &IoDb::purge);
 	 addCommand( new IoTcl::LoadObjectsCmd(interp, "IoDb::loadObjects") );
 	 addCommand( new IoTcl::SaveObjectsCmd(interp, "IoDb::saveObjects") );
   }
 
   virtual ~IoDbPkg()
     {
-		IoPtrList::theList().clearOnExit();
+		IoDb::theDb().clearOnExit();
 	 }
 
   IO::IoObject& getIoFromId(int)
-    { return dynamic_cast<IO::IoObject&>(IoPtrList::theList()); }
+    { return dynamic_cast<IO::IoObject&>(IoDb::theDb()); }
 
-  IoPtrList* getCItemFromId(int)
-    { return &(IoPtrList::theList()); }
+  IoDb* getCItemFromId(int)
+    { return &(IoDb::theDb()); }
 };
 
 } // end namespace Tcl
