@@ -54,9 +54,6 @@ namespace Util
   template <class T> class FloatingRef;
 }
 
-using Util::Ref;
-using Util::SoftRef;
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Util::RefHelper helper functions
