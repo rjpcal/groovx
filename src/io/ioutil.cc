@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Fri Jun 25 11:42:30 1999
+// written: Tue Nov  2 21:37:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,9 @@
 #include <typeinfo>
 
 #include "io.h"
+
+#include "asciistreamreader.h"
+#include "asciistreamwriter.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -51,7 +54,9 @@ DOTRACE("StringifyCmd::invoke");
 	 }
   }
   catch (IoError& err) {
-	 throw TclError(err.msg());
+	 buf[buf.size()-1] = '\0';
+	 string buf_contents(buf.begin(), buf.end());
+	 throw TclError(err.msg() + " with buffer contents ==\n" + buf_contents);
   }
   returnCstring(&(buf[0]));
 }
@@ -72,6 +77,37 @@ DOTRACE("DestringifyCmd::invoke");
 	 throw TclError(err.msg());
   }
   returnVoid();
+}
+
+void WriteCmd::invoke() {
+DOTRACE("WriteCmd::invoke");
+  IO& io = getIO();   
+
+  int buf_size = 4096;
+  vector<char> buf(buf_size);
+
+  ostrstream ost(&(buf[0]), buf_size-1);
+
+  DebugEval(typeid(io).name());
+  DebugEval(buf_size);
+
+  AsciiStreamWriter writer(ost);
+  writer.writeRoot(&io);
+  ost << '\0';
+
+  returnCstring(&(buf[0]));
+}
+
+void ReadCmd::invoke() {
+DOTRACE("ReadCmd::invoke");
+  IO& io = getIO();
+
+  const char* str = arg(objc() - 1).getCstring();
+
+  istrstream ist(str);
+
+  AsciiStreamReader reader(ist);
+  reader.readRoot(&io);
 }
 
 static const char vcid_stringifycmd_cc[] = "$Header$";
