@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Aug 25 12:15:25 2001
+// written: Tue Aug 28 11:26:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"
+#include "gfx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -28,9 +29,6 @@
 
 #include "util/algo.h"
 
-#include <GL/gl.h>
-
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -45,96 +43,108 @@ namespace
 {
   const IO::VersionId HOUSE_SERIAL_VERSION_ID = 2;
 
-  void drawWindow(int num_vert_bars, int num_horiz_bars)
+  void drawWindow(Gfx::Canvas& canvas, int num_vert_bars, int num_horiz_bars)
   {
+    DOTRACE("House::drawWindow");
     // Draw 1x1 window centered on (0,0)
 
-    glBegin(GL_LINES);
-    {
-      for (int x = 0; x < (num_vert_bars+2); ++x)
-        {
-          double xpos = double(x)/(num_vert_bars+1) - 0.5;
-          glVertex2d(xpos, -0.5);
-          glVertex2d(xpos,  0.5);
-        }
-      for (int y = 0; y < (num_horiz_bars+2); ++y)
-        {
-          double ypos = double(y)/(num_horiz_bars+1) - 0.5;
-          glVertex2d(-0.5, ypos);
-          glVertex2d( 0.5, ypos);
-        }
-    }
-    glEnd();
+    Gfx::Canvas::LinesBlock block(canvas);
+
+    for (int x = 0; x < (num_vert_bars+2); ++x)
+      {
+        double xpos = double(x)/(num_vert_bars+1) - 0.5;
+        canvas.vertex2(Gfx::Vec2<double>(xpos, -0.5));
+        canvas.vertex2(Gfx::Vec2<double>(xpos,  0.5));
+      }
+    for (int y = 0; y < (num_horiz_bars+2); ++y)
+      {
+        double ypos = double(y)/(num_horiz_bars+1) - 0.5;
+        canvas.vertex2(Gfx::Vec2<double>(-0.5, ypos));
+        canvas.vertex2(Gfx::Vec2<double>( 0.5, ypos));
+      }
   }
 
-  void drawDoor()
+  void drawDoor(Gfx::Canvas& canvas)
   {
+    DOTRACE("House::drawDoor");
     // Draw 1x1 door with bottom line centered on (0,0)
-    glRectd(-0.5, 0.0, 0.5, 1.0);
-    glBegin(GL_LINES);
-      glVertex2d(0.25, 0.35);
-      glVertex2d(0.25, 0.45);
-    glEnd();
+    canvas.drawRect(Gfx::RectLBWH<double>(-0.5, 0.0, 1.0, 1.0));
+
+    Gfx::Canvas::LinesBlock block(canvas);
+
+    canvas.vertex2(Gfx::Vec2<double>(0.25, 0.35));
+    canvas.vertex2(Gfx::Vec2<double>(0.25, 0.45));
   }
 
-  void drawStoryFrame()
+  void drawStoryFrame(Gfx::Canvas& canvas)
   {
+    DOTRACE("House::drawStoryFrame");
     // Draw 1x1 story frame centered on (0,0)
-    glRectd(-0.5, -0.5, 0.5, 0.5);
+    canvas.drawRect(Gfx::RectLBWH<double>(-0.5, -0.5, 1.0, 1.0));
   }
 
-  void drawTriangleRoof()
+  void drawTriangleRoof(Gfx::Canvas& canvas)
   {
+    DOTRACE("House::drawTriangleRoof");
     // Draw 1x1-bounded triangle with bottom line centered on (0,0)
-    glBegin(GL_TRIANGLES);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d( 0.5, 0.0);
-      glVertex2d( 0.0, 1.0);
-    glEnd();
-    glBegin(GL_LINES);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d( 0.5, 0.0);
-    glEnd();
+
+    {
+      Gfx::Canvas::TrianglesBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.0, 1.0));
+    }
+    {
+      Gfx::Canvas::LinesBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+    }
   }
 
-  void drawTrapezoidRoof()
+  void drawTrapezoidRoof(Gfx::Canvas& canvas)
   {
-    glBegin(GL_QUADS);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d( 0.5, 0.0);
-      glVertex2d( 0.4, 1.0);
-      glVertex2d(-0.4, 1.0);
-    glEnd();
-    glBegin(GL_LINES);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d( 0.5, 0.0);
-    glEnd();
+    DOTRACE("House::drawTrapezoidRoof");
+    {
+      Gfx::Canvas::QuadsBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.4, 1.0));
+      canvas.vertex2(Gfx::Vec2<double>(-0.4, 1.0));
+    }
+    {
+      Gfx::Canvas::LinesBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+    }
   }
 
-  void drawSquareRoof()
+  void drawSquareRoof(Gfx::Canvas& canvas)
   {
-    glBegin(GL_QUADS);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d( 0.5, 0.0);
-      glVertex2d( 0.5, 1.0);
-      glVertex2d(-0.5, 1.0);
-    glEnd();
-    glBegin(GL_LINES);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d( 0.5, 0.0);
-    glEnd();
+    DOTRACE("House::drawSquareRoof");
+    {
+      Gfx::Canvas::QuadsBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 1.0));
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 1.0));
+    }
+    {
+      Gfx::Canvas::LinesBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+    }
   }
 
-  void drawChimney ()
+  void drawChimney(Gfx::Canvas& canvas)
   {
-    glBegin(GL_QUADS);
-      glEdgeFlag(GL_FALSE);
-      glVertex2d( 0.5, 0.0);
-      glEdgeFlag(GL_TRUE);
-      glVertex2d(-0.5, 0.0);
-      glVertex2d(-0.5, 1.0);
-      glVertex2d( 0.5, 1.0);
-    glEnd();
+    DOTRACE("House::drawChimney");
+    {
+      Gfx::Canvas::QuadsBlock block(canvas);
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>(-0.5, 1.0));
+      canvas.vertex2(Gfx::Vec2<double>( 0.5, 1.0));
+    }
   }
 }
 
@@ -264,10 +274,10 @@ DOTRACE("House::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
 
-  GLdouble main_width = itsStoryAspectRatio;
-  GLdouble main_height = itsNumStories + itsRoofHeight;
+  double main_width = itsStoryAspectRatio;
+  double main_height = itsNumStories + itsRoofHeight;
 
-  GLdouble max_dimension = max(main_height, main_width);
+  double max_dimension = max(main_height, main_width);
 
   bbox.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dimension;
   bbox.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dimension;
@@ -287,96 +297,93 @@ DOTRACE("House::grGetBoundingBox");
 void House::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("House::grRender");
-  GLdouble total_width = itsStoryAspectRatio;
-  GLdouble total_height = itsNumStories + itsRoofHeight;
+  double total_width = itsStoryAspectRatio;
+  double total_height = itsNumStories + itsRoofHeight;
 
-  GLdouble max_dimension =
+  double max_dimension =
     (total_height > total_width) ? total_height : total_width;
 
   {
     Gfx::Canvas::MatrixSaver msaver(canvas);
 
     // Scale so that the larger dimension (of width and height)
-    // extends across 1.0 units in GL coordinates. The smaller
-    // dimension will extend across less than 1.0 GL units.
-    glScaled(itsStoryAspectRatio/max_dimension, 1.0/max_dimension, 1.0);
+    // extends across 1.0 units in world coordinates. The smaller
+    // dimension will extend across less than 1.0 world units.
+    canvas.scale(Gfx::Vec3<double>(itsStoryAspectRatio/max_dimension,
+                                   1.0/max_dimension, 1.0));
 
     // Translate down by half the height of the house, then up by 0.5
     // units, so that we are positioned in the center of the first
     // story to be drawn.
-    glTranslated(0.0, -total_height/2.0 + 0.5, 0.0);
+    canvas.translate(Gfx::Vec3<double>(0.0, -total_height/2.0 + 0.5, 0.0));
 
     {
       Gfx::Canvas::AttribSaver asaver(canvas);
 
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      canvas.setPolygonFill(false);
 
 
       // Loop over house stories.
       for (int s = 0; s < itsNumStories; ++s)
         {
-          drawStoryFrame();
+          drawStoryFrame(canvas);
 
           // Loop over window positions.
           for (int w = 0; w < itsNumWindows; ++w)
             {
               Gfx::Canvas::MatrixSaver msaver(canvas);
 
-              GLdouble x_pos = double(w+0.5)/itsNumWindows - 0.5;
+              double x_pos = double(w+0.5)/itsNumWindows - 0.5;
               if (s == 0 && w == itsDoorPosition )
                 {
                   // Draw door.
-                  glTranslated(x_pos, -0.5, 0.0);
-                  glScaled(itsDoorWidth/itsNumWindows, itsDoorHeight, 1.0);
+                  canvas.translate(Gfx::Vec3<double>(x_pos, -0.5, 0.0));
+                  canvas.scale(Gfx::Vec3<double>(itsDoorWidth/itsNumWindows,
+                                                 itsDoorHeight, 1.0));
                   if (itsDoorOrientation)
                     {
-                      glScaled(-1.0, 1.0, 1.0);
+                      canvas.scale(Gfx::Vec3<double>(-1.0, 1.0, 1.0));
                     }
-                  drawDoor();
+                  drawDoor(canvas);
                 }
               else
                 {
                   // Draw window.
-                  glTranslated(x_pos, 0.0, 0.0);
-                  glScaled(itsWindowWidth/itsNumWindows, itsWindowHeight, 1.0);
-                  drawWindow(itsWindowVertBars, itsWindowHorizBars);
+                  canvas.translate(Gfx::Vec3<double>(x_pos, 0.0, 0.0));
+                  canvas.scale(Gfx::Vec3<double>(itsWindowWidth/itsNumWindows,
+                                                 itsWindowHeight, 1.0));
+                  drawWindow(canvas, itsWindowVertBars, itsWindowHorizBars);
                 }
             }
 
-          glTranslated(0.0, 1.0, 0.0);
+          canvas.translate(Gfx::Vec3<double>(0.0, 1.0, 0.0));
         }
 
 
       // Draw roof.
-      glTranslated(0.0, -0.5, 0.0);
+      canvas.translate(Gfx::Vec3<double>(0.0, -0.5, 0.0));
 
       {
         Gfx::Canvas::MatrixSaver msaver(canvas);
 
-        glScaled(1.0+itsRoofOverhang, itsRoofHeight, 1.0);
+        canvas.scale(Gfx::Vec3<double>(1.0+itsRoofOverhang,
+                                       itsRoofHeight, 1.0));
 
         {
           Gfx::Canvas::AttribSaver asaver(canvas);
-          if (itsRoofColor == 0)
-            {
-              glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            }
-          else
-            {
-              glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            }
+          canvas.setPolygonFill((itsRoofColor == 0));
 
           if (itsRoofShape == 0)
             {
-              drawTriangleRoof();
+              drawTriangleRoof(canvas);
             }
           else if (itsRoofShape == 1)
             {
-              drawTrapezoidRoof();
+              drawTrapezoidRoof(canvas);
             }
           else
             {
-              drawSquareRoof();
+              drawSquareRoof(canvas);
             }
         }
       }
@@ -385,13 +392,15 @@ DOTRACE("House::grRender");
       {
         Gfx::Canvas::MatrixSaver msaver(canvas);
 
-        glTranslated(itsChimneyXPosition, itsChimneyYPosition, 0.0);
-        glScaled(itsChimneyWidth, itsChimneyHeight, 0.0);
+        canvas.translate(Gfx::Vec3<double>(itsChimneyXPosition,
+                                           itsChimneyYPosition, 0.0));
+        canvas.scale(Gfx::Vec3<double>(itsChimneyWidth,
+                                       itsChimneyHeight, 0.0));
 
         {
           Gfx::Canvas::AttribSaver asaver(canvas);
-          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-          drawChimney();
+          canvas.setPolygonFill(true);
+          drawChimney(canvas);
         }
       }
     }
