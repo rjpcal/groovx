@@ -3,7 +3,7 @@
 // tcllink.h
 // Rob Peters
 // created: Tue May  4 19:16:47 1999
-// written: Tue Jul 20 15:08:43 1999
+// written: Tue Sep 14 14:32:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ namespace {
 
   inline int Tcl_LinkInt(Tcl_Interp* interp, const char* varName, 
                          int* addr, int flag) {
-    vector<char> temp(strlen(varName));
+    vector<char> temp(strlen(varName) + 1);
     strcpy(&(temp[0]), varName);
     flag &= TCL_LINK_READ_ONLY;
     return Tcl_LinkVar(interp, &(temp[0]), reinterpret_cast<char *>(addr),
@@ -38,7 +38,7 @@ namespace {
   }
   inline int Tcl_LinkDouble(Tcl_Interp* interp, const char* varName, 
                             double* addr, int flag) {
-    vector<char> temp(strlen(varName));
+    vector<char> temp(strlen(varName) + 1);
     strcpy(&(temp[0]), varName);
     flag &= TCL_LINK_READ_ONLY;
     return Tcl_LinkVar(interp, &(temp[0]), reinterpret_cast<char *>(addr),
@@ -46,7 +46,7 @@ namespace {
   }
   inline int Tcl_LinkBoolean(Tcl_Interp* interp, const char* varName, 
                              int* addr, int flag) {
-    vector<char> temp(strlen(varName));
+    vector<char> temp(strlen(varName) + 1);
     strcpy(&(temp[0]), varName);
     flag &= TCL_LINK_READ_ONLY;
     return Tcl_LinkVar(interp, &(temp[0]), reinterpret_cast<char *>(addr),
@@ -54,7 +54,7 @@ namespace {
   }
   inline int Tcl_LinkString(Tcl_Interp* interp, const char* varName, 
                             char** addr, int flag) {
-    vector<char> temp(strlen(varName));
+    vector<char> temp(strlen(varName) + 1);
     strcpy(&(temp[0]), varName);
     flag &= TCL_LINK_READ_ONLY;
     return Tcl_LinkVar(interp, &(temp[0]), reinterpret_cast<char *>(addr),
