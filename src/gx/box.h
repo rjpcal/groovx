@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Nov 13 10:36:15 2002
+// written: Wed Nov 13 10:39:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ public:
   void scaleY(V factor) { sizeY(sizeY() * factor); }
   void scaleZ(V factor) { sizeZ(sizeZ() * factor); }
 
-  void scale(Gfx::Vec3<V>& factors)
+  void scale(const Gfx::Vec3<V>& factors)
   {
     scaleX(factors.x());
     scaleY(factors.y());
