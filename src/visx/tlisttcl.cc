@@ -3,13 +3,15 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Sun Oct  3 19:45:00 1999
+// written: Sun Oct  3 19:47:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
+
+#include "tlisttcl.h"
 
 #include <tcl.h>
 #include <strstream.h>
