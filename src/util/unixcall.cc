@@ -32,7 +32,7 @@
 #ifndef SYSTEM_CC_DEFINED
 #define SYSTEM_CC_DEFINED
 
-#include "system/system.h"
+#include "unixcall.h"
 
 #include "util/arrays.h"
 #include "util/error.h"
@@ -73,39 +73,39 @@ namespace
   };
 }
 
-void unixcall::chmod(const char* path, mode_t mode)
+void rutz::unixcall::chmod(const char* path, mode_t mode)
 {
-DOTRACE("unixcall::chmod");
+DOTRACE("rutz::unixcall::chmod");
 
   ErrnoSaver saver;
 
   if ( ::chmod(path, mode) != 0 )
-    throwErrno("unixcall::chmod", SRC_POS);
+    throwErrno("chmod", SRC_POS);
 }
 
-void unixcall::rename(const char* oldpath, const char* newpath)
+void rutz::unixcall::rename(const char* oldpath, const char* newpath)
 {
-DOTRACE("unixcall::rename");
+DOTRACE("rutz::unixcall::rename");
 
   ErrnoSaver saver;
 
   if ( ::rename(oldpath, newpath) != 0 )
-    throwErrno("unixcall::rename", SRC_POS);
+    throwErrno("rename", SRC_POS);
 }
 
-void unixcall::remove(const char* pathname)
+void rutz::unixcall::remove(const char* pathname)
 {
-DOTRACE("unixcall::remove");
+DOTRACE("rutz::unixcall::remove");
 
   errno = 0;
 
   if ( ::remove(pathname) != 0 )
-    throwErrno("unixcall::remove", SRC_POS);
+    throwErrno("rutz::unixcall::remove", SRC_POS);
 }
 
-rutz::fstring unixcall::getcwd()
+rutz::fstring rutz::unixcall::getcwd()
 {
-DOTRACE("unixcall::getcwd");
+DOTRACE("rutz::unixcall::getcwd");
 
   ErrnoSaver saver;
 
@@ -121,7 +121,7 @@ DOTRACE("unixcall::getcwd");
         }
       else
         {
-          throwErrno("unixcall::getcwd", SRC_POS);
+          throwErrno("getcwd", SRC_POS);
         }
     }
 

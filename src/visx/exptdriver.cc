@@ -45,14 +45,13 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "system/system.h"
-
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
 #include "util/fstring.h"
 #include "util/iter.h"
+#include "util/unixcall.h"
 
 #include "visx/tlistutils.h"
 
@@ -367,7 +366,7 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   rep->addLogInfo("Beginning experiment.");
 
-  const fstring cwd = unixcall::getcwd();
+  const fstring cwd = rutz::unixcall::getcwd();
 
   rep->beginDate = rutz::time::wall_clock_now().format();
   rep->hostname = getenv("HOSTNAME");
@@ -466,7 +465,7 @@ namespace
         newname.append(".bkp", i++);
       }
 
-    unixcall::rename(fname.c_str(), newname.c_str());
+    rutz::unixcall::rename(fname.c_str(), newname.c_str());
   }
 }
 
@@ -500,8 +499,8 @@ DOTRACE("ExptDriver::storeData");
   // Change file access modes to allow read-only by all
   const mode_t datafile_mode = S_IRUSR | S_IRGRP | S_IROTH;
 
-  unixcall::chmod(expt_filename.c_str(), datafile_mode);
-  unixcall::chmod(resp_filename.c_str(), datafile_mode);
+  rutz::unixcall::chmod(expt_filename.c_str(), datafile_mode);
+  rutz::unixcall::chmod(resp_filename.c_str(), datafile_mode);
 
   rep->addLogInfo("Experiment saved.");
 }
