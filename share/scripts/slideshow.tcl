@@ -25,7 +25,7 @@ itcl::class Playlist {
 		}
 		$this save
 	    }
-	    
+
 	} else {
 	    set itsListFile ${fname}
 	}
@@ -33,7 +33,7 @@ itcl::class Playlist {
 	set fd [open $itsListFile r]
 	set itsList [lrange [split [read $fd] "\n"] 0 end-1]
 	close $fd
-	
+
 	set itsIdx 0
 	set itsWidget $widget
 	set itsPixmap [new GxPixmap]
@@ -90,6 +90,21 @@ itcl::class Playlist {
 
 	-> $itsWidget allowRefresh 1
     }
+
+    public method rotate {angle} {
+	set f [$this filename]
+
+	if { ![file exists ${f}.orig] } {
+	    file copy $f ${f}.orig
+	}
+
+	file delete ${f}.tmp
+	file rename $f ${f}.tmp
+
+	exec jpegtran -rotate $angle -copy all ${f}.tmp > $f
+
+	$this show
+    }
 }
 
 proc min {a b} {
@@ -112,6 +127,14 @@ proc hide {} {
 
 proc blockInput {args} {
     return 0
+}
+
+proc spinInput {} {
+    $::PLAYLIST spin [.f.spinner get]
+    updateText
+    $::PLAYLIST show
+    .f.spinner clear
+    return 1
 }
 
 proc spinPic {step} {
@@ -144,13 +167,18 @@ button .f.sorter -text "sort" -command {$::PLAYLIST sort}
 
 button .f.hide -text "hide" -command hide
 
+button .f.rot90 -text "rotate cw" -command {$::PLAYLIST rotate 90}
+button .f.rot270 -text "rotate ccw" -command {$::PLAYLIST rotate 270}
+
 iwidgets::spinner .f.spinner -width 0 -fixed 0 \
-    -validate blockInput -labelvariable FILENAME \
+    -command spinInput  -labelvariable FILENAME \
     -decrement {spinPic -1} -increment {spinPic 1}
 
 bind Canvas <ButtonRelease> {$::PLAYLIST show}
 
-pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.spinner -side left -expand yes
+pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.rot90 .f.rot270 \
+    .f.spinner \
+    -side left -expand yes
 
 pack .f -side top
 
