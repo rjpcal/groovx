@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  2 14:21:31 1999
+// written: Thu Dec  2 15:09:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,6 +90,8 @@ public:
   ///
   void setAutosaveFile(const string& str);
 
+  ///
+  virtual Widget* getWidget();
 
   /** @name Graphics Actions */
   //@{

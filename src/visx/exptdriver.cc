@@ -1008,6 +1008,9 @@ const string& ExptDriver::getAutosaveFile() const
 void ExptDriver::setAutosaveFile(const string& str) 
   { itsImpl->setAutosaveFile(str); }
 
+Widget* ExptDriver::getWidget()
+  { return ObjTogl::theToglConfig(); }
+
 void ExptDriver::edDraw() 
   { itsImpl->edDraw(); }
 

@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Thu Dec  2 14:21:02 1999
+// written: Thu Dec  2 15:09:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,12 @@
 #ifndef EXPERIMENT_H_DEFINED
 #define EXPERIMENT_H_DEFINED
 
+class Widget;
+
 class Experiment {
 public:
+  virtual Widget* getWidget() = 0;
+
   virtual void edDraw() = 0;
   virtual void edUndraw() = 0;
   virtual void edSwapBuffers() = 0;
