@@ -39,7 +39,7 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
     }
 
     if { $this(objid) > 0 } {
-	::testReadWrite $this(package) $this(objid)
+        ::testReadWrite $this(package) $this(objid)
     }
 
     # class::type
@@ -97,7 +97,7 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
         "} {"^${::INT}${::SP}${::INT}$"}
         eval ::test $testname {"normal use vector set with many values"} {"
             GxShapeKit::category \"$this(objid) $this(objid)\" \"3 7 11\"
-            GxShapeKit::category \"$this(objid) $this(objid)\" 
+            GxShapeKit::category \"$this(objid) $this(objid)\"
         "} {"^${::INT}${::SP}${::INT}$"}
     }
 
