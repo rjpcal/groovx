@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 11:39:46 2001
+// written: Wed Aug 15 13:40:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,41 @@ Util::Tracer GrObj::tracer;
 
 namespace
 {
+#define GETSET(type, attr) std::make_pair(&type::get##attr, &type::set##attr)
+
+  const FieldInfo FINFOS[] =
+  {
+    FieldInfo("renderMode", GETSET(GrObj, RenderMode),
+              1, 1, 4, 1, true),
+
+    FieldInfo("unRenderMode", GETSET(GrObj, UnRenderMode),
+              6, 1, 6, 1),
+    FieldInfo("bbVisibility", GETSET(GrObj, BBVisibility),
+              false, false, true, true),
+    FieldInfo("scalingMode", GETSET(GrObj, ScalingMode),
+              1, 1, 3, 1),
+    // xx widthFactor
+    // xx heightFactor
+    FieldInfo("aspectRatio", GETSET(GrObj, AspectRatio),
+              1.0, 0.1, 10.0, 0.1),
+    FieldInfo("width", GETSET(GrObj, Width),
+              1.0, 0.1, 10.0, 0.1),
+    FieldInfo("height", GETSET(GrObj, Height),
+              1.0, 0.1, 10.0, 0.1),
+    FieldInfo("maxDimension", GETSET(GrObj, MaxDimension),
+              1.0, 0.1, 10.0, 0.1),
+    FieldInfo("alignmentMode", GETSET(GrObj, AlignmentMode),
+              1, 1, 7, 1),
+    FieldInfo("centerX", GETSET(GrObj, CenterX),
+              0.0, -10.0, 10.0, 0.1),
+    FieldInfo("centerY", GETSET(GrObj, CenterY),
+              0.0, -10.0, 10.0, 0.1)
+  };
+#undef GETSET
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  FieldMap GROBJ_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -93,7 +128,7 @@ DOTRACE("GrObj::writeTo");
 
 const FieldMap& GrObj::classFields()
 {
-  return *FieldMap::emptyFieldMap();
+  return GROBJ_FIELDS;
 }
 
 ///////////////
