@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Fri Mar  3 14:29:06 2000
+// written: Wed Mar  8 08:10:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,14 +11,11 @@
 #ifndef EVENTRESPONSEHDLR_H_DEFINED
 #define EVENTRESPONSEHDLR_H_DEFINED
 
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
-
 #ifndef RESPONSEHANDLER_H_DEFINED
 #include "responsehandler.h"
 #endif
 
+class fixed_string;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -74,7 +71,7 @@ public:
   EventResponseHdlr();
 
   /// Construct with an initial input_response_map.
-  EventResponseHdlr(const string& input_response_map);
+  EventResponseHdlr(const char* input_response_map);
 
   /// Virtual destructor.
   virtual ~EventResponseHdlr();
@@ -91,10 +88,10 @@ public:
   virtual void setInterp(Tcl_Interp* interp);
 
   /// Returns the current input response map.
-  const string& getInputResponseMap() const;
+  const fixed_string& getInputResponseMap() const;
 
   /// Use \a responseMap as the current input response map.
-  void setInputResponseMap(const string& responseMap);
+  void setInputResponseMap(const fixed_string& responseMap);
 
   /// Queries whether feedback will be given.
   bool getUseFeedback() const;
@@ -111,17 +108,17 @@ public:
   /** Returns the event sequence which is currently attended for
       responses. The event sequence is specified in the format used
       in a Tk bind command. */
-  const string& getEventSequence() const;
+  const fixed_string& getEventSequence() const;
 
   /** Use \a seq as the binding sequence to be attended for
       responses. The event sequence should be specified in the format
       used in a Tk bind command. */
-  void setEventSequence(const string& seq);
+  void setEventSequence(const fixed_string& seq);
 
   /** Returns the current binding substitution. This will be in the
       format used in a Tk binding script (i.e. a percent sign
       followed by the appropriate character). */
-  const string& getBindingSubstitution() const;
+  const fixed_string& getBindingSubstitution() const;
 
   /** Use \a sub as the current binding substitution. This must be in
       the format used in a Tk binding script (i.e. a percent sign
@@ -130,7 +127,7 @@ public:
       the binding substitution will be evaluated, and checked for
       matches in the input response map to determine the integer
       response value. */
-  void setBindingSubstitution(const string& sub);
+  void setBindingSubstitution(const fixed_string& sub);
 
   virtual void rhBeginTrial(Experiment* expt) const;
   virtual void rhAbortTrial(Experiment* expt) const;
