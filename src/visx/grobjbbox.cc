@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Sat Aug 25 12:55:12 2001
+// written: Wed Aug 29 09:37:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"
-
-#include <GL/gl.h>
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -78,17 +76,16 @@ DOTRACE("GrObjBBox::gnodeDraw");
                        child()->gnodeBoundingBox(canvas),
                        itsPixelBorder);
 
-		itsStipple ^= itsMask;
+      itsStipple ^= itsMask;
 
-		itsMask = ~itsMask;
+      itsMask = ~itsMask;
 
-		Gfx::Canvas::AttribSaver saver(canvas);
+      Gfx::Canvas::AttribSaver saver(canvas);
 
-		canvas.setLineWidth(1.0);
-		glEnable(GL_LINE_STIPPLE);
-		glLineStipple(1, itsStipple);
+      canvas.setLineWidth(1.0);
+      canvas.setLineStipple(itsStipple);
 
-		canvas.drawRect(bounds);
+      canvas.drawRect(bounds);
     }
 
   child()->gnodeDraw(canvas);
