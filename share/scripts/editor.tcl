@@ -138,7 +138,7 @@ itcl::class StringController {
 	return [$itsWidget get]
     }
 
-    public proc alignUs {} {
+    public proc alignAll {} {
 	eval iwidgets::Labeledwidget::alignlabels $toBeAligned
     }
 }
@@ -262,82 +262,93 @@ itcl::class FieldControlSet {
 	$itsCallback $fname $val
     }
 
-    constructor {panes objtype setCallback} {
-	$panes insert 0 $objtype
+    private method init { panes objtype setCallback }
 
-	set parent [$panes childsite $objtype]
+    constructor {panes objtype setCallback} { init $panes $objtype $setCallback }
 
-	set itsObjType $objtype
+    public method update {obj}
 
-	set itsCallback $setCallback
+    public method setAttribForObjs {objs fname val}
+}
 
-	set itsFrame [frame $parent.fields]
+#
+# FieldControlSet body definitions
+#
 
-	set subframe ""
+itcl::body FieldControlSet::init { panes objtype setCallback } {
+    $panes insert 0 $objtype
 
-	set column 0
+    set parent [$panes childsite $objtype]
 
-	foreach fdata [${objtype}::allFields] {
-	    set finfo [FieldInfo [::AUTO] $fdata]
+    set itsObjType $objtype
 
-	    if { [$finfo isPrivate] } { itcl::delete object $finfo; continue }
+    set itsCallback $setCallback
 
-	    set fname [$finfo name]
+    set itsFrame [frame $parent.fields]
 
-	    set itsCachedValues($fname) 0
+    set subframe ""
 
-	    set itsFieldInfos($fname) $finfo
+    set column 0
 
-	    if { [$finfo startsNewGroup] } {
-		set subframe [frame $itsFrame.column$column]
-		incr column
-		pack $subframe -side left -fill y -expand yes
-	    }
+    foreach fdata [${objtype}::allFields] {
+	set finfo [FieldInfo [::AUTO] $fdata]
 
-	    set type ScaleController
+	if { [$finfo isPrivate] } { itcl::delete object $finfo; continue }
 
-	    if { [$finfo isString] } { set type StringController }
-	    if { [$finfo isMulti] }  { set type MultiController }
-	    if { [$finfo isBoolean] } { set type BooleanController }
+	set fname [$finfo name]
 
-	    set itsControllers($fname) [$type [::AUTO] \
-		    $finfo $subframe \
-		    [itcl::code $this onControl $fname]]
+	set itsCachedValues($fname) 0
 
-	    if { [$finfo isTransient] } {
-		$subframe.$fname configure -foreground blue
-	    }
+	set itsFieldInfos($fname) $finfo
 
-	    pack $subframe.$fname -side top
+	if { [$finfo startsNewGroup] } {
+	    set subframe [frame $itsFrame.column$column]
+	    incr column
+	    pack $subframe -side left -fill y -expand yes
 	}
 
-	StringController::alignUs
+	set type ScaleController
 
-	pack $itsFrame -fill y -side left		  
+	if { [$finfo isString] } { set type StringController }
+	if { [$finfo isMulti] }  { set type MultiController }
+	if { [$finfo isBoolean] } { set type BooleanController }
+
+	set itsControllers($fname) [$type [::AUTO] \
+					$finfo $subframe \
+					[itcl::code $this onControl $fname]]
+
+	if { [$finfo isTransient] } {
+	    $subframe.$fname configure -foreground blue
+	}
+
+	pack $subframe.$fname -side top
     }
 
-    public method update {obj} {
-	foreach fname [array names itsFieldInfos] {
-	    set val ""
-	    if { [$itsFieldInfos($fname) isGettable] } {
-		set val [${itsObjType}::$fname $obj]
-	    }
-	    setControl $fname $val
-	}
-    }
+    StringController::alignAll
 
-    public method setAttribForObjs {objs fname val} {
-	debug "setting $objs $fname to $val"
-	if { [$itsFieldInfos($fname) isSettable] } {
-	    set val [subst $val]
-	    if { $itsCachedValues($fname) != $val } {
-		${itsObjType}::$fname $objs $val
-		set itsCachedValues($fname) $val
-	    }
+    pack $itsFrame -fill y -side left		  
+}
+
+itcl::body FieldControlSet::update {obj} {
+    foreach fname [array names itsFieldInfos] {
+	set val ""
+	if { [$itsFieldInfos($fname) isGettable] } {
+	    set val [${itsObjType}::$fname $obj]
 	}
+	setControl $fname $val
     }
 }
 
+itcl::body FieldControlSet::setAttribForObjs {objs fname val} {
+    debug "setting $objs $fname to $val"
+    if { [$itsFieldInfos($fname) isSettable] } {
+	set val [subst $val]
+	if { $itsCachedValues($fname) != $val } {
+	    ${itsObjType}::$fname $objs $val
+	    set itsCachedValues($fname) $val
+	}
+    }
+}
 
 #
 # Editor class definition
@@ -351,383 +362,420 @@ itcl::class Editor {
     private variable itsControlSets
     private variable itsUpdateInProgress 0
 
-    private method setObjType {type} { $itsButtons.objtypes select $type }
-
-    private method curObjType {} { return [$itsButtons.objtypes get] }
-
-    private method standardSettings {objs} {
-	set grobjs [dlist::select $objs [GrObj::is $objs]]
-
-	GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
-	GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
-	GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
-	GrObj::height $grobjs 1.0
-    }
-
-    private method addNewObject {} {
-	# create new object
-	eval set obj [new [curObjType]]
-
-	standardSettings $obj
-
-	addListObj $obj
-
-	setEditSelection $obj
-	setViewSelection $obj
-    }
+    private method setObjType {type}
+    private method curObjType {}
+    private method standardSettings {objs}
+    private method addNewObject {}
 
     # The edit obj list
-
-    private method getEditAll {} {
-	set objs [list]
-
-	foreach pair [$itsControls.editobjlist get 0 end] {
-	    lappend objs [lindex $pair 0]
-	}
-
-	return $objs
-    }
-
-    private method getEditSelection {} {
-	set objs [list]
-
-	foreach pair [$itsControls.editobjlist getcurselection] {
-	    lappend objs [lindex $pair 0]
-	}
-
-	return $objs
-    }
-
-    private method setEditSelection {objs} {
-	$itsControls.editobjlist selection clear 0 end
-	set all [getEditAll]
-	foreach obj $objs {
-	    set index [lsearch $all $obj]
-	    if { $index >= 0 } {
-		$itsControls.editobjlist selection set $index
-		onEditObjSelect
-	    }
-	}
-    }
-
-    private method onEditObjSelect {} {
-	set objs [getEditSelection]
-	if { [llength $objs] > 0 } {
-	    setObjType [IO::type [lindex $objs 0]]
-	    updateControls [lindex $objs 0]
-	}
-    }
+    private method getEditAll {}
+    private method getEditSelection {}
+    private method setEditSelection {objs}
+    private method onEditObjSelect {}
 
     # The view obj list
+    private method getViewAll {}
+    private method getViewSelection {}
+    private method setViewSelection {objs}
+    private method onViewObjSelect {}
 
-    private method getViewAll {} {
-	set objs [list]
-
-	foreach pair [$itsControls.viewobjlist get 0 end] {
-	    lappend objs [lindex $pair 0]
-	}
-
-	return $objs
-    }
-
-    private method getViewSelection {} {
-	set sel [$itsControls.viewobjlist getcurselection]
-	if { [llength $sel] > 0 } {
-	    return [lindex [lindex $sel 0] 0]
-	} else {
-	    return 0
-	}
-    }
-
-    private method setViewSelection {objs} {
-	$itsControls.viewobjlist selection clear 0 end
-	set all [getViewAll]
-	foreach obj $objs {
-	    set index [lsearch $all $obj]
-	    if { $index >= 0 } {
-		$itsControls.viewobjlist selection set $index
-		onViewObjSelect
-		requestDraw
-		return
-	    }
-	}
-    }
-
-    private method onViewObjSelect {} {
-	requestDraw
-    }
-
-
-    #
     # Both lists together
-    #
+    private method addListObj {obj}
+    private method setListAll {objs}
+    private method refreshLists {}
 
-    private method addListObj {obj} {
-	$itsControls.editobjlist insert end "$obj [IO::type $obj]"	
-	$itsControls.viewobjlist insert end "$obj [IO::type $obj]"
+    # Callbacks
+    private method makePreviewObj {}
+    private method requestDraw {}
+    private method updateControls {obj}
+    private method viewingDist {val}
+    private method setAttrib {fname val}
+    private method showFieldControls {}
+    private method runCmd {}
+
+    private method init {parent objtype}
+
+    constructor {parent {objtype Gabor} } { init $parent $objtype }
+
+    public method loadObjects {filename}
+    public method loadExpt {filename}
+    public method saveObjects {filename}
+    public method saveBitmaps {basename}
+}
+
+#
+# Editor body definitions
+#
+
+itcl::body Editor::setObjType {type} { $itsButtons.objtypes select $type }
+
+itcl::body Editor::curObjType {} { return [$itsButtons.objtypes get] }
+
+itcl::body Editor::standardSettings {objs} {
+    set grobjs [dlist::select $objs [GrObj::is $objs]]
+
+    GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
+    GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
+    GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
+    GrObj::height $grobjs 1.0
+}
+
+itcl::body Editor::addNewObject {} {
+    # create new object
+    eval set obj [new [curObjType]]
+
+    standardSettings $obj
+
+    addListObj $obj
+
+    setEditSelection $obj
+    setViewSelection $obj
+}
+
+itcl::body Editor::getEditAll {} {
+    set objs [list]
+
+    foreach pair [$itsControls.editobjlist get 0 end] {
+	lappend objs [lindex $pair 0]
     }
 
-    private method setListAll {objs} {
-	$itsControls.editobjlist clear
-	$itsControls.viewobjlist clear
+    return $objs
+}
 
-	set objs [lsort -integer $objs]
+itcl::body Editor::getEditSelection {} {
+    set objs [list]
 
-	foreach obj $objs {
-	    addListObj $obj
+    foreach pair [$itsControls.editobjlist getcurselection] {
+	lappend objs [lindex $pair 0]
+    }
+
+    return $objs
+}
+
+itcl::body Editor::setEditSelection {objs} {
+    $itsControls.editobjlist selection clear 0 end
+    set all [getEditAll]
+    foreach obj $objs {
+	set index [lsearch $all $obj]
+	if { $index >= 0 } {
+	    $itsControls.editobjlist selection set $index
+	    onEditObjSelect
 	}
-    }
-
-    private method refreshLists {} {
-	set editsel [getEditSelection]
-	set viewsel [getViewSelection]
-
-	set all [GxNode::findAll]
-
-	setListAll $all
-
-	setEditSelection $editsel
-	setViewSelection $viewsel
-    }
-
-
-
-    private method makePreviewObj {} {
-	set obj [Tlist::createPreview [getEditSelection]]
-
-	addListObj $obj
-	setViewSelection $obj
-    }
-
-    private method requestDraw {} {
-	set viewobj [getViewSelection]
-	if { $viewobj != 0 } {
-	    Toglet::see $itsToglet $viewobj
-	}
-    }
-
-    private method updateControls {obj} {
-	set itsUpdateInProgress 1
-
-	set objtype [IO::type $obj]
-
-	set controls $itsControlSets($objtype)
-
-	$controls update $obj
-
-	# need to force the controls to update before we draw the object
-	update
-
-	set itsUpdateInProgress 0
-    }
-
-    private method viewingDist {val} {
-	Toglet::setViewingDistance $itsToglet $val
-    }
-
-    private method setAttrib {fname val} {
-	debug "in setAttrib..."
-
-	set objtype [curObjType]
-
-	debug "objtype $objtype"
-
-	set selection [getEditSelection]
-
-	debug "selection $selection"
-
-	set editobjs [dlist::select $selection [${objtype}::is $selection]]
-
-	debug "editobjs $editobjs"
-
-	set controls $itsControlSets($objtype)
-
-	debug "controls $controls"
-
-	debug "fname $fname val $val"
-
-	if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
-	    Toglet::allowRefresh $itsToglet 0
-	    $controls setAttribForObjs $editobjs $fname $val
-	    Toglet::allowRefresh $itsToglet 1
-
-	    updateControls [lindex $editobjs 0]
-	}
-    }
-
-    private method showFieldControls {} {
-
-	set objtype [curObjType]
-
-	set alltypes [$itsButtons.objtypes get 0 end]
-
-	foreach type $alltypes {
-	    if { ![string equal $objtype $type] } {
-		if { [info exists itsControlSets($type)] } {
-		    $itsPanes hide $type
-		}
-	    }
-	}
-
-	if { ![info exists itsControlSets($objtype)] } {
-
-	    set itsControlSets($objtype) \
-		    [FieldControlSet [::AUTO] $itsPanes $objtype \
-		    [itcl::code $this setAttrib]]
-
-	}
-
-	$itsPanes show $objtype
-
-	$itsPanes fraction $::PANE_FRACTION [expr 100-$::PANE_FRACTION]
-    }
-
-    private method runCmd {} {
-	set cmd [$itsButtons.runcmd get]
-	catch { eval $cmd } result
-	set ::statusInfo "\[$cmd\] --> $result"
-	$itsButtons.runcmd clear
-    }
-
-    constructor {parent {objtype Gabor} } {
-	set itsPanes [iwidgets::panedwindow $parent.panes \
-		-width $::MAINPANE_WIDTH -height $::MAINPANE_HEIGHT]
-
-	$itsPanes add controls
-
-	set itsControls [$itsPanes childsite controls]
-
-	#
-	# Set up controls
-	#
-
-	scale $itsControls.viewingdist -showvalue false \
-		-from 1 -to 200 -orient horizontal \
-		-width $::SCALE_WIDTH \
-		-command [itcl::code $this viewingDist]
-	$itsControls.viewingdist set 60
-	pack $itsControls.viewingdist -side top -fill x
-
-	set itsButtons [frame $itsControls.buttons]
-
-	iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
-		-command [itcl::code $this showFieldControls] \
-		-font $::FONT
-	$itsButtons.objtypes insert 0 \
-	    Face \
-	    Fish \
-	    Gabor \
-	    Gtext \
-	    GxCylinder \
-	    GxDrawStyle \
-	    GxColor \
-	    GxLine \
-	    GxSeparator \
-	    GxSphere \
-	    House \
-	    MaskHatch \
-	    MorphyFace \
-	    Position
-	$itsButtons.objtypes sort ascending
-	setObjType $objtype
-	pack $itsButtons.objtypes -side top -anchor nw
-
-	button $itsButtons.new -text "New Object" -relief raised \
-		-command [itcl::code $this addNewObject] \
-		-font $::FONT
-	pack $itsButtons.new -side top -anchor nw
-
-	button $itsButtons.preview -text "Make Preview" -relief raised \
-		-command [itcl::code $this makePreviewObj] \
-		-font $::FONT
-	pack $itsButtons.preview -side top -anchor nw
-
-	button $itsButtons.redraw -text "Redraw" -relief raised \
-		-command [itcl::code $this requestDraw] \
-		-font $::FONT
-	pack $itsButtons.redraw -side top -anchor nw
-
-	button $itsButtons.refreshlist -text "Refresh list" -relief raised \
-		-command [itcl::code $this refreshLists] \
-		-font $::FONT
-	pack $itsButtons.refreshlist -side top -anchor nw
-
-	iwidgets::entryfield $itsButtons.runcmd \
-		-labeltext "Run command" -labelpos n \
-		-command [itcl::code $this runCmd] \
-		-labelfont $::FONT
-	pack $itsButtons.runcmd -side top -anchor nw
-
-	pack $itsButtons -side left -anchor nw
-
-	iwidgets::scrolledlistbox $itsControls.editobjlist \
-		-labeltext "Edit objects:" -hscrollmode dynamic \
-		-selectmode extended -exportselection false \
-		-selectioncommand [itcl::code $this onEditObjSelect] \
-		-labelfont $::FONT \
-		-textfont $::FONT
-	pack $itsControls.editobjlist -side left -anchor nw
-
-	iwidgets::scrolledlistbox $itsControls.viewobjlist \
-		-labeltext "View object: " -hscrollmode dynamic \
-		-selectmode browse -exportselection false \
-		-selectioncommand [itcl::code $this onViewObjSelect] \
-		-labelfont $::FONT \
-		-textfont $::FONT
-	pack $itsControls.viewobjlist -side left -anchor nw
-
-	#
-	# Set up attribs
-	#
-
-	Toglet::defaultParent $parent
-	set itsToglet [new Toglet]
-	Toglet::width $itsToglet $::TOGLET_WIDTH
-	Toglet::currentToglet $itsToglet
-
-	showFieldControls
-
-	pack $itsPanes -side left -fill both -expand yes
-    }
-
-    public method loadObjects {filename} {
-	set objs [ObjDb::loadObjects $filename]
-
-	set all [GxNode::findAll]
-
-	setListAll $all
-	standardSettings $all
-
-	return [llength $objs]
-    }
-
-    public method loadExpt {filename} {
-	Expt::load $filename
-
-	set all [GxNode::findAll]
-
-	setListAll $all
-
-	standardSettings $all
-    }
-
-    public method saveObjects {filename} {
-	set objs [getEditSelection] 
-	ObjDb::saveObjects $objs $filename no
-	return [llength $objs]
-    }
-
-    public method saveBitmaps {basename} {
-	set objs [getEditSelection]
-	set grobjs [dlist::select $objs [GrObj::is $objs]]
-	foreach obj $grobjs {
-	    GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
-	    GrObj::saveBitmapCache $obj "${basename}${obj}.pbm"
-	    GrObj::renderMode $obj $GrObj::DIRECT_RENDER
-	}
-	return [llength $objs]
     }
 }
+
+itcl::body Editor::onEditObjSelect {} {
+    set objs [getEditSelection]
+    if { [llength $objs] > 0 } {
+	setObjType [IO::type [lindex $objs 0]]
+	updateControls [lindex $objs 0]
+    }
+}
+
+itcl::body Editor::getViewAll {} {
+    set objs [list]
+
+    foreach pair [$itsControls.viewobjlist get 0 end] {
+	lappend objs [lindex $pair 0]
+    }
+
+    return $objs
+}
+
+itcl::body Editor::getViewSelection {} {
+    set sel [$itsControls.viewobjlist getcurselection]
+    if { [llength $sel] > 0 } {
+	return [lindex [lindex $sel 0] 0]
+    } else {
+	return 0
+    }
+}
+
+itcl::body Editor::setViewSelection {objs} {
+    $itsControls.viewobjlist selection clear 0 end
+    set all [getViewAll]
+    foreach obj $objs {
+	set index [lsearch $all $obj]
+	if { $index >= 0 } {
+	    $itsControls.viewobjlist selection set $index
+	    onViewObjSelect
+	    requestDraw
+	    return
+	}
+    }
+}
+
+itcl::body Editor::onViewObjSelect {} {
+    requestDraw
+}
+
+itcl::body Editor::addListObj {obj} {
+    $itsControls.editobjlist insert end "$obj [IO::type $obj]"	
+    $itsControls.viewobjlist insert end "$obj [IO::type $obj]"
+}
+
+itcl::body Editor::setListAll {objs} {
+    $itsControls.editobjlist clear
+    $itsControls.viewobjlist clear
+
+    set objs [lsort -integer $objs]
+
+    foreach obj $objs {
+	addListObj $obj
+    }
+}
+
+itcl::body Editor::refreshLists {} {
+    set editsel [getEditSelection]
+    set viewsel [getViewSelection]
+
+    set all [GxNode::findAll]
+
+    setListAll $all
+
+    setEditSelection $editsel
+    setViewSelection $viewsel
+}
+
+itcl::body Editor::makePreviewObj {} {
+    set obj [Tlist::createPreview [getEditSelection]]
+
+    addListObj $obj
+    setViewSelection $obj
+}
+
+itcl::body Editor::requestDraw {} {
+    set viewobj [getViewSelection]
+    if { $viewobj != 0 } {
+	Toglet::see $itsToglet $viewobj
+    }
+}
+
+itcl::body Editor::updateControls {obj} {
+    set itsUpdateInProgress 1
+
+    set objtype [IO::type $obj]
+
+    set controls $itsControlSets($objtype)
+
+    $controls update $obj
+
+    # need to force the controls to update before we draw the object
+    update
+
+    set itsUpdateInProgress 0
+}
+
+itcl::body Editor::viewingDist {val} {
+    Toglet::setViewingDistance $itsToglet $val
+}
+
+itcl::body Editor::setAttrib {fname val} {
+    debug "in setAttrib..."
+
+    set objtype [curObjType]
+
+    debug "objtype $objtype"
+
+    set selection [getEditSelection]
+
+    debug "selection $selection"
+
+    set editobjs [dlist::select $selection [${objtype}::is $selection]]
+
+    debug "editobjs $editobjs"
+
+    set controls $itsControlSets($objtype)
+
+    debug "controls $controls"
+
+    debug "fname $fname val $val"
+
+    if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
+	Toglet::allowRefresh $itsToglet 0
+	$controls setAttribForObjs $editobjs $fname $val
+	Toglet::allowRefresh $itsToglet 1
+
+	updateControls [lindex $editobjs 0]
+    }
+}
+
+itcl::body Editor::showFieldControls {} {
+
+    set objtype [curObjType]
+
+    set alltypes [$itsButtons.objtypes get 0 end]
+
+    foreach type $alltypes {
+	if { ![string equal $objtype $type] } {
+	    if { [info exists itsControlSets($type)] } {
+		$itsPanes hide $type
+	    }
+	}
+    }
+
+    if { ![info exists itsControlSets($objtype)] } {
+
+	set itsControlSets($objtype) \
+	    [FieldControlSet [::AUTO] $itsPanes $objtype \
+		 [itcl::code $this setAttrib]]
+
+    }
+
+    $itsPanes show $objtype
+
+    $itsPanes fraction $::PANE_FRACTION [expr 100-$::PANE_FRACTION]
+}
+
+itcl::body Editor::runCmd {} {
+    set cmd [$itsButtons.runcmd get]
+    catch { eval $cmd } result
+    set ::statusInfo "\[$cmd\] --> $result"
+    $itsButtons.runcmd clear
+}
+
+itcl::body Editor::init {parent objtype } {
+    set itsPanes [iwidgets::panedwindow $parent.panes \
+		      -width $::MAINPANE_WIDTH -height $::MAINPANE_HEIGHT]
+
+    $itsPanes add controls
+
+    set itsControls [$itsPanes childsite controls]
+
+    #
+    # Set up controls
+    #
+
+    scale $itsControls.viewingdist -showvalue false \
+	-from 1 -to 200 -orient horizontal \
+	-width $::SCALE_WIDTH \
+	-command [itcl::code $this viewingDist]
+    $itsControls.viewingdist set 60
+    pack $itsControls.viewingdist -side top -fill x
+
+    set itsButtons [frame $itsControls.buttons]
+
+    iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
+	-command [itcl::code $this showFieldControls] \
+	-font $::FONT
+    $itsButtons.objtypes insert 0 \
+	Face \
+	Fish \
+	Gabor \
+	Gtext \
+	GxCylinder \
+	GxDrawStyle \
+	GxColor \
+	GxLine \
+	GxSeparator \
+	GxSphere \
+	House \
+	MaskHatch \
+	MorphyFace \
+	Position
+    $itsButtons.objtypes sort ascending
+    setObjType $objtype
+    pack $itsButtons.objtypes -side top -anchor nw
+
+    button $itsButtons.new -text "New Object" -relief raised \
+	-command [itcl::code $this addNewObject] \
+	-font $::FONT
+    pack $itsButtons.new -side top -anchor nw
+
+    button $itsButtons.preview -text "Make Preview" -relief raised \
+	-command [itcl::code $this makePreviewObj] \
+	-font $::FONT
+    pack $itsButtons.preview -side top -anchor nw
+
+    button $itsButtons.redraw -text "Redraw" -relief raised \
+	-command [itcl::code $this requestDraw] \
+	-font $::FONT
+    pack $itsButtons.redraw -side top -anchor nw
+
+    button $itsButtons.refreshlist -text "Refresh list" -relief raised \
+	-command [itcl::code $this refreshLists] \
+	-font $::FONT
+    pack $itsButtons.refreshlist -side top -anchor nw
+
+    iwidgets::entryfield $itsButtons.runcmd \
+	-labeltext "Run command" -labelpos n \
+	-command [itcl::code $this runCmd] \
+	-labelfont $::FONT
+    pack $itsButtons.runcmd -side top -anchor nw
+
+    pack $itsButtons -side left -anchor nw
+
+    iwidgets::scrolledlistbox $itsControls.editobjlist \
+	-labeltext "Edit objects:" -hscrollmode dynamic \
+	-selectmode extended -exportselection false \
+	-selectioncommand [itcl::code $this onEditObjSelect] \
+	-labelfont $::FONT \
+	-textfont $::FONT
+    pack $itsControls.editobjlist -side left -anchor nw
+
+    iwidgets::scrolledlistbox $itsControls.viewobjlist \
+	-labeltext "View object: " -hscrollmode dynamic \
+	-selectmode browse -exportselection false \
+	-selectioncommand [itcl::code $this onViewObjSelect] \
+	-labelfont $::FONT \
+	-textfont $::FONT
+    pack $itsControls.viewobjlist -side left -anchor nw
+
+    #
+    # Set up attribs
+    #
+
+    Toglet::defaultParent $parent
+    set itsToglet [new Toglet]
+    Toglet::width $itsToglet $::TOGLET_WIDTH
+    Toglet::currentToglet $itsToglet
+
+    showFieldControls
+
+    pack $itsPanes -side left -fill both -expand yes
+}
+
+itcl::body Editor::loadObjects {filename} {
+    set objs [ObjDb::loadObjects $filename]
+
+    set all [GxNode::findAll]
+
+    setListAll $all
+    standardSettings $all
+
+    return [llength $objs]
+}
+
+itcl::body Editor::loadExpt {filename} {
+    Expt::load $filename
+
+    set all [GxNode::findAll]
+
+    setListAll $all
+
+    standardSettings $all
+}
+
+itcl::body Editor::saveObjects {filename} {
+    set objs [getEditSelection] 
+    ObjDb::saveObjects $objs $filename no
+    return [llength $objs]
+}
+
+itcl::body Editor::saveBitmaps {basename} {
+    set objs [getEditSelection]
+    set grobjs [dlist::select $objs [GrObj::is $objs]]
+    foreach obj $grobjs {
+	GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
+	GrObj::saveBitmapCache $obj "${basename}${obj}.pbm"
+	GrObj::renderMode $obj $GrObj::DIRECT_RENDER
+    }
+    return [llength $objs]
+}
+
+#
+# Menuapp class definition
+#
 
 itcl::class Menuapp {
     private variable itsFrame
