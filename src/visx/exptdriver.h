@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Dec  6 20:08:56 1999
+// written: Tue Dec  7 13:13:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ private:
   ExptDriver& operator=(const ExptDriver&);
 
 public:
-  /// Default constructor
-  ExptDriver();
+  /// 
+  ExptDriver(Tcl_Interp* interp);
 
   ///
   virtual ~ExptDriver();
@@ -82,8 +82,6 @@ public:
 
   ///
   Tcl_Interp* getInterp();
-  ///
-  void setInterp(Tcl_Interp* interp);
 
   ///
   const string& getAutosaveFile() const;

@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Dec  6 23:02:21 1999
+// written: Tue Dec  7 13:14:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ namespace {
 
 class ExptDriver::Impl {
 public:
-  Impl(ExptDriver* owner);
+  Impl(ExptDriver* owner, Tcl_Interp* interp);
   ~Impl();
 
   //////////////////////
@@ -140,7 +140,6 @@ public:
   void init();
 
   Tcl_Interp* getInterp() { return itsInterp; }
-  void setInterp(Tcl_Interp* interp);
 
   const string& getAutosaveFile() const { return itsAutosaveFile; }
   void setAutosaveFile(const string& str) { itsAutosaveFile = str; }
@@ -200,15 +199,16 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::Impl::Impl(ExptDriver* owner) :
+ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
-  itsInterp(0),
+  itsInterp(interp),
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
   itsRhId(0),
   itsThId(0)
 {
 DOTRACE("ExptDriver::Impl::Impl");
+  Tcl_Preserve(itsInterp);
 }
 
 ExptDriver::Impl::~Impl() {
@@ -637,15 +637,6 @@ DOTRACE("ExptDriver::Impl::init");
   getSubjectKey(itsSubject);
 }
 
-void ExptDriver::Impl::setInterp(Tcl_Interp* interp) {
-DOTRACE("ExptDriver::Impl::setInterp");
-  // itsImpl->itsInterp can only be set once
-  if (itsInterp == NULL) {
-	 itsInterp = interp;
-	 Tcl_Preserve(itsInterp);
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // ExptDriver action method definitions
@@ -974,8 +965,8 @@ DOTRACE("ExptDriver::Impl::storeData");
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::ExptDriver() :
-  itsImpl(new Impl(this)) 
+ExptDriver::ExptDriver(Tcl_Interp* interp) :
+  itsImpl(new Impl(this, interp))
 {
 DOTRACE("ExptDriver::ExptDriver");
 }
@@ -1010,9 +1001,6 @@ void ExptDriver::writeTo(Writer* writer) const
 Tcl_Interp* ExptDriver::getInterp() 
   { return itsImpl->getInterp(); }
 
-
-void ExptDriver::setInterp(Tcl_Interp* interp) 
-  { itsImpl->setInterp(interp); }
 
 const string& ExptDriver::getAutosaveFile() const 
   { return itsImpl->getAutosaveFile(); }
