@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Fri Jun 22 11:21:17 2001
+// written: Wed Jul 11 09:39:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -210,15 +210,15 @@ DOTRACE("Tcl::FieldsCmd::invoke");
         sub_elements.at(0) = Tcl_NewStringObj(finfo.name().c_str(), -1);
 
         // min value
-        TclValue min(itsInterp, finfo.min());
+        TclValue min(finfo.min());
         sub_elements.at(1) = min.getObj();
 
         // max value
-        TclValue max(itsInterp, finfo.max());
+        TclValue max(finfo.max());
         sub_elements.at(2) = max.getObj();
 
         // resolution value
-        TclValue res(itsInterp, finfo.res());
+        TclValue res(finfo.res());
         sub_elements.at(3) = res.getObj();
 
         // start new group flag
@@ -233,7 +233,7 @@ DOTRACE("Tcl::FieldsCmd::invoke");
     Tcl_IncrRefCount(itsFieldList);
   }
 
-  returnVal(TclValue(itsInterp, itsFieldList));
+  returnVal(TclValue(itsFieldList));
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Jul 10 18:44:46 2001
+// written: Wed Jul 11 09:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -182,7 +182,7 @@ DOTRACE("Tcl::TclCmd::arg");
     throw TclError("argument number out of range");
   }
 
-  return TclValue(itsInterp, itsObjv[argn]);
+  return TclValue(itsObjv[argn]);
 }
 
 // Extracting int's
@@ -324,7 +324,7 @@ Tcl::TclValue Tcl::TclCmd::getValFromObj<Tcl::TclValue>(
   Tcl_Interp* interp, Tcl_Obj* obj, TclValue* /*dummy*/
 ) {
 DOTRACE("Tcl::TclCmd::getValFromObj<TclValue>");
-  return TclValue(interp, obj);
+  return TclValue(obj);
 }
 
 Tcl_Obj* Tcl::TclCmd::getTclObjFromArg(int argn) {
@@ -396,7 +396,7 @@ DOTRACE("Tcl::TclCmd::returnCstring");
 
 void Tcl::TclCmd::returnValue(const Value& val) {
 DOTRACE("Tcl::TclCmd::returnValue");
-  TclValue return_val(itsInterp, val);
+  TclValue return_val(val);
   Tcl_SetObjResult(itsInterp, return_val.getObj());
   itsResult = TCL_OK;
 };
@@ -410,7 +410,7 @@ DOTRACE("Tcl::TclCmd::returnTclObj");
 void Tcl::TclCmd::lappendValue(const Value& val) {
 DOTRACE("Tcl::TclCmd::lappendValue");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
-  TclValue list_element(itsInterp, val);
+  TclValue list_element(val);
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
                                             list_element.getObj());
   if (cmd_result != TCL_OK) throw TclError();
