@@ -3,17 +3,15 @@
 // expt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Thu May 27 19:37:33 1999
+// written: Wed Jun  9 12:30:56 1999
 // $Id$
 //
-// This file defines the class Expt. Expt contains a Tlist (itself a
-// container of Trial's), and in addition holds a sequence of trial
-// id's, used as indices into the Tlist. The functionality of Expt is
-// straightforward: once a Tlist has been properly constructed, the
-// Expt is run by alternately calling drawTrial() and one of
-// processResponse() or abortTrial(). Both processResponse() and
-// abortTrial() prepare the Expt for the next Trial; thus no sort of
-// "nextTrial" call is required.
+// This file defines the class Expt. Expt holds a sequence of trial
+// id's, used as indices into the global singleton Tlist. The Expt is
+// run by alternately calling drawTrial() and one of processResponse()
+// or abortTrial(). Both processResponse() and abortTrial() prepare
+// the Expt for the next Trial; thus no sort of "nextTrial" call is
+// required.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -67,9 +65,6 @@ public:
   // accessors //
   ///////////////
 
-  Tlist& getTlist() { return itsTlist; }
-  const Tlist& getTlist() const { return itsTlist; }
-
   virtual int numTrials() const;
   virtual int numCompleted() const;
   virtual int currentTrial() const;
@@ -94,7 +89,6 @@ public:
   virtual void undoPrevTrial();
 
 private:
-  Tlist& itsTlist;				  // Reference to a container of Trial`s
   vector<int> itsTrialSequence; // Ordered sequence of indexes into itsTlist
 										  // Also functions as # of completed trials
 
