@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jan 28 11:09:11 2002
+// written: Mon Jan 28 13:55:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -169,6 +169,9 @@ int Rh_Init(Tcl_Interp* interp)
                   &EventResponseHdlr::getBindingSubstitution,
                   &EventResponseHdlr::setBindingSubstitution);
   pkg2->def("responseProc", "args body", &EventResponseHdlr::setResponseProc);
+  pkg2->defAttrib("maxResponses",
+                  &EventResponseHdlr::getMaxResponses,
+                  &EventResponseHdlr::setMaxResponses);
 
   //
   // KbdRh

@@ -87,6 +87,7 @@ public:
     TrialBase& itsTrial;
     fstring itsEventSequence;
     fstring itsBindingScript;
+    unsigned int itsResponseCount;
 
     void attend()
     {
@@ -109,7 +110,8 @@ public:
       itsWidget(widget),
       itsTrial(trial),
       itsEventSequence(seq),
-      itsBindingScript(script)
+      itsBindingScript(script),
+      itsResponseCount(0)
     {
       Precondition((erh != 0) && (widget.isValid()) && (&trial != 0));
       attend();
@@ -137,7 +139,8 @@ public:
 
       itsTrial.trResponseSeen();
 
-      ignore();
+      if (++itsResponseCount >= impl->itsMaxResponses)
+        ignore();
 
       Util::log( fstring("event_info: ", event_info) );
 
@@ -285,6 +288,8 @@ public:
   };
 
   ResponseProc itsResponseProc;
+
+  unsigned int itsMaxResponses;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -314,7 +319,8 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
   itsAbortInvalidResponses(true),
-  itsResponseProc()
+  itsResponseProc(),
+  itsMaxResponses(1)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
 }
@@ -475,6 +481,12 @@ void EventResponseHdlr::abortInvalidResponses()
 
 void EventResponseHdlr::ignoreInvalidResponses()
   { itsImpl->itsAbortInvalidResponses = false; }
+
+void EventResponseHdlr::setMaxResponses(unsigned int count)
+  { itsImpl->itsMaxResponses = count; }
+
+unsigned int EventResponseHdlr::getMaxResponses() const
+  { return itsImpl->itsMaxResponses; }
 
 void EventResponseHdlr::rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
                                      TrialBase& trial) const

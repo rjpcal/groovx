@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Mon Jan 28 13:18:08 2002
+// written: Mon Jan 28 13:51:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -154,6 +154,15 @@ public:
   /** Causes the response handler to ignore invalid responses as if
       they did not happen. */
   void ignoreInvalidResponses();
+
+  /** Set the maximum number of responses that will be allowed per activation
+      cycle (the default is 1). After that number of responses has been
+      recorded, the response handler will become inactive until explicitly
+      reactivated. */
+  void setMaxResponses(unsigned int count);
+
+  /** Query the maximum number of responses allowed per activation cycle. */
+  unsigned int getMaxResponses() const;
 
   /////////////
   // Actions //
