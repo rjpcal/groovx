@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Jun 26 12:09:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,7 @@ public:
   template <class T>
   Iterator<T> end(T* /*dummy*/=0);
 
+  /// A back-insert iterator for Tcl::List.
   class Appender
   {
     Tcl::List& itsList;

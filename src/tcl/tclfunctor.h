@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Jun 26 12:04:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,13 +36,9 @@
 namespace Tcl
 {
 
-///////////////////////////////////////////////////////////////////////
-//
-// Convert<> specialization allows us to pass Ref<>'s and SoftRef<>'s
-// to and from Tcl
-//
-///////////////////////////////////////////////////////////////////////
-
+  /// Specialization of Convert for Util::Ref.
+  /** This allows us to pass Util::Ref objects to and from Tcl via the
+      Util::UID's of the referred-to objects. */
   template <class T>
   struct Convert<Ref<T> >
   {
@@ -58,6 +54,9 @@ namespace Tcl
     }
   };
 
+  /// Specialization of Convert for Util::SoftRef.
+  /** This allows us to pass Util::SoftRef objects to and from Tcl via the
+      Util::UID's of the referred-to objects. */
   template <class T>
   struct Convert<SoftRef<T> >
   {
@@ -94,6 +93,7 @@ namespace Tcl
   typename Util::FuncTraits<Func>::Arg##N##_t p##N = \
   ctx.getValFromArg(N, TypeCue<typename Util::FuncTraits<Func>::Arg##N##_t>());
 
+  /// Generic Tcl::Functor definition.
   template <unsigned int N, class R, class Func>
   class Functor
   {};
@@ -101,6 +101,7 @@ namespace Tcl
 
 namespace Util
 {
+  /// Specialization of FuncTraits for Tcl::Functor.
   template <unsigned int N, class F, class Func>
   struct FuncTraits<Tcl::Functor<N, F, Func> >
   {
@@ -118,11 +119,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// zero arguments -- Functor<0>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<0> -- zero arguments
 
   template <class R, class Func>
   struct Functor<0, R, Func> : public FunctorBase<Func>
@@ -136,11 +134,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// one argument -- Functor<1>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<1> -- one argument
 
   template <class R, class Func>
   struct Functor<1, R, Func> : public FunctorBase<Func>
@@ -155,11 +150,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// two arguments -- Functor<2>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<2> -- two arguments
 
   template <class R, class Func>
   struct Functor<2, R, Func> : public FunctorBase<Func>
@@ -174,11 +166,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// three arguments -- Functor<3>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<3> -- three arguments
 
   template <class R, class Func>
   struct Functor<3, R, Func> : public FunctorBase<Func>
@@ -193,11 +182,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// four arguments -- Functor<4>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<4> -- four arguments
 
   template <class R, class Func>
   struct Functor<4, R, Func> : public FunctorBase<Func>
@@ -213,11 +199,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// five arguments -- Functor<5>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<5> -- five arguments
 
   template <class R, class Func>
   struct Functor<5, R, Func> : public FunctorBase<Func>
@@ -233,11 +216,8 @@ namespace Tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// six arguments -- Functor<6>
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Tcl::Functor<6> -- six arguments
 
   template <class R, class Func>
   struct Functor<6, R, Func> : public FunctorBase<Func>
@@ -254,11 +234,8 @@ namespace Tcl
 
 #undef EXTRACT_PARAM
 
-///////////////////////////////////////////////////////////////////////
-//
-// buildTclFunctor: a "generic constructor" for free function pointers.
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// A factory function for making Tcl::Functor's from free functions.
 
   template <class Fptr>
   inline Functor<Util::FuncTraits<Fptr>::numArgs,
@@ -270,11 +247,8 @@ namespace Tcl
   }
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// buildTclFunctor specializations for member functions
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 0-arg member functions.
 
   template <class R, class C>
   inline Functor<1, R, Util::MemFunctor<R (C::*)()> >
@@ -283,12 +257,18 @@ namespace Tcl
     return Util::MemFunctor<R (C::*)()>(mf);
   }
 
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 1-arg member functions.
+
   template <class R, class C, class P1>
   inline Functor<2, R, Util::MemFunctor<R (C::*)(P1)> >
   buildTclFunctor(R (C::*mf)(P1))
   {
     return Util::MemFunctor<R (C::*)(P1)>(mf);
   }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 2-arg member functions.
 
   template <class R, class C, class P1, class P2>
   inline Functor<3, R, Util::MemFunctor<R (C::*)(P1, P2)> >
@@ -297,12 +277,18 @@ namespace Tcl
     return Util::MemFunctor<R (C::*)(P1, P2)>(mf);
   }
 
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 3-arg member functions.
+
   template <class R, class C, class P1, class P2, class P3>
   inline Functor<4, R, Util::MemFunctor<R (C::*)(P1, P2, P3)> >
   buildTclFunctor(R (C::*mf)(P1,P2,P3))
   {
     return Util::MemFunctor<R (C::*)(P1, P2, P3)>(mf);
   }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 4-arg member functions.
 
   template <class R, class C, class P1, class P2, class P3, class P4>
   inline Functor<5, R, Util::MemFunctor<R (C::*)(P1, P2, P3, P4)> >
@@ -312,17 +298,16 @@ namespace Tcl
   }
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// GenericCmd
-//
-///////////////////////////////////////////////////////////////////////
+
+// ####################################################################
+/// GenericCmd implements Tcl::Command using a held functor.
 
   template <class R, class Functor>
   class GenericCmd : public Command, private Util::FuncHolder<Functor>
   {
   public:
-    GenericCmd<R, Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
+    GenericCmd<R, Functor>(Tcl_Interp* interp, Functor f,
+                           const char* cmd_name,
                            const char* usage, int nargs) :
       Command(interp, cmd_name, usage, nargs+1),
       Util::FuncHolder<Functor>(f)
@@ -335,14 +320,17 @@ namespace Tcl
     }
   };
 
+// ####################################################################
+/// Specialization for functors with void return types.
+
   template <class Functor>
   class GenericCmd<void, Functor> : public Command,
                                     private Util::FuncHolder<Functor>
   {
   public:
     GenericCmd<void, Functor>(Tcl_Interp* interp, Functor f,
-                              const char* cmd_name, const char* usage,
-                              int nargs) :
+                              const char* cmd_name,
+                              const char* usage, int nargs) :
       Command(interp, cmd_name, usage, nargs+1),
       Util::FuncHolder<Functor>(f)
     {}
@@ -355,15 +343,21 @@ namespace Tcl
   };
 
 
+// ####################################################################
+/// Factory function for Tcl::Command's from functors.
+
   template <class Functor>
   inline Command* makeGenericCmd(Tcl_Interp* interp, Functor f,
-                                 const char* cmd_name, const char* usage,
-                                 int nargs)
+                                 const char* cmd_name,
+                                 const char* usage, int nargs)
   {
     return new GenericCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
       (interp, f, cmd_name, usage, nargs);
   }
 
+
+// ####################################################################
+/// Factory function for vectorized Tcl::Command's from functors.
 
   template <class Functor>
   inline Command* makeGenericVecCmd(Tcl_Interp* interp, Functor f,
@@ -383,6 +377,9 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
+// ####################################################################
+/// Factory function for Tcl::Command's from function pointers.
+
   template <class Func>
   inline Command* makeCmd(Tcl_Interp* interp, Func f,
                           const char* cmd_name, const char* usage)
@@ -390,6 +387,9 @@ namespace Tcl
     return makeGenericCmd(interp, buildTclFunctor(f), cmd_name, usage,
                           Util::FuncTraits<Func>::numArgs);
   }
+
+// ####################################################################
+/// Factory function for vectorized Tcl::Command's from function pointers.
 
   template <class Func>
   inline Command* makeVecCmd(Tcl_Interp* interp, Func f,

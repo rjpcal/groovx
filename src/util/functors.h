@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Tue May 14 19:34:32 2002
+// written: Wed Jun 26 11:54:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@ namespace Util
 
   struct Null_t;
 
+  /// Holds typedefs for the types of a function's arguments and return value.
   template <class R = void,
             class A1 = Null_t, class A2 = Null_t, class A3 = Null_t,
             class A4 = Null_t, class A5 = Null_t, class A6 = Null_t,
@@ -45,6 +46,7 @@ namespace Util
     typedef A8 Arg8_t;
   };
 
+  /// A traits class for holding information about functions/functors.
   template <class Func>
   struct FuncTraits
   {
@@ -57,6 +59,7 @@ namespace Util
 //
 ///////////////////////////////////////////////////////////////////////
 
+  /// Specialization for free functions with no arguments.
   template <class R>
   struct FuncTraits<R (*)()>
     :
@@ -65,6 +68,7 @@ namespace Util
     enum { numArgs = 0 };
   };
 
+  /// Specialization for free functions with 1 argument.
   template <class R, class P1>
   struct FuncTraits<R (*)(P1)>
     :
@@ -73,6 +77,7 @@ namespace Util
     enum { numArgs = 1 };
   };
 
+  /// Specialization for free functions with 2 arguments.
   template <class R, class P1, class P2>
   struct FuncTraits<R (*)(P1, P2)>
     :
@@ -81,6 +86,7 @@ namespace Util
     enum { numArgs = 2 };
   };
 
+  /// Specialization for free functions with 3 arguments.
   template <class R, class P1, class P2, class P3>
   struct FuncTraits<R (*)(P1, P2, P3)>
     :
@@ -89,6 +95,7 @@ namespace Util
     enum { numArgs = 3 };
   };
 
+  /// Specialization for free functions with 4 arguments.
   template <class R, class P1, class P2, class P3, class P4>
   struct FuncTraits<R (*)(P1, P2, P3, P4)>
     :
@@ -97,6 +104,7 @@ namespace Util
     enum { numArgs = 4 };
   };
 
+  /// Specialization for free functions with 5 arguments.
   template <class R, class P1, class P2, class P3, class P4, class P5>
   struct FuncTraits<R (*)(P1, P2, P3, P4, P5)>
     :
@@ -105,6 +113,7 @@ namespace Util
     enum { numArgs = 5 };
   };
 
+  /// Specialization for free functions with 6 arguments.
   template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
   struct FuncTraits<R (*)(P1, P2, P3, P4, P5, P6)>
     :
@@ -117,8 +126,12 @@ namespace Util
 //
 // FuncTraits specializations for member functions
 //
+// We treat the "this" pointer as an implicit first-argument to the
+// function.
+//
 ///////////////////////////////////////////////////////////////////////
 
+  /// Specialization for member functions with "this" plus 0 arguments.
   template <class R, class C>
   struct FuncTraits<R (C::*)()>
     :
@@ -128,6 +141,7 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 1 argument.
   template <class R, class C, class P1>
   struct FuncTraits<R (C::*)(P1)>
     :
@@ -137,6 +151,7 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 2 arguments.
   template <class R, class C, class P1, class P2>
   struct FuncTraits<R (C::*)(P1, P2)>
     :
@@ -146,6 +161,7 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 3 arguments.
   template <class R, class C, class P1, class P2, class P3>
   struct FuncTraits<R (C::*)(P1, P2, P3)>
     :
@@ -155,6 +171,7 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 4 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4>
   struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
     :
@@ -164,14 +181,13 @@ namespace Util
     typedef C Class_t;
   };
 
-///////////////////////////////////////////////////////////////////////
-//
-// FuncHolder is basically a little helper class to avoid overeager
-// compiler warnings about holding a pointer without defining dtor,
-// copy-ctor, and operator=(). If a class instead inherits privately
-// from FuncHolder, such warnings will be avoided.
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// FuncHolder is a helper class to make pointer semantics explicit.
+/** FuncHolder helps to avoid overeager compiler warnings about holding a
+ *  pointer without defining dtor, copy-ctor, and operator=(). If a class
+ *  instead inherits privately from FuncHolder, such warnings will be
+ *  avoided. */
 
   template <class Func>
   struct FuncHolder
@@ -189,16 +205,16 @@ namespace Util
     Func itsHeldFunc;
   };
 
-///////////////////////////////////////////////////////////////////////
-//
-// MemFunctorBase wraps a member function and exposes it through ordinary
-// operator() calls, using a SoftRef<> to pass the target object
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// MemFunctorBase adapts a member function to an ordinary operator().
+/** The "this" pointer is passed through the first argument of the
+    operator() call, via a raw pointer or a SoftRef<>. */
 
   template <class F>
   class MemFunctorBase;
 
+  /// FuncTraits specialization for MemFunctorBase.
   template <class MF>
   struct FuncTraits<MemFunctorBase<MF> > : public FuncTraits<MF>
   {};
@@ -250,12 +266,9 @@ namespace Util
     }
   };
 
-///////////////////////////////////////////////////////////////////////
-//
-// MemFunctor wraps a member function and exposes it through ordinary
-// operator() calls, using a SoftRef<> to pass the target object
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// MemFunctor extends MemFunctorBase using SoftRef<> for the "this" pointers.
 
   template <class MemFunc>
   struct MemFunctor : public MemFunctorBase<MemFunc>
@@ -265,12 +278,14 @@ namespace Util
     // operator()'s inherited from MemFunctorBase
   };
 
+  /// Specialization of FuncTraits for MemFunctor.
   template <class MF>
   struct FuncTraits<MemFunctor<MF> > : public FuncTraits<MF>
   {
     typedef SoftRef<typename MemFunctor<MF>::C> Arg1_t;
   };
 
+  /// Factory function to make a MemFunctor from any member function.
   template <class MF>
   inline MemFunctor<MF> memFunc(MF mf)
   {
@@ -278,17 +293,16 @@ namespace Util
   }
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// A BoundFirst functor wraps another functor type with a fixed value
-// for its first argument. BoundFirst's can be constructed with the
-// helper template function bindFirst().
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// BoundFirst wraps another functor type with a fixed first argument.
+/** BoundFirst's can be constructed with the factory function
+    bindFirst(). */
 
   template <class BaseFunctor, class Bound>
   class BoundFirst;
 
+  /// FuncTraits specialization for BoundFirst.
   template <class BaseFunctor, class Bound>
   struct FuncTraits<BoundFirst<BaseFunctor, Bound> >
   {
@@ -380,23 +394,24 @@ namespace Util
     Bound_t itsBound;
   };
 
+  /// Factory function for creating BoundFirst functors.
   template <class BaseFunctor, class Bound_t>
   BoundFirst<BaseFunctor, Bound_t> bindFirst(BaseFunctor base, Bound_t bound)
   {
     return BoundFirst<BaseFunctor, Bound_t>(base, bound);
   }
 
-///////////////////////////////////////////////////////////////////////
-//
-// A BoundLast functor wraps another functor type with a fixed value
-// for its last argument. BoundLast's can be constructed with the
-// helper template function bindLast().
-//
-///////////////////////////////////////////////////////////////////////
+
+// ####################################################################
+
+/// BoundLast wraps another functor type with a fixed last argument.
+/** BoundLast objects can be constructed with the factory function
+    bindLast(). */
 
   template <class BaseFunctor, class Bound>
   class BoundLast;
 
+  /// FuncTraits specialization for BoundLast.
   template <class BaseFunctor, class Bound>
   struct FuncTraits<BoundLast<BaseFunctor, Bound> >
   {
@@ -488,6 +503,7 @@ namespace Util
     Bound_t itsBound;
   };
 
+  /// Factory function for creating BoundLast functors.
   template <class BaseFunctor, class Bound_t>
   BoundLast<BaseFunctor, Bound_t> bindLast(BaseFunctor base, Bound_t bound)
   {

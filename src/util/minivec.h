@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Thu Jun  6 17:28:26 2002
+// written: Wed Jun 26 12:13:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,6 +94,7 @@ namespace MVUtils
 }
 
 
+/// Resizable 1-D array class based on slimmed-down version of std::vector<>.
 template <class T>
 class minivec
 {
@@ -291,6 +292,7 @@ public:
       return *(begin() + n);
     }
 
+  /// Exeception class of index-out-of-range errors in minivec.
   class out_of_range {};
 
   reference       at (size_type n)

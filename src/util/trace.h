@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Feb  7 14:48:55 2002
+// written: Wed Jun 26 12:23:32 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -76,6 +76,7 @@ namespace Util
   class Trace;
 }
 
+/// Accumulates profiling information for a given execution context.
 class Util::Prof
 {
 public:
@@ -120,6 +121,7 @@ private:
   timeval itsTotalTime;
 };
 
+/// Times and traces execution in and out of a lexical scope.
 class Util::Trace
 {
 public:

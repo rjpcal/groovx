@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Fri Jan 18 16:06:55 2002
+// written: Wed Jun 26 12:08:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 
 namespace Util
 {
+  /// Symbol class for representing generic "end of iteration".
   struct IterEnd_t {};
 
   const IterEnd_t IterEnd = IterEnd_t();
@@ -55,6 +56,10 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 
 
+/// A template base class for all concrete iterator classes.
+/** ConcreteIter provides a "fat" interface, but a compile-time error will
+    be generated if part of the interface is used that is not supported by
+    the implementation class. */
 template <class T, class Ifx>
 class ConcreteIter
 {
@@ -107,6 +112,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 
+/// Abstract interface class for forward iterators.
 template <class T>
 class FwdIterIfx
 {
@@ -122,6 +128,7 @@ public:
 };
 
 
+/// Adapts forward iterators to the FwdIterIfx interface.
 template <class Iter, class T>
 class FwdIterAdapter : public FwdIterIfx<T>
 {
@@ -146,6 +153,7 @@ public:
 };
 
 
+/// Concrete forward iterator class.
 template <class T>
 class FwdIter :
   public ConcreteIter<T, FwdIterIfx<T> >
@@ -177,6 +185,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 
+/// Abstract interface class for bidirectional iterators.
 template <class T>
 class BidirIterIfx : public FwdIterIfx<T>
 {
@@ -188,6 +197,7 @@ public:
 };
 
 
+/// Adapts bidirectional iterators to the BidirIterIfx interface.
 template <class Iter, class T>
 class BidirIterAdapter : public BidirIterIfx<T>
 {
@@ -213,6 +223,7 @@ public:
 };
 
 
+/// Concrete bidirectional iterator class.
 template <class T>
 class BidirIter :
   public ConcreteIter<T, BidirIterIfx<T> >
@@ -244,6 +255,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+
+/// Abstract interface class for random-access iterators.
 template <class T>
 class RxsIterIfx : public BidirIterIfx<T>
 {
@@ -257,6 +270,7 @@ public:
 };
 
 
+/// Adapts random-access iterators to the RxsIterIfx interface.
 template <class Iter, class T>
 class RxsIterAdapter : public RxsIterIfx<T>
 {
@@ -292,6 +306,7 @@ public:
 };
 
 
+/// Concrete random-access iterator class.
 template <class T>
 class RxsIter :
   public ConcreteIter<T, RxsIterIfx<T> >

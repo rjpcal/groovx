@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Tue May 14 19:23:58 2002
+// written: Wed Jun 26 12:31:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,12 +25,14 @@ namespace Tcl
 {
   class ObjPtr;
 
+  /// Trait class for extracting an appropriate return-type from T.
   template <class T>
   struct Return
   {
     typedef T Type;
   };
 
+  /// Specialization of Tcl::Return for const T&.
   template <class T>
   struct Return<const T&>
   {
@@ -63,9 +65,11 @@ namespace Tcl
     static Tcl::ObjPtr                  toTcl( T val );
   };
 
+  /// Specialization for (trivially) extracting Tcl_Obj* from Tcl_Obj*.
   template <>
   Tcl_Obj*  Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj );
 
+  /// Specialization for (trivially) converting Tcl_Obj* to Tcl::ObjPtr.
   template <>
   Tcl::ObjPtr Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val );
 }

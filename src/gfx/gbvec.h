@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Fri Jan 18 16:06:58 2002
+// written: Wed Jun 26 12:35:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "gx/vec3.h"
 #endif
 
+/// GbVec3 is a field class for holding 3-D vectors/points/distances.
 template <class T>
 class GbVec3 : public Gfx::Vec3<T>,
                public TMultiValue<T>

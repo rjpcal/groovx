@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 07:54:29 2001
-// written: Fri Jan 18 16:06:55 2002
+// written: Wed Jun 26 11:30:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #define CSTDDEF_DEFINED
 #endif
 
+/// Un-typesafe base class for maintaining a free-list memory pool.
 class FreeListBase
 {
 private:
@@ -33,17 +34,28 @@ private:
   FreeListBase& operator=(const FreeListBase&);
 
 public:
+  /// Construct an (empty) free list.
+  /** All objects from this list are expected to be of size \a size_check. */
   FreeListBase(std::size_t size_check) :
     itsNodeList(0), itsSizeCheck(size_check) {}
 
+  /// Allocate space for a new object.
+  /** If there are chunks available in the free list, one of those is
+      returned; otherwise new memory is allocated with malloc() or
+      equivalent. */
   void* allocate(std::size_t bytes);
+
+  /// Return an object to the free list.
   void deallocate(void* space);
 };
 
+/// Typesafe wrapper of FreeListBase for maintaining free-list memory pools.
 template <class T>
 class FreeList : private FreeListBase
 {
 public:
+  /// Construct an (empty) free list.
+  /** All objects allocated from this list must be of size sizeof(T). */
   FreeList() : FreeListBase(sizeof(T)) {}
 
   void* allocate(std::size_t bytes)

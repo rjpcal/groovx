@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Wed Jun 26 11:21:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,10 +50,7 @@ public:
   class iterator;
   class const_iterator;
 
-  //
-  // node class definition
-  //
-
+  /// Doubly-linked node class.
   class node
   {
   private:
@@ -89,6 +86,7 @@ public:
     node* next;
   };
 
+  /// Doubly-linked list iterator.
   class iterator
   {
   private:
@@ -124,6 +122,7 @@ public:
     bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
+  /// Doubly-linked list const iterator.
   class const_iterator
   {
   private:

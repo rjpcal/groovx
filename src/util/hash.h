@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Tue May 14 20:06:58 2002
+// written: Wed Jun 26 12:07:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,7 @@ namespace
     }
 }
 
+/// Computes hash values for generic key types.
 template <class key_type>
 struct default_hasher
 {
@@ -78,6 +79,7 @@ size_t default_hasher<const char*>::operator()(const char* const& key)
   return res;
 };
 
+/// Computes hash values for string types.
 template <class string_type>
 struct string_hasher
 {
@@ -88,6 +90,7 @@ public:
     }
 };
 
+/// Hash-array class.
 template <class key_type, class value_type,
   class hash_func = default_hasher<key_type> >
 class hash_array
@@ -98,6 +101,7 @@ class hash_array
   //
 
 public:
+  /// Key/value entry in a hash-array.
   struct entry_type
   {
     entry_type(const key_type& k, const value_type& v) :
@@ -126,6 +130,7 @@ public:
   class iterator;
   friend class iterator;
 
+  /// Hash-array iterator.
   class iterator
   {
   private:

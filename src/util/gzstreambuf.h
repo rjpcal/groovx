@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Tue Apr 30 19:03:17 2002
+// written: Wed Jun 26 12:06:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@ class fstring;
 
 namespace Util
 {
+  /// A std::streambuf implementation that handles gzip-encoded data.
   class gzstreambuf : public std::streambuf
   {
   private:

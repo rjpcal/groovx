@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 17:35:40 2000
-// written: Fri Jan 18 16:06:55 2002
+// written: Wed Jun 26 12:08:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 namespace Util
 {
 
+/// Generic class for scope-based cleanup.
 template <class C, class T>
 class Janitor
 {

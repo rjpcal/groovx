@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:08:26 2000
-// written: Fri Jan 18 16:06:57 2002
+// written: Wed Jun 26 12:31:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@ namespace Gfx
   class RgbaColor;
 }
 
+/// RGBA (red/green/blue/alpha) color class.
 class Gfx::RgbaColor
 {
 private:

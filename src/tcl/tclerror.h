@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Jun 26 11:21:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@ namespace Tcl
   class BkdErrorHandler;
 }
 
+/// An exception class for Tcl errors.
 class Tcl::TclError : public Util::Error
 {
 public:
@@ -37,6 +38,7 @@ public:
   virtual ~TclError();
 };
 
+/// An error-handler that raises Tcl background errors.
 class Tcl::BkdErrorHandler : public Util::ErrorHandler
 {
 private:

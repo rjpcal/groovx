@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Fri Jun 21 11:49:51 2002
+// written: Wed Jun 26 12:35:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,7 @@ namespace Gfx
     double lengthHelper(double x, double y, double z = 0.0);
   }
 
+/// Gfx::Vec2 is a 2-D vector class for representing 2-D points or distances.
 template<class V>
 class Vec2
 {

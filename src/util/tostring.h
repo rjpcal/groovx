@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:00:26 2001
-// written: Fri Feb  1 10:56:36 2002
+// written: Wed Jun 26 11:13:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 
 namespace Util
 {
+  /// Holds information about a char array and its length
   struct CharData
   {
   private:
@@ -39,33 +40,37 @@ namespace Util
   const char* num2str(unsigned long x);
   const char* num2str(double x);
 
+  /// Functor for converting any type to a string (as a CharData).
   template <class T>
   struct Convert
   {
     static CharData toString(const T& x) { return CharData(num2str(x)); }
   };
 
+  /// Specialization for (trivially) converting CharData to CharData.
   template <>
   struct Convert<CharData>
   {
     static CharData toString(const CharData& x) { return x; }
   };
 
+  /// Specialization for converting \c char* to CharData.
   template <>
   struct Convert<char*>
   {
     static CharData toString(char* const& x) { return CharData(x); }
   };
 
+  /// Specialization for converting const char* to CharData.
   template <>
   struct Convert<const char*>
   {
     static CharData toString(const char* const& x) { return CharData(x); }
   };
 
-  // Specialization for string literals (i.e., const char[]'s)
-  // WARNING: this will misbehave if passed a char[] that is not a
-  // literal... e.g. one that is only partially filled with characters
+  /// Specialization for converting string literals (i.e., const char[]'s)
+  /** WARNING: this will misbehave if passed a char[] that is not a
+      literal... e.g. one that is only partially filled with characters */
   template <unsigned int N>
   struct Convert<char[N]>
   {

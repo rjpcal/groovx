@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Tue May 14 19:28:50 2002
+// written: Wed Jun 26 12:05:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,7 @@
 #include "util/pointers.h"
 #endif
 
-// Used to allow a shared_ptr to be initialized before we pass it to
-// the Bitmap constructor
+/// Allows a shared_ptr to be initialized before passing it to the Bitmap constructor.
 struct GLRHolder
 {
   GLRHolder(shared_ptr<GLBmapRenderer> p) : itsRenderer(p) {}

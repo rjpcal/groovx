@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:06:57 2002
+// written: Wed Jun 26 12:29:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,11 +30,9 @@ namespace Gfx
   template <class V> class RectLTRB;
   template <class V> class RectLBWH;
 
-///////////////////////////////////////////////////////////////////////
-//
-// Rect template class definition
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// Rect represents rectangles in two-dimensional space.
 
 template<class V>
 class Rect
@@ -181,6 +179,7 @@ private:
 };
 
 
+/// Helper for building Rect's with left/top/right/bottom arguments.
 template <class V>
 class RectLTRB : public Rect<V>
 {
@@ -192,6 +191,7 @@ public:
   }
 };
 
+/// Helper for building Rect's with left/bottom/width/height arguments.
 template <class V>
 class RectLBWH : public Rect<V>
 {

@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Wed Jun 26 10:56:12 2002
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -28,6 +28,11 @@
 #include "util/algo.h"
 #endif
 
+/// A borrowed pointer class
+/** The sole purpose of this class is to explicitly state the fact that a
+    given pointer is "borrowed", and does not for example need to be
+    deep-copied when its owner is copied, and hence to avoid compiler
+    warnings to that effect. */
 template <class T>
 class borrowed_ptr
 {

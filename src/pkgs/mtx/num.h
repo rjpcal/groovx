@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Wed Feb 27 18:06:23 2002
+// written: Wed Jun 26 12:12:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include <cmath>
 
+/// Numeric operations.
 class Num
 {
 public:
@@ -78,6 +79,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
+/// Functor for "multiply argument by x" operation.
 struct Mul
 {
   const double factor;
@@ -86,11 +88,13 @@ struct Mul
   double operator()(double d) { return d*factor; }
 };
 
+/// Functor for "divide argument by x" operation.
 struct Div : public Mul
 {
   Div(double div) : Mul(1.0/div) {}
 };
 
+/// Functor for "add x to argument" operation.
 struct Add
 {
   const double x;
@@ -99,11 +103,13 @@ struct Add
   double operator()(double d) { return d + x; }
 };
 
+/// Functor for "subtract x from argument" operation.
 struct Sub : public Add
 {
   Sub(double x_) : Add(-x_) {}
 };
 
+/// Functor for "argument to power p" operation.
 struct ToPow
 {
   const double p;
@@ -112,17 +118,20 @@ struct ToPow
   double operator()(double v) { return pow(v, p); }
 };
 
+/// Functor for "square of argument" operation.
 struct Square
 {
   double operator()(double x) { return x*x; }
 };
 
+/// Functor for "minimum of two values" operation.
 struct Min
 {
   double operator()(double v1, double v2)
   { return (v1 < v2) ? v1 : v2; }
 };
 
+/// Functor for "maximum of two values" operation.
 struct Max
 {
   double operator()(double v1, double v2)

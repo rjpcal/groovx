@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Wed Jun 26 12:21:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,8 @@
 
 namespace Util
 {
+  /// Exception class for range errors.
+  /** Used in static_block, fixed_block, dynamic_block. */
   class out_of_range {};
 }
 

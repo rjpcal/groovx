@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Fri Jan 18 16:06:53 2002
+// written: Wed Jun 26 11:26:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,7 @@
 #include "util/strings.h"
 #endif
 
+/// FeedbackMap associates feedbacks with different boolean conditions.
 class FeedbackMap
 {
 public:

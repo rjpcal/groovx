@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Jun 26 12:18:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,9 +134,14 @@ protected:
 };
 
 
-namespace Util { class Object; }
+namespace Util
+{
+  class Object;
+}
 
-/** ObjCaster **/
+
+// ####################################################################
+/// ObjCaster class encapsulates casts to see if objects match a given type.
 
 class Tcl::ObjCaster
 {
@@ -157,6 +162,8 @@ public:
 
 namespace Tcl
 {
+
+  /// CObjCaster implements ObjCaster with dynamic_cast.
   template <class C>
   class CObjCaster : public ObjCaster
   {

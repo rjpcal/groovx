@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Wed Jun 26 11:19:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,18 +69,21 @@ namespace Util
     inline Util::Object* getCastedItem<Util::Object>(Util::UID id)
     { return getCheckedItem(id); }
 
+    /// Policy class which unrefs objects by decrementing their ref count.
     template <class T>
     struct DefaultUnrefPolicy
     {
       static void unref(T* t) { t->decrRefCount(); }
     };
 
+    /// Policy class which decrements ref count without deletion.
     template <class T>
     struct NoDeleteUnrefPolicy
     {
       static void unref(T* t) { t->decrRefCountNoDelete(); }
     };
 
+    /// A shared implementation class for Util::FloatingRef and Util::Ref.
     template <class T, class UnrefPolicy>
     class Handle
     {

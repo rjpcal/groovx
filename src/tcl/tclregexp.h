@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:05:59 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Jun 26 12:29:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ namespace Tcl
   class RegExp;
 }
 
+/// Regular-expression class implemented with Tcl's regexp facilities.
 class Tcl::RegExp
 {
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Mon Jan 28 11:34:42 2002
+// written: Wed Jun 26 11:05:48 2002
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -41,6 +41,8 @@ namespace Tcl
   class Interp;
 }
 
+/// Wraps a Tcl object containing executable code
+/** Offers several error-handling strategies for the Tcl code. */
 class Tcl::Code
 {
 public:

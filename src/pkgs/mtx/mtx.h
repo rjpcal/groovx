@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue May 14 20:48:27 2002
+// written: Wed Jun 26 12:26:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,13 +68,9 @@ namespace RC // Range checking
 #  define RCR_inHalfOpen(x,llim,ulim) (x)
 #endif
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Range class.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// Range class represents a half-open range of indices.
 
 class Range
 {
@@ -90,12 +86,14 @@ public:
   int count() const { return itsCount; }
 };
 
+/// A range class for row ranges only.
 class RowRange : public Range
 {
 public:
   RowRange(int first, int count) : Range(first, count) {}
 };
 
+/// A range class for column ranges only.
 class ColRange : public Range
 {
 public:
@@ -125,6 +123,8 @@ class Mtx;
 //
 ///////////////////////////////////////////////////////////////////////
 
+
+/// Generic stride-based array iterator.
 template <class T>
 class MtxIterBase
 {
@@ -322,16 +322,13 @@ struct WithPolicies
   enum StoragePolicy { COPY, BORROW, REFER };
 };
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * MtxSpecs class.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
 
-struct MtxShape
+/// MtxShape class holds number-of-rows/number-of-columns info.
+
+class MtxShape
 {
+public:
   MtxShape(int mr, int nc) : mrows_(mr), ncols_(nc) {}
 
   int mrows() const { return mrows_; }
@@ -345,6 +342,10 @@ private:
   int mrows_;
   int ncols_;
 };
+
+// ####################################################################
+
+/// MtxSpecs class holds shape plus storage offset and rowstride info.
 
 class MtxSpecs
 {
@@ -600,6 +601,7 @@ public:
   // Iterators
   //
 
+  /// Index-based iterator for Mtx class.
   template <class M, class T>
   class iter_base
   {
@@ -661,6 +663,7 @@ public:
   const_iterator end() const { return const_iterator(this, nelems()); }
 
 
+  /// Column-major iterator for Mtx class.
   template <class T>
   class colmaj_iter_base
   {
@@ -720,6 +723,7 @@ public:
   { return const_colmaj_iter(rowgap(), rowstride(), address(0,ncols())); }
 
 
+  /// Row-major iterator for Mtx class.
   template <class T>
   class rowmaj_iter_base
   {
@@ -785,6 +789,7 @@ public:
   // Functions
   //
 
+  /// Functor for "set all elements to x" operation.
   struct Setter
   {
     double v;

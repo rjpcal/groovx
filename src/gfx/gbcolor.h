@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Fri Jan 18 16:06:58 2002
+// written: Wed Jun 26 12:31:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "gx/rgbacolor.h"
 #endif
 
+/// Field class for RGBA colors.
 class GbColor : public Gfx::RgbaColor, public TMultiValue<double>
 {
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Thu Jun  6 17:22:10 2002
+// written: Wed Jun 26 12:22:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,7 @@ namespace Util
   class Pipe;
 }
 
+/// Adapts UNIX-style process pipes to a std::iostream interface.
 class Util::Pipe
 {
 public:

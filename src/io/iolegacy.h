@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Fri Jan 18 16:06:57 2002
+// written: Wed Jun 26 12:27:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,11 +41,9 @@ namespace IO
   class LegacyWriter;
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// IO::LegacyReader class definition
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// Implements the IO::Reader interface using the "legacy" data format.
 
 class IO::LegacyReader : public IO::Reader
 {
@@ -86,11 +84,9 @@ private:
 };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// IO::LegacyWriter class definition
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// Implements the IO::Writer interface using the "legacy" data format.
 
 class IO::LegacyWriter : public IO::Writer
 {

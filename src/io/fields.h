@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue May 14 19:27:42 2002
+// written: Wed Jun 26 11:27:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ namespace Util
   class Signal;
 }
 
+/// A template class for limiting values within a numeric range
 template <class T>
 class BoundsChecker
 {
@@ -386,6 +387,7 @@ public:
 
   bool isBoolean()        const { return   itsFlags & BOOLEAN; }
 
+  /// Symbol class for use with Field's constructors.
   struct ValueType {};
 
   /**

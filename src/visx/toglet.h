@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Jun 25 14:31:13 2002
+// written: Wed Jun 26 12:34:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,11 +21,9 @@ struct Tcl_Interp;
 
 class TogletImpl;
 
-///////////////////////////////////////////////////////////////////////
-//
-// Toglet class definition
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
+
+/// Toglet is an OpenGL Tk widget implemented with the "Togl" library.
 
 class Toglet : public Tcl::TkWidget
 {
@@ -35,7 +33,7 @@ protected:
          bool pack=true);
 
 public:
-  // types
+  /// Simple RGB color struct for use with Toglet.
   struct Color
   {
     Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):

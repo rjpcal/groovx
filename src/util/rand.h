@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Wed Jun 26 12:24:28 2002
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -19,8 +19,12 @@
 namespace Util
 {
 
-class Randint { // uniform distribution in the interval [0,max]
+/// Uniform random distribution in the interval [0,max]
+class Randint
+{
+private:
   unsigned long randx;
+
 public:
   Randint(long s = 0) : randx(s) {}
   void seed(long s) { randx = s; }
@@ -41,7 +45,9 @@ public:
   int operator()() { return abs(draw()); }
 };
 
-class Urand : public Randint { // uniform distribution in the interval [0:n[
+// Uniform random distribution in the interval [0:n[
+class Urand : public Randint
+{
 public:
   Urand(long s = 0) : Randint(s) {}
 

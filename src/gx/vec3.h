@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Fri Jun 21 12:07:45 2002
+// written: Wed Jun 26 12:35:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@ namespace Gfx
 {
   template <class V> class Vec3;
 
+/// Gfx::Vec3 is a 3-D vector class for representing 3-D points or distances.
 template <class V>
 class Vec3
 {
