@@ -109,20 +109,18 @@ DOTRACE("TrialEvent::schedule");
   // Remember the participants
   itsTrial = &trial;
 
-  // If the requested time is zero -- i.e., immediate -- don't bother
-  // creating a timer handler. Instead, generate a direct invocation.
-  if (itsRequestedDelay == 0)
-    {
-      invokeTemplate();
-      return 0;
-    }
+  // Figure out the delay we want to request. If our requested delay is
+  // zero, then just leave it as is, so that we get an immediate callback
+  // from Tcl::Timer. Otherwise, adjust the request according to how much
+  // error we expect based on past observations.
 
-  // Otherwise, set up a timer that will call the invocation after the
-  // specified amount of time.
+  unsigned int actual_request = 0;
 
-  unsigned int actual_request =
-    Util::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
-              int(minimum_msec));
+  if (itsRequestedDelay > 0)
+    actual_request =
+      Util::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
+                int(minimum_msec));
+
   itsTimer.setDelayMsec(actual_request);
   itsTimer.schedule();
 

@@ -66,9 +66,19 @@ DOTRACE("Tcl::Timer::schedule");
 
   dbgEvalNL(3, itsMsecDelay);
 
-  itsToken = Tcl_CreateTimerHandler(itsMsecDelay,
-                                    dummyCallback,
-                                    static_cast<ClientData>(this));
+  // If the requested delay is zero -- i.e., immediate -- then don't bother
+  // creater a timer handler. Instead, generate a direct invocation; this
+  // saves a trip into the event loop and back.
+  if (itsMsecDelay == 0)
+    {
+      dummyCallback(static_cast<ClientData>(this));
+    }
+  else
+    {
+      itsToken = Tcl_CreateTimerHandler(itsMsecDelay,
+                                        dummyCallback,
+                                        static_cast<ClientData>(this));
+    }
 }
 
 void Tcl::Timer::cancel()
