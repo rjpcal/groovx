@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Tue Sep 17 11:35:08 2002
+// written: Tue Sep 17 12:00:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@ namespace Tcl
 {
   class TkWidget;
 }
+
+class TkWidgImpl;
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +69,6 @@ private:
   TkWidget(const TkWidget&);
   TkWidget& operator=(const TkWidget&);
 
-  class TkWidgImpl;
   friend class TkWidgImpl;
 
   TkWidgImpl* const rep;
