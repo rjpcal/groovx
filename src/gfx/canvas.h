@@ -3,13 +3,16 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Nov 15 18:19:10 1999
+// written: Wed Dec  1 17:33:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef CANVAS_H_DEFINED
 #define CANVAS_H_DEFINED
+
+template <class V> class Point;
+template <class V> class Rect;
 
 class Canvas {
 protected:
