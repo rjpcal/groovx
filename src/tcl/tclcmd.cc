@@ -97,6 +97,12 @@ namespace
     void remove(Tcl::Command* p)
     {
       itsList.remove(p);
+      // itsList is used as an implicit reference-count... each time a
+      // Tcl::Command is created, it creates a reference by calling add()
+      // on its Overloads object, and when the Tcl::Command is destroyed,
+      // it calls remove() on its Overloads object. So, when the Overloads
+      // itsList becomes empty, it is no longer referenced by any
+      // Tcl::Command objects and can thus be deleted.
       if (itsList.empty())
         delete this;
     }
@@ -112,13 +118,6 @@ namespace
     int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
   };
 
-#ifdef TRACE_USE_COUNT
-  STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
-#endif
-}
-
-namespace
-{
   int cInvokeCallback(ClientData clientData,
                       Tcl_Interp*, /* use Overloads's own Tcl::Interp */
                       int s_objc,
@@ -130,6 +129,10 @@ namespace
 
     return ov->rawInvoke(s_objc, objv);
   }
+
+#ifdef TRACE_USE_COUNT
+  STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
+#endif
 }
 
 Overloads::Overloads(Tcl::Interp& interp, const fstring& cmd_name) :
