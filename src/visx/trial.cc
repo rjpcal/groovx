@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Nov 17 14:06:39 2000
+// written: Tue Nov 21 13:37:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -218,40 +218,13 @@ DOTRACE("Trial::Impl::readFrom");
 
   itsState = INACTIVE;
 
-  int svid = reader->ensureReadVersionId("Trial", 3, "Try grsh0.8a3");
+  int svid = reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
   itsGxNodes.clear();
 
-  if (svid == 3) {
-	 minivec<IdItem<GxSeparator> > temp_nodes;
-
-	 IO::ReadUtils::readObjectSeq<GxSeparator>(
-          reader, "gxObjects",
-			 IdItem<GxSeparator>::makeInserter(temp_nodes));
-
-	 if (temp_nodes.size() == 0) {
-		/* do nothing, itsGxNodes stays empty */
-	 }
-	 else if (temp_nodes.size() == 1) {
-		itsGxNodes.push_back(temp_nodes[0]);
-	 }
-	 else {
-		IdItem<GxSeparator> sep(GxSeparator::make(),
-										IdItem<GxSeparator>::Insert());
-
-		for (int i = 0; i < temp_nodes.size(); ++i)
-		  {
-			 sep->addChild(temp_nodes[i].id());
-		  }
-
-		itsGxNodes.push_back(sep);
-	 }
-  }
-  else {
-	 IO::ReadUtils::readObjectSeq<GxSeparator>(
+  IO::ReadUtils::readObjectSeq<GxSeparator>(
           reader, "gxObjects",
 			 IdItem<GxSeparator>::makeInserter(itsGxNodes));
-  }
 
   itsResponses.clear();
   IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
