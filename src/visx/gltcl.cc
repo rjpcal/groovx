@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jun 18 09:29:31 2001
+// written: Mon Jun 18 10:07:52 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -70,13 +70,18 @@ namespace GLTcl {
 ///////////////////////////////////////////////////////////////////////
 
 namespace GLTcl {
-  void checkGL() {
-    GLenum status = glGetError();
-    if (status != GL_NO_ERROR) {
-      const char* msg = reinterpret_cast<const char*>(gluErrorString(status));
-      throw GLError(msg);
-    }
+  void checkGL();
+}
+
+void GLTcl::checkGL() {
+  GLenum status = glGetError();
+  if (status != GL_NO_ERROR) {
+    const char* msg = reinterpret_cast<const char*>(gluErrorString(status));
+    throw GLError(msg);
   }
+}
+
+namespace GLTcl {
 
   //
   // zero arguments
