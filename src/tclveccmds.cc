@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Sat May 26 17:41:27 2001
+// written: Wed Jul 11 10:21:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,9 @@
 
 #include "tcl/tclveccmds.h"
 
+#include "tcl/tclerror.h"
 #include "tcl/tclitempkgbase.h"
+
 #include "util/strings.h"
 
 #define NO_TRACE
@@ -30,10 +32,10 @@
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::VecGetterBaseCmd::VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
-													 const char* usage, int item_argn) :
+                                        const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name,
-			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0), 
-			item_argn+1, item_argn+1),
+         usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
+         item_argn+1, item_argn+1),
   itsPkg(pkg),
   itsItemArgn(item_argn)
 {
@@ -45,40 +47,40 @@ Tcl::VecGetterBaseCmd::~VecGetterBaseCmd() {}
 void Tcl::VecGetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecGetterBaseCmd::invoke");
   if (itsItemArgn) {
-	 Tcl::ListIterator<int>
-		id_itr = beginOfArg(itsItemArgn, (int*)0),
-		end    =   endOfArg(itsItemArgn, (int*)0);
+    Tcl::ListIterator<int>
+      id_itr = beginOfArg(itsItemArgn, (int*)0),
+      end    =   endOfArg(itsItemArgn, (int*)0);
 
-	 // If there is only one item, we want to do a regular return
-	 // rather than a list-append to the return value.
-	 if ( 1 == (end - id_itr) )
-		{
-		  void* item = itsPkg->getItemFromId(*id_itr);
-		  doReturnValForItem(item);
-		}
-	 else
-		{
-		  while (id_itr != end)
-			 {
-				void* item = itsPkg->getItemFromId(*id_itr);
-				doAppendValForItem(item);
-				++id_itr;
-			 }
-		}
+    // If there is only one item, we want to do a regular return
+    // rather than a list-append to the return value.
+    if ( 1 == (end - id_itr) )
+      {
+        void* item = itsPkg->getItemFromId(*id_itr);
+        doReturnValForItem(item);
+      }
+    else
+      {
+        while (id_itr != end)
+          {
+            void* item = itsPkg->getItemFromId(*id_itr);
+            doAppendValForItem(item);
+            ++id_itr;
+          }
+      }
   }
   else {
-	 void* item = itsPkg->getItemFromId(-1);
-	 doReturnValForItem(item);
+    void* item = itsPkg->getItemFromId(-1);
+    doReturnValForItem(item);
   }
 }
 
 template <class ValType>
 Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-														 shared_ptr<Getter<ValType> > getter,
-														 const char* usage, int item_argn) :
+                                           shared_ptr<Getter<ValType> > getter,
+                                           const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name,
-			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0), 
-			item_argn+1, item_argn+1),
+         usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
+         item_argn+1, item_argn+1),
   VecGetterBaseCmd(pkg, cmd_name, usage, item_argn),
   itsGetter(getter)
 {
@@ -138,11 +140,11 @@ template class TVecGetterCmd<const fixed_string&>;
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::VecSetterBaseCmd::VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
-													 const char* usage, int item_argn) :
-  TclCmd(pkg->interp(), cmd_name, 
-			usage ? usage : (item_argn ? 
-								  "item_id(s) new_value(s)" : "new_value"), 
-			item_argn+2, item_argn+2),
+                                        const char* usage, int item_argn) :
+  TclCmd(pkg->interp(), cmd_name,
+         usage ? usage : (item_argn ?
+                          "item_id(s) new_value(s)" : "new_value"),
+         item_argn+2, item_argn+2),
   itsPkg(pkg),
   itsItemArgn(item_argn),
   itsValArgn(item_argn+1)
@@ -155,24 +157,24 @@ Tcl::VecSetterBaseCmd::~VecSetterBaseCmd() {}
 void Tcl::VecSetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecSetterBaseCmd::invoke");
   if (itsItemArgn) {
-	 invokeForItemArgn(itsItemArgn, itsValArgn);
+    invokeForItemArgn(itsItemArgn, itsValArgn);
   }
   else {
-	 void* item = itsPkg->getItemFromId(-1);
-	 setSingleItem(item, itsValArgn);
+    void* item = itsPkg->getItemFromId(-1);
+    setSingleItem(item, itsValArgn);
   }
 }
 
 template <class T>
 Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
-												 const char* cmd_name,
-												 shared_ptr<Setter<T> > setter,
-												 const char* usage, int item_argn) :
+                                     const char* cmd_name,
+                                     shared_ptr<Setter<T> > setter,
+                                     const char* usage, int item_argn) :
   Base(pkg, cmd_name, setter, usage, item_argn),
   TclCmd(pkg->interp(), cmd_name,
-			usage ? usage : (item_argn ?
-								  "item_id(s) new_value(s)" : "new_value"), 
-			item_argn+2, item_argn+2)
+         usage ? usage : (item_argn ?
+                          "item_id(s) new_value(s)" : "new_value"),
+         item_argn+2, item_argn+2)
 {}
 
 template <class T>
@@ -184,10 +186,10 @@ Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(
   shared_ptr<Setter<value_type> > setter,
   const char* usage, int item_argn
 ) :
-  TclCmd(pkg->interp(), cmd_name, 
-			usage ? usage : (item_argn ? 
-								  "item_id(s) new_value(s)" : "new_value"), 
-			item_argn+2, item_argn+2),
+  TclCmd(pkg->interp(), cmd_name,
+         usage ? usage : (item_argn ?
+                          "item_id(s) new_value(s)" : "new_value"),
+         item_argn+2, item_argn+2),
   VecSetterBaseCmd(pkg, cmd_name, usage, item_argn),
   itsSetter(setter)
 {
@@ -210,46 +212,46 @@ DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
 
   Tcl::ListIterator<int>
 #ifdef LOCAL_DEBUG
-	 begin  = beginOfArg(item_argn, (int*)0),
+    begin  = beginOfArg(item_argn, (int*)0),
 #endif
-	 id_itr = beginOfArg(item_argn, (int*)0),
-	 end    =   endOfArg(item_argn, (int*)0);
+    id_itr = beginOfArg(item_argn, (int*)0),
+    end    =   endOfArg(item_argn, (int*)0);
 
   int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
 
   if (num_ids == 1) {
-	 stack_type val = getValFromArg(val_argn, (stack_type*)0);
+    stack_type val = getValFromArg(val_argn, (stack_type*)0);
 
-	 while (id_itr != end)
-		{
-		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
-		  itsSetter->set(item, val);
+    while (id_itr != end)
+      {
+        void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
+        itsSetter->set(item, val);
 
-		  ++id_itr;
-		}
+        ++id_itr;
+      }
 
   }
   else {
-	 iterator_type
-		val_itr = beginOfArg(val_argn, (stack_type*)0),
-		val_end =   endOfArg(val_argn, (stack_type*)0);
+    iterator_type
+      val_itr = beginOfArg(val_argn, (stack_type*)0),
+      val_end =   endOfArg(val_argn, (stack_type*)0);
 
-	 if (val_end-val_itr < 1) {
-		throw TclError("the list of new values is empty");
-	 }
+    if (val_end-val_itr < 1) {
+      throw TclError("the list of new values is empty");
+    }
 
-	 while (id_itr != end)
-		{
-		  DOTRACE("inner loop");
-		  DebugEvalNL(id_itr - begin);
+    while (id_itr != end)
+      {
+        DOTRACE("inner loop");
+        DebugEvalNL(id_itr - begin);
 
-		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
-		  itsSetter->set(item, *val_itr);
+        void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
+        itsSetter->set(item, *val_itr);
 
-		  ++id_itr;
-		  if ( (val_end - val_itr) > 1 )
-			 ++val_itr;
-		}
+        ++id_itr;
+        if ( (val_end - val_itr) > 1 )
+          ++val_itr;
+      }
   }
 }
 
@@ -273,15 +275,15 @@ template class TVecSetterCmd<const fixed_string&>;
 
 template <class T>
 Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-												 shared_ptr<Getter<T> > getter,
-												 shared_ptr<Setter<T> > setter,
-												 const char* usage, int item_argn) :
+                                     shared_ptr<Getter<T> > getter,
+                                     shared_ptr<Setter<T> > setter,
+                                     const char* usage, int item_argn) :
   TVecGetterCmd<T>(pkg, 0, getter, 0, item_argn),
   TVecSetterCmd<T>(pkg, 0, setter, 0, item_argn),
   TclCmd(pkg->interp(), cmd_name,
-			usage ? usage : (item_argn ?
-								  "item_id(s) ?new_value(s)?" : "?new_value?"),
-			item_argn+1, item_argn+2, false),
+         usage ? usage : (item_argn ?
+                          "item_id(s) ?new_value(s)?" : "?new_value?"),
+         item_argn+1, item_argn+2, false),
   itsObjcGet(item_argn+1),
   itsObjcSet(item_argn+2)
 {
@@ -317,11 +319,11 @@ template class TVecAttribCmd<const fixed_string&>;
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
-										  shared_ptr<Action> action,
-										  const char* usage, int item_argn) :
-  TclCmd(pkg->interp(), cmd_name, 
-			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
-			item_argn+1, item_argn+1),
+                                shared_ptr<Action> action,
+                                const char* usage, int item_argn) :
+  TclCmd(pkg->interp(), cmd_name,
+         usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
+         item_argn+1, item_argn+1),
   itsPkg(pkg),
   itsAction(action),
   itsItemArgn(item_argn)
@@ -334,20 +336,20 @@ Tcl::VecActionCmd::~VecActionCmd() {}
 void Tcl::VecActionCmd::invoke() {
 DOTRACE("Tcl::VecActionCmd::invoke");
   if (itsItemArgn) {
-	 Tcl::ListIterator<int>
-		id_itr = beginOfArg(itsItemArgn, (int*)0),
-		end    =   endOfArg(itsItemArgn, (int*)0);
+    Tcl::ListIterator<int>
+      id_itr = beginOfArg(itsItemArgn, (int*)0),
+      end    =   endOfArg(itsItemArgn, (int*)0);
 
-	 while (id_itr != end)
-		{
-		  void* item = itsPkg->getItemFromId(*id_itr);
-		  itsAction->action(item);
-		  ++id_itr;
-		}
+    while (id_itr != end)
+      {
+        void* item = itsPkg->getItemFromId(*id_itr);
+        itsAction->action(item);
+        ++id_itr;
+      }
   }
   else {
-	 void* item = itsPkg->getItemFromId(-1);
-	 itsAction->action(item);
+    void* item = itsPkg->getItemFromId(-1);
+    itsAction->action(item);
   }
 }
 
