@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Sat Mar  4 02:43:46 2000
+// written: Wed Mar  8 15:52:57 2000
 // $Id$
 //
 //
@@ -471,7 +471,7 @@ void CTclIoItemPkg<C>::declareProperty(const PropertyInfo<C>& pinfo) {
 
 template <class C>
 void CTclIoItemPkg<C>::declareAllProperties() {
-  for (size_t i = 0; i < C::numPropertyInfos(); ++i) {
+  for (unsigned int i = 0; i < C::numPropertyInfos(); ++i) {
 	 declareProperty(C::getPropertyInfo(i));
   }
 
