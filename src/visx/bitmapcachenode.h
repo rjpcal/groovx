@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Fri Aug 10 10:46:48 2001
+// written: Fri Aug 10 14:05:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 
 class BmapRenderer;
 class BitmapRep;
+
+class Gnode;
 
 class GrObjRenderer {
 public:
@@ -48,9 +50,9 @@ public:
   // of the update, false otherwise
   bool update(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 
-  void render(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
+  void render(const Gnode* node, Gfx::Canvas& canvas) const;
 
-  void unrender(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
+  void unrender(const Gnode* obj, Gfx::Canvas& canvas) const;
 
   void saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
                        const char* filename);
@@ -88,7 +90,7 @@ private:
   void queueBitmapLoad() const;
 
   // This function updates the cached OpenGL display list.
-  void recompileIfNeeded(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
+  void recompileIfNeeded(const Gnode* node, Gfx::Canvas& canvas) const;
 
   // This function updates the cached bitmap, and returns a true if
   // the bitmap was actually recached, and false if nothing was done.

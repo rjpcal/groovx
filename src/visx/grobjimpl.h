@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 10:46:48 2001
+// written: Fri Aug 10 13:59:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,33 @@
 #ifndef GROBJIMPL_H_DEFINED
 #define GROBJIMPL_H_DEFINED
 
+#include "application.h"
+
+#include "gnode.h"
+
 #include "grobj.h"
 #include "grobjaligner.h"
 #include "grobjbbox.h"
 #include "grobjrenderer.h"
 #include "grobjscaler.h"
+
+class GrObjNode : public Gnode {
+  borrowed_ptr<GrObj> itsObj;
+
+public:
+  GrObjNode(GrObj* obj) : itsObj(obj) {}
+
+  virtual ~GrObjNode() {}
+
+  virtual void gnodeDraw(Gfx::Canvas& canvas) const
+  { itsObj->grRender(canvas, GrObj::DRAW); }
+
+  virtual void gnodeUndraw(Gfx::Canvas& canvas) const
+  { itsObj->grRender(canvas, GrObj::UNDRAW); }
+
+  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& /*canvas*/) const
+  { return itsObj->grGetBoundingBox(); }
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -53,17 +75,25 @@ public:
   // Forwards to GrObj's protected members
   //
 
-  void grRender(Gfx::Canvas& canvas, GrObj::DrawMode mode) const
-    { self->grRender(canvas, mode); }
+//    void grRender(Gfx::Canvas& canvas, GrObj::DrawMode mode) const
+//      {
+//        if (mode == GrObj::DRAW)
+//          itsObjNode->gnodeDraw(canvas);
+//        else
+//          itsObjNode->gnodeUndraw(canvas);
+//      }
 
-  Rect<double> grGetBoundingBox() const
-    { return self->grGetBoundingBox(); }
+//    Rect<double> grGetBoundingBox() const
+//      {
+//        Gfx::Canvas& canvas = Application::theApp().getCanvas();
+//        return itsObjNode->gnodeBoundingBox(canvas);
+//      }
 
   //
   // Data members
   //
 
-  GrObj* const self;
+  shared_ptr<GrObjNode> itsObjNode;
 
   int itsCategory;
   GrObjBBox itsBB;

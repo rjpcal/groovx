@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 10:55:04 2001
+// written: Fri Aug 10 14:09:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 GrObjImpl::GrObjImpl(GrObj* obj) :
-  self(obj),
+  itsObjNode(new GrObjNode(obj)),
   itsCategory(-1),
   itsBB(this),
   itsScaler(),
@@ -54,7 +54,8 @@ GrObjImpl::GrObjImpl(GrObj* obj) :
   itsRenderer()
 {};
 
-GrObjImpl::~GrObjImpl() {
+GrObjImpl::~GrObjImpl()
+{
 DOTRACE("GrObjImpl::~GrObjImpl");
 }
 
@@ -63,7 +64,8 @@ IO::VersionId GrObjImpl::serialVersionId() const
   return GROBJ_SERIAL_VERSION_ID;
 }
 
-void GrObjImpl::readFrom(IO::Reader* reader) {
+void GrObjImpl::readFrom(IO::Reader* reader)
+{
 DOTRACE("GrObjImpl::readFrom");
 
   reader->ensureReadVersionId("GrObj", 1, "Try grsh0.8a4");
@@ -110,7 +112,8 @@ DOTRACE("GrObjImpl::readFrom");
   invalidateCaches();
 }
 
-void GrObjImpl::writeTo(IO::Writer* writer) const {
+void GrObjImpl::writeTo(IO::Writer* writer) const
+{
 DOTRACE("GrObjImpl::writeTo");
 
   writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 1,
@@ -142,13 +145,14 @@ DOTRACE("GrObjImpl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObjImpl::draw(Gfx::Canvas& canvas) const {
+void GrObjImpl::draw(Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjImpl::draw");
   canvas.throwIfError("before GrObj::draw");
 
   bool objectDrawn = itsRenderer.update(this, canvas);
 
-  Rect<double> bbox = grGetBoundingBox();
+  Rect<double> bbox = itsObjNode->gnodeBoundingBox(canvas);
 
   if ( !objectDrawn )
     {
@@ -157,7 +161,7 @@ DOTRACE("GrObjImpl::draw");
       itsScaler.doScaling(canvas);
       itsAligner.doAlignment(canvas, bbox);
 
-      itsRenderer.render(this, canvas);
+      itsRenderer.render(itsObjNode.get(), canvas);
 
       itsBB.draw(bbox, canvas);
     }
@@ -165,7 +169,8 @@ DOTRACE("GrObjImpl::draw");
   canvas.throwIfError("during GrObj::draw");
 }
 
-void GrObjImpl::undraw(Gfx::Canvas& canvas) const {
+void GrObjImpl::undraw(Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjImpl::undraw");
   canvas.throwIfError("before GrObj::undraw");
 
@@ -185,30 +190,34 @@ DOTRACE("GrObjImpl::undraw");
   canvas.throwIfError("during GrObj::undraw");
 }
 
-void GrObjImpl::invalidateCaches() {
+void GrObjImpl::invalidateCaches()
+{
 DOTRACE("GrObjImpl::invalidateCaches");
   itsRenderer.invalidate();
 }
 
-void GrObjImpl::undrawDirectRender(Gfx::Canvas& canvas) const {
+void GrObjImpl::undrawDirectRender(Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjImpl::undrawDirectRender");
 
   Gfx::Canvas::StateSaver state(canvas);
 
-  Rect<double> bbox = grGetBoundingBox();
+  Rect<double> bbox = itsObjNode->gnodeBoundingBox(canvas);
 
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
-  itsRenderer.unrender(this, canvas);
+  itsRenderer.unrender(itsObjNode.get(), canvas);
 
   itsBB.draw(bbox, canvas);
 }
 
-void GrObjImpl::undrawClearBoundingBox(Gfx::Canvas& canvas) const {
+void GrObjImpl::undrawClearBoundingBox(Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjImpl::undrawClearBoundingBox");
 
-  Rect<double> world_pos = itsBB.withBorder(grGetBoundingBox(), canvas);
+  Rect<double> world_pos =
+    itsBB.withBorder(itsObjNode->gnodeBoundingBox(canvas), canvas);
 
   Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
 

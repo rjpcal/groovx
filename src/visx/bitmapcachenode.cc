@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Aug 10 13:25:21 2001
+// written: Fri Aug 10 14:08:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ DOTRACE("GrObjRenderer::~GrObjRenderer");
   glDeleteLists(itsDisplayList, 1);
 }
 
-void GrObjRenderer::recompileIfNeeded(const GrObjImpl* obj,
+void GrObjRenderer::recompileIfNeeded(const Gnode* node,
                                       Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjRenderer::recompileIfNeeded");
@@ -62,7 +62,7 @@ DOTRACE("GrObjRenderer::recompileIfNeeded");
   newList();
 
   glNewList(itsDisplayList, GL_COMPILE);
-  obj->grRender(canvas, GrObj::DRAW);
+  node->gnodeDraw(canvas);
   glEndList();
 
   postUpdated();
@@ -76,7 +76,7 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
 
   Assert(itsBitmapCache.get() != 0);
 
-  obj->undraw(canvas);
+  obj->itsObjNode->gnodeUndraw(canvas);
 
   {
     Gfx::Canvas::StateSaver state(canvas);
@@ -86,11 +86,12 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
       glDrawBuffer(GL_FRONT);
 
       obj->itsScaler.doScaling(canvas);
-      obj->itsAligner.doAlignment(canvas, obj->grGetBoundingBox());
+      obj->itsAligner.doAlignment(canvas,
+                                  obj->itsObjNode->gnodeBoundingBox(canvas));
 
-      obj->grRender(canvas, GrObj::DRAW);
+      obj->itsObjNode->gnodeDraw(canvas);
 
-      Rect<double> bmapbox = obj->grGetBoundingBox();
+      Rect<double> bmapbox = obj->itsObjNode->gnodeBoundingBox(canvas);
 
       itsBitmapCache->grabWorldRect(bmapbox);
     }
@@ -165,14 +166,14 @@ DOTRACE("GrObjRenderer::setMode");
     }
 }
 
-void GrObjRenderer::render(const GrObjImpl* obj, Gfx::Canvas& canvas) const
+void GrObjRenderer::render(const Gnode* node, Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjRenderer::render");
   DebugEvalNL(itsMode);
   switch (itsMode)
     {
     case GrObj::DIRECT_RENDER:
-      obj->grRender(canvas, GrObj::DRAW);
+      node->gnodeDraw(canvas);
       break;
 
     case GrObj::GLCOMPILE:
@@ -187,7 +188,7 @@ DOTRACE("GrObjRenderer::render");
     }
 }
 
-void GrObjRenderer::unrender(const GrObjImpl* obj, Gfx::Canvas& canvas) const
+void GrObjRenderer::unrender(const Gnode* node, Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjRenderer::unrender");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
@@ -198,7 +199,7 @@ DOTRACE("GrObjRenderer::unrender");
     if (itsMode == GrObj::GLCOMPILE)
       callList();
     else
-      obj->grRender(canvas, GrObj::UNDRAW);
+      node->gnodeUndraw(canvas);
   }
   glPopAttrib();
 }
@@ -213,7 +214,7 @@ DOTRACE("GrObjRenderer::update");
   switch (itsMode)
     {
     case GrObj::GLCOMPILE:
-      recompileIfNeeded(obj, canvas);
+      recompileIfNeeded(obj->itsObjNode.get(), canvas);
       break;
 
     case GrObj::GL_BITMAP_CACHE:
