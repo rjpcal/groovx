@@ -147,6 +147,9 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~TclCmd();
 
+  /// Returns a string describing the command's proper usage.
+  virtual const char* usage();
+
 #ifndef BROKEN_TEMPLATE_FRIEND
 protected:
 #else
@@ -156,11 +159,6 @@ public:
   /** This is overridden by subclasses to implement the specific
       functionality for the command that is represented. */
   virtual void invoke() = 0;
-
-  /** Appends an appropriate warning about the command's proper usage
-      to the Tcl interpreter's result, and sets the interpreter's
-      result to \c TCL_ERROR. */
-  virtual void usage();
 
   /// Append \a msg as an error message to the Tcl interpreter's result.
   void errorMessage(const char* msg);
