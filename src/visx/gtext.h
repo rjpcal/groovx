@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Jul  1 12:26:30 1999
+// written: Thu Jul  1 15:09:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 class GtextError : public ErrorWithMsg {
 public:
   GtextError(const string& str = "") : ErrorWithMsg(str) {}
-}
+};
 
 class Gtext : public GrObj {
 public:
@@ -46,11 +46,14 @@ public:
 
   static void loadFont(const char* fontname);
 
+  virtual void draw() const;
+
 protected:
-  virtual void grRecompile() const;
+  virtual void grRender() const;
 
 private:
   string itsText;
+  mutable unsigned int itsListBase;
 };
 
 static const char vcid_gtext_h[] = "$Header$";
