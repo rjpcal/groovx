@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Thu Aug 16 10:50:53 2001
+// written: Fri Aug 24 16:31:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 
 class GrObjAligner : public Gnode {
 public:
-  GrObjAligner(shared_ptr<Gnode> child) :
+  GrObjAligner(Util::SoftRef<Gnode> child) :
     Gnode(child),
     itsMode(Gmodes::NATIVE_ALIGNMENT),
     itsCenter(0.0, 0.0)

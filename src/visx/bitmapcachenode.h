@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Mon Aug 20 12:22:08 2001
+// written: Fri Aug 24 16:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ class BitmapRep;
 
 class BitmapCacheNode : public Gnode {
 public:
-  BitmapCacheNode(shared_ptr<Gnode> child);
+  BitmapCacheNode(Util::SoftRef<Gnode> child);
   virtual ~BitmapCacheNode();
 
   static fstring BITMAP_CACHE_DIR;

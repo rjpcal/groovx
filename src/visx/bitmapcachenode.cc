@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Aug 23 09:40:20 2001
+// written: Fri Aug 24 16:31:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 
 fstring BitmapCacheNode::BITMAP_CACHE_DIR(".");
 
-BitmapCacheNode::BitmapCacheNode(shared_ptr<Gnode> child) :
+BitmapCacheNode::BitmapCacheNode(Util::SoftRef<Gnode> child) :
   Gnode(child),
   itsMode(Gmodes::DIRECT_RENDER),
   itsCacheFilename(""),

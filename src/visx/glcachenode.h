@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Thu Aug 16 11:00:18 2001
+// written: Fri Aug 24 16:31:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 class GLCacheNode : public Gnode {
 public:
-  GLCacheNode(shared_ptr<Gnode> child) :
+  GLCacheNode(Util::SoftRef<Gnode> child) :
     Gnode(child),
     itsMode(Gmodes::DIRECT_RENDER),
     itsDisplayList(0)

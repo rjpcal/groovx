@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Fri Aug 24 16:11:36 2001
+// written: Fri Aug 24 16:33:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,11 @@
 
 #include "gnode.h"
 
+#include "gfx/rect.h"
+
 #include "tcl/tcltimer.h"
+
+#define ANIMATE_BBOX
 
 class GrObjBBox : public Gnode {
 private:
@@ -23,13 +27,19 @@ private:
   GrObjBBox& operator=(const GrObjBBox&);
 
 public:
-  GrObjBBox(shared_ptr<Gnode> child, Util::Signal& sig) :
+  GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig) :
     Gnode(child),
     itsIsVisible(false),
     itsPixelBorder(4),
-    itsTimer(100, true)
+    itsTimer(100, true),
+    itsCachedBBox(0)
   {
     itsTimer.sigTimeOut.connect(sig.slot());
+  }
+
+  virtual ~GrObjBBox()
+  {
+    delete itsCachedBBox;
   }
 
   bool isVisible() const { return itsIsVisible; }
@@ -53,11 +63,17 @@ public:
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
+  void invalidateBBox() const { delete itsCachedBBox; itsCachedBBox = 0; };
+
+  void recomputeBBox(Gfx::Canvas& canvas) const;
+
   bool itsIsVisible;
 
   mutable int itsPixelBorder;
 
   Tcl::Timer itsTimer;
+
+  mutable Gfx::Rect<double>* itsCachedBBox;
 };
 
 static const char vcid_grobjbbox_h[] = "$Header$";

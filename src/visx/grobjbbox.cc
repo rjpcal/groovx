@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Thu Aug 23 15:33:22 2001
+// written: Fri Aug 24 16:33:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include <GL/gl.h>
 
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace
@@ -64,14 +65,32 @@ Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::gnodeBoundingBox");
 
+  invalidateBBox();
+
+  if (itsCachedBBox == 0)
+    recomputeBBox(canvas);
+
+  Assert(itsCachedBBox != 0);
+
+  return *itsCachedBBox;
+}
+
+void GrObjBBox::recomputeBBox(Gfx::Canvas& canvas) const
+{
+DOTRACE("GrObjBBox::recomputeBBox");
+
+  Assert (itsCachedBBox == 0);
+
+  itsCachedBBox = new Gfx::Rect<double>;
+
   // Add extra pixels if the box itself will be visible.
   int border_pixels = itsIsVisible ? itsPixelBorder+4 : itsPixelBorder;
 
   DebugEval(itsPixelBorder); DebugEval(border_pixels);
 
-  return addPixelBorder(canvas,
-                        child()->gnodeBoundingBox(canvas),
-                        border_pixels);
+  *itsCachedBBox = addPixelBorder(canvas,
+                                  child()->gnodeBoundingBox(canvas),
+                                  border_pixels);
 }
 
 void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const

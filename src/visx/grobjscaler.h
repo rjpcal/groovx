@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Thu Aug 16 15:27:03 2001
+// written: Fri Aug 24 16:31:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 
 class GrObjScaler : public Gnode {
 public:
-  GrObjScaler(shared_ptr<Gnode> child) :
+  GrObjScaler(Util::SoftRef<Gnode> child) :
     Gnode(child),
     itsMode(Gmodes::NATIVE_SCALING),
     itsWidthFactor(1.0),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Tue Aug 21 17:42:59 2001
+// written: Fri Aug 24 16:28:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,14 +69,14 @@ public:
 
   int itsCategory;
 
-  shared_ptr<GrObjNode> itsNativeNode;
-  shared_ptr<GrObjBBox> itsBB;
-  shared_ptr<GLCacheNode> itsGLCache;
-  shared_ptr<BitmapCacheNode> itsBitmapCache;
-  shared_ptr<GrObjAligner> itsAligner;
-  shared_ptr<GrObjScaler> itsScaler;
+  Util::Ref<GrObjNode> itsNativeNode;
+  Util::Ref<GrObjBBox> itsBB;
+  Util::Ref<GLCacheNode> itsGLCache;
+  Util::Ref<BitmapCacheNode> itsBitmapCache;
+  Util::Ref<GrObjAligner> itsAligner;
+  Util::Ref<GrObjScaler> itsScaler;
 
-  shared_ptr<Gnode> itsTopNode;
+  Util::Ref<Gnode> itsTopNode;
 
   //
   // Methods
@@ -86,12 +86,12 @@ public:
 
   GrObjImpl(GrObj* obj) :
     itsCategory(-1),
-    itsNativeNode(new GrObjNode(obj)),
-    itsBB(new GrObjBBox(itsNativeNode)),
-    itsGLCache(new GLCacheNode(itsBB)),
-    itsBitmapCache(new BitmapCacheNode(itsGLCache)),
-    itsAligner(new GrObjAligner(itsBitmapCache)),
-    itsScaler(new GrObjScaler(itsAligner)),
+    itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
+    itsBB(new GrObjBBox(itsNativeNode, obj->sigNodeChanged), Util::PRIVATE),
+    itsGLCache(new GLCacheNode(itsBB), Util::PRIVATE),
+    itsBitmapCache(new BitmapCacheNode(itsGLCache), Util::PRIVATE),
+    itsAligner(new GrObjAligner(itsBitmapCache), Util::PRIVATE),
+    itsScaler(new GrObjScaler(itsAligner), Util::PRIVATE),
     itsTopNode(itsScaler)
   {
     // We connect to sigNodeChanged in order to update any caches
