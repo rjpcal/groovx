@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Sat Nov 23 13:33:47 2002
+// written: Sat Nov 23 13:44:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,8 +64,8 @@ public:
   /// Default version is a no-op.
   virtual void timerCallback();
 
-  /// Overridden from GWT::Widget.
-  virtual void bind(const char* event_sequence, const char* script);
+  /// Bind the given script to the event_sequence.
+  void bind(const char* event_sequence, const char* script);
 
   /// Overridden from GWT::Widget.
   virtual void takeFocus();
