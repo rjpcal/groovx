@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Mar  6 19:25:22 2000
+// written: Tue Mar  7 15:31:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -245,9 +245,9 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
 void BitmapRep::queuePbmFile(const char* filename) {
 DOTRACE("BitmapRep::queuePbmFile");
 
-  auto_ptr<BmapData::UpdateFunc> updater(new PbmUpdater(filename,
-																		  itsImpl->itsContrastFlip,
-																		  itsImpl->itsVerticalFlip));
+  shared_ptr<BmapData::UpdateFunc> updater(
+    new PbmUpdater(filename, itsImpl->itsContrastFlip,
+						 itsImpl->itsVerticalFlip));
 
   itsImpl->itsData.queueUpdate(updater);
 
