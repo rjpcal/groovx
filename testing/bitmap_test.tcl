@@ -1,6 +1,6 @@
 ##############################################################################
 ###
-### BitmapTcl
+### Bitmap
 ### Rob Peters
 ### Jul-1999
 ### $Id$
@@ -8,67 +8,66 @@
 ##############################################################################
 
 package require Bitmap
-package require Glbitmap
 package require Tclgl
 package require Tlist
 package require Toglet
 
 set IMGFILE $TEST_DIR/pbmfile.PPM
 
-set ::GLBITMAP [Obj::new GLBitmap]
-Bitmap::loadImage $::GLBITMAP $::IMGFILE
+set ::BITMAP [Obj::new Bitmap]
+Bitmap::loadImage $::BITMAP $::IMGFILE
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd GLBitmapTcl IO 1 $::GLBITMAP
-IO::testDestringifyCmd GLBitmapTcl IO 1 $::GLBITMAP
-IO::testWriteCmd GLBitmapTcl IO 1 $::GLBITMAP
-IO::testReadCmd GLBitmapTcl IO 1 $::GLBITMAP
+IO::testStringifyCmd Bitmap IO 1 $::BITMAP
+IO::testDestringifyCmd Bitmap IO 1 $::BITMAP
+IO::testWriteCmd Bitmap IO 1 $::BITMAP
+IO::testReadCmd Bitmap IO 1 $::BITMAP
 
 if { ![Togl::inited] } { Togl::init; update }
 
-### Obj::new GLBitmap ###
-test "GLBitmapTcl-Obj::new GLBitmap" "too many args" {
-    Obj::new GLBitmap junk junk
+### Obj::new Bitmap ###
+test "Bitmap-Obj::new Bitmap" "too many args" {
+    Obj::new Bitmap junk junk
 } {^wrong \# args: should be}
-test "GLBitmapTcl-Obj::new GLBitmap" "normal use" {
-    set ::BITMAP [Obj::new GLBitmap]
+test "Bitmap-Obj::new Bitmap" "normal use" {
+    set ::BITMAP [Obj::new Bitmap]
 } "^${INT}$"
 
 ### Bitmap::loadImage ###
-test "BitmapTcl-Bitmap::loadImage" "too few args" {
+test "Bitmap-Bitmap::loadImage" "too few args" {
     Bitmap::loadImage
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::loadImage" "too many args" {
+test "Bitmap-Bitmap::loadImage" "too many args" {
     Bitmap::loadImage $::BITMAP $::IMGFILE junk
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::loadImage" "normal use" {
+test "Bitmap-Bitmap::loadImage" "normal use" {
     Bitmap::loadImage $::BITMAP $::IMGFILE
     Bitmap::flipContrast $::BITMAP
     GxShapeKit::alignmentMode $::BITMAP $GxShapeKit::CENTER_ON_CENTER
 } {^$}
-test "BitmapTcl-Bitmap::loadImage" "error on non-existent file" {
+test "Bitmap-Bitmap::loadImage" "error on non-existent file" {
     exec rm -rf $::TEST_DIR/nonexistent_file.ppm
     Bitmap::loadImage $::BITMAP $::TEST_DIR/nonexistent_file.ppm
 } "^Bitmap::loadImage: couldn't open file "
-test "BitmapTcl-Bitmap::loadImage" "error on junk text file" {
+test "Bitmap-Bitmap::loadImage" "error on junk text file" {
     file copy -force $::TEST_DIR/junk_text_file $::TEST_DIR/junk_text_file.pbm
     catch {Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_text_file.pbm} result
     file delete -force $::TEST_DIR/junk_text_file.pbm
     return $result
 } "^Bitmap::loadImage: bad magic number while reading pbm file.*$"
-test "BitmapTcl-Bitmap::loadImage" "error on junk binary file" {
+test "Bitmap-Bitmap::loadImage" "error on junk binary file" {
     file copy -force $::TEST_DIR/junk_bin_file $::TEST_DIR/junk_bin_file.pbm
     catch {Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_bin_file.pbm} result
     file delete -force $::TEST_DIR/junk_bin_file.pbm
     return $result
 } "^Bitmap::loadImage: bad magic number while reading pbm file.*$"
-test "BitmapTcl-Bitmap::loadImage" "unknown format" {
+test "Bitmap-Bitmap::loadImage" "unknown format" {
     Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_text_file
 } "^Bitmap::loadImage: unknown file format.*$"
 
 ### Bitmap rendering ###
-test "BitmapTcl-rendering" "normal render" {
+test "Bitmap-rendering" "normal render" {
     clearscreen
     see $::BITMAP
     set sum [pixelCheckSum]
@@ -76,13 +75,13 @@ test "BitmapTcl-rendering" "normal render" {
 } {^1}
 
 ### Bitmap::flipContrastCmd ###
-test "BitmapTcl-Bitmap::flipContrast" "too few args" {
+test "Bitmap-Bitmap::flipContrast" "too few args" {
     Bitmap::flipContrast
 } {^wrong \# args: should be "Bitmap::flipContrast item_id\(s\)"$}
-test "BitmapTcl-Bitmap::flipContrast" "too many args" {
+test "Bitmap-Bitmap::flipContrast" "too many args" {
     Bitmap::flipContrast $::BITMAP junk
 } {^wrong \# args: should be "Bitmap::flipContrast item_id\(s\)"$}
-test "BitmapTcl-Bitmap::flipContrast" "normal use" {
+test "Bitmap-Bitmap::flipContrast" "normal use" {
     Bitmap::flipContrast $::BITMAP
     clearscreen
     see $::BITMAP
@@ -97,13 +96,13 @@ test "BitmapTcl-Bitmap::flipContrast" "normal use" {
 } {^1}
 
 ### Bitmap::flipVerticalCmd ###
-test "BitmapTcl-Bitmap::flipVertical" "too few args" {
+test "Bitmap-Bitmap::flipVertical" "too few args" {
     Bitmap::flipVertical
 } {^wrong \# args: should be "Bitmap::flipVertical item_id\(s\)"$}
-test "BitmapTcl-Bitmap::flipVertical" "too many args" {
+test "Bitmap-Bitmap::flipVertical" "too many args" {
     Bitmap::flipVertical $::BITMAP junk
 } {^wrong \# args: should be "Bitmap::flipVertical item_id\(s\)"$}
-test "BitmapTcl-Bitmap::flipVertical" "normal use" {
+test "Bitmap-Bitmap::flipVertical" "normal use" {
 
     GxShapeKit::alignmentMode $::BITMAP $GxShapeKit::CENTER_ON_CENTER
 
@@ -121,14 +120,15 @@ test "BitmapTcl-Bitmap::flipVertical" "normal use" {
 } {^1}
 
 ### Bitmap::zoomCmd ###
-test "BitmapTcl-Bitmap::zoom" "too few args" {
+test "Bitmap-Bitmap::zoom" "too few args" {
     Bitmap::zoom
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::zoom" "too many args" {
+test "Bitmap-Bitmap::zoom" "too many args" {
     Bitmap::zoom $::BITMAP 1.0 junk
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::zoom" "normal use" {
-    GLBitmap::usingGlBitmap $::BITMAP no
+test "Bitmap-Bitmap::zoom" "normal use" {
+    Bitmap::asBitmap $::BITMAP no
+    Bitmap::usingZoom $::BITMAP yes
 
     Bitmap::zoom $::BITMAP {0.5 0.5}
     clearscreen
@@ -143,38 +143,38 @@ test "BitmapTcl-Bitmap::zoom" "normal use" {
     return "[expr { $count1 != $count2 }] $count1 $count2"
 } {^1}
 
-### GLBitmap::usingGlBitmapCmd ###
-test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too few args" {
-    GLBitmap::usingGlBitmap
+### Bitmap::asBitmapCmd ###
+test "Bitmap-Bitmap::asBitmap" "too few args" {
+    Bitmap::asBitmap
 } {^wrong \# args: should be}
-test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too many args" {
-    GLBitmap::usingGlBitmap $::BITMAP yes junk
+test "Bitmap-Bitmap::asBitmap" "too many args" {
+    Bitmap::asBitmap $::BITMAP yes junk
 } {^wrong \# args: should be}
-test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
-    GLBitmap::usingGlBitmap $::BITMAP no
+test "Bitmap-Bitmap::asBitmap" "normal use" {
+    Bitmap::asBitmap $::BITMAP no
     clearscreen
     set time1 [lindex [time {see $::BITMAP}] 0]
 
-    GLBitmap::usingGlBitmap $::BITMAP yes
+    Bitmap::asBitmap $::BITMAP yes
     clearscreen
     set time2 [lindex [time {see $::BITMAP}] 0]
 
     # Rendering should always be faster with glBitmap than with glDrawPixels
     expr { $time1 > $time2 }
-    
+
 } {^1$} $no_test
 
 ### Bitmap::stringifyCmd ###
 ### Bitmap::destringifyCmd ###
-test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
-    set b1 [Obj::new GLBitmap]
+test "Bitmap-Bitmap::stringify" "stringify, destringify, compare" {
+    set b1 [Obj::new Bitmap]
     Bitmap::zoom $b1 {3.0 4.5}
 
     set str1 [IO::stringify $b1]
 
     Obj::delete $b1
 
-    set b2 [Obj::new GLBitmap]
+    set b2 [Obj::new Bitmap]
     IO::destringify $b2 $str1
     set str2 [IO::stringify $b2]
 
