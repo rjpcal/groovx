@@ -266,9 +266,16 @@ endif
 #
 #-------------------------------------------------------------------------
 
+# This build rule helps to create subdirectories that don't need to be part of
+# the CVS repository, but do need to exist to hold generated files during the
+# build process in sandboxes..
+%.timestamp:
+	@[ -d ${@D} ] || mkdir -p ${@D}
+	@[ -f $@ ] || touch $@
+
 ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
-$(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
+$(OBJ)/%$(OBJ_EXT) : $(LOGS)/.timestamp $(SRC)/%.cc
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
 	$(CXX) $(ALL_CC_OPTIONS) \
@@ -306,7 +313,7 @@ endif
 
 # this is just a convenience target so that we don't have to specify
 # the entire pathnames of the different library targets
-lib%: $(INSTALL_DIR)/lib/lib%$(LIB_EXT)
+lib%: $(INSTALL_DIR)/lib/.timestamp $(INSTALL_DIR)/lib/lib%$(LIB_EXT)
 	true
 
 #-------------------------------------------------------------------------
@@ -320,13 +327,6 @@ ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
 
 SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
 ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR) $(DEP)
-
-# This build rule helps to create subdirectories that don't need to be part of
-# the CVS repository, but do need to exist to hold generated files during the
-# build process in sandboxes..
-%.timestamp:
-	@[ -d ${@D} ] || mkdir -p ${@D}
-	@[ -f $@ ] || touch $@
 
 .PHONY: dir_structure
 dir_structure:
@@ -379,11 +379,11 @@ $(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 include $(PKG_DEP_FILE)
 
 
-$(INSTALL_DIR)/lib/visx/mtx.so: \
+$(INSTALL_DIR)/lib/visx/mtx.so: $(INSTALL_DIR)/lib/visx/.timestamp \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
 
-$(INSTALL_DIR)/lib/visx/matlabengine.so: \
+$(INSTALL_DIR)/lib/visx/matlabengine.so: $(INSTALL_DIR)/lib/visx/.timestamp \
 	/usr/local/matlab/extern/lib/glnx86/libeng.so \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libut.so \
@@ -423,10 +423,10 @@ $(LIB_DEP_FILE): $(LIB_DEP_FILE).deps
 
 include $(LIB_DEP_FILE)
 
-cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
+cdeps: $(ALL_SOURCES) $(ALL_HEADERS) $(LOGS)/.timestamp
 	time cdeplevels.py $(SRC) -L 1000 > $(LOGS)/cdeps
 
-ldeps: $(ALL_SOURCES) $(ALL_HEADERS)
+ldeps: $(ALL_SOURCES) $(ALL_HEADERS) $(LOGS)/.timestamp
 	time ldeplevels.py $(SRC) -L 1000 > $(LOGS)/ldeps
 
 #-------------------------------------------------------------------------
@@ -455,7 +455,8 @@ GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
-$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
+
+$(EXECUTABLE): $(INSTALL_DIR)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CXX) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
 
 #-------------------------------------------------------------------------
@@ -467,7 +468,7 @@ $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
 
-benchmarks: $(EXECUTABLE)
+benchmarks: $(EXECUTABLE) $(LOGS)/.timestamp
 	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
 
 # Remove all backups, temporaries, and coredumps
@@ -525,3 +526,11 @@ tardist: clean
 		--exclude *.o --exclude *.do \
 		--exclude *.a --exclude *.sl \
 		--exclude *,v --exclude *~ --exclude a.out
+
+SNAPSHOT := snapshots/grsh-`date +%Y_%m_%d`
+
+export: snapshots/.timestamp
+	cvs -d `cat ./CVS/Root` export -r HEAD -d $(SNAPSHOT) grsh
+	rm -r $(SNAPSHOT)/logs
+	rm -r $(SNAPSHOT)/old_src
+	tar cfz $(SNAPSHOT).tar.gz $(SNAPSHOT)
