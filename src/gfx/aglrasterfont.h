@@ -84,6 +84,8 @@ public:
 
 private:
   fstring itsFontName;
+  FontInfo itsFontInfo;
+  AppleFontSpec itsFontSpec;
   unsigned int itsListBase;
   unsigned int itsListCount;
 };
@@ -95,7 +97,12 @@ AglRasterFont::AglRasterFont(const char* fontname) :
 {
 DOTRACE("AglRasterFont::AglRasterFont");
 
-  AppleFontSpec spec = pickAppleFont(fontname);
+  // This seems to do nothing (but it should make the Font Manager pick
+  // nice outline fonts instead of uglier scaled-bitmap fonts):
+
+  // SetOutlinePreferred(TRUE);
+
+  AppleFontSpec itsFontSpec = pickAppleFont(fontname);
 
   itsListCount = 256;
   itsListBase = GLCanvas::genLists( 256 );
@@ -106,14 +113,31 @@ DOTRACE("AglRasterFont::AglRasterFont");
     }
 
   GLboolean status = aglUseFont(aglGetCurrentContext(),
-                                spec.fontID,
-                                spec.face,
-                                spec.size,
+                                itsFontSpec.fontID,
+                                itsFontSpec.face,
+                                itsFontSpec.size,
                                 0,
                                 256,
                                 itsListBase);
 
   if (status == GL_FALSE)
+    {
+      throw Util::Error("aglUseFont failed");
+    }
+
+  /*
+    struct FontInfo {
+      short ascent;
+      short descent;
+      short widMax;
+      short leading;
+    };
+  */
+
+  OSErr err = FetchFontInfo(itsFontSpec.fontID, itsFontSpec.size,
+                            itsFontSpec.face, &itsFontInfo);
+
+  if (err != noErr)
     {
       throw Util::Error("aglUseFont failed");
     }
@@ -286,18 +310,37 @@ namespace
 void AglRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
 DOTRACE("AglRasterFont::bboxOf");
-#if 0
-  const int asc = itsFontInfo->max_bounds.ascent;
-  const int desc = itsFontInfo->max_bounds.descent;
 
+  const int asc = itsFontInfo.ascent;
+  const int desc = itsFontInfo.descent;
   int maxwid = 0;
 
   int lines = 0;
 
+  Point numer, denom;
+  numer.h = numer.v = denom.h = denom.v = 1;
+
+  // make a copy so that we can pass a non-const poitner to StdTxMeas
+  FontInfo finfo = itsFontInfo;
+
+  TextFont(itsFontSpec.fontID);
+  TextFace(itsFontSpec.face);
+  TextSize(itsFontSpec.size);
+
   while (1)
     {
       int len = linelength(text);
-      int wid = XTextWidth(itsFontInfo, text, len);
+      int wid = StdTxMeas(len, text, &numer, &denom, &finfo);
+#if 0
+      wid = TextWidth(text, 0, len);
+      wid = 0;
+      for (int i = 0; i < len; ++i)
+        {
+          int widthOfChar = CharWidth(text[i]);
+          wid += widthOfChar;
+          dbgEval(4, text[i]); dbgEvalNL(4, widthOfChar);
+        }
+#endif
       text += len;
       if (wid > maxwid)
         maxwid = wid;
@@ -311,17 +354,16 @@ DOTRACE("AglRasterFont::bboxOf");
       ++text;
     }
 
-  dbgEval(2, lines); dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, maxwid);
-#endif
+  dbgEval(2, numer.h); dbgEvalNL(2, numer.v);
+  dbgEval(2, denom.h); dbgEvalNL(2, denom.v);
+
+  dbgEval(2, lines); dbgEval(2, itsFontInfo.widMax); dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, maxwid);
+
   Gfx::Rect<int> screen = bbox.screenFromWorld(Gfx::Rect<double>());
 
-//   screen.right() += maxwid;
-//   screen.bottom() -= desc + (lines - 1) * (asc+desc);
-//   screen.top() += asc;
-  screen.right() += 50;
-  screen.bottom() -= 10;
-  screen.top() += 20;
-  (void)text;
+  screen.right() += maxwid;
+  screen.bottom() -= itsFontInfo.descent + (lines - 1) * (rasterHeight());
+  screen.top() += itsFontInfo.ascent;
 
   bbox.drawRect(bbox.worldFromScreen(screen));
 }
@@ -336,11 +378,8 @@ DOTRACE("AglRasterFont::drawText");
 int AglRasterFont::rasterHeight() const
 {
 DOTRACE("AglRasterFont::rasterHeight");
-//   const int asc = itsFontInfo->max_bounds.ascent;
-//   const int desc = itsFontInfo->max_bounds.descent;
 
-//   return asc + desc;
-  return 15;
+  return itsFontInfo.ascent + itsFontInfo.descent + itsFontInfo.leading;
 }
 
 static const char vcid_aglrasterfont_h[] = "$Header$";
