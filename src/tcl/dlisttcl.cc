@@ -2,8 +2,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Sun Mar 14 19:36:38 1999
-static const char vcid_tcldlist_cc[] = "$Id$";
+// written: Sun Mar 14 19:37:26 1999
 //
 // This package provides additional list manipulation functions using
 // object-style (rather than string-style) Tcl commands
@@ -458,4 +457,5 @@ DOTRACE("Tcldlist::Tcldlist_Init");
   return TCL_OK;
 }
 
+static const char vcid_tcldlist_cc[] = "$Header$";
 #endif // !TCLDLIST_CC_DEFINED
