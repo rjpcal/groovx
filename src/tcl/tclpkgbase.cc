@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Fri May 19 19:17:33 2000
+// written: Sat Sep 23 16:09:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,8 +55,8 @@ public:
 
   Tcl_Interp* itsInterp;
   slink_list<shared_ptr<TclCmd> > itsCmds;
-  string itsPkgName;
-  string itsVersion;
+  std::string itsPkgName;
+  std::string itsVersion;
 
   int itsInitStatus;
 
@@ -82,7 +82,7 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
 	 // First we must construct a capitalization-correct version of
 	 // itsPkgName that is just how Tcl likes it: first character
 	 // uppercase, all others lowercase.
-	 string pkgname = itsPkgName;
+	 std::string pkgname = itsPkgName;
 
 	 pkgname[0] = toupper(pkgname[0]);
 	 
@@ -95,7 +95,7 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
 	 //   '$Revision 2.8 $'
 
 	 itsVersion.erase(0, itsVersion.find_first_of("0123456789"));
-	 itsVersion.erase(itsVersion.find_last_of("0123456789")+1, string::npos);
+	 itsVersion.erase(itsVersion.find_last_of("0123456789")+1, std::string::npos);
 
 	 Tcl_PkgProvide(interp, 
 						 const_cast<char *>(pkgname.c_str()),
@@ -161,7 +161,7 @@ const char* Tcl::TclPkg::version() {
 
 const char* Tcl::TclPkg::makePkgCmdName(const char* cmd_name) {
 DOTRACE("Tcl::TclPkg::makePkgCmdName");
-  static string name;
+  static std::string name;
   name = pkgName();
   name += "::";
   name += cmd_name;
