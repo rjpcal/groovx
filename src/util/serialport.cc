@@ -99,7 +99,7 @@ DOTRACE("Util::SerialPort::SerialPort");
       typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
       itsFilebuf = new filebuf_t(fdopen(itsFiledes, "r"), std::ios::in);
 #else
-      itsFilebuf = new Util::stdiobuf(itsFiledes, std::ios::in, true);
+      itsFilebuf = new rutz::stdiobuf(itsFiledes, std::ios::in, true);
 #endif
       itsStream = new std::iostream(itsFilebuf);
     }

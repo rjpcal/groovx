@@ -125,14 +125,14 @@ Util::ExecPipe::ExecPipe(const char* m, char* const* argv) :
         {
           fds.closeWriter();
 
-          strm = new Util::stdiostream(fds.reader(),
+          strm = new rutz::stdiostream(fds.reader(),
                                        std::ios::in|std::ios::binary);
         }
       else // parent is writer
         {
           fds.closeReader();
 
-          strm = new Util::stdiostream(fds.writer(),
+          strm = new rutz::stdiostream(fds.writer(),
                                        std::ios::out|std::ios::binary);
         }
 

@@ -74,7 +74,7 @@ private:
   ShellPipe& operator=(const ShellPipe&);
 
   FILE* itsFile;
-  Util::stdiostream itsStream;
+  rutz::stdiostream itsStream;
   int itsExitStatus;
 };
 
@@ -150,7 +150,7 @@ private:
   bool parentIsReader;
   PipeFds fds;
   ChildProcess p;
-  Util::stdiostream* strm;
+  rutz::stdiostream* strm;
 };
 
 static const char vcid_pipe_h[] = "$Header$";

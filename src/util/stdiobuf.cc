@@ -46,14 +46,14 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-void Util::stdiobuf::init(int fd, int om, bool throw_exception)
+void rutz::stdiobuf::init(int fd, int om, bool throw_exception)
 {
-DOTRACE("Util::stdiobuf::init");
-  itsFiledes = fd;
+DOTRACE("rutz::stdiobuf::init");
+  m_filedes = fd;
 
-  if (itsFiledes >= 0)
+  if (m_filedes >= 0)
     {
-      itsMode = om;
+      m_mode = om;
     }
 
   if (throw_exception && !is_open())
@@ -62,43 +62,43 @@ DOTRACE("Util::stdiobuf::init");
     }
 }
 
-Util::stdiobuf::stdiobuf(FILE* f, int om, bool throw_exception) :
-  itsMode(0), itsFiledes(-1)
+rutz::stdiobuf::stdiobuf(FILE* f, int om, bool throw_exception) :
+  m_mode(0), m_filedes(-1)
 {
-DOTRACE("Util::stdiobuf::stdiobuf(FILE*)");
+DOTRACE("rutz::stdiobuf::stdiobuf(FILE*)");
   init(fileno(f), om, throw_exception);
 }
 
-Util::stdiobuf::stdiobuf(int fd, int om, bool throw_exception) :
-  itsMode(0), itsFiledes(-1)
+rutz::stdiobuf::stdiobuf(int fd, int om, bool throw_exception) :
+  m_mode(0), m_filedes(-1)
 {
-DOTRACE("Util::stdiobuf::stdiobuf(int)");
+DOTRACE("rutz::stdiobuf::stdiobuf(int)");
 
   init(fd, om, throw_exception);
 }
 
-void Util::stdiobuf::close()
+void rutz::stdiobuf::close()
 {
-DOTRACE("Util::stdiobuf::close");
+DOTRACE("rutz::stdiobuf::close");
   if (is_open())
     {
       sync();
-      // No ::close(itsFiledes) here since we leave that up to whoever
-      // instantiated this stdiobuf.
-      itsFiledes = -1;
-      itsMode = 0;
+      // NOTE: We don't do ::close(m_filedes) here since we leave that
+      // up to whoever instantiated this stdiobuf.
+      m_filedes = -1;
+      m_mode = 0;
     }
 }
 
-int Util::stdiobuf::underflow() // with help from Josuttis, p. 678
+int rutz::stdiobuf::underflow() // with help from Josuttis, p. 678
 {
-DOTRACE("Util::stdiobuf::underflow");
+DOTRACE("rutz::stdiobuf::underflow");
   // is read position before end of buffer?
   if (gptr() < egptr())
     return *gptr();
 
   int numPutback = 0;
-  if (pbackSize > 0)
+  if (s_pback_size > 0)
     {
       // process size of putback area
       // -use number of characters read
@@ -114,28 +114,30 @@ DOTRACE("Util::stdiobuf::underflow");
     }
 
   // read new characters
-  const int num = ::read(itsFiledes, buffer+pbackSize, bufSize-pbackSize);
+  const int num = ::read(m_filedes,
+                         buffer+s_pback_size,
+                         s_buf_size-s_pback_size);
 
   if (num <= 0)
     return EOF;
 
   // reset buffer pointers
-  setg (buffer+(pbackSize-numPutback),
-        buffer+pbackSize,
-        buffer+pbackSize+num);
+  setg (buffer+s_pback_size-numPutback,
+        buffer+s_pback_size,
+        buffer+s_pback_size+num);
 
-  // return next character Hrmph. We have to cast to unsigned char to avoid
-  // problems with eof. Problem is, -1 is a valid char value to
-  // return. However, without a cast, char(-1) (0xff) gets converted to
-  // int(-1), which is 0xffffffff, which is EOF! What we want is
+  // return next character Hrmph. We have to cast to unsigned char to
+  // avoid problems with eof. Problem is, -1 is a valid char value to
+  // return. However, without a cast, char(-1) (0xff) gets converted
+  // to int(-1), which is 0xffffffff, which is EOF! What we want is
   // int(0x000000ff), which we have to get by int(unsigned char(-1)).
   return static_cast<unsigned char>(*gptr());
 }
 
-int Util::stdiobuf::overflow(int c)
+int rutz::stdiobuf::overflow(int c)
 {
-DOTRACE("Util::stdiobuf::overflow");
-  if (!(itsMode & std::ios::out) || !is_open()) return EOF;
+DOTRACE("rutz::stdiobuf::overflow");
+  if (!(m_mode & std::ios::out) || !is_open()) return EOF;
 
   if (c != EOF)
     {
@@ -152,7 +154,7 @@ DOTRACE("Util::stdiobuf::overflow");
   return c;
 }
 
-int Util::stdiobuf::sync()
+int rutz::stdiobuf::sync()
 {
   if (flushoutput() == EOF)
     {
@@ -161,13 +163,13 @@ int Util::stdiobuf::sync()
   return 0;
 }
 
-int Util::stdiobuf::flushoutput()
+int rutz::stdiobuf::flushoutput()
 {
-  if (!(itsMode & std::ios::out) || !is_open()) return EOF;
+  if (!(m_mode & std::ios::out) || !is_open()) return EOF;
 
   const int num = pptr()-pbase();
 
-  if ( ::write(itsFiledes, pbase(), num) == -1 )
+  if ( ::write(m_filedes, pbase(), num) == -1 )
     {
       return EOF;
     }
