@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat May 26 16:50:04 2001
+// written: Sat Jun  2 09:14:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 #include "util/arrays.h"
 #include "util/error.h"
 
+#include <cmath>
 #include <iostream.h>
 #include <fstream.h>
 #include <strstream.h>
