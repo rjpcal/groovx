@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Sun Aug 26 08:35:17 2001
+// written: Mon Sep  3 18:01:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,8 @@
 namespace
 {
   Gfx::Vec2<double> defaultZoom(1.0, 1.0);
+
+  const IO::VersionId BITMAPREP_SERIAL_VERSION_ID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -163,11 +165,9 @@ void BitmapRep::readFrom(IO::Reader* reader)
 {
 DOTRACE("BitmapRep::readFrom");
 
-  Gfx::Vec2<int> dummyRaster;
+  reader->ensureReadVersionId("BitmapRep", 0, "Try grsh0.8a7");
 
   reader->readValue("filename", itsImpl->itsFilename);
-  reader->readValue("rasterX", dummyRaster.x());
-  reader->readValue("rasterY", dummyRaster.y());
   reader->readValue("zoomX", itsImpl->itsZoom.x());
   reader->readValue("zoomY", itsImpl->itsZoom.y());
   reader->readValue("usingZoom", itsImpl->itsUsingZoom);
@@ -188,9 +188,10 @@ void BitmapRep::writeTo(IO::Writer* writer) const
 {
 DOTRACE("BitmapRep::writeTo");
 
+  writer->ensureWriteVersionId("BitmapRep", BITMAPREP_SERIAL_VERSION_ID, 1,
+                               "Try grsh0.8a7");
+
   writer->writeValue("filename", itsImpl->itsFilename);
-  writer->writeValue("rasterX", 0);
-  writer->writeValue("rasterY", 0);
   writer->writeValue("zoomX", itsImpl->itsZoom.x());
   writer->writeValue("zoomY", itsImpl->itsZoom.y());
   writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
