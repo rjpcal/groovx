@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Thu Jun 17 10:48:39 1999
+// written: Tue Jun 29 11:49:56 1999
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -17,14 +17,19 @@
 #ifndef TCLEVALCMD_H_DEFINED
 #define TCLEVALCMD_H_DEFINED
 
+#ifndef STRING_DEFINED
+#include <string>
+#define STRING_DEFINED
+#endif
+
 #ifndef TCLOBJLOCK_H_DEFINED
 #include "tclobjlock.h"
 #endif
 
 class TclEvalCmd {
 public:
-  TclEvalCmd(const char* tcl_cmd, int flags = TCL_EVAL_GLOBAL) :
-	 itsCmdObj(Tcl_NewStringObj(tcl_cmd, -1)),
+  TclEvalCmd(const string& tcl_cmd, int flags = TCL_EVAL_GLOBAL) :
+	 itsCmdObj(Tcl_NewStringObj(tcl_cmd.c_str(), -1)),
 	 itsLock(itsCmdObj),
 	 itsFlags(flags) {}
 
