@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Mar 30 09:12:24 2000
+// written: Mon May 22 12:17:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -288,7 +288,6 @@ public:
   TlistPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, Tlist::theTlist(), "Tlist", "3.0")
   {
-  DOTRACE("TlistPkg::TlistPkg");
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
 
 	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
