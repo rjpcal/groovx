@@ -380,7 +380,10 @@ dir_structure:
 
 DEP_FILE := $(DEP)/alldepends
 
-$(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
+$(DEP):
+	mkdir -p $@
+
+$(DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS)
 	time pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
@@ -390,7 +393,7 @@ include $(DEP_FILE)
 
 PKG_DEP_FILE := $(DEP)/pkgdepends
 
-$(PKG_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS) \
+$(PKG_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
 	Makefile src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl
 
@@ -401,7 +404,7 @@ include $(PKG_DEP_FILE)
 
 LIB_DEP_FILE := $(DEP)/libdepends
 
-$(LIB_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS) \
+$(LIB_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
   Makefile $(SCRIPTS)/build_lib_rules.tcl
 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(LOCAL_LIB) \
