@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Feb  8 16:08:58 2000
+// written: Tue Feb  8 17:44:14 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -55,7 +55,7 @@
 #  include <iostream.h>
 #  include <sys/time.h>
 
-const int MAX_TRACE_LEVEL = 6;
+extern int MAX_TRACE_LEVEL;
 
 extern int TRACE_LEVEL;
 const char* const TRACE_TAB = "  ";
@@ -75,6 +75,16 @@ public:
   void add(timeval t) { 
 	 totalTime.tv_sec += t.tv_sec; 
 	 totalTime.tv_usec += t.tv_usec;
+	 // avoid overflow
+	 while (totalTime.tv_usec >= 1000000) {
+		++(totalTime.tv_sec);
+		totalTime.tv_usec -= 1000000;
+	 }
+	 // avoid underflow
+	 while (totalTime.tv_usec <= -1000000) {
+		--(totalTime.tv_sec);
+		totalTime.tv_usec += 1000000;
+	 }
 	 ++callCount; 
   }
   const char* name() const { return funcName; }
