@@ -109,6 +109,14 @@ namespace geom
                      rutz::max(this->hi, other.hi));
     }
 
+    span<V> including(V val) const
+    {
+      if      (val < lo) return span<V>(val, hi);
+      else if (val > hi) return span<V>(lo, val);
+
+      /* else */         return *this;
+    }
+
     const V lo;
     const V hi;
   };
