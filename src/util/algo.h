@@ -32,15 +32,8 @@
 #ifndef ALGO_H_DEFINED
 #define ALGO_H_DEFINED
 
-namespace Util
+namespace rutz
 {
-  template <class T>
-  inline const T& max(const T& a, const T& b)
-  {
-    /* return (a > b) ? a : b; */ // This triggers warnings in some compilers :(
-    if (a > b) return a; return b;
-  }
-
   template <class T>
   inline const T& min(const T& a, const T& b)
   {
@@ -49,11 +42,23 @@ namespace Util
   }
 
   template <class T>
-  inline T abs(const T& val)                  { return (val < 0) ? -val : val; }
+  inline const T& max(const T& a, const T& b)
+  {
+    /* return (a > b) ? a : b; */ // This triggers warnings in some compilers :(
+    if (a > b) return a; return b;
+  }
+
+  template <class T>
+  inline T abs(const T& val)
+  {
+    return (val < 0) ? -val : val;
+  }
 
   template <class T>
   inline T clamp(const T& val, const T& lower, const T& upper)
-    { return Util::max(lower, Util::min(upper, val)); }
+  {
+    return rutz::max(lower, rutz::min(upper, val));
+  }
 
   template <class T>
   inline void swap2(T& t1, T& t2)
