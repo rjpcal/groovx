@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:52 2001
+// written: Fri Aug 24 17:17:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,9 +122,8 @@ private:
 
   void reconfigure();
 
-  scoped_ptr<Gfx::Canvas> itsCanvas;
-
   Togl* const itsTogl;
+  scoped_ptr<Gfx::Canvas> itsCanvas;
   double itsViewingDistance;     // inches
   bool itsFixedScaleFlag;
   double itsFixedScale;
