@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Sat Dec  4 02:23:11 1999
+// written: Sat Dec  4 03:58:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,13 +14,7 @@
 #include "tlist.h"
 
 #include <iostream.h>
-#include <strstream.h>
 #include <string>
-#include <GL/gl.h>
-
-#include "reader.h"
-#include "trial.h"
-#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -119,51 +113,13 @@ int Tlist::charCount() const {
 			 + 5 ); // fudge factor 5
 }
 
-//---------------------------------------------------------------------
-//
-// Tlist::readFromObjidsOnly
-//
-//---------------------------------------------------------------------
-
-int Tlist::readFromObjidsOnly(istream &is, int num_trials, int offset) {
-DOTRACE("Tlist::readFromObjidsOnly");
-  // Remove all trials and resize itsTrials to 0
-  clear();
-
-  // Determine whether we will read to the end of the input stream, or
-  // whether we will read only num_trials lines from the stream,
-  // according to the convention set in the header file.
-  bool read_to_eof = (num_trials < 0);
-
-  const int BUF_SIZE = 200;
-  char line[BUF_SIZE];
-
-  int trial = 0;
-  while ( (read_to_eof || trial < num_trials) 
-          && is.getline(line, BUF_SIZE) ) {
-	 // Allow for whole-line comments beginning with '#'. If '#' is
-	 // seen, skip this line and continue with the next line. The trial
-	 // count is unaffected.
-	 if (line[0] == '#')
-		continue;
-	 istrstream ist(line);
-	 Trial* t = new Trial;
-	 t->readFromObjidsOnly(ist, offset);
-    PtrList<Trial>::insert(t);
-    ++trial;
-  }                          
-  if (is.bad()) throw InputError(ioTag);
-
-  // Return the number of trials that were loaded.
-  return trial;
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Template instantiation of PtrList<Trial>
 //
 ///////////////////////////////////////////////////////////////////////
 
+#include "trial.h"
 #include "ptrlist.cc"
 template class PtrList<Trial>;
 

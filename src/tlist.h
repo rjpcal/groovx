@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Sat Dec  4 02:19:59 1999
+// written: Sat Dec  4 03:54:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,14 +52,6 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
 
   virtual int charCount() const;
-
-  // Reads a list of 'simple' trial descriptions which contain objid's
-  // only; posid's are inferred from position int the list. If
-  // num_trials is passed as < 0, the function will read to the end of
-  // the istream. If offset is non-zero, it will be added to each
-  // incoming objid before it is inserted into the Trial. Returns the
-  // number of trials that were loaded.
-  int readFromObjidsOnly(istream &is, int num_trials, int offset = 0);
 };
 
 static const char vcid_tlist_h[] = "$Header$";
