@@ -75,8 +75,11 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~TclCmd();
 
+  /// Returns the command registered name.
+  const char* name() const;
+
   /// Returns a string describing the command's proper usage.
-  virtual const char* usage();
+  virtual const char* usage() const;
 
   /** This is overridden by subclasses to implement the specific
       functionality for the command that is represented. The \c

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Jul 12 18:00:58 2001
+// written: Thu Jul 12 18:17:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -165,6 +165,8 @@ public:
 
   const char* usage() const { return itsUsage; }
 
+  const char* name() const { return itsCmdName.c_str(); }
+
   bool allowsObjc(unsigned int objc) const
     {
       if (itsExactObjc)
@@ -290,7 +292,13 @@ DOTRACE("Tcl::TclCmd::TclCmd");
     }
 }
 
-const char* Tcl::TclCmd::usage()
+const char* Tcl::TclCmd::name() const
+{
+DOTRACE("Tcl::TclCmd::name");
+  return itsImpl->name();
+}
+
+const char* Tcl::TclCmd::usage() const
 {
 DOTRACE("Tcl::TclCmd::usage");
   return itsImpl->usage();
