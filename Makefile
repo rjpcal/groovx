@@ -443,14 +443,14 @@ clean:
 
 # Make clean, and also remove all debug object files
 clean_do: clean
-	mv $(OBJ)/*.do $(OBJ)/util/*.do $(OBJ)/tcl/*.do trash
+	rm $(OBJ)/*.do $(OBJ)/util/*.do $(OBJ)/tcl/*.do
 
 # Make clean, and also remove all production object files
 clean_o: clean
-	mv $(OBJ)/*.o $(OBJ)/util/*.o $(OBJ)/tcl/*.o trash
+	rm $(OBJ)/*.o $(OBJ)/util/*.o $(OBJ)/tcl/*.o
 
 clean_dep: clean
-	mv $(DEP)/*.d $(DEP)/util/*.d $(DEP)/tcl/*.d trash
+	rm $(DEP)/*.d $(DEP)/util/*.d $(DEP)/tcl/*.d
 
 # Generate TAGS file based on all source files
 $(SRC)/TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
