@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 21 13:57:32 2002
-// written: Tue Nov 19 17:55:31 2002
+// written: Tue Nov 26 19:25:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,8 @@ public:
   Vec3<double> applyTo(const Vec3<double>& input) const;
 
   const double* colMajorData() const { return data; }
+
+  void debugDump() const;
 
 private:
   double data[16];
