@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Mar 29 22:09:33 2000
+// written: Thu Mar 30 00:03:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "gtext.h"
 
-#include "reader.h"
 #include "rect.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <GL/gl.h>
 #include <iostream.h>

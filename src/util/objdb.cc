@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Mar 25 11:18:40 2000
+// written: Thu Mar 30 00:07:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,14 @@
 
 #include "ioptrlist.h"
 
-#include <iostream.h>
+#include "io/iomgr.h"
+#include "io/readutils.h"
+#include "io/writeutils.h"
 
-#include "iomgr.h"
-#include "readutils.h"
 #include "util/arrays.h"
 #include "util/strings.h"
-#include "writeutils.h"
+
+#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"

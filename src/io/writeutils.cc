@@ -3,7 +3,7 @@
 // writeutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:21:32 1999
-// written: Wed Mar 15 10:20:36 2000
+// written: Thu Mar 30 00:06:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef WRITEUTILS_CC_DEFINED
 #define WRITEUTILS_CC_DEFINED
 
-#include "writeutils.h"
+#include "io/writeutils.h"
 
 #include "util/strings.h"
 

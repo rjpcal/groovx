@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 29 22:09:31 2000
+// written: Thu Mar 30 00:12:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "property.h"
+#include "io/property.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////

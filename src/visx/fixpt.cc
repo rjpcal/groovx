@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 29 22:09:35 2000
+// written: Thu Mar 30 00:03:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "fixpt.h"
 
-#include "reader.h"
 #include "rect.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <iostream.h>
 #include <GL/gl.h>

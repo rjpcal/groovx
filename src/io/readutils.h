@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Thu Mar 30 00:01:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,14 +12,14 @@
 #define READUTILS_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(READER_H_DEFINED)
-#include "reader.h"
+#include "io/reader.h"
 #endif
 
 #ifdef ACC_COMPILER
 // For some reason aCC wants to see the full definition of class IO
 // before parsing the dynamic_cast<C*>(IO*) in readObjectSeq
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#  include "io.h"
+#  include "io/io.h"
 #  endif
 #endif
 

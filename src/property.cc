@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Thu Mar  9 10:31:11 2000
+// written: Thu Mar 30 00:12:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,10 +11,11 @@
 #ifndef PROPERTY_CC_DEFINED
 #define PROPERTY_CC_DEFINED
 
-#include "property.h"
+#include "io/property.h"
 
-#include "reader.h"
-#include "writer.h"
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/pointers.h"
 #include "util/strings.h"
 

@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 29 22:09:31 2000
+// written: Thu Mar 30 00:15:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,15 +12,15 @@
 #define GROBJ_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io.h"
+#include "io/io.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
-#include "observable.h"
+#include "util/observable.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVER_H_DEFINED)
-#include "observer.h"
+#include "util/observer.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)

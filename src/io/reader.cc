@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Fri Mar 10 19:59:07 2000
+// written: Thu Mar 30 00:01:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef READER_CC_DEFINED
 #define READER_CC_DEFINED
 
-#include "reader.h"
+#include "io/reader.h"
 
 #include "util/strings.h"
 

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed Mar 29 14:07:34 2000
+// written: Wed Mar 29 23:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define TIMINGHDLR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io.h"
+#include "io/io.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)

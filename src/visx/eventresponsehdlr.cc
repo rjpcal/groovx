@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Mar 29 22:13:19 2000
+// written: Thu Mar 30 00:02:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,10 @@
 #include "experiment.h"
 #include "sound.h"
 #include "soundlist.h"
-#include "reader.h"
 #include "response.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include "gwt/widget.h"
 

@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Mar 23 20:46:15 2000
+// written: Thu Mar 30 00:10:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,16 +13,16 @@
 
 #include "tcl/stringifycmd.h"
 
-#include "io.h"
+#include "io/asciistreamreader.h"
+#include "io/asciistreamwriter.h"
+#include "io/io.h"
+
 #include "util/arrays.h"
 
 #include <cstring>
 #include <fstream.h>
 #include <strstream.h>
 #include <typeinfo>
-
-#include "asciistreamreader.h"
-#include "asciistreamwriter.h"
 
 #define NO_TRACE
 #include "util/trace.h"

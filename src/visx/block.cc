@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Mar 16 09:31:49 2000
+// written: Thu Mar 30 00:07:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,16 @@
 
 #include "experiment.h"
 #include "rand.h"
-#include "reader.h"
-#include "readutils.h"
 #include "response.h"
-#include "util/strings.h"
 #include "tlist.h"
 #include "trial.h"
-#include "writer.h"
-#include "writeutils.h"
+
+#include "io/reader.h"
+#include "io/readutils.h"
+#include "io/writer.h"
+#include "io/writeutils.h"
+
+#include "util/strings.h"
 
 #include <algorithm>
 #include <iostream.h>

@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Mar 15 11:12:01 2000
+// written: Wed Mar 29 23:57:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,10 @@
 #ifndef GTEXTTCL_CC_DEFINED
 #define GTEXTTCL_CC_DEFINED
 
-#include "iofactory.h"
 #include "objlist.h"
 #include "gtext.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 

@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Thu Mar 30 00:12:50 2000
 // $Id$
 //
 //
@@ -21,7 +21,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "property.h"
+#include "io/property.h"
 #endif
 
 class IO;

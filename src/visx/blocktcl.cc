@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Mar 15 17:50:24 2000
+// written: Wed Mar 29 23:56:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,10 @@
 #ifndef BLOCKTCL_CC_DEFINED
 #define BLOCKTCL_CC_DEFINED
 
-#include "iofactory.h"
 #include "blocklist.h"
 #include "block.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/listpkg.h"

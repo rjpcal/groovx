@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Mar 29 22:09:33 2000
+// written: Thu Mar 30 00:03:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,10 @@
 
 #include "house.h"
 
-#include "reader.h"
 #include "rect.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <iostream.h>
 #include <GL/gl.h>

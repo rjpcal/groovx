@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Mar 29 22:09:32 2000
+// written: Thu Mar 30 00:04:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,12 +14,14 @@
 #include "trialevent.h"
 
 #include "demangle.h"
-#include "util/error.h"
 #include "experiment.h"
-#include "reader.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include "gwt/canvas.h"
+
+#include "util/error.h"
 
 #include <tcl.h>
 #include <cmath>

@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Wed Mar 29 23:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define RESPONSEHANDLER_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io.h"
+#include "io/io.h"
 #endif
 
 struct Tcl_Interp;

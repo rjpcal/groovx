@@ -2,7 +2,7 @@
 // iomgr.h
 // Rob Peters
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Mar 29 14:07:36 2000
+// written: Wed Mar 29 23:50:52 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -10,7 +10,7 @@
 #define IOMGR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io.h"
+#include "io/io.h"
 #endif
 
 class istream;

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 29 22:09:35 2000
+// written: Thu Mar 30 00:03:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,10 @@
 #include "gabor.h"
 
 #include "randutils.h"
-#include "reader.h"
 #include "rect.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <GL/gl.h>
 #include <cmath>

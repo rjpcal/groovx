@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Mar 22 15:24:21 2000
+// written: Wed Mar 29 23:50:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef IO_CC_DEFINED
 #define IO_CC_DEFINED
 
-#include "io.h"
+#include "io/io.h"
 
 #include <cctype>
 #include <cstring>

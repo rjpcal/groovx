@@ -3,7 +3,7 @@
 // observer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:37:03 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Thu Mar 30 00:15:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef OBSERVER_CC_DEFINED
 #define OBSERVER_CC_DEFINED
 
-#include "observer.h"
+#include "util/observer.h"
 
 #define NO_TRACE
 #include "util/trace.h"

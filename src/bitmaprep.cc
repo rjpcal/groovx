@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Mar 29 22:12:40 2000
+// written: Thu Mar 30 00:02:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,12 @@
 #include "bmapdata.h"
 #include "experiment.h"
 #include "bmaprenderer.h"
-#include "io.h"
 #include "pbm.h"
-#include "reader.h"
 #include "rect.h"
-#include "writer.h"
+
+#include "io/io.h"
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include "gwt/canvas.h"
 

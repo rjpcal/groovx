@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Fri Mar 10 19:57:54 2000
+// written: Thu Mar 30 00:02:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef WRITER_CC_DEFINED
 #define WRITER_CC_DEFINED
 
-#include "writer.h"
+#include "io/writer.h"
 
 #include "util/strings.h"
 

@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Wed Mar 15 11:12:56 2000
+// written: Wed Mar 29 23:57:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,13 +11,14 @@
 #ifndef POSITIONTCL_CC_DEFINED
 #define POSITIONTCL_CC_DEFINED
 
-#include <tcl.h>
-
-#include "iofactory.h"
 #include "position.h"
 #include "poslist.h"
 
+#include "io/iofactory.h"
+
 #include "tcl/listitempkg.h"
+
+#include <tcl.h>
 
 #define NO_TRACE
 #include "util/trace.h"

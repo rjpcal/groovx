@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Thu Mar 30 00:02:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 
 #include "position.h"
 
-#include "reader.h"
-#include "writer.h"
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <cstring>
 #include <iostream.h>

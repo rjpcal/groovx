@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 15 18:06:33 2000
+// written: Wed Mar 29 23:56:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,11 @@
 #include <cctype>
 
 #include "cloneface.h"
-#include "iofactory.h"
-#include "iomgr.h"
 #include "objlist.h"
 #include "face.h"
+
+#include "io/iofactory.h"
+#include "io/iomgr.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/tclcmd.h"

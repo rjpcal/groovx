@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Wed Mar 29 14:07:34 2000
+// written: Wed Mar 29 23:50:52 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,7 +15,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io.h"
+#include "io/io.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////

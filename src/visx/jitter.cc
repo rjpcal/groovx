@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Thu Mar 30 00:03:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,9 @@
 #include "jitter.h"
 
 #include "randutils.h"
-#include "reader.h"
-#include "writer.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <cstring>
 #include <iostream.h>

@@ -3,7 +3,7 @@
 // readutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Wed Mar 15 10:20:36 2000
+// written: Thu Mar 30 00:06:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef READUTILS_CC_DEFINED
 #define READUTILS_CC_DEFINED
 
-#include "readutils.h"
+#include "io/readutils.h"
 
 #include "util/strings.h"
 

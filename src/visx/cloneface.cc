@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Mar 15 10:17:31 2000
+// written: Thu Mar 30 00:07:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 
 #include "cloneface.h"
 
-#include "readutils.h"
-#include "writeutils.h"
+#include "io/readutils.h"
+#include "io/writeutils.h"
 
 #include <cstring>
 #include <iostream.h>			  // for serialize

@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Mar 15 11:12:22 2000
+// written: Wed Mar 29 23:57:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,10 @@
 #ifndef TRIALTCL_CC_DEFINED
 #define TRIALTCL_CC_DEFINED
 
-#include "iofactory.h"
 #include "trial.h"
 #include "tlist.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 

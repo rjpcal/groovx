@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Mar 29 14:00:58 2000
+// written: Wed Mar 29 23:57:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,11 +12,12 @@
 #define RHTCL_CC_DEFINED
 
 #include "eventresponsehdlr.h"
-#include "iofactory.h"
 #include "rhlist.h"
 #include "responsehandler.h"
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/listpkg.h"

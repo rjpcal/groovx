@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Wed Mar 29 14:10:55 2000
+// written: Wed Mar 29 23:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define IOPROXY_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io.h"
+#include "io/io.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)

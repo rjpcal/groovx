@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu Mar 23 12:43:27 2000
+// written: Wed Mar 29 23:56:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,9 @@
 #include "bitmap.h"
 #include "glbitmap.h"
 #include "xbitmap.h"
-#include "iofactory.h"
 #include "objlist.h"
+
+#include "io/iofactory.h"
 
 #include "util/strings.h"
 

@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Thu Mar 30 00:07:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,11 @@
 
 #include "timinghdlr.h"
 
-#include "iomgr.h"
-#include "readutils.h"
 #include "trialevent.h"
-#include "writeutils.h"
+
+#include "io/iomgr.h"
+#include "io/readutils.h"
+#include "io/writeutils.h"
 
 #include <cstring>
 #include <vector>

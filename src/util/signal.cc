@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Thu Mar 30 00:15:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@
 #ifndef OBSERVABLE_CC_DEFINED
 #define OBSERVABLE_CC_DEFINED
 
-#include "observable.h"
+#include "util/observable.h"
 
 #include <list>
 
-#include "observer.h"
+#include "util/observer.h"
 
 #define NO_TRACE
 #include "util/trace.h"

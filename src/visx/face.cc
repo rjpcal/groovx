@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Mar 29 22:09:35 2000
+// written: Thu Mar 30 00:02:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,11 @@
 
 #include "face.h"
 
-#include "ioproxy.h"
-#include "reader.h"
 #include "rect.h"
-#include "writer.h"
+
+#include "io/ioproxy.h"
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include "gwt/canvas.h"
 

@@ -179,15 +179,12 @@ GRSH_STATIC_OBJS := \
 
 GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/application.do \
-	$(OBJ)/asciistreamreader.do \
-	$(OBJ)/asciistreamwriter.do \
 	$(OBJ)/bitmaptcl.do \
 	$(OBJ)/block.do \
 	$(OBJ)/blocklist.do \
 	$(OBJ)/blocktcl.do \
 	$(OBJ)/bmapdata.do \
 	$(OBJ)/bmaprenderer.do \
-	$(OBJ)/canvas.do \
 	$(OBJ)/cloneface.do \
 	$(OBJ)/demangle.do \
 	$(OBJ)/eventresponsehdlr.do \
@@ -205,9 +202,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/grshapp.do \
 	$(OBJ)/gtexttcl.do \
 	$(OBJ)/housetcl.do \
-	$(OBJ)/io.do \
-	$(OBJ)/iofactory.do \
-	$(OBJ)/iomgr.do \
 	$(OBJ)/ioptrlist.do \
 	$(OBJ)/jittertcl.do \
 	$(OBJ)/kbdresponsehdlr.do \
@@ -216,15 +210,10 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/nullresponsehdlr.do \
 	$(OBJ)/objlist.do \
 	$(OBJ)/objlisttcl.do \
-	$(OBJ)/observable.do \
-	$(OBJ)/observer.do \
 	$(OBJ)/pbm.do \
 	$(OBJ)/positiontcl.do \
 	$(OBJ)/poslist.do \
 	$(OBJ)/poslisttcl.do \
-	$(OBJ)/property.do \
-	$(OBJ)/reader.do \
-	$(OBJ)/readutils.do \
 	$(OBJ)/response.do \
 	$(OBJ)/responsehandler.do \
 	$(OBJ)/rhlist.do \
@@ -247,10 +236,21 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/trialtcl.do \
 	$(OBJ)/value.do \
 	$(OBJ)/voidptrlist.do \
-	$(OBJ)/widget.do \
-	$(OBJ)/writer.do \
-	$(OBJ)/writeutils.do \
+	$(OBJ)/gwt/canvas.do \
+	$(OBJ)/gwt/widget.do \
+	$(OBJ)/io/asciistreamreader.do \
+	$(OBJ)/io/asciistreamwriter.do \
+	$(OBJ)/io/io.do \
+	$(OBJ)/io/iofactory.do \
+	$(OBJ)/io/iomgr.do \
+	$(OBJ)/io/property.do \
+	$(OBJ)/io/reader.do \
+	$(OBJ)/io/readutils.do \
+	$(OBJ)/io/writer.do \
+	$(OBJ)/io/writeutils.do \
 	$(OBJ)/util/error.do \
+	$(OBJ)/util/observable.do \
+	$(OBJ)/util/observer.do \
 	$(OBJ)/util/serialport.do \
 	$(OBJ)/util/strings.do \
 	$(OBJ)/util/trace.do \
@@ -402,10 +402,13 @@ $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
 
 ALL_SOURCES := \
 	$(wildcard $(SRC)/*.cc) \
+	$(wildcard $(SRC)/gwt/*.cc) \
+	$(wildcard $(SRC)/io/*.cc) \
 	$(wildcard $(SRC)/util/*.cc) \
 	$(wildcard $(SRC)/tcl/*.cc) 
 
-ALL_HEADERS := $(SRC)/*.h $(SRC)/util/*.h $(SRC)/tcl/*.h
+ALL_HEADERS := $(SRC)/*.h $(SRC)/gwt/*.h $(SRC)/io/*.h \
+	$(SRC)/util/*.h $(SRC)/tcl/*.h
 DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
@@ -441,7 +444,7 @@ new: cleaner $(PROD_TARGET)
 # Remove all backups, temporaries, and coredumps
 clean:
 	rm -f ./*~ ./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
-		$(SRC)/*~ $(SCRIPTS)/*~ ./testing/*~
+		$(SRC)/*~ $(SRC)/*/*~ $(SCRIPTS)/*~ ./testing/*~
 
 # Make clean, and also remove all debug object files
 clean_do: clean

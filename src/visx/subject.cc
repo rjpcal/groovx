@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 16 09:18:17 2000
+// written: Thu Mar 30 00:02:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 
 #include <iostream.h>
 
-#include "reader.h"
-#include "writer.h"
+#include "io/reader.h"
+#include "io/writer.h"
 
 #define NO_TRACE
 #include "util/trace.h"

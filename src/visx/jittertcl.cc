@@ -2,16 +2,17 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Mar 15 11:12:56 2000
+// written: Wed Mar 29 23:57:06 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef JITTERTCL_CC_DEFINED
 #define JITTERTCL_CC_DEFINED
 
-#include "iofactory.h"
 #include "jitter.h"
 #include "poslist.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 

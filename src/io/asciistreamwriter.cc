@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Mar 29 23:42:49 2000
+// written: Thu Mar 30 00:10:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,9 @@
 #ifndef ASCIISTREAMWRITER_CC_DEFINED
 #define ASCIISTREAMWRITER_CC_DEFINED
 
-#include "asciistreamwriter.h"
+#include "io/asciistreamwriter.h"
 
-#include "io.h"
+#include "io/io.h"
 
 #include "util/arrays.h"
 #include "util/strings.h"

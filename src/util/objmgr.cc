@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed Mar 29 23:57:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,10 @@
 #ifndef IOMGR_CC_DEFINED
 #define IOMGR_CC_DEFINED
 
-#include "iomgr.h"
+#include "io/iomgr.h"
 
-#include "iofactory.h"
+#include "io/iofactory.h"
+
 #include "util/strings.h"
 
 #include <iostream.h>

@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Mar 15 11:13:35 2000
+// written: Wed Mar 29 23:57:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,12 @@
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
 
-#include "iofactory.h"
 #include "thlist.h"
 #include "timinghandler.h"
 #include "timinghdlr.h"
 #include "trialevent.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/listpkg.h"

@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Thu Mar 30 00:03:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,9 @@
 #ifndef IRIXSOUND_CC_DEFINED
 #define IRIXSOUND_CC_DEFINED
 
-#include "reader.h"
-#include "writer.h"
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/arrays.h"
 #include "util/strings.h"
 

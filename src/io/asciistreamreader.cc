@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Mar 29 23:42:38 2000
+// written: Thu Mar 30 00:10:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,10 +11,10 @@
 #ifndef ASCIISTREAMREADER_CC_DEFINED
 #define ASCIISTREAMREADER_CC_DEFINED
 
-#include "asciistreamreader.h"
+#include "io/asciistreamreader.h"
 
-#include "io.h"
-#include "iomgr.h"
+#include "io/io.h"
+#include "io/iomgr.h"
 
 #include "util/arrays.h"
 #include "util/lists.h"

@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 29 22:10:26 2000
+// written: Thu Mar 30 00:02:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,17 +20,18 @@
 #include "trial.h"
 #include "objlist.h"
 #include "objtogl.h"
-#include "reader.h"
 #include "toglconfig.h"
 #include "poslist.h"
 #include "blocklist.h"
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
-#include "writer.h"
 #include "system.h"
 #include "stopwatch.h"
 #include "tlistwidget.h"
+
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tclevalcmd.h"
