@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Dec  1 11:41:30 1999
+// written: Tue Jan 11 12:24:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ DOTRACE("IoPtrList::serialize");
 
 void IoPtrList::deserialize(istream &is, IOFlag flag) {
 DOTRACE("IoPtrList::deserialize");
- string ioTag = IO::ioTypename();
+  string ioTag = IO::ioTypename();
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
   if (flag & TYPENAME) { 
@@ -124,7 +124,8 @@ DOTRACE("IoPtrList::deserialize");
 
   // The next character after itsFirstVacant had better be a newline,
   // and we need to remove it from the stream.
-  if ( is.get() != '\n' ) throw IoLogicError(ioTag);
+  if ( is.get() != '\n' )
+	 { throw IoLogicError(ioTag); }
 
   if (is.fail()) throw InputError(ioTag);
 }
