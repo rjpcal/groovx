@@ -70,6 +70,13 @@ if { $verbose_arg != -1 } {
 
 puts "seed $seed"
 expr srand($seed)
+
+# Make sure we set globalRandomSeed... this gives a hook for internal
+# C++ random number generators to rely on the same random seed, and
+# allows an entire test suite run to be predictable and
+# repeatable. This is critical in being able to track down heisenbugs!
+::globalRandSeed $seed
+
 proc rand_cmp {a1 a2} { return [expr round(200*rand() - 100.0)] }
 
 set permuted_files [lsort -command rand_cmp $files]
