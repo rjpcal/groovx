@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Apr  6 12:32:29 2001
+// written: Fri Apr  6 12:39:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,6 +65,18 @@ Slice& Slice::operator=(const Slice& other)
 
   for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
     *lhs = *rhs;
+
+  return *this;
+}
+
+Slice& Slice::operator=(const Mtx& other)
+{
+  if (itsNelems != other.nelems())
+    throw ErrorWithMsg("dimension mismatch in Slice::operator=");
+
+  int i = 0;
+  for (  MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++i)
+    *lhs = other.at(i);
 
   return *this;
 }

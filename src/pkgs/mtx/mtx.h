@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Apr  6 12:32:39 2001
+// written: Fri Apr  6 12:37:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -211,6 +211,7 @@ public:
 
   // This is assignment of value, not reference
   Slice& operator=(const Slice& other);
+  Slice& operator=(const Mtx& other);
 };
 
 
