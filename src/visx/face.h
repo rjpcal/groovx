@@ -2,7 +2,8 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 10:52:08 1999
+// written: Fri Mar 12 11:16:36 1999
+static const char vcid[] = "$Id";
 //
 // The Face class is a derived class of Scaleable (itself derived from
 // GrObj). As such, Face*'s may be stored and manipulated in ObjList's
