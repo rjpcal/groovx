@@ -3,7 +3,7 @@
 // tcllink.h
 // Rob Peters
 // created: Tue May  4 19:16:47 1999
-// written: Tue Sep 14 14:32:18 1999
+// written: Tue Dec  7 18:13:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace Tcl {
 
   inline int Tcl_LinkInt(Tcl_Interp* interp, const char* varName, 
                          int* addr, int flag) {
