@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Dec 14 17:34:28 1999
+// written: Fri Jan 14 12:08:43 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -236,10 +236,10 @@ protected:
   virtual void invoke() {
     if (toglCreated) { throw Tcl::TclError("Togl widget already initialized"); }
 
-    const char* init_args     = getCstringFromArg(1);
-    int         viewing_dist  = (objc() < 3) ? 30 : getIntFromArg(2);
-    double      gl_unit_angle = (objc() < 4) ? 2.05 : getDoubleFromArg(3);
-	 bool        pack          = (objc() < 5) ? true : getBoolFromArg(4);
+    const char* init_args     =                            getCstringFromArg(1);
+    int         viewing_dist  =      (objc() < 3) ? 30   : getIntFromArg(2);
+    double      gl_unit_angle =      (objc() < 4) ? 2.05 : getDoubleFromArg(3);
+	 bool        pack          = bool((objc() < 5) ? true : getBoolFromArg(4));
 
     const char* pathname = ".togl_private";
 
