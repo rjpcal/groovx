@@ -46,6 +46,15 @@ namespace Util
   {
     return T( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
   }
+
+  /// A hook that allows various code to start from a predictable seed.
+  /** This allows code in disparate locations to all be triggered by
+      the same random seed. This is useful in allowing for predictable
+      and repeatable execution sequences e.g. in a testing
+      context. Initial value is 0. The most sensible use case involves
+      setting this value just once, at or near the beginning of
+      program execution. */
+  unsigned long globalRandSeed;
 }
 
 /// Uniform random distribution
