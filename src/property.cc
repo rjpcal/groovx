@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Wed Mar  8 12:26:32 2000
+// written: Wed Mar  8 17:53:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,9 @@
 #include "reader.h"
 #include "writer.h"
 #include "util/pointers.h"
+#include "util/strings.h"
 
 #include <iostream.h>
-#include <string>
 
 Property::~Property() {}
 
@@ -50,7 +50,6 @@ void TProperty<T>::writeTo(Writer* writer) const
 template class TProperty<int>;
 template class TProperty<bool>;
 template class TProperty<double>;
-template class TProperty<string>;
 
 
 template <class T>
@@ -81,7 +80,6 @@ void TPtrProperty<T>::writeTo(Writer* writer) const
 template class TPtrProperty<int>;
 template class TPtrProperty<bool>;
 template class TPtrProperty<double>;
-template class TPtrProperty<string>;
 
 
 class PropertyInfoBase::Impl {
@@ -114,7 +112,7 @@ public:
 	 }
 
   /// User-friendly name of the property
-  string name;
+  fixed_string name;
   /// Suggested minimum value
   scoped_ptr<Value> min;
   /// Suggested maximum value
