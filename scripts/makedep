@@ -13,7 +13,7 @@
 
 makedepend -f- -w500 $* | \
     sed -e 's@ /usr[^ ]*@@g' \
-        #-e 's@ /opt[^ ]*@@g' \
+        -e 's@ /opt[^ ]*@@g' \
         -e '/^.*: *$/d' \
         -e "s@^src/\(.*\)\.o:@dep/\1.d obj/$ARCH/\1.do obj/$ARCH/\1.o:@"
 
