@@ -585,8 +585,20 @@ itcl::class Editor {
 	iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
 		-command [itcl::code $this showFieldControls]
 	$itsButtons.objtypes insert 0 \
-		Face Fish Gabor Gtext GxDrawStyle GxColor GxSeparator \
-		House MaskHatch MorphyFace Position
+	    Face \
+	    Fish \
+	    Gabor \
+	    Gtext \
+	    GxCylinder \
+	    GxDrawStyle \
+	    GxColor \
+	    GxLine \
+	    GxSeparator \
+	    GxSphere \
+	    House \
+	    MaskHatch \
+	    MorphyFace \
+	    Position
 	$itsButtons.objtypes sort ascending
 	setObjType $objtype
 	pack $itsButtons.objtypes -side top -anchor nw
