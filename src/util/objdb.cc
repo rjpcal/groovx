@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Oct 25 15:11:12 2000
+// written: Wed Oct 25 16:45:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ namespace {
   const IO::VersionId IOPTRLIST_SERIAL_VERSION_ID = 1;
 }
 
-IoPtrList::IoPtrList(int size) :
-  PtrListBase(size)
+IoPtrList::IoPtrList() :
+  PtrListBase()
 {
 DOTRACE("IoPtrList::IoPtrList");
 }

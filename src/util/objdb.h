@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Oct 24 16:09:28 2000
+// written: Wed Oct 25 16:45:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@
 
 class IoPtrList : public PtrListBase, public virtual IO::IoObject {
 public:
-  /// Construct and reserve space for \a size objects.
-  IoPtrList(int size);
+  /// Default constructor makes an empty list.
+  IoPtrList();
 
   /// Virtual destructor.
   virtual ~IoPtrList();

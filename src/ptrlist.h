@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Oct 25 14:41:14 2000
+// written: Wed Oct 25 16:46:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,8 +35,8 @@
 template <class T>
 class PtrList : public IoPtrList {
 public:
-  /// Construct and reserve space for \a size objects.
-  PtrList (int size);
+  /// Default constructor makes an empty list.
+  PtrList();
 
   /// Virtual destructor.
   virtual ~PtrList();

@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Oct 25 14:42:07 2000
+// written: Wed Oct 25 16:47:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 #define OLD_VERSION 1
 
 template <class T>
-PtrList<T>::PtrList(int size) :
-  IoPtrList(size)
+PtrList<T>::PtrList() :
+  IoPtrList()
 {}
 
 template <class T>
