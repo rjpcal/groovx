@@ -1,6 +1,7 @@
 Makefile
 autom4te-2.53.cache
 build
+config.h
 config.log
 config.status
 local
