@@ -67,11 +67,11 @@ public:
   /// Virtual destructor.
   virtual ~GxCache() throw();
 
-  /// FIXME
-  virtual void readFrom(IO::Reader& /*reader*/) {};
+  IO::VersionId serialVersionId() const;
 
-  /// FIXME
-  virtual void writeTo(IO::Writer& /*writer*/) const {};
+  virtual void readFrom(IO::Reader& reader);
+
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Draw using the current draw mode.
   virtual void draw(Gfx::Canvas& canvas) const;
@@ -79,13 +79,13 @@ public:
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Invalidate any current cache.
-  void invalidate();
+  void invalidate() throw();
 
   /// Get the current drawing mode.
   Mode getMode() const { return itsMode; }
 
   /// Set the current drawing mode.
-  void setMode(Mode new_mode);
+  void setMode(Mode new_mode) throw();
 
 private:
   Mode itsMode;

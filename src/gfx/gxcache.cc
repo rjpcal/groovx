@@ -34,24 +34,60 @@
 
 #include "gfx/glcanvas.h"
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/error.h"
 
 #include "util/debug.h"
+#include "util/trace.h"
 DBG_REGISTER
+
+namespace
+{
+  const IO::VersionId GXCACHE_SERIAL_VERSION_ID = 1;
+}
 
 GxCache::GxCache(Util::SoftRef<GxNode> child) :
   GxBin(child),
   itsMode(DIRECT),
   itsDisplayList(0)
-{}
+{
+DOTRACE("GxCache::GxCache");
+}
 
 GxCache::~GxCache() throw()
 {
+DOTRACE("GxCache::~GxCache");
   invalidate();
+}
+
+IO::VersionId GxCache::serialVersionId() const
+{
+DOTRACE("GxCache::serialVersionId");
+  return GXCACHE_SERIAL_VERSION_ID;
+}
+
+void GxCache::readFrom(IO::Reader& reader)
+{
+DOTRACE("GxCache::readFrom");
+
+  reader.ensureReadVersionId("GxCache", 1,
+                             "Try Revision 1.11");
+
+  reader.readValue("mode", itsMode);
+}
+
+void GxCache::writeTo(IO::Writer& writer) const
+{
+DOTRACE("GxCache::writeTo");
+
+  writer.writeValue("mode", itsMode);
 }
 
 void GxCache::draw(Gfx::Canvas& canvas) const
 {
+DOTRACE("GxCache::draw");
   GLCanvas* const glcanvas = dynamic_cast<GLCanvas*>(&canvas);
   if (itsMode != GLCOMPILE || glcanvas == 0)
     {
@@ -77,17 +113,20 @@ void GxCache::draw(Gfx::Canvas& canvas) const
 
 void GxCache::getBoundingCube(Gfx::Bbox& bbox) const
 {
+DOTRACE("GxCache::getBoundingCube");
   child()->getBoundingCube(bbox);
 }
 
-void GxCache::invalidate()
+void GxCache::invalidate() throw()
 {
+DOTRACE("GxCache::invalidate");
   GLCanvas::deleteLists(itsDisplayList, 1);
   itsDisplayList = 0;
 }
 
-void GxCache::setMode(Mode new_mode)
+void GxCache::setMode(Mode new_mode) throw()
 {
+DOTRACE("GxCache::setMode");
 #ifdef BROKEN_GL_DISPLAY_LISTS
   if (new_mode == GLCOMPILE) new_mode = DIRECT;
 #endif
