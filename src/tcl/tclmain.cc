@@ -87,10 +87,11 @@ private:
   bool itsGotPartial;
   bool isItInteractive; // True if input is a terminal-like device.
   rutz::fstring itsCommandLine; // Entire command-line as a string
+  bool itsNoWindow; // whether this is a windowless environment
 
   // Function members
 
-  MainImpl(int argc, char** argv);
+  MainImpl(int argc, char** argv, bool nowindow);
 
   int historyNext();
 
@@ -109,11 +110,11 @@ private:
   static void stdinProc(ClientData /*clientData*/, int /*mask*/);
 
 public:
-  static void create(int argc, char** argv)
+  static void create(int argc, char** argv, bool nowindow)
   {
     ASSERT(theMainImpl == 0);
 
-    theMainImpl = new MainImpl(argc, argv);
+    theMainImpl = new MainImpl(argc, argv, nowindow);
     Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(0));
   }
 
@@ -153,7 +154,7 @@ Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
 //
 //---------------------------------------------------------------------
 
-Tcl::MainImpl::MainImpl(int argc, char** argv) :
+Tcl::MainImpl::MainImpl(int argc, char** argv, bool nowindow) :
   itsArgc(argc),
   itsArgv(const_cast<const char**>(argv)),
   itsSafeInterp(Tcl_CreateInterp()),
@@ -163,7 +164,8 @@ Tcl::MainImpl::MainImpl(int argc, char** argv) :
   itsCommand(),
   itsGotPartial(false),
   isItInteractive(isatty(0)),
-  itsCommandLine()
+  itsCommandLine(),
+  itsNoWindow(nowindow)
 {
 DOTRACE("Tcl::MainImpl::MainImpl");
 
@@ -592,7 +594,7 @@ DOTRACE("Tcl::MainImpl::run");
   // Loop indefinitely, waiting for commands to execute, until there
   // are no main windows left, then exit.
 
-  while (true || Tk_GetNumMainWindows() > 0)
+  while (itsNoWindow || Tk_GetNumMainWindows() > 0)
     {
       Tcl_DoOneEvent(0);
     }
@@ -606,9 +608,9 @@ DOTRACE("Tcl::MainImpl::run");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Main::Main(int argc, char** argv)
+Tcl::Main::Main(int argc, char** argv, bool nowindow)
 {
-  Tcl::MainImpl::create(argc, argv);
+  Tcl::MainImpl::create(argc, argv, nowindow);
 }
 
 Tcl::Main::~Main()

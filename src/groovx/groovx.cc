@@ -293,7 +293,7 @@ DOTRACE("main");
             }
         }
 
-      Tcl::Main app(argc, argv);
+      Tcl::Main app(argc, argv, nowindow);
 
       if (Tcl::Main::isInteractive())
         {

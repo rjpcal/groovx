@@ -50,7 +50,7 @@ namespace Tcl
 class Tcl::Main
 {
 public:
-  Main(int argc, char** argv);
+  Main(int argc, char** argv, bool nowindow);
   ~Main();
 
   static bool isInteractive();
