@@ -117,7 +117,6 @@ test "FaceTcl-mouthHeight" "error from bad objid" {
 } {Face::mouthHeight: attempt to access invalid id '.*' in}
 
 unset faceid
-ObjList::reset
 unset EPS
 
 ### Face::stringifyCmd ###
@@ -145,6 +144,4 @@ test "FaceTcl-Face::destringify" "stringify/destringify check" {
 
 	 expr [string compare $str1 $str2] == 0
 } {^1$}
-
-ObjList::reset
 

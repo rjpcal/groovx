@@ -9,7 +9,6 @@
 
 source ${::TEST_DIR}/io_test.tcl
 
-RhList::reset
 set ::NULLRH [IO::new NullResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl

@@ -7,7 +7,6 @@
 ###
 ##############################################################################
 
-RhList::reset
 set ::EVENTRH [IO::new EventResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl

@@ -65,20 +65,13 @@ test "ExptTcl-Expt::load" "too many args" {
 test "ExptTcl-Expt::load" "fMRI sample" {
 	 Togl::setVisible false
 	 Expt::clear
-	 BlockList::reset
-	 Tlist::reset
-	 ObjList::reset
-	 PosList::reset
+	 IO::clear
 	 set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
 	 set ocounts {113 166 76}
 	 srand [clock clicks]
 	 set i [expr int([rand 0 3])]
     Expt::load $::TEST_DIR/[lindex $files $i]
 	 set dif [expr [ObjList::count] - [lindex $ocounts $i]]
-	 BlockList::reset
-	 Tlist::reset
-	 ObjList::reset
-	 PosList::reset
 	 return $dif
 } {^0$}
 test "ExptTcl-Expt::load" "psyphy samples" {
@@ -90,10 +83,7 @@ test "ExptTcl-Expt::load" "psyphy samples" {
 
 	 for {set i 0} {$i < 3} {incr i} {
 		  Expt::clear
-		  BlockList::reset
-		  Tlist::reset
-		  ObjList::reset
-		  PosList::reset
+		  IO::clear
 
 		  Expt::load $::TEST_DIR/[lindex $files $i]
 		  set odif [expr [ObjList::count] - [lindex $ocounts $i]]
@@ -133,7 +123,6 @@ test "ExptTcl-Expt::begin" "general sanity test" {
 	 Trial::timingHdlr $trial $thid
 	 Trial::responseHdlr $trial $rhid
 
-	 BlockList::reset
 	 set block [IO::new Block]
 	 Block::addTrialIds $block $trial
 

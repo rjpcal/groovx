@@ -9,7 +9,6 @@
 
 source ${::TEST_DIR}/io_test.tcl
 
-RhList::reset
 set ::KBDRH [IO::new KbdResponseHdlr]
 KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 

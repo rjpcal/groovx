@@ -46,7 +46,6 @@ test "JitterTcl-Jitter::setJitter" "error from wrong type" {
 	 Jitter::setJitter $p 1 1 1
 } {^Jitter::setJitter: an error of type (std::)?bad_cast occurred:.*$}
 
-PosList::reset
 unset jit
 
 

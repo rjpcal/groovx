@@ -53,7 +53,6 @@ test "$PACKAGE-Gtext::text" "error" {} {^$} $no_test
 ### Gtext::destringifyCmd ###
 test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
 	 set str1 [Gtext::stringify $::GTEXT]
-	 ObjList::reset
 	 set ::GTEXT [IO::new Gtext]
 	 Gtext::destringify $::GTEXT $str1
 	 set str2 [Gtext::stringify $::GTEXT]

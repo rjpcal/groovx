@@ -126,7 +126,6 @@ test "PositionTcl-IO::type" "error on too large" {
 	 IO::type 10000
 } {IO::type: attempt to access invalid id '.*' in}
 
-PosList::reset
 unset pos
 
 

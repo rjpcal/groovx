@@ -20,34 +20,29 @@ test "ObjList-ObjList::loadObjects" "too many args" {
 } {wrong \# args: should be "ObjList::loadObjects\
 		  filename \?num_to_read=-1\?"}
 test "ObjList-ObjList::loadObjects" "normal file read with no comments" {
-	 ObjList::reset
 	 set objids [ObjList::loadObjects $::TEST_DIR/faces_file_no_comments]
 	 set num_read [llength $objids]
 	 set result "$num_read [IO::type [lindex $objids 0]]"
 	 return $result
 } {^10 Face$}
 test "ObjList-ObjList::loadObjects" "normal file read" {
-	 ObjList::reset
 	 set objids [ObjList::loadObjects $::TEST_DIR/faces_file]
 	 set num_read [llength $objids]
 	 set result "$num_read [IO::type [lindex $objids 0]]"
 	 return $result
 } {^10 Face$}
 test "ObjList-ObjList::loadObjects" "normal file read with limit on # to read" {
-	 ObjList::reset
 	 set objids [ObjList::loadObjects $::TEST_DIR/faces_file 5]
 	 set num_read [llength $objids]
 	 set result "$num_read [IO::type [lindex $objids 0]]"
 	 return $result
 } {^5 Face$}
 test "ObjList-ObjList::loadObjects" "file read with virtual constructor" {
-	 ObjList::reset
 	 set objids [ObjList::loadObjects $::TEST_DIR/nos_faces_s50_c3]
 	 return "[llength $objids] \
 				[IO::type [lindex $objids 0]] [IO::type [lindex $objids 10]]"
 } {^20 *Face *CloneFace$}
 test "ObjList-ObjList::loadObjects" "empty file read" {
-	 ObjList::reset
 	 set before_count [ObjList::count]
 	 set objids [ObjList::loadObjects $::TEST_DIR/empty_file]
 	 set num_read [llength $objids]
@@ -55,7 +50,6 @@ test "ObjList-ObjList::loadObjects" "empty file read" {
 	 return "$num_read [expr $after_count - $before_count]"
 } {^0 0$}
 test "ObjList-ObjList::loadObjects" "empty file read with limit on # to read" {
-	 ObjList::reset
 	 set before_count [ObjList::count]
 	 set objids [ObjList::loadObjects $::TEST_DIR/empty_file 5]
 	 set num_read [llength $objids]

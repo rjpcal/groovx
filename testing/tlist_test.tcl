@@ -27,20 +27,14 @@ test "TlistTcl-Tlist::loadObjidFile" "too many args" {
 } {wrong \# args: should be "Tlist::loadObjidFile\
 		  objid_file num_lines \?offset\?"}
 test "TlistTcl-Tlist::loadObjidFile" "normal read with no offset" {
-	 ObjList::reset
-	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file -1 0
 	 Tlist::count
 } {^3$} $skip_known_bug
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
-	 ObjList::reset
-	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file 2 1
 	 Tlist::count
 } {^2$} $skip_known_bug
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
-	 ObjList::reset
-	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/empty_file -1 0
 	 Tlist::stringify
 	 Tlist::count

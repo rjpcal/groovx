@@ -65,8 +65,6 @@ test "BitmapTcl-Bitmap::loadPbm" "error on junk binary file" {
 
 ### Bitmap rendering ###
 test "BitmapTcl-rendering" "normal render" {
-	 BlockList::reset
-	 Tlist::reset
 	 set ::BITMAP_TRIAL [Tlist::dealSingles $::BITMAP $::POS]
 	 clearscreen
 	 show $::BITMAP_TRIAL
@@ -197,7 +195,6 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "error" {} {^$} $no_test
 ### Bitmap::destringifyCmd ###
 test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
 	 set str1 [Bitmap::stringify $::BITMAP]
-	 ObjList::reset
 	 set ::BITMAP [IO::new GLBitmap]
 	 GLBitmap::destringify $::BITMAP $str1
 	 set str2 [Bitmap::stringify $::BITMAP]

@@ -66,6 +66,5 @@ test "FixptTcl-width" "error from non-integral number" {
     FixPt::width $::fix 1.5
 } {^FixPt::width: expected integer but got "1\.5"$}
 
-ObjList::reset
 unset fix
 

@@ -119,8 +119,7 @@ test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {
     Togl::setCurTrial -1
 } {Togl::setCurTrial: attempt to access invalid id.*in}
 test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
-	 Tlist::reset
-    Togl::setCurTrial 10000
+    Togl::setCurTrial 10000000
 } {Togl::setCurTrial: attempt to access invalid id.*in}
 
 ### Togl::loadFontCmd ###

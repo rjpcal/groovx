@@ -7,7 +7,6 @@
 ###
 ##############################################################################
 
-BlockList::reset
 set ::BLOCK [IO::new Block]
 
 source ${::TEST_DIR}/io_test.tcl
