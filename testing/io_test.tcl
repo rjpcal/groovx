@@ -40,7 +40,7 @@ proc testStringifyCmd { packagename classname item_argn {item_id -1} } {
 				$cmdname -1
 		  "} {"${cmdname}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
-				$cmdname 10000
+				$cmdname 10000000
 		  "} {"${cmdname}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
@@ -89,7 +89,7 @@ proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
 		      $cmdname -1 junk
 		  "} {"${cmdname}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
-		      $cmdname 10000 junk
+		      $cmdname 10000000 junk
 		  "} {"${cmdname}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5 junk
@@ -147,7 +147,7 @@ proc testWriteCmd { packagename classname item_argn {item_id -1} } {
 				$cmdname -1
 		  "} {"${cmdname}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
-				$cmdname 10000
+				$cmdname 10000000
 		  "} {"${cmdname}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
@@ -196,7 +196,7 @@ proc testReadCmd { packagename classname item_argn {item_id -1} } {
 		      $readcmd -1 junk
 		  "} {"${readcmd}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
-		      $readcmd 10000 junk
+		      $readcmd 10000000 junk
 		  "} {"${readcmd}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$readcmd 1.5 junk
