@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Tue Apr  2 14:19:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,12 +31,6 @@ struct Tcl_Obj;
 
 class Toglet_Impl;
 
-#ifndef _XLIB_H_
-struct _XDisplay;
-typedef struct _XDisplay Display;
-typedef unsigned long Window;
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Toglet class definition
@@ -47,9 +41,9 @@ class Toglet : public Tcl::TkWidget
 {
 protected:
   Toglet(Tcl_Interp* interp,
-             int config_argc=0, char** config_argv=0,
-             bool pack=true,
-             double dist=30.0, double unit_angle=2.05);
+         int config_argc=0, char** config_argv=0,
+         bool pack=true,
+         double dist=30.0, double unit_angle=2.05);
 
 public:
   // types
@@ -76,18 +70,9 @@ public:
   Tcl_Interp* getInterp() const;
   int getWidth() const;
   const char* pathname() const;
-  Color queryColor(unsigned int color_index) const
-  {
-    Color col;
-    queryColor(color_index, col);
-    return col;
-  }
+  Color queryColor(unsigned int color_index) const;
   void queryColor(unsigned int color_index, Color& color) const;
   bool usingFixedScale() const;
-
-  Display* getX11Display() const;
-  int getX11ScreenNumber() const;
-  Window getX11Window() const;
 
   virtual Gfx::Canvas& getCanvas();
 

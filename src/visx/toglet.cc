@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jan 30 16:08:43 2002
+// written: Tue Apr  2 14:18:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -242,6 +242,13 @@ DOTRACE("Toglet::pathname");
   return itsTogl->pathname();
 }
 
+Toglet::Color Toglet::queryColor(unsigned int color_index) const
+{
+  Color col;
+  queryColor(color_index, col);
+  return col;
+}
+
 void Toglet::queryColor(unsigned int color_index, Color& color) const
 {
 DOTRACE("Toglet::queryColor");
@@ -270,24 +277,6 @@ bool Toglet::usingFixedScale() const
 {
 DOTRACE("Toglet::usingFixedScale");
   return itsFixedScaleFlag;
-}
-
-Display* Toglet::getX11Display() const
-{
-DOTRACE("getX11Display");
-  return itsTogl->display();
-}
-
-int Toglet::getX11ScreenNumber() const
-{
-DOTRACE("getX11ScreenNumber");
-  return itsTogl->screenNumber();
-}
-
-Window Toglet::getX11Window() const
-{
-DOTRACE("getX11Window");
-  return itsTogl->windowId();
 }
 
 Gfx::Canvas& Toglet::getCanvas()
