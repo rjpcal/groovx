@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Thu Jul  5 16:26:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
+#include "util/pointers.h"
 #include "util/serialport.h"
 
 #include <tk.h>
@@ -119,22 +120,20 @@ public:
            "?serial_device = /dev/tty0p0", 1, 2),
     itsEventSource(0)
     {}
-  virtual ~SerialRhCmd()
-    { delete itsEventSource; }
 
 protected:
   virtual void invoke()
     {
       const char* device = objc() >= 2 ? getCstringFromArg(1) : "/dev/tty0p0";
 
-      itsEventSource = new SerialEventSource(interp(), device);
+      itsEventSource.reset(new SerialEventSource(interp(), device));
     }
 
 private:
   SerialRhCmd(const SerialRhCmd&);
   SerialRhCmd& operator=(const SerialRhCmd&);
 
-  SerialEventSource* itsEventSource;
+  shared_ptr<SerialEventSource> itsEventSource;
 };
 
 class SerialRhTcl::SerialRhPkg : public Tcl::TclPkg {
