@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Tue Jun 12 17:02:27 2001
+// written: Wed Jun 13 10:37:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ DOTRACE("Util::RefCounted::isVolatile");
   return false;
 }
 
-Util::RefCounts::Count Util::RefCounted::refCount() const {
+int Util::RefCounted::refCount() const {
 DOTRACE("Util::RefCounted::refCount");
   return itsRefCounts->strongCount();
 }

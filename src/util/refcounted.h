@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Tue Jun 12 16:40:51 2001
+// written: Wed Jun 13 10:37:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ public:
   virtual bool isVolatile() const;
 
   /// Returns the object's (strong) reference count.
-  RefCounts::Count refCount() const;
+  int refCount() const;
 
   /// Returns the object's strong+weak reference counts.
   RefCounts* refCounts() const;
