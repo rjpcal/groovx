@@ -4,44 +4,44 @@
 
 proc getPkgNameFromPath { path } {
 
-	 set code [regexp {pkgs/([a-z]*)/} $path fullmatch pkgname]
+     set code [regexp {pkgs/([a-z]*)/} $path fullmatch pkgname]
 
-	 if { $code == 0 } {
-		  error "couldn't extract package name from path '$path'"
-	 }
+     if { $code == 0 } {
+          error "couldn't extract package name from path '$path'"
+     }
 
-	 return $pkgname
+     return $pkgname
 }
 
 proc extractPkgReqs { contents } {
-	 set lines [regexp -line -inline -all {include "pkgs/.*/.*"} $contents]
+     set lines [regexp -line -inline -all {include "pkgs/.*/.*"} $contents]
 
-	 set pkgs [list]
+     set pkgs [list]
 
-	 foreach line $lines {
-		  lappend pkgs [string totitle [getPkgNameFromPath $line]]
-	 }
+     foreach line $lines {
+          lappend pkgs [string totitle [getPkgNameFromPath $line]]
+     }
 
-	 return $pkgs
+     return $pkgs
 }
 
 proc extractPkgRevision { contents } {
 
-	 set code [regexp {Revision: ([0-9\.]*)} $contents fullmatch revision]
+     set code [regexp {Revision: ([0-9\.]*)} $contents fullmatch revision]
 
-	 return $revision
+     return $revision
 }
 
 proc getFileContents { filename } {
-	 set f [open $filename r]
-	 set contents [read $f]
-	 close $f
-	 return $contents
+     set f [open $filename r]
+     set contents [read $f]
+     close $f
+     return $contents
 }
 
 proc print { chan txt } {
-#	 puts -nonewline $txt
-	 puts -nonewline $chan $txt
+#     puts -nonewline $txt
+     puts -nonewline $chan $txt
 }
 
 
@@ -61,51 +61,51 @@ set objdir obj/$::env(ARCH)/pkgs
 cd $::env(HOME)/sorcery/grsh/src/pkgs
 
 foreach dir [glob \[a-z\]*/] {
-	 set ccfiles [glob ${dir}*.cc]
+     set ccfiles [glob ${dir}*.cc]
 
-	 set pkg [string trimright $dir /]
+     set pkg [string trimright $dir /]
 
-	 set shlib $libdir/${pkg}.so
+     set shlib $libdir/${pkg}.so
 
-	 regsub -all {\.cc} $ccfiles .do files
+     regsub -all {\.cc} $ccfiles .do files
 
-	 set objfiles [list]
+     set objfiles [list]
 
-	 print $::depfile "${shlib}:"
+     print $::depfile "${shlib}:"
 
-	 foreach file $files {
-		  lappend objfiles ${::objdir}/$file
+     foreach file $files {
+          lappend objfiles ${::objdir}/$file
 
-		  print $::depfile " \\\n\t${::objdir}/$file"
-	 }
+          print $::depfile " \\\n\t${::objdir}/$file"
+     }
 
-	 print $::depfile "\n\n"
+     print $::depfile "\n\n"
 
-	 set ccfiles [glob ${dir}*.cc]
-	 set code [catch {eval exec grep -l _Init $ccfiles} initfile]
+     set ccfiles [glob ${dir}*.cc]
+     set code [catch {eval exec grep -l _Init $ccfiles} initfile]
 
-	 if { $code == 0 } {
+     if { $code == 0 } {
 
-		  if { [llength $initfile] > 1 } {
-				error "package $pkg has more than one Tcl_PkgInit: $initfile"
-		  }
+          if { [llength $initfile] > 1 } {
+                error "package $pkg has more than one Tcl_PkgInit: $initfile"
+          }
 
-		  set pkgname [string totitle $pkg]
+          set pkgname [string totitle $pkg]
 
-		  set contents [getFileContents $initfile]
+          set contents [getFileContents $initfile]
 
-		  set revision [extractPkgRevision $contents]
+          set revision [extractPkgRevision $contents]
 
-		  set pkgreqs [extractPkgReqs $contents]
+          set pkgreqs [extractPkgReqs $contents]
 
-		  print $::indexfile "package ifneeded $pkgname $revision \{\n" 
+          print $::indexfile "package ifneeded $pkgname $revision \{\n" 
 
-		  foreach req $pkgreqs {
-				print $::indexfile "\tpackage require $req\n"
-		  } 
-		  
-		  print $::indexfile "\tload $shlib\n\}\n"
-	 }
+          foreach req $pkgreqs {
+                print $::indexfile "\tpackage require $req\n"
+          } 
+          
+          print $::indexfile "\tload $shlib\n\}\n"
+     }
 }
 
 close $depfile
