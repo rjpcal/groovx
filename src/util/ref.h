@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sat May 19 11:10:57 2001
+// written: Sat May 19 15:24:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,7 +124,12 @@ public:
 	 if (itsHandle.isValid()) itsId = itsHandle->id();
   }
 
-  MaybeIdItem(const IdItem<T> other) :
+  template <class U>
+  MaybeIdItem(const MaybeIdItem<U>& other) :
+	 itsHandle(other.handle()), itsId(other.id()) {}
+
+  template <class U>
+  MaybeIdItem(const IdItem<U>& other) :
 	 itsHandle(other.handle()), itsId(other.id()) {}
 
   // Default destructor, copy constructor, operator=() are fine
@@ -165,7 +170,7 @@ public:
 
   bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
 
-  NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
+  NullablePtrHandle<T> handle() const { attemptRefresh(); return itsHandle; }
   IO::UID id() const { return itsId; }
 };
 
