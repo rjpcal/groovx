@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Wed Sep 25 18:56:51 2002
+// written: Tue Dec 10 12:20:38 2002
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -20,11 +20,9 @@
 #define TCLCODE_H_DEFINED
 
 #include "tcl/tclobjptr.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"
-
-struct Tcl_Obj;
-struct Tcl_Interp;
 
 namespace Util
 {
@@ -44,14 +42,6 @@ class Tcl::Code
 public:
   class EvalError;
 
-  /// Specify what happens in case of an error during invoke()
-  enum ErrorHandlingMode
-  {
-    IGNORE_ERRORS,     // nothing is done except to return false from invoke()
-    THROW_EXCEPTION,   // an EvalError is thrown
-    BACKGROUND_ERROR   // Tcl_BackgroundError() is called
-  };
-
   Code();
 
   Code(const Tcl::ObjPtr& cmd, ErrorHandlingMode mode = IGNORE_ERRORS);
@@ -59,15 +49,11 @@ public:
   Code(const Tcl::ObjPtr& cmd, Util::ErrorHandler* errHandler);
 
   /// Returns true on success, false on failure.
-  bool invoke(Tcl_Interp* interp);
-
-  /// Returns true on success, false on failure.
   bool invoke(const Tcl::Interp& interp);
 
 private:
   Tcl::ObjPtr itsCodeObj;
   ErrorHandlingMode itsErrorMode;
-  int itsFlags;
   borrowed_ptr<Util::ErrorHandler> itsErrHandler;
 };
 

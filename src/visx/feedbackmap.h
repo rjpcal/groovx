@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Sun Nov  3 09:10:45 2002
+// written: Tue Dec 10 12:11:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ private:
   public:
     Item(Tcl_Obj* cond, Tcl_Obj* res) :
       itsCondition(cond),
-      itsResultCmd(res, Tcl::Code::THROW_EXCEPTION)
+      itsResultCmd(res, Tcl::THROW_EXCEPTION)
     {}
 
     bool invokeIfTrue(const Tcl::Interp& safeInterp)

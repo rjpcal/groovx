@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Dec 10 11:53:11 2002
+// written: Tue Dec 10 12:11:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -375,7 +375,7 @@ DOTRACE("ExptDriver::pause");
   (Tcl::toTcl("tk_messageBox -default ok -icon info "
               "-title \"Pause\" -type ok "
               "-message \"Experiment paused. Click OK to continue.\";\n"),
-   Tcl::Code::THROW_EXCEPTION);
+   Tcl::THROW_EXCEPTION);
 
   vxHalt();
 

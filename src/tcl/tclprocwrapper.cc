@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:47:10 2002
-// written: Sun Nov  3 09:10:46 2002
+// written: Tue Dec 10 12:15:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ void Tcl::ProcWrapper::invoke(const fstring& args) const
 
   fstring cmd(itsName, " ", args);
 
-  Tcl::Code code(Tcl::toTcl(cmd), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code code(Tcl::toTcl(cmd), Tcl::THROW_EXCEPTION);
 
   // might throw if Tcl code raises an error:
   code.invoke(itsInterp);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Sun Nov  3 09:10:46 2002
+// written: Tue Dec 10 12:13:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,19 @@ class fstring;
 namespace Tcl
 {
   class Interp;
+
+  /// Specify what happens in case of an error during invoke()
+  enum ErrorHandlingMode
+  {
+    IGNORE_ERRORS,     // nothing is done except to return false from invoke()
+    THROW_EXCEPTION,   // an EvalError is thrown
+    BACKGROUND_ERROR   // Tcl_BackgroundError() is called
+  };
+}
+
+namespace Util
+{
+  class ErrorHandler;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -45,16 +58,18 @@ public:
   Interp(const Interp& other);
   ~Interp();
 
+  // Interpreter
   bool hasInterp() const throw() { return itsInterp != 0; }
   Tcl_Interp* intp() const;
-
+  bool interpDeleted() const;
   void forgetInterp();
 
   // Expressions
   bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
 
-  // Interpreter
-  bool interpDeleted() const;
+  // Evaluating code
+  bool invoke(const Tcl::ObjPtr& code, ErrorHandlingMode mode);
+  bool invoke(const Tcl::ObjPtr& code, Util::ErrorHandler* handler);
 
   // Result
   void resetResult() const;

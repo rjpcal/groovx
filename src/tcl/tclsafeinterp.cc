@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Sat Dec  7 18:05:37 2002
+// written: Tue Dec 10 12:19:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,12 +70,25 @@ Tcl::Interp::~Interp()
                             static_cast<ClientData>(this));
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::Interp -- Interpreter
+//
+///////////////////////////////////////////////////////////////////////
+
 Tcl_Interp* Tcl::Interp::intp() const
 {
   if (itsInterp == 0)
     throw Tcl::TclError("Tcl::Interp doesn't have a valid interpreter");
 
   return itsInterp;
+}
+
+bool Tcl::Interp::interpDeleted() const
+{
+DOTRACE("Tcl::Interp::interpDeleted");
+
+  return bool(Tcl_InterpDeleted(intp()));
 }
 
 void Tcl::Interp::forgetInterp()
@@ -105,15 +118,62 @@ DOTRACE("Tcl::Interp::evalBooleanExpr");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Interp -- Interpreter
+// Tcl::Interp -- Evaluating code
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::Interp::interpDeleted() const
+bool Tcl::Interp::invoke(const Tcl::ObjPtr& code, Tcl::ErrorHandlingMode mode)
 {
-DOTRACE("Tcl::Interp::interpDeleted");
+DOTRACE("Tcl::Interp::invoke");
 
-  return bool(Tcl_InterpDeleted(intp()));
+  if (!hasInterp())
+    throw TclError("Tcl_Interp* was null in Tcl::Interp::invoke");
+
+  if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
+    return true;
+
+  // else, there was some error during the Tcl eval...
+
+  if (IGNORE_ERRORS != mode)
+    {
+      fstring msg("error while evaluating ", Tcl_GetString(code.obj()),
+                  ":\n", getResult<const char*>());
+
+      if (THROW_EXCEPTION == mode)
+        {
+          throw Tcl::TclError(msg);
+        }
+      else if (BACKGROUND_ERROR == mode)
+        {
+          appendResult(msg.c_str());
+          backgroundError();
+        }
+    }
+
+  return false; // to indicate error
+}
+
+bool Tcl::Interp::invoke(const Tcl::ObjPtr& code, Util::ErrorHandler* handler)
+{
+DOTRACE("Tcl::Interp::invoke");
+
+  if (!hasInterp())
+    throw TclError("Tcl_Interp* was null in Tcl::Interp::invoke");
+
+  if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
+    return true;
+
+  // else, there was some error during the Tcl eval...
+
+  if (handler != 0)
+    {
+      fstring msg("error while evaluating ", Tcl_GetString(code.obj()),
+                  ":\n", getResult<const char*>());
+
+      handler->handleMsg(msg.c_str());
+    }
+
+  return false; // to indicate error
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -258,18 +318,13 @@ DOTRACE("Tcl::Interp::getProcBody");
       resetResult();
 
       Tcl::Code cmd(Tcl::toTcl(fstring("info body ", proc_name)),
-                    Tcl::Code::IGNORE_ERRORS);
+                    Tcl::THROW_EXCEPTION);
 
       if (cmd.invoke(*this))
         {
           fstring result = getResult<const char*>();
           resetResult();
           return result;
-        }
-      else
-        {
-          throw Tcl::TclError(fstring("couldn't get the proc body for '",
-                                      proc_name, "'"));
         }
     }
 
@@ -293,7 +348,7 @@ DOTRACE("Tcl::Interp::createProc");
     proc_cmd_str.append(args);
   proc_cmd_str.append("} {", body, "} }");
 
-  Tcl::Code proc_cmd(Tcl::toTcl(proc_cmd_str), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code proc_cmd(Tcl::toTcl(proc_cmd_str), Tcl::THROW_EXCEPTION);
   proc_cmd.invoke(*this);
 }
 
@@ -313,7 +368,7 @@ DOTRACE("Tcl::Interp::deleteProc");
   // by renaming to the empty string "", we delete the Tcl proc
   cmd_str.append("::", proc_name, " \"\"");
 
-  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::THROW_EXCEPTION);
   cmd.invoke(*this);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Fri Nov 22 16:16:00 2002
+// written: Tue Dec 10 12:15:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace
   {
     fstring cmd("namespace eval ", from, " { namespace export * }");
 
-    Tcl::Code code(Tcl::toTcl(cmd), Tcl::Code::THROW_EXCEPTION);
+    Tcl::Code code(Tcl::toTcl(cmd), Tcl::THROW_EXCEPTION);
     code.invoke(interp);
   }
 
@@ -207,7 +207,7 @@ namespace
     fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::* }");
 
-    Tcl::Code code(Tcl::toTcl(cmd), Tcl::Code::THROW_EXCEPTION);
+    Tcl::Code code(Tcl::toTcl(cmd), Tcl::THROW_EXCEPTION);
     code.invoke(interp);
   }
 }
@@ -265,7 +265,7 @@ void Tcl::PkgBase::eval(const char* script)
 {
 DOTRACE("Tcl::PkgBase::eval");
 
-  Tcl::Code code(Tcl::toTcl(script), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code code(Tcl::toTcl(script), Tcl::THROW_EXCEPTION);
   code.invoke(rep->interp);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 14 16:24:33 2002
-// written: Fri Nov 22 17:17:23 2002
+// written: Tue Dec 10 12:12:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ namespace
         cmd_str.append(obj.id());
         cmd_str.append(init_args[i]);
         cmd_str.append(init_args[i+1]);
-        Tcl::Code cmd(cmd_str.asObj(), Tcl::Code::THROW_EXCEPTION);
+        Tcl::Code cmd(cmd_str.asObj(), Tcl::THROW_EXCEPTION);
         cmd.invoke(interp);
       }
 

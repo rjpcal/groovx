@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Mon Nov 25 19:04:41 2002
+// written: Tue Dec 10 12:12:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -320,7 +320,7 @@ DOTRACE("Tcl::TkWidget::pack");
   fstring pack_cmd_str = "pack ";
   pack_cmd_str.append( pathname() );
   pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
-  Tcl::Code pack_cmd(Tcl::toTcl(pack_cmd_str), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code pack_cmd(Tcl::toTcl(pack_cmd_str), Tcl::THROW_EXCEPTION);
   pack_cmd.invoke(rep->interp);
 }
 
@@ -332,7 +332,7 @@ DOTRACE("Tcl::TkWidget::bind");
   cmd_str.append( event_sequence, " ");
   cmd_str.append("{ ", script, " }");
 
-  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::THROW_EXCEPTION);
 
   cmd.invoke(rep->interp);
 }
@@ -344,7 +344,7 @@ DOTRACE("Tcl::TkWidget::takeFocus");
   fstring cmd_str = "focus -force ";
   cmd_str.append( pathname() );
 
-  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::THROW_EXCEPTION);
 
   cmd.invoke(rep->interp);
 }
