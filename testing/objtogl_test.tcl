@@ -11,8 +11,6 @@ package require Toglet
 package require Face
 package require Tlist
 
-set PACKAGE ObjTogl
-
 ### ObjTogl::InitCmd ###
 test "ObjTogl-Togl::Init" "test widget create" {
 	 if { ![Togl::inited] } { Togl::init; update }
@@ -99,22 +97,22 @@ test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
 } {Toglet::setCurTrial: attempted to access invalid object.*}
 
 ### Togl::loadFontCmd ###
-test "$PACKAGE-Togl::loadFont" "too many args" {
+test "ObjTogl-Togl::loadFont" "too many args" {
 	 Togl::loadFont fixed junk
 } {^wrong \# args: should be}
-test "$PACKAGE-Togl::loadDefaultFont" "normal use" {
+test "ObjTogl-Togl::loadDefaultFont" "normal use" {
 	 set code [catch {Togl::loadDefaultFont} msg]
 	 set res "$code $msg"
 } {^0 $}
-test "$PACKAGE-Togl::loadFont" "error" {
+test "ObjTogl-Togl::loadFont" "error" {
 	 Togl::loadFont junk
 } {^Toglet::loadFont: unable to load font}
 
 ### Togl::loadFontiCmd ###
-test "$PACKAGE-Togl::loadFonti" "too many args" {
+test "ObjTogl-Togl::loadFonti" "too many args" {
 	 Togl::loadFonti 3 junk
 } {^wrong \# args: should be}
-test "$PACKAGE-Togl::loadFonti" "normal use" {
+test "ObjTogl-Togl::loadFonti" "normal use" {
 	 set code [catch {Togl::loadFonti 3} msg]
 	 set res "$code $msg"
 } {^0 $}
@@ -240,13 +238,3 @@ test "ObjTogl-setViewingDistance" "err1" {
 test "ObjTogl-setViewingDistance" "err2" {
     Togl::setViewingDistance -1
 } {^Toglet::setViewingDistance: .*$}
-
-### toglDestroyCallback ###
-test "ObjTogl-toglDestroyCallback" "test with destroy widget" {
-	 togl .togl2 -rgba false
-	 catch {destroy .togl2}
-} {^0$} $no_test
-
-
-### cleanup
-unset PACKAGE
