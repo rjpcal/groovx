@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Dec  7 13:13:07 1999
+// written: Tue Jan 11 15:34:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,6 +125,8 @@ public:
   ///
   virtual void edResetExpt();
 
+  ///
+  virtual int edGetCurrentTrial() const;
   ///
   virtual void edSetCurrentTrial(int trial);
   //@}
