@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Wed Nov 13 10:13:19 2002
+// written: Wed Nov 13 10:21:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ void GLCacheNode::draw(Gfx::Canvas& canvas) const
     }
 }
 
-Gfx::Rect<double> GLCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Box<double> GLCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
   return child()->gnodeBoundingBox(canvas);
 }

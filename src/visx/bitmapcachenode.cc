@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Nov 13 10:13:09 2002
+// written: Wed Nov 13 10:25:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
       return;
     }
 
-  Gfx::Rect<double> bmapbox = child()->gnodeBoundingBox(canvas);
+  Gfx::Rect<double> bmapbox = child()->getBoundingBox(canvas);
 
   Gfx::Rect<int> screen_rect = canvas.screenFromWorld(bmapbox);
 
@@ -157,7 +157,7 @@ DOTRACE("BitmapCacheNode::draw");
     }
 }
 
-Gfx::Rect<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Box<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapCacheNode::gnodeBoundingBox");
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Wed Nov 13 10:13:50 2002
+// written: Wed Nov 13 10:24:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ public:
 
   void setWidth(Gfx::Canvas& canvas, double new_width)
   {
-    Gfx::Rect<double> native_bbox = child()->gnodeBoundingBox(canvas);
+    Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
 
     double current_width = native_bbox.width() * itsWidthFactor;
 
@@ -57,7 +57,7 @@ public:
 
   void setHeight(Gfx::Canvas& canvas, double new_height)
   {
-    Gfx::Rect<double> native_bbox = child()->gnodeBoundingBox(canvas);
+    Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
 
     double current_height = native_bbox.height() * itsHeightFactor;
 
@@ -109,13 +109,13 @@ public:
 
   double scaledWidth(Gfx::Canvas& canvas)
   {
-    Gfx::Rect<double> native_bbox = child()->gnodeBoundingBox(canvas);
+    Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
     return native_bbox.width() * itsWidthFactor;
   }
 
   double scaledHeight(Gfx::Canvas& canvas)
   {
-    Gfx::Rect<double> native_bbox = child()->gnodeBoundingBox(canvas);
+    Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
     return native_bbox.height() * itsHeightFactor;
   }
 
@@ -126,7 +126,7 @@ public:
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
-  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
+  virtual Gfx::Box<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
 

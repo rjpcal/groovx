@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Wed Nov 13 10:13:40 2002
+// written: Wed Nov 13 10:21:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ public:
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
-  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
+  virtual Gfx::Box<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
   bool isItVisible;

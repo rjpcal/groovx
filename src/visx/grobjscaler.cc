@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Wed Nov 13 10:13:48 2002
+// written: Wed Nov 13 10:35:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,11 +46,11 @@ void GrObjScaler::draw(Gfx::Canvas& canvas) const
   child()->draw(canvas);
 }
 
-Gfx::Rect<double> GrObjScaler::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Box<double> GrObjScaler::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
-  Gfx::Rect<double> bounds = child()->gnodeBoundingBox(canvas);
+  Gfx::Box<double> bounds = child()->gnodeBoundingBox(canvas);
 
-  bounds.scale(Gfx::Vec2<double>(itsWidthFactor, itsHeightFactor));
+  bounds.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
 
   return bounds;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 10:13:24 2002
+// written: Wed Nov 13 10:26:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -147,13 +147,7 @@ void GrObj::getBoundingCube(Gfx::Box<double>& cube,
 {
 DOTRACE("GrObj::getBoundingCube");
 
-  Gfx::Rect<double> rect = cube.rect();
-
-  rect.unionize(itsImpl->itsTopNode->gnodeBoundingBox(canvas));
-
-  cube.setXXYYZZ(rect.left(), rect.right(),
-                 rect.bottom(), rect.top(),
-                 cube.z0(), cube.z1());
+  cube.unionize(itsImpl->itsTopNode->gnodeBoundingBox(canvas));
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const

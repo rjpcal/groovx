@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Wed Nov 13 10:13:29 2002
+// written: Wed Nov 13 10:26:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,14 +44,14 @@ void GrObjAligner::draw(Gfx::Canvas& canvas) const
 {
   Gfx::MatrixSaver state(canvas);
 
-  doAlignment(canvas, child()->gnodeBoundingBox(canvas));
+  doAlignment(canvas, child()->getBoundingBox(canvas));
 
   child()->draw(canvas);
 }
 
-Gfx::Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Box<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
-  Gfx::Rect<double> bounds = child()->gnodeBoundingBox(canvas);
+  Gfx::Rect<double> bounds = child()->getBoundingBox(canvas);
 
   Gfx::Vec2<double> center = getCenter(bounds);
 
