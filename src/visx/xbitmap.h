@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Tue Oct  3 16:30:33 2000
+// written: Thu Oct 19 15:11:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,15 +43,13 @@ public:
   /// Virtual destructor.
   virtual ~XBitmap();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
 private:
   XBitmap(const XBitmap&);
   XBitmap& operator=(const XBitmap&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   XBmapRenderer* itsRenderer;
 };

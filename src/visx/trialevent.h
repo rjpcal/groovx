@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Sep 29 14:36:05 2000
+// written: Thu Oct 19 15:10:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,9 +92,6 @@ protected:
 private:
   static void dummyInvoke(ClientData clientData);
   void invokeTemplate();
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);

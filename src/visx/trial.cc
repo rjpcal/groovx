@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct 16 19:21:00 2000
+// written: Thu Oct 19 15:07:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 #include "thlist.h"
 #include "timinghdlr.h"
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
@@ -94,9 +93,6 @@ private:
 
   GWT::Canvas* itsCanvas;
   Block* itsBlock;
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   bool assertIdsOrHalt()
 	 {
@@ -237,48 +233,10 @@ DOTRACE("Trial::IdPair::scanFrom");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Trial::Impl::legacySrlz");
-
-  IO::WriteUtils::writeValueObjSeq(lwriter, "idPairs",
-										 itsIdPairs.begin(), itsIdPairs.end());
-
-  IO::WriteUtils::writeValueObjSeq(lwriter, "responses",
-										 itsResponses.begin(), itsResponses.end());
-
-  lwriter->writeValue("type", itsType);
-
-  lwriter->writeValue("rhId", itsRhId);
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("thId", itsThId);
-}
-
-void Trial::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Trial::Impl::legacyDesrlz");
-  itsIdPairs.clear();
-  IO::ReadUtils::template readValueObjSeq<IdPair>(lreader, "idPairs",
-									  std::back_inserter(itsIdPairs));
-
-  itsResponses.clear();
-  IO::ReadUtils::template readValueObjSeq<Response>(lreader, "responses",
-									  std::back_inserter(itsResponses));
-
-  lreader->readValue("type", itsType);
-
-  lreader->readValue("rhId", itsRhId);
-  lreader->readValue("thId", itsThId);
-}
-
 void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
 
   itsState = INACTIVE;
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   itsIdPairs.clear();
   IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
@@ -300,12 +258,6 @@ DOTRACE("Trial::Impl::readFrom");
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
 										 itsIdPairs.begin(), itsIdPairs.end());
