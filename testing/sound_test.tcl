@@ -23,7 +23,6 @@ test "SoundTcl-Sound::Sound" "too many args" {
 	 Sound::Sound filename junk
 } {^wrong \# args: should be "Sound::Sound filename"$}
 test "SoundTcl-Sound::Sound" "normal sound create" {
-	 puts $::TEST_DIR/sound1.au
 	 set ::TEST_SOUND [Sound::Sound $::TEST_DIR/sound1.au]
 	 expr {$::TEST_SOUND >= 0}
 } {^1$}
