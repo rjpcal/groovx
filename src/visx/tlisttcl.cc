@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Oct 13 11:20:53 1999
+// written: Wed Oct 20 18:14:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,11 +230,13 @@ protected:
     int trialid = getIntFromArg(1);
 	 if ( trialid < 0 ) { throw TclError(bad_trial_msg); }
 
-	 ObjId objid = getIntFromArg(2);
-	 if ( !objid ) { throw TclError(bad_objid_msg); }
+	 int objid = getIntFromArg(2);
+	 if ( !ObjList::theObjList().isValidId(objid) )
+		{ throw TclError(bad_objid_msg); }
 
-	 PosId posid = getIntFromArg(3);
-	 if ( !posid ) { throw TclError(bad_posid_msg); }
+	 int posid = getIntFromArg(3);
+	 if ( !PosList::thePosList().isValidId(posid) )
+		{ throw TclError(bad_posid_msg); }
 
 	 if ( !theTlist.isValidId(trialid) ) {
 		theTlist.insertAt(trialid, new Trial);
@@ -263,9 +265,9 @@ public:
 	 TclCmd(interp, cmd_name, "posid", 2, 2) {}
 protected:
   virtual void invoke() {
-	 int id = getIntFromArg(1);
-	 PosId posid(id);
-	 if ( !posid ) { throw TclError(bad_posid_msg); }
+	 int posid = getIntFromArg(1);
+	 if ( !PosList::thePosList().isValidId(posid) )
+		{ throw TclError(bad_posid_msg); }
 
 	 vector<int> vec;
 	 const ObjList& olist = ObjList::theObjList();
@@ -307,11 +309,12 @@ public:
 	 TclCmd(interp, cmd_name, "posid1 posid2", 3, 3) {}
 protected:
   virtual void invoke() {
-	 int id1 = getIntFromArg(1);
-	 int id2 = getIntFromArg(2);
+	 int posid1 = getIntFromArg(1);
+	 int posid2 = getIntFromArg(2);
 
-	 PosId posid1(id1), posid2(id2);
-	 if ( !posid1 || !posid2 ) { throw TclError(bad_posid_msg); }
+	 if ( !PosList::thePosList().isValidId(posid1) ||
+			!PosList::thePosList().isValidId(posid2) )
+		{ throw TclError(bad_posid_msg); }
 
 	 vector<int> vec;
 	 ObjList::theObjList().getValidIds(vec);
@@ -358,10 +361,11 @@ public:
 	 TclCmd(interp, cmd_name, "posid1 posid2 posid3", 4, 4) {}
 protected:
   virtual void invoke() {
-	 int id[3] = { getIntFromArg(1), getIntFromArg(2), getIntFromArg(3) };	 
-	 PosId posid[3] = { id[0], id[1], id[2] };
+	 int posid[3] = { getIntFromArg(1), getIntFromArg(2), getIntFromArg(3) };	 
 
-	 if (!posid[0] || !posid[1] || !posid[2] ) { 
+	 if ( !PosList::thePosList().isValidId(posid[0]) ||
+			!PosList::thePosList().isValidId(posid[1]) ||
+			!PosList::thePosList().isValidId(posid[2]) ) { 
 		throw TclError(bad_posid_msg);
 	 }
 
