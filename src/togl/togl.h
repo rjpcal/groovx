@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Sep 25 18:57:43 2002
+// written: Sat Nov  9 20:41:50 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,9 +27,6 @@
 #include "visx/tkwidget.h"
 
 struct Tcl_Interp;
-struct Tcl_Obj;
-
-typedef struct Tk_Window_ *Tk_Window;
 
 namespace Gfx
 {
