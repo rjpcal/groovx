@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Feb 17 19:51:31 2000
+// written: Fri Feb 18 08:31:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,9 +24,9 @@
 #include "writer.h"
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_DEBUG
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -430,11 +430,12 @@ DOTRACE("Fish::grRender");
   for (int i = 0; i < 4; ++i) {
 
 	 int totcoefs = 3*(itsFishParts[i].itsCoefs[0].size());
+
 	 vector<GLfloat> coefs(totcoefs);
 
 	 {
 		for (size_t j = 0; j < itsFishParts[i].itsCoefs[0].size(); ++j) {
-		  for (int k = 0; k < 2; ++k) {
+		  for (int k = 0; k < 2; ++k) {			
 			 coefs.at(3*j+k) = (GLfloat) itsFishParts[i].itsCoefs[k][j];
 		  }
 		  coefs.at(3*j+2) = (GLfloat) 0.0;
