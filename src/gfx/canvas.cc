@@ -58,27 +58,6 @@ namespace
     vec3d pt2;
     vec3d pt3;
   };
-
-  Nub::SoftRef<Gfx::Canvas> appCanvas;
-}
-
-void Gfx::Canvas::setCurrent(Nub::SoftRef<Gfx::Canvas> canvas)
-{
-DOTRACE("Gfx::Canvas::setCurrent");
-
-  ASSERT(canvas.isValid());
-
-  appCanvas = canvas;
-}
-
-Nub::SoftRef<Gfx::Canvas> Gfx::Canvas::current()
-{
-DOTRACE("Gfx::Canvas::current");
-
-  if (!appCanvas.isValid())
-    throw rutz::error("no valid current canvas", SRC_POS);
-
-  return appCanvas;
 }
 
 Gfx::Canvas::~Canvas() throw() {}

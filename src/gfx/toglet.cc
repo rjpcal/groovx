@@ -275,7 +275,6 @@ void Toglet::makeCurrent() const
           // simulate single buffering.
           rep->canvas->drawBufferFront();
         }
-      Gfx::Canvas::setCurrent(rep->canvas);
       theCurrentToglet = Nub::SoftRef<Toglet>(const_cast<Toglet*>(this));
     }
 }

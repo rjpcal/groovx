@@ -77,13 +77,6 @@ namespace Gfx
 class Canvas : public virtual Nub::Object
 {
 public:
-  /// Set the current Canvas.
-  static void setCurrent(Nub::SoftRef<Gfx::Canvas> canvas);
-
-  /// Get the current Canvas.
-  static Nub::SoftRef<Gfx::Canvas> current();
-
-
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Canvas() throw();
 

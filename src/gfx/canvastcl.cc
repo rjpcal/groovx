@@ -96,7 +96,6 @@ DOTRACE("Canvas_Init");
 
   pkg->defGetter("worldViewport", &Gfx::Canvas::getWorldViewport, SRC_POS);
 
-  pkg->def("current", "", &Gfx::Canvas::current, SRC_POS);
   pkg->def("throwIfError", "",
            bind_last(bind_last(mem_func(&Gfx::Canvas::throwIfError), SRC_POS), ""),
            SRC_POS);

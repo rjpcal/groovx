@@ -72,6 +72,11 @@ namespace
         Toglet::getCurrent()->setVisibility(false);
       }
   }
+
+  Nub::SoftRef<Gfx::Canvas> currentCanvas()
+  {
+    return Toglet::getCurrent()->getCanvas();
+  }
 }
 
 extern "C"
@@ -89,6 +94,9 @@ DOTRACE("Toglet_Init");
   Nub::ObjFactory::theOne().register_creator( &Toglet::make );
   Nub::ObjFactory::theOne().register_creator( &Toglet::makeToplevel,
                                               "TopToglet" );
+
+  pkg->def( "::tog", 0, &Toglet::getCurrent, SRC_POS );
+  pkg->def( "::cv", 0, &currentCanvas, SRC_POS );
 
   pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
   pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );
