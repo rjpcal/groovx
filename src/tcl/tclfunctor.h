@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Jul 13 15:03:39 2001
+// written: Fri Jul 13 15:27:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,6 +78,18 @@ namespace Tcl
     typedef P3 Arg3_t;
     typedef P4 Arg4_t;
     typedef P5 Arg5_t;
+  };
+
+  template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
+  struct FuncTraits<R (*)(P1, P2, P3, P4, P5, P6)>
+  {
+    enum { numArgs = 6 };
+    typedef P1 Arg1_t;
+    typedef P2 Arg2_t;
+    typedef P3 Arg3_t;
+    typedef P4 Arg4_t;
+    typedef P5 Arg5_t;
+    typedef P6 Arg6_t;
   };
 
 ///////////////////////////////////////////////////////////////////////
@@ -332,6 +344,55 @@ namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 //
+// six arguments -- Functor6
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class Func>
+  class Functor6 {
+  public:
+    Functor6<R, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      ctx.setResult(itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
+          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
+          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0),
+          ctx.getValFromArg(5, (typename FuncTraits<Func>::Arg5_t*)0),
+          ctx.getValFromArg(6, (typename FuncTraits<Func>::Arg6_t*)0)
+          ));
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+  template <class Func>
+  class Functor6<void, Func> {
+  public:
+    Functor6<void, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
+          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
+          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0),
+          ctx.getValFromArg(5, (typename FuncTraits<Func>::Arg5_t*)0),
+          ctx.getValFromArg(6, (typename FuncTraits<Func>::Arg6_t*)0)
+          );
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+
+///////////////////////////////////////////////////////////////////////
+//
 // Functor "generic constructors" for free functions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -376,6 +437,13 @@ namespace Tcl
   wrapFunc(R (*f)(P1, P2, P3, P4, P5))
   {
     return Functor5<R, R (*)(P1, P2, P3, P4, P5)>(f);
+  }
+
+  template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
+  inline Functor6<R, R (*)(P1, P2, P3, P4, P5, P6)>
+  wrapFunc(R (*f)(P1, P2, P3, P4, P5, P6))
+  {
+    return Functor6<R, R (*)(P1, P2, P3, P4, P5, P6)>(f);
   }
 
 
