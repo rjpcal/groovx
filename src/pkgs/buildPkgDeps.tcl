@@ -54,7 +54,9 @@ set project_root [pwd]
 
 set indexfile [open $::env(HOME)/local/$::env(ARCH)/lib/visx/pkgIndex.tcl w]
 
-set depfile [open ${project_root}/dep/$::env(ARCH)/pkgdepends w]
+# The name of the output file is given in the command-line args to this
+# script:
+set depfile [open [lindex $argv 0] w]
 
 set libdir $::env(HOME)/local/$::env(ARCH)/lib/visx
 
