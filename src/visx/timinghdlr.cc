@@ -275,8 +275,8 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
       unsigned int scheduled_delay = events[i]->schedule(*trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
 
-      fstring info("scheduled ", events[i]->objTypename(), " ",
-                   events[i]->id(), " @ ", scheduled_delay);
+      fstring info("scheduled @ ", scheduled_delay,
+                   ": ", events[i]->uniqueName());
       Util::log(info);
     }
 }
