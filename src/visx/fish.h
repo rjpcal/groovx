@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Sat Mar  4 02:47:22 2000
+// written: Thu Mar  9 15:34:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,6 +124,9 @@ protected:
   virtual void grRender(Canvas& canvas) const;
 
 private:
+  Fish(const Fish&);
+  Fish& operator=(const Fish&);
+
   struct EndPt;
   struct FishPart;
 

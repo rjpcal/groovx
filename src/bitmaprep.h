@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Mar  6 10:13:11 2000
+// written: Thu Mar  9 15:22:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -189,6 +189,9 @@ public:
 
 private:
   void clearBytes();
+
+  BitmapRep(const BitmapRep&);
+  BitmapRep& operator=(const BitmapRep&);
 
   class Impl;
   Impl* const itsImpl;

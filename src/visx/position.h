@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Mon Dec  6 14:01:21 1999
+// written: Thu Mar  9 15:44:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,6 +114,9 @@ public:
 private:
   /// Check all invariants and return true if everything is OK.
   bool check() const;
+
+  Position(const Position&);
+  Position& operator=(const Position&);
 
   /// opaque pointer to implementation
   PositionImpl* const itsImpl;

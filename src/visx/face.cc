@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sun Mar  5 14:54:47 2000
+// written: Thu Mar  9 15:33:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,19 +77,26 @@ namespace {
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
-Face::Face(double eh, double es, double nl, double mh, int categ) {
+Face::Face(double eh, double es, double nl, double mh, int categ) :
+  category(categ),
+  eyeHeight(eh),
+  eyeDistance(es),
+  noseLength(nl),
+  mouthHeight(mh)
+{
 DOTRACE("Face::Face");
-  category() = categ;
-  eyeHeight() = eh;
-  eyeDistance() = es;
-  noseLength() = nl;
-  mouthHeight() = mh;
   Invariant(check());
 }
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-Face::Face(istream& is, IOFlag flag) {
+Face::Face(istream& is, IOFlag flag) :
+  category(0),
+  eyeHeight(0.6),
+  eyeDistance(0.4),
+  noseLength(0.4),
+  mouthHeight(-0.8)
+{
 DOTRACE("Face::Face(istream&, IOFlag)");
   deserialize(is, flag);
   Invariant(check());

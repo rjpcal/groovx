@@ -3,7 +3,7 @@
 // grshapp.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:58 1999
-// written: Fri Mar  3 16:51:46 2000
+// written: Thu Mar  9 15:42:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,9 @@ public:
   virtual Experiment* getExperiment();
 
 private:
+  GrshApp(const GrshApp&);
+  GrshApp& operator=(const GrshApp&);
+
   Tcl_Interp* itsInterp;
   Experiment* itsExpt;
 };

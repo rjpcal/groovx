@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Mon Mar  6 10:28:47 2000
+// written: Thu Mar  9 15:24:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,9 @@ private:
   void parseMode4(istream& is);
   void parseMode5(istream& is);
   void parseMode6(istream& is);
+
+  Pbm(const Pbm&);
+  Pbm& operator=(const Pbm&);
 
   class Impl;
   Impl* const itsImpl;

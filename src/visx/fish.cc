@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Mar  8 11:23:36 2000
+// written: Thu Mar  9 15:38:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,6 +82,8 @@ Util::Tracer Fish::tracer;
 ///////////////////////////////////////////////////////////////////////
 
 struct Fish::FishPart {
+  FishPart() : itsOrder(0), itsKnots() {}
+
   GLint itsOrder;
 
   vector<GLfloat> itsKnots;
@@ -115,6 +117,7 @@ struct Fish::EndPt {
 ///////////////////////////////////////////////////////////////////////
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
+  category(-1),
   dorsalFinCoord(itsCoords[0]),
   tailFinCoord(itsCoords[1]),
   lowerFinCoord(itsCoords[2]),
@@ -122,11 +125,11 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   currentPart(0),
   currentEndPt(0),
   endPt_Part(dummy),
-  endPt_Bkpt(dummy)
+  endPt_Bkpt(dummy),
+  itsFishParts(new FishPart[4]),
+  itsEndPts(new EndPt[4])
 {
 DOTRACE("Fish::Fish");
-  itsFishParts = new FishPart[4];
-  itsEndPts = new EndPt[4];
 
   if (splinefile != 0 && coordfile != 0) {
 	 readSplineFile(splinefile);

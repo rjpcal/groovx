@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar  4 15:14:57 2000
+// written: Thu Mar  9 15:38:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,9 @@ namespace {
 FixPt::FixPt(double len, int wid) : 
   length(len), width(wid) {}
 
-FixPt::FixPt(istream &is, IOFlag flag) {
+FixPt::FixPt(istream &is, IOFlag flag) :
+  length(0.1), width(1)
+{
   deserialize(is, flag);
 }
 

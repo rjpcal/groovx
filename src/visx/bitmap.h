@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Mar  3 14:25:57 2000
+// written: Thu Mar  9 15:21:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,6 +194,9 @@ public:
   void setUsingZoom(bool val);
 
 private:
+  Bitmap(const Bitmap&);
+  Bitmap& operator=(const Bitmap&);
+
   BitmapRep* const itsImpl;
 };
 

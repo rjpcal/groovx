@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Feb 15 17:45:58 2000
+// written: Thu Mar  9 15:20:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -390,6 +390,9 @@ protected:
   virtual void grUnRender(Canvas& canvas) const;
 
 private:
+  GrObj(const GrObj&);
+  GrObj& operator=(const GrObj&);
+
   class Impl;
   friend class Impl;
   Impl* const itsImpl;	  // opaque pointer to implementation

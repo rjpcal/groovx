@@ -3,7 +3,7 @@
 // xbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:19:23 1999
-// written: Fri Feb 18 09:18:09 2000
+// written: Thu Mar  9 15:40:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,9 @@ private:
 				  int height,
 				  int bits_per_pixel,
 				  int byte_alignment) const;
+
+  XBmapRenderer(const XBmapRenderer&);
+  XBmapRenderer& operator=(const XBmapRenderer&);
 
   mutable bool itsIsCurrent;
   mutable XImage* itsImage;

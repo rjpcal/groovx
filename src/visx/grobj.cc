@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Mar  7 16:13:09 2000
+// written: Thu Mar  9 15:42:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@
 #define NULL 0L
 #endif
 
-class GrObjError : public virtual ErrorWithMsg {
+class GrObjError : public ErrorWithMsg {
 public:
   GrObjError(const char* msg) : ErrorWithMsg(msg) {}
 };
@@ -82,6 +82,10 @@ Util::Tracer GrObj::tracer;
 ///////////////////////////////////////////////////////////////////////
 
 class GrObj::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   //////////////
   // creators //
@@ -176,6 +180,10 @@ public:
   //////////////////
 private:
   class BoundingBox {
+  private:
+	 BoundingBox(const BoundingBox&);
+	 BoundingBox& operator=(const BoundingBox&);
+
   public:
 	 BoundingBox(const GrObj::Impl* owner) :
 		itsIsVisible(false),

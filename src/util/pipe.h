@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Thu Mar  9 11:40:31 2000
+// written: Thu Mar  9 15:22:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,9 @@ public:
 private:
   FILE* file() const { return itsFile; }
   int filedes() const { return fileno(itsFile); }
+
+  Pipe(const Pipe&);
+  Pipe& operator=(const Pipe&);
 
   FILE* itsFile;
   fstream itsStream;

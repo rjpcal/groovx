@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Mar  8 10:40:05 2000
+// written: Thu Mar  9 15:31:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ public:
 		  TProperty<T>::itsVal.itsVal = new_val;
 	 }
   ///
-  T virtual getNative() const { return TProperty<T>::itsVal.itsVal; }
+  virtual T getNative() const { return TProperty<T>::itsVal.itsVal; }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -377,6 +377,17 @@ public:
 							 new TValue<T>(res_), new_group),
 	 itsProperty(property_)
 	 {}
+
+  PropertyInfo(const PropertyInfo& other) :
+	 PropertyInfoBase(other),
+	 itsProperty(other.itsProperty)
+	 {}
+
+  PropertyInfo& operator=(const PropertyInfo& other)
+	 {
+		PropertyInfoBase::operator=(other);
+		itsProperty = other.itsProperty;
+	 }
 
 public:
   /// Returns a pointer-to-member that refers to the property

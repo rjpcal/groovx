@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Fri Feb 18 09:12:14 2000
+// written: Thu Mar  9 15:39:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,9 @@ public:
   void setUsingGlBitmap(bool val);
 
 private:
+  GLBitmap(const GLBitmap&);
+  GLBitmap& operator=(const GLBitmap&);
+
   GLBmapRenderer* itsRenderer;
 };
 
