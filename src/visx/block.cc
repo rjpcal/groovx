@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Sat Mar  4 16:26:44 2000
+// written: Tue Mar  7 10:49:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,18 +18,19 @@
 #include "iostl.h"
 #include "reader.h"
 #include "readutils.h"
+#include "util/strings.h"
 #include "tlist.h"
 #include "trial.h"
 #include "writer.h"
 #include "writeutils.h"
 
 #include <algorithm>
-#include <cstring>
 #include <functional>
 #include <iostream.h>
 #include <strstream.h>
 #include <sys/time.h>
 #include <list>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -44,8 +45,33 @@
 
 namespace {
   Tlist& theTlist = Tlist::theTlist();
-  const char* ioTag = "Block";
+  const string_literal ioTag = "Block";
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+//
+//
+///////////////////////////////////////////////////////////////////////
+
+class Block::Impl {
+public:
+  Impl() :
+	 itsTrialSequence(),
+	 itsRandSeed(0),
+	 itsCurTrialSeqIdx(0),
+	 itsVerbose(false)
+	 {}
+
+  vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
+										  // Also functions as # of completed trials
+
+  int itsRandSeed;				  // Random seed used to create itsTrialSequence
+  int itsCurTrialSeqIdx;		  // Index of the current trial
+  bool itsVerbose;
+
+  mutable StopWatch itsTimer;	  // Used to record the start time of each Trial
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -58,20 +84,20 @@ namespace {
 //////////////
 
 Block::Block() :
-  itsTrialSequence(),
-  itsRandSeed(0),
-  itsCurTrialSeqIdx(0),
-  itsVerbose(false)
+  itsImpl( new Impl )
 {
 DOTRACE("Block::Block");
 }
 
-Block::~Block() {}
+Block::~Block() 
+{
+  delete itsImpl;
+}
 
 void Block::addTrial(int trialid, int repeat) {
 DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i) {
-	 itsTrialSequence.push_back(trialid);
+	 itsImpl->itsTrialSequence.push_back(trialid);
   }
 };
 
@@ -91,7 +117,7 @@ DOTRACE("Block::addTrials");
   }
 
   for (int i = 0; i < repeat; ++i) {
-	 copy(ids.begin(), ids.end(), back_inserter(itsTrialSequence));
+	 copy(ids.begin(), ids.end(), back_inserter(itsImpl->itsTrialSequence));
   }
 
 #if 0
@@ -109,18 +135,19 @@ DOTRACE("Block::addTrials");
 
 void Block::shuffle(int seed) {
 DOTRACE("Block::shuffle");
-  itsRandSeed = seed;
+  itsImpl->itsRandSeed = seed;
 
   Urand generator(seed);
   
-  random_shuffle(itsTrialSequence.begin(), itsTrialSequence.end(),
+  random_shuffle(itsImpl->itsTrialSequence.begin(),
+					  itsImpl->itsTrialSequence.end(),
 					  generator);
 }
 
 void Block::removeAllTrials() {
 DOTRACE("Block::removeAllTrials");
-  itsTrialSequence.clear();
-  itsCurTrialSeqIdx = 0;
+  itsImpl->itsTrialSequence.clear();
+  itsImpl->itsCurTrialSeqIdx = 0;
 }
 
 void Block::serialize(ostream &os, IOFlag flag) const {
@@ -130,71 +157,72 @@ DOTRACE("Block::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  // itsTrialSequence
-  serializeVecInt(os, itsTrialSequence);
+  // itsImpl->itsTrialSequence
+  serializeVecInt(os, itsImpl->itsTrialSequence);
   os << endl;
-  // itsRandSeed
-  os << itsRandSeed << endl;
-  // itsCurTrialSeqIdx
-  os << itsCurTrialSeqIdx << endl;
-  // itsVerbose
-  os << itsVerbose << endl;
+  // itsImpl->itsRandSeed
+  os << itsImpl->itsRandSeed << endl;
+  // itsImpl->itsCurTrialSeqIdx
+  os << itsImpl->itsCurTrialSeqIdx << endl;
+  // itsImpl->itsVerbose
+  os << itsImpl->itsVerbose << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 }
 
 void Block::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Block::deserialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
   
-  // itsTrialSequence
-  deserializeVecInt(is, itsTrialSequence);
+  // itsImpl->itsTrialSequence
+  deserializeVecInt(is, itsImpl->itsTrialSequence);
 
-  // itsRandSeed
-  is >> itsRandSeed;
-  // itsCurTrialSeqIdx
-  is >> itsCurTrialSeqIdx;
-  if (itsCurTrialSeqIdx < 0 ||
-		size_t(itsCurTrialSeqIdx) > itsTrialSequence.size()) {
-	 throw IoValueError(ioTag);
+  // itsImpl->itsRandSeed
+  is >> itsImpl->itsRandSeed;
+  // itsImpl->itsCurTrialSeqIdx
+  is >> itsImpl->itsCurTrialSeqIdx;
+  if (itsImpl->itsCurTrialSeqIdx < 0 ||
+		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
+	 throw IoValueError(ioTag.c_str());
   }
-  // itsVerbose
+  // itsImpl->itsVerbose
   int val;
   is >> val;
-  itsVerbose = bool(val);
+  itsImpl->itsVerbose = bool(val);
 
   is.ignore(1, '\n');
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 }
 
 int Block::charCount() const {
-  return (strlen(ioTag) + 1
-			 + charCountVecInt(itsTrialSequence) + 1
-			 + gCharCount<int>(itsRandSeed) + 1
-			 + gCharCount<int>(itsCurTrialSeqIdx) + 1
-			 + gCharCount<bool>(itsVerbose) + 1
+  return (ioTag.length() + 1
+			 + charCountVecInt(itsImpl->itsTrialSequence) + 1
+			 + gCharCount<int>(itsImpl->itsRandSeed) + 1
+			 + gCharCount<int>(itsImpl->itsCurTrialSeqIdx) + 1
+			 + gCharCount<bool>(itsImpl->itsVerbose) + 1
 			 + 5); //fudge factor
 }
 
 void Block::readFrom(Reader* reader) {
 DOTRACE("Block::readFrom");
-  itsTrialSequence.clear();
+  itsImpl->itsTrialSequence.clear();
   ReadUtils::readValueSeq(
-		 reader, "trialSeq", back_inserter(itsTrialSequence), (int*)0);
-  reader->readValue("randSeed", itsRandSeed);
-  reader->readValue("curTrialSeqdx", itsCurTrialSeqIdx);
-  reader->readValue("verbose", itsVerbose);
+		 reader, "trialSeq", back_inserter(itsImpl->itsTrialSequence), (int*)0);
+  reader->readValue("randSeed", itsImpl->itsRandSeed);
+  reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  reader->readValue("verbose", itsImpl->itsVerbose);
 }
 
 void Block::writeTo(Writer* writer) const {
 DOTRACE("Block::writeTo");
 
   WriteUtils::writeValueSeq(
-        writer, "trialSeq", itsTrialSequence.begin(), itsTrialSequence.end());
-  writer->writeValue("randSeed", itsRandSeed);
-  writer->writeValue("curTrialSeqdx", itsCurTrialSeqIdx);
-  writer->writeValue("verbose", itsVerbose);
+       writer, "trialSeq",
+		 itsImpl->itsTrialSequence.begin(), itsImpl->itsTrialSequence.end());
+  writer->writeValue("randSeed", itsImpl->itsRandSeed);
+  writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  writer->writeValue("verbose", itsImpl->itsVerbose);
 }
 
 ///////////////
@@ -208,19 +236,19 @@ DOTRACE("Block::getCurTrial");
 
 int Block::numTrials() const {
 DOTRACE("Block::numTrials");
-  return itsTrialSequence.size();
+  return itsImpl->itsTrialSequence.size();
 }
 
 int Block::numCompleted() const {
 DOTRACE("Block::numCompleted");
-  return itsCurTrialSeqIdx;
+  return itsImpl->itsCurTrialSeqIdx;
 }
 
 int Block::currentTrial() const {
 DOTRACE("Block::currentTrial");
   if (isComplete()) return -1;
 
-  return itsTrialSequence[itsCurTrialSeqIdx];
+  return itsImpl->itsTrialSequence[itsImpl->itsCurTrialSeqIdx];
 }
 
 int Block::currentTrialType() const {
@@ -237,35 +265,36 @@ int Block::prevResponse() const {
 DOTRACE("Block::prevResponse");
 
 #ifdef PICKY_DEBUG
-  DebugEval(itsCurTrialSeqIdx);
-  DebugEvalNL(itsTrialSequence.size());
+  DebugEval(itsImpl->itsCurTrialSeqIdx);
+  DebugEvalNL(itsImpl->itsTrialSequence.size());
 #endif
 
-  if (itsCurTrialSeqIdx == 0 || itsTrialSequence.size() == 0) return -1;
+  if (itsImpl->itsCurTrialSeqIdx == 0 ||
+		itsImpl->itsTrialSequence.size() == 0) return -1;
 
   return theTlist.getCheckedPtr(
-                       itsTrialSequence[itsCurTrialSeqIdx-1])->lastResponse();
+     itsImpl->itsTrialSequence[itsImpl->itsCurTrialSeqIdx-1])->lastResponse();
 }
 
 bool Block::isComplete() const {
 DOTRACE("Block::isComplete");
 
 #ifdef PICKY_DEBUG
-  DebugEval(itsCurTrialSeqIdx);
-  DebugEvalNL(itsTrialSequence.size());
+  DebugEval(itsImpl->itsCurTrialSeqIdx);
+  DebugEvalNL(itsImpl->itsTrialSequence.size());
 #endif
 
-  // This is 'tricky'. The problem is that itsCurTrialSeqIdx may
+  // This is 'tricky'. The problem is that itsImpl->itsCurTrialSeqIdx may
   // temporarily be negative in between an abortTrial and the
   // corresponding endTrial. This means that we can't only compare
-  // itsCurTrialSeqIdx with itsTrialSequence.size(), because the
+  // itsImpl->itsCurTrialSeqIdx with itsImpl->itsTrialSequence.size(), because the
   // former is signed and the latter is unsigned, forcing a
   // 'promotion' to unsigned of the former... this makes it a huge
   // positive number if it was actually negative. Thus, we must also
-  // check that itsCurTrialSeqIdx is actually non-negative before
+  // check that itsImpl->itsCurTrialSeqIdx is actually non-negative before
   // returning 'true' from this function.
-  return ((itsCurTrialSeqIdx >= 0) &&
-			 (size_t(itsCurTrialSeqIdx) >= itsTrialSequence.size()));
+  return ((itsImpl->itsCurTrialSeqIdx >= 0) &&
+			 (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
 }
 
 const char* Block::trialDescription() const {
@@ -285,6 +314,16 @@ DOTRACE("Block::trialDescription");
   return buf;
 }
 
+bool Block::getVerbose() const {
+DOTRACE("Block::getVerbose");
+  return itsImpl->itsVerbose;
+}
+
+void Block::setVerbose(bool val) {
+DOTRACE("Block::setVerbose");
+  itsImpl->itsVerbose = val;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // actions 
@@ -293,7 +332,7 @@ DOTRACE("Block::trialDescription");
 
 void Block::beginTrial(Experiment*) {
 DOTRACE("Block::beginTrial");
-  if (itsVerbose) {
+  if (itsImpl->itsVerbose) {
 	 cerr << trialDescription() << endl;
   }
 
@@ -301,7 +340,7 @@ DOTRACE("Block::beginTrial");
   // time.  We record the time *after* the drawTrial call since
   // rendering the trial can possibly take considerable time (order of
   // 100 - 1000ms).
-  itsTimer.restart();
+  itsImpl->itsTimer.restart();
 }
 
 void Block::drawTrial(Experiment* expt) {
@@ -330,24 +369,24 @@ DOTRACE("Block::abortTrial");
 
   // Erase the aborted trial from the sequence. Subsequent trials will
   // slide up to fill in the gap.
-  itsTrialSequence.erase(itsTrialSequence.begin()+itsCurTrialSeqIdx);
+  itsImpl->itsTrialSequence.erase(itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
 
   // Add the aborted trial to the back of the sequence.
-  itsTrialSequence.push_back(aborted_trial);
+  itsImpl->itsTrialSequence.push_back(aborted_trial);
 
-  // We must decrement itsCurTrialSeqIdx, so that when it is
+  // We must decrement itsImpl->itsCurTrialSeqIdx, so that when it is
   // incremented by endTrial, the next trial has slid into the
   // position where the aborted trial once was.
-  --itsCurTrialSeqIdx;
+  --itsImpl->itsCurTrialSeqIdx;
 }
 
 void Block::processResponse(int response, Experiment*) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
-  getCurTrial().recordResponse(response, itsTimer.elapsedMsec());
+  getCurTrial().recordResponse(response, itsImpl->itsTimer.elapsedMsec());
 
-  if (itsVerbose) {
+  if (itsImpl->itsVerbose) {
     cerr << "response " << response << endl;
   }
 }
@@ -357,7 +396,7 @@ DOTRACE("Block::endTrial");
   if (isComplete()) return;
 
   // Prepare to start next trial.
-  ++itsCurTrialSeqIdx;
+  ++itsImpl->itsCurTrialSeqIdx;
 }
 
 void Block::haltExpt(Experiment* expt) {
@@ -370,13 +409,13 @@ DOTRACE("Block::haltExpt");
 void Block::undoPrevTrial() {
 DOTRACE("Block::undoPrevTrial");
 
-  DebugEval(itsCurTrialSeqIdx); 
+  DebugEval(itsImpl->itsCurTrialSeqIdx); 
 
   // Check to make sure we've completed at least one trial
-  if (itsCurTrialSeqIdx < 1) return;
+  if (itsImpl->itsCurTrialSeqIdx < 1) return;
   
   // Move the counter back to the previous trial...
-  --itsCurTrialSeqIdx;
+  --itsImpl->itsCurTrialSeqIdx;
 
   // ...and erase the last response given to that trial
   if ( theTlist.isValidId(currentTrial()) ) {
@@ -386,7 +425,7 @@ DOTRACE("Block::undoPrevTrial");
 
 void Block::resetBlock() {
 DOTRACE("Block::resetBlock");
-  while (itsCurTrialSeqIdx > 0) {
+  while (itsImpl->itsCurTrialSeqIdx > 0) {
 	 undoPrevTrial();
   }
 }

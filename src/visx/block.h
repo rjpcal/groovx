@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Fri Mar  3 14:26:28 2000
+// written: Tue Mar  7 10:46:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
-#endif
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
 #endif
 
 #ifndef STOPWATCH_H_DEFINED
@@ -118,11 +113,11 @@ public:
 
   /** Query whether the trialDescription() is printed to standard
       output at the beginning of each trial. */
-  virtual bool getVerbose() const { return itsVerbose; }
+  virtual bool getVerbose() const;
 
   /** Change whether the trialDescription() is printed to standard
       output at the beginning of each trial. */
-  virtual void setVerbose(bool val) { itsVerbose = val; }
+  virtual void setVerbose(bool val);
 
   /////////////
   // actions //
@@ -180,14 +175,8 @@ public:
   virtual void resetBlock();
 
 private:
-  vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
-										  // Also functions as # of completed trials
-
-  int itsRandSeed;				  // Random seed used to create itsTrialSequence
-  int itsCurTrialSeqIdx;		  // Index of the current trial
-  bool itsVerbose;
-
-  mutable StopWatch itsTimer;	  // Used to record the start time of each Trial
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_block_h[] = "$Header$";
