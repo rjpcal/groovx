@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Thu Oct 26 17:52:55 2000
+// written: Fri Oct 27 15:49:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,31 +41,7 @@ public:
   /// Virtual destructor.
   virtual ~PtrList();
 
-  /// A reference-counted handle to type T.
-  typedef IdItem<T> SharedPtr;
-
-  friend class IdItem<T>;
-  friend class MaybeIdItem<T>;
-
-protected:
-  virtual void ensureCorrectType(const IO::IoObject* ptr) const;
-
-private:
-  /** Returns the object at index \a id, after a check is performed to
-      ensure that \a id is in range, and refers to a valid object. If
-      the check fails, an \c InvalidIdError exception is thrown. */
-  SharedPtr getCheckedPtr(int id) const;
-
-  /// Insert \a ptr into the list, and return its id.
-  SharedPtr insert(T* master);
-
-  /// Insert \a handle into the list, and return its id.
-  SharedPtr insert(PtrHandle<T> handle)
-	 { return insert(handle.get()); }
-
-  /// Insert \a item into the list, and return its id.
-  SharedPtr insert(IdItem<T> item)
-	 { return insert(item.handle().get()); }
+  typedef T BaseType;
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";
