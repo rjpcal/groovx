@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Aug 16 11:03:41 2001
+// written: Mon Aug 20 12:24:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -712,17 +712,17 @@ DOTRACE("Gtext::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void Gtext::setText(const char* text)
+void Gtext::setText(const fstring& text)
 {
 DOTRACE("Gtext::setText");
   itsText = text;
   sendStateChangeMsg();
 }
 
-const char* Gtext::getText() const
+const fstring& Gtext::getText() const
 {
 DOTRACE("Gtext::getText");
-  return itsText.c_str();
+  return itsText;
 }
 
 void Gtext::setStrokeWidth(int width)

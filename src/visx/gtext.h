@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Aug 16 11:03:24 2001
+// written: Mon Aug 20 12:23:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,10 +48,10 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
   /// Change the text string to \a text.
-  void setText(const char* text);
+  void setText(const fstring& text);
 
   /// Get the current text string.
-  const char* getText() const;
+  const fstring& getText() const;
 
   /// Change the stroke width of the font to \a width.
   void setStrokeWidth(int width);
