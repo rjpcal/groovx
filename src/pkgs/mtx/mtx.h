@@ -158,6 +158,11 @@ public:
 
 	 return Slice(address(first), itsStride, n);
   }
+
+  Slice leftmost(int n)
+  {
+	 return Slice(itsData, itsStride, n);
+  }
 };
 
 typedef struct mxArray_tag mxArray;
