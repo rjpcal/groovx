@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Mon Dec  6 20:38:08 1999
+// written: Mon Dec  6 21:59:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,7 +95,8 @@ XBmapRenderer::~XBmapRenderer() {
   if (itsImage) XFree(itsImage);
 }
 
-void XBmapRenderer::doRender(unsigned char* bytes,
+void XBmapRenderer::doRender(Canvas&,
+									  unsigned char* bytes,
 									  double x_pos,
 									  double y_pos,
 									  int width,
@@ -140,7 +141,8 @@ DOTRACE("XBmapRenderer::doRender");
   glXWaitX();
 }
 
-void XBmapRenderer::doUndraw(int winRasterX, int winRasterY,
+void XBmapRenderer::doUndraw(Canvas& canvas,
+									  int winRasterX, int winRasterY,
 									  int winWidthX, int winHeightY) const {
 DOTRACE("XBmapRenderer::doUndraw");
   glPushAttrib(GL_SCISSOR_BIT);

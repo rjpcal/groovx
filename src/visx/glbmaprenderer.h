@@ -3,7 +3,7 @@
 // glbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:52:41 1999
-// written: Wed Dec  1 17:55:37 1999
+// written: Mon Dec  6 22:00:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@ public:
   GLBmapRenderer();
   virtual ~GLBmapRenderer();
 
-  virtual void doRender(unsigned char* bytes,
+  virtual void doRender(Canvas& canvas,
+								unsigned char* bytes,
 								double x_pos,
 								double y_pos,
 								int width,

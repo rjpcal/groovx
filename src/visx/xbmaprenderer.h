@@ -3,7 +3,7 @@
 // xbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:19:23 1999
-// written: Wed Dec  1 21:06:10 1999
+// written: Mon Dec  6 21:58:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,8 @@ public:
   XBmapRenderer();
   virtual ~XBmapRenderer();
 
-  virtual void doRender(unsigned char* bytes,
+  virtual void doRender(Canvas& canvas,
+								unsigned char* bytes,
 								double x_pos,
 								double y_pos,
 								int width,
@@ -38,7 +39,7 @@ public:
 								double zoom_x,
 								double zoom_y) const;
   
-  virtual void doUndraw(
+  virtual void doUndraw(Canvas& canvas,
 					  int winRasterX, int winRasterY,
 					  int winWidthX, int winHeightY) const;
 

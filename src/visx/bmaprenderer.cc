@@ -3,7 +3,7 @@
 // bmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:55:36 1999
-// written: Thu Dec  2 12:50:52 1999
+// written: Mon Dec  6 22:01:20 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ BmapRenderer::~BmapRenderer()
 DOTRACE("BmapRenderer::~BmapRenderer");
 }
 
-void BmapRenderer::doUndraw(
+void BmapRenderer::doUndraw(Canvas& canvas,
 					  int /*winRasterX*/, int /*winRasterY*/,
 					  int /*winWidthX*/, int /*winHeightY*/) const
 {
