@@ -91,6 +91,7 @@ public:
     beginDate(""),
     endDate(""),
     autosaveFile("__autosave_file"),
+    filePrefix("expt"),
     infoLog(),
     autosavePeriod(10),
     doWhenComplete(new Tcl::ProcWrapper(interp)),
@@ -112,6 +113,7 @@ public:
   fstring beginDate;    // Date(+time) when Expt was begun
   fstring endDate;      // Date(+time) when Expt was stopped
   fstring autosaveFile; // Filename used for autosaves
+  fstring filePrefix;   // String used as filename prefix for output files
 
   fstring infoLog;
 
@@ -186,6 +188,7 @@ DOTRACE("ExptDriver::readFrom");
   else
     {
       reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
+      reader.readValue("filePrefix", rep->filePrefix);
     }
 }
 
@@ -209,6 +212,7 @@ DOTRACE("ExptDriver::writeTo");
   ElementContainer::legacyWriteElements(writer, "blocks");
 
   writer.writeOwnedObject("doWhenComplete", rep->doWhenComplete);
+  writer.writeValue("filePrefix", rep->filePrefix);
 }
 
 
@@ -281,6 +285,18 @@ void ExptDriver::setAutosaveFile(const fstring& str)
 {
 DOTRACE("ExptDriver::setAutosaveFile");
   rep->autosaveFile = str;
+}
+
+const fstring& ExptDriver::getFilePrefix() const
+{
+DOTRACE("ExptDriver::getFilePrefix");
+  return rep->filePrefix;
+}
+
+void ExptDriver::setFilePrefix(const fstring& str)
+{
+DOTRACE("ExptDriver::setFilePrefix");
+  rep->filePrefix = str;
 }
 
 int ExptDriver::getAutosavePeriod() const
@@ -424,18 +440,19 @@ DOTRACE("ExptDriver::storeData");
   rep->endDate = System::theSystem().formattedTime();
 
   fstring unique_file_extension =
-    System::theSystem().formattedTime("%H%M%S%d%b%Y");
+    System::theSystem().formattedTime("_%Y%b%d_%H%M%S");
 
   // Write the main experiment file
-  fstring expt_filename = "expt";
+  fstring expt_filename = rep->filePrefix;
   expt_filename.append(unique_file_extension);
   expt_filename.append(".asw");
   IO::saveASW(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
   Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
   // Write the responses file
-  fstring resp_filename = "resp";
+  fstring resp_filename = rep->filePrefix;
   resp_filename.append(unique_file_extension);
+  resp_filename.append(".resp");
   TlistUtils::writeResponses(resp_filename.c_str());
   Util::log( fstring( "wrote file ", resp_filename.c_str()) );
 
