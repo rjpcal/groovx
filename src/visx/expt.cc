@@ -2,7 +2,7 @@
 // expt.cc
 // Rob Peters
 // created: Sat Mar 13 17:57:49 1999
-// written: Sun Apr 25 13:19:33 1999
+// written: Wed May 19 14:35:44 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,6 +15,7 @@
 #include <strstream.h>
 #include <string>
 #include <typeinfo>
+#include <sys/time.h>
 
 #include "randutils.h"
 #include "iostl.h"
@@ -25,6 +26,11 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
+
+// File scope data
+namespace {
+  const string ioTag = "Expt";
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Expt member functions
@@ -48,9 +54,20 @@ DOTRACE("Expt::init");
   itsTrialSequence.clear();
   itsRandSeed = seed;
   itsCurTrialSeqIdx = 0;
-  itsDate = date;
+  itsBeginDate = date;
   itsHostname = host;
   itsSubject = subject;
+
+  itsAutosaveFile = "__autosave_file";
+
+  itsUseFeedback = true;
+  itsVerbose = true;
+
+  itsAbortWait = 1000;
+  itsAutosavePeriod = 10;
+  itsInterTrialInterval = 1000;
+  itsStimDur = 2000;
+  itsTimeout = 4000;
 
   // obtain a list of all valid trial id's from itsTlist
   vector<int> id_vec;
@@ -59,8 +76,8 @@ DOTRACE("Expt::init");
   // push all the trial id's that will be used in Expt onto a
   // vector, in order
   vector<int> temp_vec;
-  for (int i = 0; i < id_vec.size(); i++) {
-	 for (int j = 0; j < repeat; j++) {
+  for (int i = 0; i < id_vec.size(); ++i) {
+	 for (int j = 0; j < repeat; ++j) {
 		temp_vec.push_back(id_vec[i]);
 	 }
   }
@@ -71,10 +88,12 @@ DOTRACE("Expt::init");
   vector<int>::iterator itr;
   while ( !temp_vec.empty() ) {
 	 itr = temp_vec.begin() + randIntRange(0, temp_vec.size());
-#ifdef LOCAL_DEBUG
-	 DUMP_VAL1(temp_vec.size());
-	 DUMP_VAL2(itr-temp_vec.begin());
+
+#if 0
+	 DebugEval(temp_vec.size());
+	 DebugEvalNL(itr-temp_vec.begin());
 #endif
+
 	 itsTrialSequence.push_back(*itr);
 	 temp_vec.erase(itr);
   }
@@ -97,12 +116,36 @@ DOTRACE("Expt::serialize");
   os << itsRandSeed << endl;
   // itsCurTrialSeqIdx
   os << itsCurTrialSeqIdx << endl;
-  // itsDate
-  os << itsDate << '\n';
+  // itsBeginDate
+  os << itsBeginDate << '\n';
   // itsHostname
   os << itsHostname << '\n';
   // itsSubject
   os << itsSubject << '\n';
+
+  // itsEndDate;
+  os << itsEndDate << '\n';
+
+//   // itsAutosaveFile
+//   os << itsAutosaveFile << '\n';
+//   // itsKeyRespPairs
+//   os << itsKeyRespPairs << '\n';
+  
+//   // itsUseFeedback
+//   os << itsUseFeedback << ' ';
+//   // itsVerbose
+//   os << itsVerbose << ' ';
+//   // itsAbortWait
+//   os << itsAbortWait << ' ';
+//   // itsAutosavePeriod
+//   os << itsAutosavePeriod << ' ';
+//   // itsInterTrialInterval
+//   os << itsInterTrialInterval << ' ';
+//   // itsStimDur
+//   os << itsStimDur << ' ';
+//   // itsTimeout
+//   os << itsTimeout << ' ';
+
   if (os.fail()) throw OutputError(typeid(Expt));
 }
 
@@ -135,19 +178,48 @@ DOTRACE("Expt::deserialize");
   if (itsCurTrialSeqIdx < 0 || itsCurTrialSeqIdx > itsTrialSequence.size()) {
 	 throw IoValueError(typeid(Expt));
   }
-  // itsDate
-  if (is.peek() != EOF) {
-	 getline(is, itsDate, '\n');
-  }
+  // itsBeginDate
+  if (is.peek() != EOF) { getline(is, itsBeginDate, '\n'); }
   // itsHostname
-  if (is.peek() != EOF) {
-	 getline(is, itsHostname, '\n');
-  }
+  if (is.peek() != EOF) { getline(is, itsHostname, '\n'); }
   // itsSubject
-  if (is.peek() != EOF) {
-	 getline(is, itsSubject, '\n');
-  }
+  if (is.peek() != EOF) { getline(is, itsSubject, '\n'); }
+
+  // itsEndDate
+  if (is.peek() != EOF) { getline(is, itsEndDate, '\n'); }
+
+//   // itsAutosaveFile
+//   if (is.peek() != EOF) { getline(is, itsAutosaveFile, '\n'); }
+//   // itsKeyRespPairs
+//   if (is.peek() != EOF) { getline(is, itsKeyRespPairs, '\n'); }
+
+//   // itsUseFeedback
+//   if (is.peek() != EOF) { int val; is >> val; itsUseFeedback = bool(val); }
+//   // itsVerbose
+//   if (is.peek() != EOF) { int val; is >> val; itsVerbose = bool(val); }
+//   // itsAbortWait
+//   if (is.peek() != EOF) { is >> itsAbortWait; }
+//   // itsAutosavePeriod
+//   if (is.peek() != EOF) { is >> itsAutosavePeriod; }
+//   // itsInterTrialInterval
+//   if (is.peek() != EOF) { is >> itsInterTrialInterval; }
+//   // itsStimDur
+//   if (is.peek() != EOF) { is >> itsStimDur; }
+//   // itsTimeout
+//   if (is.peek() != EOF) { is >> itsTimeout; }
   if (is.fail()) throw InputError(typeid(Expt));
+}
+
+int Expt::charCount() const {
+  return (ioTag.size() + 1
+			 + itsTlist.charCount() + 1
+			 + charCountVecInt(itsTrialSequence) + 1
+			 + charCountInt(itsRandSeed) + 1
+			 + charCountInt(itsCurTrialSeqIdx) + 1
+			 + itsBeginDate.size() + 1
+			 + itsHostname.size() + 1
+			 + itsSubject.size() + 1
+			 + 5); //fudge factor
 }
 
 ///////////////
@@ -171,19 +243,24 @@ DOTRACE("Expt::currentTrial");
   return itsTrialSequence[itsCurTrialSeqIdx];
 }
 
-int Expt::currentStimClass() const {
-DOTRACE("Expt::currentStimClass");
+int Expt::currentTrialType() const {
+DOTRACE("Expt::currentTrialType");
   if (isComplete()) return -1;
+
+  DebugEval(currentTrial());
+  DebugEvalNL(itsTlist.getTrial(currentTrial()).trialType());
 
   return itsTlist.getTrial(currentTrial()).trialType();
 }
 
 int Expt::prevResponse() const {
 DOTRACE("Expt::prevResponse");
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(itsCurTrialSeqIdx);
-  DUMP_VAL2(itsTrialSequence.size());
+
+#if 0
+  DebugEval(itsCurTrialSeqIdx);
+  DebugEvalNL(itsTrialSequence.size());
 #endif
+
   if (itsCurTrialSeqIdx == 0 || itsTrialSequence.size() == 0) return -1;
 
   return itsTlist.getTrial(itsTrialSequence[itsCurTrialSeqIdx-1]).lastResponse();
@@ -191,10 +268,12 @@ DOTRACE("Expt::prevResponse");
 
 bool Expt::isComplete() const {
 DOTRACE("Expt::isComplete");
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(itsCurTrialSeqIdx);
-  DUMP_VAL2(itsTrialSequence.size());
+
+#if 0
+  DebugEval(itsCurTrialSeqIdx);
+  DebugEvalNL(itsTrialSequence.size());
 #endif
+
   return (itsCurTrialSeqIdx >= itsTrialSequence.size());
 }
 
@@ -217,10 +296,39 @@ DOTRACE("Expt::trialDescription");
   return buf;
 }
 
+// An autosave is requested only if itsAutosavePeriod is positive, and
+// the number of completed trials is evenly divisible by the autosave
+// period.
+bool Expt::needAutosave() const {
+DOTRACE("Expt::needAutosave");
+  return ( (itsAutosavePeriod > 0) &&
+			  ((numCompleted() % itsAutosavePeriod) == 0) );
+}
 
-/////////////
-// actions //
-/////////////
+///////////////////////////////////////////////////////////////////////
+//
+// actions 
+//
+///////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------
+//
+// Expt::beginTrial --
+//
+// Start the next trial in the experiment.
+//
+// Results: 
+// none.
+//
+// Side effects:
+// Begin the next trial in the Expt. The trial is drawn, and
+// the timer to measure response time is started. The current trial is 
+// not changed until a call either to recordResponse or to abortTrial;
+// thus, multiple calls in a row to beginTrial will simply show the 
+// same trial repeatedly, although the response time timer will be
+// restarted each time.
+//
+//--------------------------------------------------------------------
 
 void Expt::beginTrial() {
 DOTRACE("Expt::beginTrial");
@@ -229,7 +337,54 @@ DOTRACE("Expt::beginTrial");
   // This single call sets the Tlist's current trial and visibility
   // appropriately, then renders the objects and flushes the graphics.
   itsTlist.drawTrial(currentTrial());
+
+  // Record when the trial began so we can later note the response
+  // time.  We record the time *after* the drawTrial call since
+  // rendering the trial can possibly take considerable time (order of
+  // 100 - 1000ms).
+  gettimeofday(&itsBeginTime, NULL);
 }
+
+//--------------------------------------------------------------------
+//
+// Expt::undrawTrial --
+//
+// Erase the current trial from the screen.
+//
+// Results:
+// none
+//
+// Side effects:
+// The current trial is erased from the screen, and the Tlist's
+// visibility is set to false, so that the trial does not reappear if
+// any redraw events are sent to the screen window.
+//
+//--------------------------------------------------------------------
+
+void Expt::undrawTrial() {
+DOTRACE("Expt::undrawTrial");
+  if (isComplete()) return;
+
+  itsTlist.undrawTrial(currentTrial());
+}
+
+//--------------------------------------------------------------------
+//
+// Expt::abortTrial --
+//
+// Abort the current trial of the experiment.
+//
+// Results:
+// none.
+//
+// Side effects:
+// The current (to be aborted) trial is put at the end of the trial
+// sequence in the Expt, without recording any response for that
+// trial. The next call to beginTrial will start the same trial that
+// would have started if the current trial had been completed
+// normally, instead of begin aborted.
+//
+//--------------------------------------------------------------------
 
 void Expt::abortTrial() {
 DOTRACE("Expt::abortTrial");
@@ -250,14 +405,75 @@ DOTRACE("Expt::abortTrial");
   // has slid into the position where the aborted trial once was.
 }
 
-void Expt::recordResponse(int val, int msec) {
+//--------------------------------------------------------------------
+//
+// Expt::recordResponse --
+//
+// Record a response to the current trial in the Expt, and prepare the
+// Expt for the next trial.
+//
+// Results:
+// none.
+//
+// Side effects:
+// The response is recorded for the current trial, and the Expt's
+// trial sequence index is incremented. In this way, the next call to 
+// beginTrial will start the next trial. Also, the next call to 
+// prevResponse will return the response that was recorded in the
+// present command.
+//
+//--------------------------------------------------------------------
+
+void Expt::recordResponse(int val) {
 DOTRACE("Expt::recordResponse");
   if (isComplete()) return;
+
+  static timeval endTime, elapsedTime;
+  gettimeofday(&endTime, NULL);
+
+  elapsedTime.tv_sec = endTime.tv_sec - itsBeginTime.tv_sec;
+  elapsedTime.tv_usec = endTime.tv_usec - itsBeginTime.tv_usec;
+
+  int msec = int(double(elapsedTime.tv_sec)*1000.0 +
+					  double(elapsedTime.tv_usec)/1000.0);
 
   itsTlist.getTrial(currentTrial()).recordResponse(val, msec);
 
   // Prepare to start next trial.
-  itsCurTrialSeqIdx++;
+  ++itsCurTrialSeqIdx;
+}
+
+//--------------------------------------------------------------------
+//
+// Expt::undoPrevTrial --
+//
+// This function undoes the last *successfully* completed trial. It
+// moves the trial counter back one, then erases the most recent
+// response given to that trial. After this, the next invocation of
+// beginTrial() will redo the trial that was undone in the present
+// command.  In sum, the state of the experiment is restored to what
+// it was just prior to the beginning of the most recent successfully
+// completed trial.
+//
+// Results:
+// none.
+//
+// Side effects:
+// The most recent response of the previous trial is erased.
+//
+//--------------------------------------------------------------------
+
+void Expt::undoPrevTrial() {
+DOTRACE("Expt::undoPrevTrial");
+
+  // Check to make sure we've completed at least one trial
+  if (itsCurTrialSeqIdx < 1) return;
+  
+  // Move the counter back to the previous trial...
+  --itsCurTrialSeqIdx;
+
+  // ...and erase the last response given to that trial
+  itsTlist.getTrial(currentTrial()).undoLastResponse();
 }
 
 static const char vcid_expt_cc[] = "$Header$";
