@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat Jul 21 20:27:09 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ public:
       case FROM_ABORT:    return itsAbortEvents;
       }
 
-    throw ErrorWithMsg("unknown TimingHdlr::TimePoint enumerant");
+    throw Util::Error("unknown TimingHdlr::TimePoint enumerant");
     return itsAbortEvents; // but we'll never get here
   }
 
@@ -215,7 +215,7 @@ unsigned int TimingHdlr::addEvent(Ref<TrialEvent> event_item,
 {
 DOTRACE("TimingHdlr::addEvent");
 
-  Impl::EventGroup& events = itsImpl->eventsAt(time_point); 
+  Impl::EventGroup& events = itsImpl->eventsAt(time_point);
   events.push_back(event_item);
   return events.size() - 1;
 }
@@ -284,10 +284,10 @@ void TimingHdlr::Impl::thResponseSeen()
 {
 DOTRACE("TimingHdlr::Impl::thResponseSeen");
   if (itsResponseEvents.size() > 0)
-	 {
-		cancelAll(itsStartEvents);
-		scheduleAll(itsResponseEvents);
-	 }
+    {
+      cancelAll(itsStartEvents);
+      scheduleAll(itsResponseEvents);
+    }
 }
 
 void TimingHdlr::Impl::thAbortTrial()

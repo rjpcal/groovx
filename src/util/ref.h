@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sun Jul 22 23:46:13 2001
+// written: Wed Aug  8 12:27:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ namespace Util { namespace RefHelper {
 
   void insertItem(Util::Object* obj);
 
-  void throwErrorWithMsg(const char* msg);
+  void throwError(const char* msg);
 
 #ifndef ACC_COMPILER
 #  define DYNCAST dynamic_cast
@@ -101,10 +101,10 @@ private:
   public:
     explicit Handle(T* master) : itsMaster(master)
     {
-      if (master == 0) Util::RefHelper::throwErrorWithMsg(
+      if (master == 0) Util::RefHelper::throwError(
                             "attempted to construct a Ref with a null pointer");
 
-      if (master->isVolatile()) Util::RefHelper::throwErrorWithMsg(
+      if (master->isVolatile()) Util::RefHelper::throwError(
                          "attempted to construct a Ref with a volatile object");
 
       itsMaster->incrRefCount();
@@ -293,7 +293,7 @@ private:
     void ensureValid() const
     {
       if (!isValid())
-        Util::RefHelper::throwErrorWithMsg(
+        Util::RefHelper::throwError(
                          "attempted to access invalid object");
     }
 

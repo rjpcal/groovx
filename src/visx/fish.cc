@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Jul 19 09:30:36 2001
+// written: Wed Aug  8 12:27:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -309,11 +309,12 @@ DOTRACE("Fish::readSplineFile");
 
   // reads in the spline knots and coefficient
   STD_IO::ifstream ifs(splinefile);
-  if (ifs.fail()) {
-    ErrorWithMsg err("error opening file '");
-    err.appendMsg(splinefile, "'");
-    throw err;
-  }
+  if (ifs.fail())
+    {
+      Util::Error err("error opening file '");
+      err.appendMsg(splinefile, "'");
+      throw err;
+    }
 
   for(i = 0; i < 4; ++i) {
     // spline number and order
@@ -342,11 +343,12 @@ DOTRACE("Fish::readSplineFile");
       }
     }
 
-    if (ifs.fail()) {
-      ErrorWithMsg err("error reading file '");
-      err.appendMsg(splinefile, "'");
-      throw err;
-    }
+    if (ifs.fail())
+      {
+        Util::Error err("error reading file '");
+        err.appendMsg(splinefile, "'");
+        throw err;
+      }
   }
 
 
@@ -363,11 +365,12 @@ DOTRACE("Fish::readSplineFile");
     ifs >> itsEndPts[i].itsX[0] >> itsEndPts[i].itsX[1]
         >> itsEndPts[i].itsY[0] >> itsEndPts[i].itsY[1];
 
-    if (ifs.fail()) {
-      ErrorWithMsg err("error reading file '");
-      err.appendMsg(splinefile, "'");
-      throw err;
-    }
+    if (ifs.fail())
+      {
+        Util::Error err("error reading file '");
+        err.appendMsg(splinefile, "'");
+        throw err;
+      }
   }
 }
 
@@ -376,11 +379,12 @@ DOTRACE("Fish::readCoordFile");
   dynamic_string dummy;
 
   STD_IO::ifstream ifs(coordfile);
-  if (ifs.fail()) {
-    ErrorWithMsg err("error opening file '");
-    err.appendMsg(coordfile, "'");
-    throw err;
-  }
+  if (ifs.fail())
+    {
+      Util::Error err("error opening file '");
+      err.appendMsg(coordfile, "'");
+      throw err;
+    }
 
   // Skip (index-1) lines
   for (int j = 0; j < index-1; ++j) {
@@ -393,11 +397,12 @@ DOTRACE("Fish::readCoordFile");
     ifs >> itsCoords[i];
   }
 
-  if (ifs.fail()) {
-    ErrorWithMsg err("error reading file '");
-    err.appendMsg(coordfile, "'");
-    throw err;
-  }
+  if (ifs.fail())
+    {
+      Util::Error err("error reading file '");
+      err.appendMsg(coordfile, "'");
+      throw err;
+    }
 }
 
 Rect<double> Fish::grGetBoundingBox() const {
@@ -416,9 +421,10 @@ void Fish::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("Fish::grRender");
   // Create and configure the NURBS object
   GLUnurbsObj* theNurb = gluNewNurbsRenderer();
-  if (theNurb == 0) {
-    throw ErrorWithMsg("Fish::grRender: couldn't allocate GLUnurbsObj");
-  }
+  if (theNurb == 0)
+    {
+      throw Util::Error("Fish::grRender: couldn't allocate GLUnurbsObj");
+    }
   gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
   gluNurbsProperty(theNurb, GLU_U_STEP, 200);
   gluNurbsProperty(theNurb, GLU_V_STEP, 200);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 11 10:17:31 2000
-// written: Wed Aug  8 12:14:09 2001
+// written: Wed Aug  8 12:27:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ Util::ErrorHandler::~ErrorHandler() {}
 Util::NullErrorHandler::~NullErrorHandler() {}
 
 void Util::NullErrorHandler::handleUnknownError() {}
-void Util::NullErrorHandler::handleErrorWithMsg(ErrorWithMsg&) {}
+void Util::NullErrorHandler::handleError(Util::Error&) {}
 void Util::NullErrorHandler::handleMsg(const char*) {}
 
 static const char vcid_errorhandler_cc[] = "$Header$";

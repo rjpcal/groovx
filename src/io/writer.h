@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Jun 13 13:15:54 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ class Value;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::WriteError : public ErrorWithMsg {
+class IO::WriteError : public Util::Error {
 
 public:
   /// Construct with a descriptive message \a msg.
@@ -62,7 +62,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::WriteVersionError : public ErrorWithMsg {
+class IO::WriteVersionError : public Util::Error {
 public:
   /// Construct with information relevant to the problem
   WriteVersionError(const char* classname,

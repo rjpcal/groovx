@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Tue Aug  7 15:08:29 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ class Value;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::ReadError : public ErrorWithMsg {
+class IO::ReadError : public Util::Error {
 public:
   /// Construct with a descriptive message \a msg.
   ReadError(const char* msg);
@@ -65,7 +65,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::ReadVersionError : public ErrorWithMsg {
+class IO::ReadVersionError : public Util::Error {
 public:
   /// Construct with information relevant to the problem
   ReadVersionError(const char* classname,

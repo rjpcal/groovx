@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Aug  8 12:13:31 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ protected:
     Tcl::TclCmd* cmd = lookupCmd(ctx.interp(), cmd_name);
 
     if (cmd == 0)
-      throw ErrorWithMsg("no such TclCmd");
+      throw Util::Error("no such TclCmd");
 
     ctx.setResult(cmd->usage());
   }
@@ -172,7 +172,7 @@ public:
               Tcl_DeleteCommand(itsInterp,
                                 const_cast<char*>(itsCmdName.c_str()));
             }
-          catch (ErrorWithMsg& err)
+          catch (Util::Error& err)
             { DebugEvalNL(err.msg_cstr()); }
           catch (...)
             { DebugPrintNL("an unknown error occurred"); }
@@ -383,9 +383,9 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
       theImpl->itsOwner->rawInvoke(interp, objc, objv);
       return TCL_OK;
     }
-  catch (ErrorWithMsg& err)
+  catch (Util::Error& err)
     {
-      DebugPrintNL("catch (ErrorWithMsg&)");
+      DebugPrintNL("catch (Util::Error&)");
       if ( !string_literal(err.msg_cstr()).empty() )
         {
           errMessage(interp, theImpl->cmdName(), err.msg_cstr());

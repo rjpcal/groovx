@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sun Aug  5 08:20:00 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1376,45 +1376,52 @@ DOTRACE("Togl::Impl::Impl");
   itsTkWin = Tk_CreateWindowFromPath(itsInterp, mainwin,
                                      const_cast<char*>(pathname),
                                      (char *) 0);
-  if (itsTkWin == NULL) {
-    throw ErrorWithMsg("Togl constructor couldn't create Tk_Window");
-  }
+  if (itsTkWin == NULL)
+    {
+      throw Util::Error("Togl constructor couldn't create Tk_Window");
+    }
 
   itsDisplay = Tk_Display( itsTkWin );
 
   Tk_SetClass(itsTkWin, "Togl");
 
   // Configure the widget
-  if (config_argc > 0 ) {
-    if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
-      Tk_DestroyWindow(itsTkWin);
-      throw ErrorWithMsg("Togl constructor couldn't configure widget");
+  if (config_argc > 0 )
+    {
+      if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR)
+        {
+          Tk_DestroyWindow(itsTkWin);
+          throw Util::Error("Togl constructor couldn't configure widget");
+        }
     }
-  }
-  else {
-    // Generate a default argc/argv array
-    const char* init_args = "-stereo false";
+  else
+    {
+      // Generate a default argc/argv array
+      const char* init_args = "-stereo false";
 
-    Tcl_SplitList(interp, init_args, &config_argc, &config_argv);
+      Tcl_SplitList(interp, init_args, &config_argc, &config_argv);
 
-    if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
-      Tk_DestroyWindow(itsTkWin);
-      throw ErrorWithMsg("Togl constructor couldn't configure widget");
+      if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR)
+        {
+          Tk_DestroyWindow(itsTkWin);
+          throw Util::Error("Togl constructor couldn't configure widget");
+        }
+
+      Tcl_Free((char*) config_argv);
     }
-
-    Tcl_Free((char*) config_argv);
-  }
 
 
   // If OpenGL window wasn't already created by configure() we
   // create it now.  We can tell by checking if the GLX context has
   // been initialized.
-  if (!itsGLXContext) {
-    if (makeWindowExist() == TCL_ERROR) {
-      Tk_DestroyWindow(itsTkWin);
-      throw ErrorWithMsg("Togl constructor couldn't create window");
+  if (!itsGLXContext)
+    {
+      if (makeWindowExist() == TCL_ERROR)
+        {
+          Tk_DestroyWindow(itsTkWin);
+          throw Util::Error("Togl constructor couldn't create window");
+        }
     }
-  }
 
   itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
                                    Togl_WidgetCmd,

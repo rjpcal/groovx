@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,13 +100,13 @@ DOTRACE("IO::IoObject::ioTypename");
 ///////////////////////////////////////////////////////////////////////
 
 IO::IoError::IoError() :
-  ErrorWithMsg()
+  Util::Error()
 {
 DOTRACE("IO::IoError::IoError");
 }
 
 IO::IoError::IoError(const char* str) :
-  ErrorWithMsg(demangle_cstr(typeid(*this).name()))
+  Util::Error(demangle_cstr(typeid(*this).name()))
 {
 DOTRACE("IO::IoError::IoError");
   appendMsg(": ");
@@ -117,9 +117,9 @@ IO::IoError::~IoError() {}
 
 void IO::IoError::setMsg(const char* str) {
 DOTRACE("IO::IoError::setMsg(const char*)");
-  ErrorWithMsg::setMsg(demangle_cstr(typeid(*this).name()));
-  ErrorWithMsg::appendMsg(": ");
-  ErrorWithMsg::appendMsg(str);
+  Util::Error::setMsg(demangle_cstr(typeid(*this).name()));
+  Util::Error::appendMsg(": ");
+  Util::Error::appendMsg(str);
 }
 
 IO::InputError::InputError(const char* str) {

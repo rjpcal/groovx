@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Wed Jul 18 12:27:38 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ protected:
   {
     if (itsEngine == 0)
       {
-        throw ErrorWithMsg("couldn't open MATLAB engine");
+        throw Util::Error("couldn't open MATLAB engine");
       }
 
     itsBuf = new char[itsBufSize];
@@ -67,7 +67,7 @@ public:
     mxArray* arr = engGetArray(itsEngine, name);
     if (arr == 0)
       {
-        ErrorWithMsg err("no such MATLAB variable: ");
+        Util::Error err("no such MATLAB variable: ");
         err.appendMsg("'",name,"'");
         throw err;
       }
@@ -84,7 +84,7 @@ public:
     int result = engPutArray(itsEngine, arr);
     if (result != 0)
       {
-        throw ErrorWithMsg("error while putting mxArray into MATLAB engine");
+        throw Util::Error("error while putting mxArray into MATLAB engine");
       }
   }
 

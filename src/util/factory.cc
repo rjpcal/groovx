@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Fri Jul 20 14:11:41 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-FactoryError::FactoryError(const char* str) : ErrorWithMsg(str) {}
+FactoryError::FactoryError(const char* str) : Util::Error(str) {}
 
 FactoryError::~FactoryError() {}
 

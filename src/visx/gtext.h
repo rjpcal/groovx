@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Jul 19 09:41:03 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  *
  **/
 
-class GtextError : public ErrorWithMsg {
+class GtextError : public Util::Error {
 public:
   /// Construct with an informative message \a msg.
   GtextError(const char* msg);

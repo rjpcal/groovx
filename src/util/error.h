@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Aug  8 12:14:24 2001
+// written: Wed Aug  8 12:28:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,30 +19,34 @@
 
 class dynamic_string;
 
+namespace Util
+{
+  class Error;
+}
 
 /**
  *
- * \c ErrorWithMsg is a simple error class that carries a string
+ * \c Util::Error is a simple error class that carries a string
  * message describing the error.
  *
  **/
 
-class ErrorWithMsg {
+class Util::Error {
 public:
   /// Default construct with an empty message string.
-  ErrorWithMsg();
+  Error();
 
   /// Construct with an informative message \a errorMessage.
-  ErrorWithMsg(const char* errorMessage);
+  Error(const char* errorMessage);
 
   /// Copy constructor.
-  ErrorWithMsg(const ErrorWithMsg& other);
+  Error(const Error& other);
 
   /// Virtual destructor.
-  virtual ~ErrorWithMsg();
+  virtual ~Error();
 
   /// Assignment operator.
-  ErrorWithMsg& operator=(const ErrorWithMsg& other);
+  Error& operator=(const Error& other);
 
   /// Get a C-style string describing the error.
   virtual const char* msg_cstr() const;
@@ -50,21 +54,21 @@ public:
   /** Append additional text to the error message. This function
       returns a reference to the invoking object, so several \c
       appendMsg() calls can be chained together. */
-  ErrorWithMsg& appendMsg(const char* addMsg);
+  Error& appendMsg(const char* addMsg);
 
   /** Append additional text to the error message. This function
       returns a reference to the invoking object, so several \c
       appendMsg() calls can be chained together. */
-  ErrorWithMsg& appendMsg(const char* addMsg1, const char* addMsg2);
+  Error& appendMsg(const char* addMsg1, const char* addMsg2);
 
   /** Append additional text to the error message. This function
       returns a reference to the invoking object, so several \c
       appendMsg() calls can be chained together. */
-  ErrorWithMsg& appendMsg(const char* addMsg1, const char* addMsg2, const char* addMsg3);
+  Error& appendMsg(const char* addMsg1, const char* addMsg2, const char* addMsg3);
 
   /// Append a number to the error message.
   template <class T>
-  ErrorWithMsg& appendNumber(const T& x)
+  Error& appendNumber(const T& x)
   {
     return appendMsg(Util::Convert<T>::toString(x));
   }

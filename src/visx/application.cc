@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Thu May 10 12:04:49 2001
+// written: Wed Aug  8 12:27:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,13 +22,14 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   Application* theSingleton = 0;
 }
 
-NoAppError::NoAppError() : ErrorWithMsg() {}
+NoAppError::NoAppError() : Util::Error() {}
 
-NoAppError::NoAppError(const char* msg) : ErrorWithMsg(msg) {}
+NoAppError::NoAppError(const char* msg) : Util::Error(msg) {}
 
 NoAppError::~NoAppError() {}
 
@@ -39,15 +40,15 @@ private:
 
 public:
   Impl(int argc, char** argv, const char* library_env_var) :
-	 itsArgc(argc),
-	 itsArgv(argv),
-	 itsLibraryDir(library_env_var == 0 ?
-						0 : System::theSystem().getenv(library_env_var))
+    itsArgc(argc),
+    itsArgv(argv),
+    itsLibraryDir(library_env_var == 0 ?
+                  0 : System::theSystem().getenv(library_env_var))
   {
-	 DebugEvalNL((void*)library_env_var);
-	 DebugEvalNL(library_env_var);
-	 DebugEvalNL(itsLibraryDir);
-	 DebugEvalNL(itsLibraryDir.c_str());
+    DebugEvalNL((void*)library_env_var);
+    DebugEvalNL(library_env_var);
+    DebugEvalNL(itsLibraryDir);
+    DebugEvalNL(itsLibraryDir.c_str());
   }
 
   int itsArgc;
@@ -63,20 +64,20 @@ DOTRACE("Application::Application");
 
 Application::~Application() {
 DOTRACE("Application::~Application");
-  delete itsImpl; 
+  delete itsImpl;
 }
 
 void Application::installApp(Application* theApp) {
 DOTRACE("Application::installApp");
   if (theSingleton == 0 && theApp != 0) {
-	 theSingleton = theApp;
+    theSingleton = theApp;
   }
 }
 
 Application& Application::theApp() {
 DOTRACE("Application::theApp");
   if (theSingleton == 0) {
-	 throw NoAppError("the application has not yet been installed");
+    throw NoAppError("the application has not yet been installed");
   }
   return *theSingleton;
 }

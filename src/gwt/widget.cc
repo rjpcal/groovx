@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Sat Jul 21 18:59:12 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,15 +163,17 @@ DOTRACE("GWT::Widget::Impl::safeDraw");
 
   if ( !itsVisibility ) return;
 
-  try {
-    DebugPrintNL("drawing the node...");
-    itsDrawNode->draw(canvas);
-    itsUndrawNode = itsDrawNode;
-    return;
-  }
-  catch (ErrorWithMsg& err) {
-    DebugEvalNL(err.msg_cstr());
-  }
+  try
+    {
+      DebugPrintNL("drawing the node...");
+      itsDrawNode->draw(canvas);
+      itsUndrawNode = itsDrawNode;
+      return;
+    }
+  catch (Util::Error& err)
+    {
+      DebugEvalNL(err.msg_cstr());
+    }
 
   // Here, either the trial id or some other id was invalid
   setVisibility(false);

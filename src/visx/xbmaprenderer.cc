@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Aug  8 11:15:08 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,9 +32,9 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-class XBmapRendererError : public ErrorWithMsg {
+class XBmapRendererError : public Util::Error {
 public:
-  XBmapRendererError(const char* msg) : ErrorWithMsg(msg) {}
+  XBmapRendererError(const char* msg) : Util::Error(msg) {}
 };
 
 namespace

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 10:55:51 1999
-// written: Mon Jun 11 18:16:07 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ namespace GWT { class Canvas; }
 
 /** Exception class that is thrown from Application::theApp() if
     nobody has yet called Application::installApp(). */
-class NoAppError : public ErrorWithMsg {
+class NoAppError : public Util::Error {
 public:
   /// Default constructor.
   NoAppError();
@@ -55,8 +55,8 @@ public:
   virtual ~Application();
 
   /** Provides global access to the singleton Application.
-		@exception NoAppError installApp() has not yet been called.
-		@return the Application passed to installApp. */
+      @exception NoAppError installApp() has not yet been called.
+      @return the Application passed to installApp. */
   static Application& theApp();
 
   /// Retrieves the experiment that is running in the application.

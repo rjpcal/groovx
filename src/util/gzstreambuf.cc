@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 13:13:22 2001
-// written: Fri Jul 20 14:03:08 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ Util::gzstreambuf::gzstreambuf(const char* name, int om, bool throw_exception) :
 
   if (throw_exception && !opened)
     {
-      ErrorWithMsg err("couldn't open file ");
+      Util::Error err("couldn't open file ");
       err.appendMsg("'", name, "'");
       if (om & STD_IO::ios::in)
         {

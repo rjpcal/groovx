@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Wed Jun 20 18:32:08 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "util/debug.h"
 
 IO::WriteError::WriteError(const char* msg) :
-  ErrorWithMsg("IO::WriteError: ")
+  Util::Error("IO::WriteError: ")
 {
   appendMsg(msg);
 }
@@ -32,7 +32,7 @@ IO::WriteVersionError::WriteVersionError(const char* classname,
                                          IO::VersionId attempted_id,
                                          IO::VersionId lowest_supported_id,
                                          const char* msg) :
-  ErrorWithMsg("IO::WriteVersionError: ")
+  Util::Error("IO::WriteVersionError: ")
 {
   appendMsg("in ", classname, ", serial version ");
   appendNumber(int(attempted_id));

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Thu Jul 19 15:34:31 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ public:
        Modes are specified by or'ing the following:
 
        ERRORS
-       Throws an ErrorWithMsg on error if an error occurs. The more
+       Throws a Util::Error on error if an error occurs. The more
        general errors for chmod are listed below:
 
        EPERM   The effective UID does not match the owner of  the
@@ -102,7 +102,7 @@ public:
        overwritten.
 
        ERRORS
-       Throws an ErrorWithMsg on error if an error occurs.
+       Throws a Util::Error on error if an error occurs.
   */
   void rename(const char* oldpath, const char* newpath);
 
@@ -125,7 +125,7 @@ public:
        may continue to use it.
 
        ERRORS
-       Throws an ErrorWithMsg on error if an error occurs.
+       Throws a Util::Error on error if an error occurs.
   */
   void remove(const char* pathname);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Tue Aug  7 11:39:28 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,11 +26,11 @@ namespace VALUE_CC_LOCAL {
 using namespace VALUE_CC_LOCAL;
 
 ValueError::ValueError() :
-  ErrorWithMsg()
+  Util::Error()
 {}
 
 ValueError::ValueError(const char* msg) :
-  ErrorWithMsg(msg)
+  Util::Error(msg)
 {}
 
 ValueError::~ValueError() {}

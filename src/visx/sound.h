@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Mon Jun 11 14:49:17 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 namespace Util { template <class T> class Ref; };
 
-class SoundError : public ErrorWithMsg {
+class SoundError : public Util::Error {
 public:
   SoundError();
   SoundError(const char* msg);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Jul 20 17:59:43 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoError : public ErrorWithMsg {
+class IO::IoError : public Util::Error {
 public:
   /// Default constructor
   IoError();

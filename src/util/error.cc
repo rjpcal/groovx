@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Aug  8 12:14:06 2001
+// written: Wed Aug  8 12:27:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-ErrorWithMsg::ErrorWithMsg() :
+Util::Error::Error() :
   itsInfo(new dynamic_string(""))
 {
 
@@ -32,63 +32,63 @@ ErrorWithMsg::ErrorWithMsg() :
 }
 
 
-ErrorWithMsg::ErrorWithMsg(const char* str) :
+Util::Error::Error(const char* str) :
   itsInfo(new dynamic_string(str))
 {
-DOTRACE("ErrorWithMsg::ErrorWithMsg");
+DOTRACE("Util::Error::Error");
 
   DebugEvalNL(*itsInfo);
 }
 
-ErrorWithMsg::ErrorWithMsg(const ErrorWithMsg& other) :
+Util::Error::Error(const Util::Error& other) :
   itsInfo(new dynamic_string(*(other.itsInfo)))
 {
-DOTRACE("ErrorWithMsg::ErrorWithMsg");
+DOTRACE("Util::Error::Error");
   DebugEvalNL(*itsInfo);
 }
 
-ErrorWithMsg::~ErrorWithMsg()
+Util::Error::~Error()
 {
-DOTRACE("ErrorWithMsg::~ErrorWithMsg");
+DOTRACE("Util::Error::~Error");
   delete itsInfo;
 }
 
-ErrorWithMsg& ErrorWithMsg::operator=(const ErrorWithMsg& other)
+Util::Error& Util::Error::operator=(const Util::Error& other)
 {
-DOTRACE("ErrorWithMsg::operator=");
+DOTRACE("Util::Error::operator=");
 
   *itsInfo = *(other.itsInfo);    DebugEvalNL(*itsInfo);
 
   return *this;
 }
 
-const char* ErrorWithMsg::msg_cstr() const
+const char* Util::Error::msg_cstr() const
 {
-DOTRACE("ErrorWithMsg::msg_cstr");
+DOTRACE("Util::Error::msg_cstr");
   return itsInfo->c_str();
 }
 
-ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg)
+Util::Error& Util::Error::appendMsg(const char* addMsg)
 {
-DOTRACE("ErrorWithMsg::appendMsg");
+DOTRACE("Util::Error::appendMsg");
   *itsInfo += addMsg;
   DebugEvalNL(*itsInfo);
   return *this;
 }
 
-ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2)
+Util::Error& Util::Error::appendMsg(const char* addMsg1, const char* addMsg2)
 {
-DOTRACE("ErrorWithMsg::appendMsg");
+DOTRACE("Util::Error::appendMsg");
   *itsInfo += addMsg1;
   *itsInfo += addMsg2;
   DebugEvalNL(*itsInfo);
   return *this;
 }
 
-ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2,
-                                      const char* addMsg3)
+Util::Error& Util::Error::appendMsg(const char* addMsg1, const char* addMsg2,
+                                    const char* addMsg3)
 {
-DOTRACE("ErrorWithMsg::appendMsg");
+DOTRACE("Util::Error::appendMsg");
   *itsInfo += addMsg1;
   *itsInfo += addMsg2;
   *itsInfo += addMsg3;
@@ -96,9 +96,9 @@ DOTRACE("ErrorWithMsg::appendMsg");
   return *this;
 }
 
-void ErrorWithMsg::setMsg(const char* str)
+void Util::Error::setMsg(const char* str)
 {
-DOTRACE("ErrorWithMsg::setMsg");
+DOTRACE("Util::Error::setMsg");
   *itsInfo = str;
   DebugEvalNL(*itsInfo);
 }

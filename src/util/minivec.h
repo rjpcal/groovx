@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Sun Jul 22 23:35:37 2001
+// written: Wed Aug  8 12:27:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -305,13 +305,13 @@ public:
 
   reference       at (size_type n)
     {
-      if (n >= size()) throw ErrorWithMsg("index out of range");
+      if (n >= size()) throw Util::Error("index out of range");
       return *(begin() + n);
     }
 
   const_reference at (size_type n)         const
     {
-      if (n >= size()) throw ErrorWithMsg("index out of range");
+      if (n >= size()) throw Util::Error("index out of range");
       return *(begin() + n);
     }
 
@@ -379,9 +379,9 @@ public:
 
   void swap (minivec<T>& x)
     {
-		Util::swap(start, x.start);
-		Util::swap(finish, x.finish);
-		Util::swap(end_of_storage, x.end_of_storage);
+      Util::swap(start, x.start);
+      Util::swap(finish, x.finish);
+      Util::swap(end_of_storage, x.end_of_storage);
     }
 
   iterator erase (iterator position)

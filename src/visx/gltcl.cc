@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 18 15:17:49 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -40,9 +40,9 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GLError : public ErrorWithMsg {
+class GLError : public Util::Error {
 public:
-  GLError(const char* msg = "") : ErrorWithMsg(msg) {}
+  GLError(const char* msg = "") : Util::Error(msg) {}
 };
 
 namespace GLTcl

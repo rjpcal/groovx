@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Jul 19 09:32:48 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-GtextError::GtextError(const char* str) : ErrorWithMsg(str) {}
+GtextError::GtextError(const char* str) : Util::Error(str) {}
 
 GtextError::~GtextError() {}
 

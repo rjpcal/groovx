@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:59 1999
-// written: Mon Jun 11 18:19:28 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,9 @@ namespace {
   const char* GRSH_LIB_DIR = "GRSH_LIB_DIR";
 }
 
-NoCanvasError::NoCanvasError() : ErrorWithMsg() {}
+NoCanvasError::NoCanvasError() : Util::Error() {}
 
-NoCanvasError::NoCanvasError(const char* msg) : ErrorWithMsg(msg) {}
+NoCanvasError::NoCanvasError(const char* msg) : Util::Error(msg) {}
 
 NoCanvasError::~NoCanvasError() {}
 
@@ -56,7 +56,7 @@ DOTRACE("GrshApp::installCanvas");
 GWT::Canvas& GrshApp::getCanvas() {
 DOTRACE("GrshApp::getCanvas");
   if (itsCanvas == 0) {
-	 throw NoCanvasError("no canvas has yet been installed");
+    throw NoCanvasError("no canvas has yet been installed");
   }
   return *itsCanvas;
 }

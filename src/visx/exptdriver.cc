@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Aug  7 14:53:23 2001
+// written: Wed Aug  8 12:27:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,8 +98,8 @@ private:
     {
       if ( !haveValidBlock() )
         {
-          throw ErrorWithMsg("the experiment must have at least one Block "
-                             "before it can be started");
+          throw Util::Error("the experiment must have at least one Block "
+                            "before it can be started");
         }
     }
 
@@ -133,7 +133,7 @@ public:
 
   Ref<Block> currentBlock() const
     {
-      if ( !haveValidBlock() ) throw ErrorWithMsg("no current block exists");
+      if ( !haveValidBlock() ) throw Util::Error("no current block exists");
       return itsBlocks.at(itsCurrentBlockIdx);
     }
 
@@ -229,7 +229,7 @@ DOTRACE("ExptDriver::Impl::doAutosave");
       DebugEvalNL(itsAutosaveFile.c_str());
       IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), itsAutosaveFile);
     }
-  catch (ErrorWithMsg& err)
+  catch (Util::Error& err)
     {
       itsErrorHandler.handleMsg(err.msg_cstr());
     }
@@ -463,7 +463,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 
       addLogInfo("Experiment saved.");
     }
-  catch (ErrorWithMsg& err)
+  catch (Util::Error& err)
     {
       itsErrorHandler.handleMsg(err.msg_cstr());
     }

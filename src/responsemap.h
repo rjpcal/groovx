@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:35:06 2001
-// written: Thu Jul 19 17:02:04 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,8 +71,8 @@ private:
 
         if (current_pair.length() != 2)
           {
-            throw ErrorWithMsg("\"pair\" did not have length 2 "
-                               "in ResponseMap::update");
+            throw Util::Error("\"pair\" did not have length 2 "
+                              "in ResponseMap::update");
           }
 
         Tcl::ObjPtr patternObj = current_pair[0];

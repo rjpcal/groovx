@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Aug  6 13:02:53 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
     {
       throw;
     }
-  catch (ErrorWithMsg& err)
+  catch (Util::Error& err)
     {
       if (hasInterp())
         {

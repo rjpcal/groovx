@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Sun Aug  5 19:06:57 2001
+// written: Wed Aug  8 12:27:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ bool Tcl::Code::invoke(Tcl_Interp* interp)
 
       if (itsErrHandler != 0)
         {
-          itsErrHandler->handleErrorWithMsg(err);
+          itsErrHandler->handleError(err);
         }
       else if (NONE == itsErrorMode)
         {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Jul 19 11:16:48 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {
   DebugEval(status);
 
   if (status == GL_FALSE)
-    throw ErrorWithMsg("GrObj::getScreenFromWorld(): gluProject error");
+    throw Util::Error("GrObj::getScreenFromWorld(): gluProject error");
 
   return Point<int>(int(temp_screen_x), int(temp_screen_y));
 }
@@ -75,7 +75,7 @@ Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const {
   DebugEval(status);
 
   if (status == GL_FALSE)
-    throw ErrorWithMsg("GrObj::getWorldFromScreen(): gluUnProject error");
+    throw Util::Error("GrObj::getWorldFromScreen(): gluUnProject error");
 
   return world_pos;
 }
@@ -228,13 +228,13 @@ void GLCanvas::throwIfError(const char* where) const {
 DOTRACE("GLCanvas::throwIfError");
   GLenum status = glGetError();
   if (status != GL_NO_ERROR)
-	 {
-		const char* msg =
-		  reinterpret_cast<const char*>(gluErrorString(status));
-		ErrorWithMsg err("GL error: ");
-		err.appendMsg(msg, " ", where);
-		throw err;
-	 }
+    {
+      const char* msg =
+        reinterpret_cast<const char*>(gluErrorString(status));
+      Util::Error err("GL error: ");
+      err.appendMsg(msg, " ", where);
+      throw err;
+    }
 }
 
 static const char vcid_glcanvas_cc[] = "$Header$";

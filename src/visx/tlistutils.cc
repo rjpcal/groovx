@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug  6 11:13:52 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ DOTRACE("TlistUtils::writeResponses");
       ofs << setw(wid) << itr->avgRespTime() << endl;
     }
 
-  if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
+  if (ofs.fail()) { throw Util::Error("error while writing to file"); }
 }
 
 void TlistUtils::writeIncidenceMatrix(const char* filename)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Jun 13 10:25:33 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,9 +26,9 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-InvalidIdError::InvalidIdError() : ErrorWithMsg() {}
+InvalidIdError::InvalidIdError() : Util::Error() {}
 
-InvalidIdError::InvalidIdError(const char* msg) : ErrorWithMsg(msg) {}
+InvalidIdError::InvalidIdError(const char* msg) : Util::Error(msg) {}
 
 InvalidIdError::~InvalidIdError() {}
 
@@ -57,15 +57,15 @@ public:
   // then we erase the iterator.
   bool isValidItr(MapType::iterator itr) const
   {
-	 if (itr == itsPtrMap.end()) return false;
+    if (itr == itsPtrMap.end()) return false;
 
-	 if ((*itr).second.isInvalid())
-		{
-  		  itsPtrMap.erase(itr);
-		  return false;
-		}
+    if ((*itr).second.isInvalid())
+      {
+        itsPtrMap.erase(itr);
+        return false;
+      }
 
-	 return true;
+    return true;
   }
 
   int count() const
@@ -91,7 +91,7 @@ public:
       if (!isValidItr(itr)) return;
 
       if ( (*itr).second.get()->isShared() )
-        throw ErrorWithMsg("attempted to remove a shared object");
+        throw Util::Error("attempted to remove a shared object");
 
       itsPtrMap.erase(itr);
     }
@@ -172,7 +172,7 @@ public:
   typedef ObjDb::Impl::MapType MapType;
 
   ItrImpl(ObjDb::Impl::MapType& m, MapType::iterator itr) :
-	 itsMap(m), itsIter(itr) {}
+    itsMap(m), itsIter(itr) {}
 
   MapType& itsMap;
   MapType::iterator itsIter;
@@ -224,16 +224,16 @@ ObjDb::Iterator::operator++()
   ++(itsImpl->itsIter);
 
   while (true)
-	 {
-		if (itsImpl->itsIter == itsImpl->itsMap.end()) break;
+    {
+      if (itsImpl->itsIter == itsImpl->itsMap.end()) break;
 
-		if ((*(itsImpl->itsIter)).second.isValid()) break;
+      if ((*(itsImpl->itsIter)).second.isValid()) break;
 
-		ItrImpl::MapType::iterator bad = itsImpl->itsIter;
-		++(itsImpl->itsIter);
+      ItrImpl::MapType::iterator bad = itsImpl->itsIter;
+      ++(itsImpl->itsIter);
 
-		itsImpl->itsMap.erase(bad);
-	 }
+      itsImpl->itsMap.erase(bad);
+    }
 
   return *this;
 }

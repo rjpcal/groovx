@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Jul 20 13:21:34 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,13 +53,13 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 PbmError::PbmError() :
-  ErrorWithMsg()
+  Util::Error()
 {
 DOTRACE("PbmError::PbmError");
 }
 
 PbmError::PbmError(const char* str) :
-  ErrorWithMsg(str)
+  Util::Error(str)
 {
 DOTRACE("PbmError::PbmError");
 }

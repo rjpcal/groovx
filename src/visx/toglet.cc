@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Aug  6 13:19:10 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ public:
     // Check if font loading succeeded...
     if (newListBase == 0)
       {
-        throw ErrorWithMsg("unable to load font");
+        throw Util::Error("unable to load font");
       }
 
     // ... otherwise unload the current font
@@ -330,7 +330,7 @@ void Toglet::scaleRect(double factor)
 DOTRACE("Toglet::scaleRect");
 
   if (factor <= 0.0)
-    throw ErrorWithMsg("invalid scaling factor");
+    throw Util::Error("invalid scaling factor");
 
   itsMinRect.widenByFactor(factor);
   itsMinRect.heightenByFactor(factor);
@@ -345,10 +345,10 @@ DOTRACE("Toglet::setColor");
   static const char* const bad_val_msg = "RGB values must be in [0.0, 1.0]";
   static const char* const bad_index_msg = "color index must be in [0, 255]";
 
-  if (                     color.pixel > 255) { throw ErrorWithMsg(bad_index_msg); }
-  if (color.red   < 0.0 || color.red   > 1.0) { throw ErrorWithMsg(bad_val_msg); }
-  if (color.green < 0.0 || color.green > 1.0) { throw ErrorWithMsg(bad_val_msg); }
-  if (color.blue  < 0.0 || color.blue  > 1.0) { throw ErrorWithMsg(bad_val_msg); }
+  if (                     color.pixel > 255) { throw Util::Error(bad_index_msg); }
+  if (color.red   < 0.0 || color.red   > 1.0) { throw Util::Error(bad_val_msg); }
+  if (color.green < 0.0 || color.green > 1.0) { throw Util::Error(bad_val_msg); }
+  if (color.blue  < 0.0 || color.blue  > 1.0) { throw Util::Error(bad_val_msg); }
 
   itsTogl->setColor(color.pixel, color.red, color.green, color.blue);
 }
@@ -358,7 +358,7 @@ void Toglet::setFixedScale(double s)
 DOTRACE("Toglet::setFixedScale");
 
   if (s <= 0.0)
-    throw ErrorWithMsg("invalid scaling factor");
+    throw Util::Error("invalid scaling factor");
 
   itsFixedScaleFlag = true;
   itsFixedScale = s;
@@ -371,7 +371,7 @@ void Toglet::setUnitAngle(double deg)
 DOTRACE("Toglet::setUnitAngle");
 
   if (deg <= 0.0)
-    throw ErrorWithMsg("unit angle must be positive");
+    throw Util::Error("unit angle must be positive");
 
   static const double deg_to_rad = 3.141593/180.0;
   itsFixedScaleFlag = true;
@@ -396,7 +396,7 @@ void Toglet::setViewingDistIn(double in)
 DOTRACE("Toglet::setViewingDistIn");
 
   if (in <= 0.0)
-    throw ErrorWithMsg("viewing distance must be positive (duh)");
+    throw Util::Error("viewing distance must be positive (duh)");
 
   // according to similar triangles,
   //   new_dist / old_dist == new_scale / old_scale;

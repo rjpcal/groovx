@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Jul 19 13:48:03 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ DOTRACE("GrObjRenderer::newList");
   itsDisplayList = glGenLists(1);
   if (itsDisplayList == 0)
     {
-      throw ErrorWithMsg("GrObj::newList: couldn't allocate display list");
+      throw Util::Error("GrObj::newList: couldn't allocate display list");
     }
 }
 

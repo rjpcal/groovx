@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Jul 22 17:57:37 2001
+// written: Wed Aug  8 12:27:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  *
  **/
 
-class InvalidIdError : public ErrorWithMsg {
+class InvalidIdError : public Util::Error {
 public:
   /// Default constructor.
   InvalidIdError();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Aug  8 12:13:26 2001
+// written: Wed Aug  8 12:27:57 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -174,36 +174,43 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   int LOCAL_ARGC = 0;
   char** LOCAL_ARGV = 0;
 }
 
 // procedure to initialize a TclApp
-int Tcl_AppInit(Tcl_Interp* interp) {
+int Tcl_AppInit(Tcl_Interp* interp)
+{
 DOTRACE("Tcl_AppInit");
-  try {
-    static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
-    return theApp.status();
-  }
-  catch (ErrorWithMsg& err) {
-    Util::log() << "uncaught ErrorWithMsg: " << err.msg_cstr() << '\n';
-  }
-  catch (std::exception& err) {
-    Util::log() << "uncaught std::exception of type "
-                << demangle_cstr(typeid(err).name())
-                << " occurred: "
-                << err.what()
-                << '\n';
-  }
-  catch (...) {
-    Util::log() << "uncaught exception of unknown type" << '\n';
-  }
+  try
+    {
+      static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
+      return theApp.status();
+    }
+  catch (Util::Error& err)
+    {
+      Util::log() << "uncaught Error: " << err.msg_cstr() << '\n';
+    }
+  catch (std::exception& err)
+    {
+      Util::log() << "uncaught std::exception of type "
+                  << demangle_cstr(typeid(err).name())
+                  << " occurred: "
+                  << err.what()
+                  << '\n';
+    }
+  catch (...)
+    {
+      Util::log() << "uncaught exception of unknown type" << '\n';
+    }
 
   exit(-1);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   LOCAL_ARGC = argc;
   LOCAL_ARGV = argv;
   Tk_Main(argc, argv, Tcl_AppInit);

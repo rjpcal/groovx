@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Jul 21 21:07:43 2001
+// written: Wed Aug  8 12:27:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@
 
 #define EVENT_TRACE
 
-class TrialEventError : public ErrorWithMsg {
+class TrialEventError : public Util::Error {
 public:
-  TrialEventError(const char* msg = "") : ErrorWithMsg(msg) {}
+  TrialEventError(const char* msg = "") : Util::Error(msg) {}
 };
 
 
@@ -192,9 +192,9 @@ DOTRACE("TrialEvent::invokeTemplate");
         {
           invoke(*itsTrial);
         }
-      catch (ErrorWithMsg& err)
+      catch (Util::Error& err)
         {
-          itsErrorHandler->handleErrorWithMsg(err);
+          itsErrorHandler->handleError(err);
         }
       catch (...)
         {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Mon Jun 11 18:17:29 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ struct Tcl_Interp;
  * if no one has installed a \c Canvas.
  *
  **/
-class NoCanvasError : public ErrorWithMsg {
+class NoCanvasError : public Util::Error {
 public:
   /// Default constructor.
   NoCanvasError();

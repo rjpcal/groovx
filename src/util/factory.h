@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Mon Jun 18 09:45:44 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ class fixed_string;
  * Exception class for \c Factory's.
  *
  **/
-class FactoryError : public ErrorWithMsg {
+class FactoryError : public Util::Error {
 public:
   /// Construct with an informative message \a msg.
   FactoryError(const char* str);

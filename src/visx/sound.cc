@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Aug  8 12:27:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,18 +27,20 @@
 #  include "dummysound.h"
 #endif
 
-namespace {
+namespace
+{
   WeakRef<Sound> OK_SOUND;
   WeakRef<Sound> ERR_SOUND;
 }
 
-SoundError::SoundError() : ErrorWithMsg() {}
-SoundError::SoundError(const char* msg) : ErrorWithMsg(msg) {}
+SoundError::SoundError() : Util::Error() {}
+SoundError::SoundError(const char* msg) : Util::Error(msg) {}
 SoundError::~SoundError() {}
 
 Sound::~Sound () {}
 
-void Sound::setOkSound(Ref<Sound> ok_sound) {
+void Sound::setOkSound(Ref<Sound> ok_sound)
+{
 #ifndef ACC_COMPILER
   OK_SOUND = ok_sound;
 #else
@@ -46,7 +48,8 @@ void Sound::setOkSound(Ref<Sound> ok_sound) {
 #endif
 }
 
-void Sound::setErrSound(Ref<Sound> err_sound) {
+void Sound::setErrSound(Ref<Sound> err_sound)
+{
 #ifndef ACC_COMPILER
   ERR_SOUND = err_sound;
 #else
@@ -54,11 +57,13 @@ void Sound::setErrSound(Ref<Sound> err_sound) {
 #endif
 }
 
-Ref<Sound> Sound::getOkSound() {
+Ref<Sound> Sound::getOkSound()
+{
   return Ref<Sound>(OK_SOUND.get());
 }
 
-Ref<Sound> Sound::getErrSound() {
+Ref<Sound> Sound::getErrSound()
+{
   return Ref<Sound>(ERR_SOUND.get());
 }
 

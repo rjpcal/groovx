@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Wed Aug  8 12:14:19 2001
+// written: Wed Aug  8 12:27:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ namespace Tcl
   class BkdErrorHandler;
 }
 
-class Tcl::TclError : public ErrorWithMsg {
+class Tcl::TclError : public Util::Error {
 public:
   TclError();
   TclError(const char* msg);
@@ -51,7 +51,7 @@ public:
   virtual ~BkdErrorHandler();
 
   virtual void handleUnknownError();
-  virtual void handleErrorWithMsg(ErrorWithMsg& err);
+  virtual void handleError(Util::Error& err);
   virtual void handleMsg(const char* msg);
 };
 

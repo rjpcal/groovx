@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:06 1999
-// written: Thu May 10 12:04:40 2001
+// written: Wed Aug  8 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class BmapData;
 
 /** This exception class will be thrown by \c Pbm if there is an error
     during parsing of the bitmap data. */
-class PbmError : public ErrorWithMsg {
+class PbmError : public Util::Error {
 public:
   /// Default constructor.
   PbmError();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Jun 12 11:17:11 2001
+// written: Wed Aug  8 12:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 #include "util/debug.h"
 
 IO::ReadError::ReadError(const char* msg) :
-  ErrorWithMsg("IO::ReadError: ")
+  Util::Error("IO::ReadError: ")
 {
   appendMsg(msg);
 }
@@ -36,7 +36,7 @@ IO::ReadVersionError::ReadVersionError(const char* classname,
                                        IO::VersionId attempted_id,
                                        IO::VersionId lowest_supported_id,
                                        const char* msg) :
-  ErrorWithMsg("IO::ReadVersionError: ")
+  Util::Error("IO::ReadVersionError: ")
 {
   appendMsg("in ", classname, ", serial version ");
   appendNumber(int(attempted_id));

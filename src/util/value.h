@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Tue Aug  7 11:38:59 2001
+// written: Wed Aug  8 12:27:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ class ostream;
  * Value object.
  *
  **/
-class ValueError : public ErrorWithMsg {
+class ValueError : public Util::Error {
 public:
   /// Default constructor.
   ValueError();

@@ -54,7 +54,7 @@ public:
     {
       if (other->contains(itsOwner))
         {
-          throw ErrorWithMsg("couldn't add node without generating a cycle");
+          throw Util::Error("couldn't add node without generating a cycle");
         }
     }
 
@@ -159,7 +159,7 @@ Ref<GxNode> GxSeparator::getChild(ChildId index) const
 DOTRACE("GxSeparator::getChild");
   if (index >= itsImpl->itsChildren.size())
     {
-      ErrorWithMsg err("GxSeparator has no child with index '");
+      Util::Error err("GxSeparator has no child with index '");
       err.appendNumber(index);
       err.appendMsg("'");
       throw err;

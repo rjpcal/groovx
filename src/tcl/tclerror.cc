@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:13 1999
-// written: Wed Aug  8 12:13:53 2001
+// written: Wed Aug  8 12:27:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,22 +22,21 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace Tcl {
-
-TclError::TclError() :
-  ::ErrorWithMsg()
+namespace Tcl
 {
-DOTRACE("TclError::TclError");
-}
+  TclError::TclError() :
+    Util::Error()
+  {
+    DOTRACE("TclError::TclError");
+  }
 
-TclError::TclError(const char* msg) :
-  ::ErrorWithMsg(msg)
-{
-DOTRACE("TclError::TclError");
-}
+  TclError::TclError(const char* msg) :
+    Util::Error(msg)
+  {
+    DOTRACE("TclError::TclError");
+  }
 
-TclError::~TclError() {}
-
+  TclError::~TclError() {}
 }
 
 
@@ -60,7 +59,7 @@ void Tcl::BkdErrorHandler::handleUnknownError() {
   raiseBackgroundError("an error of unknown type occurred");
 }
 
-void Tcl::BkdErrorHandler::handleErrorWithMsg(ErrorWithMsg& err) {
+void Tcl::BkdErrorHandler::handleError(Util::Error& err) {
   raiseBackgroundError(err.msg_cstr());
 }
 
