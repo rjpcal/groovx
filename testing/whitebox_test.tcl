@@ -9,6 +9,7 @@
 
 set pkgs {
     Algotest
+    Basesixfourtest
     Fstringtest
     Signaltest
     Vectwotest
