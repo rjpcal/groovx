@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Mon Dec  6 13:59:19 1999
+// written: Wed Feb 16 11:47:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,15 +31,13 @@
 
 /**
  *
- * Exception class for Factory's.
+ * Exception class for \c Factory's.
  *
  **/
 class FactoryError : public ErrorWithMsg {
 public:
-  ///
-  FactoryError() : ErrorWithMsg() {}
-  ///
-  FactoryError(const string& str) : ErrorWithMsg(str) {}
+  /// Construct with an informative message \a msg.
+  FactoryError(const string& str="") : ErrorWithMsg(str) {}
 };
 
 
@@ -50,14 +48,14 @@ namespace {
 
 /**
  *
- * CreatorBase is a template class that defines a single abstract
- * function, create(), that returns an object of type Base.
+ * \c CreatorBase is a template class that defines a single abstract
+ * function, \c create(), that returns an object of type \c Base.
  *
  **/
 template <class Base>
 class CreatorBase {
 public:
-  ///
+  /// Return a new object of type \c Base.
   virtual Base* create() = 0;
 };
 
@@ -72,33 +70,35 @@ public:
 template <class Base, class Derived>
 class Creator : public CreatorBase<Base> {
 public:
-  ///
+  /// Return a new object of type \c Derived.
   virtual Base* create() { return new Derived; }
 };
 
 
 /**
  *
- * CreatorMapBase provides a non-typesafe wrapper around std::map. The
- * destroy() function should be overridden to delete the pointer after
- * casting it to its true type.
+ * \c CreatorMapBase provides a non-typesafe wrapper around \c
+ * std::map. The \c killPtr() function should be overridden to delete
+ * the pointer after casting it to its true type.
  *
  **/
 
 class CreatorMapBase {
 public:
-  ///
+  /// Default constructor.
   CreatorMapBase();
-  ///
+
+  /// Virtual destructor.
   virtual ~CreatorMapBase();
 
 protected:
-  ///
+  /// Retrieve the object associated with the tag \a name.
   void* getPtrForName(const string& name) const;
-  ///
+
+  /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const string& name, void* ptr);
 
-  ///
+  /// Delete the object at \a ptr.
   virtual void killPtr(void* ptr) = 0;
 
   /** This must be called by derived class's destructors in order to
@@ -113,28 +113,29 @@ private:
 
 /**
  *
- * CreatorMap provides a typesafe wrapper around CreatorMapBase.
+ * \c CreatorMap provides a typesafe wrapper around \c CreatorMapBase.
  *
  **/
 
 template<class Base>
 class CreatorMap : private CreatorMapBase {
 public:
+  /// Virtual destructor calls \c clear() to free all memory.
   virtual ~CreatorMap() { CreatorMapBase::clear(); }
 
-  ///
+  /// The type of object stored in the map.
   typedef CreatorBase<Base> CreatorType;
 
-  ///
+  /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const string& name) const
 	 { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
 
-  ///
+  /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const string& name, CreatorType* ptr)
 	 { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
 
 protected:
-  ///
+  /// Deletes the object at \a ptr.
   virtual void killPtr(void* ptr)
 	 { delete static_cast<CreatorType*>(ptr); }
 };
@@ -142,14 +143,14 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Factory maintains a mapping from type names to CreatorBase's, and
- * in this way is able to create new objects given only a type
- * name. All of the product types of a factory must be derived from
- * Base. The constructors is protected because factories for specific
- * types should be implemented as singleton classes derived from
- * Factory.
+ * \c Factory can create objects from an inheritance hierarchy given
+ * only a typename. \Factory maintains a mapping from typenames to \c
+ * CreatorBase's, and so given a typename can call the \c create()
+ * function of the associated \c Creator. All of the product types of
+ * a factory must be derived from \c Base. The constructor is
+ * protected because factories for specific types should be
+ * implemented as singleton classes derived from Factory.
  *
- * @short Creates new objects from a typename.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -159,7 +160,7 @@ private:
   CreatorMap<Base> itsMap;
 
 protected:
-  ///
+  /// Default constructor.
   Factory() {}
 
 public:
@@ -208,12 +209,12 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * FactoryRegistrar objects can register a given type with a factory
- * when it is constructed; thus it can be used as a static class
- * member to ensure that the class is registered with an appropriate
- * factory.
+ * \c FactoryRegistrar is a convenience class for registering types
+ * with a factory. \c FactoryRegistrar objects should not be
+ * instantiated; instead, clients simply use the static function \c
+ * registerWith() to register the \c Derived type with a \c Factory
+ * rooted in the \c Base type.
  *
- * @short Convenience class for registering types with a factory.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -221,7 +222,11 @@ template <class Base, class Derived>
 class FactoryRegistrar {
 protected:
   FactoryRegistrar();
+
 public:
+  /** Registers a creator for type \c Derived with \a theFactory,
+      which is rooted in type \c Base. \c Derived must be a class
+      derived from \c Base. */
   static void registerWith(Factory<Base>& theFactory)
 	 {
 		theFactory.registerType( (Derived*) 0 );
