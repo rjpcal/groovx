@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue Sep 17 12:17:26 2002
+// written: Tue Sep 17 12:37:24 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -59,9 +59,11 @@ public:
   /// Overridden from GWT::Widget.
   virtual Gfx::Canvas& getCanvas() const;
 
-  // Callbacks
+  /// Overridden from Tcl::TkWidget.
   virtual void displayCallback();
+
   virtual void reshapeCallback();
+
   virtual void timerCallback();
 
   // Miscellaneous
@@ -72,7 +74,6 @@ public:
   Tcl_Obj* cget(Tcl_Obj* param) const;
   void configure(int objc, Tcl_Obj* const objv[]);
   void makeCurrent() const;
-  void requestRedisplay();
   void requestReconfigure();
 
   /// Overridden from GWT::Widget.

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 12:09:57 2002
+// written: Tue Sep 17 12:36:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,6 +85,7 @@ public:
     tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
                             const_cast<char*>(pathname),
                             (char *) 0)),
+    updatePending(false),
     shutdownRequested(false)
   {
     if (tkWin == 0)
@@ -95,6 +96,7 @@ public:
 
   ~TkWidgImpl()
   {
+    Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(owner));
     Tk_DestroyWindow(tkWin);
   }
 
@@ -102,6 +104,7 @@ public:
   Tcl_Interp* interp;
   const Tk_Window tkWin;
 
+  bool updatePending;
   bool shutdownRequested;
 
   enum EventType { KEY, BUTTON };
@@ -126,6 +129,21 @@ public:
                            controlPressed);
   }
 
+  static void cRenderCallback(ClientData clientData) throw()
+  {
+    Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+
+    try
+      {
+        widg->displayCallback();
+        widg->rep->updatePending = false;
+      }
+    catch (...)
+      {
+        Tcl::Interp(widg->rep->interp).handleLiveException("cRenderCallback", true);
+      }
+  }
+
   static void cEventuallyFreeCallback(char* clientData) throw()
   {
     Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
@@ -146,6 +164,15 @@ DOTRACE("TkWidgImpl::cEventCallback");
     {
       switch (rawEvent->type)
         {
+        case Expose:
+          {
+            DOTRACE("TkWidgImpl::cEventCallback-Expose");
+            if (rawEvent->xexpose.count == 0)
+              {
+                widg->requestRedisplay();
+              }
+          }
+          break;
         case KeyPress:
           if (widg->hasKeyListeners())
             keyEventProc(widg, (XKeyEvent*) rawEvent);
@@ -186,7 +213,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-#define EVENT_MASK StructureNotifyMask|KeyPressMask|ButtonPressMask
+#define EVENT_MASK ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 
 Tcl::TkWidget::TkWidget(Tcl_Interp* interp, const char* pathname) :
   rep(new TkWidgImpl(this, interp, pathname))
@@ -293,6 +320,17 @@ DOTRACE("Tcl::TkWidget::takeFocus");
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 
   cmd.invoke(rep->interp);
+}
+
+void Tcl::TkWidget::requestRedisplay()
+{
+DOTRACE("Tcl::TkWidget::requestRedisplay");
+
+  if (!rep->updatePending)
+    {
+      Tk_DoWhenIdle(TkWidgImpl::cRenderCallback, static_cast<ClientData>(this));
+      rep->updatePending = true;
+    }
 }
 
 void Tcl::TkWidget::hook()

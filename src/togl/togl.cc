@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 12:17:22 2002
+// written: Tue Sep 17 12:37:58 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -201,8 +201,6 @@ public:
 
   int itsFontListBase;
 
-  bool itsUpdatePending;
-
   Tcl_TimerToken itsTimerToken;
 
   Impl(Togl* owner, Tcl_Interp* interp);
@@ -214,9 +212,7 @@ public:
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
   static void cEventCallback(ClientData clientData, XEvent* eventPtr) throw();
   static void cTimerCallback(ClientData clientData) throw();
-  static void cRenderCallback(ClientData clientData) throw();
 
-  void requestRedisplay();
   void requestReconfigure();
   void swapBuffers() const;
 
@@ -263,8 +259,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
 
   itsFontListBase(0),
 
-  itsUpdatePending(false),
-
   itsTimerToken(0)
 {
 DOTRACE("Togl::Impl::Impl");
@@ -310,7 +304,7 @@ DOTRACE("Togl::Impl::Impl");
   //
 
   Tk_CreateEventHandler(itsTkWin,
-                        ExposureMask | StructureNotifyMask,
+                        StructureNotifyMask,
                         &cEventCallback,
                         static_cast<ClientData>(this));
 
@@ -352,8 +346,6 @@ DOTRACE("Togl::Impl::~Impl");
   Assert(itsTkWin != 0);
 
   Tcl_DeleteTimerHandler(itsTimerToken);
-
-  Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(this));
 
   Tk_FreeConfigOptions(reinterpret_cast<char*>(itsOpts.get()),
                        toglOptionTable, itsTkWin);
@@ -441,38 +433,6 @@ DOTRACE("Togl::Impl::cTimerCallback");
     }
 
   Tcl_Release(clientData);
-}
-
-// Called when the widget's contents must be redrawn.
-void Togl::Impl::cRenderCallback(ClientData clientData) throw()
-{
-DOTRACE("Togl::Impl::cRenderCallback");
-  Impl* rep = static_cast<Impl*>(clientData);
-
-  Tcl_Preserve(clientData);
-
-  try
-    {
-      rep->itsGlx->makeCurrent(rep->windowId());
-      rep->itsOwner->displayCallback();
-      rep->itsUpdatePending = false;
-    }
-  catch (...)
-    {
-      Tcl::Interp(rep->itsInterp).handleLiveException("cRenderCallback", true);
-    }
-
-  Tcl_Release(clientData);
-}
-
-void Togl::Impl::requestRedisplay()
-{
-DOTRACE("Togl::Impl::requestRedisplay");
-  if (!itsUpdatePending)
-    {
-      Tk_DoWhenIdle( cRenderCallback, static_cast<ClientData>(this) );
-      itsUpdatePending = true;
-    }
 }
 
 void Togl::Impl::requestReconfigure()
@@ -625,15 +585,6 @@ DOTRACE("Togl::Impl::eventProc");
 
   switch (eventPtr->type)
     {
-    case Expose:
-      {
-        DOTRACE("Togl::Impl::eventProc-Expose");
-        if (eventPtr->xexpose.count == 0)
-          {
-            requestRedisplay();
-          }
-      }
-      break;
     case ConfigureNotify:
       {
         DOTRACE("Togl::Impl::eventProc-ConfigureNotify");
@@ -711,6 +662,9 @@ DOTRACE("Togl::~Togl");
 void Togl::displayCallback()
 {
 DOTRACE("Togl::displayCallback");
+
+  rep->itsGlx->makeCurrent(rep->windowId());
+  fullRender();
 }
 
 void Togl::reshapeCallback()
@@ -732,7 +686,6 @@ void Togl::configure(int objc, Tcl_Obj* const objv[])
   { rep->configure(objc, objv); }
 
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(rep->windowId()); }
-void Togl::requestRedisplay()           { rep->requestRedisplay(); }
 void Togl::requestReconfigure()         { rep->requestReconfigure(); }
 void Togl::swapBuffers()                { rep->swapBuffers(); }
 int Togl::width() const                 { return rep->itsOpts->width; }
