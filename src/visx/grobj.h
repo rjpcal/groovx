@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 21:09:11 1999
+// written: Mon Dec  6 21:18:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ public:
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
 		changes pending, otherwise does nothing. */
-  void update() const;
+  void update(Canvas& canvas) const;
 
   /** This function draws the object according to the GrRenderMode
 		selected with setRenderMode(). */
