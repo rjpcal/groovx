@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Sep 29 20:10:36 1999
+// written: Tue Oct  5 09:50:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -202,7 +202,9 @@ bool TclValue::getBool() const {
 DOTRACE("TclValue::getBool");
   int val;
   if ( Tcl_GetBooleanFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 throw ValueError();
+	 string msg = Tcl_GetStringResult(itsInterp);
+	 Tcl_ResetResult(itsInterp);
+	 throw ValueError(msg);
   }
   return bool(val);
 }
@@ -233,14 +235,18 @@ DOTRACE("TclValue::getString");
 void TclValue::get(int& val) const {
 DOTRACE("TclValue::get");
   if ( Tcl_GetIntFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 throw ValueError();
+	 string msg = Tcl_GetStringResult(itsInterp);
+	 Tcl_ResetResult(itsInterp);
+	 throw ValueError(msg);
   }
 }
 
 void TclValue::get(long& val) const {
 DOTRACE("TclValue::get");
   if ( Tcl_GetLongFromObj(itsInterp, itsObj, &val) != TCL_OK) {
-	 throw ValueError();
+	 string msg = Tcl_GetStringResult(itsInterp);
+	 Tcl_ResetResult(itsInterp);
+	 throw ValueError(msg);
   }
 }
 
@@ -253,7 +259,9 @@ void TclValue::get(double& val) const {
 DOTRACE("TclValue::get");
   try {
 	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-		throw ValueError();
+		string msg = Tcl_GetStringResult(itsInterp);
+		Tcl_ResetResult(itsInterp);
+		throw ValueError(msg);
 	 }
   }
   catch (ValueError&) {
