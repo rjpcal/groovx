@@ -20,51 +20,6 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-// OK if interp is 0
-int Tcl::Safe::listLength(Tcl_Interp* interp, Tcl_Obj* tcllist)
-  throw(Tcl::TclError) {
-DOTRACE("Tcl::Safe::listLength");
-  int length;
-  if (Tcl_ListObjLength(interp, tcllist, &length) != TCL_OK) {
-	 throw TclError("error getting list length");
-  }
-  return length;
-}
-
-// OK if interp is 0
-Tcl_Obj* Tcl::Safe::listElement(Tcl_Interp* interp, Tcl_Obj* tcllist,
-										  int index) throw(Tcl::TclError) {
-DOTRACE("Tcl::Safe::listElement");
-
-  Tcl_Obj* element = NULL;
-  if (Tcl_ListObjIndex(interp, tcllist, index, &element) != TCL_OK) {
-	 throw TclError("error getting list element");
-  }
-  return element;
-}
-
-// OK if interp is 0
-void Tcl::Safe::splitList(Tcl_Interp* interp, Tcl_Obj* tcllist,
-				 Tcl_Obj**& elements_out, int& length_out) throw(Tcl::TclError) {
-DOTRACE("Tcl::Safe::splitList");
-
-  if ( Tcl_ListObjGetElements(interp, tcllist,
-										&length_out, &elements_out) != TCL_OK ) {
-	 throw TclError("error splitting list");
-  }
-}
-
-// OK if interp is 0
-int Tcl::Safe::getInt(Tcl_Interp* interp, Tcl_Obj* intObj)
-  throw(Tcl::TclError) {
-DOTRACE("Tcl::Safe::getInt");
-  int return_val=-1;
-  if (Tcl_GetIntFromObj(interp, intObj, &return_val) != TCL_OK) {
-	 throw TclError("error getting int from Tcl_Obj");
-  }
-  return return_val;
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Tcl::SafeInterface member definitions
@@ -85,6 +40,66 @@ DOTRACE("Tcl::SafeInterface::handleError");
 
 ///////////////////////////////////////////////////////////////////////
 //
+// Tcl::SafeInterface -- Ints
+//
+///////////////////////////////////////////////////////////////////////
+
+int Tcl::SafeInterface::getInt(Tcl_Obj* intObj) const throw(Tcl::TclError) {
+DOTRACE("Tcl::SafeInterface::getInt");
+
+  int return_val=-1;
+  // OK if interp is 0
+  if (Tcl_GetIntFromObj(itsInterp, intObj, &return_val) != TCL_OK) {
+	 handleError("error getting int from Tcl_Obj");
+  }
+  return return_val;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::SafeInterface -- Lists
+//
+///////////////////////////////////////////////////////////////////////
+
+int Tcl::SafeInterface::listLength(Tcl_Obj* tcllist)
+  const throw(Tcl::TclError) {
+DOTRACE("Tcl::SafeInterface::listLength");
+
+  int length;
+  // OK if itsInterp is 0
+  if (Tcl_ListObjLength(itsInterp, tcllist, &length) != TCL_OK) {
+	 handleError("error getting list length");
+  }
+  return length;
+}
+
+Tcl_Obj* Tcl::SafeInterface::listElement(Tcl_Obj* tcllist,
+													  int index) const throw(Tcl::TclError) {
+DOTRACE("Tcl::SafeInterface::listElement");
+
+  Tcl_Obj* element = 0;
+  // OK if interp is 0
+  if (Tcl_ListObjIndex(itsInterp, tcllist, index, &element) != TCL_OK) {
+	 handleError("error getting list element");
+  }
+
+  Postcondition(element != 0);
+  return element;
+}
+
+void Tcl::SafeInterface::splitList(Tcl_Obj* tcllist, Tcl_Obj**& elements_out,
+											  int& length_out) const throw(Tcl::TclError) {
+DOTRACE("Tcl::SafeInterface::splitList");
+
+  // OK if itsInterp is 0
+  if ( Tcl_ListObjGetElements(itsInterp, tcllist,
+										&length_out, &elements_out) != TCL_OK ) {
+	 handleError("error splitting list");
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // Tcl::SafeInterp member definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,7 +115,7 @@ Tcl::SafeInterp::~SafeInterp() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Expressions
+// Tcl::SafeInterp -- Expressions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -119,7 +134,7 @@ DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Interpreter
+// Tcl::SafeInterp -- Interpreter
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -132,7 +147,7 @@ DOTRACE("Tcl::SafeInterp::interpDeleted");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Result
+// Tcl::SafeInterp -- Result
 //
 ///////////////////////////////////////////////////////////////////////
 

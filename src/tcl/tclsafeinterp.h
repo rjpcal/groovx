@@ -3,7 +3,7 @@
 // tclutil.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Oct 11 17:00:01 2000
+// written: Wed Oct 11 17:37:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,22 +19,6 @@ struct Tcl_Interp;
 struct Tcl_Obj;
 
 namespace Tcl {
-  namespace Safe {
-	 // OK if interp is 0
-	 int listLength(Tcl_Interp* interp, Tcl_Obj* tcllist) throw(TclError);
-
-	 // OK if interp is 0
-	 Tcl_Obj* listElement(Tcl_Interp* interp,
-								 Tcl_Obj* tcllist, int index) throw(TclError);
-
-	 // OK if interp is 0
-	 void splitList(Tcl_Interp* interp, Tcl_Obj* tcllist,
-			  Tcl_Obj**& elements_out, int& length_out) throw(TclError);
-
-	 // OK if interp is 0
-	 int getInt(Tcl_Interp* interp, Tcl_Obj* intObj) throw(TclError);
-  }
-
   class SafeInterface;
   class SafeInterp;
 }
@@ -64,6 +48,17 @@ public:
 
   bool hasInterp() const { return itsInterp != 0; }
   Tcl_Interp* intp() const { return itsInterp; }
+
+  // Lists
+  int listLength(Tcl_Obj* tcllist) const throw(TclError);
+
+  Tcl_Obj* listElement(Tcl_Obj* tcllist, int index) const throw(TclError);
+
+  void splitList(Tcl_Obj* tcllist, Tcl_Obj**& elements_out,
+					  int& length_out) const throw(TclError);
+
+  // Ints
+  int getInt(Tcl_Obj* intObj) const throw(TclError);
 };
 
 ///////////////////////////////////////////////////////////////////////
