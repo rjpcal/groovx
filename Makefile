@@ -276,39 +276,26 @@ EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
 #
 #-------------------------------------------------------------------------
 
-# My intent is that libvisx should contain the core classes for the
-# experiment framework, and that libgrsh should contain the
-# application-specific subclasses (like Face, House, etc.). But there
-# are some bizarre problems on HPUX that give crashes from OpenGL,
-# which are very sensitive to the link order. So for now, all the
-# GL-related objects go into libgrsh, and everything else into libvisx.
-
-# Ah, well, now the HP-OpenGL bug is rearing its ugly head again, so
-# I'll have to go back to statically linking the OpenGL stuff.
-
 #
 # static objects
 #
 
-TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
-
-STATIC_SRCS := \
-	$(shell grep -l 'GL/gl\.h' $(SRC)/visx/*.cc) \
-	$(shell grep -l 'int main' $(SRC)/visx/*.cc)
-
 STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(STATIC_SRCS)))
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
 
-GRSH_STATIC_OBJS := $(STATIC_OBJS) $(TOGL_OBJS)
+GRSH_STATIC_OBJS := $(STATIC_OBJS)
 
 #
 # libDeepVision
 #
 
-DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard $(SRC)/visx/*.cc))
+TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
+
 DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(DEEPVISION_SRCS)))
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/visx/*.cc)))
+
+DEEPVISION_OBJS += $(TOGL_OBJS)
 
 LIBDEEPVISION := $(LOCAL_LIB)/libDeepVision$(LIB_EXT)
 
