@@ -411,12 +411,14 @@ private:
   format_set               m_cfg_link_formats;
   bool                     m_cfg_check_sys_deps;
   bool                     m_cfg_quiet;
+  bool                     m_cfg_verbose;
   int                      m_cfg_output_mode;
 
   vector<string>           m_src_files;
 
-  dep_map_t                m_nested_cdeps;
   dep_map_t                m_direct_cdeps;
+  dep_map_t                m_nested_cdeps;
+  dep_map_t                m_direct_ldeps;
   dep_map_t                m_nested_ldeps;
 
   map<string, parse_state> m_cdep_parse_states;
@@ -424,9 +426,15 @@ private:
 
   string                   m_strip_prefix;
 
+  int                      m_nest_level;
+
   const time_t             m_start_time;  // so we can check to see if
                                           // any source files have
                                           // timestamps in the future
+
+  std::ostream& warning();
+
+  std::ostream& info();
 
 public:
   cppdeps(int argc, char** argv);
@@ -453,6 +461,7 @@ public:
 
   const dep_list_t& get_direct_cdeps(const string& src_fname);
   const dep_list_t& get_nested_cdeps(const string& src_fname);
+  const dep_list_t& get_direct_ldeps(const string& src_fname);
   const dep_list_t& get_nested_ldeps(const string& src_fname);
 
   void print_makefile_dep(const string& current_file);
@@ -462,10 +471,27 @@ public:
   void traverse_sources();
 };
 
+std::ostream& cppdeps::warning()
+{
+  if (m_cfg_verbose)
+    for (int i = 0; i < m_nest_level; ++i) cerr << '\t';
+  cerr << "WARNING: ";
+  return cerr;
+}
+
+std::ostream& cppdeps::info()
+{
+  if (m_cfg_verbose)
+    for (int i = 0; i < m_nest_level; ++i) cerr << '\t';
+  return cerr;
+}
+
 cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_check_sys_deps(false),
   m_cfg_quiet(false),
+  m_cfg_verbose(false),
   m_cfg_output_mode(0),
+  m_nest_level(0),
   m_start_time(time((time_t*) 0))
 {
   bool debug = false;
@@ -473,9 +499,10 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   if (argc == 1)
     {
       printf
-        ("usage: %s [options] srcdir...\n"
+        ("usage: %s [options] --srcdir [dir]...\n"
          "\n"
          "options:\n"
+         "    --srcdir [dir]        specify a directory containing source files\n"
          "    --includedir [dir]    specify a directory to be searched when resolving\n"
          "                          #include \"...\" directives\n"
          "    --I[dir]              same as --includedir [dir]\n"
@@ -498,6 +525,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "    --literal [.ext]      treat files ending in \".ext\" as literal #include\'s\n"
          "    --quiet               suppress warnings\n"
          "    --debug               show contents of internal variables\n"
+         "    --verbose             trace the progress of the search algorithms\n"
          "\n"
          "any unrecognized command-line arguments are treated as source directories,\n"
          "which will be searched recursively for files with C/C++ filename extensions\n"
@@ -598,10 +626,14 @@ cppdeps::cppdeps(const int argc, char** const argv) :
         {
           debug = true;
         }
-      // treat any unrecognized arguments as src files
-      else
+      else if (strcmp(*arg, "--verbose") == 0)
         {
-          const string fname = trim_trailing_slashes(*arg);
+          m_cfg_verbose = true;
+        }
+      // treat any unrecognized arguments as src files
+      else if (strcmp(*arg, "--srcdir") == 0)
+        {
+          const string fname = trim_trailing_slashes(*++arg);
           if (!file_exists(fname.c_str()))
             {
               cerr << "ERROR: no such source file: '" << fname << "'\n";
@@ -614,11 +646,23 @@ cppdeps::cppdeps(const int argc, char** const argv) :
               m_strip_prefix = fname;
             }
         }
+      else
+        {
+          cerr << "ERROR: unrecognized command-line option: "
+               << *arg << '\n';
+          exit(1);
+        }
 
       if (debug)
         {
           inspect(argv, arg);
         }
+    }
+
+  if (m_src_files.size() == 0)
+    {
+      cerr << "ERROR: no source directories specified (use --srcdir)\n";
+      exit(1);
     }
 
   if (m_cfg_output_mode == 0)
@@ -814,9 +858,9 @@ cppdeps::get_direct_cdeps(const string& src_fname)
 
   if (f.mtime() > m_start_time && !m_cfg_quiet)
     {
-      cerr << "WARNING: for file " << src_fname << ":\n"
-           << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
-           << "\tvs. current time  (" << string_time(m_start_time) << ")\n";
+      warning() << "for file " << src_fname << ":\n"
+                << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
+                << "\tvs. current time  (" << string_time(m_start_time) << ")\n";
     }
 
   const char* fptr = static_cast<const char*>(f.memory());
@@ -923,24 +967,19 @@ cppdeps::get_direct_cdeps(const string& src_fname)
 
       if (!m_cfg_quiet)
         {
-          cerr << "WARNING: in " << src_fname
-               << ": couldn\'t resolve #include \""
-               << include_name << "\"\n";
+          warning() << "in " << src_fname
+                    << ": couldn\'t resolve #include \""
+                    << include_name << "\"\n";
 
-          cerr << "\twith search path: ";
+          info() << "\twith search path: ";
           print_stringvec(cerr, m_cfg_user_ipath);
-          cerr << "\n";
+          cerr << '\n';
 
           if (m_cfg_check_sys_deps)
             {
-              cerr << "\and system search path: [";
-              for (unsigned int i = 0; i < m_cfg_user_ipath.size(); ++i)
-                {
-                  cerr << "'" << m_cfg_user_ipath[i] << "'";
-                  if (i+1 < m_cfg_user_ipath.size())
-                    cerr << ", ";
-                }
-              cerr << "]\n";
+              info() << "\tand system search path: ";
+              print_stringvec(cerr, m_cfg_sys_ipath);
+              cerr << '\n';
             }
         }
     }
@@ -1003,12 +1042,15 @@ cppdeps::get_nested_cdeps(const string& src_fname)
       if (m_cdep_parse_states[(*i).target] == IN_PROGRESS)
         {
           if (!m_cfg_quiet)
-            cerr << "WARNING: in " << src_fname
-                 << ": recursive #include cycle with " << (*i).target << "\n";
+            warning() << "in " << src_fname
+                      << ": recursive #include cycle with "
+                      << (*i).target << "\n";
           continue;
         }
 
+      ++m_nest_level;
       const dep_list_t& indirect = get_nested_cdeps((*i).target);
+      --m_nest_level;
       dep_set.insert(indirect.begin(), indirect.end());
     }
 
@@ -1017,6 +1059,46 @@ cppdeps::get_nested_cdeps(const string& src_fname)
   result.assign(dep_set.begin(), dep_set.end());
 
   m_cdep_parse_states[src_fname] = COMPLETE;
+
+  return result;
+}
+
+const cppdeps::dep_list_t&
+cppdeps::get_direct_ldeps(const string& src_fname_orig)
+{
+  const string src_fname = make_normpath(src_fname_orig);
+
+  {
+    dep_map_t::iterator itr = m_direct_ldeps.find(src_fname);
+    if (itr != m_direct_ldeps.end())
+      return (*itr).second;
+  }
+
+  std::set<dependency> deps_set;
+
+  ++m_nest_level;
+  const dep_list_t& cdeps = get_nested_cdeps(src_fname_orig);
+  --m_nest_level;
+
+  for (dep_list_t::const_iterator
+         i = cdeps.begin(),
+         istop = cdeps.end();
+       i != istop;
+       ++i)
+    {
+      const string ccfile = find_source_for_header((*i).target);
+      if (ccfile.length() == 0)
+        continue;
+
+      if (ccfile == src_fname)
+        continue;
+
+      deps_set.insert(ccfile);
+    }
+
+  dep_list_t& result = m_direct_ldeps[src_fname];
+  assert(result.empty());
+  result.assign(deps_set.begin(), deps_set.end());
 
   return result;
 }
@@ -1041,46 +1123,51 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
   m_ldep_parse_states[src_fname] = IN_PROGRESS;
 
-#if 0
-  static int depth = 0;
-  for (int i = 0; i < depth; ++i) cerr << '\t';
-  cerr << "computing ldeps for " << src_fname << '\n';
-  ++depth;
-#endif
+  if (m_cfg_verbose)
+    {
+      info() << "start ldeps for " << src_fname << '\n';
+    }
 
   std::set<dependency> deps_set;
 
-  deps_set.insert(src_fname);
+  vector<dependency> to_handle;
 
-  const dep_list_t& cdeps = get_nested_cdeps(src_fname);
+  to_handle.push_back(src_fname);
 
-  for (dep_list_t::const_iterator
-         i = cdeps.begin(),
-         istop = cdeps.end();
-       i != istop;
-       ++i)
+  while (to_handle.size() > 0)
     {
-      const string ccfile = find_source_for_header((*i).target);
-      if (ccfile.length() == 0)
+      const string f = to_handle.back().target;
+      to_handle.pop_back();
+
+      if (deps_set.find(f) != deps_set.end())
         continue;
 
-      if (ccfile == src_fname)
-        continue;
+      deps_set.insert(f);
 
-      // Check for other recursion cycles
-      if (m_ldep_parse_states[ccfile] == IN_PROGRESS)
+      const dep_list_t& direct = get_direct_ldeps(f);
+
+      for (dep_list_t::const_iterator
+             itr = direct.begin(),
+             stop = direct.end();
+           itr != stop;
+           ++itr)
         {
-          if (!m_cfg_quiet)
-            cerr << "WARNING: in " << src_fname
-                 << ": recursive link-dep cycle with " << ccfile << "\n";
+          if ((*itr).target == src_fname)
+            {
+              if (!m_cfg_quiet)
+                warning() << " in " << src_fname
+                          << ": recursive link-dep cycle with "
+                          << (*itr).target << "\n";
+              continue;
+            }
 
-          deps_set.insert(ccfile);
-          continue;
+          to_handle.push_back(*itr);
         }
+    }
 
-      const dep_list_t& indirect_deps = get_nested_ldeps(ccfile);
-
-      deps_set.insert(indirect_deps.begin(), indirect_deps.end());
+  if (m_cfg_verbose)
+    {
+      info() << "...end ldeps for " << src_fname << '\n';
     }
 
   dep_list_t& result = m_nested_ldeps[src_fname];
@@ -1088,12 +1175,6 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
   result.assign(deps_set.begin(), deps_set.end());
 
   m_ldep_parse_states[src_fname] = COMPLETE;
-
-#if 0
-  --depth;
-  for (int i = 0; i < depth; ++i) cerr << '\t';
-  cerr << "...finished " << src_fname << '\n';
-#endif
 
   return result;
 }
