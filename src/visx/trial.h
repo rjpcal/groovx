@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Tue Nov 16 14:03:24 1999
+// written: Tue Nov 16 14:12:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ public:
   };
 
   struct IdPair : public Value {
-	 IdPair(int o, int p) : objid(o), posid(p) {}
+	 IdPair(int o = 0, int p = 0) : objid(o), posid(p) {}
 
 	 virtual Value* clone() const;
 	 virtual Type getNativeType() const;
