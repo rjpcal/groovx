@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue May 14 19:41:17 2002
+// written: Thu Sep 12 14:29:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -376,14 +376,20 @@ DOTRACE("Fish::readSplineFile");
 
   for(i = 0; i < 4; ++i)
     {
-      int which;
+      int which = 0;
 
-      int endptnb;
+      int endptnb = 0;
 
       // endpt number, associated part and breakpoint
       ifs >> dummy >> endptnb
           >> dummy >> which
           >> dummy >> itsParts[(which-1)].itsBkpt;
+
+      if (which <= 0)
+        {
+          throw Util::Error(fstring("bad 'which' value '", which,
+                                    "' while reading fish coords"));
+        }
 
       // skip the next line
       ifs >> dummy >> dummy;
