@@ -49,6 +49,7 @@ namespace Debug
   void Eval (const char* what, int level, const char* where, int line_no, void* expr, bool nl = false);
   void Eval (const char* what, int level, const char* where, int line_no, fstring expr, bool nl = false);
 
+  void PanicImpl         (const char* what, const char* where, int line_no);
   void AssertImpl        (const char* what, const char* where, int line_no);
   void PreconditionImpl  (const char* what, const char* where, int line_no);
   void PostconditionImpl (const char* what, const char* where, int line_no);
@@ -57,9 +58,11 @@ namespace Debug
   extern int level;
 }
 
+#define Panic(message) Debug::PanicImpl(message, __FILE__, __LINE__)
+
 // Like Assert(), but can't ever be turned off.
 #define AbortIf(expr) \
-      if ( expr ) { Debug::AssertImpl(#expr, __FILE__, __LINE__); }
+      do { if ( expr ) { Debug::PanicImpl(#expr, __FILE__, __LINE__); } } while (0)
 
 static const char vcid_debug_h[] = "$Id$";
 
