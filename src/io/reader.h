@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Mar 19 17:55:54 2003
+// written: Tue May 13 14:28:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -133,12 +133,39 @@ public:
   /// Read the \c Value attribute associated with the tag \a name.
   virtual void readValueObj(const fstring& name, Value& value) = 0;
 
-  /** This generic function reads a value attribute of any basic type,
-      of type \c Value, or of supported string types (\c std::string,
-      \c fstring). The value associated with tag \a name will be
-      copied into \a returnValue. */
-  template <class T>
-  void readValue(const fstring& name, T& returnValue);
+  /** @name Overloaded read functions
+
+      These functions offer a set of overloads to provide compile-time
+      polymorphism so that any supported type (any basic type, or Value, a
+      string type) or can be read with the same source code.
+  */
+  //@{
+
+  void readValue(const fstring& name, char& ret)
+  { ret = readChar(name); }
+
+  void readValue(const fstring& name, int& ret)
+  { ret = readInt(name); }
+
+  void readValue(const fstring& name, unsigned int& ret)
+  { ret = readInt(name); }
+
+  void readValue(const fstring& name, unsigned long& ret)
+  { ret = readInt(name); }
+
+  void readValue(const fstring& name, bool& ret)
+  { ret = readBool(name); }
+
+  void readValue(const fstring& name, double& ret)
+  { ret = readDouble(name); }
+
+  void readValue(const fstring& name, fstring& ret)
+  { ret = readStringImpl(name); }
+
+  void readValue(const fstring& name, Value& ret)
+  { readValueObj(name, ret); }
+
+  //@}
 
   /** Get a \c Util::Ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c

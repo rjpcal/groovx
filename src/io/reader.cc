@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Wed Mar 19 17:55:54 2003
+// written: Tue May 13 14:30:47 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -69,60 +69,6 @@ DOTRACE("IO::Reader::ensureReadVersionId");
   Assert(actual_version >= lowest_supported_version);
 
   return actual_version;
-}
-
-template <>
-void IO::Reader::readValue<char>(const fstring& name, char& return_value)
-{
-  return_value = readChar(name);
-}
-
-template <>
-void IO::Reader::readValue<int>(const fstring& name, int& return_value)
-{
-  return_value = readInt(name);
-}
-
-template <>
-void IO::Reader::readValue<unsigned int>(const fstring& name,
-                                         unsigned int& return_value)
-{
-  return_value = readInt(name);
-}
-
-template <>
-void IO::Reader::readValue<unsigned long>(const fstring& name,
-                                          unsigned long& return_value)
-{
-  return_value = readInt(name);
-}
-
-template <>
-void IO::Reader::readValue<bool>(const fstring& name,
-                                 bool& return_value)
-{
-  return_value = readBool(name);
-}
-
-template <>
-void IO::Reader::readValue<double>(const fstring& name,
-                                   double& return_value)
-{
-  return_value = readDouble(name);
-}
-
-template <>
-void IO::Reader::readValue<fstring>(const fstring& name,
-                                    fstring& return_value)
-{
-  return_value = readStringImpl(name);
-}
-
-template <>
-void IO::Reader::readValue<Value>(const fstring& name,
-                                  Value& return_value)
-{
-  readValueObj(name, return_value);
 }
 
 static const char vcid_reader_cc[] = "$Header$";
