@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 14 15:19:08 2001
+// written: Wed Mar 14 15:55:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,6 +110,34 @@ public:
   }
 
   //
+  // Iteration
+  //
+
+  class ConstIterator {
+	 const double* data;
+	 const double* stop;
+	 int stride;
+
+	 ConstIterator(const double* d, int s, int n) :
+		data(d), stride(s), stop(d + s*n) {}
+
+	 friend class ConstSlice;
+	 friend class Mtx;
+
+  public:
+
+	 double operator*() const { return *data; }
+
+	 ConstIterator& operator++() { data += stride; return *this; }
+
+	 bool hasMore() const { return data < stop; }
+  };
+
+  ConstIterator begin() const
+    { return ConstIterator(data(), itsStride, itsNelems); }
+
+
+  //
   // Functions
   //
 
@@ -124,45 +152,15 @@ public:
   double mean() const
     { return sum()/itsNelems; }
 
-  static double dot(const ConstSlice& s1, const ConstSlice& s2)
+  static double dot(ConstSlice::ConstIterator s1, ConstSlice::ConstIterator s2)
   {
 	 double result = 0.0;
 
-	 ConstIterator
-		ps1(s1.begin()),
-		ps2(s2.begin());
-
-	 for (; ps1.hasMore(); ++ps1, ++ps2)
-		result += (*ps1) * (*ps2);
+	 for (; s1.hasMore(); ++s1, ++s2)
+		result += (*s1) * (*s2);
 
 	 return result;
   }
-
-  //
-  // Iteration
-  //
-
-  class ConstIterator {
-	 const double* data;
-	 const double* stop;
-	 int stride;
-
-	 ConstIterator(const double* d, int s, int n) :
-		data(d), stride(s), stop(d + s*n) {}
-
-	 friend class ConstSlice;
-
-  public:
-
-	 double operator*() const { return *data; }
-
-	 ConstIterator& operator++() { data += stride; return *this; }
-
-	 bool hasMore() const { return data < stop; }
-  };
-
-  ConstIterator begin() const
-    { return ConstIterator(data(), itsStride, itsNelems); }
 };
 
 
@@ -351,11 +349,17 @@ public:
   ConstSlice row(int r) const
     { return ConstSlice(storage_, address(r,0), mrows_, ncols_); }
 
+  ConstSlice::ConstIterator rowIter(int r) const
+    { return ConstSlice::ConstIterator(address(r,0), mrows_, ncols_); }
+
   Slice column(int c)
     { return Slice(storage_, address(0,c), 1, mrows_); }
 
   ConstSlice column(int c) const
     { return ConstSlice(storage_, address(0,c), 1, mrows_); }
+
+  ConstSlice::ConstIterator colIter(int c) const
+    { return ConstSlice::ConstIterator(address(0,c), 1, mrows_); }
 
   Slice asSlice()
     { return Slice(storage_, start_, 1, nelems()); }
