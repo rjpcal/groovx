@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu Jul 19 10:17:35 2001
+// written: Wed Aug  8 08:17:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,6 +59,9 @@ public:
 
   V width() const { return (r-l); }
   V height() const { return (t-b); }
+
+  Point<V> extent() const { return Point<V>(width(), height()); }
+
   V aspect() const { return width()/height(); }
 
   Point<V> center() const { return Point<V>(centerX(), centerY()); }
