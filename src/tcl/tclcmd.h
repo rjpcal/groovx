@@ -13,6 +13,10 @@
 #ifndef TCLCMD_H_DEFINED
 #define TCLCMD_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
+#include "util/traits.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H_DEFINED)
 #include "tcl/tclvalue.h"
 #endif
@@ -336,7 +340,7 @@ public:
   template <class Str>
   void returnVal(const Str& val)
 	 {
-		returnCstring(val.c_str());
+		returnCstring(Util::StringTraits<Str>::c_str(val));
 	 }
 
 
@@ -371,9 +375,9 @@ public:
       val. The templated type must have a c_str() function returning
       const char*. */
   template <class Str>
-  void lappendVal(const Str& val)
+  void lappendVal(Str val)
 	 {
-		returnCstring(val.c_str());
+		lappendVal(Util::StringTraits<Str>::c_str(val));
 	 }
 
   /// Return the sequence of values referred to by the range [\a begin, \a end).
