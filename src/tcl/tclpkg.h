@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Tue Dec  7 18:17:18 1999
+// written: Tue Dec  7 19:10:10 1999
 // $Id$
 //
 //
@@ -28,6 +28,8 @@
 #ifndef PROPERTY_H_DEFINED
 #include "property.h"
 #endif
+
+class IO;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -200,8 +202,6 @@ private:
 // this, it requires overriding a function to retrieve an IO reference.
 //
 ///////////////////////////////////////////////////////////////////////
-
-class IO;
 
 class TclIoItemPkg : public TclItemPkg {
 public:
