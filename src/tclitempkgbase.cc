@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 18:32:51 2000
-// written: Fri May 11 22:06:37 2001
+// written: Mon May 14 16:05:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,11 @@
 
 #include "util/strings.h"
 
+#include "util/debug.h"
+#include "util/trace.h"
+
 template <class T>
-Getter<T>::~Getter() {}
+Getter<T>::~Getter() { DebugEvalNL((void*)this); }
 
 template <class T>
 Setter<T>::~Setter() {}
