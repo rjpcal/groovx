@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Fri Sep  6 12:28:40 2002
+// written: Fri Sep  6 13:55:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,6 @@
 #include <iostream>
 #include <tk.h>
 #include <unistd.h>
-
-#define USE_READLINE
 
 #ifdef USE_READLINE
 #  include <readline/readline.h>
