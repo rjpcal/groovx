@@ -165,7 +165,7 @@ DOTRACE("Fstringtest_Init");
 // Need these to avoid dyld errors on Mac OS X
 extern "C" int Fstringtest_SafeInit(Tcl_Interp*) { return 1; }
 
-extern "C" int Fstringtest_Unload(Tcl_Interp*, int /*flags*/)
+extern "C" int Fstringtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 DOTRACE("Fstringtest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Fstringtest");
