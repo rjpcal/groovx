@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Sep 29 16:04:24 2000
+// written: Mon Oct  9 17:09:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -253,7 +253,15 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
 
   queuePbmFile(filename);
 
-  itsImpl->itsData.updateIfNeeded();
+  try {
+	 itsImpl->itsData.updateIfNeeded();
+  }
+  // If there was a PbmError, it means we couldn't read the file
+  // 'filename' so we should forget about 'filename' locally
+  catch (PbmError&) {
+	 itsImpl->itsFilename = "";
+	 throw;
+  }
 }
 
 void BitmapRep::queuePbmFile(const char* filename) {
