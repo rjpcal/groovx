@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Wed May 31 18:46:33 2000
+// written: Fri Oct 20 11:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,6 +85,8 @@ Tcl::IoPtrListPkg::IoPtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
   itsList(aList)
 {
 DOTRACE("Tcl::IoPtrListPkg::IoPtrListPkg");
+  declareGetter("capacity",
+					 new CGetter<IoPtrList, int>(&IoPtrList::capacity));
   declareGetter("count",
 					 new CGetter<IoPtrList, int>(&IoPtrList::count));
   declareAction("reset",
