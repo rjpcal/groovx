@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Mar  3 14:30:14 2000
+// written: Tue Mar  7 19:13:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,6 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
-#endif
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -33,10 +29,12 @@ class Block;
 class ResponseHandler;
 class TimingHdlr;
 
+class fixed_string;
+
 class ExptError : public ErrorWithMsg {
 public:
   ExptError() : ErrorWithMsg() {}
-  ExptError(const string& msg) : ErrorWithMsg(msg) {}
+  ExptError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -79,9 +77,9 @@ public:
   Tcl_Interp* getInterp();
 
   /// Return the name of the file currently being used for autosaves
-  const string& getAutosaveFile() const;
+  const fixed_string& getAutosaveFile() const;
   /// Change the name of the file to use for autosaves
-  void setAutosaveFile(const string& str);
+  void setAutosaveFile(const fixed_string& str);
 
   virtual Widget* getWidget();
 
