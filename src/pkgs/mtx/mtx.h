@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 14 16:33:46 2001
+// written: Wed Mar 14 17:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -224,6 +224,7 @@ public:
 	 Iterator(double* d, int s, int n) : data(d), stride(s), stop(d + s*n) {}
 
 	 friend class Slice;
+	 friend class Mtx;
 
   public:
 
@@ -351,6 +352,9 @@ public:
   ConstSlice row(int r) const
     { return ConstSlice(storage_, address(r,0), rowstride_, ncols_); }
 
+  Slice::Iterator rowIter(int r)
+    { return Slice::Iterator(address(r,0), rowstride_, ncols_); }
+
   ConstSlice::ConstIterator rowIter(int r) const
     { return ConstSlice::ConstIterator(address(r,0), rowstride_, ncols_); }
 
@@ -363,6 +367,9 @@ public:
 
   ConstSlice column(int c) const
     { return ConstSlice(storage_, address(0,c), colstride_, mrows_); }
+
+  Slice::Iterator colIter(int c)
+    { return Slice::Iterator(address(0,c), colstride_, mrows_); }
 
   ConstSlice::ConstIterator colIter(int c) const
     { return ConstSlice::ConstIterator(address(0,c), colstride_, mrows_); }
@@ -398,11 +405,12 @@ public:
 		  }
     }
 
-  // result = vec * this;
-  void leftMultAndAssign(const ConstSlice& vec, Slice& result) const;
+  // result = vec * mtx;
+  static void VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
+									Slice& result);
 
   // this = m1 * m2;
-  void multAndAssign(const Mtx& m1, const Mtx& m2);
+  void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
 private:
   void makeUnique();

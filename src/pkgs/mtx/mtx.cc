@@ -151,7 +151,8 @@ Mtx Mtx::rows(int r, int nr) const
   return result;
 }
 
-void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
+void Mtx::VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
+							  Slice& result)
 {
   // e.g mrows == vec.nelems == 3   ncols == 4
   //
@@ -162,22 +163,30 @@ void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
   //
   // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
 
-  if ( (vec.nelems() != mrows()) ||
-       (result.nelems() != ncols()) )
-    throw ErrorWithMsg("dimension mismatch in Mtx::leftMultAndAssign");
+  if ( (vec.nelems() != mtx.mrows()) ||
+       (result.nelems() != mtx.ncols()) )
+    throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
 
   ConstSlice::ConstIterator veciter = vec.begin();
 
-  for (int col = 0; col < ncols(); ++col)
-    result[col] = Slice::dot(veciter, this->colIter(col));
+  for (int col = 0; col < mtx.ncols(); ++col)
+    result[col] = Slice::dot(veciter, mtx.colIter(col));
 }
 
-void Mtx::multAndAssign(const Mtx& m1, const Mtx& m2)
+void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
 {
+  if ( (m1.ncols() != m2.mrows()) ||
+		 (this->ncols() != m2.ncols()) )
+	 throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
+
   for (int n = 0; n < mrows(); ++n)
     {
-      Slice result(row(n));
-      m2.leftMultAndAssign(m1.row(n), result);
+		Slice::Iterator rowElement = this->rowIter(n);
+
+		ConstSlice::ConstIterator veciter = m1.rowIter(n);
+
+		for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
+		  *rowElement = Slice::dot(veciter, m2.colIter(col));
     }
 }
 
