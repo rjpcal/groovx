@@ -395,7 +395,6 @@ WIDGET_H = widget.h
 #
 APPLICATION_H = $(ERROR_H) application.h
 FACTORY_H = $(ERROR_H) $(DEMANGLE_H) factory.h
-GCCDEMANGLE_CC = $(TRACE_H) $(DEBUG_H) gccdemangle.cc
 GLBMAPRENDERER_H = $(BMAPRENDERER_H) glbmaprenderer.h
 GLCANVAS_H = $(CANVAS_H) glcanvas.h
 IO_H = $(ERROR_H) io.h
@@ -528,7 +527,7 @@ CANVAS_CC = $(CANVAS_H) canvas.cc
 CLONEFACE_CC = $(CLONEFACE_H) $(READUTILS_H) $(WRITEUTILS_H) \
 	$(TRACE_H) $(DEBUG_H) cloneface.cc
 
-DEMANGLE_CC = $(DEMANGLE_H) $(GCCDEMANGLE_CC) demangle.cc
+DEMANGLE_CC = $(DEMANGLE_H) $(TRACE_H) $(DEBUG_H) demangle.cc
 
 ERROR_CC = $(ERROR_H) $(TRACE_H) $(DEBUG_H) util/error.cc
 
