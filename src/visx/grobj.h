@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Sun Jan 16 22:48:26 2000
+// written: Tue Feb  8 15:17:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,6 +53,15 @@ class GrObj : public virtual Observable,
 				  public virtual IO 
 {
 public:
+
+  /// Turns on tracing for all GrObj functions
+  static void traceOn();
+
+  /// Turns off tracing for all GrObj functions
+  static void traceOff();
+
+  /// Toggles the tracing state for all GrObj functions
+  static void traceToggle();
 
   /**@name   Rendering modes
 	*
@@ -185,16 +194,22 @@ public:
 
   /** This will return the bounding box given by grGetBoundingBox(),
 		except that those values will be modified to reflect internal
-		scaling, translation, and pixel border values. */
+		scaling, translation, and pixel border values. If a bounding box
+		is not available, the function returns false and does not modify
+		the input reference parameters. */
   bool getBoundingBox(const Canvas& canvas, Rect<double>& bounding_box) const;
 
   /** Subclasses may override this function to fill in the parameters
-		with the bounding box in GL coordinates for the object's onscreen
-		image. The function returns true if a bounding box has provided,
-		or false if no bounding box is available. The default
-		implementation provided by GrObj returns false. */
-  protected: virtual bool grGetBoundingBox(Rect<double>& bounding_box,
+		with the bounding box in GL coordinates for the object's
+		onscreen image. The default version provided by GrObj does not
+		modify the input reference parameters. */
+  protected: virtual void grGetBoundingBox(Rect<double>& bounding_box,
 														 int& border_pixels) const;
+
+  /** This function should be overridden to return true if a bounding
+		box has provided, or false if no bounding box is available. The
+		default implementation provided by GrObj returns false. */
+  protected: virtual bool grHasBoundingBox() const;
 
 public:
   ///
