@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 01:26:03 1999
+// written: Sun Nov 21 02:44:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,7 @@ DOTRACE("VoidPtrList::~VoidPtrList");
 
 int VoidPtrList::capacity() const {
 DOTRACE("VoidPtrList::capacity");
+  return itsVec.size(); 
 }
 
 int VoidPtrList::count() const {
