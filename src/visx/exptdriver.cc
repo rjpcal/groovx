@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Oct 17 16:18:25 2000
+// written: Thu Oct 19 11:49:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,9 +82,6 @@ class ExptDriver::Impl {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
 public:
   Impl(int argc, char** argv, ExptDriver* owner, Tcl_Interp* interp);
@@ -529,69 +526,8 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("ExptDriver::Impl::legacySrlz");
-
-  lwriter->writeOwnedObject("theObjList", &ObjList::theObjList());
-  lwriter->writeOwnedObject("thePosList", &PosList::thePosList());
-  lwriter->writeOwnedObject("theTlist", &Tlist::theTlist());
-  lwriter->writeOwnedObject("theRhList", &RhList::theRhList());
-  lwriter->writeOwnedObject("theThList", &ThList::theThList());
-  lwriter->writeOwnedObject("theBlockList", &BlockList::theBlockList());
-
-  lwriter->setStringMode(IO::GETLINE_NEWLINE);
-  lwriter->writeValue("hostname", itsHostname);
-  lwriter->writeValue("subject", itsSubject);
-  lwriter->writeValue("beginDate", itsBeginDate);
-  lwriter->writeValue("endDate", itsEndDate);
-  lwriter->writeValue("autosaveFile", itsAutosaveFile);
-
-  lwriter->writeValue("blockId", itsBlockId);
-  lwriter->writeValue("rhId", itsDummyRhId);
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("thId", itsDummyThId);
-
-  updateDoUponCompletionBody();
-
-  lwriter->setStringMode(IO::CHAR_COUNT);
-  lwriter->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
-}
-
-void ExptDriver::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("ExptDriver::Impl::legacyDesrlz");
-
-  lreader->readOwnedObject("theObjList", &ObjList::theObjList());
-  lreader->readOwnedObject("thePosList", &PosList::thePosList());
-  lreader->readOwnedObject("theTlist", &Tlist::theTlist());
-  lreader->readOwnedObject("theRhList", &RhList::theRhList());
-  lreader->readOwnedObject("theThList", &ThList::theThList());
-  lreader->readOwnedObject("theBlockList", &BlockList::theBlockList());
-
-  lreader->setStringMode(IO::GETLINE_NEWLINE);
-  lreader->readValue("hostname", itsHostname);
-  lreader->readValue("subject", itsSubject);
-  lreader->readValue("beginDate", itsBeginDate);
-  lreader->readValue("endDate", itsEndDate);
-  lreader->readValue("autosaveFile", itsAutosaveFile);
-
-  lreader->readValue("blockId", itsBlockId);
-  lreader->readValue("rhId", itsDummyRhId);
-  lreader->readValue("thId", itsDummyThId);
-
-  lreader->setStringMode(IO::CHAR_COUNT);
-  lreader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
-
-  recreateDoUponCompletionProc();
-}
-
 void ExptDriver::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("ExptDriver::Impl::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readOwnedObject("theObjList", &ObjList::theObjList());
   reader->readOwnedObject("thePosList", &PosList::thePosList());
@@ -623,12 +559,6 @@ DOTRACE("ExptDriver::Impl::readFrom");
 
 void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeOwnedObject("theObjList", &ObjList::theObjList());
   writer->writeOwnedObject("thePosList", &PosList::thePosList());
