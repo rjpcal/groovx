@@ -15,28 +15,6 @@
 
 #include <cstddef>
 
-class Slice {
-  const double* data;
-  int stride;
-public:
-  Slice(const double* d=0, int s=0) : data(d), stride(s) {}
-
-  double operator[](int i) const { return *(data + stride*i); }
-
-  double operator*() const { return *data; }
-
-  void bump() { data += stride; }
-
-  static double dot(const Slice& s1, const Slice& s2,
-						  int nelems)
-  {
-	 double result = 0.0;
-	 for (int i = 0; i < nelems; ++i)
-		result += s1[i] * s2[i];
-	 return result;
-  }
-};
-
 class DataBlock {
 private:
   DataBlock(const DataBlock& other); // not implemented
@@ -74,6 +52,67 @@ public:
 };
 
 
+class Slice {
+  const double* itsData;
+  int itsStride;
+  int itsNelems;
+
+  const double* address(int i) const { return itsData + itsStride*i; }
+
+public:
+  Slice() : itsData(0), itsStride(0), itsNelems(0) {}
+
+  Slice(const double* d, int s, int n) :
+	 itsData(d), itsStride(s), itsNelems(n) {}
+
+  double operator[](int i) const { return *(address(i)); }
+
+  Slice rightmost(int n) const
+  {
+	 int first = itsNelems - n;
+	 if (first < 0) first = 0;
+
+	 return Slice(address(first), itsStride, n);
+  }
+
+  Slice leftmost(int n) const
+  {
+	 return Slice(itsData, itsStride, n);
+  }
+
+  static double dot(const Slice& s1, const Slice& s2)
+  {
+	 double result = 0.0;
+	 const int n = s1.itsNelems > s2.itsNelems ? s1.itsNelems : s2.itsNelems;
+	 for (int i = 0; i < n; ++i)
+		result += s1[i] * s2[i];
+	 return result;
+  }
+
+  class ConstIterator {
+	 const double* data;
+	 int stride;
+
+	 ConstIterator(const double* d, int s) : data(d), stride(s) {}
+
+	 friend class Slice;
+
+  public:
+
+	 double operator*() const { return *data; }
+
+	 ConstIterator& operator++() { data += stride; return *this; }
+
+	 bool operator==(const ConstIterator& other) const
+	   { return data == other.data; }
+  };
+
+  ConstIterator begin() const
+    { return ConstIterator(itsData, itsStride); }
+  ConstIterator end() const
+    { return ConstIterator(address(itsNelems), itsStride); }
+};
+
 typedef struct mxArray_tag mxArray;
 
 class Mtx {
@@ -110,12 +149,6 @@ public:
 
   void print() const;
 
-  int index(int row, int col) const { return row + (col*mrows_); }
-
-  double* address(int row, int col) { return start_ + index(row, col); }
-
-  const double* address(int row, int col) const { return start_ + index(row, col); }
-
   double& at(int row, int col) { return start_[index(row, col)]; }
 
   double at(int row, int col) const { return start_[index(row, col)]; }
@@ -138,7 +171,13 @@ public:
 
   Mtx columnSlice(int column) const { return Mtx(*this, column); }
 
+  Slice rowSlice(int row) const
+    { return Slice(address(row,0), mrows_, ncols_); }
+
 private:
+  int index(int row, int col) const { return row + (col*mrows_); }
+  double* address(int row, int col) { return start_ + index(row, col); }
+  const double* address(int row, int col) const { return start_ + index(row, col); }
 
   DataBlock* block_;
   int mrows_;
