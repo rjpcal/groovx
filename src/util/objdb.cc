@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Nov 10 17:03:57 2000
+// written: Fri Nov 17 12:15:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -337,15 +337,7 @@ IO::VersionId IoPtrList::serialVersionId() const {
 void IoPtrList::readFrom(IO::Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId(); 
-
-  if (svid < 1)
-	 {
-		throw IO::ReadVersionError("IoPtrList", svid, 1,
-											"Try grsh0.8a3");
-	 }
-
-  Assert(svid >= 1);
+  reader->ensureReadVersionId("IoPtrList", 1, "Try grsh0.8a3");
 
   purge();
   IO::ReadUtils::readObjectSeq<IO::IoObject>(reader, "itsVec", inserter());
@@ -354,14 +346,8 @@ DOTRACE("IoPtrList::readFrom");
 void IoPtrList::writeTo(IO::Writer* writer) const {
 DOTRACE("IoPtrList::writeTo");
 
-  if (IOPTRLIST_SERIAL_VERSION_ID < 1)
-	 {
-		throw IO::WriteVersionError("IoPtrList",
-											 IOPTRLIST_SERIAL_VERSION_ID, 1,
-											 "Try grsh0.8a3");
-	 }
-
-  Assert(IOPTRLIST_SERIAL_VERSION_ID >= 1); 
+  writer->ensureWriteVersionId("IoPtrList", IOPTRLIST_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.7a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "itsVec",
 											beginPtrs(), endPtrs());
