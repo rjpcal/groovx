@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Dec  1 11:25:19 1999
+// written: Wed Dec  1 14:24:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include <cstring>
 
 #include "demangle.h"
+#include "error.h"
 #include "experiment.h"
 #include "reader.h"
 #include "writer.h"
@@ -36,6 +37,11 @@
 #define EventTraceNL(type) {}
 #endif
 
+class TrialEventError : public ErrorWithMsg {
+public:
+  TrialEventError(const string& msg = "") : ErrorWithMsg(msg) {}
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // TrialEvent method definitions
@@ -45,7 +51,7 @@
 TrialEvent::TrialEvent(int msec) :
   itsRequestedDelay(msec),
   itsToken(NULL),
-  itsExperiment(Experiment::getExperiment()),
+  itsExperiment(0),
   itsTotalError(0),
   itsTotalAbsError(0),
   itsInvokeCount(0)
@@ -101,8 +107,10 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::schedule() {
+void TrialEvent::schedule(Experiment* expt) {
 DOTRACE("TrialEvent::schedule");
+  itsExperiment = expt;
+
   // Cancel any possible previously pending invocation.
   cancel();
 
@@ -132,8 +140,11 @@ DOTRACE("TrialEvent::cancel");
 
 Experiment& TrialEvent::getExperiment() {
 DOTRACE("TrialEvent::getExperiment");
-  DebugEvalNL((void *) &itsExperiment);
-  return itsExperiment;
+  DebugEvalNL((void *) itsExperiment);
+  if (itsExperiment == 0) {
+	 throw TrialEventError("TrialEvent::itsExperiment is NULL");
+  }
+  return *itsExperiment;
 }
 
 void TrialEvent::dummyInvoke(ClientData clientData) {
