@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Thu Sep 12 17:53:09 2002
+// written: Thu Sep 12 18:10:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,30 +139,24 @@ namespace
   template <class C, class T>
   struct deref
   {
-    static       T& get(      C& obj, T C::* mptr) { return (obj.*memptr); }
-    static const T& get(const C& obj, T C::* mptr) { return (obj.*memptr); }
+    static       T& get(      C& obj, T C::* mptr) { return (obj.*mptr); }
+    static const T& get(const C& obj, T C::* mptr) { return (obj.*mptr); }
   };
 
   template <class C, class T>
   struct deref<C, T*>
   {
-    static       T& get(      C& obj, T* C::* mptr) { return *(obj.*memptr); }
-    static const T& get(const C& obj, T* C::* mptr) { return *(obj.*memptr); }
+    static       T& get(      C& obj, T* C::* mptr) { return *(obj.*mptr); }
+    static const T& get(const C& obj, T* C::* mptr) { return *(obj.*mptr); }
   };
 
   template <class C, class T>
   typename Util::TypeTraits<T>::DerefT&
-  dereference(C& obj, T C::* memptr)
-  {
-    return deref<C,T>::get(obj, memptr);
-  }
+  dereference(C& obj, T C::* mptr) { return deref<C,T>::get(obj, mptr); }
 
   template <class C, class T>
   const typename Util::TypeTraits<T>::DerefT&
-  dereference(const C& obj, T C::* memptr)
-  {
-    return deref<C,T>::get(obj, memptr);
-  }
+  dereference(const C& obj, T C::* mptr) { return deref<C,T>::get(obj, mptr); }
 }
 
 
