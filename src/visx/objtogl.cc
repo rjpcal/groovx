@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jan 18 16:07:00 2002
+// written: Wed Jan 23 09:31:35 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -28,13 +28,6 @@
 
 #include "util/objfactory.h"
 #include "util/ref.h"
-
-// This hack causes this file to be compiled into the main executable
-// (through the rules in place in the Makefile), rather than a shared
-// library, so that this file can find the typeinfo for Toglet.
-#ifdef GCC_COMPILER
-#  include <GL/gl.h>
-#endif
 
 #include "util/trace.h"
 
