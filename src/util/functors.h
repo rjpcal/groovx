@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Fri Sep  7 16:15:55 2001
+// written: Fri Sep  7 17:40:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,49 +129,49 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class C>
-  struct FuncTraits<R (C::*)()>
+  struct FuncTraits<R (C::*)()> : public FuncTraitsBase
   {
     enum { numArgs = 1 };
+    typedef C Class_t;
     typedef R Retn_t;
-    typedef C* Arg1_t;
   };
 
   template <class R, class C, class P1>
-  struct FuncTraits<R (C::*)(P1)>
+  struct FuncTraits<R (C::*)(P1)> : public FuncTraitsBase
   {
     enum { numArgs = 2 };
+    typedef C Class_t;
     typedef R Retn_t;
-    typedef C* Arg1_t;
     typedef P1 Arg2_t;
   };
 
   template <class R, class C, class P1, class P2>
-  struct FuncTraits<R (C::*)(P1, P2)>
+  struct FuncTraits<R (C::*)(P1, P2)> : public FuncTraitsBase
   {
     enum { numArgs = 3 };
+    typedef C Class_t;
     typedef R Retn_t;
-    typedef C* Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
   };
 
   template <class R, class C, class P1, class P2, class P3>
-  struct FuncTraits<R (C::*)(P1, P2, P3)>
+  struct FuncTraits<R (C::*)(P1, P2, P3)> : public FuncTraitsBase
   {
     enum { numArgs = 4 };
+    typedef C Class_t;
     typedef R Retn_t;
-    typedef C* Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
     typedef P3 Arg4_t;
   };
 
   template <class R, class C, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
+  struct FuncTraits<R (C::*)(P1, P2, P3, P4)> : public FuncTraitsBase
   {
     enum { numArgs = 5 };
+    typedef C Class_t;
     typedef R Retn_t;
-    typedef C* Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
     typedef P3 Arg4_t;
@@ -205,55 +205,90 @@ namespace Util
 
 ///////////////////////////////////////////////////////////////////////
 //
+// MemFunctorBase wraps a member function and exposes it through ordinary
+// operator() calls, using a SoftRef<> to pass the target object
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class F>
+  class MemFunctorBase;
+
+  template <class MF>
+  struct FuncTraits<MemFunctorBase<MF> > : public FuncTraits<MF>
+  {};
+
+  template <class C>
+  C* extractPtr(C* c) { return c; }
+
+  template <class C>
+  C* extractPtr(const SoftRef<C>& c) { return c.get(); }
+
+  template <class MemFunc>
+  class MemFunctorBase : private FuncHolder<MemFunc>,
+                         public FuncTraits<MemFunctorBase<MemFunc> >
+  {
+  public:
+    typedef typename FuncTraits<MemFunc>::Retn_t R;
+    typedef typename FuncTraits<MemFunc>::Class_t C;
+
+    MemFunctorBase(MemFunc f) : FuncHolder<MemFunc>(f) {}
+
+    template <class Ptr>
+    R operator()(Ptr obj)
+    {
+      return (extractPtr(obj)->*itsHeldFunc)();
+    }
+
+    template <class Ptr, class P1>
+    R operator()(Ptr obj, P1 p1)
+    {
+      return (extractPtr(obj)->*itsHeldFunc)(p1);
+    }
+
+    template <class Ptr, class P1, class P2>
+    R operator()(Ptr obj, P1 p1, P2 p2)
+    {
+      return (extractPtr(obj)->*itsHeldFunc)(p1, p2);
+    }
+
+    template <class Ptr, class P1, class P2, class P3>
+    R operator()(Ptr obj, P1 p1, P2 p2, P3 p3)
+    {
+      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3);
+    }
+
+    template <class Ptr, class P1, class P2, class P3, class P4>
+    R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
+    {
+      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3, p4);
+    }
+  };
+
+  template <class MF>
+  inline MemFunctorBase<MF> memFunc(MF mf)
+  {
+    return mf;
+  }
+
+///////////////////////////////////////////////////////////////////////
+//
 // MemFunctor wraps a member function and exposes it through ordinary
 // operator() calls, using a SoftRef<> to pass the target object
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <class R, class C, class F>
-  class MemFunctor;
-
-  template <class R, class C, class MF>
-  struct FuncTraits<MemFunctor<R,C,MF> > : public FuncTraits<MF>
+  template <class MemFunc>
+  struct MemFunctor : public MemFunctorBase<MemFunc>
   {
-    typedef SoftRef<C> Arg1_t;
+    MemFunctor(MemFunc f) : MemFunctorBase<MemFunc>(f) {}
+
+    // operator()'s inherited from MemFunctorBase
   };
 
-  template <class R, class C, class MemFunc>
-  class MemFunctor : private FuncHolder<MemFunc>,
-                     public FuncTraits<MemFunctor<R, C, MemFunc> >
+  template <class MF>
+  struct FuncTraits<MemFunctor<MF> > : public FuncTraits<MF>
   {
-  public:
-    MemFunctor(MemFunc f) : FuncHolder<MemFunc>(f) {}
-
-    R operator()(SoftRef<C> obj)
-    {
-      return (obj.get()->*itsHeldFunc)();
-    }
-
-    template <class P1>
-    R operator()(SoftRef<C> obj, P1 p1)
-    {
-      return (obj.get()->*itsHeldFunc)(p1);
-    }
-
-    template <class P1, class P2>
-    R operator()(SoftRef<C> obj, P1 p1, P2 p2)
-    {
-      return (obj.get()->*itsHeldFunc)(p1, p2);
-    }
-
-    template <class P1, class P2, class P3>
-    R operator()(SoftRef<C> obj, P1 p1, P2 p2, P3 p3)
-    {
-      return (obj.get()->*itsHeldFunc)(p1, p2, p3);
-    }
-
-    template <class P1, class P2, class P3, class P4>
-    R operator()(SoftRef<C> obj, P1 p1, P2 p2, P3 p3, P4 p4)
-    {
-      return (obj.get()->*itsHeldFunc)(p1, p2, p3, p4);
-    }
+    typedef SoftRef<typename MemFunctor<MF>::C> Arg1_t;
   };
 
 
@@ -265,11 +300,11 @@ namespace Util
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <class BaseFunctor>
+  template <class BaseFunctor, class Bound>
   class BoundFirst;
 
-  template <class BaseFunctor>
-  struct FuncTraits<BoundFirst<BaseFunctor> >
+  template <class BaseFunctor, class Bound>
+  struct FuncTraits<BoundFirst<BaseFunctor, Bound> >
   {
     enum { numArgs = (FuncTraits<BaseFunctor>::numArgs-1) };
 
@@ -284,16 +319,19 @@ namespace Util
     typedef                                   Null_t   Arg8_t;
   };
 
-  template <class BaseFunctor>
+  template <class BaseFunctor, class Bound_t>
   class BoundFirst : private FuncHolder<BaseFunctor>,
-                     public FuncTraits<BoundFirst<BaseFunctor> >
+                     public FuncTraits<BoundFirst<BaseFunctor, Bound_t> >
   {
   public:
-    typedef typename FuncTraits<BaseFunctor>::Arg1_t Bound_t;
-
     BoundFirst(BaseFunctor base, Bound_t bound) :
       FuncHolder<BaseFunctor>(base),
       itsBound(bound)
+    {}
+
+    BoundFirst(const BoundFirst& other) :
+      FuncHolder<BaseFunctor>(other),
+      itsBound(other.itsBound)
     {}
 
     //
@@ -338,14 +376,15 @@ namespace Util
     }
 
   private:
+    BoundFirst& operator=(const BoundFirst&);
+
     Bound_t itsBound;
   };
 
-  template <class BaseFunctor>
-  BoundFirst<BaseFunctor>
-  bindFirst(BaseFunctor base, typename BoundFirst<BaseFunctor>::Bound_t bound)
+  template <class BaseFunctor, class Bound_t>
+  BoundFirst<BaseFunctor, Bound_t> bindFirst(BaseFunctor base, Bound_t bound)
   {
-    return BoundFirst<BaseFunctor>(base, bound);
+    return BoundFirst<BaseFunctor, Bound_t>(base, bound);
   }
 
 } // end namespace Util
