@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 16:09:26 2001
+// written: Tue Aug 21 16:11:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ DOTRACE("Util::Signal::emit");
       DebugPrintNL("sending state change...");
       if ((*ii).isValid())
         {
-          (*ii)->receiveSignal();
+          (*ii)->call();
           ++ii;
         }
       else

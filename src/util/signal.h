@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 16:09:25 2001
+// written: Tue Aug 21 16:11:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ namespace Util
  * Along with Signal, implements the Slot design pattern. An Slot can
  * be informed of changes in an Signal by calling connect() on that
  * Signal. Thereafter, the Slot will receive notifications of changes
- * in the Signal via receiveSignal().
+ * in the Signal via call().
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ public:
   static Util::SoftRef<Util::Slot> make(C* obj, MF mf);
 
   /// Informs the Slot that one of its subjects has changed.
-  virtual void receiveSignal() = 0;
+  virtual void call() = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -58,9 +58,9 @@ public:
  * of Signal do not have to override any virtual functions to become
  * an Signal: all of the machinery is provided in this base
  * class. However, to conform to the expected behavior, subclasses of
- * Signal must call emit() when any of their non-mutable
- * properties changes. This in turn will call receiveSignal() on all
- * of the Slot's that are observing this Signal.
+ * Signal must call emit() when any of their non-mutable properties
+ * changes. This in turn will \c call() all of the Slot's that are
+ * observing this Signal.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ public:
   static Util::SlotAdapter<C, MF>* make(C* obj, MF mf)
   { return new Util::SlotAdapter<C, MF>(obj, mf); }
 
-  virtual void receiveSignal()
+  virtual void call()
   {
     if (itsObject.isValid())
       (itsObject.get()->*itsMemFunc)();
