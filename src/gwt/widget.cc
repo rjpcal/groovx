@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Mon Jan 21 14:30:31 2002
+// written: Wed Jan 23 10:45:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,12 +73,14 @@ public:
     itsKeyListeners(),
     slotNodeChanged(Util::Slot::make(this, &Impl::onNodeChange))
   {
-    itsTimer.sigTimeOut.connect(this, &Impl::display);
+    itsTimer.sigTimeOut.connect(this, &Impl::fullRender);
   }
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
-  void display();
+  void render();
+
+  void fullRender();
 
   void clearscreen(Gfx::Canvas& canvas);
 
@@ -109,7 +111,7 @@ public:
   void flushChanges()
   {
     if (isItRefreshing && !isItRefreshed)
-      display();
+      fullRender();
   }
 
   void onNodeChange()
@@ -164,42 +166,52 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GWT::Widget::Impl::display()
+void GWT::Widget::Impl::render()
 {
-DOTRACE("GWT::Widget::Impl::display");
+DOTRACE("GWT::Widget::Impl::render");
 
   Gfx::Canvas& canvas = itsOwner->getCanvas();
 
-  // Only erase the previous trial if hold is off
+  try
+    {
+      Gfx::Canvas::MatrixSaver msaver(canvas);
+      Gfx::Canvas::AttribSaver asaver(canvas);
+
+      itsDrawNode->draw(canvas);
+      itsUndrawNode = itsDrawNode;
+
+      isItRefreshed = true;
+    }
+  catch (...)
+    {
+      // Here, something failed during rendering, so just go invisible
+      setVisibility(false);
+    }
+}
+
+void GWT::Widget::Impl::fullRender()
+{
+DOTRACE("GWT::Widget::Impl::fullRender");
+
+  Gfx::Canvas& canvas = itsOwner->getCanvas();
+
+  // (1) Clear the screen (but only if we are not "holding")
   if( !isItHolding )
     {
       canvas.clearColorBuffer();
     }
 
-
+  // (2) Render the current object
   if ( isItVisible )
     {
-      try
-        {
-          Gfx::Canvas::MatrixSaver msaver(canvas);
-          Gfx::Canvas::AttribSaver asaver(canvas);
-
-          itsDrawNode->draw(canvas);
-          itsUndrawNode = itsDrawNode;
-
-          isItRefreshed = true;
-        }
-      catch (...)
-        {
-          // Here, either the trial id or some other id was invalid
-          setVisibility(false);
-        }
+      render();
     }
 
+  // (3) Flush the graphics stream
   doFlush(canvas);
 }
 
-void GWT::Widget::Impl::clearscreen(Gfx::Canvas& canvas)
+void GWT::Widget::Impl::clearscreen(Gfx::Canvas& /*canvas*/)
 {
 DOTRACE("GWT::Widget::Impl::clearscreen");
   setVisibility(false);
@@ -262,9 +274,14 @@ void GWT::Widget::removeKeyListeners()
   itsImpl->itsKeyListeners.clear();
 }
 
-void GWT::Widget::display()
+void GWT::Widget::render()
 {
-  itsImpl->display();
+  itsImpl->render();
+}
+
+void GWT::Widget::fullRender()
+{
+  itsImpl->fullRender();
 }
 
 void GWT::Widget::clearscreen()
