@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Sat Nov 20 22:03:29 1999
+// written: Wed Nov 24 12:10:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 
 #ifndef BITMAP_H_DEFINED
 #include "bitmap.h"
-#endif
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
 #endif
 
 ///////////////////////////////////////////////////////////////////////
