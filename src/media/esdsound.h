@@ -128,6 +128,10 @@ void media::esd_sound_rep::play()
   afGetSampleFormat(in_file, AF_DEFAULT_TRACK, &in_format, &in_width);
 
   dbg_eval_nl(3, frame_count);
+  dbg_eval_nl(3, in_channels);
+  dbg_eval_nl(3, in_rate);
+  dbg_eval_nl(3, in_format);
+  dbg_eval_nl(3, in_width);
 
   // convert audiofile parameters to EsounD parameters
   int out_bits;
@@ -144,6 +148,8 @@ void media::esd_sound_rep::play()
     }
 
   const int bytes_per_frame = (in_width * in_channels) / 8;
+
+  dbg_eval_nl(3, bytes_per_frame);
 
   int out_channels;
   if (in_channels == 1)
@@ -178,9 +184,11 @@ void media::esd_sound_rep::play()
     }
 
   // play
-  char buf[ ESD_BUF_SIZE ];
+  const int BUF_SIZE = 4096;
+  char buf[BUF_SIZE ];
+  const int buf_frames = BUF_SIZE / bytes_per_frame;
+
   int frames_read;
-  int buf_frames = ESD_BUF_SIZE / bytes_per_frame;
 
   while ((frames_read = afReadFrames(in_file, AF_DEFAULT_TRACK,
                                      buf, buf_frames)) != 0)
