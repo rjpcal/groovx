@@ -13,7 +13,7 @@
 #include "io.h"
 #endif
 
-class Expt : public virtual IO {
+class ExptBase : public virtual IO {
 public:
   Expt () {}
   virtual ~Expt() {}
