@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug  6 08:15:34 2001
+// written: Mon Aug  6 10:58:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 #include "trial.h"
 
 #include "gwt/canvas.h"
+
+#include "gx/gxseparator.h"
 
 #include "io/reader.h"
 
@@ -39,19 +41,14 @@
 
 Util::UID TlistUtils::createPreview(GWT::Canvas& canvas,
                                     Util::UID* objids,
-                                    unsigned int objids_size,
-                                    int pixel_width, int pixel_height)
+                                    unsigned int objids_size)
 {
 DOTRACE("TlistUtils::createPreview");
-  Point<double> world_origin = canvas.getWorldFromScreen( Point<int>(0, 0) );
 
-  Point<double> world_extent =
-    canvas.getWorldFromScreen( Point<int>(pixel_width, pixel_height) );
+  Rect<double> world_viewport = canvas.getWorldViewport();
 
-  const double world_width = world_extent.x() - world_origin.x();
-  const double world_height = world_extent.y() - world_origin.y();
-
-  Ref<Trial> preview_trial(Trial::make());
+  const double world_width = world_viewport.width();
+  const double world_height = world_viewport.height();
 
   const double window_area = world_width*world_height;
   const double parcel_area = window_area/objids_size;
@@ -60,6 +57,8 @@ DOTRACE("TlistUtils::createPreview");
   const int num_cols = int(world_width/raw_parcel_side) + 1;
 
   const double parcel_side = world_width/num_cols;
+
+  Ref<GxSeparator> preview_trial(GxSeparator::make());
 
   int x_step = -1;
   int y_step = 0;
@@ -94,8 +93,16 @@ DOTRACE("TlistUtils::createPreview");
       label_pos->translation.vec().set(label_x, label_y, 0.0);
       label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-      preview_trial->add(objids[i], obj_pos.id());
-      preview_trial->add(label.id(), label_pos.id());
+      Ref<GxSeparator> obj_pair(GxSeparator::make());
+      obj_pair->addChild(obj_pos.id());
+      obj_pair->addChild(obj.id());
+
+      Ref<GxSeparator> label_pair(GxSeparator::make());
+      label_pair->addChild(label_pos.id());
+      label_pair->addChild(label.id());
+
+      preview_trial->addChild(obj_pair.id());
+      preview_trial->addChild(label_pair.id());
     }
 
   return preview_trial.id();
