@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Fri Jan 25 13:58:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ public:
 
       Response theResponse;
 
-      theResponse.setMsec(itsTrial.trElapsedMsec());
+      theResponse.setMsec(int(itsTrial.trElapsedMsec()));
 
       itsTrial.trResponseSeen();
 

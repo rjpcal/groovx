@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Fri Jan 25 13:57:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ DOTRACE("TimingHdlr::getEvent");
   return itsImpl->eventsAt(time_point).at(index);
 }
 
-int TimingHdlr::getElapsedMsec() const
+double TimingHdlr::getElapsedMsec() const
 {
 DOTRACE("TimingHdlr::getElapsedMsec");
   return itsImpl->itsTimer.elapsedMsec();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Jan 25 10:43:17 2002
+// written: Fri Jan 25 13:58:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ public:
 
   void trDoTrial(Trial* self, SoftRef<GWT::Widget> widget,
                  Util::ErrorHandler& errhdlr, Block& block);
-  int trElapsedMsec();
+  double trElapsedMsec();
   void trAbortTrial();
   void trEndTrial();
   void trNextTrial();
@@ -340,7 +340,7 @@ DOTRACE("Trial::Impl::trDoTrial");
   timeTrace("trDoTrial");
 }
 
-int Trial::Impl::trElapsedMsec()
+double Trial::Impl::trElapsedMsec()
 {
 DOTRACE("Trial::Impl::trElapsedMsec");
 
@@ -602,7 +602,7 @@ void Trial::trDoTrial(SoftRef<GWT::Widget> widget,
                       Util::ErrorHandler& errhdlr, Block& block)
   { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 
-int Trial::trElapsedMsec()
+double Trial::trElapsedMsec()
   { return itsImpl->trElapsedMsec(); }
 
 void Trial::trAbortTrial()

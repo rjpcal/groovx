@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Fri Jan 18 16:06:51 2002
+// written: Fri Jan 25 13:58:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ public:
   virtual void trDoTrial(Util::SoftRef<GWT::Widget> widget,
                          Util::ErrorHandler& errhdlr, Block& block) = 0;
 
-  virtual int trElapsedMsec() = 0;
+  virtual double trElapsedMsec() = 0;
 
   virtual void trAbortTrial() = 0;
   virtual void trEndTrial() = 0;

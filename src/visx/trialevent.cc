@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Jan 25 10:44:45 2002
+// written: Fri Jan 25 14:02:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,8 +152,8 @@ DOTRACE("TrialEvent::invokeTemplate");
   itsIsPending = false;
   itsToken = 0;
 
-  int msec = itsTimer.elapsedMsec();
-  int error = itsActualRequest - msec;
+  double msec = itsTimer.elapsedMsec();
+  double error = itsActualRequest - msec;
 
 #ifdef EVENT_TRACE
   Util::log( fstring(demangle_cstr(typeid(*this).name()), " ",
@@ -167,7 +167,7 @@ DOTRACE("TrialEvent::invokeTemplate");
   Util::log( fstring("    before == ", msec) );
 #endif
 
-  itsTotalOffset += error;
+  itsTotalOffset += int(error);
   itsTotalError += (itsRequestedDelay - msec);
 
   ++itsInvokeCount;

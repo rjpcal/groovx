@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 18 10:24:59 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Fri Jan 25 13:59:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ public:
   void restart()
     { gettimeofday(&itsStartTime, NULL); }
 
-  int elapsedMsec()
+  double elapsedMsec()
     {
       timeval endTime, elapsedTime;
 
@@ -37,8 +37,8 @@ public:
       elapsedTime.tv_sec = endTime.tv_sec - itsStartTime.tv_sec;
       elapsedTime.tv_usec = endTime.tv_usec - itsStartTime.tv_usec;
 
-      return int(double(elapsedTime.tv_sec)*1000.0 +
-                 double(elapsedTime.tv_usec)/1000.0);
+      return (double(elapsedTime.tv_sec)*1000.0 +
+              double(elapsedTime.tv_usec)/1000.0);
     }
 
 private:

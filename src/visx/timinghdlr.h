@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Fri Jan 25 13:57:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
 
   /** Returns the elapsed time in milliseconds since the start of the
       current trial */
-  int getElapsedMsec() const;
+  double getElapsedMsec() const;
 
   //////////////////
   // manipulators //
