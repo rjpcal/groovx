@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Wed Aug  8 15:34:51 2001
+// written: Wed Aug  8 18:57:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,12 +87,6 @@ void IO::Reader::readValue<double>(const fixed_string& name,
 template <>
 void IO::Reader::readValue<fixed_string>(const fixed_string& name,
                                          fixed_string& return_value) {
-  return_value = readStringImpl(name);
-}
-
-template <>
-void IO::Reader::readValue<dynamic_string>(const fixed_string& name,
-                                           dynamic_string& return_value) {
   return_value = readStringImpl(name);
 }
 

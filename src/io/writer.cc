@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Wed Aug  8 15:34:56 2001
+// written: Wed Aug  8 18:57:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,13 +90,6 @@ void IO::Writer::writeValue<fixed_string>(const char* name,
   writeCstring(name, val.c_str());
 }
 
-
-template<>
-void IO::Writer::writeValue<dynamic_string>(const char* name,
-                                            const dynamic_string& val)
-{
-  writeCstring(name, val.c_str());
-}
 
 template<>
 void IO::Writer::writeValue<Value>(const char* name,
