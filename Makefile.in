@@ -58,6 +58,7 @@ LDFLAGS         := @LDFLAGS@
 LIBS            := @LIBS@ @X_EXTRA_LIBS@
 with_htmldoc    := @with_htmldoc@
 DOXYGEN_PROG    := @DOXYGEN_PROG@
+BUILD           := @BUILD@
 
 LIB_EXT         := $(LIB_SUFFIX).$(SHLIB_EXT)
 
@@ -69,7 +70,6 @@ DEFS            += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
 #
 #-------------------------------------------------------------------------
 
-BUILD := build
 SRC := src
 DEP := $(BUILD)/dep
 OBJ := $(BUILD)/obj
