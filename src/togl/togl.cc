@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 12:06:06 2000
+// written: Thu May 25 12:50:15 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -90,17 +90,6 @@ namespace {
 KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask|	\
 EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|	\
 VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
-
-class Togl
-{
-public:
-  Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv);
-  virtual ~Togl();
-
-  class Impl;
-  friend class Impl;
-  Impl* const itsImpl;
-};
 
 
 class Togl::Impl
@@ -541,15 +530,20 @@ DOTRACE("<togl.cc>::Togl_ResetDefaultCallbacks");
   DefaultClientData = NULL;
 }
 
-void Togl_SetDisplayFunc( Togl* togl, Togl_Callback *proc )
-  { togl->itsImpl->setDisplayFunc(proc); }
+void Togl::setDisplayFunc( Togl_Callback *proc )
+  { itsImpl->setDisplayFunc(proc); }
 
-void Togl_SetReshapeFunc( Togl* togl, Togl_Callback *proc )
-  { togl->itsImpl->setReshapeFunc(proc); }
+void Togl::setReshapeFunc( Togl_Callback *proc )
+  { itsImpl->setReshapeFunc(proc); }
 
-void Togl_SetDestroyFunc( Togl* togl, Togl_Callback *proc )
-  { togl->itsImpl->setDestroyFunc(proc); }
+void Togl::setDestroyFunc( Togl_Callback *proc )
+  { itsImpl->setDestroyFunc(proc); }
 
+int Togl::configure(Tcl_Interp *interp, int argc, char *argv[], int flags)
+  { return itsImpl->configure(interp, argc, argv, flags); }
+
+void Togl::makeCurrent() const
+  { itsImpl->makeCurrent(); }
 
 /*
  * Togl_CreateCommand
@@ -558,22 +552,35 @@ void Togl_SetDestroyFunc( Togl* togl, Togl_Callback *proc )
  *   Every time the sub-command is called from Tcl, the
  *   C routine will be called with all the arguments from Tcl.
  */
-void Togl_CreateCommand( char *cmd_name, Togl_CmdProc *cmd_proc)
+void Togl::createCommand( char *cmd_name, Togl_CmdProc *cmd_proc)
 {
-DOTRACE("<togl.cc>::Togl_CreateCommand");
+DOTRACE("Togl::createCommand");
   int new_item;
   Tcl_HashEntry *entry =
 	 Tcl_CreateHashEntry(&CommandTable, cmd_name, &new_item);
   Tcl_SetHashValue(entry, cmd_proc);
 }
 
+void Togl::postRedisplay()
+  { itsImpl->postRedisplay(); }
 
-void Togl_MakeCurrent( const Togl* togl )
-  { togl->itsImpl->makeCurrent(); }
+void Togl::swapBuffers() const
+  { itsImpl->swapBuffers(); }
 
-int Togl_Configure(Tcl_Interp *interp, Togl* togl,
-                   int argc, char *argv[], int flags)
-  { return togl->itsImpl->configure(interp, argc, argv, flags); }
+char* Togl::ident() const
+  { return itsImpl->ident(); }
+
+int Togl::width() const
+  { return itsImpl->width(); }
+
+int Togl::height() const
+  { return itsImpl->height(); }
+
+Tcl_Interp* Togl::interp() const
+  { return itsImpl->interp(); }
+
+Tk_Window Togl::tkWin() const
+  { return itsImpl->tkWin(); }
 
 
 int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
@@ -657,28 +664,6 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
 }
 
 
-void Togl_PostRedisplay( Togl* togl )
-  { togl->itsImpl->postRedisplay(); }
-
-void Togl_SwapBuffers( const Togl* togl )
-  { togl->itsImpl->swapBuffers(); }
-
-char* Togl_Ident( const Togl* togl )
-  { return togl->itsImpl->ident(); }
-
-int Togl_Width( const Togl* togl )
-  { return togl->itsImpl->width(); }
-
-int Togl_Height( const Togl* togl )
-  { return togl->itsImpl->height(); }
-
-Tcl_Interp* Togl_Interp( const Togl* togl )
-  { return togl->itsImpl->interp(); }
-
-Tk_Window Togl_TkWin( const Togl* togl )
-  { return togl->itsImpl->tkWin(); }
-
-
 /*
  * A replacement for XAllocColor.  This function should never
  * fail to allocate a color.  When XAllocColor fails, we return
@@ -751,57 +736,56 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
 }
 
 
-unsigned long Togl_AllocColor( const Togl* togl,
-                               float red, float green, float blue )
-  { return togl->itsImpl->allocColor(red, green, blue); }
+unsigned long Togl::allocColor( float red, float green, float blue ) const
+  { return itsImpl->allocColor(red, green, blue); }
 
-void Togl_FreeColor( const Togl* togl, unsigned long pixel )
-  { togl->itsImpl->freeColor(pixel); }
+void Togl::freeColor( unsigned long pixel ) const
+  { itsImpl->freeColor(pixel); }
 
-void Togl_SetColor( const Togl* togl,
-                    unsigned long index, float red, float green, float blue )
-  { togl->itsImpl->setColor(index, red, green, blue); }
+void Togl::setColor( unsigned long index,
+							float red, float green, float blue ) const
+  { itsImpl->setColor(index, red, green, blue); }
 
-GLuint Togl_LoadBitmapFont( const Togl* togl, const char *fontname )
-  { togl->itsImpl->loadBitmapFont(fontname); }
+GLuint Togl::loadBitmapFont( const char *fontname ) const
+  { return itsImpl->loadBitmapFont(fontname); }
 
-void Togl_UnloadBitmapFont( const Togl* togl, GLuint fontbase )
-  { togl->itsImpl->unloadBitmapFont(fontbase); }
+void Togl::unloadBitmapFont( GLuint fontbase ) const
+  { itsImpl->unloadBitmapFont(fontbase); }
 
 
-void Togl_UseLayer( Togl* togl, int layer )
-  { togl->itsImpl->useLayer(layer); }
-
-void Togl_ShowOverlay( Togl* togl )
-  { togl->itsImpl->showOverlay(); }
-
-void Togl_HideOverlay( Togl* togl )
-  { togl->itsImpl->hideOverlay(); }
-
-void Togl_PostOverlayRedisplay( Togl* togl )
-  { togl->itsImpl->postOverlayRedisplay(); }
-
-void Togl_OverlayDisplayFunc( Togl_Callback *proc )
+void Togl::overlayDisplayFunc( Togl_Callback *proc )
 {
-DOTRACE("<togl.cc>::Togl_OverlayDisplayFunc");
+DOTRACE("Togl::OverlayDisplayFunc");
   DefaultOverlayDisplayProc = proc;
 }
 
-int Togl_ExistsOverlay( const Togl* togl )
-  { return togl->itsImpl->existsOverlay(); }
+void Togl::useLayer( int layer )
+  { itsImpl->useLayer(layer); }
 
-int Togl_GetOverlayTransparentValue( const Togl* togl )
-  { return togl->itsImpl->getOverlayTransparentValue(); }
+void Togl::showOverlay()
+  { itsImpl->showOverlay(); }
 
-int Togl_IsMappedOverlay( const Togl* togl )
-  { return togl->itsImpl->isMappedOverlay(); }
+void Togl::hideOverlay()
+  { itsImpl->hideOverlay(); }
 
-unsigned long Togl_AllocColorOverlay( const Togl* togl,
-                                      float red, float green, float blue )
-  { return togl->itsImpl->allocColorOverlay(red, green, blue); }
+void Togl::postOverlayRedisplay()
+  { itsImpl->postOverlayRedisplay(); }
 
-void Togl_FreeColorOverlay( const Togl* togl, unsigned long pixel )
-  { togl->itsImpl->freeColorOverlay(pixel); }
+int Togl::existsOverlay() const
+  { return itsImpl->existsOverlay(); }
+
+int Togl::getOverlayTransparentValue() const
+  { return itsImpl->getOverlayTransparentValue(); }
+
+int Togl::isMappedOverlay() const
+  { return itsImpl->isMappedOverlay(); }
+
+unsigned long Togl::allocColorOverlay( float red, float green,
+													float blue ) const
+  { return itsImpl->allocColorOverlay(red, green, blue); }
+
+void Togl::freeColorOverlay( unsigned long pixel ) const
+  { itsImpl->freeColorOverlay(pixel); }
 
 
 
@@ -809,18 +793,18 @@ void Togl_FreeColorOverlay( const Togl* togl, unsigned long pixel )
  * User client data
  */
 
-void Togl_ClientData( ClientData clientData )
+void Togl::defaultClientData( ClientData clientData )
 {
-DOTRACE("<togl.cc>::Togl_ClientData");
+DOTRACE("Togl::defaultClientData");
   DefaultClientData = clientData;
 }
 
-ClientData Togl_GetClientData( const Togl* togl )
-  { return togl->itsImpl->getClientData(); }
+ClientData Togl::getClientData() const
+  { return itsImpl->getClientData(); }
 
 
-void Togl_SetClientData( Togl* togl, ClientData clientData )
-  { togl->itsImpl->setClientData(clientData); }
+void Togl::setClientData( ClientData clientData )
+  { itsImpl->setClientData(clientData); }
 
 
 
@@ -829,20 +813,20 @@ void Togl_SetClientData( Togl* togl, ClientData clientData )
  * Contributed by Miguel A. De Riera Pasenau (miguel@DALILA.UPC.ES)
  */
 
-Display* Togl_Display( const Togl* togl)
-  { return togl->itsImpl->display(); }
+Display* Togl::display() const
+  { return itsImpl->display(); }
 
-Screen* Togl_Screen( const Togl* togl)
-  { return togl->itsImpl->screen(); }
+Screen* Togl::screen() const
+  { return itsImpl->screen(); }
 
-int Togl_ScreenNumber( const Togl* togl)
-  { return togl->itsImpl->screenNumber(); }
+int Togl::screenNumber() const
+  { return itsImpl->screenNumber(); }
 
-Colormap Togl_Colormap( const Togl* togl)
-  { return togl->itsImpl->colormap(); }
+Colormap Togl::colormap() const
+  { return itsImpl->colormap(); }
 
-Window Togl_Window( const Togl* togl)
-  { return togl->itsImpl->windowId(); }
+Window Togl::windowId() const
+  { return itsImpl->windowId(); }
 
 #ifdef MESA_COLOR_HACK
 /*
@@ -1111,9 +1095,9 @@ DOTRACE("<togl.cc>::generateEPS");
   return 0;
 }
 
-int Togl_DumpToEpsFile( const Togl* togl, const char *filename,
-                        int inColor, void (*user_redraw)( const Togl* ))
-  { togl->itsImpl->dumpToEpsFile(filename, inColor, user_redraw); }
+int Togl::dumpToEpsFile( const char *filename, int inColor,
+								 void (*user_redraw)( const Togl* )) const
+  { itsImpl->dumpToEpsFile(filename, inColor, user_redraw); }
 
 
 /*
@@ -1138,9 +1122,9 @@ static struct stereoStateRec {
 
 /* call instead of glDrawBuffer */
 void
-Togl_StereoDrawBuffer(GLenum mode)
+Togl::stereoDrawBuffer(GLenum mode)
 {
-DOTRACE("<togl.cc>::Togl_StereoDrawBuffer");
+DOTRACE("Togl::stereoDrawBuffer");
   if (stereo.useSGIStereo) {
     stereo.currentDrawBuffer = mode;
     switch (mode) {
@@ -1182,8 +1166,9 @@ DOTRACE("<togl.cc>::Togl_StereoDrawBuffer");
 
 /* call instead of glClear */
 void
-Togl_StereoClear(GLbitfield mask)
+Togl::stereoClear(GLbitfield mask)
 {
+DOTRACE("Togl::stereoClear");
   GLenum drawBuffer;
   if (stereo.useSGIStereo) {
     drawBuffer = stereo.currentDrawBuffer;
@@ -1263,10 +1248,12 @@ DOTRACE("<togl.cc>::stereoInit");
 
 
 void
-Togl_StereoFrustum(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top,
-						 GLfloat near, GLfloat far, GLfloat eyeDist, GLfloat eyeOffset)
+Togl::stereoFrustum(GLfloat left, GLfloat right,
+						  GLfloat bottom, GLfloat top,
+						  GLfloat near, GLfloat far,
+						  GLfloat eyeDist, GLfloat eyeOffset)
 {
-DOTRACE("<togl.cc>::Togl_StereoFrustum");
+DOTRACE("Togl::stereoFrustum");
   GLfloat eyeShift = (eyeDist - near) * (eyeOffset / eyeDist);
   
   glFrustum(left+eyeShift, right+eyeShift, bottom, top, near, far);
