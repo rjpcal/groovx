@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Thu Feb 17 12:53:16 2000
+// written: Thu Feb 17 13:30:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,10 @@
 #include "property.h"
 #endif
 
+#ifndef TRACER_H_DEFINED
+#include "util/tracer.h"
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -36,6 +40,10 @@
 
 class Fish : public GrObj, public PropFriend<Fish> {
 public:
+  /// This tracer dynamically controls the tracing of \c Fish member functions.
+  static Util::Tracer tracer;
+
+
   /** Constructor can make a Fish by reading a spline file and a
       coordinate file. If either of these filenames are null, the
       constructor will use default values for the spline
