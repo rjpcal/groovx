@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Mon Jul 16 12:51:28 2001
+// written: Mon Jul 16 14:55:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,18 +46,16 @@ void operator delete(void* space)
 }
 #endif
 
+#include <tcl.h>
+
 namespace HookTcl
 {
   void hook(Tcl::Context& ctx)
   {
-    int isum = 0;
-
-    for (int i = 1; i < ctx.objc(); ++i)
-      {
-        isum += ctx.getValFromArg(i, TypeCue<int>());
-      }
-
-    ctx.setResult(isum);
+    const char* proc = ctx.getValFromArg(1, TypeCue<const char*>());
+    Tcl_CmdInfo info;
+    int result = Tcl_GetCommandInfo(ctx.interp(), (char*)proc, &info);
+    ctx.setResult(result);
   }
 
   size_t memUsage() { return TOTAL; }
@@ -68,8 +66,8 @@ public:
   HookPkg(Tcl_Interp* interp) :
     Tcl::TclItemPkg(interp, "Hook", "$Revision$")
   {
-    defVecRaw( HookTcl::hook, "hook", "variable", 2 );
-    def( HookTcl::memUsage, "memUsage", 0 );
+    defVecRaw( HookTcl::hook, "::hook", "variable", 1 );
+    def( HookTcl::memUsage, "::memUsage", 0 );
   }
 };
 
