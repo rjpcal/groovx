@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 14:48:32 2001
-// written: Wed Nov 13 12:43:56 2002
+// written: Wed Nov 13 13:05:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,37 +66,6 @@ namespace Gmodes
       rendered into the front buffer, regardless of whether OpenGL
       double-buffering is being used. */
   const RenderMode X11_BITMAP_CACHE = 4;
-
-
-
-  ///////////////////////////////////////////////////////////////////////
-  //
-  // Scaling modes
-  //
-  ///////////////////////////////////////////////////////////////////////
-
-  /** The symbolic constants of type \c ScalingMode provide several
-      ways to scale an object with respect to the OpenGL coordinate
-      system. The current mode can be get/set with \c getScalingMode()
-      and \c setScalineMode(). The default scaling mode is \c
-      NATIVE_SCALING. */
-  typedef int ScalingMode;
-
-  /** This is the default scaling mode. No additional scaling is done beyond
-      whatever happens in the subclass's \c grRender()
-      implementation. */
-  const ScalingMode NATIVE_SCALING           = 1;
-
-  /** In this mode, the native aspect ratio of the object will be
-      maintained. Thus, requests to change one of the object's
-      dimensions (width or height) will affect the other dimension so
-      as to maintain the native aspect ratio. In this mode, \c
-      getAspectRatio() should always return 1.0. */
-  const ScalingMode MAINTAIN_ASPECT_SCALING  = 2;
-
-  /** In this mode, the width and height of the object may be set
-      independently of each other. */
-  const ScalingMode FREE_SCALING             = 3;
 }
 
 static const char vcid_gmodes_h[] = "$Header$";

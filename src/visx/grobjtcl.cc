@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Nov 13 13:01:18 2002
+// written: Wed Nov 13 13:11:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #define GROBJTCL_CC_DEFINED
 
 #include "gfx/gxaligner.h"
+#include "gfx/gxscaler.h"
 
 #include "grsh/grsh.h"
 
@@ -72,9 +73,9 @@ DOTRACE("Grobj_Init");
   pkg->linkVarCopy("GrObj::GL_BITMAP_CACHE", Gmodes::GL_BITMAP_CACHE);
   pkg->linkVarCopy("GrObj::X11_BITMAP_CACHE", Gmodes::X11_BITMAP_CACHE);
 
-  pkg->linkVarCopy("GrObj::NATIVE_SCALING", Gmodes::NATIVE_SCALING);
-  pkg->linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", Gmodes::MAINTAIN_ASPECT_SCALING);
-  pkg->linkVarCopy("GrObj::FREE_SCALING", Gmodes::FREE_SCALING);
+  pkg->linkVarCopy("GrObj::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
+  pkg->linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);
+  pkg->linkVarCopy("GrObj::FREE_SCALING", GxScaler::FREE_SCALING);
 
   pkg->linkVarCopy("GrObj::NATIVE_ALIGNMENT", GxAligner::NATIVE_ALIGNMENT);
   pkg->linkVarCopy("GrObj::CENTER_ON_CENTER", GxAligner::CENTER_ON_CENTER);

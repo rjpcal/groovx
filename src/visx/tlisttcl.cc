@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Nov 13 13:01:18 2002
+// written: Wed Nov 13 13:12:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxnode.h"
+#include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
 
 #include "grsh/grsh.h"
@@ -29,7 +30,6 @@
 #include "util/error.h"
 #include "util/ref.h"
 
-#include "visx/gmodes.h"
 #include "visx/gtext.h"
 #include "visx/position.h"
 #include "visx/grobj.h"
@@ -84,7 +84,7 @@ namespace
 
         obj->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
         obj->setBBVisibility(true);
-        obj->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+        obj->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
         obj->setMaxDimension(0.8);
 
         Ref<Position> obj_pos(Position::make());
@@ -104,7 +104,7 @@ namespace
             Ref<Gtext> label(Gtext::make());
             label->setText(fstring(objids[i]));
             label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
-            label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+            label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
 
             Ref<Position> label_pos(Position::make());

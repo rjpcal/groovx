@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Nov 13 12:55:21 2002
+// written: Wed Nov 13 13:11:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "visx/bezier.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxscaler.h"
 
 #include "gx/rect.h"
 #include "gx/vec3.h"
@@ -27,8 +28,6 @@
 #include "io/writer.h"
 
 #include "util/algo.h"
-
-#include "visx/gmodes.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -222,7 +221,7 @@ DOTRACE("MorphyFace::MorphyFace");
 
   setFieldMap(MorphyFace::classFields());
 
-  setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+  setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
   setMaxDimension(1.0);
 }
 

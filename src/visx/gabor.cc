@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Nov 13 12:50:54 2002
+// written: Wed Nov 13 13:10:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "visx/gabor.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxscaler.h"
 
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
@@ -27,8 +28,6 @@
 
 #include "util/algo.h"
 #include "util/randutils.h"
-
-#include "visx/gmodes.h"
 
 #include <cmath>
 
@@ -100,7 +99,7 @@ DOTRACE("Gabor::Gabor");
 
   setFieldMap(Gabor::classFields());
 
-  setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+  setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
 }
 
 Gabor::~Gabor ()
