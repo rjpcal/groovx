@@ -9,8 +9,6 @@
 
 load obj/$::env(ARCH)/tests/dlinktest.tso
 
-foreach cmd [info commands Dlinktest::test_*] {
-	 if { [regsub test_ $cmd expect_ expected] } {
-		  ::test "dlink_list" "$cmd" $cmd [$expected]
-	 }
+foreach cmd [info commands Dlinktest::test*] {
+    ::test "dlink_list" "$cmd" $cmd {^$}
 }
