@@ -32,9 +32,9 @@
 #ifndef GXALIGNER_H_DEFINED
 #define GXALIGNER_H_DEFINED
 
-#include "gfx/gxbin.h"
+#include "geom/vec2.h"
 
-#include "gx/vec2.h"
+#include "gfx/gxbin.h"
 
 //  #######################################################
 //  =======================================================

@@ -34,9 +34,9 @@
 
 #include "visx/jitter.h"
 
-#include "gfx/canvas.h"
+#include "geom/vec3.h"
 
-#include "gx/vec3.h"
+#include "gfx/canvas.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

@@ -34,12 +34,12 @@
 
 #include "gxpixmap.h"
 
+#include "geom/rect.h"
+#include "geom/vec2.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
-
-#include "gx/rect.h"
-#include "gx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

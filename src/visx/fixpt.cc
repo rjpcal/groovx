@@ -34,10 +34,10 @@
 
 #include "visx/fixpt.h"
 
+#include "geom/vec2.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

@@ -34,6 +34,8 @@
 
 #include "tlistutils.h"
 
+#include "geom/rect.h"
+
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxscaler.h"
@@ -41,8 +43,6 @@
 #include "gfx/gxshapekit.h"
 #include "gfx/gxtext.h"
 #include "gfx/gxtransform.h"
-
-#include "gx/rect.h"
 
 #include "io/writer.h"
 

@@ -32,13 +32,13 @@
 #ifndef HOUSE_CC_DEFINED
 #define HOUSE_CC_DEFINED
 
-#include "visx/house.h"
+#include "house.h"
+
+#include "geom/rect.h"
+#include "geom/vec3.h"
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/rect.h"
-#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

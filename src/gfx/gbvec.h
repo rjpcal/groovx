@@ -34,8 +34,8 @@
 
 #include "util/multivalue.h"
 
-#include "gx/vec2.h"
-#include "gx/vec3.h"
+#include "geom/vec2.h"
+#include "geom/vec3.h"
 
 /// GbVec2 is a field class for holding @-D vectors/points/distances.
 template <class T>

@@ -34,6 +34,8 @@
 
 #include "gfx/gxshapekit.h"
 
+#include "geom/box.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
@@ -41,8 +43,6 @@
 #include "gfx/gxbounds.h"
 #include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
-
-#include "gx/box.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

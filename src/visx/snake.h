@@ -32,7 +32,7 @@
 #ifndef SNAKE_H_DEFINED
 #define SNAKE_H_DEFINED
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "util/arrays.h"
 

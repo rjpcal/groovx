@@ -32,7 +32,7 @@
 #ifndef VECTWOTEST_CC_DEFINED
 #define VECTWOTEST_CC_DEFINED
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "pkgs/testutils.h"
 

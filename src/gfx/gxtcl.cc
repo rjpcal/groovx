@@ -32,6 +32,8 @@
 #ifndef GXTCL_CC_DEFINED
 #define GXTCL_CC_DEFINED
 
+#include "geom/bezier4.h"
+
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
 #include "gfx/gxcamera.h"
@@ -55,8 +57,6 @@
 #include "gfx/pscanvas.h"
 #include "gfx/pointtcl.h"
 #include "gfx/recttcl.h"
-
-#include "gx/bezier4.h"
 
 #include "io/fieldpkg.h"
 

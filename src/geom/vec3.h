@@ -32,7 +32,7 @@
 #ifndef VEC3_H_DEFINED
 #define VEC3_H_DEFINED
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 namespace Gfx
 {

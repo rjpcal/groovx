@@ -34,10 +34,10 @@
 
 #include "bbox.h"
 
-#include "gfx/canvas.h"
+#include "geom/box.h"
+#include "geom/txform.h"
 
-#include "gx/box.h"
-#include "gx/txform.h"
+#include "gfx/canvas.h"
 
 #include <vector>
 

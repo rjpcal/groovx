@@ -32,7 +32,7 @@
 #ifndef RECTTCL_H_DEFINED
 #define RECTTCL_H_DEFINED
 
-#include "gx/rect.h"
+#include "geom/rect.h"
 
 #include "tcl/tclconvert.h"
 #include "tcl/tcllistobj.h"

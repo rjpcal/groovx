@@ -32,7 +32,7 @@
 #ifndef GXCAMERA_H_DEFINED
 #define GXCAMERA_H_DEFINED
 
-#include "gx/rect.h"
+#include "geom/rect.h"
 
 #include "gfx/gbvec.h"
 #include "gfx/gxnode.h"

@@ -32,12 +32,12 @@
 #ifndef LINESTRIP_CC_DEFINED
 #define LINESTRIP_CC_DEFINED
 
-#include "gfx/linestrip.h"
+#include "linestrip.h"
+
+#include "geom/bezier4.h"
+#include "geom/vec3.h"
 
 #include "gfx/canvas.h"
-
-#include "gx/bezier4.h"
-#include "gx/vec3.h"
 
 #include "util/error.h"
 

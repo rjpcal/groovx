@@ -32,11 +32,11 @@
 #ifndef GLXRASTERFONT_H_DEFINED
 #define GLXRASTERFONT_H_DEFINED
 
+#include "geom/rect.h"
+
 #include "gfx/bbox.h"
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
-
-#include "gx/rect.h"
 
 #include "tcl/tcllistobj.h"
 

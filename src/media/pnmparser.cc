@@ -34,7 +34,7 @@
 
 #include "pnmparser.h"
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "media/bmapdata.h"
 

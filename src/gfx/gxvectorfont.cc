@@ -34,10 +34,10 @@
 
 #include "gxvectorfont.h"
 
+#include "geom/rect.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/rect.h"
 
 #include "util/fstring.h"
 

@@ -32,7 +32,7 @@
 #ifndef POINTTCL_H_DEFINED
 #define POINTTCL_H_DEFINED
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "tcl/tclconvert.h"
 #include "tcl/tcllistobj.h"

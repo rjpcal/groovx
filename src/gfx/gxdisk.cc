@@ -34,10 +34,10 @@
 
 #include "gxdisk.h"
 
+#include "geom/box.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/box.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

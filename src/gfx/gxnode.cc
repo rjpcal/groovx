@@ -32,12 +32,12 @@
 #ifndef GXNODE_CC_DEFINED
 #define GXNODE_CC_DEFINED
 
-#include "gfx/gxnode.h"
+#include "gxnode.h"
+
+#include "geom/box.h"
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/box.h"
 
 #include "nub/ref.h"
 

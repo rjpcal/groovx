@@ -34,7 +34,7 @@
 
 #include "bmapdata.h"
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "util/algo.h"
 #include "util/arrays.h"

@@ -34,7 +34,7 @@
 
 #include "tkwidget.h"
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "nub/ref.h"
 

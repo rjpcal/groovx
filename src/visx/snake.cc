@@ -34,8 +34,8 @@
 
 #include "snake.h"
 
-#include "gx/geom.h"
-#include "gx/vec2.h"
+#include "geom/geom.h"
+#include "geom/vec2.h"
 
 #include "util/rand.h"
 

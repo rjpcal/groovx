@@ -34,12 +34,12 @@
 
 #include "gaborarray.h"
 
+#include "geom/geom.h"
+#include "geom/rect.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
-
-#include "gx/geom.h"
-#include "gx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

@@ -34,12 +34,12 @@
 
 #include "fish.h"
 
+#include "geom/rect.h"
+#include "geom/vec3.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/rgbacolor.h"
-
-#include "gx/rect.h"
-#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

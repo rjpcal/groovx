@@ -32,7 +32,7 @@
 #ifndef GABORPATCH_H_DEFINED
 #define GABORPATCH_H_DEFINED
 
-#include "gx/geom.h"
+#include "geom/geom.h"
 
 #include <cmath>
 

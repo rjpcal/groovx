@@ -34,11 +34,11 @@
 
 #include "gxscaler.h"
 
+#include "geom/box.h"
+#include "geom/vec3.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/box.h"
-#include "gx/vec3.h"
 
 #include "util/trace.h"
 

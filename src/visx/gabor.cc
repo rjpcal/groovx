@@ -34,12 +34,12 @@
 
 #include "visx/gabor.h"
 
+#include "geom/rect.h"
+#include "geom/vec2.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
-
-#include "gx/rect.h"
-#include "gx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

@@ -34,14 +34,14 @@
 
 #include "visx/morphyface.h"
 
+#include "geom/bezier4.h"
+#include "geom/rect.h"
+#include "geom/vec3.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 #include "gfx/linestrip.h"
-
-#include "gx/bezier4.h"
-#include "gx/rect.h"
-#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

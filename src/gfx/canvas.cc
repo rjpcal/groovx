@@ -36,9 +36,9 @@
 
 #include "gfx/rgbacolor.h"
 
-#include "gx/bezier4.h"
-#include "gx/box.h"
-#include "gx/vec3.h"
+#include "geom/bezier4.h"
+#include "geom/box.h"
+#include "geom/vec3.h"
 
 #include "util/arrays.h"
 #include "util/error.h"

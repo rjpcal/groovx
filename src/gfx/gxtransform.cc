@@ -34,13 +34,13 @@
 
 #include "gxtransform.h"
 
+#include "geom/box.h"
+#include "geom/rect.h"
+#include "geom/txform.h"
+#include "geom/vec3.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/box.h"
-#include "gx/rect.h"
-#include "gx/txform.h"
-#include "gx/vec3.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

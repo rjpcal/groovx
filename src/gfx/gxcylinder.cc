@@ -32,12 +32,12 @@
 #ifndef GXCYLINDER_CC_DEFINED
 #define GXCYLINDER_CC_DEFINED
 
-#include "gfx/gxcylinder.h"
+#include "gxcylinder.h"
+
+#include "geom/box.h"
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/box.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

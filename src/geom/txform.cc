@@ -32,9 +32,9 @@
 #ifndef TXFORM_CC_DEFINED
 #define TXFORM_CC_DEFINED
 
-#include "gx/txform.h"
+#include "txform.h"
 
-#include "gx/vec3.h"
+#include "geom/vec3.h"
 
 #include <cmath>
 #include <cstring>

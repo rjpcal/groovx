@@ -46,7 +46,7 @@ void Jpeg::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
 
 #else
 
-#include "gx/vec2.h"
+#include "geom/vec2.h"
 
 #include "media/bmapdata.h"
 

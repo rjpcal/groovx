@@ -32,8 +32,8 @@
 #ifndef BOX_H_DEFINED
 #define BOX_H_DEFINED
 
-#include "gx/vec3.h"
-#include "gx/rect.h"
+#include "geom/vec3.h"
+#include "geom/rect.h"
 
 #include "util/algo.h"
 

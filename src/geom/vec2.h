@@ -32,7 +32,7 @@
 #ifndef VEC2_H_DEFINED
 #define VEC2_H_DEFINED
 
-#include "gx/geom.h"
+#include "geom/geom.h"
 
 #include <cmath>
 

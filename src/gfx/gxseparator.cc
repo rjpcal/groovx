@@ -32,13 +32,13 @@
 #ifndef GXSEPARATOR_CC_DEFINED
 #define GXSEPARATOR_CC_DEFINED
 
-#include "gfx/gxseparator.h"
+#include "gxseparator.h"
+
+#include "geom/box.h"
+#include "geom/rect.h"
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/box.h"
-#include "gx/rect.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"

@@ -32,18 +32,18 @@
 #ifndef GLCANVAS_CC_DEFINED
 #define GLCANVAS_CC_DEFINED
 
-#include "gfx/glcanvas.h"
+#include "glcanvas.h"
+
+#include "geom/rect.h"
+#include "geom/txform.h"
+#include "geom/vec2.h"
+#include "geom/vec3.h"
 
 #include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
 #include "gfx/gxrasterfont.h"
 #include "gfx/gxvectorfont.h"
 #include "gfx/rgbacolor.h"
-
-#include "gx/rect.h"
-#include "gx/txform.h"
-#include "gx/vec2.h"
-#include "gx/vec3.h"
 
 #include "media/bmapdata.h"
 

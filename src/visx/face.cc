@@ -32,10 +32,10 @@
 
 #include "visx/face.h"
 
+#include "geom/vec3.h"
+
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-
-#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

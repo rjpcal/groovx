@@ -37,9 +37,9 @@
 // constants for the Tcl functions are identical to those in the
 // analagous C functions.
 
-#include "gfx/canvas.h"
+#include "geom/rect.h"
 
-#include "gx/rect.h"
+#include "gfx/canvas.h"
 
 #include "media/bmapdata.h"
 

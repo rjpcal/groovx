@@ -36,7 +36,7 @@
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
 
-#include "gx/rect.h"
+#include "geom/rect.h"
 
 #include "tcl/tcllistobj.h"
 
