@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct  9 18:48:38 2000
-// written: Wed Jul 31 17:19:52 2002
+// written: Sun Nov  3 13:48:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,60 @@
 
 #include "util/debug.h"
 
+#include "util/strings.h"
+
 #include <cstdlib>
 #include <iostream>
 
 #define LOCAL_PROF
 #include "util/trace.h"
+
+namespace
+{
+  bool lineComplete = true;
+}
+
+int Debug::level = 0;
+
+#define EVAL_IMPL(T)                                    \
+void Debug::Eval(const char* what, int level,           \
+                 const char* where, int line_no,        \
+                 T expr, bool nl)                       \
+{                                                       \
+  if (lineComplete)                                     \
+    {                                                   \
+      STD_IO::cerr << "[" << level << "]";              \
+      STD_IO::cerr << where << ":" << line_no << ": ";  \
+    }                                                   \
+  if (what)                                             \
+    STD_IO::cerr << "(" << #T << ") " << what << " = "; \
+  STD_IO::cerr << expr;                                 \
+  if (nl)                                               \
+    {                                                   \
+      STD_IO::cerr << STD_IO::endl;                     \
+      lineComplete = true;                              \
+    }                                                   \
+  else                                                  \
+    {                                                   \
+      STD_IO::cerr << ", ";                             \
+      lineComplete = false;                             \
+    }                                                   \
+}
+
+EVAL_IMPL(bool);
+EVAL_IMPL(char);
+EVAL_IMPL(unsigned char);
+EVAL_IMPL(short);
+EVAL_IMPL(unsigned short);
+EVAL_IMPL(int);
+EVAL_IMPL(unsigned int);
+EVAL_IMPL(long);
+EVAL_IMPL(unsigned long);
+EVAL_IMPL(float);
+EVAL_IMPL(double);
+EVAL_IMPL(const char*);
+EVAL_IMPL(void*);
+EVAL_IMPL(fstring);
 
 void Debug::AssertImpl(const char* what, const char* where, int line_no)
 {
