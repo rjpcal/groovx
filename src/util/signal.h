@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Fri Nov 10 17:03:48 2000
+// written: Mon Nov 13 18:23:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,19 +33,19 @@ class ObservableImpl;
 ///////////////////////////////////////////////////////////////////////
 
 class Observable {
+protected:
+  /** Constructor is protected so that Observable cannot be directly
+		instantiated.  */
+  Observable();
+
 public:
-  ///
+  /// Virtual destructor.
   virtual ~Observable();
 
   /// Add an Observer to the list of those watching this Observable.
   void attach(Observer* obs);
   /// Remove an Observer from the list of those watching this Observable.
   void detach(Observer* obs);
-
-protected:
-  /** Constructor is protected so that Observable cannot be directly
-		instantiated.  */
-  Observable();
 
   /** Informs all this object's Observers that this Observable's state
 		has changed */
