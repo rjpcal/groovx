@@ -177,7 +177,6 @@ DOTRACE("BitmapRep::readFrom");
   if ( itsImpl->itsFilename.empty() )
     {
       itsImpl->itsData.clear();
-      itsImpl->itsRenderer->notifyBytesChanged();
     }
   else
     {
@@ -221,8 +220,6 @@ DOTRACE("BitmapRep::queuePbmFile");
                    itsImpl->itsContrastFlip, itsImpl->itsVerticalFlip));
 
   itsImpl->itsData.queueUpdate(updater);
-
-  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::savePbmFile(const char* filename) const
@@ -245,8 +242,6 @@ DOTRACE("BitmapRep::grabScreenRect");
   itsImpl->itsContrastFlip = false;
   itsImpl->itsVerticalFlip = false;
   itsImpl->itsZoom = defaultZoom;
-
-  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::grabWorldRect(const Rect<double>& world_rect)
@@ -268,8 +263,6 @@ DOTRACE("BitmapRep::flipContrast");
   itsImpl->itsContrastFlip = !itsImpl->itsContrastFlip;
 
   itsImpl->itsData.flipContrast();
-
-  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::flipVertical()
@@ -279,8 +272,6 @@ DOTRACE("BitmapRep::flipVertical");
   itsImpl->itsVerticalFlip = !itsImpl->itsVerticalFlip;
 
   itsImpl->itsData.flipVertical();
-
-  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::render(Gfx::Canvas& canvas) const
