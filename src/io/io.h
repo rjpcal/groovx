@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed May 26 20:40:11 1999
+// written: Wed May 26 21:07:50 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -56,8 +56,11 @@ public:
   virtual int charCount() const = 0;
 };
 
-int charCountInt(int i);
-int charCountDouble(double d);
+// This template function returns the number of characters needed to
+// write a type using the << insertion operator. It is instantiated
+// for the basic types.
+template<class T>
+int charCount(T val);
 
 ///////////////////////////////////////////////////////////////////////
 //
