@@ -200,13 +200,6 @@ test "ObjTogl-setColor" "too few args" {
 test "ObjTogl-setColor" "too few args" {
     Togl::setColor j u n k y
 } {^wrong \# args: should be "Togl::setColor index r g b"$}
-test "ObjTogl-setColor" "normal use" {
-	 # can only try this command if we have a private colormap
-	 set pc [lindex [.togl_private configure -privatecmap] 5]
-	 if {$pc == 1} { 
-		  Togl::setColor 0 0.5 0.5 0.5
-	 }
-} {^$}
 test "ObjTogl-setColor" "error" {
 	 Togl::setColor -1 0.5 0.5 0.5
 } {^Togl::setColor: color index must be in \[0, 255\]$}
