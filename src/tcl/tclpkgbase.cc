@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Dec 10 13:49:58 2002
+// written: Tue Dec 10 16:49:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,10 +149,10 @@ DOTRACE("Tcl::PkgBase::combineStatus");
   return TCL_OK;
 }
 
-Tcl_Interp* Tcl::PkgBase::interp()
+Tcl::Interp& Tcl::PkgBase::interp()
 {
 DOTRACE("Tcl::PkgBase::interp");
-  return rep->interp.intp();
+  return rep->interp;
 }
 
 namespace

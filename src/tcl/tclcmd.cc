@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Nov  3 13:49:46 2002
+// written: Tue Dec 10 16:57:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,12 +71,12 @@ namespace
   // managed in Tcl::Command's constructor+destructor)
   std::set<ClientData>* cxxCommands = 0;
 
-  Tcl::Command* lookupCmd(Tcl_Interp* interp, const char* cmd_name)
+  Tcl::Command* lookupCmd(Tcl::Interp& interp, const char* cmd_name)
     {
       if (cxxCommands != 0) // check if any Tcl::Command's exist yet
         {
           Tcl_CmdInfo cmd_info;
-          int result = Tcl_GetCommandInfo(interp, cmd_name, &cmd_info);
+          int result = Tcl_GetCommandInfo(interp.intp(), cmd_name, &cmd_info);
 
           if (result != 0) // check if lookup succeeded
             {
@@ -147,7 +147,7 @@ namespace
 class HelpCmd : public Tcl::Command
 {
 public:
-  HelpCmd(Tcl_Interp* interp) :
+  HelpCmd(Tcl::Interp& interp) :
     Tcl::Command(interp, "?", "commandName", 2, 2) {}
 
 protected:
@@ -155,7 +155,8 @@ protected:
   {
     const char* cmd_name = ctx.getValFromArg<const char*>(1);
 
-    Tcl::Command* cmd = lookupCmd(ctx.interp(), cmd_name);
+    Tcl::Interp intp(ctx.interp()); // FIXME
+    Tcl::Command* cmd = lookupCmd(intp, cmd_name);
 
     if (cmd == 0)
       throw Util::Error("no such Tcl::Command");
@@ -173,7 +174,7 @@ protected:
 class Tcl::Command::Impl
 {
 public:
-  Impl(Tcl::Command* owner, Tcl_Interp* interp,
+  Impl(Tcl::Command* owner, Tcl::Interp& interp,
        const char* cmd_name, const char* usage,
        int objc_min, int objc_max, bool exact_objc) :
     itsOwner(owner),
@@ -217,11 +218,11 @@ public:
       // as part if its own destruction will delete all commands
       // associated with it.
 
-      if ( !Tcl_InterpDeleted(itsInterp) )
+      if ( !itsInterp.interpDeleted() )
         {
           try
             {
-              Tcl_DeleteCommand(itsInterp, itsCmdName.c_str());
+              Tcl_DeleteCommand(itsInterp.intp(), itsCmdName.c_str());
             }
           catch (Util::Error& err)
             { dbgEvalNL(3, err.msg_cstr()); }
@@ -253,7 +254,7 @@ public:
   const fstring& cmdName() const { return itsCmdName; }
 
 private:
-  void registerCmdProc(Tcl_Interp* interp)
+  void registerCmdProc(Tcl::Interp& interp)
   {
     Tcl::Command* previousCmd = lookupCmd(interp, itsCmdName.c_str());
 
@@ -268,7 +269,7 @@ private:
       }
     else
       {
-        Tcl_CreateObjCommand(interp,
+        Tcl_CreateObjCommand(interp.intp(),
                              itsCmdName.c_str(),
                              invokeCallback,
                              static_cast<ClientData>(itsOwner),
@@ -376,7 +377,7 @@ private:
 
   // These are set once per command object
   Tcl::Command* const itsOwner;
-  Tcl_Interp* const itsInterp;
+  Tcl::Interp itsInterp;
 public:
   shared_ptr<Tcl::Dispatcher> itsDispatcher;
 private:
@@ -466,7 +467,7 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Command::Command(Tcl_Interp* interp,
+Tcl::Command::Command(Tcl::Interp& interp,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc) :
   itsImpl(new Impl(this, interp, cmd_name, usage,

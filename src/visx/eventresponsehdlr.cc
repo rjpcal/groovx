@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Dec 10 13:25:42 2002
+// written: Tue Dec 10 16:58:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
   itsState(0),
   itsInterp(Tcl::Main::interp()),
-  itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
+  itsCmdCallback(Tcl::makeCmd(itsInterp, &handleResponseCallback,
                               uniqCmdName("handler").c_str(), "<private>")),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),

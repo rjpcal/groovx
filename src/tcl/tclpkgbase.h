@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Fri Nov 22 16:11:14 2002
+// written: Tue Dec 10 16:49:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@ struct Tcl_Interp;
 namespace Tcl
 {
   class Command;
+  class Interp;
   class TclError;
   class PkgBase;
 }
@@ -102,7 +103,7 @@ public:
   }
 
   /// Returns the Tcl interpreter that was passed to the constructor.
-  Tcl_Interp* interp();
+  Tcl::Interp& interp();
 
   /// Returns the package name.
   const char* pkgName();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Nov  3 09:10:49 2002
+// written: Tue Dec 10 16:53:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@ namespace Tcl
   class Command;
   class Context;
   class Dispatcher;
+  class Interp;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +69,7 @@ public:
       objc_max, inclusive. If the value given for \a objc_max is
       negative, then the maximum objc will be set to the same value as
       \a objc_min. */
-  Command(Tcl_Interp* interp, const char* cmd_name, const char* usage,
+  Command(Tcl::Interp& interp, const char* cmd_name, const char* usage,
           int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
   /// Virtual destructor ensures proper destruction of subclasses.

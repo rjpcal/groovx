@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:47:10 2002
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 17:03:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,15 +29,15 @@ namespace
   }
 }
 
-Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& intp) :
-  itsInterp(intp.intp()),
+Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& interp) :
+  itsInterp(interp),
   itsName(uniqName()),
   itsArgs(),
   itsBody()
 {}
 
-Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& intp, const fstring& name) :
-  itsInterp(intp.intp()),
+Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& interp, const fstring& name) :
+  itsInterp(interp),
   itsName(name),
   itsArgs(),
   itsBody()
