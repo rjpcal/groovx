@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Sep 15 19:02:58 1999
+// written: Thu Dec  2 15:06:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 #ifndef RECT_H_DEFINED
 #include "rect.h"
+#endif
+
+#ifndef WIDGET_H_DEFINED
+#include "widget.h"
 #endif
 
 struct Togl;
@@ -31,7 +35,7 @@ typedef unsigned long Window;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ToglConfig {
+class ToglConfig : public Widget {
 public:
   // types
   struct Color {
@@ -78,12 +82,14 @@ public:
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
 
+  // widget functions
+  virtual void bind(const char* event_sequence, const char* script);
+  virtual void swapBuffers();
+  virtual void takeFocus();
+
   // actions
-  void bind(const char* event_sequence, const char* script);
   void loadFont(const char* fontname);
   void loadFonti(int fontnumber);
-  void swapBuffers();
-  void takeFocus();
   void writeEpsFile(const char* filename);
 
   virtual void reconfigure();
