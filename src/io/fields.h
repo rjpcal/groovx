@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug 15 07:08:43 2001
+// written: Wed Aug 15 10:50:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUEx_H_DEFINED)
 #include "util/value.h"
 #endif
+
+#include <utility>
 
 namespace IO
 {
@@ -87,6 +89,54 @@ public:
                             IO::Writer* writer, const fstring& name) const;
 };
 
+/** ReadWriteAttrib */
+template <class C, class T>
+class ReadWriteAttrib : public FieldMemberPtr {
+  typedef T (C::* Getter)() const;
+  typedef void (C::* Setter)(T);
+
+  Getter itsGetter;
+  Setter itsSetter;
+
+  ReadWriteAttrib& operator=(const ReadWriteAttrib&);
+  ReadWriteAttrib(const ReadWriteAttrib&);
+
+public:
+  ReadWriteAttrib(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
+
+  virtual void set(FieldContainer* obj, const Value& new_val) const
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    (cobj.*itsSetter)(new_val.get(Util::TypeCue<T>()));
+  }
+
+  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    return shared_ptr<Value>(new TValue<T>((cobj.*itsGetter)()));
+  }
+
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader* reader, const fstring& name)
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    T temp;
+    reader->readValue(name, temp);
+    (cobj.*itsSetter)(temp);
+  }
+
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer* writer, const fstring& name) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    writer->writeValue(name.c_str(), (cobj.*itsGetter)());
+  }
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -107,18 +157,37 @@ private:
   bool itsStartsNewGroup;
 
 public:
-  template <class C, class T, class F>
-  FieldInfo(const fstring& name, F C::* member_ptr,
-            const T& def, const T& min_, const T& max_, const T& res_,
+  template <class C, class F>
+  static shared_ptr<FieldMemberPtr> makeMemPtr(F C::* member_ptr)
+  {
+    return shared_ptr<FieldMemberPtr>(new CFieldMemberPtr<C,F>(member_ptr));
+  }
+
+  template <class C, class T>
+  static shared_ptr<FieldMemberPtr>
+  makeMemPtr(std::pair<T (C::*)() const, void (C::*)(T)> funcs)
+  {
+    return shared_ptr<FieldMemberPtr>(new ReadWriteAttrib<C,T>(funcs.first,
+                                                               funcs.second));
+  }
+
+  static shared_ptr<FieldMemberPtr> makeMemPtr(shared_ptr<FieldMemberPtr> ptr)
+  {
+    return ptr;
+  }
+
+  template <class T, class M>
+  FieldInfo(const fstring& name, M member_ptr_init,
+            const T& def, const T& min, const T& max, const T& res,
             bool new_group=false) :
     itsName(name),
-    itsMemberPtr(new CFieldMemberPtr<C,F>(member_ptr)),
+    itsMemberPtr(makeMemPtr(member_ptr_init)),
     itsDefaultValue(new TValue<T>(def)),
-    itsMin(new TValue<T>(min_)),
-    itsMax(new TValue<T>(max_)),
-    itsRes(new TValue<T>(res_)),
+    itsMin(new TValue<T>(min)),
+    itsMax(new TValue<T>(max)),
+    itsRes(new TValue<T>(res)),
     itsStartsNewGroup(new_group)
-    {}
+  {}
 
   const fstring& name() const { return itsName; }
   const Value& defaultValue() const { return *itsDefaultValue; }
