@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Sun Aug 26 08:35:11 2001
+// written: Fri Sep  7 16:22:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,20 @@
 #ifndef TCLFUNCTOR_H_DEFINED
 #define TCLFUNCTOR_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
+#include "tcl/tclconvert.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
 #include "tcl/tclveccmd.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FUNCTORS_H_DEFINED)
+#include "util/functors.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
+#include "util/ref.h"
 #endif
 
 namespace Tcl
@@ -22,334 +34,217 @@ namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 //
-// FuncTraits
+// Convert<> specialization allows us to pass Ref<>'s and SoftRef<>'s
+// to and from Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <class Func>
-  struct FuncTraits {};
-
-  template <class R>
-  struct FuncTraits<R (*)()>
+  template <class T>
+  struct Convert<Ref<T> >
   {
-    enum { numArgs = 0 };
+    static Ref<T> fromTcl(Tcl_Obj* obj)
+    {
+      Util::UID uid = Convert<Util::UID>::fromTcl(obj);
+      return Ref<T>(uid);
+    }
+
+    static Tcl::ObjPtr toTcl(Ref<T> obj)
+    {
+      return Convert<Util::UID>::toTcl(obj.id());
+    }
   };
 
-  template <class R, class P1>
-  struct FuncTraits<R (*)(P1)>
+  template <class T>
+  struct Convert<SoftRef<T> >
   {
-    enum { numArgs = 1 };
-    typedef P1 Arg1_t;
+    static SoftRef<T> fromTcl(Tcl_Obj* obj)
+    {
+      Util::UID uid = Convert<Util::UID>::fromTcl(obj);
+      return SoftRef<T>(uid);
+    }
+
+    static Tcl::ObjPtr toTcl(SoftRef<T> obj)
+    {
+      return Convert<Util::UID>::toTcl(obj.id());
+    }
   };
 
-  template <class R, class P1, class P2>
-  struct FuncTraits<R (*)(P1, P2)>
-  {
-    enum { numArgs = 2 };
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-  };
 
-  template <class R, class P1, class P2, class P3>
-  struct FuncTraits<R (*)(P1, P2, P3)>
-  {
-    enum { numArgs = 3 };
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-  };
-
-  template <class R, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (*)(P1, P2, P3, P4)>
-  {
-    enum { numArgs = 4 };
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-    typedef P4 Arg4_t;
-  };
-
-  template <class R, class P1, class P2, class P3, class P4, class P5>
-  struct FuncTraits<R (*)(P1, P2, P3, P4, P5)>
-  {
-    enum { numArgs = 5 };
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-    typedef P4 Arg4_t;
-    typedef P5 Arg5_t;
-  };
-
-  template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
-  struct FuncTraits<R (*)(P1, P2, P3, P4, P5, P6)>
-  {
-    enum { numArgs = 6 };
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-    typedef P4 Arg4_t;
-    typedef P5 Arg5_t;
-    typedef P6 Arg6_t;
-  };
-
-  //
-  // This macro avoids some of the repetitive typing...
-  //
+///////////////////////////////////////////////////////////////////////
+//
+// Functor<> template definitions. Each specialization takes a
+// C++-style functor (could be a free function, or struct with
+// operator()), and transforms it into a functor with an
+// operator()(Tcl::Context&) which can be called from a TclCmd. This
+// transformation requires extracting the appropriate parameters from
+// the Tcl::Context, passing them to the C++ functor, and returning
+// the result back to the Tcl::Context.
+//
+///////////////////////////////////////////////////////////////////////
 
 #ifdef EXTRACT_PARAM
 #  error EXTRACT_PARAM macro already defined
 #endif
 
 #define EXTRACT_PARAM(N) \
-  typename FuncTraits<Func>::Arg##N##_t p##N = \
-  ctx.getValFromArg(N, TypeCue<typename FuncTraits<Func>::Arg##N##_t>());
+  typename Util::FuncTraits<Func>::Arg##N##_t p##N = \
+  ctx.getValFromArg(N, TypeCue<typename Util::FuncTraits<Func>::Arg##N##_t>());
+
+  template <unsigned int N, class R, class Func>
+  class Functor
+  {};
+}
+
+namespace Util
+{
+  template <unsigned int N, class F, class Func>
+  struct FuncTraits<Tcl::Functor<N, F, Func> >
+  {
+    typedef typename Util::FuncTraits<Func>::Retn_t Retn_t;
+  };
+}
+
+namespace Tcl
+{
 
   template <class Func>
-  struct FuncHolder
+  struct FunctorBase : protected Util::FuncHolder<Func>
   {
-    FuncHolder<Func>(Func f) : itsFunc(f) {}
-
-    FuncHolder<Func>(const FuncHolder<Func>& other) : itsFunc(other.itsFunc) {}
-
-    FuncHolder<Func>& operator=(const FuncHolder<Func>& other)
-    {
-      itsFunc = other.itsFunc; return *this;
-    }
-
-    Func itsFunc;
+    FunctorBase<Func>(Func f) : Util::FuncHolder<Func>(f) {}
   };
+
 
 ///////////////////////////////////////////////////////////////////////
 //
-// zero arguments -- Functor0
+// zero arguments -- Functor<0>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor0 : private FuncHolder<Func>
+  struct Functor<0, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor0<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<0, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
-      R res(itsFunc()); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor0<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor0<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context&)
-    {
-      itsFunc();
+      return (itsHeldFunc());
     }
   };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// one argument -- Functor1
+// one argument -- Functor<1>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor1 : private FuncHolder<Func>
+  struct Functor<1, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor1<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<1, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1);
-      R res(itsFunc(p1)); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor1<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor1<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context& ctx)
-    {
-      EXTRACT_PARAM(1);
-      itsFunc(p1);
+      return (itsHeldFunc(p1));
     }
   };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// two arguments -- Functor2
+// two arguments -- Functor<2>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor2 : private FuncHolder<Func>
+  struct Functor<2, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor2<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<2, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
-      R res(itsFunc(p1, p2)); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor2<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor2<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2);
-      itsFunc(p1, p2);
+      return (itsHeldFunc(p1, p2));
     }
   };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// three arguments -- Functor3
+// three arguments -- Functor<3>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor3 : private FuncHolder<Func>
+  struct Functor<3, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor3<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<3, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      R res(itsFunc(p1, p2, p3)); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor3<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor3<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      itsFunc(p1, p2, p3);
+      return (itsHeldFunc(p1, p2, p3));
     }
   };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// four arguments -- Functor4
+// four arguments -- Functor<4>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor4 : private FuncHolder<Func>
+  struct Functor<4, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor4<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<4, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4);
-      R res(itsFunc(p1, p2, p3, p4)); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor4<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor4<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4);
-      itsFunc(p1, p2, p3, p4);
+      return (itsHeldFunc(p1, p2, p3, p4));
     }
   };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// five arguments -- Functor5
+// five arguments -- Functor<5>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor5 : private FuncHolder<Func>
+  struct Functor<5, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor5<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<5, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5);
-      R res(itsFunc(p1, p2, p3, p4, p5)); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor5<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor5<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4); EXTRACT_PARAM(5);
-      itsFunc(p1, p2, p3, p4, p5);
+      return (itsHeldFunc(p1, p2, p3, p4, p5));
     }
   };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// six arguments -- Functor6
+// six arguments -- Functor<6>
 //
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor6 : private FuncHolder<Func>
+  struct Functor<6, R, Func> : public FunctorBase<Func>
   {
-  public:
-    Functor6<R, Func>(Func f) : FuncHolder<Func>(f) {}
+    Functor<6, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      R res(itsFunc(p1, p2, p3, p4, p5, p6)); ctx.setResult(res);
-    }
-  };
-
-  template <class Func>
-  class Functor6<void, Func> : private FuncHolder<Func>
-  {
-  public:
-    Functor6<void, Func>(Func f) : FuncHolder<Func>(f) {}
-
-    void operator()(Tcl::Context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      itsFunc(p1, p2, p3, p4, p5, p6);
+      return (itsHeldFunc(p1, p2, p3, p4, p5, p6));
     }
   };
 
@@ -357,57 +252,59 @@ namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Functor "generic constructors" for free functions
+// buildTclFunctor: a "generic constructor" for free function pointers.
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <class R>
-  inline Functor0<R, R (*)()>
-  wrapFunc(R (*f)())
+  template <class Fptr>
+  inline Functor<Util::FuncTraits<Fptr>::numArgs,
+                 typename Util::FuncTraits<Fptr>::Retn_t,
+                 Fptr>
+  buildTclFunctor(Fptr f)
   {
-    return Functor0<R, R (*)()>(f);
+    return f;
   }
 
-  template <class R, class P1>
-  inline Functor1<R, R (*)(P1)>
-  wrapFunc(R (*f)(P1))
+
+///////////////////////////////////////////////////////////////////////
+//
+// buildTclFunctor specializations for member functions
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class C>
+  inline Functor<1, R, Util::MemFunctor<R,C, R (C::*)()> >
+  buildTclFunctor(R (C::*mf)())
   {
-    return Functor1<R, R (*)(P1)>(f);
+    return Util::MemFunctor<R,C, R (C::*)()>(mf);
   }
 
-  template <class R, class P1, class P2>
-  inline Functor2<R, R (*)(P1, P2)>
-  wrapFunc(R (*f)(P1, P2))
+  template <class R, class C, class P1>
+  inline Functor<2, R, Util::MemFunctor<R,C, R (C::*)(P1)> >
+  buildTclFunctor(R (C::*mf)(P1))
   {
-    return Functor2<R, R (*)(P1, P2)>(f);
+    return Util::MemFunctor<R,C, R (C::*)(P1)>(mf);
   }
 
-  template <class R, class P1, class P2, class P3>
-  inline Functor3<R, R (*)(P1, P2, P3)>
-  wrapFunc(R (*f)(P1, P2, P3))
+  template <class R, class C, class P1, class P2>
+  inline Functor<3, R, Util::MemFunctor<R,C, R (C::*)(P1, P2)> >
+  buildTclFunctor(R (C::*mf)(P1,P2))
   {
-    return Functor3<R, R (*)(P1, P2, P3)>(f);
+    return Util::MemFunctor<R,C, R (C::*)(P1, P2)>(mf);
   }
 
-  template <class R, class P1, class P2, class P3, class P4>
-  inline Functor4<R, R (*)(P1, P2, P3, P4)>
-  wrapFunc(R (*f)(P1, P2, P3, P4))
+  template <class R, class C, class P1, class P2, class P3>
+  inline Functor<4, R, Util::MemFunctor<R,C, R (C::*)(P1, P2, P3)> >
+  buildTclFunctor(R (C::*mf)(P1,P2,P3))
   {
-    return Functor4<R, R (*)(P1, P2, P3, P4)>(f);
+    return Util::MemFunctor<R,C, R (C::*)(P1, P2, P3)>(mf);
   }
 
-  template <class R, class P1, class P2, class P3, class P4, class P5>
-  inline Functor5<R, R (*)(P1, P2, P3, P4, P5)>
-  wrapFunc(R (*f)(P1, P2, P3, P4, P5))
+  template <class R, class C, class P1, class P2, class P3, class P4>
+  inline Functor<5, R, Util::MemFunctor<R,C, R (C::*)(P1, P2, P3, P4)> >
+  buildTclFunctor(R (C::*mf)(P1,P2,P3,P4))
   {
-    return Functor5<R, R (*)(P1, P2, P3, P4, P5)>(f);
-  }
-
-  template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
-  inline Functor6<R, R (*)(P1, P2, P3, P4, P5, P6)>
-  wrapFunc(R (*f)(P1, P2, P3, P4, P5, P6))
-  {
-    return Functor6<R, R (*)(P1, P2, P3, P4, P5, P6)>(f);
+    return Util::MemFunctor<R,C, R (C::*)(P1, P2, P3, P4)>(mf);
   }
 
 
@@ -417,21 +314,39 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <class Functor>
-  class GenericCmd : public TclCmd, private FuncHolder<Functor>
+  template <class R, class Functor>
+  class GenericCmd : public TclCmd, private Util::FuncHolder<Functor>
   {
   public:
-
-    GenericCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
-                        const char* usage, int nargs) :
+    GenericCmd<R, Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
+                           const char* usage, int nargs) :
       TclCmd(interp, cmd_name, usage, nargs+1),
-      FuncHolder<Functor>(f)
+      Util::FuncHolder<Functor>(f)
     {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      itsFunc(ctx);
+      R res(itsHeldFunc(ctx)); ctx.setResult(res);
+    }
+  };
+
+  template <class Functor>
+  class GenericCmd<void, Functor> : public TclCmd,
+                                    private Util::FuncHolder<Functor>
+  {
+  public:
+    GenericCmd<void, Functor>(Tcl_Interp* interp, Functor f,
+                              const char* cmd_name, const char* usage,
+                              int nargs) :
+      TclCmd(interp, cmd_name, usage, nargs+1),
+      Util::FuncHolder<Functor>(f)
+    {}
+
+  protected:
+    virtual void invoke(Tcl::Context& ctx)
+    {
+      itsHeldFunc(ctx);
     }
   };
 
@@ -441,7 +356,8 @@ namespace Tcl
                                 const char* cmd_name, const char* usage,
                                 int nargs)
   {
-    return new GenericCmd<Functor>(interp, f, cmd_name, usage, nargs);
+    return new GenericCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
+      (interp, f, cmd_name, usage, nargs);
   }
 
 
@@ -451,21 +367,40 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <class Functor>
-  class GenericVecCmd : public VecCmd, private FuncHolder<Functor>
+  template <class R, class Functor>
+  class GenericVecCmd : public VecCmd, private Util::FuncHolder<Functor>
   {
   public:
-    GenericVecCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
-                           const char* usage, int nargs, unsigned int keyarg)
-      :
+    GenericVecCmd<R, Functor>(Tcl_Interp* interp, Functor f,
+                              const char* cmd_name, const char* usage,
+                              int nargs, unsigned int keyarg) :
       VecCmd(interp, cmd_name, usage, keyarg, nargs+1),
-      FuncHolder<Functor>(f)
+      Util::FuncHolder<Functor>(f)
     {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      itsFunc(ctx);
+      R res(itsHeldFunc(ctx)); ctx.setResult(res);
+    }
+  };
+
+  template <class Functor>
+  class GenericVecCmd<void, Functor> : public VecCmd,
+                                       private Util::FuncHolder<Functor>
+  {
+  public:
+    GenericVecCmd<void, Functor>(Tcl_Interp* interp, Functor f,
+                                 const char* cmd_name, const char* usage,
+                                 int nargs, unsigned int keyarg) :
+      VecCmd(interp, cmd_name, usage, keyarg, nargs+1),
+      Util::FuncHolder<Functor>(f)
+    {}
+
+  protected:
+    virtual void invoke(Tcl::Context& ctx)
+    {
+      itsHeldFunc(ctx);
     }
   };
 
@@ -475,8 +410,8 @@ namespace Tcl
                                    const char* cmd_name, const char* usage,
                                    int nargs, unsigned int keyarg)
   {
-    return new GenericVecCmd<Functor>(interp, f, cmd_name,
-                                      usage, nargs, keyarg);
+    return new GenericVecCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
+      (interp, f, cmd_name, usage, nargs, keyarg);
   }
 
 ///////////////////////////////////////////////////////////////////////
@@ -489,8 +424,8 @@ namespace Tcl
   inline TclCmd* makeCmd(Tcl_Interp* interp, Func f,
                          const char* cmd_name, const char* usage)
   {
-    return makeGenericCmd(interp, wrapFunc(f), cmd_name, usage,
-                          FuncTraits<Func>::numArgs);
+    return makeGenericCmd(interp, buildTclFunctor(f), cmd_name, usage,
+                          Util::FuncTraits<Func>::numArgs);
   }
 
   template <class Func>
@@ -498,8 +433,8 @@ namespace Tcl
                             const char* cmd_name, const char* usage,
                             unsigned int keyarg=1)
   {
-    return makeGenericVecCmd(interp, wrapFunc(f), cmd_name, usage,
-                             FuncTraits<Func>::numArgs, keyarg);
+    return makeGenericVecCmd(interp, buildTclFunctor(f), cmd_name, usage,
+                             Util::FuncTraits<Func>::numArgs, keyarg);
   }
 
 } // end namespace Tcl
