@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Dec 15 12:56:00 1999
+// written: Fri Jan 14 17:36:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 #include <tk.h>
 #include <string>
 #include <cstring>
+#include <cstdio>
+#include <fstream.h>
 #include <strstream.h>
 
 #include "bitmap.h"
@@ -83,61 +85,27 @@ protected:
 	 const char* tempfilename =
 		(objc() >= 4) ? getCstringFromArg(3) : ".temp.pbm";
   
-	 string gzname = string(filename) + ".gz";
-	 vector<char> gzname_cstr(gzname.begin(), gzname.end());
-	 gzname_cstr.push_back('\0');
+	 string gzname(filename);
+	 gzname += ".gz";
 
 	 if (itsMethod == 0) {
-		invokeUsingTempFile(bm, &gzname_cstr[0], tempfilename);
+		bm->loadPbmGzFile(gzname.c_str());
 	 }
 	 else {
-		invokeUsingChannel(bm, &gzname_cstr[0]);
+		vector<char> gzname_cstr(gzname.begin(), gzname.end());
+		gzname_cstr.push_back('\0');
+
+		invokeUsingTempFile(bm, &gzname_cstr[0], tempfilename);
 	 }
   }
 
 private:
-  void invokeUsingChannel(Bitmap* bm, const char* gzname);
   void invokeUsingTempFile(Bitmap* bm,
 									const char* gzname, const char* tempfilename);
   
   Tcl_Interp* itsInterp;
   int itsMethod;
 };
-
-void BitmapTcl::LoadPbmGzCmd::invokeUsingChannel(
-  Bitmap* bm, const char* gzname
-) {
-DOTRACE("BitmapTcl::LoadPbmGzCmd::invoke");
-  // Form a command to gunzip the file
-  const char* argv[] = { "gunzip", "-c", gzname, 0 };
-  int argc = 3;
-
-  // Open a channel to get the output of the command
-  Tcl_Channel chan = Tcl_OpenCommandChannel(itsInterp, argc, 
-														  const_cast<char**>(argv),
-														  TCL_STDOUT);
-  if (chan == 0) { throw Tcl::TclError("error opening command channel"); }
-
-  // Read the output of the channel into a Tcl_Obj
-  Tcl::TclObjPtr contents(Tcl_NewObj());
-
-  while (1) {
-	 int chars_read = Tcl_ReadChars(chan, contents, 4096, 1 /* -> do append */);
-	 if ( chars_read == -1 ) { throw Tcl::TclError("error reading from channel"); }
-	 if ( chars_read == 0 ) /* we are done, so... */ break;
-  }
-
-  int result = Tcl_Close(itsInterp, chan);
-  if (result != TCL_OK) { throw Tcl::TclError("error closing command channel"); }
-  
-  // Form a stream from the bytes and load the bitmap from that stream
-  int num_bytes;
-  unsigned char* byte_array = Tcl_GetByteArrayFromObj(contents, &num_bytes);
-
-  istrstream ist(reinterpret_cast<char*>(byte_array), num_bytes);
-
-  bm->loadPbmFile(ist);
-}
 
 void BitmapTcl::LoadPbmGzCmd::invokeUsingTempFile(
   Bitmap* bm, const char* gzname, const char* tempfilename
