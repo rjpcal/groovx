@@ -588,3 +588,8 @@ putting a limit on the stack depth for which tracing is allowed.
 
 (19-Jan-2000, done 5-Oct-2000) Auto-detect gzipped files? This is done
 for the stringifycmd module.
+
+(16-Sep-1999, fixed) BUG: if somehow the current trial becomes
+invalid, it is impossible to show a new trial because the program
+always tries to undraw the current, invalid trial before drawing a new
+one. So there is no way to un-corrupt the program state.
