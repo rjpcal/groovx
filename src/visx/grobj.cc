@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 18:43:08 1999
+// written: Thu Nov 18 19:19:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,9 +103,9 @@ private:
 	 double itsHeightFactor;
   };
 
+public:
   void doScaling() const;
 
-public:
   GrObj::ScalingMode getScalingMode() const { return itsScaler.itsMode; }
 
   void setScalingMode(GrObj::ScalingMode new_mode);
@@ -134,12 +134,9 @@ private:
 	 double itsCenterY;
   };
 
-  double nativeCenterX() const;
-  double nativeCenterY() const;
-
+public:
   void doAlignment() const;
 
-public:
   void setAlignmentMode(GrObj::AlignmentMode new_mode);
   GrObj::AlignmentMode getAlignmentMode() const { return itsAligner.itsMode; }
 
@@ -156,9 +153,10 @@ public:
 private:
   class BoundingBox {
   public:
-	 BoundingBox() :
-		itsHasBB(false),
+	 BoundingBox(const GrObj::Impl* owner) :
 		itsIsVisible(false),
+		itsOwner(owner),
+		itsHasBB(false),
 		itsRawBBIsCurrent(false),
 		itsCachedRawBB(),
 		itsCachedPixelBorder(0),
@@ -166,9 +164,45 @@ private:
 		itsCachedFinalBB()
 		{}
 		
-	 mutable bool itsHasBB;
+	 bool bbExists() const
+		{
+		  updateRaw();
+		  return itsHasBB;
+		}
 
+	 const Rect<double>& getRaw() const;
+
+	 const Rect<double>& getFinal() const
+		{
+		  updateFinal();
+		  return itsCachedFinalBB;
+		}
+
+	 void invalidate() 
+		{
+		  itsRawBBIsCurrent = false;
+		  itsFinalBBIsCurrent = false;
+		}
+
+  private:
+	 void updateRaw() const;
+
+	 void updateFinal() const;
+
+	 int pixelBorder() const
+		{
+		  updateRaw();
+		  return itsCachedPixelBorder;
+		}
+
+	 // data
+  public:
 	 bool itsIsVisible;
+
+  private:
+	 const GrObj::Impl* const itsOwner;
+
+	 mutable bool itsHasBB;
 
 	 mutable bool itsRawBBIsCurrent;
 	 mutable Rect<double> itsCachedRawBB;
@@ -178,20 +212,17 @@ private:
 	 mutable Rect<double> itsCachedFinalBB;
   };
 
-  const Rect<double>& getRawBB() const;
-
-  int getBBPixelBorder() const;
-
-  bool hasBB() const;
-
-  void updateBB() const;
-
-  void updateCachedFinalBB() const;
-
   double nativeWidth() const;
   double nativeHeight() const;
 
+  double nativeCenterX() const;
+  double nativeCenterY() const;
+
 public:
+
+  const Rect<double>& getRawBB() const { return itsBB.getRaw(); }
+
+  bool hasBB() const { return itsBB.bbExists(); }
 
   bool getBoundingBox(Rect<double>& bbox) const;
 
@@ -243,8 +274,6 @@ private:
 	 // display list, and checks that the allocation actually succeeded.
 	 void newList() const;
   };
-
-  friend class Renderer;
 
 public:
 
@@ -308,6 +337,9 @@ public:
   void grRender() const { self->grRender(); }
   void grUnRender() const { self->grUnRender(); }
 
+  bool grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
+	 { return self->grGetBoundingBox(bbox, pixel_border); }
+
   //////////////////
   // Data members //
   //////////////////
@@ -321,6 +353,76 @@ private:
   Renderer itsRenderer;
   UnRenderer itsUnRenderer;
 };
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// GrObj::Impl::BoundingBox definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void GrObj::Impl::BoundingBox::updateRaw() const {
+DOTRACE("GrObj::Impl::BoundingBox::updateRaw");
+  DebugEval(itsRawBBIsCurrent);
+  if (!itsRawBBIsCurrent) {
+	 itsHasBB = itsOwner->grGetBoundingBox(itsCachedRawBB,
+														itsCachedPixelBorder);
+	 if (!itsHasBB) {
+		itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
+		itsCachedPixelBorder = 0;
+	 }
+	 itsRawBBIsCurrent = true;
+  }
+  DebugEvalNL(itsHasBB);
+}
+
+void GrObj::Impl::BoundingBox::updateFinal() const {
+DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
+
+  if ( !itsFinalBBIsCurrent ) {
+
+	 // Do the object's internal scaling and alignment, and find the
+	 // bounding box in screen coordinates
+	 
+	 glMatrixMode(GL_MODELVIEW);
+	 glPushMatrix();
+
+		itsOwner->doScaling();
+		itsOwner->doAlignment();
+		
+		Rect<int> screen_pos = GrObj::getScreenFromWorld(getRaw());
+
+	 glPopMatrix();
+	 
+	 // Add a pixel border around the edges of the image...
+	 int bp = pixelBorder();
+	 
+	 screen_pos.widenByStep(bp);
+	 screen_pos.heightenByStep(bp);
+
+	 // ... and project back to world coordinates
+	 itsCachedFinalBB = GrObj::getWorldFromScreen(screen_pos);
+	 
+	 // This next line is commented out to disable the caching scheme
+	 // because I don't think it really works, since changes to the
+	 // OpenGL state will screw up a cached copy of the box. What we
+	 // need is a way to determine whether the OpenGL state has
+	 // changed... but this might be impractical.
+//  	 itsFinalBBIsCurrent = true;
+  }
+}
+
+const Rect<double>& GrObj::Impl::BoundingBox::getRaw() const {
+DOTRACE("GrObj::Impl::BoundingBox::getRaw");
+  updateRaw();
+  return itsCachedRawBB;
+}
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -503,7 +605,7 @@ GrObj::Impl::Impl(GrObj* obj) :
   itsCategory(-1),
   itsScaler(),
   itsAligner(),
-  itsBB(),
+  itsBB(this),
   itsRenderer(),
   itsUnRenderer()
 {};
@@ -642,21 +744,6 @@ DOTRACE("GrObj::Impl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline const Rect<double>& GrObj::Impl::getRawBB() const {
-  updateBB();
-  return itsBB.itsCachedRawBB;
-}
-
-inline int GrObj::Impl::getBBPixelBorder() const {
-  updateBB();
-  return itsBB.itsCachedPixelBorder;
-}
-
-inline bool GrObj::Impl::hasBB() const {
-  updateBB();
-  return itsBB.itsHasBB;
-}
-
 inline double GrObj::Impl::aspectRatio() const {
   if ( !hasBB() ) return 1.0;
   return (itsScaler.itsHeightFactor != 0.0 ? itsScaler.itsWidthFactor/itsScaler.itsHeightFactor : 0.0);
@@ -671,32 +758,27 @@ inline double GrObj::Impl::finalHeight() const {
 }
 
 inline double GrObj::Impl::nativeWidth() const {
-  updateBB();
-  return itsBB.itsCachedRawBB.width();
+  return itsBB.getRaw().width();
 }
 
 inline double GrObj::Impl::nativeHeight() const {
-  updateBB();
-  return itsBB.itsCachedRawBB.height();;
+  return itsBB.getRaw().height();;
 }
 
 inline double GrObj::Impl::nativeCenterX() const {
-  updateBB();
-  return itsBB.itsCachedRawBB.centerX();
+  return itsBB.getRaw().centerX();
 }
 
 inline double GrObj::Impl::nativeCenterY() const {
-  updateBB();
-  return itsBB.itsCachedRawBB.centerY();
+  return itsBB.getRaw().centerY();
 }
 
 bool GrObj::Impl::getBoundingBox(Rect<double>& bbox) const {
 DOTRACE("GrObj::Impl::getBoundingBox");
 
-  if ( !hasBB() ) return false;
+  if ( !itsBB.bbExists() ) return false;
 
-  updateCachedFinalBB();
-  bbox = itsBB.itsCachedFinalBB;
+  bbox = itsBB.getFinal();
   return true;
 }
 
@@ -850,21 +932,6 @@ DOTRACE("GrObj::Impl::setUnRenderMode");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObj::Impl::updateBB() const {
-DOTRACE("GrObj::Impl::updateBB");
-  DebugEval(itsBB.itsRawBBIsCurrent);
-  if (!itsBB.itsRawBBIsCurrent) {
-	 itsBB.itsHasBB = self->grGetBoundingBox(itsBB.itsCachedRawBB,
-														  itsBB.itsCachedPixelBorder);
-	 if (!itsBB.itsHasBB) {
-		itsBB.itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
-		itsBB.itsCachedPixelBorder = 0;
-	 }
-	 itsBB.itsRawBBIsCurrent = true;
-  }
-  DebugEvalNL(itsBB.itsHasBB);
-}
-
 void GrObj::Impl::update() const {
 DOTRACE("GrObj::Impl::update");
   itsRenderer.update(this);
@@ -937,8 +1004,7 @@ DOTRACE("GrObj::Impl::grDrawBoundingBox");
 void GrObj::Impl::invalidateCaches() {
 DOTRACE("GrObj::Impl::invalidateCaches");
   itsRenderer.invalidate();
-  itsBB.itsRawBBIsCurrent = false;
-  itsBB.itsFinalBBIsCurrent = false;
+  itsBB.invalidate();
 }
 
 void GrObj::Impl::doAlignment() const {
@@ -988,42 +1054,6 @@ DOTRACE("GrObj::Impl::doScaling");
   case GrObj::FREE_SCALING:
 	 glScaled(itsScaler.itsWidthFactor, itsScaler.itsHeightFactor, 1.0);
 	 break;
-  }
-}
-
-void GrObj::Impl::updateCachedFinalBB() const {
-DOTRACE("GrObj::Impl::updateCachedFinalBB");
-
-  if ( !itsBB.itsFinalBBIsCurrent ) {
-
-	 // Do the object's internal scaling and alignment, and find the
-	 // bounding box in screen coordinates
-	 
-	 glMatrixMode(GL_MODELVIEW);
-	 glPushMatrix();
-
-		doScaling();
-		doAlignment();
-		
-		Rect<int> screen_pos = GrObj::getScreenFromWorld(getRawBB());
-
-	 glPopMatrix();
-	 
-	 // Add a pixel border around the edges of the image...
-	 int bp = getBBPixelBorder();
-	 
-	 screen_pos.widenByStep(bp);
-	 screen_pos.heightenByStep(bp);
-
-	 // ... and project back to world coordinates
-	 itsBB.itsCachedFinalBB = GrObj::getWorldFromScreen(screen_pos);
-	 
-	 // This next line is commented out to disable the caching scheme
-	 // because I don't think it really works, since changes to the
-	 // OpenGL state will screw up a cached copy of the box. What we
-	 // need is a way to determine whether the OpenGL state has
-	 // changed... but this might be impractical.
-//  	 itsBB.itsFinalBBIsCurrent = true;
   }
 }
 
