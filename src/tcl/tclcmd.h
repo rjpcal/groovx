@@ -138,7 +138,7 @@ public:
 
 private:
   Command(rutz::shared_ptr<Tcl::Callback> callback,
-          const char* cmd_name, const char* usage,
+          const char* usage,
           int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
   Command(const Command&); // not implemented

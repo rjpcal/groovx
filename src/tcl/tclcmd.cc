@@ -129,8 +129,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::Command::Command(shared_ptr<Tcl::Callback> callback,
-                      // FIXME cmd_name not needed here:
-                      const char* /*cmd_name*/, const char* usage,
+                      const char* usage,
                       int objc_min, int objc_max, bool exact_objc)
   :
   rep(new Impl(callback, usage, objc_min, objc_max, exact_objc))
@@ -153,7 +152,7 @@ DOTRACE("Tcl::Command::make");
   ASSERT(group != 0);
 
   shared_ptr<Command> cmd( new Command(callback,
-                                       cmd_name, usage,
+                                       usage,
                                        objc_min, objc_max,
                                        exact_objc) );
 
