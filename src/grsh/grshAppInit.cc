@@ -77,40 +77,41 @@ struct PackageInfo
 {
   const char* pkgName;
   Tcl_PackageInitProc *pkgInitProc;
+  const char* pkgVersion;
 };
 
 PackageInfo IMMEDIATE_PKGS[] =
   {
-    { "Tcl",      Tcl_Init       },
-    { "Tk",       Tk_Init        },
+    { "Tcl",      Tcl_Init,  ""       },
+    { "Tk",       Tk_Init,   ""       },
   };
 
 PackageInfo DELAYED_PKGS[] =
   {
-    { "Block",                Block_Init                   },
-    { "Dlist",                Dlist_Init                   },
-    { "Exptdriver",           Exptdriver_Init              },
-    { "Face",                 Face_Init                    },
-    { "Fish",                 Fish_Init                    },
-    { "Fixpt",                Fixpt_Init                   },
-    { "Gabor",                Gabor_Init                   },
-    { "Gl",                   Gl_Init                      },
-    { "Gtrace",               Gtrace_Init                  },
-    { "Gx",                   Gx_Init                      },
-    { "Hook",                 Hook_Init                    },
-    { "House",                House_Init                   },
-    { "Io",                   Io_Init                      },
-    { "Jitter",               Jitter_Init                  },
-    { "Maskhatch",            Maskhatch_Init               },
-    { "Misc",                 Misc_Init                    },
-    { "Morphyface",           Morphyface_Init              },
-    { "Obj",                  Obj_Init                     },
-    { "Rh",                   Rh_Init                      },
-    { "Sound",                Sound_Init                   },
-    { "Th",                   Th_Init                      },
-    { "Tlist",                Tlist_Init                   },
-    { "Toglet",               Toglet_Init                  },
-    { "Trial",                Trial_Init                   },
+    { "Block",        Block_Init,         "3.0" },
+    { "Dlist",        Dlist_Init,         "1.0" },
+    { "Exptdriver",   Exptdriver_Init,    "2.0" },
+    { "Face",         Face_Init,          "2.0" },
+    { "Fish",         Fish_Init,          "1.0" },
+    { "Fixpt",        Fixpt_Init,         "2.0" },
+    { "Gabor",        Gabor_Init,         "1.0" },
+    { "Gl",           Gl_Init,            "1.0" },
+    { "Gtrace",       Gtrace_Init,        "1.0" },
+    { "Gx",           Gx_Init,            "1.0" },
+    { "Hook",         Hook_Init,          "1.0" },
+    { "House",        House_Init,         "1.0" },
+    { "Io",           Io_Init,            "1.0" },
+    { "Jitter",       Jitter_Init,        "2.0" },
+    { "Maskhatch",    Maskhatch_Init,     "1.0" },
+    { "Misc",         Misc_Init,          "1.0" },
+    { "Morphyface",   Morphyface_Init,    "1.0" },
+    { "Obj",          Obj_Init,           "1.0" },
+    { "Rh",           Rh_Init,            "3.0" },
+    { "Sound",        Sound_Init,         "1.0" },
+    { "Th",           Th_Init,            "3.0" },
+    { "Tlist",        Tlist_Init,         "3.0" },
+    { "Toglet",       Toglet_Init,        "1.0" },
+    { "Trial",        Trial_Init,         "1.0" },
   };
 
 int          appArgc      = 0;
@@ -222,7 +223,9 @@ DOTRACE("main");
 
           fstring ifneededcmd("package ifneeded ",
                               DELAYED_PKGS[i].pkgName,
-                              " 1.0 {load {} ",
+                              " ",
+                              DELAYED_PKGS[i].pkgVersion,
+                              " {load {} ",
                               DELAYED_PKGS[i].pkgName,
                               " }");
 
@@ -234,7 +237,7 @@ DOTRACE("main");
           const char* ver =
             Tcl_PkgRequire(interp.intp(),
                            DELAYED_PKGS[i].pkgName,
-                           "1.0",
+                           DELAYED_PKGS[i].pkgVersion,
                            0);
 
           if (ver == 0)
