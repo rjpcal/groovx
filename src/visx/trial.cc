@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri May 11 20:44:51 2001
+// written: Fri May 11 21:24:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,8 @@ public:
 	 itsCurrentNode(0),
 	 itsResponses(),
 	 itsType(-1),
-	 itsRh(-1),
-	 itsTh(0),
+	 itsRh(),
+	 itsTh(),
 	 itsState(INACTIVE),
 	 itsWidget(0),
 	 itsBlock(0)
