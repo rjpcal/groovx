@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Mar  8 15:55:22 2000
+// written: Wed Mar  8 17:24:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -271,11 +271,6 @@ DOTRACE("AsciiStreamWriter::writeBool");
 void AsciiStreamWriter::writeDouble(const char* name, double val) {
 DOTRACE("AsciiStreamWriter::writeDouble");
   itsImpl.writeBasicType(name, val); 
-}
-
-void AsciiStreamWriter::writeString(const char* name, const string& val) {
-DOTRACE("AsciiStreamWriter::writeString");
-  itsImpl.writeStringType(name, val, "string");
 }
 
 void AsciiStreamWriter::writeCstring(const char* name, const char* val) {

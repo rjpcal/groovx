@@ -3,18 +3,13 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Mar  8 11:18:31 2000
+// written: Wed Mar  8 17:22:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef WRITER_H_DEFINED
 #define WRITER_H_DEFINED
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#define STRING_DEFINED
-#endif
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
@@ -71,9 +66,6 @@ public:
 
   /// Store the \c double attribute \a val in association with the tag \a name.
   virtual void writeDouble(const char* name, double val) = 0;
-
-  /// Store the STL \c string attribute \a val in association with the tag \a name.
-  virtual void writeString(const char* name, const string& val) = 0;
 
   /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
   virtual void writeCstring(const char* name, const char* val) = 0;

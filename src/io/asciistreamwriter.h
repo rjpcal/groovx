@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Fri Mar  3 23:41:21 2000
+// written: Wed Mar  8 17:23:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,6 @@ public:
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
   virtual void writeDouble(const char* name, double val);
-  virtual void writeString(const char* name, const string& val);
   virtual void writeCstring(const char* name, const char* val);
   virtual void writeValueObj(const char* name, const Value& value);
 
