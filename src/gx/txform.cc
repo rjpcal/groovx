@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 21 14:00:54 2002
-// written: Wed Jul  3 14:35:19 2002
+// written: Tue Nov 19 18:12:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,33 +18,34 @@
 #include "gx/vec3.h"
 
 #include <cmath>
+#include <cstring>
 
 #include "util/trace.h"
 
-// namespace
-// {
-//   void mul_mtx_4x4(const double* m1, const double* m2, double* result)
-//   {
-//     // Note we're using column-major order here
-//     for (int result_col = 0; result_col < 4; ++result_col)
-//       for (int result_row = 0; result_row < 4; ++result_row)
-//         {
-//           result[result_col * 4 + result_row] =
-//               m1[0 * 4 + result_row] * m2[result_col * 4 + 0]
-//             + m1[1 * 4 + result_row] * m2[result_col * 4 + 1]
-//             + m1[2 * 4 + result_row] * m2[result_col * 4 + 2]
-//             + m1[3 * 4 + result_row] * m2[result_col * 4 + 3];
-//         }
-//   }
-// }
+namespace
+{
+  void mul_mtx_4x4(const double* m1, const double* m2, double* result)
+  {
+    // Note we're using column-major order here
+    for (int result_col = 0; result_col < 4; ++result_col)
+      for (int result_row = 0; result_row < 4; ++result_row)
+        {
+          result[result_col * 4 + result_row] =
+              m1[0 * 4 + result_row] * m2[result_col * 4 + 0]
+            + m1[1 * 4 + result_row] * m2[result_col * 4 + 1]
+            + m1[2 * 4 + result_row] * m2[result_col * 4 + 2]
+            + m1[3 * 4 + result_row] * m2[result_col * 4 + 3];
+        }
+  }
+}
 
 Gfx::Txform::Txform()
 {
 DOTRACE("Gfx::Txform::Txform");
-  data[0] = 0.0; data[4] = 0.0; data[8] = 0.0; data[12] = 0.0;
-  data[1] = 0.0; data[5] = 0.0; data[9] = 0.0; data[13] = 0.0;
-  data[2] = 0.0; data[6] = 0.0; data[10] = 0.0; data[14] = 0.0;
-  data[3] = 0.0; data[7] = 0.0; data[11] = 0.0; data[15] = 0.0;
+  data[0] = 1.0; data[4] = 0.0; data[8] = 0.0; data[12] = 0.0;
+  data[1] = 0.0; data[5] = 1.0; data[9] = 0.0; data[13] = 0.0;
+  data[2] = 0.0; data[6] = 0.0; data[10] = 1.0; data[14] = 0.0;
+  data[3] = 0.0; data[7] = 0.0; data[11] = 0.0; data[15] = 1.0;
 }
 
 
@@ -103,6 +104,39 @@ DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
   data[1]=sy*(ry*rx*(1-c)+rz*s); data[5]=sy*(ry*ry*(1-c)+c);    data[9]=sy*(ry*rz*(1-c)-rx*s); data[13]=ty;
   data[2]=sz*(rz*rx*(1-c)-ry*s); data[6]=sz*(rz*ry*(1-c)+rx*s); data[10]=sz*(rz*rz*(1-c)+c);   data[14]=tz;
   data[3]=0.0;                   data[7]=0.0;                   data[11]=0.0;                  data[15]=1.0;
+}
+
+void Gfx::Txform::translate(const Vec3<double>& t)
+{
+  Txform old_mtx(*this);
+
+  double tm[16];
+  tm[0] = 1.0; tm[4] = 0.0;  tm[8] = 0.0; tm[12] = t.x();
+  tm[1] = 0.0; tm[5] = 1.0;  tm[9] = 0.0; tm[13] = t.y();
+  tm[2] = 0.0; tm[6] = 0.0; tm[10] = 1.0; tm[14] = t.z();
+  tm[3] = 0.0; tm[7] = 0.0; tm[11] = 0.0; tm[15] = 1.0;
+
+  mul_mtx_4x4(old_mtx.data, tm, this->data);
+}
+
+void Gfx::Txform::scale(const Vec3<double>& s)
+{
+  Txform old_mtx(*this);
+
+  double sm[16];
+  sm[0] = s.x(); sm[4] = 0.0;    sm[8] = 0.0;    sm[12] = 0.0;
+  sm[1] = 0.0;   sm[5] = s.y();  sm[9] = 0.0;    sm[13] = 0.0;
+  sm[2] = 0.0;   sm[6] = 0.0;    sm[10] = s.z(); sm[14] = 0.0;
+  sm[3] = 0.0;   sm[7] = 0.0;    sm[11] = 0.0;   sm[15] = 1.0;
+
+  mul_mtx_4x4(old_mtx.data, sm, this->data);
+}
+
+void Gfx::Txform::transform(const Gfx::Txform& other)
+{
+  Txform old_mtx(*this);
+
+  mul_mtx_4x4(old_mtx.data, other.data, this->data);
 }
 
 Gfx::Vec2<double> Gfx::Txform::applyTo(const Gfx::Vec2<double>& input) const

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 21 13:57:32 2002
-// written: Wed Jul  3 14:33:27 2002
+// written: Tue Nov 19 17:55:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,10 @@ public:
          const Vec3<double>& scaling,
          const Vec3<double>& rotationAxis,
          double rotationAngle);
+
+  void translate(const Vec3<double>& t);
+  void scale(const Vec3<double>& s);
+  void transform(const Gfx::Txform& other);
 
   Vec2<double> applyTo(const Vec2<double>& input) const;
   Vec3<double> applyTo(const Vec3<double>& input) const;
