@@ -85,6 +85,13 @@ public:
       the package. */
   virtual ~PkgBase();
 
+  /// Find a package given its name and version.
+  /** If the package is not already loaded, this function will attempt to
+      "require" the package. If the package cannot be found or loaded, a
+      null pointer will be returned. */
+  static PkgBase* lookup(Tcl_Interp* interp,
+                         const char* name, const char* version) throw();
+
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
   int initStatus() const;
@@ -135,6 +142,11 @@ public:
   /** Import all of the commands and procedures defined in the specified
       namespace into our own package namespace. */
   void inherit(const char* namesp);
+
+  /// Import all of the commands and procedures defined in the named pkg.
+  /** If the named pkg has not yet been loaded, this function will attempt
+      to load it via loookup(). */
+  void inheritPkg(const char* pkgName, const char* pkgVersion = "");
 
   /// Does a simple \c Tcl_Eval of \a script using the package's \c Tcl_Interp.
   void eval(const char* script);
