@@ -216,8 +216,13 @@ shared_ptr<std::ostream> Util::ogzopen(const fstring& filename,
     }
   else
     {
-      return shared_ptr<std::ostream>
-        (new std::ofstream(filename.c_str(), flags));
+      shared_ptr<std::ostream> result =
+        make_shared(new std::ofstream(filename.c_str(), flags));
+      if (result->fail())
+        throw Util::Error(fstring("couldn't open file '", filename,
+                                  "' for writing"));
+
+      return result;
     }
 }
 
