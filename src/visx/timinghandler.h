@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Mon May 24 18:35:50 1999
+// written: Thu Jun 10 18:32:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,7 @@
 #endif
 
 class ExptDriver;
+class Trial;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -40,7 +41,7 @@ class ExptDriver;
 
 class ExptEvent {
 public:
-  ExptEvent(ExptDriver& ed, int msec);
+  ExptEvent(int msec);
   virtual ~ExptEvent();
 
   int getDelay() const { return itsRequestedDelay; }
@@ -51,6 +52,8 @@ public:
 
 protected:
   virtual void invoke() = 0;
+
+  ExptDriver& getExptDriver();
   
 private:
   static void dummyInvoke(ClientData clientData);
@@ -62,8 +65,6 @@ private:
   mutable timeval itsBeginTime;
   mutable int itsDelayErrors;
   mutable int itsInvokeCount;
-protected:
-  ExptDriver& itsExptDriver;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -74,35 +75,35 @@ protected:
 
 class AbortTrialEvent : public ExptEvent {
 public:
-  AbortTrialEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+  AbortTrialEvent(int msec = 0) : ExptEvent(msec) {}
 protected:
   virtual void invoke();
 };
 
 class BeginTrialEvent : public ExptEvent {
 public:
-  BeginTrialEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+  BeginTrialEvent(int msec = 0) : ExptEvent(msec) {}
 protected:
   virtual void invoke();
 };
 
 class EndTrialEvent : public ExptEvent {
 public:
-  EndTrialEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+  EndTrialEvent(int msec = 0) : ExptEvent(msec) {}
 protected:
   virtual void invoke();
 };
 
 class DrawEvent : public ExptEvent {
 public:
-  DrawEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+  DrawEvent(int msec = 0) : ExptEvent(msec) {}
 protected:
   virtual void invoke();
 };
 
 class UndrawEvent : public ExptEvent {
 public:
-  UndrawEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+  UndrawEvent(int msec = 0) : ExptEvent(msec) {}
 protected:
   virtual void invoke();
 };
@@ -116,7 +117,7 @@ protected:
 class TimingHandler : public virtual IO {
 public:
   // Creators
-  TimingHandler(ExptDriver& ed);
+  TimingHandler();
 
   virtual ~TimingHandler();
 
@@ -154,14 +155,7 @@ private:
   DrawEvent itsDrawEvent;
   UndrawEvent itsUndrawEvent;
 
-  vector<ExptEvent *> itsBeginEvents;
-  vector<ExptEvent *> itsEndEvents;
-  vector<ExptEvent *> itsResponseEvents;
-  vector<ExptEvent *> itsAbortEvents;
-
   int itsAutosavePeriod;		  // # of trials between autosaves
-
-  ExptDriver& itsExptDriver;
 };
 
 static const char vcid_timinghandler_h[] = "$Header$";
