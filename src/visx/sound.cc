@@ -112,6 +112,12 @@ DOTRACE("Sound::make");
   return new Sound;
 }
 
+Sound* Sound::makeFrom(const char* filename)
+{
+DOTRACE("Sound::make");
+  return new Sound(filename);
+}
+
 Sound::Sound(const char* filename) :
   itsFilename(""),
   itsRep()
