@@ -321,8 +321,16 @@ public:
   static string get_source_for_header(const string& header)
   {
     const string::size_type suff = header.find_last_of('.');
-    string result = header.substr(0, suff);
-    result += ".cc";
+    string result;
+    result = header.substr(0, suff) + ".cc";
+    if (file_exists(result.c_str()))
+      return result;
+
+    result = header.substr(0, suff) + ".C";
+    if (file_exists(result.c_str()))
+      return result;
+
+    result = header.substr(0, suff) + ".cpp";
     if (file_exists(result.c_str()))
       return result;
 
