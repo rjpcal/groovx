@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Tue Jul  9 13:53:13 2002
+// written: Fri Sep  6 12:14:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,6 +141,13 @@ Tcl_Obj* Tcl::Interp::getObjResult() const
 DOTRACE("Tcl::Interp::getObjResult");
 
   return Tcl_GetObjResult(intp());
+}
+
+void Tcl::Interp::setObjResult(Tcl_Obj* obj) const
+{
+DOTRACE("Tcl::Interp::setObjResult");
+
+  Tcl_SetObjResult(intp(), obj);
 }
 
 ///////////////////////////////////////////////////////////////////////
