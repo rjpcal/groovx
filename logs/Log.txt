@@ -4,9 +4,8 @@ $Id$
 *** FRONT of priority queue ***
 
 (23-Feb-2002) Remaining OS X issues:
-  need cc -keep_private_externs?
-  need cc +e0 or +e1?
   set TMPDIR environment variable to a fast drive for gcc temp files
+  explicit template instantiation does not work (e.g. util/multivalue.cc)
 
 (25-Jan-2002) Logging goodies: log levels, and multiple log targets with
 separate log levels for each?
