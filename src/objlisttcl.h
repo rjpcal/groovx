@@ -3,7 +3,7 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Sun Jun 20 18:03:20 1999
+// written: Mon Jun 21 11:09:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,29 +11,13 @@
 #ifndef OBJLISTTCL_H_DEFINED
 #define OBJLISTTCL_H_DEFINED
 
-///////////////////////////////////////////////////////////////////////
-//
-// ObjList Tcl package declarations
-//
-///////////////////////////////////////////////////////////////////////
+namespace ObjlistTcl {
+  const char* const bad_objid_msg = "objid out of range";
+  const char* const wrong_type_msg = "object not of correct type";
+}
 
 struct Tcl_Interp;
 typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
-struct Tcl_Obj;
-class ObjList;
-class GrObj;
-
-namespace ObjlistTcl {
-  typedef int (ObjlistTcl_SubcmdProc) 
-    (Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
-
-  GrObj* getObjFromArg(Tcl_Interp* interp, Tcl_Obj* const objv[], 
-                       int argn);
-
-  const char* const bad_objid_msg = "objid out of range";
-  const char* const wrong_type_msg = "object not of correct type";
-
-}
 
 extern "C" Tcl_PackageInitProc Objlist_Init;
 
