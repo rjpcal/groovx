@@ -47,14 +47,15 @@ class fstring;
  *
  * \c GxShapeKit is the abstract base class for graphic
  * objects. GxShapeKit*'s may be stored and manipulated in
- * ObjList's. Subclasses derived from GxShapeKit must specify the details
- * of how their objects will be drawn, by overriding the virtual function
- * grRender(), and/or by choosing an appropriate render mode with
- * setRenderMode(). Public clients call draw() to display the object. The
- * caches that mediate the various drawing modes are kept up to date by
- * using the Signal interface. Thus, whenever a manipulator changes a
- * parameter in a derived class, it should also call
- * GxShapeKit::sigNodeChanged.emit() to indicate that an update is needed.
+ * ObjList's. Subclasses derived from GxShapeKit must specify the
+ * details of how their objects will be drawn, by overriding the
+ * virtual function grRender(), and/or by choosing an appropriate
+ * render mode with setRenderMode(). Public clients call draw() to
+ * display the object. The caches that mediate the various drawing
+ * modes are kept up to date by using the Signal interface. Thus,
+ * whenever a manipulator changes a parameter in a derived class, it
+ * should also call GxShapeKit::sigNodeChanged.emit() to indicate that
+ * an update is needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -84,21 +85,21 @@ public:
   /// Get GxShapeKit's fields.
   static const FieldMap& classFields();
 
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
   //
   // Accessors
   //
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   /** Queries whether the bounding box will be visible when the object
       is drawn. */
   bool getBBVisibility() const;
 
   /** Overridden from GxNode. Extends the cube by the rect returned by
-      grGetBoundingBox(), with additional transformations to reflect the
-      scaling mode, alignment mode, and pixel border values. Subclasses of
-      GxShapeKit should override grGetBoundingBox(), not
-      getBoundingCube(). */
+      grGetBoundingBox(), with additional transformations to reflect
+      the scaling mode, alignment mode, and pixel border
+      values. Subclasses of GxShapeKit should override
+      grGetBoundingBox(), not getBoundingCube(). */
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /** Subclasses must override this function to return the bounding
@@ -134,8 +135,8 @@ public:
   /// Returns the x value of the location of the object's center.
   double getCenterY() const;
 
-  /** Returns the thickness (as a percentage of object size) of the border
-      around the bounding box area. */
+  /** Returns the thickness (as a percentage of object size) of the
+      border around the bounding box area. */
   int getPercentBorder() const;
 
   /// Returns the value of the user-defined category.
@@ -145,11 +146,11 @@ public:
   int getRenderMode() const;
 
 
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
   //
   // Manipulators
   //
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   /// Changes whether the bounding box will be visible when the object is drawn.
   void setBBVisibility(bool visibility);
@@ -196,8 +197,8 @@ public:
       ARBITRARY_ON_CENTER. */
   void setCenterY(double val);
 
-  /** Change the thickness (as a percentage of object size) of the border
-      that will be added around the bounding box area. */
+  /** Change the thickness (as a percentage of object size) of the
+      border that will be added around the bounding box area. */
   void setPercentBorder(int pixels);
 
   /// Change the value of the user-defined category to \a val.
@@ -209,11 +210,11 @@ public:
   void setRenderMode(int mode);
 
 
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
   //
   // Actions
   //
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   /** This function draws the object according to the GrRenderMode
       selected with setRenderMode(). */

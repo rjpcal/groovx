@@ -63,287 +63,287 @@ namespace Util
   template <class T1, class T2>
   inline T2& getref(std::pair<T1, T2>& p) { return p.second; }
 
-///////////////////////////////////////////////////////////////////////
-//
-// ConcreteIter class
-//
-///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
+  //
+  // ConcreteIter class
+  //
+  ///////////////////////////////////////////////////////////
 
-
-/// A template base class for all concrete iterator classes.
-/** ConcreteIter provides a "fat" interface, but a compile-time error will
-    be generated if part of the interface is used that is not supported by
-    the implementation class. */
-template <class T, class Ifx>
-class ConcreteIter
-{
-  shared_ptr<Ifx> rep;
-
-  void makeUnique()
+  /// A template base class for all concrete iterator classes.
+  /** ConcreteIter provides a "fat" interface, but a compile-time
+      error will be generated if part of the interface is used that is
+      not supported by the implementation class. */
+  template <class T, class Ifx>
+  class ConcreteIter
   {
-    if ( !rep.unique() )
-      {
-        rep.reset( rep->clone() );
-      }
-  }
+    shared_ptr<Ifx> rep;
 
-public:
-  ConcreteIter(const ConcreteIter& other) : rep(other.rep) {}
+    void makeUnique()
+    {
+      if ( !rep.unique() )
+        {
+          rep.reset( rep->clone() );
+        }
+    }
 
-  ConcreteIter(shared_ptr<Ifx> impl)      : rep(impl) {}
+  public:
+    ConcreteIter(const ConcreteIter& other) : rep(other.rep) {}
 
-  // Default assigment-oper OK
+    ConcreteIter(shared_ptr<Ifx> impl)      : rep(impl) {}
 
-  void next()                    { makeUnique(); rep->next(); }
-  void prev()                    { makeUnique(); rep->prev(); }
-  void step(int n)               { makeUnique(); rep->step(n); }
-  ConcreteIter& operator++()     { next(); return *this; }
-  ConcreteIter operator++(int)   { ConcreteIter c(*this); next(); return c; }
-  ConcreteIter& operator--()     { prev(); return *this; }
-  ConcreteIter operator--(int)   { ConcreteIter c(*this); prev(); return c; }
+    // Default assigment-oper OK
 
-  ConcreteIter operator+=(int n) { step(n); return *this; }
-  ConcreteIter operator-=(int n) { step(-n); return *this; }
+    void next()                    { makeUnique(); rep->next(); }
+    void prev()                    { makeUnique(); rep->prev(); }
+    void step(int n)               { makeUnique(); rep->step(n); }
+    ConcreteIter& operator++()     { next(); return *this; }
+    ConcreteIter operator++(int)   { ConcreteIter c(*this); next(); return c; }
+    ConcreteIter& operator--()     { prev(); return *this; }
+    ConcreteIter operator--(int)   { ConcreteIter c(*this); prev(); return c; }
 
-  int operator-(const ConcreteIter& other) const
+    ConcreteIter operator+=(int n) { step(n); return *this; }
+    ConcreteIter operator-=(int n) { step(-n); return *this; }
+
+    int operator-(const ConcreteIter& other) const
     { return rep->minus(other.rep); }
 
-  T*   operator->()                 const { return &(rep->get()); }
-  T&   operator*()                  const { return rep->get(); }
+    T*   operator->()                 const { return &(rep->get()); }
+    T&   operator*()                  const { return rep->get(); }
 
-  bool atEnd()                      const { return rep->atEnd(); }
-  bool isValid()                    const { return !atEnd(); }
-  int  fromEnd()                    const { return rep->fromEnd(); }
-  bool operator==(const IterEnd_t&) const { return atEnd(); }
-  bool operator!=(const IterEnd_t&) const { return !atEnd(); }
-};
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Forward iterators
-//
-///////////////////////////////////////////////////////////////////////
+    bool atEnd()                      const { return rep->atEnd(); }
+    bool isValid()                    const { return !atEnd(); }
+    int  fromEnd()                    const { return rep->fromEnd(); }
+    bool operator==(const IterEnd_t&) const { return atEnd(); }
+    bool operator!=(const IterEnd_t&) const { return !atEnd(); }
+  };
 
 
-/// Abstract interface class for forward iterators.
-template <class T>
-class FwdIterIfx
-{
-public:
-  typedef T ValueType;
-  typedef FwdIterIfx<T> Interface;
-
-  virtual ~FwdIterIfx() {}
-  virtual FwdIterIfx<T>* clone() const = 0;
-  virtual void next() = 0;
-  virtual T& get() const = 0;
-  virtual bool atEnd() const = 0;
-};
+  ///////////////////////////////////////////////////////////
+  //
+  // Forward iterators
+  //
+  ///////////////////////////////////////////////////////////
 
 
-/// Adapts forward iterators to the FwdIterIfx interface.
-template <class Iter, class T>
-class FwdIterAdapter : public FwdIterIfx<T>
-{
-  FwdIterAdapter<Iter, T>& operator=(const FwdIterAdapter<Iter, T>&);
-
-  typedef FwdIterIfx<T> Base;
-
-  Iter itsIter;
-  Iter itsEnd;
-
-  FwdIterAdapter<Iter, T>(const FwdIterAdapter<Iter, T>& that) :
-    Base(), itsIter(that.itsIter), itsEnd(that.itsEnd) {}
-
-public:
-  FwdIterAdapter<Iter, T>(Iter iter, Iter end) :
-    Base(), itsIter(iter), itsEnd(end) {}
-
-  virtual Base* clone() const { return new FwdIterAdapter(*this); }
-  virtual void   next()       { ++itsIter; }
-  virtual T&      get() const { return getref(*itsIter); }
-  virtual bool  atEnd() const { return itsIter == itsEnd; }
-};
-
-
-/// Concrete forward iterator class.
-template <class T>
-class FwdIter :
-  public ConcreteIter<T, FwdIterIfx<T> >
-{
-  template <class It>
-  shared_ptr<FwdIterIfx<T> >
-  adapt(It iter, It end)
+  /// Abstract interface class for forward iterators.
+  template <class T>
+  class FwdIterIfx
   {
-    return shared_ptr<FwdIterIfx<T> >
-      (new FwdIterAdapter<It, T>(iter, end));
-  }
+  public:
+    typedef T ValueType;
+    typedef FwdIterIfx<T> Interface;
 
-public:
-  typedef FwdIterIfx<T> Interface;
-  typedef ConcreteIter<T, Interface> Base;
-
-  FwdIter(const Base& other) : Base(other) {}
-
-  FwdIter(shared_ptr<Interface> impl) : Base(impl) {}
-
-  template <class It>
-  FwdIter(It iter, It end) : Base(adapt(iter, end)) {}
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// Bidirectional iterators
-//
-///////////////////////////////////////////////////////////////////////
+    virtual ~FwdIterIfx() {}
+    virtual FwdIterIfx<T>* clone() const = 0;
+    virtual void next() = 0;
+    virtual T& get() const = 0;
+    virtual bool atEnd() const = 0;
+  };
 
 
-/// Abstract interface class for bidirectional iterators.
-template <class T>
-class BidirIterIfx : public FwdIterIfx<T>
-{
-public:
-  typedef BidirIterIfx<T> Interface;
-
-  virtual BidirIterIfx<T>* clone() const = 0;
-  virtual void prev() = 0;
-};
-
-
-/// Adapts bidirectional iterators to the BidirIterIfx interface.
-template <class Iter, class T>
-class BidirIterAdapter : public BidirIterIfx<T>
-{
-  BidirIterAdapter<Iter, T>& operator=(const BidirIterAdapter<Iter, T>&);
-
-  typedef BidirIterIfx<T> Base;
-
-  Iter itsIter;
-  Iter itsEnd;
-
-  BidirIterAdapter<Iter, T>(const BidirIterAdapter<Iter, T>& that) :
-    Base(), itsIter(that.itsIter), itsEnd(that.itsEnd) {}
-
-public:
-  BidirIterAdapter<Iter, T>(Iter iter, Iter end) :
-    Base(), itsIter(iter), itsEnd(end) {}
-
-  virtual Base* clone() const { return new BidirIterAdapter(*this); }
-  virtual void   next()       { ++itsIter; }
-  virtual void   prev()       { --itsIter; }
-  virtual T&      get() const { return getref(*itsIter); }
-  virtual bool  atEnd() const { return itsIter == itsEnd; }
-};
-
-
-/// Concrete bidirectional iterator class.
-template <class T>
-class BidirIter :
-  public ConcreteIter<T, BidirIterIfx<T> >
-{
-  template <class It>
-  shared_ptr<BidirIterIfx<T> >
-  adapt(It iter, It end)
+  /// Adapts forward iterators to the FwdIterIfx interface.
+  template <class Iter, class T>
+  class FwdIterAdapter : public FwdIterIfx<T>
   {
-    return shared_ptr<BidirIterIfx<T> >
-      (new BidirIterAdapter<It, T>(iter, end));
-  }
+    FwdIterAdapter<Iter, T>& operator=(const FwdIterAdapter<Iter, T>&);
 
-public:
-  typedef BidirIterIfx<T> Interface;
-  typedef ConcreteIter<T, Interface> Base;
+    typedef FwdIterIfx<T> Base;
 
-  BidirIter(const Base& other) : Base(other) {}
+    Iter itsIter;
+    Iter itsEnd;
 
-  BidirIter(shared_ptr<Interface> impl) : Base(impl) {}
+    FwdIterAdapter<Iter, T>(const FwdIterAdapter<Iter, T>& that) :
+      Base(), itsIter(that.itsIter), itsEnd(that.itsEnd) {}
 
-  template <class It>
-  BidirIter(It iter, It end) : Base(adapt(iter, end)) {}
-};
+  public:
+    FwdIterAdapter<Iter, T>(Iter iter, Iter end) :
+      Base(), itsIter(iter), itsEnd(end) {}
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// Random Access iterators
-//
-///////////////////////////////////////////////////////////////////////
+    virtual Base* clone() const { return new FwdIterAdapter(*this); }
+    virtual void   next()       { ++itsIter; }
+    virtual T&      get() const { return getref(*itsIter); }
+    virtual bool  atEnd() const { return itsIter == itsEnd; }
+  };
 
 
-/// Abstract interface class for random-access iterators.
-template <class T>
-class RxsIterIfx : public BidirIterIfx<T>
-{
-public:
-  typedef RxsIterIfx<T> Interface;
-
-  virtual RxsIterIfx<T>* clone() const = 0;
-  virtual void step(int n) = 0;
-  virtual int minus(RxsIterIfx<T>& other) const = 0;
-  virtual int fromEnd() const = 0;
-};
-
-
-/// Adapts random-access iterators to the RxsIterIfx interface.
-template <class Iter, class T>
-class RxsIterAdapter : public RxsIterIfx<T>
-{
-  RxsIterAdapter<Iter, T>& operator=(const RxsIterAdapter<Iter, T>&);
-
-  typedef RxsIterIfx<T> Base;
-
-  Iter itsIter;
-  Iter itsEnd;
-
-  RxsIterAdapter<Iter, T>(const RxsIterAdapter<Iter, T>& that) :
-    Base(), itsIter(that.itsIter), itsEnd(that.itsEnd) {}
-
-public:
-  RxsIterAdapter<Iter, T>(Iter iter, Iter end) :
-    Base(), itsIter(iter), itsEnd(end) {}
-
-  virtual Base*  clone()       const { return new RxsIterAdapter(*this); }
-  virtual void    next()             { ++itsIter; }
-  virtual void    prev()             { --itsIter; }
-  virtual void    step(int n)        { itsIter += n; }
-  virtual T&       get()       const { return getref(*itsIter); }
-  virtual bool   atEnd()       const { return itsIter == itsEnd; }
-  virtual int  fromEnd()       const { return itsEnd - itsIter; }
-
-  virtual int minus(RxsIterIfx<T>& other_) const
+  /// Concrete forward iterator class.
+  template <class T>
+  class FwdIter :
+    public ConcreteIter<T, FwdIterIfx<T> >
   {
-    RxsIterAdapter<Iter, T>& other =
-      dynamic_cast<RxsIterAdapter<Iter, T>& >(other_);
+    template <class It>
+    shared_ptr<FwdIterIfx<T> >
+    adapt(It iter, It end)
+    {
+      return shared_ptr<FwdIterIfx<T> >
+        (new FwdIterAdapter<It, T>(iter, end));
+    }
 
-    return itsIter - other.itsIter;
-  }
-};
+  public:
+    typedef FwdIterIfx<T> Interface;
+    typedef ConcreteIter<T, Interface> Base;
+
+    FwdIter(const Base& other) : Base(other) {}
+
+    FwdIter(shared_ptr<Interface> impl) : Base(impl) {}
+
+    template <class It>
+    FwdIter(It iter, It end) : Base(adapt(iter, end)) {}
+  };
+
+  ///////////////////////////////////////////////////////////
+  //
+  // Bidirectional iterators
+  //
+  ///////////////////////////////////////////////////////////
 
 
-/// Concrete random-access iterator class.
-template <class T>
-class RxsIter :
-  public ConcreteIter<T, RxsIterIfx<T> >
-{
-  template <class It>
-  shared_ptr<RxsIterIfx<T> >
-  adapt(It iter, It end)
+  /// Abstract interface class for bidirectional iterators.
+  template <class T>
+  class BidirIterIfx : public FwdIterIfx<T>
   {
-    return shared_ptr<RxsIterIfx<T> >
-      (new RxsIterAdapter<It, T>(iter, end));
-  }
+  public:
+    typedef BidirIterIfx<T> Interface;
 
-public:
-  typedef RxsIterIfx<T> Interface;
-  typedef ConcreteIter<T, Interface> Base;
+    virtual BidirIterIfx<T>* clone() const = 0;
+    virtual void prev() = 0;
+  };
 
-  RxsIter(const Base& other) : Base(other) {}
 
-  RxsIter(shared_ptr<Interface> impl) : Base(impl) {}
+  /// Adapts bidirectional iterators to the BidirIterIfx interface.
+  template <class Iter, class T>
+  class BidirIterAdapter : public BidirIterIfx<T>
+  {
+    BidirIterAdapter<Iter, T>&
+    operator=(const BidirIterAdapter<Iter, T>&);
 
-  template <class It>
-  RxsIter(It iter, It end) : Base(adapt(iter, end)) {}
-};
+    typedef BidirIterIfx<T> Base;
+
+    Iter itsIter;
+    Iter itsEnd;
+
+    BidirIterAdapter<Iter, T>(const BidirIterAdapter<Iter, T>& that) :
+      Base(), itsIter(that.itsIter), itsEnd(that.itsEnd) {}
+
+  public:
+    BidirIterAdapter<Iter, T>(Iter iter, Iter end) :
+      Base(), itsIter(iter), itsEnd(end) {}
+
+    virtual Base* clone() const { return new BidirIterAdapter(*this); }
+    virtual void   next()       { ++itsIter; }
+    virtual void   prev()       { --itsIter; }
+    virtual T&      get() const { return getref(*itsIter); }
+    virtual bool  atEnd() const { return itsIter == itsEnd; }
+  };
+
+
+  /// Concrete bidirectional iterator class.
+  template <class T>
+  class BidirIter :
+    public ConcreteIter<T, BidirIterIfx<T> >
+  {
+    template <class It>
+    shared_ptr<BidirIterIfx<T> >
+    adapt(It iter, It end)
+    {
+      return shared_ptr<BidirIterIfx<T> >
+        (new BidirIterAdapter<It, T>(iter, end));
+    }
+
+  public:
+    typedef BidirIterIfx<T> Interface;
+    typedef ConcreteIter<T, Interface> Base;
+
+    BidirIter(const Base& other) : Base(other) {}
+
+    BidirIter(shared_ptr<Interface> impl) : Base(impl) {}
+
+    template <class It>
+    BidirIter(It iter, It end) : Base(adapt(iter, end)) {}
+  };
+
+
+  ///////////////////////////////////////////////////////////
+  //
+  // Random Access iterators
+  //
+  ///////////////////////////////////////////////////////////
+
+
+  /// Abstract interface class for random-access iterators.
+  template <class T>
+  class RxsIterIfx : public BidirIterIfx<T>
+  {
+  public:
+    typedef RxsIterIfx<T> Interface;
+
+    virtual RxsIterIfx<T>* clone() const = 0;
+    virtual void step(int n) = 0;
+    virtual int minus(RxsIterIfx<T>& other) const = 0;
+    virtual int fromEnd() const = 0;
+  };
+
+
+  /// Adapts random-access iterators to the RxsIterIfx interface.
+  template <class Iter, class T>
+  class RxsIterAdapter : public RxsIterIfx<T>
+  {
+    RxsIterAdapter<Iter, T>& operator=(const RxsIterAdapter<Iter, T>&);
+
+    typedef RxsIterIfx<T> Base;
+
+    Iter itsIter;
+    Iter itsEnd;
+
+    RxsIterAdapter<Iter, T>(const RxsIterAdapter<Iter, T>& that) :
+      Base(), itsIter(that.itsIter), itsEnd(that.itsEnd) {}
+
+  public:
+    RxsIterAdapter<Iter, T>(Iter iter, Iter end) :
+      Base(), itsIter(iter), itsEnd(end) {}
+
+    virtual Base*  clone()       const { return new RxsIterAdapter(*this); }
+    virtual void    next()             { ++itsIter; }
+    virtual void    prev()             { --itsIter; }
+    virtual void    step(int n)        { itsIter += n; }
+    virtual T&       get()       const { return getref(*itsIter); }
+    virtual bool   atEnd()       const { return itsIter == itsEnd; }
+    virtual int  fromEnd()       const { return itsEnd - itsIter; }
+
+    virtual int minus(RxsIterIfx<T>& other_) const
+    {
+      RxsIterAdapter<Iter, T>& other =
+        dynamic_cast<RxsIterAdapter<Iter, T>& >(other_);
+
+      return itsIter - other.itsIter;
+    }
+  };
+
+
+  /// Concrete random-access iterator class.
+  template <class T>
+  class RxsIter :
+    public ConcreteIter<T, RxsIterIfx<T> >
+  {
+    template <class It>
+    shared_ptr<RxsIterIfx<T> >
+    adapt(It iter, It end)
+    {
+      return shared_ptr<RxsIterIfx<T> >
+        (new RxsIterAdapter<It, T>(iter, end));
+    }
+
+  public:
+    typedef RxsIterIfx<T> Interface;
+    typedef ConcreteIter<T, Interface> Base;
+
+    RxsIter(const Base& other) : Base(other) {}
+
+    RxsIter(shared_ptr<Interface> impl) : Base(impl) {}
+
+    template <class It>
+    RxsIter(It iter, It end) : Base(adapt(iter, end)) {}
+  };
 
 } // end namespace Util
 
