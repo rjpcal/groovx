@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:32:51 2002
-// written: Tue Sep 17 17:16:24 2002
+// written: Tue Sep 17 17:21:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +19,7 @@
 namespace X11Util
 {
   Colormap findColormap(Display* dpy, XVisualInfo* visInfo,
-                        bool rgba, bool privateCmap);
-
-  Colormap rgbColormap(Display *dpy, int scrnum,
-                       const XVisualInfo *visinfo);
+                        bool privateCmap);
 
   void hackInstallColormap(Display* dpy, Window win, Colormap cmap);
 }

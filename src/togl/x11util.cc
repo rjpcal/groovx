@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:32:56 2002
-// written: Tue Sep 17 17:16:36 2002
+// written: Tue Sep 17 17:22:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,109 +15,41 @@
 
 #include "togl/x11util.h"
 
-#include <X11/Xatom.h>  /* for XA_RGB_DEFAULT_MAP atom */
-#include <X11/Xmu/StdCmap.h>  /* for XmuLookupStandardColormap */
-
 #include "util/debug.h"
 #include "util/trace.h"
 
-// Return an X colormap to use for OpenGL RGB-mode rendering.
-// Input:  dpy - the X display
-//         scrnum - the X screen number
-//         visinfo - the XVisualInfo as returned by glXChooseVisual()
-// Return:  an X Colormap or 0 if there's a _serious_ error.
-Colormap X11Util::rgbColormap(Display *dpy, int scrnum,
-                              const XVisualInfo *visinfo)
-{
-DOTRACE("X11Util::rgbColormap");
-  Window root = RootWindow(dpy,scrnum);
-
-  // First check if visinfo's visual matches the default/root visual.
-
-  if (visinfo->visual==DefaultVisual(dpy,scrnum))
-    {
-      /* use the default/root colormap */
-      Colormap cmap;
-      cmap = DefaultColormap( dpy, scrnum );
-      return cmap;
-    }
-
-
-  // Next, try to find a standard X colormap.
-
-#ifndef SOLARIS_BUG
-  Status status = XmuLookupStandardColormap( dpy, visinfo->screen,
-                                             visinfo->visualid, visinfo->depth,
-                                             XA_RGB_DEFAULT_MAP,
-                                             /* replace */ False,
-                                             /* retain */ True);
-  if (status == 1)
-    {
-      int numCmaps;
-      XStandardColormap *standardCmaps;
-      Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
-                                        &numCmaps, XA_RGB_DEFAULT_MAP);
-      if (status == 1)
-        {
-          for (int i = 0; i < numCmaps; i++)
-            {
-              if (standardCmaps[i].visualid == visinfo->visualid)
-                {
-                  Colormap cmap = standardCmaps[i].colormap;
-                  XFree(standardCmaps);
-                  return cmap;
-                }
-            }
-          XFree(standardCmaps);
-        }
-    }
-#endif
-
-  // If we get here, give up and just allocate a new colormap.
-
-  return XCreateColormap( dpy, root, visinfo->visual, AllocNone );
-}
-
 Colormap X11Util::findColormap(Display* dpy, XVisualInfo* visInfo,
-                               bool rgba, bool privateCmap)
+                               bool privateCmap)
 {
 DOTRACE("X11Util::findColormap");
 
   int scrnum = DefaultScreen(dpy);
-  Colormap cmap;
-  if (rgba)
+
+  // For RGB colormap or shared color-index colormap
+  if (!privateCmap)
     {
-      /* Colormap for RGB mode */
-      cmap = rgbColormap( dpy, scrnum, visInfo );
-    }
-  else
-    {
-      /* Colormap for CI mode */
-      if (privateCmap)
+      if (visInfo->visual == DefaultVisual(dpy, scrnum))
         {
-          /* need read/write colormap so user can store own color entries */
-          cmap = XCreateColormap(dpy,
-                                 RootWindow(dpy, visInfo->screen),
-                                 visInfo->visual, AllocAll);
+          // Just share the default colormap
+          return DefaultColormap(dpy, scrnum);
         }
       else
         {
-          if (visInfo->visual==DefaultVisual(dpy, scrnum))
-            {
-              /* share default/root colormap */
-              cmap = DefaultColormap(dpy,scrnum);
-            }
-          else
-            {
-              /* make a new read-only colormap */
-              cmap = XCreateColormap(dpy,
-                                     RootWindow(dpy, visInfo->screen),
-                                     visInfo->visual, AllocNone);
-            }
+          // Make a new read-only colormap
+          return XCreateColormap(dpy,
+                                 RootWindow(dpy, visInfo->screen),
+                                 visInfo->visual, AllocNone);
         }
     }
 
-  return cmap;
+  // For private color-index colormap
+  else
+    {
+      // Use AllocAll to get a read/write colormap
+      return XCreateColormap(dpy,
+                             RootWindow(dpy, visInfo->screen),
+                             visInfo->visual, AllocAll);
+    }
 }
 
 void X11Util::hackInstallColormap(Display* dpy, Window win, Colormap cmap)
