@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Dec  7 18:01:57 1999
+// written: Tue Dec  7 18:08:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,10 +36,12 @@ namespace {
   }
 
   void dummyDeleteProc(ClientData clientData) {
-	 TclCmd* cmd = static_cast<TclCmd*>(clientData);
+	 Tcl::TclCmd* cmd = static_cast<Tcl::TclCmd*>(clientData);
 	 delete cmd;
   }
 }
+
+namespace Tcl {
 
 TclCmd::~TclCmd() {
 DOTRACE("TclCmd::~TclCmd");
@@ -346,6 +348,7 @@ DOTRACE("TclCmd::dummyInvoke");
   return theCmd->itsResult;
 }
 
+} // end namespace Tcl
 
 static const char vcid_tclcmd_cc[] = "$Header$";
 #endif // !TCLCMD_CC_DEFINED
