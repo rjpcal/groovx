@@ -651,9 +651,31 @@ cppdeps::get_direct_includes(const string& src_fname)
 
       const string include_string(include_name, include_length);
       if (!m_quiet)
-        cerr << "WARNING: in " << src_fname
-             << ": couldn\'t resolve #include \""
-             << include_string << "\"\n";
+        {
+          cerr << "WARNING: in " << src_fname
+               << ": couldn\'t resolve #include \""
+               << include_string << "\"\n";
+          cerr << "\twith search path: [";
+          for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
+            {
+              cerr << "'" << m_user_ipath[i] << "'";
+              if (i+1 < m_user_ipath.size())
+                cerr << ", ";
+            }
+          cerr << "]\n";
+
+          if (m_check_sys_includes)
+            {
+              cerr << "\and system search path: [";
+              for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
+                {
+                  cerr << "'" << m_user_ipath[i] << "'";
+                  if (i+1 < m_user_ipath.size())
+                    cerr << ", ";
+                }
+              cerr << "]\n";
+            }
+        }
     }
 
   return vec;
