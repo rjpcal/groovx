@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Tue Nov 12 13:00:17 2002
+// written: Wed Dec 25 09:01:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,12 +120,29 @@ DOTRACE("PngParser::parse");
 
   const int bit_depth = png_get_bit_depth(itsPngPtr, itsInfoPtr);
 
-  if (bit_depth == 16)
-    png_set_strip_16(itsPngPtr);
-  else if (bit_depth != 8)
-    throw Util::Error(fstring("bit-depth '", bit_depth,
-                              "' is not supported for PNG images "
-                              "(must be 8- or 16-bit)"));
+  switch (bit_depth)
+    {
+    case 16:
+      // Strip 16-bit pixels down to 8-bit
+      png_set_strip_16(itsPngPtr);
+      break;
+
+    case 8:
+      // nothing
+      break;
+
+    case 4:
+    case 2:
+    case 1:
+      // Forces 1-, 2-, or 4-bit pixels to be expanded into full bytes.
+      png_set_packing(itsPngPtr);
+      break;
+
+    default:
+      throw Util::Error(fstring("bit-depth '", bit_depth,
+                                "' is not supported for PNG images "
+                                "(must be 8- or 16-bit)"));
+    }
 
   const png_byte color_type = png_get_color_type(itsPngPtr, itsInfoPtr);
 
