@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Nov 15 14:19:38 1999
+// written: Fri Dec  3 16:00:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -509,7 +509,7 @@ DOTRACE("ToglConfig::writeEpsFile");
   glPopAttrib();
 
   // redisplay original image
-  display();
+  refresh();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -530,14 +530,14 @@ void dummyDisplayCallback(Togl* togl) {
 DOTRACE("dummyDisplayCallback");
   ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
   DebugEvalNL((void*) config);
-  config->display();
+  config->refresh();
 }
 
 void dummyEpsCallback(const Togl* togl) {
 DOTRACE("dummyEpsCallback");
   ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
   DebugEvalNL((void*) config);
-  config->display();
+  config->refresh();
 }
 }
 
