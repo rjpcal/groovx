@@ -16,15 +16,15 @@ of default arguments... these cannot be used unless the full class
 definition is known. This particularly affects uses like 'const
 string& s = ""', but I think the problem can be easily circumvented
 by removing the default argument, and adding instead an overloaded
-function version with no string argument.
+function version with no string argument. [8-Mar-2000] Well, now, a
+week later, the compile time for a full debug build of the project has
+been cut nearly in half, and "stringfwd.h" is no longer needed at all!
+I've found that most interfaces can use 'const char*' just fine, and
+let clients and implementors deal with more complex string classes if
+they so choose. Only 12 translation units now depend on <string>, and
+21 on <vector>.
 
-Who still #include's <string>? : bitmaprep.h, gtext.h, subject.h
-
-<vector>?: bezier.h block.h bmapdata.h iostl.h pbm.h
- tcllink.h tlistutils.h trial.h
-
-Should be able to eliminate using <vector> in BmapData and Pbm
-interfaces by using iterators instead.
+<vector>?: bezier.h iostl.h
 
 (8-Feb-2000) Should think about doing dynamic tracing generically,
 perhaps with a mixin base class.
