@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Thu Aug  9 16:06:22 2001
+// written: Thu Aug  9 17:20:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,18 +102,6 @@ DOTRACE("BmapData::bytesPtr");
   return const_cast<unsigned char*>(&(itsImpl->itsBytes[0]));
 }
 
-dynamic_block<unsigned char>& BmapData::bytesVec()
-{
-  updateIfNeeded();
-  return itsImpl->itsBytes;
-}
-
-const dynamic_block<unsigned char>& BmapData::bytesVec() const
-{
-  updateIfNeeded();
-  return itsImpl->itsBytes;
-}
-
 int BmapData::width() const
 {
 DOTRACE("BmapData::width");
@@ -131,29 +119,35 @@ DOTRACE("BmapData::height");
 Point<int> BmapData::extent() const
 {
 DOTRACE("BmapData::height");
+  updateIfNeeded();
   return itsImpl->itsExtent;
 }
 
 int BmapData::bitsPerPixel() const
 {
 DOTRACE("BmapData::bitsPerPixel");
+  updateIfNeeded();
   return itsImpl->itsBitsPerPixel;
 }
 
 int BmapData::byteAlignment() const
 {
 DOTRACE("BmapData::byteAlignment");
+  updateIfNeeded();
   return itsImpl->itsByteAlignment;
 }
 
-int BmapData::byteCount() const
+unsigned int BmapData::byteCount() const
 {
 DOTRACE("BmapData::byteCount");
   updateIfNeeded();
-  return bytesPerRow() * itsImpl->itsExtent.y();
+
+  Assert(itsImpl->itsBytes.size() == bytesPerRow() * itsImpl->itsExtent.y());
+
+  return itsImpl->itsBytes.size();
 }
 
-int BmapData::bytesPerRow() const
+unsigned int BmapData::bytesPerRow() const
 {
 DOTRACE("BmapData::bytesPerRow");
   updateIfNeeded();
@@ -212,38 +206,16 @@ DOTRACE("BmapData::flipVertical");
 void BmapData::clear()
 {
 DOTRACE("BmapData::clear");
-  itsImpl->itsBytes.resize(1);
-  itsImpl->itsExtent.set(1,1);
-  itsImpl->itsBitsPerPixel = 1;
-  itsImpl->itsByteAlignment = 1;
 
-  itsImpl->itsUpdater.reset(0);
+  BmapData empty;
+  swap(empty);
 }
 
 void BmapData::swap(BmapData& other)
 {
 DOTRACE("BmapData::swap");
-  updateIfNeeded();
 
-  itsImpl->itsBytes.swap(other.itsImpl->itsBytes);
-
-  Util::swap(itsImpl->itsExtent, other.itsImpl->itsExtent);
-  Util::swap(itsImpl->itsBitsPerPixel, other.itsImpl->itsBitsPerPixel);
-  Util::swap(itsImpl->itsByteAlignment, other.itsImpl->itsByteAlignment);
-}
-
-void BmapData::swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
-                    int& bits_per_pixel, int& byte_alignment)
-{
-DOTRACE("BmapData::swap");
-  updateIfNeeded();
-
-  itsImpl->itsBytes.swap(bytes);
-
-  Util::swap(itsImpl->itsExtent.x(), width);
-  Util::swap(itsImpl->itsExtent.y(), height);
-  Util::swap(itsImpl->itsBitsPerPixel, bits_per_pixel);
-  Util::swap(itsImpl->itsByteAlignment, byte_alignment);
+  Util::swap(itsImpl, other.itsImpl);
 }
 
 void BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const
@@ -257,10 +229,11 @@ void BmapData::updateIfNeeded() const
 DOTRACE("BmapData::updateIfNeeded");
   if (itsImpl->itsUpdater.get() != 0)
     {
-      // This steals the updater from itsImpl->itsUpdater, so that we can
-      // avoid endless recursion if updateIfNeeded is called again
-      // as part of the updating.
       shared_ptr<UpdateFunc> tempUpdater(itsImpl->itsUpdater);
+
+      // We release itsImpl->itsUpdater before doing the update, so
+      // that we avoid endless recursion if updateIfNeeded is called
+      // again during the updating.
       itsImpl->itsUpdater.reset(0);
 
       tempUpdater->update(const_cast<BmapData&>(*this));

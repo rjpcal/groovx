@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Thu Aug  9 16:01:45 2001
+// written: Thu Aug  9 17:09:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,12 +86,6 @@ public:
   /// Returns a pointer to the raw image data.
   unsigned char* bytesPtr() const;
 
-  /// Returns a reference to the container of the raw image data.
-  dynamic_block<unsigned char>& bytesVec();
-
-  /// Returns a reference to the container of the raw image data.
-  const dynamic_block<unsigned char>& bytesVec() const;
-
   /// Returns the bitmap's width in pixels.
   int width() const;
 
@@ -111,10 +105,10 @@ public:
   /** Returns the number of bytes used by the bitmap data. Some of
       these bytes may be 'filler bytes' needed to meet the storage
       alignment requirements. */
-  int byteCount() const;
+  unsigned int byteCount() const;
 
   /** Returns the number of bytes used per image row in the bitmap data. */
-  int bytesPerRow() const;
+  unsigned int bytesPerRow() const;
 
 
   //---------------------------------------------------------------------
@@ -135,10 +129,6 @@ public:
   /// Swaps the internal representation with that of \a other.
   void swap(BmapData& other);
 
-  /// Swaps the internal representation with the given arguments.
-  void swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
-            int& bits_per_pixel, int& byte_alignment);
-
   /** Queues the update given by \a updater. The \c update() function
       will be called only when the bitmap data must be accessed. */
   void queueUpdate(shared_ptr<UpdateFunc> updater) const;
@@ -153,7 +143,7 @@ public:
 
 private:
   class Impl;
-  Impl* const itsImpl;
+  Impl* itsImpl;
 };
 
 static const char vcid_bmapdata_h[] = "$Header$";
