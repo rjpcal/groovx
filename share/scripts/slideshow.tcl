@@ -12,6 +12,7 @@ itcl::class Playlist {
     private variable itsDir
     private variable itsList
     private variable itsIdx
+    private variable itsPrev
 
     constructor { dir } {
 	set itsDir $dir
@@ -28,6 +29,7 @@ itcl::class Playlist {
 	    close $fd
 	}
 	set itsIdx 0
+	set itsPrev 0
     }
 
     public method save {} {
@@ -66,13 +68,26 @@ itcl::class Playlist {
     public method sort {} {
 	set itsList [lsort -dictionary $itsList]
     }
+
+    public method show {} {
+	set f [$this filename]
+
+	puts $f
+
+	set b [new GxPixmap]
+	-> $b loadImage $f
+	-> $b zoomTo [Togl::size]
+
+	see $b
+
+	delete $itsPrev
+	set itsPrev $b
+    }
 }
 
 set PLAYLIST [Playlist PLAYLIST [lindex $argv end]]
 
-set PREV 0
-
-set DELAY 3000
+set DELAY 4000
 
 set LOOP_HANDLE 0
 
@@ -84,13 +99,13 @@ proc min {a b} {
 proc looper {} {
     set ::LOOP_HANDLE [after $::DELAY ::looper]
     spinPic 1
-    showPic
+    $::PLAYLIST show
 }
 
 proc hide {} {
     $::PLAYLIST remove
     updateText
-    showPic
+    $::PLAYLIST show
 }
 
 frame .f
@@ -121,7 +136,7 @@ iwidgets::spinner .f.spinner -width 0 -fixed 0 \
     -validate blockInput -labelvariable FILENAME \
     -decrement {spinPic -1} -increment {spinPic 1}
 
-bind Canvas <ButtonRelease> {showPic}
+bind Canvas <ButtonRelease> {$::PLAYLIST show}
 
 pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.spinner -side left -expand yes
 
@@ -129,26 +144,11 @@ pack .f -side top
 
 Toglet::currentToglet [new Toglet]
 
-Togl::bind <ButtonPress-1> {spinPic -1; showPic}
-Togl::bind <ButtonPress-3> {spinPic 1; showPic}
+Togl::bind <ButtonPress-1> {spinPic -1; $::PLAYLIST show}
+Togl::bind <ButtonPress-3> {spinPic 1; $::PLAYLIST show}
 
 Togl::height 975
 Togl::width 1400
 
-proc showPic {} {
-    set f [$::PLAYLIST filename]
-
-    puts $f
-
-    set b [new GxPixmap]
-    -> $b loadImage $f
-    -> $b zoomTo [Togl::size]
-
-    see $b
-
-    delete $::PREV
-    set ::PREV $b
-}
-
 updateText
-showPic
+$::PLAYLIST show
