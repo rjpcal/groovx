@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Thu Sep 13 11:32:13 2001
+// written: Fri Sep 21 11:04:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef TKWIDGET_CC_DEFINED
 #define TKWIDGET_CC_DEFINED
 
-#include "tcl/tkwidget.h"
+#include "visx/tkwidget.h"
 
 #include "util/ref.h"
 

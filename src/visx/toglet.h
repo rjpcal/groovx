@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Sep 21 10:48:10 2001
+// written: Fri Sep 21 11:04:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
-#include "tcl/tkwidget.h"
+#include "visx/tkwidget.h"
 #endif
 
 struct Togl;
