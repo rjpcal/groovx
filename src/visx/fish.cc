@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Fri Nov 10 17:04:01 2000
+// written: Tue Nov 14 07:16:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,12 +34,6 @@
 #define LOCAL_DEBUG
 #include "util/debug.h"
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -47,42 +41,25 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  int dummy=0; // We need a dummy int to attach various CPtrProperty's
+  int dummy=0; // We need a dummy int to attach various CPtrField's
 
-  const Fish::PInfo PINFOS[] = {
-	 Fish::PInfo("category",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::fishCategory), 0, 10, 1, true),
-	 Fish::PInfo("dorsalFinCoord",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::dorsalFinCoord),
-					 -2.0, 2.0, 0.1),
-	 Fish::PInfo("tailFinCoord",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::tailFinCoord),
-					 -2.0, 2.0, 0.1),
-	 Fish::PInfo("lowerFinCoord",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::lowerFinCoord),
-					 -2.0, 2.0, 0.1),
-	 Fish::PInfo("mouthCoord",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::mouthCoord),
-					 -2.0, 2.0, 0.1),
+  const FieldInfo FINFOS[] = {
+	 FieldInfo("category", &Fish::fishCategory, 0, 0, 10, 1, true),
+	 FieldInfo("dorsalFinCoord", &Fish::dorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
+	 FieldInfo("tailFinCoord", &Fish::tailFinCoord, 0.0, -2.0, 2.0, 0.1),
+	 FieldInfo("lowerFinCoord", &Fish::lowerFinCoord, 0.0, -2.0, 2.0, 0.1),
+	 FieldInfo("mouthCoord", &Fish::mouthCoord, 0.0, -2.0, 2.0, 0.1),
 
-	 Fish::PInfo("currentPart",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::currentPart),
-					 0, 3, 1, true),
+	 FieldInfo("currentPart", &Fish::currentPart, 0, 0, 3, 1, true),
 
-	 Fish::PInfo("currentEndPt",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::currentEndPt),
-					 0, 3, 1, true),
-	 Fish::PInfo("endPt_Part",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::endPt_Part),
-					 1, 4, 1),
-	 Fish::PInfo("endPt_Bkpt",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::endPt_Bkpt),
-					 1, 10, 1)
+	 FieldInfo("currentEndPt", &Fish::currentEndPt, 0, 0, 3, 1, true),
+	 FieldInfo("endPt_Part", &Fish::endPt_Part, 1, 1, 4, 1),
+	 FieldInfo("endPt_Bkpt", &Fish::endPt_Bkpt, 1, 1, 10, 1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Fish::PInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const unsigned int NUM_LEGACY_PINFOS = 5;
+  const FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
 }
@@ -134,6 +111,8 @@ struct Fish::EndPt {
 //
 ///////////////////////////////////////////////////////////////////////
 
+const FieldMap& Fish::classFields() { return FISH_FIELDS; }
+
 Fish* Fish::make() {
 DOTRACE("Fish::make");
   return new Fish;
@@ -146,15 +125,16 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  fishCategory(-1),
-  dorsalFinCoord(itsCoords[0]),
-  tailFinCoord(itsCoords[1]),
-  lowerFinCoord(itsCoords[2]),
-  mouthCoord(itsCoords[3]),
-  currentPart(0),
-  currentEndPt(0),
-  endPt_Part(dummy),
-  endPt_Bkpt(dummy),
+  FieldContainer(FISH_FIELDS),
+  fishCategory(this, -1),
+  dorsalFinCoord(this, itsCoords[0]),
+  tailFinCoord(this, itsCoords[1]),
+  lowerFinCoord(this, itsCoords[2]),
+  mouthCoord(this, itsCoords[3]),
+  currentPart(this, 0),
+  currentEndPt(this, 0),
+  endPt_Part(this, dummy),
+  endPt_Bkpt(this, dummy),
   itsFishParts(new FishPart[4]),
   itsEndPts(new EndPt[4])
 {
@@ -283,11 +263,8 @@ DOTRACE("Fish::serialVersionId");
 void Fish::readFrom(IO::Reader* reader) {
 DOTRACE("Fish::readFrom");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name(),
-								 const_cast<Value&>(get(PINFOS[i].property())));
-  }
-  
+  readFieldsFrom(reader); 
+
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid < 2)
 	 GrObj::readFrom(reader);
@@ -303,9 +280,7 @@ DOTRACE("Fish::readFrom");
 void Fish::writeTo(IO::Writer* writer) const {
 DOTRACE("Fish::writeTo");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
+  writeFieldsTo(writer);
 
   if (FISH_SERIAL_VERSION_ID < 2)
 	 GrObj::writeTo(writer);
@@ -332,22 +307,6 @@ DOTRACE("Fish::receiveStateChangeMsg");
   endPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
    
   GrObj::receiveStateChangeMsg(obj);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Properties
-//
-///////////////////////////////////////////////////////////////////////
-
-unsigned int Fish::numPropertyInfos() {
-DOTRACE("Fish::numPropertyInfos");
-  return NUM_PINFOS;
-}
-
-const Fish::PInfo& Fish::getPropertyInfo(unsigned int i) {
-DOTRACE("Fish::getPropertyInfo");
-  return PINFOS[i];
 }
 
 void Fish::readSplineFile(const char* splinefile) {
