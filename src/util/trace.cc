@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Feb 21 16:27:13 2002
+// written: Mon Mar  4 11:17:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -200,7 +200,8 @@ void Util::Prof::printAllProfData(STD_IO::ostream& os)
 
   for (unsigned int i = 0; i < allProfs().size(); ++i)
     {
-      allProfs()[i]->printProfData(os);
+      if (allProfs()[i]->count() > 0)
+        allProfs()[i]->printProfData(os);
     }
 }
 
