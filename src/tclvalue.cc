@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu Mar 16 12:00:51 2000
+// written: Thu May 25 13:17:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ DOTRACE("Tcl::TclValue::getCstring");
 //---------------------------------------------------------------------
 
 void Tcl::TclValue::get(int& val) const {
-DOTRACE("Tcl::TclValue::get");
+DOTRACE("Tcl::TclValue::get(int&)");
   checkSharing(itsObj, &tclIntType);
   if ( Tcl_GetIntFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 	 fixed_string msg = Tcl_GetStringResult(itsInterp);
@@ -278,7 +278,7 @@ DOTRACE("Tcl::TclValue::get");
 }
 
 void Tcl::TclValue::get(long& val) const {
-DOTRACE("Tcl::TclValue::get");
+DOTRACE("Tcl::TclValue::get(long&)");
   checkSharing(itsObj, &tclIntType);
   if ( Tcl_GetLongFromObj(itsInterp, itsObj, &val) != TCL_OK) {
 	 fixed_string msg = Tcl_GetStringResult(itsInterp);
@@ -288,27 +288,22 @@ DOTRACE("Tcl::TclValue::get");
 }
 
 void Tcl::TclValue::get(bool& val) const {
-DOTRACE("Tcl::TclValue::get");
+DOTRACE("Tcl::TclValue::get(bool&)");
   val = getBool();
 }
 
 void Tcl::TclValue::get(double& val) const {
-DOTRACE("Tcl::TclValue::get");
+DOTRACE("Tcl::TclValue::get(double&)");
   checkSharing(itsObj, &tclDoubleType);
-  try {
-	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-		fixed_string msg = Tcl_GetStringResult(itsInterp);
-		Tcl_ResetResult(itsInterp);
-		throw ValueError(msg.c_str());
-	 }
-  }
-  catch (ValueError&) {
-	 throw;
+  if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
+	 fixed_string msg = Tcl_GetStringResult(itsInterp);
+	 Tcl_ResetResult(itsInterp);
+	 throw ValueError(msg.c_str());
   }
 }
 
 void Tcl::TclValue::get(const char*& val) const {
-DOTRACE("Tcl::TclValue::get");
+DOTRACE("Tcl::TclValue::get(const char*&)");
   val = Tcl_GetString(itsObj);
 }
 
