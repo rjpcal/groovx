@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Thu Jun 14 14:54:40 2001
+// written: Fri Jun 15 19:50:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,13 @@
 #include "util/object.h"
 #endif
 
-namespace GWT {
+namespace GWT
+{
   class Canvas;
   class Widget;
+
+  class ButtonListener;
+  class KeyListener;
 }
 
 class GxNode;
@@ -27,7 +31,24 @@ class GxNode;
 namespace Util { template <class T> class Ref; };
 namespace Util { template <class T> class WeakRef; }
 
-class TrialBase;
+template <class T> class shared_ptr;
+
+
+//
+// Listener class definitions
+//
+
+class GWT::ButtonListener {
+public:
+  virtual void onButtonPress(unsigned int button, int x, int y) = 0;
+};
+
+class GWT::KeyListener {
+public:
+  virtual void onKeyPress(unsigned int modifiers, const char* keys,
+                          int x, int y) = 0;
+};
+
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -46,6 +67,9 @@ public:
   virtual ~Widget();
 
   virtual Canvas& getCanvas() = 0;
+
+  virtual void addButtonListener (shared_ptr<GWT::ButtonListener> b) = 0;
+  virtual void addKeyListener    (shared_ptr<GWT::KeyListener> k) = 0;
 
   virtual void bind(const char* event_sequence, const char* script) = 0;
   virtual void takeFocus() = 0;

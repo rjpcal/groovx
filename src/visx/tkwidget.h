@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Fri Jun 15 18:23:47 2001
+// written: Fri Jun 15 19:50:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,35 +17,12 @@
 #include "gwt/widget.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
-#include "util/pointers.h"
-#endif
-
 typedef struct Tk_Window_ *Tk_Window;
 
 namespace Tcl
 {
   class TkWidget;
-
-  class ButtonListener;
-  class KeyListener;
 }
-
-
-//
-// Listener class definitions
-//
-
-class Tcl::ButtonListener {
-public:
-  virtual void onButtonPress(unsigned int button, int x, int y) = 0;
-};
-
-class Tcl::KeyListener {
-public:
-  virtual void onKeyPress(unsigned int modifiers, const char* keys,
-                          int x, int y) = 0;
-};
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -65,8 +42,8 @@ public:
   TkWidget();
   virtual ~TkWidget();
 
-  void addButtonListener (shared_ptr<ButtonListener> b);
-  void addKeyListener    (shared_ptr<KeyListener> k);
+  virtual void addButtonListener (shared_ptr<GWT::ButtonListener> b);
+  virtual void addKeyListener    (shared_ptr<GWT::KeyListener> k);
 
   void removeButtonListeners();
   void removeKeyListeners();
