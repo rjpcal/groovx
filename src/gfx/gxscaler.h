@@ -32,11 +32,7 @@
 #ifndef GXSCALER_H_DEFINED
 #define GXSCALER_H_DEFINED
 
-#include "geom/rect.h"
-
 #include "gfx/gxbin.h"
-
-#include "util/algo.h"
 
 /// A graphics node that optionally rescales its child object.
 class GxScaler : public GxBin
