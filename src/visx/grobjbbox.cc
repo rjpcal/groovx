@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Thu Aug 16 11:32:31 2001
+// written: Thu Aug 23 09:43:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,20 +27,18 @@ namespace
 {
   void renderRect(Gfx::Canvas& canvas, const Gfx::Rect<double>& bounds)
   {
-    glPushAttrib(GL_LINE_BIT);
-    {
-      glLineWidth(1.0);
-      glEnable(GL_LINE_STIPPLE);
-      glLineStipple(1, 0x0F0F);
+    Gfx::Canvas::AttribSaver saver(canvas);
 
-      canvas.drawRect(bounds);
-    }
-    glPopAttrib();
+    glLineWidth(1.0);
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(1, 0x0F0F);
+
+    canvas.drawRect(bounds);
   }
 
   Gfx::Rect<double> addPixelBorder(Gfx::Canvas& canvas,
-											  const Gfx::Rect<double>& raw,
-											  int border_pixels)
+                                   const Gfx::Rect<double>& raw,
+                                   int border_pixels)
   {
     // Find the bounding box in screen coordinates
     Gfx::Rect<int> screen_pos = canvas.screenFromWorld(raw);
@@ -64,8 +62,8 @@ DOTRACE("GrObjBBox::gnodeBoundingBox");
   DebugEval(itsPixelBorder); DebugEval(border_pixels);
 
   return addPixelBorder(canvas,
-								child()->gnodeBoundingBox(canvas),
-								border_pixels);
+                        child()->gnodeBoundingBox(canvas),
+                        border_pixels);
 }
 
 void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const
@@ -74,10 +72,10 @@ DOTRACE("GrObjBBox::gnodeDraw");
 
   if (itsIsVisible)
     {
-      Gfx::Rect<double> bounds = 
+      Gfx::Rect<double> bounds =
         addPixelBorder(canvas,
-							  child()->gnodeBoundingBox(canvas),
-							  itsPixelBorder);
+                       child()->gnodeBoundingBox(canvas),
+                       itsPixelBorder);
 
       renderRect(canvas, bounds);
     }

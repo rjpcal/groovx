@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 22 18:13:13 2001
+// written: Thu Aug 23 09:41:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,10 +141,11 @@ DOTRACE("Face::grRender");
   // Drawing commands begin here...
   //
 
+  Gfx::Canvas::AttribSaver attribSaver(canvas);
+
   // Enable antialiasing, if it is available
   if (have_antialiasing)
     {
-      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
       glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
 
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
@@ -251,11 +252,6 @@ DOTRACE("Face::grRender");
     glVertex2d(theirNose_x, nose_top_y);
     glEnd();
   }
-
-  if (have_antialiasing)
-    {
-      glPopAttrib();
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////
