@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Apr 30 09:32:08 2002
+// written: Tue Apr 30 09:35:44 2002
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -185,10 +185,18 @@ namespace DlistTcl
 
     const double skip = (end - begin) / (npts - 1);
 
-    for (unsigned int i = 0; i < npts; ++i)
-      {
-        result.append(begin + i*skip);
-      }
+    bool integer_mode = (skip == int(skip) && begin == int(begin));
+
+    if (integer_mode)
+      for (unsigned int i = 0; i < npts; ++i)
+        {
+          result.append(int(begin + i*skip));
+        }
+    else
+      for (unsigned int i = 0; i < npts; ++i)
+        {
+          result.append(begin + i*skip);
+        }
 
     return result;
   }
