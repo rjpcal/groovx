@@ -2,7 +2,8 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Mar  9 21:33:47 1999
+// written: Fri Mar 12 11:01:52 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJ_CC_DEFINED
@@ -12,7 +13,6 @@
 
 #include <iostream.h>           // for serialize
 #include <GL/gl.h>
-#include <cstring>
 #include <cstdlib>				  // for exit
 
 #define NO_TRACE
@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 // GrObj default constructor
-GrObj::GrObj() : 
+GrObj::GrObj(int categ) : 
   itsIsCurrent(0), itsDisplayList(-1)
 {
     itsDisplayList = glGenLists(1);
@@ -39,7 +39,8 @@ GrObj::GrObj() :
 GrObj::GrObj(istream &is) :
   itsIsCurrent(0), itsDisplayList(-1)
 {
-    itsDisplayList = glGenLists(1);
+  deserialize(is);
+  itsDisplayList = glGenLists(1);
 }
 
 // GrObj destructor
@@ -50,6 +51,12 @@ GrObj::~GrObj() {
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
 IOResult GrObj::serialize(ostream &os, IOFlag flag) const {
+DOTRACE("GrObj::serialize");
+  return IO_OK;
+}
+
+IOResult GrObj::deserialize(istream &is, IOFlag flag) {
+DOTRACE("GrObj::deserialize");
   return IO_OK;
 }
 
@@ -66,7 +73,7 @@ DOTRACE("GrObj::grNewList");
   glDeleteLists(itsDisplayList, 1);
   itsDisplayList = glGenLists(1); 
   if (itsDisplayList == 0) {     
-    cerr << "grNewList: couldn't allocate display list\n";
+    cerr << "GrObj::grNewList: couldn't allocate display list\n";
 	 exit(-1);
   }
 }
