@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Jul  3 15:51:48 1999
+// written: Sat Jul  3 16:10:48 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -105,16 +105,18 @@ public:
 	 pointer operator-> () const { return &(operator*()); }
 
 	 iterator& operator++ () { 
-		while ( (itsIndex<=itsList->capacity())
-				  && !(itsList->isValidId(itsIndex)) ) { ++itsIndex; }
+		while ( (itsIndex<itsList->capacity()) 
+				  && !(itsList->isValidId(++itsIndex)) ) { }
+		return *this;
 	 }
 
 	 iterator operator++ (int)
 		{ iterator tmp = *this; ++*this; return tmp; }
 
 	 iterator& operator-- () {
-		while ( (itsIndex >= -1) && !(itsList->isValidId(itsIndex)) )
-		  { --itsIndex; }
+		while ( (itsIndex >= -1) 
+				  && !(itsList->isValidId(--itsIndex)) ) { }
+		return *this;
 	 }
 
 	 iterator operator-- (int)
