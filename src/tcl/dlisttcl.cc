@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 22 15:28:51 2001
+// written: Sat Sep  8 14:12:16 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -19,17 +19,8 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
-#include <cstdlib>
-
-#define NO_TRACE
 #include "util/trace.h"
-#include "util/debug.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// DlistTcl package declarations
-//
-///////////////////////////////////////////////////////////////////////
 
 namespace DlistTcl
 {
@@ -44,11 +35,6 @@ namespace DlistTcl
   Tcl::List zeros(unsigned int num_zeros);
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// DlistTcl package definitions
-//
-///////////////////////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------
 //
