@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Thu Mar 23 19:16:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include "bezier.h"
 #include "canvas.h"
+#include "ioproxy.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
@@ -43,6 +44,8 @@
 namespace {
   template <class T>
   inline T abs(T val) { return (val < 0) ? -val : val; }
+
+  const unsigned long MFACE_SERIAL_VERSION_ID = 1;
 
   const char* ioTag = "MorphyFace";
 
@@ -431,6 +434,11 @@ DOTRACE("MorphyFace::charCount");
 			 + 1);//fudge factor
 }
 
+unsigned long MorphyFace::serialVersionId() const {
+DOTRACE("MorphyFace::serialVersionId");
+  return MFACE_SERIAL_VERSION_ID;
+}
+
 void MorphyFace::readFrom(Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
@@ -438,7 +446,14 @@ DOTRACE("MorphyFace::readFrom");
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  GrObj::readFrom(reader);
+  unsigned long svid = reader->readSerialVersionId();
+  if (svid == 0)
+	 GrObj::readFrom(reader);
+  else if (svid == 1)
+	 {
+		IOProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 }
 
 void MorphyFace::writeTo(Writer* writer) const {
@@ -447,7 +462,13 @@ DOTRACE("MorphyFace::writeTo");
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
-  GrObj::writeTo(writer);
+  if (MFACE_SERIAL_VERSION_ID == 0)
+	 GrObj::writeTo(writer);
+  else if (MFACE_SERIAL_VERSION_ID == 1)
+	 {
+		IOProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 ///////////////////////////////////////////////////////////////////////
