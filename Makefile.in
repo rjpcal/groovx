@@ -481,7 +481,7 @@ svn_export:
 	echo $(DISTNAME)
 	mkdir -p snapshots
 	cd snapshots && \
-	  svn export file:///home/rjpeters/svnrepos/code/trunk/groovx $(DISTNAME) \
+	  svn export file:///home/rjpeters/svnrepo/code/trunk/groovx $(DISTNAME) \
 	  && rm -r $(DISTNAME)/logs/* \
 	  && (cd $(DISTNAME) && autoconf) \
 	  && (echo "date is $(DISTNAME)" > $(DISTNAME)/SNAPSHOT) \
