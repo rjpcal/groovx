@@ -21,29 +21,46 @@ if { ![Togl::inited] } { Togl::init; update }
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {
     Tlist::loadObjidFile
 } {wrong \# args: should be "Tlist::loadObjidFile\
-		  objid_file num_lines \?offset\?"}
+		  objid_file objids posids \?num_lines=-1\?"}
 test "TlistTcl-Tlist::loadObjidFile" "too many args" {
-    Tlist::loadObjidFile j u n k
+    Tlist::loadObjidFile j u n k y
 } {wrong \# args: should be "Tlist::loadObjidFile\
-		  objid_file num_lines \?offset\?"}
-test "TlistTcl-Tlist::loadObjidFile" "normal read with no offset" {
-	 Tlist::loadObjidFile $::TEST_DIR/objid_file -1 0
-	 Trial::countAll
-} {^3$} $skip_known_bug
-test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
-	 Tlist::loadObjidFile $::TEST_DIR/objid_file 2 1
-	 Trial::countAll
-} {^2$} $skip_known_bug
+		  objid_file objids posids \?num_lines=-1\?"}
+test "TlistTcl-Tlist::loadObjidFile" "normal read" {
+	 set objids [new Face 11]
+	 set posids [new Position 4]
+	 set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids -1]
+	 IoDb::clear
+	 llength $trials
+} {^3$}
+test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines" {
+	 set objids [new Face 11]
+	 set posids [new Position 4]
+	 set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids 2]
+	 IoDb::clear
+	 llength $trials
+} {^2$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
-	 Tlist::loadObjidFile $::TEST_DIR/empty_file -1 0
-	 Trial::countAll
-} {^0$} $skip_known_bug
+	 set objids [new Face 11]
+	 set posids [new Position 4]
+	 set trials [Tlist::loadObjidFile $::TEST_DIR/empty_file $objids $posids -1]
+	 IoDb::clear
+	 llength $trials
+} {^0$}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
-	 Tlist::loadObjidFile $::TEST_DIR/junk_text_file -1 0
-} {Tlist::loadObjidFile: IO::InputError: Trial} $skip_known_bug
+	 set o [new Face 11]
+	 set p [new Position 4]
+	 set trials [Tlist::loadObjidFile $::TEST_DIR/junk_text_file $o $p -1]
+	 IoDb::clear
+	 llength $trials
+} {Tlist::loadObjidFile: IO::InputError:}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
-	 Tlist::loadObjidFile $::TEST_DIR/junk_bin_file -1 0
-} {Tlist::loadObjidFile: IO::InputError: Trial} $skip_known_bug
+	 set o [new Face 11]
+	 set p [new Position 4]
+	 set trials [Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1]
+	 IoDb::clear
+	 llength $trials
+} {Tlist::loadObjidFile: IO::InputError:}
 
 #  [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 

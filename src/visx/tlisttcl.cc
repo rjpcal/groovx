@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu May 17 10:28:21 2001
+// written: Wed May 23 10:31:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "trial.h"
 
 #include "gx/gxnode.h"
+#include "gx/gxseparator.h"
 
 #include "io/iditem.h"
 
@@ -26,6 +27,9 @@
 #include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
+
+#include <fstream.h>
+#include <strstream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -53,11 +57,6 @@ namespace TlistTcl {
   class WriteResponsesCmd;
 
   class TlistPkg;
-}
-
-namespace {
-  // error messages
-  const char* const bad_trial_msg = "invalid trial id";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -255,21 +254,68 @@ protected:
 class TlistTcl::LoadObjidFileCmd : public Tcl::TclCmd {
 public:
   LoadObjidFileCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "objid_file num_lines ?offset?", 3, 4, false) {}
+	 Tcl::TclCmd(interp, cmd_name, "objid_file objids posids ?num_lines=-1?",
+					 4, 5, false) {}
 protected:
   virtual void invoke() {
 	 const char* objid_file =                 getCstringFromArg(1);
-	 int         num_lines  =                 getIntFromArg(2);
-	 int         offset     = (objc() >= 4) ? getIntFromArg(3) : 0;
+	 int         num_lines  = (objc() >= 5) ? getIntFromArg(4) : -1;
 
-	 try {
-		int num_loaded =
-		  TlistUtils::loadObjidFile(objid_file, num_lines, offset);
-		returnInt(num_loaded);
-	 }
-	 catch (IO::IoError& err) {
-		throw Tcl::TclError(err.msg_cstr());
-	 }
+	 // Determine whether we will read to the end of the input stream, or
+	 // whether we will read only num_lines lines from the stream.
+	 bool read_to_eof = (num_lines < 0);
+
+	 int num_objids = getSequenceLengthOfArg(2);
+	 fixed_block<int> objids(num_objids);
+	 getSequenceFromArg(2, objids.begin(), (int*)0);
+
+	 int num_posids = getSequenceLengthOfArg(3);
+	 fixed_block<int> posids(num_posids);
+	 getSequenceFromArg(3, posids.begin(), (int*)0);
+
+	 STD_IO::ifstream ifs(objid_file);
+
+	 const int BUF_SIZE = 200;
+	 char line[BUF_SIZE];
+
+	 int num_read = 0;
+	 while ( (read_to_eof || num_read < num_lines) 
+				&& ifs.getline(line, BUF_SIZE) )
+		{
+		  // Allow for whole-line comments beginning with '#'. If '#' is
+		  // seen, skip this line and continue with the next line. The trial
+		  // count is unaffected.
+		  if (line[0] == '#')
+			 continue;
+
+		  if (ifs.fail()) throw IO::InputError("Tlist::loadObjidFile");
+
+		  istrstream ist(line);
+
+		  IdItem<Trial> trial(Trial::make());
+		  IdItem<GxSeparator> sep(GxSeparator::make());
+
+		  int objn = 0;
+		  int posn = 0;
+		  while (ist >> objn)
+			 {
+				IdItem<GxSeparator> innersep(GxSeparator::make());
+				innersep->addChild(posids[posn]);
+				innersep->addChild(objids[objn-1]);
+				sep->addChild(innersep->id());
+				++posn;
+			 }
+
+		  if (ist.fail() && !ist.eof())
+			 throw IO::InputError("Tlist::loadObjidFile");
+
+		  trial->addNode(sep->id());
+
+		  lappendVal(trial->id());
+
+		  ++num_read;
+		}
+
   }
 };
 
