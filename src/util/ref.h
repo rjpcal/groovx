@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu May 17 10:37:40 2001
+// written: Thu May 17 10:48:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,9 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEMUTILS_H_DEFINED)
 #include "io/iditemutils.h"
 #endif
+
+template <class T> class IdItem;
+template <class T> class MaybeIdItem;
 
 template <class Container, class T>
 class IdItemInserter {
@@ -71,6 +74,10 @@ public:
 
   template <class U>
   IdItem(const IdItem<U>& other) : itsHandle(other.handle()) {}
+
+  // Will raise an exception if the MaybeIdItem is invalid
+  template <class U>
+  IdItem(const MaybeIdItem<U>& other);
 
         T* operator->()       { return itsHandle.get(); }
   const T* operator->() const { return itsHandle.get(); }
@@ -225,6 +232,18 @@ MIdItemInserter<Container, T>::operator=(T* obj)
   itsContainer.push_back(MaybeIdItem<T>(obj));
   return *this;
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+// inline member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+template <class U>
+inline IdItem<T>::IdItem(const MaybeIdItem<U>& other) :
+  itsHandle(other.get())
+{}
 
 static const char vcid_iditem_h[] = "$Header$";
 #endif // !IDITEM_H_DEFINED
