@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Tue Nov  9 11:15:21 1999
+// written: Tue Nov  9 15:17:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,13 +19,13 @@
 
 #include "error.h"
 #include "exptdriver.h"
-#include "tclevalcmd.h"
 #include "objtogl.h"
-#include "toglconfig.h"
 #include "sound.h"
 #include "soundlist.h"
 #include "reader.h"
+#include "tclevalcmd.h"
 #include "tclobjlock.h"
+#include "toglconfig.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -129,9 +129,9 @@ private:
 	 { raiseBackgroundError(msg.c_str()); }
 
   static Tcl_ObjCmdProc privateHandleCmd;
-  int handleResponse(const char* keysym) const;
+  void handleResponse(const char* keysym) const;
   int getRespFromKeysym(const char* keysym) const;
-  int feedback(int response) const;
+  void feedback(int response) const;
   void updateFeedbacks();
   void updateRegexps();
 
@@ -147,10 +147,8 @@ private:
 
   int getCheckedInt(Tcl_Obj* intObj) const throw(ErrorWithMsg);
 
-  bool getCheckedBooleanExpr(Tcl_Obj* booleanExprObj) const throw(ErrorWithMsg);
-
   string getBindingScript() const
-	 { return string("{ " + itsPrivateCmdName + "%K }"); }
+	 { return string("{ " + itsPrivateCmdName + " %K }"); }
 
   void clearEventQueue() const throw()
 	 {
@@ -171,16 +169,13 @@ private:
 		return (text-1);
 	 }
 
-  bool isFeedbackConditionTrue(int index) const throw(ErrorWithMsg)
-	 { return getCheckedBooleanExpr(itsFeedbacks[index].condition); }
-
   string getUniqueCmdName()
 	 {
 		const string privateHandleCmdName = "__KbdResponseHdlrPrivate::handle";
 
 		vector<char> buf(privateHandleCmdName.length() + 32);
 		ostrstream ost(&buf[0], privateHandleCmdName.length() + 32);
-		ost << privateHandleCmdName << ++cmdCounter << '\0';
+		ost << privateHandleCmdName << ++cmdCounter << '\0';		
 		return string(&buf[0]);
 	 }
 
@@ -193,34 +188,82 @@ private:
   mutable Tcl_Command itsTclCmdToken;
   const string itsPrivateCmdName;
 
-  struct RegExp_ResponseVal {
-    RegExp_ResponseVal(Tcl_RegExp rx, int rv) : regexp(rx), resp_val(rv) {}
-    Tcl_RegExp regexp;
-    int resp_val;
+  class RegExp_ResponseVal {
+  public:
+    RegExp_ResponseVal(Tcl_RegExp rx, int rv) : itsRegexp(rx), itsRespVal(rv) {}
+
+	 bool matchesString(Tcl_Interp* interp,
+							  const char* string_to_match) throw(ErrorWithMsg)
+		{
+		  static const int REGEX_ERROR        = -1;
+		  static const int REGEX_NO_MATCH     =  0;
+		  static const int REGEX_FOUND_MATCH  =  1;
+
+		  int regex_result =
+			 Tcl_RegExpExec(interp, itsRegexp, string_to_match, string_to_match);
+
+		  switch (regex_result) {
+		  case REGEX_ERROR:
+			 throw ErrorWithMsg("error executing regular expression "
+									  "for KbdResponseHdlr");
+
+		  case REGEX_NO_MATCH:
+			 return false;
+
+		  case REGEX_FOUND_MATCH:
+			 return true;
+		
+		  default: // "can't happen"
+			 Assert(false);
+		  }
+		}
+
+	 int responseValue() { return itsRespVal; }
+
+  private:
+    Tcl_RegExp itsRegexp;
+    int itsRespVal;
   };
 
   string itsKeyRespPairs;
   mutable vector<RegExp_ResponseVal> itsRegexps;
 
-  string itsFeedbackPairs;
-  bool itsUseFeedback;
-
-//    struct Condition_Feedback {
-//    	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res);
-//  	 Condition_Feedback(const Condition_Feedback& rhs);
-//  	 Condition_Feedback& operator=(const Condition_Feedback& rhs);
-
-//    	 TclObjPtr condition;
-//    	 TclObjPtr result; 
-//    };
-  struct Condition_Feedback {
+  class Condition_Feedback {
+  public:
   	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-  		condition(cond), result(res) {}		
-  	 Tcl_Obj* condition;
-  	 Tcl_Obj* result; 
+  		itsCondition(cond),
+ 		itsResultCmd(res, TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
+		{}
+
+	 bool isTrue(Tcl_Interp* interp) throw(ErrorWithMsg)
+		{
+		  int expr_result;
+		  if (Tcl_ExprBooleanObj(interp, itsCondition, &expr_result) != TCL_OK) {
+			 throw ErrorWithMsg("error evaluating boolean expression "
+									  "for KbdResponseHdlr");
+		  }
+		  return bool(expr_result);
+		}
+
+	 void invoke(Tcl_Interp* interp) throw(ErrorWithMsg)
+		{ itsResultCmd.invoke(interp); }
+
+	 bool invokeIfTrue(Tcl_Interp* interp) throw (ErrorWithMsg)
+		{
+		  if (isTrue(interp)) 
+			 { invoke(interp); return true; }
+		  return false;
+		}
+
+  private:
+	 TclObjPtr itsCondition;
+ 	 TclEvalCmd itsResultCmd;
   };
 
+  string itsFeedbackPairs;
   mutable vector<Condition_Feedback> itsFeedbacks;
+
+  bool itsUseFeedback;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -238,14 +281,15 @@ KbdResponseHdlr::Impl::Impl(KbdResponseHdlr* owner,
   itsKeyRespPairs(key_resp_pairs),
   itsRegexps(),
   itsFeedbackPairs(),
-  itsUseFeedback(true),
-  itsFeedbacks()
+  itsFeedbacks(),
+  itsUseFeedback(true)
 {
 DOTRACE("KbdResponseHdlr::Impl::Impl");
 }
 
 KbdResponseHdlr::Impl::~Impl() {
 DOTRACE("KbdResponseHdlr::Impl::~Impl");
+
   // We must check if itsInterp has been tagged for deletion already,
   // since if it is then we must not attempt to use it to delete a Tcl
   // command (this results in "called Tcl_HashEntry on deleted
@@ -254,6 +298,8 @@ DOTRACE("KbdResponseHdlr::Impl::~Impl");
   // destruction will delete all commands associated with it.
 
   if ( !Tcl_InterpDeleted(itsInterp) ) {
+	 ignore();
+ 
 	 DebugPrintNL("deleting Tcl command " + itsPrivateCmdName);
 
 	 DebugEvalNL((void*) itsTclCmdToken);
@@ -377,13 +423,16 @@ DOTRACE("KbdResponseHdlr::Impl::rhAbortTrial");
 
 void KbdResponseHdlr::Impl::attend() const {
 DOTRACE("KbdResponseHdlr::Impl::attend");
-  Assert(itsInterp != 0);
-
   clearEventQueue();
   
   try {
-	 ObjTogl::theToglConfig()->bind(eventSequence.c_str(),
-											  getBindingScript().c_str());
+	 if (ObjTogl::toglHasBeenCreated()) {
+		ObjTogl::theToglConfig()->bind(eventSequence.c_str(),
+												 getBindingScript().c_str());
+	 }
+  }
+  catch (ErrorWithMsg& err) {
+	 raiseBackgroundError(err.msg());
   }
   catch (...) {
 	 raiseBackgroundError("error creating event binding "
@@ -393,11 +442,14 @@ DOTRACE("KbdResponseHdlr::Impl::attend");
 
 void KbdResponseHdlr::Impl::ignore() const {
 DOTRACE("KbdResponseHdlr::Impl::ignore");
-  Assert(itsInterp != 0);
-
   try {
-	 ObjTogl::theToglConfig()->bind(eventSequence.c_str(),
-											  nullScript.c_str());
+	 if (ObjTogl::toglHasBeenCreated()) {
+		ObjTogl::theToglConfig()->bind(eventSequence.c_str(),
+												 nullScript.c_str());
+	 }
+  }
+  catch (ErrorWithMsg& err) {
+	 raiseBackgroundError(err.msg());
   }
   catch (...) {
 	 raiseBackgroundError("error creating event binding "
@@ -406,7 +458,9 @@ DOTRACE("KbdResponseHdlr::Impl::ignore");
 }
 
 void KbdResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
-DOTRACE("KbdResponseHdlr::Impl::raiseBackgroundError");
+DOTRACE("KbdResponseHdlr::Impl::raiseBackgroundError"); 
+  DebugEvalNL(msg); 
+  Assert(itsInterp != 0);
   Tcl_AppendResult(itsInterp, msg, (char*) 0);
   Tcl_BackgroundError(itsInterp);
 }
@@ -421,8 +475,8 @@ DOTRACE("KbdResponseHdlr::Impl::raiseBackgroundError");
 //--------------------------------------------------------------------
 
 int KbdResponseHdlr::Impl::privateHandleCmd(
-	       ClientData clientData, Tcl_Interp*, int objc, Tcl_Obj *const objv[]
-	 ) {
+  ClientData clientData, Tcl_Interp* interp, int objc, Tcl_Obj *const objv[]
+  ) {
 DOTRACE("KbdResponseHdlr::Impl::privateHandleCmd");
   // We assert that objc is 2 because this command should only ever
   // be invoked by a callback set up by KbdResponseHdlr, which
@@ -432,11 +486,23 @@ DOTRACE("KbdResponseHdlr::Impl::privateHandleCmd");
   KbdResponseHdlr::Impl* impl =
 	 static_cast<KbdResponseHdlr::Impl *>(clientData);
 
-  return impl->handleResponse(Tcl_GetString(objv[1]));
+  try {
+	 impl->handleResponse(Tcl_GetString(objv[1]));
+  }
+  catch (ErrorWithMsg& err) {
+	 Tcl_AppendResult(interp, err.msg().c_str(), (char*) 0);
+	 return TCL_ERROR;
+  }
+  catch (...) {
+	 Tcl_AppendResult(interp, "an error of unknown type occurred", (char*) 0);
+	 return TCL_ERROR;
+  }
+
+  return TCL_OK;
 }
 
 
-int KbdResponseHdlr::Impl::handleResponse(const char* keysym) const {
+void KbdResponseHdlr::Impl::handleResponse(const char* keysym) const {
 DOTRACE("KbdResponseHdlr::Impl::handleResponse");
 
   exptDriver.edResponseSeen();
@@ -445,28 +511,23 @@ DOTRACE("KbdResponseHdlr::Impl::handleResponse");
 
   int response = getRespFromKeysym(keysym);
 
-  int tcl_result = TCL_OK;
-
   if ( !isValidResponse(response) ) {
 	 exptDriver.edAbortTrial();
   }
 
   else {
 	 exptDriver.edProcessResponse(response);
-	 if (itsUseFeedback) { tcl_result = feedback(response); }
+	 if (itsUseFeedback) { feedback(response); }
   }
-
-  return tcl_result;
 }
 
 //--------------------------------------------------------------------
 //
 // KbdResponseHdlr::getRespFromKeysysm --
 //
-// This procedure looks up a character string in the KbdResponseHdlrs
-// regexp table. It returns the response value associated with the
-// first regexp in itsRegexps that matches the given character string,
-// or returns INVALID_RESPONSE if none of the regexps give a match.
+// This procedure returns the response value associated with the first
+// regexp in itsRegexps that matches the given character string, or
+// returns INVALID_RESPONSE if none of the regexps give a match.
 //
 //--------------------------------------------------------------------
 
@@ -476,35 +537,16 @@ DOTRACE("KbdResponseHdlr::Impl::getRespFromKeysym");
 
   const char* response_string = extractStringFromKeysym(keysym);
     
-  static const int REGEX_ERROR        = -1;
-  static const int REGEX_NO_MATCH     =  0;
-  static const int REGEX_FOUND_MATCH  =  1;
-
   for (int i = 0; i < itsRegexps.size(); ++i) {
-    int regex_result = Tcl_RegExpExec(itsInterp, itsRegexps[i].regexp, 
-												  response_string, response_string);
-
-	 switch (regex_result) {
-	 case REGEX_ERROR:
-		raiseBackgroundError("error executing regular expression "
-									"for KbdResponseHdlr");
-		return ResponseHandler::INVALID_RESPONSE;
-
-	 case REGEX_NO_MATCH:
-		break; // continue with next loop iteration
-
-	 case REGEX_FOUND_MATCH:
-		return itsRegexps[i].resp_val;
-		
-	 default: // "can't happen"
-		Assert(false);
+	 if (itsRegexps[i].matchesString(itsInterp, response_string)) {
+		return itsRegexps[i].responseValue();
 	 }
   }
 
   return ResponseHandler::INVALID_RESPONSE;
 }
 
-int KbdResponseHdlr::Impl::feedback(int response) const {
+void KbdResponseHdlr::Impl::feedback(int response) const {
 DOTRACE("KbdResponseHdlr::Impl::feedback");
   Assert(itsInterp != 0);
 
@@ -513,27 +555,12 @@ DOTRACE("KbdResponseHdlr::Impl::feedback");
   Tcl_SetVar2Ex(itsInterp, "resp_val", NULL,
 					 Tcl_NewIntObj(response), TCL_GLOBAL_ONLY);
 
-  try {
-	 for (int i = 0; i < itsFeedbacks.size(); ++i) {
-		if ( isFeedbackConditionTrue(i) ) {
-		  // Then evaluate the associated result script..,
-		  if (Tcl_EvalObjEx(itsInterp, itsFeedbacks[i].result,
-								  TCL_EVAL_GLOBAL) != TCL_OK) {
-			 raiseBackgroundError("error evaluating feedback result script "
-										 "in KbdResponseHdlr::feedback");
-		  }
-		  // ... and exit the loop since we only evaluate at most one
-		  // result script
-		  break;
-		}
-	 }
-  }
-  catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg());
+  bool feedbackGiven = false;
+  for (int i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
+	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsInterp);
   }
 
   Tcl_UnsetVar(itsInterp, "resp_val", 0);
-  return TCL_OK;
 }
 
 
@@ -542,33 +569,6 @@ DOTRACE("KbdResponseHdlr::Impl::feedback");
 // KbdResponseHdlr::updateFeedacks --
 //
 //---------------------------------------------------------------------
-
-//  KbdResponseHdlr::Condition_Feedback::
-//  Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-//    condition(cond), result(res)
-//  {
-//    DOTRACE("Condition_Feedback(Tcl_Obj*, Tcl_Obj*)");
-//    DebugEval(cond->refCount); DebugEvalNL(res->refCount);
-//  }
-
-//  KbdResponseHdlr::Condition_Feedback::
-//  Condition_Feedback(const Condition_Feedback& rhs) :
-//    condition(rhs.condition), result(rhs.result)
-//  {
-//    DOTRACE("Condition_Feedback(const Condition_Feedback&)");
-//    Tcl_Obj* p = condition; DebugEval(p->refCount);
-//    Tcl_Obj* q = result;    DebugEvalNL(q->refCount);
-//  }
-
-//  KbdResponseHdlr::Condition_Feedback&
-//  KbdResponseHdlr::Condition_Feedback::
-//  operator=(const Condition_Feedback& rhs)
-//  {
-//    DOTRACE("Condition_Feedback::operator=");
-//    condition = rhs.condition; result = rhs.result; return *this;
-//    Tcl_Obj* p = condition; DebugEval(p->refCount);
-//    Tcl_Obj* q = result;    DebugEvalNL(q->refCount);
-//  }
 
 void KbdResponseHdlr::Impl::updateFeedbacks() {
 DOTRACE("KbdResponseHdlr::Impl::updateFeedbacks");
@@ -582,10 +582,9 @@ DOTRACE("KbdResponseHdlr::Impl::updateFeedbacks");
 	 TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackPairs.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
-	 // Loop over the regexp/response value pairs
 	 for (int i = 0; i < num_pairs; ++i) {
 
-		Tcl_Obj* current_pair = pairs[i];
+		TclObjPtr current_pair = pairs[i];
 
 		// Check that the length of the "pair" is really 2
 		if (getCheckedListLength(current_pair) != 2) {
@@ -594,15 +593,10 @@ DOTRACE("KbdResponseHdlr::Impl::updateFeedbacks");
 		  return;
 		}
 
-		// First pair element
-		Tcl_Obj *first_obj = getCheckedListElement(current_pair, 0);
-		Tcl_IncrRefCount(first_obj);
-
-		// Second pair element
-		Tcl_Obj *second_obj = getCheckedListElement(current_pair, 1);
-		Tcl_IncrRefCount(second_obj);
+		Tcl_Obj *condition = getCheckedListElement(current_pair, 0);
+		Tcl_Obj *result = getCheckedListElement(current_pair, 1);
     
-		itsFeedbacks.push_back(Impl::Condition_Feedback(first_obj, second_obj));
+		itsFeedbacks.push_back(Impl::Condition_Feedback(condition, result));
 	 }
 
 	 DebugPrintNL("updateFeedbacks success!");
@@ -635,9 +629,6 @@ DOTRACE("KbdResponseHdlr::updateRegexps");
 	 TclObjPtr pairs_list(Tcl_NewStringObj(itsKeyRespPairs.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
-	 // Loop over the regexp/response value pairs, and store in
-	 // itsRegexps a compiled Tcl_RegExp and integer response value for
-	 // each pair.
 	 for (int i = 0; i < num_pairs; ++i) {
 
 		TclObjPtr current_pair = pairs[i];
@@ -649,11 +640,9 @@ DOTRACE("KbdResponseHdlr::updateRegexps");
 		  return;
 		}
 
-		// First pair element
 		Tcl_Obj* patternObj = getCheckedListElement(current_pair, 0);
 		Tcl_RegExp regexp = getCheckedRegexp(patternObj);
 
-		// Second pair element
 		Tcl_Obj *response_valObj = getCheckedListElement(current_pair, 1);
 		int response_val = getCheckedInt(response_valObj);
     
@@ -726,19 +715,6 @@ DOTRACE("KbdResponseHdlr::Impl::getCheckedInt");
   return return_val;
 }
 
-bool KbdResponseHdlr::Impl::getCheckedBooleanExpr(
-  Tcl_Obj* booleanExprObj
-) const throw(ErrorWithMsg) {
-DOTRACE("KbdResponseHdlr::Impl::getCheckedBooleanExpr");
-  int expr_result;
-
-  if (Tcl_ExprBooleanObj(itsInterp, booleanExprObj, &expr_result) != TCL_OK) {
-	 throw ErrorWithMsg("error evaluating boolean expression "
-							  "for KbdResponseHdlr");
-  }
-  return bool(expr_result);
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -751,38 +727,28 @@ DOTRACE("KbdResponseHdlr::Impl::getCheckedBooleanExpr");
 KbdResponseHdlr::KbdResponseHdlr(const string& key_resp_pairs) : 
   ResponseHandler(),
   itsImpl(new Impl(this, key_resp_pairs))
-{
-DOTRACE("KbdResponseHdlr::KbdResponseHdlr");
-}
+{}
 
-KbdResponseHdlr::~KbdResponseHdlr() {
-DOTRACE("KbdResponseHdlr::~KbdResponseHdlr");
-  delete itsImpl;
-}
+KbdResponseHdlr::~KbdResponseHdlr()
+  { delete itsImpl; }
 
-void KbdResponseHdlr::serialize(ostream &os, IOFlag flag) const {
-  itsImpl->serialize(os, flag);
-}
+void KbdResponseHdlr::serialize(ostream &os, IOFlag flag) const
+  { itsImpl->serialize(os, flag); }
 
-void KbdResponseHdlr::deserialize(istream &is, IOFlag flag) {
-  itsImpl->deserialize(is, flag);
-}
+void KbdResponseHdlr::deserialize(istream &is, IOFlag flag)
+  { itsImpl->deserialize(is, flag); }
 
-int KbdResponseHdlr::charCount() const {
-  return itsImpl->charCount();
-}
+int KbdResponseHdlr::charCount() const
+  { return itsImpl->charCount(); }
 
-void KbdResponseHdlr::readFrom(Reader* reader) {
-  itsImpl->readFrom(reader);
-}
+void KbdResponseHdlr::readFrom(Reader* reader)
+  { itsImpl->readFrom(reader); }
 
-void KbdResponseHdlr::writeTo(Writer* writer) const {
-  itsImpl->writeTo(writer);
-}
+void KbdResponseHdlr::writeTo(Writer* writer) const
+  { itsImpl->writeTo(writer); }
 
-void KbdResponseHdlr::setInterp(Tcl_Interp* interp) {
-  itsImpl->setInterp(interp);
-}
+void KbdResponseHdlr::setInterp(Tcl_Interp* interp)
+  { itsImpl->setInterp(interp); }
 
 const string& KbdResponseHdlr::getKeyRespPairs() const {
 DOTRACE("KbdResponseHdlr::getKeyRespPairs");
@@ -814,19 +780,14 @@ DOTRACE("KbdResponseHdlr::setFeedbackPairs");
   itsImpl->setFeedbackPairs(feedback_string);
 }
 
-void KbdResponseHdlr::rhBeginTrial() const {
-DOTRACE("KbdResponseHdlr::rhBeginTrial");
-  itsImpl->rhBeginTrial();
-}
+void KbdResponseHdlr::rhBeginTrial() const
+  { itsImpl->rhBeginTrial(); }
 
-void KbdResponseHdlr::rhAbortTrial() const {
-  itsImpl->rhAbortTrial();
-}
+void KbdResponseHdlr::rhAbortTrial() const
+  { itsImpl->rhAbortTrial(); }
 
-void KbdResponseHdlr::rhHaltExpt() const {
-DOTRACE("KbdResponseHdlr::rhHaltExpt");
-  itsImpl->rhHaltExpt();
-}
+void KbdResponseHdlr::rhHaltExpt() const
+  { itsImpl->rhHaltExpt(); }
 
 static const char vcid_kbdresponsehdlr_cc[] = "$Header$";
 #endif // !KBDRESPONSEHDLR_CC_DEFINED
