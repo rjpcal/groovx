@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Nov 22 17:18:23 2002
+// written: Sat Dec 21 12:14:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,10 +81,6 @@ DOTRACE("Th_Init");
   pkg1->def( "addAbortEvent", "th_id event_id",
              Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
                             TimingHdlr::FROM_ABORT) );
-
-  pkg1->eval("namespace eval Th { "
-             "    proc autosavePeriod {id args} { "
-             "        error {use Expt::autosavePeriod instead} } }");
 
   pkg1->namespaceAlias("Th");
 

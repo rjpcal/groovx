@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Nov 22 17:18:23 2002
+// written: Sat Dec 21 12:15:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -187,15 +187,6 @@ DOTRACE("Rh_Init");
   Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
   pkg3->inherit("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg3);
-
-  pkg3->eval("namespace eval KbdResponseHdlr {\n"
-             "  proc keyRespPairs args {\n"
-             "    return [eval EventResponseHdlr::inputResponseMap $args]\n"
-             "  }\n"
-             "  proc feedbackPairs args {\n"
-             "    return [eval EventResponseHdlr::feedbackMap $args]\n"
-             "  }\n"
-             "}\n");
 
   pkg3->namespaceAlias("KbdRh");
 
