@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Wed Aug 15 17:47:19 2001
+// written: Wed Aug 22 17:42:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,26 +15,11 @@
 
 #include "gfx/gbcolor.h"
 
-#include "io/reader.h"
-#include "io/writer.h"
-
 #include "util/strings.h"
 
-#include <strstream.h>
-
-#include "util/debug.h"
-
-namespace GbColorLocal
-{
-  void raiseScanError();
-}
-
-void GbColorLocal::raiseScanError()
-{
-  throw ValueError("couldn't scan data for GbColor");
-}
-
 GbColor::GbColor(double v) : RgbaColor(v) {}
+
+GbColor::GbColor(double r, double g, double b, double a) : RgbaColor(r,g,b,a) {}
 
 GbColor::~GbColor() {}
 
@@ -52,38 +37,9 @@ fstring GbColor::getNativeTypeName() const
   static fstring name("GbColor"); return name;
 }
 
-void GbColor::printTo(STD_IO::ostream& os) const
-{
-  os << r() << " " << g()  << " " << b() << " " << a();
-}
+unsigned int GbColor::numValues() const { return 4; }
 
-void GbColor::scanFrom(STD_IO::istream& is)
-{
-  is >> r();
-  if (is.fail() || is.eof()) GbColorLocal::raiseScanError();
-
-  is >> g();
-  if (is.fail() || is.eof()) GbColorLocal::raiseScanError();
-
-  is >> b();
-  if (is.fail() || is.eof()) GbColorLocal::raiseScanError();
-
-  is >> a();
-  if (is.fail() && !is.eof()) GbColorLocal::raiseScanError();
-}
-
-const char* GbColor::get(Util::TypeCue<const char*>) const
-{
-  static char buf[256];
-  ostrstream ost(buf, 256);
-  printTo(ost);
-  return buf;
-}
-
-void GbColor::assignTo(Value& other) const
-{
-  other.set(this->get(Util::TypeCue<const char*>()));
-}
+const double* GbColor::constBegin() const { return RgbaColor::data(); }
 
 static const char vcid_gbcolor_cc[] = "$Header$";
 #endif // !GBCOLOR_CC_DEFINED
