@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Sep 29 15:33:56 1999
+// written: Mon Oct  4 13:58:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,6 +105,8 @@ private:
   int itsCachedBBPixelBorder;
 
   void updateBB() {
+  DOTRACE("GrObjImpl::updateBB");
+    DebugEval(itsRawBBIsCurrent);
 	 if (!itsRawBBIsCurrent) {
 		itsHasBB = self->grGetBoundingBox(itsCachedRawBB.l,
 													 itsCachedRawBB.t,
@@ -113,6 +115,7 @@ private:
 													 itsCachedBBPixelBorder);
 		itsRawBBIsCurrent = true;
 	 }
+	 DebugEvalNL(itsHasBB);
   }
 
 public:
@@ -227,6 +230,11 @@ DOTRACE("GrObj::GrObj");
 
   setRenderMode(render_mode);
   setUnRenderMode(unrender_mode);
+
+  // This is necessary because any representations that have been
+  // cached during the GrObj constructor will become invalid upon
+  // return to the derived class constructor.
+  sendStateChangeMsg();
 }
 
 // read the object's state from an input stream. The input stream must
@@ -239,6 +247,8 @@ DOTRACE("GrObj::GrObj(istream&)");
   itsImpl->itsDisplayList = glGenLists(1);
 
   attach(this);
+
+  sendStateChangeMsg();
 }
 
 // GrObj destructor
@@ -573,6 +583,9 @@ DOTRACE("GrObj::setMaxDimension");
 
 void GrObj::setAlignmentMode(AlignmentMode val) {
 DOTRACE("GrObj::setAlignmentMode");
+  DebugEval(val); 
+  DebugEvalNL(itsImpl->itsAlignmentMode); 
+
   if (val == itsImpl->itsAlignmentMode) return;
 
   switch (val) {
@@ -595,6 +608,8 @@ DOTRACE("GrObj::setAlignmentMode");
   } // end switch
 
   sendStateChangeMsg();
+
+  DebugEvalNL(itsImpl->itsAlignmentMode); 
 }
 
 void GrObj::setCenterX(double val) {
