@@ -296,6 +296,10 @@ public:
     { return Slice(start_, 1, nelems()); }
 
 
+  //
+  // Functions
+  //
+
   void apply(double func(double))
     {
 		double* p = start_;
@@ -303,6 +307,9 @@ public:
 		for (; p < end; ++p)
 		  *p = func(*p);
     }
+
+  // result = vec * this;
+  void leftMultAndAssign(const ConstSlice& vec, Slice& result) const;
 
 private:
   int index(int row, int col) const { return row + (col*mrows_); }

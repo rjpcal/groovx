@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar 13 11:55:52 2001
+// written: Tue Mar 13 12:24:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,6 +107,25 @@ void Mtx::reshape(int mrows, int ncols)
 
   mrows_ = mrows;
   ncols_ = ncols;
+}
+
+void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
+{
+  // e.g mrows == vec.nelems == 3   ncols == 4
+  //
+  //               | e11  e12  e13  e14 |
+  // [w1 w2 w3] *  | e21  e22  e23  e24 | = 
+  //               | e31  e32  e33  e34 |
+  //
+  //
+  // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
+
+  if ( (vec.nelems() != mrows_) ||
+		 (result.nelems() != ncols_) )
+	 throw ErrorWithMsg("dimension mismatch in Mtx::leftMultAndAssign");
+
+  for (int col = 0; col < ncols_; ++col)
+	 result[col] = Slice::dot(vec, this->column(col));
 }
 
 static const char vcid_mtx_cc[] = "$Header$";
