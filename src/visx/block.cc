@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Jul  7 17:11:43 2000
+// written: Fri Sep 22 18:30:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace {
   Tlist& theTlist = Tlist::theTlist();
   const string_literal ioTag("Block");
 
-  int charCountVecInt(const vector<int>& vec) {
+  int charCountVecInt(const std::vector<int>& vec) {
 	 int count = IO::gCharCount<int>(vec.size()) + 1;
 	 for (size_t i = 0; i < vec.size(); ++i) {
 		count += IO::gCharCount<int>(vec[i]);
@@ -79,7 +79,7 @@ public:
 	 itsExperiment(0)
 	 {}
 
-  vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
+  std::vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;		  // Index of the current trial
@@ -170,9 +170,9 @@ DOTRACE("Block::shuffle");
 
   Util::Urand generator(seed);
   
-  random_shuffle(itsImpl->itsTrialSequence.begin(),
-					  itsImpl->itsTrialSequence.end(),
-					  generator);
+  std::random_shuffle(itsImpl->itsTrialSequence.begin(),
+							 itsImpl->itsTrialSequence.end(),
+							 generator);
   itsImpl->updateCurrentTrial();
 }
 
@@ -256,7 +256,7 @@ void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::template readValueSeq<int>(
-		 reader, "trialSeq", back_inserter(itsImpl->itsTrialSequence));
+		 reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
   itsImpl->updateCurrentTrial();
@@ -440,7 +440,7 @@ DOTRACE("Block::processResponse");
 	 // If the response was incorrect, add a repeat of the current
 	 // trial to the block and reshuffle
 	 addTrial(currentTrial(), 1);
-	 random_shuffle(
+	 std::random_shuffle(
 		itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
 		itsImpl->itsTrialSequence.end());
   }
