@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Sat Mar  4 04:10:39 2000
+// written: Tue Mar  7 19:12:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "tclcmd.h"
 #include "stringifycmd.h"
 #include "tclveccmds.h"
+#include "util/strings.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -182,44 +183,53 @@ private:
 template <class T>
 void Tcl::TclItemPkg::declareGetter_(TclItemPkg* pkg, const char* cmd_name,
 												 Getter<T>* getter, const char* usage) {
-  pkg->addCommand( new Tcl::TVecGetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name), 
-															getter, usage, pkg->itsItemArgn) );
+  pkg->addCommand(
+         new Tcl::TVecGetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name), 
+											  getter, usage, pkg->itsItemArgn)
+			);
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareSetter_(TclItemPkg* pkg, const char* cmd_name,
 												 Setter<T>* setter, const char* usage) {
-  pkg->addCommand( new Tcl::TVecSetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name),
-															setter, usage, pkg->itsItemArgn) );
+  pkg->addCommand(
+		   new Tcl::TVecSetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name),
+											  setter, usage, pkg->itsItemArgn)
+			);
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareAttrib_(TclItemPkg* pkg, const char* attrib_name,
 												 Attrib<T>* attrib, const char* usage) {
-  pkg->addCommand( new Tcl::TVecAttribCmd<T>(pkg, pkg->makePkgCmdName(attrib_name),
-															attrib, usage, pkg->itsItemArgn) );
+  pkg->addCommand(
+			new Tcl::TVecAttribCmd<T>(pkg, pkg->makePkgCmdName(attrib_name),
+											  attrib, usage, pkg->itsItemArgn)
+			);
 }
 
 namespace Tcl {
 
 void TclItemPkg::instantiate() {
-  Getter<int>* gi=0;             declareGetter_(this, 0, gi, 0);
-  Getter<bool>* gb=0;            declareGetter_(this, 0, gb, 0);
-  Getter<double>* gd=0;          declareGetter_(this, 0, gd, 0);
-  Getter<const char*>* gcc=0;    declareGetter_(this, 0, gcc, 0);
-  Getter<const string&>* gcs=0;  declareGetter_(this, 0, gcs, 0);
+  declareGetter_(this, 0, (Getter<int>*) 0, 0);
+  declareGetter_(this, 0, (Getter<bool>*) 0, 0);
+  declareGetter_(this, 0, (Getter<double>*) 0, 0);
+  declareGetter_(this, 0, (Getter<const char*>*) 0, 0);
+  declareGetter_(this, 0, (Getter<const string&>*) 0, 0);
+  declareGetter_(this, 0, (Getter<const fixed_string&>*) 0, 0);
 
-  Setter<int>* si=0;             declareSetter_(this, 0, si, 0);
-  Setter<bool>* sb=0;            declareSetter_(this, 0, sb, 0);
-  Setter<double>* sd=0;          declareSetter_(this, 0, sd, 0);
-  Setter<const char*>* scc=0;    declareSetter_(this, 0, scc, 0);
-  Setter<const string&>* scs=0;  declareSetter_(this, 0, scs, 0);
+  declareSetter_(this, 0, (Setter<int>*) 0, 0);
+  declareSetter_(this, 0, (Setter<bool>*) 0, 0);
+  declareSetter_(this, 0, (Setter<double>*) 0, 0);
+  declareSetter_(this, 0, (Setter<const char*>*) 0, 0);
+  declareSetter_(this, 0, (Setter<const string&>*) 0, 0);
+  declareSetter_(this, 0, (Setter<const fixed_string&>*) 0, 0);
 
-  Attrib<int>* ai=0;             declareAttrib_(this, 0, ai, 0);
-  Attrib<bool>* ab=0;            declareAttrib_(this, 0, ab, 0);
-  Attrib<double>* ad=0;          declareAttrib_(this, 0, ad, 0);
-  Attrib<const char*>* acc=0;    declareAttrib_(this, 0, acc, 0);
-  Attrib<const string&>* acs=0;  declareAttrib_(this, 0, acs, 0);
+  declareAttrib_(this, 0, (Attrib<int>*) 0, 0);
+  declareAttrib_(this, 0, (Attrib<bool>*) 0, 0);
+  declareAttrib_(this, 0, (Attrib<double>*) 0, 0);
+  declareAttrib_(this, 0, (Attrib<const char*>*) 0, 0);
+  declareAttrib_(this, 0, (Attrib<const string&>*) 0, 0);
+  declareAttrib_(this, 0, (Attrib<const fixed_string&>*) 0, 0);
 }
 
 void TclItemPkg::declareAction(const char* action_name, Action* action,
