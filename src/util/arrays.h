@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Jun 26 12:21:18 2002
+// written: Wed Aug  7 15:32:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,9 +120,9 @@ struct static_block
 
 ///////////////////////////////////////////////////////////////////////
 /**
- * \c fixed_block is a simple wrapper for a dynamically allocated
- * array whose size is fixed on instantiation. Copying and assignment
- * are not allowed.
+ * \c fixed_block is a simple wrapper for a dynamically allocated array
+ * whose size is fixed at construction. Copying and assignment are not
+ * allowed.
  **/
 ///////////////////////////////////////////////////////////////////////
 
