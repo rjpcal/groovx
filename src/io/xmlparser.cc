@@ -63,7 +63,7 @@ XmlParser::~XmlParser()
   XML_ParserFree(itsParser);
 }
 
-void XmlParser::characterData(const char* text, int length) {}
+void XmlParser::characterData(const char* /*text*/, int /*length*/) {}
 
 void XmlParser::elementStartC(void* data, const char* el, const char** attr)
 {
