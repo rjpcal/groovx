@@ -2,7 +2,7 @@
 // iomgr.h
 // Rob Peters
 // created: Fri Apr 23 01:12:37 1999
-// written: Fri Sep 29 10:32:06 2000
+// written: Fri Nov  3 14:44:05 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -13,9 +13,12 @@
 #include "io/iodecls.h"
 #endif
 
+class fixed_string;
+
 namespace IO {
   namespace IoMgr {
 	 IO::IoObject* newIO(const char* type);
+	 IO::IoObject* newIO(const fixed_string& type);
   }
 }
 
