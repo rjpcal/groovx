@@ -365,13 +365,21 @@ namespace
 
     const rectd viewport = rectd(canvas.getScreenViewport());
 
+    dbg_dump(0, viewport);
+
     const vec3d screen_pos = canvas.screenFromWorld3(world_pos);
+
+    dbg_dump(0, screen_pos);
 
     const vec3d safe_screen = vec3d(viewport.center_x(),
                                     viewport.center_y(),
                                     0.5);
 
+    dbg_dump(0, safe_screen);
+
     const vec3d safe_world = canvas.worldFromScreen3(safe_screen);
+
+    dbg_dump(0, safe_world);
 
     glRasterPos3d(safe_world.x(), safe_world.y(), safe_world.z());
 
