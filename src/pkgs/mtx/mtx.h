@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 15:39:16 2002
+// written: Tue Feb 19 17:08:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -495,14 +495,18 @@ public:
   // This version will print the given name before printing the matrix contents
   void print(const char* mtxName) const;
 
+  //
+  // Iteration
+  //
+
   template <class M, class T>
   class iter_base
   {
-    M& mtx;
+    M* mtx;
     int elem;
 
   public:
-    iter_base(M& m, int e) : mtx(m), elem(e) {}
+    iter_base(M* m, int e) : mtx(m), elem(e) {}
 
     typedef std::random_access_iterator_tag iterator_category;
 
@@ -511,11 +515,11 @@ public:
     typedef T*           pointer;
     typedef T&           reference;
 
-    iter_base end() const { return iter_base(mtx, mtx.nelems()); }
+    iter_base end() const { return iter_base(mtx, mtx->nelems()); }
 
-    bool hasMore() const { return elem < mtx.nelems(); }
+    bool hasMore() const { return elem < mtx->nelems(); }
 
-    reference operator*() const { return mtx.at(elem); }
+    reference operator*() const { return mtx->at(elem); }
 
     // Comparison
 
@@ -542,6 +546,15 @@ public:
     iter_base operator+(int x) const { return iter_base(mtx, elem+x); }
     iter_base operator-(int x) const { return iter_base(mtx, elem-x); }
   };
+
+  typedef iter_base<Mtx, double> iterator;
+  typedef iter_base<const Mtx, const double> const_iterator;
+
+  iterator begin_nc() { return iterator(this, 0); }
+  iterator end_nc() { return iterator(this, nelems()); }
+
+  const_iterator begin() const { return const_iterator(this, 0); }
+  const_iterator end() const { return const_iterator(this, nelems()); }
 
   //
   // Data access
@@ -644,31 +657,11 @@ public:
     return res;
   }
 
-  double min(int* min_pos = 0) const
-  {
-    double res = at(0);
-    int pos = 0;
-    for (int i = 1; i < nelems(); ++i)
-      {
-        double v = at(i);
-        if (v < res) { res = v; pos = i; }
-      }
-    if (min_pos != 0) *min_pos = pos;
-    return res;
-  }
+  const_iterator find_min() const;
+  const_iterator find_max() const;
 
-  double max(int* max_pos = 0) const
-  {
-    double res = at(0);
-    int pos = 0;
-    for (int i = 1; i < nelems(); ++i)
-      {
-        double v = at(i);
-        if (v > res) { res = v; pos = i; }
-      }
-    if (max_pos != 0) *max_pos = pos;
-    return res;
-  }
+  double min() const { return *(find_min()); }
+  double max() const { return *(find_max()); }
 
   double sum() const
   {
@@ -677,6 +670,8 @@ public:
       res += at(i);
     return res;
   }
+
+  double mean() const { return sum() / nelems(); }
 
   void apply(double func(double)) { itsImpl.apply(func); }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 15:18:49 2002
+// written: Tue Feb 19 17:05:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -465,6 +465,17 @@ void Mtx::swapColumns(int c1, int c2)
 
   memswap(itsImpl.address_nc(0,c1), itsImpl.address_nc(0,c2), mrows());
 }
+
+Mtx::const_iterator Mtx::find_min() const
+{
+  return std::min_element(begin(), end());
+}
+
+Mtx::const_iterator Mtx::find_max() const
+{
+  return std::max_element(begin(), end());
+}
+
 
 Mtx& Mtx::operator+=(const Mtx& other)
 {
