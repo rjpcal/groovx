@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iditemutils.cc
+// iditem.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,22 +10,20 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IDITEMUTILS_CC_DEFINED
-#define IDITEMUTILS_CC_DEFINED
+#ifndef IDITEM_CC_DEFINED
+#define IDITEM_CC_DEFINED
 
-#include "io/io.h"
-
-#include "io/iditemutils.h"
+#include "io/iditem.h"
 
 #include "io/iodb.h"
 
-bool IdItemUtils::isValidId(int id) {
+bool IdItemUtils::isValidId(IO::UID id) {
   return IoDb::theDb().isValidId(id);
 }
 
-IO::IoObject* IdItemUtils::getCheckedItem(int id) {
+IO::IoObject* IdItemUtils::getCheckedItem(IO::UID id) {
   return IoDb::theDb().getCheckedPtrBase(id);
 }
 
-static const char vcid_iditemutils_cc[] = "$Header$";
-#endif // !IDITEMUTILS_CC_DEFINED
+static const char vcid_iditem_cc[] = "$Header$";
+#endif // !IDITEM_CC_DEFINED
