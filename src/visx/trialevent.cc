@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Dec 13 10:54:19 2002
+// written: Fri Dec 13 11:06:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,12 +45,11 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-TrialEvent::TrialEvent(int msec) :
+TrialEvent::TrialEvent(unsigned int msec) :
   itsTimer(msec, false),
   itsRequestedDelay(msec),
   itsErrorHandler(0),
   itsTrial(0),
-  itsStopWatch(),
   itsEstimatedOffset(0.0),
   itsTotalOffset(0.0),
   itsTotalError(0.0),
@@ -64,8 +63,6 @@ DOTRACE("TrialEvent::TrialEvent");
 TrialEvent::~TrialEvent()
 {
 DOTRACE("TrialEvent::~TrialEvent");
-
-  cancel();
 
   dbgEval(3, itsTotalOffset);
   dbgEval(3, itsTotalError);
@@ -91,35 +88,30 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-int TrialEvent::schedule(Trial& trial,
-                         Util::ErrorHandler& errhdlr,
-                         int minimum_msec)
+unsigned int TrialEvent::schedule(Trial& trial,
+                                  Util::ErrorHandler& errhdlr,
+                                  unsigned int minimum_msec)
 {
 DOTRACE("TrialEvent::schedule");
-  // Cancel any possible previously pending invocation.
-  cancel();
-
-  // Note the time when the current scheduling request was made.
-  itsStopWatch.restart();
 
   // Remember the participants
   itsErrorHandler = &errhdlr;
   itsTrial = &trial;
 
-  // If the requested time is zero or negative - i.e., immediate,
-  // don't bother creating a timer handler. Instead, generate a direct
-  // invocation.
-  if (itsRequestedDelay <= 0)
+  // If the requested time is zero -- i.e., immediate -- don't bother
+  // creating a timer handler. Instead, generate a direct invocation.
+  if (itsRequestedDelay == 0)
     {
       invokeTemplate();
       return 0;
     }
+
   // Otherwise, set up a timer that will call the invocation after the
   // specified amount of time.
 
-  int actual_request =
-    Util::max(itsRequestedDelay + (int)itsEstimatedOffset,
-              Util::max(minimum_msec, 0));
+  unsigned int actual_request =
+    Util::max(itsRequestedDelay + (unsigned int)itsEstimatedOffset,
+              Util::max(minimum_msec, 0u));
   itsTimer.setDelayMsec(actual_request);
   itsTimer.schedule();
 
@@ -138,7 +130,7 @@ DOTRACE("TrialEvent::invokeTemplate");
 
   try
     {
-      const double msec = itsStopWatch.elapsedMsec();
+      const double msec = itsTimer.elapsedMsec();
       const double error = itsTimer.delayMsec() - msec;
 
       fstring scopename(demangle_cstr(typeid(*this).name()), " ",
@@ -190,7 +182,7 @@ DOTRACE("TrialEvent::invokeTemplate");
 //
 ///////////////////////////////////////////////////////////////////////
 
-AbortTrialEvent::AbortTrialEvent(int msec) : TrialEvent(msec) {}
+AbortTrialEvent::AbortTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
 AbortTrialEvent::~AbortTrialEvent() {}
 
@@ -200,7 +192,7 @@ DOTRACE("AbortTrialEvent::invoke");
   trial.trAbort();
 }
 
-DrawEvent::DrawEvent(int msec) : TrialEvent(msec) {}
+DrawEvent::DrawEvent(unsigned int msec) : TrialEvent(msec) {}
 
 DrawEvent::~DrawEvent() {}
 
@@ -216,7 +208,7 @@ DOTRACE("DrawEvent::invoke");
     }
 }
 
-RenderEvent::RenderEvent(int msec) : TrialEvent(msec) {}
+RenderEvent::RenderEvent(unsigned int msec) : TrialEvent(msec) {}
 
 RenderEvent::~RenderEvent() {}
 
@@ -232,7 +224,7 @@ DOTRACE("RenderEvent::invoke");
     }
 }
 
-EndTrialEvent::EndTrialEvent(int msec) : TrialEvent(msec) {}
+EndTrialEvent::EndTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
 EndTrialEvent::~EndTrialEvent() {}
 
@@ -242,7 +234,7 @@ DOTRACE("EndTrialEvent::invoke");
   trial.trEndTrial();
 }
 
-NextNodeEvent::NextNodeEvent(int msec) : TrialEvent(msec) {}
+NextNodeEvent::NextNodeEvent(unsigned int msec) : TrialEvent(msec) {}
 
 NextNodeEvent::~NextNodeEvent() {}
 
@@ -252,7 +244,7 @@ DOTRACE("NextNodeEvent::invoke");
   trial.trNextNode();
 }
 
-AllowResponsesEvent::AllowResponsesEvent(int msec) : TrialEvent(msec) {}
+AllowResponsesEvent::AllowResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
 
 AllowResponsesEvent::~AllowResponsesEvent() {}
 
@@ -262,7 +254,7 @@ DOTRACE("AllowResponsesEvent::invoke");
   trial.trAllowResponses();
 }
 
-DenyResponsesEvent::DenyResponsesEvent(int msec) : TrialEvent(msec) {}
+DenyResponsesEvent::DenyResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
 
 DenyResponsesEvent::~DenyResponsesEvent() {}
 
@@ -272,7 +264,7 @@ DOTRACE("DenyResponsesEvent::invoke");
   trial.trDenyResponses();
 }
 
-UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}
+UndrawEvent::UndrawEvent(unsigned int msec) : TrialEvent(msec) {}
 
 UndrawEvent::~UndrawEvent() {}
 
@@ -284,7 +276,7 @@ DOTRACE("UndrawEvent::invoke");
     widget->undraw();
 }
 
-SwapBuffersEvent::SwapBuffersEvent(int msec) : TrialEvent(msec) {}
+SwapBuffersEvent::SwapBuffersEvent(unsigned int msec) : TrialEvent(msec) {}
 
 SwapBuffersEvent::~SwapBuffersEvent() {}
 
@@ -296,7 +288,7 @@ DOTRACE("SwapBuffersEvent::invoke");
     widget->swapBuffers();
 }
 
-RenderBackEvent::RenderBackEvent(int msec) : TrialEvent(msec) {}
+RenderBackEvent::RenderBackEvent(unsigned int msec) : TrialEvent(msec) {}
 
 RenderBackEvent::~RenderBackEvent() {}
 
@@ -308,7 +300,7 @@ DOTRACE("RenderBackEvent::invoke");
     widget->getCanvas().drawOnBackBuffer();
 }
 
-RenderFrontEvent::RenderFrontEvent(int msec) : TrialEvent(msec) {}
+RenderFrontEvent::RenderFrontEvent(unsigned int msec) : TrialEvent(msec) {}
 
 RenderFrontEvent::~RenderFrontEvent() {}
 
@@ -320,7 +312,7 @@ DOTRACE("RenderFrontEvent::invoke");
     widget->getCanvas().drawOnFrontBuffer();
 }
 
-ClearBufferEvent::ClearBufferEvent(int msec) : TrialEvent(msec) {}
+ClearBufferEvent::ClearBufferEvent(unsigned int msec) : TrialEvent(msec) {}
 
 ClearBufferEvent::~ClearBufferEvent() {}
 
@@ -332,7 +324,7 @@ DOTRACE("ClearBufferEvent::invoke");
     widget->clearscreen();
 }
 
-GenericEvent::GenericEvent(int msec) :
+GenericEvent::GenericEvent(unsigned int msec) :
   TrialEvent(msec),
   itsCallback(new Tcl::ProcWrapper(Tcl::Main::interp()))
 {}

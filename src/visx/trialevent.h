@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Dec 13 10:53:47 2002
+// written: Fri Dec 13 11:05:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,8 +28,6 @@ namespace Util
 
 class Trial;
 
-typedef void* ClientData;
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -49,7 +47,7 @@ class TrialEvent : public IO::IoObject
 {
 protected:
   /// Construct with a requested delay of \a msec.
-  TrialEvent(int msec);
+  TrialEvent(unsigned int msec);
 
 public:
   /// Destructor cancels any pending callback to \c invoke().
@@ -59,10 +57,10 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
   /// Return the current requested delay time, in milliseconds.
-  int getDelay() const { return itsRequestedDelay; }
+  unsigned int getDelay() const { return itsRequestedDelay; }
 
   /// Set the requested delay time to \a msec milliseconds.
-  void setDelay(int msec) { itsRequestedDelay = msec; }
+  void setDelay(unsigned int msec) { itsRequestedDelay = msec; }
 
   /// Queries whether there is a pending callback to \c invoke().
   bool isPending() const { return itsTimer.isPending(); }
@@ -80,8 +78,8 @@ public:
       The minimum_msec parameter specifies a minimum delay time; this may
       be used to ensure that proper relative ordering of TrialEvent's is
       maintained, even if the event loop is getting slowed down overall.  */
-  int schedule(Trial& trial, Util::ErrorHandler& errhdlr,
-               int minimum_msec = 0);
+  unsigned int schedule(Trial& trial, Util::ErrorHandler& errhdlr,
+                        unsigned int minimum_msec = 0);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
@@ -99,19 +97,17 @@ protected:
   virtual void invoke(Trial& trial) = 0;
 
 private:
-  static void dummyInvoke(ClientData clientData);
   void invokeTemplate();
 
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);
 
   Tcl::Timer itsTimer;
-  int itsRequestedDelay;
+  unsigned int itsRequestedDelay;
   Util::ErrorHandler* itsErrorHandler;
   Trial* itsTrial;
 
   // Diagnostic stuff
-  mutable StopWatch itsStopWatch;
   mutable double itsEstimatedOffset;
   mutable double itsTotalOffset;
   mutable double itsTotalError;
@@ -129,7 +125,7 @@ class AbortTrialEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  AbortTrialEvent(int msec = 0);
+  AbortTrialEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static AbortTrialEvent* make() { return new AbortTrialEvent; }
@@ -145,7 +141,7 @@ class DrawEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  DrawEvent(int msec = 0);
+  DrawEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static DrawEvent* make() { return new DrawEvent; }
@@ -160,7 +156,7 @@ class RenderEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  RenderEvent(int msec = 0);
+  RenderEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static RenderEvent* make() { return new RenderEvent; }
@@ -175,7 +171,7 @@ class EndTrialEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  EndTrialEvent(int msec = 0);
+  EndTrialEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static EndTrialEvent* make() { return new EndTrialEvent; }
@@ -190,7 +186,7 @@ class NextNodeEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  NextNodeEvent(int msec = 0);
+  NextNodeEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static NextNodeEvent* make() { return new NextNodeEvent; }
@@ -205,7 +201,7 @@ class AllowResponsesEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  AllowResponsesEvent(int msec = 0);
+  AllowResponsesEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static AllowResponsesEvent* make() { return new AllowResponsesEvent; }
@@ -220,7 +216,7 @@ class DenyResponsesEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  DenyResponsesEvent(int msec = 0);
+  DenyResponsesEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static DenyResponsesEvent* make() { return new DenyResponsesEvent; }
@@ -235,7 +231,7 @@ class UndrawEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  UndrawEvent(int msec = 0);
+  UndrawEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static UndrawEvent* make() { return new UndrawEvent; }
@@ -250,7 +246,7 @@ class RenderBackEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  RenderBackEvent(int msec = 0);
+  RenderBackEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static RenderBackEvent* make() { return new RenderBackEvent; }
@@ -265,7 +261,7 @@ class RenderFrontEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  RenderFrontEvent(int msec = 0);
+  RenderFrontEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static RenderFrontEvent* make() { return new RenderFrontEvent; }
@@ -280,7 +276,7 @@ class SwapBuffersEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  SwapBuffersEvent(int msec = 0);
+  SwapBuffersEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static SwapBuffersEvent* make() { return new SwapBuffersEvent; }
@@ -295,7 +291,7 @@ class ClearBufferEvent : public TrialEvent
 {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  ClearBufferEvent(int msec = 0);
+  ClearBufferEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static ClearBufferEvent* make() { return new ClearBufferEvent; }
@@ -312,7 +308,7 @@ private:
   Util::Ref<Tcl::ProcWrapper> itsCallback;
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
-  GenericEvent(int msec = 0);
+  GenericEvent(unsigned int msec = 0);
 public:
   /// Default creator.
   static GenericEvent* make() { return new GenericEvent; }
