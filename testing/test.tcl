@@ -81,7 +81,7 @@ proc finish {} {
 	 set per_test [expr $::num_tests ? ($elapsed_ms/$::num_tests) : 0]
 	 set msg ""
 	 if { $::num_success < $::num_tests } {
-		  append msg "-- WARNING -- BUGGY SOFTWARE --"
+		  append msg "-- WARNING -- BUGGY SOFTWARE --\n"
 	 }
 	 append msg "$::num_success tests succeeded of $::num_tests tests attempted.\n"
 	 append msg "Testing lasted $elapsed_ms msec, or $per_test msec per test.\n"
