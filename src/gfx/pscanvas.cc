@@ -661,9 +661,7 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
-vec3d Gfx::PSCanvas::screenFromWorld3(
-  const vec3d& /*world_pos*/
-  ) const
+vec3d Gfx::PSCanvas::screenFromWorld3(const vec3d& /*world_pos*/) const
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld3");
 // FIXME
@@ -671,9 +669,7 @@ DOTRACE("Gfx::PSCanvas::screenFromWorld3");
   return vec3d();
 }
 
-vec3d Gfx::PSCanvas::worldFromScreen3(
-  const vec3d& /*screen_pos*/
-  ) const
+vec3d Gfx::PSCanvas::worldFromScreen3(const vec3d& /*screen_pos*/) const
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen3");
 // FIXME
@@ -764,18 +760,21 @@ void Gfx::PSCanvas::setColorIndex(unsigned int /*index*/)
 {
 DOTRACE("Gfx::PSCanvas::setColorIndex");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setClearColorIndex(unsigned int /*index*/)
 {
 DOTRACE("Gfx::PSCanvas::setClearColorIndex");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::swapForeBack()
 {
 DOTRACE("Gfx::PSCanvas::swapForeBack");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setPolygonFill(bool on)
@@ -789,6 +788,7 @@ void Gfx::PSCanvas::setPointSize(double /*size*/)
 {
 DOTRACE("Gfx::PSCanvas::setPointSize");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setLineWidth(double width)
@@ -817,6 +817,7 @@ void Gfx::PSCanvas::viewport(int /*x*/, int /*y*/, int /*w*/, int /*h*/)
 {
 DOTRACE("Gfx::PSCanvas::viewport");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::orthographic(const rectd& /*bounds*/,
@@ -883,6 +884,7 @@ void Gfx::PSCanvas::drawPixels(const media::bmap_data& /*data*/,
 {
 DOTRACE("Gfx::PSCanvas::drawPixels");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawBitmap(const media::bmap_data& /*data*/,
@@ -890,6 +892,7 @@ void Gfx::PSCanvas::drawBitmap(const media::bmap_data& /*data*/,
 {
 DOTRACE("Gfx::PSCanvas::drawBitmap");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::grabPixels(const recti&, media::bmap_data&)
@@ -903,12 +906,14 @@ void Gfx::PSCanvas::clearColorBuffer()
 {
 DOTRACE("Gfx::PSCanvas::clearColorBuffer");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::clearColorBuffer(const recti& /*screen_rect*/)
 {
 DOTRACE("Gfx::PSCanvas::clearColorBuffer(geom::rect)");
 // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawRect(const rectd& r)
@@ -951,12 +956,14 @@ void Gfx::PSCanvas::drawCylinder(double /*base_radius*/, double /*top_radius*/,
                                  bool /*fill*/)
 {
   // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawSphere(double /*radius*/, int /*slices*/, int /*stacks*/,
                                bool /*fill*/)
 {
   // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawBezier4(const vec3d& p1,
@@ -978,6 +985,7 @@ void Gfx::PSCanvas::drawBezierFill4(const vec3d& /*center*/,
 {
 DOTRACE("Gfx::PSCanvas::drawBezierFill4");
   // FIXME
+  rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::beginPoints(const char* comment)
