@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Fri Aug 10 14:05:30 2001
+// written: Fri Aug 10 14:41:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,19 +32,15 @@ public:
 
   void callList() const;
 
-  void invalidate() const { itsIsCurrent = false; }
-
   void setMode(GrObj::RenderMode new_mode);
 
   GrObj::RenderMode getMode() const { return itsMode; }
 
   const fstring& getCacheFilename() const { return itsCacheFilename; }
 
-  void setCacheFilename(const fstring& name)
-    {
-      itsCacheFilename = name;
-      queueBitmapLoad();
-    }
+  void invalidate();
+
+  void setCacheFilename(const fstring& name);
 
   // Returns true if the object was rendered to the screen as part
   // of the update, false otherwise
@@ -55,15 +51,7 @@ public:
   void unrender(const Gnode* obj, Gfx::Canvas& canvas) const;
 
   void saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
-                       const char* filename);
-
-  void restoreBitmapCache() const
-    {
-      queueBitmapLoad();
-      if ( GrObj::X11_BITMAP_CACHE == itsMode ||
-           GrObj::GL_BITMAP_CACHE == itsMode )
-        postUpdated();
-    }
+                       const char* filename) const;
 
   GrObj::RenderMode getUnMode() const { return itsUnMode; }
   void setUnMode(GrObj::RenderMode new_val) { itsUnMode = new_val; }
@@ -74,10 +62,8 @@ private:
 
   mutable fstring itsCacheFilename;
 
-  mutable bool itsIsCurrent;    // true if displaylist is current
   mutable int itsDisplayList;   // OpenGL display list that draws the object
-  shared_ptr<BmapRenderer> itsBmapRenderer;
-  shared_ptr<BitmapRep> itsBitmapCache;
+  mutable shared_ptr<BitmapRep> itsBitmapCache;
 
   fstring fullCacheFilename() const
     {
@@ -87,20 +73,12 @@ private:
       return result;
     }
 
-  void queueBitmapLoad() const;
-
   // This function updates the cached OpenGL display list.
   void recompileIfNeeded(const Gnode* node, Gfx::Canvas& canvas) const;
 
   // This function updates the cached bitmap, and returns a true if
   // the bitmap was actually recached, and false if nothing was done.
   bool recacheBitmapIfNeeded(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
-
-  void postUpdated() const { itsIsCurrent = true; }
-
-  // This function deletes any previous display list, allocates a new
-  // display list, and checks that the allocation actually succeeded.
-  void newList() const;
 };
 
 static const char vcid_grobjrenderer_h[] = "$Header$";
