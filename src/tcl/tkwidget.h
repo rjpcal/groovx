@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Sat Nov 23 13:44:18 2002
+// written: Sat Nov 23 14:29:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ public:
 
   void destroyWidget();
 
-  virtual int width() const;
-  virtual int height() const;
+  int width() const;
+  int height() const;
   void setWidth(int w);
   void setHeight(int h);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:26:16 2002
+// written: Sat Nov 23 14:30:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,9 @@
 #define TOGLET_H_DEFINED
 
 #include "tcl/tkwidget.h"
+
+class GxNode;
+class GxCamera;
 
 class Scene;
 
@@ -47,8 +50,8 @@ public:
   /// Specify which Tk window should be the parent of new Toglet's.
   static void defaultParent(const char* pathname);
 
-  /// Overridden from GWT::Widget.
-  virtual Gfx::Canvas& getCanvas() const;
+  /// Return the associated canvas.
+  Gfx::Canvas& getCanvas() const;
 
   void makeCurrent() const;
 
