@@ -77,6 +77,25 @@ OS=`uname`
 AC_MSG_RESULT($OS)
 
 ##########################################################################
+### Find/choose windowing system.
+
+AC_ARG_ENABLE(aqua,
+	      [AC_HELP_STRING([--enable-aqua],
+		              [whether to use Mac OS X Aqua window system instead of X11 [no]])],
+	      ,
+	      enable_aqua=no)
+
+AC_MSG_CHECKING([for windowing system])
+
+if test "$enable_aqua" = "yes"; then
+   windowsystem=aqua
+   AC_MSG_RESULT([Mac OS X Aqua])
+else
+   windowsystem=x11
+   AC_MSG_RESULT([X11])
+fi
+
+##########################################################################
 ### Find c++ compiler and linkers.
 
 AC_LANG(C++)
