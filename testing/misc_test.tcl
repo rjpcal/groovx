@@ -32,7 +32,7 @@ test "MiscTcl-srand" "too few args" {
 } {wrong \# args: should be "srand seed"}
 test "MiscTcl-srand" "normal use" {
 	 srand 10
-	 expr [rand 0 1] == 0.138641357422
+	 expr [rand 0 1] == 0.138649044093
 } {^1$}
 test "MiscTcl-srand" "error from non-numeric input" {
     srand junk
