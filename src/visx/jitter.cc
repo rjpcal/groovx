@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Tue Nov 28 19:03:07 2000
+// written: Wed Nov 29 13:28:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,13 +111,13 @@ DOTRACE("Jitter::draw");
 void Jitter::undraw(GWT::Canvas& canvas) const {
 DOTRACE("Jitter::undraw");
   // Translate
-  canvas.translate(translation()+Vec3<double>(itsXShift, itsYShift, 0.0));
+  canvas.translate(translation.vec()+Vec3<double>(itsXShift, itsYShift, 0.0));
 
   // Scale
-  canvas.scale(scaling());
+  canvas.scale(scaling.vec());
 
   // Rotate
-  canvas.rotate(rotationAxis(), rotationAngle()+itsRShift);
+  canvas.rotate(rotationAxis.vec(), rotationAngle()+itsRShift);
 }
 
 static const char vcid_jitter_cc[] = "$Header$";

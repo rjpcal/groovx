@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Nov 29 12:24:07 2000
+// written: Wed Nov 29 13:28:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,15 @@
 #include "gx/gxnode.h"
 #endif
 
-class PositionImpl;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXVEC_H_DEFINED)
+#include "gx/gxvec.h"
+#endif
 
-template <class V> class Vec3;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
+#endif
+
+class PositionImpl;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -31,7 +37,7 @@ template <class V> class Vec3;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Position : public GxNode {
+class Position : public GxNode, public FieldContainer {
   //////////////
   // creators //
   //////////////
@@ -46,60 +52,33 @@ public:
   /// Virtual destructor.
   virtual ~Position();
 
-  ///
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
-  ///
   virtual void writeTo(IO::Writer* writer) const;
 
-  ///////////////
-  // accessors //
-  ///////////////
 
-  /** Return the vector (x, y, z) specifying the rotational axis
-		through the reference parameters x, y, and z, and return the
-		angle of rotation (in degrees) about that axis through the
-		reference parameter a. */
-  void getRotate(double &a, double &x, double &y, double &z) const;
+  ////////////
+  // fields //
+  ////////////
 
-  /** Return the scaling vector (x, y, z) through the reference
-		parameters x, y, and z. A negative value indicates a reflection
-		about the axis. */
-  void getScale(double &x, double &y, double &z) const;
+  /// The translation vector.
+  GxVec3<double> translation;
 
-  /** Return the translation vector (x, y, z) through the reference
-		parameters x, y, and z. */
-  void getTranslate(double &x, double &y, double &z) const;
+  /// The scaling factors.
+  GxVec3<double> scaling;
 
-protected:
-  const Vec3<double>& translation() const;
-  const Vec3<double>& scaling() const;
-  const Vec3<double>& rotationAxis() const;
-  double rotationAngle() const;
+  /// The axis around which the rotation is performed.
+  GxVec3<double> rotationAxis;
 
-  //////////////////
-  // manipulators //
-  //////////////////
+  /// The angle of rotation in degrees.
+  TField<double> rotationAngle;
 
-public:
-  /**  Set the angle of rotation to 'a' degrees. */
-  void setAngle(double a);
-
-  /** Set the angle of rotation to 'a' degrees, and set the axis of
-		rotation to the vector (x, y, z). */
-  void setRotate(double a, double x, double y, double z);
-
-  /** Set the scaling vector to (x, y, z), where negative values
-		indicate a reflection about that axis. */
-  void setScale(double x, double y, double z);
-
-  /** Set the translation vector to (x, y, z). */
-  void setTranslate(double x, double y, double z);
+  static const FieldMap& classFields();
 
   /////////////
   // actions //
   /////////////
 
-public:
   /// Translate, scale, and rotate.
   virtual void draw(GWT::Canvas&) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Nov 29 12:24:38 2000
+// written: Wed Nov 29 13:28:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,8 +27,29 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-struct PositionData {
-  PositionData() :
+namespace {
+  const IO::VersionId POS_SERIAL_VERSION_ID = 1;
+
+  const FieldInfo FINFOS[] = {
+	 FieldInfo("translation", &Position::translation, 0., 0., 0., 0., true),
+	 FieldInfo("scaling", &Position::scaling, 0., 0., 0., 0.),
+	 FieldInfo("rotationAxis", &Position::rotationAxis, 0., 0., 0., 0.),
+	 FieldInfo("rotationAngle", &Position::rotationAngle, 0., 0., 360., 1.)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// PositionImpl structure 
+//
+///////////////////////////////////////////////////////////////////////
+
+struct PositionImpl {
+  PositionImpl() :
 	 tr(0.0, 0.0, 0.0),
 	 sc(1.0, 1.0, 1.0),
 	 rt(0.0, 0.0, 1.0),
@@ -43,20 +64,11 @@ struct PositionData {
 
 ///////////////////////////////////////////////////////////////////////
 //
-// PositionImpl structure 
-//
-///////////////////////////////////////////////////////////////////////
-
-struct PositionImpl {
-  PositionData cur;
-  PositionData last;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
 // Position member functions
 //
 ///////////////////////////////////////////////////////////////////////
+
+const FieldMap& Position::classFields() { return POS_FIELDS; }
 
 Position* Position::make() {
 DOTRACE("Position::make");
@@ -64,7 +76,11 @@ DOTRACE("Position::make");
 }
 
 Position::Position() : 
-  itsImpl(new PositionImpl)
+  itsImpl(new PositionImpl),
+  translation(this, 0.0, 0.0, 0.0),
+  scaling(this, 1.0, 1.0, 1.0),
+  rotationAxis(this, 0.0, 0.0, 1.0),
+  rotationAngle(this, 0.0)
 {
 DOTRACE("Position::Position()");
 
@@ -76,95 +92,43 @@ DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
+IO::VersionId Position::serialVersionId() const {
+DOTRACE("Position::serialVersionId");
+  return POS_SERIAL_VERSION_ID;
+}
+
 void Position::readFrom(IO::Reader* reader) {
 DOTRACE("Position::readFrom");
 
-  reader->readValue("transX", itsImpl->cur.tr.x());
-  reader->readValue("transY", itsImpl->cur.tr.y());
-  reader->readValue("transZ", itsImpl->cur.tr.z());
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid == 0) {
+	 reader->readValue("transX", translation.x());
+	 reader->readValue("transY", translation.y());
+	 reader->readValue("transZ", translation.z());
 
-  reader->readValue("scaleX", itsImpl->cur.sc.x());
-  reader->readValue("scaleY", itsImpl->cur.sc.y());
-  reader->readValue("scaleZ", itsImpl->cur.sc.z());
+	 reader->readValue("scaleX", scaling.x());
+	 reader->readValue("scaleY", scaling.y());
+	 reader->readValue("scaleZ", scaling.z());
 
-  reader->readValue("rotateX", itsImpl->cur.rt.x());
-  reader->readValue("rotateY", itsImpl->cur.rt.y());
-  reader->readValue("rotateZ", itsImpl->cur.rt.z());
-  reader->readValue("rotateAngle", itsImpl->cur.rt_ang);
+	 reader->readValue("rotateX", rotationAxis.x());
+	 reader->readValue("rotateY", rotationAxis.y());
+	 reader->readValue("rotateZ", rotationAxis.z());
+	 rotationAngle.readValueFrom(reader, "rotateAngle");
+  }
+  else {
+	 reader->ensureReadVersionId("Position", 1, "Try grsh0.8a4");
+
+	 readFieldsFrom(reader, classFields());
+  }
 }
 
 void Position::writeTo(IO::Writer* writer) const {
 DOTRACE("Position::writeTo");
 
-  writer->writeValue("transX", itsImpl->cur.tr.x());
-  writer->writeValue("transY", itsImpl->cur.tr.y());
-  writer->writeValue("transZ", itsImpl->cur.tr.z());
+  writer->ensureWriteVersionId("Position", POS_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a4");
 
-  writer->writeValue("scaleX", itsImpl->cur.sc.x());
-  writer->writeValue("scaleY", itsImpl->cur.sc.y());
-  writer->writeValue("scaleZ", itsImpl->cur.sc.z());
-
-  writer->writeValue("rotateX", itsImpl->cur.rt.x());
-  writer->writeValue("rotateY", itsImpl->cur.rt.y());
-  writer->writeValue("rotateZ", itsImpl->cur.rt.z());
-  writer->writeValue("rotateAngle", itsImpl->cur.rt_ang);
-}
-
-///////////////
-// accessors //
-///////////////
-
-void Position::getRotate(double &a, double &x, double &y, double &z) const {
-DOTRACE("Position::getRotate");
-  a = itsImpl->cur.rt_ang;
-  itsImpl->cur.rt.get(x, y, z);
-}
-
-void Position::getTranslate(double &x, double &y, double &z) const {
-DOTRACE("Position::getTranslate");
-  itsImpl->cur.tr.get(x, y, z);
-}
-
-void Position::getScale(double &x, double &y, double &z) const {
-DOTRACE("Position::getScale");
-  itsImpl->cur.sc.get(x, y, z);
-}
-
-const Vec3<double>& Position::translation() const
-{ return itsImpl->cur.tr; }
-
-const Vec3<double>& Position::scaling() const
-{ return itsImpl->cur.sc; }
-
-const Vec3<double>& Position::rotationAxis() const
-{ return itsImpl->cur.rt; }
-
-double Position::rotationAngle() const
-{ return itsImpl->cur.rt_ang; }
-
-//////////////////
-// manipulators //
-//////////////////
-
-void Position::setAngle(double a) {
-DOTRACE("Position::setAngle");
-  itsImpl->cur.rt_ang = a;
-}
-
-void Position::setRotate(double a, double x, double y, double z) {
-DOTRACE("Position::setRotate");
-  itsImpl->cur.rt_ang = a;
-  itsImpl->cur.rt.set(x, y, z);
-}
-
-void Position::setScale(double x, double y, double z) {
-DOTRACE("Position::setScale");
-  itsImpl->cur.sc.set(x, y, z);
-}
-
-void Position::setTranslate(double x, double y, double z) {
-DOTRACE("Position::setTranslate");
-  itsImpl->cur.tr.set(x, y, z);
+  writeFieldsTo(writer, classFields());
 }
 
 /////////////
@@ -173,18 +137,21 @@ DOTRACE("Position::setTranslate");
 
 void Position::draw(GWT::Canvas& canvas) const {
 DOTRACE("Position::draw");
-  canvas.translate(itsImpl->cur.tr);
-  canvas.scale(itsImpl->cur.sc);
-  canvas.rotate(itsImpl->cur.rt, itsImpl->cur.rt_ang);
+  canvas.translate(translation.vec());
+  canvas.scale(scaling.vec());
+  canvas.rotate(rotationAxis.vec(), rotationAngle());
 
-  itsImpl->last = itsImpl->cur;
+  itsImpl->tr = translation.vec();
+  itsImpl->sc = scaling.vec();
+  itsImpl->rt = rotationAxis.vec();
+  itsImpl->rt_ang = rotationAngle();
 }
 
 void Position::undraw(GWT::Canvas& canvas) const {
 DOTRACE("Position::undraw");
-  canvas.translate(itsImpl->last.tr);
-  canvas.scale(itsImpl->last.sc);
-  canvas.rotate(itsImpl->last.rt, itsImpl->last.rt_ang);
+  canvas.translate(itsImpl->tr);
+  canvas.scale(itsImpl->sc);
+  canvas.rotate(itsImpl->rt, itsImpl->rt_ang);
 }
 
 static const char vcid_position_cc[] = "$Header$";
