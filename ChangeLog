@@ -179,3 +179,7 @@ will be needed, and then they can be phased out.
   OK, replaced Gnode with GxBin. Changed all of the Gnode subclasses into
   generic Gx* node subclasses. So now I feel better; all the stuff is
   generic. In principle GrObj could become a Gx* class now itself.
+
+* (done 20-Nov-2002) Rename GrObj --> GxShapeKit
+
+* (done 20-Nov-2002) Rename Position --> GxTransform
