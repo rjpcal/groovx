@@ -3,6 +3,9 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(14-Jan-2000) Need to flesh out the Pipe class that has been
+introduced in Bitmap::loadPbmGzCmd().
+
 (11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
 
 (11-Jan-2000) Need a way to defer loading of pbm files from when
