@@ -230,5 +230,5 @@ DOTRACE("Basesixfourtest_Unload");
 extern "C" int Basesixfourtest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_basesixfourtest_cc[] = "$Header$";
+static const char vcid_basesixfourtest_cc[] = "$Id$ $URL$";
 #endif // !BASESIXFOURTEST_CC_DEFINED

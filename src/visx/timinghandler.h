@@ -71,5 +71,5 @@ private:
   unsigned int abortwait_abort_id;
 };
 
-static const char vcid_timinghandler_h[] = "$Header$";
+static const char vcid_timinghandler_h[] = "$Id$ $URL$";
 #endif // !TIMINGHANDLER_H_DEFINED

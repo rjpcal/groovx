@@ -40,5 +40,5 @@ namespace rutz
   const char* demangled_name(const std::type_info& info);
 }
 
-static const char vcid_demangle_h[] = "$Header$";
+static const char vcid_demangle_h[] = "$Id$ $URL$";
 #endif // !DEMANGLE_H_DEFINED

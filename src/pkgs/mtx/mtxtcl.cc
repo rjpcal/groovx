@@ -60,5 +60,5 @@ DOTRACE("Mtx_Init");
   PKG_RETURN;
 }
 
-static const char vcid_mtxtcl_cc[] = "$Header$";
+static const char vcid_mtxtcl_cc[] = "$Id$ $URL$";
 #endif // !MTXTCL_CC_DEFINED

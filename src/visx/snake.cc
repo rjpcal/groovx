@@ -501,5 +501,5 @@ DOTRACE("Snake::transformPath");
     }
 }
 
-static const char vcid_snake_cc[] = "$Header$";
+static const char vcid_snake_cc[] = "$Id$ $URL$";
 #endif // !SNAKE_CC_DEFINED

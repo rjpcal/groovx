@@ -74,5 +74,5 @@ namespace IO
   };
 }
 
-static const char vcid_writeidmap_h[] = "$Header$";
+static const char vcid_writeidmap_h[] = "$Id$ $URL$";
 #endif // !WRITEIDMAP_H_DEFINED

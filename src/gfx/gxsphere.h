@@ -87,5 +87,5 @@ private:
   GxSphere& operator=(const GxSphere&);
 };
 
-static const char vcid_gxsphere_h[] = "$Header$";
+static const char vcid_gxsphere_h[] = "$Id$ $URL$";
 #endif // !GXSPHERE_H_DEFINED

@@ -59,5 +59,5 @@ KbdResponseHdlr::KbdResponseHdlr() :
 
 KbdResponseHdlr::~KbdResponseHdlr() throw() {}
 
-static const char vcid_kbdresponsehdlr_cc[] = "$Header$";
+static const char vcid_kbdresponsehdlr_cc[] = "$Id$ $URL$";
 #endif // !KBDRESPONSEHDLR_CC_DEFINED

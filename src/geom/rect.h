@@ -227,5 +227,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_rect_h[] = "$Header$";
+static const char vcid_rect_h[] = "$Id$ $URL$";
 #endif // !RECT_H_DEFINED

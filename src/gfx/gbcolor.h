@@ -57,5 +57,5 @@ public:
   virtual const double* const_begin() const;
 };
 
-static const char vcid_gbcolor_h[] = "$Header$";
+static const char vcid_gbcolor_h[] = "$Id$ $URL$";
 #endif // !GBCOLOR_H_DEFINED

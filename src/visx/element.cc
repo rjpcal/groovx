@@ -38,5 +38,5 @@ Element::~Element() throw() {}
 
 void Element::vxEndTrialHook() { /* no-op */ }
 
-static const char vcid_element_cc[] = "$Header$";
+static const char vcid_element_cc[] = "$Id$ $URL$";
 #endif // !ELEMENT_CC_DEFINED

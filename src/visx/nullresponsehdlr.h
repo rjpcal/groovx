@@ -57,5 +57,5 @@ public:
   virtual void rhDenyResponses() const;
 };
 
-static const char vcid_nullresponsehdlr_h[] = "$Header$";
+static const char vcid_nullresponsehdlr_h[] = "$Id$ $URL$";
 #endif // !NULLRESPONSEHDLR_H_DEFINED

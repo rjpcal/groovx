@@ -39,5 +39,5 @@ Nub::TimerToken::~TimerToken() throw() {}
 
 Nub::Scheduler::~Scheduler() throw() {}
 
-static const char vcid_scheduler_cc[] = "$Header$";
+static const char vcid_scheduler_cc[] = "$Id$ $URL$";
 #endif // !SCHEDULER_CC_DEFINED

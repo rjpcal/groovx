@@ -737,5 +737,5 @@ DOTRACE("Dlist_Init");
   PKG_RETURN;
 }
 
-static const char vcid_dlisttcl_cc[] = "$Header$";
+static const char vcid_dlisttcl_cc[] = "$Id$ $URL$";
 #endif // !DLISTTCL_CC_DEFINED

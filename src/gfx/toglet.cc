@@ -384,5 +384,5 @@ void Toglet::animate(unsigned int framesPerSecond)
   rep->scene->animate(framesPerSecond);
 }
 
-static const char vcid_toglet_cc[] = "$Header$";
+static const char vcid_toglet_cc[] = "$Id$ $URL$";
 #endif // !TOGLET_CC_DEFINED

@@ -43,5 +43,5 @@ namespace media
   void save_png(const char* filename, const media::bmap_data& data);
 }
 
-static const char vcid_pngparser_h[] = "$Header$";
+static const char vcid_pngparser_h[] = "$Id$ $URL$";
 #endif // !PNGPARSER_H_DEFINED

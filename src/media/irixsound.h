@@ -202,5 +202,5 @@ DOTRACE("media::irix_audio_sound_rep::play");
     }
 }
 
-static const char vcid_irixsound_h[] = "$Header$";
+static const char vcid_irixsound_h[] = "$Id$ $URL$";
 #endif // !IRIXSOUND_H_DEFINED

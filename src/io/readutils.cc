@@ -53,5 +53,5 @@ fstring IO::ReadUtils::makeSeqCountString(const fstring& seq_name)
   return result;
 }
 
-static const char vcid_readutils_cc[] = "$Header$";
+static const char vcid_readutils_cc[] = "$Id$ $URL$";
 #endif // !READUTILS_CC_DEFINED

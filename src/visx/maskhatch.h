@@ -84,5 +84,5 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_maskhatch_h[] = "$Header$";
+static const char vcid_maskhatch_h[] = "$Id$ $URL$";
 #endif // !MASKHATCH_H_DEFINED

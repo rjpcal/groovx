@@ -98,5 +98,5 @@ void GxColor::draw(Gfx::Canvas& canvas) const
   canvas.setColor(rgbaColor);
 }
 
-static const char vcid_gxcolor_cc[] = "$Header$";
+static const char vcid_gxcolor_cc[] = "$Id$ $URL$";
 #endif // !GXCOLOR_CC_DEFINED

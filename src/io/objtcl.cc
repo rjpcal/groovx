@@ -234,5 +234,5 @@ DOTRACE("Obj_Init");
   PKG_RETURN;
 }
 
-static const char vcid_objtcl_cc[] = "$Header$";
+static const char vcid_objtcl_cc[] = "$Id$ $URL$";
 #endif // !OBJTCL_CC_DEFINED

@@ -100,5 +100,5 @@ public:
   int operator()(int n) { return idraw(n); }
 };
 
-static const char vcid_rand_h[] = "$Header$";
+static const char vcid_rand_h[] = "$Id$ $URL$";
 #endif // !RAND_H_DEFINED

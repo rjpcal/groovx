@@ -79,5 +79,5 @@ DOTRACE("Tlist_Init");
   PKG_RETURN;
 }
 
-static const char vcid_tlisttcl_cc[] = "$Header$";
+static const char vcid_tlisttcl_cc[] = "$Id$ $URL$";
 #endif // !TLISTTCL_CC_DEFINED

@@ -287,5 +287,5 @@ shared_ptr<std::istream> rutz::igzopen(const fstring& filename,
 //    return 0;
 //  }
 
-static const char vcid_gzstreambuf_cc[] = "$Header$";
+static const char vcid_gzstreambuf_cc[] = "$Id$ $URL$";
 #endif // !GZSTREAMBUF_CC_DEFINED

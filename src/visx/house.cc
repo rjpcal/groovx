@@ -426,5 +426,5 @@ DOTRACE("House::grRender");
   }
 }
 
-static const char vcid_house_cc[] = "$Header$";
+static const char vcid_house_cc[] = "$Id$ $URL$";
 #endif // !HOUSE_CC_DEFINED

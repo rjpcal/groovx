@@ -44,5 +44,5 @@ namespace Tcl
   void defTracing(Tcl::Pkg* pkg, rutz::tracer& tracer);
 }
 
-static const char vcid_tracertcl_h[] = "$Header$";
+static const char vcid_tracertcl_h[] = "$Id$ $URL$";
 #endif // !TRACERTCL_H_DEFINED

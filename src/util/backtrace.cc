@@ -182,5 +182,5 @@ rutz::fstring rutz::backtrace::format() const
   return result;
 }
 
-static const char vcid_backtrace_cc[] = "$Header$";
+static const char vcid_backtrace_cc[] = "$Id$ $URL$";
 #endif // !BACKTRACE_CC_DEFINED

@@ -139,5 +139,5 @@ DOTRACE("GxBounds::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char vcid_gxbounds_cc[] = "$Header$";
+static const char vcid_gxbounds_cc[] = "$Id$ $URL$";
 #endif // !GXBOUNDS_CC_DEFINED

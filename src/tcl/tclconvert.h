@@ -151,5 +151,5 @@ namespace Tcl
   Tcl::ObjPtr toTcl( rutz::fwd_iter<T> iter );
 }
 
-static const char vcid_tclconvert_h[] = "$Header$";
+static const char vcid_tclconvert_h[] = "$Id$ $URL$";
 #endif // !TCLCONVERT_H_DEFINED

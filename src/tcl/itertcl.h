@@ -58,5 +58,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_itertcl_h[] = "$Header$";
+static const char vcid_itertcl_h[] = "$Id$ $URL$";
 #endif // !ITERTCL_H_DEFINED

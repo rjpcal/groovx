@@ -233,5 +233,5 @@ private:
   Impl* rep;
 };
 
-static const char vcid_glcanvas_h[] = "$Header$";
+static const char vcid_glcanvas_h[] = "$Id$ $URL$";
 #endif // !GLCANVAS_H_DEFINED

@@ -141,5 +141,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_iolegacy_h[] = "$Header$";
+static const char vcid_iolegacy_h[] = "$Id$ $URL$";
 #endif // !IOLEGACY_H_DEFINED

@@ -210,5 +210,5 @@ DOTRACE("Signaltest_Unload");
 extern "C" int Signaltest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_signaltest_cc[] = "$Header$";
+static const char vcid_signaltest_cc[] = "$Id$ $URL$";
 #endif // !SIGNALTEST_CC_DEFINED

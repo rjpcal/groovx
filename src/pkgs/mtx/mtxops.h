@@ -19,5 +19,5 @@ mtx squared(const mtx& src);
 mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
             int* ppadtop=0, int* ppadleft=0);
 
-static const char vcid_mtxops_h[] = "$Header$";
+static const char vcid_mtxops_h[] = "$Id$ $URL$";
 #endif // !MTXOPS_H_DEFINED

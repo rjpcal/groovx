@@ -148,5 +148,5 @@ void IO::ObjectMap::clear()
   itsMap.clear();
 }
 
-static const char vcid_readobjectmap_h[] = "$Header$";
+static const char vcid_readobjectmap_h[] = "$Id$ $URL$";
 #endif // !READOBJECTMAP_H_DEFINED

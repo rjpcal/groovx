@@ -537,5 +537,5 @@ DOTRACE("Gxdisk_Init");
   PKG_RETURN;
 }
 
-static const char vcid_gxtcl_cc[] = "$Header$";
+static const char vcid_gxtcl_cc[] = "$Id$ $URL$";
 #endif // !GXTCL_CC_DEFINED

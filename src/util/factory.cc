@@ -41,5 +41,5 @@ rutz::factory_base::~factory_base()
 DOTRACE("rutz::factory_base::~factory_base");
 }
 
-static const char vcid_factory_cc[] = "$Header$";
+static const char vcid_factory_cc[] = "$Id$ $URL$";
 #endif // !FACTORY_CC_DEFINED

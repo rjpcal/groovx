@@ -104,5 +104,5 @@ DOTRACE("Geomtest_Unload");
 
 extern "C" int Geomtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char vcid_geomtest_cc[] = "$Header$";
+static const char vcid_geomtest_cc[] = "$Id$ $URL$";
 #endif // !GEOMTEST_CC_DEFINED

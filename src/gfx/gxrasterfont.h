@@ -60,5 +60,5 @@ public:
   virtual int rasterHeight() const = 0;
 };
 
-static const char vcid_gxrasterfont_h[] = "$Header$";
+static const char vcid_gxrasterfont_h[] = "$Id$ $URL$";
 #endif // !GXRASTERFONT_H_DEFINED

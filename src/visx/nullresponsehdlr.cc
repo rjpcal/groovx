@@ -97,5 +97,5 @@ void NullResponseHdlr::rhDenyResponses() const
 DOTRACE("NullResponseHdlr::rhDenyResponses");
 }
 
-static const char vcid_nullresponsehdlr_cc[] = "$Header$";
+static const char vcid_nullresponsehdlr_cc[] = "$Id$ $URL$";
 #endif // !NULLRESPONSEHDLR_CC_DEFINED

@@ -494,5 +494,5 @@ namespace Tcl
 
 } // end namespace Tcl
 
-static const char vcid_tclfunctor_h[] = "$Header$";
+static const char vcid_tclfunctor_h[] = "$Id$ $URL$";
 #endif // !TCLFUNCTOR_H_DEFINED

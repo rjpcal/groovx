@@ -66,5 +66,5 @@ private:
   rutz::time m_start_time;
 };
 
-static const char vcid_stopwatch_h[] = "$Header$";
+static const char vcid_stopwatch_h[] = "$Id$ $URL$";
 #endif // !STOPWATCH_H_DEFINED

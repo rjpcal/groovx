@@ -58,5 +58,5 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
   return result;
 }
 
-static const char vcid_mtxops_cc[] = "$Header$";
+static const char vcid_mtxops_cc[] = "$Id$ $URL$";
 #endif // !MTXOPS_CC_DEFINED

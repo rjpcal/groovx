@@ -99,5 +99,5 @@ private:
   Element* itsParent;
 };
 
-static const char vcid_block_h[] = "$Header$";
+static const char vcid_block_h[] = "$Id$ $URL$";
 #endif // !BLOCK_H_DEFINED

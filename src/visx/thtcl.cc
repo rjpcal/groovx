@@ -129,5 +129,5 @@ DOTRACE("Timinghandler_Init");
   PKG_RETURN;
 }
 
-static const char vcid_thtcl_cc[] = "$Header$";
+static const char vcid_thtcl_cc[] = "$Id$ $URL$";
 #endif // !THTCL_CC_DEFINED

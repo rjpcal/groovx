@@ -370,5 +370,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_iter_h[] = "$Header$";
+static const char vcid_iter_h[] = "$Id$ $URL$";
 #endif // !ITER_H_DEFINED

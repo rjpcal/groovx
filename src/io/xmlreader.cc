@@ -598,5 +598,5 @@ DOTRACE("IO::xmlDebug");
   root.trace(std::cout, 0, "root");
 }
 
-static const char vcid_xmlreader_cc[] = "$Header$";
+static const char vcid_xmlreader_cc[] = "$Id$ $URL$";
 #endif // !XMLREADER_CC_DEFINED

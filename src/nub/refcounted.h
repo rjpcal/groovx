@@ -202,5 +202,5 @@ public:
   int dbg_WeakRefCount() const throw();
 };
 
-static const char vcid_refcounted_h[] = "$Header$";
+static const char vcid_refcounted_h[] = "$Id$ $URL$";
 #endif // !REFCOUNTED_H_DEFINED

@@ -142,5 +142,5 @@ DOTRACE("Jitter::draw");
   canvas.rotate(rotationAxis, itsRotationAngle+itsRShift);
 }
 
-static const char vcid_jitter_cc[] = "$Header$";
+static const char vcid_jitter_cc[] = "$Id$ $URL$";
 #endif // !JITTER_CC_DEFINED

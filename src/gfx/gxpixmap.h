@@ -196,5 +196,5 @@ private:
   GxPixmapImpl* const rep;
 };
 
-static const char vcid_gxpixmap_h[] = "$Header$";
+static const char vcid_gxpixmap_h[] = "$Id$ $URL$";
 #endif // !GXPIXMAP_H_DEFINED

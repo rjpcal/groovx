@@ -93,5 +93,5 @@ namespace Tcl
             std::ios::openmode flags = std::ios::openmode(0));
 }
 
-static const char vcid_tclchannelbuf_h[] = "$Header$";
+static const char vcid_tclchannelbuf_h[] = "$Id$ $URL$";
 #endif // !TCLCHANNELBUF_H_DEFINED

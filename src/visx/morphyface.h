@@ -157,5 +157,5 @@ private:
   MorphyFace& operator=(const MorphyFace&); // assignment operator not to be used
 };
 
-static const char vcid_morphyface_h[] = "$Header$";
+static const char vcid_morphyface_h[] = "$Id$ $URL$";
 #endif // !MORPHYFACE_H_DEFINED

@@ -570,5 +570,5 @@ DOTRACE("Fish::grRender");
 }
 
 
-static const char vcid_fish_cc[] = "$Header$";
+static const char vcid_fish_cc[] = "$Id$ $URL$";
 #endif // !FISH_CC_DEFINED

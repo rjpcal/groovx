@@ -51,5 +51,5 @@ DOTRACE("Maskhatch_Init");
   PKG_RETURN;
 }
 
-static const char vcid_masktcl_cc[] = "$Header$";
+static const char vcid_masktcl_cc[] = "$Id$ $URL$";
 #endif // !MASKTCL_CC_DEFINED

@@ -167,5 +167,5 @@ struct Setter
   double operator()(double) { return v; }
 };
 
-static const char vcid_num_h[] = "$Header$";
+static const char vcid_num_h[] = "$Id$ $URL$";
 #endif // !NUM_H_DEFINED

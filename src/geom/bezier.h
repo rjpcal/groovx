@@ -215,5 +215,5 @@ double geom::bezier::eval_deriv(double u)
   return result;
 }
 
-static const char vcid_bezier_h[] = "$Header$";
+static const char vcid_bezier_h[] = "$Id$ $URL$";
 #endif // !BEZIER_H_DEFINED

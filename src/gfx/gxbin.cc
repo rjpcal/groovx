@@ -50,5 +50,5 @@ void GxBin::setChild(const Nub::Ref<GxNode>& child)
   this->sigNodeChanged.emit();
 }
 
-static const char vcid_gxbin_cc[] = "$Header$";
+static const char vcid_gxbin_cc[] = "$Id$ $URL$";
 #endif // !GXBIN_CC_DEFINED

@@ -303,5 +303,5 @@ DOTRACE("Fstringtest_Unload");
 
 extern "C" int Fstringtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char vcid_fstringtest_cc[] = "$Header$";
+static const char vcid_fstringtest_cc[] = "$Id$ $URL$";
 #endif // !FSTRINGTEST_CC_DEFINED

@@ -139,5 +139,5 @@ inline void Tcl::ObjPtr::append(const T& other)
   append(Tcl::toTcl(other));
 }
 
-static const char vcid_tclobjptr_h[] = "$Header$";
+static const char vcid_tclobjptr_h[] = "$Id$ $URL$";
 #endif // !TCLOBJPTR_H_DEFINED

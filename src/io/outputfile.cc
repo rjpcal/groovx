@@ -102,5 +102,5 @@ STD_IO::ostream& OutputFile::stream()
   return *itsStream;
 }
 
-static const char vcid_outputfile_cc[] = "$Header$";
+static const char vcid_outputfile_cc[] = "$Id$ $URL$";
 #endif // !OUTPUTFILE_CC_DEFINED

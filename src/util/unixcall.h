@@ -126,5 +126,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_system_h[] = "$Header$";
+static const char vcid_system_h[] = "$Id$ $URL$";
 #endif // !SYSTEM_H_DEFINED

@@ -51,5 +51,5 @@ DOTRACE("Fixpt_Init");
   PKG_RETURN;
 }
 
-static const char vcid_fixpttcl_cc[] = "$Header$";
+static const char vcid_fixpttcl_cc[] = "$Id$ $URL$";
 #endif // !FIXPTTCL_CC_DEFINED

@@ -413,5 +413,5 @@ namespace Nub
 
 } // end namespace Nub
 
-static const char vcid_signal_h[] = "$Header$";
+static const char vcid_signal_h[] = "$Id$ $URL$";
 #endif // !SIGNAL_H_DEFINED

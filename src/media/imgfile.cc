@@ -172,5 +172,5 @@ void media::save_image(const char* filename,
   Nub::log(fstring("saved image file ", filename));
 }
 
-static const char vcid_imgfile_cc[] = "$Header$";
+static const char vcid_imgfile_cc[] = "$Id$ $URL$";
 #endif // !IMGFILE_CC_DEFINED

@@ -74,5 +74,5 @@ GlxOpts::GlxOpts() :
 DOTRACE("GlxOpts::GlxOpts");
 }
 
-static const char vcid_glxopts_cc[] = "$Header$";
+static const char vcid_glxopts_cc[] = "$Id$ $URL$";
 #endif // !GLXOPTS_CC_DEFINED

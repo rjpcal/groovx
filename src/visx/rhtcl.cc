@@ -256,5 +256,5 @@ DOTRACE("Serialrh_Init");
   PKG_RETURN;
 }
 
-static const char vcid_rhtcl_cc[] = "$Header$";
+static const char vcid_rhtcl_cc[] = "$Id$ $URL$";
 #endif // !RHTCL_CC_DEFINED

@@ -74,5 +74,5 @@ public:
                                                   GlxOpts& opts);
 };
 
-static const char vcid_glwindowinterface_h[] = "$Header$";
+static const char vcid_glwindowinterface_h[] = "$Id$ $URL$";
 #endif // !GLWINDOWINTERFACE_H_DEFINED

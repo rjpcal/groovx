@@ -108,5 +108,5 @@ DOTRACE("IO::Writer::defaultWriteRawData");
   writeCstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
 }
 
-static const char vcid_writer_cc[] = "$Header$";
+static const char vcid_writer_cc[] = "$Id$ $URL$";
 #endif // !WRITER_CC_DEFINED

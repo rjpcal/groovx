@@ -89,5 +89,5 @@ private:
   GxCylinder& operator=(const GxCylinder&);
 };
 
-static const char vcid_gxcylinder_h[] = "$Header$";
+static const char vcid_gxcylinder_h[] = "$Id$ $URL$";
 #endif // !GXCYLINDER_H_DEFINED

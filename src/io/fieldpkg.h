@@ -61,5 +61,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_fieldpkg_h[] = "$Header$";
+static const char vcid_fieldpkg_h[] = "$Id$ $URL$";
 #endif // !FIELDPKG_H_DEFINED

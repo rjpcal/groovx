@@ -36,5 +36,5 @@
 
 unsigned long rutz::default_rand_seed = 0;
 
-static const char vcid_rand_cc[] = "$Header$";
+static const char vcid_rand_cc[] = "$Id$ $URL$";
 #endif // !RAND_CC_DEFINED

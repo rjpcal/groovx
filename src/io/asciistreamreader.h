@@ -56,5 +56,5 @@ namespace IO
   rutz::shared_ptr<IO::Reader> makeAsciiStreamReader(const char* filename);
 }
 
-static const char vcid_asciistreamreader_h[] = "$Header$";
+static const char vcid_asciistreamreader_h[] = "$Id$ $URL$";
 #endif // !ASCIISTREAMREADER_H_DEFINED

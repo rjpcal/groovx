@@ -49,5 +49,5 @@ namespace geom
                        const vec3<double>& world_pos);
 }
 
-static const char vcid_projection_h[] = "$Header$";
+static const char vcid_projection_h[] = "$Id$ $URL$";
 #endif // !PROJECTION_H_DEFINED

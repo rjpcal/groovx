@@ -36,5 +36,5 @@
 
 const rutz::iter_end_t rutz::iter_end = {};
 
-static const char vcid_iter_cc[] = "$Header$";
+static const char vcid_iter_cc[] = "$Id$ $URL$";
 #endif // !ITER_CC_DEFINED

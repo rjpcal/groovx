@@ -114,5 +114,5 @@ private:
   friend class GxTransformImpl;
 };
 
-static const char vcid_gxtransform_h[] = "$Header$";
+static const char vcid_gxtransform_h[] = "$Id$ $URL$";
 #endif // !GXTRANSFORM_H_DEFINED

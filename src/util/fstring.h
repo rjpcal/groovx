@@ -466,5 +466,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_fstring_h[] = "$Header$";
+static const char vcid_fstring_h[] = "$Id$ $URL$";
 #endif // !FSTRING_H_DEFINED

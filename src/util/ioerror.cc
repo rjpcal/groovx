@@ -46,5 +46,5 @@ DOTRACE("rutz::filename_error::filename_error");
 
 rutz::filename_error::~filename_error() throw() {}
 
-static const char vcid_ioerror_cc[] = "$Header$";
+static const char vcid_ioerror_cc[] = "$Id$ $URL$";
 #endif // !IOERROR_CC_DEFINED

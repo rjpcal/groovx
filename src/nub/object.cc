@@ -79,5 +79,5 @@ DOTRACE("Nub::Object::uniqueName");
   return rutz::fstring(objTypename(), "(", id(), ")");
 }
 
-static const char vcid_object_cc[] = "$Header$";
+static const char vcid_object_cc[] = "$Id$ $URL$";
 #endif // !OBJECT_CC_DEFINED

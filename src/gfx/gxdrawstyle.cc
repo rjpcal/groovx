@@ -106,5 +106,5 @@ void GxDrawStyle::draw(Gfx::Canvas& canvas) const
   canvas.setLineStipple(static_cast<unsigned short>(linePattern));
 }
 
-static const char vcid_gxdrawstyle_cc[] = "$Header$";
+static const char vcid_gxdrawstyle_cc[] = "$Id$ $URL$";
 #endif // !GXDRAWSTYLE_CC_DEFINED

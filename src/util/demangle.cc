@@ -103,5 +103,5 @@ DOTRACE("rutz::demangled_name");
   return (*result.first).second.c_str();
 }
 
-static const char vcid_demangle_cc[] = "$Header$";
+static const char vcid_demangle_cc[] = "$Id$ $URL$";
 #endif // !DEMANGLE_CC_DEFINED

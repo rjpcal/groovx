@@ -488,5 +488,5 @@ const char* const Tcl::Pkg::actionUsage = "objref(s)";
 const char* const Tcl::Pkg::getterUsage = "objref(s)";
 const char* const Tcl::Pkg::setterUsage = "objref(s) new_value(s)";
 
-static const char vcid_tclpkg_cc[] = "$Header$";
+static const char vcid_tclpkg_cc[] = "$Id$ $URL$";
 #endif // !TCLPKG_CC_DEFINED

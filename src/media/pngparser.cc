@@ -367,5 +367,5 @@ DOTRACE("media::save_png");
 
 #endif // HAVE_LIBPNG
 
-static const char vcid_pngparser_cc[] = "$Header$";
+static const char vcid_pngparser_cc[] = "$Id$ $URL$";
 #endif // !PNGPARSER_CC_DEFINED

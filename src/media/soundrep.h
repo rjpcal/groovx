@@ -51,5 +51,5 @@ namespace media
   };
 }
 
-static const char vcid_soundrep_h[] = "$Header$";
+static const char vcid_soundrep_h[] = "$Id$ $URL$";
 #endif // !SOUNDREP_H_DEFINED

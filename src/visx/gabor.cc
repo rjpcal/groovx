@@ -309,5 +309,5 @@ DOTRACE("Gabor::grRender");
                     vec2d(itsPointSize, itsPointSize));
 }
 
-static const char vcid_gabor_cc[] = "$Header$";
+static const char vcid_gabor_cc[] = "$Id$ $URL$";
 #endif // !GABOR_CC_DEFINED

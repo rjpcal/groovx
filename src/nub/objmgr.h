@@ -57,5 +57,5 @@ namespace Nub
   }
 }
 
-static const char vcid_objmgr_h[] = "$Header$";
+static const char vcid_objmgr_h[] = "$Id$ $URL$";
 #endif // !OBJMGR_H_DEFINED

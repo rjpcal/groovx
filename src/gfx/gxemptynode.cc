@@ -58,5 +58,5 @@ GxEmptyNode* GxEmptyNode::make()
   return p;
 }
 
-static const char vcid_gxemptynode_cc[] = "$Header$";
+static const char vcid_gxemptynode_cc[] = "$Id$ $URL$";
 #endif // !GXEMPTYNODE_CC_DEFINED

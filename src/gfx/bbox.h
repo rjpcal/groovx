@@ -90,5 +90,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_bbox_h[] = "$Header$";
+static const char vcid_bbox_h[] = "$Id$ $URL$";
 #endif // !BBOX_H_DEFINED

@@ -113,5 +113,5 @@ public:
 };
 
 
-static const char vcid_gxaligner_h[] = "$Header$";
+static const char vcid_gxaligner_h[] = "$Id$ $URL$";
 #endif // !GXALIGNER_H_DEFINED

@@ -43,5 +43,5 @@ namespace media
   void save_image(const char* filename, const media::bmap_data& data);
 }
 
-static const char vcid_imgfile_h[] = "$Header$";
+static const char vcid_imgfile_h[] = "$Id$ $URL$";
 #endif // !IMGFILE_H_DEFINED

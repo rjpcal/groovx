@@ -131,5 +131,5 @@ inline Nub::Ref<const IoObject> makeConstProxy(const C* ref)
 
 } // end namespace IO
 
-static const char vcid_ioproxy_h[] = "$Header$";
+static const char vcid_ioproxy_h[] = "$Id$ $URL$";
 #endif // !IOPROXY_H_DEFINED

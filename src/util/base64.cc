@@ -259,5 +259,5 @@ void rutz::base64_decode(const rutz::byte_array& src,
                 dst);
 }
 
-static const char vcid_base64_cc[] = "$Header$";
+static const char vcid_base64_cc[] = "$Id$ $URL$";
 #endif // !BASE64_CC_DEFINED

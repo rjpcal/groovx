@@ -17,5 +17,5 @@
 
 dash::variant::~variant() {}
 
-static const char vcid_variant_cc[] = "$Header$";
+static const char vcid_variant_cc[] = "$Id$ $URL$";
 #endif // !VARIANT_CC_DEFINED

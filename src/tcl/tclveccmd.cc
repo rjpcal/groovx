@@ -190,5 +190,5 @@ void Tcl::useVecDispatch(Tcl::Command& cmd, unsigned int key_argn)
   cmd.setDispatcher(rutz::make_shared(new VecDispatcher(key_argn)));
 }
 
-static const char vcid_tclveccmd_cc[] = "$Header$";
+static const char vcid_tclveccmd_cc[] = "$Id$ $URL$";
 #endif // !TCLVECCMD_CC_DEFINED

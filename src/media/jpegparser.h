@@ -40,5 +40,5 @@ namespace media
   void load_jpeg(const char* filename, media::bmap_data& data);
 }
 
-static const char vcid_jpegparser_h[] = "$Header$";
+static const char vcid_jpegparser_h[] = "$Id$ $URL$";
 #endif // !JPEGPARSER_H_DEFINED

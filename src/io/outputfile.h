@@ -77,5 +77,5 @@ private:
   rutz::shared_ptr<STD_IO::ostream> itsStream;
 };
 
-static const char vcid_outputfile_h[] = "$Header$";
+static const char vcid_outputfile_h[] = "$Id$ $URL$";
 #endif // !OUTPUTFILE_H_DEFINED

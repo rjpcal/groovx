@@ -160,5 +160,5 @@ DOTRACE("Block::vxAllChildrenFinished");
   p->vxReturn(CHILD_OK);
 }
 
-static const char vcid_block_cc[] = "$Header$";
+static const char vcid_block_cc[] = "$Id$ $URL$";
 #endif // !BLOCK_CC_DEFINED

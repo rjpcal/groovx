@@ -95,5 +95,5 @@ private:
   mutable int itsDisplayList;
 };
 
-static const char vcid_gxcache_h[] = "$Header$";
+static const char vcid_gxcache_h[] = "$Id$ $URL$";
 #endif // !GXCACHE_H_DEFINED

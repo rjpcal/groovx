@@ -153,5 +153,5 @@ private:
   unsigned int itsFrameDumpPeriod;
 };
 
-static const char vcid_gaborarray_h[] = "$Header$";
+static const char vcid_gaborarray_h[] = "$Id$ $URL$";
 #endif // !GABORARRAY_H_DEFINED

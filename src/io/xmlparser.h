@@ -64,5 +64,5 @@ private:
   const int itsBufSize;
 };
 
-static const char vcid_xmlparser_h[] = "$Header$";
+static const char vcid_xmlparser_h[] = "$Id$ $URL$";
 #endif // !XMLPARSER_H_DEFINED

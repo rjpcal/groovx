@@ -239,5 +239,5 @@ DOTRACE("Tcl::Context::setObjResult");
   itsInterp.setResult(obj);
 }
 
-static const char vcid_tclcmd_cc[] = "$Header$";
+static const char vcid_tclcmd_cc[] = "$Id$ $URL$";
 #endif // !TCLCMD_CC_DEFINED

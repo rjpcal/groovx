@@ -168,5 +168,5 @@ private:
   TkWidgImpl* const rep;
 };
 
-static const char vcid_tkwidget_h[] = "$Header$";
+static const char vcid_tkwidget_h[] = "$Id$ $URL$";
 #endif // !TKWIDGET_H_DEFINED

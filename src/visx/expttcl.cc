@@ -150,5 +150,5 @@ DOTRACE("Exptdriver_Init");
   PKG_RETURN;
 }
 
-static const char vcid_expttcl_cc[] = "$Header$";
+static const char vcid_expttcl_cc[] = "$Id$ $URL$";
 #endif // !EXPTTCL_CC_DEFINED

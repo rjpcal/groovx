@@ -142,5 +142,5 @@ DOTRACE("CloneFace::getVertOffset");
   return itsVertOffset;
 }
 
-static const char vcid_cloneface_cc[] = "$Header$";
+static const char vcid_cloneface_cc[] = "$Id$ $URL$";
 #endif // !CLONEFACE_CC_DEFINED

@@ -166,5 +166,5 @@ DOTRACE("Matlabengine_Init");
   PKG_RETURN;
 }
 
-static const char vcid_matlabtcl_cc[] = "$Header$";
+static const char vcid_matlabtcl_cc[] = "$Id$ $URL$";
 #endif // !MATLABTCL_CC_DEFINED

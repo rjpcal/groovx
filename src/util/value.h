@@ -107,5 +107,5 @@ inline STD_IO::istream& operator>>(STD_IO::istream& is,
   return is;
 }
 
-static const char vcid_value_h[] = "$Header$";
+static const char vcid_value_h[] = "$Id$ $URL$";
 #endif // !VALUE_H_DEFINED

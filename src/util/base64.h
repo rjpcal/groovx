@@ -57,5 +57,5 @@ namespace rutz
                      rutz::byte_array& dst);
 }
 
-static const char vcid_base64_h[] = "$Header$";
+static const char vcid_base64_h[] = "$Id$ $URL$";
 #endif // !BASE64_H_DEFINED

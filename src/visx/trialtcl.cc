@@ -96,5 +96,5 @@ DOTRACE("Trial_Init");
   PKG_RETURN;
 }
 
-static const char vcid_trialtcl_cc[] = "$Header$";
+static const char vcid_trialtcl_cc[] = "$Id$ $URL$";
 #endif // !TRIALTCL_CC_DEFINED

@@ -185,5 +185,5 @@ int rutz::stdiobuf::flushoutput()
   return num;
 }
 
-static const char vcid_stdiobuf_cc[] = "$Header$";
+static const char vcid_stdiobuf_cc[] = "$Id$ $URL$";
 #endif // !STDIOBUF_CC_DEFINED

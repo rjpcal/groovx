@@ -121,5 +121,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_toglet_h[] = "$Header$";
+static const char vcid_toglet_h[] = "$Id$ $URL$";
 #endif // !TOGLET_H_DEFINED

@@ -143,5 +143,5 @@ namespace
 //    printboth(typeid(Tplate3<int>::Xt).name());
 //  }
 
-static const char vcid_demangle_gcc_v3_h[] = "$Header$";
+static const char vcid_demangle_gcc_v3_h[] = "$Id$ $URL$";
 #endif // !DEMANGLE_GCC_V3_H_DEFINED

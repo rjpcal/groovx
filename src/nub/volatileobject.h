@@ -52,5 +52,5 @@ public:
   void destroy();
 };
 
-static const char vcid_volatileobject_h[] = "$Header$";
+static const char vcid_volatileobject_h[] = "$Id$ $URL$";
 #endif // !VOLATILEOBJECT_H_DEFINED

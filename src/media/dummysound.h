@@ -61,5 +61,5 @@ void media::dummy_sound_rep::play()
 DOTRACE("dummy_sound_rep::play");
 }
 
-static const char vcid_dummysound_h[] = "$Header$";
+static const char vcid_dummysound_h[] = "$Id$ $URL$";
 #endif // !DUMMYSOUND_H_DEFINED

@@ -201,5 +201,5 @@ private:
 };
 
 
-static const char vcid_eventresponsehdlr_h[] = "$Header$";
+static const char vcid_eventresponsehdlr_h[] = "$Id$ $URL$";
 #endif // !EVENTRESPONSEHDLR_H_DEFINED

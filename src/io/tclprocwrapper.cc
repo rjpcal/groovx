@@ -119,5 +119,5 @@ fstring Tcl::ProcWrapper::fullSpec() const
   return result;
 }
 
-static const char vcid_tclprocwrapper_cc[] = "$Header$";
+static const char vcid_tclprocwrapper_cc[] = "$Id$ $URL$";
 #endif // !TCLPROCWRAPPER_CC_DEFINED

@@ -316,5 +316,5 @@ int rutz::bidir_pipe::exit_status() throw()
   return 0;
 }
 
-static const char vcid_pipe_cc[] = "$Header$";
+static const char vcid_pipe_cc[] = "$Id$ $URL$";
 #endif // !PIPE_CC_DEFINED

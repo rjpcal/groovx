@@ -73,5 +73,5 @@ rutz::fstring rutz::time::format(const char* formatcode) const
   return rutz::fstring(rutz::char_range(&buf[0], count));
 }
 
-static const char vcid_time_cc[] = "$Header$";
+static const char vcid_time_cc[] = "$Id$ $URL$";
 #endif // !TIME_CC_DEFINED

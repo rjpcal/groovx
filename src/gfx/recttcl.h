@@ -73,5 +73,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_recttcl_h[] = "$Header$";
+static const char vcid_recttcl_h[] = "$Id$ $URL$";
 #endif // !RECTTCL_H_DEFINED

@@ -188,5 +188,5 @@ namespace rutz
   shared_ptr<T> make_shared(T* t) { return shared_ptr<T>(t); }
 }
 
-static const char vcid_sharedptr_h[] = "$Header$";
+static const char vcid_sharedptr_h[] = "$Id$ $URL$";
 #endif // !SHAREDPTR_H_DEFINED

@@ -59,5 +59,5 @@ DOTRACE("Jitter_Init");
   PKG_RETURN;
 }
 
-static const char vcid_jittertcl_cc[] = "$Header$";
+static const char vcid_jittertcl_cc[] = "$Id$ $URL$";
 #endif // !JITTERTCL_CC_DEFINED

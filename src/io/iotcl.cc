@@ -91,5 +91,5 @@ DOTRACE("Outputfile_Init");
   PKG_RETURN;
 }
 
-static const char vcid_iotcl_cc[] = "$Header$";
+static const char vcid_iotcl_cc[] = "$Id$ $URL$";
 #endif // !IOTCL_CC_DEFINED

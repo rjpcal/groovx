@@ -100,5 +100,5 @@ private:
   double* itsData;
 };
 
-static const char vcid_gaborpatch_h[] = "$Header$";
+static const char vcid_gaborpatch_h[] = "$Id$ $URL$";
 #endif // !GABORPATCH_H_DEFINED

@@ -51,5 +51,5 @@ DOTRACE("Morphyface_Init");
   PKG_RETURN;
 }
 
-static const char vcid_morphyfacetcl_cc[] = "$Header$";
+static const char vcid_morphyfacetcl_cc[] = "$Id$ $URL$";
 #endif // !MORPHYFACETCL_CC_DEFINED

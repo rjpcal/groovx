@@ -73,5 +73,5 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gxdrawstyle_h[] = "$Header$";
+static const char vcid_gxdrawstyle_h[] = "$Id$ $URL$";
 #endif // !GXDRAWSTYLE_H_DEFINED

@@ -65,5 +65,5 @@ namespace IO
   void saveGVX(Nub::Ref<IO::IoObject> obj, rutz::fstring filename);
 }
 
-static const char vcid_ioutil_h[] = "$Header$";
+static const char vcid_ioutil_h[] = "$Id$ $URL$";
 #endif // !IOUTIL_H_DEFINED

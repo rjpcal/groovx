@@ -155,5 +155,5 @@ DOTRACE("quicktime_sound_rep::close_sound");
     }
 }
 
-static const char vcid_quicktimesound_h[] = "$Header$";
+static const char vcid_quicktimesound_h[] = "$Id$ $URL$";
 #endif // !QUICKTIMESOUND_H_DEFINED

@@ -362,5 +362,5 @@ DOTRACE("Nub::ObjDb::insertObjWeak");
   rep->insertObj(obj, false);
 }
 
-static const char vcid_objdb_cc[] = "$Header$";
+static const char vcid_objdb_cc[] = "$Id$ $URL$";
 #endif // !OBJDB_CC_DEFINED

@@ -72,5 +72,5 @@ public:
   const double* data() const { return &itsData[0]; }
 };
 
-static const char vcid_rgbacolor_h[] = "$Header$";
+static const char vcid_rgbacolor_h[] = "$Id$ $URL$";
 #endif // !RGBACOLOR_H_DEFINED

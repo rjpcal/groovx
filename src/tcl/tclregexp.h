@@ -54,5 +54,5 @@ private:
   Tcl::ObjPtr itsPatternObj;
 };
 
-static const char vcid_tclregexp_h[] = "$Header$";
+static const char vcid_tclregexp_h[] = "$Id$ $URL$";
 #endif // !TCLREGEXP_H_DEFINED

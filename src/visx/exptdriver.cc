@@ -499,5 +499,5 @@ DOTRACE("ExptDriver::storeData");
   rep->addLogInfo("Experiment saved.");
 }
 
-static const char vcid_exptdriver_cc[] = "$Header$";
+static const char vcid_exptdriver_cc[] = "$Id$ $URL$";
 #endif // !EXPTDRIVER_CC_DEFINED

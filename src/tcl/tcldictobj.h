@@ -88,5 +88,5 @@ private:
   Tcl::ObjPtr itsDictObj;
 };
 
-static const char vcid_tcldictobj_h[] = "$Header$";
+static const char vcid_tcldictobj_h[] = "$Id$ $URL$";
 #endif // !TCLDICTOBJ_H_DEFINED

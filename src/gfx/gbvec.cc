@@ -78,5 +78,5 @@ template class GbVec2<double>;
 template class GbVec3<int>;
 template class GbVec3<double>;
 
-static const char vcid_gbvec_cc[] = "$Header$";
+static const char vcid_gbvec_cc[] = "$Id$ $URL$";
 #endif // !GBVEC_CC_DEFINED

@@ -308,5 +308,5 @@ private:
   timeval m_timeval;
 };
 
-static const char vcid_time_h[] = "$Header$";
+static const char vcid_time_h[] = "$Id$ $URL$";
 #endif // !TIME_H_DEFINED

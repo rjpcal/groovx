@@ -263,5 +263,5 @@ namespace
   }
 }
 
-static const char vcid_demangle_gcc_v2_h[] = "$Header$";
+static const char vcid_demangle_gcc_v2_h[] = "$Id$ $URL$";
 #endif // !DEMANGLE_GCC_V2_H_DEFINED

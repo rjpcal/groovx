@@ -232,5 +232,5 @@ private:
   double itsViewingDistance;    // inches
 };
 
-static const char vcid_gxcamera_h[] = "$Header$";
+static const char vcid_gxcamera_h[] = "$Id$ $URL$";
 #endif // !GXCAMERA_H_DEFINED

@@ -90,5 +90,5 @@ DOTRACE("Elementcontainer_Init");
   PKG_RETURN;
 }
 
-static const char vcid_elementcontainertcl_cc[] = "$Header$";
+static const char vcid_elementcontainertcl_cc[] = "$Id$ $URL$";
 #endif // !ELEMENTCONTAINERTCL_CC_DEFINED

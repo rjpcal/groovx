@@ -149,5 +149,5 @@ DOTRACE("GxLighting::draw");
                   spotCutoff);
 }
 
-static const char vcid_gxlighting_cc[] = "$Header$";
+static const char vcid_gxlighting_cc[] = "$Id$ $URL$";
 #endif // !GXLIGHTING_CC_DEFINED

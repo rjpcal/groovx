@@ -88,5 +88,5 @@ bool Tcl::RegExp::matchesString(const char* str)
   return false;
 }
 
-static const char vcid_tclregexp_cc[] = "$Header$";
+static const char vcid_tclregexp_cc[] = "$Id$ $URL$";
 #endif // !TCLREGEXP_CC_DEFINED

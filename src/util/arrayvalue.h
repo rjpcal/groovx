@@ -83,5 +83,5 @@ namespace rutz
   };
 }
 
-static const char vcid_arrayvalue_h[] = "$Header$";
+static const char vcid_arrayvalue_h[] = "$Id$ $URL$";
 #endif // !ARRAYVALUE_H_DEFINED

@@ -367,5 +367,5 @@ DOTRACE("GxSeparator::draw");
     }
 }
 
-static const char vcid_gxseparator_cc[] = "$Header$";
+static const char vcid_gxseparator_cc[] = "$Id$ $URL$";
 #endif // !GXSEPARATOR_CC_DEFINED

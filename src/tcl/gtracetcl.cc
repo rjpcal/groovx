@@ -105,5 +105,5 @@ DOTRACE("Prof_Init");
   PKG_RETURN;
 }
 
-static const char vcid_gtrace_cc[] = "$Header$";
+static const char vcid_gtrace_cc[] = "$Id$ $URL$";
 #endif // !GTRACE_CC_DEFINED

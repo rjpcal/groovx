@@ -138,5 +138,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_elementcontainer_h[] = "$Header$";
+static const char vcid_elementcontainer_h[] = "$Id$ $URL$";
 #endif // !ELEMENTCONTAINER_H_DEFINED

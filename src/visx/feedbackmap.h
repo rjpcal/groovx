@@ -140,5 +140,5 @@ private:
   mutable bool isItDirty;
 };
 
-static const char vcid_feedbackmap_h[] = "$Header$";
+static const char vcid_feedbackmap_h[] = "$Id$ $URL$";
 #endif // !FEEDBACKMAP_H_DEFINED

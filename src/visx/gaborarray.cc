@@ -668,5 +668,5 @@ DOTRACE("GaborArray::backgJitter");
     }
 }
 
-static const char vcid_gaborarray_cc[] = "$Header$";
+static const char vcid_gaborarray_cc[] = "$Id$ $URL$";
 #endif // !GABORARRAY_CC_DEFINED

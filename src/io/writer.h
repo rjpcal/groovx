@@ -172,5 +172,5 @@ protected:
                            unsigned int length);
 };
 
-static const char vcid_writer_h[] = "$Header$";
+static const char vcid_writer_h[] = "$Id$ $URL$";
 #endif // !WRITER_H_DEFINED

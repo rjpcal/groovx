@@ -46,5 +46,5 @@ public:
   virtual ~KbdResponseHdlr() throw();
 };
 
-static const char vcid_kbdresponsehdlr_h[] = "$Header$";
+static const char vcid_kbdresponsehdlr_h[] = "$Id$ $URL$";
 #endif // !KBDRESPONSEHDLR_H_DEFINED

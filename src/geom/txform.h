@@ -107,5 +107,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_txform_h[] = "$Header$";
+static const char vcid_txform_h[] = "$Id$ $URL$";
 #endif // !TXFORM_H_DEFINED

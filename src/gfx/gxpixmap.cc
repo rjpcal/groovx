@@ -541,5 +541,5 @@ DOTRACE("GxPixmap::scramble");
   this->sigNodeChanged.emit();
 }
 
-static const char vcid_gxpixmap_cc[] = "$Header$";
+static const char vcid_gxpixmap_cc[] = "$Id$ $URL$";
 #endif // !GXPIXMAP_CC_DEFINED

@@ -39,5 +39,5 @@ namespace Tcl
   void useVecDispatch(Tcl::Command& cmd, unsigned int key_argn);
 }
 
-static const char vcid_tclveccmd_h[] = "$Header$";
+static const char vcid_tclveccmd_h[] = "$Id$ $URL$";
 #endif // !TCLVECCMD_H_DEFINED

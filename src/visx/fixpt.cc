@@ -149,5 +149,5 @@ DOTRACE("FixPt::grRender");
   }
 }
 
-static const char vcid_fixpt_cc[] = "$Header$";
+static const char vcid_fixpt_cc[] = "$Id$ $URL$";
 #endif // !FIXPT_CC_DEFINED

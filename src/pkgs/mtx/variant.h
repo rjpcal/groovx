@@ -50,5 +50,5 @@ public:
   virtual void          set_bool_field(const char* field_name, bool field) = 0;
 };
 
-static const char vcid_variant_h[] = "$Header$";
+static const char vcid_variant_h[] = "$Id$ $URL$";
 #endif // !VARIANT_H_DEFINED

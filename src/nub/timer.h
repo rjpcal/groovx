@@ -82,5 +82,5 @@ private:
   mutable rutz::stopwatch itsStopWatch;
 };
 
-static const char vcid_timer_h[] = "$Header$";
+static const char vcid_timer_h[] = "$Id$ $URL$";
 #endif // !TIMER_H_DEFINED

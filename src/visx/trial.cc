@@ -679,5 +679,5 @@ DOTRACE("Trial::trDenyResponses");
   rep->activeState->rh->rhDenyResponses();
 }
 
-static const char vcid_trial_cc[] = "$Header$";
+static const char vcid_trial_cc[] = "$Id$ $URL$";
 #endif // !TRIAL_CC_DEFINED

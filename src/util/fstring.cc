@@ -482,5 +482,5 @@ void rutz::fstring::debug_dump() const throw()
   m_rep->debug_dump();
 }
 
-static const char vcid_fstring_cc[] = "$Header$";
+static const char vcid_fstring_cc[] = "$Id$ $URL$";
 #endif // !FSTRING_CC_DEFINED

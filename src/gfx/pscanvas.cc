@@ -1093,5 +1093,5 @@ DOTRACE("Gfx::PSCanvas::flushOutput");
   rep->itsFstream << std::flush;
 }
 
-static const char vcid_pscanvas_cc[] = "$Header$";
+static const char vcid_pscanvas_cc[] = "$Id$ $URL$";
 #endif // !PSCANVAS_CC_DEFINED

@@ -51,5 +51,5 @@ DOTRACE("Nub::ObjMgr::newObj(const fstring&)");
   return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
 }
 
-static const char vcid_objmgr_cc[] = "$Header$";
+static const char vcid_objmgr_cc[] = "$Id$ $URL$";
 #endif // !OBJMGR_CC_DEFINED

@@ -55,5 +55,5 @@ DOTRACE("Block_Init");
   PKG_RETURN;
 }
 
-static const char vcid_blocktcl_cc[] = "$Header$";
+static const char vcid_blocktcl_cc[] = "$Id$ $URL$";
 #endif // !BLOCKTCL_CC_DEFINED

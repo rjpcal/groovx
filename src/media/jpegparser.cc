@@ -179,5 +179,5 @@ DOTRACE("media::load_jpeg");
 
 #endif // HAVE_LIBJPEG
 
-static const char vcid_jpegparser_cc[] = "$Header$";
+static const char vcid_jpegparser_cc[] = "$Id$ $URL$";
 #endif // !JPEGPARSER_CC_DEFINED

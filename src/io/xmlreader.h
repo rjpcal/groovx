@@ -47,5 +47,5 @@ namespace IO
   void xmlDebug(const char* filename);
 }
 
-static const char vcid_xmlreader_h[] = "$Header$";
+static const char vcid_xmlreader_h[] = "$Id$ $URL$";
 #endif // !XMLREADER_H_DEFINED

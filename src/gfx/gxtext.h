@@ -97,5 +97,5 @@ private:
   int itsStrokeWidth;
 };
 
-static const char vcid_gxtext_h[] = "$Header$";
+static const char vcid_gxtext_h[] = "$Id$ $URL$";
 #endif // !GXTEXT_H_DEFINED

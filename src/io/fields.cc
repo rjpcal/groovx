@@ -227,5 +227,5 @@ DOTRACE("FieldContainer::child");
   return 0;
 }
 
-static const char vcid_fields_cc[] = "$Header$";
+static const char vcid_fields_cc[] = "$Id$ $URL$";
 #endif // !FIELDS_CC_DEFINED

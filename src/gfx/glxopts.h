@@ -61,5 +61,5 @@ struct GlxOpts
   bool transparent;      ///< whether to request transparency
 };
 
-static const char vcid_glxopts_h[] = "$Header$";
+static const char vcid_glxopts_h[] = "$Id$ $URL$";
 #endif // !GLXOPTS_H_DEFINED

@@ -83,5 +83,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_vectcl_h[] = "$Header$";
+static const char vcid_vectcl_h[] = "$Id$ $URL$";
 #endif // !VECTCL_H_DEFINED

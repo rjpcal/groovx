@@ -213,5 +213,5 @@ namespace media
 
 } // end namespace media
 
-static const char vcid_bmapdata_h[] = "$Header$";
+static const char vcid_bmapdata_h[] = "$Id$ $URL$";
 #endif // !BMAPDATA_H_DEFINED

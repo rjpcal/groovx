@@ -73,5 +73,5 @@ DOTRACE("Tkwidget_Init");
   PKG_RETURN;
 }
 
-static const char vcid_tkwidgettcl_cc[] = "$Header$";
+static const char vcid_tkwidgettcl_cc[] = "$Id$ $URL$";
 #endif // !TKWIDGETTCL_CC_DEFINED

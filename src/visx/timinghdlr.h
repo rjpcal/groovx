@@ -104,5 +104,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_timinghdlr_h[] = "$Header$";
+static const char vcid_timinghdlr_h[] = "$Id$ $URL$";
 #endif // !TIMINGHDLR_H_DEFINED

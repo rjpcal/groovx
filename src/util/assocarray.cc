@@ -128,5 +128,5 @@ DOTRACE("rutz::assoc_array_base::set_value_for_key");
   ptr_slot = ptr;
 }
 
-static const char vcid_assocarray_cc[] = "$Header$";
+static const char vcid_assocarray_cc[] = "$Id$ $URL$";
 #endif // !ASSOCARRAY_CC_DEFINED

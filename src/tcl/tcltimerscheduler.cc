@@ -141,5 +141,5 @@ DOTRACE("Tcl::TimerScheduler::schedule");
     (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
 }
 
-static const char vcid_tcltimerscheduler_cc[] = "$Header$";
+static const char vcid_tcltimerscheduler_cc[] = "$Id$ $URL$";
 #endif // !TCLTIMERSCHEDULER_CC_DEFINED

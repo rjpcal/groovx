@@ -122,5 +122,5 @@ DOTRACE("Tcl::List::getLength");
   return static_cast<unsigned int>(len);
 }
 
-static const char vcid_tcllistobj_cc[] = "$Header$";
+static const char vcid_tcllistobj_cc[] = "$Id$ $URL$";
 #endif // !TCLLISTOBJ_CC_DEFINED

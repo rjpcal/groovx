@@ -122,5 +122,5 @@ DOTRACE("IO::IoObject::serialVersionId");
   return 0;
 }
 
-static const char vcid_io_cc[] = "$Header$";
+static const char vcid_io_cc[] = "$Id$ $URL$";
 #endif // !IO_CC_DEFINED

@@ -113,5 +113,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_gxseparator_h[] = "$Header$";
+static const char vcid_gxseparator_h[] = "$Id$ $URL$";
 #endif // !GXSEPARATOR_H_DEFINED

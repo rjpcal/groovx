@@ -88,5 +88,5 @@ private:
   GxMaterial& operator=(const GxMaterial&);
 };
 
-static const char vcid_gxmaterial_h[] = "$Header$";
+static const char vcid_gxmaterial_h[] = "$Id$ $URL$";
 #endif // !GXMATERIAL_H_DEFINED

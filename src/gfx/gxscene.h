@@ -137,5 +137,5 @@ private:
   Nub::Ref<Nub::Slot0> slotNodeChanged;
 };
 
-static const char vcid_gxscene_h[] = "$Header$";
+static const char vcid_gxscene_h[] = "$Id$ $URL$";
 #endif // !GXSCENE_H_DEFINED

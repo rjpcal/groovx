@@ -105,5 +105,5 @@ public:
   icstrstream(const char* s);
 };
 
-static const char vcid_cstrstream_h[] = "$Header$";
+static const char vcid_cstrstream_h[] = "$Id$ $URL$";
 #endif // !CSTRSTREAM_H_DEFINED

@@ -84,5 +84,5 @@ namespace Gfx
 
 } // end namespace Gfx
 
-static const char vcid_linestrip_h[] = "$Header$";
+static const char vcid_linestrip_h[] = "$Id$ $URL$";
 #endif // !LINESTRIP_H_DEFINED

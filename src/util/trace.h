@@ -184,5 +184,5 @@ private:
 #  define DOTRACE(x) {}
 #endif
 
-static const char vcid_trace_h[] = "$Header$";
+static const char vcid_trace_h[] = "$Id$ $URL$";
 #endif // !TRACE_H_DEFINED

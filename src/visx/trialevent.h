@@ -345,5 +345,5 @@ private:
   std::vector<Nub::Ref<TrialEvent> > itsEvents;
 };
 
-static const char vcid_trialevent_h[] = "$Header$";
+static const char vcid_trialevent_h[] = "$Id$ $URL$";
 #endif // !TRIALEVENT_H_DEFINED

@@ -113,5 +113,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_objpkg_h[] = "$Header$";
+static const char vcid_objpkg_h[] = "$Id$ $URL$";
 #endif // !OBJPKG_H_DEFINED

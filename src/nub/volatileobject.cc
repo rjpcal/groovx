@@ -53,5 +53,5 @@ DOTRACE("Nub::VolatileObject::destroy");
   delete this;
 }
 
-static const char vcid_volatileobject_cc[] = "$Header$";
+static const char vcid_volatileobject_cc[] = "$Id$ $URL$";
 #endif // !VOLATILEOBJECT_CC_DEFINED

@@ -77,5 +77,5 @@ private:
   int itsMsec;
 };
 
-static const char vcid_response_h[] = "$Header$";
+static const char vcid_response_h[] = "$Id$ $URL$";
 #endif // !RESPONSE_H_DEFINED

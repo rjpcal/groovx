@@ -72,5 +72,5 @@ rutz::shared_ptr<GxFont> GxFont::make(const char* name_cstr)
 
 GxFont::~GxFont() throw() {}
 
-static const char vcid_gxfont_cc[] = "$Header$";
+static const char vcid_gxfont_cc[] = "$Id$ $URL$";
 #endif // !GXFONT_CC_DEFINED

@@ -124,5 +124,5 @@ DOTRACE("Toglet_Init");
   PKG_RETURN;
 }
 
-static const char vcid_toglettcl_cc[] = "$Header$";
+static const char vcid_toglettcl_cc[] = "$Id$ $URL$";
 #endif // !TOGLETTCL_CC_DEFINED

@@ -56,5 +56,5 @@ namespace IO
   rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(const char* filename);
 }
 
-static const char vcid_asciistreamwriter_h[] = "$Header$";
+static const char vcid_asciistreamwriter_h[] = "$Id$ $URL$";
 #endif // !ASCIISTREAMWRITER_H_DEFINED

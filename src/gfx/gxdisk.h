@@ -88,5 +88,5 @@ private:
   GxDisk& operator=(const GxDisk&);
 };
 
-static const char vcid_gxdisk_h[] = "$Header$";
+static const char vcid_gxdisk_h[] = "$Id$ $URL$";
 #endif // !GXDISK_H_DEFINED

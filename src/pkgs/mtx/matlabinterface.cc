@@ -78,5 +78,5 @@ DOTRACE("make_mxarray");
 
 #endif // HAVE_MATLAB
 
-static const char vcid_matlabinterface_cc[] = "$Header$";
+static const char vcid_matlabinterface_cc[] = "$Id$ $URL$";
 #endif // !MATLABINTERFACE_CC_DEFINED

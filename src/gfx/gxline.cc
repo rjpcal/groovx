@@ -141,5 +141,5 @@ DOTRACE("GxLine::draw");
   canvas.vertex3(stop.vec());
 }
 
-static const char vcid_gxline_cc[] = "$Header$";
+static const char vcid_gxline_cc[] = "$Id$ $URL$";
 #endif // !GXLINE_CC_DEFINED

@@ -142,5 +142,5 @@ public:
   void close() { m_buf.close(); }
 };
 
-static const char vcid_stdiobuf_h[] = "$Header$";
+static const char vcid_stdiobuf_h[] = "$Id$ $URL$";
 #endif // !STDIOBUF_H_DEFINED

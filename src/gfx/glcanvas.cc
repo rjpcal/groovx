@@ -1269,5 +1269,5 @@ void GLCanvas::material(const Gfx::RgbaColor* spec,
     glMaterialf(GL_FRONT, GL_SHININESS, *shininess);
 }
 
-static const char vcid_glcanvas_cc[] = "$Header$";
+static const char vcid_glcanvas_cc[] = "$Id$ $URL$";
 #endif // !GLCANVAS_CC_DEFINED

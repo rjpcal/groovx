@@ -46,5 +46,5 @@ namespace rutz
                       const rutz::file_pos& pos);
 }
 
-static const char vcid_stderror_h[] = "$Header$";
+static const char vcid_stderror_h[] = "$Id$ $URL$";
 #endif // !STDERROR_H_DEFINED

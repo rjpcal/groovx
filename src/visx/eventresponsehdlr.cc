@@ -473,5 +473,5 @@ void EventResponseHdlr::rhDenyResponses() const
   POSTCONDITION( rep->isInactive() );
 }
 
-static const char vcid_eventresponsehdlr_cc[] = "$Header$";
+static const char vcid_eventresponsehdlr_cc[] = "$Id$ $URL$";
 #endif // !EVENTRESPONSEHDLR_CC_DEFINED

@@ -529,5 +529,5 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
 }
 
-static const char vcid_morphyface_cc[] = "$Header$";
+static const char vcid_morphyface_cc[] = "$Id$ $URL$";
 #endif // !MORPHYFACE_CC_DEFINED

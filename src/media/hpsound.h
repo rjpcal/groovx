@@ -178,5 +178,5 @@ DOTRACE("media::hp_audio_sound_rep::error_handler");
   return 0;
 }
 
-static const char vcid_hpsound_h[] = "$Header$";
+static const char vcid_hpsound_h[] = "$Id$ $URL$";
 #endif // !HPSOUND_H_DEFINED

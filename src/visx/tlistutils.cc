@@ -547,5 +547,5 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   return result;
 }
 
-static const char vcid_tlistutils_cc[] = "$Header$";
+static const char vcid_tlistutils_cc[] = "$Id$ $URL$";
 #endif // !TLISTUTILS_CC_DEFINED

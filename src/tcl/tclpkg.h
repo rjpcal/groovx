@@ -332,5 +332,5 @@ catch(...)                                      \
 return 1;
 
 
-static const char vcid_tclpkg_h[] = "$Header$";
+static const char vcid_tclpkg_h[] = "$Id$ $URL$";
 #endif // !TCLPKG_H_DEFINED

@@ -196,5 +196,5 @@ void Outliner::elementEnd(const char* el)
 }
 #endif
 
-static const char vcid_xmlparser_cc[] = "$Header$";
+static const char vcid_xmlparser_cc[] = "$Id$ $URL$";
 #endif // !XMLPARSER_CC_DEFINED

@@ -76,5 +76,5 @@ private:
   mutable unsigned short itsMask;
 };
 
-static const char vcid_gxbounds_h[] = "$Header$";
+static const char vcid_gxbounds_h[] = "$Id$ $URL$";
 #endif // !GXBOUNDS_H_DEFINED

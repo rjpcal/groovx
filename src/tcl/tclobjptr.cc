@@ -75,5 +75,5 @@ void Tcl::ObjPtr::decrRef(Tcl_Obj* obj)
   Tcl_DecrRefCount(obj);
 }
 
-static const char vcid_tclobjptr_cc[] = "$Header$";
+static const char vcid_tclobjptr_cc[] = "$Id$ $URL$";
 #endif // !TCLOBJPTR_CC_DEFINED

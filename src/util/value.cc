@@ -67,5 +67,5 @@ void rutz::value::set_string(rutz::fstring val)
   scan_from(ist);
 }
 
-static const char vcid_value_cc[] = "$Header$";
+static const char vcid_value_cc[] = "$Id$ $URL$";
 #endif // !VALUE_CC_DEFINED

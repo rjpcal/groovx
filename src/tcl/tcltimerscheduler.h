@@ -51,5 +51,5 @@ public:
            void* clientdata);
 };
 
-static const char vcid_tcltimerscheduler_h[] = "$Header$";
+static const char vcid_tcltimerscheduler_h[] = "$Id$ $URL$";
 #endif // !TCLTIMERSCHEDULER_H_DEFINED

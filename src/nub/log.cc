@@ -180,5 +180,5 @@ DOTRACE("Nub::log");
     logImpl(*logFile, msg);
 }
 
-static const char vcid_log_cc[] = "$Header$";
+static const char vcid_log_cc[] = "$Id$ $URL$";
 #endif // !LOG_CC_DEFINED

@@ -355,5 +355,5 @@ DOTRACE("GxPsyphyCamera::draw");
   orthoFixed(canvas, width(), height(), pixels_per_unit);
 }
 
-static const char vcid_gxcamera_cc[] = "$Header$";
+static const char vcid_gxcamera_cc[] = "$Id$ $URL$";
 #endif // !GXCAMERA_CC_DEFINED

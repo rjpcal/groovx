@@ -269,5 +269,5 @@ int Nub::RefCounted::dbg_WeakRefCount() const throw()
   return itsRefCounts->itsWeak;
 }
 
-static const char vcid_refcounted_cc[] = "$Header$";
+static const char vcid_refcounted_cc[] = "$Id$ $URL$";
 #endif // !REFCOUNTED_CC_DEFINED

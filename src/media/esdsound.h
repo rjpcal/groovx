@@ -309,5 +309,5 @@ void media::esd_sound_rep::play()
     }
 }
 
-static const char vcid_esdsound_h[] = "$Header$";
+static const char vcid_esdsound_h[] = "$Id$ $URL$";
 #endif // !ESDSOUND_H_DEFINED

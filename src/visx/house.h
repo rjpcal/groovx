@@ -138,5 +138,5 @@ private:
   House& operator=(const House&);
 };
 
-static const char vcid_house_h[] = "$Header$";
+static const char vcid_house_h[] = "$Id$ $URL$";
 #endif // !HOUSE_H_DEFINED

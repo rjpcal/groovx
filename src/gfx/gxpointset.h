@@ -90,5 +90,5 @@ private:
   GxPointSet& operator=(const GxPointSet&);
 };
 
-static const char vcid_gxpointset_h[] = "$Header$";
+static const char vcid_gxpointset_h[] = "$Id$ $URL$";
 #endif // !GXPOINTSET_H_DEFINED

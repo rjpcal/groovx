@@ -143,5 +143,5 @@ DOTRACE("Vectwotest_Unload");
 
 extern "C" int Vectwotest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char vcid_vectwotest_cc[] = "$Header$";
+static const char vcid_vectwotest_cc[] = "$Id$ $URL$";
 #endif // !VECTWOTEST_CC_DEFINED

@@ -53,5 +53,5 @@ Nub::ObjFactory& Nub::ObjFactory::theOne()
   return *instance;
 }
 
-static const char vcid_objfactory_cc[] = "$Header$";
+static const char vcid_objfactory_cc[] = "$Id$ $URL$";
 #endif // !OBJFACTORY_CC_DEFINED

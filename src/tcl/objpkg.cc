@@ -142,5 +142,5 @@ DOTRACE("Tcl::defGenericObjCmds");
             rutz::bind_first(getSizeof, caster), src_pos );
 }
 
-static const char vcid_objpkg_cc[] = "$Header$";
+static const char vcid_objpkg_cc[] = "$Id$ $URL$";
 #endif // !OBJPKG_CC_DEFINED

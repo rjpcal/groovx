@@ -438,5 +438,5 @@ public:
 
 } // end namespace Gfx
 
-static const char vcid_canvas_h[] = "$Header$";
+static const char vcid_canvas_h[] = "$Id$ $URL$";
 #endif // !CANVAS_H_DEFINED

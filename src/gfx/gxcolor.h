@@ -69,5 +69,5 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gxcolor_h[] = "$Header$";
+static const char vcid_gxcolor_h[] = "$Id$ $URL$";
 #endif // !GXCOLOR_H_DEFINED

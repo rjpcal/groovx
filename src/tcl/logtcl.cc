@@ -59,5 +59,5 @@ DOTRACE("Log_Init");
   PKG_RETURN;
 }
 
-static const char vcid_logtcl_cc[] = "$Header$";
+static const char vcid_logtcl_cc[] = "$Id$ $URL$";
 #endif // !LOGTCL_CC_DEFINED

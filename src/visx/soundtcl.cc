@@ -84,5 +84,5 @@ DOTRACE("Sound_Init");
   PKG_RETURN;
 }
 
-static const char vcid_soundtcl_cc[] = "$Header$";
+static const char vcid_soundtcl_cc[] = "$Id$ $URL$";
 #endif // !SOUNDTCL_CC_DEFINED

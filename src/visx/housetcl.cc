@@ -52,5 +52,5 @@ DOTRACE("House_Init");
   PKG_RETURN;
 }
 
-static const char vcid_housetcl_cc[] = "$Header$";
+static const char vcid_housetcl_cc[] = "$Id$ $URL$";
 #endif // !HOUSETCL_CC_DEFINED

@@ -1060,5 +1060,5 @@ mtx arr_div(const mtx& m1, const mtx& m2);
 mtx min(const mtx& m1, const mtx& m2);
 mtx max(const mtx& m1, const mtx& m2);
 
-static const char vcid_mtx_h[] = "$Header$";
+static const char vcid_mtx_h[] = "$Id$ $URL$";
 #endif // !MTX_H_DEFINED

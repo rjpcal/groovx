@@ -51,5 +51,5 @@ namespace rutz
 
 }
 
-static const char vcid_ioerror_h[] = "$Header$";
+static const char vcid_ioerror_h[] = "$Id$ $URL$";
 #endif // !IOERROR_H_DEFINED

@@ -227,5 +227,5 @@ DOTRACE("GxTransform::draw");
     }
 }
 
-static const char vcid_gxtransform_cc[] = "$Header$";
+static const char vcid_gxtransform_cc[] = "$Id$ $URL$";
 #endif // !GXTRANSFORM_CC_DEFINED

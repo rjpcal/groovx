@@ -125,5 +125,5 @@ DOTRACE("GxPointSet::draw");
   canvas.end();
 }
 
-static const char vcid_gxpointset_cc[] = "$Header$";
+static const char vcid_gxpointset_cc[] = "$Id$ $URL$";
 #endif // !GXPOINTSET_CC_DEFINED

@@ -87,5 +87,5 @@ private:
   double itsCtrlPnts[24];       // Bezier control points for face outline
 };
 
-static const char vcid_cloneface_h[] = "$Header$";
+static const char vcid_cloneface_h[] = "$Id$ $URL$";
 #endif // !CLONEFACE_H_DEFINED

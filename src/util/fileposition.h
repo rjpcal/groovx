@@ -49,5 +49,5 @@ namespace rutz
 /// This macro can be used to capture the current source filename and line-number.
 #define SRC_POS rutz::file_pos(__FILE__, __LINE__)
 
-static const char vcid_fileposition_h[] = "$Header$";
+static const char vcid_fileposition_h[] = "$Id$ $URL$";
 #endif // !FILEPOSITION_H_DEFINED

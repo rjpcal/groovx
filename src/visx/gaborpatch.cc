@@ -148,5 +148,5 @@ double GaborPatch::compute(int x, int y) const
   return sinus * gauss;
 }
 
-static const char vcid_gaborpatch_cc[] = "$Header$";
+static const char vcid_gaborpatch_cc[] = "$Id$ $URL$";
 #endif // !GABORPATCH_CC_DEFINED

@@ -128,5 +128,5 @@ DOTRACE("rutz::unixcall::getcwd");
   return rutz::fstring(&buf[0]);
 }
 
-static const char vcid_system_cc[] = "$Header$";
+static const char vcid_system_cc[] = "$Id$ $URL$";
 #endif // !SYSTEM_CC_DEFINED

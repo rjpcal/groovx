@@ -94,5 +94,5 @@ public:
   rutz::fstring fullSpec() const;
 };
 
-static const char vcid_tclprocwrapper_h[] = "$Header$";
+static const char vcid_tclprocwrapper_h[] = "$Id$ $URL$";
 #endif // !TCLPROCWRAPPER_H_DEFINED

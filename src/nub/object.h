@@ -94,5 +94,5 @@ private:
   Nub::UID itsId;
 };
 
-static const char vcid_object_h[] = "$Header$";
+static const char vcid_object_h[] = "$Id$ $URL$";
 #endif // !OBJECT_H_DEFINED

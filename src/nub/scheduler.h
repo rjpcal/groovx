@@ -67,5 +67,5 @@ public:
            void* clientdata) = 0;
 };
 
-static const char vcid_scheduler_h[] = "$Header$";
+static const char vcid_scheduler_h[] = "$Id$ $URL$";
 #endif // !SCHEDULER_H_DEFINED

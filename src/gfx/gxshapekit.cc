@@ -468,5 +468,5 @@ DOTRACE("GxShapeKit::setHeightFactor");
   rep->scaler->setHeightFactor(val);
 }
 
-static const char vcid_gxshapekit_cc[] = "$Header$";
+static const char vcid_gxshapekit_cc[] = "$Id$ $URL$";
 #endif // !GXSHAPEKIT_CC_DEFINED

@@ -234,5 +234,5 @@ Nub::Signal0::~Signal0() throw()
 DOTRACE("Nub::Signal0::~Signal0");
 }
 
-static const char vcid_signal_cc[] = "$Header$";
+static const char vcid_signal_cc[] = "$Id$ $URL$";
 #endif // !SIGNAL_CC_DEFINED

@@ -250,5 +250,5 @@ DOTRACE("GxScaler::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char vcid_gxscaler_cc[] = "$Header$";
+static const char vcid_gxscaler_cc[] = "$Id$ $URL$";
 #endif // !GXSCALER_CC_DEFINED

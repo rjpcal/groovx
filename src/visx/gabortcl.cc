@@ -70,5 +70,5 @@ DOTRACE("Gaborarray_Init");
   PKG_RETURN;
 }
 
-static const char vcid_gabortcl_cc[] = "$Header$";
+static const char vcid_gabortcl_cc[] = "$Id$ $URL$";
 #endif // !GABORTCL_CC_DEFINED

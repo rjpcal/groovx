@@ -138,5 +138,5 @@ DOTRACE("GxCylinder::draw");
                       itsSlices, itsStacks, itsFilled);
 }
 
-static const char vcid_gxcylinder_cc[] = "$Header$";
+static const char vcid_gxcylinder_cc[] = "$Id$ $URL$";
 #endif // !GXCYLINDER_CC_DEFINED

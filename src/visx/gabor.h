@@ -156,5 +156,5 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gabor_h[] = "$Header$";
+static const char vcid_gabor_h[] = "$Id$ $URL$";
 #endif // !GABOR_H_DEFINED

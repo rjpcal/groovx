@@ -69,5 +69,5 @@ namespace rutz
   }
 }
 
-static const char vcid_algo_h[] = "$Header$";
+static const char vcid_algo_h[] = "$Id$ $URL$";
 #endif // !ALGO_H_DEFINED

@@ -110,5 +110,5 @@ public:
 };
 
 
-static const char vcid_io_h[] = "$Header$";
+static const char vcid_io_h[] = "$Id$ $URL$";
 #endif // !IO_H_DEFINED

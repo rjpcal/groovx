@@ -430,5 +430,5 @@ DOTRACE("MultiEvent::clearEvents");
   itsEvents.clear();
 }
 
-static const char vcid_trialevent_cc[] = "$Header$";
+static const char vcid_trialevent_cc[] = "$Id$ $URL$";
 #endif // !TRIALEVENT_CC_DEFINED

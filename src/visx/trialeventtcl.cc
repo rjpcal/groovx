@@ -169,5 +169,5 @@ DOTRACE("Multievent_Init");
   PKG_RETURN;
 }
 
-static const char vcid_trialeventtcl_cc[] = "$Header$";
+static const char vcid_trialeventtcl_cc[] = "$Id$ $URL$";
 #endif // !TRIALEVENTTCL_CC_DEFINED

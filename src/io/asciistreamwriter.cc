@@ -370,5 +370,5 @@ shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(const char* filename)
   return rutz::make_shared(new AsciiStreamWriter(filename));
 }
 
-static const char vcid_asciistreamwriter_cc[] = "$Header$";
+static const char vcid_asciistreamwriter_cc[] = "$Id$ $URL$";
 #endif // !ASCIISTREAMWRITER_CC_DEFINED

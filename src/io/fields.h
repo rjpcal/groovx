@@ -765,5 +765,5 @@ inline C& FieldAux::cast(F& p)
   return *result;
 }
 
-static const char vcid_fields_h[] = "$Header$";
+static const char vcid_fields_h[] = "$Id$ $URL$";
 #endif // !FIELDS_H_DEFINED

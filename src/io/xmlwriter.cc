@@ -328,5 +328,5 @@ shared_ptr<IO::Writer> IO::makeXMLWriter(const char* filename)
   return rutz::make_shared(new XMLWriter(filename));
 }
 
-static const char vcid_xmlwriter_cc[] = "$Header$";
+static const char vcid_xmlwriter_cc[] = "$Id$ $URL$";
 #endif // !XMLWRITER_CC_DEFINED

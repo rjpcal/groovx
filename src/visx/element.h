@@ -100,5 +100,5 @@ public:
   virtual void vxReset() = 0;
 };
 
-static const char vcid_element_h[] = "$Header$";
+static const char vcid_element_h[] = "$Id$ $URL$";
 #endif // !ELEMENT_H_DEFINED

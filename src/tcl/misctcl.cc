@@ -141,5 +141,5 @@ DOTRACE("Misc_Init");
   PKG_RETURN;
 }
 
-static const char vcid_misctcl_cc[] = "$Header$";
+static const char vcid_misctcl_cc[] = "$Id$ $URL$";
 #endif // !MISCTCL_CC_DEFINED

@@ -216,5 +216,5 @@ DOTRACE("Gfx::LineStrip::drawJoinedLineStrip");
   canvas->end();
 }
 
-static const char vcid_linestrip_cc[] = "$Header$";
+static const char vcid_linestrip_cc[] = "$Id$ $URL$";
 #endif // !LINESTRIP_CC_DEFINED

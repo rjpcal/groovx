@@ -532,5 +532,5 @@ DOTRACE("Gl_Init");
   PKG_RETURN;
 }
 
-static const char vcid_gltcl_cc[] = "$Header$";
+static const char vcid_gltcl_cc[] = "$Id$ $URL$";
 #endif // !GLTCL_CC_DEFINED

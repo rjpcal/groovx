@@ -430,5 +430,5 @@ DOTRACE("AglRasterFont::rasterHeight");
   return itsFontInfo.ascent + itsFontInfo.descent + itsFontInfo.leading;
 }
 
-static const char vcid_aglrasterfont_h[] = "$Header$";
+static const char vcid_aglrasterfont_h[] = "$Id$ $URL$";
 #endif // !AGLRASTERFONT_H_DEFINED

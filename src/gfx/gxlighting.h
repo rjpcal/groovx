@@ -93,5 +93,5 @@ private:
   GxLighting& operator=(const GxLighting&);
 };
 
-static const char vcid_gxlighting_h[] = "$Header$";
+static const char vcid_gxlighting_h[] = "$Id$ $URL$";
 #endif // !GXLIGHTING_H_DEFINED

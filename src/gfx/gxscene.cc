@@ -214,5 +214,5 @@ DOTRACE("GxScene::animate");
     }
 }
 
-static const char vcid_gxscene_cc[] = "$Header$";
+static const char vcid_gxscene_cc[] = "$Id$ $URL$";
 #endif // !GXSCENE_CC_DEFINED

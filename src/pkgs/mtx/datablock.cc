@@ -314,5 +314,5 @@ void data_ref_holder::swap(data_ref_holder& other)
   std::swap(m_ref, other.m_ref);
 }
 
-static const char vcid_datablock_cc[] = "$Header$";
+static const char vcid_datablock_cc[] = "$Id$ $URL$";
 #endif // !DATABLOCK_CC_DEFINED

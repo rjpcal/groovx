@@ -130,5 +130,5 @@ DOTRACE("rutz::serial_port::close");
   return m_exit_status;
 }
 
-static const char vcid_serialport_cc[] = "$Header$";
+static const char vcid_serialport_cc[] = "$Id$ $URL$";
 #endif // !SERIALPORT_CC_DEFINED

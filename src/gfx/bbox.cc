@@ -231,5 +231,5 @@ DOTRACE("Gfx::Bbox::rect");
   return rep->cube.rect();
 }
 
-static const char vcid_bbox_cc[] = "$Header$";
+static const char vcid_bbox_cc[] = "$Id$ $URL$";
 #endif // !BBOX_CC_DEFINED

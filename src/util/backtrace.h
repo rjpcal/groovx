@@ -96,5 +96,5 @@ private:
   impl* const rep;
 };
 
-static const char vcid_backtrace_h[] = "$Header$";
+static const char vcid_backtrace_h[] = "$Id$ $URL$";
 #endif // !BACKTRACE_H_DEFINED

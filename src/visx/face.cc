@@ -356,5 +356,5 @@ DOTRACE("Face::getVertOffset");
   return 0.0;
 }
 
-static const char vcid_face_cc[] = "$Header$";
+static const char vcid_face_cc[] = "$Id$ $URL$";
 #endif // !FACE_CC_DEFINED

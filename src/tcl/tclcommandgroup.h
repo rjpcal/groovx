@@ -97,5 +97,5 @@ private:
   CommandGroup& operator=(const CommandGroup&); // not implemented
 };
 
-static const char vcid_tclcommandgroup_h[] = "$Header$";
+static const char vcid_tclcommandgroup_h[] = "$Id$ $URL$";
 #endif // !TCLCOMMANDGROUP_H_DEFINED

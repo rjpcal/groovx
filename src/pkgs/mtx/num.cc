@@ -100,5 +100,5 @@ double Num::fastexp7(double x)
   return x < 0 ? 1.0/fastexpImpl(-x) : fastexpImpl(x);
 }
 
-static const char vcid_num_cc[] = "$Header$";
+static const char vcid_num_cc[] = "$Id$ $URL$";
 #endif // !NUM_CC_DEFINED

@@ -67,5 +67,5 @@ namespace
   }
 }
 
-static const char vcid_demangle_cxxfilt_h[] = "$Header$";
+static const char vcid_demangle_cxxfilt_h[] = "$Id$ $URL$";
 #endif // !DEMANGLE_CXXFILT_H_DEFINED

@@ -73,5 +73,5 @@ private:
   Main& operator=(const Main&);
 };
 
-static const char vcid_tclmain_h[] = "$Header$";
+static const char vcid_tclmain_h[] = "$Id$ $URL$";
 #endif // !TCLMAIN_H_DEFINED

@@ -551,5 +551,5 @@ DOTRACE("geom::txform::debug_sse");
   return result;
 }
 
-static const char vcid_txform_cc[] = "$Header$";
+static const char vcid_txform_cc[] = "$Id$ $URL$";
 #endif // !TXFORM_CC_DEFINED

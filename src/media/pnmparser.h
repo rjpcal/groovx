@@ -56,5 +56,5 @@ namespace media
   void save_pnm(STD_IO::ostream& os, const media::bmap_data& data);
 };
 
-static const char vcid_pbm_h[] = "$Header$";
+static const char vcid_pbm_h[] = "$Id$ $URL$";
 #endif // !PBM_H_DEFINED

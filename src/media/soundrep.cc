@@ -61,5 +61,5 @@ DOTRACE("sound_rep::check_filename");
     }
 }
 
-static const char vcid_soundrep_cc[] = "$Header$";
+static const char vcid_soundrep_cc[] = "$Id$ $URL$";
 #endif // !SOUNDREP_CC_DEFINED

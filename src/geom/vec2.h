@@ -233,5 +233,5 @@ namespace geom
 
 } // end namespace Gfx
 
-static const char vcid_point_h[] = "$Header$";
+static const char vcid_point_h[] = "$Id$ $URL$";
 #endif // !VEC2_H_DEFINED

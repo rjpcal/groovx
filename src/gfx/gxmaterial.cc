@@ -132,5 +132,5 @@ DOTRACE("GxMaterial::draw");
                      &shininess);
 }
 
-static const char vcid_gxmaterial_cc[] = "$Header$";
+static const char vcid_gxmaterial_cc[] = "$Id$ $URL$";
 #endif // !GXMATERIAL_CC_DEFINED

@@ -412,5 +412,5 @@ void rutz::trace::print_out() throw()
     STD_IO::cerr << '\n';
 }
 
-static const char vcid_trace_cc[] = "$Header$";
+static const char vcid_trace_cc[] = "$Id$ $URL$";
 #endif // TRACE_CC_DEFINED

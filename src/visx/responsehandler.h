@@ -100,5 +100,5 @@ private:
   ResponseHandler& operator=(const ResponseHandler&);
 };
 
-static const char vcid_responsehandler_h[] = "$Header$";
+static const char vcid_responsehandler_h[] = "$Id$ $URL$";
 #endif // !RESPONSEHANDLER_H_DEFINED

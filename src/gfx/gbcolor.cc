@@ -63,5 +63,5 @@ const double* GbColor::const_begin() const
   return Gfx::RgbaColor::data();
 }
 
-static const char vcid_gbcolor_cc[] = "$Header$";
+static const char vcid_gbcolor_cc[] = "$Id$ $URL$";
 #endif // !GBCOLOR_CC_DEFINED

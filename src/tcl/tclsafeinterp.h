@@ -175,5 +175,5 @@ private:
   Tcl_Interp* itsInterp;
 };
 
-static const char vcid_tclsafeinterp_h[] = "$Header$";
+static const char vcid_tclsafeinterp_h[] = "$Id$ $URL$";
 #endif // !TCLSAFEINTERP_H_DEFINED

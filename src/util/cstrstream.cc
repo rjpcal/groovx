@@ -99,5 +99,5 @@ rutz::icstrstream::icstrstream(const char* s)
   m_buf.make_owning();
 }
 
-static const char vcid_cstrstream_cc[] = "$Header$";
+static const char vcid_cstrstream_cc[] = "$Id$ $URL$";
 #endif // !CSTRSTREAM_CC_DEFINED

@@ -863,5 +863,5 @@ DOTRACE("GxVectorFont::vectorHeight");
   return 8.0;
 }
 
-static const char vcid_gxvectorfont_cc[] = "$Header$";
+static const char vcid_gxvectorfont_cc[] = "$Id$ $URL$";
 #endif // !GXVECTORFONT_CC_DEFINED

@@ -101,5 +101,5 @@ namespace rutz
                                    std::ios::openmode(0));
 }
 
-static const char vcid_gzstreambuf_h[] = "$Header$";
+static const char vcid_gzstreambuf_h[] = "$Id$ $URL$";
 #endif // !GZSTREAMBUF_H_DEFINED

@@ -63,5 +63,5 @@ DOTRACE("Element_Init");
   PKG_RETURN;
 }
 
-static const char vcid_elementtcl_cc[] = "$Header$";
+static const char vcid_elementtcl_cc[] = "$Id$ $URL$";
 #endif // !ELEMENTTCL_CC_DEFINED

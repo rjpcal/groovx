@@ -92,5 +92,5 @@ private:
   const rutz::backtrace* m_backtrace;
 };
 
-static const char vcid_error_h[] = "$Header$";
+static const char vcid_error_h[] = "$Id$ $URL$";
 #endif // !ERROR_H_DEFINED

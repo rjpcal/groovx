@@ -243,5 +243,5 @@ private:
   Tcl_Obj* const* const itsObjv;
 };
 
-static const char vcid_tclcmd_h[] = "$Header$";
+static const char vcid_tclcmd_h[] = "$Id$ $URL$";
 #endif // !TCLCMD_H_DEFINED

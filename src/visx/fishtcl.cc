@@ -73,5 +73,5 @@ DOTRACE("Fish_Init");
   PKG_RETURN;
 }
 
-static const char vcid_fishtcl_cc[] = "$Header$";
+static const char vcid_fishtcl_cc[] = "$Id$ $URL$";
 #endif // !FISHTCL_CC_DEFINED

@@ -262,5 +262,5 @@ DOTRACE("media::load_pnm");
   data.swap(new_data);
 }
 
-static const char vcid_pbm_cc[] = "$Header$";
+static const char vcid_pbm_cc[] = "$Id$ $URL$";
 #endif // !PBM_CC_DEFINED

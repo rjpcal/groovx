@@ -355,5 +355,5 @@ int Hook_Init(Tcl_Interp* interp)
   PKG_RETURN;
 }
 
-static const char vcid_hooktcl_cc[] = "$Header$";
+static const char vcid_hooktcl_cc[] = "$Id$ $URL$";
 #endif // !HOOKTCL_CC_DEFINED

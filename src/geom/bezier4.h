@@ -175,5 +175,5 @@ inline double geom::bezier4::eval_min()
   return m_val_min;
 }
 
-static const char vcid_bezier4_h[] = "$Header$";
+static const char vcid_bezier4_h[] = "$Id$ $URL$";
 #endif // !BEZIER4_H_DEFINED

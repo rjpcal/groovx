@@ -85,5 +85,5 @@ void Nub::Detail::throwSoftRefInvalid(const std::type_info& info,
                     pos);
 }
 
-static const char vcid_ref_cc[] = "$Header$";
+static const char vcid_ref_cc[] = "$Id$ $URL$";
 #endif // !REF_CC_DEFINED

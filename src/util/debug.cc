@@ -156,5 +156,5 @@ void rutz::debug::set_global_level(int lev)
     key_levels[i] = (unsigned char) lev;
 }
 
-static const char vcid_debug_cc[] = "$Header$";
+static const char vcid_debug_cc[] = "$Id$ $URL$";
 #endif // !DEBUG_CC_DEFINED

@@ -128,5 +128,5 @@ private:
 };
 
 
-static const char vcid_gxscaler_h[] = "$Header$";
+static const char vcid_gxscaler_h[] = "$Id$ $URL$";
 #endif // !GXSCALER_H_DEFINED

@@ -118,5 +118,5 @@ namespace
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
-static const char vcid_testutils_h[] = "$Header$";
+static const char vcid_testutils_h[] = "$Id$ $URL$";
 #endif // !TESTUTILS_H_DEFINED

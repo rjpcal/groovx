@@ -473,5 +473,5 @@ DOTRACE("media::bmap_data::make_scrambled");
   return result;
 }
 
-static const char vcid_bmapdata_cc[] = "$Header$";
+static const char vcid_bmapdata_cc[] = "$Id$ $URL$";
 #endif // !BMAPDATA_CC_DEFINED

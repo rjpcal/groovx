@@ -148,5 +148,5 @@ void TimingHandler::setTimeout(int msec)
   getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }
 
-static const char vcid_timinghandler_cc[] = "$Header$";
+static const char vcid_timinghandler_cc[] = "$Id$ $URL$";
 #endif // !TIMINGHANDLER_CC_DEFINED

@@ -179,5 +179,5 @@ private:
   Impl* rep;
 };
 
-static const char vcid_pscanvas_h[] = "$Header$";
+static const char vcid_pscanvas_h[] = "$Id$ $URL$";
 #endif // !PSCANVAS_H_DEFINED

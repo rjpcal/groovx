@@ -68,5 +68,5 @@ public:
   void setChild(const Nub::Ref<GxNode>& child);
 };
 
-static const char vcid_gxbin_h[] = "$Header$";
+static const char vcid_gxbin_h[] = "$Id$ $URL$";
 #endif // !GXBIN_H_DEFINED

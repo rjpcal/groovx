@@ -507,5 +507,5 @@ shared_ptr<IO::Reader> IO::makeAsciiStreamReader(const char* filename)
   return rutz::make_shared( new AsciiStreamReader(filename) );
 }
 
-static const char vcid_asciistreamreader_cc[] = "$Header$";
+static const char vcid_asciistreamreader_cc[] = "$Id$ $URL$";
 #endif // !ASCIISTREAMREADER_CC_DEFINED

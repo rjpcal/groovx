@@ -196,5 +196,5 @@ namespace rutz
 } // end namespace rutz
 
 
-static const char vcid_factory_h[] = "$Header$";
+static const char vcid_factory_h[] = "$Id$ $URL$";
 #endif // !FACTORY_H_DEFINED

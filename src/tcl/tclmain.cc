@@ -650,5 +650,5 @@ DOTRACE("Tcl::Main::commandLine");
   return Tcl::MainImpl::get()->commandLine();
 }
 
-static const char vcid_tclmain_cc[] = "$Header$";
+static const char vcid_tclmain_cc[] = "$Id$ $URL$";
 #endif // !TCLMAIN_CC_DEFINED

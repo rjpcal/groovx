@@ -109,5 +109,5 @@ public:
   void undraw(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gxnode_h[] = "$Header$";
+static const char vcid_gxnode_h[] = "$Id$ $URL$";
 #endif // !GXNODE_H_DEFINED

@@ -32,5 +32,5 @@
 #ifndef VEC2_CC_DEFINED
 #define VEC2_CC_DEFINED
 
-static const char vcid_vec2_cc[] = "$Header$";
+static const char vcid_vec2_cc[] = "$Id$ $URL$";
 #endif // !VEC2_CC_DEFINED

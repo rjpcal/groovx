@@ -165,5 +165,5 @@ DOTRACE("Tcl::defAllFields");
               FieldsLister(fieldmap, true), src_pos);
 }
 
-static const char vcid_fieldpkg_cc[] = "$Header$";
+static const char vcid_fieldpkg_cc[] = "$Id$ $URL$";
 #endif // !FIELDPKG_CC_DEFINED

@@ -80,5 +80,5 @@ namespace TlistUtils
                           Tcl::List posids, int num_lines);
 }
 
-static const char vcid_tlistutils_h[] = "$Header$";
+static const char vcid_tlistutils_h[] = "$Id$ $URL$";
 #endif // !TLISTUTILS_H_DEFINED

@@ -51,5 +51,5 @@ namespace IO
   rutz::shared_ptr<IO::Writer> makeXMLWriter(const char* filename);
 }
 
-static const char vcid_xmlwriter_h[] = "$Header$";
+static const char vcid_xmlwriter_h[] = "$Id$ $URL$";
 #endif // !XMLWRITER_H_DEFINED

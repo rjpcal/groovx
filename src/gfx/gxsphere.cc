@@ -131,5 +131,5 @@ DOTRACE("GxSphere::draw");
   canvas.drawSphere(itsRadius, itsSlices, itsStacks, itsFilled);
 }
 
-static const char vcid_gxsphere_cc[] = "$Header$";
+static const char vcid_gxsphere_cc[] = "$Id$ $URL$";
 #endif // !GXSPHERE_CC_DEFINED

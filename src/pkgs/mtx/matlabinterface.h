@@ -33,5 +33,5 @@ mxArray* make_mxarray(const mtx& m);
 
 #endif // HAVE_MATLAB
 
-static const char vcid_matlabinterface_h[] = "$Header$";
+static const char vcid_matlabinterface_h[] = "$Id$ $URL$";
 #endif // !MATLABINTERFACE_H_DEFINED

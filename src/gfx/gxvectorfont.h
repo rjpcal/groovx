@@ -58,5 +58,5 @@ private:
   GxVectorFont& operator=(const GxVectorFont&);
 };
 
-static const char vcid_gxvectorfont_h[] = "$Header$";
+static const char vcid_gxvectorfont_h[] = "$Id$ $URL$";
 #endif // !GXVECTORFONT_H_DEFINED

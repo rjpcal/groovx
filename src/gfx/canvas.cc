@@ -259,5 +259,5 @@ void Gfx::Canvas::finishDrawing()
 DOTRACE("Gfx::Canvas::finishDrawing");
 }
 
-const char vcid_canvas_cc[] = "$Header$";
+const char vcid_canvas_cc[] = "$Id$ $URL$";
 #endif // !CANVAS_CC_DEFINED

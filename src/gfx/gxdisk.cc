@@ -134,5 +134,5 @@ DOTRACE("GxDisk::draw");
                     itsNumSlices, itsNumLoops);
 }
 
-static const char vcid_gxdisk_cc[] = "$Header$";
+static const char vcid_gxdisk_cc[] = "$Id$ $URL$";
 #endif // !GXDISK_CC_DEFINED

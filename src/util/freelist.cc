@@ -60,5 +60,5 @@ void rutz::free_list_base::deallocate(void* space)
   m_node_list = n;
 }
 
-static const char vcid_freelist_cc[] = "$Header$";
+static const char vcid_freelist_cc[] = "$Id$ $URL$";
 #endif // !FREELIST_CC_DEFINED

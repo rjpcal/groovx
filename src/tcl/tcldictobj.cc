@@ -108,5 +108,5 @@ DOTRACE("Tcl::Dict::doGet");
 
 #endif // defined(HAVE_TCL_DICT)
 
-static const char vcid_tcldictobj_cc[] = "$Header$";
+static const char vcid_tcldictobj_cc[] = "$Id$ $URL$";
 #endif // !TCLDICTOBJ_CC_DEFINED

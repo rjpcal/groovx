@@ -206,5 +206,5 @@ DOTRACE("GxText::grRender");
   itsFont->drawText(itsText.c_str(), canvas);
 }
 
-static const char vcid_gxtext_cc[] = "$Header$";
+static const char vcid_gxtext_cc[] = "$Id$ $URL$";
 #endif // !GXTEXT_CC_DEFINED

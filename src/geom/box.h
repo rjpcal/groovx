@@ -197,5 +197,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_box_h[] = "$Header$";
+static const char vcid_box_h[] = "$Id$ $URL$";
 #endif // !BOX_H_DEFINED

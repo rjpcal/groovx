@@ -148,5 +148,5 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_fish_h[] = "$Header$";
+static const char vcid_fish_h[] = "$Id$ $URL$";
 #endif // !FISH_H_DEFINED

@@ -127,5 +127,5 @@ DOTRACE("Glcanvas_Init");
   PKG_RETURN;
 }
 
-static const char vcid_canvastcl_cc[] = "$Header$";
+static const char vcid_canvastcl_cc[] = "$Id$ $URL$";
 #endif // !CANVASTCL_CC_DEFINED

@@ -57,5 +57,5 @@ public:
   static MtxObj* make() { return new MtxObj(mtx::empty_mtx()); }
 };
 
-static const char vcid_mtxobj_h[] = "$Header$";
+static const char vcid_mtxobj_h[] = "$Id$ $URL$";
 #endif // !MTXOBJ_H_DEFINED

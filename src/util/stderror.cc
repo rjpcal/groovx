@@ -47,5 +47,5 @@ void rutz::throw_bad_cast(const std::type_info& to,
                                   rutz::demangled_name(from)), pos);
 }
 
-static const char vcid_stderror_cc[] = "$Header$";
+static const char vcid_stderror_cc[] = "$Id$ $URL$";
 #endif // !STDERROR_CC_DEFINED

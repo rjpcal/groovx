@@ -215,5 +215,5 @@ DOTRACE("Tcltimertest_Unload");
 extern "C" int Tcltimertest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_tcltimertest_cc[] = "$Header$";
+static const char vcid_tcltimertest_cc[] = "$Id$ $URL$";
 #endif // !TCLTIMERTEST_CC_DEFINED

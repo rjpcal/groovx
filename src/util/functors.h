@@ -750,5 +750,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_functors_h[] = "$Header$";
+static const char vcid_functors_h[] = "$Id$ $URL$";
 #endif // !FUNCTORS_H_DEFINED

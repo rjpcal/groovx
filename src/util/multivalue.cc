@@ -99,5 +99,5 @@ DOTRACE("rutz::multi_value<T>::scan_from");
 template class rutz::multi_value<int>;
 template class rutz::multi_value<double>;
 
-static const char vcid_multivalue_cc[] = "$Header$";
+static const char vcid_multivalue_cc[] = "$Id$ $URL$";
 #endif // !MULTIVALUE_CC_DEFINED

@@ -52,5 +52,5 @@ ResponseHandler::~ResponseHandler() throw()
 DOTRACE("ResponseHandler::~ResponseHandler");
 }
 
-static const char vcid_responsehandler_cc[] = "$Header$";
+static const char vcid_responsehandler_cc[] = "$Id$ $URL$";
 #endif // !RESPONSEHANDLER_CC_DEFINED

@@ -184,5 +184,5 @@ shared_ptr<std::istream> Tcl::ichanopen(Tcl_Interp* interp,
 }
 
 
-static const char vcid_tclchannelbuf_cc[] = "$Header$";
+static const char vcid_tclchannelbuf_cc[] = "$Id$ $URL$";
 #endif // !TCLCHANNELBUF_CC_DEFINED

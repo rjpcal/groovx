@@ -65,5 +65,5 @@ namespace Nub
   void log(const rutz::fstring& msg);
 }
 
-static const char vcid_log_h[] = "$Header$";
+static const char vcid_log_h[] = "$Id$ $URL$";
 #endif // !LOG_H_DEFINED

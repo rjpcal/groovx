@@ -57,5 +57,5 @@ public:
   static GxEmptyNode* make();
 };
 
-static const char vcid_gxemptynode_h[] = "$Header$";
+static const char vcid_gxemptynode_h[] = "$Id$ $URL$";
 #endif // !GXEMPTYNODE_H_DEFINED

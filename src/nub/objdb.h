@@ -177,5 +177,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_objdb_h[] = "$Header$";
+static const char vcid_objdb_h[] = "$Id$ $URL$";
 #endif // !OBJDB_H_DEFINED

@@ -91,5 +91,5 @@ public:
   virtual const T* const_begin() const;
 };
 
-static const char vcid_gbvec_h[] = "$Header$";
+static const char vcid_gbvec_h[] = "$Id$ $URL$";
 #endif // !GBVEC_H_DEFINED

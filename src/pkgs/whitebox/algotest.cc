@@ -130,5 +130,5 @@ DOTRACE("Algotest_Unload");
 extern "C" int Algotest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_algotest_cc[] = "$Header$";
+static const char vcid_algotest_cc[] = "$Id$ $URL$";
 #endif // !ALGOTEST_CC_DEFINED

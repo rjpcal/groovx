@@ -442,5 +442,5 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
   return TCL_ERROR;
 }
 
-static const char vcid_tclcommandgroup_cc[] = "$Header$";
+static const char vcid_tclcommandgroup_cc[] = "$Id$ $URL$";
 #endif // !TCLCOMMANDGROUP_CC_DEFINED

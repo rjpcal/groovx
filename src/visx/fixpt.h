@@ -77,5 +77,5 @@ private:
   int itsWidth;
 };
 
-static const char vcid_fixpt_h[] = "$Header$";
+static const char vcid_fixpt_h[] = "$Id$ $URL$";
 #endif // !FIXPT_H_DEFINED

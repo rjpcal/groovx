@@ -436,5 +436,5 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   return win;
 }
 
-static const char vcid_glxwrapper_h[] = "$Header$";
+static const char vcid_glxwrapper_h[] = "$Id$ $URL$";
 #endif // !GLXWRAPPER_H_DEFINED

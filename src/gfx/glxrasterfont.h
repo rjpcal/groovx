@@ -331,5 +331,5 @@ DOTRACE("GlxRasterFont::rasterHeight");
   return asc + desc;
 }
 
-static const char vcid_glxrasterfont_h[] = "$Header$";
+static const char vcid_glxrasterfont_h[] = "$Id$ $URL$";
 #endif // !GLXRASTERFONT_H_DEFINED

@@ -136,5 +136,5 @@ DOTRACE("GxAligner::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char vcid_gxaligner_cc[] = "$Header$";
+static const char vcid_gxaligner_cc[] = "$Id$ $URL$";
 #endif // !GXALIGNER_CC_DEFINED

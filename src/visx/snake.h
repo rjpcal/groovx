@@ -92,5 +92,5 @@ private:
                      int i2, const geom::vec2<double>& new2);
 };
 
-static const char vcid_snake_h[] = "$Header$";
+static const char vcid_snake_h[] = "$Id$ $URL$";
 #endif // !SNAKE_H_DEFINED

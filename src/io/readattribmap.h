@@ -146,5 +146,5 @@ void IO::AttribMap::addNewAttrib(const rutz::fstring& attrib_name,
   itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
 }
 
-static const char vcid_readattribmap_h[] = "$Header$";
+static const char vcid_readattribmap_h[] = "$Id$ $URL$";
 #endif // !READATTRIBMAP_H_DEFINED

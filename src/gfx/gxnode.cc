@@ -116,5 +116,5 @@ DOTRACE("GxNode::undraw");
   canvas.clearColorBuffer(screen_box);
 }
 
-static const char vcid_gxnode_cc[] = "$Header$";
+static const char vcid_gxnode_cc[] = "$Id$ $URL$";
 #endif // !GXNODE_CC_DEFINED

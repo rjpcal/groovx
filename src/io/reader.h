@@ -179,5 +179,5 @@ protected:
   void defaultReadRawData(const rutz::fstring& name, rutz::byte_array& data);
 };
 
-static const char vcid_reader_h[] = "$Header$";
+static const char vcid_reader_h[] = "$Id$ $URL$";
 #endif // !READER_H_DEFINED

@@ -91,5 +91,5 @@ namespace rutz
   };
 }
 
-static const char vcid_scopedptr_h[] = "$Header$";
+static const char vcid_scopedptr_h[] = "$Id$ $URL$";
 #endif // !SCOPEDPTR_H_DEFINED

@@ -870,5 +870,5 @@ DOTRACE("max(mtx, mtx)");
   return binary_op(m1, m2, Max());
 }
 
-static const char vcid_mtx_cc[] = "$Header$";
+static const char vcid_mtx_cc[] = "$Id$ $URL$";
 #endif // !MTX_CC_DEFINED

@@ -94,5 +94,5 @@ public:
   }
 };
 
-static const char vcid_freelist_h[] = "$Header$";
+static const char vcid_freelist_h[] = "$Id$ $URL$";
 #endif // !FREELIST_H_DEFINED

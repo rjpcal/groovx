@@ -129,5 +129,5 @@ private:
   Face& operator=(const Face&);
 };
 
-static const char vcid_face_h[] = "$Header$";
+static const char vcid_face_h[] = "$Id$ $URL$";
 #endif // !FACE_H_DEFINED

@@ -58,5 +58,5 @@ namespace rutz
   };
 }
 
-static const char vcid_mappedfile_h[] = "$Header$";
+static const char vcid_mappedfile_h[] = "$Id$ $URL$";
 #endif // !MAPPEDFILE_H_DEFINED

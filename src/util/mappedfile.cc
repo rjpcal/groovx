@@ -83,5 +83,5 @@ rutz::mapped_file::~mapped_file()
   close(m_fileno);
 }
 
-static const char vcid_mappedfile_cc[] = "$Header$";
+static const char vcid_mappedfile_cc[] = "$Id$ $URL$";
 #endif // !MAPPEDFILE_CC_DEFINED

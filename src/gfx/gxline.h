@@ -95,5 +95,5 @@ private:
   GxLine& operator=(const GxLine&);
 };
 
-static const char vcid_gxline_h[] = "$Header$";
+static const char vcid_gxline_h[] = "$Id$ $URL$";
 #endif // !GXLINE_H_DEFINED

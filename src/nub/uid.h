@@ -38,5 +38,5 @@ namespace Nub
   typedef unsigned long UID;
 }
 
-static const char vcid_uid_h[] = "$Header$";
+static const char vcid_uid_h[] = "$Id$ $URL$";
 #endif // !UID_H_DEFINED

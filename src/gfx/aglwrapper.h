@@ -393,5 +393,5 @@ DOTRACE("AglWrapper::makeTkRealWindow");
   return (Window) 0;
 }
 
-static const char vcid_aglwrapper_h[] = "$Header$";
+static const char vcid_aglwrapper_h[] = "$Id$ $URL$";
 #endif // !AGLWRAPPER_H_DEFINED

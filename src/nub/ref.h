@@ -506,5 +506,5 @@ inline Nub::Ref<T>::Ref(const SoftRef<U>& other) :
   itsHandle(other.get())
 {}
 
-static const char vcid_ref_h[] = "$Header$";
+static const char vcid_ref_h[] = "$Id$ $URL$";
 #endif // !REF_H_DEFINED

@@ -127,5 +127,5 @@ Nub::Ref<IO::IoObject> IO::retrieveASW(fstring fname)
   return reader->readRoot();
 }
 
-static const char vcid_ioutil_cc[] = "$Header$";
+static const char vcid_ioutil_cc[] = "$Id$ $URL$";
 #endif // !IOUTIL_CC_DEFINED

@@ -59,5 +59,5 @@ public:
   static ObjFactory& theOne();
 };
 
-static const char vcid_objfactory_h[] = "$Header$";
+static const char vcid_objfactory_h[] = "$Id$ $URL$";
 #endif // !OBJFACTORY_H_DEFINED

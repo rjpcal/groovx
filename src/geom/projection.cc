@@ -77,5 +77,5 @@ DOTRACE("geom::project");
                0.5 * (s1.z()+1));
 }
 
-static const char vcid_projection_cc[] = "$Header$";
+static const char vcid_projection_cc[] = "$Id$ $URL$";
 #endif // !PROJECTION_CC_DEFINED

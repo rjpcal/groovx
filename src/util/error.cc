@@ -129,5 +129,5 @@ const rutz::backtrace& rutz::error::last_backtrace()
   return *last;
 }
 
-static const char vcid_error_cc[] = "$Header$";
+static const char vcid_error_cc[] = "$Id$ $URL$";
 #endif // !ERROR_CC_DEFINED

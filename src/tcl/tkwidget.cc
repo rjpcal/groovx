@@ -790,5 +790,5 @@ void Tcl::TkWidget::hook()
   sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);
 }
 
-static const char vcid_tkwidget_cc[] = "$Header$";
+static const char vcid_tkwidget_cc[] = "$Id$ $URL$";
 #endif // !TKWIDGET_CC_DEFINED

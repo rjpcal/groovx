@@ -521,5 +521,5 @@ DOTRACE("Tcl::Interp::deleteProc");
   eval(cmd_str);
 }
 
-static const char vcid_tclsafeinterp_cc[] = "$Header$";
+static const char vcid_tclsafeinterp_cc[] = "$Id$ $URL$";
 #endif // !TCLSAFEINTERP_CC_DEFINED

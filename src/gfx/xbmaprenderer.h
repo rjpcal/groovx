@@ -153,5 +153,5 @@ DOTRACE("XBmapRenderer::doRender");
   XFree(image);
 }
 
-static const char vcid_xbmaprenderer_h[] = "$Header$";
+static const char vcid_xbmaprenderer_h[] = "$Id$ $URL$";
 #endif // !XBMAPRENDERER_H_DEFINED

@@ -185,5 +185,5 @@ DOTRACE("MaskHatch::grRender");
   canvas.vertex2(vec2d(1.0, 1.0));
 }
 
-static const char vcid_maskhatch_cc[] = "$Header$";
+static const char vcid_maskhatch_cc[] = "$Id$ $URL$";
 #endif // !MASKHATCH_CC_DEFINED

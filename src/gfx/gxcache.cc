@@ -139,5 +139,5 @@ DOTRACE("GxCache::setMode");
   itsMode = new_mode;
 }
 
-static const char vcid_gxcache_cc[] = "$Header$";
+static const char vcid_gxcache_cc[] = "$Id$ $URL$";
 #endif // !GXCACHE_CC_DEFINED

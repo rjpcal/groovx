@@ -217,5 +217,5 @@ private:
 };
 
 
-static const char vcid_datablock_h[] = "$Header$";
+static const char vcid_datablock_h[] = "$Id$ $URL$";
 #endif // !DATABLOCK_H_DEFINED

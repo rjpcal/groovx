@@ -89,5 +89,5 @@ DOTRACE("Cloneface_Init");
   PKG_RETURN;
 }
 
-static const char vcid_facetcl_cc[] = "$Header$";
+static const char vcid_facetcl_cc[] = "$Id$ $URL$";
 #endif // !FACETCL_CC_DEFINED

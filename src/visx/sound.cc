@@ -176,5 +176,5 @@ DOTRACE("Sound::getFile");
   return itsFilename.c_str();
 }
 
-static const char vcid_sound_cc[] = "$Header$";
+static const char vcid_sound_cc[] = "$Id$ $URL$";
 #endif // !SOUND_CC_DEFINED

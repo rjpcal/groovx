@@ -79,5 +79,5 @@ namespace geom
   }
 }
 
-static const char vcid_geom_h[] = "$Header$";
+static const char vcid_geom_h[] = "$Id$ $URL$";
 #endif // !GEOM_H_DEFINED

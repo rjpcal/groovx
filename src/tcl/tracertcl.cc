@@ -48,5 +48,5 @@ void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& t)
   pkg->def( "traceStatus", "", bind_first(mem_func(&tracer::status), &t), SRC_POS );
 }
 
-static const char vcid_tracertcl_cc[] = "$Header$";
+static const char vcid_tracertcl_cc[] = "$Id$ $URL$";
 #endif // !TRACERTCL_CC_DEFINED

@@ -642,5 +642,5 @@ DOTRACE("IO::LegacyWriter::writeRoot");
                                          Nub::PRIVATE));
 }
 
-static const char vcid_iolegacy_cc[] = "$Header$";
+static const char vcid_iolegacy_cc[] = "$Id$ $URL$";
 #endif // !IOLEGACY_CC_DEFINED

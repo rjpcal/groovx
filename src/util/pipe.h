@@ -191,5 +191,5 @@ private:
   rutz::stdiostream* m_out_stream;
 };
 
-static const char vcid_pipe_h[] = "$Header$";
+static const char vcid_pipe_h[] = "$Id$ $URL$";
 #endif // !PIPE_H_DEFINED

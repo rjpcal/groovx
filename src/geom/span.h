@@ -127,5 +127,5 @@ namespace geom
   };
 }
 
-static const char vcid_span_h[] = "$Header$";
+static const char vcid_span_h[] = "$Id$ $URL$";
 #endif // !SPAN_H_DEFINED

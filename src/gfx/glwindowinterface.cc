@@ -64,5 +64,5 @@ DOTRACE("GlWindowInterface::make[agl]");
 #  error no GL_PLATFORM macro defined!
 #endif
 
-static const char vcid_glwindowinterface_cc[] = "$Header$";
+static const char vcid_glwindowinterface_cc[] = "$Id$ $URL$";
 #endif // !GLWINDOWINTERFACE_CC_DEFINED

@@ -123,5 +123,5 @@ DOTRACE("Nub::Timer::dummyCallback");
   timer->sigTimeOut.emit();
 }
 
-static const char vcid_timer_cc[] = "$Header$";
+static const char vcid_timer_cc[] = "$Id$ $URL$";
 #endif // !TIMER_CC_DEFINED

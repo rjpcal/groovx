@@ -153,5 +153,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_vec3_h[] = "$Header$";
+static const char vcid_vec3_h[] = "$Id$ $URL$";
 #endif // !VEC3_H_DEFINED

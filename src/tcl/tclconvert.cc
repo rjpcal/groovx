@@ -422,5 +422,5 @@ DOTRACE("Tcl::toTcl(Tcl::ObjPtr)");
   return val;
 }
 
-static const char vcid_tclconvert_cc[] = "$Header$";
+static const char vcid_tclconvert_cc[] = "$Id$ $URL$";
 #endif // !TCLCONVERT_CC_DEFINED

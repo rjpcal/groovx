@@ -355,5 +355,5 @@ DOTRACE("ElementContainer::isComplete");
   return (rep->sequencePos >= rep->elements.size());
 }
 
-static const char vcid_elementcontainer_cc[] = "$Header$";
+static const char vcid_elementcontainer_cc[] = "$Id$ $URL$";
 #endif // !ELEMENTCONTAINER_CC_DEFINED

@@ -130,5 +130,5 @@ namespace WriteUtils
 
 }} // end namespace IO::WriteUtils
 
-static const char vcid_writeutils_h[] = "$Header$";
+static const char vcid_writeutils_h[] = "$Id$ $URL$";
 #endif // !WRITEUTILS_H_DEFINED

@@ -71,5 +71,5 @@ public:
   virtual void drawText(const char* text, Gfx::Canvas& canvas) const = 0;
 };
 
-static const char vcid_gxfont_h[] = "$Header$";
+static const char vcid_gxfont_h[] = "$Id$ $URL$";
 #endif // !GXFONT_H_DEFINED

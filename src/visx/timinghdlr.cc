@@ -364,5 +364,5 @@ DOTRACE("TimingHdlr::thHaltExpt");
   Impl::cancelAll(rep->abortEvents);
 }
 
-static const char vcid_timinghdlr_cc[] = "$Header$";
+static const char vcid_timinghdlr_cc[] = "$Id$ $URL$";
 #endif // !TIMINGHDLR_CC_DEFINED

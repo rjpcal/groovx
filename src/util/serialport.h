@@ -75,5 +75,5 @@ private:
   int                m_exit_status;
 };
 
-static const char vcid_serialport_h[] = "$Header$";
+static const char vcid_serialport_h[] = "$Id$ $URL$";
 #endif // !SERIALPORT_H_DEFINED

@@ -70,5 +70,5 @@ DOTRACE("Response::scan_from");
   is >> itsVal >> itsMsec;
 }
 
-static const char vcid_response_cc[] = "$Header$";
+static const char vcid_response_cc[] = "$Id$ $URL$";
 #endif // !RESPONSE_CC_DEFINED

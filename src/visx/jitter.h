@@ -93,5 +93,5 @@ private:
   mutable double itsRShift;
 };
 
-static const char vcid_jitter_h_[] = "$Header$";
+static const char vcid_jitter_h_[] = "$Id$ $URL$";
 #endif // !JITTER_H_DEFINED

@@ -127,5 +127,5 @@ namespace ReadUtils
 
 }} // end namespace IO::ReadUtils
 
-static const char vcid_readutils_h[] = "$Header$";
+static const char vcid_readutils_h[] = "$Id$ $URL$";
 #endif // !READUTILS_H_DEFINED

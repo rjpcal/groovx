@@ -292,5 +292,5 @@ inline Tcl::List::Iterator<T> Tcl::List::end(T* /*dummy*/)
   return Iterator<T>(*this, IteratorBase::END);
 }
 
-static const char vcid_tcllistobj_h[] = "$Header$";
+static const char vcid_tcllistobj_h[] = "$Id$ $URL$";
 #endif // !TCLLISTOBJ_H_DEFINED

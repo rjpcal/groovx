@@ -93,5 +93,5 @@ private:
   rutz::shared_ptr<media::sound_rep> itsRep;
 };
 
-static const char vcid_sound_h[] = "$Header$";
+static const char vcid_sound_h[] = "$Id$ $URL$";
 #endif // !SOUND_H_DEFINED

@@ -241,5 +241,5 @@ private:
   GxShapeKitImpl* const rep;    // opaque pointer to implementation
 };
 
-static const char vcid_gxshapekit_h[] = "$Header$";
+static const char vcid_gxshapekit_h[] = "$Id$ $URL$";
 #endif // !GXSHAPEKIT_H_DEFINED
