@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 21 11:45:40 2001
+// written: Sun Mar 25 17:38:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ public:
   // Constructors
   //
 
-  enum StoragePolicy { COPY, BORROW };
+  enum StoragePolicy { COPY, BORROW, REFER };
 
   static const Mtx& emptyMtx();
 
@@ -344,10 +344,18 @@ private:
 
 	 void init(double* data, int mrows, int ncols, StoragePolicy s)
 	 {
-		if (s == COPY)
-		  storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
-		else
+		switch (s) {
+		case BORROW:
 		  storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
+		  break;
+		case REFER:
+		  storage_ = DataBlock::makeReferred(data, mrows*ncols);
+		  break;
+		case COPY:
+		default:
+		  storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
+		  break;
+		}
 
 		storage_->incrRefCount();
 
