@@ -345,7 +345,10 @@ Tcl::List TlistUtils::dealSingles(Tcl::List objids, Nub::UID posid)
       Ref<Trial> trial(Trial::make());
 
       trial->addNode(makeSepPair(pos, obj));
-      trial->setType(obj->category());
+
+      Nub::SoftRef<GxShapeKit> sk(*itr);
+      if (sk.isValid())
+        trial->setType(sk->category());
 
       result.append(trial.id());
     }
