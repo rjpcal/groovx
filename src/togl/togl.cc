@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue May 30 16:51:38 2000
+// written: Wed Sep 13 17:09:42 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -92,8 +92,11 @@ EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|	\
 VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
 
-class Togl::Impl
-{
+class Togl::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(Togl* owner, Tcl_Interp* interp,
 		 const char* pathname, int config_argc, char** config_argv);
@@ -371,7 +374,7 @@ static Tk_ConfigSpec configSpecs[] = {
 
 #ifndef NO_TK_CURSOR
   { TK_CONFIG_ACTIVE_CURSOR, "-cursor", "cursor", "Cursor",
-	 "", Tk_Offset(Togl::Impl, itsCursor), TK_CONFIG_NULL_OK },
+	 "", Tk_Offset(Togl::Impl, itsCursor), TK_CONFIG_NULL_OK, NULL },
 #endif
 
   {TK_CONFIG_INT, "-time", "time", "Time",
@@ -1115,7 +1118,7 @@ DOTRACE("<togl.cc>::generateEPS");
 
 int Togl::dumpToEpsFile( const char *filename, int inColor,
 								 void (*user_redraw)( const Togl* )) const
-  { itsImpl->dumpToEpsFile(filename, inColor, user_redraw); }
+  { return itsImpl->dumpToEpsFile(filename, inColor, user_redraw); }
 
 
 /*
@@ -1314,12 +1317,14 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsTkWin(0),
   itsWindowId(0),
   itsInterp(interp),
+  itsWidgetCmd(0),
 #ifndef NO_TK_CURSOR
   itsCursor(None),
 #endif
   itsWidth(0),
   itsHeight(0),
   itsTime(0),
+  itsTimerHandler(0),
   itsRgbaFlag(1),
   itsRgbaRed(1),
   itsRgbaGreen(1),
@@ -1336,10 +1341,15 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsAlphaSize(1),
   itsStencilFlag(0),
   itsStencilSize(1),
+  itsPrivateCmapFlag(0),
   itsOverlayFlag(0),
   itsStereoFlag(0),
   itsAuxNumber(0),
   itsIndirect(GL_FALSE),
+  itsShareList(NULL),
+  itsShareContext(NULL),
+  itsIdent(NULL),
+  itsClientData(DefaultClientData),
   itsUpdatePending(GL_FALSE),
   itsDisplayProc(DefaultDisplayProc),
   itsReshapeProc(DefaultReshapeProc),
@@ -1349,10 +1359,10 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayWindow(0),
   itsOverlayDisplayProc(DefaultOverlayDisplayProc),
   itsOverlayUpdatePending(GL_FALSE),
-  itsShareList(NULL),
-  itsShareContext(NULL),
-  itsIdent(NULL),
-  itsClientData(DefaultClientData),
+  itsOverlayCmap(),
+  itsOverlayTransparentPixel(),
+  itsOverlayIsMapped(0),
+  itsVisInfo(0),
 
   /* for EPS Output */
   itsEpsRedMap(NULL),
