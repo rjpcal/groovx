@@ -69,7 +69,6 @@ public:
 
 protected:
   virtual fixed_string readStringImpl(const fixed_string& name);
-  virtual IO::IoObject* readObjectImpl(const fixed_string& name);
 
 private:
   LegacyReader(const LegacyReader&);
