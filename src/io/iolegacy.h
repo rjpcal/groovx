@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Sep 28 19:18:50 2000
+// written: Thu Sep 28 19:22:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,6 +102,7 @@ public:
   void throwIfError(const char* type);
 
   void setFieldSeparator(char sep);
+  void setFieldSeparator(const char* sep);
   void resetFieldSeparator();
 
   void insertChar(char c);
