@@ -650,7 +650,7 @@ namespace
                   bool trailing_newline)
   {
     if (mtx_name != 0 && mtx_name[0] != '\0')
-      s << mtx_name << '\n';
+      s << '[' << mtx_name << "] ";
 
     s << "mrows " << m.mrows() << " ncols " << m.ncols();
     for(int i = 0; i < m.mrows(); ++i)
