@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Aug 20 13:28:29 2001
+// written: Mon Aug 20 14:26:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ void string_rep::realloc(std::size_t bufsize)
 {
   Precondition(itsRefCount <= 1);
 
-  string_rep new_rep(Util::max(itsAllocSize*2, bufsize), 0);
+  string_rep new_rep(Util::max(itsAllocSize*2 + 32, bufsize), 0);
 
   new_rep.append(this->itsLength, this->itsText);
 
@@ -93,9 +93,10 @@ void string_rep::append(std::size_t length, const char* text)
   Postcondition(itsLength+1 <= itsAllocSize);
 }
 
-string_rep::string_rep(std::size_t length, const char* text) :
+string_rep::string_rep(std::size_t length, const char* text,
+                       std::size_t alloc_size) :
   itsRefCount(0),
-  itsAllocSize(length+1),
+  itsAllocSize(Util::max(length+1, alloc_size)),
   itsLength(0),
   itsText(new char[itsAllocSize])
 {
@@ -103,15 +104,6 @@ string_rep::string_rep(std::size_t length, const char* text) :
     append(length, text);
   else
     itsText[0] = '\0';
-}
-
-string_rep::string_rep(std::size_t length) :
-  itsRefCount(0),
-  itsAllocSize(length+1),
-  itsLength(length),
-  itsText(new char[itsAllocSize])
-{
-  itsText[0] = '\0';
 }
 
 string_rep::~string_rep()
@@ -124,27 +116,25 @@ string_rep* string_rep::getEmptyRep()
   static string_rep* empty_rep = 0;
   if (empty_rep == 0)
     {
-      empty_rep = new string_rep(0);
+      empty_rep = new string_rep(0, 0);
       empty_rep->incrRefCount();
     }
 
   return empty_rep;
 }
 
-string_rep* string_rep::make(std::size_t length, const char* text)
+string_rep* string_rep::make(std::size_t length, const char* text,
+                             std::size_t alloc_size)
 {
   if (length == 0)
     return getEmptyRep();
 
-  return new string_rep(length, text);
+  return new string_rep(length, text, alloc_size);
 }
 
-string_rep* string_rep::make(std::size_t length)
+string_rep* string_rep::clone() const
 {
-  if (length == 0)
-    return getEmptyRep();
-
-  return new string_rep(length);
+  return new string_rep(itsLength, itsText, itsAllocSize);
 }
 
 void string_rep::makeUnique(string_rep*& rep)
@@ -168,38 +158,34 @@ char* string_rep::data()
   return itsText;
 }
 
+void string_rep::clear()
+{
+  Precondition(itsRefCount <= 1);
+
+  itsLength = 0;
+  itsText[0] = '\0';
+}
+
 //---------------------------------------------------------------------
 //
 // fstring member definitions
 //
 //---------------------------------------------------------------------
 
-void fstring::init()
+void fstring::init(Util::CharData cdata)
 {
 DOTRACE("fstring::init");
   Precondition(itsRep == 0);
 
-  itsRep = string_rep::make(0);
+  itsRep = string_rep::make(cdata.len, cdata.text);
 
   itsRep->incrRefCount();
 }
 
 fstring::fstring() :
-  itsRep(0)
+  itsRep(string_rep::make(0,0))
 {
-DOTRACE("fstring::fstring(int)");
-
-  itsRep = string_rep::make(0);
-
-  itsRep->incrRefCount();
-}
-
-fstring::fstring(const char* text) :
-  itsRep(0)
-{
-DOTRACE("fstring::fstring(const char*)");
-
-  itsRep = string_rep::make(safestrlen(text), text);
+DOTRACE("fstring::fstring");
 
   itsRep->incrRefCount();
 }
@@ -228,11 +214,8 @@ fstring& fstring::operator=(const char* text)
 {
 DOTRACE("fstring::operator=(const char*)");
 
-  string_rep* old_rep = itsRep;
-  itsRep = string_rep::make(safestrlen(text), text);
-  itsRep->incrRefCount();
-  old_rep->decrRefCount();
-
+  fstring copy(text);
+  this->swap(copy);
   return *this;
 }
 
@@ -240,11 +223,8 @@ fstring& fstring::operator=(const fstring& other)
 {
 DOTRACE("fstring::operator=(const fstring&)");
 
-  string_rep* old_rep = itsRep;
-  itsRep = other.itsRep;
-  itsRep->incrRefCount();
-  old_rep->decrRefCount();
-
+  fstring copy(other);
+  this->swap(copy);
   return *this;
 }
 
@@ -308,46 +288,45 @@ DOTRACE("fstring::append_text");
 //
 //---------------------------------------------------------------------
 
-STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str)
+void fstring::read(STD_IO::istream& is)
 {
-DOTRACE("operator>>(std::istream&, fstring&)");
-  str = "";
+DOTRACE("fstring::read");
+  clear();
   is >> STD_IO::ws;
   while ( true )
     {
-      int c = is.peek();
+      int c = is.get();
       if (c == EOF || isspace(c))
-        break;
-      str.append(char(is.get()));
+        {
+          is.unget();
+          return;
+        }
+      append(char(c));
     }
-  return is;
 }
 
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str)
+void fstring::write(STD_IO::ostream& os) const
 {
-DOTRACE("operator<<(std::ostream&, fstring&)");
-  os << str.c_str();
-  return os;
+DOTRACE("fstring::write");
+  os.write(c_str(), length());
 }
 
-STD_IO::istream& getline(STD_IO::istream& is, fstring& str)
+void fstring::readline(STD_IO::istream& is)
 {
-DOTRACE("getline(std::istream&, fstring&)");
-  return getline(is, str, '\n');
+  readline(is, '\n');
 }
 
-STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol)
+void fstring::readline(STD_IO::istream& is, char eol)
 {
-DOTRACE("getline(std::istream&, fstring&, char)");
-  str = "";
+DOTRACE("fstring::readline");
+  clear();
   while ( true )
     {
       int c = is.get();
       if (c == EOF || c == eol)
         break;
-      str.append(char(c));
+      append(char(c));
     }
-  return is;
 }
 
 static const char vcid_strings_cc[] = "$Header$";
