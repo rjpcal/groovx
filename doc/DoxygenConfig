@@ -309,7 +309,6 @@ INPUT                  = ./doc \
                          ./src/gwt \
                          ./src/gx \
                          ./src/io \
-                         ./src/pkgs/dlinktest \
                          ./src/pkgs/hashtest \
                          ./src/pkgs/matlabengine \
                          ./src/pkgs/minivectest \
