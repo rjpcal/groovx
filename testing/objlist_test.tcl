@@ -17,7 +17,7 @@ List::testList ObjlistTcl ObjList GrObj Face Fish
 test "ObjlistTcl-ObjList::stringify" "use on empty list" {
     ObjList::reset
 	 ObjList::stringify
-} "(ObjList|PtrList<GrObj>) $::INT $::INT"
+} "(ObjList|PtrList<GrObj>) @$::INT { $::INT $::INT"
 test "ObjlistTcl-ObjList::stringify" "use on filled list" {
 	 ObjList::reset
 	 set f [Face::Face]
