@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Sat Mar  4 03:46:32 2000
+// written: Sun Mar  5 14:32:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Property {
+class Property : public virtual IO {
 public:
   ///
   template <class C> friend class PropFriend;
@@ -70,7 +70,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class TProperty : public Property, public virtual IO {
+class TProperty : public Property {
 public:
   ///
   TProperty(T init=T()) : itsVal(init) {}
@@ -211,7 +211,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class TPtrProperty : public Property, public virtual IO {
+class TPtrProperty : public Property {
 public:
   ///
   TPtrProperty(T& valRef) : itsVal(valRef) {}
