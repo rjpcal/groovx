@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Nov 10 15:59:17 1999
+// written: Tue Nov 30 16:44:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -408,6 +408,7 @@ public:
 	 max.reset(rhs.max->clone());
 	 res.reset(rhs.res->clone());
 	 startNewGroup = rhs.startNewGroup;
+	 return *this;
   }
 
   /// User-friendly name of the property
