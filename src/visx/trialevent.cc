@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Sat Sep 23 16:01:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,7 +188,8 @@ DOTRACE("TrialEvent::invokeTemplate");
   int error = itsActualRequest - msec;
 
 #ifdef EVENT_TRACE
-  cerr << demangle_cstr(typeid(*this).name()) << ' ' << IoObject::id() << endl;
+  cerr << demangle_cstr(typeid(*this).name()) << ' '
+		 << IO::IoObject::id() << endl;
 
   cerr << "    request delay == " << itsRequestedDelay << '\n';
   cerr << "    est offset == " << itsEstimatedOffset << '\n';
