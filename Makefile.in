@@ -259,15 +259,13 @@ $(VISX_LIB_DIR)/ilabx.$(SHLIB_EXT): \
 ifneq ($(matlab_lib),)
 $(VISX_LIB_DIR)/mtx.so: \
 	$(matlab_lib)/libmx.so \
-	$(matlab_lib)/libmatlb.so
 
 $(VISX_LIB_DIR)/matlabengine.so: \
 	$(matlab_lib)/libeng.so \
 	$(matlab_lib)/libmx.so \
 	$(matlab_lib)/libut.so \
 	$(matlab_lib)/libmat.so \
-	$(matlab_lib)/libmi.so \
-	$(matlab_lib)/libmatlb.so
+
 endif
 
 # dependencies of main project shlib's on object files
@@ -345,7 +343,7 @@ STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 EXECUTABLE := $(exec_prefix)/bin/groovx$(PACKAGE_VERSION)
 
 ifneq ($(windowsystem),aqua)
-foo$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
+$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 else
 OSXAPP := $(exec_prefix)/Groovx.app/Contents/MacOS/Groovx
