@@ -2,11 +2,10 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Sat May 15 15:01:41 1999
+// written: Thu May 20 09:47:35 1999
 // $Id$
 //
-// The Face class is derived from GrObj. As such, Face*'s may be
-// stored and manipulated in ObjList's. The Face class provides the
+// The Face class is derived from GrObj. Face provides the
 // functionality needed to display Brunswick faces parameterized by
 // nose length, mouth height, eye height, and eye separation.
 ///////////////////////////////////////////////////////////////////////
@@ -16,20 +15,23 @@
 
 #include <cmath>					  // for abs()
 
-#ifndef IOSTL_H_INCLUDED
+#ifndef IOSTL_H_DEFINED
 #include "iostl.h"
 #endif
 
-#ifndef VECTOR_INCLUDED
+#ifndef VECTOR_DEFINED
 #include <vector>
+#define VECTOR_DEFINED
 #endif
 
-#ifndef GROBJ_H_INCLUDED
+#ifndef GROBJ_H_DEFINED
 #include "grobj.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
+//
 // Face class declaration
+//
 ///////////////////////////////////////////////////////////////////////
 
 class Face : public GrObj {
@@ -104,21 +106,18 @@ private:
   void makeIoList(vector<IO *>& vec);
   void makeIoList(vector<const IO *>& vec) const;
 
-//   float itsEyeDistance;
-//   float itsNoseLength;
-//   float itsMouthHeight;         // mouth height
-//   float itsEyeHeight;           // eyes height
   IoWrapper<float> itsEyeDistance;
   IoWrapper<float> itsNoseLength;
   IoWrapper<float> itsMouthHeight;
   IoWrapper<float> itsEyeHeight;
 
   IoWrapper<int> itsCategory;	  // holds an arbitrary category specification
-//   int itsCategory;				  // holds an arbitrary category specification
 };
 
 ///////////////////////////////////////////////////////////////////////
+//
 // Face inline member functions
+//
 ///////////////////////////////////////////////////////////////////////
 
 inline void Face::setNoseLen(float nl) {

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat May 15 15:05:57 1999
+// written: Sat May 15 15:15:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,28 +27,6 @@
 #define LOCAL_ASSERT
 #define LOCAL_INVARIANT
 #include "debug.h"
-
-void Face::makeIoList(vector<IO *>& vec) {
-DOTRACE("Face::makeIoList");
-  vec.clear();
-
-  vec.push_back(&itsCategory);
-  vec.push_back(&itsEyeHeight);
-  vec.push_back(&itsEyeDistance);
-  vec.push_back(&itsNoseLength);
-  vec.push_back(&itsMouthHeight);
-}
-
-void Face::makeIoList(vector<const IO *>& vec) const {
-DOTRACE("Face::makeIoList const");
-  vec.clear();
-
-  vec.push_back(&itsCategory);
-  vec.push_back(&itsEyeHeight);
-  vec.push_back(&itsEyeDistance);
-  vec.push_back(&itsNoseLength);
-  vec.push_back(&itsMouthHeight);
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -101,13 +79,6 @@ DOTRACE("Face::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << typeid(Face).name() << sep; }
 
-//   os << itsCategory() << sep;
-//   os.setf(ios::fixed);
-//   os.precision(2);
-//   os << setw(4) << getEyeHgt() << sep;
-//   os << setw(4) << getEyeDist() << sep;
-//   os << setw(4) << getNoseLen() << sep;
-//   os << setw(4) << getMouthHgt();
   vector<const IO *> ioList;
   makeIoList(ioList);
   for (vector<const IO *>::const_iterator ii = ioList.begin(); 
@@ -134,14 +105,6 @@ DOTRACE("Face::deserialize");
   for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
 	 (*ii)->deserialize(is, flag);
   }
-
-//   int cat;
-//   is >> cat; itsCategory = cat;
-//   float val;
-//   is >> val; setEyeHgt(val);
-//   is >> val; setEyeDist(val);
-//   is >> val; setNoseLen(val);
-//   is >> val; setMouthHgt(val);
 
   // Mysterious bug in HP compiler (aCC) requires the following
   // contorted code; if the exception is not first caught in this
@@ -313,14 +276,30 @@ DOTRACE("Face::getVertOffset");
 
 bool Face::check() const {
 DOTRACE("Face::check");
-
   // nothing to be checked in current implementation, so just...
   return true;
+}
 
-//   return ( (itsNose[0]<=0.0) &&
-// 			  (itsNose[1]>=0.0) &&
-// 			  (itsEye[0]<=0.0) &&
-// 			  (itsEye[1]>=0.0) );
+void Face::makeIoList(vector<IO *>& vec) {
+DOTRACE("Face::makeIoList");
+  vec.clear();
+
+  vec.push_back(&itsCategory);
+  vec.push_back(&itsEyeHeight);
+  vec.push_back(&itsEyeDistance);
+  vec.push_back(&itsNoseLength);
+  vec.push_back(&itsMouthHeight);
+}
+
+void Face::makeIoList(vector<const IO *>& vec) const {
+DOTRACE("Face::makeIoList const");
+  vec.clear();
+
+  vec.push_back(&itsCategory);
+  vec.push_back(&itsEyeHeight);
+  vec.push_back(&itsEyeDistance);
+  vec.push_back(&itsNoseLength);
+  vec.push_back(&itsMouthHeight);
 }
 
 static const char vcid_face_cc[] = "$Header$";
