@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Fri Jan 18 16:07:05 2002
+// written: Thu Jan 31 13:36:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "tcl/tclpkgbase.h"
 
 #include "tcl/tclcmd.h"
+#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 
 #include "util/pointers.h"
@@ -191,6 +192,42 @@ Tcl_Interp* Tcl::PkgBase::interp()
 {
 DOTRACE("Tcl::PkgBase::interp");
  return itsImpl->itsInterp;
+}
+
+namespace
+{
+  void exportAll(Tcl_Interp* interp, const char* from)
+  {
+    fstring cmd("namespace eval ", from, " { namespace export * }");
+
+    Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
+    code.invoke(interp);
+  }
+
+  void exportInto(Tcl_Interp* interp, const char* from, const char* to)
+  {
+    fstring cmd("namespace eval ", to, " { namespace import ::");
+    cmd.append(from, "::* }");
+
+    Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
+    code.invoke(interp);
+  }
+}
+
+void Tcl::PkgBase::namespaceAlias(const char* namesp)
+{
+DOTRACE("Tcl::PkgBase::namespaceAlias");
+
+  exportAll(itsImpl->itsInterp, itsImpl->itsPkgName.c_str());
+  exportInto(itsImpl->itsInterp, itsImpl->itsPkgName.c_str(), namesp);
+}
+
+void Tcl::PkgBase::inherit(const char* namesp)
+{
+DOTRACE("Tcl::PkgBase::inherit");
+
+  exportAll(itsImpl->itsInterp, namesp);
+  exportInto(itsImpl->itsInterp, namesp, itsImpl->itsPkgName.c_str());
 }
 
 const char* Tcl::PkgBase::pkgName()
