@@ -8,8 +8,10 @@
 
 package require Iwidgets
 
-proc msg { tag content } {
-    puts [format "%15s: %s" $tag $content]
+namespace eval slideshow {
+    proc msg { tag content } {
+	puts [format "%15s: %s" $tag $content]
+    }
 }
 
 proc split_lines { text linelength indent } {
@@ -18,7 +20,7 @@ proc split_lines { text linelength indent } {
 proc image_file_exists { fname } {
     if { ![file exists $fname] } { return 0 }
     if { [file size $fname] == 0 } {
-	msg "empty file" $fname
+	slideshow::msg "empty file" $fname
 	file delete $fname
 	return 0
     }
@@ -32,7 +34,7 @@ proc build_scaled_pixmap { fname size } {
     set code [catch {
 	if { 0 } {
 	    set cmd "|anytopnm $fname | pnmscale -xysize $size"
-	    msg "resize load" $fname
+	    slideshow::msg "resize load" $fname
 	    set fd [open $cmd r]
 
 	    fconfigure $fd -encoding binary -translation {binary binary}
@@ -41,15 +43,15 @@ proc build_scaled_pixmap { fname size } {
 
 	    catch {close $fd}
 	} else {
-	    msg "fast load" $fname
+	    slideshow::msg "fast load" $fname
 	    -> $px loadImage $fname
 	    -> $px zoomTo $size
 	}
     } result]
 
     if { $code != 0 } {
-	msg "load error" $fname
-	msg "error detail" $result
+	slideshow::msg "load error" $fname
+	slideshow::msg "error detail" $result
 	error "couldn't load image $fname"
     }
 
@@ -163,6 +165,11 @@ itcl::class Playlist {
 	    }
 	}
 
+	if { [file exists ./.slideshowrc.tcl] } {
+	    slideshow::msg "rc file" ./.slideshowrc.tcl
+	    uplevel #0 {source ./.slideshowrc.tcl}
+	}
+
 	if { [file isdirectory $fname] } {
 	    set itsListFile ${fname}/.playlist
 
@@ -220,7 +227,7 @@ itcl::class Playlist {
     }
 
     public method save {} {
-	msg "write playlist" $itsListFile
+	slideshow::msg "write playlist" $itsListFile
 	if { [file exists ${itsListFile}.bkp] } {
 	    file delete ${itsListFile}.bkp
 	}
@@ -263,7 +270,7 @@ itcl::class Playlist {
 
     public method remove {} {
 	set target [lindex $itsList $itsIdx]
-	msg "hide file" $target
+	slideshow::msg "hide file" $target
 	lappend itsPurgeList $target
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
 	switch -- $itsMode {
@@ -290,20 +297,25 @@ itcl::class Playlist {
     public method purge {} {
 	puts "purging..."
 	foreach f $itsPurgeList {
-	    msg "delete file" $f
-	    set dir [file dirname $f]
-	    set tail [file tail $f]
-	    set stubfile ${dir}/.${tail}.deleted
-	    set fd [open $stubfile w]
-	    close $fd
-	    file delete $f
+	    if { [llength [info proc ::slideshowDeleteHook]] > 0 } {
+		slideshow::msg "deleteHook" $f
+		::slideshowDeleteHook $f
+	    } else {
+		slideshow::msg "delete file" $f
+		set dir [file dirname $f]
+		set tail [file tail $f]
+		set stubfile ${dir}/.${tail}.deleted
+		set fd [open $stubfile w]
+		close $fd
+		file delete $f
+	    }
 	    incr itsDelCount
 	}
 	set itsPurgeList [list]
 	save
-	msg "files deleted" $itsDelCount
-	msg "files shown" $itsShowCount
-	msg "percent kept" [format "%.2f%%" \
+	slideshow::msg "files deleted" $itsDelCount
+	slideshow::msg "files shown" $itsShowCount
+	slideshow::msg "percent kept" [format "%.2f%%" \
 				[expr 100 * (1.0 - double($itsDelCount)/$itsShowCount)]]
     }
 
@@ -320,34 +332,34 @@ itcl::class Playlist {
 	set i $itsGuessNext
 	set f [lindex $itsList $i]
 	while { ![image_file_exists $f] } {
-	    msg "no such file" $f
+	    slideshow::msg "no such file" $f
 	    set itsList [lreplace $itsList $i $i]
 	    set i [expr $i % [llength $itsList]]
 	    set f [lindex $itsList $i]
 	}
 	set itsPixmapCache($f) [build_scaled_pixmap $f [-> $itsWidget size]]
-	msg "cache insert" $f
+	slideshow::msg "cache insert" $f
     }
 
     public method show {} {
 	set f [$this filename]
 
 	while { ![image_file_exists $f] } {
-	    msg "no such file" $f
+	    slideshow::msg "no such file" $f
 	    set itsList [lreplace $itsList $itsIdx $itsIdx]
 	    set itsIdx [expr $itsIdx % [llength $itsList]]
 	    set f [$this filename]
 	}
 
-	msg "index" "$itsIdx of [llength $itsList]"
-	msg "show file" $f
+	slideshow::msg "index" "$itsIdx of [llength $itsList]"
+	slideshow::msg "show file" $f
 
 	set old $itsPixmap
 	if { [info exists itsPixmapCache($f)] \
 		 && [GxPixmap::is $itsPixmapCache($f)] } {
 	    set itsPixmap $itsPixmapCache($f)
 	    unset itsPixmapCache($f)
-	    msg "cache hit" $f
+	    slideshow::msg "cache hit" $f
 	} else {
 	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
 	}
@@ -362,7 +374,7 @@ itcl::class Playlist {
 
 	ObjDb::clear
 
-	msg "pixmaps" [GxPixmap::findAll]
+	slideshow::msg "pixmaps" [GxPixmap::findAll]
 
 	incr itsShowCount
 
