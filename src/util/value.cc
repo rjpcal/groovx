@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Mon Nov  4 15:18:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "util/strings.h"
 
+#include <sstream>
 #include <strstream.h>
 
 #include "util/trace.h"
@@ -31,15 +32,15 @@ Value::~Value()
 DOTRACE("Value::~Value");
 }
 
-
 const char* Value::getCstring() const
 {
 DOTRACE("Value::getCstring");
-  static char buf[512];
-  ostrstream ost(buf, 256);
-  printTo(ost);
-  ost << '\0';
-  return buf;
+
+  static std::ostringstream oss;
+  oss.str(std::string());
+  printTo(oss);
+  oss << '\0';
+  return oss.str().c_str();
 }
 
 fstring Value::getFstring() const
