@@ -579,7 +579,8 @@ if test -d $with_matlab; then
    AC_MSG_RESULT($matlab_arch)
 
    CPPFLAGS="$CPPFLAGS -I${with_matlab}/extern/include"
-   matlab_lib=${with_matlab}/extern/lib/${matlab_arch}
+   #for old matlab (<= r12): matlab_lib=${with_matlab}/extern/lib/${matlab_arch}
+   matlab_lib=${with_matlab}/bin/${matlab_arch}
    LDFLAGS="$LDFLAGS -L${matlab_lib}"
    if test $need_rpath = yes; then
       LDFLAGS="$LDFLAGS -Wl,-rpath,${matlab_lib}"
