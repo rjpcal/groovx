@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Apr  2 14:19:09 2002
+// written: Tue Apr  2 15:41:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H_DEFINED)
-#include "gx/rect.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
@@ -27,9 +23,13 @@
 
 struct Togl;
 struct Tcl_Interp;
-struct Tcl_Obj;
 
 class Toglet_Impl;
+
+namespace Gfx
+{
+  template <class V> class Rect;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -42,8 +42,7 @@ class Toglet : public Tcl::TkWidget
 protected:
   Toglet(Tcl_Interp* interp,
          int config_argc=0, char** config_argv=0,
-         bool pack=true,
-         double dist=30.0, double unit_angle=2.05);
+         bool pack=true);
 
 public:
   // types
@@ -106,16 +105,17 @@ private:
   Toglet(const Toglet&); // no copy constructor
   Toglet& operator=(const Toglet&); // no assignment operator
 
+  void reconfigure();
+
   friend class Toglet_Impl;
 
-  void reconfigure();
+  class Sizer;
+  friend class Sizer;
 
   Togl* const itsTogl;
   scoped_ptr<Gfx::Canvas> itsCanvas;
-  double itsViewingDistance;     // inches
-  bool itsFixedScaleFlag;
-  double itsFixedScale;
-  Gfx::Rect<double> itsMinRect;
+
+  scoped_ptr<Sizer> itsSizer;
   unsigned int itsFontListBase;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Apr  2 14:18:54 2002
+// written: Tue Apr  2 15:41:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include "gfx/glcanvas.h"
 
+#include "gx/rect.h"
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclcode.h"
@@ -108,6 +109,21 @@ public:
   }
 };
 
+struct Toglet::Sizer
+{
+  Sizer(double dist = 30.0) :
+    itsViewingDistance(dist),
+    itsFixedScaleFlag(true),
+    itsFixedScale(1.0),
+    itsMinRect()
+  {}
+
+  double itsViewingDistance;     // inches
+  bool itsFixedScaleFlag;
+  double itsFixedScale;
+  Gfx::Rect<double> itsMinRect;
+};
+
 namespace
 {
   void setIntParam(Togl* togl, const char* param, int val)
@@ -128,16 +144,12 @@ namespace
 
 Toglet::Toglet(Tcl_Interp* interp,
                int config_argc, char** config_argv,
-               bool pack,
-               double dist, double unit_angle) :
+               bool pack) :
   Tcl::TkWidget(),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
   itsCanvas(new GLCanvas(itsTogl->bitsPerPixel(),
                          itsTogl->isRgba(), itsTogl->isDoubleBuffered())),
-  itsViewingDistance(dist),
-  itsFixedScaleFlag(true),
-  itsFixedScale(1.0),
-  itsMinRect(),
+  itsSizer(new Sizer),
   itsFontListBase(0)
 {
 DOTRACE("Toglet::Toglet");
@@ -151,7 +163,9 @@ DOTRACE("Toglet::Toglet");
   itsTogl->setDisplayFunc(Toglet_Impl::displayCallback);
   itsTogl->setDestroyFunc(Toglet_Impl::destroyCallback);
 
-  setUnitAngle(unit_angle);
+  const double default_unit_angle = 2.05;
+
+  setUnitAngle(default_unit_angle);
 
   itsTogl->makeCurrent();
 
@@ -209,13 +223,13 @@ DOTRACE("Toglet::~Toglet");
 double Toglet::getFixedScale() const
 {
 DOTRACE("Toglet::getFixedScale");
-  return itsFixedScale;
+  return itsSizer->itsFixedScale;
 }
 
 Gfx::Rect<double> Toglet::getMinRect() const
 {
 DOTRACE("Toglet::getMinRect");
-  return itsMinRect;
+  return itsSizer->itsMinRect;
 }
 
 Tcl_Interp* Toglet::getInterp() const
@@ -276,7 +290,7 @@ DOTRACE("Toglet::queryColor");
 bool Toglet::usingFixedScale() const
 {
 DOTRACE("Toglet::usingFixedScale");
-  return itsFixedScaleFlag;
+  return itsSizer->itsFixedScaleFlag;
 }
 
 Gfx::Canvas& Toglet::getCanvas()
@@ -320,8 +334,8 @@ DOTRACE("Toglet::scaleRect");
   if (factor <= 0.0)
     throw Util::Error("invalid scaling factor");
 
-  itsMinRect.widenByFactor(factor);
-  itsMinRect.heightenByFactor(factor);
+  itsSizer->itsMinRect.widenByFactor(factor);
+  itsSizer->itsMinRect.heightenByFactor(factor);
 
   reconfigure();
 }
@@ -348,8 +362,8 @@ DOTRACE("Toglet::setFixedScale");
   if (s <= 0.0)
     throw Util::Error("invalid scaling factor");
 
-  itsFixedScaleFlag = true;
-  itsFixedScale = s;
+  itsSizer->itsFixedScaleFlag = true;
+  itsSizer->itsFixedScale = s;
 
   reconfigure();
 }
@@ -362,10 +376,10 @@ DOTRACE("Toglet::setUnitAngle");
     throw Util::Error("unit angle must be positive");
 
   static const double deg_to_rad = 3.141593/180.0;
-  itsFixedScaleFlag = true;
+  itsSizer->itsFixedScaleFlag = true;
   // tan(deg) == screen_unit_dist/viewing_dist;
   // screen_unit_dist == 1.0 * itsFixedScale / screepPpi;
-  double screen_unit_dist = tan(deg*deg_to_rad) * itsViewingDistance;
+  double screen_unit_dist = tan(deg*deg_to_rad) * itsSizer->itsViewingDistance;
 
   Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(itsTogl->tkWin()));
   int screen_pixel_width = XWidthOfScreen(scr);
@@ -374,7 +388,7 @@ DOTRACE("Toglet::setUnitAngle");
 
   double screen_ppi = screen_pixel_width / screen_inch_width;
   DebugEvalNL(screen_ppi);
-  itsFixedScale = int(screen_unit_dist * screen_ppi);
+  itsSizer->itsFixedScale = int(screen_unit_dist * screen_ppi);
 
   reconfigure();
 }
@@ -388,9 +402,9 @@ DOTRACE("Toglet::setViewingDistIn");
 
   // according to similar triangles,
   //   new_dist / old_dist == new_scale / old_scale;
-  double factor = in / itsViewingDistance;
-  itsFixedScale *= factor;
-  itsViewingDistance = in;
+  double factor = in / itsSizer->itsViewingDistance;
+  itsSizer->itsFixedScale *= factor;
+  itsSizer->itsViewingDistance = in;
 
   reconfigure();
 }
@@ -398,8 +412,8 @@ DOTRACE("Toglet::setViewingDistIn");
 void Toglet::setMinRectLTRB(double L, double T, double R, double B)
 {
 DOTRACE("Toglet::setMinRectLTRB");
-  itsFixedScaleFlag = false;
-  itsMinRect.setRectLTRB(L,T,R,B);
+  itsSizer->itsFixedScaleFlag = false;
+  itsSizer->itsMinRect.setRectLTRB(L,T,R,B);
 
   reconfigure();
 }
@@ -467,23 +481,23 @@ DOTRACE("Toglet::reconfigure");
 
   if (usingFixedScale())
     {
-      double l = -1 * (getWidth()  / 2.0) / itsFixedScale;
-      double r =      (getWidth()  / 2.0) / itsFixedScale;
-      double b = -1 * (getHeight() / 2.0) / itsFixedScale;
-      double t =      (getHeight() / 2.0) / itsFixedScale;
+      double l = -1 * (getWidth()  / 2.0) / itsSizer->itsFixedScale;
+      double r =      (getWidth()  / 2.0) / itsSizer->itsFixedScale;
+      double b = -1 * (getHeight() / 2.0) / itsSizer->itsFixedScale;
+      double t =      (getHeight() / 2.0) / itsSizer->itsFixedScale;
       glOrtho(l, r, b, t, -1.0, 1.0);
     }
 
   else // not usingFixedScale (i.e. minRect instead)
     {
-      Gfx::Rect<double> therect(itsMinRect); // the actual rect that we'll build
+      Gfx::Rect<double> therect(itsSizer->itsMinRect); // the actual rect that we'll build
 
       // the desired conditions are as follows:
       //    (1) therect contains itsMinRect
       //    (2) therect.aspect() == getAspect()
       //    (3) therect is the smallest rectangle that meets (1) and (2)
 
-      double ratio_of_aspects = itsMinRect.aspect() / getAspect();
+      double ratio_of_aspects = itsSizer->itsMinRect.aspect() / getAspect();
 
       if ( ratio_of_aspects < 1 ) // the available space is too wide...
         {
