@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Mar  3 14:29:35 2000
+// written: Wed Mar  8 08:32:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include <tcl.h>
 #include <strstream.h>
-#include <string>
 #include <vector>
 
 #include "error.h"
@@ -25,6 +24,8 @@
 #include "reader.h"
 #include "tclevalcmd.h"
 #include "tclobjlock.h"
+#include "util/arrays.h"
+#include "util/strings.h"
 #include "widget.h"
 #include "writer.h"
 
@@ -40,11 +41,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "EventResponseHdlr";
+  const string_literal ioTag = "EventResponseHdlr";
 
-  const string nullScript = "{}";
-
-  unsigned long cmdCounter = 0;
+  const string_literal nullScript = "{}";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +54,7 @@ namespace {
 
 class EventResponseHdlr::Impl {
 public:
-  Impl(EventResponseHdlr* owner, const string& input_response_map);
+  Impl(EventResponseHdlr* owner, const char* input_response_map);
   ~Impl();
 
   // Delegand functions
@@ -72,13 +71,12 @@ public:
 
   void setInterp(Tcl_Interp* interp);
 
-  const string& getInputResponseMap() const
+  const fixed_string& getInputResponseMap() const
 	 { return itsInputResponseMap; }
 
-  void setInputResponseMap(const string& s)
+  void setInputResponseMap(const fixed_string& s)
 	 {
-		itsInputResponseMap = s; 
-		updateRegexps();
+		itsInputResponseMap = s;
 	 }
 
   bool getUseFeedback() const
@@ -96,17 +94,17 @@ public:
 		updateFeedbacks();
 	 }
 
-  const string& getEventSequence() const
+  const fixed_string& getEventSequence() const
 	 { return itsEventSequence; }
 
-  void setEventSequence(const string& seq)
+  void setEventSequence(const fixed_string& seq)
 	 { itsEventSequence = seq; }
 
-  const string& getBindingSubstitution() const
+  const fixed_string& getBindingSubstitution() const
 	 { return itsBindingSubstitution; }
 
-  void setBindingSubstitution(const string& sub)
-	 { itsBindingSubstitution = sub; }
+  void setBindingSubstitution(const fixed_string& sub)
+	 { itsBindingSubstitution = sub.c_str(); }
 
   void rhBeginTrial(Experiment* expt) const
 	 { itsExperiment = expt; attend(expt); }
@@ -147,8 +145,6 @@ private:
 
 
   void raiseBackgroundError(const char* msg) const throw();
-  void raiseBackgroundError(const string& msg) const throw()
-	 { raiseBackgroundError(msg.c_str()); }
 
   static Tcl_ObjCmdProc privateHandleCmd;
   void handleResponse(const char* keysym) const;
@@ -169,9 +165,13 @@ private:
 
   int getCheckedInt(Tcl_Obj* intObj) const throw(ErrorWithMsg);
 
-  string getBindingScript() const
-	 { return string("{ " + itsPrivateCmdName + " " +
-						  itsBindingSubstitution + " }"); }
+  dynamic_string getBindingScript() const
+	 {
+		dynamic_string result = "{ ";
+		result += itsPrivateCmdName;           result += " ";
+		result += itsBindingSubstitution;      result += " }";
+		return result;
+	 }
 
   void clearEventQueue() const throw()
 	 {
@@ -192,14 +192,17 @@ private:
 		return (text-1);
 	 }
 
-  string getUniqueCmdName()
+  fixed_string getUniqueCmdName()
 	 {
-		const string privateHandleCmdName = "__EventResponseHdlrPrivate::handle";
+		const string_literal privateHandleCmdName =
+		  "__EventResponseHdlrPrivate::handle";
 
-		vector<char> buf(privateHandleCmdName.length() + 32);
-		ostrstream ost(&buf[0], privateHandleCmdName.length() + 32);
+		static unsigned long cmdCounter = 0;
+
+		fixed_block<char> buf(privateHandleCmdName.length() + 32);
+		ostrstream ost(&buf[0], buf.size());
 		ost << privateHandleCmdName << ++cmdCounter << '\0';		
-		return string(&buf[0]);
+		return &buf[0];
 	 }
 
   // data
@@ -211,7 +214,7 @@ private:
   Tcl_Interp* itsInterp;
 
   mutable Tcl_Command itsTclCmdToken;
-  const string itsPrivateCmdName;
+  const fixed_string itsPrivateCmdName;
 
   class RegExp_ResponseVal {
   public:
@@ -250,7 +253,7 @@ private:
     int itsRespVal;
   };
 
-  string itsInputResponseMap;
+  fixed_string itsInputResponseMap;
   mutable vector<RegExp_ResponseVal> itsRegexps;
 
   class Condition_Feedback {
@@ -285,13 +288,13 @@ private:
  	 Tcl::TclEvalCmd itsResultCmd;
   };
 
-  string itsFeedbackMap;
+  fixed_string itsFeedbackMap;
   mutable vector<Condition_Feedback> itsFeedbacks;
 
   bool itsUseFeedback;
 
-  string itsEventSequence;
-  string itsBindingSubstitution;
+  fixed_string itsEventSequence;
+  fixed_string itsBindingSubstitution;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -301,12 +304,12 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
-										const string& input_response_map) :
+										const char* input_response_map) :
   itsOwner(owner),
   itsExperiment(0),
   itsInterp(0),
   itsTclCmdToken(0),
-  itsPrivateCmdName(getUniqueCmdName()),
+  itsPrivateCmdName(getUniqueCmdName().c_str()),
   itsInputResponseMap(input_response_map),
   itsRegexps(),
   itsFeedbackMap(),
@@ -332,7 +335,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
 	 if (itsExperiment != 0)
 		ignore(itsExperiment);
  
-	 DebugPrintNL("deleting Tcl command " + itsPrivateCmdName);
+	 DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
 	 DebugEvalNL((void*) itsTclCmdToken);
 	 Tcl_DeleteCommandFromToken(itsInterp, itsTclCmdToken);
@@ -355,7 +358,7 @@ DOTRACE("EventResponseHdlr::Impl::serialize");
   os << itsEventSequence << endl;
   os << itsBindingSubstitution << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to serialize */ }
 }
@@ -363,14 +366,14 @@ DOTRACE("EventResponseHdlr::Impl::serialize");
 void EventResponseHdlr::Impl::deserialize(istream &is, IOFlag flag) {
 DOTRACE("EventResponseHdlr::Impl::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   oldDeserialize(is, flag);
 
   getline(is, itsEventSequence, '\n');       DebugEvalNL(itsEventSequence);
   getline(is, itsBindingSubstitution, '\n'); DebugEvalNL(itsBindingSubstitution);
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to deserialize */ }
 }
@@ -418,7 +421,7 @@ DOTRACE("EventResponseHdlr::Impl::oldDeserialize");
   int cc = is.get();
   if ( cc != '\n' ) {
 	 DebugEvalNL(cc);
-	 throw IoLogicError(ioTag);
+	 throw IoLogicError(ioTag.c_str());
   }
 }
 
@@ -481,7 +484,7 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 	 p->play();
   }
   catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -500,7 +503,7 @@ DOTRACE("EventResponseHdlr::Impl::attend");
 									 getBindingScript().c_str());
   }
   catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg());
+	 raiseBackgroundError(err.msg_cstr());
   }
   catch (...) {
 	 raiseBackgroundError("error creating event binding "
@@ -515,7 +518,7 @@ DOTRACE("EventResponseHdlr::Impl::ignore");
 									 nullScript.c_str());
   }
   catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg());
+	 raiseBackgroundError(err.msg_cstr());
   }
   catch (...) {
 	 raiseBackgroundError("error creating event binding "
@@ -669,7 +672,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
 	 DebugPrintNL("updateFeedbacks success!");
   }
   catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -693,7 +696,8 @@ DOTRACE("EventResponseHdlr::updateRegexps");
   try {
 	 Tcl_Obj** pairs;
 	 int num_pairs=0;
-	 Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
+	 Tcl::TclObjPtr pairs_list(
+                       Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
 	 for (int i = 0; i < num_pairs; ++i) {
@@ -719,7 +723,7 @@ DOTRACE("EventResponseHdlr::updateRegexps");
 	 DebugPrintNL("updateRegexps success!");
   }
   catch (ErrorWithMsg& err) {
-	 raiseBackgroundError(err.msg());
+	 raiseBackgroundError(err.msg_cstr());
   }
 }
 
@@ -797,7 +801,7 @@ EventResponseHdlr::EventResponseHdlr() :
   itsImpl(new Impl(this, ""))
 {}
 
-EventResponseHdlr::EventResponseHdlr(const string& input_response_map) : 
+EventResponseHdlr::EventResponseHdlr(const char* input_response_map) : 
   ResponseHandler(),
   itsImpl(new Impl(this, input_response_map))
 {}
@@ -823,12 +827,12 @@ void EventResponseHdlr::writeTo(Writer* writer) const
 void EventResponseHdlr::setInterp(Tcl_Interp* interp)
   { itsImpl->setInterp(interp); }
 
-const string& EventResponseHdlr::getInputResponseMap() const {
+const fixed_string& EventResponseHdlr::getInputResponseMap() const {
 DOTRACE("EventResponseHdlr::getInputResponseMap");
   return itsImpl->getInputResponseMap();
 }
 
-void EventResponseHdlr::setInputResponseMap(const string& s) {
+void EventResponseHdlr::setInputResponseMap(const fixed_string& s) {
 DOTRACE("EventResponseHdlr::setInputResponseMap");
   itsImpl->setInputResponseMap(s);
 }
@@ -853,19 +857,19 @@ DOTRACE("EventResponseHdlr::setFeedbackMap");
   itsImpl->setFeedbackMap(feedback_string);
 }
 
-const string& EventResponseHdlr::getEventSequence() const {
+const fixed_string& EventResponseHdlr::getEventSequence() const {
   return itsImpl->getEventSequence();
 }
 
-void EventResponseHdlr::setEventSequence(const string& seq) {
+void EventResponseHdlr::setEventSequence(const fixed_string& seq) {
   itsImpl->setEventSequence(seq);
 }
 
-const string& EventResponseHdlr::getBindingSubstitution() const {
+const fixed_string& EventResponseHdlr::getBindingSubstitution() const {
   return itsImpl->getBindingSubstitution();
 }
 
-void EventResponseHdlr::setBindingSubstitution(const string& sub) {
+void EventResponseHdlr::setBindingSubstitution(const fixed_string& sub) {
   itsImpl->setBindingSubstitution(sub);
 }
 
