@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Sun Mar  5 14:32:27 2000
+// written: Wed Mar  8 10:40:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -330,8 +330,6 @@ protected:
   PropertyInfoBase& operator=(const PropertyInfoBase& other);
 
 public:
-  /// Returns a user-friendly name of the property
-  const string& name() const;
   /// Returns a user-friendly name of the property
   const char* name_cstr() const;
 
