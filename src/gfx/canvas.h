@@ -5,13 +5,15 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Aug 29 09:11:55 2001
+// written: Mon Sep  3 10:32:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef CANVAS_H_DEFINED
 #define CANVAS_H_DEFINED
+
+template <class T> class dynamic_block;
 
 namespace Gfx
 {
@@ -209,6 +211,12 @@ public:
                            const Gfx::Vec3<double>& p3,
                            const Gfx::Vec3<double>& p4,
                            unsigned int subdivisions) = 0;
+
+  /** Draw a NURBS curve. The default implementation splits the NURBS
+      curve into 4-pt Bezier curve components, and then draws those
+      with drawBezier4(). */
+  virtual void drawNurbsCurve(const dynamic_block<float>& knots,
+                              const dynamic_block<Gfx::Vec3<float> >& pts);
 
   virtual void beginPoints() = 0;
   virtual void beginLines() = 0;
