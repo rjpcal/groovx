@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Nov 10 17:23:54 2000
+// written: Tue Nov 28 13:42:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@
 struct Togl;
 struct Tcl_Interp;
 struct Tcl_Obj;
+
+class ToglConfig_Impl;
 
 #ifndef _XLIB_H_
 struct _XDisplay;
@@ -107,7 +109,6 @@ public:
   void loadFonti(int fontnumber);
   void writeEpsFile(const char* filename);
 
-  virtual void reconfigure();
   virtual void display() = 0;
   virtual void clearscreen() = 0;
   virtual void refresh() = 0;
@@ -116,6 +117,10 @@ public:
 private:
   ToglConfig(const ToglConfig&); // no copy constructor
   ToglConfig& operator=(const ToglConfig&); // no assignment operator
+
+  friend class ToglConfig_Impl;
+
+  void reconfigure();
 
   scoped_ptr<GWT::Canvas> itsCanvas;
 
