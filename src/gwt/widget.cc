@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Nov 28 14:09:49 2000
+// written: Tue Nov 28 17:49:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gwt/widget.h"
 
-#include "trialbase.h"
+#include "gx/gxnode.h"
 
 #include "io/io.h"
 #include "io/iditem.h"
@@ -26,6 +26,30 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+class EmptyNode : public GxNode {
+private:
+  EmptyNode() {}
+public:
+  virtual ~EmptyNode() {}
+
+  virtual void readFrom(IO::Reader*) {}
+  virtual void writeTo(IO::Writer*) const {}
+
+  virtual void draw(GWT::Canvas&) const {}
+  virtual void undraw(GWT::Canvas&) const {}
+
+  static EmptyNode* make()
+  {
+	 static EmptyNode* p = 0;
+	 if (p == 0)
+		{
+		  p = new EmptyNode;
+		  p->incrRefCount();
+		}
+	 return p;
+  }
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // GWT::Widget::Impl definition
@@ -34,14 +58,15 @@
 
 class GWT::Widget::Impl {
 public:
-  Impl() :
-	 itsDrawItem(0),
-	 itsUndrawItem(0),
+  Impl(GWT::Widget* owner) :
+	 itsOwner(owner),
+    itsDrawNode(EmptyNode::make()),
+    itsUndrawNode(EmptyNode::make()),
 	 itsVisibility(false),
 	 itsHoldOn(false)
   {}
 
-  void safeDrawTrial(GWT::Canvas& canvas);
+  void safeDraw(GWT::Canvas& canvas);
 
   void display(GWT::Canvas& canvas);
 
@@ -52,32 +77,24 @@ public:
   void setVisibility(bool val)
   {
 	 itsVisibility = val;
-	 if (itsVisibility == false)
-		{
-		  itsDrawItem = MaybeIdItem<TrialBase>(itsDrawItem.id());
-		  itsUndrawItem =  MaybeIdItem<TrialBase>(itsUndrawItem.id());
-		}
-  }
-
-  void setCurTrial(const MaybeIdItem<TrialBase>& item)
-  {
-  	 itsDrawItem = item;
-
-	 try {
-		itsDrawItem.refresh();
-	 }
-	 catch(...) {
-		setVisibility(false);
-		throw;
-	 }
+  	 if (itsVisibility == false)
+  		{
+		  undraw(*(itsOwner->getCanvas()));
+		  itsDrawNode = PtrHandle<GxNode>(EmptyNode::make());
+		  itsUndrawNode = PtrHandle<GxNode>(EmptyNode::make());
+  		}
   }
 
   void setHold(bool hold_on)
   { itsHoldOn = hold_on; }
 
+  void setDrawable(const IdItem<GxNode>& node)
+  { itsDrawNode = node.handle(); }
+
 private:
-  MaybeIdItem<TrialBase> itsDrawItem;
-  MaybeIdItem<TrialBase> itsUndrawItem;
+  GWT::Widget* itsOwner;
+  PtrHandle<GxNode> itsDrawNode;
+  PtrHandle<GxNode> itsUndrawNode;
   bool itsVisibility;
   bool itsHoldOn;
 };
@@ -89,15 +106,15 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GWT::Widget::Impl::safeDrawTrial(GWT::Canvas& canvas) {
-DOTRACE("GWT::Widget::Impl::safeDrawTrial");
+void GWT::Widget::Impl::safeDraw(GWT::Canvas& canvas) {
+DOTRACE("GWT::Widget::Impl::safeDraw");
 
   if ( !itsVisibility ) return;
 
   try {
-	 DebugPrintNL("drawing the trial...");
-	 itsDrawItem->trDraw(canvas, false);
-	 itsUndrawItem = itsDrawItem;
+	 DebugPrintNL("drawing the node...");
+	 itsDrawNode->draw(canvas);
+	 itsUndrawNode = itsDrawNode;
 	 return;
   }
   catch (ErrorWithMsg& err) {
@@ -117,14 +134,14 @@ DOTRACE("GWT::Widget::Impl::display");
 	 // invalid id errors that occur, and simply clear the screen in
 	 // this case.
 	 try {
-		itsUndrawItem->trUndraw(canvas, false);
+		itsUndrawNode->undraw(canvas);
 	 }
 	 catch (...) {
 		canvas.clearColorBuffer();
 	 }
   }
 
-  safeDrawTrial(canvas);
+  safeDraw(canvas);
 }
 
 void GWT::Widget::Impl::clearscreen(GWT::Canvas& canvas) {
@@ -136,7 +153,8 @@ DOTRACE("GWT::Widget::Impl::clearscreen");
 
 void GWT::Widget::Impl::undraw(GWT::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::undraw");
-  itsUndrawItem->trUndraw(canvas, true);
+  itsUndrawNode->undraw(canvas); 
+  canvas.flushOutput();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -146,7 +164,7 @@ DOTRACE("GWT::Widget::Impl::undraw");
 ///////////////////////////////////////////////////////////////////////
 
 GWT::Widget::Widget() :
-  itsImpl(new Impl)
+  itsImpl(new Impl(this))
 {
 DOTRACE("GWT::Widget::Widget");
 }
@@ -171,7 +189,7 @@ void GWT::Widget::refresh() {
 DOTRACE("GWT::Widget::refresh");
 
   getCanvas()->clearColorBuffer(); 
-  itsImpl->safeDrawTrial(*(getCanvas()));
+  itsImpl->safeDraw(*(getCanvas()));
   swapBuffers();
   getCanvas()->flushOutput();
 }
@@ -184,14 +202,14 @@ DOTRACE("GWT::Widget::setVisibility");
   itsImpl->setVisibility(vis);
 }
 
-void GWT::Widget::setCurTrial(const MaybeIdItem<TrialBase>& item) {
-DOTRACE("GWT::Widget::setCurTrial");
-  itsImpl->setCurTrial(item);
-}
-
 void GWT::Widget::setHold(bool hold_on) {
 DOTRACE("GWT::Widget::setHold");
   itsImpl->setHold(hold_on);
+}
+
+void GWT::Widget::setDrawable(const IdItem<GxNode>& node) {
+DOTRACE("GWT::Widget::setDrawable");
+  itsImpl->setDrawable(node);
 }
 
 static const char vcid_widget_cc[] = "$Header$";
