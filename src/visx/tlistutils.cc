@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Dec  6 15:22:27 1999
+// written: Mon Dec  6 15:30:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ DOTRACE("TlistUtils::makeTriads");
 			 }
 			 Trial* t = tlist.getPtr(trial);
 			 for (int e = 0; e < 3; ++e) {
-				t->add(base_triad[e], posid[e]);
+				t->add(base_triad[permutations[p][e]], posid[e]);
 			 }
 			 ++trial;
 		  } // end p
