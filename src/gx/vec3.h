@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Mon Aug 27 16:59:12 2001
+// written: Mon Aug 27 17:09:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,11 +46,21 @@ public:
         V* data()       { return &itsData[0]; }
   const V* data() const { return &itsData[0]; }
 
+  //
+  // Vec3-Vec3 math
+  //
+
   Vec3 operator+(const Vec3<V>& rhs) const
-    { return Vec3<V>(x() + rhs.x(), y() + rhs.y(), z()+rhs.z()); }
+    { return Vec3<V>(x() + rhs.x(), y() + rhs.y(), z() + rhs.z()); }
 
   Vec3 operator-(const Vec3<V>& rhs) const
-    { return Vec3<V>(x() - rhs.x(), y() - rhs.y(), z()-rhs.z()); }
+    { return Vec3<V>(x() - rhs.x(), y() - rhs.y(), z() - rhs.z()); }
+
+  Vec3 operator*(const Vec3<V>& rhs) const
+    { return Vec3<V>(x() * rhs.x(), y() * rhs.y(), z() * rhs.z()); }
+
+  Vec3 operator/(const Vec3<V>& rhs) const
+    { return Vec3<V>(x() / rhs.x(), y() / rhs.y(), z() / rhs.z()); }
 };
 
 static const char vcid_vec3_h[] = "$Header$";
