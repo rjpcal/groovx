@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Jul 20 14:57:59 1999
+// written: Fri Jul 23 12:40:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -290,15 +290,7 @@ DOTRACE("ExptDriver::assertIds");
   Tcl_AddObjErrorInfo(itsInterp, "invalid item id", -1);
 
   // ...and halt any of the participants for which we have valid id's
-  if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
-	 block().haltExpt();
-  }
-  if ( RhList::theRhList().isValidId(itsRhId) ) {
-	 responseHandler().rhHaltExpt();
-  }
-  if ( ThList::theThList().isValidId(itsThId) ) {
-	 timingHdlr().thHaltExpt();
-  }
+  edHaltExpt();
 
   return false;
 }
@@ -505,6 +497,10 @@ DOTRACE("ExptDriver::edEndTrial");
 	 }
   }
 
+  DebugEval(block().numCompleted());
+  DebugEval(block().numTrials());
+  DebugEvalNL(block().isComplete());
+
   if (block().isComplete()) {
 	 BlockList& blist = BlockList::theBlockList();
 
@@ -539,13 +535,17 @@ DOTRACE("ExptDriver::edEndTrial");
 
 void ExptDriver::edHaltExpt() const {
 DOTRACE("ExptDriver::edHaltExpt");
-  if ( !assertIds() ) return;
-
   TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
 
-  timingHdlr().thHaltExpt();
-  responseHandler().rhHaltExpt();
-  block().haltExpt();
+  if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+	 block().haltExpt();
+  }
+  if ( RhList::theRhList().isValidId(itsRhId) ) {
+	 responseHandler().rhHaltExpt();
+  }
+  if ( ThList::theThList().isValidId(itsThId) ) {
+	 timingHdlr().thHaltExpt();
+  }
 }
 
 //--------------------------------------------------------------------
@@ -623,20 +623,22 @@ DOTRACE("ExptDriver::writeAndExit");
 
   try {
 	 write(expt_filename.c_str());
+	 cout << "wrote file " << expt_filename << endl;
+
+	 // Write the responses file
+	 string resp_filename = string("resp") + unique_filename;
+	 TlistTcl::writeResponsesProc(resp_filename.c_str());
+	 cout << "wrote file " << resp_filename << endl;
+
   }
   catch (IoError& err) {
 	 Tcl_BackgroundError(itsInterp);
 	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
-
-  cout << "wrote file " << expt_filename << endl;
-
-  // Write the responses file
-  string resp_filename = string("resp") + unique_filename;
-
-  TlistTcl::writeResponsesProc(resp_filename.c_str());
-
-  cout << "wrote file " << resp_filename << endl;
+  catch (TclError& err) {
+	 Tcl_BackgroundError(itsInterp);
+	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
+  }
 
   // Gracefully exit the application (or not)
 //   Tcl_Exit(0);
