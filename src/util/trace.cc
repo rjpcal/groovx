@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Thu Sep 21 19:26:39 2000
+// written: Thu Sep 21 20:04:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,12 +22,12 @@ int MAX_TRACE_LEVEL = 6;
 
 int TRACE_LEVEL = 0;
 
+Util::Trace::Mode TRACE_MODE = Util::Trace::RUN;
+
 namespace {
   const char* PDATA_FILE = "prof.out";
 
   ofstream* PDATA_STREAM = new ofstream(PDATA_FILE);
-
-  Util::Trace::Mode theTraceMode = Util::Trace::RUN;
 
   void waitOnStep() {
 	 static char dummyBuffer[256];
@@ -61,11 +61,11 @@ Util::Prof::~Prof() {
 }
 
 void Util::Trace::setMode(Mode new_mode) {
-  theTraceMode = new_mode;
+  TRACE_MODE = new_mode;
 }
 
 Util::Trace::Mode Util::Trace::getMode() {
-  return theTraceMode;
+  return TRACE_MODE;
 }
 
 void Util::Trace::printIn() {
