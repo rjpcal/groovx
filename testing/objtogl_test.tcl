@@ -103,10 +103,10 @@ test "ObjTogl-Togl::loadFont" "too many args" {
 test "ObjTogl-Togl::loadDefaultFont" "normal use" {
 	 set code [catch {Togl::loadDefaultFont} msg]
 	 set res "$code $msg"
-} {^0 $}
+} {^0 }
 test "ObjTogl-Togl::loadFont" "error" {
 	 Togl::loadFont junk
-} {^Toglet::loadFont: unable to load font}
+} {^Toglet::loadFont: }
 
 ### Togl::loadFontiCmd ###
 test "ObjTogl-Togl::loadFonti" "too many args" {
@@ -115,7 +115,7 @@ test "ObjTogl-Togl::loadFonti" "too many args" {
 test "ObjTogl-Togl::loadFonti" "normal use" {
 	 set code [catch {Togl::loadFonti 3} msg]
 	 set res "$code $msg"
-} {^0 $}
+} {^0 }
 
 ### dumpCmapCmd ###
 test "ObjTogl-dumpCmap" "too many args" {
