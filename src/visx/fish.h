@@ -114,6 +114,13 @@ private:
   /// Controls the breakpoint referred to by the current end point.
   int* itsEndPt_Bkpt;
 
+  /** Controls whether the different parts of the fish will be
+      rendered in different colors. */
+  bool inColor;
+
+  /// Controls whether the B-spline control points will be shown
+  bool showControlPoints;
+
   /////////////
   // actions //
   /////////////
