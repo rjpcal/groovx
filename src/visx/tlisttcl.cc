@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon May 22 12:17:12 2000
+// written: Tue Oct 17 12:18:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ protected:
 
 	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
-	 int previewid = TlistUtils::createPreview(theTlist, *canvas,
+	 int previewid = TlistUtils::createPreview(*canvas,
 															 &objids[0], objids.size(),
 															 pixel_width, pixel_height);
 
