@@ -49,6 +49,13 @@ namespace
 {
   bool debug_line_complete = true;
   int debug_next_key = 0;
+
+  void show_position(int level, const char* where, int line_no) throw()
+  {
+    std::cerr << "[" << std::setw(2) << level << "] "
+              << std::setw(20) << where << ":"
+              << line_no << ": ";
+  }
 }
 
 unsigned char rutz::debug::key_levels[rutz::debug::MAX_KEYS];
@@ -60,13 +67,10 @@ void rutz::debug::eval(const char* what, int level,     \
                        bool nl, T expr) throw()         \
 {                                                       \
   using std::cerr;                                      \
-  using std::setw;                                      \
   cerr.exceptions(std::ios::goodbit);                   \
   if (debug_line_complete)                              \
     {                                                   \
-      cerr << "[" << setw(2) << level << "] "           \
-           << setw(30) << where << ":"                  \
-           << line_no << ": ";                          \
+      show_position(level, where, line_no);             \
     }                                                   \
   if (what)                                             \
     {                                                   \
@@ -102,7 +106,10 @@ EVAL_IMPL(rutz::fstring);
 
 void rutz::debug::dump(const char* what, int level, const char* where, int line_no) throw()
 {
-  rutz::debug::eval(what, level, where, line_no, true, "...");
+  std::cerr.exceptions(std::ios::goodbit);
+  show_position(level, where, line_no);
+  std::cerr << std::setw(15) << what << " := ";
+  debug_line_complete = false;
 }
 
 void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
