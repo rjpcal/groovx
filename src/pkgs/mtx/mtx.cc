@@ -40,7 +40,7 @@
 #include <iostream>
 #include <iomanip>
 #ifdef WITH_MATLAB
-#include <libmatlb.h>
+#include <matrix.h>
 #endif
 #include <numeric>
 

@@ -84,7 +84,7 @@ public:
 
   Util::Ref<MtxObj> getMtx(const char* name)
   {
-    mxArray* arr = engGetArray(itsEngine, name);
+    mxArray* arr = engGetVariable(itsEngine, name);
     if (arr == 0)
       {
         throw Util::Error(fstring("no such MATLAB variable: '", name, "'"));
@@ -97,9 +97,9 @@ public:
     return mtx;
   }
 
-  void putArray(const mxArray* arr)
+  void putArray(const mxArray* arr, const char* name)
   {
-    int result = engPutArray(itsEngine, arr);
+    int result = engPutVariable(itsEngine, name, arr);
     if (result != 0)
       {
         throw Util::Error("error while putting mxArray into MATLAB engine");
