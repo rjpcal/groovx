@@ -17,6 +17,10 @@
 #include "util/observable.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
 #endif
@@ -77,15 +81,12 @@ public:
 class FieldInfo {
 private:
   const fixed_string itsName;
-  FieldMemberPtr* itsMemberPtr;
-  Value* itsDefaultValue;
-  Value* itsMin;
-  Value* itsMax;
-  Value* itsRes;
+  shared_ptr<FieldMemberPtr> itsMemberPtr;
+  shared_ptr<Value> itsDefaultValue;
+  shared_ptr<Value> itsMin;
+  shared_ptr<Value> itsMax;
+  shared_ptr<Value> itsRes;
   bool itsStartsNewGroup;
-
-  FieldInfo(const FieldInfo&);
-  FieldInfo& operator=(const FieldInfo&);
 
 public:
   template <class C, class T, class F>
