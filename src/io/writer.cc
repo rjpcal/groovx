@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Fri Nov 10 17:03:57 2000
+// written: Tue Nov 14 14:50:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,9 @@
 #include "util/strings.h"
 
 #include <strstream.h>
+
+#define LOCAL_ASSERT
+#include "util/debug.h"
 
 IO::WriteError::WriteError(const char* msg) :
   ErrorWithMsg("IO::WriteError: ")
@@ -43,6 +46,18 @@ IO::WriteVersionError::WriteVersionError(const char* classname,
 IO::WriteVersionError::~WriteVersionError() {}
 
 IO::Writer::~Writer () {}
+
+void IO::Writer::ensureWriteVersionId(const char* name,
+												  IO::VersionId actual_version,
+												  IO::VersionId lowest_supported_version,
+												  const char* msg) {
+
+  if (actual_version < lowest_supported_version)
+	 throw IO::WriteVersionError(name, actual_version,
+										  lowest_supported_version, msg);
+
+  Assert(actual_version >= lowest_supported_version);
+}
 
 template<>
 void IO::Writer::writeValue<char>(const char* name, const char& val) {

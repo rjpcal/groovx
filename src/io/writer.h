@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Fri Nov 10 17:03:50 2000
+// written: Tue Nov 14 14:50:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,6 +90,14 @@ public:
 
   /// Virtual destructor allows correct destruction of subclasses.
   virtual ~Writer();
+
+  /** A convenience function to ensure that the current serial version
+      is no less than the \a lowest_supported_version. If this test
+      fails, a WriteVersionError will be thrown.*/
+  void ensureWriteVersionId(const char* name,
+									 IO::VersionId actual_version,
+									 IO::VersionId lowest_supported_version,
+									 const char* msg);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
   virtual void writeChar(const char* name, char val) = 0;
