@@ -6,4 +6,4 @@
 
 ./configure \
     --prefix=/Users/rjpeters/local/groovx \
-    --with-tcltk=/Users/rjpeters/local/tcl8.4.5
+    --with-tcltk=/Users/rjpeters/local/tcl8.5a1
