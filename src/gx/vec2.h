@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Wed Aug  8 08:11:24 2001
+// written: Wed Aug  8 08:13:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,9 @@ public:
 
   const V& x() const { return x_; }
   const V& y() const { return y_; }
+
+  Point abs() const
+    { return Point(x_ > 0 ? x_ : -x_, y_ > 0 ? y_ : -y_); }
 
   void set(V x, V y) { x_ = x; y_ = y; }
 
