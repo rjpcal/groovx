@@ -9,6 +9,9 @@
 
 package require Objtogl
 package require Togl
+package require Face
+package require Pos
+package require Tlist
 
 set PACKAGE ObjTogl
 
@@ -16,6 +19,68 @@ set PACKAGE ObjTogl
 test "ObjTogl-Togl::Init" "test widget create" {
 	 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 } {^$}
+
+### Togl::undrawCmd ###
+test "ObjTogl-Togl::undraw" "too many args" {
+	 Togl::undraw junk
+} {wrong \# args: should be "Togl::undraw"}
+test "ObjTogl-Togl::undraw" "normal use" {
+	 Tlist::reset
+	 set f [Face::Face]
+	 set p [Pos::Pos]
+	 Tlist::addObject 0 $f $p
+	 setForeground 1
+	 setBackground 0
+	 clearscreen
+	 Togl::show 0
+	 Togl::undraw
+	 pixelCheckSum
+} {^0$}
+test "ObjTogl-Togl::undraw" "no error" {} $BLANK $no_test
+
+### Togl::refreshCmd ###
+test "ObjTogl-Togl::refresh" "too many args" {
+	 Togl::refresh junk
+} {wrong \# args: should be "Togl::refresh"}
+test "ObjTogl-Togl::refresh" "normal use" {
+	 Tlist::reset
+	 set f [Face::Face]
+	 set p [Pos::Pos]
+	 Tlist::addObject 0 $f $p
+	 Tlist::setCurTrial 0
+	 setForeground 1
+	 setBackground 0
+	 Togl::refresh
+	 # check to see if some pixels actually got drawn
+	 expr [pixelCheckSum] > 500
+} {^1$}
+test "ObjTogl-Togl::refresh" "no error" {} $BLANK $no_test
+
+### Togl::clearscreenCmd ###
+test "ObjTogl-Togl::clearscreen" "too many args" {
+    Togl::clearscreen junk
+} {wrong \# args: should be "Togl::clearscreen"}
+test "ObjTogl-Togl::clearscreen" "normal use" {
+	 setBackground 0
+	 Togl::clearscreen
+	 pixelCheckSum
+} {^0$}
+test "ObjTogl-Togl::clearscreen" "no error" {} $BLANK $no_test
+
+### Togl::showCmd ###
+test "ObjTogl-Togl::show" "too few args" {
+	 Togl::show
+} {wrong \# args: should be "Togl::show trial_id"}
+test "ObjTogl-Togl::show" "too many args" {
+	 Togl::show j u
+} {wrong \# args: should be "Togl::show trial_id"}
+test "ObjTogl-Togl::show" "normal use on valid trial id" {
+	 catch {Togl::show 10}
+} {^0$}
+test "ObjTogl-Togl::show" "normal use on invalid trial id" { 
+	 catch {Togl::show -1}
+} {^0$}
+test "ObjTogl-Togl::show" "no error" {} $BLANK $no_test
 
 ### Togl::loadFontCmd ###
 test "$PACKAGE-Togl::loadFont" "too many args" {
