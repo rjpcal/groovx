@@ -25,6 +25,51 @@ proc build_scaled_pixmap { fname size } {
     return $px
 }
 
+proc is_img_file { fname } {
+    switch -- [file extension $fname] {
+	.jpg -
+	.jpeg -
+	.JPG -
+	.JPEG -
+	.gif -
+	.GIF -
+	.pnm -
+	.PNM -
+	.png -
+	.PNG {
+	    return 1
+	}
+	default {
+	    return 0
+	}
+    }
+}
+
+proc get_dir_contents { dirname recursive {varname ""} } {
+    if { [string length $varname] == 0 } {
+	set result [list]
+    } else {
+	upvar $varname result
+    }
+
+    puts -nonewline "getting contents of directory: ${dirname}\r"
+    flush stdout
+
+    foreach f [lsort -dictionary [glob -nocomplain ${dirname}/*]] {
+	if { [file isdirectory $f] } {
+	    if { $recursive != 0 } {
+		get_dir_contents $f 1 result
+	    }
+	} else {
+	    if { [is_img_file $f] } {
+		lappend result $f
+	    }
+	}
+    }
+
+    return $result
+}
+
 itcl::class RandSeq {
     private variable current
     private variable next
@@ -66,10 +111,19 @@ itcl::class Playlist {
 
 	set itsMatch "*"
 
+	set doRecurse 0
+	set doFresh 0
+
 	for {set i 0} {$i < [llength $argv]} {incr i} {
 	    switch -- [lindex $argv $i] {
 		-match {
 		    set itsMatch [lindex $argv [expr $i+1]]
+		}
+		-recurse {
+		    set doRecurse 1
+		}
+		-fresh {
+		    set doFresh 1
 		}
 	    }
 	}
@@ -77,12 +131,12 @@ itcl::class Playlist {
 	if { [file isdirectory $fname] } {
 	    set itsListFile ${fname}/.playlist
 
+	    if { $doFresh } {
+		file delete $itsListFile
+	    }
+
 	    if { ![file exists $itsListFile] } {
-		set names [lsort -dictionary [glob ${fname}/*]]
-		set itsList [list]
-		foreach n $names {
-		    lappend itsList $n
-		}
+		get_dir_contents $fname $doRecurse itsList
 		$this save
 	    }
 
@@ -125,8 +179,12 @@ itcl::class Playlist {
 
     public method save {} {
 	puts "writing playlist"
-	file delete ${itsListFile}.bkp
-	file rename $itsListFile ${itsListFile}.bkp
+	if { [file exists ${itsListFile}.bkp] } {
+	    file delete ${itsListFile}.bkp
+	}
+	if { [file exists $itsListFile] } {
+	    file rename $itsListFile ${itsListFile}.bkp
+	}
 	set fd [open $itsListFile w]
 	puts $fd [join $itsList "\n"]
 	close $fd
