@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Oct 12 16:47:33 1999
+// written: Mon Oct 18 19:14:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "tclpkg.h"
 
+#include <cctype>
 #include <cstring>
 #include <typeinfo>
 #include <vector>
@@ -67,6 +68,13 @@ DOTRACE("TclPkg::TclPkg");
 	 for (int i = 1; i < pkgname.length(); ++i) {
 		pkgname[i] = tolower(pkgname[i]);
 	 }
+
+	 // Fix up itsVersion to remove any extraneous char's (such as
+	 // version-control info, where we'd get a string like
+	 //   '$Revision 2.8 $'
+
+	 itsVersion.erase(0, itsVersion.find_first_of("0123456789"));
+	 itsVersion.erase(itsVersion.find_last_of("0123456789")+1, string::npos);
 
 	 Tcl_PkgProvide(interp, 
 						 const_cast<char *>(pkgname.c_str()),
