@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Sep 29 18:41:09 2000
+// written: Fri Sep 29 18:50:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,7 +118,6 @@ DOTRACE("Face::legacySrlz");
 void Face::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Face::legacyDesrlz");
 
-  lreader->eatWhitespace();
   int version = lreader->getLegacyVersionId();
 
   if (version == 1) lreader->grabLeftBrace();
