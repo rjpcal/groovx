@@ -473,9 +473,11 @@ namespace eval pl {
     }
 }
 
-proc looper { delay } {
+set LOOP_DELAY 150
+
+proc looper { } {
     after cancel $::LOOP_HANDLE
-    set ::LOOP_HANDLE [after $delay "::looper 150"]
+    set ::LOOP_HANDLE [after $::LOOP_DELAY "::looper"]
     pl::spin 1
     pl::show
 }
@@ -503,7 +505,7 @@ proc toggleLoop {} {
 	set ::IN_LOOP 0
 	.f.loop configure -text "start loop"
     } else {
-	::looper 150
+	::looper
 	set ::IN_LOOP 1
 	.f.loop configure -text "stop loop"
     }
@@ -557,6 +559,8 @@ bind all <Key-Return> {pl::save}
 bind all <Key-x> {pl::purge; pl::reshow 1}
 bind all <Key-Escape> { -> [Toglet::current] setVisible 0; pl::purge; exit }
 bind all <Key-l> {::toggleLoop}
+bind all <Key-comma> {set ::LOOP_DELAY [expr {int($::LOOP_DELAY*1.5)}]}
+bind all <Key-period> {set ::LOOP_DELAY [expr {int($::LOOP_DELAY*0.67)}]}
 
 if { $show_buttons } {
     -> $t height [expr [winfo screenheight .] - 100]
