@@ -22,6 +22,24 @@ ValueError::ValueError(const string& msg) :
 
 Value::~Value() {}
 
+
+void Value::printTo(ostream& os) const { throw ValueError(); }
+void Value::scanFrom(istream& is) { throw ValueError(); }
+
+int Value::getInt() const { throw ValueError(); }
+long Value::getLong() const { throw ValueError(); }
+bool Value::getBool() const { throw ValueError(); }
+double Value::getDouble() const { throw ValueError(); }
+const char* Value::getCstring() const { throw ValueError(); }
+string Value::getString() const { throw ValueError(); }
+
+void Value::get(int& val) const { throw ValueError(); }
+void Value::get(long& val) const { throw ValueError(); }
+void Value::get(bool& val) const { throw ValueError(); }
+void Value::get(double& val) const { throw ValueError(); }
+void Value::get(const char*& val) const { throw ValueError(); }
+void Value::get(string& val) const { throw ValueError(); }
+
 void Value::setInt(int) { throw ValueError(); }
 void Value::setLong(long) { throw ValueError(); }
 void Value::setBool(bool) { throw ValueError(); }
@@ -47,6 +65,14 @@ void TValue<T>::printTo(ostream& os) const { os << itsVal; }
 
 template <class T>
 void TValue<T>::scanFrom(istream& is) { is >> itsVal; }
+
+template <>
+void TValue<bool>::scanFrom(istream& is)
+{ int temp; is >> temp; itsVal = bool(temp); }
+
+template <>
+void TValue<const char*>::scanFrom(istream&)
+{ throw ValueError(); }
 
 template <>
 Value::Type TValue<int>::getNativeType() const { return Value::INT; }
@@ -140,6 +166,14 @@ void TValuePtr<T>::printTo(ostream& os) const { os << *itsValPtr; }
 
 template <class T>
 void TValuePtr<T>::scanFrom(istream& is) { is >> *itsValPtr; }
+
+template <>
+void TValuePtr<bool>::scanFrom(istream& is)
+{ int temp; is >> temp; *itsValPtr = bool(temp); }
+
+template <>
+void TValuePtr<const char*>::scanFrom(istream&)
+{ throw ValueError(); }
 
 template <>
 Value::Type TValuePtr<int>::getNativeType() const { return Value::INT; }
