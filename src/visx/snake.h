@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:02 2003
-// written: Tue May 13 13:02:46 2003
+// written: Thu May 15 08:11:00 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -86,7 +86,8 @@ private:
     return itsElem[i];
   }
 
-  void jiggle(Util::Urand& urand);
+  // Returns true if jiggling converged
+  bool jiggle(Util::Urand& urand);
   void transformPath(int i1, const Gfx::Vec2<double>& new1,
                      int i2, const Gfx::Vec2<double>& new2);
 };

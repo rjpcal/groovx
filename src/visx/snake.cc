@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Tue May 13 13:02:28 2003
+// written: Thu May 15 08:17:35 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -281,7 +281,12 @@ DOTRACE("Snake::Snake");
 
   for (int count = 0; count < ITERS; ++count)
     {
-      this->jiggle(urand);
+      const bool convergeOk = this->jiggle(urand);
+      if ( !convergeOk )
+        {
+          printf("warning: Snake::jiggle failed to converge\n");
+          break;
+        }
     }
 
   // Now reset so that the center of the ring is at the origin
@@ -350,7 +355,7 @@ DOTRACE("Snake::getElement");
 /*               \    _,-~   theta[2]                                     */
 /*              no[2]~_________                                           */
 
-void Snake::jiggle(Util::Urand& urand)
+bool Snake::jiggle(Util::Urand& urand)
 {
 DOTRACE("Snake::jiggle");
 
@@ -375,7 +380,11 @@ DOTRACE("Snake::jiggle");
 
   double increment = INITIAL_INCREMENT;
 
-  for (;;)
+  const int MAX_ITERS = 10000;
+
+  int k = 0;
+
+  for (; k < MAX_ITERS; ++k)
     {
       const double incr = urand.booldraw() ? -increment : increment;
 
@@ -414,6 +423,8 @@ DOTRACE("Snake::jiggle");
         break;
     }
 
+  bool didConverge = (k < MAX_ITERS);
+
   for (int n = 0; n < 4; ++n)
     this->transformPath(i[n], new_pos[n],
                         i[(n+1)%4], new_pos[(n+1)%4]);
@@ -422,6 +433,8 @@ DOTRACE("Snake::jiggle");
     {
       itsElem[i[n]] = new_pos[n];
     }
+
+  return didConverge;
 }
 
 void Snake::transformPath(int i1, const Vec2d& new1,
