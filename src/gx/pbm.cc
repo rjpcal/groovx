@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Jun  1 13:55:30 2000
+// written: Sat Sep 23 14:59:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,11 @@
 #include "util/filename.h"
 #include "util/pipe.h"
 
-#include <fstream.h>
+#ifdef PRESTANDARD_IOSTREAMS
+#  include <fstream.h>
+#else
+#  include <fstream>
+#endif
 #include <cctype>
 
 #define NO_TRACE
@@ -119,10 +123,10 @@ Pbm::Pbm(const BmapData& data) :
   setBytes(data);
 }
 
-Pbm::Pbm(istream& is) :
+Pbm::Pbm(std::istream& is) :
   itsImpl( new Impl )
 {
-DOTRACE("Pbm::Pbm(istream&)");
+DOTRACE("Pbm::Pbm(std::istream&)");
   readStream(is);
 }
 
@@ -150,7 +154,12 @@ DOTRACE("Pbm::Pbm(const char*)");
 	 }
   else
 	 {
+#ifdef PRESTANDARD_IOSTREAMS
 		ifstream ifs(filename.c_str(), ios::in|ios::binary);
+#else
+		std::ifstream ifs(filename.c_str(),
+								std::ios_base::in|std::ios_base::binary);
+#endif
 		if (ifs.fail()) {
 		  PbmError err("couldn't open file: "); err.appendMsg(filename.c_str());
 		  throw err;
@@ -200,19 +209,20 @@ DOTRACE("Pbm::write");
 	 }
   else
 	 {
-		ofstream ofs(filename.c_str());
+		std::ofstream ofs(filename.c_str());
 		write(ofs);
 	 }
 }
 
-void Pbm::write(ostream& os) const {
+void Pbm::write(std::ostream& os) const {
 DOTRACE("Pbm::write");
   os << 'P' << itsImpl->itsMode << ' ' 
 	  << itsImpl->itsImageWidth << ' ' << itsImpl->itsImageHeight << '\n';
-  os.write(&itsImpl->itsBytes[0], itsImpl->itsBytes.size());
+  os.write(reinterpret_cast<char*>(&itsImpl->itsBytes[0]),
+			  itsImpl->itsBytes.size());
 }
 
-void Pbm::readStream(istream& is) {
+void Pbm::readStream(std::istream& is) {
 DOTRACE("Pbm::readStream");
   if (is.fail()) {
 	 throw PbmError("input stream failed before reading pbm file");
@@ -285,7 +295,7 @@ DOTRACE("Pbm::readStream");
   }
 }
 
-void Pbm::parseMode1(istream& is) {
+void Pbm::parseMode1(std::istream& is) {
 DOTRACE("Pbm::parseMode1");
   int position = 0;
   int val = 0;
@@ -304,7 +314,7 @@ DOTRACE("Pbm::parseMode1");
   } 
 }
 
-void Pbm::parseMode2(istream& is) {
+void Pbm::parseMode2(std::istream& is) {
 DOTRACE("Pbm::parseMode2");
   double conversion = 255.0/double(itsImpl->itsMaxGrey);
   
@@ -320,24 +330,27 @@ DOTRACE("Pbm::parseMode2");
   } 
 }
 
-void Pbm::parseMode3(istream& is) {
+void Pbm::parseMode3(std::istream& is) {
 DOTRACE("Pbm::parseMode3");
   parseMode2(is);
 }
 
-void Pbm::parseMode4(istream& is) {
+void Pbm::parseMode4(std::istream& is) {
 DOTRACE("Pbm::parseMode4");
-  is.read(&(itsImpl->itsBytes[0]), itsImpl->itsNumBytes);
+  is.read(reinterpret_cast<char*>(&(itsImpl->itsBytes[0])),
+			 itsImpl->itsNumBytes);
 }
 
-void Pbm::parseMode5(istream& is) {
+void Pbm::parseMode5(std::istream& is) {
 DOTRACE("Pbm::parseMode5");
-  is.read(&(itsImpl->itsBytes[0]), itsImpl->itsNumBytes);  
+  is.read(reinterpret_cast<char*>(&(itsImpl->itsBytes[0])),
+			 itsImpl->itsNumBytes);  
 }
 
-void Pbm::parseMode6(istream& is) {
+void Pbm::parseMode6(std::istream& is) {
 DOTRACE("Pbm::parseMode6");
-  is.read(&(itsImpl->itsBytes[0]), itsImpl->itsNumBytes);
+  is.read(reinterpret_cast<char*>(&(itsImpl->itsBytes[0])),
+			 itsImpl->itsNumBytes);
 }
 
 static const char vcid_pbm_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Wed May 17 13:44:35 2000
+// written: Sat Sep 23 14:39:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,13 @@
 #define CSTDIO_DEFINED
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FSTREAM_H_DEFINED)
-#include <fstream.h>
-#define FSTREAM_H_DEFINED
+#ifdef PRESTANDARD_IOSTREAMS
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FSTREAM_H_DEFINED)
+#    include <fstream.h>
+#    define FSTREAM_H_DEFINED
+#  endif
+#else
+#  include <fstream>
 #endif
 
 namespace Util {
@@ -29,12 +33,16 @@ class Util::Pipe {
 public:
   Pipe(const char* command, const char* mode) :
 	 itsFile(popen(command, mode)),
-	 itsStream(),
+	 itsStream(&itsFilebuf),
 	 itsClosed(false),
 	 itsExitStatus(0)
 	 {
 		if ( itsFile != 0 ) {
+#ifdef PRESTANDARD_IOSTREAMS
 		  itsStream.attach(filedes());
+#else
+		  itsFilebuf.open(filedes());
+#endif
 		}
 		else {
 		  itsClosed = true;
@@ -44,12 +52,14 @@ public:
   ~Pipe()
 	 { close(); }
 
-  fstream& stream() { return itsStream; }
+  std::iostream& stream() { return itsStream; }
 
   int close()
 	 {
 		if ( !itsClosed ) {
+#ifdef PRESTANDARD_IOSTREAMS
 		  itsStream.close();
+#endif
 		  itsExitStatus = pclose(itsFile);
 		  itsClosed = true;
 		}
@@ -68,7 +78,12 @@ private:
   Pipe& operator=(const Pipe&);
 
   FILE* itsFile;
+#ifdef PRESTANDARD_IOSTREAMS
   fstream itsStream;
+#else
+  std::iostream itsStream;
+  std::filebuf itsFilebuf;
+#endif
   bool itsClosed;
   int itsExitStatus;
 };

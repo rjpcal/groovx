@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Thu Jun  1 13:55:19 2000
+// written: Sat Sep 23 14:37:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,11 @@
 #include "util/error.h"
 #endif
 
-class istream;
-class ostream;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#include <iosfwd>
+#define IOSFWD_DEFINED
+#endif
+
 class BmapData;
 
 /** This exception class will be thrown by \c Pbm if there is an error
@@ -38,7 +41,7 @@ public:
   Pbm(const BmapData& data);
 
   /// Construct by reading PBM format data from the \c istream \a is.
-  Pbm(istream& is);
+  Pbm(std::istream& is);
 
   /// Construct by reading PBM format data from the file \a filename.
   Pbm(const char* filename);
@@ -54,20 +57,20 @@ public:
   void swapInto(BmapData& data);
 
   /// Write PBM format data to the \c ostream \a os.
-  void write(ostream& os) const;
+  void write(std::ostream& os) const;
 
   /// Write PBM format data to the file \a filename.
   void write(const char* filename) const;
 
 private:
-  void readStream(istream& is);
+  void readStream(std::istream& is);
 
-  void parseMode1(istream& is);
-  void parseMode2(istream& is);
-  void parseMode3(istream& is);
-  void parseMode4(istream& is);
-  void parseMode5(istream& is);
-  void parseMode6(istream& is);
+  void parseMode1(std::istream& is);
+  void parseMode2(std::istream& is);
+  void parseMode3(std::istream& is);
+  void parseMode4(std::istream& is);
+  void parseMode5(std::istream& is);
+  void parseMode6(std::istream& is);
 
   Pbm(const Pbm&);
   Pbm& operator=(const Pbm&);
