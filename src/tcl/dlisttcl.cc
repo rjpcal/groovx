@@ -371,7 +371,7 @@ namespace Dlist
 
             if (newdist > origdist)
               {
-                Util::swap2(slots[i], slots[j]);
+                rutz::swap2(slots[i], slots[j]);
                 dist += (newdist-origdist)/double(N);
               }
           }
@@ -501,7 +501,7 @@ namespace Dlist
   Tcl::List repeat(Tcl::List source_list, Tcl::List times_list)
   {
     // find the minimum of the two lists' lengths
-    unsigned int min_len = Util::min(source_list.length(), times_list.length());
+    unsigned int min_len = rutz::min(source_list.length(), times_list.length());
 
     Tcl::List result;
 

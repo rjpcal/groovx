@@ -296,7 +296,7 @@ private:
 
   DerefT limit(const DerefT& raw) const
   {
-    return Util::clamp(raw, itsMin, itsMax);
+    return rutz::clamp(raw, itsMin, itsMax);
   }
 
   T C::* itsDataMember;

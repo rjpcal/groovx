@@ -150,7 +150,7 @@ namespace Util
     private:
       void swap(Handle& other) throw()
       {
-        Util::swap2(itsMaster, other.itsMaster);
+        rutz::swap2(itsMaster, other.itsMaster);
       }
 
       T* itsMaster;
@@ -393,8 +393,8 @@ private:
 
     void swap(WeakHandle& other) throw()
     {
-      Util::swap2(itsMaster, other.itsMaster);
-      Util::swap2(itsCounts, other.itsCounts);
+      rutz::swap2(itsMaster, other.itsMaster);
+      rutz::swap2(itsCounts, other.itsCounts);
     }
 
     // In order to avoid storing a separate bool indicating whether we

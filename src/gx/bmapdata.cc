@@ -302,7 +302,7 @@ void Gfx::BmapData::swap(Gfx::BmapData& other)
 {
 DOTRACE("Gfx::BmapData::swap");
 
-  Util::swap2(rep, other.rep);
+  rutz::swap2(rep, other.rep);
 }
 
 void Gfx::BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const

@@ -71,7 +71,7 @@ void string_rep::operator delete(void* space)
 string_rep::string_rep(std::size_t length, const char* text,
                        std::size_t capacity) :
   m_refcount(0),
-  m_capacity(Util::max(length+1, capacity)),
+  m_capacity(rutz::max(length+1, capacity)),
   m_length(0),
   m_text(new char[m_capacity])
 {
@@ -195,13 +195,13 @@ void string_rep::uniq_realloc(std::size_t capacity)
 {
   Precondition(m_refcount <= 1);
 
-  string_rep new_rep(Util::max(m_capacity*2 + 32, capacity), 0);
+  string_rep new_rep(rutz::max(m_capacity*2 + 32, capacity), 0);
 
   new_rep.uniq_append(this->m_length, this->m_text);
 
-  Util::swap2(m_capacity, new_rep.m_capacity);
-  Util::swap2(m_length, new_rep.m_length);
-  Util::swap2(m_text, new_rep.m_text);
+  rutz::swap2(m_capacity, new_rep.m_capacity);
+  rutz::swap2(m_length, new_rep.m_length);
+  rutz::swap2(m_text, new_rep.m_text);
 }
 
 void string_rep::uniq_reserve(std::size_t capacity)
@@ -277,7 +277,7 @@ void fstring::swap(fstring& other) throw()
 {
 DOTRACE("fstring::swap");
 
-  Util::swap2(m_rep, other.m_rep);
+  rutz::swap2(m_rep, other.m_rep);
 }
 
 fstring& fstring::operator=(const char* text)

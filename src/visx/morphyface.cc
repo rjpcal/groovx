@@ -333,7 +333,7 @@ DOTRACE("MorphyFace::grRender");
       canvas.scale(Vec3d(left_right*1.0, 1.0, 1.0));
 
       // Move to the eye position
-      canvas.translate(Vec3d(Util::abs(itsEyeDistance)/2.0,
+      canvas.translate(Vec3d(rutz::abs(itsEyeDistance)/2.0,
                              itsEyeYpos, 0.0));
 
       // Draw eye outline
@@ -402,7 +402,7 @@ DOTRACE("MorphyFace::grRender");
         static const int num_slices = 20;
         static const int num_loops = 1;
 
-        canvas.drawCircle(radius*Util::abs(itsPupilDilation), radius, true,
+        canvas.drawCircle(radius*rutz::abs(itsPupilDilation), radius, true,
                           num_slices, num_loops);
       }
     }
@@ -441,8 +441,8 @@ DOTRACE("MorphyFace::grRender");
 
     canvas.translate(Vec3d(itsNoseXpos, itsNoseYpos, 0.0));
 
-    const Vec2d s(Util::abs(itsNoseWidth)/2.0,
-                  Util::abs(itsNoseLength));
+    const Vec2d s(rutz::abs(itsNoseWidth)/2.0,
+                  rutz::abs(itsNoseLength));
 
     ls.begin(canvas, 0.01*itsStrokeWidth);
     ls.vertex(s*Vec2d(-0.75, 0.5));
@@ -518,7 +518,7 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   dbgEval(3, top_width);   dbgEvalNL(3, bottom_width);
 
-  double max_width = Util::max(1.0, Util::max(top_width, bottom_width));
+  double max_width = rutz::max(1.0, rutz::max(top_width, bottom_width));
 
   dbgEvalNL(3, max_width);
 

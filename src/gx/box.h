@@ -112,9 +112,9 @@ public:
   /// Like setXXYYZZ(), except figure out the right min/max ordering.
   void setAnyXXYYZZ(V x0, V x1, V y0, V y1, V z0, V z1)
   {
-    xx0 = Util::min(x0, x1); xx1 = Util::max(x0, x1);
-    yy0 = Util::min(y0, y1); yy1 = Util::max(y0, y1);
-    zz0 = Util::min(z0, z1); zz1 = Util::max(z0, z1);
+    xx0 = rutz::min(x0, x1); xx1 = rutz::max(x0, x1);
+    yy0 = rutz::min(y0, y1); yy1 = rutz::max(y0, y1);
+    zz0 = rutz::min(z0, z1); zz1 = rutz::max(z0, z1);
   }
 
   void setCorners(const Gfx::Vec3<V>& p1, const Gfx::Vec3<V>& p2)
@@ -169,12 +169,12 @@ public:
           }
         else
           {
-            xx0 = Util::min(xx0, other.xx0);
-            xx1 = Util::max(xx1, other.xx1);
-            yy0 = Util::min(yy0, other.yy0);
-            yy1 = Util::max(yy1, other.yy1);
-            zz0 = Util::min(zz0, other.zz0);
-            zz1 = Util::max(zz1, other.zz1);
+            xx0 = rutz::min(xx0, other.xx0);
+            xx1 = rutz::max(xx1, other.xx1);
+            yy0 = rutz::min(yy0, other.yy0);
+            yy1 = rutz::max(yy1, other.yy1);
+            zz0 = rutz::min(zz0, other.zz0);
+            zz1 = rutz::max(zz1, other.zz1);
           }
       }
   }

@@ -122,7 +122,7 @@ DOTRACE("TrialEvent::schedule");
 
   if (itsRequestedDelay > 0)
     actual_request =
-      Util::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
+      rutz::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
                 int(minimum_msec));
 
   itsTimer.setDelayMsec(actual_request);
@@ -158,7 +158,7 @@ DOTRACE("TrialEvent::invokeTemplate");
   // Negative error: we expect the event to occur later than requested
   // (round towards negative infinity)
   const double moving_average_ratio =
-    1.0 / Util::min(10, itsInvokeCount);
+    1.0 / rutz::min(10, itsInvokeCount);
 
   itsEstimatedOffset =
     (1.0 - moving_average_ratio) * itsEstimatedOffset +

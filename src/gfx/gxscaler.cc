@@ -180,7 +180,7 @@ double GxScaler::scaledHeight() const
 
 double GxScaler::scaledMaxDim() const
 {
-  return Util::max(scaledWidth(), scaledHeight());
+  return rutz::max(scaledWidth(), scaledHeight());
 }
 
 void GxScaler::draw(Gfx::Canvas& canvas) const

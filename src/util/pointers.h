@@ -197,8 +197,8 @@ public:
   /// Swap pointees with another shared_ptr.
   void swap(shared_ptr<T>& other) throw()
     {
-      Util::swap2(px, other.px);
-      Util::swap2(pn, other.pn);
+      rutz::swap2(px, other.px);
+      rutz::swap2(pn, other.pn);
     }
 
 private:

@@ -492,7 +492,7 @@ void GxPixmap::zoomTo(Gfx::Vec2<int> sz)
 DOTRACE("GxPixmap::zoomTo");
   double x_ratio = double(sz.x()) / rep->itsData.width();
   double y_ratio = double(sz.y()) / rep->itsData.height();
-  double ratio = Util::min(x_ratio, y_ratio);
+  double ratio = rutz::min(x_ratio, y_ratio);
   setUsingZoom(true);
   setZoom(Gfx::Vec2<double>(ratio, ratio));
 }

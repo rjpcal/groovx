@@ -100,8 +100,8 @@ inline void Bezier4::computeMinMax()
 {
   double b2_4ac = c1[1]*c1[1] - 4*c1[0]*c1[2];
 
-  using Util::max;
-  using Util::min;
+  using rutz::max;
+  using rutz::min;
 
   valMin = min(eval(0.0), eval(1.0));
   valMax = max(eval(0.0), eval(1.0));
@@ -111,8 +111,8 @@ inline void Bezier4::computeMinMax()
       double part1 = -c1[1] / (2*c1[2]);
       double part2 = sqrt(b2_4ac) / (2*c1[2]);
 
-      double extremum1 = Util::clamp(part1 + part2, 0.0, 1.0);
-      double extremum2 = Util::clamp(part1 - part2, 0.0, 1.0);
+      double extremum1 = rutz::clamp(part1 + part2, 0.0, 1.0);
+      double extremum2 = rutz::clamp(part1 - part2, 0.0, 1.0);
 
       double v1 = eval(extremum1);
       double v2 = eval(extremum2);

@@ -119,8 +119,8 @@ public:
   {
     ll = x;
     bb = y;
-    rr = ll+Util::abs(w);
-    tt = bb+Util::abs(h);
+    rr = ll+rutz::abs(w);
+    tt = bb+rutz::abs(h);
     return *this;
   }
 
@@ -129,18 +129,18 @@ public:
   {
     ll = xy.x();
     bb = xy.y();
-    rr = ll+Util::abs(wh.x());
-    tt = bb+Util::abs(wh.y());
+    rr = ll+rutz::abs(wh.x());
+    tt = bb+rutz::abs(wh.y());
     return *this;
   }
 
   /// Set four corners from positions of two diagonally-opposed corners.
   Rect<V>& setCorners(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
   {
-    ll = Util::min(p1.x(), p2.x());
-    rr = Util::max(p1.x(), p2.x());
-    bb = Util::min(p1.y(), p2.y());
-    tt = Util::max(p1.y(), p2.y());
+    ll = rutz::min(p1.x(), p2.x());
+    rr = rutz::max(p1.x(), p2.x());
+    bb = rutz::min(p1.y(), p2.y());
+    tt = rutz::max(p1.y(), p2.y());
     return *this;
   }
 
@@ -206,10 +206,10 @@ public:
           }
         else
           {
-            ll = Util::min(ll, other.ll);
-            rr = Util::max(rr, other.rr);
-            bb = Util::min(bb, other.bb);
-            tt = Util::max(tt, other.tt);
+            ll = rutz::min(ll, other.ll);
+            rr = rutz::max(rr, other.rr);
+            bb = rutz::min(bb, other.bb);
+            tt = rutz::max(tt, other.tt);
           }
       }
   }

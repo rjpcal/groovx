@@ -306,7 +306,7 @@ DOTRACE("House::grGetBoundingBox");
   const double main_width = itsStoryAspectRatio;
   const double main_height = itsNumStories + itsRoofHeight;
 
-  using Util::max;
+  using rutz::max;
 
   const double max_dim = max(main_height, main_width);
 

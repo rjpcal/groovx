@@ -137,7 +137,7 @@ struct static_block
   /** This requires an element-by-element swap. */
   void swap(static_block& other)
     {
-      Util::swap2(*this, other);
+      rutz::swap2(*this, other);
     }
 
   T data[N];
@@ -240,8 +240,8 @@ public:
       the dynamically-allocated arrays; no element-wise swap is needed. */
   void swap(fixed_block& other)
     {
-      Util::swap2(N,    other.N);
-      Util::swap2(data, other.data);
+      rutz::swap2(N,    other.N);
+      rutz::swap2(data, other.data);
     }
 
 private:
@@ -326,7 +326,7 @@ public:
 
   /// Swap pointees with another shared_array.
   void swap(shared_array<T>& other) throw()
-  { Util::swap2(px,other.px); Util::swap2(pn,other.pn); }
+  { rutz::swap2(px,other.px); rutz::swap2(pn,other.pn); }
 
 private:
 
@@ -434,8 +434,8 @@ public:
       the dynamically-allocated arrays; no element-wise swap is needed. */
   void swap(dynamic_block& other)
     {
-      Util::swap2(N,    other.N);
-      Util::swap2(data, other.data);
+      rutz::swap2(N,    other.N);
+      rutz::swap2(data, other.data);
     }
 
   /// Resize to a new size.
