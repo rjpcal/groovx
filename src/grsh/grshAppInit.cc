@@ -1,6 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
 // grshAppInit.cc
-// adapted by Rob Peters Nov-98
+// Rob Peters
+// created: Nov-98
+// written: Fri Mar 12 07:53:40 1999
+// 	$Id$	
 //
 // This is the main application file for a Tcl/Tk application that
 // manages collections of GrObj's (graphic objects) within an
