@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Tue Nov 14 08:10:09 2000
+// written: Thu Nov 16 01:00:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,23 +135,34 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
   // ... or if we are setting
   else if (TclCmd::objc() == itsObjcSet) {
 
-	 Tcl::ListIterator<Tcl::TclValue>
-		val_itr = beginOfArg(itsValArgn, (TclValue*)0),
-		val_end = endOfArg(itsValArgn, (TclValue*)0);
+	 if (ids.size() == 1)
+		{
+		  TclValue val = getValFromArg(itsValArgn, (TclValue*)0);
 
-	 TclValue val = *val_itr;
+		  IdItem<FieldContainer> item(ids[0]);
+		  item->field(itsFinfo).setValue(val);
+		}
+	 else
+		{
+		  Tcl::ListIterator<Tcl::TclValue>
+			 val_itr = beginOfArg(itsValArgn, (TclValue*)0),
+			 val_end = endOfArg(itsValArgn, (TclValue*)0);
 
-	 for (size_t i = 0; i < ids.size(); ++i) {
-		IdItem<FieldContainer> item(ids[i]);
-		item->field(itsFinfo).setValue(val);
+		  TclValue val = *val_itr;
 
-		// Only fetch a new value if there are more values to get... if
-		// we run out of values before we run out of ids, then we just
-		// keep on using the last value in the sequence of values.
-		if (val_itr != val_end)
-		  if (++val_itr != val_end)
-			 val = *val_itr;
-	 }
+		  for (size_t i = 0; i < ids.size(); ++i) {
+			 IdItem<FieldContainer> item(ids[i]);
+			 item->field(itsFinfo).setValue(val);
+
+			 // Only fetch a new value if there are more values to
+			 // get... if we run out of values before we run out of ids,
+			 // then we just keep on using the last value in the sequence
+			 // of values.
+			 if (val_itr != val_end)
+				if (++val_itr != val_end)
+				  val = *val_itr;
+		  }
+		}
   }
   // ... or ... "can't happen"
   else {  Assert(0);  }
