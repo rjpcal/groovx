@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Thu Feb 27 16:24:27 2003
+// written: Thu Feb 27 16:28:33 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,9 @@ const char* demangle_cstr(const char* in) { return in; }
 
 #  if defined(__GNUC__)
 #    if __GNUC__ < 3
-#      include "system/gcc_v2_demangle.h"
+#      include "system/demangle_gcc_v2.h"
 #    else
-#      include "system/gcc_v3_demangle.h"
+#      include "system/demangle_gcc_v3.h"
 #    endif
 #  else
 #    error no method specified for typename demangling

@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gcc_v3_demangle.h
+// demangle_gcc_v3.h
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Tue Jun 19 17:00:38 2001
-// written: Thu Feb 27 16:23:35 2003
+// created: Tue Jun 19 17:00:38 2001 (as gcc_v3_demangle.h)
+// written: Thu Feb 27 16:27:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GCC_V3_DEMANGLE_H_DEFINED
-#define GCC_V3_DEMANGLE_H_DEFINED
+#ifndef DEMANGLE_GCC_V3_H_DEFINED
+#define DEMANGLE_GCC_V3_H_DEFINED
 
 #include "util/error.h"
 
@@ -117,5 +117,5 @@ DOTRACE("demangle_impl");
 //    printboth(typeid(Tplate3<int>::Xt).name());
 //  }
 
-static const char vcid_gcc_v3_demangle_h[] = "$Header$";
-#endif // !GCC_V3_DEMANGLE_H_DEFINED
+static const char vcid_demangle_gcc_v3_h[] = "$Header$";
+#endif // !DEMANGLE_GCC_V3_H_DEFINED

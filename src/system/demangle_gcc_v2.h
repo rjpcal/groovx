@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gcc_v2_demangle.h
+// demangle_gcc_v2.h
 //
-// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Tue Jun 19 16:58:19 2001
-// written: Thu Feb 27 16:18:30 2003
+// created: Tue Jun 19 16:58:19 2001 (as gcc_v2_demangle.h)
+// written: Thu Feb 27 16:28:21 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GCC_V2_DEMANGLE_H_DEFINED
-#define GCC_V2_DEMANGLE_H_DEFINED
+#ifndef DEMANGLE_GCC_V2_H_DEFINED
+#define DEMANGLE_GCC_V2_H_DEFINED
 
 #include <cctype>
 #include <cstdlib>
@@ -245,5 +245,5 @@ DOTRACE("demangle_impl");
   return out;
 }
 
-static const char vcid_gcc_v2_demangle_h[] = "$Header$";
-#endif // !GCC_V2_DEMANGLE_H_DEFINED
+static const char vcid_demangle_gcc_v2_h[] = "$Header$";
+#endif // !DEMANGLE_GCC_V2_H_DEFINED
