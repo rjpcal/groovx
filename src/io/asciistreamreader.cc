@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Jun 19 15:47:39 2001
+// written: Thu Jul 19 21:01:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,10 @@
 #include "io/io.h"
 
 #include "util/arrays.h"
-#include "util/lists.h"
 #include "util/objmgr.h"
 #include "util/pointers.h"
 #include "util/ref.h"
+#include "util/slink_list.h"
 #include "util/strings.h"
 #include "util/value.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Fri May 11 20:56:38 2001
+// written: Thu Jul 19 21:02:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define HASH_H_DEFINED
 
 #include "util/arrays.h"
-#include "util/lists.h"
+#include "util/slink_list.h"
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
@@ -26,24 +26,24 @@ namespace {
   const int num_primes = 28;
   const unsigned long prime_list[num_primes] =
   {
-	 53ul,         97ul,         193ul,       389ul,       769ul,
-	 1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
-	 49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
-	 1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
-	 50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul, 
-	 1610612741ul, 3221225473ul, 4294967291ul
+    53ul,         97ul,         193ul,       389ul,       769ul,
+    1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
+    49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
+    1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
+    50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul,
+    1610612741ul, 3221225473ul, 4294967291ul
   };
 
   inline unsigned long least_prime_greater_than(unsigned long hint)
-	 {
-		int n = 0;
-		while (n < (num_primes-1))
-		  {
-			 if (prime_list[n] > hint) break;
-			 ++n;
-		  }
-		return prime_list[n];
-	 }
+    {
+      int n = 0;
+      while (n < (num_primes-1))
+        {
+          if (prime_list[n] > hint) break;
+          ++n;
+        }
+      return prime_list[n];
+    }
 }
 
 template <class key_type>
@@ -76,9 +76,9 @@ template <class string_type>
 struct string_hasher {
 public:
   size_t operator()(const string_type& key)
-	 {
-		return default_hasher<const char*>()(key.c_str());
-	 }
+    {
+      return default_hasher<const char*>()(key.c_str());
+    }
 };
 
 template <class key_type, class value_type,
@@ -91,17 +91,17 @@ class hash_array {
 
 public:
   struct entry_type {
-	 entry_type(const key_type& k, const value_type& v) :
-		key(k), value(v) {}
+    entry_type(const key_type& k, const value_type& v) :
+      key(k), value(v) {}
 
-	 entry_type(const entry_type& other) :
-		key(other.key), value(other.value) {}
+    entry_type(const entry_type& other) :
+      key(other.key), value(other.value) {}
 
-	 entry_type& operator=(const entry_type& other)
-	   { key = other.key; value = other.value; return *this; }
+    entry_type& operator=(const entry_type& other)
+      { key = other.key; value = other.value; return *this; }
 
-	 key_type key;
-	 value_type value;
+    key_type key;
+    value_type value;
   };
 
 private:
@@ -119,97 +119,97 @@ public:
 
   class iterator {
   private:
-	 friend class hash_array;
+    friend class hash_array;
 
-	 table_type* buckets_ptr;
-	 table_iterator table_itr;
-	 list_iterator list_itr;
-	 bool at_end;
+    table_type* buckets_ptr;
+    table_iterator table_itr;
+    list_iterator list_itr;
+    bool at_end;
 
-	 enum position { BEGIN, END };
+    enum position { BEGIN, END };
 
-	 // XXX This requires the table to always contain at least one list
-	 iterator(table_type* tp, position pos = BEGIN) :
-		buckets_ptr(tp),
-		table_itr( (pos == BEGIN) ? tp->begin() : tp->end()-1),
-		list_itr( (pos == BEGIN) ? table_itr->begin() : table_itr->end() ),
-		at_end( pos == END )
-		{
-		  if (pos == BEGIN)
-			 {
-				start_next_nonempty_bucket();
-			 }
-		}
+    // XXX This requires the table to always contain at least one list
+    iterator(table_type* tp, position pos = BEGIN) :
+      buckets_ptr(tp),
+      table_itr( (pos == BEGIN) ? tp->begin() : tp->end()-1),
+      list_itr( (pos == BEGIN) ? table_itr->begin() : table_itr->end() ),
+      at_end( pos == END )
+      {
+        if (pos == BEGIN)
+          {
+            start_next_nonempty_bucket();
+          }
+      }
 
-	 iterator(table_type* tp, table_iterator ti, list_iterator li) :
-		buckets_ptr(tp), table_itr(ti), list_itr(li), at_end(false) {}
+    iterator(table_type* tp, table_iterator ti, list_iterator li) :
+      buckets_ptr(tp), table_itr(ti), list_itr(li), at_end(false) {}
 
-	 void start_next_nonempty_bucket()
-		{
-		  while (table_itr->empty() && table_itr < (buckets_ptr->end()-1))
-			 ++table_itr;
-		  if (table_itr->empty())
-			 at_end = true;
-		  list_itr = table_itr->begin();
-		}
+    void start_next_nonempty_bucket()
+      {
+        while (table_itr->empty() && table_itr < (buckets_ptr->end()-1))
+          ++table_itr;
+        if (table_itr->empty())
+          at_end = true;
+        list_itr = table_itr->begin();
+      }
 
   public:
-	 typedef entry_type* pointer;
-	 typedef entry_type& reference;
+    typedef entry_type* pointer;
+    typedef entry_type& reference;
 
-	 iterator(const iterator& other) :
-		buckets_ptr(other.buckets_ptr),
-		table_itr(other.table_itr),
-		list_itr(other.list_itr),
-		at_end(other.at_end)
-		{}
+    iterator(const iterator& other) :
+      buckets_ptr(other.buckets_ptr),
+      table_itr(other.table_itr),
+      list_itr(other.list_itr),
+      at_end(other.at_end)
+      {}
 
-	 iterator& operator=(const iterator& other)
-	 {
-		buckets_ptr = other.buckets_ptr;
-		table_itr = other.table_itr;
-		list_itr = other.list_itr;
-		at_end = other.at_end;
-		return *this;
-	 }
+    iterator& operator=(const iterator& other)
+    {
+      buckets_ptr = other.buckets_ptr;
+      table_itr = other.table_itr;
+      list_itr = other.list_itr;
+      at_end = other.at_end;
+      return *this;
+    }
 
-	 reference operator*() { return list_itr.operator*(); }
-	 pointer operator->() {
+    reference operator*() { return list_itr.operator*(); }
+    pointer operator->() {
 #ifdef LOCAL_DEBUG
-  		DebugEval(table_itr - buckets_ptr->begin());
-  		DebugEvalNL(&*list_itr);
+      DebugEval(table_itr - buckets_ptr->begin());
+      DebugEvalNL(&*list_itr);
 #endif
-		return list_itr.operator->();
-	 }
+      return list_itr.operator->();
+    }
 
-	 iterator& operator++()
-		{
-		  if (!at_end)
-			 {
-				if (++list_itr == table_itr->end())
-				  {
-					 if (table_itr >= (buckets_ptr->end()-1))
-						at_end = true;
-					 else {
-						++table_itr;
-						start_next_nonempty_bucket();
-					 }
-				  }
-			 }
-		  return *this;
-		}
+    iterator& operator++()
+      {
+        if (!at_end)
+          {
+            if (++list_itr == table_itr->end())
+              {
+                if (table_itr >= (buckets_ptr->end()-1))
+                  at_end = true;
+                else {
+                  ++table_itr;
+                  start_next_nonempty_bucket();
+                }
+              }
+          }
+        return *this;
+      }
 
-	 iterator operator++(int)
-		{ iterator tmp(*this); ++*this; return tmp; }
+    iterator operator++(int)
+      { iterator tmp(*this); ++*this; return tmp; }
 
-	 bool operator==(const iterator& other) const
-		{ return ( (at_end == other.at_end) &&
-					  (table_itr == other.table_itr) &&
-					  (list_itr == other.list_itr) ); }
-	 bool operator!=(const iterator& other) const
-		{ return ( (at_end != other.at_end) ||
-					  (table_itr != other.table_itr) ||
-					  (list_itr != other.list_itr) ); }
+    bool operator==(const iterator& other) const
+      { return ( (at_end == other.at_end) &&
+                 (table_itr == other.table_itr) &&
+                 (list_itr == other.list_itr) ); }
+    bool operator!=(const iterator& other) const
+      { return ( (at_end != other.at_end) ||
+                 (table_itr != other.table_itr) ||
+                 (list_itr != other.list_itr) ); }
   };
 
   //
@@ -228,32 +228,32 @@ private:
 
 public:
   hash_array() :
-	 buckets(prime_list[0]),
-	 hasher(hash_func()),
-	 entry_count(0),
-	 max_load(0.7),
-	 grow_factor(1.6)
-	 {}
+    buckets(prime_list[0]),
+    hasher(hash_func()),
+    entry_count(0),
+    max_load(0.7),
+    grow_factor(1.6)
+    {}
   hash_array(size_type size_hint) :
-	 buckets(least_prime_greater_than(size_hint)),
-	 hasher(hash_func()),
-	 entry_count(0),
-	 max_load(0.7),
-	 grow_factor(1.6)
-	 {}
+    buckets(least_prime_greater_than(size_hint)),
+    hasher(hash_func()),
+    entry_count(0),
+    max_load(0.7),
+    grow_factor(1.6)
+    {}
   hash_array(const hash_array& other) :
-	 buckets(other.buckets),
-	 hasher(other.hasher),
-	 entry_count(other.entry_count),
-	 max_load(other.max_load),
-	 grow_factor(other.grow_factor) {}
+    buckets(other.buckets),
+    hasher(other.hasher),
+    entry_count(other.entry_count),
+    max_load(other.max_load),
+    grow_factor(other.grow_factor) {}
 
   hash_array& operator=(const hash_array& other)
-	 {
-		hash_array other_copy(other);
-		this->swap(other_copy);
-		return *this;
-	 }
+    {
+      hash_array other_copy(other);
+      this->swap(other_copy);
+      return *this;
+    }
 
   iterator begin() { return iterator(&buckets); }
   iterator end() { return iterator(&buckets, iterator::END); }
@@ -263,116 +263,116 @@ public:
   size_type bucket_count() const { return buckets.size(); }
   double load_factor() const { return double(size()) / bucket_count(); }
   size_type longest_chain() const
-	 {
-		size_type res = 0;
-		for (table_iterator itr = buckets.begin(), stop = buckets.end();
-			  itr != stop;
-			  ++itr)
-		  {
-			 size_type c = itr->size();
-			 if (res < c) res = c;
-		  }
-		return res;
-	 }
+    {
+      size_type res = 0;
+      for (table_iterator itr = buckets.begin(), stop = buckets.end();
+           itr != stop;
+           ++itr)
+        {
+          size_type c = itr->size();
+          if (res < c) res = c;
+        }
+      return res;
+    }
 
   void set_max_load(double load) const { max_load = load; }
 
   iterator insert(const entry_type& entry, bool allow_resize = true)
-	 {
-		size_t h = hasher(entry.key) % buckets.size();
+    {
+      size_t h = hasher(entry.key) % buckets.size();
 #ifdef LOCAL_DEBUG
-		DebugEvalNL(h);
+      DebugEvalNL(h);
 #endif
 
-		table_iterator bucket_itr = buckets.begin()+h;
-		list_iterator itr(bucket_itr->begin()), stop(bucket_itr->end());
+      table_iterator bucket_itr = buckets.begin()+h;
+      list_iterator itr(bucket_itr->begin()), stop(bucket_itr->end());
 
-		// See if an entry with the given key already exists...
-		bool created_new_entry = false;
-		for ( ; itr != stop; ++itr)
-		  {
-			 if (itr->key == entry.key) break;
-		  }
+      // See if an entry with the given key already exists...
+      bool created_new_entry = false;
+      for ( ; itr != stop; ++itr)
+        {
+          if (itr->key == entry.key) break;
+        }
 
-		// ... if not, then add a new entry
-		if ( itr == stop )
-		  {
-			 if ( allow_resize &&
-				   entry_count+1 > max_load*buckets.size() )
-				{
-				  resize(entry_count*grow_factor); // resize...
-				  h = hasher(entry.key) % buckets.size();
-				  bucket_itr = buckets.begin()+h;
-				}
+      // ... if not, then add a new entry
+      if ( itr == stop )
+        {
+          if ( allow_resize &&
+               entry_count+1 > max_load*buckets.size() )
+            {
+              resize(entry_count*grow_factor); // resize...
+              h = hasher(entry.key) % buckets.size();
+              bucket_itr = buckets.begin()+h;
+            }
 
-			 bucket_itr->push_front(entry);
-			 itr = bucket_itr->begin();
-			 ++entry_count;
-			 created_new_entry = true;
-		  }
+          bucket_itr->push_front(entry);
+          itr = bucket_itr->begin();
+          ++entry_count;
+          created_new_entry = true;
+        }
 
-		// ... otherwise, do nothing (just keep the existing entry)
-		else { ; }
+      // ... otherwise, do nothing (just keep the existing entry)
+      else { ; }
 
-		return iterator(&buckets, bucket_itr, itr);
-	 }
+      return iterator(&buckets, bucket_itr, itr);
+    }
 
   iterator insert(const key_type& key, const value_type& value)
-	 { return insert(entry_type(key, value)); }
+    { return insert(entry_type(key, value)); }
 
   value_type& operator[](const key_type& key)
-	 {
+    {
 #ifdef LOCAL_DEBUG
-		DebugEvalNL(key);
+      DebugEvalNL(key);
 #endif
-		return insert(key, value_type())->value;
-	 }
+      return insert(key, value_type())->value;
+    }
 
   iterator find(const key_type& key)
-	 {
-		size_t h = hasher(key) % buckets.size();
+    {
+      size_t h = hasher(key) % buckets.size();
 
-		table_iterator bucket_itr = buckets.begin()+h;
-		list_iterator itr(bucket_itr->begin()), stop(bucket_itr->end());
+      table_iterator bucket_itr = buckets.begin()+h;
+      list_iterator itr(bucket_itr->begin()), stop(bucket_itr->end());
 
-		for ( ; itr != stop; ++itr)
-		  {
-			 if (itr->key == key) break;
-		  }
+      for ( ; itr != stop; ++itr)
+        {
+          if (itr->key == key) break;
+        }
 
-		return iterator(&buckets, bucket_itr, itr);
-	 }
+      return iterator(&buckets, bucket_itr, itr);
+    }
 
   void swap(hash_array& other)
-	 {
-		buckets.swap(other.buckets);
-		size_type other_entry_count = other.entry_count;
-		other.entry_count = this->entry_count;
-		this->entry_count = other_entry_count;
-	 }
+    {
+      buckets.swap(other.buckets);
+      size_type other_entry_count = other.entry_count;
+      other.entry_count = this->entry_count;
+      this->entry_count = other_entry_count;
+    }
 
   void resize(size_type new_size_hint)
-	 {
-		hash_array new_array(new_size_hint);
-		for (iterator itr = begin(), stop = end(); itr != stop; ++itr)
-		  {
-			 new_array.insert(*itr, false);
-		  }
-		this->swap(new_array);
-	 }
+    {
+      hash_array new_array(new_size_hint);
+      for (iterator itr = begin(), stop = end(); itr != stop; ++itr)
+        {
+          new_array.insert(*itr, false);
+        }
+      this->swap(new_array);
+    }
 
   void clear()
-	 {
-		for (table_iterator itr = buckets.begin(), stop = buckets.end();
-			  itr != stop;
-			  ++itr)
-		  {
- 			 /* size_type sz = itr->size(); */
-			 itr->clear();
-			 /* entry_count -= sz; */
-		  }
-		entry_count = 0;
-	 }
+    {
+      for (table_iterator itr = buckets.begin(), stop = buckets.end();
+           itr != stop;
+           ++itr)
+        {
+          /* size_type sz = itr->size(); */
+          itr->clear();
+          /* entry_count -= sz; */
+        }
+      entry_count = 0;
+    }
 };
 
 

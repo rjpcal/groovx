@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Mon Jun 11 15:08:16 2001
+// written: Thu Jul 19 21:03:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,18 +22,18 @@
 #include "util/arrays.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LISTS_H_DEFINED)
-#include "util/lists.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(SLINK_LIST_H_DEFINED)
+#include "util/slink_list.h"
 #endif
 
 namespace {
   template <class T>
   inline T max(const T& a, const T& b)
-	 { return (a > b) ? a : b; }
+    { return (a > b) ? a : b; }
 
   template <class T>
   inline T min(const T& a, const T& b)
-	 { return (a < b) ? a : b; }
+    { return (a < b) ? a : b; }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ namespace {
 
 class Bezier {
 private:
-  dynamic_block<double> R;		  // control points
+  dynamic_block<double> R;      // control points
 
   // coefficients of the Bezier polynomial
   // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
@@ -57,28 +57,28 @@ private:
   // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
   dynamic_block<double> c1;
 
-  double uMin_;	 // value of u in [0,1] which gives the minimum
+  double uMin_;    // value of u in [0,1] which gives the minimum
   double uMax_;  // value of u in [0,1] which gives the maximum
   double valMin_;
   double valMax_;
 
   static int choose(int n, int k) {
-	 // result = n! / [k!(n-k)!]
-	 int result = 1;
+    // result = n! / [k!(n-k)!]
+    int result = 1;
 
-	 // we have symmetry of (n k) = (n n-k)
-	 // smaller k gives a faster computation, so:
-	 if ( (n-k) < k ) { k = n-k; }
+    // we have symmetry of (n k) = (n n-k)
+    // smaller k gives a faster computation, so:
+    if ( (n-k) < k ) { k = n-k; }
 
-	 // compute n! / (n-k)!  =  n*(n-1)*(n-2)...(n-k+1)
-	 for (int f = n; f > (n-k); --f) {
-		result *= f;
-	 }
-	 for (int d = 2; d <= k; ++d) {
-		result /= d;
-	 }
+    // compute n! / (n-k)!  =  n*(n-1)*(n-2)...(n-k+1)
+    for (int f = n; f > (n-k); --f) {
+      result *= f;
+    }
+    for (int d = 2; d <= k; ++d) {
+      result /= d;
+    }
 
-	 return result;
+    return result;
   }
 
 public:
@@ -130,26 +130,26 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
   c0.resize(RR.size());
   c1.resize(RR.size()-1);
 
-  int n = RR.size()-1;			  // degree of polynomial = num_points - 1
+  int n = RR.size()-1;          // degree of polynomial = num_points - 1
 
   //         ( n )    i  {     (i+k)   ( i )      }
   // c0    = (   ) * sum {  (-1)     * (   ) * R  }
   //   i     ( i )   k=0 {             ( k )    k }
 
   {for (int i = 0; i <= n; ++i) {
-	 c0[i] = 0;
+    c0[i] = 0;
 
-	 for (int k = 0; k <= i; ++k) {
-		int i_choose_k = Bezier::choose(i,k);
+    for (int k = 0; k <= i; ++k) {
+      int i_choose_k = Bezier::choose(i,k);
 
-		c0[i] += ( (i+k)%2 ? 1 : -1) * i_choose_k * R[k];
-	 }
+      c0[i] += ( (i+k)%2 ? 1 : -1) * i_choose_k * R[k];
+    }
 
-	 c0[i] *= Bezier::choose(n,i);
+    c0[i] *= Bezier::choose(n,i);
   }}
 
   {for (size_t i = 0; i < c1.size(); ++i) {
-	 c1[i] = (i+1) * c0[i+1];
+    c1[i] = (i+1) * c0[i+1];
   }}
 
 
@@ -161,13 +161,13 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
 
   double prev, current = evalDeriv(0.0);
   for (int e = 1; e <= extrema_res; ++e) {
-	 prev = current;
-	 current = evalDeriv(double(e)/extrema_res);
-	 // See if the derivative has crossed zero by checking if the signs
-	 // of current and prev are different
-	 if ( (prev > 0.0) != (current > 0.0) ) {
-		extrema.push_front((current+prev)/2.0);
-	 }
+    prev = current;
+    current = evalDeriv(double(e)/extrema_res);
+    // See if the derivative has crossed zero by checking if the signs
+    // of current and prev are different
+    if ( (prev > 0.0) != (current > 0.0) ) {
+      extrema.push_front((current+prev)/2.0);
+    }
   }
 
   extrema.push_front(1.0);
@@ -176,27 +176,27 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
   valMin_ = valMax_ = eval(0.0);
 
   for (slink_list<double>::iterator
-			ii = extrema.begin(),
-			end = extrema.end();
-		 ii != end;
-		 ++ii)
-	 {
-		double current = eval(*ii);
-		if (current < valMin_) {
-		  valMin_ = current;
-		  uMin_ = *ii;
-		}
-		if (current > valMax_) {
-		  valMax_ = current;
-		  uMax_ = *ii;
-		}
-	 }
+         ii = extrema.begin(),
+         end = extrema.end();
+       ii != end;
+       ++ii)
+    {
+      double current = eval(*ii);
+      if (current < valMin_) {
+        valMin_ = current;
+        uMin_ = *ii;
+      }
+      if (current > valMax_) {
+        valMax_ = current;
+        uMax_ = *ii;
+      }
+    }
 }
 
 double Bezier::eval(double u) {
   double result = 0.0;
   for (size_t i = 0; i < c0.size(); ++i) {
-	 result += c0[i] * pow(u,double(i));
+    result += c0[i] * pow(u,double(i));
   }
   return result;
 }
@@ -204,7 +204,7 @@ double Bezier::eval(double u) {
 double Bezier::evalDeriv(double u) {
   double result = 0.0;
   for (size_t i = 0; i < c1.size(); ++i) {
-	 result += c1[i] * pow(u,double(i));
+    result += c1[i] * pow(u,double(i));
   }
   return result;
 }
@@ -222,7 +222,7 @@ double Bezier::evalDeriv(double u) {
 
 class Bezier4 {
 private:
-  fixed_block<double> R;		  // control points
+  fixed_block<double> R;        // control points
 
   // coefficients of the Bezier polynomial
   // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
@@ -280,26 +280,26 @@ void Bezier4::setCtrlPnts(double R0, double R1, double R2, double R3) {
   c0[3] =   -R[0] + 3*R[1] - 3*R[2] + R[3];
 
   for (size_t i = 0; i < c1.size(); ++i) {
-	 c1[i] = (i+1) * c0[i+1];
+    c1[i] = (i+1) * c0[i+1];
   }
 
   b2_4ac = c1[1]*c1[1] - 4*c1[0]*c1[2];
 
   if (b2_4ac >= 0.0) {
-	 double part1 = -c1[1] / (2*c1[2]);
-	 double part2 = sqrt(b2_4ac) / (2*c1[2]);
+    double part1 = -c1[1] / (2*c1[2]);
+    double part2 = sqrt(b2_4ac) / (2*c1[2]);
 
-	 extremum1 = part1 + part2;
-	 if (extremum1 < 0.0) extremum1 = 0.0;
-	 if (extremum1 > 1.0) extremum1 = 1.0;
+    extremum1 = part1 + part2;
+    if (extremum1 < 0.0) extremum1 = 0.0;
+    if (extremum1 > 1.0) extremum1 = 1.0;
 
-	 extremum2 = part1 - part2;
-	 if (extremum2 < 0.0) extremum2 = 0.0;
-	 if (extremum2 > 1.0) extremum2 = 1.0;
+    extremum2 = part1 - part2;
+    if (extremum2 < 0.0) extremum2 = 0.0;
+    if (extremum2 > 1.0) extremum2 = 1.0;
   }
   else {
-	 extremum1 = 0.0;
-	 extremum2 = 1.0;
+    extremum1 = 0.0;
+    extremum2 = 1.0;
   }
 }
 
@@ -313,12 +313,12 @@ double Bezier4::evalDeriv(double u) {
 
 double Bezier4::evalMax() {
   return max( max(eval(0.0), eval(1.0)),
-				  max(eval(extremum1), eval(extremum2)) );
+              max(eval(extremum1), eval(extremum2)) );
 }
 
 double Bezier4::evalMin() {
   return min( min(eval(0.0), eval(1.0)),
-				  min(eval(extremum1), eval(extremum2)) );
+              min(eval(extremum1), eval(extremum2)) );
 }
 
 static const char vcid_bezier_h[] = "$Header$";
