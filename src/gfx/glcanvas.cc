@@ -801,6 +801,12 @@ DOTRACE("GLCanvas::flushOutput");
     glFlush();
 }
 
+void GLCanvas::finishDrawing()
+{
+DOTRACE("GLCanvas::finishDrawing");
+  glFinish();
+}
+
 int GLCanvas::genLists(int num)
 {
 DOTRACE("GLCanvas::genLists");

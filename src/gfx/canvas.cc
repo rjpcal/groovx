@@ -228,5 +228,10 @@ void Gfx::Canvas::begin(Gfx::Canvas::VertexStyle s)
     }
 }
 
+void Gfx::Canvas::finishDrawing()
+{
+DOTRACE("Gfx::Canvas::finishDrawing");
+}
+
 const char vcid_canvas_cc[] = "$Header$";
 #endif // !CANVAS_CC_DEFINED
