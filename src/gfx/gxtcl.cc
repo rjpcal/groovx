@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Tue Aug 28 17:38:10 2001
+// written: Wed Aug 29 10:29:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "itertcl.h"
 
 #include "gfx/gxcolor.h"
+#include "gfx/gxdrawstyle.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
 #include "gfx/pscanvas.h"
@@ -83,7 +84,11 @@ DOTRACE("Gx_Init");
   Tcl::defFieldContainer<GxColor>(pkg3);
   Tcl::defCreator<GxColor>(pkg3);
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
+  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "GxDrawStyle", "$Revision$");
+  Tcl::defFieldContainer<GxDrawStyle>(pkg4);
+  Tcl::defCreator<GxDrawStyle>(pkg4);
+
+  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3, pkg4);
 }
 
 static const char vcid_gxtcl_cc[] = "$Header$";
