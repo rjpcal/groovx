@@ -107,7 +107,7 @@ public:
   /// Default constructor.
   GxFixedRectCamera() :
     GxCamera(),
-    itsRect(Gfx::rectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
+    itsRect(geom::rect_ltrb<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
   /// Virtual no-throw destructor.
@@ -117,15 +117,15 @@ public:
   virtual void writeTo(IO::Writer& /*writer*/) const {}
 
   /// Change the viewable rect area.
-  void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
+  void setRect(const geom::rect<double>& rect) { itsRect = rect; }
 
   /// Get the viewable rect area.
-  const Gfx::Rect<double>& getRect() const { return itsRect; }
+  const geom::rect<double>& getRect() const { return itsRect; }
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
 private:
-  Gfx::Rect<double> itsRect;
+  geom::rect<double> itsRect;
 };
 
 /// Camera that keeps at least a given rect visible at all times.
@@ -135,7 +135,7 @@ public:
   /// Default constructor.
   GxMinRectCamera() :
     GxCamera(),
-    itsRect(Gfx::rectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
+    itsRect(geom::rect_ltrb<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
   /// Virtual no-throw destructor.
@@ -145,15 +145,15 @@ public:
   virtual void writeTo(IO::Writer& /*writer*/) const {}
 
   /// Change the minimally-visible rect
-  void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
+  void setRect(const geom::rect<double>& rect) { itsRect = rect; }
 
   /// Get the minimally-visible rect
-  const Gfx::Rect<double>& getRect() const { return itsRect; }
+  const geom::rect<double>& getRect() const { return itsRect; }
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
 private:
-  Gfx::Rect<double> itsRect;
+  geom::rect<double> itsRect;
 };
 
 /// Camera that maintains a fixed world-to-screen scaling.

@@ -36,189 +36,187 @@
 
 #include <cmath>
 
-namespace Gfx
+namespace geom
 {
-  template <class V> class Vec2;
+  /// Gfx::vec2 is a 2-D vector class for representing 2-D points or distances.
+  template<class V>
+  class vec2
+  {
+  public:
+    vec2(V x=0, V y=0) : xx(x), yy(y) {}
 
-/// Gfx::Vec2 is a 2-D vector class for representing 2-D points or distances.
-template<class V>
-class Vec2
-{
-public:
-  Vec2(V x=0, V y=0) : xx(x), yy(y) {}
+    template <class U>
+    explicit vec2(const vec2<U>& other) : xx(V(other.x())), yy(V(other.y())) {}
 
-  template <class U>
-  explicit Vec2(const Vec2<U>& other) : xx(V(other.x())), yy(V(other.y())) {}
-
-  template <class U>
-  Vec2& operator=(const Vec2<U>& other)
+    template <class U>
+    vec2& operator=(const vec2<U>& other)
     { xx = other.x(); yy = other.y(); return *this; }
 
-  V& x() { return xx; }
-  V& y() { return yy; }
+    V& x() { return xx; }
+    V& y() { return yy; }
 
-  const V& x() const { return xx; }
-  const V& y() const { return yy; }
+    const V& x() const { return xx; }
+    const V& y() const { return yy; }
 
-  Vec2 abs() const
-    { return Vec2(xx > 0 ? xx : -xx, yy > 0 ? yy : -yy); }
+    vec2 abs() const
+    { return vec2(xx > 0 ? xx : -xx, yy > 0 ? yy : -yy); }
 
-  void set(V x, V y) { xx = x; yy = y; }
+    void set(V x, V y) { xx = x; yy = y; }
 
-  bool operator==(const Vec2<V>& b)
+    bool operator==(const vec2<V>& b)
     { return x() == b.x() && y() == b.y(); }
 
-  //
-  // Polar coordinates
-  //
+    //
+    // Polar coordinates
+    //
 
-  double length() const { return sqrt(xx*xx + yy*yy); }
+    double length() const { return sqrt(xx*xx + yy*yy); }
 
-  void setLength(double len)
-  {
-    const double r = length();
-    if (r != 0.0)
-      scaleBy(len / r);
-  }
+    void set_length(double len)
+    {
+      const double r = length();
+      if (r != 0.0)
+        scale_by(len / r);
+    }
 
-  void setPolarRad(double r, double theta)
-  {
-    xx = r * cos(theta);
-    yy = r * sin(theta);
-  }
+    void set_polar_rad(double r, double theta)
+    {
+      xx = r * cos(theta);
+      yy = r * sin(theta);
+    }
 
-  double thetaDeg() const
-  {
-    return Geom::rad2deg(atan2(yy, xx));
-  }
+    double theta_deg() const
+    {
+      return geom::rad2deg(atan2(yy, xx));
+    }
 
-  void setThetaDeg(double degrees)
-  {
-    setPolarRad(length(), Geom::deg2rad(degrees));
-  }
+    void set_theta_deg(double degrees)
+    {
+      set_polar_rad(length(), geom::deg2rad(degrees));
+    }
 
-  void rotateDeg(double degrees)
-  {
-    // FIXME should use a real sin(),cos() rotation matrix here?
-    degrees = Geom::deg_n180_180(degrees);
-    if (degrees == 0.0)
-      {
-        return;
-      }
-    else if (degrees == 90.0)
-      {
-        double old_x = xx;
-        xx = -yy;
-        yy = old_x;
-      }
-    else if (degrees == 180.0)
-      {
-        xx = -xx;
-        yy = -yy;
-      }
-    else if (degrees == -90.0)
-      {
-        double old_x = xx;
-        xx = yy;
-        yy = -old_x;
-      }
-    else
-      {
-        setThetaDeg(thetaDeg() + degrees);
-      }
-  }
+    void rotate_deg(double degrees)
+    {
+      // FIXME should use a real sin(),cos() rotation matrix here?
+      degrees = geom::deg_n180_180(degrees);
+      if (degrees == 0.0)
+        {
+          return;
+        }
+      else if (degrees == 90.0)
+        {
+          double old_x = xx;
+          xx = -yy;
+          yy = old_x;
+        }
+      else if (degrees == 180.0)
+        {
+          xx = -xx;
+          yy = -yy;
+        }
+      else if (degrees == -90.0)
+        {
+          double old_x = xx;
+          xx = yy;
+          yy = -old_x;
+        }
+      else
+        {
+          set_theta_deg(theta_deg() + degrees);
+        }
+    }
 
-  /// Result in radians.
-  double angleTo(const Vec2<V>& b) const
-  {
-    return rad_0_2pi(atan2(b.y() - y(), b.x() - x()));
-  }
+    /// Result in radians.
+    double angle_to(const vec2<V>& b) const
+    {
+      return rad_0_2pi(atan2(b.y() - y(), b.x() - x()));
+    }
 
-  double distanceTo(const Vec2<V>& b) const
-  {
-    const double dx = x() - b.x();
-    const double dy = y() - b.y();
-    return sqrt(dx*dx + dy*dy);
-  }
+    double distance_to(const vec2<V>& b) const
+    {
+      const double dx = x() - b.x();
+      const double dy = y() - b.y();
+      return sqrt(dx*dx + dy*dy);
+    }
 
-  //
-  // Vec2-scalar math
-  //
+    //
+    // vec2-scalar math
+    //
 
-  template <class U>
-  void scaleBy(const U& factor) { xx *= factor; yy *= factor; }
+    template <class U>
+    void scale_by(const U& factor) { xx *= factor; yy *= factor; }
 
-  Vec2 operator*(const V& factor) const
-    { return Vec2<V>(xx * factor, yy * factor); }
+    vec2 operator*(const V& factor) const
+    { return vec2<V>(xx * factor, yy * factor); }
 
-  Vec2 operator/(const V& factor) const
-    { return Vec2<V>(xx / factor, yy / factor); }
+    vec2 operator/(const V& factor) const
+    { return vec2<V>(xx / factor, yy / factor); }
 
-  template <class U>
-  Vec2& operator*=(const U& factor) { scaleBy(factor); return *this; }
+    template <class U>
+    vec2& operator*=(const U& factor) { scale_by(factor); return *this; }
 
-  template <class U>
-  Vec2& operator/=(const U& factor) { scaleBy(V(1)/factor); return *this; }
-
-
-  //
-  // Vec2-Vec2 math
-  //
-
-  Vec2 operator+(const Vec2<V>& rhs) const
-    { return Vec2<V>(xx + rhs.x(), yy + rhs.y()); }
-
-  Vec2 operator-(const Vec2<V>& rhs) const
-    { return Vec2<V>(xx - rhs.x(), yy - rhs.y()); }
+    template <class U>
+    vec2& operator/=(const U& factor) { scale_by(V(1)/factor); return *this; }
 
 
-  template <class U>
-  Vec2 operator*(const Vec2<U>& rhs) const
-    { return Vec2(V(x() * rhs.x()), V(y() * rhs.y())); }
+    //
+    // vec2-vec2 math
+    //
 
-  template <class U>
-  Vec2 operator/(const Vec2<U>& rhs) const
-    { return Vec2(V(x() / rhs.x()), V(y() / rhs.y())); }
+    vec2 operator+(const vec2<V>& rhs) const
+    { return vec2<V>(xx + rhs.x(), yy + rhs.y()); }
+
+    vec2 operator-(const vec2<V>& rhs) const
+    { return vec2<V>(xx - rhs.x(), yy - rhs.y()); }
 
 
-  template <class U>
-  Vec2& operator+=(const Vec2<U>& rhs)
+    template <class U>
+    vec2 operator*(const vec2<U>& rhs) const
+    { return vec2(V(x() * rhs.x()), V(y() * rhs.y())); }
+
+    template <class U>
+    vec2 operator/(const vec2<U>& rhs) const
+    { return vec2(V(x() / rhs.x()), V(y() / rhs.y())); }
+
+
+    template <class U>
+    vec2& operator+=(const vec2<U>& rhs)
     { xx += V(rhs.x()); yy += V(rhs.y()); return *this; }
 
-  template <class U>
-  Vec2& operator-=(const Vec2<U>& rhs)
+    template <class U>
+    vec2& operator-=(const vec2<U>& rhs)
     { xx -= V(rhs.x()); yy -= V(rhs.y()); return *this; }
 
 
-  template <class U>
-  Vec2& operator*=(const Vec2<U>& factor)
+    template <class U>
+    vec2& operator*=(const vec2<U>& factor)
     { xx *= factor.x(); yy *= factor.y(); return *this; }
 
-  template <class U>
-  Vec2& operator/=(const Vec2<U>& factor)
+    template <class U>
+    vec2& operator/=(const vec2<U>& factor)
     { xx /= factor.x(); yy /= factor.y(); return *this; }
 
 
-private:
-  V xx;
-  V yy;
-};
-
-  typedef Vec2<int> Vec2i;
-  typedef Vec2<float> Vec2f;
-  typedef Vec2<double> Vec2d;
+  private:
+    V xx;
+    V yy;
+  };
 
   template <class U>
-  Vec2<U> normalTo(const Vec2<U>& a)
-    { return Vec2<U>(-a.y(), a.x()); }
+  vec2<U> normal_to(const vec2<U>& a)
+  { return vec2<U>(-a.y(), a.x()); }
 
   template <class U>
-  Vec2<U> makeUnitLength(const Vec2<U>& a)
-    {
-      const double r = a.length();
-      if (r == 0.0) return a;
-      return Vec2<U>(a.x()/r, a.y()/r);
-    }
+  vec2<U> make_unit_length(const vec2<U>& a)
+  {
+    const double r = a.length();
+    if (r == 0.0) return a;
+    return vec2<U>(a.x()/r, a.y()/r);
+  }
+
+  typedef vec2<int> vec2i;
+  typedef vec2<float> vec2f;
+  typedef vec2<double> vec2d;
 
 } // end namespace Gfx
 

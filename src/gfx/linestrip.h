@@ -34,18 +34,22 @@
 
 #include <vector>
 
+namespace geom
+{
+  template <class T> class vec2;
+  template <class T> class vec3;
+}
+
 namespace Gfx
 {
   class Canvas;
-  template <class T> class Vec2;
-  template <class T> class Vec3;
 
   /// Helps to render line strips, with optional corner joining.
   class LineStrip
   {
   private:
     Gfx::Canvas* canvas;
-    std::vector<Gfx::Vec2<double> > pts;
+    std::vector<geom::vec2<double> > pts;
     double width;
     bool join;
     bool loop;
@@ -61,13 +65,13 @@ namespace Gfx
 
     void begin(Gfx::Canvas& c, double w);
 
-    void vertex(const Vec2<double>& pt);
+    void vertex(const geom::vec2<double>& pt);
 
     /// Generates a series of vertex() calls to render the bezier curve.
-    void drawBezier4(const Vec3<double>& p1,
-                     const Vec3<double>& p2,
-                     const Vec3<double>& p3,
-                     const Vec3<double>& p4,
+    void drawBezier4(const geom::vec3<double>& p1,
+                     const geom::vec3<double>& p2,
+                     const geom::vec3<double>& p3,
+                     const geom::vec3<double>& p4,
                      unsigned int subdivisions,
                      unsigned int start = 0);
 

@@ -154,7 +154,7 @@ DOTRACE("Jpeg::load");
   // cinfo.output_components
 
   // 6. Read scanlines
-  Gfx::BmapData new_data(Gfx::Vec2<int>(cinfo.output_width,
+  Gfx::BmapData new_data(geom::vec2<int>(cinfo.output_width,
                                         cinfo.output_height),
                          cinfo.output_components*BITS_IN_JSAMPLE,
                          1);

@@ -61,7 +61,7 @@ using rutz::fstring;
 
 namespace
 {
-  const Gfx::Vec2<double> defaultZoom(1.0, 1.0);
+  const geom::vec2<double> defaultZoom(1.0, 1.0);
 
   const IO::VersionId BITMAP_SERIAL_VERSION_ID = 5;
 }
@@ -146,7 +146,7 @@ public:
   {}
 
   fstring itsFilename;
-  Gfx::Vec2<double> itsZoom;
+  geom::vec2<double> itsZoom;
   mutable Gfx::BmapData itsData;
   bool itsUsingZoom;
   bool itsContrastFlip;
@@ -345,7 +345,7 @@ DOTRACE("GxPixmap::saveImage");
   ImgFile::save(filename, rep->itsData);
 }
 
-void GxPixmap::grabScreenRect(const Gfx::Rect<int>& rect)
+void GxPixmap::grabScreenRect(const geom::rect<int>& rect)
 {
 DOTRACE("GxPixmap::grabScreenRect");
 
@@ -368,18 +368,18 @@ DOTRACE("GxPixmap::grabScreen");
 
   Gfx::Canvas& canvas = Gfx::Canvas::current();
 
-  Gfx::Rect<int> bounds = canvas.getScreenViewport();
+  geom::rect<int> bounds = canvas.getScreenViewport();
 
   grabScreenRect(bounds);
 }
 
-void GxPixmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
+void GxPixmap::grabWorldRect(const geom::rect<double>& world_rect)
 {
 DOTRACE("GxPixmap::grabWorldRect");
 
   Gfx::Canvas& canvas = Gfx::Canvas::current();
 
-  Gfx::Rect<int> screen_rect = canvas.screenFromWorld(world_rect);
+  geom::rect<int> screen_rect = canvas.screenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
 
@@ -412,7 +412,7 @@ void GxPixmap::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxPixmap::grRender");
 
-  Gfx::Vec2<double> world_pos;
+  geom::vec2<double> world_pos;
 
   if (rep->itsData.bitsPerPixel() == 1 && rep->itsAsBitmap)
     {
@@ -439,21 +439,21 @@ void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPixmap::grGetBoundingBox");
 
-  using Gfx::Vec2i;
-  using Gfx::Vec2d;
+  using geom::vec2i;
+  using geom::vec2d;
 
   // Get the corners in screen coordinates
-  Vec2i bottom_left(bbox.screenFromWorld(Vec2d()));
-  Vec2i top_right  (Vec2d(bottom_left) + (Vec2d(size()) * getZoom()));
+  vec2i bottom_left(bbox.screenFromWorld(vec2d()));
+  vec2i top_right  (vec2d(bottom_left) + (vec2d(size()) * getZoom()));
 
-  bbox.vertex2(Vec2d());
+  bbox.vertex2(vec2d());
   bbox.vertex2(bbox.worldFromScreen(top_right));
 }
 
-Gfx::Vec2<int> GxPixmap::size() const
+geom::vec2<int> GxPixmap::size() const
   { return rep->itsData.size(); }
 
-Gfx::Vec2<double> GxPixmap::getZoom() const
+geom::vec2<double> GxPixmap::getZoom() const
   { return rep->itsUsingZoom ? rep->itsZoom : defaultZoom; }
 
 bool GxPixmap::getUsingZoom() const
@@ -484,20 +484,20 @@ DOTRACE("GxPixmap::data");
   return rep->itsData;
 }
 
-void GxPixmap::setZoom(Gfx::Vec2<double> zoom)
+void GxPixmap::setZoom(geom::vec2<double> zoom)
 {
 DOTRACE("GxPixmap::setZoom");
   rep->itsZoom = zoom; this->sigNodeChanged.emit();
 }
 
-void GxPixmap::zoomTo(Gfx::Vec2<int> sz)
+void GxPixmap::zoomTo(geom::vec2<int> sz)
 {
 DOTRACE("GxPixmap::zoomTo");
   double x_ratio = double(sz.x()) / rep->itsData.width();
   double y_ratio = double(sz.y()) / rep->itsData.height();
   double ratio = rutz::min(x_ratio, y_ratio);
   setUsingZoom(true);
-  setZoom(Gfx::Vec2<double>(ratio, ratio));
+  setZoom(geom::vec2<double>(ratio, ratio));
 }
 
 void GxPixmap::setUsingZoom(bool val)

@@ -65,7 +65,7 @@ DOTRACE("GxBounds::getBoundingCube");
 
   const double s = 1.0 + itsPercentBorder/100.0;
 
-  bbox.scale(Gfx::Vec3<double>(s,s,s));
+  bbox.scale(geom::vec3<double>(s,s,s));
 
   child()->getBoundingCube(bbox);
 
@@ -84,10 +84,10 @@ DOTRACE("GxBounds::draw");
     {
       Gfx::Bbox bbox(canvas);
       const double s = 1.0 + itsPercentBorder/100.0;
-      bbox.scale(Gfx::Vec3<double>(s,s,s));
+      bbox.scale(geom::vec3<double>(s,s,s));
       child()->getBoundingCube(bbox);
 
-      Gfx::Rect<double> bounds = bbox.rect();
+      geom::rect<double> bounds = bbox.rect();
 
 #define ANIMATE_BBOX
 
@@ -112,10 +112,10 @@ DOTRACE("GxBounds::draw");
       {
         Gfx::PointsBlock block(canvas);
 
-        canvas.vertex2(bounds.bottomLeft());
-        canvas.vertex2(bounds.bottomRight());
-        canvas.vertex2(bounds.topRight());
-        canvas.vertex2(bounds.topLeft());
+        canvas.vertex2(bounds.bottom_left());
+        canvas.vertex2(bounds.bottom_right());
+        canvas.vertex2(bounds.top_right());
+        canvas.vertex2(bounds.top_left());
         canvas.vertex2(bounds.center());
       }
     }

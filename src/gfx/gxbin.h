@@ -36,9 +36,9 @@
 
 #include "nub/ref.h"
 
-namespace Gfx
+namespace geom
 {
-  class Txform;
+  class txform;
 }
 
 //  #######################################################

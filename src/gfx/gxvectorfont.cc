@@ -822,7 +822,7 @@ void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
     longest = current;
 
 
-  Gfx::Rect<double> rect;
+  geom::rect<double> rect;
   rect.left() = 0.0;
   unsigned int len = longest;
   rect.right() = len > 0 ? (5*len) - 1 : 1.0;

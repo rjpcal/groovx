@@ -52,21 +52,21 @@ GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
   itsCenter(0.0, 0.0)
 {}
 
-Gfx::Vec2<double> GxAligner::getCenter(const Gfx::Rect<double>& bounds) const
+geom::vec2<double> GxAligner::getCenter(const geom::rect<double>& bounds) const
 {
 DOTRACE("GxAligner::getCenter");
   switch (itsMode)
     {
     case CENTER_ON_CENTER:
-      return Gfx::Vec2<double>(0.0, 0.0);
+      return geom::vec2<double>(0.0, 0.0);
     case NW_ON_CENTER:
-      return Gfx::Vec2<double>(bounds.width()/2.0, -bounds.height()/2.0);
+      return geom::vec2<double>(bounds.width()/2.0, -bounds.height()/2.0);
     case NE_ON_CENTER:
-      return Gfx::Vec2<double>(-bounds.width()/2.0, -bounds.height()/2.0);
+      return geom::vec2<double>(-bounds.width()/2.0, -bounds.height()/2.0);
     case SW_ON_CENTER:
-      return Gfx::Vec2<double>(bounds.width()/2.0, bounds.height()/2.0);
+      return geom::vec2<double>(bounds.width()/2.0, bounds.height()/2.0);
     case SE_ON_CENTER:
-      return Gfx::Vec2<double>(-bounds.width()/2.0, bounds.height()/2.0);
+      return geom::vec2<double>(-bounds.width()/2.0, bounds.height()/2.0);
     case ARBITRARY_ON_CENTER:
       return itsCenter;
     }
@@ -75,18 +75,18 @@ DOTRACE("GxAligner::getCenter");
 }
 
 void GxAligner::doAlignment(Gfx::Canvas& canvas,
-                            const Gfx::Rect<double>& native) const
+                            const geom::rect<double>& native) const
 {
 DOTRACE("GxAligner::doAlignment");
 
   if (NATIVE_ALIGNMENT == itsMode) return;
 
   // This indicates where the center of the object will go
-  Gfx::Vec2<double> center = getCenter(native);
+  geom::vec2<double> center = getCenter(native);
 
   center -= native.center();
 
-  Gfx::Vec3<double> vec(center.x(), center.y(), 0.0);
+  geom::vec3<double> vec(center.x(), center.y(), 0.0);
 
   canvas.translate(vec);
 }
@@ -110,11 +110,11 @@ DOTRACE("GxAligner::getBoundingCube");
 
   child()->getBoundingCube(mybox);
 
-  Gfx::Rect<double> bounds = mybox.rect();
+  geom::rect<double> bounds = mybox.rect();
 
-  Gfx::Vec2<double> center = getCenter(bounds);
+  geom::vec2<double> center = getCenter(bounds);
 
-  bounds.setCenter(center);
+  bounds.set_center(center);
 
   bbox.drawRect(bounds);
 

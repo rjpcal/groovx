@@ -50,6 +50,9 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using geom::vec2d;
+using geom::vec3d;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -71,23 +74,23 @@ namespace
       for (int x = 1; x < (num_vert_bars+1); ++x)
         {
           double xpos = double(x)/(num_vert_bars+1) - 0.5;
-          canvas.vertex2(Gfx::Vec2<double>(xpos, -0.5));
-          canvas.vertex2(Gfx::Vec2<double>(xpos,  0.5));
+          canvas.vertex2(vec2d(xpos, -0.5));
+          canvas.vertex2(vec2d(xpos,  0.5));
         }
       for (int y = 1; y < (num_horiz_bars+1); ++y)
         {
           double ypos = double(y)/(num_horiz_bars+1) - 0.5;
-          canvas.vertex2(Gfx::Vec2<double>(-0.5, ypos));
-          canvas.vertex2(Gfx::Vec2<double>( 0.5, ypos));
+          canvas.vertex2(vec2d(-0.5, ypos));
+          canvas.vertex2(vec2d( 0.5, ypos));
         }
     }
 
     {
       Gfx::QuadsBlock block(canvas, "window outline");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, -0.5));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, -0.5));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.5));
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.5));
+      canvas.vertex2(vec2d(-0.5, -0.5));
+      canvas.vertex2(vec2d( 0.5, -0.5));
+      canvas.vertex2(vec2d( 0.5, 0.5));
+      canvas.vertex2(vec2d(-0.5, 0.5));
     }
   }
 
@@ -95,19 +98,19 @@ namespace
   {
     DOTRACE("House::drawDoor");
     // Draw 1x1 door with bottom line centered on (0,0)
-    canvas.drawRect(Gfx::rectLBWH<double>(-0.5, 0.0, 1.0, 1.0));
+    canvas.drawRect(geom::rect_lbwh<double>(-0.5, 0.0, 1.0, 1.0));
 
     Gfx::LinesBlock block(canvas, "door");
 
-    canvas.vertex2(Gfx::Vec2<double>(0.25, 0.35));
-    canvas.vertex2(Gfx::Vec2<double>(0.25, 0.45));
+    canvas.vertex2(vec2d(0.25, 0.35));
+    canvas.vertex2(vec2d(0.25, 0.45));
   }
 
   void drawStoryFrame(Gfx::Canvas& canvas)
   {
     DOTRACE("House::drawStoryFrame");
     // Draw 1x1 story frame centered on (0,0)
-    canvas.drawRect(Gfx::rectLBWH<double>(-0.5, -0.5, 1.0, 1.0));
+    canvas.drawRect(geom::rect_lbwh<double>(-0.5, -0.5, 1.0, 1.0));
   }
 
   void drawTriangleRoof(Gfx::Canvas& canvas)
@@ -117,14 +120,14 @@ namespace
 
     {
       Gfx::TrianglesBlock block(canvas, "triangle roof");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.0, 1.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
+      canvas.vertex2(vec2d( 0.0, 1.0));
     }
     {
       Gfx::LinesBlock block(canvas, "triangle roof ledge");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
     }
   }
 
@@ -133,15 +136,15 @@ namespace
     DOTRACE("House::drawTrapezoidRoof");
     {
       Gfx::QuadsBlock block(canvas, "trapezoid roof");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.4, 1.0));
-      canvas.vertex2(Gfx::Vec2<double>(-0.4, 1.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
+      canvas.vertex2(vec2d( 0.4, 1.0));
+      canvas.vertex2(vec2d(-0.4, 1.0));
     }
     {
       Gfx::LinesBlock block(canvas, "trapezoid roof overhand");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
     }
   }
 
@@ -150,15 +153,15 @@ namespace
     DOTRACE("House::drawSquareRoof");
     {
       Gfx::QuadsBlock block(canvas, "square roof");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 1.0));
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 1.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 1.0));
+      canvas.vertex2(vec2d(-0.5, 1.0));
     }
     {
       Gfx::LinesBlock block(canvas, "square roof overhang");
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
     }
   }
 
@@ -167,10 +170,10 @@ namespace
     DOTRACE("House::drawChimney");
     {
       Gfx::QuadsBlock block(canvas, "chimney");
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>(-0.5, 1.0));
-      canvas.vertex2(Gfx::Vec2<double>( 0.5, 1.0));
+      canvas.vertex2(vec2d( 0.5, 0.0));
+      canvas.vertex2(vec2d(-0.5, 0.0));
+      canvas.vertex2(vec2d(-0.5, 1.0));
+      canvas.vertex2(vec2d( 0.5, 1.0));
     }
   }
 }
@@ -301,7 +304,7 @@ void House::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("House::grGetBoundingBox");
 
-  Gfx::Rect<double> rect;
+  geom::rect<double> rect;
 
   const double main_width = itsStoryAspectRatio;
   const double main_height = itsNumStories + itsRoofHeight;
@@ -337,13 +340,13 @@ DOTRACE("House::grRender");
   // Scale so that the larger dimension (of width and height)
   // extends across 1.0 units in world coordinates. The smaller
   // dimension will extend across less than 1.0 world units.
-  canvas.scale(Gfx::Vec3<double>(itsStoryAspectRatio/max_dimension,
-                                 1.0/max_dimension, 1.0));
+  canvas.scale(vec3d(itsStoryAspectRatio/max_dimension,
+                     1.0/max_dimension, 1.0));
 
   // Translate down by half the height of the house, then up by 0.5
   // units, so that we are positioned in the center of the first
   // story to be drawn.
-  canvas.translate(Gfx::Vec3<double>(0.0, -total_height/2.0 + 0.5, 0.0));
+  canvas.translate(vec3d(0.0, -total_height/2.0 + 0.5, 0.0));
 
   canvas.setPolygonFill(false);
 
@@ -362,38 +365,37 @@ DOTRACE("House::grRender");
           if (s == 0 && w == itsDoorPosition )
             {
               // Draw door.
-              canvas.translate(Gfx::Vec3<double>(x_pos, -0.5, 0.0));
-              canvas.scale(Gfx::Vec3<double>(itsDoorWidth/itsNumWindows,
-                                             itsDoorHeight, 1.0));
+              canvas.translate(vec3d(x_pos, -0.5, 0.0));
+              canvas.scale(vec3d(itsDoorWidth/itsNumWindows,
+                                 itsDoorHeight, 1.0));
               if (itsDoorOrientation)
                 {
-                  canvas.scale(Gfx::Vec3<double>(-1.0, 1.0, 1.0));
+                  canvas.scale(vec3d(-1.0, 1.0, 1.0));
                 }
               drawDoor(canvas);
             }
           else
             {
               // Draw window.
-              canvas.translate(Gfx::Vec3<double>(x_pos, 0.0, 0.0));
-              canvas.scale(Gfx::Vec3<double>(itsWindowWidth/itsNumWindows,
-                                             itsWindowHeight, 1.0));
+              canvas.translate(vec3d(x_pos, 0.0, 0.0));
+              canvas.scale(vec3d(itsWindowWidth/itsNumWindows,
+                                 itsWindowHeight, 1.0));
               drawWindow(canvas, itsWindowVertBars, itsWindowHorizBars);
             }
         }
 
-      canvas.translate(Gfx::Vec3<double>(0.0, 1.0, 0.0));
+      canvas.translate(vec3d(0.0, 1.0, 0.0));
     }
 
 
   // Draw roof.
-  canvas.translate(Gfx::Vec3<double>(0.0, -0.5, 0.0));
+  canvas.translate(vec3d(0.0, -0.5, 0.0));
 
   {
     Gfx::MatrixSaver msaver(canvas, "roof");
     Gfx::AttribSaver asaver(canvas);
 
-    canvas.scale(Gfx::Vec3<double>(1.0+itsRoofOverhang,
-                                   itsRoofHeight, 1.0));
+    canvas.scale(vec3d(1.0+itsRoofOverhang, itsRoofHeight, 1.0));
 
     canvas.setPolygonFill((itsRoofColor == 0));
 
@@ -416,10 +418,10 @@ DOTRACE("House::grRender");
     Gfx::MatrixSaver msaver(canvas, "chimney");
     Gfx::AttribSaver asaver(canvas);
 
-    canvas.translate(Gfx::Vec3<double>(itsChimneyXPosition,
-                                       itsChimneyYPosition, 0.0));
-    canvas.scale(Gfx::Vec3<double>(itsChimneyWidth,
-                                   itsChimneyHeight, 0.0));
+    canvas.translate(vec3d(itsChimneyXPosition,
+                           itsChimneyYPosition, 0.0));
+    canvas.scale(vec3d(itsChimneyWidth,
+                       itsChimneyHeight, 0.0));
 
     canvas.setPolygonFill(true);
     drawChimney(canvas);

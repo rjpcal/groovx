@@ -51,11 +51,11 @@ struct GaborArrayElement
     pos(x,y), theta(th), type(t)
   {}
 
-  GaborArrayElement(const Gfx::Vec2<int>& v, double th, Type t) :
+  GaborArrayElement(const geom::vec2<int>& v, double th, Type t) :
     pos(v), theta(th), type(t)
   {}
 
-  Gfx::Vec2d pos;    // position of node
+  geom::vec2d pos;   // position of node
   double theta;      // angle to x-axis, 0 to TWOPI
   Type type;
 };
@@ -70,16 +70,16 @@ public:
 
 private:
   const int itsLength;
-  rutz::fixed_block<Gfx::Vec2<double> > itsElem;
+  rutz::fixed_block<geom::vec2<double> > itsElem;
 
-  Gfx::Vec2<double>& elem(int i)
+  geom::vec2<double>& elem(int i)
   {
     i = i % itsLength;
     if (i < 0) i += itsLength;
     return itsElem[i];
   }
 
-  const Gfx::Vec2<double>& elem(int i) const
+  const geom::vec2<double>& elem(int i) const
   {
     i = i % itsLength;
     if (i < 0) i += itsLength;
@@ -88,8 +88,8 @@ private:
 
   // Returns true if jiggling converged
   bool jiggle(rutz::urand& urand);
-  void transformPath(int i1, const Gfx::Vec2<double>& new1,
-                     int i2, const Gfx::Vec2<double>& new2);
+  void transformPath(int i1, const geom::vec2<double>& new1,
+                     int i2, const geom::vec2<double>& new2);
 };
 
 static const char vcid_snake_h[] = "$Header$";

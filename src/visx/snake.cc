@@ -46,8 +46,7 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-using namespace Geom;
-using namespace Gfx;
+using geom::vec2d;
 
 namespace
 {
@@ -90,35 +89,35 @@ namespace
     std::sort(i, i+4);
   }
 
-  Tuple4 getEdgeLengths(const Vec2d no[4])
+  Tuple4 getEdgeLengths(const vec2d no[4])
   {
-    return Tuple4(no[0].distanceTo(no[1]),
-                  no[1].distanceTo(no[2]),
-                  no[2].distanceTo(no[3]),
-                  no[3].distanceTo(no[0]));
+    return Tuple4(no[0].distance_to(no[1]),
+                  no[1].distance_to(no[2]),
+                  no[2].distance_to(no[3]),
+                  no[3].distance_to(no[0]));
   }
 
-  Tuple4 getThetas(const Vec2d no[4])
+  Tuple4 getThetas(const vec2d no[4])
   {
-    return Tuple4(no[0].angleTo(no[1]),
-                  no[1].angleTo(no[2]),
-                  no[2].angleTo(no[3]),
-                  no[3].angleTo(no[0]));
+    return Tuple4(no[0].angle_to(no[1]),
+                  no[1].angle_to(no[2]),
+                  no[2].angle_to(no[3]),
+                  no[3].angle_to(no[0]));
   }
 
   Tuple4 getAlphas(const Tuple4& theta)
   {
-    return Tuple4(rad_0_2pi(M_PI - theta[0] + theta[3]),
-                  rad_0_2pi(M_PI - theta[1] + theta[0]),
-                  rad_0_2pi(M_PI - theta[2] + theta[1]),
-                  rad_0_2pi(M_PI - theta[3] + theta[2]));
+    return Tuple4(geom::rad_0_2pi(M_PI - theta[0] + theta[3]),
+                  geom::rad_0_2pi(M_PI - theta[1] + theta[0]),
+                  geom::rad_0_2pi(M_PI - theta[2] + theta[1]),
+                  geom::rad_0_2pi(M_PI - theta[3] + theta[2]));
   }
 
   // Must return "true" in order to proceed with new nodes in jiggle().
-  bool squashQuadrangle(const Vec2d& old_0, const Vec2d& old_1,
-                        const Vec2d& old_2, const Vec2d& old_3,
-                        Vec2d* new_0, Vec2d* new_1,
-                        Vec2d* new_2, Vec2d* new_3,
+  bool squashQuadrangle(const vec2d& old_0, const vec2d& old_1,
+                        const vec2d& old_2, const vec2d& old_3,
+                        vec2d* new_0, vec2d* new_1,
+                        vec2d* new_2, vec2d* new_3,
                         double new_theta)
   {
   DOTRACE("squashQuadrangle");
@@ -126,7 +125,7 @@ namespace
       // Here we adjust the position of node-1 by jiggling its angle with
       // respect to node-0:
 
-      const double d = old_0.distanceTo(old_1);
+      const double d = old_0.distance_to(old_1);
 
       new_1->x() = old_0.x() + d * cos(new_theta);
       new_1->y() = old_0.y() + d * sin(new_theta);
@@ -195,9 +194,9 @@ namespace
 
     */
 
-    const double a = old_3.distanceTo(*new_1);
-    const double b = old_1.distanceTo(old_2);
-    const double c = old_2.distanceTo(old_3);
+    const double a = old_3.distance_to(*new_1);
+    const double b = old_1.distance_to(old_2);
+    const double c = old_2.distance_to(old_3);
 
     const double cos_ang = (old_3.x() - new_1->x()) / a;  // adjac / hypot
     const double sin_ang = (old_3.y() - new_1->y()) / a;  // oppos / hypot
@@ -220,16 +219,16 @@ namespace
 
     // Here's the two candidate re-rotated coords:
 
-    const Vec2d new_2a
+    const vec2d new_2a
       (new_1->x() + xp*cos_ang - yp*sin_ang,
        new_1->y() + xp*sin_ang + yp*cos_ang);
 
-    const Vec2d new_2b
+    const vec2d new_2b
       (new_1->x() + xp*cos_ang + yp*sin_ang,
        new_1->y() + xp*sin_ang - yp*cos_ang);
 
-    const double d_2_2a = new_2a.distanceTo(old_2);
-    const double d_2_2b = new_2b.distanceTo(old_2);
+    const double d_2_2a = new_2a.distance_to(old_2);
+    const double d_2_2b = new_2b.distance_to(old_2);
 
     *new_0 = old_0;
     *new_2 = (d_2_2a < d_2_2b) ? new_2a : new_2b;
@@ -276,7 +275,7 @@ DOTRACE("Snake::Snake");
     {
       const double alpha = alpha_start + 2 * M_PI * n / itsLength;
 
-      itsElem[n].setPolarRad(radius, -alpha);
+      itsElem[n].set_polar_rad(radius, -alpha);
     }
 
   const int ITERS = 400;
@@ -292,7 +291,7 @@ DOTRACE("Snake::Snake");
     }
 
   // Now reset so that the center of the ring is at the origin
-  Vec2d c;
+  vec2d c;
 
   for (int n = 0; n < itsLength; ++n)
     c += itsElem[n];
@@ -319,7 +318,7 @@ DOTRACE("Snake::getElement");
   result.type = GaborArrayElement::CONTOUR;
   result.pos.x() = 0.5 * (elem(n).x() + elem(n+1).x());
   result.pos.y() = 0.5 * (elem(n).y() + elem(n+1).y());
-  result.theta = rad_0_2pi(-elem(n).angleTo(elem(n+1)));
+  result.theta = geom::rad_0_2pi(-elem(n).angle_to(elem(n+1)));
 
   return result;
 }
@@ -364,7 +363,7 @@ DOTRACE("Snake::jiggle");
   int i[4];
   pickRandom4(itsLength, i, urand);
 
-  const Vec2d old_pos[4] =
+  const vec2d old_pos[4] =
     {
       itsElem[i[0]], itsElem[i[1]], itsElem[i[2]], itsElem[i[3]]
     };
@@ -373,12 +372,12 @@ DOTRACE("Snake::jiggle");
   const Tuple4 old_alpha = getAlphas(old_theta);
 
   const Tuple4 old_delta
-    (rad_npi_pi(elem(i[0]).angleTo(elem(i[0]+1)) - elem(i[0]-1).angleTo(elem(i[0]))),
-     rad_npi_pi(elem(i[1]).angleTo(elem(i[1]+1)) - elem(i[1]-1).angleTo(elem(i[1]))),
-     rad_npi_pi(elem(i[2]).angleTo(elem(i[2]+1)) - elem(i[2]-1).angleTo(elem(i[2]))),
-     rad_npi_pi(elem(i[3]).angleTo(elem(i[3]+1)) - elem(i[3]-1).angleTo(elem(i[3]))));
+    (geom::rad_npi_pi(elem(i[0]).angle_to(elem(i[0]+1)) - elem(i[0]-1).angle_to(elem(i[0]))),
+     geom::rad_npi_pi(elem(i[1]).angle_to(elem(i[1]+1)) - elem(i[1]-1).angle_to(elem(i[1]))),
+     geom::rad_npi_pi(elem(i[2]).angle_to(elem(i[2]+1)) - elem(i[2]-1).angle_to(elem(i[2]))),
+     geom::rad_npi_pi(elem(i[3]).angle_to(elem(i[3]+1)) - elem(i[3]-1).angle_to(elem(i[3]))));
 
-  Vec2d new_pos[4];
+  vec2d new_pos[4];
 
   double increment = INITIAL_INCREMENT;
 
@@ -439,13 +438,13 @@ DOTRACE("Snake::jiggle");
   return didConverge;
 }
 
-void Snake::transformPath(int i1, const Vec2d& new1,
-                          int i2, const Vec2d& new2)
+void Snake::transformPath(int i1, const vec2d& new1,
+                          int i2, const vec2d& new2)
 {
 DOTRACE("Snake::transformPath");
 
-  const Vec2d old1 = itsElem[i1];
-  const Vec2d old2 = itsElem[i2];
+  const vec2d old1 = itsElem[i1];
+  const vec2d old2 = itsElem[i2];
 
   // OK, our jiggling algorithm has determined new locations for node-1 and
   // node-2. Now, we want to adjust all the intermediate points
@@ -467,11 +466,11 @@ DOTRACE("Snake::transformPath");
   /*    a21  a12              sin a'-a    cos a'-a                     */
   /*                                                                   */
 
-  const double d = old1.distanceTo(old2);
-  const double a = old1.angleTo(old2);
+  const double d = old1.distance_to(old2);
+  const double a = old1.angle_to(old2);
 
-  const double dp = new1.distanceTo(new2);
-  const double ap = new1.angleTo(new2);
+  const double dp = new1.distance_to(new2);
+  const double ap = new1.angle_to(new2);
 
   const double diff_a = ap - a;
 

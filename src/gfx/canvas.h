@@ -36,13 +36,18 @@
 
 namespace rutz
 {
-  template <class T> class dynamic_block;
   class file_pos;
+  class fstring;
+  template <class T> class dynamic_block;
 }
 
-namespace rutz
+namespace geom
 {
-  class fstring;
+  template <class V> class box;
+  template <class V> class rect;
+  template <class V> class vec2;
+  template <class V> class vec3;
+  class txform;
 }
 
 class GxRasterFont;
@@ -53,11 +58,6 @@ namespace Gfx
   class BmapData;
   class Canvas;
   class RgbaColor;
-  class Txform;
-  template <class V> class Box;
-  template <class V> class Rect;
-  template <class V> class Vec2;
-  template <class V> class Vec3;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -90,22 +90,22 @@ public:
 
 
   /// Convert a point from world coordinates to screen coordinates.
-  virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const = 0;
+  virtual geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const = 0;
 
   /// Convert a point from screen coordinates to world coordinates.
-  virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const = 0;
+  virtual geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const = 0;
 
   /// Convert a rect from screen coordinates to world coordinates.
-  virtual Gfx::Rect<int> screenFromWorld(const Gfx::Rect<double>& world_pos) const = 0;
+  virtual geom::rect<int> screenFromWorld(const geom::rect<double>& world_pos) const = 0;
 
   /// Convert a rect from world coordinates to screen coordinates.
-  virtual Gfx::Rect<double> worldFromScreen(const Gfx::Rect<int>& screen_pos) const = 0;
+  virtual geom::rect<double> worldFromScreen(const geom::rect<int>& screen_pos) const = 0;
 
   /// Get the viewport rect in screen coordinates.
-  virtual Gfx::Rect<int> getScreenViewport() const = 0;
+  virtual geom::rect<int> getScreenViewport() const = 0;
 
   /// Get the viewport rect in world coordinates.
-  virtual Gfx::Rect<double> getWorldViewport() const = 0;
+  virtual geom::rect<double> getWorldViewport() const = 0;
 
 
   /// Query whether the drawable is in RGBA mode.
@@ -248,7 +248,7 @@ public:
   virtual void viewport(int x, int y, int w, int h) = 0;
 
   /// Specify an orthographic projection for the canvas.
-  virtual void orthographic(const Gfx::Rect<double>& bounds,
+  virtual void orthographic(const geom::rect<double>& bounds,
                             double zNear, double zFar) = 0;
 
   /// Specify an perspective projection for the canvas.
@@ -268,14 +268,14 @@ public:
   virtual void popMatrix() = 0;
 
   /// Translate the coordinate system by the given vector.
-  virtual void translate(const Gfx::Vec3<double>& v) = 0;
+  virtual void translate(const geom::vec3<double>& v) = 0;
   /// Scale/reflect the coordinate system by the given vector.
-  virtual void scale(const Gfx::Vec3<double>& v) = 0;
+  virtual void scale(const geom::vec3<double>& v) = 0;
   /// Rotate the coordinate system around the given vector.
-  virtual void rotate(const Gfx::Vec3<double>& v, double degrees) = 0;
+  virtual void rotate(const geom::vec3<double>& v, double degrees) = 0;
 
   /// Apply a generic transformation to the coordinate system.
-  virtual void transform(const Gfx::Txform& tx) = 0;
+  virtual void transform(const geom::txform& tx) = 0;
 
   ///////////////////////////////////////////////////////////
   //
@@ -285,31 +285,31 @@ public:
 
   /// Draw pixmap data at the specified position.
   virtual void drawPixels(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos,
-                          const Gfx::Vec2<double>& zoom) = 0;
+                          const geom::vec2<double>& world_pos,
+                          const geom::vec2<double>& zoom) = 0;
 
   /// Draw 1-bit bitmap data at the specified position.
   virtual void drawBitmap(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos) = 0;
+                          const geom::vec2<double>& world_pos) = 0;
 
   /// Read pixel data from the screen rect \a bounds into \a data_out.
-  virtual void grabPixels(const Gfx::Rect<int>& bounds,
+  virtual void grabPixels(const geom::rect<int>& bounds,
                           Gfx::BmapData& data_out) = 0;
 
   /// Clear the color buffer to the clear color.
   virtual void clearColorBuffer() = 0;
 
   /// Clear a region of the color buffer to the clear color.
-  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) = 0;
+  virtual void clearColorBuffer(const geom::rect<int>& screen_rect) = 0;
 
   /// Draw a rectangle.
-  virtual void drawRect(const Gfx::Rect<double>& rect) = 0;
+  virtual void drawRect(const geom::rect<double>& rect) = 0;
 
   /// Draw a rectangle, forcing whether it is filled or not.
-  void drawRect(const Gfx::Rect<double>& rect, bool filled);
+  void drawRect(const geom::rect<double>& rect, bool filled);
 
   /// Draw a cube.
-  virtual void drawBox(const Gfx::Box<double>& box);
+  virtual void drawBox(const geom::box<double>& box);
 
   /// Draw a circle.
   virtual void drawCircle(double inner_radius, double outer_radius, bool fill,
@@ -325,18 +325,18 @@ public:
                           bool fill) = 0;
 
   /// Draw a Bezier curve with 4 control points.
-  virtual void drawBezier4(const Gfx::Vec3<double>& p1,
-                           const Gfx::Vec3<double>& p2,
-                           const Gfx::Vec3<double>& p3,
-                           const Gfx::Vec3<double>& p4,
+  virtual void drawBezier4(const geom::vec3<double>& p1,
+                           const geom::vec3<double>& p2,
+                           const geom::vec3<double>& p3,
+                           const geom::vec3<double>& p4,
                            unsigned int subdivisions);
 
   /// Draw a filled Bezier curve with 4 control points.
-  virtual void drawBezierFill4(const Gfx::Vec3<double>& center,
-                               const Gfx::Vec3<double>& p1,
-                               const Gfx::Vec3<double>& p2,
-                               const Gfx::Vec3<double>& p3,
-                               const Gfx::Vec3<double>& p4,
+  virtual void drawBezierFill4(const geom::vec3<double>& center,
+                               const geom::vec3<double>& p1,
+                               const geom::vec3<double>& p2,
+                               const geom::vec3<double>& p3,
+                               const geom::vec3<double>& p4,
                                unsigned int subdivisions);
 
   /// Draw a NURBS curve.
@@ -345,7 +345,7 @@ public:
       drawBezier4(). */
   virtual void drawNurbsCurve
     (const rutz::dynamic_block<float>& knots,
-     const rutz::dynamic_block<Gfx::Vec3<float> >& pts);
+     const rutz::dynamic_block<geom::vec3<float> >& pts);
 
   virtual void beginPoints(const char* comment="") = 0;         ///< Start a series of points vertices.
   virtual void beginLines(const char* comment="") = 0;          ///< Start a set of lines.
@@ -377,9 +377,9 @@ public:
   void begin(VertexStyle s, const char* comment="");
 
   /// Put a 2-D vertex (with z = 0) into the current vertex-series.
-  virtual void vertex2(const Gfx::Vec2<double>& v) = 0;
+  virtual void vertex2(const geom::vec2<double>& v) = 0;
   /// Put a 3-D vertex into the current vertex-series.
-  virtual void vertex3(const Gfx::Vec3<double>& v) = 0;
+  virtual void vertex3(const geom::vec3<double>& v) = 0;
 
   /// End the current vertex-series.
   virtual void end() = 0;

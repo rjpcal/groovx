@@ -39,7 +39,7 @@
 
 /// GbVec2 is a field class for holding @-D vectors/points/distances.
 template <class T>
-class GbVec2 : public Gfx::Vec2<T>,
+class GbVec2 : public geom::vec2<T>,
                public rutz::multi_value<T>
 {
 public:
@@ -54,10 +54,10 @@ public:
   /// Virtual destructor.
   virtual ~GbVec2();
 
-  /// Get the underlying Gfx::Vec2 value.
-        Gfx::Vec2<T>& vec()       { return *this; }
-  /// Get the underlying Gfx::Vec2 value.
-  const Gfx::Vec2<T>& vec() const { return *this; }
+  /// Get the underlying geom::vec2 value.
+        geom::vec2<T>& vec()       { return *this; }
+  /// Get the underlying geom::vec2 value.
+  const geom::vec2<T>& vec() const { return *this; }
 
   virtual rutz::fstring value_typename() const;
 
@@ -66,7 +66,7 @@ public:
 
 /// GbVec3 is a field class for holding 3-D vectors/points/distances.
 template <class T>
-class GbVec3 : public Gfx::Vec3<T>,
+class GbVec3 : public geom::vec3<T>,
                public rutz::multi_value<T>
 {
 public:
@@ -81,10 +81,10 @@ public:
   /// Virtual destructor.
   virtual ~GbVec3();
 
-  /// Get the underlying Gfx::Vec3 value.
-        Gfx::Vec3<T>& vec()       { return *this; }
-  /// Get the underlying Gfx::Vec3 value.
-  const Gfx::Vec3<T>& vec() const { return *this; }
+  /// Get the underlying geom::vec3 value.
+        geom::vec3<T>& vec()       { return *this; }
+  /// Get the underlying geom::vec3 value.
+  const geom::vec3<T>& vec() const { return *this; }
 
   virtual rutz::fstring value_typename() const;
 

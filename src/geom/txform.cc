@@ -43,7 +43,8 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-using namespace Gfx;
+using geom::vec2d;
+using geom::vec3d;
 
 namespace
 {
@@ -62,22 +63,22 @@ namespace
   }
 }
 
-Gfx::Txform::Txform()
+geom::txform::txform()
 {
-DOTRACE("Gfx::Txform::Txform");
-  data[0] = 1.0; data[4] = 0.0; data[8] = 0.0; data[12] = 0.0;
-  data[1] = 0.0; data[5] = 1.0; data[9] = 0.0; data[13] = 0.0;
-  data[2] = 0.0; data[6] = 0.0; data[10] = 1.0; data[14] = 0.0;
-  data[3] = 0.0; data[7] = 0.0; data[11] = 0.0; data[15] = 1.0;
+DOTRACE("geom::txform::txform");
+  m_mtx[0] = 1.0; m_mtx[4] = 0.0; m_mtx[8] = 0.0; m_mtx[12] = 0.0;
+  m_mtx[1] = 0.0; m_mtx[5] = 1.0; m_mtx[9] = 0.0; m_mtx[13] = 0.0;
+  m_mtx[2] = 0.0; m_mtx[6] = 0.0; m_mtx[10] = 1.0; m_mtx[14] = 0.0;
+  m_mtx[3] = 0.0; m_mtx[7] = 0.0; m_mtx[11] = 0.0; m_mtx[15] = 1.0;
 }
 
 
-Gfx::Txform::Txform(const Vec3d& translation,
-                    const Vec3d& scaling,
-                    const Vec3d& rotationAxis,
-                    double rotationAngle)
+geom::txform::txform(const vec3d& translation,
+                     const vec3d& scaling,
+                     const vec3d& rotation_axis,
+                     double rotation_angle)
 {
-DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
+DOTRACE("geom::txform::txform(tx, scl, rot)");
 
   // The matrices look transposed because OpenGL expects column-major
 
@@ -100,14 +101,14 @@ DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
     };
   */
 
-  const double rl = rotationAxis.length();
+  const double rl = rotation_axis.length();
 
-  const double rx = rotationAxis.x() / rl;
-  const double ry = rotationAxis.y() / rl;
-  const double rz = rotationAxis.z() / rl;
+  const double rx = rotation_axis.x() / rl;
+  const double ry = rotation_axis.y() / rl;
+  const double rz = rotation_axis.z() / rl;
 
-  const double c = cos((rotationAngle) * M_PI / 180.0);
-  const double s = sin((rotationAngle) * M_PI / 180.0);
+  const double c = cos((rotation_angle) * M_PI / 180.0);
+  const double s = sin((rotation_angle) * M_PI / 180.0);
 
   // The result of rotation
   /*
@@ -123,15 +124,15 @@ DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
   // Compute result = t * s * r = ts * r;
   /* mul_mtx_4x4(ts, r, result); */
 
-  data[0]=sx*(rx*rx*(1-c)+c);    data[4]=sx*(rx*ry*(1-c)-rz*s); data[8]=sx*(rx*rz*(1-c)+ry*s); data[12]=tx;
-  data[1]=sy*(ry*rx*(1-c)+rz*s); data[5]=sy*(ry*ry*(1-c)+c);    data[9]=sy*(ry*rz*(1-c)-rx*s); data[13]=ty;
-  data[2]=sz*(rz*rx*(1-c)-ry*s); data[6]=sz*(rz*ry*(1-c)+rx*s); data[10]=sz*(rz*rz*(1-c)+c);   data[14]=tz;
-  data[3]=0.0;                   data[7]=0.0;                   data[11]=0.0;                  data[15]=1.0;
+  m_mtx[0]=sx*(rx*rx*(1-c)+c);    m_mtx[4]=sx*(rx*ry*(1-c)-rz*s); m_mtx[8]=sx*(rx*rz*(1-c)+ry*s); m_mtx[12]=tx;
+  m_mtx[1]=sy*(ry*rx*(1-c)+rz*s); m_mtx[5]=sy*(ry*ry*(1-c)+c);    m_mtx[9]=sy*(ry*rz*(1-c)-rx*s); m_mtx[13]=ty;
+  m_mtx[2]=sz*(rz*rx*(1-c)-ry*s); m_mtx[6]=sz*(rz*ry*(1-c)+rx*s); m_mtx[10]=sz*(rz*rz*(1-c)+c);   m_mtx[14]=tz;
+  m_mtx[3]=0.0;                   m_mtx[7]=0.0;                   m_mtx[11]=0.0;                  m_mtx[15]=1.0;
 }
 
-void Gfx::Txform::translate(const Vec3d& t)
+void geom::txform::translate(const vec3d& t)
 {
-DOTRACE("Gfx::Txform::translate");
+DOTRACE("geom::txform::translate");
 
 #if 0
   /*                     brute force
@@ -141,7 +142,7 @@ DOTRACE("Gfx::Txform::translate");
               | m2 m6 m10 m14 |   |  0  0  1 tz |
               | m3 m7 m11 m15 |   |  0  0  0  1 |
   */
-  Txform old_mtx(*this);
+  txform old_mtx(*this);
 
   double tm[16];
   tm[0] = 1.0; tm[4] = 0.0;  tm[8] = 0.0; tm[12] = t.x();
@@ -149,7 +150,7 @@ DOTRACE("Gfx::Txform::translate");
   tm[2] = 0.0; tm[6] = 0.0; tm[10] = 1.0; tm[14] = t.z();
   tm[3] = 0.0; tm[7] = 0.0; tm[11] = 0.0; tm[15] = 1.0;
 
-  mul_mtx_4x4(old_mtx.data, tm, this->data);
+  mul_mtx_4x4(old_mtx.m_mtx, tm, this->m_mtx);
 #else
   /*                 optimized
 
@@ -158,16 +159,16 @@ DOTRACE("Gfx::Txform::translate");
               | m2 m6 m10 m2*tx+m6*ty+m10*tz+m14 |
               | m3 m7 m11 m3*tx+m7*ty+m11*tz+m15 |
   */
-  data[12] += t.x()*data[0] + t.y()*data[4] + t.z()*data[8];
-  data[13] += t.x()*data[1] + t.y()*data[5] + t.z()*data[9];
-  data[14] += t.x()*data[2] + t.y()*data[6] + t.z()*data[10];
-  data[15] += t.x()*data[3] + t.y()*data[7] + t.z()*data[11];
+  m_mtx[12] += t.x()*m_mtx[0] + t.y()*m_mtx[4] + t.z()*m_mtx[8];
+  m_mtx[13] += t.x()*m_mtx[1] + t.y()*m_mtx[5] + t.z()*m_mtx[9];
+  m_mtx[14] += t.x()*m_mtx[2] + t.y()*m_mtx[6] + t.z()*m_mtx[10];
+  m_mtx[15] += t.x()*m_mtx[3] + t.y()*m_mtx[7] + t.z()*m_mtx[11];
 #endif
 }
 
-void Gfx::Txform::scale(const Vec3d& s)
+void geom::txform::scale(const vec3d& s)
 {
-DOTRACE("Gfx::Txform::scale");
+DOTRACE("geom::txform::scale");
 
 #if 0
   /*                brute force
@@ -177,7 +178,7 @@ DOTRACE("Gfx::Txform::scale");
               | m2 m6 m10 m14 |   |  0  0 sz  0 |
               | m3 m7 m11 m15 |   |  0  0  0  1 |
   */
-  Txform old_mtx(*this);
+  txform old_mtx(*this);
 
   double sm[16];
   sm[0] = s.x(); sm[4] = 0.0;    sm[8] = 0.0;    sm[12] = 0.0;
@@ -185,7 +186,7 @@ DOTRACE("Gfx::Txform::scale");
   sm[2] = 0.0;   sm[6] = 0.0;    sm[10] = s.z(); sm[14] = 0.0;
   sm[3] = 0.0;   sm[7] = 0.0;    sm[11] = 0.0;   sm[15] = 1.0;
 
-  mul_mtx_4x4(old_mtx.data, sm, this->data);
+  mul_mtx_4x4(old_mtx.m_mtx, sm, this->m_mtx);
 #else
   /*                 optimized
 
@@ -194,42 +195,43 @@ DOTRACE("Gfx::Txform::scale");
               | sx*m2 sy*m6 sz*m10 m14 |
               | sx*m3 sy*m7 sz*m11 m15 |
   */
-  data[0] *= s.x();
-  data[1] *= s.x();
-  data[2] *= s.x();
-  data[3] *= s.x();
-  data[4] *= s.y();
-  data[5] *= s.y();
-  data[6] *= s.y();
-  data[7] *= s.y();
-  data[8] *= s.z();
-  data[9] *= s.z();
-  data[10] *= s.z();
-  data[11] *= s.z();
+  m_mtx[0] *= s.x();
+  m_mtx[1] *= s.x();
+  m_mtx[2] *= s.x();
+  m_mtx[3] *= s.x();
+  m_mtx[4] *= s.y();
+  m_mtx[5] *= s.y();
+  m_mtx[6] *= s.y();
+  m_mtx[7] *= s.y();
+  m_mtx[8] *= s.z();
+  m_mtx[9] *= s.z();
+  m_mtx[10] *= s.z();
+  m_mtx[11] *= s.z();
 #endif
 }
 
-void Gfx::Txform::rotate(const Vec3d& rotationAxis, double rotationAngle)
+void geom::txform::rotate(const vec3d& rotation_axis,
+                          double rotation_angle)
 {
-DOTRACE("Gfx::Txform::rotate");
+DOTRACE("geom::txform::rotate");
 
-  Txform rotation(Vec3d(0, 0, 0),
-                  Vec3d(1, 1, 1),
-                  rotationAxis, rotationAngle);
+  txform rotation(vec3d(0, 0, 0),
+                  vec3d(1, 1, 1),
+                  rotation_axis, rotation_angle);
 
   this->transform(rotation);
 }
 
-void Gfx::Txform::transform(const Gfx::Txform& other)
+void geom::txform::transform(const geom::txform& other)
 {
-DOTRACE("Gfx::Txform::transform");
+DOTRACE("geom::txform::transform");
 
-  Txform old_mtx(*this);
+  txform old_mtx(*this);
 
-  mul_mtx_4x4(old_mtx.data, other.data, this->data);
+  mul_mtx_4x4(old_mtx.m_mtx, other.m_mtx, this->m_mtx);
 }
 
-Vec2d Gfx::Txform::applyTo(const Vec2d& input) const
+vec2d geom::txform::apply_to(const vec2d& input) const
 {
   /*
         | m0 m4 m8  m12 |   | input.x |
@@ -239,31 +241,31 @@ Vec2d Gfx::Txform::applyTo(const Vec2d& input) const
    */
 
   const double output_x =
-    data[0] * input.x()
-    + data[4] * input.y()
-    // + data[8] * 0.0
-    + data[12] * 1.0;
+    m_mtx[0] * input.x()
+    + m_mtx[4] * input.y()
+    // + m_mtx[8] * 0.0
+    + m_mtx[12] * 1.0;
 
   const double output_y =
-    data[1] * input.x()
-    + data[5] * input.y()
-    // + data[9] * 0.0
-    + data[13] * 1.0;
+    m_mtx[1] * input.x()
+    + m_mtx[5] * input.y()
+    // + m_mtx[9] * 0.0
+    + m_mtx[13] * 1.0;
 
   // output_z is forced to zero since we're returning a 2-D result
 
   const double output_w =
-    data[3] * input.x()
-    + data[7] * input.y()
-    // + data[11] * 0.0
-    + data[15] * 1.0;
+    m_mtx[3] * input.x()
+    + m_mtx[7] * input.y()
+    // + m_mtx[11] * 0.0
+    + m_mtx[15] * 1.0;
 
   return (output_w != 0.0)
-    ? Vec2d(output_x / output_w, output_y / output_w)
-    : Vec2d(0.0, 0.0);
+    ? vec2d(output_x / output_w, output_y / output_w)
+    : vec2d(0.0, 0.0);
 }
 
-Vec3d Gfx::Txform::applyTo(const Vec3d& input) const
+vec3d geom::txform::apply_to(const vec3d& input) const
 {
   /*
         | m0 m4 m8  m12 |   | input.x |
@@ -273,42 +275,42 @@ Vec3d Gfx::Txform::applyTo(const Vec3d& input) const
    */
 
   const double output_x =
-    data[0] * input.x()
-    + data[4] * input.y()
-    + data[8] * input.z()
-    + data[12] * 1.0;
+    m_mtx[0] * input.x()
+    + m_mtx[4] * input.y()
+    + m_mtx[8] * input.z()
+    + m_mtx[12] * 1.0;
 
   const double output_y =
-    data[1] * input.x()
-    + data[5] * input.y()
-    + data[9] * input.z()
-    + data[13] * 1.0;
+    m_mtx[1] * input.x()
+    + m_mtx[5] * input.y()
+    + m_mtx[9] * input.z()
+    + m_mtx[13] * 1.0;
 
   const double output_z =
-    data[2] * input.x()
-    + data[6] * input.y()
-    + data[10] * input.z()
-    + data[14] * 1.0;
+    m_mtx[2] * input.x()
+    + m_mtx[6] * input.y()
+    + m_mtx[10] * input.z()
+    + m_mtx[14] * 1.0;
 
   const double output_w =
-    data[3] * input.x()
-    + data[7] * input.y()
-    + data[11] * input.z()
-    + data[15] * 1.0;
+    m_mtx[3] * input.x()
+    + m_mtx[7] * input.y()
+    + m_mtx[11] * input.z()
+    + m_mtx[15] * 1.0;
 
   return (output_w != 0.0)
-    ? Vec3d(output_x / output_w,
+    ? vec3d(output_x / output_w,
             output_y / output_w,
             output_z / output_w)
-    : Vec3d(0.0, 0.0, 0.0);
+    : vec3d(0.0, 0.0, 0.0);
 }
 
-void Gfx::Txform::debug_dump() const
+void geom::txform::debug_dump() const
 {
-  dbg_print(0, data[0]); dbg_print(0, data[4]); dbg_print(0, data[8]); dbg_print_nl(0, data[12]);
-  dbg_print(0, data[1]); dbg_print(0, data[5]); dbg_print(0, data[9]); dbg_print_nl(0, data[13]);
-  dbg_print(0, data[2]); dbg_print(0, data[6]); dbg_print(0, data[10]); dbg_print_nl(0, data[14]);
-  dbg_print(0, data[3]); dbg_print(0, data[7]); dbg_print(0, data[11]); dbg_print_nl(0, data[15]);
+  dbg_print(0, m_mtx[0]); dbg_print(0, m_mtx[4]); dbg_print(0, m_mtx[8]); dbg_print_nl(0, m_mtx[12]);
+  dbg_print(0, m_mtx[1]); dbg_print(0, m_mtx[5]); dbg_print(0, m_mtx[9]); dbg_print_nl(0, m_mtx[13]);
+  dbg_print(0, m_mtx[2]); dbg_print(0, m_mtx[6]); dbg_print(0, m_mtx[10]); dbg_print_nl(0, m_mtx[14]);
+  dbg_print(0, m_mtx[3]); dbg_print(0, m_mtx[7]); dbg_print(0, m_mtx[11]); dbg_print_nl(0, m_mtx[15]);
 }
 
 static const char vcid_txform_cc[] = "$Header$";

@@ -224,7 +224,7 @@ DOTRACE("Pbm::load");
       is.ignore(1000, '\n');
     }
 
-  Gfx::Vec2<int> extent;
+  geom::vec2<int> extent;
 
   is >> extent.x(); dbg_eval(3, extent.x());
   is >> extent.y(); dbg_eval_nl(3, extent.y());

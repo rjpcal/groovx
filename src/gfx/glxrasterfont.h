@@ -291,7 +291,7 @@ DOTRACE("GlxRasterFont::bboxOf");
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  Gfx::Rect<int> screen = bbox.screenFromWorld(Gfx::Rect<double>());
+  geom::rect<int> screen = bbox.screenFromWorld(geom::rect<double>());
 
   screen.right() += maxwid;
   screen.bottom() -= desc + (lines - 1) * (asc+desc);

@@ -476,7 +476,7 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
 {
   Gfx::BmapData data;
 
-  const Gfx::Rect<int> bounds = Gfx::Rect<int>().setXYWH(x, y, w, h);
+  const geom::rect<int> bounds = geom::rect<int>().set_lbwh(x, y, w, h);
 
   Gfx::Canvas::current().grabPixels(bounds, data);
 

@@ -34,11 +34,15 @@
 
 #include <X11/Xlib.h>
 
+namespace geom
+{
+  template <class V> class vec2;
+}
+
 namespace Gfx
 {
   class BmapData;
   class Canvas;
-  template <class V> class Vec2;
 }
 
 /// XBmapRenderer is "in between jobs"... needs to be merged into GLCanvas.
@@ -49,8 +53,8 @@ namespace XBmapRenderer
                  int screen,
                  Gfx::Canvas& canvas,
                  const Gfx::BmapData& data,
-                 const Gfx::Vec2<double>& world_pos,
-                 const Gfx::Vec2<double>& zoom);
+                 const geom::vec2<double>& world_pos,
+                 const geom::vec2<double>& zoom);
 };
 
 //---------------------------------------------------------------------
@@ -78,8 +82,8 @@ void XBmapRenderer::doRender(Display* display,
                              int screen,
                              Gfx::Canvas& canvas,
                              const Gfx::BmapData& data,
-                             const Gfx::Vec2<double>& world_pos,
-                             const Gfx::Vec2<double>& /* zoom */)
+                             const geom::vec2<double>& world_pos,
+                             const geom::vec2<double>& /* zoom */)
 {
 DOTRACE("XBmapRenderer::doRender");
 
@@ -96,7 +100,7 @@ DOTRACE("XBmapRenderer::doRender");
   data.setRowOrder(Gfx::BmapData::TOP_FIRST);
 
   // Calculate GL window coordinates of lower left corner of image
-  Gfx::Vec2<int> screen_pos = canvas.screenFromWorld(world_pos);
+  geom::vec2<int> screen_pos = canvas.screenFromWorld(world_pos);
 
   dbg_eval(3, world_pos.x()); dbg_eval(3, world_pos.y());
   dbg_eval(3, screen_pos.x()); dbg_eval_nl(3, screen_pos.y());

@@ -37,10 +37,14 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
+namespace geom
+{
+  template <class V> class vec2;
+}
+
 namespace Gfx
 {
   class BmapData;
-  template <class V> class Vec2;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +94,7 @@ public:
   BmapData();
 
   /// Construct with the given image data specifications.
-  BmapData(const Gfx::Vec2<int>& dims, int bits_per_pixel, int byte_alignment);
+  BmapData(const geom::vec2<int>& dims, int bits_per_pixel, int byte_alignment);
 
   /// Copy constructor.
   BmapData(const BmapData& other);
@@ -130,7 +134,7 @@ public:
   int height() const;
 
   /// Returns the bitmap's size (x-width, y-height) in pixels.
-  Gfx::Vec2<int> size() const;
+  geom::vec2<int> size() const;
 
   /// Returns the number of bits used per pixel in the bitmap.
   int bitsPerPixel() const;

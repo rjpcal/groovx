@@ -126,8 +126,8 @@ void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("FixPt::grGetBoundingBox");
 
-  bbox.vertex2(Gfx::Vec2<double>(-itsLength/2.0, -itsLength/2.0));
-  bbox.vertex2(Gfx::Vec2<double>(+itsLength/2.0, +itsLength/2.0));
+  bbox.vertex2(geom::vec2<double>(-itsLength/2.0, -itsLength/2.0));
+  bbox.vertex2(geom::vec2<double>(+itsLength/2.0, +itsLength/2.0));
 }
 
 void FixPt::grRender(Gfx::Canvas& canvas) const
@@ -141,11 +141,11 @@ DOTRACE("FixPt::grRender");
   {
     Gfx::LinesBlock block(canvas);
 
-    canvas.vertex2(Gfx::Vec2<double>(0.0, -itsLength/2.0));
-    canvas.vertex2(Gfx::Vec2<double>(0.0, itsLength/2.0));
+    canvas.vertex2(geom::vec2<double>(0.0, -itsLength/2.0));
+    canvas.vertex2(geom::vec2<double>(0.0, itsLength/2.0));
 
-    canvas.vertex2(Gfx::Vec2<double>(-itsLength/2.0, 0.0));
-    canvas.vertex2(Gfx::Vec2<double>(itsLength/2.0, 0.0));
+    canvas.vertex2(geom::vec2<double>(-itsLength/2.0, 0.0));
+    canvas.vertex2(geom::vec2<double>(itsLength/2.0, 0.0));
   }
 }
 

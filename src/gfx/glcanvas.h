@@ -62,14 +62,14 @@ public:
   void drawBufferFront() throw();
   void drawBufferBack() throw();
 
-  virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
-  virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const;
+  virtual geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const;
+  virtual geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const;
 
-  virtual Gfx::Rect<int> screenFromWorld(const Gfx::Rect<double>& world_pos) const;
-  virtual Gfx::Rect<double> worldFromScreen(const Gfx::Rect<int>& screen_pos) const;
+  virtual geom::rect<int> screenFromWorld(const geom::rect<double>& world_pos) const;
+  virtual geom::rect<double> worldFromScreen(const geom::rect<int>& screen_pos) const;
 
-  virtual Gfx::Rect<int> getScreenViewport() const;
-  virtual Gfx::Rect<double> getWorldViewport() const;
+  virtual geom::rect<int> getScreenViewport() const;
+  virtual geom::rect<double> getWorldViewport() const;
 
 
   virtual bool isRgba() const;
@@ -109,7 +109,7 @@ public:
 
   virtual void viewport(int x, int y, int w, int h);
 
-  virtual void orthographic(const Gfx::Rect<double>& bounds,
+  virtual void orthographic(const geom::rect<double>& bounds,
                             double zNear, double zFar);
 
   virtual void perspective(double fovy, double aspect,
@@ -119,32 +119,32 @@ public:
   virtual void pushMatrix(const char* comment="");
   virtual void popMatrix();
 
-  virtual void translate(const Gfx::Vec3<double>& v);
-  virtual void scale(const Gfx::Vec3<double>& v);
-  virtual void rotate(const Gfx::Vec3<double>& v, double degrees);
+  virtual void translate(const geom::vec3<double>& v);
+  virtual void scale(const geom::vec3<double>& v);
+  virtual void rotate(const geom::vec3<double>& v, double degrees);
 
-  virtual void transform(const Gfx::Txform& tx);
+  virtual void transform(const geom::txform& tx);
 
   /// Do a "safe" glRasterPos().
   /** If the given position does not fall in the screen viewport, then we
       use the "fake glBitmap()" hack to get a valid raster position outside
       the viewport. */
-  void rasterPos(const Gfx::Vec2<double>& world_pos);
+  void rasterPos(const geom::vec2<double>& world_pos);
 
   virtual void drawPixels(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos,
-                          const Gfx::Vec2<double>& zoom);
+                          const geom::vec2<double>& world_pos,
+                          const geom::vec2<double>& zoom);
 
   virtual void drawBitmap(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos);
+                          const geom::vec2<double>& world_pos);
 
-  virtual void grabPixels(const Gfx::Rect<int>& bounds,
+  virtual void grabPixels(const geom::rect<int>& bounds,
                           Gfx::BmapData& data_out);
 
   virtual void clearColorBuffer();
-  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect);
+  virtual void clearColorBuffer(const geom::rect<int>& screen_rect);
 
-  virtual void drawRect(const Gfx::Rect<double>& rect);
+  virtual void drawRect(const geom::rect<double>& rect);
 
   virtual void drawCircle(double inner_radius, double outer_radius, bool fill,
                           unsigned int slices, unsigned int loops);
@@ -156,17 +156,17 @@ public:
   virtual void drawSphere(double radius, int slices, int stacks,
                           bool fill);
 
-  virtual void drawBezier4(const Gfx::Vec3<double>& p1,
-                           const Gfx::Vec3<double>& p2,
-                           const Gfx::Vec3<double>& p3,
-                           const Gfx::Vec3<double>& p4,
+  virtual void drawBezier4(const geom::vec3<double>& p1,
+                           const geom::vec3<double>& p2,
+                           const geom::vec3<double>& p3,
+                           const geom::vec3<double>& p4,
                            unsigned int subdivisions);
 
-  virtual void drawBezierFill4(const Gfx::Vec3<double>& center,
-                               const Gfx::Vec3<double>& p1,
-                               const Gfx::Vec3<double>& p2,
-                               const Gfx::Vec3<double>& p3,
-                               const Gfx::Vec3<double>& p4,
+  virtual void drawBezierFill4(const geom::vec3<double>& center,
+                               const geom::vec3<double>& p1,
+                               const geom::vec3<double>& p2,
+                               const geom::vec3<double>& p3,
+                               const geom::vec3<double>& p4,
                                unsigned int subdivisions);
 
   virtual void beginPoints(const char* comment="");
@@ -180,8 +180,8 @@ public:
   virtual void beginQuadStrip(const char* comment="");
   virtual void beginPolygon(const char* comment="");
 
-  virtual void vertex2(const Gfx::Vec2<double>& v);
-  virtual void vertex3(const Gfx::Vec3<double>& v);
+  virtual void vertex2(const geom::vec2<double>& v);
+  virtual void vertex3(const geom::vec3<double>& v);
 
   virtual void end();
 
@@ -216,8 +216,8 @@ public:
              const Gfx::RgbaColor* specular,
              const Gfx::RgbaColor* diffuse,
              const Gfx::RgbaColor* ambient,
-             const Gfx::Vec3<double>* position,
-             const Gfx::Vec3<double>* spotDirection,
+             const geom::vec3<double>* position,
+             const geom::vec3<double>* spotDirection,
              double attenuation,
              double spotExponent,
              double spotCutoff);

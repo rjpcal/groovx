@@ -36,11 +36,15 @@
 
 #include <iosfwd>
 
+namespace geom
+{
+  template <class V> class rect;
+  template <class V> class vec2;
+}
+
 namespace Gfx
 {
   class BmapData;
-  template <class V> class Rect;
-  template <class V> class Vec2;
 }
 
 class GxPixmapImpl;
@@ -100,7 +104,7 @@ public:
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The
       rectangle is specified in screen coordinates. */
-  void grabScreenRect(const Gfx::Rect<int>& rect);
+  void grabScreenRect(const geom::rect<int>& rect);
 
   /// Like grabScreen(), but grab pixels from the entire canvas window.
   void grabScreen();
@@ -108,7 +112,7 @@ public:
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The
       rectangle is specified in world coordinates. */
-  void grabWorldRect(const Gfx::Rect<double>& rect);
+  void grabWorldRect(const geom::rect<double>& rect);
 
   /// Flips the luminance contrast of the bitmap data.
   /** The actual math depends on the format of the bitmap data. The
@@ -128,10 +132,10 @@ public:
   ///////////////
 
   /// Get the image's size (x-width, y-height) in pixels.
-  Gfx::Vec2<int> size() const;
+  geom::vec2<int> size() const;
 
   /// Get the (x,y) factors by which the bitmap will be scaled.
-  Gfx::Vec2<double> getZoom() const;
+  geom::vec2<double> getZoom() const;
 
   /// Query whether zooming is currently to be used.
   bool getUsingZoom() const;
@@ -158,10 +162,10 @@ public:
   Gfx::BmapData& data();
 
   /// Change the (x,y) factor by which the bitmap will be scaled.
-  void setZoom(Gfx::Vec2<double> zoom);
+  void setZoom(geom::vec2<double> zoom);
 
   /// Zoom to a given size.
-  void zoomTo(Gfx::Vec2<int> sz);
+  void zoomTo(geom::vec2<int> sz);
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);

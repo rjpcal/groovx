@@ -220,7 +220,7 @@ DOTRACE("PngParser::parse");
 
   ASSERT(row_bytes == width*nchannels);
 
-  Gfx::BmapData new_data(Gfx::Vec2<int>(width, height),
+  Gfx::BmapData new_data(geom::vec2<int>(width, height),
                          nchannels*8, // bits_per_pixel
                          1); // byte_alignment
 

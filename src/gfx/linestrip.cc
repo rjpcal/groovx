@@ -45,8 +45,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-using Gfx::Vec2d;
-using Gfx::Vec3d;
+using geom::vec2d;
+using geom::vec3d;
 
 Gfx::LineStrip::LineStrip() :
   canvas(0),
@@ -85,28 +85,28 @@ DOTRACE("Gfx::LineStrip::begin");
   width = w;
 }
 
-void Gfx::LineStrip::vertex(const Vec2d& pt)
+void Gfx::LineStrip::vertex(const vec2d& pt)
 {
 DOTRACE("Gfx::LineStrip::vertex");
   pts.push_back(pt);
 }
 
-void Gfx::LineStrip::drawBezier4(const Vec3d& p1,
-                                 const Vec3d& p2,
-                                 const Vec3d& p3,
-                                 const Vec3d& p4,
+void Gfx::LineStrip::drawBezier4(const vec3d& p1,
+                                 const vec3d& p2,
+                                 const vec3d& p3,
+                                 const vec3d& p4,
                                  unsigned int subdivisions,
                                  unsigned int start)
 {
 DOTRACE("Gfx::LineStrip::drawBezier4");
-  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
-  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
-  //     Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+  geom::bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+  geom::bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+  //     geom::bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
 
   for (unsigned int i = start; i < subdivisions; ++i)
     {
       double u = double(i) / double(subdivisions - 1);
-      this->vertex(Vec2d(xb.eval(u), yb.eval(u)));
+      this->vertex(vec2d(xb.eval(u), yb.eval(u)));
     }
 }
 
@@ -148,16 +148,16 @@ namespace
   // this result will be halfway between that of the normal vectors to d1
   // and d2, and the length of the result will be determined by the angle
   // of the intersection.
-  Vec2d joinedNormal(const Vec2d& d1, const Vec2d& d2)
+  vec2d joinedNormal(const vec2d& d1, const vec2d& d2)
   {
-    const Vec2d n1 = normalTo(d1);
-    const Vec2d n2 = normalTo(d2);
+    const vec2d n1 = normal_to(d1);
+    const vec2d n2 = normal_to(d2);
 
     double c = 0.0;
     if      (d1.x()+d2.x() != 0.0) { c = (n2.x() - n1.x()) / (d1.x() + d2.x()); }
     else if (d1.y()+d2.y() != 0.0) { c = (n2.y() - n1.y()) / (d1.y() + d2.y()); }
 
-    return Vec2d(n2 - d2 * c);
+    return vec2d(n2 - d2 * c);
   }
 }
 
@@ -166,34 +166,34 @@ void Gfx::LineStrip::drawJoinedLineStrip()
 DOTRACE("Gfx::LineStrip::drawJoinedLineStrip");
   canvas->beginQuadStrip();
 
-  Vec2d d1;
-  Vec2d d2;
+  vec2d d1;
+  vec2d d2;
 
-  Vec2d start_pt1;
-  Vec2d start_pt2;
+  vec2d start_pt1;
+  vec2d start_pt2;
 
   for (unsigned int i = 1; i <= pts.size(); ++i)
     {
       if (i == pts.size())
         {
-          if (loop) d2 = makeUnitLength(pts[0] - pts[i-1]);
+          if (loop) d2 = make_unit_length(pts[0] - pts[i-1]);
           else      d2 = d1;
         }
       else
         {
-          d2 = makeUnitLength(pts[i] - pts[i-1]);
+          d2 = make_unit_length(pts[i] - pts[i-1]);
         }
 
       if (i == 1)
         {
-          if (loop) d1 = makeUnitLength(pts[0] - pts.back());
+          if (loop) d1 = make_unit_length(pts[0] - pts.back());
           else      d1 = d2;
         }
 
-      const Vec2d use_n = joinedNormal(d1, d2);
+      const vec2d use_n = joinedNormal(d1, d2);
 
-      const Vec2d pt1 = pts[i-1] - use_n*width;
-      const Vec2d pt2 = pts[i-1] + use_n*width;
+      const vec2d pt1 = pts[i-1] - use_n*width;
+      const vec2d pt2 = pts[i-1] + use_n*width;
 
       canvas->vertex2(pt1);
       canvas->vertex2(pt2);

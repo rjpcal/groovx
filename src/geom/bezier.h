@@ -37,104 +37,109 @@
 
 #include <cmath>
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Bezier is a general class for evaluating Bezier curves, their
- * derivatives, and their minimum and maximum values.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class Bezier
+namespace geom
 {
-private:
-  rutz::dynamic_block<double> R;      // control points
+  //  #######################################################
+  //  =======================================================
 
-  // coefficients of the Bezier polynomial
-  // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
-  rutz::dynamic_block<double> c0;
+  /// geom::bezier is a general class for evaluating Bezier curves
+  /** Also for evaluation Bezier derivatives, and their minimum and
+      maximum values. */
 
-  // coefficients of the derivative polynomial
-  // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
-  rutz::dynamic_block<double> c1;
-
-  double uMin_;    // value of u in [0,1] which gives the minimum
-  double uMax_;  // value of u in [0,1] which gives the maximum
-  double valMin_;
-  double valMax_;
-
-  static int choose(int n, int k)
+  class bezier
   {
-    // result = n! / [k!(n-k)!]
-    int result = 1;
+  private:
+    rutz::dynamic_block<double> m_ctrl;      // control points
 
-    // we have symmetry of (n k) = (n n-k)
-    // smaller k gives a faster computation, so:
-    if ( (n-k) < k ) { k = n-k; }
+    // coefficients of the Bezier polynomial
+    // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
+    rutz::dynamic_block<double> m_c0;
 
-    // compute n! / (n-k)!  =  n*(n-1)*(n-2)...(n-k+1)
-    for (int f = n; f > (n-k); --f)
-      {
-        result *= f;
-      }
-    for (int d = 2; d <= k; ++d)
-      {
-        result /= d;
-      }
+    // coefficients of the derivative polynomial
+    // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
+    rutz::dynamic_block<double> m_c1;
 
-    return result;
-  }
+    double m_arg_min;  // value of u in [0,1] which gives the minimum
+    double m_arg_max;  // value of u in [0,1] which gives the maximum
+    double m_val_min;
+    double m_val_max;
 
-public:
-  /** Construct from a vector of control points. The argument
-      extrema_res is used to specify the number of subdivisions that
-      will be examined when searching for the extrema. If extrema_res
-      is < 0 (the default value), a default number of subdivisions
-      will be used. */
-  Bezier(const rutz::dynamic_block<double>& RR, int extrema_res=-1);
+    static int choose(int n, int k)
+    {
+      // result = n! / [k!(n-k)!]
+      int result = 1;
 
-  /// Reset the control points,
-  void setCtrlPnts(const rutz::dynamic_block<double>& RR, int extrema_res=-1);
+      // we have symmetry of (n k) = (n n-k)
+      // smaller k gives a faster computation, so:
+      if ( (n-k) < k ) { k = n-k; }
+
+      // compute n! / (n-k)!  =  n*(n-1)*(n-2)...(n-k+1)
+      for (int f = n; f > (n-k); --f)
+        {
+          result *= f;
+        }
+      for (int d = 2; d <= k; ++d)
+        {
+          result /= d;
+        }
+
+      return result;
+    }
+
+  public:
+    /** Construct from a vector of control points. The argument
+        extrema_res is used to specify the number of subdivisions that
+        will be examined when searching for the extrema. If extrema_res
+        is < 0 (the default value), a default number of subdivisions
+        will be used. */
+    bezier(const rutz::dynamic_block<double>& RR, int extrema_res=-1);
+
+    /// Reset the control points,
+    void set_control_points(const rutz::dynamic_block<double>& RR,
+                            int extrema_res=-1);
 
 
-  /// Evaluate the Bezier curve for a given u in [0, 1]
-  double eval(double u);
-  /// Evaluate the derivative of the Bezier curve for a given u in [0, 1]
-  double evalDeriv(double u);
+    /// Evaluate the Bezier curve for u in [0, 1]
+    double eval(double u);
+    /// Evaluate the derivative of the Bezier curve for u in [0, 1]
+    double eval_deriv(double u);
 
-  /** Returns the value of u at which the Bezier curve takes its
-      maximum value. */
-  double uMin() { return uMin_; }
-  /** Returns the value of u at which the Bezier curve takes its
-      minimum value. */
-  double uMax() { return uMax_; }
+    /// Get the arg-min value of the Bezier curve in the range [0, 1]
+    double arg_min() { return m_arg_min; }
+    /// Get the arg-max value of the Bezier curve in the range [0, 1]
+    double arg_max() { return m_arg_max; }
 
-  /** Returns the maximum value that the Bezier curve will take in the
-      range u in [0, 1] */
-  double valMin() { return valMin_; }
-  /** Returns the minimum value that the Bezier curve will take in the
-      range u in [0, 1] */
-  double valMax() { return valMax_; }
-};
+    /// Get the min value of the Bezier curve in the range [0, 1]
+    double eval_min() { return m_val_min; }
+    /// Get the max value of the Bezier curve in the range [0, 1]
+    double eval_max() { return m_val_max; }
+  };
 
-Bezier::Bezier(const rutz::dynamic_block<double>& RR, int extrema_res) :
-  R(),
-  c0(),
-  c1(),
-  uMin_(0.0),
-  uMax_(0.0),
-  valMin_(0.0),
-  valMax_(0.0)
+} // end namespace geom
+
+//  #######################################################
+//  =======================================================
+
+geom::bezier::bezier(const rutz::dynamic_block<double>& RR,
+                     int extrema_res) :
+  m_ctrl(),
+  m_c0(),
+  m_c1(),
+  m_arg_min(0.0),
+  m_arg_max(0.0),
+  m_val_min(0.0),
+  m_val_max(0.0)
 {
-  setCtrlPnts(RR, extrema_res);
+  set_control_points(RR, extrema_res);
 }
 
-void Bezier::setCtrlPnts(const rutz::dynamic_block<double>& RR, int extrema_res)
+void geom::bezier::set_control_points
+  (const rutz::dynamic_block<double>& RR,
+   int extrema_res)
 {
-  R = RR;
-  c0.resize(RR.size());
-  c1.resize(RR.size()-1);
+  m_ctrl = RR;
+  m_c0.resize(RR.size());
+  m_c1.resize(RR.size()-1);
 
   int n = RR.size()-1;          // degree of polynomial = num_points - 1
 
@@ -144,67 +149,67 @@ void Bezier::setCtrlPnts(const rutz::dynamic_block<double>& RR, int extrema_res)
 
   {for (int i = 0; i <= n; ++i)
     {
-      c0[i] = 0;
+      m_c0[i] = 0;
 
       for (int k = 0; k <= i; ++k)
         {
-          int i_choose_k = Bezier::choose(i,k);
+          int i_choose_k = bezier::choose(i,k);
 
-          c0[i] += ( (i+k)%2 ? 1 : -1) * i_choose_k * R[k];
+          m_c0[i] += ( (i+k)%2 ? 1 : -1) * i_choose_k * m_ctrl[k];
         }
 
-      c0[i] *= Bezier::choose(n,i);
+      m_c0[i] *= bezier::choose(n,i);
     }
   }
 
-  {for (size_t i = 0; i < c1.size(); ++i)
+  {for (size_t i = 0; i < m_c1.size(); ++i)
     {
-      c1[i] = (i+1) * c0[i+1];
+      m_c1[i] = (i+1) * m_c0[i+1];
     }
   }
 
 
   if (extrema_res <= 0) { extrema_res = 4*(RR.size()); }
 
-  uMin_ = uMax_ = 0.0;
-  valMin_ = valMax_ = eval(0.0);
+  m_arg_min = m_arg_max = 0.0;
+  m_val_min = m_val_max = eval(0.0);
 
   for (int e = 1; e <= extrema_res; ++e)
     {
       const double u = double(e)/extrema_res;
       const double current = eval(u);
-      if (current < valMin_)
+      if (current < m_val_min)
         {
-          valMin_ = current;
-          uMin_ = u;
+          m_val_min = current;
+          m_arg_min = u;
         }
-      else if (current > valMax_)
+      else if (current > m_val_max)
         {
-          valMax_ = current;
-          uMax_ = u;
+          m_val_max = current;
+          m_arg_max = u;
         }
     }
 }
 
-double Bezier::eval(double u)
+double geom::bezier::eval(double u)
 {
   double result = 0.0;
   double powers = 1.0;
-  for (size_t i = 0; i < c0.size(); ++i)
+  for (size_t i = 0; i < m_c0.size(); ++i)
     {
-      result += c0[i] * powers;
+      result += m_c0[i] * powers;
       powers *= u;
     }
   return result;
 }
 
-double Bezier::evalDeriv(double u)
+double geom::bezier::eval_deriv(double u)
 {
   double result = 0.0;
   double powers = 1.0;
-  for (size_t i = 0; i < c1.size(); ++i)
+  for (size_t i = 0; i < m_c1.size(); ++i)
     {
-      result += c1[i] * powers;
+      result += m_c1[i] * powers;
       powers *= u;
     }
   return result;

@@ -75,7 +75,7 @@ namespace
   {
     DOTRACE("<tlisttcl.cc>::doCreatePreview");
 
-    Gfx::Rect<double> world_viewport = canvas.getWorldViewport();
+    geom::rect<double> world_viewport = canvas.getWorldViewport();
 
     const double world_width = world_viewport.width();
     const double world_height = world_viewport.height();

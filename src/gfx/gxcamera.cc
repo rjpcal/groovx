@@ -146,7 +146,7 @@ DOTRACE("GxMinRectCamera::draw");
   canvas.viewport(0, 0, width(), height());
 
   // the actual rect that we'll build:
-  Gfx::Rect<double> port(itsRect);
+  geom::rect<double> port(itsRect);
 
   // the desired conditions are as follows:
   //    (1) port contains itsRect
@@ -159,11 +159,11 @@ DOTRACE("GxMinRectCamera::draw");
 
   if ( ratio_of_aspects < 1 ) // the available space is too wide...
     {
-      port.scaleX(1/ratio_of_aspects); // so use some extra width
+      port.scale_x(1/ratio_of_aspects); // so use some extra width
     }
   else                        // the available space is too tall...
     {
-      port.scaleY(ratio_of_aspects); // so use some extra height
+      port.scale_y(ratio_of_aspects); // so use some extra height
     }
 
   canvas.orthographic(port, -10.0, 10.0);
@@ -178,7 +178,7 @@ namespace
     const double b = -1 * (h / 2.0) / ppu;
     const double t =      (h / 2.0) / ppu;
 
-    canvas.orthographic(Gfx::rectLTRB<double>(l, t, r, b), -10.0, 10.0);
+    canvas.orthographic(geom::rect_ltrb<double>(l,t,r,b), -10.0, 10.0);
   }
 }
 

@@ -57,7 +57,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-using namespace Gfx;
+using geom::vec2i;
+using geom::vec2d;
 
 namespace
 {
@@ -184,16 +185,17 @@ void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  const Vec2d world_origin(0.0, 0.0);
+  const vec2d world_origin(0.0, 0.0);
 
-  const Vec2i screen_origin = bbox.screenFromWorld(world_origin);
+  const vec2i screen_origin = bbox.screenFromWorld(world_origin);
 
-  const Vec2i size(itsResolution * itsPointSize,
+  const vec2i size(itsResolution * itsPointSize,
                    itsResolution * itsPointSize);
 
-  const Rect<int> screen_rect = Rect<int>().setXYWH(screen_origin, size);
+  const geom::rect<int> screen_rect =
+    geom::rect<int>().set_lbwh(screen_origin, size);
 
-  const Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  const geom::rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
   bbox.drawRect(world_rect);
 }
@@ -204,7 +206,7 @@ DOTRACE("Gabor::getBmapData");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
   const double ysigma2 = itsSigma * itsSigma;
 
-  const Vec2d center(0.0, 0.0);
+  const vec2d center(0.0, 0.0);
 
   static const double PI = acos(-1.0);
 
@@ -229,7 +231,7 @@ DOTRACE("Gabor::getBmapData");
 
   double res_step = 1.0/itsResolution;
 
-  Vec2i size(itsResolution, itsResolution);
+  vec2i size(itsResolution, itsResolution);
 
   int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
 
@@ -247,8 +249,8 @@ DOTRACE("Gabor::getBmapData");
         {
           const double unrotated_x = x_pos*res_step - 0.5;
 
-          Vec2d point(unrotated_x, unrotated_y);
-          point.rotateDeg(itsOrientation);
+          vec2d point(unrotated_x, unrotated_y);
+          point.rotate_deg(itsOrientation);
 
           point -= center;
 
@@ -310,8 +312,8 @@ DOTRACE("Gabor::grRender");
   Gfx::BmapData data;
   getBmapData(data);
 
-  canvas.drawPixels(data, Vec2d(0.0, 0.0),
-                    Vec2d(itsPointSize, itsPointSize));
+  canvas.drawPixels(data, vec2d(0.0, 0.0),
+                    vec2d(itsPointSize, itsPointSize));
 }
 
 static const char vcid_gabor_cc[] = "$Header$";

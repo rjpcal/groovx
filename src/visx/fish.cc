@@ -72,9 +72,9 @@ namespace
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 4;
 
-  using Gfx::Vec2d;
-  using Gfx::Vec3f;
-  using Gfx::Vec3d;
+  using geom::vec2d;
+  using geom::vec3f;
+  using geom::vec3d;
 
   const int DF_0 = 0;
   const int TF_1 = 1;
@@ -104,7 +104,7 @@ struct Fish::Part
 
   rutz::dynamic_block<float> itsKnots;
 
-  rutz::dynamic_block<Vec3f> itsCtrlPnts;
+  rutz::dynamic_block<vec3f> itsCtrlPnts;
 
   // -- end points --
 
@@ -112,13 +112,13 @@ struct Fish::Part
   // in this structure as well as the x and y coordinates of the two
   // points which define the boundaries of the endpoint line
   int itsBkpt;
-  Vec3f itsPt0;
-  Vec3f itsPt1;
+  vec3f itsPt0;
+  vec3f itsPt1;
 
   double itsCoord;
 
   template <std::size_t N1, std::size_t N2>
-  void reset(float const (&knots)[N1], Vec3f const (&points)[N2])
+  void reset(float const (&knots)[N1], vec3f const (&points)[N2])
   {
     itsKnots.assign(rutz::array_begin(knots),
                     rutz::array_end(knots));
@@ -231,56 +231,56 @@ DOTRACE("Fish::restoreToDefault");
     1.0, 1.0, 1.0, 1.0
   };
 
-  static const Vec3f DF_coefs[] =
+  static const vec3f DF_coefs[] =
   {
-    Vec3f(-0.2856,  0.2915,  0.2856),
-    Vec3f(-0.2140,  0.2866,  0.2140),
-    Vec3f(-0.2176,  0.2863,  0.2176),
-    Vec3f(-0.0735,  0.4670,  0.0735),
-    Vec3f( 0.0168,  0.3913,  0.0168),
-    Vec3f( 0.1101,  0.3071,  0.1101),
-    Vec3f( 0.3049,  0.1048,  0.3049),
-    Vec3f( 0.0953,  0.1800,  0.0953),
-    Vec3f( 0.1597,  0.1538,  0.1597),
+    vec3f(-0.2856,  0.2915,  0.2856),
+    vec3f(-0.2140,  0.2866,  0.2140),
+    vec3f(-0.2176,  0.2863,  0.2176),
+    vec3f(-0.0735,  0.4670,  0.0735),
+    vec3f( 0.0168,  0.3913,  0.0168),
+    vec3f( 0.1101,  0.3071,  0.1101),
+    vec3f( 0.3049,  0.1048,  0.3049),
+    vec3f( 0.0953,  0.1800,  0.0953),
+    vec3f( 0.1597,  0.1538,  0.1597),
   };
 
-  static const Vec3f TF_coefs[] =
+  static const vec3f TF_coefs[] =
   {
-    Vec3f( 0.1597,  0.1538,  0.1597),
-    Vec3f( 0.2992,  0.1016,  0.2992),
-    Vec3f( 0.2864,  0.1044,  0.2864),
-    Vec3f( 0.7837,  0.1590,  0.7837),
-    Vec3f( 0.4247,  0.0155,  0.4247),
-    Vec3f( 0.6362, -0.3203,  0.6362),
-    Vec3f( 0.3379, -0.0706,  0.3379),
-    Vec3f( 0.3137,  0.0049,  0.3137),
-    Vec3f( 0.1573, -0.0401,  0.1573),
+    vec3f( 0.1597,  0.1538,  0.1597),
+    vec3f( 0.2992,  0.1016,  0.2992),
+    vec3f( 0.2864,  0.1044,  0.2864),
+    vec3f( 0.7837,  0.1590,  0.7837),
+    vec3f( 0.4247,  0.0155,  0.4247),
+    vec3f( 0.6362, -0.3203,  0.6362),
+    vec3f( 0.3379, -0.0706,  0.3379),
+    vec3f( 0.3137,  0.0049,  0.3137),
+    vec3f( 0.1573, -0.0401,  0.1573),
   };
 
-  static const Vec3f LF_coefs[] =
+  static const vec3f LF_coefs[] =
   {
-    Vec3f( 0.1573, -0.0401,  0.1573),
-    Vec3f( 0.2494, -0.0294,  0.2494),
-    Vec3f( 0.1822, -0.0877,  0.1822),
-    Vec3f(-0.0208, -0.3236,  0.0208),
-    Vec3f(-0.0632, -0.3412,  0.0632),
-    Vec3f(-0.1749, -0.1120,  0.1749),
-    Vec3f(-0.1260, -0.4172,  0.1260),
-    Vec3f(-0.3242, -0.1818,  0.3242),
-    Vec3f(-0.2844, -0.1840,  0.2844),
+    vec3f( 0.1573, -0.0401,  0.1573),
+    vec3f( 0.2494, -0.0294,  0.2494),
+    vec3f( 0.1822, -0.0877,  0.1822),
+    vec3f(-0.0208, -0.3236,  0.0208),
+    vec3f(-0.0632, -0.3412,  0.0632),
+    vec3f(-0.1749, -0.1120,  0.1749),
+    vec3f(-0.1260, -0.4172,  0.1260),
+    vec3f(-0.3242, -0.1818,  0.3242),
+    vec3f(-0.2844, -0.1840,  0.2844),
   };
 
-  static const Vec3f MA_coefs[] =
+  static const vec3f MA_coefs[] =
   {
-    Vec3f(-0.2844, -0.1840,  0.2844),
-    Vec3f(-0.3492, -0.1834,  0.3492),
-    Vec3f(-0.4554, -0.1489,  0.4554),
-    Vec3f(-0.6135, -0.0410,  0.6135),
-    Vec3f(-0.7018,  0.0346,  0.7018),
-    Vec3f(-0.5693,  0.1147,  0.5693),
-    Vec3f(-0.4507,  0.2227,  0.4507),
-    Vec3f(-0.3393,  0.2737,  0.3393),
-    Vec3f(-0.2856,  0.2915,  0.2856),
+    vec3f(-0.2844, -0.1840,  0.2844),
+    vec3f(-0.3492, -0.1834,  0.3492),
+    vec3f(-0.4554, -0.1489,  0.4554),
+    vec3f(-0.6135, -0.0410,  0.6135),
+    vec3f(-0.7018,  0.0346,  0.7018),
+    vec3f(-0.5693,  0.1147,  0.5693),
+    vec3f(-0.4507,  0.2227,  0.4507),
+    vec3f(-0.3393,  0.2737,  0.3393),
+    vec3f(-0.2856,  0.2915,  0.2856),
   };
 
   itsParts[DF_0].reset(knots, DF_coefs);
@@ -478,8 +478,8 @@ void Fish::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Fish::grGetBoundingBox");
 
-  bbox.vertex2(Vec2d(-0.75, -0.5));
-  bbox.vertex2(Vec2d(+0.75, +0.5));
+  bbox.vertex2(vec2d(-0.75, -0.5));
+  bbox.vertex2(vec2d(+0.75, +0.5));
 }
 
 void Fish::grRender(Gfx::Canvas& canvas) const
@@ -503,7 +503,7 @@ DOTRACE("Fish::grRender");
       if (inColor)
         canvas.setColor(colors[i]);
 
-      rutz::dynamic_block<Vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
+      rutz::dynamic_block<vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
 
       // Set the coefficients at the break point to a linear sum of
       // the two corresponding endpoints
@@ -511,7 +511,7 @@ DOTRACE("Fish::grRender");
       float alpha = 0.5*(1-itsParts[i].itsCoord);
       float beta  = 0.5*(1+itsParts[i].itsCoord);
 
-      Vec3f pt = itsParts[i].itsPt0 * alpha + itsParts[i].itsPt1 * beta;
+      vec3f pt = itsParts[i].itsPt0 * alpha + itsParts[i].itsPt1 * beta;
 
       // indexing in the coefs array starts at 0
       unsigned int bkpt = itsParts[i].itsBkpt - 1;
@@ -550,19 +550,20 @@ DOTRACE("Fish::grRender");
             {
               Gfx::AttribSaver saver(canvas);
               canvas.setPolygonFill(true);
-              Gfx::Rect<double> rect;
+              geom::rect<double> rect;
               for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
                 {
                   Gfx::MatrixSaver msaver(canvas);
-                  canvas.translate(Vec3d(0.0, 0.0, ctrlpnts[i].z()));
-                  rect.setXYWH(ctrlpnts[i].x(), ctrlpnts[i].y(), 0.03, 0.03);
+                  canvas.translate(vec3d(0.0, 0.0, ctrlpnts[i].z()));
+                  rect.set_lbwh(ctrlpnts[i].x(), ctrlpnts[i].y(),
+                                0.03, 0.03);
                   canvas.drawRect(rect);
                 }
             }
           {
             Gfx::LinesBlock block(canvas);
-            canvas.vertex2(Vec2d(itsParts[i].itsPt0.vec2()));
-            canvas.vertex2(Vec2d(itsParts[i].itsPt1.vec2()));
+            canvas.vertex2(vec2d(itsParts[i].itsPt0.as_vec2()));
+            canvas.vertex2(vec2d(itsParts[i].itsPt1.as_vec2()));
           }
         }
     }

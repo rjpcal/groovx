@@ -70,15 +70,15 @@ struct GxTransformImpl
   GxTransform* owner;
 
 private:
-  mutable Gfx::Txform txformCache;
+  mutable geom::txform txformCache;
 
 public:
-  const Gfx::Txform& getTxform() const
+  const geom::txform& getTxform() const
   {
-    txformCache = Gfx::Txform(owner->translation,
-                              owner->scaling,
-                              owner->rotationAxis,
-                              owner->itsRotationAngle);
+    txformCache = geom::txform(owner->translation,
+                               owner->scaling,
+                               owner->rotationAxis,
+                               owner->itsRotationAngle);
 
     return txformCache;
   }
@@ -174,7 +174,7 @@ DOTRACE("GxTransform::writeTo");
 // accessors //
 ///////////////
 
-const Gfx::Txform& GxTransform::getTxform() const
+const geom::txform& GxTransform::getTxform() const
 {
 DOTRACE("GxTransform::getTxform");
 
@@ -215,14 +215,14 @@ DOTRACE("GxTransform::draw");
 
       const double d = itsJackSize / 10.0;
 
-      canvas.vertex3(Gfx::Vec3<double>(-d, 0.0, 0.0));
-      canvas.vertex3(Gfx::Vec3<double>( d, 0.0, 0.0));
+      canvas.vertex3(geom::vec3<double>(-d, 0.0, 0.0));
+      canvas.vertex3(geom::vec3<double>( d, 0.0, 0.0));
 
-      canvas.vertex3(Gfx::Vec3<double>(0.0, -d, 0.0));
-      canvas.vertex3(Gfx::Vec3<double>(0.0,  d, 0.0));
+      canvas.vertex3(geom::vec3<double>(0.0, -d, 0.0));
+      canvas.vertex3(geom::vec3<double>(0.0,  d, 0.0));
 
-      canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0, -d));
-      canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0,  d));
+      canvas.vertex3(geom::vec3<double>(0.0, 0.0, -d));
+      canvas.vertex3(geom::vec3<double>(0.0, 0.0,  d));
     }
 }
 

@@ -42,74 +42,74 @@ DBG_REGISTER
 
 namespace
 {
-  using namespace Gfx;
+  using namespace geom;
 
   void testAbs()
   {
-    Vec2i v(-1, 3);
-    TEST_REQUIRE(v.abs() == Vec2i(1, 3));
+    vec2i v(-1, 3);
+    TEST_REQUIRE(v.abs() == vec2i(1, 3));
   }
 
   void testLength()
   {
-    Vec2d v(3.0, 4.0);
+    vec2d v(3.0, 4.0);
     TEST_REQUIRE(v.length() == 5.0);
   }
 
   void testSetLength()
   {
-    Vec2d v(0.6, 0.8);
-    v.setLength(5.0);
+    vec2d v(0.6, 0.8);
+    v.set_length(5.0);
     TEST_REQUIRE(approxEq(v.length(), 5.0));
-    TEST_REQUIRE(v == Vec2d(3.0, 4.0));
+    TEST_REQUIRE(v == vec2d(3.0, 4.0));
   }
 
   void testSetPolarRad()
   {
-    Vec2d v;
-    v.setPolarRad(2.0, M_PI / 4.0);
+    vec2d v;
+    v.set_polar_rad(2.0, M_PI / 4.0);
     TEST_REQUIRE_APPROX(v.x(), 1.41421, 1e-5);
     TEST_REQUIRE_APPROX(v.y(), 1.41421, 1e-5);
   }
 
   void testThetaDeg()
   {
-    TEST_REQUIRE_APPROX(Vec2d( 1.0,  0.0).thetaDeg(), 0.0,       1e-20);
-    TEST_REQUIRE_APPROX(Vec2d( 1.0,  0.5).thetaDeg(), 26.5651,   1e-4);
-    TEST_REQUIRE_APPROX(Vec2d( 1.0,  1.0).thetaDeg(), 45.0,      1e-20);
-    TEST_REQUIRE_APPROX(Vec2d( 0.5,  1.0).thetaDeg(), 63.4349,   1e-4);
-    TEST_REQUIRE_APPROX(Vec2d( 0.0,  1.0).thetaDeg(), 90.0,      1e-20);
-    TEST_REQUIRE_APPROX(Vec2d(-0.5,  1.0).thetaDeg(), 116.5651,  1e-4);
-    TEST_REQUIRE_APPROX(Vec2d(-1.0,  1.0).thetaDeg(), 135.0,     1e-20);
-    TEST_REQUIRE_APPROX(Vec2d(-1.0,  0.5).thetaDeg(), 153.4349,  1e-4);
-    TEST_REQUIRE_APPROX(Vec2d(-1.0,  0.0).thetaDeg(), 180.0,     1e-20);
-    TEST_REQUIRE_APPROX(Vec2d(-1.0, -0.5).thetaDeg(), -153.4349, 1e-4);
-    TEST_REQUIRE_APPROX(Vec2d(-1.0, -1.0).thetaDeg(), -135.0,    1e-20);
-    TEST_REQUIRE_APPROX(Vec2d(-0.5, -1.0).thetaDeg(), -116.5651, 1e-4);
-    TEST_REQUIRE_APPROX(Vec2d(-0.0, -1.0).thetaDeg(), -90.0,     1e-20);
-    TEST_REQUIRE_APPROX(Vec2d( 0.5, -1.0).thetaDeg(), -63.4349,  1e-4);
-    TEST_REQUIRE_APPROX(Vec2d( 1.0, -1.0).thetaDeg(), -45.0,     1e-20);
-    TEST_REQUIRE_APPROX(Vec2d( 1.0, -0.5).thetaDeg(), -26.5651,  1e-4);
+    TEST_REQUIRE_APPROX(vec2d( 1.0,  0.0).theta_deg(), 0.0,       1e-20);
+    TEST_REQUIRE_APPROX(vec2d( 1.0,  0.5).theta_deg(), 26.5651,   1e-4);
+    TEST_REQUIRE_APPROX(vec2d( 1.0,  1.0).theta_deg(), 45.0,      1e-20);
+    TEST_REQUIRE_APPROX(vec2d( 0.5,  1.0).theta_deg(), 63.4349,   1e-4);
+    TEST_REQUIRE_APPROX(vec2d( 0.0,  1.0).theta_deg(), 90.0,      1e-20);
+    TEST_REQUIRE_APPROX(vec2d(-0.5,  1.0).theta_deg(), 116.5651,  1e-4);
+    TEST_REQUIRE_APPROX(vec2d(-1.0,  1.0).theta_deg(), 135.0,     1e-20);
+    TEST_REQUIRE_APPROX(vec2d(-1.0,  0.5).theta_deg(), 153.4349,  1e-4);
+    TEST_REQUIRE_APPROX(vec2d(-1.0,  0.0).theta_deg(), 180.0,     1e-20);
+    TEST_REQUIRE_APPROX(vec2d(-1.0, -0.5).theta_deg(), -153.4349, 1e-4);
+    TEST_REQUIRE_APPROX(vec2d(-1.0, -1.0).theta_deg(), -135.0,    1e-20);
+    TEST_REQUIRE_APPROX(vec2d(-0.5, -1.0).theta_deg(), -116.5651, 1e-4);
+    TEST_REQUIRE_APPROX(vec2d(-0.0, -1.0).theta_deg(), -90.0,     1e-20);
+    TEST_REQUIRE_APPROX(vec2d( 0.5, -1.0).theta_deg(), -63.4349,  1e-4);
+    TEST_REQUIRE_APPROX(vec2d( 1.0, -1.0).theta_deg(), -45.0,     1e-20);
+    TEST_REQUIRE_APPROX(vec2d( 1.0, -0.5).theta_deg(), -26.5651,  1e-4);
   }
 
   void testSetThetaDeg()
   {
-    { Vec2d v(1, 0); v.setThetaDeg(0.0);    TEST_REQUIRE_APPROX(v.x(),  1.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.000000, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(22.5);   TEST_REQUIRE_APPROX(v.x(),  0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.382683, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(45.0);   TEST_REQUIRE_APPROX(v.x(),  0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.707107, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(67.5);   TEST_REQUIRE_APPROX(v.x(),  0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.923880, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(90.0);   TEST_REQUIRE_APPROX(v.x(),  0.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  1.000000, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(112.5);  TEST_REQUIRE_APPROX(v.x(), -0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.923880, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(135.0);  TEST_REQUIRE_APPROX(v.x(), -0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.707107, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(157.5);  TEST_REQUIRE_APPROX(v.x(), -0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.382683, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(180.0);  TEST_REQUIRE_APPROX(v.x(), -1.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.000000, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(202.5);  TEST_REQUIRE_APPROX(v.x(), -0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.382683, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(225.0);  TEST_REQUIRE_APPROX(v.x(), -0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.707107, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(247.5);  TEST_REQUIRE_APPROX(v.x(), -0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.923880, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(270.0);  TEST_REQUIRE_APPROX(v.x(),  0.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -1.000000, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(292.5);  TEST_REQUIRE_APPROX(v.x(),  0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.923880, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(315.0);  TEST_REQUIRE_APPROX(v.x(),  0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.707107, 1e-4); }
-    { Vec2d v(1, 0); v.setThetaDeg(337.5);  TEST_REQUIRE_APPROX(v.x(),  0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.382683, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(0.0);    TEST_REQUIRE_APPROX(v.x(),  1.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.000000, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(22.5);   TEST_REQUIRE_APPROX(v.x(),  0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.382683, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(45.0);   TEST_REQUIRE_APPROX(v.x(),  0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.707107, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(67.5);   TEST_REQUIRE_APPROX(v.x(),  0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.923880, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(90.0);   TEST_REQUIRE_APPROX(v.x(),  0.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  1.000000, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(112.5);  TEST_REQUIRE_APPROX(v.x(), -0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.923880, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(135.0);  TEST_REQUIRE_APPROX(v.x(), -0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.707107, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(157.5);  TEST_REQUIRE_APPROX(v.x(), -0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.382683, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(180.0);  TEST_REQUIRE_APPROX(v.x(), -1.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(),  0.000000, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(202.5);  TEST_REQUIRE_APPROX(v.x(), -0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.382683, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(225.0);  TEST_REQUIRE_APPROX(v.x(), -0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.707107, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(247.5);  TEST_REQUIRE_APPROX(v.x(), -0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.923880, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(270.0);  TEST_REQUIRE_APPROX(v.x(),  0.000000, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -1.000000, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(292.5);  TEST_REQUIRE_APPROX(v.x(),  0.382683, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.923880, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(315.0);  TEST_REQUIRE_APPROX(v.x(),  0.707107, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.707107, 1e-4); }
+    { vec2d v(1, 0); v.set_theta_deg(337.5);  TEST_REQUIRE_APPROX(v.x(),  0.923880, 1e-4);   TEST_REQUIRE_APPROX(v.y(), -0.382683, 1e-4); }
   }
 }
 
@@ -118,7 +118,7 @@ int Vectwotest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Vectwotest_Init");
 
-  // Package can't be named "Vec2test" because Tcl doesn't like numerals in
+  // Package can't be named "vec2test" because Tcl doesn't like numerals in
   // package names
   PKG_CREATE(interp, "Vectwotest", "$Revision$");
 

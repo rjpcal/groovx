@@ -60,7 +60,7 @@ using rutz::shared_ptr;
 class Gfx::BmapData::Impl
 {
 public:
-  Impl(const Gfx::Vec2<int>& ex, int bits_per_pixel, int byte_alignment) :
+  Impl(const geom::vec2<int>& ex, int bits_per_pixel, int byte_alignment) :
     extent(ex),
     bitsPerPixel(bits_per_pixel),
     byteAlignment(byte_alignment),
@@ -107,7 +107,7 @@ public:
 
   unsigned int byteCount() const { return bytes.size(); }
 
-  Gfx::Vec2<int> extent;
+  geom::vec2<int> extent;
   int bitsPerPixel;
   int byteAlignment;
   rutz::dynamic_block<unsigned char> bytes;
@@ -125,12 +125,12 @@ public:
 Gfx::BmapData::UpdateFunc::~UpdateFunc() {}
 
 Gfx::BmapData::BmapData() :
-  rep(new Impl(Gfx::Vec2<int>(0, 0), 1, 1))
+  rep(new Impl(geom::vec2<int>(0, 0), 1, 1))
 {
 DOTRACE("Gfx::BmapData::BmapData");
 }
 
-Gfx::BmapData::BmapData(const Gfx::Vec2<int>& extent,
+Gfx::BmapData::BmapData(const geom::vec2<int>& extent,
                         int bits_per_pixel, int byte_alignment) :
   rep(new Impl(extent, bits_per_pixel, byte_alignment))
 {
@@ -193,7 +193,7 @@ DOTRACE("Gfx::BmapData::height");
   return rep->extent.y();
 }
 
-Gfx::Vec2<int> Gfx::BmapData::size() const
+geom::vec2<int> Gfx::BmapData::size() const
 {
 DOTRACE("Gfx::BmapData::size");
   updateIfNeeded();

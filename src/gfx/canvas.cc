@@ -47,14 +47,16 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+using geom::vec3d;
+
 namespace
 {
   struct BezData
   {
-    Gfx::Vec3<double> pt0;
-    Gfx::Vec3<double> pt1;
-    Gfx::Vec3<double> pt2;
-    Gfx::Vec3<double> pt3;
+    vec3d pt0;
+    vec3d pt1;
+    vec3d pt2;
+    vec3d pt3;
   };
 
   Gfx::Canvas* appCanvas = 0;
@@ -81,7 +83,7 @@ DOTRACE("Gfx::Canvas::current");
 
 Gfx::Canvas::~Canvas() throw() {}
 
-void Gfx::Canvas::drawRect(const Gfx::Rect<double>& rect, bool filled)
+void Gfx::Canvas::drawRect(const geom::rect<double>& rect, bool filled)
 {
   Gfx::AttribSaver saver(*this);
 
@@ -90,7 +92,7 @@ void Gfx::Canvas::drawRect(const Gfx::Rect<double>& rect, bool filled)
   drawRect(rect);
 }
 
-void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
+void Gfx::Canvas::drawBox(const geom::box<double>& box)
 {
   AttribSaver saver(*this);
 
@@ -131,53 +133,53 @@ void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
   }
 }
 
-void Gfx::Canvas::drawBezier4(const Gfx::Vec3<double>& p1,
-                              const Gfx::Vec3<double>& p2,
-                              const Gfx::Vec3<double>& p3,
-                              const Gfx::Vec3<double>& p4,
+void Gfx::Canvas::drawBezier4(const vec3d& p1,
+                              const vec3d& p2,
+                              const vec3d& p3,
+                              const vec3d& p4,
                               unsigned int subdivisions)
 {
 DOTRACE("Gfx::Canvas::drawBezier4");
 
-  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
-  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
-  Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+  geom::bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+  geom::bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+  geom::bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
 
   beginLineStrip();
   for (unsigned int i = 0; i < subdivisions; ++i)
     {
       double u = double(i) / double(subdivisions - 1);
-      vertex3(Gfx::Vec3<double>(xb.eval(u), yb.eval(u), zb.eval(u)));
+      vertex3(vec3d(xb.eval(u), yb.eval(u), zb.eval(u)));
     }
   end();
 }
 
-void Gfx::Canvas::drawBezierFill4(const Gfx::Vec3<double>& center,
-                                  const Gfx::Vec3<double>& p1,
-                                  const Gfx::Vec3<double>& p2,
-                                  const Gfx::Vec3<double>& p3,
-                                  const Gfx::Vec3<double>& p4,
+void Gfx::Canvas::drawBezierFill4(const vec3d& center,
+                                  const vec3d& p1,
+                                  const vec3d& p2,
+                                  const vec3d& p3,
+                                  const vec3d& p4,
                                   unsigned int subdivisions)
 {
 DOTRACE("Gfx::Canvas::drawBezierFill4");
 
-  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
-  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
-  Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+  geom::bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+  geom::bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+  geom::bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
 
   beginTriangleFan();
   vertex3(center);
   for (unsigned int i = 0; i < subdivisions; ++i)
     {
       double u = double(i) / double(subdivisions - 1);
-      vertex3(Gfx::Vec3<double>(xb.eval(u), yb.eval(u), zb.eval(u)));
+      vertex3(vec3d(xb.eval(u), yb.eval(u), zb.eval(u)));
     }
   end();
 }
 
 void Gfx::Canvas::drawNurbsCurve
   (const rutz::dynamic_block<float>& knots,
-   const rutz::dynamic_block<Gfx::Vec3<float> >& pts)
+   const rutz::dynamic_block<geom::vec3<float> >& pts)
 {
 DOTRACE("Gfx::Canvas::drawNurbsCurve");
 

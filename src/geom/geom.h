@@ -34,7 +34,7 @@
 
 #include <cmath>
 
-namespace Geom
+namespace geom
 {
   inline double deg2rad(double degrees)
   {

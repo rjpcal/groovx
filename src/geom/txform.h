@@ -32,41 +32,41 @@
 #ifndef TXFORM_H_DEFINED
 #define TXFORM_H_DEFINED
 
-namespace Gfx
+namespace geom
 {
+  template <class V> class vec2;
+  template <class V> class vec3;
 
-template <class V> class Vec2;
-template <class V> class Vec3;
+  /// Represents a 4x4 transformation matrix in homogenous coordinates.
+  class txform
+  {
+  public:
+    /// Build an identity transformation matrix.
+    txform();
 
-/// Represents a 4x4 transformation matrix in homogenous coordinates.
-class Txform
-{
-public:
-  /// Build an identity transformation matrix.
-  Txform();
+    txform(const vec3<double>& translation,
+           const vec3<double>& scaling,
+           const vec3<double>& rotation_axis,
+           double rotation_angle);
 
-  Txform(const Vec3<double>& translation,
-         const Vec3<double>& scaling,
-         const Vec3<double>& rotationAxis,
-         double rotationAngle);
+    void translate(const vec3<double>& t);
+    void scale(const vec3<double>& s);
+    void rotate(const vec3<double>& rotation_axis,
+                double rotation_angle);
+    void transform(const geom::txform& other);
 
-  void translate(const Vec3<double>& t);
-  void scale(const Vec3<double>& s);
-  void rotate(const Vec3<double>& rotationAxis, double rotationAngle);
-  void transform(const Gfx::Txform& other);
+    vec2<double> apply_to(const vec2<double>& input) const;
+    vec3<double> apply_to(const vec3<double>& input) const;
 
-  Vec2<double> applyTo(const Vec2<double>& input) const;
-  Vec3<double> applyTo(const Vec3<double>& input) const;
+    const double* col_major_data() const { return &m_mtx[0]; }
 
-  const double* colMajorData() const { return data; }
+    void debug_dump() const;
 
-  void debug_dump() const;
+  private:
+    double m_mtx[16];
+  };
 
-private:
-  double data[16];
-};
-
-} // end namespace Gfx
+} // end namespace geom
 
 static const char vcid_txform_h[] = "$Header$";
 #endif // !TXFORM_H_DEFINED

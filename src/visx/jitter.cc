@@ -133,7 +133,7 @@ DOTRACE("Jitter::draw");
   rejitter();
   // Translate
   canvas.translate(translation +
-                   Gfx::Vec3<double>(itsXShift, itsYShift, 0.0));
+                   geom::vec3<double>(itsXShift, itsYShift, 0.0));
 
   // Scale
   canvas.scale(scaling);

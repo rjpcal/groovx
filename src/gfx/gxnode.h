@@ -41,12 +41,16 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
+namespace geom
+{
+  template <class V> class box;
+  template <class V> class rect;
+}
+
 namespace Gfx
 {
   class Bbox;
   class Canvas;
-  template <class V> class Rect;
-  template <class V> class Box;
 }
 
 namespace Nub
@@ -95,7 +99,7 @@ public:
   virtual rutz::fwd_iter<const Nub::Ref<GxNode> > deepChildren();
 
   /// Get the 2-D z-projection of the result of getBoundingCube().
-  Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;
+  geom::rect<double> getBoundingBox(Gfx::Canvas& canvas) const;
 
   /** Subclasses override this to transform the bounding box according to
       how that subclass is rendered. */

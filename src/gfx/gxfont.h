@@ -37,11 +37,15 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
+namespace geom
+{
+  template <class V> class rect;
+}
+
 namespace Gfx
 {
   class Bbox;
   class Canvas;
-  template <class V> class Rect;
 }
 
 /// An abstract class for fonts.

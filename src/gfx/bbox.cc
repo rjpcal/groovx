@@ -44,32 +44,34 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-using namespace Gfx;
+using geom::vec2i;
+using geom::vec2d;
+using geom::vec3d;
 
 struct Gfx::Bbox::Impl
 {
   Impl(Canvas& c) : canvas(c), cube(), txforms(1), first(true) {}
 
   Canvas& canvas;
-  Box<double> cube;
-  std::vector<Txform> txforms;
+  geom::box<double> cube;
+  std::vector<geom::txform> txforms;
   bool first;
 
-  void merge(const Vec3d& v)
+  void merge(const vec3d& v)
   {
     if (first)
       {
-        Vec3d tx = txforms.back().applyTo(v);
-        cube.setCorners(tx, tx);
+        vec3d tx = txforms.back().apply_to(v);
+        cube.set_corners(tx, tx);
         first = false;
       }
     else
-      cube.merge(txforms.back().applyTo(v));
+      cube.merge(txforms.back().apply_to(v));
   }
 
-  void merge(const Vec2d& v)
+  void merge(const vec2d& v)
   {
-    merge(Vec3d(v.x(), v.y(), 0.0));
+    merge(vec3d(v.x(), v.y(), 0.0));
   }
 };
 
@@ -103,66 +105,66 @@ void Gfx::Bbox::pop()
   rep->txforms.pop_back();
 }
 
-Vec2i Gfx::Bbox::screenFromWorld(const Vec2d& world_pos) const
+vec2i Gfx::Bbox::screenFromWorld(const vec2d& world_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
   return rep->canvas.screenFromWorld(world_pos);
 }
 
-Vec2d Gfx::Bbox::worldFromScreen(const Vec2i& screen_pos) const
+vec2d Gfx::Bbox::worldFromScreen(const vec2i& screen_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
   return rep->canvas.worldFromScreen(screen_pos);
 }
 
-Rect<int> Gfx::Bbox::screenFromWorld(const Rect<double>& world_pos) const
+geom::rect<int> Gfx::Bbox::screenFromWorld(const geom::rect<double>& world_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
   return rep->canvas.screenFromWorld(world_pos);
 }
 
-Rect<double> Gfx::Bbox::worldFromScreen(const Rect<int>& screen_pos) const
+geom::rect<double> Gfx::Bbox::worldFromScreen(const geom::rect<int>& screen_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
   return rep->canvas.worldFromScreen(screen_pos);
 }
 
-void Gfx::Bbox::translate(const Vec3d& v)
+void Gfx::Bbox::translate(const vec3d& v)
 {
   rep->txforms.back().translate(v);
 }
 
-void Gfx::Bbox::scale(const Vec3d& v)
+void Gfx::Bbox::scale(const vec3d& v)
 {
   rep->txforms.back().scale(v);
 }
 
-void Gfx::Bbox::transform(const Txform& m)
+void Gfx::Bbox::transform(const geom::txform& m)
 {
   rep->txforms.back().transform(m);
 
   dbg_dump(2, rep->txforms.back());
 }
 
-void Gfx::Bbox::vertex2(const Vec2d& v)
+void Gfx::Bbox::vertex2(const vec2d& v)
 {
   rep->merge(v);
 }
 
-void Gfx::Bbox::vertex3(const Vec3d& v)
+void Gfx::Bbox::vertex3(const vec3d& v)
 {
   rep->merge(v);
 }
 
-void Gfx::Bbox::drawRect(const Rect<double>& rect)
+void Gfx::Bbox::drawRect(const geom::rect<double>& rect)
 {
-  rep->merge(rect.bottomLeft());
-  rep->merge(rect.bottomRight());
-  rep->merge(rect.topLeft());
-  rep->merge(rect.topRight());
+  rep->merge(rect.bottom_left());
+  rep->merge(rect.bottom_right());
+  rep->merge(rect.top_left());
+  rep->merge(rect.top_right());
 }
 
-void Gfx::Bbox::drawBox(const Box<double>& box)
+void Gfx::Bbox::drawBox(const geom::box<double>& box)
 {
   rep->merge(box.point000());
   rep->merge(box.point001());
@@ -174,12 +176,12 @@ void Gfx::Bbox::drawBox(const Box<double>& box)
   rep->merge(box.point111());
 }
 
-Box<double> Gfx::Bbox::cube() const
+geom::box<double> Gfx::Bbox::cube() const
 {
   return rep->cube;
 }
 
-Rect<double> Gfx::Bbox::rect() const
+geom::rect<double> Gfx::Bbox::rect() const
 {
   return rep->cube.rect();
 }

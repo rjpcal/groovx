@@ -60,10 +60,14 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-using namespace Geom;
-using namespace Gfx;
+using geom::vec2i;
+using geom::vec2d;
 
 using rutz::shared_ptr;
+
+using Gfx::Bbox;
+using Gfx::BmapData;
+using Gfx::Canvas;
 
 namespace
 {
@@ -207,7 +211,7 @@ DOTRACE("GaborArray::saveContourOnlyImage");
       if (itsArray[i].type != GaborArrayElement::CONTOUR)
         continue;
 
-      const double theta = rad_0_2pi(itsArray[i].theta + M_PI_2);
+      const double theta = geom::rad_0_2pi(itsArray[i].theta + M_PI_2);
 
       const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
       const int ycenter = int(itsArray[i].pos.y() + itsSizeY / 2.0 + 0.5);
@@ -233,7 +237,7 @@ DOTRACE("GaborArray::saveContourOnlyImage");
           }
     }
 
-  shared_ptr<BmapData> result(new BmapData(Vec2i(itsSizeX, itsSizeY),
+  shared_ptr<BmapData> result(new BmapData(vec2i(itsSizeX, itsSizeY),
                                            8, 1));
 
   unsigned char* bytes = result->bytesPtr();
@@ -259,14 +263,14 @@ DOTRACE("GaborArray::grGetBoundingBox");
 
   // FIXME this heavily duplicates Gabor::grGetBoundingBox()
 
-  const Vec2d world_origin(0.0, 0.0);
+  const vec2d world_origin(0.0, 0.0);
 
-  const Vec2i screen_origin = bbox.screenFromWorld(world_origin);
+  const vec2i screen_origin = bbox.screenFromWorld(world_origin);
 
-  Rect<int> screen_rect;
-  screen_rect.setXYWH(screen_origin, Vec2i(itsSizeX, itsSizeY));
+  geom::rect<int> screen_rect;
+  screen_rect.set_lbwh(screen_origin, vec2i(itsSizeX, itsSizeY));
 
-  Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  geom::rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
   bbox.drawRect(world_rect);
 }
@@ -277,7 +281,7 @@ DOTRACE("GaborArray::grRender");
 
   update();
 
-  canvas.drawPixels(*itsBmap, Vec2d(0.0, 0.0), Vec2d(1.0, 1.0));
+  canvas.drawPixels(*itsBmap, vec2d(0.0, 0.0), vec2d(1.0, 1.0));
 }
 
 void GaborArray::updateForeg() const
@@ -422,8 +426,8 @@ DOTRACE("GaborArray::generateBmap");
 
       const double theta =
         (itsArray[i].type == GaborArrayElement::CONTOUR)
-        ? rad_0_2pi(itsThetaJitter * (rand_theta - M_PI) +
-                    (itsArray[i].theta + M_PI_2))
+        ? geom::rad_0_2pi(itsThetaJitter * (rand_theta - M_PI) +
+                          (itsArray[i].theta + M_PI_2))
         : rand_theta;
 
       const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
@@ -471,7 +475,7 @@ DOTRACE("GaborArray::generateBmap");
         }
     }
 
-  shared_ptr<BmapData> result(new BmapData(Vec2i(itsSizeX, itsSizeY),
+  shared_ptr<BmapData> result(new BmapData(vec2i(itsSizeX, itsSizeY),
                                            8, 1));
 
   unsigned char* bytes = result->bytesPtr();
@@ -557,7 +561,7 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   return true;
 }
 
-bool GaborArray::tooClose(const Vec2d& v, int except) const
+bool GaborArray::tooClose(const vec2d& v, int except) const
 {
   double minSpacingSqr = itsMinSpacing*itsMinSpacing;
 
@@ -639,7 +643,7 @@ DOTRACE("GaborArray::backgJitter");
           if (itsArray[n].type == GaborArrayElement::CONTOUR)
             continue;
 
-          Vec2d v;
+          vec2d v;
           v.x() = itsArray[n].pos.x() + jitter*(urand.fdraw_range(-1.0, 1.0));
           v.y() = itsArray[n].pos.y() + jitter*(urand.fdraw_range(-1.0, 1.0));
 

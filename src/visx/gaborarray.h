@@ -118,7 +118,7 @@ private:
   void updateBmap() const;
   void update() const;
   bool tryPush(const GaborArrayElement& e) const;
-  bool tooClose(const Gfx::Vec2<double>& v, int except) const;
+  bool tooClose(const geom::vec2<double>& v, int except) const;
   void backgHexGrid() const;
   void backgFill() const;
   void backgJitter(rutz::urand& urand) const;

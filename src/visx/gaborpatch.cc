@@ -38,8 +38,6 @@
 
 #include "util/trace.h"
 
-using namespace Geom;
-
 namespace
 {
   typedef std::map<GaborSpec, GaborPatch*> MapType;
@@ -52,8 +50,8 @@ namespace
 }
 
 GaborSpec::GaborSpec(double s, double o, double t, double p) :
-  theta(DELTA_THETA * (int(rad_0_pi(t)/DELTA_THETA + 0.5) % NUM_THETA)),
-  phi(DELTA_PHASE * (int(rad_0_2pi(p)/DELTA_PHASE + 0.5) % NUM_PHASE)),
+  theta(DELTA_THETA * (int(geom::rad_0_pi(t)/DELTA_THETA + 0.5) % NUM_THETA)),
+  phi(DELTA_PHASE * (int(geom::rad_0_2pi(p)/DELTA_PHASE + 0.5) % NUM_PHASE)),
   sigma(s),
   omega(o)
 {}

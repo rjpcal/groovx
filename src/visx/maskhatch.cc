@@ -48,8 +48,6 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-using namespace Gfx;
-
 namespace
 {
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 3;
@@ -134,7 +132,7 @@ void MaskHatch::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MaskHatch::grGetBoundingBox");
 
-  bbox.drawRect(Gfx::rectLBWH<double>(0.0, 0.0, 1.0, 1.0));
+  bbox.drawRect(geom::rect_lbwh<double>(0.0, 0.0, 1.0, 1.0));
 }
 
 void MaskHatch::grRender(Gfx::Canvas& canvas) const
@@ -149,39 +147,41 @@ DOTRACE("MaskHatch::grRender");
 
   Gfx::LinesBlock b(canvas);
 
+  using geom::vec2d;
+
   for (int i = 0; i < itsNumLines; ++i)
     {
       double position = double(i)/itsNumLines;
 
       // horizontal line
-      canvas.vertex2(Vec2d(0.0, position));
-      canvas.vertex2(Vec2d(1.0, position));
+      canvas.vertex2(vec2d(0.0, position));
+      canvas.vertex2(vec2d(1.0, position));
 
       // vertical line
-      canvas.vertex2(Vec2d(position, 0.0));
-      canvas.vertex2(Vec2d(position, 1.0));
+      canvas.vertex2(vec2d(position, 0.0));
+      canvas.vertex2(vec2d(position, 1.0));
 
       // lines with slope = 1
-      canvas.vertex2(Vec2d(0.0, position));
-      canvas.vertex2(Vec2d(1.0-position, 1.0));
+      canvas.vertex2(vec2d(0.0, position));
+      canvas.vertex2(vec2d(1.0-position, 1.0));
 
-      canvas.vertex2(Vec2d(position, 0.0));
-      canvas.vertex2(Vec2d(1.0, 1.0-position));
+      canvas.vertex2(vec2d(position, 0.0));
+      canvas.vertex2(vec2d(1.0, 1.0-position));
 
       // lines with slope = -1
-      canvas.vertex2(Vec2d(0.0, 1.0-position));
-      canvas.vertex2(Vec2d(1.0-position, 0.0));
+      canvas.vertex2(vec2d(0.0, 1.0-position));
+      canvas.vertex2(vec2d(1.0-position, 0.0));
 
-      canvas.vertex2(Vec2d(position, 1.0));
-      canvas.vertex2(Vec2d(1.0, position));
+      canvas.vertex2(vec2d(position, 1.0));
+      canvas.vertex2(vec2d(1.0, position));
     }
 
   // final closing lines
-  canvas.vertex2(Vec2d(0.0, 1.0));
-  canvas.vertex2(Vec2d(1.0, 1.0));
+  canvas.vertex2(vec2d(0.0, 1.0));
+  canvas.vertex2(vec2d(1.0, 1.0));
 
-  canvas.vertex2(Vec2d(1.0, 0.0));
-  canvas.vertex2(Vec2d(1.0, 1.0));
+  canvas.vertex2(vec2d(1.0, 0.0));
+  canvas.vertex2(vec2d(1.0, 1.0));
 }
 
 static const char vcid_maskhatch_cc[] = "$Header$";

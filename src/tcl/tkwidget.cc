@@ -482,9 +482,9 @@ DOTRACE("Tcl::TkWidget::height");
   return Tk_Height(rep->tkWin);
 }
 
-Gfx::Vec2<int> Tcl::TkWidget::size() const
+geom::vec2<int> Tcl::TkWidget::size() const
 {
-  return Gfx::Vec2<int>(width(), height());
+  return geom::vec2<int>(width(), height());
 }
 
 void Tcl::TkWidget::setWidth(int w)
@@ -492,8 +492,8 @@ void Tcl::TkWidget::setWidth(int w)
 DOTRACE("Tcl::TkWidget::setWidth");
   // Need to specify Tk_ReqHeight(rep->tkWin) instead of
   // Tk_Height(rep->tkWin), since the latter might not reflect the
-  // requested height if the event loop has not been entered since a call
-  // to setHeight().
+  // requested height if the event loop has not been entered since a
+  // call to setHeight().
   Tk_GeometryRequest(rep->tkWin, w, Tk_ReqHeight(rep->tkWin));
 }
 
@@ -502,12 +502,12 @@ void Tcl::TkWidget::setHeight(int h)
 DOTRACE("Tcl::TkWidget::setHeight");
   // Need to specify Tk_ReqWidth(rep->tkWin) instead of
   // Tk_Width(rep->tkWin), since the latter might not reflect the
-  // requested height if the event loop has not been entered since a call
-  // to setWidth().
+  // requested height if the event loop has not been entered since a
+  // call to setWidth().
   Tk_GeometryRequest(rep->tkWin, Tk_ReqWidth(rep->tkWin), h);
 }
 
-void Tcl::TkWidget::setSize(Gfx::Vec2<int> sz)
+void Tcl::TkWidget::setSize(geom::vec2<int> sz)
 {
 DOTRACE("Tcl::TkWidget::setSize");
   Tk_GeometryRequest(rep->tkWin, sz.x(), sz.y());
@@ -692,7 +692,7 @@ DOTRACE("Tcl::TkWidget::maximize");
 
   const int w = WidthOfScreen(Tk_Screen(rep->tkWin));
   const int h = HeightOfScreen(Tk_Screen(rep->tkWin));
-  setSize(Gfx::Vec2<int>(w, h));
+  setSize(geom::vec2<int>(w, h));
 
   Tk_Window mainWin = rep->tkWin;
   while ( !Tk_IsTopLevel(mainWin) )
@@ -711,7 +711,7 @@ DOTRACE("Tcl::TkWidget::minimize");
 
   ungrabKeyboard();
 
-  setSize(Gfx::Vec2<int>(200, 200));
+  setSize(geom::vec2<int>(200, 200));
 }
 
 void Tcl::TkWidget::bind(const fstring& event_sequence, const fstring& script)

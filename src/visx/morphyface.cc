@@ -53,7 +53,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-using namespace Gfx;
+using geom::vec2d;
+using geom::vec3d;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -83,8 +84,8 @@ namespace
       0.7, 0.6, 0.0
     };
 
-    Bezier4 xbezier(-1.0, -top_width, top_width, 1.0);
-    Bezier4 ybezier( 0.0,  4.0/3.0  , 4.0/3.0  , 0.0);
+    geom::bezier4 xbezier(-1.0, -top_width, top_width, 1.0);
+    geom::bezier4 ybezier( 0.0,  4.0/3.0  , 4.0/3.0  , 0.0);
 
     for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
       {
@@ -93,8 +94,8 @@ namespace
         const double x = xbezier.eval(u);
         const double y = ybezier.eval(u);
 
-        const double tang_x = xbezier.evalDeriv(u);
-        const double tang_y = ybezier.evalDeriv(u);
+        const double tang_x = xbezier.eval_deriv(u);
+        const double tang_y = ybezier.eval_deriv(u);
 
         // tangent vector = (tang_x, tang_y)
         // ==> normal vector = (-tang_y, tang_x)
@@ -123,14 +124,14 @@ namespace
   {
     Gfx::MatrixSaver saver(canvas);
 
-    canvas.scale(Vec3d(x_scale, y_scale, 1.0));
+    canvas.scale(vec3d(x_scale, y_scale, 1.0));
 
     Gfx::QuadStripBlock block(canvas);
 
     for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
       {
-        canvas.vertex2(Vec2d(vertices[4*i  ], vertices[4*i+1]));
-        canvas.vertex2(Vec2d(vertices[4*i+2], vertices[4*i+3]));
+        canvas.vertex2(vec2d(vertices[4*i  ], vertices[4*i+1]));
+        canvas.vertex2(vec2d(vertices[4*i+2], vertices[4*i+3]));
       }
   }
 
@@ -308,19 +309,19 @@ DOTRACE("MorphyFace::grRender");
 
   //canvas.enableAntialiasing();
 
-  LineStrip ls;
+  Gfx::LineStrip ls;
   ls.lineJoin(itsLineJoin);
 
   //
   // Draw eyes
   //
 
-  const Vec3d eye_ctrlpnts[4] =
+  const vec3d eye_ctrlpnts[4] =
   {
-    Vec3d(-3.0/7.0, 0.0,     0.0),
-    Vec3d(-2.0/7.0, 2.0/3.0, 0.0),
-    Vec3d( 2.0/7.0, 2.0/3.0, 0.0),
-    Vec3d( 4.0/7.0, 0.0,     0.0)
+    vec3d(-3.0/7.0, 0.0,     0.0),
+    vec3d(-2.0/7.0, 2.0/3.0, 0.0),
+    vec3d( 2.0/7.0, 2.0/3.0, 0.0),
+    vec3d( 4.0/7.0, 0.0,     0.0)
   };
 
   const int eye_subdivisions = 20;
@@ -330,20 +331,20 @@ DOTRACE("MorphyFace::grRender");
       Gfx::MatrixSaver msaver(canvas);
 
       // Do appropriate reflection
-      canvas.scale(Vec3d(left_right*1.0, 1.0, 1.0));
+      canvas.scale(vec3d(left_right*1.0, 1.0, 1.0));
 
       // Move to the eye position
-      canvas.translate(Vec3d(rutz::abs(itsEyeDistance)/2.0,
+      canvas.translate(vec3d(rutz::abs(itsEyeDistance)/2.0,
                              itsEyeYpos, 0.0));
 
       // Draw eye outline
       {
         DOTRACE("MorphyFace::grRender-draw eye outline");
 
-        const Vec3d s1(itsEyeHeight*itsEyeAspectRatio,
+        const vec3d s1(itsEyeHeight*itsEyeAspectRatio,
                        -itsEyeHeight,
                        1.0);
-        const Vec3d s2(itsEyeHeight*itsEyeAspectRatio,
+        const vec3d s2(itsEyeHeight*itsEyeAspectRatio,
                        itsEyeHeight,
                        1.0);
 
@@ -370,14 +371,14 @@ DOTRACE("MorphyFace::grRender");
 
         Gfx::MatrixSaver msaver3(canvas);
 
-        canvas.translate(Vec3d(itsEyebrowXpos, itsEyebrowYpos, 0.0));
-        canvas.rotate(Vec3d::unitZ(), itsEyebrowAngle);
+        canvas.translate(vec3d(itsEyebrowXpos, itsEyebrowYpos, 0.0));
+        canvas.rotate(vec3d::unit_z(), itsEyebrowAngle);
 
         Gfx::AttribSaver asaver(canvas);
 
         canvas.setLineWidth(itsEyebrowThickness);
 
-        const Vec3d s(itsEyeHeight*itsEyeAspectRatio,
+        const vec3d s(itsEyeHeight*itsEyeAspectRatio,
                       itsEyeHeight*itsEyebrowCurvature,
                       1.0);
 
@@ -394,7 +395,7 @@ DOTRACE("MorphyFace::grRender");
 
         Gfx::MatrixSaver msaver4(canvas);
 
-        canvas.translate(Vec3d(left_right*itsPupilXpos,
+        canvas.translate(vec3d(left_right*itsPupilXpos,
                                itsPupilYpos, 0.0));
 
         double radius = 0.5 * itsPupilSize * itsEyeHeight;
@@ -413,19 +414,19 @@ DOTRACE("MorphyFace::grRender");
 
   ls.closeLoop(true);
   ls.begin(canvas, 0.015*itsStrokeWidth);
-  ls.drawBezier4(Vec3d(itsFaceWidth, 0.0, 0.0),
-                 Vec3d(itsBottomWidth*itsFaceWidth,
+  ls.drawBezier4(vec3d(itsFaceWidth, 0.0, 0.0),
+                 vec3d(itsBottomWidth*itsFaceWidth,
                        itsBottomHeight*4.0/3.0, 0.0),
-                 Vec3d(-itsBottomWidth*itsFaceWidth,
+                 vec3d(-itsBottomWidth*itsFaceWidth,
                        itsBottomHeight*4.0/3.0, 0.0),
-                 Vec3d(-itsFaceWidth, 0.0, 0.0),
+                 vec3d(-itsFaceWidth, 0.0, 0.0),
                  50, 1);
-  ls.drawBezier4(Vec3d(-itsFaceWidth, 0.0, 0.0),
-                 Vec3d(-itsTopWidth*itsFaceWidth,
+  ls.drawBezier4(vec3d(-itsFaceWidth, 0.0, 0.0),
+                 vec3d(-itsTopWidth*itsFaceWidth,
                        itsTopHeight*4.0/3.0, 0.0),
-                 Vec3d(itsTopWidth*itsFaceWidth,
+                 vec3d(itsTopWidth*itsFaceWidth,
                        itsTopHeight*4.0/3.0, 0.0),
-                 Vec3d(itsFaceWidth, 0.0, 0.0),
+                 vec3d(itsFaceWidth, 0.0, 0.0),
                  50, 1);
   ls.end();
   ls.closeLoop(false);
@@ -439,21 +440,21 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::MatrixSaver msaver5(canvas);
 
-    canvas.translate(Vec3d(itsNoseXpos, itsNoseYpos, 0.0));
+    canvas.translate(vec3d(itsNoseXpos, itsNoseYpos, 0.0));
 
-    const Vec2d s(rutz::abs(itsNoseWidth)/2.0,
+    const vec2d s(rutz::abs(itsNoseWidth)/2.0,
                   rutz::abs(itsNoseLength));
 
     ls.begin(canvas, 0.01*itsStrokeWidth);
-    ls.vertex(s*Vec2d(-0.75, 0.5));
-    ls.vertex(s*Vec2d(-1.0,  0.0));
-    ls.vertex(s*Vec2d(-0.75, -0.333333));
-    ls.vertex(s*Vec2d(-0.25, -0.333333));
-    ls.vertex(s*Vec2d( 0.0, -0.5));   // CENTER
-    ls.vertex(s*Vec2d( 0.25, -0.333333));
-    ls.vertex(s*Vec2d( 0.75, -0.333333));
-    ls.vertex(s*Vec2d( 1.0,  0.0));
-    ls.vertex(s*Vec2d( 0.75, 0.5));
+    ls.vertex(s*vec2d(-0.75, 0.5));
+    ls.vertex(s*vec2d(-1.0,  0.0));
+    ls.vertex(s*vec2d(-0.75, -0.333333));
+    ls.vertex(s*vec2d(-0.25, -0.333333));
+    ls.vertex(s*vec2d( 0.0, -0.5));   // CENTER
+    ls.vertex(s*vec2d( 0.25, -0.333333));
+    ls.vertex(s*vec2d( 0.75, -0.333333));
+    ls.vertex(s*vec2d( 1.0,  0.0));
+    ls.vertex(s*vec2d( 0.75, 0.5));
     ls.end();
   }
 
@@ -466,15 +467,15 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::MatrixSaver msaver6(canvas);
 
-    canvas.translate(Vec3d(itsMouthXpos, itsMouthYpos, 0.0));
+    canvas.translate(vec3d(itsMouthXpos, itsMouthYpos, 0.0));
 
-    const Vec3d s(itsMouthWidth, itsMouthCurvature, 1.0);
+    const vec3d s(itsMouthWidth, itsMouthCurvature, 1.0);
 
     ls.begin(canvas, 0.01*itsStrokeWidth);
-    ls.drawBezier4(s*Vec3d(-0.5,  0.5,      0.0),
-                   s*Vec3d(-0.2, -0.833333, 0.0),
-                   s*Vec3d( 0.2, -0.833333, 0.0),
-                   s*Vec3d( 0.5,  0.5,      0.0),
+    ls.drawBezier4(s*vec3d(-0.5,  0.5,      0.0),
+                   s*vec3d(-0.2, -0.833333, 0.0),
+                   s*vec3d( 0.2, -0.833333, 0.0),
+                   s*vec3d( 0.5,  0.5,      0.0),
                    30);
     ls.end();
   }
@@ -508,13 +509,13 @@ void MorphyFace::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MorphyFace::grGetBoundingBox");
 
-  Gfx::Rect<double> rect;
+  geom::rect<double> rect;
 
-  Bezier4 xbezier_top(-1.0, -itsTopWidth, itsTopWidth, 1.0);
-  Bezier4 xbezier_bottom(1.0, itsBottomWidth, -itsBottomWidth, -1.0);
+  geom::bezier4 xbezier_top(-1.0, -itsTopWidth, itsTopWidth, 1.0);
+  geom::bezier4 xbezier_bottom(1.0, itsBottomWidth, -itsBottomWidth, -1.0);
 
-  double top_width = xbezier_top.evalMax();
-  double bottom_width = xbezier_bottom.evalMax();
+  double top_width = xbezier_top.eval_max();
+  double bottom_width = xbezier_bottom.eval_max();
 
   dbg_eval(3, top_width);   dbg_eval_nl(3, bottom_width);
 

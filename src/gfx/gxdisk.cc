@@ -106,11 +106,11 @@ void GxDisk::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxDisk::getBoundingCube");
 
-  Gfx::Box<double> mybox;
+  geom::box<double> mybox;
 
-  mybox.setXXYYZZ(-itsOuterRadius, itsOuterRadius,
-                  -itsOuterRadius, itsOuterRadius,
-                  0.0, 0.0);
+  mybox.set_xx_yy_zz(-itsOuterRadius, itsOuterRadius,
+                     -itsOuterRadius, itsOuterRadius,
+                     0.0, 0.0);
 
   bbox.drawBox(mybox);
 }

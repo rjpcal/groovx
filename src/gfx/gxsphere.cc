@@ -104,11 +104,11 @@ void GxSphere::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxSphere::getBoundingCube");
 
-  Gfx::Box<double> mybox;
+  geom::box<double> mybox;
 
-  mybox.setXXYYZZ(-itsRadius, itsRadius,
-                  -itsRadius, itsRadius,
-                  -itsRadius, itsRadius);
+  mybox.set_xx_yy_zz(-itsRadius, itsRadius,
+                     -itsRadius, itsRadius,
+                     -itsRadius, itsRadius);
 
   bbox.drawBox(mybox);
 }

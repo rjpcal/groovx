@@ -32,15 +32,19 @@
 #ifndef BBOX_H_DEFINED
 #define BBOX_H_DEFINED
 
+namespace geom
+{
+  template <class V> class box;
+  template <class V> class rect;
+  template <class V> class vec2;
+  template <class V> class vec3;
+  class txform;
+}
+
 namespace Gfx
 {
   class Bbox;
   class Canvas;
-  class Txform;
-  template <class V> class Box;
-  template <class V> class Rect;
-  template <class V> class Vec2;
-  template <class V> class Vec3;
 }
 
 /// Computes a "shrink-wrapped" bounding box around a set of graphics primitives.
@@ -58,27 +62,27 @@ public:
   void push();
   void pop();
 
-  Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
+  geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const;
 
-  Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const;
+  geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const;
 
-  Gfx::Rect<int> screenFromWorld(const Gfx::Rect<double>& world_pos) const;
+  geom::rect<int> screenFromWorld(const geom::rect<double>& world_pos) const;
 
-  Gfx::Rect<double> worldFromScreen(const Gfx::Rect<int>& screen_pos) const;
+  geom::rect<double> worldFromScreen(const geom::rect<int>& screen_pos) const;
 
-  void translate(const Gfx::Vec3<double>& v);
-  void scale(const Gfx::Vec3<double>& v);
-  void transform(const Gfx::Txform& m);
+  void translate(const geom::vec3<double>& v);
+  void scale(const geom::vec3<double>& v);
+  void transform(const geom::txform& m);
 
-  void vertex2(const Gfx::Vec2<double>& v);
-  void vertex3(const Gfx::Vec3<double>& v);
+  void vertex2(const geom::vec2<double>& v);
+  void vertex3(const geom::vec3<double>& v);
 
-  void drawRect(const Gfx::Rect<double>& rect);
+  void drawRect(const geom::rect<double>& rect);
 
-  void drawBox(const Gfx::Box<double>& box);
+  void drawBox(const geom::box<double>& box);
 
-  Gfx::Box<double> cube() const;
-  Gfx::Rect<double> rect() const;
+  geom::box<double> cube() const;
+  geom::rect<double> rect() const;
 
 private:
   Bbox& operator=(const Bbox&);

@@ -39,9 +39,9 @@
 
 class GxTransformImpl;
 
-namespace Gfx
+namespace geom
 {
-  class Txform;
+  class txform;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ public:
   static const FieldMap& classFields();
 
   /// Get the associated coordinate transform matrix.
-  const Gfx::Txform& getTxform() const;
+  const geom::txform& getTxform() const;
 
   /// Apply our transformation to the bbox.
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;

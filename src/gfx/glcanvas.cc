@@ -62,9 +62,11 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-using rutz::shared_ptr;
+using geom::vec2i;
+using geom::vec2d;
+using geom::vec3d;
 
-using namespace Gfx;
+using rutz::shared_ptr;
 
 class GLCanvas::Impl
 {
@@ -111,9 +113,9 @@ DOTRACE("GLCanvas::drawBufferBack");
   glDrawBuffer(GL_BACK);
 }
 
-Vec2i GLCanvas::screenFromWorld(const Vec2d& world_pos) const
+vec2i GLCanvas::screenFromWorld(const vec2d& world_pos) const
 {
-DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
+DOTRACE("GLCanvas::screenFromWorld(geom::vec2)");
 
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -136,12 +138,12 @@ DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
     throw rutz::error("GLCanvas::screenFromWorld(): gluProject error",
                       SRC_POS);
 
-  return Vec2i(int(temp_screen_x), int(temp_screen_y));
+  return vec2i(int(temp_screen_x), int(temp_screen_y));
 }
 
-Vec2d GLCanvas::worldFromScreen(const Vec2i& screen_pos) const
+vec2d GLCanvas::worldFromScreen(const vec2i& screen_pos) const
 {
-DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
+DOTRACE("GLCanvas::worldFromScreen(geom::vec2)");
 
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -153,7 +155,7 @@ DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
 
   double dummy_z;
 
-  Vec2d world_pos;
+  vec2d world_pos;
 
   GLint status =
     gluUnProject(screen_pos.x(), screen_pos.y(), 0,
@@ -170,37 +172,37 @@ DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
 }
 
 
-Rect<int> GLCanvas::screenFromWorld(const Rect<double>& world_pos) const
+geom::rect<int> GLCanvas::screenFromWorld(const geom::rect<double>& world_pos) const
 {
-DOTRACE("GLCanvas::screenFromWorld(Gfx::Rect)");
+DOTRACE("GLCanvas::screenFromWorld(geom::rect)");
 
-  Rect<int> screen_rect;
-  screen_rect.setBottomLeft( screenFromWorld(world_pos.bottomLeft()) );
-  screen_rect.setTopRight  ( screenFromWorld(world_pos.topRight()) +
-                             Vec2i(1,1) );
+  geom::rect<int> screen_rect;
+  screen_rect.set_bottom_left( screenFromWorld(world_pos.bottom_left()) );
+  screen_rect.set_top_right  ( screenFromWorld(world_pos.top_right()) +
+                               vec2i(1,1) );
   return screen_rect;
 }
 
-Rect<double> GLCanvas::worldFromScreen(const Rect<int>& screen_pos) const
+geom::rect<double> GLCanvas::worldFromScreen(const geom::rect<int>& screen_pos) const
 {
-DOTRACE("GLCanvas::worldFromScreen(Gfx::Rect)");
+DOTRACE("GLCanvas::worldFromScreen(geom::rect)");
 
-  Rect<double> world_rect;
-  world_rect.setBottomLeft( worldFromScreen(screen_pos.bottomLeft()) );
-  world_rect.setTopRight  ( worldFromScreen(screen_pos.topRight())   );
+  geom::rect<double> world_rect;
+  world_rect.set_bottom_left( worldFromScreen(screen_pos.bottom_left()) );
+  world_rect.set_top_right  ( worldFromScreen(screen_pos.top_right())   );
   return world_rect;
 }
 
-Rect<int> GLCanvas::getScreenViewport() const
+geom::rect<int> GLCanvas::getScreenViewport() const
 {
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
-  return rectLBWH<int>(viewport[0], viewport[1],
-                       viewport[2], viewport[3]);
+  return geom::rect_lbwh<int>(viewport[0], viewport[1],
+                              viewport[2], viewport[3]);
 }
 
-Rect<double> GLCanvas::getWorldViewport() const
+geom::rect<double> GLCanvas::getWorldViewport() const
 {
   return worldFromScreen(getScreenViewport());
 }
@@ -406,7 +408,7 @@ DOTRACE("GLCanvas::viewport");
     }
 }
 
-void GLCanvas::orthographic(const Rect<double>& bounds,
+void GLCanvas::orthographic(const geom::rect<double>& bounds,
                             double zNear, double zFar)
 {
 DOTRACE("GLCanvas::orthographic");
@@ -443,37 +445,37 @@ DOTRACE("GLCanvas::popMatrix");
   glPopMatrix();
 }
 
-void GLCanvas::translate(const Vec3d& v)
+void GLCanvas::translate(const vec3d& v)
 {
 DOTRACE("GLCanvas::translate");
   glTranslated(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::scale(const Vec3d& v)
+void GLCanvas::scale(const vec3d& v)
 {
 DOTRACE("GLCanvas::scale");
   glScaled(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::rotate(const Vec3d& v, double angle_in_degrees)
+void GLCanvas::rotate(const vec3d& v, double angle_in_degrees)
 {
 DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
 }
 
-void GLCanvas::transform(const Gfx::Txform& tx)
+void GLCanvas::transform(const geom::txform& tx)
 {
 DOTRACE("GLCanvas::transform");
-  glMultMatrixd(tx.colMajorData());
+  glMultMatrixd(tx.col_major_data());
 }
 
-void GLCanvas::rasterPos(const Gfx::Vec2<double>& world_pos)
+void GLCanvas::rasterPos(const geom::vec2<double>& world_pos)
 {
 DOTRACE("GLCanvas::rasterPos");
 
-  const Rect<int> viewport = getScreenViewport();
+  const geom::rect<int> viewport = getScreenViewport();
 
-  const Vec2i screen_pos = screenFromWorld(world_pos);
+  const vec2i screen_pos = screenFromWorld(world_pos);
 
   if (viewport.contains(screen_pos))
     {
@@ -491,7 +493,7 @@ DOTRACE("GLCanvas::rasterPos");
       // (0,0). Then we do a glBitmap() call whose only purpose is to
       // use the "xmove" and "ymove" arguments to adjust the raster
       // position.
-      const Vec2d lower_left = worldFromScreen(Vec2i(0,0));
+      const vec2d lower_left = worldFromScreen(vec2i(0,0));
       glRasterPos2d(lower_left.x(), lower_left.y());
       glBitmap(0, 0, 0.0f, 0.0f,
                screen_pos.x(),
@@ -501,8 +503,8 @@ DOTRACE("GLCanvas::rasterPos");
 }
 
 void GLCanvas::drawPixels(const Gfx::BmapData& data,
-                          const Vec2d& world_pos,
-                          const Vec2d& zoom)
+                          const vec2d& world_pos,
+                          const vec2d& zoom)
 {
 DOTRACE("GLCanvas::drawPixels");
 
@@ -557,7 +559,7 @@ DOTRACE("GLCanvas::drawPixels");
 }
 
 void GLCanvas::drawBitmap(const Gfx::BmapData& data,
-                          const Vec2d& world_pos)
+                          const vec2d& world_pos)
 {
 DOTRACE("GLCanvas::drawBitmap");
 
@@ -569,7 +571,8 @@ DOTRACE("GLCanvas::drawBitmap");
            static_cast<GLubyte*>(data.bytesPtr()));
 }
 
-void GLCanvas::grabPixels(const Rect<int>& bounds, Gfx::BmapData& data_out)
+void GLCanvas::grabPixels(const geom::rect<int>& bounds,
+                          Gfx::BmapData& data_out)
 {
 DOTRACE("GLCanvas::grabPixels");
 
@@ -608,9 +611,9 @@ DOTRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void GLCanvas::clearColorBuffer(const Rect<int>& screen_rect)
+void GLCanvas::clearColorBuffer(const geom::rect<int>& screen_rect)
 {
-DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
+DOTRACE("GLCanvas::clearColorBuffer(geom::rect)");
 
   glPushAttrib(GL_SCISSOR_BIT);
   {
@@ -625,7 +628,7 @@ DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
   glPopAttrib();
 }
 
-void GLCanvas::drawRect(const Rect<double>& rect)
+void GLCanvas::drawRect(const geom::rect<double>& rect)
 {
 DOTRACE("GLCanvas::drawRect");
 
@@ -682,10 +685,10 @@ DOTRACE("GLCanvas::drawSphere");
   gluDeleteQuadric(qobj);
 }
 
-void GLCanvas::drawBezier4(const Vec3d& p1,
-                           const Vec3d& p2,
-                           const Vec3d& p3,
-                           const Vec3d& p4,
+void GLCanvas::drawBezier4(const vec3d& p1,
+                           const vec3d& p2,
+                           const vec3d& p3,
+                           const vec3d& p4,
                            unsigned int subdivisions)
 {
 DOTRACE("GLCanvas::drawBezier4");
@@ -697,7 +700,7 @@ DOTRACE("GLCanvas::drawBezier4");
 
 #else
 
-  Vec3d points[] =
+  vec3d points[] =
   {
     p1, p2, p3, p4
   };
@@ -710,11 +713,11 @@ DOTRACE("GLCanvas::drawBezier4");
 #endif
 }
 
-void GLCanvas::drawBezierFill4(const Vec3d& center,
-                               const Vec3d& p1,
-                               const Vec3d& p2,
-                               const Vec3d& p3,
-                               const Vec3d& p4,
+void GLCanvas::drawBezierFill4(const vec3d& center,
+                               const vec3d& p1,
+                               const vec3d& p2,
+                               const vec3d& p3,
+                               const vec3d& p4,
                                unsigned int subdivisions)
 {
 DOTRACE("GLCanvas::drawBezierFill4");
@@ -725,7 +728,7 @@ DOTRACE("GLCanvas::drawBezierFill4");
 #if 0
   Canvas::drawBezierFill4(center, p1, p2, p3, p4, subdivisions);
 #else
-  Vec3d points[] =
+  vec3d points[] =
   {
     p1, p2, p3, p4
   };
@@ -780,13 +783,13 @@ void GLCanvas::beginQuadStrip(const char* /*comment*/)
 void GLCanvas::beginPolygon(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
 
-void GLCanvas::vertex2(const Vec2d& v)
+void GLCanvas::vertex2(const vec2d& v)
 {
 DOTRACE("GLCanvas::vertex2");
   glVertex2d(v.x(), v.y());
 }
 
-void GLCanvas::vertex3(const Vec3d& v)
+void GLCanvas::vertex3(const vec3d& v)
 {
 DOTRACE("GLCanvas::vertex3");
   glVertex3d(v.x(), v.y(), v.z());
@@ -817,7 +820,7 @@ DOTRACE("GLCanvas::drawRasterText");
 
       dbg_eval(3, len); dbg_eval_nl(3, p);
 
-      rasterPos( Vec2d(0.0, 0.0) );
+      rasterPos( vec2d(0.0, 0.0) );
       if (line > 0)
         {
           // this is a workaround to shift the raster position by a given
@@ -950,8 +953,8 @@ void GLCanvas::light(int lightnum,
                      const Gfx::RgbaColor* spec,
                      const Gfx::RgbaColor* diff,
                      const Gfx::RgbaColor* ambi,
-                     const Vec3d* posi,
-                     const Vec3d* sdir,
+                     const vec3d* posi,
+                     const vec3d* sdir,
                      double attenuation,
                      double spotExponent,
                      double spotCutoff)

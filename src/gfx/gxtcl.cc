@@ -101,7 +101,7 @@ namespace GxTcl
       }
   }
 
-  Gfx::Rect<double> boundingBox(Nub::Ref<GxNode> obj)
+  geom::rect<double> boundingBox(Nub::Ref<GxNode> obj)
   {
     return obj->getBoundingBox(Gfx::Canvas::current());
   }
@@ -139,7 +139,7 @@ namespace GxTcl
 
     Tcl::List result;
 
-    Bezier4 bez(p1, p2, p3, p4);
+    geom::bezier4 bez(p1, p2, p3, p4);
 
     for (unsigned int i = 0; i < N; ++i)
       {

@@ -71,7 +71,7 @@ DOTRACE("GxScaler::setMode");
 
 void GxScaler::setWidth(double new_width)
 {
-  Gfx::Rect<double> native_bbox =
+  geom::rect<double> native_bbox =
     child()->getBoundingBox(Gfx::Canvas::current());
 
   double current_width = native_bbox.width() * itsWidthFactor;
@@ -95,7 +95,7 @@ void GxScaler::setWidth(double new_width)
 
 void GxScaler::setHeight(double new_height)
 {
-  Gfx::Rect<double> native_bbox =
+  geom::rect<double> native_bbox =
     child()->getBoundingBox(Gfx::Canvas::current());
 
   double current_height = native_bbox.height() * itsHeightFactor;
@@ -166,14 +166,14 @@ double GxScaler::aspectRatio() const
 
 double GxScaler::scaledWidth() const
 {
-  Gfx::Rect<double> native_bbox =
+  geom::rect<double> native_bbox =
     child()->getBoundingBox(Gfx::Canvas::current());
   return native_bbox.width() * itsWidthFactor;
 }
 
 double GxScaler::scaledHeight() const
 {
-  Gfx::Rect<double> native_bbox =
+  geom::rect<double> native_bbox =
     child()->getBoundingBox(Gfx::Canvas::current());
   return native_bbox.height() * itsHeightFactor;
 }
@@ -192,7 +192,7 @@ void GxScaler::draw(Gfx::Canvas& canvas) const
   else
     {
       Gfx::MatrixSaver state(canvas);
-      canvas.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+      canvas.scale(geom::vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
       child()->draw(canvas);
     }
 }
@@ -202,7 +202,7 @@ void GxScaler::getBoundingCube(Gfx::Bbox& bbox) const
   bbox.push();
 
   if (NATIVE_SCALING != itsMode)
-    bbox.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+    bbox.scale(geom::vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
 
   child()->getBoundingCube(bbox);
 

@@ -39,17 +39,17 @@
 
 namespace Tcl
 {
-  /// Conversion routine for Tcl object to Gfx::Vec2.
+  /// Conversion routine for Tcl object to geom::vec2.
   template <class T>
-  inline Gfx::Vec2<T> fromTcl(Tcl_Obj* obj, Gfx::Vec2<T>*)
+  inline geom::vec2<T> fromTcl(Tcl_Obj* obj, geom::vec2<T>*)
   {
     Tcl::List listObj(obj);
-    return Gfx::Vec2<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0));
+    return geom::vec2<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0));
   }
 
-  /// Conversion routine for Gfx::Vec2 to Tcl::ObjPtr.
+  /// Conversion routine for geom::vec2 to Tcl::ObjPtr.
   template <class T>
-  inline Tcl::ObjPtr toTcl( const Gfx::Vec2<T>& point )
+  inline Tcl::ObjPtr toTcl( const geom::vec2<T>& point )
   {
     Tcl::List listObj;
     listObj.append(point.x());

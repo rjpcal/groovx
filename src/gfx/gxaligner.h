@@ -84,7 +84,7 @@ public:
   GxAligner(Nub::SoftRef<GxNode> child);
 
   /// Get the center after aligning the given rect.
-  Gfx::Vec2<double> getCenter(const Gfx::Rect<double>& bounds) const;
+  geom::vec2<double> getCenter(const geom::rect<double>& bounds) const;
 
   /// Get the alignment mode.
   Mode getMode() const        { return itsMode; }
@@ -100,11 +100,11 @@ public:
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
 private:
-  void doAlignment(Gfx::Canvas& canvas, const Gfx::Rect<double>& native) const;
+  void doAlignment(Gfx::Canvas& canvas, const geom::rect<double>& native) const;
 
 public:
   Mode itsMode;                 ///< Current alignment mode.
-  Gfx::Vec2<double> itsCenter;  ///< Current center.
+  geom::vec2<double> itsCenter; ///< Current center.
 };
 
 

@@ -39,9 +39,9 @@ struct Tcl_Interp;
 
 typedef struct Tk_Window_ *Tk_Window;
 
-namespace Gfx
+namespace geom
 {
-  template <class T> class Vec2;
+  template <class T> class vec2;
 }
 
 namespace Tcl
@@ -98,10 +98,10 @@ public:
 
   int width() const;
   int height() const;
-  Gfx::Vec2<int> size() const;
+  geom::vec2<int> size() const;
   void setWidth(int w);
   void setHeight(int h);
-  void setSize(Gfx::Vec2<int> sz);
+  void setSize(geom::vec2<int> sz);
 
   Tcl::Interp& interp() const;
   Tk_Window tkWin() const;

@@ -39,18 +39,20 @@
 
 namespace Tcl
 {
-  /// Conversion routines for Tcl object to Gfx::Rect.
+  /// Conversion routines for Tcl object to geom::rect.
   template <class T>
-  inline Gfx::Rect<T> fromTcl(Tcl_Obj* obj, Gfx::Rect<T>*)
+  inline geom::rect<T> fromTcl(Tcl_Obj* obj, geom::rect<T>*)
   {
     Tcl::List listObj(obj);
-    return Gfx::rectLTRB<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
-                            listObj.get(2, (T*)0), listObj.get(3, (T*)0));
+    return geom::rect_ltrb<T>(listObj.get(0, (T*)0),
+                              listObj.get(1, (T*)0),
+                              listObj.get(2, (T*)0),
+                              listObj.get(3, (T*)0));
   }
 
-  /// Conversion routine for Gfx::Rect to Tcl::ObjPtr.
+  /// Conversion routine for geom::rect to Tcl::ObjPtr.
   template <class T>
-  inline Tcl::ObjPtr toTcl( const Gfx::Rect<T>& rect )
+  inline Tcl::ObjPtr toTcl( const geom::rect<T>& rect )
   {
     Tcl::List listObj;
     listObj.append(rect.left());

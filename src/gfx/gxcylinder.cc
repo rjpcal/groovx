@@ -108,13 +108,13 @@ void GxCylinder::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxCylinder::getBoundingCube");
 
-  Gfx::Box<double> mybox;
+  geom::box<double> mybox;
 
   const double maxr = itsBase > itsTop ? itsBase : itsTop;
 
-  mybox.setXXYYZZ(-maxr, maxr,
-                  -maxr, maxr,
-                  0.0, itsHeight);
+  mybox.set_xx_yy_zz(-maxr, maxr,
+                     -maxr, maxr,
+                     0.0, itsHeight);
 
   bbox.drawBox(mybox);
 }

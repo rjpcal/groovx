@@ -98,7 +98,7 @@ DOTRACE("GxNode::deepChildren");
     (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
 }
 
-Gfx::Rect<double> GxNode::getBoundingBox(Gfx::Canvas& canvas) const
+geom::rect<double> GxNode::getBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxNode::getBoundingBox");
 
@@ -112,12 +112,12 @@ void GxNode::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxNode::undraw");
 
-  const Gfx::Rect<double> world_box = getBoundingBox(canvas);
+  const geom::rect<double> world_box = getBoundingBox(canvas);
 
-  Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
+  geom::rect<int> screen_box = canvas.screenFromWorld(world_box);
 
-  screen_box.setWidth(screen_box.width()+4);
-  screen_box.setHeight(screen_box.height()+4);
+  screen_box.set_width(screen_box.width()+4);
+  screen_box.set_height(screen_box.height()+4);
 
   canvas.clearColorBuffer(screen_box);
 }
