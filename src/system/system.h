@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Thu Jul 19 14:52:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,31 +37,26 @@ public:
   static const mode_t IXUSR   = 00100;
   /// read by group
   static const mode_t IRGRP   = 00040;
-  /// write by group   
+  /// write by group
   static const mode_t IWGRP   = 00020;
-  /// execute/search by group   
+  /// execute/search by group
   static const mode_t IXGRP   = 00010;
-  /// read by others   
+  /// read by others
   static const mode_t IROTH   = 00004;
-  /// write by others   
+  /// write by others
   static const mode_t IWOTH   = 00002;
-  /// execute/search by others   
+  /// execute/search by others
   static const mode_t IXOTH   = 00001;
 
 
   /**  DESCRIPTION
-		 The mode of the file given by path is changed.
+       The mode of the file given by path is changed.
 
        Modes are specified by or'ing the following:
 
-		 RETURN VALUE
-       On  success,  zero is returned.  On error, -1 is returned,
-       and errno is set appropriately.
-
-		 ERRORS
-       Depending  on  the  file  system,  other  errors  can   be
-       returned.   The  more  general errors for chmod are listed
-       below:
+       ERRORS
+       Throws an ErrorWithMsg on error if an error occurs. The more
+       general errors for chmod are listed below:
 
        EPERM   The effective UID does not match the owner of  the
                file, and is not zero.
@@ -77,7 +72,7 @@ public:
        ELOOP   Too   many  symbolic  links  were  encountered  in
                resolving path.
        EIO     An I/O error occurred. */
-  int chmod(const char* path, mode_t mode);
+  void chmod(const char* path, mode_t mode);
 
 
   /**  DESCRIPTION
@@ -104,10 +99,10 @@ public:
        if  newpath  refers  to  a  symbolic link the link will be
        overwritten.
 
-		 RETURN VALUE
-       On success, zero is returned.  On error, -1  is  returned,
-       and errno is set appropriately. */
-  int rename(const char* oldpath, const char* newpath);
+       ERRORS
+       Throws an ErrorWithMsg on error if an error occurs.
+  */
+  void rename(const char* oldpath, const char* newpath);
 
 
   /**  DESCRIPTION
@@ -127,10 +122,10 @@ public:
        for it is removed but processes which have the object open
        may continue to use it.
 
-		 RETURN VALUE
-       On success, zero is returned.  On error, -1  is  returned,
-       and errno is set appropriately. */
-  int remove(const char* pathname);
+       ERRORS
+       Throws an ErrorWithMsg on error if an error occurs.
+  */
+  void remove(const char* pathname);
 
   /** Get the absolute pathname of the current working
       directory. Warning: the result of this function is only valid
