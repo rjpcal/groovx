@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu May 10 12:04:43 2001
+// written: Thu May 17 10:50:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,8 +234,8 @@ DOTRACE("IO::LegacyReader::readValueObj");
   itsImpl->throwIfError(name);
 }
 
-IO::IoObject* IO::LegacyReader::readObject(const fixed_string& name) {
-DOTRACE("IO::LegacyReader::readObject");
+IO::IoObject* IO::LegacyReader::readObjectImpl(const fixed_string& name) {
+DOTRACE("IO::LegacyReader::readObjectImpl");
   DebugEval(name);
   fixed_string type;
   itsImpl->itsInStream >> type; DebugEval(type);
@@ -274,7 +274,7 @@ DOTRACE("IO::LegacyReader::readBaseClass");
 IO::IoObject* IO::LegacyReader::readRoot(IO::IoObject* root) {
 DOTRACE("IO::LegacyReader::readRoot");
   if (root == 0) {
-	 return readObject("rootObject");
+	 return readObjectImpl("rootObject");
   }
   DebugEvalNL(root->ioTypename());
 

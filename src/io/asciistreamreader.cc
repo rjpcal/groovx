@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu May 10 12:04:44 2001
+// written: Thu May 17 10:50:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ public:
   // Returns a new dynamically allocated char array
   fixed_string readStringType(const fixed_string& name);
 
-  IO::IoObject* readObject(const fixed_string& attrib_name);
+  IO::IoObject* readObjectImpl(const fixed_string& attrib_name);
 
   void readValueObj(const fixed_string& name, Value& value);
 
@@ -448,8 +448,8 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_string;
 }
 
-IO::IoObject* AsciiStreamReader::Impl::readObject(const fixed_string& attrib_name) {
-DOTRACE("AsciiStreamReader::Impl::readObject");
+IO::IoObject* AsciiStreamReader::Impl::readObjectImpl(const fixed_string& attrib_name) {
+DOTRACE("AsciiStreamReader::Impl::readObjectImpl");
 
   Attrib attrib = currentAttribs().get(attrib_name);
 
@@ -623,9 +623,9 @@ void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value) {
   itsImpl.readValueObj(name, value); 
 }
 
-IO::IoObject* AsciiStreamReader::readObject(const fixed_string& attrib_name) {
+IO::IoObject* AsciiStreamReader::readObjectImpl(const fixed_string& attrib_name) {
   DebugEvalNL(attrib_name); 
-  return itsImpl.readObject(attrib_name);
+  return itsImpl.readObjectImpl(attrib_name);
 }
 
 void AsciiStreamReader::readOwnedObject(const fixed_string& name,

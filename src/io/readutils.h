@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Thu May 10 12:04:37 2001
+// written: Thu May 17 10:50:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace ReadUtils {
 		  readSequenceCount(reader, seq_name) : known_count;
 
 		for (int i = 0; i < count; ++i) {
-		  IO::IoObject* io = reader->readObject(makeElementNameString(seq_name, i));
+		  IO::IoObject* io = reader->readObjectImpl(makeElementNameString(seq_name, i));
 
 		  if (io == 0) {
 			 *inserter = static_cast<C*>(0);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 17 10:30:52 2001
+// written: Thu May 17 10:50:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,11 +232,11 @@ DOTRACE("Trial::Impl::readFrom");
 
   reader->readValue("type", itsType);
 
-  IO::IoObject* rhio = reader->readObject("rh");
+  IO::IoObject* rhio = reader->readObjectImpl("rh");
   ResponseHandler* rh = dynamic_cast<ResponseHandler*>(rhio);
   itsRh = MaybeIdItem<ResponseHandler>(rh);
 
-  IO::IoObject* thio = reader->readObject("th");
+  IO::IoObject* thio = reader->readObjectImpl("th");
   TimingHdlr* th = dynamic_cast<TimingHdlr*>(thio);
   itsTh = MaybeIdItem<TimingHdlr>(th);
 }
