@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Thu Aug  9 07:06:04 2001
+// written: Thu Aug  9 11:52:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ void Field::setValue(const Value& new_val, FieldContainer& owner)
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TField<T>::TField(FieldContainer* owner, const T& val) :
+TField<T>::TField(const T& val) :
   Field(), itsVal(val) {}
 
 template <class T>
@@ -80,8 +80,7 @@ template class TField<double>;
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TBoundedField<T>::TBoundedField(FieldContainer* owner, const T& val,
-                                const T& min, const T& max) :
+TBoundedField<T>::TBoundedField(const T& val, const T& min, const T& max) :
     Field(),
     itsVal(val),
     itsMin(min),
@@ -125,10 +124,7 @@ template class TBoundedField<double>;
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TPtrField<T>::TPtrField(FieldContainer* owner, T& valRef) :
-  Field(),
-  itsVal(valRef)
-{}
+TPtrField<T>::TPtrField(T& valRef) : Field(), itsVal(valRef) {}
 
 template <class T>
 TPtrField<T>::~TPtrField() {}
