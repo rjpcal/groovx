@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu Aug 16 09:35:02 2001
+// written: Thu Aug 16 10:01:32 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -194,7 +194,6 @@ public:
     defSetter("loadFont", &Toglet::loadFont);
     defSetter("loadFonti", &Toglet::loadFonti);
     defGetter("pathname", &Toglet::pathname);
-    defAction("refresh", &Toglet::refresh);
     defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
     defSetter("setFixedScale", "item_id(s) scale", &Toglet::setFixedScale);
     defSetter("setUnitAngle", "item_id(s) angle_in_degrees",
@@ -215,9 +214,7 @@ public:
     Pkg::eval("namespace eval Togl { proc init {} {} }\n"
               "proc clearscreen {} { Togl::clearscreen }\n"
               "proc see {id} { Togl::see $id }\n"
-              "proc show {id} { Togl::show $id }\n"
-              "proc undraw {} { Togl::undraw }\n"
-              "proc redraw {} { Togl::refresh }\n");
+              "proc undraw {} { Togl::undraw }\n");
 
     Pkg::eval("foreach cmd [info commands ::Toglet::*] {"
               "  proc ::Togl::[namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \" }\n"

@@ -36,24 +36,6 @@ test "ObjTogl-Togl::undraw" "normal use" {
 } {^1 }
 test "ObjTogl-Togl::undraw" "no error" {} $BLANK $no_test
 
-### Togl::refreshCmd ###
-test "ObjTogl-Togl::refresh" "too many args" {
-	 Togl::refresh junk
-} {wrong \# args: should be}
-test "ObjTogl-Togl::refresh" "normal use" {
-	 set f [Obj::new Face]
-	 set t [Obj::new Trial]
-	 Trial::addNode $t $f
-	 Togl::setCurTrial $t
-	 glIndexi 1
-	 glClearIndex 0
-	 Togl::setVisible 1
-	 Togl::refresh
-	 # check to see if some pixels actually got drawn
-	 expr [pixelCheckSum] > 500
-} {^1$}
-test "ObjTogl-Togl::refresh" "no error" {} $BLANK $no_test
-
 ### Togl::clearscreenCmd ###
 test "ObjTogl-Togl::clearscreen" "too many args" {
     Togl::clearscreen junk
