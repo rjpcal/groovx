@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Sat Sep 23 14:20:04 2000
+// written: Sat Sep 23 14:23:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -320,6 +320,8 @@ public:
   void setRenderMode(GrObj::GrObjRenderMode new_mode)
 	 { itsRenderer.setMode(new_mode, this); }
 
+  static void setBitmapCacheDir(const char* dirname)
+    { Impl::Renderer::BITMAP_CACHE_DIR = dirname; }
 
   void saveBitmapCache(GWT::Canvas& canvas, const char* filename);
   void restoreBitmapCache() const
