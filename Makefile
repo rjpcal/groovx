@@ -16,6 +16,27 @@
 #
 ##########################################################################
 
+#-------------------------------------------------------------------------
+#
+# Top-level configuration options
+#
+#-------------------------------------------------------------------------
+
+# The base directory where things will be installed
+INSTALL_PREFIX := $(HOME)/local/$(PLATFORM)
+
+
+
+###
+### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
+###
+
+#-------------------------------------------------------------------------
+#
+# Various default values
+#
+#-------------------------------------------------------------------------
+
 default: all
 
 VERSION := 0.8a8
@@ -45,8 +66,6 @@ PLATFORM := $(ARCH)
 #
 #-------------------------------------------------------------------------
 
-LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
-
 SRC := src
 DEP := ./dep/$(PLATFORM)
 OBJ := obj/$(PLATFORM)
@@ -54,10 +73,10 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
-INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
+INCLUDE_PATH += -I$(INSTALL_PREFIX)/include -I$(SRC)
 
-LOCAL_LIB := $(LOCAL_ARCH)/lib
-LOCAL_BIN := $(LOCAL_ARCH)/bin
+LOCAL_LIB := $(INSTALL_PREFIX)/lib
+LOCAL_BIN := $(INSTALL_PREFIX)/bin
 TMP_DIR := ./tmp/$(PLATFORM)
 TMP_FILE := $(TMP_DIR)/tmpfile
 
@@ -106,7 +125,6 @@ ifeq ($(PLATFORM),ppc)
 # The /sw/lib and /sw/include directories are managed by Fink
 	LIB_PATH += -L/usr/X11R6/lib -L/sw/lib
 	INCLUDE_PATH += -I/usr/X11R6/include -I/sw/include
-
 endif
 
 ifndef MODE
@@ -141,7 +159,7 @@ ifeq ($(COMPILER),MIPSpro)
 
 	CPP_DEFINES += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	INCLUDE_PATH += -I$(LOCAL_ARCH)/include/cppheaders
+	INCLUDE_PATH += -I$(INSTALL_PREFIX)/include/cppheaders
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
@@ -348,7 +366,7 @@ include $(DEP_FILE)
 
 # dependencies of package shlib's on object files
 
-VISX_LIB_DIR := $(LOCAL_ARCH)/lib/visx
+VISX_LIB_DIR := $(INSTALL_PREFIX)/lib/visx
 
 PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
