@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Nov 10 17:27:03 2000
+// written: Tue Nov 28 18:54:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #endif
 
 class PositionImpl;
+
+template <class V> class Vec3;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -91,12 +93,10 @@ public:
   /////////////
 
 protected:
-  /// Apply the stored translation to the model view matrix
-  virtual void translate() const;
-  /// Apply the stored scaling to the model view matrix
-  virtual void scale() const;
-  /// Apply the stored rotation to the model view matrix
-  virtual void rotate() const;
+  const Vec3<double>& translation() const;
+  const Vec3<double>& scaling() const;
+  const Vec3<double>& rotationAxis() const;
+  double rotationAngle() const;
 
 public:
   /// Translate, scale, and rotate.
