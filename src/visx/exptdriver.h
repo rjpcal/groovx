@@ -119,21 +119,7 @@ private:
   class ExptImpl;
   friend class ExptImpl;
 
-  ExptImpl* itsImpl;
-
-  Tcl_Interp* itsInterp;
-
-  string itsHostname;			  // Host computer on which Expt was begun
-  string itsSubject;				  // Id of subject on whom Expt was performed
-  string itsBeginDate;			  // Date(+time) when Expt was begun
-  string itsEndDate;				  // Date(+time) when Expt was stopped
-  string itsAutosaveFile;		  // Filename used for autosaves
-
-  int itsBlockId;
-  int itsRhId;
-  int itsThId;
-
-  mutable timeval itsBeginTime;
+  ExptImpl* const itsImpl;
 };
 
 static const char vcid_exptdriver_h[] = "$Header$";
