@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Sep 23 15:01:43 2000
+// written: Wed Oct 11 14:34:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -259,7 +259,6 @@ public:
   RhListPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, RhList::theRhList(), "RhList", "$Revision$")
   {
-	 RhList::theRhList().setInterp(interp);
 	 RhList::theRhList().insertAt(0, RhList::Ptr(new KbdResponseHdlr()));
   }
 };
