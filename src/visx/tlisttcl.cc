@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Dec  3 15:28:51 1999
+// written: Sat Dec  4 01:19:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,6 @@
 
 namespace TlistTcl {
   class AddObjectCmd;
-  class SetCurTrialCmd;
 
   class CreatePreviewCmd;
 
@@ -510,32 +509,6 @@ protected:
 
 //--------------------------------------------------------------------
 //
-// TlistTcl::setCurTrialCmd --
-//
-// Change the Tlist's current trial to a specified trial id. The
-// current trial is the one that will be displayed by a subsequent
-// call to "redraw", or by remap events sent to the screen
-// window. Returns an error if the specified trial id is not valid.
-//
-//--------------------------------------------------------------------
-
-class TlistTcl::SetCurTrialCmd : public TclCmd {
-public:
-  SetCurTrialCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "trial_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 int trial = getIntFromArg(1);
-
-	 if (!theTlist.isValidId(trial)) { throw TclError(bad_trial_msg); }
-	 
-	 theTlist.setCurTrial(trial);
-	 returnVoid();
-  }
-};
-
-//--------------------------------------------------------------------
-//
 // TlistTcl::write_responsesCmd --
 //
 // A Tcl command to write a file containing a summary of the responses
@@ -685,10 +658,7 @@ public:
 	 ListPkg<Tlist>(interp, Tlist::theTlist(), "Tlist", "3.0")
   {
   DOTRACE("TlistPkg::TlistPkg");
-	 declareCSetter("setVisible", &Tlist::setVisible);
-
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
-	 addCommand( new SetCurTrialCmd(interp, "Tlist::setCurTrial") );
 
 	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 
