@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Oct 31 12:18:17 2000
+// written: Tue Oct 31 22:39:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,7 +221,9 @@ public:
   class AttribMap {
   private:
 	 fixed_string itsObjTag;
-	 std::map<fixed_string, Attrib> itsMap;
+
+	 typedef std::map<fixed_string, Attrib> MapType;
+	 MapType itsMap;
 	 IO::VersionId itsSerialVersionId;
 
   public:
@@ -235,8 +237,8 @@ public:
 	 const Attrib& operator[](const fixed_string& attrib_name)
 		{
 		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::operator[]");
-		  const Attrib& attrib = itsMap[attrib_name];
-		  if ( attrib.type.empty() )
+		  MapType::const_iterator itr = itsMap.find(attrib_name);
+		  if ( itr == itsMap.end() )
 			 {
 				IO::ReadError err("no attribute named '");
 				err.appendMsg(attrib_name.c_str());
@@ -244,7 +246,7 @@ public:
 				throw err;
 			 }
 
-		  return attrib;
+		  return (*itr).second;
 		}
 
   private:
