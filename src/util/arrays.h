@@ -3,7 +3,7 @@
 // arrays.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 15:56:36 2000
-// written: Thu Mar  9 10:30:19 2000
+// written: Sun Mar 12 00:24:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,17 @@ struct static_block {
 
   size_type size() const { return N; }
 
+  size_type max_size() const { return size_type(-1) / sizeof(T); }
+
+  bool empty() const { return (N == 0); }
+
+  void swap(static_block& other)
+	 {
+		static_block other_copy = other;
+		other = *this;
+		*this = other_copy;
+	 }
+
   T data[N];
 };
 
@@ -91,6 +102,7 @@ template <class T>
 class fixed_block {
 private:
   fixed_block(const fixed_block<T>& other);
+
   fixed_block<T>& operator=(const fixed_block<T>& other);
 
 public:
@@ -135,6 +147,21 @@ public:
 	 }
 
   size_type size() const { return N; }
+
+  size_type max_size() const { return size_type(-1) / sizeof(T); }
+
+  bool empty() const { return (N == 0); }
+
+  void swap(fixed_block& other)
+	 {
+		size_type other_N = other.N;
+		other.N = this->N;
+		this->N = other_N;
+
+		T* other_data = other.data;
+		other.data = this->data;
+		this->data = other_data;
+	 }
 
 private:
   size_type N;
@@ -186,17 +213,6 @@ public:
 
   ~dynamic_block() { delete [] data; }
 
-  void swap(dynamic_block& other)
-	 {
-		size_type other_size = other.N;
-		other.N = this->N;
-		this->N = other_size;
-
-		T* other_data = other.data;
-		other.data = this->data;
-		this->data = other_data;
-	 }
-
   iterator begin() { return data; }
   iterator end() { return data+N; }
 
@@ -221,6 +237,21 @@ public:
 	 }
 
   size_type size() const { return N; }
+
+  size_type max_size() const { return size_type(-1) / sizeof(T); }
+
+  bool empty() const { return (N == 0); }
+
+  void swap(dynamic_block& other)
+	 {
+		size_type other_N = other.N;
+		other.N = this->N;
+		this->N = other_N;
+
+		T* other_data = other.data;
+		other.data = this->data;
+		this->data = other_data;
+	 }
 
   void resize(size_type new_size)
 	 {
