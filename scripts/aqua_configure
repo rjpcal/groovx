@@ -4,6 +4,15 @@
 
 # standard configuration for my imac
 
+mkdir -p build/compat/include build/compat/lib
+
+ln -sf /usr/X11R6/include/expat.h        build/compat/include
+
+ln -sf /usr/X11R6/lib/libexpat.1.0.dylib build/compat/lib
+ln -sf /usr/X11R6/lib/libexpat.1.dylib   build/compat/lib
+ln -sf /usr/X11R6/lib/libexpat.a         build/compat/lib
+ln -sf /usr/X11R6/lib/libexpat.dylib     build/compat/lib
+
 ./configure \
     --prefix=/Users/rjpeters/local/groovx-aqua \
     --with-tcltk=/Users/rjpeters/Library/Frameworks \
