@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 14:40:34 2000
+// written: Wed Oct 25 16:19:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,16 +117,12 @@ public:
   Inserter inserter() { return Inserter(this); }
 
 protected:
-  /// Construct a PtrList with an initial reserve capacity of 'size'
-  PtrListBase(int size);
+  /// Default constructor makes an empty list.
+  PtrListBase();
 
 public:
   ///
   virtual ~PtrListBase();
-
-  /** Returns the size of the internal array. The number returned also
-		refers to the one-past-the-end index into the PtrList. */
-  int capacity() const;
 
   /** Returns the number of filled sites in the PtrList. */
   int count() const;
