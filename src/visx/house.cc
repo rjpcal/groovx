@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Oct 12 15:46:43 1999
+// written: Wed Oct 20 10:18:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,9 @@
 #include <iostream.h>
 #include <string>
 #include <GL/gl.h>
+
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -193,6 +196,26 @@ DOTRACE("House::deserialize");
   if (flag & BASES) { GrObj::deserialize(is, flag); }
 
   sendStateChangeMsg();
+}
+
+void House::readFrom(Reader* reader) {
+DOTRACE("House::readFrom");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+  }
+
+  GrObj::readFrom(reader);
+}
+
+void House::writeTo(Writer* writer) const {
+DOTRACE("House::writeTo");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+  }
+
+  GrObj::writeTo(writer);
 }
 
 int House::charCount() const {

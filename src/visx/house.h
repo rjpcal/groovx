@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Thu Sep 30 11:22:17 1999
+// written: Wed Oct 20 10:17:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,8 @@ public:
   
   virtual int charCount() const;
 
-  virtual int getCategory() const { return -1; }
-
-  virtual void setCategory(int) {  }
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //
