@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 18 13:06:30 2001
+// written: Sun Aug  5 08:15:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -191,11 +191,6 @@ public:
 
     Pkg::eval("proc new {args} { eval Obj::new $args }");
     Pkg::eval("proc delete {args} { eval Obj::delete $args }");
-
-    Pkg::eval("namespace eval IO {\n"
-              "proc new {args} { eval Obj::new $args }\n"
-              "proc delete {args} { eval Obj::delete $args }\n"
-              "}");
   }
 };
 
@@ -215,14 +210,6 @@ public:
     def( "loadObjects", "filename", &IoTcl::loadAllObjects );
     def( "saveObjects", "objids filename use_bases=yes", &IoTcl::saveObjects );
     def( "saveObjects", "objids filename", &IoTcl::saveObjectsDefault );
-
-    Pkg::eval("namespace eval IoDb {\n"
-              "  proc clear {args} { eval ObjDb::clear $args }\n"
-              "  proc purge {args} { eval ObjDb::purge $args }\n"
-              "  proc release {args} { eval ObjDb::release $args }\n"
-              "  proc loadObjects {args} { eval ObjDb::loadObjects $args }\n"
-              "  proc saveObjects {args} { eval ObjDb::saveObjects $args }\n"
-              "}\n");
   }
 
   virtual ~ObjDbPkg()
