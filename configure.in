@@ -44,6 +44,22 @@ AC_DEFUN([AC_CHECK_LIB_CXX],
 	    $5
 	 fi])
 
+# AC_LATE_WARN(msg) msg will be given as a warning, and will be repeated at
+# the end of running the configure script, making it more likely that the
+# user will notice it.
+AC_DEFUN([AC_LATE_WARN],
+[AC_MSG_WARN([$1])
+late_warnings="${late_warnings}
+* $1"])
+
+# AC_GIVE_LATE_WARNINGS() actually print the late warnings
+AC_DEFUN([AC_GIVE_LATE_WARNINGS],
+[if test "$late_warnings" != ""; then
+   AC_MSG_WARN([$late_warnings])
+fi])
+
+late_warnings=""
+
 # If CXXFLAGS was not already set, then set it now to keep autoconf from
 # adding "-g -O2".
 
@@ -51,6 +67,7 @@ if test "${CXXFLAGS+set}" != "set" ; then
     CXXFLAGS=""
 fi
 
+##########################################################################
 ### Find operating system.
 
 AC_MSG_CHECKING([for operating system])
@@ -59,7 +76,8 @@ OS=`uname`
 
 AC_MSG_RESULT($OS)
 
-### Find c++ compiler.
+##########################################################################
+### Find c++ compiler and linkers.
 
 AC_LANG(C++)
 AC_PROG_CXX(g++-3 g++ c++ CC)
@@ -113,6 +131,7 @@ esac
 AC_SUBST(SHLIB_CMD)
 AC_SUBST(STATLIB_CMD)
 
+##########################################################################
 ### Arch-specific stuff
 
 need_rpath=yes
@@ -158,6 +177,9 @@ esac
 
 AC_SUBST(SHLIB_EXT)
 AC_SUBST(STATLIB_EXT)
+
+##########################################################################
+### Checks for compiler features.
 
 ### Check for virtual base class address-offset bug
 
@@ -300,7 +322,9 @@ else
    AC_DEFINE(STD_IO,[],[iostreams are in global namespace])
 fi
 
+##########################################################################
 ### Checks for header files.
+
 AC_PATH_XTRA
 
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
@@ -322,31 +346,38 @@ AC_CHECK_HEADER([esd.h],
 		[AC_DEFINE(HAVE_ESD_H,1,[have esd.h?])
 		 LIBS="$LIBS -lesd -laudiofile"],,-)
 
+##########################################################################
 ### Checks for libraries.
 
 AC_CHECK_LIB_CXX(m, [#include <cmath>], [sin(0.0)],
-		 [LIBS="-lm $LIBS"], [AC_MSG_ERROR(libm missing)])
+		 [LIBS="-lm $LIBS"], [AC_MSG_ERROR(libm check failed)])
 
-AC_CHECK_LIB_CXX(png, [#include <png.h>], [png_destroy_read_struct(0,0,0)],
-		 [LIBS="-lpng $LIBS"], [AC_MSG_ERROR(libpng missing)])
+AC_CHECK_LIB_CXX(png,
+		 [#include <png.h>],
+		 [png_destroy_read_struct(0,0,0)],
+		 [LIBS="-lpng $LIBS"
+		  AC_DEFINE(HAVE_LIBPNG,1,[libpng present and working?])],
+		 [AC_LATE_WARN(libpng check failed)])
 
-AC_CHECK_LIB_CXX(jpeg, [
-#include <cstdio>
-#include <jpeglib.h>],
-[jpeg_create_decompress(0)],
-[LIBS="-ljpeg $LIBS"], [AC_MSG_ERROR(libjpeg missing)])
+AC_CHECK_LIB_CXX(jpeg,
+		 [#include <cstdio>
+		  #include <jpeglib.h>],
+		 [jpeg_create_decompress(0)],
+		 [LIBS="-ljpeg $LIBS"
+		  AC_DEFINE(HAVE_LIBJPEG,1,[libjpeg present and working?])],
+		 [AC_LATE_WARN(libjpeg check failed)])
 
 AC_CHECK_LIB_CXX(z, [#include <zlib.h>], [gzopen(0,0)],
-		 [LIBS="-lz $LIBS"], [AC_MSG_ERROR(libz missing)])
+		 [LIBS="-lz $LIBS"], [AC_MSG_ERROR(libz check failed)])
 
 AC_CHECK_LIB_CXX(X11, [#include <X11/Xlib.h>], [XQueryColor(0,0,0)],
-		 [LIBS="-lX11 $LIBS"], [AC_MSG_ERROR(missing libX11)])
+		 [LIBS="-lX11 $LIBS"], [AC_MSG_ERROR(libX11 check failed)])
 
 AC_CHECK_LIB_CXX(GL, [#include <GL/gl.h>], [glEnd()],
-		 [LIBS="-lGL $LIBS"], [AC_MSG_ERROR(missing libGL)])
+		 [LIBS="-lGL $LIBS"], [AC_MSG_ERROR(libGL check failed)])
 
 AC_CHECK_LIB_CXX(GLU, [#include <GL/glu.h>], [gluErrorString(0)],
-		 [LIBS="-lGLU $LIBS"], [AC_MSG_ERROR(missing libGLU)])
+		 [LIBS="-lGLU $LIBS"], [AC_MSG_ERROR(libGLU check failed)])
 
 # add -lefence to LIBS for Electric Fence mem debugging
 
@@ -361,25 +392,17 @@ AC_EGREP_HEADER(MESA, [GL/gl.h],
                  AC_MSG_RESULT(yes)],
 		[AC_MSG_RESULT(no)])
 
-dnl Checks for typedefs, structures, and compiler characteristics.
-dnl AC_TYPE_MODE_T
-dnl AC_TYPE_SIZE_T
-dnl AC_HEADER_TIME
-dnl AC_STRUCT_TM
-
-dnl Checks for library functions.
-dnl AC_HEADER_STDC
-dnl AC_FUNC_STRFTIME
-dnl AC_CHECK_FUNCS(getcwd gettimeofday select strerror)
-
-dnl Setup linking options
+### Setup linking options
 
 if test $need_rpath = yes; then
    LDFLAGS="$LDFLAGS -Wl,-rpath,\${exec_prefix}/lib"
 fi
 LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 
-###
+##########################################################################
+### Process command-line options.
+
+### --with-tcltk
 
 AC_MSG_CHECKING([for location of tcl+tk >= 8.4])
 
@@ -419,7 +442,7 @@ AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 
 LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
 
-###
+### --with-matlab
 
 AC_MSG_CHECKING([whether to enable matlab support])
 
@@ -457,7 +480,7 @@ fi
 
 AC_SUBST(matlab_lib)
 
-###
+### --enable-readline
 
 enable_readline=yes
 
@@ -477,7 +500,7 @@ if test $enable_readline = yes; then
                      AC_DEFINE(WITH_READLINE,1,[with readline support?])])
 fi
 
-###
+### --enable-debug
 
 AC_MSG_CHECKING([whether to enable debug mode])
 
@@ -499,7 +522,7 @@ else
    AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
 fi
 
-###
+### --with-htmldoc
 
 AC_MSG_CHECKING([where to install html documentation])
 
@@ -512,6 +535,12 @@ AC_ARG_WITH(htmldoc,
 AC_MSG_RESULT($with_htmldoc)
 
 AC_SUBST(with_htmldoc)
+
+
+##########################################################################
+### Generate output
+
+AC_GIVE_LATE_WARNINGS()
 
 AC_CONFIG_FILES([Makefile:Makefile.in])
 AC_CONFIG_FILES([doc/DoxyConfig:doc/DoxyConfig.in])
