@@ -649,6 +649,7 @@ itcl::body Editor::init {parent objtype } {
 	Face \
 	Fish \
 	Gabor \
+	GaborArray \
 	Gtext \
 	GxCylinder \
 	GxDisk \
