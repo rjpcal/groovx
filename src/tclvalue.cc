@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar 15 20:30:07 2000
+// written: Thu Mar 16 12:00:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,30 @@
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
+
+extern Tcl_ObjType	tclBooleanType;
+extern Tcl_ObjType	tclDoubleType;
+extern Tcl_ObjType	tclIntType;
+extern Tcl_ObjType	tclListType;
+extern Tcl_ObjType	tclStringType;
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  inline void checkSharing(Tcl_Obj*& obj, Tcl_ObjType* target_type)
+	 {
+		if ( (obj->typePtr != target_type) && Tcl_IsShared(obj) )
+		  {
+			 Tcl_DecrRefCount(obj);
+			 obj = Tcl_DuplicateObj(obj);
+			 Tcl_IncrRefCount(obj);
+		  }
+	 }
+}
 
 //---------------------------------------------------------------------
 //
@@ -216,6 +240,7 @@ DOTRACE("Tcl::TclValue::getLong");
 bool Tcl::TclValue::getBool() const {
 DOTRACE("Tcl::TclValue::getBool");
   int val;
+  checkSharing(itsObj, &tclBooleanType);
   if ( Tcl_GetBooleanFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 	 fixed_string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
@@ -244,6 +269,7 @@ DOTRACE("Tcl::TclValue::getCstring");
 
 void Tcl::TclValue::get(int& val) const {
 DOTRACE("Tcl::TclValue::get");
+  checkSharing(itsObj, &tclIntType);
   if ( Tcl_GetIntFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 	 fixed_string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
@@ -253,6 +279,7 @@ DOTRACE("Tcl::TclValue::get");
 
 void Tcl::TclValue::get(long& val) const {
 DOTRACE("Tcl::TclValue::get");
+  checkSharing(itsObj, &tclIntType);
   if ( Tcl_GetLongFromObj(itsInterp, itsObj, &val) != TCL_OK) {
 	 fixed_string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
@@ -267,6 +294,7 @@ DOTRACE("Tcl::TclValue::get");
 
 void Tcl::TclValue::get(double& val) const {
 DOTRACE("Tcl::TclValue::get");
+  checkSharing(itsObj, &tclDoubleType);
   try {
 	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 		fixed_string msg = Tcl_GetStringResult(itsInterp);
