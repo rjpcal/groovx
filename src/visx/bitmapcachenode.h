@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Wed Nov 13 12:27:10 2002
+// written: Wed Nov 13 12:35:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,9 @@
 #ifndef BITMAPCACHENODE_H_DEFINED
 #define BITMAPCACHENODE_H_DEFINED
 
+#include "gfx/gxbin.h"
+
 #include "visx/gmodes.h"
-#include "visx/gnode.h"
 
 #include "util/strings.h"
 #include "util/pointers.h"
@@ -23,10 +24,10 @@ class BmapRenderer;
 
 namespace Gfx { class BmapData; }
 
-class BitmapCacheNode : public Gnode
+class BitmapCacheNode : public GxBin
 {
 public:
-  BitmapCacheNode(Util::SoftRef<Gnode> child);
+  BitmapCacheNode(Util::SoftRef<GxNode> child);
   virtual ~BitmapCacheNode();
 
   static fstring BITMAP_CACHE_DIR;

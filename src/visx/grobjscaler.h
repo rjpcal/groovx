@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Wed Nov 13 12:27:35 2002
+// written: Wed Nov 13 12:36:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,18 +13,19 @@
 #ifndef GROBJSCALER_H_DEFINED
 #define GROBJSCALER_H_DEFINED
 
-#include "visx/gmodes.h"
-#include "visx/gnode.h"
+#include "gfx/gxbin.h"
 
 #include "gx/rect.h"
 
 #include "util/algo.h"
 
-class GrObjScaler : public Gnode
+#include "visx/gmodes.h"
+
+class GrObjScaler : public GxBin
 {
 public:
-  GrObjScaler(Util::SoftRef<Gnode> child) :
-    Gnode(child),
+  GrObjScaler(Util::SoftRef<GxNode> child) :
+    GxBin(child),
     itsMode(Gmodes::NATIVE_SCALING),
     itsWidthFactor(1.0),
     itsHeightFactor(1.0)
@@ -133,7 +134,6 @@ public:
                                Gfx::Canvas& canvas) const;
 
 private:
-
   Gmodes::ScalingMode itsMode;
 
 public:

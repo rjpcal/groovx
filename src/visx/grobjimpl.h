@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Nov 13 12:27:30 2002
+// written: Wed Nov 13 12:37:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,9 @@
 #ifndef GROBJIMPL_H_DEFINED
 #define GROBJIMPL_H_DEFINED
 
-#include "visx/gnode.h"
+#include "gfx/gxbin.h"
+
+#include "gx/box.h"
 
 #include "visx/grobj.h"
 #include "visx/grobjaligner.h"
@@ -25,12 +27,12 @@
 
 #include "util/volatileobject.h"
 
-class GrObjNode : public Gnode
+class GrObjNode : public GxBin
 {
   borrowed_ptr<GrObj> itsObj;
 
 public:
-  GrObjNode(GrObj* obj) : Gnode(), itsObj(obj) {}
+  GrObjNode(GrObj* obj) : GxBin(), itsObj(obj) {}
 
   virtual ~GrObjNode() {}
 
@@ -71,7 +73,7 @@ public:
   Util::Ref<GrObjAligner> itsAligner;
   Util::Ref<GrObjScaler> itsScaler;
 
-  Util::Ref<Gnode> itsTopNode;
+  Util::Ref<GxNode> itsTopNode;
 
   //
   // Methods

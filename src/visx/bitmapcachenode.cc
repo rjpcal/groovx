@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Nov 13 11:03:34 2002
+// written: Wed Nov 13 12:37:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "gfx/canvas.h"
 
 #include "gx/bmapdata.h"
+#include "gx/box.h"
 #include "gx/imgfile.h"
 #include "gx/rect.h"
 
@@ -31,8 +32,8 @@
 
 fstring BitmapCacheNode::BITMAP_CACHE_DIR(".");
 
-BitmapCacheNode::BitmapCacheNode(Util::SoftRef<Gnode> child) :
-  Gnode(child),
+BitmapCacheNode::BitmapCacheNode(Util::SoftRef<GxNode> child) :
+  GxBin(child),
   itsMode(Gmodes::DIRECT_RENDER),
   itsCacheFilename(""),
   itsBmapRenderer(0),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Wed Nov 13 12:27:27 2002
+// written: Wed Nov 13 12:36:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,16 +13,16 @@
 #ifndef GROBJBBOX_H_DEFINED
 #define GROBJBBOX_H_DEFINED
 
-#include "visx/gnode.h"
+#include "gfx/gxbin.h"
 
-class GrObjBBox : public Gnode
+class GrObjBBox : public GxBin
 {
 private:
   GrObjBBox(const GrObjBBox&);
   GrObjBBox& operator=(const GrObjBBox&);
 
 public:
-  GrObjBBox(Util::SoftRef<Gnode> child);
+  GrObjBBox(Util::SoftRef<GxNode> child);
 
   virtual ~GrObjBBox();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Wed Nov 13 12:27:20 2002
+// written: Wed Nov 13 12:35:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,15 @@
 #ifndef GLCACHENODE_H_DEFINED
 #define GLCACHENODE_H_DEFINED
 
-#include "visx/gmodes.h"
-#include "visx/gnode.h"
+#include "gfx/gxbin.h"
 
-class GLCacheNode : public Gnode
+#include "visx/gmodes.h"
+
+class GLCacheNode : public GxBin
 {
 public:
-  GLCacheNode(Util::SoftRef<Gnode> child) :
-    Gnode(child),
+  GLCacheNode(Util::SoftRef<GxNode> child) :
+    GxBin(child),
     itsMode(Gmodes::DIRECT_RENDER),
     itsDisplayList(0)
   {}

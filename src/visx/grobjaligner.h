@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Wed Nov 13 12:27:24 2002
+// written: Wed Nov 13 12:35:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,18 +13,19 @@
 #ifndef GROBJALIGNER_H_DEFINED
 #define GROBJALIGNER_H_DEFINED
 
-#include "visx/gmodes.h"
-#include "visx/gnode.h"
+#include "gfx/gxbin.h"
 
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
+#include "visx/gmodes.h"
+
 /// Controls how a GrObj is aligned relative to the origin when it is drawn.
-class GrObjAligner : public Gnode
+class GrObjAligner : public GxBin
 {
 public:
-  GrObjAligner(Util::SoftRef<Gnode> child) :
-    Gnode(child),
+  GrObjAligner(Util::SoftRef<GxNode> child) :
+    GxBin(child),
     itsMode(Gmodes::NATIVE_ALIGNMENT),
     itsCenter(0.0, 0.0)
   {}
