@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Aug 13 14:32:03 2001
+// written: Tue Aug 14 11:47:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
                           const Gfx::Vec2<double>& zoom) const;
 
   virtual void drawBitmap(const Gfx::BmapData& data,
-								  const Gfx::Vec2<double>& world_pos) const;
+                          const Gfx::Vec2<double>& world_pos) const;
 
   virtual void grabPixels(const Gfx::Rect<int>& bounds,
                           Gfx::BmapData& data_out) const;
@@ -70,6 +70,8 @@ public:
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const;
 
   virtual void throwIfError(const char* where) const;
+
+  virtual void drawRect(const Gfx::Rect<double>& rect) const;
 };
 
 static const char vcid_glcanvas_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Aug 13 14:39:21 2001
+// written: Tue Aug 14 11:47:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,6 +130,8 @@ public:
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const = 0;
 
   virtual void throwIfError(const char* where) const = 0;
+
+  virtual void drawRect(const Gfx::Rect<double>& rect) const = 0;
 
 //    virtual void beginPoints() const = 0;
 //    virtual void beginLines() const = 0;
