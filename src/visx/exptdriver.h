@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov  3 14:47:31 1999
+// written: Wed Nov 10 13:42:20 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,64 +41,103 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// ExptDriver class defintion
-//
-///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * ExptDriver is a singleton that coordinates all objects necessary to
+ * run an experiment.
+ *
+ * @memo ExptDriver is a singleton that coordinates all objects
+ * necessary to run an experiment.
+ **/
 
 class ExptDriver : public virtual IO {
 protected:
-  // Creators
+  /// Default constructor
   ExptDriver();
 
 private:
-  ExptDriver(const ExptDriver&);	// copy constructor not allowed
-  ExptDriver& operator=(const ExptDriver&); // assignment not allowed
+  /// Copy constructor not allowed
+  ExptDriver(const ExptDriver&);
+  /// assignment not allowed
+  ExptDriver& operator=(const ExptDriver&);
 
+  ///
   static ExptDriver theInstance;
 
 public:
+  /// Retrieve the singleton instance.
   static ExptDriver& theExptDriver();
 
+  ///
   virtual ~ExptDriver();
 
+  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
+  ///
   virtual void deserialize(istream &is, IOFlag flag);
+  ///
   virtual int charCount() const;
 
+  ///
   virtual void readFrom(Reader* reader);
+  ///
   virtual void writeTo(Writer* writer) const;
 
-  // Accessors + Manipulators
+  //////////////////////////////
+  // Accessors + Manipulators //
+  //////////////////////////////
+
+  ///
   Tcl_Interp* getInterp();
+  ///
   void setInterp(Tcl_Interp* interp);
 
+  ///
   const string& getAutosaveFile() const;
+  ///
   void setAutosaveFile(const string& str);
 
-  // Graphics actions
-  void draw();
-  void undraw();
-  void edSwapBuffers();
 
-  // Trial event sequence actions
+  /** @name Graphics Actions */
+  //@{
+  ///
+  void draw();
+  ///
+  void undraw();
+  ///
+  void edSwapBuffers();
+  //@}
+
+  /** @name Trial event sequence actions */
+  //@{
+  ///
   void edBeginExpt();
 
+  ///
   void edBeginTrial();
+  ///
   void edResponseSeen();
+  ///
   void edProcessResponse(int response);
+  ///
   void edAbortTrial();
+  ///
   void edEndTrial();
+  ///
   void edHaltExpt() const;
 
+  ///
   void edResetExpt();
+  //@}
 
+  ///
   void read(const char* filename);
+  ///
   void write(const char* filename) const;
 
-  // This saves the experiment file and a summary-of-responses file
-  // under unique filenames, and optionally quits the application if
-  // quitApplication is true.
+  /** This saves the experiment file and a summary-of-responses file
+		under unique filenames, and optionally quits the application if
+		quitApplication is true. */
   void writeAndExit(bool quitApplication=false);
 
 private:
