@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Thu Nov 11 15:01:49 1999
+// written: Sun Nov 21 03:14:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,35 +60,10 @@ DOTRACE("RhList::theRhList");
   return *instance;
 }
 
-void RhList::deserialize(istream &is, IOFlag flag) {
-DOTRACE("RhList::deserialize");
-  Base::deserialize(is, flag);
-  
-  // This ensures that all the new ResponseHandler's have their
-  // Tcl_Interp* set correctly
-  setInterp(itsInterp);
-}
-
-void RhList::readFrom(Reader* reader) {
-DOTRACE("RhList::readFrom");
-
-  Base::readFrom(reader);
-
-  // Ensure that all the new ResponseHandler's have their Tcl_Interp*
-  // set correctly
-  setInterp(itsInterp);
-}
-
-int RhList::insert(ResponseHandler* ptr) {
-DOTRACE("RhList::insert");
-  ptr->setInterp(itsInterp);
-  return Base::insert(ptr);
-}
-
-void RhList::insertAt(int id, ResponseHandler* ptr) {
-DOTRACE("RhList::insertAt");
-  ptr->setInterp(itsInterp);
-  Base::insertAt(id, ptr);
+void RhList::afterInsertHook(int /* id */, void* ptr) {
+DOTRACE("RhList::afterInsertHook");
+  ResponseHandler* rh = static_cast<ResponseHandler*>(ptr);
+  rh->setInterp(itsInterp);
 }
 
 void RhList::setInterp(Tcl_Interp* interp) {
