@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Fri Sep 29 13:45:53 2000
+// written: Thu Oct  5 12:50:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,11 @@
 #include "io/iolegacy.h"
 
 #include "util/arrays.h"
+#include "util/strings.h"
+
+#ifdef HAVE_ZSTREAM
+#  include <zstream.h>
+#endif
 
 #include <cstring>
 #include <fstream.h>
@@ -29,6 +34,13 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// StringifyCmd
+//
+///////////////////////////////////////////////////////////////////////
 
 Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
 										  const char* usage, int objc) :
@@ -59,11 +71,22 @@ DOTRACE("Tcl::StringifyCmd::invoke");
 
 	 throw err;
   }
+  catch (...) {
+	 ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+	 throw;
+  }
 
   returnCstring(ost.str());
 
   ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// DestringifyCmd
+//
+///////////////////////////////////////////////////////////////////////
 
 Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
 												const char* usage, int objc) :
@@ -86,6 +109,13 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
   returnVoid();
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// WriteCmd
+//
+///////////////////////////////////////////////////////////////////////
+
 Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name,
 								const char* usage, int objc) :
   TclCmd(interp, cmd_name, usage, objc, objc, true) {}
@@ -96,20 +126,41 @@ void Tcl::WriteCmd::invoke() {
 DOTRACE("Tcl::WriteCmd::invoke");
   IO::IoObject& io = getIO();   
 
-  const int BUF_SIZE = 4096;
-  static_block<char, BUF_SIZE> buf;
-
-  ostrstream ost(&(buf[0]), buf.size()-1);
+  ostrstream ost;
 
   DebugEval(typeid(io).name());
-  DebugEval(buf.size());
 
-  AsciiStreamWriter writer(ost);
-  writer.writeRoot(&io);
-  ost << '\0';
+  try {
+	 AsciiStreamWriter writer(ost);
+	 writer.writeRoot(&io);
+	 ost << '\0';
+  }
+  catch (IO::IoError& err) {
+	 err.appendMsg(" with buffer contents ==\n");
 
-  returnCstring(&(buf[0]));
+	 ost << '\0';
+	 err.appendMsg(ost.str());
+
+	 ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+
+	 throw err;
+  }
+  catch (...) {
+	 ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+	 throw;
+  }
+
+  returnCstring(ost.str());
+
+  ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ReadCmd
+//
+///////////////////////////////////////////////////////////////////////
 
 Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name,
 							 const char* usage, int objc) :
@@ -129,6 +180,13 @@ DOTRACE("Tcl::ReadCmd::invoke");
   reader.readRoot(&io);
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// ASWSaveCmd
+//
+///////////////////////////////////////////////////////////////////////
+
 Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
 									 const char* usage, int objc) :
   TclCmd(interp, cmd_name, usage, objc, objc, true) {}
@@ -138,19 +196,45 @@ Tcl::ASWSaveCmd::~ASWSaveCmd() {}
 void Tcl::ASWSaveCmd::invoke() {
 DOTRACE("Tcl::ASWSaveCmd::invoke");
   IO::IoObject& io = getIO();
-  const char* filename = getFilename();
+  fixed_string filename = getFilename();
 
-  STD_IO::ofstream ofs(filename);
+  STD_IO::ofstream ofs(filename.c_str());
   if ( ofs.fail() ) {
 	 Tcl::TclError err("couldn't open file ");
-	 err.appendMsg("'", filename, "'");
+	 err.appendMsg("'", filename.c_str(), "'");
 	 err.appendMsg("for writing");
 	 throw err;
   }
 
+#ifdef HAVE_ZSTREAM
+  string_literal gz_ext(".gz");
+
+  const char* filename_ext = filename.c_str() + filename.length() - 3;
+
+  if ( gz_ext == filename_ext ) {
+	 ofs.close();
+
+	 ozipstream ozs(filename.c_str());
+
+	 AsciiStreamWriter writer(ozs);
+	 writer.writeRoot(&io);
+  }
+  else {
+	 AsciiStreamWriter writer(ofs);
+	 writer.writeRoot(&io);
+  }
+#else
   AsciiStreamWriter writer(ofs);
   writer.writeRoot(&io);
+#endif
 }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ASRLoadCmd
+//
+///////////////////////////////////////////////////////////////////////
 
 Tcl::ASRLoadCmd::ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name,
 									 const char* usage, int objc) :
@@ -167,18 +251,37 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
   beforeLoadHook(); 
 
   IO::IoObject& io = getIO();
-  const char* filename = getFilename();
+  fixed_string filename = getFilename();
 
-  STD_IO::ifstream ifs(filename);
+  STD_IO::ifstream ifs(filename.c_str());
   if ( ifs.fail() ) {
 	 Tcl::TclError err("couldn't open file ");
-	 err.appendMsg("'", filename, "'");
+	 err.appendMsg("'", filename.c_str(), "'");
 	 err.appendMsg("for reading");
 	 throw err;
   }
 
+#ifdef HAVE_ZSTREAM
+  string_literal gz_ext(".gz");
+
+  const char* filename_ext = filename.c_str() + filename.length() - 3;
+
+  if ( gz_ext == filename_ext ) {
+	 ifs.close();
+
+	 izipstream izs(filename.c_str());
+
+	 AsciiStreamReader reader(izs);
+	 reader.readRoot(&io);
+  }
+  else {
+	 AsciiStreamReader reader(ifs);
+	 reader.readRoot(&io);
+  }
+#else
   AsciiStreamReader reader(ifs);
   reader.readRoot(&io);
+#endif
 
   afterLoadHook();
 }
