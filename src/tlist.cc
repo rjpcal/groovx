@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Sun Oct 22 15:13:09 2000
+// written: Mon Oct 23 11:45:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,9 @@ DOTRACE("Tlist::theTlist");
 #include "trialbase.h"
 #include "ptrlist.cc"
 template class PtrList<TrialBase>;
+#include "itemwithid.cc"
+template class ItemWithId<TrialBase>;
+template class NullableItemWithId<TrialBase>;
 
 template <>
 PtrList<TrialBase>& ItemWithId<TrialBase>::ptrList()

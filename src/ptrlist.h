@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sun Oct 22 15:59:10 2000
+// written: Mon Oct 23 11:42:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,54 +15,9 @@
 #include "ioptrlist.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRHANDLE_H_DEFINED)
-#include "util/ptrhandle.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
+#include "itemwithid.h"
 #endif
-
-template <class T> class PtrList;
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * ItemWithId<T> is a wrapper of a PtrHandle<T> along with an integer
- * index from a PtrList<T>.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class ItemWithId {
-private:
-  static PtrList<T>& ptrList();
-
-  PtrHandle<T> itsHandle;
-  const int itsId;
-
-public:
-
-  ItemWithId(T* master, int id_) : itsHandle(master), itsId(id_) {}
-  ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
-
-  /** A symbol to pass to constructors indicating that the item should
-		be inserted into an appropriate PtrList. */
-  enum Insert { INSERT };
-
-  ItemWithId(T* ptr, Insert /*dummy param*/);
-  ItemWithId(PtrHandle<T> item, Insert /*dummy param*/);
-
-  // Default destructor, copy constructor, operator=() are fine
-
-        T* operator->()       { return itsHandle.get(); }
-  const T* operator->() const { return itsHandle.get(); }
-        T& operator*()        { return *(itsHandle.get()); }
-  const T& operator*()  const { return *(itsHandle.get()); }
-
-        T* get()              { return itsHandle.get(); }
-  const T* get()        const { return itsHandle.get(); }
-
-  PtrHandle<T> handle() const { return itsHandle; }
-  int id() const { return itsId; }
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -141,82 +96,6 @@ public:
   void insertAt(int id, ItemWithId<T> item)
 	 { PtrListBase::insertPtrBaseAt(id, item.handle().get()); }
 };
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * NullableItemWithId<T> is a wrapper of a NullablePtrHandle<T> along
- * with an integer index from a PtrList<T>.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class NullableItemWithId {
-private:
-  static PtrList<T>& ptrList();
-
-  mutable NullablePtrHandle<T> itsHandle;
-  int itsId;
-
-public:
-  explicit NullableItemWithId(int id_) :
-	 itsHandle(0), itsId(id_) {}
-
-  NullableItemWithId(T* master, int id_) :
-	 itsHandle(master), itsId(id_) {}
-
-  NullableItemWithId(PtrHandle<T> item_, int id_) :
-	 itsHandle(item_), itsId(id_) {}
-
-  NullableItemWithId(NullablePtrHandle<T> item_, int id_) :
-	 itsHandle(item_), itsId(id_) {}
-
-  NullableItemWithId(const ItemWithId<T> other) :
-	 itsHandle(other.handle()), itsId(other.id()) {}
-
-  // Default destructor, copy constructor, operator=() are fine
-
-        T* operator->()       { refresh(); return itsHandle.get(); }
-  const T* operator->() const { refresh(); return itsHandle.get(); }
-        T& operator*()        { refresh(); return *(itsHandle.get()); }
-  const T& operator*()  const { refresh(); return *(itsHandle.get()); }
-
-        T* get()              { refresh(); return itsHandle.get(); }
-  const T* get()        const { refresh(); return itsHandle.get(); }
-
-  void refresh() const
-    {
-		if ( !itsHandle.isValid() )
-		  {
-			 typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
-			 itsHandle = p.handle();
-		  }
-	 }
-
-  bool isValid() const { return itsHandle.isValid(); }
-
-  NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
-  int id() const { return itsId; }
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// ItemWithId member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-ItemWithId<T>::ItemWithId(T* ptr, Insert /*dummy param*/) :
-  itsHandle(ptr),
-  itsId(ptrList().insert(itsHandle).id())
-{}
-
-template <class T>
-ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
-  itsHandle(item),
-  itsId(ptrList().insert(itsHandle).id())
-{}
 
 static const char vcid_ptrlist_h[] = "$Header$";
 #endif // !PTRLIST_H_DEFINED

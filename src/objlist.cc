@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Sun Oct 22 15:12:37 2000
+// written: Mon Oct 23 11:45:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,9 @@ DOTRACE("ObjList::theObjList");
 #include "grobj.h"
 #include "ptrlist.cc"
 template class PtrList<GrObj>;
+#include "itemwithid.cc"
+template class ItemWithId<GrObj>;
+template class NullableItemWithId<GrObj>;
 
 template <>
 PtrList<GrObj>& ItemWithId<GrObj>::ptrList()

@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Sun Oct 22 15:12:31 2000
+// written: Mon Oct 23 11:44:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,9 @@ DOTRACE("BlockList::theBlockList");
 #include "block.h"
 #include "ptrlist.cc"
 template class PtrList<Block>;
+#include "itemwithid.cc"
+template class ItemWithId<Block>;
+template class NullableItemWithId<Block>;
 
 template <>
 PtrList<Block>& ItemWithId<Block>::ptrList()
