@@ -51,6 +51,8 @@ proc print { chan txt } {
 
 proc setup_package { pkgname ccfiles libdir } {
 
+    if { [llength $ccfiles] == 0 } { return }
+
     set shlib $libdir/${pkgname}[info sharedlibextension]
 
     regsub -all {\.cc} $ccfiles .${::OBJEXT} files
@@ -120,7 +122,7 @@ foreach dir [glob \[a-z\]*/] {
 	# becomes the package name
 	set pkgname [file tail $dir]
 
-	set ccfiles [glob ${dir}/*.cc]
+	set ccfiles [glob -nocomplain ${dir}/*.cc]
 
 	setup_package $pkgname $ccfiles $LIBDIR
     } else {
