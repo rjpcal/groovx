@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu May 15 16:39:35 2003
+// written: Thu May 15 16:42:02 2003
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -162,6 +162,11 @@ DOTRACE("main");
 
   try
     {
+      // Quick check argv to optionally turn on global tracing and/or set
+      // the global debug level. This method is particularly useful for
+      // helping to diagnose problems that are occurring during application
+      // startup, before we have a chance to get to the command-line prompt
+      // and do a "::gtrace 1" or a "::dbgLevel 9".
       for (int i = 0; i < argc; ++i)
         {
           if (strcmp(argv[i], "-dbglevel") == 0)
