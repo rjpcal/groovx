@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Tue Aug 14 11:47:26 2001
+// written: Wed Aug 22 18:18:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +62,11 @@ public:
   virtual void drawOnFrontBuffer() const;
   virtual void drawOnBackBuffer() const;
 
-  virtual void pushState() const;
-  virtual void popState() const;
+  virtual void pushMatrix() const;
+  virtual void popMatrix() const;
+
+  virtual void pushFullState() const;
+  virtual void popFullState() const;
 
   virtual void translate(const Gfx::Vec3<double>& v) const;
   virtual void scale(const Gfx::Vec3<double>& v) const;

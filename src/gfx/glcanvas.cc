@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Aug 14 12:05:42 2001
+// written: Wed Aug 22 18:19:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -304,18 +304,30 @@ DOTRACE("GLCanvas::drawOnBackBuffer");
   glDrawBuffer(GL_BACK);
 }
 
-void GLCanvas::pushState() const
+void GLCanvas::pushMatrix() const
 {
-DOTRACE("GLCanvas::pushState");
+DOTRACE("GLCanvas::pushMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 }
 
-void GLCanvas::popState() const
+void GLCanvas::popMatrix() const
 {
-DOTRACE("GLCanvas::popState");
+DOTRACE("GLCanvas::popMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
+}
+
+void GLCanvas::pushFullState() const
+{
+DOTRACE("GLCanvas::pushFullState");
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+}
+
+void GLCanvas::popFullState() const
+{
+DOTRACE("GLCanvas::popFullState");
+  glPopAttrib(GL_ALL_ATTRIB_BITS);
 }
 
 
