@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Wed Nov  1 16:23:45 2000
+// written: Fri Nov  3 14:54:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,10 @@ void FactoryError::throwForType(const char* type) {
   FactoryError err(bad_create_msg);
   err.appendMsg(type);
   throw err;
+}
+
+void FactoryError::throwForType(const fixed_string& type) {
+  throwForType(type.c_str());
 }
 
 struct CreatorMapBase::Impl {
@@ -66,9 +70,9 @@ DOTRACE("CreatorMapBase::clear");
   delete itsImpl;
 }
 
-void* CreatorMapBase::getPtrForName(const char* name) const {
+void* CreatorMapBase::getPtrForName(const fixed_string& name) const {
 DOTRACE("CreatorMapBase::getPtrForName");
-  return itsImpl->itsMap[fixed_string(name)];
+  return itsImpl->itsMap[name];
 }
 
 void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
