@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Aug 22 18:21:34 2001
+// written: Wed Aug 22 18:34:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@ namespace Gfx
 {
   class BmapData;
   class Canvas;
+  class RgbaColor;
   template <class V> class Rect;
   template <class V> class Vec2;
   template <class V> class Vec3;
@@ -144,6 +145,8 @@ public:
       attribs within a lexical scope. */
   typedef Saver<&Gfx::Canvas::pushAttribs, &Gfx::Canvas::popAttribs>
   AttribSaver;
+
+  virtual void setColor(const Gfx::RgbaColor& rgba) const = 0;
 
   virtual void translate(const Gfx::Vec3<double>& v) const = 0;
   virtual void scale(const Gfx::Vec3<double>& v) const = 0;

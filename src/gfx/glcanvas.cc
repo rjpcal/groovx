@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Aug 22 18:23:06 2001
+// written: Wed Aug 22 18:37:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/bmapdata.h"
 #include "gfx/rect.h"
+#include "gfx/rgbacolor.h"
 #include "gfx/vec2.h"
 #include "gfx/vec3.h"
 
@@ -328,6 +329,13 @@ void GLCanvas::popAttribs() const
 {
 DOTRACE("GLCanvas::popAttribs");
   glPopAttrib();
+}
+
+
+void GLCanvas::setColor(const Gfx::RgbaColor& rgba) const
+{
+DOTRACE("GLCanvas::setColor");
+  glColor4dv(rgba.data());
 }
 
 
