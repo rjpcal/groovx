@@ -179,6 +179,14 @@ AC_SUBST(SHLIB_EXT)
 AC_SUBST(STATLIB_EXT)
 
 ##########################################################################
+### Check for programs other than compiler+linker.
+
+AC_PATH_PROG([ANYTOPNM_PROG], [anytopnm], [])
+if test "$ANYTOPNM_PROG" != ""; then
+   AC_DEFINE_UNQUOTED(ANYTOPNM_PROG,"$ANYTOPNM_PROG",[full path to anytopnm program])
+fi
+
+##########################################################################
 ### Checks for compiler features.
 
 ### Check for virtual base class address-offset bug
