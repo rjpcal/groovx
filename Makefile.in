@@ -415,7 +415,7 @@ count:
 
 # Count the number of non-commented source lines
 ncsl:
-	@NCSL $(LOCAL_SRCS) | sort -n | tee $(LOGS)/ncsl
+	@NCSL --mapped $(LOCAL_SRCS) | sort -n | tee $(LOGS)/ncsl
 
 docs: $(DOC)/DoxyConfig
 	mkdir -p $(BUILD)/html
