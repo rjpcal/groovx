@@ -111,5 +111,5 @@ test "BlockTcl-Block::trialDescription" "too many args" {
 test "BlockTcl-Block::trialDescription" "normal use on empty expt" {
 	 Block::removeAllTrials $::BLOCK
 	 Block::trialDescription $::BLOCK
-} {^block is complete$}
+} {^complete$}
 test "BlockTcl-Block::trialDescription" "error" {} $BLANK $no_test
