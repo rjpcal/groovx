@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Thu May 11 18:24:23 2000
+// written: Thu May 11 20:00:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ public:
   // Actions //
   /////////////
 
-  virtual void rhBeginTrial(GWT::Widget& widget, Trial& trial) const;
+  virtual void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;

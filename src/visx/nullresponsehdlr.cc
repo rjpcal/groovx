@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Thu May 11 10:20:02 2000
+// written: Thu May 11 20:00:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ void NullResponseHdlr::setInterp(Tcl_Interp*) {
 }
 
 // actions
-void NullResponseHdlr::rhBeginTrial(GWT::Widget&, Trial&) const {
+void NullResponseHdlr::rhBeginTrial(GWT::Widget&, TrialBase&) const {
 DOTRACE("NullResponseHdlr::rhBeginTrial");
 }
 

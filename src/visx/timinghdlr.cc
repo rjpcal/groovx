@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 11 13:45:22 2000
+// written: Thu May 11 19:41:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ public:
 private:
   GWT::Widget* itsWidget;
   Util::ErrorHandler* itsErrorHandler;
-  Trial* itsTrial;
+  TrialBase* itsTrial;
 
   void scheduleAll(vector<TrialEvent*>& events) {
   DOTRACE("scheduleAll");
@@ -93,7 +93,7 @@ public:
   void thHaltExpt();
   void thAbortTrial();
   void thResponseSeen();
-  void thBeginTrial(GWT::Widget& widget, Util::ErrorHandler& eh, Trial& trial);
+  void thBeginTrial(GWT::Widget& widget, Util::ErrorHandler& eh, TrialBase& trial);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -362,7 +362,7 @@ DOTRACE("TimingHdlr::addEventByName");
 ///////////////////////////////////////////////////////////////////////
 
 void TimingHdlr::Impl::thBeginTrial(GWT::Widget& widget,
-												Util::ErrorHandler& eh, Trial& trial) {
+												Util::ErrorHandler& eh, TrialBase& trial) {
 DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
   itsTimer.restart();
@@ -414,7 +414,7 @@ void TimingHdlr::thResponseSeen()
   { itsImpl->thResponseSeen(); }
 
 void TimingHdlr::thBeginTrial(GWT::Widget& widget,
-										Util::ErrorHandler& eh, Trial& trial)
+										Util::ErrorHandler& eh, TrialBase& trial)
   { itsImpl->thBeginTrial(widget, eh, trial); }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";

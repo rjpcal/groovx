@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu May 11 13:21:24 2000
+// written: Thu May 11 19:37:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ namespace GWT { class Widget; }
 namespace Util { class ErrorHandler; }
 
 class Experiment;
-class Trial;
+class TrialBase;
 
 struct Tcl_TimerToken_;
 typedef struct Tcl_TimerToken_* Tcl_TimerToken;
@@ -76,7 +76,7 @@ public:
       to \c cancel(). If the requested delay is negative or zero, the
       \c invoke() callback is triggered immediately without involving
       the event loop. */
-  void schedule(GWT::Widget& widget, Util::ErrorHandler& errhdlr, Trial& trial);
+  void schedule(GWT::Widget& widget, Util::ErrorHandler& errhdlr, TrialBase& trial);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
@@ -109,7 +109,7 @@ protected:
       call to \c schedule(). \c TrialEventError is thrown if \c
       schedule() has never been called, or if the \c Trial* passed
       most recently to \c schedule() was null. */
-  Trial& getTrial();
+  TrialBase& getTrial();
 
 private:
   static void dummyInvoke(ClientData clientData);
@@ -122,7 +122,7 @@ private:
 
   GWT::Widget* itsWidget;
   Util::ErrorHandler* itsErrorHandler;
-  Trial* itsTrial;
+  TrialBase* itsTrial;
 
   mutable bool itsIsPending;
 
@@ -139,7 +139,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-/// TrialEvent subclass to call Trial::trAbortTrial().
+/// TrialEvent subclass to call TrialBase::trAbortTrial().
 class AbortTrialEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -148,7 +148,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Trial::trDrawTrial().
+/// TrialEvent subclass to call TrialBase::trDrawTrial().
 class DrawEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -157,7 +157,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Trial::trEndTrial().
+/// TrialEvent subclass to call TrialBase::trEndTrial().
 class EndTrialEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -166,7 +166,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Trial::trUndrawTrial().
+/// TrialEvent subclass to call TrialBase::trUndrawTrial().
 class UndrawEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.

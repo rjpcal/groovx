@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu May 11 18:25:38 2000
+// written: Thu May 11 20:25:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "sound.h"
 #include "soundlist.h"
 #include "response.h"
-#include "trial.h"
+#include "trialbase.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -123,7 +123,7 @@ public:
   void ignoreInvalidResponses()
 	 { itsAbortInvalidResponses = false; }
 
-  void rhBeginTrial(GWT::Widget& widget, Trial& trial) const
+  void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
 	 {
 		itsWidget = &widget;
 		itsTrial = &trial;
@@ -149,7 +149,7 @@ private:
 	 }
 
 
-  Trial& getTrial() const
+  TrialBase& getTrial() const
 	 {
 		if (itsTrial == 0)
 		  { throw ErrorWithMsg("EventResponseHdlr::itsTrial is NULL"); }
@@ -234,7 +234,7 @@ private:
   EventResponseHdlr* itsOwner;
 
   mutable GWT::Widget* itsWidget;
-  mutable Trial* itsTrial;
+  mutable TrialBase* itsTrial;
 
   Tcl_Interp* itsInterp;
 
@@ -663,7 +663,7 @@ DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
   Response theResponse;
 
-  Trial& trial = getTrial();
+  TrialBase& trial = getTrial();
 
   theResponse.setMsec(trial.trElapsedMsec());
 
@@ -679,7 +679,7 @@ DOTRACE("EventResponseHdlr::Impl::handleResponse");
   }
 
   else {
-	 trial.recordResponse(theResponse);
+	 trial.trRecordResponse(theResponse);
 	 if (itsUseFeedback) { feedback(theResponse.val()); }
   }
 }
@@ -968,7 +968,7 @@ void EventResponseHdlr::abortInvalidResponses()
 void EventResponseHdlr::ignoreInvalidResponses()
   { itsImpl->ignoreInvalidResponses(); }
 
-void EventResponseHdlr::rhBeginTrial(GWT::Widget& widget, Trial& trial) const
+void EventResponseHdlr::rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
   { itsImpl->rhBeginTrial(widget, trial); }
 
 void EventResponseHdlr::rhAbortTrial() const

@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu May 11 17:47:38 2000
+// written: Thu May 11 19:38:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "trialevent.h"
 
-#include "trial.h"
+#include "trialbase.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -129,7 +129,7 @@ DOTRACE("TrialEvent::writeTo");
 
 void TrialEvent::schedule(GWT::Widget& widget,
 								  Util::ErrorHandler& errhdlr,
-								  Trial& trial) {
+								  TrialBase& trial) {
 DOTRACE("TrialEvent::schedule");
   itsWidget = &widget;
   itsErrorHandler = &errhdlr;
@@ -185,7 +185,7 @@ DOTRACE("TrialEvent::getErrorHandler");
   return *itsErrorHandler;
 }
 
-Trial& TrialEvent::getTrial() {
+TrialBase& TrialEvent::getTrial() {
 DOTRACE("TrialEvent::getTrial");
   DebugEvalNL((void *) itsTrial);
   if (itsTrial == 0) {

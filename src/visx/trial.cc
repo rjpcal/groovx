@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 11 18:52:01 2000
+// written: Thu May 11 19:31:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #include "trial.h"
 
 #include "block.h"
-#include "experiment.h"
 #include "objlist.h"
 #include "poslist.h"
 #include "grobj.h"
@@ -31,6 +30,7 @@
 #include "io/writeutils.h"
 
 #include "gwt/canvas.h"
+#include "gwt/widget.h"
 
 #include "util/strings.h"
 
@@ -128,7 +128,8 @@ public:
 #endif
 
   // Delegand functions for Trial
-  void trDoTrial(Trial* self, Experiment& expt, Block& block);
+  void trDoTrial(Trial* self, GWT::Widget& widget,
+					  Util::ErrorHandler& errhdlr, Block& block);
   int trElapsedMsec();
   void trAbortTrial();
   void trEndTrial();
@@ -477,14 +478,6 @@ DOTRACE("setTimingHdlr");
   itsImpl->itsThId = thid;
 }
 
-void Trial::recordResponse(const Response& response) {
-DOTRACE("Trial::recordResponse"); 
-  itsImpl->timeTrace("recordResponse");
-  itsImpl->itsResponses.push_back(response);
-
-  itsImpl->getBlock().processResponse(response);
-}
-
 void Trial::clearResponses() {
 DOTRACE("Trial::clearResponses");
   itsImpl->itsResponses.clear();
@@ -494,16 +487,17 @@ DOTRACE("Trial::clearResponses");
 // actions //
 /////////////
 
-void Trial::Impl::trDoTrial(Trial* self, Experiment& expt, Block& block) {
+void Trial::Impl::trDoTrial(Trial* self, GWT::Widget& widget,
+									 Util::ErrorHandler& errhdlr, Block& block) {
 DOTRACE("Trial::Impl::trDoTrial");
-  itsCanvas = expt.getCanvas();
+  itsCanvas = widget.getCanvas();
   itsBlock = &block;
   if ( !assertIdsOrHalt() ) return;
 
-  timingHdlr().thBeginTrial(*(expt.getWidget()), expt.getErrorHandler(), *self);
+  timingHdlr().thBeginTrial(widget, errhdlr, *self);
   timeTrace("trDoTrial"); 
 
-  responseHandler().rhBeginTrial(*(expt.getWidget()), *self);
+  responseHandler().rhBeginTrial(widget, *self);
 }
 
 int Trial::Impl::trElapsedMsec() {
@@ -576,6 +570,14 @@ DOTRACE("Trial::Impl::trResponseSeen");
   timingHdlr().thResponseSeen();
 }
 
+void Trial::trRecordResponse(const Response& response) {
+DOTRACE("Trial::trRecordResponse"); 
+  itsImpl->timeTrace("trRecordResponse");
+  itsImpl->itsResponses.push_back(response);
+
+  itsImpl->getBlock().processResponse(response);
+}
+
 void Trial::Impl::trDrawTrial() const {
 DOTRACE("Trial::Impl::trDrawTrial");
 
@@ -644,8 +646,9 @@ DOTRACE("Trial::Impl::undoLastResponse");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::trDoTrial(Experiment& expt, Block& block)
-  { itsImpl->trDoTrial(this, expt, block); }
+void Trial::trDoTrial(GWT::Widget& widget,
+							 Util::ErrorHandler& errhdlr, Block& block)
+  { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 
 int Trial::trElapsedMsec()
   { return itsImpl->trElapsedMsec(); }

@@ -3,7 +3,7 @@
 // nullresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:35 1999
-// written: Thu May 11 10:20:01 2000
+// written: Thu May 11 20:00:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ public:
   virtual void setInterp(Tcl_Interp* interp);
 
   // actions
-  virtual void rhBeginTrial(GWT::Widget& widget, Trial& trial) const;
+  virtual void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;

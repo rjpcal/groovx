@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu Mar 30 09:01:07 2000
+// written: Thu May 11 20:16:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,10 +142,8 @@ DOTRACE("TlistUtils::makeSingles");
   // 2) it sets the Trial's type to the category of its single GrObj
   for (size_t i=0; i < vec.size(); ++i) {
 	 int id = vec[i];
-	 if ( !tlist.isValidId(id) ) {
-		tlist.insertAt(id, Tlist::Ptr(new Trial));
-	 }
-	 Tlist::Ptr t = tlist.getPtr(id);
+	 Trial* t = new Trial;
+	 tlist.insertAt(id, Tlist::Ptr(t));
 	 t->add(id, posid);
 	 const ObjList::Ptr obj = olist.getCheckedPtr(id);
 	 t->setType(obj->getCategory());
@@ -172,10 +170,8 @@ DOTRACE("TlistUtils::makePairs");
   int trialid = 0;
   for (size_t i = 0; i < vec.size(); ++i) {
 	 for (size_t j = 0; j < vec.size(); ++j) {
-		if ( !tlist.isValidId(trialid) ) {
-		  tlist.insertAt(trialid, Tlist::Ptr(new Trial));
-		}
-		Tlist::Ptr t = tlist.getPtr(trialid);
+		Trial* t = new Trial;
+		tlist.insertAt(trialid, Tlist::Ptr(t));
 		t->add(vec[i], posid1);
 		t->add(vec[j], posid2);
 		t->setType( i == j );
@@ -245,10 +241,8 @@ DOTRACE("TlistUtils::makeTriads");
 
 		  // loops over p,e run through all permutations
 		  for (int p = 0; p < NUM_PERMS; ++p) {
-			 if ( !tlist.isValidId(trial) ) {
-				tlist.insertAt(trial, Tlist::Ptr(new Trial));
-			 }
-			 Tlist::Ptr t = tlist.getPtr(trial);
+			 Trial* t = new Trial;
+			 tlist.insertAt(trial, Tlist::Ptr(t));
 			 for (int e = 0; e < 3; ++e) {
 				t->add(base_triad[permutations[p][e]], posid[e]);
 			 }
@@ -286,12 +280,10 @@ DOTRACE("TlistUtils::makeSummaryTrial");
   DebugEval(x0); DebugEvalNL(y0);
 
   PosList& plist = PosList::thePosList();
-	 
-  if ( !tlist.isValidId(trialid) ) {
-	 tlist.insertAt(trialid, Tlist::Ptr(new Trial));
-  }
 
-  Tlist::Ptr t = tlist.getPtr(trialid);
+  Trial* t = new Trial;
+	 
+  tlist.insertAt(trialid, Tlist::Ptr(t));
 
   for (size_t i=0; i < objids.size(); ++i) {
 	 int row = i / num_cols;
@@ -332,11 +324,17 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
-	 ofs << setw(wid) << trialids[i];
-	 ofs << setw(wid) << t->numResponses();
-	 ofs << setw(wid) << t->avgResponse();	 
-	 ofs << setw(wid) << t->avgRespTime() << endl;
+	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
+
+	 Trial* t = dynamic_cast<Trial*>(tb.get());
+
+	 if ( t )
+		{
+		  ofs << setw(wid) << trialids[i];
+		  ofs << setw(wid) << t->numResponses();
+		  ofs << setw(wid) << t->avgResponse();	 
+		  ofs << setw(wid) << t->avgRespTime() << endl;
+		}
   }
 
   if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
@@ -352,15 +350,20 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
   ofstream ofs(filename);
 	 
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
-		
-	 // Use this to make sure we don't round down when we should round up.
-	 double fudge = 0.0001;
-		
-	 int num_zeros = int( (1.0 - t->avgResponse()) * t->numResponses() + fudge);
-	 int num_ones = t->numResponses() - num_zeros;
+	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
 
-	 ofs << num_zeros << "  " << num_ones << endl;
+	 Trial* t = dynamic_cast<Trial*>(tb.get());
+
+	 if ( t )
+		{
+		  // Use this to make sure we don't round down when we should round up.
+		  double fudge = 0.0001;
+
+		  int num_zeros = int( (1.0 - t->avgResponse()) * t->numResponses() + fudge);
+		  int num_ones = t->numResponses() - num_zeros;
+
+		  ofs << num_zeros << "  " << num_ones << endl;
+		}
   }
 }
 
@@ -418,16 +421,21 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
-	 
-	 for (Trial::IdPairItr ii = t->beginIdPairs(), end = t->endIdPairs();
-			ii != end;
-			++ii)
+	 Tlist::Ptr tb = tlist.getPtr(trialids[i]);
+
+	 Trial* t = dynamic_cast<Trial*>(tb.get());
+
+	 if ( t )
 		{
-		  ofs << ii->objid << ' ';
+		  for (Trial::IdPairItr ii = t->beginIdPairs(), end = t->endIdPairs();
+				 ii != end;
+				 ++ii)
+			 {
+				ofs << ii->objid << ' ';
+			 }
+
+		  ofs << t->avgResponse() << endl;
 		}
-		
-	 ofs << t->avgResponse() << endl;
   }
 }
 
@@ -445,7 +453,11 @@ DOTRACE("TlistUtils::addObject");
 	 tlist.insertAt(trialid, Tlist::Ptr(new Trial));
   }
 
-  tlist.getPtr(trialid)->add(objid, posid);
+  Tlist::Ptr tb = tlist.getPtr(trialid);
+
+  Trial& t = dynamic_cast<Trial&>(*(tb.get()));
+
+  t.add(objid, posid);
 }
 
 static const char vcid_tlistutils_cc[] = "$Header$";

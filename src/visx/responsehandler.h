@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu May 11 10:19:37 2000
+// written: Thu May 11 19:59:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace GWT { class Widget; }
 struct Tcl_Interp;
 
 class Block;
-class Trial;
+class TrialBase;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -58,23 +58,23 @@ public:
       processing that may be required in handling responses. */
   virtual void setInterp(Tcl_Interp* interp) = 0;
 
-  /** Will be called by a \c Trial at the beginning of a
-      trial. \c ResponseHandler subclasses implement this function to
-      prepare listening for responses, etc. */
-  virtual void rhBeginTrial(GWT::Widget& widget, Trial& trial) const = 0;
+  /** Will be called by a \c TrialBase at the beginning of a trial. \c
+      ResponseHandler subclasses implement this function to prepare
+      listening for responses, etc. */
+  virtual void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const = 0;
 
-  /** Will by called by a \c Trial if a trial is aborted. \c
+  /** Will by called by a \c TrialBase if a trial is aborted. \c
       ResponseHandler subclasses implement this function to quit
       listening for responses, etc. */
   virtual void rhAbortTrial() const = 0;
 
-  /** Will by called by a \c Trial when a trial is complete. \c
+  /** Will by called by a \c TrialBase when a trial is complete. \c
       ResponseHandler subclasses implement this function to quit
       listening for responses, etc. */
   virtual void rhEndTrial() const = 0;
 
-  /** Will by called by a \c Trial when the sequence of trials
-      is halted suddenly. \c ResponseHandler subclasses implement this
+  /** Will by called by a \c TrialBase when the sequence of trials is
+      halted suddenly. \c ResponseHandler subclasses implement this
       function to quit listening for responses, etc. */
   virtual void rhHaltExpt() const = 0;
 

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu May 11 13:34:39 2000
+// written: Thu May 11 19:41:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 namespace GWT { class Widget; }
 namespace Util { class ErrorHandler; }
 
-class Trial;
+class TrialBase;
 class TrialEvent;
 
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
   /////////////
 
   virtual void thBeginTrial(GWT::Widget& widget,
-									 Util::ErrorHandler& eh, Trial& trial);
+									 Util::ErrorHandler& eh, TrialBase& trial);
   virtual void thResponseSeen();
   virtual void thAbortTrial();
 

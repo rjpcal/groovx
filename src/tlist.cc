@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu Mar 30 09:07:22 2000
+// written: Thu May 11 19:55:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace {
 //////////////
 
 Tlist::Tlist(int size) : 
-  PtrList<Trial>(size)
+  PtrList<TrialBase>(size)
 {
 DOTRACE("Tlist::Tlist");
 }
@@ -64,7 +64,7 @@ void Tlist::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Tlist::serialize");
   // Always serialize the PtrList base
   if (true || flag & IO::BASES) { 
-	 PtrList<Trial>::serialize(os, flag);
+	 PtrList<TrialBase>::serialize(os, flag);
   }
 
   // Here we are spoofing the obselete data members itsCurTrial and
@@ -82,9 +82,9 @@ DOTRACE("Tlist::serialize");
 
 void Tlist::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Tlist::deserialize");
-  // Always deserialize its PtrList<Trial> base
+  // Always deserialize its PtrList<TrialBase> base
   if (true || flag & IO::BASES) {
-	 PtrList<Trial>::deserialize(is, flag);
+	 PtrList<TrialBase>::deserialize(is, flag);
   }
 
   // Here we are spoofing the obselete data members itsCurTrial and
@@ -99,19 +99,19 @@ int Tlist::charCount() const {
   return (strlen(ioTag) + 1
 			 + IO::gCharCount<int>(0) + 1
 			 + IO::gCharCount<bool>(false) + 1
-			 + PtrList<Trial>::charCount()
+			 + PtrList<TrialBase>::charCount()
 			 + 5 ); // fudge factor 5
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Template instantiation of PtrList<Trial>
+// Template instantiation of PtrList<TrialBase>
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "trial.h"
+#include "trialbase.h"
 #include "ptrlist.cc"
-template class PtrList<Trial>;
+template class PtrList<TrialBase>;
 
 static const char vcid_tlist_cc[] = "$Header$";
 #endif // !TLIST_CC_DEFINED

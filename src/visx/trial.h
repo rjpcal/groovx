@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu May 11 17:42:16 2000
+// written: Thu May 11 20:11:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,21 +19,27 @@
 #include "util/value.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRIALBASE_H_DEFINED)
+#include "trialbase.h"
+#endif
+
 namespace GWT {
   class Canvas;
+  class Widget;
 }
 
+namespace Util { class ErrorHandler; }
+
 class Block;
-class Experiment;
 class Response;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Trial class declaration
+// Trial class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Trial : public virtual IO::IoObject {
+class Trial : public TrialBase, public virtual IO::IoObject {
 public:
   //////////////////
   // nested types //
@@ -91,11 +97,11 @@ public:
   IdPairItr endIdPairs() const;
 
   // returns some info about relationship between objects in trial
-  int trialType() const;
+  virtual int trialType() const;
 
-  const char* description() const;
+  virtual const char* description() const;
 
-  int lastResponse() const;
+  virtual int lastResponse() const;
 
   int numResponses() const;
 
@@ -115,9 +121,7 @@ public:
   void setResponseHandler(int rhid);
   void setTimingHdlr(int thid);
 
-  void recordResponse(const Response& response);
-
-  void undoLastResponse();
+  virtual void undoLastResponse();
 
   void clearResponses();
 
@@ -125,20 +129,22 @@ public:
   // actions //
   /////////////
 
-  void trDoTrial(Experiment& expt, Block& block);
+  virtual void trDoTrial(GWT::Widget& widget,
+								 Util::ErrorHandler& errhdlr, Block& block);
 
-  int trElapsedMsec();
+  virtual int trElapsedMsec();
 
-  void trAbortTrial();
-  void trEndTrial();
-  void trNextTrial();
-  void trHaltExpt();
-  void trResponseSeen();
-  void trDrawTrial() const;
-  void trUndrawTrial() const;
+  virtual void trAbortTrial();
+  virtual void trEndTrial();
+  virtual void trNextTrial();
+  virtual void trHaltExpt();
+  virtual void trResponseSeen();
+  virtual void trRecordResponse(const Response& response);
+  virtual void trDrawTrial() const;
+  virtual void trUndrawTrial() const;
 
-  void trDraw(GWT::Canvas& canvas, bool flush) const;
-  void trUndraw(GWT::Canvas& canvas, bool flush) const;
+  virtual void trDraw(GWT::Canvas& canvas, bool flush) const;
+  virtual void trUndraw(GWT::Canvas& canvas, bool flush) const;
 
 private:
   Trial(const Trial&);

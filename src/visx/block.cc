@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu May 11 17:45:15 2000
+// written: Thu May 11 19:52:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "experiment.h"
 #include "response.h"
 #include "tlist.h"
-#include "trial.h"
+#include "trialbase.h"
 
 #include "io/reader.h"
 #include "io/readutils.h"
@@ -284,7 +284,7 @@ DOTRACE("Block::writeTo");
 // accessors //
 ///////////////
 
-Trial& Block::getCurTrial() const {
+TrialBase& Block::getCurTrial() const {
 DOTRACE("Block::getCurTrial");
   return *(theTlist.getCheckedPtr(currentTrial()));
 }
@@ -399,7 +399,7 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->setExpt(expt);
 
-  getCurTrial().trDoTrial(expt, *this);
+  getCurTrial().trDoTrial(*(expt.getWidget()), expt.getErrorHandler(), *this);
 }
 
 void Block::drawTrialHook() {

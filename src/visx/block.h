@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu May 11 17:44:38 2000
+// written: Thu May 11 19:50:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 #include "io/io.h"
 #endif
 
-class Trial;
+class TrialBase;
 
 class Experiment;
 
@@ -75,7 +75,7 @@ public:
   ///////////////
   
   /// Returns a reference to the current \c Trial.
-  Trial& getCurTrial() const;
+  TrialBase& getCurTrial() const;
 
   /// Returns the total number of trials that will comprise the Block.
   virtual int numTrials() const;
@@ -90,7 +90,7 @@ public:
   virtual int currentTrial() const;
 
   /** Returns the integer type of the current trial (the result of
-      Trial::trialType(). */
+      TrialBase::trialType(). */
   virtual int currentTrialType() const;
 
   /** Returns the last valid (but not necessarily "correct") response
