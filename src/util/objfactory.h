@@ -42,7 +42,9 @@ namespace Util
 }
 
 /// Singleton wrapper for Factor<IO>.
-class Util::ObjFactory : public Factory<Util::SoftRef<Util::Object> >
+class Util::ObjFactory
+  :
+  public rutz::factory<Util::SoftRef<Util::Object> >
 {
 protected:
   /// Default constructor.

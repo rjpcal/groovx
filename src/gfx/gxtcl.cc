@@ -201,7 +201,7 @@ DOTRACE("Gxseparator_Init");
   pkg->defGetter("numChildren", &GxSeparator::numChildren, SRC_POS);
   pkg->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt, SRC_POS);
   pkg->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild, SRC_POS);
-  Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
+  Util::ObjFactory::theOne().register_creator(&GxSeparator::make);
 
   PKG_RETURN;
 }

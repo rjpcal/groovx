@@ -91,7 +91,7 @@ DOTRACE("Trial_Init");
   // FIXME this is redundant with Element::trialType
   pkg->defAttrib("type", &Trial::trialType, &Trial::setType, SRC_POS);
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
+  Util::ObjFactory::theOne().register_creator(&Trial::make);
 
   PKG_RETURN;
 }

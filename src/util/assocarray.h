@@ -38,22 +38,26 @@ namespace rutz
 {
   class file_pos;
 
-  /// \c rutz::assoc_array provides a non-typesafe wrapper around \c std::map.
+  /// \c rutz::assoc_array_base provides a non-typesafe wrapper around \c std::map.
   /** The use must provide a pointer to a function that knows how to
       properly destroy the actual contained objects according to their
       true type. */
 
-  class assoc_array
+  class assoc_array_base
   {
   public:
     /// Function type for destroying elements.
     typedef void (kill_func_t) (void*);
 
     /// Default constructor.
-    assoc_array(kill_func_t* f);
+    /** descr is a human-readable description of what this array's
+        keys represent; this is used in error messages, e.g. if descr
+        is "frobnicator", then error messages would include "unknown
+        frobnicator" */
+    assoc_array_base(kill_func_t* f, const char* descr = "key");
 
     /// Virtual destructor.
-    ~assoc_array();
+    ~assoc_array_base();
 
     /// Raise an exception reporting an unknown key.
     void throw_for_key(const char* key, const rutz::file_pos& pos);
@@ -74,11 +78,52 @@ namespace rutz
     void clear();
 
   private:
-    assoc_array(const assoc_array&);
-    assoc_array& operator=(const assoc_array&);
+    assoc_array_base(const assoc_array_base&);
+    assoc_array_base& operator=(const assoc_array_base&);
 
     struct impl;
     impl* const rep;
+  };
+
+
+  /// rutz::assoc_array is a typesafe wrapper of rutz::assoc_array_base.
+
+  template<class value_t>
+  class assoc_array
+  {
+  public:
+    /// Default constructor
+    /** descr is a human-readable description of what this array's
+        keys represent; this is used in error messages, e.g. if descr
+        is "frobnicator", then error messages would include "unknown
+        frobnicator" */
+    assoc_array(const char* descr) : base(&delete_ptr, descr) {}
+
+    /// Raise an exception reporting an unknown key.
+    void throw_for_key(const char* key, const rutz::file_pos& pos)
+    { base.throw_for_key(key, pos); }
+
+    /// Raise an exception reporting an unknown key.
+    void throw_for_key(const fstring& key, const rutz::file_pos& pos)
+    { base.throw_for_key(key, pos); }
+
+    /// Get the object associated with the given key.
+    value_t* get_ptr_for_key(const fstring& key) const
+    { return static_cast<value_t*>(base.get_value_for_key(key)); }
+
+    /// Get the object associated with the given key.
+    value_t* get_ptr_for_key(const char* key) const
+    { return static_cast<value_t*>(base.get_value_for_key(key)); }
+
+    /// Associate the object at \a ptr with the given key.
+    void set_ptr_for_key(const char* key, value_t* ptr)
+    { base.set_value_for_key(key, static_cast<void*>(ptr)); }
+
+  private:
+    rutz::assoc_array_base base;
+
+    static void delete_ptr(void* ptr)
+    { delete static_cast<value_t*>(ptr); }
   };
 }
 

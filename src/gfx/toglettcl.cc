@@ -84,9 +84,9 @@ DOTRACE("Toglet_Init");
   pkg->inheritPkg("TkWidget");
   Tcl::defGenericObjCmds<Toglet>(pkg, SRC_POS);
 
-  Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::make );
-  Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::makeToplevel,
-                                                  "TopToglet" );
+  Util::ObjFactory::theOne().register_creator( &Toglet::make );
+  Util::ObjFactory::theOne().register_creator( &Toglet::makeToplevel,
+                                               "TopToglet" );
 
   pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
   pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );

@@ -40,7 +40,7 @@ namespace
 }
 
 Util::ObjFactory::ObjFactory() :
-  Factory<SoftRef<Util::Object> >() {}
+  rutz::factory<SoftRef<Util::Object> >() {}
 
 Util::ObjFactory::~ObjFactory() {}
 

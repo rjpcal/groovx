@@ -41,30 +41,37 @@
 
 #include "util/trace.h"
 
-struct rutz::assoc_array::impl
+struct rutz::assoc_array_base::impl
 {
-  impl(kill_func_t* f) : values(), kill_func(f) {}
+  impl(kill_func_t* f, const char* descr)
+    :
+    values(),
+    kill_func(f),
+    key_description(descr)
+  {}
 
   typedef std::map<fstring, void*> map_t;
 
-  map_t values;
+  map_t        values;
   kill_func_t* kill_func;
+  fstring      key_description;
 };
 
-rutz::assoc_array::assoc_array(kill_func_t* f) :
-  rep(new impl(f))
+rutz::assoc_array_base::assoc_array_base(kill_func_t* f,
+                                         const char* descr) :
+  rep(new impl(f, descr))
 {
-DOTRACE("rutz::assoc_array::assoc_array");
+DOTRACE("rutz::assoc_array_base::assoc_array_base");
 }
 
-rutz::assoc_array::~assoc_array()
+rutz::assoc_array_base::~assoc_array_base()
 {
-DOTRACE("rutz::assoc_array::~assoc_array");
+DOTRACE("rutz::assoc_array_base::~assoc_array_base");
   clear();
 }
 
-void rutz::assoc_array::throw_for_key(const char* key,
-                                      const rutz::file_pos& pos)
+void rutz::assoc_array_base::throw_for_key(const char* key,
+                                           const rutz::file_pos& pos)
 {
   fstring keylist("known keys are:");
 
@@ -76,20 +83,19 @@ void rutz::assoc_array::throw_for_key(const char* key,
         keylist.append("\n\t", ii->first);
     }
 
-  // FIXME use a more generic term than "object type" here
-  throw rutz::error(fstring(keylist, "\nunknown object type '",
-                            key, "'"), pos);
+  throw rutz::error(fstring(keylist, "\nunknown ", rep->key_description,
+                            " '", key, "'"), pos);
 }
 
-void rutz::assoc_array::throw_for_key(const fstring& key,
-                                      const rutz::file_pos& pos)
+void rutz::assoc_array_base::throw_for_key(const fstring& key,
+                                           const rutz::file_pos& pos)
 {
   throw_for_key(key.c_str(), pos);
 }
 
-void rutz::assoc_array::clear()
+void rutz::assoc_array_base::clear()
 {
-DOTRACE("rutz::assoc_array::clear");
+DOTRACE("rutz::assoc_array_base::clear");
   for (impl::map_t::iterator ii = rep->values.begin();
        ii != rep->values.end();
        ++ii)
@@ -101,20 +107,20 @@ DOTRACE("rutz::assoc_array::clear");
   delete rep;
 }
 
-void* rutz::assoc_array::get_value_for_key(const fstring& key) const
+void* rutz::assoc_array_base::get_value_for_key(const fstring& key) const
 {
-DOTRACE("rutz::assoc_array::get_value_for_key");
+DOTRACE("rutz::assoc_array_base::get_value_for_key");
   return rep->values[key];
 }
 
-void* rutz::assoc_array::get_value_for_key(const char* key) const
+void* rutz::assoc_array_base::get_value_for_key(const char* key) const
 {
   return get_value_for_key(fstring(key));
 }
 
-void rutz::assoc_array::set_value_for_key(const char* key, void* ptr)
+void rutz::assoc_array_base::set_value_for_key(const char* key, void* ptr)
 {
-DOTRACE("rutz::assoc_array::set_value_for_key");
+DOTRACE("rutz::assoc_array_base::set_value_for_key");
   fstring skey(key);
   void*& ptr_slot = rep->values[skey];
   if (rep->kill_func != 0) rep->kill_func(ptr_slot);

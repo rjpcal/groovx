@@ -98,10 +98,10 @@ namespace Tcl
   void defCreator(Pkg*, const char* aliasName = 0)
   {
     const char* origName =
-      Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
+      Util::ObjFactory::theOne().register_creator(&C::make);
 
     if (aliasName != 0)
-      Util::ObjFactory::theOne().registerAlias(origName, aliasName);
+      Util::ObjFactory::theOne().register_alias(origName, aliasName);
   }
 }
 

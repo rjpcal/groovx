@@ -47,7 +47,7 @@ Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)
 Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const fstring& type)
 {
 DOTRACE("Util::ObjMgr::newObj(const fstring&)");
-  return Util::SoftRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
+  return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
 }
 
 static const char vcid_objmgr_cc[] = "$Header$";

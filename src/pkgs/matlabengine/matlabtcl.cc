@@ -159,7 +159,7 @@ DOTRACE("Matlabengine_Init");
   pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
   pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&MatlabEngine::make);
+  Util::ObjFactory::theOne().register_creator(&MatlabEngine::make);
 
   PKG_RETURN;
 }

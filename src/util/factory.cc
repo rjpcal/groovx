@@ -36,9 +36,9 @@
 
 #include "util/trace.h"
 
-FactoryBase::~FactoryBase()
+rutz::factory_base::~factory_base()
 {
-DOTRACE("FactoryBase::~FactoryBase");
+DOTRACE("rutz::factory_base::~factory_base");
 }
 
 static const char vcid_factory_cc[] = "$Header$";

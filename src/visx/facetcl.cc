@@ -67,11 +67,11 @@ DOTRACE("Face_Init");
   Tcl::defFieldContainer<Face>(pkg, SRC_POS);
   Tcl::defCreator<Face>(pkg);
 
-  Util::ObjFactory::theOne().registerCreatorFunc( &makeInnerFace,
-                                                  "InnerFace" );
+  Util::ObjFactory::theOne().register_creator( &makeInnerFace,
+                                               "InnerFace" );
 
-  Util::ObjFactory::theOne().registerCreatorFunc( &makeFilledFace,
-                                                  "FilledFace" );
+  Util::ObjFactory::theOne().register_creator( &makeFilledFace,
+                                               "FilledFace" );
 
   PKG_RETURN;
 }

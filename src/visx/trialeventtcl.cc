@@ -55,7 +55,7 @@ namespace
                    const char* name)
   {
     PKG_CREATE(interp, name, "$Revision$");
-    Util::ObjFactory::theOne().registerCreatorFunc(func, name);
+    Util::ObjFactory::theOne().register_creator(func, name);
     pkg->inheritPkg("TrialEvent");
 
     PKG_RETURN;

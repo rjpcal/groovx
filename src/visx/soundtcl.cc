@@ -60,7 +60,7 @@ DOTRACE("Sound_Init");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&Sound::make);
+  Util::ObjFactory::theOne().register_creator(&Sound::make);
 
   pkg->def( "haveAudio", 0, &Sound::haveSound, SRC_POS );
 

@@ -68,7 +68,7 @@ DOTRACE("Fish_Init");
   pkg->defVec( "make", "spline_file coord_file index", &makeFish, 1,
                SRC_POS );
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
+  Util::ObjFactory::theOne().register_creator(&Fish::make);
 
   PKG_RETURN;
 }
