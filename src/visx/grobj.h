@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 23 09:54:13 2000
+// written: Thu Mar 23 12:56:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,6 +300,12 @@ public:
   //
   ///////////////////////////////////////////////////////////////////////
 
+  /** Changes the bitmap cache directory to \a dirname. This is where
+      bitmaps saved with \c saveBitmapCache() will be stored, and also
+      where objects will look to restore themselves from previously
+      saved bitmap caches. */
+  static void setBitmapCacheDir(const char* dirname);
+
   /// Changes whether the bounding box will be visible when the object is drawn.
   void setBBVisibility(bool visibility);
 
@@ -367,6 +373,12 @@ public:
   // Actions
   //
   ///////////////////////////////////////////////////////////////////////
+
+  /** Saves a bitmap cache of the object to the named file. The file
+      will be stored in the directory given to \c
+      setBitmapCacheDir(). The filename must refer to a format
+      supported by \c Pbm. */
+  void saveBitmapCache(Canvas& canvas, const char* filename) const;
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
 		changes pending, otherwise does nothing. */
