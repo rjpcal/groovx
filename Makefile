@@ -477,4 +477,5 @@ export: snapshots/.timestamp
 	rm -r snapshots/$(SNAPSHOT)/logs
 	rm -r snapshots/$(SNAPSHOT)/old_src
 	rm -r snapshots/$(SNAPSHOT)/future_src
+	cd snapshots/$(SNAPSHOT); autoconf
 	cd snapshots; tar cfz $(SNAPSHOT).tar.gz $(SNAPSHOT)
