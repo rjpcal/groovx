@@ -2,14 +2,16 @@
 // trialexpt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Tue Mar 16 19:13:57 1999
+// written: Mon Apr 19 13:03:45 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIALEXPT_H_DEFINED
 #define TRIALEXPT_H_DEFINED
 
-#include "expt.h"
+#ifndef IO_H_INCLUDED
+#include "io.h"
+#endif
 
 #include <vector>
 
@@ -19,19 +21,21 @@ class Tlist;
 // TrialExpt class
 ///////////////////////////////////////////////////////////////////////
 
-class TrialExpt : public Expt {
+class TrialExpt : public virtual IO {
 public:
   // creators
   TrialExpt(Tlist& tlist, int repeat, int seed = 0);
   ~TrialExpt() {}
+
+  void init(int repeat, int seed = 0);
 
   // These I/O functions write/read the _entire_ state of the
   // TrialExpt, including itsTlist (which is only held by reference).
   // In addition, since Tlist itself writes/reads the ObjList and
   // PosList that it holds by reference, these I/O functions are all
   // that is needed to manage Expt's through files.
-  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
-  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
+  virtual void serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
+  virtual void deserialize(istream &is, IOFlag flag = NO_FLAGS);
   
   // accessors
   virtual int numTrials() const;
@@ -44,6 +48,7 @@ public:
 
   // actions
   virtual void beginTrial();
+  virtual void abortTrial();
   virtual void recordResponse(int resp);
 
 private:
