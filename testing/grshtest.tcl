@@ -61,7 +61,7 @@ set seed_arg [lsearch -exact $argv "-seed"]
 if { $seed_arg != -1 } {
     set seed [lindex $argv [expr $seed_arg + 1]]
 } else {
-    set seed [clock clicks]
+    set seed [clock seconds]
 }
 
 set verbose_arg [lsearch -exact $argv "-verbose"]
