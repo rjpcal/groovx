@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Mon Dec  6 20:37:05 1999
+// written: Mon Dec  6 23:05:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 
 #include "tlistwidget.h"
 
-#include <GL/gl.h>
-
-#include "glcanvas.h"
+#include "canvas.h"
 #include "tlist.h"
 #include "trial.h"
 
@@ -30,17 +28,12 @@ namespace {
 
 	 DebugPrintNL("drawing the trial...");
 	 try {
-		theTlist.getCheckedPtr(trial)->trDraw(GLCanvas::theCanvas(), false);
+		theTlist.getCheckedPtr(trial)->trDraw(widg->getCanvas(), false);
 	 }
 	 catch (InvalidIdError& err) {
 		DebugEvalNL(err.msg());
 		widg->setVisibility(false);
 	 }
-  }
-
-  void clearColorBuffer() {
-  DOTRACE("{tlistwidget.cc}::clearColorBuffer");
-    glClear(GL_COLOR_BUFFER_BIT);
   }
 }
 
@@ -56,35 +49,35 @@ DOTRACE("TlistWidget::display");
   // invalid id errors that occur, and simply clear the screen in
   // this case.
   try {
-	 theTlist.getCheckedPtr(itsCurTrial)->trUndraw(GLCanvas::theCanvas(), false);
+	 theTlist.getCheckedPtr(itsCurTrial)->trUndraw(this->getCanvas(), false);
   }
   catch (InvalidIdError&) {
 	 clearscreen();
   }
 
   safeDrawTrial(itsCurTrial, this);
-  glFlush();
+  getCanvas()->flushOutput();
 }
 
 void TlistWidget::clearscreen() {
 DOTRACE("TlistWidget::clearscreen");
   setVisibility(false);
-  clearColorBuffer();
-  glFlush();
+  getCanvas()->clearColorBuffer();
+  getCanvas()->flushOutpu();
 }
 
 void TlistWidget::refresh() {
 DOTRACE("TlistWidget::refresh");
 
-  clearColorBuffer(); 
+  getCanvas()->clearColorBuffer(); 
   safeDrawTrial(itsCurTrial, this);
   swapBuffers();
-  glFlush();
+  getCanvas()->flushOutpu();
 }
 
 void TlistWidget::undraw() {
 DOTRACE("TlistWidget::undraw");
-  theTlist.getCheckedPtr(itsCurTrial)->trUndraw(GLCanvas::theCanvas(), true);
+  theTlist.getCheckedPtr(itsCurTrial)->trUndraw(this->getCanvas(), true);
 }
 
 void TlistWidget::setCurTrial(int trial) {
