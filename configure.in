@@ -97,6 +97,8 @@ else
    AC_DEFINE(GL_PLATFORM_GLX,1,[use X11 OpenGL windowsystem interface (glx)])
 fi
 
+AC_SUBST(windowsystem)
+
 ##########################################################################
 ### Find c++ compiler and linkers.
 
