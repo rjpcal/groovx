@@ -28,15 +28,19 @@
 
 3. Dependencies
 
+   (Assume /path/to/install is where you will install local packages)
+   (Assume /path/to/source is where you unpack and build these packages)
+
    This software requires the following packages:
 
      * Tcl/Tk (version 8.4b1 or later)
 
        Note that you'll need to install all of the tkInt*.h files to an
        include directory, in addition to the other tk*.h files that are
-       normally installed as part of tk. The tkInt*.h files are those in
-       tk8.4b1/generic/tkInt*.h, replacing 8.4b1 with whichever version of
-       Tk you have.
+       normally installed as part of tk. That is:
+
+       cd /path/to/source/tk8.4b1
+       cp generic/tkInt*.h /path/to/install/include
 
      * X11 windowing system
      * OpenGL
@@ -47,6 +51,32 @@
 
      * libpng (portable network graphics library)
      * matlab (allows running a matlab engine inside the grsh shell)
+
+   The following packages are optional, but are used in some of the scripts
+   that use the grsh software.
+   
+     * itcl and itk (itcl3.2.1_src.tgz)
+   
+       cd /path/to/source
+       tar xfz itcl3.2.1_src.tgz
+       cd itcl3.2.1
+       ./configure  --prefix=/path/to/install
+       make
+       make install
+   
+     * iwidgets (iwidgets4.0.0.tar.gz)
+   
+       cd /path/to/source
+       tar xfz iwidgets4.0.0.tar.gz
+       cd iwidgets4.0.0
+       ./configure  --prefix=/path/to/install \
+         --with-itcl=/path/to/source/itcl3.2.1/itcl \
+         --with-itk=/path/to/source/itcl3.2.1/itk
+       # no need to do "make", just do "make install"
+       make install
+      
+
+     
 
 4. Makefile configuration
 
