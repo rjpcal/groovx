@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Sep 25 19:02:35 2002
+// written: Wed Nov 13 14:20:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "util/strings.h"
 
 #include "visx/grobj.h"
+
+class GxFont;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -64,6 +66,7 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
+  GxFont* itsFont;
   fstring itsText;
   int itsStrokeWidth;
   mutable unsigned int itsListBase;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Nov 13 14:04:54 2002
+// written: Wed Nov 13 14:38:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
+#include "gfx/gxfont.h"
 #include "gfx/gxscaler.h"
 
 #include "gx/rect.h"
@@ -768,6 +769,7 @@ DOTRACE("Gtext::make");
 
 Gtext::Gtext(const char* text) :
   GrObj(),
+  itsFont(new GxFont("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
   itsText(text ? text : ""),
   itsStrokeWidth(2),
   itsListBase(0)
@@ -784,6 +786,7 @@ DOTRACE("Gtext::Gtext(const char*)");
 Gtext::~Gtext()
 {
 DOTRACE("Gtext::~Gtext");
+  delete itsFont;
 }
 
 IO::VersionId Gtext::serialVersionId() const
@@ -865,16 +868,23 @@ DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth;
 }
 
-Gfx::Rect<double> Gtext::grGetBoundingBox(Gfx::Canvas&) const
+Gfx::Rect<double> Gtext::grGetBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gtext::grGetBoundingBox");
 
-  Gfx::Rect<double> bbox;
-  bbox.left() = 0.0;
-  bbox.right() = itsText.length() > 0 ? (5*itsText.length()) - 1 : 1.0;
-  bbox.bottom() = -1.0;
-  bbox.top() = 6.0;
-  return bbox;
+//   Gfx::Rect<double> bbox;
+//   bbox.left() = 0.0;
+//   bbox.right() = itsText.length() > 0 ? (5*itsText.length()) - 1 : 1.0;
+//   bbox.bottom() = -1.0;
+//   bbox.top() = 6.0;
+//   return bbox;
+
+  Gfx::Rect<int> screen = canvas.screenFromWorld(Gfx::Rect<double>());
+  screen.right()  += itsFont->widthOf(itsText.c_str());
+  screen.bottom() -= itsFont->descentOf(itsText.c_str());
+  screen.top()    += itsFont->ascentOf(itsText.c_str());
+
+  return canvas.worldFromScreen(screen);
 }
 
 void Gtext::grRender(Gfx::Canvas& canvas) const
@@ -887,7 +897,8 @@ DOTRACE("Gtext::grRender");
 
   canvas.setLineWidth(itsStrokeWidth);
   glRasterPos2d( 0.0, 0.0 );
-  glListBase( itsListBase );
+//   glListBase( itsListBase );
+  glListBase( itsFont->listBase() );
   glCallLists( itsText.length(), GL_BYTE, itsText.c_str() );
 }
 
