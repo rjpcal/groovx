@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Wed Sep 25 18:57:07 2002
+// written: Sun Nov  3 09:10:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
+
+#include "util/pointers.h"
 
 namespace Tcl
 {
@@ -70,19 +72,19 @@ public:
   template <class T>
   T get(unsigned int index, T* /*dummy*/=0) const
     {
-      return Tcl::Convert<T>::fromTcl(at(index));
+      return Tcl::toNative<T>(at(index));
     }
 
   unsigned int size() const { update(); return itsLength; }
   unsigned int length() const { update(); return itsLength; }
 
   template <class T>
-  void append(T t) { doAppend(Tcl::Convert<T>::toTcl(t), 1); }
+  void append(T t) { doAppend(Tcl::toTcl(t), 1); }
 
   template <class T>
   void append(T t, unsigned int times)
     {
-      doAppend(Tcl::Convert<T>::toTcl(t), times);
+      doAppend(Tcl::toTcl(t), times);
     }
 
   template <class Itr>
@@ -154,6 +156,10 @@ private:
 
 class Tcl::List::IteratorBase
 {
+protected:
+  // Make protected to prevent people from instantiating IteratorBase directly.
+  ~IteratorBase() {}
+
 public:
   typedef int difference_type;
 
@@ -224,18 +230,23 @@ private:
 template <class T>
 class Tcl::List::Iterator : public Tcl::List::IteratorBase
 {
+  // Keep a copy of the current value here so that operator*() can return a
+  // reference rather than by value.
+  mutable shared_ptr<const T> itsCurrent;
+
 public:
   Iterator(const List& owner, Pos pos = BEGIN) :
-    IteratorBase(owner, pos) {}
+    IteratorBase(owner, pos), itsCurrent(0) {}
 
   Iterator(Tcl_Obj* listObj, Pos pos = BEGIN) :
-    IteratorBase(listObj, pos) {}
+    IteratorBase(listObj, pos), itsCurrent(0) {}
 
   typedef T value_type;
 
-  T operator*() const
+  const T& operator*() const
   {
-    return Tcl::Convert<T>::fromTcl(current());
+    itsCurrent.reset(new T(Tcl::toNative<T>(current())));
+    return *itsCurrent;
   }
 };
 
