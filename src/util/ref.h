@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Aug 31 17:02:42 2001
+// written: Mon Sep  3 15:37:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,8 @@ namespace Util
 
   template <class T> class Ref;
   template <class T> class SoftRef;
+
+  template <class T> class FloatingRef;
 }
 
 using Util::Ref;
@@ -78,6 +80,61 @@ namespace Util
     inline Util::Object* getCastedItem<Util::Object>(Util::UID id)
     { return getCheckedItem(id); }
 
+    template <class T>
+    struct DefaultUnrefPolicy
+    {
+      static void unref(T* t) { t->decrRefCount(); }
+    };
+
+    template <class T>
+    struct NoDeleteUnrefPolicy
+    {
+      void unref(T* t) { t->decrRefCountNoDelete(); }
+    };
+
+    template <class T, class UnrefPolicy>
+    class Handle
+    {
+    public:
+      explicit Handle(T* master) : itsMaster(master)
+      {
+        if (master == 0)
+          throwError("attempted to construct a Ref with a null pointer");
+
+        if (master->isNotShareable())
+          throwError("attempted to construct a Ref with an unshareable object");
+
+        itsMaster->incrRefCount();
+      }
+
+      ~Handle()
+      { UnrefPolicy::unref(itsMaster); }
+
+      Handle(const Handle& other) : itsMaster(other.itsMaster)
+      { itsMaster->incrRefCount(); }
+
+      Handle& operator=(const Handle& other)
+      {
+        Handle otherCopy(other);
+        this->swap(otherCopy);
+        return *this;
+      }
+
+      T* get() const { return itsMaster; }
+
+      bool operator==(const Handle& other) const
+      { return itsMaster == other.itsMaster; }
+
+    private:
+      void swap(Handle& other)
+      {
+        Util::swap(itsMaster, other.itsMaster);
+      }
+
+      T* itsMaster;
+
+    };
+
   }
 } // end namespace Util::RefHelpers
 
@@ -85,6 +142,17 @@ namespace Util
 
 namespace Util
 {
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Util::FloatingRef<T> is a ref-counted smart pointer that will NOT
+ * delete its pointee when exiting scope. This can be of use to
+ * clients who need to allow an object to be returned to a clean state
+ * (i.e. with ref count == 0), but need to ref the object temporarily.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -105,46 +173,8 @@ class Ref
 {
 private:
 
-  class Handle
-  {
-  public:
-    explicit Handle(T* master) : itsMaster(master)
-    {
-      if (master == 0) Util::RefHelper::throwError(
-                            "attempted to construct a Ref with a null pointer");
-
-      if (master->isNotShareable()) Util::RefHelper::throwError(
-                     "attempted to construct a Ref with an unshareable object");
-
-      itsMaster->incrRefCount();
-    }
-
-    ~Handle()
-    { itsMaster->decrRefCount(); }
-
-    Handle(const Handle& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-    Handle& operator=(const Handle& other)
-    {
-      Handle otherCopy(other);
-      this->swap(otherCopy);
-      return *this;
-    }
-
-    T* get() const { return itsMaster; }
-
-    bool operator==(const Handle& other) const
-    { return itsMaster == other.itsMaster; }
-
-  private:
-    void swap(Handle& other)
-    {
-      Util::swap(itsMaster, other.itsMaster);
-    }
-
-    T* itsMaster;
-  };
+  typedef Util::RefHelper::Handle<T, Util::RefHelper::DefaultUnrefPolicy<T> >
+  Handle;
 
   Handle itsHandle;
 
