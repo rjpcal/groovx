@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jul 30 19:06:26 2002
+// written: Tue Jul 30 19:30:13 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -317,8 +317,8 @@ private:
 
   void destroyCurrentWindow();
   int checkForGLX();
-  int setupVisInfoAndContext();
-  shared_ptr<GlxAttribs> buildAttribList(int ci_depth, int dbl_flag);
+  void setupVisInfoAndContext();
+  shared_ptr<GlxAttribs> buildAttribList();
   void createWindow();
   Window findParent();
   Colormap findColormap();
@@ -349,6 +349,7 @@ public:
   int itsRgbaRed;
   int itsRgbaGreen;
   int itsRgbaBlue;
+  int itsColorIndexSize;
   int itsDoubleFlag;
   int itsDepthFlag;
   int itsDepthSize;
@@ -423,6 +424,9 @@ static Tk_ConfigSpec configSpecs[] =
 
   {TK_CONFIG_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
    (char*)"1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
+
+  {TK_CONFIG_INT, (char*)"-colorindexsize", (char*)"colorindexsize", (char*)"ColorIndexSize",
+   (char*)"8", Tk_Offset(Togl::Impl, itsColorIndexSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
 #ifndef NO_DOUBLE_BUFFER
@@ -1198,6 +1202,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsRgbaRed(1),
   itsRgbaGreen(1),
   itsRgbaBlue(1),
+  itsColorIndexSize(8),
 #ifndef NO_DOUBLE_BUFFER
   itsDoubleFlag(1),
 #else
@@ -1346,23 +1351,24 @@ int Togl::Impl::configure(Tcl_Interp* interp,
 {
 DOTRACE("Togl::Impl::configure");
 
-  int oldRgbaFlag    = itsRgbaFlag;
-  int oldRgbaRed     = itsRgbaRed;
-  int oldRgbaGreen   = itsRgbaGreen;
-  int oldRgbaBlue    = itsRgbaBlue;
-  int oldDoubleFlag  = itsDoubleFlag;
-  int oldDepthFlag   = itsDepthFlag;
-  int oldDepthSize   = itsDepthSize;
-  int oldAccumFlag   = itsAccumFlag;
-  int oldAccumRed    = itsAccumRed;
-  int oldAccumGreen  = itsAccumGreen;
-  int oldAccumBlue   = itsAccumBlue;
-  int oldAccumAlpha  = itsAccumAlpha;
-  int oldAlphaFlag   = itsAlphaFlag;
-  int oldAlphaSize   = itsAlphaSize;
-  int oldStencilFlag = itsStencilFlag;
-  int oldStencilSize = itsStencilSize;
-  int oldAuxNumber   = itsAuxNumber;
+  int oldRgbaFlag       = itsRgbaFlag;
+  int oldRgbaRed        = itsRgbaRed;
+  int oldRgbaGreen      = itsRgbaGreen;
+  int oldRgbaBlue       = itsRgbaBlue;
+  int oldColorIndexSize = itsColorIndexSize;
+  int oldDoubleFlag     = itsDoubleFlag;
+  int oldDepthFlag      = itsDepthFlag;
+  int oldDepthSize      = itsDepthSize;
+  int oldAccumFlag      = itsAccumFlag;
+  int oldAccumRed       = itsAccumRed;
+  int oldAccumGreen     = itsAccumGreen;
+  int oldAccumBlue      = itsAccumBlue;
+  int oldAccumAlpha     = itsAccumAlpha;
+  int oldAlphaFlag      = itsAlphaFlag;
+  int oldAlphaSize      = itsAlphaSize;
+  int oldStencilFlag    = itsStencilFlag;
+  int oldStencilSize    = itsStencilSize;
+  int oldAuxNumber      = itsAuxNumber;
 
   if (Tk_ConfigureWidget(interp, itsTkWin, configSpecs,
                          argc, const_cast<char**>(argv),
@@ -1377,6 +1383,7 @@ DOTRACE("Togl::Impl::configure");
       || itsRgbaRed != oldRgbaRed
       || itsRgbaGreen != oldRgbaGreen
       || itsRgbaBlue != oldRgbaBlue
+      || itsColorIndexSize != oldColorIndexSize
       || itsDoubleFlag != oldDoubleFlag
       || itsDepthFlag != oldDepthFlag
       || itsDepthSize != oldDepthSize
@@ -1956,8 +1963,14 @@ DOTRACE("Togl::Impl::makeWindowExist");
   int status = checkForGLX();
   if ( status != TCL_OK ) return status;
 
-  status = setupVisInfoAndContext();
-  if ( status != TCL_OK ) return status;
+  try
+    {
+      setupVisInfoAndContext();
+    }
+  catch (Util::Error& err)
+    {
+      return TCL_ERR(itsInterp, err.msg_cstr());
+    }
 
   createWindow();
 
@@ -2008,61 +2021,43 @@ DOTRACE("Togl::Impl::checkForGLX");
   return TCL_OK;
 }
 
-int Togl::Impl::setupVisInfoAndContext()
+void Togl::Impl::setupVisInfoAndContext()
 {
 DOTRACE("Togl::Impl::setupVisInfoAndContext");
 
-  const int MAX_ATTEMPTS = 12;
+  shared_ptr<GlxAttribs> attribs = buildAttribList();
 
-  static int ci_depths[MAX_ATTEMPTS] =
+  itsVisInfo = glXChooseVisual( itsDisplay,
+                                DefaultScreen(itsDisplay),
+                                attribs->get() );
+
+  if (itsVisInfo == 0)
     {
-      8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
-    };
-  static int dbl_flags[MAX_ATTEMPTS] =
-    {
-      0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
-    };
-
-  /* It may take a few tries to get a visual */
-  for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++)
-    {
-      DebugEvalNL(attempt);
-
-      shared_ptr<GlxAttribs> attribs =
-        buildAttribList(ci_depths[attempt], dbl_flags[attempt]);
-
-      itsVisInfo = glXChooseVisual( itsDisplay,
-                                    DefaultScreen(itsDisplay),
-                                    attribs->get() );
-
-      if (itsVisInfo)
+      // If we had requested single-buffering, then now try for
+      // double-buffering, since that can emulate single-buffering
+      if (itsDoubleFlag == false)
         {
-          /* found a GLX visual! */
-          itsBitsPerPixel = itsVisInfo->depth;
-
-          DebugEvalNL((void*)itsVisInfo->visualid);
-          DebugEvalNL(itsVisInfo->depth);
-          DebugEvalNL(itsVisInfo->bits_per_rgb);
-          break;
+          itsDoubleFlag = true;
+          setupVisInfoAndContext();
+          return;
+        }
+      else
+        {
+          throw Util::Error("Togl couldn't find a matching visual");
         }
     }
 
-  if (itsVisInfo==NULL)
-    {
-      return TCL_ERR(itsInterp, "Togl: couldn't get visual");
-    }
+  // else... found a GLX visual!
+  itsBitsPerPixel = itsVisInfo->depth;
+
+  DebugEvalNL((void*)itsVisInfo->visualid);
+  DebugEvalNL(itsVisInfo->depth);
+  DebugEvalNL(itsVisInfo->bits_per_rgb);
 
   // Create a new OpenGL rendering context.
   Assert( itsGlx == 0 );
 
-  try
-    {
-      itsGlx = new GlxWrapper(itsDisplay, itsVisInfo, !itsIndirect);
-    }
-  catch (Util::Error& err)
-    {
-      return TCL_ERR(itsInterp, err.msg_cstr());
-    }
+  itsGlx = new GlxWrapper(itsDisplay, itsVisInfo, !itsIndirect);
 
   // Make sure we don't try to use a depth buffer with indirect rendering
   if ( !itsGlx->isDirect() && itsDepthFlag == true )
@@ -2070,39 +2065,38 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
       delete itsGlx;
       itsGlx = 0;
       itsDepthFlag = false;
-      return setupVisInfoAndContext();
+      setupVisInfoAndContext();
+      return;
     }
 
   itsIndirect = !itsGlx->isDirect();
-
-  return TCL_OK;
 }
 
-shared_ptr<GlxAttribs> Togl::Impl::buildAttribList(int ci_depth, int dbl_flag)
+shared_ptr<GlxAttribs> Togl::Impl::buildAttribList()
 {
 DOTRACE("Togl::Impl::buildAttribList");
 
   shared_ptr<GlxAttribs> attribs(new GlxAttribs);
 
-  if (itsRgbaFlag)               attribs->rgba(itsRgbaRed,
-                                               itsRgbaGreen,
-                                               itsRgbaBlue,
-                                   itsAlphaFlag ? itsAlphaSize : -1);
+  if (itsRgbaFlag)        attribs->rgba(itsRgbaRed,
+                                        itsRgbaGreen,
+                                        itsRgbaBlue,
+                                        itsAlphaFlag ? itsAlphaSize : -1);
 
-  else                           attribs->colorIndex( ci_depth );
+  else                    attribs->colorIndex( itsColorIndexSize );
 
-  if (itsDepthFlag)              attribs->depthBuffer( itsDepthSize );
+  if (itsDepthFlag)       attribs->depthBuffer( itsDepthSize );
 
-  if (itsDoubleFlag || dbl_flag) attribs->doubleBuffer();
+  if (itsDoubleFlag)      attribs->doubleBuffer();
 
-  if (itsStencilFlag)            attribs->stencilBuffer( itsStencilSize );
+  if (itsStencilFlag)     attribs->stencilBuffer( itsStencilSize );
 
-  if (itsAccumFlag)              attribs->accum(itsAccumRed,
-                                                itsAccumGreen,
-                                                itsAccumBlue,
-                                     itsAlphaFlag ? itsAccumAlpha : -1);
+  if (itsAccumFlag)       attribs->accum(itsAccumRed,
+                                         itsAccumGreen,
+                                         itsAccumBlue,
+                                         itsAlphaFlag ? itsAccumAlpha : -1);
 
-  if (itsAuxNumber != 0)         attribs->auxBuffers( itsAuxNumber );
+  if (itsAuxNumber > 0)   attribs->auxBuffers( itsAuxNumber );
 
   return attribs;
 }
