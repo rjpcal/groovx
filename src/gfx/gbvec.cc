@@ -49,10 +49,8 @@ unsigned int GbVec3<T>::numValues() const { return 3; }
 template <class T>
 const T* GbVec3<T>::constBegin() const { return Gfx::Vec3<T>::data(); }
 
-#ifndef PPC
 template class GbVec3<int>;
 template class GbVec3<double>;
-#endif
 
 static const char vcid_gbvec_cc[] = "$Header$";
 #endif // !GBVEC_CC_DEFINED

@@ -26,16 +26,6 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-#ifdef PPC
-#include "gfx/gbvec.cc"
-
-void instant_gbvec()
-{
-  GbVec3<int> pi; pi.~GbVec3<int>();
-  GbVec3<double> pd; pd.~GbVec3<double>();
-}
-#endif
-
 namespace
 {
   const IO::VersionId POS_SERIAL_VERSION_ID = 1;
