@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb 25 13:52:11 2003
-// written: Wed Feb 26 09:04:47 2003
+// written: Wed Feb 26 14:11:56 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "util/error.h"
 
 #include <ios>
+#include <unistd.h>
 
 #include "util/debug.h"
 #include "util/trace.h"
