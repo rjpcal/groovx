@@ -79,8 +79,8 @@ namespace
     const rutz::time t4 = rutz::time::user_rusage();
     const rutz::time builtin_erfc = t4-t3;
 
-    dbg_eval_nl(0, (custom_erfc).msec());
-    dbg_eval_nl(0, (builtin_erfc).msec());
+    dbg_eval_nl(0, custom_erfc.msec());
+    dbg_eval_nl(0, builtin_erfc.msec());
   }
 
   void testGammaln()
@@ -107,8 +107,8 @@ namespace
     rutz::time t4 = rutz::time::user_rusage();
     const rutz::time builtin_lgamma = t4-t3;
 
-    dbg_eval_nl(0, (custom_gammaln).msec());
-    dbg_eval_nl(0, (builtin_lgamma).msec());
+    dbg_eval_nl(0, custom_gammaln.msec());
+    dbg_eval_nl(0, builtin_lgamma.msec());
   }
 }
 
