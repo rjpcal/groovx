@@ -3,7 +3,7 @@
 // tracertcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 17 13:34:40 2000
-// written: Wed Mar  8 16:58:12 2000
+// written: Wed Mar 15 10:17:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "util/tracer.h"
 
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 // Template class to run member functions on Tracer's.
 template <class FuncType>

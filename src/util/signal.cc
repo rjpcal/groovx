@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Tue Oct 12 16:19:09 1999
+// written: Wed Mar 15 10:17:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,8 @@
 #include "observer.h"
 
 #define NO_TRACE
-#include "trace.h"
-#include "debug.h"
+#include "util/trace.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

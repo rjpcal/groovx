@@ -3,7 +3,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Dec  7 18:02:10 1999
+// written: Wed Mar 15 10:17:26 2000
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -22,8 +22,8 @@
 #include "errmsg.h"
 
 #define NO_TRACE
-#include "trace.h"
-#include "debug.h"
+#include "util/trace.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

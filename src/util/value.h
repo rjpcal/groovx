@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Fri Mar 10 01:06:03 2000
+// written: Wed Mar 15 10:19:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define VALUE_H_DEFINED
 
 #ifndef ERROR_H_DEFINED
-#include "error.h"
+#include "util/error.h"
 #endif
 
 class istream;

@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Mar 10 01:26:20 2000
+// written: Wed Mar 15 10:17:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,9 @@
 #include <GL/gl.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

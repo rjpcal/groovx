@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Dec  7 11:59:02 1999
+// written: Wed Mar 15 10:17:29 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -18,7 +18,7 @@
 #include "grshapp.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 // Forward declarations of package init procedures
 extern "C" {

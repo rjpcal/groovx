@@ -3,7 +3,7 @@
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Wed Mar  8 16:18:16 2000
+// written: Wed Mar 15 10:17:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 #include "listpkg.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 //---------------------------------------------------------------------
 //

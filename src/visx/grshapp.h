@@ -3,7 +3,7 @@
 // grshapp.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:58 1999
-// written: Thu Mar  9 15:42:40 2000
+// written: Wed Mar 15 10:19:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #endif
 
 #ifndef ERROR_H_DEFINED
-#include "error.h"
+#include "util/error.h"
 #endif
 
 struct Tcl_Interp;

@@ -3,7 +3,7 @@
 // writeutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:21:32 1999
-// written: Mon Mar  6 12:37:34 2000
+// written: Wed Mar 15 10:20:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "writeutils.h"
 
-#include "strings.h"
+#include "util/strings.h"
 
 #include <strstream.h>
 

@@ -3,7 +3,7 @@
 // morphyfacetcl.cc
 // Rob Peters 
 // created: Wed Sep  8 15:42:36 1999
-// written: Wed Mar  8 16:17:14 2000
+// written: Wed Mar 15 10:17:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "morphyface.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 extern "C"
 int Morphyface_Init(Tcl_Interp* interp) {

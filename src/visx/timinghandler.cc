@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Fri Mar 10 00:51:43 2000
+// written: Wed Mar 15 10:17:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,9 +19,9 @@
 #include <iostream.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace {
   const char* ioTag = "TimingHandler";

@@ -3,7 +3,7 @@
 // bmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:55:36 1999
-// written: Fri Mar 10 00:30:39 2000
+// written: Wed Mar 15 10:17:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "bmaprenderer.h"
 
-#include "trace.h"
+#include "util/trace.h"
 
 BmapRenderer::~BmapRenderer()
 {

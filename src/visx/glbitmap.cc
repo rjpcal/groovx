@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Sun Mar  5 16:15:48 2000
+// written: Wed Mar 15 10:17:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,9 @@
 #include <iostream.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace {
   const char* ioTag = "GLBitmap";

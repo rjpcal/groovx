@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Mar  9 16:14:15 2000
+// written: Wed Mar 15 10:20:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 
 #include "toglconfig.h"
 
-#include "error.h"
+#include "util/error.h"
 #include "glcanvas.h"
-#include "strings.h"
+#include "util/strings.h"
 #include "tclevalcmd.h"
 
 #include <X11/Xlib.h>
@@ -33,9 +33,9 @@
 #endif
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

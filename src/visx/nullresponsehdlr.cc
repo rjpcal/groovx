@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Sun Mar  5 16:16:46 2000
+// written: Wed Mar 15 10:17:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include <iostream.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 namespace {
   const char* ioTag = "NullResponseHdlr";

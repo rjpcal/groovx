@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu Mar  9 10:34:08 2000
+// written: Wed Mar 15 10:19:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "canvas.h"
-#include "error.h"
+#include "util/error.h"
 #include "gtext.h"
 #include "objlist.h"
 #include "position.h"
@@ -30,8 +30,8 @@
 #include "trial.h"
 #include "tlist.h"
 
-#include "trace.h"
-#include "debug.h"
+#include "util/trace.h"
+#include "util/debug.h"
 
 namespace {
   const char* const bad_trial_msg = "invalid trial id";

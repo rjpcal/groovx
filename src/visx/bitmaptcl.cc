@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu Mar  9 17:36:50 2000
+// written: Wed Mar 15 10:20:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "iofactory.h"
 #include "objlist.h"
 #include "listitempkg.h"
-#include "strings.h"
+#include "util/strings.h"
 #include "system.h"
 #include "tclcmd.h"
 #include "tclobjlock.h"

@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Mar 10 00:53:26 2000
+// written: Wed Mar 15 10:17:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,9 @@
 #include <vector>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

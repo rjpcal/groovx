@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Mar  8 16:27:16 2000
+// written: Wed Mar 15 10:17:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@
 #include "listpkg.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace BlockTcl {
   class AddTrialsCmd;

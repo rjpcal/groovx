@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Mar 12 00:09:13 2000
+// written: Wed Mar 15 10:17:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,9 @@
 #include "writeutils.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 IoPtrList::IoPtrList(int size) :
   VoidPtrList(size)

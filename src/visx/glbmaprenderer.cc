@@ -3,7 +3,7 @@
 // glbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:52:41 1999
-// written: Thu Mar  9 15:39:53 2000
+// written: Wed Mar 15 10:17:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include <GL/gl.h>
 
-#include "trace.h"
+#include "util/trace.h"
 
 GLBmapRenderer::GLBmapRenderer () :
   itsUsingGlBitmap(true)

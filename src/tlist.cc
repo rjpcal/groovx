@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Mar  8 13:18:57 2000
+// written: Wed Mar 15 10:17:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 #include <cstring>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -2,7 +2,7 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Dec  7 18:01:10 1999
+// written: Wed Mar 15 10:17:27 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -16,9 +16,9 @@
 #include "subject.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 // Subject Tcl package

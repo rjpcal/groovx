@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Mar 10 01:27:21 2000
+// written: Wed Mar 15 10:17:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,10 +29,10 @@
 #include <GL/glu.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
 #define LOCAL_INVARIANT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

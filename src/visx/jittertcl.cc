@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Mar  8 16:33:54 2000
+// written: Wed Mar 15 10:17:28 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,8 +15,8 @@
 #include "listitempkg.h"
 
 #define NO_TRACE
-#include "trace.h"
-#include "debug.h"
+#include "util/trace.h"
+#include "util/debug.h"
 
 namespace JitterTcl {
   class SetJitterCmd;

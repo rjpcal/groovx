@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Mar  9 17:44:06 2000
+// written: Wed Mar 15 10:17:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@
 #include <tcl.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 //---------------------------------------------------------------------
 //

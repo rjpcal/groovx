@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Mar  9 15:38:04 2000
+// written: Wed Mar 15 10:19:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "fish.h"
 
-#include "error.h"
+#include "util/error.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"

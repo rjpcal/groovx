@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Mar 13 18:47:52 2000
+// written: Wed Mar 15 10:17:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,9 +30,9 @@
 #include <vector>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

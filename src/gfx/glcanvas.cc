@@ -3,7 +3,7 @@
 // glcanvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Feb 18 22:45:54 2000
+// written: Wed Mar 15 10:19:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,12 +16,12 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "error.h"
+#include "util/error.h"
 #include "point.h"
 #include "rect.h"
 
-#include "debug.h"
-#include "trace.h"
+#include "util/debug.h"
+#include "util/trace.h"
 
 
 Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {

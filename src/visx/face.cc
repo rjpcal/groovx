@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar  9 15:33:03 2000
+// written: Wed Mar 15 10:17:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,10 +24,10 @@
 #include <GL/glu.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
 #define LOCAL_INVARIANT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

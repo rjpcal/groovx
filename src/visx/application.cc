@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:05:52 1999
-// written: Fri Mar  3 16:51:18 2000
+// written: Wed Mar 15 10:17:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "application.h"
 
-#include "trace.h"
+#include "util/trace.h"
 
 namespace {
   Application* theSingleton = 0;

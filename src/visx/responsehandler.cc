@@ -3,7 +3,7 @@
 // responsehandler.cc
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Mon Nov  8 16:32:39 1999
+// written: Wed Mar 15 10:17:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "responsehandler.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

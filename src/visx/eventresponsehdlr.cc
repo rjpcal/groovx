@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Mar 13 19:58:37 2000
+// written: Wed Mar 15 10:19:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include <tcl.h>
 #include <strstream.h>
 
-#include "error.h"
+#include "util/error.h"
 #include "experiment.h"
 #include "sound.h"
 #include "soundlist.h"
@@ -30,9 +30,9 @@
 #include "writer.h"
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

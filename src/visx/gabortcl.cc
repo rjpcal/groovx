@@ -3,7 +3,7 @@
 // gabortcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 14:16:30 1999
-// written: Wed Mar  8 16:32:16 2000
+// written: Wed Mar 15 10:17:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "gabor.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 extern "C"
 int Gabor_Init(Tcl_Interp* interp) {

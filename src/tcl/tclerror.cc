@@ -3,7 +3,7 @@
 // tclerror.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:13 1999
-// written: Wed Mar  8 12:24:15 2000
+// written: Wed Mar 15 10:17:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "tclerror.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 namespace Tcl {
 

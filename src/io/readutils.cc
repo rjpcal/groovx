@@ -3,7 +3,7 @@
 // readutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Mon Mar  6 12:39:04 2000
+// written: Wed Mar 15 10:20:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "readutils.h"
 
-#include "strings.h"
+#include "util/strings.h"
 
 #include <strstream.h>
 

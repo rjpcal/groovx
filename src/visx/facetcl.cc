@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sat Mar 11 23:11:00 2000
+// written: Wed Mar 15 10:17:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,9 +27,9 @@
 #include "tclcmd.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace FaceTcl {
   class LoadFacesCmd;

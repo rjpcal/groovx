@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Sun Mar  5 16:16:13 2000
+// written: Wed Mar 15 10:17:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,9 +19,9 @@
 #include <iostream.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace {
   const char* ioTag = "XBitmap";

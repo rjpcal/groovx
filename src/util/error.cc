@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Mon Mar 13 13:58:38 2000
+// written: Wed Mar 15 10:22:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,13 +11,13 @@
 #ifndef ERROR_CC_DEFINED
 #define ERROR_CC_DEFINED
 
-#include "error.h"
+#include "util/error.h"
 
-#include "strings.h"
+#include "util/strings.h"
 
 #define NO_TRACE
-#include "trace.h"
-#include "debug.h"
+#include "util/trace.h"
+#include "util/debug.h"
 
 Error::Error () {
 DOTRACE("Error::Error ");

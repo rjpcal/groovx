@@ -3,7 +3,7 @@
 // response.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:33:17 2000
-// written: Mon Mar 13 19:47:48 2000
+// written: Wed Mar 15 10:17:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include <iostream.h>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

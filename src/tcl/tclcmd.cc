@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Mar 10 15:07:24 2000
+// written: Wed Mar 15 10:17:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,9 @@
 #include <vector>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace {
   Tcl_Obj* nullObject () {

@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Mar 13 14:37:29 2000
+// written: Wed Mar 15 10:23:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef STRINGS_CC_DEFINED
 #define STRINGS_CC_DEFINED
 
-#include "strings.h"
+#include "util/strings.h"
 
 #include <cstring>
 #include <iostream.h>

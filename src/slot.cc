@@ -3,7 +3,7 @@
 // observer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:37:03 1999
-// written: Tue Oct 12 15:13:13 1999
+// written: Wed Mar 15 10:17:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "observer.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 Observer::~Observer() {
 DOTRACE("Observer::~Observer");

@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Mar 13 12:43:52 2000
+// written: Wed Mar 15 10:23:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define TRACE_CC_DEFINED
 
 #define LOCAL_PROF
-#include "trace.h"
+#include "util/trace.h"
 
 #include <fstream.h>
 #include <iostream.h>

@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Thu Mar  9 16:21:46 2000
+// written: Wed Mar 15 10:19:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,13 +20,13 @@
 #include <GL/glu.h>
 
 #include "canvas.h"
-#include "error.h"
+#include "util/error.h"
 #include "point.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 class XBmapRendererError : public ErrorWithMsg {
 public:

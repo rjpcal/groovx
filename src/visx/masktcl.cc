@@ -3,7 +3,7 @@
 // masktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 18:19:05 1999
-// written: Wed Mar  8 16:34:24 2000
+// written: Wed Mar 15 10:17:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "propitempkg.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 
 extern "C"

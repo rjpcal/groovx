@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Mar 14 14:12:45 2000
+// written: Wed Mar 15 10:17:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,9 +24,9 @@
 #include <string>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 #if defined(IRIX6) || defined(HP9000S700)
 #define AsciiStreamReader ASR

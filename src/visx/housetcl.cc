@@ -3,7 +3,7 @@
 // housetcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 15:14:19 1999
-// written: Wed Mar  8 16:33:13 2000
+// written: Wed Mar 15 10:17:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "propitempkg.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 
 
 extern "C"
