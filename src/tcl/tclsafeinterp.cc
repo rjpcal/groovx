@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ DOTRACE("Tcl::Interp::hasCommand");
   return (result != 0);
 }
 
-fixed_string Tcl::Interp::getProcBody(const char* proc_name) const
+fstring Tcl::Interp::getProcBody(const char* proc_name) const
 {
 DOTRACE("Tcl::Interp::getProcBody");
   if (hasCommand(proc_name))
@@ -247,7 +247,7 @@ DOTRACE("Tcl::Interp::getProcBody");
 
       if (cmd.invoke(intp()))
         {
-          fixed_string result = getResult(TypeCue<const char*>());
+          fstring result = getResult(TypeCue<const char*>());
           resetResult();
           return result;
         }

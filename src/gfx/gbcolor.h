@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Tue Aug  7 11:37:08 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,8 @@ public:
 protected:
   virtual void doSetValue(const Value& new_val);
 public:
-  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
-  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
+  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
+  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
   virtual shared_ptr<Value> value() const;
 };
 

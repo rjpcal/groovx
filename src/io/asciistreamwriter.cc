@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Jun 20 17:44:56 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ public:
     itsBuf(*itsFstream),
     itsToHandle(), itsWrittenObjects()
   {
-	 if (itsFstream->fail()) throw IO::FilenameError(filename);
+    if (itsFstream->fail()) throw IO::FilenameError(filename);
   }
 
   ~Impl()
@@ -267,7 +267,7 @@ void AsciiStreamWriter::Impl::writeBaseClass(
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
 
-  fixed_string type = basePart->ioTypename().c_str();
+  fstring type = basePart->ioTypename().c_str();
 
   itsBuf << type.c_str() << ' ' << baseClassName << " := ";
 

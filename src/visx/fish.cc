@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ void Fish::readSplineFile(const char* splinefile)
 DOTRACE("Fish::readSplineFile");
   size_t i, j;
   int k, splnb, endptnb;
-  fixed_string dummy;
+  fstring dummy;
 
   // reads in the spline knots and coefficient
   STD_IO::ifstream ifs(splinefile);
@@ -396,7 +396,7 @@ DOTRACE("Fish::readSplineFile");
 void Fish::readCoordFile(const char* coordfile, int index)
 {
 DOTRACE("Fish::readCoordFile");
-  fixed_string dummy;
+  fstring dummy;
 
   STD_IO::ifstream ifs(coordfile);
   if (ifs.fail())

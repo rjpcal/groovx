@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ public:
   GrObjRenderer();
   virtual ~GrObjRenderer();
 
-  static fixed_string BITMAP_CACHE_DIR;
+  static fstring BITMAP_CACHE_DIR;
 
   void callList() const;
 
@@ -36,9 +36,9 @@ public:
 
   GrObj::RenderMode getMode() const { return itsMode; }
 
-  const fixed_string& getCacheFilename() const { return itsCacheFilename; }
+  const fstring& getCacheFilename() const { return itsCacheFilename; }
 
-  void setCacheFilename(const fixed_string& name)
+  void setCacheFilename(const fstring& name)
     {
       itsCacheFilename = name;
       queueBitmapLoad();
@@ -70,16 +70,16 @@ private:
   GrObj::RenderMode itsMode;
   GrObj::RenderMode itsUnMode;
 
-  mutable fixed_string itsCacheFilename;
+  mutable fstring itsCacheFilename;
 
   mutable bool itsIsCurrent;    // true if displaylist is current
   mutable int itsDisplayList;   // OpenGL display list that draws the object
   shared_ptr<BmapRenderer> itsBmapRenderer;
   shared_ptr<BitmapRep> itsBitmapCache;
 
-  fixed_string fullCacheFilename() const
+  fstring fullCacheFilename() const
     {
-      fixed_string result = BITMAP_CACHE_DIR;
+      fstring result = BITMAP_CACHE_DIR;
       result += "/";
       result += itsCacheFilename;
       return result;

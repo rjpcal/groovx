@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Wed Aug  8 14:47:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -198,19 +198,19 @@ DOTRACE("Tcl::Convert<const char*>::fromTcl");
 }
 
 template <>
-fixed_string Tcl::Convert<fixed_string>::fromTcl(Tcl_Obj* obj)
+fstring Tcl::Convert<fstring>::fromTcl(Tcl_Obj* obj)
 {
-DOTRACE("Tcl::Convert<fixed_string>::fromTcl");
+DOTRACE("Tcl::Convert<fstring>::fromTcl");
 
-  return fixed_string(Convert<const char*>::fromTcl(obj));
+  return fstring(Convert<const char*>::fromTcl(obj));
 }
 
 template <>
-fixed_string Tcl::Convert<const fixed_string&>::fromTcl(Tcl_Obj* obj)
+fstring Tcl::Convert<const fstring&>::fromTcl(Tcl_Obj* obj)
 {
-DOTRACE("Tcl::Convert<fixed_string>::fromTcl");
+DOTRACE("Tcl::Convert<fstring>::fromTcl");
 
-  return Convert<fixed_string>::fromTcl(obj);
+  return Convert<fstring>::fromTcl(obj);
 }
 
 template <>
@@ -325,17 +325,17 @@ DOTRACE("Tcl::Convert<char*>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<fixed_string>::toTcl(fixed_string val)
+Tcl_Obj* Tcl::Convert<fstring>::toTcl(fstring val)
 {
-DOTRACE("Tcl::Convert<fixed_string>::toTcl");
+DOTRACE("Tcl::Convert<fstring>::toTcl");
 
   return Convert<const char*>::toTcl(val.c_str());
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<const fixed_string&>::toTcl(const fixed_string& val)
+Tcl_Obj* Tcl::Convert<const fstring&>::toTcl(const fstring& val)
 {
-DOTRACE("Tcl::Convert<const fixed_string&>::toTcl");
+DOTRACE("Tcl::Convert<const fstring&>::toTcl");
 
   return Convert<const char*>::toTcl(val.c_str());
 }

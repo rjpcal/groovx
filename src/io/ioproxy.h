@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Tue Jun 12 11:17:10 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual fixed_string ioTypename() const
+  virtual fstring ioTypename() const
     { return demangle_cstr(typeid(C).name()); }
 
 private:
@@ -89,7 +89,7 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual fixed_string ioTypename() const
+  virtual fstring ioTypename() const
     { return demangle_cstr(typeid(C).name()); }
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Aug  8 12:55:51 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 #define TYPEINFO_DEFINED
 #endif
 
-class fixed_string;
+class fstring;
 
 /**
  *
@@ -36,7 +36,7 @@ class fixed_string;
 namespace FactoryError
 {
   void throwForType(const char* type);
-  void throwForType(const fixed_string& type);
+  void throwForType(const fstring& type);
 };
 
 
@@ -104,7 +104,7 @@ public:
 
 protected:
   /// Retrieve the object associated with the tag \a name.
-  void* getPtrForName(const fixed_string& name) const;
+  void* getPtrForName(const fstring& name) const;
 
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, void* ptr);
@@ -141,7 +141,7 @@ public:
   typedef CreatorBase<BasePtr> CreatorType;
 
   /// Get the object associated with the tag \a name.
-  CreatorType* getPtrForName(const fixed_string& name) const
+  CreatorType* getPtrForName(const fstring& name) const
     { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
@@ -215,7 +215,7 @@ public:
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
-  BasePtr newObject(const fixed_string& type)
+  BasePtr newObject(const fstring& type)
   {
     CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
     if (creator == 0) return BasePtr();
@@ -224,7 +224,7 @@ public:
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
-  BasePtr newCheckedObject(const fixed_string& type)
+  BasePtr newCheckedObject(const fstring& type)
   {
     CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
     if (creator == 0) FactoryError::throwForType(type);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,9 @@ public:
   FeedbackMap() :
     itsUseFeedback(true), itsRep(), itsItems(), isItDirty(true) {}
 
-  const fixed_string& rep() const { return itsRep; }
+  const fstring& rep() const { return itsRep; }
 
-  void set(const fixed_string& new_rep)
+  void set(const fstring& new_rep)
   {
     itsRep = new_rep;
     isItDirty = true;
@@ -103,7 +103,7 @@ public:
   bool itsUseFeedback;
 
 private:
-  fixed_string itsRep;
+  fstring itsRep;
   mutable minivec<Item> itsItems;
   mutable bool isItDirty;
 };

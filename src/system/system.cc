@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ DOTRACE("System::sleep");
   ::sleep(seconds);
 }
 
-fixed_string System::formattedTime(const char* format)
+fstring System::formattedTime(const char* format)
 {
 DOTRACE("System::formattedTime");
 
@@ -123,7 +123,7 @@ DOTRACE("System::formattedTime");
 
   strftime(buf, 512, format, tt);
 
-  return fixed_string(buf);
+  return fstring(buf);
 }
 
 static const char vcid_system_cc[] = "$Header$";

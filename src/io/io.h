@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug  8 15:57:45 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 #include "io/iodecls.h"
 #endif
 
-class fixed_string;
+class fstring;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -89,7 +89,7 @@ public:
       provided by \c IO returns a demangled version of \c
       typeid(*this).name(), which should very closely resemble the way
       the object was declared in source code. */
-  virtual fixed_string ioTypename() const;
+  virtual fstring ioTypename() const;
 };
 
 

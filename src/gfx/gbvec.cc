@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Tue Aug  7 11:32:19 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,12 +94,12 @@ void GbVec3<T>::doSetValue(const Value& new_val)
 }
 
 template <class T>
-void GbVec3<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
+void GbVec3<T>::readValueFrom(IO::Reader* reader, const fstring& name)
 { reader->readValueObj(name, *this); }
 
 template <class T>
 void GbVec3<T>::writeValueTo(IO::Writer* writer,
-                            const fixed_string& name) const
+                            const fstring& name) const
 { writer->writeValueObj(name.c_str(), *this); }
 
 template <class T>

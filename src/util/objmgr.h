@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Jun 13 17:39:17 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "util/ref.h"
 #endif
 
-class fixed_string;
+class fstring;
 
 namespace Util {
   namespace ObjMgr {
@@ -25,7 +25,7 @@ namespace Util {
     Util::WeakRef<Util::Object> newObj(const char* type);
 
     /// Will not return 0; will throw an exception on failure.
-    Util::WeakRef<Util::Object> newObj(const fixed_string& type);
+    Util::WeakRef<Util::Object> newObj(const fstring& type);
 
     template <class T, class S>
     Util::WeakRef<T> newTypedObj(S type)

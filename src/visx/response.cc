@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:33:17 2000
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ DOTRACE("Response::scanFrom");
 const char* Response::get(Util::TypeCue<const char*>) const
 {
 DOTRACE("Response::get(const char*)");
-  static fixed_string str;
+  static fstring str;
   str = "";
   str.append(itsVal).append(" ").append(itsMsec);
   return str.c_str();

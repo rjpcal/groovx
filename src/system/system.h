@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef SYSTEM_H_DEFINED
 #define SYSTEM_H_DEFINED
 
-class fixed_string;
+class fstring;
 
 ///
 class System {
@@ -151,7 +151,7 @@ public:
 
   /** Return a formatted string representation of the current
       time. See 'man strftime' for the formatting codes. */
-  fixed_string formattedTime(const char* format = "%a %b %d %H:%M:%S %Z %Y");
+  fstring formattedTime(const char* format = "%a %b %d %H:%M:%S %Z %Y");
 };
 
 static const char vcid_system_h[] = "$Header$";

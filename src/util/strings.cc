@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Aug  8 18:58:58 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -170,53 +170,53 @@ char* string_rep::data()
 
 //---------------------------------------------------------------------
 //
-// fixed_string member definitions
+// fstring member definitions
 //
 //---------------------------------------------------------------------
 
-fixed_string::fixed_string(std::size_t length) :
+fstring::fstring(std::size_t length) :
   itsRep(0)
 {
-DOTRACE("fixed_string::fixed_string(int)");
+DOTRACE("fstring::fstring(int)");
 
   itsRep = string_rep::make(length);
 
   itsRep->incrRefCount();
 }
 
-fixed_string::fixed_string(const char* text) :
+fstring::fstring(const char* text) :
   itsRep(0)
 {
-DOTRACE("fixed_string::fixed_string(const char*)");
+DOTRACE("fstring::fstring(const char*)");
 
   itsRep = string_rep::make(strlen(text), text);
 
   itsRep->incrRefCount();
 }
 
-fixed_string::fixed_string(const fixed_string& other) :
+fstring::fstring(const fstring& other) :
   itsRep(other.itsRep)
 {
-DOTRACE("fixed_string::fixed_string(const fixed_string&)");
+DOTRACE("fstring::fstring(const fstring&)");
   itsRep->incrRefCount();
 }
 
-fixed_string::~fixed_string()
+fstring::~fstring()
 {
-DOTRACE("fixed_string::~fixed_string");
+DOTRACE("fstring::~fstring");
   itsRep->decrRefCount();
 }
 
-void fixed_string::swap(fixed_string& other)
+void fstring::swap(fstring& other)
 {
-DOTRACE("fixed_string::swap");
+DOTRACE("fstring::swap");
 
   Util::swap(itsRep, other.itsRep);
 }
 
-fixed_string& fixed_string::operator=(const char* text)
+fstring& fstring::operator=(const char* text)
 {
-DOTRACE("fixed_string::operator=(const char*)");
+DOTRACE("fstring::operator=(const char*)");
 
   string_rep* old_rep = itsRep;
   itsRep = string_rep::make(strlen(text), text);
@@ -226,9 +226,9 @@ DOTRACE("fixed_string::operator=(const char*)");
   return *this;
 }
 
-fixed_string& fixed_string::operator=(const fixed_string& other)
+fstring& fstring::operator=(const fstring& other)
 {
-DOTRACE("fixed_string::operator=(const fixed_string&)");
+DOTRACE("fstring::operator=(const fstring&)");
 
   string_rep* old_rep = itsRep;
   itsRep = other.itsRep;
@@ -238,31 +238,31 @@ DOTRACE("fixed_string::operator=(const fixed_string&)");
   return *this;
 }
 
-bool fixed_string::equals(const char* other) const
+bool fstring::equals(const char* other) const
 {
-DOTRACE("fixed_string::equals(const char*)");
+DOTRACE("fstring::equals(const char*)");
   return ( c_str() == other ||
            strcmp(c_str(), other) == 0 );
 }
 
-bool fixed_string::equals(const string_literal& other) const
+bool fstring::equals(const string_literal& other) const
 {
-DOTRACE("fixed_string::equals(const string_literal&");
+DOTRACE("fstring::equals(const string_literal&");
   return ( length() == other.length() &&
            strcmp(c_str(), other.c_str()) == 0 );
 }
 
-bool fixed_string::equals(const fixed_string& other) const
+bool fstring::equals(const fstring& other) const
 {
-DOTRACE("fixed_string::equals(const fixed_string&)");
+DOTRACE("fstring::equals(const fstring&)");
   return c_str() == other.c_str() ||
     ( length() == other.length() &&
       strcmp(c_str(), other.c_str()) == 0 );
 }
 
-bool fixed_string::ends_with(const fixed_string& ext) const
+bool fstring::ends_with(const fstring& ext) const
 {
-DOTRACE("fixed_string::ends_with");
+DOTRACE("fstring::ends_with");
   if (ext.length() > this->length())
     return false;
 
@@ -271,9 +271,9 @@ DOTRACE("fixed_string::ends_with");
   return ext.equals(this->c_str() + skip);
 }
 
-void fixed_string::append_text(std::size_t length, const char* text)
+void fstring::append_text(std::size_t length, const char* text)
 {
-DOTRACE("fixed_string::append_text");
+DOTRACE("fstring::append_text");
 
   string_rep::makeUnique(itsRep);
   itsRep->append(length, text);
@@ -285,7 +285,7 @@ DOTRACE("fixed_string::append_text");
 //
 //---------------------------------------------------------------------
 
-STD_IO::istream& operator>>(STD_IO::istream& is, fixed_string& str)
+STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str)
 {
   std::string temp; is >> temp;
   str = temp.c_str();
@@ -298,13 +298,13 @@ STD_IO::ostream& operator<<(STD_IO::ostream& os, const string_literal& str)
   return os;
 }
 
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const fixed_string& str)
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str)
 {
   os << str.c_str();
   return os;
 }
 
-STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str)
+STD_IO::istream& getline(STD_IO::istream& is, fstring& str)
 {
   std::string temp;
   std::getline(is, temp);
@@ -312,7 +312,7 @@ STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str)
   return is;
 }
 
-STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str, char eol)
+STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol)
 {
   std::string temp;
   std::getline(is, temp, eol);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 const char* IO::ReadUtils::makeElementNameString(const char* seq_name,
                                                  int element_num)
 {
-  static fixed_string result("");
+  static fstring result("");
   result = seq_name;
   result.append( element_num );
   return result.c_str();
@@ -28,7 +28,7 @@ const char* IO::ReadUtils::makeElementNameString(const char* seq_name,
 
 const char* IO::ReadUtils::makeSeqCountString(const char* seq_name)
 {
-  static fixed_string result("");
+  static fstring result("");
   result = seq_name;
   result += "Count";
   return result.c_str();

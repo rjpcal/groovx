@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Aug  8 20:03:17 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ public:
   virtual ~Error();
 
   /// Get a C-style string describing the error.
-  const fixed_string& msg() const { return itsInfo; }
+  const fstring& msg() const { return itsInfo; }
 
   /// Get a C-style string describing the error.
   const char* msg_cstr() const { return itsInfo.c_str(); }
@@ -113,7 +113,7 @@ public:
 private:
   Error& operator=(const Error& other);
 
-  fixed_string itsInfo;
+  fstring itsInfo;
 };
 
 #define INHERIT_ERROR_CTORS(type) \

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Aug  8 19:00:54 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ public:
 
   void addLogInfo(const char* message)
   {
-    fixed_string date_string = System::theSystem().formattedTime();
+    fstring date_string = System::theSystem().formattedTime();
 
     itsInfoLog.append("@");
     itsInfoLog.append(date_string);
@@ -162,13 +162,13 @@ private:
 public:
   WeakRef<GWT::Widget> itsWidget;
 
-  fixed_string itsHostname;     // Host computer on which Expt was begun
-  fixed_string itsSubject;      // Id of subject on whom Expt was performed
-  fixed_string itsBeginDate;    // Date(+time) when Expt was begun
-  fixed_string itsEndDate;      // Date(+time) when Expt was stopped
-  fixed_string itsAutosaveFile; // Filename used for autosaves
+  fstring itsHostname;     // Host computer on which Expt was begun
+  fstring itsSubject;      // Id of subject on whom Expt was performed
+  fstring itsBeginDate;    // Date(+time) when Expt was begun
+  fstring itsEndDate;      // Date(+time) when Expt was stopped
+  fstring itsAutosaveFile; // Filename used for autosaves
 
-  fixed_string itsInfoLog;
+  fstring itsInfoLog;
 
   int itsAutosavePeriod;
 
@@ -208,7 +208,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
-  fixed_string cmd_line("command line: ");
+  fstring cmd_line("command line: ");
 
   for (int i = 0; i < argc; ++i) {
     cmd_line.append(argv[i]);
@@ -289,7 +289,7 @@ DOTRACE("ExptDriver::Impl::readFrom");
   IO::ReadUtils::readObjectSeq<Block>(
            reader, "blocks", std::back_inserter(itsBlocks));
 
-  fixed_string proc_body;
+  fstring proc_body;
   reader->readValue("doUponCompletionScript", proc_body);
   itsInterp.createProc("Expt", "doUponCompletion", "", proc_body.c_str());
 }
@@ -313,7 +313,7 @@ DOTRACE("ExptDriver::Impl::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
                                  itsBlocks.begin(), itsBlocks.end());
 
-  fixed_string proc_body = itsInterp.getProcBody("Expt::doUponCompletion");
+  fstring proc_body = itsInterp.getProcBody("Expt::doUponCompletion");
   writer->writeValue("doUponCompletionScript", proc_body);
 }
 
@@ -439,18 +439,18 @@ DOTRACE("ExptDriver::Impl::storeData");
     {
       itsEndDate = System::theSystem().formattedTime();
 
-      fixed_string unique_file_extension =
+      fstring unique_file_extension =
         System::theSystem().formattedTime("%H%M%S%d%b%Y");
 
       // Write the main experiment file
-      fixed_string expt_filename = "expt";
+      fstring expt_filename = "expt";
       expt_filename += unique_file_extension;
       expt_filename += ".asw";
       IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), expt_filename.c_str());
       Util::log() << "wrote file " << expt_filename.c_str() << '\n';
 
       // Write the responses file
-      fixed_string resp_filename = "resp";
+      fstring resp_filename = "resp";
       resp_filename += unique_file_extension;
       TlistUtils::writeResponses(resp_filename.c_str());
       Util::log() << "wrote file " << resp_filename.c_str() << '\n';
@@ -505,10 +505,10 @@ void ExptDriver::writeTo(IO::Writer* writer) const
 //
 ///////////////////////////////////////////////////////////////////////
 
-const fixed_string& ExptDriver::getAutosaveFile() const
+const fstring& ExptDriver::getAutosaveFile() const
   { return itsImpl->itsAutosaveFile; }
 
-void ExptDriver::setAutosaveFile(const fixed_string& str)
+void ExptDriver::setAutosaveFile(const fstring& str)
   { itsImpl->itsAutosaveFile = str; }
 
 int ExptDriver::getAutosavePeriod() const

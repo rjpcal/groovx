@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug  7 10:23:02 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
 
 class FieldInfo {
 private:
-  const fixed_string itsName;
+  const fstring itsName;
   shared_ptr<FieldMemberPtr> itsMemberPtr;
   shared_ptr<Value> itsDefaultValue;
   shared_ptr<Value> itsMin;
@@ -90,7 +90,7 @@ private:
 
 public:
   template <class C, class T, class F>
-  FieldInfo(const fixed_string& name, F C::* member_ptr,
+  FieldInfo(const fstring& name, F C::* member_ptr,
             const T& def, const T& min_, const T& max_, const T& res_,
             bool new_group=false) :
     itsName(name),
@@ -102,7 +102,7 @@ public:
     itsStartsNewGroup(new_group)
     {}
 
-  const fixed_string& name() const { return itsName; }
+  const fstring& name() const { return itsName; }
   const Value& defaultValue() const { return *itsDefaultValue; }
 
   const Value& min() const { return *itsMin; }
@@ -152,8 +152,8 @@ public:
 
   virtual ~Field();
 
-  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name) = 0;
-  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const = 0;
+  virtual void readValueFrom(IO::Reader* reader, const fstring& name) = 0;
+  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const = 0;
 
   virtual shared_ptr<Value> value() const = 0;
   void setValue(const Value& new_val, FieldContainer& owner);
@@ -179,8 +179,8 @@ public:
   TField(FieldContainer* owner, const T& val = T());
   virtual ~TField();
 
-  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
-  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
+  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
+  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
 
   virtual shared_ptr<Value> value() const;
 
@@ -214,8 +214,8 @@ public:
 
   virtual ~TBoundedField();
 
-  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
-  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
+  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
+  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
 
   virtual shared_ptr<Value> value() const;
 
@@ -247,8 +247,8 @@ public:
   TPtrField(FieldContainer* owner, T& valRef);
   virtual ~TPtrField();
 
-  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
-  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
+  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
+  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
 
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
@@ -288,7 +288,7 @@ public:
   bool hasParent() const;
   const FieldMap* parent() const;
 
-  const FieldInfo& info(const fixed_string& name) const;
+  const FieldInfo& info(const fstring& name) const;
 
   class ItrImpl;
 
@@ -346,10 +346,10 @@ public:
 
   void setFieldMap(const FieldMap& fields);
 
-  Field& field(const fixed_string& name);
+  Field& field(const fstring& name);
   Field& field(const FieldInfo& pinfo);
 
-  const Field& field(const fixed_string& name) const;
+  const Field& field(const fstring& name) const;
   const Field& field(const FieldInfo& pinfo) const;
 
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Wed Aug  8 18:57:38 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,8 +84,8 @@ void IO::Writer::writeValue<double>(const char* name, const double& val)
 
 
 template<>
-void IO::Writer::writeValue<fixed_string>(const char* name,
-                                      const fixed_string& val)
+void IO::Writer::writeValue<fstring>(const char* name,
+                                     const fstring& val)
 {
   writeCstring(name, val.c_str());
 }

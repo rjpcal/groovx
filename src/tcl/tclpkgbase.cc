@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu Jul 19 21:01:57 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ namespace Tcl
                       int* addr, int flag)
   {
     DebugEvalNL(varName);
-    fixed_string temp = varName;
+    fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_INT) != TCL_OK )
@@ -67,7 +67,7 @@ namespace Tcl
                          double* addr, int flag)
   {
     DebugEvalNL(varName);
-    fixed_string temp = varName;
+    fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_DOUBLE) != TCL_OK )
@@ -78,7 +78,7 @@ namespace Tcl
                           int* addr, int flag)
   {
     DebugEvalNL(varName);
-    fixed_string temp = varName;
+    fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_BOOLEAN) != TCL_OK )
@@ -89,7 +89,7 @@ namespace Tcl
                          char** addr, int flag)
   {
     DebugEvalNL(varName);
-    fixed_string temp = varName;
+    fstring temp = varName;
     flag &= TCL_LINK_READ_ONLY;
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_STRING) != TCL_OK )
@@ -240,7 +240,7 @@ DOTRACE("Tcl::PkgBase::makePkgCmdName");
 void Tcl::PkgBase::eval(const char* script)
 {
 DOTRACE("Tcl::PkgBase::eval");
-  fixed_string script_copy(script);
+  fstring script_copy(script);
   Tcl_Eval(itsImpl->itsInterp, script_copy.data());
 }
 

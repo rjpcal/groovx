@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun 25 06:42:30 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,11 +54,11 @@ DOTRACE("Subject::writeTo");
   writer->writeValue("directory", itsDirectory);
 }
 
-void Subject::setName(const fixed_string& name) {
+void Subject::setName(const fstring& name) {
   itsName = name;
 }
 
-void Subject::setDirectory(const fixed_string& dir) {
+void Subject::setDirectory(const fstring& dir) {
   itsDirectory = dir;
 }
 

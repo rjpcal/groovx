@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 13:13:22 2001
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,9 +176,9 @@ namespace
   };
 }
 
-shared_ptr<STD_IO::ostream> Util::ogzopen(const fixed_string& filename)
+shared_ptr<STD_IO::ostream> Util::ogzopen(const fstring& filename)
 {
-  static fixed_string gz_ext(".gz");
+  static fstring gz_ext(".gz");
 
   if (filename.ends_with(gz_ext))
     {
@@ -194,7 +194,7 @@ shared_ptr<STD_IO::ostream> Util::ogzopen(const fixed_string& filename)
 
 shared_ptr<STD_IO::ostream> Util::ogzopen(const char*filename)
 {
-  return ogzopen(fixed_string(filename));
+  return ogzopen(fstring(filename));
 }
 
 shared_ptr<STD_IO::istream> Util::igzopen(const char* filename)
@@ -203,7 +203,7 @@ shared_ptr<STD_IO::istream> Util::igzopen(const char* filename)
     (new gzstream(filename, STD_IO::ios::in, true));
 }
 
-shared_ptr<STD_IO::istream> Util::igzopen(const fixed_string& filename)
+shared_ptr<STD_IO::istream> Util::igzopen(const fstring& filename)
 {
   return igzopen(filename.c_str());
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Wed Aug  8 18:57:56 2001
+// written: Wed Aug  8 20:11:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,8 @@ IO::Reader::~Reader() {}
 
 int IO::Reader::ensureReadVersionId(const char* name,
                                     IO::VersionId lowest_supported_version,
-                                    const char* msg) {
+                                    const char* msg)
+{
   IO::VersionId actual_version = this->readSerialVersionId();
 
   if (actual_version < lowest_supported_version)
@@ -57,42 +58,49 @@ int IO::Reader::ensureReadVersionId(const char* name,
 }
 
 template <>
-void IO::Reader::readValue<char>(const fixed_string& name, char& return_value) {
+void IO::Reader::readValue<char>(const fstring& name, char& return_value)
+{
   return_value = readChar(name);
 }
 
 template <>
-void IO::Reader::readValue<int>(const fixed_string& name, int& return_value) {
+void IO::Reader::readValue<int>(const fstring& name, int& return_value)
+{
   return_value = readInt(name);
 }
 
 template <>
-void IO::Reader::readValue<size_t>(const fixed_string& name,
-                                   size_t& return_value) {
+void IO::Reader::readValue<size_t>(const fstring& name,
+                                   size_t& return_value)
+{
   return_value = readInt(name);
 }
 
 template <>
-void IO::Reader::readValue<bool>(const fixed_string& name,
-                                 bool& return_value) {
+void IO::Reader::readValue<bool>(const fstring& name,
+                                 bool& return_value)
+{
   return_value = readBool(name);
 }
 
 template <>
-void IO::Reader::readValue<double>(const fixed_string& name,
-                                   double& return_value) {
+void IO::Reader::readValue<double>(const fstring& name,
+                                   double& return_value)
+{
   return_value = readDouble(name);
 }
 
 template <>
-void IO::Reader::readValue<fixed_string>(const fixed_string& name,
-                                         fixed_string& return_value) {
+void IO::Reader::readValue<fstring>(const fstring& name,
+                                    fstring& return_value)
+{
   return_value = readStringImpl(name);
 }
 
 template <>
-void IO::Reader::readValue<Value>(const fixed_string& name,
-                                  Value& return_value) {
+void IO::Reader::readValue<Value>(const fstring& name,
+                                  Value& return_value)
+{
   readValueObj(name, return_value);
 }
 

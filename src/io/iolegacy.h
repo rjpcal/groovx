@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Wed Jun 13 13:15:54 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,26 +53,26 @@ public:
 
   virtual IO::VersionId readSerialVersionId();
 
-  virtual char readChar(const fixed_string& name);
-  virtual int readInt(const fixed_string& name);
-  virtual bool readBool(const fixed_string& name);
-  virtual double readDouble(const fixed_string& name);
-  virtual void readValueObj(const fixed_string& name, Value& value);
+  virtual char readChar(const fstring& name);
+  virtual int readInt(const fstring& name);
+  virtual bool readBool(const fstring& name);
+  virtual double readDouble(const fstring& name);
+  virtual void readValueObj(const fstring& name, Value& value);
 
-  virtual Util::Ref<IO::IoObject> readObject(const fixed_string& name);
+  virtual Util::Ref<IO::IoObject> readObject(const fstring& name);
   virtual Util::WeakRef<IO::IoObject>
-    readMaybeObject(const fixed_string& name);
+    readMaybeObject(const fstring& name);
 
-  virtual void readOwnedObject(const fixed_string& name,
+  virtual void readOwnedObject(const fstring& name,
                                Util::Ref<IO::IoObject> obj);
 
-  virtual void readBaseClass(const fixed_string& baseClassName,
+  virtual void readBaseClass(const fstring& baseClassName,
                              Util::Ref<IO::IoObject> basePart);
 
   virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
-  virtual fixed_string readStringImpl(const fixed_string& name);
+  virtual fstring readStringImpl(const fstring& name);
 
 private:
   LegacyReader(const LegacyReader&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Aug  8 19:00:31 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,43 +109,43 @@ public:
   virtual IO::VersionId readSerialVersionId() = 0;
 
   /// Read the \c char attribute associated with the tag \a name.
-  virtual char readChar(const fixed_string& name) = 0;
+  virtual char readChar(const fstring& name) = 0;
 
   /// Read the \c int attribute associated with the tag \a name.
-  virtual int readInt(const fixed_string& name) = 0;
+  virtual int readInt(const fstring& name) = 0;
 
   /// Read the \c bool attribute associated with the tag \a name.
-  virtual bool readBool(const fixed_string& name) = 0;
+  virtual bool readBool(const fstring& name) = 0;
 
   /// Read the \c double attribute associated with the tag \a name.
-  virtual double readDouble(const fixed_string& name) = 0;
+  virtual double readDouble(const fstring& name) = 0;
 
   /// Read the \c Value attribute associated with the tag \a name.
-  virtual void readValueObj(const fixed_string& name, Value& value) = 0;
+  virtual void readValueObj(const fstring& name, Value& value) = 0;
 
   /** This generic function reads a value attribute of any basic type,
       of type \c Value, or of supported string types (\c std::string,
-      \c fixed_string). The value associated with tag \a name will be
+      \c fstring). The value associated with tag \a name will be
       copied into \a returnValue. */
   template <class T>
-  void readValue(const fixed_string& name, T& returnValue);
+  void readValue(const fstring& name, T& returnValue);
 
   /** Get a \c Util::Ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
       ObjDb, if necessary. */
-  virtual Util::Ref<IO::IoObject> readObject(const fixed_string& name) = 0;
+  virtual Util::Ref<IO::IoObject> readObject(const fstring& name) = 0;
 
   /** Get a \c WeakRef associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
       the \c ObjDb, if necessary. */
   virtual Util::WeakRef<IO::IoObject> readMaybeObject(
-                                           const fixed_string& name) = 0;
+                                            const fstring& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
-  virtual void readOwnedObject(const fixed_string& name,
+  virtual void readOwnedObject(const fstring& name,
                                Util::Ref<IO::IoObject> obj) = 0;
 
   /** Read the named base class into the IO object \a obj, which
@@ -153,7 +153,7 @@ public:
       class part of the object. In particular, \a obj's virtual
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
-  virtual void readBaseClass(const fixed_string& baseClassName,
+  virtual void readBaseClass(const fstring& baseClassName,
                              Util::Ref<IO::IoObject> basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
@@ -165,7 +165,7 @@ public:
 
 protected:
   /// Read the string attribute associated with the tag \a name.
-  virtual fixed_string readStringImpl(const fixed_string& name) = 0;
+  virtual fstring readStringImpl(const fstring& name) = 0;
 };
 
 static const char vcid_reader_h[] = "$Header$";

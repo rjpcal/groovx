@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,11 +45,11 @@
 
 namespace {
   // the main window can be specified with either PARENT = "" or "."
-  fixed_string PARENT = "";
+  fstring PARENT = "";
 
   const char* widgetName(Util::UID id)
   {
-    static fixed_string buf;
+    static fstring buf;
     buf = PARENT;
     buf.append(".togl_private");
     buf.append(int(id));
@@ -111,11 +111,11 @@ namespace
 {
   void setIntParam(Togl* togl, const char* param, int val)
   {
-    fixed_string builder = togl->pathname();
+    fstring builder = togl->pathname();
     builder.append(" configure -").append(param)
       .append(" ").append(val);
 
-    fixed_string buf(builder.c_str());
+    fstring buf(builder.c_str());
 
     Tcl::Code cmd(buf.data(), Tcl::Code::THROW_EXCEPTION);
     cmd.invoke(togl->interp());
@@ -180,7 +180,7 @@ DOTRACE("Toglet::Toglet");
 
   if (pack)
     {
-      fixed_string pack_cmd_str = "pack ";
+      fstring pack_cmd_str = "pack ";
       pack_cmd_str += pathname();
       pack_cmd_str += " -side left -expand 1 -fill both; update";
       Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
@@ -316,7 +316,7 @@ DebugPrintNL("Toglet::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(itsTogl->interp()) )
     {
-      fixed_string destroy_cmd_str = "destroy ";
+      fstring destroy_cmd_str = "destroy ";
       destroy_cmd_str += pathname();
 
       Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
@@ -442,7 +442,7 @@ void Toglet::bind(const char* event_sequence, const char* script)
 {
 DOTRACE("Toglet::bind");
 
-  fixed_string cmd_str = "bind ";
+  fstring cmd_str = "bind ";
   cmd_str.append( pathname() ).append(" ");
   cmd_str.append( event_sequence ).append(" ");
   cmd_str.append("{ ").append( script ).append(" }");
@@ -538,7 +538,7 @@ DOTRACE("Toglet::swapBuffers");
 void Toglet::takeFocus()
 {
 DOTRACE("Toglet::takeFocus");
-  fixed_string cmd_str = "focus -force ";
+  fstring cmd_str = "focus -force ";
   cmd_str.append( pathname() );
 
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);

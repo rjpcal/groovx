@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Aug  8 18:48:39 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ namespace HookTcl
   {
     Tcl::List result;
 
-    fixed_string f("foo");
+    fstring f("foo");
     result.append(f);
 
     f.append("bar");
@@ -64,7 +64,7 @@ namespace HookTcl
     f.append(42);
     result.append(f);
 
-    f.append(fixed_string("fstr"));
+    f.append(fstring("fstr"));
     result.append(f);
 
     result.append(f.length());

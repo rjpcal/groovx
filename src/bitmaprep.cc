@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Aug  8 11:41:28 2001
+// written: Wed Aug  8 20:16:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public:
 
   shared_ptr<BmapRenderer> itsRenderer;
 
-  fixed_string itsFilename;
+  fstring itsFilename;
   Point<double> itsRasterPos;
   Point<double> itsZoom;
   bool itsUsingZoom;
@@ -104,7 +104,7 @@ public:
   virtual void update(BmapData& update_me);
 
 private:
-  fixed_string itsFilename;
+  fstring itsFilename;
   bool itsFlipContrast;
   bool itsFlipVertical;
 };

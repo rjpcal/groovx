@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug  7 17:37:11 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,17 +37,17 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  const fixed_string& getName() const { return itsName; }
-  void setName(const fixed_string& name);
-  const fixed_string& getDirectory() const { return itsDirectory; }
-  void setDirectory(const fixed_string& dir);
+  const fstring& getName() const { return itsName; }
+  void setName(const fstring& name);
+  const fstring& getDirectory() const { return itsDirectory; }
+  void setDirectory(const fstring& dir);
 
 private:
   Subject(const Subject&);
   Subject& operator=(const Subject&);
 
-  fixed_string itsName;
-  fixed_string itsDirectory;
+  fstring itsName;
+  fstring itsDirectory;
 };
 
 static const char vcid_subject_h[] = "$Header$";

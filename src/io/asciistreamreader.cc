@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Aug  8 15:56:30 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@
 
 class AttributeReadError : public IO::ReadError {
 public:
-  AttributeReadError(const fixed_string& attrib_name) :
+  AttributeReadError(const fstring& attrib_name) :
     IO::ReadError()
   {
     append("input failed while reading attribute: ", attrib_name.c_str());
@@ -96,7 +96,7 @@ public:
 
     // This will create an object for the id if one has not yet been
     // created, then return the object for that id.
-    Ref<IO::IoObject> fetchObject(const fixed_string& type, Util::UID id)
+    Ref<IO::IoObject> fetchObject(const fstring& type, Util::UID id)
       {
         MapType::const_iterator itr = itsMap.find(id);
 
@@ -138,18 +138,18 @@ public:
     Attrib(); // not implemented
 
   public:
-    Attrib(const fixed_string& t, const fixed_string& v) :
+    Attrib(const fstring& t, const fstring& v) :
       type(t), value(v) {}
 
-    fixed_string type;
-    fixed_string value;
+    fstring type;
+    fstring value;
   };
 
   class AttribMap {
   private:
-    fixed_string itsObjTag;
+    fstring itsObjTag;
 
-    typedef std::pair<fixed_string, Attrib> ValueType;
+    typedef std::pair<fstring, Attrib> ValueType;
     typedef std::list<ValueType> ListType;
 
     ListType itsMap;
@@ -157,14 +157,14 @@ public:
     IO::VersionId itsSerialVersionId;
 
   public:
-    AttribMap(const fixed_string& obj_tag) :
+    AttribMap(const fstring& obj_tag) :
       itsObjTag(obj_tag), itsMap(), itsSerialVersionId(0) {}
 
     void readAttributes(STD_IO::istream& buf);
 
     IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
 
-    Attrib get(const fixed_string& attrib_name)
+    Attrib get(const fstring& attrib_name)
       {
         ListType::iterator itr = itsMap.begin(), end = itsMap.end();
         while (itr != end)
@@ -184,10 +184,10 @@ public:
       }
 
   private:
-    fixed_string readAndUnEscape(STD_IO::istream& is);
+    fstring readAndUnEscape(STD_IO::istream& is);
 
-    void addNewAttrib(const fixed_string& attrib_name,
-                      const fixed_string& type, const fixed_string& value)
+    void addNewAttrib(const fstring& attrib_name,
+                      const fstring& type, const fstring& value)
       {
         itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
       }
@@ -209,13 +209,13 @@ private:
     }
 
   void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
-                     const fixed_string& obj_tag, Ref<IO::IoObject> obj);
+                     const fstring& obj_tag, Ref<IO::IoObject> obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
 public:
   template <class T>
-  T readBasicType(const fixed_string& name)
+  T readBasicType(const fstring& name)
   {
     Attrib a = currentAttribs().get(name);
     istrstream ist(a.value.c_str());
@@ -234,15 +234,15 @@ public:
     { return currentAttribs().getSerialVersionId(); }
 
   // Returns a new dynamically allocated char array
-  fixed_string readStringType(const fixed_string& name);
+  fstring readStringType(const fstring& name);
 
-  WeakRef<IO::IoObject> readMaybeObject(const fixed_string& attrib_name);
+  WeakRef<IO::IoObject> readMaybeObject(const fstring& attrib_name);
 
-  void readValueObj(const fixed_string& name, Value& value);
+  void readValueObj(const fstring& name, Value& value);
 
-  void readOwnedObject(const fixed_string& name, Ref<IO::IoObject> obj);
+  void readOwnedObject(const fstring& name, Ref<IO::IoObject> obj);
 
-  void readBaseClass(IO::Reader* reader, const fixed_string& baseClassName,
+  void readBaseClass(IO::Reader* reader, const fstring& baseClassName,
                      Ref<IO::IoObject> basePart);
 
   Ref<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
@@ -261,7 +261,7 @@ namespace
   fixed_block<char> READ_BUFFER(4096);
 }
 
-fixed_string AsciiStreamReader::Impl::AttribMap::readAndUnEscape(
+fstring AsciiStreamReader::Impl::AttribMap::readAndUnEscape(
   STD_IO::istream& is
 ) {
 DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
@@ -322,7 +322,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
 
   *itr = '\0';
 
-  return fixed_string(READ_BUFFER.begin());
+  return fstring(READ_BUFFER.begin());
 }
 
 void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf)
@@ -390,7 +390,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
 void AsciiStreamReader::Impl::inflateObject(
   IO::Reader* reader, STD_IO::istream& buf,
-  const fixed_string& obj_tag, Ref<IO::IoObject> obj
+  const fstring& obj_tag, Ref<IO::IoObject> obj
 )
 {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
@@ -406,7 +406,7 @@ DOTRACE("AsciiStreamReader::Impl::inflateObject");
   itsAttribs.pop_front();
 }
 
-fixed_string AsciiStreamReader::Impl::readStringType(const fixed_string& name)
+fstring AsciiStreamReader::Impl::readStringType(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
@@ -423,7 +423,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
                           "for a string attribute: ", len);
     }
 
-  fixed_string new_string(len+1);
+  fstring new_string(len+1);
   if (len > 0)
     ist.read(new_string.data(), len);
   new_string.data()[len] = '\0';
@@ -438,7 +438,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 }
 
 WeakRef<IO::IoObject>
-AsciiStreamReader::Impl::readMaybeObject(const fixed_string& attrib_name)
+AsciiStreamReader::Impl::readMaybeObject(const fstring& attrib_name)
 {
 DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
 
@@ -462,7 +462,7 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
 }
 
 void AsciiStreamReader::Impl::readValueObj(
-  const fixed_string& attrib_name,
+  const fstring& attrib_name,
   Value& value
   )
 {
@@ -478,7 +478,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  const fixed_string& attrib_name, Ref<IO::IoObject> obj
+  const fstring& attrib_name, Ref<IO::IoObject> obj
   )
 {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
@@ -498,7 +498,7 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 }
 
 void AsciiStreamReader::Impl::readBaseClass(
-  IO::Reader* reader, const fixed_string& baseClassName,
+  IO::Reader* reader, const fstring& baseClassName,
   Ref<IO::IoObject> basePart
   )
 {
@@ -600,61 +600,61 @@ DOTRACE("AsciiStreamReader::readSerialVersionId");
   return itsImpl.readSerialVersionId();
 }
 
-char AsciiStreamReader::readChar(const fixed_string& name)
+char AsciiStreamReader::readChar(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readChar");
   DebugEvalNL(name);
   return itsImpl.template readBasicType<char>(name);
 }
 
-int AsciiStreamReader::readInt(const fixed_string& name)
+int AsciiStreamReader::readInt(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readInt");
   DebugEvalNL(name);
   return itsImpl.template readBasicType<int>(name);
 }
 
-bool AsciiStreamReader::readBool(const fixed_string& name)
+bool AsciiStreamReader::readBool(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readBool");
   DebugEvalNL(name);
   return bool(itsImpl.template readBasicType<int>(name));
 }
 
-double AsciiStreamReader::readDouble(const fixed_string& name)
+double AsciiStreamReader::readDouble(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readDouble");
   DebugEvalNL(name);
   return itsImpl.template readBasicType<double>(name);
 }
 
-fixed_string AsciiStreamReader::readStringImpl(const fixed_string& name)
+fstring AsciiStreamReader::readStringImpl(const fstring& name)
 {
   DebugEvalNL(name);
   return itsImpl.readStringType(name);
 }
 
-void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value)
+void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 {
   DebugEvalNL(name);
   itsImpl.readValueObj(name, value);
 }
 
 Ref<IO::IoObject>
-AsciiStreamReader::readObject(const fixed_string& name)
+AsciiStreamReader::readObject(const fstring& name)
 {
   DebugEvalNL(attrib_name);
   return Ref<IO::IoObject>(itsImpl.readMaybeObject(name));
 }
 
 WeakRef<IO::IoObject>
-AsciiStreamReader::readMaybeObject(const fixed_string& name)
+AsciiStreamReader::readMaybeObject(const fstring& name)
 {
   DebugEvalNL(attrib_name);
   return itsImpl.readMaybeObject(name);
 }
 
-void AsciiStreamReader::readOwnedObject(const fixed_string& name,
+void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
   DebugEvalNL(name);
@@ -662,7 +662,7 @@ void AsciiStreamReader::readOwnedObject(const fixed_string& name,
 }
 
 void AsciiStreamReader::readBaseClass(
-  const fixed_string& baseClassName, Ref<IO::IoObject> basePart
+  const fstring& baseClassName, Ref<IO::IoObject> basePart
 )
 {
   DebugEvalNL(baseClassName);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Aug  8 20:04:13 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,17 +47,17 @@ class HelpCmd;
 
 namespace
 {
-  inline void errMessage(Tcl_Interp* interp, const fixed_string& cmd_name,
+  inline void errMessage(Tcl_Interp* interp, const fstring& cmd_name,
                          const char* err_msg)
     {
       Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
                              cmd_name.c_str(), ": ", err_msg, (char *) NULL);
     }
 
-  inline void errMessage(Tcl_Interp* interp, const fixed_string& cmd_name,
+  inline void errMessage(Tcl_Interp* interp, const fstring& cmd_name,
                          const std::type_info& exc_type, const char* what=0)
     {
-      fixed_string msg = "an error of type ";
+      fstring msg = "an error of type ";
       msg += demangle_cstr(exc_type.name());
       msg += " occurred";
       if (what)
@@ -181,16 +181,16 @@ public:
 
   const char* usage() const
   {
-    static fixed_string result;
+    static fstring result;
 
     result = findFirstOverload()->buildUsage();
 
     return result.c_str();
   }
 
-  fixed_string buildUsage() const
+  fstring buildUsage() const
   {
-    fixed_string result;
+    fstring result;
 
     result.append("\t").append(itsCmdName);
 
@@ -207,7 +207,7 @@ public:
 
   const char* name() const { return itsCmdName.c_str(); }
 
-  const fixed_string& cmdName() const { return itsCmdName; }
+  const fstring& cmdName() const { return itsCmdName; }
 
 private:
   void registerCmdProc(Tcl_Interp* interp)
@@ -337,7 +337,7 @@ private:
   const unsigned int itsObjcMin;
   const unsigned int itsObjcMax;
   const bool itsExactObjc;
-  fixed_string itsCmdName;
+  fstring itsCmdName;
   int itsUseCount;
   Impl* itsOverload;
   Impl* itsPrevOverload;
@@ -401,7 +401,7 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
     }
   catch (const char* text)
     {
-      fixed_string msg = "an error occurred: ";
+      fstring msg = "an error occurred: ";
       msg += text;
       errMessage(interp, theImpl->cmdName(), msg.c_str());
     }

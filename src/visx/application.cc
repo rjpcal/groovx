@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Wed Aug  8 20:16:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public:
 
   int itsArgc;
   char** itsArgv;
-  fixed_string itsLibraryDir;
+  fstring itsLibraryDir;
 };
 
 Application::Application(int argc, char** argv, const char* library_env_var) :

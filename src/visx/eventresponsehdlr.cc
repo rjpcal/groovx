@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Aug  8 19:00:54 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +62,8 @@ public:
   private:
     Util::WeakRef<GWT::Widget> itsWidget;
     TrialBase& itsTrial;
-    fixed_string itsEventSequence;
-    fixed_string itsBindingScript;
+    fstring itsEventSequence;
+    fstring itsBindingScript;
 
     void attend()
     {
@@ -82,7 +82,7 @@ public:
 
     ERHActiveState(const EventResponseHdlr::Impl* erh,
                    Util::WeakRef<GWT::Widget> widget, TrialBase& trial,
-                   const fixed_string& seq, const fixed_string& script) :
+                   const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
       itsEventSequence(seq),
@@ -134,7 +134,7 @@ public:
 
   void becomeActive(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) const
   {
-    fixed_string script(itsCmdCallback->name());
+    fstring script(itsCmdCallback->name());
     script.append(" ").append((int)itsOwner->id());
     script.append(" ").append(itsBindingSubstitution);
 
@@ -162,7 +162,7 @@ public:
 
   static const char* uniqueCmdName()
   {
-    static fixed_string baseName;
+    static fstring baseName;
     static int cmdCounter = 0;
 
     baseName = "__EventResponseHdlrPrivate::handle";
@@ -185,8 +185,8 @@ public:
   ResponseMap itsResponseMap;
   FeedbackMap itsFeedbackMap;
 
-  fixed_string itsEventSequence;
-  fixed_string itsBindingSubstitution;
+  fstring itsEventSequence;
+  fstring itsBindingSubstitution;
 
   bool itsAbortInvalidResponses;
 };
@@ -239,13 +239,13 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
   becomeInactive();
 
   {
-    fixed_string rep;
+    fstring rep;
     reader->readValue("inputResponseMap", rep);
     itsResponseMap.set(rep);
   }
 
   {
-    fixed_string rep;
+    fstring rep;
     reader->readValue("feedbackMap", rep);
     itsFeedbackMap.set(rep);
   }
@@ -297,13 +297,13 @@ void EventResponseHdlr::readFrom(IO::Reader* reader)
 void EventResponseHdlr::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-const fixed_string& EventResponseHdlr::getInputResponseMap() const
+const fstring& EventResponseHdlr::getInputResponseMap() const
 {
 DOTRACE("EventResponseHdlr::getInputResponseMap");
   return itsImpl->itsResponseMap.rep();
 }
 
-void EventResponseHdlr::setInputResponseMap(const fixed_string& s)
+void EventResponseHdlr::setInputResponseMap(const fstring& s)
 {
 DOTRACE("EventResponseHdlr::setInputResponseMap");
   itsImpl->itsResponseMap.set(s);
@@ -333,16 +333,16 @@ DOTRACE("EventResponseHdlr::setFeedbackMap");
   itsImpl->itsFeedbackMap.set(feedback_string);
 }
 
-const fixed_string& EventResponseHdlr::getEventSequence() const
+const fstring& EventResponseHdlr::getEventSequence() const
   { return itsImpl->itsEventSequence; }
 
-void EventResponseHdlr::setEventSequence(const fixed_string& seq)
+void EventResponseHdlr::setEventSequence(const fstring& seq)
   { itsImpl->itsEventSequence = seq; }
 
-const fixed_string& EventResponseHdlr::getBindingSubstitution() const
+const fstring& EventResponseHdlr::getBindingSubstitution() const
   { return itsImpl->itsBindingSubstitution; }
 
-void EventResponseHdlr::setBindingSubstitution(const fixed_string& sub)
+void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
   { itsImpl->itsBindingSubstitution = sub; }
 
 void EventResponseHdlr::abortInvalidResponses()

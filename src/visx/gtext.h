@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Aug  8 12:51:51 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ protected:
   virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 
 private:
-  fixed_string itsText;
+  fstring itsText;
   int itsStrokeWidth;
   mutable unsigned int itsListBase;
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Sat Jul 21 20:10:50 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "util/tracer.h"
 #endif
 
-class fixed_string;
+class fstring;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -99,10 +99,10 @@ public:
   ////////////////////////////
 
   /// Returns the current input response map.
-  const fixed_string& getInputResponseMap() const;
+  const fstring& getInputResponseMap() const;
 
   /// Use \a responseMap as the current input response map.
-  void setInputResponseMap(const fixed_string& responseMap);
+  void setInputResponseMap(const fstring& responseMap);
 
   /// Queries whether feedback will be given.
   bool getUseFeedback() const;
@@ -119,17 +119,17 @@ public:
   /** Returns the event sequence which is currently attended for
       responses. The event sequence is specified in the format used
       in a Tk bind command. */
-  const fixed_string& getEventSequence() const;
+  const fstring& getEventSequence() const;
 
   /** Use \a seq as the binding sequence to be attended for
       responses. The event sequence should be specified in the format
       used in a Tk bind command. */
-  void setEventSequence(const fixed_string& seq);
+  void setEventSequence(const fstring& seq);
 
   /** Returns the current binding substitution. This will be in the
       format used in a Tk binding script (i.e. a percent sign
       followed by the appropriate character). */
-  const fixed_string& getBindingSubstitution() const;
+  const fstring& getBindingSubstitution() const;
 
   /** Use \a sub as the current binding substitution. This must be in
       the format used in a Tk binding script (i.e. a percent sign
@@ -138,7 +138,7 @@ public:
       the binding substitution will be evaluated, and checked for
       matches in the input response map to determine the integer
       response value. */
-  void setBindingSubstitution(const fixed_string& sub);
+  void setBindingSubstitution(const fstring& sub);
 
   /** Causes the response handler to abort the trial if an invalid
       responses is seen. This is the default behavior. */

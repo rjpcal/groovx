@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Aug  8 14:47:31 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ DOTRACE("IO::IoObject::serialVersionId");
   return 0;
 }
 
-fixed_string IO::IoObject::ioTypename() const {
+fstring IO::IoObject::ioTypename() const {
 DOTRACE("IO::IoObject::ioTypename");
   return demangle_cstr(typeid(*this).name());
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 11 13:21:57 2001
-// written: Tue Aug  7 10:26:37 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ public:
   ReadWriteAttrib(C* t, Getter g, Setter s) :
     Field(), itsC(t), itsGetter(g), itsSetter(s) {}
 
-  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name)
+  virtual void readValueFrom(IO::Reader* reader, const fstring& name)
   {
     T temp;
     reader->readValue(name, temp);
@@ -56,7 +56,7 @@ public:
   }
 
   virtual void writeValueTo(IO::Writer* writer,
-                            const fixed_string& name) const
+                            const fstring& name) const
   {
     writer->writeValue(name.c_str(), (itsC->*itsGetter)());
   }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Mon Aug  6 13:02:13 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 struct Tcl_Interp;
 struct Tcl_Obj;
 
-class fixed_string;
+class fstring;
 
 namespace Tcl
 {
@@ -95,7 +95,7 @@ public:
   // Commands/procedures
   bool hasCommand(const char* cmd_name) const;
 
-  fixed_string getProcBody(const char* proc_name) const;
+  fstring getProcBody(const char* proc_name) const;
   void createProc(const char* namesp, const char* proc_name,
                   const char* args, const char* body);
 

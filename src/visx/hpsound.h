@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public:
   virtual void setFile(const char* filename);
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
-  virtual fixed_string ioTypename() const { return "Sound"; }
+  virtual fstring ioTypename() const { return "Sound"; }
 
   void swap(HpAudioSound& other)
     {
@@ -87,7 +87,7 @@ public:
     }
 
 private:
-  fixed_string itsFilename;
+  fstring itsFilename;
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
 };

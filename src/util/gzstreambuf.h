@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Fri Jul 20 13:31:14 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ typedef int streamsize;
 #include <zlib.h>
 
 template <class T> class shared_ptr;
-class fixed_string;
+class fstring;
 
 namespace Util
 {
@@ -61,7 +61,7 @@ namespace Util
   /** Opens a file for writing. An exception will be thrown if the
       specified file cannot be opened. The output file will be
       gz-compressed if the filename ends with ".gz". */
-  shared_ptr<STD_IO::ostream> ogzopen(const fixed_string& filename);
+  shared_ptr<STD_IO::ostream> ogzopen(const fstring& filename);
 
   /// Overload.
   shared_ptr<STD_IO::ostream> ogzopen(const char* filename);
@@ -70,7 +70,7 @@ namespace Util
       specified file cannot be opened. If the file is gz-compressed,
       this will be automagically detected regardless of the filename
       extension. */
-  shared_ptr<STD_IO::istream> igzopen(const fixed_string& filename);
+  shared_ptr<STD_IO::istream> igzopen(const fstring& filename);
 
   /// Overload.
   shared_ptr<STD_IO::istream> igzopen(const char* filename);

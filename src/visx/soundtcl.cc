@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Aug  8 19:00:53 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,13 +62,13 @@ public:
       }
     else
       {
-        fixed_string lib_dir(Application::theApp().getLibraryDirectory());
+        fstring lib_dir(Application::theApp().getLibraryDirectory());
         DebugEvalNL(lib_dir);
 
-        fixed_string full_ok_file(lib_dir);
+        fstring full_ok_file(lib_dir);
         full_ok_file.append(ok_sound_file);     DebugEvalNL(full_ok_file);
 
-        fixed_string full_err_file(lib_dir);
+        fstring full_err_file(lib_dir);
         full_err_file.append(err_sound_file);     DebugEvalNL(full_err_file);
 
         static int OK = -1;

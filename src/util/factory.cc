@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ void FactoryError::throwForType(const char* type)
   throw Util::Error("unknown object type '", type, "'");
 }
 
-void FactoryError::throwForType(const fixed_string& type)
+void FactoryError::throwForType(const fstring& type)
 {
   throwForType(type.c_str());
 }
@@ -37,8 +37,8 @@ struct CreatorMapBase::Impl
 {
   Impl() : itsMap() {}
 
-  typedef hash_array<fixed_string, void*,
-    string_hasher<fixed_string> >
+  typedef hash_array<fstring, void*,
+    string_hasher<fstring> >
   MapType;
 
   MapType itsMap;
@@ -68,7 +68,7 @@ DOTRACE("CreatorMapBase::clear");
   delete itsImpl;
 }
 
-void* CreatorMapBase::getPtrForName(const fixed_string& name) const
+void* CreatorMapBase::getPtrForName(const fstring& name) const
 {
 DOTRACE("CreatorMapBase::getPtrForName");
   return itsImpl->itsMap[name];
@@ -77,7 +77,7 @@ DOTRACE("CreatorMapBase::getPtrForName");
 void CreatorMapBase::setPtrForName(const char* name, void* ptr)
 {
 DOTRACE("CreatorMapBase::setPtrForName");
-  fixed_string sname(name);
+  fstring sname(name);
   void*& ptr_slot = itsImpl->itsMap[sname];
   killPtr(ptr_slot);
   ptr_slot = ptr;

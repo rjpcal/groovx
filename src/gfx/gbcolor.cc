@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Tue Aug  7 11:31:51 2001
+// written: Wed Aug  8 20:16:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,10 +89,10 @@ void GbColor::doSetValue(const Value& new_val)
   scanFrom(ist);
 }
 
-void GbColor::readValueFrom(IO::Reader* reader, const fixed_string& name)
+void GbColor::readValueFrom(IO::Reader* reader, const fstring& name)
 { reader->readValueObj(name, *this); }
 
-void GbColor::writeValueTo(IO::Writer* writer, const fixed_string& name) const
+void GbColor::writeValueTo(IO::Writer* writer, const fstring& name) const
 { writer->writeValueObj(name.c_str(), *this); }
 
 shared_ptr<Value> GbColor::value() const

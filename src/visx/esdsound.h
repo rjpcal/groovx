@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ public:
   virtual void setFile(const char* filename);
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
-  virtual fixed_string ioTypename() const { return "Sound"; }
+  virtual fstring ioTypename() const { return "Sound"; }
 
   void swap(EsdSound& other)
   {
@@ -55,7 +55,7 @@ public:
   }
 
 private:
-  fixed_string itsFilename;
+  fstring itsFilename;
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:11 1999
-// written: Thu May 10 12:04:40 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,20 +34,20 @@ public:
 
   virtual ~KbdResponseHdlr();
 
-  const fixed_string& getKeyRespPairs() const
-	 { return EventResponseHdlr::getInputResponseMap(); }
-  void setKeyRespPairs(const fixed_string& s)
-	 { EventResponseHdlr::setInputResponseMap(s); }
+  const fstring& getKeyRespPairs() const
+    { return EventResponseHdlr::getInputResponseMap(); }
+  void setKeyRespPairs(const fstring& s)
+    { EventResponseHdlr::setInputResponseMap(s); }
 
   bool getUseFeedback() const
-	 { return EventResponseHdlr::getUseFeedback(); }
+    { return EventResponseHdlr::getUseFeedback(); }
   void setUseFeedback(bool val)
-	 { EventResponseHdlr::setUseFeedback(val); }
+    { EventResponseHdlr::setUseFeedback(val); }
 
   const char* getFeedbackPairs() const
-	 { return EventResponseHdlr::getFeedbackMap(); }
+    { return EventResponseHdlr::getFeedbackMap(); }
   void setFeedbackPairs(const char* feedback_string)
-	 { EventResponseHdlr::setFeedbackMap(feedback_string); }
+    { EventResponseHdlr::setFeedbackMap(feedback_string); }
 };
 
 static const char vcid_kbdresponsehdlr_h[] = "$Header$";

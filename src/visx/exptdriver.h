@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat Jul 21 20:02:40 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ struct Tcl_Interp;
 
 class Block;
 
-class fixed_string;
+class fstring;
 
 namespace Util
 {
@@ -77,9 +77,9 @@ public:
   //////////////////////////////
 
   /// Return the name of the file currently being used for autosaves
-  const fixed_string& getAutosaveFile() const;
+  const fstring& getAutosaveFile() const;
   /// Change the name of the file to use for autosaves
-  void setAutosaveFile(const fixed_string& str);
+  void setAutosaveFile(const fstring& str);
 
   /// Return the current autosave period.
   int getAutosavePeriod() const;

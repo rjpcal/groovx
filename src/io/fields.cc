@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,11 +52,11 @@ template <class T>
 TField<T>::~TField() {}
 
 template <class T>
-void TField<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
+void TField<T>::readValueFrom(IO::Reader* reader, const fstring& name)
 { reader->readValue(name, itsVal); }
 
 template <class T>
-void TField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) const
+void TField<T>::writeValueTo(IO::Writer* writer, const fstring& name) const
 { writer->writeValue(name.c_str(), itsVal); }
 
 template <class T>
@@ -93,12 +93,12 @@ TBoundedField<T>::~TBoundedField() {}
 
 template <class T>
 void TBoundedField<T>::readValueFrom(IO::Reader* reader,
-                                     const fixed_string& name)
+                                     const fstring& name)
 { reader->readValue(name, itsVal); }
 
 template <class T>
 void TBoundedField<T>::writeValueTo(IO::Writer* writer,
-                                    const fixed_string& name) const
+                                    const fstring& name) const
 { writer->writeValue(name.c_str(), itsVal); }
 
 template <class T>
@@ -134,11 +134,11 @@ template <class T>
 TPtrField<T>::~TPtrField() {}
 
 template <class T>
-void TPtrField<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
+void TPtrField<T>::readValueFrom(IO::Reader* reader, const fstring& name)
 { reader->readValueObj(name, itsVal); }
 
 template <class T>
-void TPtrField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) const
+void TPtrField<T>::writeValueTo(IO::Writer* writer, const fstring& name) const
 { writer->writeValueObj(name.c_str(), itsVal); }
 
 template <class T>
@@ -167,7 +167,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  typedef std::map<fixed_string, const FieldInfo*> MapType;
+  typedef std::map<fstring, const FieldInfo*> MapType;
   MapType itsNameMap;
   const FieldInfo* const itsIoBegin;
   const FieldInfo* const itsIoEnd;
@@ -209,7 +209,7 @@ bool FieldMap::hasParent() const
 const FieldMap* FieldMap::parent() const
 { return itsImpl->itsParent; }
 
-const FieldInfo& FieldMap::info(const fixed_string& name) const {
+const FieldInfo& FieldMap::info(const fstring& name) const {
   Impl::MapType::const_iterator itr = itsImpl->itsNameMap.find(name);
 
   if (itr != itsImpl->itsNameMap.end())
@@ -227,7 +227,7 @@ const FieldInfo& FieldMap::info(const fixed_string& name) const {
 
 class FieldMap::ItrImpl {
 public:
-  typedef std::map<fixed_string, const FieldInfo*> MapType;
+  typedef std::map<fstring, const FieldInfo*> MapType;
 
   ItrImpl(MapType::const_iterator i) : itsItr(i) {}
 
@@ -284,13 +284,13 @@ FieldContainer::~FieldContainer() {}
 void FieldContainer::setFieldMap(const FieldMap& fields)
 { itsFieldMap = &fields; }
 
-Field& FieldContainer::field(const fixed_string& name)
+Field& FieldContainer::field(const fstring& name)
 { return itsFieldMap->info(name).dereference(this); }
 
 Field& FieldContainer::field(const FieldInfo& pinfo)
 { return pinfo.dereference(this); }
 
-const Field& FieldContainer::field(const fixed_string& name) const
+const Field& FieldContainer::field(const fstring& name) const
 { return itsFieldMap->info(name).dereference(
                 const_cast<FieldContainer*>(this)); }
 

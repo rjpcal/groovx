@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Aug  8 14:47:30 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace
   }
 
   template <class Writer>
-  fixed_string stringWrite(Util::Ref<IO::IoObject> obj)
+  fstring stringWrite(Util::Ref<IO::IoObject> obj)
   {
     ostrstream ost;
 
@@ -77,7 +77,7 @@ namespace
         throw;
       }
 
-    fixed_string result(ost.str());
+    fstring result(ost.str());
 
     ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 
@@ -85,12 +85,12 @@ namespace
   }
 }
 
-fixed_string IO::stringify(Util::Ref<IO::IoObject> obj)
+fstring IO::stringify(Util::Ref<IO::IoObject> obj)
 {
   return stringWrite<IO::LegacyWriter>(obj);
 }
 
-fixed_string IO::write(Util::Ref<IO::IoObject> obj)
+fstring IO::write(Util::Ref<IO::IoObject> obj)
 {
   return stringWrite<AsciiStreamWriter>(obj);
 }
@@ -109,14 +109,14 @@ void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
   streamRead<AsciiStreamReader>(obj, ist);
 }
 
-void IO::saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename)
+void IO::saveASW(Util::Ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
 
   streamWrite<AsciiStreamWriter>(obj, *os);
 }
 
-void IO::loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename)
+void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:35:06 2001
-// written: Wed Aug  8 15:29:28 2001
+// written: Wed Aug  8 20:16:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,13 +27,13 @@ public:
     isItDirty(true),
     itsItems() {}
 
-  void set(const fixed_string& new_rep)
+  void set(const fstring& new_rep)
   {
     itsStringRep = new_rep;;
     isItDirty = true;
   }
 
-  const fixed_string& rep() const { return itsStringRep; }
+  const fstring& rep() const { return itsStringRep; }
 
   // Returns the response value associated with the first regexp that
   // matches the given character string, or returns
@@ -92,7 +92,7 @@ private:
     int responseValue;
   };
 
-  fixed_string itsStringRep;
+  fstring itsStringRep;
   mutable bool isItDirty;
   mutable minivec<MapItem> itsItems;
 };

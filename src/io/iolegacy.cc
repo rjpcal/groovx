@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 20:16:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
       }
   }
 
-  void throwIfError(const fixed_string& type)
+  void throwIfError(const fstring& type)
   {
     throwIfError(type.c_str());
   }
@@ -64,9 +64,9 @@ public:
   STD_IO::istream& itsInStream;
   int itsLegacyVersionId;
 
-  void readTypename(const fixed_string& correct_name)
+  void readTypename(const fstring& correct_name)
   {
-    fixed_string name;
+    fstring name;
     itsInStream >> name;
 
     if (! name.equals(correct_name))
@@ -124,7 +124,7 @@ public:
       }
   }
 
-  void inflateObject(const fixed_string& name, Ref<IO::IoObject> obj)
+  void inflateObject(const fstring& name, Ref<IO::IoObject> obj)
   {
     DebugEvalNL(name);
 
@@ -165,7 +165,7 @@ DOTRACE("IO::LegacyReader::readSerialVersionId");
   return itsImpl->itsLegacyVersionId;
 }
 
-char IO::LegacyReader::readChar(const fixed_string& name)
+char IO::LegacyReader::readChar(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readChar");
   DebugEval(name);
@@ -175,7 +175,7 @@ DOTRACE("IO::LegacyReader::readChar");
   return val;
 }
 
-int IO::LegacyReader::readInt(const fixed_string& name)
+int IO::LegacyReader::readInt(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readInt");
   DebugEval(name);
@@ -185,7 +185,7 @@ DOTRACE("IO::LegacyReader::readInt");
   return val;
 }
 
-bool IO::LegacyReader::readBool(const fixed_string& name)
+bool IO::LegacyReader::readBool(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readBool");
   DebugEval(name);
@@ -195,7 +195,7 @@ DOTRACE("IO::LegacyReader::readBool");
   return bool(val);
 }
 
-double IO::LegacyReader::readDouble(const fixed_string& name)
+double IO::LegacyReader::readDouble(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readDouble");
   DebugEval(name);
@@ -205,7 +205,7 @@ DOTRACE("IO::LegacyReader::readDouble");
   return val;
 }
 
-fixed_string IO::LegacyReader::readStringImpl(const fixed_string& name)
+fstring IO::LegacyReader::readStringImpl(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readStringImpl");
   DebugEvalNL(name);
@@ -230,7 +230,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
 //   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
 
-  fixed_string new_string(numchars);
+  fstring new_string(numchars);
 
   if ( numchars > 0 )
     {
@@ -242,7 +242,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
   return new_string;
 }
 
-void IO::LegacyReader::readValueObj(const fixed_string& name, Value& value)
+void IO::LegacyReader::readValueObj(const fstring& name, Value& value)
 {
 DOTRACE("IO::LegacyReader::readValueObj");
   DebugEvalNL(name);
@@ -251,18 +251,18 @@ DOTRACE("IO::LegacyReader::readValueObj");
 }
 
 Ref<IO::IoObject>
-IO::LegacyReader::readObject(const fixed_string& name)
+IO::LegacyReader::readObject(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readObject");
   return Ref<IO::IoObject>(readMaybeObject(name));
 }
 
 WeakRef<IO::IoObject>
-IO::LegacyReader::readMaybeObject(const fixed_string& name)
+IO::LegacyReader::readMaybeObject(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readMaybeObject");
   DebugEval(name);
-  fixed_string type;
+  fstring type;
   itsImpl->itsInStream >> type; DebugEval(type);
 
   if (type == "NULL")
@@ -282,7 +282,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 #endif
 }
 
-void IO::LegacyReader::readOwnedObject(const fixed_string& name,
+void IO::LegacyReader::readOwnedObject(const fstring& name,
                                        Ref<IO::IoObject> obj)
 {
 DOTRACE("IO::LegacyReader::readOwnedObject");
@@ -291,7 +291,7 @@ DOTRACE("IO::LegacyReader::readOwnedObject");
   itsImpl->inflateObject(name, obj);
 }
 
-void IO::LegacyReader::readBaseClass(const fixed_string& baseClassName,
+void IO::LegacyReader::readBaseClass(const fstring& baseClassName,
                                      Ref<IO::IoObject> basePart)
 {
 DOTRACE("IO::LegacyReader::readBaseClass");

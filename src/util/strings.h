@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Aug  8 18:58:39 2001
+// written: Wed Aug  8 20:16:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 #endif
 
 class string_literal;
-class fixed_string;
+class fstring;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -41,7 +41,7 @@ class fixed_string;
 
 class string_literal {
 public:
-  friend class fixed_string;
+  friend class fstring;
 
   string_literal(const char* literal);
 
@@ -63,7 +63,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c string_rep is a helper class for fixed_string that handles
+ * \c string_rep is a helper class for fstring that handles
  * memory management and reference-counting. \c string_rep should not
  * be used by public clients.
  *
@@ -120,32 +120,32 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c fixed_string is a simple string class that holds a pointer to a
+ * \c fstring is a simple string class that holds a pointer to a
  * dynamically-allocated char array. The initializer does not have to
  * reside in permanent storage, since a copy is made when the \c
- * fixed_string is constructed. Assignment is allowed, with copy
+ * fstring is constructed. Assignment is allowed, with copy
  * semantics. Also, a \c swap() operation is provided.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class fixed_string {
+class fstring {
 public:
   friend class string_literal;
 
-  fixed_string(std::size_t length = 0);
-  fixed_string(const char* text);
-  fixed_string(const fixed_string& other);
-  ~fixed_string();
+  fstring(std::size_t length = 0);
+  fstring(const char* text);
+  fstring(const fstring& other);
+  ~fstring();
 
-  void swap(fixed_string& other);
+  void swap(fstring& other);
 
-  fixed_string& operator=(const char* text);
-  fixed_string& operator=(const fixed_string& other);
+  fstring& operator=(const char* text);
+  fstring& operator=(const fstring& other);
 
   bool equals(const char* other) const;
   bool equals(const string_literal& other) const;
-  bool equals(const fixed_string& other) const;
+  bool equals(const fstring& other) const;
 
   char* data() { string_rep::makeUnique(itsRep); return itsRep->data(); }
 
@@ -153,7 +153,7 @@ public:
   std::size_t length() const { return itsRep->length(); }
   bool empty() const { return (length() == 0); }
 
-  bool ends_with(const fixed_string& ext) const;
+  bool ends_with(const fstring& ext) const;
 
   //
   // Comparison operators
@@ -183,17 +183,17 @@ public:
       return strcmp(c_str(), other.c_str()) > 0;
     }
 
-  fixed_string& append(const char* text)
+  fstring& append(const char* text)
   { if (text) append_text(strlen(text), text); return *this; }
 
-  fixed_string& append(const fixed_string& other)
+  fstring& append(const fstring& other)
   { append_text(other.length(), other.c_str()); return *this; }
 
   template <class T>
-  fixed_string& append(const T& x);
+  fstring& append(const T& x);
 
   template <class T>
-  fixed_string& operator+=(const T& x) { return append(x); }
+  fstring& operator+=(const T& x) { return append(x); }
 
 private:
   void append_text(std::size_t length, const char* text);
@@ -212,14 +212,14 @@ namespace Util
   };
 
   template <>
-  struct Convert<fixed_string>
+  struct Convert<fstring>
   {
-    static const char* toString(const fixed_string& x) { return x.c_str(); }
+    static const char* toString(const fstring& x) { return x.c_str(); }
   };
 }
 
 template <class T>
-inline fixed_string& fixed_string::append(const T& x)
+inline fstring& fstring::append(const T& x)
 {
   append(Util::Convert<T>::toString(x)); return *this;
 }
@@ -235,7 +235,7 @@ inline fixed_string& fixed_string::append(const T& x)
 inline bool operator==(const char* lhs, const string_literal& rhs)
   { return rhs.equals(lhs); }
 
-inline bool operator==(const char* lhs, const fixed_string& rhs)
+inline bool operator==(const char* lhs, const fstring& rhs)
   { return rhs.equals(lhs); }
 
 // With string_literal on left
@@ -246,18 +246,18 @@ inline bool operator==(const string_literal& lhs, const char* rhs)
 inline bool operator==(const string_literal& lhs, const string_literal& rhs)
   { return lhs.equals(rhs); }
 
-inline bool operator==(const string_literal& lhs, const fixed_string& rhs)
+inline bool operator==(const string_literal& lhs, const fstring& rhs)
   { return rhs.equals(lhs); }
 
-// With fixed_string on left
+// With fstring on left
 
-inline bool operator==(const fixed_string& lhs, const char* rhs)
+inline bool operator==(const fstring& lhs, const char* rhs)
   { return lhs.equals(rhs); }
 
-inline bool operator==(const fixed_string& lhs, const string_literal& rhs)
+inline bool operator==(const fstring& lhs, const string_literal& rhs)
   { return lhs.equals(rhs); }
 
-inline bool operator==(const fixed_string& lhs, const fixed_string& rhs)
+inline bool operator==(const fstring& lhs, const fstring& rhs)
   { return lhs.equals(rhs); }
 
 ///////////////////////////////////////////////////////////////////////
@@ -276,14 +276,14 @@ class ostream;
 #  endif
 #endif
 
-STD_IO::istream& operator>>(STD_IO::istream& is, fixed_string& str);
+STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str);
 
 STD_IO::ostream& operator<<(STD_IO::ostream& os, const string_literal& str);
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const fixed_string& str);
+STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str);
 
-STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str);
+STD_IO::istream& getline(STD_IO::istream& is, fstring& str);
 
-STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str, char eol);
+STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol);
 
 static const char vcid_strings_h[] = "$Header$";
 #endif // !STRINGS_H_DEFINED
