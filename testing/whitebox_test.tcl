@@ -10,6 +10,7 @@
 set pkgs {
     Dlinktest
     Fstringtest
+    Vectwotest
 }
 
 foreach pkg $pkgs {
