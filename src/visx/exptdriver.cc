@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Sep 29 16:05:53 2000
+// written: Mon Oct  9 18:31:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -419,7 +419,7 @@ DOTRACE("ExptDriver::Impl::assertIds");
   }
 
   // ...one of the validity checks failed, so generate an error+message
-  edRaiseBackgroundError("invalid item id");
+  edRaiseBackgroundError("invalid Block id in ExptDriver::assertIds()");
 
   // ...and halt any of the participants for which we have valid id's
   edHaltExpt();
