@@ -33,39 +33,22 @@
 #include "util/volatileobject.h"
 
 #include "util/trace.h"
-#include "util/debug.h"
 
-Util::VolatileObject::VolatileObject() :
-  isItDestroyed(false)
+Util::VolatileObject::VolatileObject()
 {
 DOTRACE("Util::VolatileObject::VolatileObject");
   this->markAsVolatile();
-  this->incrRefCount();
 }
 
 Util::VolatileObject::~VolatileObject()
 {
 DOTRACE("Util::VolatileObject::~VolatileObject");
-
-  // If this destructor was not called via destroy(), then it means we
-  // probably have a stack object here. In order to keep weak references
-  // doing the right thing, we need to make sure that we decrement the ref
-  // count here.
-  if (!isItDestroyed)
-    {
-      Assert(refCount() == 1);
-      this->decrRefCountNoDelete();
-    }
 }
 
 void Util::VolatileObject::destroy()
 {
 DOTRACE("Util::VolatileObject::destroy");
-  Assert(refCount() == 1);
-
-  isItDestroyed = true;
-
-  this->decrRefCount();
+  delete this;
 }
 
 static const char vcid_volatileobject_cc[] = "$Header$";

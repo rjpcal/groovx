@@ -43,8 +43,6 @@ namespace Util
     windowing system, for example). */
 class Util::VolatileObject : public virtual Util::Object
 {
-  bool isItDestroyed; // To keep track of whether destroy() was called yet.
-
 public:
   VolatileObject();
   virtual ~VolatileObject();
