@@ -361,31 +361,10 @@ namespace
       for (int x = 0; x < SIZE; ++x)
         *bytes++ = (x*y) % 256;
 
-    const vec3d world_pos = vec3d::zeros();
-
-    const rectd viewport = rectd(canvas.getScreenViewport());
-
-    dbg_dump(0, viewport);
-
-    const vec3d screen_pos = canvas.screenFromWorld3(world_pos);
-
-    dbg_dump(0, screen_pos);
-
-    const vec3d safe_screen = vec3d(viewport.center_x(),
-                                    viewport.center_y(),
-                                    0.5);
-
-    dbg_dump(0, safe_screen);
-
-    const vec3d safe_world = canvas.worldFromScreen3(safe_screen);
-
-    dbg_dump(0, safe_world);
-
-    glRasterPos3d(safe_world.x(), safe_world.y(), safe_world.z());
+    glRasterPos3d(2.56, 2.56, 0.0);
 
     glBitmap(0, 0, 0.0f, 0.0f,
-             screen_pos.x()-safe_screen.x(),
-             screen_pos.y()-safe_screen.y(),
+             -256, -256,
              static_cast<const GLubyte*>(0));
 
     glDrawPixels(SIZE, SIZE,
