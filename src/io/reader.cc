@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Oct 19 16:03:26 1999
+// written: Tue Nov 30 17:24:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,11 @@ void Reader::readValue<char>(const string& name, char& return_value) {
 
 template <>
 void Reader::readValue<int>(const string& name, int& return_value) {
+  return_value = readInt(name);
+}
+
+template <>
+void Reader::readValue<size_t>(const string& name, size_t& return_value) {
   return_value = readInt(name);
 }
 
