@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Sep 29 14:51:51 2000
+// written: Wed Nov  1 18:28:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef GROBJ_H_DEFINED
 #define GROBJ_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
+#include "gx/gxnode.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
@@ -53,9 +53,9 @@ namespace GWT {
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GrObj : public virtual Observable, 
-				  public virtual Observer,
-				  public virtual IO::IoObject 
+class GrObj : public GxNode,
+				  public virtual Observable, 
+				  public virtual Observer
 {
 public:
 
