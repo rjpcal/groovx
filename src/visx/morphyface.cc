@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Sep  9 19:06:43 1999
+// written: Wed Sep 22 15:04:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,9 @@
 #include <GL/glu.h>
 
 #include <cctype>
+#include <cmath>
 
+#include "bezier.h"
 #include "gfxattribs.h"
 
 #define NO_TRACE
@@ -31,7 +33,7 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// File scope data 
+// File scope definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -42,6 +44,102 @@ namespace {
 	 while ( isspace(is.peek()) ) {
 		is.get();
 	 }
+  }
+
+  void draw_hairstyle1() {
+	 const GLdouble hair_vertices[] = {
+		-0.955, 0.293,
+		-1.000, 0.000,
+		-1.273, 0.206,
+		-1.273, 0.382,
+		-0.550, 1.018,
+		-0.118, 0.618,
+		0.364, 1.117,
+		0.455, 0.764,
+		0.682, 0.945,
+		0.591, 0.587,
+		1.182, 0.529,
+		0.955, 0.294,
+		1.210, 0.265,
+		1.000, 0.059,
+// 	 // Individual hair line 1
+		-0.455, 0.824,				  //	 -1.25 3.5
+		-0.182, 0.921,				  // 	 -0.5 4.125
+		0.273, 0.950,				  // 	 0.75 4.25
+		0.545, 0.900,				  // 	 1.5 3.825
+// 	 // Individual hair line 2
+		0.455, 0.765,				  // 	 1.25 3.25
+		0.300, 0.588,				  // 	 0.825 2.5
+		0.091, 0.500,				  // 	 0.25 2.125
+		-0.300, 0.429,				  // 	 -0.825 1.825
+	 };
+	 
+	 glEnableClientState(GL_VERTEX_ARRAY);
+	 {
+		glVertexPointer(2, GL_DOUBLE, 0, hair_vertices);
+	 
+		glPushAttrib(GL_POLYGON_BIT);
+		{
+		  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		  
+		  glBegin(GL_TRIANGLE_FAN);
+		  {
+			 glArrayElement(0);
+			 glArrayElement(1);
+			 glArrayElement(2);
+			 glArrayElement(3);
+			 glArrayElement(4);
+			 glArrayElement(5);
+		  }
+		  glEnd();
+		  
+		  glBegin(GL_TRIANGLE_STRIP);
+		  {
+			 glArrayElement(4);
+			 glArrayElement(5);
+			 glArrayElement(6);
+			 glArrayElement(7);
+			 glArrayElement(8);
+			 glArrayElement(9);
+			 glArrayElement(10);
+			 glArrayElement(11);
+			 glArrayElement(12);
+			 glArrayElement(13);
+		  }
+		  glEnd();
+		  
+		  // Second hair line
+		  glBegin(GL_LINE_STRIP);
+		  {
+			 glArrayElement(18);
+			 glArrayElement(19);
+			 glArrayElement(20);
+			 glArrayElement(21);
+		  }
+		  glEnd();
+		  
+		  // First hair line
+		  GLint foreground, background;
+		  glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+		  glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+		  
+		  glIndexi(background);
+		  glBegin(GL_LINE_STRIP);
+		  {
+			 glArrayElement(14);
+			 glArrayElement(15);
+			 glArrayElement(16);
+			 glArrayElement(17);
+		  }
+		  glEnd();
+		  
+		  glIndexi(foreground);
+		  
+		}
+		glPopAttrib();
+		
+	 }
+	 glDisableClientState(GL_VERTEX_ARRAY);
   }
 }
 
@@ -55,15 +153,20 @@ namespace {
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
-MorphyFace::MorphyFace(double, double, double, double, int categ) {
+MorphyFace::MorphyFace(int categ) :
+  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX)
+{
 DOTRACE("MorphyFace::MorphyFace");
   itsCategory() = categ;
 
   itsFaceWidth() = 2.75; 
-  itsTopHeight() = 4.1;
+  itsTopHeight() = 3.8;
   itsBottomHeight() = -3.0;
-  itsTopWidth() = 2.75;
-  itsBottomWidth() = 2.75;
+  itsTopWidth() = 1.15;
+  itsBottomWidth() = 1.0;
+
+  itsHairWidth() = 0.20;
+  itsHairStyle() = 0;
 
   itsEyeYpos() = 0.375;
   itsEyeDistance() = 2.25;
@@ -96,7 +199,9 @@ DOTRACE("MorphyFace::MorphyFace");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-MorphyFace::MorphyFace(istream& is, IOFlag flag) {
+MorphyFace::MorphyFace(istream& is, IOFlag flag) :
+  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX)
+{
 DOTRACE("MorphyFace::MorphyFace(istream&, IOFlag)");
   deserialize(is, flag);
   Invariant(check());
@@ -190,6 +295,8 @@ DOTRACE("MorphyFace::deserialize");
   Invariant(check());
 
   if (flag & BASES) { GrObj::deserialize(is, flag); }
+
+  sendStateChangeMsg();
 }
 
 int MorphyFace::charCount() const {
@@ -310,16 +417,16 @@ DOTRACE("MorphyFace::grRender");
   static const int nctrlsets = 2;
   const double ctrlpnts[] = {
     -itsFaceWidth(), 0.0,        0,        // first 4 control points 
-	 -itsTopWidth(),  itsTopHeight()*4.0/3.0, 0,
-	 itsTopWidth(),   itsTopHeight()*4.0/3.0, 0,
+	 -itsTopWidth()*itsFaceWidth(),  itsTopHeight()*4.0/3.0, 0,
+	 itsTopWidth()*itsFaceWidth(),   itsTopHeight()*4.0/3.0, 0,
 	 itsFaceWidth(),  0.0,        0,
 	 itsFaceWidth(), 0.0, 0, // second 4 control points 
-	 itsBottomWidth(), itsBottomHeight()*4.0/3.0, 0,
-	 -itsBottomWidth(), itsBottomHeight()*4.0/3.0, 0,
+	 itsBottomWidth()*itsFaceWidth(), itsBottomHeight()*4.0/3.0, 0,
+	 -itsBottomWidth()*itsFaceWidth(), itsBottomHeight()*4.0/3.0, 0,
 	 -itsFaceWidth(), 0.0, 0};
   
   glEnable(GL_MAP1_VERTEX_3);
-  for (int i = 0; i < nctrlsets; ++i) {
+  for (int i = 1; i < nctrlsets; ++i) {
 	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
 	 // Evaluate the 1-d Bezier curve
 	 glMapGrid1d(num_subdivisions, 0.0, 1.0);
@@ -371,91 +478,99 @@ DOTRACE("MorphyFace::grRender");
   // Draw hair.
   //
 
-  const GLdouble hair_vertices[] = {
-	 -0.955, 0.293,
-	 -1.000, 0.000,
-	 -1.273, 0.206,
-	 -1.273, 0.382,
-	 -0.550, 1.018,
-	 -0.118, 0.618,
-	  0.364, 1.117,
-	  0.455, 0.764,
-	  0.682, 0.945,
-	  0.591, 0.587,
-	  1.182, 0.529,
-	  0.955, 0.294,
-	  1.210, 0.265,
-	  1.000, 0.059,
-// 	 // Individual hair line 1
-	 -0.455, 0.824,				  //	 -1.25 3.5
-	 -0.182, 0.921,				  // 	 -0.5 4.125
-	  0.273, 0.950,				  // 	 0.75 4.25
-	  0.545, 0.900,				  // 	 1.5 3.825
-// 	 // Individual hair line 2
-	  0.455, 0.765,				  // 	 1.25 3.25
-	  0.300, 0.588,				  // 	 0.825 2.5
-	  0.091, 0.500,				  // 	 0.25 2.125
-	 -0.300, 0.429,				  // 	 -0.825 1.825
-  };
+  Bezier4 xbezier(-1.0, -itsTopWidth(), itsTopWidth(), 1.0);
+  Bezier4 ybezier( 0.0,     4.0/3.0   ,   4.0/3.0  , 0.0);
 
-  glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_DOUBLE, 0, hair_vertices);
-	 
-	 glPushAttrib(GL_POLYGON_BIT);
-	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  const int num_hair_points = 15;
+  double hair_widths[num_hair_points]   = { 
+	 0.40, 0.90, 0.95,
+	 1.00, 0.97, 0.94,
+	 0.91, 0.88, 0.85,
+	 0.81, 0.78, 0.75,
+	 0.7, 0.6, 0.0 };
+  double hair_x_normals[num_hair_points];
+  double hair_y_normals[num_hair_points];
 
-		glPushMatrix();
-		  glScalef(itsFaceWidth(), itsTopHeight(), 1.0);
+  double hair_vertices[num_hair_points*4];
 
-		  glBegin(GL_TRIANGLE_FAN);
-	       glArrayElement(0);
-			 glArrayElement(1);
-			 glArrayElement(2);
-			 glArrayElement(3);
-			 glArrayElement(4);
-			 glArrayElement(5);
-		  glEnd();
+  {
+	 for (int i = 0; i < num_hair_points; ++i) {
+		double u = 0.5 + double(i)/double(2*num_hair_points-2);
+
+		double x = xbezier.eval(u);
+		double y = ybezier.eval(u);
 		
-		  glBegin(GL_TRIANGLE_STRIP);
-		    glArrayElement(4);
-			 glArrayElement(5);
-			 glArrayElement(6);
-			 glArrayElement(7);
-			 glArrayElement(8);
-			 glArrayElement(9);
-			 glArrayElement(10);
-			 glArrayElement(11);
-			 glArrayElement(12);
-			 glArrayElement(13);
-		  glEnd();
+		double tang_x = xbezier.evalDeriv(u);
+		double tang_y = ybezier.evalDeriv(u);
 
-		  GLint foreground, background;
-		  glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-		  glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-		  
-		  glIndexi(background);
-		  glBegin(GL_LINE_STRIP);
-		    glArrayElement(14);
-		    glArrayElement(15);
-		    glArrayElement(16);
-		    glArrayElement(17);
-		  glEnd();
-
-		  glIndexi(foreground);
-		  glBegin(GL_LINE_STRIP);
-		    glArrayElement(18);
-		    glArrayElement(19);
-		    glArrayElement(20);
-		    glArrayElement(21);
-		  glEnd();
-
-
-		glPopMatrix();
+		// tangent vector = (tang_x, tang_y)
+		// ==> normal vector = (-tang_y, tang_x)
+		double norm_x = -tang_y;
+		double norm_y = tang_x;
 		
-	 glPopAttrib();
+		// compute the factor needed to make a unit normal vector
+		double norm_factor = 1.0 / sqrt(norm_x*norm_x + norm_y*norm_y);
+		
+		hair_x_normals[i] = norm_x * norm_factor;
+		hair_y_normals[i] = norm_y * norm_factor;
+		
+		hair_vertices[4*i]   = // inner x value
+		  x - hair_x_normals[i]*hair_widths[i]*itsHairWidth();
+		hair_vertices[4*i+1] = // inner y value
+		  y - hair_y_normals[i]*hair_widths[i]*itsHairWidth();
+		hair_vertices[4*i+2] = // outer x value
+		  x + hair_x_normals[i]*hair_widths[i]*itsHairWidth();
+		hair_vertices[4*i+3] = // outer y value
+		  y + hair_y_normals[i]*hair_widths[i]*itsHairWidth();
+	 }
+  }
+  
+  glPushAttrib(GL_POLYGON_BIT);
+  {
+	 if (itsHairStyle() == 0) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	 }
+	 else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	 }
 
-  glDisableClientState(GL_VERTEX_ARRAY);
+	 // Draw right side
+	 glPushMatrix();
+	 {
+		glScalef(itsFaceWidth(), itsTopHeight(), 1.0);
+		
+		glBegin(GL_QUAD_STRIP);
+		{
+		  for (int i = 0; i < num_hair_points; ++i) {
+			 glVertex2d(hair_vertices[4*i  ], hair_vertices[4*i+1]);
+			 glVertex2d(hair_vertices[4*i+2], hair_vertices[4*i+3]);
+		  }
+		}
+		glEnd();
+		
+	 }
+	 glPopMatrix();
 
+	 // Draw left side
+	 glPushMatrix();
+	 {
+		glScalef(-itsFaceWidth(), itsTopHeight(), 1.0);
+		
+		glBegin(GL_QUAD_STRIP);
+		{
+		  for (int i = 0; i < num_hair_points; ++i) {
+			 glVertex2d(hair_vertices[4*i  ], hair_vertices[4*i+1]);
+			 glVertex2d(hair_vertices[4*i+2], hair_vertices[4*i+3]);
+		  }
+		}
+		glEnd();
+		
+	 }
+	 glPopMatrix();
+
+  }
+  glPopAttrib();
+		
   // Undo pushes
   if (have_antialiasing) {
 	 glPopAttrib();
@@ -466,6 +581,32 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
+bool MorphyFace::grGetBoundingBox(double& left, double& top,
+											 double& right, double& bottom,
+											 int& border_pixels) const {
+DOTRACE("MorphyFace::grGetBoundingBox");
+  Bezier4 xbezier_top(-1.0, -itsTopWidth(), itsTopWidth(), 1.0);
+  Bezier4 xbezier_bottom(1.0, itsBottomWidth(), -itsBottomWidth(), -1.0);
+
+  double top_width = xbezier_top.evalMax();
+  double bottom_width = xbezier_bottom.evalMax();
+
+  DebugEval(top_width);   DebugEvalNL(bottom_width);
+
+  double max_width = max(1.0, max(top_width, bottom_width)); 
+
+  DebugEvalNL(max_width);
+
+  left   = -max_width      * itsFaceWidth() * (1 + itsHairWidth());
+  right  =  max_width      * itsFaceWidth() * (1 + itsHairWidth());
+  top    =  itsTopHeight() * (1 + itsHairWidth());
+  bottom =  itsBottomHeight();
+
+  border_pixels = 4;
+
+  return true;
+}
+
 bool MorphyFace::check() const {
 DOTRACE("MorphyFace::check");
   return (itsEyeDistance() >= 0.0 && itsNoseLength() >= 0.0);
@@ -473,22 +614,54 @@ DOTRACE("MorphyFace::check");
 
 void MorphyFace::makeIoList(vector<IO *>& vec) {
 DOTRACE("MorphyFace::makeIoList");
-  vec.clear();
-
-  vec.push_back(&itsCategory);
-  vec.push_back(&itsEyeYpos);
-  vec.push_back(&itsEyeDistance);
-  vec.push_back(&itsNoseLength);
+  makeIoList(reinterpret_cast<vector<const IO *> &>(vec));
 }
 
 void MorphyFace::makeIoList(vector<const IO *>& vec) const {
 DOTRACE("MorphyFace::makeIoList const");
   vec.clear();
 
+/*
+  PROPERTY([a-z]*, \(.*\));
+  vec.push_back(&its\1);
+ */
+
   vec.push_back(&itsCategory);
+
+  vec.push_back(&itsFaceWidth);
+  vec.push_back(&itsTopWidth);
+  vec.push_back(&itsBottomWidth);
+  vec.push_back(&itsTopHeight);
+  vec.push_back(&itsBottomHeight);
+
+  vec.push_back(&itsHairWidth);
+  vec.push_back(&itsHairStyle);
+
   vec.push_back(&itsEyeYpos);
   vec.push_back(&itsEyeDistance);
+  vec.push_back(&itsEyeHeight);
+  vec.push_back(&itsEyeAspectRatio);
+
+  vec.push_back(&itsPupilXpos);
+  vec.push_back(&itsPupilYpos);
+  vec.push_back(&itsPupilSize);
+  vec.push_back(&itsPupilDilation);
+
+  vec.push_back(&itsEyebrowXpos);
+  vec.push_back(&itsEyebrowYpos);
+  vec.push_back(&itsEyebrowCurvature);
+  vec.push_back(&itsEyebrowAngle);
+  vec.push_back(&itsEyebrowThickness);
+
+  vec.push_back(&itsNoseXpos);
+  vec.push_back(&itsNoseYpos);
   vec.push_back(&itsNoseLength);
+  vec.push_back(&itsNoseWidth);
+
+  vec.push_back(&itsMouthXpos);
+  vec.push_back(&itsMouthYpos);
+  vec.push_back(&itsMouthWidth);
+  vec.push_back(&itsMouthCurvature);
 }
 
 static const char vcid_morphyface_cc[] = "$Header$";
