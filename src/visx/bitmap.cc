@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Jan 21 12:36:41 2002
+// written: Mon Jan 21 13:09:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,6 +129,35 @@ public:
   bool itsPurgeable;
   mutable Gfx::BmapData itsData;
 
+  void queuePbmFile(const char* filename)
+  {
+    DOTRACE("BitmapImpl::queuePbmFile");
+
+    shared_ptr<Gfx::BmapData::UpdateFunc> updater
+      (new PbmUpdater(filename,
+                      itsFilename,
+                      itsContrastFlip,
+                      itsVerticalFlip));
+
+    itsData.queueUpdate(updater);
+  }
+
+  void purge()
+  {
+    if (!itsFilename.empty())
+      {
+        // NOTE: it's important that this functionality be separate from
+        // Bitmap's own version of queuePbmFile(), since that function
+        // immediately calls sigNodeChanged, which means that we notify
+        // everyone else that the data have been purged, so the bitmap might
+        // never have a chance to be drawn on the screen
+
+        itsData.clear();
+
+        queuePbmFile(itsFilename.c_str());
+      }
+  }
+
 private:
   BitmapImpl(const BitmapImpl&);
   BitmapImpl& operator=(const BitmapImpl&);
@@ -225,13 +254,7 @@ void Bitmap::queuePbmFile(const char* filename)
 {
 DOTRACE("Bitmap::queuePbmFile");
 
-  shared_ptr<Gfx::BmapData::UpdateFunc> updater
-    (new PbmUpdater(filename,
-                    itsImpl->itsFilename,
-                    itsImpl->itsContrastFlip,
-                    itsImpl->itsVerticalFlip));
-
-  itsImpl->itsData.queueUpdate(updater);
+  itsImpl->queuePbmFile(filename);
 
   this->sigNodeChanged.emit();
 }
@@ -306,12 +329,9 @@ DOTRACE("Bitmap::grRender");
 
   if (isPurgeable())
     {
-      itsImpl->itsData.clear();
-
       // This const_cast is OK because we aren't changing the observable
       // state; we're just re-queuing the current filename
-      const_cast<Bitmap*>(this)->
-        queuePbmFile(itsImpl->itsFilename.c_str());
+      const_cast<BitmapImpl*>(itsImpl)->purge();
     }
 }
 
