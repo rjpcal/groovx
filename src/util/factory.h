@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Sat Nov 20 22:43:18 1999
+// written: Sat Nov 20 23:54:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,7 +99,11 @@ protected:
   void setPtrForName(const string& name, void* ptr);
 
   ///
-  virtual void destroy(void* ptr) = 0;
+  virtual void killPtr(void* ptr) = 0;
+
+  /** This must be called by derived class's destructors in order to
+      avoid a memory leak. */
+  void clear();
 
 private:
   struct Impl;
@@ -116,6 +120,8 @@ private:
 template<class Base>
 class CreatorMap : private CreatorMapBase {
 public:
+  virtual ~CreatorMap() { CreatorMapBase::clear(); }
+
   ///
   typedef CreatorBase<Base> CreatorType;
 
@@ -127,8 +133,9 @@ public:
   void setPtrForName(const string& name, CreatorType* ptr)
 	 { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
 
+protected:
   ///
-  virtual void destroy(void* ptr)
+  virtual void killPtr(void* ptr)
 	 { delete static_cast<CreatorType*>(ptr); }
 };
 
