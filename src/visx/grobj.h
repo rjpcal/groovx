@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 22 15:28:51 2001
+// written: Tue Sep  4 10:47:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,8 @@
 #endif
 
 class GrObjImpl;
+
+class fstring;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -134,8 +136,6 @@ public:
   /// Returns the current rendering mode.
   Gmodes::RenderMode getRenderMode() const;
 
-  /// Returns the current unrendering mode.
-  Gmodes::RenderMode getUnRenderMode() const;
 
   ///////////////////////////////////////////////////////////////////////
   //
@@ -206,11 +206,6 @@ public:
       are not met, in which case the scaling mode is unchanged. */
   void setRenderMode(Gmodes::RenderMode mode);
 
-  /** Changes the current unrendering mode to \a mode, unless the
-      requirements of \a mode (for example, requiring a bounding box)
-      are not met, in which case the scaling mode is unchanged. */
-  void setUnRenderMode(Gmodes::RenderMode mode);
-
 
   ///////////////////////////////////////////////////////////////////////
   //
@@ -232,8 +227,7 @@ public:
       selected with setRenderMode(). */
   void draw(Gfx::Canvas& canvas) const;
 
-  /** This function undraws the object according to the GrRenderMode
-      selected with setUnRenderMode(). */
+  /// This function undraws the object by clearing its bounding box.
   void undraw(Gfx::Canvas& canvas) const;
 
   /** This function must be overridden in derived classes to execute
@@ -241,6 +235,9 @@ public:
   virtual void grRender(Gfx::Canvas& canvas) const = 0;
 
 private:
+  const fstring& getCacheFilename() const;
+  void setCacheFilename(const fstring& name);
+
   GrObj(const GrObj&);
   GrObj& operator=(const GrObj&);
 
