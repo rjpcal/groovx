@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Feb 28 17:13:51 2002
+// written: Fri Mar  1 16:55:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -810,8 +810,8 @@ public:
     return res;
   }
 
-  const_iterator find_min() const;
-  const_iterator find_max() const;
+  const_colmaj_iter find_min() const;
+  const_colmaj_iter find_max() const;
 
   double min() const { return *(find_min()); }
   double max() const { return *(find_max()); }
