@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Oct 20 17:39:05 2000
+// written: Tue Oct 24 13:11:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "experiment.h"
 #include "grshapp.h"
 #include "sound.h"
-#include "soundlist.h"
 #include "response.h"
 #include "trialbase.h"
 
@@ -138,8 +137,7 @@ public:
 		Invariant(check());
 		erh->ignore(itsWidget);
 
-		const int ERR_INDEX = 1;
-		SoundList::SharedPtr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
+		ItemWithId<Sound> p = Sound::getErrSound();
 		p->play();
 	 }
 
