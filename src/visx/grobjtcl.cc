@@ -17,6 +17,7 @@
 #include "objlist.h"
 #include "listitempkg.h"
 #include "rect.h"
+#include "tclveccmds.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -26,7 +27,7 @@
 
 namespace GrobjTcl {
   class BoundingBoxCmd;
-  class UpdateCmd;
+  class Updater;
   class GrObjPkg;
 };
 
@@ -55,21 +56,16 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// UpdateCmd --
+// Updater --
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::UpdateCmd : public TclItemCmd<GrObj> {
+class GrobjTcl::Updater : public Action {
 public:
-  UpdateCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<GrObj>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
+  virtual void action(void* item) {
+	 GrObj* obj = static_cast<GrObj*>(item);
 	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
-	 if (canvas == 0) {
-		throw TclError("couldn't obtain a Canvas");
-	 }
-	 getItem()->update(*canvas);
+	 obj->update(*canvas);
   }
 };
 
@@ -86,7 +82,8 @@ public:
 													 "GrObj", "2.5")
   {
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
-	 addCommand( new UpdateCmd(this, "GrObj::update") );
+	 addCommand( new VecActionCmd(this, "GrObj::update",
+											new Updater, "item_id(s)", 1) );
 
 	 declareCAttrib("alignmentMode",
 						 &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
