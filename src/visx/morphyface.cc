@@ -115,7 +115,7 @@ namespace
     Bezier4 xbezier(-1.0, -top_width, top_width, 1.0);
     Bezier4 ybezier( 0.0,     4.0/3.0   ,   4.0/3.0  , 0.0);
 
-    for (int i = 0; i < NUM_HAIR_POINTS; ++i)
+    for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
       {
         const double u = 0.5 + double(i)/double(2*NUM_HAIR_POINTS-2);
 
