@@ -3,7 +3,7 @@
 // tclutil.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 11 10:27:35 2000
-// written: Wed Oct 11 17:02:56 2000
+// written: Mon Oct 16 13:28:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ DOTRACE("Tcl::SafeInterp::interpDeleted");
 void Tcl::SafeInterp::appendResult(const char* msg) const {
 DOTRACE("Tcl::SafeInterp::appendResult");
 
-  Tcl_AppendResult(itsInterp, msg);
+  Tcl_AppendResult(itsInterp, msg, (char*)0);
 }
 
 ///////////////////////////////////////////////////////////////////////
