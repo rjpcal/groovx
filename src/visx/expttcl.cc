@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jul 18 13:06:30 2001
+// written: Thu Jul 19 15:46:49 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -191,6 +191,7 @@ public:
               &ExptDriver::setAutosavePeriod);
     defAction("clear", &ExptDriver::edClearExpt);
     defGetter("currentBlock", &ExptDriver::currentBlock);
+    defGetter("infoLog", &ExptDriver::getInfoLog);
     defAction("reset", &ExptDriver::edResetExpt);
     defAction("stop", &ExptDriver::edHaltExpt);
     defAction("storeData", &ExptDriver::storeData);
