@@ -3,7 +3,7 @@
 // iodecls.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 14:44:42 2000
-// written: Wed Sep 27 14:45:45 2000
+// written: Fri Sep 29 14:34:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,9 @@ namespace IO {
 
   class Reader;
   class Writer;
+
+  class LegacyReader;
+  class LegacyWriter;
 
   class IoError;
   class InputError;

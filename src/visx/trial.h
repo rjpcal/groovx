@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Sep 27 14:42:45 2000
+// written: Fri Sep 29 14:43:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,10 +66,6 @@ public:
 
   Trial();
   virtual ~Trial ();
-
-  // write/read the object's state from/to an output/input stream
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:36:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,9 +52,6 @@ public:
   /// Destructor cancels any pending callback to \c invoke().
   virtual ~TrialEvent();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -95,6 +92,9 @@ protected:
 private:
   static void dummyInvoke(ClientData clientData);
   void invokeTemplate();
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);

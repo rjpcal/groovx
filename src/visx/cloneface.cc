@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Sep 27 16:56:44 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,16 +23,6 @@
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope data 
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  const char* ioTag = "CloneFace";
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -60,16 +50,13 @@ DOTRACE("CloneFace::~CloneFace");
 // before the base class (Face) since the first thing the virtual
 // constructor sees must be the typename of the most fully derived
 // class, in order to invoke the proper constructor.
-void CloneFace::legacySrlz(IO::Writer* writer) const {
+void CloneFace::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("CloneFace::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag);
-
-	 for (int i = 0; i < 24; ++i) {
-		writer->writeValue("ctrlPnt", itsCtrlPnts[i]);
-	 }
+	 IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
+											 itsCtrlPnts, itsCtrlPnts+24, true);
 
 	 writer->writeValue("eyeAspect", itsEyeAspect);
 	 writer->writeValue("vertOffset", itsVertOffset);
@@ -81,15 +68,14 @@ DOTRACE("CloneFace::legacySrlz");
   }
 }
 
-void CloneFace::legacyDesrlz(IO::Reader* reader) {
+void CloneFace::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("CloneFace::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
-	 for (int i = 0; i < 24; ++i) {
-		reader->readValue("ctrlPnt", itsCtrlPnts[i]);
-	 }
+	 IO::ReadUtils::template readValueSeq<double>(reader, "ctrlPnts",
+																 itsCtrlPnts, 24);
+
 	 reader->readValue("eyeAspect", itsEyeAspect);
 	 reader->readValue("vertOffset", itsVertOffset);
 
@@ -103,7 +89,14 @@ DOTRACE("CloneFace::legacyDesrlz");
 void CloneFace::readFrom(IO::Reader* reader) {
 DOTRACE("CloneFace::readFrom");
 
-  IO::ReadUtils::template readValueSeq<double>(reader, "ctrlPnts", itsCtrlPnts);
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
+  IO::ReadUtils::template readValueSeq<double>(reader, "ctrlPnts",
+															  itsCtrlPnts, 24);
   reader->readValue("eyeAspect", itsEyeAspect);
   reader->readValue("vertOffset", itsVertOffset);
 
@@ -114,7 +107,14 @@ DOTRACE("CloneFace::readFrom");
 void CloneFace::writeTo(IO::Writer* writer) const {
 DOTRACE("CloneFace::writeTo");
 
-  IO::WriteUtils::writeValueSeq(writer, "ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
+  IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
+										  itsCtrlPnts, itsCtrlPnts+24, true);
   writer->writeValue("eyeAspect", itsEyeAspect);
   writer->writeValue("vertOffset", itsVertOffset);
 

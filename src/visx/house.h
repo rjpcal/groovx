@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:36:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,9 +38,6 @@ public:
 
   /// Virtual destructor.
   virtual ~House();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -126,6 +123,9 @@ protected:
 private:
   House(const House&);
   House& operator=(const House&);
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_house_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Wed Sep 27 17:42:06 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -391,12 +391,10 @@ GrObj::Impl::~Impl() {
 DOTRACE("GrObj::Impl::~Impl");
 }
 
-void GrObj::Impl::legacySrlz(IO::Writer* writer) const {
+void GrObj::Impl::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("GrObj::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-
-	 lwriter->writeTypename("GrObj");
 
 	 writer->writeValue("GrObj::category", itsCategory);
 
@@ -417,14 +415,10 @@ DOTRACE("GrObj::Impl::legacySrlz");
   }
 }
 
-void GrObj::Impl::legacyDesrlz(IO::Reader* reader) {
+void GrObj::Impl::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("GrObj::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-
-	 lreader->readTypename("GrObj");
-
-	 invalidateCaches();
 
 	 reader->readValue("GrObj::category", itsCategory);
 
@@ -452,6 +446,12 @@ DOTRACE("GrObj::Impl::legacyDesrlz");
 
 void GrObj::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
 
   IO::VersionId svid = reader->readSerialVersionId(); 
 
@@ -490,6 +490,13 @@ DOTRACE("GrObj::Impl::readFrom");
 
 void GrObj::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   writer->writeValue("GrObj::category", itsCategory);
 
   writer->writeValue("GrObj::renderMode", itsRenderer.getMode());

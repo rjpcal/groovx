@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Sep 27 11:12:29 2000
+// written: Fri Sep 29 14:43:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,9 +83,6 @@ public:
 
   /// Virtual destructor.
   virtual ~EventResponseHdlr();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

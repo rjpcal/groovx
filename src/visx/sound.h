@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Sep 27 11:09:05 2000
+// written: Fri Sep 29 14:31:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,9 +47,6 @@ public:
   static Sound* newPlatformSound(const char* soundfile);
 
   virtual ~Sound();
-
-  virtual void legacySrlz(IO::Writer* writer) const = 0;
-  virtual void legacyDesrlz(IO::Reader* reader) = 0;
 
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;

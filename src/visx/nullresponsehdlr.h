@@ -3,7 +3,7 @@
 // nullresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:35 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:43:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,9 +19,6 @@ class NullResponseHdlr : public ResponseHandler {
 public:
   NullResponseHdlr();
   virtual ~NullResponseHdlr();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

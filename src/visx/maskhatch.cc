@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Sep 27 17:57:39 2000
+// written: Fri Sep 29 14:45:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,6 @@
 #endif
 
 namespace {
-  const char* ioTag = "MaskHatch";
-
   const MaskHatch::PInfo PINFOS[] = {
 	 MaskHatch::PInfo("numLines",
 							SGI_IDIOT_CAST(Property MaskHatch::*, &MaskHatch::numLines),
@@ -64,41 +62,65 @@ DOTRACE("MaskHatch::~MaskHatch ");
   
 }
 
-void MaskHatch::legacySrlz(IO::Writer* writer) const {
+void MaskHatch::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("MaskHatch::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag);
+	 for (size_t i = 0; i < numPropertyInfos(); ++i) {
+		writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
+	 }
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
-void MaskHatch::legacyDesrlz(IO::Reader* reader) {
+void MaskHatch::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("MaskHatch::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
+
+	 for (size_t i = 0; i < numPropertyInfos(); ++i) {
+		reader->readValueObj(PINFOS[i].name_cstr(),
+									const_cast<Value&>(get(PINFOS[i].property())));
+	 }
 
 	 IO::IoProxy<GrObj> baseclass(this);
 	 lreader->readBaseClass("GrObj", &baseclass);
   }
+
+  sendStateChangeMsg();
 }
 
 void MaskHatch::readFrom(IO::Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
+
+  sendStateChangeMsg();
 }
 
 void MaskHatch::writeTo(IO::Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }

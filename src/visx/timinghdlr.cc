@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Sep 27 18:06:45 2000
+// written: Fri Sep 29 14:45:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,10 +35,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-
   const IO::VersionId TIMINGHDLR_SERIAL_VERSION_ID = 1;
-
-  const char* ioTag = "TimingHdlr";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -85,10 +82,6 @@ private:
 public:
   void deleteAll(std::vector<TrialEvent*>& events);
 
-  void legacySrlzVec(IO::Writer* writer, const std::vector<TrialEvent*>& vec);
-
-  void legacyDesrlzVec(IO::Reader* reader, std::vector<TrialEvent*>& vec);
-
   // Delegand functions
   void thHaltExpt();
   void thAbortTrial();
@@ -129,38 +122,49 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::legacySrlz(IO::Writer* writer) const {
+void TimingHdlr::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("TimingHdlr::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag);
-
 	 writer->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
-	 itsImpl->legacySrlzVec(writer, itsImpl->itsImmediateEvents);
-	 itsImpl->legacySrlzVec(writer, itsImpl->itsStartEvents);
-	 itsImpl->legacySrlzVec(writer, itsImpl->itsResponseEvents);
-	 itsImpl->legacySrlzVec(writer, itsImpl->itsAbortEvents);
+	 IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
+								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
 
-	 lwriter->throwIfError(ioTag);
+	 IO::WriteUtils::writeObjectSeq(writer, "startEvents",
+								 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
+
+	 IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
+								 itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
+
+	 IO::WriteUtils::writeObjectSeq(writer, "abortEvents",
+								 itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
   }
 }
 
-void TimingHdlr::legacyDesrlz(IO::Reader* reader) {
+void TimingHdlr::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("TimingHdlr::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
 	 reader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
-	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsImmediateEvents);
-	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsStartEvents);
-	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsResponseEvents);
-	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsAbortEvents);
+	 itsImpl->deleteAll(itsImpl->itsImmediateEvents);
+	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "immediateEvents",
+								std::back_inserter(itsImpl->itsImmediateEvents));
 
-	 lreader->throwIfError(ioTag);
+	 itsImpl->deleteAll(itsImpl->itsStartEvents);
+	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "startEvents",
+								std::back_inserter(itsImpl->itsStartEvents));
+
+	 itsImpl->deleteAll(itsImpl->itsResponseEvents);
+	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "responseEvents",
+								std::back_inserter(itsImpl->itsResponseEvents));
+
+	 itsImpl->deleteAll(itsImpl->itsAbortEvents);
+	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "abortEvents",
+								std::back_inserter(itsImpl->itsAbortEvents));
   }
 }
 
@@ -171,6 +175,12 @@ DOTRACE("TimingHdlr::serialVersionId");
 
 void TimingHdlr::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHdlr::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
 
   IO::VersionId svid = reader->readSerialVersionId(); 
   if (svid == 0)
@@ -195,6 +205,12 @@ DOTRACE("TimingHdlr::readFrom");
 
 void TimingHdlr::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHdlr::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   if (TIMINGHDLR_SERIAL_VERSION_ID == 0)
 	 writer->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
@@ -293,43 +309,6 @@ DOTRACE("TimingHdlr::addEventByName");
 // TimingHdlr helper function definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-
-void TimingHdlr::Impl::legacySrlzVec(IO::Writer* writer,
-												 const std::vector<TrialEvent*>& vec) {
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 ostream& os = lwriter->output();
-	 os << vec.size() << IO::SEP;
-	 for (size_t i = 0; i < vec.size(); ++i) {
-		vec[i]->legacySrlz(writer);
-	 }
-  }
-}
-
-void TimingHdlr::Impl::legacyDesrlzVec(IO::Reader* reader,
-													std::vector<TrialEvent*>& vec) {
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 istream& is = lreader->input();
-	 deleteAll(vec);
-
-	 size_t size; is >> size; DebugEvalNL(size);
-
-	 const int SIZE_SANITY_CHECK = 1000;
-
-	 if (size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
-
-	 vec.resize(size);
-
-	 for (size_t i = 0; i < size; ++i) {
-		TrialEvent* e =
-		  dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, lreader->flags()));
-		if (!e) throw IO::InputError(ioTag);
-		vec[i] = e;
-	 }
-  }
-}
 
 void TimingHdlr::Impl::scheduleAll(std::vector<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::scheduleAll");

@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:36:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,9 +54,6 @@ public:
   /// Virtual destructor.
   virtual ~Gtext();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -81,6 +78,9 @@ protected:
   virtual void grRender(GWT::Canvas& canvas) const;
 
 private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
   fixed_string itsText;
   int itsStrokeWidth;
   mutable unsigned int itsListBase;

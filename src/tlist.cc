@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Sep 27 18:11:28 2000
+// written: Fri Sep 29 14:55:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,16 +21,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope declarations and helper functions
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  const char* ioTag = "Tlist";
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -63,12 +53,15 @@ DOTRACE("Tlist::theTlist");
 //
 //---------------------------------------------------------------------
 
-void Tlist::legacySrlz(IO::Writer* writer) const {
-DOTRACE("Tlist::legacySrlz");
+void Tlist::writeTo(IO::Writer* writer) const {
+DOTRACE("Tlist::writeTo");
+  // Always legacySrlz the PtrList base
+  PtrList<TrialBase>::writeTo(writer);
+
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 // Always legacySrlz the PtrList base
-	 PtrList<TrialBase>::legacySrlz(writer);
+
+	 lwriter->resetFieldSeparator();
 
 	 // Here we are spoofing the obselete data members itsCurTrial and
 	 // itsVisibility.
@@ -83,12 +76,13 @@ DOTRACE("Tlist::legacySrlz");
 //
 //---------------------------------------------------------------------
 
-void Tlist::legacyDesrlz(IO::Reader* reader) {
-DOTRACE("Tlist::legacyDesrlz");
+void Tlist::readFrom(IO::Reader* reader) {
+DOTRACE("Tlist::readFrom");
+  // Always legacyDesrlz its PtrList<TrialBase> base
+  PtrList<TrialBase>::readFrom(reader);
+
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 // Always legacyDesrlz its PtrList<TrialBase> base
-	 PtrList<TrialBase>::legacyDesrlz(reader);
 
 	 // Here we are spoofing the obselete data members itsCurTrial and
 	 // itsVisibility.

@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Sep 29 09:44:04 2000
+// written: Fri Sep 29 15:01:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,9 +74,6 @@ public:
   HpAudioSound(const char* filename);
   virtual ~HpAudioSound();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -85,6 +82,9 @@ public:
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
 private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
   fixed_string itsFilename;
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
@@ -123,7 +123,7 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   }
 }
 
-void HpAudioSound::legacySrlz(IO::Writer* writer) const {
+void HpAudioSound::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("HpAudioSound::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
@@ -132,7 +132,7 @@ DOTRACE("HpAudioSound::legacySrlz");
   }
 }
 
-void HpAudioSound::legacyDesrlz(IO::Reader* reader) {
+void HpAudioSound::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("HpAudioSound::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
@@ -146,12 +146,25 @@ DOTRACE("HpAudioSound::legacyDesrlz");
 void HpAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("HpAudioSound::readFrom");
 
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   reader->readValue("filename", itsFilename);
   setFile(itsFilename.c_str());
 }
 
 void HpAudioSound::writeTo(IO::Writer* writer) const {
 DOTRACE("HpAudioSound::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   writer->writeValue("filename", itsFilename); 
 }
 

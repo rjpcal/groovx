@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Sep 28 15:28:54 2000
+// written: Fri Sep 29 14:36:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,9 +38,6 @@ public:
   /// Virtual destructor.
   virtual ~IoPtrList();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -60,6 +57,9 @@ protected:
 private:
   IoPtrList(const IoPtrList&);
   IoPtrList& operator=(const IoPtrList&);
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_ioptrlist_h[] = "$Header$";

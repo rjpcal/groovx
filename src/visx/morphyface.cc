@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Sep 27 14:42:46 2000
+// written: Fri Sep 29 14:45:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,49 +56,6 @@ namespace {
   const IO::VersionId MFACE_SERIAL_VERSION_ID = 1;
 
   const char* ioTag = "MorphyFace";
-
-  typedef Property MorphyFace::* IoMember;
-
-  const IoMember IO_MEMBERS[] = {
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::category),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::faceWidth),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::topWidth),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::bottomWidth),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::topHeight),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::bottomHeight),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::hairWidth),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::hairStyle),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyeYpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyeDistance),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyeHeight),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyeAspectRatio),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::pupilXpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::pupilYpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::pupilSize),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::pupilDilation),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyebrowXpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyebrowYpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyebrowCurvature),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyebrowAngle),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::eyebrowThickness),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::noseXpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::noseYpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::noseLength),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::noseWidth),
-
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::mouthXpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::mouthYpos),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::mouthWidth),
-	 SGI_IDIOT_CAST(Property MorphyFace::*, &MorphyFace::mouthCurvature)
-  };
-
-  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
   typedef MorphyFace MF;
 
@@ -358,81 +315,59 @@ DOTRACE("MorphyFace::~MorphyFace");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void MorphyFace::legacySrlz(IO::Writer* writer) const {
+void MorphyFace::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("MorphyFace::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 	 Invariant(check());
 
-	 lwriter->writeTypename(ioTag);
-
-	 ostream& os = lwriter->output();
-
-	 // version
-	 os << "@1" << IO::SEP;
-
-	 os << '{' << IO::SEP;
-
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+		writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
 	 }
 
-	 os << '}' << endl;
-	 lwriter->throwIfError(ioTag);
+	 lwriter->insertChar('\n');
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
-void MorphyFace::legacyDesrlz(IO::Reader* reader) {
+void MorphyFace::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("MorphyFace::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
-	 IO::IoObject::eatWhitespace(is);
+	 lreader->eatWhitespace();
 	 int version = 0;
 
-	 if ( is.peek() == '@' ) {
-		int c = is.get();
+	 if ( lreader->peek() == '@' ) {
+		int c = lreader->getChar();
 		Assert(c == '@');
 
-		is >> version;
+		lreader->readValue("legacyVersion", version);
 		DebugEvalNL(version);
 	 }
 
-	 if (version == 0) {
-		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
-		}
-	 }
-	 else if (version == 1) {
-		char brace;
-		is >> brace;
+	 if (version == 1) {
+		char brace = lreader->readChar("leftBrace");
 		if (brace != '{') {
 		  IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
 		  throw err;
 		}
+	 }
 
-		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
-		}
+	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+		reader->readValueObj(PINFOS[i].name_cstr(),
+									const_cast<Value&>(get(PINFOS[i].property())));
+	 }
 
-		is >> brace;
+	 if (version == 1) {
+		char brace = lreader->readChar("rightBrace");
 		if (brace != '}') {
 		  IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
 		  throw err;
 		}
 	 }
-	 else {
-		IO::LogicError err(ioTag); err.appendMsg(" unknown version");
-		throw err;
-	 }
-
-	 lreader->throwIfError(ioTag);
 
 	 Invariant(check());
 
@@ -450,6 +385,13 @@ DOTRACE("MorphyFace::serialVersionId");
 
 void MorphyFace::readFrom(IO::Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
@@ -463,10 +405,19 @@ DOTRACE("MorphyFace::readFrom");
 		IO::IoProxy<GrObj> baseclass(this);
 		reader->readBaseClass("GrObj", &baseclass);
 	 }
+
+  sendStateChangeMsg();
 }
 
 void MorphyFace::writeTo(IO::Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }

@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Sep 27 11:47:12 2000
+// written: Fri Sep 29 15:01:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,8 +26,12 @@ template <class V> class Rect;
 
 namespace GWT { class Canvas; }
 
-namespace IO { class Reader; }
-namespace IO { class Writer; }
+namespace IO {
+  class Reader;
+  class Writer;
+  class LegacyReader;
+  class LegacyWriter;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -57,12 +61,10 @@ public:
 private:
   void init();
 
-public:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
-  /// Conforms to the \c IO interface.
-  void legacySrlz(IO::Writer* writer) const;
-  /// Conforms to the \c IO interface.
-  void legacyDesrlz(IO::Reader* reader);
+public:
 
   /// Conforms to the \c IO interface.
   void readFrom(IO::Reader* reader);

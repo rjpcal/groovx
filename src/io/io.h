@@ -99,16 +99,6 @@ public:
 		resemble the way the object was declared in source code. */
   virtual fixed_string ioTypename() const;
 
-  /** The old-style function to send an object to a stream. Each
-      subclass must implement its own formatting. \c writeTo() should
-      be favored over \c legacySrlz(). */
-  virtual void legacySrlz(IO::Writer* writer) const;
-
-  /** The old-style function to read an object from a stream. Each
-      subclass must implement its own formatting. \c readFrom() should
-      be favored over \c legacyDesrlz(). */
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual fixed_string legacyIoTypename() const;
 
   virtual fixed_string legacyValidTypenames() const;

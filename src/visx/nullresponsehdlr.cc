@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Wed Sep 27 13:50:52 2000
+// written: Fri Sep 29 14:43:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,32 +20,12 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-namespace {
-  const char* ioTag = "NullResponseHdlr";
-}
-
 NullResponseHdlr::NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::NullResponseHdlr");
 }
 
 NullResponseHdlr::~NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
-}
-
-void NullResponseHdlr::legacySrlz(IO::Writer* writer) const {
-DOTRACE("NullResponseHdlr::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 lwriter->writeTypename(ioTag);
-  }
-}
-
-void NullResponseHdlr::legacyDesrlz(IO::Reader* reader) {
-DOTRACE("NullResponseHdlr::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 lreader->readTypename(ioTag);
-  }
 }
 
 void NullResponseHdlr::readFrom(IO::Reader*) {

@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// Io.cc
+// io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu Sep 28 16:12:06 2000
+// written: Fri Sep 29 14:55:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,6 @@
 
 #include "util/strings.h"
 
-#include <cctype>
-#include <cstring>
-#include <strstream.h>
 #include <typeinfo>
 
 #define NO_TRACE
@@ -77,33 +74,6 @@ IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
 }
 
-void IO::IoObject::ioSerialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("IO::IoObject::ioSerialize");
-  LegacyWriter writer(os, flag);
-  writer.writeRoot(this);
-}
-
-void IO::IoObject::ioDeserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("IO::IoObject::ioDeserialize");
-  LegacyReader reader(is, flag);
-  reader.readRoot(this);
-}
-
-int IO::IoObject::ioCharCount() const {
-DOTRACE("IO::IoObject::ioCharCount");
-  ostrstream ost;
-  ioSerialize(ost, IO::TYPENAME|IO::BASES);
-  return strlen(ost.str());
-}
-
-void IO::IoObject::legacySrlz(IO::Writer* writer) const {
-  throw IO::OutputError("legacySrlz not implemented for this object");
-}
-
-void IO::IoObject::legacyDesrlz(IO::Reader* reader) {
-  throw IO::InputError("legacyDesrlz not implemented for this object");
-}
-
 fixed_string IO::IoObject::legacyIoTypename() const {
 DOTRACE("IO::IoObject::legacyIoTypename");
   return demangle_cstr(typeid(*this).name());
@@ -135,14 +105,6 @@ DOTRACE("IO::IoObject::serialVersionId");
 fixed_string IO::IoObject::ioTypename() const {
 DOTRACE("IO::IoObject::ioTypename");
   return demangle_cstr(typeid(*this).name());
-}
-
-int IO::IoObject::eatWhitespace(STD_IO::istream& is) {
-DOTRACE("IO::IoObject::eatWhitespace");
-  int c=0;
-  while ( isspace(is.peek()) )
-	 { is.get(); ++c; }
-  return c;
 }
 
 ///////////////////////////////////////////////////////////////////////

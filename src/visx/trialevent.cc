@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Sep 27 13:50:52 2000
+// written: Fri Sep 29 14:45:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,41 +83,35 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(averageError);
 }
 
-void TrialEvent::legacySrlz(IO::Writer* writer) const {
+void TrialEvent::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("TrialEvent::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 const char* ioTag = demangle_cstr(typeid(*this).name());
-
-	 lwriter->writeTypename(ioTag);
-
-	 ostream& os = lwriter->output();
-
-	 os << itsRequestedDelay << endl;
-	 lwriter->throwIfError(ioTag);
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("requestedDelay", itsRequestedDelay);
   }
 }
 
-void TrialEvent::legacyDesrlz(IO::Reader* reader) {
+void TrialEvent::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("TrialEvent::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 
 	 cancel(); // cancel since the event is changing state
 
-	 const char* ioTag = demangle_cstr(typeid(*this).name());
-	 lreader->readTypename(ioTag);
-
-	 istream& is = lreader->input();
-
-	 is >> itsRequestedDelay;
-	 lreader->throwIfError(ioTag);
+	 reader->readValue("requestedDelay", itsRequestedDelay);
   }
 }
 
 void TrialEvent::readFrom(IO::Reader* reader) {
 DOTRACE("TrialEvent::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
 
   cancel(); // cancel since the event is changing state
 
@@ -126,6 +120,12 @@ DOTRACE("TrialEvent::readFrom");
 
 void TrialEvent::writeTo(IO::Writer* writer) const {
 DOTRACE("TrialEvent::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }

@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:36:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,9 +38,6 @@ public:
   /// Virtual destructor.
   virtual ~MaskHatch();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -70,6 +67,10 @@ protected:
   virtual bool grHasBoundingBox() const;
 
   virtual void grRender(GWT::Canvas& canvas) const; 
+
+private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_maskhatch_h[] = "$Header$";

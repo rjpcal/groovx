@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed Sep 27 11:09:05 2000
+// written: Fri Sep 29 14:31:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,9 +41,6 @@ public:
 
   /// Virtual destructor.
   virtual ~ResponseHandler();
-
-  virtual void legacySrlz(IO::Writer* writer) const = 0;
-  virtual void legacyDesrlz(IO::Reader* reader) = 0;
 
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;

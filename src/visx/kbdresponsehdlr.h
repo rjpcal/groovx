@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:49:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@ public:
   KbdResponseHdlr(const char* key_resp_pairs);
   virtual ~KbdResponseHdlr();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   const fixed_string& getKeyRespPairs() const
 	 { return EventResponseHdlr::getInputResponseMap(); }
@@ -46,6 +46,10 @@ public:
 	 { return EventResponseHdlr::getFeedbackMap(); }
   void setFeedbackPairs(const char* feedback_string)
 	 { EventResponseHdlr::setFeedbackMap(feedback_string); }
+
+private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_kbdresponsehdlr_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Sep 27 14:42:45 2000
+// written: Fri Sep 29 14:51:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -214,9 +214,6 @@ public:
 		  GrObjRenderMode unrender_mode = GROBJ_SWAP_FORE_BACK);
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Sep 27 13:50:53 2000
+// written: Fri Sep 29 14:45:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,26 +34,25 @@ DOTRACE("IoPtrList::IoPtrList");
 
 IoPtrList::~IoPtrList() {}
 
-void IoPtrList::legacySrlz(IO::Writer* writer) const {
+void IoPtrList::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("IoPtrList::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
 	 fixed_string ioTag = IO::IoObject::ioTypename();
 
-	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
-
 	 // itsVec: we will legacySrlz only the non-null T*'s in
 	 // itsVec. In order to correctly legacyDesrlz the object later, we
 	 // must write both the size of itsVec (in order to correctly
 	 // resize later), as well as the number of non-null objects that we
 	 // legacySrlz (so that legacyDesrlz knows when to stop reading).
-	 os << voidVecSize() << IO::SEP;
+
+	 writer->writeValue("voidVecSize", voidVecSize());
 
 	 int num_non_null = VoidPtrList::count();
-	 os << num_non_null << endl;
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("num_non_null", num_non_null);
+	 lwriter->resetFieldSeparator();
 
 	 // Serialize all non-null ptr's.
 	 int c = 0;
@@ -61,11 +60,14 @@ DOTRACE("IoPtrList::legacySrlz");
 			i < end;
 			++i) {
 		if (getVoidPtr(i) != NULL) {
-		  os << i << IO::SEP;
+		  writer->writeValue("i", i);
+
 		  // we must legacySrlz the typename since legacyDesrlz requires a
 		  // typename in order to call the virtual constructor
 		  IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
-		  obj->ioSerialize(os, lwriter->flags() | IO::TYPENAME);
+		  IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		  lwriter->writeObject("ptrListItem", obj);
+
 		  ++c;
 		}
 	 }
@@ -74,72 +76,71 @@ DOTRACE("IoPtrList::legacySrlz");
 		throw IO::LogicError(ioTag.c_str());
 	 }
 
-	 // itsFirstVacant
-	 os << firstVacant() << endl;
-	 lwriter->throwIfError(ioTag.c_str());
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeInt("itsFirstVacant", firstVacant());
   }
 }
 
+fixed_string IoPtrList::legacyValidTypenames() const {
+DOTRACE("IoPtrList::legacyValidTypenames");
+  fixed_string ioTag = IO::IoObject::ioTypename();
 
-void IoPtrList::legacyDesrlz(IO::Reader* reader) {
+  dynamic_string typename_list = ioTag;
+  typename_list += " ";
+  typename_list += alternateIoTags();
+  return typename_list.c_str();
+}
+
+void IoPtrList::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("IoPtrList::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 
-	 fixed_string ioTag = IO::IoObject::ioTypename();
+  	 fixed_string ioTag = IO::IoObject::ioTypename();
 
-	 dynamic_string typename_list = ioTag;
-	 typename_list += " ";
-	 typename_list += alternateIoTags();
-	 lreader->readTypename(typename_list.c_str());
-
-	 istream& is = lreader->input();
-
-	 // voidVec
-	 clear();
 	 int size, num_non_null;
-	 is >> size >> num_non_null;
-	 // We must check if the STD_IO::istream has failed in order to avoid
-	 // attempting to resize the voidVec to some crazy size.
-	 lreader->throwIfError(ioTag.c_str());
+	 reader->readValue("voidVecSize", size);
+	 reader->readValue("num_non_null", num_non_null);
+
 	 if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
 		throw IO::ValueError(ioTag.c_str());
 	 }
+
 	 VoidPtrList::clear();
 	 voidVecResize(size);
+
 	 int ptrid;
-	 fixed_string type;
+
 	 for (int i = 0; i < num_non_null; ++i) {
-		is >> ptrid;
+		reader->readValue("i", ptrid);
+
 		if (ptrid < 0 || ptrid >= size) {
 		  throw IO::ValueError(ioTag.c_str());
 		}
 
-		is >> type;
-
-		IO::IoObject* obj = IO::IoMgr::newIO(type.c_str());
-		if (!obj) throw IO::InputError(ioTag.c_str());
+		IO::IoObject* obj = lreader->readObject("ptrListItem");
 
 		insertVoidPtrAt(ptrid, fromIOToVoid(obj));
-		obj->ioDeserialize(is, lreader->flags() & ~IO::TYPENAME);
 	 }
-	 // itsFirstVacant
-	 is >> VoidPtrList::firstVacant();
-	 if (firstVacant() < 0) {
-		throw IO::ValueError(ioTag.c_str());
-	 }
+
+	 firstVacant() = reader->readInt("itsFirstVacant");
 
 	 // The next character after itsFirstVacant had better be a newline,
 	 // and we need to remove it from the stream.
-	 if ( is.get() != '\n' )
+	 if ( lreader->getChar() != '\n' )
 		{ throw IO::LogicError(ioTag.c_str()); }
-
-	 lreader->throwIfError(ioTag.c_str());
   }
 }
 
 void IoPtrList::readFrom(IO::Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   firstVacant() = reader->readInt("itsFirstVacant");
 
   int count = IO::ReadUtils::readSequenceCount(reader, "itsVec"); DebugEvalNL(count);
@@ -164,6 +165,13 @@ DOTRACE("IoPtrList::readFrom");
 
 void IoPtrList::writeTo(IO::Writer* writer) const {
 DOTRACE("IoPtrList::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   writer->writeInt("itsFirstVacant", firstVacant());
 
   unsigned int count = voidVecSize();

@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Sep 27 14:42:45 2000
+// written: Fri Sep 29 14:43:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,9 +69,6 @@ public:
   /// Virtual destructor.
   virtual ~ExptDriver();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -127,6 +124,7 @@ public:
   void storeData();
 
 private:
+
   class Impl;
   friend class Impl;
 

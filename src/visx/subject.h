@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:36:05 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -27,9 +27,6 @@ public:
   Subject(const char* name, const char* dir);
   virtual ~Subject();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -41,6 +38,9 @@ public:
 private:
   Subject(const Subject&);
   Subject& operator=(const Subject&);
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
   fixed_string itsName;
   fixed_string itsDirectory;

@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Thu Sep 28 11:44:20 2000
+// written: Fri Sep 29 14:33:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,12 +34,6 @@ template <class C>
 class IoProxy : public IO::IoObject {
 public:
   IoProxy(C* ref) : itsReferand(ref) {}
-
-  virtual void legacySrlz(IO::Writer* writer) const
-	 { itsReferand->C::legacySrlz(writer); }
-
-  virtual void legacyDesrlz(IO::Reader* reader)
-	 { itsReferand->C::legacyDesrlz(reader); }
 
   virtual void readFrom(IO::Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
@@ -73,12 +67,6 @@ template <class C>
 class ConstIoProxy : public IO::IoObject {
 public:
   ConstIoProxy(const C* ref) : itsReferand(ref) {}
-
-  virtual void legacySrlz(IO::Writer* writer) const
-	 { itsReferand->C::legacySrlz(writer); }
-
-  virtual void legacyDesrlz(IO::Reader* reader)
-	 { const_cast<C*>(itsReferand)->C::legacyDesrlz(reader); }
 
   virtual void readFrom(IO::Reader* reader)
 	 { const_cast<C*>(itsReferand)->C::readFrom(reader); }

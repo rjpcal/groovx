@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Fri Sep 29 14:36:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,6 @@ public:
 
   virtual ~TimingHandler();
 
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -46,6 +43,9 @@ public:
   void setTimeout(int val); 
 
 private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
   int stimdur_start_id;
   int timeout_start_id;
   int iti_response_id;

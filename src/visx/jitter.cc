@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Sep 27 17:53:06 2000
+// written: Fri Sep 29 14:45:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,16 +30,6 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// File scope data
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  const char* ioTag = "Jitter";
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // Jitter member functions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,12 +53,10 @@ DOTRACE("Jitter::~Jitter");
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-void Jitter::legacySrlz(IO::Writer* writer) const {
+void Jitter::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("Jitter::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-
-	 lwriter->writeTypename(ioTag);
 
 	 writer->writeValue("jitterX", itsXJitter);
 	 writer->writeValue("jitterY", itsYJitter);
@@ -82,12 +70,10 @@ DOTRACE("Jitter::legacySrlz");
   }
 }
 
-void Jitter::legacyDesrlz(IO::Reader* reader) {
+void Jitter::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("Jitter::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-
-	 lreader->readTypename(ioTag);
 
 	 reader->readValue("jitterX", itsXJitter);
 	 reader->readValue("jitterY", itsYJitter);
@@ -103,6 +89,12 @@ DOTRACE("Jitter::legacyDesrlz");
 void Jitter::readFrom(IO::Reader* reader) {
 DOTRACE("Jitter::readFrom");
 
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   Position::readFrom(reader);
 
   reader->readValue("jitterX", itsXJitter);
@@ -112,6 +104,12 @@ DOTRACE("Jitter::readFrom");
 
 void Jitter::writeTo(IO::Writer* writer) const {
 DOTRACE("Jitter::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   Position::writeTo(writer);
 

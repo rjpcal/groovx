@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Fri Sep 29 14:45:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,38 +46,6 @@
 namespace {
   template <class T>
   inline T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
-
-  const char* ioTag = "House";
-
-  typedef Property House::* IoMember;
-
-  const IoMember IO_MEMBERS[] = {
-	 SGI_IDIOT_CAST(Property House::*, &House::storyAspectRatio),
-	 SGI_IDIOT_CAST(Property House::*, &House::numStories),
-
-	 SGI_IDIOT_CAST(Property House::*, &House::doorPosition),
-	 SGI_IDIOT_CAST(Property House::*, &House::doorWidth),  // fraction of avail. space
-	 SGI_IDIOT_CAST(Property House::*, &House::doorHeight), // fraction of one story
-	 SGI_IDIOT_CAST(Property House::*, &House::doorOrientation), // left or right
-
-	 SGI_IDIOT_CAST(Property House::*, &House::numWindows),
-	 SGI_IDIOT_CAST(Property House::*, &House::windowWidth),	// fraction of avail. space
-	 SGI_IDIOT_CAST(Property House::*, &House::windowHeight), // fraction of one story
-	 SGI_IDIOT_CAST(Property House::*, &House::windowVertBars),
-	 SGI_IDIOT_CAST(Property House::*, &House::windowHorizBars),
-
-	 SGI_IDIOT_CAST(Property House::*, &House::roofShape),
-	 SGI_IDIOT_CAST(Property House::*, &House::roofOverhang),
-	 SGI_IDIOT_CAST(Property House::*, &House::roofHeight),
-	 SGI_IDIOT_CAST(Property House::*, &House::roofColor),
-
-	 SGI_IDIOT_CAST(Property House::*, &House::chimneyXPosition),
-	 SGI_IDIOT_CAST(Property House::*, &House::chimneyYPosition),
-	 SGI_IDIOT_CAST(Property House::*, &House::chimneyWidth),
-	 SGI_IDIOT_CAST(Property House::*, &House::chimneyHeight)
-  };
-
-  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
   const House::PInfo PINFOS[] = {
 	 House::PInfo("storyAspectRatio",
@@ -267,43 +235,29 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::legacySrlz(IO::Writer* writer) const {
+void House::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("House::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag);
-
-	 ostream& os = lwriter->output();
-
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+		writer->writeValueObj(PINFOS[i].name_cstr(),
+									 get(PINFOS[i].property()));
 	 }
-
-	 lwriter->throwIfError(ioTag);
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
-void House::legacyDesrlz(IO::Reader* reader) {
+void House::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("House::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
-	 istream& is = lreader->input();
-
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacyDesrlz(reader);
-	 }
-
-	 try {
-		lreader->throwIfError(ioTag);
-	 }
-	 catch (IO::IoError&) { 
-		throw;
+	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+		reader->readValueObj(PINFOS[i].name_cstr(),
+									const_cast<Value&>(get(PINFOS[i].property())));
 	 }
 
 	 IO::IoProxy<GrObj> baseclass(this);
@@ -315,16 +269,32 @@ DOTRACE("House::legacyDesrlz");
 
 void House::readFrom(IO::Reader* reader) {
 DOTRACE("House::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
+
+  sendStateChangeMsg();
 }
 
 void House::writeTo(IO::Writer* writer) const {
 DOTRACE("House::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(),
 								  get(PINFOS[i].property()));

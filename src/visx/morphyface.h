@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Sep 27 14:42:45 2000
+// written: Fri Sep 29 14:36:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,9 +38,6 @@ public:
   MorphyFace();
   /// Virtual destructor.
   virtual ~MorphyFace ();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -140,6 +137,9 @@ protected:
 private:
   /// Check all invariants and return true if everything is OK.
   bool check() const;
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
   MorphyFace(const MorphyFace&);            // copy constructor not to be used
   MorphyFace& operator=(const MorphyFace&); // assignment operator not to be used

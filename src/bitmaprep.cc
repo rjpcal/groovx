@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Sep 28 20:36:48 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ DOTRACE("BitmapRep::init");
   itsImpl->itsData.clear();
 }
 
-void BitmapRep::legacySrlz(IO::Writer* writer) const {
+void BitmapRep::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("BitmapRep::legacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
@@ -181,7 +181,7 @@ DOTRACE("BitmapRep::legacySrlz");
   }
 }
 
-void BitmapRep::legacyDesrlz(IO::Reader* reader) {
+void BitmapRep::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("BitmapRep::legacyDesrlz");
 
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
@@ -209,6 +209,13 @@ DOTRACE("BitmapRep::legacyDesrlz");
 
 void BitmapRep::readFrom(IO::Reader* reader) {
 DOTRACE("BitmapRep::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   reader->readValue("filename", itsImpl->itsFilename);
   reader->readValue("rasterX", itsImpl->itsRasterX);
   reader->readValue("rasterY", itsImpl->itsRasterY);
@@ -228,6 +235,13 @@ DOTRACE("BitmapRep::readFrom");
 
 void BitmapRep::writeTo(IO::Writer* writer) const {
 DOTRACE("BitmapRep::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   writer->writeValue("filename", itsImpl->itsFilename);
   writer->writeValue("rasterX", itsImpl->itsRasterX);
   writer->writeValue("rasterY", itsImpl->itsRasterY);

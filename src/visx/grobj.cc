@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Sep 27 14:42:46 2000
+// written: Fri Sep 29 14:52:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,20 +85,6 @@ DOTRACE("GrObj::~GrObj");
   delete itsImpl;
 }
 
-// write the object's state to an output stream. The output stream must
-// already be open and connected to an appropriate file.
-void GrObj::legacySrlz(IO::Writer* writer) const {
-DOTRACE("GrObj::legacySrlz");
-  itsImpl->legacySrlz(writer);
-}
-
-void GrObj::legacyDesrlz(IO::Reader* reader) {
-DOTRACE("GrObj::legacyDesrlz");
-
-  itsImpl->legacyDesrlz(reader); 
-  sendStateChangeMsg();
-}
-
 IO::VersionId GrObj::serialVersionId() const {
 DOTRACE("GrObj::Impl::serialVersionId");
   return itsImpl->serialVersionId(); 
@@ -113,6 +99,7 @@ DOTRACE("GrObj::readFrom");
 
 void GrObj::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::writeTo");
+
   itsImpl->writeTo(writer);
 }
 

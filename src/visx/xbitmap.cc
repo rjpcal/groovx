@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Sep 27 14:37:15 2000
+// written: Fri Sep 29 14:36:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@
 #include "util/debug.h"
 
 namespace {
-  const char* ioTag = "XBitmap";
-
   XBmapRenderer* tempRenderer = 0;
 }
 
@@ -64,22 +62,19 @@ DOTRACE("XBitmap::~XBitmap");
   delete itsRenderer; 
 }
 
-void XBitmap::legacySrlz(IO::Writer* writer) const {
+void XBitmap::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("XBitmap::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 lwriter->writeTypename(ioTag);
-
 	 IO::ConstIoProxy<Bitmap> baseclass(this);
 	 lwriter->writeBaseClass("Bitmap", &baseclass);
   }
 }
 
-void XBitmap::legacyDesrlz(IO::Reader* reader) {
+void XBitmap::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("XBitmap::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
 	 IO::IoProxy<Bitmap> baseclass(this);
 	 lreader->readBaseClass("Bitmap", &baseclass);

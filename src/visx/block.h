@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Sep 27 11:12:29 2000
+// written: Fri Sep 29 15:01:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,9 +62,6 @@ public:
 
   /// Clear the Block's list of trial ids.
   void removeAllTrials();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -169,6 +166,9 @@ public:
   virtual void resetBlock();
 
 private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
   Block(const Block&);
   Block& operator=(const Block&);
 

@@ -64,13 +64,14 @@ private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
 public:
   Impl(EventResponseHdlr* owner, const char* input_response_map);
   ~Impl();
 
   // Delegand functions
-  void legacySrlz(IO::Writer* writer) const;
-  void legacyDesrlz(IO::Reader* reader);
 
   void oldLegacySrlz(IO::Writer* writer) const;
   void oldLegacyDesrlz(IO::Reader* reader);
@@ -448,7 +449,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   }
 }
 
-void EventResponseHdlr::Impl::legacySrlz(IO::Writer* writer) const {
+void EventResponseHdlr::Impl::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("EventResponseHdlr::Impl::legacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
@@ -461,7 +462,7 @@ DOTRACE("EventResponseHdlr::Impl::legacySrlz");
   }
 }
 
-void EventResponseHdlr::Impl::legacyDesrlz(IO::Reader* reader) {
+void EventResponseHdlr::Impl::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
@@ -518,6 +519,12 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   reader->readValue("inputResponseMap", itsInputResponseMap);
   reader->readValue("feedbackMap", itsFeedbackMap);
   reader->readValue("useFeedback", itsUseFeedback);
@@ -530,6 +537,12 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("EventResponseHdlr::Impl::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   writer->writeValue("inputResponseMap", itsInputResponseMap);
   writer->writeValue("feedbackMap", itsFeedbackMap);
@@ -873,12 +886,6 @@ EventResponseHdlr::EventResponseHdlr(const char* input_response_map) :
 
 EventResponseHdlr::~EventResponseHdlr()
   { delete itsImpl; }
-
-void EventResponseHdlr::legacySrlz(IO::Writer* writer) const
-  { itsImpl->legacySrlz(writer); }
-
-void EventResponseHdlr::legacyDesrlz(IO::Reader* reader)
-  { itsImpl->legacyDesrlz(reader); }
 
 void EventResponseHdlr::readFrom(IO::Reader* reader)
   { itsImpl->readFrom(reader); }

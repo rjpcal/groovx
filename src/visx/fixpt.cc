@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Sep 27 17:25:30 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,8 +40,6 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const char* ioTag = "FixPt";
-
   const FixPt::PInfo PINFOS[] = {
 		FixPt::PInfo("length", SGI_IDIOT_CAST(Property FixPt::*, &FixPt::length),
 						 0.0, 10.0, 0.1, true),
@@ -63,11 +61,9 @@ FixPt::FixPt(double len, int wid) :
 
 FixPt::~FixPt() {}
 
-void FixPt::legacySrlz(IO::Writer* writer) const {
+void FixPt::legacySrlz(IO::LegacyWriter* writer) const {
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-
-	 lwriter->writeTypename(ioTag);
 
 	 writer->writeDouble("length", length());
 	 lwriter->setFieldSeparator('\n');
@@ -78,10 +74,9 @@ void FixPt::legacySrlz(IO::Writer* writer) const {
   }
 }
 
-void FixPt::legacyDesrlz(IO::Reader* reader) {
+void FixPt::legacyDesrlz(IO::LegacyReader* reader) {
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
 	 reader->readValue("length", length());
 	 reader->readValue("width", width());
@@ -93,6 +88,13 @@ void FixPt::legacyDesrlz(IO::Reader* reader) {
 
 void FixPt::readFrom(IO::Reader* reader) {
 DOTRACE("FixPt::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   reader->readValue("length", length());
   reader->readValue("width", width());
 
@@ -103,6 +105,13 @@ DOTRACE("FixPt::readFrom");
 
 void FixPt::writeTo(IO::Writer* writer) const {
 DOTRACE("FixPt::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   writer->writeDouble("length", length());
   writer->writeInt("width", width());
 

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed Sep 27 14:42:45 2000
+// written: Fri Sep 29 14:36:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,9 +35,6 @@ class TimingHdlr : public virtual IO::IoObject {
 public:
   TimingHdlr();
   virtual ~TimingHdlr();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -81,6 +78,9 @@ public:
 private:
   TimingHdlr(const TimingHdlr&);
   TimingHdlr& operator=(const TimingHdlr&);
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
   class Impl;
   Impl* const itsImpl;

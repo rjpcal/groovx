@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Sep 27 14:42:45 2000
+// written: Fri Sep 29 14:36:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,16 +39,6 @@ public:
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
   /// Virtual destructor.
   virtual ~Face ();
-
-  /** Write the face to a stream using the format:
-	  
-	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void legacySrlz(IO::Writer* writer) const;
-
-  /** Read the face from a stream using the format:
-	  
-	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -116,14 +106,14 @@ public:
   protected: virtual void grRender(GWT::Canvas& canvas) const; 
 
 private:
+  Face(const Face&);
+  Face& operator=(const Face&);
+
   /// Check all invariants and return true if everything is OK.
   bool check() const;
 
-  /// copy constructor not to be used
-  Face(const Face&);
-
-  /// assignment operator not to be used
-  Face& operator=(const Face&);
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_face_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Sep 27 17:03:21 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,18 +57,6 @@ namespace {
 
   const string_literal ioTag("Face");
 
-  typedef Property Face::* IoMember;
-
-  const IoMember IO_MEMBERS[] = {
-	 SGI_IDIOT_CAST(Property Face::*, &Face::category),
-	 SGI_IDIOT_CAST(Property Face::*, &Face::eyeHeight),
-	 SGI_IDIOT_CAST(Property Face::*, &Face::eyeDistance),
-	 SGI_IDIOT_CAST(Property Face::*, &Face::noseLength),
-	 SGI_IDIOT_CAST(Property Face::*, &Face::mouthHeight)
-  };
-
-  const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
-
   const Face::PInfo PINFOS[] = {
 	 Face::PInfo("category", SGI_IDIOT_CAST(Property Face::*, &Face::category)
 					 , 0, 10, 1, true),
@@ -113,86 +101,60 @@ DOTRACE("Face::~Face");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void Face::legacySrlz(IO::Writer* writer) const {
+void Face::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("Face::legacySrlz");
   Invariant(check());
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
-
-	 // version
-	 os << "@1" << IO::SEP;
-
-	 os << '{' << IO::SEP;
-
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-  		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 for (size_t i = 0; i < NUM_PINFOS; ++i) {
+		writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
 	 }
 
-	 os << '}' << endl;
-	 lwriter->throwIfError(ioTag.c_str());
+	 lwriter->insertChar('\n');
 
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
-void Face::legacyDesrlz(IO::Reader* reader) {
+void Face::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("Face::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag.c_str());
 
 	 lreader->eatWhitespace();
 	 int version = 0;
 
-	 istream& is = lreader->input();
-
-	 if ( is.peek() == '@' ) {
-		int c = is.get();
+	 if ( lreader->peek() == '@' ) {
+		int c = lreader->getChar();
 		Assert(c == '@');
 
-		is >> version;
+		lreader->readValue("legacyVersion", version);
 		DebugEvalNL(version);
 	 }
 
-	 if (version == 0) {
-		// Format is:
-		// Face $category $eyeheight $eyedistance $noselength $mouthheight
-		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
-		}
-	 }
-	 else if (version == 1) {
-		// Format is:
-		// Face { $category $eyeheight $eyedistance $noselength $mouthheight }
-		char brace;
-		is >> brace;
+	 if (version == 1) {
+		char brace = lreader->readChar("leftBrace");
 		if (brace != '{') {
 		  IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
 		  throw err;
 		}
+	 }
 
-		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
-		}
+	 for (size_t i = 0; i < NUM_PINFOS; ++i) {
+		reader->readValueObj(PINFOS[i].name_cstr(),
+									const_cast<Value&>(get(PINFOS[i].property())));
+	 }
 
-		is >> brace;
+	 if (version == 1) {
+		char brace = lreader->readChar("rightBrace");
 		if (brace != '}') {
 		  IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
 		  throw err;
 		}
 	 }
-	 else {
-		IO::LogicError err(ioTag.c_str()); err.appendMsg(" unknown version");
-		throw err;
-	 }
-
-	 lreader->throwIfError(ioTag.c_str());
 
 	 Invariant(check());
 
@@ -210,6 +172,13 @@ DOTRACE("Face::serialVersionId");
 
 void Face::readFrom(IO::Reader* reader) {
 DOTRACE("Face::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
@@ -227,6 +196,13 @@ DOTRACE("Face::readFrom");
 
 void Face::writeTo(IO::Writer* writer) const {
 DOTRACE("Face::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }

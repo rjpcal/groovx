@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Sep 28 19:38:22 2000
+// written: Fri Sep 29 15:01:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,9 @@ class Trial::Impl {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
 public:
   Impl(Trial*) :
@@ -132,10 +135,6 @@ private:
   }
 
 public:
-
-  // Delegand functions for Trial
-  void legacySrlz(IO::Writer* writer) const;
-  void legacyDesrlz(IO::Reader* reader);
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
@@ -216,7 +215,7 @@ DOTRACE("Trial::IdPair::scanFrom");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::legacySrlz(IO::Writer* writer) const {
+void Trial::Impl::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("Trial::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
@@ -235,7 +234,7 @@ DOTRACE("Trial::Impl::legacySrlz");
   }
 }
 
-void Trial::Impl::legacyDesrlz(IO::Reader* reader) {
+void Trial::Impl::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("Trial::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
@@ -256,6 +255,13 @@ DOTRACE("Trial::Impl::legacyDesrlz");
 
 void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   itsIdPairs.clear();
   IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
 									  std::back_inserter(itsIdPairs));
@@ -276,6 +282,12 @@ DOTRACE("Trial::Impl::readFrom");
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
 										 itsIdPairs.begin(), itsIdPairs.end());
@@ -637,12 +649,6 @@ DOTRACE("Trial::~Trial");
 ////////////////////////////////
 // delegations to Trial::Impl //
 ////////////////////////////////
-
-void Trial::legacySrlz(IO::Writer* writer) const
-  { itsImpl->legacySrlz(writer); }
-
-void Trial::legacyDesrlz(IO::Reader* reader)
-  { itsImpl->legacyDesrlz(reader); }
 
 IO::VersionId Trial::serialVersionId() const
   { return TRIAL_SERIAL_VERSION_ID; }

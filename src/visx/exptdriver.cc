@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Sep 29 13:43:43 2000
+// written: Fri Sep 29 15:00:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,6 +83,9 @@ private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
 public:
   Impl(int argc, char** argv, ExptDriver* owner, Tcl_Interp* interp);
   ~Impl();
@@ -136,8 +139,6 @@ private:
   //////////////////////////
 
 public:
-  void legacySrlz(IO::Writer* writer) const;
-  void legacyDesrlz(IO::Reader* reader);
 
   IO::VersionId serialVersionId() const
 	 { return EXPTDRIVER_SERIAL_VERSION_ID; }
@@ -556,7 +557,7 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::legacySrlz(IO::Writer* writer) const {
+void ExptDriver::Impl::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("ExptDriver::Impl::legacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
@@ -588,7 +589,7 @@ DOTRACE("ExptDriver::Impl::legacySrlz");
   }
 }
 
-void ExptDriver::Impl::legacyDesrlz(IO::Reader* reader) {
+void ExptDriver::Impl::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("ExptDriver::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
@@ -621,6 +622,12 @@ DOTRACE("ExptDriver::Impl::legacyDesrlz");
 void ExptDriver::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("ExptDriver::Impl::readFrom");
 
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   reader->readOwnedObject("theObjList", &ObjList::theObjList());
   reader->readOwnedObject("thePosList", &PosList::thePosList());
   reader->readOwnedObject("theTlist", &Tlist::theTlist());
@@ -651,6 +658,12 @@ DOTRACE("ExptDriver::Impl::readFrom");
 
 void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   writer->writeOwnedObject("theObjList", &ObjList::theObjList());
   writer->writeOwnedObject("thePosList", &PosList::thePosList());
@@ -974,12 +987,6 @@ ExptDriver::~ExptDriver() {
 DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl;
 }
-
-void ExptDriver::legacySrlz(IO::Writer* writer) const
-  { itsImpl->legacySrlz(writer); }
-
-void ExptDriver::legacyDesrlz(IO::Reader* reader)
-  { itsImpl->legacyDesrlz(reader); }
 
 IO::VersionId ExptDriver::serialVersionId() const
   { return itsImpl->serialVersionId(); }

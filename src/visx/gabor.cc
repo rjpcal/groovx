@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep 27 17:30:42 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,6 @@
 #endif
 
 namespace {
-  const char* ioTag = "Gabor";
-
   const Gabor::PInfo PINFOS[] = {
 		Gabor::PInfo("colorMode",
 						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::colorMode),
@@ -97,40 +95,55 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::legacySrlz(IO::Writer* writer) const {
+void Gabor::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("Gabor::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 lwriter->writeTypename(ioTag);
-
 	 IO::ConstIoProxy<GrObj> baseclass(this);
 	 writer->writeBaseClass("GrObj", &baseclass);
   }
 }
 
-void Gabor::legacyDesrlz(IO::Reader* reader) {
+void Gabor::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("Gabor::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
 	 IO::IoProxy<GrObj> baseclass(this);
 	 reader->readBaseClass("GrObj", &baseclass);
   }
+
+  sendStateChangeMsg();
 }
 
 void Gabor::readFrom(IO::Reader* reader) {
 DOTRACE("Gabor::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
+
+  sendStateChangeMsg();
 }
 
 void Gabor::writeTo(IO::Writer* writer) const {
 DOTRACE("Gabor::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }

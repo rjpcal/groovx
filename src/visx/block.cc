@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Sep 27 16:51:25 2000
+// written: Fri Sep 29 14:45:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,21 +173,16 @@ DOTRACE("Block::removeAllTrials");
   itsImpl->itsCurrentTrialId = -1;
 }
 
-void Block::legacySrlz(IO::Writer* writer) const {
+void Block::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("Block::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
+	 IO::WriteUtils::writeValueSeq(
+       writer, "trialSeq",
+		 itsImpl->itsTrialSequence.begin(), itsImpl->itsTrialSequence.end());
 
-	 ostream& os = lwriter->output();
-
-	 // itsImpl->itsTrialSequence
-	 os << itsImpl->itsTrialSequence.size() << IO::SEP << IO::SEP;
-	 for (size_t i = 0; i < itsImpl->itsTrialSequence.size(); ++i) {
-		os << itsImpl->itsTrialSequence[i] << IO::SEP;
-	 }
-	 os << endl;
+	 lwriter->insertChar('\n');
 
 	 lwriter->setFieldSeparator('\n');
 	 writer->writeValue("randSeed", itsImpl->itsRandSeed);
@@ -196,25 +191,14 @@ DOTRACE("Block::legacySrlz");
   }
 }
 
-void Block::legacyDesrlz(IO::Reader* reader) {
+void Block::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("Block::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag.c_str());
 
-	 istream& is = lreader->input();
-  
-	 // itsImpl->itsTrialSequence
-	 int size;
-	 is >> size;
-	 if (size < 0) {
-		throw IO::InputError("VecInt saw negative value for size");
-	 }
-	 itsImpl->itsTrialSequence.resize(size, 0);
-	 for (int i = 0; i < size; ++i) {
-		is >> itsImpl->itsTrialSequence[i];
-	 }
-	 lreader->throwIfError(ioTag.c_str());
+	 itsImpl->itsTrialSequence.clear();
+	 IO::ReadUtils::template readValueSeq<int>(
+		 reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
 
 	 reader->readValue("randSeed", itsImpl->itsRandSeed);
 
@@ -227,12 +211,20 @@ DOTRACE("Block::legacyDesrlz");
 
 	 reader->readValue("verbose", itsImpl->itsVerbose);
 
-	 is.ignore(1, '\n');
+	 // XXX I think this is not necessary
+	 //  	 lreader->input().ignore(1, '\n');
   }
 }
 
 void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::template readValueSeq<int>(
 		 reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
@@ -248,6 +240,12 @@ DOTRACE("Block::readFrom");
 
 void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
 
   IO::WriteUtils::writeValueSeq(
        writer, "trialSeq",

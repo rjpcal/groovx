@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Sep 29 09:43:47 2000
+// written: Fri Sep 29 14:45:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -674,7 +674,7 @@ Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::legacySrlz(IO::Writer* writer) const {
+void Gtext::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("Gtext::legacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
@@ -688,7 +688,7 @@ DOTRACE("Gtext::legacySrlz");
   }
 }
 
-void Gtext::legacyDesrlz(IO::Reader* reader) {
+void Gtext::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("Gtext::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
@@ -703,6 +703,13 @@ DOTRACE("Gtext::legacyDesrlz");
 
 void Gtext::readFrom(IO::Reader* reader) {
 DOTRACE("Gtext::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   reader->readValue("text", itsText);
   reader->readValue("strokeWidth", itsStrokeWidth);
  
@@ -711,6 +718,13 @@ DOTRACE("Gtext::readFrom");
 
 void Gtext::writeTo(IO::Writer* writer) const {
 DOTRACE("Gtext::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   writer->writeValue("text", itsText);
   writer->writeValue("strokeWidth", itsStrokeWidth);
 

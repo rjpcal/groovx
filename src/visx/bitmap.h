@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep 27 11:09:05 2000
+// written: Fri Sep 29 15:01:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,9 +46,6 @@ public:
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Bitmap();
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -187,6 +184,9 @@ public:
   void setUsingZoom(bool val);
 
 private:
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
+
   Bitmap(const Bitmap&);
   Bitmap& operator=(const Bitmap&);
 

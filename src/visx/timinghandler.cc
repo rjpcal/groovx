@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Wed Sep 27 15:10:37 2000
+// written: Fri Sep 29 14:52:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-namespace {
-  const char* ioTag = "TimingHandler";
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -53,12 +49,10 @@ TimingHandler::~TimingHandler() {
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-void TimingHandler::legacySrlz(IO::Writer* writer) const {
+void TimingHandler::legacySrlz(IO::LegacyWriter* writer) const {
 DOTRACE("TimingHandler::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-
-	 lwriter->writeTypename(ioTag);
 
 	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
 	 IO::ConstIoProxy<TimingHdlr> baseclass(this);
@@ -66,11 +60,10 @@ DOTRACE("TimingHandler::legacySrlz");
   }
 }
 
-void TimingHandler::legacyDesrlz(IO::Reader* reader) {
+void TimingHandler::legacyDesrlz(IO::LegacyReader* reader) {
 DOTRACE("TimingHandler::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag);
 
 	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
 	 IO::IoProxy<TimingHdlr> baseclass(this);
@@ -80,11 +73,25 @@ DOTRACE("TimingHandler::legacyDesrlz");
 
 void TimingHandler::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHandler::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
   TimingHdlr::readFrom(reader);
 }
 
 void TimingHandler::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHandler::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
   TimingHdlr::writeTo(writer);
 }
 
