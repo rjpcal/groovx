@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Jun 11 15:08:17 2001
+// written: Wed Jul 18 17:07:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,8 @@
 
 namespace {
   const FieldInfo MASK_FINFOS[] = {
-	 FieldInfo("numLines", &MaskHatch::numLines, 5, 0, 25, 1, true),
-	 FieldInfo("lineWidth", &MaskHatch::lineWidth, 1, 0, 25, 1)
+    FieldInfo("numLines", &MaskHatch::numLines, 5, 0, 25, 1, true),
+    FieldInfo("lineWidth", &MaskHatch::lineWidth, 1, 0, 25, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
@@ -85,7 +85,7 @@ void MaskHatch::writeTo(IO::Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
 
   writer->ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
@@ -93,7 +93,7 @@ DOTRACE("MaskHatch::writeTo");
 }
 
 void MaskHatch::grGetBoundingBox(Rect<double>& bbox,
-											int& border_pixels) const {
+                                 int& border_pixels) const {
 DOTRACE("MaskHatch::grGetBoundingBox");
 
   bbox.left() = bbox.bottom() = 0.0;
@@ -101,56 +101,51 @@ DOTRACE("MaskHatch::grGetBoundingBox");
   border_pixels = lineWidth()/2 + 2;
 }
 
-bool MaskHatch::grHasBoundingBox() const {
-DOTRACE("MaskHastch::grHasBoundingBox");
-  return true;
-}
-
 void MaskHatch::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("MaskHatch::grRender");
 
-  if (numLines() == 0) return; 
+  if (numLines() == 0) return;
 
   glPushAttrib(GL_LINE_BIT);
-  { 
-	 glLineWidth(lineWidth());
+  {
+    glLineWidth(lineWidth());
 
-	 glBegin(GL_LINES);
-	 {
-		for (int i = 0; i < numLines(); ++i) {
-		  GLdouble position = double(i)/numLines();
+    glBegin(GL_LINES);
+    {
+      for (int i = 0; i < numLines(); ++i) {
+        GLdouble position = double(i)/numLines();
 
-		  // horizontal line
-		  glVertex2d(0.0, position);
-		  glVertex2d(1.0, position);
+        // horizontal line
+        glVertex2d(0.0, position);
+        glVertex2d(1.0, position);
 
-		  // vertical line
-		  glVertex2d(position, 0.0);
-		  glVertex2d(position, 1.0);
+        // vertical line
+        glVertex2d(position, 0.0);
+        glVertex2d(position, 1.0);
 
-		  // lines with slope = 1 
-		  glVertex2d(0.0, position);
-		  glVertex2d(1.0-position, 1.0);
+        // lines with slope = 1
+        glVertex2d(0.0, position);
+        glVertex2d(1.0-position, 1.0);
 
-		  glVertex2d(position, 0.0);
-		  glVertex2d(1.0, 1.0-position);
+        glVertex2d(position, 0.0);
+        glVertex2d(1.0, 1.0-position);
 
-		  // lines with slope = -1
-		  glVertex2d(0.0, 1.0-position);
-		  glVertex2d(1.0-position, 0.0);
+        // lines with slope = -1
+        glVertex2d(0.0, 1.0-position);
+        glVertex2d(1.0-position, 0.0);
 
-		  glVertex2d(position, 1.0);
-		  glVertex2d(1.0, position);
-		}
+        glVertex2d(position, 1.0);
+        glVertex2d(1.0, position);
+      }
 
-		// final closing lines
-		glVertex2d(0.0, 1.0);
-		glVertex2d(1.0, 1.0);
+      // final closing lines
+      glVertex2d(0.0, 1.0);
+      glVertex2d(1.0, 1.0);
 
-		glVertex2d(1.0, 0.0);
-		glVertex2d(1.0, 1.0);
-	 }
-	 glEnd();
+      glVertex2d(1.0, 0.0);
+      glVertex2d(1.0, 1.0);
+    }
+    glEnd();
   }
   glPopAttrib();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jul 13 14:46:45 2001
+// written: Wed Jul 18 17:07:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,9 +146,6 @@ void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 void Bitmap::grGetBoundingBox(Rect<double>& bbox,
                               int& border_pixels) const
   { itsImpl->grGetBoundingBox(bbox, border_pixels); }
-
-bool Bitmap::grHasBoundingBox() const
-  { return itsImpl->grHasBoundingBox(); }
 
 int Bitmap::byteCount() const
   { return itsImpl->byteCount(); }

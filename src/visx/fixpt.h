@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Jun  1 14:20:25 2001
+// written: Wed Jul 18 17:07:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,9 +61,7 @@ public:
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
-										  int& border_pixels) const;
-
-  virtual bool grHasBoundingBox() const;
+                                int& border_pixels) const;
 
   virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 };

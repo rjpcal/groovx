@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Jul 18 17:14:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace GWT {
 ///////////////////////////////////////////////////////////////////////
 
 class GrObj : public GxNode,
-				  public Util::Observer
+              public Util::Observer
 {
 public:
 
@@ -66,16 +66,16 @@ public:
   ///////////////////////////////////////////////////////////////////////
 
   /** The symbolic constants of type \c GrObj::RenderMode control the
-	   way the object is drawn to and undrawn from the screen. The
-	   current modes can be get/set with \c getRenderMode(), \c
-	   setRenderMode(), \c getUnRenderMode(), and \c
-	   setUnRenderMode(). The default rendering mode is \c
-	   GLCOMPILE, and the default unrendering mode is \c
-	   SWAP_FORE_BACK. **/
+      way the object is drawn to and undrawn from the screen. The
+      current modes can be get/set with \c getRenderMode(), \c
+      setRenderMode(), \c getUnRenderMode(), and \c
+      setUnRenderMode(). The default rendering mode is \c
+      GLCOMPILE, and the default unrendering mode is \c
+      SWAP_FORE_BACK. **/
   typedef int RenderMode;
 
   /** In this mode, \c grRender() will be called every time the object
-		is drawn or undrawn.  */
+      is drawn or undrawn.  */
   static const RenderMode DIRECT_RENDER = 1;
 
   /** In this mode, \c grRender() is called on a draw request only if
@@ -97,8 +97,7 @@ public:
       scaling or rotation requests, but will be fixed at the screen
       size at which the object was most recently direct-rendered; note
       however that OpenGL translation requests will still work
-      properly. This mode requires the object to have a bounding box
-      (i.e. \c getBoundingBox() must return \c true). **/
+      properly. */
   static const RenderMode GL_BITMAP_CACHE = 3;
 
   /** In this mode, \c grRender() is called on an draw request only if
@@ -112,21 +111,17 @@ public:
       direct-rendered; note however that OpenGL translation requests
       will still work properly, and 2) the object will always be
       rendered into the front buffer, regardless of whether OpenGL
-      double-buffering is being used. This mode requires the object to
-      have a bounding box (i.e. \c getBoundingBox() must return \c
-      true). **/
+      double-buffering is being used. */
   static const RenderMode X11_BITMAP_CACHE = 4;
 
   /** This mode may be used only as an unrendering mode. If selected,
-		unrendering will be done by performing a normal render except
-		with the foreground and background colors swapped. */
+      unrendering will be done by performing a normal render except
+      with the foreground and background colors swapped. */
   static const RenderMode SWAP_FORE_BACK = 5;
 
   /** This mode may be used only as an unrendering mode. If selected,
       unrendering will be done by clearing to the background color the
-      region enclosed by the object's bounding box. This mode requires
-      the object to have a bounding box (i.e. \c getBoundingBox() must
-      return \c true). */
+      region enclosed by the object's bounding box. */
   static const RenderMode CLEAR_BOUNDING_BOX = 6;
 
 
@@ -140,9 +135,7 @@ public:
       ways to scale an object with respect to the OpenGL coordinate
       system. The current mode can be get/set with \c getScalingMode()
       and \c setScalineMode(). The default scaling mode is \c
-      NATIVE_SCALING. All other scaling modes require the object to
-      have a bounding box (i.e. \c getBoundingBox() must return \c
-      true). */
+      NATIVE_SCALING. */
   typedef int ScalingMode;
 
   /** This is the default scaling mode. No additional scaling is done beyond
@@ -172,9 +165,7 @@ public:
       ways to position an object with respect to the OpenGL coordinate
       system. The current mode can be get/set with \c
       getAlignmentMode() and \c setAlignmentMode(). The default
-      alignment mode is \c NATIVE_ALIGNMENT. All other alignment modes
-      require the object to have a bounding box (i.e. \c
-      getBoundingBox() must return \c true). */
+      alignment mode is \c NATIVE_ALIGNMENT. */
   typedef int AlignmentMode;
 
   /** This is the default alignment mode. No additional translations
@@ -206,7 +197,7 @@ public:
 
   /// Default constructor
   GrObj(RenderMode render_mode = GLCOMPILE,
-		  RenderMode unrender_mode = SWAP_FORE_BACK);
+        RenderMode unrender_mode = SWAP_FORE_BACK);
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
 
@@ -225,24 +216,17 @@ public:
   bool getBBVisibility() const;
 
   /** Returns the bounding box given by \c grGetBoundingBox(), with
-		additional modifications to reflect the scaling mode, alignment
-		mode, and pixel border values. If a bounding box is not
-		available, the function returns false and does not modify the
-		input reference parameters. */
-  bool getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bounding_box) const;
+      additional modifications to reflect the scaling mode, alignment
+      mode, and pixel border values. */
+  void getBoundingBox(const GWT::Canvas& canvas,
+                      Rect<double>& bounding_box) const;
 
-protected: 
-  /** Subclasses may override this function to fill in the parameters
-		with the bounding box in GL coordinates for the object's
-		onscreen image. The default version provided by GrObj does not
-		modify the input reference parameters. */
+protected:
+  /** Subclasses must override this function to fill in the parameters
+      with the bounding box in GL coordinates for the object's
+      onscreen image. */
   virtual void grGetBoundingBox(Rect<double>& bounding_box,
-														 int& border_pixels) const;
-
-  /** This function should be overridden to return true if a bounding
-		box has provided, or false if no bounding box is available. The
-		default implementation provided by GrObj returns false. */
-  virtual bool grHasBoundingBox() const;
+                                int& border_pixels) const = 0;
 
 public:
   /// Returns the current scaling mode.
@@ -285,7 +269,7 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //
-  // Manipulators 
+  // Manipulators
   //
   ///////////////////////////////////////////////////////////////////////
 
@@ -374,22 +358,22 @@ public:
   void restoreBitmapCache() const;
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
-		changes pending, otherwise does nothing. */
+      changes pending, otherwise does nothing. */
   void update(GWT::Canvas& canvas) const;
 
   /** This function draws the object according to the GrRenderMode
-		selected with setRenderMode(). */
+      selected with setRenderMode(). */
   void draw(GWT::Canvas& canvas) const;
 
   /** This function undraws the object according to the GrRenderMode
-		selected with setUnRenderMode(). */
+      selected with setUnRenderMode(). */
   void undraw(GWT::Canvas& canvas) const;
 
   enum DrawMode { DRAW, UNDRAW };
 
 protected:
   /** This function must be overridden in derived classes to execute
-		the actual OpenGL commands that render the object. */
+      the actual OpenGL commands that render the object. */
   virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const = 0;
 
 private:
@@ -398,7 +382,7 @@ private:
 
   class Impl;
   friend class Impl;
-  Impl* const itsImpl;	  // opaque pointer to implementation
+  Impl* const itsImpl;    // opaque pointer to implementation
 };
 
 static const char vcid_grobj_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jun 11 15:08:17 2001
+// written: Wed Jul 18 17:07:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@
 
 namespace {
   const FieldInfo FIXPT_FINFOS[] = {
-		FieldInfo("length", &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
-		FieldInfo("width", &FixPt::width, 1, 0, 100, 1)
+      FieldInfo("length", &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
+      FieldInfo("width", &FixPt::width, 1, 0, 100, 1)
   };
 
   const FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2);
@@ -58,7 +58,7 @@ DOTRACE("FixPt::make");
   return new FixPt;
 }
 
-FixPt::FixPt(double len, int wid) : 
+FixPt::FixPt(double len, int wid) :
   FieldContainer(),
   length(this, len), width(this, wid)
 {
@@ -88,25 +88,20 @@ void FixPt::writeTo(IO::Writer* writer) const {
 DOTRACE("FixPt::writeTo");
 
   writer->ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
-  writeFieldsTo(writer, classFields()); 
+  writeFieldsTo(writer, classFields());
 
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,
-									  int& border_pixels) const {
+                             int& border_pixels) const {
 DOTRACE("FixPt::grGetBoundingBox");
   bbox.left()  = bbox.bottom() = -length()/2.0;
   bbox.right() = bbox.top()    =  length()/2.0;
 
   border_pixels = 4;
-}
-
-bool FixPt::grHasBoundingBox() const {
-DOTRACE("FixPt::grHasBoundingBox");
-  return true;
 }
 
 void FixPt::grRender(GWT::Canvas&, DrawMode) const {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Jul 18 12:27:38 2001
+// written: Wed Jul 18 17:13:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,10 +59,7 @@ namespace GrobjTcl
     GWT::Canvas& canvas = Application::theApp().getCanvas();
 
     Rect<double> bbox;
-    bool have_box = obj->getBoundingBox(canvas, bbox);
-
-    if (!have_box)
-      throw Tcl::TclError("object did not define a bounding box");
+    obj->getBoundingBox(canvas, bbox);
 
     return bbox;
   }

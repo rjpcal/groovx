@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Jul 13 14:47:22 2001
+// written: Wed Jul 18 17:07:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -420,11 +420,6 @@ DOTRACE("BitmapRep::grGetBoundingBox");
                                 height()*abs(itsImpl->itsZoomY));
 
   bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
-}
-
-bool BitmapRep::grHasBoundingBox() const {
-DOTRACE("BitmapRep::grHasBoundingBox");
-  return true;
 }
 
 int BitmapRep::byteCount() const {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun 11 15:08:17 2001
+// written: Wed Jul 18 17:13:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ const int GrObj::ARBITRARY_ON_CENTER;
 
 // GrObj default constructor
 GrObj::GrObj(GrObj::RenderMode render_mode,
-				 GrObj::RenderMode unrender_mode) :
+             GrObj::RenderMode unrender_mode) :
   itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj");
@@ -86,13 +86,13 @@ DOTRACE("GrObj::GrObj");
 // GrObj destructor
 GrObj::~GrObj() {
 DOTRACE("GrObj::~GrObj");
-  detach(this); 
+  detach(this);
   delete itsImpl;
 }
 
 IO::VersionId GrObj::serialVersionId() const {
 DOTRACE("GrObj::Impl::serialVersionId");
-  return itsImpl->serialVersionId(); 
+  return itsImpl->serialVersionId();
 }
 
 void GrObj::readFrom(IO::Reader* reader) {
@@ -117,20 +117,11 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->getBBVisibility();
 }
 
-bool GrObj::getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const {
+void GrObj::getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const
+{
 DOTRACE("GrObj::getBoundingBox");
 
-  return itsImpl->getBoundingBox(canvas, bbox);
-}
-
-void GrObj::grGetBoundingBox(Rect<double>& /*bounding_box*/,
-									  int& /* border_pixels */) const {
-DOTRACE("GrObj::grGetBoundingBox");
-}
-
-bool GrObj::grHasBoundingBox() const {
-DOTRACE("GrObj::grHasBoundingBox");
-  return false;
+  itsImpl->getBoundingBox(canvas, bbox);
 }
 
 GrObj::ScalingMode GrObj::getScalingMode() const {
@@ -193,7 +184,7 @@ DOTRACE("GrObj::getUnRenderMode");
 
 void GrObj::setBitmapCacheDir(const char* dirname) {
 DOTRACE("GrObj::setBitmapCacheDir");
-  Impl::setBitmapCacheDir(dirname); 
+  Impl::setBitmapCacheDir(dirname);
 }
 
 void GrObj::setBBVisibility(bool visibility) {
@@ -210,28 +201,28 @@ DOTRACE("GrObj::setScalingMode");
 void GrObj::setWidth(double val) {
 DOTRACE("GrObj::setWidth");
 
-  itsImpl->setWidth(val); 
+  itsImpl->setWidth(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setHeight(double val) {
 DOTRACE("GrObj::setHeight");
 
-  itsImpl->setHeight(val); 
+  itsImpl->setHeight(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setAspectRatio(double val) {
 DOTRACE("GrObj::setAspectRatio");
 
-  itsImpl->setAspectRatio(val); 
+  itsImpl->setAspectRatio(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setMaxDimension(double val) {
 DOTRACE("GrObj::setMaxDimension");
 
-  itsImpl->setMaxDimension(val); 
+  itsImpl->setMaxDimension(val);
   sendStateChangeMsg();
 }
 
@@ -266,17 +257,17 @@ DOTRACE("GrObj::setRenderMode");
 
 #ifdef I686
   // display lists don't work at present with i686/linux/mesa
-  if (mode == GLCOMPILE) mode = DIRECT_RENDER; 
+  if (mode == GLCOMPILE) mode = DIRECT_RENDER;
 #endif
 
-  itsImpl->setRenderMode(mode); 
+  itsImpl->setRenderMode(mode);
   sendStateChangeMsg();
 }
 
 void GrObj::setUnRenderMode(GrObj::RenderMode mode) {
 DOTRACE("GrObj::setUnRenderMode");
 
-  itsImpl->setUnRenderMode(mode); 
+  itsImpl->setUnRenderMode(mode);
   sendStateChangeMsg();
 }
 
@@ -288,8 +279,8 @@ DOTRACE("GrObj::receiveStateChangeMsg");
   DebugEval((void*)dynamic_cast<Util::Observable*>(this));
   DebugEvalNL((void*)obj);
   if (obj == this) {
-	 DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
-	 itsImpl->invalidateCaches();
+    DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
+    itsImpl->invalidateCaches();
   }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun 22 11:50:21 2001
+// written: Wed Jul 18 17:07:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -269,11 +269,6 @@ DOTRACE("Face::grGetBoundingBox");
   bounding_box.bottom() = 0.2 + 0.75*(-1.7-0.2);
   bounding_box.top() = 0.2 + 0.75*(1.4-0.2);
   border_pixels = 4;
-}
-
-bool Face::grHasBoundingBox() const {
-DOTRACE("Face::grHasBoundingBox");
-  return true;
 }
 
 int Face::category() const {

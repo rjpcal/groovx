@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Jun  1 14:21:07 2001
+// written: Wed Jul 18 17:07:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ public:
   TField<int> orientation;
 
   /** Number of rectangle subdivisions per OpenGL unit (note that this
-		applies only when the colorMode is \a BW_DITHER_RECT). */
+      applies only when the colorMode is \a BW_DITHER_RECT). */
   TField<int> resolution;
 
   /** The size of the points used when \a colorMode is either \a
@@ -103,9 +103,7 @@ public:
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
-										  int& border_pixels) const;
-
-  virtual bool grHasBoundingBox() const;
+                                int& border_pixels) const;
 
   virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 };

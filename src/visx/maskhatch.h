@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Jun  1 14:21:07 2001
+// written: Wed Jul 18 17:07:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,11 +62,9 @@ public:
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
-										  int& border_pixels) const;
+                                int& border_pixels) const;
 
-  virtual bool grHasBoundingBox() const;
-
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const; 
+  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 };
 
 static const char vcid_maskhatch_h[] = "$Header$";

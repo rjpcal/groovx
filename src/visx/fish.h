@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Jun  8 14:01:36 2001
+// written: Wed Jul 18 17:07:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public:
   static Fish* make();
 
   static Fish* makeFromFiles(const char* splinefile,
-									  const char* coordfile, int index);
+                             const char* coordfile, int index);
 
 private:
   void restoreToDefault();
@@ -115,9 +115,7 @@ public:
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
-										  int& border_pixels) const;
-
-  virtual bool grHasBoundingBox() const;
+                                int& border_pixels) const;
 
   virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 

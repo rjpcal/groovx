@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu Jun 21 13:49:31 2001
+// written: Wed Jul 18 17:13:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,11 +77,7 @@ DOTRACE("TlistUtils::createPreview");
     if (x_step == num_cols) { x_step = 0; ++y_step; }
 
     Ref<GrObj> obj(objids[i]);
-    bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
-
-    if ( !haveBB ) {
-      throw ErrorWithMsg("all objects must have bounding boxes");
-    }
+    obj->getBoundingBox(canvas, bbxs[i]);
 
     obj->setAlignmentMode(GrObj::CENTER_ON_CENTER);
     obj->setBBVisibility(true);

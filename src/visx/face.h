@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Jul 18 17:07:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,13 +97,11 @@ public:
   virtual void setCategory(int val);
 
   protected: virtual void grGetBoundingBox(Rect<double>& bounding_box,
-														 int& border_pixels) const;
-
-  protected: virtual bool grHasBoundingBox() const;
+                                           int& border_pixels) const;
 
   /** Reimplements the \c GrObj pure virtual function. It renders a
-		face with the appropriate parameters. */
-  protected: virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const; 
+      face with the appropriate parameters. */
+  protected: virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 
 private:
   Face(const Face&);
