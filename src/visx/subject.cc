@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Sep 29 14:45:45 2000
+// written: Fri Sep 29 16:11:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,28 +37,22 @@ Subject::~Subject() {
 DOTRACE("Subject::~Subject");
 }
 
-void Subject::legacySrlz(IO::LegacyWriter* writer) const {
+void Subject::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Subject::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
+  lwriter->setStringMode(IO::GETLINE_NEWLINE);
 
-	 writer->writeValue("name", itsName);
-	 writer->writeValue("directory", itsDirectory);
-  }
+  lwriter->writeValue("name", itsName);
+  lwriter->writeValue("directory", itsDirectory);
 }
 
-void Subject::legacyDesrlz(IO::LegacyReader* reader) {
+void Subject::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Subject::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 lreader->setStringMode(IO::GETLINE_NEWLINE);
+  lreader->setStringMode(IO::GETLINE_NEWLINE);
 
-	 reader->readValue("name", itsName);
-	 reader->readValue("directory", itsDirectory);
-  }
+  lreader->readValue("name", itsName);
+  lreader->readValue("directory", itsDirectory);
 }
 
 void Subject::readFrom(IO::Reader* reader) {

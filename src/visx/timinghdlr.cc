@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Sep 29 14:45:45 2000
+// written: Fri Sep 29 16:12:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,50 +122,44 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::legacySrlz(IO::LegacyWriter* writer) const {
+void TimingHdlr::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("TimingHdlr::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 writer->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
+  lwriter->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
-	 IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
-								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
+  IO::WriteUtils::writeObjectSeq(lwriter, "immediateEvents",
+     itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
 
-	 IO::WriteUtils::writeObjectSeq(writer, "startEvents",
-								 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
+  IO::WriteUtils::writeObjectSeq(lwriter, "startEvents",
+     itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
 
-	 IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
-								 itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
+  IO::WriteUtils::writeObjectSeq(lwriter, "responseEvents",
+     itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
 
-	 IO::WriteUtils::writeObjectSeq(writer, "abortEvents",
-								 itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
-  }
+  IO::WriteUtils::writeObjectSeq(lwriter, "abortEvents",
+     itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
 }
 
-void TimingHdlr::legacyDesrlz(IO::LegacyReader* reader) {
+void TimingHdlr::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("TimingHdlr::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 reader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
+  lreader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
-	 itsImpl->deleteAll(itsImpl->itsImmediateEvents);
-	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "immediateEvents",
-								std::back_inserter(itsImpl->itsImmediateEvents));
+  itsImpl->deleteAll(itsImpl->itsImmediateEvents);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "immediateEvents",
+                        std::back_inserter(itsImpl->itsImmediateEvents));
 
-	 itsImpl->deleteAll(itsImpl->itsStartEvents);
-	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "startEvents",
-								std::back_inserter(itsImpl->itsStartEvents));
+  itsImpl->deleteAll(itsImpl->itsStartEvents);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "startEvents",
+                        std::back_inserter(itsImpl->itsStartEvents));
 
-	 itsImpl->deleteAll(itsImpl->itsResponseEvents);
-	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "responseEvents",
-								std::back_inserter(itsImpl->itsResponseEvents));
+  itsImpl->deleteAll(itsImpl->itsResponseEvents);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "responseEvents",
+                        std::back_inserter(itsImpl->itsResponseEvents));
 
-	 itsImpl->deleteAll(itsImpl->itsAbortEvents);
-	 IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "abortEvents",
-								std::back_inserter(itsImpl->itsAbortEvents));
-  }
+  itsImpl->deleteAll(itsImpl->itsAbortEvents);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "abortEvents",
+                        std::back_inserter(itsImpl->itsAbortEvents));
 }
 
 IO::VersionId TimingHdlr::serialVersionId() const {

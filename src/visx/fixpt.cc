@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:07:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,29 +61,23 @@ FixPt::FixPt(double len, int wid) :
 
 FixPt::~FixPt() {}
 
-void FixPt::legacySrlz(IO::LegacyWriter* writer) const {
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
+void FixPt::legacySrlz(IO::LegacyWriter* lwriter) const {
 
-	 writer->writeDouble("length", length());
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeInt("width", width());
+  lwriter->writeDouble("length", length());
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeInt("width", width());
 
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 lwriter->writeBaseClass("GrObj", &baseclass);
-  }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void FixPt::legacyDesrlz(IO::LegacyReader* reader) {
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
+void FixPt::legacyDesrlz(IO::LegacyReader* lreader) {
 
-	 reader->readValue("length", length());
-	 reader->readValue("width", width());
+  lreader->readValue("length", length());
+  lreader->readValue("width", width());
 
-	 IO::IoProxy<GrObj> baseclass(this);
-	 lreader->readBaseClass("GrObj", &baseclass);
-  }
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
 }
 
 void FixPt::readFrom(IO::Reader* reader) {

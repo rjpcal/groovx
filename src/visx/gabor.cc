@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:08:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,23 +95,16 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::legacySrlz(IO::LegacyWriter* writer) const {
+void Gabor::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Gabor::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 writer->writeBaseClass("GrObj", &baseclass);
-  }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void Gabor::legacyDesrlz(IO::LegacyReader* reader) {
+void Gabor::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Gabor::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-
-	 IO::IoProxy<GrObj> baseclass(this);
-	 reader->readBaseClass("GrObj", &baseclass);
-  }
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
 
   sendStateChangeMsg();
 }

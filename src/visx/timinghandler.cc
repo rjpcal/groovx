@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Fri Sep 29 14:52:53 2000
+// written: Fri Sep 29 16:11:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,26 +49,20 @@ TimingHandler::~TimingHandler() {
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-void TimingHandler::legacySrlz(IO::LegacyWriter* writer) const {
+void TimingHandler::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("TimingHandler::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
-	 IO::ConstIoProxy<TimingHdlr> baseclass(this);
-	 lwriter->writeBaseClass("TimingHdlr", &baseclass);
-  }
+  IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
+  IO::ConstIoProxy<TimingHdlr> baseclass(this);
+  lwriter->writeBaseClass("TimingHdlr", &baseclass);
 }
 
-void TimingHandler::legacyDesrlz(IO::LegacyReader* reader) {
+void TimingHandler::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("TimingHandler::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
-	 IO::IoProxy<TimingHdlr> baseclass(this);
-	 lreader->readBaseClass("TimingHdlr", &baseclass);
-  }
+  IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
+  IO::IoProxy<TimingHdlr> baseclass(this);
+  lreader->readBaseClass("TimingHdlr", &baseclass);
 }
 
 void TimingHandler::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Sep 29 15:01:38 2000
+// written: Fri Sep 29 16:12:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -215,42 +215,36 @@ DOTRACE("Trial::IdPair::scanFrom");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::legacySrlz(IO::LegacyWriter* writer) const {
+void Trial::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Trial::Impl::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
+  IO::WriteUtils::writeValueObjSeq(lwriter, "idPairs",
 										 itsIdPairs.begin(), itsIdPairs.end());
 
-	 IO::WriteUtils::writeValueObjSeq(writer, "responses",
+  IO::WriteUtils::writeValueObjSeq(lwriter, "responses",
 										 itsResponses.begin(), itsResponses.end());
 
-	 writer->writeValue("type", itsType);
+  lwriter->writeValue("type", itsType);
 
-	 writer->writeValue("rhId", itsRhId);
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("thId", itsThId);
-  }
+  lwriter->writeValue("rhId", itsRhId);
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeValue("thId", itsThId);
 }
 
-void Trial::Impl::legacyDesrlz(IO::LegacyReader* reader) {
+void Trial::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Trial::Impl::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 itsIdPairs.clear();
-	 IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
+  itsIdPairs.clear();
+  IO::ReadUtils::template readValueObjSeq<IdPair>(lreader, "idPairs",
 									  std::back_inserter(itsIdPairs));
 
-	 itsResponses.clear();
-	 IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
+  itsResponses.clear();
+  IO::ReadUtils::template readValueObjSeq<Response>(lreader, "responses",
 									  std::back_inserter(itsResponses));
 
-	 reader->readValue("type", itsType);
+  lreader->readValue("type", itsType);
 
-	 reader->readValue("rhId", itsRhId);
-	 reader->readValue("thId", itsThId);
-  }
+  lreader->readValue("rhId", itsRhId);
+  lreader->readValue("thId", itsThId);
 }
 
 void Trial::Impl::readFrom(IO::Reader* reader) {

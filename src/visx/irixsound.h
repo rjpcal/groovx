@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Fri Sep 29 15:01:20 2000
+// written: Fri Sep 29 16:09:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,24 +106,18 @@ DOTRACE("IrixAudioSound::~IrixAudioSound");
   }
 }
 
-void IrixAudioSound::legacySrlz(IO::LegacyWriter* writer) const {
+void IrixAudioSound::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("IrixAudioSound::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
-	 writer->writeValue("filename", itsFilename);
-  }
+  lwriter->setStringMode(IO::GETLINE_NEWLINE);
+  lwriter->writeValue("filename", itsFilename);
 }
 
-void IrixAudioSound::legacyDesrlz(IO::LegacyReader* reader) {
+void IrixAudioSound::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("IrixAudioSound::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 lreader->setStringMode(IO::GETLINE_NEWLINE);
-	 reader->readValue("filename", itsFilename);
+  lreader->setStringMode(IO::GETLINE_NEWLINE);
+  lreader->readValue("filename", itsFilename);
 
-	 setFile(itsFilename.c_str());
-  }
+  setFile(itsFilename.c_str());
 }
 
 void IrixAudioSound::readFrom(IO::Reader* reader) {

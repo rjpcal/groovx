@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Sep 29 14:45:46 2000
+// written: Fri Sep 29 16:10:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,37 +53,31 @@ DOTRACE("Jitter::~Jitter");
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-void Jitter::legacySrlz(IO::LegacyWriter* writer) const {
+void Jitter::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Jitter::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 writer->writeValue("jitterX", itsXJitter);
-	 writer->writeValue("jitterY", itsYJitter);
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("jitterR", itsRJitter);
+  lwriter->writeValue("jitterX", itsXJitter);
+  lwriter->writeValue("jitterY", itsYJitter);
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeValue("jitterR", itsRJitter);
 
-	 // The base class (Position) is always legacySrlzd, regardless of flag.
-	 IO::LWFlagJanitor(*lwriter, lwriter->flags() | IO::BASES);
-	 IO::ConstIoProxy<Position> baseclass(this);
-	 lwriter->writeBaseClass("Position", &baseclass);
-  }
+  // The base class (Position) is always legacySrlzd, regardless of flag.
+  IO::LWFlagJanitor(*lwriter, lwriter->flags() | IO::BASES);
+  IO::ConstIoProxy<Position> baseclass(this);
+  lwriter->writeBaseClass("Position", &baseclass);
 }
 
-void Jitter::legacyDesrlz(IO::LegacyReader* reader) {
+void Jitter::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Jitter::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 reader->readValue("jitterX", itsXJitter);
-	 reader->readValue("jitterY", itsYJitter);
-	 reader->readValue("jitterR", itsRJitter);
+  lreader->readValue("jitterX", itsXJitter);
+  lreader->readValue("jitterY", itsYJitter);
+  lreader->readValue("jitterR", itsRJitter);
 
-	 // The base class (Position) is always legacyDesrlzd, regardless of flag.
-	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
-	 IO::IoProxy<Position> baseclass(this);
-	 lreader->readBaseClass("Position", &baseclass);
-  }
+  // The base class (Position) is always legacyDesrlzd, regardless of flag.
+  IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
+  IO::IoProxy<Position> baseclass(this);
+  lreader->readBaseClass("Position", &baseclass);
 }
 
 void Jitter::readFrom(IO::Reader* reader) {

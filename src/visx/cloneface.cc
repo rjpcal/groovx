@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:05:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,40 +50,34 @@ DOTRACE("CloneFace::~CloneFace");
 // before the base class (Face) since the first thing the virtual
 // constructor sees must be the typename of the most fully derived
 // class, in order to invoke the proper constructor.
-void CloneFace::legacySrlz(IO::LegacyWriter* writer) const {
+void CloneFace::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("CloneFace::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
-											 itsCtrlPnts, itsCtrlPnts+24, true);
+  IO::WriteUtils::writeValueSeq(lwriter, "ctrlPnts",
+										  itsCtrlPnts, itsCtrlPnts+24, true);
 
-	 writer->writeValue("eyeAspect", itsEyeAspect);
-	 writer->writeValue("vertOffset", itsVertOffset);
+  lwriter->writeValue("eyeAspect", itsEyeAspect);
+  lwriter->writeValue("vertOffset", itsVertOffset);
 
-	 // Always legacySrlz Face, regardless of lwriter->flags()
-	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
-	 IO::ConstIoProxy<Face> baseclass(this);
-	 writer->writeBaseClass("Face", &baseclass);
-  }
+  // Always legacySrlz Face, regardless of lwriter->flags()
+  IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
+  IO::ConstIoProxy<Face> baseclass(this);
+  lwriter->writeBaseClass("Face", &baseclass);
 }
 
-void CloneFace::legacyDesrlz(IO::LegacyReader* reader) {
+void CloneFace::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("CloneFace::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 IO::ReadUtils::template readValueSeq<double>(reader, "ctrlPnts",
-																 itsCtrlPnts, 24);
+  IO::ReadUtils::template readValueSeq<double>(lreader, "ctrlPnts",
+															  itsCtrlPnts, 24);
 
-	 reader->readValue("eyeAspect", itsEyeAspect);
-	 reader->readValue("vertOffset", itsVertOffset);
+  lreader->readValue("eyeAspect", itsEyeAspect);
+  lreader->readValue("vertOffset", itsVertOffset);
 
-	 // Always legacyDesrlz Face, regardless of lreader->flags()
-	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
-	 IO::IoProxy<Face> baseclass(this);
-	 reader->readBaseClass("Face", &baseclass);
-  }
+  // Always legacyDesrlz Face, regardless of lreader->flags()
+  IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
+  IO::IoProxy<Face> baseclass(this);
+  lreader->readBaseClass("Face", &baseclass);
 }
 
 void CloneFace::readFrom(IO::Reader* reader) {

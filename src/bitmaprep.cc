@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:04:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,49 +161,41 @@ DOTRACE("BitmapRep::init");
   itsImpl->itsData.clear();
 }
 
-void BitmapRep::legacySrlz(IO::LegacyWriter* writer) const {
+void BitmapRep::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("BitmapRep::legacySrlz");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
+  lwriter->setStringMode(IO::GETLINE_TAB);
+  lwriter->writeValue("itsFilename", itsImpl->itsFilename);
 
-	 lwriter->setStringMode(IO::GETLINE_TAB);
-	 writer->writeValue("itsFilename", itsImpl->itsFilename);
-
-	 writer->writeValue("rasterX", itsImpl->itsRasterX);
-	 writer->writeValue("rasterY", itsImpl->itsRasterY);
-	 writer->writeValue("zoomX", itsImpl->itsZoomX);
-	 writer->writeValue("zoomY", itsImpl->itsZoomY);
-	 writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
-	 writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
-  }
+  lwriter->writeValue("rasterX", itsImpl->itsRasterX);
+  lwriter->writeValue("rasterY", itsImpl->itsRasterY);
+  lwriter->writeValue("zoomX", itsImpl->itsZoomX);
+  lwriter->writeValue("zoomY", itsImpl->itsZoomY);
+  lwriter->writeValue("usingZoom", itsImpl->itsUsingZoom);
+  lwriter->writeValue("contrastFlip", itsImpl->itsContrastFlip);
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
 }
 
-void BitmapRep::legacyDesrlz(IO::LegacyReader* reader) {
+void BitmapRep::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("BitmapRep::legacyDesrlz");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
+  lreader->setStringMode(IO::GETLINE_TAB);
+  lreader->readValue("itsFilename", itsImpl->itsFilename);
 
-	 lreader->setStringMode(IO::GETLINE_TAB);
-	 reader->readValue("itsFilename", itsImpl->itsFilename);
+  lreader->readValue("rasterX", itsImpl->itsRasterX);
+  lreader->readValue("rasterY", itsImpl->itsRasterY);
+  lreader->readValue("zoomX", itsImpl->itsZoomX);
+  lreader->readValue("zoomY", itsImpl->itsZoomY);
+  lreader->readValue("usingZoom", itsImpl->itsUsingZoom);
+  lreader->readValue("contrastFlip", itsImpl->itsContrastFlip);
+  lreader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
 
-	 reader->readValue("rasterX", itsImpl->itsRasterX);
-	 reader->readValue("rasterY", itsImpl->itsRasterY);
-	 reader->readValue("zoomX", itsImpl->itsZoomX);
-	 reader->readValue("zoomY", itsImpl->itsZoomY);
-	 reader->readValue("usingZoom", itsImpl->itsUsingZoom);
-	 reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
-	 reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
-
-	 if ( itsImpl->itsFilename.empty() ) {
-		clearBytes();
-	 }
-	 else {
-		queuePbmFile(itsImpl->itsFilename.c_str());
-	 }
+  if ( itsImpl->itsFilename.empty() ) {
+	 clearBytes();
+  }
+  else {
+	 queuePbmFile(itsImpl->itsFilename.c_str());
   }
 }
 

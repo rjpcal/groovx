@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri Sep 29 14:36:06 2000
+// written: Fri Sep 29 16:12:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,23 +62,16 @@ DOTRACE("XBitmap::~XBitmap");
   delete itsRenderer; 
 }
 
-void XBitmap::legacySrlz(IO::LegacyWriter* writer) const {
+void XBitmap::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("XBitmap::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 IO::ConstIoProxy<Bitmap> baseclass(this);
-	 lwriter->writeBaseClass("Bitmap", &baseclass);
-  }
+  IO::ConstIoProxy<Bitmap> baseclass(this);
+  lwriter->writeBaseClass("Bitmap", &baseclass);
 }
 
-void XBitmap::legacyDesrlz(IO::LegacyReader* reader) {
+void XBitmap::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("XBitmap::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-
-	 IO::IoProxy<Bitmap> baseclass(this);
-	 lreader->readBaseClass("Bitmap", &baseclass);
-  }
+  IO::IoProxy<Bitmap> baseclass(this);
+  lreader->readBaseClass("Bitmap", &baseclass);
 }
 
 static const char vcid_xbitmap_cc[] = "$Header$";

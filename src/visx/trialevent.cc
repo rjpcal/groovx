@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Sep 29 14:45:45 2000
+// written: Fri Sep 29 16:12:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,25 +83,18 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(averageError);
 }
 
-void TrialEvent::legacySrlz(IO::LegacyWriter* writer) const {
+void TrialEvent::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("TrialEvent::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("requestedDelay", itsRequestedDelay);
-  }
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::legacyDesrlz(IO::LegacyReader* reader) {
+void TrialEvent::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("TrialEvent::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 cancel(); // cancel since the event is changing state
+  cancel(); // cancel since the event is changing state
 
-	 reader->readValue("requestedDelay", itsRequestedDelay);
-  }
+  lreader->readValue("requestedDelay", itsRequestedDelay);
 }
 
 void TrialEvent::readFrom(IO::Reader* reader) {

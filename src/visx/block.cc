@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:04:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,47 +173,41 @@ DOTRACE("Block::removeAllTrials");
   itsImpl->itsCurrentTrialId = -1;
 }
 
-void Block::legacySrlz(IO::LegacyWriter* writer) const {
+void Block::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Block::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 IO::WriteUtils::writeValueSeq(
-       writer, "trialSeq",
+  IO::WriteUtils::writeValueSeq(
+       lwriter, "trialSeq",
 		 itsImpl->itsTrialSequence.begin(), itsImpl->itsTrialSequence.end());
 
-	 lwriter->insertChar('\n');
+  lwriter->insertChar('\n');
 
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("randSeed", itsImpl->itsRandSeed);
-	 writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
-	 writer->writeValue("verbose", itsImpl->itsVerbose);
-  }
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeValue("randSeed", itsImpl->itsRandSeed);
+  lwriter->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  lwriter->writeValue("verbose", itsImpl->itsVerbose);
 }
 
-void Block::legacyDesrlz(IO::LegacyReader* reader) {
+void Block::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Block::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 itsImpl->itsTrialSequence.clear();
-	 IO::ReadUtils::template readValueSeq<int>(
-		 reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
+  itsImpl->itsTrialSequence.clear();
+  IO::ReadUtils::template readValueSeq<int>(
+		 lreader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
 
-	 reader->readValue("randSeed", itsImpl->itsRandSeed);
+  lreader->readValue("randSeed", itsImpl->itsRandSeed);
 
-	 reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
-	 if (itsImpl->itsCurTrialSeqIdx < 0 ||
-		  size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-		throw IO::ValueError(ioTag.c_str());
-	 }
-	 itsImpl->updateCurrentTrial();
-
-	 reader->readValue("verbose", itsImpl->itsVerbose);
-
-	 // XXX I think this is not necessary
-	 //  	 lreader->input().ignore(1, '\n');
+  lreader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  if (itsImpl->itsCurTrialSeqIdx < 0 ||
+		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
+	 throw IO::ValueError(ioTag.c_str());
   }
+  itsImpl->updateCurrentTrial();
+
+  lreader->readValue("verbose", itsImpl->itsVerbose);
+
+  // XXX I think this is not necessary
+  //  	 lreader->input().ignore(1, '\n');
 }
 
 void Block::readFrom(IO::Reader* reader) {

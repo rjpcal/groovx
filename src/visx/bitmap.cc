@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Sep 29 14:56:22 2000
+// written: Fri Sep 29 16:04:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,30 +47,22 @@ DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-void Bitmap::legacySrlz(IO::LegacyWriter* writer) const {
+void Bitmap::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Bitmap::legacySrlz");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
+  itsImpl->writeTo(lwriter);
 
-	 itsImpl->writeTo(writer);
-
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 writer->writeBaseClass("GrObj", &baseclass);
-  }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void Bitmap::legacyDesrlz(IO::LegacyReader* reader) {
+void Bitmap::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Bitmap::legacyDesrlz");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
+  itsImpl->readFrom(lreader);
 
-	 itsImpl->readFrom(reader);
-
-	 IO::IoProxy<GrObj> baseclass(this);
-	 reader->readBaseClass("GrObj", &baseclass);
-  }
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
 }
 
 void Bitmap::readFrom(IO::Reader* reader) {

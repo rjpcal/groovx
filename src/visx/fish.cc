@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:07:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -261,36 +261,29 @@ DOTRACE("Fish::~Fish");
   delete [] itsEndPts;
 }
 
-void Fish::legacySrlz(IO::LegacyWriter* writer) const {
+void Fish::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Fish::legacySrlz");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-
-	 for (unsigned int i = 0; i < NUM_LEGACY_PINFOS; ++i) {
-		writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-	 }
-
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 writer->writeBaseClass("GrObj", &baseclass);
+  for (unsigned int i = 0; i < NUM_LEGACY_PINFOS; ++i) {
+	 lwriter->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
+
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void Fish::legacyDesrlz(IO::LegacyReader* reader) {
+void Fish::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Fish::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 for (unsigned int i = 0; i < NUM_LEGACY_PINFOS; ++i) {
-		reader->readValueObj(PINFOS[i].name_cstr(),
-									const_cast<Value&>(get(PINFOS[i].property())));
-	 }
-
-	 IO::IoProxy<GrObj> baseclass(this);
-	 reader->readBaseClass("GrObj", &baseclass);
-
-	 sendStateChangeMsg();
+  for (unsigned int i = 0; i < NUM_LEGACY_PINFOS; ++i) {
+	 lreader->readValueObj(PINFOS[i].name_cstr(),
+								  const_cast<Value&>(get(PINFOS[i].property())));
   }
+
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
+
+  sendStateChangeMsg();
 }
 
 void Fish::readFrom(IO::Reader* reader) {

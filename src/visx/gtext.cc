@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Sep 29 14:45:46 2000
+// written: Fri Sep 29 16:08:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -674,31 +674,24 @@ Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::legacySrlz(IO::LegacyWriter* writer) const {
+void Gtext::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("Gtext::legacySrlz");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
+  lwriter->setStringMode(IO::GETLINE_NEWLINE);
+  lwriter->writeValue("text", itsText);
 
-	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
-	 writer->writeValue("text", itsText);
-
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 lwriter->writeBaseClass("GrObj", &baseclass);
-  }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void Gtext::legacyDesrlz(IO::LegacyReader* reader) {
+void Gtext::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Gtext::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 lreader->setStringMode(IO::GETLINE_NEWLINE);
-	 reader->readValue("text", itsText);
+  lreader->setStringMode(IO::GETLINE_NEWLINE);
+  lreader->readValue("text", itsText);
 
-	 IO::IoProxy<GrObj> baseclass(this);
-	 lreader->readBaseClass("GrObj", &baseclass);
-  }
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
 }
 
 void Gtext::readFrom(IO::Reader* reader) {

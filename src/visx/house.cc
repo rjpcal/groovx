@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Sep 29 14:45:46 2000
+// written: Fri Sep 29 16:09:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -235,36 +235,30 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::legacySrlz(IO::LegacyWriter* writer) const {
+void House::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("House::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-		writer->writeValueObj(PINFOS[i].name_cstr(),
-									 get(PINFOS[i].property()));
-	 }
-
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 lwriter->writeBaseClass("GrObj", &baseclass);
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 lwriter->writeValueObj(PINFOS[i].name_cstr(),
+									get(PINFOS[i].property()));
   }
+
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void House::legacyDesrlz(IO::LegacyReader* reader) {
+void House::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("House::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-		reader->readValueObj(PINFOS[i].name_cstr(),
-									const_cast<Value&>(get(PINFOS[i].property())));
-	 }
-
-	 IO::IoProxy<GrObj> baseclass(this);
-	 lreader->readBaseClass("GrObj", &baseclass);
-
-	 sendStateChangeMsg();
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 lreader->readValueObj(PINFOS[i].name_cstr(),
+								  const_cast<Value&>(get(PINFOS[i].property())));
   }
+
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
+
+  sendStateChangeMsg();
 }
 
 void House::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:08:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -391,57 +391,50 @@ GrObj::Impl::~Impl() {
 DOTRACE("GrObj::Impl::~Impl");
 }
 
-void GrObj::Impl::legacySrlz(IO::LegacyWriter* writer) const {
+void GrObj::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("GrObj::Impl::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
+  lwriter->writeValue("GrObj::category", itsCategory);
 
-	 writer->writeValue("GrObj::category", itsCategory);
+  lwriter->writeValue("GrObj::renderMode", itsRenderer.getMode());
 
-	 writer->writeValue("GrObj::renderMode", itsRenderer.getMode());
+  lwriter->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
-	 writer->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
+  lwriter->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
-	 writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
+  lwriter->writeValue("GrObj::scalingMode", itsScaler.getMode());
+  lwriter->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
+  lwriter->writeValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
 
-	 writer->writeValue("GrObj::scalingMode", itsScaler.getMode());
-	 writer->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
-	 writer->writeValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
-
-	 writer->writeValue("GrObj::alignmentMode", itsAligner.itsMode);
-	 writer->writeValue("GrObj::centerX", itsAligner.itsCenterX);
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("GrObj::centerY", itsAligner.itsCenterY);
-  }
+  lwriter->writeValue("GrObj::alignmentMode", itsAligner.itsMode);
+  lwriter->writeValue("GrObj::centerX", itsAligner.itsCenterX);
+  lwriter->setFieldSeparator('\n');
+  lwriter->writeValue("GrObj::centerY", itsAligner.itsCenterY);
 }
 
-void GrObj::Impl::legacyDesrlz(IO::LegacyReader* reader) {
+void GrObj::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("GrObj::Impl::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 reader->readValue("GrObj::category", itsCategory);
+  lreader->readValue("GrObj::category", itsCategory);
 
-	 int temp;
-	 reader->readValue("GrObj::renderMode", temp);
-	 itsRenderer.setMode(temp, this);
+  int temp;
+  lreader->readValue("GrObj::renderMode", temp);
+  itsRenderer.setMode(temp, this);
 
-	 reader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
+  lreader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
-	 reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
+  lreader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
-	 reader->readValue("GrObj::scalingMode", temp);
-	 itsScaler.setMode(temp, this);
+  lreader->readValue("GrObj::scalingMode", temp);
+  itsScaler.setMode(temp, this);
 
-	 reader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
-	 reader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
+  lreader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
+  lreader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
 
-	 reader->readValue("GrObj::alignmentMode", itsAligner.itsMode);
-	 reader->readValue("GrObj::centerX", itsAligner.itsCenterX);
-	 reader->readValue("GrObj::centerY", itsAligner.itsCenterY);
+  lreader->readValue("GrObj::alignmentMode", itsAligner.itsMode);
+  lreader->readValue("GrObj::centerX", itsAligner.itsCenterX);
+  lreader->readValue("GrObj::centerY", itsAligner.itsCenterY);
 
-	 invalidateCaches();
-  }
+  invalidateCaches();
 }
 
 void GrObj::Impl::readFrom(IO::Reader* reader) {

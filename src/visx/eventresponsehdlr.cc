@@ -449,29 +449,22 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   }
 }
 
-void EventResponseHdlr::Impl::legacySrlz(IO::LegacyWriter* writer) const {
+void EventResponseHdlr::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("EventResponseHdlr::Impl::legacySrlz");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
+  oldLegacySrlz(lwriter);
 
-	 oldLegacySrlz(writer);
-
-	 writer->writeValue("eventSequence", itsEventSequence);
-	 writer->writeValue("bindingSubstitution", itsBindingSubstitution);
-  }
+  lwriter->writeValue("eventSequence", itsEventSequence);
+  lwriter->writeValue("bindingSubstitution", itsBindingSubstitution);
 }
 
-void EventResponseHdlr::Impl::legacyDesrlz(IO::LegacyReader* reader) {
+void EventResponseHdlr::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 oldLegacyDesrlz(reader);
+  oldLegacyDesrlz(lreader);
 
-	 reader->readValue("eventSequence", itsEventSequence);
-	 reader->readValue("bindingSubstitution", itsBindingSubstitution);
-  }
+  lreader->readValue("eventSequence", itsEventSequence);
+  lreader->readValue("bindingSubstitution", itsBindingSubstitution);
 }
 
 void EventResponseHdlr::Impl::oldLegacySrlz(IO::Writer* writer) const {

@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri Sep 29 14:45:47 2000
+// written: Fri Sep 29 16:08:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,30 +60,24 @@ DOTRACE("GLBitmap::~GLBitmap");
   delete itsRenderer; 
 }
 
-void GLBitmap::legacySrlz(IO::LegacyWriter* writer) const {
+void GLBitmap::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("GLBitmap::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
 
-	 writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
+  lwriter->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
-	 IO::ConstIoProxy<Bitmap> baseclass(this);
-	 writer->writeBaseClass("Bitmap", &baseclass);
-  }
+  IO::ConstIoProxy<Bitmap> baseclass(this);
+  lwriter->writeBaseClass("Bitmap", &baseclass);
 }
 
-void GLBitmap::legacyDesrlz(IO::LegacyReader* reader) {
+void GLBitmap::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("GLBitmap::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 bool val;
-	 reader->readValue("usingGlBitmap", val); 
-	 itsRenderer->setUsingGlBitmap(val);
+  bool val;
+  lreader->readValue("usingGlBitmap", val); 
+  itsRenderer->setUsingGlBitmap(val);
 
-	 IO::IoProxy<Bitmap> baseclass(this);
-	 lreader->readBaseClass("Bitmap", &baseclass);
-  }
+  IO::IoProxy<Bitmap> baseclass(this);
+  lreader->readBaseClass("Bitmap", &baseclass);
 }
 
 void GLBitmap::readFrom(IO::Reader* reader) {

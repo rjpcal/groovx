@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Sep 29 14:45:45 2000
+// written: Fri Sep 29 16:10:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -315,67 +315,61 @@ DOTRACE("MorphyFace::~MorphyFace");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void MorphyFace::legacySrlz(IO::LegacyWriter* writer) const {
+void MorphyFace::legacySrlz(IO::LegacyWriter* lwriter) const {
 DOTRACE("MorphyFace::legacySrlz");
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 Invariant(check());
+  Invariant(check());
 
-	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-		writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-	 }
-
-	 lwriter->insertChar('\n');
-
-	 IO::ConstIoProxy<GrObj> baseclass(this);
-	 lwriter->writeBaseClass("GrObj", &baseclass);
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 lwriter->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
+
+  lwriter->insertChar('\n');
+
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  lwriter->writeBaseClass("GrObj", &baseclass);
 }
 
-void MorphyFace::legacyDesrlz(IO::LegacyReader* reader) {
+void MorphyFace::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("MorphyFace::legacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
 
-	 lreader->eatWhitespace();
-	 int version = 0;
+  lreader->eatWhitespace();
+  int version = 0;
 
-	 if ( lreader->peek() == '@' ) {
-		int c = lreader->getChar();
-		Assert(c == '@');
+  if ( lreader->peek() == '@' ) {
+	 int c = lreader->getChar();
+	 Assert(c == '@');
 
-		lreader->readValue("legacyVersion", version);
-		DebugEvalNL(version);
-	 }
-
-	 if (version == 1) {
-		char brace = lreader->readChar("leftBrace");
-		if (brace != '{') {
-		  IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
-		  throw err;
-		}
-	 }
-
-	 for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-		reader->readValueObj(PINFOS[i].name_cstr(),
-									const_cast<Value&>(get(PINFOS[i].property())));
-	 }
-
-	 if (version == 1) {
-		char brace = lreader->readChar("rightBrace");
-		if (brace != '}') {
-		  IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
-		  throw err;
-		}
-	 }
-
-	 Invariant(check());
-
-	 IO::IoProxy<GrObj> baseclass(this);
-	 lreader->readBaseClass("GrObj", &baseclass);
-
-	 sendStateChangeMsg();
+	 lreader->readValue("legacyVersion", version);
+	 DebugEvalNL(version);
   }
+
+  if (version == 1) {
+	 char brace = lreader->readChar("leftBrace");
+	 if (brace != '{') {
+		IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
+		throw err;
+	 }
+  }
+
+  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
+	 lreader->readValueObj(PINFOS[i].name_cstr(),
+								  const_cast<Value&>(get(PINFOS[i].property())));
+  }
+
+  if (version == 1) {
+	 char brace = lreader->readChar("rightBrace");
+	 if (brace != '}') {
+		IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
+		throw err;
+	 }
+  }
+
+  Invariant(check());
+
+  IO::IoProxy<GrObj> baseclass(this);
+  lreader->readBaseClass("GrObj", &baseclass);
+
+  sendStateChangeMsg();
 }
 
 IO::VersionId MorphyFace::serialVersionId() const {
