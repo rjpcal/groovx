@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Mon Nov 25 11:49:13 2002
+// written: Fri Dec 13 10:06:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,19 +42,20 @@ public:
   bool isRepeating() const { return isItRepeating; }
   void setRepeating(bool repeat) { isItRepeating = repeat; }
 
+  bool isPending() const { return itsToken != 0; }
+
 private:
   static void dummyCallback(ClientData clientData);
 
   Timer(const Timer&);
   Timer& operator=(const Timer&);
 
+  Tcl_TimerToken itsToken;
   unsigned int itsMsecDelay;
   bool isItRepeating;
 
   // Diagnostics
   mutable StopWatch itsStopWatch;
-
-  Tcl_TimerToken itsToken;
 };
 
 static const char vcid_tcltimer_h[] = "$Header$";
