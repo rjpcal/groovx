@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Nov 20 15:08:00 2002
+// written: Fri Nov 22 17:08:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,12 @@
 #ifndef TCLPKG_H_DEFINED
 #define TCLPKG_H_DEFINED
 
-#include "util/objfactory.h"
-#include "util/pointers.h"
-
 #include "tcl/tclfunctor.h"
 #include "tcl/tclpkgbase.h"
 
 namespace Tcl
 {
-  class ObjCaster;
   class Pkg;
-
-  template <class C>
-  void defCreator(Pkg*, const char* aliasName = 0)
-  {
-    const char* origName =
-      Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
-
-    if (aliasName != 0)
-      Util::ObjFactory::theOne().registerAlias(origName, aliasName);
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -129,62 +115,11 @@ public:
     defSetter( cmd_name, setterFunc );
   }
 
-  void defGenericObjCmds(shared_ptr<ObjCaster> caster);
-
 protected:
   static const char* actionUsage(const char* usage);
   static const char* getterUsage(const char* usage);
   static const char* setterUsage(const char* usage);
 };
-
-
-namespace Util
-{
-  class Object;
-}
-
-
-// ####################################################################
-/// ObjCaster class encapsulates casts to see if objects match a given type.
-
-class Tcl::ObjCaster
-{
-protected:
-  ObjCaster();
-
-public:
-  virtual ~ObjCaster();
-
-  virtual bool isMyType(const Util::Object* obj) = 0;
-
-  bool isNotMyType(const Util::Object* obj) { return !isMyType(obj); }
-
-  bool isIdMyType(Util::UID uid);
-
-  bool isIdNotMyType(Util::UID uid) { return !isIdMyType(uid); }
-};
-
-namespace Tcl
-{
-
-  /// CObjCaster implements ObjCaster with dynamic_cast.
-  template <class C>
-  class CObjCaster : public ObjCaster
-  {
-  public:
-    virtual bool isMyType(const Util::Object* obj)
-    {
-      return (obj != 0 && dynamic_cast<const C*>(obj) != 0);
-    }
-  };
-
-  template <class C>
-  void defGenericObjCmds(Pkg* pkg)
-  {
-    shared_ptr<ObjCaster> caster(new CObjCaster<C>);
-    pkg->defGenericObjCmds(caster);
-  }
-}
 
 static const char vcid_tclpkg_h[] = "$Header$";
 #endif // !TCLPKG_H_DEFINED
