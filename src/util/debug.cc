@@ -3,7 +3,7 @@
 // debug.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 18:48:38 2000
-// written: Mon Oct  9 19:27:40 2000
+// written: Tue Oct 10 07:16:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <iostream.h>
 
+#define LOCAL_PROF
 #include "util/trace.h"
 
 void Debug::AssertImpl(const char* what, const char* where, int line_no) {
