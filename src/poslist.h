@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Thu Jul 22 12:56:54 1999
+// written: Wed Oct 20 17:59:46 1999
 // $Id$
 //
 // This file defines PosList, a singleton class whose instance is a
@@ -23,8 +23,6 @@
 #endif
 
 class Position;
-
-#include "id.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
