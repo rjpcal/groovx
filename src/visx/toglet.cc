@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Nov  3 18:18:23 1999
+// written: Thu Nov  4 10:01:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -265,8 +265,8 @@ DOTRACE("ToglConfig::scaleRect");
   try { if (factor <= 0.0) { throw ToglError("invalid scaling factor"); } }
   catch (ToglError&) { throw; }
 
-  itsMinRect.widen(factor);
-  itsMinRect.heighten(factor);
+  itsMinRect.widenByFactor(factor);
+  itsMinRect.heightenByFactor(factor);
 
   reconfigure();
 }
@@ -443,10 +443,10 @@ DOTRACE("ToglConfig::reconfigure");
     double ratio_of_aspects = itsMinRect.aspect() / getAspect();
     
     if ( ratio_of_aspects < 1 ) { // the available space is too wide...
-      therect.widen(1/ratio_of_aspects); // so use some extra width
+      therect.widenByFactor(1/ratio_of_aspects); // so use some extra width
     }
     else {                        // the available space is too tall...
-      therect.heighten(ratio_of_aspects); // and use some extra height
+      therect.heightenByFactor(ratio_of_aspects); // and use some extra height
     }
     
     glOrtho(therect.l, therect.r, therect.b, therect.t, -1.0, 1.0);
