@@ -154,7 +154,11 @@ test "FaceTcl-Face::loadFaces" "normal file read with limit on # to read" {
 				&& [string compare [GrObj::type 0] "Face"] == 0
 } {^1$}
 test "FaceTcl-Face::loadFaces" "file read with virtual constructor" {
-} {^$} $must_implement
+	 ObjList::reset
+	 set objids [Face::loadFaces $::TEST_DIR/nos_faces_s50_c3]
+	 return "[llength $objids] [ObjList::count] \
+				[GrObj::type 0] [GrObj::type 10]"
+} {^20 *20 *Face *CloneFace$}
 test "FaceTcl-Face::loadFaces" "empty file read" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/empty_file]
