@@ -235,11 +235,21 @@ namespace GLTcl
 
 #undef NAMEVAL
 
-  template <class T>
-  void extractValues(GLenum tag, T* vals_out);
+  void GLTcl::extractValues(GLenum tag, GLboolean* vals_out)
+  { glGetBooleanv(tag, vals_out); }
+
+  void GLTcl::extractValues(GLenum tag, GLdouble* vals_out)
+  { glGetDoublev(tag, vals_out); }
+
+  void GLTcl::extractValues(GLenum tag, GLint* vals_out)
+  { glGetIntegerv(tag, vals_out); }
 
   template <class T>
-  Tcl::List get(GLenum param_tag)
+  Tcl::List get(GLenum param_tag
+#ifdef PPC
+		, T* dummy=0
+#endif
+		)
   {
     const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
@@ -254,26 +264,17 @@ namespace GLTcl
     return result;
   }
 
+#ifdef PPC
+  Tcl::List getBoolean(GLenum param_tag)
+  { return get<GLboolean>(param_tag, (GLboolean*) 0); }
+
+  Tcl::List getDouble(GLenum param_tag)
+  { return get<GLdouble>(param_tag, (GLdouble*) 0); }
+
+  Tcl::List getInt(GLenum param_tag)
+  { return get<GLint>(param_tag, (GLint*) 0); }
+#endif
 }
-
-//---------------------------------------------------------------------
-//
-// Specializations of GLTcl::extractValues for boolean, double, and
-// int types
-//
-//---------------------------------------------------------------------
-
-template <>
-void GLTcl::extractValues<GLboolean>(GLenum tag, GLboolean* vals_out)
-{ glGetBooleanv(tag, vals_out); }
-
-template <>
-void GLTcl::extractValues<GLdouble>(GLenum tag, GLdouble* vals_out)
-{ glGetDoublev(tag, vals_out); }
-
-template <>
-void GLTcl::extractValues<GLint>(GLenum tag, GLint* vals_out)
-{ glGetIntegerv(tag, vals_out); }
 
 //---------------------------------------------------------------------
 //
@@ -500,9 +501,15 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
             gluPerspective );
 
+#ifndef PPC
   pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
   pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
   pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
+#else
+  pkg->def( "::glGetBoolean", "param_name", GLTcl::getBoolean );
+  pkg->def( "::glGetDouble", "param_name", GLTcl::getDouble );
+  pkg->def( "::glGetInteger", "param_name", GLTcl::getInt );
+#endif
 
   pkg->def( "::antialias", "on_off", GLTcl::antialias );
   pkg->def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine );
