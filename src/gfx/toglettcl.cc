@@ -156,9 +156,6 @@ public:
               "}\n"
               "namespace eval ::Togl { namespace export * }"
               );
-
-    // FIXME can't ExptDriver get its widget some other way?
-    Pkg::eval("Expt::widget [Toglet::current]");
   }
 
   virtual ~TogletPkg()

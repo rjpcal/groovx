@@ -32,50 +32,26 @@
 
 #include "gfx/toglet.h"
 
-#include "system/system.h"
-
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
-#include "util/objfactory.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
 #include "visx/exptdriver.h"
 
 #include "util/trace.h"
-#include "util/debug.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// Expt Tcl package declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace ExptTcl
+namespace
 {
-  class ExpPkg;
-
-  SoftRef<ExptDriver> theExptDriver;
-
-  void setCurrentExpt(Ref<ExptDriver> expt)
-  {
-    theExptDriver = expt;
-  }
-
-  Ref<ExptDriver> getCurrentExpt()
-  {
-    return theExptDriver;
-  }
-
   // Creates the necessary screen bindings for start, pause, and quit,
   // then begins the current trial (probably the first trial) of the
   // current Expt. Record the time when the experiment
   // began. edBeginExpt is called, which displays a trial, and
   // generates the timer callbacks associated with a trial.
-  void begin(Ref<ExptDriver> expt)
+  void beginExpt(Util::Ref<ExptDriver> expt)
   {
     Util::SoftRef<Toglet> widget = expt->getWidget();
 
@@ -118,78 +94,39 @@ namespace ExptTcl
   }
 }
 
-//---------------------------------------------------------------------
-//
-// ExpPkg definition
-//
-//---------------------------------------------------------------------
-
-class ExptTcl::ExpPkg : public Tcl::Pkg
-{
-public:
-  ExpPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "ExptDriver", "$Revision$")
-  {
-    theExptDriver = Ref<ExptDriver>(ExptDriver::make());
-
-    this->inheritPkg("IO");
-
-    Tcl::defGenericObjCmds<ExptDriver>(this);
-
-    Tcl::defTracing(this, ExptDriver::tracer);
-
-    def( "current", "expt_id", &ExptTcl::setCurrentExpt );
-    def( "current", 0, &ExptTcl::getCurrentExpt );
-
-    def( "begin", "expt_id", ExptTcl::begin );
-    def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
-
-    def("addBlock", "expt_id block_id",
-        Util::bindLast(Util::memFunc(&ExptDriver::addElement), 1));
-    defAttrib("autosaveFile",
-              &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
-    defAttrib("autosavePeriod",
-              &ExptDriver::getAutosavePeriod,
-              &ExptDriver::setAutosavePeriod);
-    defGetter("blocks", &ExptDriver::getElements);
-    defAction("clear", &ExptDriver::clearElements);
-    defGetter("currentBlock", &ExptDriver::currentElement);
-    defGetter("infoLog", &ExptDriver::getInfoLog);
-    defAction( "pause", &ExptDriver::pause );
-    defAction("reset", &ExptDriver::vxReset);
-    defAction("stop", &ExptDriver::vxHalt);
-    defAction("storeData", &ExptDriver::storeData);
-    defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
-    defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
-    defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
-
-    Pkg::eval("foreach cmd [info commands ::ExptDriver::*] {"
-              "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[ExptDriver::current\\] \\$args \" } }\n"
-              "namespace eval Expt { namespace export * }"
-              );
-  }
-
-  virtual ~ExpPkg()
-    {
-      if (theExptDriver.isValid())
-        theExptDriver->clearElements();
-    }
-};
-
-//---------------------------------------------------------------------
-//
-// Expt_Init --
-//
-//---------------------------------------------------------------------
-
 extern "C"
 int Exptdriver_Init(Tcl_Interp* interp)
 {
 DOTRACE("Exptdriver_Init");
 
-  Tcl::Pkg* pkg = new ExptTcl::ExpPkg(interp);
-
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ExptDriver", "$Revision$");
+  pkg->inheritPkg("IO");
   Tcl::defCreator<ExptDriver>(pkg, "Expt");
+  Tcl::defGenericObjCmds<ExptDriver>(pkg);
+
+  Tcl::defTracing(pkg, ExptDriver::tracer);
+
+  pkg->def( "begin", "expt_id", &beginExpt );
+  pkg->def( "setStartCommand", "expt_id command", &setStartCommand );
+
+  pkg->def("addBlock", "expt_id block_id",
+           Util::bindLast(Util::memFunc(&ExptDriver::addElement), 1));
+  pkg->defAttrib("autosaveFile",
+                 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+  pkg->defAttrib("autosavePeriod",
+                 &ExptDriver::getAutosavePeriod,
+                 &ExptDriver::setAutosavePeriod);
+  pkg->defGetter("blocks", &ExptDriver::getElements);
+  pkg->defAction("clear", &ExptDriver::clearElements);
+  pkg->defGetter("currentBlock", &ExptDriver::currentElement);
+  pkg->defGetter("infoLog", &ExptDriver::getInfoLog);
+  pkg->defAction( "pause", &ExptDriver::pause );
+  pkg->defAction("reset", &ExptDriver::vxReset);
+  pkg->defAction("stop", &ExptDriver::vxHalt);
+  pkg->defAction("storeData", &ExptDriver::storeData);
+  pkg->defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
+  pkg->defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
+  pkg->defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
 
   return pkg->initStatus();
 }
