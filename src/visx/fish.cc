@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Sep  3 10:44:08 2001
+// written: Mon Sep  3 10:54:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,7 +127,9 @@ const FieldMap& Fish::classFields()
     Field("inColor", &Fish::inColor,
           false, false, true, true, Field::TRANSIENT),
     Field("showControlPoints", &Fish::showControlPoints,
-          false, false, true, true, Field::TRANSIENT)
+          false, false, true, true, Field::TRANSIENT),
+    Field("partsMask", &Fish::partsMask,
+          0, 0, 15, 1, Field::TRANSIENT)
   };
 
   static FieldMap FISH_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -160,7 +162,8 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsEndPt_Part(&dummy_int),
   itsEndPt_Bkpt(&dummy_int),
   inColor(false),
-  showControlPoints(false)
+  showControlPoints(false),
+  partsMask(0)
 {
 DOTRACE("Fish::Fish");
 
@@ -457,6 +460,9 @@ DOTRACE("Fish::grRender");
   // Loop over fish parts
   for (int i = 0; i < 4; ++i)
     {
+      if ((1 << i) & partsMask)
+        continue;
+
       if (inColor)
         canvas.setColor(colors[i]);
 

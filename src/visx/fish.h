@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Wed Aug 29 13:30:02 2001
+// written: Mon Sep  3 10:50:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,6 +120,9 @@ private:
 
   /// Controls whether the B-spline control points will be shown
   bool showControlPoints;
+
+  /// Selective masks the rendering of the different parts.
+  int partsMask;
 
   /////////////
   // actions //
