@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Fri May 11 16:29:19 2001
+// written: Thu Sep 13 11:49:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define NUM_CC_DEFINED
 
 #include "num.h"
-
-#include "mtx.h"
 
 #include "util/trace.h"
 
@@ -27,35 +25,35 @@ double Num::lookup[TABLE_SIZE] = { 0.0 };
 namespace {
   double fastexpImpl(double xx)
   {
-	 static const double one_over[] = {
-		1.0, /* 1/0 -- undefined, really */
-		1.0,
-		0.5,
-		0.333333333333333333333333,
-		0.25,
-		0.2,
-		0.166666666666666666666667,
-		0.142857142857142857142857,
-		0.125,
-		0.111111111111111111111111,
-		0.1
-	 };
+    static const double one_over[] = {
+      1.0, /* 1/0 -- undefined, really */
+      1.0,
+      0.5,
+      0.333333333333333333333333,
+      0.25,
+      0.2,
+      0.166666666666666666666667,
+      0.142857142857142857142857,
+      0.125,
+      0.111111111111111111111111,
+      0.1
+    };
 
-	 return
-		1.0 + (xx * one_over[1])
-		* (1.0 + (xx * one_over[2])
-			* (1.0 + (xx * one_over[3])
-				* (1.0 + (xx * one_over[4])
-					* (1.0 + (xx * one_over[5])
-						* (1.0 + (xx * one_over[6])
-							* (1.0 + (xx * one_over[7])
-								)
-							)
-						)
-					)
-				)
-			)
-		;
+    return
+      1.0 + (xx * one_over[1])
+      * (1.0 + (xx * one_over[2])
+         * (1.0 + (xx * one_over[3])
+            * (1.0 + (xx * one_over[4])
+               * (1.0 + (xx * one_over[5])
+                  * (1.0 + (xx * one_over[6])
+                     * (1.0 + (xx * one_over[7])
+                        )
+                     )
+                  )
+               )
+            )
+         )
+      ;
   }
 }
 
@@ -64,8 +62,8 @@ double Num::gammalnEngine(double xx)
 DOTRACE("Num::gammalnEngine");
 
   static double cof[6] = {76.18009172947146,     -86.50532032941677,
-								  24.01409824083091,     -1.231738572450155,
-								  0.1208650973866179e-2, -0.5395239384953e-5};
+                          24.01409824083091,     -1.231738572450155,
+                          0.1208650973866179e-2, -0.5395239384953e-5};
   double x,y,tmp,ser;
   int j;
 
