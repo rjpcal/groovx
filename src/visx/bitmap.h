@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 20 16:10:45 2002
+// written: Wed Nov 20 16:45:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ private:
   Bitmap(const Bitmap&);
   Bitmap& operator=(const Bitmap&);
 
-  BitmapImpl* const itsImpl;
+  BitmapImpl* const rep;
 };
 
 static const char vcid_bitmap_h[] = "$Header$";
