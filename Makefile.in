@@ -127,7 +127,7 @@ $(DOC)/DoxyConfig: $(DOC)/DoxyConfig.in config.status
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-CPPFLAGS += -I$(SRC)
+CPPFLAGS += -I$(SRC) -I$(SRC)/pkgs
 
 ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
