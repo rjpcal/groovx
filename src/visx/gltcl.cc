@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jul 16 11:33:23 2001
+// written: Mon Jul 16 12:12:04 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -19,7 +19,6 @@
 #define GLTCL_CC_DEFINED
 
 #include "tcl/functor.h"
-#include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclitempkg.h"
 
@@ -93,17 +92,18 @@ void GLTcl::checkGL() {
 //
 //---------------------------------------------------------------------
 
-class GLTcl::glGetCmd : public Tcl::TclCmd {
-protected:
-  struct AttribInfo {
+namespace GLTcl
+{
+  struct AttribInfo
+  {
     const char* param_name;
     GLenum param_tag;
     int num_values;
   };
 
-  static std::map<GLenum, const AttribInfo*> theirAttribs;
+  static std::map<GLenum, const AttribInfo*> theAttribMap;
 
-  void initialize(Tcl::TclPkg* pkg) {
+  void initializeGet(Tcl::TclPkg* pkg) {
     static bool inited = false;
 
     if ( inited ) return;
@@ -349,79 +349,49 @@ protected:
     int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
     for (int i = 0; i < num_params; ++i) {
       pkg->linkVarCopy(theAttribs[i].param_name, (int)theAttribs[i].param_tag);
-      theirAttribs[theAttribs[i].param_tag] = &(theAttribs[i]);
+      theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
     }
 
     inited = true;
   }
+}
 
-public:
-  glGetCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "param_name", 2, 2) { initialize(pkg); }
+namespace GLTcl
+{
 
-protected:
-  virtual void getValues(const AttribInfo* theInfo,
-                         Tcl::Context& ctx) = 0;
+  template <class T>
+  void extractValues(GLenum tag, T* vals_out);
 
-  virtual void invoke(Tcl::Context& ctx)
+  template <class T>
+  Tcl::List get(GLenum param_tag)
   {
-    GLenum param_tag = ctx.getIntFromArg(1);
-
-    const AttribInfo* theInfo = theirAttribs[param_tag];
+    const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
       {
         throw Tcl::TclError("invalid or unsupported enumerant");
       }
 
-    getValues(theInfo, ctx);
-  }
-};
-
-// Unique definition of static member of glGetCmd
-std::map<GLenum, const GLTcl::glGetCmd::AttribInfo*> GLTcl::glGetCmd::theirAttribs;
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glGetTypeCmd<T> --
-//
-// A typed template derived from glGetCmd for returning typed info
-// from glGetXXX.
-//
-//---------------------------------------------------------------------
-
-namespace GLTcl {
-
-template <class T>
-class glGetTypeCmd : public glGetCmd {
-public:
-  glGetTypeCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    glGetCmd(pkg, cmd_name) {}
-
-protected:
-  void extractValues(GLenum tag, T* vals_out);
-
-  virtual void getValues(const AttribInfo* theInfo, Tcl::Context& ctx)
-  {
     fixed_block<T> theVals(theInfo->num_values);
     extractValues(theInfo->param_tag, &(theVals[0]));
-    ctx.returnSequence(theVals.begin(), theVals.end());
+    Tcl::List result;
+    result.appendRange(theVals.begin(), theVals.end());
+    return result;
   }
-};
 
 }
 
 // Specializations of glGetTypeCmd::extractValues for basic types
 
 template <>
-void GLTcl::glGetTypeCmd<GLboolean>::extractValues(GLenum tag, GLboolean* vals_out)
+void GLTcl::extractValues<GLboolean>(GLenum tag, GLboolean* vals_out)
 { glGetBooleanv(tag, vals_out); }
 
 template <>
-void GLTcl::glGetTypeCmd<GLdouble>::extractValues(GLenum tag, GLdouble* vals_out)
+void GLTcl::extractValues<GLdouble>(GLenum tag, GLdouble* vals_out)
 { glGetDoublev(tag, vals_out); }
 
 template <>
-void GLTcl::glGetTypeCmd<GLint>::extractValues(GLenum tag, GLint* vals_out)
+void GLTcl::extractValues<GLint>(GLenum tag, GLint* vals_out)
 { glGetIntegerv(tag, vals_out); }
 
 //---------------------------------------------------------------------
@@ -803,9 +773,10 @@ public:
     def( gluPerspective,
          "::gluPerspective", "field_of_view_y aspect zNear zFar" );
 
-    addCommand( new glGetTypeCmd<GLboolean>(this, "::glGetBoolean") );
-    addCommand( new glGetTypeCmd<GLdouble>(this, "::glGetDouble") );
-    addCommand( new glGetTypeCmd<GLint>(this, "::glGetInteger") );
+    initializeGet(this);
+    def( GLTcl::get<GLboolean>, "::glGetBoolean", "param_name" );
+    def( GLTcl::get<GLdouble>, "::glGetDouble", "param_name" );
+    def( GLTcl::get<GLint>, "::glGetInteger", "param_name" );
 
     def( GLTcl::antialias, "::antialias", "on_off" );
     def( GLTcl::drawOneLine, "::drawOneLine", "x1 y1 x2 y2" );
