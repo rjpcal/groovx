@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 13:29:50 2001
+// written: Tue Aug 21 13:45:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,15 +67,11 @@ namespace
 // GrObj default constructor
 GrObj::GrObj() :
   FieldContainer(&sigNodeChanged),
-  itsImpl(new GrObjImpl(this))
+  itsImpl(GrObjImpl::make(this))
 {
 DOTRACE("GrObj::GrObj");
 
-  DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
-
-  // The GrObj needs to observe itself in order to update its display
-  // list according to state changes.
-  sigNodeChanged.connect(this);
+  itsImpl->incrRefCount();
 
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
@@ -87,8 +83,7 @@ DOTRACE("GrObj::GrObj");
 GrObj::~GrObj()
 {
 DOTRACE("GrObj::~GrObj");
-  sigNodeChanged.disconnect(this->id());
-  delete itsImpl;
+  itsImpl->decrRefCount();
 }
 
 IO::VersionId GrObj::serialVersionId() const
@@ -309,12 +304,6 @@ DOTRACE("GrObj::setRenderMode");
 void GrObj::setUnRenderMode(Gmodes::RenderMode)
 {
 DOTRACE("GrObj::setUnRenderMode");
-}
-
-void GrObj::receiveSignal()
-{
-DOTRACE("GrObj::receiveSignal");
-  itsImpl->invalidateCaches();
 }
 
 

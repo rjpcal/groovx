@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Thu Aug 16 11:02:25 2001
+// written: Tue Aug 21 13:44:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ namespace
   const IO::VersionId GROBJ_SERIAL_VERSION_ID = 1;
 }
 
-class GrObjImpl {
+class GrObjImpl : public Util::Object {
 private:
   GrObjImpl(const GrObjImpl&);
   GrObjImpl& operator=(const GrObjImpl&);
@@ -80,6 +80,8 @@ public:
   // Methods
   //
 
+  static GrObjImpl* make(GrObj* obj) { return new GrObjImpl(obj); }
+
   GrObjImpl(GrObj* obj) :
     itsCategory(-1),
     itsNativeNode(new GrObjNode(obj)),
@@ -89,7 +91,11 @@ public:
     itsAligner(new GrObjAligner(itsBitmapCache)),
     itsScaler(new GrObjScaler(itsAligner)),
     itsTopNode(itsScaler)
-  {}
+  {
+    // We connect to sigNodeChanged in order to update any caches
+    // according to state changes.
+    obj->sigNodeChanged.connect(this, &GrObjImpl::invalidateCaches);
+  }
 
   IO::VersionId serialVersionId() const
   {
