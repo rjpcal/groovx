@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Aug 10 11:05:57 2001
+// written: Fri Aug 10 12:08:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,12 +128,29 @@ void Pbm::save(const char* filename, const Gfx::BmapData& data)
   save(*os, data);
 }
 
-void Pbm::save(STD_IO::ostream& os, const Gfx::BmapData& data)
+void Pbm::save(STD_IO::ostream& os, const Gfx::BmapData& data_)
 {
 DOTRACE("Pbm::save");
-  os << 'P' << modeForBitDepth(data.bitsPerPixel())
+
+  Gfx::BmapData data(data_);
+
+  // OpenGL bitmap data starts with the bottom row, but PBM files
+  // should start with the top row.
+  data.flipVertical();
+
+  int mode = modeForBitDepth(data.bitsPerPixel());
+
+  os << 'P' << mode
      << ' ' << data.extent().x()
-     << ' ' << data.extent().y() << '\n';
+     << ' ' << data.extent().y();
+
+  if (mode != 1 && mode != 4)
+    {
+      const int max_grey = 255;
+      os << ' ' << max_grey;
+    }
+
+  os << '\n';
 
   os.write(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
 }
