@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Sep  5 17:30:35 2001
+// written: Wed Sep  5 18:26:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,9 +124,9 @@ const FieldMap& Fish::classFields()
           Field::TRANSIENT),
 
     Field("inColor", &Fish::inColor,
-          false, false, true, true, Field::TRANSIENT),
+          false, false, true, true, Field::BOOLEAN | Field::TRANSIENT),
     Field("showControlPoints", &Fish::showControlPoints,
-          false, false, true, true, Field::TRANSIENT),
+          false, false, true, true, Field::BOOLEAN | Field::TRANSIENT),
     Field("partsMask", &Fish::partsMask,
           0, 0, 15, 1, Field::TRANSIENT)
   };
