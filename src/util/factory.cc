@@ -35,7 +35,7 @@
 #include "util/error.h"
 #include "util/strings.h"
 
-#include "util/hash.h"
+#include <map>
 
 #include "util/trace.h"
 
@@ -43,7 +43,7 @@ struct AssocArray::Impl
 {
   Impl(KillFunc* f) : funcMap(), killFunc(f) {}
 
-  typedef hash_array<fstring, void*, string_hasher<fstring> > MapType;
+  typedef std::map<fstring, void*> MapType;
 
   MapType funcMap;
   KillFunc* killFunc;
@@ -69,11 +69,11 @@ void AssocArray::throwForType(const char* type)
        ii != rep->funcMap.end();
        ++ii)
     {
-      if (ii->value != 0)
-        typelist.append("\n\t", ii->key);
+      if (ii->second != 0)
+        typelist.append("\n\t", ii->first);
     }
 
-  throw Util::Error(fstring("unknown object type '", type, "'\n", typelist));
+  throw Util::Error(fstring(typelist, "\nunknown object type '", type, "'"));
 }
 
 void AssocArray::throwForType(const fstring& type)
@@ -88,8 +88,8 @@ DOTRACE("AssocArray::clear");
        ii != rep->funcMap.end();
        ++ii)
     {
-      if (rep->killFunc != 0) rep->killFunc(ii->value);
-      ii->value = 0;
+      if (rep->killFunc != 0) rep->killFunc(ii->second);
+      ii->second = 0;
     }
 
   delete rep;
