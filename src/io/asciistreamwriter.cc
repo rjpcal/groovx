@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Jul 10 14:52:21 2000
+// written: Wed Jul 19 19:37:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,7 @@ namespace {
 		case '}':
 		  text.replace(pos, 1, "\\}");
 		  pos += 2;
+		  break;
 		default:
 		  ++pos;
 		  break;
