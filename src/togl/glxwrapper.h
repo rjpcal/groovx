@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Sat Aug 10 15:12:11 2002
+// written: Sat Aug 10 15:20:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,12 +26,7 @@ private:
   XVisualInfo* itsVisInfo;
   GLXContext itsContext;
 
-  void createContext(bool direct, GlxWrapper* share = 0);
-
 public:
-  GlxWrapper(Display* dpy, XVisualInfo* visinfo, bool direct,
-             GlxWrapper* share = 0);
-
   GlxWrapper(Display* dpy, GlxAttribs& attribs, bool direct,
              GlxWrapper* share = 0);
 

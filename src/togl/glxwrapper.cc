@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Sat Aug 10 15:12:06 2002
+// written: Sat Aug 10 15:19:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,32 +29,6 @@ namespace
   // For caching the latest subject of GlxWrapper::makeCurrent()
   const GlxWrapper* currentGlxWrapper = 0;
   Window currentWindow = 0;
-}
-
-void GlxWrapper::createContext(bool direct, GlxWrapper* share)
-{
-DOTRACE("GlxWrapper::createContext");
-  itsContext = glXCreateContext(itsDisplay,
-                                itsVisInfo,
-                                share ? share->itsContext : None,
-                                direct ? GL_TRUE : GL_FALSE);
-
-  DebugEvalNL(itsContext);
-
-  if (itsContext == 0)
-    {
-      throw Util::Error("could not create GL rendering context");
-    }
-}
-
-GlxWrapper::GlxWrapper(Display* dpy, XVisualInfo* visinfo, bool direct,
-                       GlxWrapper* share) :
-  itsDisplay(dpy),
-  itsVisInfo(visinfo),
-  itsContext(0)
-{
-DOTRACE("GlxWrapper::GlxWrapper");
-  createContext(direct, share);
 }
 
 GlxWrapper::GlxWrapper(Display* dpy, GlxAttribs& attribs, bool direct,
@@ -88,7 +62,17 @@ DOTRACE("GlxWrapper::GlxWrapper");
   DebugEvalNL(itsVisInfo->depth);
   DebugEvalNL(itsVisInfo->bits_per_rgb);
 
-  createContext(direct, share);
+  itsContext = glXCreateContext(itsDisplay,
+                                itsVisInfo,
+                                share ? share->itsContext : None,
+                                direct ? GL_TRUE : GL_FALSE);
+
+  DebugEvalNL(itsContext);
+
+  if (itsContext == 0)
+    {
+      throw Util::Error("could not create GL rendering context");
+    }
 }
 
 GlxWrapper::~GlxWrapper()
