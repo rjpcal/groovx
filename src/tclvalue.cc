@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Oct  5 09:50:00 1999
+// written: Tue Nov 16 12:12:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,6 +176,19 @@ DOTRACE("TclValue::getNativeType");
   else if (type_name == "boolean") { return Value::BOOL; }
   else if (type_name == "string") { return Value::CSTRING; }
   else return Value::UNKNOWN;
+}
+
+void TclValue::printTo(ostream& os) const {
+DOTRACE("TclValue::printTo");
+  os << Tcl_GetString(itsObj);
+}
+
+void TclValue::scanFrom(istream& is) {
+DOTRACE("TclValue::scanFrom");
+  char buf[256]; 
+  is >> ws;
+  is.get(buf, 256, '\n');
+  Tcl_SetStringObj(itsObj, buf, -1);
 }
 
 //---------------------------------------------------------------------
