@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Aug  7 11:17:57 2002
+// written: Wed Aug  7 11:41:30 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -30,31 +30,9 @@
 #include <X11/Xlib.h>
 #endif
 
-
 #define TOGL_VERSION "1.5"
 #define TOGL_MAJOR_VERSION 1
 #define TOGL_MINOR_VERSION 5
-
-
-/*
- * Normal and overlay plane constants
- */
-#define TOGL_NORMAL  1
-#define TOGL_OVERLAY 2
-
-
-class Togl;
-
-
-extern "C"
-{
-  typedef void (Togl_Callback) (Togl* togl);
-
-  typedef void (Togl_OverlayCallback) (void* togl);
-
-  extern int Togl_Init( Tcl_Interp *interp );
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -72,18 +50,23 @@ public:
   Togl(Tcl_Interp* interp, const char* pathname);
   virtual ~Togl();
 
+  // Callbacks
+  typedef void (Callback) (Togl* togl);
+  typedef void (OverlayCallback) (void* togl);
+
   // Default callback setup functions
-  static void setDefaultCreateFunc(Togl_Callback* proc);
-  static void setDefaultDisplayFunc(Togl_Callback* proc);
-  static void setDefaultReshapeFunc(Togl_Callback* proc);
-  static void setDefaultDestroyFunc(Togl_Callback* proc);
-  static void setDefaultTimerFunc(Togl_Callback* proc);
+  static void setDefaultClientData(ClientData clientData);
+  static void setDefaultCreateFunc(Callback* proc);
+  static void setDefaultDisplayFunc(Callback* proc);
+  static void setDefaultReshapeFunc(Callback* proc);
+  static void setDefaultDestroyFunc(Callback* proc);
+  static void setDefaultTimerFunc(Callback* proc);
   static void resetDefaultCallbacks();
 
   // Change callbacks for existing widget
-  void setDisplayFunc(Togl_Callback* proc);
-  void setReshapeFunc(Togl_Callback* proc);
-  void setDestroyFunc(Togl_Callback* proc);
+  void setDisplayFunc(Togl::Callback* proc);
+  void setReshapeFunc(Togl::Callback* proc);
+  void setDestroyFunc(Togl::Callback* proc);
 
   // Miscellaneous
   int configure(int objc, Tcl_Obj* const objv[]);
@@ -104,32 +87,38 @@ public:
   const char* pathname() const;
 
   // Color index mode
-  unsigned long allocColor( float red, float green, float blue ) const;
-  void freeColor( unsigned long index ) const;
-  void setColor( unsigned long index,
-                 float red, float green, float blue ) const;
+  unsigned long allocColor(float red, float green, float blue) const;
+  void freeColor(unsigned long index) const;
+  void setColor(unsigned long index,
+                float red, float green, float blue) const;
 
   // Bitmap fonts
-  unsigned int loadBitmapFont( const char *fontname ) const;
-  unsigned int loadBitmapFonti( int fontnumber ) const;
-  void unloadBitmapFont( unsigned int fontbase ) const;
+  unsigned int loadBitmapFont(const char* fontname) const;
+  unsigned int loadBitmapFonti(int fontnumber) const;
+  void unloadBitmapFont(unsigned int fontbase) const;
+
+  // Layers
+  enum Layer
+    {
+      Normal = 1,
+      Overlay = 2
+    };
 
   // Overlay functions
-  void overlayDisplayFunc( Togl_OverlayCallback* proc );
-  void useLayer( int layer );
+  void overlayDisplayFunc(OverlayCallback* proc);
+  void useLayer(Layer layer);
   void showOverlay();
   void hideOverlay();
   void requestOverlayRedisplay();
   int existsOverlay() const;
   int getOverlayTransparentValue() const;
   bool isMappedOverlay() const;
-  unsigned long allocColorOverlay( float red, float green, float blue ) const;
-  void freeColorOverlay( unsigned long index ) const;
+  unsigned long allocColorOverlay(float red, float green, float blue) const;
+  void freeColorOverlay(unsigned long index) const;
 
   // User client data
-  static void defaultClientData( ClientData clientData );
   ClientData getClientData() const;
-  void setClientData( ClientData clientData );
+  void setClientData(ClientData clientData);
 
   // X11-only commands
   Display* display() const;
@@ -137,11 +126,6 @@ public:
   int screenNumber() const;
   Colormap colormap() const;
   Window windowId() const;
-
-  // Generate EPS file.
-  // Contributed by Miguel A. De Riera Pasenau (miguel@DALILA.UPC.ES)
-  int dumpToEpsFile( const char *filename, int inColor,
-                     void (*user_redraw)(const Togl*) ) const;
 
   class Impl;
   friend class Impl;

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Sun Aug  4 20:21:24 2002
+// written: Wed Aug  7 11:32:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@
 
 /* Copyright (c) Mark J. Kilgard, 1996. */
 
-void* GLUtil::grabPixels(int inColor, unsigned int width, unsigned int height)
+void* GLUtil::grabPixels(bool inColor, unsigned int width, unsigned int height)
 {
 DOTRACE("GLUtil::grabPixels");
   GLenum format;
@@ -99,7 +99,7 @@ DOTRACE("GLUtil::grabPixels");
   return buffer;
 }
 
-int GLUtil::generateEPS(const char *filename, int inColor,
+int GLUtil::generateEPS(const char* filename, bool inColor,
                         unsigned int width, unsigned int height)
 {
 DOTRACE("GLUtil::generateEPS");

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Aug  6 15:53:01 2002
+// written: Wed Aug  7 11:40:14 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -90,11 +90,11 @@ namespace
   const char*  DEFAULT_FONTNAME  = "fixed";
   const char*  DEFAULT_TIME      = "1";
 
-  Togl_Callback* DefaultCreateProc = NULL;
-  Togl_Callback* DefaultDisplayProc = NULL;
-  Togl_Callback* DefaultReshapeProc = NULL;
-  Togl_Callback* DefaultDestroyProc = NULL;
-  Togl_Callback* DefaultTimerProc = NULL;
+  Togl::Callback* DefaultCreateProc = NULL;
+  Togl::Callback* DefaultDisplayProc = NULL;
+  Togl::Callback* DefaultReshapeProc = NULL;
+  Togl::Callback* DefaultDestroyProc = NULL;
+  Togl::Callback* DefaultTimerProc = NULL;
   ClientData DefaultClientData = NULL;
 
   int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
@@ -224,10 +224,10 @@ public:
   bool itsUpdatePending;
   bool itsShutdownRequested;
   ClientData itsClientData;
-  Togl_Callback* itsUserDisplayProc;
-  Togl_Callback* itsUserReshapeProc;
-  Togl_Callback* itsUserDestroyProc;
-  Togl_Callback* itsUserTimerProc;
+  Togl::Callback* itsUserDisplayProc;
+  Togl::Callback* itsUserReshapeProc;
+  Togl::Callback* itsUserDestroyProc;
+  Togl::Callback* itsUserTimerProc;
   Tcl_TimerToken itsTimerToken;
 
   GlxOverlay* itsOverlay;
@@ -245,9 +245,9 @@ public:
   static void cTimerCallback(ClientData clientData);
   static void cRenderCallback(ClientData clientData);
 
-  void setDisplayFunc(Togl_Callback* proc) { itsUserDisplayProc = proc; }
-  void setReshapeFunc(Togl_Callback* proc) { itsUserReshapeProc = proc; }
-  void setDestroyFunc(Togl_Callback* proc) { itsUserDestroyProc = proc; }
+  void setDisplayFunc(Togl::Callback* proc) { itsUserDisplayProc = proc; }
+  void setReshapeFunc(Togl::Callback* proc) { itsUserReshapeProc = proc; }
+  void setDestroyFunc(Togl::Callback* proc) { itsUserDestroyProc = proc; }
 
   void requestRedisplay();
   void requestReconfigure();
@@ -259,7 +259,7 @@ public:
   void freeColor(unsigned long pixel) const;
   void setColor(unsigned long index, float red, float green, float blue) const;
 
-  void useLayer(int layer);
+  void useLayer(Togl::Layer layer);
 
   Window windowId() const { return Tk_WindowId(itsTkWin); }
 
@@ -502,10 +502,17 @@ void Togl::Impl::cTimerCallback(ClientData clientData)
 DOTRACE("Togl::Impl::cTimerCallback");
   Impl* rep = static_cast<Impl*>(clientData);
   Tcl_Preserve(clientData);
-  rep->itsUserTimerProc(rep->itsOwner);
-  rep->itsTimerToken =
-    Tcl_CreateTimerHandler(rep->itsOpts.time, cTimerCallback,
-                           static_cast<ClientData>(rep));
+  if (rep->itsUserTimerProc == 0)
+    {
+      rep->itsTimerToken = 0;
+    }
+  else
+    {
+      rep->itsUserTimerProc(rep->itsOwner);
+      rep->itsTimerToken =
+        Tcl_CreateTimerHandler(rep->itsOpts.time, cTimerCallback,
+                               static_cast<ClientData>(rep));
+    }
   Tcl_Release(clientData);
 }
 
@@ -559,9 +566,9 @@ DOTRACE("Togl::Impl::requestReconfigure");
       glViewport(0, 0, itsOpts.width, itsOpts.height);
       if (itsOpts.overlayFlag)
         {
-          useLayer( TOGL_OVERLAY );
+          useLayer( Overlay );
           glViewport( 0, 0, itsOpts.width, itsOpts.height );
-          useLayer( TOGL_NORMAL );
+          useLayer( Normal );
         }
     }
 }
@@ -631,22 +638,16 @@ DOTRACE("Togl::Impl::setColor");
   XStoreColor( itsDisplay, Tk_Colormap(itsTkWin), &xcol );
 }
 
-void Togl::Impl::useLayer(int layer)
+void Togl::Impl::useLayer(Togl::Layer layer)
 {
 DOTRACE("Togl::Impl::useLayer");
   if (itsOverlay)
     {
-      if (layer==TOGL_OVERLAY)
+      switch(layer)
         {
-          itsOverlay->makeCurrent();
-        }
-      else if (layer==TOGL_NORMAL)
-        {
-          itsGlx->makeCurrent(windowId());
-        }
-      else
-        {
-          /* error */
+        case Normal:  itsGlx->makeCurrent(windowId()); break;
+        case Overlay: itsOverlay->makeCurrent(); break;
+        default:      Assert(0); break;
         }
     }
 }
@@ -793,11 +794,13 @@ DOTRACE("Togl::~Togl");
   delete rep;
 }
 
-void Togl::setDefaultCreateFunc(Togl_Callback* p) { DefaultCreateProc = p; }
-void Togl::setDefaultDisplayFunc(Togl_Callback* p) { DefaultDisplayProc = p; }
-void Togl::setDefaultReshapeFunc(Togl_Callback* p) { DefaultReshapeProc = p; }
-void Togl::setDefaultDestroyFunc(Togl_Callback* p) { DefaultDestroyProc = p; }
-void Togl::setDefaultTimerFunc(Togl_Callback* p) { DefaultTimerProc = p; }
+
+void Togl::setDefaultClientData(ClientData p)       { DefaultClientData = p; }
+void Togl::setDefaultCreateFunc(Togl::Callback* p)  { DefaultCreateProc = p; }
+void Togl::setDefaultDisplayFunc(Togl::Callback* p) { DefaultDisplayProc = p; }
+void Togl::setDefaultReshapeFunc(Togl::Callback* p) { DefaultReshapeProc = p; }
+void Togl::setDefaultDestroyFunc(Togl::Callback* p) { DefaultDestroyProc = p; }
+void Togl::setDefaultTimerFunc(Togl::Callback* p)   { DefaultTimerProc = p; }
 
 void Togl::resetDefaultCallbacks()
 {
@@ -810,9 +813,9 @@ DOTRACE("Togl::resetDefaultCallbacks");
   DefaultClientData = 0;
 }
 
-void Togl::setDisplayFunc(Togl_Callback* proc) { rep->setDisplayFunc(proc); }
-void Togl::setReshapeFunc(Togl_Callback* proc) { rep->setReshapeFunc(proc); }
-void Togl::setDestroyFunc(Togl_Callback* proc) { rep->setDestroyFunc(proc); }
+void Togl::setDisplayFunc(Togl::Callback* proc) { rep->setDisplayFunc(proc); }
+void Togl::setReshapeFunc(Togl::Callback* proc) { rep->setReshapeFunc(proc); }
+void Togl::setDestroyFunc(Togl::Callback* proc) { rep->setDestroyFunc(proc); }
 
 int Togl::configure(int objc, Tcl_Obj* const objv[])
   { return rep->configure(objc, objv); }
@@ -852,21 +855,17 @@ void Togl::unloadBitmapFont( GLuint fontbase ) const
   { GLUtil::unloadBitmapFont(fontbase); }
 
 
-void Togl::overlayDisplayFunc(Togl_OverlayCallback* proc)
+void Togl::overlayDisplayFunc(Togl::OverlayCallback* proc)
 {
 DOTRACE("Togl::OverlayDisplayFunc");
   if (rep->itsOverlay)
     rep->itsOverlay->setDisplayProc(proc, static_cast<void*>(this));
 }
 
-void Togl::useLayer( int layer )
-  { rep->useLayer(layer); }
+void Togl::useLayer(Togl::Layer layer) { rep->useLayer(layer); }
 
-void Togl::showOverlay()
-  { if (rep->itsOverlay) rep->itsOverlay->show(); }
-
-void Togl::hideOverlay()
-  { if (rep->itsOverlay) rep->itsOverlay->hide(); }
+void Togl::showOverlay() { if (rep->itsOverlay) rep->itsOverlay->show(); }
+void Togl::hideOverlay() { if (rep->itsOverlay) rep->itsOverlay->hide(); }
 
 void Togl::requestOverlayRedisplay()
   { if (rep->itsOverlay) rep->itsOverlay->requestRedisplay(); }
@@ -905,12 +904,6 @@ DOTRACE("Togl::freeColorOverlay");
     rep->itsOverlay->freeColor(pixel);
 }
 
-void Togl::defaultClientData( ClientData clientData )
-{
-DOTRACE("Togl::defaultClientData");
-  DefaultClientData = clientData;
-}
-
 ClientData Togl::getClientData() const { return rep->itsClientData; }
 void Togl::setClientData(ClientData p) { rep->itsClientData = p; }
 
@@ -919,17 +912,6 @@ Screen* Togl::screen() const    { return Tk_Screen(rep->itsTkWin); }
 int Togl::screenNumber() const  { return Tk_ScreenNumber(rep->itsTkWin); }
 Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
 Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
-
-int Togl::dumpToEpsFile( const char *filename, int inColor,
-                         void (*user_redraw)( const Togl* )) const
-{
-DOTRACE("Togl::dumpToEpsFile");
-
-  user_redraw(this);
-  glFlush();
-
-  return GLUtil::generateEPS(filename, inColor, width(), height());
-}
 
 ///////////////////////////////////////////////////////////////////////
 //

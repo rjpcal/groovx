@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:24 2002
-// written: Sun Aug  4 20:15:48 2002
+// written: Wed Aug  7 11:32:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 namespace GLUtil
 {
-  void* grabPixels(int inColor, unsigned int width, unsigned int height);
+  void* grabPixels(bool inColor, unsigned int width, unsigned int height);
 
-  int generateEPS(const char *filename, int inColor,
+  int generateEPS(const char* filename, bool inColor,
                   unsigned int width, unsigned int height);
 
   // Returns the starting index of a series of GL display lists
