@@ -155,7 +155,7 @@ const FieldMap& MorphyFace::classFields()
           Field::NEW_GROUP),
     Field("eyebrowYpos", &MF::itsEyebrowYpos, 0.5, 0.0, 1.5, 0.05),
     Field("eyebrowCurvature", &MF::itsEyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
-    Field("eyebrowAngle", &MF::itsEyebrowAngle, -5, -50, 50, 1),
+    Field("eyebrowAngle", &MF::itsEyebrowAngle, -5.0, -50.0, 50.0, 1.0),
     Field("eyebrowThickness", &MF::itsEyebrowThickness, 2.0, 0.1, 4.0, 0.1),
 
     Field("noseXpos", &MF::itsNoseXpos, 0.0, -1.0, 1.0, 0.05, Field::NEW_GROUP),
@@ -271,9 +271,6 @@ DOTRACE("MorphyFace::writeTo");
 void MorphyFace::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("MorphyFace::grRender");
-
-  // Enable antialiasing, if it is available
-  const bool have_antialiasing = canvas.isRgba();
 
   Gfx::Canvas::AttribSaver attribSaver(canvas);
 
@@ -401,14 +398,6 @@ DOTRACE("MorphyFace::grRender");
   //
   // Draw mouth.
   //
-
-  const double mouth_ctrlpnts[] =
-  {
-    -0.5,  0.5,      0.0,
-    -0.2, -0.833333, 0.0,
-     0.2, -0.833333, 0.0,
-     0.5,  0.5,      0.0
-  };
 
   {
     DOTRACE("MorphyFace::grRender-draw mouth");
