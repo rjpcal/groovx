@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 17 15:05:13 2001
+// written: Sat May 19 15:22:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -250,8 +250,8 @@ DOTRACE("Trial::Impl::writeTo");
 
   writer->writeValue("type", itsType);
 
-  writer->writeObject("rh", itsRh.isValid() ? itsRh.get() : 0);
-  writer->writeObject("th", itsTh.isValid() ? itsTh.get() : 0);
+  writer->writeObject("rh", itsRh);
+  writer->writeObject("th", itsTh);
 }
 
 int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {

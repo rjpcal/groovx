@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Thu May 10 12:04:37 2001
+// written: Sat May 19 15:17:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WRITER_H_DEFINED)
 #include "io/writer.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "io/iditem.h"
 #endif
 
 namespace IO {
@@ -65,25 +69,6 @@ public:
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeObjectSeq(IO::Writer* writer, const char* name,
-									  Itr begin, Itr end, bool skip_count=false)
-	 {
-		if (!skip_count) {
-		  writer->writeValue(makeSeqCountString(name),
-									computeCount(begin, end));
-		}
-
-		int count = 0;
-	 
-		while (begin != end) {
-		  writer->writeObject(makeElementNameString(name, count), *begin);
-		  ++begin;
-		  ++count;
-		}
-	 }
-
-  /// A generic interface for handling containers, sequences, etc. of objects
-  template <class Itr>
   static void writeSmartPtrSeq(IO::Writer* writer, const char* name,
 										 Itr begin, Itr end, bool skip_count=false)
 	 {
@@ -95,7 +80,8 @@ public:
 		int count = 0;
 	 
 		while (begin != end) {
-		  writer->writeObject(makeElementNameString(name, count), begin->get());
+		  writer->writeObject(makeElementNameString(name, count),
+									 MaybeIdItem<const IO::IoObject>(*begin));
 		  ++begin;
 		  ++count;
 		}

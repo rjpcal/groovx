@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Sat May 19 11:53:34 2001
+// written: Sat May 19 15:12:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,14 +125,16 @@ public:
   void writeValue(const char* name, const T& val);
 
   /// Store the \c IO object \a val in association with the tag \a name.
-  virtual void writeObject(const char* name, const IO::IoObject* obj) = 0;
+  virtual void writeObject(const char* name,
+									MaybeIdItem<const IO::IoObject> obj) = 0;
 
   /** Store the owned \c IO object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
       by the storing object; no other objects should reference \a
       obj. This allows the \c Writer subclass to implement the storage
       of an owned object as a contained object. */
-  virtual void writeOwnedObject(const char* name, const IO::IoObject* obj) = 0;
+  virtual void writeOwnedObject(const char* name,
+										  IdItem<const IO::IoObject> obj) = 0;
 
   /** Write the named base class using the IO object \a obj, which
       should be arranged to point or refer to the appropriate base

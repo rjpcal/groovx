@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Sat May 19 11:54:37 2001
+// written: Sat May 19 15:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,8 +103,11 @@ public:
   virtual void writeDouble(const char* name, double val);
   virtual void writeValueObj(const char* name, const Value& value);
 
-  virtual void writeObject(const char* name, const IO::IoObject* obj);
-  virtual void writeOwnedObject(const char* name, const IO::IoObject* obj);
+  virtual void writeObject(const char* name,
+									MaybeIdItem<const IO::IoObject> obj);
+
+  virtual void writeOwnedObject(const char* name,
+										  IdItem<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
 										IdItem<const IO::IoObject> basePart);

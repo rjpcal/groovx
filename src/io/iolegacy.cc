@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Sat May 19 14:50:22 2001
+// written: Sat May 19 15:38:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -403,7 +403,8 @@ public:
   void noNewlineNeeded() { itsNeedsNewline = false; }
   void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
 
-  void flattenObject(const char* obj_name, const IO::IoObject* obj,
+  void flattenObject(const char* obj_name,
+							MaybeIdItem<const IO::IoObject> obj,
 							bool stub_out = false)
   {
 	 if (itsIndentLevel > 0)
@@ -411,14 +412,14 @@ public:
 	 else
 		requestNewline();
 
-	 if (obj == 0)
+	 if ( !(obj.isValid()) )
 		{
 		  stream() << "NULL" << itsFSep;
 		  throwIfError(obj_name);
 		  return;
 		}
 
-	 Assert(obj != 0);
+	 Assert(obj.isValid());
 
 	 stream() << obj->ioTypename() << itsFSep;
 	 throwIfError(obj->ioTypename().c_str());
@@ -515,14 +516,15 @@ DOTRACE("IO::LegacyWriter::writeValueObj");
   itsImpl->throwIfError(name);
 }
 
-void IO::LegacyWriter::writeObject(const char* name, const IO::IoObject* obj) {
+void IO::LegacyWriter::writeObject(const char* name,
+											  MaybeIdItem<const IO::IoObject> obj) {
 DOTRACE("IO::LegacyWriter::writeObject");
 
   itsImpl->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeOwnedObject(const char* name,
-													 const IO::IoObject* obj) {
+													 IdItem<const IO::IoObject> obj) {
 DOTRACE("IO::LegacyWriter::writeOwnedObject");
 
   itsImpl->flattenObject(name, obj);
@@ -532,17 +534,17 @@ void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
 												  IdItem<const IO::IoObject> basePart) {
 DOTRACE("IO::LegacyWriter::writeBaseClass");
   if (itsImpl->itsWriteBases) {
-	 itsImpl->flattenObject(baseClassName, basePart.get());
+	 itsImpl->flattenObject(baseClassName, basePart);
   }
   else {
-	 itsImpl->flattenObject(baseClassName, basePart.get(), true);
+	 itsImpl->flattenObject(baseClassName, basePart, true);
   }
 }
 
 void IO::LegacyWriter::writeRoot(const IO::IoObject* root) {
 DOTRACE("IO::LegacyWriter::writeRoot");
 
-  itsImpl->flattenObject("rootObject", root);
+  itsImpl->flattenObject("rootObject", MaybeIdItem<const IO::IoObject>(root));
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";

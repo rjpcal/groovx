@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Sat May 19 11:54:27 2001
+// written: Sat May 19 15:37:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,9 +139,9 @@ private:
 public:
   void writeValueObj(const char* name, const Value& value);
 
-  void writeObject(const char* name, const IO::IoObject* obj);
+  void writeObject(const char* name, MaybeIdItem<const IO::IoObject> obj);
 
-  void writeOwnedObject(const char* name, const IO::IoObject* obj);
+  void writeOwnedObject(const char* name, IdItem<const IO::IoObject> obj);
 
   void writeBaseClass(const char* baseClassName,
 							 IdItem<const IO::IoObject> basePart);
@@ -242,26 +242,28 @@ DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
 			<< value << ATTRIB_ENDER;
 }
 
-void AsciiStreamWriter::Impl::writeObject(const char* name,
-														const IO::IoObject* obj) {
+void AsciiStreamWriter::Impl::writeObject(
+  const char* name,
+  MaybeIdItem<const IO::IoObject> obj
+) {
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
 
-  if (obj == 0) {
-	 itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
-  }
-  else {
-	 Assert(dynamic_cast<const IO::IoObject*>(obj) != 0);
+  if (obj.isValid()) {
+	 Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
 	 itsBuf << obj->ioTypename().c_str() << " "
 			  << name << " := "
 			  << obj->id() << ATTRIB_ENDER;
 	 
-	 addObjectToBeHandled(obj);
+	 addObjectToBeHandled(obj.get());
+  }
+  else {
+	 itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
   }
 }
 
 void AsciiStreamWriter::Impl::writeOwnedObject(
-  const char* name, const IO::IoObject* obj
+  const char* name, IdItem<const IO::IoObject> obj
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
   writeObject(name, obj);
@@ -328,11 +330,13 @@ void AsciiStreamWriter::writeValueObj(const char* name, const Value& value) {
   itsImpl.writeValueObj(name, value);
 }
 
-void AsciiStreamWriter::writeObject(const char* name, const IO::IoObject* obj) {
+void AsciiStreamWriter::writeObject(const char* name,
+												MaybeIdItem<const IO::IoObject> obj) {
   itsImpl.writeObject(name, obj);
 }
 
-void AsciiStreamWriter::writeOwnedObject(const char* name, const IO::IoObject* obj) {
+void AsciiStreamWriter::writeOwnedObject(const char* name,
+													  IdItem<const IO::IoObject> obj) {
   itsImpl.writeOwnedObject(name, obj);
 }
 
