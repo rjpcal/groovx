@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Mon Dec  6 21:59:50 1999
+// written: Mon Dec  6 23:10:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include <GL/glx.h>
 #include <GL/glu.h>
 
-#include "glcanvas.h"
+#include "canvas.h"
 #include "error.h"
 #include "point.h"
 
@@ -95,7 +95,7 @@ XBmapRenderer::~XBmapRenderer() {
   if (itsImage) XFree(itsImage);
 }
 
-void XBmapRenderer::doRender(Canvas&,
+void XBmapRenderer::doRender(Canvas& canvas,
 									  unsigned char* bytes,
 									  double x_pos,
 									  double y_pos,
@@ -118,7 +118,7 @@ DOTRACE("XBmapRenderer::doRender");
 
   // Calculate GL window coordinates of lower left corner of image
   Point<int> screen_pos =
-	 GLCanvas::theCanvas().getScreenFromWorld(Point<double>(x_pos, y_pos));
+	 canvas.getScreenFromWorld(Point<double>(x_pos, y_pos));
 
   DebugEval(x_pos); DebugEval(y_pos);
   DebugEval(screen_pos.x()); DebugEvalNL(screen_pos.y());
