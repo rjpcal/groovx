@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Oct  8 15:46:00 2000
+// written: Mon Oct  9 08:23:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,17 +19,7 @@
 #include "io/io.h"
 #endif
 
-class MasterIoPtr : public MasterPtrBase {
-public:
-  MasterIoPtr();
-  virtual ~MasterIoPtr();
-
-  virtual IO::IoObject* ioPtr() const = 0;
-
-  virtual bool isValid() const = 0;
-
-  virtual bool operator==(const MasterPtrBase& other) = 0;
-};
+class MasterIoPtr;
 
 ///////////////////////////////////////////////////////////////////////
 /**
