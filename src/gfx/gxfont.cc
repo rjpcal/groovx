@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 12 18:35:02 2002
-// written: Tue Nov 12 18:44:24 2002
+// written: Wed Nov 13 14:37:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,13 @@
 
 #include "gxfont.h"
 
+#include "system/system.h"
+
 #include "util/error.h"
 
 #include <GL/gl.h>
 #include <GL/glx.h>
+#include <X11/Xlib.h>
 
 #include "util/debug.h"
 #include "util/trace.h"
@@ -32,7 +35,7 @@ struct GxFont::Impl
   unsigned int listCount;
 };
 
-GxFont::GxFont(Display* dpy, const char* fontname) :
+GxFont::GxFont(const char* fontname) :
   rep(new Impl)
 {
 DOTRACE("GxFont::GxFont");
@@ -41,6 +44,8 @@ DOTRACE("GxFont::GxFont");
     fontname = "fixed";
 
   Assert( fontname != 0 );
+
+  Display* dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
 
   rep->fontInfo = XLoadQueryFont( dpy, fontname );
   dbgEval(2, rep->fontInfo); dbgEvalNL(2, rep->fontInfo->fid);
@@ -99,6 +104,73 @@ unsigned int GxFont::listBase() const
 {
 DOTRACE("GxFont::listBase");
   return rep->listBase;
+}
+
+int GxFont::widthOf(const char* text) const
+{
+  int w = 0;
+  while (*text != '\0')
+    {
+      w += rep->fontInfo->per_char[*text].width;
+      ++text;
+    }
+
+  return w;
+}
+
+int GxFont::heightOf(const char* text) const
+{
+  int desc = 0;
+  int asc = 0;
+
+  while (*text != '\0')
+    {
+      XCharStruct& ch = rep->fontInfo->per_char[*text];
+
+      if (ch.ascent > asc)
+        asc = ch.ascent;
+
+      if (ch.descent > desc)
+        desc = ch.descent;
+
+      ++text;
+    }
+
+  return desc+asc;
+}
+
+int GxFont::ascentOf(const char* text) const
+{
+  int asc = 0;
+
+  while (*text != '\0')
+    {
+      XCharStruct& ch = rep->fontInfo->per_char[*text];
+
+      if (ch.ascent > asc)
+        asc = ch.ascent;
+
+      ++text;
+    }
+
+  return asc;
+}
+
+int GxFont::descentOf(const char* text) const
+{
+  int desc = 0;
+
+  while (*text != '\0')
+    {
+      XCharStruct& ch = rep->fontInfo->per_char[*text];
+
+      if (ch.descent > desc)
+        desc = ch.descent;
+
+      ++text;
+    }
+
+  return desc;
 }
 
 static const char vcid_gxfont_cc[] = "$Header$";
