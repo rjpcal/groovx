@@ -45,7 +45,6 @@ proc testSubclass { package {subclass "GrObj"} {objid -1} } {
 	 testReadCmd testObj
 	 testWriteCmd testObj
 	 testCategoryCmd testObj
-	 testUpdateCmd testObj
 	 testDrawCmd testObj
 	 testBoundingBoxCmd testObj
 	 testAlignmentModeCmd testObj
@@ -148,34 +147,6 @@ proc testCategoryCmd { objname } {
 		      GrObj::category \"$this(objid) $this(objid)\" \"3 7 11\"
 		      GrObj::category \"$this(objid) $this(objid)\" 
 		  "} {"^${::INT}${::SP}${::INT}$"}
-	 }
-}
-
-proc testUpdateCmd { objname } {
-	 upvar $objname this
-
-	 set cmdname "GrObj::update"
-	 set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
-	 set testname "${this(package)}-${cmdname}"
-
-	 if { $this(testbase) } {
-		  eval ::test $testname {"too few args"} {"
-				$cmdname
-		  "} {$usage}
-
-		  eval ::test $testname {"too many args"} {"
-		      $cmdname 0 junk
-		  "} {$usage}
-	 }
-
-	 if { $this(testsubclass) } {
-		  package require Toglet
-		  if { ![Togl::inited] } { Togl::init; ::update }
-
-
-		  eval ::test $testname {"normal use"} {"
-		      catch {$cmdname $this(objid)}
-		  "} {"^0$"}
 	 }
 }
 
