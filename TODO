@@ -24,21 +24,25 @@
 
   where is <GL/glx.h> used?
 
-  glxwrapper.h
-    OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
-  xbmaprenderer.cc
-    OK - not used externally
-  gxrasterfont.cc
+    glxwrapper.h
+      OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
+    xbmaprenderer.cc
+      OK - not used externally
+    gxrasterfont.cc
 
   where is <X11/Xlib.h> used?
 
-  glxwrapper.h
-    OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
-  xbmaprenderer.h
-    OK - used only in xbmaprenderer.cc
-  gxrasterfont.cc
-  rhtcl.cc
-    only used for XStringToKeysym and XKeysymToKeycode
+    glxwrapper.h
+      OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
+    xbmaprenderer.h
+      OK - used only in xbmaprenderer.cc
+    gxrasterfont.cc
+    rhtcl.cc
+      only used for XStringToKeysym and XKeysymToKeycode
+
+  how to set up for Aqua?
+
+    TkMacOSXGetDrawablePort to get a GWorldPtr/CGrafPtr from Tk_WindowId(tkWin)
 
 * (8-Jun-2004) Change EventResponseHdlr::feedbackMap to be a proc
 
