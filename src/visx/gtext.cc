@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Tue Nov 12 17:34:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -823,7 +823,8 @@ const FieldMap& Gtext::classFields()
           Field::NEW_GROUP | Field::STRING),
     Field("strokeWidth",
           make_mypair(&Gtext::getStrokeWidth, &Gtext::setStrokeWidth),
-          1, 1, 20, 1)
+          1, 1, 20, 1),
+    Field("listBase", &Gtext::itsListBase, 0, 0, 1000, 1, Field::TRANSIENT)
   };
 
   static FieldMap GTEXT_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -882,6 +883,7 @@ DOTRACE("Gtext::grRender");
   Gfx::AttribSaver asaver(canvas);
 
   canvas.setLineWidth(itsStrokeWidth);
+  glRasterPos2d( 0.0, 0.0 );
   glListBase( itsListBase );
   glCallLists( itsText.length(), GL_BYTE, itsText.c_str() );
 }
