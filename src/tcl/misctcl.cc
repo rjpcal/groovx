@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jul 16 11:44:54 2001
+// written: Wed Jul 18 11:27:35 2001
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -17,8 +17,7 @@
 #ifndef MISCTCL_C_DEFINED
 #define MISCTCL_C_DEFINED
 
-#include "tcl/functor.h"
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 
 #include "util/rand.h"
 #include "util/randutils.h"
@@ -57,8 +56,7 @@ int Misc_Init(Tcl_Interp* interp)
 {
   using namespace MiscTcl;
 
-  Tcl::TclItemPkg* pkg =
-    new Tcl::TclItemPkg(interp, "Misc", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Misc", "$Revision$");
 
   pkg->def( &MiscTcl::rand, "::rand", "min max" );
   pkg->def( &MiscTcl::srand, "::srand", "seed" );

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jul 16 12:59:01 2001
+// written: Wed Jul 18 11:27:35 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -16,8 +16,8 @@
 #define DLISTTCL_CC_DEFINED
 
 #include "tcl/tclerror.h"
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 
 #include <cstdlib>
 
@@ -294,7 +294,7 @@ int Dlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Dlist_Init");
 
-  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "Dlist", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Dlist", "$Revision$");
 
   pkg->def( &DlistTcl::choose, "::dlist_choose", "source_list index_list" );
   pkg->def( &DlistTcl::not_, "::dlist_not", "source_list" );

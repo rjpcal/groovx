@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 16 10:30:41 2001
+// written: Wed Jul 18 11:36:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,7 @@
 #include "timinghdlr.h"
 #include "trialevent.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
-#include "tcl/tclcmd.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
@@ -60,10 +58,10 @@ namespace ThTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public Tcl::TclItemPkg {
+class ThTcl::ThPkg: public Tcl::Pkg {
 public:
   ThPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Th", "$Revision$")
+    Tcl::Pkg(interp, "Th", "$Revision$")
   {
     Tcl::defGenericObjCmds<TimingHdlr>(this);
 
@@ -76,9 +74,9 @@ public:
     def( &ThTcl::addAbortEvent,
          "addAbortEvent", "th_id event_type msec_delay" );
 
-    Tcl::TclPkg::eval("namespace eval Th { "
-                      "    proc autosavePeriod {id args} { "
-                      "        error {use Expt::autosavePeriod instead} } }");
+    Pkg::eval("namespace eval Th { "
+              "    proc autosavePeriod {id args} { "
+              "        error {use Expt::autosavePeriod instead} } }");
   }
 };
 
@@ -93,10 +91,10 @@ namespace SimpleThTcl
   class SimpleThPkg;
 }
 
-class SimpleThTcl::SimpleThPkg : public Tcl::TclItemPkg {
+class SimpleThTcl::SimpleThPkg : public Tcl::Pkg {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "SimpleTh", "$Revision$")
+    Tcl::Pkg(interp, "SimpleTh", "$Revision$")
   {
     Tcl::defGenericObjCmds<TimingHandler>(this);
 
@@ -141,10 +139,10 @@ DOTRACE("Th_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
 
-  Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
-  Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
+  Tcl::Pkg* pkg1 = new ThTcl::ThPkg(interp);
+  Tcl::Pkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
 
-  return pkg1->combineStatus(pkg2->initStatus());
+  return Tcl::Pkg::initStatus(pkg1, pkg2);
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Mon Jul 16 10:32:50 2001
+// written: Wed Jul 18 11:27:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,7 @@
 
 #include "jitter.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
@@ -33,10 +32,10 @@ namespace JitterTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class JitterTcl::JitterPkg : public Tcl::TclItemPkg {
+class JitterTcl::JitterPkg : public Tcl::Pkg {
 public:
   JitterPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Jitter", "$Revision$")
+    Tcl::Pkg(interp, "Jitter", "$Revision$")
   {
     Tcl::defGenericObjCmds<Jitter>(this);
 
@@ -56,7 +55,7 @@ int Jitter_Init(Tcl_Interp* interp)
 {
 DOTRACE("Jitter_Init");
 
-  Tcl::TclPkg* pkg = new JitterTcl::JitterPkg(interp);
+  Tcl::Pkg* pkg = new JitterTcl::JitterPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Jitter::make);
 

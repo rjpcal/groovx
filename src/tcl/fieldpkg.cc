@@ -123,7 +123,7 @@ DOTRACE("Tcl::FieldsLister::operator()");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::defField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo)
+void Tcl::defField(Tcl::Pkg* pkg, const FieldInfo& finfo)
 {
 DOTRACE("Tcl::defField");
 
@@ -132,7 +132,7 @@ DOTRACE("Tcl::defField");
                   "item_id(s) new_val(s)", 2 );
 }
 
-void Tcl::defAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap)
+void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fmap)
 {
 DOTRACE("Tcl::defAllFields");
   for (FieldMap::Iterator itr = fmap.begin(), end = fmap.end();

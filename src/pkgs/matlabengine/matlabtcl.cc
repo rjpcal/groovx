@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Mon Jul 16 10:29:05 2001
+// written: Wed Jul 18 11:27:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,7 @@
 
 #include "mtxobj.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
+#include "tcl/tclpkg.h"
 
 #include "util/error.h"
 #include "util/object.h"
@@ -100,10 +99,10 @@ namespace MatlabTcl
   class MatlabPkg;
 }
 
-class MatlabTcl::MatlabPkg : public Tcl::TclItemPkg {
+class MatlabTcl::MatlabPkg : public Tcl::Pkg {
 public:
   MatlabPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "MatlabEngine", "$Revision$")
+    Tcl::Pkg(interp, "MatlabEngine", "$Revision$")
   {
     Tcl::defGenericObjCmds<MatlabEngine>(this);
 
@@ -120,7 +119,7 @@ int Matlab_Init(Tcl_Interp* interp)
 {
 DOTRACE("Matlab_Init");
 
-  Tcl::TclPkg* pkg = new MatlabTcl::MatlabPkg(interp);
+  Tcl::Pkg* pkg = new MatlabTcl::MatlabPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MatlabEngine::make);
 

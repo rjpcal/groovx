@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jul 18 09:48:26 2001
+// written: Wed Jul 18 11:03:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,13 +26,13 @@ int Face_Init(Tcl_Interp* interp)
 {
 DOTRACE("Face_Init");
 
-  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "Face", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Face", "$Revision$");
   Tcl::defFieldContainer<Face>(pkg);
 
-  Tcl::TclItemPkg* pkg2 = new Tcl::TclItemPkg(interp, "CloneFace", "$Revision$");
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "CloneFace", "$Revision$");
   Tcl::defFieldContainer<CloneFace>(pkg);
 
-  return Tcl::TclPkg::initStatus(pkg, pkg2);
+  return Tcl::Pkg::initStatus(pkg, pkg2);
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";

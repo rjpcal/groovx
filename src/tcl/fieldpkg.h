@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 12 17:45:52 2000
-// written: Wed Jul 18 09:55:19 2001
+// written: Wed Jul 18 11:25:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "util/objfactory.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
-#include "tcl/tclitempkg.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLPKG_H_DEFINED)
+#include "tcl/tclpkg.h"
 #endif
 
 class FieldInfo;
@@ -27,13 +27,13 @@ class FieldMap;
 namespace Tcl
 {
 
-  class TclItemPkg;
+  class Pkg;
 
-  void defField(TclItemPkg* pkg, const FieldInfo& finfo);
-  void defAllFields(TclItemPkg* pkg, const FieldMap& fmap);
+  void defField(Pkg* pkg, const FieldInfo& finfo);
+  void defAllFields(Pkg* pkg, const FieldMap& fmap);
 
   template <class C>
-  void defFieldContainer(TclItemPkg* pkg)
+  void defFieldContainer(Pkg* pkg)
   {
     Tcl::defGenericObjCmds<C>(pkg);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Mon Jul 16 10:23:16 2001
+// written: Wed Jul 18 11:25:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "mtxobj.h"
 
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
@@ -26,10 +26,10 @@ namespace MtxTcl
   class MtxPkg;
 }
 
-class MtxTcl::MtxPkg : public Tcl::TclItemPkg {
+class MtxTcl::MtxPkg : public Tcl::Pkg {
 public:
   MtxPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Mtx", "$Revision$")
+    Tcl::Pkg(interp, "Mtx", "$Revision$")
   {
     Tcl::defGenericObjCmds<MtxObj>(this);
 
@@ -42,10 +42,11 @@ public:
 };
 
 extern "C"
-int Mtx_Init(Tcl_Interp* interp) {
+int Mtx_Init(Tcl_Interp* interp)
+{
 DOTRACE("Mtx_Init");
 
-  Tcl::TclPkg* pkg = new MtxTcl::MtxPkg(interp);
+  Tcl::Pkg* pkg = new MtxTcl::MtxPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MtxObj::make);
 

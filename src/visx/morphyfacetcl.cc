@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:42:36 1999
-// written: Wed Jul 18 09:52:50 2001
+// written: Wed Jul 18 11:13:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,11 @@
 #include "util/trace.h"
 
 extern "C"
-int Morphyface_Init(Tcl_Interp* interp) {
+int Morphyface_Init(Tcl_Interp* interp)
+{
 DOTRACE("Morphyface_Init");
 
-  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "MorphyFace", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MorphyFace", "$Revision$");
   Tcl::defFieldContainer<MorphyFace>(pkg);
 
   return pkg->initStatus();

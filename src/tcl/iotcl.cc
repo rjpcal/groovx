@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Jul 16 13:00:10 2001
+// written: Wed Jul 18 11:27:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "io/iolegacy.h"
 
 #include "tcl/tclerror.h"
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objdb.h"
 #include "util/objmgr.h"
@@ -159,13 +159,13 @@ namespace Tcl
       }
   }
 
-class IoObjectPkg : public TclItemPkg
+class IoObjectPkg : public Pkg
 {
 public:
   IoObjectPkg(Tcl_Interp* interp) :
-    TclItemPkg(interp, "IO", "$Revision$")
+    Pkg(interp, "IO", "$Revision$")
   {
-    TclItemPkg::addIoCommands();
+    Pkg::addIoCommands();
 
     Tcl::defGenericObjCmds<IO::IoObject>(this);
 
@@ -173,11 +173,11 @@ public:
   }
 };
 
-class ObjectPkg : public TclItemPkg
+class ObjectPkg : public Pkg
 {
 public:
   ObjectPkg(Tcl_Interp* interp) :
-    TclItemPkg(interp, "Obj", "$Revision$")
+    Pkg(interp, "Obj", "$Revision$")
   {
     Tcl::defGenericObjCmds<Util::Object>(this);
 
@@ -189,24 +189,24 @@ public:
     def( &Tcl::objNewOne, "new", "typename" );
     def( &Tcl::objDelete, "delete", "item_id(s)" );
 
-    TclPkg::eval("proc new {args} { eval Obj::new $args }");
-    TclPkg::eval("proc delete {args} { eval Obj::delete $args }");
+    Pkg::eval("proc new {args} { eval Obj::new $args }");
+    Pkg::eval("proc delete {args} { eval Obj::delete $args }");
 
-    TclPkg::eval("namespace eval IO {\n"
-                 "proc new {args} { eval Obj::new $args }\n"
-                 "proc delete {args} { eval Obj::delete $args }\n"
-                 "}");
+    Pkg::eval("namespace eval IO {\n"
+              "proc new {args} { eval Obj::new $args }\n"
+              "proc delete {args} { eval Obj::delete $args }\n"
+              "}");
   }
 };
 
-class ObjDbPkg : public TclItemPkg {
+class ObjDbPkg : public Pkg {
   static void clear() { ObjDb::theDb().clear(); }
   static void purge() { ObjDb::theDb().purge(); }
   static void release(Util::UID id) { ObjDb::theDb().release(id); }
 
 public:
   ObjDbPkg(Tcl_Interp* interp) :
-    TclItemPkg(interp, "ObjDb", "$Revision$")
+    Pkg(interp, "ObjDb", "$Revision$")
   {
     def( &ObjDbPkg::clear, "clear", 0 );
     def( &ObjDbPkg::purge, "purge", 0 );
@@ -218,13 +218,13 @@ public:
     def( &IoTcl::saveObjectsDefault,
          "saveObjects", "objids filename" );
 
-    TclPkg::eval("namespace eval IoDb {\n"
-                 "  proc clear {args} { eval ObjDb::clear $args }\n"
-                 "  proc purge {args} { eval ObjDb::purge $args }\n"
-                 "  proc release {args} { eval ObjDb::release $args }\n"
-                 "  proc loadObjects {args} { eval ObjDb::loadObjects $args }\n"
-                 "  proc saveObjects {args} { eval ObjDb::saveObjects $args }\n"
-                 "}\n");
+    Pkg::eval("namespace eval IoDb {\n"
+              "  proc clear {args} { eval ObjDb::clear $args }\n"
+              "  proc purge {args} { eval ObjDb::purge $args }\n"
+              "  proc release {args} { eval ObjDb::release $args }\n"
+              "  proc loadObjects {args} { eval ObjDb::loadObjects $args }\n"
+              "  proc saveObjects {args} { eval ObjDb::saveObjects $args }\n"
+              "}\n");
   }
 
   virtual ~ObjDbPkg()
@@ -240,11 +240,11 @@ int Io_Init(Tcl_Interp* interp)
 {
 DOTRACE("Io_Init");
 
-  Tcl::TclPkg* pkg1 = new Tcl::ObjDbPkg(interp);
-  Tcl::TclPkg* pkg2 = new Tcl::ObjectPkg(interp);
-  Tcl::TclPkg* pkg3 = new Tcl::IoObjectPkg(interp);
+  Tcl::Pkg* pkg1 = new Tcl::ObjDbPkg(interp);
+  Tcl::Pkg* pkg2 = new Tcl::ObjectPkg(interp);
+  Tcl::Pkg* pkg3 = new Tcl::IoObjectPkg(interp);
 
-  return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
+  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
 }
 
 static const char vcid_iotcl_cc[] = "$Header$";

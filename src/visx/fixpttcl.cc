@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jul 18 09:51:29 2001
+// written: Wed Jul 18 11:13:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,11 @@
 #include "util/trace.h"
 
 extern "C"
-int Fixpt_Init(Tcl_Interp* interp) {
+int Fixpt_Init(Tcl_Interp* interp)
+{
 DOTRACE("Fixpt_Init");
 
-  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "FixPt", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "FixPt", "$Revision$");
   Tcl::defFieldContainer<FixPt>(pkg);
 
   return pkg->initStatus();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jul 18 10:40:53 2001
+// written: Wed Jul 18 11:26:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,8 @@
 #include "block.h"
 #include "trialbase.h"
 
-#include "tcl/objfunctor.h"
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -56,10 +55,10 @@ namespace BlockTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public Tcl::TclItemPkg {
+class BlockTcl::BlockPkg : public Tcl::Pkg {
 public:
   BlockPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Block", "$Revision$")
+    Tcl::Pkg(interp, "Block", "$Revision$")
   {
     Tcl::defGenericObjCmds<Block>(this);
 
@@ -91,10 +90,11 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Block_Init(Tcl_Interp* interp) {
+int Block_Init(Tcl_Interp* interp)
+{
 DOTRACE("Block_Init");
 
-  Tcl::TclPkg* pkg = new BlockTcl::BlockPkg(interp);
+  Tcl::Pkg* pkg = new BlockTcl::BlockPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Block::make);
 

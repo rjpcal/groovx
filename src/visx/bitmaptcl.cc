@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Mon Jul 16 11:37:13 2001
+// written: Wed Jul 18 11:26:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,7 @@
 #include "util/ref.h"
 #include "util/strings.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
+#include "tcl/tclpkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -54,10 +53,10 @@ namespace BitmapTcl
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::BitmapPkg : public Tcl::TclItemPkg {
+class BitmapTcl::BitmapPkg : public Tcl::Pkg {
 public:
   BitmapPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Bitmap", "$Revision$")
+    Tcl::Pkg(interp, "Bitmap", "$Revision$")
   {
     Tcl::defGenericObjCmds<Bitmap>(this);
 
@@ -93,10 +92,10 @@ namespace GLBitmapTcl {
   class GLBitmapPkg;
 }
 
-class GLBitmapTcl::GLBitmapPkg : public Tcl::TclItemPkg {
+class GLBitmapTcl::GLBitmapPkg : public Tcl::Pkg {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "GLBitmap", "$Revision$")
+    Tcl::Pkg(interp, "GLBitmap", "$Revision$")
   {
     Tcl::defGenericObjCmds<GLBitmap>(this);
 
@@ -115,10 +114,10 @@ namespace XBitmapTcl {
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapPkg : public Tcl::TclItemPkg {
+class XBitmapTcl::XBitmapPkg : public Tcl::Pkg {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "XBitmap", "$Revision$")
+    Tcl::Pkg(interp, "XBitmap", "$Revision$")
   {
     Tcl::defGenericObjCmds<XBitmap>(this);
   }
@@ -131,17 +130,18 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Bitmap_Init(Tcl_Interp* interp) {
+int Bitmap_Init(Tcl_Interp* interp)
+{
 DOTRACE("Bitmap_Init");
 
-  Tcl::TclPkg* pkg1 = new BitmapTcl::BitmapPkg(interp);
-  Tcl::TclPkg* pkg2 = new GLBitmapTcl::GLBitmapPkg(interp);
-  Tcl::TclPkg* pkg3 = new XBitmapTcl::XBitmapPkg(interp);
+  Tcl::Pkg* pkg1 = new BitmapTcl::BitmapPkg(interp);
+  Tcl::Pkg* pkg2 = new GLBitmapTcl::GLBitmapPkg(interp);
+  Tcl::Pkg* pkg3 = new XBitmapTcl::XBitmapPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&GLBitmap::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&XBitmap::make);
 
-  return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));;
+  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
 }
 
 static const char vcid_bitmaptcl_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Mon Jul 16 10:23:16 2001
+// written: Wed Jul 18 11:25:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gtext.h"
 
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
@@ -34,10 +34,10 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public Tcl::TclItemPkg {
+class GtextTcl::GtextPkg : public Tcl::Pkg {
 public:
   GtextPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Gtext", "$Revision$")
+    Tcl::Pkg(interp, "Gtext", "$Revision$")
   {
     Tcl::defGenericObjCmds<Gtext>(this);
 
@@ -54,10 +54,11 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Gtext_Init(Tcl_Interp* interp) {
+int Gtext_Init(Tcl_Interp* interp)
+{
 DOTRACE("Gtext_Init");
 
-  Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp);
+  Tcl::Pkg* pkg = new GtextTcl::GtextPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Gtext::make);
 

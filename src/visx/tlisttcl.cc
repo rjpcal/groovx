@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Jul 16 12:58:15 2001
+// written: Wed Jul 18 11:27:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
 #include "util/ref.h"
@@ -289,10 +289,10 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
 //
 //---------------------------------------------------------------------
 
-class TlistTcl::TlistPkg : public Tcl::TclItemPkg {
+class TlistTcl::TlistPkg : public Tcl::Pkg {
 public:
   TlistPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Tlist", "$Revision$")
+    Tcl::Pkg(interp, "Tlist", "$Revision$")
   {
     def( &TlistTcl::createPreview,
          "createPreview", "objids pixel_width pixel_height" );
@@ -329,7 +329,7 @@ int Tlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tlist_Init");
 
-  Tcl::TclPkg* pkg = new TlistTcl::TlistPkg(interp);
+  Tcl::Pkg* pkg = new TlistTcl::TlistPkg(interp);
 
   return pkg->initStatus();
 }

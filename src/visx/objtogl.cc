@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jul 16 13:04:03 2001
+// written: Wed Jul 18 11:27:36 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -23,8 +23,8 @@
 #include "gx/gxnode.h"
 
 #include "tcl/tclerror.h"
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 #include "util/ref.h"
@@ -164,10 +164,10 @@ namespace ObjTogl
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::TogletPkg : public Tcl::TclItemPkg {
+class ObjTogl::TogletPkg : public Tcl::Pkg {
 public:
   TogletPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Toglet", "$Revision$")
+    Tcl::Pkg(interp, "Toglet", "$Revision$")
   {
     Tcl::defGenericObjCmds<Toglet>(this);
 
@@ -210,19 +210,19 @@ public:
 
     setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
 
-    TclPkg::eval("namespace eval Togl { proc init {} {} }\n"
-                 "proc clearscreen {} { Togl::clearscreen }\n"
-                 "proc see {id} { Togl::see $id }\n"
-                 "proc show {id} { Togl::show $id }\n"
-                 "proc undraw {} { Togl::undraw }\n"
-                 "proc redraw {} { Togl::refresh }\n");
+    Pkg::eval("namespace eval Togl { proc init {} {} }\n"
+              "proc clearscreen {} { Togl::clearscreen }\n"
+              "proc see {id} { Togl::see $id }\n"
+              "proc show {id} { Togl::show $id }\n"
+              "proc undraw {} { Togl::undraw }\n"
+              "proc redraw {} { Togl::refresh }\n");
 
-    TclPkg::eval("foreach cmd [info commands ::Toglet::*] {"
-                 "  proc ::Togl::[namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \" }\n"
-                 "namespace eval Togl { namespace export * }"
-                 );
+    Pkg::eval("foreach cmd [info commands ::Toglet::*] {"
+              "  proc ::Togl::[namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \" }\n"
+              "namespace eval Togl { namespace export * }"
+              );
 
-    TclPkg::eval("Expt::widget [Toglet::currentToglet]");
+    Pkg::eval("Expt::widget [Toglet::currentToglet]");
   }
 
   virtual ~TogletPkg()
@@ -258,7 +258,7 @@ int Objtogl_Init(Tcl_Interp* interp)
 {
 DOTRACE("Objtogl_Init");
 
-  Tcl::TclPkg* pkg = new ObjTogl::TogletPkg(interp);
+  Tcl::Pkg* pkg = new ObjTogl::TogletPkg(interp);
 
   toglCreateInterp = interp;
 

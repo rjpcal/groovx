@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jul 16 10:23:16 2001
+// written: Wed Jul 18 11:35:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "subject.h"
 
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
@@ -24,14 +24,15 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace SubjectTcl {
+namespace SubjectTcl
+{
   class SubjectPkg;
 }
 
-class SubjectTcl::SubjectPkg : public Tcl::TclItemPkg {
+class SubjectTcl::SubjectPkg : public Tcl::Pkg {
 public:
   SubjectPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Subject", "$Revision$")
+    Tcl::Pkg(interp, "Subject", "$Revision$")
   {
     Tcl::defGenericObjCmds<Subject>(this);
 
@@ -42,10 +43,11 @@ public:
 };
 
 extern "C"
-int Subject_Init(Tcl_Interp* interp) {
+int Subject_Init(Tcl_Interp* interp)
+{
 DOTRACE("Subject_Init");
 
-  Tcl::TclPkg* pkg = new SubjectTcl::SubjectPkg(interp);
+  Tcl::Pkg* pkg = new SubjectTcl::SubjectPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Subject::make);
 

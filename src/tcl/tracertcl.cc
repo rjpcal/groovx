@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Wed Jul 18 10:39:52 2001
+// written: Wed Jul 18 11:25:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "tcl/tracertcl.h"
 
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 
 #include "util/tracer.h"
 
@@ -60,7 +60,7 @@ namespace
 
 } // end namespace Tcl
 
-void Tcl::defTracing(Tcl::TclItemPkg* pkg, Util::Tracer& tracer)
+void Tcl::defTracing(Tcl::Pkg* pkg, Util::Tracer& tracer)
 {
   using Util::Tracer;
 

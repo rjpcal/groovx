@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Jul 16 10:31:31 2001
+// written: Wed Jul 18 11:27:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,7 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
+#include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
 
@@ -39,10 +38,10 @@ namespace GxTcl
   class GxNodePkg;
 }
 
-class GxTcl::GxNodePkg : public Tcl::TclItemPkg {
+class GxTcl::GxNodePkg : public Tcl::Pkg {
 public:
   GxNodePkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "GxNode", "$Revision$")
+    Tcl::Pkg(interp, "GxNode", "$Revision$")
     {
       Tcl::defGenericObjCmds<GxNode>(this);
 
@@ -61,10 +60,10 @@ namespace GxTcl
   class GxSeparatorPkg;
 }
 
-class GxTcl::GxSeparatorPkg : public Tcl::TclItemPkg {
+class GxTcl::GxSeparatorPkg : public Tcl::Pkg {
 public:
   GxSeparatorPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "GxSeparator", "$Revision$")
+    Tcl::Pkg(interp, "GxSeparator", "$Revision$")
     {
       Tcl::defGenericObjCmds<GxSeparator>(this);
 
@@ -77,12 +76,13 @@ public:
 };
 
 extern "C"
-int Gx_Init(Tcl_Interp* interp) {
+int Gx_Init(Tcl_Interp* interp)
+{
 DOTRACE("Gx_Init");
-  Tcl::TclPkg* pkg1 = new GxTcl::GxNodePkg(interp);
-  Tcl::TclPkg* pkg2 = new GxTcl::GxSeparatorPkg(interp);
+  Tcl::Pkg* pkg1 = new GxTcl::GxNodePkg(interp);
+  Tcl::Pkg* pkg2 = new GxTcl::GxSeparatorPkg(interp);
 
-  return pkg1->combineStatus(pkg2->initStatus());
+  return Tcl::Pkg::initStatus(pkg1, pkg2);
 }
 
 static const char vcid_gxtcl_cc[] = "$Header$";

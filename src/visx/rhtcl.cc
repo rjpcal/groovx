@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 18 10:41:19 2001
+// written: Wed Jul 18 11:25:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
 
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -128,10 +128,10 @@ namespace SerialRhTcl
   }
 }
 
-class SerialRhTcl::SerialRhPkg : public Tcl::TclItemPkg {
+class SerialRhTcl::SerialRhPkg : public Tcl::Pkg {
 public:
   SerialRhPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "SerialRh", "$Revision$")
+    Tcl::Pkg(interp, "SerialRh", "$Revision$")
     {
       defRaw( &SerialRhTcl::startSerial, "SerialRh::SerialRh",
               "device=/dev/tty0p0", 1 );
@@ -151,10 +151,10 @@ namespace EventRhTcl
   class EventRhPkg;
 }
 
-class EventRhTcl::EventRhPkg : public Tcl::TclItemPkg {
+class EventRhTcl::EventRhPkg : public Tcl::Pkg {
 public:
   EventRhPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "EventRh", "$Revision$")
+    Tcl::Pkg(interp, "EventRh", "$Revision$")
   {
     Tcl::defTracing(this, EventResponseHdlr::tracer);
 
@@ -194,10 +194,10 @@ namespace KbdRhTcl {
   class KbdRhPkg;
 }
 
-class KbdRhTcl::KbdRhPkg : public Tcl::TclItemPkg {
+class KbdRhTcl::KbdRhPkg : public Tcl::Pkg {
 public:
   KbdRhPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "KbdRh", "$Revision$")
+    Tcl::Pkg(interp, "KbdRh", "$Revision$")
   {
     Tcl::defGenericObjCmds<KbdResponseHdlr>(this);
 
@@ -224,28 +224,27 @@ public:
 //--------------------------------------------------------------------
 
 extern "C"
-int Rh_Init(Tcl_Interp* interp) {
+int Rh_Init(Tcl_Interp* interp)
+{
 DOTRACE("Rh_Init");
 
-  Tcl::TclPkg* pkg1 = new Tcl::TclItemPkg(interp, "Rh", "$Revision$");
+  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Rh", "$Revision$");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg1);
 
-  Tcl::TclPkg* pkg2 = new EventRhTcl::EventRhPkg(interp);
-  Tcl::TclPkg* pkg3 = new KbdRhTcl::KbdRhPkg(interp);
-  Tcl::TclPkg* pkg4 = new Tcl::TclItemPkg(interp, "NullRh",
-                                          "$Revision$");
+  Tcl::Pkg* pkg2 = new EventRhTcl::EventRhPkg(interp);
 
-  Tcl::TclPkg* pkg5 = new SerialRhTcl::SerialRhPkg(interp);
+  Tcl::Pkg* pkg3 = new KbdRhTcl::KbdRhPkg(interp);
+
+  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "NullRh", "$Revision$");
+  Tcl::defGenericObjCmds<NullResponseHdlr>(pkg4);
+
+  Tcl::Pkg* pkg5 = new SerialRhTcl::SerialRhPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
 
-  return pkg1->combineStatus(
-         pkg2->combineStatus(
-         pkg3->combineStatus(
-         pkg4->combineStatus(
-         pkg5->initStatus()))));
+  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3, pkg4, pkg5);
 }
 
 static const char vcid_rhtcl_cc[] = "$Header$";

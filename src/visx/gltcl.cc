@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jul 16 13:02:36 2001
+// written: Wed Jul 18 11:27:36 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -19,8 +19,8 @@
 #define GLTCL_CC_DEFINED
 
 #include "tcl/tclerror.h"
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
 
@@ -102,7 +102,7 @@ namespace GLTcl
 
   static std::map<GLenum, const AttribInfo*> theAttribMap;
 
-  void initializeGet(Tcl::TclPkg* pkg) {
+  void initializeGet(Tcl::Pkg* pkg) {
     static bool inited = false;
 
     if ( inited ) return;
@@ -596,10 +596,10 @@ GLdouble GLTcl::pixelCheckSum(int x, int y, int w, int h)
 //
 //---------------------------------------------------------------------
 
-class GLTcl::GLPkg : public Tcl::TclItemPkg {
+class GLTcl::GLPkg : public Tcl::Pkg {
 public:
   GLPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Tclgl", "$Revision$")
+    Tcl::Pkg(interp, "Tclgl", "$Revision$")
   {
 
     // for glBegin
@@ -793,10 +793,11 @@ public:
 //--------------------------------------------------------------------
 
 extern "C"
-int Gltcl_Init(Tcl_Interp* interp) {
+int Gltcl_Init(Tcl_Interp* interp)
+{
 DOTRACE("Gltcl_Init");
 
-  Tcl::TclPkg* pkg = new GLTcl::GLPkg(interp);
+  Tcl::Pkg* pkg = new GLTcl::GLPkg(interp);
 
 #ifdef ACC_COMPILER
 //   typeid(out_of_range);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Jul 16 15:15:37 2001
+// written: Wed Jul 18 11:27:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,7 @@
 #include "application.h"
 #include "sound.h"
 
-#include "tcl/objfunctor.h"
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 #include "tcl/tclutil.h"
 
 #include "util/objfactory.h"
@@ -48,10 +47,10 @@ namespace SoundTcl
 //
 //---------------------------------------------------------------------
 
-class SoundTcl::SoundPkg : public Tcl::TclItemPkg {
+class SoundTcl::SoundPkg : public Tcl::Pkg {
 public:
   SoundPkg(Tcl::SafeInterp interp) :
-    Tcl::TclItemPkg(interp.intp(), "Sound", "$Revision$")
+    Tcl::Pkg(interp.intp(), "Sound", "$Revision$")
   {
     Tcl::defGenericObjCmds<Sound>(this);
 
@@ -118,7 +117,7 @@ extern "C" int Sound_Init(Tcl_Interp* interp)
 {
 DOTRACE("Sound_Init");
 
-  Tcl::TclPkg* pkg = new SoundTcl::SoundPkg(interp);
+  Tcl::Pkg* pkg = new SoundTcl::SoundPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Sound::make);
 

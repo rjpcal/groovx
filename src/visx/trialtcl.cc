@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Jul 18 10:41:24 2001
+// written: Wed Jul 18 11:03:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,10 +40,10 @@ namespace TrialTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialTcl::TrialPkg : public Tcl::TclItemPkg {
+class TrialTcl::TrialPkg : public Tcl::Pkg {
 public:
   TrialPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Trial", "$Revision$")
+    Tcl::Pkg(interp, "Trial", "$Revision$")
   {
     Tcl::defTracing(this, Trial::tracer);
 
@@ -84,7 +84,7 @@ int Trial_Init(Tcl_Interp* interp)
 {
 DOTRACE("Trial_Init");
 
-  Tcl::TclPkg* pkg = new TrialTcl::TrialPkg(interp);
+  Tcl::Pkg* pkg = new TrialTcl::TrialPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 

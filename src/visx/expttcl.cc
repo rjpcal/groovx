@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jul 18 10:41:04 2001
+// written: Wed Jul 18 11:27:36 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -25,9 +25,8 @@
 
 #include "system/system.h"
 
-#include "tcl/objfunctor.h"
 #include "tcl/tclcode.h"
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 #include "tcl/tclutil.h"
 #include "tcl/tracertcl.h"
 
@@ -158,13 +157,13 @@ namespace ExptTcl
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::ExpPkg : public Tcl::TclItemPkg
+class ExptTcl::ExpPkg : public Tcl::Pkg
 {
 private:
 
 public:
   ExpPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Exp", "$Revision$")
+    Tcl::Pkg(interp, "Exp", "$Revision$")
   {
     theExptDriver = Ref<ExptDriver>
       (ExptDriver::make(Application::theApp().argc(),
@@ -173,7 +172,7 @@ public:
 
     Tcl::defGenericObjCmds<ExptDriver>(this);
 
-    Tcl::TclItemPkg::addIoCommands();
+    Tcl::Pkg::addIoCommands();
 
     Tcl::defTracing(this, ExptDriver::tracer);
 
@@ -198,10 +197,10 @@ public:
     defAction("storeData", &ExptDriver::storeData);
     defAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
 
-    TclPkg::eval("foreach cmd [info commands ::Exp::*] {"
-                 "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" } }\n"
-                 "namespace eval Expt { namespace export * }"
-                 );
+    Pkg::eval("foreach cmd [info commands ::Exp::*] {"
+              "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" } }\n"
+              "namespace eval Expt { namespace export * }"
+              );
   }
 
   virtual ~ExpPkg()
@@ -236,7 +235,7 @@ int Expt_Init(Tcl_Interp* interp)
 {
 DOTRACE("Expt_Init");
 
-  Tcl::TclPkg* pkg = new ExptTcl::ExpPkg(interp);
+  Tcl::Pkg* pkg = new ExptTcl::ExpPkg(interp);
 
   exptCreateInterp = interp;
 

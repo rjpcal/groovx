@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Mon Jul 16 14:55:37 2001
+// written: Wed Jul 18 11:33:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef HOOKTCL_CC_DEFINED
 #define HOOKTCL_CC_DEFINED
 
-#include "tcl/tclitempkg.h"
+#include "tcl/tclpkg.h"
 
 #define LOCAL_TRACE
 #include "util/trace.h"
@@ -61,10 +61,10 @@ namespace HookTcl
   size_t memUsage() { return TOTAL; }
 }
 
-class HookPkg : public Tcl::TclItemPkg {
+class HookPkg : public Tcl::Pkg {
 public:
   HookPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "Hook", "$Revision$")
+    Tcl::Pkg(interp, "Hook", "$Revision$")
   {
     defVecRaw( HookTcl::hook, "::hook", "variable", 1 );
     def( HookTcl::memUsage, "::memUsage", 0 );
@@ -72,9 +72,9 @@ public:
 };
 
 extern "C"
-int Hook_Init(Tcl_Interp* interp) {
-
-  Tcl::TclPkg* pkg = new HookPkg(interp);
+int Hook_Init(Tcl_Interp* interp)
+{
+  Tcl::Pkg* pkg = new HookPkg(interp);
 
   return pkg->initStatus();
 }

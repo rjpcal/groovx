@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Jul 18 10:41:14 2001
+// written: Wed Jul 18 11:27:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,9 @@
 #include "grobj.h"
 #include "rect.h"
 
-#include "tcl/tclitempkg.h"
-#include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
 namespace Tcl
@@ -89,10 +88,10 @@ namespace GrobjTcl
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::GrObjPkg : public Tcl::TclItemPkg {
+class GrobjTcl::GrObjPkg : public Tcl::Pkg {
 public:
   GrObjPkg(Tcl_Interp* interp) :
-    Tcl::TclItemPkg(interp, "GrObj", "$Revision$")
+    Tcl::Pkg(interp, "GrObj", "$Revision$")
   {
     Tcl::defTracing(this, GrObj::tracer);
 
@@ -156,7 +155,7 @@ public:
 extern "C"
 int Grobj_Init(Tcl_Interp* interp)
 {
-  Tcl::TclPkg* pkg = new GrobjTcl::GrObjPkg(interp);
+  Tcl::Pkg* pkg = new GrobjTcl::GrObjPkg(interp);
 
   return pkg->initStatus();
 }
