@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu May 11 19:41:36 2000
+// written: Wed May 17 16:29:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
-#include "stopwatch.h"
+#include "util/stopwatch.h"
 #endif
 
 namespace GWT { class Widget; }

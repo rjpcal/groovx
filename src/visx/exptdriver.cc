@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 17 13:55:26 2000
+// written: Wed May 17 16:29:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
-#include "stopwatch.h"
 #include "tlistwidget.h"
 
 #include "io/reader.h"
@@ -36,6 +35,7 @@
 
 #include "util/arrays.h"
 #include "util/errorhandler.h"
+#include "util/stopwatch.h"
 #include "util/strings.h"
 
 #include <tcl.h>
