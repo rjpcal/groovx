@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 13:38:15 2002
+// written: Tue Feb 19 13:51:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -227,13 +227,6 @@ Slice& Slice::operator=(const Mtx& other)
   return *this;
 }
 
-
-
-MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
-  // Make sure that the data storage is unique since this is a
-  // non-const iterator
-  Base(m.makeUnique().storageStart() + storageOffset, s, n)
-{}
 
 
 ///////////////////////////////////////////////////////////////////////

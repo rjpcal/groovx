@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 13:38:03 2002
+// written: Tue Feb 19 13:50:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,10 +96,20 @@ public:
 template <class T>
 class MtxIterBase
 {
-public:
+protected:
+
   MtxIterBase(T* d, int str, int n) :
     data(d), stride(str), stop(data+str*n) {}
 
+  // This call syntax is used to indicate that we need to get a unique copy of
+  // the storage first
+  MtxIterBase(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
+    data(m.makeUnique().storageStart() + storageOffset),
+    stride(s),
+    stop(data+stride*n)
+  {}
+
+public:
   MtxIterBase(const MtxIterBase& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
 
@@ -107,117 +117,58 @@ public:
   MtxIterBase(const MtxIterBase<U>& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
 
+  typedef random_access_iterator_tag iterator_category;
+  typedef T                          value_type;
+  typedef ptrdiff_t                  difference_type;
+  typedef T*                         pointer;
+  typedef T&                         reference;
+
+  MtxIterBase end() const { MtxIterBase e(*this); e.data = stop; return e; }
+
+  bool hasMore() const { return data < stop; }
+
+  // Dereference
+
+  reference operator*() const { RC_less(data, stop); return *data; }
+
+  // Comparison
+
+  bool operator==(const MtxIterBase& other) const { return data == other.data; }
+
+  bool operator!=(const MtxIterBase& other) const { return data != other.data; }
+
+  bool operator<(const MtxIterBase& other) const { return data < other.data; }
+
+  difference_type operator-(const MtxIterBase& other) const
+    { return (data - other.data) / stride; }
+
+  // Increment/Decrement
+
+  MtxIterBase& operator++() { data += stride; return *this; }
+  MtxIterBase& operator--() { data -= stride; return *this; }
+
+  MtxIterBase operator++(int) { MtxIterBase cpy(*this); data += stride; return cpy; }
+  MtxIterBase operator--(int) { MtxIterBase cpy(*this); data -= stride; return cpy; }
+
+  MtxIterBase& operator+=(int x) { data += x*stride; return *this; }
+  MtxIterBase& operator-=(int x) { data -= x*stride; return *this; }
+
+  MtxIterBase operator+(int x) const { MtxIterBase res(*this); res += x; return res; }
+  MtxIterBase operator-(int x) const { MtxIterBase res(*this); res -= x; return res; }
+
+private:
+
+  template <class U> friend class MtxIterBase;
+  friend class Slice;
+  friend class Mtx;
+
   T* data;
   int stride;
   T* stop;
 };
 
-
-class MtxIter : protected MtxIterBase<double>
-{
-  typedef MtxIterBase<double> Base;
-
-  MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n);
-
-  friend class MtxConstIter;
-  friend class Slice;
-  friend class Mtx;
-
-public:
-
-  typedef random_access_iterator_tag iterator_category;
-  typedef double                     value_type;
-  typedef ptrdiff_t                  difference_type;
-  typedef double*                    pointer;
-  typedef double&                    reference;
-
-  MtxIter end() const { MtxIter res(*this); res.data = stop; return res; }
-
-  bool hasMore() const { return data < stop; }
-
-  // Dereference
-
-  double& operator*() { RC_less(data, stop); return *data; }
-
-  // Comparison
-
-  bool operator==(const MtxIter& other) const { return data == other.data; }
-
-  bool operator!=(const MtxIter& other) const { return data != other.data; }
-
-  bool operator<(const MtxIter& other) const { return data < other.data; }
-
-  difference_type operator-(const MtxIter& other) const
-    { return (data - other.data) / stride; }
-
-  // Increment/Decrement
-
-  MtxIter& operator++() { data += stride; return *this; }
-  MtxIter& operator--() { data -= stride; return *this; }
-
-  MtxIter operator++(int) { MtxIter cpy(*this); data += stride; return cpy; }
-  MtxIter operator--(int) { MtxIter cpy(*this); data -= stride; return cpy; }
-
-  MtxIter& operator+=(int x) { data += x*stride; return *this; }
-  MtxIter& operator-=(int x) { data -= x*stride; return *this; }
-
-  MtxIter operator+(int x) const { MtxIter res(*this); res += x; return res; }
-  MtxIter operator-(int x) const { MtxIter res(*this); res -= x; return res; }
-};
-
-
-
-class MtxConstIter : protected MtxIterBase<const double>
-{
-  typedef MtxIterBase<const double> Base;
-
-  MtxConstIter(const double* d, int s, int n) : Base(d, s, n) {}
-
-  friend class Slice;
-  friend class Mtx;
-
-public:
-  MtxConstIter(const MtxIter& other) : Base(other) {}
-
-  typedef random_access_iterator_tag iterator_category;
-  typedef double                     value_type;
-  typedef ptrdiff_t                  difference_type;
-  typedef double*                    pointer;
-  typedef double&                    reference;
-
-  MtxConstIter end() const { MtxConstIter e(*this); e.data = stop; return e; }
-
-  bool hasMore() const { return data < stop; }
-
-  // Dereference
-
-  double operator*() const { RC_less(data, stop); return *data; }
-
-  // Comparison
-
-  bool operator==(const MtxConstIter& other) const { return data == other.data; }
-
-  bool operator!=(const MtxConstIter& other) const { return data != other.data; }
-
-  bool operator<(const MtxConstIter& other) const { return data < other.data; }
-
-  difference_type operator-(const MtxConstIter& other) const
-    { return (data - other.data) / stride; }
-
-  // Increment/Decrement
-
-  MtxConstIter& operator++() { data += stride; return *this; }
-  MtxConstIter& operator--() { data -= stride; return *this; }
-
-  MtxConstIter operator++(int) { MtxConstIter cpy(*this); data += stride; return cpy; }
-  MtxConstIter operator--(int) { MtxConstIter cpy(*this); data -= stride; return cpy; }
-
-  MtxConstIter& operator+=(int x) { data += x*stride; return *this; }
-  MtxConstIter& operator-=(int x) { data -= x*stride; return *this; }
-
-  MtxConstIter operator+(int x) const { MtxConstIter res(*this); res += x; return res; }
-  MtxConstIter operator-(int x) const { MtxConstIter res(*this); res -= x; return res; }
-};
+typedef MtxIterBase<double> MtxIter;
+typedef MtxIterBase<const double> MtxConstIter;
 
 
 
@@ -628,7 +579,8 @@ private:
   const double* storageStart() const { return itsImpl.storageStart(); }
   double* storageStart() { return itsImpl.storageStart(); }
 
-  friend class MtxIter;
+  friend class MtxIterBase<double>;
+  friend class MtxIterBase<const double>;
 
   friend class Slice;
 
