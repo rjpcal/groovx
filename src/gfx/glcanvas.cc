@@ -88,7 +88,7 @@ namespace
     return (value == GL_TRUE);
   }
 
-  geom::span<double> depthRange()
+  geom::span<double> rawGepthRange()
   {
     DOTRACE("<glcanvas.cc>::depthRange");
     GLdouble vals[2];
@@ -122,6 +122,7 @@ public:
     modelviewCache(),
     projectionCache(),
     viewportCache(),
+    depthrangeCache(0.0, 1.0),
     checkFrequency(100),
     checkCounter(0)
   {
@@ -186,6 +187,7 @@ public:
   std::vector<txform> modelviewCache;
   std::vector<txform> projectionCache;
   geom::rect<int> viewportCache;
+  const geom::span<double> depthrangeCache;
   int checkFrequency;
   mutable int checkCounter;
 };
@@ -227,11 +229,12 @@ vec3d GLCanvas::screenFromWorld3(const vec3d& world_pos) const
 {
 DOTRACE("GLCanvas::screenFromWorld3");
 
-  GLint current_viewport[4];
-  glGetIntegerv(GL_VIEWPORT, current_viewport);
-
   const txform m = rep->getModelview();
   const txform p = rep->getProjection();
+  const geom::rect<int> viewport = this->getScreenViewport();
+
+  const int v[4] = { viewport.left(), viewport.bottom(),
+                     viewport.width(), viewport.height() };
 
   vec3d screen_pos;
 
@@ -239,7 +242,7 @@ DOTRACE("GLCanvas::screenFromWorld3");
     gluProject(world_pos.x(), world_pos.y(), world_pos.z(),
                m.col_major_data(),
                p.col_major_data(),
-               current_viewport,
+               &v[0],
                &screen_pos.x(), &screen_pos.y(), &screen_pos.z());
 
   dbg_eval_nl(3, status);
@@ -636,7 +639,7 @@ DOTRACE("GLCanvas::rasterPos");
 
   const geom::rect<double> viewport = geom::rect<double>(getScreenViewport());
 
-  const geom::span<double> depth = depthRange();
+  const geom::span<double> depth = rep->depthrangeCache;
 
   const vec3d screen_pos = screenFromWorld3(world_pos);
 
@@ -646,10 +649,12 @@ DOTRACE("GLCanvas::rasterPos");
   if (viewport.contains(screen_pos.as_vec2()) &&
       depth.contains(screen_pos.z()))
     {
+      DOTRACE("GLCanvas::rasterPos::branch-1");
       glRasterPos3d(world_pos.x(), world_pos.y(), world_pos.z());
     }
   else
     {
+      DOTRACE("GLCanvas::rasterPos::branch-2");
       // OK... in this case, our desired raster position actually
       // falls outside the onscreen viewport. If we just called
       // glRasterPos() with that position, it would recognize it as an
@@ -670,16 +675,17 @@ DOTRACE("GLCanvas::rasterPos");
 
       glRasterPos3d(safe_world.x(), safe_world.y(), safe_world.z());
 
-      if (!rasterPositionValid())
-        throw rutz::error("couldn't set valid raster position", SRC_POS);
-
       glBitmap(0, 0, 0.0f, 0.0f,
                screen_pos.x()-safe_screen.x(),
                screen_pos.y()-safe_screen.y(),
                static_cast<const GLubyte*>(0));
     }
 
-  POSTCONDITION(rasterPositionValid());
+  if (GET_DBG_LEVEL() >= 8)
+    {
+      // This operation is slow because it involves a glGet*()
+      POSTCONDITION(rasterPositionValid());
+    }
 }
 
 void GLCanvas::drawPixels(const media::bmap_data& data,
