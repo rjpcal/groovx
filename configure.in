@@ -15,11 +15,29 @@ AC_MSG_RESULT($OS)
 need_rpath=yes
 
 case $OS in
-   Linux) need_rpath=yes;;
-   IRIX) need_rpath=yes;;
-   Darwin) need_rpath=no;;
-   *) ;;
+   Linux)
+      need_rpath=yes
+      SHLIB_EXT=so
+      STATLIB_EXT=a
+      ;;
+   IRIX)
+      need_rpath=yes
+      SHLIB_EXT=so
+      STATLIB_EXT=a
+      AC_DEFINE(SHORTEN_SYMBOL_NAMES,1)
+      ;;
+   Darwin)
+      need_rpath=no
+      SHLIB_EXT=dylib
+      STATLIB_EXT=a
+      AC_DEFINE(ESD_WORKAROUND,1)
+      ;;
+   *)
+      AC_MSG_ERROR([unknown operating system])
+      ;;
 esac
+
+AC_SUBST(SHLIB_EXT)
 
 # If CXXFLAGS was not already set, then set it now to keep autoconf from
 # adding "-g -O2".
@@ -31,7 +49,7 @@ fi
 dnl Compiler checks.
 
 AC_LANG(C++)
-AC_PROG_CXX(g++-3 g++ c++)
+AC_PROG_CXX(g++-3 g++ c++ CC)
 
 dnl Checks for libraries.
 

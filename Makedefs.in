@@ -13,6 +13,10 @@ exec_prefix := @exec_prefix@
 
 OBJEXT := @OBJEXT@
 
+SHLIB_EXT := @SHLIB_EXT@
+
+STATLIB_EXT := @STATLIB_EXT@
+
 CPPFLAGS := @CPPFLAGS@ @X_CFLAGS@
 
 CXXFLAGS := @CXXFLAGS@

@@ -76,25 +76,17 @@ CPPFLAGS += -I$(SRC)
 
 ifeq ($(ARCH),irix6)
 	COMPILER := MIPSpro
-	SHLIB_EXT := so
-	STATLIB_EXT := a
-
-	DEFS += -DSHORTEN_SYMBOL_NAMES
 endif
 
 ifeq ($(ARCH),i686)
 	COMPILER := g++3
-	SHLIB_EXT := so
-	STATLIB_EXT := a
 
 	CXXFLAGS += -march=i686
 endif
 
 ifeq ($(ARCH),ppc)
 	COMPILER := g++2
-	SHLIB_EXT := dylib
-	STATLIB_EXT := a
-	DEFS += -DESD_WORKAROUND
+
 # The /sw/lib and /sw/include directories are managed by Fink
 	LDFLAGS += -L/sw/lib
 	CPPFLAGS += -I/sw/include
