@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 14:09:00 2002
+// written: Tue Feb 19 14:35:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -288,15 +288,6 @@ void MtxImpl::selectColumnRange(int c, int nc)
   ncols_ = nc;
 }
 
-void MtxImpl::makeUnique()
-{
-  if ( !datablock_->isUnique() )
-    {
-      DOTRACE("MtxImpl::makeUnique");
-      DataBlock::makeUnique(datablock_);
-    }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Mtx member definitions
@@ -415,8 +406,6 @@ void Mtx::reorderColumns(const Mtx& index_)
 void Mtx::swapColumns(int c1, int c2)
 {
   if (c1 == c2) return;
-
-  makeUnique();
 
   memswap(itsImpl.address_nc(0,c1), itsImpl.address_nc(0,c2), mrows());
 }

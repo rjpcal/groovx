@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 14:08:18 2002
+// written: Tue Feb 19 14:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,14 +101,6 @@ protected:
   MtxIterBase(T* d, int str, int n) :
     data(d), stride(str), stop(data+str*n) {}
 
-  // This call syntax is used to indicate that we need to get a unique copy of
-  // the storage first
-  MtxIterBase(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
-    data(m.makeUnique().storageStart_nc() + storageOffset),
-    stride(s),
-    stop(data+stride*n)
-  {}
-
 public:
   MtxIterBase(const MtxIterBase& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
@@ -187,6 +179,7 @@ protected:
   int itsNelems;
 
   inline const double* dataStart() const;
+  inline double* dataStart_nc();
   ptrdiff_t dataOffset(int i) const { return itsStride*i; }
   const double* address(int i) const { return dataStart() + dataOffset(i); }
 
@@ -236,7 +229,7 @@ public:
   //
 
   MtxIter beginNC()
-    { return MtxIter(itsOwner, storageOffset(0), itsStride, itsNelems); }
+    { return MtxIter(dataStart_nc(), itsStride, itsNelems); }
 
   MtxIter endNC()
     { return beginNC().end(); }
@@ -426,13 +419,13 @@ public:
   double at(int i) const
   {
     RC_less(i+offset_, storageLength());
-    return datablock_->itsData[i+offset_];
+    return storage()[i+offset_];
   }
 
   double& at_nc(int i)
   {
     RC_less(i+offset_, storageLength());
-    return datablock_->itsData[i+offset_];
+    return storage_nc()[i+offset_];
   }
 
   void reshape(int mrows, int ncols);
@@ -454,10 +447,10 @@ public:
   { return RCR_less(offset_ + offsetFromStart(row, col), storageLength()); }
 
   double* address_nc(int row, int col)
-  { return datablock_->itsData + offsetFromStorage(row, col); }
+  { return storage_nc() + offsetFromStorage(row, col); }
 
   const double* address(int row, int col) const
-  { return datablock_->itsData + offsetFromStorage(row, col); }
+  { return storage() + offsetFromStorage(row, col); }
 
 #ifdef APPLY_IMPL
 #  error macro error
@@ -467,7 +460,7 @@ public:
   // template arguments to a single apply() template
 #  define APPLY_IMPL \
  \
-      double* p = datablock_->itsData + offset_; \
+      double* p = storage_nc() + offset_; \
       unsigned int gap = rowgap(); \
  \
       if (gap == 0) \
@@ -503,13 +496,13 @@ public:
 #  undef APPLY_IMPL
 #endif // APPLY_IMPL
 
-  void makeUnique();
+  void makeUnique() { DataBlock::makeUnique(datablock_); }
 
-  const double* storageStart() const { return datablock_->itsData; }
-  double* storageStart_nc() { return datablock_->itsData; }
+  const double* storage() const { return datablock_->data(); }
+  double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
 
 private:
-  int storageLength() const { return datablock_->itsLength; }
+  int storageLength() const { return datablock_->length(); }
   unsigned int rowgap() const { return rowstride_ - mrows_; }
 
   DataBlock* datablock_;
@@ -612,7 +605,7 @@ public:
                    itsImpl.rowstride(), itsImpl.ncols()); }
 
   MtxIter rowIter(int r)
-    { return MtxIter(*this, itsImpl.offsetFromStorage(r,0),
+    { return MtxIter(itsImpl.address_nc(r,0),
                      itsImpl.rowstride(), itsImpl.ncols()); }
 
   MtxConstIter rowIter(int r) const
@@ -633,11 +626,12 @@ public:
                    itsImpl.colstride(), mrows()); }
 
   MtxIter columnIter(int c)
-    { return MtxIter(*this, itsImpl.offsetFromStorage(0,c),
+    { return MtxIter(itsImpl.address_nc(0,c),
                      itsImpl.colstride(), mrows()); }
 
   MtxConstIter columnIter(int c) const
-    { return MtxConstIter(itsImpl.address(0,c), itsImpl.colstride(), mrows()); }
+    { return MtxConstIter(itsImpl.address(0,c),
+                          itsImpl.colstride(), mrows()); }
 
   Mtx columns(int c, int nc) const;
 
@@ -711,13 +705,10 @@ public:
     return res;
   }
 
-  void apply(double func(double))
-  {
-    makeUnique();
-    itsImpl.apply(func);
-  }
+  void apply(double func(double)) { itsImpl.apply(func); }
 
-  template <class F> void applyF(F func);
+  template <class F>
+  void applyF(F func) { itsImpl.applyFF(func); }
 
   struct Setter
   {
@@ -726,11 +717,7 @@ public:
     double operator()(double) { return v; }
   };
 
-  void setAll(double x)
-  {
-    makeUnique();
-    applyF(Setter(x));
-  }
+  void setAll(double x) { applyF(Setter(x)); }
 
   Mtx& operator+=(double x) { applyF(Add(x)); return *this; }
   Mtx& operator-=(double x) { applyF(Sub(x)); return *this; }
@@ -759,11 +746,11 @@ public:
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
-  Mtx& makeUnique() { itsImpl.makeUnique(); return *this; }
+  void makeUnique() { itsImpl.makeUnique(); }
 
 private:
-  const double* storageStart() const { return itsImpl.storageStart(); }
-  double* storageStart_nc() { return itsImpl.storageStart_nc(); }
+  const double* storage() const { return itsImpl.storage(); }
+  double* storage_nc() { return itsImpl.storage_nc(); }
 
   friend class MtxIterBase<double>;
   friend class MtxIterBase<const double>;
@@ -783,7 +770,7 @@ inline double ElemProxy::value() const
 { return m.itsImpl.at(i); }
 
 inline double& ElemProxy::uniqueRef()
-{ m.makeUnique(); return m.itsImpl.at_nc(i); }
+{ return m.itsImpl.at_nc(i); }
 
 inline double& ElemProxy::operator=(double d)
 { return (uniqueRef() = d); }
@@ -807,7 +794,10 @@ inline ElemProxy::operator double() { return m.itsImpl.at(i); }
 
 
 inline const double* Slice::dataStart() const
-{ return itsOwner.storageStart() + itsOffset; }
+{ return itsOwner.storage() + itsOffset; }
+
+inline double* Slice::dataStart_nc()
+{ return itsOwner.storage_nc() + itsOffset; }
 
 inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
   itsOwner(const_cast<Mtx&>(owner)),
@@ -815,13 +805,6 @@ inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
   itsStride(s),
   itsNelems(n) {}
 
-
-template <class F>
-void Mtx::applyF(F func)
-{
-  makeUnique();
-  itsImpl.applyFF(func);
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
