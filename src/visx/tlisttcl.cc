@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Oct 23 12:52:43 2000
+// written: Tue Oct 24 12:44:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,11 @@
 
 #include "application.h"
 #include "experiment.h"
+#include "grobj.h"
+#include "objlist.h"
 #include "tlist.h"
 #include "tlistutils.h"
+#include "trial.h"
 
 #include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
@@ -37,10 +40,9 @@ namespace TlistTcl {
 
   class CreatePreviewCmd;
 
-  class MakeSinglesCmd;
-  class MakePairsCmd;
-  class MakeTriadsCmd;
-  class MakeSummaryTrialCmd;
+  class DealSinglesCmd;
+  class DealPairsCmd;
+  class DealTriadsCmd;
 
   class LoadObjidFileCmd;
   class WriteMatlabCmd;
@@ -95,105 +97,158 @@ protected:
   }
 };
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------
 //
-// AddObjectCmd --
+// TlistTcl::DealSinglesCmd --
 //
-//---------------------------------------------------------------------
+// Make new Trial's so that there is one Trial for each valid object
+// in the ObjList. Returns the ids of the trials that were created.
+//
+//--------------------------------------------------------------------
 
-class TlistTcl::AddObjectCmd : public Tcl::TclCmd {
+class TlistTcl::DealSinglesCmd : public Tcl::TclCmd {
 public:
-  AddObjectCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "trial objid posid", 4, 4) {}
+  DealSinglesCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 Tcl::TclCmd(interp, cmd_name, "objid(s) posid", 3, 3) {}
 protected:
   virtual void invoke() {
-    int trialid = getIntFromArg(1);
-	 int objid = getIntFromArg(2);
-	 int posid = getIntFromArg(3);
+	 int posid = getIntFromArg(2);
 
-	 TlistUtils::addObject(trialid, objid, posid);
+	 for (Tcl::ListIterator<int>
+			  itr = beginOfArg(1, (int*)0),
+			  end = endOfArg(1, (int*)0);
+			itr != end;
+			++itr)
+		{
+		  Trial* t = Trial::make();
+		  Tlist::SharedPtr trial = Tlist::theTlist().insert(t);
+
+		  t->add(*itr, posid);
+		  NullableItemWithId<GrObj> obj(*itr);
+		  t->setType(obj->getCategory());
+
+		  lappendVal(trial.id());
+		}
   }
 };
 
 //--------------------------------------------------------------------
 //
-// TlistTcl::MakeSinglesCmd --
+// TlistTcl::DealPairsCmd --
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::MakeSinglesCmd : public Tcl::TclCmd {
+class TlistTcl::DealPairsCmd : public Tcl::TclCmd {
 public:
-  MakeSinglesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "posid", 2, 2) {}
+  DealPairsCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 Tcl::TclCmd(interp, cmd_name, "objids1 objids2 posid1 posid2", 5, 5) {}
 protected:
   virtual void invoke() {
-	 int posid = getIntFromArg(1);
-	 returnInt(TlistUtils::makeSingles(posid));
+	 int posid1 = getIntFromArg(3);
+	 int posid2 = getIntFromArg(4);
+
+	 Tlist& tlist = Tlist::theTlist();
+
+	 for (Tcl::ListIterator<int>
+			  itr1 = beginOfArg(1, (int*)0),
+			  end1 = endOfArg(1, (int*)0);
+			itr1 != end1;
+			++itr1)
+		for (Tcl::ListIterator<int>
+				 itr2 = beginOfArg(2, (int*)0),
+				 end2 = endOfArg(2, (int*)0);
+			  itr2 != end2;
+			  ++itr2)
+		  {
+			 Trial* t = Trial::make();
+			 Tlist::SharedPtr trial = Tlist::theTlist().insert(t);
+
+			 t->add(*itr1, posid1);
+			 t->add(*itr2, posid2);
+			 t->setType(*itr1 == *itr2);
+
+			 lappendVal(trial.id());
+		  }
   }
 };
 
 //--------------------------------------------------------------------
 //
-// TlistTcl::MakePairsCmd --
+// TlistTcl::DealTriadsCmd --
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::MakePairsCmd : public Tcl::TclCmd {
+class TlistTcl::DealTriadsCmd : public Tcl::TclCmd {
 public:
-  MakePairsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "posid1 posid2", 3, 3) {}
+  DealTriadsCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 Tcl::TclCmd(interp, cmd_name,
+					 "objids posid1 posid2 posid3", 5, 5) {}
 protected:
   virtual void invoke() {
-	 int posid1 = getIntFromArg(1);
-	 int posid2 = getIntFromArg(2);
+	 int posids[3] = { getIntFromArg(2), getIntFromArg(3), getIntFromArg(4) };
 
-	 returnInt(TlistUtils::makePairs(posid1, posid2));
-  }
-};
+	 Tlist& tlist = Tlist::theTlist();
 
-//--------------------------------------------------------------------
-//
-// TlistTcl::MakeTriadsCmd --
-//
-//--------------------------------------------------------------------
+	 const int NUM_PERMS = 18;
+	 static int permutations[NUM_PERMS][3] = { 
+		{0, 0, 1},
+		{0, 0, 2},
+		{1, 1, 0},
+		{1, 1, 2},
+		{2, 2, 0},
+		{2, 2, 1},
+		{0, 1, 1},
+		{0, 2, 2},
+		{1, 0, 0},
+		{2, 0, 0},
+		{2, 1, 1},
+		{1, 2, 2},
+		{0, 1, 2},
+		{0, 2, 1},
+		{1, 0, 2},
+		{1, 2, 0},
+		{2, 0, 1},
+		{2, 1, 0} };
 
-class TlistTcl::MakeTriadsCmd : public Tcl::TclCmd {
-public:
-  MakeTriadsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "posid1 posid2 posid3", 4, 4) {}
-protected:
-  virtual void invoke() {
-	 int posid[3] = { getIntFromArg(1), getIntFromArg(2), getIntFromArg(3) };
+	 Tcl::ListIterator<int>
+		itr = beginOfArg(1, (int*)0),
+		end = endOfArg(1, (int*)0);
 
-	 returnInt(TlistUtils::makeTriads(posid));
-  }
-};
+	 int id_count = end - itr;
 
-//--------------------------------------------------------------------
-//
-// TlistTcl::MakeSummaryTrialCmd --
-//
-//--------------------------------------------------------------------
+	 fixed_block<int> objids(id_count);
 
-class TlistTcl::MakeSummaryTrialCmd : public Tcl::TclCmd {
-public:
-  MakeSummaryTrialCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "trialid num_cols scale ?xstep? ?ystep?",
-			  4, 6, false) {}
-protected:
-  virtual void invoke() {
-	 int trialid = getIntFromArg(1);
-	 if (trialid < 0) { throw Tcl::TclError(bad_trial_msg); }
+	 {for (int i = 0; i < objids.size(); ++i)
+		{
+		  objids[i] = *itr;
+		  ++itr;
+		}
+	 }
 
-	 int num_cols = getIntFromArg(2);
-	 if (num_cols <= 0) { throw Tcl::TclError("num_cols must be a positive integer"); }
+	 int base_triad[3];
 
-	 double scale = getDoubleFromArg(3);
-	 double xstep = (objc() >= 5) ? getDoubleFromArg(4) : 2.0;
-	 double ystep = (objc() >= 6) ? getDoubleFromArg(5) : 3.0;
+	 for (int i = 0; i < objids.size(); ++i) {
+		base_triad[0] = objids[i];
 
-	 returnInt(TlistUtils::makeSummaryTrial(trialid, num_cols, scale,
-														 xstep, ystep));
+		for (int j = i+1; j < objids.size(); ++j) {
+		  base_triad[1] = objids[j];
+
+		  for (int k = j+1; k < objids.size(); ++k) {
+			 base_triad[2] = objids[k];
+
+			 // loops over p,e run through all permutations
+			 for (int p = 0; p < NUM_PERMS; ++p) {
+				Trial* t = Trial::make();
+				Tlist::SharedPtr trial = Tlist::theTlist().insert(t);
+				for (int e = 0; e < 3; ++e) {
+				  t->add(base_triad[permutations[p][e]], posids[e]);
+				}
+				lappendVal(trial.id());
+			 } // end p
+		  } // end itr3
+		} // end itr2
+	 } // end itr1
+
   }
 };
 
@@ -287,14 +342,11 @@ public:
   TlistPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, Tlist::theTlist(), "Tlist", "3.0")
   {
-	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
-
 	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 
-	 addCommand( new MakeSinglesCmd(interp, "Tlist::makeSingles") );
-	 addCommand( new MakePairsCmd(interp, "Tlist::makePairs") );
-	 addCommand( new MakeTriadsCmd(interp, "Tlist::makeTriads") );
-	 addCommand( new MakeSummaryTrialCmd(interp, "Tlist::makeSummaryTrial") );
+	 addCommand( new DealSinglesCmd(interp, "Tlist::dealSingles") );
+	 addCommand( new DealPairsCmd(interp, "Tlist::dealPairs") );
+	 addCommand( new DealTriadsCmd(interp, "Tlist::dealTriads") );
 
 	 addCommand( new LoadObjidFileCmd(interp, "Tlist::loadObjidFile") );
 	 addCommand( new WriteMatlabCmd(interp, "Tlist::writeMatlab") );
