@@ -34,6 +34,8 @@
 
 struct Tcl_Interp;
 
+template <class T> class shared_ptr;
+
 namespace Tcl
 {
   class Command;
@@ -259,7 +261,7 @@ private:
   const char* makePkgCmdName(const char* cmd_name);
 
   /// Adds \a cmd to the commands managed by the package.
-  void addCommand(Command* cmd);
+  void addCommand(shared_ptr<Command> cmd);
 
   static const char* actionUsage(const char* usage);
   static const char* getterUsage(const char* usage);

@@ -35,6 +35,7 @@
 #include "tcl/tclveccmd.h"
 
 #include "util/functors.h"
+#include "util/pointers.h"
 #include "util/ref.h"
 
 namespace Tcl
@@ -340,13 +341,22 @@ namespace Tcl
   template <class R, class Functor>
   class GenericCmd : public Command
   {
-  public:
+  protected:
     GenericCmd<R, Functor>(Tcl::Interp& interp, Functor f,
                            const char* cmd_name,
                            const char* usage, int nargs) :
       Command(interp, cmd_name, usage, nargs+1),
       itsHeldFunc(f)
     {}
+
+  public:
+    static shared_ptr<GenericCmd> make(Tcl::Interp& interp, Functor f,
+                                       const char* cmd_name,
+                                       const char* usage, int nargs)
+    {
+      return shared_ptr<GenericCmd>(new GenericCmd(interp, f, cmd_name,
+                                                   usage, nargs));
+    }
 
     virtual ~GenericCmd() throw() {}
 
@@ -366,13 +376,22 @@ namespace Tcl
   template <class Functor>
   class GenericCmd<void, Functor> : public Command
   {
-  public:
+  protected:
     GenericCmd<void, Functor>(Tcl::Interp& interp, Functor f,
                               const char* cmd_name,
                               const char* usage, int nargs) :
       Command(interp, cmd_name, usage, nargs+1),
       itsHeldFunc(f)
     {}
+
+  public:
+    static shared_ptr<GenericCmd> make(Tcl::Interp& interp, Functor f,
+                                       const char* cmd_name,
+                                       const char* usage, int nargs)
+    {
+      return shared_ptr<GenericCmd>(new GenericCmd(interp, f, cmd_name,
+                                                   usage, nargs));
+    }
 
     virtual ~GenericCmd() throw() {}
 
@@ -391,11 +410,13 @@ namespace Tcl
 /// Factory function for Tcl::Command's from functors.
 
   template <class Functor>
-  inline Command* makeGenericCmd(Tcl::Interp& interp, Functor f,
-                                 const char* cmd_name,
-                                 const char* usage, int nargs)
+  inline shared_ptr<Command> makeGenericCmd
+                               (Tcl::Interp& interp, Functor f,
+                                const char* cmd_name,
+                                const char* usage, int nargs)
   {
-    return new GenericCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
+    typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
+    return GenericCmd<Retn_t, Functor>::make
       (interp, f, cmd_name, usage, nargs);
   }
 
@@ -404,14 +425,15 @@ namespace Tcl
 /// Factory function for vectorized Tcl::Command's from functors.
 
   template <class Functor>
-  inline Command* makeGenericVecCmd(Tcl::Interp& interp, Functor f,
-                                    const char* cmd_name, const char* usage,
-                                    int nargs, unsigned int keyarg)
+  inline shared_ptr<Command> makeGenericVecCmd
+                               (Tcl::Interp& interp, Functor f,
+                                const char* cmd_name, const char* usage,
+                                int nargs, unsigned int keyarg)
   {
-    Command* cmd =
-      new GenericCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
+    typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
+    shared_ptr<Command> cmd = GenericCmd<Retn_t, Functor>::make
       (interp, f, cmd_name, usage, nargs);
-    Tcl::useVecDispatch(cmd, keyarg);
+    Tcl::useVecDispatch(cmd.get(), keyarg); // FIXME avoid get()
     return cmd;
   }
 
@@ -425,8 +447,9 @@ namespace Tcl
 /// Factory function for Tcl::Command's from function pointers.
 
   template <class Func>
-  inline Command* makeCmd(Tcl::Interp& interp, Func f,
-                          const char* cmd_name, const char* usage)
+  inline shared_ptr<Command> makeCmd
+                              (Tcl::Interp& interp, Func f,
+                               const char* cmd_name, const char* usage)
   {
     return makeGenericCmd(interp, buildTclFunctor(f), cmd_name, usage,
                           Util::FuncTraits<Func>::numArgs);
@@ -436,9 +459,10 @@ namespace Tcl
 /// Factory function for vectorized Tcl::Command's from function pointers.
 
   template <class Func>
-  inline Command* makeVecCmd(Tcl::Interp& interp, Func f,
-                             const char* cmd_name, const char* usage,
-                             unsigned int keyarg=1)
+  inline shared_ptr<Command> makeVecCmd
+                              (Tcl::Interp& interp, Func f,
+                               const char* cmd_name, const char* usage,
+                               unsigned int keyarg=1)
   {
     return makeGenericVecCmd(interp, buildTclFunctor(f), cmd_name, usage,
                              Util::FuncTraits<Func>::numArgs, keyarg);

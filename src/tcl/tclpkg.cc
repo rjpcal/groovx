@@ -333,10 +333,10 @@ DOTRACE("Tcl::Pkg::eval");
     }
 }
 
-void Tcl::Pkg::addCommand(Command* cmd)
+void Tcl::Pkg::addCommand(shared_ptr<Command> cmd)
 {
 DOTRACE("Tcl::Pkg::addCommand");
-  rep->cmds.push_front(shared_ptr<Command>(cmd));
+  rep->cmds.push_front(cmd);
 }
 
 void Tcl::Pkg::linkVar(const char* varName, int& var)

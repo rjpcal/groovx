@@ -216,7 +216,7 @@ public:
 
   Tcl::Interp itsInterp;
 
-  scoped_ptr<Tcl::Command> itsCmdCallback;
+  shared_ptr<Tcl::Command> itsCmdCallback;
 
   FeedbackMap itsFeedbackMap;
 
