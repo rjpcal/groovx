@@ -23,10 +23,10 @@ set fix [Obj::new FixPt]
 ### lengthCmd ###
 test "FixptTcl-length" "too few args" {
     FixPt::length
-} {^wrong \# args: should be "FixPt::length item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FixptTcl-length" "too many args" {
     FixPt::length j u n
-} {^wrong \# args: should be "FixPt::length item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FixptTcl-length" "normal set" {
 	 catch {FixPt::length $::fix 1.0}
 } {^0$}
@@ -44,10 +44,10 @@ test "FixptTcl-length" "error from wrong type" {
 ### widthCmd ###
 test "FixptTcl-width" "too few args" {
     FixPt::width
-} {wrong \# args: should be "FixPt::width item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "FixptTcl-width" "too many args" {
     FixPt::width j u n
-} {wrong \# args: should be "FixPt::width item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "FixptTcl-width" "normal set" {
 	 catch {FixPt::width $::fix 2}
 } {^0$}

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Thu Jul 12 13:23:43 2001
+// written: Thu Jul 12 17:36:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,19 +18,59 @@
 #include "io/fields.h"
 
 #include "tcl/tclvalue.h"
+#include "tcl/tclveccmds.h"
 
-#include "util/arrays.h"
-#include "util/minivec.h"
 #include "util/ref.h"
 #include "util/strings.h"
-
-#include <tcl.h>
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace Tcl {
+namespace Tcl
+{
+
+  class FieldContainerFetcher : public Tcl::ItemFetcher {
+  public:
+    FieldContainerFetcher(int item_argn) : itsItemArgn(item_argn) {}
+
+    virtual void* getItemFromContext(Tcl::Context& ctx)
+    {
+      int id = ctx.getIntFromArg(itsItemArgn);
+      Ref<FieldContainer> item(id);
+      return static_cast<void*>(item.get());
+    }
+
+  private:
+    int itsItemArgn;
+  };
+
+  class FieldAttrib : public Getter<TclValue>, public Setter<TclValue> {
+  private:
+    const FieldInfo& itsFinfo;
+
+  public:
+    FieldAttrib(const FieldInfo& finfo) : itsFinfo(finfo) {}
+
+    const char* name() const { return itsFinfo.name().c_str(); }
+
+    static shared_ptr<FieldAttrib> make(const FieldInfo& finfo)
+    {
+      return make_shared(new FieldAttrib(finfo));
+    }
+
+    virtual TclValue get(void* vitem) const
+    {
+      FieldContainer* item = static_cast<FieldContainer*>(vitem);
+      return *(item->field(itsFinfo).value());
+    }
+
+    virtual void set(void* vitem, TclValue val)
+    {
+      FieldContainer* item = static_cast<FieldContainer*>(vitem);
+      item->field(itsFinfo).setValue(val);
+    }
+  };
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -38,25 +78,44 @@ namespace Tcl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class FieldVecCmd : public TclCmd {
-private:
-  TclItemPkg* itsPkg;
-  const FieldInfo& itsFinfo;
-  int itsItemArgn;
-  int itsValArgn;
-  int itsObjcGet;
-  int itsObjcSet;
+  class FieldVecCmd : public TVecAttribCmd<TclValue> {
+  private:
+    static FieldContainerFetcher* getFetcher0()
+    {
+      static shared_ptr<FieldContainerFetcher> theFetcher0;
+      if (theFetcher0.get() == 0)
+        {
+          theFetcher0.reset(new FieldContainerFetcher(0));
+        }
+      return theFetcher0.get();
+    }
 
-  FieldVecCmd(const FieldVecCmd&);
-  FieldVecCmd& operator=(const FieldVecCmd&);
+    static FieldContainerFetcher* getFetcher1()
+    {
+      static shared_ptr<FieldContainerFetcher> theFetcher1;
+      if (theFetcher1.get() == 0)
+        {
+          theFetcher1.reset(new FieldContainerFetcher(1));
+        }
+      return theFetcher1.get();
+    }
 
-public:
-  FieldVecCmd(TclItemPkg* pkg, const FieldInfo& finfo);
-  virtual ~FieldVecCmd();
+    static FieldContainerFetcher* getFetcher(int item_argn)
+    {
+      return (item_argn==0) ? getFetcher0() : getFetcher1();
+    }
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
+  public:
+    FieldVecCmd(TclItemPkg* pkg, shared_ptr<FieldAttrib> attrib) :
+      TVecAttribCmd<TclValue>(pkg->interp(),
+                              getFetcher(pkg->itemArgn()),
+                              pkg->makePkgCmdName(attrib->name()),
+                              attrib,
+                              attrib,
+                              0, /* for default usage string */
+                              pkg->itemArgn())
+    {}
+  };
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -64,119 +123,25 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class FieldsCmd : public TclCmd {
-private:
-  Tcl_Interp* itsInterp;
-  const FieldMap& itsFields;
-  Tcl_Obj* itsFieldList;
+  class FieldsCmd : public TclCmd {
+  private:
+    const FieldMap& itsFields;
+    Tcl::List itsFieldList;
+    bool isItInited;
 
-  FieldsCmd(const FieldsCmd&);
-  FieldsCmd& operator=(const FieldsCmd&);
+    FieldsCmd(const FieldsCmd&);
+    FieldsCmd& operator=(const FieldsCmd&);
 
-public:
-  FieldsCmd(TclPkg* pkg, const FieldMap& fields);
-  virtual ~FieldsCmd();
+  public:
+    FieldsCmd(TclPkg* pkg, const FieldMap& fields);
+    virtual ~FieldsCmd();
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
+  protected:
+    virtual void invoke(Tcl::Context& ctx);
+  };
 
 } // end namespace Tcl
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// FieldVecCmd member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::FieldVecCmd::FieldVecCmd(TclItemPkg* pkg, const FieldInfo& finfo) :
-  TclCmd(pkg->interp(), pkg->makePkgCmdName(finfo.name().c_str()),
-         (pkg->itemArgn() ? "item_id(s) ?new_value(s)?" : "?new_value?"),
-         pkg->itemArgn()+1, pkg->itemArgn()+2, false),
-  itsPkg(pkg),
-  itsFinfo(finfo),
-  itsItemArgn(pkg->itemArgn()),
-  itsValArgn(pkg->itemArgn()+1),
-  itsObjcGet(pkg->itemArgn()+1),
-  itsObjcSet(pkg->itemArgn()+2)
-{}
-
-Tcl::FieldVecCmd::~FieldVecCmd() {}
-
-void Tcl::FieldVecCmd::invoke(Tcl::Context& ctx)
-{
-DOTRACE("Tcl::FieldVecCmd::invoke");
-
-  DebugEvalNL(ctx.getCstringFromArg(0));
-
-  // Fetch the item ids
-  dynamic_block<int> ids(1);
-
-  if (itsItemArgn) {
-    ids.assign(ctx.beginOfArg(itsItemArgn, (int*)0), ctx.endOfArg(itsItemArgn, (int*)0));
-  }
-  else {
-    // -1 is the cue to use the default item
-    ids.at(0) = -1;
-  }
-
-  // If we are getting...
-  if (ctx.objc() == itsObjcGet) {
-    if ( ids.size() == 0 )
-      /* return an empty Tcl result since the list of ids was empty */
-      return;
-    else if ( ids.size() == 1 )
-      {
-        Ref<FieldContainer> item(ids[0]);
-        ctx.setResult<const Value&>( *(item->field(itsFinfo).value()) );
-      }
-    else
-      {
-        Tcl::List result;
-        for (size_t i = 0; i < ids.size(); ++i) {
-          Ref<FieldContainer> item(ids[i]);
-          result.append<const Value&>( *(item->field(itsFinfo).value()) );
-        }
-        ctx.setResult(result);
-      }
-
-  }
-  // ... or if we are setting
-  else if (ctx.objc() == itsObjcSet) {
-
-    if (ids.size() == 1)
-      {
-        TclValue val = ctx.getValFromArg(itsValArgn, (TclValue*)0);
-
-        Ref<FieldContainer> item(ids[0]);
-        item->field(itsFinfo).setValue(val);
-      }
-    else
-      {
-        Tcl::List::Iterator<Tcl::TclValue>
-          val_itr = ctx.beginOfArg(itsValArgn, (TclValue*)0),
-          val_end = ctx.endOfArg(itsValArgn, (TclValue*)0);
-
-        TclValue val = *val_itr;
-
-        for (size_t i = 0; i < ids.size(); ++i) {
-          Ref<FieldContainer> item(ids[i]);
-          item->field(itsFinfo).setValue(val);
-
-          // Only fetch a new value if there are more values to
-          // get... if we run out of values before we run out of ids,
-          // then we just keep on using the last value in the sequence
-          // of values.
-          if (val_itr != val_end)
-            if (++val_itr != val_end)
-              val = *val_itr;
-        }
-      }
-  }
-  // ... or ... "can't happen"
-  else {  Assert(0);  }
-}
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -187,9 +152,9 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
 
 Tcl::FieldsCmd::FieldsCmd(TclPkg* pkg, const FieldMap& fields) :
   TclCmd(pkg->interp(), pkg->makePkgCmdName("fields"), NULL, 1, 1),
-  itsInterp(pkg->interp()),
   itsFields(fields),
-  itsFieldList(0)
+  itsFieldList(),
+  isItInited(false)
 {}
 
 Tcl::FieldsCmd::~FieldsCmd() {}
@@ -197,48 +162,31 @@ Tcl::FieldsCmd::~FieldsCmd() {}
 void Tcl::FieldsCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::FieldsCmd::invoke");
-  if (itsFieldList == 0) {
+  if (!isItInited)
+    {
+      for (FieldMap::IoIterator
+             itr = itsFields.ioBegin(),
+             end = itsFields.ioEnd();
+           itr != end;
+           ++itr)
+        {
+          const FieldInfo& finfo = *itr;
 
-    minivec<Tcl_Obj*> elements;
+          Tcl::List sub_list;
 
-    for (FieldMap::IoIterator
-           itr = itsFields.ioBegin(),
-           end = itsFields.ioEnd();
-         itr != end;
-         ++itr)
-      {
-        fixed_block<Tcl_Obj*> sub_elements(5);
+          sub_list.append(finfo.name());           // property name
+          sub_list.append<TclValue>(finfo.min());  // min value
+          sub_list.append<TclValue>(finfo.max());  // max value
+          sub_list.append<TclValue>(finfo.res());  // resolution value
+          sub_list.append(finfo.startsNewGroup()); // start new group flag
 
-        const FieldInfo& finfo = *itr;
+          itsFieldList.append(sub_list);
+        }
 
-        // property name
-        sub_elements.at(0) = Tcl_NewStringObj(finfo.name().c_str(), -1);
+      isItInited = true;
+    }
 
-        // min value
-        TclValue min(finfo.min());
-        sub_elements.at(1) = min.getObj();
-
-        // max value
-        TclValue max(finfo.max());
-        sub_elements.at(2) = max.getObj();
-
-        // resolution value
-        TclValue res(finfo.res());
-        sub_elements.at(3) = res.getObj();
-
-        // start new group flag
-        sub_elements.at(4) = Tcl_NewBooleanObj(finfo.startsNewGroup());
-
-        elements.push_back(Tcl_NewListObj(sub_elements.size(),
-                                          &(sub_elements[0])));
-      }
-
-    itsFieldList = Tcl_NewListObj(elements.size(), &(elements[0]));
-
-    Tcl_IncrRefCount(itsFieldList);
-  }
-
-  ctx.setResult<const Value&>(TclValue(itsFieldList));
+  ctx.setResult(itsFieldList);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -249,7 +197,7 @@ DOTRACE("Tcl::FieldsCmd::invoke");
 
 void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) {
 DOTRACE("Tcl::declareField");
-  pkg->addCommand( new FieldVecCmd(pkg, finfo) );
+  pkg->addCommand( new FieldVecCmd(pkg, FieldAttrib::make(finfo)) );
 }
 
 void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){

@@ -27,10 +27,10 @@ set faceid [Obj::new Face] ;# guaranteed face id for next operations
 ### eyeHeightCmd ###
 test "FaceTcl-eyeHeight" "too few args" {
 	 Face::eyeHeight
-} {^wrong \# args: should be "Face::eyeHeight item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-eyeHeight" "too many args" {
 	 Face::eyeHeight j u n
-} {^wrong \# args: should be "Face::eyeHeight item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-eyeHeight" "normal use set" {
 	 Face::eyeHeight $::faceid 2.0 
 } {^$}
@@ -50,10 +50,10 @@ test "FaceTcl-eyeHeight" "error from bad objid" {
 ### eyeDistanceCmd ###
 test "FaceTcl-eyeDistance" "too few args" {
 	 Face::eyeDistance
-} {^wrong \# args: should be "Face::eyeDistance item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-eyeDistance" "too many args" {
 	 Face::eyeDistance j u n
-} {^wrong \# args: should be "Face::eyeDistance item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-eyeDistance" "normal use set" {
 	 Face::eyeDistance $::faceid 2.0 
 } {^$}
@@ -73,10 +73,10 @@ test "FaceTcl-eyeDistance" "error from bad objid" {
 ### noseLengthCmd ###
 test "FaceTcl-noseLength" "too few args" {
 	 Face::noseLength
-} {^wrong \# args: should be "Face::noseLength item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-noseLength" "too many args" {
 	 Face::noseLength j u n
-} {^wrong \# args: should be "Face::noseLength item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-noseLength" "normal use set" {
 	 Face::noseLength $::faceid 2.0 
 } {^$}
@@ -96,10 +96,10 @@ test "FaceTcl-noseLength" "error from bad objid" {
 ### mouthHeightCmd ###
 test "FaceTcl-mouthHeight" "too few args" {
 	 Face::mouthHeight
-} {^wrong \# args: should be "Face::mouthHeight item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-mouthHeight" "too many args" {
 	 Face::mouthHeight j u n
-} {^wrong \# args: should be "Face::mouthHeight item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "FaceTcl-mouthHeight" "normal use set" {
 	 Face::mouthHeight $::faceid 2.0 
 } {^$}

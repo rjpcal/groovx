@@ -32,10 +32,10 @@ set pos [Obj::new Position]
 ### Pos::rotationAxis ###
 test "PositionTcl-Pos::rotationAxis" "too few args" {
     Pos::rotationAxis
-} {wrong \# args: should be "Pos::rotationAxis item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Pos::rotationAxis" "too many args" {
     Pos::rotationAxis posid angle j u n k
-} {wrong \# args: should be "Pos::rotationAxis item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Pos::rotationAxis" "normal use with angle and axis of rotation" {
 	 catch {Pos::rotationAxis $::pos {1.5 0.0 -2.2}}
 } {^0$}
@@ -49,10 +49,10 @@ test "PositionTcl-Pos::rotationAxis" "error on bad posid" {
 ### Pos::scaling ###
 test "PositionTcl-Pos::scaling" "too few args" {
     Pos::scaling
-} {wrong \# args: should be "Pos::scaling item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Pos::scaling" "too many args" {
     Pos::scaling posid j u n k
-} {wrong \# args: should be "Pos::scaling item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Pos::scaling" "normal use" {
 	 catch {Pos::scaling $::pos {1.5 3.0 4.5}}
 } {^0$}
@@ -66,10 +66,10 @@ test "PositionTcl-Pos::scaling" "error on bad posid" {
 ### Pos::translation ###
 test "PositionTcl-Pos::translation" "too few args" {
     Pos::translation
-} {wrong \# args: should be "Pos::translation item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Pos::translation" "too many args" {
     Pos::translation posid x y z junk
-} {wrong \# args: should be "Pos::translation item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "PositionTcl-Pos::translation" "normal use" {
 	 catch {Pos::translation $::pos {10.0 -3.6 9.4}}
 } {^0$}
