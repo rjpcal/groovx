@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 13:28:54 2001
+// written: Tue Aug 21 13:46:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVER_H_DEFINED)
-#include "util/observer.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
@@ -54,8 +50,7 @@ class GrObjImpl;
 ///////////////////////////////////////////////////////////////////////
 
 class GrObj : public GxNode,
-              public FieldContainer,
-              public Util::Observer
+              public FieldContainer
 {
 public:
 
@@ -215,8 +210,6 @@ public:
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */
   void setUnRenderMode(Gmodes::RenderMode mode);
-
-  virtual void receiveSignal();
 
 
   ///////////////////////////////////////////////////////////////////////
