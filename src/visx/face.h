@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Nov 15 15:41:27 1999
+// written: Mon Dec  6 13:59:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  * functionality needed to display Brunswick faces parameterized by
  * nose length, mouth height, eye height, and eye separation.
  *
- * @memo Subclass of GrObj for drawing Brunswik faces.
+ * @short Subclass of GrObj for drawing Brunswik faces.
  **/
 ///////////////////////////////////////////////////////////////////////
 

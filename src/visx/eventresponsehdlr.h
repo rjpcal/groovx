@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Dec  1 14:38:02 1999
+// written: Mon Dec  6 13:58:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,8 +65,9 @@
  * will play the Sound::ok sound if the current response matches the
  * current trial type. Otherwise, it will play the Sound::err sound.
  *
- * @memo Handles responses by using Tk event bindings. 
+ * @short Handles responses by using Tk event bindings. 
  **/
+///////////////////////////////////////////////////////////////////////
 
 class EventResponseHdlr : public ResponseHandler {
 public:

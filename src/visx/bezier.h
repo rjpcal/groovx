@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Mon Dec  6 13:56:58 1999
+// written: Mon Dec  6 13:57:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ double Bezier::evalDeriv(double u) {
  * The Bezier4 class is specialized for evaluating Bezier curves with
  * four control points.
  *
- * @memo Specialized class for evaluating Bezier curves with four
+ * @short Specialized class for evaluating Bezier curves with four
  * control points.
  **/
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Dec  4 01:52:46 1999
+// written: Mon Dec  6 13:58:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
  * ExptDriver is a singleton that coordinates all objects necessary to
  * run an experiment.
  *
- * @memo ExptDriver is a singleton that coordinates all objects
+ * @short ExptDriver is a singleton that coordinates all objects
  * necessary to run an experiment.
  **/
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Dec  1 09:54:39 1999
+// written: Mon Dec  6 13:57:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ class BmapRenderer;
  * this. Subclasses of Bitmap can implement a particular rendering
  * method by overriding doRender() and doUndraw() appropriately.
  *
- * @memo Abstract subclass of GrObj for rendering bitmaps.
+ * @short Abstract subclass of GrObj for rendering bitmaps.
  **/
 ///////////////////////////////////////////////////////////////////////
 

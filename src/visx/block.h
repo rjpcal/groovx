@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Sat Dec  4 02:06:08 1999
+// written: Mon Dec  6 13:58:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ class Experiment;
  * ExptDriver by alternately calling drawTrial() and one of
  * processResponse() or abortTrial().
  *
- * @memo Represents a block as a sequence of trials in an experiment.
+ * @short Represents a block as a sequence of trials in an experiment.
  **/
 ///////////////////////////////////////////////////////////////////////
 

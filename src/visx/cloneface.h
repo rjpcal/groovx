@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Sat Nov 20 20:34:45 1999
+// written: Mon Dec  6 13:58:21 1999
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -27,7 +27,7 @@
  * getVertOffset() functions to return CloneFace data members. (In the
  * base class Face, these functions just return constant data.)
  *
- * @memo Subclass of Face that can manipulate additional parameters
+ * @short Subclass of Face that can manipulate additional parameters
  * for rendering Brunswik faces.
  **/
 ///////////////////////////////////////////////////////////////////////

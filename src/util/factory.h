@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Tue Nov 30 19:00:35 1999
+// written: Mon Dec  6 13:59:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ protected:
  * types should be implemented as singleton classes derived from
  * Factory.
  *
- * @memo Creates new objects from a typename.
+ * @short Creates new objects from a typename.
  **/
 ///////////////////////////////////////////////////////////////////////
 

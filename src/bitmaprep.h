@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Dec  1 20:21:16 1999
+// written: Mon Dec  6 13:57:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ template <class V> class Rect;
  *
  * BitmapRep
  *
- * @memo 
+ * @short A class that maintains data associated with a bitmap.
  **/
 ///////////////////////////////////////////////////////////////////////
 
