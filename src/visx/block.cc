@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Dec  6 20:13:00 1999
+// written: Tue Jan 25 11:49:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -306,8 +306,8 @@ void Block::drawTrial(Experiment* expt) {
 DOTRACE("Block::drawTrial");
   if (isComplete()) return;
 
-  Trial* trial = theTlist.getCheckedPtr(currentTrial());
-  trial->trDraw(*(expt->getCanvas()), true);
+  getCurTrial().trDraw(*(expt->getCanvas()), true);
+
   expt->edSetCurrentTrial(currentTrial());
 }
 
@@ -315,8 +315,7 @@ void Block::undrawTrial(Experiment* expt) {
 DOTRACE("Block::undrawTrial");
   if (isComplete()) return;
 
-  Trial* trial = theTlist.getCheckedPtr(currentTrial());
-  trial->trUndraw(*(expt->getCanvas()), true);
+  getCurTrial().trUndraw(*(expt->getCanvas()), true);
 }
 
 void Block::abortTrial(Experiment*) {
