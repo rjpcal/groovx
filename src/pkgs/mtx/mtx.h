@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Sun Mar 25 17:38:04 2001
+// written: Mon Mar 26 09:25:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,6 +168,18 @@ public:
   double mean() const
     { return sum()/itsNelems; }
 
+
+  bool operator==(const Slice& other) const
+  {
+	 if (itsNelems != other.itsNelems) return false;
+
+	 for (MtxConstIter a = this->begin(), b = other.begin();
+			a.hasMore();
+			++a, ++b)
+		if (*a != *b) return false;
+
+	 return true;
+  }
 
   //
   // Non-const functions
