@@ -473,7 +473,7 @@ export:
 	  && rm -r $(DISTNAME)/logs/* \
 	  && (cd $(DISTNAME) && autoconf) \
 	  && (cd $(DISTNAME) && echo $(DISTNAME) > SNAPSHOT) \
-	  && (cd $(DISTNAME) && rm -r autom4te.cache)
+	  && (cd $(DISTNAME) && rm -r autom4te.cache) \
 	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
 
 www_export: export
