@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Tue May 16 00:00:46 2000
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -69,6 +69,7 @@ public:
 		  else if (BACKGROUND_ERROR == itsErrorMode) {
 			 Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
 			 Tcl_BackgroundError(interp);
+			 return tclresult;
 		  }
 		}
 	 }
