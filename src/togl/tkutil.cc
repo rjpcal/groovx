@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 15:09:49 2002
-// written: Tue Aug  6 13:48:25 2002
+// written: Tue Sep 17 12:20:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,31 +76,6 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
   // Issue a ConfigureNotify event if there were deferred changes
   issueConfigureNotify(tkWin);
-}
-
-void TkUtil::addWindow(Tk_Window tkWin, Window win)
-{
-DOTRACE("TkUtil::addWindow");
-
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
-
-  int new_flag;
-  Tcl_HashEntry* hPtr =
-    Tcl_CreateHashEntry(&winPtr->dispPtr->winTable, (char*) win, &new_flag);
-
-  Tcl_SetHashValue(hPtr, winPtr);
-}
-
-void TkUtil::forgetWindow(Tk_Window tkWin, Window win)
-{
-DOTRACE("TkUtil::forgetWindow");
-
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(tkWin);
-
-  Tcl_HashEntry* entryPtr =
-    Tcl_FindHashEntry(&winPtr->dispPtr->winTable, (char*) win);
-
-  Tcl_DeleteHashEntry(entryPtr);
 }
 
 Window TkUtil::findParent(Tk_Window tkWin) throw()
