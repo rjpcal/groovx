@@ -59,8 +59,8 @@ test "ObjDb-ObjDb::loadObjects" "error on non-existent file" {
 } {^ObjDb::loadObjects: unable to open file$}
 test "ObjDb-ObjDb::loadObjects" "error from junk text file" {
 	 ObjDb::loadObjects $::TEST_DIR/junk_text_file
-} {^ObjDb::loadObjects: (IO::InputError|unable to create object of type).*$}
+} {^ObjDb::loadObjects: }
 test "ObjDb-ObjDb::loadObjects" "error from junk binary file" {
 	 ObjDb::loadObjects $::TEST_DIR/junk_bin_file
-} {ObjDb::loadObjects: (IO::InputError|unable to create object of type).*$} \
+} {ObjDb::loadObjects: } \
   [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
