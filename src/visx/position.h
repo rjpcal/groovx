@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Jun 21 12:03:48 2002
+// written: Fri Jun 21 14:06:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,11 @@
 #endif
 
 class PositionImpl;
+
+namespace Gfx
+{
+  class Txform;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -84,7 +89,7 @@ public:
   // accessors //
   ///////////////
 
-  void getTransformation(double* result) const;
+  Gfx::Txform getTxform() const;
 
   /////////////
   // actions //
