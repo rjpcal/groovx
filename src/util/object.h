@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun  5 10:23:15 2001
-// written: Tue Jun  5 10:39:19 2001
+// written: Mon Jun 18 09:46:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ protected:
   Object();
 
   /// Virtual destructor.
-  virtual ~Object() = 0;
+  virtual ~Object();
 
 public:
   /** Returns the unique id for this object. The unique id will always
