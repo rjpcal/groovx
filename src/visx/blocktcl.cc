@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Oct 27 16:01:19 2000
+// written: Fri Oct 27 18:40:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,10 +11,8 @@
 #ifndef BLOCKTCL_CC_DEFINED
 #define BLOCKTCL_CC_DEFINED
 
-#include "blocklist.h"
 #include "block.h"
-
-#include "tlist.h"
+#include "ioptrlist.h"
 #include "trialbase.h"
 
 #include "io/iofactory.h"
@@ -45,9 +43,9 @@ namespace BlockTcl {
 
 	 bool testing_last_trial = (last_trial != -1);
 
-	 for (Tlist::Iterator
-			  itr = Tlist::theTlist().begin(),
-			  end = Tlist::theTlist().end();
+	 for (IoPtrList::Iterator
+			  itr = IoPtrList::theList().begin(),
+			  end = IoPtrList::theList().end();
 			itr != end;
 			++itr)
 		{
@@ -142,10 +140,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public Tcl::ListItemPkg<Block, BlockList> {
+class BlockTcl::BlockPkg : public Tcl::ListItemPkg<Block, IoPtrList> {
 public:
   BlockPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Block, BlockList>(interp, BlockList::theBlockList(),
+	 Tcl::ListItemPkg<Block, IoPtrList>(interp, IoPtrList::theList(),
 													"Block", "1.1")
   {
 	 Tcl::addTracing(this, Block::tracer);
@@ -181,7 +179,7 @@ DOTRACE("Block_Init");
 
   Tcl::TclPkg* pkg1 = new BlockTcl::BlockPkg(interp);
   Tcl::TclPkg* pkg2 =
-	 new Tcl::PtrListPkg<Block>(interp, BlockList::theBlockList(),
+	 new Tcl::PtrListPkg<Block>(interp, IoPtrList::theList(),
 										 "BlockList", "$Revision$");
 
   IO::IoFactory::theOne().registerCreatorFunc(&Block::make);

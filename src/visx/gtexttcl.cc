@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Fri Oct 20 17:31:31 2000
+// written: Fri Oct 27 18:44:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef GTEXTTCL_CC_DEFINED
 #define GTEXTTCL_CC_DEFINED
 
-#include "objlist.h"
+#include "ioptrlist.h"
 #include "gtext.h"
 
 #include "io/iofactory.h"
@@ -33,10 +33,10 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public Tcl::ListItemPkg<Gtext, ObjList> {
+class GtextTcl::GtextPkg : public Tcl::ListItemPkg<Gtext, IoPtrList> {
 public:
   GtextPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Gtext, ObjList>(interp, ObjList::theObjList(),
+	 Tcl::ListItemPkg<Gtext, IoPtrList>(interp, IoPtrList::theList(),
 												 "Gtext", "1.1")
   {
 	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);

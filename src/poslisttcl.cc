@@ -3,7 +3,7 @@
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Fri Oct 27 15:59:06 2000
+// written: Fri Oct 27 18:39:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,9 @@
 #ifndef POSLISTTCL_CC_DEFINED
 #define POSLISTTCL_CC_DEFINED
 
-#include "poslist.h"
+#include "ioptrlist.h"
+
+#include "position.h"
 
 #include "tcl/listpkg.h"
 
@@ -29,7 +31,7 @@ int Poslist_Init(Tcl_Interp* interp) {
 DOTRACE("Poslist_Init");
 
   Tcl::TclPkg* pkg = 
-	 new Tcl::PtrListPkg<Position>(interp, PosList::thePosList(),
+	 new Tcl::PtrListPkg<Position>(interp, IoPtrList::theList(),
 											 "PosList", "$Revision$");
 
   return pkg->initStatus();

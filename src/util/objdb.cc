@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Oct 27 15:34:36 2000
+// written: Fri Oct 27 16:31:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -294,6 +294,10 @@ IO::IoObject* IoPtrList::Iterator::getObject() const
 // IoPtrList member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+IoPtrList IoPtrList::theInstance;
+
+IoPtrList& IoPtrList::theList() { return theInstance; }
 
 IoPtrList::Iterator IoPtrList::begin() const {
 DOTRACE("IoPtrList::begin");

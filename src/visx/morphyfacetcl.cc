@@ -3,7 +3,7 @@
 // morphyfacetcl.cc
 // Rob Peters 
 // created: Wed Sep  8 15:42:36 1999
-// written: Fri Oct 20 15:00:45 2000
+// written: Fri Oct 27 18:44:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef MORPHYFACETCL_CC_DEFINED
 #define MORPHYFACETCL_CC_DEFINED
 
-#include "objlist.h"
+#include "ioptrlist.h"
 #include "morphyface.h"
 
 #include "tcl/propitempkg.h"
@@ -24,8 +24,8 @@ int Morphyface_Init(Tcl_Interp* interp) {
 DOTRACE("Morphyface_Init");
 
   Tcl::TclPkg* pkg = 
-	 new Tcl::PropertyListItemPkg<MorphyFace, ObjList>(
-              interp, ObjList::theObjList(), "MorphyFace", "1.2");
+	 new Tcl::PropertyListItemPkg<MorphyFace, IoPtrList>(
+              interp, IoPtrList::theList(), "MorphyFace", "1.2");
 
   return pkg->initStatus();
 }

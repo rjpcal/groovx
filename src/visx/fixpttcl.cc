@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 15 11:14:08 2000
+// written: Fri Oct 27 18:44:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include <tcl.h>
 
 #include "fixpt.h"
-#include "objlist.h"
+#include "ioptrlist.h"
 
 #include "tcl/propitempkg.h"
 
@@ -27,7 +27,7 @@ extern "C" Tcl_PackageInitProc Fixpt_Init;
 int Fixpt_Init(Tcl_Interp* interp) {
 DOTRACE("Fixpt_Init");
 
-  new Tcl::PropertyListItemPkg<FixPt, ObjList>(interp, ObjList::theObjList(),
+  new Tcl::PropertyListItemPkg<FixPt, IoPtrList>(interp, IoPtrList::theList(),
 															  "FixPt", "$Revision$");
 
   Tcl_Eval(interp,

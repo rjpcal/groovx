@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Fri Oct 20 17:26:37 2000
+// written: Fri Oct 27 18:44:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "bitmap.h"
 #include "glbitmap.h"
 #include "xbitmap.h"
-#include "objlist.h"
+#include "ioptrlist.h"
 
 #include "io/iofactory.h"
 
@@ -172,10 +172,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::BitmapPkg : public Tcl::AbstractListItemPkg<Bitmap, ObjList> {
+class BitmapTcl::BitmapPkg : public Tcl::AbstractListItemPkg<Bitmap, IoPtrList> {
 public:
   BitmapPkg(Tcl_Interp* interp) :
-	 Tcl::AbstractListItemPkg<Bitmap, ObjList>(interp, ObjList::theObjList(),
+	 Tcl::AbstractListItemPkg<Bitmap, IoPtrList>(interp, IoPtrList::theList(),
 															 "Bitmap", "1.1")
   {
 	 addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
@@ -206,10 +206,10 @@ namespace GLBitmapTcl {
   class GLBitmapPkg;
 }
 
-class GLBitmapTcl::GLBitmapPkg : public Tcl::ListItemPkg<GLBitmap, ObjList> {
+class GLBitmapTcl::GLBitmapPkg : public Tcl::ListItemPkg<GLBitmap, IoPtrList> {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<GLBitmap, ObjList>(interp, ObjList::theObjList(),
+	 Tcl::ListItemPkg<GLBitmap, IoPtrList>(interp, IoPtrList::theList(),
 													 "GLBitmap", "1.1")
   {
 	 declareCAttrib("usingGlBitmap",
@@ -227,10 +227,10 @@ namespace XBitmapTcl {
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapPkg : public Tcl::ListItemPkg<XBitmap, ObjList> {
+class XBitmapTcl::XBitmapPkg : public Tcl::ListItemPkg<XBitmap, IoPtrList> {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
+	 Tcl::ListItemPkg<XBitmap, IoPtrList>(interp, IoPtrList::theList(),
 													"XBitmap", "$Revision$")
 	 {}
 };

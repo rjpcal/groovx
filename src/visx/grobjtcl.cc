@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Mar 29 22:09:33 2000
+// written: Fri Oct 27 18:39:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "application.h"
 #include "experiment.h"
 #include "grobj.h"
-#include "objlist.h"
+#include "ioptrlist.h"
 #include "rect.h"
 
 #include "tcl/listitempkg.h"
@@ -114,10 +114,10 @@ public:
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::GrObjPkg : public Tcl::AbstractListItemPkg<GrObj, ObjList> {
+class GrobjTcl::GrObjPkg : public Tcl::AbstractListItemPkg<GrObj, IoPtrList> {
 public:
   GrObjPkg(Tcl_Interp* interp) :
-	 Tcl::AbstractListItemPkg<GrObj, ObjList>(interp, ObjList::theObjList(),
+	 Tcl::AbstractListItemPkg<GrObj, IoPtrList>(interp, IoPtrList::theList(),
 															"GrObj", "$Revision$")
   {
 	 Tcl::addTracing(this, GrObj::tracer);

@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Oct 20 17:01:48 2000
+// written: Fri Oct 27 18:44:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define FACETCL_CC_DEFINED
 
 #include "cloneface.h"
-#include "objlist.h"
+#include "ioptrlist.h"
 #include "face.h"
 
 #include "tcl/propitempkg.h"
@@ -24,8 +24,8 @@ extern "C"
 int Face_Init(Tcl_Interp* interp) {
 DOTRACE("Face_Init");
 
-  Tcl::TclPkg* pkg = new Tcl::PropertyListItemPkg<Face, ObjList>(
-              interp, ObjList::theObjList(), "Face", "$Revision$"); 
+  Tcl::TclPkg* pkg = new Tcl::PropertyListItemPkg<Face, IoPtrList>(
+              interp, IoPtrList::theList(), "Face", "$Revision$"); 
 
   IO::IoFactory::theOne().registerCreatorFunc(&CloneFace::make);
 

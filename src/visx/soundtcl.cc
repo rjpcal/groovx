@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Fri Oct 27 16:02:49 2000
+// written: Fri Oct 27 18:40:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,10 @@
 #define SOUNDTCL_CC_DEFINED
 
 #include "application.h"
-#include "soundlist.h"
+#include "ioptrlist.h"
 #include "sound.h"
+
+#include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/listpkg.h"
@@ -84,11 +86,11 @@ protected:
 //---------------------------------------------------------------------
 
 class SoundTcl::SoundPkg :
-  public Tcl::AbstractListItemPkg<Sound, SoundList> {
+  public Tcl::AbstractListItemPkg<Sound, IoPtrList> {
 public:
   SoundPkg(Tcl_Interp* interp) :
-	 Tcl::AbstractListItemPkg<Sound, SoundList>(
-			 interp, SoundList::theSoundList(), "Sound", "1.3")
+	 Tcl::AbstractListItemPkg<Sound, IoPtrList>(
+			 interp, IoPtrList::theList(), "Sound", "1.3")
   {
 	 bool haveSound = Sound::initSound();
 
@@ -157,7 +159,7 @@ namespace SoundListTcl {
 class SoundListTcl::SoundListPkg : public Tcl::PtrListPkg<Sound> {
 public:
   SoundListPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<Sound>(interp, SoundList::theSoundList(),
+	 Tcl::PtrListPkg<Sound>(interp, IoPtrList::theList(),
 									"SoundList", "$Revision$") {}
 };
 
@@ -172,6 +174,8 @@ DOTRACE("Sound_Init");
 
   Tcl::TclPkg* pkg1 = new SoundTcl::SoundPkg(interp);
   Tcl::TclPkg* pkg2 = new SoundListTcl::SoundListPkg(interp);
+
+  IO::IoFactory::theOne().registerCreatorFunc(&Sound::make);
 
   return pkg1->initedOk() ? pkg2->initStatus() : pkg1->initStatus();
 }

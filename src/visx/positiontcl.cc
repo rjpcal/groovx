@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Fri Oct 20 17:37:16 2000
+// written: Fri Oct 27 18:40:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define POSITIONTCL_CC_DEFINED
 
 #include "position.h"
-#include "poslist.h"
+#include "ioptrlist.h"
 
 #include "io/iofactory.h"
 
@@ -118,11 +118,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class PosTcl::PosPkg : public Tcl::ListItemPkg<Position, PosList> {
+class PosTcl::PosPkg : public Tcl::ListItemPkg<Position, IoPtrList> {
 public:
   PosPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Position, PosList>(interp, PosList::thePosList(),
-													 "Pos", "2.3")
+	 Tcl::ListItemPkg<Position, IoPtrList>(interp, IoPtrList::theList(),
+														"Pos", "2.3")
   {
 	 addCommand( new RotateCmd(this, "Pos::rotate") );
 	 addCommand( new TranslateCmd(this, "Pos::translate") );

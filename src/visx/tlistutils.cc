@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu Oct 26 17:50:08 2000
+// written: Fri Oct 27 18:40:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,12 @@
 #include "tlistutils.h"
 
 #include "gtext.h"
+#include "iditem.h"
+#include "ioptrlist.h"
 #include "position.h"
 #include "rect.h"
 #include "trial.h"
-#include "tlist.h"
+#include "ioptrlist.h"
 
 #include "gwt/canvas.h"
 
@@ -125,7 +127,7 @@ DOTRACE("TlistUtils::createPreview");
 void TlistUtils::writeResponses(const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
 
-  Tlist& tlist = Tlist::theTlist(); 
+  IoPtrList& tlist = IoPtrList::theList(); 
 
   STD_IO::ofstream ofs(filename);
   const int wid = 8;
@@ -137,7 +139,7 @@ DOTRACE("TlistUtils::writeResponses");
   
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (Tlist::IdIterator
+  for (IoPtrList::IdIterator
 			itr = tlist.beginIds(),
 			end = tlist.endIds();
 		 itr != end;
@@ -160,11 +162,11 @@ DOTRACE("TlistUtils::writeResponses");
 void TlistUtils::writeIncidenceMatrix(const char* filename) {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
 
-  Tlist& tlist = Tlist::theTlist(); 
+  IoPtrList& tlist = IoPtrList::theList(); 
 
   STD_IO::ofstream ofs(filename);
 
-  for (Tlist::IdIterator
+  for (IoPtrList::IdIterator
 			itr = tlist.beginIds(),
 			end = tlist.endIds();
 		 itr != end;
@@ -197,7 +199,7 @@ int TlistUtils::readFromObjidsOnly(STD_IO::istream& is,
 											  int num_lines, int offset) {
 DOTRACE("TlistUtils::readFromObjidsOnly");
 
-  Tlist& tlist = Tlist::theTlist(); 
+  IoPtrList& tlist = IoPtrList::theList(); 
 
   // FIXME this will not really do what we want anymore -- need to
   // return a list of the trial ids that are created
@@ -235,14 +237,14 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 void TlistUtils::writeMatlab(const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
 
-  Tlist& tlist = Tlist::theTlist(); 
+  IoPtrList& tlist = IoPtrList::theList(); 
 
   STD_IO::ofstream ofs(filename);
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
-  for (Tlist::IdIterator
+  for (IoPtrList::IdIterator
 			itr = tlist.beginIds(),
 			end = tlist.endIds();
 		 itr != end;

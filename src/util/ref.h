@@ -3,7 +3,7 @@
 // iditem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Oct 27 15:50:40 2000
+// written: Fri Oct 27 18:43:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,27 @@
 #include "util/ptrhandle.h"
 #endif
 
-#if 0
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
+#include "util/error.h"
+#endif
+
 namespace IO { class IoObject; }
+
+class IoPtrList;
 
 namespace IdItemUtils {
   bool isValidId(int id);
   void insertItem(IO::IoObject* obj);
   IO::IoObject* getCheckedItem(int id);
-}
-#endif
 
-template <class T> class PtrList;
+  template <class T>
+  inline T* getCastedItem(int id)
+  {
+	 IO::IoObject* obj = getCheckedItem(id);
+	 T& t = dynamic_cast<T&>(*obj);
+	 return &t;
+  }
+}
 
 template <class Container, class T>
 class IdItemInserter {
@@ -52,12 +62,13 @@ public:
 template <class T>
 class IdItem {
 private:
-  static PtrList<T>& ptrList();
-
   PtrHandle<T> itsHandle;
 
 public:
-  IdItem(int id);
+  IdItem(int id) :
+	 itsHandle(IdItemUtils::getCastedItem<T>(id))
+  {}
+
   IdItem(T* master) : itsHandle(master) {}
   IdItem(PtrHandle<T> item_) : itsHandle(item_) {}
 
@@ -67,12 +78,26 @@ public:
 		should be inserted into an appropriate PtrList. */
   class Insert {};
 
-  IdItem(T* ptr, Insert /*dummy param*/);
-  IdItem(PtrHandle<T> item, Insert /*dummy param*/);
+  IdItem(T* ptr, Insert /*dummy param*/) :
+	 itsHandle(ptr)
+  {
+	 IdItemUtils::insertItem(ptr);
+  }
+
+  IdItem(PtrHandle<T> item, Insert /*dummy param*/) :
+	 itsHandle(item)
+  {
+	 IdItemUtils::insertItem(itsHandle.get());
+  }
 
   /** This operation will cause \a new_master to be inserted into an
       appropriate PtrList. */
-  IdItem& operator=(T* new_master);
+  IdItem& operator=(T* new_master)
+  {
+	 itsHandle = PtrHandle<T>(new_master);
+	 IdItemUtils::insertItem(new_master);
+	 return *this;
+  }
 
         T* operator->()       { return itsHandle.get(); }
   const T* operator->() const { return itsHandle.get(); }
@@ -124,32 +149,43 @@ public:
 template <class T>
 class MaybeIdItem {
 private:
-  static PtrList<T>& ptrList();
-
   mutable NullablePtrHandle<T> itsHandle;
   int itsId;
 
-  void check();
-
 public:
   explicit MaybeIdItem(int id_) :
-	 itsHandle(0), itsId(id_) { check(); }
+	 itsHandle(0), itsId(id_) {}
 
   MaybeIdItem(T* master, int id_) :
-	 itsHandle(master), itsId(id_) { check(); }
+	 itsHandle(master), itsId(id_) {}
 
   MaybeIdItem(PtrHandle<T> item_, int id_) :
-	 itsHandle(item_), itsId(id_) { check(); }
+	 itsHandle(item_), itsId(id_) {}
 
   MaybeIdItem(NullablePtrHandle<T> item_, int id_) :
-	 itsHandle(item_), itsId(id_) { check(); }
+	 itsHandle(item_), itsId(id_) {}
 
   MaybeIdItem(const IdItem<T> other) :
-	 itsHandle(other.handle()), itsId(other.id()) { check(); }
+	 itsHandle(other.handle()), itsId(other.id()) {}
 
   // These will cause the item to be inserted into the relevant list.
-  MaybeIdItem(T* master);
-  MaybeIdItem(PtrHandle<T> item);
+  MaybeIdItem(T* master) :
+	 itsHandle(master),
+	 itsId(-1)
+  {
+	 if (master != 0)
+		{
+		  IdItemUtils::insertItem(master);
+		  itsId = master->id();
+		}
+  }
+
+  MaybeIdItem(PtrHandle<T> item) :
+	 itsHandle(item),
+	 itsId(item->id())
+  {
+	 IdItemUtils::insertItem(itsHandle.get());
+  }
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -161,14 +197,34 @@ public:
         T* get()              { refresh(); return itsHandle.get(); }
   const T* get()        const { refresh(); return itsHandle.get(); }
 
+  /** This will try to refresh the handle from the id, and will throw
+      an exception if the operation fails (if the id is invalid). */
+  void refresh() const {
+	 if ( !itsHandle.isValid() )
+		{
+		  IdItem<T> p = IdItemUtils::getCastedItem<T>(itsId);
+		  itsHandle = p.handle();
+		  if (itsId != itsHandle->id())
+			 throw ErrorWithMsg("assertion failed in refresh");
+		}
+  }
+
+
   /** This will try to refresh the handle from the id, but will not
       throw an exception if the operation fails; it will just leave
       the object with an invalid handle. */
-  void attemptRefresh() const;
+  void attemptRefresh() const {
+	 if ( !itsHandle.isValid() )
+		{
+		  if (IdItemUtils::isValidId(itsId)) {
+			 IdItem<T> p = IdItemUtils::getCastedItem<T>(itsId);
+			 itsHandle = p.handle();
+			 if (itsId != itsHandle->id())
+				throw ErrorWithMsg("assertion failed in attemptRefresh");
+		  }
+		}
+  }
 
-  /** This will try to refresh the handle from the id, and will throw
-      an exception if the operation fails (if the id is invalid). */
-  void refresh() const;
 
   bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
 

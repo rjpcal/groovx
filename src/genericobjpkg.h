@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Fri Oct 27 15:41:31 2000
+// written: Fri Oct 27 17:38:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
 #include "tcl/tclitempkg.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
@@ -133,7 +137,7 @@ public:
   List& theList() { return itsList; }
 
   virtual C* getCItemFromId(int id) {
-	 IdItem<typename List::BaseType> item(id);
+	 IdItem<C> item(id);
 	 // will throw bad_cast if cast fails
 	 C& p = dynamic_cast<C&>(*item);
 	 return &p;
@@ -179,7 +183,7 @@ public:
 protected:
   virtual void invoke() {
 	 C* newObject = C::make();
-	 typedef IdItem<typename List::BaseType> ItemType;
+	 typedef IdItem<C> ItemType;
 	 ItemType item(newObject, ItemType::Insert());
 	 returnInt(item.id());
   }

@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Oct 27 15:28:46 2000
+// written: Fri Oct 27 16:30:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,13 +52,17 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class IoPtrList : public virtual IO::IoObject {
-protected:
+private:
+  static IoPtrList theInstance;
+
   /// Default constructor makes an empty list.
   IoPtrList();
 
 public:
   /// Virtual destructor.
   virtual ~IoPtrList();
+
+  static IoPtrList& theList();
 
   //
   // IO interface
@@ -164,7 +168,6 @@ public:
       the process. */
   void clear();
 
-protected:
   /** Return the \c IO::IoObject* at the index given by \a id. Checks
 		first if \a id is a valid index, and throws an \c InvalidIdError
 		if it is not. */

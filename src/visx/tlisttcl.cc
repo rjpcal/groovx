@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Oct 27 16:03:16 2000
+// written: Fri Oct 27 18:40:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,8 @@
 #include "application.h"
 #include "experiment.h"
 #include "grobj.h"
-#include "objlist.h"
-#include "tlist.h"
+#include "ioptrlist.h"
+#include "ioptrlist.h"
 #include "tlistutils.h"
 #include "trial.h"
 
@@ -57,7 +57,7 @@ namespace {
   const char* const bad_trial_msg = "invalid trial id";
 
   // local reference to the global Tlist singleton
-  Tlist& theTlist = Tlist::theTlist();
+  IoPtrList& theTlist = IoPtrList::theList();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ protected:
 	 int posid1 = getIntFromArg(3);
 	 int posid2 = getIntFromArg(4);
 
-	 Tlist& tlist = Tlist::theTlist();
+	 IoPtrList& tlist = IoPtrList::theList();
 
 	 for (Tcl::ListIterator<int>
 			  itr1 = beginOfArg(1, (int*)0),
@@ -187,7 +187,7 @@ protected:
   virtual void invoke() {
 	 int posids[3] = { getIntFromArg(2), getIntFromArg(3), getIntFromArg(4) };
 
-	 Tlist& tlist = Tlist::theTlist();
+	 IoPtrList& tlist = IoPtrList::theList();
 
 	 const int NUM_PERMS = 18;
 	 static int permutations[NUM_PERMS][3] = { 
@@ -340,7 +340,7 @@ protected:
 class TlistTcl::TlistPkg : public Tcl::PtrListPkg<Trial> {
 public:
   TlistPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<Trial>(interp, Tlist::theTlist(), "Tlist", "3.0")
+	 Tcl::PtrListPkg<Trial>(interp, IoPtrList::theList(), "Tlist", "3.0")
   {
 	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 

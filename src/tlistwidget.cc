@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Oct 27 09:03:57 2000
+// written: Fri Oct 27 17:13:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "tlistwidget.h"
 
+#include "io/io.h"
 #include "iditem.h"
 #include "trialbase.h"
 
