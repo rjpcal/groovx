@@ -33,9 +33,9 @@
 #define GLTCL_CC_DEFINED
 
 // This Tcl package provides some simple Tcl wrappers for C OpenGL
-// functions. The function names, argument lists, and symbolic constants
-// for the Tcl functions are identical to those in the analagous C
-// functions.
+// functions. The function names, argument lists, and symbolic
+// constants for the Tcl functions are identical to those in the
+// analagous C functions.
 
 #include "gfx/canvas.h"
 
@@ -95,10 +95,11 @@ namespace GLTcl
 
 #define NAMEVAL(x) #x, x
 
-  // The point of this struct and the associated std::map is so that we can
-  // figure out how many values we should try to retrieve from an OpenGL get()
-  // call, for a given parameter which is specified by a GLenum (e.g. we
-  // should try to get 4 values for the GL_VIEWPORT param)
+  // The point of this struct and the associated std::map is so that
+  // we can figure out how many values we should try to retrieve from
+  // an OpenGL get() call, for a given parameter which is specified by
+  // a GLenum (e.g. we should try to get 4 values for the GL_VIEWPORT
+  // param)
   struct AttribInfo
   {
     const char* param_name;
@@ -321,7 +322,8 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   if (matrix.size() != 16)
     {
-      throw Util::Error("matrix must have 16 entries in column-major order");
+      throw Util::Error("matrix must have 16 entries "
+                        "in column-major order");
     }
 
   glLoadMatrixd(&matrix[0]);
@@ -385,7 +387,8 @@ DOTRACE("GLTcl::antialias");
 //
 //--------------------------------------------------------------------
 
-void GLTcl::drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2)
+void GLTcl::drawOneLine(GLdouble x1, GLdouble y1,
+                        GLdouble x2, GLdouble y2)
 {
   glBegin(GL_LINES);
   glVertex3d(x1, y1, 0.0);
