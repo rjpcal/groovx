@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Sat Jun 16 18:39:18 2001
+// written: Mon Jun 18 06:53:22 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -49,17 +49,11 @@ public:
 namespace GLTcl {
   class GLPkg;
 
-  class glClearColorCmd;
-  class glColorCmd;
   class glFrustumCmd;
   class glGetCmd;
   class glLoadMatrixCmd;
   class glOrthoCmd;
-  class glRotateCmd;
-  class glVertexCmd;
-
   class gluLookAtCmd;
-  class gluPerspectiveCmd;
 
   // Tcl functions
   Tcl_ObjCmdProc drawOneLineCmd;
@@ -214,12 +208,12 @@ namespace GLTcl {
     {}
 
   protected:
-	 virtual void invoke()
-	 {
-		P1 p1 = getValFromArg(1, (P1*)0);
-		P2 p2 = getValFromArg(2, (P2*)0);
-		itsFunc(p1, p2);
-	 }
+    virtual void invoke()
+    {
+      P1 p1 = getValFromArg(1, (P1*)0);
+      P2 p2 = getValFromArg(2, (P2*)0);
+      itsFunc(p1, p2);
+    }
 
   private:
     GLCmdP2(const GLCmdP2&);
@@ -287,6 +281,68 @@ namespace GLTcl {
     Func itsFunc;
   };
 
+
+  //
+  // four arguments
+  //
+
+  template <class R, class P1, class P2, class P3, class P4>
+  class GLCmdP4 : public Tcl::TclCmd {
+  public:
+    typedef R (*Func)(P1, P2, P3, P4);
+
+    GLCmdP4(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+            const char* usage) :
+      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 5),
+      itsFunc(f)
+    {}
+
+  protected:
+    virtual void invoke()
+    {
+      P1 p1 = getValFromArg(1, (P1*)0);
+      P2 p2 = getValFromArg(2, (P2*)0);
+      P3 p3 = getValFromArg(2, (P3*)0);
+      P4 p4 = getValFromArg(2, (P4*)0);
+      returnVal(itsFunc(p1, p2, p3, p4));
+    }
+
+  private:
+    GLCmdP4(const GLCmdP4&);
+    GLCmdP4& operator=(const GLCmdP4&);
+
+    Func itsFunc;
+  };
+
+  template <class P1, class P2, class P3, class P4>
+  class GLCmdP4<void, P1, P2, P3, P4> : public Tcl::TclCmd {
+  public:
+    typedef void (*Func)(P1, P2, P3, P4);
+
+    GLCmdP4(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+            const char* usage) :
+      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 5),
+      itsFunc(f)
+    {}
+
+  protected:
+    virtual void invoke()
+    {
+      P1 p1 = getValFromArg(1, (P1*)0);
+      P2 p2 = getValFromArg(2, (P2*)0);
+      P3 p3 = getValFromArg(2, (P3*)0);
+      P4 p4 = getValFromArg(2, (P4*)0);
+      itsFunc(p1, p2, p3, p4);
+    }
+
+  private:
+    GLCmdP4(const GLCmdP4&);
+    GLCmdP4& operator=(const GLCmdP4&);
+
+    Func itsFunc;
+  };
+
+
   template <class Func>
   inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg, Func f,
                               const char* cmd_name, const char* usage);
@@ -323,50 +379,15 @@ namespace GLTcl {
     return new GLTcl::GLCmdP3<R, P1, P2, P3>(pkg, f, cmd_name, usage);
   }
 
+  template <class R, class P1, class P2, class P3, class P4>
+  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
+                              R (*f)(P1, P2, P3, P4),
+                              const char* cmd_name, const char* usage)
+  {
+    return new GLTcl::GLCmdP4<R, P1, P2, P3, P4>(pkg, f, cmd_name, usage);
+  }
+
 } // end namespace GLTcl
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glClearColorCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glClearColorCmd : public Tcl::TclCmd {
-public:
-  glClearColorCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "red green blue alpha", 5, 5) {}
-protected:
-  virtual void invoke() {
-    GLclampf red   = getDoubleFromArg(1);
-    GLclampf green = getDoubleFromArg(2);
-    GLclampf blue  = getDoubleFromArg(3);
-    GLclampf alpha = getDoubleFromArg(4);
-
-    glClearColor(red, green, blue, alpha);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glColorCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glColorCmd : public Tcl::TclCmd {
-public:
-  glColorCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "red green blue ?alpha=1.0?", 4, 5) {}
-protected:
-  virtual void invoke() {
-    GLdouble red   = getDoubleFromArg(1);
-    GLdouble green = getDoubleFromArg(2);
-    GLdouble blue  = getDoubleFromArg(3);
-    GLdouble alpha = (objc() < 5) ? 1.0 : getDoubleFromArg(4);
-
-    glColor4d(red, green, blue, alpha);
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -782,51 +803,6 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// GLTcl::glRotateCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glRotateCmd : public Tcl::TclCmd {
-public:
-  glRotateCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "angle_in_degrees x y z", 5, 5) {}
-protected:
-  virtual void invoke() {
-    GLdouble angle = getDoubleFromArg(1);
-    GLdouble x = getDoubleFromArg(2);
-    GLdouble y = getDoubleFromArg(3);
-    GLdouble z = getDoubleFromArg(4);
-
-    glRotated(angle, x, y, z);
-    checkGL();
-  }
-};
-
-//--------------------------------------------------------------------
-//
-// GLTcl::glVertexCmd --
-//
-//--------------------------------------------------------------------
-
-class GLTcl::glVertexCmd : public Tcl::TclCmd {
-public:
-  glVertexCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "x y ?z=0? ?w=1?", 3, 5) {}
-protected:
-  virtual void invoke() {
-    GLdouble x = getDoubleFromArg(1);
-    GLdouble y = getDoubleFromArg(2);
-    GLdouble z = (objc() < 4) ? 0.0 : getDoubleFromArg(3);
-    GLdouble w = (objc() < 5) ? 1.0 : getDoubleFromArg(4);
-
-    if (objc() == 3)      { glVertex2d(x,y); }
-    else if (objc() == 4) { glVertex3d(x,y,z); }
-    else if (objc() == 5) { glVertex4d(x,y,z,w); }
-  }
-};
-
-//---------------------------------------------------------------------
-//
 // GLTcl::gluLookAtCmd --
 //
 //---------------------------------------------------------------------
@@ -848,26 +824,6 @@ protected:
     GLdouble upY = getDoubleFromArg(8);
     GLdouble upZ = getDoubleFromArg(9);
     gluLookAt(eyeX, eyeY, eyeZ, targX, targY, targZ, upX, upY, upZ);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::gluPerspectiveCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::gluPerspectiveCmd : public Tcl::TclCmd {
-public:
-  gluPerspectiveCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "field_of_view_y aspect zNear zFar", 5, 5) {}
-protected:
-  virtual void invoke() {
-    GLdouble fovy = getDoubleFromArg(1);
-    GLdouble aspect = getDoubleFromArg(2);
-    GLdouble zNear = getDoubleFromArg(3);
-    GLdouble zFar = getDoubleFromArg(4);
-    gluPerspective(fovy, aspect, zNear, zFar);
   }
 };
 
@@ -1248,11 +1204,11 @@ public:
     this->linkVarCopy("GL_PROJECTION", GL_PROJECTION);
     this->linkVarCopy("GL_TEXTURE",    GL_TEXTURE);
 
-	 // for glNewList
+    // for glNewList
     this->linkVarCopy("GL_COMPILE", GL_COMPILE);
     this->linkVarCopy("GL_COMPILE_AND_EXECUTE", GL_COMPILE_AND_EXECUTE);
 
-	 // for glPolygonMode
+    // for glPolygonMode
     this->linkVarCopy("GL_POINT", GL_POINT);
     this->linkVarCopy("GL_LINE", GL_LINE);
     this->linkVarCopy("GL_FILL", GL_FILL);
@@ -1261,7 +1217,9 @@ public:
     addCommand( makeCmd (this, glBlendFunc, "glBlendFunc", "sfactor dfactor") );
     addCommand( makeCmd (this, glCallList, "glCallList", "list") );
     addCommand( makeCmd (this, glClear, "glClear", "mask_bits") );
+    addCommand( makeCmd (this, glClearColor, "glClearColor", "red green blue alpha") );
     addCommand( makeCmd (this, glClearIndex, "glClearIndex", "index") );
+    addCommand( makeCmd (this, glColor4d, "glColor", "red green blue alpha") );
     addCommand( makeCmd (this, glDeleteLists, "glDeleteLists", "list_id range") );
     addCommand( makeCmd (this, glDisable, "glDisable", "capability") );
     addCommand( makeCmd (this, glDrawBuffer, "glDrawBuffer", "mode") );
@@ -1281,21 +1239,22 @@ public:
     addCommand( makeCmd (this, glPolygonMode, "glPolygonMode", "face mode") );
     addCommand( makeCmd (this, glPopMatrix, "glPopMatrix", 0) );
     addCommand( makeCmd (this, glPushMatrix, "glPushMatrix", 0) );
+    addCommand( makeCmd (this, glRotated, "glRotate", "angle_in_degrees x y z") );
     addCommand( makeCmd (this, glScaled, "glScale", "x y z") );
     addCommand( makeCmd (this, glTranslated, "glTranslate", "x y z") );
+    addCommand( makeCmd (this, glVertex2d, "glVertex2", "x y") );
+    addCommand( makeCmd (this, glVertex3d, "glVertex3", "x y z") );
+    addCommand( makeCmd (this, glVertex4d, "glVertex4", "x y z w") );
+    addCommand( makeCmd (this, gluPerspective, "gluPerspective",
+                         "field_of_view_y aspect zNear zFar") );
 
-    addCommand( new glClearColorCmd   (this, "glClearColor") );
-    addCommand( new glColorCmd        (this, "glColor") );
     addCommand( new glFrustumCmd      (this, "glFrustum") );
     addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
     addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
     addCommand( new glGetTypeCmd<GLint>(this, "glGetInteger") );
     addCommand( new glLoadMatrixCmd   (this, "glLoadMatrix") );
     addCommand( new glOrthoCmd        (this, "glOrtho") );
-    addCommand( new glRotateCmd       (this, "glRotate") );
-    addCommand( new glVertexCmd       (this, "glVertex") );
     addCommand( new gluLookAtCmd      (this, "gluLookAt") );
-    addCommand( new gluPerspectiveCmd (this, "gluPerspective") );
   }
 };
 
