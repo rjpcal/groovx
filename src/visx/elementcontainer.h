@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Thu Dec  5 17:11:06 2002
+// written: Thu Dec  5 17:24:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,6 +103,8 @@ public:
 
 protected:
   void childFinishedHelper(Element::ChildStatus s);
+
+  void ensureNotComplete() const;
 
   minivec<Util::Ref<Element> >& iolegacyElements() const;
   int& iolegacyRandSeed() const;

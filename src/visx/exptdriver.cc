@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:53:16 2002
+// written: Thu Dec  5 17:53:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,34 +80,12 @@ public:
     autosaveFile("__autosave_file"),
     infoLog(),
     autosavePeriod(10),
-    elements(),
-    sequenceIdx(0),
     errorHandler(interp.intp()),
     doWhenComplete(new Tcl::ProcWrapper(interp)),
     numTrialsCompleted(0)
   {}
 
   ~Impl() {}
-
-  //
-  // helper functions
-  //
-
-  bool haveCurrentElement() const
-    {
-      return ( sequenceIdx < elements.size() );
-    }
-
-  // Ensure that there is a valid current element. If there is not, throw
-  // an exception.
-  void ensureHasElement() const
-    {
-      if ( !haveCurrentElement() )
-        {
-          throw Util::Error("the experiment must have at least one Element"
-                            "before it can be started");
-        }
-    }
 
   //
   // data members
@@ -126,10 +104,6 @@ public:
   fstring infoLog;
 
   int autosavePeriod;
-
-  minivec<Ref<Element> > elements;
-
-  unsigned int sequenceIdx;
 
   Tcl::BkdErrorHandler errorHandler;
 
@@ -189,11 +163,11 @@ DOTRACE("ExptDriver::readFrom");
   reader->readValue("autosavePeriod", rep->autosavePeriod);
   reader->readValue("infoLog", rep->infoLog);
 
-  reader->readValue("currentBlockIdx", rep->sequenceIdx);
+  reader->readValue("currentBlockIdx", iolegacySequencePos());
 
-  rep->elements.clear();
+  iolegacyElements().clear();
   IO::ReadUtils::readObjectSeq<Element>(
-           reader, "blocks", std::back_inserter(rep->elements));
+           reader, "blocks", std::back_inserter(iolegacyElements()));
 
   if (svid < 4)
     {
@@ -222,10 +196,11 @@ DOTRACE("ExptDriver::writeTo");
   writer->writeValue("autosavePeriod", rep->autosavePeriod);
   writer->writeValue("infoLog", rep->infoLog);
 
-  writer->writeValue("currentBlockIdx", rep->sequenceIdx);
+  writer->writeValue("currentBlockIdx", iolegacySequencePos());
 
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
-                                 rep->elements.begin(), rep->elements.end());
+                                 iolegacyElements().begin(),
+                                 iolegacyElements().end());
 
   writer->writeOwnedObject("doWhenComplete", rep->doWhenComplete);
 }
@@ -249,42 +224,10 @@ DOTRACE("ExptDriver::getWidget");
   return rep->widget;
 }
 
-int ExptDriver::trialType() const
-{
-DOTRACE("ExptDriver::trialType");
-  return currentElement()->trialType();
-}
-
-int ExptDriver::lastResponse() const
-{
-DOTRACE("ExptDriver::lastResponse");
-  return currentElement()->lastResponse();
-}
-
-fstring ExptDriver::status() const
-{
-DOTRACE("ExptDriver::status");
-
-  if (!rep->haveCurrentElement())
-    return "not running";
-
-  return currentElement()->status();
-}
-
 void ExptDriver::vxRun(Element& /*parent*/)
 {
 DOTRACE("currentElement");
   /* FIXME */ Assert(false);
-}
-
-void ExptDriver::vxHalt() const
-{
-DOTRACE("ExptDriver::vxHalt");
-
-  if ( rep->haveCurrentElement() )
-    {
-      currentElement()->vxHalt();
-    }
 }
 
 void ExptDriver::vxEndTrialHook()
@@ -305,13 +248,13 @@ DOTRACE("ExptDriver::vxEndTrialHook");
   IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
-void ExptDriver::vxChildFinished(ChildStatus /*s*/)
+void ExptDriver::vxChildFinished(ChildStatus s)
 {
 DOTRACE("ExptDriver::vxChildFinished");
 
-  ++rep->sequenceIdx;
+  childFinishedHelper(s);
 
-  if ( !rep->haveCurrentElement() )
+  if ( isComplete() )
     {
       Util::log( "experiment complete" );
 
@@ -327,34 +270,6 @@ DOTRACE("ExptDriver::vxChildFinished");
   else
     {
       currentElement()->vxRun(*this);
-    }
-}
-
-void ExptDriver::vxUndo()
-{
-DOTRACE("ExptDriver::vxUndo");
-  currentElement()->vxUndo();
-}
-
-void ExptDriver::vxReset()
-{
-DOTRACE("ExptDriver::vxReset");
-  vxHalt();
-
-  Util::log("resetting experiment");
-
-  while (1)
-    {
-      if ( rep->haveCurrentElement() )
-        {
-          Util::log(fstring("resetting element", rep->sequenceIdx));
-          currentElement()->vxReset();
-        }
-
-      if (rep->sequenceIdx > 0)
-        --(rep->sequenceIdx);
-      else
-        break;
     }
 }
 
@@ -406,29 +321,6 @@ DOTRACE("ExptDriver::addLogInfo");
   rep->infoLog.append("\n");
 }
 
-void ExptDriver::addElement(Ref<Element> elem)
-{
-DOTRACE("ExptDriver::addElement");
-
-  rep->elements.push_back(elem);
-}
-
-Ref<Element> ExptDriver::currentElement() const
-{
-DOTRACE("ExptDriver::currentElement");
-  if ( !rep->haveCurrentElement() )
-    throw Util::Error("no current element exists");
-  return rep->elements.at(rep->sequenceIdx);
-}
-
-Util::FwdIter<Util::Ref<Element> > ExptDriver::getElements() const
-{
-DOTRACE("ExptDriver::getElements");
-
-  return Util::FwdIter<Util::Ref<Element> >(rep->elements.begin(),
-                                            rep->elements.end());
-}
-
 fstring ExptDriver::getDoWhenComplete() const
 {
 DOTRACE("ExptDriver::getDoWhenComplete");
@@ -457,7 +349,7 @@ void ExptDriver::edBeginExpt()
 {
 DOTRACE("ExptDriver::edBeginExpt");
 
-  rep->ensureHasElement();
+  ensureNotComplete();
 
   addLogInfo("Beginning experiment.");
 
@@ -476,18 +368,9 @@ void ExptDriver::edResumeExpt()
 {
 DOTRACE("ExptDriver::edResumeExpt");
 
-  rep->ensureHasElement();
+  ensureNotComplete();
 
   currentElement()->vxRun(*this);
-}
-
-void ExptDriver::edClearExpt()
-{
-DOTRACE("ExptDriver::edClearExpt");
-  vxHalt();
-
-  rep->elements.clear();
-  rep->sequenceIdx = 0;
 }
 
 void ExptDriver::pause()

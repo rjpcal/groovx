@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:53:12 2002
+// written: Thu Dec  5 17:35:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "util/tracer.h"
 
-#include "visx/element.h"
+#include "visx/elementcontainer.h"
 
 struct Tcl_Interp;
 
@@ -44,7 +44,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver : public Element
+class ExptDriver : public ElementContainer
 {
 private:
   /// Copy constructor not allowed
@@ -78,17 +78,7 @@ public:
 
   virtual const Util::SoftRef<Toglet>& getWidget() const;
 
-  virtual int trialType() const;
-
-  virtual int lastResponse() const;
-
-  /// Overridden from Element.
-  virtual fstring status() const;
-
   virtual void vxRun(Element& parent);
-
-  /// Halt the experiment. No more trials will be begun.
-  virtual void vxHalt() const;
 
   /// End the current trial normally, and move on to the next trial.
   virtual void vxEndTrialHook();
@@ -96,12 +86,6 @@ public:
   /** Attempt to start the next element, or stop the experiment if there
       are no more element. */
   virtual void vxChildFinished(ChildStatus s);
-
-  virtual void vxUndo();
-
-  /** Reset the Experiment, restoring it to a state in which no
-      trials have been run. */
-  virtual void vxReset();
 
   //////////////////////////////
   // Accessors + Manipulators //
@@ -124,12 +108,6 @@ public:
       date/time-stamped. */
   void addLogInfo(const char* message);
 
-  void addElement(Util::Ref<Element> elem);
-  Util::Ref<Element> currentElement() const;
-
-  /// Returns an iterator to all the Element objects contained in the experiment.
-  Util::FwdIter<Util::Ref<Element> > getElements() const;
-
   fstring getDoWhenComplete() const;
   void setDoWhenComplete(const fstring& script);
 
@@ -146,9 +124,6 @@ public:
   /// Resume the experiment after it has been halted.
   void edResumeExpt();
 
-  /// Clear the experiment to an empty state.
-  void edClearExpt();
-
   void pause();
 
   /** This saves the experiment file and a summary-of-responses file
@@ -156,7 +131,6 @@ public:
   void storeData();
 
 private:
-
   class Impl;
   friend class Impl;
 

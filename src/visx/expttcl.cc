@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Dec  5 13:55:08 2002
+// written: Thu Dec  5 17:30:43 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -131,14 +131,15 @@ public:
     def( "begin", "expt_id", ExptTcl::begin );
     def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
 
-    defSetter("addBlock", &ExptDriver::addElement);
+    def("addBlock", "expt_id block_id",
+        Util::bindLast(Util::memFunc(&ExptDriver::addElement), 1));
     defAttrib("autosaveFile",
               &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
     defAttrib("autosavePeriod",
               &ExptDriver::getAutosavePeriod,
               &ExptDriver::setAutosavePeriod);
     defGetter("blocks", &ExptDriver::getElements);
-    defAction("clear", &ExptDriver::edClearExpt);
+    defAction("clear", &ExptDriver::clearElements);
     defGetter("currentBlock", &ExptDriver::currentElement);
     defGetter("infoLog", &ExptDriver::getInfoLog);
     defAction( "pause", &ExptDriver::pause );
@@ -158,7 +159,7 @@ public:
   virtual ~ExpPkg()
     {
       if (theExptDriver.isValid())
-        theExptDriver->edClearExpt();
+        theExptDriver->clearElements();
     }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:54 2002
-// written: Thu Dec  5 17:11:57 2002
+// written: Thu Dec  5 17:33:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,9 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "util/error.h"
 #include "util/iter.h"
+#include "util/log.h"
 #include "util/rand.h"
 #include "util/ref.h"
 #include "util/minivec.h"
@@ -122,7 +124,7 @@ DOTRACE("ElementContainer::lastResponse");
 fstring ElementContainer::status() const
 {
 DOTRACE("ElementContainer::status");
-  if (isComplete()) return fstring("block is complete");
+  if (isComplete()) return fstring("complete");
 
   fstring msg;
   msg.append("next element ", currentElement().id(), ", ")
@@ -145,6 +147,9 @@ void ElementContainer::vxUndo()
 DOTRACE("ElementContainer::vxUndo");
   dbgEval(3, rep->sequencePos);
 
+  // FIXME how to know whether we should back up our own sequence, or
+  // whether our child just backs up in its own sequence?
+
   // Check to make sure we've completed at least one element
   if (rep->sequencePos < 1) return;
 
@@ -160,8 +165,13 @@ DOTRACE("ElementContainer::vxUndo");
 void ElementContainer::vxReset()
 {
 DOTRACE("ElementContainer::vxReset");
+  vxHalt();
+
+  Util::log("ElementContainer::vxReset");
+
   for (unsigned int i = 0; i < rep->elements.size(); ++i)
     {
+      Util::log(fstring("resetting element", i));
       rep->elements[i]->vxReset();
     }
 
@@ -213,6 +223,8 @@ DOTRACE("ElementContainer::shuffle");
 void ElementContainer::clearElements()
 {
 DOTRACE("ElementContainer::clearElements");
+  vxHalt();
+
   rep->elements.clear();
   rep->sequencePos = 0;
 }
@@ -303,6 +315,17 @@ DOTRACE("ElementContainer::childFinishedHelper");
   dbgEval(3, numCompleted());
   dbgEval(3, numElements());
   dbgEvalNL(3, isComplete());
+}
+
+void ElementContainer::ensureNotComplete() const
+{
+DOTRACE("ElementContainer::ensureNotComplete");
+
+  if (isComplete())
+    {
+      throw Util::Error("the experiment must have at least one Element"
+                        "before it can be started");
+    }
 }
 
 minivec<Util::Ref<Element> >& ElementContainer::iolegacyElements() const
