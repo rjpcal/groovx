@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jul 19 15:06:14 2001
+// written: Thu Jul 19 15:55:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "block.h"
 #include "tlistutils.h"
-#include "trialbase.h"
 
 #include "gwt/widget.h"
 
@@ -108,12 +107,6 @@ private:
 
   void doUponCompletion() const;
 
-  void noteElapsedTime() const;
-
-  fixed_string getCurrentTimeDateString() const;
-
-  fixed_string getSubjectKey() const;
-
   dynamic_string makeUniqueFileExtension() const;
 
   //////////////////////////
@@ -122,26 +115,12 @@ private:
 
 public:
 
-  IO::VersionId serialVersionId() const
-    { return EXPTDRIVER_SERIAL_VERSION_ID; }
-
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  const fixed_string& getAutosaveFile() const { return itsAutosaveFile; }
-
-  void setAutosaveFile(const fixed_string& str) { itsAutosaveFile = str; }
-
-  int getAutosavePeriod() const { return itsAutosavePeriod; }
-
-  void setAutosavePeriod(int period) { itsAutosavePeriod = period; }
-
-  const char* getInfoLog() const
-    { return itsInfoLog.c_str(); }
-
   void addLogInfo(const char* message)
   {
-    fixed_string date_string = getCurrentTimeDateString();
+    fixed_string date_string = System::theSystem().formattedTime();
 
     itsInfoLog.append("@");
     itsInfoLog.append(date_string);
@@ -158,16 +137,6 @@ public:
       if ( !haveValidBlock() ) throw ErrorWithMsg("no current block exists");
       return itsBlocks.at(itsCurrentBlockIdx);
     }
-
-  Util::ErrorHandler& getErrorHandler()           { return itsErrHandler; }
-
-  GWT::Widget& getWidget()                        { return *itsWidget; }
-
-  Util::WeakRef<GWT::Widget> widget() const       { return itsWidget; }
-
-  void setWidget(Util::WeakRef<GWT::Widget> widg) { itsWidget = widg; }
-
-  GWT::Canvas& getCanvas() { return getWidget().getCanvas(); }
 
   void edBeginExpt();
   void edEndTrial();
@@ -190,6 +159,7 @@ private:
 
   Tcl::SafeInterp itsInterp;
 
+public:
   WeakRef<GWT::Widget> itsWidget;
 
   fixed_string itsHostname;     // Host computer on which Expt was begun
@@ -202,14 +172,15 @@ private:
 
   int itsAutosavePeriod;
 
-  typedef minivec<Ref<Block> > BlocksType;
-  BlocksType itsBlocks;
+private:
+  minivec<Ref<Block> > itsBlocks;
 
   unsigned int itsCurrentBlockIdx;
 
   mutable StopWatch itsTimer;
 
-  mutable Tcl::BkdErrorHandler itsErrHandler;
+public:
+  mutable Tcl::BkdErrorHandler itsErrorHandler;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -233,7 +204,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsBlocks(),
   itsCurrentBlockIdx(0),
   itsTimer(),
-  itsErrHandler(interp)
+  itsErrorHandler(interp)
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
@@ -256,12 +227,12 @@ void ExptDriver::Impl::doAutosave() {
 DOTRACE("ExptDriver::Impl::doAutosave");
   try
     {
-      DebugEvalNL(getAutosaveFile().c_str());
-      IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), getAutosaveFile());
+      DebugEvalNL(itsAutosaveFile.c_str());
+      IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), itsAutosaveFile);
     }
   catch (ErrorWithMsg& err)
     {
-      itsErrHandler.handleMsg(err.msg_cstr());
+      itsErrorHandler.handleMsg(err.msg_cstr());
     }
 }
 
@@ -288,75 +259,33 @@ void ExptDriver::Impl::doUponCompletion() const {
 DOTRACE("ExptDriver::Impl::doUponCompletion");
   if (itsInterp.hasCommand("Expt::doUponCompletion"))
     {
-      Tcl::Code cmd("Expt::doUponCompletion", &itsErrHandler);
+      Tcl::Code cmd("Expt::doUponCompletion", &itsErrorHandler);
       cmd.invoke(itsInterp);
     }
-}
-
-void ExptDriver::Impl::noteElapsedTime() const {
-DOTRACE("ExptDriver::Impl::noteElapsedTime");
-  Util::log() << "expt completed in "
-              << itsTimer.elapsedMsec()
-              << " milliseconds\n";
-}
-
-fixed_string ExptDriver::Impl::getCurrentTimeDateString() const {
-DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
-  static Tcl::Code dateStringCmd("clock format [clock seconds]",
-                                 Tcl::Code::THROW_EXCEPTION);
-
-  dateStringCmd.invoke(itsInterp);
-  return fixed_string(itsInterp.getResult(TypeCue<const char*>()));
-}
-
-fixed_string ExptDriver::Impl::getSubjectKey() const {
-DOTRACE("ExptDriver::Impl::getSubjectKey");
-
-  // Get the subject's initials as the tail of the current directory
-  static Tcl::Code subjectKeyCmd("file tail [pwd]",
-                                 Tcl::Code::THROW_EXCEPTION);
-
-  subjectKeyCmd.invoke(itsInterp);
-
-  // Get the result, and remove an optional leading 'human_', if present
-  const char* key = itsInterp.getResult(TypeCue<const char*>());
-  if ( strncmp(key, "human_", 6) == 0 )
-    {
-      key += 6;
-    }
-
-  return fixed_string(key);
 }
 
 dynamic_string ExptDriver::Impl::makeUniqueFileExtension() const {
 DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
-  // Format the current time into a unique filename extension
-  static Tcl::Code uniqueFilenameCmd(
-        "clock format [clock seconds] -format %H%M%d%b%Y",
-        Tcl::Code::THROW_EXCEPTION);
-
-  static dynamic_string previous_result = "";
+  static dynamic_string previous_ext = "";
   static char tag[2] = {'a', '\0'};
 
-  uniqueFilenameCmd.invoke(itsInterp);
+  dynamic_string current_ext = System::theSystem().formattedTime("%H%M%d%b%Y");
 
-  dynamic_string current_result = itsInterp.getResult(TypeCue<const char*>());
-
-  if (current_result.equals(previous_result))
+  if (current_ext.equals(previous_ext))
     {
       ++tag[0];
       if (tag[0] > 'z') tag[0] = 'a';
 
-      current_result.append(tag);
+      current_ext.append(tag);
     }
   else
     {
-      previous_result = current_result;
+      previous_ext = current_ext;
       tag[0] = 'a';
     }
 
-  return current_result;
+  return current_ext;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -426,9 +355,9 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
 
   addLogInfo("Beginning experiment.");
 
-  itsBeginDate = getCurrentTimeDateString();
-  itsHostname = itsInterp.getGlobalVar(TypeCue<const char*>(), "env", "HOST");;
-  itsSubject = getSubjectKey();
+  itsBeginDate = System::theSystem().formattedTime();
+  itsHostname = System::theSystem().getenv("HOST");
+  itsSubject = System::theSystem().getcwd();
 
   itsTimer.restart();
 
@@ -490,21 +419,24 @@ void ExptDriver::Impl::edResetExpt() {
 DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
-  while (1) {
-    if ( haveValidBlock() )
-      {
-        currentBlock()->resetBlock();
-      }
+  while (itsCurrentBlockIdx > 0)
+    {
+      if ( haveValidBlock() )
+        {
+          currentBlock()->resetBlock();
+        }
 
-    if (itsCurrentBlockIdx > 0) { --itsCurrentBlockIdx; }
-    else return;
-  }
+      --itsCurrentBlockIdx;
+    }
 }
 
 
 void ExptDriver::Impl::edEndExpt() {
 DOTRACE("ExptDriver::Impl::edEndExpt");
-  noteElapsedTime();
+
+  Util::log() << "expt completed in "
+              << itsTimer.elapsedMsec()
+              << " milliseconds\n";
 
   addLogInfo("Experiment complete.");
 
@@ -529,7 +461,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 
   try
     {
-      itsEndDate = getCurrentTimeDateString();
+      itsEndDate = System::theSystem().formattedTime();
 
       dynamic_string unique_file_extension = makeUniqueFileExtension();
 
@@ -557,7 +489,7 @@ DOTRACE("ExptDriver::Impl::storeData");
     }
   catch (ErrorWithMsg& err)
     {
-      itsErrHandler.handleMsg(err.msg_cstr());
+      itsErrorHandler.handleMsg(err.msg_cstr());
       return;
     }
 }
@@ -582,7 +514,7 @@ DOTRACE("ExptDriver::~ExptDriver");
 }
 
 IO::VersionId ExptDriver::serialVersionId() const
-  { return itsImpl->serialVersionId(); }
+  { return EXPTDRIVER_SERIAL_VERSION_ID; }
 
 void ExptDriver::readFrom(IO::Reader* reader)
   { itsImpl->readFrom(reader); }
@@ -598,19 +530,19 @@ void ExptDriver::writeTo(IO::Writer* writer) const
 ///////////////////////////////////////////////////////////////////////
 
 const fixed_string& ExptDriver::getAutosaveFile() const
-  { return itsImpl->getAutosaveFile(); }
+  { return itsImpl->itsAutosaveFile; }
 
 void ExptDriver::setAutosaveFile(const fixed_string& str)
-  { itsImpl->setAutosaveFile(str); }
+  { itsImpl->itsAutosaveFile = str; }
 
 int ExptDriver::getAutosavePeriod() const
-  { return itsImpl->getAutosavePeriod(); }
+  { return itsImpl->itsAutosavePeriod; }
 
 void ExptDriver::setAutosavePeriod(int period)
-  { itsImpl->setAutosavePeriod(period); }
+  { itsImpl->itsAutosavePeriod = period; }
 
 const char* ExptDriver::getInfoLog() const
-  { return itsImpl->getInfoLog(); }
+  { return itsImpl->itsInfoLog.c_str(); }
 
 void ExptDriver::addLogInfo(const char* message)
   { itsImpl->addLogInfo(message); }
@@ -622,19 +554,19 @@ Ref<Block> ExptDriver::currentBlock() const
   { return itsImpl->currentBlock(); }
 
 Util::ErrorHandler& ExptDriver::getErrorHandler()
-  { return itsImpl->getErrorHandler(); }
+  { return itsImpl->itsErrorHandler; }
 
 GWT::Widget& ExptDriver::getWidget()
-  { return itsImpl->getWidget(); }
+  { return *(itsImpl->itsWidget); }
 
 Util::WeakRef<GWT::Widget> ExptDriver::widget() const
-  { return itsImpl->widget(); }
+  { return itsImpl->itsWidget; }
 
 void ExptDriver::setWidget(Util::WeakRef<GWT::Widget> widg)
-  { itsImpl->setWidget(widg); }
+  { itsImpl->itsWidget = widg; }
 
 GWT::Canvas& ExptDriver::getCanvas()
-  { return itsImpl->getCanvas(); }
+  { return itsImpl->itsWidget->getCanvas(); }
 
 void ExptDriver::edBeginExpt()
   { itsImpl->edBeginExpt(); }
