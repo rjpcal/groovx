@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu May 10 12:04:45 2001
+// written: Tue May 15 18:32:06 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -1566,17 +1566,42 @@ DOTRACE("TclGL::pixelCheckSumCmd");
 	 h = viewport[3];										 DebugEvalNL(h);  
   }
 
+  GLboolean isRgba;
+  glGetBooleanv(GL_RGBA_MODE, &isRgba);
 
-  fixed_block<GLubyte> pixels(w*h);
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
+  if (GL_TRUE == isRgba)
+	 {
+		fixed_block<GLfloat> pixels(w*h*3);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-  long int sum = 0;
-  for (unsigned int i = 0; i < pixels.size(); ++i) {
-	 sum += pixels[i];
-  }
+		glPushAttrib(GL_PIXEL_MODE_BIT);
+		glReadBuffer(GL_FRONT);
+		glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
+		glPopAttrib();
 
-  Tcl_SetObjResult(interp, Tcl_NewIntObj(sum));
+		GLfloat sum = 0;
+		for (unsigned int i = 0; i < pixels.size(); ++i) {
+		  sum += pixels[i];
+		}
+		Tcl_SetObjResult(interp, Tcl_NewDoubleObj(sum));
+	 }
+  else
+	 {
+		fixed_block<GLubyte> pixels(w*h);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+		glPushAttrib(GL_PIXEL_MODE_BIT);
+		glReadBuffer(GL_FRONT);
+		glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
+		glPopAttrib();
+
+		long int sum = 0;
+		for (unsigned int i = 0; i < pixels.size(); ++i) {
+		  sum += pixels[i];
+		}
+		Tcl_SetObjResult(interp, Tcl_NewIntObj(sum));
+	 }
+
   return TCL_OK;
 }
 
