@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Mon Oct 23 18:04:05 2000
+// written: Mon Oct 23 22:48:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ private:
   static PtrList<T>& ptrList();
 
   PtrHandle<T> itsHandle;
-  const int itsId;
+  int itsId;
 
 public:
 
