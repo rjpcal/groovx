@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sun Oct  8 17:02:05 2000
+// written: Mon Oct  9 08:35:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,67 +15,9 @@
 #include "ioptrlist.h"
 #endif
 
-template <class T>
-class MasterPtr : public MasterIoPtr {
-private:
-  T* itsPtr;
-
-public:
-  explicit MasterPtr(T* ptr);
-  virtual ~MasterPtr();
-
-  T* getPtr() { return itsPtr; }
-
-  virtual IO::IoObject* ioPtr() const;
-
-  virtual bool isValid() const;
-
-  virtual bool operator==(const MasterPtrBase& other);
-};
-
-template <class T>
-class PtrHandle {
-public:
-  explicit PtrHandle(MasterPtr<T>* master) : itsMaster(master)
-  {
-	 if (master == 0) throw ErrorWithMsg("MasterPtr<T> was null");
-	 itsMaster->incrRefCount();
-  }
-
-  ~PtrHandle()
-    { itsMaster->decrRefCount(); }
-
-  PtrHandle(const PtrHandle& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-  PtrHandle& operator=(const PtrHandle& other)
-    {
-		PtrHandle otherCopy(other);
-		this->swap(otherCopy);
-		return *this;
-	 }
-
-  MasterPtr<T>* masterPtr()
-    { return itsMaster; }
-
-        T* operator->()       { return (itsMaster->getPtr()); }
-  const T* operator->() const { return (itsMaster->getPtr()); }
-        T& operator*()        { return *(itsMaster->getPtr()); }
-  const T& operator*()  const { return *(itsMaster->getPtr()); }
-
-        T* get()              { return (itsMaster->getPtr()); }
-  const T* get()        const { return (itsMaster->getPtr()); }
-
-private:
-  void swap(PtrHandle& other)
-    {
-		MasterPtr<T>* otherMaster = other.itsMaster;
-		other.itsMaster = this->itsMaster;
-		this->itsMaster = otherMaster;
-	 }
-
-  MasterPtr<T>* itsMaster;
-};
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MASTERPTR_H_DEFINED)
+#include "masterptr.h"
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
