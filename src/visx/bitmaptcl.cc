@@ -22,7 +22,6 @@
 #include "xbitmap.h"
 #include "iomgr.h"
 #include "objlist.h"
-#include "objtogl.h"
 #include "listitempkg.h"
 #include "system.h"
 #include "tclcmd.h"
