@@ -545,7 +545,7 @@ itcl::body Editor::makePreviewObj {} {
 itcl::body Editor::requestDraw {} {
     set viewobj [getViewSelection]
     if { $viewobj != 0 } {
-	Toglet::see $itsToglet $viewobj
+	-> $itsToglet see $viewobj
     }
 }
 
@@ -586,9 +586,9 @@ itcl::body Editor::setAttrib {fname val} {
     debug "fname $fname val $val"
 
     if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
-	Toglet::allowRefresh $itsToglet 0
+	-> $itsToglet allowRefresh 0
 	$controls setAttribForObjs $editobjs $fname $val
-	Toglet::allowRefresh $itsToglet 1
+	-> $itsToglet allowRefresh 1
 
 	updateControls [lindex $editobjs 0]
     }
@@ -650,7 +650,6 @@ itcl::body Editor::init {parent objtype } {
 	Fish \
 	Gabor \
 	GaborArray \
-	Gtext \
 	GxCylinder \
 	GxDisk \
 	GxDrawStyle \
@@ -664,6 +663,7 @@ itcl::body Editor::init {parent objtype } {
 	GxPsyphyCamera \
 	GxSeparator \
 	GxSphere \
+	GxText \
 	GxTransform \
 	House \
 	MaskHatch \
@@ -722,8 +722,8 @@ itcl::body Editor::init {parent objtype } {
 
     Toglet::defaultParent $parent
     set itsToglet [new Toglet]
-    Toglet::width $itsToglet $::TOGLET_WIDTH
-    Toglet::currentToglet $itsToglet
+    -> $itsToglet width $::TOGLET_WIDTH
+    Toglet::current $itsToglet
 
     showFieldControls
 
@@ -920,7 +920,7 @@ itcl::class Menuapp {
 wm withdraw .
 
 # get rid of the default widget
-set defToglet [Toglet::currentToglet]
+set defToglet [Toglet::current]
 
 set app [Menuapp [::AUTO]]
 
