@@ -108,7 +108,9 @@ ifeq ($(PLATFORM),i686)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DI686 -march=i686
+# display lists don't work at present with i686/linux/mesa
+
+	CPP_DEFINES += -DBROKEN_GL_DISPLAY_LISTS -march=i686
 
 	DEFAULT_MODE := debug
 
@@ -121,7 +123,7 @@ ifeq ($(PLATFORM),ppc)
 	COMPILER := g++2
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
-	CPP_DEFINES += -DPPC -Dlrand48=rand
+	CPP_DEFINES += -DESD_WORKAROUND -Dlrand48=rand
 	DEFAULT_MODE := debug
 	ETAGS := etags
 	AUDIO_LIB := -lesd -laudiofile
