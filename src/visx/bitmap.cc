@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Aug  9 17:58:49 2001
+// written: Fri Aug 10 07:12:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,11 +116,6 @@ void Bitmap::flipContrast()
 void Bitmap::flipVertical()
   { itsImpl->flipVertical(); sendStateChangeMsg(); }
 
-void Bitmap::center()
-{
-  setAlignmentMode(GrObj::CENTER_ON_CENTER);
-}
-
 void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 {
   if (mode == DRAW)
@@ -133,12 +128,6 @@ void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 
 Rect<double> Bitmap::grGetBoundingBox() const
   { return itsImpl->grGetBoundingBox(); }
-
-int Bitmap::byteCount() const
-  { return itsImpl->byteCount(); }
-
-int Bitmap::bytesPerRow() const
-  { return itsImpl->bytesPerRow(); }
 
 Point<int> Bitmap::size() const
   { return itsImpl->size(); }

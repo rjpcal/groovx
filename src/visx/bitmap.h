@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Aug  9 18:01:36 2001
+// written: Fri Aug 10 07:11:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,6 @@ public:
   // actions //
   /////////////
 
-public:
   /// Loads PBM bitmap data from the PBM file at \a filename.
   void loadPbmFile(const char* filename);
 
@@ -88,31 +87,9 @@ public:
       it can be maintained throughout IO operations. */
   void flipVertical();
 
-  /** Centers the image so that its center coincides with the origin
-      in the graphics environment when it is rendered. */
-  void center();
-
-protected:
-  /** Implements the \c GrObj rendering operation. The rendering is
-      delegated to the \c BmapRenderer passed to the
-      constructor. Therefore, subclasses of \c Bitmap should not
-      override \c grRender(), but should instead provide a specialized
-      \c BmapRenderer. */
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
-
   ///////////////
   // accessors //
   ///////////////
-
-protected:
-  virtual Rect<double> grGetBoundingBox() const;
-
-public:
-  /// Get the number of bytes of image data.
-  int byteCount() const;
-
-  /// Get the number of bytes per row in the image data.
-  int bytesPerRow() const;
 
   /// Get the image's size (x-width, y-height) in pixels.
   Point<int> size() const;
@@ -138,6 +115,16 @@ public:
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);
+
+protected:
+  /** Implements the \c GrObj rendering operation. The rendering is
+      delegated to the \c BmapRenderer passed to the
+      constructor. Therefore, subclasses of \c Bitmap should not
+      override \c grRender(), but should instead provide a specialized
+      \c BmapRenderer. */
+  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
+
+  virtual Rect<double> grGetBoundingBox() const;
 
 private:
   Bitmap(const Bitmap&);
