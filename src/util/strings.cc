@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu Mar 23 11:41:32 2000
+// written: Tue Sep 19 17:11:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,10 +46,13 @@ bool string_literal::equals(const string_literal& other) const
 //---------------------------------------------------------------------
 
 fixed_string::fixed_string(const char* text) :
-  itsText(new char[strlen(text)+1]),
-  itsLength(strlen(text))
+  itsText(text == 0 ? new char[1] : new char[strlen(text)+1]),
+  itsLength(text == 0 ? 0 : strlen(text))
 {
-  strcpy(itsText, text);
+  if (text != 0)
+	 strcpy(itsText, text);
+  else
+	 itsText[0] = 0;
 }
 
 fixed_string::fixed_string(const fixed_string& other) :
@@ -119,7 +122,7 @@ bool fixed_string::equals(const fixed_string& other) const
 //---------------------------------------------------------------------
 
 struct dynamic_string::Impl {
-  Impl(const char* s) : text(s) {}
+  Impl(const char* s) : text(s == 0 ? "" : s) {}
   string text;
 };
 
