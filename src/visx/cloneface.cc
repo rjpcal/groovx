@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Sat Mar  4 16:27:14 2000
+// written: Fri Mar 10 00:31:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ DOTRACE("CloneFace::CloneFace()");
 }
 
 CloneFace::CloneFace (istream& is, IOFlag flag) :
-  Face()
+  Face(), itsEyeAspect(0.0), itsVertOffset(0.0) 
 {
 DOTRACE("CloneFace::CloneFace(istream&, IOFlag)");
   deserialize(is, flag);
