@@ -10,7 +10,6 @@
 package require Toglet
 package require Togl
 package require Face
-package require Pos
 package require Tlist
 
 set PACKAGE ObjTogl

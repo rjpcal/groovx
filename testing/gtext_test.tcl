@@ -11,7 +11,6 @@ package require Gtext
 package require Toglet
 package require Tclgl
 package require Tlist
-package require Pos
 
 source ${::TEST_DIR}/grobj_test.tcl
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:53:34 1999
-// written: Wed Aug 15 12:25:13 2001
+// written: Thu Aug 30 16:55:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,15 +17,14 @@
 
 #include "tcl/fieldpkg.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 
 extern "C"
-int Pos_Init(Tcl_Interp* interp)
+int Position_Init(Tcl_Interp* interp)
 {
-DOTRACE("Pos_Init");
+DOTRACE("Position_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Pos", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Position", "$Revision$");
   Tcl::defFieldContainer<Position>(pkg);
   Tcl::defCreator<Position>(pkg);
 

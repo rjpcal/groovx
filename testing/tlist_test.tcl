@@ -8,7 +8,7 @@
 ##############################################################################
 
 package require Face
-package require Pos
+package require Position
 package require Tlist
 package require Toglet
 
