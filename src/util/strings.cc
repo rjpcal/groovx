@@ -76,7 +76,7 @@ string_rep::string_rep(std::size_t length, const char* text,
   m_text(new char[m_capacity])
 {
   if (text)
-    append(length, text);
+    uniq_append(length, text);
   else
     add_terminator();
 }
@@ -129,14 +129,14 @@ void string_rep::make_unique(string_rep*& rep)
   Postcondition(new_rep->m_refcount == 1);
 }
 
-char* string_rep::data() throw()
+char* string_rep::uniq_data() throw()
 {
   Precondition(m_refcount <= 1);
 
   return m_text;
 }
 
-void string_rep::clear() throw()
+void string_rep::uniq_clear() throw()
 {
   Precondition(m_refcount <= 1);
 
@@ -144,7 +144,7 @@ void string_rep::clear() throw()
   add_terminator();
 }
 
-void string_rep::append_no_terminate(char c)
+void string_rep::uniq_append_no_terminate(char c)
 {
   if (m_length + 2 <= m_capacity)
     {
@@ -152,7 +152,7 @@ void string_rep::append_no_terminate(char c)
     }
   else
     {
-      realloc(m_length + 2);
+      uniq_realloc(m_length + 2);
       m_text[m_length++] = c;
     }
 }
@@ -162,14 +162,15 @@ void string_rep::add_terminator() throw()
   m_text[m_length] = '\0';
 }
 
-void string_rep::set_length(std::size_t length) throw()
+void string_rep::uniq_set_length(std::size_t length) throw()
 {
+  Precondition(m_refcount <= 1);
   Precondition(length+1 < m_capacity);
   m_length = length;
   add_terminator();
 }
 
-void string_rep::append(std::size_t length, const char* text)
+void string_rep::uniq_append(std::size_t length, const char* text)
 {
   Precondition(m_refcount <= 1);
   Precondition(text != 0);
@@ -182,30 +183,31 @@ void string_rep::append(std::size_t length, const char* text)
     }
   else
     {
-      realloc(m_length + length + 1);
-      append(length, text);
+      uniq_realloc(m_length + length + 1);
+      uniq_append(length, text);
     }
 
   Postcondition(m_length+1 <= m_capacity);
+  Postcondition(m_text[m_length] == '\0');
 }
 
-void string_rep::realloc(std::size_t capacity)
+void string_rep::uniq_realloc(std::size_t capacity)
 {
   Precondition(m_refcount <= 1);
 
   string_rep new_rep(Util::max(m_capacity*2 + 32, capacity), 0);
 
-  new_rep.append(this->m_length, this->m_text);
+  new_rep.uniq_append(this->m_length, this->m_text);
 
   Util::swap2(m_capacity, new_rep.m_capacity);
   Util::swap2(m_length, new_rep.m_length);
   Util::swap2(m_text, new_rep.m_text);
 }
 
-void string_rep::reserve(std::size_t capacity)
+void string_rep::uniq_reserve(std::size_t capacity)
 {
   if (m_capacity < capacity)
-    realloc(capacity);
+    uniq_realloc(capacity);
 }
 
 void string_rep::debugDump() const throw()
@@ -313,7 +315,7 @@ DOTRACE("fstring::clear");
 
   if (m_rep->is_unique())
     {
-      m_rep->clear();
+      m_rep->uniq_clear();
     }
   else
     {
@@ -355,17 +357,16 @@ DOTRACE("fstring::operator>");
   return strcmp(c_str(), other) > 0;
 }
 
-namespace
-{
-  const int SZ = 64;
-}
-
 void fstring::do_append(char c) { append_range(&c, 1); }
 void fstring::do_append(const char* s) { if (s != 0) append_range(s, strlen(s)); }
 void fstring::do_append(const fstring& s) { append_range(s.c_str(), s.length()); }
 
-#define APPEND(fmt, val) \
-  char buf[SZ]; int n = snprintf(buf, SZ, fmt, (val)); Assert(n > 0 && n < SZ); append_range(&buf[0], std::size_t(n))
+#define APPEND(fmt, val)                        \
+  const int SZ = 64;                            \
+  char buf[SZ];                                 \
+  int n = snprintf(buf, SZ, fmt, (val));        \
+  Assert(n > 0 && n < SZ);                      \
+  append_range(&buf[0], std::size_t(n))
 
 void fstring::do_append(bool x)          { APPEND("%d", int(x)); }
 void fstring::do_append(int x)           { APPEND("%d", x); }
@@ -396,7 +397,7 @@ DOTRACE("fstring::append_range");
   else
     {
       string_rep::make_unique(m_rep);
-      m_rep->append(len, text);
+      m_rep->uniq_append(len, text);
     }
 }
 
@@ -420,7 +421,7 @@ DOTRACE("fstring::read");
           is.unget();
           break;
         }
-      m_rep->append_no_terminate(char(c));
+      m_rep->uniq_append_no_terminate(char(c));
     }
 
   m_rep->add_terminator();
@@ -433,15 +434,16 @@ DOTRACE("fstring::readsome");
   if (count > 0)
     {
       string_rep::make_unique(m_rep);
-      m_rep->reserve(count+1);
+
+      m_rep->uniq_reserve(count+1);
 #ifndef PRESTANDARD_IOSTREAMS
-      unsigned int numread = is.readsome(m_rep->data(), count);
-      m_rep->set_length(numread);
+      unsigned int numread = is.readsome(m_rep->uniq_data(), count);
+      m_rep->uniq_set_length(numread);
 #else
-      is.read(m_rep->data(), count);
+      is.read(m_rep->uniq_data(), count);
       if (is.eof()) is.clear();
       unsigned int numread = is.gcount();
-      m_rep->set_length(numread);
+      m_rep->uniq_set_length(numread);
 #endif
     }
 }
@@ -467,7 +469,7 @@ DOTRACE("fstring::readline");
       int c = is.get();
       if (c == EOF || c == eol)
         break;
-      m_rep->append_no_terminate(char(c));
+      m_rep->uniq_append_no_terminate(char(c));
     }
 
   m_rep->add_terminator();

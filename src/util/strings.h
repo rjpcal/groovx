@@ -75,11 +75,11 @@ public:
   static string_rep* make(std::size_t length, const char* text,
                           std::size_t capacity=0);
 
-  string_rep* clone() const;
-
   static void make_unique(string_rep*& rep);
 
-  bool is_unique() throw() { return m_refcount == 1; }
+  string_rep* clone() const;
+
+  bool is_unique() const throw() { return m_refcount == 1; }
 
   void incr_ref_count() throw() { ++m_refcount; }
 
@@ -94,21 +94,31 @@ public:
   std::size_t length() const throw() { return m_length; }
   std::size_t capacity() const throw() { return m_capacity; }
   const char* text() const throw() { return m_text; }
-  char* data() throw();
 
-  void clear() throw();
+  // Member functions whose names are prefixed with "uniq_" require as
+  // a precondition that the string_rep object be unshared, so callers
+  // are required to call string_rep::make_unique() on the string_rep
+  // before calling such a member function. It's not possible for
+  // string_rep to handle this itself, because the act of doing a
+  // make_unique() requires actually substituting one string_rep
+  // object for another, which is something that can only done by the
+  // caller.
 
-  void append_no_terminate(char c);
+  char* uniq_data() throw();
+
+  void uniq_clear() throw();
+
+  void uniq_append_no_terminate(char c);
 
   void add_terminator() throw();
 
-  void set_length(std::size_t length) throw();
+  void uniq_set_length(std::size_t length) throw();
 
-  void append(std::size_t length, const char* text);
+  void uniq_append(std::size_t length, const char* text);
 
-  void realloc(std::size_t capacity);
+  void uniq_realloc(std::size_t capacity);
 
-  void reserve(std::size_t capacity);
+  void uniq_reserve(std::size_t capacity);
 
   void debugDump() const throw();
 
@@ -241,7 +251,7 @@ public:
   /// Get a pointer to the non-const underlying data array.
   char* data()
   {
-    string_rep::make_unique(m_rep); return m_rep->data();
+    string_rep::make_unique(m_rep); return m_rep->uniq_data();
   }
 
   /// Get a pointer to the const underlying data array.
