@@ -34,6 +34,7 @@
 
 #include "geom/vec2.h"
 
+#include "gfx/gbvec.h"
 #include "gfx/gxbin.h"
 
 //  #######################################################
@@ -83,6 +84,9 @@ public:
   /// Construct with a given child object.
   GxAligner(Nub::SoftRef<GxNode> child);
 
+  /// Virtual nothrow destructor.
+  virtual ~GxAligner() throw();
+
   /// Get the center after aligning the given rect.
   geom::vec2<double> getCenter(const geom::rect<double>& bounds) const;
 
@@ -92,8 +96,8 @@ public:
   /// Set the alignment mode.
   void setMode(Mode new_mode) { itsMode = new_mode; }
 
-  virtual void readFrom(IO::Reader& /*reader*/) {};
-  virtual void writeTo(IO::Writer& /*writer*/) const {};
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
@@ -104,8 +108,8 @@ private:
                    const geom::rect<double>& native) const;
 
 public:
-  Mode itsMode;                 ///< Current alignment mode.
-  geom::vec2<double> itsCenter; ///< Current center.
+  Mode itsMode;             ///< Current alignment mode.
+  GbVec2<double> itsCenter; ///< Current center.
 };
 
 

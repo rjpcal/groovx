@@ -42,6 +42,9 @@
 #include "geom/txform.h"
 #include "geom/vec3.h"
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/debug.h"
 DBG_REGISTER
 #include "util/trace.h"
@@ -55,6 +58,8 @@ GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
   itsMode(NATIVE_ALIGNMENT),
   itsCenter(0.0, 0.0)
 {}
+
+GxAligner::~GxAligner() throw() {}
 
 vec2d GxAligner::getCenter(const rectd& b) const
 {
@@ -88,6 +93,19 @@ DOTRACE("GxAligner::doAlignment");
   canvas.translate(vec);
 }
 
+void GxAligner::readFrom(IO::Reader& reader)
+{
+DOTRACE("GxAligner::readFrom");
+  reader.readValue("mode", itsMode);
+  reader.readValueObj("center", itsCenter);
+}
+
+void GxAligner::writeTo(IO::Writer& writer) const
+{
+DOTRACE("GxAligner::writeTo");
+  writer.writeValue("mode", itsMode);
+  writer.writeValueObj("center", itsCenter);
+}
 
 void GxAligner::draw(Gfx::Canvas& canvas) const
 {

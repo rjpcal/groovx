@@ -41,6 +41,9 @@
 #include "gfx/canvas.h"
 #include "gfx/rgbacolor.h"
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
@@ -48,6 +51,7 @@ DBG_REGISTER
 GxBounds::GxBounds(Nub::SoftRef<GxNode> child) :
   GxBin(child),
   isItVisible(false),
+  isItAnimated(true),
   itsPercentBorder(4),
   itsStipple(0x0F0F), // 0000111100001111
   itsMask(0x3333)     // 0011001100110011
@@ -55,23 +59,20 @@ GxBounds::GxBounds(Nub::SoftRef<GxNode> child) :
 
 GxBounds::~GxBounds() throw() {}
 
-void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
+void GxBounds::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxBounds::getBoundingCube");
+DOTRACE("GxBounds::readFrom");
+  reader.readValue("isVisible", isItVisible);
+  reader.readValue("isAnimated", isItAnimated);
+  reader.readValue("percentBorder", itsPercentBorder);
+}
 
-  bbox.push();
-
-  dbg_eval(3, itsPercentBorder);
-
-  const double s = 1.0 + itsPercentBorder/100.0;
-
-  bbox.scale(geom::vec3<double>(s,s,s));
-
-  child()->getBoundingCube(bbox);
-
-  bbox.pop();
-
-  dbg_dump(2, bbox.cube());
+void GxBounds::writeTo(IO::Writer& writer) const
+{
+DOTRACE("GxBounds::writeTo");
+  writer.writeValue("isVisible", isItVisible);
+  writer.writeValue("isAnimated", isItAnimated);
+  writer.writeValue("percentBorder", itsPercentBorder);
 }
 
 void GxBounds::draw(Gfx::Canvas& canvas) const
@@ -89,13 +90,11 @@ DOTRACE("GxBounds::draw");
 
       geom::rect<double> bounds = bbox.rect();
 
-#define ANIMATE_BBOX
-
-#ifdef ANIMATE_BBOX
-      itsStipple ^= itsMask;
-
-      itsMask = ~itsMask;
-#endif
+      if (isItAnimated)
+        {
+          itsStipple ^= itsMask;
+          itsMask = ~itsMask;
+        }
 
       Gfx::AttribSaver saver(canvas);
 
@@ -119,6 +118,25 @@ DOTRACE("GxBounds::draw");
         canvas.vertex2(bounds.center());
       }
     }
+}
+
+void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
+{
+DOTRACE("GxBounds::getBoundingCube");
+
+  bbox.push();
+
+  dbg_eval(3, itsPercentBorder);
+
+  const double s = 1.0 + itsPercentBorder/100.0;
+
+  bbox.scale(geom::vec3<double>(s,s,s));
+
+  child()->getBoundingCube(bbox);
+
+  bbox.pop();
+
+  dbg_dump(2, bbox.cube());
 }
 
 static const char vcid_gxbounds_cc[] = "$Header$";

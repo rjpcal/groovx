@@ -198,7 +198,12 @@ DOTRACE("GxShapeKit::readFrom");
   readFieldsFrom(reader, classFields());
 
   if (svid >= 4)
-    reader.readOwnedObject("scaler", rep->scaler);
+    {
+      reader.readOwnedObject("bounds", rep->boundsOutline);
+      reader.readOwnedObject("cache", rep->cache);
+      reader.readOwnedObject("aligner", rep->aligner);
+      reader.readOwnedObject("scaler", rep->scaler);
+    }
 }
 
 void GxShapeKit::writeTo(IO::Writer& writer) const
@@ -211,6 +216,9 @@ DOTRACE("GxShapeKit::writeTo");
 
   writeFieldsTo(writer, classFields(), GXSHAPEKIT_SVID);
 
+  writer.writeOwnedObject("bounds", rep->boundsOutline);
+  writer.writeOwnedObject("cache", rep->cache);
+  writer.writeOwnedObject("aligner", rep->aligner);
   writer.writeOwnedObject("scaler", rep->scaler);
 }
 
@@ -222,14 +230,14 @@ const FieldMap& GxShapeKit::classFields()
   {
     Field("category", &GxShapeKit::category, &GxShapeKit::setCategory,
           0, 0, 20, 1, Field::NEW_GROUP),
-    Field("renderMode", GETSET(RenderMode), 1, 1, 4, 1),
+    Field("renderMode", GETSET(RenderMode), 1, 1, 4, 1).versions(0,3),
     Field("bbVisibility", GETSET(BBVisibility),
-          false, false, true, true, Field::BOOLEAN),
-    Field("scalingMode", GETSET(ScalingMode), 1, 1, 3, 1).versions(0, 3),
+          false, false, true, true, Field::BOOLEAN).versions(0,3),
+    Field("scalingMode", GETSET(ScalingMode), 1, 1, 3, 1).versions(0,3),
     Field("widthFactor", GETSET(WidthFactor), 1.0, 0.1, 10.0, 0.1,
-          Field::PRIVATE).versions(0, 3),
+          Field::PRIVATE).versions(0,3),
     Field("heightFactor", GETSET(HeightFactor), 1.0, 0.1, 10.0, 0.1,
-          Field::PRIVATE).versions(0, 3),
+          Field::PRIVATE).versions(0,3),
     Field("aspectRatio", GETSET(AspectRatio), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
     Field("width", GETSET(Width), 1.0, 0.1, 10.0, 0.1,
@@ -238,9 +246,9 @@ const FieldMap& GxShapeKit::classFields()
           Field::TRANSIENT),
     Field("maxDimension", GETSET(MaxDimension), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("alignmentMode", GETSET(AlignmentMode), 1, 1, 7, 1),
-    Field("centerX", GETSET(CenterX), 0.0, -10.0, 10.0, 0.1),
-    Field("centerY", GETSET(CenterY), 0.0, -10.0, 10.0, 0.1)
+    Field("alignmentMode", GETSET(AlignmentMode), 1, 1, 7, 1).versions(0,3),
+    Field("centerX", GETSET(CenterX), 0.0, -10.0, 10.0, 0.1).versions(0,3),
+    Field("centerY", GETSET(CenterY), 0.0, -10.0, 10.0, 0.1).versions(0,3)
   };
 #undef GETSET
 
