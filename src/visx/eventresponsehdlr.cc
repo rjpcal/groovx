@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Jul 19 17:18:02 2001
+// written: Thu Jul 19 20:15:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public:
     virtual void rhEndTrial() {}
     virtual void rhHaltExpt() {}
 
-    virtual void handleResponse(const char* keysym) {}
+    virtual void handleResponse(const char* /*keysym*/) {}
 
     virtual void onDestroy() {}
 
