@@ -1,21 +1,40 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sun Apr 25 13:24:42 1999
+// written: Tue May 25 13:49:59 1999
 // $Id$
+//
+// This file defines the IO abstract interface. This interface
+// provides the framwork necessary for object I/O. Classes which need
+// to be serialized/deserialized should inherit virtually from
+// IO. Also defined in this file are the various exception types that
+// may be thrown in serialize and deserialize methods. All IO-related
+// exception classes are derived from IoError.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_H_DEFINED
 #define IO_H_DEFINED
 
+#ifndef STRING_DEFINED
 #include <string>
+#define STRING_DEFINED
+#endif
+
+#ifndef CMATH_DEFINED
+#include <cmath>
+#define CMATH_DEFINED
+#endif
 
 class istream; class ostream;
 class type_info;
 
 ///////////////////////////////////////////////////////////////////////
-// IO class
+//
+// IO class -- abstract interface definition
+//
 ///////////////////////////////////////////////////////////////////////
 
 class IO {
@@ -23,20 +42,27 @@ public:
   // The following flags may be OR'ed together and passed to the flag
   // argument of serialize/deserialize to control different aspects of
   // the formatting used to read and write objects. In general, the
-  // same flags muyst be used to read an object as were used to write
+  // same flags must be used to read an object as were used to write
   // it.
   typedef int IOFlag;
   static const IOFlag NO_FLAGS   = 0;
   static const IOFlag TYPENAME   = 1 << 0; // The class's name is written/read
   static const IOFlag BASES      = 1 << 1; // The class's bases is written/read
 
-  virtual ~IO() {}
-  virtual void serialize(ostream &os, IOFlag flag) const=0;
-  virtual void deserialize(istream &is, IOFlag flag) = 0;
+  virtual ~IO();
+  virtual void serialize(ostream& os, IOFlag flag) const = 0;
+  virtual void deserialize(istream& is, IOFlag flag) = 0;
+
+  virtual int charCount() const = 0;
 };
 
+inline int charCountInt(int i) { return int(ceil(log10(double(i)))); }
+inline int charCountDouble(double d) { return 15; }
+
 ///////////////////////////////////////////////////////////////////////
+//
 // IO exception classes
+//
 ///////////////////////////////////////////////////////////////////////
 
 class IoError {
