@@ -144,17 +144,17 @@ AC_PATH_XTRA
 
 ### Check for audio header files and libraries
 
-AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream])
+AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream],,,-)
 AC_CHECK_HEADER([dmedia/audio.h],
 		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
-		 LIBS="$LIBS -laudio -laudiofile"])
+		 LIBS="$LIBS -laudio -laudiofile"],,-)
 
 AC_CHECK_HEADER([Alib.h],
-		[AC_DEFINE(HAVE_ALIB_H,1) LIBS="$LIBS -lAlib"])
+		[AC_DEFINE(HAVE_ALIB_H,1) LIBS="$LIBS -lAlib"],,-)
 
 AC_CHECK_HEADER([esd.h],
 		[AC_DEFINE(HAVE_ESD_H,1)
-		 LIBS="$LIBS -lesd -laudiofile"])
+		 LIBS="$LIBS -lesd -laudiofile"],,-)
 
 ### Check support for c++ iostreams
 
@@ -216,11 +216,11 @@ LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 
 ###
 
-AC_MSG_CHECKING([for location of tcltk8.4])
+AC_MSG_CHECKING([for location of tcl+tk >= 8.4])
 
 AC_ARG_WITH(tcltk,
 	    AC_HELP_STRING([--with-tcltk=DIR],
-			   [specify where tcl/tk >= 8.4 are installed [/usr/local]]),
+			   [specify where tcl+tk >= 8.4 are installed [/usr/local]]),
 	    ,
 	    with_tcltk=/usr/local)
 
@@ -237,10 +237,12 @@ if test $need_rpath = yes; then
 fi
 LDFLAGS="$LDFLAGS -L${with_tcltk}/lib"
 
+AC_MSG_CHECKING([for tcl+tk versions])
+
 TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
 TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
 
-AC_MSG_NOTICE([found tcl ($TCL_VERSION) and tk ($TK_VERSION)])
+AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 
 LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
 
@@ -268,19 +270,39 @@ fi
 
 ###
 
-AC_MSG_CHECKING([whether to use GNU readline command editing in the shell])
+enable_readline=yes
 
-AC_ARG_ENABLE(readline,
-	      AC_HELP_STRING([--enable-readline],
-	                     [enable GNU readline command editing [yes]]),
-	      ,
-	      enable_readline=yes)
+AC_CHECK_HEADERS([readline/readline.h readline/history.h],
+		  , enable_readline=no,-)
 
-AC_MSG_RESULT($enable_readline)
+AC_MSG_CHECKING([for readline libraries])
+
+orig_libs=$LIBS
+readline_libs=""
 
 if test $enable_readline = yes; then
-   LIBS="$LIBS -lreadline -ltermcap"
+   LIBS="$LIBS -lreadline"
+   readline_libs="-lreadline"
+   AC_TRY_LINK([#include <stdio.h>
+                #include <readline/readline.h>],
+	       [rl_callback_handler_install(0,0)],
+               enable_readline=yes, enable_readline=no)
+   if test $enable_readline = no; then
+      LIBS="$LIBS -ltermcap"
+      readline_libs="$readline_libs -ltermcap"
+      AC_TRY_LINK([#include <stdio.h>
+		   #include <readline/readline.h>],
+		  [rl_callback_handler_install(0,0)],
+                  enable_readline=yes, enable_readline=no)
+   fi
+fi
+
+if test $enable_readline = yes; then
    AC_DEFINE(WITH_READLINE, 1)
+   AC_MSG_RESULT([yes ($readline_libs)])
+else
+   LIBS=$orig_libs
+   AC_MSG_RESULT(no)
 fi
 
 ###
