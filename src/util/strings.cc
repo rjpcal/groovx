@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Aug  8 20:53:55 2001
+// written: Thu Aug  9 08:07:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,34 +20,11 @@
 
 #include <cstring>
 #include <iostream.h>
-#include <string>
 
 #define NO_PROF
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-//---------------------------------------------------------------------
-//
-// string_literal member definitions
-//
-//---------------------------------------------------------------------
-
-string_literal::string_literal(const char* literal) :
-  itsText(literal),
-  itsLength(strlen(literal))
-{}
-
-bool string_literal::equals(const char* other) const
-{
-  return ( strcmp(itsText, other) == 0 );
-}
-
-bool string_literal::equals(const string_literal& other) const
-{
-  return ( itsLength == other.itsLength &&
-           strcmp(itsText, other.itsText) == 0 );
-}
 
 //---------------------------------------------------------------------
 //
@@ -95,14 +72,17 @@ void string_rep::append(std::size_t length, const char* text)
 
   if (itsLength + length + 1 <= itsAllocSize)
     {
-      memcpy(itsText+itsLength, text, length+1);
+      memcpy(itsText+itsLength, text, length);
       itsLength += length;
+      itsText[itsLength] = '\0';
     }
   else
     {
       realloc(itsLength + length + 1);
       append(length, text);
     }
+
+  Postcondition(itsLength+1 <= itsAllocSize);
 }
 
 string_rep::string_rep(std::size_t length, const char* text) :
@@ -267,13 +247,6 @@ DOTRACE("fstring::equals(const char*)");
            strcmp(c_str(), other) == 0 );
 }
 
-bool fstring::equals(const string_literal& other) const
-{
-DOTRACE("fstring::equals(const string_literal&");
-  return ( length() == other.length() &&
-           strcmp(c_str(), other.c_str()) == 0 );
-}
-
 bool fstring::equals(const fstring& other) const
 {
 DOTRACE("fstring::equals(const fstring&)");
@@ -293,6 +266,28 @@ DOTRACE("fstring::ends_with");
   return ext.equals(this->c_str() + skip);
 }
 
+bool fstring::operator<(const char* other) const
+{
+  // Check if we are pointing to the same string
+  if (c_str() == other) return false;
+  // ...otherwise do a string compare
+  return strcmp(c_str(), other) < 0;
+}
+
+bool fstring::operator>(const char* other) const
+{
+  // Check if we are pointing to the same string
+  if (c_str() == other) return false;
+  // ...otherwise do a string compare
+  return strcmp(c_str(), other) > 0;
+}
+
+void fstring::do_append(const char* text)
+{
+DOTRACE("fstring::do_append");
+  if (text) append_text(strlen(text), text);
+}
+
 void fstring::append_text(std::size_t length, const char* text)
 {
 DOTRACE("fstring::append_text");
@@ -309,36 +304,43 @@ DOTRACE("fstring::append_text");
 
 STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str)
 {
-  std::string temp; is >> temp;
-  str = temp.c_str();
+DOTRACE("operator>>(std::istream&, fstring&)");
+  str = "";
+  is >> STD_IO::ws;
+  while ( true )
+    {
+      int c = is.peek();
+      if (c == EOF || isspace(c))
+        break;
+      str.append(char(is.get()));
+    }
   return is;
-}
-
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const string_literal& str)
-{
-  os << str.c_str();
-  return os;
 }
 
 STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str)
 {
+DOTRACE("operator<<(std::ostream&, fstring&)");
   os << str.c_str();
   return os;
 }
 
 STD_IO::istream& getline(STD_IO::istream& is, fstring& str)
 {
-  std::string temp;
-  std::getline(is, temp);
-  str = temp.c_str();
-  return is;
+DOTRACE("getline(std::istream&, fstring&)");
+  return getline(is, str, '\n');
 }
 
 STD_IO::istream& getline(STD_IO::istream& is, fstring& str, char eol)
 {
-  std::string temp;
-  std::getline(is, temp, eol);
-  str = temp.c_str();
+DOTRACE("getline(std::istream&, fstring&, char)");
+  str = "";
+  while ( true )
+    {
+      int c = is.get();
+      if (c == EOF || c == eol)
+        break;
+      str.append(char(c));
+    }
   return is;
 }
 
