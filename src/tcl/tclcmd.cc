@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Sep  9 14:30:25 2001
+// written: Sun Sep  9 14:48:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,6 @@
 #  include <fstream.h>
 #endif
 
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -85,8 +84,11 @@ namespace
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
 
-  HelpCmd* helpCmd = 0;
+  HelpCmd* theHelpCmd = 0;
   bool firstTime = true;
+  // we need this extra 'firstTime' flag to avoid endless recursion
+  // when trying to create theHelpCmd (i.e., otherwise the constructor
+  // for HelpCmd will also try to create theHelpCmd, etc...)
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +106,7 @@ public:
 protected:
   virtual void invoke(Tcl::Context& ctx)
   {
-    const char* cmd_name = ctx.getCstringFromArg(1);
+    const char* cmd_name = ctx.getValFromArg(1, TypeCue<const char*>());
 
     Tcl::Command* cmd = lookupCmd(ctx.interp(), cmd_name);
 
@@ -129,7 +131,7 @@ public:
        int objc_min, int objc_max, bool exact_objc) :
     itsOwner(owner),
     itsInterp(interp),
-    itsUsage(usage),
+    itsUsage(usage ? usage : ""),
     itsObjcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
     itsObjcMax( (objc_max > 0) ? (unsigned int) objc_max : itsObjcMin),
     itsExactObjc(exact_objc),
@@ -142,8 +144,8 @@ public:
 
     if (firstTime)
       {
-        firstTime = false;
-        helpCmd = new HelpCmd(interp);
+		  firstTime = false;
+        theHelpCmd = new HelpCmd(interp);
       }
   }
 
@@ -181,13 +183,9 @@ public:
         }
     }
 
-  const char* usage() const
+  fstring usage() const
   {
-    static fstring result;
-
-    result = findFirstOverload()->buildUsage();
-
-    return result.c_str();
+    return findFirstOverload()->buildUsage();
   }
 
   fstring buildUsage() const
@@ -196,7 +194,7 @@ public:
 
     result.append("\t").append(itsCmdName);
 
-    if (itsUsage && *itsUsage != '\0')
+    if (!itsUsage.empty())
       {
         result.append(" ").append(itsUsage);
       }
@@ -206,8 +204,6 @@ public:
 
     return result;
   }
-
-  const char* name() const { return itsCmdName.c_str(); }
 
   const fstring& cmdName() const { return itsCmdName; }
 
@@ -309,7 +305,7 @@ private:
 
   void appendFullUsage(fstring& str)
     {
-      if (itsUsage && *itsUsage != '\0')
+      if (!itsUsage.empty())
         {
           str.append("\"", itsCmdName, " ");
           str.append(itsUsage, "\"");
@@ -325,18 +321,17 @@ private:
                             int objc, Tcl_Obj *const objv[]);
 
 private:
-
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
   // These are set once per command object
   Tcl::Command* const itsOwner;
   Tcl_Interp* const itsInterp;
-  const char* const itsUsage;
+  const fstring itsUsage;
   const unsigned int itsObjcMin;
   const unsigned int itsObjcMax;
   const bool itsExactObjc;
-  fstring itsCmdName;
+  const fstring itsCmdName;
   int itsUseCount;
   Impl* itsOverload;
   Impl* itsPrevOverload;
@@ -431,13 +426,13 @@ Tcl::Command::Command(Tcl_Interp* interp,
 DOTRACE("Tcl::Command::Command");
 }
 
-const char* Tcl::Command::name() const
+const fstring& Tcl::Command::name() const
 {
 DOTRACE("Tcl::Command::name");
-  return itsImpl->name();
+  return itsImpl->cmdName();
 }
 
-const char* Tcl::Command::usage() const
+fstring Tcl::Command::usage() const
 {
 DOTRACE("Tcl::Command::usage");
   return itsImpl->usage();
