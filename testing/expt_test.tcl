@@ -57,6 +57,7 @@ test "ExptTcl-Expt::load" "too many args" {
     Expt::load j u
 } {wrong \# args: should be "Expt::load filename"}
 test "ExptTcl-Expt::load" "fMRI sample" {
+	 Togl::setVisible false
 	 BlockList::reset
 	 Tlist::reset
 	 ObjList::reset
