@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Jan 30 14:08:04 2002
+// written: Mon Jul 22 18:37:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,12 +83,10 @@ public:
   void setGlobalVar(const char* var_name, const Tcl::ObjPtr& var) const;
   void unsetGlobalVar(const char* var_name) const;
 
-  template <class Cue>
-  typename Cue::Type getGlobalVar(Cue, const char* name1,
-                                  const char* name2=0) const
+  template <class T>
+  T getGlobalVar(const char* name1, const char* name2=0) const
   {
-    return Tcl::Convert<typename Cue::Type>::fromTcl
-      (getObjGlobalVar(name1, name2));
+    return Tcl::Convert<T>::fromTcl(getObjGlobalVar(name1, name2));
   }
 
   // Errors
