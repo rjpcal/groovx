@@ -3,7 +3,7 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Tue Jun 29 17:40:22 1999
+// written: Wed Jul  7 14:26:55 1999
 // $Id$
 //
 // This file defines a template TclPkg intended to be used with List's
@@ -71,8 +71,10 @@ protected:
 template <class List>
 class ListPkg : public CTclIoItemPkg<List> {
 public:
-  ListPkg(Tcl_Interp* interp, const char* pkg_name, const char* version) :
-	 CTclIoItemPkg<List>(interp, pkg_name, version, 0)
+  ListPkg(Tcl_Interp* interp, List& aList,
+			 const char* pkg_name, const char* version) :
+	 CTclIoItemPkg<List>(interp, pkg_name, version, 0),
+	 itsList(aList)
   {
 	 declareGetter("count", new CGetter<List, int>(&List::count));
 	 declareAction("reset", new CAction<List>(&List::clear));
@@ -83,8 +85,10 @@ public:
 											 TclPkg::makePkgCmdName("isValidId")) );
   }
 
-  virtual IO& getIoFromId(int) = 0;
-  virtual List* getCItemFromId(int) = 0;
+  virtual IO& getIoFromId(int) { return dynamic_cast<IO&>(itsList); }
+  virtual List* getCItemFromId(int) { return &itsList; }
+private:
+  List& itsList;
 };
 
 static const char vcid_listpkg_h[] = "$Header$";
