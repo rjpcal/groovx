@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Aug 27 17:00:03 2001
+// written: Tue Aug 28 11:08:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -272,6 +272,20 @@ void GLCanvas::setLineWidth(double width)
 {
 DOTRACE("GLCanvas::setLineWidth");
   glLineWidth(width);
+}
+
+void GLCanvas::setPolygonFill(bool on)
+{
+DOTRACE("GLCanvas::setPolygonFill");
+
+  if (on)
+    {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+  else
+    {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
 }
 
 void GLCanvas::enableAntialiasing()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Aug 27 16:56:25 2001
+// written: Tue Aug 28 11:07:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,8 @@ public:
   virtual void swapForeBack();
 
   virtual void setLineWidth(double width);
+
+  virtual void setPolygonFill(bool on);
 
   virtual void enableAntialiasing();
 

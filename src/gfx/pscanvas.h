@@ -66,6 +66,8 @@ public:
 
   virtual void setLineWidth(double width);
 
+  virtual void setPolygonFill(bool on);
+
   virtual void enableAntialiasing();
 
 

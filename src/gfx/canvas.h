@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Aug 27 16:56:17 2001
+// written: Tue Aug 28 11:06:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,6 +139,10 @@ public:
   virtual void swapForeBack() = 0;
 
   virtual void setLineWidth(double width) = 0;
+
+  /** Control whether polygons will be filled (if true), or outlined
+      (if false). */
+  virtual void setPolygonFill(bool on) = 0;
 
   virtual void enableAntialiasing() = 0;
 
