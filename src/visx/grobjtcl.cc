@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Nov 13 13:51:34 2002
+// written: Wed Nov 13 14:06:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #define GROBJTCL_CC_DEFINED
 
 #include "gfx/gxaligner.h"
+#include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
 
 #include "grsh/grsh.h"
@@ -24,7 +25,6 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
-#include "visx/gmodes.h"
 #include "visx/grobj.h"
 #include "visx/recttcl.h"
 
@@ -68,10 +68,8 @@ DOTRACE("Grobj_Init");
 
   pkg->defAttrib("category", &GrObj::category, &GrObj::setCategory);
 
-  pkg->linkVarCopy("GrObj::DIRECT_RENDER", Gmodes::DIRECT_RENDER);
-  pkg->linkVarCopy("GrObj::GLCOMPILE", Gmodes::GLCOMPILE);
-  pkg->linkVarCopy("GrObj::GL_BITMAP_CACHE", Gmodes::GL_BITMAP_CACHE);
-  pkg->linkVarCopy("GrObj::X11_BITMAP_CACHE", Gmodes::X11_BITMAP_CACHE);
+  pkg->linkVarCopy("GrObj::DIRECT", GxCache::DIRECT);
+  pkg->linkVarCopy("GrObj::GLCOMPILE", GxCache::GLCOMPILE);
 
   pkg->linkVarCopy("GrObj::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
   pkg->linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);

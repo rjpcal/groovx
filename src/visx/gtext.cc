@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Nov 13 13:11:25 2002
+// written: Wed Nov 13 14:04:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
+#include "gfx/gxcache.h"
 #include "gfx/gxscaler.h"
 
 #include "gx/rect.h"
@@ -24,8 +25,6 @@
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "visx/gmodes.h"
 
 #include <GL/gl.h>
 
@@ -778,7 +777,7 @@ DOTRACE("Gtext::Gtext(const char*)");
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
   setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
-  setRenderMode(Gmodes::GLCOMPILE);
+  setRenderMode(GxCache::GLCOMPILE);
   setHeight(1.0);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 13:47:57 2002
+// written: Wed Nov 13 14:07:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "visx/grobj.h"
 
-#include "visx/gmodes.h"
 #include "visx/grobjimpl.h"
 
 #include "gfx/canvas.h"
@@ -211,7 +210,7 @@ DOTRACE("GrObj::category");
 
 int GrObj::getRenderMode() const
 {
-  return itsImpl->itsGLCache->getMode();
+  return itsImpl->itsCache->getMode();
 }
 
 //////////////////
@@ -304,7 +303,7 @@ void GrObj::setRenderMode(int mode)
 {
 DOTRACE("GrObj::setRenderMode");
 
-  itsImpl->itsGLCache->setMode(mode);
+  itsImpl->itsCache->setMode(mode);
   this->sigNodeChanged.emit();
 }
 
