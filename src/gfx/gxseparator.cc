@@ -286,7 +286,6 @@ Util::FwdIter<const Util::Ref<GxNode> > GxSeparator::deepChildren()
 {
 DOTRACE("GxSeparator::deepChildren");
 
-
   return Util::FwdIter<const Util::Ref<GxNode> >
     (shared_ptr<GxSepIter>(new GxSepIter(this)));
 }
