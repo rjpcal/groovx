@@ -2,8 +2,8 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Mar 12 11:10:58 1999
-static const char vcid[] = "$Id";
+// written: Fri Mar 12 11:11:34 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITION_CC_DEFINED
