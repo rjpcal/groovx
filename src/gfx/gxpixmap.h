@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.h)
-// written: Wed Mar 19 17:56:01 2003
+// written: Sat May  3 11:59:06 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,15 +43,10 @@ namespace Gfx
 
 class GxPixmapImpl;
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c GxPixmap is a subclass of \c GxShapeKit that manages bitmap data, but
- * does not implement a method for rendering the bitmap data to the screen,
- * since there is typically more than one way to do this.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+
+/// \c GxPixmap is a subclass of \c GxShapeKit represents bitmap images.
 
 class GxPixmap : public GxShapeKit
 {
@@ -134,8 +129,11 @@ public:
   /// Get the name (if any) of the file associated with this bitmap image.
   const char* filename() const;
 
-  /** Query whether the image will be rendered as 1-bit bitmap. */
+  /// Query whether the image will be rendered as 1-bit bitmap.
   bool getAsBitmap() const;
+
+  /// Get a checksum of all the bytes in the image data.
+  long int checkSum() const;
 
   //////////////////
   // manipulators //
