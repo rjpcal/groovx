@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Sat Jul  3 16:34:45 1999
+// written: Thu Oct 21 18:17:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,9 @@
 #include <iostream.h>
 #include <string>
 #include <GL/gl.h>
+
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -144,6 +147,40 @@ int Position::charCount() const {
 			 + gCharCount<double>(itsImpl->rt_z) + 1
 			 + gCharCount<double>(itsImpl->rt_ang) + 1
 			 + 1);// fudge factor
+}
+
+void Position::readFrom(Reader* reader) {
+DOTRACE("Position::readFrom");
+
+  reader->readValue("transX", itsImpl->tr_x);
+  reader->readValue("transY", itsImpl->tr_y);
+  reader->readValue("transZ", itsImpl->tr_z);
+
+  reader->readValue("scaleX", itsImpl->sc_x);
+  reader->readValue("scaleY", itsImpl->sc_y);
+  reader->readValue("scaleZ", itsImpl->sc_z);
+
+  reader->readValue("rotateX", itsImpl->rt_x);
+  reader->readValue("rotateY", itsImpl->rt_y);
+  reader->readValue("rotateZ", itsImpl->rt_z);
+  reader->readValue("rotateAngle", itsImpl->rt_ang);
+}
+
+void Position::writeTo(Writer* writer) const {
+DOTRACE("Position::writeTo");
+
+  writer->writeValue("transX", itsImpl->tr_x);
+  writer->writeValue("transY", itsImpl->tr_y);
+  writer->writeValue("transZ", itsImpl->tr_z);
+
+  writer->writeValue("scaleX", itsImpl->sc_x);
+  writer->writeValue("scaleY", itsImpl->sc_y);
+  writer->writeValue("scaleZ", itsImpl->sc_z);
+
+  writer->writeValue("rotateX", itsImpl->rt_x);
+  writer->writeValue("rotateY", itsImpl->rt_y);
+  writer->writeValue("rotateZ", itsImpl->rt_z);
+  writer->writeValue("rotateAngle", itsImpl->rt_ang);
 }
 
 ///////////////

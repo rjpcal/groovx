@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Tue Oct 12 10:27:36 1999
+// written: Thu Oct 21 18:14:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   int getDelay() const { return itsRequestedDelay; }
   void setDelay(int msec) { itsRequestedDelay = msec; }

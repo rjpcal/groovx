@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Sun Jun 27 16:34:24 1999
+// written: Thu Oct 21 18:14:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   typedef int TimePoint;
   static const TimePoint IMMEDIATE=0;

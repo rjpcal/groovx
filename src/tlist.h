@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Thu Jul  8 10:51:40 1999
+// written: Thu Oct 21 18:14:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,6 +56,9 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   // Reads a list of 'simple' trial descriptions which contain objid's
   // only; posid's are inferred from position int the list. If

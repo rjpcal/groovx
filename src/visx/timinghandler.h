@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Fri Jun 25 12:56:14 1999
+// written: Thu Oct 21 18:13:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   // Accessors + Manipulators
   int getAbortWait() const; 

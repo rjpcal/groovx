@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Sat Jul  3 16:34:46 1999
+// written: Thu Oct 21 18:17:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include <GL/gl.h>
 
 #include "randutils.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -107,6 +109,26 @@ int Jitter::charCount() const {
 			 + gCharCount<double>(itsRJitter) + 1
 			 + Position::charCount()
 			 + 1);// fudge factor
+}
+
+void Jitter::readFrom(Reader* reader) {
+DOTRACE("Jitter::readFrom");
+
+  Position::readFrom(reader);
+
+  reader->readValue("jitterX", itsXJitter);
+  reader->readValue("jitterY", itsYJitter);
+  reader->readValue("jitterR", itsRJitter);
+}
+
+void Jitter::writeTo(Writer* writer) const {
+DOTRACE("Jitter::writeTo");
+
+  Position::writeTo(writer);
+ 
+  writer->writeValue("jitterX", itsXJitter);
+  writer->writeValue("jitterY", itsYJitter);
+  writer->writeValue("jitterR", itsRJitter);
 }
 
 /////////////

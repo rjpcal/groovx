@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Thu May 20 09:47:00 1999
+// written: Thu Oct 21 18:13:44 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -26,6 +26,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   const char* getName() const { return itsName; }
   void setName(const char* name);
