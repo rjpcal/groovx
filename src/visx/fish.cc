@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Aug 13 12:15:36 2001
+// written: Wed Aug 15 06:40:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  FieldContainer(),
+  FieldContainer(this),
   fishCategory(-1),
   dorsalFinCoord(itsCoords[0]),
   tailFinCoord(itsCoords[1]),

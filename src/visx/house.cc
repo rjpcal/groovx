@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Mon Aug 13 12:15:36 2001
+// written: Wed Aug 15 06:40:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ DOTRACE("House::make");
 }
 
 House::House() :
-  FieldContainer(),
+  FieldContainer(this),
   storyAspectRatio(3.0),
   numStories(2),
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Aug 13 15:26:38 2001
+// written: Wed Aug 15 06:40:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ DOTRACE("Gabor::make");
 }
 
 Gabor::Gabor() :
-  FieldContainer(),
+  FieldContainer(this),
   colorMode(1),
   contrast(1.0),
   spatialFreq(3.5),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 14 21:34:31 2001
+// written: Wed Aug 15 06:46:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
-#include "util/observable.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
@@ -170,7 +166,7 @@ public:
   virtual void writeValueTo(IO::Writer* writer, const fstring& name) const = 0;
 
   virtual shared_ptr<Value> value() const = 0;
-  void setValue(const Value& new_val, FieldContainer& owner);
+  void setValue(const Value& new_val);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -344,17 +340,17 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FieldContainer : public virtual Util::Object,
-                       public virtual Util::Observable
+class FieldContainer : public virtual Util::Object
 {
 private:
   const FieldMap* itsFieldMap;
+  Util::Observable* itsObservable;
 
   FieldContainer(const FieldContainer&);
   FieldContainer& operator=(const FieldContainer&);
 
 public:
-  FieldContainer();
+  FieldContainer(Util::Observable* obs);
   virtual ~FieldContainer();
 
   void setFieldMap(const FieldMap& fields);

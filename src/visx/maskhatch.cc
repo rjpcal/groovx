@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 06:40:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ DOTRACE("MaskHatch::make");
 
 MaskHatch::MaskHatch () :
   GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
-  FieldContainer(),
+  FieldContainer(this),
   numLines(10, 0, 1000),
   lineWidth(1, 0, 1000)
 {

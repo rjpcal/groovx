@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Tue Aug 14 18:52:45 2001
+// written: Wed Aug 15 06:46:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/pointers.h"
+#include "util/observable.h"
 
 #include <map>
 
@@ -31,10 +31,9 @@ FieldMemberPtr::~FieldMemberPtr() {}
 Field::Field() {}
 Field::~Field() {}
 
-void Field::setValue(const Value& new_val, FieldContainer& owner)
+void Field::setValue(const Value& new_val)
 {
   doSetValue(new_val);
-  owner.sendStateChangeMsg();
 }
 
 
@@ -272,7 +271,9 @@ FieldMap::IoIterator FieldMap::ioEnd() const
 //
 ///////////////////////////////////////////////////////////////////////
 
-FieldContainer::FieldContainer() : itsFieldMap(FieldMap::emptyFieldMap())
+FieldContainer::FieldContainer(Util::Observable* obs) :
+  itsFieldMap(FieldMap::emptyFieldMap()),
+  itsObservable(obs)
 {}
 
 FieldContainer::~FieldContainer() {}
@@ -282,24 +283,24 @@ void FieldContainer::setFieldMap(const FieldMap& fields)
 
 shared_ptr<Value> FieldContainer::getField(const fstring& name) const
 {
-  return itsFieldMap->info(name).dereference(
-            const_cast<FieldContainer*>(this)).value();
+  return getField(itsFieldMap->info(name));
 }
 
 shared_ptr<Value> FieldContainer::getField(const FieldInfo& pinfo) const
 {
-  return pinfo.dereference(
-            const_cast<FieldContainer*>(this)).value();
+  return pinfo.dereference(const_cast<FieldContainer*>(this)).value();
 }
 
 void FieldContainer::setField(const fstring& name, const Value& new_val)
 {
-  itsFieldMap->info(name).dereference(this).setValue(new_val, *this);
+  setField(itsFieldMap->info(name), new_val);
 }
 
 void FieldContainer::setField(const FieldInfo& pinfo, const Value& new_val)
 {
-  pinfo.dereference(this).setValue(new_val, *this);
+  pinfo.dereference(this).setValue(new_val);
+  if (itsObservable)
+    itsObservable->sendStateChangeMsg();
 }
 
 void FieldContainer::readFieldsFrom(IO::Reader* reader,
@@ -315,7 +316,8 @@ DOTRACE("FieldContainer::readFieldsFrom");
       itr->dereference(this).readValueFrom(reader, itr->name());
     }
 
-  sendStateChangeMsg();
+  if (itsObservable)
+    itsObservable->sendStateChangeMsg();
 }
 
 void FieldContainer::writeFieldsTo(IO::Writer* writer,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Aug 10 10:55:03 2001
+// written: Wed Aug 15 06:40:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -499,7 +499,7 @@ DOTRACE("Trial::make");
 }
 
 Trial::Trial() :
-  FieldContainer(),
+  FieldContainer(0),
   tType(this, &Trial::trialType, &Trial::setType),
   itsImpl( new Impl(this) )
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Mon Aug 13 12:17:29 2001
+// written: Wed Aug 15 06:42:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,10 +26,12 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const IO::VersionId POS_SERIAL_VERSION_ID = 1;
 
-  const FieldInfo FINFOS[] = {
+  const FieldInfo FINFOS[] =
+  {
     FieldInfo("translation", &Position::translation, 0., 0., 0., 0., true),
     FieldInfo("scaling", &Position::scaling, 0., 0., 0., 0.),
     FieldInfo("rotationAxis", &Position::rotationAxis, 0., 0., 0., 0.),
@@ -75,6 +77,7 @@ DOTRACE("Position::make");
 }
 
 Position::Position() :
+  FieldContainer(this),
   translation(0.0, 0.0, 0.0),
   scaling(1.0, 1.0, 1.0),
   rotationAxis(0.0, 0.0, 1.0),
@@ -86,42 +89,48 @@ DOTRACE("Position::Position()");
   DebugEvalNL((void *) itsImpl);
 }
 
-Position::~Position() {
+Position::~Position()
+{
 DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-IO::VersionId Position::serialVersionId() const {
+IO::VersionId Position::serialVersionId() const
+{
 DOTRACE("Position::serialVersionId");
   return POS_SERIAL_VERSION_ID;
 }
 
-void Position::readFrom(IO::Reader* reader) {
+void Position::readFrom(IO::Reader* reader)
+{
 DOTRACE("Position::readFrom");
 
   IO::VersionId svid = reader->readSerialVersionId();
-  if (svid == 0) {
-    reader->readValue("transX", translation.x());
-    reader->readValue("transY", translation.y());
-    reader->readValue("transZ", translation.z());
+  if (svid == 0)
+    {
+      reader->readValue("transX", translation.x());
+      reader->readValue("transY", translation.y());
+      reader->readValue("transZ", translation.z());
 
-    reader->readValue("scaleX", scaling.x());
-    reader->readValue("scaleY", scaling.y());
-    reader->readValue("scaleZ", scaling.z());
+      reader->readValue("scaleX", scaling.x());
+      reader->readValue("scaleY", scaling.y());
+      reader->readValue("scaleZ", scaling.z());
 
-    reader->readValue("rotateX", rotationAxis.x());
-    reader->readValue("rotateY", rotationAxis.y());
-    reader->readValue("rotateZ", rotationAxis.z());
-    rotationAngle.readValueFrom(reader, "rotateAngle");
-  }
-  else {
-    reader->ensureReadVersionId("Position", 1, "Try grsh0.8a4");
+      reader->readValue("rotateX", rotationAxis.x());
+      reader->readValue("rotateY", rotationAxis.y());
+      reader->readValue("rotateZ", rotationAxis.z());
+      rotationAngle.readValueFrom(reader, "rotateAngle");
+    }
+  else
+    {
+      reader->ensureReadVersionId("Position", 1, "Try grsh0.8a4");
 
-    readFieldsFrom(reader, classFields());
-  }
+      readFieldsFrom(reader, classFields());
+    }
 }
 
-void Position::writeTo(IO::Writer* writer) const {
+void Position::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Position::writeTo");
 
   writer->ensureWriteVersionId("Position", POS_SERIAL_VERSION_ID, 1,
@@ -134,7 +143,8 @@ DOTRACE("Position::writeTo");
 // actions //
 /////////////
 
-void Position::draw(Gfx::Canvas& canvas) const {
+void Position::draw(Gfx::Canvas& canvas) const
+{
 DOTRACE("Position::draw");
   canvas.translate(translation.vec());
   canvas.scale(scaling.vec());
@@ -146,7 +156,8 @@ DOTRACE("Position::draw");
   itsImpl->rt_ang = rotationAngle();
 }
 
-void Position::undraw(Gfx::Canvas& canvas) const {
+void Position::undraw(Gfx::Canvas& canvas) const
+{
 DOTRACE("Position::undraw");
   canvas.translate(itsImpl->tr);
   canvas.scale(itsImpl->sc);
