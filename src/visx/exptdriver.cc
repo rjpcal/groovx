@@ -105,7 +105,7 @@ public:
 
   Tcl::Interp interp;
 
-  SoftRef<Toglet> widget;
+  Util::SoftRef<Toglet> widget;
 
   fstring hostname;     // Host computer on which Expt was begun
   fstring subject;      // Id of subject on whom Expt was performed
@@ -117,7 +117,7 @@ public:
 
   int autosavePeriod;
 
-  Ref<Tcl::ProcWrapper> doWhenComplete;
+  Util::Ref<Tcl::ProcWrapper> doWhenComplete;
 
   unsigned int numTrialsCompleted;
 };

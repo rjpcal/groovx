@@ -37,15 +37,15 @@
 
 #include "util/trace.h"
 
-SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)
+Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)
 {
   return newObj(fstring(type));
 }
 
-SoftRef<Util::Object> Util::ObjMgr::newObj(const fstring& type)
+Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const fstring& type)
 {
 DOTRACE("Util::ObjMgr::newObj(const fstring&)");
-  return SoftRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
+  return Util::SoftRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
 }
 
 static const char vcid_objmgr_cc[] = "$Header$";

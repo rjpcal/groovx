@@ -134,7 +134,7 @@ public:
     {
       ignore();
 
-      Ref<Sound> p = Sound::getErrSound();
+      Util::Ref<Sound> p = Sound::getErrSound();
       p->play();
     }
 

@@ -69,23 +69,23 @@
 
 namespace GxTcl
 {
-  bool contains(Ref<GxNode> item, Ref<GxNode> other)
+  bool contains(Util::Ref<GxNode> item, Util::Ref<GxNode> other)
   {
     return item->contains(other.get());
   }
 
-  void savePS(Ref<GxNode> item, const char* filename)
+  void savePS(Util::Ref<GxNode> item, const char* filename)
   {
     Gfx::PSCanvas canvas(filename);
 
     item->draw(canvas);
   }
 
-  void addChildren(Ref<GxSeparator> sep, Tcl::List objs)
+  void addChildren(Util::Ref<GxSeparator> sep, Tcl::List objs)
   {
-    Tcl::List::Iterator<Ref<GxNode> >
-      itr = objs.begin<Ref<GxNode> >(),
-      end = objs.end<Ref<GxNode> >();
+    Tcl::List::Iterator<Util::Ref<GxNode> >
+      itr = objs.begin<Util::Ref<GxNode> >(),
+      end = objs.end<Util::Ref<GxNode> >();
 
     while (itr != end)
       {

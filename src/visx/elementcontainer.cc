@@ -309,11 +309,11 @@ DOTRACE("ElementContainer::clearElements");
   rep->sequencePos = 0;
 }
 
-SoftRef<Element> ElementContainer::currentElement() const
+Util::SoftRef<Element> ElementContainer::currentElement() const
 {
 DOTRACE("ElementContainer::currentElement");
   if (rep->sequencePos >= rep->elements.size())
-    return SoftRef<Element>();
+    return Util::SoftRef<Element>();
 
   return rep->elements.at(rep->sequencePos);
 }

@@ -57,11 +57,11 @@ public:
   virtual void writeDouble(const char*, double)         { ++itsCount; }
   virtual void writeCstring(const char*, const char*)   { ++itsCount; }
   virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
-  virtual void writeObject(const char*, SoftRef<const IO::IoObject>)
+  virtual void writeObject(const char*, Util::SoftRef<const IO::IoObject>)
     { ++itsCount; }
-  virtual void writeOwnedObject(const char*, Ref<const IO::IoObject>)
+  virtual void writeOwnedObject(const char*, Util::Ref<const IO::IoObject>)
     { ++itsCount; }
-  virtual void writeBaseClass(const char*, Ref<const IO::IoObject>)
+  virtual void writeBaseClass(const char*, Util::Ref<const IO::IoObject>)
     { ++itsCount; }
   virtual void writeRoot(const IO::IoObject*) {}
 

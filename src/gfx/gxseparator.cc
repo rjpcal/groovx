@@ -93,7 +93,7 @@ public:
 
   GxSeparator* owner;
 
-  typedef std::vector<Ref<GxNode> > VecType;
+  typedef std::vector<Util::Ref<GxNode> > VecType;
   VecType children;
 
   bool debugMode;
@@ -220,7 +220,7 @@ DOTRACE("GxSeparator::numChildren");
   return rep->children.size();
 }
 
-Ref<GxNode> GxSeparator::getChild(ChildId index) const
+Util::Ref<GxNode> GxSeparator::getChild(ChildId index) const
 {
 DOTRACE("GxSeparator::getChild");
   if (index >= rep->children.size())

@@ -141,7 +141,7 @@ DOTRACE("GxScene::setVisibility");
     }
 }
 
-void GxScene::setCamera(const Ref<GxCamera>& cam)
+void GxScene::setCamera(const Util::Ref<GxCamera>& cam)
 {
 DOTRACE("GxScene::setCamera");
   itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
@@ -155,7 +155,7 @@ DOTRACE("GxScene::setCamera");
   fullRender();
 }
 
-void GxScene::setDrawable(const Ref<GxNode>& node)
+void GxScene::setDrawable(const Util::Ref<GxNode>& node)
 {
 DOTRACE("GxScene::setDrawable");
   itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);

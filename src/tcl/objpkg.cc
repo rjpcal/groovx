@@ -52,7 +52,7 @@ Tcl::ObjCaster::~ObjCaster() {}
 
 bool Tcl::ObjCaster::isIdMyType(Util::UID uid)
 {
-  SoftRef<Util::Object> item(uid);
+  Util::SoftRef<Util::Object> item(uid);
   return (item.isValid() && isMyType(item.get()));
 }
 

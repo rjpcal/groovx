@@ -87,7 +87,7 @@ namespace
     xp->edBeginExpt();
   }
 
-  void waitStartKey(Ref<ExptDriver> xp)
+  void waitStartKey(Util::Ref<ExptDriver> xp)
   {
     Util::SoftRef<Toglet> w = xp->getWidget();
 

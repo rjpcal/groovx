@@ -393,7 +393,7 @@ void Toglet::setCamera(const Util::Ref<GxCamera>& cam)
   rep->scene->setCamera(cam);
 }
 
-void Toglet::setDrawable(const Ref<GxNode>& node)
+void Toglet::setDrawable(const Util::Ref<GxNode>& node)
 {
   makeCurrent();
   rep->scene->setDrawable(node);

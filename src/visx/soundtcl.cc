@@ -75,12 +75,12 @@ public:
 
         try
           {
-            Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
+            Util::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
             Sound::setOkSound(ok_sound);
             OK = ok_sound.id();
             linkConstVar("Sound::ok", OK);
 
-            Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
+            Util::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
             Sound::setErrSound(err_sound);
             ERR = err_sound.id();
             linkConstVar("Sound::err", ERR);

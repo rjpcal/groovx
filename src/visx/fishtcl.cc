@@ -46,7 +46,7 @@ namespace
   Util::UID makeFish(const char* spline_file, const char* coord_file,
                      int index)
   {
-    Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
+    Util::Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
     return obj.id();
   }
 }

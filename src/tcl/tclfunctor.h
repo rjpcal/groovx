@@ -43,17 +43,17 @@ namespace Tcl
   /** This allows us to receive Util::Ref objects from Tcl via the
       Util::UID's of the referred-to objects. */
   template <class T>
-  inline Ref<T> fromTcl(Tcl_Obj* obj, Ref<T>*)
+  inline Util::Ref<T> fromTcl(Tcl_Obj* obj, Util::Ref<T>*)
   {
     Util::UID uid = Tcl::toNative<Util::UID>(obj);
-    return Ref<T>(uid);
+    return Util::Ref<T>(uid);
   }
 
   /// Overload of toTcl for Util::Ref.
   /** This allows us to pass Util::Ref objects to Tcl via the Util::UID's
       of the referred-to objects. */
   template <class T>
-  inline Tcl::ObjPtr toTcl(Ref<T> obj)
+  inline Tcl::ObjPtr toTcl(Util::Ref<T> obj)
   {
     return toTcl(obj.id());
   }
@@ -62,17 +62,17 @@ namespace Tcl
   /** This allows us to receive Util::SoftRef objects from Tcl via the
       Util::UID's of the referred-to objects. */
   template <class T>
-  inline SoftRef<T> fromTcl(Tcl_Obj* obj, SoftRef<T>*)
+  inline Util::SoftRef<T> fromTcl(Tcl_Obj* obj, Util::SoftRef<T>*)
   {
     Util::UID uid = Tcl::toNative<Util::UID>(obj);
-    return SoftRef<T>(uid);
+    return Util::SoftRef<T>(uid);
   }
 
   /// Overload of toTcl for Util::SoftRef.
   /** This allows us to pass Util::SoftRef objects to Tcl via the
       Util::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::ObjPtr toTcl(SoftRef<T> obj)
+  inline Tcl::ObjPtr toTcl(Util::SoftRef<T> obj)
   {
     return toTcl(obj.id());
   }

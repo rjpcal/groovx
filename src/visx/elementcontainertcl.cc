@@ -52,7 +52,7 @@ namespace
          itr != end;
          ++itr)
       {
-        container->addElement(Ref<Element>(*itr), repeat);
+        container->addElement(Util::Ref<Element>(*itr), repeat);
       }
   }
 }

@@ -83,10 +83,10 @@ public:
   const Util::Ref<GxCamera>& getCamera() const { return itsCamera; }
 
   /// Set the camera to be used to view the scene.
-  void setCamera(const Ref<GxCamera>& cam);
+  void setCamera(const Util::Ref<GxCamera>& cam);
 
   /// Get the drawable object currently being viewed.
-  void setDrawable(const Ref<GxNode>& node);
+  void setDrawable(const Util::Ref<GxNode>& node);
 
   /// To be called when the associated window is resized.
   void reshape(int width, int height);

@@ -82,7 +82,7 @@ public:
     return (result == 0) ? (itsBuf+2) : "";
   }
 
-  Ref<MtxObj> getMtx(const char* name)
+  Util::Ref<MtxObj> getMtx(const char* name)
   {
     mxArray* arr = engGetArray(itsEngine, name);
     if (arr == 0)
@@ -90,7 +90,7 @@ public:
         throw Util::Error(fstring("no such MATLAB variable: '", name, "'"));
       }
 
-    Ref<MtxObj> mtx(new MtxObj(arr, Mtx::COPY));
+    Util::Ref<MtxObj> mtx(new MtxObj(arr, Mtx::COPY));
 
     mxDestroyArray(arr);
 
@@ -132,10 +132,10 @@ public:
     return "can't happen";
   }
 
-  Ref<MtxObj> getMtx(const char*)
+  Util::Ref<MtxObj> getMtx(const char*)
   {
     noSupport();
-    return Ref<MtxObj>(new MtxObj(0,0));
+    return Util::Ref<MtxObj>(new MtxObj(0,0));
   }
 };
 

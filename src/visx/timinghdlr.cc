@@ -81,7 +81,7 @@ public:
     trial(0)
     {}
 
-  typedef minivec<Ref<TrialEvent> > EventGroup;
+  typedef minivec<Util::Ref<TrialEvent> > EventGroup;
 
   EventGroup immediateEvents;
   EventGroup startEvents;
@@ -200,8 +200,8 @@ DOTRACE("TimingHdlr::writeTo");
 // accessors //
 ///////////////
 
-Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
-                                     unsigned int index) const
+Util::Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
+                                           unsigned int index) const
 {
 DOTRACE("TimingHdlr::getEvent");
   return rep->eventsAt(time_point).at(index);
@@ -217,7 +217,7 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-unsigned int TimingHdlr::addEvent(Ref<TrialEvent> event_item,
+unsigned int TimingHdlr::addEvent(Util::Ref<TrialEvent> event_item,
                                   TimePoint time_point)
 {
 DOTRACE("TimingHdlr::addEvent");
@@ -232,7 +232,7 @@ unsigned int TimingHdlr::addEventByName(const char* event_type,
 {
 DOTRACE("TimingHdlr::addEventByName");
 
-  Ref<TrialEvent> event_item(
+  Util::Ref<TrialEvent> event_item(
                     Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
 
   event_item->setDelay(msec_delay);
@@ -247,7 +247,8 @@ DOTRACE("TimingHdlr::addEventByName");
 
 namespace
 {
-  bool cmp_delay_less(const Ref<TrialEvent>& e1, const Ref<TrialEvent>& e2)
+  bool cmp_delay_less(const Util::Ref<TrialEvent>& e1,
+                      const Util::Ref<TrialEvent>& e2)
   {
     return (e1->getDelay() < e2->getDelay());
   }

@@ -62,8 +62,8 @@
 
 namespace
 {
-  SoftRef<Sound> OK_SOUND;
-  SoftRef<Sound> ERR_SOUND;
+  Util::SoftRef<Sound> theOkSound;
+  Util::SoftRef<Sound> theErrSound;
 }
 
 SoundRep::~SoundRep() throw() {}
@@ -83,24 +83,24 @@ DOTRACE("SoundRep::checkFilename");
     }
 }
 
-void Sound::setOkSound(Ref<Sound> ok_sound)
+void Sound::setOkSound(Util::Ref<Sound> ok_sound)
 {
-  OK_SOUND = ok_sound;
+  theOkSound = ok_sound;
 }
 
-void Sound::setErrSound(Ref<Sound> err_sound)
+void Sound::setErrSound(Util::Ref<Sound> err_sound)
 {
-  ERR_SOUND = err_sound;
+  theErrSound = err_sound;
 }
 
-Ref<Sound> Sound::getOkSound()
+Util::Ref<Sound> Sound::getOkSound()
 {
-  return Ref<Sound>(OK_SOUND.get());
+  return Util::Ref<Sound>(theOkSound.get());
 }
 
-Ref<Sound> Sound::getErrSound()
+Util::Ref<Sound> Sound::getErrSound()
 {
-  return Ref<Sound>(ERR_SOUND.get());
+  return Util::Ref<Sound>(theErrSound.get());
 }
 
 Sound* Sound::make()

@@ -54,7 +54,8 @@
 
 namespace
 {
-  Tcl::List dumpCmap(SoftRef<Toglet> toglet, unsigned int start, unsigned end)
+  Tcl::List dumpCmap(Util::SoftRef<Toglet> toglet,
+                     unsigned int start, unsigned end)
   {
     if (start > 255 || end > 255)
       {
@@ -77,7 +78,7 @@ namespace
     return result;
   }
 
-  Tcl::List dumpCmapAll(SoftRef<Toglet> toglet)
+  Tcl::List dumpCmapAll(Util::SoftRef<Toglet> toglet)
   {
     return dumpCmap(toglet, 0, 255);
   }
@@ -89,7 +90,7 @@ namespace
 
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
-  Util::UID see(SoftRef<Toglet> widg, Ref<GxNode> item)
+  Util::UID see(Util::SoftRef<Toglet> widg, Util::Ref<GxNode> item)
   {
     widg->setDrawable(item);
     widg->setVisibility(true);
