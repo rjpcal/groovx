@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Oct 25 07:47:23 2000
+// written: Wed Oct 25 09:32:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ template <class T>
 PtrList<T>::SharedPtr PtrList<T>::getCheckedPtr(int id) const
 {
 #ifdef OLD_VERSION
-  RefCounted* voidPtr = PtrListBase::getCheckedPtrBase(id);
+  IO::IoObject* voidPtr = PtrListBase::getCheckedPtrBase(id);
   // cast as reference to force an exception on error
   T& t = dynamic_cast<T&>(*voidPtr);
   return SharedPtr(&t, id);
@@ -107,17 +107,7 @@ PtrList<T>::SharedPtr PtrList<T>::insert(T* master)
 }
 
 template <class T>
-RefCounted* PtrList<T>::getPtrBase(int id) const throw ()
-{
-#ifdef OLD_VERSION
-  return PtrListBase::getPtrBase(id);
-#else
-#error not supported
-#endif
-}
-
-template <class T>
-RefCounted* PtrList<T>::getCheckedPtrBase(int id) const throw (InvalidIdError)
+IO::IoObject* PtrList<T>::getCheckedPtrBase(int id) const throw (InvalidIdError)
 {
 #ifdef OLD_VERSION
   return PtrListBase::getCheckedPtrBase(id);
@@ -127,13 +117,21 @@ RefCounted* PtrList<T>::getCheckedPtrBase(int id) const throw (InvalidIdError)
 }
 
 template <class T>
-int PtrList<T>::insertPtrBase(RefCounted* ptr)
+int PtrList<T>::insertPtrBase(IO::IoObject* ptr)
 {
 #ifdef OLD_VERSION
   return PtrListBase::insertPtrBase(ptr);
 #else
 #error not supported
 #endif
+}
+
+template <class T>
+void PtrList<T>::ensureCorrectType(const IO::IoObject* ptr) const
+{
+  const T* t = dynamic_cast<const T*>(ptr);
+  if (t == 0)
+	 throw ErrorWithMsg("ensureCorrectType failed");
 }
 
 static const char vcid_ptrlist_cc[] = "$Header$";
