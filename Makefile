@@ -65,6 +65,7 @@ TEST_OBJECTS =	\
 	face.do facetcl.sl \
 	fixpt.do fixpttcl.sl \
 	gfxattribs.sl \
+	glbitmap.do \
 	grobj.do grobjtcl.sl \
 	grshAppInit.do \
 	gtext.do gtexttcl.sl \
@@ -77,6 +78,7 @@ TEST_OBJECTS =	\
 	jitter.do jittertcl.sl \
 	kbdresponsehdlr.sl \
 	misctcl.sl \
+	morphyface.do morphyfacetcl.sl\
 	nullresponsehdlr.sl \
 	objlist.sl objlisttcl.sl \
 	objtogl.do \
@@ -107,7 +109,8 @@ TEST_OBJECTS =	\
 	toglconfig.do \
 	trace.sl \
 	trial.do trialtcl.sl \
-	trialevent.do
+	trialevent.do \
+	xbitmap.do
 
 TEST_DEPENDS = $(TEST_OBJECTS)
 
@@ -241,6 +244,7 @@ GTEXT_H = $(GROBJ_H) $(ERROR_H) gtext.h
 IOMGR_H = $(IO_H) $(IOFACTORY_H) iomgr.h
 JITTER_H = $(POSITION_H) jitter.h
 KBDRESPONSEHDLR_H = $(RESPONSEHANDLER_H) kbdresponsehdlr.h
+MORPHYFACE_H = $(IOSTL_H) $(GROBJ_H) morphyface.h
 NULLRESPONSEHDLR_H = $(RESPONSEHANDLER_H) nullresponsehdlr.h
 OBJLIST_H = $(PTRLIST_H) $(ID_H) objlist.h
 POSLIST_H = $(PTRLIST_H) $(ID_H) poslist.h
@@ -254,9 +258,11 @@ TIMINGHANDLER_H = $(TIMINGHDLR_H) timinghandler.h
 
 #level 4 headers
 CLONEFACE_H = $(FACE_H) cloneface.h
+GLBITMAP_H = $(BITMAP_H) glbitmap.h
 LISTITEMPKG_H = $(TCLITEMPKG_H) listitempkg.h
 LISTPKG_H = $(TCLITEMPKG_H) listpkg.h
 PTRLIST_CC = $(PTRLIST_H) $(IOMGR_H) ptrlist.cc
+XBITMAP_H = $(BITMAP_H) xbitmap.h
 
 #level 5 headers
 
@@ -268,8 +274,8 @@ PTRLIST_CC = $(PTRLIST_H) $(IOMGR_H) ptrlist.cc
 
 BITMAP_CC = $(BITMAP_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
 
-BITMAPTCL_CC = $(BITMAP_H) $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) \
-	$(TCLCMD_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
+BITMAPTCL_CC = $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) $(IOMGR_H) $(OBJLIST_H) \
+	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
 
 BLOCK_CC = $(BLOCK_H) $(RAND_H) $(IOSTL_H) $(TLIST_H) $(TRIAL_H) \
 	$(TIMEUTILS_H) $(TRACE_H) $(DEBUG_H) block.cc
@@ -309,6 +315,8 @@ FIXPTTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(FIXPT_H) $(LISTITEMPKG_H) \
 
 GFXATTRIBS_CC = $(GFXATTRIBS_H) gfxattribs.cc
 
+GLBITMAP_CC = $(GLBITMAP_H) $(PBM_H) $(TRACE_H) $(DEBUG_H) glbitmap.cc
+
 GROBJ_CC = $(GROBJ_H) $(ERROR_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
 GROBJTCL_CC = $(GROBJTCL_H) $(LISTITEMPKG_H) $(GROBJ_H) $(OBJLIST_H) grobjtcl.cc
@@ -342,6 +350,12 @@ KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) $(EXPTDRIVER_H) \
 	$(TRACE_H) $(DEBUG_H) kbdresponsehdlr.cc
 
 MISCTCL_CC = $(MISCTCL_H) $(RANDUTILS_H) misctcl.cc
+
+MORPHYFACE_CC = $(MORPHYFACE_H) $(GFXATTRIBS_H) \
+	$(TRACE_H) $(DEBUG_H) morphyface.cc
+
+MORPHYFACETCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(MORPHYFACE_H) \
+	$(TCLCMD_H) $(TRACE_H) $(DEBUG_H) morphyfacetcl.cc
 
 NULLRESPONSEHDLR_CC = $(NULLRESPONSEHDLR_H) $(EXPTDRIVER_H) \
 	$(TRACE_H) nullresponsehdlr.cc
@@ -406,6 +420,9 @@ TRIALEVENT_CC = $(TRIALEVENT_H) $(EXPTDRIVER_H) $(TIMEUTILS_H) \
 TRIALTCL_CC = $(IOMGR_H) $(TRIAL_H) $(TLIST_H) $(LISTITEMPKG_H) \
 	$(TRACE_H) $(DEBUG_H) trialtcl.cc
 
+XBITMAP_CC = $(XBITMAP_H) $(PBM_H) $(TOGLCONFIG_H) $(OBJTOGL_H) \
+	$(TRACE_H) $(DEBUG_H) xbitmap.cc
+
 #-------------------------------------------------------------------------
 #
 # Dependency lists for object files
@@ -427,6 +444,7 @@ facetcl.*[ol]: $(FACETCL_CC)
 fixpt.*[ol]: $(FIXPT_CC)
 fixpttcl.*[ol]: $(FIXPTTCL_CC)
 gfxattribs.*[ol]: $(GFXATTRIBS_CC)
+glbitmap.*[ol]: $(GLBITMAP_CC)
 grobj.*[ol]: $(GROBJ_CC)
 grobjtcl.*[ol]: $(GROBJTCL_CC)
 grshAppInit.*[ol]: $(GRSHAPPINIT_CC)
@@ -442,6 +460,8 @@ jitter.*[ol]: $(JITTER_CC)
 jittertcl.*[ol]: $(JITTERTCL_CC)
 kbdresponsehdlr.*[ol]: $(KBDRESPONSEHDLR_CC)
 misctcl.*[ol]: $(MISCTCL_CC)
+morphyface.*[ol]: $(MORPHYFACE_CC)
+morphyfacetcl.*[ol]: $(MORPHYFACETCL_CC)
 objlist.*[ol]: objlist.h ptrlist.h io.h iomgr.h grobj.h id.h \
 	observable.h observer.h trace.h debug.h ptrlist.cc objlist.cc
 objlisttcl.*[ol]: $(OBJLISTTCL_CC)
@@ -496,6 +516,7 @@ trial.*[ol]: trial.h io.h objlist.h ptrlist.h grobj.h id.h \
 	observable.h observer.h poslist.h position.h trace.h debug.h trial.cc
 trialtcl.*[ol]: $(TRIALTCL_CC)
 trialevent.*[ol]: $(TRIALEVENT_CC)
+xbitmap.*[ol]: $(XBITMAP_CC)
 
 #-------------------------------------------------------------------------
 #
