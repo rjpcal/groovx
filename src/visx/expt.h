@@ -1,29 +1,38 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // expt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Wed May 19 14:35:41 1999
+// written: Thu May 27 19:37:33 1999
 // $Id$
 //
 // This file defines the class Expt. Expt contains a Tlist (itself a
 // container of Trial's), and in addition holds a sequence of trial
 // id's, used as indices into the Tlist. The functionality of Expt is
 // straightforward: once a Tlist has been properly constructed, the
-// Expt is run by alternately calling beginTrial() and one of
-// recordResponse() or abortTrial(). Both recordResponse() and
+// Expt is run by alternately calling drawTrial() and one of
+// processResponse() or abortTrial(). Both processResponse() and
 // abortTrial() prepare the Expt for the next Trial; thus no sort of
 // "nextTrial" call is required.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPT_H_DEFINED
 #define EXPT_H_DEFINED
 
-#ifndef IO_H_INCLUDED
+#ifndef IO_H_DEFINED
 #include "io.h"
 #endif
 
+#ifndef VECTOR_DEFINED
 #include <vector>
+#define VECTOR_DEFINED
+#endif
+
+#ifndef STRING_DEFINED
 #include <string>
+#define STRING_DEFINED
+#endif
 
 class Tlist;
 struct timeval;
@@ -69,44 +78,19 @@ public:
   virtual bool isComplete() const;
   virtual const char* trialDescription() const;
 
-  virtual bool needAutosave() const;
-
-  virtual const string& getEndDate() const { return itsEndDate; }
-  virtual const string& getAutosaveFile() const { return itsAutosaveFile; }
-
   virtual bool getVerbose() const { return itsVerbose; }
-
-  virtual int getAbortWait() const { return itsAbortWait; }
-  virtual int getAutosavePeriod() const { return itsAutosavePeriod; }
-  virtual int getInterTrialInterval() const { return itsInterTrialInterval; }
-  virtual int getStimDur() const { return itsStimDur; }
-  virtual int getTimeout() const { return itsTimeout; }
-
-  //////////////////
-  // manipulators //
-  //////////////////
-
-  virtual void setEndDate(const string& str) { itsEndDate = str; }
-  virtual void setAutosaveFile(const string& str) { itsAutosaveFile = str; }
-  virtual void setKeyRespPairs(const string& str) { itsKeyRespPairs = str; }
-
-  virtual void setUseFeedback(bool val) { itsUseFeedback = val; }
   virtual void setVerbose(bool val) { itsVerbose = val; }
-
-  virtual void setAbortWait(int val) { itsAbortWait = val; }
-  virtual void setAutosavePeriod(int val) { itsAutosavePeriod = val; }
-  virtual void setInterTrialInterval(int val) { itsInterTrialInterval = val; }
-  virtual void setStimDur(int val) { itsStimDur = val; }
-  virtual void setTimeout(int val) { itsTimeout = val; }
 
   /////////////
   // actions //
   /////////////
 
   virtual void beginTrial();
+
+  virtual void drawTrial();
   virtual void undrawTrial();
   virtual void abortTrial();
-  virtual void recordResponse(int val);
+  virtual void processResponse(int response);
   virtual void undoPrevTrial();
 
 private:
@@ -121,20 +105,10 @@ private:
   string itsHostname;			  // Host computer on which Expt was begun
   string itsSubject;				  // Id of subject on whom Expt was performed
 
-  // These members are in search of a better home...
-  string itsEndDate;				  // Date(+time) when Expt was stopped
-  string itsAutosaveFile;		  // Filename used for autosaves
-  string itsKeyRespPairs;		  // Regexp string holding key-response pairs
-
-  bool itsUseFeedback;
-  bool itsVerbose;
-  int itsAbortWait;
-  int itsAutosavePeriod;		  // # of trials between autosaves
-  int itsInterTrialInterval;
-  int itsStimDur;
-  int itsTimeout;
-
   mutable timeval itsBeginTime; // Used to record the start time of each Trial
+
+  // This is serialized elsewhere for legacy reasons
+  bool itsVerbose;
 };
 
 static const char vcid_expt_h[] = "$Header$";
