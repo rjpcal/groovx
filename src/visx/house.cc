@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Sep 21 15:03:32 1999
+// written: Thu Sep 30 11:23:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,28 +123,28 @@ namespace {
 
 House::House () {
 DOTRACE("House::House ");
-  itsStoryAspectRatio() = 3.0; 
-  itsNumStories() = 2;
+  storyAspectRatio() = 3.0; 
+  numStories() = 2;
 
-  itsDoorPosition() = 2;
-  itsDoorHeight() = 0.75;
-  itsDoorWidth() = 0.75;
+  doorPosition() = 2;
+  doorHeight() = 0.75;
+  doorWidth() = 0.75;
 
-  itsNumWindows() = 5;
-  itsWindowHeight() = 0.5;
-  itsWindowWidth() = 0.75;
-  itsWindowVertBars() = 1;
-  itsWindowHorizBars() = 1;
+  numWindows() = 5;
+  windowHeight() = 0.5;
+  windowWidth() = 0.75;
+  windowVertBars() = 1;
+  windowHorizBars() = 1;
 
-  itsRoofShape() = 0;
-  itsRoofOverhang() = 0.05;
-  itsRoofHeight() = 0.75;
-  itsRoofColor() = 1;
+  roofShape() = 0;
+  roofOverhang() = 0.05;
+  roofHeight() = 0.75;
+  roofColor() = 1;
 
-  itsChimneyXPosition() = 0.2;
-  itsChimneyYPosition() = 0.5;
-  itsChimneyWidth() = 0.06;
-  itsChimneyHeight() = 0.5;
+  chimneyXPosition() = 0.2;
+  chimneyYPosition() = 0.5;
+  chimneyWidth() = 0.06;
+  chimneyHeight() = 0.5;
 }
 
 House::~House () {
@@ -196,22 +196,69 @@ DOTRACE("House::charCount");
   return 128; 
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Properties
+//
+///////////////////////////////////////////////////////////////////////
+
+const vector<House::PInfo>& House::getPropertyInfos() {
+DOTRACE("House::getPropertyInfos");
+
+  static vector<PInfo> p;
+
+  typedef House H;
+
+  if (p.size() == 0) {
+	 p.push_back(PInfo("storyAspectRatio", &H::storyAspectRatio, 0.5, 10.0, 0.05, true));
+	 p.push_back(PInfo("numStories", &H::numStories, 1, 5, 1));
+
+	 p.push_back(PInfo("doorPosition", &H::doorPosition, 0, 5, 1, true));
+	 p.push_back(PInfo("doorWidth", &H::doorWidth, 0.05, 1.0, 0.05));
+	 p.push_back(PInfo("doorHeight", &H::doorHeight, 0.05, 1.0, 0.05));
+	 p.push_back(PInfo("doorOrientation", &H::doorOrientation, 0, 1, 1));
+
+	 p.push_back(PInfo("numWindows", &H::numWindows, 2, 6, 1, true));
+	 p.push_back(PInfo("windowWidth", &H::windowWidth, 0.05, 1.0, 0.05));
+	 p.push_back(PInfo("windowHeight", &H::windowHeight, 0.05, 1.0, 0.05));
+	 p.push_back(PInfo("windowVertBars", &H::windowVertBars, 0, 5, 1));
+	 p.push_back(PInfo("windowHorizBars", &H::windowHorizBars, 0, 5, 1));
+
+	 p.push_back(PInfo("roofShape", &H::roofShape, 0, 2, 1, true));
+	 p.push_back(PInfo("roofHeight", &H::roofHeight, 0.05, 2.0, 0.05));
+	 p.push_back(PInfo("roofOverhang", &H::roofOverhang, 0.0, 0.5, 0.05));
+	 p.push_back(PInfo("roofColor", &H::roofColor, 0, 1, 1));
+
+	 p.push_back(PInfo("chimneyXPosition", &H::chimneyXPosition, -0.5, 0.5, 0.05, true));
+	 p.push_back(PInfo("chimneyYPosition", &H::chimneyYPosition, 0.0, 1.0, 0.05));
+	 p.push_back(PInfo("chimneyWidth", &H::chimneyWidth, 0.01, 0.30, 0.01));
+	 p.push_back(PInfo("chimneyHeight", &H::chimneyHeight, 0.05, 2.0, 0.1));
+  }
+  return p;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Actions
+//
+///////////////////////////////////////////////////////////////////////
+
 bool House::grGetBoundingBox(double& left, double& top,
 									  double& right, double& bottom,
 									  int& border_pixels) const {
 DOTRACE("House::grGetBoundingBox");
-  GLdouble main_width = itsStoryAspectRatio();
-  GLdouble main_height = itsNumStories() + itsRoofHeight();
+  GLdouble main_width = storyAspectRatio();
+  GLdouble main_height = numStories() + roofHeight();
 
   GLdouble max_dimension = max(main_height, main_width);
 
-  left   = -main_width/2.0 * (1 + max(itsRoofOverhang(), 0.0)) / max_dimension;
-  right  =  main_width/2.0 * (1 + max(itsRoofOverhang(), 0.0)) / max_dimension;
+  left   = -main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
+  right  =  main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
   bottom = -main_height/2.0 / max_dimension;
 
   top    =  main_height/2.0;
-  if ( (itsChimneyYPosition() + itsChimneyHeight()) > itsRoofHeight() ) {
-	 top += itsChimneyYPosition() + itsChimneyHeight() - itsRoofHeight();
+  if ( (chimneyYPosition() + chimneyHeight()) > roofHeight() ) {
+	 top += chimneyYPosition() + chimneyHeight() - roofHeight();
   }
 
   top   /= max_dimension;
@@ -223,8 +270,8 @@ DOTRACE("House::grGetBoundingBox");
 
 void House::grRender() const {
 DOTRACE("House::grRender");
-  GLdouble total_width = itsStoryAspectRatio();
-  GLdouble total_height = itsNumStories() + itsRoofHeight();
+  GLdouble total_width = storyAspectRatio();
+  GLdouble total_height = numStories() + roofHeight();
 
   GLdouble max_dimension = 
  	 (total_height > total_width) ? total_height : total_width;
@@ -236,7 +283,7 @@ DOTRACE("House::grRender");
  	 // Scale so that the larger dimension (of width and height)
  	 // extends across 1.0 units in GL coordinates. The smaller
  	 // dimension will extend across less than 1.0 GL units.
-	 glScaled(itsStoryAspectRatio()/max_dimension, 1.0/max_dimension, 1.0);
+	 glScaled(storyAspectRatio()/max_dimension, 1.0/max_dimension, 1.0);
 
 	 // Translate down by half the height of the house, then up by 0.5
 	 // units, so that we are positioned in the center of the first
@@ -249,19 +296,19 @@ DOTRACE("House::grRender");
 		
 		
 		// Loop over house stories.
-		for (int s = 0; s < itsNumStories(); ++s) {
+		for (int s = 0; s < numStories(); ++s) {
 		  drawStoryFrame();
 
 		  // Loop over window positions.
-		  for (int w = 0; w < itsNumWindows(); ++w) {
+		  for (int w = 0; w < numWindows(); ++w) {
 			 glPushMatrix();
 			 {
-				GLdouble x_pos = double(w+0.5)/itsNumWindows() - 0.5;
-				if (s == 0 && w == itsDoorPosition() ) {
+				GLdouble x_pos = double(w+0.5)/numWindows() - 0.5;
+				if (s == 0 && w == doorPosition() ) {
 				  // Draw door.
 				  glTranslated(x_pos, -0.5, 0.0);
-				  glScaled(itsDoorWidth()/itsNumWindows(), itsDoorHeight(), 1.0);
-				  if (itsDoorOrientation()) {
+				  glScaled(doorWidth()/numWindows(), doorHeight(), 1.0);
+				  if (doorOrientation()) {
 					 glScaled(-1.0, 1.0, 1.0);
 				  }
 				  drawDoor();
@@ -269,8 +316,8 @@ DOTRACE("House::grRender");
 				else {
 				  // Draw window.
 				  glTranslated(x_pos, 0.0, 0.0);
-				  glScaled(itsWindowWidth()/itsNumWindows(), itsWindowHeight(), 1.0);
-				  drawWindow(itsWindowVertBars(), itsWindowHorizBars());
+				  glScaled(windowWidth()/numWindows(), windowHeight(), 1.0);
+				  drawWindow(windowVertBars(), windowHorizBars());
 				}
 			 }
 			 glPopMatrix();
@@ -285,21 +332,21 @@ DOTRACE("House::grRender");
 
 		glPushMatrix();
 		{
-		  glScaled(1.0+itsRoofOverhang(), itsRoofHeight(), 1.0);
+		  glScaled(1.0+roofOverhang(), roofHeight(), 1.0);
 
 		  glPushAttrib(GL_POLYGON_BIT);
 		  {
-			 if (itsRoofColor() == 0) {
+			 if (roofColor() == 0) {
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			 }
 			 else {
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			 }
 			 
-			 if (itsRoofShape() == 0) {
+			 if (roofShape() == 0) {
 				drawTriangleRoof();
 			 }
-			 else if (itsRoofShape() == 1) {
+			 else if (roofShape() == 1) {
 				drawTrapezoidRoof();
 			 }
 			 else {
@@ -314,8 +361,8 @@ DOTRACE("House::grRender");
 		// Draw chimney.
 		glPushMatrix();
 		{
-		  glTranslated(itsChimneyXPosition(), itsChimneyYPosition(), 0.0);
-		  glScaled(itsChimneyWidth(), itsChimneyHeight(), 0.0);
+		  glTranslated(chimneyXPosition(), chimneyYPosition(), 0.0);
+		  glScaled(chimneyWidth(), chimneyHeight(), 0.0);
 			 
 		  glPushAttrib(GL_POLYGON_BIT);
 		  {
@@ -344,34 +391,29 @@ void House::makeIoList(vector<const IO *>& vec) const {
 DOTRACE("House::makeIoList const");
   vec.clear();
 
-/*
-  PROPERTY([a-z]*, \(.*\));
-  vec.push_back(&its\1);
- */
+  vec.push_back(&storyAspectRatio);
+  vec.push_back(&numStories);
 
-  vec.push_back(&itsStoryAspectRatio);
-  vec.push_back(&itsNumStories);
+  vec.push_back(&doorPosition);
+  vec.push_back(&doorWidth);  // fraction of avail. space
+  vec.push_back(&doorHeight); // fraction of one story
+  vec.push_back(&doorOrientation); // left or right
 
-  vec.push_back(&itsDoorPosition);
-  vec.push_back(&itsDoorWidth);  // fraction of avail. space
-  vec.push_back(&itsDoorHeight); // fraction of one story
-  vec.push_back(&itsDoorOrientation); // left or right
+  vec.push_back(&numWindows);
+  vec.push_back(&windowWidth);	// fraction of avail. space
+  vec.push_back(&windowHeight); // fraction of one story
+  vec.push_back(&windowVertBars);
+  vec.push_back(&windowHorizBars);
 
-  vec.push_back(&itsNumWindows);
-  vec.push_back(&itsWindowWidth);	// fraction of avail. space
-  vec.push_back(&itsWindowHeight); // fraction of one story
-  vec.push_back(&itsWindowVertBars);
-  vec.push_back(&itsWindowHorizBars);
+  vec.push_back(&roofShape);
+  vec.push_back(&roofOverhang);
+  vec.push_back(&roofHeight);
+  vec.push_back(&roofColor);
 
-  vec.push_back(&itsRoofShape);
-  vec.push_back(&itsRoofOverhang);
-  vec.push_back(&itsRoofHeight);
-  vec.push_back(&itsRoofColor);
-
-  vec.push_back(&itsChimneyXPosition);
-  vec.push_back(&itsChimneyYPosition);
-  vec.push_back(&itsChimneyWidth);
-  vec.push_back(&itsChimneyHeight);
+  vec.push_back(&chimneyXPosition);
+  vec.push_back(&chimneyYPosition);
+  vec.push_back(&chimneyWidth);
+  vec.push_back(&chimneyHeight);
 }
 
 static const char vcid_house_cc[] = "$Header$";

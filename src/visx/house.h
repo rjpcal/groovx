@@ -3,17 +3,13 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Tue Sep 21 15:04:01 1999
+// written: Thu Sep 30 11:22:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef HOUSE_H_DEFINED
 #define HOUSE_H_DEFINED
-
-#ifndef IOSTL_H_DEFINED
-#include "iostl.h"
-#endif
 
 #ifndef VECTOR_DEFINED
 #include <vector>
@@ -24,24 +20,8 @@
 #include "grobj.h"
 #endif
 
-#ifdef PROPERTY
-#error PROPERTY macro already defined
-#else
-#define PROPERTY(type, name) \
-  private: IoWrapper<type> its##name; \
-  public:  type get##name() const { return its##name(); } \
-  public:  void set##name(type val) { its##name() = val; sendStateChangeMsg(); }
-#endif
-
-#ifdef BOUNDED_PROPERTY
-#error BOUNDED_PROPERTY macro already defined
-#else
-#define BOUNDED_PROPERTY(type, name, min, max) \
-  private: IoWrapper<type> its##name; \
-  public:  type get##name() const { return its##name(); } \
-  public:  void set##name(type val) { \
-				  if (val >= min && val <= max) its##name() = val; \
-				  sendStateChangeMsg(); }
+#ifndef PROPERTY_H_DEFINED
+#include "property.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +30,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class House : public GrObj {
+class House : public GrObj, public PropFriend<House> {
 public:
   House();
   virtual ~House();
@@ -64,29 +44,36 @@ public:
 
   virtual void setCategory(int) {  }
 
-  PROPERTY(double, StoryAspectRatio);
-  PROPERTY(int, NumStories);
+  ////////////////
+  // properties //
+  ////////////////
 
-  PROPERTY(int, DoorPosition);
-  PROPERTY(double, DoorWidth);  // fraction of avail. space
-  PROPERTY(double, DoorHeight); // fraction of one story
-  PROPERTY(bool, DoorOrientation); // left or right
+  typedef PropertyInfo<House> PInfo;
+  static const vector<PInfo>& getPropertyInfos();
 
-  PROPERTY(int, NumWindows);
-  PROPERTY(double, WindowWidth);	// fraction of avail. space
-  PROPERTY(double, WindowHeight); // fraction of one story
-  PROPERTY(int, WindowVertBars);
-  PROPERTY(int, WindowHorizBars);
+  CTProperty<House, double> storyAspectRatio;
+  CTProperty<House, int> numStories;
 
-  PROPERTY(int, RoofShape);
-  PROPERTY(double, RoofOverhang);
-  PROPERTY(double, RoofHeight);
-  PROPERTY(int, RoofColor);
+  CTProperty<House, int> doorPosition;
+  CTProperty<House, double> doorWidth;  // fraction of avail. space
+  CTProperty<House, double> doorHeight; // fraction of one story
+  CTProperty<House, bool> doorOrientation; // left or right
 
-  PROPERTY(double, ChimneyXPosition);
-  PROPERTY(double, ChimneyYPosition);
-  PROPERTY(double, ChimneyWidth);
-  PROPERTY(double, ChimneyHeight);
+  CTProperty<House, int> numWindows;
+  CTProperty<House, double> windowWidth;	// fraction of avail. space
+  CTProperty<House, double> windowHeight; // fraction of one story
+  CTProperty<House, int> windowVertBars;
+  CTProperty<House, int> windowHorizBars;
+
+  CTProperty<House, int> roofShape;
+  CTProperty<House, double> roofOverhang;
+  CTProperty<House, double> roofHeight;
+  CTProperty<House, int> roofColor;
+
+  CTProperty<House, double> chimneyXPosition;
+  CTProperty<House, double> chimneyYPosition;
+  CTProperty<House, double> chimneyWidth;
+  CTProperty<House, double> chimneyHeight;
 
   virtual bool grGetBoundingBox(double& left, double& top,
 										  double& right, double& bottom,
@@ -102,8 +89,6 @@ private:
   void makeIoList(vector<IO *>& vec);
   void makeIoList(vector<const IO *>& vec) const;
 };
-
-#undef PROPERTY
 
 static const char vcid_house_h[] = "$Header$";
 #endif // !HOUSE_H_DEFINED

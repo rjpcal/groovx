@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Sep 29 20:54:40 1999
+// written: Thu Sep 30 12:17:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,12 +153,10 @@ namespace {
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
-MorphyFace::MorphyFace(int categ) :
+MorphyFace::MorphyFace() :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX)
 {
 DOTRACE("MorphyFace::MorphyFace");
-
-  category() = categ;
 
   faceWidth() = 2.75; 
   topHeight() = 3.8;
@@ -255,8 +253,6 @@ DOTRACE("MorphyFace::deserialize");
   }
 
   if (version == 0) {
-	 // Format is:
-	 // MorphyFace $category $eyeheight $eyedistance $noselength $mouthheight
 	 vector<IO *> ioList;
 	 makeIoList(ioList);
 	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
@@ -264,8 +260,6 @@ DOTRACE("MorphyFace::deserialize");
 	 }
   }
   else if (version == 1) {
-	 // Format is:
-	 // MorphyFace { $category $eyeheight $eyedistance $noselength $mouthheight }
 	 char brace;
 	 is >> brace;
 	 if (brace != '{') { throw IoLogicError(ioTag + " missing left-brace"); }
@@ -316,7 +310,7 @@ DOTRACE("MorphyFace::charCount");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const vector<MorphyFace::PInfo> & MorphyFace::getPropertyInfos() {
+const vector<MorphyFace::PInfo>& MorphyFace::getPropertyInfos() {
 DOTRACE("MorphyFace::getPropertyInfos");
   static vector<PInfo> p;
 
@@ -675,11 +669,6 @@ DOTRACE("MorphyFace::makeIoList");
 void MorphyFace::makeIoList(vector<const IO *>& vec) const {
 DOTRACE("MorphyFace::makeIoList const");
   vec.clear();
-
-/*
-  PROPERTY([a-z]*, \(.*\));
-  vec.push_back(&its\1);
- */
 
   vec.push_back(&category);
 

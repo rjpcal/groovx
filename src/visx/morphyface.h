@@ -3,17 +3,13 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Sep 29 20:53:53 1999
+// written: Thu Sep 30 11:34:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MORPHYFACE_H_DEFINED
 #define MORPHYFACE_H_DEFINED
-
-#ifndef IOSTL_H_DEFINED
-#include "iostl.h"
-#endif
 
 #ifndef VECTOR_DEFINED
 #include <vector>
@@ -40,7 +36,7 @@ public:
   // creators //
   //////////////
 
-  MorphyFace(int categ=0);
+  MorphyFace();
   MorphyFace(istream &is, IOFlag flag);
   virtual ~MorphyFace ();
 
@@ -61,7 +57,7 @@ public:
   typedef PropertyInfo<MorphyFace> PInfo;
   static const vector<PInfo>& getPropertyInfos();
 
-  CTProperty<MorphyFace, int> category; // holds an arbitrary category specification
+  CTProperty<MorphyFace, int> category;
 
   CTProperty<MorphyFace, double> faceWidth;
   CTProperty<MorphyFace, double> topWidth;
@@ -116,8 +112,6 @@ private:
   void makeIoList(vector<IO *>& vec);
   void makeIoList(vector<const IO *>& vec) const;
 };
-
-#undef PROPERTY
 
 static const char vcid_morphyface_h[] = "$Header$";
 #endif // !MORPHYFACE_H_DEFINED
