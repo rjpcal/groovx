@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Mar 30 09:50:04 2000
+// written: Mon May 15 19:02:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ public:
 
 class HpAudioSound : public Sound {
 public:
-  HpAudioSound(Audio* audio, const char* filename);
+  HpAudioSound(const char* filename);
   virtual ~HpAudioSound();
 
   virtual void serialize(ostream& os, IO::IOFlag flag) const;
@@ -86,7 +86,6 @@ public:
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
 private:
-  Audio* itsAudio;
   fixed_string itsFilename;
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
@@ -98,18 +97,18 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-HpAudioSound::HpAudioSound(Audio* audio, const char* filename) :
-  itsAudio(audio), itsSBucket(NULL)
+HpAudioSound::HpAudioSound(const char* filename) :
+  itsSBucket(NULL)
 {
 DOTRACE("HpAudioSound::HpAudioSound");
-  if ( !itsAudio ) { throw SoundError("invalid HP audio server connection"); }
+  if ( !theAudio ) { throw SoundError("invalid HP audio server connection"); }
 
   itsPlayParams.pause_first = 0; 
   itsPlayParams.start_offset.type = ATTSamples; 
   itsPlayParams.start_offset.u.samples = 0;
   itsPlayParams.loop_count = 0; 
   itsPlayParams.previous_transaction = 0; 
-  itsPlayParams.gain_matrix = *ASimplePlayer(itsAudio);
+  itsPlayParams.gain_matrix = *ASimplePlayer(theAudio);
   itsPlayParams.priority = APriorityNormal;
   itsPlayParams.play_volume = AUnityGain;
   itsPlayParams.duration.type = ATTFullLength;
@@ -120,7 +119,9 @@ DOTRACE("HpAudioSound::HpAudioSound");
 
 HpAudioSound::~HpAudioSound() {
 DOTRACE("HpAudioSound::~HpAudioSound");
-  ADestroySBucket( itsAudio, itsSBucket, NULL );
+  if ( theAudio != 0 ) {
+	 ADestroySBucket( theAudio, itsSBucket, NULL );
+  }
 }
 
 void HpAudioSound::serialize(ostream& os, IO::IOFlag flag) const {
@@ -171,14 +172,14 @@ DOTRACE("HpAudioSound::charCount");
   
 void HpAudioSound::play() {
 DOTRACE("HpAudioSound::play");
-  if ( !itsAudio ) { throw SoundError("invalid audio server connection"); }
+  if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
 
-  ATransID xid = APlaySBucket( itsAudio, itsSBucket, &itsPlayParams, NULL );
+  ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
 }
 	
 void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
-  if ( !itsAudio ) { throw SoundError("invalid audio server connection"); }
+  if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
 
   ifstream ifs(filename);
   if (ifs.fail()) {
@@ -188,7 +189,7 @@ DOTRACE("HpAudioSound::setFile");
   itsFilename = filename;
 
   if (itsSBucket) {
-	 ADestroySBucket( itsAudio, itsSBucket, NULL);
+	 ADestroySBucket( theAudio, itsSBucket, NULL);
 	 itsSBucket = 0;
   }
 
@@ -196,7 +197,7 @@ DOTRACE("HpAudioSound::setFile");
   AudioAttrMask AttribsMask = 0;
   AudioAttributes Attribs;
 
-  itsSBucket = ALoadAFile(itsAudio, const_cast<char *>(itsFilename.c_str()),
+  itsSBucket = ALoadAFile(theAudio, const_cast<char *>(itsFilename.c_str()),
 								  fileFormat, AttribsMask,
 								  &Attribs, NULL);
 }
@@ -249,7 +250,7 @@ DOTRACE("Sound::closeSound");
 
 Sound* Sound::newPlatformSound(const char* soundfile) {
 DOTRACE("Sound::newPlatformSound");
-  return new HpAudioSound(theAudio, soundfile);
+  return new HpAudioSound(soundfile);
 }
 
 static const char vcid_hpsound_cc[] = "$Header$";
