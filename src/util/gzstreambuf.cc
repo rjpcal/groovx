@@ -177,7 +177,7 @@ namespace
   private:
     Util::gzstreambuf itsBuf;
   public:
-    gzstream(const char* filename_cstr, std::ios_base::openmode mode,
+    gzstream(const char* filename_cstr, std::ios::openmode mode,
              bool throw_exception) :
       std::iostream(0),
       itsBuf(filename_cstr, mode, throw_exception)
