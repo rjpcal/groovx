@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 29 17:32:36 2001
+// written: Sat Sep  1 09:56:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +55,111 @@ namespace
   const int TF_1 = 1;
   const int LF_2 = 2;
   const int MA_3 = 3;
+
+  struct BezData
+  {
+    Gfx::Vec3<double> pt0;
+    Gfx::Vec3<double> pt1;
+    Gfx::Vec3<double> pt2;
+    Gfx::Vec3<double> pt3;
+  };
+
+  void drawBezier(Gfx::Canvas& canvas, const BezData& bz, unsigned int subdiv)
+  {
+    canvas.drawBezier4(bz.pt0, bz.pt1, bz.pt2, bz.pt3, subdiv);
+  }
+
+  void drawNurbs(Gfx::Canvas& canvas,
+                 const dynamic_block<GLfloat>& knots,
+                 const dynamic_block<Pt3>& pts,
+                 unsigned int order)
+  {
+//      struct bspcontrol   *pts = bsd->pts;
+//      float               tx, ty, tw;
+    float               d, d1, d2, d3;
+//      int                 k;
+
+    int n = pts.size();
+
+    Assert(n > 4);
+
+    int nbz = n - 3;
+
+    const GLfloat* t = &knots[3];
+
+    dynamic_block<BezData> bz(nbz);
+
+//      bz[0].x0 = pts[0].x;
+//      bz[0].y0 = pts[0].y;
+//      bz[0].w0 = pts[0].w;
+    bz[0].pt0 = pts[0];
+//      bz[0].x1 = pts[1].x;
+//      bz[0].y1 = pts[1].y;
+//      bz[0].w1 = pts[1].w;
+    bz[0].pt1 = pts[1];
+
+//      d1 = pts[3].t - pts[2].t;
+//      d2 = pts[2].t - pts[1].t;
+    d1 = t[3] - t[2];
+    d2 = t[2] - t[1];
+
+    d = d1 + d2;
+
+//      bz[0].x2 = (d2 * pts[2].x + d1 * pts[1].x) / d;
+//      bz[0].y2 = (d2 * pts[2].y + d1 * pts[1].y) / d;
+//      bz[0].w2 = (d2 * pts[2].w + d1 * pts[1].w) / d;
+    bz[0].pt2 = (pts[2] * d2 + pts[1] * d1) / d;
+
+    int j = 2;
+    for ( /* */ ; j < n - 2; j++) {
+      d3 = d2;
+      d2 = d1;
+      if (j == n - 3)
+        d1 = 0;
+      else
+        {
+//          d1 = pts[j+2].t - pts[j+1].t;
+          d1 = t[j+2] - t[j+1];
+        }
+      d = d1 + d2 + d3;
+//        tx = (d3 * pts[j+1].x + (d1 + d2) * pts[j].x) / d;
+//        ty = (d3 * pts[j+1].y + (d1 + d2) * pts[j].y) / d;
+//        tw = (d3 * pts[j+1].w + (d1 + d2) * pts[j].w) / d;
+      Pt3 txyz = ( (pts[j+1] * d3) + (pts[j] * (d1+d2)) ) / d;
+
+//        bz[j-2].x3 = (d2 * bz[j-2].x2 + d3 * tx) / (d2 + d3);
+//        bz[j-2].y3 = (d2 * bz[j-2].y2 + d3 * ty) / (d2 + d3);
+//        bz[j-2].w3 = (d2 * bz[j-2].w2 + d3 * tw) / (d2 + d3);
+      bz[j-2].pt3 = (bz[j-2].pt2 * d2 + txyz * d3) / (d2+d3);
+//        bz[j-1].x0 = bz[j-2].x3;
+//        bz[j-1].y0 = bz[j-2].y3;
+//        bz[j-1].w0 = bz[j-2].w3;
+      bz[j-1].pt0 = bz[j-2].pt3;
+//        bz[j-1].x1 = tx;
+//        bz[j-1].y1 = ty;
+//        bz[j-1].w1 = tw;
+      bz[j-1].pt1 = txyz;
+//        bz[j-1].x2 = ((d2 + d3) * pts[j+1].x + d1 * pts[j].x) / d;
+//        bz[j-1].y2 = ((d2 + d3) * pts[j+1].y + d1 * pts[j].y) / d;
+//        bz[j-1].w2 = ((d2 + d3) * pts[j+1].w + d1 * pts[j].w) / d;
+      bz[j-1].pt2 = (pts[j+1] * (d2+d3) + pts[j] * d1) / d;
+    }
+//      bz[j-2].x2 = pts[n-2].x;
+//      bz[j-2].y2 = pts[n-2].y;
+//      bz[j-2].w2 = pts[n-2].w;
+    bz[j-2].pt2 = pts[n-2];
+//      bz[j-2].x3 = pts[n-1].x;
+//      bz[j-2].y3 = pts[n-1].y;
+//      bz[j-2].w3 = pts[n-1].w;
+    bz[j-2].pt3 = pts[n-1];
+
+    {
+      for (int i = 0; i < bz.size(); ++i)
+        {
+          drawBezier(canvas, bz[i], 20);
+        }
+    }
+  }
 }
 
 Util::Tracer Fish::tracer;
@@ -120,7 +226,7 @@ const FieldMap& Fish::classFields()
     Field("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
     Field("currentPart", &Fish::itsCurrentPart, 0, 0, 3, 1,
-			 Field::NEW_GROUP | Field::CHECKED),
+          Field::NEW_GROUP | Field::CHECKED),
 
     Field("currentEndPt", &Fish::itsCurrentEndPt, 0, 0, 3, 1, Field::CHECKED),
 
@@ -532,6 +638,8 @@ DOTRACE("Fish::grRender");
         }
         gluEndCurve(theNurb.ptr);
       }
+
+      drawNurbs(canvas, itsParts[i].itsKnots, ctrlpnts, itsParts[i].itsOrder);
 
       if (showControlPoints)
         {
