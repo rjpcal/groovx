@@ -3,7 +3,7 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Mon Oct 30 10:13:15 2000
+// written: Mon Oct 30 11:54:03 2000
 // $Id$
 //
 // This file defines a TclPkg to be used with IoPtrList's.
@@ -18,7 +18,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOPTRLIST_H_DEFINED)
-#include "ioptrlist.h"
+#include "io/ioptrlist.h"
 #endif
 
 namespace Tcl {

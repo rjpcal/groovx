@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Oct 30 11:23:31 2000
+// written: Mon Oct 30 11:53:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #include "tlistutils.h"
 
 #include "gtext.h"
-#include "ioptrlist.h"
 #include "position.h"
 #include "rect.h"
 #include "trial.h"
@@ -22,6 +21,7 @@
 #include "gwt/canvas.h"
 
 #include "io/iditem.h"
+#include "io/ioptrlist.h"
 
 #include "util/arrays.h"
 #include "util/error.h"

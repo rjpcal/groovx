@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Oct 27 16:31:22 2000
+// written: Mon Oct 30 11:53:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef IOPTRLIST_CC_DEFINED
 #define IOPTRLIST_CC_DEFINED
 
-#include "ioptrlist.h"
+#include "io/ioptrlist.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
