@@ -6,10 +6,13 @@ dnl $Revision$
 
 AC_INIT(grsh, [0.8a8], [rjpeters@klab.caltech.edu])
 
+AC_LANG(C++)
 
-dnl Checks for programs.
-dnl AC_PROG_CXX
-dnl AC_PROG_CC
+dnl Compiler checks.
+
+AC_PROG_CXX(g++-3 g++ c++)
+
+AC_CHECK_HEADERS(limits)
 
 dnl Checks for libraries.
 
