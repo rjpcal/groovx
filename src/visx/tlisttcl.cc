@@ -104,7 +104,7 @@ protected:
 	 int objid = getIntFromArg(2);
 	 int posid = getIntFromArg(3);
 
-	 TlistUtils::addObject(tlist, trial, objid, posid);
+	 TlistUtils::addObject(theTlist, trialid, objid, posid);
   }
 };
 
