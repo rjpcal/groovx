@@ -82,6 +82,17 @@ struct Gfx::Bbox::Impl
       cube.merge(txforms.back().apply_to(v));
   }
 
+  void mergeRaw(const vec3d& v)
+  {
+    if (first)
+      {
+        cube.set_corners(v, v);
+        first = false;
+      }
+    else
+      cube.merge(v);
+  }
+
   void merge(const vec2d& v)
   {
     merge(vec3d(v.x(), v.y(), 0.0));
@@ -180,10 +191,10 @@ void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
 {
   const vec3d o = rep->screenFromWorld3(vec3d(lower_left));
 
-  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.bottom_left())));
-  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.bottom_right())));
-  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.top_left())));
-  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.top_right())));
+  rep->mergeRaw(rep->worldFromScreen3(o+vec2d(screen_rect.bottom_left())));
+  rep->mergeRaw(rep->worldFromScreen3(o+vec2d(screen_rect.bottom_right())));
+  rep->mergeRaw(rep->worldFromScreen3(o+vec2d(screen_rect.top_left())));
+  rep->mergeRaw(rep->worldFromScreen3(o+vec2d(screen_rect.top_right())));
 }
 
 geom::box<double> Gfx::Bbox::cube() const
