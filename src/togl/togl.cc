@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jun 18 09:54:30 2002
+// written: Tue Jun 18 10:02:55 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -275,16 +275,6 @@ public:
 };
 
 
-/*
- * Prototypes for functions local to this file
- */
-#ifdef MESA_COLOR_HACK
-static int get_free_color_cells( Display *display, int screen,
-                                 Colormap colormap);
-static void free_default_color_cells( Display *display, Colormap colormap);
-#endif
-
-
 
 
 /*
@@ -416,9 +406,6 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
       /* use the default/root colormap */
       Colormap cmap;
       cmap = DefaultColormap( dpy, scrnum );
-#ifdef MESA_COLOR_HACK
-      (void) get_free_color_cells( dpy, scrnum, cmap);
-#endif
       return cmap;
     }
 
@@ -869,72 +856,6 @@ Colormap Togl::colormap() const
 
 Window Togl::windowId() const
   { return itsImpl->windowId(); }
-
-#ifdef MESA_COLOR_HACK
-
-#define RLEVELS     5
-#define GLEVELS     9
-#define BLEVELS     5
-
-/* to free dithered_rgb_colormap pixels allocated by Mesa */
-static unsigned long *ToglMesaUsedPixelCells = NULL;
-static int ToglMesaUsedFreeCells = 0;
-
-static int get_free_color_cells( Display *display, int screen,
-                                 Colormap colormap)
-{
-DOTRACE("<togl.cc>::get_free_color_cells");
-  if ( !ToglMesaUsedPixelCells)
-    {
-      XColor xcol;
-      int i;
-      int colorsfailed, ncolors = XDisplayCells( display, screen);
-
-      long r, g, b;
-
-      ToglMesaUsedPixelCells = ( unsigned long *)calloc( ncolors, sizeof( unsigned long));
-
-      /* Allocate X colors and initialize color_table[], red_table[], etc */
-      /* de Mesa 2.1: xmesa1.c setup_dithered_(...) */
-      i = colorsfailed = 0;
-      for (r = 0; r < RLEVELS; r++)
-        for (g = 0; g < GLEVELS; g++)
-          for (b = 0; b < BLEVELS; b++)
-            {
-              int exact;
-              xcol.red   = ( r*65535)/(RLEVELS-1);
-              xcol.green = ( g*65535)/(GLEVELS-1);
-              xcol.blue  = ( b*65535)/(BLEVELS-1);
-              noFaultXAllocColor( display, colormap, ncolors,
-                                  &xcol, &exact );
-              ToglMesaUsedPixelCells[ i++] = xcol.pixel;
-              if (!exact) {
-                colorsfailed++;
-              }
-            }
-      ToglMesaUsedFreeCells = i;
-
-      XFreeColors( display, colormap, ToglMesaUsedPixelCells,
-                   ToglMesaUsedFreeCells, 0x00000000);
-    }
-  return ToglMesaUsedFreeCells;
-}
-
-
-static void free_default_color_cells( Display *display, Colormap colormap)
-{
-DOTRACE("<togl.cc>::free_default_color_cells");
-  if ( ToglMesaUsedPixelCells)
-    {
-      XFreeColors( display, colormap, ToglMesaUsedPixelCells,
-                   ToglMesaUsedFreeCells, 0x00000000);
-      free( ( char *)ToglMesaUsedPixelCells);
-      ToglMesaUsedPixelCells = NULL;
-      ToglMesaUsedFreeCells = 0;
-    }
-}
-
-#endif // MESA_COLOR_HACK
 
 
 /*
@@ -1391,10 +1312,6 @@ DOTRACE("Togl::Impl::configure");
       || itsStencilSize != oldStencilSize
       || itsAuxNumber != oldAuxNumber)
     {
-#ifdef MESA_COLOR_HACK
-      free_default_color_cells( itsDisplay,
-                                colormap() );
-#endif
       /* Have to recreate the window and GLX context */
       if (makeWindowExist()==TCL_ERROR)
         {
