@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Wed Jun  6 09:28:41 2001
+// written: Thu Jul 19 16:36:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,11 +45,6 @@ public:
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;
 
-  /** This symbolic is used in place of an actual response value to
-      indicate that the response was invalid or could not be
-      determined. */
-  static const int INVALID_RESPONSE = -1;
-
   /** Will be called by a \c TrialBase at the beginning of a trial. \c
       ResponseHandler subclasses implement this function to prepare
       listening for responses, etc. */
@@ -72,7 +67,7 @@ public:
 
   /// Subclasses implement this function to attend to responses.
   virtual void rhAllowResponses(GWT::Widget& widget,
-										  TrialBase& trial) const = 0;
+                                TrialBase& trial) const = 0;
 
   /// Subclasses implement this function to stop attending to responses.
   virtual void rhDenyResponses() const = 0;
