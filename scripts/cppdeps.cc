@@ -95,6 +95,18 @@ namespace
     return fname.substr(0, pos);
   }
 
+  string trim_trailing_slashes(const string& inp)
+  {
+    string result = inp;
+
+    while (result.length() > 1 && result[result.length()-1] == '/')
+      {
+        result.erase(result.length()-1,1);
+      }
+
+    return result;
+  }
+
   // make a normalized pathname from the given input, by making the
   // following transformations:
   //   (1) "/./"          --> "/"
@@ -286,8 +298,6 @@ public:
 
   void inspect();
 
-  static string trim_filename(const string& inp);
-
   int is_cc_filename(const char* fname);
 
   int is_cc_or_h_filename(const char* fname);
@@ -320,6 +330,7 @@ cppdeps::cppdeps(int argc, char** argv) :
          "options:\n"
          "    --includedir [dir]    specify a directory to be searched when resolving\n"
          "                          #include \"...\" directives\n"
+         "    --I[dir]              same as --includedir [dir]\n"
          "    --sysincludedir [dir] specify a directory to be searched when resolving\n"
          "                          #include <...> directives\n"
          "    --objdir [dir]        specify a path prefix indicating where the object\n"
@@ -352,11 +363,15 @@ cppdeps::cppdeps(int argc, char** argv) :
 
   ++argv; // skip to first command-line arg
 
-  while (*argv != 0)
+  for ( ; *argv != 0; ++argv)
     {
       if (strcmp(*argv, "--includedir") == 0)
         {
           m_user_ipath.push_back(*++argv);
+        }
+      if (strncmp(*argv, "-I", 2) == 0)
+        {
+          m_user_ipath.push_back((*argv) + 2);
         }
       else if (strcmp(*argv, "--sysincludedir") == 0)
         {
@@ -364,7 +379,7 @@ cppdeps::cppdeps(int argc, char** argv) :
         }
       else if (strcmp(*argv, "--objdir") == 0)
         {
-          m_objdir = trim_filename(*++argv);
+          m_objdir = trim_trailing_slashes(*++argv);
         }
       else if (strcmp(*argv, "--checksys") == 0)
         {
@@ -389,7 +404,7 @@ cppdeps::cppdeps(int argc, char** argv) :
       // treat any unrecognized arguments as src files
       else
         {
-          const string fname = trim_filename(*argv);
+          const string fname = trim_trailing_slashes(*argv);
           if (!file_exists(fname.c_str()))
             {
               cerr << "ERROR: no such source file: '" << fname << "'\n";
@@ -402,7 +417,6 @@ cppdeps::cppdeps(int argc, char** argv) :
               m_strip_prefix = fname;
             }
         }
-      ++argv;
     }
 }
 
@@ -421,22 +435,6 @@ void cppdeps::inspect()
     cerr << '\t' << m_src_files[i] << '\n';
 
   cerr << "\nobjdir: " << m_objdir << '\n';
-}
-
-string cppdeps::trim_filename(const string& inp)
-{
-  string result = inp;
-  if (result[0] == '.' && result[1] == '/')
-    {
-      result.erase(0,2);
-    }
-
-  while (result.length() > 1 && result[result.length()-1] == '/')
-    {
-      result.erase(result.length()-1,1);
-    }
-
-  return result;
 }
 
 int cppdeps::is_cc_filename(const char* fname)
