@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Jun 30 10:23:05 1999
+// written: Thu Jul  1 13:45:29 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -69,6 +69,8 @@ public:
   // accessors //
   ///////////////
 
+  bool getUsingCompile() const;
+
   virtual int getCategory() const = 0;
   // getCategory and setCategory are used to manipulate some
   // user-defined categories that can be used to classify different
@@ -77,6 +79,8 @@ public:
   //////////////////
   // manipulators //
   //////////////////
+
+  void setUsingCompile(bool val);
 
   virtual void setCategory(int val) = 0;
   
@@ -105,12 +109,18 @@ public:
   // and background colors first.
 
 protected:
-  virtual void grRecompile() const = 0;
-  // This function must be overridden in the derived classes, and
-  // should arrange for an appropriate display list to be compiled
-  // that can render the object.
+  virtual void grRender() const = 0;
+  // This function must be overridden in derived classes to execute
+  // the actual OpenGL commands that render the object.
 
-  bool grIsCurrent() const { return itsIsCurrent; }
+  virtual void grRecompile() const;
+  // This function should arrange for an up-to-date GL display list to
+  // be compiled that will draw the object. This function may be
+  // overridden in the derived classes, but it defaults to simply
+  // creating a new display list, then compiling it with the effects
+  // of grRender().
+
+  bool grIsCurrent() const;
   void grPostUpdated() const;
   // These functions manipulate whether the GrObj is considered
   // current: the GrObj is current if its OpenGL display list is in
@@ -132,6 +142,7 @@ protected:
 
 private:
   mutable bool itsIsCurrent;    // true if displaylist is current
+  mutable bool itsUsingCompile; // true if GrObj is to be compiled before draw
   mutable int itsDisplayList;   // OpenGL display list that draws the object
 };
 
