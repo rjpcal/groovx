@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 21 13:28:55 2002
+// written: Mon Jan 21 13:41:20 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -69,8 +69,6 @@ class ostream;
 //                long           tv_usec;  /* and microseconds */
 //            };
 
-
-const char* const TRACE_TAB = "  ";
 
 namespace Util
 {
