@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:32:35 2001
-// written: Thu Jul 12 12:21:45 2001
+// written: Thu Aug  9 18:42:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ DOTRACE("Tcl::List::List");
   split();
 }
 
-Tcl::List::List(Tcl_Obj* listObj) :
+Tcl::List::List(Tcl::ObjPtr listObj) :
   itsList(listObj),
   itsElements(0),
   itsLength(0)
@@ -46,8 +46,7 @@ void Tcl::List::split() const
 DOTRACE("Tcl::List::split");
 
   int count;
-  if ( Tcl_ListObjGetElements(0, itsList, &count, &itsElements)
-       != TCL_OK)
+  if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements) != TCL_OK)
     {
       throw Tcl::TclError("couldn't split Tcl list");
     }
@@ -56,15 +55,14 @@ DOTRACE("Tcl::List::split");
   itsLength = (unsigned int) count;
 }
 
-void Tcl::List::doAppend(Tcl_Obj* obj, unsigned int times)
+void Tcl::List::doAppend(Tcl::ObjPtr obj, unsigned int times)
 {
 DOTRACE("Tcl::List::doAppend");
 
   itsList.ensureUnique();
 
   while (times--)
-    if ( Tcl_ListObjAppendElement(0, itsList, obj)
-         != TCL_OK )
+    if ( Tcl_ListObjAppendElement(0, itsList.obj(), obj.obj()) != TCL_OK )
       {
         throw Tcl::TclError("couldn't append to Tcl list");
       }

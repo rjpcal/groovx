@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Mon Jul 16 13:02:01 2001
+// written: Thu Aug  9 18:44:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ public:
 
   virtual ~VecContext()
   {
-    Tcl::Context::setObjResult(itsResult.asObj());
+    Tcl::Context::setObjResult(itsResult);
   }
 
   void next()
@@ -78,7 +78,7 @@ protected:
     return *(itsArgs.at(argn));
   }
 
-  virtual void setObjResult(Tcl_Obj* obj)
+  virtual void setObjResult(Tcl::ObjPtr obj)
   {
     itsResult.append(obj);
   }

@@ -472,10 +472,10 @@ Tcl::Context::Context(Tcl_Interp* interp,
 Tcl::Context::~Context()
 {}
 
-void Tcl::Context::setObjResult(Tcl_Obj* obj)
+void Tcl::Context::setObjResult(Tcl::ObjPtr obj)
 {
 DOTRACE("Tcl::Context::setObjResult");
-  Tcl_SetObjResult(itsInterp, obj);
+  Tcl_SetObjResult(itsInterp, obj.obj());
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:47:29 2001
-// written: Thu Aug  9 17:48:22 2001
+// written: Thu Aug  9 18:41:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace Tcl
       return Point<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0));
     }
 
-    static Tcl_Obj* toTcl( const Point<T>& point )
+    static Tcl::ObjPtr toTcl( const Point<T>& point )
     {
       Tcl::List listObj;
       listObj.append(point.x());
@@ -55,7 +55,7 @@ namespace Tcl
       return Convert<const Point<T>&>::fromTcl(obj);
     }
 
-    static Tcl_Obj* toTcl( Point<T> point )
+    static Tcl::ObjPtr toTcl( Point<T> point )
     {
       return Convert<const Point<T>&>::toTcl(point);
     }

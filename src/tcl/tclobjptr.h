@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Tue Aug  7 11:12:52 2001
+// written: Thu Aug  9 18:52:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,9 +38,17 @@ public:
   /// Default constructor with a shared and empty Tcl_Obj*.
   ObjPtr();
 
+  /// Construct with a Tcl_Obj*.
+  ObjPtr(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
+
   /// Construct with automatic conversion from a C++ type.
   template <class T>
-  ObjPtr(T t) : itsObj(Tcl::Convert<T>::toTcl(t)) { incrRef(itsObj); }
+  ObjPtr(T t) : itsObj(0)
+  {
+    ObjPtr temp(Tcl::Convert<T>::toTcl(t));
+    itsObj = temp.obj();
+    incrRef(itsObj);
+  }
 
   /// Destructor.
   ~ObjPtr() { decrRef(itsObj); }
@@ -65,9 +73,6 @@ public:
     }
 
   typedef Tcl_Obj* Tcl_ObjPtr;
-
-  /// Conversion operator to Tcl_Obj*.
-  operator Tcl_ObjPtr() { return itsObj; }
 
   Tcl_Obj* obj() { return itsObj; }
 

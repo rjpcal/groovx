@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Jul 22 18:05:40 2001
+// written: Thu Aug  9 18:46:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
+#include "tcl/tclobjptr.h"
 #endif
 
 struct Tcl_Interp;
@@ -163,7 +167,7 @@ protected:
   virtual Tcl_Obj* getObjv(unsigned int n) { return itsObjv[n]; }
 
   /// Return a Tcl_Obj*.
-  virtual void setObjResult(Tcl_Obj* obj);
+  virtual void setObjResult(Tcl::ObjPtr obj);
 
 private:
   Context(const Context&);

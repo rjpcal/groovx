@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Thu Aug  9 07:06:03 2001
+// written: Thu Aug  9 18:31:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,13 +79,13 @@ void Tcl::Interp::forgetInterp()
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::Interp::evalBooleanExpr(Tcl_Obj* obj) const
+bool Tcl::Interp::evalBooleanExpr(Tcl::ObjPtr obj) const
 {
 DOTRACE("Tcl::Interp::evalBooleanExpr");
 
   int expr_result;
 
-  if (Tcl_ExprBooleanObj(intp(), obj, &expr_result) != TCL_OK)
+  if (Tcl_ExprBooleanObj(intp(), obj.obj(), &expr_result) != TCL_OK)
     {
       handleError("error evaluating boolean expression");
     }
@@ -139,13 +139,12 @@ DOTRACE("Tcl::Interp::getObjResult");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::Interp::setGlobalVar(const char* var_name,
-                                   Tcl::ObjPtr var) const
+void Tcl::Interp::setGlobalVar(const char* var_name, Tcl::ObjPtr var) const
 {
 DOTRACE("Tcl::Interp::setGlobalVar");
 
   if (Tcl_SetVar2Ex(intp(), const_cast<char*>(var_name), /*name2*/0,
-                    var, TCL_GLOBAL_ONLY) == 0)
+                    var.obj(), TCL_GLOBAL_ONLY) == 0)
     {
       handleError("couldn't set global variable");
     }

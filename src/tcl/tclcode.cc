@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Thu Aug  9 07:11:40 2001
+// written: Thu Aug  9 18:28:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,10 +58,9 @@ bool Tcl::Code::invoke(Tcl_Interp* interp)
   if (interp == 0)
     throw EvalError("Tcl_Interp* was null in Tcl::Code::invoke");
 
-  if ( Tcl_EvalObjEx(interp, itsCodeObj, itsFlags)
-       != TCL_OK )
+  if ( Tcl_EvalObjEx(interp, itsCodeObj.obj(), itsFlags) != TCL_OK )
     {
-      EvalError err(itsCodeObj);
+      EvalError err(itsCodeObj.obj());
 
       if (itsErrHandler != 0)
         {

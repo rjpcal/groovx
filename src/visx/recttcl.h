@@ -38,7 +38,7 @@ namespace Tcl
                      listObj.get(2, (T*)0), listObj.get(3, (T*)0));
     }
 
-    static Tcl_Obj* toTcl( const Rect<T>& rect )
+    static Tcl::ObjPtr toTcl( const Rect<T>& rect )
     {
       Tcl::List listObj;
       listObj.append(rect.left());
@@ -58,7 +58,7 @@ namespace Tcl
 		return Convert<const Rect<T>&>::fromTcl(obj);
 	 }
 
-    static Tcl_Obj* toTcl( Rect<T> rect )
+    static Tcl::ObjPtr toTcl( Rect<T> rect )
     {
 		return Convert<const Rect<T>&>::toTcl(rect);
     }

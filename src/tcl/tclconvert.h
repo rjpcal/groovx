@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Tue Aug  7 15:40:00 2001
+// written: Thu Aug  9 18:38:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@ struct TypeCue
 
 namespace Tcl
 {
+  class ObjPtr;
 
   template <class T>
   struct Return
@@ -59,14 +60,14 @@ namespace Tcl
     static Return<T>::Type   fromTcl( Tcl_Obj* obj );
 
     /// Convert the C++ object to Tcl.
-    static Tcl_Obj*            toTcl( T val );
+    static Tcl::ObjPtr         toTcl( T val );
   };
 
   template <>
-  inline Tcl_Obj* Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj ) { return obj; }
+  Tcl_Obj*  Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj );
 
   template <>
-  inline Tcl_Obj* Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val ) { return val; }
+  Tcl::ObjPtr Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val );
 }
 
 static const char vcid_tclconvert_h[] = "$Header$";

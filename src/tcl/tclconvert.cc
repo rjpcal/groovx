@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Thu Aug  9 07:02:05 2001
+// written: Thu Aug  9 18:50:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclobjptr.h"
 #include "tcl/tclvalue.h"
 
 #include "util/strings.h"
@@ -77,6 +78,17 @@ namespace
     if (t < 0)
       throw Tcl::TclError("signed/unsigned conversion failed");
   }
+}
+
+template <>
+Tcl_Obj* Tcl::Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj ) { return obj; }
+
+template <>
+Tcl::ObjPtr Tcl::Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val )
+{
+  Tcl::ObjPtr result;
+  result = val;
+  return result;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -233,7 +245,7 @@ DOTRACE("Tcl::Convert<Tcl::List>::fromTcl");
 ///////////////////////////////////////////////////////////////////////
 
 template <>
-Tcl_Obj* Tcl::Convert<long>::toTcl(long val)
+Tcl::ObjPtr Tcl::Convert<long>::toTcl(long val)
 {
 DOTRACE("Tcl::Convert<long>::toTcl");
 
@@ -241,7 +253,7 @@ DOTRACE("Tcl::Convert<long>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<unsigned long>::toTcl(unsigned long val)
+Tcl::ObjPtr Tcl::Convert<unsigned long>::toTcl(unsigned long val)
 {
 DOTRACE("Tcl::Convert<unsigned long>::toTcl");
 
@@ -253,7 +265,7 @@ DOTRACE("Tcl::Convert<unsigned long>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<int>::toTcl(int val)
+Tcl::ObjPtr Tcl::Convert<int>::toTcl(int val)
 {
 DOTRACE("Tcl::Convert<int>::toTcl");
 
@@ -261,7 +273,7 @@ DOTRACE("Tcl::Convert<int>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<unsigned int>::toTcl(unsigned int val)
+Tcl::ObjPtr Tcl::Convert<unsigned int>::toTcl(unsigned int val)
 {
 DOTRACE("Tcl::Convert<unsigned int>::toTcl");
 
@@ -273,7 +285,7 @@ DOTRACE("Tcl::Convert<unsigned int>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<unsigned char>::toTcl(unsigned char val)
+Tcl::ObjPtr Tcl::Convert<unsigned char>::toTcl(unsigned char val)
 {
 DOTRACE("Tcl::Convert<unsigne char>::toTcl");
 
@@ -281,7 +293,7 @@ DOTRACE("Tcl::Convert<unsigne char>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<bool>::toTcl(bool val)
+Tcl::ObjPtr Tcl::Convert<bool>::toTcl(bool val)
 {
 DOTRACE("Tcl::Convert<bool>::toTcl");
 
@@ -289,7 +301,7 @@ DOTRACE("Tcl::Convert<bool>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<double>::toTcl(double val)
+Tcl::ObjPtr Tcl::Convert<double>::toTcl(double val)
 {
 DOTRACE("Tcl::Convert<double>::toTcl");
 
@@ -297,7 +309,7 @@ DOTRACE("Tcl::Convert<double>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<float>::toTcl(float val)
+Tcl::ObjPtr Tcl::Convert<float>::toTcl(float val)
 {
 DOTRACE("Tcl::Convert<float>::toTcl");
 
@@ -305,7 +317,7 @@ DOTRACE("Tcl::Convert<float>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<const char*>::toTcl(const char* val)
+Tcl::ObjPtr Tcl::Convert<const char*>::toTcl(const char* val)
 {
 DOTRACE("Tcl::Convert<const char*>::toTcl");
 
@@ -313,7 +325,7 @@ DOTRACE("Tcl::Convert<const char*>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<char*>::toTcl(char* val)
+Tcl::ObjPtr Tcl::Convert<char*>::toTcl(char* val)
 {
 DOTRACE("Tcl::Convert<char*>::toTcl");
 
@@ -321,7 +333,7 @@ DOTRACE("Tcl::Convert<char*>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<fstring>::toTcl(fstring val)
+Tcl::ObjPtr Tcl::Convert<fstring>::toTcl(fstring val)
 {
 DOTRACE("Tcl::Convert<fstring>::toTcl");
 
@@ -329,7 +341,7 @@ DOTRACE("Tcl::Convert<fstring>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<const fstring&>::toTcl(const fstring& val)
+Tcl::ObjPtr Tcl::Convert<const fstring&>::toTcl(const fstring& val)
 {
 DOTRACE("Tcl::Convert<const fstring&>::toTcl");
 
@@ -337,25 +349,16 @@ DOTRACE("Tcl::Convert<const fstring&>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<const Value&>::toTcl(const Value& val)
+Tcl::ObjPtr Tcl::Convert<const Value&>::toTcl(const Value& val)
 {
 DOTRACE("Tcl::Convert<const Value&>::toTcl");
 
-  Tcl_Obj* obj = 0;
-
-  {
-    TclValue tval(val);
-    obj = tval.getObj();
-    ++(obj->refCount);
-  }
-
-  --(obj->refCount);
-
-  return obj;
+  TclValue tval(val);
+  return tval.getObj();
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<Tcl::List>::toTcl(Tcl::List listObj)
+Tcl::ObjPtr Tcl::Convert<Tcl::List>::toTcl(Tcl::List listObj)
 {
 DOTRACE("Tcl::Convert<const Value&>::toTcl");
 
@@ -363,7 +366,7 @@ DOTRACE("Tcl::Convert<const Value&>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<Tcl::TclValue>::toTcl(Tcl::TclValue val)
+Tcl::ObjPtr Tcl::Convert<Tcl::TclValue>::toTcl(Tcl::TclValue val)
 {
 DOTRACE("Tcl::Convert<Tcl::TclValue>::toTcl");
 
@@ -371,7 +374,7 @@ DOTRACE("Tcl::Convert<Tcl::TclValue>::toTcl");
 }
 
 template <>
-Tcl_Obj* Tcl::Convert<Tcl::ObjPtr>::toTcl(Tcl::ObjPtr val)
+Tcl::ObjPtr Tcl::Convert<Tcl::ObjPtr>::toTcl(Tcl::ObjPtr val)
 {
 DOTRACE("Tcl::Convert<Tcl::ObjPtr>::toTcl");
 

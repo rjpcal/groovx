@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:09:12 2001
-// written: Thu Aug  9 07:06:03 2001
+// written: Thu Aug  9 18:30:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,11 +29,11 @@ namespace
   {
     const int flags = 0;
     // OK to pass Tcl_Interp*==0
-    Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj, flags);
+    Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj.obj(), flags);
     if (!regexp)
       {
         throw Tcl::TclError(fstring("error getting a Tcl_RegExp from '",
-                                    Tcl_GetString(patternObj), "'"));
+                                    Tcl_GetString(patternObj.obj()), "'"));
       }
     return regexp;
   }

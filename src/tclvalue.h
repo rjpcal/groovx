@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu Aug  9 07:32:49 2001
+// written: Thu Aug  9 18:40:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public:
   virtual ~TclValue();
 
   /// Get the \c Tcl_Obj used as the internal representation.
-  Tcl_Obj* getObj() const { return itsObjPtr.obj(); }
+  Tcl::ObjPtr getObj() const { return itsObjPtr; }
 
   /// Assignment operator.
   TclValue& operator=(const TclValue& other)
