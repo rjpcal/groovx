@@ -62,6 +62,8 @@ namespace Debug
 
   int createKey(const char* filename);
 
+  /// Get the debug key associated with the given filename.
+  /** Returns -1 if the filename is not registered. */
   int lookupKey(const char* filename);
 
   void setGlobalLevel(int lev);
