@@ -50,6 +50,127 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+namespace WindowSystem
+{
+  void winInfo(Tk_Window tkWin);
+  void iconify(Tk_Window tkWin);
+  void grabKeyboard(Tk_Window tkWin);
+  void ungrabKeyboard(Tk_Window tkWin);
+}
+
+#if defined(GL_PLATFORM_GLX)
+
+void WindowSystem::winInfo(Tk_Window tkWin)
+{
+DOTRACE("WindowSystem::winInfo[glx]");
+  Display* dpy = Tk_Display(tkWin);
+
+  int natoms = 0;
+  Atom* atoms = XListProperties(dpy, Tk_WindowId(tkWin),
+                                &natoms);
+
+  fprintf(stderr, "%d atoms\n", natoms);
+
+  for (int i = 0; i < natoms; ++i)
+    {
+      const char* name = XGetAtomName(dpy, atoms[i]);
+
+      fprintf(stderr, "[%d] %s\n", i, name);
+
+      long long_offset = 0;
+      long long_length = 16;
+
+      Atom actual_type_return = 0;
+      int actual_format_return = 0;
+      unsigned long nitems_return = 0;
+      unsigned long bytes_after_return = 0;
+      unsigned char* prop_return = 0;
+
+      XGetWindowProperty(dpy, Tk_WindowId(tkWin),
+                         atoms[i],
+                         long_offset,
+                         long_length,
+                         False,
+                         AnyPropertyType,
+                         &actual_type_return,
+                         &actual_format_return,
+                         &nitems_return,
+                         &bytes_after_return,
+                         &prop_return);
+
+      XFree(prop_return);
+    }
+
+  XFree(atoms);
+}
+
+void WindowSystem::iconify(Tk_Window tkWin)
+{
+DOTRACE("WindowSystem::iconify[glx]");
+  XIconifyWindow(Tk_Display(tkWin),
+                 Tk_WindowId(tkWin),
+                 Tk_ScreenNumber(tkWin));
+}
+
+void WindowSystem::grabKeyboard(Tk_Window tkWin)
+{
+DOTRACE("WindowSystem::grabKeyboard[glx]");
+  const int result =
+    XGrabKeyboard(Tk_Display(tkWin),
+                  Tk_WindowId(tkWin),
+                  False /* don't send key events to their normal windows */,
+                  GrabModeAsync /* pointer mode */,
+                  GrabModeAsync /* keyboard mode */,
+                  CurrentTime /* when grab should take place */);
+
+  switch (result)
+    {
+    case AlreadyGrabbed:
+      throw Util::Error("couldn't grab keyboard: keyboard already grabbed");
+    case GrabNotViewable:
+      throw Util::Error("couldn't grab keyboard: grab window not viewable");
+    case GrabInvalidTime:
+      throw Util::Error("couldn't grab keyboard: grab time invalid");
+    case GrabFrozen:
+      throw Util::Error("couldn't grab keyboard: pointer already frozen");
+    }
+}
+
+void WindowSystem::ungrabKeyboard(Tk_Window tkWin)
+{
+DOTRACE("WindowSystem::ungrabKeyboard[glx]");
+  XUngrabKeyboard(Tk_Display(tkWin), CurrentTime);
+}
+
+#elif defined(GL_PLATFORM_AGL)
+
+void WindowSystem::winInfo(Tk_Window /*tkWin*/)
+{
+DOTRACE("WindowSystem::winInfo[agl]");
+  // FIXME
+  throw Util::Error("WindowSystem::winInfo not supported");
+}
+
+void WindowSystem::iconify(Tk_Window /*tkWin*/)
+{
+DOTRACE("WindowSystem::iconify[agl]");
+  // FIXME
+  throw Util::Error("WindowSystem::iconify not supported");
+}
+
+void WindowSystem::grabKeyboard(Tk_Window /*tkWin*/)
+{
+DOTRACE("WindowSystem::grabKeyboard[agl]");
+  // don't need to do anything to grab keyboard with Mac OS X Aqua
+}
+
+void WindowSystem::ungrabKeyboard(Tk_Window /*tkWin*/)
+{
+DOTRACE("WindowSystem::ungrabKeyboard[agl]");
+  // don't need to do anything to (un)grab keyboard with Mac OS X Aqua
+}
+
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -186,7 +307,6 @@ void TkWidgImpl::keyEventProc(XKeyEvent* eventPtr)
 {
 DOTRACE("TkWidgImpl::keyEventProc");
 
-#if defined(GL_PLATFORM_GLX)
   const bool controlPressed = eventPtr->state & ControlMask;
 
   // Need to save and later restore the event "state" in order that
@@ -199,18 +319,19 @@ DOTRACE("TkWidgImpl::keyEventProc");
   eventPtr->state &= ~ControlMask;
 
   char buf[32];
+#if defined(GL_PLATFORM_GLX)
   const int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
   buf[len] = '\0';
+#elif defined(GL_PLATFORM_AGL)
+  strncpy(buf, eventPtr->trans_chars, 31);
+  buf[31] = '\0';
+#endif
 
   // Restore the state
   eventPtr->state = saveState;
 
   GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
   owner->sigKeyPressed.emit(ev);
-#else
-  throw Util::Error("keyEventProc not supported");
-  (void) eventPtr;
-#endif
 }
 
 void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent) throw()
@@ -399,49 +520,7 @@ void Tcl::TkWidget::winInfo() throw()
 {
 DOTRACE("Tcl::TkWidget::winInfo");
 
-#if defined(GL_PLATFORM_GLX)
-  Display* dpy = Tk_Display(rep->tkWin);
-
-  int natoms = 0;
-  Atom* atoms = XListProperties(dpy, Tk_WindowId(rep->tkWin),
-                                &natoms);
-
-  fprintf(stderr, "%d atoms\n", natoms);
-
-  for (int i = 0; i < natoms; ++i)
-    {
-      const char* name = XGetAtomName(dpy, atoms[i]);
-
-      fprintf(stderr, "[%d] %s\n", i, name);
-
-      long long_offset = 0;
-      long long_length = 16;
-
-      Atom actual_type_return = 0;
-      int actual_format_return = 0;
-      unsigned long nitems_return = 0;
-      unsigned long bytes_after_return = 0;
-      unsigned char* prop_return = 0;
-
-      XGetWindowProperty(dpy, Tk_WindowId(rep->tkWin),
-                         atoms[i],
-                         long_offset,
-                         long_length,
-                         False,
-                         AnyPropertyType,
-                         &actual_type_return,
-                         &actual_format_return,
-                         &nitems_return,
-                         &bytes_after_return,
-                         &prop_return);
-
-      XFree(prop_return);
-    }
-
-  XFree(atoms);
-#else
-  throw Util::Error("TkWidget::winInfo not supported");
-#endif
+  WindowSystem::winInfo(rep->tkWin);
 }
 
 Tcl::Interp& Tcl::TkWidget::interp() const
@@ -465,12 +544,11 @@ double Tcl::TkWidget::pixelsPerInch() const
 {
 DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
-#if defined(GL_PLATFORM_GLX)
   Assert(rep->tkWin != 0);
 
   Screen* scr = Tk_Screen(rep->tkWin);
-  const int screen_pixel_width = XWidthOfScreen(scr);
-  const int screen_mm_width = XWidthMMOfScreen(scr);
+  const int screen_pixel_width = WidthOfScreen(scr);
+  const int screen_mm_width = WidthMMOfScreen(scr);
 
   const double screen_inch_width = screen_mm_width / 25.4;
 
@@ -478,9 +556,6 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
   dbgEvalNL(3, screen_ppi);
   return screen_ppi;
-#else
-  throw Util::Error("TkWidget::pixelsPerInch not supported");
-#endif
 }
 
 void Tcl::TkWidget::setCursor(const char* cursor_spec)
@@ -529,16 +604,12 @@ void Tcl::TkWidget::warpPointer(int x, int y) const
 {
 DOTRACE("Tcl::TkWidget::warpPointer");
 
-#if defined(GL_PLATFORM_GLX)
+  // NOTE: The XWarpPointer emulation routine provided by Tk for Mac OS X
+  // Aqua currently does nothing (as of Tk 8.5a1).
   XWarpPointer(Tk_Display(rep->tkWin),
                0, Tk_WindowId(rep->tkWin),
                0, 0, 0, 0,
                x, y);
-#else
-  throw Util::Error("TkWidget::warpPointer not supported");
-  (void) x;
-  (void) y;
-#endif
 }
 
 void Tcl::TkWidget::pack()
@@ -580,39 +651,14 @@ void Tcl::TkWidget::iconify()
 {
 DOTRACE("Tcl::TkWidget::iconify");
 
-#if defined(GL_PLATFORM_GLX)
-  XIconifyWindow(Tk_Display(rep->tkWin),
-                 Tk_WindowId(rep->tkWin),
-                 Tk_ScreenNumber(rep->tkWin));
-#else
-  throw Util::Error("TkWidget::iconify not supported");
-#endif
+  WindowSystem::iconify(rep->tkWin);
 }
 
 void Tcl::TkWidget::grabKeyboard()
 {
 DOTRACE("Tcl::TkWidget::grabKeyboard");
 
-#if defined(GL_PLATFORM_GLX)
-  const int result =
-    XGrabKeyboard(Tk_Display(rep->tkWin),
-                  Tk_WindowId(rep->tkWin),
-                  False /* don't send key events to their normal windows */,
-                  GrabModeAsync /* pointer mode */,
-                  GrabModeAsync /* keyboard mode */,
-                  CurrentTime /* when grab should take place */);
-
-  switch (result)
-    {
-    case AlreadyGrabbed:
-      throw Util::Error("couldn't grab keyboard: keyboard already grabbed");
-    case GrabNotViewable:
-      throw Util::Error("couldn't grab keyboard: grab window not viewable");
-    case GrabInvalidTime:
-      throw Util::Error("couldn't grab keyboard: grab time invalid");
-    case GrabFrozen:
-      throw Util::Error("couldn't grab keyboard: pointer already frozen");
-    }
+  WindowSystem::grabKeyboard(rep->tkWin);
 
   // Oddly enough, we can't just call takeFocus() directly here. In
   // particular, we run into problems if grabKeyboard() is called from an
@@ -623,37 +669,21 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
   // is completely finished processing the EnterNotify event.
   Tcl_DoWhenIdle(TkWidgImpl::cTakeFocusCallback,
                  static_cast<ClientData>(this));
-
-#elif defined(GL_PLATFORM_AGL)
-  // don't need to do anything to grab keyboard with Mac OS X Aqua
-
-#else
-#  error no GL_PLATFORM macro defined
-#endif
 }
 
 void Tcl::TkWidget::ungrabKeyboard()
 {
 DOTRACE("Tcl::TkWidget::ungrabKeyboard");
 
-#if defined(GL_PLATFORM_GLX)
-  XUngrabKeyboard(Tk_Display(rep->tkWin), CurrentTime);
-
-#elif defined(GL_PLATFORM_AGL)
-  // don't need to do anything to (un)grab keyboard with Mac OS X Aqua
-
-#else
-#  error no GL_PLATFORM macro defined
-#endif
+  WindowSystem::ungrabKeyboard(rep->tkWin);
 }
 
 void Tcl::TkWidget::maximize()
 {
 DOTRACE("Tcl::TkWidget::maximize");
 
-#if defined(GL_PLATFORM_GLX)
-  const int w = XWidthOfScreen(Tk_Screen(rep->tkWin));
-  const int h = XHeightOfScreen(Tk_Screen(rep->tkWin));
+  const int w = WidthOfScreen(Tk_Screen(rep->tkWin));
+  const int h = HeightOfScreen(Tk_Screen(rep->tkWin));
   setSize(Gfx::Vec2<int>(w, h));
 
   Tk_Window mainWin = rep->tkWin;
@@ -665,9 +695,6 @@ DOTRACE("Tcl::TkWidget::maximize");
   Tk_MoveToplevelWindow(mainWin, 0, 0);
 
   grabKeyboard();
-#else
-  throw Util::Error("TkWidget::maximize not supported");
-#endif
 }
 
 void Tcl::TkWidget::minimize()
