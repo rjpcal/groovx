@@ -193,27 +193,16 @@ BEZIER_H = bezier.h
 DEBUG_H = debug.h
 ERRMSG_H = errmsg.h
 ERROR_H = error.h
-EXPTTCL_H = expttcl.h
-FACETCL_H = facetcl.h
 GFXATTRIBS_H = gfxattribs.h
-GROBJTCL_H = grobjtcl.h
 ID_H = id.h
 IOUTILS_H = ioutils.h
-JITTERTCL_H = jittertcl.h
-MISCTCL_H = misctcl.h
-OBJLISTTCL_H = objlisttcl.h
-POSLISTTCL_H = poslisttcl.h
 OBJTOGL_H = objtogl.h
 OBSERVABLE_H = observable.h
 OBSERVER_H = observer.h
-POSITIONTCL_H = positiontcl.h
-POSLISTTCL_H = poslisttcl.h
 RAND_H = rand.h
 RANDUTILS_H = randutils.h
 RECT_H = rect.h
-SOUNDTCL_H = soundtcl.h
 STLUTILS_H = stlutils.h
-TCLGL_H = tclgl.h
 TCLLINK_H = tcllink.h
 TCLOBJLOCK_H = tclobjlock.h
 TCLPKG_H = tclpkg.h
@@ -321,7 +310,7 @@ EXPTDRIVER_CC = $(EXPTDRIVER_H) $(TCLERROR_H) $(EXPT_H) $(OBJTOGL_H) \
 	$(TRIAL_H) $(OBJLIST_H) $(POSLIST_H) $(BLOCKLIST_H) $(RHLIST_H) \
 	$(THLIST_H) $(TLIST_H) $(TIMEUTILS_H) $(TRACE_H) $(DEBUG_H) exptdriver.cc
 
-EXPTTCL_CC = $(EXPTTCL_H) $(TCLEVALCMD_H) $(EXPTDRIVER_H) \
+EXPTTCL_CC = $(TCLEVALCMD_H) $(EXPTDRIVER_H) \
 	$(TCLITEMPKG_H) $(TCLCMD_H) $(OBJTOGL_H) $(TOGLCONFIG_H) \
 	$(TRACE_H) $(DEBUG_H) expttcl.cc
 
@@ -329,11 +318,11 @@ EXPTTESTTCL_CC = $(TCLLINK_H) expttesttcl.cc
 
 FACE_CC = $(FACE_H) $(GFXATTRIBS_H) $(TRACE_H) $(DEBUG_H) face.cc
 
-FACETCL_CC = $(FACETCL_H) $(CLONEFACE_H) $(IOMGR_H) $(OBJLIST_H) \
+FACETCL_CC = $(CLONEFACE_H) $(IOMGR_H) $(OBJLIST_H) \
 	$(FACE_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) facetcl.cc
 
-FISH_CC = $(FISH_H) $(ERROR_H) fish.cc
+FISH_CC = $(FISH_H) $(ERROR_H) $(TRACE_H) $(DEBUG_H) fish.cc
 
 FISHTCL_CC = $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
 
@@ -349,7 +338,7 @@ GLBITMAP_CC = $(GLBITMAP_H) $(TRACE_H) $(DEBUG_H) glbitmap.cc
 GROBJ_CC = $(GROBJ_H) $(GLBITMAP_H) $(XBITMAP_H) \
 	$(ERROR_H) $(RECT_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
-GROBJTCL_CC = $(GROBJTCL_H) $(LISTITEMPKG_H) $(GROBJ_H) $(OBJLIST_H) grobjtcl.cc
+GROBJTCL_CC = $(LISTITEMPKG_H) $(GROBJ_H) $(OBJLIST_H) grobjtcl.cc
 
 GRSHAPPINIT_CC = $(TRACE_H) grshAppInit.cc
 
@@ -377,7 +366,7 @@ IOUTILS_CC = $(IOUTILS_H) $(IO_H) ioutils.cc
 
 JITTER_CC = $(JITTER_H) $(RANDUTILS_H) $(TRACE_H) $(DEBUG_H) jitter.cc
 
-JITTERTCL_CC = $(JITTERTCL_H) $(IOMGR_H) $(JITTER_H) $(POSLIST_H) \
+JITTERTCL_CC = $(IOMGR_H) $(JITTER_H) $(POSLIST_H) \
 	$(LISTITEMPKG_H) $(TRACE_H) $(DEBUG_H) jittertcl.cc
 
 KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) $(EXPTDRIVER_H) \
@@ -389,7 +378,7 @@ MASKHATCH_CC = $(MASKHATCH_H) $(TRACE_H) $(DEBUG_H) maskhatch.cc
 MASKTCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(MASKHATCH_H) \
 	$(TRACE_H) $(DEBUG_H) masktcl.cc
 
-MISCTCL_CC = $(MISCTCL_H) $(RANDUTILS_H) misctcl.cc
+MISCTCL_CC = $(RANDUTILS_H) misctcl.cc
 
 MORPHYFACE_CC = $(MORPHYFACE_H) $(BEZIER_H) $(GFXATTRIBS_H) \
 	$(TRACE_H) $(DEBUG_H) morphyface.cc
@@ -400,15 +389,15 @@ MORPHYFACETCL_CC = $(IOMGR_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(MORPHYFACE_H) \
 NULLRESPONSEHDLR_CC = $(NULLRESPONSEHDLR_H) $(EXPTDRIVER_H) \
 	$(TRACE_H) nullresponsehdlr.cc
 
-OBJLISTTCL_CC = $(OBJLISTTCL_H) $(OBJLIST_H) $(LISTPKG_H) \
+OBJLISTTCL_CC = $(OBJLIST_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) objlisttcl.cc
 
 PBM_CC = $(PBM_H) $(TRACE_H) $(DEBUG_H) pbm.cc
 
-POSITIONTCL_CC = $(POSITIONTCL_H) $(IOMGR_H) $(POSITION_H) $(POSLIST_H) \
+POSITIONTCL_CC = $(IOMGR_H) $(POSITION_H) $(POSLIST_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) positiontcl.cc
 
-POSLISTTCL_CC = $(POSLISTTCL_H) $(POSLIST_H) $(LISTPKG_H) \
+POSLISTTCL_CC = $(POSLIST_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) poslisttcl.cc
 
 PROPERTY_CC = $(PROPERTY_H) property.cc
@@ -424,7 +413,7 @@ SOUND_CC = $(SOUND_H) sound.cc
 SOUNDLIST_CC = $(SOUNDLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(SOUND_H) $(PTRLIST_CC) soundlist.cc
 
-SOUNDTCL_CC = $(SOUNDTCL_H) $(ERRMSG_H) $(SOUNDLIST_H) $(SOUND_H) \
+SOUNDTCL_CC = $(ERRMSG_H) $(SOUNDLIST_H) $(SOUND_H) \
 	$(LISTPKG_H) $(LISTITEMPKG_H) $(TCLLINK_H) $(TRACE_H) $(DEBUG_H) soundtcl.cc
 
 STRINGIFYCMD_CC = $(STRINGIFYCMD_H) $(IO_H) \
@@ -435,7 +424,7 @@ TCLCMD_CC = $(TCLCMD_H) $(ERRMSG_H) $(TCLVALUE_H) \
 
 TCLERROR_CC = $(TCLERROR_H) $(TRACE_H) tclerror.cc
 
-TCLGL_CC = $(TCLGL_H) $(TCLPKG_H) $(TCLCMD_H) $(TCLERROR_H) \
+TCLGL_CC = $(TCLPKG_H) $(TCLCMD_H) $(TCLERROR_H) \
 	$(TRACE_H) $(DEBUG_H) tclgl.cc
 
 TCLITEMPKG_CC = $(TCLITEMPKG_H) $(TCLCMD_H) $(STRINGIFYCMD_H) \
@@ -546,7 +535,7 @@ soundtcl.do: $(SOUNDTCL_CC)
 soundtcl.sl: soundtcl.do
 stringifycmd.*[ol]: $(STRINGIFYCMD_CC)
 subject.*[ol]: subject.h io.h ioutils.h trace.h debug.h subject.cc
-subjecttcl.*[ol]: subjecttcl.h errmsg.h subject.h io.h trace.h debug.h \
+subjecttcl.*[ol]: errmsg.h subject.h io.h trace.h debug.h \
 	subjecttcl.cc
 tcldlist.*[ol]: tcldlist.h errmsg.h trace.h debug.h tcldlist.cc
 tclcmd.*[ol]: $(TCLCMD_CC)
