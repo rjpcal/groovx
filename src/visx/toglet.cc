@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jun  6 16:30:00 2001
+// written: Wed Jun  6 16:53:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,8 +73,13 @@ namespace {
   DOTRACE("toglDestroyCallback");
 	 DebugEvalNL((void*)togl);
 	 ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
+
+
+	 // We have to test that config is non-null, because if this
+	 // callback was triggered out of ToglConfig's destructor, then it
+	 // will have already set the client data for the Togl* to null.
 	 DebugEvalNL((void*)config);
-	 config->onWindowClose();
+	 if (config) config->onWindowClose();
   }
 
   void dummyEventProc(ClientData clientData, XEvent* eventPtr) {
