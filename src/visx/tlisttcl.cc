@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Sep 21 10:47:44 2001
+// written: Tue Nov  6 16:20:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,9 @@ namespace
 {
   Util::UID doCreatePreview(Gfx::Canvas& canvas,
                             Util::UID* objids,
-                            unsigned int objids_size)
+                            unsigned int objids_size,
+                            int num_cols_hint = -1,
+                            bool text_labels = true)
   {
     DOTRACE("<tlisttcl.cc>::doCreatePreview");
 
@@ -57,7 +59,8 @@ namespace
     const double parcel_area = window_area/objids_size;
     const double raw_parcel_side = sqrt(parcel_area);
 
-    const int num_cols = int(world_width/raw_parcel_side) + 1;
+    const int num_cols = num_cols_hint > 0
+      ? num_cols_hint : int(world_width/raw_parcel_side) + 1;
 
     const double parcel_side = world_width/num_cols;
 
@@ -78,34 +81,38 @@ namespace
         obj->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
         obj->setMaxDimension(0.8);
 
-        Ref<Gtext> label(Gtext::make());
-        label->setText(fstring(objids[i]));
-        label->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
-        label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
-        label->setHeight(0.1);
-
         Ref<Position> obj_pos(Position::make());
         double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
         double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
         obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
         obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-        Ref<Position> label_pos(Position::make());
-        double label_x = obj_x;
-        double label_y = obj_y - 0.50*parcel_side;
-        label_pos->translation.vec().set(label_x, label_y, 0.0);
-        label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
-
         Ref<GxSeparator> obj_pair(GxSeparator::make());
         obj_pair->addChild(obj_pos);
         obj_pair->addChild(obj);
 
-        Ref<GxSeparator> label_pair(GxSeparator::make());
-        label_pair->addChild(label_pos);
-        label_pair->addChild(label);
-
         preview_trial->addChild(obj_pair);
-        preview_trial->addChild(label_pair);
+
+        if (text_labels)
+          {
+            Ref<Gtext> label(Gtext::make());
+            label->setText(fstring(objids[i]));
+            label->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+            label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+            label->setHeight(0.1);
+
+            Ref<Position> label_pos(Position::make());
+            double label_x = obj_x;
+            double label_y = obj_y - 0.50*parcel_side;
+            label_pos->translation.vec().set(label_x, label_y, 0.0);
+            label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
+
+            Ref<GxSeparator> label_pair(GxSeparator::make());
+            label_pair->addChild(label_pos);
+            label_pair->addChild(label);
+
+            preview_trial->addChild(label_pair);
+          }
       }
 
     return preview_trial.id();
@@ -120,7 +127,8 @@ namespace
 
 namespace TlistTcl
 {
-  Util::UID createPreview(Tcl::List objid_list);
+  Util::UID createPreview(Tcl::List objid_list,
+                          int num_cols_hit, bool use_text_labels);
 
   Tcl::List dealSingles(Tcl::List objids, Util::UID posid);
 
@@ -148,14 +156,17 @@ namespace TlistTcl
 //
 //---------------------------------------------------------------------
 
-Util::UID TlistTcl::createPreview(Tcl::List objid_list)
+Util::UID TlistTcl::createPreview(Tcl::List objid_list,
+                                  int num_cols_hint = -1,
+                                  bool text_labels = true)
 {
   fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
                                 objid_list.end<Util::UID>());
 
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-  return doCreatePreview(canvas, &objids[0], objids.size());
+  return doCreatePreview(canvas, &objids[0], objids.size(),
+                         num_cols_hint, text_labels);
 }
 
 //--------------------------------------------------------------------
@@ -391,7 +402,10 @@ int Tlist_Init(Tcl_Interp* interp)
 DOTRACE("Tlist_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Tlist", "$Revision$");
-  pkg->def( "createPreview", "objids", &TlistTcl::createPreview );
+  pkg->def( "createPreview", "objids num_cols_hint use_text_labels",
+            &TlistTcl::createPreview );
+  pkg->def( "createPreview", "objids",
+            Util::bindLast(Util::bindLast(&TlistTcl::createPreview, true), -1) );
 
   pkg->def( "dealSingles", "objid(s) posid",
             &TlistTcl::dealSingles );
