@@ -158,13 +158,15 @@ proc testDrawCmd { objname } {
         package require Toglet
 
         eval ::test $testname {"normal use"} {"
+            glClearColor 0 0 0 0
+            glColor 1 1 1 1
             clearscreen
             set pix1 \[pixelCheckSum\]
             see $this(objid)
             set pix2 \[pixelCheckSum\]
             Togl::setVisible false
-            expr \$pix1 == \$pix2
-         "} {"^0$"}
+            return \"\[expr \$pix1 == \$pix2\] \$pix1 \$pix2\"
+         "} {"^0 "}
     }
 }
 
