@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Thu Jun  1 13:59:58 2000
+// written: Wed Oct  4 10:42:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,8 @@ TlistWidget::TlistWidget(Tcl_Interp* interp, const char* pathname,
 								 double dist, double unit_angle) :
   ToglConfig(interp, pathname, config_argc, config_argv, dist, unit_angle),
   itsCurTrial(0),
-  itsVisibility(false)
+  itsVisibility(false),
+  itsHoldOn(false)
 {
 DOTRACE("TlistWidget::TlistWidget");
 }
@@ -41,14 +42,18 @@ TlistWidget::~TlistWidget() {}
 
 void TlistWidget::display() {
 DOTRACE("TlistWidget::display");
-  // First we must erase the previous current trial. We ignore any
-  // invalid id errors that occur, and simply clear the screen in
-  // this case.
-  try {
-	 theTlist.getCheckedPtr(itsCurTrial)->trUndraw(*(this->getCanvas()), false);
-  }
-  catch (InvalidIdError&) {
-	 clearscreen();
+
+  // Only erase the previous trial if hold is off
+  if( !itsHoldOn ) {
+	 // First we must erase the previous current trial. We ignore any
+	 // invalid id errors that occur, and simply clear the screen in
+	 // this case.
+	 try {
+		theTlist.getCheckedPtr(itsCurTrial)->trUndraw(*(this->getCanvas()), false);
+	 }
+	 catch (InvalidIdError&) {
+		clearscreen();
+	 }
   }
 
   safeDrawTrial();
