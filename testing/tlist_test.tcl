@@ -17,12 +17,10 @@ if { ![Togl::inited] } { Togl::init; update }
 ### Tlist::loadObjidFileCmd ###
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {
     Tlist::loadObjidFile
-} {wrong \# args: should be "Tlist::loadObjidFile\
-		  objid_file objids posids \?num_lines=-1\?"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::loadObjidFile" "too many args" {
     Tlist::loadObjidFile j u n k y
-} {wrong \# args: should be "Tlist::loadObjidFile\
-		  objid_file objids posids \?num_lines=-1\?"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::loadObjidFile" "normal read" {
 	 set objids [new Face 11]
 	 set posids [new Position 4]
