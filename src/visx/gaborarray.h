@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Mon May 12 14:20:32 2003
+// written: Mon May 12 14:46:56 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,7 +37,7 @@
 
 #include "util/arrays.h"
 
-#include "visx/gaborset.h"
+#include "visx/gaborpatch.h"
 #include "visx/snake.h"
 
 namespace Gfx

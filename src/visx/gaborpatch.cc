@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gaborset.cc
+// gaborpatch.cc
 //
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Mon May 12 11:15:35 2003
-// written: Mon May 12 14:42:12 2003
+// created: Mon May 12 14:45:52 2003
+// written: Mon May 12 14:46:23 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -28,10 +28,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORSET_CC_DEFINED
-#define GABORSET_CC_DEFINED
+#ifndef GABORPATCH_CC_DEFINED
+#define GABORPATCH_CC_DEFINED
 
-#include "gaborset.h"
+#include "gaborpatch.h"
 
 #include <map>
 
@@ -137,5 +137,5 @@ const GaborPatch& GaborPatch::lookup(double sigma, double omega,
   return lookup(spec);
 }
 
-static const char vcid_gaborset_cc[] = "$Header$";
-#endif // !GABORSET_CC_DEFINED
+static const char vcid_gaborpatch_cc[] = "$Header$";
+#endif // !GABORPATCH_CC_DEFINED

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gaborset.h
+// gaborpatch.h
 //
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Mon May 12 11:15:29 2003
-// written: Mon May 12 14:25:37 2003
+// created: Mon May 12 14:45:43 2003
+// written: Mon May 12 14:46:06 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -28,8 +28,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORSET_H_DEFINED
-#define GABORSET_H_DEFINED
+#ifndef GABORPATCH_H_DEFINED
+#define GABORPATCH_H_DEFINED
 
 #include "gx/geom.h"
 
@@ -79,5 +79,5 @@ private:
   GaborPatch& operator=(const GaborPatch&);
 };
 
-static const char vcid_gaborset_h[] = "$Header$";
-#endif // !GABORSET_H_DEFINED
+static const char vcid_gaborpatch_h[] = "$Header$";
+#endif // !GABORPATCH_H_DEFINED
