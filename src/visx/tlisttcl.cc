@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Sep 12 16:53:26 2001
+// written: Thu Sep 13 10:56:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 #include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
+#include "util/error.h"
 #include "util/ref.h"
 
 #include "visx/gtext.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Sep 10 17:17:38 2001
+// written: Thu Sep 13 10:55:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,12 +19,11 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/error.h"
 #include "util/objfactory.h"
 #include "util/strings.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 //---------------------------------------------------------------------
