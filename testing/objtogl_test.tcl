@@ -75,11 +75,13 @@ test "ObjTogl-Togl::show" "too many args" {
 	 Togl::show j u
 } {wrong \# args: should be "Togl::show trial_id"}
 test "ObjTogl-Togl::show" "normal use on valid trial id" {
-	 catch {Togl::show 10}
-} {^0$}
+	 set code [catch {Togl::show 10} msg]
+	 set result "$code $msg"
+} {^1 Togl::show: invalid trial id$}
 test "ObjTogl-Togl::show" "normal use on invalid trial id" { 
-	 catch {Togl::show -1}
-} {^0$}
+	 set code [catch {Togl::show -1} msg]
+	 set result "$code $msg"
+} {^1 Togl::show: invalid trial id$}
 test "ObjTogl-Togl::show" "no error" {} $BLANK $no_test
 
 ### Togl::setVisibleCmd ###
