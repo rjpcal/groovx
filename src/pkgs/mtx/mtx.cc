@@ -501,13 +501,29 @@ DOTRACE("sub_mtx_ref::operator=(const mtx&)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-mtx mtx::colmaj_import_from(double* data, int mrows, int ncols,
-                            storage_policy s)
+mtx mtx::colmaj_copy_of(const double* data, int mrows, int ncols)
 {
-DOTRACE("mtx::colmaj_import_from");
+DOTRACE("mtx::colmaj_copy_of");
 
   return mtx(mtx_shape(mrows, ncols),
-             data_holder(data, mrows, ncols, s));
+             data_holder(const_cast<double*>(data),
+                         mrows, ncols, COPY));
+}
+
+mtx mtx::colmaj_borrow_from(double* data, int mrows, int ncols)
+{
+DOTRACE("mtx::colmaj_borrow_from");
+
+  return mtx(mtx_shape(mrows, ncols),
+             data_holder(data, mrows, ncols, BORROW));
+}
+
+mtx mtx::colmaj_refer_to(double* data, int mrows, int ncols)
+{
+DOTRACE("mtx::colmaj_refer_to");
+
+  return mtx(mtx_shape(mrows, ncols),
+             data_holder(data, mrows, ncols, REFER));
 }
 
 mtx mtx::zeros(const mtx_shape& s)

@@ -813,8 +813,14 @@ public:
     Base(specs, data)
   {}
 
-  static mtx colmaj_import_from(double* data, int mrows, int ncols,
-                                storage_policy s = COPY);
+  /// Set up a mtx with a storage policy of COPY.
+  static mtx colmaj_copy_of(const double* data, int mrows, int ncols);
+
+  /// Set up a mtx with a storage_policy of BORROW.
+  static mtx colmaj_borrow_from(double* data, int mrows, int ncols);
+
+  /// Set up a mtx with a storage_policy of REFER.
+  static mtx colmaj_refer_to(double* data, int mrows, int ncols);
 
   static mtx zeros(const mtx_shape& s);
 
