@@ -235,14 +235,15 @@ fi
 
 dnl Checks for libraries.
 
-dnl Checks for header files.
+### Checks for header files.
 AC_PATH_XTRA
 
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
-### Check for audio header files and libraries
+AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream \
+		  png.h fcntl.h termios.h sys/time.h unistd.h \
+		  ext/stdio_filebuf.h],,,-)
 
-AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream],,,-)
 AC_CHECK_HEADER([dmedia/audio.h],
 		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
 		 LIBS="$LIBS -laudio -laudiofile"],,-)
@@ -263,8 +264,6 @@ AC_MSG_CHECKING([whether OpenGL implementation is Mesa])
 AC_EGREP_HEADER(MESA, [GL/gl.h],
 		[AC_DEFINE(BROKEN_GL_DISPLAY_LISTS,1) AC_MSG_RESULT(yes)],
 		[AC_MSG_RESULT(no)])
-
-dnl AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl AC_TYPE_MODE_T
