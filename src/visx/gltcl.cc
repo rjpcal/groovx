@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Aug  3 15:33:29 1999
+// written: Tue Sep 14 14:12:31 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -116,7 +116,7 @@ public:
 			  int objc_min=0, int objc_max=100000, bool exact_objc=false) :
 	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc)
   {
-	 DebugEvalNL(cmd_name);
+ 	 DebugEvalNL(cmd_name);
   }
 protected:
   void checkGL() throw(GLError) {
@@ -1497,7 +1497,6 @@ DOTRACE("Tclgl_Init");
                          (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   }
 
-  Tcl_PkgProvide(interp, "Tclgl", "1.4");
   return TCL_OK;
 }
 
