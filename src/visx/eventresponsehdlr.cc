@@ -108,15 +108,15 @@ public:
 	 { itsBindingSubstitution = sub; }
 
   void rhBeginTrial(Experiment* expt) const
-	 { itsExperiment = expt; attend(); }
+	 { itsExperiment = expt; attend(expt); }
 
   void rhAbortTrial(Experiment* expt) const;
 
   void rhEndTrial(Experiment* expt) const
-	 { itsExperiment = expt; ignore(); }
+	 { itsExperiment = expt; ignore(expt); }
 
   void rhHaltExpt(Experiment* expt) const
-	 { itsExperiment = expt; ignore(); }
+	 { itsExperiment = expt; ignore(expt); }
 
   // Helper functions
 private:
@@ -133,7 +133,7 @@ private:
   // ignore() when a response has been made so that events are not
   // received during response processing and during the inter-trial
   // period.
-  void attend() const;
+  void attend(Experiment* expt) const;
 
   // When this procedure is invoked, the program ignores
   // user-generated events (mouse or keyboard) that would otherwise
@@ -142,7 +142,7 @@ private:
   // processed, and any other time when it is necessary to avoid an
   // unintended key/button-press being interpreted as a response. The
   // effect is cancelled by calling attend().
-  void ignore() const;
+  void ignore(Experiment* expt) const;
 
 
   void raiseBackgroundError(const char* msg) const throw();
@@ -328,7 +328,8 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   // destruction will delete all commands associated with it.
 
   if ( !Tcl_InterpDeleted(itsInterp) ) {
-	 ignore();
+	 if (itsExperiment != 0)
+		ignore(itsExperiment);
  
 	 DebugPrintNL("deleting Tcl command " + itsPrivateCmdName);
 
@@ -463,7 +464,7 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 
   Assert(itsInterp != 0);
 
-  ignore();
+  ignore(expt);
 
   try {
 	 const int ERR_INDEX = 1;
@@ -481,13 +482,13 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void EventResponseHdlr::Impl::attend() const {
+void EventResponseHdlr::Impl::attend(Experiment* expt) const {
 DOTRACE("EventResponseHdlr::Impl::attend");
   clearEventQueue();
   
   try {
-	 getExpt().getWidget()->bind(itsEventSequence.c_str(),
-										  getBindingScript().c_str());
+	 expt->getWidget()->bind(itsEventSequence.c_str(),
+									 getBindingScript().c_str());
   }
   catch (ErrorWithMsg& err) {
 	 raiseBackgroundError(err.msg());
@@ -498,11 +499,11 @@ DOTRACE("EventResponseHdlr::Impl::attend");
   }
 }
 
-void EventResponseHdlr::Impl::ignore() const {
+void EventResponseHdlr::Impl::ignore(Experiment* expt) const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
   try {
-	 getExpt().getWidget()->bind(itsEventSequence.c_str(),
-										  nullScript.c_str());
+	 expt->getWidget()->bind(itsEventSequence.c_str(),
+									 nullScript.c_str());
   }
   catch (ErrorWithMsg& err) {
 	 raiseBackgroundError(err.msg());
@@ -563,7 +564,7 @@ DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
   getExpt().edResponseSeen();
 
-  ignore();
+  ignore(&(getExpt()));
 
   int response = getRespFromKeysym(keysym);
 
