@@ -14,7 +14,7 @@
 ##############################################################################
 
 ### Load test procedures
-source $env(HOME)/sorcery/grsh/testing/test.tcl
+source [file dirname [info script]]/test.tcl
 
 set VERBOSE 0
 
