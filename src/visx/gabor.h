@@ -101,6 +101,9 @@ public:
   /// Fill in the Gfx::BmapData object with the Gabor pixmap.
   void getBmapData(Gfx::BmapData& bmap) const;
 
+  /// Save the Gabor pixmap as an image file at the given filename.
+  void saveImage(const char* filename) const;
+
 private:
   /// The current \c ColorMode used for rendering.
   ColorMode itsColorMode;

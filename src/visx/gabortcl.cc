@@ -46,6 +46,7 @@ DOTRACE("Gabor_Init");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Gabor>(pkg);
   Tcl::defCreator<Gabor>(pkg);
+  pkg->def("saveImage", "item_id filename", &Gabor::saveImage);
 
   PKG_RETURN;
 }

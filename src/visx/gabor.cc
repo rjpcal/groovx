@@ -37,6 +37,7 @@
 
 #include "gx/bbox.h"
 #include "gx/bmapdata.h"
+#include "gx/imgfile.h"
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
@@ -196,6 +197,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 
 void Gabor::getBmapData(Gfx::BmapData& dest) const
 {
+DOTRACE("Gabor::getBmapData");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
   const double ysigma2 = itsSigma * itsSigma;
 
@@ -286,6 +288,16 @@ void Gabor::getBmapData(Gfx::BmapData& dest) const
     }
 
   data.swap(dest);
+}
+
+void Gabor::saveImage(const char* filename) const
+{
+DOTRACE("Gabor::saveImage");
+
+  Gfx::BmapData data;
+  getBmapData(data);
+
+  ImgFile::save(filename, data);
 }
 
 void Gabor::grRender(Gfx::Canvas& canvas) const
