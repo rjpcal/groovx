@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 15:50:12 2002
+// written: Thu Nov 21 15:53:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ DOTRACE("GxCamera::reconfigure");
         const double r =      (width  / 2.0) / itsPixelsPerUnit;
         const double b = -1 * (height / 2.0) / itsPixelsPerUnit;
         const double t =      (height / 2.0) / itsPixelsPerUnit;
-        canvas.orthographic(Gfx::RectLTRB<double>(l, r, b, t), -10.0, 10.0);
+        canvas.orthographic(Gfx::RectLTRB<double>(l, t, r, b), -10.0, 10.0);
       }
       break;
     case FIXED_RECT:
