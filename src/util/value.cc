@@ -115,6 +115,12 @@ fstring TValue<double>::getNativeTypeName() const
   static fstring name("double"); return name;
 }
 
+template <>
+fstring TValue<fstring>::getNativeTypeName() const
+{
+  static fstring name("fstring"); return name;
+}
+
 
 //
 // The get functions default to throwing an exception, but are
@@ -132,6 +138,8 @@ template <> int TValue<int>::get(Util::TypeCue<int>) const { return itsVal; }
 template <> long TValue<long>::get(Util::TypeCue<long>) const { return itsVal; }
 template <> bool TValue<bool>::get(Util::TypeCue<bool>) const { return itsVal; }
 template <> double TValue<double>::get(Util::TypeCue<double>) const { return itsVal; }
+template <> const char* TValue<fstring>::get(Util::TypeCue<const char*>) const
+{ return itsVal.c_str(); }
 
 template <class T> void TValue<T>::set(int val) { Value::set(val); }
 template <class T> void TValue<T>::set(long val) { Value::set(val); }
@@ -143,6 +151,7 @@ template <> void TValue<int>::set(int val) { itsVal = val; }
 template <> void TValue<long>::set(long val) { itsVal = val; }
 template <> void TValue<bool>::set(bool val) { itsVal = val; }
 template <> void TValue<double>::set(double val) { itsVal = val; }
+template <> void TValue<fstring>::set(const char* val) { itsVal = val; }
 
 template <class T> void TValue<T>::assignTo(Value& other) const
 {
@@ -154,6 +163,7 @@ template class TValue<int>;
 template class TValue<long>;
 template class TValue<bool>;
 template class TValue<double>;
+template class TValue<fstring>;
 
 ///////////////////////////////////////////////////////////////////////
 //
