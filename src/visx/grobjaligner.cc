@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Fri Aug 10 14:52:53 2001
+// written: Fri Aug 10 18:21:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,31 @@ DOTRACE("GrObjAligner::doAlignment");
 
   canvas.translate(vec);
 }
+
+
+void GrObjAligner::gnodeDraw(Gfx::Canvas& canvas) const
+{
+  Gfx::Canvas::StateSaver state(canvas);
+
+  doAlignment(canvas, child()->gnodeBoundingBox(canvas));
+
+  child()->gnodeDraw(canvas);
+}
+
+void GrObjAligner::gnodeUndraw(Gfx::Canvas& canvas) const
+{
+  Gfx::Canvas::StateSaver state(canvas);
+
+  doAlignment(canvas, child()->gnodeBoundingBox(canvas));
+
+  child()->gnodeUndraw(canvas);
+}
+
+Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
+{
+  return child()->gnodeBoundingBox(canvas);
+}
+
 
 static const char vcid_grobjaligner_cc[] = "$Header$";
 #endif // !GROBJALIGNER_CC_DEFINED

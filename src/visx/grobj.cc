@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 18:14:05 2001
+// written: Fri Aug 10 18:24:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,17 +127,17 @@ DOTRACE("GrObj::getMaxDimension");
 
 Gmodes::AlignmentMode GrObj::getAlignmentMode() const {
 DOTRACE("GrObj::getAlignmentMode");
-  return itsImpl->itsAligner.getMode();
+  return itsImpl->itsAligner->getMode();
 }
 
 double GrObj::getCenterX() const {
 DOTRACE("GrObj::getCenterX");
-  return itsImpl->itsAligner.itsCenter.x();
+  return itsImpl->itsAligner->itsCenter.x();
 }
 
 double GrObj::getCenterY() const {
 DOTRACE("GrObj::getCenterY");
-  return itsImpl->itsAligner.itsCenter.y();
+  return itsImpl->itsAligner->itsCenter.y();
 }
 
 int GrObj::getPixelBorder() const {
@@ -212,21 +212,21 @@ DOTRACE("GrObj::setMaxDimension");
 void GrObj::setAlignmentMode(Gmodes::AlignmentMode val) {
 DOTRACE("GrObj::setAlignmentMode");
 
-  itsImpl->itsAligner.setMode(val);
+  itsImpl->itsAligner->setMode(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setCenterX(double val) {
 DOTRACE("GrObj::setCenterX");
 
-  itsImpl->itsAligner.itsCenter.x() = val;
+  itsImpl->itsAligner->itsCenter.x() = val;
   sendStateChangeMsg();
 }
 
 void GrObj::setCenterY(double val) {
 DOTRACE("GrObj::setCenterY");
 
-  itsImpl->itsAligner.itsCenter.y() = val;
+  itsImpl->itsAligner->itsCenter.y() = val;
   sendStateChangeMsg();
 }
 

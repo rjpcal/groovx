@@ -14,21 +14,16 @@
 #define GROBJALIGNER_H_DEFINED
 
 #include "gmodes.h"
+#include "gnode.h"
 #include "point.h"
 
-template <class V> class Rect;
-
-namespace Gfx
-{
-  class Canvas;
-}
-
-class GrObjAligner {
+class GrObjAligner : public Gnode {
 public:
-  GrObjAligner() :
+  GrObjAligner(shared_ptr<Gnode> child) :
+	 Gnode(child),
     itsMode(Gmodes::NATIVE_ALIGNMENT),
     itsCenter(0.0, 0.0)
-    {}
+  {}
 
   Point<double> getCenter(double width, double height) const
   {
@@ -46,15 +41,23 @@ public:
     return itsCenter;
   }
 
-  void doAlignment(Gfx::Canvas& canvas, const Rect<double>& native) const;
+  Gmodes::AlignmentMode getMode() const { return itsMode; }
 
   void setMode(Gmodes::AlignmentMode new_mode)
   {
     itsMode = new_mode;
   }
 
-  Gmodes::AlignmentMode getMode() const { return itsMode; }
+  virtual void gnodeDraw(Gfx::Canvas& canvas) const;
 
+  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
+
+  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
+
+private:
+  void doAlignment(Gfx::Canvas& canvas, const Rect<double>& native) const;
+
+public:
   Gmodes::AlignmentMode itsMode;
   Point<double> itsCenter;
 };
