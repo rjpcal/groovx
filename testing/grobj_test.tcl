@@ -11,9 +11,6 @@ package require Objlist
 package require Grobj
 package require Face
 package require Fixpt
-package require Objtogl
-
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 set FACE [Face::Face]
 set FIXPT [Fixpt::Fixpt]
@@ -21,10 +18,10 @@ set FIXPT [Fixpt::Fixpt]
 ### GrObj::typeCmd ###
 test "GrobjTcl-GrObj::type" "too few args" {
     GrObj::type
-} {wrong \# args: should be "GrObj::type objid"}
+} {wrong \# args: should be "GrObj::type item_id"}
 test "GrobjTcl-GrObj::type" "too many args" {
     GrObj::type j u
-} {wrong \# args: should be "GrObj::type objid"}
+} {wrong \# args: should be "GrObj::type item_id"}
 test "GrobjTcl-GrObj::type" "normal use on Face" {
 	 GrObj::type $::FACE
 } {Face}
@@ -90,6 +87,10 @@ test "GrobjTcl-GrObj::category" "normal use vector set with many values" {
 	 GrObj::category "$::FACE $::FIXPT"
 } "^${INT}${SP}${INT}$"
 test "GrobjTcl-GrObj::category" "error" {} {^$} $no_test
+
+
+package require Objtogl
+if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 ### GrObj::updateCmd ###
 test "GrobjTcl-GrObj::update" "too few args" {
