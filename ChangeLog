@@ -186,3 +186,17 @@ will be needed, and then they can be phased out.
 
 * (9-Nov-2002, done 20-Nov-2002) X11Util just has findColormap()
   Moved this back into Togl.
+   GxText
+
+* (done 20-Nov-2002) Merge GlxWrapper and GLCanvas functionality.
+
+  [ok] Move glxwrapper.* and glxattribs.* and glxopts.* into src/gfx/.
+
+  [ok] Rather than GlxWrapper owning a GLCanvas, it should be the other way
+  around. Togl should own a GLCanvas then instead of a GlxWrapper.
+
+  [ok] Tcl interface to GL should go through GLCanvas instead of Togl
+  (i.e. functions like isRgba and isDoubleBuffered).
+
+  [ok] Ultimately the only purpose of Togl should be to bind a GLCanvas to a
+  "physical" X window.

@@ -7,11 +7,13 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (13-Nov-2002) Cleanup GrObj once and for all
+* (20-Nov-2002) Rename Bitmap -->
+   GxPixmap
+   GxImage
 
-  OK, replaced Gnode with GxBin. Changed all of the Gnode subclasses into
-  generic Gx* node subclasses. So now I feel better; all the stuff is
-  generic. In principle GrObj could become a Gx* class now itself.
+* (20-Nov-2002) Rename Gtext -->
+
+* (20-Nov-2002) Get rid of GLBitmap/XBitmap; put X11-rendering into GLCanvas.
 
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
@@ -30,9 +32,6 @@
   One problem is that this kind of things means that a given object's
   FieldMap could change if its child object changes. How do we keep Tcl,
   for example, abreast of such changes?
-
-* (9-Nov-2002) X11Util just has findColormap()
-  Move this back into Togl?
 
 * (4-Nov-2002) Dynamically-sized array-Value objects?
 
