@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Oct 27 18:05:36 2000
+// written: Fri Oct 27 18:29:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,7 +118,8 @@ DOTRACE("HpAudioSound::HpAudioSound");
 HpAudioSound::~HpAudioSound() {
 DOTRACE("HpAudioSound::~HpAudioSound");
   if ( theAudio != 0 ) {
-	 ADestroySBucket( theAudio, itsSBucket, NULL );
+	 if (itsSBucket)
+		ADestroySBucket( theAudio, itsSBucket, NULL );
   }
 }
 
@@ -140,7 +141,8 @@ void HpAudioSound::play() {
 DOTRACE("HpAudioSound::play");
   if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
 
-  ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
+  if (itsSBucket)
+	 ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
 }
 	
 void HpAudioSound::setFile(const char* filename) {
