@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Sep 27 14:42:46 2000
+// written: Thu Sep 28 19:38:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,31 +221,17 @@ DOTRACE("Trial::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
+	 IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
+										 itsIdPairs.begin(), itsIdPairs.end());
 
-	 ostream& os = lwriter->output();
+	 IO::WriteUtils::writeValueObjSeq(writer, "responses",
+										 itsResponses.begin(), itsResponses.end());
 
-	 // itsIdPairs
-	 os << itsIdPairs.size() << IO::SEP;
-	 for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
-			ii != itsIdPairs.end(); 
-			++ii) {
-		os << ii->objid << IO::SEP << ii->posid << IO::SEP << IO::SEP;
-	 }
-	 // itsResponses
-	 os << itsResponses.size() << IO::SEP << IO::SEP;
-	 for (size_t i = 0; i < itsResponses.size(); ++i) {
-		itsResponses[i].printTo(os);
-	 }
-	 // itsType
-	 os << itsType << IO::SEP;
+	 writer->writeValue("type", itsType);
 
-	 // itsRhId
-	 os << itsRhId << IO::SEP;
-	 // itsThId
-	 os << itsThId << endl;
-
-	 lwriter->throwIfError(ioTag.c_str());
+	 writer->writeValue("rhId", itsRhId);
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("thId", itsThId);
   }
 }
 
@@ -253,49 +239,29 @@ void Trial::Impl::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Trial::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 lreader->readTypename(ioTag.c_str());
-
-	 istream& is = lreader->input();
-
-	 // itsIdPairs
 	 itsIdPairs.clear();
-	 int size;
-	 is >> size;
-	 if (size < 0) {
-		throw IO::ValueError(ioTag.c_str());
-	 }
-	 int objid;
-	 int posid;
-	 for (int i = 0; i < size; ++i) {
-		is >> objid >> posid;
-		if ( !ObjList::theObjList().isValidId(objid) ||
-			  !PosList::thePosList().isValidId(posid) ) {
-		  throw IO::ValueError(ioTag.c_str());
-		}
-		add(objid, posid);
-	 }
-	 // itsResponses
-	 int resp_size;
-	 is >> resp_size;
-	 itsResponses.resize(resp_size);
-	 for (int j = 0; j < resp_size; ++j) {
-		itsResponses[j].scanFrom(is);
-	 }
-	 // itsType
-	 is >> itsType;
+	 IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
+									  std::back_inserter(itsIdPairs));
 
-	 // itsRhId
-	 is >> itsRhId; DebugEvalNL(itsRhId);
-	 // itsThId
-	 is >> itsThId; DebugEvalNL(itsThId);
+	 itsResponses.clear();
+	 IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
+									  std::back_inserter(itsResponses));
 
-	 if (is.fail()) { throw IO::InputError(ioTag.c_str()); }
+	 reader->readValue("type", itsType);
+
+	 reader->readValue("rhId", itsRhId);
+	 reader->readValue("thId", itsThId);
   }
 }
 
 void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
-  reader->readValue("type", itsType);
+  itsIdPairs.clear();
+  IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
+									  std::back_inserter(itsIdPairs));
+  itsResponses.clear();
+  IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
+									  std::back_inserter(itsResponses));
 
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid >= 1)
@@ -303,32 +269,25 @@ DOTRACE("Trial::Impl::readFrom");
   else
 	 itsCorrectResponse = Response::ALWAYS_CORRECT;
 
+  reader->readValue("type", itsType);
   reader->readValue("rhId", itsRhId);
   reader->readValue("thId", itsThId);
-
-  itsResponses.clear();
-  IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
-									  std::back_inserter(itsResponses));
-
-  itsIdPairs.clear();
-  IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
-									  std::back_inserter(itsIdPairs));
 }
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
-  writer->writeValue("type", itsType);
+
+  IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
+										 itsIdPairs.begin(), itsIdPairs.end());
+  IO::WriteUtils::writeValueObjSeq(writer, "responses",
+										 itsResponses.begin(), itsResponses.end());
 
   if (TRIAL_SERIAL_VERSION_ID >= 1)
 	 writer->writeValue("correctResponse", itsCorrectResponse);
 
+  writer->writeValue("type", itsType);
   writer->writeValue("rhId", itsRhId);
   writer->writeValue("thId", itsThId);
-
-  IO::WriteUtils::writeValueObjSeq(writer, "responses",
-										 itsResponses.begin(), itsResponses.end());
-  IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
-										 itsIdPairs.begin(), itsIdPairs.end());
 }
 
 int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {
