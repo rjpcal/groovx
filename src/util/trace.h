@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jul 31 17:16:21 2002
+// written: Wed Jul 31 18:02:14 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -159,6 +159,9 @@ public:
   /// Copy constructor.
   BackTrace(const BackTrace& other);
 
+  /// Assignment operator.
+  BackTrace& operator=(const BackTrace& other);
+
   /// Destructor.
   ~BackTrace() throw();
 
@@ -187,8 +190,6 @@ public:
   void print(STD_IO::ostream& os) const;
 
 private:
-  BackTrace& operator=(const BackTrace&);
-
   struct Impl;
   Impl* const rep;
 };

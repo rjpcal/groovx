@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jul 31 17:18:17 2002
+// written: Wed Jul 31 18:02:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,12 @@ Util::BackTrace::BackTrace() :
 Util::BackTrace::BackTrace(const BackTrace& other) :
   rep(new Impl(*other.rep))
 {}
+
+Util::BackTrace& Util::BackTrace::operator=(const BackTrace& other)
+{
+  *rep = *other.rep;
+  return *this;
+}
 
 Util::BackTrace::~BackTrace() throw()
 {
