@@ -76,16 +76,6 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  // this function reads from an STD_IO::istream that is assumed to contain
-  // objid's only; posid's are implied by the position in the input
-  // NOTE: this function reads to the end of the input stream since it
-  // has no way to know when the input would be done. Thus it should
-  // be passed an STD_IO::istream containing only the line of interest. If
-  // offset is non-zero, it will be added to each incoming objid
-  // before the objid is inserted into the Trial. The function returns
-  // the number of objid's read from the stream.
-  int readFromObjidsOnly(STD_IO::istream &is, int offset = 0);
-
   void writeMatlab(STD_IO::ostream& os) const;
 
   ////////////////////////////

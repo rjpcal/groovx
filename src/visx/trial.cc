@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed May 23 18:48:04 2001
+// written: Sat May 26 13:33:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ public:
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
-  int readFromObjidsOnly(STD_IO::istream &is, int offset);
+
   void writeMatlab(STD_IO::ostream& os) const;
 
   int getCorrectResponse() const { return itsCorrectResponse; }
@@ -285,42 +285,6 @@ DOTRACE("Trial::Impl::writeTo");
 
   writer->writeObject("rh", itsRh);
   writer->writeObject("th", itsTh);
-}
-
-int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {
-DOTRACE("Trial::Impl::readFromObjidsOnly");
-
-  itsState = INACTIVE;
-
-  int posid = 0;
-  int objid;
-  if (offset == 0) {
-    while (is >> objid) {
-		if ( objid < 0) {
-		  throw IO::ValueError(ioTag);
-		}
-      add(objid, posid);
-      ++posid;
-    }
-  }
-  else { // offset != 0
-    while (is >> objid) {
-		if ( (objid+offset) < 0 ) {
-		  throw IO::ValueError(ioTag);
-		}
-      add(objid+offset, posid);
-      ++posid;
-    }
-  }
-
-  // Throw an exception if the stream has failed. However, since
-  // istrstream's seem to always fail at eof, even if nothing went
-  // wrong, we must only throw the exception if we have fail'ed with
-  // out reaching eof. This should catch most mistakes.
-  if (is.fail() && !is.eof()) throw IO::InputError(ioTag);
-
-  // return the number of objid's read
-  return posid;
 }
 
 void Trial::Impl::writeMatlab(STD_IO::ostream& os) const {
@@ -675,9 +639,6 @@ void Trial::readFrom(IO::Reader* reader)
 
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
-
-int Trial::readFromObjidsOnly(STD_IO::istream &is, int offset)
-  { return itsImpl->readFromObjidsOnly(is, offset); }
 
 void Trial::writeMatlab(STD_IO::ostream& os) const
   { itsImpl->writeMatlab(os); }
