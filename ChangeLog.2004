@@ -118,3 +118,56 @@
   place and just belongs in Trial instead.
 
   OK, fixed now.
+
+* (19-Jul-2004, done) port graphics stuff to Aqua for Darwin
+
+  where are <GL/glx.h> and <X11/Xlib.h> used?
+
+    glxwrapper.h
+      OK - used only in glwindowinterface.cc for instantiation
+    xbmaprenderer.h
+      OK - not used anywhere
+    glxrasterfont.h
+      OK - used only in gxrasterfont.cc for instantiation
+
+  where are GL_PLATFORM macros used?
+
+    glcanvas.cc -- guards the <GL/gl.h> #includes
+    gxvectorfont.cc -- guards the <GL/gl.h> #includes
+    gltcl.cc -- guards the <GL/gl.h> #includes
+
+    toglet.cc -- guards Tk_SetClassProcs
+    tkwidget.cc -- selects implementation of WindowSystem portability layer
+    gltcl.cc --	checks for GL_RESCALE_NORMAL_EXT
+
+    gxrasterfont.cc -- selects between {Glx,Agl}Rasterfont
+    glwindowinterface.cc -- selects between {Glx,Agl}Wrapper
+
+* (22-Nov-2002) Cleaning out the src/visx tree.
+
+  [ok] gtracetcl.cc --> src/tcl
+  [ok] Subject class has never been used at all --> trash it
+
+* (13-Sep-2002, obsolete) Hacks to work around broken MIPSpro compiler
+
+** problems with template arg-dependent lookup:
+
+   template <class F> struct Traits { enum { num = 1 }; };
+
+   template <int N> struct Functor {};
+
+   template <class F> struct Return
+   { typedef Functor<Traits<F>::num> Type; };
+
+   // template <class F> Functor<Traits<F>::num> buildTclFunctor(F f);
+   template <class F> typename Return<F>::Type buildTclFunctor(F f);
+
+   void bar(int) {}
+
+   void test() { buildTclFunctor(bar); }
+
+** return void not supported in templates
+
+** overeager lookup of template arg-dependent names
+
+** no <cheader> include files so e.g. size_t not in std:: namespace
