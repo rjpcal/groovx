@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Dec  6 20:35:50 1999
+// written: Mon Dec  6 23:02:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,6 @@
 #include "system.h"
 #include "stopwatch.h"
 #include "tlistwidget.h"
-#include "glcanvas.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -150,7 +149,7 @@ public:
 	 { return ObjTogl::theToglConfig(); }
 
   Canvas* getCanvas()
-	 { return &(GLCanvas::theCanvas()); }
+	 { return getWidget()->getCanvas(); }
 
   void edDraw();
   void edUndraw();
