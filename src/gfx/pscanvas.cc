@@ -321,14 +321,25 @@ public:
     indent(); itsFstream << angle << " rotate\n";
   }
 
-  template <class Pt>
-  void moveto(const Pt& v)
+  // NOTE: these next four functions must be non-templates in order to avoid
+  // "internal compiler errors" with g++-2.96 on Mac OS X.
+
+  void moveto(const Gfx::Vec2<double>& v)
   {
     indent(); pushxy(v); itsFstream << "moveto\n";
   }
 
-  template <class Pt>
-  void lineto(const Pt& v)
+  void moveto(const Gfx::Vec3<double>& v)
+  {
+    indent(); pushxy(v); itsFstream << "moveto\n";
+  }
+
+  void lineto(const Gfx::Vec2<double>& v)
+  {
+    indent(); pushxy(v); itsFstream << "lineto\n";
+  }
+
+  void lineto(const Gfx::Vec3<double>& v)
   {
     indent(); pushxy(v); itsFstream << "lineto\n";
   }
@@ -461,14 +472,30 @@ public:
     itsFstream << "setrgbcolor\n";
   }
 
-  template <class T>
-  void push1(T v)
+  // The push1() and pushxy() functions must be non-templates to placate
+  // g++-2.96 on Mac OS X.
+
+  void push1(double v)
   {
     itsFstream << v << " ";
   }
 
-  template <class Pt>
-  void pushxy(const Pt& v)
+  void push1(int v)
+  {
+    itsFstream << v << " ";
+  }
+
+  void push1(const char* v)
+  {
+    itsFstream << v << " ";
+  }
+
+  void pushxy(const Gfx::Vec2<double>& v)
+  {
+    itsFstream << v.x() << " " << v.y() << " ";
+  }
+
+  void pushxy(const Gfx::Vec3<double>& v)
   {
     itsFstream << v.x() << " " << v.y() << " ";
   }
