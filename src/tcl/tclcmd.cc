@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Oct  5 13:55:15 2000
+// written: Thu Oct  5 15:35:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -248,6 +248,11 @@ Tcl::TclValue Tcl::TclCmd::getValFromObj<Tcl::TclValue>(
 ) {
 DOTRACE("Tcl::TclCmd::getValFromObj<TclValue>");
   return TclValue(interp, obj);
+}
+
+Tcl_Obj* Tcl::TclCmd::getTclObjFromArg(int argn) {
+DOTRACE("Tcl::TclCmd::getTclObjFromArg");
+  return itsObjv[argn];
 }
 
 void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,

@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Oct  5 13:54:21 2000
+// written: Thu Oct  5 15:33:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -178,6 +178,9 @@ public:
 
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
   const char* getCstringFromArg(int argn);
+
+  /// Return the \c Tcl_Obj* in argument number \a argn.
+  Tcl_Obj* getTclObjFromArg(int argn);
 
   /** Attempts to retrieve an string type from argument number \a
       argn. The templated type must be assignable from const char*. */
