@@ -322,6 +322,9 @@ DOTRACE("GLCanvas::worldFromScreen3");
   const txform p = rep->getProjection();
   const recti v = getScreenViewport();
 
+  dbg_dump(5, m);
+  dbg_dump(5, p);
+
   const vec3d world2 = geom::unproject(m, p, v, screen_pos);
 
   if (GET_DBG_LEVEL() >= 8)
