@@ -3,7 +3,7 @@
 // tlisttcl.h
 // Rob Peters
 // created: Sat Mar 13 12:37:22 1999
-// written: Thu Jun 24 20:12:52 1999
+// written: Thu Jun 24 20:15:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ class Tlist;
 
 namespace TlistTcl {
   // Exported procedures
-  int writeResponsesProc(Tcl_Interp* interp, const char* filename);
+  void writeResponsesProc(const char* filename);
 }
 
 extern "C" Tcl_PackageInitProc Tlist_Init;
