@@ -395,6 +395,7 @@ $(EXECUTABLE)
 install:					\
 install-scripts					\
 install-audio					\
+install-images					\
 build						\
 $(VISX_LIB_DIR)/pkgIndex.tcl			\
 $(exec_prefix)/bin/groovx
@@ -539,3 +540,20 @@ $(prefix)/share/audio/sin_350Hz_2x120ms.au	\
 $(prefix)/share/audio/sin_350Hz_300ms.au	\
 $(prefix)/share/audio/sin_500Hz_2x120ms.au	\
 $(prefix)/share/audio/sin_500Hz_300ms.au	\
+
+$(prefix)/share/images/%.jpg: ./share/images/%.jpg
+	rm -f $@
+	cp $^ $@
+	chmod 444 $@
+
+install-images: $(prefix)/share/images/.timestamp \
+$(prefix)/share/images/nga01.jpg		\
+$(prefix)/share/images/nga02.jpg		\
+$(prefix)/share/images/nga03.jpg		\
+$(prefix)/share/images/nga04.jpg		\
+$(prefix)/share/images/nga05.jpg		\
+$(prefix)/share/images/nga06.jpg		\
+$(prefix)/share/images/nga07.jpg		\
+$(prefix)/share/images/nga08.jpg		\
+$(prefix)/share/images/nga09.jpg		\
+$(prefix)/share/images/nga10.jpg		\
