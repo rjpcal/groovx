@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Thu Mar 30 09:50:02 2000
+// written: Tue May 30 18:02:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,9 @@
 #include <iostream.h>
 
 Property::~Property() {}
+
+template <class T>
+TProperty<T>::TProperty(const T& init) : itsVal(init) {}
 
 template <class T>
 void TProperty<T>::serialize(ostream& os, IO::IOFlag) const 
@@ -52,6 +55,9 @@ template class TProperty<int>;
 template class TProperty<bool>;
 template class TProperty<double>;
 
+
+template <class T>
+TPtrProperty<T>::TPtrProperty(T& valRef) : itsVal(valRef) {}
 
 template <class T>
 void TPtrProperty<T>::serialize(ostream& os, IO::IOFlag) const 

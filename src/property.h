@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Thu Mar 30 10:06:46 2000
+// written: Tue May 30 18:02:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ template <class T>
 class TProperty : public Property {
 public:
   ///
-  TProperty(T init=T()) : itsVal(init) {}
+  TProperty(const T& init=T());
 
   ///
   template <class C> friend class PropFriend;
@@ -123,7 +123,7 @@ template <class C, class T>
 class CTProperty : public TProperty<T> { 
 public:
   ///
-  CTProperty(T init = T()) : TProperty<T>(init) {}
+  CTProperty(const T& init = T()) : TProperty<T>(init) {}
 
 #ifndef GCC_COMPILER
   ///
@@ -146,7 +146,7 @@ template <class T, int min, int max, int div>
 class TBoundedProperty : public TProperty<T> {
 public:
   ///
-  TBoundedProperty(T init=T()) : TProperty<T>(init) {}
+  TBoundedProperty(const T& init=T()) : TProperty<T>(init) {}
 
 #ifndef GCC_COMPILER
 protected:
@@ -189,7 +189,8 @@ template <class C, class T, int min, int max, int div>
 class CTBoundedProperty : public TBoundedProperty<T, min, max, div> { 
 public:
   ///
-  CTBoundedProperty(T init = T()) : TBoundedProperty<T, min, max, div>(init) {}
+  CTBoundedProperty(const T& init = T()) :
+	 TBoundedProperty<T, min, max, div>(init) {}
 
 #ifndef GCC_COMPILER
   ///
@@ -214,7 +215,7 @@ template <class T>
 class TPtrProperty : public Property {
 public:
   ///
-  TPtrProperty(T& valRef) : itsVal(valRef) {}
+  TPtrProperty(T& valRef);
 
   ///
   template <class C> friend class PropFriend;
