@@ -62,16 +62,13 @@
   (classmodel and hmax), but only groovx depends on the Util:: stuff.
 
   How to rename Util::? Ark. Cog. Cue. Gel. Hub. Ion. Rho. Rio.
-  Aloe. Onyx. Nub.
+  Aloe. Onyx. Nub. Opal. Opus.
 
   [-> Util] arrayvalue
   [-> Util] log (depends on Object)
   [-> Util] multivalue
   [-> Util] objdb
   [-> Util] value
-  [-> rutz] iter
-  [-> rutz] pointers
-  [-> rutz] strings
   [Util] object
   [Util] objfactory
   [Util] objmgr
@@ -82,6 +79,9 @@
   [Util] timer (depends on signal)
   [Util] uid
   [Util] volatileobject
+
+  OK, all the rutz stuff is now moved to the right namespace.
+
   [rutz] algo
   [rutz] arrays
   [rutz] assocarray
@@ -100,14 +100,17 @@
   [rutz] freelist
   [rutz] functors
   [rutz] gzstreambuf
+  [rutz] iter
   [rutz] mappedfile
   [rutz] pipe
+  [rutz] pointers
   [rutz] rand
   [rutz] serialport
   [rutz] staticstack
   [rutz] stderror
   [rutz] stdiobuf
   [rutz] stopwatch
+  [rutz] strings
   [rutz] time
   [rutz] trace
   [rutz] tracer (rename to rutz::toggle?)
