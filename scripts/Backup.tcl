@@ -6,6 +6,7 @@ set archive_name grsh_backup_${date_ext}.tar.gz
 
 set sources "../grsh/Makefile \
 		  ../grsh/RCS \
+		  ../grsh/dep \
 		  ../grsh/doc \
 		  ../grsh/idep \
 		  ../grsh/logs \
