@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 15:22:39 2000
+// written: Wed May 24 15:33:58 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -126,6 +126,9 @@ private:
   void checkDblBufferSnafu();
   void setupEpsMaps();
   void freeEpsMaps();
+
+  void addSelfToList();
+  void removeSelfFromList();
 
 public:
 
@@ -324,39 +327,6 @@ static Tcl_HashTable CommandTable;
 
 static Togl* ToglHead = NULL;  /* head of linked list */
 
-
-/*
- * Add given togl widget to linked list.
- */
-static void AddToList(Togl* t)
-{
-DOTRACE("<togl.cc>::AddToList");
-  t->itsNext = ToglHead;
-  ToglHead = t;
-}
-
-/*
- * Remove given togl widget from linked list.
- */
-static void RemoveFromList(Togl* t)
-{
-DOTRACE("<togl.cc>::RemoveFromList");
-  Togl* prev = NULL;
-  Togl* pos = ToglHead;
-  while (pos) {
-	 if (pos == t) {
-		if (prev) {
-		  prev->itsNext = pos->itsNext;
-		}
-		else {
-		  ToglHead = pos->itsNext;
-		}
-		return;
-	 }
-	 prev = pos;
-	 pos = pos->itsNext;
-  }
-}
 
 /*
  * Return pointer to togl widget given a user identifier string.
@@ -1971,7 +1941,7 @@ DOTRACE("Togl::Togl");
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 
   /* Add to linked list */
-  AddToList(this);
+  addSelfToList();
 }
 
 Togl::~Togl() {
@@ -1989,7 +1959,7 @@ DOTRACE("Togl::~Togl");
   }
 
   /* remove from linked list */
-  RemoveFromList(this);
+  removeSelfFromList();
 }
 
 int Togl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags) {
@@ -2647,6 +2617,31 @@ DOTRACE("Togl::freeEpsMaps");
   if (itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
   itsEpsRedMap = itsEpsGreenMap = itsEpsBlueMap = NULL;
   itsEpsMapSize = 0;
+}
+
+void Togl::addSelfToList() {
+DOTRACE("Togl::addSelfToList");
+  itsNext = ToglHead;
+  ToglHead = this;
+}
+
+void Togl::removeSelfFromList() {
+DOTRACE("Togl::removeSelfFromList");
+  Togl* prev = NULL;
+  Togl* pos = ToglHead;
+  while (pos) {
+	 if (pos == this) {
+		if (prev) {
+		  prev->itsNext = pos->itsNext;
+		}
+		else {
+		  ToglHead = pos->itsNext;
+		}
+		return;
+	 }
+	 prev = pos;
+	 pos = pos->itsNext;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
