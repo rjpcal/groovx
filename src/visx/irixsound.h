@@ -52,25 +52,15 @@
 //
 //  ===================================================================
 
-class IrixAudioSound : public Sound
+class IrixAudioSoundRep : public SoundRep
 {
 public:
-  IrixAudioSound(const char* filename = 0);
-  virtual ~IrixAudioSound();
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  IrixAudioSoundRep(const char* filename = 0);
+  virtual ~IrixAudioSoundRep();
 
   virtual void play();
-  virtual void setFile(const char* filename);
-  virtual const char* getFile() const { return itsFilename.c_str(); }
-
-  virtual fstring objTypename() const { return "Sound"; }
 
 private:
-  IrixAudioSound(const IrixAudioSound&);
-  IrixAudioSound& operator=(const IrixAudioSound&);
-
   fstring itsFilename;
 
   ALconfig itsAudioConfig;
@@ -83,7 +73,7 @@ private:
   dynamic_block<unsigned char> itsSamples;
 };
 
-IrixAudioSound::IrixAudioSound(const char* filename) :
+IrixAudioSoundRep::IrixAudioSoundRep(const char* filename) :
   itsFilename(""),
   itsAudioConfig(alNewConfig()),
   itsNumChannels(0),
@@ -94,73 +84,15 @@ IrixAudioSound::IrixAudioSound(const char* filename) :
   itsSamplingRate(0.0),
   itsSamples()
 {
-DOTRACE("IrixAudioSound::IrixAudioSound");
+DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   if (itsAudioConfig == 0)
     throw Util::Error("error creating an ALconfig while creating Sound");
 
-  if (filename)
-    setFile(filename);
-}
+  if (filename == 0 || filename[0] == '\0')
+    throw Util::Error("invalid filename");
 
-IrixAudioSound::~IrixAudioSound()
-{
-DOTRACE("IrixAudioSound::~IrixAudioSound");
-  if (itsAudioConfig != 0)
-    {
-      alFreeConfig(itsAudioConfig);
-    }
-}
-
-void IrixAudioSound::readFrom(IO::Reader* reader)
-{
-DOTRACE("IrixAudioSound::readFrom");
-
-  reader->readValue("filename", itsFilename);
-  setFile(itsFilename.c_str());
-}
-
-void IrixAudioSound::writeTo(IO::Writer* writer) const
-{
-DOTRACE("IrixAudioSound::writeTo");
-
-  writer->writeValue("filename", itsFilename);
-}
-
-void IrixAudioSound::play()
-{
-DOTRACE("IrixAudioSound::play");
-  if (itsSamples.size() == 0) return;
-
-  ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
-  dbgEvalNL(3, (void*) audioPort);
-  if (audioPort == 0)
-    {
-      throw Util::Error("error opening an audio port during Sound::play");
-    }
-
-  int writeResult =
-    alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
-  if (writeResult == -1)
-    {
-      throw Util::Error("error writing to the audio port during Sound::play");
-    }
-
-  while (alGetFilled(audioPort) > 0)
-    {
-      usleep(5000);
-    }
-
-  int closeResult = alClosePort(audioPort);
-  if (closeResult == -1)
-    {
-      throw Util::Error("error closing the audio port during Sound::play");
-    }
-}
-
-void IrixAudioSound::setFile(const char* filename)
-{
-DOTRACE("IrixAudioSound::setFile");
   STD_IO::ifstream ifs(filename);
+
   if (ifs.fail())
     {
       throw IO::FilenameError(filename);
@@ -251,6 +183,47 @@ DOTRACE("IrixAudioSound::setFile");
     {
       throw Util::Error(fstring("error closing sound file ", itsFilename));
     }
+    setFile(filename);
+}
+
+IrixAudioSoundRep::~IrixAudioSoundRep()
+{
+DOTRACE("IrixAudioSoundRep::~IrixAudioSoundRep");
+  if (itsAudioConfig != 0)
+    {
+      alFreeConfig(itsAudioConfig);
+    }
+}
+
+void IrixAudioSoundRep::play()
+{
+DOTRACE("IrixAudioSoundRep::play");
+  if (itsSamples.size() == 0) return;
+
+  ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
+  dbgEvalNL(3, (void*) audioPort);
+  if (audioPort == 0)
+    {
+      throw Util::Error("error opening an audio port during Sound::play");
+    }
+
+  int writeResult =
+    alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
+  if (writeResult == -1)
+    {
+      throw Util::Error("error writing to the audio port during Sound::play");
+    }
+
+  while (alGetFilled(audioPort) > 0)
+    {
+      usleep(5000);
+    }
+
+  int closeResult = alClosePort(audioPort);
+  if (closeResult == -1)
+    {
+      throw Util::Error("error closing the audio port during Sound::play");
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -276,16 +249,10 @@ void Sound::closeSound()
 DOTRACE("Sound::closeSound");
 }
 
-Sound* Sound::make()
-{
-DOTRACE("Sound::make");
-  return new IrixAudioSound();
-}
-
-Sound* Sound::newPlatformSound(const char* soundfile)
+Sound* Sound::newPlatformSoundRep(const char* soundfile)
 {
 DOTRACE("Sound::newPlatformSound");
-  return new IrixAudioSound(soundfile);
+  return new IrixAudioSoundRep(soundfile);
 }
 
 static const char vcid_irixsound_h[] = "$Header$";

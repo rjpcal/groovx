@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 19 07:38:09 2003
-// written: Mon May 19 08:50:27 2003
+// written: Mon May 19 09:04:31 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,18 +117,6 @@ DOTRACE("Sound::closeSound");
     {
       ExitMovies();
     }
-}
-
-Sound* Sound::make()
-{
-DOTRACE("Sound::make");
-  return new StdSound;
-}
-
-Sound* Sound::newPlatformSound(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSound");
-  return new StdSound(soundfile);
 }
 
 SoundRep* Sound::newPlatformSoundRep(const char* soundfile)

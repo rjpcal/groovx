@@ -41,85 +41,20 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-/// DummySound is a stub implementation of the Sound interface.
-class DummySound : public Sound
+/// DummySoundRep is a stub implementation of the SoundRep interface.
+class DummySoundRep : public SoundRep
 {
 public:
-  /// Construct with a named sound file.
-  DummySound(const char* filename = 0);
-
-  /// Virtual destructor.
-  virtual ~DummySound();
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  /// Construct from a sound file (but all we do is see if the file exists).
+  DummySoundRep(const char* filename = 0);
 
   /// Play the sound (but this is a no-op for DummySound).
   virtual void play();
-
-  /// Set to refer to a different sound file.
-  virtual void setFile(const char* filename);
-
-  /// Get the name of the associated sound file.
-  virtual const char* getFile() const { return itsFilename.c_str(); }
-
-  virtual fstring objTypename() const { return "Sound"; }
-
-  /// Swap contents with a different DummySound object.
-  void swap(DummySound& other)
-  {
-    itsFilename.swap(other.itsFilename);
-  }
-
-private:
-  fstring itsFilename;
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// DummySound member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-DummySound::DummySound(const char* filename) :
-  itsFilename("")
+DummySoundRep::DummySoundRep(const char* filename)
 {
-DOTRACE("DummySound::DummySound");
-  setFile(filename);
-}
-
-DummySound::~DummySound()
-{
-DOTRACE("DummySound::~DummySound");
-}
-
-void DummySound::readFrom(IO::Reader* reader)
-{
-DOTRACE("DummySound::readFrom");
-
-  reader->readValue("filename", itsFilename);
-
-  dbgEval(3, itsFilename.length()); dbgEvalNL(3, itsFilename);
-
-  if (!itsFilename.is_empty())
-    setFile(itsFilename.c_str());
-}
-
-void DummySound::writeTo(IO::Writer* writer) const
-{
-DOTRACE("DummySound::writeTo");
-
-  writer->writeValue("filename", itsFilename);
-}
-
-void DummySound::play()
-{
-DOTRACE("DummySound::play");
-}
-
-void DummySound::setFile(const char* filename)
-{
-DOTRACE("DummySound::setFile");
+DOTRACE("DummySoundRep::DummySoundRep");
   if (filename != 0 && filename[0] != '\0')
     {
       STD_IO::ifstream ifs(filename);
@@ -128,9 +63,12 @@ DOTRACE("DummySound::setFile");
           throw IO::FilenameError(filename);
         }
       ifs.close();
-
-      itsFilename = filename;
     }
+}
+
+void DummySoundRep::play()
+{
+DOTRACE("DummySoundRep::play");
 }
 
 
@@ -157,16 +95,10 @@ void Sound::closeSound()
 DOTRACE("Sound::closeSound");
 }
 
-Sound* Sound::make()
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
 {
-DOTRACE("Sound::make");
-  return new DummySound();
-}
-
-Sound* Sound::newPlatformSound(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSound");
-  return new DummySound(soundfile);
+DOTRACE("Sound::newPlatformSoundRep");
+  return new DummySoundRep(soundfile);
 }
 
 static const char vcid_dummysound_h[] = "$Header$";

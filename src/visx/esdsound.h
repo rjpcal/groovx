@@ -43,34 +43,14 @@
 #include "util/debug.h"
 
 /// EsdSound implementats the Sound interface using the ESD API.
-class EsdSound : public Sound
+class EsdSoundRep : public SoundRep
 {
 public:
   /// Construct with reference to the named sound file.
-  EsdSound(const char* filename = 0);
-
-  /// Virtual destructor.
-  virtual ~EsdSound();
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  EsdSoundRep(const char* filename = 0);
 
   /// Play the sound (in this case using the ESD daemon).
   virtual void play();
-
-  /// Change to refer to a new sound file.
-  virtual void setFile(const char* filename);
-
-  /// Get the name of the associated sound file.
-  virtual const char* getFile() const { return itsFilename.c_str(); }
-
-  virtual fstring objTypename() const { return "Sound"; }
-
-  /// Swap contents with another EsdSound object.
-  void swap(EsdSound& other)
-  {
-    itsFilename.swap(other.itsFilename);
-  }
 
 private:
   fstring itsFilename;
@@ -82,52 +62,10 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-EsdSound::EsdSound(const char* filename) :
+EsdSoundRep::EsdSoundRep(const char* filename) :
   itsFilename("")
 {
-DOTRACE("EsdSound::EsdSound");
-  setFile(filename);
-}
-
-EsdSound::~EsdSound()
-{
-DOTRACE("EsdSound::~EsdSound");
-}
-
-void EsdSound::readFrom(IO::Reader* reader)
-{
-DOTRACE("EsdSound::readFrom");
-
-  reader->readValue("filename", itsFilename);
-
-  dbgEval(3, itsFilename.length()); dbgEvalNL(3, itsFilename);
-
-  if (!itsFilename.is_empty())
-    setFile(itsFilename.c_str());
-}
-
-void EsdSound::writeTo(IO::Writer* writer) const
-{
-DOTRACE("EsdSound::writeTo");
-
-  writer->writeValue("filename", itsFilename);
-}
-
-void EsdSound::play()
-{
-DOTRACE("EsdSound::play");
-
-  if (!itsFilename.is_empty())
-    {
-      int res = esd_play_file("", itsFilename.c_str(), 0);
-      if (res == 0)
-        throw IO::FilenameError(itsFilename.c_str());
-    }
-}
-
-void EsdSound::setFile(const char* filename)
-{
-DOTRACE("EsdSound::setFile");
+DOTRACE("EsdSoundRep::EsdSoundRep");
   if (filename != 0 && filename[0] != '\0')
     {
       // We just use afOpenFile to ensure that the filename refers to
@@ -149,6 +87,18 @@ DOTRACE("EsdSound::setFile");
         }
 
       itsFilename = filename;
+    }
+}
+
+void EsdSoundRep::play()
+{
+DOTRACE("EsdSoundRep::play");
+
+  if (!itsFilename.is_empty())
+    {
+      int res = esd_play_file("", itsFilename.c_str(), 0);
+      if (res == 0)
+        throw IO::FilenameError(itsFilename.c_str());
     }
 }
 
@@ -190,16 +140,10 @@ DOTRACE("Sound::closeSound");
     esd_audio_close();
 }
 
-Sound* Sound::make()
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
 {
-DOTRACE("Sound::make");
-  return new EsdSound();
-}
-
-Sound* Sound::newPlatformSound(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSound");
-  return new EsdSound(soundfile);
+DOTRACE("SoundRep::newPlatformSoundRep");
+  return new EsdSoundRep(soundfile);
 }
 
 static const char vcid_esdsound_h[] = "$Header$";

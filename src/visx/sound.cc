@@ -61,8 +61,6 @@ namespace
 
 SoundRep::~SoundRep() {}
 
-Sound::~Sound() {}
-
 void Sound::setOkSound(Ref<Sound> ok_sound)
 {
   OK_SOUND = ok_sound;
@@ -83,22 +81,28 @@ Ref<Sound> Sound::getErrSound()
   return Ref<Sound>(ERR_SOUND.get());
 }
 
-StdSound::StdSound(const char* filename) :
+Sound* Sound::make()
+{
+DOTRACE("Sound::make");
+  return new Sound;
+}
+
+Sound::Sound(const char* filename) :
   itsFilename(""),
   itsRep(0)
 {
-DOTRACE("StdSound::StdSound");
+DOTRACE("Sound::Sound");
   setFile(filename);
 }
 
-StdSound::~StdSound()
+Sound::~Sound()
 {
-DOTRACE("StdSound::~StdSound");
+DOTRACE("Sound::~Sound");
 }
 
-void StdSound::readFrom(IO::Reader* reader)
+void Sound::readFrom(IO::Reader* reader)
 {
-DOTRACE("StdSound::readFrom");
+DOTRACE("Sound::readFrom");
 
   reader->readValue("filename", itsFilename);
 
@@ -106,23 +110,23 @@ DOTRACE("StdSound::readFrom");
     setFile(itsFilename.c_str());
 }
 
-void StdSound::writeTo(IO::Writer* writer) const
+void Sound::writeTo(IO::Writer* writer) const
 {
-DOTRACE("StdSound::writeTo");
+DOTRACE("Sound::writeTo");
 
   writer->writeValue("filename", itsFilename);
 }
 
-void StdSound::play()
+void Sound::play()
 {
-DOTRACE("StdSound::play");
+DOTRACE("Sound::play");
   if (itsRep.get() != 0)
     itsRep->play();
 }
 
-void StdSound::setFile(const char* filename)
+void Sound::setFile(const char* filename)
 {
-DOTRACE("StdSound::setFile");
+DOTRACE("Sound::setFile");
   if (filename != 0 && filename[0] != '\0')
     {
       itsRep.reset(newPlatformSoundRep(filename));
@@ -130,9 +134,9 @@ DOTRACE("StdSound::setFile");
     }
 }
 
-const char* StdSound::getFile() const
+const char* Sound::getFile() const
 {
-DOTRACE("StdSound::getFile");
+DOTRACE("Sound::getFile");
   return itsFilename.c_str();
 }
 

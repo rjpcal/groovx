@@ -70,10 +70,8 @@ public:
       caller is responsible for destroying the Sound object. */
   static Sound* make();
 
-  /** Returns a pointer to a new platform-appropriate Sound object. The
+  /** Returns a pointer to a new platform-appropriate SoundRep object. The
       caller is responsible for destroying the Sound object. */
-  static Sound* newPlatformSound(const char* soundfile);
-
   static SoundRep* newPlatformSoundRep(const char* soundfile);
 
   static void setOkSound(Util::Ref<Sound> ok_sound);
@@ -81,24 +79,9 @@ public:
   static Util::Ref<Sound> getOkSound();
   static Util::Ref<Sound> getErrSound();
 
+  Sound(const char* filename = 0);
+
   virtual ~Sound();
-
-  virtual void readFrom(IO::Reader* reader) = 0;
-  virtual void writeTo(IO::Writer* writer) const = 0;
-
-  virtual void play() = 0;
-  virtual void setFile(const char* filename) = 0;
-  virtual const char* getFile() const = 0;
-};
-
-class StdSound : public Sound
-{
-public:
-  StdSound(const char* filename = 0);
-
-  virtual ~StdSound();
-
-  virtual fstring objTypename() const { return "Sound"; }
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

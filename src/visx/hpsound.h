@@ -78,28 +78,13 @@ using namespace HPSOUND_CC_LOCAL;
 //
 //  ===================================================================
 
-class HpAudioSound : public Sound
+class HpAudioSoundRep : public SoundRep
 {
 public:
-  HpAudioSound(const char* filename = 0);
-  virtual ~HpAudioSound();
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  HpAudioSoundRep(const char* filename = 0);
+  virtual ~HpAudioSoundRep();
 
   virtual void play();
-  virtual void setFile(const char* filename);
-  virtual const char* getFile() const { return itsFilename.c_str(); }
-
-  virtual fstring objTypename() const { return "Sound"; }
-
-  void swap(HpAudioSound& other)
-    {
-      itsFilename.swap(other.itsFilename);
-
-      Util::swap2(itsSBucket,    other.itsSBucket);
-      Util::swap2(itsPlayParams, other.itsPlayParams);
-    }
 
 private:
   fstring itsFilename;
@@ -107,18 +92,12 @@ private:
   SBPlayParams itsPlayParams;
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// HpAudioSound member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-HpAudioSound::HpAudioSound(const char* filename) :
+HpAudioSoundRep::HpAudioSoundRep(const char* filename) :
   itsFilename(""),
   itsSBucket(0),
   itsPlayParams()
 {
-DOTRACE("HpAudioSound::HpAudioSound");
+DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
   if ( !theAudio )
     throw Util::Error("invalid HP audio server connection");
 
@@ -132,52 +111,6 @@ DOTRACE("HpAudioSound::HpAudioSound");
   itsPlayParams.play_volume = AUnityGain;
   itsPlayParams.duration.type = ATTFullLength;
   itsPlayParams.event_mask = 0;
-
-  setFile(filename);
-}
-
-HpAudioSound::~HpAudioSound()
-{
-DOTRACE("HpAudioSound::~HpAudioSound");
-  if ( theAudio != 0 )
-    {
-      if (itsSBucket)
-        ADestroySBucket( theAudio, itsSBucket, NULL );
-    }
-}
-
-void HpAudioSound::readFrom(IO::Reader* reader)
-{
-DOTRACE("HpAudioSound::readFrom");
-
-  reader->readValue("filename", itsFilename);
-
-  dbgEval(3, itsFilename.length()); dbgEvalNL(3, itsFilename);
-
-  if (!itsFilename.empty())
-    setFile(itsFilename.c_str());
-}
-
-void HpAudioSound::writeTo(IO::Writer* writer) const
-{
-DOTRACE("HpAudioSound::writeTo");
-
-  writer->writeValue("filename", itsFilename);
-}
-
-void HpAudioSound::play()
-{
-DOTRACE("HpAudioSound::play");
-  if ( !theAudio )
-    throw Util::Error("invalid audio server connection");
-
-  if (itsSBucket)
-    ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
-}
-
-void HpAudioSound::setFile(const char* filename)
-{
-DOTRACE("HpAudioSound::setFile");
 
   if (filename != 0 && filename[0] != '\0')
     {
@@ -200,6 +133,26 @@ DOTRACE("HpAudioSound::setFile");
 
       itsFilename = filename;
     }
+}
+
+HpAudioSoundRep::~HpAudioSoundRep()
+{
+DOTRACE("HpAudioSoundRep::~HpAudioSoundRep");
+  if ( theAudio != 0 )
+    {
+      if (itsSBucket)
+        ADestroySBucket( theAudio, itsSBucket, NULL );
+    }
+}
+
+void HpAudioSoundRep::play()
+{
+DOTRACE("HpAudioSoundRep::play");
+  if ( !theAudio )
+    throw Util::Error("invalid audio server connection");
+
+  if (itsSBucket)
+    ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
 }
 
 
@@ -254,16 +207,10 @@ DOTRACE("Sound::closeSound");
     }
 }
 
-Sound* Sound::make()
+Sound* Sound::newPlatformSoundRep(const char* soundfile)
 {
-DOTRACE("Sound::make");
-  return new HpAudioSound();
-}
-
-Sound* Sound::newPlatformSound(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSound");
-  return new HpAudioSound(soundfile);
+DOTRACE("Sound::newPlatformSoundRep");
+  return new HpAudioSoundRep(soundfile);
 }
 
 static const char vcid_hpsound_h[] = "$Header$";
