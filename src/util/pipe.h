@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Fri Jan 14 17:51:53 2000
+// written: Tue Feb  1 12:02:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,27 @@
 #ifndef PIPE_H_DEFINED
 #define PIPE_H_DEFINED
 
+// This hackery is required since in the sgi "stdio.h" header,
+// popen(), pclose(), and fileno() are not declared if -ansi is used
+// on the command line. So we temporarily define _NO_ANSIMODE here,
+// and then turn it back off afterwards.
+#ifdef IRIX6
+#  if !(_NO_ANSIMODE)
+#    undef  _NO_ANSIMODE
+#    define _NO_ANSIMODE 1
+#    define UNDO_NO_ANSIMODE
+#  endif
+#endif
+
 #include <cstdio>
+
+#ifdef UNDO_NO_ANSIMODE
+#  undef _NO_ANSIMODE
+#  define _NO_ANSIMODE 0
+#endif
+// end hackery
+
+
 #include <fstream.h>
 
 namespace Util {
