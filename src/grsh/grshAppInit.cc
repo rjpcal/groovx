@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Sep 29 19:29:59 1999
+// written: Thu Sep 30 12:15:53 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -25,6 +25,7 @@ extern "C" {
   Tcl_PackageInitProc Expt_Init;
   Tcl_PackageInitProc Expttest_Init;
   Tcl_PackageInitProc Face_Init;
+  Tcl_PackageInitProc Fish_Init;
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Grobj_Init;
   Tcl_PackageInitProc Gtext_Init;
@@ -61,6 +62,7 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Expt",     Expt_Init      }
   , { "ExptTest", Expttest_Init  }
   , { "Face",     Face_Init      }
+  , { "Fish",     Fish_Init      }
   , { "FixPt",    Fixpt_Init     }
   , { "Grobj",    Grobj_Init     }
   , { "Gtext",    Gtext_Init     }
