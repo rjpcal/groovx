@@ -65,9 +65,11 @@ public:
     interp(intp),
     cmdToken(Tcl_CreateObjCommand(interp.intp(),
                                   cmd_name.c_str(),
-                                  &cInvokeCallback,
+                                  // see comment in CommandGroup's
+                                  // constructor for why we pass zeros here
+                                  static_cast<Tcl_ObjCmdProc*>(0),
                                   static_cast<ClientData>(0),
-                                  &cDeleteCallback)),
+                                  static_cast<Tcl_CmdDeleteProc*>(0))),
     initialCmdName(getFullCommandName(intp, cmdToken)),
     cmdList(),
     profName("tcl/", cmd_name),
@@ -139,12 +141,22 @@ Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
 {
 DOTRACE("Tcl::CommandGroup::CommandGroup");
 
-  // Register the command procedure
+  // Register the command procedure. We do a two-step initialization. When
+  // we call Tcl_CreateObjCommand in Impl's constructor, we don't fill in
+  // the clientData/objProc/deleteProc values there, but instead wait to
+  // fill them in here. The reason is that we don't want to set up any
+  // callbacks from Tcl until after we're sure that everything else in the
+  // construction sequence has succeeded. We want to ensure that we don't
+  // have "dangling callbacks" in case an exception escapes from an earlier
+  // part of Impl's or CommandGroups's constructor.
   Tcl_CmdInfo info;
   const int result = Tcl_GetCommandInfoFromToken(rep->cmdToken, &info);
   Assert(result == 1);
+  Assert(info.isNativeObjectProc == 1);
   info.objClientData = static_cast<ClientData>(this);
+  info.objProc = &cInvokeCallback;
   info.deleteData = static_cast<ClientData>(this);
+  info.deleteProc = &cDeleteCallback;
   Tcl_SetCommandInfoFromToken(rep->cmdToken, &info);
 
   Tcl_CreateExitHandler(&cExitCallback,
