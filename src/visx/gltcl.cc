@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Sep 20 11:37:29 1999
+// written: Sun Oct  3 19:58:54 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -15,8 +15,6 @@
 
 #ifndef TCLGL_CC_DEFINED
 #define TCLGL_CC_DEFINED
-
-#include "tclgl.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -1467,6 +1465,8 @@ public:
 // TclGL::Tclgl_Init --
 //
 //--------------------------------------------------------------------
+
+extern "C" Tcl_PackageInitProc Tclgl_Init;
 
 int Tclgl_Init(Tcl_Interp* interp) {
 DOTRACE("Tclgl_Init");
