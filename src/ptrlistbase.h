@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 09:32:19 2000
+// written: Wed Oct 25 11:54:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,30 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class PtrListBase {
+public:
+
+  class Impl;
+  class ItrImpl;
+
+  class IdIterator {
+  private:
+	 ItrImpl* itsImpl;
+  public:
+	 IdIterator(ItrImpl* impl);
+	 ~IdIterator();
+	 IdIterator(const IdIterator& other);
+	 IdIterator& operator=(const IdIterator& other);
+
+	 bool operator==(const IdIterator& other) const;
+
+	 IdIterator& operator++();
+
+	 int operator*() const;
+  };
+
+  IdIterator beginIds();
+  IdIterator endIds();
+
 protected:
   /// Construct a PtrList with an initial reserve capacity of 'size'
   PtrListBase(int size);
@@ -112,7 +136,6 @@ private:
   PtrListBase(const PtrListBase&);
   PtrListBase& operator=(const PtrListBase&);
 
-  class Impl;
   Impl* const itsImpl;
 };
 
