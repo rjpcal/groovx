@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 12:48:19 2002
+// written: Wed Nov 13 13:21:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -358,25 +358,25 @@ DOTRACE("GrObj::setCacheFilename");
 double GrObj::getWidthFactor() const
 {
 DOTRACE("GrObj::getWidthFactor");
-  return itsImpl->itsScaler->itsWidthFactor;
+  return itsImpl->itsScaler->widthFactor();
 }
 
 void GrObj::setWidthFactor(double val)
 {
 DOTRACE("GrObj::setWidthFactor");
-  itsImpl->itsScaler->itsWidthFactor = val;
+  itsImpl->itsScaler->setWidthFactor(val);
 }
 
 double GrObj::getHeightFactor() const
 {
 DOTRACE("GrObj::getHeightFactor");
-  return itsImpl->itsScaler->itsHeightFactor;
+  return itsImpl->itsScaler->heightFactor();
 }
 
 void GrObj::setHeightFactor(double val)
 {
 DOTRACE("GrObj::setHeightFactor");
-  itsImpl->itsScaler->itsHeightFactor = val;
+  itsImpl->itsScaler->setHeightFactor(val);
 }
 
 static const char vcid_grobj_cc[] = "$Header$";
