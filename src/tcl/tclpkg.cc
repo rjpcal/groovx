@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Sat May 19 22:14:15 2001
+// written: Sat May 26 17:48:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,13 +75,18 @@ void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
 
 template <class T>
 void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
-												Attrib<T>* attrib, const char* usage) {
+												Getter<T>* getter,
+												Setter<T>* setter,
+												const char* usage) {
+
   addCommand(
 			new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
 #ifndef ACC_COMPILER
-											  make_shared(attrib),
+											  make_shared(getter),
+											  make_shared(setter),
 #else
-											  shared_ptr<Attrib<T> >(attrib),
+											  shared_ptr<Getter<T> >(getter),
+											  shared_ptr<Setter<T> >(setter),
 #endif
 											  usage, itsItemArgn)
 			);
@@ -105,13 +110,18 @@ void Tcl::TclItemPkg::instantiate() {
   declareSetter(0, (Setter<const char*>*) 0, 0);
   declareSetter(0, (Setter<const fixed_string&>*) 0, 0);
 
-  declareAttrib(0, (Attrib<int>*) 0, 0);
-  declareAttrib(0, (Attrib<unsigned int>*) 0, 0);
-  declareAttrib(0, (Attrib<unsigned long>*) 0, 0);
-  declareAttrib(0, (Attrib<bool>*) 0, 0);
-  declareAttrib(0, (Attrib<double>*) 0, 0);
-  declareAttrib(0, (Attrib<const char*>*) 0, 0);
-  declareAttrib(0, (Attrib<const fixed_string&>*) 0, 0);
+#define DUMMY_INST(type) \
+  declareAttrib(0, (Getter<type>*) 0, (Setter<type>*) 0, 0)
+
+  DUMMY_INST(int);
+  DUMMY_INST(unsigned int);
+  DUMMY_INST(unsigned long);
+  DUMMY_INST(bool);
+  DUMMY_INST(double);
+  DUMMY_INST(const char*);
+  DUMMY_INST(const fixed_string&);
+
+#undef DUMMY_INST
 }
 
 void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
