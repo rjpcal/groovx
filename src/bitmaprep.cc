@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Dec  6 21:49:23 1999
+// written: Mon Dec  6 23:07:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -326,7 +326,7 @@ DOTRACE("BitmapRep::grUnRender");
   int border_pixels;
   grGetBoundingBox(world_rect, border_pixels);
 
-  Rect<int> screen_pos = GLCanvas::theCanvas().getScreenFromWorld(world_rect);
+  Rect<int> screen_pos = canvas.getScreenFromWorld(world_rect);
 
   screen_pos.widenByStep(border_pixels + 1);
   screen_pos.heightenByStep(border_pixels + 1);
@@ -343,7 +343,7 @@ DOTRACE("BitmapRep::grUnRender");
 ///////////////
 
 bool BitmapRep::grGetBoundingBox(Rect<double>& bbox,
-										int& border_pixels) const {
+											int& border_pixels) const {
 DOTRACE("BitmapRep::grGetBoundingBox");
 
   border_pixels = 2;
