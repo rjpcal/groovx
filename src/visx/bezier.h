@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Wed Dec  1 11:52:37 1999
+// written: Wed Dec  1 11:56:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
 double Bezier::eval(double u) {
   double result = 0.0;
   for (size_t i = 0; i < c0.size(); ++i) {
-	 result += c0[i] * pow(u,i);
+	 result += c0[i] * pow(u,double(i));
   }
   return result;
 }
@@ -182,7 +182,7 @@ double Bezier::eval(double u) {
 double Bezier::evalDeriv(double u) {
   double result = 0.0;
   for (size_t i = 0; i < c1.size(); ++i) {
-	 result += c1[i] * pow(u,i);
+	 result += c1[i] * pow(u,double(i));
   }
   return result;
 }
