@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Tue Oct 19 15:52:20 1999
+// written: Tue Oct 19 17:07:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,13 @@ ValueError::ValueError(const string& msg) :
 
 
 Value::~Value() {}
+
+void Value::setInt(int) { throw ValueError(); }
+void Value::setLong(long) { throw ValueError(); }
+void Value::setBool(bool) { throw ValueError(); }
+void Value::setDouble(double) { throw ValueError(); }
+void Value::setCstring(const char*) { throw ValueError(); }
+void Value::setString(const string&) { throw ValueError(); }
 
 
 ///////////////////////////////////////////////////////////////////////
