@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Tue Oct 17 16:24:18 2000
+// written: Tue Oct 17 17:50:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,18 +13,13 @@
 
 #include "tlistwidget.h"
 
-#include "tlist.h"
 #include "trialbase.h"
 
 #include "gwt/canvas.h"
 
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
-
-
-namespace {
-  Tlist& theTlist = Tlist::theTlist();
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -35,15 +30,115 @@ namespace {
 class TlistWidget::Impl {
 public:
   Impl() :
-	 itsCurTrial(0),
+	 itsDrawItem(0),
+	 itsUndrawItem(0),
 	 itsVisibility(false),
 	 itsHoldOn(false)
   {}
 
-  int itsCurTrial;
+  void safeDrawTrial(GWT::Canvas& canvas);
+
+  void display(GWT::Canvas& canvas);
+
+  void clearscreen(GWT::Canvas& canvas);
+
+  void undraw(GWT::Canvas& canvas);
+
+  void setVisibility(bool val)
+  {
+	 itsVisibility = val;
+	 if (itsVisibility == false)
+		{
+		  itsDrawItem = NullableItemWithId<TrialBase>(itsDrawItem.id());
+		  itsUndrawItem =  NullableItemWithId<TrialBase>(itsUndrawItem.id());
+		}
+  }
+
+  void setCurTrial(const NullableItemWithId<TrialBase>& item)
+  {
+  	 itsDrawItem = item;
+
+	 try {
+		itsDrawItem.refresh();
+	 }
+	 catch(InvalidIdError&) {
+		setVisibility(false);
+		throw;
+	 }
+  }
+
+  void setHold(bool hold_on)
+  { itsHoldOn = hold_on; }
+
+private:
+  NullableItemWithId<TrialBase> itsDrawItem;
+  NullableItemWithId<TrialBase> itsUndrawItem;
   bool itsVisibility;
   bool itsHoldOn;
 };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// TlistWidget::Impl member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void TlistWidget::Impl::safeDrawTrial(GWT::Canvas& canvas) {
+DOTRACE("TlistWidget::Impl::safeDrawTrial");
+
+  if ( !itsVisibility ) return;
+
+  try {
+	 DebugPrintNL("drawing the trial...");
+	 itsDrawItem->trDraw(canvas, false);
+	 itsUndrawItem = itsDrawItem;
+	 return;
+  }
+  catch (InvalidIdError& err) {
+	 DebugEvalNL(err.msg_cstr());
+  }
+
+  // Here, either the trial id or some other id was invalid
+  setVisibility(false);
+}
+
+void TlistWidget::Impl::display(GWT::Canvas& canvas) {
+DOTRACE("TlistWidget::Impl::display");
+
+  // Only erase the previous trial if hold is off
+  if( !itsHoldOn ) {
+	 // First we must erase the previous current trial. We ignore any
+	 // invalid id errors that occur, and simply clear the screen in
+	 // this case.
+	 try {
+		itsUndrawItem->trUndraw(canvas, false);
+	 }
+	 catch (InvalidIdError&) {
+		canvas.clearColorBuffer();
+	 }
+  }
+
+  safeDrawTrial(canvas);
+}
+
+void TlistWidget::Impl::clearscreen(GWT::Canvas& canvas) {
+DOTRACE("TlistWidget::Impl::clearscreen");
+  setVisibility(false); 
+  canvas.clearColorBuffer();
+  canvas.flushOutput();
+}
+
+void TlistWidget::Impl::undraw(GWT::Canvas& canvas) {
+DOTRACE("TlistWidget::Impl::undraw");
+  itsUndrawItem->trUndraw(canvas, true);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// TlistWidget member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 TlistWidget::TlistWidget(Tcl_Interp* interp, const char* pathname,
 								 int config_argc, char** config_argv,
@@ -61,81 +156,40 @@ TlistWidget::~TlistWidget() {
 void TlistWidget::display() {
 DOTRACE("TlistWidget::display");
 
-  // Only erase the previous trial if hold is off
-  if( !itsImpl->itsHoldOn ) {
-	 // First we must erase the previous current trial. We ignore any
-	 // invalid id errors that occur, and simply clear the screen in
-	 // this case.
-	 try {
-		theTlist.getCheckedPtr(itsImpl->itsCurTrial)->trUndraw(*(this->getCanvas()), false);
-	 }
-	 catch (InvalidIdError&) {
-		clearscreen();
-	 }
-  }
+  itsImpl->display(*(getCanvas()));
 
-  safeDrawTrial();
   swapBuffers();
   getCanvas()->flushOutput();
 }
 
-void TlistWidget::clearscreen() {
-DOTRACE("TlistWidget::clearscreen");
-  setVisibility(false);
-  getCanvas()->clearColorBuffer();
-  getCanvas()->flushOutput();
-}
+void TlistWidget::clearscreen()
+  { itsImpl->clearscreen(*(getCanvas())); }
 
 void TlistWidget::refresh() {
 DOTRACE("TlistWidget::refresh");
 
   getCanvas()->clearColorBuffer(); 
-  safeDrawTrial();
+  itsImpl->safeDrawTrial(*(getCanvas()));
   swapBuffers();
   getCanvas()->flushOutput();
 }
 
-void TlistWidget::undraw() {
-DOTRACE("TlistWidget::undraw");
-  theTlist.getCheckedPtr(itsImpl->itsCurTrial)->trUndraw(*(this->getCanvas()), true);
-}
+void TlistWidget::undraw()
+  { itsImpl->undraw(*(getCanvas())); }
 
 void TlistWidget::setVisibility(bool vis) {
 DOTRACE("TlistWidget::setVisibility");
-  itsImpl->itsVisibility = vis;
+  itsImpl->setVisibility(vis);
 }
 
 void TlistWidget::setCurTrial(const NullableItemWithId<TrialBase>& item) {
 DOTRACE("TlistWidget::setCurTrial");
-  if ( !theTlist.isValidId(item.id()) )
-	 { throw InvalidIdError("invalid trial id"); }
-	 
-  itsImpl->itsCurTrial = item.id();
+  itsImpl->setCurTrial(item);
 }
 
 void TlistWidget::setHold(bool hold_on) {
 DOTRACE("TlistWidget::setHold");
-  itsImpl->itsHoldOn = hold_on;
-}
-
-void TlistWidget::safeDrawTrial() {
-DOTRACE("TlistWidget::safeDrawTrial");
-
-  if ( !itsImpl->itsVisibility ) return;
-
-  if ( theTlist.isValidId(itsImpl->itsCurTrial) ) {
-	 try {
-		DebugPrintNL("drawing the trial...");
-		theTlist.getPtr(itsImpl->itsCurTrial)->trDraw(*(getCanvas()), false);
-		return;
-	 }
-	 catch (InvalidIdError& err) {
-		DebugEvalNL(err.msg_cstr());
-	 }
-  }
-
-  // Here, either the trial id or some other id was invalid
-  setVisibility(false);
+  itsImpl->setHold(hold_on);
 }
 
 static const char vcid_tlistwidget_cc[] = "$Header$";
