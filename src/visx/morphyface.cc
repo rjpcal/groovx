@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Oct 20 17:30:32 2000
+// written: Thu Nov  2 14:54:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace {
 
   const MorphyFace::PInfo PINFOS[] = {
 	 MF::PInfo("category",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::category),
+				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::mfaceCategory),
 				  0, 10, 1, true),
 
 	 MF::PInfo("faceWidth",
@@ -270,7 +270,7 @@ DOTRACE("MorphyFace::make");
 MorphyFace::MorphyFace() :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
 
-  category(0),
+  mfaceCategory(0),
 
   faceWidth(2.75),
   topWidth(1.15),
