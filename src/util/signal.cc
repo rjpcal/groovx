@@ -76,6 +76,35 @@ Util::Slot0::~Slot0() throw()
 DOTRACE("Util::Slot0::~Slot0");
 }
 
+Util::SoftRef<Util::Slot0> Util::Slot0::make(void (*freeFunc)())
+{
+DOTRACE("Util::Slot0::make");
+
+  return Util::SoftRef<Slot0>(SlotAdapterFreeFunc0::make(freeFunc));
+}
+
+Util::SlotAdapterFreeFunc0::SlotAdapterFreeFunc0(FreeFunc* f)
+  : itsFreeFunc(f)
+{}
+
+Util::SlotAdapterFreeFunc0::~SlotAdapterFreeFunc0() throw() {}
+
+Util::SlotAdapterFreeFunc0*
+Util::SlotAdapterFreeFunc0::make(FreeFunc* f)
+{
+  return new SlotAdapterFreeFunc0(f);
+}
+
+bool Util::SlotAdapterFreeFunc0::exists() const
+{
+  return true;
+}
+
+void Util::SlotAdapterFreeFunc0::call()
+{
+  (*itsFreeFunc)();
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // SignalBase::Impl class
