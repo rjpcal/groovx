@@ -1,28 +1,37 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Sun Apr 25 12:50:02 1999
+// written: Thu May 27 18:07:46 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TLIST_H_DEFINED
 #define TLIST_H_DEFINED
 
+#ifndef VECTOR_DEFINED
 #include <vector>
+#define VECTOR_DEFINED
+#endif
 
-#ifndef IO_H_INCLUDED
+#ifndef IO_H_DEFINED
 #include "io.h"
 #endif
 
 class Trial;
-class ObjList;
-class PosList;
+class ObjId;
+class PosId;
+
+///////////////////////////////////////////////////////////////////////
+//
+// Tlist class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class Tlist : public virtual IO {
 private:
-  const ObjList& itsObjList;
-  const PosList& itsPosList;
   vector<Trial *> itsTrials;
   int itsCurTrial;
   bool itsVisibility;
@@ -31,22 +40,23 @@ public:
   // creators //
   //////////////
 
-  Tlist (ObjList &olist, PosList &plist) : 
-    itsObjList(olist), itsPosList(plist), 
+  Tlist() : 
     itsTrials(1, NULL), itsCurTrial(0), itsVisibility(false) {}
   virtual ~Tlist();
 
+  // These I/O functions write/read the entire state of the Tlist
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
-  // These I/O functions write/read the _entire_ state of the Tlist,
-  // including itsObjList and itsPosList, which are held only by reference.
 
-  void readFromObjidsOnly(istream &is, int num_trials, int offset = 0);
+  virtual int charCount() const;
+
+  int readFromObjidsOnly(istream &is, int num_trials, int offset = 0);
   // Reads a list of 'simple' trial descriptions which contain objid's
   // only; posid's are inferred from position int the list. If
   // num_trials is passed as < 0, the function will read to the end of
   // the istream. If offset is non-zero, it will be added to each
-  // incoming objid before it is inserted into the Trial.
+  // incoming objid before it is inserted into the Trial. Returns the
+  // number of trials that were loaded.
 
   ///////////////
   // accessors //
@@ -78,7 +88,7 @@ public:
 
   void setVisible(bool vis);
   void setCurTrial(int trial);
-  void addToTrial(int trial, int objid, int posid);
+  void addToTrial(int trial, ObjId objid, PosId posid);
   void clearTrial(int trial);
   void clearAllTrials();
 
@@ -87,7 +97,9 @@ public:
   /////////////
 
   void drawTrial(int trial);
+  void undrawTrial(int trial);
   void drawCurTrial() const;
+  void undrawCurTrial() const;
 };
 
 static const char vcid_tlist_h[] = "$Header$";
