@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Nov 15 07:51:14 2000
+// written: Wed Nov 15 08:37:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@
 #include <map>
 
 #include "util/trace.h"
+#define LOCAL_ASSERT
+#include "util/debug.h"
 
 FieldMemberPtr::~FieldMemberPtr() {}
 
@@ -183,7 +185,9 @@ const FieldInfo& FieldMap::info(const fixed_string& name) const {
 	 return *((*itr).second);
 
   if (hasParent())
-	 return parent()->info(name);
+	 {
+		return parent()->info(name);
+	 }
   else
 	 {
 		ErrorWithMsg err("no such field: '");
