@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul  1 11:54:48 1999 (as gtext.cc)
-// written: Fri Mar 28 17:57:36 2003
+// written: Wed May 14 18:58:14 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -159,7 +159,7 @@ DOTRACE("GxText::setStrokeWidth");
   if (width > 0)
     {
       itsStrokeWidth = width;
-      setPixelBorder(itsStrokeWidth+4);
+      setPercentBorder(itsStrokeWidth+4);
       this->sigNodeChanged.emit();
     }
 }

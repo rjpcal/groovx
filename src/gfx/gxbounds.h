@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 13:34:26 2002
-// written: Sat Mar 29 12:42:46 2003
+// written: Wed May 14 18:58:14 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -54,10 +54,10 @@ public:
   void setVisible(bool val) { isItVisible = val; }
 
   /// Query the gap between the child object and the boundary.
-  int pixelBorder() const { return itsPixelBorder; }
+  int percentBorder() const { return itsPercentBorder; }
 
   /// Change the gap between the child object and the boundary.
-  void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
+  void setPercentBorder(int pixels) { itsPercentBorder = pixels; }
 
   virtual void readFrom(IO::Reader* /*reader*/) {};
   virtual void writeTo(IO::Writer* /*writer*/) const {};
@@ -69,7 +69,7 @@ public:
 private:
   bool isItVisible;
 
-  int itsPixelBorder;
+  int itsPercentBorder;
 
   mutable unsigned short itsStipple;
   mutable unsigned short itsMask;

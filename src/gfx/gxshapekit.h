@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// written: Fri Apr  4 11:23:59 2003
+// written: Wed May 14 18:57:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -133,9 +133,9 @@ public:
   /// Returns the x value of the location of the object's center.
   double getCenterY() const;
 
-  /** Returns the thickness (in pixels) of the border around the
-      bounding box area. */
-  int getPixelBorder() const;
+  /** Returns the thickness (as a percentage of object size) of the border
+      around the bounding box area. */
+  int getPercentBorder() const;
 
   /// Returns the value of the user-defined category.
   virtual int category() const;
@@ -195,9 +195,9 @@ public:
       ARBITRARY_ON_CENTER. */
   void setCenterY(double val);
 
-  /** Change the thickness (in pixels) of the border that will be
-      added around the bounding box area. */
-  void setPixelBorder(int pixels);
+  /** Change the thickness (as a percentage of object size) of the border
+      that will be added around the bounding box area. */
+  void setPercentBorder(int pixels);
 
   /// Change the value of the user-defined category to \a val.
   virtual void setCategory(int val);

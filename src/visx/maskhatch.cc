@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Mar 19 18:00:54 2003
+// written: Wed May 14 18:58:14 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -123,7 +123,7 @@ DOTRACE("MaskHatch::writeTo");
 
 void MaskHatch::update()
 {
-  setPixelBorder(itsLineWidth/2 + 2);
+  setPercentBorder(itsLineWidth/2 + 2);
 }
 
 void MaskHatch::grGetBoundingBox(Gfx::Bbox& bbox) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.cc)
-// written: Wed Mar 19 17:56:00 2003
+// written: Wed May 14 19:01:48 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -199,31 +199,31 @@ DOTRACE("GxShapeKit::writeTo");
 
 const FieldMap& GxShapeKit::classFields()
 {
-#define GETSET(type, attr) make_mypair(&type::get##attr, &type::set##attr)
+#define GETSET(attr) make_mypair(&GxShapeKit::get##attr, &GxShapeKit::set##attr)
 
   static const Field FIELD_ARRAY[] =
   {
     Field("category", make_mypair(&GxShapeKit::category, &GxShapeKit::setCategory),
           0, 0, 20, 1, Field::NEW_GROUP),
-    Field("renderMode", GETSET(GxShapeKit, RenderMode), 1, 1, 4, 1),
-    Field("bbVisibility", GETSET(GxShapeKit, BBVisibility),
+    Field("renderMode", GETSET(RenderMode), 1, 1, 4, 1),
+    Field("bbVisibility", GETSET(BBVisibility),
           false, false, true, true, Field::BOOLEAN),
-    Field("scalingMode", GETSET(GxShapeKit, ScalingMode), 1, 1, 3, 1),
-    Field("widthFactor", GETSET(GxShapeKit, WidthFactor), 1.0, 0.1, 10.0, 0.1,
+    Field("scalingMode", GETSET(ScalingMode), 1, 1, 3, 1),
+    Field("widthFactor", GETSET(WidthFactor), 1.0, 0.1, 10.0, 0.1,
           Field::PRIVATE),
-    Field("heightFactor", GETSET(GxShapeKit, HeightFactor), 1.0, 0.1, 10.0, 0.1,
+    Field("heightFactor", GETSET(HeightFactor), 1.0, 0.1, 10.0, 0.1,
           Field::PRIVATE),
-    Field("aspectRatio", GETSET(GxShapeKit, AspectRatio), 1.0, 0.1, 10.0, 0.1,
+    Field("aspectRatio", GETSET(AspectRatio), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("width", GETSET(GxShapeKit, Width), 1.0, 0.1, 10.0, 0.1,
+    Field("width", GETSET(Width), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("height", GETSET(GxShapeKit, Height), 1.0, 0.1, 10.0, 0.1,
+    Field("height", GETSET(Height), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("maxDimension", GETSET(GxShapeKit, MaxDimension), 1.0, 0.1, 10.0, 0.1,
+    Field("maxDimension", GETSET(MaxDimension), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
-    Field("alignmentMode", GETSET(GxShapeKit, AlignmentMode), 1, 1, 7, 1),
-    Field("centerX", GETSET(GxShapeKit, CenterX), 0.0, -10.0, 10.0, 0.1),
-    Field("centerY", GETSET(GxShapeKit, CenterY), 0.0, -10.0, 10.0, 0.1)
+    Field("alignmentMode", GETSET(AlignmentMode), 1, 1, 7, 1),
+    Field("centerX", GETSET(CenterX), 0.0, -10.0, 10.0, 0.1),
+    Field("centerY", GETSET(CenterY), 0.0, -10.0, 10.0, 0.1)
   };
 #undef GETSET
 
@@ -297,10 +297,10 @@ DOTRACE("GxShapeKit::getCenterY");
   return rep->aligner->itsCenter.y();
 }
 
-int GxShapeKit::getPixelBorder() const
+int GxShapeKit::getPercentBorder() const
 {
-DOTRACE("GxShapeKit::getPixelBorder");
-  return rep->boundsOutline->pixelBorder();
+DOTRACE("GxShapeKit::getPercentBorder");
+  return rep->boundsOutline->percentBorder();
 }
 
 int GxShapeKit::category() const
@@ -388,10 +388,10 @@ DOTRACE("GxShapeKit::setCenterY");
   this->sigNodeChanged.emit();
 }
 
-void GxShapeKit::setPixelBorder(int pixels)
+void GxShapeKit::setPercentBorder(int pixels)
 {
-DOTRACE("GxShapeKit::setPixelBorder");
-  rep->boundsOutline->setPixelBorder(pixels);
+DOTRACE("GxShapeKit::setPercentBorder");
+  rep->boundsOutline->setPercentBorder(pixels);
 }
 
 void GxShapeKit::setCategory(int val)

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 13:34:18 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Wed May 14 18:56:29 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -46,7 +46,7 @@
 GxBounds::GxBounds(Util::SoftRef<GxNode> child) :
   GxBin(child),
   isItVisible(false),
-  itsPixelBorder(4),
+  itsPercentBorder(4),
   itsStipple(0x0F0F), // 0000111100001111
   itsMask(0x3333)     // 0011001100110011
 {}
@@ -57,13 +57,11 @@ void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxBounds::getBoundingCube");
 
-  int border_pixels = itsPixelBorder;
-
-  dbgEval(3, itsPixelBorder); dbgEvalNL(3, border_pixels);
-
   bbox.push();
 
-  const double s = 1.0 + border_pixels/100.0;
+  dbgEval(3, itsPercentBorder);
+
+  const double s = 1.0 + itsPercentBorder/100.0;
 
   bbox.scale(Gfx::Vec3<double>(s,s,s));
 
@@ -83,7 +81,7 @@ DOTRACE("GxBounds::draw");
   if (isItVisible)
     {
       Gfx::Bbox bbox(canvas);
-      const double s = 1.0 + itsPixelBorder/100.0;
+      const double s = 1.0 + itsPercentBorder/100.0;
       bbox.scale(Gfx::Vec3<double>(s,s,s));
       child()->getBoundingCube(bbox);
 
