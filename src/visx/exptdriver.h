@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jan 27 13:42:48 2000
+// written: Mon Feb 14 17:51:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,11 +42,9 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ExptDriver is a singleton that coordinates all objects necessary to
- * run an experiment.
+ * ExptDriver is an implementation of the Experiment interface that
+ * coordinates all objects necessary to run an experiment.
  *
- * @short ExptDriver is a singleton that coordinates all objects
- * necessary to run an experiment.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -58,85 +56,57 @@ private:
   ExptDriver& operator=(const ExptDriver&);
 
 public:
-  /// 
   ExptDriver(Tcl_Interp* interp);
 
-  ///
   virtual ~ExptDriver();
 
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
-  ///
   virtual void manageObject(const char* name, IO* object);
 
   //////////////////////////////
   // Accessors + Manipulators //
   //////////////////////////////
 
-  ///
   Tcl_Interp* getInterp();
 
-  ///
+  /// Return the name of the file currently being used for autosaves
   const string& getAutosaveFile() const;
-  ///
+  /// Change the name of the file to use for autosaves
   void setAutosaveFile(const string& str);
 
-  ///
   virtual Widget* getWidget();
 
-  ///
   virtual Canvas* getCanvas();
 
-  /** @name Graphics Actions */
-  //@{
-  ///
   virtual void edDraw();
-  ///
   virtual void edUndraw();
-  ///
   virtual void edSwapBuffers();
-  //@}
 
-  /** @name Trial event sequence actions */
-  //@{
-  ///
   virtual void edBeginExpt();
 
-  ///
   virtual void edBeginTrial();
-  ///
   virtual void edResponseSeen();
-  ///
   virtual void edProcessResponse(int response);
-  ///
   virtual void edAbortTrial();
-  ///
   virtual void edEndTrial();
-  ///
   virtual void edHaltExpt() const;
 
-  ///
   virtual void edResetExpt();
 
-  ///
+  /// Returns the id of the current trial
   virtual int edGetCurrentTrial() const;
-  ///
   virtual void edSetCurrentTrial(int trial);
-  //@}
 
-  ///
+  /// Uses \c deserialize() to read an experiment from \a filename
   void read(const char* filename);
-  ///
+
+  /// Uses \c serialize() to write an experiment to \a filename
   void write(const char* filename) const;
 
   /** This saves the experiment file and a summary-of-responses file
