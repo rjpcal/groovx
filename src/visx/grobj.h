@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Sep 21 16:09:33 1999
+// written: Tue Sep 21 16:28:10 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -43,9 +43,9 @@ class GrObj : public virtual Observable,
 {
 public:
 
-  /////////////////////////
-  // flags and constants //
-  /////////////////////////
+  /////////////////////
+  // rendering modes //
+  /////////////////////
   typedef int GrObjRenderMode;
 
   static const GrObjRenderMode GROBJ_DIRECT_RENDER = 1;
@@ -81,6 +81,33 @@ public:
   // This mode may be used only as an unrendering mode. If selected,
   // unrendering will be done by clearing to the background color the
   // region enclosed by the object's bounding box.
+
+
+  ///////////////////
+  // scaling modes //
+  ///////////////////
+
+  typedef int ScalingMode;
+
+  static const int NATIVE_SCALING           = 1; // default
+  static const int MAINTAIN_ASPECT_SCALING  = 2;
+  static const int FREE_SCALING             = 3;
+
+
+  /////////////////////
+  // alignment modes //
+  /////////////////////
+
+  typedef int AlignmentMode;
+
+  static const int NATIVE_ALIGNMENT      = 1; // default
+  static const int CENTER_ON_CENTER      = 2;
+  static const int NW_ON_CENTER          = 3;
+  static const int NE_ON_CENTER          = 4;
+  static const int SW_ON_CENTER          = 5;
+  static const int SE_ON_CENTER          = 6;
+  static const int ARBITRARY_ON_CENTER   = 7;
+
 
   //////////////
   // creators //
@@ -126,10 +153,13 @@ public:
   // implementation provided by GrObj returns false.
 
 public:
-  bool getMaintainAsepct() const;
+  ScalingMode getScalingMode() const;
   double getWidth() const;
   double getHeight() const;
+  double getAspectRatio() const;
   double getMaxDimension() const;
+
+  AlignmentMode getAlignmentMode() const;
   double getCenterX() const;
   double getCenterY() const;
 
@@ -161,10 +191,13 @@ public:
 
   void setBBVisibility(bool visibility);
 
-  void setMaintainAsepct(bool val);
+  void setScalingMode(ScalingMode val);
   void setWidth(double val);
   void setHeight(double val);
+  void setAspectRatio(double val);
   void setMaxDimension(double val);
+
+  void setAlignmentMode(AlignmentMode val);
   void setCenterX(double val);
   void setCenterY(double val);
 
