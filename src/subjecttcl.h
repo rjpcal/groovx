@@ -2,8 +2,8 @@
 // subjecttcl.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 12:54:07 1999
-static const char vcid_subjecttcl_h[] = "$Id$";
+// written: Tue Mar 16 19:31:40 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_H_DEFINED
@@ -20,4 +20,5 @@ namespace SubjectTcl {
   Tcl_PackageInitProc Subject_Init;
 }
 
+static const char vcid_subjecttcl_h[] = "$Header$";
 #endif // !SUBJECTTCL_H_DEFINED

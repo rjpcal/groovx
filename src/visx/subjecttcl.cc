@@ -2,7 +2,7 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Mar 15 16:04:50 1999
+// written: Tue Mar 16 19:32:00 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,8 +36,8 @@ namespace SubjectTcl {
 
   // the subcommands called by subjectCmd
   typedef int (SubjectTcl_SubcmdProc) 
-	 (Tcl_HashTable *tblPtr, Tcl_Interp *interp, 
-	  int objc, Tcl_Obj *const objv[]);
+    (Tcl_HashTable *tblPtr, Tcl_Interp *interp, 
+     int objc, Tcl_Obj *const objv[]);
 
   SubjectTcl_SubcmdProc newSubjectCmd;
   SubjectTcl_SubcmdProc subjectNameCmd;
@@ -54,7 +54,7 @@ namespace SubjectTcl {
 
 int SubjectTcl::getSubjectFromObj(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
                                   int objnum, Tcl_Obj *const objv[],
-											 Subject *&theSubject) {
+                                  Subject *&theSubject) {
 DOTRACE("SubjectTcl::getSubjectFromObj");
   char *subjectKey=NULL;
   Tcl_HashEntry *theEntry=NULL;
@@ -77,7 +77,7 @@ DOTRACE("SubjectTcl::getSubjectFromObj");
 }
 
 int SubjectTcl::subjectCmd(ClientData clientData, Tcl_Interp *interp,
-									int objc, Tcl_Obj *const objv[]) {
+                           int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SubjectTcl::subjectCmd");
   Tcl_HashTable *tblPtr = (Tcl_HashTable *) clientData;
   
@@ -87,34 +87,34 @@ DOTRACE("SubjectTcl::subjectCmd");
   }
 
   if (objc == 1) {
-	 Tcl_WrongNumArgs(interp, 1, objv, "subcommand [args...]");
-	 return TCL_ERROR;
+    Tcl_WrongNumArgs(interp, 1, objv, "subcommand [args...]");
+    return TCL_ERROR;
   }
-  else if (objc >= 2) {			  // subcommand
-	 char* cmd = Tcl_GetString(objv[1]);
+  else if (objc >= 2) {         // subcommand
+    char* cmd = Tcl_GetString(objv[1]);
 
-	 if ( strcmp(cmd, "new") == 0 ) {
-		return newSubjectCmd(tblPtr, interp, objc, objv);
-	 }
-	 if ( strcmp(cmd, "name") == 0 ) {
-		return subjectNameCmd(tblPtr, interp, objc, objv);
-	 }
-	 if ( strcmp(cmd, "dir") == 0 ) {
-		return subjectDirCmd(tblPtr, interp, objc, objv);
-	 }
-	 if ( strcmp(cmd, "list") == 0 ) {
-		return listSubjectsCmd(tblPtr, interp, objc, objv);
-	 }
-	 else {
-		err_message(interp, objv, bad_command);
-		return TCL_ERROR;
-	 }
+    if ( strcmp(cmd, "new") == 0 ) {
+      return newSubjectCmd(tblPtr, interp, objc, objv);
+    }
+    if ( strcmp(cmd, "name") == 0 ) {
+      return subjectNameCmd(tblPtr, interp, objc, objv);
+    }
+    if ( strcmp(cmd, "dir") == 0 ) {
+      return subjectDirCmd(tblPtr, interp, objc, objv);
+    }
+    if ( strcmp(cmd, "list") == 0 ) {
+      return listSubjectsCmd(tblPtr, interp, objc, objv);
+    }
+    else {
+      err_message(interp, objv, bad_command);
+      return TCL_ERROR;
+    }
   }
   return TCL_OK;
 }
 
 int SubjectTcl::newSubjectCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-										int objc, Tcl_Obj *const objv[]) {
+                              int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SubjectTcl::newSubjectCmd");
   const char *subjectKey=NULL, *subjectName=NULL, *subjectDir=NULL;
   Subject *newSubject=NULL;
@@ -153,7 +153,7 @@ DOTRACE("SubjectTcl::newSubjectCmd");
 }
 
 int SubjectTcl::subjectNameCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-										 int objc, Tcl_Obj *const objv[]) {
+                               int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SubjectTcl::subjectNameCmd");
   char *subjectName=NULL;
   Subject *theSubject=NULL;
@@ -181,7 +181,7 @@ DOTRACE("SubjectTcl::subjectNameCmd");
 }
 
 int SubjectTcl::subjectDirCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-										int objc, Tcl_Obj *const objv[]) {
+                              int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SubjectTcl::subjectDirCmd");
   char *subjectDir=NULL;
   Subject *theSubject=NULL;
@@ -209,7 +209,7 @@ DOTRACE("SubjectTcl::subjectDirCmd");
 }
 
 int SubjectTcl::listSubjectsCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-										  int objc, Tcl_Obj *const objv[]) {
+                                int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SubjectTcl::listSubjectsCmd");
   Tcl_HashEntry *theEntry=NULL;
   char *theKey=NULL;
