@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Jul 22 17:55:04 1999
+// written: Thu Jul 22 18:19:19 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -79,6 +79,9 @@ namespace TclGL {
   class glScaleCmd;
   class glTranslateCmd;
   class glVertexCmd;
+
+  class gluLookAtCmd;
+  class gluPerspectiveCmd;
 
   // Tcl functions
   Tcl_ObjCmdProc setBackgroundCmd;
@@ -1014,7 +1017,7 @@ protected:
 
 //--------------------------------------------------------------------
 //
-// TclGL::glVertex3fCmd --
+// TclGL::glVertexCmd --
 //
 //--------------------------------------------------------------------
 
@@ -1032,6 +1035,52 @@ protected:
 	 if (objc() == 3)      { glVertex2d(x,y); }
 	 else if (objc() == 4) { glVertex3d(x,y,z); }
 	 else if (objc() == 5) { glVertex4d(x,y,z,w); }
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::gluLookAtCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::gluLookAtCmd : public TclGL::GLCmd {
+public:
+  gluLookAtCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "eyeX eyeY eyeZ targX targY targZ upX upY upZ", 10, 10)
+	 {}
+protected:
+  virtual void invoke() {
+	 GLdouble eyeX = getDoubleFromArg(1);
+	 GLdouble eyeY = getDoubleFromArg(2);
+	 GLdouble eyeZ = getDoubleFromArg(3);
+	 GLdouble targX = getDoubleFromArg(4);
+	 GLdouble targY = getDoubleFromArg(5);
+	 GLdouble targZ = getDoubleFromArg(6);
+	 GLdouble upX = getDoubleFromArg(7);
+	 GLdouble upY = getDoubleFromArg(8);
+	 GLdouble upZ = getDoubleFromArg(9);
+	 gluLookAt(eyeX, eyeY, eyeZ, targX, targY, targZ, upX, upY, upZ);
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::gluPerspectiveCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::gluPerspectiveCmd : public TclGL::GLCmd {
+public:
+  gluPerspectiveCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "field_of_view_y aspect zNear zFar", 5, 5) {}
+protected:
+  virtual void invoke() {
+	 GLdouble fovy = getDoubleFromArg(1);
+	 GLdouble aspect = getDoubleFromArg(2);
+	 GLdouble zNear = getDoubleFromArg(3);
+	 GLdouble zFar = getDoubleFromArg(4);
+	 gluPerspective(fovy, aspect, zNear, zFar);
   }
 };
 
@@ -1390,6 +1439,9 @@ public:
 	 addCommand( new glScaleCmd        (this, "glScale") );
 	 addCommand( new glTranslateCmd    (this, "glTranslate") );
 	 addCommand( new glVertexCmd       (this, "glVertex") );
+
+	 addCommand( new gluLookAtCmd      (this, "gluLookAt") );
+	 addCommand( new gluPerspectiveCmd (this, "gluPerspective") );
   }
 };
 
