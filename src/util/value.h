@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Thu Aug 30 16:21:59 2001
+// written: Mon Sep  3 13:40:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,127 +146,6 @@ inline STD_IO::istream& operator>>(STD_IO::istream& is, Value& val)
   val.scanFrom(is);
   return is;
 }
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c TValue provides a simple templated implementation of \c Value
- * for the basic types. All attempts to get or set a \c TValue from a
- * type other than the template type \c T will fail with a \c
- * ValueError exception being thrown.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TValue : public Value
-{
-public:
-  /// Construct with an initial value \a val.
-  TValue(const T& val) : itsVal(val) {}
-
-  /// Copy constructor.
-  TValue(const TValue& other) :
-    Value(other), itsVal(other.itsVal) {}
-
-  /// Assignment operator.
-  TValue& operator=(const TValue& other)
-    { itsVal = other.itsVal; return *this; }
-
-  /// Virtual destructor.
-  virtual ~TValue ();
-
-  virtual Value* clone() const;
-
-  virtual fstring getNativeTypeName() const;
-
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
-
-  virtual int get(Util::TypeCue<int>) const;
-  virtual long get(Util::TypeCue<long>) const;
-  virtual bool get(Util::TypeCue<bool>) const;
-  virtual double get(Util::TypeCue<double>) const;
-  virtual const char* get(Util::TypeCue<const char*>) const;
-
-  virtual void set(int val);
-  virtual void set(long val);
-  virtual void set(bool val);
-  virtual void set(double val);
-  virtual void set(const char* val);
-
-  virtual void assignTo(Value& other) const;
-
-  /** Publicly accessible lone data member allows efficient access to
-      those who know the true type of the object. */
-  T itsVal;
-};
-
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c TValuePtr provides a simple templated implementation of \c Value
- * for the basic types. As in \c TValue, all attempts to get or set a
- * \c TValuePtr from a type other than the template type \c T will
- * fail with a \c ValueError exception being thrown. Internally, \c
- * TValuePtr stores a \c T*, so that the \c TValuePtr can be reseated
- * after construction to point to a different \c T.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TValuePtr : public Value
-{
-public:
-  /// Construct and refer to \c valRef.
-  TValuePtr(T& valRef) : itsValPtr(&valRef) {}
-
-  /// Copy constructor.
-  TValuePtr(const TValuePtr& other) :
-    Value(other), itsValPtr(other.itsValPtr) {}
-
-  /// Assignment operator.
-  TValuePtr& operator=(const TValuePtr& other)
-    { itsValPtr = other.itsValPtr; return *this; }
-
-  /// Virtual destructor.
-  virtual ~TValuePtr();
-
-  /// Reseat the internal pointer to refer to \a valRef.
-  void reseat(T& valRef) { itsValPtr = &valRef; }
-
-  virtual Value* clone() const;
-
-  virtual fstring getNativeTypeName() const;
-
-  virtual void printTo(STD_IO::ostream& os) const;
-  virtual void scanFrom(STD_IO::istream& is);
-
-  virtual int get(Util::TypeCue<int>) const;
-  virtual long get(Util::TypeCue<long>) const;
-  virtual bool get(Util::TypeCue<bool>) const;
-  virtual double get(Util::TypeCue<double>) const;
-  virtual const char* get(Util::TypeCue<const char*>) const;
-
-  virtual void set(int val);
-  virtual void set(long val);
-  virtual void set(bool val);
-  virtual void set(double val);
-  virtual void set(const char* val);
-
-  virtual void assignTo(Value& other) const;
-
-  /// Return a reference to the currently pointed-to \c T object.
-  T& operator()() { return *itsValPtr; }
-
-  /// Return a const reference to the currently pointed-to \c T object.
-  const T& operator()() const { return *itsValPtr; }
-
-private:
-  T* itsValPtr;
-};
 
 static const char vcid_value_h[] = "$Header$";
 #endif // !VALUE_H_DEFINED
