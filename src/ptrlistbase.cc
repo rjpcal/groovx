@@ -39,7 +39,16 @@ InvalidIdError::~InvalidIdError() {}
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const int RESERVE_CHUNK = 20;
+  static const int GROW_CHUNK = 20;
+  static const double GROW_FACTOR = 1.2;
+
+  size_t calculateGrowSize(size_t oldsize) {
+
+	 double oldsize_d = double(oldsize);
+	 double newsize_d = (oldsize_d * GROW_FACTOR) + GROW_CHUNK;
+
+	 return size_t(newsize_d);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -283,10 +292,10 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
   size_t uid = size_t(id);
 
   if (uid >= itsImpl->itsPtrVec.capacity()) {
-	 itsImpl->itsPtrVec.reserve(uid+RESERVE_CHUNK);
+  	 itsImpl->itsPtrVec.reserve(calculateGrowSize(uid));
   }
   if (uid >= itsImpl->itsPtrVec.size()) {
-    itsImpl->itsPtrVec.resize(uid+1, VoidPtrHandle());
+    itsImpl->itsPtrVec.resize(calculateGrowSize(uid), VoidPtrHandle());
   }
 
   Assert(itsImpl->itsPtrVec.size() > uid);
