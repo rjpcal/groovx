@@ -79,6 +79,8 @@ struct Gfx::Bbox::Impl
 
   void merge(const vec3d& v)
   {
+    dbg_eval_nl(3, first);
+
     if (first)
       {
         vec3d tx = txforms.back().apply_to(v);
@@ -91,6 +93,8 @@ struct Gfx::Bbox::Impl
 
   void mergeRaw(const vec3d& v)
   {
+    dbg_eval_nl(3, first);
+
     if (first)
       {
         cube.set_corners(v, v);
