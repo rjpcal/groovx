@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Feb  3 12:48:59 2000
+// written: Thu Feb  3 13:13:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,17 +100,26 @@ private:
 		itsHeightFactor(1.0)
 		{}
 
+	 void doScaling() const;
+	 GrObj::ScalingMode getMode() const { return itsMode; }
+	 void setMode(GrObj::ScalingMode new_mode, GrObj::Impl* obj);
+
+  private:
 	 GrObj::ScalingMode itsMode;
+  public:
 	 double itsWidthFactor;
 	 double itsHeightFactor;
   };
 
 public:
-  void doScaling() const;
+  void doScaling() const
+	 { itsScaler.doScaling(); }
 
-  GrObj::ScalingMode getScalingMode() const { return itsScaler.itsMode; }
+  GrObj::ScalingMode getScalingMode() const
+	 { return itsScaler.getMode(); }
 
-  void setScalingMode(GrObj::ScalingMode new_mode);
+  void setScalingMode(GrObj::ScalingMode new_mode)
+	 { itsScaler.setMode(new_mode, this); }
 
   void setWidth(double new_width);
   void setHeight(double new_height);
@@ -358,6 +367,48 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////////////////
+//
+// GrObj::Impl::Scaler definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void GrObj::Impl::Scaler::doScaling() const {
+DOTRACE("GrObj::Impl::Scaler::doScaling");
+  if (GrObj::NATIVE_SCALING == itsMode) return;
+	 
+  switch (itsMode) {
+  case GrObj::MAINTAIN_ASPECT_SCALING:
+  case GrObj::FREE_SCALING:
+	 glScaled(itsWidthFactor, itsHeightFactor, 1.0);
+	 break;
+  }
+}
+
+void GrObj::Impl::Scaler::setMode(GrObj::ScalingMode new_mode,
+											 GrObj::Impl* obj) {
+DOTRACE("GrObj::Impl::Scaler::setMode");
+  if (itsMode == new_mode) return;
+
+  switch (new_mode) {
+  case GrObj::NATIVE_SCALING:
+	 itsMode = new_mode;
+
+	 itsWidthFactor = 1.0;
+	 itsHeightFactor = 1.0;
+	 break;
+
+  case GrObj::MAINTAIN_ASPECT_SCALING:
+  case GrObj::FREE_SCALING:
+	 // These modes require a bounding box
+	 if ( !obj->hasBB() ) return;
+
+	 itsMode = new_mode;
+	 break;
+
+  } // end switch
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -389,6 +440,8 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 	 // Do the object's internal scaling and alignment, and find the
 	 // bounding box in screen coordinates
 	 
+	 Rect<int> screen_pos;
+
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
@@ -396,9 +449,9 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 
 		itsOwner->doScaling();
 		itsOwner->doAlignment();
-		
-		Rect<int> screen_pos = canvas.getScreenFromWorld(getRaw());
-	 }
+
+		screen_pos = canvas.getScreenFromWorld(getRaw());
+	 }  
 	 
 	 // Add a pixel border around the edges of the image...
 	 int bp = pixelBorder();
@@ -640,7 +693,7 @@ DOTRACE("GrObj::Impl::serialize");
 
   os << itsBB.itsIsVisible << IO::SEP;
 
-  os << itsScaler.itsMode << IO::SEP;
+  os << itsScaler.getMode() << IO::SEP;
   os << itsScaler.itsWidthFactor << IO::SEP;
   os << itsScaler.itsHeightFactor << IO::SEP;
 
@@ -671,7 +724,9 @@ DOTRACE("GrObj::Impl::deserialize");
 
   is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
 
-  is >> itsScaler.itsMode; if (is.fail()) throw InputError("after GrObj::itsScaler.itsMode");
+  is >> temp; itsScaler.setMode(temp, this);
+  if (is.fail()) throw InputError("after GrObj::itsScaler.itsMode");
+
   is >> itsScaler.itsWidthFactor; if (is.fail()) throw InputError("after GrObj::itsScaler.itsWidthFactor");
   is >> itsScaler.itsHeightFactor; if (is.fail()) throw InputError("after GrObj::itsScaler.itsHeightFactor");
 
@@ -697,7 +752,7 @@ DOTRACE("GrObj::Impl::charCount");
 	 
 	 + gCharCount(itsBB.itsIsVisible) + 1
 	 
-	 + gCharCount(itsScaler.itsMode) + 1
+	 + gCharCount(itsScaler.getMode()) + 1
 	 + gCharCount(itsScaler.itsWidthFactor) + 1
 	 + gCharCount(itsScaler.itsHeightFactor) + 1
 	 
@@ -722,7 +777,9 @@ DOTRACE("GrObj::Impl::readFrom");
 
   reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
-  reader->readValue("GrObj::scalingMode", itsScaler.itsMode);
+  reader->readValue("GrObj::scalingMode", temp);
+  itsScaler.setMode(temp, this);
+
   reader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
   reader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
 
@@ -740,7 +797,7 @@ DOTRACE("GrObj::Impl::writeTo");
 
   writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
-  writer->writeValue("GrObj::scalingMode", itsScaler.itsMode);
+  writer->writeValue("GrObj::scalingMode", itsScaler.getMode());
   writer->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
   writer->writeValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
 
@@ -806,33 +863,10 @@ DOTRACE("GrObj::Impl::setBBVisibility");
   itsBB.itsIsVisible = visibility;
 }
 
-void GrObj::Impl::setScalingMode(GrObj::ScalingMode new_mode) {
-DOTRACE("GrObj::Impl::setScalingMode");
-  if (itsScaler.itsMode == new_mode) return;
-
-  switch (new_mode) {
-  case GrObj::NATIVE_SCALING:
-	 itsScaler.itsMode = new_mode;
-
-	 itsScaler.itsWidthFactor = 1.0;
-	 itsScaler.itsHeightFactor = 1.0;
-	 break;
-
-  case GrObj::MAINTAIN_ASPECT_SCALING:
-  case GrObj::FREE_SCALING:
-	 // These modes require a bounding box
-	 if ( !hasBB() ) return;
-
-	 itsScaler.itsMode = new_mode;
-	 break;
-
-  } // end switch
-}
-
 void GrObj::Impl::setWidth(double new_width) {
 DOTRACE("GrObj::Impl::setWidth");
   if (new_width == 0.0 || new_width == finalWidth()) return; 
-  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double new_width_factor = new_width / nativeWidth();
@@ -841,7 +875,7 @@ DOTRACE("GrObj::Impl::setWidth");
 	 
   itsScaler.itsWidthFactor = new_width_factor;
 
-  if (itsScaler.itsMode == GrObj::MAINTAIN_ASPECT_SCALING) {
+  if (itsScaler.getMode() == GrObj::MAINTAIN_ASPECT_SCALING) {
 	 itsScaler.itsHeightFactor *= change_factor;
   }
 }
@@ -849,7 +883,7 @@ DOTRACE("GrObj::Impl::setWidth");
 void GrObj::Impl::setHeight(double new_height) {
 DOTRACE("GrObj::Impl::setHeight");
   if (new_height == 0.0 || new_height == finalHeight()) return; 
-  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double new_height_factor = new_height / nativeHeight();
@@ -858,7 +892,7 @@ DOTRACE("GrObj::Impl::setHeight");
 
   itsScaler.itsHeightFactor = new_height_factor;
 
-  if (itsScaler.itsMode == GrObj::MAINTAIN_ASPECT_SCALING) {
+  if (itsScaler.getMode() == GrObj::MAINTAIN_ASPECT_SCALING) {
 	 itsScaler.itsWidthFactor *= change_factor;
   }
 }
@@ -866,7 +900,7 @@ DOTRACE("GrObj::Impl::setHeight");
 void GrObj::Impl::setAspectRatio(double new_aspect_ratio) {
 DOTRACE("GrObj::Impl::setAspectRatio");
   if (new_aspect_ratio == 0.0 || new_aspect_ratio == aspectRatio()) return; 
-  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double change_factor = new_aspect_ratio / (aspectRatio());
@@ -879,7 +913,7 @@ DOTRACE("GrObj::Impl::setAspectRatio");
 
 void GrObj::Impl::setMaxDimension(double new_max_dimension) {
 DOTRACE("GrObj::Impl::setMaxDimension");
-  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.getMode() == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double scaling_factor = new_max_dimension / max(finalWidth(), finalHeight());
@@ -1061,18 +1095,6 @@ DOTRACE("GrObj::Impl::doAlignment");
 					0.0);
 }
 
-void GrObj::Impl::doScaling() const {
-DOTRACE("GrObj::Impl::doScaling");
-  if (GrObj::NATIVE_SCALING == itsScaler.itsMode) return;
-	 
-  switch (itsScaler.itsMode) {
-  case GrObj::MAINTAIN_ASPECT_SCALING:
-  case GrObj::FREE_SCALING:
-	 glScaled(itsScaler.itsWidthFactor, itsScaler.itsHeightFactor, 1.0);
-	 break;
-  }
-}
-
 void GrObj::Impl::undrawDirectRender(Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
@@ -1094,7 +1116,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
-		Canavs::StateSaver state(canvas);
+		Canvas::StateSaver state(canvas);
 
 		doScaling();
 		doAlignment();
