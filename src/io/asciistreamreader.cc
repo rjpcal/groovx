@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Oct  9 19:49:38 2000
+// written: Thu Oct 19 11:27:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -210,11 +210,13 @@ public:
 
   class AttribMap {
   private:
+	 std::string itsObjTag;
 	 std::map<std::string, Attrib> itsMap;
 	 IO::VersionId itsSerialVersionId;
 
   public:
-	 AttribMap() : itsMap(), itsSerialVersionId(0) {}
+	 AttribMap(const char* obj_tag) :
+		itsObjTag(obj_tag ? obj_tag : ""), itsMap(), itsSerialVersionId(0) {}
 
 	 void readAttributes(STD_IO::istream& buf);
 
@@ -226,8 +228,9 @@ public:
 		  const Attrib& attrib = itsMap[attrib_name];
 		  if ( attrib.type.empty() )
 			 {
-				IO::ReadError err("invalid attribute name: ");
+				IO::ReadError err("no attribute named '");
 				err.appendMsg(attrib_name.c_str());
+				err.appendMsg("' for ", itsObjTag.c_str());
 				throw err;
 			 }
 
@@ -269,7 +272,8 @@ private:
 		return itsAttribs.front();
 	 }
 
-  void inflateObject(IO::Reader* reader, STD_IO::istream& buf, IO::IoObject* obj);
+  void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
+							const char* obj_tag, IO::IoObject* obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
@@ -377,11 +381,13 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamReader::Impl::inflateObject(IO::Reader* reader,
-														  STD_IO::istream& buf, IO::IoObject* obj) {
+void AsciiStreamReader::Impl::inflateObject(
+  IO::Reader* reader, STD_IO::istream& buf,
+  const char* obj_tag, IO::IoObject* obj
+) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
-  itsAttribs.push_front(AttribMap()); 
+  itsAttribs.push_front(AttribMap(obj_tag));
 
   //   ...read the object's attributes from the stream...
   itsAttribs.front().readAttributes(buf);
@@ -482,7 +488,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
   ist >> bracket;
 
-  inflateObject(reader, ist, basePart);
+  inflateObject(reader, ist, baseClassName, basePart);
 
   ist >> bracket >> ws;
 }
@@ -523,7 +529,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
 	 obj = itsObjects.fetchObject(type, id);
 
-	 inflateObject(reader, itsBuf, obj);
+	 inflateObject(reader, itsBuf, type, obj);
 
 	 itsBuf >> bracket >> ws;
 
