@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Fri May 11 21:28:41 2001
+// written: Sat May 12 08:19:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,6 @@ ErrorWithMsg::ErrorWithMsg() :
   Error(),
   itsInfo(new dynamic_string(""))
 {
-  Util::Trace::printStackTrace(cerr);
 
   DebugEvalNL(*itsInfo);
 }
@@ -46,8 +45,6 @@ ErrorWithMsg::ErrorWithMsg(const char* str) :
   itsInfo(new dynamic_string(str))
 {
 DOTRACE("ErrorWithMsg::ErrorWithMsg");
-
-  Util::Trace::printStackTrace(cerr);
 
   DebugEvalNL(*itsInfo);
 }
