@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri May 11 20:42:21 2001
+// written: Fri May 11 21:15:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ public:
   // These will cause the item to be inserted into the relevant list.
   MaybeIdItem(T* master) :
 	 itsHandle(master),
-	 itsId(-1)
+	 itsId(0)
   {
 	 if (master != 0)
 		{
@@ -174,6 +174,8 @@ public:
 		  itsId = master->id();
 		}
   }
+
+  MaybeIdItem() : itsHandle(0), itsId(0) {}
 
   MaybeIdItem(PtrHandle<T> item) :
 	 itsHandle(item),

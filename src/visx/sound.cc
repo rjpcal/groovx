@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri May 11 20:06:34 2001
+// written: Fri May 11 21:18:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,8 @@
 #endif
 
 namespace {
-  MaybeIdItem<Sound> OK_SOUND(0);
-  MaybeIdItem<Sound> ERR_SOUND(0);
+  MaybeIdItem<Sound> OK_SOUND;
+  MaybeIdItem<Sound> ERR_SOUND;
 }
 
 SoundError::SoundError() : ErrorWithMsg() {}
