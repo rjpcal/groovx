@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Oct 12 10:37:53 1999
+// written: Thu Oct 21 18:34:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,11 @@
 
 #include "rand.h"
 #include "iostl.h"
+#include "reader.h"
 #include "tlist.h"
 #include "trial.h"
 #include "timeutils.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -168,6 +170,25 @@ int Block::charCount() const {
 			 + gCharCount<int>(itsCurTrialSeqIdx) + 1
 			 + gCharCount<bool>(itsVerbose) + 1
 			 + 5); //fudge factor
+}
+
+void Block::readFrom(Reader* reader) {
+DOTRACE("Block::readFrom");
+  itsTrialSequence.clear();
+  reader->readValueSeq("trialSeq", back_inserter(itsTrialSequence));
+  reader->readValue("randSeed", itsRandSeed);
+  reader->readValue("curTrialSeqdx", itsCurTrialSeqIdx);
+  reader->readValue("verbose", itsVerbose);
+}
+
+void Block::writeTo(Writer* writer) const {
+DOTRACE("Block::writeTo");
+
+  writer->writeValueSeq("trialSeq",
+								itsTrialSequence.begin(), itsTrialSequence.end());
+  writer->writeValue("randSeed", itsRandSeed);
+  writer->writeValue("curTrialSeqdx", itsCurTrialSeqIdx);
+  writer->writeValue("verbose", itsVerbose);
 }
 
 ///////////////
