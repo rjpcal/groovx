@@ -80,7 +80,7 @@ namespace rutz
 
   inline bool approx_eq(double a, double b, double tol = APPROX_TOL)
   {
-    return fabs(a-b) < tol;
+    return fabs(a-b) < fabs(tol);
   }
 
   inline void test_require_approx_eq(double expr1,
