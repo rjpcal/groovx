@@ -3,7 +3,7 @@
 // tlistutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 02:58:20 1999
-// written: Sat Sep 23 15:37:26 2000
+// written: Tue Oct 17 12:04:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,7 @@ namespace GWT {
 
 class TlistUtils {
 public:
-  static int createPreview(Tlist& tlist,
-									const GWT::Canvas& canvas,
+  static int createPreview(const GWT::Canvas& canvas,
 									int* objids, unsigned int objids_size,
 									int pixel_width,
 									int pixel_height);
