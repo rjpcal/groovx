@@ -108,6 +108,12 @@ case $OS in
       # dynamic libraries; this is needed e.g. for the matlab libut.so library to
       # find the "_start" symbol.
       LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
+
+      # May need this -Bsymbolic when using Intel's C++ compiler in order
+      # to force our own shlib's to link against icc's C++ std lib rather than
+      # against g++'s /usr/lib/libstdc++
+
+      #LDFLAGS="$LDFLAGS -Wl,-Bsymbolic"
       ;;
    IRIX)
       need_rpath=yes
