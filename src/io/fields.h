@@ -57,38 +57,6 @@ namespace Util
   class Signal0;
 }
 
-/// A template class for limiting values within a numeric range
-template <class T>
-class BoundsChecker
-{
-public:
-  /// The type returned when the field is dereferenced.
-  typedef typename Util::TypeTraits<T>::DerefT DerefT;
-
-private:
-  BoundsChecker(const DerefT& min, const DerefT& max) :
-    itsMin(min), itsMax(max) {}
-
-public:
-  const DerefT itsMin;  ///< lower bound
-  const DerefT itsMax;  ///< upper bound
-
-  /// Factory function.
-  static shared_ptr<BoundsChecker<T> >
-  make(const DerefT& min, const DerefT& max, bool check)
-  {
-    return check ?
-      shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max)) :
-      shared_ptr<BoundsChecker<T> >(0);
-  }
-
-  /// Bounds-limit the input value.
-  DerefT limit(const DerefT& raw)
-  {
-    return Util::clamp(raw, itsMin, itsMax);
-  }
-};
-
 // Have to use this local replacement for std::pair because #include'ing
 // <utility> brings in std::rel_ops, which, with g++-2.96 on Mac OS X, match
 // too greedily and mess up template instantiations with classes that already
@@ -215,11 +183,7 @@ public:
   typedef typename Util::TypeTraits<T>::DerefT DerefT;
 
   /// Construct with a pointer-to-data-member.
-  DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
-
-  /// Construct with a pointer-to-data-member and a bounds checker.
-  DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<T> > checker) :
-    itsDataMember(memptr), itsChecker(checker) {}
+  DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr) {}
 
   /// Change the value of the given object's pointed-to data member.
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
@@ -228,8 +192,7 @@ public:
 
     DerefT raw = new_val.template as<DerefT>();
 
-    dereference(cobj, itsDataMember) =
-      itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
+    dereference(cobj, itsDataMember) = raw;
   }
 
   /// Get the value of the given object's pointed-to data member.
@@ -263,7 +226,78 @@ private:
   DataMemberFieldImpl(const DataMemberFieldImpl&);
 
   T C::* itsDataMember;
-  shared_ptr<BoundsChecker<T> > itsChecker;
+};
+
+/// CheckedDataMemberFieldImpl.
+template <class C, class T>
+class CheckedDataMemberFieldImpl : public FieldImpl
+{
+public:
+
+  /// Type returned when the field is dereferenced.
+  typedef typename Util::TypeTraits<T>::DerefT DerefT;
+
+  /// Construct with a pointer-to-data-member and a bounds checker.
+  CheckedDataMemberFieldImpl(T C::* memptr,
+                             const DerefT& min,
+                             const DerefT& max) :
+    itsDataMember(memptr),
+    itsMin(min),
+    itsMax(max)
+  {}
+
+  /// Change the value of the given object's pointed-to data member.
+  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
+  {
+    C& cobj = FieldAux::cast<C>(*obj);
+
+    DerefT raw = new_val.template as<DerefT>();
+
+    dereference(cobj, itsDataMember) = this->limit(raw);
+  }
+
+  /// Get the value of the given object's pointed-to data member.
+  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
+  {
+    const C& cobj = FieldAux::cast<const C>(*obj);
+
+    return Tcl::toTcl(const_dereference(cobj, itsDataMember));
+  }
+
+  /// Read the value of the given object's pointed-to data member.
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader& reader, const fstring& name) const
+  {
+    C& cobj = FieldAux::cast<C>(*obj);
+
+    DerefT temp;
+
+    reader.readValue(name, temp);
+
+    dereference(cobj, itsDataMember) = this->limit(temp);
+  }
+
+  /// Write the value of the given object's pointed-to data member.
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer& writer, const fstring& name) const
+  {
+    const C& cobj = FieldAux::cast<const C>(*obj);
+
+    writer.writeValue(name.c_str(), const_dereference(cobj, itsDataMember));
+  }
+
+private:
+  CheckedDataMemberFieldImpl(const CheckedDataMemberFieldImpl&);
+  CheckedDataMemberFieldImpl& operator=(const CheckedDataMemberFieldImpl&);
+
+  DerefT limit(const DerefT& raw) const
+  {
+    return Util::clamp(raw, itsMin, itsMax);
+  }
+
+  T C::* itsDataMember;
+  const DerefT itsMin;
+  const DerefT itsMax;
 };
 
 /// ValueFieldImpl
@@ -464,9 +498,12 @@ public:
   static shared_ptr<FieldImpl>
   makeImpl(T C::* member_ptr, const T2& min, const T2& max, bool check)
   {
+    if (check)
+      return shared_ptr<FieldImpl>
+        (new CheckedDataMemberFieldImpl<C,T>(member_ptr, min, max));
+    // else...
     return shared_ptr<FieldImpl>
-      (new DataMemberFieldImpl<C,T>
-       (member_ptr, BoundsChecker<T>::make(min, max, check)));
+      (new DataMemberFieldImpl<C,T>(member_ptr));
   }
 
   /**
