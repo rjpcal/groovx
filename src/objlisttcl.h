@@ -3,7 +3,7 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Jun 11 11:25:49 1999
+// written: Fri Jun 11 11:29:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,7 @@ class GrObj;
 
 namespace ObjlistTcl {
   typedef int (ObjlistTcl_SubcmdProc) 
-    (const ObjList& olist, Tcl_Interp* interp,
-     int objc, Tcl_Obj* const objv[]);
+    (Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
 
   GrObj* getObjFromArg(Tcl_Interp* interp, Tcl_Obj* const objv[], 
                        int argn);
