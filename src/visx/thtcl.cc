@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Jun 24 19:21:10 1999
+// written: Tue Jun 29 18:34:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "timinghandler.h"
 #include "timinghdlr.h"
 #include "tclitempkg.h"
+#include "listpkg.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -78,6 +79,7 @@ protected:
 	 int msec = getIntFromArg(3);
 
 	 int eventid = th->addEventByName(event_type, itsTimePoint, msec);
+	 returnInt(eventid);
   }
 private:
   TimingHdlr::TimePoint itsTimePoint;
@@ -192,15 +194,12 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThlistTcl::ThListPkg : public CTclIoItemPkg<ThList> {
+class ThlistTcl::ThListPkg : public ListPkg<ThList> {
 public:
   ThListPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<ThList>(interp, "ThList", "1.1", 0)
+	 ListPkg<ThList>(interp, "ThList", "3.0")
   {
 	 ThList::theThList().insertAt(0, new TimingHandler());
-
-	 declareGetter("count", new CGetter<ThList, int>(&ThList::count));
-	 declareAction("reset", new CAction<ThList>(&ThList::clear));
   }
 
   virtual IO& getIoFromId(int) { return ThList::theThList(); }
