@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Thu May 10 12:04:42 2001
+// written: Fri Jul 20 14:11:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,29 +22,28 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-namespace {
-  const char* bad_create_msg = "unable to create object of type ";
-}
-
 FactoryError::FactoryError(const char* str) : ErrorWithMsg(str) {}
 
 FactoryError::~FactoryError() {}
 
-void FactoryError::throwForType(const char* type) {
-  FactoryError err(bad_create_msg);
-  err.appendMsg(type);
+void FactoryError::throwForType(const char* type)
+{
+  FactoryError err("unknown object type ");
+  err.appendMsg("'", type, "'");
   throw err;
 }
 
-void FactoryError::throwForType(const fixed_string& type) {
+void FactoryError::throwForType(const fixed_string& type)
+{
   throwForType(type.c_str());
 }
 
-struct CreatorMapBase::Impl {
+struct CreatorMapBase::Impl
+{
   Impl() : itsMap() {}
 
   typedef hash_array<fixed_string, void*,
- 	 string_hasher<fixed_string> > 
+    string_hasher<fixed_string> >
   MapType;
 
   MapType itsMap;
@@ -56,28 +55,32 @@ CreatorMapBase::CreatorMapBase() :
 DOTRACE("CreatorMapBase::CreatorMapBase");
 }
 
-CreatorMapBase::~CreatorMapBase() {
+CreatorMapBase::~CreatorMapBase()
+{
 DOTRACE("CreatorMapBase::~CreatorMapBase");
 }
 
-void CreatorMapBase::clear() {
+void CreatorMapBase::clear()
+{
 DOTRACE("CreatorMapBase::clear");
   for (Impl::MapType::iterator ii = itsImpl->itsMap.begin();
-		 ii != itsImpl->itsMap.end();
-		 ++ii) {
- 	 killPtr(ii->value);
- 	 ii->value = 0;
+       ii != itsImpl->itsMap.end();
+       ++ii) {
+    killPtr(ii->value);
+    ii->value = 0;
   }
 
   delete itsImpl;
 }
 
-void* CreatorMapBase::getPtrForName(const fixed_string& name) const {
+void* CreatorMapBase::getPtrForName(const fixed_string& name) const
+{
 DOTRACE("CreatorMapBase::getPtrForName");
   return itsImpl->itsMap[name];
 }
 
-void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
+void CreatorMapBase::setPtrForName(const char* name, void* ptr)
+{
 DOTRACE("CreatorMapBase::setPtrForName");
   fixed_string sname(name);
   void*& ptr_slot = itsImpl->itsMap[sname];
@@ -85,7 +88,8 @@ DOTRACE("CreatorMapBase::setPtrForName");
   ptr_slot = ptr;
 }
 
-FactoryBase::~FactoryBase() {
+FactoryBase::~FactoryBase()
+{
 DOTRACE("FactoryBase::~FactoryBase");
 }
 
