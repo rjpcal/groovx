@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Sun Aug 26 08:35:12 2001
+// written: Wed Sep  5 18:51:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,8 +104,10 @@ public:
         xx = yy;
         yy = -old_x;
       }
-
-    setThetaDeg(thetaDeg() + degrees);
+    else
+      {
+        setThetaDeg(thetaDeg() + degrees);
+      }
   }
 
   //
