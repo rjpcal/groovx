@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Sep  8 13:18:27 1999
+// written: Wed Sep  8 15:46:27 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -30,6 +30,7 @@ extern "C" {
   Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc Jitter_Init;
   Tcl_PackageInitProc Misc_Init;
+  Tcl_PackageInitProc Morphyface_Init;
   Tcl_PackageInitProc Objlist_Init;
   Tcl_PackageInitProc Objtogl_Init;
   Tcl_PackageInitProc Pos_Init;
@@ -63,6 +64,7 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Gtext",    Gtext_Init     }
   , { "Jitter",   Jitter_Init    }
   , { "Misc",     Misc_Init      }
+  , { "MorphyFace",Morphyface_Init}
   , { "ObjList",  Objlist_Init   }
   , { "Objtogl",  Objtogl_Init   }
   , { "Pos",      Pos_Init       }
