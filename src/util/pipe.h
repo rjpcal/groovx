@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Feb 26 08:38:44 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,14 @@
 #ifndef PIPE_H_DEFINED
 #define PIPE_H_DEFINED
 
+#include "util/stdiobuf.h"
+
 #include <cstdio>
 
-#ifdef HAVE_FSTREAM
-#  include <fstream>
+#ifdef HAVE_ISTREAM
+#  include <istream>
 #else
-#  include <fstream.h>
+#  include <istream.h>
 #endif
 
 namespace Util
@@ -32,32 +34,10 @@ class Util::Pipe
 public:
   Pipe(const char* command, const char* mode) :
     itsFile(popen(command, mode)),
-#if defined(PRESTANDARD_IOSTREAMS)
-    itsStream(),
-#elif defined(__GNUC__) && __GNUC__ >= 3
-    itsFilebuf(file(),std::ios::in|std::ios::out),
+    itsFilebuf(file(), std::ios::in|std::ios::out),
     itsStream(&itsFilebuf),
-#else
-    itsStream(filedes()),
-#endif
-    itsClosed(false),
     itsExitStatus(0)
-    {
-      if ( itsFile != 0 )
-        {
-#if defined(PRESTANDARD_IOSTREAMS)
-          itsStream.attach(filedes());
-#elif defined(__GNUC__) && __GNUC__ >= 3
-          /* nothing */
-#else
-          /* nothing */
-#endif
-        }
-      else
-        {
-          itsClosed = true;
-        }
-    }
+  {}
 
   ~Pipe()
     { close(); }
@@ -66,22 +46,16 @@ public:
 
   int close()
     {
-      if ( !itsClosed )
+      if ( !isClosed() )
         {
-#ifdef PRESTANDARD_IOSTREAMS
-          itsStream.close();
-#elif defined(__GNUC__) && __GNUC__ >= 3
-          /* nothing */
-#else
-          itsStream.close();
-#endif
+          itsFilebuf.close();
           itsExitStatus = pclose(itsFile);
-          itsClosed = true;
+          itsFile = 0;
         }
       return itsExitStatus;
     }
 
-  bool isClosed() const { return itsClosed || !itsStream.is_open(); }
+  bool isClosed() const { return (itsFile == 0) || !itsStream.is_open(); }
 
   int exitStatus() const { return itsExitStatus; }
 
@@ -93,15 +67,8 @@ private:
   Pipe& operator=(const Pipe&);
 
   FILE* itsFile;
-#ifdef PRESTANDARD_IOSTREAMS
-  fstream itsStream;
-#elif defined(__GNUC__) && __GNUC__ >= 3
-  std::filebuf itsFilebuf;
+  Util::stdiobuf itsFilebuf;
   STD_IO::iostream itsStream;
-#else
-  STD_IO::fstream itsStream;
-#endif
-  bool itsClosed;
   int itsExitStatus;
 };
 
