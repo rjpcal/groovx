@@ -45,6 +45,7 @@ namespace Util
 
 namespace Tcl
 {
+  class Dict;
   class List;
   class ObjPtr;
 
@@ -90,6 +91,7 @@ namespace Tcl
   float         fromTcl(Tcl_Obj* obj, float*);
   const char*   fromTcl(Tcl_Obj* obj, const char**);
   fstring       fromTcl(Tcl_Obj* obj, fstring*);
+  Tcl::Dict     fromTcl(Tcl_Obj* obj, Tcl::Dict*);
   Tcl::List     fromTcl(Tcl_Obj* obj, Tcl::List*);
 
   template <class T>
@@ -114,6 +116,7 @@ namespace Tcl
   Tcl::ObjPtr toTcl(const char* val);
   Tcl::ObjPtr toTcl(const fstring& val);
   Tcl::ObjPtr toTcl(const Value& val);
+  Tcl::ObjPtr toTcl(Tcl::Dict dictObj);
   Tcl::ObjPtr toTcl(Tcl::List listObj);
   Tcl::ObjPtr toTcl(Tcl::ObjPtr val);
 
