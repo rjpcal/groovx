@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Wed Aug 22 17:42:02 2001
+// written: Wed Aug 22 18:35:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,10 @@
 
 #include "util/strings.h"
 
-GbColor::GbColor(double v) : RgbaColor(v) {}
+GbColor::GbColor(double v) : Gfx::RgbaColor(v) {}
 
-GbColor::GbColor(double r, double g, double b, double a) : RgbaColor(r,g,b,a) {}
+GbColor::GbColor(double r, double g, double b, double a) :
+  Gfx::RgbaColor(r,g,b,a) {}
 
 GbColor::~GbColor() {}
 
@@ -39,7 +40,7 @@ fstring GbColor::getNativeTypeName() const
 
 unsigned int GbColor::numValues() const { return 4; }
 
-const double* GbColor::constBegin() const { return RgbaColor::data(); }
+const double* GbColor::constBegin() const { return Gfx::RgbaColor::data(); }
 
 static const char vcid_gbcolor_cc[] = "$Header$";
 #endif // !GBCOLOR_CC_DEFINED

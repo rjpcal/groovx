@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Wed Aug 22 17:41:32 2001
+// written: Wed Aug 22 18:36:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "gfx/rgbacolor.h"
 #endif
 
-class GbColor : public RgbaColor, public TMultiValue<double>
+class GbColor : public Gfx::RgbaColor, public TMultiValue<double>
 {
 public:
   GbColor(double v = 1.0);
@@ -29,8 +29,8 @@ public:
   virtual ~GbColor();
 
   // These help to disambiguate function calls to set()
-        RgbaColor& color()       { return *this; }
-  const RgbaColor& color() const { return *this; }
+        Gfx::RgbaColor& color()       { return *this; }
+  const Gfx::RgbaColor& color() const { return *this; }
 
   virtual Value* clone() const;
   virtual fstring getNativeTypeName() const;
