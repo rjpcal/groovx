@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Wed Jul 18 12:21:35 2001
+// written: Thu Aug  9 13:14:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace
 
   // Specialization of TraceCmd::invoke for action functions
   template <>
-  void TraceFunc<TraceActionFunc>::operator()(Tcl::Context& ctx)
+  void TraceFunc<TraceActionFunc>::operator()(Tcl::Context&)
   {
     (itsTracer.*itsFunc)();
   }

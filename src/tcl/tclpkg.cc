@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu Jul 19 14:18:46 2001
+// written: Thu Aug  9 13:13:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ namespace Tcl
 
     RemoveAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-    void operator()(Tcl::Context& ctx)
+    void operator()(Tcl::Context&)
     {
       ObjDb& theDb = ObjDb::theDb();
       for (ObjDb::IdIterator

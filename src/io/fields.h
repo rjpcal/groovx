@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Thu Aug  9 11:53:01 2001
+// written: Thu Aug  9 13:14:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ protected:
 public:
   Field();
 
-  Field(const Field& other) {}
+  Field(const Field&) {}
 
   virtual ~Field();
 

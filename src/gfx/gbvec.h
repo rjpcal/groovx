@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Thu Aug  9 11:53:49 2001
+// written: Thu Aug  9 13:15:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ private:
   Vec3<T> itsData;
 
 public:
-  GbVec3(double x_=0.0, double y_=0.0, double z_=0.0);
+  GbVec3(T x_=T(), T y_=T(), T z_=T());
   virtual ~GbVec3();
 
         T& x()       { return itsData.x(); }

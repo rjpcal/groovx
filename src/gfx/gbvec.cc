@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Thu Aug  9 11:53:40 2001
+// written: Thu Aug  9 13:16:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ void GbVecLocal::raiseScanError() {
 }
 
 template <class T>
-GbVec3<T>::GbVec3(double x_, double y_, double z_) :
+GbVec3<T>::GbVec3(T x_, T y_, T z_) :
   Field(),
   itsData(x_, y_, z_)
 {}
