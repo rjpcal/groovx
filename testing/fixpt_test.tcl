@@ -35,11 +35,11 @@ test "FixptTcl-length" "error from non-numeric input" {
 } {expected.*but got}
 test "FixptTcl-length" "error from bad objid" {
     FixPt::length -1 1.0
-} {^FixPt::length: }
+} {expected.*but got}
 test "FixptTcl-length" "error from wrong type" {
     set f [Obj::new Face]
 	 FixPt::length $f 1.0
-} {^FixPt::length: }
+} {failed cast}
 
 ### widthCmd ###
 test "FixptTcl-width" "too few args" {
@@ -56,11 +56,11 @@ test "FixptTcl-width" "error from non-numeric input" {
 } {expected.*but got}
 test "FixptTcl-width" "error from bad objid" {
     FixPt::width -1 5
-} {^FixPt::width: }
+} {expected.*but got}
 test "FixptTcl-width" "error from wrong type" {
     set f [Obj::new Face]
 	 FixPt::width $f 5
-} {^FixPt::width: }
+} {failed cast}
 test "FixptTcl-width" "error from non-integral number" {
     FixPt::width $::fix 1.5
 } {expected.*but got}

@@ -82,14 +82,14 @@ test "TrialTcl-Trial::responseHdlr" "too many args" {
     Trial::responseHdlr $::TRIAL 0 junk
 } {^wrong \# args: should be}
 test "TrialTcl-Trial::responseHdlr" "normal use" {
-	 set rh [new NullResponseHdlr]
+    set rh [new NullResponseHdlr]
     Trial::responseHdlr $::TRIAL $rh
     expr $rh == [Trial::responseHdlr $::TRIAL]
 } {^1$}
 test "TrialTcl-Trial::responseHdlr" "error" {
     set result [catch {Trial::responseHdlr $::TRIAL -1} msg]
     return "$result $msg"
-} {^1 Trial::responseHdlr}
+} {^1.*expected.*but got}
 
 ### Trial::timingHdlrCmd ###
 test "TrialTcl-Trial::timingHdlr" "too few args" {
@@ -99,24 +99,23 @@ test "TrialTcl-Trial::timingHdlr" "too many args" {
     Trial::timingHdlr $::TRIAL 0 junk
 } {^wrong \# args: should be}
 test "TrialTcl-Trial::timingHdlr" "normal use" {
-	 set th [new TimingHdlr]
+    set th [new TimingHdlr]
     Trial::timingHdlr $::TRIAL $th
     expr $th == [Trial::timingHdlr $::TRIAL]
 } {^1$}
 test "TrialTcl-Trial::timingHdlr" "error" {
     set result [catch {Trial::timingHdlr $::TRIAL -1} msg]
     return "$result $msg"
-} {^1 Trial::timingHdlr}
+} {^1.*expected.*but got}
 
 ### Trial::typeCmd ###
 test "TrialTcl-Trial::type" "too few args" {
     Trial::type
 } {^wrong \# args: should be}
 test "TrialTcl-Trial::type" "too many args" {
-    Trial::type $::TRIAL 0 junk 
+    Trial::type $::TRIAL 0 junk
 } {^wrong \# args: should be}
 test "TrialTcl-Trial::type" "normal use" {
     Trial::type $::TRIAL 0
     Trial::type $::TRIAL
 } {^0$}
-

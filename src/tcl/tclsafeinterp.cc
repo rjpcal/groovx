@@ -355,6 +355,7 @@ DOTRACE("Tcl::Interp::linkBoolean");
 }
 
 void Tcl::Interp::handleLiveException(const char* where,
+                                      const FilePosition& pos,
                                       bool withBkgdError) throw()
 {
 DOTRACE("Tcl::Interp::handleLiveException");
@@ -371,6 +372,9 @@ DOTRACE("Tcl::Interp::handleLiveException");
         {
           fstring msg;
 
+          msg.append(demangled_name(typeid(err)), " caught at ",
+                     pos.fileName, ":", pos.lineNo, ":\n");
+
           if (where != 0 && where[0] != '\0')
             msg.append(where, ": ");
 
@@ -378,8 +382,6 @@ DOTRACE("Tcl::Interp::handleLiveException");
 
           if (what != 0 && what[0] != '\0')
             msg.append(what, " ");
-
-          msg.append("(", demangled_name(typeid(err)), ")");
 
           appendResult(msg);
         }
@@ -392,10 +394,11 @@ DOTRACE("Tcl::Interp::handleLiveException");
         {
           fstring msg;
 
+          msg.append("exception of unknown type caught at ",
+                     pos.fileName, ":", pos.lineNo, ":\n");
+
           if (where != 0 && where[0] != '\0')
             msg.append(where, ": ");
-
-          msg.append("an error of unknown type occurred");
 
           appendResult(msg);
         }

@@ -35,7 +35,7 @@ test "Dlist-dlist::index" "norm" {
 test "Dlist-dlist::index" "err" {
     set a {3 5 9}
     dlist::index $a 3
-} {^dlist::index: }
+} {index was out of range}
 
 ### dlist::not ###
 test "Dlist-dlist::not" "args" {
@@ -144,10 +144,10 @@ test "Dlist-dlist::slice" "norm2" {
 } {^1 4 7}
 test "Dlist-dlist::slice" "err1" {
     dlist::slice {{1 2 3} {4 5 6} {7 8 9}} 3
-} {^dlist::slice: }
+} {index was out of range}
 test "Dlist-dlist::slice" "err2" {
     dlist::slice {{1 2 3} {4 5} {7 8 9}} 2
-} {^dlist::slice: }
+} {index was out of range}
 
 ### dlist::sum ###
 test "Dlist-dlist::sum" "args" {

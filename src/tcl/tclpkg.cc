@@ -244,7 +244,7 @@ DOTRACE("Tcl::Pkg::~Pkg");
     }
   catch (...)
     {
-      rep->interp.handleLiveException("Tcl::Pkg::~Pkg");
+      rep->interp.handleLiveException("Tcl::Pkg::~Pkg", SRC_POS);
     }
 
   delete rep;
@@ -309,10 +309,10 @@ DOTRACE("Tcl::Pkg::interp");
   return rep->interp;
 }
 
-void Tcl::Pkg::handleLiveException() throw()
+void Tcl::Pkg::handleLiveException(const FilePosition& pos) throw()
 {
 DOTRACE("Tcl::Pkg::handleLiveException");
-  rep->interp.handleLiveException("");
+  rep->interp.handleLiveException(rep->pkgName.c_str(), pos);
 }
 
 void Tcl::Pkg::namespaceAlias(const char* namesp,
@@ -327,7 +327,8 @@ DOTRACE("Tcl::Pkg::namespaceAlias");
     }
   catch (...)
     {
-      rep->interp.handleLiveException("Tcl::Pkg::namespaceAlias", false);
+      rep->interp.handleLiveException("Tcl::Pkg::namespaceAlias",
+                                      SRC_POS, false);
     }
 }
 
@@ -343,7 +344,8 @@ DOTRACE("Tcl::Pkg::inherit");
     }
   catch (...)
     {
-      rep->interp.handleLiveException("Tcl::Pkg::inherit", false);
+      rep->interp.handleLiveException("Tcl::Pkg::inherit",
+                                      SRC_POS, false);
     }
 }
 
@@ -407,7 +409,8 @@ DOTRACE("Tcl::Pkg::eval");
     }
   catch(...)
     {
-      rep->interp.handleLiveException("Tcl::Pkg::eval", false);
+      rep->interp.handleLiveException("Tcl::Pkg::eval",
+                                      SRC_POS, false);
     }
 }
 

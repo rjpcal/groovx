@@ -399,7 +399,8 @@ DOTRACE("TkWidgImpl::cEventCallback");
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cEventCallback", true);
+      widg->rep->interp.handleLiveException("cEventCallback",
+                                            SRC_POS, true);
     }
 }
 
@@ -416,7 +417,8 @@ DOTRACE("TkWidgImpl::cRenderCallback");
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cRenderCallback", true);
+      widg->rep->interp.handleLiveException("cRenderCallback",
+                                            SRC_POS, true);
     }
 }
 
@@ -437,7 +439,8 @@ DOTRACE("TkWidgImpl::cTakeFocusCallback");
     }
   catch (...)
     {
-      widg->rep->interp.handleLiveException("cEventCallback", true);
+      widg->rep->interp.handleLiveException("cEventCallback",
+                                            SRC_POS, true);
     }
 }
 
