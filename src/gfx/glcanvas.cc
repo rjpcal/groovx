@@ -111,34 +111,6 @@ namespace
     glGetDoublev(GL_PROJECTION_MATRIX, &m[0]);
     return txform::copy_of(&m[0]);
   }
-
-  txform orthoTransform(const geom::rect<double>& b,
-                        double zNear, double zFar)
-  {
-    txform result = txform::no_init();
-
-    result[0] = 2.0/(b.width());
-    result[1] = 0;
-    result[2] = 0;
-    result[3] = 0;
-
-    result[4] = 0;
-    result[5] = 2.0/(b.height());
-    result[6] = 0;
-    result[7] = 0;
-
-    result[8] = 0;
-    result[9] = 0;
-    result[10] = -2.0/(zFar - zNear);
-    result[11] = 0;
-
-    result[12] = -(b.right()+b.left())/(b.right()-b.left());
-    result[13] = -(b.top()+b.bottom())/(b.top()-b.bottom());
-    result[14] = -(zFar+zNear)/(zFar-zNear);
-    result[15] = 1.0;
-
-    return result;
-  }
 }
 
 class GLCanvas::Impl
@@ -570,8 +542,7 @@ DOTRACE("GLCanvas::orthographic");
   glOrtho(bounds.left(), bounds.right(),
           bounds.bottom(), bounds.top(),
           zNear, zFar);
-//   rep->projectionCache.back() = rawGetProjection();
-  rep->projectionCache.back() = orthoTransform(bounds, zNear, zFar);
+  rep->projectionCache.back() = txform::orthographic(bounds, zNear, zFar);
   glMatrixMode(GL_MODELVIEW);
 }
 

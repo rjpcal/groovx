@@ -34,6 +34,7 @@
 
 namespace geom
 {
+  template <class V> class rect;
   template <class V> class vec2;
   template <class V> class vec3;
 
@@ -64,6 +65,10 @@ namespace geom
     /// Factory function to copy an existing array in column-major order.
     static txform copy_of(const double* data)
     { txform r(true); r.set_col_major_data(data); return r; }
+
+    /// Factory function to create an orthographic transform.
+    static txform orthographic(const geom::rect<double>& bounds,
+                               double zNear, double zFar);
 
     /// Factory function to make a matrix with uninitialized entries.
     static txform no_init() { return txform(true); }
