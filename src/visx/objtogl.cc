@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 18 13:18:51 2002
+// written: Tue Nov 12 14:02:35 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -152,9 +152,9 @@ public:
     def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
     defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
-    defAction("loadDefaultFont", &Togl::loadDefaultFont);
-    defSetter("loadFont", &Togl::loadBitmapFont);
-    defSetter("loadFonti", &Togl::loadBitmapFonti);
+    def("loadDefaultFont", "toglet_id", &Togl::loadDefaultFont);
+    def("loadFont", "toglet_id font_name", &Togl::loadBitmapFont);
+    def("loadFonti", "toglet_id font_id", &Togl::loadBitmapFonti);
     defGetter("pathname", &Tcl::TkWidget::pathname);
     defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
     defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);

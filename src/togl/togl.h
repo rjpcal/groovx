@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Sat Nov  9 20:41:50 2002
+// written: Tue Nov 12 14:00:27 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -82,9 +82,9 @@ public:
   Color queryColor(unsigned int color_index) const;
 
   // Bitmap fonts
-  void loadDefaultFont() const;
-  void loadBitmapFont(const char* fontname) const;
-  void loadBitmapFonti(int fontnumber) const;
+  unsigned int loadDefaultFont() const;
+  unsigned int loadBitmapFont(const char* fontname) const;
+  unsigned int loadBitmapFonti(int fontnumber) const;
 
   class Impl;
   friend class Impl;

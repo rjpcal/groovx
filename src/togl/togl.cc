@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Nov  9 21:18:00 2002
+// written: Tue Nov 12 17:40:06 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -86,7 +86,7 @@ public:
 
   Togl::Color queryColor(unsigned int color_index) const;
 
-  void loadFontList(GLuint newListBase);
+  unsigned int loadFontList(GLuint newListBase);
 };
 
 
@@ -158,7 +158,7 @@ Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
   return color;
 }
 
-void Togl::Impl::loadFontList(GLuint newListBase)
+unsigned int Togl::Impl::loadFontList(GLuint newListBase)
 {
 DOTRACE("Togl::Impl::loadFontList");
   // Check if font loading succeeded...
@@ -175,6 +175,8 @@ DOTRACE("Togl::Impl::loadFontList");
 
   // ... and point to the new font
   itsFontListBase = newListBase;
+
+  return itsFontListBase;
 }
 
 Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
@@ -288,22 +290,23 @@ bool Togl::hasPrivateCmap() const       { return rep->itsPrivateCmapFlag; }
 Togl::Color Togl::queryColor(unsigned int color_index) const
   { return rep->queryColor(color_index); }
 
-void Togl::loadDefaultFont() const
+unsigned int Togl::loadDefaultFont() const
 {
-  loadBitmapFont(0);
+  return loadBitmapFont(0);
 }
 
-void Togl::loadBitmapFont(const char* fontname) const
+unsigned int Togl::loadBitmapFont(const char* fontname) const
 {
 DOTRACE("Togl::loadBitmapFont");
-  rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin), fontname));
+  return rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
+                                                  fontname));
 }
 
-void Togl::loadBitmapFonti(int fontnumber) const
+unsigned int Togl::loadBitmapFonti(int fontnumber) const
 {
 DOTRACE("Togl::loadBitmapFonti");
-  rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
-                                           GLUtil::NamedFont(fontnumber)));
+  return rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
+                                                  GLUtil::NamedFont(fontnumber)));
 }
 
 Gfx::Canvas& Togl::getCanvas() const
