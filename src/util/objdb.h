@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri May 11 20:29:17 2001
+// written: Wed May 16 17:20:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -197,23 +197,6 @@ public:
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
   int insertPtrBase(IO::IoObject* ptr);
-
-  template <class T>
-  IdItem<T> getCheckedIoPtr(int id)
-    {
-		IO::IoObject* voidPtr = getCheckedPtrBase(id);
-
-		// cast as reference to force an exception on error
-		T& t = dynamic_cast<T&>(*voidPtr);
-
-		return IdItem<T>(&t);
-	 }
-
-  template <class T>
-  void insertIo(T* master)
-    {
-		insertPtrBase(master);
-	 }
 
 private:
   IoDb(const IoDb&);
