@@ -50,6 +50,8 @@ namespace geom
     // Creators
     rect() : xx(), yy() {} // everything inits to zero
 
+    rect(const geom::span<V>& x, const geom::span<V>& y) : xx(x), yy(y) {}
+
     rect(const geom::vec2<V>& p1, const geom::vec2<V>& p2)
     { set_corners(p1, p2); }
 
