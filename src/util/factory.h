@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu May 10 12:04:36 2001
+// written: Fri May 11 20:27:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,11 @@ public:
   typedef Derived* (*FuncType) ();
 
   CreatorFromFunc(FuncType func) : itsFunc(func) {}
+
+  CreatorFromFunc(const CreatorFromFunc& other) : itsFunc(other.itsFunc) {}
+
+  CreatorFromFunc& operator=(const CreatorFromFunc& other)
+    { itsFunc = other.itsFunc; return *this; }
 
   virtual Base* create() { return itsFunc(); }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu May 10 12:04:38 2001
+// written: Fri May 11 20:29:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,12 +136,17 @@ public:
   public:
 	 Inserter(IoDb* list_) : itsList(list_) {}
 
+	 Inserter(const Inserter& other) : itsList(other.itsList) {}
+
+	 Inserter& operator=(const Inserter& other)
+	   { itsList = other.itsList; return *this; }
+
 	 Inserter& operator=(IO::IoObject* obj)
 		{ itsList->insertPtrBase(obj); return *this; }
 
 	 Inserter& operator*() { return *this; }
 	 Inserter& operator++() { return *this; }
-	 Inserter& operator++(int) { return *this; }
+	 Inserter operator++(int) { return *this; }
   };
 
   Inserter inserter() { return Inserter(this); }

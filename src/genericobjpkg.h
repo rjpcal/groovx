@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu May 10 12:04:37 2001
+// written: Fri May 11 20:26:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,9 @@ protected:
   virtual void invoke();
 
 private:
+  CountAllCmd(const CountAllCmd&);
+  CountAllCmd& operator=(const CountAllCmd&);
+
   IoCaster* itsCaster;
 };
 
@@ -66,6 +69,9 @@ protected:
   virtual void invoke();
 
 private:
+  FindAllCmd(const FindAllCmd&);
+  FindAllCmd& operator=(const FindAllCmd&);
+
   IoCaster* itsCaster;
 };
 
@@ -80,6 +86,9 @@ protected:
   virtual void invoke();
 
 private:
+  RemoveAllCmd(const RemoveAllCmd&);
+  RemoveAllCmd& operator=(const RemoveAllCmd&);
+
   IoCaster* itsCaster;
 };
 
@@ -94,6 +103,9 @@ protected:
   virtual void invoke();
 
 private:
+  IsCmd(const IsCmd&);
+  IsCmd& operator=(const IsCmd&);
+
   IoCaster* itsCaster;
 };
 

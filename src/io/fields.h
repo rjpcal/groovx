@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Thu May 10 12:04:38 2001
+// written: Fri May 11 20:23:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,11 @@ private:
 public:
   CFieldMemberPtr(T C::* ptr) : itsPtr(ptr) {}
 
+  CFieldMemberPtr(const CFieldMemberPtr& other) : itsPtr(other.itsPtr) {}
+
+  CFieldMemberPtr& operator=(const CFieldMemberPtr& other)
+    { itsPtr = other.itsPtr; return *this; }
+
   virtual Field& dereference(FieldContainer* obj) const;
 };
 
@@ -78,6 +83,9 @@ private:
   Value* itsMax;
   Value* itsRes;
   bool itsStartsNewGroup;
+
+  FieldInfo(const FieldInfo&);
+  FieldInfo& operator=(const FieldInfo&);
 
 public:
   template <class C, class T, class F>
@@ -117,6 +125,9 @@ public:
 class Field {
 private:
   FieldContainer* itsOwner;
+
+  Field(const Field&);
+  Field& operator=(const Field&);
 
 protected:
   virtual void doSetValue(const Value& new_val) = 0;
@@ -247,6 +258,9 @@ class FieldMap {
 private:
   class Impl;
   Impl* const itsImpl;
+
+  FieldMap(const FieldMap&);
+  FieldMap& operator=(const FieldMap&);
 
 public:
   FieldMap(const FieldInfo* begin, const FieldInfo* end,
