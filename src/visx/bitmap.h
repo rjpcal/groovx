@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Sep 29 16:54:38 2000
+// written: Thu Oct 19 11:04:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,6 +56,7 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Bitmap();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
