@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Sat Aug 25 21:44:35 2001
+// written: Mon Aug 27 16:27:29 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -18,11 +18,10 @@
 #ifndef GLTCL_CC_DEFINED
 #define GLTCL_CC_DEFINED
 
-#include "glcanvas.h"
-
 #include "application.h"
 
 #include "gfx/bmapdata.h"
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
 
 #include "tcl/tclerror.h"
