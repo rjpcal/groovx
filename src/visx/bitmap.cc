@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Oct 14 15:53:33 1999
+// written: Tue Oct 19 15:35:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 
 #include "error.h"
 #include "pbm.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -124,6 +126,34 @@ DOTRACE("Bitmap::deserialize");
 int Bitmap::charCount() const {
 DOTRACE("Bitmap::charCount");
   return 128;
+}
+
+void Bitmap::readFrom(Reader* reader) {
+DOTRACE("Bitmap::readFrom");
+  reader->readValue("filename", itsFilename);
+  reader->readValue("rasterX", itsRasterX);
+  reader->readValue("rasterY", itsRasterY);
+  reader->readValue("zoomX", itsZoomX);
+  reader->readValue("zoomY", itsZoomY);
+  reader->readValue("usingZoom", itsUsingZoom);
+  reader->readValue("contrastFlip", itsContrastFlip);
+  reader->readValue("verticalFlip", itsVerticalFlip);
+
+  GrObj::readFrom(reader);
+}
+
+void Bitmap::writeTo(Writer* writer) const {
+DOTRACE("Bitmap::writeTo");
+  writer->writeValue("filename", itsFilename);
+  writer->writeValue("rasterX", itsRasterX);
+  writer->writeValue("rasterY", itsRasterY);
+  writer->writeValue("zoomX", itsZoomX);
+  writer->writeValue("zoomY", itsZoomY);
+  writer->writeValue("usingZoom", itsUsingZoom);
+  writer->writeValue("contrastFlip", itsContrastFlip);
+  writer->writeValue("verticalFlip", itsVerticalFlip);
+
+  GrObj::writeTo(writer);
 }
 
 /////////////

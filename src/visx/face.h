@@ -1,13 +1,15 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Oct  4 12:48:08 1999
+// written: Tue Oct 19 15:37:27 1999
 // $Id$
 //
 // The Face class is derived from GrObj. Face provides the
 // functionality needed to display Brunswick faces parameterized by
 // nose length, mouth height, eye height, and eye separation.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACE_H_DEFINED
@@ -53,6 +55,9 @@ public:
   // [Face] category eyeHgt eyeDist noseLen mouthHgt
   
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //
