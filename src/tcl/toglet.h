@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 16:42:02 2002
+// written: Thu Nov 21 17:04:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define TOGLET_H_DEFINED
 
 #include "tcl/tkwidget.h"
-
-class GxCamera;
 
 namespace Gfx
 {
@@ -49,9 +47,6 @@ public:
 
   /// Overridden from GWT::Widget.
   virtual Gfx::Canvas& getCanvas() const;
-
-  Util::Ref<GxCamera> getCamera() const;
-  void setCamera(Util::Ref<GxCamera> cam);
 
   void makeCurrent() const;
 

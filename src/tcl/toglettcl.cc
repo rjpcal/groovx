@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Thu Nov 21 16:56:12 2002
+// written: Thu Nov 21 17:10:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ public:
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
-    defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
+    defAttrib("camera", &GWT::Widget::getCamera, &GWT::Widget::setCamera);
     defAction("clearscreen", &Toglet::fullClearscreen);
     defAction("destroy", &Tcl::TkWidget::destroyWidget);
     defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);

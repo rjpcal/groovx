@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu Nov 14 17:08:23 2002
+// written: Thu Nov 21 17:14:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "gwt/widget.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxcamera.h"
 #include "gfx/gxemptynode.h"
 #include "gfx/gxnode.h"
 
@@ -42,6 +43,7 @@ public:
     itsDrawNode(GxEmptyNode::make()),
     itsUndrawNode(GxEmptyNode::make()),
     isItVisible(false),
+    itsCamera(new GxFixedScaleCamera()),
     isItHolding(false),
     isItRefreshing(true),
     isItRefreshed(false),
@@ -51,6 +53,7 @@ public:
     slotNodeChanged(Util::Slot::make(this, &Impl::onNodeChange))
   {
     itsTimer.sigTimeOut.connect(this, &Impl::fullRender);
+    itsCamera->sigNodeChanged.connect(slotNodeChanged);
   }
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
@@ -82,6 +85,15 @@ public:
       {
         fullClearscreen(itsOwner->getCanvas());
       }
+  }
+
+  void setCamera(const Ref<GxCamera>& cam)
+  {
+    itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
+
+    itsCamera = cam;
+
+    itsCamera->sigNodeChanged.connect(slotNodeChanged);
   }
 
   void setDrawable(const Ref<GxNode>& node)
@@ -127,6 +139,7 @@ private:
   bool isItVisible;
 
 public:
+  Util::Ref<GxCamera> itsCamera;
   bool isItHolding;
   bool isItRefreshing;
   bool isItRefreshed;
@@ -160,6 +173,7 @@ DOTRACE("GWT::Widget::Impl::render");
       Gfx::MatrixSaver msaver(canvas);
       Gfx::AttribSaver asaver(canvas);
 
+      itsCamera->draw(canvas);
       itsDrawNode->draw(canvas);
       itsUndrawNode = itsDrawNode;
 
@@ -293,6 +307,21 @@ void GWT::Widget::allowRefresh(bool allow)
 DOTRACE("GWT::Widget::allowRefresh");
   itsImpl->isItRefreshing = allow;
   itsImpl->flushChanges();
+}
+
+const Util::Ref<GxCamera>& GWT::Widget::getCamera() const
+{
+DOTRACE("GWT::Widget::getCamera");
+
+  return itsImpl->itsCamera;
+}
+
+void GWT::Widget::setCamera(const Util::Ref<GxCamera>& cam)
+{
+DOTRACE("GWT::Widget::setCamera");
+
+  itsImpl->setCamera(cam);
+  fullRender();
 }
 
 void GWT::Widget::setDrawable(const Ref<GxNode>& node)

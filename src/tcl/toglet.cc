@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 16:57:43 2002
+// written: Thu Nov 21 17:16:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,6 @@ public:
   Toglet* owner;
   const Tk_Window tkWin;
   Util::SoftRef<GLCanvas> canvas;
-  Util::Ref<GxCamera> camera;
 
   Impl(Toglet* p);
   ~Impl() throw() {}
@@ -81,8 +80,7 @@ Tk_ClassProcs toglProcs =
 Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
-  canvas(),
-  camera(new GxFixedScaleCamera(p->pixelsPerInch()))
+  canvas()
 {
 DOTRACE("Toglet::Impl::Impl");
 
@@ -228,19 +226,6 @@ DOTRACE("Toglet::getCanvas");
   return *(rep->canvas);
 }
 
-Util::Ref<GxCamera> Toglet::getCamera() const
-{
-DOTRACE("Toglet::getCamera");
-  return rep->camera;
-}
-
-void Toglet::setCamera(Util::Ref<GxCamera> cam)
-{
-DOTRACE("Toglet::setCamera");
-  rep->camera = cam;
-  reshapeCallback();
-}
-
 void Toglet::makeCurrent() const
 {
   rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
@@ -251,7 +236,6 @@ void Toglet::displayCallback()
 DOTRACE("Toglet::displayCallback");
 
   makeCurrent();
-  rep->camera->draw(*(rep->canvas));
   fullRender();
 }
 
@@ -259,10 +243,7 @@ void Toglet::reshapeCallback()
 {
 DOTRACE("Toglet::reshapeCallback");
 
-  makeCurrent();
-
-  rep->camera->reshape(width(), height());
-
+  getCamera()->reshape(width(), height());
   requestRedisplay();
 }
 
