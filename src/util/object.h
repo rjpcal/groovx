@@ -33,6 +33,8 @@
 #include "util/refcounted.h"
 #include "util/uid.h"
 
+class fstring;
+
 namespace Util
 {
   class Object;
@@ -65,6 +67,12 @@ public:
   /** Returns the unique id for this object. The unique id will always
       be strictly positive; zero is always an invalid unique id. */
   Util::UID id() const;
+
+  /// Returns the typename of the full object.
+  /** The default implementation provided by \c Util::Object returns a
+      demangled version of \c typeid(*this).name(), which should very
+      closely resemble the way the object was declared in source code. */
+  virtual fstring objTypename() const;
 
 private:
   Util::UID itsId;

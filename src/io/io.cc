@@ -34,12 +34,8 @@
 
 #include "io/writer.h"
 
-#include "system/demangle.h"
-
 #include "util/ref.h"
 #include "util/strings.h"
-
-#include <typeinfo>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -112,7 +108,7 @@ DOTRACE("IO::IoObject::serialVersionId");
 fstring IO::IoObject::ioTypename() const
 {
 DOTRACE("IO::IoObject::ioTypename");
-  return demangle_cstr(typeid(*this).name());
+  return objTypename();
 }
 
 static const char vcid_io_cc[] = "$Header$";

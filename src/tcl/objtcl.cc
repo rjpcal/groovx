@@ -183,11 +183,6 @@ namespace
         ++itr;
       }
   }
-
-  fstring objType(Util::SoftRef<Util::Object> obj)
-  {
-    return demangle_cstr(typeid(*obj).name());
-  }
 }
 
 extern "C"
@@ -212,7 +207,7 @@ DOTRACE("Obj_Init");
   pkg2->defAction("incrRefCount", &Util::Object::incrRefCount);
   pkg2->defAction("decrRefCount", &Util::Object::decrRefCount);
 
-  pkg2->defVec( "type", "item_id(s)", &objType );
+  pkg2->defVec( "type", "item_id(s)", &Util::Object::objTypename );
 
   pkg2->def( "new", "typename", &objNew );
   pkg2->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",

@@ -32,6 +32,12 @@
 
 #include "util/object.h"
 
+#include "system/demangle.h"
+
+#include "util/strings.h"
+
+#include <typeinfo>
+
 #include "util/trace.h"
 
 namespace
@@ -49,7 +55,16 @@ Util::Object::~Object()
 DOTRACE("Util::Object::~Object");
 }
 
-Util::UID Util::Object::id() const { return itsId; }
+Util::UID Util::Object::id() const
+{
+  return itsId;
+}
+
+fstring Util::Object::objTypename() const
+{
+DOTRACE("Util::Object::objTypename");
+  return demangle_cstr(typeid(*this).name());
+}
 
 static const char vcid_object_cc[] = "$Header$";
 #endif // !OBJECT_CC_DEFINED
