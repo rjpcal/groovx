@@ -41,6 +41,7 @@
 #include <cstring>     // for strerror()
 #include <fcntl.h>     // for open(), O_RDONLY
 #include <sys/mman.h>  // for mmap()
+#include <unistd.h>    // for close()
 
 rutz::mapped_file::mapped_file(const char* filename)
   :
