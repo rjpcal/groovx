@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Nov  1 18:30:58 2000
+// written: Thu Nov  2 15:44:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 
 #ifdef PRESTANDARD_IOSTREAMS
 class istream;
+class ostream;
 #else
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
 #    include <iosfwd>
@@ -36,8 +37,6 @@ namespace GWT {
 }
 
 namespace Util { class ErrorHandler; }
-
-class GxNode;
 
 class Position;
 class Block;
@@ -81,6 +80,8 @@ public:
   // the number of objid's read from the stream.
   int readFromObjidsOnly(STD_IO::istream &is, int offset = 0);
 
+  void writeMatlab(STD_IO::ostream& os) const;
+
   ///////////////
   // accessors //
   ///////////////
@@ -89,10 +90,6 @@ public:
 
   int getResponseHandler() const;
   int getTimingHdlr() const;
-
-  typedef const IdItem<GxNode>* GxNodeItr;
-  GxNodeItr beginGxNodes() const;
-  GxNodeItr endGxNodes() const;
 
   // returns some info about relationship between objects in trial
   virtual int trialType() const;
