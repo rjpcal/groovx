@@ -37,27 +37,22 @@
 
 #include "util/trace.h"
 
-class InnerFace : public Face
+namespace
 {
-public:
-  static InnerFace* make()
+  static Face* makeInnerFace()
   {
-    InnerFace* p = new InnerFace;
+    Face* p = Face::make();
     p->setField("partsMask", Tcl::toTcl(1));
     return p;
   }
-};
 
-class FilledFace : public Face
-{
-public:
-  static FilledFace* make()
+  static Face* makeFilledFace()
   {
-    FilledFace* p = new FilledFace;
+    Face* p = Face::make();
     p->setField("isFilled", Tcl::toTcl(1));
     return p;
   }
-};
+}
 
 extern "C"
 int Face_Init(Tcl_Interp* interp)
@@ -65,22 +60,30 @@ int Face_Init(Tcl_Interp* interp)
 DOTRACE("Face_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Face", "$Revision$");
+  pkg->inheritPkg("IO");
   Tcl::defFieldContainer<Face>(pkg);
   Tcl::defCreator<Face>(pkg);
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "CloneFace", "$Revision$");
-  Tcl::defFieldContainer<CloneFace>(pkg2);
-  Tcl::defCreator<CloneFace>(pkg2);
+  Util::ObjFactory::theOne().registerCreatorFunc( &makeInnerFace,
+                                                  "InnerFace" );
 
-  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "InnerFace", "$Revision$");
-  Tcl::defFieldContainer<InnerFace>(pkg3);
-  Tcl::defCreator<InnerFace>(pkg3);
+  Util::ObjFactory::theOne().registerCreatorFunc( &makeFilledFace,
+                                                  "FilledFace" );
 
-  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "FilledFace", "$Revision$");
-  Tcl::defFieldContainer<FilledFace>(pkg4);
-  Tcl::defCreator<FilledFace>(pkg4);
+  return pkg->initStatus();
+}
 
-  return Tcl::Pkg::initStatus(pkg, pkg2, pkg3, pkg4);
+extern "C"
+int Cloneface_Init(Tcl_Interp* interp)
+{
+DOTRACE("Cloneface_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "CloneFace", "$Revision$");
+  pkg->inheritPkg("Face");
+  Tcl::defFieldContainer<CloneFace>(pkg);
+  Tcl::defCreator<CloneFace>(pkg);
+
+  return pkg->initStatus();
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";

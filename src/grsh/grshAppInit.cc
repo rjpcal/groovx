@@ -41,6 +41,7 @@
 extern "C"
 {
   Tcl_PackageInitProc Block_Init;
+  Tcl_PackageInitProc Cloneface_Init;
   Tcl_PackageInitProc Dlist_Init;
   Tcl_PackageInitProc Exptdriver_Init;
   Tcl_PackageInitProc Face_Init;
@@ -89,6 +90,7 @@ PackageInfo IMMEDIATE_PKGS[] =
 PackageInfo DELAYED_PKGS[] =
   {
     { "Block",        Block_Init,         "3.0" },
+    { "Cloneface",    Cloneface_Init,     "2.0" },
     { "Dlist",        Dlist_Init,         "1.0" },
     { "Exptdriver",   Exptdriver_Init,    "2.0" },
     { "Face",         Face_Init,          "2.0" },
