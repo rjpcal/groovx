@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Sep 29 16:20:21 2000
+// written: Fri Sep 29 18:53:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,14 +27,13 @@
 #include "util/debug.h"
 
 namespace IO {
-  /** This function reads the next word from \a theStream, and
-      compares it to the correct names in \a correctNames. \a
-      correctNames should consist of one or more space-separated
-      words. If the word read from the stream does not match any of
-      these words, and \a doCheck is true, an \c InputError is thrown
-      with the last word in correctNames as its info. If \a doCheck is
-      false, the function does nothing except read a word from \a
-      theStream. */
+  // This function reads the next word from theStream, and compares it
+  // to the correct names in correctNames. correctNames should consist
+  // of one or more space-separated words. If the word read from the
+  // stream does not match any of these words, and doCheck is true, an
+  // InputError is thrown with the last word in correctNames as its
+  // info. If doCheck is false, the function does nothing except read
+  // a word from theStream.
   void readTypename(STD_IO::istream& is,
 						  const char* correctNames_cstr,
 						  bool doCheck);
@@ -95,12 +94,38 @@ DOTRACE("IO::readTypename");
   throw err;
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// LegacyReader::Impl definition
+//
+///////////////////////////////////////////////////////////////////////
+
 class IO::LegacyReader::Impl {
 public:
   Impl(STD_IO::istream& is, IO::IOFlag flag) :
 	 itsInStream(is),
-	 itsFlags(flag)
+	 itsFlags(flag),
+	 itsStringMode(IO::CHAR_COUNT)
   {}
+
+  void throwIfError(const char* type) {
+	 if (itsInStream.fail()) {
+		DOTRACE("IO::LegacyReader::Impl::throwIfError+");
+		DebugEvalNL(type);
+		throw IO::InputError(type);
+	 }
+  }
+
+#if 0
+  struct ReadState {
+  	 IO::IOFlag flags;
+	 LegacyStringMode strMode;
+  	 const fixed_string objType;
+  	 bool usingLegacyVersion;
+	 const int attribCount;
+	 int curAttribCount;
+  };
+#endif
 
   STD_IO::istream& itsInStream;
   IO::IOFlag itsFlags;
@@ -134,30 +159,49 @@ DOTRACE("IO::LegacyReader::setFlags");
   itsImpl->itsFlags = new_flags;
 }
 
-void IO::LegacyReader::throwIfError(const char* type) {
-DOTRACE("IO::LegacyReader::throwIfError");
-  if (itsImpl->itsInStream.fail()) {
-	 DebugEvalNL(type);
-	 throw IO::InputError(type);
+int IO::LegacyReader::getLegacyVersionId() {
+DOTRACE("IO::LegacyReader::getLegacyVersionId");
+
+  while ( isspace(itsImpl->itsInStream.peek()) )
+	 { itsImpl->itsInStream.get(); }
+
+  int version = 0;
+
+  if (itsImpl->itsInStream.peek() == '@') {
+	 int c = itsImpl->itsInStream.get();
+	 Assert(c == '@');
+
+	 itsImpl->itsInStream >> version;
+	 DebugEvalNL(version);
+	 itsImpl->throwIfError("versionId");
+  }
+
+  return version;
+}
+
+void IO::LegacyReader::grabLeftBrace() {
+DOTRACE("IO::LegacyReader::grabLeftBrace");
+  char brace;
+  itsImpl->itsInStream >> brace;
+  if (brace != '{') {
+	 throw IO::LogicError("missing left-brace");
   }
 }
 
-int IO::LegacyReader::eatWhitespace() {
-DOTRACE("IO::LegacyReader::eatWhitespace");
-  int c=0;
-  while ( isspace(itsImpl->itsInStream.peek()) )
-	 { itsImpl->itsInStream.get(); ++c; }
-  return c;
+void IO::LegacyReader::grabRightBrace() {
+DOTRACE("IO::LegacyReader::grabRightBrace");
+  char brace;
+  itsImpl->itsInStream >> brace;
+  if (brace != '}') {
+	 throw IO::LogicError("missing left-brace");
+  }
 }
 
-int IO::LegacyReader::peek() {
-DOTRACE("IO::LegacyReader::peek");
-  return itsImpl->itsInStream.peek();
-}
-
-int IO::LegacyReader::getChar() {
-DOTRACE("IO::LegacyReader::getChar");
-  return itsImpl->itsInStream.get();
+void IO::LegacyReader::grabNewline() {
+DOTRACE("IO::LegacyReader::grabNewline");
+  if (itsImpl->itsInStream.get() != '\n') {
+	 throw IO::LogicError("missing newline");
+  }
 }
 
 void IO::LegacyReader::setStringMode(LegacyStringMode mode) {
@@ -167,7 +211,6 @@ DOTRACE("IO::LegacyReader::setStringMode");
 
 IO::VersionId IO::LegacyReader::readSerialVersionId() {
 DOTRACE("IO::LegacyReader::readSerialVersionId");
-  throw IO::InputError("LegacyReader--not implemented");
   return -1;
 }
 
@@ -176,7 +219,7 @@ DOTRACE("IO::LegacyReader::readChar");
   DebugEval(name);
   char val;
   itsImpl->itsInStream >> val;   DebugEvalNL(val);
-  throwIfError(name);
+  itsImpl->throwIfError(name);
   return val;
 }
 
@@ -185,7 +228,7 @@ DOTRACE("IO::LegacyReader::readInt");
   DebugEval(name);
   int val;
   itsImpl->itsInStream >> val;   DebugEvalNL(val);
-  throwIfError(name);
+  itsImpl->throwIfError(name);
   return val;
 }
 
@@ -194,7 +237,7 @@ DOTRACE("IO::LegacyReader::readBool");
   DebugEval(name);
   int val;
   itsImpl->itsInStream >> val;   DebugEvalNL(val);
-  throwIfError(name);
+  itsImpl->throwIfError(name);
   return bool(val);
 }
 
@@ -203,7 +246,7 @@ DOTRACE("IO::LegacyReader::readDouble");
   DebugEval(name);
   double val;
   itsImpl->itsInStream >> val;   DebugEvalNL(val);
-  throwIfError(name);
+  itsImpl->throwIfError(name);
   return val;
 }
 
@@ -257,12 +300,12 @@ DOTRACE("IO::LegacyReader::readCstring");
 	 }
 	 break;
   default:
-	 throw IO::InputError("LegacyWriter was set to unknown string mode");
+	 throw IO::InputError("LegacyReader was set to unknown string mode");
 	 break;
   }
 
   try {
-	 throwIfError(name);
+	 itsImpl->throwIfError(name);
   }
   catch (...) {
 	 delete [] return_buf;
@@ -276,7 +319,7 @@ void IO::LegacyReader::readValueObj(const char* name, Value& value) {
 DOTRACE("IO::LegacyReader::readValueObj");
   DebugEvalNL(name);
   value.scanFrom(itsImpl->itsInStream);
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 IO::IoObject* IO::LegacyReader::readObject(const char* name) {
@@ -291,7 +334,7 @@ DOTRACE("IO::LegacyReader::readObject");
   IO::LRFlagJanitor jtr_(*this, itsImpl->itsFlags & ~IO::TYPENAME);
   obj->readFrom(this);
 
-  throwIfError(name);
+  itsImpl->throwIfError(name);
   return obj;
 }
 
@@ -304,7 +347,7 @@ DOTRACE("IO::LegacyReader::readOwnedObject");
 							obj->legacyValidTypenames().c_str(), true);
   }
   obj->readFrom(this);
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyReader::readBaseClass(const char* baseClassName,
@@ -323,7 +366,7 @@ DOTRACE("IO::LegacyReader::readBaseClass");
 
 	 basePart->readFrom(this);
   }
-  throwIfError(baseClassName);
+  itsImpl->throwIfError(baseClassName);
 }
 
 IO::IoObject* IO::LegacyReader::readRoot(IO::IoObject* root) {
@@ -340,21 +383,32 @@ DOTRACE("IO::LegacyReader::readRoot");
   return root;
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// LegacyWriter::Impl definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class IO::LegacyWriter::Impl {
 public:
   Impl(STD_IO::ostream& os, IO::IOFlag flag) :
 	 itsOutStream(os),
 	 itsFlags(flag),
-	 itsFSep()
-  {
-	 itsFSep[0] = IO::SEP;
-	 itsFSep[1] = '\0';
+	 itsFSep(IO::SEP),
+	 itsStringMode(IO::CHAR_COUNT)
+  {}
+
+  void throwIfError(const char* type) {
+	 if (itsOutStream.fail()) {
+		DOTRACE("IO::LegacyWriter::Impl::throwIfError+");
+		DebugEvalNL(type);
+		throw IO::OutputError(type);
+	 }
   }
 
   STD_IO::ostream& itsOutStream;
   IO::IOFlag itsFlags;
-  char itsFSep[8];				  // field separator
+  char itsFSep;				  // field separator
   LegacyStringMode itsStringMode;
 };
 
@@ -386,30 +440,14 @@ DOTRACE("IO::LegacyWriter::setFlags");
   itsImpl->itsFlags = new_flags;
 }
 
-void IO::LegacyWriter::throwIfError(const char* type) {
-DOTRACE("IO::LegacyWriter::throwIfError");
-  if (itsImpl->itsOutStream.fail()) throw IO::OutputError(type);
-}
-
 void IO::LegacyWriter::setFieldSeparator(char sep) {
 DOTRACE("IO::LegacyWriter::setFieldSeparator");
-  itsImpl->itsFSep[0] = sep;
-  itsImpl->itsFSep[1] = '\0';
-}
-
-void IO::LegacyWriter::setFieldSeparator(const char* sep) {
-DOTRACE("IO::LegacyWriter::setFieldSeparator");
-  char* ptr = &itsImpl->itsFSep[0];
-  char* end = ptr+8;
-  while (*ptr++ = *sep++)
-	 if (ptr >= end) break;
-  ptr[7] = '\0';
+  itsImpl->itsFSep = sep;
 }
 
 void IO::LegacyWriter::resetFieldSeparator() {
 DOTRACE("IO::LegacyWriter::resetFieldSeparator");
-  itsImpl->itsFSep[0] = IO::SEP;
-  itsImpl->itsFSep[1] = '\0';
+  itsImpl->itsFSep = IO::SEP;
 }
 
 void IO::LegacyWriter::insertChar(char c) {
@@ -425,25 +463,25 @@ DOTRACE("IO::LegacyWriter::setStringMode");
 void IO::LegacyWriter::writeChar(const char* name, char val) {
 DOTRACE("IO::LegacyWriter::writeChar");
   itsImpl->itsOutStream << val << itsImpl->itsFSep;
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeInt(const char* name, int val) {
 DOTRACE("IO::LegacyWriter::writeInt");
   itsImpl->itsOutStream << val << itsImpl->itsFSep;
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeBool(const char* name, bool val) {
 DOTRACE("IO::LegacyWriter::writeBool");
   itsImpl->itsOutStream << val << itsImpl->itsFSep;
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeDouble(const char* name, double val) {
 DOTRACE("IO::LegacyWriter::writeDouble");
   itsImpl->itsOutStream << val << itsImpl->itsFSep;
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeCstring(const char* name, const char* val) {
@@ -458,14 +496,14 @@ DOTRACE("IO::LegacyWriter::writeCstring");
 	 break;
   case IO::CHAR_COUNT:
 	 itsImpl->itsOutStream << strlen(val) << '\n'
-					  << val << '\n';
+								  << val << '\n';
 	 break;
   default:
 	 throw IO::InputError("LegacyWriter was set to unknown string mode");
 	 break;
   }
 
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeValueObj(const char* name,
@@ -473,7 +511,7 @@ void IO::LegacyWriter::writeValueObj(const char* name,
 DOTRACE("IO::LegacyWriter::writeValueObj");
   value.printTo(itsImpl->itsOutStream);
   itsImpl->itsOutStream << itsImpl->itsFSep;
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeObject(const char* name, const IO::IoObject* obj) {
@@ -484,12 +522,12 @@ DOTRACE("IO::LegacyWriter::writeObject");
 
   if (itsImpl->itsFlags & IO::TYPENAME) {
 	 itsImpl->itsOutStream << obj->ioTypename() << itsImpl->itsFSep;
-	 throwIfError(obj->ioTypename().c_str());
+	 itsImpl->throwIfError(obj->ioTypename().c_str());
   }
 
   obj->writeTo(this); 
   resetFieldSeparator();
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeOwnedObject(const char* name,
@@ -501,12 +539,12 @@ DOTRACE("IO::LegacyWriter::writeOwnedObject");
 
   if (itsImpl->itsFlags & IO::TYPENAME) {
 	 itsImpl->itsOutStream << obj->ioTypename() << itsImpl->itsFSep;
-	 throwIfError(obj->ioTypename().c_str());
+	 itsImpl->throwIfError(obj->ioTypename().c_str());
   }
 
   obj->writeTo(this); 
   resetFieldSeparator();
-  throwIfError(name);
+  itsImpl->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
@@ -521,13 +559,13 @@ DOTRACE("IO::LegacyWriter::writeBaseClass");
 
 	 if (itsImpl->itsFlags & IO::TYPENAME) {
 		itsImpl->itsOutStream << basePart->ioTypename() << itsImpl->itsFSep;
-		throwIfError(basePart->ioTypename().c_str());
+		itsImpl->throwIfError(basePart->ioTypename().c_str());
 	 }
 
 	 basePart->writeTo(this);
 	 resetFieldSeparator();
   }
-  throwIfError(baseClassName);
+  itsImpl->throwIfError(baseClassName);
 }
 
 void IO::LegacyWriter::writeRoot(const IO::IoObject* root) {
@@ -539,7 +577,7 @@ DOTRACE("IO::LegacyWriter::writeRoot");
 
   if (itsImpl->itsFlags & IO::TYPENAME) {
 	 itsImpl->itsOutStream << root->ioTypename() << itsImpl->itsFSep;
-	 throwIfError(root->ioTypename().c_str());
+	 itsImpl->throwIfError(root->ioTypename().c_str());
   }
 
   root->writeTo(this);

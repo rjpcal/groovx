@@ -63,13 +63,10 @@ public:
 
   IO::IOFlag flags() const;
 
-  void throwIfError(const char* type);
-
-  int eatWhitespace();
-
-  int peek();
-
-  int getChar();
+  int getLegacyVersionId();
+  void grabLeftBrace();
+  void grabRightBrace();
+  void grabNewline();
 
   void setStringMode(LegacyStringMode mode);
 
@@ -114,10 +111,7 @@ public:
 
   IO::IOFlag flags() const;
 
-  void throwIfError(const char* type);
-
   void setFieldSeparator(char sep);
-  void setFieldSeparator(const char* sep);
   void resetFieldSeparator();
 
   void insertChar(char c);
