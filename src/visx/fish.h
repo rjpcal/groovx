@@ -92,14 +92,12 @@ private:
   /// Controls the shape of the mouth
   double* itsMouthCoord;
 
-public:
   /// Selects the current part for editing.
-  TBoundedField<int> currentPart;
+  int itsCurrentPart;
 
   /// Selects the current end point for editing.
-  TBoundedField<int> currentEndPt;
+  int itsCurrentEndPt;
 
-private:
   /// Controls the part referred to by the current end point.
   int* itsEndPt_Part;
 

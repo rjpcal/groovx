@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 11:13:09 2001
+// written: Wed Aug 15 17:27:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,12 +48,14 @@ public:
   // properties //
   ////////////////
 
+private:
   /// The number of lines that will be rendered in each direction.
-  TBoundedField<int> numLines;
+  int itsNumLines;
 
   /// The pixel-width of each line.
-  TBoundedField<int> lineWidth;
+  int itsLineWidth;
 
+public:
   static const FieldMap& classFields();
 
   /// Overridden from GrObj.

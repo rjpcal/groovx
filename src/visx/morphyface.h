@@ -89,7 +89,7 @@ private:
     ///< The y-position of the pupils, relative to the center of the eye.
   double itsPupilSize;
     ///< The diameter of the pupils, relative to the height of the eye.
-  TBoundedField<double> itsPupilDilation;
+  double itsPupilDilation;
     ///< The dilation of the pupil, on a scale of [0,1).
 
   double itsEyebrowXpos;

@@ -104,9 +104,12 @@ const FieldMap& Fish::classFields()
     FieldInfo("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
     FieldInfo("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
-    FieldInfo("currentPart", FieldInfo::OldTag(), &Fish::currentPart, 0, 0, 3, 1, true),
+    FieldInfo("currentPart", FieldInfo::BoundsCheck(),
+				  &Fish::itsCurrentPart, 0, 0, 3, 1, true),
 
-    FieldInfo("currentEndPt", FieldInfo::OldTag(), &Fish::currentEndPt, 0, 0, 3, 1, true),
+    FieldInfo("currentEndPt", FieldInfo::BoundsCheck(),
+				  &Fish::itsCurrentEndPt, 0, 0, 3, 1, true),
+
     FieldInfo("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
     FieldInfo("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)
   };
@@ -138,8 +141,8 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsTailFinCoord(&itsCoords[1]),
   itsLowerFinCoord(&itsCoords[2]),
   itsMouthCoord(&itsCoords[3]),
-  currentPart(0, 0, 3),
-  currentEndPt(0, 0, 3),
+  itsCurrentPart(0),
+  itsCurrentEndPt(0),
   itsEndPt_Part(&dummy),
   itsEndPt_Bkpt(&dummy),
   itsFishParts(new FishPart[4]),
@@ -157,11 +160,6 @@ DOTRACE("Fish::Fish");
     restoreToDefault();
   }
 
-//    currentPart.attach(this);
-//    currentEndPt.attach(this);
-
-//    currentPart.sendStateChangeMsg();
-//    currentEndPt.sendStateChangeMsg();
   sendStateChangeMsg();
 }
 
@@ -307,18 +305,9 @@ DOTRACE("Fish::writeTo");
 void Fish::receiveStateChangeMsg(const Util::Observable* obj)
 {
 DOTRACE("Fish::receiveStateChangeMsg");
-//    if (obj == &currentPart) {
-//    }
-//    else if (obj == &currentEndPt) {
-//     itsEndPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
-//     itsEndPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
-//    }
-//    else {
-//     GrObj::receiveStateChangeMsg(obj);
-//    }
 
-  itsEndPt_Part = &(itsEndPts[currentEndPt()].itsPart);
-  itsEndPt_Bkpt = &(itsEndPts[currentEndPt()].itsBkpt);
+  itsEndPt_Part = &(itsEndPts[itsCurrentEndPt].itsPart);
+  itsEndPt_Bkpt = &(itsEndPts[itsCurrentEndPt].itsBkpt);
 
   GrObj::receiveStateChangeMsg(obj);
 }

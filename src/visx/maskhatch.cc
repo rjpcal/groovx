@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 17:29:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,22 +30,24 @@
 
 namespace
 {
-  const FieldInfo MASK_FINFOS[] =
-  {
-    FieldInfo("numLines", FieldInfo::OldTag(), &MaskHatch::numLines, 5, 0, 25, 1, true),
-    FieldInfo("lineWidth", FieldInfo::OldTag(), &MaskHatch::lineWidth, 1, 0, 25, 1)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
-
-  FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS,
-                       &GrObj::classFields());
 
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
 }
 
 const FieldMap& MaskHatch::classFields()
 {
+  static const FieldInfo MASK_FINFOS[] =
+  {
+    FieldInfo("numLines", &MaskHatch::itsNumLines, 5, 0, 25, 1, true),
+    FieldInfo("lineWidth", FieldInfo::BoundsCheck(),
+              &MaskHatch::itsLineWidth, 1, 0, 25, 1)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS,
+                              &GrObj::classFields());
+
   return MASK_FIELDS;
 }
 
@@ -57,12 +59,12 @@ DOTRACE("MaskHatch::make");
 
 MaskHatch::MaskHatch () :
   GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
-  numLines(10, 0, 1000),
-  lineWidth(1, 0, 1000)
+  itsNumLines(10),
+  itsLineWidth(1)
 {
 DOTRACE("MaskHatch::MaskHatch");
 
-  setFieldMap(MASK_FIELDS);
+  setFieldMap(MaskHatch::classFields());
 
   setAlignmentMode(Gmodes::CENTER_ON_CENTER);
   DebugEval(getAlignmentMode());
@@ -104,7 +106,7 @@ DOTRACE("MaskHatch::writeTo");
 
 void MaskHatch::receiveStateChangeMsg(const Util::Observable* obj)
 {
-  setPixelBorder(lineWidth()/2 + 2);
+  setPixelBorder(itsLineWidth/2 + 2);
   GrObj::receiveStateChangeMsg(obj);
 }
 
@@ -123,17 +125,17 @@ void MaskHatch::grRender(Gfx::Canvas&, DrawMode) const
 {
 DOTRACE("MaskHatch::grRender");
 
-  if (numLines() == 0) return;
+  if (itsNumLines == 0) return;
 
   glPushAttrib(GL_LINE_BIT);
   {
-    glLineWidth(lineWidth());
+    glLineWidth(itsLineWidth);
 
     glBegin(GL_LINES);
     {
-      for (int i = 0; i < numLines(); ++i)
+      for (int i = 0; i < itsNumLines; ++i)
         {
-          GLdouble position = double(i)/numLines();
+          GLdouble position = double(i)/itsNumLines;
 
           // horizontal line
           glVertex2d(0.0, position);

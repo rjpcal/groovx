@@ -133,7 +133,6 @@ namespace
 
 const FieldMap& MorphyFace::classFields()
 {
-
   typedef MorphyFace MF;
 
   static const FieldInfo FINFOS[] =
@@ -157,7 +156,8 @@ const FieldMap& MorphyFace::classFields()
     FieldInfo("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, true),
     FieldInfo("pupilYpos", &MF::itsPupilYpos, 0.0, -0.5, 0.5, 0.05),
     FieldInfo("pupilSize", &MF::itsPupilSize, 0.6, 0.0, 1.0, 0.05),
-    FieldInfo("pupilDilation", FieldInfo::OldTag(), &MF::itsPupilDilation, 0.5, 0.0, 1.0, 0.05),
+    FieldInfo("pupilDilation", FieldInfo::BoundsCheck(),
+				  &MF::itsPupilDilation, 0.5, 0.05, 0.95, 0.05),
 
     FieldInfo("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
     FieldInfo("eyebrowYpos", &MF::itsEyebrowYpos, 0.5, 0.0, 1.5, 0.05),
@@ -212,7 +212,7 @@ MorphyFace::MorphyFace() :
   itsPupilXpos(0.0),
   itsPupilYpos(0.0),
   itsPupilSize(0.6),
-  itsPupilDilation(0.5, 0.0, 0.999),
+  itsPupilDilation(0.5),
 
   itsEyebrowXpos(0.0),
   itsEyebrowYpos(0.5),
@@ -379,7 +379,7 @@ DOTRACE("MorphyFace::grRender");
                    1.0);
           static const int num_slices = 20;
           static const int num_loops = 1;
-          gluDisk(qobj, 0.5*Util::abs(itsPupilDilation()), 0.5,
+          gluDisk(qobj, 0.5*Util::abs(itsPupilDilation), 0.5,
                   num_slices, num_loops);
         }
         glPopMatrix();
