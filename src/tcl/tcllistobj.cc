@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:32:35 2001
-// written: Thu Aug  9 18:42:49 2001
+// written: Sun Sep  9 15:11:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ DOTRACE("Tcl::List::at");
 
   update();
 
-  if (index > itsLength)
+  if (index >= itsLength)
     throw Tcl::TclError("index was out of range in Tcl list access");
 
   DebugEval(index); DebugEvalNL(itsElements[index]);
