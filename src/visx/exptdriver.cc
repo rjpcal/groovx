@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jan 30 15:29:33 2002
+// written: Thu Jan 31 10:33:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -192,8 +192,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsBlocks(),
   itsCurrentBlockIdx(0),
   itsErrorHandler(interp),
-  itsDoWhenComplete(new Tcl::ProcWrapper(interp,
-                                         "ExptPrivate_onCompletion"))
+  itsDoWhenComplete(new Tcl::ProcWrapper(interp))
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
