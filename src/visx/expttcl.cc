@@ -2,8 +2,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Mar 12 12:58:24 1999
-static const char vcid_expttcl_cc[] = "$Id$";
+// written: Sun Mar 14 19:41:07 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPTTCL_CC_DEFINED
@@ -268,4 +267,5 @@ DOTRACE("ExptTcl::Expt_Init");
   return TCL_OK;
 }
 
+static const char vcid_expttcl_cc[] = "$Header$";
 #endif // !EXPTTCL_CC_DEFINED
