@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  4 16:15:39 1999
+// written: Mon Oct  4 16:24:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,9 @@ public:
   ////////////////
   // properties //
   ////////////////
+
+  typedef PropertyInfo<FixPt> PInfo;
+  static const vector<PInfo>& getPropertyInfos();
 
   CTProperty<FixPt, double> length;	// length of crosshairs in GL coordinates
   CTProperty<FixPt, int> width; // width of crosshairs in pixels

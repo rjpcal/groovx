@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  4 16:18:34 1999
+// written: Mon Oct  4 16:27:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,19 @@ int FixPt::charCount() const {
 			 + gCharCount<double>(length()) + 1
 			 + gCharCount<int>(width()) + 1
 			 + 1);// fudge factor
+}
+
+const vector<FixPt::PInfo>& FixPt::getPropertyInfos() {
+  static vector<PInfo> p;
+
+  typedef FixPt F;
+
+  if (p.size() == 0) {
+	 p.push_back(PInfo("length", &F::length, 0.0, 10.0, 0.1, true));
+	 p.push_back(PInfo("width", &F::width, 0, 100, 1));
+  }
+
+  return p;
 }
 
 bool FixPt::grGetBoundingBox(double& left, double& top,
