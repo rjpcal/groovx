@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Sep 10 17:17:38 2001
+// written: Thu Sep 13 10:54:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 #include "util/objfactory.h"
 #include "util/pointers.h"
 #include "util/serialport.h"
+#include "util/strings.h"
 
 #include <tk.h>
 #include <X11/Xlib.h>
