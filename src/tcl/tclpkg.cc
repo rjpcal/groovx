@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Oct 18 18:56:38 1999
+// written: Tue Nov 30 17:34:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ protected:
     void* item = itsPkg->getItemFromId(ids[0]);
     returnVal(itsGetter->get(item));
 
-    for (int i = 1; i < ids.size(); ++i) {
+    for (size_t i = 1; i < ids.size(); ++i) {
       void* item = itsPkg->getItemFromId(ids[i]);
       lappendVal(itsGetter->get(item));
     }
@@ -178,7 +178,7 @@ protected:
 
     int max_valn = vals.size()-1;
 
-    for (int i = 0, valn = 0; i < ids.size(); ++i) {
+    for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
       void* item = itsPkg->getItemFromId(ids[i]);
       itsSetter->set(item, vals[valn]);
       if (valn < max_valn) ++valn;
@@ -218,7 +218,7 @@ void TVecSetterCmd<const string&>::invoke() {
 
     int max_valn = vals.size()-1;
 
-    for (int i = 0, valn = 0; i < ids.size(); ++i) {
+    for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
       void* item = itsPkg->getItemFromId(ids[i]);
       itsSetter->set(item, vals[valn]);
       if (valn < max_valn) ++valn;
@@ -338,7 +338,7 @@ protected:
       ids.push_back(-1);
     }
 
-    for (int i = 0; i < ids.size(); ++i) {
+    for (size_t i = 0; i < ids.size(); ++i) {
       void* item = itsPkg->getItemFromId(ids[i]);
       itsAction->action(item);
     }
