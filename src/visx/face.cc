@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Sep 29 16:07:31 2000
+// written: Fri Sep 29 17:43:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,15 +119,7 @@ void Face::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("Face::legacyDesrlz");
 
   lreader->eatWhitespace();
-  int version = 0;
-
-  if ( lreader->peek() == '@' ) {
-	 int c = lreader->getChar();
-	 Assert(c == '@');
-
-	 lreader->readValue("legacyVersion", version);
-	 DebugEvalNL(version);
-  }
+  int version = lreader->getLegacyVersionId();
 
   if (version == 1) {
 	 char brace = lreader->readChar("leftBrace");

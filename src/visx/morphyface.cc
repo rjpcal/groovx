@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Sep 29 16:10:39 2000
+// written: Fri Sep 29 17:44:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -333,15 +333,7 @@ void MorphyFace::legacyDesrlz(IO::LegacyReader* lreader) {
 DOTRACE("MorphyFace::legacyDesrlz");
 
   lreader->eatWhitespace();
-  int version = 0;
-
-  if ( lreader->peek() == '@' ) {
-	 int c = lreader->getChar();
-	 Assert(c == '@');
-
-	 lreader->readValue("legacyVersion", version);
-	 DebugEvalNL(version);
-  }
+  int version = lreader->getLegacyVersionId();
 
   if (version == 1) {
 	 char brace = lreader->readChar("leftBrace");
