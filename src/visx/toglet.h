@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jun  6 16:32:19 2001
+// written: Wed Jun  6 16:50:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLCONFIG_H_DEFINED
 #define TOGLCONFIG_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
@@ -43,7 +47,13 @@ typedef unsigned long Window;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ToglConfig : public GWT::Widget {
+class ToglConfig : public virtual Util::Object, public GWT::Widget {
+protected:
+  ToglConfig(Tcl_Interp* interp,
+				 int config_argc=0, char** config_argv=0,
+				 bool pack=true,
+				 double dist=30.0, double unit_angle=2.05);
+
 public:
   // types
   struct Color {
@@ -53,10 +63,7 @@ public:
 	 double red, green, blue;
   };
 
-  ToglConfig(Tcl_Interp* interp,
-				 int config_argc=0, char** config_argv=0,
-				 bool pack=true,
-				 double dist=30.0, double unit_angle=2.05);
+  static ToglConfig* make(Tcl_Interp* interp) { return new ToglConfig(interp); }
 
   virtual ~ToglConfig();
 
