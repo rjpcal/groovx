@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Aug 10 10:46:51 2001
+// written: Fri Aug 10 12:32:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,13 +46,7 @@ Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
   itsImpl(new BitmapRep(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
-}
-
-Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer, const char* filename) :
-  GrObj(GLCOMPILE, CLEAR_BOUNDING_BOX),
-  itsImpl(new BitmapRep(renderer, filename))
-{
-DOTRACE("Bitmap::Bitmap");
+  setAlignmentMode(GrObj::CENTER_ON_CENTER);
 }
 
 Bitmap::~Bitmap()
