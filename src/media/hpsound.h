@@ -42,135 +42,140 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace
+namespace media
 {
-  Audio* theAudio = 0;
+  //  #######################################################
+  //  =======================================================
 
-  static long audioErrorHandler(Audio* audio, AErrorEvent *errEvent)
+  /// hp_audio_sound_rep implements the Sound interface using HP's audio API.
+
+  class hp_audio_sound_rep : public sound_rep
   {
-  DOTRACE("audioErrorhandler");
+  public:
+    hp_audio_sound_rep(const char* filename = 0);
+    virtual ~hp_audio_sound_rep() throw();
 
-    static char buf[128];
-    AGetErrorText(audio, errEvent->error_code, buf, 127);
+    virtual void play();
 
-    dbg_eval_nl(3, buf);
+  private:
+    SBucket* m_sbucket;
+    SBPlayParams m_play_params;
 
-    throw rutz::error(rutz::fstring("HP Audio Error: ", buf), SRC_POS);
+    static Audio* s_audio = 0;
 
-    // we'll never get here, but we need to placate the compiler
-    return 0;
-  }
+    static bool init_sound();
+    static void close_sound();
+    static long error_handler(Audio* audio, AErrorEvent* err);
+  };
+
 }
 
-//  #######################################################
-//  =======================================================
-//
-/// HpAudioSound implements the Sound interface using HP's audio API.
-//
-//  =======================================================
+Audio* media::hp_audio_sound_rep::s_audio = 0;
 
-class HpAudioSoundRep : public SoundRep
+media::hp_audio_sound_rep::hp_audio_sound_rep(const char* filename) :
+  m_sbucket(0),
+  m_play_params()
 {
-public:
-  HpAudioSoundRep(const char* filename = 0);
-  virtual ~HpAudioSoundRep() throw();
-
-  virtual void play();
-
-private:
-  SBucket* itsSBucket;
-  SBPlayParams itsPlayParams;
-
-  bool initSound()
-  {
-    DOTRACE("HpAudioSoundRep::initSound");
-
-    if (theAudio != 0) return true;
-
-    ASetErrorHandler(audioErrorHandler);
-
-    bool retVal = false;
-
-    // Open an audio connection to the default audio server, then
-    // check to make sure connection succeeded. If the connection
-    // fails, 'audio' is set to NULL.
-    const char* ServerName = "";
-    long status = 0;
-    theAudio = AOpenAudio( const_cast<char *>(ServerName), &status );
-    if ( status != 0 )
-      {
-        theAudio = NULL;
-        retVal = false;
-      }
-    else
-      {
-        ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
-        retVal = true;
-      }
-
-    return retVal;
-  }
-
-  void Sound::closeSound()
-  {
-    DOTRACE("HpAudioSoundRep::closeSound");
-    if ( theAudio )
-      {
-        ACloseAudio( theAudio, NULL );
-        theAudio = 0;
-      }
-  }
-};
-
-HpAudioSoundRep::HpAudioSoundRep(const char* filename) :
-  itsSBucket(0),
-  itsPlayParams()
-{
-DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
-  initSound();
-  if ( !theAudio )
+DOTRACE("hp_audio_sound_rep::hp_audio_sound_rep");
+  init_sound();
+  if ( !s_audio )
     throw rutz::error("invalid HP audio server connection", SRC_POS);
 
-  SoundRep::checkFilename(filename);
+  sound_rep::check_filename(filename);
 
-  itsPlayParams.pause_first = 0;
-  itsPlayParams.start_offset.type = ATTSamples;
-  itsPlayParams.start_offset.u.samples = 0;
-  itsPlayParams.loop_count = 0;
-  itsPlayParams.previous_transaction = 0;
-  itsPlayParams.gain_matrix = *ASimplePlayer(theAudio);
-  itsPlayParams.priority = APriorityNormal;
-  itsPlayParams.play_volume = AUnityGain;
-  itsPlayParams.duration.type = ATTFullLength;
-  itsPlayParams.event_mask = 0;
+  m_play_params.pause_first = 0;
+  m_play_params.start_offset.type = ATTSamples;
+  m_play_params.start_offset.u.samples = 0;
+  m_play_params.loop_count = 0;
+  m_play_params.previous_transaction = 0;
+  m_play_params.gain_matrix = *ASimplePlayer(s_audio);
+  m_play_params.priority = APriorityNormal;
+  m_play_params.play_volume = AUnityGain;
+  m_play_params.duration.type = ATTFullLength;
+  m_play_params.event_mask = 0;
 
-  AFileFormat fileFormat = AFFUnknown;
-  AudioAttrMask AttribsMask = 0;
-  AudioAttributes Attribs;
+  AFileFormat file_format = AFFUnknown;
+  AudioAttrMask attr_mask = 0;
+  AudioAttributes attribs;
 
-  itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
-                          fileFormat, AttribsMask, &Attribs, NULL);
+  m_sbucket = ALoadAFile(s_audio, const_cast<char *>(filename),
+                         file_format, attr_mask, &attribs, NULL);
 }
 
-HpAudioSoundRep::~HpAudioSoundRep() throw()
+media::hp_audio_sound_rep::~hp_audio_sound_rep() throw()
 {
-DOTRACE("HpAudioSoundRep::~HpAudioSoundRep");
-  if ( theAudio != 0 )
+DOTRACE("hp_audio_sound_rep::~hp_audio_sound_rep");
+  if ( s_audio != 0 )
     {
-      if (itsSBucket)
-        ADestroySBucket( theAudio, itsSBucket, NULL );
+      if (m_sbucket)
+        ADestroySBucket( s_audio, m_sbucket, NULL );
     }
 }
 
-void HpAudioSoundRep::play()
+void media::hp_audio_sound_rep::play()
 {
-DOTRACE("HpAudioSoundRep::play");
-  initSound();
-  if ( !theAudio )
+DOTRACE("hp_audio_sound_rep::play");
+  init_sound();
+  if ( !s_audio )
     throw rutz::error("invalid audio server connection", SRC_POS);
 
-  if (itsSBucket)
-    ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
+  if (m_sbucket)
+    ATransID xid = APlaySBucket( s_audio, m_sbucket, &m_play_params, NULL );
+}
+
+bool media::hp_audio_sound_rep::init_sound()
+{
+DOTRACE("hp_audio_sound_rep::init_sound");
+
+  if (s_audio != 0) return true;
+
+  ASetErrorHandler(&error_handler);
+
+  bool retval = false;
+
+  // Open an audio connection to the default audio server, then
+  // check to make sure connection succeeded. If the connection
+  // fails, 'audio' is set to NULL.
+  const char* server_name = "";
+  long status = 0;
+  s_audio = AOpenAudio( const_cast<char*>(server_name), &status );
+  if ( status != 0 )
+    {
+      s_audio = NULL;
+      retval = false;
+    }
+  else
+    {
+      ASetCloseDownMode( s_audio, AKeepTransactions, NULL );
+      retval = true;
+    }
+
+  return retval;
+}
+
+void media::hp_audio_sound_rep::close_sound()
+{
+DOTRACE("hp_audio_sound_rep::close_sound");
+  if ( s_audio )
+    {
+      ACloseAudio( s_audio, NULL );
+      s_audio = 0;
+    }
+}
+
+long media::hp_audio_sound_rep::error_handler(Audio* audio, AErrorEvent *err)
+{
+DOTRACE("media::hp_audio_sound_rep::error_handler");
+
+  static char buf[128];
+  AGetErrorText(audio, err->error_code, buf, 127);
+
+  dbg_eval_nl(3, buf);
+
+  throw rutz::error(rutz::fstring("HP Audio Error: ", buf), SRC_POS);
+
+  // we'll never get here, but we need to placate the compiler
+  return 0;
 }
 
 static const char vcid_hpsound_h[] = "$Header$";

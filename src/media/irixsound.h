@@ -45,39 +45,42 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-//  #######################################################
-//  =======================================================
-//
-/// IrixAudioSound implements Sound using SGI's "dmedia" audio API.
-//
-//  =======================================================
-
-class IrixAudioSoundRep : public SoundRep
+namespace media
 {
-public:
-  IrixAudioSoundRep(const char* filename = 0);
-  virtual ~IrixAudioSoundRep() throw();
 
-  virtual void play();
+  //  #######################################################
+  //  =======================================================
 
-private:
-  ALconfig itsAudioConfig;
-  rutz::dynamic_block<unsigned char> itsSamples;
-  AFframecount itsFrameCount;
-};
+  /// irix_audio_sound_rep implements Sound using SGI's "dmedia" audio API.
 
-IrixAudioSoundRep::IrixAudioSoundRep(const char* filename) :
-  itsAudioConfig(alNewConfig()),
-  itsSamples(),
-  itsFrameCount(0)
+  class irix_audio_sound_rep : public sound_rep
+  {
+  public:
+    irix_audio_sound_rep(const char* filename = 0);
+    virtual ~irix_audio_sound_rep() throw();
+
+    virtual void play();
+
+  private:
+    ALconfig m_audio_config;
+    rutz::dynamic_block<unsigned char> m_samples;
+    AFframecount m_frame_count;
+  };
+
+}
+
+media::irix_audio_sound_rep::irix_audio_sound_rep(const char* filename) :
+  m_audio_config(alNewConfig()),
+  m_samples(),
+  m_frame_count(0)
 {
-DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
+DOTRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
 
-  if (itsAudioConfig == 0)
+  if (m_audio_config == 0)
     throw rutz::error("error creating an ALconfig "
                       "while creating Sound", SRC_POS);
 
-  SoundRep::checkFilename(filename);
+  sound_rep::check_filename(filename);
 
   // Open filename as an audio file for reading. We pass a NULL
   // AFfilesetup to indicate that file setup parameters should be
@@ -90,109 +93,109 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
     }
 
   // Read important parameters from the audio file, and use them to
-  // set the corresponding parameters in itsAudioConfig.
+  // set the corresponding parameters in m_audio_config.
 
   // Number of audio channels (i.e. mono == 1, stereo == 2)
-  const int numChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
-  if (numChannels == -1)
+  const int num_channels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
+  if (num_channels == -1)
     {
       throw rutz::error(rutz::fstring("error reading the number of channels "
                                       "in sound file ", filename), SRC_POS);
     }
-  alSetChannels(itsAudioConfig, numChannels);
+  alSetChannels(m_audio_config, num_channels);
 
   // Frame count
-  itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
-  if (itsFrameCount < 0)
+  m_frame_count = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
+  if (m_frame_count < 0)
     {
       throw rutz::error(rutz::fstring("error reading the frame count "
                                       "in sound file ", filename), SRC_POS);
     }
 
   // Sample format and width
-  int sampleFormat = 0;
-  int sampleWidth = 0;
+  int sample_format = 0;
+  int sample_width = 0;
   afGetSampleFormat(audiofile, AF_DEFAULT_TRACK,
-                    &sampleFormat, &sampleWidth);
-  alSetSampFmt(itsAudioConfig, sampleFormat);
-  alSetWidth(itsAudioConfig, sampleWidth);
+                    &sample_format, &sample_width);
+  alSetSampFmt(m_audio_config, sample_format);
+  alSetWidth(m_audio_config, sample_width);
 
   // Sample size and rate
-  const int bytesPerSample = (sampleWidth + 7)/8;
+  const int bytes_per_sample = (sample_width + 7)/8;
 
-  const double samplingRate = afGetRate(audiofile, AF_DEFAULT_TRACK);
+  const double sampling_rate = afGetRate(audiofile, AF_DEFAULT_TRACK);
 
   ALpv pv;
   pv.param = AL_RATE;
-  pv.value.ll = alDoubleToFixed(samplingRate);
+  pv.value.ll = alDoubleToFixed(sampling_rate);
 
   alSetParams(AL_DEFAULT_DEVICE, &pv, 1);
 
-  dbg_eval(3, numChannels);
-  dbg_eval(3, itsFrameCount);
-  dbg_eval(3, sampleWidth);
-  dbg_eval(3, bytesPerSample);
-  dbg_eval_nl(3, samplingRate);
+  dbg_eval(3, num_channels);
+  dbg_eval(3, m_frame_count);
+  dbg_eval(3, sample_width);
+  dbg_eval(3, bytes_per_sample);
+  dbg_eval_nl(3, sampling_rate);
 
   // Allocate space for the sound samples
-  itsSamples.resize(itsFrameCount*numChannels*bytesPerSample);
+  m_samples.resize(m_frame_count*num_channels*bytes_per_sample);
 
-  const int readResult = afReadFrames(audiofile, AF_DEFAULT_TRACK,
-                                      static_cast<void*>(&itsSamples[0]),
-                                      itsFrameCount);
+  const int read_result = afReadFrames(audiofile, AF_DEFAULT_TRACK,
+                                       static_cast<void*>(&m_samples[0]),
+                                       m_frame_count);
 
-  const int closeResult = afCloseFile(audiofile);
+  const int close_result = afCloseFile(audiofile);
 
-  if (readResult == -1)
+  if (read_result == -1)
     {
       throw rutz::error(rutz::fstring("error reading sound data "
                                       "from file ", filename), SRC_POS);
     }
 
-  if (closeResult == -1)
+  if (close_result == -1)
     {
       throw rutz::error(rutz::fstring("error closing sound file ",
                                       filename), SRC_POS);
     }
 }
 
-IrixAudioSoundRep::~IrixAudioSoundRep() throw()
+media::irix_audio_sound_rep::~irix_audio_sound_rep() throw()
 {
-DOTRACE("IrixAudioSoundRep::~IrixAudioSoundRep");
-  if (itsAudioConfig != 0)
+DOTRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
+  if (m_audio_config != 0)
     {
-      alFreeConfig(itsAudioConfig);
+      alFreeConfig(m_audio_config);
     }
 }
 
-void IrixAudioSoundRep::play()
+void media::irix_audio_sound_rep::play()
 {
-DOTRACE("IrixAudioSoundRep::play");
-  if (itsSamples.size() == 0) return;
+DOTRACE("media::irix_audio_sound_rep::play");
+  if (m_samples.size() == 0) return;
 
-  ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
-  dbg_eval_nl(3, (void*) audioPort);
-  if (audioPort == 0)
+  ALport audio_port = alOpenPort("Sound::play", "w", m_audio_config);
+  dbg_eval_nl(3, (void*) audio_port);
+  if (audio_port == 0)
     {
       throw rutz::error("error opening an audio port "
                         "during Sound::play", SRC_POS);
     }
 
   int writeResult =
-    alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
+    alWriteFrames(audio_port, static_cast<void*>(&m_samples[0]), m_frame_count);
   if (writeResult == -1)
     {
       throw rutz::error("error writing to the audio port "
                         "during Sound::play", SRC_POS);
     }
 
-  while (alGetFilled(audioPort) > 0)
+  while (alGetFilled(audio_port) > 0)
     {
       usleep(5000);
     }
 
-  int closeResult = alClosePort(audioPort);
-  if (closeResult == -1)
+  int close_result = alClosePort(audio_port);
+  if (close_result == -1)
     {
       throw rutz::error("error closing the audio port "
                         "during Sound::play", SRC_POS);

@@ -43,28 +43,35 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-/// QuickTimeSoundRep plays sound files synchronously using Apple's QuickTime.
-class QuickTimeSoundRep : public SoundRep
+namespace media
 {
-public:
-  QuickTimeSoundRep(const char* filename);
+  /// quicktime_sound_rep plays sound files synchronously using Apple's QuickTime.
+  class quicktime_sound_rep : public sound_rep
+  {
+  public:
+    quicktime_sound_rep(const char* filename);
 
-  virtual ~QuickTimeSoundRep() throw();
+    virtual ~quicktime_sound_rep() throw();
 
-  virtual void play();
+    virtual void play();
 
-  bool initSound();
-  void closeSound();
+    bool init_sound();
+    void close_sound();
 
-  short itsFileRefNum;
-  Movie itsMovie;
-};
+    short m_file_ref_num;
+    Movie m_movie;
 
-QuickTimeSoundRep::QuickTimeSoundRep(const char* filename)
+    static bool quicktime_inited;
+  };
+}
+
+bool media::quicktime_sound_rep quicktime_inited = false;
+
+media::quicktime_sound_rep::quicktime_sound_rep(const char* filename)
 {
-DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
+DOTRACE("media::quicktime_sound_rep::quicktime_sound_rep");
 
-  initSound();
+  init_sound();
 
   // (1) Get an FSRef from the filename
   FSRef ref;
@@ -87,67 +94,62 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
                       SRC_POS);
 
   // (3) Get a movie file descriptor from the FSSpec
-  err = OpenMovieFile(&spec, &itsFileRefNum, fsRdPerm);
+  err = OpenMovieFile(&spec, &m_file_ref_num, fsRdPerm);
 
   if (noErr != err)
     throw rutz::error(rutz::fstring("error in OpenMovieFile: ", err),
                       SRC_POS);
 
   // (4) Get a movie object from the movie file
-  err = NewMovieFromFile(&itsMovie, itsFileRefNum, 0, nil,
+  err = NewMovieFromFile(&m_movie, m_file_ref_num, 0, nil,
                          newMovieActive, nil);
 
   if (noErr != err)
     {
-      CloseMovieFile(itsFileRefNum);
+      CloseMovieFile(m_file_ref_num);
       throw rutz::error(rutz::fstring("error in NewMovieFromFile: ", err),
                         SRC_POS);
     }
 }
 
-QuickTimeSoundRep::~QuickTimeSoundRep() throw()
+media::quicktime_sound_rep::~quicktime_sound_rep() throw()
 {
-DOTRACE("QuickTimeSoundRep::~QuickTimeSoundRep");
-  DisposeMovie(itsMovie);
-  CloseMovieFile(itsFileRefNum);
+DOTRACE("media::quicktime_sound_rep::~quicktime_sound_rep");
+  DisposeMovie(m_movie);
+  CloseMovieFile(m_file_ref_num);
 }
 
-void QuickTimeSoundRep::play()
+void media::quicktime_sound_rep::play()
 {
-DOTRACE("QuickTimeSoundRep::play");
-  GoToBeginningOfMovie(itsMovie);
+DOTRACE("media::quicktime_sound_rep::play");
+  GoToBeginningOfMovie(m_movie);
 
-  StartMovie(itsMovie);
+  StartMovie(m_movie);
 
-  while (!IsMovieDone (itsMovie))
+  while (!IsMovieDone (m_movie))
     {
-      MoviesTask(itsMovie, 0);
+      MoviesTask(m_movie, 0);
     }
 }
 
-namespace
+bool media::quicktime_sound_rep::init_sound()
 {
-  bool quicktimeInited = false;
-}
-
-bool QuickTimeSoundRep::initSound()
-{
-DOTRACE("QuickTimeSoundRep::initSound");
-  if (!quicktimeInited)
+DOTRACE("media::quicktime_sound_rep::init_sound");
+  if (!quicktime_inited)
     {
       const OSErr err = EnterMovies();
 
       if (noErr == err)
-        quicktimeInited = true;
+        quicktime_inited = true;
     }
 
-  return quicktimeInited;
+  return quicktime_inited;
 }
 
-void QuickTimeSoundRep::closeSound()
+void media::quicktime_sound_rep::close_sound()
 {
-DOTRACE("QuickTimeSoundRep::closeSound");
-  if (quicktimeInited)
+DOTRACE("quicktime_sound_rep::close_sound");
+  if (quicktime_inited)
     {
       ExitMovies();
     }

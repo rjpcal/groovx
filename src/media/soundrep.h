@@ -32,21 +32,24 @@
 #ifndef SOUNDREP_H_DEFINED
 #define SOUNDREP_H_DEFINED
 
-/// SoundRep is provides a trivial platform-independent sound interface.
-/** Different concrete subclasses are defined elsewhere to encapsulate
-    different platform-dependent sound APIs. */
-class SoundRep
+namespace media
 {
-public:
-  virtual ~SoundRep() throw();
+  /// sound_rep is provides a trivial platform-independent sound interface.
+  /** Different concrete subclasses are defined elsewhere to encapsulate
+      different platform-dependent sound APIs. */
+  class sound_rep
+  {
+  public:
+    virtual ~sound_rep() throw();
 
-  virtual void play() = 0;
+    virtual void play() = 0;
 
-protected:
-  /// Checks that the filename points to a readable file.
-  /** Throws an exception in case of any failure. */
-  static void checkFilename(const char* filename);
-};
+  protected:
+    /// Checks that the filename points to a readable file.
+    /** Throws an exception in case of any failure. */
+    static void check_filename(const char* filename);
+  };
+}
 
 static const char vcid_soundrep_h[] = "$Header$";
 #endif // !SOUNDREP_H_DEFINED

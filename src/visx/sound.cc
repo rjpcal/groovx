@@ -43,23 +43,23 @@
 
 #if defined(HAVE_ALIB_H)
 #  include "media/hpsound.h"
-   typedef HpAudioSoundRep sound_rep_t;
+   typedef hp_audio_sound_rep sound_rep_t;
 
 #elif defined(HAVE_DMEDIA_AUDIO_H)
 #  include "media/irixsound.h"
-   typedef IrixAudioSoundRep sound_rep_t;
+   typedef media::irix_audio_sound_rep sound_rep_t;
 
 #elif defined(HAVE_QUICKTIME_MOVIES_H)
 #  include "media/quicktimesound.h"
-   typedef QuickTimeAudioSoundRep sound_rep_t;
+   typedef media::quicktime_sound_rep sound_rep_t;
 
 #elif defined(HAVE_ESD_H)
 #  include "media/esdsound.h"
-   typedef EsdSoundRep sound_rep_t;
+   typedef media::esd_sound_rep sound_rep_t;
 
 #else
 #  include "media/dummysound.h"
-   typedef DummySoundRep sound_rep_t;
+   typedef media::dummy_sound_rep sound_rep_t;
 
 #endif
 
@@ -71,6 +71,12 @@ namespace
 {
   Nub::SoftRef<Sound> theOkSound;
   Nub::SoftRef<Sound> theErrSound;
+
+  media::sound_rep* newPlatformSoundRep(const char* soundfile)
+  {
+    DOTRACE("<sound.cc>::newPlatformSoundRep");
+    return new sound_rep_t(soundfile);
+  }
 }
 
 void Sound::setOkSound(Nub::Ref<Sound> ok_sound)
@@ -103,12 +109,6 @@ Sound* Sound::makeFrom(const char* filename)
 {
 DOTRACE("Sound::make");
   return new Sound(filename);
-}
-
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep");
-  return new sound_rep_t(soundfile);
 }
 
 Sound::Sound(const char* filename) :

@@ -40,38 +40,40 @@
 #include <esd.h>
 
 #include "util/trace.h"
-#include "util/debug.h"
-DBG_REGISTER
 
-/// EsdSound implementats the Sound interface using the ESD API.
-class EsdSoundRep : public SoundRep
+namespace media
 {
-public:
-  /// Construct with reference to the named sound file.
-  EsdSoundRep(const char* filename = 0);
+  /// esd_sound_rep implementats the Sound interface using the ESD API.
+  class esd_sound_rep : public sound_rep
+  {
+  public:
+    /// Construct with reference to the named sound file.
+    esd_sound_rep(const char* filename = 0);
 
-  /// Virtual destructor.
-  virtual ~EsdSoundRep() throw();
+    /// Virtual destructor.
+    virtual ~esd_sound_rep() throw();
 
-  /// Play the sound (in this case using the ESD daemon).
-  virtual void play();
+    /// Play the sound (in this case using the ESD daemon).
+    virtual void play();
 
-private:
-  rutz::fstring itsFilename;
-};
+  private:
+    rutz::fstring m_filename;
+  };
+
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// EsdSound member definitions
+// esd_sound_rep member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-EsdSoundRep::EsdSoundRep(const char* filename) :
-  itsFilename("")
+media::esd_sound_rep::esd_sound_rep(const char* filename) :
+  m_filename("")
 {
-DOTRACE("EsdSoundRep::EsdSoundRep");
+DOTRACE("media::esd_sound_rep::esd_sound_rep");
 
-  SoundRep::checkFilename(filename);
+  sound_rep::check_filename(filename);
 
   // We just use afOpenFile to ensure that the filename refers to
   // a readable+valid file
@@ -83,30 +85,30 @@ DOTRACE("EsdSoundRep::EsdSoundRep");
                                       filename, "'"), SRC_POS);
     }
 
-  int closeResult = afCloseFile(audiofile);
+  int close_result = afCloseFile(audiofile);
 
-  if (closeResult == -1)
+  if (close_result == -1)
     {
       throw rutz::error(rutz::fstring("error closing sound file '",
                                       filename, "'"), SRC_POS);
     }
 
-  itsFilename = filename;
+  m_filename = filename;
 }
 
-EsdSoundRep::~EsdSoundRep() throw() {}
+media::esd_sound_rep::~esd_sound_rep() throw() {}
 
-void EsdSoundRep::play()
+void media::esd_sound_rep::play()
 {
-DOTRACE("EsdSoundRep::play");
+  DOTRACE("media::esd_sound_rep::play");
 
-  if (!itsFilename.is_empty())
+  if (!m_filename.is_empty())
     {
-      int res = esd_play_file("", itsFilename.c_str(), 1);
+      int res = esd_play_file("", m_filename.c_str(), 1);
       if (res == 0)
         throw rutz::error(rutz::fstring("error while attempting to "
                                         "play sound file:\n  '",
-                                        itsFilename.c_str(), "'"),
+                                        m_filename.c_str(), "'"),
                           SRC_POS);
     }
 }

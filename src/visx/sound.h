@@ -37,7 +37,10 @@
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
-class SoundRep;
+namespace media
+{
+  class sound_rep;
+}
 
 namespace Nub
 {
@@ -56,10 +59,6 @@ public:
   /** The new object will have the named sound file pre-loaded. The
       caller is responsible for destroying the Sound object. */
   static Sound* makeFrom(const char* filename);
-
-  /// Returns a pointer to a new platform-appropriate SoundRep object.
-  /** The caller is responsible for destroying the Sound object. */
-  static SoundRep* newPlatformSoundRep(const char* soundfile);
 
   static void setOkSound(Nub::Ref<Sound> ok_sound);
   static void setErrSound(Nub::Ref<Sound> err_sound);
@@ -91,7 +90,7 @@ public:
 
 private:
   rutz::fstring itsFilename;
-  rutz::shared_ptr<SoundRep> itsRep;
+  rutz::shared_ptr<media::sound_rep> itsRep;
 };
 
 static const char vcid_sound_h[] = "$Header$";

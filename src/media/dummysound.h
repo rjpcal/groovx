@@ -36,26 +36,29 @@
 
 #include "util/trace.h"
 
-/// DummySoundRep is a stub implementation of the SoundRep interface.
-class DummySoundRep : public SoundRep
+namespace media
 {
-public:
-  /// Construct from a sound file (but all we do is see if the file exists).
-  DummySoundRep(const char* filename = 0);
+  /// dummy_sound_rep is a stub implementation of the sound_rep interface.
+  class dummy_sound_rep : public sound_rep
+  {
+  public:
+    /// Construct from a sound file (but all we do is see if the file exists).
+    dummy_sound_rep(const char* filename = 0);
 
-  /// Play the sound (but this is a no-op for DummySound).
-  virtual void play();
-};
-
-DummySoundRep::DummySoundRep(const char* filename)
-{
-DOTRACE("DummySoundRep::DummySoundRep");
-  SoundRep::checkFilename(filename);
+    /// Play the sound (but this is a no-op for DummySound).
+    virtual void play();
+  };
 }
 
-void DummySoundRep::play()
+media::dummy_sound_rep::dummy_sound_rep(const char* filename)
 {
-DOTRACE("DummySoundRep::play");
+DOTRACE("dummy_sound_rep::dummy_sound_rep");
+  sound_rep::check_filename(filename);
+}
+
+void media::dummy_sound_rep::play()
+{
+DOTRACE("dummy_sound_rep::play");
 }
 
 static const char vcid_dummysound_h[] = "$Header$";
