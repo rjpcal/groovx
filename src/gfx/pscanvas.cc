@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Wed Aug 29 10:40:55 2001
+// written: Wed Aug 29 10:48:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -688,8 +688,7 @@ void Gfx::PSCanvas::setLineWidth(double width)
 {
 DOTRACE("Gfx::PSCanvas::setLineWidth");
 
-  itsImpl->setlinewidth(width * 0.5);
-  // arbitrary scaling by 0.5 so lines look "not too thick" in Postscript
+  itsImpl->setlinewidth(width);
 }
 
 void Gfx::PSCanvas::setLineStipple(unsigned short bit_pattern)
