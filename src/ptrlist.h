@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Fri Oct 27 15:49:13 2000
+// written: Fri Oct 27 16:45:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,8 +40,6 @@ public:
 
   /// Virtual destructor.
   virtual ~PtrList();
-
-  typedef T BaseType;
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";

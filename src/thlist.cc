@@ -3,7 +3,7 @@
 // thlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:37 1999
-// written: Thu Oct 26 17:52:56 2000
+// written: Fri Oct 27 17:49:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,23 +13,14 @@
 
 #include "thlist.h"
 
+#include "ioptrlist.h"
+
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
-ThList::ThList() : Base()
-{
-DOTRACE("ThList::ThList");
-}
-
-ThList::~ThList() {}
-
-ThList ThList::theInstance;
-
-ThList& ThList::theThList() {
+IoPtrList& ThList::theThList() {
 DOTRACE("ThList::theThList");
-  return theInstance; 
+  return IoPtrList::theList();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -39,20 +30,14 @@ DOTRACE("ThList::theThList");
 ///////////////////////////////////////////////////////////////////////
 
 #include "timinghdlr.h"
-#include "ptrlist.cc"
-template class PtrList<TimingHdlr>;
 
 template <>
-PtrList<TimingHdlr>& IdItem<TimingHdlr>::ptrList()
+IoPtrList& IdItem<TimingHdlr>::ptrList()
 { return ThList::theThList(); }
 
 template <>
-PtrList<TimingHdlr>& MaybeIdItem<TimingHdlr>::ptrList()
+IoPtrList& MaybeIdItem<TimingHdlr>::ptrList()
 { return ThList::theThList(); }
-
-#include "iditem.cc"
-template class IdItem<TimingHdlr>;
-template class MaybeIdItem<TimingHdlr>;
 
 static const char vcid_thlist_cc[] = "$Header$";
 #endif // !THLIST_CC_DEFINED

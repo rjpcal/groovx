@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Thu Oct 26 17:52:56 2000
+// written: Fri Oct 27 17:51:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,14 @@
 
 #include "poslist.h"
 
+#include "ioptrlist.h"
+
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
-PosList PosList::theInstance;
-
-PosList::PosList() : Base()
-{
-DOTRACE("PosList::PosList");
-}
-
-PosList::~PosList()
-{
-DOTRACE("PosList::~PosList");
-}
-
-PosList& PosList::thePosList() {
+IoPtrList& PosList::thePosList() {
 DOTRACE("PosList::thePosList");
-  return theInstance;
+  return IoPtrList::theList();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -42,20 +30,14 @@ DOTRACE("PosList::thePosList");
 ///////////////////////////////////////////////////////////////////////
 
 #include "position.h"
-#include "ptrlist.cc"
-template class PtrList<Position>;
 
 template <>
-PtrList<Position>& IdItem<Position>::ptrList()
+IoPtrList& IdItem<Position>::ptrList()
 { return PosList::thePosList(); }
 
 template <>
-PtrList<Position>& MaybeIdItem<Position>::ptrList()
+IoPtrList& MaybeIdItem<Position>::ptrList()
 { return PosList::thePosList(); }
-
-#include "iditem.cc"
-template class IdItem<Position>;
-template class MaybeIdItem<Position>;
 
 static const char vcid_poslist_cc[] = "$Header$";
 #endif // !POSLIST_CC_DEFINED

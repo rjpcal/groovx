@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Oct 26 17:52:56 2000
+// written: Fri Oct 27 18:12:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,14 @@
 
 #include "objlist.h"
 
+#include "ioptrlist.h"
+
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
-ObjList ObjList::theInstance;
-
-ObjList::ObjList() : Base()
-{
-DOTRACE("ObjList::ObjList");
-}
-
-ObjList::~ObjList()
-{
-DOTRACE("ObjList::~ObjList");
-}
-
-ObjList& ObjList::theObjList() {
+IoPtrList& ObjList::theObjList() {
 DOTRACE("ObjList::theObjList");
-  return theInstance; 
+  return IoPtrList::theList(); 
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -42,20 +30,14 @@ DOTRACE("ObjList::theObjList");
 ///////////////////////////////////////////////////////////////////////
 
 #include "grobj.h"
-#include "ptrlist.cc"
-template class PtrList<GrObj>;
 
 template <>
-PtrList<GrObj>& IdItem<GrObj>::ptrList()
+IoPtrList& IdItem<GrObj>::ptrList()
 { return ObjList::theObjList(); }
 
 template <>
-PtrList<GrObj>& MaybeIdItem<GrObj>::ptrList()
+IoPtrList& MaybeIdItem<GrObj>::ptrList()
 { return ObjList::theObjList(); }
-
-#include "iditem.cc"
-template class IdItem<GrObj>;
-template class MaybeIdItem<GrObj>;
 
 static const char vcid_objlist_cc[] = "$Header$";
 #endif // !OBJLIST_CC_DEFINED
