@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Thu Nov 14 15:25:54 2002
+// written: Thu Nov 14 15:59:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,11 +38,85 @@ struct GxRasterFont::Impl
 {
   Impl(const char* n) : fontInfo(0), fontName(n), listBase(0), listCount(0) {}
 
+  static fstring pickXFont(const char* spec);
+
   XFontStruct* fontInfo;
   fstring fontName;
   unsigned int listBase;
   unsigned int listCount;
 };
+
+fstring GxRasterFont::Impl::pickXFont(const char* spec)
+{
+DOTRACE("GxRasterFont::Impl::pickXFont");
+
+  if (isdigit(spec[0]))
+    {
+      // e.g. 8x13, 9x15
+      return fstring(spec);
+    }
+  else if (spec[0] == '-')
+    {
+      // e.g. a full X font name "-adobe-..."
+      return fstring(spec);
+    }
+  else
+    {
+
+      const char* foundry = "*";
+      fstring     family  = "helvetica";
+      const char* weight  = "medium"; // black, bold, demibold, light, medium, regular
+      const char* slant   = "r"; // 'i', 'o', 'r'
+      const char* width   = "normal"; // condensed, normal
+      const char* style   = ""; // could by '', 'ja', 'ko', 'medium', 'sans'
+      fstring     pxlsize = "12";
+      const char* ptsize  = "*";
+      const char* resx    = "*"; // could be 72, 75, 100
+      const char* resy    = "*"; // could be 72, 75, 100
+      const char* spc     = "*"; // could be 'c', 'm', 'p'
+      const char* avgwid  = "*";
+      const char* rgstry  = "*"; // e.g. iso8859
+      const char* encdng  = "*";
+
+      istrstream ist(spec);
+      ist >> family;
+      ist >> pxlsize;
+      fstring mods;
+      ist >> mods;
+
+      const char* mod = mods.c_str();
+      while (*mod != '\0')
+        {
+          switch (*mod)
+            {
+            case 'b': weight = "bold"; break;
+            case 'i': slant = "i"; break;
+            case 'o': slant = "o"; break;
+            }
+          ++mod;
+        }
+
+      char buf[256];
+
+      snprintf(buf, 256, "-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s",
+               foundry,
+               family.c_str(),
+               weight,
+               slant,
+               width,
+               style,
+               pxlsize.c_str(),
+               ptsize,
+               resx,
+               resy,
+               spc,
+               avgwid,
+               rgstry,
+               encdng);
+      dbgEvalNL(2, buf);
+      return fstring(buf);
+    }
+}
 
 GxRasterFont::GxRasterFont(const char* fontname) :
   rep(new Impl(fontname))
@@ -56,56 +130,27 @@ DOTRACE("GxRasterFont::GxRasterFont");
 
   Display* dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
 
-  const char* xname = "";
-  char buf[256];
+  fstring xname = Impl::pickXFont(fontname);
 
-  if (isdigit(fontname[0]))
-    {
-      // e.g. 8x13, 9x15
-      xname = fontname;
-    }
-  else if (fontname[0] == '-')
-    {
-      // e.g. a full X font name "-adobe-..."
-      xname = fontname;
-    }
-  else
-    {
-      istrstream ist(fontname);
-      fstring family;
-      ist >> family;
-      int fontsize = 12;
-      ist >> fontsize;
+  dbgEvalNL(2, xname.c_str());
+  dbgEvalNL(2, xname);
 
-      const char* weight = "medium";
-      const char* slant = "r";
+  rep->fontInfo = XLoadQueryFont( dpy, xname.c_str() );
 
-      snprintf(buf, 256, "-*-%s-%s-%s-*-*-%d-*-*-*-*-*-*-*",
-               family.c_str(), weight, slant, fontsize);
-      xname = buf;
-    }
-
-  rep->fontInfo = XLoadQueryFont( dpy, xname );
-
-  dbgEval(2, xname);
-  dbgEval(2, rep->fontInfo);
-  dbgEvalNL(2, rep->fontInfo->fid);
+  dbgEvalNL(2, rep->fontInfo);
 
   if (rep->fontInfo == 0)
     {
       throw Util::Error(fstring("couldn't load X font '", xname, "'"));
     }
 
-  const int first = rep->fontInfo->min_char_or_byte2;
-  dbgEval(2, first);
-  const int last = rep->fontInfo->max_char_or_byte2;
-  dbgEval(2, last);
+  dbgEvalNL(2, rep->fontInfo->fid);
 
-  rep->listCount = last-first+1;
-  dbgEvalNL(2, rep->listCount);
+  const int first = rep->fontInfo->min_char_or_byte2;    dbgEval(2, first);
+  const int last = rep->fontInfo->max_char_or_byte2;     dbgEval(2, last);
 
-  rep->listBase = glGenLists( last+1 );
-  dbgEvalNL(2, rep->listBase);
+  rep->listCount = last-first+1;                dbgEvalNL(2, rep->listCount);
+  rep->listBase = glGenLists( last+1 );         dbgEvalNL(2, rep->listBase);
 
   if (rep->listBase==0)
     {
