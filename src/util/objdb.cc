@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Oct 25 09:44:10 2000
+// written: Wed Oct 25 11:17:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,6 @@ DOTRACE("IoPtrList::writeTo");
 		  {
 			 IO::IoObject* obj = getCheckedPtrBase(i);
 			 Assert(obj != 0);
-			 Assert(obj->isValid());
 			 ioBlock[i] = obj;
 		  }
 		else
