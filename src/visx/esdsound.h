@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Thu May 24 18:50:47 2001
+// written: Thu May 24 18:55:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "util/strings.h"
 
 #include <esd.h>
-#include <fstream.h>				  // to check if files exist
 
 #define NO_TRACE
 #include "util/trace.h"
