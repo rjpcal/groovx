@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Fri Jan 25 10:38:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,13 +25,15 @@ namespace Util
 {
   template <class T> class Ref;
   template <class T> class SoftRef;
-};
+}
 
 class TrialBase;
 
 class Experiment;
 
 class Response;
+
+class fstring;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -117,7 +119,7 @@ public:
       id's of the objects that are displayed in the trial, the
       categories of those objects, and the number of completed trials
       and number of total trials. */
-  const char* trialDescription() const;
+  fstring trialDescription() const;
 
   /** Query whether the trialDescription() is printed to standard
       output at the beginning of each trial. */
