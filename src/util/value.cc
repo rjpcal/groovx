@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Fri Mar  7 13:18:24 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,10 @@
 
 #include "util/value.h"
 
+#include "util/cstrstream.h"
 #include "util/strings.h"
 
 #include <sstream>
-#include <strstream.h>
 
 #include "util/trace.h"
 
@@ -51,7 +51,7 @@ fstring Value::getFstring() const
 void Value::setCstring(const char* str)
 {
 DOTRACE("Value::setCstring");
-  istrstream ist(str);
+  Util::icstrstream ist(str);
   scanFrom(ist);
 }
 

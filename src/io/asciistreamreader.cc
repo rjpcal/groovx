@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Jan 20 13:00:24 2003
+// written: Fri Mar  7 13:16:52 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "io/io.h"
 
 #include "util/arrays.h"
+#include "util/cstrstream.h"
 #include "util/objmgr.h"
 #include "util/pointers.h"
 #include "util/ref.h"
@@ -26,7 +27,6 @@
 #include "util/value.h"
 
 #include <iostream>
-#include <strstream.h>
 #include <map>
 #include <list>
 
@@ -220,7 +220,7 @@ public:
   T readBasicType(const fstring& name)
   {
     Attrib a = currentAttribs().get(name);
-    istrstream ist(a.value.c_str());
+    Util::icstrstream ist(a.value.c_str());
 
     T return_val;
     ist >> return_val;
@@ -421,7 +421,7 @@ fstring AsciiStreamReader::Impl::readStringType(const fstring& name)
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
   Attrib a = currentAttribs().get(name);
-  istrstream ist(a.value.c_str());
+  Util::icstrstream ist(a.value.c_str());
 
   int len;
   ist >> len;                     dbgEvalNL(3, len);
@@ -452,7 +452,7 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
 
   Attrib attrib = currentAttribs().get(attrib_name);
 
-  istrstream ist(attrib.value.c_str());
+  Util::icstrstream ist(attrib.value.c_str());
   Util::UID id;
   ist >> id;
 
@@ -473,7 +473,7 @@ void AsciiStreamReader::Impl::readValueObj(
 DOTRACE("AsciiStreamReader::Impl::readValueObj");
 
   Attrib a = currentAttribs().get(attrib_name);
-  istrstream ist(a.value.c_str());
+  Util::icstrstream ist(a.value.c_str());
 
   ist >> value;
 
@@ -488,7 +488,7 @@ void AsciiStreamReader::Impl::readOwnedObject(
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
   Attrib a = currentAttribs().get(object_name);
-  istrstream ist(a.value.c_str());
+  Util::icstrstream ist(a.value.c_str());
   char bracket[16];
 
   ist >> bracket;

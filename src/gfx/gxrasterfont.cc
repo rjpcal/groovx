@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Wed Feb 26 16:31:57 2003
+// written: Fri Mar  7 13:17:30 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,13 +20,13 @@
 
 #include "system/system.h"
 
+#include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/strings.h"
 
 #include <cctype>
 #include <cstdio>
 #include <cstring>
-#include <strstream.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
@@ -62,7 +62,6 @@ DOTRACE("GxRasterFont::Impl::pickXFont");
     }
   else
     {
-
       const char* foundry = "*";
       fstring     family  = "helvetica";
       const char* weight  = "medium"; // black, bold, demibold, light, medium, regular
@@ -78,7 +77,7 @@ DOTRACE("GxRasterFont::Impl::pickXFont");
       const char* rgstry  = "*"; // e.g. iso8859
       const char* encdng  = "*";
 
-      istrstream ist(spec);
+      Util::icstrstream ist(spec);
       ist >> family;
       ist >> pxlsize;
       fstring mods;

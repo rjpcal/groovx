@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Fri Mar  7 13:18:59 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 #include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
+#include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/ref.h"
 
@@ -36,11 +37,6 @@
 
 #include <cmath>
 #include <fstream>
-#ifdef HAVE_SSTREAM
-#include <sstream>
-#else
-#include <strstream>
-#endif
 
 #include "util/trace.h"
 
@@ -369,11 +365,7 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       if (ifs.fail())
         throw Util::Error("error reading objid file");
 
-#ifdef HAVE_SSTREAM
-      std::istringstream ist(line);
-#else
-      istrstream ist(line);
-#endif
+      Util::icstrstream ist(line);
 
       Ref<Trial> trial(Trial::make());
       Ref<GxSeparator> sep(GxSeparator::make());

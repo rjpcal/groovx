@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Mon Jan 13 11:04:47 2003
+// written: Fri Mar  7 13:19:32 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 
+#include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/gzstreambuf.h"
 #include "util/pointers.h"
@@ -28,7 +29,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <strstream.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -82,14 +82,14 @@ fstring IO::write(Util::Ref<IO::IoObject> obj)
 
 void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
 {
-  istrstream ist(buf);
+  Util::icstrstream ist(buf);
 
   streamRead<IO::LegacyReader>(obj, ist);
 }
 
 void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
 {
-  istrstream ist(buf);
+  Util::icstrstream ist(buf);
 
   streamRead<AsciiStreamReader>(obj, ist);
 }
