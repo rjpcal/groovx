@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Fri Nov 10 17:03:51 2000
+// written: Tue Nov 28 14:25:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,8 @@ public:
 
   virtual void trDraw(GWT::Canvas& canvas, bool flush) const = 0;
   virtual void trUndraw(GWT::Canvas& canvas, bool flush) const = 0;
+
+  virtual void installSelf(GWT::Widget& widget) const = 0;
 };
 
 static const char vcid_trialbase_h[] = "$Header$";
