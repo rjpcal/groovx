@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 00:33:28 1999
+// written: Sun Nov 21 00:50:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,6 @@
 #ifndef VECTOR_DEFINED
 #include <vector>
 #define VECTOR_DEFINED
-#endif
-
-#ifndef IO_H_DEFINED
-#include "io.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
