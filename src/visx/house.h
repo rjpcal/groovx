@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Aug 15 11:13:07 2001
+// written: Wed Aug 15 15:00:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,63 +49,65 @@ public:
   // properties //
   ////////////////
 
+private:
   /// Width/height ratio of each story.
-  TField<double> storyAspectRatio;
+  double itsStoryAspectRatio;
 
   /// Number of stories in the building.
-  TField<int> numStories;
+  int itsNumStories;
 
-  /// Position of the door in range [0, numWindows).
-  TField<int> doorPosition;
+  /// Position of the door in range [0, itsNumWindows).
+  int itsDoorPosition;
 
   /// Width of door as fraction of available parcel.
-  TField<double> doorWidth;
+  double itsDoorWidth;
 
   /// Height of door as fraction of one story.
-  TField<double> doorHeight;
+  double itsDoorHeight;
 
   /// Whether door handle is on left or right.
-  TField<bool> doorOrientation;
+  bool itsDoorOrientation;
 
   /// Number of windows per story.
-  TField<int> numWindows;
+  int itsNumWindows;
 
   /// Width of windows as fraction of available parcel.
-  TField<double> windowWidth;
+  double itsWindowWidth;
 
   /// Height of windows as fraction of one story.
-  TField<double> windowHeight;
+  double itsWindowHeight;
 
   /// Number of vertical bars in each window.
-  TField<int> windowVertBars;
+  int itsWindowVertBars;
 
   /// Number of horizontal bars in each window.
-  TField<int> windowHorizBars;
+  int itsWindowHorizBars;
 
   /// Enumerated mode for the roof shape.
-  TField<int> roofShape;
+  int itsRoofShape;
 
   /// Amount of roof overhang, as a fraction of story width.
-  TField<double> roofOverhang;
+  double itsRoofOverhang;
 
   /// Height of roof as fraction of the story height.
-  TField<double> roofHeight;
+  double itsRoofHeight;
 
   /// Color of the roof: 0 -> black, 1 -> white.
-  TField<int> roofColor;
+  int itsRoofColor;
 
   /// X position of the chimney within the roof.
-  TField<double> chimneyXPosition;
+  double itsChimneyXPosition;
 
   /// Y position of the chimney within the roof.
-  TField<double> chimneyYPosition;
+  double itsChimneyYPosition;
 
   /// Width of the chimney, as fraction of the story width.
-  TField<double> chimneyWidth;
+  double itsChimneyWidth;
 
   /// Height of the chimney, as fraction of the story height.
-  TField<double> chimneyHeight;
+  double itsChimneyHeight;
 
+public:
   static const FieldMap& classFields();
 
 protected:

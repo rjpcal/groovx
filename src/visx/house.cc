@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 15:00:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,61 +44,30 @@ namespace
 {
   const IO::VersionId HOUSE_SERIAL_VERSION_ID = 2;
 
-  const FieldInfo FINFOS[] = {
-    FieldInfo("storyAspectRatio", FieldInfo::OldTag(),
-              &House::storyAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
-    FieldInfo("numStories", FieldInfo::OldTag(), &House::numStories, 2, 1, 5, 1),
-
-    FieldInfo("doorPosition", FieldInfo::OldTag(), &House::doorPosition, 2, 0, 5, 1, true),
-    FieldInfo("doorWidth", FieldInfo::OldTag(), &House::doorWidth, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("doorHeight", FieldInfo::OldTag(), &House::doorHeight, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("doorOrientation", FieldInfo::OldTag(),
-              &House::doorOrientation, false, false, true, true),
-
-    FieldInfo("numWindows", FieldInfo::OldTag(), &House::numWindows, 5, 2, 6, 1, true),
-    FieldInfo("windowWidth", FieldInfo::OldTag(), &House::windowWidth, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("windowHeight", FieldInfo::OldTag(), &House::windowHeight, 0.5, 0.05, 1.0, 0.05),
-    FieldInfo("windowVertBars", FieldInfo::OldTag(), &House::windowVertBars, 1, 0, 5, 1),
-    FieldInfo("windowHorizBars", FieldInfo::OldTag(), &House::windowHorizBars, 1, 0, 5, 1),
-
-    FieldInfo("roofShape", FieldInfo::OldTag(), &House::roofShape, 0, 0, 2, 1, true),
-    FieldInfo("roofHeight", FieldInfo::OldTag(), &House::roofHeight, 0.05, 0.05, 2.0, 0.05),
-    FieldInfo("roofOverhang", FieldInfo::OldTag(), &House::roofOverhang, 0.75, 0.0, 0.5, 0.05),
-    FieldInfo("roofColor", FieldInfo::OldTag(), &House::roofColor, 1, 0, 1, 1),
-
-    FieldInfo("chimneyXPosition", FieldInfo::OldTag(),
-              &House::chimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
-    FieldInfo("chimneyYPosition", FieldInfo::OldTag(),
-              &House::chimneyYPosition, 0.5, 0.0, 1.0, 0.05),
-    FieldInfo("chimneyWidth", FieldInfo::OldTag(), &House::chimneyWidth, 0.06, 0.01, 0.30, 0.01),
-    FieldInfo("chimneyHeight", FieldInfo::OldTag(), &House::chimneyHeight, 0.5, 0.05, 2.0, 0.1)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                        &GrObj::classFields());
-
-  void drawWindow(int num_vert_bars, int num_horiz_bars) {
+  void drawWindow(int num_vert_bars, int num_horiz_bars)
+  {
     // Draw 1x1 window centered on (0,0)
 
     glBegin(GL_LINES);
     {
-      for (int x = 0; x < (num_vert_bars+2); ++x) {
-        double xpos = double(x)/(num_vert_bars+1) - 0.5;
-        glVertex2d(xpos, -0.5);
-        glVertex2d(xpos,  0.5);
-      }
-      for (int y = 0; y < (num_horiz_bars+2); ++y) {
-        double ypos = double(y)/(num_horiz_bars+1) - 0.5;
-        glVertex2d(-0.5, ypos);
-        glVertex2d( 0.5, ypos);
-      }
+      for (int x = 0; x < (num_vert_bars+2); ++x)
+        {
+          double xpos = double(x)/(num_vert_bars+1) - 0.5;
+          glVertex2d(xpos, -0.5);
+          glVertex2d(xpos,  0.5);
+        }
+      for (int y = 0; y < (num_horiz_bars+2); ++y)
+        {
+          double ypos = double(y)/(num_horiz_bars+1) - 0.5;
+          glVertex2d(-0.5, ypos);
+          glVertex2d( 0.5, ypos);
+        }
     }
     glEnd();
   }
 
-  void drawDoor() {
+  void drawDoor()
+  {
     // Draw 1x1 door with bottom line centered on (0,0)
     glRectd(-0.5, 0.0, 0.5, 1.0);
     glBegin(GL_LINES);
@@ -107,12 +76,14 @@ namespace
     glEnd();
   }
 
-  void drawStoryFrame() {
+  void drawStoryFrame()
+  {
     // Draw 1x1 story frame centered on (0,0)
     glRectd(-0.5, -0.5, 0.5, 0.5);
   }
 
-  void drawTriangleRoof() {
+  void drawTriangleRoof()
+  {
     // Draw 1x1-bounded triangle with bottom line centered on (0,0)
     glBegin(GL_TRIANGLES);
       glVertex2d(-0.5, 0.0);
@@ -125,7 +96,8 @@ namespace
     glEnd();
   }
 
-  void drawTrapezoidRoof() {
+  void drawTrapezoidRoof()
+  {
     glBegin(GL_QUADS);
       glVertex2d(-0.5, 0.0);
       glVertex2d( 0.5, 0.0);
@@ -138,7 +110,8 @@ namespace
     glEnd();
   }
 
-  void drawSquareRoof() {
+  void drawSquareRoof()
+  {
     glBegin(GL_QUADS);
       glVertex2d(-0.5, 0.0);
       glVertex2d( 0.5, 0.0);
@@ -151,7 +124,8 @@ namespace
     glEnd();
   }
 
-  void drawChimney () {
+  void drawChimney ()
+  {
     glBegin(GL_QUADS);
       glEdgeFlag(GL_FALSE);
       glVertex2d( 0.5, 0.0);
@@ -169,53 +143,96 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& House::classFields() { return HOUSE_FIELDS; }
+const FieldMap& House::classFields()
+{
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("storyAspectRatio",
+              &House::itsStoryAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
+    FieldInfo("numStories", &House::itsNumStories, 2, 1, 5, 1),
 
-House* House::make() {
+    FieldInfo("doorPosition", &House::itsDoorPosition, 2, 0, 5, 1, true),
+    FieldInfo("doorWidth", &House::itsDoorWidth, 0.75, 0.05, 1.0, 0.05),
+    FieldInfo("doorHeight", &House::itsDoorHeight, 0.75, 0.05, 1.0, 0.05),
+    FieldInfo("doorOrientation",
+              &House::itsDoorOrientation, false, false, true, true),
+
+    FieldInfo("numWindows", &House::itsNumWindows, 5, 2, 6, 1, true),
+    FieldInfo("windowWidth", &House::itsWindowWidth, 0.75, 0.05, 1.0, 0.05),
+    FieldInfo("windowHeight", &House::itsWindowHeight, 0.5, 0.05, 1.0, 0.05),
+    FieldInfo("windowVertBars", &House::itsWindowVertBars, 1, 0, 5, 1),
+    FieldInfo("windowHorizBars", &House::itsWindowHorizBars, 1, 0, 5, 1),
+
+    FieldInfo("roofShape", &House::itsRoofShape, 0, 0, 2, 1, true),
+    FieldInfo("roofHeight", &House::itsRoofHeight, 0.05, 0.05, 2.0, 0.05),
+    FieldInfo("roofOverhang", &House::itsRoofOverhang, 0.75, 0.0, 0.5, 0.05),
+    FieldInfo("roofColor", &House::itsRoofColor, 1, 0, 1, 1),
+
+    FieldInfo("chimneyXPosition",
+              &House::itsChimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
+    FieldInfo("chimneyYPosition",
+              &House::itsChimneyYPosition, 0.5, 0.0, 1.0, 0.05),
+    FieldInfo("chimneyWidth", &House::itsChimneyWidth, 0.06, 0.01, 0.30, 0.01),
+    FieldInfo("chimneyHeight", &House::itsChimneyHeight, 0.5, 0.05, 2.0, 0.1)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                               &GrObj::classFields());
+
+  return HOUSE_FIELDS;
+}
+
+House* House::make()
+{
 DOTRACE("House::make");
   return new House;
 }
 
 House::House() :
-  storyAspectRatio(3.0),
-  numStories(2),
+  itsStoryAspectRatio(3.0),
+  itsNumStories(2),
 
-  doorPosition(2),
-  doorWidth(0.75),
-  doorHeight(0.75),
-  doorOrientation(false),
+  itsDoorPosition(2),
+  itsDoorWidth(0.75),
+  itsDoorHeight(0.75),
+  itsDoorOrientation(false),
 
-  numWindows(5),
-  windowWidth(0.75),
-  windowHeight(0.5),
-  windowVertBars(1),
-  windowHorizBars(1),
+  itsNumWindows(5),
+  itsWindowWidth(0.75),
+  itsWindowHeight(0.5),
+  itsWindowVertBars(1),
+  itsWindowHorizBars(1),
 
-  roofShape(0),
-  roofOverhang(0.05),
-  roofHeight(0.75),
-  roofColor(1),
+  itsRoofShape(0),
+  itsRoofOverhang(0.05),
+  itsRoofHeight(0.75),
+  itsRoofColor(1),
 
-  chimneyXPosition(0.2),
-  chimneyYPosition(0.5),
-  chimneyWidth(0.06),
-  chimneyHeight(0.5)
+  itsChimneyXPosition(0.2),
+  itsChimneyYPosition(0.5),
+  itsChimneyWidth(0.06),
+  itsChimneyHeight(0.5)
 {
 DOTRACE("House::House");
 
-  setFieldMap(HOUSE_FIELDS);
+  setFieldMap(House::classFields());
 }
 
-House::~House() {
+House::~House()
+{
 DOTRACE("House::~House");
 }
 
-IO::VersionId House::serialVersionId() const {
+IO::VersionId House::serialVersionId() const
+{
 DOTRACE("House::serialVersionId");
   return HOUSE_SERIAL_VERSION_ID;
 }
 
-void House::readFrom(IO::Reader* reader) {
+void House::readFrom(IO::Reader* reader)
+{
 DOTRACE("House::readFrom");
 
   reader->ensureReadVersionId("House", 2, "Try grsh0.8a4");
@@ -225,7 +242,8 @@ DOTRACE("House::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void House::writeTo(IO::Writer* writer) const {
+void House::writeTo(IO::Writer* writer) const
+{
 DOTRACE("House::writeTo");
 
   writer->ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
@@ -242,34 +260,37 @@ DOTRACE("House::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> House::grGetBoundingBox() const {
+Gfx::Rect<double> House::grGetBoundingBox() const
+{
 DOTRACE("House::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
 
-  GLdouble main_width = storyAspectRatio();
-  GLdouble main_height = numStories() + roofHeight();
+  GLdouble main_width = itsStoryAspectRatio;
+  GLdouble main_height = itsNumStories + itsRoofHeight;
 
   GLdouble max_dimension = max(main_height, main_width);
 
-  bbox.left()   = -main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
-  bbox.right()  =  main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
+  bbox.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dimension;
+  bbox.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dimension;
   bbox.bottom() = -main_height/2.0 / max_dimension;
 
   bbox.top()    =  main_height/2.0;
-  if ( (chimneyYPosition() + chimneyHeight()) > roofHeight() ) {
-    bbox.top() += chimneyYPosition() + chimneyHeight() - roofHeight();
-  }
+  if ( (itsChimneyYPosition + itsChimneyHeight) > itsRoofHeight )
+    {
+      bbox.top() += itsChimneyYPosition + itsChimneyHeight - itsRoofHeight;
+    }
 
   bbox.top()   /= max_dimension;
 
   return bbox;
 }
 
-void House::grRender(Gfx::Canvas&, DrawMode) const {
+void House::grRender(Gfx::Canvas&, DrawMode) const
+{
 DOTRACE("House::grRender");
-  GLdouble total_width = storyAspectRatio();
-  GLdouble total_height = numStories() + roofHeight();
+  GLdouble total_width = itsStoryAspectRatio;
+  GLdouble total_height = itsNumStories + itsRoofHeight;
 
   GLdouble max_dimension =
     (total_height > total_width) ? total_height : total_width;
@@ -281,7 +302,7 @@ DOTRACE("House::grRender");
     // Scale so that the larger dimension (of width and height)
     // extends across 1.0 units in GL coordinates. The smaller
     // dimension will extend across less than 1.0 GL units.
-    glScaled(storyAspectRatio()/max_dimension, 1.0/max_dimension, 1.0);
+    glScaled(itsStoryAspectRatio/max_dimension, 1.0/max_dimension, 1.0);
 
     // Translate down by half the height of the house, then up by 0.5
     // units, so that we are positioned in the center of the first
@@ -294,35 +315,40 @@ DOTRACE("House::grRender");
 
 
       // Loop over house stories.
-      for (int s = 0; s < numStories(); ++s) {
-        drawStoryFrame();
+      for (int s = 0; s < itsNumStories; ++s)
+        {
+          drawStoryFrame();
 
-        // Loop over window positions.
-        for (int w = 0; w < numWindows(); ++w) {
-          glPushMatrix();
-          {
-            GLdouble x_pos = double(w+0.5)/numWindows() - 0.5;
-            if (s == 0 && w == doorPosition() ) {
-              // Draw door.
-              glTranslated(x_pos, -0.5, 0.0);
-              glScaled(doorWidth()/numWindows(), doorHeight(), 1.0);
-              if (doorOrientation()) {
-                glScaled(-1.0, 1.0, 1.0);
+          // Loop over window positions.
+          for (int w = 0; w < itsNumWindows; ++w)
+            {
+              glPushMatrix();
+              {
+                GLdouble x_pos = double(w+0.5)/itsNumWindows - 0.5;
+                if (s == 0 && w == itsDoorPosition )
+                  {
+                    // Draw door.
+                    glTranslated(x_pos, -0.5, 0.0);
+                    glScaled(itsDoorWidth/itsNumWindows, itsDoorHeight, 1.0);
+                    if (itsDoorOrientation)
+                      {
+                        glScaled(-1.0, 1.0, 1.0);
+                      }
+                    drawDoor();
+                  }
+                else
+                  {
+                    // Draw window.
+                    glTranslated(x_pos, 0.0, 0.0);
+                    glScaled(itsWindowWidth/itsNumWindows, itsWindowHeight, 1.0);
+                    drawWindow(itsWindowVertBars, itsWindowHorizBars);
+                  }
               }
-              drawDoor();
+              glPopMatrix();
             }
-            else {
-              // Draw window.
-              glTranslated(x_pos, 0.0, 0.0);
-              glScaled(windowWidth()/numWindows(), windowHeight(), 1.0);
-              drawWindow(windowVertBars(), windowHorizBars());
-            }
-          }
-          glPopMatrix();
-        }
 
-        glTranslated(0.0, 1.0, 0.0);
-      }
+          glTranslated(0.0, 1.0, 0.0);
+        }
 
 
       // Draw roof.
@@ -330,26 +356,31 @@ DOTRACE("House::grRender");
 
       glPushMatrix();
       {
-        glScaled(1.0+roofOverhang(), roofHeight(), 1.0);
+        glScaled(1.0+itsRoofOverhang, itsRoofHeight, 1.0);
 
         glPushAttrib(GL_POLYGON_BIT);
         {
-          if (roofColor() == 0) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-          }
-          else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-          }
+          if (itsRoofColor == 0)
+            {
+              glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+          else
+            {
+              glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            }
 
-          if (roofShape() == 0) {
-            drawTriangleRoof();
-          }
-          else if (roofShape() == 1) {
-            drawTrapezoidRoof();
-          }
-          else {
-            drawSquareRoof();
-          }
+          if (itsRoofShape == 0)
+            {
+              drawTriangleRoof();
+            }
+          else if (itsRoofShape == 1)
+            {
+              drawTrapezoidRoof();
+            }
+          else
+            {
+              drawSquareRoof();
+            }
         }
         glPopAttrib();
 
@@ -359,8 +390,8 @@ DOTRACE("House::grRender");
       // Draw chimney.
       glPushMatrix();
       {
-        glTranslated(chimneyXPosition(), chimneyYPosition(), 0.0);
-        glScaled(chimneyWidth(), chimneyHeight(), 0.0);
+        glTranslated(itsChimneyXPosition, itsChimneyYPosition, 0.0);
+        glScaled(itsChimneyWidth, itsChimneyHeight, 0.0);
 
         glPushAttrib(GL_POLYGON_BIT);
         {
