@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 11:14:10 2003
+// written: Tue May 13 12:11:27 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -44,6 +44,11 @@ class Snake;
 namespace Gfx
 {
   class BmapData;
+}
+
+namespace Util
+{
+  class Urand;
 }
 
 /// GaborArray represents an 2-D spatial array of gabor patches.
@@ -86,8 +91,9 @@ private:
   int insideElements(const Snake& snake) const;
   void hexGridElements() const;
   void fillElements() const;
-  void jitterElement() const;
+  void jitterElement(Util::Urand& urand) const;
 
+  int itsSeed;
   int itsForegNumber;
   double itsForegSpacing;
   GbVec2<int> itsSize;

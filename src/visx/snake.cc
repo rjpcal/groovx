@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Tue May 13 11:28:38 2003
+// written: Tue May 13 12:05:22 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -36,6 +36,8 @@
 #include "gx/geom.h"
 #include "gx/vec2.h"
 
+#include "util/rand.h"
+
 #include <algorithm>
 #include <cmath>
 
@@ -64,23 +66,23 @@ namespace
     double arr[4];
   };
 
-  void pickRandom4(int length, int i[])
+  void pickRandom4(int length, int i[], Util::Urand& urand)
   {
-    i[0] = i[1] = i[2] = i[3] = int(length * drand48());
+    i[0] = i[1] = i[2] = i[3] = urand.idraw(length);
 
     while (i[1] == i[0])
     {
-      i[1] = int(length * drand48());
+      i[1] = urand.idraw(length);
     }
 
     while (i[2] == i[0] || i[2] == i[1])
     {
-      i[2] = int(length * drand48());
+      i[2] = urand.idraw(length);
     }
 
     while (i[3] == i[0] || i[3] == i[1] || i[3] == i[2])
     {
-      i[3] = int(length * drand48());
+      i[3] = urand.idraw(length);
     }
 
     std::sort(i, i+4);
@@ -242,7 +244,8 @@ namespace
             || fabs(delta[3]) > MAX_DELTA);
   }
 
-  bool acceptNewDelta(const Tuple4& newdelta, const Tuple4& olddelta)
+  bool acceptNewDelta(const Tuple4& newdelta, const Tuple4& olddelta,
+                      Util::Urand& urand)
   {
     const double energy_diff =
       newdelta[0]*newdelta[0] - olddelta[0]*olddelta[0]
@@ -250,15 +253,14 @@ namespace
       + newdelta[2]*newdelta[2] - olddelta[2]*olddelta[2]
       + newdelta[3]*newdelta[3] - olddelta[3]*olddelta[3];
 
-    // Note, if energy_diff is < 0, then the probability is > 0, so
-    // as expected drand48() will always be < probability.
+    // Note, if energy_diff<0, then probability>1.
     const double probability = exp(-energy_diff/TEMPERATURE);
 
-    return drand48() <= probability;
+    return urand.fdraw() <= probability;
   }
 }
 
-Snake::Snake(int l, double sp) :
+Snake::Snake(int l, double sp, Util::Urand& urand) :
   itsLength(l),
   itsSpacing(sp),
   itsElem(itsLength)
@@ -267,7 +269,7 @@ DOTRACE("Snake::Snake");
 
   const double radius = (itsLength * itsSpacing) / (2*M_PI);
 
-  const double alpha_start = 2 * M_PI * drand48();
+  const double alpha_start = 2 * M_PI * urand.fdraw();
 
   for (int n = 0; n < itsLength; ++n)
     {
@@ -280,7 +282,7 @@ DOTRACE("Snake::Snake");
 
   for (int count = 0; count < ITERS; ++count)
     {
-      this->jiggle();
+      this->jiggle(urand);
     }
 
   // Now reset so that the center of the ring is at the origin
@@ -349,12 +351,12 @@ DOTRACE("Snake::getElement");
 /*               \    _,-~   theta[2]                                     */
 /*              no[2]~_________                                           */
 
-void Snake::jiggle()
+void Snake::jiggle(Util::Urand& urand)
 {
 DOTRACE("Snake::jiggle");
 
   int i[4];
-  pickRandom4(itsLength, i);
+  pickRandom4(itsLength, i, urand);
 
   const Vec2d old_pos[4] =
     {
@@ -376,9 +378,9 @@ DOTRACE("Snake::jiggle");
 
   for (;;)
     {
-      const double incr = (drand48()<0.5) ? -increment : increment;
+      const double incr = urand.booldraw() ? -increment : increment;
 
-      const int r = int(4 * drand48());
+      const int r = urand.idraw(4);
 
       const double incr_theta = old_theta[r] - incr;
 
@@ -409,7 +411,7 @@ DOTRACE("Snake::jiggle");
           continue;
         }
 
-      if (acceptNewDelta(new_delta, old_delta))
+      if (acceptNewDelta(new_delta, old_delta, urand))
         break;
     }
 

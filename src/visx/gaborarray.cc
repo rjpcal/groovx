@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 11:30:00 2003
+// written: Tue May 13 12:19:23 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -48,6 +48,7 @@
 #include "io/writer.h"
 
 #include "util/error.h"
+#include "util/rand.h"
 
 #include "visx/gaborpatch.h"
 #include "visx/snake.h"
@@ -73,6 +74,7 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
                        double backgIniSpacing_,
                        double backgMinSpacing_)
   :
+  itsSeed(0),
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
   itsSize(sizeX, sizeY),
@@ -94,8 +96,9 @@ const FieldMap& GaborArray::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("foregNumber", &GaborArray::itsForegNumber,
-          24, 1, 100, 1, Field::NEW_GROUP),
+    Field("seed", &GaborArray::itsSeed, 0, 0, 2147483647, 1,
+          Field::NEW_GROUP),
+    Field("foregNumber", &GaborArray::itsForegNumber, 24, 1, 100, 1),
     Field("foregSpacing", &GaborArray::itsForegSpacing,
           45.0, 1.0, 100.0, 1.0),
     Field("size", Field::ValueType(), &GaborArray::itsSize,
@@ -181,7 +184,9 @@ DOTRACE("GaborArray::update");
 
   totalNumber = 0;
 
-  Snake snake(itsForegNumber, itsForegSpacing);
+  Util::Urand urand(itsSeed);
+
+  Snake snake(itsForegNumber, itsForegSpacing, urand);
 
   // pull in elements from the snake
   for (int n = 0; n < snake.getLength(); ++n)
@@ -198,7 +203,7 @@ DOTRACE("GaborArray::update");
 
   for (int i = 0; i < diffusionCycles; ++i)
     {
-      jitterElement();
+      jitterElement(urand);
       fillElements();
     }
 
@@ -214,13 +219,13 @@ DOTRACE("GaborArray::update");
 
   for (int i = 0; i < totalNumber; ++i)
     {
-      const double phi   = 2 * M_PI * drand48();
+      const double phi   = 2 * M_PI * urand.fdraw();
 //       const double phi = 0.0;
 
       const double theta =
         (array[i].type == Element::CONTOUR)
         ? rad_0_2pi(array[i].theta + M_PI_2)
-        : array[i].theta;
+        : 2*M_PI * urand.fdraw();
 
       const int xcenter = int(array[i].pos.x() + itsSize.x() / 2.0 + 0.5);
       const int ycenter = int(array[i].pos.y() + itsSize.y() / 2.0 + 0.5);
@@ -358,7 +363,7 @@ DOTRACE("GaborArray::hexGridElements");
 
       for (int i = 0; i < nx; ++i, x += dx)
         {
-          tryPush(Element(x, y, 2 * M_PI * drand48(), Element::OUTSIDE));
+          tryPush(Element(x, y, 0.0, Element::OUTSIDE));
         }
     }
 }
@@ -377,14 +382,14 @@ DOTRACE("GaborArray::fillElements");
   for (double x = -halfX; x <= halfX; x += dx)
     for (double y = -halfY; y <= halfY; y += dx)
       {
-        tryPush(Element(x, y, 2 * M_PI * drand48(), Element::OUTSIDE));
+        tryPush(Element(x, y, 0.0, Element::OUTSIDE));
       }
 
   const double backgAveSpacing = sqrt(2.0*itsSize.x()*itsSize.y()/(SQRT3*totalNumber));
   printf(" %d elements, ave spacing %f\n", totalNumber, backgAveSpacing);
 }
 
-void GaborArray::jitterElement() const
+void GaborArray::jitterElement(Util::Urand& urand) const
 {
 DOTRACE("GaborArray::jitterElement");
 
@@ -403,8 +408,8 @@ DOTRACE("GaborArray::jitterElement");
             continue;
 
           Vec2d v;
-          v.x() = array[n].pos.x() + jitter*(2*drand48() - 1);
-          v.y() = array[n].pos.y() + jitter*(2*drand48() - 1);
+          v.x() = array[n].pos.x() + jitter*(urand.fdrawRange(-1.0, 1.0));
+          v.y() = array[n].pos.y() + jitter*(urand.fdrawRange(-1.0, 1.0));
 
           if (v.x() < -halfX) v.x() += itsSize.x();
           if (v.x() >  halfX) v.x() -= itsSize.x();

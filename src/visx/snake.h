@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:02 2003
-// written: Mon May 12 13:03:55 2003
+// written: Tue May 13 12:01:16 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,6 +35,11 @@
 
 #include "util/arrays.h"
 
+namespace Util
+{
+  class Urand;
+}
+
 struct Element
 {
   enum Type { OUTSIDE, INSIDE, CONTOUR };
@@ -57,7 +62,7 @@ struct Element
 class Snake
 {
 public:
-  Snake(int l, double sp);
+  Snake(int l, double sp, Util::Urand& urand);
   ~Snake();
 
   int getLength() const { return itsLength; }
@@ -83,7 +88,7 @@ private:
     return itsElem[i];
   }
 
-  void jiggle();
+  void jiggle(Util::Urand& urand);
   void transformPath(int i1, const Gfx::Vec2<double>& new1,
                      int i2, const Gfx::Vec2<double>& new2);
 };
