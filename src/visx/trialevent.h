@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Tue Feb 15 15:45:55 2000
+// written: Wed Mar  8 16:14:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,12 @@
 #include "io.h"
 #endif
 
-#ifndef TCL_H_DEFINED
-#include <tcl.h>
-#define TCL_H_DEFINED
-#endif
-
 #ifndef STOPWATCH_H_DEFINED
 #include "stopwatch.h"
 #endif
+
+struct Tcl_TimerToken_;
+typedef struct Tcl_TimerToken_* Tcl_TimerToken;
 
 class Experiment;
 
