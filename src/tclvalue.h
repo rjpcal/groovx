@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Mon Dec  6 13:39:20 1999
+// written: Tue Dec  7 18:04:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 struct Tcl_Obj;
 struct Tcl_Interp;
 
+namespace Tcl {
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -28,7 +30,7 @@ struct Tcl_Interp;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class TclValue : public Value {
+class TclValue : public ::Value {
 public:
   TclValue(Tcl_Interp* interp, Tcl_Obj* obj);
 
@@ -77,6 +79,8 @@ private:
   mutable Tcl_Interp* itsInterp;
   mutable Tcl_Obj* itsObj;
 };
+
+} // end namespace Tcl
 
 static const char vcid_tclvalue_h[] = "$Header$";
 #endif // !TCLVALUE_H_DEFINED

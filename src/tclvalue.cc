@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Nov 16 12:12:40 1999
+// written: Tue Dec  7 18:05:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
+
+namespace Tcl {
 
 //---------------------------------------------------------------------
 //
@@ -297,6 +299,8 @@ void TclValue::get(string& val) const {
 DOTRACE("TclValue::get");
   val = Tcl_GetString(itsObj);
 }
+
+} // end namespace Tcl
 
 static const char vcid_tclvalue_cc[] = "$Header$";
 #endif // !TCLVALUE_CC_DEFINED
