@@ -3,7 +3,7 @@
 // demangle.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:19 1999
-// written: Wed Mar 15 10:17:31 2000
+// written: Mon Mar 20 20:16:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,16 @@
 
 #include "demangle.h"
 
-#include <string>
+#ifdef ACC_COMPILER
 
-string demangle(const string& in);
+const char* demangle_cstr(const char* in) { return in; }
+
+#endif // ACC_COMPILER
+
+
+#ifdef GCC_COMPILER
+
+string demangle(const string& in) { return in; }
 
 const char* demangle_cstr(const char* in) {
   static string result;
@@ -23,15 +30,9 @@ const char* demangle_cstr(const char* in) {
   return result.c_str();
 }
 
-#ifdef ACC_COMPILER
-string demangle(const string& in) { return in; }
-#endif
-
-
-#ifdef GCC_COMPILER
-
 #include <cctype>
 #include <cstdlib>
+#include <string>
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
