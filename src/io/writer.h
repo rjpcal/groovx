@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Thu May 10 12:04:37 2001
+// written: Sat May 19 11:53:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,9 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
 #include "io/iodecls.h"
 #endif
+
+template <class T> class IdItem;
+template <class T> class MaybeIdItem;
 
 namespace IO {
   class IoObject;
@@ -137,7 +140,7 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
   virtual void writeBaseClass(const char* baseClassName,
-										const IO::IoObject* basePart) = 0;
+										IdItem<const IO::IoObject> basePart) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be

@@ -15,6 +15,7 @@
 
 #include "io/io.h"
 
+#include "io/iditem.h"
 #include "io/iodb.h"
 #include "io/writer.h"
 
@@ -50,7 +51,7 @@ public:
   virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
   virtual void writeObject(const char*, const IO::IoObject*)      { ++itsCount; }
   virtual void writeOwnedObject(const char*, const IO::IoObject*) { ++itsCount; }
-  virtual void writeBaseClass(const char*, const IO::IoObject*)   { ++itsCount; }
+  virtual void writeBaseClass(const char*, IdItem<const IO::IoObject>)   { ++itsCount; }
   virtual void writeRoot(const IO::IoObject*) {}
 
   void reset() { itsCount = 0; }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Sat May 19 08:20:28 2001
+// written: Sat May 19 11:40:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,8 +112,7 @@ DOTRACE("Face::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
-  reader->readBaseClass("GrObj", baseclass.get());
+  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
 void Face::writeTo(IO::Writer* writer) const {
@@ -124,8 +123,7 @@ DOTRACE("Face::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
-  writer->writeBaseClass("GrObj", baseclass.get());
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

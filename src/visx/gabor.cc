@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat May 19 08:21:35 2001
+// written: Sat May 19 11:44:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,8 +100,7 @@ DOTRACE("Gabor::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
-  reader->readBaseClass("GrObj", baseclass.get());
+  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
 void Gabor::writeTo(IO::Writer* writer) const {
@@ -112,8 +111,7 @@ DOTRACE("Gabor::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
-  writer->writeBaseClass("GrObj", baseclass.get());
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
 void Gabor::grGetBoundingBox(Rect<double>& bbox,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Thu May 10 12:04:44 2001
+// written: Sat May 19 11:54:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "io/asciistreamwriter.h"
 
 #include "io/io.h"
+#include "io/iditem.h"
 
 #include "util/arrays.h"
 #include "util/strings.h"
@@ -142,7 +143,8 @@ public:
 
   void writeOwnedObject(const char* name, const IO::IoObject* obj);
 
-  void writeBaseClass(const char* baseClassName, const IO::IoObject* basePart);
+  void writeBaseClass(const char* baseClassName,
+							 IdItem<const IO::IoObject> basePart);
 
   template <class T>
   void writeBasicType(const char* name, T val,
@@ -266,18 +268,15 @@ DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
 }
 
 void AsciiStreamWriter::Impl::writeBaseClass(
-  const char* baseClassName, const IO::IoObject* basePart
+  const char* baseClassName, IdItem<const IO::IoObject> basePart
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
-
-  if (basePart == 0)
-	 throw IO::WriteError("the base class part of an object must be non-null");
 
   fixed_string type = basePart->ioTypename().c_str();
 
   itsBuf << type.c_str() << ' ' << baseClassName << " := ";
 
-  flattenObject(basePart);
+  flattenObject(basePart.get());
 
   itsBuf << ATTRIB_ENDER;
 }
@@ -338,7 +337,7 @@ void AsciiStreamWriter::writeOwnedObject(const char* name, const IO::IoObject* o
 }
 
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
-													const IO::IoObject* basePart) {
+													IdItem<const IO::IoObject> basePart) {
   itsImpl.writeBaseClass(baseClassName, basePart);
 }
 

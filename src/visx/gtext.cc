@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Sat May 19 08:18:24 2001
+// written: Sat May 19 11:44:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -695,8 +695,7 @@ DOTRACE("Gtext::readFrom");
   reader->readValue("text", itsText);
   reader->readValue("strokeWidth", itsStrokeWidth);
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
-  reader->readBaseClass("GrObj", baseclass.get());
+  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
 void Gtext::writeTo(IO::Writer* writer) const {
@@ -708,8 +707,7 @@ DOTRACE("Gtext::writeTo");
   writer->writeValue("text", itsText);
   writer->writeValue("strokeWidth", itsStrokeWidth);
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
-  writer->writeBaseClass("GrObj", baseclass.get());
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
 void Gtext::setText(const char* text) {

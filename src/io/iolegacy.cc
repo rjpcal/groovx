@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu May 17 15:48:37 2001
+// written: Sat May 19 11:54:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -264,21 +264,19 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 }
 
 void IO::LegacyReader::readOwnedObject(const fixed_string& name,
-													IO::IoObject* obj) {
+													IdItem<IO::IoObject> obj) {
 DOTRACE("IO::LegacyReader::readOwnedObject");
-  Precondition(obj != 0);
 
   itsImpl->readTypename(obj->ioTypename());
-  itsImpl->inflateObject(name, obj);
+  itsImpl->inflateObject(name, obj.get());
 }
 
 void IO::LegacyReader::readBaseClass(const fixed_string& baseClassName,
-												 IO::IoObject* basePart) {
+												 IdItem<IO::IoObject> basePart) {
 DOTRACE("IO::LegacyReader::readBaseClass");
-  Precondition(basePart != 0);
 
   itsImpl->readTypename(basePart->ioTypename());
-  itsImpl->inflateObject(baseClassName, basePart);
+  itsImpl->inflateObject(baseClassName, basePart.get());
 }
 
 IdItem<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* root) {
@@ -531,13 +529,13 @@ DOTRACE("IO::LegacyWriter::writeOwnedObject");
 }
 
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
-												  const IO::IoObject* basePart) {
+												  IdItem<const IO::IoObject> basePart) {
 DOTRACE("IO::LegacyWriter::writeBaseClass");
   if (itsImpl->itsWriteBases) {
-	 itsImpl->flattenObject(baseClassName, basePart);
+	 itsImpl->flattenObject(baseClassName, basePart.get());
   }
   else {
-	 itsImpl->flattenObject(baseClassName, basePart, true);
+	 itsImpl->flattenObject(baseClassName, basePart.get(), true);
   }
 }
 

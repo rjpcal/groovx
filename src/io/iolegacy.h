@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu May 17 15:47:50 2001
+// written: Sat May 19 11:54:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +62,11 @@ public:
   virtual IdItem<IO::IoObject> readObject(const fixed_string& name);
   virtual MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name);
 
-  virtual void readOwnedObject(const fixed_string& name, IO::IoObject* obj);
-  virtual void readBaseClass(const fixed_string& baseClassName, IO::IoObject* basePart);
+  virtual void readOwnedObject(const fixed_string& name,
+										 IdItem<IO::IoObject> obj);
+
+  virtual void readBaseClass(const fixed_string& baseClassName,
+									  IdItem<IO::IoObject> basePart);
 
   virtual IdItem<IO::IoObject> readRoot(IO::IoObject* root=0);
 
@@ -102,7 +105,9 @@ public:
 
   virtual void writeObject(const char* name, const IO::IoObject* obj);
   virtual void writeOwnedObject(const char* name, const IO::IoObject* obj);
-  virtual void writeBaseClass(const char* baseClassName, const IO::IoObject* basePart);
+
+  virtual void writeBaseClass(const char* baseClassName,
+										IdItem<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 

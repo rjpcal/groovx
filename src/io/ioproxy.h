@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Sat May 19 10:54:58 2001
+// written: Sat May 19 11:53:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ protected:
 
 public:
   static IdItem<IoObject> make(C* ref)
-    { return IdItem<IoProxy>( new IoProxy(ref) ); }
+    { return IdItem<IoObject>( new IoProxy(ref) ); }
 
   virtual void readFrom(Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
@@ -80,8 +80,8 @@ protected:
   virtual ~ConstIoProxy() {}
 
 public:
-  static IdItem<IoObject> make(const C* ref)
-    { return IdItem<ConstIoProxy>( new ConstIoProxy(ref) ); }
+  static IdItem<const IoObject> make(const C* ref)
+    { return IdItem<const IoObject>( new ConstIoProxy(ref) ); }
 
   virtual void readFrom(Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
@@ -103,7 +103,7 @@ private:
 };
 
 template <class C>
-inline IdItem<IoObject> makeConstProxy(const C* ref)
+inline IdItem<const IoObject> makeConstProxy(const C* ref)
   { return ConstIoProxy<C>::make(ref); }
 
 

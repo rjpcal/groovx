@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Sat May 19 08:22:47 2001
+// written: Sat May 19 11:44:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,8 +73,7 @@ DOTRACE("Jitter::readFrom");
   reader->readValue("jitterY", itsYJitter);
   reader->readValue("jitterR", itsRJitter);
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<Position>(this));
-  reader->readBaseClass("Position", baseclass.get());
+  reader->readBaseClass("Position", IO::makeProxy<Position>(this));
 }
 
 void Jitter::writeTo(IO::Writer* writer) const {
@@ -87,8 +86,7 @@ DOTRACE("Jitter::writeTo");
   writer->writeValue("jitterY", itsYJitter);
   writer->writeValue("jitterR", itsRJitter);
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<Position>(this));
-  writer->writeBaseClass("Position", baseclass.get());
+  writer->writeBaseClass("Position", IO::makeConstProxy<Position>(this));
 }
 
 /////////////

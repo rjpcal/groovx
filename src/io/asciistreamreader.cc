@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu May 17 15:49:33 2001
+// written: Sat May 19 11:44:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -255,10 +255,10 @@ public:
 
   void readValueObj(const fixed_string& name, Value& value);
 
-  void readOwnedObject(const fixed_string& name, IO::IoObject* obj);
+  void readOwnedObject(const fixed_string& name, IdItem<IO::IoObject> obj);
 
   void readBaseClass(IO::Reader* reader, const fixed_string& baseClassName,
-							IO::IoObject* basePart);
+							IdItem<IO::IoObject> basePart);
 
   IdItem<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
 };
@@ -481,7 +481,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  const fixed_string& attrib_name, IO::IoObject* obj
+  const fixed_string& attrib_name, IdItem<IO::IoObject> obj
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
@@ -496,11 +496,12 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
   if ( id == 0 )
 	 throw IO::ReadError("owned object had object id of 0");
 
-  itsObjects.assignObjectForId(id, obj);
+  itsObjects.assignObjectForId(id, obj.get());
 }
 
 void AsciiStreamReader::Impl::readBaseClass(
-  IO::Reader* reader, const fixed_string& baseClassName, IO::IoObject* basePart
+  IO::Reader* reader, const fixed_string& baseClassName,
+  IdItem<IO::IoObject> basePart
   ) {
 DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
@@ -510,7 +511,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
   ist >> bracket;
 
-  inflateObject(reader, ist, baseClassName, basePart);
+  inflateObject(reader, ist, baseClassName, basePart.get());
 
   ist >> bracket >> ws;
 }
@@ -638,13 +639,13 @@ AsciiStreamReader::readMaybeObject(const fixed_string& name)
 }
 
 void AsciiStreamReader::readOwnedObject(const fixed_string& name,
-													 IO::IoObject* obj) {
+													 IdItem<IO::IoObject> obj) {
   DebugEvalNL(name); 
   itsImpl.readOwnedObject(name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
-  const fixed_string& baseClassName, IO::IoObject* basePart
+  const fixed_string& baseClassName, IdItem<IO::IoObject> basePart
 ) {
   DebugEvalNL(baseClassName); 
   itsImpl.readBaseClass(this, baseClassName, basePart);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Sat May 19 08:20:06 2001
+// written: Sat May 19 11:40:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,7 @@ DOTRACE("CloneFace::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<Face>(this));
-  reader->readBaseClass("Face", baseclass.get());
+  reader->readBaseClass("Face", IO::makeProxy<Face>(this));
 }
 
 void CloneFace::writeTo(IO::Writer* writer) const {
@@ -89,8 +88,7 @@ DOTRACE("CloneFace::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<Face>(this));
-  writer->writeBaseClass("Face", baseclass.get());
+  writer->writeBaseClass("Face", IO::makeConstProxy<Face>(this));
 }
 
 const double* CloneFace::getCtrlPnts() const {

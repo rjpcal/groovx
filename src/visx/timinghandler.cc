@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Sat May 19 08:24:01 2001
+// written: Sat May 19 11:44:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,8 +73,7 @@ DOTRACE("TimingHandler::readFrom");
 
   reader->ensureReadVersionId("TimingHandler", 2, "Try grsh0.8a4");
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<TimingHdlr>(this));
-  reader->readBaseClass("TimingHdlr", baseclass.get());
+  reader->readBaseClass("TimingHdlr", IO::makeProxy<TimingHdlr>(this));
 }
 
 void TimingHandler::writeTo(IO::Writer* writer) const {
@@ -83,8 +82,7 @@ DOTRACE("TimingHandler::writeTo");
   writer->ensureWriteVersionId("TimingHandler",
 		      TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try grsh0.8a4");
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<TimingHdlr>(this));
-  writer->writeBaseClass("TimingHdlr", baseclass.get());
+  writer->writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
 }
 
 int TimingHandler::getAbortWait() const { 

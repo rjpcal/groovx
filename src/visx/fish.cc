@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat May 19 08:20:54 2001
+// written: Sat May 19 11:44:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -269,8 +269,7 @@ DOTRACE("Fish::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeProxy<GrObj>(this));
-  reader->readBaseClass("GrObj", baseclass.get());
+  reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
 void Fish::writeTo(IO::Writer* writer) const {
@@ -281,8 +280,7 @@ DOTRACE("Fish::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  IdItem<IO::IoObject> baseclass(IO::makeConstProxy<GrObj>(this));
-  writer->writeBaseClass("GrObj", baseclass.get());
+  writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
 void Fish::receiveStateChangeMsg(const Observable* obj) {
