@@ -3,7 +3,7 @@
 // grshapp.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:26:59 1999
-// written: Thu Jun  1 13:51:18 2000
+// written: Tue Sep 19 17:37:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #include "util/trace.h"
 
+namespace {
+  const char* GRSH_LIB_DIR = "GRSH_LIB_DIR";
+}
+
 NoExptError::NoExptError() : ErrorWithMsg() {}
 
 NoExptError::NoExptError(const char* msg) : ErrorWithMsg(msg) {}
@@ -22,6 +26,7 @@ NoExptError::NoExptError(const char* msg) : ErrorWithMsg(msg) {}
 NoExptError::~NoExptError() {}
 
 GrshApp::GrshApp(Tcl_Interp* interp) :
+  Application(GRSH_LIB_DIR),
   itsInterp(interp),
   itsExpt(0)
 {
