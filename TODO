@@ -7,6 +7,11 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (15-Oct-2004) make a DebugScheduler that can be used in TimingHdlr
+
+  DebugScheduler stores a priority_queue, and schedules itself in the
+  Tcl event loop with Tcl_DoWhenIdle().
+
 * (13-Oct-2004) try to minimize global data masquerading as singletons
 
 ** ObjDb::theDb() is OK because that is really a conceptual singleton
@@ -64,18 +69,16 @@
   How to rename Util::? Ark. Cog. Cue. Gel. Hub. Ion. Rho. Rio.
   Aloe. Onyx. Nub. Opal. Opus.
 
-  [-> Util] arrayvalue
+  [Util] scheduler
+
   [-> Util] log (depends on Object)
-  [-> Util] multivalue
   [-> Util] objdb
-  [-> Util] value
   [Util] object
   [Util] objfactory
   [Util] objmgr
   [Util] ref
   [Util] refcounted
-  [Util] scheduler
-  [Util] signal
+  [Util] signal (depends on object)
   [Util] timer (depends on signal)
   [Util] uid
   [Util] volatileobject
@@ -84,6 +87,7 @@
 
   [rutz] algo
   [rutz] arrays
+  [rutz] arrayvalue
   [rutz] assocarray
   [rutz] backtrace
   [rutz] base64
@@ -102,6 +106,7 @@
   [rutz] gzstreambuf
   [rutz] iter
   [rutz] mappedfile
+  [rutz] multivalue
   [rutz] pipe
   [rutz] pointers
   [rutz] rand
@@ -115,50 +120,7 @@
   [rutz] trace
   [rutz] tracer (rename to rutz::toggle?)
   [rutz] traits
-
-* (12-Oct-2004) Make it easier to debug+test timing sequences
-
-  Need to generalize Tcl::Timer into something that includes a
-  Scheduler interface. The usual Scheduler interface would just rely
-  on Tcl_CreateTimerHandler, but we could have a DebugScheduler that
-  would allow us to manually step through events.
-
-  How to do this incrementally?
-
-  (1-done) Just implement a Tcl::TimerScheduler, then have Tcl::Timer
-	   rely on that.
-
-  (2-done) Make a generic Util::Scheduler, and have Tcl::Timer depend
-	   on that instead of the specific Tcl::TimerScheduler
-	   implementation. OK, but who is going to feed the specific
-	   Util::Scheduler object to Tcl::Timer? This depends on the
-	   location in which we wish to inject a choice between
-	   "normal" and "debug" scheduling. Is it another global
-	   choice, where we just have a global "current scheduler"?
-	   No, that's no good... we might want to have multiple
-	   schedulers operating simultaneously (e.g. scene update
-	   "normal", experiment progress in "debug" mode). So maybe
-	   the scheduler is stored in ExptDriver, and passed along the
-	   Element object hieararchy? Does that move ExptDriver too
-	   much in the direction of a God class?
-
-	   Essentially Util::Scheduler is doing the "Abstract Factory"
-	   pattern, where it creates Util::TimerToken objects.
-
-  (3-done) Now Tcl::Timer doesn't depend on Tcl, so move it elsewhere
-	   (maybe down into Util?).
-
-  (4) OK, now we have all the smarts in Util::Timer, but we still have
-      a Tcl::Timer class whose only purpose is to hook up a
-      Util::Timer object with a Tcl::TimerScheduler. Need to move this
-      logic elsewhere. First, need to get clients to rely on
-      Util::Timer instead of Tcl::Timer.
-
-  (5) Change Tcl::TimerScheduler to hold a Tcl::Interp, to which it
-      can direct background errors; this way we don't need
-      Tcl::Main::interp() in Tcl::Timer. Maybe we get this by having
-      Tcl::Interp itself create the Tcl::TimerScheduler,
-      i.e. interp.getScheduler().
+  [rutz] value
 
 * (9-Oct-2004) Fix GLCanvas::grabPixels() to work with 16-bit framebuffer
 
