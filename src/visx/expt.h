@@ -3,7 +3,7 @@
 // expt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Wed Jun  9 12:31:53 1999
+// written: Wed Jun  9 12:52:28 1999
 // $Id$
 //
 // This file defines the class Expt. Expt holds a sequence of trial
@@ -32,7 +32,6 @@
 #define STRING_DEFINED
 #endif
 
-class Tlist;
 struct timeval;
 
 ///////////////////////////////////////////////////////////////////////
@@ -52,11 +51,8 @@ public:
   void init(int repeat, int seed = 0, const string& date="", 
 				const string& host="", const string& subject="");
 
-  // These I/O functions write/read the _entire_ state of the
-  // Expt, including itsTlist (which is only held by reference).
-  // In addition, since Tlist itself writes/reads the ObjList and
-  // PosList that it holds by reference, these I/O functions are all
-  // that is needed to manage Expt's through files.
+  // These I/O functions write/read the _entire_ state of the Expt,
+  // including the global Tlist, ObjList, and PosList.
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
@@ -89,7 +85,7 @@ public:
   virtual void undoPrevTrial();
 
 private:
-  vector<int> itsTrialSequence; // Ordered sequence of indexes into itsTlist
+  vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
 										  // Also functions as # of completed trials
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
