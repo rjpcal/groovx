@@ -74,6 +74,9 @@ namespace
   {
     DOTRACE("<tlisttcl.cc>::doCreatePreview");
 
+    if (world_viewport.is_void())
+      throw rutz::error("invalid void rect", SRC_POS);
+
     const double world_width = world_viewport.width();
     const double world_height = world_viewport.height();
 
