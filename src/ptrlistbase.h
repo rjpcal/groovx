@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 12:13:33 2000
+// written: Wed Oct 25 13:26:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,6 +66,8 @@ public:
 	 IdIterator& operator++();
 
 	 int operator*() const;
+
+	 IO::IoObject* getObject() const;
   };
 
   IdIterator beginIds() const;
