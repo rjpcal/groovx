@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Wed Jul 11 12:07:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #include "tcl/genericobjpkg.h"
 #include "tcl/tclcmd.h"
-#include "tcl/tclobjlock.h"
 
 #define NO_TRACE
 #include "util/trace.h"
