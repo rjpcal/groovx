@@ -3,7 +3,7 @@
 // refcounted.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Oct 22 14:40:28 2000
-// written: Sun Oct 22 15:01:54 2000
+// written: Tue Oct 24 19:51:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 RefCounted::RefCounted() :
-  itsRefCount(0)
+  itsRefCount(0),
+  itsRefCount2(0)
 {
 DOTRACE("RefCounted::RefCounted");
 }
@@ -45,23 +46,48 @@ DOTRACE("RefCounted::incrRefCount");
 void RefCounted::decrRefCount() {
 DOTRACE("RefCounted::decrRefCount");
   --itsRefCount;
-  if (itsRefCount <= 0)
+  if (itsRefCount <= 0 && itsRefCount2 <= 0)
+	 delete this;
+}
+
+void RefCounted::incrRefCount2() {
+DOTRACE("RefCounted::incrRefCount2");
+  ++itsRefCount2;
+}
+
+void RefCounted::decrRefCount2() {
+DOTRACE("RefCounted::decrRefCount2");
+  --itsRefCount2;
+  if (itsRefCount <= 0 && itsRefCount2 <= 0)
 	 delete this;
 }
 
 bool RefCounted::isShared() const {
 DOTRACE("RefCounted::isShared");
-  return (itsRefCount > 1);
+  return (itsRefCount > 1 ||
+			 itsRefCount2 > 1 ||
+			 (itsRefCount + itsRefCount2) > 1
+			 );
 }
 
 bool RefCounted::isUnshared() const {
 DOTRACE("RefCounted::isUnshared");
-  return (itsRefCount <= 1);
+  return !isShared();
 }
 
 int RefCounted::refCount() const {
 DOTRACE("RefCounted::refCount");
+  return itsRefCount + itsRefCount2;
+}
+
+int RefCounted::refCount1() const {
+DOTRACE("RefCounted::refCount1");
   return itsRefCount;
+}
+
+int RefCounted::refCount2() const {
+DOTRACE("RefCounted::refCount2");
+  return itsRefCount2;
 }
 
 bool RefCounted::isValid() const {
