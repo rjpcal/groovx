@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 15:56:41 2000
-// written: Thu May 10 12:04:35 2001
+// written: Thu May 17 06:55:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +74,14 @@ private:
   T* itsMaster;
 };
 
+
+template <class To, class Fr>
+PtrHandle<To> dynamicCast(PtrHandle<Fr> p)
+{
+  Fr* f = p.get();
+  To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
+  return PtrHandle<To>(&t);
+}
 
 
 ///////////////////////////////////////////////////////////////////////
