@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 17 18:24:39 1999
+// written: Wed Nov 17 19:22:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include <fstream.h>
 #include <string>
 #include <vector>
+#include <sys/time.h>
 
 #include "block.h"
 #include "tclerror.h"

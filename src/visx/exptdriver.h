@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 17 18:22:44 1999
+// written: Wed Nov 17 19:22:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,6 @@
 #ifndef STRING_DEFINED
 #include <string>
 #define STRING_DEFINED
-#endif
-
-#ifndef TIME_H_DEFINED
-#include <sys/time.h>
-#define TIME_H_DEFINED
 #endif
 
 #ifndef ERROR_H_DEFINED
