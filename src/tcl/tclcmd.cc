@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jan 30 16:02:39 2002
+// written: Thu Jan 31 13:56:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -245,17 +245,22 @@ private:
   {
     Tcl::Command* previousCmd = lookupCmd(interp, itsCmdName.c_str());
 
-    if ( previousCmd == 0 )
+    // Only add as an overload if there is an existing previousCmd registered
+    // with the same name as us, AND if that cmd was ORIGINALLY registered
+    // under the same name as us (which may not be the case of that cmd was
+    // the target of renaming or namespace importing, etc.)
+    if ( previousCmd != 0 &&
+         previousCmd->itsImpl->cmdName() == this->cmdName() )
+      {
+        addAsOverloadOf(previousCmd);
+      }
+    else
       {
         Tcl_CreateObjCommand(interp,
                              const_cast<char*>(itsCmdName.c_str()),
                              invokeCallback,
                              static_cast<ClientData>(itsOwner),
                              (Tcl_CmdDeleteProc*) NULL);
-      }
-    else
-      {
-        addAsOverloadOf(previousCmd);
       }
   }
 
