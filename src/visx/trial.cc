@@ -326,6 +326,13 @@ DOTRACE("Trial::vxUndo");
     rep->responses.pop_back();
 }
 
+Util::FwdIter<Response> Trial::responses() const
+{
+DOTRACE("Trial::responses");
+  return Util::FwdIter<Response>
+    (rep->responses.begin(), rep->responses.end());
+}
+
 unsigned int Trial::numResponses() const
   { return rep->responses.size(); }
 

@@ -39,10 +39,10 @@
 
 #include "util/objfactory.h"
 
-#include "visx/trial.h"
-
+#include "visx/response.h"
 #include "visx/responsehandler.h"
 #include "visx/timinghdlr.h"
+#include "visx/trial.h"
 
 #include "util/trace.h"
 
@@ -72,6 +72,7 @@ DOTRACE("Trial_Init");
   pkg->defAction("nextNode", &Trial::trNextNode);
   pkg->defGetter("nodes", &Trial::nodes);
   pkg->defGetter("numResponses", &Trial::numResponses);
+  pkg->defGetter("responses", &Trial::responses);
   pkg->defAttrib("responseHdlr",
                  &Trial::getResponseHandler, &Trial::setResponseHandler);
   pkg->defGetter("stdInfo", &Trial::stdInfo);

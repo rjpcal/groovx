@@ -88,6 +88,8 @@ public:
 
   void setType(int t);
 
+  Util::FwdIter<Response> responses() const;
+
   unsigned int numResponses() const;
 
   void clearResponses();
