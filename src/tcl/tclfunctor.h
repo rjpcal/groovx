@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Jul 13 15:27:59 2001
+// written: Tue Aug  7 17:31:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc());
+      R res(itsFunc()); ctx.setResult(res);
     }
 
   private:
@@ -152,8 +152,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1);
-      ctx.setResult(itsFunc(p1));
+      EXTRACT_PARAM(1);
+      R res(itsFunc(p1)); ctx.setResult(res);
     }
 
   private:
@@ -167,7 +167,7 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1);
+      EXTRACT_PARAM(1);
       itsFunc(p1);
     }
 
@@ -189,8 +189,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2);
-      ctx.setResult(itsFunc(p1, p2));
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2);
+      R res(itsFunc(p1, p2)); ctx.setResult(res);
     }
 
   private:
@@ -204,7 +204,7 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2);
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2);
       itsFunc(p1, p2);
     }
 
@@ -226,8 +226,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      ctx.setResult(itsFunc(p1, p2, p3));
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      R res(itsFunc(p1, p2, p3)); ctx.setResult(res);
     }
 
   private:
@@ -241,7 +241,7 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       itsFunc(p1, p2, p3);
     }
 
@@ -263,9 +263,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-		EXTRACT_PARAM(4);
-      ctx.setResult(itsFunc(p1, p2, p3, p4));
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4);
+      R res(itsFunc(p1, p2, p3, p4)); ctx.setResult(res);
     }
 
   private:
@@ -279,8 +279,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-		EXTRACT_PARAM(4);
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4);
       itsFunc(p1, p2, p3, p4);
     }
 
@@ -302,9 +302,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-		EXTRACT_PARAM(4); EXTRACT_PARAM(5);
-      ctx.setResult(itsFunc(p1, p2, p3, p4, p5));
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4); EXTRACT_PARAM(5);
+      R res(itsFunc(p1, p2, p3, p4, p5)); ctx.setResult(res);
     }
 
   private:
@@ -318,8 +318,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-		EXTRACT_PARAM(4); EXTRACT_PARAM(5);
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4); EXTRACT_PARAM(5);
       itsFunc(p1, p2, p3, p4, p5);
     }
 
@@ -341,9 +341,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-		EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      ctx.setResult(itsFunc(p1, p2, p3, p4, p5, p6));
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
+      R res(itsFunc(p1, p2, p3, p4, p5, p6)); ctx.setResult(res);
     }
 
   private:
@@ -357,8 +357,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-		EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
       itsFunc(p1, p2, p3, p4, p5, p6);
     }
 
