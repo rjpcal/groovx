@@ -1,7 +1,7 @@
 /* $Id$ */
 /** 
 
-\mainpage The VisX framework
+\mainpage The GroovX framework
 
 \author Rob Peters rjpeters at klab dot caltech dot edu
 
@@ -39,5 +39,8 @@ Here are a few starting points into the framework:
 <li>Field and Value 
 
 </ul>
+
+A recent snapshot of the source code should be available <a
+href="http://www.klab.caltech.edu/rjpeters/code/">here</a>.
 
 **/
