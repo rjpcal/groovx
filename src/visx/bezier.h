@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Tue Sep 21 11:04:05 1999
+// written: Wed Sep 22 12:01:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,12 @@
 #include <cmath>
 #define CMATH_DEFINED
 #endif
+
+///////////////////////////////////////////////////////////////////////
+//
+// Bezier4 class -- specialized for four control points
+//
+///////////////////////////////////////////////////////////////////////
 
 class Bezier4 {
 private:
@@ -109,6 +115,151 @@ double Bezier4::evalMax() {
 double Bezier4::evalMin() {
   return min( min(eval(0.0), eval(1.0)),
 				  min(eval(extremum1), eval(extremum2)) );
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Bezier class --
+//
+///////////////////////////////////////////////////////////////////////
+
+class Bezier {
+private:
+  vector<double> R;				  // control points
+
+  // coefficients of the Bezier polynomial
+  // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
+  vector<double> c0;
+
+  // coefficients of the derivative polynomial
+  // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
+  vector<double> c1;
+  
+  vector<double> extrema;
+  
+  double uMin_;	 // value of u in [0,1] which gives the minimum
+  double uMax_;  // value of u in [0,1] which gives the maximum
+  double valMin_;
+  double valMax_;
+
+  int choose(int n, int k) {
+	 // result = n! / [k!(n-k)!]
+	 int result = 1;
+
+	 // we have symmetry of (n k) = (n n-k)
+	 // smaller k gives a faster computation, so:
+	 if ( (n-k) < k ) { k = n-k; }
+
+	 // compute n! / (n-k)!  =  n*(n-1)*(n-2)...(n-k+1)
+	 for (int f = n; f > (n-k); --f) {
+		result *= f;
+	 }
+	 for (int d = 2; d <= k; ++d) {
+		result /= d;
+	 }
+	 
+	 return result;
+  }
+
+public:
+  // If extrema_res is < 0, the default resolution will be used
+  Bezier(const vector<double>& RR, int extrema_res=-1);
+
+  void setCtrlPnts(const vector<double>& RR, int extrema_res=-1);
+
+  double eval(double u);
+  double evalDeriv(double u);
+
+  double uMin() { return uMin_; }
+  double uMax() { return uMax_; }
+  double valMin() { return valMin_; }
+  double valMax() { return valMax_; }
+};
+
+Bezier::Bezier(const vector<double>& RR, int extrema_res) :
+  R(RR),
+  c0(RR.size()),
+  c1(RR.size()-1),
+  extrema(RR.size()) // there are (RR.size()-2) roots of the derivative,
+							// plus two for the range endpoints (0.0, 1.0)
+{
+  setCtrlPnts(RR, extrema_res);
+}
+
+void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
+  R = RR;
+
+  int n = RR.size()-1;			  // degree of polynomial = num_points - 1
+
+  //         ( n )    i  {     (i+k)   ( i )      }
+  // c0    = (   ) * sum {  (-1)     * (   ) * R  }
+  //   i     ( i )   k=0 {             ( k )    k }
+
+  {for (int i = 0; i <= n; ++i) {
+	 c0[i] = 0;
+
+	 for (int k = 0; k <= i; ++k) {
+		int i_choose_k = Bezier::choose(i,k);
+
+		c0[i] += ( (i+k)%2 ? 1 : -1) * i_choose_k * R[k];
+	 }
+
+	 c0[i] *= Bezier::choose(n,i);
+  }}
+
+  {for (int i = 0; i < c1.size(); ++i) {
+	 c1[i] = (i+1) * c0[i+1];
+  }}
+
+
+  if (extrema_res <= 0) { extrema_res = 4*(RR.size()); }
+
+  extrema.clear();
+  extrema.push_back(0.0);
+
+  double prev, current = evalDeriv(0.0);
+  for (int e = 1; e <= extrema_res; ++e) {
+	 prev = current;
+	 current = evalDeriv(double(e)/extrema_res);
+	 // See if the derivative has crossed zero by checking if the signs
+	 // of current and prev are different
+	 if ( (prev > 0.0) != (current > 0.0) ) {
+		extrema.push_back((current+prev)/2.0);
+	 }
+  }
+  
+  extrema.push_back(1.0);
+
+  uMin_ = uMax_ = 0.0;
+  valMin_ = valMax_ = eval(0.0);
+
+  {for (int i = 0; i < extrema.size(); ++i) {
+	 double current = eval(extrema[i]);
+	 if (current < valMin_) {
+		valMin_ = current;
+		uMin_ = extrema[i];
+	 }
+	 if (current > valMax_) {
+		valMax_ = current;
+		uMax_ = extrema[i];
+	 }
+  }}
+}
+
+double Bezier::eval(double u) {
+  double result = 0.0;
+  for (int i = 0; i < c0.size(); ++i) {
+	 result += c0[i] * pow(u,i);
+  }
+  return result;
+}
+
+double Bezier::evalDeriv(double u) {
+  double result = 0.0;
+  for (int i = 0; i < c1.size(); ++i) {
+	 result += c1[i] * pow(u,i);
+  }
+  return result;
 }
 
 static const char vcid_bezier_h[] = "$Header$";
