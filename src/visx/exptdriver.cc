@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Mar  9 17:11:22 2000
+// written: Fri Mar 10 00:38:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +74,10 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 class ExptDriver::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(ExptDriver* owner, Tcl_Interp* interp);
   ~Impl();
@@ -217,10 +221,16 @@ private:
 ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
+  itsHostname(""),
+  itsSubject(""),
+  itsBeginDate(""),
+  itsEndDate(""),
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
   itsRhId(0),
-  itsThId(0)
+  itsThId(0),
+  itsTimer(),
+  itsDoUponCompletionBody()
   //  ,itsManagedObjects()
 {
 DOTRACE("ExptDriver::Impl::Impl");
