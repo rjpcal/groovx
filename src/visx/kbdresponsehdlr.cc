@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Tue Jul 20 16:15:08 1999
+// written: Tue Jul 20 16:45:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,6 +98,7 @@ DOTRACE("KbdResponseHdlr::serialize");
   if (flag & TYPENAME) { os << ioTag << sep; }
 
   os << itsKeyRespPairs << endl;
+  os << itsFeedbackPairs << endl;
   os << itsUseFeedback << endl;
 
   if (os.fail()) throw OutputError(ioTag);
@@ -110,6 +111,9 @@ DOTRACE("KbdResponseHdlr::deserialize");
 
   getline(is, itsKeyRespPairs, '\n');
   updateRegexps();
+
+  getline(is, itsFeedbackPairs, '\n');
+  updateFeedbacks();
 
   int val;
   is >> val;
@@ -230,6 +234,7 @@ DOTRACE("KbdResponseHdlr::feedback");
 
   DebugEvalNL(response);
 
+#if 0
   static Tcl_Obj* feedbackObj = 
     Tcl_NewStringObj("::feedback", -1);
   static TclObjLock lock_(feedbackObj);
@@ -240,6 +245,34 @@ DOTRACE("KbdResponseHdlr::feedback");
   TclObjLock lock2_(feedbackObjv[1]);
 
   return Tcl_EvalObjv(itsInterp, 2, feedbackObjv, TCL_EVAL_GLOBAL);
+#endif
+
+  Tcl_SetVar2Ex(itsInterp, "resp_val", NULL,
+					 Tcl_NewIntObj(response), TCL_GLOBAL_ONLY);
+
+  for (int i = 0; i < itsFeedbacks.size(); ++i) {
+	 int condition_result;
+	 if (Tcl_ExprBooleanObj(itsInterp, itsFeedbacks[i].condition,
+									&condition_result) != TCL_OK) {
+		Tcl_BackgroundError(itsInterp);
+		break;
+	 }
+	 
+	 // If the condition was true...
+	 if (condition_result != 0) {
+		// Then evaluate the associated result script..,
+		if (Tcl_EvalObjEx(itsInterp, itsFeedbacks[i].result,
+								TCL_EVAL_GLOBAL) != TCL_OK) {
+		  Tcl_BackgroundError(itsInterp);
+		}
+		// ... and exit the loop since we only evaluate at most one
+		// result script
+		break;
+	 }
+  }
+
+  Tcl_UnsetVar(itsInterp, "resp_val", 0);
+  return TCL_OK;
 }
 
 //--------------------------------------------------------------------
