@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon May 14 16:00:16 2001
+// written: Tue May 15 17:51:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,11 +125,20 @@ public:
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
  	 addCommand( new Tcl::TVecSetterCmd<const char*>(
 										  this, "GrObj::saveBitmapCache",
+#ifndef ACC_COMPILER
 										  make_shared(new SaveBitmapCacheAction),
+#else
+										  shared_ptr<Setter<const char*> >(
+														  new SaveBitmapCacheAction),
+#endif
 										  "item_id(s) filename(s)", 1) );
 	 declareCAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
 	 addCommand( new Tcl::VecActionCmd(this, "GrObj::update",
+#ifndef ACC_COMPILER
 												  make_shared(new Updater),
+#else
+												  shared_ptr<Action>(new Updater),
+#endif
 												  "item_id(s)", 1) );
 
 	 addCommand( new SetBitmapCacheDirCmd(interp, "GrObj::setBitmapCacheDir") );
