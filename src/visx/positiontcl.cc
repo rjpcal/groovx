@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Sun Oct  3 19:33:52 1999
+// written: Wed Oct 13 15:38:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include <tcl.h>
 #include <typeinfo>
 
+#include "demangle.h"
 #include "iomgr.h"
 #include "position.h"
 #include "poslist.h"
@@ -126,7 +127,7 @@ public:
 protected:
   virtual void invoke() {
 	 Position* p = getItem();
-	 returnCstring(typeid(*p).name());
+	 returnCstring(demangle(typeid(*p).name()).c_str());
   }
 };
 

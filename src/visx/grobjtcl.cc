@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Sun Oct  3 19:20:34 1999
+// written: Wed Oct 13 15:37:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include <typeinfo>
 
+#include "demangle.h"
 #include "grobj.h"
 #include "objlist.h"
 #include "listitempkg.h"
@@ -65,7 +66,7 @@ public:
 protected:
   virtual void invoke() {
 	 GrObj* p = getItem();
-	 returnCstring(typeid(*p).name());
+	 returnCstring(demangle(typeid(*p).name()).c_str());
   }
 };
 
