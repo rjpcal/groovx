@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Sep  1 10:50:03 2001
+// written: Sat Sep  1 11:10:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,46 +73,45 @@ namespace
                  const dynamic_block<GLfloat>& knots,
                  const dynamic_block<Pt3>& pts)
   {
-    int nctrl = pts.size();
-
-    Assert(nctrl > 4);
-
-    int nbz = nctrl - 3;
-
     const GLfloat* t = &knots[2];
     // t points to { 0, 0, 0.17, 0.33, 0.5, 0.67, 0.83, 1, 1 }
 
+    unsigned int nctrl = pts.size();
+
+    Assert(nctrl > 4);
+
+    unsigned int nbz = nctrl - 3;
+
     dynamic_block<BezData> bz(nbz);
 
-    for (int k = 0; k < nbz; ++k)
+    for (unsigned int k = 0; k < nbz; ++k)
       {
         float d1 = t[k+3] - t[k+2]; // == 0 when k == nbz-1 (last iteration)
         float d2 = t[k+2] - t[k+1];
         float d3 = t[k+1] - t[k];  // == 0 when k == 0 (first iteration)
         float d = t[k+3] - t[k];
 
-        Pt3 txyz = ( (pts[k+2] * d3) + (pts[k+1] * (d1+d2)) ) / d;
-
-        bz[k].pt1 = txyz;
+        bz[k].pt1 = (pts[k+2] *  d3     + pts[k+1] * (d1+d2)) / d;
+        bz[k].pt2 = (pts[k+2] * (d2+d3) + pts[k+1] *  d1    ) / d;
 
         if (k == 0)
           {
             bz[k].pt0 = pts[k];
-//              bz[k].pt1 = pts[k+1];
           }
         else
           {
-            bz[k-1].pt3 = (bz[k-1].pt2 * d2 + txyz * d3) / (d2+d3);
+            bz[k-1].pt3 = (bz[k-1].pt2 * d2 + bz[k].pt1 * d3) / (d2+d3);
             bz[k].pt0 = bz[k-1].pt3;
           }
 
-        bz[k].pt2 = (pts[k+2] * (d2+d3) + pts[k+1] * d1) / d;
+        if (k == (nbz-1))
+          {
+            bz[k].pt3 = pts[k+3];
+          }
+
       }
 
-    bz[nbz-1].pt2 = pts[nctrl-2];
-    bz[nbz-1].pt3 = pts[nctrl-1];
-
-    for (int i = 0; i < bz.size(); ++i)
+    for (unsigned int i = 0; i < bz.size(); ++i)
       {
         drawBezier(canvas, bz[i], 20);
       }
