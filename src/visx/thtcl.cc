@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jan 23 10:55:28 2002
+// written: Wed Jan 30 20:59:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@
 
 namespace
 {
-  unsigned int addEvent(Util::Ref<TimingHdlr> th, const char* event_type,
-                        int msec, TimingHdlr::TimePoint time_point)
+  unsigned int addNewEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+                           int msec, TimingHdlr::TimePoint time_point)
   {
     return th->addEventByName(event_type, time_point, msec);
   }
@@ -40,30 +40,30 @@ DOTRACE("Th_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&DrawEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&RenderEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&AllowResponsesEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&DenyResponsesEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
-
   Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Th", "$Revision$");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg1);
 
   pkg1->def( "addImmediateEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addEvent, TimingHdlr::IMMEDIATE) );
+             Util::bindLast(&addNewEvent, TimingHdlr::IMMEDIATE) );
   pkg1->def( "addStartEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addEvent, TimingHdlr::FROM_START) );
+             Util::bindLast(&addNewEvent, TimingHdlr::FROM_START) );
   pkg1->def( "addResponseEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addEvent, TimingHdlr::FROM_RESPONSE) );
+             Util::bindLast(&addNewEvent, TimingHdlr::FROM_RESPONSE) );
   pkg1->def( "addAbortEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addEvent, TimingHdlr::FROM_ABORT) );
+             Util::bindLast(&addNewEvent, TimingHdlr::FROM_ABORT) );
+
+  pkg1->def( "addImmediateEvent", "th_id event_id",
+             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                            TimingHdlr::IMMEDIATE) );
+  pkg1->def( "addStartEvent", "th_id event_id",
+             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                            TimingHdlr::FROM_START) );
+  pkg1->def( "addResponseEvent", "th_id event_id",
+             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                            TimingHdlr::FROM_RESPONSE) );
+  pkg1->def( "addAbortEvent", "th_id event_id",
+             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                            TimingHdlr::FROM_ABORT) );
 
   pkg1->eval("namespace eval Th { "
              "    proc autosavePeriod {id args} { "
@@ -87,7 +87,25 @@ DOTRACE("Th_Init");
                   &TimingHandler::getTimeout,
                   &TimingHandler::setTimeout);
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2);
+  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
+  Tcl::defGenericObjCmds<TrialEvent>(pkg3);
+
+  pkg3->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
+
+  Util::ObjFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&DrawEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&RenderEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&AllowResponsesEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&DenyResponsesEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
+
+  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";
