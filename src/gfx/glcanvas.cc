@@ -50,6 +50,8 @@
 #include "util/error.h"
 #include "util/sharedptr.h"
 
+#include <vector>
+
 #if defined(GL_PLATFORM_GLX)
 #  include <GL/gl.h>
 #  include <GL/glu.h>
@@ -94,20 +96,48 @@ namespace
     return geom::span<double>(vals[0], vals[1]);
   }
 
-  txform getModelview()
+  txform rawGetModelview()
   {
-    DOTRACE("<glcanvas.cc>::getModelview");
+    DOTRACE("<glcanvas.cc>::rawGetModelview");
     GLdouble m[16];
     glGetDoublev(GL_MODELVIEW_MATRIX, &m[0]);
     return txform::copy_of(&m[0]);
   }
 
-  txform getProjection()
+  txform rawGetProjection()
   {
-    DOTRACE("<glcanvas.cc>::getProjection");
+    DOTRACE("<glcanvas.cc>::rawGetProjection");
     GLdouble m[16];
     glGetDoublev(GL_PROJECTION_MATRIX, &m[0]);
     return txform::copy_of(&m[0]);
+  }
+
+  txform orthoTransform(const geom::rect<double>& b,
+                        double zNear, double zFar)
+  {
+    txform result = txform::no_init();
+
+    result[0] = 2.0/(b.width());
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+
+    result[4] = 0;
+    result[5] = 2.0/(b.height());
+    result[6] = 0;
+    result[7] = 0;
+
+    result[8] = 0;
+    result[9] = 0;
+    result[10] = -2.0/(zFar - zNear);
+    result[11] = 0;
+
+    result[12] = -(b.right()+b.left())/(b.right()-b.left());
+    result[13] = -(b.top()+b.bottom())/(b.top()-b.bottom());
+    result[14] = -(zFar+zNear)/(zFar-zNear);
+    result[15] = 1.0;
+
+    return result;
   }
 }
 
@@ -116,11 +146,74 @@ class GLCanvas::Impl
 public:
   Impl(shared_ptr<GlxOpts> opts_, shared_ptr<GlWindowInterface> glx_) :
     opts(opts_),
-    glx(glx_)
-  {}
+    glx(glx_),
+    modelviewCache(),
+    projectionCache(),
+    checkFrequency(100),
+    checkCounter(0)
+  {
+    modelviewCache.push_back(txform::identity());
+    projectionCache.push_back(txform::identity());
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    dbg_dump(4, modelviewCache.back());
+  }
+
+  bool needCheck() const
+  {
+    DOTRACE("GLCanvas::needCheck");
+    if (checkFrequency == 0) return false;
+    return (checkCounter++ % checkFrequency) == 0;
+  }
+
+  const txform& getModelview() const
+  {
+    DOTRACE("GLCanvas::getModelview");
+    ASSERT(modelviewCache.size() > 0);
+    if (needCheck())
+      {
+        const txform ref = rawGetModelview();
+        const double sse = ref.debug_sse(modelviewCache.back());
+        if (sse > 1e-10)
+          {
+            dbg_eval_nl(0, sse);
+            dbg_dump(0, ref);
+            dbg_dump(0, modelviewCache.back());
+            PANIC("numerical error in modelview matrix cache");
+          }
+      }
+    return modelviewCache.back();
+  }
+
+  const txform& getProjection() const
+  {
+    DOTRACE("GLCanvas::getProjection");
+    ASSERT(projectionCache.size() > 0);
+    if (needCheck())
+      {
+        const txform ref = rawGetProjection();
+        const double sse = ref.debug_sse(projectionCache.back());
+        if (sse > 1e-10)
+          {
+            dbg_eval_nl(0, sse);
+            dbg_dump(0, ref);
+            dbg_dump(0, projectionCache.back());
+            PANIC("numerical error in projection matrix cache");
+          }
+      }
+    return projectionCache.back();
+  }
 
   shared_ptr<GlxOpts> opts;
   shared_ptr<GlWindowInterface> glx;
+  std::vector<txform> modelviewCache;
+  std::vector<txform> projectionCache;
+  int checkFrequency;
+  mutable int checkCounter;
 };
 
 GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts,
@@ -163,8 +256,8 @@ DOTRACE("GLCanvas::screenFromWorld3");
   GLint current_viewport[4];
   glGetIntegerv(GL_VIEWPORT, current_viewport);
 
-  const txform m = getModelview();
-  const txform p = getProjection();
+  const txform m = rep->getModelview();
+  const txform p = rep->getProjection();
 
   vec3d screen_pos;
 
@@ -240,8 +333,8 @@ DOTRACE("GLCanvas::worldFromScreen3");
 
   dbg_dump(3, screen_pos);
 
-  const txform m = getModelview();
-  const txform p = getProjection();
+  const txform m = rep->getModelview();
+  const txform p = rep->getProjection();
   const geom::rect<int> v = getScreenViewport();
 
   const vec3d world1 = unproject1(m, p, v, screen_pos);
@@ -477,6 +570,8 @@ DOTRACE("GLCanvas::orthographic");
   glOrtho(bounds.left(), bounds.right(),
           bounds.bottom(), bounds.top(),
           zNear, zFar);
+//   rep->projectionCache.back() = rawGetProjection();
+  rep->projectionCache.back() = orthoTransform(bounds, zNear, zFar);
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -488,15 +583,17 @@ DOTRACE("GLCanvas::perspective");
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(fovy, aspect, zNear, zFar);
+  rep->projectionCache.back() = rawGetProjection();
   glMatrixMode(GL_MODELVIEW);
 }
-
 
 void GLCanvas::pushMatrix(const char* /*comment*/)
 {
 DOTRACE("GLCanvas::pushMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
+  rep->modelviewCache.push_back(rep->modelviewCache.back());
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::popMatrix()
@@ -504,12 +601,17 @@ void GLCanvas::popMatrix()
 DOTRACE("GLCanvas::popMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
+  ASSERT(rep->modelviewCache.size() > 0);
+  rep->modelviewCache.pop_back();
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::translate(const vec3d& v)
 {
 DOTRACE("GLCanvas::translate");
   glTranslated(v.x(), v.y(), v.z());
+  rep->modelviewCache.back().translate(v);
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::scale(const vec3d& v)
@@ -528,24 +630,32 @@ DOTRACE("GLCanvas::scale");
       throw rutz::error("invalid z scaling factor", SRC_POS);
     }
   glScaled(v.x(), v.y(), v.z());
+  rep->modelviewCache.back().scale(v);
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::rotate(const vec3d& v, double angle_in_degrees)
 {
 DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
+  rep->modelviewCache.back().rotate(v, angle_in_degrees);
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::transform(const geom::txform& tx)
 {
 DOTRACE("GLCanvas::transform");
   glMultMatrixd(tx.col_major_data());
+  rep->modelviewCache.back().transform(tx);
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::loadMatrix(const geom::txform& tx)
 {
 DOTRACE("GLCanvas::loadMatrix");
   glLoadMatrixd(tx.col_major_data());
+  rep->modelviewCache.back() = tx;
+  dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
