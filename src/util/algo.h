@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jul 22 23:31:48 2001
-// written: Sun Jul 22 23:36:56 2001
+// written: Mon Aug  6 17:04:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,9 @@ namespace Util
   template <class T>
   inline const T& min(const T& a, const T& b)
     { return (a < b) ? a : b; }
+
+  template <class T>
+  inline T abs(const T& val) { return (val < 0) ? -val : val; }
 
   template <class T>
   inline void swap(T& t1, T& t2)
