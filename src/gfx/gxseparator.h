@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri Aug 10 10:56:08 2001
+// written: Tue Aug 21 15:30:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +19,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
 #include "io/iodecls.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
-#include "util/utilfwd.h"
 #endif
 
 namespace Util
