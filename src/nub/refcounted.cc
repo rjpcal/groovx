@@ -264,5 +264,10 @@ int Nub::RefCounted::dbg_RefCount() const throw()
   return itsRefCounts->itsStrong;
 }
 
+int Nub::RefCounted::dbg_WeakRefCount() const throw()
+{
+  return itsRefCounts->itsWeak;
+}
+
 static const char vcid_refcounted_cc[] = "$Header$";
 #endif // !REFCOUNTED_CC_DEFINED
