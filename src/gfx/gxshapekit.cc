@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.cc)
-// written: Mon Jan 13 11:01:38 2003
+// written: Mon Jan 20 12:52:29 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,15 +78,15 @@ public:
   // Data members
   //
 
-  int itsCategory;
+  int category;
 
-  Util::Ref<GxShapeKitNode> itsNativeNode;
-  Util::Ref<GxBounds> itsBB;
-  Util::Ref<GxCache> itsCache;
-  Util::Ref<GxAligner> itsAligner;
-  Util::Ref<GxScaler> itsScaler;
+  Util::Ref<GxShapeKitNode> nativeNode;
+  Util::Ref<GxBounds> boundsOutline;
+  Util::Ref<GxCache> cache;
+  Util::Ref<GxAligner> aligner;
+  Util::Ref<GxScaler> scaler;
 
-  Util::Ref<GxNode> itsTopNode;
+  Util::Ref<GxNode> topNode;
 
   //
   // Methods
@@ -95,13 +95,13 @@ public:
   static GxShapeKitImpl* make(GxShapeKit* obj) { return new GxShapeKitImpl(obj); }
 
   GxShapeKitImpl(GxShapeKit* obj) :
-    itsCategory(-1),
-    itsNativeNode(new GxShapeKitNode(obj), Util::PRIVATE),
-    itsBB(new GxBounds(itsNativeNode), Util::PRIVATE),
-    itsCache(new GxCache(itsBB), Util::PRIVATE),
-    itsAligner(new GxAligner(itsCache), Util::PRIVATE),
-    itsScaler(new GxScaler(itsAligner), Util::PRIVATE),
-    itsTopNode(itsScaler)
+    category(-1),
+    nativeNode(new GxShapeKitNode(obj), Util::PRIVATE),
+    boundsOutline(new GxBounds(nativeNode), Util::PRIVATE),
+    cache(new GxCache(boundsOutline), Util::PRIVATE),
+    aligner(new GxAligner(cache), Util::PRIVATE),
+    scaler(new GxScaler(aligner), Util::PRIVATE),
+    topNode(scaler)
   {
     // We connect to sigNodeChanged in order to update any caches
     // according to state changes.
@@ -110,7 +110,7 @@ public:
 
   void invalidateCaches()
   {
-    itsCache->invalidate();
+    cache->invalidate();
   }
 };
 
@@ -135,7 +135,7 @@ Util::Tracer GxShapeKit::tracer;
 // GxShapeKit default constructor
 GxShapeKit::GxShapeKit() :
   FieldContainer(&sigNodeChanged),
-  itsImpl(GxShapeKitImpl::make(this))
+  rep(GxShapeKitImpl::make(this))
 {
 DOTRACE("GxShapeKit::GxShapeKit");
 
@@ -151,7 +151,7 @@ DOTRACE("GxShapeKit::GxShapeKit");
 GxShapeKit::~GxShapeKit()
 {
 DOTRACE("GxShapeKit::~GxShapeKit");
-  itsImpl->destroy();
+  rep->destroy();
 }
 
 IO::VersionId GxShapeKit::serialVersionId() const
@@ -221,79 +221,79 @@ const FieldMap& GxShapeKit::classFields()
 bool GxShapeKit::getBBVisibility() const
 {
 DOTRACE("GxShapeKit::getBBVisibility");
-  return itsImpl->itsBB->isVisible();
+  return rep->boundsOutline->isVisible();
 }
 
 void GxShapeKit::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxShapeKit::getBoundingCube");
 
-  itsImpl->itsTopNode->getBoundingCube(bbox);
+  rep->topNode->getBoundingCube(bbox);
 }
 
 int GxShapeKit::getScalingMode() const
 {
 DOTRACE("GxShapeKit::getScalingMode");
-  return itsImpl->itsScaler->getMode();
+  return rep->scaler->getMode();
 }
 
 double GxShapeKit::getWidth() const
 {
 DOTRACE("GxShapeKit::getWidth");
-  return itsImpl->itsScaler->scaledWidth();
+  return rep->scaler->scaledWidth();
 }
 
 double GxShapeKit::getHeight() const
 {
 DOTRACE("GxShapeKit::getHeight");
-  return itsImpl->itsScaler->scaledHeight();
+  return rep->scaler->scaledHeight();
 }
 
 double GxShapeKit::getAspectRatio() const
 {
 DOTRACE("GxShapeKit::getAspectRatio");
-  return itsImpl->itsScaler->aspectRatio();
+  return rep->scaler->aspectRatio();
 }
 
 double GxShapeKit::getMaxDimension() const
 {
 DOTRACE("GxShapeKit::getMaxDimension");
-  return itsImpl->itsScaler->scaledMaxDim();
+  return rep->scaler->scaledMaxDim();
 }
 
 int GxShapeKit::getAlignmentMode() const
 {
 DOTRACE("GxShapeKit::getAlignmentMode");
-  return itsImpl->itsAligner->getMode();
+  return rep->aligner->getMode();
 }
 
 double GxShapeKit::getCenterX() const
 {
 DOTRACE("GxShapeKit::getCenterX");
-  return itsImpl->itsAligner->itsCenter.x();
+  return rep->aligner->itsCenter.x();
 }
 
 double GxShapeKit::getCenterY() const
 {
 DOTRACE("GxShapeKit::getCenterY");
-  return itsImpl->itsAligner->itsCenter.y();
+  return rep->aligner->itsCenter.y();
 }
 
 int GxShapeKit::getPixelBorder() const
 {
 DOTRACE("GxShapeKit::getPixelBorder");
-  return itsImpl->itsBB->pixelBorder();
+  return rep->boundsOutline->pixelBorder();
 }
 
 int GxShapeKit::category() const
 {
 DOTRACE("GxShapeKit::category");
-  return itsImpl->itsCategory;
+  return rep->category;
 }
 
 int GxShapeKit::getRenderMode() const
 {
-  return itsImpl->itsCache->getMode();
+  return rep->cache->getMode();
 }
 
 //////////////////
@@ -302,7 +302,7 @@ int GxShapeKit::getRenderMode() const
 
 void GxShapeKit::setBBVisibility(bool visibility)
 {
-  itsImpl->itsBB->setVisible(visibility);
+  rep->boundsOutline->setVisible(visibility);
   this->sigNodeChanged.emit();
 }
 
@@ -310,7 +310,7 @@ void GxShapeKit::setScalingMode(int val)
 {
 DOTRACE("GxShapeKit::setScalingMode");
 
-  itsImpl->itsScaler->setMode(val);
+  rep->scaler->setMode(val);
   this->sigNodeChanged.emit();
 }
 
@@ -318,7 +318,7 @@ void GxShapeKit::setWidth(double val)
 {
 DOTRACE("GxShapeKit::setWidth");
 
-  itsImpl->itsScaler->setWidth(val);
+  rep->scaler->setWidth(val);
   this->sigNodeChanged.emit();
 }
 
@@ -326,7 +326,7 @@ void GxShapeKit::setHeight(double val)
 {
 DOTRACE("GxShapeKit::setHeight");
 
-  itsImpl->itsScaler->setHeight(val);
+  rep->scaler->setHeight(val);
   this->sigNodeChanged.emit();
 }
 
@@ -334,7 +334,7 @@ void GxShapeKit::setAspectRatio(double val)
 {
 DOTRACE("GxShapeKit::setAspectRatio");
 
-  itsImpl->itsScaler->setAspectRatio(val);
+  rep->scaler->setAspectRatio(val);
   this->sigNodeChanged.emit();
 }
 
@@ -342,7 +342,7 @@ void GxShapeKit::setMaxDimension(double val)
 {
 DOTRACE("GxShapeKit::setMaxDimension");
 
-  itsImpl->itsScaler->setMaxDim(val);
+  rep->scaler->setMaxDim(val);
   this->sigNodeChanged.emit();
 }
 
@@ -350,7 +350,7 @@ void GxShapeKit::setAlignmentMode(int val)
 {
 DOTRACE("GxShapeKit::setAlignmentMode");
 
-  itsImpl->itsAligner->setMode(val);
+  rep->aligner->setMode(val);
   this->sigNodeChanged.emit();
 }
 
@@ -358,7 +358,7 @@ void GxShapeKit::setCenterX(double val)
 {
 DOTRACE("GxShapeKit::setCenterX");
 
-  itsImpl->itsAligner->itsCenter.x() = val;
+  rep->aligner->itsCenter.x() = val;
   this->sigNodeChanged.emit();
 }
 
@@ -366,27 +366,27 @@ void GxShapeKit::setCenterY(double val)
 {
 DOTRACE("GxShapeKit::setCenterY");
 
-  itsImpl->itsAligner->itsCenter.y() = val;
+  rep->aligner->itsCenter.y() = val;
   this->sigNodeChanged.emit();
 }
 
 void GxShapeKit::setPixelBorder(int pixels)
 {
 DOTRACE("GxShapeKit::setPixelBorder");
-  itsImpl->itsBB->setPixelBorder(pixels);
+  rep->boundsOutline->setPixelBorder(pixels);
 }
 
 void GxShapeKit::setCategory(int val)
 {
 DOTRACE("GxShapeKit::setCategory");
-  itsImpl->itsCategory = val;
+  rep->category = val;
 }
 
 void GxShapeKit::setRenderMode(int mode)
 {
 DOTRACE("GxShapeKit::setRenderMode");
 
-  itsImpl->itsCache->setMode(mode);
+  rep->cache->setMode(mode);
   this->sigNodeChanged.emit();
 }
 
@@ -398,31 +398,31 @@ DOTRACE("GxShapeKit::setRenderMode");
 void GxShapeKit::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxShapeKit::draw");
-  itsImpl->itsTopNode->draw(canvas);
+  rep->topNode->draw(canvas);
 }
 
 double GxShapeKit::getWidthFactor() const
 {
 DOTRACE("GxShapeKit::getWidthFactor");
-  return itsImpl->itsScaler->widthFactor();
+  return rep->scaler->widthFactor();
 }
 
 void GxShapeKit::setWidthFactor(double val)
 {
 DOTRACE("GxShapeKit::setWidthFactor");
-  itsImpl->itsScaler->setWidthFactor(val);
+  rep->scaler->setWidthFactor(val);
 }
 
 double GxShapeKit::getHeightFactor() const
 {
 DOTRACE("GxShapeKit::getHeightFactor");
-  return itsImpl->itsScaler->heightFactor();
+  return rep->scaler->heightFactor();
 }
 
 void GxShapeKit::setHeightFactor(double val)
 {
 DOTRACE("GxShapeKit::setHeightFactor");
-  itsImpl->itsScaler->setHeightFactor(val);
+  rep->scaler->setHeightFactor(val);
 }
 
 static const char vcid_gxshapekit_cc[] = "$Header$";

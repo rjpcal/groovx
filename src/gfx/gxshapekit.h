@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// written: Mon Jan 13 11:01:38 2003
+// written: Mon Jan 20 12:50:33 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ private:
   GxShapeKit& operator=(const GxShapeKit&);
 
   friend class GxShapeKitImpl;
-  GxShapeKitImpl* const itsImpl;    // opaque pointer to implementation
+  GxShapeKitImpl* const rep;    // opaque pointer to implementation
 };
 
 static const char vcid_gxshapekit_h[] = "$Header$";
