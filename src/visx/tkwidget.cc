@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sat Jun 16 07:25:51 2001
+// written: Mon Jun 18 09:49:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,11 +57,11 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::TkWidget::Impl definition
+// Tcl::TkWidget::TkWidgImpl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget::Impl
+class Tcl::TkWidget::TkWidgImpl
 {
 public:
 
@@ -71,13 +71,13 @@ public:
   Buttons itsButtonListeners;
   Keys itsKeyListeners;
 
-  Impl() : itsButtonListeners(), itsKeyListeners() {}
+  TkWidgImpl() : itsButtonListeners(), itsKeyListeners() {}
 
   static void buttonEventProc(ClientData clientData, XEvent* rawEvent)
   {
     DOTRACE("buttonEventProc");
 
-    Impl* impl = static_cast<Impl*>(clientData);
+    TkWidgImpl* impl = static_cast<TkWidgImpl*>(clientData);
 
     Assert(rawEvent->type == ButtonPress);
 
@@ -98,7 +98,7 @@ public:
   {
     DOTRACE("keyEventProc");
 
-    Impl* impl = static_cast<Impl*>(clientData);
+    TkWidgImpl* impl = static_cast<TkWidgImpl*>(clientData);
 
     Assert(rawEvent->type == KeyPress);
 
@@ -129,7 +129,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TkWidget::TkWidget() : itsImpl(new Impl)
+Tcl::TkWidget::TkWidget() : itsImpl(new TkWidgImpl)
 {
 #if 0
   addButtonListener(Util::Ref<GWT::ButtonListener>(DbgButtonListener::make()));
@@ -143,7 +143,7 @@ void Tcl::TkWidget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
 {
   if (itsImpl->itsButtonListeners.empty())
     {
-      Tk_CreateEventHandler(tkWin(), ButtonPressMask, Impl::buttonEventProc,
+      Tk_CreateEventHandler(tkWin(), ButtonPressMask, TkWidgImpl::buttonEventProc,
                             static_cast<void*>(itsImpl));
     }
 
@@ -154,7 +154,7 @@ void Tcl::TkWidget::removeButtonListeners()
 {
   itsImpl->itsButtonListeners.clear();
 
-  Tk_DeleteEventHandler(tkWin(), ButtonPressMask, Impl::buttonEventProc,
+  Tk_DeleteEventHandler(tkWin(), ButtonPressMask, TkWidgImpl::buttonEventProc,
                         static_cast<void*>(itsImpl));
 }
 
@@ -162,7 +162,7 @@ void Tcl::TkWidget::addKeyListener(Util::Ref<GWT::KeyListener> k)
 {
   if (itsImpl->itsKeyListeners.empty())
     {
-      Tk_CreateEventHandler(tkWin(), KeyPressMask, Impl::keyEventProc,
+      Tk_CreateEventHandler(tkWin(), KeyPressMask, TkWidgImpl::keyEventProc,
                             static_cast<void*>(itsImpl));
     }
 
@@ -173,7 +173,7 @@ void Tcl::TkWidget::removeKeyListeners()
 {
   itsImpl->itsKeyListeners.clear();
 
-  Tk_DeleteEventHandler(tkWin(), KeyPressMask, Impl::keyEventProc,
+  Tk_DeleteEventHandler(tkWin(), KeyPressMask, TkWidgImpl::keyEventProc,
                         static_cast<void*>(itsImpl));
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Sat Jun 16 07:24:25 2001
+// written: Mon Jun 18 09:49:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,10 +52,10 @@ private:
   TkWidget(const TkWidget&);
   TkWidget& operator=(const TkWidget&);
 
-  class Impl;
-  friend class Impl;
+  class TkWidgImpl;
+  friend class TkWidgImpl;
 
-  Impl* const itsImpl;
+  TkWidgImpl* const itsImpl;
 };
 
 static const char vcid_tkwidget_h[] = "$Header$";
