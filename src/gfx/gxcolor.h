@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:42:48 2001
-// written: Fri Jan 18 16:06:58 2002
+// written: Tue Mar 26 16:40:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,8 @@ private:
   GxColor(const GxColor&);
   GxColor& operator=(const GxColor&);
 
+  GbColor rgbaColor;
+
 protected:
   /// Default constructor.
   GxColor();
@@ -40,10 +42,6 @@ public:
 
   static GxColor* make() { return new GxColor; }
 
-private:
-  GbColor rgbaColor;
-
-public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
