@@ -44,7 +44,8 @@ namespace Tcl
   inline geom::vec2<T> fromTcl(Tcl_Obj* obj, geom::vec2<T>*)
   {
     Tcl::List listObj(obj);
-    return geom::vec2<T>(listObj.get<T>(0), listObj.get<T>(1));
+    return geom::vec2<T>(listObj.template get<T>(0),
+                         listObj.template get<T>(1));
   }
 
   /// Conversion routine for geom::vec2 to Tcl::ObjPtr.
