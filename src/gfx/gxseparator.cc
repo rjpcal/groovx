@@ -3,7 +3,7 @@
 // gxseparator.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu Nov  2 13:24:02 2000
+// written: Thu Nov  2 13:35:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,19 +85,6 @@ DOTRACE("GxSeparator::insertChild");
 										IdItem<GxNode>(ioId));
 }
 
-IdItem<GxNode> GxSeparator::getChild(ChildId index) const {
-DOTRACE("GxSeparator::getChild");
-  if (index < 0 || index >= itsImpl->itsChildren.size())
-	 {
-		ErrorWithMsg err("GxSeparator has no child with index '");
-		err.appendNumber(index);
-		err.appendMsg("'");
-		throw err;
-	 }
-
-  return itsImpl->itsChildren[index];
-}
-
 void GxSeparator::removeChildId(ChildId index) {
 DOTRACE("GxSeparator::removeChildId");
   if (index >= 0 && index < itsImpl->itsChildren.size())
@@ -118,6 +105,24 @@ DOTRACE("GxSeparator::removeChildItem");
 			 break;
 		  }
 	 }   
+}
+
+int GxSeparator::numChildren() const {
+DOTRACE("GxSeparator::numChildren");
+  return itsImpl->itsChildren.size();
+}
+
+IdItem<GxNode> GxSeparator::getChild(ChildId index) const {
+DOTRACE("GxSeparator::getChild");
+  if (index < 0 || index >= itsImpl->itsChildren.size())
+	 {
+		ErrorWithMsg err("GxSeparator has no child with index '");
+		err.appendNumber(index);
+		err.appendMsg("'");
+		throw err;
+	 }
+
+  return itsImpl->itsChildren[index];
 }
 
 GxSeparator::ChildItr GxSeparator::beginChildren() const {
