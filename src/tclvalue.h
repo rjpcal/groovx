@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Nov 16 12:35:36 1999
+// written: Mon Dec  6 13:39:20 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,9 +19,13 @@ struct Tcl_Obj;
 struct Tcl_Interp;
 
 ///////////////////////////////////////////////////////////////////////
-//
-// TclValue class definition
-//
+/**
+ *
+ * A subclass of Value that can be used with Tcl_Obj's. Internally,
+ * TclValue uses the Tcl C API to manage conversions among basic
+ * types.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class TclValue : public Value {
