@@ -2,7 +2,8 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Sun Mar 14 19:39:30 1999
+// written: Mon Mar 15 16:05:48 1999
+// $Id$
 //
 // This package provides additional list manipulation functions using
 // object-style (rather than string-style) Tcl commands
