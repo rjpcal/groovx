@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 14:38:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,15 +36,6 @@
 
 namespace
 {
-  const FieldInfo FIXPT_FINFOS[] =
-  {
-    FieldInfo("length", FieldInfo::OldTag(), &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
-    FieldInfo("width", FieldInfo::OldTag(), &FixPt::width, 1, 1, 100, 1)
-  };
-
-  FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2,
-                        &GrObj::classFields());
-
   const IO::VersionId FIXPT_SERIAL_VERSION_ID = 2;
 }
 
@@ -56,6 +47,15 @@ namespace
 
 const FieldMap& FixPt::classFields()
 {
+  static const FieldInfo FIXPT_FINFOS[] =
+  {
+    FieldInfo("length", &FixPt::itsLength, 0.1, 0.0, 10.0, 0.1, true),
+    FieldInfo("width", &FixPt::itsWidth, 1, 1, 100, 1)
+  };
+
+  static FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2,
+                               &GrObj::classFields());
+
   return FIXPT_FIELDS;
 }
 
@@ -66,9 +66,9 @@ DOTRACE("FixPt::make");
 }
 
 FixPt::FixPt(double len, int wid) :
-  length(len), width(wid)
+  itsLength(len), itsWidth(wid)
 {
-  setFieldMap(FIXPT_FIELDS);
+  setFieldMap(FixPt::classFields());
 }
 
 FixPt::~FixPt() {}
@@ -86,8 +86,6 @@ DOTRACE("FixPt::readFrom");
   reader->ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
 
   readFieldsFrom(reader, classFields());
-
-  DebugEval(length());  DebugEvalNL(width());
 
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
@@ -109,8 +107,8 @@ Gfx::Rect<double> FixPt::grGetBoundingBox() const
 DOTRACE("FixPt::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
-  bbox.left()  = bbox.bottom() = -length()/2.0;
-  bbox.right() = bbox.top()    =  length()/2.0;
+  bbox.left()  = bbox.bottom() = -itsLength/2.0;
+  bbox.right() = bbox.top()    =  itsLength/2.0;
 
   return bbox;
 }
@@ -119,18 +117,18 @@ void FixPt::grRender(Gfx::Canvas&, DrawMode) const
 {
 DOTRACE("FixPt::grRender");
   glPushAttrib(GL_LINE_BIT);
-  glLineWidth(width());
+  glLineWidth(itsWidth);
 
   glBegin(GL_LINES);
-  glVertex3f(0.0, -length()/2.0, 0.0);
-  glVertex3f(0.0, length()/2.0, 0.0);
+  glVertex3f(0.0, -itsLength/2.0, 0.0);
+  glVertex3f(0.0, itsLength/2.0, 0.0);
   glEnd();
 
   glFlush();
 
   glBegin(GL_LINES);
-  glVertex3f(-length()/2.0, 0.0, 0.0);
-  glVertex3f(length()/2.0, 0.0, 0.0);
+  glVertex3f(-itsLength/2.0, 0.0, 0.0);
+  glVertex3f(itsLength/2.0, 0.0, 0.0);
   glEnd();
 
   glPopAttrib();

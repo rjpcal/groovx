@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug 15 11:13:00 2001
+// written: Wed Aug 15 14:36:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,22 +43,23 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  ////////////////
-  // properties //
-  ////////////////
-
-  /// Length of crosshairs in GL coordinates.
-  TField<double> length;
-
-  /// Width of crosshairs in pixels.
-  TField<int> width;
-
   static const FieldMap& classFields();
 
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;
 
   virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
+
+private:
+  ////////////////
+  // properties //
+  ////////////////
+
+  /// Length of crosshairs in GL coordinates.
+  double itsLength;
+
+  /// Width of crosshairs in pixels.
+  int itsWidth;
 };
 
 static const char vcid_fixpt_h[] = "$Header$";

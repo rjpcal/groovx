@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 14:32:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,26 +43,6 @@
 namespace
 {
   int dummy=0; // We need a dummy int to attach various CPtrField's
-
-  const FieldInfo FINFOS[] =
-  {
-    FieldInfo("category", FieldInfo::OldTag(), &Fish::fishCategory, 0, 0, 10, 1, true),
-    FieldInfo("dorsalFinCoord", FieldInfo::OldTag(), &Fish::dorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("tailFinCoord", FieldInfo::OldTag(), &Fish::tailFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("lowerFinCoord", FieldInfo::OldTag(), &Fish::lowerFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("mouthCoord", FieldInfo::OldTag(), &Fish::mouthCoord, 0.0, -2.0, 2.0, 0.1),
-
-    FieldInfo("currentPart", FieldInfo::OldTag(), &Fish::currentPart, 0, 0, 3, 1, true),
-
-    FieldInfo("currentEndPt", FieldInfo::OldTag(), &Fish::currentEndPt, 0, 0, 3, 1, true),
-    FieldInfo("endPt_Part", FieldInfo::OldTag(), &Fish::endPt_Part, 1, 1, 4, 1),
-    FieldInfo("endPt_Bkpt", FieldInfo::OldTag(), &Fish::endPt_Bkpt, 1, 1, 10, 1)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                       &GrObj::classFields());
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
 }
@@ -114,7 +94,30 @@ struct Fish::EndPt {
 //
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& Fish::classFields() { return FISH_FIELDS; }
+const FieldMap& Fish::classFields()
+{
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("category", &Fish::itsFishCategory, 0, 0, 10, 1, true),
+    FieldInfo("dorsalFinCoord", FieldInfo::OldTag(), &Fish::dorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("tailFinCoord", FieldInfo::OldTag(), &Fish::tailFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("lowerFinCoord", FieldInfo::OldTag(), &Fish::lowerFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("mouthCoord", FieldInfo::OldTag(), &Fish::mouthCoord, 0.0, -2.0, 2.0, 0.1),
+
+    FieldInfo("currentPart", FieldInfo::OldTag(), &Fish::currentPart, 0, 0, 3, 1, true),
+
+    FieldInfo("currentEndPt", FieldInfo::OldTag(), &Fish::currentEndPt, 0, 0, 3, 1, true),
+    FieldInfo("endPt_Part", FieldInfo::OldTag(), &Fish::endPt_Part, 1, 1, 4, 1),
+    FieldInfo("endPt_Bkpt", FieldInfo::OldTag(), &Fish::endPt_Bkpt, 1, 1, 10, 1)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+										&GrObj::classFields());
+
+  return FISH_FIELDS;
+}
 
 Fish* Fish::make()
 {
@@ -130,7 +133,7 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  fishCategory(-1),
+  itsFishCategory(-1),
   dorsalFinCoord(itsCoords[0]),
   tailFinCoord(itsCoords[1]),
   lowerFinCoord(itsCoords[2]),
@@ -144,7 +147,7 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
 {
 DOTRACE("Fish::Fish");
 
-  setFieldMap(FISH_FIELDS);
+  setFieldMap(Fish::classFields());
 
   if (splinefile != 0 && coordfile != 0) {
     readSplineFile(splinefile);
@@ -410,7 +413,7 @@ DOTRACE("Fish::readCoordFile");
       getline(ifs, dummy, '\n');
     }
 
-  int temp; ifs >> temp; fishCategory.setNative(temp);
+  ifs >> itsFishCategory;
 
   for (int i = 0; i < 4; ++i)
     {

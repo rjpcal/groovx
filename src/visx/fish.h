@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Wed Aug 15 11:12:57 2001
+// written: Wed Aug 15 14:31:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,12 +72,8 @@ public:
   // properties //
   ////////////////
 
-  /** The category of the fish. The semantics of \a category are
-      defined by the client. */
-  TField<int> fishCategory;
-
-  virtual int category() const { return fishCategory(); }
-  virtual void setCategory(int val) { fishCategory.setNative(val); }
+  virtual int category() const { return itsFishCategory; }
+  virtual void setCategory(int val) { itsFishCategory = val; sendStateChangeMsg(); }
 
   /// Controls the shape of the dorsal fin.
   TPtrField<double> dorsalFinCoord;
@@ -117,6 +113,10 @@ protected:
 private:
   Fish(const Fish&);
   Fish& operator=(const Fish&);
+
+  /** The category of the fish. The semantics of \a category are
+      defined by the client. */
+  int itsFishCategory;
 
   struct EndPt;
   struct FishPart;
