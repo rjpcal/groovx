@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 17:18:18 2002
+// written: Mon Sep 16 17:25:31 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -60,8 +60,8 @@ struct ToglOpts
 {
   void toDefaults()
   {
-    width = 0;
-    height = 0;
+    width = 400;
+    height = 400;
     time = 0;
     privateCmapFlag = 0;
     overlayFlag = 0;
@@ -85,8 +85,6 @@ struct ToglOpts
 namespace
 {
   // Defaults
-  const char*  DEFAULT_WIDTH     = "400";
-  const char*  DEFAULT_HEIGHT    = "400";
   const char*  DEFAULT_TIME      = "1";
 
   Togl::Callback* DefaultCreateProc = NULL;
@@ -100,18 +98,11 @@ namespace
 
   const int TOGL_GLX_OPTION     = 1 << 0;
   const int TOGL_OVERLAY_OPTION = 1 << 1;
-  const int TOGL_GEOM_OPTION    = 1 << 2;
 
   Tk_OptionTable toglOptionTable = 0;
 
   Tk_OptionSpec optionSpecs[] =
   {
-    {TK_OPTION_PIXELS, (char*)"-width", (char*)"width", (char*)"Width",
-     (char*)DEFAULT_WIDTH, -1, Tk_Offset(ToglOpts, width), 0, NULL, TOGL_GEOM_OPTION},
-
-    {TK_OPTION_PIXELS, (char*)"-height", (char*)"height", (char*)"Height",
-     (char*)DEFAULT_HEIGHT, -1, Tk_Offset(ToglOpts, height), 0, NULL, TOGL_GEOM_OPTION},
-
     {TK_OPTION_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
 #ifndef NO_RGBA
      (char*)"true",
@@ -261,7 +252,6 @@ private:
   void eventProc(XEvent* eventPtr);
   void makeWindowExist(); // throws a Util::Error on failure
   void setupOverlay(); // throws a Util::Error on failure
-  void requestShutdown() throw();
 };
 
 
@@ -509,14 +499,9 @@ DOTRACE("Togl::Impl::configure");
       // and GLX context
       if (mask & TOGL_GLX_OPTION)
         makeWindowExist();
-      else
-        {
-          if (mask & TOGL_GEOM_OPTION)
-            Tk_GeometryRequest(itsTkWin, itsOpts->width, itsOpts->height);
 
-          if (mask & TOGL_OVERLAY_OPTION)
-            setupOverlay();
-        }
+      else if (mask & TOGL_OVERLAY_OPTION)
+        setupOverlay();
     }
   catch (Util::Error& err)
     {
@@ -735,7 +720,14 @@ DOTRACE("Togl::Impl::eventProc");
     case DestroyNotify:
       {
         DOTRACE("Togl::Impl::eventProc-DestroyNotify");
-        requestShutdown();
+
+        // Idiot-check that we don't have recursive destroy calls
+        Assert(!itsShutdownRequested);
+
+        itsShutdownRequested = true;
+
+        Tcl_EventuallyFree(static_cast<ClientData>(this),
+                           cEventuallyFreeCallback);
       }
       break;
     default:
@@ -805,21 +797,6 @@ DOTRACE("Togl::Impl::setupOverlay");
   Assert(itsOverlay != 0);
 
   TkUtil::addWindow(itsTkWin, itsOverlay->windowId());
-}
-
-void Togl::Impl::requestShutdown() throw()
-{
-  // If we end up calling ourselves recursively here (which is like to
-  // happen via a chain of DestroyNotify and "command deleted" callbacks),
-  // then just return without doing anything.
-  if (itsShutdownRequested)
-    return;
-
-DOTRACE("Togl::Impl::requestShutdown");
-
-  itsShutdownRequested = true;
-
-  Tcl_EventuallyFree(static_cast<ClientData>(this), cEventuallyFreeCallback);
 }
 
 ///////////////////////////////////////////////////////////////////////
