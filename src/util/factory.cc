@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Mon Jan 20 13:59:45 2003
+// written: Mon Jan 20 14:01:44 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ DOTRACE("AssocArray::clear");
        ii != rep->funcMap.end();
        ++ii)
     {
-      rep->killFunc(ii->value);
+      if (rep->killFunc != 0) rep->killFunc(ii->value);
       ii->value = 0;
     }
 
@@ -89,7 +89,7 @@ void AssocArray::setPtrForName(const char* name, void* ptr)
 DOTRACE("AssocArray::setPtrForName");
   fstring sname(name);
   void*& ptr_slot = rep->funcMap[sname];
-  rep->killFunc(ptr_slot);
+  if (rep->killFunc != 0) rep->killFunc(ptr_slot);
   ptr_slot = ptr;
 }
 
