@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Fri Aug 10 10:55:03 2001
+// written: Fri Aug 10 15:03:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,15 +69,15 @@ DOTRACE("TlistUtils::createPreview");
 
       Ref<GrObj> obj(objids[i]);
 
-      obj->setAlignmentMode(GrObj::CENTER_ON_CENTER);
+      obj->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
       obj->setBBVisibility(true);
-      obj->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+      obj->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
       obj->setMaxDimension(0.8);
 
       Ref<Gtext> label(Gtext::make());
       label->setText(Util::Convert<Util::UID>::toString(objids[i]));
-      label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
-      label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+      label->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+      label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
       label->setHeight(0.1);
 
       Ref<Position> obj_pos(Position::make());

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 14:34:51 2001
+// written: Fri Aug 10 15:01:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,38 +32,13 @@ Util::Tracer GrObj::tracer;
 ///////////////////////////////////////////////////////////////////////
 
 
-/////////////////////////
-// flags and constants //
-/////////////////////////
-
-const GrObj::RenderMode GrObj::DIRECT_RENDER;
-const GrObj::RenderMode GrObj::GLCOMPILE;
-const GrObj::RenderMode GrObj::GL_BITMAP_CACHE;
-const GrObj::RenderMode GrObj::X11_BITMAP_CACHE;
-const GrObj::RenderMode GrObj::SWAP_FORE_BACK;
-const GrObj::RenderMode GrObj::CLEAR_BOUNDING_BOX;
-
-
-const int GrObj::NATIVE_SCALING;
-const int GrObj::MAINTAIN_ASPECT_SCALING;
-const int GrObj::FREE_SCALING;
-
-
-const int GrObj::NATIVE_ALIGNMENT;
-const int GrObj::CENTER_ON_CENTER;
-const int GrObj::NW_ON_CENTER;
-const int GrObj::NE_ON_CENTER;
-const int GrObj::SW_ON_CENTER;
-const int GrObj::SE_ON_CENTER;
-const int GrObj::ARBITRARY_ON_CENTER;
-
 //////////////
 // creators //
 //////////////
 
 // GrObj default constructor
-GrObj::GrObj(GrObj::RenderMode render_mode,
-             GrObj::RenderMode unrender_mode) :
+GrObj::GrObj(Gmodes::RenderMode render_mode,
+             Gmodes::RenderMode unrender_mode) :
   itsImpl(new GrObjImpl(this))
 {
 DOTRACE("GrObj::GrObj");
@@ -124,7 +99,7 @@ DOTRACE("GrObj::getBoundingBox");
   bbox = itsImpl->itsBB.withBorder(grGetBoundingBox(), canvas);
 }
 
-GrObj::ScalingMode GrObj::getScalingMode() const
+Gmodes::ScalingMode GrObj::getScalingMode() const
 {
 DOTRACE("GrObj::getScalingMode");
   return itsImpl->itsScaler.getMode();
@@ -150,7 +125,7 @@ DOTRACE("GrObj::getMaxDimension");
   return itsImpl->itsScaler.scaledMaxDim(grGetBoundingBox());
 }
 
-GrObj::AlignmentMode GrObj::getAlignmentMode() const {
+Gmodes::AlignmentMode GrObj::getAlignmentMode() const {
 DOTRACE("GrObj::getAlignmentMode");
   return itsImpl->itsAligner.getMode();
 }
@@ -175,11 +150,11 @@ DOTRACE("GrObj::category");
   return itsImpl->itsCategory;
 }
 
-GrObj::RenderMode GrObj::getRenderMode() const {
+Gmodes::RenderMode GrObj::getRenderMode() const {
   return itsImpl->itsRenderer.getMode();
 }
 
-GrObj::RenderMode GrObj::getUnRenderMode() const {
+Gmodes::RenderMode GrObj::getUnRenderMode() const {
 DOTRACE("GrObj::getUnRenderMode");
   return itsImpl->itsRenderer.getUnMode();
 }
@@ -198,7 +173,7 @@ void GrObj::setBBVisibility(bool visibility)
   itsImpl->itsBB.setVisible(visibility);
 }
 
-void GrObj::setScalingMode(ScalingMode val)
+void GrObj::setScalingMode(Gmodes::ScalingMode val)
 {
 DOTRACE("GrObj::setScalingMode");
 
@@ -234,7 +209,7 @@ DOTRACE("GrObj::setMaxDimension");
   sendStateChangeMsg();
 }
 
-void GrObj::setAlignmentMode(AlignmentMode val) {
+void GrObj::setAlignmentMode(Gmodes::AlignmentMode val) {
 DOTRACE("GrObj::setAlignmentMode");
 
   itsImpl->itsAligner.setMode(val);
@@ -265,14 +240,14 @@ DOTRACE("GrObj::setCategory");
   itsImpl->itsCategory = val;
 }
 
-void GrObj::setRenderMode(GrObj::RenderMode mode) {
+void GrObj::setRenderMode(Gmodes::RenderMode mode) {
 DOTRACE("GrObj::setRenderMode");
 
   itsImpl->itsRenderer.setMode(mode);
   sendStateChangeMsg();
 }
 
-void GrObj::setUnRenderMode(GrObj::RenderMode mode) {
+void GrObj::setUnRenderMode(Gmodes::RenderMode mode) {
 DOTRACE("GrObj::setUnRenderMode");
 
   itsImpl->itsRenderer.setUnMode(mode);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Aug 10 14:35:08 2001
+// written: Fri Aug 10 15:02:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,24 +96,24 @@ public:
               &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
     defAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
 
-    linkVarCopy("GrObj::DIRECT_RENDER", GrObj::DIRECT_RENDER);
-    linkVarCopy("GrObj::GLCOMPILE", GrObj::GLCOMPILE);
-    linkVarCopy("GrObj::GL_BITMAP_CACHE", GrObj::GL_BITMAP_CACHE);
-    linkVarCopy("GrObj::X11_BITMAP_CACHE", GrObj::X11_BITMAP_CACHE);
-    linkVarCopy("GrObj::SWAP_FORE_BACK", GrObj::SWAP_FORE_BACK);
-    linkVarCopy("GrObj::CLEAR_BOUNDING_BOX", GrObj::CLEAR_BOUNDING_BOX);
+    linkVarCopy("GrObj::DIRECT_RENDER", Gmodes::DIRECT_RENDER);
+    linkVarCopy("GrObj::GLCOMPILE", Gmodes::GLCOMPILE);
+    linkVarCopy("GrObj::GL_BITMAP_CACHE", Gmodes::GL_BITMAP_CACHE);
+    linkVarCopy("GrObj::X11_BITMAP_CACHE", Gmodes::X11_BITMAP_CACHE);
+    linkVarCopy("GrObj::SWAP_FORE_BACK", Gmodes::SWAP_FORE_BACK);
+    linkVarCopy("GrObj::CLEAR_BOUNDING_BOX", Gmodes::CLEAR_BOUNDING_BOX);
 
-    linkVarCopy("GrObj::NATIVE_SCALING", GrObj::NATIVE_SCALING);
-    linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", GrObj::MAINTAIN_ASPECT_SCALING);
-    linkVarCopy("GrObj::FREE_SCALING", GrObj::FREE_SCALING);
+    linkVarCopy("GrObj::NATIVE_SCALING", Gmodes::NATIVE_SCALING);
+    linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", Gmodes::MAINTAIN_ASPECT_SCALING);
+    linkVarCopy("GrObj::FREE_SCALING", Gmodes::FREE_SCALING);
 
-    linkVarCopy("GrObj::NATIVE_ALIGNMENT", GrObj::NATIVE_ALIGNMENT);
-    linkVarCopy("GrObj::CENTER_ON_CENTER", GrObj::CENTER_ON_CENTER);
-    linkVarCopy("GrObj::NW_ON_CENTER", GrObj::NW_ON_CENTER);
-    linkVarCopy("GrObj::NE_ON_CENTER", GrObj::NE_ON_CENTER);
-    linkVarCopy("GrObj::SW_ON_CENTER", GrObj::SW_ON_CENTER);
-    linkVarCopy("GrObj::SE_ON_CENTER", GrObj::SE_ON_CENTER);
-    linkVarCopy("GrObj::ARBITRARY_ON_CENTER", GrObj::ARBITRARY_ON_CENTER);
+    linkVarCopy("GrObj::NATIVE_ALIGNMENT", Gmodes::NATIVE_ALIGNMENT);
+    linkVarCopy("GrObj::CENTER_ON_CENTER", Gmodes::CENTER_ON_CENTER);
+    linkVarCopy("GrObj::NW_ON_CENTER", Gmodes::NW_ON_CENTER);
+    linkVarCopy("GrObj::NE_ON_CENTER", Gmodes::NE_ON_CENTER);
+    linkVarCopy("GrObj::SW_ON_CENTER", Gmodes::SW_ON_CENTER);
+    linkVarCopy("GrObj::SE_ON_CENTER", Gmodes::SE_ON_CENTER);
+    linkVarCopy("GrObj::ARBITRARY_ON_CENTER", Gmodes::ARBITRARY_ON_CENTER);
   }
 };
 

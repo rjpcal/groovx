@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 14:09:58 2001
+// written: Fri Aug 10 15:02:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,11 +176,11 @@ DOTRACE("GrObjImpl::undraw");
 
   switch (itsRenderer.getUnMode())
     {
-    case GrObj::DIRECT_RENDER:
-    case GrObj::SWAP_FORE_BACK:
+    case Gmodes::DIRECT_RENDER:
+    case Gmodes::SWAP_FORE_BACK:
       undrawDirectRender(canvas);
       break;
-    case GrObj::CLEAR_BOUNDING_BOX:
+    case Gmodes::CLEAR_BOUNDING_BOX:
       undrawClearBoundingBox(canvas);
       break;
     default:
