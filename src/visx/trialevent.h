@@ -39,6 +39,7 @@
 #include "util/stopwatch.h"
 #include "util/ref.h"
 
+class OutputFile;
 class Trial;
 
 namespace Util
@@ -400,6 +401,45 @@ public:
 //  ===================================================================
 
 /// TrialEvent subclass to call an arbitrary piece of Tcl code.
+class FileWriteEvent : public TrialEvent
+{
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  FileWriteEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~FileWriteEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
+public:
+  /// Default creator.
+  static FileWriteEvent* make() { return new FileWriteEvent; }
+
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
+
+  /// Get the byte that will be written to the file.
+  int getByte() const;
+
+  /// Set the byte that will be written to the file.
+  void setByte(int b);
+
+  /// Get the file object that will be written to.
+  Util::Ref<OutputFile> getFile() const;
+
+  /// Set the file object that will be written to.
+  void setFile(Util::Ref<OutputFile> file);
+
+private:
+  Util::Ref<OutputFile> itsFile;
+  int itsByte;
+};
+
+//  ###################################################################
+//  ===================================================================
+
+/// TrialEvent subclass to call an arbitrary piece of Tcl code.
 class GenericEvent : public TrialEvent
 {
 protected:
@@ -408,6 +448,8 @@ protected:
 
   /// Virtual destructor.
   virtual ~GenericEvent() throw();
+
+  virtual void invoke(Trial& trial);
 
 public:
   /// Default creator.
@@ -421,9 +463,6 @@ public:
 
   /// Set the Tcl callback script to be triggered.
   void setCallback(const fstring& script);
-
-protected:
-  virtual void invoke(Trial& trial);
 
 private:
   Util::Ref<Tcl::ProcWrapper> itsCallback;

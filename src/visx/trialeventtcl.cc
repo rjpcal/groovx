@@ -5,7 +5,6 @@
 // Copyright (c) 2003-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 22 14:37:17 2003
-// written: Thu May 22 15:26:00 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -30,6 +29,8 @@
 
 #ifndef TRIALEVENTTCL_CC_DEFINED
 #define TRIALEVENTTCL_CC_DEFINED
+
+#include "io/outputfile.h"
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
@@ -95,6 +96,23 @@ DOTRACE("Trialevent_Init");
   initEventType<RenderFrontEvent>(interp);
   initEventType<ClearBufferEvent>(interp);
   initEventType<FinishDrawingEvent>(interp);
+
+  return pkg->initStatus();
+}
+
+extern "C"
+int Filewriteevent_Init(Tcl_Interp* interp)
+{
+DOTRACE("Filewriteevent_Init");
+
+  Tcl::Pkg* pkg = initEventType<FileWriteEvent>(interp);
+
+  pkg->defAttrib("file",
+                 &FileWriteEvent::getFile,
+                 &FileWriteEvent::setFile);
+  pkg->defAttrib("byte",
+                 &FileWriteEvent::getByte,
+                 &FileWriteEvent::setByte);
 
   return pkg->initStatus();
 }

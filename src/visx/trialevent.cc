@@ -36,6 +36,7 @@
 #include "gfx/toglet.h"
 
 #include "io/ioproxy.h"
+#include "io/outputfile.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
@@ -50,6 +51,8 @@
 #include "util/ref.h"
 
 #include "visx/trial.h"
+
+#include <fstream>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -169,11 +172,11 @@ DOTRACE("TrialEvent::invokeTemplate");
   Util::Log::removeObjScope(*this);
 }
 
-///////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------
 //
-// TrialEvent derived class overrides of invoke()
+// AbortTrialEvent
 //
-///////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------
 
 AbortTrialEvent::AbortTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
@@ -184,6 +187,12 @@ void AbortTrialEvent::invoke(Trial& trial)
 DOTRACE("AbortTrialEvent::invoke");
   trial.trAbort();
 }
+
+//---------------------------------------------------------------------
+//
+// DrawEvent
+//
+//---------------------------------------------------------------------
 
 DrawEvent::DrawEvent(unsigned int msec) : TrialEvent(msec) {}
 
@@ -201,6 +210,12 @@ DOTRACE("DrawEvent::invoke");
     }
 }
 
+//---------------------------------------------------------------------
+//
+// RenderEvent
+//
+//---------------------------------------------------------------------
+
 RenderEvent::RenderEvent(unsigned int msec) : TrialEvent(msec) {}
 
 RenderEvent::~RenderEvent() throw() {}
@@ -217,6 +232,12 @@ DOTRACE("RenderEvent::invoke");
     }
 }
 
+//---------------------------------------------------------------------
+//
+// EndTrialEvent
+//
+//---------------------------------------------------------------------
+
 EndTrialEvent::EndTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
 EndTrialEvent::~EndTrialEvent() throw() {}
@@ -226,6 +247,12 @@ void EndTrialEvent::invoke(Trial& trial)
 DOTRACE("EndTrialEvent::invoke");
   trial.trEndTrial();
 }
+
+//---------------------------------------------------------------------
+//
+// NextNodeEvent
+//
+//---------------------------------------------------------------------
 
 NextNodeEvent::NextNodeEvent(unsigned int msec) : TrialEvent(msec) {}
 
@@ -237,6 +264,12 @@ DOTRACE("NextNodeEvent::invoke");
   trial.trNextNode();
 }
 
+//---------------------------------------------------------------------
+//
+// AllowResponsesEvent
+//
+//---------------------------------------------------------------------
+
 AllowResponsesEvent::AllowResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
 
 AllowResponsesEvent::~AllowResponsesEvent() throw() {}
@@ -247,6 +280,12 @@ DOTRACE("AllowResponsesEvent::invoke");
   trial.trAllowResponses();
 }
 
+//---------------------------------------------------------------------
+//
+// DenyResponsesEvent
+//
+//---------------------------------------------------------------------
+
 DenyResponsesEvent::DenyResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
 
 DenyResponsesEvent::~DenyResponsesEvent() throw() {}
@@ -256,6 +295,12 @@ void DenyResponsesEvent::invoke(Trial& trial)
 DOTRACE("DenyResponsesEvent::invoke");
   trial.trDenyResponses();
 }
+
+//---------------------------------------------------------------------
+//
+// UndrawEvent
+//
+//---------------------------------------------------------------------
 
 UndrawEvent::UndrawEvent(unsigned int msec) : TrialEvent(msec) {}
 
@@ -269,6 +314,12 @@ DOTRACE("UndrawEvent::invoke");
     widget->undraw();
 }
 
+//---------------------------------------------------------------------
+//
+// SwapBuffersEvent
+//
+//---------------------------------------------------------------------
+
 SwapBuffersEvent::SwapBuffersEvent(unsigned int msec) : TrialEvent(msec) {}
 
 SwapBuffersEvent::~SwapBuffersEvent() throw() {}
@@ -280,6 +331,12 @@ DOTRACE("SwapBuffersEvent::invoke");
   if (widget.isValid())
     widget->swapBuffers();
 }
+
+//---------------------------------------------------------------------
+//
+// RenderBackEvent
+//
+//---------------------------------------------------------------------
 
 RenderBackEvent::RenderBackEvent(unsigned int msec) : TrialEvent(msec) {}
 
@@ -293,6 +350,12 @@ DOTRACE("RenderBackEvent::invoke");
     widget->getCanvas().drawOnBackBuffer();
 }
 
+//---------------------------------------------------------------------
+//
+// RenderFrontEvent
+//
+//---------------------------------------------------------------------
+
 RenderFrontEvent::RenderFrontEvent(unsigned int msec) : TrialEvent(msec) {}
 
 RenderFrontEvent::~RenderFrontEvent() throw() {}
@@ -304,6 +367,12 @@ DOTRACE("RenderFrontEvent::invoke");
   if (widget.isValid())
     widget->getCanvas().drawOnFrontBuffer();
 }
+
+//---------------------------------------------------------------------
+//
+// ClearBufferEvent
+//
+//---------------------------------------------------------------------
 
 ClearBufferEvent::ClearBufferEvent(unsigned int msec) : TrialEvent(msec) {}
 
@@ -317,6 +386,12 @@ DOTRACE("ClearBufferEvent::invoke");
     widget->clearscreen();
 }
 
+//---------------------------------------------------------------------
+//
+// FinishDrawingEvent
+//
+//---------------------------------------------------------------------
+
 FinishDrawingEvent::FinishDrawingEvent(unsigned int msec) : TrialEvent(msec) {}
 
 FinishDrawingEvent::~FinishDrawingEvent() throw() {}
@@ -329,12 +404,83 @@ DOTRACE("FinishDrawingEvent::invoke");
     widget->getCanvas().finishDrawing();
 }
 
+//---------------------------------------------------------------------
+//
+// FileWriteEvent
+//
+//---------------------------------------------------------------------
+
+FileWriteEvent::FileWriteEvent(unsigned int msec) :
+  TrialEvent(msec),
+  itsFile(OutputFile::make())
+{}
+
+FileWriteEvent::~FileWriteEvent() throw() {}
+
+void FileWriteEvent::invoke(Trial& /*trial*/)
+{
+  if (itsFile->hasStream())
+    {
+      itsFile->stream().put(static_cast<char>(itsByte));
+      itsFile->stream().flush();
+      Util::log( fstring("wrote '", itsByte, "' to '",
+                         itsFile->getFilename(), "'") );
+    }
+}
+
+void FileWriteEvent::readFrom(IO::Reader& reader)
+{
+  itsFile = dynamicCast<OutputFile>(reader.readObject("file"));
+  reader.readValue("byte", itsByte);
+
+  reader.readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+}
+
+void FileWriteEvent::writeTo(IO::Writer& writer) const
+{
+  writer.writeObject("file", itsFile);
+  writer.writeValue("byte", itsByte);
+
+  writer.writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+}
+
+int FileWriteEvent::getByte() const
+{
+  return itsByte;
+}
+
+void FileWriteEvent::setByte(int b)
+{
+  itsByte = b;
+}
+
+Util::Ref<OutputFile> FileWriteEvent::getFile() const
+{
+  return itsFile;
+}
+
+void FileWriteEvent::setFile(Util::Ref<OutputFile> file)
+{
+  itsFile = file;
+}
+
+//---------------------------------------------------------------------
+//
+// GenericEvent
+//
+//---------------------------------------------------------------------
+
 GenericEvent::GenericEvent(unsigned int msec) :
   TrialEvent(msec),
   itsCallback(new Tcl::ProcWrapper(Tcl::Main::interp()))
 {}
 
 GenericEvent::~GenericEvent() throw() {}
+
+void GenericEvent::invoke(Trial& /*trial*/)
+{
+  itsCallback->invoke("");
+}
 
 void GenericEvent::readFrom(IO::Reader& reader)
 {
@@ -360,10 +506,11 @@ void GenericEvent::setCallback(const fstring& script)
   itsCallback->define("", script);
 }
 
-void GenericEvent::invoke(Trial& /*trial*/)
-{
-  itsCallback->invoke("");
-}
+//---------------------------------------------------------------------
+//
+// MultiEvent
+//
+//---------------------------------------------------------------------
 
 MultiEvent::MultiEvent(unsigned int msec) :
   TrialEvent(msec),
