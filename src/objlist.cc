@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Oct 16 15:23:38 2000
+// written: Tue Oct 17 11:36:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,10 @@ DOTRACE("ObjList::theObjList");
 #include "masterptrt.cc"
 template class MasterPtr<GrObj>;
 template class PtrList<GrObj>;
+
+template <>
+PtrList<GrObj>& ItemWithId<GrObj>::theirPtrList =
+  ObjList::theObjList();
 
 template <>
 PtrList<GrObj>& NullableItemWithId<GrObj>::theirPtrList =

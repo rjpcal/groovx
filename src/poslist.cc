@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Mon Oct 16 15:23:40 2000
+// written: Tue Oct 17 11:37:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,10 @@ DOTRACE("PosList::thePosList");
 #include "masterptrt.cc"
 template class MasterPtr<Position>;
 template class PtrList<Position>;
+
+template <>
+PtrList<Position>& ItemWithId<Position>::theirPtrList =
+  PosList::thePosList();
 
 template <>
 PtrList<Position>& NullableItemWithId<Position>::theirPtrList =

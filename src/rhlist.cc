@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Mon Oct 16 15:23:42 2000
+// written: Tue Oct 17 11:37:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,10 @@
 #include "masterptrt.cc"
 template class MasterPtr<ResponseHandler>;
 template class PtrList<ResponseHandler>;
+
+template <>
+PtrList<ResponseHandler>& ItemWithId<ResponseHandler>::theirPtrList =
+  RhList::theRhList();
 
 template <>
 PtrList<ResponseHandler>& NullableItemWithId<ResponseHandler>::theirPtrList =

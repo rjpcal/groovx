@@ -3,7 +3,7 @@
 // soundlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:41 1999
-// written: Mon Oct 16 15:23:45 2000
+// written: Tue Oct 17 11:37:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,10 @@ DOTRACE("SoundList::theSoundList");
 #include "masterptrt.cc"
 template class MasterPtr<Sound>;
 template class PtrList<Sound>;
+
+template <>
+PtrList<Sound>& ItemWithId<Sound>::theirPtrList =
+  SoundList::theSoundList();
 
 template <>
 PtrList<Sound>& NullableItemWithId<Sound>::theirPtrList =
