@@ -347,6 +347,22 @@ fi
 
 AC_SUBST(enable_matlab)
 
+# AC_CHECK_LIB_CXX(libname, includes, function-call,
+#                  action-on-success, action-on-fail)
+AC_DEFUN([AC_CHECK_LIB_CXX],
+	 [AC_MSG_CHECKING([for lib$1])
+	 libs_save=$LIBS
+	 LIBS="$LIBS -l$1"
+	 AC_TRY_LINK([$2], [$3], [havelib_$1=yes], [havelib_$1=no])
+	 LIBS=$libs_save
+	 if test $havelib_$1=yes; then
+	    AC_MSG_RESULT(yes)
+	    $4
+	 else
+	    AC_MSG_RESULT(no)
+	    $5
+	 fi])
+
 ###
 
 enable_readline=yes
@@ -356,33 +372,14 @@ AC_CHECK_HEADERS([readline/readline.h readline/history.h],
 
 if test $enable_readline = yes; then
 
-   AC_MSG_CHECKING([for readline libraries])
+   AC_CHECK_LIB_CXX(termcap, [#include <termcap.h>], [tgetent(0,0)],
+		    [LIBS="-ltermcap $LIBS"])
 
-   orig_libs=$LIBS
-   readline_libs=""
-
-   LIBS="$LIBS -lreadline"
-   readline_libs="-lreadline"
-   AC_TRY_LINK([#include <stdio.h>
-                #include <readline/readline.h>],
-	       [rl_callback_handler_install(0,0)],
-               enable_readline=yes, enable_readline=no)
-   if test $enable_readline = no; then
-      LIBS="$LIBS -ltermcap"
-      readline_libs="$readline_libs -ltermcap"
-      AC_TRY_LINK([#include <stdio.h>
-		   #include <readline/readline.h>],
-		  [rl_callback_handler_install(0,0)],
-                  enable_readline=yes, enable_readline=no)
-   fi
-
-   if test $enable_readline = yes; then
-      AC_DEFINE(WITH_READLINE, 1)
-      AC_MSG_RESULT([yes ($readline_libs)])
-   else
-      LIBS=$orig_libs
-      AC_MSG_RESULT(no)
-   fi
+   AC_CHECK_LIB_CXX(readline,
+		    [#include <stdio.h>
+		     #include <readline/readline.h>],
+		    [rl_callback_handler_install(0,0)],
+		    [LIBS="-lreadline $LIBS"; AC_DEFINE(WITH_READLINE,1)])
 fi
 
 ###
