@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Thu May 11 18:37:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,6 +163,10 @@ public:
   {
 	 Tcl::addTracing(this, EventResponseHdlr::tracer);
 
+	 declareCAction("abortInvalidResponses",
+						 &EventResponseHdlr::abortInvalidResponses);
+	 declareCAction("ignoreInvalidResponses",
+						 &EventResponseHdlr::ignoreInvalidResponses);
 	 declareCAttrib("useFeedback",
 						 &EventResponseHdlr::getUseFeedback,
 						 &EventResponseHdlr::setUseFeedback);
