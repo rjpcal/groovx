@@ -1,0 +1,590 @@
+* -*- outline -*- $Id$
+
+* "Make it run, make it run correctly, make it run fast"
+
+* TODO
+
+** (2-Jul-2002) new project name?
+
+OO framework
+
+  hood
+  loot
+  ooze
+  poof
+  igloo
+  roost
+  scoop
+  troop
+  cooler
+  noodle
+
+Psychophysics experiments
+
+  fovx - fovex - fovee
+
+  grove - grovx - groovx
+
+  gruve - gruuv
+
+  focal
+
+  focus
+
+  acuity
+
+** (11-Oct-1999) "GWT::Widget" wrapper for Tk widgets
+Could write a Widget class that encapsulates the details of Tk
+widgets. Then we could extend with subclasses... for example one subclass
+could be designed to edit Property's of another class.
+
+Need to rework the Widget inheritance hierarchy. Right now we have a
+bloated base class in GWT::Widget. That class should become much more
+lightweight and not have any Tk- or GL-specific stuff in it.
+
+Should be GWT::Widget <-- Tcl::TkWidget <-- Toglet (or GLWidget)
+
+** (23-Feb-2002) Remaining OS X issues:
+  set TMPDIR environment variable to a fast drive for gcc temp files
+  explicit template instantiation does not work (e.g. util/multivalue.cc)
+
+** (25-Jan-2002) Logging goodies
+   log levels, and multiple log targets with separate log levels for each?
+
+** (17-Jan-2002) get automated dependencies working
+
+eliminate some of the cruft from the main executable and make things more
+modular+loadable
+
+OK, in order to allow easy building of test driver executables, we need to
+be able to figure out which libraries + object files are required by the
+test script, and specify this information in a makefile-compatible format.
+
+  (1-done) Figure out on which .o files a given .cc file depends. OK,
+	   ldeps::get_batch can do this now.
+
+  (2-done) Figure out where those .o files are to be found (as individual
+           .o files, in a static archive, in a dynamic library). OK, we
+           handle this with a regexp mapping in linkdeps.tcl.
+
+  (3-done) Figure out what to do with a new .o file (keep it separate, or
+	   put it in a dynamic library). OK, this is handled by
+	   build_lib_rules.tcl.
+
+  (4) specify these results to a makefile
+
+  -- Aha! General principle: need a generic mapping from #include directives
+     to link options
+
+     -- local #include's just involve adding a .o file
+     -- std library #include's require nothing, since it is automatically linked
+     -- other #include's require some kind of user defined map, such as
+	<engine.h> requires libmatlabengine
+
+  -- Start simple: let's get a script to build the LIBDEEP... targets and
+     dependencies for us. The only thing that the rest of the Makefile will
+     depend on is the $(PROJECT_LIBS) variable.
+
+** (13-Sep-2001) Nested containment of FieldContainer's
+in addition to inheritance.
+
+** (22-Aug-2001) Allow args in the Signal/Slot callbacks
+e.g. for event handlers
+
+** (4-Sep-2001) A Connection class to manage Signal/Slot connections
+
+** (24-Aug-2001) How to get animation working?
+
+I have a Tcl::Timer for generic timer callbacks now, but the problem is:
+how to inform the animated thing that it is time to stop drawing itself,
+for example when the Widget switches to displaying something else? I guess
+the appropriate model is for GxNode's the sigNodeChanged signal to indicate
+they need to be redrawn (e.g. for animation), and for the Widget to connect
+to that signal to listen for changes. Later on, we can try to optimize the
+redraws so that in an animation only the changed things are redrawn. OK,
+I've got this working now to animate the bounding boxes... but the next
+question: how to avoid excessive updates if multiple objects are on the
+screen at once? We need only one timer per scene, rather than one timer per
+object. [3-Sep-2001] Aha! GxNode's should just emit change events as
+necessary, everyone at their own rate... But, the Widget should also have a
+timer callback going, so that it redisplays itself only at some maximum
+frame rate. When it gets signals saying that GxNode's have changed, it just
+remembers this fact until its next redisplay comes around, rather than
+immediately redisplaying the scene. Widget could have a maxRefreshRate
+attrib, instead of allowRefresh; then "maxRefreshRate 0" would be
+equivalent to "allowRefresh false".
+
+** (3-Sep-2001) class-based inheritance of Tcl commands
+we don't need multiple TclCmd objects, instead we just need to register the
+same TclCmd object under multiple names.
+
+** (16-Aug-2001) How to implement bounding boxes at the level of GxNode?
+How do we allow a Position, for example, to return/transform a
+bounding box? ... OK, the GxNode function takes a Rect reference, so
+that subclasses can either transform or extend that Rect.
+
+** (6-Jun-2001) refactoring Trial/TimingHdlr/ResponseHandler
+
+I'm getting the feeling these are
+starting to become inherently buggy.
+
+For example, need to make sure I haven't broken anything by changing
+trHaltExpt() to not call trAbortTrial() and trEndTrial().
+
+Need to have a useful way of debugging TimingHdlr/Trial sequences.
+
+
+** (12-Jun-2001) Need to work on ObjTogl a bit
+Should be able to split the Tcl pkg's into two: one that exposes only
+GWT::Widget functionality, and the other which exposes Toglet
+functionality.
+
+
+** (2-Jun-2001) writeRoot() should take a MaybeIdItem
+
+** (27-May-2001) Change Jitter to be a FieldContainer
+
+** (27-May-2001) Refactor away the list_test.tcl module
+and the dependent blocklist_test.tcl, objlist_test.tcl, etc.
+
+** (24-May-2001) Maybe Togl should be a canvas
+
+or we should have a ToglCanvas, so that swapBuffers() can go in Canvas,
+where it seems to belong, rather than in Widget, where it sits now
+(basically to allow Toglet to implement swapBuffers by calling Togl
+something).
+
+** (30-Nov-2000) a event type to install a GxNode?
+Now that screen-update is better controlled, we could introduce a new
+TrialEvent type that puts a GxNode into the Widget... this would give a way
+to implement visual feedback in an experiment.
+
+** (note 30-Oct-2000) scripts as callbacks?
+The fact that we now have good unique correspondence between objects and
+ids means that there are flexible possibilities for allowing scripts as
+callbacks. For example, a callback class could have an abstract function
+that takes an object, and an implementation could pass that object to a
+script as an id.
+
+** (25-Jun-1999) how dynamic loading should work for grsh
+all of the lists, plus all of the base classes that are held by the lists,
+need to be statically (or at least permanently dynamically-) linked into
+the grsh executable. These would be the so-called 'core' modules. Any of
+the separate Tcl packages should contain the subclass (such as Face) and
+the TclPkg to work with that subclass (such as FaceTcl)... these units can
+then be loaded with the Tcl "load" command, and would be called
+'extensions'. Dependencies between any of the extensions should be
+avoided. This hierarchy urges strongly for all the base classes handled on
+the lists to be abstract. The problem right now is the issue with bus
+errors due to OpenGL calls from dynamically-linked modules--most of the
+'extensions' will use OpenGL, so this probably makes them unable to be
+dynamically loaded.
+
+OK, later I've figured out that a problem with dynamic loading occurred on
+program shutdown. Apparently, shlib's loaded with Tcl's 'load' are unloaded
+before C++ static shutdown occurs... this means that virtual destructors
+for IoObject's maybe missing when the IoPtrList tries to destroy them in
+its own destructor. Now, I've just figured out that a solution is to Tcl
+exit handlers; in fact I already had the framework in place via the TclPkg
+destructor, which is called from an exit handler that is registered for
+each TclPkg. So for now I just put calls to clear the ExptDriver and the
+IoPtrList inside the ExptPkg destructor; this ensures that we don't try to
+call any IoObject destructors after the libraries are unloaded.
+
+The final step is to come up with an organized build approach using
+these package files... we need to:
+1) manage the dependencies for the shlib's,
+2) make sure the pkgIndex.tcl files are updated,
+3) maintain separate debug/production trees for the shlib's
+
+** (21-Sep-2000) Writer subclass for matlab export
+
+A new subclass of Writer could handle exporting data in a format suitable
+for Matlab use, perhaps. Aha! A generic FormatWriter could take arguments
+describing which fields are to go into the file. In fact, we could just
+give it a format string like this:
+
+fwriter.setFormat("category eyeDistance eyeHeight noseLength mouthHeight"); 
+
+and it would filter out any other data. The implementation would actually
+be similar to AsciiStreamReader, using a std::map to store attributes as
+they come in from writeTo(), then generating output from the attributes in
+the map using the format string. Easier would be to store a map from field
+names to integers, where the integers are indices into a vector of strings
+that will be printed.
+
+  MapType::iterator ii = attrib_map.find(field_name);
+  if (ii != attrib_map.end())
+    {
+      int i = (*ii).second;
+      char buf[4096];
+      ostrstream ost(buf, 4096);
+      ost << val << '\0';
+      fields[i] = buf;
+    }
+
+then later:
+
+  for (int i = 0; i < fields.size(); ++i)
+    itsBuf << fields[i] << sep;
+
+Not too much more effort would be needed to allow simple parsing of the
+format string, so that we could include both literal text, as well as
+fields to be substituted, like this:
+
+fwriter.setFormat("c: $category ed: $eyeDistance eh: $eyeHeight");
+
+... on second thought, this might actually be quite a bit of work. The
+FormatWriter would still be quite useful even if it only allowed field
+substitutions. We start out using the '$' syntax, though, to allow for
+future expansion.
+
+** (1-Nov-2000) Event handling by a chain of command
+passing either up or down the experiment hierarchy (i.e. Expt --> Block -->
+Trial --> EventResponseHdlr or the reverse direction).
+
+** (28-Nov-2000) GxShape as base class for GxLine, GxRect, GxDisk, etc.
+
+** (25-Oct-2000) ReadUtils and WriteUtils use iterators?
+could/should really be implemented in terms of iterators that iterate over
+the elements in the stream. Then transferring elements to/from a local
+container is just a simple std::copy type of operation.
+
+** (28-Sep-2000) irix core dump
+Why does irix occasionally core-dump during Face testing in
+GrObj::invalidateCaches()?
+
+
+** (23-Sep-2000) use XBlackPixel/XWhitePixel in Togl setup
+
+** (7-Jul-2000) Adding an 'itsCorrectVal' member to Response
+Should this value be serialized? We don't have a good way to do versioning
+of Value types that are written/read with printTo() and
+scanFrom(). [...Later] Probably if any versioning becomes necessary, it's a
+good sign that the thing should become an IoObject, rather than a plain
+Value.
+
+** (22-May-2000) destroy the pause keybinding when an experiment is done
+The problem is, ExptDriver shouldn't know about the names of the Tcl
+commands that run it... therefore we don't want ExptDriver to
+create/destroy bindings to "Expt::pause".
+
+** (16-Mar-2000) what happens on Block::abortTrial()?
+Block should have a parameter (or virtual function) to control what happens
+on abortTrial()... i.e., should we reschedule the trial, ignore the trial,
+record an invalid response?
+
+** (20-Jan-2000) a Trial::prepare() function?
+We should set up a way for Trial's to have a prepare() function which would
+do things like update its GrObj's (and flush pending requests like loading
+bitmap data). Then Block's could have a prepareNextTrial() function which
+could be called during the preceding trial. [Later] Hmmm, if I ever were
+going to implement this, it would be better done generically with in
+implementation of idle callbacks.
+
+** (15-May-2000) GOAL #5 Improve the overall timing accuracy of the software.
+
+*** (29-Nov-1999) adjust TrialEvent internal delays
+TrialEvent's could internally adjust their requested delays so that the
+actual delays converge to the requested delays. This would require some
+care to ensure that we don't send the entire system into an unstable
+oscillation. We'd maintain two values: itsIdealDelay, and
+itsRequestedDelay. The ideal delay remains constant, but we modify the
+requested delay based on experience to try to get the actual delay to meet
+the ideal delay. There are several strategies we could use to make these
+adjustments-- one would be to try to minimize the total timing error of the
+TrialEvent, another would be to minimize the average absolute value of the
+timing error. [Later] We could also control the timing more
+globally... where a block or experiment knows how long it is supposed to
+last, then timer events report to the block how long they requested, and
+how long they actually lasted. Then the block could adjust the requested
+times for future trial events in order to compensate.
+
+*** (14-May-2000) Implemented error-checking and adjustment in TrialEvent
+This gives very good accuracy (+/-1msec average per trial)
+over an experiment. Still need to control this error-checking from
+script-level, and to provide a hint to the TrialEvent at construction time.
+
+*** (15-May-2000) integrated timing info
+Need to include info about timing throughout the experiment object
+hierarchy, from Experiment, Block, and Trial, to TimingHdlr. Each object
+should know its allotted time, its expected error, and should compute its
+actual error and use this to give feedback to someone in order to improve
+future timing. Experiment and Block don't have too much control, but they
+can keep an overall view of how the timing is going, and perhaps issue a
+request for future trials to compensate their timing by a particular scale
+factor in order to adjust for past errors.
+
+*** (15-May-2000) Trial's should know their desired length
+and give feedback to their TimingHdlr's so that the TimingHdlr's can do a
+multiplicative scaling to compensate.
+
+** (16-May-2000) GOAL #7 Make bitmap caching a more fluent part of the software.
+
+Need to have a way to explicitly represent GrObj's with cached-bitmap-file
+representations... this way we can have access both to a GrObj's semantic
+properties (i.e. face width, nose length, etc.)  while still accessing it
+in a bitmap form. This would involve a command to cache a GrObj to file,
+given a filename, and then the object should automatically load that file
+when it is deserialized at a later time.
+
+
+** (13-Sep-1999) Refactoring Toglet into Widget, Camera, Canvas
+
+*** (27-Nov-1999) a Window/Widget class to contain a Camera and a Canvas
+Or does the Camera need to contain the Canvas? It seems like the Window
+will pass a redraw request on to its Camera, which would need to have a
+Canvas reference to pass to the graphic objects in order for them to redraw
+themselves.
+
+*** (17-Nov-1999) The Camera abstraction
+includes some of the Toglet functionality such as perspective or
+orthographic projection, viewing distance, viewport, and which will be used
+by a Window/Widget to handle redraws and reconfigures. A subclass of Camera
+can carry the Tlist functionality such as setVisible(), setCurTrial(),
+etc. Actually, it seems there are two different parts to camera: one is the
+object/scene that it is viewing, and the other defines the sort of
+projection that is used.
+
+could be passed to GrObj's in their grRender() function. How does it relate
+to a Window/Widget? Is it owned, referred to, etc.? Has a width+height.
+
+*** (13-Sep-1999) Should change Toglet to a "Camera"-style interface
+a la Open Inventor. Then different types of camera's, such as orthographic
+or perspective projection, could be related by inheritance from an abstract
+base class Camera. Parameters include viewing volume, autoUpdate
+(determines if scene is automatically redrawn upon Expose or Resize
+events)...
+
+
+** (29-Nov-1999) How to automate the data analysis?
+
+Need to bridge the gap between output of Grsh program running experiment,
+and necessary input to Matlab to process data. I think this is a possible
+route:
+
+      1) expt completes and saves files
+
+      2) a Grsh script runs and processes the data further, generating
+         the data files that matlab needs, and also **generating a
+         Matlab script file (.m file)** that we can run to process the
+         data.
+         
+      3) Run the .m file to finish the data processing.
+
+What input does this process need? We need to know the location of the
+pairs/triads experiment file, and of the classification experiment
+files.
+
+Breakdown of classification process:
+
+1) make incidence matrices (see make_inc_mat_mfaces_s50.m as example)
+   from resp files.
+2) run models (see run_mfaces_models.m as example)
+
+Important data:
+
+- base directory which contains subjects' individual directories
+- name of subject (encoded as directory for subject)
+- date of pairs experiment (to create pairs directory based on date)
+- name for type of objects
+- names of response files in probe experiments
+
+Use case:
+1) run experiments + collect multiple data files from several subjects
+2) run mds analysis on results of similarity tasks
+3) compile subjects' overall categorization results across all clones
+4) fit various models to the categorization results
+
+** (17-Nov-1999) automate the experiment-running process
+
+[later] Aha! I see that this is just yet another level of abstraction on
+top of block/experiment etc. In fact, there might be two abstractions: one
+which defines a series of experiments to be run together as a session
+(ExperimentSession?), in which the next experiment might depend on the
+results of the previous one, and a higher level abstraction which defines a
+series of sessions (ExperimentSeries) that constitute an entire experiment,
+lasting perhaps several weeks. An ExperimentSession probably requires only
+one process, whereas an ExperimentSeries requires multiple processes to be
+run, over the course of many days/weeks (and therefore requires the help of
+some persistent data in the form of files in order to maintain itself over
+the entire duration).
+
+1) 'log in' a subject ==> change to the correct directory
+2) run an experiment
+3) move the experiment data files to appropriate names and chmod appropriately
+   --> this requires ExptDriver() to provide the names of its most
+   recently saved files
+4) possibly repeat steps 2+3
+   --> We can store a file that contains a list of experiment commands
+   that should be issued. A separate file, called 'next_expt' can be
+   updated to always contain the command needed to run the next
+   experiment. When one experiment is completed, the driver rewrites
+   the 'next_expt' file appropriately.
+5) exit
+
+*** (22-Nov-1999) Need to get rjp_subject working.
+1) Need to maintain a do_expt script in each subject's directory. 2) Need
+to make sure that autosave file is writable by rjp_subject, and if not, use
+a different filename. (Maybe use temp filename generating facility of OS?).
+
+** (14-Dec-1999) Need Canvas& argument to GrObj::grGetBoundingBox
+
+** (14-Dec-1999) Need Canvas& argument to Bitmap::grabScreenRect/grabWorldRect
+
+** (17-Nov-1999) matlab automation for data analysis?
+by opening a pipe to a Matlab process from within Tcl?
+
+** (5-Oct-1999) TimingHdlr response behavior?
+Maybe TimingHdlr should have a toggle switch to indicate
+what the behavior should be when a response is seen. (Whether to
+cancel StartEvents, etc.).
+
+** (29-Sep-1999) Avoid unnecessary sendChangeMsg()'s
+It would be nice, in the Value/Property scheme, to be able to avoid
+triggering sendChangeMsg() when the value doesn't actually change (e.g if
+the new value was the same as the current value, or was out of bounds).
+
+** (21-Jun-1999) arrange GL coordinates to correspond to visual angle
+
+** (15-Jun-1999) Bitmaps need to have attribs for glPixelZoom()
+and other operations that can affect pixel rendering... should these be
+placed in a separate Position subclass?
+
+** (May-1999) extract experiment+trial statistics 
+
+** (May-1999) Implement GLenums with something other than STL maps
+Probably best to use Tcl_Index API's, to search for matching string in
+array, and retrieve its index.
+
+* DONE
+
+** (done 25-Jan-2002) Logging
+OK, have a simple scope nesting and timing architecture in place for
+logging.
+
+** (done 17-Jan-2002) More efficient bitmaps
+Improve (startup time, memory use) for eyetracking stimulus scripts?
+Things are speedier with queuePbmFile(), so that bitmaps are only loaded
+when needed, and with purgeable bitmaps, so that the memory is freed
+immediately after the bitmap is drawn. This is a reasonable tradeoff if
+each image is going to be displayed relatively few times compared to the
+overall number of images used.
+
+** (done 28-Jan-2002) decode responses by a Tcl 'proc'
+Implemented a first attempt at allowing responses to be decoded by a
+"proc"-like Tcl code block, rather than by a regular expression
+mapping. Eventually the old regex approach can probably be encapsulated
+within the new more flexible approach.
+
+** (done 28-Jan-2002) multiple responses within a single Trial run
+OK, added a "maxResponses" attribute to EventResponseHdlr so that we can
+specify an arbitrary number of responses (instead of the default, 1) to be
+allowed in each activation cycle, before the response handler goes quiet.
+
+** (28-Jan-2002, done 30-Jan-2002) generic Tcl code wrapper
+Would be nice to have a reusable class that can wrap a Tcl procedure that
+can be serialized and deserialized. We are already doing this in practice
+in ExptDriver (with the doUponCompletion script) and in EventResponseHdlr
+(with the responseProc). Should be able to refactor out the common
+code. OK, I extracted TclProcWrapper from EventResponseHdlr's former
+ResponseProc class, and made it an IO::IoObject (all this after much
+painful debugging that was eventually solved by Electric Fence). Next step
+is to extract it physically, and then re-use it in ExptDrvier. This should
+eventually be a very useful and powerful class -- it's a nice interface to
+provide extensible hooks + callbacks. [30-Jan] OK, extracted out
+Tcl::ProcWrapper and put it into place in ExptDriver. This is looking like
+a nice powerful tool now.
+
+** (24-Aug-2001, done 31-Jan-2002) infix member function calls in Tcl
+So we can do "$f eyeHeight 0.4" rather than "Face::eyeHeight $f 0.4". I
+don't think I'll have a problem getting the mechanics of the function calls
+set up... but the problem is, how to get Tcl commands registered for all of
+the objects? Or just resort to using "unknown"? Or... just set up
+inheritance, so that for example, the "Face" namespace in Tcl inherits all
+the commands in "GrObj", "GxNode", and "IO", for example. [3-Sep-2001]
+Hmmm, no, the real problem is not how to get Tcl commands registered (this
+could be done in the Convert::toTcl functions), but rather how to allow
+easy vectorization of commands?  Maybe all my OO stuff could go under a Tcl
+cmd "with", so we can do "with $f eyeHeight 0.4", which would work whether
+$f was single- or multi-valued. [31-Jan-2001] Could get working notation
+using namespace eval in a special oo command, perhaps named "->". Need to
+provide a way for Tcl::Pkg's to inherit() the functions in other
+packages. The idea would be that a Pkg would first inherit() all the
+necessary functions, then it would define its own functions. That way in
+case of a name conflict, the new function would overwrite ("hide") the
+inherited function. We could still access the overwritten function with an
+explicit qualification. Done -- added a "->" command that provides infix
+syntax. Inheritance is managed through namespace importing/exporting via
+Tcl::Pkg::inherit().
+
+** (31-Jan-2002, done 1-Feb-2002) Add fstring operator!=().
+
+** (30-Jan-2002, done 2-Feb-2002) Segfault on "? new".
+Fixed: Re-fixed the local function lookupCmd(), so that it won't crash if
+it is passed a command name that refers to a non-Tcl::Command command (such
+as a tcl proc). Apparently my idiom of dynamic_cast<>(static_cast<>()) was
+not sufficient to test whether we actually had a valid Tcl::Command*;
+instead I now just manage a std::set<void*> holding the addresses of valid
+Tcl::Command's.
+
+** (23-Feb-2002, done 23-Feb-2002) shared libraries on OS X?
+
+  with SHLIB_CMD := cc -dynamiclib -flat_namespace -undefined suppress -o
+    --> libraries build ok
+    --> executable links ok
+    --> executable fails at startup due to undefined c++ iostream symbols
+    --> adding -lcc_dynamic to each of the link commands doesn't help
+
+  Aha! need to use "c++" instead of "cc", with -lcc_dynamic, so we have:
+    c++ -dynamiclib -flat_namespace -undefined suppress -o {name} -lcc_dynamic
+
+** (23-Sep-2000, nix 14-June-2002) log-file?
+Should have a log-file that can catch non-essential messages (such as the
+timing info that is emitted by TrialEvent destructors). [nix
+this... logging is now improved somewhat with Util::log]
+
+** (14-Jun-2002, done 17-Jun-2002) Fix dynamic loading
+so that we don't have to link in matlab stuff to the main executable, but
+just to the mtx package.
+
+Get this bogus crap:
+
+[hume 16:52 52]% testsh
+(1) testsh> package require Mtx
+couldn't load file "/cit/rjpeters/local/i686/lib/visx/mtx.so":
+ /usr/local/matlab/extern/lib/glnx86/libut.so: undefined symbol: _start
+
+Aha. Have to use the linker option --export-dynamic, so that libut.so can
+find the _start symbol which is of course defined next to wherever main()
+is defined, which would be in the executable itself.
+
+** (note 2-Jul-2002) OS X porting note: -install_name with ld
+Ran into problems with tk8.4a4; specifically, got "could not find dynamic
+library libtk8.4a4.dylib" at runtime when trying to run testsh. The problem
+was in the Tk makefile, which failed to set the -install_name option when
+ld'ing the dylib.
+
+** (note 13-Sep-2002) Hacks to work around broken MIPSpro compiler:
+
+*** problems with template arg-dependent lookup:
+
+template <class F> struct Traits { enum { num = 1 }; };
+
+template <int N> struct Functor {};
+
+template <class F> struct Return
+{ typedef Functor<Traits<F>::num> Type; };
+
+// template <class F> Functor<Traits<F>::num> buildTclFunctor(F f);
+template <class F> typename Return<F>::Type buildTclFunctor(F f);
+
+void bar(int) {}
+
+void test() { buildTclFunctor(bar); }
+
+*** return void not supported in templates
+
+*** overeager lookup of template arg-dependent names
+
+*** no <cheader> include files so e.g. size_t not in std:: namespace

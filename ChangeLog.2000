@@ -1,0 +1,1284 @@
+###################### -*- text -*- ######################################
+#
+# ChangeLog 2000
+# 
+# Rob Peters <rjpeters@klab.caltech.edu>
+#
+# $Id$
+#
+#############################################3############################
+
+(19-Jul-1999, nix) Eureka! The right way to build various experiments
+is now suddenly clear (!) There must be an abstract base class
+ExptBuilder that will have pretty much one function, build() (but how
+does it get the params that it needs?). This abstract class can have a
+Tcl interface associated with it. Subclasses will know how to build
+specific types of experiments, such as triads expt's, pairs exp'ts,
+facefinder expt's, etc. In particular, one subclass could do all its
+work in Tcl by just taking a Tcl script as its constructor argument,
+and Tcl_Eval'ing that script in its build() function. This class would
+still allow great flexibility in expt-building since Tcl build scripts
+could be changed without recompiling; however the framework allows
+more stablebuild scripts to be migrated to their own subclasses on the
+C++-side. But wait... what advantage is there to having all this stuff
+in virtual functions? i.e., where is the client that will benefit by
+not having to know the concrete class of some ExptBuilder?
+
+(18-Oct-1999, done) How to handle base classes in the Reader/Writer
+interface? We can can just call Base::readFrom() or Base::writeTo(),
+which will generally work, unless a base class and subclass happen to
+share private data members with the same name. Perhaps we could avoid
+this by giving a fully scoped attribute name (i.e. 'Face::noseLength')
+when storing or retrieving attributes. The disadvantage of this is
+that it is only a convention, and as such it could be ignored on
+purpose or by oversight. [Later] Now I have a readBaseClass() and
+writeBaseClass() that are able to handle a base class's attributes
+inline, inside a nested {} pair.
+
+(19-Oct-1999, done) Just realized how testing should work for
+base-class functionality... the base class test package should provide
+a way to run all of the base class tests on a particular subclass. In
+Tcl, this should just be a matter of providing the subclass name to a
+proc, for example 'IO::testSubClass FixPt'. This can eliminate a lot
+of duplicated script code, and allows all subclasses to benefit when
+new base class tests are written. OK, I just realized also that it
+would make sense to put the test procedures for a class inside that
+class's Tcl namespace... this can be wholly at the script-level
+without having to add any C code.
+
+(5-Nov-1999, done) AsciiStreamReader should gracefully report an invalid
+attribute name, perhaps by throwing a NoSuchAttributeError.
+
+(30-Nov-1999, done 7-Jan-2000) What to do about 'control reaching end
+of non-void function' in ExptDriver::Impl::block(), responseHdlr(),
+and timingHdlr()? Probably the best is to eliminate the error checking
+in block(), responseHdlr(), and timingHdlr(), and require that the
+id's be checked with assertIds() before these functions are called. We
+can add an Assert to this effect inside block(), etc. Done.
+
+(6-Dec-1999, done) Replace GrObj::getScreenFromWorld etc. with
+Canvas::... in BitmapRep (how to get the Canvas& arguments where they
+need to be?)
+
+(11-Jan-2000, done 11-Jan-2000) Need to have quick Tcl access to the
+current trial id. Probably an Expt::currentTrial command for Tcl.
+
+(14-Jan-2000, done 14-Jan-2000) There is some weird problem with
+TlistWidget, perhaps?  Ah yes... first, we didn't initialize
+itsCurTrial and itsVisibility in the constructor, and second of all,
+we didn't check for itsVisibility in safeDrawTrial() before attempting
+to draw.
+
+(14-Jan-2000, done 14-Jan-2000) Need to flesh out the Pipe class that
+has been introduced in Bitmap::loadPbmGzCmd(). OK, this is done so now
+the Pipe class itself provides access to an fstream& that can be used
+to read/write from the Pipe as appropriate.
+
+(6-Dec-1999, done 16-Jan-2000) Do we also want Canvas& arguments in
+the bounding box call chain? I added a Canvas& argument to
+GrObj::getBoundingBox(), but not to the protected
+GrObj::grGetBoundingBox()... the only subclass that needed a Canvas in
+order to implement this function was Bitmap(Rep), so for this
+implementation I just retrieve the Canvas from the
+Application->Experiment->Canvas call chain. Thus GLCanvas::theCanvas()
+is eliminated.
+
+(20-Sep-1999, done 19-Jan-2000) Fixed a nasty memory corruption bug
+that was due to neglecting to set GL_PACK_ALIGNMENT appropriately
+before reading pixel data out of the screenbuffer into main
+memory. Since the value for GL_PACK_ALIGNMENT defaults to 4, it is not
+sufficient to allocate (width*height) bytes if the row size is not
+divisible by 4. How to avoid these problems in the future? Include a
+byteAlignment member in Bitmap, add a utility function that
+reallocates appropriate space for a given width and height. [Later]
+OK, this is handled centrally by Gfx::BmapData.
+
+(11-Jan-2000, done 20-Jan-2000) Need a way to defer loading of pbm
+files from when Bitmap's are deserialized until when they are first
+used. This would require a way to for the files to be loaded on
+demand. It would have the added benefit that in an fMRI script, we
+would only have to load the bitmaps that are actually used in the
+experiment. Done using BmapData to handle the actuall caching process.
+
+(8-Feb-2000, done 8-Feb-2000) Should think about doing dynamic tracing
+generically, perhaps with a mixin base class. This is basically done
+by using Util::Tracer.
+
+(27-Jun-1999, done 13-Mar-2000) Maybe Response's want to be first
+class objects rather than lowly int's? This would allow the class to
+have a static member InvalidResponse... would allow subclassing of
+responses... would allow different ResponseHandler's to work with
+different Response subclasses... Interestingly, the creation of a
+Response requires input from both ResponseHandler (for the semantic
+value) and from the TimingHandler (for the response time) --> trying
+to implement Response would probably raise some important design
+issues. Actually, I think I do have a simple Response struct that is
+just local to Trial's right now.
+
+(3-Mar-2000, done 20-Mar-2000) Ugh. I just now realized how much time
+it takes to compile STL headers. In the past, I didn't try to
+forward-declare STL templates since their declarations can vary by
+compiler... but I now realized (duh!) that (by using an extra level of
+indirection) I can use a "stringfwd.h" file that correctly declares
+string, depending on the compiler. On a tiny test file, this reduces
+the compilation time from about 15 sec to only 1-2 sec !!! So I've
+created "stringfwd.h" and "vectorfwd.h", and I'm going to try to use
+these exclusively when a declaration is needed in one of my header
+files. One issue is that of default arguments... these cannot be used
+unless the full class definition is known. This particularly affects
+uses like 'const string& s = ""', but I think the problem can be
+easily circumvented by removing the default argument, and adding
+instead an overloaded function version with no string
+argument. [8-Mar-2000] Well, now, a week later, the compile time for a
+full debug build of the project has been cut nearly in half, and
+"stringfwd.h" is no longer needed at all!  I've found that most
+interfaces can use 'const char*' just fine, and let clients and
+implementors deal with more complex string classes if they so
+choose. Only 12 translation units now depend on <string>, and 21 on
+<vector>. [20-Mar-2000] Decreased those numbers even more now... only
+5 translation units depend on <vector>, 9 on <string>, 3 on <map>, 1
+on <list>, and 1 on <set>.
+
+(21-Mar-2000, done 22-Mar-2000) We need some sort of versioning
+facility for Reader/Writer. OK, but how do we handle versioning
+separately for base classes? Right now, base classes are handled ad
+hoc, with subclasses calling their superclass's writeTo() method from
+within their own writeTo() method. OK, I've added readBaseClass() and
+writeBaseClass() methods to Reader and Writer. This allows base
+classes to be written inline, with a bracketed block of the base
+class's attributes treated as a single attribute for its containing
+class. (In principle, we could now handle owned/contained objects in
+this same way). In order to correctly write base classes, we first
+needed some way to pass the base part of an object as an IO* while
+ensuring that the correct overrides of readFrom()/writeTo() would be
+called (i.e. avoid calling the most fully derived version of these
+functions). This can be done with the IOProxy template, which holds a
+pointer to an object of class C, and forwards all IO functions to the
+C:: versions of those functions. So we can pass an IOProxy<Base>* to
+the readBaseClass() and writeBaseClass() functions in order to achieve
+the desired effect. Another structural change was to allow
+AsciiStreamReader to maintain a stack of attribute maps, so that we
+can represent arbitrarily deep nesting hierarchies of objects. This
+involved just changing itsAttribs from an AttribMap to a
+slink_list<AttribMap>. Finally, we needed to allow the string enders
+('^') that occur inside a base class's attribute to be ignored when
+the end class's attributes are being read... to do this we introduce
+the convention that {}'s protect ^'s, so in order to have reached the
+end of an attribute, we must see a '^' and be at brace level 0. This
+in turn required that {}'s be treated specially--they must be escaped
+with '\' when occurring within an attribute string. 
+
+(6-Oct-1999, done 23-Mar-2000) GrObj needs a saveBitmapCache()
+function to dump a cached bitmap to file. Or maybe just a
+writeBitmap() function, that would apply even for objects whose mode
+is not one of the bitmap cache modes, and that would generate a
+temporary bitmap if necessary. [Later] This stuff belongs outside of
+the GrObj class, since it needs only the public interface... perhaps
+it should just go in grobjtcl.cc file.
+
+(28-Mar-2000, done 29-Mar-2000) Need to implement SerialRh (response
+handler). This will share a lot of code with EventResponseHdlr, so we
+probably need to create a base class for both such as FeedbackRh that
+will handle the inputResponseMap and the feedbackMap but will delegate
+attend() and ignore() via abstract functions. ... [Later] OK, so in
+fact we don't need a new ResponseHandler class; instead we can add a
+new event source that translates incoming serial port characters into
+window-system events via Tk_QueueWindowEvent.
+
+
+========================================================================
+| GOAL -- done 11 May 2000
+| 
+| Goal: ExptDriver should not have to know anything about TimingHdlr's
+| or ResponseHdlr's. Done!
+| 
+| To do this, as usual we should try an easy migration path.
+| 1) make Trial an abstract class, and move current Trial implementation
+| into a derived class
+| 2) set up abstract Trial functions to take on behavior of Experiment
+| functions. At first, ExptDriver can just forward stuff to Trial so
+| that we don't have to redefine the handlers' interfaces right away.
+| 
+| (24-Jan-2000) More flexible behavior by putting trial behavior in
+| Trial rather than in ExptDriver.
+| 
+| (9-May-2000) I think I may finally have my hooks into this
+| problem. Branched off behavior from edBeginTrial() into
+| edDoTrial(). Added Trial::trDoTrial(), which is called from
+| edBeginTrial(). For now, trDoTrial() just calls right back to
+| edDoTrial(), mimicking the previous behavior exactly. But... now we
+| can slowly migrate the behavior from edDoTrial() back into
+| trDoTrial(). Then this process can be iterated for the other
+| Experiment:: functions. Eventually this will allow us to create a
+| Trial base class with these new functions as virtual functions, so
+| that we can create Trial's with very different behaviors (e.g. a
+| ball-tracking trial, or a delayed-match trial).
+| 
+| (12-May-2000) The way things look now, there is fairly clean
+| separation amongst the different experiment participants. Basically:
+| 
+|                                 ___________________________________
+|                                |                                   |
+|                                V                                   |
+|  Experiment ---> Block ---> Trial ---> Response     Timing       Trial
+|             <---       <---       <--- Handler   +->Handler ---> Event
+|                                |                 |                 
+|                                |_________________|
+| 
+| Importantly, this means that we can treat ResponseHandler, TimingHdlr,
+| and TrialEvents as implementation details of Trial... so that can now
+| substitute in other Trial subclasses with different behaviors.
++-----------------------------------------------------------------------
+
+(15-Jan-2000, done) I think the executable shouldn't have to depend on
+the shared libraries, since these should be able to be change without
+forcing a relink on the main executable. ... Yes, but we need to be
+able to account for whether static or dynamic linking is being used.
+
+
+(16-Dec-1999, done) Try to fix ToglConfig::loadFonti on irix by
+switching fontnumber to a long before casting to char*. Tried
+it... didn't work.
+
+(done 19-Sep-2000) Want an indirection for auxiliary files so that the
+complete pathname is not hard-coded. To do this kind of added
+indirection (e.g. for now-hard-coded sound files, etc.), we can
+require an environment variable like GRSH_LIB_DIR to point to the root
+of a directory tree that will hold all auxiliary files for grsh
+programs. This can include the current contents of face/faces_triads,
+and face/audio, plus probably some other new goodies.
+
+(note 22-Sep-2000) Looks like I now have a new architecture to target:
+irix6 w/ MIPSpro compiler. The MIPSpro compiler looks to be fairly
+C++-standard compliant. It would be nice to have a separate build for
+that compiler... might be faster, also might allow c++ exceptions in
+shared libraries. But, this is something to try only after I get
+everything compiling cleanly with g++ again (following the upgrade to
+irix6.5 from irix6.3).
+
+(done 23-Sep-2000) OK, I figured out from a post on DejaNews that the
+problem on the sgi is that sgi's libGLU was implemented partially in
+c++ and compiled with MIPSpro; due to incompatible ABI's, this code
+cannot be linked with code compiled by g++. So, I have two options: 1)
+compile a version of OpenGL using g++, or 2) figure out how to get
+MIPSpro to compile my code. For option 2), I guess I can just use
+reinterpret_cast (which I'll define as SGI_IDIOT_CAST)... and keep my
+fingers crossed. ... OK, now I've done five hours of porting so that
+everything compiles/links/runs ok on curie using MIPSpro. I have a few
+bugs to wrinkle out however. And, this effort has provided an impetus
+for becoming more standard-compliant, with regard to the 'std'
+namespace, and the new IOStreams library.
+
+(done 23-Sep-2000) Bug on the new irix build of grsh--the application
+crashes on exit (something in EventResponseHandler::ignore()). OK,
+this is due to the fact that ignore() tries to use itsWidget, but the
+ToglConfig has already been destroyed by the time we try to use
+it. This is fixed by adding forgetWidget() and forgetTrial(), which
+set the pointers to null at the end of a trial or when the experiment
+is halted.
+
+(done 24-Sep-2000) Hey... something good came out of this whole sgi mess:
+now I can use shared libraries on the sgi, since MIPSpro allows
+exceptions to work correctly with shared libraries.
+
+(23-Sep-2000, done 24-Sep-2000) Bugs on the new irix build of grsh:
+togl widget won't run in rgba mode. ... OK, this was due to the hack
+that I had set up to force colormaps to be set, in which the colormap
+was set recursively up the window parent chain. But, trying to set a
+colormap on an rgba window makes no sense, and this is what was
+causing the BadMatch error. In any case, that hack is not needed in
+rgba mode, so I added a check for the widget's itsRgbaFlag before we
+start setting colormaps.
+
+(nix 24-Sep-2000) make startup procedures figure out if X server is
+available
+
+(done 25-Sep-2000) Added a miscellaneous "log" string property to
+ExptDriver, so that we can append human-readable messages to it as
+needed.
+
+========================================================================
+| GOAL -- done 29-Sep-2000
+|   Refactoring the legacy IO interface (serialize/deserialize)
+|
+| (29-Sep-2000) This is done enough for now. I now have a LegacyReader and
+| LegacyWriter that have an augmented interface that allows client
+| classes to emulate the format of their old serialize/deserialize
+| functions within the readFrom/writeTo context. It's a bit clunky, but
+| I think it's much better than before, and there is still room for more
+| streamlining if it becomes important in the future.
+| 
+| (16-May-2000) Phase out the old serialize()/deserialize() interface.
+| 
+| (25-Sep-2000) The main obstacle here is that loadFaces() and
+| loadObjects() rely on the old interface. These will continue to be
+| needed for some time, in order to read older files. But, this only
+| requires the old interface for the GrObj hierarchy. In fact, we only
+| need Face, MorphyFace, and Fish. Plus, we need to arrange a new way to
+| store object databases that works with the new IO interface.
+| 
+| Basically we need an Adapter class that can be used to implement the
+| old IO interface using the functionality defined by the new
+| interface. This would work by trapping all calls to
+| serialize/deserialize in the IoObject base class. This class would
+| then construct an appropriate adapter, and call readFrom or writeTo
+| using this adapter.
+| 
+| The problem that we face is that in the new IO interface, the
+| Reader/Writer does the parsing, but in the old IO interface, the
+| individual classes do the parsing, and they don't always do it the
+| same way. Maybe I have a plan for a big refactoring job:
+| 
+| 1-done) rename current serialize/deserialize/charCount to legacySrlz,
+|    legacyDesrlz, and legacyCharCount.
+| 
+| 2-done) Make legacy functions protected, and force callers to call
+|    through a new serialize/deserialize interface. For now IoObject
+|    just forwards onto the protected functions.
+| 
+| 3-done) Change parameter list of legacy functions to take a Reader* or
+|    Writer*.
+| 
+| 4-done) Have ioSerialize() and ioDeserialize() pass a LegacyReader* or
+|    LegacyWriter* to the legacy functions. These classes will allow
+|    access to the stream and the IOFlag. Add downcasts to the
+|    implementation of the legacy functions.
+| 
+| 5-done) Eliminate legacyCharCount(), and replace it with a slow, but
+|    generic implementation in ioCharCount().
+| 
+| 6-done) Eliminate the stream and flag parameters from the legacy functions.
+| 
+| 7-done) Use writeTypename() rather than checking IO::TYPENAME.
+| 
+| 8-done) Remove the stream and IOFlag parameters from the legacy functions.
+| 
+| 9-done) Reimplement the legacy functions in terms of the LegacyReader and
+|    LegacyWriter interfaces.
+| 
+| 	9a-done) Do the easy stuff--the basic types char, int, bool, double.
+| 	9b-done) Do the harder stuff--Value types.
+| 	9c-done) Let LegacyReader and LegacyWriter handle the typenames
+| 	9c-done) Do the harder stuff--sequences.
+| 	9d-done) Do the harder stuff--strings.
+| 
+| 10-done) Ditch unused IoMgr::newIO() functions.
+| 
+| 11-done) Remove unneeded #include <iostream.h>'s.
+| 
+| 12-done) Eliminate the ioSerialize wrapper functions, and have former
+|    clients just instantiate a LegacyReader/LegacyWriter on their own.
+| 
+| 13-done) Remove legacySrlz and legacyDesrlz from IoObject. Subclasses
+| 	can continue to implement these as private functions, and then
+| 	branch into them (if necessary) from writeTo and readFrom based on
+| 	a dynamic_cast. This way, classes can keep their legacy code
+| 	separate from current code, but clients see only a uniform IO
+| 	interface via readFrom() and writeTo().
+| 
+| 14-done) Remove the now unnecessary dynamic_cast's from legacySrlz() and
+| 	legacyDesrlz() implementations.
+| 
+| 15-done) Remove legacyIoTypename()? I think this might be everywhere the
+| 	same as ioTypename().
+| 
+| 16-done) Add readLegacyVersion() to LegacyReader to handle the '@1' format
+| 	used by Face and MorphyFace.
+| 
+| (13-Apr-2000) Encapsulate the old serialize/deserialize functions by
+| wrapping them in a special Reader/Writer pair, that has specialized
+| functions for each of the currently existing types. If an unsupported
+| type is encountered, we throw an exception. Come to think of it, we'd
+| only have to support a Reader, since we don't want to do any writing
+| if this format is to become obsolete. This would have the advantage of
+| moving all the ugly old code out of the current components.
++-----------------------------------------------------------------------
+
+(21-Sep-2000, done 2-Oct-2000) Arghh! More event-loop problems. Get a
+core dump after Ctrl-C (which halts experiment), followed by Ctrl-Q
+(which rehalts, then attempts to write data and quit). This triggers
+an assertion itsCanvas != 0 in Trial::getCanvas, called from
+Trial::trUndrawTrial(). OK... I'm getting to the bottom of
+this. Basically, the first halt triggers Block::abortTrial(), from
+Trial::trAbortTrial(), from Trial::trHaltExpt(). This changes the
+current trial in the Block. Then, on the next halt, the new current
+Trial attempts to trUndraw(), but this fails since the trial has never
+been begun, and so itsCanvas == 0. TO SOLVE THIS: I think that
+trHaltExpt() doesn't really need to trAbortTrial()... it would be fine
+to just leave the current trial as is; when the experiment resumes
+we'll start off with the same current trial. But this may miss the
+underlying problem... that somehow it is possible to have a "current"
+trial in a corrupted state. We could introduce a state flag into the
+Trial, so that it ignores all requests until it has been officially
+begun. Yes-- this would work. I think the gang-of-four State pattern
+would be good here. Have an abstract TrialState class with virtual
+functions that match the main trial events. These functions take a
+Trial&, and the concrete subclasses take the appropriate action for
+that state. The instances of TrialState are themselves stateless (they
+have no member data, only behavior), so we can store static instances
+of the various states within the TrialState base class. But, maybe we
+should work with Block also to ensure that its 'current' trial is not
+adjusted until that trial is going to be begun. ... Well, I added an
+'itsState' member to Trial::Impl. Right now this is just an enum, and
+all of the action functions check for (itsState == INACTIVE) before
+doing anything. More elegant would be to have itsState be a pointer to
+an implementation of TrialState, so that the (itsState == INACTIVE)
+checks would be just handled by virtual function dispatch. However,
+that solution is probably overkill right now, although I'll keep it in
+mind for the future. But, I still think my solution smells like
+defensive programming... I should perhaps still take a look at Block
+to see if it can be restructured in a better way so that it doesn't
+call action functions on inactive trials.
+
+(nix 2-Oct-2000) Idea for a generic ExptElement interface that would
+apply to Experiment, Block, Trial, ResponseHandler, and
+TimingHandler. In the pseudo chain-of-command hierarchy that describes
+experiment control, this would allow children to know their parents
+only as ExperimentElements, while parents would know the specific type
+of their children. This would help reduce coupling. In particular,
+TrialEvents would only have to know Trial's as ExptElem's in order to
+implement callbacks. Maybe this doesn't work... it looks like
+ExptElement would be nearly identical to TrialBase.
+
+(done 21-Sep-2000) Got some cool breakpoint-type things working with
+Util::Trace. Basically, we can call Util::Trace::setMode() so that we
+break into a command-line on trace-in and trace-out. Then this
+command-line can either reset the mode to RUN, or continue
+stepping. We could easily allow step-in or step-over as well, by
+putting a limit on the stack depth for which tracing is allowed.
+
+========================================================================
+| GOAL #3  --  done 9-Oct-2000
+| 
+| Implement reference counting so that smart pointers can be used within
+| C++ instead of integer id's.
+| 
+| 1-done) Add a SharedPtr to PtrList that starts the provides reference
+|    counting skeleton.
+| 
+| 2-done) Add a MasterVoidPtr to VoidPtrList, and turn over the control of
+|    object destruction to it.
+| 
+| 3-done) Add a VoidPtrHandle.
+| 
+| 4-done) VoidPtrHandle should become ref-counting.
+| 
+| 5-done) MasterVoidPtr should become abstract, and we should use MasterIoPtr
+|    as a concret subclass instead. Then we can dynamic_cast to/from
+|    IO*'s, rather than static_cast'ing to/from void*. MasterVoidPtr
+|    should not need the ptr() function anymore. 
+| 
+| 6-done) MasterVoidPtr can be renamed MasterPtrBase.
+| 
+| 7-done) We can remove destroyPtr() from the PtrList specification, since
+|    the destruction of raw pointers can now be handled in the MasterPtr
+|    hierarchy. 
+| 
+| 8-done) Make MasterIoPtr abstract and derive a template MasterPtr<T>
+|    from it
+| 
+| 9-done) Move the ref-counting implementation into MasterPtrBase. Then
+|    we can have different handle classes that are allowed to manage the
+|    ref-counted objects. VoidPtrList can use VoidPtrHandle's, but
+|    PtrList might use PtrHandle<T>.
+| 
+| 10-done) Add ItemWithId<T> that is basically a pair<int,SharedPtr>.
+| 
+| 11-done) Add isShared() to MasterPtrBase.
+| 
+| 12-done) Add the policy that VoidPtrList::remove() is not allowed unless the
+|    object at that id is currently unshared. This should apply to
+|    clear() as well.
+| 
+| 13-done) VoidPtrList can be renamed PtrListBase (!).
+| 
+| (very early) figure way for ObjList and PosList to notify Trials or
+| Tlist when GrObj or Position is deleted. Then Trial should remove that
+| (objid, posid) pair from its list. Possibility: have GrObj and
+| Position implement a Notifier interface, where clients subscribe to
+| the object, then the object has a notify() procedure that sends a
+| message to each of its clients. Contents of message might be "I've
+| changed" or "I'm destructed". Or... have ObjList control the
+| notification since Trials only know about objids and posids. PtrList
+| could maintain an array of info that is parallel to the stored
+| pointers. This array could contain sets of clients for each id. Have
+| to think carefully about how this structure could be maintained
+| through serialization.
+| 
+| Or... do pseudo-smart pointer stuff within PtrList. Whenever some
+| client is going to hold on to an id within the PtrList, it must "check
+| out" the id. This would increment a reference count within the
+| PtrList. Ptr's with a non-zero ref count are not allowed to be
+| delete'd or overwritten. This is I guess just a simpler version of
+| maintaining a list of clients--it doesn't allow for any messages to be
+| sent back to the clients.
+| 
+| On third thought, this is a deep design issue. The question is, who
+| owns the GrObj's and Position's? Who can delete them?
+| 
+| (19-Oct-1999) I'm suddenly turned off by PtrList's: 1) I just fixed a
+| bug in insertAt that is equivalent to the 'check for assignment to
+| self' in assignment operators, and 2) even worse, I just realized that
+| it would be disastrous if the same pointer were stored at two
+| locations in a PtrList... double deletion would result. This suggests
+| to me that we need a more flexible and robust memory-management
+| scheme, probably using reference-counted smart pointers. This will
+| also eliminate a lot of "dangling id" problems that necessitated
+| getCheckedPtr(id). But what sort of Tcl interface should the
+| ref-counted smart-pointers have?
+| 
+| (24-Jan-2000) OK, forget the traditional ref-counted
+| pointers. Instead, we'll put the reference counting right into the
+| list. This will avoid the problems with maintaining the VoidPtrList <-
+| IoPtrList <- PtrList hierarchy. VoidPtrList will be able to hold the
+| ref counts, and maintain the ref counting logic; it will just have to
+| forward object destruction to a derived class via a virtual function,
+| as it does now.
+| 
+| Clients will use a ListItem, containing an integer id and a pointer to
+| a PtrList. The ListItem's constructors and destructor will manage the
+| ref counts via calls to PtrList member functions. ListItem will offer
+| an operator-> so it can be used as a smart pointer.
+| 
+| In order to hide PtrList from clients, we can define the necessary
+| functions out of line.
+| 
+| At the expense of some size, we can cache a C* inside ListItem so that
+| we don't have to call a PtrList member function every time ListItem is
+| used. Basically, PtrList would keep a counter that is incremented
+| every time the list is modified. ListItems would maintain a const* to
+| this count, and would also store the value of the counter from the
+| last time their C* was cached. Then checking that the cache is current
+| just involves dereferencing the const* counter and comparing it to the
+| stored counter value.
+| 
+| Problem: how to handle derived classes with a ListItem?
+| 
+| (10-May-2000) In lieu of true reference counting with PtrList's, we
+| could allow locks that clients could take that would temporarily
+| prevent objects from being deleted.
+| 
+| (5-Oct-2000) What do I want out of an improved memory management
+| system?
+| 
+|   *) be able to associate C++ objects with unique integers, and
+|    retrieve the object from somewhere given the integer
+|   *) ensure that the object is not destroyed until all references to
+|    it and to its integer identifier are gone
+|   *) provide some way for Tcl to control which objects are referenced
+|    from Tcl and which are unreferenced... this probably requires a new
+|    Tcl_Obj type
+|   *) allow some of the conveniences of the current PtrList system,
+|    like being able to retrieve a list of all valid objects of a given
+|    type
+| 
+| Is the current system fatally flawed with respect to these goals? The
+| hardest part is controlling references from Tcl.
+| 
+| One solution would just be to have the Tcl objects be typed, rather
+| than just plain integers. The internal rep would be something that
+| refers to the PtrList with an integer id, and disallows conversions to
+| other Tcl_Obj types. However, then we wouldn't be able to do integer
+| math with the id's, although we could view the id's as strings. This
+| system requires a dependency on the Tcl ref-counting system.
+| 
+| Another solution would be to require explicit control of a Tcl
+| reference count from the Tcl side, with functions like
+| PtrList::incrRef and PtrList::decrRef. This might require us to have
+| two ref counts, one for the C++ side and one for the Tcl side, in
+| order to keep things safe and sensible.
+| 
+| ... I think the first option is more sound, although it is a bit less
+| convenient in the sense that it will require some changes to existing
+| scripts. If I had itcl up and running, I could build an equally safe
+| solution out of itcl code using the second implementation.
+| 
+| ... I tried a bit at implementing the first option, playing around
+| with a new Tcl_ObjType. It seems like I don't have a good way to
+| control exactly when objects are ref'd, unref'd, and when they switch
+| types. So, I think I'm going to try for option two for now, by added
+| two reference counts to the PtrList's, one for C++ and one for
+| Tcl. Tcl scripts will have to manually control the reference counts
+| for now.
+| 
+| ... Need to focus on getting more behavior into the smart pointers,
+| and less in the PtrList. The PtrList has two functions: one is to
+| control how id's are doled out, and the other is to maintain knowledge
+| of all existing pointers of a certain type.
+| 
++-------------------------------------------------------------------------
+
+(19-Jan-2000, done 5-Oct-2000) Auto-detect gzipped files? This is done
+for the stringifycmd module.
+
+(16-Sep-1999, fixed) BUG: if somehow the current trial becomes
+invalid, it is impossible to show a new trial because the program
+always tries to undraw the current, invalid trial before drawing a new
+one. So there is no way to un-corrupt the program state.
+
+(9-Oct-2000, done 11-Oct-2000) Could refactor EventResponseHdlr and
+Trial by using a state pattern instead of an enum TrialState. Done for
+EventResponseHdlr, but I'm not sure this helped make things clearer.
+
+(28-Jun-1999, done 11-Oct-2000) Need way for TclCmd's to "own"
+TclEvalCmd's, so that the Tcl_Interp* management can be hidden from
+the client. [Later] OK, this is done fairly well by Tcl::Interp and
+Tcl::Code.
+
+(done 16-Oct-2000) NullablePtrHandle? Allows resources to be
+purged. Done. 
+
+(note 18-Oct-2000) Ouch! I got bitten by a bug (? or my own problem) using
+MIPSpro. The call was
+   C& p = dynamic_cast<C&>(*(itsList.getCheckedPtr(id)));
+in AbstractListItemPkg<C,List>::getCItemFromId(). The problem was that
+if the dynamic_cast threw an exception, the temporary SharedPtr
+created by getCheckedPtr() was not destroyed properly, meaning that
+the reference-counts got hosed. This is a Bad Thing. Who's right?
+Is the temporary supposed to be destroyed, or not? ... the standard
+says the temporary must be destroyed... maybe this was a bad
+interaction of virtual functions, templates, temporaries, exceptions,
+etc. in MIPSpro.
+
+========================================================================
+| Migrate legacy data 18-Oct-2000
+| done 20-Oct-2000
+| 
+| Should get rid of legacySrlz and legacyDesrlz once and for all.
+| 
+| 1-done) fMRI data -- These are not likely to ever be needed. But... I was
+|    able to successfully convert all of this data to ASW format.
+| 
+| 2-done) Psychophysics fall 1999 -- These are readable by the current
+|    legacyDesrlz. Therefore, we can migrate these files to
+|    AsciiStreamWriter format in a batch process.
+| 
+| 	human_ac human_em human_jl human_ne human_rl
+| 	also human_ok human_rp human_fg
+| 
+| 3-done) Psychophysics spring 1999 -- These are not readable by the current
+| 	legacyDesrlz, and have fundamental incompatibility due to the lack
+| 	of RhList, ThList, BlockList. Therefore, I think it's best to
+| 	orphan them right now. The file format is fairly straightforward if
+| 	I needed to pull the data out at somepoint in the future. These
+| 	files are also readable+writable by grsh.a1.2.2, grsh0.5a2, and
+| 	grsh0.5a3. I'll freeze grsh0.8a2 as is, so that I could in
+| 	principle restructure these files at some point to be readable by
+| 	grsh0.8a2, and then re-write them in ASW format.
+| 
+| 	human_ap human_aw human_cc human_ss
+| 
+| 4-done) Copy all legacyDesrlz/legacySrlz functions into a text document as
+| 	a quick way to be able to manually read older files.
+| 
+| 5-done) The object definition files in faces_triads/. Do we continue
+|    to support this format, or convert these to ASW somehow? Or define
+|    a "new" format for GrObj's only that allows them to be read in a
+|    similar way? Probably best to have a new format that is similar to
+|    the sparse format now used by LegacyReader. The question is, should
+|    the new format be implemented with readTo/writeFrom, or does it
+|    require a separate interface? Probably we can use readTo/writeFrom,
+|    especially since, this should be used mostly for GrObj's... this
+|    would allow us to collapse legacySrlz and legacyDesrlz back into
+|    readFrom/writeTo, since we wouldn't be trying to support an old
+|    format anymore. OK, the new format for LegacyWriter is stabilized,
+|    so I can go ahead and convert all of the object definition
+|    files. Done. Also, I now have testall.tcl file in the faces_triads
+|    directory that will use any version of grsh to make sure that all
+|    the files are readable.
+| 
+| Ahhh... this is good. I've released the grip that the legacy IO format
+| held over this project. So far it has cut out nearly 2000 lines of
+| source code... I expect I may find more in the future as well.
+| 
++------------------------------------------------------------------------
+
+(note 18-Oct-2000) I need to think a lot more carefully in the future
+if/when changing file formats. As a one-user system, I think it is
+reasonable to consider migrating all old data over to a new format
+rather than trying to support multiple formats. Hopefully this is less
+of a problem with ASW format than with the Legacy format. I need to
+add a bunch of test cases that ensure that various old files
+(e.g. from psychophysics, fMRI) are still readable with each version.
+
+(3-Jul-1999, done 24-Oct-2000) Tlist makeSingles, etc. could now take
+a sequence/list of objids as an optional argument utilizing
+TclCmd::getSequenceFromArg.
+
+(note 25-Oct-2000) Note to self. std::map is not actually such a slow
+compiler, as long as neither of the types is std::string... only takes
+10-15 sec to compile a file std::map, even if one of the types is not
+a builtin.
+
+(25-Oct-2000, done 26-Oct-2000) Try overloading operator new+delete in
+IoObject. OK, tried this, and found with profiling that these are
+definitely *NOT* a bottleneck. Combined, they took about 0.1% of the
+runtime in a test-suite run.
+
+========================================================================
+| Resource management revisited 17-Oct-2000
+| done 27-Oct-2000
+| 
+| (1-done) Generalize Factory so it can take a creation function. Make
+|     class constructors protected and add make() creation functions
+|     instead.
+| 
+| (2-done) Aha! We can get rid of MasterPtr.... IoObject itself should
+|     handle the reference counting. Then PtrHandle<T> of different
+|     types can be assigned to each other, DynamicCast'ed, etc., since
+|     the pointee's (IoObject*'s) will be related through inheritance.
+| 
+|     In detail
+|     (done) MasterPtrBase becomes RefCounted
+|     (done) IoObject inherits from RefCounted
+|     (done) VoidPtrHandle manages RefCounted
+|     (done) PtrListBase manages RefCounted
+|     (done) PtrHandle<T> holds T* (derived from RefCounted) directly
+|     (done) NullablePtrHandle<T> holds T* directly
+|     (done) get rid of masterptrt.cc
+| 
+| (3-done) Make sure nobody is writing PtrList ids in writeTo().
+|     (done) Block
+|     (done) Trial ... this is tricky. Need to refactor the implementation
+| 		  to store two vectors of GrObj's and Position's, I think. Only
+| 		  client of beginIdPairs() is TlistUtils::writeMatlab(). That
+| 		  can change to use an iterator over the GrObj's instead. Will
+| 		  need to have a dummy IdPairSpoofer structure in the
+| 		  implementation to allow us to read older files.
+| 	 (done) ExptDriver
+| 
+| (4-done) Migrate all old experiment data-files over to this new format
+|     that will not include PtrList's. I'll make a snapshot of the
+|     system so that we can get back to the state that can convert
+|     between old+new format. Then I'll rev the project version and cut
+|     out the old format code so that the IO code doesn't get too messy.
+| 
+| (5-done) Make sure there is a snapshot of the project that can read
+|     old files (i.e. with PtrList's) but also write new files (w/o
+|     PtrList's). OK, this is grsh0.8a3.
+| 
+| (6-done) Make the IoMap. When an IoObject is constructed, we put its
+|     id+address into the map, and when it is destroyed, we remove it
+|     from the map. We need functions to iterate through the map, to
+|     test if an id is valid, to return the count of objects.
+| 
+| (7-done) A key step here is eliminating uses of insertAt(). The main
+| 	 perpetrator here is TlistUtils, whose interface needs a major
+| 	 overhaul.
+| 
+| (8-done) Make all PtrListBase functions virtual, so we can try swapping
+|     implementations at the PtrList<T> level.
+| 
+| (9-done) For debugging purposes, add a second ref-count to RefCounted,
+| 	 so that Tcl clients can manipulate a separate reference count.
+| 
+| (10-done) An important intermediate goal is the state where the PtrList's
+|     are still physically in place, but all of the id's in existence
+|     are just the plain IoId's. ... Maybe this is not really a useful
+|     stage. I think once we are at the point where this stage is
+|     feasible, we'll just be wanting to finally ditch the PtrList's.
+| 
+| (11-done) Make the C++ side independent of PtrList's. Block's need to store
+|     Trial*'s (or ItemWithId<TrialBase>'s), and ExptDriver needs to
+|     store ItemWithId<Block>'s.
+| 
+|     (done) block.cc      on tlist.h
+|     (done) exptdriver.cc on blocklist.h
+|     (done) eventresponsehdlr.cc on soundlist.h
+| 
+|     (done) tlistutils.cc on objlist.h
+|     (done) tlistutils.cc on poslist.h
+| 
+| (12-done) Fix the read/write system so we don't have to work with
+| 	 temporary containers when reading/writing member containers. Done
+| 	 -- added WriteUtils::writeSmartPtrSeq, and added special insert
+| 	 iterators for IdItem and MaybeIdItem that can work with
+| 	 ReadUtils::readObjectSeq
+| 
+| (13-done) Ditch the itsId member of IdItem, since it would always be
+| 	 the same as itsHandle->id(). MaybeIdItem needs to keep itsId,
+| 	 since this is what allows us to implement lazy fetching.
+| 
+| (14-done) Try to eliminate uses of MaybeIdItem in favor of
+| 	 IdItem. ... Yeahbut, in some cases we need to have some way to
+| 	 represent "no object". It's either this way, or generate
+| 	 NullObject classes for each base type that can fill in for a real
+| 	 object... this sounds more messy. In some cases I should be able
+| 	 to get rid of MaybeIdItem.
+| 
+| (15-done) We might be able to do away PtrList templates, in favor
+| 	 of one gigantic IoPtrList that stores everybody... with the new id
+| 	 system, there would be no id collision problem, and since most
+| 	 retrievals from a PtrList require a dynamic_cast anyway, there
+| 	 wouldn't be an extra performance hit for casting out of the
+| 	 IoPtrList. Then we could have IdItem's referring not just to the
+| 	 base-classes (i.e. GrObj, Position, TrialBase, etc.) but also to
+| 	 derived classes (e.g. Face, FixPt, Trial, etc.). What's the
+| 	 simplest possible step toward trying this? Maybe make
+| 	 getCheckedPtr() a member template function, so we can start
+| 	 specifying the type we're trying to retrieve. We'd need to have
+| 	 templated iterator types to provide different views of the
+| 	 IoPtrList. This could be a fairly simple template wrapper around
+| 	 the basic iterator.
+| 
+| (22-Oct-2000) I see the elimination of PtrList's in the
+| future. Instead we can maintain a map of ioId()'s to IoObject*'s. This
+| can be managed in the constructor+destructor for IoObject. This map
+| could be purged of refcount-0 objects on command. The map would allow
+| us to do similar operations to what the PtrList's provide now. For
+| example, find all objects of a given type.
+| 
+| (done, 18-Oct-2000) Aha! I have a vision... the PtrList's do not need
+| to be serialized at all... they can become merely a runtime resource
+| that expose C++ objects to Tcl. This will be possible if C++ objects
+| serialize not object-id's, but rather actual object references. Then
+| the id's will be automatically reconstructed when the objects are read
+| back in.
+| 
+| (done, 17-Oct-2000) Move ItemWithId<T> and NullableItemWithId<T> off
+| into their own component. Most C++ clients should not have to rely on
+| PtrList directly, or access any of the singletons.
+| 
+| (done, 17-Oct-2000) Make C++ clients of getPtr() and getCheckedPtr()
+| just store an ItemWithId<T> instead.
+| 
+| (done 17-Oct-2000) ItemWithId<T> could store a static PtrList<T>&,
+| which would allow us to construct an ItemWithId<T> from a MasterPtr
+| only, and insert this MasterPtr into the PtrList from within the
+| ItemWithId structure. Done.
+| 
+| (done 17-Oct-2000) Make PtrList::insert() functions return an
+| ItemWithId. This is a first step to eliminating reliance on the int
+| id's in the C++ side of things. Done.
+| 
++------------------------------------------------------------------------
+
+(8-Jan-2000, done 27-Oct-2000) How to read/write CountedPtr's? This is
+the big barrier to establishing CountedPtr's as a better way to manage
+objects between C++ and Tcl. Probably Reader/Writer need a special
+method for CountedPtr's. The question is how to keep track of the
+pointers to the reference counts. Or... we could put the reference
+count right in IO... Aha! Instead of AsciiStreamReader maintaining a
+map<unsigned long, IO*> during deserialization, we could use a
+map<unsigned long, CountedPtr<IO> >. However, this introduces a split
+from the semantics of readOwnedObject()... this suggests that we need
+a separate map for owned objects. As this transition will require a
+nearly universal switch to CountedPtr's, we need to provide a feasible
+migration route, perhaps by providing the ability to short-circuit
+CountedPtr's ref-counting at first. ... This is not an issue
+anymore. Now IoObjects have a built in ref-count. Reader+Writer don't
+explicitly do anything with the refcount; instead, clients are
+responsible for grabbing the object if they need it.
+
+(10-Oct-2000, done 27-Oct-2000) Start reaping the benefits of my
+PtrList ref-counting refactoring by allowing clients to lock onto
+their resources using ItemWithId<T>. Done.
+
+(10-Oct-2000, done 27-Oct-2000) PtrList could do an "idiot check" on
+insert to make sure that we aren't storing the same pointer in two
+slots. If this happens with the same MasterPtr, we can just return the
+previous MasterPtr; however if it happens with two MasterPtr's
+pointing to the same object, then it is a bug which will result in
+memory corruption.
+
+(done 30-Oct-2000) iditem.h --> io/iditem.h & io/iditemutils.h
+
+(done 30-Oct-2000) ioptrlist.h+cc --> io/ioptrlist.h+cc
+
+(done 30-Oct-2000) Remove List template argument from ListItemPkg.
+
+(done 30-Oct-2000) Replace DefaultCreatorCmd with a single IO::new
+that uses IoFactory. Turn List::remove into IO::delete.
+
+(nix 30-Oct-2000, 24-Jun-1999) Would be nice to define some sort of
+appropriate inheritance semantics for CTclPkg's... so that CTclPkg<B>
+can inherit from CTclPkg<A> iff B inherits from A, and furthermore
+that this inheritance does "all the right things".
+
+(nix 30-Oct-2000, 30-Jun-1999) Really need to get an iterator working
+for PtrList's... and get rid of these pseudo-working Id's. OK, now
+have an iterator class implemented, but how to construct them?
+Specifically, I'll need to be able to construct iterators from int
+id's, but then what to do if the int is an invalid index? Throw an
+exception? Leave the iterator in a corrupted state? Also, basically
+all of the PtrList operations should use iterators... addPtr() should
+return an iterator, remove() should take an iterator.
+
+(nix 30-Oct-2000, 6-Oct-1999) Should Property's be Observable's? Is
+this worth the extra space? Perhaps only some properties should be
+Observable's. How would this be done?
+
+(nix 30-Oct-2000, 22-Nov-1999) Hey, I think I might be able to totally
+do away with PtrList's, at least in the public interface. I think that
+they could be wrapped into the base class, so that every GrObj created
+is automatically placed in the ObjList, and anytime a GrObj is
+destroyed it is removed from the PtrList. This would just entail
+overriding operator new + delete for that class. The class would have
+static operations that mimic the PtrList's operations.
+
+(done 30-Oct-2000, 1-Dec-1999) Unsavory dependencies:
+  EventResponseHdlr on ObjTogl -- axed via Widget abstraction!
+  EventResponseHdlr on SoundList
+  ObjTogl on Tlist -- compilation dep gone, but still link dep
+  Trial on ObjList, PosList?
+  Block on Tlist?
+  BitmapRep on GLCanvas::theCanvas()
+
+... I see that this whole PtrList business introduces some wacky
+  dependencies... I don't think C++ clients should be depending on the
+  PtrList's directly. Instead, maybe the PtrList's should manage
+  CountedPtr's or something similar, so that the integer indices are
+  only visible in Tcl. [Later 30-Oct-2000] With the whole IoPtrList
+  refactoring, we have now eliminated C++ client's dependencies on the
+  item ids.
+
+(nix 30-Oct-2000) Goal: ExptDriver shouldn't have to know about any
+lists except maybe BlockList. As for serializing, the lists should
+register themselves with ExptDriver at application startup. Experiment
+base class should declare an abstract manageObject(const char* name,
+IO* object) function. The lists should call this in in their
+Tcl_PkgInitProc's. The problem with this approach is that we lose the
+ability to control the order in which the lists are read/written
+through the IO interface. This is not so much a problem for the
+readFrom()/writeTo() interface, as this is designed to be
+order-independent, but it is a problem for the
+serialize()/deserialize() interface. Perhaps we could use some ad hoc
+strategy to make sure that the managed objects are written in the same
+order every time (based on their ioTypename() for instance?). [Later]
+This is obsolete since we no longer depend on PtrList's in the
+serialization process.
+
+(done 1-Nov-2000) Got rid of all the unneeded io tcl commands... we
+don't need a separate stringify/destringify command for each subclass;
+instead, a single one in the IO:: tcl namespace will do just
+fine. This allowed us to get rid of TclIoItemPkg in favor of an
+addIoCommands() function in TclItemPkg, taking an IoFetcher* as an
+argument. This in turn allowed us to get rid of CTclIoItemPkg and the
+duplication that existed between it and CTclItemPkg.
+
+(3-Dec-1999, done 2-Nov-2000) I have a potential type-system loophole
+with TclItemPkg and TclItemCmd... TclItemPkg blindly casts
+TclItemCmd::getItemFromId() from void* to T*, without any guarantee
+that TclItemPkg is dealing with the correct type. Suggests we need a
+template wrapper around TclItemPkg? No... we can fix this by just
+having TclItemCmd<C> require a CTclItemPkg<C> in its constructor
+rather than a plain TclItemPkg.
+
+(24-Oct-2000, done 3-Nov-2000) Work on dlink_list... it's buggy. I
+think it needs an overhaul of the design of the head and
+tail... having these starting off at 0 is not working. OK, I did this,
+but it is still not working if I try to substitute dlink_list in
+gxtraversal.cc. ... OK, now I found this new problem -- it's with
+node::destroy(). If T was a pointer type (say, GxNode*), then calling
+val.~T() was causing the actual GxNode to be destroyed, not just the
+pointer to it. This seems to have been resolved by changing the call
+to (&val)->~T(). I tried substituting dlink_list everywhere slink_list
+was being used, and things still worked fine, so I think I'm going to
+sign off on dlink_list as passing muster for now.
+
+========================================================================
+| GOAL #2
+| done 28-Nov-2000
+| 
+| This is done, with possibilities for future development by way of
+| implementing new GxNode subclasses, such as for colors, basic shapes, etc.
+| 
+| (24-Jan-2000) Allow a more flexible description of the scene graph, a
+| la Open Inventor.
+| 
+| This is now particularly important as Trial's take on more
+| behavior... they shouldn't be used anymore as a way to store
+| combinations of objects.
+| 
+| (1-Nov-2000) borrowed from OpenInventor --
+| 
+| class GxNode : public IO::IoObject {};
+|  |
+|  +-- class GrObj : public GxNode {}; --> GxShape
+|  |
+|  +-- class GxTransformation : public GxNode {};
+|  |    |
+|  |    +-- class GxTranslation : public GxTransformation {};
+|  |    |
+|  |    +-- class GxScale : public GxTransformation {};
+|  |
+|  |
+|  +-- class GxGroup : public GxNode {};
+|       |
+|       +-- class GxSeparator : public GxGroup {};
+| 
+| Then Trial just holds one IdItem<GxNode>, and draws it on a
+| DrawEvent. Or, Trial holds a number of IdItem<GxNode>'s, and DrawEvent
+| holds an index indicating which one to draw.
+| 
+| This is probably an incompatible change with the old Trial... or maybe
+| not... we should be able to convert old Trial structures into new Gx
+| hierarchies. And the old add() interface should still work, with a bit
+| of translation.
+| 
+| (1-done) Put GxNode in place.
+| 
+| (2-done) Make GrObj derive from GxNode.
+| 
+| (3-done) Find former clients of GrObj who really only need to depend on
+|     GxNode. Trial and TlistTcl.
+| 
+| (4-done) Make Position derive from GxNode.
+| 
+| (5-done) Find Position clients who only need to depend on GxNode. Trial.
+| 
+| (6-done) Implement GxSeparator, add a Tcl package for it, and write
+|     tests for the Tcl package.
+| 
+| (7-done) getCategory() --> category()
+| 
+| (8-done) Reimplement Trial using GxNode's instead of GrObj's and
+|     Position's.
+| 
+| (9-done) Add FieldContainer. Where to put this in the inheritance
+|     hierarchy? Right now it is just a mixin class... eventually it
+|     could go before GrObj or even GxNode... this would require a
+|     coherent policy on how to handle inherited Field's.
+| 
+| (10-done) Change the semantics of Trial so that only one GxNode is
+|     drawn at a time... in the future we might allow different GxNode's
+|     to be drawn on subsequent calls to trDraw().
+| 
++-----------------------------------------------------------------------
+
+(1-Nov-2000, done 28-Nov-2000) Make PropertyContainer or
+FieldContainer a base class; then Property's can be handled through
+inheritance rather than by templates. This should reduce some code
+bloat.
+
+========================================================================
+| Goal #4
+| done 28-Nov-2000
+| 
+| (24-Jan-2000) Develop a more coherent view of the screen-update model:
+| Who gets to do it, and when?
+| 
+| (28-Nov-2000) Aha! TlistWidget should change to be a GxNodeWidget,
+| which stores a current GxNode to be drawn. Then Trial, in trDraw() and
+| trUndraw(), can install the appropriate GxNode into the widget, and
+| then request a draw or an undraw; Trial will not have to do any
+| drawing/undrawing explicitly on its own. I think this would make
+| GxNodeWidget the only place where the drawing is actually done in the
+| application.
+| 
+| (done) GxNodeWidget functionality should just go into the Widget base
+| class with the function setDrawable(GxNode& node).
+| 
+| (done) remove Block::drawTrialHook() and Experiment::edSetCurrentTrial().
+| 
+| (done) trUndrawTrial is not needed, since we can just call
+| widget.undraw(). This would apply to UndrawEvent::invoke() as well as
+| trHaltExpt(). This would mean Trial would need to store a GWT::Widget*
+| rather than a GWT::Canvas*.
+| 
+| (done) Aha! trDraw is not needed either, since we can just
+| trial.installSelf(widget) followed by widget.display()
+| 
+| (done) ToglConfig::reconfigure() should be non-virtual and private.
+| 
+| (2-Oct-2000) The first step in this is to eliminate any direct
+| attempts to draw to the screen, other than by a Widget object (such as
+| TlistWidget). Others who want the screen updated should do so
+| indirectly by requesting the widget to redraw itself.
+| 
++-----------------------------------------------------------------------
+
+(2-Oct-1999, done 15-Nov-2000) Should be able to call up a property
+info struct from a class by giving it a string name of a
+property. [Later] This is done now with FieldMap, which can be gotten
+from a class by the static function classFields(), and which has a
+member info() that retrieves a FieldInfo object given the attribute
+name.
+
+(28-Nov-2000, done 28-Nov-2000) Make Position use Vec3's. Move
+translate(), scale(), and rotate() into Canvas, along with appropriate
+Vec3 arguments.
+
+(27-Oct-2000, done 30-Nov-2000) Should IoPtrList attempt to get
+objects out of the IoMap if the PtrList site is empty? No--some
+objects need to remain permanently hidden as implementation details.
+
+========================================================================
+| "Dynamic templates" 4-Oct-2000
+| 
+| (4-Oct-2000) I like the idea I saw in the CUJ that dealt with
+| deferring the template nature of something. Basically a generic
+| interface is provided in a derived class, like
+| 
+| class Impl { public: virtual ~class Impl(); };
+| 
+| template <class T> class TImpl : public Impl { public: T data; };
+| 
+| class Interface {
+| public:
+|   template <class T>
+|   T getT() {
+|     TImpl* tptr = dynamic_cast<TImpl<T>*>(itsImpl);
+|     if (tptr) return tptr->data;
+|     else { throw "..."; }
+|   }
+| 
+|   Impl* itsImpl;
+| };
+| 
+| This allows Interface to gain some of the benefits of templates, but
+| doesn't require the entire class to be templated, only the getT()
+| function. If there a long chain of templates involved, this technique
+| might be able to defer the templated-ness to the last class in the
+| chain, for example. This is a particular benefit if there are virtual
+| functions involved, since it allows us to avoid having vtables laid
+| down everywhere.
+| 
+| As a practice before I move on to a more heavy use of this approach, I
+| bet I can use this approach to eliminate the use of void*'s in the
+| implentation of the TclPkg hierarchy. Ugh. I just realized that this
+| is basically skirting around the idea of just using a
+| mother-of-all-base classes approach, such as deriving everything from
+| Object. The template idea is just a way of grafting on the MOAB to a
+| preexisting object hierarchy. ... except that the template approach
+| does allow non-objects to be included, such as native types,
+| pointer-to-members, etc.
+| 
+| I think I should be able to get some benefit of this in my TclPkg
+| hierarchy. For example, PropertyInfo would not have to be a template
+| class; instead, PropertyInfo::property() would just have to be a
+| template member function, along with a template constructor.
+| 
+| *) Turning PropertyInfo into a non-template class allows us to turn
+|    the get getPropertyInfos() interface from an ad-hoc interface to a
+|    dynamic, polymorphic interface.
+| 
+| *) PropFriend would have an non-template base class that would define
+|    the functions set() and get(). These would be implemented in a
+|    template class that used dynamic casts to get the type information
+|    back out.
+| 
+| *) CPropertiesCmd would not have to be a template.
+| 
+| (30-Nov-2000) Time to move on... I don't think this technique will be
+| too useful for me; the one possible area of use might be as a way to
+| implement generic function pointers.
+| 
++-----------------------------------------------------------------------
+
+(2-Oct-1999, nixed 30-Nov-2000) Property's could store a pointer to
+something like ValChecker, which has a virtual function, that could
+variously do 1) check whether new value is the same as the current
+value, 2) check whether the new value is in bounds/valid. If the
+ValChecker* is 0, then no check is done, and not much time is lost
+worrying about the check. This would avoid the problem of trying to
+maintain parallel hierarchies of Property, BoundedProperty, etc.
+
+(1-Dec-2000, done 2-Dec-2000) Need a better naming convention to
+distinguish between unadorned value types (like Vec3), field/value
+types (like GxVec3), and scene node types.
+
+OK, I'll use no prefix for unadorned basic types, use the prefix 'Gb'
+for Field/Value types, and use 'Gx' for scene nodes.
+
+RgbaColor (unadorned) ---> GbRgbaColor (Field/Value) ---> GxRgbaColor (node)
+
+Vec3 (unadorned) ---> GbVec3 (Field/Value)
+
+(30-Oct-2000, done 2-Dec-2000) Use PtrHandle's in TimingHdlr
+implementation to avoid deleteAll().
+
+(22-Mar-2000) We could have a more compact reader/writer format by
+using a system that wrote class definitions to the file, and stored
+some sort of translator for each class in the reader/writer... this
+would allow us to just store the raw data for individual objects,
+without having to store the metadata over and over. [Later] the
+generic version of this is that each read/write requires a per-class
+translater, with the default being that the normal verbose translater
+is used, but if a different translater is present, then that one can
+be used instead. This idea might come around if I implement
+FormatWriter as suggested in a different note.
+
+(May-1999, obsolete 5-Dec-2000) An idea for a more generic way to
+describe Trial's: rather than explicitly storing objid/posid pairs,
+Trial's could store sequences of events (this overlaps my previous
+idea about using events to describe trial timing). One particular
+*type* of event then could be DisplayObjectAtPosition (or something
+less wordy). This event would store the objid and posid (or maybe
+GrObj* and Position*) and would know how to display itself. The events
+would have in common an action() function or something
+similar. Problem: who stores the references to ObjList and PosList
+that make posid's and objid's work?  Currently it is Trial's, but with
+this new scheme there would have to be one for each
+DisplayObjectAtPosition event, and with several of these per Trial,
+and perhaps thousands of Trials in an Expt, this means many thousands
+of references, all of which are pointing at just one or two
+ObjList's/PosList's. This seems somewhat excessive. What to do ...?
+[Later] This latter problem has been solved by making ObjList and
+PosList singletons.
+
+(22-Jun-1999, done) Ugh. Spent all day tracking down idiotic pointer
+problems. Should really use vector<unsigned char> rather than C-style
+arrays to hold the info in Bitmap's and Pbm's, and use checked access
+through at() especially when algorithms are untested.
+
+(May-1999, obsolete 6-Dec-2000) Trial's should hold more info-- in
+particular, they should know their own correct response, or at least
+have a virtual function to determine if a particular response is
+correct/valid or not. The derived classes could be "BinaryTrial",
+"AnalogTrial", etc. This would avoid having to implement the
+feedback/correctness check at a high level. Also, Trial's might know
+their own timing info, although they may not necessarily implement the
+timing themselves.
+
+(14-Dec-1999, obsolete 11-Dec-2000) The implementation of GrObj should
+be moved into a separate component since it is fairly
+heavyweight. Subclasses would then be required to provide this
+implementation upon construction. This method would allow clients, but
+not subclasses, of GrObj to avoid dependencies on such components as
+bitmaprep, etc. But, how to avoid having to make all GrObj functions
+virtual? We'd like some to stay non-virtual. Aha! The new lightweight
+GrObj shouldn't even have the grRender(), grUnRender(), or
+grGetBoundingBox() functions... these will first be defined in
+GrObjImpl. [Later] ... ok, this is moot now because of the addition of
+GxNode, which is a lightweight abstract class that serves the needs of
+most clients.
+
++-----
+|
+| (29-Oct-2000, tabled 11-Dec-2000) We could make a lot of IoPtrList Tcl
+| commands very generic, by allowing a predicate argument to determine
+| which objects are to be acted upon. See batch.tcl. This could be
+| called IoDb::batch. ... I'll table this idea for now; most of this can
+| be more simply done by creating the relevant commands in each
+| IoItemPkg (such as removeAll, countAll, findAll).
+| 
+| (9-Dec-2000, done 11-Dec-2000) Replace all of the PtrList Tcl packages
+| with a few commands that are added to each ItemPkg... these include
+| findAll, countAll, removeAll. ObjList::save/loadObjects should move to
+| IoDb.
+| 
+| (1-Nov-2000, done 11-Dec-2000) IoPtrList --> IoDb.
+| 
+| (29-Oct-2000, done 11-Dec-2000) ObjList::LoadObjectCmd can be replaced
+| with something generic that works for all IoObject types. Maybe these
+| should go in ReadUtils/WriteUtils? Templated on the Reader/Writer
+| type? OK, this stuff is in the IoDb package now.
+| 
+| (27-Oct-2000, done 11-Dec-2000) Do we still need separate Tcl packages
+| for the different PtrList's? I think no. We should be able to have a
+| single IoDb:: namespace in Tcl.
+|
++-----
+
+(May-1999, obsolete 11-Dec-2000) Maybe Position should be migrated to
+an abstract base class, with the current Position class becoming
+StaticPosition or FixedPosition. What would a Position subclass for
+moving objects look like? This is mooted by the presence GxNode.
+
+(28-Sep-2000, nix 13-Dec-2000) fixed_block and dynamic_block should
+have release() members, so that we can use them for exception-safe
+storage, then transfer ownership of the buffer to someone else once
+the operations are safely completed. ... [Later] Forget this, since if
+someone else wants ownership, they should just use a fixed_block or
+dynamic_block themselves.
