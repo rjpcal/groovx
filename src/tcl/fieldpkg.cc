@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Thu Aug 30 10:09:53 2001
+// written: Thu Aug 30 11:46:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,7 +109,15 @@ DOTRACE("Tcl::FieldsLister::operator()");
               sub_list.append(field.min());            // min value
               sub_list.append(field.max());            // max value
               sub_list.append(field.res());            // resolution value
-              sub_list.append(field.startsNewGroup()); // start new group flag
+
+              Tcl::List flags;
+              if (field.startsNewGroup()) flags.append("NEW_GROUP");
+              if (field.isTransient()) flags.append("TRANSIENT");
+              if (field.isString()) flags.append("STRING");
+              if (field.isMultiValued()) flags.append("MULTI");
+              if (field.isChecked()) flags.append("CHECKED");
+
+              sub_list.append(flags);
 
               itsFieldList.append(sub_list);
             }
