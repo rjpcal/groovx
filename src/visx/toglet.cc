@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Apr  2 16:31:35 2002
+// written: Tue Apr  2 16:53:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,6 +130,7 @@ public:
   enum ResizePolicy
     {
       FIXED_SCALE,
+      FIXED_RECT,
       MIN_RECT
     };
 
@@ -137,7 +138,7 @@ public:
     itsPolicy(FIXED_SCALE),
     itsViewingDistance(dist),
     itsPixelsPerUnit(1.0),
-    itsMinRect()
+    itsRect()
   {}
 
   // For FIXED_SCALE mode:
@@ -146,17 +147,35 @@ public:
   void setViewingDistIn(double inches);
   bool usingFixedScale() const { return itsPolicy == FIXED_SCALE; }
 
+  // For FIXED_RECT mode:
+  void setFixedRectLTRB(double L, double T, double R, double B);
+
   // For MIN_RECT mode:
-  void scaleRect(double factor);
   void setMinRectLTRB(double L, double T, double R, double B);
+
+  // For FIXED_RECT or MIN_RECT modes:
+  void scaleRect(double factor);
 
   void reconfigure(const int width, const int height);
 
 private:
+  void setRect(double L, double T, double R, double B)
+  {
+    // Test for valid rect: right > left && top > bottom. In
+    // particular, we must not have right == left or top == bottom
+    // since this collapses the space onto one dimension.
+    if (R <= L || T <= B)
+      {
+        throw Util::Error("invalid rect");
+      }
+
+    itsRect.setRectLTRB(L,T,R,B);
+  }
+
   ResizePolicy itsPolicy;
   double itsViewingDistance;    // inches
-  double itsPixelsPerUnit;         // pixels per GLunit
-  Gfx::Rect<double> itsMinRect;
+  double itsPixelsPerUnit;      // pixels per GLunit
+  Gfx::Rect<double> itsRect;
 };
 
 void Toglet::Sizer::setPixelsPerUnit(double s)
@@ -196,19 +215,25 @@ void Toglet::Sizer::setViewingDistIn(double inches)
   itsViewingDistance = inches;
 }
 
-void Toglet::Sizer::scaleRect(double factor)
+void Toglet::Sizer::setFixedRectLTRB(double L, double T, double R, double B)
 {
-  if (factor <= 0.0)
-    throw Util::Error("invalid scaling factor");
-
-  itsMinRect.widenByFactor(factor);
-  itsMinRect.heightenByFactor(factor);
+  itsPolicy = Sizer::FIXED_RECT;
+  setRect(L,T,R,B);
 }
 
 void Toglet::Sizer::setMinRectLTRB(double L, double T, double R, double B)
 {
   itsPolicy = Sizer::MIN_RECT;
-  itsMinRect.setRectLTRB(L,T,R,B);
+  setRect(L,T,R,B);
+}
+
+void Toglet::Sizer::scaleRect(double factor)
+{
+  if (factor <= 0.0)
+    throw Util::Error("invalid scaling factor");
+
+  itsRect.widenByFactor(factor);
+  itsRect.heightenByFactor(factor);
 }
 
 void Toglet::Sizer::reconfigure(const int width, const int height)
@@ -230,19 +255,25 @@ DOTRACE("Toglet::Sizer::reconfigure");
         glOrtho(l, r, b, t, -1.0, 1.0);
       }
       break;
+    case FIXED_RECT:
+      {
+        glOrtho(itsRect.left(), itsRect.right(),
+                itsRect.bottom(), itsRect.top(), -1.0, 1.0);
+      }
+      break;
     case MIN_RECT:
       {
         // the actual rect that we'll build:
-        Gfx::Rect<double> port(itsMinRect);
+        Gfx::Rect<double> port(itsRect);
 
         // the desired conditions are as follows:
-        //    (1) port contains itsMinRect
+        //    (1) port contains itsRect
         //    (2) port.aspect() == getAspect()
         //    (3) port is the smallest rectangle that meets (1) and (2)
 
         const double window_aspect = double(width) / double(height);
 
-        const double ratio_of_aspects = itsMinRect.aspect() / window_aspect;
+        const double ratio_of_aspects = itsRect.aspect() / window_aspect;
 
         if ( ratio_of_aspects < 1 ) // the available space is too wide...
           {
@@ -497,6 +528,13 @@ void Toglet::setViewingDistIn(double inches)
 {
 DOTRACE("Toglet::setViewingDistIn");
   itsSizer->setViewingDistIn(inches);
+  reconfigure();
+}
+
+void Toglet::setFixedRectLTRB(double L, double T, double R, double B)
+{
+DOTRACE("Toglet::setFixedRectLTRB");
+  itsSizer->setFixedRectLTRB(L,T,R,B);
   reconfigure();
 }
 

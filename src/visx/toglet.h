@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Apr  2 16:29:08 2002
+// written: Tue Apr  2 16:49:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +74,7 @@ public:
   void scaleRect(double factor);
   void setColor(const Color& color);
   void setPixelsPerUnit(double s);
+  void setFixedRectLTRB(double L, double T, double R, double B);
   void setMinRectLTRB(double L, double T, double R, double B);
   void setHeight(int val);
   void setWidth(int val);

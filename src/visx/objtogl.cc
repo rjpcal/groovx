@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Apr  2 16:35:45 2002
+// written: Tue Apr  2 16:55:08 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -123,20 +123,6 @@ namespace ObjTogl
     trial->installSelf(toglet);
   }
 
-  void setMinRect(SoftRef<Toglet> toglet,
-                  double l, double t, double r, double b)
-  {
-    // Test for valid rect: right > left && top > bottom. In
-    // particular, we must not have right == left or top == bottom
-    // since this collapses the space onto one dimension.
-    if (r <= l || t <= b)
-      {
-        throw Tcl::TclError("invalid rect");
-      }
-
-    toglet->setMinRectLTRB(l,t,r,b);
-  }
-
   // Make a specified trial the widget's current trial, and draw it in
   // the OpenGL window. The widget's visibility is set to true.
   void show(SoftRef<Toglet> toglet, Ref<TrialBase> trial)
@@ -173,7 +159,6 @@ public:
     def( "see", "gxnode_id", &ObjTogl::see );
     def( "setColor", "index r g b", &ObjTogl::setColor );
     def( "setCurTrial", "toglet_id widget_id", &ObjTogl::setCurTrial );
-    def( "setMinRect", "left top right bottom", &ObjTogl::setMinRect );
     def( "show", "toglet_id trial_id", &ObjTogl::show );
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
@@ -181,6 +166,7 @@ public:
     defAction("clearscreen", &Toglet::fullClearscreen);
     defAction("destroy", &Toglet::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
+    def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
     defAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
     defAction("loadDefaultFont", &Toglet::loadDefaultFont);
@@ -190,6 +176,7 @@ public:
     defGetter("pixelsPerInch", &Toglet::pixelsPerInch);
     defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
     defSetter("pixelsPerUnit", "item_id(s) scale", &Toglet::setPixelsPerUnit);
+    def("setMinRect", "uid left top right bottom", &Toglet::setMinRectLTRB);
     defSetter("setUnitAngle", "item_id(s) angle_in_degrees",
               &Toglet::setUnitAngle);
     defSetter("setViewingDistance", "item_id(s) distance_in_inches",
