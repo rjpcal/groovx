@@ -230,18 +230,20 @@ endif
 		LD_OPTIONS +=
 	endif
 
-	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
 ifneq ($(PLATFORM),ppc)
 	SHLIB_CMD := $(CC) -shared -o
 	STATLIB_CMD := ar rus
+	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 endif
 ifeq ($(PLATFORM),ppc)
-	SHLIB_CMD := libtool -dynamic -flat_namespace -undefined suppress -o
+#	SHLIB_CMD := libtool -dynamic -flat_namespace -undefined suppress -o
+	SHLIB_CMD := cc -dynamiclib -flat_namespace -undefined suppress -o
 # -install_name ${LIB_RUNTIME_DIR}/libname
 	STATLIB_CMD := libtool -static -o
 	LD_OPTIONS += -Wl,-m
 # -Wl,-multiply_defined,warning
+	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 endif
 
 endif
@@ -281,18 +283,6 @@ endif
 INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
 LIB_PATH += -L$(LOCAL_LIB)
-LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
-
-ifneq ($(PLATFORM),ppc)
-	INCLUDE_PATH += -I/usr/local/matlab/extern/include
-	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
-	LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
-	CPP_DEFINES += -DHAVE_MATLAB
-endif
-
-ifeq ($(PLATFORM),i686)
-	LIB_PATH += -L/usr/X11R6/lib
-endif
 
 EXTERNAL_LIBS := \
 	-lGLU -lGL \
@@ -302,10 +292,27 @@ EXTERNAL_LIBS := \
 	$(AUDIO_LIB) \
 	-lm
 
+ifneq ($(PLATFORM),ppc)
+	LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
+
+	INCLUDE_PATH += -I/usr/local/matlab/extern/include
+	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
+	LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
+	CPP_DEFINES += -DHAVE_MATLAB
+
+	EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
+endif
+
+ifeq ($(PLATFORM),ppc)
+	EXTERNAL_LIBS += -lcc_dynamic
+endif
+
+ifeq ($(PLATFORM),i686)
+	LIB_PATH += -L/usr/X11R6/lib
+endif
+
 # add -lefence to EXTERNAL_LIBS for Electric Fence mem debugging
 
-
-EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
 
 #-------------------------------------------------------------------------
 #
@@ -342,7 +349,7 @@ endif
 
 ifeq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $^ -lcc_dynamic
+	$(SHLIB_CMD) $@ $^
 endif
 
 %.$(STATLIB_EXT):
@@ -413,12 +420,12 @@ $(LIB_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext $(OBJ_EXT) \
+		--module Visx \
 		--module Gfx \
 		--module GWT \
 		--module Tcl \
 		--module IO \
 		--module Gx \
-		--module Visx \
 		--module Togl \
 		--module System \
 		--module Util \
@@ -438,6 +445,10 @@ ldeps: $(ALL_SOURCES) $(ALL_HEADERS)
 # Build rules for production and debug executables
 #
 #-------------------------------------------------------------------------
+
+ifeq ($(PLATFORM),ppc)
+	PROJECT_LIBS := 
+endif
 
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
@@ -461,11 +472,20 @@ ifeq ($(MODE),debug)
 	endif
 endif
 
+ifneq ($(PLATFORM),ppc)
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
-
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
+endif
+
+ifeq ($(PLATFORM),ppc)
+CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(PROJECT_OBJS) \
+	$(LIB_PATH) $(EXTERNAL_LIBS)
+$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(PROJECT_OBJS)
+	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
+endif
+
 
 #-------------------------------------------------------------------------
 #
