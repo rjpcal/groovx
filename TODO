@@ -7,6 +7,20 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (13-Nov-2002) Cleanup (or dissolve?) GrObj once and for all
+
+* (13-Sep-2001) Nested containment of FieldContainer's
+  in addition to inheritance.
+
+  OK, the main issue here is how to do the "cast" that is required in all
+  of the field implementations. We need to be able to cast from a
+  FieldContainer* to a C*. This is easy with inheritance, since we can just
+  use a dynamic cast. But, with containment, we need to be able to "cast"
+  to a subobject. Probably the easiest was is to provide a virtual function
+  in FieldContainer that provides access to a child, if any. Then we can
+  have a wrapper cast function that first tries dynamic_cast, and if that
+  fails, tries to cast a child subobject to the proper type.
+
 * (9-Nov-2002) Cleanup Togl helper code
 
 ** GLUtil just has font functions.
@@ -120,9 +134,6 @@ test script, and specify this information in a makefile-compatible format.
   -- Start simple: let's get a script to build the LIBDEEP... targets and
      dependencies for us. The only thing that the rest of the Makefile will
      depend on is the $(PROJECT_LIBS) variable.
-
-* (13-Sep-2001) Nested containment of FieldContainer's
-in addition to inheritance.
 
 * (22-Aug-2001) Allow args in the Signal/Slot callbacks
 e.g. for event handlers
