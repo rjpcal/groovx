@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Sat Nov 23 14:03:11 2002
+// written: Sat Nov 23 14:10:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,20 +29,10 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-class Scene
-{
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// GWT::Widget::Impl definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class GWT::Widget::Impl : public Util::VolatileObject
+class Scene : public Util::VolatileObject
 {
 public:
-  Impl(GWT::Widget* owner) :
+  Scene(GWT::Widget* owner) :
     itsOwner(owner),
     itsDrawNode(GxEmptyNode::make()),
     itsUndrawNode(GxEmptyNode::make()),
@@ -52,15 +42,13 @@ public:
     isItRefreshing(true),
     isItRefreshed(false),
     itsTimer(100, true),
-    itsButtonListeners(),
-    itsKeyListeners(),
-    slotNodeChanged(Util::Slot::make(this, &Impl::onNodeChange))
+    slotNodeChanged(Util::Slot::make(this, &Scene::onNodeChange))
   {
-    itsTimer.sigTimeOut.connect(this, &Impl::fullRender);
+    itsTimer.sigTimeOut.connect(this, &Scene::fullRender);
     itsCamera->sigNodeChanged.connect(slotNodeChanged);
   }
 
-  static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
+  static Scene* make(GWT::Widget* owner) { return new Scene(owner); }
 
   void undraw(Gfx::Canvas& canvas);
 
@@ -127,8 +115,8 @@ private:
     canvas.flushOutput();
   }
 
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+  Scene(const Scene&);
+  Scene& operator=(const Scene&);
 
   GWT::Widget* itsOwner;
   Util::Ref<GxNode> itsDrawNode;
@@ -143,25 +131,40 @@ public:
 
   Tcl::Timer itsTimer;
 
+  Util::Ref<Util::Slot> slotNodeChanged;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// GWT::Widget::Impl definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class GWT::Widget::Impl
+{
+public:
+  Impl() :
+    itsButtonListeners(),
+    itsKeyListeners()
+  {}
+
   typedef dlink_list<Util::Ref<GWT::ButtonListener> > Buttons;
   typedef dlink_list<Util::Ref<GWT::KeyListener> >    Keys;
 
   Buttons itsButtonListeners;
   Keys itsKeyListeners;
-
-  Util::Ref<Util::Slot> slotNodeChanged;
 };
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GWT::Widget::Impl member definitions
+// Scene member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GWT::Widget::Impl::render()
+void Scene::render()
 {
-DOTRACE("GWT::Widget::Impl::render");
+DOTRACE("Scene::render");
 
   Gfx::Canvas& canvas = itsOwner->getCanvas();
 
@@ -184,9 +187,9 @@ DOTRACE("GWT::Widget::Impl::render");
     }
 }
 
-void GWT::Widget::Impl::fullRender()
+void Scene::fullRender()
 {
-DOTRACE("GWT::Widget::Impl::fullRender");
+DOTRACE("Scene::fullRender");
 
   Gfx::Canvas& canvas = itsOwner->getCanvas();
 
@@ -206,9 +209,9 @@ DOTRACE("GWT::Widget::Impl::fullRender");
   doFlush(canvas);
 }
 
-void GWT::Widget::Impl::undraw(Gfx::Canvas& canvas)
+void Scene::undraw(Gfx::Canvas& canvas)
 {
-DOTRACE("GWT::Widget::Impl::undraw");
+DOTRACE("Scene::undraw");
   itsUndrawNode->undraw(canvas);
   doFlush(canvas);
 }
@@ -220,7 +223,8 @@ DOTRACE("GWT::Widget::Impl::undraw");
 ///////////////////////////////////////////////////////////////////////
 
 GWT::Widget::Widget() :
-  itsImpl(Impl::make(this))
+  itsImpl(new Impl),
+  itsScene(Scene::make(this))
 {
 DOTRACE("GWT::Widget::Widget");
 }
@@ -229,7 +233,8 @@ GWT::Widget::~Widget()
 {
 DOTRACE("GWT::Widget::~Widget");
 
-  itsImpl->destroy();
+  itsScene->destroy();
+  delete itsImpl;
 }
 
 void GWT::Widget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
@@ -265,67 +270,67 @@ void GWT::Widget::removeKeyListeners()
 
 void GWT::Widget::render()
 {
-  itsImpl->render();
+  itsScene->render();
 }
 
 void GWT::Widget::fullRender()
 {
-  itsImpl->fullRender();
+  itsScene->fullRender();
 }
 
 void GWT::Widget::clearscreen()
 {
-  itsImpl->clearscreen(getCanvas());
+  itsScene->clearscreen(getCanvas());
 }
 
 void GWT::Widget::fullClearscreen()
 {
-  itsImpl->fullClearscreen(getCanvas());
+  itsScene->fullClearscreen(getCanvas());
 }
 
 void GWT::Widget::undraw()
 {
-  itsImpl->undraw(getCanvas());
+  itsScene->undraw(getCanvas());
 }
 
 void GWT::Widget::setVisibility(bool vis)
 {
 DOTRACE("GWT::Widget::setVisibility");
-  itsImpl->setVisibility(vis);
+  itsScene->setVisibility(vis);
 }
 
 void GWT::Widget::setHold(bool hold_on)
 {
 DOTRACE("GWT::Widget::setHold");
-  itsImpl->isItHolding = hold_on;
+  itsScene->isItHolding = hold_on;
 }
 
 void GWT::Widget::allowRefresh(bool allow)
 {
 DOTRACE("GWT::Widget::allowRefresh");
-  itsImpl->isItRefreshing = allow;
-  itsImpl->flushChanges();
+  itsScene->isItRefreshing = allow;
+  itsScene->flushChanges();
 }
 
 const Util::Ref<GxCamera>& GWT::Widget::getCamera() const
 {
 DOTRACE("GWT::Widget::getCamera");
 
-  return itsImpl->itsCamera;
+  return itsScene->itsCamera;
 }
 
 void GWT::Widget::setCamera(const Util::Ref<GxCamera>& cam)
 {
 DOTRACE("GWT::Widget::setCamera");
 
-  itsImpl->setCamera(cam);
+  itsScene->setCamera(cam);
   fullRender();
 }
 
 void GWT::Widget::setDrawable(const Ref<GxNode>& node)
 {
 DOTRACE("GWT::Widget::setDrawable");
-  itsImpl->setDrawable(node);
+  itsScene->setDrawable(node);
 }
 
 void GWT::Widget::animate(unsigned int framesPerSecond)
@@ -333,12 +338,12 @@ void GWT::Widget::animate(unsigned int framesPerSecond)
 DOTRACE("GWT::Widget::animate");
   if (framesPerSecond == 0)
     {
-      itsImpl->itsTimer.cancel();
+      itsScene->itsTimer.cancel();
     }
   else
     {
-      itsImpl->itsTimer.setDelayMsec(1000/framesPerSecond);
-      itsImpl->itsTimer.schedule();
+      itsScene->itsTimer.setDelayMsec(1000/framesPerSecond);
+      itsScene->itsTimer.schedule();
     }
 }
 
