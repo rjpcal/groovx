@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Fri Nov 22 15:44:37 2002
+// written: Fri Nov 22 16:16:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,35 +95,35 @@ public:
 
   ~Impl();
 
-  Tcl_Interp* itsInterp;
-  slink_list<shared_ptr<Command> > itsCmds;
-  std::string itsPkgName;
-  std::string itsVersion;
+  Tcl_Interp* interp;
+  slink_list<shared_ptr<Command> > cmds;
+  std::string pkgName;
+  std::string version;
 
-  int itsInitStatus;
+  int initStatus;
 
   slink_list<shared_ptr<int> > ownedInts;
   slink_list<shared_ptr<double> > ownedDoubles;
 };
 
-Tcl::PkgBase::Impl::Impl(Tcl_Interp* interp,
-                         const char* name, const char* version) :
-  itsInterp(interp),
-  itsCmds(),
-  itsPkgName(name ? name : ""),
-  itsVersion(version ? version : ""),
-  itsInitStatus(TCL_OK),
+Tcl::PkgBase::Impl::Impl(Tcl_Interp* intp,
+                         const char* name, const char* vers) :
+  interp(intp),
+  cmds(),
+  pkgName(name ? name : ""),
+  version(vers ? vers : ""),
+  initStatus(TCL_OK),
   ownedInts(),
   ownedDoubles()
 {
 DOTRACE("Tcl::PkgBase::Impl::Impl");
-  if ( !itsPkgName.empty() && !itsVersion.empty() )
+  if ( !pkgName.empty() && !version.empty() )
   {
 
     // First we must construct a capitalization-correct version of
-    // itsPkgName that is just how Tcl likes it: first character
+    // pkgName that is just how Tcl likes it: first character
     // uppercase, all others lowercase.
-    std::string pkgname = itsPkgName;
+    std::string pkgname = pkgName;
 
     pkgname[0] = char(toupper(pkgname[0]));
 
@@ -132,14 +132,14 @@ DOTRACE("Tcl::PkgBase::Impl::Impl");
       pkgname[i] = char(tolower(pkgname[i]));
     }
 
-    // Fix up itsVersion to remove any extraneous char's (such as
+    // Fix up version to remove any extraneous char's (such as
     // version-control info, where we'd get a string like
     //   '$Revision 2.8 $'
 
-    itsVersion.erase(0, itsVersion.find_first_of("0123456789"));
-    itsVersion.erase(itsVersion.find_last_of("0123456789")+1, std::string::npos);
+    version.erase(0, version.find_first_of("0123456789"));
+    version.erase(version.find_last_of("0123456789")+1, std::string::npos);
 
-    Tcl_PkgProvide(interp, pkgname.c_str(), itsVersion.c_str());
+    Tcl_PkgProvide(interp, pkgname.c_str(), version.c_str());
   }
 }
 
@@ -150,7 +150,7 @@ DOTRACE("Tcl::PkgBase::Impl::~Impl");
 
 Tcl::PkgBase::PkgBase(Tcl_Interp* interp,
                       const char* name, const char* version) :
-  itsImpl(new Impl(interp, name, version))
+  rep(new Impl(interp, name, version))
 {
 DOTRACE("Tcl::PkgBase::PkgBase");
   Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(this));
@@ -159,13 +159,13 @@ DOTRACE("Tcl::PkgBase::PkgBase");
 Tcl::PkgBase::~PkgBase()
 {
 DOTRACE("Tcl::PkgBase::~PkgBase");
-  delete itsImpl;
+  delete rep;
 }
 
 int Tcl::PkgBase::initStatus() const
 {
 DOTRACE("Tcl::PkgBase::initStatus");
-  return itsImpl->itsInitStatus;
+  return rep->initStatus;
 }
 
 int Tcl::PkgBase::initStatus(PkgBase* pkg)
@@ -189,7 +189,7 @@ DOTRACE("Tcl::PkgBase::combineStatus");
 Tcl_Interp* Tcl::PkgBase::interp()
 {
 DOTRACE("Tcl::PkgBase::interp");
- return itsImpl->itsInterp;
+ return rep->interp;
 }
 
 namespace
@@ -216,26 +216,26 @@ void Tcl::PkgBase::namespaceAlias(const char* namesp)
 {
 DOTRACE("Tcl::PkgBase::namespaceAlias");
 
-  exportAll(itsImpl->itsInterp, itsImpl->itsPkgName.c_str());
-  exportInto(itsImpl->itsInterp, itsImpl->itsPkgName.c_str(), namesp);
+  exportAll(rep->interp, rep->pkgName.c_str());
+  exportInto(rep->interp, rep->pkgName.c_str(), namesp);
 }
 
 void Tcl::PkgBase::inherit(const char* namesp)
 {
 DOTRACE("Tcl::PkgBase::inherit");
 
-  exportAll(itsImpl->itsInterp, namesp);
-  exportInto(itsImpl->itsInterp, namesp, itsImpl->itsPkgName.c_str());
+  exportAll(rep->interp, namesp);
+  exportInto(rep->interp, namesp, rep->pkgName.c_str());
 }
 
 const char* Tcl::PkgBase::pkgName()
 {
-  return itsImpl->itsPkgName.c_str();
+  return rep->pkgName.c_str();
 }
 
 const char* Tcl::PkgBase::version()
 {
-  return itsImpl->itsVersion.c_str();
+  return rep->version.c_str();
 }
 
 const char* Tcl::PkgBase::makePkgCmdName(const char* cmd_name_cstr)
@@ -266,59 +266,59 @@ void Tcl::PkgBase::eval(const char* script)
 DOTRACE("Tcl::PkgBase::eval");
 
   Tcl::Code code(Tcl::toTcl(script), Tcl::Code::THROW_EXCEPTION);
-  code.invoke(itsImpl->itsInterp);
+  code.invoke(rep->interp);
 }
 
 void Tcl::PkgBase::addCommand(Command* cmd)
 {
 DOTRACE("Tcl::PkgBase::addCommand");
-  itsImpl->itsCmds.push_front(shared_ptr<Command>(cmd));
+  rep->cmds.push_front(shared_ptr<Command>(cmd));
 }
 
 void Tcl::PkgBase::linkVar(const char* varName, int& var)
 {
 DOTRACE("Tcl::PkgBase::linkVar int");
-  linkInt(itsImpl->itsInterp, varName, &var, 0);
+  linkInt(rep->interp, varName, &var, 0);
 }
 
 void Tcl::PkgBase::linkVar(const char* varName, double& var)
 {
 DOTRACE("Tcl::PkgBase::linkVar double");
-  linkDouble(itsImpl->itsInterp, varName, &var, 0);
+  linkDouble(rep->interp, varName, &var, 0);
 }
 
 void Tcl::PkgBase::linkVarCopy(const char* varName, int var)
 {
 DOTRACE("Tcl::PkgBase::linkVarCopy int");
   shared_ptr<int> copy(new int(var));
-  itsImpl->ownedInts.push_front(copy);
-  linkInt(itsImpl->itsInterp, varName, copy.get(), TCL_LINK_READ_ONLY);
+  rep->ownedInts.push_front(copy);
+  linkInt(rep->interp, varName, copy.get(), TCL_LINK_READ_ONLY);
 }
 
 void Tcl::PkgBase::linkVarCopy(const char* varName, double var)
 {
 DOTRACE("Tcl::PkgBase::linkVarCopy double");
   shared_ptr<double> copy(new double(var));
-  itsImpl->ownedDoubles.push_front(copy);
-  linkDouble(itsImpl->itsInterp, varName, copy.get(), TCL_LINK_READ_ONLY);
+  rep->ownedDoubles.push_front(copy);
+  linkDouble(rep->interp, varName, copy.get(), TCL_LINK_READ_ONLY);
 }
 
 void Tcl::PkgBase::linkConstVar(const char* varName, int& var)
 {
 DOTRACE("Tcl::PkgBase::linkConstVar int");
-  linkInt(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY);
+  linkInt(rep->interp, varName, &var, TCL_LINK_READ_ONLY);
 }
 
 void Tcl::PkgBase::linkConstVar(const char* varName, double& var)
 {
 DOTRACE("Tcl::PkgBase::linkConstVar double");
-  linkDouble(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY);
+  linkDouble(rep->interp, varName, &var, TCL_LINK_READ_ONLY);
 }
 
 void Tcl::PkgBase::setInitStatusError()
 {
 DOTRACE("Tcl::PkgBase::setInitStatusError");
-  itsImpl->itsInitStatus = TCL_ERROR;
+  rep->initStatus = TCL_ERROR;
 }
 
 static const char vcid_tclpkgbase_cc[] = "$Header$";
