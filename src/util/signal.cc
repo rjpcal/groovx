@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Mon May 22 12:19:15 2000
+// written: Sat Sep 23 16:35:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ public:
 	 { }
   ~ObservableImpl()
 	 { }
-  list<Observer *> itsObservers;
+  std::list<Observer *> itsObservers;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ DOTRACE("Observable::detach");
 
 void Observable::sendStateChangeMsg() const {
 DOTRACE("Observable::sendStateChangeMsg");
-  for (list<Observer *>::iterator ii = itsImpl.itsObservers.begin();
+  for (std::list<Observer *>::iterator ii = itsImpl.itsObservers.begin();
 		 ii != itsImpl.itsObservers.end();
 		 ii++) {
 	 (*ii)->receiveStateChangeMsg(this);
@@ -77,7 +77,7 @@ DOTRACE("Observable::sendStateChangeMsg");
 
 void Observable::sendDestroyMsg() {
 DOTRACE("Observable::sendDestroyMsg");
-  list<Observer *>& theList = itsImpl.itsObservers;
+  std::list<Observer *>& theList = itsImpl.itsObservers;
 
   DebugEval(itsImpl.itsObservers.size());
 
