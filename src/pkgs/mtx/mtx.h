@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Apr 18 15:43:01 2001
+// written: Thu Apr 26 22:43:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 #include "num.h"
 
 #include <iterator>
+
+using namespace std;
 
 class fixed_string;
 
@@ -123,6 +125,8 @@ public:
 
   bool operator==(const MtxIter& other) const { return data == other.data; }
 
+  bool operator!=(const MtxIter& other) const { return data != other.data; }
+
   bool operator<(const MtxIter& other) const { return data < other.data; }
 
   difference_type operator-(const MtxIter& other) const
@@ -178,6 +182,8 @@ public:
 
   bool operator==(const MtxConstIter& other) const { return data == other.data; }
 
+  bool operator!=(const MtxConstIter& other) const { return data != other.data; }
+
   bool operator<(const MtxConstIter& other) const { return data < other.data; }
 
   difference_type operator-(const MtxConstIter& other) const
@@ -213,7 +219,7 @@ protected:
   int itsStride;
   int itsNelems;
 
-  const double* dataStart() const;
+  inline const double* dataStart() const;
   ptrdiff_t dataOffset(int i) const { return itsStride*i; }
   const double* address(int i) const { return dataStart() + dataOffset(i); }
 
@@ -221,7 +227,7 @@ protected:
 
   friend class Mtx;
 
-  Slice(const Mtx& owner, ptrdiff_t offset, int s, int n);
+  inline Slice(const Mtx& owner, ptrdiff_t offset, int s, int n);
 
 public:
 
