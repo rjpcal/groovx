@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 10:55:04 2001
+// written: Mon Aug 13 10:00:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/algo.h"
 #include "util/strings.h"
 
 #include <cstring>
@@ -40,16 +41,15 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-  template <class T>
-  inline T abs(T val) { return (val < 0) ? -val : val; }
-
+namespace
+{
   const IO::VersionId FACE_SERIAL_VERSION_ID = 1;
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
 
-  const FieldInfo FINFOS[] = {
+  const FieldInfo FINFOS[] =
+  {
     FieldInfo("category", &Face::faceCategory, 0, 0, 10, 1, true),
     FieldInfo("eyeHeight", &Face::eyeHeight, 0.6, -1.2, 1.2, 0.01),
     FieldInfo("eyeDistance", &Face::eyeDistance, 0.4, 0.0, 1.8, 0.01),
@@ -72,9 +72,13 @@ namespace {
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& Face::classFields() { return FACE_FIELDS; }
+const FieldMap& Face::classFields()
+{
+  return FACE_FIELDS;
+}
 
-Face* Face::make() {
+Face* Face::make()
+{
 DOTRACE("Face::make");
   return new Face;
 }
@@ -88,22 +92,24 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
   mouthHeight(mh)
 {
 DOTRACE("Face::Face");
-  Invariant(check());
 
   setFieldMap(FACE_FIELDS);
 }
 
-Face::~Face() {
+Face::~Face()
+{
 DOTRACE("Face::~Face");
   // nothing to do
 }
 
-IO::VersionId Face::serialVersionId() const {
+IO::VersionId Face::serialVersionId() const
+{
 DOTRACE("Face::serialVersionId");
   return FACE_SERIAL_VERSION_ID;
 }
 
-void Face::readFrom(IO::Reader* reader) {
+void Face::readFrom(IO::Reader* reader)
+{
 DOTRACE("Face::readFrom");
 
   reader->ensureReadVersionId("Face", 1, "Try grsh0.8a4");
@@ -113,7 +119,8 @@ DOTRACE("Face::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void Face::writeTo(IO::Writer* writer) const {
+void Face::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Face::writeTo");
 
   writer->ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
@@ -128,9 +135,9 @@ DOTRACE("Face::writeTo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void Face::grRender(Gfx::Canvas& canvas, DrawMode mode) const {
+void Face::grRender(Gfx::Canvas& canvas, DrawMode mode) const
+{
 DOTRACE("Face::grRender");
-  Invariant(check());
 
   const bool have_antialiasing = canvas.isRgba();
 
@@ -139,17 +146,18 @@ DOTRACE("Face::grRender");
   //
 
   // Enable antialiasing, if it is available
-  if (have_antialiasing) {
-    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
-    glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
+  if (have_antialiasing)
+    {
+      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
+      glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
 
-    if (mode == DRAW)
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
-    else
-      glBlendFunc(GL_ONE, GL_ZERO); // overwrite source into destination
+      if (mode == DRAW)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
+      else
+        glBlendFunc(GL_ONE, GL_ZERO); // overwrite source into destination
 
-    glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
-  }
+      glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
+    }
 
   // Prepare to push and pop modelview matrices.
   glMatrixMode(GL_MODELVIEW);
@@ -157,20 +165,6 @@ DOTRACE("Face::grRender");
   //
   // Set up for drawing eyes.
   //
-
-  // Create a quadric obj to use for calling gluDisk(). This disk will
-  // be used to render the eyeballs and the pupils.
-  GLUquadricObj* qobj = gluNewQuadric();
-  gluQuadricDrawStyle(qobj, GLU_SILHOUETTE);
-  static const int num_slices = 20;
-  static const int num_loops = 1;
-  static const GLdouble outer_radius = 0.5;
-
-  // Calculate the x positions for the left and right eyes
-  // left position always <= 0.0
-  // right position always >= 0.0
-  const double left_eye_x = -abs(eyeDistance())/2.0;
-  const double right_eye_x = -left_eye_x;
 
   // Generate the eyeball scales on the basis of the eye aspect. The
   // eye aspect should range from 0.0 to 1.0 to control the eyeball x
@@ -194,23 +188,28 @@ DOTRACE("Face::grRender");
   const GLdouble pupil_x_scale = pupil_x_scale_abs/eyeball_x_scale;
   const GLdouble pupil_y_scale = pupil_y_scale_abs/eyeball_y_scale;
 
-  // Draw left eye.
-  glPushMatrix();
-  glTranslatef(left_eye_x, eyeHeight(), 0.0);
-  glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
-  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-  glScalef(pupil_x_scale, pupil_y_scale, 1.0);
-  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-  glPopMatrix();
+  // Calculate the x position for the eyes
+  const double eye_x = Util::abs(eyeDistance())/2.0;
 
-  // Draw right eye.
-  glPushMatrix();
-  glTranslatef(right_eye_x, eyeHeight(), 0.0);
-  glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
-  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-  glScalef(pupil_x_scale, pupil_y_scale, 1.0);
-  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-  glPopMatrix();
+  // Create a quadric obj to use for calling gluDisk(). This disk will
+  // be used to render the eyeballs and the pupils.
+  GLUquadricObj* qobj = gluNewQuadric();
+  gluQuadricDrawStyle(qobj, GLU_SILHOUETTE);
+  static const int num_slices = 20;
+  static const int num_loops = 1;
+  static const GLdouble outer_radius = 0.5;
+
+  // Draw eyes.
+  for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
+    {
+      glPushMatrix();
+      glTranslatef(eye_pos * eye_x, eyeHeight(), 0.0);
+      glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
+      gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+      glScalef(pupil_x_scale, pupil_y_scale, 1.0);
+      gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+      glPopMatrix();
+    }
 
   gluDeleteQuadric(qobj);
 
@@ -225,15 +224,17 @@ DOTRACE("Face::grRender");
   const double* const ctrlpnts = getCtrlPnts();
 
   glEnable(GL_MAP1_VERTEX_3);
-  for (int i = 0; i < nctrlsets; ++i) {
-    glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
-    // Define a 1-d evaluator for the Bezier curves .
-    glBegin(GL_LINE_STRIP);
-    for (int j = 0; j <= num_subdivisions; ++j) {
-      glEvalCoord1f((GLdouble) j/ (GLdouble) num_subdivisions);
+  for (int i = 0; i < nctrlsets; ++i)
+    {
+      glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
+      // Define a 1-d evaluator for the Bezier curves .
+      glBegin(GL_LINE_STRIP);
+      for (int j = 0; j <= num_subdivisions; ++j)
+        {
+          glEvalCoord1f((GLdouble) j/ (GLdouble) num_subdivisions);
+        }
+      glEnd();
     }
-    glEnd();
-  }
 
   //
   // Draw nose and mouth.
@@ -242,7 +243,7 @@ DOTRACE("Face::grRender");
   // Calculate the y positions for the top and bottom of the nose
   // bottom always <= 0.0
   // top always >= 0.0
-  const double nose_bottom_y = -abs(noseLength())/2.0;
+  const double nose_bottom_y = -Util::abs(noseLength())/2.0;
   const double nose_top_y = -nose_bottom_y;
 
   glBegin(GL_LINES);
@@ -252,16 +253,18 @@ DOTRACE("Face::grRender");
   glVertex2f(theirNose_x, nose_top_y);
   glEnd();
 
-  if (have_antialiasing) {
-    glPopAttrib();
-  }
+  if (have_antialiasing)
+    {
+      glPopAttrib();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Rect<double> Face::grGetBoundingBox() const {
+Rect<double> Face::grGetBoundingBox() const
+{
 DOTRACE("Face::grGetBoundingBox");
 
   Rect<double> bounding_box;
@@ -273,43 +276,45 @@ DOTRACE("Face::grGetBoundingBox");
   return bounding_box;
 }
 
-int Face::category() const {
+int Face::category() const
+{
 DOTRACE("Face::category");
   return faceCategory();
 }
 
-void Face::setCategory(int val) {
+void Face::setCategory(int val)
+{
 DOTRACE("Face::setCategory");
   faceCategory.setNative(val);
 }
 
-const double* Face::getCtrlPnts() const {
+const double* Face::getCtrlPnts() const
+{
 DOTRACE("Face::getCtrlPnts");
-  static const double ctrlpnts[] = {    -.7, 0.2, 0, // first 4 control points
-                                       -.7, 1.4, 0,
-                                       .7, 1.4, 0,
-                                       .7, 0.2, 0,
-                                       .7, 0.2, 0, // second 4 control points
-                                       .6, -1.7, 0,
-                                       -.6, -1.7, 0,
-                                       -.7, 0.2, 0};
+  static const double ctrlpnts[] =
+  {
+    -.7, 0.2, 0, // first 4 control points
+    -.7, 1.4, 0,
+    .7, 1.4, 0,
+    .7, 0.2, 0,
+    .7, 0.2, 0, // second 4 control points
+    .6, -1.7, 0,
+    -.6, -1.7, 0,
+    -.7, 0.2, 0
+  };
   return ctrlpnts;
 }
 
-double Face::getEyeAspect() const {
+double Face::getEyeAspect() const
+{
 DOTRACE("Face::getEyeAspect");
   return 0.0;
 }
 
-double Face::getVertOffset() const {
+double Face::getVertOffset() const
+{
 DOTRACE("Face::getVertOffset");
   return 0.0;
-}
-
-bool Face::check() const {
-DOTRACE("Face::check");
-//   return (eyeDistance() >= 0.0 && noseLength() >= 0.0);
-  return true;
 }
 
 static const char vcid_face_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 10:46:49 2001
+// written: Mon Aug 13 09:59:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,9 +106,6 @@ protected:
 private:
   Face(const Face&);
   Face& operator=(const Face&);
-
-  /// Check all invariants and return true if everything is OK.
-  bool check() const;
 };
 
 static const char vcid_face_h[] = "$Header$";
