@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Sat Sep 23 15:32:23 2000
+// written: Tue Sep 26 19:04:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,16 +33,16 @@ class FixPt : public GrObj, public PropFriend<FixPt> {
 public:
   /// Construct with initial values for the cross length and pixel-width.
   FixPt (double len=0.1, int wid=1);
-
-  /// Construct from an \c STD_IO::istream using \c deserialize().
+#ifdef LEGACY
+  /// Construct from an \c STD_IO::istream using \c legacyDesrlz().
   FixPt (STD_IO::istream &is, IO::IOFlag flag);
-
+#endif
   /// Virtual destructor.
   virtual ~FixPt ();
 
-  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

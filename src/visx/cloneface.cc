@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Tue Sep 26 19:12:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "io/writeutils.h"
 
 #include <cstring>
-#include <iostream.h>			  // for serialize
+#include <iostream.h>			  // for legacySrlz
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -51,24 +51,25 @@ DOTRACE("CloneFace::CloneFace()");
   }
 }
 
+#ifdef LEGACY
 CloneFace::CloneFace (STD_IO::istream& is, IO::IOFlag flag) :
   Face(), itsEyeAspect(0.0), itsVertOffset(0.0) 
 {
 DOTRACE("CloneFace::CloneFace(STD_IO::istream&, IO::IOFlag)");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
-
+#endif
 
 CloneFace::~CloneFace () {
 DOTRACE("CloneFace::~CloneFace");
 }
 
-// In serialize/deserialize, the derived class (CloneFace) is handled
+// In legacySrlz/legacyDesrlz, the derived class (CloneFace) is handled
 // before the base class (Face) since the first thing the virtual
 // constructor sees must be the typename of the most fully derived
 // class, in order to invoke the proper constructor.
-void CloneFace::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("CloneFace::serialize");
+void CloneFace::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("CloneFace::legacySrlz");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
@@ -80,13 +81,13 @@ DOTRACE("CloneFace::serialize");
 
   if (os.fail()) throw IO::OutputError(ioTag);
 
-  // Always serialize Face, regardless of (flag & IO::BASES)
+  // Always legacySrlz Face, regardless of (flag & IO::BASES)
   // Always use the typename in the base class, regardless of flag
-  Face::serialize(os, (flag | IO::TYPENAME));
+  Face::legacySrlz(writer, os, (flag | IO::TYPENAME));
 }
 
-void CloneFace::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("CloneFace::deserialize");
+void CloneFace::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("CloneFace::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   
   for (int i = 0; i < 24; ++i) {
@@ -104,18 +105,18 @@ DOTRACE("CloneFace::deserialize");
  	 throw;
   }
 
-  // Always deserialize Face, regardless of (flag & IO::BASES)
+  // Always legacyDesrlz Face, regardless of (flag & IO::BASES)
   // Always use the typename in the base class, regardless of flag
-  Face::deserialize(is, (flag | IO::TYPENAME));
+  Face::legacyDesrlz(reader, is, (flag | IO::TYPENAME));
 }
 
-int CloneFace::charCount() const {
-DOTRACE("CloneFace::charCount");
+int CloneFace::legacyCharCount() const {
+DOTRACE("CloneFace::legacyCharCount");
   return ( strlen(ioTag) + 1  
 			  + 24*6 + 1
 			  + IO::gCharCount(itsEyeAspect) + 1
 			  + IO::gCharCount(itsVertOffset) + 1
-			  + Face::charCount()
+			  + Face::legacyCharCount()
 			  + 5 ); 
 }
 

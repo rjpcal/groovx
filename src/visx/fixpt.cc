@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Sep 23 16:43:57 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,16 +59,16 @@ namespace {
 
 FixPt::FixPt(double len, int wid) : 
   length(len), width(wid) {}
-
+#ifdef LEGACY
 FixPt::FixPt(STD_IO::istream &is, IO::IOFlag flag) :
   length(0.1), width(1)
 {
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
-
+#endif
 FixPt::~FixPt() {}
 
-void FixPt::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
+void FixPt::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
@@ -76,24 +76,24 @@ void FixPt::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
   os << width() << endl;
   if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void FixPt::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
+void FixPt::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> length();
   is >> width();
   if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 }
 
-int FixPt::charCount() const {
+int FixPt::legacyCharCount() const {
   return (strlen(ioTag) + 1
 			 + IO::gCharCount<double>(length()) + 1
 			 + IO::gCharCount<int>(width()) + 1
-			 + GrObj::charCount()
+			 + GrObj::legacyCharCount()
 			 + 1);// fudge factor
 }
 

@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 19:16:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,34 +48,34 @@ KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
 
 KbdResponseHdlr::~KbdResponseHdlr() {}
 
-void KbdResponseHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("KbdResponseHdlr::serialize");
+void KbdResponseHdlr::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("KbdResponseHdlr::legacySrlz");
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
-  oldSerialize(os, flag);
+  oldLegacySrlz(writer, os, flag);
 
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { /* no bases to serialize */ }
+  if (flag & IO::BASES) { /* no bases to legacySrlz */ }
 }
 
-void KbdResponseHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("KbdResponseHdlr::deserialize");
+void KbdResponseHdlr::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("KbdResponseHdlr::legacyDesrlz");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  oldDeserialize(is, flag);
+  oldLegacyDesrlz(reader, is, flag);
 
   setEventSequence("<KeyPress");
   setBindingSubstitution("%K");
 
   if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { /* no bases to deserialize */ }
+  if (flag & IO::BASES) { /* no bases to legacyDesrlz */ }
 }
 
-int KbdResponseHdlr::charCount() const {
-DOTRACE("KbdResponseHdlr::charCount");
+int KbdResponseHdlr::legacyCharCount() const {
+DOTRACE("KbdResponseHdlr::legacyCharCount");
   return ioTag.length() + 1 + oldCharCount();
 }
 

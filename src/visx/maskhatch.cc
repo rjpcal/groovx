@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Sat Sep 23 16:51:15 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,23 +63,23 @@ DOTRACE("MaskHatch::~MaskHatch ");
   
 }
 
-void MaskHatch::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("MaskHatch::serialize");
+void MaskHatch::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("MaskHatch::legacySrlz");
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
   if (os.fail()) throw IO::OutputError(ioTag);
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void MaskHatch::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("MaskHatch::deserialize");
+void MaskHatch::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("MaskHatch::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   if (is.fail()) throw IO::InputError(ioTag);
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 }
 
-int MaskHatch::charCount() const {
-DOTRACE("MaskHatch::charCount");
-  return strlen(ioTag) + 1 + GrObj::charCount();
+int MaskHatch::legacyCharCount() const {
+DOTRACE("MaskHatch::legacyCharCount");
+  return strlen(ioTag) + 1 + GrObj::legacyCharCount();
 }
 
 void MaskHatch::readFrom(IO::Reader* reader) {

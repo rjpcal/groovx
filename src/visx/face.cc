@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Sep 23 15:32:26 2000
+// written: Tue Sep 26 19:12:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 #include "util/strings.h"
 
-#include <iostream.h>           // for serialize
+#include <iostream.h>           // for legacySrlz
 #include <cstring>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -105,7 +105,7 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
 DOTRACE("Face::Face");
   Invariant(check());
 }
-
+#ifdef LEGACY
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
 Face::Face(STD_IO::istream& is, IO::IOFlag flag) :
@@ -116,10 +116,10 @@ Face::Face(STD_IO::istream& is, IO::IOFlag flag) :
   mouthHeight(-0.8)
 {
 DOTRACE("Face::Face(STD_IO::istream&, IO::IOFlag)");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
   Invariant(check());
 }
-
+#endif
 Face::~Face() {
 DOTRACE("Face::~Face");
   // nothing to do
@@ -127,8 +127,8 @@ DOTRACE("Face::~Face");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void Face::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Face::serialize");
+void Face::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Face::legacySrlz");
   Invariant(check());
 
   char sep = ' ';
@@ -140,17 +140,17 @@ DOTRACE("Face::serialize");
   os << '{' << sep;
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).serialize(os, flag);
+	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
   }
 
   os << '}' << endl;
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void Face::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Face::deserialize");
+void Face::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Face::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   IO::IoObject::eatWhitespace(is);
@@ -168,7 +168,7 @@ DOTRACE("Face::deserialize");
 	 // Format is:
 	 // Face $category $eyeheight $eyedistance $noselength $mouthheight
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).deserialize(is, flag);
+		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
 	 }
   }
   else if (version == 1) {
@@ -182,7 +182,7 @@ DOTRACE("Face::deserialize");
 	 }
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).deserialize(is, flag);
+		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
 	 }
 
 	 is >> brace;
@@ -210,23 +210,23 @@ DOTRACE("Face::deserialize");
   }
   Invariant(check());
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
 
-int Face::charCount() const {
-DOTRACE("Face::charCount");
+int Face::legacyCharCount() const {
+DOTRACE("Face::legacyCharCount");
   return (ioTag.length() + 1
 			 + 3 // version
 			 + 2 // brace
-			 + category.charCount() + 1
-			 + eyeDistance.charCount() + 1
-			 + noseLength.charCount() + 1
-			 + mouthHeight.charCount() + 1
-			 + eyeHeight.charCount() + 1
+			 + category.legacyCharCount() + 1
+			 + eyeDistance.legacyCharCount() + 1
+			 + noseLength.legacyCharCount() + 1
+			 + mouthHeight.legacyCharCount() + 1
+			 + eyeHeight.legacyCharCount() + 1
 			 + 2 // brace
-			 + GrObj::charCount()
+			 + GrObj::legacyCharCount()
 			 + 1);//fudge factor
 }
 

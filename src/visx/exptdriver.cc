@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Sep 25 09:52:59 2000
+// written: Tue Sep 26 19:20:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,10 +137,10 @@ private:
   //////////////////////////
 
 public:
-  void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
-  void deserialize(STD_IO::istream& is, IO::IOFlag flag);
+  void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
+  void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
 
-  int charCount() const;
+  int legacyCharCount() const;
 
   unsigned long serialVersionId() const
 	 { return EXPTDRIVER_SERIAL_VERSION_ID; }
@@ -559,17 +559,17 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("ExptDriver::Impl::serialize");
+void ExptDriver::Impl::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("ExptDriver::Impl::legacySrlz");
 
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
-  ObjList::   theObjList()   .serialize(os, flag);
-  PosList::   thePosList()   .serialize(os, flag);
-  Tlist::     theTlist()     .serialize(os, flag);
-  RhList::    theRhList()    .serialize(os, flag);
-  ThList::    theThList()    .serialize(os, flag);
-  BlockList:: theBlockList() .serialize(os, flag);
+  ObjList::   theObjList()   .legacySrlz(writer, os, flag);
+  PosList::   thePosList()   .legacySrlz(writer, os, flag);
+  Tlist::     theTlist()     .legacySrlz(writer, os, flag);
+  RhList::    theRhList()    .legacySrlz(writer, os, flag);
+  ThList::    theThList()    .legacySrlz(writer, os, flag);
+  BlockList:: theBlockList() .legacySrlz(writer, os, flag);
 
   os << itsHostname       << '\n';
   os << itsSubject        << '\n';
@@ -589,17 +589,17 @@ DOTRACE("ExptDriver::Impl::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void ExptDriver::Impl::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("ExptDriver::Impl::deserialize");
+void ExptDriver::Impl::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("ExptDriver::Impl::legacyDesrlz");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  ObjList::   theObjList()   .deserialize(is, flag);
-  PosList::   thePosList()   .deserialize(is, flag);
-  Tlist::     theTlist()     .deserialize(is, flag);
-  RhList::    theRhList()    .deserialize(is, flag);
-  ThList::    theThList()    .deserialize(is, flag);
-  BlockList:: theBlockList() .deserialize(is, flag);
+  ObjList::   theObjList()   .legacyDesrlz(reader, is, flag);
+  PosList::   thePosList()   .legacyDesrlz(reader, is, flag);
+  Tlist::     theTlist()     .legacyDesrlz(reader, is, flag);
+  RhList::    theRhList()    .legacyDesrlz(reader, is, flag);
+  ThList::    theThList()    .legacyDesrlz(reader, is, flag);
+  BlockList:: theBlockList() .legacyDesrlz(reader, is, flag);
 
   getline(is, itsHostname,     '\n');
   getline(is, itsSubject,      '\n');
@@ -629,15 +629,15 @@ DOTRACE("ExptDriver::Impl::deserialize");
   if (is.fail()) throw IO::InputError(ioTag.c_str());
 }
 
-int ExptDriver::Impl::charCount() const {
-DOTRACE("ExptDriver::Impl::charCount");
+int ExptDriver::Impl::legacyCharCount() const {
+DOTRACE("ExptDriver::Impl::legacyCharCount");
   return (  ioTag.length() + 1
-			 + (ObjList::   theObjList()   .charCount()) + 1
-			 + (PosList::   thePosList()   .charCount()) + 1
-			 + (Tlist::     theTlist()     .charCount()) + 1
-			 + (RhList::    theRhList()    .charCount()) + 1
-			 + (ThList::    theThList()    .charCount()) + 1
-			 + (BlockList:: theBlockList() .charCount()) + 1
+			 + (ObjList::   theObjList()   .legacyCharCount()) + 1
+			 + (PosList::   thePosList()   .legacyCharCount()) + 1
+			 + (Tlist::     theTlist()     .legacyCharCount()) + 1
+			 + (RhList::    theRhList()    .legacyCharCount()) + 1
+			 + (ThList::    theThList()    .legacyCharCount()) + 1
+			 + (BlockList:: theBlockList() .legacyCharCount()) + 1
 			 + itsHostname.length() + 1
 			 + itsSubject.length() + 1
 			 + itsBeginDate.length() + 1
@@ -896,7 +896,7 @@ void ExptDriver::Impl::read(const char* filename) {
 DOTRACE("ExptDriver::Impl::read");
   STD_IO::ifstream ifs(filename);
   if (ifs.fail()) throw IO::FilenameError(filename);
-  deserialize(ifs, IO::BASES|IO::TYPENAME);
+  itsOwner->ioDeserialize(ifs, IO::BASES|IO::TYPENAME);
 }
 
 //--------------------------------------------------------------------
@@ -912,7 +912,7 @@ DOTRACE("ExptDriver::Impl::write");
 
   STD_IO::ofstream ofs(filename);
   if (ofs.fail()) throw IO::FilenameError(filename);
-  serialize(ofs, IO::BASES|IO::TYPENAME);
+  itsOwner->ioSerialize(ofs, IO::BASES|IO::TYPENAME);
 }
 
 //--------------------------------------------------------------------
@@ -1006,14 +1006,14 @@ DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl;
 }
 
-void ExptDriver::serialize(STD_IO::ostream &os, IO::IOFlag flag) const
-  { itsImpl->serialize(os, flag); }
+void ExptDriver::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const
+  { itsImpl->legacySrlz(writer, os, flag); }
 
-void ExptDriver::deserialize(STD_IO::istream &is, IO::IOFlag flag)
-  { itsImpl->deserialize(is, flag); }
+void ExptDriver::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag)
+  { itsImpl->legacyDesrlz(reader, is, flag); }
 
-int ExptDriver::charCount() const
-  { return itsImpl->charCount(); }
+int ExptDriver::legacyCharCount() const
+  { return itsImpl->legacyCharCount(); }
 
 unsigned long ExptDriver::serialVersionId() const
   { return itsImpl->serialVersionId(); }

@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sat Sep 23 16:02:06 2000
+// written: Tue Sep 26 18:39:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,8 +46,8 @@ namespace IO {
   class FilenameError;
 
   /** The symbolic constants of type \c IOFlag flags may be OR'ed
-   * together and passed to the flag argument of \c serialize() or \c
-   * deserialize() to control different aspects of the formatting used
+   * together and passed to the flag argument of \c legacySrlz() or \c
+   * legacyDesrlz() to control different aspects of the formatting used
    * to read and write objects. In general, the same flags must be
    * used to read an object as were used to write it. */
   typedef int IOFlag;
@@ -59,7 +59,7 @@ namespace IO {
   /// The class's bases are written/read
   const IOFlag BASES      = 1 << 1;
 
-  /// A default separator to be used between elements in a serialized object
+  /// A default separator to be used between elements in a legacySrlzd object
   const char SEP = ' ';
 
 
@@ -89,20 +89,11 @@ public:
   /// Virtual destructor to ensure correct destruction of subclasses
   virtual ~IoObject() = 0;
 
-  /** The old-style function to send an object to a stream. Each
-      subclass must implement its own formatting. \c writeTo() should
-      be favored over \c serialize(). */
-  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
+  void ioSerialize(STD_IO::ostream& os, IO::IOFlag flag) const;
 
-  /** The old-style function to read an object from a stream. Each
-      subclass must implement its own formatting. \c readFrom() should
-      be favored over \c deserialize(). */
-  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
+  void ioDeserialize(STD_IO::istream& is, IO::IOFlag flag);
 
-  /** The old-style function to return an upper limit on the number of
-      characters that will be sent to a stream by \c serialize(). Each
-      subclass must implement its own formatting. */
-  virtual int charCount() const;
+  int ioCharCount() const;
 
   /** The preferred method for saving an object's state via the
       generic interface provided by \c IO::Reader. Each subclass of \c
@@ -165,6 +156,23 @@ public:
   static void readTypename(STD_IO::istream& theStream,
 									const char* correctNames,
 									bool doCheck = true);
+
+protected:
+
+  /** The old-style function to send an object to a stream. Each
+      subclass must implement its own formatting. \c writeTo() should
+      be favored over \c legacySrlz(). */
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
+
+  /** The old-style function to read an object from a stream. Each
+      subclass must implement its own formatting. \c readFrom() should
+      be favored over \c legacyDesrlz(). */
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
+
+  /** The old-style function to return an upper limit on the number of
+      characters that will be sent to a stream by \c legacySrlz(). Each
+      subclass must implement its own formatting. */
+  virtual int legacyCharCount() const;
 
 private:
   unsigned long itsId;
@@ -256,7 +264,7 @@ public:
  *
  * A subclass of IoError for "can't-happen" errors that are discovered
  * during input or output. This type of error suggests * that either
- * the object or its serialized description has been * corrupted.
+ * the object or its legacySrlzd description has been * corrupted.
  **/
 class IO::LogicError : public IO::IoError {
 public:

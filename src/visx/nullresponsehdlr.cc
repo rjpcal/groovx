@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 18:39:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,20 +31,20 @@ NullResponseHdlr::~NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("NullResponseHdlr::serialize");
+void NullResponseHdlr::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("NullResponseHdlr::legacySrlz");
 
   if (flag & IO::TYPENAME) { os << ioTag << ' '; }
 }
 
-void NullResponseHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("NullResponseHdlr::deserialize");
+void NullResponseHdlr::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("NullResponseHdlr::legacyDesrlz");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 }
 
-int NullResponseHdlr::charCount() const {
-DOTRACE("NullResponseHdlr::charCount");
+int NullResponseHdlr::legacyCharCount() const {
+DOTRACE("NullResponseHdlr::legacyCharCount");
   return strlen(ioTag) + 1;
 }
 

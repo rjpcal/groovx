@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,15 +58,15 @@ DOTRACE("Tlist::theTlist");
 
 //---------------------------------------------------------------------
 //
-// Tlist::serialize
+// Tlist::legacySrlz
 //
 //---------------------------------------------------------------------
 
-void Tlist::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Tlist::serialize");
-  // Always serialize the PtrList base
+void Tlist::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Tlist::legacySrlz");
+  // Always legacySrlz the PtrList base
   if (true || flag & IO::BASES) { 
-	 PtrList<TrialBase>::serialize(os, flag);
+	 PtrList<TrialBase>::legacySrlz(writer, os, flag);
   }
 
   // Here we are spoofing the obselete data members itsCurTrial and
@@ -78,15 +78,15 @@ DOTRACE("Tlist::serialize");
 
 //---------------------------------------------------------------------
 //
-// Tlist::deserialize
+// Tlist::legacyDesrlz
 //
 //---------------------------------------------------------------------
 
-void Tlist::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Tlist::deserialize");
-  // Always deserialize its PtrList<TrialBase> base
+void Tlist::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Tlist::legacyDesrlz");
+  // Always legacyDesrlz its PtrList<TrialBase> base
   if (true || flag & IO::BASES) {
-	 PtrList<TrialBase>::deserialize(is, flag);
+	 PtrList<TrialBase>::legacyDesrlz(reader, is, flag);
   }
 
   // Here we are spoofing the obselete data members itsCurTrial and
@@ -97,11 +97,11 @@ DOTRACE("Tlist::deserialize");
   if (is.fail()) throw IO::InputError(ioTag);
 }
 
-int Tlist::charCount() const {
+int Tlist::legacyCharCount() const {
   return (strlen(ioTag) + 1
 			 + IO::gCharCount<int>(0) + 1
 			 + IO::gCharCount<bool>(false) + 1
-			 + PtrList<TrialBase>::charCount()
+			 + PtrList<TrialBase>::legacyCharCount()
 			 + 5 ); // fudge factor 5
 }
 

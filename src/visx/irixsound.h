@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 18:39:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,9 +63,9 @@ public:
   IrixAudioSound(const char* filename);
   virtual ~IrixAudioSound();
 
-  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
   
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -116,8 +116,8 @@ DOTRACE("IrixAudioSound::~IrixAudioSound");
   }
 }
 
-void IrixAudioSound::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("IrixAudioSound::serialize");
+void IrixAudioSound::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("IrixAudioSound::legacySrlz");
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -129,8 +129,8 @@ DOTRACE("IrixAudioSound::serialize");
   if (flag & IO::BASES) { /* no bases to deal with */ }
 }
 
-void IrixAudioSound::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("IrixAudioSound::deserialize");
+void IrixAudioSound::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("IrixAudioSound::legacyDesrlz");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
@@ -143,8 +143,8 @@ DOTRACE("IrixAudioSound::deserialize");
   setFile(itsFilename.c_str());
 }
 
-int IrixAudioSound::charCount() const {
-DOTRACE("IrixAudioSound::charCount");
+int IrixAudioSound::legacyCharCount() const {
+DOTRACE("IrixAudioSound::legacyCharCount");
   return (ioTag.length() + 1
 			 + itsFilename.length() + 1
 			 +5); // fudge factor

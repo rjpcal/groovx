@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Tue Sep 26 19:12:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,37 +41,39 @@ Bitmap::Bitmap(BmapRenderer* renderer, const char* filename) :
 DOTRACE("Bitmap::Bitmap");
 }
 
+#ifdef LEGACY
 Bitmap::Bitmap(BmapRenderer* renderer, STD_IO::istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
+#endif
 
 Bitmap::~Bitmap() {
 DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-void Bitmap::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("Bitmap::serialize");
+void Bitmap::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("Bitmap::legacySrlz");
 
-  itsImpl->serialize(os, flag);
+  itsImpl->legacySrlz(writer, os, flag);
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void Bitmap::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("Bitmap::deserialize");
+void Bitmap::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("Bitmap::legacyDesrlz");
 
-  itsImpl->deserialize(is, flag);
+  itsImpl->legacyDesrlz(reader, is, flag);
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 }
 
-int Bitmap::charCount() const
-  { return itsImpl->charCount() + GrObj::charCount(); }
+int Bitmap::legacyCharCount() const
+  { return itsImpl->legacyCharCount() + GrObj::legacyCharCount(); }
 
 void Bitmap::readFrom(IO::Reader* reader) {
 DOTRACE("Bitmap::readFrom");

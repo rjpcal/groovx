@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 18:24:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 	 
 	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
 
-	 io->deserialize(ifs, flags);
+	 io->ioDeserialize(ifs, flags);
 	 
 	 int objid = olist.insert(ObjList::Ptr(p));
 
@@ -146,7 +146,7 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  olist.getCheckedPtr(*itr)->serialize(ofs, flags);
+		  olist.getCheckedPtr(*itr)->ioSerialize(ofs, flags);
 		  ofs << endl;
 		}
   }

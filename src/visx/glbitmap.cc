@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,15 +48,15 @@ GLBitmap::GLBitmap(const char* filename) :
 DOTRACE("GLBitmap::GLBitmap");
   init(); 
 }
-
+#ifdef LEGACY
 GLBitmap::GLBitmap(STD_IO::istream& is, IO::IOFlag flag) :
   Bitmap(tempRenderer = new GLBmapRenderer()),
   itsRenderer(tempRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
-
+#endif
 void GLBitmap::init() {
 DOTRACE("GLBitmap::init");
   GrObj::setRenderMode(GROBJ_GL_COMPILE);
@@ -69,8 +69,8 @@ DOTRACE("GLBitmap::~GLBitmap");
   delete itsRenderer; 
 }
 
-void GLBitmap::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("GLBitmap::serialize");
+void GLBitmap::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("GLBitmap::legacySrlz");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
@@ -78,11 +78,11 @@ DOTRACE("GLBitmap::serialize");
 
   if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & IO::BASES) { Bitmap::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { Bitmap::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void GLBitmap::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("GLBitmap::deserialize");
+void GLBitmap::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("GLBitmap::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   int val;
@@ -91,11 +91,11 @@ DOTRACE("GLBitmap::deserialize");
 
   if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & IO::BASES) { Bitmap::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { Bitmap::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 }
 
-int GLBitmap::charCount() const {
-DOTRACE("GLBitmap::charCount");
+int GLBitmap::legacyCharCount() const {
+DOTRACE("GLBitmap::legacyCharCount");
   return 128;
 }
 

@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Sep 23 16:42:47 2000
+// written: Tue Sep 26 19:12:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -271,27 +271,27 @@ DOTRACE("Fish::~Fish");
   delete [] itsEndPts;
 }
 
-void Fish::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("Fish::serialize");
+void Fish::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("Fish::legacySrlz");
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).serialize(os, flag);
+	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
   }
 
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }  
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }  
 }
 
-void Fish::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("Fish::deserialize");
+void Fish::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("Fish::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).deserialize(is, flag);
+	 (this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
   }
 
   try {
@@ -301,22 +301,22 @@ DOTRACE("Fish::deserialize");
 	 throw;
   }
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
 
-int Fish::charCount() const {
-DOTRACE("Fish::charCount");
+int Fish::legacyCharCount() const {
+DOTRACE("Fish::legacyCharCount");
   int result = ioTag.length() + 1;
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 result += (this->*IO_MEMBERS[i]).charCount() + 1;
+	 result += (this->*IO_MEMBERS[i]).legacyCharCount() + 1;
   }
 
   result += 5;						  // fudge factor
 
-  result += GrObj::charCount();
+  result += GrObj::legacyCharCount();
 
   return result;
 }

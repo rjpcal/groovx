@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed May 31 18:45:33 2000
+// written: Tue Sep 26 14:28:20 2000
 // $Id$
 //
 //
@@ -325,7 +325,7 @@ public:
 					 int item_argn=1) :
 	 TclIoItemPkg(interp, name, version, item_argn) 
   {
-	 declareGetter("charCount", new CGetter<C, int>(&C::charCount));
+	 declareGetter("charCount", new CGetter<C, int>(&C::legacyCharCount));
   }
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) (),

@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Sat Sep 23 15:32:23 2000
+// written: Tue Sep 26 19:06:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,16 +51,16 @@ class Gtext : public GrObj {
 public:
   /// Construct with an initial text string \a text.
   Gtext(const char* text=0);
-
-  /// Construct from an \c STD_IO::istream using \c deserialize().
+#ifdef LEGACY
+  /// Construct from an \c STD_IO::istream using \c legacyDesrlz().
   Gtext(STD_IO::istream& is, IO::IOFlag flag);
-
+#endif
   /// Virtual destructor.
   virtual ~Gtext();
 
-  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Sep 23 16:50:23 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -266,27 +266,27 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("House::serialize");
+void House::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("House::legacySrlz");
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).serialize(os, flag);
+	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
   }
 
   if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void House::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("House::deserialize");
+void House::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("House::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).deserialize(is, flag);
+	 (this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
   }
 
   try {
@@ -296,7 +296,7 @@ DOTRACE("House::deserialize");
 	 throw;
   }
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
@@ -321,9 +321,9 @@ DOTRACE("House::writeTo");
   GrObj::writeTo(writer);
 }
 
-int House::charCount() const {
-DOTRACE("House::charCount");
-  return 128 + GrObj::charCount();
+int House::legacyCharCount() const {
+DOTRACE("House::legacyCharCount");
+  return 128 + GrObj::legacyCharCount();
 }
 
 ///////////////////////////////////////////////////////////////////////

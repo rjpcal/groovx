@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 19:07:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,23 +74,23 @@ DOTRACE("Position::Position()");
   // empty
   Invariant(check());
 }
-
+#ifdef LEGACY
 Position::Position (STD_IO::istream& is, IO::IOFlag flag) : 
   itsImpl(new PositionImpl)
 {
 DOTRACE("Position::Position(STD_IO::istream&, IO::IOFlag)");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
-
+#endif
 Position::~Position() {
 DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-void Position::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Position::serialize");
+void Position::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Position::legacySrlz");
   Invariant(check());
-  if (flag & IO::BASES) { /* there are no bases to serialize */ }
+  if (flag & IO::BASES) { /* there are no bases to legacySrlz */ }
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -108,13 +108,13 @@ DOTRACE("Position::serialize");
   if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void Position::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Position::deserialize");
+void Position::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Position::legacyDesrlz");
   Invariant(check());
 
   DebugEvalNL(flag);
 
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> itsImpl->tr_x;
@@ -134,7 +134,7 @@ DOTRACE("Position::deserialize");
   if (is.fail()) throw IO::InputError(ioTag);
 }
 
-int Position::charCount() const {
+int Position::legacyCharCount() const {
   return (strlen(ioTag) + 1
 			 + IO::gCharCount<double>(itsImpl->tr_x) + 1
 			 + IO::gCharCount<double>(itsImpl->tr_y) + 1

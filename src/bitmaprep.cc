@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Tue Sep 26 18:39:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,8 +163,8 @@ DOTRACE("BitmapRep::init");
   itsImpl->itsData.clear();
 }
 
-void BitmapRep::serialize(STD_IO::ostream& os, int flag) const {
-DOTRACE("BitmapRep::serialize");
+void BitmapRep::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, int flag) const {
+DOTRACE("BitmapRep::legacySrlz");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
@@ -178,8 +178,8 @@ DOTRACE("BitmapRep::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void BitmapRep::deserialize(STD_IO::istream& is, int flag) {
-DOTRACE("BitmapRep::deserialize");
+void BitmapRep::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, int flag) {
+DOTRACE("BitmapRep::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   IO::IoObject::eatWhitespace(is);
@@ -208,8 +208,8 @@ DOTRACE("BitmapRep::deserialize");
   }
 }
 
-int BitmapRep::charCount() const {
-DOTRACE("BitmapRep::charCount");
+int BitmapRep::legacyCharCount() const {
+DOTRACE("BitmapRep::legacyCharCount");
   return 128;
 }
 

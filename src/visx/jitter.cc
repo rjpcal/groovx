@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,28 +51,28 @@ Jitter::Jitter () :
 DOTRACE("Jitter::Jitter");
   // empty
 }
-
+#ifdef LEGACY
 Jitter::Jitter(STD_IO::istream &is, IO::IOFlag flag) : 
   Position() ,
   itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
   itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
 {
 DOTRACE("Jitter::Jitter");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
-
+#endif
 Jitter::~Jitter () {
 DOTRACE("Jitter::~Jitter");
   // empty
 }
 
 
-// In serialize/deserialize, the derived class (Jitter) is handled
+// In legacySrlz/legacyDesrlz, the derived class (Jitter) is handled
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-void Jitter::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Jitter::serialize");
+void Jitter::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Jitter::legacySrlz");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
@@ -82,13 +82,13 @@ DOTRACE("Jitter::serialize");
 
   if (os.fail()) throw IO::OutputError(ioTag);
 
-  // The base class (Position) is always serialized, regardless of flag.
+  // The base class (Position) is always legacySrlzd, regardless of flag.
   // The typename in the base class is always used, regardless of flag.
-  Position::serialize(os, (flag | IO::TYPENAME));
+  Position::legacySrlz(writer, os, (flag | IO::TYPENAME));
 }
 
-void Jitter::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Jitter::deserialize");
+void Jitter::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Jitter::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> itsXJitter >> itsYJitter >> itsRJitter;
@@ -100,17 +100,17 @@ DOTRACE("Jitter::deserialize");
 
   if (is.fail()) throw IO::InputError(ioTag);
 
-  // The base class (Position) is always deserialized, regardless of flag.
+  // The base class (Position) is always legacyDesrlzd, regardless of flag.
   // The typename in the base class is always used, regardless of flag.
-  Position::deserialize(is, (flag | IO::TYPENAME));
+  Position::legacyDesrlz(reader, is, (flag | IO::TYPENAME));
 }
 
-int Jitter::charCount() const {
+int Jitter::legacyCharCount() const {
   return (strlen(ioTag) + 1
 			 + IO::gCharCount<double>(itsXJitter) + 1
 			 + IO::gCharCount<double>(itsYJitter) + 1
 			 + IO::gCharCount<double>(itsRJitter) + 1
-			 + Position::charCount()
+			 + Position::legacyCharCount()
 			 + 1);// fudge factor
 }
 

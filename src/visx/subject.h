@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Sat Sep 23 15:32:23 2000
+// written: Tue Sep 26 19:07:39 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,12 +25,14 @@
 class Subject : public virtual IO::IoObject {
 public:
   Subject(const char* name, const char* dir);
+#ifdef LEGACY
   Subject(STD_IO::istream &is, IO::IOFlag flag);
+#endif
   virtual ~Subject();
 
-  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

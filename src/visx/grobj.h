@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Sat Sep 23 15:32:23 2000
+// written: Tue Sep 26 19:05:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -212,16 +212,16 @@ public:
   /// Default constructor
   GrObj(GrObjRenderMode render_mode = GROBJ_GL_COMPILE,
 		  GrObjRenderMode unrender_mode = GROBJ_SWAP_FORE_BACK);
-
-  /// Construct from an STD_IO::istream by using deserialize.
+#ifdef LEGACY
+  /// Construct from an STD_IO::istream by using legacyDesrlz.
   GrObj(STD_IO::istream &is, IO::IOFlag flag);
-
+#endif
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
 
-  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
 
   virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Sep 23 16:46:56 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,23 +96,23 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Gabor::serialize");
+void Gabor::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Gabor::legacySrlz");
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
   if (os.fail()) throw IO::OutputError(ioTag);
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void Gabor::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Gabor::deserialize");
+void Gabor::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Gabor::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   if (is.fail()) throw IO::InputError(ioTag);
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 }
 
-int Gabor::charCount() const {
-DOTRACE("Gabor::charCount");
-  return strlen(ioTag) + 1 + GrObj::charCount();
+int Gabor::legacyCharCount() const {
+DOTRACE("Gabor::legacyCharCount");
+  return strlen(ioTag) + 1 + GrObj::legacyCharCount();
 }
 
 void Gabor::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Sep 23 16:01:06 2000
+// written: Tue Sep 26 18:39:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,8 +82,8 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(averageError);
 }
 
-void TrialEvent::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("TrialEvent::serialize");
+void TrialEvent::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("TrialEvent::legacySrlz");
 
   if (flag&IO::TYPENAME)
 	 {
@@ -93,8 +93,8 @@ DOTRACE("TrialEvent::serialize");
   if (os.fail()) throw IO::InputError(typeid(*this));
 }
 
-void TrialEvent::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("TrialEvent::deserialize");
+void TrialEvent::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("TrialEvent::legacyDesrlz");
 
   cancel(); // cancel since the event is changing state
 
@@ -106,8 +106,8 @@ DOTRACE("TrialEvent::deserialize");
   if (is.fail()) throw IO::InputError(typeid(*this));
 }
 
-int TrialEvent::charCount() const {
-DOTRACE("TrialEvent::charCount");
+int TrialEvent::legacyCharCount() const {
+DOTRACE("TrialEvent::legacyCharCount");
   return ( strlen(demangle_cstr(typeid(*this).name())) + 1
 			 + IO::gCharCount<int>(itsRequestedDelay) + 1
 			 + 1); // fudge factor

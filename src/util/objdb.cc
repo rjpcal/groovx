@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 18:39:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,20 +35,20 @@ DOTRACE("IoPtrList::IoPtrList");
 
 IoPtrList::~IoPtrList() {}
 
-void IoPtrList::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("IoPtrList::serialize");
+void IoPtrList::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("IoPtrList::legacySrlz");
   fixed_string ioTag = IO::IoObject::ioTypename();
 
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
-  // itsVec: we will serialize only the non-null T*'s in
-  // itsVec. In order to correctly deserialize the object later, we
+  // itsVec: we will legacySrlz only the non-null T*'s in
+  // itsVec. In order to correctly legacyDesrlz the object later, we
   // must write both the size of itsVec (in order to correctly
   // resize later), as well as the number of non-null objects that we
-  // serialize (so that deserialize knows when to stop reading).
+  // legacySrlz (so that legacyDesrlz knows when to stop reading).
   os << voidVecSize() << sep;
 
   int num_non_null = VoidPtrList::count();
@@ -61,10 +61,10 @@ DOTRACE("IoPtrList::serialize");
 		 ++i) {
     if (getVoidPtr(i) != NULL) {
       os << i << sep;
-      // we must serialize the typename since deserialize requires a
+      // we must legacySrlz the typename since legacyDesrlz requires a
       // typename in order to call the virtual constructor
 		IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
-      obj->serialize(os, flag|IO::TYPENAME);
+      obj->ioSerialize(os, flag|IO::TYPENAME);
       ++c;
     }
   }
@@ -79,11 +79,11 @@ DOTRACE("IoPtrList::serialize");
 }
 
 
-void IoPtrList::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("IoPtrList::deserialize");
+void IoPtrList::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("IoPtrList::legacyDesrlz");
   fixed_string ioTag = IO::IoObject::ioTypename();
 
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
   if (flag & IO::TYPENAME) { 
 	 dynamic_string typename_list = ioTag;
 	 typename_list += " ";
@@ -117,7 +117,7 @@ DOTRACE("IoPtrList::deserialize");
 	 if (!obj) throw IO::InputError(ioTag.c_str());
 
 	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
-	 obj->deserialize(is, flag & ~IO::TYPENAME);
+	 obj->ioDeserialize(is, flag & ~IO::TYPENAME);
   }
   // itsFirstVacant
   is >> VoidPtrList::firstVacant();
@@ -134,8 +134,8 @@ DOTRACE("IoPtrList::deserialize");
 }
 
 
-int IoPtrList::charCount() const {
-DOTRACE("IoPtrList::charCount");
+int IoPtrList::legacyCharCount() const {
+DOTRACE("IoPtrList::legacyCharCount");
   fixed_string ioTag = IO::IoObject::ioTypename();
   int ch_count = ioTag.length() + 1
 	 + IO::gCharCount<int>(voidVecSize()) + 1;
@@ -150,7 +150,7 @@ DOTRACE("IoPtrList::charCount");
 		ch_count += IO::gCharCount<int>(i) + 1;
 
 		IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
-		ch_count += obj->charCount() + 1;
+		ch_count += obj->ioCharCount() + 1;
 	 }
   }
 

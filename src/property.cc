@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Tue Sep 26 18:39:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,20 +30,20 @@ template <class T>
 TProperty<T>::~TProperty() {}
 
 template <class T>
-void TProperty<T>::serialize(STD_IO::ostream& os, IO::IOFlag) const 
+void TProperty<T>::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const 
   { os << itsVal.itsVal << ' '; }
 
 template <class T>
-void TProperty<T>::deserialize(STD_IO::istream& is, IO::IOFlag)
+void TProperty<T>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag)
   { is >> itsVal.itsVal; }
 
 template <>
-void TProperty<bool>::deserialize(STD_IO::istream& is, IO::IOFlag) {
+void TProperty<bool>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag) {
   int temp; is >> temp; itsVal.itsVal = bool(temp);
 }
 
 template <class T>
-int TProperty<T>::charCount() const
+int TProperty<T>::legacyCharCount() const
   { return IO::gCharCount<T>(itsVal.itsVal); }
 
 template <class T>
@@ -66,19 +66,19 @@ template <class T>
 TPtrProperty<T>::~TPtrProperty() {}
 
 template <class T>
-void TPtrProperty<T>::serialize(STD_IO::ostream& os, IO::IOFlag) const 
+void TPtrProperty<T>::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const 
 	 { os << itsVal() << ' '; }
 
 template <class T>
-void TPtrProperty<T>::deserialize(STD_IO::istream& is, IO::IOFlag)
+void TPtrProperty<T>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag)
 	 { is >> itsVal(); }
 
 template <>
-void TPtrProperty<bool>::deserialize(STD_IO::istream& is, IO::IOFlag)
+void TPtrProperty<bool>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag)
     { int temp; is >> temp; itsVal() = bool(temp); }
 
 template <class T>
-int TPtrProperty<T>::charCount() const
+int TPtrProperty<T>::legacyCharCount() const
 	 { return IO::gCharCount<T>(itsVal()); }
 
 template <class T>

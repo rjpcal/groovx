@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 19:07:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,17 +51,17 @@ DOTRACE("Subject::Subject");
 Subject::~Subject() {
 DOTRACE("Subject::~Subject");
 }
-
+#ifdef LEGACY
 Subject::Subject(STD_IO::istream &is, IO::IOFlag flag) :
   itsName(""), itsDirectory("")
 {
 DOTRACE("Subject::Subject");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
-
-void Subject::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Subject::serialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+#endif
+void Subject::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Subject::legacySrlz");
+  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -72,9 +72,9 @@ DOTRACE("Subject::serialize");
   if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Subject::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Subject::deserialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+void Subject::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Subject::legacyDesrlz");
+  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsName, '\n');
@@ -83,7 +83,7 @@ DOTRACE("Subject::deserialize");
   if (is.fail()) throw IO::InputError(ioTag.c_str());
 }
 
-int Subject::charCount() const {
+int Subject::legacyCharCount() const {
   return (ioTag.length() + 1
 			 + itsName.length() + 1
 			 + itsDirectory.length() + 1

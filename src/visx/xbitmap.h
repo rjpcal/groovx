@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Sat Sep 23 15:32:22 2000
+// written: Tue Sep 26 19:02:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,10 @@ public:
       Bitmap for a list of supported file types. */
   XBitmap(const char* filename);
 
-  /// Construct from an \c STD_IO::istream by calling \c deserialize().
+#ifdef LEGACY
+  /// Construct from an \c STD_IO::istream by calling \c legacyDesrlz().
   XBitmap(STD_IO::istream& is, IO::IOFlag flag);
+#endif
 
   private: void init();
   
@@ -46,9 +48,9 @@ public:
   /// Virtual destructor.
   virtual ~XBitmap();
 
-  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
 
 private:
   XBitmap(const XBitmap&);

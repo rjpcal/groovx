@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -669,7 +669,7 @@ DOTRACE("Gtext::Gtext(const char*)");
   GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
   GrObj::setHeight(1.0);
 }
-
+#ifdef LEGACY
 Gtext::Gtext(STD_IO::istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
   itsText(""),
@@ -677,25 +677,25 @@ Gtext::Gtext(STD_IO::istream& is, IO::IOFlag flag) :
   itsListBase(0)
 {
 DOTRACE("Gtext::Gtext(STD_IO::istream&, IO::IOFlag)");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 }
- 
+#endif
 Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Gtext::serialize");
+void Gtext::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("Gtext::legacySrlz");
 
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
   os << itsText << endl;
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void Gtext::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Gtext::deserialize");
+void Gtext::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("Gtext::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); } 
 
   if ( IO::SEP == is.peek() ) { is.get(); }
@@ -704,14 +704,14 @@ DOTRACE("Gtext::deserialize");
 
   if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 }
 
-int Gtext::charCount() const {
-DOTRACE("Gtext::charCount");
+int Gtext::legacyCharCount() const {
+DOTRACE("Gtext::legacyCharCount");
   return (ioTag.length() + 1
 			 + itsText.length() + 1
-			 + GrObj::charCount()
+			 + GrObj::legacyCharCount()
 			 + 1); // fudge factor
 }
 

@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Sat Sep 23 15:37:15 2000
+// written: Tue Sep 26 18:39:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,11 +60,11 @@ private:
 public:
 
   /// Conforms to the \c IO interface.
-  void serialize(STD_IO::ostream& os, int flag) const;
+  void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, int flag) const;
   /// Conforms to the \c IO interface.
-  void deserialize(STD_IO::istream& is, int flag);
+  void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, int flag);
   /// Conforms to the \c IO interface.
-  int charCount() const;
+  int legacyCharCount() const;
 
   /// Conforms to the \c IO interface.
   void readFrom(IO::Reader* reader);

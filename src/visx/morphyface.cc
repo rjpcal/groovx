@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Sat Sep 23 16:54:26 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@
 #include "gwt/canvas.h"
 
 #include <cstring>
-#include <iostream.h>           // for serialize
+#include <iostream.h>           // for legacySrlz
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -350,7 +350,7 @@ MorphyFace::MorphyFace() :
 DOTRACE("MorphyFace::MorphyFace");
   Invariant(check());
 }
-
+#ifdef LEGACY
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
 MorphyFace::MorphyFace(STD_IO::istream& is, IO::IOFlag flag) :
@@ -394,10 +394,10 @@ MorphyFace::MorphyFace(STD_IO::istream& is, IO::IOFlag flag) :
   mouthCurvature(0.6)
 {
 DOTRACE("MorphyFace::MorphyFace(STD_IO::istream&, IO::IOFlag)");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
   Invariant(check());
 }
-
+#endif
 MorphyFace::~MorphyFace() {
 DOTRACE("MorphyFace::~MorphyFace");
   // nothing to do
@@ -405,8 +405,8 @@ DOTRACE("MorphyFace::~MorphyFace");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void MorphyFace::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("MorphyFace::serialize");
+void MorphyFace::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("MorphyFace::legacySrlz");
   Invariant(check());
 
   char sep = ' ';
@@ -418,17 +418,17 @@ DOTRACE("MorphyFace::serialize");
   os << '{' << sep;
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).serialize(os, flag);
+	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
   }
 
   os << '}' << endl;
   if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void MorphyFace::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("MorphyFace::deserialize");
+void MorphyFace::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("MorphyFace::legacyDesrlz");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   IO::IoObject::eatWhitespace(is);
@@ -444,7 +444,7 @@ DOTRACE("MorphyFace::deserialize");
 
   if (version == 0) {
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).deserialize(is, flag);
+		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
 	 }
   }
   else if (version == 1) {
@@ -456,7 +456,7 @@ DOTRACE("MorphyFace::deserialize");
 	 }
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).deserialize(is, flag);
+		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
 	 }
 
 	 is >> brace;
@@ -484,19 +484,19 @@ DOTRACE("MorphyFace::deserialize");
   }
   Invariant(check());
 
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
+  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
 
-int MorphyFace::charCount() const {
-DOTRACE("MorphyFace::charCount");
+int MorphyFace::legacyCharCount() const {
+DOTRACE("MorphyFace::legacyCharCount");
   return (strlen(ioTag) + 1
 			 + 3 // version
 			 + 2 // brace
 			 + 128 // params
 			 + 2 // brace
-			 + GrObj::charCount()
+			 + GrObj::legacyCharCount()
 			 + 1);//fudge factor
 }
 

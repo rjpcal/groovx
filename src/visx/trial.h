@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Sat Sep 23 15:32:23 2000
+// written: Tue Sep 26 19:08:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,13 +65,15 @@ public:
   //////////////
 
   Trial();
+#ifdef LEGACY
   Trial(STD_IO::istream &is, IO::IOFlag flag); 
+#endif
   virtual ~Trial ();
 
   // write/read the object's state from/to an output/input stream
-  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
   
   virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

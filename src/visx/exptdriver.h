@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Sep 25 09:29:38 2000
+// written: Tue Sep 26 18:39:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,9 +69,9 @@ public:
   /// Virtual destructor.
   virtual ~ExptDriver();
 
-  virtual void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
 
   virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -117,10 +117,10 @@ public:
   virtual int edGetCurrentTrial() const;
   virtual void edSetCurrentTrial(int trial);
 
-  /// Uses \c deserialize() to read an experiment from \a filename.
+  /// Uses \c legacyDesrlz() to read an experiment from \a filename.
   void read(const char* filename);
 
-  /// Uses \c serialize() to write an experiment to \a filename.
+  /// Uses \c legacySrlz() to write an experiment to \a filename.
   void write(const char* filename) const;
 
   /** This saves the experiment file and a summary-of-responses file

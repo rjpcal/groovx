@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Sat Sep 23 14:22:51 2000
+// written: Tue Sep 26 19:12:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,20 +77,20 @@ DOTRACE("GrObj::GrObj");
   // return to the derived class constructor.
   sendStateChangeMsg();
 }
-
+#ifdef LEGACY
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
 GrObj::GrObj(STD_IO::istream& is, IO::IOFlag flag) :
   itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj(STD_IO::istream&)");
-  deserialize(is, flag);
+  legacyDesrlz(is, flag);
 
   attach(this);
 
   sendStateChangeMsg();
 }
-
+#endif
 // GrObj destructor
 GrObj::~GrObj() {
 DOTRACE("GrObj::~GrObj");
@@ -100,15 +100,15 @@ DOTRACE("GrObj::~GrObj");
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-void GrObj::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("GrObj::serialize");
-  itsImpl->serialize(os, flag);
+void GrObj::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("GrObj::legacySrlz");
+  itsImpl->legacySrlz(writer, os, flag);
 }
 
-void GrObj::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("GrObj::deserialize");
+void GrObj::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("GrObj::legacyDesrlz");
 
-  itsImpl->deserialize(is, flag); 
+  itsImpl->legacyDesrlz(reader, is, flag); 
   sendStateChangeMsg();
 }
 
@@ -129,9 +129,9 @@ DOTRACE("GrObj::writeTo");
   itsImpl->writeTo(writer);
 }
 
-int GrObj::charCount() const {
-DOTRACE("GrObj::charCount");
-  return itsImpl->charCount();
+int GrObj::legacyCharCount() const {
+DOTRACE("GrObj::legacyCharCount");
+  return itsImpl->legacyCharCount();
 }
 
 ///////////////

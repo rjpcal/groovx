@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Tue Sep 26 18:39:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,9 +75,9 @@ public:
   HpAudioSound(const char* filename);
   virtual ~HpAudioSound();
 
-  virtual void serialize(STD_IO::ostream& os, IO::IOFlag flag) const;
-  virtual void deserialize(STD_IO::istream& is, IO::IOFlag flag);
-  virtual int charCount() const;
+  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
+  virtual int legacyCharCount() const;
   
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -125,8 +125,8 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   }
 }
 
-void HpAudioSound::serialize(STD_IO::ostream& os, IO::IOFlag flag) const {
-DOTRACE("HpAudioSound::serialize");
+void HpAudioSound::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("HpAudioSound::legacySrlz");
 
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
@@ -138,8 +138,8 @@ DOTRACE("HpAudioSound::serialize");
   if (flag & IO::BASES) { /* no bases to deal with */ }
 }
 
-void HpAudioSound::deserialize(STD_IO::istream& is, IO::IOFlag flag) {
-DOTRACE("HpAudioSound::deserialize");
+void HpAudioSound::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("HpAudioSound::legacyDesrlz");
 
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
@@ -164,8 +164,8 @@ DOTRACE("HpAudioSound::writeTo");
   writer->writeValue("filename", itsFilename); 
 }
 
-int HpAudioSound::charCount() const {
-DOTRACE("HpAudioSound::charCount");
+int HpAudioSound::legacyCharCount() const {
+DOTRACE("HpAudioSound::legacyCharCount");
   return (ioTag.length() + 1
 			 + itsFilename.length() + 1
 			 +5); // fudge factor

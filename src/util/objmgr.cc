@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Tue Sep 26 18:25:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ DOTRACE("IO::IoMgr::newIo(STD_IO::istream&, IO::IOFlag)");
 IO::IoObject* IO::IoMgr::newIO(const char* type, STD_IO::istream& is, IO::IOFlag flag) {
 DOTRACE("IO::IoMgr::newIo(const char*, STD_IO::istream&, IO::IOFlag)");
   IO::IoObject* io = newIO(type);
-  io->deserialize(is, flag);
+  io->ioDeserialize(is, flag);
   return io;
 }
 

@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat Sep 23 15:54:35 2000
+// written: Tue Sep 26 19:12:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,10 +88,10 @@ private:
 public:
   void deleteAll(std::vector<TrialEvent*>& events);
 
-  void serializeVec(STD_IO::ostream& os, IO::IOFlag flag,
+  void legacySrlzVec(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag,
 						  const std::vector<TrialEvent*>& vec);
 
-  void deserializeVec(STD_IO::istream& is, IO::IOFlag flag,
+  void legacyDesrlzVec(STD_IO::istream& is, IO::IOFlag flag,
 							 std::vector<TrialEvent*>& vec);
 
   // Delegand functions
@@ -134,40 +134,40 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("TimingHdlr::serialize");
-  if (flag & IO::BASES) { /* no bases to serialize */ }
+void TimingHdlr::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+DOTRACE("TimingHdlr::legacySrlz");
+  if (flag & IO::BASES) { /* no bases to legacySrlz */ }
 
   if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
   
   os << itsImpl->itsDummyAutosavePeriod << IO::SEP;
 
-  itsImpl->serializeVec(os, flag, itsImpl->itsImmediateEvents);
-  itsImpl->serializeVec(os, flag, itsImpl->itsStartEvents);
-  itsImpl->serializeVec(os, flag, itsImpl->itsResponseEvents);
-  itsImpl->serializeVec(os, flag, itsImpl->itsAbortEvents);
+  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsImmediateEvents);
+  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsStartEvents);
+  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsResponseEvents);
+  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsAbortEvents);
 
   if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void TimingHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("TimingHdlr::deserialize");
-  if (flag & IO::BASES) { /* no bases to deserialize */ }
+void TimingHdlr::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+DOTRACE("TimingHdlr::legacyDesrlz");
+  if (flag & IO::BASES) { /* no bases to legacyDesrlz */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> itsImpl->itsDummyAutosavePeriod;
   DebugEvalNL(itsImpl->itsDummyAutosavePeriod);
 
-  itsImpl->deserializeVec(is, flag, itsImpl->itsImmediateEvents);
-  itsImpl->deserializeVec(is, flag, itsImpl->itsStartEvents);
-  itsImpl->deserializeVec(is, flag, itsImpl->itsResponseEvents);
-  itsImpl->deserializeVec(is, flag, itsImpl->itsAbortEvents);
+  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsImmediateEvents);
+  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsStartEvents);
+  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsResponseEvents);
+  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsAbortEvents);
 
   if (is.fail()) throw IO::InputError(ioTag);
 }
 
-int TimingHdlr::charCount() const {
-DOTRACE("TimingHdlr::charCount"); 
+int TimingHdlr::legacyCharCount() const {
+DOTRACE("TimingHdlr::legacyCharCount"); 
 
   // XXX not implemented!
 
@@ -305,16 +305,17 @@ DOTRACE("TimingHdlr::addEventByName");
 ///////////////////////////////////////////////////////////////////////
 
 
-void TimingHdlr::Impl::serializeVec(STD_IO::ostream& os, IO::IOFlag flag,
-												const std::vector<TrialEvent*>& vec) {
+void TimingHdlr::Impl::legacySrlzVec(IO::Writer* writer,
+												 STD_IO::ostream& os, IO::IOFlag flag,
+												 const std::vector<TrialEvent*>& vec) {
   os << vec.size() << IO::SEP;
   for (size_t i = 0; i < vec.size(); ++i) {
-	 vec[i]->serialize(os, flag);
+	 vec[i]->legacySrlz(writer, os, flag);
   }
 }
 
-void TimingHdlr::Impl::deserializeVec(STD_IO::istream& is, IO::IOFlag flag,
-												  std::vector<TrialEvent*>& vec) {
+void TimingHdlr::Impl::legacyDesrlzVec(STD_IO::istream& is, IO::IOFlag flag,
+													std::vector<TrialEvent*>& vec) {
   deleteAll(vec);
 
   size_t size; is >> size; DebugEvalNL(size);
