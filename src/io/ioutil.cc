@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jun 20 10:04:00 2001
+// written: Wed Jul 11 10:18:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,9 @@
 #include "io/asciistreamwriter.h"
 #include "io/io.h"
 #include "io/iolegacy.h"
+
+#include "tcl/tclerror.h"
+#include "tcl/tclvalue.h"
 
 #include "util/arrays.h"
 #include "util/gzstreambuf.h"

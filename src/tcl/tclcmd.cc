@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 11 10:04:46 2001
+// written: Wed Jul 11 10:18:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,9 @@
 
 #include "system/demangle.h"
 
-#include "tcl/convert.h"
 #include "tcl/errmsg.h"
+#include "tcl/tclerror.h"
+#include "tcl/tclvalue.h"
 
 #include "util/strings.h"
 
@@ -36,12 +37,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-extern Tcl_ObjType   tclBooleanType;
-extern Tcl_ObjType   tclDoubleType;
-extern Tcl_ObjType   tclIntType;
-extern Tcl_ObjType   tclListType;
-extern Tcl_ObjType   tclStringType;
 
 ///////////////////////////////////////////////////////////////////////
 //
