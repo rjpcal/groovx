@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Fri Aug 10 10:55:03 2001
+// written: Wed Aug 15 12:25:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,7 @@ public:
     Tcl::defTracing(this, Trial::tracer);
 
     Tcl::defFieldContainer<Trial>(this);
+    Tcl::defCreator<Trial>(this);
 
     defSetter("addNode", &Trial::addNode);
     defGetter("avgResponse", &Trial::avgResponse);

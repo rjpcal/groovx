@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jul 18 11:13:31 2001
+// written: Wed Aug 15 12:24:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@ DOTRACE("Fixpt_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "FixPt", "$Revision$");
   Tcl::defFieldContainer<FixPt>(pkg);
+  Tcl::defCreator<FixPt>(pkg);
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:42:36 1999
-// written: Wed Jul 18 11:13:31 2001
+// written: Wed Aug 15 12:25:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@ DOTRACE("Morphyface_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MorphyFace", "$Revision$");
   Tcl::defFieldContainer<MorphyFace>(pkg);
+  Tcl::defCreator<MorphyFace>(pkg);
 
   return pkg->initStatus();
 }

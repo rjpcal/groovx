@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 14:16:30 1999
-// written: Wed Jul 18 11:13:31 2001
+// written: Wed Aug 15 12:24:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@ DOTRACE("Gabor_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Gabor", "$Revision$");
   Tcl::defFieldContainer<Gabor>(pkg);
+  Tcl::defCreator<Gabor>(pkg);
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug 15 10:19:26 2001
+// written: Wed Aug 15 12:24:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,11 @@ DOTRACE("Face_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Face", "$Revision$");
   Tcl::defFieldContainer<Face>(pkg);
+  Tcl::defCreator<Face>(pkg);
 
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "CloneFace", "$Revision$");
   Tcl::defFieldContainer<CloneFace>(pkg2);
+  Tcl::defCreator<CloneFace>(pkg);
 
   return Tcl::Pkg::initStatus(pkg, pkg2);
 }

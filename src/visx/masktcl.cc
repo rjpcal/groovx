@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 18:19:05 1999
-// written: Wed Jul 18 11:13:31 2001
+// written: Wed Aug 15 12:25:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@ DOTRACE("Mask_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MaskHatch", "$Revision$");
   Tcl::defFieldContainer<MaskHatch>(pkg);
+  Tcl::defCreator<MaskHatch>(pkg);
 
   return pkg->initStatus();
 }

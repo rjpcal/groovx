@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:53:34 1999
-// written: Wed Jul 18 11:13:31 2001
+// written: Wed Aug 15 12:25:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@ DOTRACE("Pos_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Pos", "$Revision$");
   Tcl::defFieldContainer<Position>(pkg);
+  Tcl::defCreator<Position>(pkg);
 
   return pkg->initStatus();
 }

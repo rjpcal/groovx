@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 15:14:19 1999
-// written: Wed Jul 18 11:13:31 2001
+// written: Wed Aug 15 12:24:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@ DOTRACE("House_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "House", "$Revision$");
   Tcl::defFieldContainer<House>(pkg);
+  Tcl::defCreator<House>(pkg);
 
   return pkg->initStatus();
 }
