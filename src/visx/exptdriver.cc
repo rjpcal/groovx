@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun  6 16:41:58 2001
+// written: Wed Jun  6 16:50:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -199,8 +199,7 @@ public:
 
   GWT::Widget* getWidget()
 	 {
-		Assert(itsWidget != 0);
-		return itsWidget;
+		return itsWidget.get();
 	 }
 
   GWT::Canvas* getCanvas()
@@ -229,7 +228,7 @@ private:
 
   Tcl_Interp* itsInterp;
 
-  ToglConfig* itsWidget;
+  IdItem<ToglConfig> itsWidget;
 
   fixed_string itsHostname;	  // Host computer on which Expt was begun
   fixed_string itsSubject;		  // Id of subject on whom Expt was performed
@@ -263,7 +262,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 							  ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
-  itsWidget(new ToglConfig(interp)),
+  itsWidget(ToglConfig::make(interp)),
   itsHostname(""),
   itsSubject(""),
   itsBeginDate(""),
@@ -279,7 +278,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
-  ObjTogl::setCurrentTogl(itsWidget);
+  ObjTogl::setCurrentTogl(itsWidget.get());
 
   dynamic_string cmd_line("command line: ");
 
