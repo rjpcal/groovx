@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Mon Jul 16 09:32:51 2001
+// written: Mon Jul 16 09:37:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,10 +122,10 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class GenericObjPkg : public CTclItemPkg<C>, public ObjCaster {
+class GenericObjPkg : public TclItemPkg, public ObjCaster {
 public:
   GenericObjPkg(Tcl_Interp* interp, const char* name, const char* version) :
-    CTclItemPkg<C>(interp, name, version)
+    TclItemPkg(interp, name, version)
   {
     addCommand( new IsCmd(interp, this, TclPkg::makePkgCmdName("is")));
     addCommand( new CountAllCmd(interp, this,
