@@ -101,6 +101,16 @@ itcl::class FieldControls {
 				set upper [lindex $finfo 2]
 				set step [lindex $finfo 3]
 				set flags [lindex $finfo 4]
+
+				set is_private [expr [lsearch $flags PRIVATE] != -1]
+
+				if {$is_private} { continue }
+
+				set isItTransient($fname) [expr [lsearch $flags TRANSIENT] != -1]
+				set isItString($fname) [expr [lsearch $flags STRING] != -1]
+				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
+				set isItGettable($fname) [expr [lsearch $flags NO_GET] == -1]
+				set isItSettable($fname) [expr [lsearch $flags NO_SET] == -1]
 				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
 
 				if {$startsnewgroup} {
@@ -108,21 +118,15 @@ itcl::class FieldControls {
 					 pack $currentframe -side left -fill y -expand yes
 				}
 
-				if { [lsearch $itsNames $fname] != -1 } { continue }
-
-				set isItTransient($fname) [expr [lsearch $flags TRANSIENT] != -1]
-				set isItString($fname) [expr [lsearch $flags STRING] != -1]
-				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
-				set isItGettable($fname) [expr [lsearch $flags NO_GET] == -1]
-				set isItSettable($fname) [expr [lsearch $flags NO_SET] == -1]
-
 				lappend itsNames $fname
 				set itsCachedValues($fname) 0
 
 				set pane $currentframe
 
 				if { $isItString($fname) } {
-					 iwidgets::entryfield $pane.$fname -labeltext $fname -width 15 \
+					 iwidgets::entryfield $pane.$fname \
+								-labeltext $fname -labelpos n \
+								-width 15 \
 								-command [itcl::code $this onControl $setCallback $fname]
 					 lappend align_us $pane.$fname
 
@@ -432,7 +436,7 @@ itcl::class Editor {
 
 	 constructor {parent {objtype Gabor} } {
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
-					 -width 900 -height 900]
+					 -width 900 -height 1000]
 
 		  $itsPanes add controls
 
