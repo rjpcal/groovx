@@ -43,8 +43,8 @@ namespace
   int v0 = 0;
   int v1 = 0;
 
-  void v0_callback() { ++v0; }
-  void v1_callback() { --v1; }
+  void v0_callback0() { ++v0; }
+  void v1_callback0() { --v1; }
 
   void testSlotAdapterFreeFunc0()
   {
@@ -59,12 +59,12 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    Util::SoftRef<Util::Slot0> s0 = sig0.connect(&v0_callback);
+    Util::SoftRef<Util::Slot0> s0 = sig0.connect(&v0_callback0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 1);
     TEST_REQUIRE_EQ(v1, 0);
 
-    Util::SoftRef<Util::Slot0> s1 = sig0.connect(&v1_callback);
+    Util::SoftRef<Util::Slot0> s1 = sig0.connect(&v1_callback0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, -1);
@@ -86,7 +86,7 @@ namespace
     Util::Signal0 sig2;
     Util::Signal0 sig3;
 
-    sig3.connect(&v0_callback); // sig3 --> v0 callback
+    sig3.connect(&v0_callback0); // sig3 --> v0_callback0
 
     v0 = 0;
     TEST_REQUIRE_EQ(v0, 0);
@@ -95,19 +95,19 @@ namespace
     sig2.emit(); TEST_REQUIRE_EQ(v0, 0);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 1);
 
-    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0 callback
+    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0_callback0
 
     sig1.emit(); TEST_REQUIRE_EQ(v0, 1);
     sig2.emit(); TEST_REQUIRE_EQ(v0, 2);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 3);
 
-    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0 callback
+    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0_callback0
 
     sig1.emit(); TEST_REQUIRE_EQ(v0, 4);
     sig2.emit(); TEST_REQUIRE_EQ(v0, 5);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 6);
 
-    sig2.disconnect(sig3.slot()); // sig1 --> sig2 XX sig3 --> v0 callback
+    sig2.disconnect(sig3.slot()); // sig1 --> sig2 XX sig3 --> v0_callback0
 
     sig1.emit(); TEST_REQUIRE_EQ(v0, 6);
     sig2.emit(); TEST_REQUIRE_EQ(v0, 6);
@@ -127,11 +127,11 @@ namespace
     Util::Signal0 sig2;
     Util::Signal0 sig3;
 
-    sig3.connect(&v0_callback); // sig3 --> v0 callback
-    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0 callback
-    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0 callback
+    sig3.connect(&v0_callback0); // sig3 --> v0_callback0
+    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0_callback0
+    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0_callback0
 
-    sig3.connect(sig1.slot()); // sig1 --> sig2 --> sig3 --> v0 callback
+    sig3.connect(sig1.slot()); // sig1 --> sig2 --> sig3 --> v0_callback0
                                //  ^                 |
                                //  |                 |
                                //  +-----------------+
