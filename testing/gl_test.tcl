@@ -21,12 +21,12 @@ test "TclGL-glEnd" "args" {
 test "TclGL-glEnd" "normal use" {} {^$}
 test "TclGL-glEnd" "error" {} {^$}
 
-### glVertexCmd ###
-test "TclGL-glVertex" "args" {
-	 glVertex
-} {wrong \# args: should be "glVertex x y \?z=0\? \?w=1\?"}
-test "TclGL-glVertex" "normal use" {} {^$}
-test "TclGL-glVertex" "error" {} {^$}
+### glVertex4Cmd ###
+test "TclGL-glVertex4" "args" {
+	 glVertex4
+} {wrong \# args: should be "glVertex4 x y z w"}
+test "TclGL-glVertex4" "normal use" {} {^$}
+test "TclGL-glVertex4" "error" {} {^$}
 
 ### glIndexiCmd ###
 test "TclGL-glIndexi" "args" {
