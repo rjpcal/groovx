@@ -101,9 +101,10 @@ namespace GxTcl
       }
   }
 
-  geom::rect<double> boundingBox(Nub::Ref<GxNode> obj)
+  geom::rect<double> boundingBox(Nub::Ref<GxNode> obj,
+                                 Nub::SoftRef<Gfx::Canvas> canvas)
   {
-    return obj->getBoundingBox(*(Gfx::Canvas::current()));
+    return obj->getBoundingBox(*canvas);
   }
 
   rutz::fstring gxsepFields()
@@ -174,7 +175,7 @@ DOTRACE("Gxnode_Init");
 
   pkg->def( "contains", "objref other_id", &GxTcl::contains, SRC_POS );
   pkg->defVec("deepChildren", "objref(s)", &GxNode::deepChildren, 1, SRC_POS);
-  pkg->defVec("boundingBox", "objref(s)", &GxTcl::boundingBox, 1, SRC_POS);
+  pkg->defVec("boundingBox", "objref(s) canvas", &GxTcl::boundingBox, 1, SRC_POS);
   pkg->def( "savePS", "objref filename", &GxTcl::savePS, SRC_POS );
 
   PKG_RETURN;
