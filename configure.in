@@ -363,7 +363,7 @@ AC_MSG_RESULT(yes))
 
 AC_CHECK_PROG(have_prog_cxxfilt, [c++filt], yes, no)
 if test "$have_prog_cxxfilt" = yes; then
-   AC_DEFINE(HAVE_PROG_CXXFILT)
+   AC_DEFINE(HAVE_PROG_CXXFILT,1,[do we have a 'c++filt' program?])
 fi
 
 ### Check support for c++ iostreams
@@ -725,5 +725,7 @@ AC_GIVE_LATE_WARNINGS()
 
 AC_CONFIG_FILES([Makefile:Makefile.in])
 AC_CONFIG_FILES([doc/DoxyConfig:doc/DoxyConfig.in])
+
+AC_CONFIG_HEADERS([config.h])
 
 AC_OUTPUT()
