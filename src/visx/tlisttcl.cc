@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Sun Aug 26 08:53:53 2001
+// written: Sat Sep  8 14:10:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,12 +51,6 @@ namespace TlistTcl
 
   Tcl::List loadObjidFile(const char* objid_file, Tcl::List objids,
                           Tcl::List posids, int num_lines);
-
-  Tcl::List loadObjidFileAll(const char* objid_file, Tcl::List objids,
-                             Tcl::List posids)
-  {
-    return loadObjidFile(objid_file, objids, posids, -1);
-  }
 
   Ref<GxSeparator> makeSepPair(Util::Ref<GxNode> obj1, Util::Ref<GxNode> obj2)
   {
@@ -325,10 +319,10 @@ DOTRACE("Tlist_Init");
   pkg->def( "dealTriads", "objids posid1 posid2 posid3",
             &TlistTcl::dealTriads );
 
-  pkg->def( "loadObjidFile", "objid_file objids posids",
-            &TlistTcl::loadObjidFile );
   pkg->def( "loadObjidFile", "objid_file objids posids num_lines=-1",
-            &TlistTcl::loadObjidFileAll );
+            &TlistTcl::loadObjidFile );
+  pkg->def( "loadObjidFile", "objid_file objids posids",
+            Util::bindLast(&TlistTcl::loadObjidFile, -1) );
 
   pkg->def( "write_responses", "filename", &TlistUtils::writeResponses );
   pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix );
