@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Mar 19 17:57:28 2003
+// written: Tue May 13 11:47:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -49,7 +49,7 @@
 
 namespace
 {
-  Util::Randint generator;
+  Util::Urand generator;
 
   void usleepr(unsigned int usecs, unsigned int reps)
   {
@@ -92,9 +92,9 @@ DOTRACE("Misc_Init");
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Misc", "$Revision$");
 
   pkg->def( "::rand", "min max",
-            bindFirst(memFunc(&Randint::fdrawRange), &generator) );
+            bindFirst(memFunc(&Urand::fdrawRange), &generator) );
   pkg->def( "::srand", "seed",
-            bindFirst(memFunc(&Randint::seed), &generator) );
+            bindFirst(memFunc(&Urand::seed), &generator) );
 
   // use the standard library sleep() to sleep a specified # of seconds
   //

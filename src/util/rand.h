@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Wed Mar 19 12:45:37 2003
+// written: Tue May 13 12:13:48 2003
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -19,39 +19,47 @@
 namespace Util
 {
 
-/// Uniform random distribution in the interval [0,max]
-class Randint
+/// Uniform random distribution
+class Urand
 {
 private:
   unsigned long randx;
 
+  int abs(int x) { return x & 0x7fffffff; }
+  static double max() { return 2147483648.0 /* == 0x80000000u */; }
+
+  int idraw() { return randx = randx * 0x41c64e6d + 0x3039; }
+
 public:
-  Randint(long s = 0) : randx(s) {}
+  Urand(long s = 0) : randx(s) {}
   void seed(long s) { randx = s; }
 
-  // magic numbers chosen to use 31 bits of a 32-bit long:
+  /// Uniform random distribution in the interval [0.0:1.0[
+  double fdraw()
+  {
+    return abs(idraw())/max();
+  }
 
-  int abs(int x) { return x&0x7fffffff; }
-  static double max() { return 2147483648.0; }
-  int draw() { return randx = randx*1103515245 + 12345; }
-
-  double fdraw() { return abs(draw())/max(); }
-
+  /// Uniform random distribution in the interval [min:max[
   double fdrawRange(double min, double max)
   {
     return min + fdraw() * (max-min);
   }
 
-  int operator()() { return abs(draw()); }
-};
+  /// Uniform random distribution between true:false
+  bool booldraw()
+  {
+    return fdraw() < 0.5;
+  }
 
-/// Uniform random distribution in the interval [0:n[
-class Urand : public Randint
-{
-public:
-  Urand(long s = 0) : Randint(s) {}
+  /// Uniform random distribution in the interval [0:n[
+  int idraw(int n)
+  {
+    int r = int(n*fdraw()); return (r==n) ? n-1 : r;
+  }
 
-  int operator()(int n) { int r = int(n*fdraw()); return (r==n) ? n-1 : r; }
+  /// Uniform random distribution in the interval [0:n[
+  int operator()(int n) { return idraw(n); }
 };
 
 }
