@@ -61,6 +61,74 @@ namespace
   }
 }
 
+class TclProcWrapper
+{
+private:
+  TclProcWrapper(const TclProcWrapper&);
+  TclProcWrapper& operator=(const TclProcWrapper&);
+
+  fstring itsName;
+  fstring itsArgs;
+  fstring itsBody;
+  Tcl::Interp* itsInterp;
+
+public:
+  TclProcWrapper() : itsName(), itsArgs(), itsBody(), itsInterp(0) {}
+
+  ~TclProcWrapper() { destroy(); }
+
+  void create(Tcl::Interp& intp, const fstring& args, const fstring& body)
+  {
+    destroy();
+
+    itsName = uniqueCmdName("responseProc");
+    itsArgs = args;
+    itsBody = body;
+    itsInterp = &intp;
+
+    itsInterp->createProc("", itsName.c_str(),
+			  itsArgs.c_str(), itsBody.c_str());
+  }
+
+  void destroy()
+  {
+    if (exists())
+      {
+	Assert( itsInterp != 0 );
+	itsInterp->deleteProc("", itsName.c_str());
+
+	itsName = itsArgs = itsBody = fstring();
+      }
+
+    Postcondition( !exists() );
+  }
+
+  bool exists() const { return !itsName.is_empty(); }
+
+  int call(const fstring& args) const
+  {
+    Precondition( exists() );
+
+    Assert( itsInterp != 0 );
+
+    fstring cmd = itsName; cmd.append(" ").append(args);
+
+    Tcl::Code code(cmd, Tcl::Code::IGNORE_ERRORS);
+
+    code.invoke(*itsInterp);
+
+    int result = Response::INVALID_VALUE;
+
+    try { result = itsInterp->getResult<int>(); } catch(...) {}
+
+    return result;
+  }
+
+  const fstring& name() const { return itsName; }
+  const fstring& args() const { return itsArgs; }
+  const fstring& body() const { return itsBody; }
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // EventResponseHdlr::Impl class definition
@@ -219,75 +287,7 @@ public:
 
   bool itsAbortInvalidResponses;
 
-  class ResponseProc
-  {
-  private:
-    ResponseProc(const ResponseProc&);
-    ResponseProc& operator=(const ResponseProc&);
-
-    fstring itsName;
-    fstring itsArgs;
-    fstring itsBody;
-    Tcl::Interp* itsInterp;
-
-  public:
-    ResponseProc() : itsName(), itsArgs(), itsBody(), itsInterp(0) {}
-
-    ~ResponseProc() { destroy(); }
-
-    void create(Tcl::Interp& intp, const fstring& args, const fstring& body)
-    {
-      destroy();
-
-      itsName = uniqueCmdName("responseProc");
-      itsArgs = args;
-      itsBody = body;
-      itsInterp = &intp;
-
-      itsInterp->createProc("", itsName.c_str(),
-                            itsArgs.c_str(), itsBody.c_str());
-    }
-
-    void destroy()
-    {
-      if (exists())
-        {
-          Assert( itsInterp != 0 );
-          itsInterp->deleteProc("", itsName.c_str());
-
-          itsName = itsArgs = itsBody = fstring();
-        }
-
-      Postcondition( !exists() );
-    }
-
-    bool exists() const { return !itsName.is_empty(); }
-
-    int call(const fstring& args) const
-    {
-      Precondition( exists() );
-
-      Assert( itsInterp != 0 );
-
-      fstring cmd = itsName; cmd.append(" ").append(args);
-
-      Tcl::Code code(cmd, Tcl::Code::IGNORE_ERRORS);
-
-      code.invoke(*itsInterp);
-
-      int result = Response::INVALID_VALUE;
-
-      try { result = itsInterp->getResult<int>(); } catch(...) {}
-
-      return result;
-    }
-
-    const fstring& name() const { return itsName; }
-    const fstring& args() const { return itsArgs; }
-    const fstring& body() const { return itsBody; }
-  };
-
-  ResponseProc itsResponseProc;
+  TclProcWrapper itsResponseProc;
 
   unsigned int itsMaxResponses;
 };
