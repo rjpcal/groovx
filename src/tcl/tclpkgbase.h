@@ -103,6 +103,9 @@ public:
       initialization was successful. */
   int initStatus() const throw();
 
+  /// Mark the package as having failed its initialization.
+  void setInitStatusError() throw();
+
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl::Interp& interp() throw();
 
@@ -169,8 +172,6 @@ protected:
 
   /// Adds \a cmd to the commands managed by the package.
   void addCommand(Command* cmd);
-
-  void setInitStatusError() throw();
 
 private:
   PkgBase(const PkgBase&);
