@@ -69,7 +69,7 @@ namespace Util
 class Util::Prof
 {
 public:
-  Prof(const char* s) throw();
+  Prof(const char* s, const char* fname, int lineno) throw();
   ~Prof() throw();
 
   /// Reset the call count and elapsed time to zero.
@@ -83,6 +83,10 @@ public:
   void addChildTime(const Util::Time& t) throw();
 
   const char* name() const throw();
+
+  const char* srcFileName() const throw();
+
+  int srcLineNo() const throw();
 
   /// Returns the total elapsed time in microseconds since the last reset().
   double totalTime() const throw();
@@ -115,10 +119,12 @@ private:
   Prof(const Prof&) throw();
   Prof& operator=(const Prof&) throw();
 
-  const char* itsFuncName;
-  unsigned int itsCallCount;
-  Util::Time itsTotalTime;
-  Util::Time itsChildrenTime;
+  const char*  const itsFuncName;
+  const char*  const itsSourceFileName;
+  int          const itsSourceLineNo;
+  unsigned int       itsCallCount;
+  Util::Time         itsTotalTime;
+  Util::Time         itsChildrenTime;
 };
 
 /// Times and traces execution in and out of a lexical scope.
@@ -218,7 +224,7 @@ private:
 #endif
 
 #ifdef LOCAL_PROF
-#  define DOTRACE(x) static Util::Prof P_x_(x); \
+#  define DOTRACE(x) static Util::Prof P_x_(x, __FILE__, __LINE__); \
                      Util::Trace T_x_(P_x_, DYNAMIC_TRACE_EXPR);
 #else
 #  define DOTRACE(x) {}
