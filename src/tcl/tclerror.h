@@ -3,7 +3,7 @@
 // tclerror.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:26 1999
-// written: Wed May 31 18:50:41 2000
+// written: Wed Oct 11 10:57:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,13 @@
 #include "util/error.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERRORHANDLER_H_DEFINED)
+#include "util/errorhandler.h"
+#endif
+
 namespace Tcl {
   class TclError;
+  class BkdErrorHandler;
 }
 
 class Tcl::TclError : public ErrorWithMsg {
@@ -24,6 +29,26 @@ public:
   TclError();
   TclError(const char* msg);
   virtual ~TclError();
+};
+
+class Tcl::BkdErrorHandler : public Util::ErrorHandler {
+private:
+  Tcl_Interp* itsInterp;
+
+  void raiseBackgroundError(const char* msg);
+
+  BkdErrorHandler(const BkdErrorHandler&);
+  BkdErrorHandler& operator=(const BkdErrorHandler&);
+
+public:
+  BkdErrorHandler(Tcl_Interp* interp);
+
+  virtual ~BkdErrorHandler();
+
+  virtual void handleUnknownError();
+  virtual void handleError(Error& err);
+  virtual void handleErrorWithMsg(ErrorWithMsg& err);
+  virtual void handleMsg(const char* msg);
 };
 
 static const char vcid_tclerror_h[] = "$Header$";
