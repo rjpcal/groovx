@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Wed Jan 23 11:13:04 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -116,17 +116,13 @@ namespace ExptTcl
     Tcl::Interp::clearEventQueue();
 
     Util::SoftRef<GWT::Widget> widget = ed->getWidget();
-    widget->clearscreen();
-    widget->swapBuffers();
-    widget->clearscreen();
-    widget->swapBuffers();
+    widget->fullClearscreen();
+    widget->fullClearscreen();
 
     System::theSystem().sleep(2);
 
-    widget->clearscreen();
-    widget->swapBuffers();
-    widget->clearscreen();
-    widget->swapBuffers();
+    widget->fullClearscreen();
+    widget->fullClearscreen();
 
     Tcl::Interp::clearEventQueue();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Jan 23 10:45:33 2002
+// written: Wed Jan 23 11:13:04 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -178,7 +178,7 @@ public:
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
-    defAction("clearscreen", &Toglet::clearscreen);
+    defAction("clearscreen", &Toglet::fullClearscreen);
     defAction("destroy", &Toglet::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
     defAttrib("height", &Toglet::getHeight, &Toglet::setHeight);

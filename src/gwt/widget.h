@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Wed Jan 23 10:40:56 2002
+// written: Wed Jan 23 11:14:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,6 @@ public:
   virtual void takeFocus() = 0;
   virtual void swapBuffers() = 0;
 
-  virtual void clearscreen();
   virtual void undraw();
 
   /** "Bare-bones rendering": only render the current object; the caller is
@@ -102,6 +101,14 @@ public:
       the current object, then flushes the graphics stream and swaps buffers
       if necessary. */
   void fullRender();
+
+  /** "Bare-bones clearscreen": clear the color buffer and set the current
+      object to empty, but don't flush the graphics stream. */
+  void clearscreen();
+
+  /** "Full-featured clearscreen": clear the color buffer, set the current
+      object to empty, and flush the graphics stream. */
+  void fullClearscreen();
 
   // Change the global visibility, which determines whether anything
   // will be displayed by a "redraw" command, or by remap events sent

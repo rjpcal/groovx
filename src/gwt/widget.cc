@@ -78,24 +78,33 @@ public:
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
+  void undraw(Gfx::Canvas& canvas);
+
   void render();
 
   void fullRender();
 
-  void clearscreen(Gfx::Canvas& canvas);
+  void clearscreen(Gfx::Canvas& canvas)
+  {
+    canvas.clearColorBuffer();
+    setDrawable(theEmptyNode);
+    itsUndrawNode = theEmptyNode;
+    isItVisible = false;
+  }
 
-  void undraw(Gfx::Canvas& canvas);
+  void fullClearscreen(Gfx::Canvas& canvas)
+  {
+    clearscreen(canvas);
+    doFlush(canvas);
+  }
 
   void setVisibility(bool val)
   {
     DOTRACE("GWT::Widget::Impl::setVisibility");
     isItVisible = val;
-    if (isItVisible == false)
+    if ( !isItVisible )
       {
-        itsOwner->getCanvas().clearColorBuffer();
-        doFlush(itsOwner->getCanvas());
-        setDrawable(theEmptyNode);
-        itsUndrawNode = theEmptyNode;
+	fullClearscreen(itsOwner->getCanvas());
       }
   }
 
@@ -211,12 +220,6 @@ DOTRACE("GWT::Widget::Impl::fullRender");
   doFlush(canvas);
 }
 
-void GWT::Widget::Impl::clearscreen(Gfx::Canvas& /*canvas*/)
-{
-DOTRACE("GWT::Widget::Impl::clearscreen");
-  setVisibility(false);
-}
-
 void GWT::Widget::Impl::undraw(Gfx::Canvas& canvas)
 {
 DOTRACE("GWT::Widget::Impl::undraw");
@@ -287,6 +290,11 @@ void GWT::Widget::fullRender()
 void GWT::Widget::clearscreen()
 {
   itsImpl->clearscreen(getCanvas());
+}
+
+void GWT::Widget::fullClearscreen()
+{
+  itsImpl->fullClearscreen(getCanvas());
 }
 
 void GWT::Widget::undraw()
