@@ -140,7 +140,7 @@ public:
   Nub::Ref<MtxObj> getMtx(const char*)
   {
     noSupport();
-    return Nub::Ref<MtxObj>(new MtxObj(0,0));
+    return Nub::Ref<MtxObj>(new MtxObj(mtx::empty_mtx()));
   }
 };
 

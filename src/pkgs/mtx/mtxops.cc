@@ -41,7 +41,7 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
     throw rutz::error("zeropad(): new size must be >= old size",
                       SRC_POS);
 
-  mtx result(new_mrows, new_ncols);
+  mtx result = mtx::zeros(new_mrows, new_ncols);
 
   const int padtop =  (new_mrows - src.mrows() + 1) / 2;
   const int padleft = (new_ncols - src.ncols() + 1) / 2;

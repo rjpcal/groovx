@@ -15,6 +15,8 @@
 
 #include "matlabinterface.h"
 
+#ifdef HAVE_MATLAB
+
 #include "mtx/mtx.h"
 
 #include "util/error.h"
@@ -73,6 +75,8 @@ DOTRACE("make_mxarray");
 
   return result_mx;
 }
+
+#endif // HAVE_MATLAB
 
 static const char vcid_matlabinterface_cc[] = "$Header$";
 #endif // !MATLABINTERFACE_CC_DEFINED

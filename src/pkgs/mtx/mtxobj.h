@@ -54,7 +54,7 @@ public:
 
   virtual ~MtxObj() throw() {}
 
-  static MtxObj* make() { return new MtxObj(0,0); }
+  static MtxObj* make() { return new MtxObj(mtx::empty_mtx()); }
 };
 
 static const char vcid_mtxobj_h[] = "$Header$";

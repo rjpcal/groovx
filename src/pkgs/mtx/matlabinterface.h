@@ -13,6 +13,8 @@
 #ifndef MATLABINTERFACE_H_DEFINED
 #define MATLABINTERFACE_H_DEFINED
 
+#ifdef HAVE_MATLAB
+
 #include <matrix.h>
 
 #include "mtx/datablock.h"
@@ -28,6 +30,8 @@ mtx make_mtx(const mxArray* a,
              mtx_policies::storage_policy s = mtx_policies::COPY);
 
 mxArray* make_mxarray(const mtx& m);
+
+#endif // HAVE_MATLAB
 
 static const char vcid_matlabinterface_h[] = "$Header$";
 #endif // !MATLABINTERFACE_H_DEFINED
