@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon May 22 18:01:42 2000
+// written: Tue May 23 20:23:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,14 @@
 
 #include "tcl/tclevalcmd.h"
 
+#include "togl/togl.h"
+
 #include "util/error.h"
 #include "util/strings.h"
 
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <tk.h>
-#include <togl.h>
 #include <cmath>
 #include <strstream.h>
 

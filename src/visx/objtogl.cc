@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri May 19 15:14:55 2000
+// written: Tue May 23 20:22:45 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -24,11 +24,12 @@
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
 
+#include "togl/togl.h"
+
 #include "util/strings.h"
 
 #include <strstream.h>
 #include <iomanip.h>
-#include <togl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
