@@ -50,51 +50,56 @@ namespace {
 
 namespace RC
 {
-  void raiseException(const char* msg);
+  void raiseException(const char* msg, const char* f, int ln);
 }
 
-void RC::raiseException(const char* msg)
+void RC::raiseException(const char* msg, const char* f, int ln)
 {
   DebugPrintNL(msg);
-  ErrorWithMsg err("Range check: ");
+#ifdef LOCAL_PROF
+  Util::Trace::printStackTrace();
+#endif
+  ErrorWithMsg err("Range check failed in file '");
+  err.appendMsg(f).appendMsg("' at line #").appendNumber(ln).appendMsg(": ");
   err.appendMsg(msg);
   throw err;
 }
 
-void RC::less(const void* x, const void* lim)
+void RC::less(const void* x, const void* lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raiseException("less: pointer range error");
+  else raiseException("less: pointer range error", f, ln);
 }
 
-void RC::leq(const void* x, const void* lim)
+void RC::leq(const void* x, const void* lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raiseException("leq: pointer range error");
+  else raiseException("leq: pointer range error", f, ln);
 }
 
-void RC::inHalfOpen(const void* x, const void* llim, const void* ulim)
+void RC::inHalfOpen(const void* x, const void* llim, const void* ulim,
+						  const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException("inHalfOpen: pointer range error");
+  else raiseException("inHalfOpen: pointer range error", f, ln);
 }
 
-void RC::less(int x, int lim)
+void RC::less(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raiseException("less: integer range error");
+  else raiseException("less: integer range error", f, ln);
 }
 
-void RC::leq(int x, int lim)
+void RC::leq(int x, int lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raiseException("leq: integer range error");
+  else raiseException("leq: integer range error", f, ln);
 }
 
-void RC::inHalfOpen(int x, int llim, int ulim)
+void RC::inHalfOpen(int x, int llim, int ulim, const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException("inHalfOpen: integer range error");
+  else raiseException("inHalfOpen: integer range error", f, ln);
 }
 
 
