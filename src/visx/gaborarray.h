@@ -37,7 +37,7 @@
 #include "util/arrays.h"
 #include "util/pointers.h"
 
-class Element;
+class GaborArrayElement;
 class Snake;
 
 namespace Gfx
@@ -109,13 +109,13 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  void dumpFrame() const;
+  shared_ptr<Gfx::BmapData> generateBmap() const;
 
   void updateForeg() const;
   void updateBackg() const;
   void updateBmap() const;
   void update() const;
-  bool tryPush(const Element& e) const;
+  bool tryPush(const GaborArrayElement& e) const;
   bool tooClose(const Gfx::Vec2<double>& v, int except) const;
   void backgHexGrid() const;
   void backgFill() const;
@@ -143,8 +143,11 @@ private:
   Cached<double> itsContrastJitter;
 
   mutable int itsTotalNumber;
-  mutable fixed_block<Element> itsArray;
+  mutable fixed_block<GaborArrayElement> itsArray;
   mutable shared_ptr<Gfx::BmapData> itsBmap;
+
+  bool itsDumpingFrames;
+  unsigned int itsFrameDumpPeriod;
 };
 
 static const char vcid_gaborarray_h[] = "$Header$";

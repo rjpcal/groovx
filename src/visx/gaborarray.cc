@@ -63,6 +63,18 @@ using namespace Gfx;
 namespace
 {
   const int MAX_GABOR_NUMBER = 1800;
+
+  void dumpFrame(shared_ptr<Gfx::BmapData> bmap)
+  {
+    DOTRACE("<gaborarray.cc>::dumpFrame");
+
+    static int framecount = 0;
+
+    char fname[256];
+    snprintf(fname, 256, "frame_%06d.png", framecount++);
+
+    ImgFile::save(fname, *bmap);
+  }
 }
 
 GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
@@ -94,7 +106,10 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
 
   itsTotalNumber(0),
   itsArray(MAX_GABOR_NUMBER),
-  itsBmap(0)
+  itsBmap(0),
+
+  itsDumpingFrames(false),
+  itsFrameDumpPeriod(20)
 {
 DOTRACE("GaborArray::GaborArray");
 
@@ -130,6 +145,11 @@ const FieldMap& GaborArray::classFields()
     Field("gaborSigma", &GaborArray::itsGaborSigma, 7.5, 0.5, 25.0, 0.5),
     Field("contrastSeed", &GaborArray::itsContrastSeed, 0, 0, 20000, 1),
     Field("contrastJitter", &GaborArray::itsContrastJitter, 0.0, 0.0, 2.0, 0.01),
+
+    Field("dumpingFrames", &GaborArray::itsDumpingFrames,
+          false, false, true, true, Field::BOOLEAN | Field::TRANSIENT),
+    Field("frameDumpPeriod", &GaborArray::itsFrameDumpPeriod,
+          20, 1, 100, 1, Field::TRANSIENT),
   };
 
   static FieldMap GABORARRAY_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
@@ -179,7 +199,7 @@ DOTRACE("GaborArray::saveContourOnlyImage");
 
   for (int i = 0; i < itsTotalNumber; ++i)
     {
-      if (itsArray[i].type != Element::CONTOUR)
+      if (itsArray[i].type != GaborArrayElement::CONTOUR)
         continue;
 
       const double theta = rad_0_2pi(itsArray[i].theta + M_PI_2);
@@ -275,7 +295,7 @@ DOTRACE("GaborArray::updateForeg");
   // pull in elements from the snake
   for (int n = 0; n < itsForegNumber; ++n)
     {
-      Element e = snake.getElement(n);
+      GaborArrayElement e = snake.getElement(n);
       e.pos.x() += itsForegPosX;
       e.pos.y() += itsForegPosY;
 
@@ -326,7 +346,7 @@ DOTRACE("GaborArray::updateBackg");
 
   for (int n = 0; n < itsTotalNumber; ++n)
     {
-      if (itsArray[n].type == Element::CONTOUR)
+      if (itsArray[n].type == GaborArrayElement::CONTOUR)
         continue;
 
       bool inside = true;
@@ -354,7 +374,7 @@ DOTRACE("GaborArray::updateBackg");
 
       if (inside)
         {
-          itsArray[n].type = Element::INSIDE;
+          itsArray[n].type = GaborArrayElement::INSIDE;
           ++insideNumber;
         }
     }
@@ -372,18 +392,9 @@ DOTRACE("GaborArray::updateBackg");
   itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
 
-void GaborArray::updateBmap() const
+shared_ptr<Gfx::BmapData> GaborArray::generateBmap() const
 {
-DOTRACE("GaborArray::updateBmap");
-
-  if (itsThetaSeed.ok()
-      && itsPhaseSeed.ok()
-      && itsThetaJitter.ok()
-      && itsGaborPeriod.ok()
-      && itsGaborSigma.ok()
-      && itsContrastSeed.ok()
-      && itsContrastJitter.ok())
-    return;
+DOTRACE("GaborArray::generateBmap");
 
   const int npix = itsSizeX*itsSizeY;
 
@@ -404,7 +415,7 @@ DOTRACE("GaborArray::updateBmap");
       const double rand_theta = 2*M_PI * thetas.fdraw();
 
       const double theta =
-        (itsArray[i].type == Element::CONTOUR)
+        (itsArray[i].type == GaborArrayElement::CONTOUR)
         ? rad_0_2pi(itsThetaJitter * (rand_theta - M_PI) +
                     (itsArray[i].theta + M_PI_2))
         : rand_theta;
@@ -456,7 +467,23 @@ DOTRACE("GaborArray::updateBmap");
   if (clip)
     printf("warning: some values were clipped\n");
 
-  itsBmap.swap(result);
+  return result;
+}
+
+void GaborArray::updateBmap() const
+{
+DOTRACE("GaborArray::updateBmap");
+
+  if (itsThetaSeed.ok()
+      && itsPhaseSeed.ok()
+      && itsThetaJitter.ok()
+      && itsGaborPeriod.ok()
+      && itsGaborSigma.ok()
+      && itsContrastSeed.ok()
+      && itsContrastJitter.ok())
+    return;
+
+  itsBmap = generateBmap();
 
   itsThetaSeed.save();
   itsPhaseSeed.save();
@@ -478,7 +505,7 @@ DOTRACE("GaborArray::update");
   updateBmap();
 }
 
-bool GaborArray::tryPush(const Element& e) const
+bool GaborArray::tryPush(const GaborArrayElement& e) const
 {
   if (tooClose(e.pos, -1)) return false;
 
@@ -490,8 +517,15 @@ bool GaborArray::tryPush(const Element& e) const
 
   itsArray[itsTotalNumber++] = e;
 
-  dumpFrame();
-  dumpFrame();
+  // this double call is on purpose so that the added elements don't fly by
+  // quite so quickly in the resulting movie
+  if (itsDumpingFrames)
+    {
+      shared_ptr<Gfx::BmapData> bmap = generateBmap();
+
+      dumpFrame(bmap);
+      dumpFrame(bmap);
+    }
 
   return true;
 }
@@ -536,7 +570,7 @@ DOTRACE("GaborArray::backgHexGrid");
 
       for (int i = 0; i < nx; ++i, x += dx)
         {
-          tryPush(Element(x, y, 0.0, Element::OUTSIDE));
+          tryPush(GaborArrayElement(x, y, 0.0, GaborArrayElement::OUTSIDE));
         }
     }
 }
@@ -553,7 +587,7 @@ DOTRACE("GaborArray::backgFill");
   for (double x = -halfX; x <= halfX; x += dx)
     for (double y = -halfY; y <= halfY; y += dx)
       {
-        tryPush(Element(x, y, 0.0, Element::OUTSIDE));
+        tryPush(GaborArrayElement(x, y, 0.0, GaborArrayElement::OUTSIDE));
       }
 
   const double spacing = sqrt(2.0*itsSizeX*itsSizeY/(sqrt(3.0)*itsTotalNumber));
@@ -575,7 +609,7 @@ DOTRACE("GaborArray::backgJitter");
     {
       for (int n = 0; n < itsTotalNumber; ++n)
         {
-          if (itsArray[n].type == Element::CONTOUR)
+          if (itsArray[n].type == GaborArrayElement::CONTOUR)
             continue;
 
           Vec2d v;
@@ -593,24 +627,12 @@ DOTRACE("GaborArray::backgJitter");
             }
         }
 
-      if (niter % 15 == 0) dumpFrame();
-    }
-}
-
-void GaborArray::dumpFrame() const
-{
-DOTRACE("GaborArray::dumpFrame");
-
-  if (0)
-    {
-      static int framecount = 0;
-
-      char fname[256];
-      snprintf(fname, 256, "frame_%06d.pnm", framecount++);
-
-      this->saveImage(fname);
-
-      printf("dumped frame %s\n", fname);
+      if (itsDumpingFrames &&
+          niter % itsFrameDumpPeriod == 0)
+        {
+          shared_ptr<Gfx::BmapData> bmap = generateBmap();
+          dumpFrame(bmap);
+        }
     }
 }
 
