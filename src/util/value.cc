@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Sat Oct  2 21:24:15 1999
+// written: Tue Oct 12 10:52:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,10 +28,10 @@ Value::~Value() {}
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TValue::~TValue() {}
+TValue<T>::~TValue() {}
 
 template <class T>
-Value* TValue::clone() const { return new TValue<T>(itsVal); }
+Value* TValue<T>::clone() const { return new TValue<T>(itsVal); }
 
 template <>
 Value::Type TValue<int>::getNativeType() const { return Value::INT; }
@@ -58,12 +58,12 @@ Value::Type TValue<string>::getNativeType() const { return Value::STRING; }
 // matches the type of the template parameter.
 //
 
-template <class T> int TValue::getInt() const { throw ValueError(); }
-template <class T> long TValue::getLong() const { throw ValueError(); }
-template <class T> bool TValue::getBool() const { throw ValueError(); }
-template <class T> double TValue::getDouble() const { throw ValueError(); }
-template <class T> const char* TValue::getCstring() const { throw ValueError(); }
-template <class T> string TValue::getString() const { throw ValueError(); }
+template <class T> int TValue<T>::getInt() const { throw ValueError(); }
+template <class T> long TValue<T>::getLong() const { throw ValueError(); }
+template <class T> bool TValue<T>::getBool() const { throw ValueError(); }
+template <class T> double TValue<T>::getDouble() const { throw ValueError(); }
+template <class T> const char* TValue<T>::getCstring() const { throw ValueError(); }
+template <class T> string TValue<T>::getString() const { throw ValueError(); }
 
 template <> int TValue<int>::getInt() const { return itsVal; }
 template <> long TValue<long>::getLong() const { return itsVal; }
@@ -72,12 +72,12 @@ template <> double TValue<double>::getDouble() const { return itsVal; }
 template <> const char* TValue<const char*>::getCstring() const { return itsVal; }
 template <> string TValue<string>::getString() const { return itsVal; }
 
-template <class T> void TValue::get(int&) const { throw ValueError(); }
-template <class T> void TValue::get(long&) const { throw ValueError(); }
-template <class T> void TValue::get(bool&) const { throw ValueError(); }
-template <class T> void TValue::get(double&) const { throw ValueError(); }
-template <class T> void TValue::get(const char*&) const { throw ValueError(); }
-template <class T> void TValue::get(string&) const { throw ValueError(); }
+template <class T> void TValue<T>::get(int&) const { throw ValueError(); }
+template <class T> void TValue<T>::get(long&) const { throw ValueError(); }
+template <class T> void TValue<T>::get(bool&) const { throw ValueError(); }
+template <class T> void TValue<T>::get(double&) const { throw ValueError(); }
+template <class T> void TValue<T>::get(const char*&) const { throw ValueError(); }
+template <class T> void TValue<T>::get(string&) const { throw ValueError(); }
 
 template <> void TValue<int>::get(int& val) const { val = itsVal; }
 template <> void TValue<long>::get(long& val) const { val = itsVal; }
@@ -102,10 +102,10 @@ template class TValue<string>;
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TValuePtr::~TValuePtr() {}
+TValuePtr<T>::~TValuePtr() {}
 
 template <class T>
-Value* TValuePtr::clone() const { return new TValuePtr<T>(*itsValPtr); }
+Value* TValuePtr<T>::clone() const { return new TValuePtr<T>(*itsValPtr); }
 
 template <>
 Value::Type TValuePtr<int>::getNativeType() const { return Value::INT; }
@@ -132,12 +132,12 @@ Value::Type TValuePtr<string>::getNativeType() const { return Value::STRING; }
 // matches the type of the template parameter.
 //
 
-template <class T> int TValuePtr::getInt() const { throw ValueError(); }
-template <class T> long TValuePtr::getLong() const { throw ValueError(); }
-template <class T> bool TValuePtr::getBool() const { throw ValueError(); }
-template <class T> double TValuePtr::getDouble() const { throw ValueError(); }
-template <class T> const char* TValuePtr::getCstring() const { throw ValueError(); }
-template <class T> string TValuePtr::getString() const { throw ValueError(); }
+template <class T> int TValuePtr<T>::getInt() const { throw ValueError(); }
+template <class T> long TValuePtr<T>::getLong() const { throw ValueError(); }
+template <class T> bool TValuePtr<T>::getBool() const { throw ValueError(); }
+template <class T> double TValuePtr<T>::getDouble() const { throw ValueError(); }
+template <class T> const char* TValuePtr<T>::getCstring() const { throw ValueError(); }
+template <class T> string TValuePtr<T>::getString() const { throw ValueError(); }
 
 template <> int TValuePtr<int>::getInt() const { return *itsValPtr; }
 template <> long TValuePtr<long>::getLong() const { return *itsValPtr; }
@@ -146,12 +146,12 @@ template <> double TValuePtr<double>::getDouble() const { return *itsValPtr; }
 template <> const char* TValuePtr<const char*>::getCstring() const { return *itsValPtr; }
 template <> string TValuePtr<string>::getString() const { return *itsValPtr; }
 
-template <class T> void TValuePtr::get(int&) const { throw ValueError(); }
-template <class T> void TValuePtr::get(long&) const { throw ValueError(); }
-template <class T> void TValuePtr::get(bool&) const { throw ValueError(); }
-template <class T> void TValuePtr::get(double&) const { throw ValueError(); }
-template <class T> void TValuePtr::get(const char*&) const { throw ValueError(); }
-template <class T> void TValuePtr::get(string&) const { throw ValueError(); }
+template <class T> void TValuePtr<T>::get(int&) const { throw ValueError(); }
+template <class T> void TValuePtr<T>::get(long&) const { throw ValueError(); }
+template <class T> void TValuePtr<T>::get(bool&) const { throw ValueError(); }
+template <class T> void TValuePtr<T>::get(double&) const { throw ValueError(); }
+template <class T> void TValuePtr<T>::get(const char*&) const { throw ValueError(); }
+template <class T> void TValuePtr<T>::get(string&) const { throw ValueError(); }
 
 template <> void TValuePtr<int>::get(int& val) const { val = *itsValPtr; }
 template <> void TValuePtr<long>::get(long& val) const { val = *itsValPtr; }
