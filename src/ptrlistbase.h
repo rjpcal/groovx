@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Oct 24 16:13:43 2000
+// written: Tue Oct 24 17:42:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,14 +57,14 @@ public:
 
   /** Returns the size of the internal array. The number returned also
 		refers to the one-past-the-end index into the PtrList. */
-  int capacity() const;
+  virtual int capacity() const;
 
   /** Returns the number of filled sites in the PtrList. */
-  int count() const;
+  virtual int count() const;
 
   /** Returns true if 'id' is a valid index into a non-NULL T* in
 		the PtrList, given its current size. */
-  bool isValidId(int id) const;
+  virtual bool isValidId(int id) const;
 
   /** Insert all of the valid id's in the list using the insert
       iterator \a itr. **/
@@ -82,31 +82,31 @@ public:
       object at index \a id, causing the object to be destroyed since
       it was unshared. If the object is shared, this operation throws
       an exception. */
-  void remove(int id);
+  virtual void remove(int id);
 
   /** Removes reference to the object at \a id. */
-  void release(int id);
+  virtual void release(int id);
 
   /** Releases references to all unshared objects held by the
       list. Since the objects are unshared, they will be destroyed in
       the process. */
-  void clear();
+  virtual void clear();
 
 protected:
   /** Return the \c RefCounted* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
-  RefCounted* getPtrBase(int id) const throw ();
+  virtual RefCounted* getPtrBase(int id) const throw ();
 
   /** Like \c getPtrBase(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
-  RefCounted* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  virtual RefCounted* getCheckedPtrBase(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  int insertPtrBase(RefCounted* ptr);
+  virtual int insertPtrBase(RefCounted* ptr);
 
 private:
   PtrListBase(const PtrListBase&);
