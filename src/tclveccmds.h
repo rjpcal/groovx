@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Mon May 14 16:01:55 2001
+// written: Sat May 26 17:49:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 
 template <class T> class Getter;
 template <class T> class Setter;
-template <class T> class Attrib;
 
 class Action;
 
@@ -174,7 +173,8 @@ template <class T>
 class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-					 shared_ptr<Attrib<T> > attrib,
+					 shared_ptr<Getter<T> > getter,
+					 shared_ptr<Setter<T> > setter,
 					 const char* usage, int item_argn);
 
   virtual ~TVecAttribCmd();

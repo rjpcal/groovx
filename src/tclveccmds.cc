@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Fri May 18 17:22:43 2001
+// written: Sat May 26 17:41:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -273,22 +273,11 @@ template class TVecSetterCmd<const fixed_string&>;
 
 template <class T>
 Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-												 shared_ptr<Attrib<T> > attrib,
+												 shared_ptr<Getter<T> > getter,
+												 shared_ptr<Setter<T> > setter,
 												 const char* usage, int item_argn) :
-  TVecGetterCmd<T>(pkg, 0,
-#ifndef ACC_COMPILER
-						 attrib,
-#else
-						 shared_ptr<Getter<T> >(attrib),
-#endif
-						 0, item_argn),
-  TVecSetterCmd<T>(pkg, 0,
-#ifndef ACC_COMPILER
-						 attrib,
-#else
-						 shared_ptr<Setter<T> >(attrib),
-#endif
-						 0, item_argn),
+  TVecGetterCmd<T>(pkg, 0, getter, 0, item_argn),
+  TVecSetterCmd<T>(pkg, 0, setter, 0, item_argn),
   TclCmd(pkg->interp(), cmd_name,
 			usage ? usage : (item_argn ?
 								  "item_id(s) ?new_value(s)?" : "?new_value?"),
