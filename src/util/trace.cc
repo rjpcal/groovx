@@ -313,19 +313,16 @@ Util::Prof::~Prof() throw()
           // fopen() call above fails, so we can't simply check (file!=0)
           // to see if initialization has already been tried
           inited = true;
+
+          if (file == 0)
+            {
+              fprintf(stderr, "couldn't open profile file for writing\n");
+            }
         }
 
       if (file != 0)
         {
           printProfData(file);
-          fprintf(file, "%10ld %6d %10ld %10ld %s\n",
-                  long(avgTime()), count(),
-                  long(selfTime()), long(totalTime()),
-                  itsFuncName);
-        }
-      else
-        {
-          fprintf(stderr, "couldn't write to profile file\n");
         }
     }
 }
