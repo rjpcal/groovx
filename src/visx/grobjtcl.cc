@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Mar 15 12:00:18 2000
+// written: Thu Mar 23 15:52:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@
 
 namespace GrobjTcl {
   class BoundingBoxCmd;
+  class SaveBitmapCacheAction;
+  class SetBitmapCacheDirCmd;
   class Updater;
   class GrObjPkg;
 };
@@ -56,6 +58,38 @@ protected:
 		lappendVal(bbox.right());
 		lappendVal(bbox.bottom());
 	 }
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// SaveBitmapCacheAction --
+//
+//---------------------------------------------------------------------
+
+class GrobjTcl::SaveBitmapCacheAction : public Setter<const char*> {
+public:
+  virtual void set(void* item, const char* filename) {
+	 GrObj* obj = static_cast<GrObj*>(item);
+	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 obj->saveBitmapCache(*canvas, filename);
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// SetBitmapCacheDirCmd --
+//
+//---------------------------------------------------------------------
+
+class GrobjTcl::SetBitmapCacheDirCmd : public Tcl::TclCmd {
+public:
+  SetBitmapCacheDirCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 Tcl::TclCmd(interp, cmd_name, "dirname", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 const char* dirname = getCstringFromArg(1);
+	 GrObj::setBitmapCacheDir(dirname);
   }
 };
 
@@ -89,8 +123,15 @@ public:
 	 Tcl::addTracing(this, GrObj::tracer);
 
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
+ 	 addCommand( new Tcl::TVecSetterCmd<const char*>(
+										  this, "GrObj::saveBitmapCache",
+										  new SaveBitmapCacheAction,
+										  "item_id(s) filename(s)", 1) );
+	 declareCAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
 	 addCommand( new Tcl::VecActionCmd(this, "GrObj::update",
 												  new Updater, "item_id(s)", 1) );
+
+	 addCommand( new SetBitmapCacheDirCmd(interp, "GrObj::setBitmapCacheDir") );
 
 	 declareCAttrib("alignmentMode",
 						 &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
