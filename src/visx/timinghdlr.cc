@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Dec  1 11:43:08 1999
+// written: Wed Dec  1 14:26:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,36 @@ const TimingHdlr::TimePoint TimingHdlr::FROM_ABORT;
 
 namespace {
   const string ioTag = "TimingHdlr";
+
+  void scheduleAll(vector<TrialEvent*>& events, Experiment* expt) {
+  DOTRACE("scheduleAll");
+    for (int i = 0; i < events.size(); ++i) {
+		events[i]->schedule(expt);
+	 }
+#if 0
+	 for_each(events.begin(), events.end(), mem_fun(&TrialEvent::schedule));
+#endif
+  }
+
+  void cancelAll(vector<TrialEvent*>& events) {
+  DOTRACE("cancelAll");
+    for (int i = 0; i < events.size(); ++i) {
+		events[i]->cancel();
+	 }
+#if 0
+	 for_each(events.begin(), events.end(), mem_fun(&TrialEvent::cancel));
+#endif
+  }
+
+  void deleteAll(vector<TrialEvent*>& events) {
+  DOTRACE("deleteAll");
+    for (int i = 0; i < events.size(); ++i) {
+		delete events[i];
+		events[i] = 0;
+	 }
+	 events.resize(0);
+  }
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -267,76 +297,33 @@ DOTRACE("TimingHdlr::addEventByName");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::thBeginTrial() {
+void TimingHdlr::thBeginTrial(Experiment* expt) {
 DOTRACE("TimingHdlr::thBeginTrial");
 
   itsTimer.restart(); 
 
   cancelAll(itsResponseEvents);
   cancelAll(itsAbortEvents);
-  scheduleAll(itsImmediateEvents);
-  scheduleAll(itsStartEvents);
+  scheduleAll(itsImmediateEvents, expt);
+  scheduleAll(itsStartEvents, expt);
 }
 
-void TimingHdlr::thResponseSeen() {
+void TimingHdlr::thResponseSeen(Experiment* expt) {
 DOTRACE("TimingHdlr::thResponseSeen");
   if (itsResponseEvents.size() > 0) { 
 	 cancelAll(itsStartEvents);
-	 scheduleAll(itsResponseEvents);
+	 scheduleAll(itsResponseEvents, expt);
   }
 }
 
-void TimingHdlr::thAbortTrial() {
+void TimingHdlr::thAbortTrial(Experiment* expt) {
 DOTRACE("TimingHdlr::thAbortTrial");
   cancelAll(itsStartEvents);
-  scheduleAll(itsAbortEvents);
+  scheduleAll(itsAbortEvents, expt);
 }
 
-void TimingHdlr::thHaltExpt() {
+void TimingHdlr::thHaltExpt(Experiment* expt) {
 DOTRACE("TimingHdlr::thHaltExpt");
-  cancelAll(itsStartEvents);
-  cancelAll(itsResponseEvents);
-  cancelAll(itsAbortEvents);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// TimingHdlr private utility functions
-//
-///////////////////////////////////////////////////////////////////////
-
-void TimingHdlr::scheduleAll(vector<TrialEvent*>& events) {
-DOTRACE("TimingHdlr::scheduleAll");
-  for (int i = 0; i < events.size(); ++i) {
-	 events[i]->schedule();
-  }
-#if 0
-  for_each(events.begin(), events.end(), mem_fun(&TrialEvent::schedule));
-#endif
-}
-
-void TimingHdlr::cancelAll(vector<TrialEvent*>& events) {
-DOTRACE("TimingHdlr::cancelAll");
-  for (int i = 0; i < events.size(); ++i) {
-	 events[i]->cancel();
-  }
-#if 0
-  for_each(events.begin(), events.end(), mem_fun(&TrialEvent::cancel));
-#endif
-}
-
-void TimingHdlr::deleteAll(vector<TrialEvent*>& events) {
-DOTRACE("TimingHdlr::deleteAll");
-  for (int i = 0; i < events.size(); ++i) {
-	 delete events[i];
-	 events[i] = 0;
-  }
-  events.resize(0);
-}
-
-void TimingHdlr::cancelAll() {
-DOTRACE("TimingHdlr::cancelAll");
-  cancelAll(itsImmediateEvents);
   cancelAll(itsStartEvents);
   cancelAll(itsResponseEvents);
   cancelAll(itsAbortEvents);
