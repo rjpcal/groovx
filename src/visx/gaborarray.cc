@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 10:37:45 2003
+// written: Tue May 13 10:46:02 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -271,7 +271,7 @@ DOTRACE("GaborArray::insideElements");
           if (vp < 0.0)
             {
               inside = false;
-              continue;
+              break;
             }
         }
 
