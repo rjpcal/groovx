@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Mon Jul 16 07:56:55 2001
+// written: Mon Jul 16 12:54:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,19 +17,11 @@
 #include "tcl/convert.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLLISTOBJ_H_DEFINED)
-#include "tcl/tcllistobj.h"
-#endif
-
 struct Tcl_Interp;
 struct Tcl_Obj;
-typedef void* ClientData;
-
-class Value;
 
 namespace Tcl
 {
-  class TclValue;
   class TclCmd;
   class Context;
 }
@@ -118,11 +110,9 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::Context, which is passed to \a TclCmd::invoke(), provides
- * an interface for getting values from command arguments (using
- * functions like \c getIntFromArg() and getCstringFromArg()), and an
- * interface for returning values to the Tcl interpreter's result
- * (using functions such as \c setResult() and \c restultAppender()).
+ * \c Tcl::Context, which is passed to \a TclCmd::invoke(), provides a
+ * getValFromArg() for getting values from command arguments, and
+ * provides setResult() for returning values to the Tcl interpreter.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -143,39 +133,14 @@ public:
   /// Return the number of arguments in the current invocation.
   unsigned int objc() { return itsObjc; }
 
-  //---------------------------------------------------------------------
   //
-  // Functions to query the arguments of the current invocation.
+  // To query the arguments of the current invocation:
   //
-  //---------------------------------------------------------------------
 
-  /// Attempts to retrieve an \c int from argument number \a argn.
-  int getIntFromArg(unsigned int argn)
-    { return Tcl::Convert<int>::fromTcl(getObjv(argn)); }
-
-  /// Attempts to retrieve a \c long from argument number \a argn.
-  long getLongFromArg(unsigned int argn)
-    { return Tcl::Convert<long>::fromTcl(getObjv(argn)); }
-
-  /// Attempts to retrieve a \c bool from argument number \a argn.
-  bool getBoolFromArg(unsigned int argn)
-    { return Tcl::Convert<bool>::fromTcl(getObjv(argn)); }
-
-  /// Attempts to retrieve a \c double from argument number \a argn.
-  double getDoubleFromArg(unsigned int argn)
-    { return Tcl::Convert<double>::fromTcl(getObjv(argn)); }
-
-  /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
+  /** Attempts to retrieve a C-style string (\c char*) from argument
+      number \a argn. */
   const char* getCstringFromArg(unsigned int argn)
-    { return getStringFromArg(argn, (const char**) 0); }
-
-  /** Attempts to retrieve an string type from argument number \a
-      argn. The templated type must be assignable from const char*. */
-  template <class Str>
-  Str getStringFromArg(unsigned int argn, Str* /* dummy */ = 0)
-    {
-      return Str(Tcl::Convert<const char*>::fromTcl(getObjv(argn)));
-    }
+    { return getValFromArg(argn, TypeCue<const char*>()); }
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
@@ -186,57 +151,10 @@ public:
       return Tcl::Convert<typename Cue::Type>::fromTcl(getObjv(argn));
     }
 
-  //---------------------------------------------------------------------
+
   //
-  // Functions to treat the arguments of the current invocation as Tcl
-  // lists. There are two ways to handle arguments in such a way: one
-  // is to transfer the whole list through an STL-style insert
-  // iterator usinge getSequenceFromArg() , and the other is to use \c
-  // Tcl::List::Iterator's from beginOfArg() and endOfArg(), which
-  // iterate through a Tcl list and convert each value to a type
-  // specified by the template argument of \c Tcl::List::Iterator.
+  // To return a value to the Tcl interpreter
   //
-  //---------------------------------------------------------------------
-
-  /** Attempts to convert argument number \a argn into a sequence of
-      elements of type \c T, and inserts these through the insert
-      iterator \a itr. */
-  template <class Cue, class Iterator>
-  void getSequenceFromArg(unsigned int argn, Iterator itr, Cue)
-    {
-      Tcl::List elements(getObjv(argn));
-
-      for (unsigned int i = 0; i < elements.length(); ++i)
-        {
-          *itr = Tcl::Convert<typename Cue::Type>::fromTcl(elements[i]);
-          ++itr;
-        }
-    }
-
-  /** Attempts to convert argument number \a argn into a Tcl list, and
-      if successful, returns an iterator pointing to the beginning of
-      that list. */
-  template <class T>
-  List::Iterator<T> beginOfArg(unsigned int argn, T* /*dummy*/=0)
-    {
-      return List::Iterator<T>(getObjv(argn), List::Iterator<T>::BEGIN);
-    }
-
-  /** Attempts to convert argument number \a argn into a Tcl list, and
-      if successful, returns an iterator pointing to the
-      one-past-the-end element of that list. */
-  template <class T>
-  List::Iterator<T> endOfArg(unsigned int argn, T* /*dummy*/=0)
-    {
-      return List::Iterator<T>(getObjv(argn), List::Iterator<T>::END);
-    }
-
-
-  //---------------------------------------------------------------------
-  //
-  // Functions to return a value from the command
-  //
-  //---------------------------------------------------------------------
 
   /// Return satisfactorily with the result \a t of type \c T.
   template <class T>
@@ -244,62 +162,6 @@ public:
     {
       setObjResult(Tcl::Convert<T>::toTcl(t));
     }
-
-  /// Return the sequence of values referred to by the range [\a begin, \a end).
-  template <class Itr>
-  void returnSequence(Itr begin, Itr end)
-    {
-      Tcl::List result;
-      while (begin != end)
-        {
-          result.append(*begin);
-          ++begin;
-        }
-      setResult(result);
-    }
-
-  /** \c ResultAppender is an inserter (as well as an output iterator)
-    that appends elements of type \c T to the result of the \c
-    TclCmd with which it is initialized. */
-  template <class T>
-  class ResultAppender {
-  public:
-    /// Construct with a \c TclCmd whose result should be appended to.
-    ResultAppender(Context* ctx) :
-      itsContext(ctx), itsList() {}
-
-    /// Destructor actually returns the value to the Context.
-    ~ResultAppender()
-    { itsContext->setResult(itsList); }
-
-    /// Copy constructor.
-    ResultAppender(const ResultAppender& other) :
-      itsContext(other.itsContext), itsList(other.itsList) {}
-
-    /// Assignment operator.
-    ResultAppender& operator=(const ResultAppender& other)
-    { itsContext = other.itsContext; itsList = other.itsList; return *this; }
-
-    /// Output assignment: \a val will be appended to the \c TclCmd's result.
-    ResultAppender& operator=(const T& val)
-    { itsList.append(val); return *this; }
-
-    /// Dereference.
-    ResultAppender& operator*() { return *this; }
-    /// Pre-increment.
-    ResultAppender& operator++() { return *this; }
-    /// Post-increment.
-    ResultAppender operator++(int) { return *this; }
-
-  private:
-    Context* itsContext;
-    Tcl::List itsList;
-  };
-
-  /// Return a \c ResultAppender of the given type for this \c TclCmd.
-  template <class T>
-  ResultAppender<T> resultAppender(T* /*dummy*/=0)
-    { return ResultAppender<T>(this); }
 
 protected:
   /// Get the n'th argument.
