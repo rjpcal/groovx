@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 18:13:13 2002
+// written: Wed Feb 20 18:06:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,18 @@
 #ifndef MTX_H_DEFINED
 #define MTX_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DATABLOCK_H_DEFINED)
 #include "datablock.h"
-#include "num.h"
+#endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(NUM_H_DEFINED)
+#include "num.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITERATOR_DEFINED)
 #include <iterator>
+#define ITERATOR_DEFINED
+#endif
 
 class fstring;
 

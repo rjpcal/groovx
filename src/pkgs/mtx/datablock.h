@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Tue Feb 19 14:14:42 2002
+// written: Wed Feb 20 18:06:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,10 @@
 #ifndef DATABLOCK_H_DEFINED
 #define DATABLOCK_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
+#define CSTDDEF_DEFINED
+#endif
 
 class DataBlock
 {
