@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Jun 11 12:10:47 2001
+// written: Mon Jun 11 12:25:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,12 +171,12 @@ public:
 
   virtual shared_ptr<Value> value() const;
 
-  void setNative(T new_val) { itsVal.itsVal = new_val; }
+  void setNative(T new_val) { itsVal = new_val; }
 
-  const T& operator()() const { return itsVal.itsVal; }
+  const T& operator()() const { return itsVal; }
 
 private:
-  TValue<T> itsVal;
+  T itsVal;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -206,10 +206,10 @@ public:
 
   virtual shared_ptr<Value> value() const;
 
-  const T& operator()() const { return itsVal.itsVal; }
+  const T& operator()() const { return itsVal; }
 
 private:
-  TValue<T> itsVal;
+  T itsVal;
   const T itsMin;
   const T itsMax;
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Jun 11 12:12:25 2001
+// written: Mon Jun 11 12:26:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,13 @@ void Field::setValue(const Value& new_val) {
   itsOwner->sendStateChangeMsg();
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// TField member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
 template <class T>
 TField<T>::TField(FieldContainer* owner, const T& val) :
   Field(owner), itsVal(val) {}
@@ -45,23 +52,31 @@ TField<T>::~TField() {}
 
 template <class T>
 void TField<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
-{ reader->readValueObj(name, itsVal); }
+{ reader->readValue(name, itsVal); }
 
 template <class T>
 void TField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) const
-{ writer->writeValueObj(name.c_str(), itsVal); }
+{ writer->writeValue(name.c_str(), itsVal); }
 
 template <class T>
 shared_ptr<Value> TField<T>::value() const
-{ return shared_ptr<Value>(itsVal.clone()); }
+{ return shared_ptr<Value>(new TValue<T>(itsVal)); }
 
 template <class T>
 void TField<T>::doSetValue(const Value& new_val)
-{ new_val.get(itsVal.itsVal); }
+{ new_val.get(itsVal); }
 
 template class TField<int>;
 template class TField<bool>;
 template class TField<double>;
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// TBoundedField member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 template <class T>
 TBoundedField<T>::TBoundedField(FieldContainer* owner, const T& val,
@@ -78,27 +93,35 @@ TBoundedField<T>::~TBoundedField() {}
 template <class T>
 void TBoundedField<T>::readValueFrom(IO::Reader* reader,
 												 const fixed_string& name)
-{ reader->readValueObj(name, itsVal); }
+{ reader->readValue(name, itsVal); }
 
 template <class T>
 void TBoundedField<T>::writeValueTo(IO::Writer* writer,
 												const fixed_string& name) const
-{ writer->writeValueObj(name.c_str(), itsVal); }
+{ writer->writeValue(name.c_str(), itsVal); }
 
 template <class T>
 shared_ptr<Value> TBoundedField<T>::value() const
-{ return shared_ptr<Value>(itsVal.clone()); }
+{ return shared_ptr<Value>(new TValue<T>(itsVal)); }
 
 template <class T>
 void TBoundedField<T>::doSetValue(const Value& new_val) {
   T temp; new_val.get(temp);
   if (temp >= itsMin && temp <= itsMax)
-	 itsVal.itsVal = temp;
+	 itsVal = temp;
 }
 
 template class TBoundedField<int>;
 template class TBoundedField<bool>;
 template class TBoundedField<double>;
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// TPtrField member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 template <class T>
 TPtrField<T>::TPtrField(FieldContainer* owner, T& valRef) :
@@ -128,6 +151,8 @@ shared_ptr<Value> TPtrField<T>::value() const
 template class TPtrField<int>;
 template class TPtrField<bool>;
 template class TPtrField<double>;
+
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -243,6 +268,8 @@ FieldMap::IoIterator FieldMap::ioBegin() const
 
 FieldMap::IoIterator FieldMap::ioEnd() const
 { return itsImpl->itsIoEnd; }
+
+
 
 ///////////////////////////////////////////////////////////////////////
 //
