@@ -39,6 +39,11 @@ public:
   static const int INVALID_VALUE = -1;
   static const int ALWAYS_CORRECT = -2;
 
+  /// IGNORE means to treat the response as if it never happened.
+  /** For instance, this may be useful in handling key or button events
+      that occur when the user hits an errant key. */
+  static const int IGNORE = -3;
+
   Response(int v = INVALID_VALUE, int m = -1, int c = ALWAYS_CORRECT) :
     itsVal(v), itsMsec(m), itsCorrectVal(c) {}
 
@@ -48,6 +53,8 @@ public:
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
+
+  bool shouldIgnore() const { return itsVal == IGNORE; }
 
   bool isValid() const { return (itsVal >= 0); }
 

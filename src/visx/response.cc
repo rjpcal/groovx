@@ -46,6 +46,7 @@
 
 const int Response::INVALID_VALUE;
 const int Response::ALWAYS_CORRECT;
+const int Response::IGNORE;
 
 Response::~Response() throw() {}
 
