@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Oct  4 10:45:07 2000
+// written: Tue Oct 17 16:18:53 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -383,7 +383,7 @@ protected:
 	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
 
 	 if (widg != 0) {
-		widg->setCurTrial(trial);
+		widg->setCurTrial(NullableItemWithId<TrialBase>(trial));
 	 }
   }
 };
@@ -458,7 +458,7 @@ protected:
 	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
 
 	 if (widg != 0) {
-		widg->setCurTrial(id);
+		widg->setCurTrial(NullableItemWithId<TrialBase>(id));
 		widg->setVisibility(true);
 
 		widg->display();

@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Oct 11 11:12:22 2000
+// written: Tue Oct 17 16:18:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -799,7 +799,7 @@ DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
 	 dynamic_cast<TlistWidget*>(getWidget());
 
   if (widg != 0) {
-	 widg->setCurTrial(trial);
+	 widg->setCurTrial(NullableItemWithId<TrialBase>(trial));
   }
 }
 
