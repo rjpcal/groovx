@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jan  7 16:53:10 2000
+// written: Tue Jan 11 15:41:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -164,6 +164,7 @@ public:
   void edEndTrial();
   void edHaltExpt() const;
   void edResetExpt();
+  int edGetCurrentTrial() const;
   void edSetCurrentTrial(int trial);
 
   void read(const char* filename);
@@ -860,6 +861,20 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 
 //---------------------------------------------------------------------
 //
+// ExptDriver::edGetCurrentTrial() --
+//
+//---------------------------------------------------------------------
+
+int ExptDriver::Impl::edGetCurrentTrial() const {
+DOTRACE("ExptDriver::Impl::edGetCurrentTrial");
+   
+  if ( !assertIds() ) return -1;
+
+  return block().currentTrial();
+}
+
+//---------------------------------------------------------------------
+//
 // ExptDriver::edSetCurrentTrial() --
 //
 //---------------------------------------------------------------------
@@ -1045,6 +1060,9 @@ void ExptDriver::edResetExpt()
 
 void ExptDriver::edSetCurrentTrial(int trial)
   { itsImpl->edSetCurrentTrial(trial); }
+
+int ExptDriver::edGetCurrentTrial() const
+  { return itsImpl->edGetCurrentTrial(); }
 
 void ExptDriver::read(const char* filename) 
   { itsImpl->read(filename); }
