@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Jul 18 17:13:40 2001
+// written: Thu Jul 19 11:07:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-int TlistUtils::createPreview(const GWT::Canvas& canvas,
+int TlistUtils::createPreview(GWT::Canvas& canvas,
                               int* objids, unsigned int objids_size,
                               int pixel_width,
                               int pixel_height) {
