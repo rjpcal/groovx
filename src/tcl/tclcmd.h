@@ -338,7 +338,7 @@ public:
   /** Return satisfactorily with the string type result \a val. The
       templated type must have a c_str() function returning const char*. */
   template <class Str>
-  void returnVal(const Str& val)
+  void returnStringType(const Str& val)
 	 {
 		returnCstring(Util::StringTraits<Str>::c_str(val));
 	 }
@@ -375,7 +375,7 @@ public:
       val. The templated type must have a c_str() function returning
       const char*. */
   template <class Str>
-  void lappendVal(Str val)
+  void lappendStringType(Str val)
 	 {
 		lappendVal(Util::StringTraits<Str>::c_str(val));
 	 }
