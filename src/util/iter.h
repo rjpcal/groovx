@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Sun Aug 19 15:11:48 2001
+// written: Sun Aug 19 17:24:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "util/pointers.h"
 
 #include "util/utilfwd.h"
+
+#include <utility>
 
 namespace Util
 {
@@ -28,6 +30,12 @@ namespace Util
   template <class Iter, class T> class RxsIterAdapter;
 
   template <class T, class Ifx> class ConcreteIter;
+
+  template <class T>
+  inline T& getref(T& t) { return t; }
+
+  template <class T1, class T2>
+  inline T2& getref(std::pair<T1, T2>& p) { return p.second; }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -120,7 +128,7 @@ public:
 
   virtual Base* clone() const { return new FwdIterAdapter(*this); }
   virtual void   next()       { ++itsIter; }
-  virtual T&      get() const { return *itsIter; }
+  virtual T&      get() const { return getref(*itsIter); }
   virtual bool  atEnd() const { return itsIter == itsEnd; }
 };
 
@@ -184,7 +192,7 @@ public:
   virtual Base* clone() const { return new BidirIterAdapter(*this); }
   virtual void   next()       { ++itsIter; }
   virtual void   prev()       { --itsIter; }
-  virtual T&      get() const { return *itsIter; }
+  virtual T&      get() const { return getref(*itsIter); }
   virtual bool  atEnd() const { return itsIter == itsEnd; }
 };
 
@@ -251,7 +259,7 @@ public:
   virtual void    next()             { ++itsIter; }
   virtual void    prev()             { --itsIter; }
   virtual void    step(int n)        { itsIter += n; }
-  virtual T&       get()       const { return *itsIter; }
+  virtual T&       get()       const { return getref(*itsIter); }
   virtual bool   atEnd()       const { return itsIter == itsEnd; }
   virtual int  fromEnd()       const { return itsEnd - itsIter; }
 
