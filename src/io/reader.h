@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu Nov 11 11:56:32 1999
+// written: Wed Dec  1 11:44:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,17 +20,7 @@
 #include "error.h"
 #endif
 
-
-#ifndef ACC_COMPILER
 class IO;
-#else
-// For some reason aCC wants to see the full definition of class IO
-// before parsing the dynamic_cast<C*>(IO*) in readObjectSeq
-#  ifndef IO_H_DEFINED
-#  include "io.h"
-#  endif
-#endif
-
 class Value;
 
 ///////////////////////////////////////////////////////////////////////
@@ -97,42 +87,6 @@ public:
   /** The Reader will use the IO* provided here, rather than creating
       a new object. */
   virtual void readOwnedObject(const string& name, IO* obj) = 0;
-
-  /** Provides a generic interface for handling containers, sequences,
-		etc. of value types. */
-  template <class Inserter, class T>
-  void readValueSeq(const string& name, Inserter inserter, T* = 0) {
-	 int count = readInt(name+"Count");
-
-	 for (int i = 0; i < count; ++i) {
-		T temp;
-		readValue(name+makeNumberString(i), temp);
-		*inserter = temp;
-		++inserter;
-	 }
-  }
-
-  /** Provides a generic interface for handling containers, sequences,
-      etc. of IO objects */
-  template <class Inserter, class C>
-  void readObjectSeq(const string& name, Inserter inserter, C* /*dummy*/) {
-	 int count = readInt(name+"Count");
-
-	 for (int i = 0; i < count; ++i) {
-		IO* io = readObject(name+makeNumberString(i));
-
-		if (io == 0) {
-		  *inserter = static_cast<C*>(0);
-		}
-
-		else {
-		  C* obj = dynamic_cast<C*>(io);
-		  if (obj == 0) throw ReadError("failed cast in readObjectSeq");
-		  *inserter = obj;
-		}
-
-	 }
-  }
 
   /** This function can either create a new root object (if 'root' is
 		passed as 0), or use one that has already been constructed and
