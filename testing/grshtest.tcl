@@ -73,7 +73,10 @@ proc rand_cmp {a1 a2} { return [expr round(200*rand() - 100.0)] }
 
 set permuted_files [lsort -command rand_cmp $files]
 
-foreach file $permuted_files { testfile ${TEST_DIR}/$file }
+foreach file $permuted_files {
+	 IO::clear
+	 testfile ${TEST_DIR}/$file
+}
 
 ### Compute test statistics and exit
 finish
