@@ -258,7 +258,7 @@ CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 
 AC_CHECK_HEADERS([limits iosfwd iostream istream ostream fstream sstream \
-		  streambuf ext/stdio_filebuf.h \
+		  streambuf ios ext/stdio_filebuf.h \
 		  png.h jpeglib.h fcntl.h termios.h sys/time.h unistd.h \
 		  ],,,-)
 
