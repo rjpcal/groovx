@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Tue Nov 30 19:07:32 1999
+// written: Tue Dec  7 18:34:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 #include "iomgr.h"
 #endif
 
+namespace Tcl {
+
 template <class C, class List>
 class PropertyListItemPkg : public ListItemPkg<C, List> {
 public:
@@ -31,6 +33,7 @@ public:
   }
 };
 
+}
 
 static const char vcid_propitempkg_h[] = "$Header$";
 #endif // !PROPITEMPKG_H_DEFINED
