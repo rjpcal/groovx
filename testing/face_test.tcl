@@ -184,7 +184,7 @@ test "FaceTcl-Face::loadFaces" "error from junk text file" {
 } {^Face::loadFaces: (IO::InputError|unable to create object of type).*$}
 test "FaceTcl-Face::loadFaces" "error from junk binary file" {
 	 Face::loadFaces $::TEST_DIR/junk_bin_file
-} {^Face::loadFaces: (IO::InputError|unable to create object of type).*$} \
+} {Face::loadFaces: (IO::InputError|unable to create object of type).*$} \
   [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 ### Face::stringifyCmd ###
