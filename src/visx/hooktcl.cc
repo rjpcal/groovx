@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Jul 11 19:53:13 2001
+// written: Thu Jul 12 12:27:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,14 +59,24 @@ protected:
   }
 };
 
-class HookCmd : public Tcl::TclCmd {
+#include "tcl/tclveccmd.h"
+
+class HookCmd : public Tcl::VecCmd {
 public:
   HookCmd(Tcl_Interp* interp) :
-    Tcl::TclCmd(interp, "hook", "", 0, 10000, false) {}
+    Tcl::VecCmd(interp, "hook", "", 1, 0, 10000, false) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
-    ctx.setResult("Hello, World!");
+  virtual void invoke(Context& ctx)
+  {
+    int isum = 0;
+
+    for (int i = 1; i < ctx.objc(); ++i)
+      {
+        isum += ctx.getIntFromArg(i);
+      }
+
+    ctx.setResult(isum);
   }
 };
 
