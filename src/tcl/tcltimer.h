@@ -32,6 +32,7 @@
 #ifndef TCLTIMER_H_DEFINED
 #define TCLTIMER_H_DEFINED
 
+#include "util/pointers.h"
 #include "util/signal.h"
 #include "util/stopwatch.h"
 
@@ -39,20 +40,32 @@ struct Tcl_TimerToken_;
 typedef struct Tcl_TimerToken_* Tcl_TimerToken;
 typedef void* ClientData;
 
+template <class T> class shared_ptr;
+
 namespace Tcl
 {
   class Timer;
-
   class TimerScheduler;
+  class TimerSchedulerToken;
 }
+
+class Tcl::TimerSchedulerToken
+{
+public:
+  virtual ~TimerSchedulerToken();
+
+  Tcl_TimerToken itsToken;
+};
 
 class Tcl::TimerScheduler
 {
 public:
   TimerScheduler();
 
-  Tcl_TimerToken schedule(int msec, void (*callback)(void*),
-                          void* clientdata);
+  // Tcl_TimerToken
+  shared_ptr<Tcl::TimerSchedulerToken> schedule(int msec,
+                                                void (*callback)(void*),
+                                                void* clientdata);
 };
 
 /// Wraps a signal/slot interface around the Tcl timer callback mechansim.
@@ -73,7 +86,7 @@ public:
   bool isRepeating() const { return isItRepeating; }
   void setRepeating(bool repeat) { isItRepeating = repeat; }
 
-  bool isPending() const { return itsToken != 0; }
+  bool isPending() const { return itsToken.get() != 0; }
 
   double elapsedMsec() const { return itsStopWatch.elapsed().msec(); }
 
@@ -85,7 +98,8 @@ private:
 
   Tcl::TimerScheduler itsScheduler;
 
-  Tcl_TimerToken itsToken;
+//   Tcl_TimerToken itsToken;
+  shared_ptr<Tcl::TimerSchedulerToken> itsToken;
   unsigned int itsMsecDelay;
   bool isItRepeating;
 

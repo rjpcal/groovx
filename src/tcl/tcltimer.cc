@@ -45,17 +45,25 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+Tcl::TimerSchedulerToken::~TimerSchedulerToken() {}
+
 Tcl::TimerScheduler::TimerScheduler()
 {
 DOTRACE("Tcl::TimerScheduler::TimerScheduler");
 }
 
-Tcl_TimerToken
+shared_ptr<Tcl::TimerSchedulerToken>
 Tcl::TimerScheduler::schedule(int msec, void (*callback)(void*),
                               void* clientdata)
 {
 DOTRACE("Tcl::TimerScheduler::schedule");
-  return Tcl_CreateTimerHandler(msec, callback, clientdata);
+  shared_ptr<Tcl::TimerSchedulerToken> result
+    (new Tcl::TimerSchedulerToken);
+
+  result->itsToken =
+    Tcl_CreateTimerHandler(msec, callback, clientdata);
+
+  return result;
 }
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :
@@ -109,9 +117,10 @@ void Tcl::Timer::cancel()
 {
 DOTRACE("Tcl::Timer::cancel");
 
-  Tcl_DeleteTimerHandler(itsToken);
+  if (itsToken.get() != 0)
+    Tcl_DeleteTimerHandler(itsToken->itsToken);
 
-  itsToken = 0;
+  itsToken.reset(0);
 }
 
 void Tcl::Timer::dummyCallback(ClientData clientData) throw()
@@ -123,7 +132,7 @@ DOTRACE("Tcl::Timer::dummyCallback");
 
   try
     {
-      timer->itsToken = 0;
+      timer->itsToken.reset(0);
 
       dbgEvalNL(3, timer->itsStopWatch.elapsed().msec());
 
