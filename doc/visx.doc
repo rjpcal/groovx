@@ -25,6 +25,7 @@ provide this meta-level access.
 Here are a few starting points into the framework:
 
 <ul>
+<li>Util::RefCounted and Util::RefCounts
 <li>Util::Object
 <li>Util::Ref and Util::WeakRef
 <li>ObjDb
