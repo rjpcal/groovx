@@ -61,7 +61,7 @@ namespace
       case 24: return 6; // RGB
       }
 
-    throw rutz::error(rutz::fstring("invalid Pbm bit depth value: ",
+    throw rutz::error(rutz::fstring("invalid PNM bit depth value: ",
                                     depth), SRC_POS);
 
     ASSERT(0); return 0; // can't get here
@@ -76,7 +76,7 @@ namespace
       case 3: case 6: return 24; // RGB
       }
 
-    throw rutz::error(rutz::fstring("invalid Pbm mode value: ", mode),
+    throw rutz::error(rutz::fstring("invalid PNM mode value: ", mode),
                       SRC_POS);
 
     ASSERT(0); return 0; // can't happen
@@ -125,14 +125,56 @@ namespace
       }
   }
 
-  void parse_pbm_mode_456(std::istream& is, media::bmap_data& data)
+  void parse_pbm_mode_456(std::istream& is,
+                          media::bmap_data& data,
+                          int max_grey)
   {
   DOTRACE("parse_pbm_mode_456");
+
     dbg_eval_nl(3, data.byte_count());
-    is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
-    unsigned int numread = is.gcount();
-    if (numread < data.byte_count())
-      throw rutz::error("stream underflow in parse_pbm_mode_456", SRC_POS);
+
+    if (max_grey == 255) // the most common case
+      {
+        is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
+        unsigned int numread = is.gcount();
+        if (numread < data.byte_count())
+          throw rutz::error("stream underflow in parse_pbm_mode_456", SRC_POS);
+      }
+    else
+      {
+        int nbits = 0;
+        for (int g = max_grey; g != 0; g >>= 1)
+          {
+            ++nbits;
+          }
+
+        dbg_eval_nl(3, nbits);
+
+        ASSERT(nbits >= 1);
+
+        const int nbytes = ((nbits - 1) / 8) + 1;
+
+        dbg_eval_nl(3, nbytes);
+
+        unsigned char* p = data.bytes_ptr();
+        unsigned char* stop = data.bytes_ptr() + data.byte_count();
+
+        while (p != stop)
+          {
+            int val = 0;
+            for (int i = 0; i < nbytes; ++i)
+              {
+                int c = is.get();
+                if (c == EOF)
+                  throw rutz::error("premature EOF while reading pnm file", SRC_POS);
+                val += (c << (8*i));
+              }
+
+            *p = (unsigned char)(255*double(val)/double(max_grey));
+            ++p;
+          }
+      }
+
     if (is.fail() && !is.eof())
       throw rutz::error("input stream failed in parse_pbm_mode_456", SRC_POS);
   }
@@ -140,7 +182,7 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Pbm member definitions
+// PNM load/save definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -210,7 +252,7 @@ DOTRACE("media::load_pnm");
   is >> mode;
   dbg_eval_nl(3, mode);
 
-  int bit_depth = bit_depth_for_mode(mode);
+  const int bit_depth = bit_depth_for_mode(mode);
 
   while ( isspace(is.peek()) )
     {
@@ -237,6 +279,13 @@ DOTRACE("media::load_pnm");
 
   dbg_eval_nl(3, max_grey);
 
+  if (max_grey < 1)
+    {
+      throw rutz::error(rutz::fstring("while reading pnm file: "
+                                      "invalid max grey value: ",
+                                      max_grey), SRC_POS);
+    }
+
   // one more character of whitespace after max_grey
   c = is.get();
   if ( !isspace(c) )
@@ -251,7 +300,7 @@ DOTRACE("media::load_pnm");
     {
     case 1:                 parse_pbm_mode_1(is, new_data); break;
     case 2: case 3:         parse_pbm_mode_23(is, new_data, max_grey); break;
-    case 4: case 5: case 6: parse_pbm_mode_456(is, new_data); break;
+    case 4: case 5: case 6: parse_pbm_mode_456(is, new_data, max_grey); break;
     default: ASSERT(false); break;
     }
 
