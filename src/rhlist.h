@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Wed Feb 16 07:49:45 2000
+// written: Fri Mar 10 00:36:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,9 @@ public:
   void setInterp(Tcl_Interp* interp);
 
 private:
+  RhList(const RhList&);
+  RhList& operator=(const RhList&);
+
   Tcl_Interp* itsInterp;
 };
 

@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Mar  8 08:10:20 2000
+// written: Fri Mar 10 00:33:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,6 +151,9 @@ protected:
   int oldCharCount() const;
 
 private:
+  EventResponseHdlr(const EventResponseHdlr&);
+  EventResponseHdlr& operator=(const EventResponseHdlr&);
+
   class Impl;
   friend class EventResponseHdlr::Impl;
   Impl* const itsImpl;

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Sun Mar  5 18:57:30 2000
+// written: Fri Mar 10 00:36:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,6 +79,9 @@ public:
   virtual void thHaltExpt(Experiment* expt);
 
 private:
+  TimingHdlr(const TimingHdlr&);
+  TimingHdlr& operator=(const TimingHdlr&);
+
   class Impl;
   Impl* const itsImpl;
 };

@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Mar  9 16:05:29 2000
+// written: Fri Mar 10 00:40:49 2000
 // $Id$
 //
 //
@@ -423,6 +423,9 @@ protected:
 	 }
 
 private:
+  CVecPropertyCmd(const CVecPropertyCmd&);
+  CVecPropertyCmd& operator=(const CVecPropertyCmd&);
+
   CTclIoItemPkg<C>* itsPkg;
   const PropertyInfo<C>& itsPropInfo;
 };

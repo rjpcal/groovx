@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Mon Feb 21 08:54:17 2000
+// written: Fri Mar 10 00:33:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +74,10 @@ public:
       is halted suddenly. \c ResponseHandler subclasses implement this
       function to quit listening for responses, etc. */
   virtual void rhHaltExpt(Experiment* expt) const = 0;
+
+private:
+  ResponseHandler(const ResponseHandler&);
+  ResponseHandler& operator=(const ResponseHandler&);
 };
 
 static const char vcid_responsehandler_h[] = "$Header$";
