@@ -36,6 +36,8 @@ typedef void* ClientData;
 
 class fstring;
 
+template <class T> class shared_ptr;
+
 namespace Tcl
 {
   class Command;
@@ -53,11 +55,7 @@ public:
   /// Find the command for the given name, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp, const fstring& cmd_name);
 
-  void add(Tcl::Command* p);
-
-  void remove(Tcl::Command* p);
-
-  Tcl::Command* first() const;
+  void add(shared_ptr<Tcl::Command> p);
 
   const fstring& cmdName() const;
 

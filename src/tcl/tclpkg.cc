@@ -103,7 +103,7 @@ public:
   ~Impl() throw();
 
   Tcl::Interp interp;
-  slink_list<shared_ptr<Command> > cmds;
+
   const std::string namespName;
   const std::string pkgName;
   const std::string version;
@@ -127,7 +127,6 @@ public:
 Tcl::Pkg::Impl::Impl(Tcl_Interp* intp,
                      const char* name, const char* vers) :
   interp(intp),
-  cmds(),
   namespName(name ? name : ""),
   pkgName(makeCleanPkgName(namespName)),
   version(makeCleanVersionString(vers)),
@@ -331,12 +330,6 @@ DOTRACE("Tcl::Pkg::eval");
     {
       rep->interp.handleLiveException("Tcl::Pkg::eval", false);
     }
-}
-
-void Tcl::Pkg::addCommand(shared_ptr<Command> cmd)
-{
-DOTRACE("Tcl::Pkg::addCommand");
-  rep->cmds.push_front(cmd);
 }
 
 void Tcl::Pkg::linkVar(const char* varName, int& var)

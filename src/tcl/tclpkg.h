@@ -169,23 +169,21 @@ public:
   template <class Func>
   inline void def(const char* cmd_name, const char* usage, Func f)
   {
-    addCommand( makeCmd(interp(), f, makePkgCmdName(cmd_name), usage) );
+    makeCmd(interp(), f, makePkgCmdName(cmd_name), usage);
   }
 
   template <class Func>
   inline void defVec(const char* cmd_name, const char* usage, Func f,
                      unsigned int keyarg=1)
   {
-    addCommand( makeVecCmd(interp(), f, makePkgCmdName(cmd_name),
-                           usage, keyarg) );
+    makeVecCmd(interp(), f, makePkgCmdName(cmd_name), usage, keyarg);
   }
 
   template <class Func>
   inline void defRaw(const char* cmd_name, unsigned int nargs,
                      const char* usage, Func f)
   {
-    addCommand( makeGenericCmd(interp(), f, makePkgCmdName(cmd_name),
-                               usage, nargs) );
+    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name), usage, nargs);
   }
 
   template <class Func>
@@ -193,8 +191,8 @@ public:
                         const char* usage, Func f,
                         unsigned int keyarg=1)
   {
-    addCommand( makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
-                                  usage, nargs, keyarg) );
+    makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
+                      usage, nargs, keyarg);
   }
 
   template <class C>
@@ -259,9 +257,6 @@ private:
       until the next time it is called, so callers should make a copy
       of the result. */
   const char* makePkgCmdName(const char* cmd_name);
-
-  /// Adds \a cmd to the commands managed by the package.
-  void addCommand(shared_ptr<Command> cmd);
 
   static const char* actionUsage(const char* usage);
   static const char* getterUsage(const char* usage);

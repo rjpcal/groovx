@@ -17,6 +17,7 @@
 #include "tcl/tclcmd.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/pointers.h"
 #include "util/strings.h"
 
 #include <list>
@@ -40,7 +41,7 @@ public:
 
   ~Impl() throw() {}
 
-  typedef std::list<Tcl::Command*> List;
+  typedef std::list<shared_ptr<Tcl::Command> > List;
 
   Tcl::Interp interp;
   const fstring cmdName;
@@ -73,10 +74,9 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
 
 // A destruction sequence can get triggered in a number of ways:
 /*
-   (1) remove() might be called enough times that rep->cmdList becomes empty
-   (2) application exit might trigger the cExitCallback
+   (1) application exit might trigger the cExitCallback
 
-   (3) the cDeleteCallback might get triggered either by explicit deletion
+   (2) the cDeleteCallback might get triggered either by explicit deletion
        by the user (e.g. [rename]ing the command to the empty string "")
 
    General principles:
@@ -86,15 +86,12 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
        Tcl_Command even if rep->cmdList is not empty; that would just mean that
        the remaining Tcl::Command objects in rep->cmdList won't have any input
        sent their way
-
-   (2) however, if possible we want to wait to destroy the Tcl_Command
-       object until rep->cmdList is empty
  */
 Tcl::CommandGroup::~CommandGroup() throw()
 {
 DOTRACE("Tcl::CommandGroup::~CommandGroup");
 
-  Assert( rep->cmdList.empty() );
+//   Assert( rep->cmdList.empty() );
   Assert( rep->cmdToken == 0 );
 
   Tcl_DeleteExitHandler(&cExitCallback,
@@ -144,38 +141,10 @@ DOTRACE("Tcl::CommandGroup::make");
   return new CommandGroup(interp, cmd_name);
 }
 
-void Tcl::CommandGroup::add(Tcl::Command* p)
+void Tcl::CommandGroup::add(shared_ptr<Tcl::Command> p)
 {
 DOTRACE("Tcl::CommandGroup::add");
   rep->cmdList.push_back(p);
-}
-
-void Tcl::CommandGroup::remove(Tcl::Command* p)
-{
-DOTRACE("Tcl::CommandGroup::remove");
-  rep->cmdList.remove(p);
-  // rep->cmdList is used as an implicit reference-count... each time a
-  // Tcl::Command is created, it creates a reference by calling add()
-  // on its CommandGroup object, and when the Tcl::Command is destroyed,
-  // it calls remove() on its CommandGroup object. So, when the CommandGroup
-  // rep->cmdList becomes empty, it is no longer referenced by any
-  // Tcl::Command objects and can thus be deleted.
-  if (rep->cmdList.empty())
-    {
-      if (rep->cmdToken != 0)
-        {
-          Tcl_DeleteCommandFromToken(rep->interp.intp(), rep->cmdToken);
-        }
-      else
-        {
-          delete this;
-        }
-    }
-}
-
-Tcl::Command* Tcl::CommandGroup::first() const
-{
-  return rep->cmdList.front();
 }
 
 const fstring& Tcl::CommandGroup::cmdName() const
@@ -307,9 +276,9 @@ DOTRACE("Tcl::CommandGroup::cDeleteCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
   Assert(c != 0);
   c->rep->cmdToken = 0; // since this callback is notifying us that the
-                      // command was deleted
-  if (c->rep->cmdList.empty())
-    delete c;
+                        // command was deleted
+  // FIXME need to notify cmdList that we're being deleted?
+  delete c;
 }
 
 void Tcl::CommandGroup::cExitCallback(ClientData clientData) throw()

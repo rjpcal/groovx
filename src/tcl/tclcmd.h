@@ -92,30 +92,23 @@ public:
 class Tcl::Command
 {
 protected:
-  /** Construct with basic properties for the command. If \a
-      exact_objc is true, then the \a objc of a command invocation is
-      required to be exactly equal either \a objc_min or \a objc_max;
-      if it is false, then \a objc must be between \a objc_min and \a
-      objc_max, inclusive. If the value given for \a objc_max is
-      negative, then the maximum objc will be set to the same value as
-      \a objc_min. */
   Command(Tcl::Interp& interp,
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
           int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
 public:
+  /// Construct with basic properties for the command.
+  /** If \a exact_objc is true, then the \a objc of a command invocation is
+      required to be exactly equal either \a objc_min or \a objc_max; if it
+      is false, then \a objc must be between \a objc_min and \a objc_max,
+      inclusive. If the value given for \a objc_max is negative, then the
+      maximum objc will be set to the same value as \a objc_min. */
   static shared_ptr<Command> make(
           Tcl::Interp& interp,
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
-          int objc_min=0, int objc_max=-1, bool exact_objc=false)
-  {
-    return shared_ptr<Command>(new Command(interp, callback,
-                                           cmd_name, usage,
-                                           objc_min, objc_max,
-                                           exact_objc));
-  }
+          int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   ~Command() throw();

@@ -138,17 +138,32 @@ DOTRACE("Tcl::Command::Command");
   rep->overloads = Tcl::CommandGroup::make(interp, cmd_name);
 
   Assert(rep->overloads != 0);
+}
 
-  rep->overloads->add(this);
+shared_ptr<Tcl::Command> Tcl::Command::make(
+          Tcl::Interp& interp,
+          shared_ptr<Tcl::Callback> callback,
+          const char* cmd_name, const char* usage,
+          int objc_min, int objc_max, bool exact_objc)
+{
+DOTRACE("Tcl::Command::make");
+  shared_ptr<Command> cmd( new Command(interp, callback,
+                                       cmd_name, usage,
+                                       objc_min, objc_max,
+                                       exact_objc) );
+
+  cmd->rep->overloads->add(cmd);
+
+  return cmd;
 }
 
 Tcl::Command::~Command() throw()
 {
 DOTRACE("Tcl::Command::~Command");
 
-  rep->overloads->remove(this);
+//   rep->overloads->remove(this);
 
-  rep->overloads = 0;
+//   rep->overloads = 0;
 
   delete rep;
 }
