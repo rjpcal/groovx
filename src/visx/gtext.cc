@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Jul  6 13:16:06 1999
+// written: Mon Sep 20 16:15:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@ namespace {
 }
 
 Gtext::Gtext(const char* text) :
+  GrObj(GROBJ_DIRECT_RENDER, GROBJ_SWAP_FORE_BACK),
   itsText(text ? text : ""),
   itsListBase(0)
 {
@@ -85,18 +86,14 @@ DOTRACE("Gtext::getText");
   return itsText.c_str();
 }
 
-void Gtext::draw() const {
-DOTRACE("Gtext::draw");
+void Gtext::grRender() const {
+DOTRACE("Gtext::grRender");
   unsigned int fontListBase = ObjTogl::theToglConfig()->getFontListBase();
   if (itsListBase != fontListBase) { 
 	 itsListBase = fontListBase;
 	 sendStateChangeMsg();
   }
-  GrObj::draw();
-}
 
-void Gtext::grRender() const {
-DOTRACE("Gtext::grRender");
   glPushAttrib(GL_LIST_BIT);
     glRasterPos2d(0, 0);
     glListBase( itsListBase );

@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Tue Jul  6 13:13:04 1999
+// written: Mon Sep 20 16:14:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,8 +43,6 @@ public:
 
   void setText(const char* text);
   const char* getText() const;
-
-  virtual void draw() const;
 
 protected:
   virtual void grRender() const;
