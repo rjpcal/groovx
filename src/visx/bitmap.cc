@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep 27 11:43:55 2000
+// written: Wed Sep 27 14:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "bitmap.h"
 
 #include "bitmaprep.h"
+#include "io/ioproxy.h"
 #include "io/iolegacy.h"
 #include "util/strings.h"
 
@@ -54,10 +55,8 @@ DOTRACE("Bitmap::legacySrlz");
   if (lwriter != 0) {
 	 itsImpl->legacySrlz(writer);
 
-	 if (lwriter->flags() & IO::BASES) {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		GrObj::legacySrlz(writer);
-	 }
+	 IO::ConstIoProxy<GrObj> baseclass(this);
+	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -68,10 +67,8 @@ DOTRACE("Bitmap::legacyDesrlz");
   if (lreader != 0) {
 	 itsImpl->legacyDesrlz(reader);
 
-	 if (lreader->flags() & IO::BASES) {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		GrObj::legacyDesrlz(reader);
-	 }
+	 IO::IoProxy<GrObj> baseclass(this);
+	 lreader->readBaseClass("GrObj", &baseclass);
   }
 }
 

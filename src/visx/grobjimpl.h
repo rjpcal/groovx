@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Sep 27 11:12:28 2000
+// written: Wed Sep 27 14:42:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
-  static const unsigned long GROBJ_SERIAL_VERSION_ID = 1;
+  static const IO::VersionId GROBJ_SERIAL_VERSION_ID = 1;
 
 public:
   //////////////
@@ -54,7 +54,7 @@ public:
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
 
-  unsigned long serialVersionId() const { return GROBJ_SERIAL_VERSION_ID; }
+  IO::VersionId serialVersionId() const { return GROBJ_SERIAL_VERSION_ID; }
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 

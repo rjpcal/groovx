@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Sep 27 11:23:53 2000
+// written: Wed Sep 27 13:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,14 +55,15 @@ void Subject::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Subject::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag.c_str());
+
 	 ostream& os = lwriter->output();
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
 	 os << itsName << endl;
 	 os << itsDirectory << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -70,13 +71,14 @@ void Subject::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Subject::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag.c_str());
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
 	 getline(is, itsName, '\n');
 	 getline(is, itsDirectory, '\n');
 
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
   }
 }
 

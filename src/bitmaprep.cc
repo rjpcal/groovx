@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Sep 27 11:47:29 2000
+// written: Wed Sep 27 13:49:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -169,19 +169,18 @@ DOTRACE("BitmapRep::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
+	 lwriter->writeTypename(ioTag.c_str());
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
 	 os << itsImpl->itsFilename << '\t';
-	 os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
-	 os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
-	 os << itsImpl->itsUsingZoom << sep;
-	 os << itsImpl->itsContrastFlip << sep;
+	 os << itsImpl->itsRasterX << IO::SEP << itsImpl->itsRasterY << IO::SEP;
+	 os << itsImpl->itsZoomX << IO::SEP << itsImpl->itsZoomY << IO::SEP;
+	 os << itsImpl->itsUsingZoom << IO::SEP;
+	 os << itsImpl->itsContrastFlip << IO::SEP;
 	 os << itsImpl->itsVerticalFlip << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -190,9 +189,10 @@ DOTRACE("BitmapRep::legacyDesrlz");
 
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 lreader->readTypename(ioTag.c_str());
+
+	 istream& is = lreader->input();
 
 	 IO::IoObject::eatWhitespace(is);
 	 getline(is, itsImpl->itsFilename, '\t');
@@ -210,7 +210,7 @@ DOTRACE("BitmapRep::legacyDesrlz");
 	 is >> val;
 	 itsImpl->itsVerticalFlip = bool(val);
 
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
 
 	 if ( itsImpl->itsFilename.empty() ) {
 		clearBytes();

@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Sep 27 11:23:52 2000
+// written: Wed Sep 27 13:34:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ DOTRACE("Tlist::legacySrlz");
 	 // itsVisibility.
 	 os << int(0) << IO::SEP << bool(false) << IO::SEP;
 
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
   }
 }
 
@@ -98,7 +98,7 @@ DOTRACE("Tlist::legacyDesrlz");
 	 int dummy1, dummy2;
 	 is >> dummy1 >> dummy2;
 
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 lreader->throwIfError(ioTag);
   }
 }
 

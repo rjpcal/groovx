@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Sep 27 11:48:43 2000
+// written: Wed Sep 27 14:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "rect.h"
 
 #include "io/iolegacy.h"
+#include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -65,36 +66,33 @@ FixPt::~FixPt() {}
 void FixPt::legacySrlz(IO::Writer* writer) const {
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
-	 os << length() << sep;
+	 os << length() << IO::SEP;
 	 os << width() << endl;
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
 
-	 if (lwriter->flags() & IO::BASES) {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		GrObj::legacySrlz(writer);
-	 }
+	 IO::ConstIoProxy<GrObj> baseclass(this);
+	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
 void FixPt::legacyDesrlz(IO::Reader* reader) {
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag);
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
 	 is >> length();
 	 is >> width();
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 lreader->throwIfError(ioTag);
 
-	 if (lreader->flags() & IO::BASES) {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		GrObj::legacyDesrlz(reader);
-	 }
+	 IO::IoProxy<GrObj> baseclass(this);
+	 lreader->readBaseClass("GrObj", &baseclass);
   }
 }
 

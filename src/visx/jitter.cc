@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Sep 27 12:11:21 2000
+// written: Wed Sep 27 15:10:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "jitter.h"
 
 #include "io/iolegacy.h"
+#include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -66,21 +67,21 @@ void Jitter::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Jitter::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
-	 os << itsXJitter << sep
-		 << itsYJitter << sep
+	 os << itsXJitter << IO::SEP
+		 << itsYJitter << IO::SEP
 		 << itsRJitter << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
 
 	 // The base class (Position) is always legacySrlzd, regardless of flag.
-	 // The typename in the base class is always used, regardless of flag.
-	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-	 Position::legacySrlz(writer);
+	 IO::LWFlagJanitor(*lwriter, lwriter->flags() | IO::BASES);
+	 IO::ConstIoProxy<Position> baseclass(this);
+	 lwriter->writeBaseClass("Position", &baseclass);
   }
 }
 
@@ -88,9 +89,10 @@ void Jitter::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Jitter::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+	 lreader->readTypename(ioTag);
+
+	 istream& is = lreader->input();
 
 	 is >> itsXJitter >> itsYJitter >> itsRJitter;
 
@@ -99,12 +101,12 @@ DOTRACE("Jitter::legacyDesrlz");
 	 DebugEval(itsYJitter);
 	 DebugEvalNL(itsRJitter);
 
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 lreader->throwIfError(ioTag);
 
 	 // The base class (Position) is always legacyDesrlzd, regardless of flag.
-	 // The typename in the base class is always used, regardless of flag.
-	 IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-	 Position::legacyDesrlz(reader);
+	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
+	 IO::IoProxy<Position> baseclass(this);
+	 lreader->readBaseClass("Position", &baseclass);
   }
 }
 

@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Sep 27 11:48:24 2000
+// written: Wed Sep 27 14:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "rect.h"
 
 #include "io/iolegacy.h"
+#include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -67,15 +68,13 @@ void MaskHatch::legacySrlz(IO::Writer* writer) const {
 DOTRACE("MaskHatch::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
-	 if (os.fail()) throw IO::OutputError(ioTag);
-
-	 if (lwriter->flags() & IO::BASES) {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		GrObj::legacySrlz(writer);
-	 }
+	 IO::ConstIoProxy<GrObj> baseclass(this);
+	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -83,14 +82,10 @@ void MaskHatch::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("MaskHatch::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 lreader->readTypename(ioTag);
 
-	 if (lreader->flags() & IO::BASES) {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		GrObj::legacyDesrlz(reader);
-	 }
+	 IO::IoProxy<GrObj> baseclass(this);
+	 lreader->readBaseClass("GrObj", &baseclass);
   }
 }
 

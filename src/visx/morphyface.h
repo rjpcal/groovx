@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Wed Sep 27 14:42:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
   virtual void legacySrlz(IO::Writer* writer) const;
   virtual void legacyDesrlz(IO::Reader* reader);
 
-  virtual unsigned long serialVersionId() const;
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 

@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Wed Sep 27 11:41:16 2000
+// written: Wed Sep 27 15:10:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "timinghandler.h"
 
 #include "io/iolegacy.h"
+#include "io/ioproxy.h"
 #include "trialevent.h"
 
 #include <cstring>
@@ -56,16 +57,12 @@ void TimingHandler::legacySrlz(IO::Writer* writer) const {
 DOTRACE("TimingHandler::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-  
-	 {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		TimingHdlr::legacySrlz(writer);
-	 }
 
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->writeTypename(ioTag);
+
+	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
+	 IO::ConstIoProxy<TimingHdlr> baseclass(this);
+	 lwriter->writeBaseClass("TimingHdlr", &baseclass);
   }
 }
 
@@ -73,15 +70,11 @@ void TimingHandler::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("TimingHandler::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+	 lreader->readTypename(ioTag);
 
-	 {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		TimingHdlr::legacyDesrlz(reader);
-	 }
-
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
+	 IO::IoProxy<TimingHdlr> baseclass(this);
+	 lreader->readBaseClass("TimingHdlr", &baseclass);
   }
 }
 

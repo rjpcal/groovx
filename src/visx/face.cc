@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Sep 27 11:32:41 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace {
   template <class T>
   inline T abs(T val) { return (val < 0) ? -val : val; }
 
-  const unsigned long FACE_SERIAL_VERSION_ID = 1;
+  const IO::VersionId FACE_SERIAL_VERSION_ID = 1;
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
@@ -119,27 +119,25 @@ DOTRACE("Face::legacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag.c_str());
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
 	 // version
-	 os << "@1" << sep;
+	 os << "@1" << IO::SEP;
 
-	 os << '{' << sep;
+	 os << '{' << IO::SEP;
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 		(this->*IO_MEMBERS[i]).legacySrlz(writer);
 	 }
 
 	 os << '}' << endl;
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
 
-	 if (lwriter->flags() & IO::BASES) {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		GrObj::legacySrlz(writer);
-	 }
+	 IO::ConstIoProxy<GrObj> baseclass(this);
+	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -147,8 +145,9 @@ void Face::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Face::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag.c_str());
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
 	 IO::IoObject::eatWhitespace(is);
 	 int version = 0;
@@ -193,30 +192,18 @@ DOTRACE("Face::legacyDesrlz");
 		throw err;
 	 }
 
-	 // Mysterious bug in HP compiler (aCC) requires the following
-	 // contorted code; if the exception is not first caught in this
-	 // function, then re-thrown, it causes a bus error when compiled
-	 // with optimization on, although there is no problem with
-	 // optimization off. Somehow adding the catch and re-throw avoids
-	 // the problem, without changing the program's behavior.
-	 try {
-		if (is.fail()) throw IO::InputError(ioTag.c_str());
-	 }
-	 catch (IO::IoError&) { 
-		throw;
-	 }
+	 lreader->throwIfError(ioTag.c_str());
+
 	 Invariant(check());
 
-	 if (lreader->flags() & IO::BASES) {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		GrObj::legacyDesrlz(reader);
-	 }
+	 IO::IoProxy<GrObj> baseclass(this);
+	 lreader->readBaseClass("GrObj", &baseclass);
 
 	 sendStateChangeMsg();
   }
 }
 
-unsigned long Face::serialVersionId() const {
+IO::VersionId Face::serialVersionId() const {
 DOTRACE("Face::serialVersionId");
   return FACE_SERIAL_VERSION_ID;
 }
@@ -228,7 +215,7 @@ DOTRACE("Face::readFrom");
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  unsigned long svid = reader->readSerialVersionId();
+  IO::VersionId svid = reader->readSerialVersionId();
   if (svid == 0)
 	 GrObj::readFrom(reader);
   else if (svid == 1)
@@ -248,7 +235,7 @@ DOTRACE("Face::writeTo");
 	 GrObj::writeTo(writer);
   else if (FACE_SERIAL_VERSION_ID == 1)
 	 {
-		IO::IoProxy<GrObj> baseclass(const_cast<Face*>(this));
+		IO::ConstIoProxy<GrObj> baseclass(this);
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
 }

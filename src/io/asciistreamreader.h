@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Sat Sep 23 15:37:32 2000
+// written: Wed Sep 27 14:42:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
   /// Virtual destructor.
   virtual ~AsciiStreamReader();
 
-  virtual unsigned long readSerialVersionId();
+  virtual IO::VersionId readSerialVersionId();
 
   virtual char readChar(const char* name);
   virtual int readInt(const char* name);

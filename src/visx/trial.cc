@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Sep 27 11:23:52 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const unsigned long TRIAL_SERIAL_VERSION_ID = 1;
+  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 1;
 
   const string_literal ioTag("Trial");
 }
@@ -220,31 +220,32 @@ void Trial::Impl::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag.c_str());
+
 	 ostream& os = lwriter->output();
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
 	 // itsIdPairs
-	 os << itsIdPairs.size() << sep;
+	 os << itsIdPairs.size() << IO::SEP;
 	 for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
 			ii != itsIdPairs.end(); 
 			++ii) {
-		os << ii->objid << sep << ii->posid << sep << sep;
+		os << ii->objid << IO::SEP << ii->posid << IO::SEP << IO::SEP;
 	 }
 	 // itsResponses
-	 os << itsResponses.size() << sep << sep;
+	 os << itsResponses.size() << IO::SEP << IO::SEP;
 	 for (size_t i = 0; i < itsResponses.size(); ++i) {
 		itsResponses[i].printTo(os);
 	 }
 	 // itsType
-	 os << itsType << sep;
+	 os << itsType << IO::SEP;
 
 	 // itsRhId
-	 os << itsRhId << sep;
+	 os << itsRhId << IO::SEP;
 	 // itsThId
 	 os << itsThId << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -252,9 +253,10 @@ void Trial::Impl::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Trial::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag.c_str());
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
-  
+
 	 // itsIdPairs
 	 itsIdPairs.clear();
 	 int size;
@@ -295,7 +297,7 @@ void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
   reader->readValue("type", itsType);
 
-  unsigned long svid = reader->readSerialVersionId();
+  IO::VersionId svid = reader->readSerialVersionId();
   if (svid >= 1)
 	 reader->readValue("correctResponse", itsCorrectResponse);
   else
@@ -683,7 +685,7 @@ void Trial::legacySrlz(IO::Writer* writer) const
 void Trial::legacyDesrlz(IO::Reader* reader)
   { itsImpl->legacyDesrlz(reader); }
 
-unsigned long Trial::serialVersionId() const
+IO::VersionId Trial::serialVersionId() const
   { return TRIAL_SERIAL_VERSION_ID; }
 
 void Trial::readFrom(IO::Reader* reader)

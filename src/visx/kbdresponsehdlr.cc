@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Wed Sep 27 11:36:15 2000
+// written: Wed Sep 27 13:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,13 +51,14 @@ void KbdResponseHdlr::legacySrlz(IO::Writer* writer) const {
 DOTRACE("KbdResponseHdlr::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
 
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
+	 lwriter->writeTypename(ioTag.c_str());
+
+	 ostream& os = lwriter->output();
 
 	 oldLegacySrlz(writer);
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -65,16 +66,15 @@ void KbdResponseHdlr::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("KbdResponseHdlr::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 lreader->readTypename(ioTag.c_str());
 
 	 oldLegacyDesrlz(reader);
 
 	 setEventSequence("<KeyPress");
 	 setBindingSubstitution("%K");
 
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
   }
 }
 

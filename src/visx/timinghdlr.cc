@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Sep 27 11:53:08 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@
 
 namespace {
 
-  const unsigned long TIMINGHDLR_SERIAL_VERSION_ID = 1;
+  const IO::VersionId TIMINGHDLR_SERIAL_VERSION_ID = 1;
 
   const char* ioTag = "TimingHdlr";
 }
@@ -133,8 +133,10 @@ void TimingHdlr::legacySrlz(IO::Writer* writer) const {
 DOTRACE("TimingHdlr::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
   
 	 os << itsImpl->itsDummyAutosavePeriod << IO::SEP;
 
@@ -143,7 +145,7 @@ DOTRACE("TimingHdlr::legacySrlz");
 	 itsImpl->legacySrlzVec(writer, itsImpl->itsResponseEvents);
 	 itsImpl->legacySrlzVec(writer, itsImpl->itsAbortEvents);
 
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
   }
 }
 
@@ -151,8 +153,9 @@ void TimingHdlr::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("TimingHdlr::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag);
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
 	 is >> itsImpl->itsDummyAutosavePeriod;
 	 DebugEvalNL(itsImpl->itsDummyAutosavePeriod);
@@ -162,11 +165,11 @@ DOTRACE("TimingHdlr::legacyDesrlz");
 	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsResponseEvents);
 	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsAbortEvents);
 
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 lreader->throwIfError(ioTag);
   }
 }
 
-unsigned long TimingHdlr::serialVersionId() const {
+IO::VersionId TimingHdlr::serialVersionId() const {
 DOTRACE("TimingHdlr::serialVersionId");
   return TIMINGHDLR_SERIAL_VERSION_ID;
 }
@@ -174,7 +177,7 @@ DOTRACE("TimingHdlr::serialVersionId");
 void TimingHdlr::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHdlr::readFrom");
 
-  unsigned long svid = reader->readSerialVersionId(); 
+  IO::VersionId svid = reader->readSerialVersionId(); 
   if (svid == 0)
 	 reader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 

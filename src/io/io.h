@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Sep 27 11:09:05 2000
+// written: Wed Sep 27 14:45:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
 #endif
 
 #ifdef PRESTANDARD_IOSTREAMS
@@ -31,37 +35,6 @@ class ostream;
 #endif
 
 class fixed_string;
-
-namespace IO {
-  class IoObject;
-
-  class Reader;
-  class Writer;
-
-  class IoError;
-  class InputError;
-  class OutputError;
-  class LogicError;
-  class ValueError;
-  class FilenameError;
-
-  /** The symbolic constants of type \c IOFlag flags may be OR'ed
-   * together and passed to the flag argument of \c legacySrlz() or \c
-   * legacyDesrlz() to control different aspects of the formatting used
-   * to read and write objects. In general, the same flags must be
-   * used to read an object as were used to write it. */
-  typedef int IOFlag;
-
-  /// Neither the class's name or its bases will be written/read
-  const IOFlag NO_FLAGS   = 0;
-  /// The class's name is written/read
-  const IOFlag TYPENAME   = 1 << 0;
-  /// The class's bases are written/read
-  const IOFlag BASES      = 1 << 1;
-
-  /// A default separator to be used between elements in a legacySrlzd object
-  const char SEP = ' ';
-}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -124,7 +97,7 @@ public:
       class. Implementations of \c IO::Reader and \c IO::Writer will provide a
       way for a class to store and retrieve the serialization version
       of an object. */
-  virtual unsigned long serialVersionId() const;
+  virtual IO::VersionId serialVersionId() const;
 
   /** Returns a string specifying the typename of the actual
 		object. The implementation provided by \c IO returns a demangled

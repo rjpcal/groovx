@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Sat Sep 23 16:15:51 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,7 +184,7 @@ DOTRACE("AsciiStreamWriter::Impl::flattenObject");
   itsBuf << "{ ";
 
   //   ...write <version id> if it is nonzero...
-  unsigned long serial_ver_id = obj->serialVersionId();;
+  IO::VersionId serial_ver_id = obj->serialVersionId();;
   if ( serial_ver_id > 0 )
 	 itsBuf << 'v' << serial_ver_id << ' ';
 

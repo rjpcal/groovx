@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu Jun  1 12:22:19 2000
+// written: Wed Sep 27 14:45:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
 #endif
 
 namespace IO {
@@ -65,7 +69,7 @@ public:
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */
-  virtual unsigned long readSerialVersionId() = 0;
+  virtual IO::VersionId readSerialVersionId() = 0;
 
   /// Read the \c char attribute associated with the tag \a name.
   virtual char readChar(const char* name) = 0;

@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Sep 27 11:35:58 2000
+// written: Wed Sep 27 13:50:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -447,16 +447,17 @@ DOTRACE("EventResponseHdlr::Impl::legacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
 
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
+	 lwriter->writeTypename(ioTag.c_str());
+
+	 ostream& os = lwriter->output();
 
 	 oldLegacySrlz(writer);
 
 	 os << itsEventSequence << endl;
 	 os << itsBindingSubstitution << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -464,16 +465,17 @@ void EventResponseHdlr::Impl::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 lreader->readTypename(ioTag.c_str());
 
 	 oldLegacyDesrlz(reader);
+
+	 istream& is = lreader->input();
 
 	 getline(is, itsEventSequence, '\n');       DebugEvalNL(itsEventSequence);
 	 getline(is, itsBindingSubstitution, '\n'); DebugEvalNL(itsBindingSubstitution);
 
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
   }
 }
 

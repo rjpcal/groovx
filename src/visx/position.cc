@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Sep 27 12:05:39 2000
+// written: Wed Sep 27 13:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_INVARIANT
 #include "util/debug.h"
 
@@ -86,40 +85,35 @@ DOTRACE("Position::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 	 Invariant(check());
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
-	 os << itsImpl->tr_x << sep
-		 << itsImpl->tr_y << sep
-		 << itsImpl->tr_z << sep;
-	 os << itsImpl->sc_x << sep
-		 << itsImpl->sc_y << sep
-		 << itsImpl->sc_z << sep;
-	 os << itsImpl->rt_x << sep
-		 << itsImpl->rt_y << sep
-		 << itsImpl->rt_z << sep
+	 os << itsImpl->tr_x << IO::SEP
+		 << itsImpl->tr_y << IO::SEP
+		 << itsImpl->tr_z << IO::SEP;
+	 os << itsImpl->sc_x << IO::SEP
+		 << itsImpl->sc_y << IO::SEP
+		 << itsImpl->sc_z << IO::SEP;
+	 os << itsImpl->rt_x << IO::SEP
+		 << itsImpl->rt_y << IO::SEP
+		 << itsImpl->rt_z << IO::SEP
 		 << itsImpl->rt_ang << endl;
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
   }
 }
 
 void Position::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Position::legacyDesrlz");
+  Invariant(check());
+
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+
+	 lreader->readTypename(ioTag);
+
 	 istream& is = lreader->input();
-	 Invariant(check());
-
-	 DebugEvalNL(lreader->flags());
-
-	 if (lreader->flags() & IO::TYPENAME) {
-		DebugPrintNL("reading typename");
-		IO::IoObject::readTypename(is, ioTag);
-	 }
-
-	 if (is.fail()) throw IO::InputError("after Position typename");
 
 	 is >> itsImpl->tr_x;
 	 is >> itsImpl->tr_y;
@@ -135,7 +129,7 @@ DOTRACE("Position::legacyDesrlz");
 	 DebugEval(itsImpl->tr_x);
 	 DebugEvalNL(itsImpl->rt_ang);
 
-	 if (is.fail()) throw IO::InputError(ioTag);
+	 lreader->throwIfError(ioTag);
   }
 }
 

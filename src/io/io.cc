@@ -3,7 +3,7 @@
 // Io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Sep 27 11:54:08 2000
+// written: Wed Sep 27 15:02:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,8 +97,13 @@ DOTRACE("IO::IoObject::ioCharCount");
   return strlen(ost.str());
 }
 
-void IO::IoObject::legacySrlz(IO::Writer* writer) const {}
-void IO::IoObject::legacyDesrlz(IO::Reader* reader) {}
+void IO::IoObject::legacySrlz(IO::Writer* writer) const {
+  throw IO::OutputError("legacySrlz not implemented for this object");
+}
+
+void IO::IoObject::legacyDesrlz(IO::Reader* reader) {
+  throw IO::InputError("legacyDesrlz not implemented for this object");
+}
 
 unsigned int IO::IoObject::ioAttribCount() const {
 DOTRACE("IO::IoObject::ioAttribCount");
@@ -113,7 +118,7 @@ DOTRACE("IO::IoObject::id");
   return itsId;
 }
 
-unsigned long IO::IoObject::serialVersionId() const {
+IO::VersionId IO::IoObject::serialVersionId() const {
 DOTRACE("IO::IoObject::serialVersionId");
   return 0; 
 }
@@ -131,8 +136,9 @@ DOTRACE("IO::IoObject::eatWhitespace");
   return c;
 }
 
-void IO::IoObject::readTypename(STD_IO::istream& is, const char* correctNames_cstr,
-							 bool doCheck) {
+void IO::IoObject::readTypename(STD_IO::istream& is,
+										  const char* correctNames_cstr,
+										  bool doCheck) {
 DOTRACE("IO::IoObject::readTypename");
   std::string correctNames = correctNames_cstr;
 

@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Sep 27 11:17:20 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ DOTRACE("GrObj::legacyDesrlz");
   sendStateChangeMsg();
 }
 
-unsigned long GrObj::serialVersionId() const {
+IO::VersionId GrObj::serialVersionId() const {
 DOTRACE("GrObj::Impl::serialVersionId");
   return itsImpl->serialVersionId(); 
 }

@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Wed Sep 27 11:21:21 2000
+// written: Wed Sep 27 13:50:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,14 +120,14 @@ void IrixAudioSound::legacySrlz(IO::Writer* writer) const {
 DOTRACE("IrixAudioSound::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
+	 lwriter->writeTypename(ioTag.c_str());
+
+	 ostream& os = lwriter->output();
 
 	 os << itsFilename << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -135,13 +135,14 @@ void IrixAudioSound::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("IrixAudioSound::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 lreader->readTypename(ioTag.c_str());
+
+	 istream& is = lreader->input();
 
 	 getline(is, itsFilename, '\n');
   
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
 
 	 setFile(itsFilename.c_str());
   }

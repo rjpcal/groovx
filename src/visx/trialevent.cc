@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Sep 27 11:40:38 2000
+// written: Wed Sep 27 13:50:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,14 +87,15 @@ void TrialEvent::legacySrlz(IO::Writer* writer) const {
 DOTRACE("TrialEvent::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 const char* ioTag = demangle_cstr(typeid(*this).name());
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 if (lwriter->flags() & IO::TYPENAME)
-		{
-		  os << demangle_cstr(typeid(*this).name()) << ' ';
-		}
 	 os << itsRequestedDelay << endl;
-	 if (os.fail()) throw IO::InputError(typeid(*this));
+	 lwriter->throwIfError(ioTag);
   }
 }
 
@@ -102,16 +103,16 @@ void TrialEvent::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("TrialEvent::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
 	 cancel(); // cancel since the event is changing state
 
-	 if (lreader->flags() & IO::TYPENAME)
-		{
-		  IO::IoObject::readTypename(is, demangle_cstr(typeid(*this).name()));
-		}
+	 const char* ioTag = demangle_cstr(typeid(*this).name());
+	 lreader->readTypename(ioTag);
+
+	 istream& is = lreader->input();
+
 	 is >> itsRequestedDelay;
-	 if (is.fail()) throw IO::InputError(typeid(*this));
+	 lreader->throwIfError(ioTag);
   }
 }
 

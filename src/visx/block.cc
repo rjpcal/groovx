@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Sep 27 11:28:48 2000
+// written: Wed Sep 27 13:50:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -177,15 +177,15 @@ void Block::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Block::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag.c_str());
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
 	 // itsImpl->itsTrialSequence
-	 os << itsImpl->itsTrialSequence.size() << sep << sep;
+	 os << itsImpl->itsTrialSequence.size() << IO::SEP << IO::SEP;
 	 for (size_t i = 0; i < itsImpl->itsTrialSequence.size(); ++i) {
-		os << itsImpl->itsTrialSequence[i] << sep;
+		os << itsImpl->itsTrialSequence[i] << IO::SEP;
 	 }
 	 os << endl;
 	 // itsImpl->itsRandSeed
@@ -195,7 +195,7 @@ DOTRACE("Block::legacySrlz");
 	 // itsImpl->itsVerbose
 	 os << itsImpl->itsVerbose << endl;
 
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -203,8 +203,9 @@ void Block::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Block::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag.c_str());
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
   
 	 // itsImpl->itsTrialSequence
 	 int size;
@@ -216,7 +217,7 @@ DOTRACE("Block::legacyDesrlz");
 	 for (int i = 0; i < size; ++i) {
 		is >> itsImpl->itsTrialSequence[i];
 	 }
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
 
 	 // itsImpl->itsRandSeed
 	 is >> itsImpl->itsRandSeed;
@@ -235,7 +236,7 @@ DOTRACE("Block::legacyDesrlz");
 	 itsImpl->itsVerbose = bool(val);
 
 	 is.ignore(1, '\n');
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
   }
 }
 

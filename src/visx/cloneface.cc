@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Sep 27 11:32:38 2000
+// written: Wed Sep 27 14:36:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "cloneface.h"
 
 #include "io/iolegacy.h"
+#include "io/ioproxy.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
@@ -63,23 +64,23 @@ void CloneFace::legacySrlz(IO::Writer* writer) const {
 DOTRACE("CloneFace::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
 	 for (int i = 0; i < 24; ++i) {
-		os << itsCtrlPnts[i] << sep;
+		os << itsCtrlPnts[i] << IO::SEP;
 	 }
-	 os << itsEyeAspect << sep;
-	 os << itsVertOffset << sep;
+	 os << itsEyeAspect << IO::SEP;
+	 os << itsVertOffset << IO::SEP;
 
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
 
-	 // Always legacySrlz Face, regardless of (lwriter->flags() & IO::BASES)
-	 // Always use the typename in the base class, regardless of flag
-	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-	 Face::legacySrlz(writer);
+	 // Always legacySrlz Face, regardless of lwriter->flags()
+	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
+	 IO::ConstIoProxy<Face> baseclass(this);
+	 lwriter->writeBaseClass("Face", &baseclass);
   }
 }
 
@@ -87,9 +88,10 @@ void CloneFace::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("CloneFace::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag);
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
-  
+
 	 for (int i = 0; i < 24; ++i) {
 		is >> itsCtrlPnts[i];
 	 }
@@ -99,16 +101,16 @@ DOTRACE("CloneFace::legacyDesrlz");
 	 // Bug in aCC requires this rather than a simple throw; see face.cc
 	 // for further explanation.
 	 try {
-		if (is.fail()) throw IO::InputError(ioTag);
+		lreader->throwIfError(ioTag);
 	 }
 	 catch (IO::IoError&) {
 		throw;
 	 }
 
-	 // Always legacyDesrlz Face, regardless of (lreader->flags() & IO::BASES)
-	 // Always use the typename in the base class, regardless of flag
-	 IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-	 Face::legacyDesrlz(reader);
+	 // Always legacyDesrlz Face, regardless of lreader->flags()
+	 IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
+	 IO::IoProxy<Face> baseclass(this);
+	 lreader->readBaseClass("Face", &baseclass);
   }
 }
 
@@ -118,6 +120,9 @@ DOTRACE("CloneFace::readFrom");
   IO::ReadUtils::template readValueSeq<double>(reader, "ctrlPnts", itsCtrlPnts);
   reader->readValue("eyeAspect", itsEyeAspect);
   reader->readValue("vertOffset", itsVertOffset);
+
+  IO::IoProxy<Face> baseclass(this);
+  reader->readBaseClass("Face", &baseclass);
 }
 
 void CloneFace::writeTo(IO::Writer* writer) const {
@@ -126,6 +131,9 @@ DOTRACE("CloneFace::writeTo");
   IO::WriteUtils::writeValueSeq(writer, "ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
   writer->writeValue("eyeAspect", itsEyeAspect);
   writer->writeValue("vertOffset", itsVertOffset);
+
+  IO::ConstIoProxy<Face> baseclass(this);
+  writer->writeBaseClass("Face", &baseclass);
 }
 
 const double* CloneFace::getCtrlPnts() const {

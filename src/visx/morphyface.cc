@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Sep 27 11:48:24 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ namespace {
   template <class T>
   inline T abs(T val) { return (val < 0) ? -val : val; }
 
-  const unsigned long MFACE_SERIAL_VERSION_ID = 1;
+  const IO::VersionId MFACE_SERIAL_VERSION_ID = 1;
 
   const char* ioTag = "MorphyFace";
 
@@ -363,27 +363,25 @@ DOTRACE("MorphyFace::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 	 Invariant(check());
+
+	 lwriter->writeTypename(ioTag);
+
 	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
-
 	 // version
-	 os << "@1" << sep;
+	 os << "@1" << IO::SEP;
 
-	 os << '{' << sep;
+	 os << '{' << IO::SEP;
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 		(this->*IO_MEMBERS[i]).legacySrlz(writer);
 	 }
 
 	 os << '}' << endl;
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
 
-	 if (lwriter->flags() & IO::BASES) {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		GrObj::legacySrlz(writer);
-	 }
+	 IO::ConstIoProxy<GrObj> baseclass(this);
+	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -391,8 +389,9 @@ void MorphyFace::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("MorphyFace::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag);
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
 	 IO::IoObject::eatWhitespace(is);
 	 int version = 0;
@@ -433,30 +432,18 @@ DOTRACE("MorphyFace::legacyDesrlz");
 		throw err;
 	 }
 
-	 // Mysterious bug in HP compiler (aCC) requires the following
-	 // contorted code; if the exception is not first caught in this
-	 // function, then re-thrown, it causes a bus error when compiled
-	 // with optimization on, although there is no problem with
-	 // optimization off. Somehow adding the catch and re-throw avoids
-	 // the problem, without changing the program's behavior.
-	 try {
-		if (is.fail()) throw IO::InputError(ioTag);
-	 }
-	 catch (IO::IoError&) { 
-		throw;
-	 }
+	 lreader->throwIfError(ioTag);
+
 	 Invariant(check());
 
-	 if (lreader->flags() & IO::BASES) {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		GrObj::legacyDesrlz(reader);
-	 }
+	 IO::IoProxy<GrObj> baseclass(this);
+	 lreader->readBaseClass("GrObj", &baseclass);
 
 	 sendStateChangeMsg();
   }
 }
 
-unsigned long MorphyFace::serialVersionId() const {
+IO::VersionId MorphyFace::serialVersionId() const {
 DOTRACE("MorphyFace::serialVersionId");
   return MFACE_SERIAL_VERSION_ID;
 }
@@ -468,7 +455,7 @@ DOTRACE("MorphyFace::readFrom");
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  unsigned long svid = reader->readSerialVersionId();
+  IO::VersionId svid = reader->readSerialVersionId();
   if (svid == 0)
 	 GrObj::readFrom(reader);
   else if (svid == 1)

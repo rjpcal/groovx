@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Wed Sep 27 11:23:53 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-const unsigned long GrObj::Impl::GROBJ_SERIAL_VERSION_ID;
+const IO::VersionId GrObj::Impl::GROBJ_SERIAL_VERSION_ID;
 
 dynamic_string GrObj::Impl::Renderer::BITMAP_CACHE_DIR(".");
 
@@ -395,11 +395,10 @@ void GrObj::Impl::legacySrlz(IO::Writer* writer) const {
 DOTRACE("GrObj::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
+
+	 lwriter->writeTypename("GrObj");
+
 	 ostream& os = lwriter->output();
-
-	 DebugEvalNL(lwriter->flags() & IO::TYPENAME); 
-
-	 if (lwriter->flags() & IO::TYPENAME) { os << "GrObj" << IO::SEP; }
 
 	 os << itsCategory << IO::SEP;
 
@@ -416,7 +415,7 @@ DOTRACE("GrObj::Impl::legacySrlz");
 	 os << itsAligner.itsCenterX << IO::SEP;
 	 os << itsAligner.itsCenterY << endl;  
 
-	 if (os.fail()) throw IO::OutputError("GrObj");
+	 lwriter->throwIfError("GrObj");
   }
 }
 
@@ -424,43 +423,42 @@ void GrObj::Impl::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("GrObj::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+
+	 lreader->readTypename("GrObj");
+
 	 istream& is = lreader->input();
-
-	 DebugEvalNL(lreader->flags() & IO::TYPENAME); 
-
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, "GrObj"); }
 
 	 int temp;
 
-	 is >> itsCategory; if (is.fail()) throw IO::InputError("after GrObj::itsCategory");
+	 is >> itsCategory; lreader->throwIfError("after GrObj::itsCategory");
 
 	 is >> temp; itsRenderer.setMode(temp, this);
-	 if (is.fail()) throw IO::InputError("after GrObj::itsRenderer.itsMode");
+	 lreader->throwIfError("after GrObj::itsRenderer.itsMode");
 
-	 is >> itsUnRenderer.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsUnRenderer.itsMode");
+	 is >> itsUnRenderer.itsMode; lreader->throwIfError("after GrObj::itsUnRenderer.itsMode");
 
-	 is >> temp; if (is.fail()) throw IO::InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
+	 is >> temp; lreader->throwIfError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
 
 	 is >> temp; itsScaler.setMode(temp, this);
-	 if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsMode");
+	 lreader->throwIfError("after GrObj::itsScaler.itsMode");
 
-	 is >> itsScaler.itsWidthFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsWidthFactor");
-	 is >> itsScaler.itsHeightFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsHeightFactor");
+	 is >> itsScaler.itsWidthFactor; lreader->throwIfError("after GrObj::itsScaler.itsWidthFactor");
+	 is >> itsScaler.itsHeightFactor; lreader->throwIfError("after GrObj::itsScaler.itsHeightFactor");
 
-	 is >> itsAligner.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsMode");
-	 is >> itsAligner.itsCenterX; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterX");
-	 is >> itsAligner.itsCenterY; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterY");
+	 is >> itsAligner.itsMode; lreader->throwIfError("after GrObj::itsAligner.itsMode");
+	 is >> itsAligner.itsCenterX; lreader->throwIfError("after GrObj::itsAligner.itsCenterX");
+	 is >> itsAligner.itsCenterY; lreader->throwIfError("after GrObj::itsAligner.itsCenterY");
 
 	 invalidateCaches();
 
-	 if (is.fail()) throw IO::InputError("GrObj");
+	 lreader->throwIfError("GrObj");
   }
 }
 
 void GrObj::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
 
-  unsigned long svid = reader->readSerialVersionId(); 
+  IO::VersionId svid = reader->readSerialVersionId(); 
 
   reader->readValue("GrObj::category", itsCategory);
 

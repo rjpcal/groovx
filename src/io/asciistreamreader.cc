@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Sat Sep 23 16:13:09 2000
+// written: Wed Sep 27 14:42:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,14 +203,14 @@ public:
   class AttribMap {
   private:
 	 std::map<std::string, Attrib> itsMap;
-	 unsigned long itsSerialVersionId;
+	 IO::VersionId itsSerialVersionId;
 
   public:
 	 AttribMap() : itsMap(), itsSerialVersionId(0) {}
 
 	 void readAttributes(STD_IO::istream& buf);
 
-	 unsigned long getSerialVersionId() const { return itsSerialVersionId; }
+	 IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
 
 	 const Attrib& operator[](const std::string& attrib_name)
 		{
@@ -280,7 +280,7 @@ public:
 	 return return_val;
   }
 
-  unsigned long readSerialVersionId()
+  IO::VersionId readSerialVersionId()
 	 { return currentAttribs().getSerialVersionId(); }
 
   // Returns a new dynamically allocated char array
@@ -524,7 +524,7 @@ DOTRACE("AsciiStreamReader::~AsciiStreamReader");
   delete &itsImpl; 
 }
 
-unsigned long AsciiStreamReader::readSerialVersionId() {
+IO::VersionId AsciiStreamReader::readSerialVersionId() {
 DOTRACE("AsciiStreamReader::readSerialVersionId");
   return itsImpl.readSerialVersionId();
 }

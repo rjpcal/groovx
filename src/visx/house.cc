@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Sep 27 11:48:24 2000
+// written: Wed Sep 27 14:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "rect.h"
 
 #include "io/iolegacy.h"
+#include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -270,21 +271,19 @@ void House::legacySrlz(IO::Writer* writer) const {
 DOTRACE("House::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
+	 lwriter->writeTypename(ioTag);
+
+	 ostream& os = lwriter->output();
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 		(this->*IO_MEMBERS[i]).legacySrlz(writer);
 	 }
 
-	 if (os.fail()) throw IO::OutputError(ioTag);
+	 lwriter->throwIfError(ioTag);
 
-	 if (lwriter->flags() & IO::BASES) {
-		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
-		GrObj::legacySrlz(writer);
-	 }
+	 IO::ConstIoProxy<GrObj> baseclass(this);
+	 lwriter->writeBaseClass("GrObj", &baseclass);
   }
 }
 
@@ -292,24 +291,23 @@ void House::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("House::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
+	 lreader->readTypename(ioTag);
+
 	 istream& is = lreader->input();
-	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
 	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 		(this->*IO_MEMBERS[i]).legacyDesrlz(reader);
 	 }
 
 	 try {
-		if (is.fail()) throw IO::InputError(ioTag);
+		lreader->throwIfError(ioTag);
 	 }
 	 catch (IO::IoError&) { 
 		throw;
 	 }
 
-	 if (lreader->flags() & IO::BASES) {
-		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
-		GrObj::legacyDesrlz(reader);
-	 }
+	 IO::IoProxy<GrObj> baseclass(this);
+	 lreader->readBaseClass("GrObj", &baseclass);
 
 	 sendStateChangeMsg();
   }

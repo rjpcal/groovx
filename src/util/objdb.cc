@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Sep 27 11:51:05 2000
+// written: Wed Sep 27 13:50:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,19 +38,19 @@ void IoPtrList::legacySrlz(IO::Writer* writer) const {
 DOTRACE("IoPtrList::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
 
 	 fixed_string ioTag = IO::IoObject::ioTypename();
 
-	 char sep = ' ';
-	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
+	 lwriter->writeTypename(ioTag.c_str());
+
+	 ostream& os = lwriter->output();
 
 	 // itsVec: we will legacySrlz only the non-null T*'s in
 	 // itsVec. In order to correctly legacyDesrlz the object later, we
 	 // must write both the size of itsVec (in order to correctly
 	 // resize later), as well as the number of non-null objects that we
 	 // legacySrlz (so that legacyDesrlz knows when to stop reading).
-	 os << voidVecSize() << sep;
+	 os << voidVecSize() << IO::SEP;
 
 	 int num_non_null = VoidPtrList::count();
 	 os << num_non_null << endl;
@@ -61,7 +61,7 @@ DOTRACE("IoPtrList::legacySrlz");
 			i < end;
 			++i) {
 		if (getVoidPtr(i) != NULL) {
-		  os << i << sep;
+		  os << i << IO::SEP;
 		  // we must legacySrlz the typename since legacyDesrlz requires a
 		  // typename in order to call the virtual constructor
 		  IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
@@ -76,7 +76,7 @@ DOTRACE("IoPtrList::legacySrlz");
 
 	 // itsFirstVacant
 	 os << firstVacant() << endl;
-	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 lwriter->throwIfError(ioTag.c_str());
   }
 }
 
@@ -85,16 +85,15 @@ void IoPtrList::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("IoPtrList::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
 
 	 fixed_string ioTag = IO::IoObject::ioTypename();
 
-	 if (lreader->flags() & IO::TYPENAME) { 
-		dynamic_string typename_list = ioTag;
-		typename_list += " ";
-		typename_list += alternateIoTags();
-		IO::IoObject::readTypename(is, typename_list.c_str());
-	 }
+	 dynamic_string typename_list = ioTag;
+	 typename_list += " ";
+	 typename_list += alternateIoTags();
+	 lreader->readTypename(typename_list.c_str());
+
+	 istream& is = lreader->input();
 
 	 // voidVec
 	 clear();
@@ -102,7 +101,7 @@ DOTRACE("IoPtrList::legacyDesrlz");
 	 is >> size >> num_non_null;
 	 // We must check if the STD_IO::istream has failed in order to avoid
 	 // attempting to resize the voidVec to some crazy size.
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
 	 if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
 		throw IO::ValueError(ioTag.c_str());
 	 }
@@ -135,7 +134,7 @@ DOTRACE("IoPtrList::legacyDesrlz");
 	 if ( is.get() != '\n' )
 		{ throw IO::LogicError(ioTag.c_str()); }
 
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 lreader->throwIfError(ioTag.c_str());
   }
 }
 
