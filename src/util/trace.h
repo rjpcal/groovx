@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:52 2001
+// written: Sun Aug 26 08:53:50 2001
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -75,12 +75,14 @@ extern int MAX_TRACE_LEVEL;
 extern int TRACE_LEVEL;
 const char* const TRACE_TAB = "  ";
 
-namespace Util {
+namespace Util
+{
   class Prof;
   class Trace;
 }
 
-class Util::Prof {
+class Util::Prof
+{
 public:
   Prof(const char* s);
   ~Prof();
@@ -92,15 +94,17 @@ public:
       totalTime.tv_sec += t.tv_sec;
       totalTime.tv_usec += t.tv_usec;
       // avoid overflow
-      while (totalTime.tv_usec >= 1000000) {
-        ++(totalTime.tv_sec);
-        totalTime.tv_usec -= 1000000;
-      }
+      while (totalTime.tv_usec >= 1000000)
+        {
+          ++(totalTime.tv_sec);
+          totalTime.tv_usec -= 1000000;
+        }
       // avoid underflow
-      while (totalTime.tv_usec <= -1000000) {
-        --(totalTime.tv_sec);
-        totalTime.tv_usec += 1000000;
-      }
+      while (totalTime.tv_usec <= -1000000)
+        {
+          --(totalTime.tv_sec);
+          totalTime.tv_usec += 1000000;
+        }
       ++callCount;
     }
 
@@ -127,7 +131,8 @@ private:
   timeval totalTime;
 };
 
-class Util::Trace {
+class Util::Trace
+{
 public:
   enum Mode { RUN, STEP };
 

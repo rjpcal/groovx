@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 22 15:28:51 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Face : public GrObj {
+class Face : public GrObj
+{
 protected:
   /// Construct with initial values for the Brunswik face parameters.
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Thu Aug 16 11:03:23 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class House : public GrObj {
+class House : public GrObj
+{
 protected:
   /// Default constructor.
   House();

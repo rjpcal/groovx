@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,8 @@ class ostream;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class AsciiStreamReader : public IO::Reader {
+class AsciiStreamReader : public IO::Reader
+{
 public:
   /// Construct with a connection to an open \c STD_IO::istream.
   AsciiStreamReader(STD_IO::istream& is);

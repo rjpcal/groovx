@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Sun Jul 22 23:41:39 2001
+// written: Sun Aug 26 08:39:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,8 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 
 template <class T, size_t N>
-struct static_block {
+struct static_block
+{
 
   typedef T value_type;
 
@@ -99,7 +100,8 @@ struct static_block {
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class fixed_block {
+class fixed_block
+{
 private:
   fixed_block(const fixed_block<T>& other);
 
@@ -192,7 +194,8 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-class shared_array {
+class shared_array
+{
 public:
   typedef T element_type;
 
@@ -224,7 +227,8 @@ public:
     if (--*pn == 0) { delete [] px; }
     else { // allocate new reference counter
       try { pn = new long; }  // fix: prevent leak if new throws
-      catch (...) {
+      catch (...)
+      {
         ++*pn;  // undo effect of --*pn above to meet effects guarantee
         delete [] p;
         throw;
@@ -270,7 +274,8 @@ template<typename T>
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class dynamic_block {
+class dynamic_block
+{
 public:
 
   typedef T value_type;
@@ -334,8 +339,8 @@ public:
 
   void swap(dynamic_block& other)
     {
-		Util::swap(N,    other.N);
-		Util::swap(data, other.data);
+      Util::swap(N,    other.N);
+      Util::swap(data, other.data);
     }
 
   void resize(size_type new_size)

@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Jun 11 15:08:15 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -45,27 +45,28 @@
 /*
  * "Standard" fonts which can be specified to Togl_LoadBitmapFont()
  */
-#define TOGL_BITMAP_8_BY_13		1
-#define TOGL_BITMAP_9_BY_15		2
-#define TOGL_BITMAP_TIMES_ROMAN_10	3
-#define TOGL_BITMAP_TIMES_ROMAN_24	4
-#define TOGL_BITMAP_HELVETICA_10	5
-#define TOGL_BITMAP_HELVETICA_12	6
-#define TOGL_BITMAP_HELVETICA_18	7
+#define TOGL_BITMAP_8_BY_13      1
+#define TOGL_BITMAP_9_BY_15      2
+#define TOGL_BITMAP_TIMES_ROMAN_10  3
+#define TOGL_BITMAP_TIMES_ROMAN_24  4
+#define TOGL_BITMAP_HELVETICA_10 5
+#define TOGL_BITMAP_HELVETICA_12 6
+#define TOGL_BITMAP_HELVETICA_18 7
 
 
 /*
  * Normal and overlay plane constants
  */
-#define TOGL_NORMAL	1
-#define TOGL_OVERLAY	2
+#define TOGL_NORMAL  1
+#define TOGL_OVERLAY 2
 
 
 class Togl;
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 typedef void (Togl_Callback) (Togl* togl);
@@ -93,14 +94,15 @@ extern void Togl_ResetDefaultCallbacks( void );
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Togl {
+class Togl
+{
 private:
   Togl(const Togl&);
   Togl& operator=(const Togl&);
 
 public:
   Togl(Tcl_Interp* interp, const char* pathname,
-		 int config_argc = 0, char** config_argv = 0);
+       int config_argc = 0, char** config_argv = 0);
   virtual ~Togl();
 
   // Change callbacks for existing widget
@@ -128,10 +130,10 @@ public:
   const char* pathname() const;
 
   // Color index mode
-  unsigned long allocColor( float red, float green, float blue ) const;  
+  unsigned long allocColor( float red, float green, float blue ) const;
   void freeColor( unsigned long index ) const;
   void setColor( unsigned long index,
-					  float red, float green, float blue ) const;
+                 float red, float green, float blue ) const;
 
   // Bitmap fonts
   GLuint loadBitmapFont( const char *fontname ) const;
@@ -167,16 +169,16 @@ public:
 #ifdef __sgi
   static void stereoDrawBuffer( GLenum mode );
   static void stereoFrustum( GLfloat left, GLfloat right,
-									  GLfloat bottom, GLfloat top,
-									  GLfloat near, GLfloat far,
-									  GLfloat eyeDist, GLfloat eyeOffset );
+                             GLfloat bottom, GLfloat top,
+                             GLfloat near, GLfloat far,
+                             GLfloat eyeDist, GLfloat eyeOffset );
   static void stereoClear( GLbitfield mask );
 #endif
 
   // Generate EPS file.
   // Contributed by Miguel A. De Riera Pasenau (miguel@DALILA.UPC.ES)
   int dumpToEpsFile( const char *filename, int inColor,
-							void (*user_redraw)(const Togl*) ) const;
+                     void (*user_redraw)(const Togl*) ) const;
 
   class Impl;
   friend class Impl;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Tue Jun 19 17:00:22 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,8 @@ const char* demangle_cstr(const char* in) { return in; }
 #if GCC_COMPILER < 3
 #  include "system/gcc_v2_demangle.h"
 
-const char* demangle_cstr(const char* in) {
+const char* demangle_cstr(const char* in)
+{
   static std::string result;
   result = gcc_v2_demangle(in);
   return result.c_str();
@@ -33,7 +34,8 @@ const char* demangle_cstr(const char* in) {
 #else
 #  include "system/gcc_v3_demangle.h"
 
-const char* demangle_cstr(const char* in) {
+const char* demangle_cstr(const char* in)
+{
   static std::string result;
   result = gcc_v3_demangle(in);
   return result.c_str();

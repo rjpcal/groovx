@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Aug 21 16:09:26 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,8 @@ Util::Tracer Fish::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct Fish::FishPart {
+struct Fish::FishPart
+{
   FishPart() : itsOrder(0), itsKnots() {}
 
   GLint itsOrder;
@@ -80,7 +81,8 @@ struct Fish::FishPart {
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct Fish::EndPt {
+struct Fish::EndPt
+{
   int itsPart;
   int itsBkpt;
   float itsX[2];

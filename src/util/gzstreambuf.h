@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Wed Aug  8 20:16:37 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@ class fstring;
 
 namespace Util
 {
-  class gzstreambuf : public STD_IO::streambuf {
+  class gzstreambuf : public STD_IO::streambuf
+  {
   private:
     bool opened;
     int mode;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Thu Aug  9 07:08:51 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,14 +29,16 @@ namespace Tcl
   class BkdErrorHandler;
 }
 
-class Tcl::TclError : public Util::Error {
+class Tcl::TclError : public Util::Error
+{
 public:
   TclError(const fstring& msg) : Util::Error(msg) {};
 
   virtual ~TclError();
 };
 
-class Tcl::BkdErrorHandler : public Util::ErrorHandler {
+class Tcl::BkdErrorHandler : public Util::ErrorHandler
+{
 private:
   Tcl_Interp* itsInterp;
 

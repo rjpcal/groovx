@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Sun Jul 22 23:43:25 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class dlink_list {
+class dlink_list
+{
 public:
 
   //
@@ -53,7 +54,8 @@ public:
   // node class definition
   //
 
-  class node {
+  class node
+  {
   private:
     ~node(); // not defined
     node(const node& other); // not defined
@@ -87,7 +89,8 @@ public:
     node* next;
   };
 
-  class iterator {
+  class iterator
+  {
   private:
     node* nn;
 
@@ -121,7 +124,8 @@ public:
     bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
-  class const_iterator {
+  class const_iterator
+  {
   private:
     node* nn;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Mon Aug 13 12:13:10 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GLBmapRenderer : public BmapRenderer {
+class GLBmapRenderer : public BmapRenderer
+{
 public:
   /// Default constructor.
   GLBmapRenderer();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,8 @@ class TrialBase;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ResponseHandler : public IO::IoObject {
+class ResponseHandler : public IO::IoObject
+{
 public:
   /// Default constructor.
   ResponseHandler();

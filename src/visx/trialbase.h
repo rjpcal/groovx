@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,8 @@ class Response;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialBase : public IO::IoObject {
+class TrialBase : public IO::IoObject
+{
 public:
   virtual ~TrialBase();
 

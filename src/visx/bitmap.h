@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Aug 16 11:03:24 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,8 @@ class BmapRenderer;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Bitmap : public GrObj {
+class Bitmap : public GrObj
+{
 public:
 
   //////////////

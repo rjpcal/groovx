@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Wed Aug  8 15:29:28 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,8 @@
 #define ITERATOR_DEFINED
 #endif
 
-namespace MVUtils {
+namespace MVUtils
+{
 
   template <class BidirectionalIterator1, class BidirectionalIterator2>
     inline BidirectionalIterator2 copy_backward (BidirectionalIterator1 first,
@@ -98,7 +99,8 @@ namespace MVUtils {
 
 
 template <class T>
-class minivec {
+class minivec
+{
 public:
   //
   // Types.

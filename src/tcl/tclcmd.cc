@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Mon Aug 20 12:25:47 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class HelpCmd : public Tcl::TclCmd {
+class HelpCmd : public Tcl::TclCmd
+{
 public:
   HelpCmd(Tcl_Interp* interp) :
     Tcl::TclCmd(interp, "?", "commandName", 2, 2) {}
@@ -121,7 +122,8 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclCmd::Impl {
+class Tcl::TclCmd::Impl
+{
 public:
   Impl(Tcl::TclCmd* owner, Tcl_Interp* interp,
        const char* cmd_name, const char* usage,
@@ -415,7 +417,8 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TclCmd::~TclCmd() {
+Tcl::TclCmd::~TclCmd()
+{
 DOTRACE("Tcl::TclCmd::~TclCmd");
   delete itsImpl;
 }

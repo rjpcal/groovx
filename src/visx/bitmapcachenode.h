@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Fri Aug 24 16:31:13 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,8 @@
 
 class BitmapRep;
 
-class BitmapCacheNode : public Gnode {
+class BitmapCacheNode : public Gnode
+{
 public:
   BitmapCacheNode(Util::SoftRef<Gnode> child);
   virtual ~BitmapCacheNode();

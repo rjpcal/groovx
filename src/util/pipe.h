@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Tue Jun 19 15:04:48 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,13 @@
 #  include <fstream>
 #endif
 
-namespace Util {
+namespace Util
+{
   class Pipe;
 }
 
-class Util::Pipe {
+class Util::Pipe
+{
 public:
   Pipe(const char* command, const char* mode) :
     itsFile(popen(command, mode)),
@@ -46,16 +48,18 @@ public:
     itsClosed(false),
     itsExitStatus(0)
     {
-      if ( itsFile != 0 ) {
+      if ( itsFile != 0 )
+        {
 #if defined(PRESTANDARD_IOSTREAMS)
-        itsStream.attach(filedes());
+          itsStream.attach(filedes());
 #elif !defined(GCC_COMPILER) || GCC_COMPILER < 3
-        itsFilebuf.open(filedes());
+          itsFilebuf.open(filedes());
 #endif
-      }
-      else {
-        itsClosed = true;
-      }
+        }
+      else
+        {
+          itsClosed = true;
+        }
     }
 
   ~Pipe()
@@ -65,13 +69,14 @@ public:
 
   int close()
     {
-      if ( !itsClosed ) {
+      if ( !itsClosed )
+        {
 #ifdef PRESTANDARD_IOSTREAMS
-        itsStream.close();
+          itsStream.close();
 #endif
-        itsExitStatus = pclose(itsFile);
-        itsClosed = true;
-      }
+          itsExitStatus = pclose(itsFile);
+          itsClosed = true;
+        }
       return itsExitStatus;
     }
 

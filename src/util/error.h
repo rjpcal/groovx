@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Thu Aug  9 06:50:31 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@ namespace Util
  *
  **/
 
-class Util::Error {
+class Util::Error
+{
 public:
   /// Default construct with an empty message string.
   Error() : itsInfo() {}

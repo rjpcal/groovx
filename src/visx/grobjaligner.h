@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Fri Aug 24 16:31:12 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,8 @@
 #include "gfx/rect.h"
 #include "gfx/vec2.h"
 
-class GrObjAligner : public Gnode {
+class GrObjAligner : public Gnode
+{
 public:
   GrObjAligner(Util::SoftRef<Gnode> child) :
     Gnode(child),

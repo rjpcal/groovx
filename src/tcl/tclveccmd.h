@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:14:43 2001
-// written: Thu Jul 12 13:02:53 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecCmd : public Tcl::TclCmd {
+class Tcl::VecCmd : public Tcl::TclCmd
+{
 public:
   VecCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
          unsigned int key_argn,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:30:04 2000
-// written: Thu Aug  9 07:32:49 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 #include "util/value.h"
 #endif
 
-class Response : public Value {
+class Response : public Value
+{
 public:
   static const int INVALID_VALUE = -1;
   static const int ALWAYS_CORRECT = -2;

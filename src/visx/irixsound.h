@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Aug  9 07:06:03 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IrixAudioSound : public Sound {
+class IrixAudioSound : public Sound
+{
 public:
   IrixAudioSound(const char* filename = 0);
   virtual ~IrixAudioSound();

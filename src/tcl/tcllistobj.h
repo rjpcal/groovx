@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Thu Aug  9 18:42:37 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::List {
+class Tcl::List
+{
 public:
   /// Default constructor makes an empty list
   List();
@@ -103,7 +104,8 @@ public:
   template <class T>
   Iterator<T> end(T* /*dummy*/=0);
 
-  class Appender {
+  class Appender
+  {
     Tcl::List& itsList;
   public:
     Appender(Tcl::List& aList) : itsList(aList) {}
@@ -149,7 +151,8 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::List::IteratorBase {
+class Tcl::List::IteratorBase
+{
 public:
   typedef int difference_type;
 
@@ -218,7 +221,8 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class Tcl::List::Iterator : public Tcl::List::IteratorBase {
+class Tcl::List::Iterator : public Tcl::List::IteratorBase
+{
 public:
   Iterator(const List& owner, Pos pos = BEGIN) :
     IteratorBase(owner, pos) {}

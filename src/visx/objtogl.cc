@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Aug 22 15:30:56 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -165,7 +165,8 @@ namespace ObjTogl
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::TogletPkg : public Tcl::Pkg {
+class ObjTogl::TogletPkg : public Tcl::Pkg
+{
 public:
   TogletPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Toglet", "$Revision$")

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Wed Aug  8 20:16:41 2001
+// written: Sun Aug 26 08:35:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@ namespace
   Application* theSingleton = 0;
 }
 
-class Application::Impl {
+class Application::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

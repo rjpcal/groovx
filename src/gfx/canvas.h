@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Aug 22 18:34:33 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,8 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gfx::Canvas {
+class Gfx::Canvas
+{
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Canvas();
@@ -117,7 +118,8 @@ public:
   /** \c MatrixSaver handles saving and restoring of some part of the
       matrix state within a lexical scope, in an exception-safe manner. */
   template <Manip doit, Manip undoit>
-  class Saver {
+  class Saver
+  {
   public:
     /** Save the state of \a canvas. Its state will be restored to the
         saved state when the \c MatrixSaver is destroyed. */

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Aug 15 15:17:59 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,8 @@ class PositionImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Position : public GxNode, public FieldContainer {
+class Position : public GxNode, public FieldContainer
+{
   //////////////
   // creators //
   //////////////

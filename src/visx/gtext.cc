@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Aug 24 18:35:37 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,8 @@ namespace
 //---------------------------------------------------------------------
 
   enum pointtype {PT, STROKE, END};
-  struct CP {
+  struct CP
+  {
     GLfloat x,y;
     pointtype type;
   };
@@ -50,121 +51,147 @@ namespace
 //
 //---------------------------------------------------------------------
 
-  CP Adata[] = {
+  CP Adata[] =
+  {
     {0, 0, PT}, {0, 3, PT}, {2, 6, PT}, {4, 3, PT}, {4, 0, STROKE},
     {0, 3, PT}, {4, 3, END}
   };
 
-  CP Bdata[] = {
+  CP Bdata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {3, 3, PT}, {4, 2, PT}, {4, 1, PT}, {3, 0, PT}, {0, 0, STROKE},
     {0, 3, PT}, {3, 3, END}
   };
 
-  CP Cdata[] = {
+  CP Cdata[] =
+  {
     {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, END}
   };
 
-  CP Ddata[] = {
+  CP Ddata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 1, PT}, {3, 0, PT}, {0, 0, END}
   };
 
-  CP Edata[] = {
+  CP Edata[] =
+  {
     {4, 0, PT}, {0, 0, PT}, {0, 6, PT}, {4, 6, STROKE},
     {0, 3, PT}, {3, 3, END}
   };
 
-  CP Fdata[] = {
+  CP Fdata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {4, 6, STROKE},
     {0, 3, PT}, {3, 3, END}
   };
 
-  CP Gdata[] = {
+  CP Gdata[] =
+  {
     {2, 3, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, END}
   };
 
-  CP Hdata[] = {
+  CP Hdata[] =
+  {
     {0, 0, PT}, {0, 6, STROKE},
     {4, 0, PT}, {4, 6, STROKE},
     {0, 3, PT}, {4, 3, END}
   };
 
-  CP Idata[] = {
+  CP Idata[] =
+  {
     {2, 6, PT}, {2, 0, STROKE},
     {0, 0, PT}, {4, 0, STROKE},
     {0, 6, PT}, {4, 6, END},
   };
 
-  CP Jdata[] = {
+  CP Jdata[] =
+  {
     {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 6, END}
   };
 
-  CP Kdata[] = {
+  CP Kdata[] =
+  {
     {0, 0, PT}, {0, 6, STROKE},
     {4, 6, PT}, {0, 3, PT}, {4, 0, END}
   };
 
-  CP Ldata[] = {
+  CP Ldata[] =
+  {
     {4, 0, PT}, {0, 0, PT}, {0, 6, END}
   };
 
-  CP Mdata[] = {
+  CP Mdata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {2, 3, PT}, {4, 6, PT}, {4, 0, END}
   };
 
-  CP Ndata[] = {
+  CP Ndata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {4, 0, PT}, {4, 6, END}
   };
 
-  CP Odata[] = {
+  CP Odata[] =
+  {
     {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, END}
   };
 
-  CP Pdata[] = {
+  CP Pdata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {3, 3, PT}, {0, 3, END}
   };
 
-  CP Qdata[] = {
+  CP Qdata[] =
+  {
     {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, STROKE},
     {3, 1, PT}, {4, 0, END}
   };
 
-  CP Rdata[] = {
+  CP Rdata[] =
+  {
     {0, 0, PT}, {0, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {3, 3, PT}, {0, 3, STROKE},
     {1, 3, PT}, {4, 0, END}
   };
 
-  CP Sdata[] = {
+  CP Sdata[] =
+  {
     {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {3, 3, PT}, {1, 3, PT}, {0, 4, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, END}
   };
 
-  CP Tdata[] = {
+  CP Tdata[] =
+  {
     {2, 0, PT}, {2, 6, STROKE},
     {0, 6, PT}, {4, 6, END},
   };
 
-  CP Udata[] = {
+  CP Udata[] =
+  {
     {0, 6, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 6, END}
   };
 
-  CP Vdata[] = {
+  CP Vdata[] =
+  {
     {0, 6, PT}, {2, 0, PT}, {4, 6, END}
   };
 
-  CP Wdata[] = {
+  CP Wdata[] =
+  {
     {0, 6, PT}, {0, 0, PT}, {2, 3, PT}, {4, 0, PT}, {4, 6, END}
   };
 
-  CP Xdata[] = {
+  CP Xdata[] =
+  {
     {0, 0, PT}, {4, 6, STROKE},
     {0, 6, PT}, {4, 0, END}
   };
 
-  CP Ydata[] = {
+  CP Ydata[] =
+  {
     {0, 6, PT}, {2, 3, PT}, {4, 6, STROKE},
     {2, 3, PT}, {2, 0, END}
   };
 
-  CP Zdata[] = {
+  CP Zdata[] =
+  {
     {4, 0, PT}, {0, 0, PT}, {4, 6, PT}, {0, 6, STROKE},
     {1, 3, PT}, {3, 3, END}
   };
@@ -175,128 +202,154 @@ namespace
 //
 //---------------------------------------------------------------------
 
-  CP adata[] = {
+  CP adata[] =
+  {
     {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, STROKE},
     {4, 3, PT}, {1, 3, PT}, {0, 2, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, END}
   };
 
-  CP bdata[] = {
+  CP bdata[] =
+  {
     {0, 0, PT}, {0, 6, STROKE},
     {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, END}
   };
 
-  CP cdata[] = {
+  CP cdata[] =
+  {
     {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, END}
   };
 
-  CP ddata[] = {
+  CP ddata[] =
+  {
     {4, 0, PT}, {4, 6, STROKE},
     {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, END}
   };
 
-  CP edata[] = {
+  CP edata[] =
+  {
     {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 2, PT}, {0, 2, END}
   };
 
-  CP fdata[] = {
+  CP fdata[] =
+  {
     {1, 0, PT}, {1, 5, PT}, {2, 6, PT}, {3, 6, PT}, {4, 5, STROKE},
     {0, 3, PT}, {3, 3, END}
   };
 
-  CP gdata[] = {
+  CP gdata[] =
+  {
     {4, 2, PT}, {3, 1, PT}, {1, 1, PT}, {0, 2, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, PT}, {3, -1, PT}, {1, -1, PT}, {0, 0, END}
   };
 
-  CP hdata[] = {
+  CP hdata[] =
+  {
     {0, 0, PT}, {0, 6, STROKE},
     {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, END}
   };
 
-  CP idata[] = {
+  CP idata[] =
+  {
     {0, 0, PT}, {4, 0, STROKE},
     {1, 4, PT}, {2, 4, PT}, {2, 0, STROKE},
     {2, 6, PT}, {2.25, 5.75, PT}, {2, 5.5, PT}, {1.75, 5.75, PT}, {2, 6, END}
   };
 
-  CP jdata[] = {
+  CP jdata[] =
+  {
     {3, 4, PT}, {4, 4, PT}, {4, 0, PT}, {3, -1, PT}, {1, -1, PT}, {0, 0, STROKE},
     {4, 6, PT}, {4.25, 5.75, PT}, {4, 5.5, PT}, {3.75, 5.75, PT}, {4, 6, END}
   };
 
-  CP kdata[] = {
+  CP kdata[] =
+  {
     {0, 0, PT}, {0, 6, STROKE},
     {0, 2, PT}, {1, 2, PT}, {4, 4, STROKE},
     {1, 2, PT}, {4, 0, END}
   };
 
-  CP ldata[] = {
+  CP ldata[] =
+  {
     {0, 0, PT}, {4, 0, STROKE},
     {1, 6, PT}, {2, 6, PT}, {2, 0, END}
   };
 
-  CP mdata[] = {
+  CP mdata[] =
+  {
     {0, 0, PT}, {0, 4, PT}, {2, 4, PT}, {2, 1, STROKE},
     {2, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, END}
   };
 
-  CP ndata[] = {
+  CP ndata[] =
+  {
     {0, 0, PT}, {0, 4, STROKE},
     {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, END}
   };
 
-  CP odata[] = {
+  CP odata[] =
+  {
     {1, 0, PT}, {0, 1, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, END}
   };
 
-  CP pdata[] = {
+  CP pdata[] =
+  {
     {0, -1, PT}, {0, 4, STROKE},
     {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 2, PT}, {3, 1, PT}, {1, 1, PT}, {0, 2, END}
   };
 
-  CP qdata[] = {
+  CP qdata[] =
+  {
     {4, -1, PT}, {4, 4, STROKE},
     {4, 3, PT}, {3, 4, PT}, {1, 4, PT}, {0, 3, PT}, {0, 2, PT}, {1, 1, PT}, {3, 1, PT}, {4, 2, END}
   };
 
-  CP rdata[] = {
+  CP rdata[] =
+  {
     {0, 0, PT}, {0, 4, STROKE},
     {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, END}
   };
 
-  CP sdata[] = {
+  CP sdata[] =
+  {
     {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {0, 2, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, END}
   };
 
-  CP tdata[] = {
+  CP tdata[] =
+  {
     {0, 4, PT}, {3, 4, STROKE},
     {1, 5, PT}, {1, 1, PT}, {2, 0, PT}, {3, 0, PT}, {4, 1, END}
   };
 
-  CP udata[] = {
+  CP udata[] =
+  {
     {0, 4, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, STROKE},
     {4, 0, PT}, {4, 4, END}
   };
 
-  CP vdata[] = {
+  CP vdata[] =
+  {
     {0, 4, PT}, {2, 0, PT}, {4, 4, END}
   };
 
-  CP wdata[] = {
+  CP wdata[] =
+  {
     {0, 4, PT}, {0, 1, PT}, {1, 0, PT}, {2, 1, STROKE},
     {2, 3, PT}, {2, 1, PT}, {3, 0, PT}, {4, 1, PT}, {4, 4, END}
   };
 
-  CP xdata[] = {
+  CP xdata[] =
+  {
     {0, 4, PT}, {4, 0, STROKE},
     {0, 0, PT}, {4, 4, END}
   };
 
-  CP ydata[] = {
+  CP ydata[] =
+  {
     {0, 4, PT}, {0, 2, PT}, {1, 1, PT}, {3, 1, PT}, {4, 2, STROKE},
     {4, 4, PT}, {4, 0, PT}, {3, -1, PT}, {1, -1, PT}, {0, 0, END}
   };
 
-  CP zdata[] = {
+  CP zdata[] =
+  {
     {0, 4, PT}, {4, 4, PT}, {0, 0, PT}, {4, 0, STROKE},
     {1, 2, PT}, {3, 2, END}
   };
@@ -307,47 +360,57 @@ namespace
 //
 //---------------------------------------------------------------------
 
-  CP n0data[] = {
+  CP n0data[] =
+  {
     {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, STROKE},
     {0, 0, PT}, {4, 6, END}
   };
 
-  CP n1data[] = {
+  CP n1data[] =
+  {
     {0, 0, PT}, {4, 0, STROKE},
     {0, 4, PT}, {2, 6, PT}, {2, 0, END}
   };
 
-  CP n2data[] = {
+  CP n2data[] =
+  {
     {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {0, 1, PT}, {0, 0, PT}, {4, 0, END}
   };
 
-  CP n3data[] = {
+  CP n3data[] =
+  {
     {0, 6, PT}, {4, 6, PT}, {2, 3, PT}, {3, 3, PT}, {4, 2, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, END}
   };
 
-  CP n4data[] = {
+  CP n4data[] =
+  {
     {3, 0, PT}, {3, 6, PT}, {0, 3, PT}, {0, 2, PT}, {4, 2, END}
   };
 
-  CP n5data[] = {
+  CP n5data[] =
+  {
     {4, 6, PT}, {0, 6, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, END}
   };
 
-  CP n6data[] = {
+  CP n6data[] =
+  {
     {3, 6, PT}, {2, 6, PT}, {0, 4, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {3, 3, PT}, {1, 3, PT}, {0, 2, END}
   };
 
-  CP n7data[] = {
+  CP n7data[] =
+  {
     {0, 6, PT}, {4, 6, PT}, {1, 0, STROKE},
     {1.5, 3, PT}, {3.5, 3, END}
   };
 
-  CP n8data[] = {
+  CP n8data[] =
+  {
     {1, 3, PT}, {0, 4, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {3, 3, PT}, {1, 3, PT},
                 {0, 2, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {3, 3, END}
   };
 
-  CP n9data[] = {
+  CP n9data[] =
+  {
     {1, 0, PT}, {2, 0, PT}, {4, 2, PT}, {4, 5, PT}, {3, 6, PT}, {1, 6, PT}, {0, 5, PT}, {0, 4, PT}, {1, 3, PT}, {3, 3, PT}, {4, 4, END}
   };
 
@@ -362,149 +425,181 @@ namespace
 
   CP space_data[] = { {0, 0, END} };
 
-  CP exclamation_data[] = {
+  CP exclamation_data[] =
+  {
     {2, 6, PT}, {2, 2, STROKE},
     {2, 0, PT}, {2.25, 0.25, PT}, {2, 0.5, PT}, {1.75, 0.25, PT}, {2, 0, END}
   };
 
-  CP double_quote_data[] = {
+  CP double_quote_data[] =
+  {
     {1, 6, PT}, {1, 4, STROKE},
     {3, 6, PT}, {3, 4, END}
   };
 
-  CP pound_sign_data[] = {
+  CP pound_sign_data[] =
+  {
     {0.5, 1, PT}, {1.5, 5, STROKE},
     {2.5, 1, PT}, {3.5, 5, STROKE},
     {0, 2, PT}, {4, 2, STROKE},
     {0, 4, PT}, {4, 4, END}
   };
 
-  CP dollar_sign_data[] = {
+  CP dollar_sign_data[] =
+  {
     {4, 5, PT}, {1, 5, PT}, {0, 4, PT}, {1, 3, PT}, {3, 3, PT}, {4, 2, PT}, {3, 1, PT}, {0, 1, STROKE},
     {2, 6, PT}, {2, 0, END}
   };
 
-  CP percent_data[] = {
+  CP percent_data[] =
+  {
     {0, 0, PT}, {4, 6, STROKE},
     {1, 5.5, PT}, {1.5, 5, PT}, {1, 4.5, PT}, {0.5, 5, PT}, {1, 5.5, STROKE},
     {3, 1.5, PT}, {3.5, 1, PT}, {3, 0.5, PT}, {2.5, 1, PT}, {3, 1.5, END}
   };
 
-  CP ampersand_data[] = {
+  CP ampersand_data[] =
+  {
     {4, 2, PT}, {2, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 2, PT}, {3, 4, PT}, {3, 5, PT}, {2, 6, PT}, {1, 6, PT}, {0, 5, PT}, {0, 4, PT}, {4, 0, END}
   };
 
-  CP apostrophe_data[] = {
+  CP apostrophe_data[] =
+  {
     {2, 6, PT}, {2, 5, PT}, {1, 4, END}
   };
 
-  CP left_paren_data[] = {
+  CP left_paren_data[] =
+  {
     {3, 6, PT}, {1, 4, PT}, {1, 2, PT}, {3, 0, END}
   };
 
-  CP right_paren_data[] = {
+  CP right_paren_data[] =
+  {
     {1, 6, PT}, {3, 4, PT}, {3, 2, PT}, {1, 0, END}
   };
 
-  CP asterisk_data[] = {
+  CP asterisk_data[] =
+  {
     {0, 3, PT}, {4, 3, STROKE},
     {0.5, 1.5, PT}, {3.5, 4.5, STROKE},
     {0.5, 4.5, PT}, {3.5, 1.5, END}
   };
 
-  CP plus_data[] = {
+  CP plus_data[] =
+  {
     {0, 3, PT}, {4, 3, STROKE},
     {2, 5, PT}, {2, 1, END}
   };
 
-  CP comma_data[] = {
+  CP comma_data[] =
+  {
     {2, 1, PT}, {2, 0, PT}, {1, -1, END}
   };
 
-  CP hyphen_data[] = {
+  CP hyphen_data[] =
+  {
     {0, 3, PT}, {4, 3, END}
   };
 
-  CP period_data[] = {
+  CP period_data[] =
+  {
     {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, END}
   };
 
-  CP slash_data[] = {
+  CP slash_data[] =
+  {
     {0, 0, PT}, {4, 6, END}
   };
 
-  CP colon_data[] = {
+  CP colon_data[] =
+  {
     {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, STROKE},
     {2, 4.25, PT}, {2.25, 4, PT}, {2, 3.75, PT}, {1.75, 4, PT}, {2, 4.25, END}
   };
 
-  CP semicolon_data[] = {
+  CP semicolon_data[] =
+  {
     {2, 4.25, PT}, {2.25, 4, PT}, {2, 3.75, PT}, {1.75, 4, PT}, {2, 4.25, STROKE},
     {2, 1, PT}, {2, 0, PT}, {1, -1, END}
   };
 
-  CP left_angle_data[] = {
+  CP left_angle_data[] =
+  {
     {4, 6, PT}, {0, 3, PT}, {4, 0, END}
   };
 
-  CP equal_data_data[] = {
+  CP equal_data_data[] =
+  {
     {0, 2, PT}, {4, 2, STROKE},
     {0, 4, PT}, {4, 4, END}
   };
 
-  CP right_angle_data[] = {
+  CP right_angle_data[] =
+  {
     {0, 6, PT}, {4, 3, PT}, {0, 0, END}
   };
 
-  CP question_data[] = {
+  CP question_data[] =
+  {
     {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {2, 3, PT}, {2, 2, STROKE},
     {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, END}
   };
 
-  CP at_data[] = {
+  CP at_data[] =
+  {
     {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 2, PT}, {1.5, 2, PT}, {1, 2.5, PT}, {1, 3.5, PT},
                 {1.5, 4, PT}, {3, 4, PT}, {3, 2, END}
   };
 
-  CP left_square_data[] = {
+  CP left_square_data[] =
+  {
     {4, 0, PT}, {1, 0, PT}, {1, 6, PT}, {4, 6, END}
   };
 
-  CP backslash_data[] = {
+  CP backslash_data[] =
+  {
     {0, 6, PT}, {4, 0, END}
   };
 
-  CP right_square_data[] = {
+  CP right_square_data[] =
+  {
     {0, 0, PT}, {3, 0, PT}, {3, 6, PT}, {0, 6, END}
   };
 
-  CP caret_data[] = {
+  CP caret_data[] =
+  {
     {0.5, 4.5, PT}, {2, 6, PT}, {3.5, 4.5, END}
   };
 
-  CP underscore_data[] = {
+  CP underscore_data[] =
+  {
     {0, 0, PT}, {4, 0, END}
   };
 
-  CP backquote_data[] = {
+  CP backquote_data[] =
+  {
     {2, 6, PT}, {2, 5, PT}, {3, 4, END}
   };
 
-  CP left_curly_data[] = {
+  CP left_curly_data[] =
+  {
     {4, 6, PT}, {3, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {2.5, 3, PT}, {1.5, 3, STROKE},
     {2.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {3, 0, PT}, {4, 0, END}
   };
 
-  CP vertical_bar_data[] = {
+  CP vertical_bar_data[] =
+  {
     {2, 0, PT}, {2, 6, END}
   };
 
-  CP right_curly_data[] = {
+  CP right_curly_data[] =
+  {
     {0, 6, PT}, {1, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {1.5, 3, PT}, {2.5, 3, STROKE},
     {1.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {1, 0, PT}, {0, 0, END}
   };
 
-  CP tilde_data[] = {
+  CP tilde_data[] =
+  {
     {0.5, 5, PT}, {1.5, 6, PT}, {2.5, 5, PT}, {3.5, 6, END}
   };
 
@@ -514,12 +609,15 @@ namespace
 //
 //---------------------------------------------------------------------
 
-  void drawLetter(CP* cp) {
+  void drawLetter(CP* cp)
+  {
     glBegin(GL_LINE_STRIP);
-    while (1) {
+    while (1)
+    {
       glVertex2fv(&cp->x);
 
-      switch (cp->type) {
+      switch (cp->type)
+      {
       case PT:
         break;
       case STROKE:
@@ -536,7 +634,8 @@ namespace
     }
   }
 
-  GLuint getStrokeFontListBase() {
+  GLuint getStrokeFontListBase()
+  {
     static GLuint listBase = 0;
 
     if (listBase != 0) return listBase;
@@ -678,7 +777,8 @@ DOTRACE("Gtext::Gtext(const char*)");
   setHeight(1.0);
 }
 
-Gtext::~Gtext() {
+Gtext::~Gtext()
+{
 DOTRACE("Gtext::~Gtext");
 }
 

@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Sun Jul 22 23:45:15 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -29,7 +29,8 @@
 #endif
 
 template <class T>
-class borrowed_ptr {
+class borrowed_ptr
+{
 private:
   T* ptr;
 
@@ -93,7 +94,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template<class T>
-class scoped_ptr {
+class scoped_ptr
+{
 public:
   explicit scoped_ptr( T* p=0 ) throw() :
     ptr(p)
@@ -138,7 +140,8 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template<class T>
-class shared_ptr {
+class shared_ptr
+{
 public:
   typedef T element_type;
 
@@ -183,7 +186,8 @@ public:
       if (--*pn == 0) { delete px; }
       else { // allocate new reference counter
         try { pn = new long; }  // fix: prevent leak if new throws
-        catch (...) {
+        catch (...)
+        {
           ++*pn;  // undo effect of --*pn above to meet effects guarantee
           delete p;
           throw;
@@ -225,11 +229,12 @@ private:
 
   void share(T* rpx, long* rpn)
     {
-      if (pn != rpn) {
-        dispose();
-        px = rpx;
-        ++*(pn = rpn);
-      }
+      if (pn != rpn)
+        {
+          dispose();
+          px = rpx;
+          ++*(pn = rpn);
+        }
     }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Aug 13 12:19:14 2001
+// written: Sun Aug 26 08:35:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BitmapRep::Impl {
+class BitmapRep::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -88,7 +89,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class PbmUpdater : public Gfx::BmapData::UpdateFunc {
+class PbmUpdater : public Gfx::BmapData::UpdateFunc
+{
 public:
   PbmUpdater(const fstring& filename, fstring& owner_filename,
              bool contrast, bool vertical) :

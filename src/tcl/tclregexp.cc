@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:09:12 2001
-// written: Thu Aug  9 18:30:38 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,8 @@ bool Tcl::RegExp::matchesString(const char* str)
   // OK to pass Tcl_Interp*==0
   int regex_result = Tcl_RegExpExec(0, regexp, str, str);
 
-  switch (regex_result) {
+  switch (regex_result)
+  {
   case REGEX_ERROR:
     throw TclError("error executing regular expression");
 

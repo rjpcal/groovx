@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,8 @@ namespace
 {
   const IO::VersionId TRIAL_SERIAL_VERSION_ID = 4;
 
-  struct ActiveState {
+  struct ActiveState
+  {
     ActiveState(Block* block, SoftRef<GWT::Widget> widget,
                 Ref<ResponseHandler> rh, Ref<TimingHdlr> th) :
       itsBlock(block),
@@ -77,7 +78,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Trial::Impl {
+class Trial::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

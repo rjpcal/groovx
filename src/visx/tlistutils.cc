@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,7 +160,8 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
     }
 }
 
-class MatlabTrialWriter : public IO::Writer {
+class MatlabTrialWriter : public IO::Writer
+{
 private:
   STD_IO::ostream& itsOs;
 public:

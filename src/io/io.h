@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:52 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,8 @@ class fstring;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject : public virtual Util::Object {
+class IO::IoObject : public virtual Util::Object
+{
 private:
   IoObject(const IoObject&);
   IoObject& operator=(const IoObject&);
@@ -97,7 +98,8 @@ public:
  * A subclass of Util::Error for invalid filenames or filenames
  * referring to inaccessible files.
  **/
-class IO::FilenameError : public Util::Error {
+class IO::FilenameError : public Util::Error
+{
 public:
   /// Default constructor.
   FilenameError(const char* filename);

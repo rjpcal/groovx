@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Wed Aug 22 10:55:02 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,8 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Slot : public virtual Util::Object {
+class Util::Slot : public virtual Util::Object
+{
 public:
   /// Default constructor.
   Slot();
@@ -71,7 +72,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Signal {
+class Util::Signal
+{
 public:
   /// Default constructor.
   Signal();
@@ -126,7 +128,7 @@ class Util::SlotAdapter : public Util::Slot
   MF itsMemFunc;
 
   SlotAdapter(C* obj, MF mf) :
-	 itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
+    itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
 
 public:
   static Util::SlotAdapter<C, MF>* make(C* obj, MF mf)
@@ -152,7 +154,7 @@ template <class C, class MF>
 inline Util::SoftRef<Util::Slot> Util::Slot::make(C* obj, MF mf)
 {
   return Util::SoftRef<Util::Slot>(Util::SlotAdapter<C, MF>::make(obj, mf),
-											  Util::STRONG,
+                                   Util::STRONG,
                                    Util::PRIVATE);
 };
 

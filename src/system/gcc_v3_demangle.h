@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 17:00:38 2001
-// written: Tue Aug  7 16:52:08 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,8 @@
 
 std::string gcc_v3_demangle(const std::string& in);
 
-class GccV3Demangler {
+class GccV3Demangler
+{
 private:
   std::string itsBuf;
   std::string::size_type itsPos;
@@ -63,55 +64,56 @@ int GccV3Demangler::munchInt()
   return val;
 }
 
-void GccV3Demangler::readBuiltinType() {
-
+void GccV3Demangler::readBuiltinType()
+{
   char typecode = itsBuf[itsPos];
   itsBuf.erase(itsPos, 1);
-  switch (typecode) {
-  case 'a':
-    itsBuf.insert(itsPos, "signed char"); itsPos += 11;
-    break;
-  case 'b':
-    itsBuf.insert(itsPos, "bool"); itsPos += 4;
-    break;
-  case 'c':
-    itsBuf.insert(itsPos, "char"); itsPos += 4;
-    break;
-  case 'd':
-    itsBuf.insert(itsPos, "double"); itsPos += 6;
-    break;
-  case 'f':
-    itsBuf.insert(itsPos, "float"); itsPos += 5;
-    break;
-  case 'h':
-    itsBuf.insert(itsPos, "unsigned char"); itsPos += 13;
-    break;
-  case 'i':
-    itsBuf.insert(itsPos, "int"); itsPos += 3;
-    break;
-  case 'j':
-    itsBuf.insert(itsPos, "unsigned int"); itsPos += 12;
-    break;
-  case 'l':
-    itsBuf.insert(itsPos, "long"); itsPos += 4;
-    break;
-  case 'm':
-    itsBuf.insert(itsPos, "unsigned long"); itsPos += 13;
-    break;
-  case 's':
-    itsBuf.insert(itsPos, "short"); itsPos += 5;
-    break;
-  case 't':
-    itsBuf.insert(itsPos, "unsigned short"); itsPos += 14;
-    break;
-  case 'v':
-    itsBuf.insert(itsPos, "void"); itsPos += 4;
-    break;
-  default:
-    DebugEvalNL(typecode);
-    Assert(0);
-    break;
-  }
+  switch (typecode)
+    {
+    case 'a':
+      itsBuf.insert(itsPos, "signed char"); itsPos += 11;
+      break;
+    case 'b':
+      itsBuf.insert(itsPos, "bool"); itsPos += 4;
+      break;
+    case 'c':
+      itsBuf.insert(itsPos, "char"); itsPos += 4;
+      break;
+    case 'd':
+      itsBuf.insert(itsPos, "double"); itsPos += 6;
+      break;
+    case 'f':
+      itsBuf.insert(itsPos, "float"); itsPos += 5;
+      break;
+    case 'h':
+      itsBuf.insert(itsPos, "unsigned char"); itsPos += 13;
+      break;
+    case 'i':
+      itsBuf.insert(itsPos, "int"); itsPos += 3;
+      break;
+    case 'j':
+      itsBuf.insert(itsPos, "unsigned int"); itsPos += 12;
+      break;
+    case 'l':
+      itsBuf.insert(itsPos, "long"); itsPos += 4;
+      break;
+    case 'm':
+      itsBuf.insert(itsPos, "unsigned long"); itsPos += 13;
+      break;
+    case 's':
+      itsBuf.insert(itsPos, "short"); itsPos += 5;
+      break;
+    case 't':
+      itsBuf.insert(itsPos, "unsigned short"); itsPos += 14;
+      break;
+    case 'v':
+      itsBuf.insert(itsPos, "void"); itsPos += 4;
+      break;
+    default:
+      DebugEvalNL(typecode);
+      Assert(0);
+      break;
+    }
 }
 
 void GccV3Demangler::readTemplateArgs()
@@ -139,7 +141,8 @@ void GccV3Demangler::readTemplateArgs()
     }
 }
 
-void GccV3Demangler::readUserDefinedType() {
+void GccV3Demangler::readUserDefinedType()
+{
   int length = munchInt();
   itsPos += length;
 
@@ -168,30 +171,33 @@ void GccV3Demangler::readType()
   itsPos += qual.length();
 }
 
-std::string GccV3Demangler::readQualifiers() {
+std::string GccV3Demangler::readQualifiers()
+{
   std::string qual;
-  while (true) {
-    switch (itsBuf[itsPos]) {
-    case 'P':
-      qual.insert(0, "*");
-      itsBuf.erase(itsPos, 1);
-      break;
-    case 'R':
-      qual.insert(0, "&");
-      itsBuf.erase(itsPos, 1);
-      break;
-    case 'V':
-      qual.insert(0, " volatile");
-      itsBuf.erase(itsPos, 1);
-      break;
-    case 'K':
-      qual.insert(0, " const");
-      itsBuf.erase(itsPos, 1);
-      break;
-    default:
-      return qual;
+  while (true)
+    {
+      switch (itsBuf[itsPos])
+        {
+        case 'P':
+          qual.insert(0, "*");
+          itsBuf.erase(itsPos, 1);
+          break;
+        case 'R':
+          qual.insert(0, "&");
+          itsBuf.erase(itsPos, 1);
+          break;
+        case 'V':
+          qual.insert(0, " volatile");
+          itsBuf.erase(itsPos, 1);
+          break;
+        case 'K':
+          qual.insert(0, " const");
+          itsBuf.erase(itsPos, 1);
+          break;
+        default:
+          return qual;
+        }
     }
-  }
 
   return qual;
 }
@@ -289,7 +295,8 @@ DOTRACE("gcc_v3_demangle");
 //  template <class T1>
 //  class Tplate3 { struct Xt {}; };
 
-//  int main() {
+//  int main()
+//  {
 //    printboth(typeid(int).name());
 //    printboth(typeid(double).name());
 //    printboth(typeid(i).name());

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu Aug  9 18:40:31 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclValue : public Value {
+class Tcl::TclValue : public Value
+{
 public:
   template <class T>
   TclValue(T t) : itsObjPtr(t) {}

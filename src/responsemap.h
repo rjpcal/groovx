@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:35:06 2001
-// written: Wed Aug  8 20:16:38 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 #include "tcl/tclobjptr.h"
 #include "tcl/tclregexp.h"
 
-class ResponseMap {
+class ResponseMap
+{
 public:
   ResponseMap(const char* rep) :
     itsStringRep(rep),
@@ -84,7 +85,8 @@ private:
     isItDirty = false;
   }
 
-  class MapItem {
+  class MapItem
+  {
   public:
     MapItem(Tcl::ObjPtr obj, int rv) : regExp(obj), responseValue(rv) {}
 

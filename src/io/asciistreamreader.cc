@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class AttributeReadError : public IO::ReadError {
+class AttributeReadError : public IO::ReadError
+{
 public:
   AttributeReadError(const fstring& attrib_name) :
     IO::ReadError(fstring("input failed while reading attribute: ",
@@ -53,7 +54,8 @@ public:
   {}
 };
 
-class AsciiStreamReader::Impl {
+class AsciiStreamReader::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -69,7 +71,8 @@ public:
   // Nested types
 public:
 
-  class ObjectMap {
+  class ObjectMap
+  {
   private:
     typedef std::map<Util::UID, Ref<IO::IoObject> > MapType;
     MapType itsMap;
@@ -130,7 +133,8 @@ public:
     void clear() { itsMap.clear(); }
   };
 
-  struct Attrib {
+  struct Attrib
+  {
   private:
     Attrib(); // not implemented
 
@@ -142,7 +146,8 @@ public:
     fstring value;
   };
 
-  class AttribMap {
+  class AttribMap
+  {
   private:
     fstring itsObjTag;
 

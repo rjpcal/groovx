@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Thu Aug  9 18:28:49 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,8 @@
 
 #include <tcl.h>
 
-class Tcl::Code::EvalError : public Tcl::TclError {
+class Tcl::Code::EvalError : public Tcl::TclError
+{
 public:
   EvalError(Tcl_Obj* cmd_obj) :
     Tcl::TclError(fstring("error while evaluating ", Tcl_GetString(cmd_obj)))

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,8 @@ namespace
   const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 3;
 
 #ifdef TIME_TRACE
-  inline void TimeTraceNL(const char* loc, int msec) {
+  inline void TimeTraceNL(const char* loc, int msec)
+  {
     Util::log() << "in " << loc << ", elapsed time == " << msec << '\n';
   }
 #else
@@ -72,7 +73,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver::Impl {
+class ExptDriver::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -210,7 +212,8 @@ DOTRACE("ExptDriver::Impl::Impl");
 
   fstring cmd_line("command line: ");
 
-  for (int i = 0; i < argc; ++i) {
+  for (int i = 0; i < argc; ++i)
+  {
     cmd_line.append(argv[i]);
     cmd_line.append(" ");
   }
@@ -223,7 +226,8 @@ ExptDriver::Impl::~Impl()
 DOTRACE("ExptDriver::Impl::~Impl");
 }
 
-void ExptDriver::Impl::doAutosave() {
+void ExptDriver::Impl::doAutosave()
+{
 DOTRACE("ExptDriver::Impl::doAutosave");
   try
     {
@@ -246,7 +250,8 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 //
 //--------------------------------------------------------------------
 
-bool ExptDriver::Impl::needAutosave() const {
+bool ExptDriver::Impl::needAutosave() const
+{
 DOTRACE("ExptDriver::Impl::needAutosave");
   if ( !haveValidBlock() ) return false;
 
@@ -255,7 +260,8 @@ DOTRACE("ExptDriver::Impl::needAutosave");
            !(itsAutosaveFile.empty()) );
 }
 
-void ExptDriver::Impl::doUponCompletion() const {
+void ExptDriver::Impl::doUponCompletion() const
+{
 DOTRACE("ExptDriver::Impl::doUponCompletion");
   if (itsInterp.hasCommand("Expt::doUponCompletion"))
     {
@@ -270,7 +276,8 @@ DOTRACE("ExptDriver::Impl::doUponCompletion");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::readFrom(IO::Reader* reader) {
+void ExptDriver::Impl::readFrom(IO::Reader* reader)
+{
 DOTRACE("ExptDriver::Impl::readFrom");
 
   reader->ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
@@ -294,7 +301,8 @@ DOTRACE("ExptDriver::Impl::readFrom");
   itsInterp.createProc("Expt", "doUponCompletion", "", proc_body.c_str());
 }
 
-void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
+void ExptDriver::Impl::writeTo(IO::Writer* writer) const
+{
 DOTRACE("ExptDriver::Impl::writeTo");
 
   writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 3,
@@ -324,7 +332,8 @@ DOTRACE("ExptDriver::Impl::writeTo");
 ///////////////////////////////////////////////////////////////////////
 
 
-void ExptDriver::Impl::edBeginExpt() {
+void ExptDriver::Impl::edBeginExpt()
+{
 DOTRACE("ExptDriver::Impl::edBeginExpt");
 
   ensureHasBlock();
@@ -341,14 +350,16 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
 }
 
 
-void ExptDriver::Impl::edEndTrial() {
+void ExptDriver::Impl::edEndTrial()
+{
 DOTRACE("ExptDriver::Impl::edEndTrial");
 
   if ( needAutosave() ) { doAutosave(); }
 }
 
 
-void ExptDriver::Impl::edNextBlock() {
+void ExptDriver::Impl::edNextBlock()
+{
 DOTRACE("ExptDriver::Impl::edNextBlock");
 
   ++itsCurrentBlockIdx;
@@ -364,7 +375,8 @@ DOTRACE("ExptDriver::Impl::edNextBlock");
 }
 
 
-void ExptDriver::Impl::edHaltExpt() const {
+void ExptDriver::Impl::edHaltExpt() const
+{
 DOTRACE("ExptDriver::Impl::edHaltExpt");
 
   if ( haveValidBlock() )
@@ -374,7 +386,8 @@ DOTRACE("ExptDriver::Impl::edHaltExpt");
 }
 
 
-void ExptDriver::Impl::edResumeExpt() {
+void ExptDriver::Impl::edResumeExpt()
+{
 DOTRACE("ExptDriver::Impl::edResumeExpt");
   ensureHasBlock();
 
@@ -382,7 +395,8 @@ DOTRACE("ExptDriver::Impl::edResumeExpt");
 }
 
 
-void ExptDriver::Impl::edClearExpt() {
+void ExptDriver::Impl::edClearExpt()
+{
 DOTRACE("ExptDriver::Impl::edClearExpt");
   edHaltExpt();
 
@@ -391,7 +405,8 @@ DOTRACE("ExptDriver::Impl::edClearExpt");
 }
 
 
-void ExptDriver::Impl::edResetExpt() {
+void ExptDriver::Impl::edResetExpt()
+{
 DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
@@ -407,7 +422,8 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 }
 
 
-void ExptDriver::Impl::edEndExpt() {
+void ExptDriver::Impl::edEndExpt()
+{
 DOTRACE("ExptDriver::Impl::edEndExpt");
 
   Util::log() << "expt completed in "
@@ -430,7 +446,8 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::Impl::storeData() {
+void ExptDriver::Impl::storeData()
+{
 DOTRACE("ExptDriver::Impl::storeData");
 
   edHaltExpt();
@@ -484,7 +501,8 @@ ExptDriver::ExptDriver(int argc, char** argv, Tcl_Interp* interp) :
 DOTRACE("ExptDriver::ExptDriver");
 }
 
-ExptDriver::~ExptDriver() {
+ExptDriver::~ExptDriver()
+{
 DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Sun Jul 22 23:43:58 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,8 @@
 #define CSTDDEF_DEFINED
 #endif
 
-namespace {
+namespace
+{
   // Note: assumes long is at least 32 bits.
   const int num_primes = 28;
   const unsigned long prime_list[num_primes] =
@@ -51,7 +52,8 @@ namespace {
 }
 
 template <class key_type>
-struct default_hasher {
+struct default_hasher
+{
 public:
   size_t operator()(const key_type& key);
 };
@@ -77,7 +79,8 @@ size_t default_hasher<const char*>::operator()(const char* const& key)
 };
 
 template <class string_type>
-struct string_hasher {
+struct string_hasher
+{
 public:
   size_t operator()(const string_type& key)
     {
@@ -87,14 +90,16 @@ public:
 
 template <class key_type, class value_type,
   class hash_func = default_hasher<key_type> >
-class hash_array {
+class hash_array
+{
 
   //
   // nested types and typedefs
   //
 
 public:
-  struct entry_type {
+  struct entry_type
+  {
     entry_type(const key_type& k, const value_type& v) :
       key(k), value(v) {}
 
@@ -121,7 +126,8 @@ public:
   class iterator;
   friend class iterator;
 
-  class iterator {
+  class iterator
+  {
   private:
     friend class hash_array;
 
@@ -178,7 +184,8 @@ public:
     }
 
     reference operator*() { return list_itr.operator*(); }
-    pointer operator->() {
+    pointer operator->()
+    {
 #ifdef LOCAL_DEBUG
       DebugEval(table_itr - buckets_ptr->begin());
       DebugEvalNL(&*list_itr);
@@ -194,10 +201,11 @@ public:
               {
                 if (table_itr >= (buckets_ptr->end()-1))
                   at_end = true;
-                else {
-                  ++table_itr;
-                  start_next_nonempty_bucket();
-                }
+                else
+                  {
+                    ++table_itr;
+                    start_next_nonempty_bucket();
+                  }
               }
           }
         return *this;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jul 19 21:10:57 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Pkg : public PkgBase {
+class Tcl::Pkg : public PkgBase
+{
 public:
   Pkg(Tcl_Interp* interp, const char* pkg_name, const char* version);
 
@@ -139,7 +140,8 @@ namespace Util { class Object; }
 
 /** ObjCaster **/
 
-class Tcl::ObjCaster {
+class Tcl::ObjCaster
+{
 protected:
   ObjCaster();
 
@@ -158,7 +160,8 @@ public:
 namespace Tcl
 {
   template <class C>
-  class CObjCaster : public ObjCaster {
+  class CObjCaster : public ObjCaster
+  {
   public:
     virtual bool isMyType(const Util::Object* obj)
     {

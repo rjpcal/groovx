@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Thu Aug  9 11:43:03 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor0 : private FuncHolder<Func> {
+  class Functor0 : private FuncHolder<Func>
+  {
   public:
     Functor0<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -137,7 +138,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor0<void, Func> : private FuncHolder<Func> {
+  class Functor0<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor0<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -155,7 +157,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor1 : private FuncHolder<Func> {
+  class Functor1 : private FuncHolder<Func>
+  {
   public:
     Functor1<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -167,7 +170,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor1<void, Func> : private FuncHolder<Func> {
+  class Functor1<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor1<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -186,7 +190,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor2 : private FuncHolder<Func> {
+  class Functor2 : private FuncHolder<Func>
+  {
   public:
     Functor2<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -198,7 +203,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor2<void, Func> : private FuncHolder<Func> {
+  class Functor2<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor2<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -217,7 +223,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor3 : private FuncHolder<Func> {
+  class Functor3 : private FuncHolder<Func>
+  {
   public:
     Functor3<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -229,7 +236,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor3<void, Func> : private FuncHolder<Func> {
+  class Functor3<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor3<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -248,7 +256,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor4 : private FuncHolder<Func> {
+  class Functor4 : private FuncHolder<Func>
+  {
   public:
     Functor4<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -261,7 +270,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor4<void, Func> : private FuncHolder<Func> {
+  class Functor4<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor4<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -281,7 +291,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor5 : private FuncHolder<Func> {
+  class Functor5 : private FuncHolder<Func>
+  {
   public:
     Functor5<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -294,7 +305,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor5<void, Func> : private FuncHolder<Func> {
+  class Functor5<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor5<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -314,7 +326,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor6 : private FuncHolder<Func> {
+  class Functor6 : private FuncHolder<Func>
+  {
   public:
     Functor6<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -327,7 +340,8 @@ namespace Tcl
   };
 
   template <class Func>
-  class Functor6<void, Func> : private FuncHolder<Func> {
+  class Functor6<void, Func> : private FuncHolder<Func>
+  {
   public:
     Functor6<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
@@ -404,7 +418,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class Functor>
-  class GenericCmd : public TclCmd, private FuncHolder<Functor> {
+  class GenericCmd : public TclCmd, private FuncHolder<Functor>
+  {
   public:
 
     GenericCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
@@ -437,7 +452,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class Functor>
-  class GenericVecCmd : public VecCmd, private FuncHolder<Functor> {
+  class GenericVecCmd : public VecCmd, private FuncHolder<Functor>
+  {
   public:
     GenericVecCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
                            const char* usage, int nargs, unsigned int keyarg)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Aug 21 15:36:54 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,8 @@ namespace Util
  *
  **/
 
-class InvalidIdError : public Util::Error {
+class InvalidIdError : public Util::Error
+{
 public:
   InvalidIdError(const fstring& msg) : Util::Error(msg) {};
 
@@ -55,7 +56,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ObjDb {
+class ObjDb
+{
 private:
   static ObjDb theInstance;
 
@@ -82,7 +84,8 @@ public:
   Iterator objects() const;
 
   template <class T>
-  class CastingIterator {
+  class CastingIterator
+  {
     Iterator itsItr;
 
     void advanceToValid()

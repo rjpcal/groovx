@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 24 16:28:40 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,8 @@
 
 #include "util/volatileobject.h"
 
-class GrObjNode : public Gnode {
+class GrObjNode : public Gnode
+{
   borrowed_ptr<GrObj> itsObj;
 
 public:
@@ -56,7 +57,8 @@ namespace
   const IO::VersionId GROBJ_SERIAL_VERSION_ID = 1;
 }
 
-class GrObjImpl : public Util::VolatileObject {
+class GrObjImpl : public Util::VolatileObject
+{
 private:
   GrObjImpl(const GrObjImpl&);
   GrObjImpl& operator=(const GrObjImpl&);

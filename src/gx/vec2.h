@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Thu Aug  9 15:27:50 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,23 +24,24 @@ namespace Gfx
 
   namespace PointAlgo
   {
-	 const double PI = 3.14159265359;
+    const double PI = 3.14159265359;
 
-	 double deg2rad(double degrees);
-	 double rad2deg(double radians);
+    double deg2rad(double degrees);
+    double rad2deg(double radians);
 
-	 void normRad(double& radians);
-	 void normDeg(double& degrees);
+    void normRad(double& radians);
+    void normDeg(double& degrees);
 
-	 double thetaDeg(double y, double x);
+    double thetaDeg(double y, double x);
 
-	 void setPolarPoint(Vec2<double>& point,
-							  double length, double degrees);
+    void setPolarPoint(Vec2<double>& point,
+                       double length, double degrees);
   }
 }
 
 template<class V>
-class Gfx::Vec2 {
+class Gfx::Vec2
+{
 public:
   Vec2(V x=0, V y=0) : xx(x), yy(y) {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sun Aug 26 08:35:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Block::Impl {
+class Block::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Fri Aug 10 12:38:46 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@
 
 // Used to allow a shared_ptr to be initialized before we pass it to
 // the Bitmap constructor
-struct XRHolder {
+struct XRHolder
+{
   XRHolder(shared_ptr<XBmapRenderer> p) : itsRenderer(p) {}
   shared_ptr<XBmapRenderer> itsRenderer;
 };
@@ -41,7 +42,8 @@ struct XRHolder {
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class XBitmap : private XRHolder, public Bitmap {
+class XBitmap : private XRHolder, public Bitmap
+{
 protected:
   /// Construct an empty bitmap.
   XBitmap();

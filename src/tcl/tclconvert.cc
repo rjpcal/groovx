@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Mon Aug 20 15:37:25 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,8 @@ extern Tcl_ObjType   tclStringType;
 
 namespace
 {
-  class SafeUnshared {
+  class SafeUnshared
+  {
   private:
     Tcl_Obj* itsObj;
     bool isItOwning;

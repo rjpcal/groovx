@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Thu Aug 23 16:12:43 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,8 @@ namespace Tcl
   class Timer;
 }
 
-class Tcl::Timer {
+class Tcl::Timer
+{
 public:
   Timer(unsigned int msec, bool repeat = false);
   ~Timer();

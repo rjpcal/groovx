@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:11 1999
-// written: Wed Aug  8 20:16:38 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class KbdResponseHdlr : public EventResponseHdlr {
+class KbdResponseHdlr : public EventResponseHdlr
+{
   // creators
 protected:
   KbdResponseHdlr();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Thu Aug  9 07:06:03 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,10 +60,11 @@ void CreatorMapBase::clear()
 DOTRACE("CreatorMapBase::clear");
   for (Impl::MapType::iterator ii = itsImpl->itsMap.begin();
        ii != itsImpl->itsMap.end();
-       ++ii) {
-    killPtr(ii->value);
-    ii->value = 0;
-  }
+       ++ii)
+    {
+      killPtr(ii->value);
+      ii->value = 0;
+    }
 
   delete itsImpl;
 }

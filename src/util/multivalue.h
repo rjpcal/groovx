@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Wed Aug 22 17:05:06 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,8 @@
 #endif
 
 template <class T>
-class TMultiValue : public Value {
+class TMultiValue : public Value
+{
 public:
   virtual Value* clone() const = 0;
   virtual fstring getNativeTypeName() const = 0;

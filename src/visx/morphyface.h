@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Thu Aug 16 11:03:23 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MorphyFace : public GrObj {
+class MorphyFace : public GrObj
+{
   //////////////
   // creators //
   //////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 07:54:29 2001
-// written: Mon Aug 13 11:17:55 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,8 @@
 #define CSTDDEF_DEFINED
 #endif
 
-class FreeListBase {
+class FreeListBase
+{
 private:
   struct Node
   {
@@ -40,7 +41,8 @@ public:
 };
 
 template <class T>
-class FreeList : private FreeListBase {
+class FreeList : private FreeListBase
+{
 public:
   FreeList() : FreeListBase(sizeof(T)) {}
 

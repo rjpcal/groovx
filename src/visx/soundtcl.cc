@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,8 @@ namespace SoundTcl
 //
 //---------------------------------------------------------------------
 
-class SoundTcl::SoundPkg : public Tcl::Pkg {
+class SoundTcl::SoundPkg : public Tcl::Pkg
+{
 public:
   SoundPkg(const Tcl::Interp& interp) :
     Tcl::Pkg(interp.intp(), "Sound", "$Revision$")

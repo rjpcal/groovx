@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,8 @@ namespace
   }
 }
 
-class AsciiStreamWriter::Impl {
+class AsciiStreamWriter::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

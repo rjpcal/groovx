@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Wed Aug 22 18:25:37 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@
 
 #include "util/trace.h"
 
-class GxSeparator::Impl : public Util::VolatileObject {
+class GxSeparator::Impl : public Util::VolatileObject
+{
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Aug 15 17:56:37 2001
+// written: Sun Aug 26 08:35:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,8 @@ class fstring;
  * Value object.
  *
  **/
-class ValueError : public Util::Error {
+class ValueError : public Util::Error
+{
 public:
   ValueError(const fstring& msg) : Util::Error(msg) {};
 
@@ -66,7 +67,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Value {
+class Value
+{
 public:
 
   /// Default constructor.
@@ -150,7 +152,8 @@ inline STD_IO::istream& operator>>(STD_IO::istream& is, Value& val)
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class TValue : public Value {
+class TValue : public Value
+{
 public:
   /// Construct with an initial value \a val.
   TValue(const T& val) : itsVal(val) {}
@@ -207,7 +210,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class TValuePtr : public Value {
+class TValuePtr : public Value
+{
 public:
   /// Construct and refer to \c valRef.
   TValuePtr(T& valRef) : itsValPtr(&valRef) {}

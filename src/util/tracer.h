@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb  8 17:48:17 2000
-// written: Thu May 10 12:04:35 2001
+// written: Sun Aug 26 08:38:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,13 @@
 #ifndef TRACER_H_DEFINED
 #define TRACER_H_DEFINED
 
-namespace Util {
+namespace Util
+{
   class Tracer;
 }
 
-class Util::Tracer {
+class Util::Tracer
+{
 public:
   Tracer() : itsStatus(false) {}
 

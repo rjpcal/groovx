@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,8 @@ class Value;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::WriteError : public Util::Error {
+class IO::WriteError : public Util::Error
+{
 public:
   WriteError(const fstring& msg) : Util::Error(msg) {};
 
@@ -62,7 +63,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::WriteVersionError : public Util::Error {
+class IO::WriteVersionError : public Util::Error
+{
 public:
   /// Construct with information relevant to the problem
   WriteVersionError(const char* classname,
@@ -88,7 +90,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::Writer {
+class IO::Writer
+{
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.

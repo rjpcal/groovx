@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 10:55:51 1999
-// written: Fri Aug 10 10:50:05 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Application {
+class Application
+{
 protected:
   /// Default no-op constructor.
   Application(int argc, char** argv, const char* library_env_var = 0);

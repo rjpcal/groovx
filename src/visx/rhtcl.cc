@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Aug 25 21:56:53 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,8 @@ namespace SerialRhTcl
   class SerialRhPkg;
 }
 
-class SerialRhTcl::SerialEventSource {
+class SerialRhTcl::SerialEventSource
+{
 public:
   SerialEventSource(Tcl_Interp* interp, const char* serial_device) :
     itsInterp(interp),
@@ -65,7 +66,8 @@ private:
   Tcl_Interp* itsInterp;
   Util::SerialPort itsPort;
 
-  static void setupProc(ClientData /*clientData*/, int flags) {
+  static void setupProc(ClientData /*clientData*/, int flags)
+  {
     if ( !(flags & TCL_FILE_EVENTS) ) return;
 
     Tcl_Time block_time;
@@ -75,7 +77,8 @@ private:
     Tcl_SetMaxBlockTime(&block_time);
   }
 
-  static void checkProc(ClientData clientData, int flags) {
+  static void checkProc(ClientData clientData, int flags)
+  {
     if ( !(flags & TCL_FILE_EVENTS) ) return;
 
     SerialEventSource* source = static_cast<SerialEventSource*>(clientData);

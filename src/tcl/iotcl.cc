@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Tue Aug 21 16:19:28 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,7 +142,8 @@ namespace
 
 namespace IoTcl
 {
-  class ObjDbPkg : public Tcl::Pkg {
+  class ObjDbPkg : public Tcl::Pkg
+  {
 
   public:
     ObjDbPkg(Tcl_Interp* interp) :

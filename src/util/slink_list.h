@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Fri Aug 17 13:11:59 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class slink_list {
+class slink_list
+{
 public:
 
   //
@@ -48,7 +49,8 @@ public:
   // Nested types: node and iterators
   //
 
-  struct node {
+  struct node
+  {
     node(const T& v, node* n) : val(v), next(n) {}
 
     node(const node& other) : val(other.val), next(other.next) {}
@@ -60,7 +62,8 @@ public:
     node* next;
   };
 
-  class iterator {
+  class iterator
+  {
   private:
     node* nn;
 
@@ -89,7 +92,8 @@ public:
     bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
-  class const_iterator {
+  class const_iterator
+  {
   private:
     node* nn;
 

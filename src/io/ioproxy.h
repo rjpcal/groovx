@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Wed Aug 22 11:01:22 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,10 +34,12 @@
 #define TYPEINFO_DEFINED
 #endif
 
-namespace IO {
+namespace IO
+{
 
 template <class C>
-class IoProxy : public IoObject {
+class IoProxy : public IoObject
+{
 protected:
   IoProxy(C* ref) : IoObject(), itsReferand(ref) {}
   virtual ~IoProxy() {}
@@ -71,7 +73,8 @@ inline Util::Ref<IoObject> makeProxy(C* ref)
 
 
 template <class C>
-class ConstIoProxy : public IoObject {
+class ConstIoProxy : public IoObject
+{
 protected:
   ConstIoProxy(const C* ref) : IoObject(), itsReferand(const_cast<C*>(ref)) {}
   virtual ~ConstIoProxy() {}

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Wed Aug  8 20:16:37 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 class fstring;
 
 ///
-class System {
+class System
+{
 protected:
   ///
   System();

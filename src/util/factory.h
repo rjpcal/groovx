@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Aug  8 20:16:37 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,8 @@ namespace FactoryError
  *
  **/
 template <class BasePtr>
-class CreatorBase {
+class CreatorBase
+{
 public:
   /// Return a clone of this Creator
   virtual CreatorBase* clone() const = 0;
@@ -64,7 +65,8 @@ public:
  *
  **/
 template <class BasePtr, class DerivedPtr>
-class CreatorFromFunc : public CreatorBase<BasePtr> {
+class CreatorFromFunc : public CreatorBase<BasePtr>
+{
 public:
   typedef DerivedPtr (*FuncType) ();
 
@@ -94,7 +96,8 @@ private:
  *
  **/
 
-class CreatorMapBase {
+class CreatorMapBase
+{
 public:
   /// Default constructor.
   CreatorMapBase();
@@ -132,7 +135,8 @@ private:
  **/
 
 template<class BasePtr>
-class CreatorMap : private CreatorMapBase {
+class CreatorMap : private CreatorMapBase
+{
 public:
   /// Virtual destructor calls \c clear() to free all memory.
   virtual ~CreatorMap() { CreatorMapBase::clear(); }
@@ -161,7 +165,8 @@ protected:
  *
  **/
 
-class FactoryBase {
+class FactoryBase
+{
 public:
   virtual ~FactoryBase();
 };
@@ -181,7 +186,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class BasePtr>
-class Factory : public FactoryBase {
+class Factory : public FactoryBase
+{
 private:
   CreatorMap<BasePtr> itsMap;
 

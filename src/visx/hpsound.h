@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Aug  9 07:06:03 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,8 @@ using namespace HPSOUND_CC_LOCAL;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class HpAudioSound : public Sound {
+class HpAudioSound : public Sound
+{
 public:
   HpAudioSound(const char* filename = 0);
   virtual ~HpAudioSound();
@@ -124,10 +125,11 @@ DOTRACE("HpAudioSound::HpAudioSound");
 HpAudioSound::~HpAudioSound()
 {
 DOTRACE("HpAudioSound::~HpAudioSound");
-  if ( theAudio != 0 ) {
-    if (itsSBucket)
-      ADestroySBucket( theAudio, itsSBucket, NULL );
-  }
+  if ( theAudio != 0 )
+    {
+      if (itsSBucket)
+        ADestroySBucket( theAudio, itsSBucket, NULL );
+    }
 }
 
 void HpAudioSound::readFrom(IO::Reader* reader)

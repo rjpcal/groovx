@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Thu Jul 19 16:36:14 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@ ResponseHandler::ResponseHandler()
 DOTRACE("ResponseHandler::ResponseHandler");
 }
 
-ResponseHandler::~ResponseHandler() {
+ResponseHandler::~ResponseHandler()
+{
 DOTRACE("ResponseHandler::~ResponseHandler");
 }
 

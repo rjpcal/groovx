@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Aug 22 11:15:27 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IO::LegacyReader::Impl {
+class IO::LegacyReader::Impl
+{
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
@@ -318,7 +319,8 @@ DOTRACE("IO::LegacyReader::readRoot");
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IO::LegacyWriter::Impl {
+class IO::LegacyWriter::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -371,7 +373,8 @@ public:
     }
 
 private:
-  class Indenter {
+  class Indenter
+  {
   private:
     Impl* itsOwner;
 

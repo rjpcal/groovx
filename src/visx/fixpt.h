@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:52 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FixPt : public GrObj {
+class FixPt : public GrObj
+{
 protected:
   /// Construct with initial values for the cross length and pixel-width.
   FixPt (double len=0.1, int wid=1);

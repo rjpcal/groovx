@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 21 15:30:29 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,8 @@ namespace Util
 }
 
 template <class T>
-class BoundsChecker {
+class BoundsChecker
+{
 private:
   BoundsChecker(const T& min, const T& max) : itsMin(min), itsMax(max) {}
 
@@ -82,7 +83,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 
-class FieldImpl {
+class FieldImpl
+{
 public:
   virtual ~FieldImpl();
 
@@ -138,7 +140,8 @@ namespace
 
 /** DataMemberFieldImpl */
 template <class C, class T>
-class DataMemberFieldImpl : public FieldImpl {
+class DataMemberFieldImpl : public FieldImpl
+{
 public:
 
   typedef Deref<T>::Type DerefT;
@@ -192,7 +195,8 @@ private:
 
 /** ValueFieldImpl */
 template <class C, class V>
-class ValueFieldImpl : public FieldImpl {
+class ValueFieldImpl : public FieldImpl
+{
 public:
 
   ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
@@ -236,7 +240,8 @@ private:
 
 /** FuncMemberFieldImpl */
 template <class C, class T>
-class FuncMemberFieldImpl : public FieldImpl {
+class FuncMemberFieldImpl : public FieldImpl
+{
   typedef T (C::* Getter)() const;
   typedef void (C::* Setter)(T);
 
@@ -291,7 +296,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Field {
+class Field
+{
 private:
   const fstring itsName;
   shared_ptr<FieldImpl> itsFieldImpl;
@@ -416,7 +422,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FieldMap {
+class FieldMap
+{
 private:
   class Impl;
   Impl* itsImpl;

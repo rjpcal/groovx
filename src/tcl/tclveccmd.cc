@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Thu Aug  9 18:44:56 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,8 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecContext : public Tcl::Context {
+class Tcl::VecContext : public Tcl::Context
+{
 public:
   VecContext(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const objv[],
              unsigned int num_calls) :

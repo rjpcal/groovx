@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Fri Aug 24 16:59:39 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-class EmptyNode : public GxNode {
+class EmptyNode : public GxNode
+{
 private:
   EmptyNode() {}
 public:
@@ -55,7 +56,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget::Impl : public Util::VolatileObject {
+class GWT::Widget::Impl : public Util::VolatileObject
+{
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),

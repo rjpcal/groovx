@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Tue Aug 21 16:09:26 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,8 @@ FieldImpl::~FieldImpl() {}
 //
 ///////////////////////////////////////////////////////////////////////
 
-class FieldMap::Impl {
+class FieldMap::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

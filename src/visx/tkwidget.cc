@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sat Jul 21 19:01:24 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@
 #ifdef LOCAL_DEBUG
 #include <iostream.h>
 
-class DbgButtonListener : public GWT::ButtonListener {
+class DbgButtonListener : public GWT::ButtonListener
+{
 public:
   static DbgButtonListener* make() { return new DbgButtonListener; }
 
@@ -45,7 +46,8 @@ public:
   }
 };
 
-class DbgKeyListener : public GWT::KeyListener {
+class DbgKeyListener : public GWT::KeyListener
+{
 public:
   static DbgKeyListener* make() { return new DbgKeyListener; }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Thu May 10 12:04:35 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -16,7 +16,8 @@
 #ifndef RAND_H_DEFINED
 #define RAND_H_DEFINED
 
-namespace Util {
+namespace Util
+{
 
 class Randint { // uniform distribution in the interval [0,max]
   unsigned long randx;

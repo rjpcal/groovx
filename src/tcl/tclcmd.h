@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Aug  9 18:46:29 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclCmd {
+class Tcl::TclCmd
+{
 public:
   /** Construct with basic properties for the command. If \a
       exact_objc is true, then the \a objc of a command invocation is
@@ -116,7 +117,8 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Context {
+class Tcl::Context
+{
 public:
   friend class TclCmd;
 

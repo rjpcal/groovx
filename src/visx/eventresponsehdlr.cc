@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sun Aug 26 08:53:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class EventResponseHdlr::Impl {
+class EventResponseHdlr::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -58,7 +59,8 @@ public:
   class ERHActiveState;
   friend class ERHActiveState;
 
-  class ERHActiveState {
+  class ERHActiveState
+  {
   private:
     Util::SoftRef<GWT::Widget> itsWidget;
     TrialBase& itsTrial;
@@ -273,7 +275,8 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-EventResponseHdlr* EventResponseHdlr::make() {
+EventResponseHdlr* EventResponseHdlr::make()
+{
 DOTRACE("EventResponseHdlr::make");
   return new EventResponseHdlr;
 }

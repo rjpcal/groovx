@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,7 +71,8 @@ class fstring;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class EventResponseHdlr : public ResponseHandler {
+class EventResponseHdlr : public ResponseHandler
+{
 public:
   /** This tracer dynamically controls the tracing of \c
       EventResponseHdlr member functions. */

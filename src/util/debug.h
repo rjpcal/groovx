@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:52 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,8 @@
 #  endif
 #endif
 
-namespace Debug {
+namespace Debug
+{
   void AssertImpl        (const char* what, const char* where, int line_no);
   void PreconditionImpl  (const char* what, const char* where, int line_no);
   void PostconditionImpl (const char* what, const char* where, int line_no);

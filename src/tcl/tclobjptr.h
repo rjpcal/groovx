@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Thu Aug  9 18:52:23 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ObjPtr {
+class ObjPtr
+{
 public:
   /// Default constructor with a shared and empty Tcl_Obj*.
   ObjPtr();

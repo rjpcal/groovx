@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Wed Aug 22 11:45:43 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,7 +107,8 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
       }
   }
 
-  class Lock {
+  class Lock
+  {
     Lock(const Lock&);
     Lock& operator=(const Lock&);
 

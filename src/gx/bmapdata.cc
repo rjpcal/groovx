@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Mon Aug 13 12:13:10 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Gfx::BmapData::Impl {
+class Gfx::BmapData::Impl
+{
 public:
   Impl(const Gfx::Vec2<int>& extent, int bits_per_pixel, int byte_alignment) :
     itsExtent(extent),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Aug 20 13:34:18 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,8 @@ class ostream;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class string_rep {
+class string_rep
+{
 private:
   string_rep(const string_rep& other); // not implemented
   string_rep& operator=(const string_rep& other); // not implemented
@@ -112,7 +113,8 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class fstring {
+class fstring
+{
 public:
   fstring();
   fstring(const fstring& other);

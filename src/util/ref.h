@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Aug 22 10:45:47 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,42 +44,47 @@ using Util::SoftRef;
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace Util { namespace RefHelper {
-  bool isValidId(Util::UID id);
-  Util::Object* getCheckedItem(Util::UID id);
+namespace Util
+{
+  namespace RefHelper
+  {
+    bool isValidId(Util::UID id);
+    Util::Object* getCheckedItem(Util::UID id);
 
-  void insertItem(Util::Object* obj);
+    void insertItem(Util::Object* obj);
 
-  void throwError(const char* msg);
+    void throwError(const char* msg);
 
 #ifndef ACC_COMPILER
 #  define DYNCAST dynamic_cast
 #else
-  template <class T, class U>
-  T DYNCAST(U& u) { return dynamic_cast<T>(u); }
+    template <class T, class U>
+    T DYNCAST(U& u) { return dynamic_cast<T>(u); }
 #endif
 
-  template <class T>
-  inline T* getCastedItem(Util::UID id)
-  {
-    Util::Object* obj = getCheckedItem(id);
-    T& t = DYNCAST<T&>(*obj);
-    return &t;
-  }
+    template <class T>
+    inline T* getCastedItem(Util::UID id)
+    {
+      Util::Object* obj = getCheckedItem(id);
+      T& t = DYNCAST<T&>(*obj);
+      return &t;
+    }
 
 #ifdef DYNCAST
 #undef DYNCAST
 #endif
 
-  template <>
-  inline Util::Object* getCastedItem<Util::Object>(Util::UID id)
-  { return getCheckedItem(id); }
+    template <>
+    inline Util::Object* getCastedItem<Util::Object>(Util::UID id)
+    { return getCheckedItem(id); }
 
-}} // end namespace Util::RefHelpers
+  }
+} // end namespace Util::RefHelpers
 
 
 
-namespace Util {
+namespace Util
+{
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -96,10 +101,12 @@ namespace Util {
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class Ref {
+class Ref
+{
 private:
 
-  class Handle {
+  class Handle
+  {
   public:
     explicit Handle(T* master) : itsMaster(master)
     {
@@ -176,7 +183,8 @@ public:
 // TypeTraits specialization for Util::Ref smart pointer
 
 template <class T>
-struct TypeTraits<Ref<T> > {
+struct TypeTraits<Ref<T> >
+{
   typedef T Pointee;
 };
 
@@ -192,7 +200,8 @@ Ref<To> dynamicCast(Ref<Fr> p)
 
 
 
-namespace Util {
+namespace Util
+{
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -210,13 +219,15 @@ namespace Util {
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class SoftRef {
+class SoftRef
+{
 private:
 
   // This internal helper class manages memory etc., and provides one
   // important guarantee: it will never return an invalid pointer from
   // get() (an exception will be raised if this would fail)
-  class WeakHandle {
+  class WeakHandle
+  {
   private:
     static Util::RefCounts* getCounts(T* master, RefType tp)
     {
@@ -380,7 +391,8 @@ public:
 // TypeTraits specialization for SoftRef smart pointer
 
   template <class T>
-  struct TypeTraits<SoftRef<T> > {
+  struct TypeTraits<SoftRef<T> >
+  {
     typedef T Pointee;
   };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Fri Aug 24 16:31:12 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 
 #include "util/algo.h"
 
-class GrObjScaler : public Gnode {
+class GrObjScaler : public Gnode
+{
 public:
   GrObjScaler(Util::SoftRef<Gnode> child) :
     Gnode(child),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Wed Aug 15 17:57:39 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,8 @@
 
 #include "util/trace.h"
 
-namespace VALUE_CC_LOCAL {
+namespace VALUE_CC_LOCAL
+{
   void raiseValueError(const char* msg ="") { throw ValueError(msg); }
 }
 
@@ -29,11 +30,13 @@ using namespace VALUE_CC_LOCAL;
 
 ValueError::~ValueError() {}
 
-Value::Value() {
+Value::Value()
+{
 DOTRACE("Value::Value");
 }
 
-Value::~Value() {
+Value::~Value()
+{
 DOTRACE("Value::~Value");
 }
 

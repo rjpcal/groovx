@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 11 10:15:41 2000
-// written: Wed Aug  8 12:27:56 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@ namespace Util
   class NullErrorHandler;
 }
 
-class Util::ErrorHandler {
+class Util::ErrorHandler
+{
 public:
   virtual ~ErrorHandler();
 
@@ -29,7 +30,8 @@ public:
   virtual void handleMsg(const char* msg) = 0;
 };
 
-class Util::NullErrorHandler : public Util::ErrorHandler {
+class Util::NullErrorHandler : public Util::ErrorHandler
+{
 public:
   virtual ~NullErrorHandler();
 

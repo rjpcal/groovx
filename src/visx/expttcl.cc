@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sun Aug 26 08:38:30 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -209,7 +209,8 @@ public:
 //
 //---------------------------------------------------------------------
 
-namespace {
+namespace
+{
   Tcl_Interp* exptCreateInterp = 0;
 
   ExptDriver* makeExptDriver()

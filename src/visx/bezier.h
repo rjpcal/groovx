@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Tue Aug 21 09:58:13 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Bezier {
+class Bezier
+{
 private:
   dynamic_block<double> R;      // control points
 
@@ -233,7 +234,8 @@ double Bezier::evalDeriv(double u)
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Bezier4 {
+class Bezier4
+{
 private:
   fixed_block<double> R;        // control points
 

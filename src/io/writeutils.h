@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,12 @@
 #include "io/writer.h"
 #endif
 
-namespace IO {
+namespace IO
+{
 
 /// Utilities for writing sequences to a \c IO::Writer.
-class WriteUtils {
+class WriteUtils
+{
 public:
   /** A generic interface for handling containers, sequences, etc. of
       value types. */

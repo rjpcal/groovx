@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Sun Aug 26 08:35:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TimingHdlr::Impl {
+class TimingHdlr::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

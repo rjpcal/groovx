@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Aug 21 17:16:15 2001
-// written: Tue Aug 21 17:19:30 2001
+// written: Sun Aug 26 08:35:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,8 @@ namespace Util
   class VolatileObject;
 }
 
-class Util::VolatileObject : public virtual Util::Object {
+class Util::VolatileObject : public virtual Util::Object
+{
 public:
   VolatileObject();
   virtual ~VolatileObject();

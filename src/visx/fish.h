@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Aug 21 16:09:26 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Fish : public GrObj {
+class Fish : public GrObj
+{
 public:
   /// This tracer dynamically controls the tracing of \c Fish member functions.
   static Util::Tracer tracer;

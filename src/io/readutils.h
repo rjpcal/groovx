@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Mon Aug 20 12:31:23 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,8 @@
 #include "io/reader.h"
 #endif
 
-namespace IO {
+namespace IO
+{
 /// Utilities for reading sequences from a \c IO::Reader.
 namespace ReadUtils
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:47:13 2001
-// written: Wed Jun 20 18:24:47 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,8 @@ class ostream;
 
 namespace Util
 {
-  class Log {
+  class Log
+  {
     Log(const Log&);
     Log& operator=(const Log&);
 

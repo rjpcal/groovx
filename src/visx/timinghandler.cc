@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Sat Jul 21 20:22:21 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-TimingHandler* TimingHandler::make() {
+TimingHandler* TimingHandler::make()
+{
 DOTRACE("TimingHandler::make");
   return new TimingHandler;
 }

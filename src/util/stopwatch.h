@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 18 10:24:59 1999
-// written: Mon Jun 11 15:08:14 2001
+// written: Sun Aug 26 08:35:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,27 +18,28 @@
 #define TIME_H_DEFINED
 #endif
 
-class StopWatch {
+class StopWatch
+{
 public:
   StopWatch() : itsStartTime() { restart(); }
 
   void restart()
-	 { gettimeofday(&itsStartTime, NULL); }
+    { gettimeofday(&itsStartTime, NULL); }
 
   int elapsedMsec()
-	 {
-		timeval endTime, elapsedTime;
+    {
+      timeval endTime, elapsedTime;
 
-		// Get ending time from previous trial
-		gettimeofday(&endTime, NULL);
+      // Get ending time from previous trial
+      gettimeofday(&endTime, NULL);
 
-		// Compute elapsed time for previous trial
-		elapsedTime.tv_sec = endTime.tv_sec - itsStartTime.tv_sec;
-		elapsedTime.tv_usec = endTime.tv_usec - itsStartTime.tv_usec;
+      // Compute elapsed time for previous trial
+      elapsedTime.tv_sec = endTime.tv_sec - itsStartTime.tv_sec;
+      elapsedTime.tv_usec = endTime.tv_usec - itsStartTime.tv_usec;
 
-		return int(double(elapsedTime.tv_sec)*1000.0 +
-					  double(elapsedTime.tv_usec)/1000.0);
-	 }
+      return int(double(elapsedTime.tv_sec)*1000.0 +
+                 double(elapsedTime.tv_usec)/1000.0);
+    }
 
 private:
   timeval itsStartTime;

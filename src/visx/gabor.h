@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Aug 16 11:03:24 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gabor : public GrObj {
+class Gabor : public GrObj
+{
 protected:
   /// Default constructor.
   Gabor();

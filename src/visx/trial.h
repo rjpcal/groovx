@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Fri Aug 24 11:14:37 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,8 @@ class TimingHdlr;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Trial : public TrialBase, public FieldContainer {
+class Trial : public TrialBase, public FieldContainer
+{
 public:
 
   /** This tracer dynamically controls the tracing of Trial member

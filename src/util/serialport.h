@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:45:35 2000
-// written: Tue Jun 19 15:28:10 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,11 +22,13 @@
 #  include <fstream>
 #endif
 
-namespace Util {
+namespace Util
+{
   class SerialPort;
 }
 
-class Util::SerialPort {
+class Util::SerialPort
+{
 public:
   SerialPort(const char* serial_device);
 

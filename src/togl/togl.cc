@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Fri Aug 24 17:37:23 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -90,7 +90,8 @@ EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
 VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
 
-class Togl::Impl {
+class Togl::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -125,7 +126,8 @@ public:
 
   void postRedisplay()
     {
-      if (!itsUpdatePending) {
+      if (!itsUpdatePending)
+      {
         Tk_DoWhenIdle( dummyRenderCallback, static_cast<ClientData>(this) );
         itsUpdatePending = GL_TRUE;
       }
@@ -135,10 +137,12 @@ public:
 
   void swapBuffers() const
     {
-      if (itsDoubleFlag) {
+      if (itsDoubleFlag)
+      {
         glXSwapBuffers( itsDisplay, windowId() );
       }
-      else {
+      else
+      {
         glFlush();
       }
     }
@@ -305,7 +309,8 @@ static void stereoInit( int stereoEnabled );
  * Setup Togl widget configuration options:
  */
 
-static Tk_ConfigSpec configSpecs[] = {
+static Tk_ConfigSpec configSpecs[] =
+{
   {TK_CONFIG_PIXELS, "-height", "height", "Height",
    DEFAULT_HEIGHT, Tk_Offset(Togl::Impl, itsHeight), 0, NULL},
 
@@ -435,7 +440,8 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
   /*
    * First check if visinfo's visual matches the default/root visual.
    */
-  if (visinfo->visual==DefaultVisual(dpy,scrnum)) {
+  if (visinfo->visual==DefaultVisual(dpy,scrnum))
+  {
     /* use the default/root colormap */
     Colormap cmap;
     cmap = DefaultColormap( dpy, scrnum );
@@ -448,7 +454,8 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
   /*
    * Check if we're using Mesa.
    */
-  if (strstr(glXQueryServerString( dpy, scrnum, GLX_VERSION ), "Mesa")) {
+  if (strstr(glXQueryServerString( dpy, scrnum, GLX_VERSION ), "Mesa"))
+  {
 
     /* Next, if we're using Mesa and displaying on an HP with the
        "Color Recovery" feature and the visual is 8-bit TrueColor,
@@ -457,22 +464,26 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
     Atom hp_cr_maps = XInternAtom( dpy, "_HP_RGB_SMOOTH_MAP_LIST", True );
     if (hp_cr_maps
         && visinfo->visual->c_class==TrueColor
-        && visinfo->depth==8) {
-      int numCmaps;
-      XStandardColormap *standardCmaps;
-      Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
-                                        &numCmaps, hp_cr_maps );
-      if (status) {
-        for (int i=0; i<numCmaps; i++) {
-          if (standardCmaps[i].visualid == visinfo->visual->visualid) {
-            Colormap cmap = standardCmaps[i].colormap;
-            XFree( standardCmaps );
-            return cmap;
+        && visinfo->depth==8)
+      {
+        int numCmaps;
+        XStandardColormap *standardCmaps;
+        Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
+                                          &numCmaps, hp_cr_maps );
+        if (status)
+          {
+            for (int i=0; i<numCmaps; i++)
+              {
+                if (standardCmaps[i].visualid == visinfo->visual->visualid)
+                  {
+                    Colormap cmap = standardCmaps[i].colormap;
+                    XFree( standardCmaps );
+                    return cmap;
+                  }
+              }
+            XFree(standardCmaps);
           }
-        }
-        XFree(standardCmaps);
       }
-    }
   }
 
   /*
@@ -484,22 +495,26 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
                                              XA_RGB_DEFAULT_MAP,
                                              /* replace */ False,
                                              /* retain */ True);
-  if (status == 1) {
-    int numCmaps;
-    XStandardColormap *standardCmaps;
-    Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
-                                      &numCmaps, XA_RGB_DEFAULT_MAP);
-    if (status == 1) {
-      for (int i = 0; i < numCmaps; i++) {
-        if (standardCmaps[i].visualid == visinfo->visualid) {
-          Colormap cmap = standardCmaps[i].colormap;
+  if (status == 1)
+    {
+      int numCmaps;
+      XStandardColormap *standardCmaps;
+      Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
+                                        &numCmaps, XA_RGB_DEFAULT_MAP);
+      if (status == 1)
+        {
+          for (int i = 0; i < numCmaps; i++)
+            {
+              if (standardCmaps[i].visualid == visinfo->visualid)
+                {
+                  Colormap cmap = standardCmaps[i].colormap;
+                  XFree(standardCmaps);
+                  return cmap;
+                }
+            }
           XFree(standardCmaps);
-          return cmap;
         }
-      }
-      XFree(standardCmaps);
     }
-  }
 #endif
 
   /*
@@ -614,7 +629,8 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
   Togl::Impl* impl = static_cast<Togl::Impl*>(clientData);
   int result = TCL_OK;
 
-  if (argc < 2) {
+  if (argc < 2)
+  {
     Tcl_AppendResult(interp, "wrong # args: should be \"",
                      argv[0], " ?options?\"", NULL);
     return TCL_ERROR;
@@ -622,58 +638,71 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
 
   Tk_Preserve((ClientData)impl);
 
-  if (!strncmp(argv[1], "configure", Util::max((unsigned int)1, strlen(argv[1])))) {
-    if (argc == 2) {
+  if (!strncmp(argv[1], "configure", Util::max((unsigned int)1, strlen(argv[1]))))
+  {
+    if (argc == 2)
+    {
       /* Return list of all configuration parameters */
       result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecs,
                                 (char *)impl, (char *)NULL, 0);
     }
-    else if (argc == 3) {
-      if (strcmp(argv[2],"-extensions")==0) {
+    else if (argc == 3)
+    {
+      if (strcmp(argv[2],"-extensions")==0)
+      {
         /* Return a list of OpenGL extensions available */
         char *extensions;
         extensions = (char *) glGetString(GL_EXTENSIONS);
         Tcl_SetResult( interp, extensions, TCL_STATIC );
         result = TCL_OK;
       }
-      else {
+      else
+      {
         /* Return a specific configuration parameter */
         result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecs,
                                   (char *)impl, argv[2], 0);
       }
     }
-    else {
+    else
+    {
       /* Execute a configuration change */
       result = impl->configure(interp, argc-2, argv+2, TK_CONFIG_ARGV_ONLY);
     }
   }
-  else if (!strncmp(argv[1], "render", Util::max((unsigned int)1, strlen(argv[1])))) {
+  else if (!strncmp(argv[1], "render", Util::max((unsigned int)1, strlen(argv[1]))))
+  {
     /* force the widget to be redrawn */
     Togl::Impl::dummyRenderCallback(static_cast<ClientData>(impl));
   }
-  else if (!strncmp(argv[1], "swapbuffers", Util::max((unsigned int)1, strlen(argv[1])))) {
+  else if (!strncmp(argv[1], "swapbuffers", Util::max((unsigned int)1, strlen(argv[1]))))
+  {
     /* force the widget to be redrawn */
     impl->swapBuffers();
   }
-  else if (!strncmp(argv[1], "makecurrent", Util::max((unsigned int)1, strlen(argv[1])))) {
+  else if (!strncmp(argv[1], "makecurrent", Util::max((unsigned int)1, strlen(argv[1]))))
+  {
     /* force the widget to be redrawn */
     impl->makeCurrent();
   }
-  else {
+  else
+  {
     /* Probably a user-defined function */
     Tcl_HashEntry* entry = Tcl_FindHashEntry(&CommandTable, argv[1]);
-    if (entry != NULL) {
+    if (entry != NULL)
+    {
       Togl_CmdProc* cmd_proc = (Togl_CmdProc *)Tcl_GetHashValue(entry);
       result = cmd_proc(impl->itsOwner, argc, argv);
     }
-    else {
+    else
+    {
       Tcl_AppendResult(interp, "Togl: Unknown option: ", argv[1], "\n",
                        "Try: configure or render\n",
                        "or one of the user-defined commands:\n",
                        NULL);
       Tcl_HashSearch search;
       entry = Tcl_FirstHashEntry(&CommandTable, &search);
-      while (entry) {
+      while (entry)
+      {
         Tcl_AppendResult(interp, "  ",
                          Tcl_GetHashKey(&CommandTable, entry),
                          "\n", NULL);
@@ -708,7 +737,8 @@ noFaultXAllocColor( Display *dpy, Colormap cmap, int cmapSize,
 DOTRACE("<togl.cc>::noFaultXAllocColor");
 
   /* First try just using XAllocColor. */
-  if (XAllocColor(dpy, cmap, color)) {
+  if (XAllocColor(dpy, cmap, color))
+  {
     *exact = 1;
     return;
   }
@@ -716,25 +746,30 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
   /* Retrieve color table entries. */
   /* XXX alloca candidate. */
   XColor* ctable = (XColor *) malloc(cmapSize * sizeof(XColor));
-  {for (int i = 0; i < cmapSize; i++) {
-    ctable[i].pixel = i;
-  }}
+  {for (int i = 0; i < cmapSize; i++)
+    {
+      ctable[i].pixel = i;
+    }
+  }
   XQueryColors(dpy, cmap, ctable, cmapSize);
 
   /* Find best match. */
   int bestmatch = -1;
   double mindist = 0.0; // 3*2^16^2 exceeds long int precision.
 
-  {for (int i = 0; i < cmapSize; i++) {
-    double dr = (double) color->red - (double) ctable[i].red;
-    double dg = (double) color->green - (double) ctable[i].green;
-    double db = (double) color->blue - (double) ctable[i].blue;
-    double dist = dr * dr + dg * dg + db * db;
-    if (bestmatch < 0 || dist < mindist) {
-      bestmatch = i;
-      mindist = dist;
+  {for (int i = 0; i < cmapSize; i++)
+    {
+      double dr = (double) color->red - (double) ctable[i].red;
+      double dg = (double) color->green - (double) ctable[i].green;
+      double db = (double) color->blue - (double) ctable[i].blue;
+      double dist = dr * dr + dg * dg + db * db;
+      if (bestmatch < 0 || dist < mindist)
+        {
+          bestmatch = i;
+          mindist = dist;
+        }
     }
-  }}
+  }
 
   /* Return result. */
   XColor subColor;
@@ -748,7 +783,8 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
    * fail if the cell is read/write.  Otherwise, we're incrementing
    * the cell's reference count.
    */
-  if (!XAllocColor(dpy, cmap, &subColor)) {
+  if (!XAllocColor(dpy, cmap, &subColor))
+  {
     /* do this to work around a problem reported by Frank Ortega */
     subColor.pixel = (unsigned long) bestmatch;
     subColor.red   = ctable[bestmatch].red;
@@ -869,7 +905,8 @@ static int get_free_color_cells( Display *display, int screen,
                                  Colormap colormap)
 {
 DOTRACE("<togl.cc>::get_free_color_cells");
-  if ( !ToglMesaUsedPixelCells) {
+  if ( !ToglMesaUsedPixelCells)
+  {
     XColor xcol;
     int i;
     int colorsfailed, ncolors = XDisplayCells( display, screen);
@@ -883,18 +920,19 @@ DOTRACE("<togl.cc>::get_free_color_cells");
     i = colorsfailed = 0;
     for (r = 0; r < RLEVELS; r++)
       for (g = 0; g < GLEVELS; g++)
-        for (b = 0; b < BLEVELS; b++) {
-          int exact;
-          xcol.red   = ( r*65535)/(RLEVELS-1);
-          xcol.green = ( g*65535)/(GLEVELS-1);
-          xcol.blue  = ( b*65535)/(BLEVELS-1);
-          noFaultXAllocColor( display, colormap, ncolors,
-                              &xcol, &exact );
-          ToglMesaUsedPixelCells[ i++] = xcol.pixel;
-          if (!exact) {
-            colorsfailed++;
+        for (b = 0; b < BLEVELS; b++)
+          {
+            int exact;
+            xcol.red   = ( r*65535)/(RLEVELS-1);
+            xcol.green = ( g*65535)/(GLEVELS-1);
+            xcol.blue  = ( b*65535)/(BLEVELS-1);
+            noFaultXAllocColor( display, colormap, ncolors,
+                                &xcol, &exact );
+            ToglMesaUsedPixelCells[ i++] = xcol.pixel;
+            if (!exact) {
+              colorsfailed++;
+            }
           }
-        }
     ToglMesaUsedFreeCells = i;
 
     XFreeColors( display, colormap, ToglMesaUsedPixelCells,
@@ -907,7 +945,8 @@ DOTRACE("<togl.cc>::get_free_color_cells");
 static void free_default_color_cells( Display *display, Colormap colormap)
 {
 DOTRACE("<togl.cc>::free_default_color_cells");
-  if ( ToglMesaUsedPixelCells) {
+  if ( ToglMesaUsedPixelCells)
+  {
     XFreeColors( display, colormap, ToglMesaUsedPixelCells,
                  ToglMesaUsedFreeCells, 0x00000000);
     free( ( char *)ToglMesaUsedPixelCells);
@@ -940,11 +979,13 @@ DOTRACE("<togl.cc>::grabPixels");
   GLenum format;
   unsigned int size;
 
-  if (inColor) {
+  if (inColor)
+  {
     format = GL_RGB;
     size = width * height * 3;
   }
-  else {
+  else
+  {
     format = GL_COLOR_INDEX;
     /* format = GL_LUMINANCE; */
     size = width * height * 1;
@@ -1003,7 +1044,8 @@ DOTRACE("<togl.cc>::generateEPS");
     inColor ? 3 /* Red, green, blue. */ : 1 /* Luminance. */;
 
   FILE* fp = fopen(filename, "w");
-  if (fp == NULL) {
+  if (fp == NULL)
+  {
     return 2;
   }
   fprintf(fp, "%%!PS-Adobe-2.0 EPSF-1.2\n");
@@ -1019,43 +1061,48 @@ DOTRACE("<togl.cc>::generateEPS");
   int pos = 0;
   unsigned char* curpix = (unsigned char*) pixels;
 
-  {for ( unsigned int i = 0; i < width * height * components; ) {
-    unsigned char bitpixel = 0;
-    if (inColor) {
-      double pix = 0.0;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x80;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x40;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x20;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x10;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x08;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x04;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x02;
-      pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
-      if ( pix > 127.0) bitpixel |= 0x01;
+  {for ( unsigned int i = 0; i < width * height * components; )
+    {
+      unsigned char bitpixel = 0;
+      if (inColor)
+        {
+          double pix = 0.0;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x80;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x40;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x20;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x10;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x08;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x04;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x02;
+          pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
+          if ( pix > 127.0) bitpixel |= 0x01;
+        }
+      else
+        {
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x80;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x40;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x20;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x10;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x08;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x04;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x02;
+          if ( curpix[ i++] > 0x7f) bitpixel |= 0x01;
+        }
+      fprintf(fp, "%02hx", bitpixel);
+      if (++pos >= 40)
+        {
+          fprintf(fp, "\n%%");
+          pos = 0;
+        }
     }
-    else {
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x80;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x40;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x20;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x10;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x08;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x04;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x02;
-      if ( curpix[ i++] > 0x7f) bitpixel |= 0x01;
-    }
-    fprintf(fp, "%02hx", bitpixel);
-    if (++pos >= 40) {
-      fprintf(fp, "\n%%");
-      pos = 0;
-    }
-  }}
+  }
 
   if (pos)
     fprintf(fp, "\n%%%%EndPreview\n");
@@ -1092,13 +1139,16 @@ DOTRACE("<togl.cc>::generateEPS");
 
   curpix = (unsigned char *) pixels;
   pos = 0;
-  {for (unsigned int i = width * height * components; i > 0; i--) {
-    fprintf(fp, "%02hx", *curpix++);
-    if (++pos >= 40) {
-      fprintf(fp, "\n");
-      pos = 0;
+  {for (unsigned int i = width * height * components; i > 0; i--)
+    {
+      fprintf(fp, "%02hx", *curpix++);
+      if (++pos >= 40)
+        {
+          fprintf(fp, "\n");
+          pos = 0;
+        }
     }
-  }}
+  }
 
   if (pos)
     fprintf(fp, "\n");
@@ -1122,7 +1172,8 @@ int Togl::dumpToEpsFile( const char *filename, int inColor,
 
 #if defined(__sgi) && defined(STEREO)
 
-static struct stereoStateRec {
+static struct stereoStateRec
+ {
   Bool        useSGIStereo;
   Display     *currentDisplay;
   Window      currentWindow;
@@ -1139,9 +1190,11 @@ void
 Togl::stereoDrawBuffer(GLenum mode)
 {
 DOTRACE("Togl::stereoDrawBuffer");
-  if (stereo.useSGIStereo) {
+  if (stereo.useSGIStereo)
+  {
     stereo.currentDrawBuffer = mode;
-    switch (mode) {
+    switch (mode)
+    {
     case GL_FRONT:
     case GL_BACK:
     case GL_FRONT_AND_BACK:
@@ -1167,7 +1220,8 @@ DOTRACE("Togl::stereoDrawBuffer");
     default:
       break;
     }
-    if (stereo.currentDisplay && stereo.currentWindow) {
+    if (stereo.currentDisplay && stereo.currentWindow)
+    {
       glXWaitGL();  /* sync with GL command stream before calling X */
       XSGISetStereoBuffer(stereo.currentDisplay,
                           stereo.currentWindow,
@@ -1184,9 +1238,11 @@ Togl::stereoClear(GLbitfield mask)
 {
 DOTRACE("Togl::stereoClear");
   GLenum drawBuffer;
-  if (stereo.useSGIStereo) {
+  if (stereo.useSGIStereo)
+  {
     drawBuffer = stereo.currentDrawBuffer;
-    switch (drawBuffer) {
+    switch (drawBuffer)
+    {
     case GL_FRONT:
       stereoDrawBuffer(GL_FRONT_RIGHT);
       glClear(mask);
@@ -1220,21 +1276,27 @@ stereoMakeCurrent(Display *dpy, Window win, GLXContext ctx)
 {
 DOTRACE("<togl.cc>::stereoMakeCurrent");
 
-  if (stereo.useSGIStereo) {
-    if (dpy && (dpy != stereo.currentDisplay)) {
+  if (stereo.useSGIStereo)
+  {
+    if (dpy && (dpy != stereo.currentDisplay))
+    {
       int event, error;
       /* Make sure new Display supports SGIStereo */
-      if (XSGIStereoQueryExtension(dpy, &event, &error) == False) {
+      if (XSGIStereoQueryExtension(dpy, &event, &error) == False)
+      {
         dpy = NULL;
       }
     }
-    if (dpy && win && (win != stereo.currentWindow)) {
+    if (dpy && win && (win != stereo.currentWindow))
+    {
       /* Make sure new Window supports SGIStereo */
-      if (XSGIQueryStereoMode(dpy, win) == X_STEREO_UNSUPPORTED) {
+      if (XSGIQueryStereoMode(dpy, win) == X_STEREO_UNSUPPORTED)
+      {
         win = None;
       }
     }
-    if (ctx && (ctx != stereo.currentContext)) {
+    if (ctx && (ctx != stereo.currentContext))
+    {
       GLint drawBuffer;
       glGetIntegerv(GL_DRAW_BUFFER, &drawBuffer);
       stereoDrawBuffer((GLenum) drawBuffer);
@@ -1289,7 +1351,8 @@ Togl::Togl(Tcl_Interp* interp, const char* pathname,
 DOTRACE("Togl::Togl");
 }
 
-Togl::~Togl() {
+Togl::~Togl()
+{
 DOTRACE("Togl::~Togl");
   delete itsImpl;
 }
@@ -1435,31 +1498,36 @@ DOTRACE("Togl::Impl::Impl");
                         Togl::Impl::dummyEventProc,
                         static_cast<ClientData>(this));
 
-  if (itsTimerProc) {
+  if (itsTimerProc)
+  {
     Tk_CreateTimerHandler( itsTime, Togl::Impl::dummyTimerCallback,
                            static_cast<ClientData>(this) );
   }
 
   addSelfToList();
 
-  if (DefaultCreateProc) {
+  if (DefaultCreateProc)
+  {
     DefaultCreateProc(itsOwner);
   }
 
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 }
 
-Togl::Impl::~Impl() {
+Togl::Impl::~Impl()
+{
 DOTRACE("Togl::Impl::~Impl");
 
   Tk_FreeOptions(configSpecs, (char *) this, itsDisplay, 0);
 
 #ifndef NO_TK_CURSOR
-  if (itsCursor != None) {
+  if (itsCursor != None)
+  {
     Tk_FreeCursor(itsDisplay, itsCursor);
   }
 #endif
-  if (itsDestroyProc) {
+  if (itsDestroyProc)
+  {
     itsDestroyProc(itsOwner);
   }
 
@@ -1473,7 +1541,8 @@ DOTRACE("Togl::Impl::~Impl");
 //
 //---------------------------------------------------------------------
 
-int Togl::Impl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags) {
+int Togl::Impl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags)
+{
 DOTRACE("Togl::Impl::configure");
 
   int oldRgbaFlag    = itsRgbaFlag;
@@ -1495,9 +1564,10 @@ DOTRACE("Togl::Impl::configure");
   int oldAuxNumber   = itsAuxNumber;
 
   if (Tk_ConfigureWidget(interp, itsTkWin, configSpecs,
-                         argc, argv, (char *)this, flags) == TCL_ERROR) {
-    return TCL_ERROR;
-  }
+                         argc, argv, (char *)this, flags) == TCL_ERROR)
+    {
+      return TCL_ERROR;
+    }
 
   Tk_GeometryRequest(itsTkWin, itsWidth, itsHeight);
 
@@ -1517,16 +1587,18 @@ DOTRACE("Togl::Impl::configure");
       || itsAlphaSize != oldAlphaSize
       || itsStencilFlag != oldStencilFlag
       || itsStencilSize != oldStencilSize
-      || itsAuxNumber != oldAuxNumber) {
+      || itsAuxNumber != oldAuxNumber)
+    {
 #ifdef MESA_COLOR_HACK
-    free_default_color_cells( itsDisplay,
-                              colormap() );
+      free_default_color_cells( itsDisplay,
+                                colormap() );
 #endif
-    /* Have to recreate the window and GLX context */
-    if (makeWindowExist()==TCL_ERROR) {
-      return TCL_ERROR;
+      /* Have to recreate the window and GLX context */
+      if (makeWindowExist()==TCL_ERROR)
+        {
+          return TCL_ERROR;
+        }
     }
-  }
 
 #if defined(__sgi) && defined(STEREO)
   stereoInit(itsStereoFlag);
@@ -1565,24 +1637,28 @@ DOTRACE("Togl::Impl::makeCurrent");
 
 
 // Gets called when an Togl widget is destroyed.
-void Togl::Impl::dummyDestroyProc(char* clientData) {
+void Togl::Impl::dummyDestroyProc(char* clientData)
+{
 DOTRACE("Togl::Impl::dummyDestroyProc");
   Impl* impl = reinterpret_cast<Impl*>(clientData);
   delete impl->itsOwner;
 }
 
-void Togl::Impl::dummyEventProc(ClientData clientData, XEvent* eventPtr) {
+void Togl::Impl::dummyEventProc(ClientData clientData, XEvent* eventPtr)
+{
   Impl* impl = static_cast<Impl*>(clientData);
   impl->eventProc(eventPtr);
 }
 
-void Togl::Impl::dummyWidgetCmdDeletedProc(ClientData clientData) {
+void Togl::Impl::dummyWidgetCmdDeletedProc(ClientData clientData)
+{
   Impl* impl = static_cast<Impl*>(clientData);
   impl->widgetCmdDeletedProc();
 }
 
 // Gets called from Tk_CreateTimerHandler.
-void Togl::Impl::dummyTimerCallback(ClientData clientData) {
+void Togl::Impl::dummyTimerCallback(ClientData clientData)
+{
 DOTRACE("Togl::Impl::dummyTimerCallback");
   Impl* impl = static_cast<Impl*>(clientData);
   impl->itsTimerProc(impl->itsOwner);
@@ -1596,22 +1672,26 @@ DOTRACE("Togl::Impl::dummyTimerCallback");
 //
 // Note that the parameter type is ClientData so this function can be
 // passed to Tk_DoWhenIdle().
-void Togl::Impl::dummyRenderCallback(ClientData clientData) {
+void Togl::Impl::dummyRenderCallback(ClientData clientData)
+{
 DOTRACE("Togl::Impl::dummyRenderCallback");
   Impl* impl = static_cast<Impl*>(clientData);
 
-  if (impl->itsDisplayProc) {
+  if (impl->itsDisplayProc)
+  {
     impl->makeCurrent();
     impl->itsDisplayProc(impl->itsOwner);
   }
   impl->itsUpdatePending = GL_FALSE;
 }
 
-void Togl::Impl::dummyOverlayRenderCallback(ClientData clientData) {
+void Togl::Impl::dummyOverlayRenderCallback(ClientData clientData)
+{
 DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
   Impl* impl = static_cast<Impl*>(clientData);
 
-  if (impl->itsOverlayFlag && impl->itsOverlayDisplayProc) {
+  if (impl->itsOverlayFlag && impl->itsOverlayDisplayProc)
+  {
     glXMakeCurrent( impl->itsDisplay,
                     impl->itsOverlayWindow,
                     impl->itsOverlayCtx );
@@ -1626,10 +1706,12 @@ DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
 }
 
 
-Togl::Impl* Togl::Impl::findTogl(const char* ident) {
+Togl::Impl* Togl::Impl::findTogl(const char* ident)
+{
 DOTRACE("Togl::Impl::findTogl");
   Impl* t = ToglHead;
-  while (t) {
+  while (t)
+  {
     if (strcmp(t->itsIdent, ident) == 0)
       return t;
     t = t->itsNext;
@@ -1637,7 +1719,8 @@ DOTRACE("Togl::Impl::findTogl");
   return NULL;
 }
 
-void Togl::Impl::postReconfigure() {
+void Togl::Impl::postReconfigure()
+{
 DOTRACE("Togl::Impl::postReconfigure");
   if (itsWidth != Tk_Width(itsTkWin) || itsHeight != Tk_Height(itsTkWin))
     {
@@ -1645,18 +1728,22 @@ DOTRACE("Togl::Impl::postReconfigure");
       itsHeight = Tk_Height(itsTkWin);
       XResizeWindow(itsDisplay, windowId(), itsWidth, itsHeight);
 
-      if (itsOverlayFlag) {
+      if (itsOverlayFlag)
+      {
         XResizeWindow( itsDisplay, itsOverlayWindow, itsWidth, itsHeight );
         XRaiseWindow( itsDisplay, itsOverlayWindow );
       }
       makeCurrent();
     }
-  if (itsReshapeProc) {
+  if (itsReshapeProc)
+  {
     itsReshapeProc(itsOwner);
   }
-  else {
+  else
+  {
     glViewport(0, 0, itsWidth, itsHeight);
-    if (itsOverlayFlag) {
+    if (itsOverlayFlag)
+    {
       useLayer( TOGL_OVERLAY );
       glViewport( 0, 0, itsWidth, itsHeight );
       useLayer( TOGL_NORMAL );
@@ -1664,14 +1751,17 @@ DOTRACE("Togl::Impl::postReconfigure");
   }
 }
 
-unsigned long Togl::Impl::allocColor(float red, float green, float blue) const {
+unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
+{
 DOTRACE("Togl::Impl::allocColor");
-  if (itsRgbaFlag) {
+  if (itsRgbaFlag)
+  {
     fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
     return 0;
   }
   /* TODO: maybe not... */
-  if (itsPrivateCmapFlag) {
+  if (itsPrivateCmapFlag)
+  {
     fprintf(stderr,"Error: Togl::allocColor illegal with private colormap\n");
     return 0;
   }
@@ -1694,14 +1784,17 @@ DOTRACE("Togl::Impl::allocColor");
   return xcol.pixel;
 }
 
-void Togl::Impl::freeColor(unsigned long pixel) const {
+void Togl::Impl::freeColor(unsigned long pixel) const
+{
 DOTRACE("Togl::Impl::freeColor");
-  if (itsRgbaFlag) {
+  if (itsRgbaFlag)
+  {
     fprintf(stderr,"Error: Togl::freeColor illegal in RGBA mode.\n");
     return;
   }
   /* TODO: maybe not... */
-  if (itsPrivateCmapFlag) {
+  if (itsPrivateCmapFlag)
+  {
     fprintf(stderr,"Error: Togl::freeColor illegal with private colormap\n");
     return;
   }
@@ -1711,16 +1804,19 @@ DOTRACE("Togl::Impl::freeColor");
 }
 
 void Togl::Impl::setColor(unsigned long index,
-                          float red, float green, float blue) const {
-DOTRACE("Togl::Impl::setColor");
-  if (itsRgbaFlag) {
-    fprintf(stderr,"Error: Togl::setColor illegal in RGBA mode.\n");
-    return;
-  }
-  if (!itsPrivateCmapFlag) {
-    fprintf(stderr,"Error: Togl::setColor requires a private colormap\n");
-    return;
-  }
+                          float red, float green, float blue) const
+{
+  DOTRACE("Togl::Impl::setColor");
+  if (itsRgbaFlag)
+    {
+      fprintf(stderr,"Error: Togl::setColor illegal in RGBA mode.\n");
+      return;
+    }
+  if (!itsPrivateCmapFlag)
+    {
+      fprintf(stderr,"Error: Togl::setColor requires a private colormap\n");
+      return;
+    }
 
   XColor xcol;
 
@@ -1752,13 +1848,16 @@ static GLuint ListCount[MAX_FONTS];
 //
 //---------------------------------------------------------------------
 
-GLuint Togl::Impl::loadBitmapFont(const char* fontname) const {
+GLuint Togl::Impl::loadBitmapFont(const char* fontname) const
+{
 DOTRACE("Togl::Impl::loadBitmapFont");
   static int FirstTime = 1;
 
   /* Initialize the ListBase and ListCount arrays */
-  if (FirstTime) {
-    for (int i=0;i<MAX_FONTS;++i) {
+  if (FirstTime)
+  {
+    for (int i=0;i<MAX_FONTS;++i)
+    {
       ListBase[i] = ListCount[i] = 0;
     }
     FirstTime = 0;
@@ -1770,7 +1869,8 @@ DOTRACE("Togl::Impl::loadBitmapFont");
   Assert( fontname );
 
   XFontStruct *fontinfo = XLoadQueryFont( Tk_Display(this->itsTkWin), fontname );
-  if (!fontinfo) {
+  if (!fontinfo)
+  {
     return 0;
   }
 
@@ -1779,7 +1879,8 @@ DOTRACE("Togl::Impl::loadBitmapFont");
   int count = last-first+1;
 
   GLuint fontbase = glGenLists( (GLuint) (last+1) );
-  if (fontbase==0) {
+  if (fontbase==0)
+  {
     return 0;
   }
   glXUseXFont( fontinfo->fid, first, count, (int) fontbase+first );
@@ -1788,8 +1889,10 @@ DOTRACE("Togl::Impl::loadBitmapFont");
    * for unloadBitmapFont().
    */
   {
-    for (int i=0;i<MAX_FONTS;++i) {
-      if (ListBase[i]==0) {
+    for (int i=0;i<MAX_FONTS;++i)
+    {
+      if (ListBase[i]==0)
+      {
         ListBase[i] = fontbase;
         ListCount[i] = last+1;
         break;
@@ -1800,7 +1903,8 @@ DOTRACE("Togl::Impl::loadBitmapFont");
   return fontbase;
 }
 
-GLuint Togl::Impl::loadBitmapFonti(int fontnumber) const {
+GLuint Togl::Impl::loadBitmapFonti(int fontnumber) const
+{
 
   /*
    * This method of selecting X fonts according to a TOGL_ font name
@@ -1809,7 +1913,8 @@ GLuint Togl::Impl::loadBitmapFonti(int fontnumber) const {
 
   const char* name = DEFAULT_FONTNAME;
 
-  switch (fontnumber) {
+  switch (fontnumber)
+  {
   case TOGL_BITMAP_8_BY_13:
     name = "8x13";
     break;
@@ -1837,11 +1942,14 @@ GLuint Togl::Impl::loadBitmapFonti(int fontnumber) const {
 }
 
 // Release the display lists which were generated by loadBitmapFont().
-void Togl::Impl::unloadBitmapFont(GLuint fontbase) const {
+void Togl::Impl::unloadBitmapFont(GLuint fontbase) const
+{
 DOTRACE("Togl::Impl::unloadBitmapFont");
-  for (int i=0; i<MAX_FONTS; ++i) {
+  for (int i=0; i<MAX_FONTS; ++i)
+  {
     DebugEvalNL(i);
-    if (ListBase[i]==fontbase) {
+    if (ListBase[i]==fontbase)
+    {
       DebugEvalNL(fontbase);
       DebugEval(ListBase[i]); DebugEvalNL(ListCount[i]);
       glDeleteLists( ListBase[i], ListCount[i] );
@@ -1855,10 +1963,13 @@ DOTRACE("Togl::Impl::unloadBitmapFont");
  * Overlay functions
  */
 
-void Togl::Impl::useLayer(int layer) {
+void Togl::Impl::useLayer(int layer)
+{
 DOTRACE("Togl::Impl::useLayer");
-  if (itsOverlayWindow) {
-    if (layer==TOGL_OVERLAY) {
+  if (itsOverlayWindow)
+  {
+    if (layer==TOGL_OVERLAY)
+    {
       glXMakeCurrent( itsDisplay,
                       itsOverlayWindow,
                       itsOverlayCtx );
@@ -1868,7 +1979,8 @@ DOTRACE("Togl::Impl::useLayer");
                          itsOverlayCtx );
 #endif /* __sgi STEREO */
     }
-    else if (layer==TOGL_NORMAL) {
+    else if (layer==TOGL_NORMAL)
+    {
       glXMakeCurrent( itsDisplay,
                       windowId(),
                       itsGLXContext );
@@ -1878,30 +1990,36 @@ DOTRACE("Togl::Impl::useLayer");
                          itsGLXContext );
 #endif /* __sgi STEREO */
     }
-    else {
+    else
+    {
       /* error */
     }
   }
 }
 
-void Togl::Impl::showOverlay() {
+void Togl::Impl::showOverlay()
+{
 DOTRACE("Togl::Impl::showOverlay");
-  if (itsOverlayWindow) {
+  if (itsOverlayWindow)
+  {
     XMapWindow( itsDisplay, itsOverlayWindow );
     XInstallColormap(itsDisplay, itsOverlayCmap);
     itsOverlayIsMapped = 1;
   }
 }
 
-void Togl::Impl::hideOverlay() {
+void Togl::Impl::hideOverlay()
+{
 DOTRACE("Togl::Impl::hideOverlay");
-  if (itsOverlayWindow && itsOverlayIsMapped) {
+  if (itsOverlayWindow && itsOverlayIsMapped)
+  {
     XUnmapWindow( itsDisplay, itsOverlayWindow );
     itsOverlayIsMapped = 0;
   }
 }
 
-void Togl::Impl::postOverlayRedisplay() {
+void Togl::Impl::postOverlayRedisplay()
+{
 DOTRACE("Togl::Impl::postOverlayRedisplay");
   if (!itsOverlayUpdatePending && itsOverlayWindow && itsOverlayDisplayProc)
     {
@@ -1912,9 +2030,11 @@ DOTRACE("Togl::Impl::postOverlayRedisplay");
 }
 
 unsigned long Togl::Impl::allocColorOverlay(float red, float green,
-                                            float blue) const {
+                                            float blue) const
+{
 DOTRACE("Togl::Impl::allocColorOverlay");
-  if (itsOverlayFlag && itsOverlayCmap) {
+  if (itsOverlayFlag && itsOverlayCmap)
+  {
     XColor xcol;
     xcol.red   = (short) (red* 65535.0);
     xcol.green = (short) (green* 65535.0);
@@ -1924,24 +2044,29 @@ DOTRACE("Togl::Impl::allocColorOverlay");
       return (unsigned long) -1;
     return xcol.pixel;
   }
-  else {
+  else
+  {
     return (unsigned long) -1;
   }
 }
 
-void Togl::Impl::freeColorOverlay(unsigned long pixel) const {
+void Togl::Impl::freeColorOverlay(unsigned long pixel) const
+{
 DOTRACE("Togl::Impl::freeColorOverlay");
 
-  if (itsOverlayFlag && itsOverlayCmap) {
+  if (itsOverlayFlag && itsOverlayCmap)
+  {
     XFreeColors( itsDisplay, itsOverlayCmap, &pixel, 1, 0 );
   }
 }
 
 int Togl::Impl::dumpToEpsFile(const char* filename, int inColor,
-                        void (*user_redraw)( const Togl* )) const {
+                        void (*user_redraw)( const Togl* )) const
+{
 DOTRACE("Togl::Impl::dumpToEpsFile");
 
-  if ( !itsRgbaFlag) {
+  if ( !itsRgbaFlag)
+  {
     glPixelMapfv( GL_PIXEL_MAP_I_TO_R, itsEpsMapSize, itsEpsRedMap);
     glPixelMapfv( GL_PIXEL_MAP_I_TO_G, itsEpsMapSize, itsEpsGreenMap);
     glPixelMapfv( GL_PIXEL_MAP_I_TO_B, itsEpsMapSize, itsEpsBlueMap);
@@ -1956,22 +2081,27 @@ DOTRACE("Togl::Impl::dumpToEpsFile");
   return generateEPS( filename, inColor, itsWidth, itsHeight);
 }
 
-void Togl::Impl::eventProc(XEvent* eventPtr) {
+void Togl::Impl::eventProc(XEvent* eventPtr)
+{
 DOTRACE("Togl::Impl::eventProc");
 
-  switch (eventPtr->type) {
+  switch (eventPtr->type)
+  {
   case Expose:
     DebugPrintNL("Expose");
-    if (eventPtr->xexpose.count == 0) {
+    if (eventPtr->xexpose.count == 0)
+    {
       if (!itsUpdatePending &&
-          eventPtr->xexpose.window==windowId()) {
-        postRedisplay();
-      }
+          eventPtr->xexpose.window==windowId())
+        {
+          postRedisplay();
+        }
       if (!itsOverlayUpdatePending && itsOverlayFlag
           && itsOverlayIsMapped
-          && eventPtr->xexpose.window==itsOverlayWindow){
-        postOverlayRedisplay();
-      }
+          && eventPtr->xexpose.window==itsOverlayWindow)
+        {
+          postOverlayRedisplay();
+        }
     }
     break;
   case ConfigureNotify:
@@ -1983,14 +2113,17 @@ DOTRACE("Togl::Impl::eventProc");
     break;
   case DestroyNotify:
     DebugPrintNL("DestroyNotify");
-    if (itsTkWin != NULL) {
+    if (itsTkWin != NULL)
+    {
       itsTkWin = NULL;
       Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
     }
-    if (itsTimerProc != NULL) {
+    if (itsTimerProc != NULL)
+    {
       Tcl_DeleteTimerHandler(itsTimerHandler);
     }
-    if (itsUpdatePending) {
+    if (itsUpdatePending)
+    {
       Tcl_CancelIdleCall(Togl::Impl::dummyRenderCallback,
                          static_cast<ClientData>(this));
     }
@@ -2021,7 +2154,8 @@ DOTRACE("Togl::Impl::eventProc");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Togl::Impl::widgetCmdDeletedProc() {
+void Togl::Impl::widgetCmdDeletedProc()
+{
 DOTRACE("Togl::Impl::widgetCmdDeletedProc");
   /*
    * This procedure could be invoked either because the window was
@@ -2031,7 +2165,8 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
    */
 
   /* NEW in togl 1.5 beta 3 */
-  if (this && itsTkWin) {
+  if (this && itsTkWin)
+  {
     Tk_DeleteEventHandler(itsTkWin,
                           ExposureMask | StructureNotifyMask,
                           Togl::Impl::dummyEventProc,
@@ -2039,15 +2174,18 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
   }
 
   /* NEW in togl 1.5 beta 3 */
-  if (itsGLXContext) {
+  if (itsGLXContext)
+  {
     /* XXX this might be bad if two or more Togl widgets share a context */
     glXDestroyContext( itsDisplay, itsGLXContext );
     itsGLXContext = NULL;
   }
-  if (itsOverlayCtx) {
+  if (itsOverlayCtx)
+  {
     Tcl_HashEntry *entryPtr;
     TkWindow *winPtr = (TkWindow *) itsTkWin;
-    if (winPtr) {
+    if (winPtr)
+    {
       entryPtr = Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
                                    (char *) itsOverlayWindow );
       Tcl_DeleteHashEntry(entryPtr);
@@ -2056,7 +2194,8 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
     itsOverlayCtx = NULL;
   }
 
-  if (itsTkWin != NULL) {
+  if (itsTkWin != NULL)
+  {
     Tk_DestroyWindow(itsTkWin);
     itsTkWin = NULL;
   }
@@ -2071,7 +2210,8 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Togl::Impl::makeWindowExist() {
+int Togl::Impl::makeWindowExist()
+{
 DOTRACE("Togl::Impl::makeWindowExist");
 
   destroyCurrentWindow();
@@ -2109,32 +2249,38 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
 } // end Togl::Impl::makeWindowExist()
 
-void Togl::Impl::destroyCurrentWindow() {
+void Togl::Impl::destroyCurrentWindow()
+{
 DOTRACE("Togl::Impl::destroyCurrentWindow");
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
-  if (winPtr->window != None) {
+  if (winPtr->window != None)
+  {
     XDestroyWindow(itsDisplay, winPtr->window);
     winPtr->window = 0;
   }
 }
 
-int Togl::Impl::checkForGLX() {
+int Togl::Impl::checkForGLX()
+{
 DOTRACE("Togl::Impl::checkForGLX");
 
   /* Make sure OpenGL's GLX extension supported */
   int dummy;
-  if (!glXQueryExtension(itsDisplay, &dummy, &dummy)) {
+  if (!glXQueryExtension(itsDisplay, &dummy, &dummy))
+  {
     return TCL_ERR(itsInterp, "Togl: X server has no OpenGL GLX extension");
   }
 
   return TCL_OK;
 }
 
-int Togl::Impl::setupVisInfoAndContext() {
+int Togl::Impl::setupVisInfoAndContext()
+{
 DOTRACE("Togl::Impl::setupVisInfoAndContext");
 
-  if (itsShareContext && findTogl(itsShareContext)) {
+  if (itsShareContext && findTogl(itsShareContext))
+  {
     /* share OpenGL context with existing Togl widget */
     Impl* shareWith = findTogl(itsShareContext);
     Assert(shareWith);
@@ -2143,41 +2289,48 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
     itsVisInfo = shareWith->itsVisInfo;
     printf("SHARE CTX\n");
   }
-  else /* !(itsShareContext && findTogl(itsShareContext)) */ {
+  else /* !(itsShareContext && findTogl(itsShareContext)) */
+  {
     int attrib_list[1000];
 
     const int MAX_ATTEMPTS = 12;
 
-    static int ci_depths[MAX_ATTEMPTS] = {
+    static int ci_depths[MAX_ATTEMPTS] =
+    {
       8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
     };
-    static int dbl_flags[MAX_ATTEMPTS] = {
+    static int dbl_flags[MAX_ATTEMPTS] =
+    {
       0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
     };
 
     /* It may take a few tries to get a visual */
-    for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++) {
+    for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++)
+    {
       DebugEvalNL(attempt);
       buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
 
       itsVisInfo = glXChooseVisual( itsDisplay,
                                     DefaultScreen(itsDisplay), attrib_list );
 
-      if (itsVisInfo) {
+      if (itsVisInfo)
+      {
         DebugEvalNL((void*)itsVisInfo->visualid);
         /* found a GLX visual! */
         break;
       }
     } // end for loop
 
-    if (itsVisInfo==NULL) {
+    if (itsVisInfo==NULL)
+    {
       return TCL_ERR(itsInterp, "Togl: couldn't get visual");
     }
 
     // Create a new OpenGL rendering context.
     setupGLXContext();   DebugEvalNL(itsGLXContext);
 
-    if (itsGLXContext == NULL) {
+    if (itsGLXContext == NULL)
+    {
       return TCL_ERR(itsInterp, "could not create rendering context");
     }
 
@@ -2186,13 +2339,15 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
   return TCL_OK;
 }
 
-void Togl::Impl::buildAttribList(int* attrib_list, int ci_depth, int dbl_flag) {
+void Togl::Impl::buildAttribList(int* attrib_list, int ci_depth, int dbl_flag)
+{
 DOTRACE("Togl::Impl::buildAttribList");
   int attrib_count = 0;
 
   attrib_list[attrib_count++] = GLX_USE_GL;
 
-  if (itsRgbaFlag) {
+  if (itsRgbaFlag)
+  {
     /* RGB[A] mode */
     attrib_list[attrib_count++] = GLX_RGBA;
     attrib_list[attrib_count++] = GLX_RED_SIZE;
@@ -2201,7 +2356,8 @@ DOTRACE("Togl::Impl::buildAttribList");
     attrib_list[attrib_count++] = itsRgbaGreen;   DebugEval(itsRgbaGreen);
     attrib_list[attrib_count++] = GLX_BLUE_SIZE;
     attrib_list[attrib_count++] = itsRgbaBlue;    DebugEvalNL(itsRgbaBlue);
-    if (itsAlphaFlag) {
+    if (itsAlphaFlag)
+    {
       attrib_list[attrib_count++] = GLX_ALPHA_SIZE;
       attrib_list[attrib_count++] = itsAlphaSize;  DebugEvalNL(itsAlphaSize);
     }
@@ -2209,47 +2365,55 @@ DOTRACE("Togl::Impl::buildAttribList");
     /* for EPS Output */
     freeEpsMaps();
   }
-  else {
+  else
+  {
     /* Color index mode */
     attrib_list[attrib_count++] = GLX_BUFFER_SIZE;
     attrib_list[attrib_count++] = ci_depth;
   }
 
-  if (itsDepthFlag) {
+  if (itsDepthFlag)
+  {
     attrib_list[attrib_count++] = GLX_DEPTH_SIZE;
     attrib_list[attrib_count++] = itsDepthSize;
   }
 
-  if (itsDoubleFlag || dbl_flag) {
+  if (itsDoubleFlag || dbl_flag)
+  {
     attrib_list[attrib_count++] = GLX_DOUBLEBUFFER;
   }
 
-  if (itsStencilFlag) {
+  if (itsStencilFlag)
+  {
     attrib_list[attrib_count++] = GLX_STENCIL_SIZE;
     attrib_list[attrib_count++] = itsStencilSize;
   }
 
-  if (itsAccumFlag) {
+  if (itsAccumFlag)
+  {
     attrib_list[attrib_count++] = GLX_ACCUM_RED_SIZE;
     attrib_list[attrib_count++] = itsAccumRed;
     attrib_list[attrib_count++] = GLX_ACCUM_GREEN_SIZE;
     attrib_list[attrib_count++] = itsAccumGreen;
     attrib_list[attrib_count++] = GLX_ACCUM_BLUE_SIZE;
     attrib_list[attrib_count++] = itsAccumBlue;
-    if (itsAlphaFlag) {
+    if (itsAlphaFlag)
+    {
       attrib_list[attrib_count++] = GLX_ACCUM_ALPHA_SIZE;
       attrib_list[attrib_count++] = itsAccumAlpha;
     }
   }
 
-  if (itsAuxNumber != 0) {
+  if (itsAuxNumber != 0)
+  {
     attrib_list[attrib_count++] = GLX_AUX_BUFFERS;
     attrib_list[attrib_count++] = itsAuxNumber;
   }
 
   /* stereo hack */
   /*
-    if (itsStereoFlag) {
+    if (itsStereoFlag)
+    {
     attrib_list[attrib_count++] = GLX_STEREO;
     }
   */
@@ -2257,11 +2421,13 @@ DOTRACE("Togl::Impl::buildAttribList");
   attrib_list[attrib_count++] = None;
 }
 
-void Togl::Impl::setupGLXContext() {
+void Togl::Impl::setupGLXContext()
+{
 DOTRACE("Togl::Impl::setupGLXContext");
   int directCtx = itsIndirect ? GL_FALSE : GL_TRUE;
 
-  if (itsShareList) {
+  if (itsShareList)
+  {
     /* share display lists with existing this widget */
     Impl* shareWith = findTogl(itsShareList);
     GLXContext shareCtx;
@@ -2272,13 +2438,15 @@ DOTRACE("Togl::Impl::setupGLXContext");
     itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo,
                                      shareCtx, directCtx);
   }
-  else {
+  else
+  {
     /* don't share display lists */
     itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
   }
 }
 
-void Togl::Impl::createWindow() {
+void Togl::Impl::createWindow()
+{
 DOTRACE("Togl::Impl::createWindow");
 
   TkWindow *winPtr = (TkWindow *) itsTkWin;
@@ -2317,12 +2485,14 @@ DOTRACE("Togl::Impl::createWindow");
   // install the colormap when the Togl widget becomes the active
   // window, but this has not worked yet.
 
-  if (!itsRgbaFlag) {
+  if (!itsRgbaFlag)
+  {
 
     Window current = itsWindowId;
     Window root = XRootWindow( itsDisplay, DefaultScreen(itsDisplay) );
 
-    while (current != root) {
+    while (current != root)
+    {
 
       DebugEval((void*)current); DebugEvalNL((void*)root);
 
@@ -2351,44 +2521,54 @@ DOTRACE("Togl::Impl::createWindow");
 #endif /* TK_USE_INPUT_METHODS */
 }
 
-Window Togl::Impl::findParent() {
+Window Togl::Impl::findParent()
+{
 DOTRACE("Togl::Impl::findParent");
 
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
-  if ((winPtr->parentPtr == NULL) || (winPtr->flags & TK_TOP_LEVEL)) {
+  if ((winPtr->parentPtr == NULL) || (winPtr->flags & TK_TOP_LEVEL))
+  {
     return XRootWindow(winPtr->display, winPtr->screenNum);
   }
   // else...
-  if (winPtr->parentPtr->window == None) {
+  if (winPtr->parentPtr->window == None)
+  {
     Tk_MakeWindowExist((Tk_Window) winPtr->parentPtr);
   }
   return winPtr->parentPtr->window;
 }
 
-Colormap Togl::Impl::findColormap() {
+Colormap Togl::Impl::findColormap()
+{
 DOTRACE("Togl::Impl::findColormap");
 
   int scrnum = DefaultScreen(itsDisplay);
   Colormap cmap;
-  if (itsRgbaFlag) {
+  if (itsRgbaFlag)
+  {
     /* Colormap for RGB mode */
     cmap = get_rgb_colormap( itsDisplay, scrnum, itsVisInfo );
   }
-  else {
+  else
+  {
     /* Colormap for CI mode */
-    if (itsPrivateCmapFlag) {
+    if (itsPrivateCmapFlag)
+    {
       /* need read/write colormap so user can store own color entries */
       cmap = XCreateColormap(itsDisplay,
                              RootWindow(itsDisplay, itsVisInfo->screen),
                              itsVisInfo->visual, AllocAll);
     }
-    else {
-      if (itsVisInfo->visual==DefaultVisual(itsDisplay, scrnum)) {
+    else
+    {
+      if (itsVisInfo->visual==DefaultVisual(itsDisplay, scrnum))
+      {
         /* share default/root colormap */
         cmap = DefaultColormap(itsDisplay,scrnum);
       }
-      else {
+      else
+      {
         /* make a new read-only colormap */
         cmap = XCreateColormap(itsDisplay,
                                RootWindow(itsDisplay, itsVisInfo->screen),
@@ -2400,11 +2580,13 @@ DOTRACE("Togl::Impl::findColormap");
   return cmap;
 }
 
-void Togl::Impl::setupStackingOrder() {
+void Togl::Impl::setupStackingOrder()
+{
 DOTRACE("Togl::Impl::setupStackingOrder");
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
-  if (!(winPtr->flags & TK_TOP_LEVEL)) {
+  if (!(winPtr->flags & TK_TOP_LEVEL))
+  {
     /*
      * If any siblings higher up in the stacking order have already
      * been created then move this window to its rightful position
@@ -2417,16 +2599,17 @@ DOTRACE("Togl::Impl::setupStackingOrder");
      */
 
     for (TkWindow* winPtr2 = winPtr->nextPtr; winPtr2 != NULL;
-         winPtr2 = winPtr2->nextPtr) {
-      if ((winPtr2->window != None) && !(winPtr2->flags & TK_TOP_LEVEL)) {
-        XWindowChanges changes;
-        changes.sibling = winPtr2->window;
-        changes.stack_mode = Below;
-        XConfigureWindow(winPtr->display, winPtr->window,
-                         CWSibling|CWStackMode, &changes);
-        break;
+         winPtr2 = winPtr2->nextPtr)
+      {
+        if ((winPtr2->window != None) && !(winPtr2->flags & TK_TOP_LEVEL)) {
+          XWindowChanges changes;
+          changes.sibling = winPtr2->window;
+          changes.stack_mode = Below;
+          XConfigureWindow(winPtr->display, winPtr->window,
+                           CWSibling|CWStackMode, &changes);
+          break;
+        }
       }
-    }
 
     /*
      * If this window has a different colormap than its parent, add
@@ -2434,16 +2617,20 @@ DOTRACE("Togl::Impl::setupStackingOrder");
      */
 
     if ((winPtr->parentPtr != NULL) &&
-        (winPtr->atts.colormap != winPtr->parentPtr->atts.colormap)) {
-      TkWmAddToColormapWindows(winPtr);
-    }
+        (winPtr->atts.colormap != winPtr->parentPtr->atts.colormap))
+      {
+        TkWmAddToColormapWindows(winPtr);
+      }
   }
 }
 
-void Togl::Impl::setupOverlayIfNeeded() {
+void Togl::Impl::setupOverlayIfNeeded()
+{
 DOTRACE("Togl::Impl::setupOverlayIfNeeded");
-  if (itsOverlayFlag) {
-    if (setupOverlay() == TCL_ERROR) {
+  if (itsOverlayFlag)
+  {
+    if (setupOverlay() == TCL_ERROR)
+    {
       fprintf(stderr,"Warning: couldn't setup overlay.\n");
       itsOverlayFlag = 0;
     }
@@ -2454,18 +2641,21 @@ DOTRACE("Togl::Impl::setupOverlayIfNeeded");
  * Do all the setup for overlay planes
  * Return:   TCL_OK or TCL_ERROR
  */
-int Togl::Impl::setupOverlay() {
+int Togl::Impl::setupOverlay()
+{
 DOTRACE("Togl::Impl::setupOverlay");
 
 #ifdef GLX_TRANSPARENT_TYPE_EXT
-  static int ovAttributeList[] = {
+  static int ovAttributeList[] =
+  {
     GLX_BUFFER_SIZE, 2,
     GLX_LEVEL, 1,
     GLX_TRANSPARENT_TYPE_EXT, GLX_TRANSPARENT_INDEX_EXT,
     None
   };
 #else
-  static int ovAttributeList[] = {
+  static int ovAttributeList[] =
+  {
     GLX_BUFFER_SIZE, 2,
     GLX_LEVEL, 1,
     None
@@ -2478,7 +2668,8 @@ DOTRACE("Togl::Impl::setupOverlay");
                                           DefaultScreen(itsDisplay),
                                           ovAttributeList );
 
-  if (!visinfo) {
+  if (!visinfo)
+  {
     Tcl_AppendResult(itsInterp,Tk_PathName(winPtr),
                      ": No suitable overlay index visual available",
                      (char *) NULL);
@@ -2539,7 +2730,8 @@ DOTRACE("Togl::Impl::setupOverlay");
   return TCL_OK;
 }
 
-void Togl::Impl::issueConfigureNotify() {
+void Togl::Impl::issueConfigureNotify()
+{
 DOTRACE("Togl::Impl::issueConfigureNotify");
 
   /*
@@ -2551,39 +2743,44 @@ DOTRACE("Togl::Impl::issueConfigureNotify");
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
   if ((winPtr->flags & TK_NEED_CONFIG_NOTIFY)
-      && !(winPtr->flags & TK_ALREADY_DEAD)){
+      && !(winPtr->flags & TK_ALREADY_DEAD))
+    {
+      winPtr->flags &= ~TK_NEED_CONFIG_NOTIFY;
 
-    winPtr->flags &= ~TK_NEED_CONFIG_NOTIFY;
+      XEvent event;
 
-    XEvent event;
-
-    event.type = ConfigureNotify;
-    event.xconfigure.serial = LastKnownRequestProcessed(winPtr->display);
-    event.xconfigure.send_event = False;
-    event.xconfigure.display = winPtr->display;
-    event.xconfigure.event = winPtr->window;
-    event.xconfigure.window = winPtr->window;
-    event.xconfigure.x = winPtr->changes.x;
-    event.xconfigure.y = winPtr->changes.y;
-    event.xconfigure.width = winPtr->changes.width;
-    event.xconfigure.height = winPtr->changes.height;
-    event.xconfigure.border_width = winPtr->changes.border_width;
-    if (winPtr->changes.stack_mode == Above) {
-      event.xconfigure.above = winPtr->changes.sibling;
+      event.type = ConfigureNotify;
+      event.xconfigure.serial = LastKnownRequestProcessed(winPtr->display);
+      event.xconfigure.send_event = False;
+      event.xconfigure.display = winPtr->display;
+      event.xconfigure.event = winPtr->window;
+      event.xconfigure.window = winPtr->window;
+      event.xconfigure.x = winPtr->changes.x;
+      event.xconfigure.y = winPtr->changes.y;
+      event.xconfigure.width = winPtr->changes.width;
+      event.xconfigure.height = winPtr->changes.height;
+      event.xconfigure.border_width = winPtr->changes.border_width;
+      if (winPtr->changes.stack_mode == Above)
+        {
+          event.xconfigure.above = winPtr->changes.sibling;
+        }
+      else
+        {
+          event.xconfigure.above = None;
+        }
+      event.xconfigure.override_redirect = winPtr->atts.override_redirect;
+      Tk_HandleEvent(&event);
     }
-    else {
-      event.xconfigure.above = None;
-    }
-    event.xconfigure.override_redirect = winPtr->atts.override_redirect;
-    Tk_HandleEvent(&event);
-  }
 }
 
-void Togl::Impl::checkDblBufferSnafu() {
+void Togl::Impl::checkDblBufferSnafu()
+{
 DOTRACE("Togl::Impl::checkDblBufferSnafu");
   int dbl_flag;
-  if (glXGetConfig( itsDisplay, itsVisInfo, GLX_DOUBLEBUFFER, &dbl_flag )) {
-    if (itsDoubleFlag==0 && dbl_flag) {
+  if (glXGetConfig( itsDisplay, itsVisInfo, GLX_DOUBLEBUFFER, &dbl_flag ))
+  {
+    if (itsDoubleFlag==0 && dbl_flag)
+    {
       /* We requested single buffering but had to accept a */
       /* double buffered visual.  Set the GL draw buffer to */
       /* be the front buffer to simulate single buffering. */
@@ -2592,14 +2789,17 @@ DOTRACE("Togl::Impl::checkDblBufferSnafu");
   }
 }
 
-void Togl::Impl::setupEpsMaps() {
+void Togl::Impl::setupEpsMaps()
+{
 DOTRACE("Togl::Impl::setupEpsMaps");
-  if ( !itsRgbaFlag ) {
+  if ( !itsRgbaFlag )
+  {
     GLint index_bits;
     glGetIntegerv( GL_INDEX_BITS, &index_bits );
 
     int index_size = 1 << index_bits;
-    if ( itsEpsMapSize != index_size ) {
+    if ( itsEpsMapSize != index_size )
+    {
       if ( itsEpsRedMap) free( ( char *)itsEpsRedMap);
       if ( itsEpsGreenMap) free( ( char *)itsEpsGreenMap);
       if ( itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
@@ -2611,7 +2811,8 @@ DOTRACE("Togl::Impl::setupEpsMaps");
   }
 }
 
-void Togl::Impl::freeEpsMaps() {
+void Togl::Impl::freeEpsMaps()
+{
 DOTRACE("Togl::Impl::freeEpsMaps");
   if (itsEpsRedMap) free( ( char *)itsEpsRedMap);
   if (itsEpsGreenMap) free( ( char *)itsEpsGreenMap);
@@ -2620,22 +2821,28 @@ DOTRACE("Togl::Impl::freeEpsMaps");
   itsEpsMapSize = 0;
 }
 
-void Togl::Impl::addSelfToList() {
+void Togl::Impl::addSelfToList()
+{
 DOTRACE("Togl::Impl::addSelfToList");
   itsNext = ToglHead;
   ToglHead = this;
 }
 
-void Togl::Impl::removeSelfFromList() {
+void Togl::Impl::removeSelfFromList()
+{
 DOTRACE("Togl::Impl::removeSelfFromList");
   Togl::Impl* prev = NULL;
   Togl::Impl* pos = ToglHead;
-  while (pos) {
-    if (pos == this) {
-      if (prev) {
+  while (pos)
+  {
+    if (pos == this)
+    {
+      if (prev)
+      {
         prev->itsNext = pos->itsNext;
       }
-      else {
+      else
+      {
         ToglHead = pos->itsNext;
       }
       return;
@@ -2651,7 +2858,8 @@ DOTRACE("Togl::Impl::removeSelfFromList");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace ToglTcl {
+namespace ToglTcl
+{
   int ToglCmd(ClientData clientData, Tcl_Interp *interp,
               int argc, char **argv);
 
@@ -2662,16 +2870,19 @@ int ToglTcl::ToglCmd(ClientData, Tcl_Interp *interp,
                      int argc, char **argv)
 {
 DOTRACE("ToglTcl::ToglCmd");
-  if (argc <= 1) {
+  if (argc <= 1)
+  {
     return TCL_ERR(interp,
                    "wrong # args: should be \"pathName read filename\"");
   }
 
   /* Create Togl data structure */
-  try {
+  try
+  {
     new Togl(interp, argv[1], argc-2, argv+2);
   }
-  catch (...) {
+  catch (...)
+  {
     return TCL_ERROR;
   }
 

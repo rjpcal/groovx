@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 13:32:16 1999
-// written: Thu May 10 12:04:39 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,13 +19,14 @@ typedef struct _XDisplay Display;
 typedef unsigned long Window;
 #endif
 
-class XWinInfo {
+class XWinInfo
+{
 public:
   XWinInfo(Display* dpy, int scr_number, Window win) :
-	 itsDisplay(dpy),
-	 itsScreenNumber(scr_number),
-	 itsWindow(win)
-	 {}
+    itsDisplay(dpy),
+    itsScreenNumber(scr_number),
+    itsWindow(win)
+    {}
 
   Display* getXDisplay()      const { return itsDisplay; }
   int      getXScreenNumber() const { return itsScreenNumber; }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Aug 24 17:50:25 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,8 @@ namespace Gfx
 ///////////////////////////////////////////////////////////////////////
 
 template<class V>
-class Gfx::Rect {
+class Gfx::Rect
+{
 public:
   // Creators
   Rect() : ll(), tt(), rr(), bb() {} // everything inits to zero

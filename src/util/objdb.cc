@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Aug 22 11:17:27 2001
+// written: Sun Aug 26 08:35:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ InvalidIdError::~InvalidIdError() {}
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ObjDb::Impl {
+class ObjDb::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);

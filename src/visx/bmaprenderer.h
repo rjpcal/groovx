@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 16:51:34 1999
-// written: Mon Aug 13 12:13:10 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,8 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class BmapRenderer {
+class BmapRenderer
+{
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~BmapRenderer();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Sun Jul 22 18:07:06 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,8 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::PkgBase {
+class Tcl::PkgBase
+{
 public:
   /** Construct a \c Tcl::PkgBase with a Tcl interpreter, package
       name, and package version. The version string should be in the

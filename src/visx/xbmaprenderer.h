@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Mon Aug 13 12:13:10 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,8 @@ typedef Tk_Window_* Tk_Window;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class XBmapRenderer : public BmapRenderer {
+class XBmapRenderer : public BmapRenderer
+{
 public:
   /** Initializes some X11 structures. Must be called before any \c
       XBmapRenderer objects are rendered. */

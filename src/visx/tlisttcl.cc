@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Sat Aug 25 22:01:14 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,7 +168,8 @@ Tcl::List TlistTcl::dealTriads(Tcl::List objid_list, Util::UID posid1,
                                Util::UID posid2, Util::UID posid3)
 {
   const unsigned int NUM_PERMS = 18;
-  static int permutations[NUM_PERMS][3] = {
+  static int permutations[NUM_PERMS][3] =
+  {
     {0, 0, 1},
     {0, 0, 2},
     {1, 1, 0},
@@ -186,7 +187,8 @@ Tcl::List TlistTcl::dealTriads(Tcl::List objid_list, Util::UID posid1,
     {1, 0, 2},
     {1, 2, 0},
     {2, 0, 1},
-    {2, 1, 0} };
+    {2, 1, 0}
+  };
 
   fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
                                 objid_list.end<Util::UID>());

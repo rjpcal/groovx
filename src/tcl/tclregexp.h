@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:05:59 2001
-// written: Mon Jul 16 13:27:09 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,8 @@ namespace Tcl
   class RegExp;
 }
 
-class Tcl::RegExp {
+class Tcl::RegExp
+{
 public:
   RegExp() : itsPatternObj() {}
 

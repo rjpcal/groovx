@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 10:56:20 1999
-// written: Sat Jul 21 20:21:15 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TimingHandler : public TimingHdlr {
+class TimingHandler : public TimingHdlr
+{
 protected:
   // Creators
   TimingHandler();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Mon Aug 20 12:23:40 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gtext : public GrObj {
+class Gtext : public GrObj
+{
 protected:
   /// Construct with an initial text string \a text.
   Gtext(const char* text=0);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,8 @@ class ostream;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class AsciiStreamWriter : public IO::Writer {
+class AsciiStreamWriter : public IO::Writer
+{
 public:
   /// Construct with a connection to an open \c STD_IO::ostream.
   AsciiStreamWriter(STD_IO::ostream& os);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Tue Jun 19 15:31:40 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,63 +37,65 @@ Util::SerialPort::SerialPort(const char* serial_device) :
   itsExitStatus(0)
 {
 DOTRACE("Util::SerialPort::SerialPort");
-  if (itsFiledes != -1) {
-    struct termios ti;
+  if (itsFiledes != -1)
+    {
+      struct termios ti;
 
-    if ( tcgetattr( filedes(), &ti ) == -1 )
-      { close(); return; }
+      if ( tcgetattr( filedes(), &ti ) == -1 )
+        { close(); return; }
 
-    // input modes:
-    //   ignore BREAK condition on input,
-    //   ignore framing errors and parity errors
-    ti.c_iflag = IGNBRK | IGNPAR;
+      // input modes:
+      //   ignore BREAK condition on input,
+      //   ignore framing errors and parity errors
+      ti.c_iflag = IGNBRK | IGNPAR;
 
-    // output modes:
-    //   none
-    ti.c_oflag = 0x0;
+      // output modes:
+      //   none
+      ti.c_oflag = 0x0;
 
-    // control modes:
-    //    character size 8
-    //    ignore modem control lines
-    //    baud rate 9600
-    //    enable receiver
-    ti.c_cflag = CS8 | CLOCAL | B9600 | CREAD;
+      // control modes:
+      //    character size 8
+      //    ignore modem control lines
+      //    baud rate 9600
+      //    enable receiver
+      ti.c_cflag = CS8 | CLOCAL | B9600 | CREAD;
 
-    // local modes:
-    //    none
-    ti.c_lflag = 0;
+      // local modes:
+      //    none
+      ti.c_lflag = 0;
 
-    // control characters
-    ti.c_cc[VTIME] = 0;         // intercharacter timer
-    ti.c_cc[VMIN]  = 1;         // minimum number of characters to be read
+      // control characters
+      ti.c_cc[VTIME] = 0;         // intercharacter timer
+      ti.c_cc[VMIN]  = 1;         // minimum number of characters to be read
 
-    if ( tcsetattr( filedes(), TCSANOW, &ti) == -1 )
-      { close(); return; }
+      if ( tcsetattr( filedes(), TCSANOW, &ti) == -1 )
+        { close(); return; }
 
 #if defined(GCC_COMPILER) && GCC_COMPILER >= 3
-    itsFilebuf = new std::filebuf(fdopen(filedes(), "r"), std::ios::in);
-    itsStream = new std::iostream(itsFilebuf);
+      itsFilebuf = new std::filebuf(fdopen(filedes(), "r"), std::ios::in);
+      itsStream = new std::iostream(itsFilebuf);
 #else
-    itsStream = new STD_IO::fstream;
-    itsStream->attach(filedes());
+      itsStream = new STD_IO::fstream;
+      itsStream->attach(filedes());
 #endif
-  }
+    }
 }
 
-int Util::SerialPort::close(){
+int Util::SerialPort::close()
+{
 DOTRACE("Util::SerialPort::close");
-  if ( !isClosed() ) {
-
-    delete itsStream;
-    itsStream = 0;
+  if ( !isClosed() )
+    {
+      delete itsStream;
+      itsStream = 0;
 
 #if defined(GCC_COMPILER) && GCC_COMPILER >= 3
-    delete itsFilebuf;
-    itsFilebuf = 0;
+      delete itsFilebuf;
+      itsFilebuf = 0;
 #endif
 
-    itsExitStatus = ::close(itsFiledes);
-  }
+      itsExitStatus = ::close(itsFiledes);
+    }
   return itsExitStatus;
 }
 

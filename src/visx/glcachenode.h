@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Fri Aug 24 16:31:55 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include "gmodes.h"
 #include "gnode.h"
 
-class GLCacheNode : public Gnode {
+class GLCacheNode : public Gnode
+{
 public:
   GLCacheNode(Util::SoftRef<Gnode> child) :
     Gnode(child),

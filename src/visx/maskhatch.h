@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Aug 21 13:53:06 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MaskHatch : public GrObj {
+class MaskHatch : public GrObj
+{
 protected:
   /// Default constructor.
   MaskHatch();

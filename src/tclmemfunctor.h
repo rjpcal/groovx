@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 13 09:07:00 2001
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,8 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class C, class F>
-  class MemFunctor {
+  class MemFunctor
+  {
   public:
     typedef F MemFunc;
 

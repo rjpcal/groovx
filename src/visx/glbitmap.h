@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Fri Aug 10 12:34:32 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,8 @@
 
 // Used to allow a shared_ptr to be initialized before we pass it to
 // the Bitmap constructor
-struct GLRHolder {
+struct GLRHolder
+{
   GLRHolder(shared_ptr<GLBmapRenderer> p) : itsRenderer(p) {}
   shared_ptr<GLBmapRenderer> itsRenderer;
 };
@@ -41,7 +42,8 @@ struct GLRHolder {
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GLBitmap : private GLRHolder, public Bitmap {
+class GLBitmap : private GLRHolder, public Bitmap
+{
 protected:
   /// Construct an empty bitmap.
   GLBitmap();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,8 @@ namespace Tcl
   }
 }
 
-struct Tcl::PkgBase::Impl {
+struct Tcl::PkgBase::Impl
+{
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -129,7 +130,8 @@ Tcl::PkgBase::Impl::Impl(Tcl_Interp* interp,
   ownedDoubles()
 {
 DOTRACE("Tcl::PkgBase::Impl::Impl");
-  if ( !itsPkgName.empty() && !itsVersion.empty() ) {
+  if ( !itsPkgName.empty() && !itsVersion.empty() )
+  {
 
     // First we must construct a capitalization-correct version of
     // itsPkgName that is just how Tcl likes it: first character
@@ -138,7 +140,8 @@ DOTRACE("Tcl::PkgBase::Impl::Impl");
 
     pkgname[0] = char(toupper(pkgname[0]));
 
-    for (size_t i = 1; i < pkgname.length(); ++i) {
+    for (size_t i = 1; i < pkgname.length(); ++i)
+    {
       pkgname[i] = char(tolower(pkgname[i]));
     }
 

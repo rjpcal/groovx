@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Mon Aug 13 12:13:10 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,10 +42,12 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gfx::BmapData {
+class Gfx::BmapData
+{
 public:
   /// Nested class in allows \c BmapData objects to be updated lazily.
-  class UpdateFunc {
+  class UpdateFunc
+  {
   public:
     /// Virtual destructor ensures correct destruction of subclasses.
     virtual ~UpdateFunc();

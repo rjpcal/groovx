@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class DummySound : public Sound {
+class DummySound : public Sound
+{
 public:
   DummySound(const char* filename = 0);
   virtual ~DummySound();

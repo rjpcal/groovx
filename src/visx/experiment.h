@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,8 @@ namespace Util
 class Response;
 
 /// Protocol class that represents psychophysical experiments.
-class Experiment {
+class Experiment
+{
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Experiment();

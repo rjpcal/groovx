@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Tue Aug 21 15:24:53 2001
+// written: Sun Aug 26 08:38:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ class ostream;
 #  endif
 #endif
 
-namespace IO {
+namespace IO
+{
   class LegacyReader;
   class LegacyWriter;
 }
@@ -46,7 +47,8 @@ namespace IO {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IO::LegacyReader : public IO::Reader {
+class IO::LegacyReader : public IO::Reader
+{
 public:
   LegacyReader(STD_IO::istream& is);
   virtual ~LegacyReader();
@@ -90,7 +92,8 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IO::LegacyWriter : public IO::Writer {
+class IO::LegacyWriter : public IO::Writer
+{
 public:
   LegacyWriter(STD_IO::ostream& os, bool write_bases=true);
   virtual ~LegacyWriter();

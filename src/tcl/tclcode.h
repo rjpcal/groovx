@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Sun Aug  5 19:06:57 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -41,7 +41,8 @@ namespace Tcl
   class Interp;
 }
 
-class Tcl::Code {
+class Tcl::Code
+{
 public:
   class EvalError;
 

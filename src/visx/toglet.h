@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Aug 24 17:17:14 2001
+// written: Sun Aug 26 08:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,8 @@ typedef unsigned long Window;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Toglet : public Tcl::TkWidget {
+class Toglet : public Tcl::TkWidget
+{
 protected:
   Toglet(Tcl_Interp* interp,
              int config_argc=0, char** config_argv=0,
@@ -52,7 +53,8 @@ protected:
 
 public:
   // types
-  struct Color {
+  struct Color
+  {
     Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
       pixel(p), red(r), green(g), blue(b) {}
     unsigned int pixel;
@@ -74,7 +76,8 @@ public:
   Tcl_Interp* getInterp() const;
   int getWidth() const;
   const char* pathname() const;
-  Color queryColor(unsigned int color_index) const {
+  Color queryColor(unsigned int color_index) const
+  {
     Color col;
     queryColor(color_index, col);
     return col;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Mon Aug 13 12:16:30 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,8 @@ namespace Gfx
 }
 
 template <class V>
-class Gfx::Vec3 {
+class Gfx::Vec3
+{
 private:
   V itsData[3];
 

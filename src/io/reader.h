@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Tue Aug 21 15:25:13 2001
+// written: Sun Aug 26 08:35:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,8 @@ class Value;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::ReadError : public Util::Error {
+class IO::ReadError : public Util::Error
+{
 public:
   ReadError(const fstring& msg) : Util::Error(msg) {};
 
@@ -60,7 +61,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::ReadVersionError : public Util::Error {
+class IO::ReadVersionError : public Util::Error
+{
 public:
   /// Construct with information relevant to the problem
   ReadVersionError(const char* classname,
@@ -86,7 +88,8 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::Reader {
+class IO::Reader
+{
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.

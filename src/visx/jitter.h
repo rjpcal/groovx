@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:40 1999
-// written: Fri Aug 10 10:46:48 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Jitter : public Position {
+class Jitter : public Position
+{
   //////////////
   // creators //
   //////////////

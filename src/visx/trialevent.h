@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Tue Aug 14 21:38:06 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,8 @@ typedef void* ClientData;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class TrialEvent : public IO::IoObject {
+class TrialEvent : public IO::IoObject
+{
 protected:
   /// Construct with a requested delay of \a msec.
   TrialEvent(int msec);
@@ -125,7 +126,8 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 /// TrialEvent subclass to call TrialBase::trAbortTrial().
-class AbortTrialEvent : public TrialEvent {
+class AbortTrialEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   AbortTrialEvent(int msec = 0);
@@ -139,7 +141,8 @@ protected:
 };
 
 /// TrialEvent subclass to call TrialBase::installSelf() and Widget::display().
-class DrawEvent : public TrialEvent {
+class DrawEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   DrawEvent(int msec = 0);
@@ -153,7 +156,8 @@ protected:
 };
 
 /// TrialEvent subclass to call TrialBase::trEndTrial().
-class EndTrialEvent : public TrialEvent {
+class EndTrialEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   EndTrialEvent(int msec = 0);
@@ -167,7 +171,8 @@ protected:
 };
 
 /// TrialEvent subclass to call TrialBase::trNextNode().
-class NextNodeEvent : public TrialEvent {
+class NextNodeEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   NextNodeEvent(int msec = 0);
@@ -181,7 +186,8 @@ protected:
 };
 
 /// TrialEvent subclass to call TrialBase::trAllowResponses().
-class AllowResponsesEvent : public TrialEvent {
+class AllowResponsesEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   AllowResponsesEvent(int msec = 0);
@@ -195,7 +201,8 @@ protected:
 };
 
 /// TrialEvent subclass to call TrialBase::trDenyResponses().
-class DenyResponsesEvent : public TrialEvent {
+class DenyResponsesEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   DenyResponsesEvent(int msec = 0);
@@ -209,7 +216,8 @@ protected:
 };
 
 /// TrialEvent subclass to call Widget::undraw().
-class UndrawEvent : public TrialEvent {
+class UndrawEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   UndrawEvent(int msec = 0);
@@ -223,7 +231,8 @@ protected:
 };
 
 /// TrialEvent subclass to call Canvas::drawOnBackBuffer().
-class RenderBackEvent : public TrialEvent {
+class RenderBackEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderBackEvent(int msec = 0);
@@ -237,7 +246,8 @@ protected:
 };
 
 /// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
-class RenderFrontEvent : public TrialEvent {
+class RenderFrontEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   RenderFrontEvent(int msec = 0);
@@ -251,7 +261,8 @@ protected:
 };
 
 /// TrialEvent subclass to call Widget::swapBuffers().
-class SwapBuffersEvent : public TrialEvent {
+class SwapBuffersEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   SwapBuffersEvent(int msec = 0);
@@ -265,7 +276,8 @@ protected:
 };
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
-class ClearBufferEvent : public TrialEvent {
+class ClearBufferEvent : public TrialEvent
+{
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
   ClearBufferEvent(int msec = 0);

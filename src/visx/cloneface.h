@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:25 1999
-// written: Wed Aug 15 14:24:45 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -33,7 +33,8 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class CloneFace : public Face {
+class CloneFace : public Face
+{
 protected:
   /// Default constructor.
   CloneFace();

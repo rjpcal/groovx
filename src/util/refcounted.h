@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Tue Aug 21 15:22:42 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,8 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-struct Util::RefCounts {
+struct Util::RefCounts
+{
 protected:
   ~RefCounts();
 
@@ -94,7 +95,8 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::RefCounted {
+class Util::RefCounted
+{
 private:
   RefCounts* const itsRefCounts;
 

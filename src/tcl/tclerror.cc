@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:13 1999
-// written: Wed Aug  8 15:34:05 2001
+// written: Sun Aug 26 08:53:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@
 Tcl::TclError::~TclError() {}
 
 
-void Tcl::BkdErrorHandler::raiseBackgroundError(const char* msg) {
+void Tcl::BkdErrorHandler::raiseBackgroundError(const char* msg)
+{
 DOTRACE("Tcl::BkdErrorHandler::raiseBackgroundError");
   Tcl_AppendResult(itsInterp, msg, (char*) 0);
   Tcl_BackgroundError(itsInterp);
@@ -41,15 +42,18 @@ DOTRACE("Tcl::BkdErrorHandler::BkdErrorHandler");
 
 Tcl::BkdErrorHandler::~BkdErrorHandler() {}
 
-void Tcl::BkdErrorHandler::handleUnknownError() {
+void Tcl::BkdErrorHandler::handleUnknownError()
+{
   raiseBackgroundError("an error of unknown type occurred");
 }
 
-void Tcl::BkdErrorHandler::handleError(Util::Error& err) {
+void Tcl::BkdErrorHandler::handleError(Util::Error& err)
+{
   raiseBackgroundError(err.msg_cstr());
 }
 
-void Tcl::BkdErrorHandler::handleMsg(const char* msg) {
+void Tcl::BkdErrorHandler::handleMsg(const char* msg)
+{
   raiseBackgroundError(msg);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 13:07:53 2001
-// written: Tue Jul 10 13:19:17 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 
 #include "util/object.h"
 
-class MtxObj : public Mtx, public Util::Object {
+class MtxObj : public Mtx, public Util::Object
+{
 public:
   template <class T1>
   MtxObj(T1 t1) : Mtx(t1) {}

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri Aug 24 11:13:48 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,8 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GxSeparator : public GxNode {
+class GxSeparator : public GxNode
+{
 protected:
   GxSeparator();
 

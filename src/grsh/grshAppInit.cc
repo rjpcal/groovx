@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Aug 22 15:30:56 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -35,7 +35,8 @@
 // Forward declarations of package init procedures
 //
 
-extern "C" {
+extern "C"
+{
   Tcl_PackageInitProc Bitmap_Init;
   Tcl_PackageInitProc Block_Init;
   Tcl_PackageInitProc Dlist_Init;
@@ -72,14 +73,17 @@ extern "C" {
 // Info about the packages to be loaded
 //
 
-namespace {
+namespace
+{
 
-struct PackageInfo {
+struct PackageInfo
+{
   const char* pkgName;
   Tcl_PackageInitProc *pkgInitProc;
 };
 
-PackageInfo IMMEDIATE_PKGS[] = {
+PackageInfo IMMEDIATE_PKGS[] =
+{
   { "Tcl",      Tcl_Init       }
   , { "Tk",       Tk_Init        }
   , { "Togl",     Togl_Init      }
@@ -127,7 +131,8 @@ PackageInfo DELAYED_PKGS[] = {};
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TclApp : public GrshApp {
+class TclApp : public GrshApp
+{
 public:
   TclApp(int argc, char** argv, Tcl::Interp& interp);
 
@@ -142,21 +147,25 @@ TclApp::TclApp(int argc, char** argv, Tcl::Interp& interp) :
 {
 DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
-  {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i) {
+  {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
+    {
 #ifdef LOCAL_TRACE
-    Util::log() << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
+      Util::log() << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
 #endif
-    int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
-    if (result != TCL_OK) { itsStatus = result; }
-  }}
+      int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
+      if (result != TCL_OK) { itsStatus = result; }
+    }
+  }
 
 #if 0
-  {for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i) {
-    Tcl_StaticPackage((Tcl_Interp*) 0,
-                      const_cast<char*>(DELAYED_PKGS[i].pkgName),
-                      DELAYED_PKGS[i].pkgInitProc,
-                      0);
-  }}
+  {for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
+    {
+      Tcl_StaticPackage((Tcl_Interp*) 0,
+                        const_cast<char*>(DELAYED_PKGS[i].pkgName),
+                        DELAYED_PKGS[i].pkgInitProc,
+                        0);
+    }
+  }
 #endif
 
   // set prompt to "cmd[n]% " where cmd is the name of the program,

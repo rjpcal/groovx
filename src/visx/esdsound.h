@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Thu Aug  9 07:06:03 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class EsdSound : public Sound {
+class EsdSound : public Sound
+{
 public:
   EsdSound(const char* filename = 0);
   virtual ~EsdSound();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 02:58:20 1999
-// written: Tue Aug 21 15:29:35 2001
+// written: Sun Aug 26 08:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,8 @@ namespace Gfx
 
 template <class T> class dynamic_block;
 
-class TlistUtils {
+class TlistUtils
+{
 public:
   static Util::UID createPreview(Gfx::Canvas& canvas,
                                  Util::UID* objids, unsigned int objids_size);

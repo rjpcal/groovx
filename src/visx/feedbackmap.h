@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Wed Aug  8 20:16:38 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 #include "util/minivec.h"
 #include "util/strings.h"
 
-class FeedbackMap {
+class FeedbackMap
+{
 public:
   FeedbackMap() :
     itsUseFeedback(true), itsRep(), itsItems(), isItDirty(true) {}
@@ -77,7 +78,8 @@ private:
     isItDirty = false;
   }
 
-  class Item {
+  class Item
+  {
   public:
     Item(Tcl_Obj* cond, Tcl_Obj* res) :
       itsCondition(cond),

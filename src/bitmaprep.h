@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Sun Aug 26 08:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,8 @@ namespace IO
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class BitmapRep {
+class BitmapRep
+{
 public:
   /// Construct with empty bitmap data.
   BitmapRep(shared_ptr<BmapRenderer> renderer);

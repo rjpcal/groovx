@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:12 1999
-// written: Thu May 10 12:04:46 2001
+// written: Sun Aug 26 08:53:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,19 +28,20 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-KbdResponseHdlr* KbdResponseHdlr::make() {
+KbdResponseHdlr* KbdResponseHdlr::make()
+{
 DOTRACE("KbdResponseHdlr::make");
   return new KbdResponseHdlr;
 }
 
-KbdResponseHdlr::KbdResponseHdlr() : 
+KbdResponseHdlr::KbdResponseHdlr() :
   EventResponseHdlr("")
 {
   setEventSequence("<KeyPress>");
   setBindingSubstitution("%K");
 }
 
-KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) : 
+KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
   EventResponseHdlr(key_resp_pairs)
 {
   setEventSequence("<KeyPress>");

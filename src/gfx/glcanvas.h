@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Aug 24 17:12:23 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 #include "gfx/canvas.h"
 #endif
 
-class GLCanvas : public Gfx::Canvas {
+class GLCanvas : public Gfx::Canvas
+{
 public:
   GLCanvas(bool is_rgba, bool is_doublebuffered);
 

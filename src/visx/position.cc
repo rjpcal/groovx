@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 22 17:11:09 2001
+// written: Sun Aug 26 08:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct PositionImpl {
+struct PositionImpl
+{
   PositionImpl() :
     tr(0.0, 0.0, 0.0),
     sc(1.0, 1.0, 1.0),

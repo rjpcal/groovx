@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Fri Aug 10 10:46:48 2001
+// written: Sun Aug 26 08:35:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 struct Tcl_Interp;
 
 
-class GrshApp : public Application {
+class GrshApp : public Application
+{
 public:
   /// Construct with the applicaton's Tcl interpreter.
   GrshApp(int argc, char** argv, Tcl_Interp* interp);
