@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Mar 20 11:53:37 2000
+// written: Mon Mar 20 13:05:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,8 @@ public:
 	 iterator& operator++() { nn = nn->next; return *this; }
 	 iterator operator++(int) { iterator temp(*this); ++*this; return temp; }
 
-	 bool operator==(const iterator& other) { return nn == other.nn; }
-	 bool operator!=(const iterator& other) { return nn != other.nn; }
+	 bool operator==(const iterator& other) const { return nn == other.nn; }
+	 bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
   class const_iterator {
