@@ -61,6 +61,7 @@ extern "C"
   Tcl_PackageInitProc Cloneface_Init;
   Tcl_PackageInitProc Dlist_Init;
   Tcl_PackageInitProc Element_Init;
+  Tcl_PackageInitProc Elementcontainer_Init;
   Tcl_PackageInitProc Eventresponsehdlr_Init;
   Tcl_PackageInitProc Exptdriver_Init;
   Tcl_PackageInitProc Face_Init;
@@ -142,7 +143,8 @@ PackageInfo DELAYED_PKGS[] =
     { "Block",               Block_Init,               "3.0" },
     { "Cloneface",           Cloneface_Init,           "2.0" },
     { "Dlist",               Dlist_Init,               "1.0" },
-    { "Element",             Element_Init,             "1.0" },
+    { "Element",             Element_Init,             "3.0" },
+    { "Elementcontainer",    Elementcontainer_Init,    "3.0" },
     { "Eventresponsehdlr",   Eventresponsehdlr_Init,   "3.0" },
     { "Exptdriver",          Exptdriver_Init,          "2.0" },
     { "Face",                Face_Init,                "2.0" },

@@ -16,17 +16,17 @@ IO::testDestringifyCmd BlockTcl IO 1 $::BLOCK
 IO::testWriteCmd BlockTcl IO 1 $::BLOCK
 IO::testReadCmd BlockTcl IO 1 $::BLOCK
 
-### Block::currentTrial ###
-test "Block::currentTrial" "too few args" {
-    Block::currentTrial
+### Block::currentElement ###
+test "Block::currentElement" "too few args" {
+    Block::currentElement
 } {wrong \# args}
-test "Block::currentTrial" "too many args" {
-    Block::currentTrial $::BLOCK junk
+test "Block::currentElement" "too many args" {
+    Block::currentElement $::BLOCK junk
 } {wrong \# args}
 
-test "Block::currentTrial" "normal use on empty block" {
-    Block::removeAllTrials $::BLOCK
-    Block::currentTrial $::BLOCK
+test "Block::currentElement" "normal use on empty block" {
+    Block::clearElements $::BLOCK
+    Block::currentElement $::BLOCK
 } {^0$}
 
 ### Block::trialType ###
@@ -38,7 +38,7 @@ test "Block::trialType" "too many args" {
 } {wrong \# args}
 
 test "Block::trialType" "normal use on empty expt" {
-    Block::removeAllTrials $::BLOCK
+    Block::clearElements $::BLOCK
     Block::trialType $::BLOCK
 } {^-1$}
 
@@ -51,7 +51,7 @@ test "Block::isComplete" "too many args" {
 } {wrong \# args}
 
 test "Block::isComplete" "normal use on empty expt" {
-    Block::removeAllTrials $::BLOCK
+    Block::clearElements $::BLOCK
     Block::isComplete $::BLOCK
 } {^1$}
 
@@ -64,21 +64,21 @@ test "Block::numCompleted" "too many args" {
 } {wrong \# args}
 
 test "Block::numCompleted" "use on empty expt" {
-    Block::removeAllTrials $::BLOCK
+    Block::clearElements $::BLOCK
     Block::numCompleted $::BLOCK
 } {^0$}
 
-### Block::numTrials ###
-test "Block::numTrials" "too few args" {
-    Block::numTrials 
+### Block::numElements ###
+test "Block::numElements" "too few args" {
+    Block::numElements 
 } {wrong \# args}
-test "Block::numTrials" "too many args" {
-    Block::numTrials $::BLOCK junk
+test "Block::numElements" "too many args" {
+    Block::numElements $::BLOCK junk
 } {wrong \# args}
 
-test "Block::numTrials" "use on empty expt" {
-    Block::removeAllTrials $::BLOCK
-    Block::numTrials   $::BLOCK 
+test "Block::numElements" "use on empty expt" {
+    Block::clearElements $::BLOCK
+    Block::numElements   $::BLOCK 
 } {^0$}
 
 ### Block::lastResponse ###
@@ -90,7 +90,7 @@ test "Block::lastResponse" "too many args" {
 } {wrong \# args}
 
 test "Block::lastResponse" "normal use on empty expt" {
-    Block::removeAllTrials $::BLOCK
+    Block::clearElements $::BLOCK
     Block::lastResponse $::BLOCK
 } {^\-1$}
 
@@ -103,6 +103,6 @@ test "Block::info" "too many args" {
 } {wrong \# args}
 
 test "Block::info" "normal use on empty expt" {
-    Block::removeAllTrials $::BLOCK
+    Block::clearElements $::BLOCK
     Block::info $::BLOCK
 } {^complete$}

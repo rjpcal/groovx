@@ -108,20 +108,18 @@ test "ExptDriver::halt" "too many args" {
 
 ### General experiment tests ###
 test "ExptDriver::begin" "general sanity test" {
-    set thid [Obj::new TimingHdlr]
-    Th::addStartEvent $thid EndTrialEvent 100
+    set thid [new TimingHdlr]
+    -> $thid addStartEvent EndTrialEvent 100
 
-    set rhid [Obj::new NullResponseHdlr]
+    set face [new Face]
+    set trial [new Trial]
+    -> $trial addNode $face
 
-    set face [Obj::new Face]
-    set trial [Obj::new Trial]
-    Trial::addNode $trial $face
+    -> $trial timingHdlr $thid
+    -> $trial responseHdlr [new NullResponseHdlr]
 
-    Trial::timingHdlr $trial $thid
-    Trial::responseHdlr $trial $rhid
-
-    set block [Obj::new Block]
-    Block::addTrialIds $block $trial
+    set block [new Block]
+    -> $block addElements $trial
 
     set expt [new ExptDriver]
     -> $expt widget [Toglet::current]

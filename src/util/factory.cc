@@ -101,6 +101,11 @@ DOTRACE("AssocArray::getPtrForName");
   return rep->funcMap[name];
 }
 
+void* AssocArray::getPtrForName(const char* name) const
+{
+  return getPtrForName(fstring(name));
+}
+
 void AssocArray::setPtrForName(const char* name, void* ptr)
 {
 DOTRACE("AssocArray::setPtrForName");
