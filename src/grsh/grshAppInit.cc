@@ -2,8 +2,8 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 12:56:30 1999
-static const char[] vcid_grshAppInit_cc = "$Id$";
+// written: Mon Mar 15 15:57:52 1999
+// $Id$
 //
 // This is the main application file for a Tcl/Tk application that
 // manages collections of GrObj's (graphic objects) within an
@@ -23,17 +23,16 @@ static const char[] vcid_grshAppInit_cc = "$Id$";
 namespace ExptTcl       { Tcl_PackageInitProc Expt_Init;        }
 namespace FaceTcl       { Tcl_PackageInitProc Face_Init;        }
 namespace FixptTcl      { Tcl_PackageInitProc Fixpt_Init;       }
-namespace GlistTcl      { Tcl_PackageInitProc Glist_Init;       }
-namespace MiscTcl       { Tcl_PackageInitProc Misctcl_Init;     }
+namespace MiscTcl       { Tcl_PackageInitProc Misc_Init;        }
 namespace ObjlistTcl    { Tcl_PackageInitProc Objlist_Init;     }
 namespace ObjTogl       { Tcl_PackageInitProc Objtogl_Init;     }
-namespace ScaleableTcl  { Tcl_PackageInitProc Scaleable_Init;   }
+namespace PositionTcl   { Tcl_PackageInitProc Position_Init;    }
+namespace PoslistTcl    { Tcl_PackageInitProc Poslist_Init;     }
 namespace SubjectTcl    { Tcl_PackageInitProc Subject_Init;     }
 namespace Tcldlist      { Tcl_PackageInitProc Tcldlist_Init;    }
 namespace TclGL         { Tcl_PackageInitProc Tclgl_Init;       }
-namespace TimerTcl      { Tcl_PackageInitProc Timer_Init;       }  
-
-#define NO_TRACE
+namespace TlistTcl      { Tcl_PackageInitProc Tlist_Init;       }
+#define LOCAL_TRACE
 #include "trace.h"
 
 int main(int argc, char **argv) {
@@ -48,18 +47,19 @@ DOTRACE("Tcl_AppInit");
   if (Tcl_Init(interp)                  != TCL_OK)   { return TCL_ERROR; }
   if (Tk_Init(interp)                   != TCL_OK)   { return TCL_ERROR; }
   if (Togl_Init(interp)                 != TCL_OK)   { return TCL_ERROR; }
-  if (ExptTcl::Expt_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
   if (FaceTcl::Face_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
   if (FixptTcl::Fixpt_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
-  if (GlistTcl::Glist_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
-  if (MiscTcl::Misctcl_Init(interp)     != TCL_OK)   { return TCL_ERROR; }
+  if (MiscTcl::Misc_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
   if (ObjlistTcl::Objlist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
   if (ObjTogl::Objtogl_Init(interp)     != TCL_OK)   { return TCL_ERROR; }
-  if (ScaleableTcl::Scaleable_Init(interp) != TCL_OK) { return TCL_ERROR; }
+  if (PositionTcl::Position_Init(interp) != TCL_OK)  { return TCL_ERROR; }
+  if (PoslistTcl::Poslist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
   if (SubjectTcl::Subject_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
   if (Tcldlist::Tcldlist_Init(interp)   != TCL_OK)   { return TCL_ERROR; }
   if (TclGL::Tclgl_Init(interp)         != TCL_OK)   { return TCL_ERROR; }
-  if (TimerTcl::Timer_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
+  if (TlistTcl::Tlist_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
+
+  if (ExptTcl::Expt_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
 
   // set prompt to "grsh[n]% " where n is the history event number
   Tcl_SetVar(interp, "tcl_prompt1", 
@@ -70,3 +70,5 @@ DOTRACE("Tcl_AppInit");
   Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
   return TCL_OK;
 }
+
+static const char vcid_grshAppInit_cc[] = "$Header$";
