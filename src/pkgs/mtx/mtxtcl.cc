@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Mon Jul 16 07:47:20 2001
+// written: Mon Jul 16 09:36:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,11 +31,11 @@ public:
   MtxPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<MtxObj>(interp, "Mtx", "$Revision$")
   {
-    declareCAction("print", (void (MtxObj::*)() const) &Mtx::print);
+    declareCAction<MtxObj>("print", &Mtx::print);
 
-    declareCGetter("mrows", (int (MtxObj::*)() const) &Mtx::mrows);
-    declareCGetter("ncols", (int (MtxObj::*)() const) &Mtx::ncols);
-    declareCGetter("nelems", (int (MtxObj::*)() const) &Mtx::nelems);
+    declareCGetter<MtxObj, int>("mrows", &Mtx::mrows);
+    declareCGetter<MtxObj, int>("ncols", &Mtx::ncols);
+    declareCGetter<MtxObj, int>("nelems", &Mtx::nelems);
   }
 };
 
