@@ -93,6 +93,22 @@ namespace
     glGetDoublev(GL_DEPTH_RANGE, &vals[0]);
     return geom::span<double>(vals[0], vals[1]);
   }
+
+  txform getModelview()
+  {
+    DOTRACE("<glcanvas.cc>::getModelview");
+    GLdouble m[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, &m[0]);
+    return txform::copy_of(&m[0]);
+  }
+
+  txform getProjection()
+  {
+    DOTRACE("<glcanvas.cc>::getProjection");
+    GLdouble m[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, &m[0]);
+    return txform::copy_of(&m[0]);
+  }
 }
 
 class GLCanvas::Impl
@@ -144,19 +160,19 @@ vec3d GLCanvas::screenFromWorld3(const vec3d& world_pos) const
 {
 DOTRACE("GLCanvas::screenFromWorld3");
 
-  GLdouble current_mv_matrix[16];
-  GLdouble current_proj_matrix[16];
   GLint current_viewport[4];
-
-  glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
-  glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
   glGetIntegerv(GL_VIEWPORT, current_viewport);
+
+  const txform m = getModelview();
+  const txform p = getProjection();
 
   vec3d screen_pos;
 
   GLint status =
     gluProject(world_pos.x(), world_pos.y(), world_pos.z(),
-               current_mv_matrix, current_proj_matrix, current_viewport,
+               m.col_major_data(),
+               p.col_major_data(),
+               current_viewport,
                &screen_pos.x(), &screen_pos.y(), &screen_pos.z());
 
   dbg_eval_nl(3, status);
@@ -175,17 +191,20 @@ namespace
 {
   vec3d unproject1(const txform& modelview,
                    const txform& projection,
-                   const GLint* viewport,
-                   const vec3d& screen_pos)
+                   const geom::rect<int>& viewport,
+                   const vec3d& screen)
   {
     DOTRACE("unproject1");
     vec3d world_pos;
 
+    const int v[4] = { viewport.left(), viewport.bottom(),
+                       viewport.width(), viewport.height() };
+
     GLint status =
-      gluUnProject(screen_pos.x(), screen_pos.y(), screen_pos.z(),
+      gluUnProject(screen.x(), screen.y(), screen.z(),
                    modelview.col_major_data(),
                    projection.col_major_data(),
-                   viewport,
+                   &v[0],
                    &world_pos.x(), &world_pos.y(), &world_pos.z());
 
     dbg_eval_nl(3, status);
@@ -199,17 +218,17 @@ namespace
 
   vec3d unproject2(const txform& modelview,
                    const txform& projection,
-                   const GLint* viewport,
-                   const vec3d& screen_pos)
+                   const geom::rect<int>& viewport,
+                   const vec3d& screen)
   {
     DOTRACE("unproject2");
 
     const txform pm = projection.mtx_mul(modelview);
     const txform pmi = pm.inverted();
 
-    const vec3d screen2(2*(screen_pos.x() - viewport[0])/viewport[2] - 1,
-                        2*(screen_pos.y() - viewport[1])/viewport[3] - 1,
-                        2*(screen_pos.z()) - 1);
+    const vec3d screen2(2*(screen.x() - viewport.left())/viewport.width() - 1,
+                        2*(screen.y() - viewport.bottom())/viewport.height() - 1,
+                        2*(screen.z()) - 1);
 
     return pmi.apply_to(screen2);
   }
@@ -221,19 +240,12 @@ DOTRACE("GLCanvas::worldFromScreen3");
 
   dbg_dump(3, screen_pos);
 
-  GLdouble mv_matrix[16];
-  GLdouble proj_matrix[16];
-  GLint viewport[4];
+  const txform m = getModelview();
+  const txform p = getProjection();
+  const geom::rect<int> v = getScreenViewport();
 
-  glGetDoublev(GL_MODELVIEW_MATRIX, mv_matrix);
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
-  glGetIntegerv(GL_VIEWPORT, viewport);
-
-  const txform m = txform::copy_of(mv_matrix);
-  const txform p = txform::copy_of(proj_matrix);
-
-  const vec3d world1 = unproject1(m, p, viewport, screen_pos);
-  const vec3d world2 = unproject2(m, p, viewport, screen_pos);
+  const vec3d world1 = unproject1(m, p, v, screen_pos);
+  const vec3d world2 = unproject2(m, p, v, screen_pos);
 
   const vec3d diff = world2 - world1;
 
@@ -253,6 +265,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
 
 geom::rect<int> GLCanvas::getScreenViewport() const
 {
+DOTRACE("GLCanvas::getScreenViewport");
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
