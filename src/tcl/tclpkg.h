@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jun 23 14:28:32 1999
+// written: Thu Jun 24 15:28:59 1999
 // $Id$
 //
 //
@@ -50,28 +50,32 @@ public:
   
 protected:
   template <class T>
-  void declareGetter(const char* cmd_name, Getter<T>* getter)
-  { declareGetter_(this, cmd_name, getter); }
+  void declareGetter(const char* cmd_name, Getter<T>* getter,
+							const char* usage = 0)
+  { declareGetter_(this, cmd_name, getter, usage); }
   
   template <class T>
-  void declareSetter(const char* cmd_name, Setter<T>* setter)
-  { declareSetter_(this, cmd_name, setter); }
+  void declareSetter(const char* cmd_name, Setter<T>* setter,
+							const char* usage = 0)
+  { declareSetter_(this, cmd_name, setter, usage); }
 
   template <class T>
-  void declareAttrib(const char* attrib_name, Attrib<T>* attrib)
-  { declareAttrib_(this, attrib_name, attrib); }
+  void declareAttrib(const char* attrib_name, Attrib<T>* attrib,
+							const char* usage = 0)
+  { declareAttrib_(this, attrib_name, attrib, usage); }
 
-  void declareAction(const char* action_name, Action* action);
+  void declareAction(const char* action_name, Action* action,
+							const char* usage = 0);
 
 private:
   template <class T>
-  static void declareGetter_(TclItemPkg*, const char*, Getter<T>*);
+  static void declareGetter_(TclItemPkg*, const char*, Getter<T>*, const char*);
 
   template <class T>
-  static void declareSetter_(TclItemPkg*, const char*, Setter<T>*);
+  static void declareSetter_(TclItemPkg*, const char*, Setter<T>*, const char*);
 
   template <class T>
-  static void declareAttrib_(TclItemPkg*, const char*, Attrib<T>*);
+  static void declareAttrib_(TclItemPkg*, const char*, Attrib<T>*, const char*);
 
   void instantiate();
 
