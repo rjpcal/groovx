@@ -104,6 +104,7 @@ itcl::class Editor {
 		  set objs [getEditSelection]
 		  if { [llength $objs] > 0 } {
 				updateControls [lindex $objs 0]
+				requestDraw
 		  }
 	 }
 
@@ -125,10 +126,6 @@ itcl::class Editor {
 
 		  set viewobj [getViewSelection]
 
-		  if { $obj == $viewobj } {
-				Toglet::setVisible $itsToglet false
-		  }
-
 		  foreach field $itsFieldNames {
 				set val [${itsObjType}::$field $obj]
 				$itsFieldControls($field) set $val
@@ -137,12 +134,6 @@ itcl::class Editor {
 
 		  # need to force the controls to update before we draw the object
 		  update
-
-		  if { $obj == $viewobj } {
-				Toglet::setVisible $itsToglet true
-
-				requestDraw
-		  }
 
 		  set itsUpdateInProgress 0
 	 }
@@ -160,6 +151,8 @@ itcl::class Editor {
 					 ${itsObjType}::$name $editobjs $val
 					 set itsAttribValues($name) $val
 				}
+
+				updateControls [lindex $editobjs 0]
 		  }
 	 }
 
