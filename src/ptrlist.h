@@ -192,15 +192,6 @@ private:
   mutable NullablePtrHandle<T> itsHandle;
   int itsId;
 
-  void refreshPtr() const
-    {
-		if ( !itsHandle.isValid() )
-		  {
-			 typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
-			 itsHandle = p.handle();
-		  }
-	 }
-
 public:
   explicit NullableItemWithId(int id_) :
 	 itsHandle(0), itsId(id_) {}
@@ -219,17 +210,26 @@ public:
 
   // Default destructor, copy constructor, operator=() are fine
 
-        T* operator->()       { refreshPtr(); return itsHandle.get(); }
-  const T* operator->() const { refreshPtr(); return itsHandle.get(); }
-        T& operator*()        { refreshPtr(); return *(itsHandle.get()); }
-  const T& operator*()  const { refreshPtr(); return *(itsHandle.get()); }
+        T* operator->()       { refresh(); return itsHandle.get(); }
+  const T* operator->() const { refresh(); return itsHandle.get(); }
+        T& operator*()        { refresh(); return *(itsHandle.get()); }
+  const T& operator*()  const { refresh(); return *(itsHandle.get()); }
 
-        T* get()              { refreshPtr(); return itsHandle.get(); }
-  const T* get()        const { refreshPtr(); return itsHandle.get(); }
+        T* get()              { refresh(); return itsHandle.get(); }
+  const T* get()        const { refresh(); return itsHandle.get(); }
+
+  void refresh() const
+    {
+		if ( !itsHandle.isValid() )
+		  {
+			 typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
+			 itsHandle = p.handle();
+		  }
+	 }
 
   bool isValid() const { return itsHandle.isValid(); }
 
-  NullablePtrHandle<T> handle() const { refreshPtr(); return itsHandle; }
+  NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
   int id() const { return itsId; }
 };
 
