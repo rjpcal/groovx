@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Apr 30 11:54:02 2002
+// written: Sat Aug 10 14:39:45 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -216,8 +216,7 @@ namespace
 
   ExptDriver* makeExptDriver()
   {
-    if (exptCreateInterp == 0)
-      FactoryError::throwForType("ExptDriver");
+    Assert(exptCreateInterp != 0);
 
     return ExptDriver::make(Application::theApp().argc(),
                             Application::theApp().argv(),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Jul  3 17:26:47 2002
+// written: Sat Aug 10 14:45:59 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -30,6 +30,7 @@
 #include "util/ref.h"
 
 #include "util/trace.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -231,8 +232,7 @@ namespace
 
   Toglet* makeToglet()
   {
-    if (toglCreateInterp == 0)
-      FactoryError::throwForType("Toglet");
+    Assert(toglCreateInterp != 0);
 
     return Toglet::make(toglCreateInterp);
   }
