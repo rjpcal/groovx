@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct 22 17:10:57 2000
+// written: Mon Oct 23 13:14:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,6 +149,16 @@ public:
 
   void ensureNotDuplicate(RefCounted* ptr);
 
+  int findPtr(RefCounted* ptr)
+  {
+	 for (int i = 0; i < itsPtrVec.size(); ++i)
+		{
+		  if ( itsPtrVec[i].masterPtr() == ptr )
+			 return i;
+		}
+	 return -1;
+  }
+
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -283,6 +293,12 @@ DOTRACE("PtrListBase::getCheckedPtrBase");
 
 int PtrListBase::insertPtrBase(RefCounted* ptr) {
 DOTRACE("PtrListBase::insertPtrBase");
+
+  int existing_site = itsImpl->findPtr(ptr);
+
+  if (existing_site != -1)
+	 return existing_site;
+
   int new_site = itsImpl->itsFirstVacant;
   insertPtrBaseAt(new_site, ptr);
   return new_site;              // return the id of the inserted void*
