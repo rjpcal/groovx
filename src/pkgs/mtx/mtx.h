@@ -127,6 +127,9 @@ public:
 
 	 bool operator==(const ConstIterator& other) const
 	   { return data == other.data; }
+
+	 bool operator!=(const ConstIterator& other) const
+	   { return data != other.data; }
   };
 
   ConstIterator begin() const
