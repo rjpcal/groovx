@@ -4,15 +4,17 @@ set date_ext [clock format [clock seconds] -format %Y_%m_%d]
 
 set archive_name grsh_backup_${date_ext}.tar.gz
 
-set sources "../grsh/Makefile \
-		  ../grsh/RCS \
-		  ../grsh/dep \
-		  ../grsh/doc \
-		  ../grsh/idep \
-		  ../grsh/logs \
-		  ../grsh/scripts \
-		  ../grsh/src \
-		  ../grsh/testing/ \
+cd ~/sorcery/
+
+set sources "grsh/Makefile \
+		  grsh/RCS \
+		  grsh/dep \
+		  grsh/doc \
+		  grsh/idep \
+		  grsh/logs \
+		  grsh/scripts \
+		  grsh/src \
+		  grsh/testing/ \
 		  "
 puts "generating archive \"$archive_name\" from \"$sources\"..."
 eval exec tar cvfz $archive_name $sources
