@@ -164,13 +164,17 @@ DOTRACE("Tcl::fromTcl(long*)");
     {
       throw rutz::error(fstring("expected long value "
                                 "but got \"", Tcl_GetString(obj),
-                                "\" (value too large)"), SRC_POS);
+                                "\" (value too large, max is ",
+                                longmax,
+                                ")"), SRC_POS);
     }
   else if (wideval < static_cast<Tcl_WideInt>(longmin))
     {
       throw rutz::error(fstring("expected long value "
                                 "but got \"", Tcl_GetString(obj),
-                                "\" (value too small)"), SRC_POS);
+                                "\" (value too small, min is ",
+                                longmin,
+                                ")"), SRC_POS);
     }
 
   return static_cast<long>(wideval);
@@ -206,7 +210,9 @@ DOTRACE("Tcl::fromTcl(unsigned long*)");
     {
       throw rutz::error(fstring("expected unsigned long value "
                                 "but got \"", Tcl_GetString(obj),
-                                "\" (value too large)"), SRC_POS);
+                                "\" (value too large, max is ",
+                                ulongmax,
+                                ")"), SRC_POS);
     }
 
   return static_cast<unsigned long>(wideval);
