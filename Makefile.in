@@ -78,6 +78,7 @@ OBJ := $(BUILD)/obj
 LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
+DEVSCRIPTS := ./devscripts
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
 DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
@@ -183,14 +184,14 @@ LOCAL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc -or -name \*.C)
 
 # dependencies of object files on source+header files
 
-$(SCRIPTS)/cppdeps: $(SCRIPTS)/cppdeps.cc
+$(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
-$(DEP)/cppdepends: $(SCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(SCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $@
+$(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $@
 
-$(DEP)/altdeps: $(SCRIPTS)/cppdeps.tcl $(SCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
-	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
+$(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
 # Run the old Tcl script and compare its output against the new C++
 # dependency-computation script
@@ -198,9 +199,9 @@ depcheck: $(DEP)/cppdepends $(DEP)/altdeps
 	diff $(DEP)/cppdepends $(DEP)/altdeps > /dev/null
 
 .PHONY: deptime
-deptime: $(SCRIPTS)/cppdeps $(DEP)/altdeps
+deptime: $(DEVSCRIPTS)/cppdeps $(DEP)/altdeps
 	/usr/bin/time -f "%e %U %S" -o deptime -a \
-	 $(SCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $(DEP)/cppdepends
+	 $(DEVSCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $(DEP)/cppdepends
 	cat deptime
 	diff $(DEP)/cppdepends $(DEP)/altdeps
 
