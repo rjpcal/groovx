@@ -256,6 +256,9 @@ AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 
 LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
 
+AC_CHECK_HEADERS([tkIntDecls.h tkIntPlatDecls.h tkIntXlibDecls.h],,
+		 [AC_MSG_ERROR([tk internal headers must be installed])],-)
+
 ###
 
 AC_MSG_CHECKING([whether to to enable matlab support])
