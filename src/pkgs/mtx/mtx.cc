@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Feb 27 15:18:07 2002
+// written: Wed Feb 27 15:39:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,12 @@ void RC::raiseException(const char* msg, const char* f, int ln)
   throw Util::Error(errmsg);
 }
 
+void RC::geq(const void* x, const void* lim, const char* f, int ln)
+{
+  if (x>=lim) ; // OK
+  else raiseException("geq: pointer range error", f, ln);
+}
+
 void RC::less(const void* x, const void* lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
@@ -88,6 +94,12 @@ void RC::inHalfOpen(const void* x, const void* llim, const void* ulim,
 {
   if (x>=llim && x<ulim) ; // OK
   else raiseException("inHalfOpen: pointer range error", f, ln);
+}
+
+void RC::geq(int x, int lim, const char* f, int ln)
+{
+  if (x>=lim) ; // OK
+  else raiseException("geq: integer range error", f, ln);
 }
 
 void RC::less(int x, int lim, const char* f, int ln)
