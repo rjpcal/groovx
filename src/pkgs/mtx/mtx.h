@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Feb 14 11:56:18 2002
+// written: Thu Feb 14 18:20:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -524,6 +524,36 @@ public:
     for (int r = 0; r < mrows(); ++r, ++resiter)
       *resiter = row(r).mean();
 
+    return res;
+  }
+
+  double min() const
+  {
+    double res = at(0);
+    for (int i = 1; i < nelems(); ++i)
+      {
+        double v = at(i);
+        if (v < res) res = v;
+      }
+    return res;
+  }
+
+  double max() const
+  {
+    double res = at(0);
+    for (int i = 1; i < nelems(); ++i)
+      {
+        double v = at(i);
+        if (v > res) res = v;
+      }
+    return res;
+  }
+
+  double sum() const
+  {
+    double res = 0.0;
+    for (int i = 0; i < nelems(); ++i)
+      res += at(i);
     return res;
   }
 
