@@ -6,10 +6,10 @@
 
 PACKAGE_VERSION := @PACKAGE_VERSION@
 
-DEFAULT_MODE := @DEFAULT_MODE@
-
 prefix := @prefix@
 exec_prefix := @exec_prefix@
+
+EXECUTABLE := @EXECUTABLE@
 
 CXX := @CXX@
 
@@ -18,6 +18,8 @@ SHLIB_CMD := @SHLIB_CMD@
 STATLIB_CMD := @STATLIB_CMD@
 
 OBJEXT := @OBJEXT@
+
+LIB_SUFFIX := @LIB_SUFFIX@
 
 SHLIB_EXT := @SHLIB_EXT@
 

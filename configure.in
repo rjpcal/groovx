@@ -163,7 +163,7 @@ AC_CHECK_HEADER([esd.h],
 AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
 
 AC_TRY_COMPILE([#include <iostream>], [std::ios_base* p;],
-		AC_MSG_RESULT(yes),
+		[AC_MSG_RESULT(yes)],
 		[AC_DEFINE(PRESTANDARD_IOSTREAMS, 1) AC_MSG_RESULT(no)])
 
 have_std_io=no
@@ -194,7 +194,7 @@ AC_MSG_CHECKING([whether OpenGL implementation is Mesa])
 
 AC_EGREP_HEADER(MESA, [GL/gl.h],
 		[AC_DEFINE(BROKEN_GL_DISPLAY_LISTS,1) AC_MSG_RESULT(yes)],
-		AC_MSG_RESULT(no))
+		[AC_MSG_RESULT(no)])
 
 dnl AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
@@ -221,8 +221,8 @@ LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 AC_MSG_CHECKING([for location of tcl+tk >= 8.4])
 
 AC_ARG_WITH(tcltk,
-	    AC_HELP_STRING([--with-tcltk=DIR],
-			   [specify where tcl+tk >= 8.4 are installed [/usr/local]]),
+	    [AC_HELP_STRING([--with-tcltk=DIR],
+			    [specify where tcl+tk >= 8.4 are installed [/usr/local]])],
 	    ,
 	    with_tcltk=/usr/local)
 
@@ -261,8 +261,8 @@ LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
 AC_MSG_CHECKING([whether to to enable matlab support])
 
 AC_ARG_ENABLE(matlab,
-	      AC_HELP_STRING([--enable-matlab],
-			     [enable MATLAB support \[yes\]]),
+	      [AC_HELP_STRING([--enable-matlab],
+			      [enable MATLAB support [yes]])],
 	      ,
 	      enable_matlab=yes)
 
@@ -285,12 +285,13 @@ enable_readline=yes
 AC_CHECK_HEADERS([readline/readline.h readline/history.h],
 		  , enable_readline=no,-)
 
-AC_MSG_CHECKING([for readline libraries])
-
-orig_libs=$LIBS
-readline_libs=""
-
 if test $enable_readline = yes; then
+
+   AC_MSG_CHECKING([for readline libraries])
+
+   orig_libs=$LIBS
+   readline_libs=""
+
    LIBS="$LIBS -lreadline"
    readline_libs="-lreadline"
    AC_TRY_LINK([#include <stdio.h>
@@ -305,34 +306,47 @@ if test $enable_readline = yes; then
 		  [rl_callback_handler_install(0,0)],
                   enable_readline=yes, enable_readline=no)
    fi
-fi
 
-if test $enable_readline = yes; then
-   AC_DEFINE(WITH_READLINE, 1)
-   AC_MSG_RESULT([yes ($readline_libs)])
-else
-   LIBS=$orig_libs
-   AC_MSG_RESULT(no)
+   if test $enable_readline = yes; then
+      AC_DEFINE(WITH_READLINE, 1)
+      AC_MSG_RESULT([yes ($readline_libs)])
+   else
+      LIBS=$orig_libs
+      AC_MSG_RESULT(no)
+   fi
 fi
 
 ###
 
-AC_MSG_CHECKING([whether to enable debug mode by default])
+AC_MSG_CHECKING([whether to enable debug mode])
 
-AC_ARG_ENABLE(default-debug,
-	      AC_HELP_STRING([--enable-default-debug],
-			     [whether the default build should include debugging (default=yes)]),
+AC_ARG_ENABLE(debug,
+	      [AC_HELP_STRING([--enable-debug],
+			      [whether the build should include debugging [yes]])],
 	      ,
-	      enable_default_debug=yes)
+	      enable_debug=yes)
 
-AC_MSG_RESULT($enable_default_debug)
+AC_MSG_RESULT($enable_debug)
 
-if test $enable_default_debug = yes; then
-   AC_SUBST(DEFAULT_MODE, debug)
+if test $enable_debug = yes; then
+   DEFS="$DEFS -DPROF"
+   LIB_SUFFIX=".d${PACKAGE_VERSION}"
+   CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
+   EXECUTABLE=\${exec_prefix}/bin/testsh
+   build=build/${ARCH}-debug
 else
-   AC_SUBST(DEFAULT_MODE, prod)
+   LIB_SUFFIX=${PACKAGE_VERSION}
+   CXXFLAGS="$CXXFLAGS $PROD_CXXFLAGS"
+   EXECUTABLE=\${exec_prefix}/bin/grsh${PACKAGE_VERSION}
+   build=build/${ARCH}-prod
 fi
 
-AC_CONFIG_FILES([Makedefs])
+AC_SUBST(LIB_SUFFIX)
+AC_SUBST(EXECUTABLE)
+
+AC_MSG_CHECKING([for build directory])
+AC_MSG_RESULT($build)
+
+AC_CONFIG_FILES([${build}/Makedefs:Makedefs.in])
 
 AC_OUTPUT()

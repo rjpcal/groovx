@@ -18,13 +18,20 @@
 
 default: all
 
+MAKEFLAGS += --warn-undefined-variables
+
+ifndef BUILD
+	BUILD := build/$(ARCH)-debug
+endif
+
+
 ###
 ### All configuration options should be selected via the configure script,
 ### which will generate an appropriate Makedefs file, which is included here:
 ###
 
-Makedefs: Makedefs.in config.status
-	./config.status --file=Makedefs
+$(BUILD)/Makedefs: Makedefs.in config.status
+	./config.status --file=$(BUILD)/Makedefs:Makedefs.in
 
 config.status: configure
 	./config.status --recheck
@@ -32,13 +39,11 @@ config.status: configure
 configure: configure.in
 	autoconf
 
-include Makedefs
+include $(BUILD)/Makedefs
 
 ###
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
 ###
-
-MAKEFLAGS += --warn-undefined-variables
 
 #-------------------------------------------------------------------------
 #
@@ -46,12 +51,7 @@ MAKEFLAGS += --warn-undefined-variables
 #
 #-------------------------------------------------------------------------
 
-ifndef MODE
-	MODE := $(DEFAULT_MODE)
-endif
-
 SRC := src
-BUILD := build/$(ARCH)-$(MODE)
 DEP := $(BUILD)/dep
 OBJ := $(BUILD)/obj
 LOGS := ./logs
@@ -59,23 +59,6 @@ DOC := ./doc
 SCRIPTS := ./scripts
 
 CPPFLAGS += -I$(SRC)
-
-#-------------------------------------------------------------------------
-#
-# Options for compiling and linking
-#
-#-------------------------------------------------------------------------
-
-ifeq ($(MODE),debug)
-	LIB_SUFFIX := .d
-	DEFS += -DPROF
-	CXXFLAGS += $(DEBUG_CXXFLAGS)
-endif
-
-ifeq ($(MODE),prod)
-	LIB_SUFFIX := $(PACKAGE_VERSION)
-	CXXFLAGS += $(PROD_CXXFLAGS)
-endif
 
 #-------------------------------------------------------------------------
 #
@@ -237,13 +220,6 @@ ldeps: $(ALL_SOURCES) $(ALL_HEADERS) $(LOGS)/.timestamp
 
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
-
-ifeq ($(MODE),debug)
-	EXECUTABLE := $(exec_prefix)/bin/testsh
-endif
-ifeq ($(MODE),prod)
-	EXECUTABLE := $(exec_prefix)/bin/grsh$(PACKAGE_VERSION)
-endif
 
 all:
 	make dir_structure
