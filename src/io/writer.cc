@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Tue Nov 30 17:25:25 1999
+// written: Tue Feb 15 12:38:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,13 +57,6 @@ template<>
 void Writer::writeValue<Value>(const string& name,
 										  const Value& value) {
   writeValueObj(name, value);
-}
-
-string Writer::makeNumberString(int number) {
-  char buf[16];
-  ostrstream ost(buf, 16);
-  ost << number << '\0';
-  return buf;
 }
 
 static const char vcid_writer_cc[] = "$Header$";
