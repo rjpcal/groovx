@@ -72,7 +72,7 @@ public:
 
   virtual void drawText(const char* text, Gfx::Canvas& canvas) const;
 
-  /// Return the line height of the font, in screen coords (i.e., pixels).
+  /// Return the line height of the font in screen coords (i.e., pixels)
   virtual int rasterHeight() const;
 
 private:
@@ -96,7 +96,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
     {
       dpy = XOpenDisplay(getenv("DISPLAY"));
       if (dpy == 0)
-        throw rutz::error("couldn't open connection to X server", SRC_POS);
+        throw rutz::error("couldn't open X server connection", SRC_POS);
     }
 
   rutz::fstring xname = pickXFont(fontname);
@@ -110,21 +110,25 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
 
   if (itsFontInfo == 0)
     {
-      throw rutz::error(rutz::fstring("couldn't load X font '", xname, "'"), SRC_POS);
+      throw rutz::error(rutz::fstring("couldn't load X font '",
+                                      xname, "'"), SRC_POS);
     }
 
   dbg_eval_nl(2, itsFontInfo->fid);
 
-  const int first = itsFontInfo->min_char_or_byte2;    dbg_eval(2, first);
-  const int last = itsFontInfo->max_char_or_byte2;     dbg_eval(2, last);
+  const int first = itsFontInfo->min_char_or_byte2; dbg_eval(2, first);
+  const int last = itsFontInfo->max_char_or_byte2;  dbg_eval(2, last);
 
-  itsListCount = last-first+1;                dbg_eval_nl(2, itsListCount);
-  itsListBase = GLCanvas::genLists( last+1 ); dbg_eval_nl(2, itsListBase);
+  itsListCount = last-first+1;
+  itsListBase = GLCanvas::genLists( last+1 );
+
+  dbg_eval_nl(2, itsListCount);
+  dbg_eval_nl(2, itsListBase);
 
   if (itsListBase==0)
     {
       XFreeFontInfo(NULL, itsFontInfo, 1);
-      throw rutz::error(rutz::fstring("couldn't allocate GL display lists"), SRC_POS);
+      throw rutz::error("couldn't allocate GL display lists", SRC_POS);
     }
 
   glXUseXFont(itsFontInfo->fid,
@@ -185,10 +189,10 @@ DOTRACE("GlxRasterFont::pickXFont");
 
       rutz::fstring mods  = "";
 
-      // Parse the spec as a Tcl list. This is useful for font names with
-      // embedded spaces, such that the spec needs quotes or
-      // braces... e.g., {"luxi mono" 34 ib}. In cases like that, we can't
-      // just split the spec on whitespace.
+      // Parse the spec as a Tcl list. This is useful for font names
+      // with embedded spaces, such that the spec needs quotes or
+      // braces... e.g., {"luxi mono" 34 ib}. In cases like that, we
+      // can't just split the spec on whitespace.
       Tcl::List specitems = Tcl::toTcl(spec);
 
       if (specitems.length() >= 1)
@@ -297,10 +301,12 @@ DOTRACE("GlxRasterFont::bboxOf");
   const int b = -desc + (lines - 1) * (asc+desc);
   const int t = asc;
 
-  bbox.drawScreenRect(geom::vec3d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
+  bbox.drawScreenRect(geom::vec3d::zeros(),
+                      geom::rect<int>::ltrb(l,t,r,b));
 }
 
-void GlxRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const
+void GlxRasterFont::drawText(const char* text,
+                             Gfx::Canvas& canvas) const
 {
 DOTRACE("GlxRasterFont::drawText");
 
