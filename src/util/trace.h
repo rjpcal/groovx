@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri May 11 15:20:50 2001
+// written: Fri May 11 19:52:42 2001
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -53,28 +53,27 @@
 #  endif
 #endif
 
-#ifdef LOCAL_PROF
-#  include <sys/time.h>
 
-
-#  ifdef PRESTANDARD_IOSTREAMS
+#ifdef PRESTANDARD_IOSTREAMS
 class ostream;
-#  else
-#    if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#      include <iosfwd>
-#      define IOSFWD_DEFINED
-#    endif
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
 #  endif
+#endif
+
+#include <sys/time.h>
+// struct timeval {
+//                unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
+//                long           tv_usec;  /* and microseconds */
+//            };
 
 
 extern int MAX_TRACE_LEVEL;
 
 extern int TRACE_LEVEL;
 const char* const TRACE_TAB = "  ";
-// struct timeval {
-//                unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
-//                long           tv_usec;  /* and microseconds */
-//            };
 
 namespace Util {
   class Prof;
@@ -149,14 +148,12 @@ private:
   const bool giveTraceMsg;
 };
 
-#    define DOTRACE(x) static Util::Prof P__(x); \
-                       Util::Trace T__(P__, DYNAMIC_TRACE_EXPR);
-
-#else // !defined(LOCAL_PROF)
-
+#ifdef LOCAL_PROF
+#  define DOTRACE(x) static Util::Prof P__(x); \
+                     Util::Trace T__(P__, DYNAMIC_TRACE_EXPR);
+#else
 #  define DOTRACE(x) {}
-
-#endif // !defined(LOCAL_PROF)
+#endif
 
 static const char vcid_trace_h[] = "$Header$";
 #endif // !TRACE_H_DEFINED
