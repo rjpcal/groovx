@@ -63,14 +63,16 @@ namespace
 {
   const IO::VersionId MFACE_SERIAL_VERSION_ID = 2;
 
-  const unsigned int NUM_HAIR_POINTS = 15;
+  const unsigned int NUM_HAIR_POINTS = 15; // can't change this without
+                                           // also changing "hair_widths"
+                                           // below
   const double* getHairVertices(double top_width, double hair_width)
   {
     DOTRACE("getHairVertices");
 
     static double hair_vertices[NUM_HAIR_POINTS*4];
 
-    double hair_widths[NUM_HAIR_POINTS] =
+    static const double hair_widths[NUM_HAIR_POINTS] =
     {
       0.40, 0.90, 0.95,
       1.00, 0.97, 0.94,
