@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Fri Dec  3 15:11:46 1999
+// written: Fri Dec  3 15:25:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@ public:
 
   virtual void display();
   virtual void clearscreen();
+  virtual void refresh();
+  virtual void undraw();
 };
 
 static const char vcid_tlistwidget_h[] = "$Header$";

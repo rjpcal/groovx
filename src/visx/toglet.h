@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Dec  3 15:11:29 1999
+// written: Fri Dec  3 15:25:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,8 @@ public:
   virtual void reconfigure();
   virtual void display() = 0;
   virtual void clearscreen() = 0;
+  virtual void refresh() = 0;
+  virtual void undraw() = 0;
 
 private:
   ToglConfig(const ToglConfig&); // no copy constructor

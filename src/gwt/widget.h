@@ -3,7 +3,7 @@
 // widget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Dec  2 15:05:17 1999
-// written: Fri Dec  3 15:11:01 1999
+// written: Fri Dec  3 15:24:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@ public:
   virtual void swapBuffers() = 0;
   virtual void display() = 0;
   virtual void clearscreen() = 0;
+  virtual void refresh() = 0;
+  virtual void undraw() = 0;
 };
 
 static const char vcid_widget_h[] = "$Header$";

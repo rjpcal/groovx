@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Dec  3 15:12:40 1999
+// written: Fri Dec  3 15:27:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,19 @@ void TlistWidget::clearscreen() {
 DOTRACE("TlistWidget::clearscreen");
   Tlist::theTlist().setVisible(false);
   glClear(GL_COLOR_BUFFER_BIT);
+  glFlush();
+}
+
+void TlistWidget::refresh() {
+DOTRACE("TlistWidget::refresh");
+  clearscreen();
+  display();
+  glFlush();
+}
+
+void TlistWidget::undraw() {
+DOTRACE("TlistWidget::undraw");
+  Tlist::theTlist().undrawCurTrial();
   glFlush();
 }
 
