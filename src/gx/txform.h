@@ -50,6 +50,7 @@ public:
 
   void translate(const Vec3<double>& t);
   void scale(const Vec3<double>& s);
+  void rotate(const Vec3<double>& rotationAxis, double rotationAngle);
   void transform(const Gfx::Txform& other);
 
   Vec2<double> applyTo(const Vec2<double>& input) const;
