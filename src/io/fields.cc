@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Tue Nov 14 21:18:58 2000
+// written: Wed Nov 15 07:51:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -262,11 +262,12 @@ const Field& FieldContainer::field(const fixed_string& name) const
 const Field& FieldContainer::field(const FieldInfo& pinfo) const
 { return pinfo.dereference(const_cast<FieldContainer*>(this)); }
 
-void FieldContainer::readFieldsFrom(IO::Reader* reader) {
+void FieldContainer::readFieldsFrom(IO::Reader* reader,
+												const FieldMap& fields) {
 DOTRACE("FieldContainer::readFieldsFrom");
   for (FieldMap::IoIterator
-			itr = itsFieldMap->ioBegin(),
-			end = itsFieldMap->ioEnd();
+			itr = fields.ioBegin(),
+			end = fields.ioEnd();
 		 itr != end;
 		 ++itr)
 	 {
@@ -276,11 +277,12 @@ DOTRACE("FieldContainer::readFieldsFrom");
   sendStateChangeMsg();
 }
 
-void FieldContainer::writeFieldsTo(IO::Writer* writer) const {
+void FieldContainer::writeFieldsTo(IO::Writer* writer,
+											  const FieldMap& fields) const {
 DOTRACE("FieldContainer::writeFieldsTo");
   for (FieldMap::IoIterator
-			itr = itsFieldMap->ioBegin(),
-			end = itsFieldMap->ioEnd();
+			itr = fields.ioBegin(),
+			end = fields.ioEnd();
 		 itr != end;
 		 ++itr)
 	 {
