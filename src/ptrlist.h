@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Oct 24 15:53:33 2000
+// written: Tue Oct 24 17:43:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,18 @@ public:
 
   friend class ItemWithId<T>;
   friend class NullableItemWithId<T>;
+
+  virtual int capacity() const;
+  virtual int count() const;
+  virtual bool isValidId(int id) const;
+  virtual void remove(int id);
+  virtual void release(int id);
+  virtual void clear();
+
+protected:
+  virtual RefCounted* getPtrBase(int id) const throw ();
+  virtual RefCounted* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  virtual int insertPtrBase(RefCounted* ptr);
 
 private:
 
