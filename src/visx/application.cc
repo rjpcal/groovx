@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Wed Sep 11 14:37:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 namespace
 {
   Application* theSingleton = 0;
+  const char* GRSH_LIB_DIR = "GRSH_LIB_DIR";
 }
 
 class Application::Impl
@@ -39,7 +40,8 @@ public:
     itsArgc(argc),
     itsArgv(argv),
     itsLibraryDir(library_env_var == 0 ?
-                  0 : System::theSystem().getenv(library_env_var))
+                  0 : System::theSystem().getenv(library_env_var)),
+    itsCanvas(0)
   {
     DebugEvalNL((void*)library_env_var);
     DebugEvalNL(library_env_var);
@@ -50,12 +52,14 @@ public:
   int itsArgc;
   char** itsArgv;
   fstring itsLibraryDir;
+  Gfx::Canvas* itsCanvas;
 };
 
-Application::Application(int argc, char** argv, const char* library_env_var) :
-  itsImpl(new Impl(argc, argv, library_env_var))
+Application::Application(int argc, char** argv) :
+  itsImpl(new Impl(argc, argv, GRSH_LIB_DIR))
 {
 DOTRACE("Application::Application");
+  installApp(this);
 }
 
 Application::~Application()
@@ -81,6 +85,23 @@ DOTRACE("Application::theApp");
       throw Util::Error("the application has not yet been installed");
     }
   return *theSingleton;
+}
+
+void Application::installCanvas(Gfx::Canvas& canvas)
+{
+DOTRACE("Application::installCanvas");
+  itsImpl->itsCanvas = &canvas;
+  Assert(itsImpl->itsCanvas != 0);
+}
+
+Gfx::Canvas& Application::getCanvas()
+{
+DOTRACE("Application::getCanvas");
+  if (itsImpl->itsCanvas == 0)
+    {
+      throw Util::Error("no canvas has yet been installed");
+    }
+  return *(itsImpl->itsCanvas);
 }
 
 int Application::argc() const

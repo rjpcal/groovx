@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 10:55:51 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Wed Sep 11 14:38:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,27 +18,19 @@ namespace Gfx
   class Canvas;
 }
 
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Abstract base class that models an application invocation.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
+/// Manages top-level application information (i.e. global variables).
 class Application
 {
 protected:
-  /// Default no-op constructor.
-  Application(int argc, char** argv, const char* library_env_var = 0);
-
   /** When the concrete Application is created in a program, the
       Application should be installed with this function so that it is
       globally accessible via theApp(). */
   static void installApp(Application* theApp);
 
 public:
+  /// Default constructor.
+  Application(int argc, char** argv);
+
   /// Virtual destructor ensures correct destruction of subclasses.
   virtual ~Application();
 
@@ -47,8 +39,11 @@ public:
       @return the Application passed to installApp. */
   static Application& theApp();
 
-  /// Retrieves the experiment that is running in the application.
-  virtual Gfx::Canvas& getCanvas() = 0;
+  /// Installs \a canavs as the application's \c Canvas.
+  void installCanvas(Gfx::Canvas& canvas);
+
+  /// Retrieves the current \c Canvas.
+  Gfx::Canvas& getCanvas();
 
   int argc() const;
 

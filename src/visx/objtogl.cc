@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Sat Aug 10 14:45:59 2002
+// written: Wed Sep 11 14:33:23 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -16,7 +16,7 @@
 #ifndef OBJTOGL_CC_DEFINED
 #define OBJTOGL_CC_DEFINED
 
-#include "visx/grshapp.h"
+#include "visx/application.h"
 #include "visx/toglet.h"
 #include "visx/trialbase.h"
 
@@ -50,12 +50,10 @@ namespace ObjTogl
 
     // Install the experiment into the application
     Application& app = Application::theApp();
-    GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
 
-    if (grshapp != 0)
-      {
-        grshapp->installCanvas(theWidget->getCanvas());
-      }
+    // FIXME should this call just go inside Toglet::makeCurrent() itself?
+    app.installCanvas(theWidget->getCanvas());
+
     toglet->makeCurrent();
   }
 
