@@ -71,12 +71,6 @@ namespace
 {
   Nub::SoftRef<Sound> theOkSound;
   Nub::SoftRef<Sound> theErrSound;
-
-  media::sound_rep* newPlatformSoundRep(const char* soundfile)
-  {
-    DOTRACE("<sound.cc>::newPlatformSoundRep");
-    return new sound_rep_t(soundfile);
-  }
 }
 
 void Sound::setOkSound(Nub::Ref<Sound> ok_sound)
@@ -156,7 +150,7 @@ void Sound::forceLoad()
 DOTRACE("Sound::forceLoad");
   // check if we have a valid filename without a corresponding valid rep
   if (itsRep.get() == 0 && !itsFilename.is_empty())
-    itsRep.reset(newPlatformSoundRep(itsFilename.c_str()));
+    itsRep.reset(new sound_rep_t(itsFilename.c_str()));
 }
 
 void Sound::setFile(const char* filename)
