@@ -95,7 +95,7 @@ namespace eval cdeps {
 	return [has_extension $filename $ext_list]
     }
 
-    proc is_cc_file { filename } {
+    proc is_cc_filename { filename } {
 	set ext_list [list .cc .C .c]
 
 	return [has_extension $filename $ext_list]
@@ -136,7 +136,7 @@ namespace eval cdeps {
 
 	    } elseif { [file isfile $f] } {
 
-		if { [is_cc_file $f] } {
+		if { [is_cc_filename $f] } {
 		    get_nested_includes $f $search_path
 		}
 	    }
@@ -173,7 +173,7 @@ namespace eval cdeps {
 	set offset [expr [string length $src_dir]+1]
 
 	foreach f [lsort [array names ::NESTED_INCLUDES]] {
-	    if { ![is_cc_file $f] } continue
+	    if { ![is_cc_filename $f] } continue
 
 	    set stem [file rootname $f]
 	    set idx [string first ${src_dir}/ $stem]
@@ -242,37 +242,22 @@ namespace eval ldeps {
 	return [lsort -unique $mapped_deps]
     }
 
-    proc get_batch { glob_patterns search_path } {
+    proc get_batch { filename_list search_path mapping } {
 	set deps [list]
-
-	set filename_list [glob -nocomplain $glob_patterns]
 
 	foreach f $filename_list {
 
 	    if { [file isdirectory $f] } {
 		puts "dir: $f"
-		set deps [concat $deps [get_batch ${f}/*.cc $search_path]]
-		set deps [concat $deps [get_batch ${f}/*/ $search_path]]
+		set deps [concat $deps [get_batch [glob -nocomplain ${f}/*] \
+					    $search_path $mapping]]
 
 	    } elseif { [file isfile $f] } {
-		set deps [concat $deps [get_1 $f $search_path]]
+		set deps [concat $deps \
+			      [get_1_mapped $f $search_path $mapping]]
 	    }
 	}
 
 	return [lsort -unique $deps]
-    }
-
-    proc condense { dep_list } {
-	set dirs [list]
-
-	foreach d $dep_list {
-	    lappend dirs [file dirname $d]
-	}
-
-	return [lsort -unique $dirs]
-    }
-
-    proc get_condensed { glob_patterns search_path } {
-	return [condense [get_batch $glob_patterns $search_path]]
     }
 }
