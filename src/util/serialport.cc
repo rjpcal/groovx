@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Mon Sep  9 11:44:31 2002
+// written: Sat Sep 21 12:02:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#if defined(__GNUC__) && __GNUC__ >= 3
+#ifdef HAVE_EXT_STDIO_FILEBUF_H
 #include <ext/stdio_filebuf.h>
 #endif
 
@@ -29,7 +29,7 @@
 
 Util::SerialPort::SerialPort(const char* serial_device) :
   itsFiledes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
-#if defined(__GNUC__) && __GNUC__ >= 3
+#ifdef HAVE_EXT_STDIO_FILEBUF_H
   itsFilebuf(0),
 #endif
   itsStream(0),
@@ -70,7 +70,7 @@ DOTRACE("Util::SerialPort::SerialPort");
       if ( tcsetattr( filedes(), TCSANOW, &ti) == -1 )
         { close(); return; }
 
-#if defined(__GNUC__) && __GNUC__ >= 3
+#ifdef HAVE_EXT_STDIO_FILEBUF_H
       typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
       itsFilebuf = new filebuf_t(fdopen(filedes(), "r"), std::ios::in);
       itsStream = new std::iostream(itsFilebuf);
@@ -89,7 +89,7 @@ DOTRACE("Util::SerialPort::close");
       delete itsStream;
       itsStream = 0;
 
-#if defined(__GNUC__) && __GNUC__ >= 3
+#ifdef HAVE_EXT_STDIO_FILEBUF_H
       delete itsFilebuf;
       itsFilebuf = 0;
 #endif

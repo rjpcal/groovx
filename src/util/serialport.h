@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:45:35 2000
-// written: Mon Sep  9 12:19:05 2002
+// written: Sat Sep 21 12:02:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ private:
 
   int itsFiledes;
 
-#if defined(__GNUC__) && __GNUC__ >= 3
+#ifdef HAVE_EXT_STDIO_FILEBUF_H
   std::filebuf* itsFilebuf;
   std::iostream* itsStream;
 #else
