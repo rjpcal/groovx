@@ -38,10 +38,6 @@
 
 namespace Util
 {
-  class Slot0;
-  template <class C, class MF> class SlotAdapterMemFunc0;
-  class Signal0;
-
 #if 0
 template <class R>
 class Marshal
@@ -107,6 +103,8 @@ public:
   template<class C, class MF>
   static Util::SoftRef<Slot0> make(C* obj, MF mf);
 
+  static Util::SoftRef<Slot0> make(void (*freeFunc)());
+
   virtual void call() = 0;
 
   /// Unpacks any parameters and then calls the implementation.
@@ -146,10 +144,36 @@ public:
 template <class C, class MF>
 inline Util::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
 {
-  return Util::SoftRef<Slot0>(SlotAdapterMemFunc0<C, MF>::make(obj, mf),
-                             Util::STRONG,
-                             Util::PRIVATE);
+  return Util::SoftRef<Slot0>
+    (SlotAdapterMemFunc0<C, MF>::make(obj, mf),
+     Util::STRONG,
+     Util::PRIVATE);
 }
+
+//  ###################################################################
+//  ===================================================================
+
+/// A mem-func adapter for zero-argument slots.
+
+class SlotAdapterFreeFunc0 : public Slot0
+{
+public:
+  typedef void (FreeFunc)();
+
+private:
+  FreeFunc* itsFreeFunc;
+
+  SlotAdapterFreeFunc0(FreeFunc* f);
+
+  virtual ~SlotAdapterFreeFunc0() throw();
+
+public:
+  static SlotAdapterFreeFunc0* make(FreeFunc* f);
+
+  virtual bool exists() const;
+
+  virtual void call();
+};
 
 //  ###################################################################
 //  ===================================================================
@@ -279,23 +303,26 @@ public:
   virtual ~Signal0() throw();
 
   /// Add a Slot to the list of those watching this Signal.
-  void connect(Util::SoftRef<Slot0> slot)
-  { SignalBase::doConnect(slot); }
+  Util::SoftRef<Slot0> connect(Util::SoftRef<Slot0> slot)
+  { SignalBase::doConnect(slot); return slot; }
 
-  /// Connect an object to this Signal.
+  /// Connect a free function to this Signal0.
+  Util::SoftRef<Slot0> connect(void (*freeFunc)())
+  { return connect(Slot0::make(freeFunc)); }
+
+  /// Connect an object to this Signal0.
   /** After connection, when the signal is triggered, \a mem_func will
       be called on \a obj. \c connect() returns the Util::UID of the
       connection object that is created. */
   template <class C, class MF>
-  void connect(C* obj, MF mem_func)
-  { connect(Slot0::make(obj, mem_func)); }
+  Util::SoftRef<Slot0> connect(C* obj, MF mem_func)
+  { return connect(Slot0::make(obj, mem_func)); }
 
-  /// Remove a Slot from the list of those watching this Signal.
+  /// Remove a Slot from the list of those watching this Signal0.
   void disconnect(Util::SoftRef<Slot0> slot)
   { SignalBase::doDisconnect(slot); }
 
-  /** Informs all this object's Slots that this Signal's state
-      has changed */
+  /// Trigger all of this object's Slots.
   void emit() const { SignalBase::doEmit((void*)0); }
 
   /// Returns a slot which when called will cause this Signal to emit().
@@ -322,12 +349,12 @@ public:
 
   virtual ~Signal1() throw() {}
 
-  void connect(Util::SoftRef<Slot1<P1> > slot)
-  { SignalBase::doConnect(slot); }
+  Util::SoftRef<Slot1<P1> > connect(Util::SoftRef<Slot1<P1> > slot)
+  { SignalBase::doConnect(slot); return slot; }
 
   template <class C, class MF>
-  void connect(C* obj, MF mem_func)
-  { connect(Slot1<P1>::make(obj, mem_func)); }
+  Util::SoftRef<Slot1<P1> > connect(C* obj, MF mem_func)
+  { return connect(Slot1<P1>::make(obj, mem_func)); }
 
   void disconnect(Util::SoftRef<Slot1<P1> > slot)
   { SignalBase::doDisconnect(slot); }
