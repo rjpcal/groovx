@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jan 28 11:44:55 2002
+// written: Mon Jan 28 11:53:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -263,7 +263,10 @@ void Tcl::Interp::createProc(const char* namesp, const char* proc_name,
 {
 DOTRACE("Tcl::Interp::createProc");
   Tcl::ObjPtr proc_cmd_str;
-  if (namesp && (*namesp != '\0'))
+
+  const bool have_namespace = (namesp != 0 && (*namesp != '\0'));
+
+  if (have_namespace)
     {
       proc_cmd_str.append("namespace eval ");
       proc_cmd_str.append(namesp);
@@ -277,7 +280,8 @@ DOTRACE("Tcl::Interp::createProc");
   proc_cmd_str.append("} {");
   proc_cmd_str.append(body);
   proc_cmd_str.append("} ");
-  if (namesp)
+
+  if (have_namespace)
     proc_cmd_str.append(" }");
 
   Tcl::Code proc_cmd(proc_cmd_str, Tcl::Code::THROW_EXCEPTION);
