@@ -112,7 +112,11 @@ public:
   // Methods
   //
 
-  static GxShapeKitImpl* make(GxShapeKit* obj) { return new GxShapeKitImpl(obj); }
+  static GxShapeKitImpl* make(GxShapeKit* obj)
+  {
+    DOTRACE("GxShapeKitImpl::make");
+    return new GxShapeKitImpl(obj);
+  }
 
   GxShapeKitImpl(GxShapeKit* obj) :
     category(-1),
@@ -123,6 +127,7 @@ public:
     scaler(new GxScaler(aligner), Nub::PRIVATE),
     topNode(scaler)
   {
+    DOTRACE("GxShapeKitImpl::GxShapeKitImpl");
     // We connect to sigNodeChanged in order to update any caches
     // according to state changes.
     obj->sigNodeChanged.connect(this, &GxShapeKitImpl::invalidateCaches);
