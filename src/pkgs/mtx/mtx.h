@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 14:51:10 2002
+// written: Mon Mar  4 14:53:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,8 +179,6 @@ public:
   MtxIterBase operator-(int x) const { MtxIterBase res(*this); res -= x; return res; }
 
 private:
-
-  template <class U> friend class MtxIterBase;
   friend class Slice;
   friend class Mtx;
 
@@ -888,9 +886,6 @@ public:
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
 private:
-  friend class MtxIterBase<double>;
-  friend class MtxIterBase<const double>;
-
   friend class Slice;
 };
 
