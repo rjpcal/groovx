@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 14:18:59 2002
-// written: Fri Jul  5 14:19:57 2002
+// written: Fri Jul  5 15:17:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ private:
   bool itsFilled;
 
 public:
-  /// Get GxLine's FieldMap.
+  /// Get GxSphere's FieldMap.
   static const FieldMap& classFields();
 
   /////////////
