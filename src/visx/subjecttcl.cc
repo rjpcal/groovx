@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:53 2001
+// written: Sat Aug 25 21:58:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,34 +19,18 @@
 
 #include "util/objfactory.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
-
-namespace SubjectTcl
-{
-  class SubjectPkg;
-}
-
-class SubjectTcl::SubjectPkg : public Tcl::Pkg {
-public:
-  SubjectPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Subject", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<Subject>(this);
-
-    defAttrib("name", &Subject::getName, &Subject::setName);
-    defAttrib("directory", &Subject::getDirectory, &Subject::setDirectory);
-  }
-};
 
 extern "C"
 int Subject_Init(Tcl_Interp* interp)
 {
 DOTRACE("Subject_Init");
 
-  Tcl::Pkg* pkg = new SubjectTcl::SubjectPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Subject", "$Revision$");
+  Tcl::defGenericObjCmds<Subject>(pkg);
+
+  pkg->defAttrib("name", &Subject::getName, &Subject::setName);
+  pkg->defAttrib("directory", &Subject::getDirectory, &Subject::setDirectory);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Subject::make);
 
