@@ -5,7 +5,7 @@
 // Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Wed Mar 19 12:45:37 2003
+// written: Wed Mar 19 13:46:31 2003
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -26,104 +26,50 @@
 
 #include "util/algo.h"
 
-/// A borrowed pointer class
-/** The sole purpose of this class is to explicitly state the fact that a
-    given pointer is "borrowed", and does not for example need to be
-    deep-copied when its owner is copied, and hence to avoid compiler
-    warnings to that effect. */
-template <class T>
-class borrowed_ptr
-{
-private:
-  T* ptr;
+//  ###################################################################
+//  ===================================================================
 
-public:
-  borrowed_ptr( T* p=0 ) throw() :
-    ptr(p)
-  {}
+/// A smart-pointer for unshared objects.
 
-  ~borrowed_ptr() throw() {}
-
-  template <class TT>
-  borrowed_ptr( TT* p ) throw() :
-    ptr(p)
-  {}
-
-  borrowed_ptr( const borrowed_ptr& other ) throw() :
-    ptr(other.ptr)
-  {}
-
-  template <class TT>
-  borrowed_ptr( const borrowed_ptr<TT>& other ) throw() :
-    ptr(other.ptr)
-  {}
-
-  borrowed_ptr& operator=( T* p ) throw()
-  { ptr = p; return *this; }
-
-  borrowed_ptr& operator=( const borrowed_ptr& other ) throw()
-  { ptr = other.ptr; return *this; }
-
-  template <class TT>
-  borrowed_ptr& operator=( const borrowed_ptr<TT>& other ) throw()
-  { ptr = other.ptr; return *this; }
-
-  bool operator==( T* p ) const throw()
-  { return ptr == p; }
-
-  bool operator==( const borrowed_ptr& other ) const throw()
-  { return ptr == other.ptr; }
-
-  template <class TT>
-  bool operator==( const borrowed_ptr<TT>& other ) const throw()
-  { return ptr == other.ptr; }
-
-  typedef T* pointer;
-  typedef T& reference;
-
-  reference operator*() const throw() { return *ptr; }
-
-  pointer operator->() const throw() { return ptr; }
-
-  operator pointer() const throw() { return ptr; }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *  \c scoped_ptr mimics a built-in pointer except that it guarantees
- *  deletion of the object pointed to, either on destruction of the
- *  scoped_ptr or via an explicit \c reset().
- **/
-///////////////////////////////////////////////////////////////////////
+/** \c scoped_ptr mimics a built-in pointer except that it guarantees
+    deletion of the object pointed to, either on destruction of the
+    scoped_ptr or via an explicit \c reset(). */
 
 template<class T>
 class scoped_ptr
 {
 public:
+  /// Construct with pointer to given object (or null).
   explicit scoped_ptr( T* p=0 ) throw() :
     ptr(p)
     {}
 
+  /// Construct with pointer to given object of related type.
   template <class TT>
   explicit scoped_ptr( TT* p ) throw() :
     ptr(p)
     {}
 
+  /// Destructor.
   ~scoped_ptr()
     { delete ptr; }
 
+  /// Reset with pointer to different object (or null).
   void reset( T* p=0 )
     {
       if ( ptr != p )
         { delete ptr; ptr = p; }
     }
 
+  /// Dereference.
   T& operator*() const throw()
     { return *ptr; }
 
+  /// Dereference for member access.
   T* operator->() const throw()
     { return ptr; }
 
+  /// Get a pointer to the referred-to object.
   T* get() const throw()
     { return ptr; }
 
@@ -134,13 +80,15 @@ private:
   T* ptr;
 };
 
-///////////////////////////////////////////////////////////////////////
-/**
- *  An enhanced relative of scoped_ptr with reference counted copy semantics.
- *  The object pointed to is deleted when the last shared_ptr pointing to it
- *  is destroyed or reset.
- **/
-///////////////////////////////////////////////////////////////////////
+
+//  ###################################################################
+//  ===================================================================
+
+/// A reference-counted smart pointer for shared objects.
+
+/** \c shared_ptr is an enhanced relative of scoped_ptr with reference
+    counted copy semantics.  The object pointed to is deleted when the last
+    shared_ptr pointing to it is destroyed or reset. */
 
 template<class T>
 class shared_ptr
@@ -148,6 +96,7 @@ class shared_ptr
 public:
   typedef T element_type;
 
+  /// Construct with pointer to given object (or null).
   explicit shared_ptr(T* p =0) :
     px(p), pn(0)
     {
@@ -155,20 +104,24 @@ public:
       catch (...) { delete p; throw; }
     }
 
+  /// Copy construct.
   shared_ptr(const shared_ptr& r) throw() :
     px(r.px), pn(r.pn)
     {
       ++(*pn);
     }
 
+  /// Destructor.
   ~shared_ptr() { dispose(); }
 
+  /// Assignment operator.
   shared_ptr& operator=(const shared_ptr& r)
     {
       share(r.px,r.pn);
       return *this;
     }
 
+  /// Copy constructor from pointer to related type.
   template<class TT>
   shared_ptr(const shared_ptr<TT>& r) throw() :
     px(r.px), pn(r.pn)
@@ -176,6 +129,7 @@ public:
       ++(*pn);
     }
 
+  /// Assignment operator from pointer to related type.
   template<class TT>
   shared_ptr& operator=(const shared_ptr<TT>& r)
     {
@@ -183,6 +137,7 @@ public:
       return *this;
     }
 
+  /// Reset with a pointer to a different object (or null).
   void reset(T* p=0)
     {
       if ( px == p ) return;  // fix: self-assignment safe
@@ -200,21 +155,27 @@ public:
       px = p;
     }
 
+  /// Dereference.
   T& operator*() const throw()
     { return *px; }
 
+  /// Dereference for member access.
   T* operator->() const throw()
     { return px; }
 
+  /// Get a pointer to the referred-to object.
   T* get() const throw()
     { return px; }
 
+  /// Get the current reference count.
   long use_count() const throw()
     { return *pn; }
 
+  /// Query whether the pointee is unique (i.e. refcount == 1).
   bool unique() const throw()
     { return *pn == 1; }
 
+  /// Swap pointees with another shared_ptr.
   void swap(shared_ptr<T>& other) throw()
     {
       Util::swap2(px, other.px);
@@ -241,18 +202,21 @@ private:
     }
 };
 
+/// Equality for shared_ptr; returns true if both have the same pointee.
 template<class T, class U>
 inline bool operator==(const shared_ptr<T>& a, const shared_ptr<U>& b)
 {
   return a.get() == b.get();
 }
 
+/// Inequality for shared_ptr; returns true if each has different pointees.
 template<class T, class U>
 inline bool operator!=(const shared_ptr<T>& a, const shared_ptr<U>& b)
 {
   return a.get() != b.get();
 }
 
+/// A factory helper function to make a shared_ptr from a raw pointer.
 template <class T>
 shared_ptr<T> make_shared(T* t) { return shared_ptr<T>(t); }
 
