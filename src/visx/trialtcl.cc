@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Sat May 26 18:00:03 2001
+// written: Sun May 27 15:39:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,14 +45,10 @@ public:
 	 Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
 protected:
   virtual void invoke() {
-	 Trial* t = getItem();
-
 	 int objid = getIntFromArg(2);
-	 if (objid < 0) { throw Tcl::TclError("invalid id"); }
-
 	 int posid = getIntFromArg(3);
-	 if (posid < 0) { throw Tcl::TclError("invalid id"); }
 
+	 Trial* t = getItem();
 	 t->add(objid, posid);
   }
 };
