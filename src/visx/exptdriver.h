@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 12 15:38:21 1999
+// written: Wed May 26 18:46:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,76 +11,20 @@
 #ifndef EXPTDRIVER_H_DEFINED
 #define EXPTDRIVER_H_DEFINED
 
-#include <tcl.h>
+#ifndef IO_H_DEFINED
+#include "io.h"
+#endif
 
-#include <vector>
+#ifndef STRING_DEFINED
+#include <string>
+#define STRING_DEFINED
+#endif
+
+struct Tcl_Interp;
 
 class Expt;
-class ExptDriver;
-
-///////////////////////////////////////////////////////////////////////
-//
-// ExptTimer abstract class defintion
-//
-///////////////////////////////////////////////////////////////////////
-
-enum TimeBase { IMMEDIATE, FROM_START, FROM_RESPONSE };
-
-class ExptTimer {
-public:
-  // We initialize itsInterp to NULL-- this is OK because it must be
-  // set with schedule() before will ever be dereferenced.
-  ExptTimer(ExptDriver& ed) :
-	 itsToken(NULL), itsExptDriver(ed) {}
-  virtual ~ExptTimer() {
-	 cancel();
-  }
-  void cancel() {
-	 Tcl_DeleteTimerHandler(itsToken);
-  }
-  void schedule(int msec, Tcl_Interp* interp);
-
-private:
-  static void dummyTimerProc(ClientData clientData) {
-	 ExptTimer* timer = static_cast<ExptTimer *>(clientData);
-	 timer->invoke();
-  }
-  virtual void invoke() = 0;
-  
-  TimeBase itsTimeBase;
-  int itsRequestedTime;
-  int itsActualTime;
-  Tcl_TimerToken itsToken;
-protected:
-  ExptDriver& itsExptDriver;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// ExptTimer derived classes defintions
-//
-///////////////////////////////////////////////////////////////////////
-
-class AbortTrialTimer : public ExptTimer {
-public:
-  AbortTrialTimer(ExptDriver& ed) : ExptTimer(ed) {}
-private:
-  virtual void invoke();
-};
-
-class StartTrialTimer : public ExptTimer {
-public:
-  StartTrialTimer(ExptDriver& ed) : ExptTimer(ed) {}
-private:
-  virtual void invoke();
-};
-
-class UndrawTrialTimer : public ExptTimer {
-public:
-  UndrawTrialTimer(ExptDriver& ed) : ExptTimer(ed) {}
-private:
-  virtual void invoke();
-};
+class ResponseHandler;
+class TimingHandler;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -88,47 +32,72 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver {
+class ExptDriver : public virtual IO {
 public:
-  ExptDriver(Expt& expt);
-  void setInterp(Tcl_Interp* interp) { itsInterp = interp; }
+  // Creators
+  ExptDriver(Expt& expt, Tcl_Interp* interp);
+  virtual ~ExptDriver();
 
+  void init(int repeat, int seed, const string& date,
+				const string& host, const string& subject);
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
+  virtual int charCount() const;
+
+  // Accessors + Manipulators
   Expt& expt() { return itsExpt; }
-  Tcl_Interp* interp() { return itsInterp; }
 
-  void abortTrial();
-  void startTrial();
-  int stopTime();
-  int writeProc(const char* filename);
-  int write_and_exitProc();
+  bool needAutosave() const;
 
-  void scheduleNextTrial();
+  const string& getEndDate() const;
+  const string& getAutosaveFile() const;
+  const string& getKeyRespPairs() const; // delegate to itsResponseHandler
+  bool getUseFeedback() const; // delegate to itsResponseHandler
+  bool getVerbose() const;
 
-  int feedbackProc(int response);
+  int getAbortWait() const;
+  int getAutosavePeriod() const;
+  int getInterTrialInterval() const;
+  int getStimDur() const;
+  int getTimeout() const;
 
-  int updateRegexpsProc();
+  void setEndDate(const string& str);
+  void setAutosaveFile(const string& str);
+  void setUseFeedback(bool val); // delegate to itsResponseHandler
+  void setKeyRespPairs(const string& s); // delegate to itsResponseHandler
+  void setVerbose(bool val);
 
-  // The regexp 
-  struct RegExp_ResponseVal {
-    RegExp_ResponseVal(Tcl_RegExp rx, int rv) : regexp(rx), resp_val(rv) {}
-    Tcl_RegExp regexp;
-    int resp_val;
-  };
-
-  int ignoreResponse();
-  int attendResponse();
-  int handleResponse(const char* keysym); // returns TCL_RESULT_CODE
+  void setAbortWait(int val);
+  void setAutosavePeriod(int val);
+  void setInterTrialInterval(int val);
+  void setStimDur(int val);
+  void setTimeout(int val);
   
+  // Actions
+  void edBeginTrial();
+  void draw();
+  void undraw();
+  void edAbortTrial();
+  void edEndTrial();
+  void edResponseSeen();
+  void edProcessResponse(int response);
+  void edHaltExpt();
+
+  int write(const char* filename);
+  int writeAndExit();
+
 private:
   Expt& itsExpt;
   Tcl_Interp* itsInterp;
 
-  AbortTrialTimer itsAbortTimer;
-  StartTrialTimer itsStartTimer;
-  UndrawTrialTimer itsUndrawTrialTimer;
+  string itsEndDate;				  // Date(+time) when Expt was stopped
+  string itsAutosaveFile;		  // Filename used for autosaves
 
-  vector<RegExp_ResponseVal> itsRegexps;
+  // These are event sources for ExptDriver
+  ResponseHandler& itsResponseHandler; // contained by ref to break dependency
+  TimingHandler& itsTimingHandler;
 };
+
 
 static const char vcid_exptdriver_h[] = "$Header$";
 #endif // !EXPTDRIVER_H_DEFINED
