@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jul 19 21:14:29 2001
+// written: Sat Jul 21 20:03:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -554,19 +554,16 @@ void ExptDriver::addBlock(Ref<Block> block)
 Ref<Block> ExptDriver::currentBlock() const
   { return itsImpl->currentBlock(); }
 
-Util::ErrorHandler& ExptDriver::getErrorHandler()
+Util::ErrorHandler& ExptDriver::getErrorHandler() const
   { return itsImpl->itsErrorHandler; }
 
-GWT::Widget& ExptDriver::getWidget()
-  { return *(itsImpl->itsWidget); }
-
-Util::WeakRef<GWT::Widget> ExptDriver::widget() const
+Util::WeakRef<GWT::Widget> ExptDriver::getWidget() const
   { return itsImpl->itsWidget; }
 
 void ExptDriver::setWidget(Util::WeakRef<GWT::Widget> widg)
   { itsImpl->itsWidget = widg; }
 
-GWT::Canvas& ExptDriver::getCanvas()
+GWT::Canvas& ExptDriver::getCanvas() const
   { return itsImpl->itsWidget->getCanvas(); }
 
 void ExptDriver::edBeginExpt()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Mon Jun 11 18:33:01 2001
+// written: Sat Jul 21 20:01:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,11 @@ namespace GWT
   class Canvas;
 }
 
-namespace Util { class ErrorHandler; }
+namespace Util
+{
+  class ErrorHandler;
+  template <class T> class WeakRef;
+};
 
 class Response;
 
@@ -29,13 +33,13 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Experiment();
 
-  virtual Util::ErrorHandler& getErrorHandler() = 0;
+  virtual Util::ErrorHandler& getErrorHandler() const = 0;
   ///< Return an \c ErrorHandler that can deal with error messages.
 
-  virtual GWT::Widget& getWidget() = 0;
+  virtual Util::WeakRef<GWT::Widget> getWidget() const = 0;
   ///< Return the Widget in which the experiment is running.
 
-  virtual GWT::Canvas& getCanvas() = 0;
+  virtual GWT::Canvas& getCanvas() const = 0;
   ///< Return the Canvas for the Widget in which the experiment is running.
 
   virtual void edBeginExpt() = 0;

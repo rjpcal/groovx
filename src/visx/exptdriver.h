@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat Jul 21 19:11:41 2001
+// written: Sat Jul 21 20:02:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,13 +96,12 @@ public:
   void addBlock(Util::Ref<Block> block);
   Util::Ref<Block> currentBlock() const;
 
-  virtual Util::ErrorHandler& getErrorHandler();
+  virtual Util::ErrorHandler& getErrorHandler() const;
 
-  virtual GWT::Widget& getWidget();
-  Util::WeakRef<GWT::Widget> widget() const;
+  Util::WeakRef<GWT::Widget> getWidget() const;
   void setWidget(Util::WeakRef<GWT::Widget> widg);
 
-  virtual GWT::Canvas& getCanvas();
+  virtual GWT::Canvas& getCanvas() const;
 
   virtual void edBeginExpt();
   virtual void edEndTrial();
