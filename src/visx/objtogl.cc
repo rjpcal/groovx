@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Nov 28 15:16:50 2000
+// written: Tue Dec  5 17:51:41 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -507,6 +507,12 @@ public:
 				 "proc show {id} { Togl::show $id }\n"
 				 "proc undraw {} { Togl::undraw }\n"
 				 "proc redraw {} { Togl::refresh }\n");
+  }
+
+  virtual ~ObjToglPkg() {
+	 if (toglCreated) {
+		ObjTogl::theToglConfig()->setVisibility(false);
+	 }
   }
 
   ToglConfig* getCItemFromId(int) {
