@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Jul 13 18:26:41 1999
+// written: Tue Jul 13 18:30:04 1999
 // $Id$
 //
 // This file defines a class TclPkg which can be used alone, or as a
@@ -44,6 +44,7 @@
 #endif
 
 class TclCmd;
+class TclError;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -69,9 +70,9 @@ protected:
   void linkVar(const char* varName, int& var) throw (TclError);
   void linkVar(const char* varName, double& var) throw (TclError);
   void linkVar(const char* varName, char*& var) throw (TclError);
-  void linkConstVar(const char* varName, int* var) throw (TclError);
-  void linkConstVar(const char* varName, double* var) throw (TclError);
-  void linkConstVar(const char* varName, char** var) throw (TclError);
+  void linkConstVar(const char* varName, int& var) throw (TclError);
+  void linkConstVar(const char* varName, double& var) throw (TclError);
+  void linkConstVar(const char* varName, char*& var) throw (TclError);
 
 private:
   static void exitHandler(ClientData clientData);
