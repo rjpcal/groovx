@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Aug  8 15:29:29 2001
+// written: Thu Aug  9 17:10:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,20 +162,16 @@ DOTRACE("XBmapRenderer::update");
       itsImage = 0;
     }
 
-  if (data.bytesPtr() != 0)
-    {
-      int format = (data.bitsPerPixel() == 1) ? XYBitmap : ZPixmap;
+  int format = (data.bitsPerPixel() == 1) ? XYBitmap : ZPixmap;
 
-      itsImage =
-        XCreateImage(display, visual,
-                     data.bitsPerPixel(), /* bit depth */
-                     format, /* format = XYBitmap, XYPixmap, ZPixmap */
-                     0, /* offset */
-                     reinterpret_cast<char*>(data.bytesPtr()),
-                     data.width(), data.height(),
-                     data.byteAlignment()*8, /* bitmap_pad */
-                     0); /* bytes_per_line */
-    }
+  itsImage = XCreateImage(display, visual,
+                          data.bitsPerPixel(), /* bit depth */
+                          format, /* format = XYBitmap, XYPixmap, ZPixmap */
+                          0, /* offset */
+                          reinterpret_cast<char*>(data.bytesPtr()),
+                          data.width(), data.height(),
+                          data.byteAlignment()*8, /* bitmap_pad */
+                          0); /* bytes_per_line */
 
   itsIsCurrent = true;
 }
