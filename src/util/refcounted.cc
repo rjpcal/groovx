@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Thu May 10 12:04:42 2001
+// written: Sat May 19 08:48:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,16 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
+void* RefCounted::operator new(size_t bytes) {
+DOTRACE("RefCounted::operator new");
+  return ::operator new(bytes);
+}
+
+void RefCounted::operator delete(void* space, size_t bytes) {
+DOTRACE("RefCounted::operator delete");
+  ::operator delete(space);
+}
+
 RefCounted::RefCounted() :
   itsRefCount(0),
   itsRefCount2(0)
@@ -38,6 +48,8 @@ DOTRACE("RefCounted::RefCounted");
 RefCounted::~RefCounted()
 {
 DOTRACE("RefCounted::~RefCounted");
+
+  Assert(itsRefCount <= 0 && itsRefCount2 <= 0);
 }
 
 void RefCounted::incrRefCount() {
