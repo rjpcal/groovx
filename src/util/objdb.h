@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Oct 10 09:14:42 2000
+// written: Thu Oct 19 17:37:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,21 +44,11 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
 protected:
-  /** May be overridden by subclasses to provide a list of alternative
-      typenames suitable for use in \c IO::readTypename(). The default
-      implementation here returns an empty string. */
-  virtual const char* alternateIoTags() const;
-
-  virtual fixed_string legacyValidTypenames() const;
-
   virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const = 0;
 
 private:
   IoPtrList(const IoPtrList&);
   IoPtrList& operator=(const IoPtrList&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_ioptrlist_h[] = "$Header$";
