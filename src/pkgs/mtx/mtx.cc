@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Jan 13 11:01:38 2003
+// written: Mon Jan 20 13:31:01 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -602,10 +602,12 @@ DOTRACE("Mtx::Mtx(const MtxShape&, InitPolicy)");
 const Mtx& Mtx::emptyMtx()
 {
 DOTRACE("Mtx::emptyMtx");
-  // FIXME this is probably not safe in mex files due to the improper C++
-  // static initialization/termination semantics there.
-  static Mtx m(0,0);
-  return m;
+  static Mtx* m = 0;
+  if (m == 0)
+    {
+      m = new Mtx(0,0);
+    }
+  return *m;
 }
 
 Mtx::Mtx(const Slice& s) :
