@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Aug 16 10:05:24 2001
+// written: Mon Aug 20 12:37:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,8 +181,8 @@ DOTRACE("Toglet::Toglet");
   if (pack)
     {
       fstring pack_cmd_str = "pack ";
-      pack_cmd_str += pathname();
-      pack_cmd_str += " -side left -expand 1 -fill both; update";
+      pack_cmd_str.append( pathname() );
+      pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
       Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
       pack_cmd.invoke(interp);
     }
@@ -317,7 +317,7 @@ DebugPrintNL("Toglet::destroyWidget");
   if ( !Tcl_InterpDeleted(itsTogl->interp()) )
     {
       fstring destroy_cmd_str = "destroy ";
-      destroy_cmd_str += pathname();
+      destroy_cmd_str.append( pathname() );
 
       Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
                             Tcl::Code::BACKGROUND_ERROR);
