@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu May 11 18:12:50 2000
+// written: Sat Sep 23 15:02:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,11 +83,11 @@ public:
 	 addCommand( new AddEventCmd(this, "Th::addAbortEvent",
 										  TimingHdlr::FROM_ABORT));
 
-	 TclPkg::eval("namespace eval Th { "
-					  "    proc timingHdlr {} { return [Th] } }");
-	 TclPkg::eval("namespace eval Th { "
-					  "    proc autosavePeriod {id args} { "
-					  "        return [eval Expt::autosavePeriod $args] } }");
+	 Tcl::TclPkg::eval("namespace eval Th { "
+							 "    proc timingHdlr {} { return [Th] } }");
+	 Tcl::TclPkg::eval("namespace eval Th { "
+							 "    proc autosavePeriod {id args} { "
+							 "        return [eval Expt::autosavePeriod $args] } }");
   }
 };
 
@@ -120,8 +120,8 @@ public:
 						 &TimingHandler::getTimeout,
 						 &TimingHandler::setTimeout);
 
-	 TclPkg::eval("namespace eval SimpleTh { "
-					  "    proc timingHandler {} { return [SimpleTh] } }");
+	 Tcl::TclPkg::eval("namespace eval SimpleTh { "
+							 "    proc timingHandler {} { return [SimpleTh] } }");
   }
 };
 
