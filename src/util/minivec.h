@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Wed Sep 25 18:58:58 2002
+// written: Mon Nov  4 14:59:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #include <limits>
 #endif
 
-namespace MVUtils
+namespace mvaux
 {
 
   template <class BidirectionalIterator1, class BidirectionalIterator2>
@@ -57,14 +57,16 @@ namespace MVUtils
                                                InputIterator last,
                                                ForwardIterator result)
     {
-      while (first != last) MVUtils::construct(result++, *first++);
+      while (first != last) mvaux::construct(result++, *first++);
       return result;
     }
 
   template <class ForwardIterator, class Size, class T>
-    inline void uninitialized_fill_n (ForwardIterator first, Size n, const T& x)
+    inline ForwardIterator uninitialized_fill_n (ForwardIterator dest,
+                                                 Size n, const T& x)
     {
-      while (n--) MVUtils::construct(first++, x);
+      while (n--) mvaux::construct(dest++, x);
+      return dest;
     }
 
   template <class T>
@@ -73,11 +75,40 @@ namespace MVUtils
       pointer->~T();
     }
 
+  template <class T>
+    inline void destroy(T* start, T* finish)
+    {
+      while ( start < finish)
+        mvaux::destroy(start++);
+    }
+
 
   template <class T1, class T2>
     inline void construct (T1* p, const T2& value)
     {
       new (p) T1(value);
+    }
+
+  template <class T>
+  inline size_t max_size()
+    {
+      return 1 > UINT_MAX/sizeof(T) ?
+        size_t(1) : size_t(UINT_MAX/sizeof(T));
+    }
+
+  template <class T>
+  inline T* allocate(size_t n)
+    {
+      void* tmp =
+        static_cast<void*>(::operator new(static_cast<size_t>(n*sizeof(T))));
+      if (tmp == 0) throw std::bad_alloc();
+      return static_cast<T*>(tmp);
+    }
+
+  template <class T>
+  inline void deallocate(T* p)
+    {
+      ::operator delete(static_cast<void*>(p));
     }
 }
 
@@ -112,31 +143,6 @@ private:
 
   void insert_aux (iterator position, const T& x);
 
-  void destroy(iterator start_, iterator finish_)
-    {
-      while ( start_ != finish_)
-        MVUtils::destroy(start_++);
-    }
-
-  static size_type mv_max_size()
-    {
-      return 1 > UINT_MAX/sizeof(T) ?
-        size_type(1) : size_type(UINT_MAX/sizeof(T));
-    }
-
-  static pointer mv_allocate(size_type n, pointer = 0)
-    {
-      void * tmp =
-        static_cast<void*>(::operator new(static_cast<size_t>(n*sizeof(T))));
-      if (tmp == 0) throw std::bad_alloc();
-      return static_cast<pointer>(tmp);
-    }
-
-  static void mv_deallocate(pointer p)
-    {
-      ::operator delete(static_cast<void*>(p));
-    }
-
 public:
   //
   // construct/copy/destroy
@@ -146,33 +152,19 @@ public:
     {}
 
   //
-  // Build a minivec of size n with each element set to default for type T.
-  // This requires that T have a default constructor.
-  //
-  explicit minivec (size_type n)
-    {
-      start = mv_allocate(n,(pointer)0);
-      T value;
-      MVUtils::uninitialized_fill_n(start, n, value);
-      finish = start + n;
-      end_of_storage = finish;
-    }
-
-  //
   // Build a minivec of size n with each element set to copy of value.
   //
-  minivec (size_type n, const T& value)
+  minivec (size_type n, const T& value = T())
     {
-      start = mv_allocate(n,(pointer)0);
-      MVUtils::uninitialized_fill_n(start, n, value);
-      finish = start + n;
+      start = mvaux::allocate<T>(n);
+      finish = mvaux::uninitialized_fill_n(start, n, value);
       end_of_storage = finish;
     }
 
   minivec (const minivec<T>& x)
     {
-      start = mv_allocate(x.end() - x.begin(),(pointer)0);
-      finish = MVUtils::uninitialized_copy(x.begin(), x.end(), start);
+      start = mvaux::allocate<T>(x.end() - x.begin());
+      finish = mvaux::uninitialized_copy(x.begin(), x.end(), start);
       end_of_storage = finish;
     }
 
@@ -180,15 +172,15 @@ public:
   minivec (InputIterator first, InputIterator last)
     {
       size_type n = std::distance(first, last);
-      start = mv_allocate(n,(pointer)0);
-      finish = MVUtils::uninitialized_copy(first, last, start);
+      start = mvaux::allocate<T>(n);
+      finish = mvaux::uninitialized_copy(first, last, start);
       end_of_storage = finish;
     }
 
   ~minivec ()
     {
-      destroy(start, finish);
-      mv_deallocate(start);
+      mvaux::destroy(start, finish);
+      mvaux::deallocate(start);
     }
 
   minivec<T>& operator= (const minivec<T>& x);
@@ -197,16 +189,6 @@ public:
   void assign (InputIterator first, InputIterator last)
     {
       erase(begin(), end()); insert(begin(), first, last);
-    }
-
-  //
-  // Assign n copies of default value of type T to minivec.
-  // This requires that T have a default constructor.
-  //
-  template<class Size>
-  void assign (Size n)
-    {
-      erase(begin(), end()); insert(begin(), n, T());
     }
 
   //
@@ -221,10 +203,10 @@ public:
   //
   // Iterators.
   //
-  iterator       begin ()       { return start;  }
-  const_iterator begin () const { return start;  }
-  iterator       end ()         { return finish; }
-  const_iterator end ()   const { return finish; }
+  iterator       begin()       { return start;  }
+  const_iterator begin() const { return start;  }
+  iterator       end()         { return finish; }
+  const_iterator end()   const { return finish; }
 
   reverse_iterator rbegin ()
     {
@@ -247,9 +229,9 @@ public:
   // Capacity.
   //
   size_type size ()     const { return size_type(end() - begin()); }
-  size_type max_size () const { return mv_max_size();   }
-  void resize (size_type new_size);
-  void resize (size_type new_size, T value);
+  size_type max_size () const { return mvaux::max_size<T>();   }
+
+  void resize (size_type new_size, const T& value = T());
 
   size_type capacity () const { return size_type(end_of_storage - begin()); }
   bool      empty ()    const { return begin() == end();                    }
@@ -257,10 +239,10 @@ public:
     {
       if (capacity() < n)
         {
-          iterator tmp = mv_allocate(n,start);
-          MVUtils::uninitialized_copy(begin(), end(), tmp);
-          destroy(start, finish);
-          mv_deallocate(start);
+          pointer tmp = mvaux::allocate<T>(n);
+          mvaux::uninitialized_copy(begin(), end(), tmp);
+          mvaux::destroy(start, finish);
+          mvaux::deallocate(start);
           finish = tmp + size();
           start = tmp;
           end_of_storage = begin() + n;
@@ -270,15 +252,8 @@ public:
   //
   // Element access.
   //
-  reference       operator[] (size_type n)
-    {
-      return *(begin() + n);
-    }
-
-  const_reference operator[] (size_type n) const
-    {
-      return *(begin() + n);
-    }
+  reference       operator[] (size_type n)       { return *(begin() + n); }
+  const_reference operator[] (size_type n) const { return *(begin() + n); }
 
   /// Exeception class of index-out-of-range errors in minivec.
   class out_of_range {};
@@ -307,8 +282,8 @@ public:
     {
       if (finish != end_of_storage)
         {
-          MVUtils::construct(finish, x);
-          finish++;
+          mvaux::construct(finish, x);
+          ++finish;
         }
       else
         insert_aux(end(), x);
@@ -317,35 +292,18 @@ public:
   void pop_back()
     {
       --finish;
-      MVUtils::destroy(finish);
-    }
-
-  //
-  // Insert default value of type T at position.
-  // Requires that T have a default constructor.
-  //
-  iterator insert (iterator position)
-    {
-      size_type n = position - begin();
-      T x;
-      if (finish != end_of_storage && position == end())
-        {
-          MVUtils::construct(finish, x); finish++;
-        }
-      else
-        insert_aux(position, x);
-      return begin() + n;
+      mvaux::destroy(finish);
     }
 
   //
   // Insert x at position.
   //
-  iterator insert (iterator position, const T& x)
+  iterator insert (iterator position, const T& x = T())
     {
       size_type n = position - begin();
       if (finish != end_of_storage && position == end())
         {
-          MVUtils::construct(finish, x); finish++;
+          mvaux::construct(finish, x); finish++;
         }
       else
         insert_aux(position, x);
@@ -366,19 +324,20 @@ public:
 
   iterator erase (iterator position)
     {
-      if (position + 1 != end()) MVUtils::copy(position + 1, end(), position);
+      if (position + 1 != end()) mvaux::copy(position + 1, end(), position);
       --finish;
-      MVUtils::destroy(finish);
+      mvaux::destroy(finish);
       return position;
     }
 
   iterator erase (iterator first, iterator last)
     {
-      iterator i = MVUtils::copy(last, end(), first);
-      destroy(i, finish);
+      iterator i = mvaux::copy(last, end(), first);
+      mvaux::destroy(i, finish);
       finish = finish - (last - first);
       return first;
     }
+
   void clear()
     {
       erase(begin(),end());
@@ -386,22 +345,8 @@ public:
 
 }; // end class minivec
 
-//
-// This requires that T have a default constructor.
-//
-
 template <class T>
-void minivec<T>::resize (size_type new_size)
-{
-  T value;
-  if (new_size > size())
-    insert(end(), new_size - size(), value);
-  else if (new_size < size())
-    erase(begin() + new_size, end());
-}
-
-template <class T>
-void minivec<T>::resize (size_type new_size, T value)
+void minivec<T>::resize (size_type new_size, const T& value)
 {
   if (new_size > size())
     insert(end(), new_size - size(), value);
@@ -415,20 +360,20 @@ minivec<T>& minivec<T>::operator= (const minivec<T>& x)
   if (&x == this) return *this;
   if (x.size() > capacity())
     {
-      destroy(start, finish);
-      mv_deallocate(start);
-      start = mv_allocate(x.end() - x.begin(),(pointer)0);
-      end_of_storage = MVUtils::uninitialized_copy(x.begin(), x.end(), start);
+      mvaux::destroy(start, finish);
+      mvaux::deallocate(start);
+      start = mvaux::allocate<T>(x.end() - x.begin());
+      end_of_storage = mvaux::uninitialized_copy(x.begin(), x.end(), start);
     }
   else if (size() >= x.size())
     {
-      iterator i = MVUtils::copy(x.begin(), x.end(), begin());
-      destroy(i, finish);
+      iterator i = mvaux::copy(x.begin(), x.end(), begin());
+      mvaux::destroy(i, finish);
     }
   else
     {
-      MVUtils::copy(x.begin(), x.begin() + size(), begin());
-      MVUtils::uninitialized_copy(x.begin() + size(), x.end(), begin() + size());
+      mvaux::copy(x.begin(), x.begin() + size(), begin());
+      mvaux::uninitialized_copy(x.begin() + size(), x.end(), begin() + size());
     }
   finish = begin() + x.size();
   return *this;
@@ -439,8 +384,8 @@ void minivec<T>::insert_aux (iterator position, const T& x)
 {
   if (finish != end_of_storage)
     {
-      MVUtils::construct(finish, *(finish - 1));
-      MVUtils::copy_backward(position, finish - 1, finish);
+      mvaux::construct(finish, *(finish - 1));
+      mvaux::copy_backward(position, finish - 1, finish);
       *position = x;
       ++finish;
     }
@@ -453,12 +398,12 @@ void minivec<T>::insert_aux (iterator position, const T& x)
       //
       const size_type buffer_size = sizeof(T) >= 1024 ? 1 : 1024/sizeof(T);
       size_type len = size() + buffer_size;
-      iterator tmp = mv_allocate(len,start);
-      MVUtils::uninitialized_copy(begin(), position, tmp);
-      MVUtils::construct((tmp + (position - begin())), x);
-      MVUtils::uninitialized_copy(position, end(), tmp + (position - begin()) + 1);
-      destroy(begin(), end());
-      mv_deallocate(begin());
+      pointer tmp = mvaux::allocate<T>(len);
+      iterator middle = mvaux::uninitialized_copy(begin(), position, tmp);
+      mvaux::construct(middle, x);
+      mvaux::uninitialized_copy(position, end(), middle + 1);
+      mvaux::destroy(begin(), end());
+      mvaux::deallocate(begin());
       end_of_storage = tmp + len;
       finish = tmp + size() + 1;
       start = tmp;
@@ -473,27 +418,27 @@ void minivec<T>::insert (iterator position, size_type n, const T& x)
     {
       if (end() - position > n)
         {
-          MVUtils::uninitialized_copy(end() - n, end(), end());
-          MVUtils::copy_backward(position, end() - n, end());
-          MVUtils::fill(position, position + n, x);
+          mvaux::uninitialized_copy(end() - n, end(), end());
+          mvaux::copy_backward(position, end() - n, end());
+          mvaux::fill(position, position + n, x);
         }
       else
         {
-          MVUtils::uninitialized_copy(position, end(), position + n);
-          MVUtils::fill(position, end(), x);
-          MVUtils::uninitialized_fill_n(end(), n - (end() - position), x);
+          mvaux::uninitialized_copy(position, end(), position + n);
+          mvaux::fill(position, end(), x);
+          mvaux::uninitialized_fill_n(end(), n - (end() - position), x);
         }
       finish += n;
     }
   else
     {
       size_type len = size() + max(size(), n);
-      iterator tmp = mv_allocate(len,start);
-      MVUtils::uninitialized_copy(begin(), position, tmp);
-      MVUtils::uninitialized_fill_n(tmp + (position - begin()), n, x);
-      MVUtils::uninitialized_copy(position, end(), tmp + (position - begin() + n));
-      destroy(begin(), end());
-      mv_deallocate(begin());
+      pointer tmp = mvaux::allocate<T>(len);
+      iterator middle = mvaux::uninitialized_copy(begin(), position, tmp);
+      mvaux::uninitialized_fill_n(middle, n, x);
+      mvaux::uninitialized_copy(position, end(), middle + n);
+      mvaux::destroy(begin(), end());
+      mvaux::deallocate(begin());
       end_of_storage = tmp + len;
       finish = tmp + size() + n;
       start = tmp;
@@ -511,27 +456,27 @@ void minivec<T>::insert (iterator position, InputIterator first,
     {
       if (end() - position > n)
         {
-          MVUtils::uninitialized_copy(end() - n, end(), end());
-          MVUtils::copy_backward(position, end() - n, end());
-          copy(first, last, position);
+          mvaux::uninitialized_copy(end() - n, end(), end());
+          mvaux::copy_backward(position, end() - n, end());
+          mvaux::copy(first, last, position);
         }
       else
         {
-          MVUtils::uninitialized_copy(position, end(), position + n);
-          copy(first, first + (end() - position), position);
-          MVUtils::uninitialized_copy(first + (end() - position), last, end());
+          mvaux::uninitialized_copy(position, end(), position + n);
+          mvaux::copy(first, first + (end() - position), position);
+          mvaux::uninitialized_copy(first + (end() - position), last, end());
         }
       finish += n;
     }
   else
     {
       size_type len = size() + max(size(), n);
-      iterator tmp = mv_allocate(len,start);
-      MVUtils::uninitialized_copy(begin(), position, tmp);
-      MVUtils::uninitialized_copy(first, last, tmp + (position - begin()));
-      MVUtils::uninitialized_copy(position, end(), tmp + (position - begin() + n));
-      destroy(begin(), end());
-      mv_deallocate(begin());
+      pointer tmp = mvaux::allocate<T>(len);
+      iterator middle = mvaux::uninitialized_copy(begin(), position, tmp);
+      mvaux::uninitialized_copy(first, last, middle);
+      mvaux::uninitialized_copy(position, end(), middle + n);
+      mvaux::destroy(begin(), end());
+      mvaux::deallocate(begin());
       end_of_storage = tmp + len;
       finish = tmp + size() + n;
       start = tmp;
