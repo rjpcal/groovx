@@ -219,6 +219,8 @@ DOTRACE("Grsh_AppInit");
     }
 
   exit(-1);
+
+  /* can't get here, but placate compiler: */ return TCL_ERROR;
 }
 
 int main(int argc, char** argv)
