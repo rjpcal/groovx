@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Dec 15 14:06:38 2002
+// written: Sun Dec 15 14:51:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@
 
 #include "util/strings.h"
 
+#include <map>
 #include <tcl.h>
-#include <set>
 
 #define TRACE_USE_COUNT
 
@@ -42,30 +42,18 @@ class HelpCmd;
 
 namespace
 {
-  // Holds the set of the addresses of all valid Tcl::Command objects (this is
+  // Holds the the addresses of all valid Tcl::Command objects (this is
   // managed in Tcl::Command's constructor+destructor)
-  std::set<ClientData>* cxxCommands = 0;
+  typedef std::map<fstring, Tcl::Command*> CmdTable;
 
-  Tcl::Command* lookupCmd(Tcl::Interp& interp, const char* cmd_name)
-    {
-      if (cxxCommands != 0) // check if any Tcl::Command's exist yet
-        {
-          Tcl_CmdInfo cmd_info;
-          int result = Tcl_GetCommandInfo(interp.intp(), cmd_name, &cmd_info);
+  CmdTable* commandTable_ = 0;
 
-          if (result != 0) // check if lookup succeeded
-            {
-              // if the result is found in "cxxCommands", then it is one of
-              // our Tcl::Command's (otherwise it is some other type of
-              // command, such as a tcl proc)
-
-              if (cxxCommands->find(cmd_info.objClientData) !=
-                  cxxCommands->end())
-                return static_cast<Tcl::Command*>(cmd_info.objClientData);
-            }
-        }
-      return 0;
-    }
+  CmdTable& commandTable()
+  {
+    if (commandTable_ == 0)
+      commandTable_ = new CmdTable;
+    return *commandTable_;
+  }
 
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
@@ -127,7 +115,7 @@ protected:
   {
     const char* cmd_name = ctx.getValFromArg<const char*>(1);
 
-    Tcl::Command* cmd = lookupCmd(ctx.interp(), cmd_name);
+    Tcl::Command* cmd = commandTable()[cmd_name];
 
     if (cmd == 0)
       throw Util::Error("no such Tcl::Command");
@@ -184,6 +172,11 @@ public:
       try
         {
           itsInterp.deleteCommand(itsCmdName.c_str());
+
+          CmdTable::iterator pos = commandTable().find(itsCmdName);
+
+          if ((*pos).second == itsOwner)
+            commandTable().erase(pos);
         }
       catch (Util::Error& err)
         {
@@ -220,7 +213,7 @@ public:
 private:
   void registerCmdProc(Tcl::Interp& interp)
   {
-    Tcl::Command* previousCmd = lookupCmd(interp, itsCmdName.c_str());
+    Tcl::Command* previousCmd = commandTable()[itsCmdName];
 
     // Only add as an overload if there is an existing previousCmd registered
     // with the same name as us, AND if that cmd was ORIGINALLY registered
@@ -238,6 +231,8 @@ private:
                              invokeCallback,
                              static_cast<ClientData>(itsOwner),
                              (Tcl_CmdDeleteProc*) NULL);
+
+        commandTable()[itsCmdName] = itsOwner;
       }
   }
 
@@ -422,21 +417,11 @@ Tcl::Command::Command(Tcl::Interp& interp,
                objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
-
-  if (cxxCommands == 0)
-    {
-      cxxCommands = new std::set<ClientData>;
-    }
-  cxxCommands->insert(static_cast<ClientData>(this));
 }
 
 Tcl::Command::~Command()
 {
 DOTRACE("Tcl::Command::~Command");
-
-  Assert(cxxCommands != 0);
-
-  cxxCommands->erase(static_cast<ClientData>(this));
 
   delete rep;
 }
