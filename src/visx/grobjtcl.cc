@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Tue Sep  4 10:39:03 2001
+// written: Sat Sep  8 14:00:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,13 +23,10 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// Grobj Tcl package
-//
-///////////////////////////////////////////////////////////////////////
+#include "util/trace.h"
 
-namespace GrobjTcl
+
+namespace
 {
   Gfx::Rect<double> boundingBox(Util::Ref<GrObj> obj)
   {
@@ -53,27 +50,22 @@ namespace GrobjTcl
     Gfx::Canvas& canvas = Application::theApp().getCanvas();
     obj->update(canvas);
   }
-};
+}
 
-//---------------------------------------------------------------------
-//
-// Grobj_Init --
-//
-//---------------------------------------------------------------------
 
 extern "C"
 int Grobj_Init(Tcl_Interp* interp)
 {
+DOTRACE("Grobj_Init");
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GrObj", "$Revision$");
 
   Tcl::defTracing(pkg, GrObj::tracer);
 
   Tcl::defFieldContainer<GrObj>(pkg);
 
-  pkg->defVec( "boundingBox", "item_id(s)", &GrobjTcl::boundingBox );
-  pkg->defVec( "saveBitmapCache", "item_id(s) filename(s)",
-               &GrobjTcl::saveBitmapCache );
-  pkg->defVec( "update", "item_id(s)", &GrobjTcl::update );
+  pkg->defVec( "boundingBox", "item_id(s)", &::boundingBox );
+  pkg->defVec( "saveBitmapCache", "item_id(s) filename(s)", &::saveBitmapCache );
+  pkg->defVec( "update", "item_id(s)", &::update );
 
   pkg->def( "setBitmapCacheDir", "filename", &GrObj::setBitmapCacheDir );
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Sat Aug 25 21:29:18 2001
+// written: Sat Sep  8 13:57:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,9 @@
 
 #include "util/objfactory.h"
 
-namespace FishTcl
+#include "util/trace.h"
+
+namespace
 {
   Util::UID makeFish(const char* spline_file, const char* coord_file,
                      int index)
@@ -33,13 +35,15 @@ namespace FishTcl
 extern "C"
 int Fish_Init(Tcl_Interp* interp)
 {
+DOTRACE("Fish_Init");
+
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Fish", "$Revision$");
 
   Tcl::defTracing(pkg, Fish::tracer);
 
   Tcl::defGenericObjCmds<Fish>(pkg);
 
-  pkg->defVec( "make", "spline_file coord_file index", &FishTcl::makeFish );
+  pkg->defVec( "make", "spline_file coord_file index", &makeFish );
 
   Tcl::defAllFields(pkg, Fish::classFields());
 
