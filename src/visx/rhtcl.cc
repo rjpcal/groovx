@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Jun 11 22:08:44 1999
+// written: Mon Jun 14 13:50:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,18 +15,16 @@
 #include <strstream.h>
 
 #include "rhlist.h"
-#include "errmsg.h"
 #include "responsehandler.h"
-#include "tclobjcommand.h"
+#include "tclcmd.h"
 #include "attribcommand.h"
-#include "stringifycmd.h"
+#include "tclpkg.h"
+#include "tcllistpkg.h"
 
 #define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
-
-namespace { // unnamed namespace wrapper for all command classes
 
 //---------------------------------------------------------------------
 //
@@ -69,10 +67,10 @@ private:
 //
 //--------------------------------------------------------------------
 
-class ResponseHandlerCmd : public TclObjCommand {
+class ResponseHandlerCmd : public TclCmd {
 public:
   ResponseHandlerCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclObjCommand(interp, cmd_name, NULL, 1, 1) {}
+	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
 	 ResponseHandler* rh = new ResponseHandler();
@@ -129,76 +127,48 @@ protected:
   virtual void set() { itsRh->setUseFeedback(getBoolFromArg(2)); }
 };
 
-//--------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////
 //
-// ResetRhListCmd --
+// RhListPkg class definition
 //
-//
-//--------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////
 
-class ResetRhListCmd : public TclObjCommand {
+class RhListPkg : public TclListPkg {
 public:
-  ResetRhListCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclObjCommand(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 RhList::theRhList().clear();
+  RhListPkg(Tcl_Interp* interp) :
+	 TclListPkg(interp, "RhList", "1.1")
+  {
+	 RhList::theRhList().setInterp(interp);
+	 RhList::theRhList().insertAt(0, new ResponseHandler());
   }
-};
 
-//--------------------------------------------------------------------
-//
-// RhCountCmd --
-//
-//--------------------------------------------------------------------
-
-class RhCountCmd : public TclObjCommand {
-public:
-  RhCountCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclObjCommand(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 returnInt(RhList::theRhList().count());
-  }
-};
-
-//--------------------------------------------------------------------
-//
-// RhStringifyCmd --
-//
-//
-//--------------------------------------------------------------------
-
-class RhStringifyCmd : public StringifyCmd {
-public:
-  RhStringifyCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 StringifyCmd(interp, cmd_name, NULL, 1) {}
-protected:
-  virtual IO& getIO() { return RhList::theRhList(); }
+  virtual IO& getList() { return RhList::theRhList(); }
   virtual int getBufSize() { return 200; }
+
+  virtual void reset() { RhList::theRhList().clear(); }
+  virtual int count() { return RhList::theRhList().count(); }
 };
 
-//--------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////
 //
-// RhDestringifyCmd --
+// RhPkg class definition
 //
-//
-//--------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////
 
-class RhDestringifyCmd : public DestringifyCmd {
+class RhPkg : public TclPkg {
 public:
-  RhDestringifyCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 DestringifyCmd(interp, cmd_name, "string", 2) {}
-protected:
-  virtual IO& getIO() { return RhList::theRhList(); }
+  RhPkg(Tcl_Interp* interp) :
+	 TclPkg(interp, "Rh", "1.1") 
+  {
+	 addCommand( new ResponseHandlerCmd(interp, "Rh::responseHandler") );
+	 addCommand( new UseFeedbackCmd(interp, "Rh::useFeedback") );
+	 addCommand( new KeyRespPairsCmd(interp, "Rh::keyRespPairs") );	 
+  }
 };
-
-} // end unnamed namespace
 
 //--------------------------------------------------------------------
 //
 // RhTcl::Rh_Init --
-//
 //
 //--------------------------------------------------------------------
 
@@ -209,31 +179,10 @@ namespace RhTcl {
 int RhTcl::Rh_Init(Tcl_Interp* interp) {
 DOTRACE("RhTcl::Rh_Init");
 
-  RhList::theRhList().setInterp(interp);
-  RhList::theRhList().insertAt(0, new ResponseHandler());
+  new RhListPkg(interp);
+  new RhPkg(interp);
 
-  new ResponseHandlerCmd(interp, "Rh::responseHandler");
-
-  new UseFeedbackCmd(interp, "Rh::useFeedback");
-
-  new KeyRespPairsCmd(interp, "Rh::keyRespPairs");
-
-  new ResetRhListCmd(interp, "RhList::resetRhList");
-
-  new RhCountCmd(interp, "RhList::rhCount");
-
-  new RhStringifyCmd(interp, "RhList::stringify");
-
-  new RhDestringifyCmd(interp, "RhList::destringify");
-
-#if 0
-  Tcl_CreateObjCommand(interp, "RhList::stringify", stringifyCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "RhList::destringify", destringifyCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-#endif
-
-  Tcl_PkgProvide(interp, "Rh", "1.1");
+  return TCL_OK;
 }
 
 static const char vcid_rhtcl_cc[] = "$Header$";
