@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Mon Aug 13 16:39:06 2001
+// written: Wed Aug 15 06:49:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,9 @@ public:
   void sendStateChangeMsg() const;
 
 private:
+  Observable(const Observable&);
+  Observable& operator=(const Observable&);
+
   class ObsImpl;
 
   ObsImpl* itsImpl;
