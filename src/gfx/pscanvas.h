@@ -121,11 +121,12 @@ public:
 
   virtual void flushOutput();
 
+  class Impl;
+
 private:
   PSCanvas(const PSCanvas&);
   PSCanvas& operator=(const PSCanvas&);
 
-  class Impl;
   Impl* itsImpl;
 };
 
