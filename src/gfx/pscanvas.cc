@@ -637,16 +637,16 @@ public:
 
 namespace
 {
-  Gfx::PSCanvas::Impl::PointsPrim thePointsPrim;
-  Gfx::PSCanvas::Impl::LinesPrim theLinesPrim;
-  Gfx::PSCanvas::Impl::LineStripPrim theLineStripPrim;
-  Gfx::PSCanvas::Impl::LineLoopPrim theLineLoopPrim;
-  Gfx::PSCanvas::Impl::TrianglesPrim theTrianglesPrim;
+  Gfx::PSCanvas::Impl::PointsPrim        thePointsPrim;
+  Gfx::PSCanvas::Impl::LinesPrim         theLinesPrim;
+  Gfx::PSCanvas::Impl::LineStripPrim     theLineStripPrim;
+  Gfx::PSCanvas::Impl::LineLoopPrim      theLineLoopPrim;
+  Gfx::PSCanvas::Impl::TrianglesPrim     theTrianglesPrim;
   Gfx::PSCanvas::Impl::TriangleStripPrim theTriangleStripPrim;
-  Gfx::PSCanvas::Impl::TriangleFanPrim theTriangleFanPrim;
-  Gfx::PSCanvas::Impl::QuadsPrim theQuadsPrim;
-  Gfx::PSCanvas::Impl::QuadStripPrim theQuadStripPrim;
-  Gfx::PSCanvas::Impl::PolygonPrim thePolygonPrim;
+  Gfx::PSCanvas::Impl::TriangleFanPrim   theTriangleFanPrim;
+  Gfx::PSCanvas::Impl::QuadsPrim         theQuadsPrim;
+  Gfx::PSCanvas::Impl::QuadStripPrim     theQuadStripPrim;
+  Gfx::PSCanvas::Impl::PolygonPrim       thePolygonPrim;
 }
 
 Gfx::PSCanvas::PSCanvas(const char* filename) :
