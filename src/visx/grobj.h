@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Sep 21 18:01:51 1999
+// written: Thu Sep 23 12:26:45 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -265,6 +265,7 @@ protected:
 
   private: void grDoAlignment() const;
 
+  friend class GrObjImpl;
 private:
   GrObjImpl* const itsImpl;	  // opaque pointer to implementation
 };
