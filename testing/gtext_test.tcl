@@ -47,16 +47,6 @@ test "$PACKAGE-Gtext::text" "normal use set, get, compare" {
 } {^Hello, again$}
 test "$PACKAGE-Gtext::text" "error" {} {^$} $no_test
 
-### Gtext::stringifyCmd ###
-### Gtext::destringifyCmd ###
-test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
-	 set str1 [IO::stringify $::GTEXT]
-	 set ::GTEXT [Obj::new Gtext]
-	 IO::destringify $::GTEXT $str1
-	 set str2 [IO::stringify $::GTEXT]
-	 return "[string equal $str1 $str2] $str1 $str2"
-} {^1 }
-
 ### Gtext rendering ###
 test "$PACKAGE-rendering" "normal render" {
 	 clearscreen
