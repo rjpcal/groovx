@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jul  7 17:15:12 1999
+// written: Fri Jul 23 13:58:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,17 +115,10 @@ DOTRACE("ToglConfig::ToglConfig");
 
 ToglConfig::~ToglConfig() {
 DOTRACE("ToglConfig::~ToglConfig");
+DebugPrintNL("ToglConfig::~ToglConfig");
   Togl_SetClientData(itsWidget, static_cast<ClientData>(0));
-
-  // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !Tcl_InterpDeleted(Togl_Interp(itsWidget)) ) {
-	 string destroy_cmd_str = string("destroy ") + pathname(itsWidget);
-	 TclEvalCmd destroy_cmd(destroy_cmd_str);
-	 if ( destroy_cmd.invoke(Togl_Interp(itsWidget)) != TCL_OK ) {
-		Tcl_BackgroundError(Togl_Interp(itsWidget));
-	 }
-  }
-
+  Togl_SetReshapeFunc(itsWidget, 0);
+  Togl_SetDisplayFunc(itsWidget, 0);
   itsWidget = 0;
 }
 
@@ -220,9 +213,23 @@ DOTRACE("ToglConfig::usingFixedScale");
 // manipulators //
 //////////////////
 
+void ToglConfig::destroyWidget() {
+DOTRACE("ToglConfig::destroyWidget");
+DebugPrintNL("ToglConfig::destroyWidget");
+  // If we are exiting, don't bother destroying the widget; otherwise...
+  if ( !Tcl_InterpDeleted(Togl_Interp(itsWidget)) ) {
+	 string destroy_cmd_str = string("destroy ") + pathname(itsWidget);
+	 TclEvalCmd destroy_cmd(destroy_cmd_str);
+	 if ( destroy_cmd.invoke(Togl_Interp(itsWidget)) != TCL_OK ) {
+		Tcl_BackgroundError(Togl_Interp(itsWidget));
+	 }
+  }
+}
+
 void ToglConfig::scaleRect(double factor) {
 DOTRACE("ToglConfig::scaleRect");
-  if (factor <= 0.0) { throw ToglError("invalid scaling factor"); }
+  try { if (factor <= 0.0) { throw ToglError("invalid scaling factor"); } }
+  catch (ToglError&) { throw; }
 
   itsMinRect.widen(factor);
   itsMinRect.heighten(factor);
@@ -235,17 +242,21 @@ DOTRACE("ToglConfig::setColor");
   static const char* const bad_val_msg = "RGB values must be in [0.0, 1.0]";
   static const char* const bad_index_msg = "color index must be in [0, 255]";
 
-  if (color.pixel < 0   || color.pixel > 255) { throw ToglError(bad_index_msg); }
-  if (color.red   < 0.0 || color.red   > 1.0) { throw ToglError(bad_val_msg); }
-  if (color.green < 0.0 || color.green > 1.0) { throw ToglError(bad_val_msg); }
-  if (color.blue  < 0.0 || color.blue  > 1.0) { throw ToglError(bad_val_msg); }
+  try {
+	 if (color.pixel < 0   || color.pixel > 255) { throw ToglError(bad_index_msg); }
+	 if (color.red   < 0.0 || color.red   > 1.0) { throw ToglError(bad_val_msg); }
+	 if (color.green < 0.0 || color.green > 1.0) { throw ToglError(bad_val_msg); }
+	 if (color.blue  < 0.0 || color.blue  > 1.0) { throw ToglError(bad_val_msg); }
+  }
+  catch (ToglError&) { throw; }
 
   Togl_SetColor(itsWidget, color.pixel, color.red, color.green, color.blue);
 }
 
 void ToglConfig::setFixedScale(double s) {
 DOTRACE("ToglConfig::setFixedScale"); 
-  if (s <= 0.0) { throw ToglError("invalid scaling factor"); }
+  try { if (s <= 0.0) { throw ToglError("invalid scaling factor"); } }
+  catch (ToglError&) { throw; }
 
   itsFixedScaleFlag = true;
   itsFixedScale = s;
@@ -255,7 +266,8 @@ DOTRACE("ToglConfig::setFixedScale");
 
 void ToglConfig::setUnitAngle(double deg) {
 DOTRACE("ToglConfig::setUnitAngle");
-  if (deg <= 0.0) { throw ToglError("unit angle must be positive"); }
+  try { if (deg <= 0.0) { throw ToglError("unit angle must be positive"); } }
+  catch (ToglError&) { throw; }
 
   static const double deg_to_rad = 3.141593/180.0;
   itsFixedScaleFlag = true;
@@ -269,7 +281,12 @@ DOTRACE("ToglConfig::setUnitAngle");
 
 void ToglConfig::setViewingDistIn(double in) {
 DOTRACE("ToglConfig::setViewingDistIn"); 
-  if (in <= 0.0) { throw ToglError("viewing distance must be positive (duh)"); }
+  try {
+	 if (in <= 0.0) 
+		{ throw ToglError("viewing distance must be positive (duh)"); }
+  }
+  catch (ToglError&) { throw; }
+
 
   // according to similar triangles,
   //   new_dist / old_dist == new_scale / old_scale;
@@ -310,7 +327,8 @@ DOTRACE("ToglConfig::bind");
 	 + event_sequence + " " + script;
   TclEvalCmd cmd(cmd_str);
   int result = cmd.invoke(Togl_Interp(itsWidget));
-  if (result != TCL_OK) throw ToglError();
+  try { if (result != TCL_OK) throw ToglError(); }
+  catch (ToglError&) { throw; }
 }
 
 void ToglConfig::loadFont(const char* fontname) {
@@ -318,11 +336,14 @@ DOTRACE("ToglConfig::loadFont");
 
   GLuint newListBase = Togl_LoadBitmapFont(itsWidget, fontname);
 
-  // Check if font loading succeeded...
-  if (newListBase == 0) {
-	 DebugEval(fontname);
-	 throw ToglError(string("unable to load font ") + fontname);
+  try {
+	 // Check if font loading succeeded...
+	 if (newListBase == 0) {
+		DebugEval(fontname);
+		throw ToglError(string("unable to load font ") + fontname);
+	 }
   }
+  catch (ToglError&) { throw; }
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
@@ -339,9 +360,12 @@ DOTRACE("ToglConfig::loadFonti");
 	 Togl_LoadBitmapFont(itsWidget, reinterpret_cast<char*>(fontnumber));
 
   // Check if font loading succeeded...
-  if (newListBase == 0) {
-	 throw ToglError(string("unable to load font"));
+  try {
+	 if (newListBase == 0) {
+		throw ToglError(string("unable to load font"));
+	 }
   }
+  catch (ToglError&) { throw; }
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
@@ -411,7 +435,10 @@ DOTRACE("ToglConfig::swapBuffers");
 void ToglConfig::takeFocus() {
 DOTRACE("ToglConfig::takeFocus");
   TclEvalCmd cmd(string("focus -force ") + pathname(itsWidget));
-  if ( cmd.invoke(Togl_Interp(itsWidget)) != TCL_OK ) { throw ToglError(); }
+  try {
+	 if ( cmd.invoke(Togl_Interp(itsWidget)) != TCL_OK ) { throw ToglError(); }
+  }
+  catch (ToglError&) { throw; }
 }
 
 void ToglConfig::writeEpsFile(const char* filename) {
