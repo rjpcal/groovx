@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Mon Sep 25 08:43:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,13 @@ public:
   int getAutosavePeriod() const;
   /// Change the autosave period to \a period.
   void setAutosavePeriod(int period);
+
+  /// Return the full contents of the info log.
+  const char* getInfoLog() const;
+
+  /** Add a message to the info log. The message will automatically be
+		date/time-stamped. */
+  void addLogInfo(const char* message);
 
   virtual Util::ErrorHandler& getErrorHandler();
 
