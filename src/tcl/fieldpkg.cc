@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Fri May 11 21:25:16 2001
+// written: Wed Jun  6 15:54:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,9 @@
 #include "tcl/fieldpkg.h"
 
 #include "io/fields.h"
-#include "io/iditem.h"
 
 #include "util/arrays.h"
+#include "util/iditem.h"
 #include "util/minivec.h"
 #include "util/strings.h"
 

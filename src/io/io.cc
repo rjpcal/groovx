@@ -15,12 +15,11 @@
 
 #include "io/io.h"
 
-#include "io/iditem.h"
-#include "io/iodb.h"
 #include "io/writer.h"
 
 #include "system/demangle.h"
 
+#include "util/iditem.h"
 #include "util/strings.h"
 
 #include <typeinfo>

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu May 17 15:32:32 2001
+// written: Wed Jun  6 15:54:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,10 @@
 #include "io/asciistreamreader.h"
 #include "io/asciistreamwriter.h"
 #include "io/io.h"
-#include "io/iditem.h"
 #include "io/iolegacy.h"
 
 #include "util/arrays.h"
+#include "util/iditem.h"
 #include "util/strings.h"
 
 #ifdef HAVE_ZSTREAM

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Fri May 11 20:26:18 2001
+// written: Wed Jun  6 15:54:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 #ifndef IOITEMPKG_H_DEFINED
 #define IOITEMPKG_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "util/iditem.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "io/iditem.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
+#include "io/io.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
@@ -36,7 +36,7 @@ protected:
 public:
   virtual ~IoCaster();
 
-  virtual bool isMyType(const IO::IoObject* obj) = 0;
+  virtual bool isMyType(const Util::Object* obj) = 0;
 
   bool isMyType(int id);
 };
@@ -138,7 +138,7 @@ public:
 		return item.get();
 	 }
 
-  virtual bool isMyType(const IO::IoObject* obj)
+  virtual bool isMyType(const Util::Object* obj)
     { return (obj != 0 && dynamic_cast<const C*>(obj) != 0); }
 };
 

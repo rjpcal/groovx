@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu May 31 18:04:09 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -24,12 +24,12 @@
 #include "gx/gxnode.h"
 
 #include "io/io.h"
-#include "io/iditem.h"
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
 
+#include "util/iditem.h"
 #include "util/strings.h"
 
 #include <tcl.h>

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat Jun  2 09:14:26 2001
+// written: Wed Jun  6 15:56:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,11 +22,10 @@
 
 #include "gwt/canvas.h"
 
-#include "io/iditem.h"
-#include "io/iodb.h"
-
 #include "util/arrays.h"
 #include "util/error.h"
+#include "util/iditem.h"
+#include "util/iodb.h"
 
 #include <cmath>
 #include <iostream.h>

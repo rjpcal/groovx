@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Thu May 17 11:05:20 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include "io/reader.h"
 
 #include "io/io.h"
-#include "io/iditem.h"
+
+#include "util/iditem.h"
 
 #include <cstddef>
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sun May 27 16:03:26 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -23,8 +23,6 @@
 
 #include "gwt/widget.h"
 
-#include "io/iditem.h"
-
 #include "system/system.h"
 
 #include "tcl/tclcmd.h"
@@ -32,6 +30,7 @@
 #include "tcl/tclitempkg.h"
 #include "tcl/tracertcl.h"
 
+#include "util/iditem.h"
 #include "util/strings.h"
 
 #define NO_TRACE

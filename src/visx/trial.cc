@@ -25,13 +25,13 @@
 #include "gx/gxtraversal.h"
 #include "gx/gxseparator.h"
 
-#include "io/iditem.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "gwt/widget.h"
 
 #include "util/errorhandler.h"
+#include "util/iditem.h"
 #include "util/minivec.h"
 
 #include <strstream.h>

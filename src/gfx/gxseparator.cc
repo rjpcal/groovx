@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Jun  5 10:40:20 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 #include "gwt/canvas.h"
 
-#include "io/iditem.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "util/error.h"
+#include "util/iditem.h"
 #include "util/minivec.h"
 
 #include "util/trace.h"

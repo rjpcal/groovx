@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun May 27 16:02:44 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #include "gwt/widget.h"
 
-#include "io/iditem.h"
 #include "io/asciistreamwriter.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -34,6 +33,7 @@
 
 #include "util/error.h"
 #include "util/errorhandler.h"
+#include "util/iditem.h"
 #include "util/minivec.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"

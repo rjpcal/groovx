@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Thu May 24 18:19:45 2001
+// written: Wed Jun  6 15:53:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "sound.h"
 
-#include "io/iditem.h"
+#include "util/iditem.h"
 
 #if defined(HP9000S700)
 #  include "hpsound.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Sat May 19 15:37:19 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,9 @@
 #include "io/asciistreamwriter.h"
 
 #include "io/io.h"
-#include "io/iditem.h"
 
 #include "util/arrays.h"
+#include "util/iditem.h"
 #include "util/strings.h"
 #include "util/value.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Jun  1 18:11:46 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,12 +21,11 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "io/iditem.h"
-
 #include "tcl/tclcmd.h"
 #include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
+#include "util/iditem.h"
 
 #include <fstream.h>
 #include <strstream.h>

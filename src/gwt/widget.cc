@@ -20,8 +20,8 @@
 #include "gx/gxnode.h"
 
 #include "io/io.h"
-#include "io/iditem.h"
 
+#include "util/iditem.h"
 #include "util/observer.h"
 
 #include "util/trace.h"

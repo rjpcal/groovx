@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Jun  4 11:27:31 2001
+// written: Wed Jun  6 15:56:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,12 +18,13 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 #include "io/iomgr.h"
-#include "io/iodb.h"
 
 #include "system/demangle.h"
 
 #include "tcl/stringifycmd.h"
 #include "tcl/tclpkg.h"
+
+#include "util/iodb.h"
 
 #include <fstream.h>
 #include <typeinfo>

@@ -21,7 +21,6 @@
 #include "response.h"
 #include "trialbase.h"
 
-#include "io/iditem.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -33,6 +32,7 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
+#include "util/iditem.h"
 #include "util/pointers.h"
 #include "util/strings.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Nov  3 00:24:54 2000
-// written: Thu May 10 12:04:44 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,8 @@
 
 #include "gx/gxseparator.h"
 
-#include "io/iditem.h"
-
 #include "util/dlink_list.h"
+#include "util/iditem.h"
 
 #include "util/trace.h"
 

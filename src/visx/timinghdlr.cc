@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Jun  5 10:39:38 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,12 @@
 
 #include "trialevent.h"
 
-#include "io/iditem.h"
 #include "io/iomgr.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "util/error.h"
+#include "util/iditem.h"
 #include "util/minivec.h"
 
 #define NO_TRACE

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Sat Jun  2 15:49:31 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 #include "io/iolegacy.h"
 
-#include "io/iditem.h"
 #include "io/iomgr.h"
 
+#include "util/iditem.h"
 #include "util/strings.h"
 #include "util/value.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Sat May 19 15:52:49 2001
+// written: Wed Jun  6 15:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,12 +19,12 @@
 #include "response.h"
 #include "trialbase.h"
 
-#include "io/iditem.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "util/iditem.h"
 #include "util/rand.h"
 #include "util/minivec.h"
 
