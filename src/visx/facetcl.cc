@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Jul 12 13:04:05 1999
+// written: Sun Oct  3 19:01:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,6 +146,9 @@ public:
   }
 };
   
+
+extern "C" Tcl_PackageInitProc Face_Init;
+
 int Face_Init(Tcl_Interp* interp) {
 DOTRACE("Face_Init");
 
