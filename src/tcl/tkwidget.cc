@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Mon Nov 25 18:27:33 2002
+// written: Mon Nov 25 19:04:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,33 +31,6 @@
 #include "util/debug.h"
 
 
-class DbgButtonListener : public GWT::ButtonListener
-{
-public:
-  static DbgButtonListener* make() { return new DbgButtonListener; }
-
-  virtual void onButtonPress(const GWT::ButtonPressEvent& ev)
-  {
-    std::cerr << "ButtonPress: "
-              << "button " << ev.button
-              << " x " << ev.x << " y " << ev.y << std::endl;
-  }
-};
-
-class DbgKeyListener : public GWT::KeyListener
-{
-public:
-  static DbgKeyListener* make() { return new DbgKeyListener; }
-
-  virtual void onKeyPress(const GWT::KeyPressEvent& ev)
-  {
-    std::cerr << "KeyPress: "
-              << "keys " << ev.keys
-              << " control " << ev.controlPressed
-              << " x " << ev.x << " y " << ev.y << std::endl;
-  }
-};
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Tcl::TkWidget::TkWidgImpl definition
@@ -66,7 +39,7 @@ public:
 
 #define EVENT_MASK ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
 
-class TkWidgImpl
+class TkWidgImpl : public Util::VolatileObject
 {
   TkWidgImpl(const TkWidgImpl&);
   TkWidgImpl& operator=(const TkWidgImpl&);
@@ -87,11 +60,25 @@ public:
   bool updatePending;
   bool shutdownRequested;
 
-  enum EventType { KEY, BUTTON };
+  void onButtonPress(const GWT::ButtonPressEvent& ev)
+  {
+    std::cerr << "ButtonPress: "
+              << "button " << ev.button
+              << " x " << ev.x << " y " << ev.y << std::endl;
+  }
+
+  void onKeyPress(const GWT::KeyPressEvent& ev)
+  {
+    std::cerr << "KeyPress: "
+              << "keys " << ev.keys
+              << " control " << ev.controlPressed
+              << " x " << ev.x << " y " << ev.y << std::endl;
+  }
 
   static void buttonEventProc(Tcl::TkWidget* widg, XButtonEvent* eventPtr)
   {
-    widg->dispatchButtonEvent(eventPtr->button, eventPtr->x, eventPtr->y);
+    GWT::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
+    widg->sigButtonPressed.emit(ev);
   }
 
   static void keyEventProc(Tcl::TkWidget* widg, XKeyEvent* eventPtr)
@@ -105,8 +92,8 @@ public:
 
     buf[len] = '\0';
 
-    widg->dispatchKeyEvent(&buf[0], eventPtr->x, eventPtr->y,
-                           controlPressed);
+    GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
+    widg->sigKeyPressed.emit(ev);
   }
 
   static void cEventCallback(ClientData clientData, XEvent* rawEvent);
@@ -196,12 +183,10 @@ DOTRACE("TkWidgImpl::cEventCallback");
           }
        break;
         case KeyPress:
-          if (widg->hasKeyListeners())
-            keyEventProc(widg, (XKeyEvent*) rawEvent);
+          keyEventProc(widg, (XKeyEvent*) rawEvent);
           break;
         case ButtonPress:
-          if (widg->hasButtonListeners())
-            buttonEventProc(widg, (XButtonEvent*) rawEvent);
+          buttonEventProc(widg, (XButtonEvent*) rawEvent);
           break;
         case MapNotify:
           {
@@ -377,9 +362,9 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
 
 void Tcl::TkWidget::hook()
 {
-  addButtonListener(Util::Ref<GWT::ButtonListener>(DbgButtonListener::make()));
-  addButtonListener(Util::Ref<GWT::ButtonListener>(DbgButtonListener::make()));
-  addKeyListener(Util::Ref<GWT::KeyListener>(DbgKeyListener::make()));
+  sigButtonPressed.connect(rep, &TkWidgImpl::onButtonPress);
+  sigButtonPressed.connect(rep, &TkWidgImpl::onButtonPress);
+  sigKeyPressed.connect(rep, &TkWidgImpl::onKeyPress);
 }
 
 static const char vcid_tkwidget_cc[] = "$Header$";

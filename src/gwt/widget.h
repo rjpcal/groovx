@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Mon Nov 25 18:22:51 2002
+// written: Mon Nov 25 19:03:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,13 +14,11 @@
 #define WIDGET_H_DEFINED
 
 #include "util/object.h"
+#include "util/signal.h"
 
 namespace GWT
 {
   class Widget;
-
-  class ButtonListener;
-  class KeyListener;
 
   enum EventStatus { HANDLED, NOT_HANDLED };
 
@@ -40,30 +38,6 @@ namespace GWT
   };
 }
 
-namespace Util
-{
-  template <class T> class Ref;
-};
-
-
-//
-// Listener class definitions
-//
-
-/// Listener for button-press events.
-class GWT::ButtonListener : public Util::Object
-{
-public:
-  virtual void onButtonPress(const ButtonPressEvent& ev) = 0;
-};
-
-/// Listener for key-press events.
-class GWT::KeyListener : public Util::Object
-{
-public:
-  virtual void onKeyPress(const KeyPressEvent& ev) = 0;
-};
-
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -82,27 +56,14 @@ public:
   /// Virtual destructor.
   virtual ~Widget();
 
-  void addButtonListener (Util::Ref<GWT::ButtonListener> b);
-  void addKeyListener    (Util::Ref<GWT::KeyListener> k);
-
-  bool hasButtonListeners() const;
-  bool hasKeyListeners() const;
-
-  void removeButtonListeners();
-  void removeKeyListeners();
+  Util::Signal1<const ButtonPressEvent&> sigButtonPressed;
+  Util::Signal1<const KeyPressEvent&> sigKeyPressed;
 
   virtual void takeFocus() = 0;
-
-  void dispatchButtonEvent(unsigned int button, int x, int y);
-  void dispatchKeyEvent(const char* keys, int x, int y,
-                        bool controlPressed);
 
 private:
   Widget(const Widget&);
   Widget& operator=(const Widget&);
-
-  class Impl;
-  Impl* const itsImpl;
 };
 
 static const char vcid_widget_h[] = "$Header$";
