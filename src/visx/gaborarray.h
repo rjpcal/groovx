@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Mon May 12 12:50:11 2003
+// written: Mon May 12 13:33:13 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -50,7 +50,6 @@ class GaborArray : public GxShapeKit
 {
 public:
   GaborArray(double gaborPeriod = 15.0, double gaborSigma = 7.5,
-             int gaborSize = 60,
              int foregNumber = 24, double foregSpacing = 45.0,
              int sizeX_ = 512, int sizeY_ = 512,
              double backgIniSpacing_ = 48.0,

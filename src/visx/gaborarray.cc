@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 13:25:57 2003
+// written: Mon May 12 13:33:23 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -219,14 +219,14 @@ void GaborArray::dumpFrame() const
     }
 }
 
-GaborArray::GaborArray(double gaborPeriod, double gaborSigma, int gaborSize,
+GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
                        int foregNumber, double foregSpacing,
                        int sizeX_, int sizeY_,
                        double backgIniSpacing_,
                        double backgMinSpacing_)
   :
   snake(foregNumber, foregSpacing),
-  gabors(gaborPeriod, gaborSigma, gaborSize),
+  gabors(gaborPeriod, gaborSigma),
   sizeX(sizeX_),
   sizeY(sizeY_),
   halfX(0.5*sizeX),

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:35 2003
-// written: Mon May 12 13:25:07 2003
+// written: Mon May 12 13:34:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,46 +43,50 @@ namespace
 {
   const double DELTA_THETA    = M_PI / GABOR_MAX_ORIENT;
   const double DELTA_PHASE    = 2 * M_PI / GABOR_MAX_PHASE;
-
-  GaborPatch* createPatch(double sigma, double omega, double theta,
-                          double phi, double contrast, int xysize)
-  {
-  DOTRACE("createPatch");
-
-    GaborPatch* const result = new GaborPatch(xysize);
-
-    const double ssqr  = 2.*sigma*sigma;
-
-    const double cos_theta = cos(theta);
-    const double sin_theta = sin(theta);
-
-    double* ptr = result->itsData;
-
-    for (int iy = 0; iy < xysize; ++iy)
-      {
-        const double fy = iy - xysize / 2.0 + 0.5;
-
-        for (int ix = 0; ix < xysize; ++ix)
-          {
-            const double fx = ix - xysize / 2.0 + 0.5;
-
-            const double dx = cos_theta * fx - sin_theta * fy;
-            const double dy = sin_theta * fx + cos_theta * fy;
-
-            const double dsqr  = (dx*dx + dy*dy) / ssqr;
-
-            const double sinus = cos(omega * dx + phi);
-
-            const double gauss = exp(-dsqr);
-            *ptr++ = contrast * sinus * gauss;
-          }
-      }
-
-    return result;
-  }
 }
 
-GaborSet::GaborSet(double period, double sigma, int size)
+GaborPatch::GaborPatch(double sigma, double omega, double theta,
+                       double phi, double contrast)
+  :
+  itsSize(int(8*sigma + 0.5)),
+  itsSigma(sigma),
+  itsOmega(omega),
+  itsTheta(theta),
+  itsPhi(phi),
+  itsContrast(contrast),
+  itsData(new double[itsSize*itsSize])
+{
+DOTRACE("GaborPatch::GaborPatch");
+
+  const double ssqr  = 2.*sigma*sigma;
+
+  const double cos_theta = cos(theta);
+  const double sin_theta = sin(theta);
+
+  double* ptr = itsData;
+
+  for (int iy = 0; iy < itsSize; ++iy)
+    {
+      const double fy = iy - itsSize / 2.0 + 0.5;
+
+      for (int ix = 0; ix < itsSize; ++ix)
+        {
+          const double fx = ix - itsSize / 2.0 + 0.5;
+
+          const double dx = cos_theta * fx - sin_theta * fy;
+          const double dy = sin_theta * fx + cos_theta * fy;
+
+          const double dsqr  = (dx*dx + dy*dy) / ssqr;
+
+          const double sinus = cos(omega * dx + phi);
+
+          const double gauss = exp(-dsqr);
+          *ptr++ = contrast * sinus * gauss;
+        }
+    }
+}
+
+GaborSet::GaborSet(double period, double sigma)
 {
 DOTRACE("GaborSet::GaborSet");
 
@@ -91,12 +95,11 @@ DOTRACE("GaborSet::GaborSet");
   for (int n = 0; n < GABOR_MAX_ORIENT; ++n)
     for (int m=0; m < GABOR_MAX_PHASE; ++m)
       {
-        Patch[n][m] = createPatch(sigma,
-                                  omega,
-                                  n * DELTA_THETA,
-                                  m * DELTA_PHASE,
-                                  /* contrast */ 1.0,
-                                  size);
+        Patch[n][m] = new GaborPatch(sigma,
+                                     omega,
+                                     n * DELTA_THETA,
+                                     m * DELTA_PHASE,
+                                     /* contrast */ 1.0);
       }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:29 2003
-// written: Mon May 12 13:26:55 2003
+// written: Mon May 12 13:33:08 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,7 +37,9 @@ const int GABOR_MAX_PHASE = 8;
 class GaborPatch
 {
 public:
-  GaborPatch(int s) : itsSize(s), itsData(new double[s*s]) {}
+  GaborPatch(double sigma, double omega, double theta,
+             double phi, double contrast);
+
   ~GaborPatch() { delete [] itsData; }
 
   int size() const { return itsSize; }
@@ -46,10 +48,15 @@ public:
 
   double at(int x, int y) const { return itsData[x + y*itsSize]; }
 
+private:
   const int itsSize;
+  const double itsSigma;
+  const double itsOmega;
+  const double itsTheta;
+  const double itsPhi;
+  const double itsContrast;
   double* const itsData;
 
-private:
   GaborPatch(const GaborPatch&);
   GaborPatch& operator=(const GaborPatch&);
 };
@@ -57,7 +64,7 @@ private:
 class GaborSet
 {
 public:
-  GaborSet(double period, double sigma, int size);
+  GaborSet(double period, double sigma);
   ~GaborSet();
 
   const GaborPatch& getPatch(double theta, double phi) const;
