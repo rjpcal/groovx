@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Nov 30 17:46:35 1999
+// written: Wed Dec  1 15:26:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ private:
 										  // Also functions as # of completed trials
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
-  size_t itsCurTrialSeqIdx;	  // Index of the current trial
+  int itsCurTrialSeqIdx;		  // Index of the current trial
   bool itsVerbose;
 
   mutable StopWatch itsTimer;	  // Used to record the start time of each Trial
