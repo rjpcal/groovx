@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Thu Jul 12 17:36:55 2001
+// written: Fri Jul 13 11:23:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "tcl/tclvalue.h"
 #include "tcl/tclveccmds.h"
 
+#include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -52,13 +53,6 @@ namespace Tcl
   public:
     FieldAttrib(const FieldInfo& finfo) : itsFinfo(finfo) {}
 
-    const char* name() const { return itsFinfo.name().c_str(); }
-
-    static shared_ptr<FieldAttrib> make(const FieldInfo& finfo)
-    {
-      return make_shared(new FieldAttrib(finfo));
-    }
-
     virtual TclValue get(void* vitem) const
     {
       FieldContainer* item = static_cast<FieldContainer*>(vitem);
@@ -70,51 +64,6 @@ namespace Tcl
       FieldContainer* item = static_cast<FieldContainer*>(vitem);
       item->field(itsFinfo).setValue(val);
     }
-  };
-
-///////////////////////////////////////////////////////////////////////
-//
-// FieldVecCmd class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-  class FieldVecCmd : public TVecAttribCmd<TclValue> {
-  private:
-    static FieldContainerFetcher* getFetcher0()
-    {
-      static shared_ptr<FieldContainerFetcher> theFetcher0;
-      if (theFetcher0.get() == 0)
-        {
-          theFetcher0.reset(new FieldContainerFetcher(0));
-        }
-      return theFetcher0.get();
-    }
-
-    static FieldContainerFetcher* getFetcher1()
-    {
-      static shared_ptr<FieldContainerFetcher> theFetcher1;
-      if (theFetcher1.get() == 0)
-        {
-          theFetcher1.reset(new FieldContainerFetcher(1));
-        }
-      return theFetcher1.get();
-    }
-
-    static FieldContainerFetcher* getFetcher(int item_argn)
-    {
-      return (item_argn==0) ? getFetcher0() : getFetcher1();
-    }
-
-  public:
-    FieldVecCmd(TclItemPkg* pkg, shared_ptr<FieldAttrib> attrib) :
-      TVecAttribCmd<TclValue>(pkg->interp(),
-                              getFetcher(pkg->itemArgn()),
-                              pkg->makePkgCmdName(attrib->name()),
-                              attrib,
-                              attrib,
-                              0, /* for default usage string */
-                              pkg->itemArgn())
-    {}
   };
 
 ///////////////////////////////////////////////////////////////////////
@@ -197,7 +146,30 @@ DOTRACE("Tcl::FieldsCmd::invoke");
 
 void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) {
 DOTRACE("Tcl::declareField");
-  pkg->addCommand( new FieldVecCmd(pkg, FieldAttrib::make(finfo)) );
+
+  static shared_ptr<FieldContainerFetcher>
+    fetcher0(new FieldContainerFetcher(0));
+
+  static shared_ptr<FieldContainerFetcher>
+    fetcher1(new FieldContainerFetcher(1));
+
+  shared_ptr<FieldAttrib> attrib(new FieldAttrib(finfo));
+
+  pkg->addCommand( new TVecGetterCmd<TclValue>(
+                         pkg->interp(),
+                         pkg->itemArgn() == 0 ? fetcher0.get() : fetcher1.get(),
+                         pkg->makePkgCmdName(finfo.name().c_str()),
+                         attrib,
+                         0, /* for default usage string */
+                         pkg->itemArgn()) );
+
+  pkg->addCommand( new TVecSetterCmd<TclValue>(
+                         pkg->interp(),
+                         pkg->itemArgn() == 0 ? fetcher0.get() : fetcher1.get(),
+                         pkg->makePkgCmdName(finfo.name().c_str()),
+                         attrib,
+                         0, /* for default usage string */
+                         pkg->itemArgn()) );
 }
 
 void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
