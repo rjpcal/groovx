@@ -93,3 +93,7 @@
   * premature failure of std::ofstream object in ~Prof()
 
     OK, can use C stdio (FILE*) instead.
+
+* (23-Feb-2002, done 18-Jul-2003) OS X issues
+  explicit template instantiation does not work (e.g. util/multivalue.cc)
+  OK, the workaround hack is not needed with more recent OSX compilers
