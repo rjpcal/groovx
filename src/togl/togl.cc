@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jul 30 18:05:17 2002
+// written: Tue Jul 30 18:39:06 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -106,7 +106,6 @@ public:
   ~GlxWrapper()
   {
     glXDestroyContext(itsDisplay, context);
-    context = 0;
   }
 
   bool isDirect() const
@@ -119,7 +118,7 @@ public:
     glXMakeCurrent(itsDisplay, win, context);
   }
 
-  GLXContext context;      /* Normal planes GLX context */
+  GLXContext context;
 
 private:
   Display* itsDisplay;
@@ -246,20 +245,20 @@ public:
 
   Togl* itsOwner;
 
-  GlxWrapper* itsGlx;
-  Display* itsDisplay;     /* X's token for the window's display. */
-  Tk_Window  itsTkWin;     /* Tk window structure */
+  GlxWrapper* itsGlx;           /* Normal planes GLX context */
+  Display* itsDisplay;          /* X's token for the window's display. */
+  Tk_Window  itsTkWin;          /* Tk window structure */
   Window itsWindowId;
-  Tcl_Interp* itsInterp;      /* Tcl interpreter */
-  Tcl_Command itsWidgetCmd;       /* Token for togl's widget command */
+  Tcl_Interp* itsInterp;        /* Tcl interpreter */
+  Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
 #ifndef NO_TK_CURSOR
-  Tk_Cursor itsCursor;     /* The widget's cursor */
+  Tk_Cursor itsCursor;          /* The widget's cursor */
 #endif
   int itsWidth;
-  int itsHeight;     /* Dimensions of window */
-  int itsTime;       /* Time value for timer */
+  int itsHeight;                /* Dimensions of window */
+  int itsTime;                  /* Time value for timer */
   Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
-  int itsRgbaFlag;      /* configuration flags (ala GLX parameters) */
+  int itsRgbaFlag;           /* configuration flags (ala GLX parameters) */
   int itsRgbaRed;
   int itsRgbaGreen;
   int itsRgbaBlue;
@@ -281,22 +280,22 @@ public:
   int itsAuxNumber;
   int itsIndirect;
 
-  ClientData itsClientData;      /* Pointer to user data */
+  ClientData itsClientData;     /* Pointer to user data */
 
-  GLboolean itsUpdatePending;    /* Should normal planes be redrawn? */
+  GLboolean itsUpdatePending;   /* Should normal planes be redrawn? */
 
-  Togl_Callback* itsDisplayProc;    /* Callback when widget is rendered */
-  Togl_Callback* itsReshapeProc;    /* Callback when window size changes */
-  Togl_Callback* itsDestroyProc;    /* Callback when widget is destroyed */
-  Togl_Callback* itsTimerProc;      /* Callback when widget is idle */
+  Togl_Callback* itsDisplayProc; /* Callback when widget is rendered */
+  Togl_Callback* itsReshapeProc; /* Callback when window size changes */
+  Togl_Callback* itsDestroyProc; /* Callback when widget is destroyed */
+  Togl_Callback* itsTimerProc;  /* Callback when widget is idle */
 
   /* Overlay stuff */
-  GLXContext itsOverlayCtx;      /* Overlay planes OpenGL context */
-  Window itsOverlayWindow;    /* The overlay window, or 0 */
-  Togl_Callback* itsOverlayDisplayProc;   /* Overlay redraw proc */
-  GLboolean itsOverlayUpdatePending;   /* Should overlay be redrawn? */
-  Colormap itsOverlayCmap;    /* colormap for overlay is created */
-  int itsOverlayTransparentPixel;      /* transparent pixel */
+  GlxWrapper* itsOverlayGlx;    /* Overlay planes OpenGL context */
+  Window itsOverlayWindow;      /* The overlay window, or 0 */
+  Togl_Callback* itsOverlayDisplayProc; /* Overlay redraw proc */
+  GLboolean itsOverlayUpdatePending; /* Should overlay be redrawn? */
+  Colormap itsOverlayCmap;      /* colormap for overlay is created */
+  int itsOverlayTransparentPixel; /* transparent pixel */
   int itsOverlayIsMapped;
 
   /* for DumpToEpsFile: Added by Miguel A. de Riera Pasenau 10.01.1997 */
@@ -1139,7 +1138,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsReshapeProc(DefaultReshapeProc),
   itsDestroyProc(DefaultDestroyProc),
   itsTimerProc(DefaultTimerProc),
-  itsOverlayCtx(NULL),
+  itsOverlayGlx(0),
   itsOverlayWindow(0),
   itsOverlayDisplayProc(DefaultOverlayDisplayProc),
   itsOverlayUpdatePending(GL_FALSE),
@@ -1394,9 +1393,7 @@ DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
 
   if (impl->itsOverlayFlag && impl->itsOverlayDisplayProc)
     {
-      glXMakeCurrent( impl->itsDisplay,
-                      impl->itsOverlayWindow,
-                      impl->itsOverlayCtx );
+      impl->itsOverlayGlx->makeCurrent(impl->itsOverlayWindow);
       impl->itsOverlayDisplayProc(impl->itsOwner);
     }
   impl->itsOverlayUpdatePending = GL_FALSE;
@@ -1645,9 +1642,7 @@ DOTRACE("Togl::Impl::useLayer");
     {
       if (layer==TOGL_OVERLAY)
         {
-          glXMakeCurrent( itsDisplay,
-                          itsOverlayWindow,
-                          itsOverlayCtx );
+          itsOverlayGlx->makeCurrent(itsOverlayWindow);
         }
       else if (layer==TOGL_NORMAL)
         {
@@ -1835,7 +1830,7 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
       delete itsGlx;
       itsGlx = 0;
     }
-  if (itsOverlayCtx)
+  if (itsOverlayGlx)
     {
       Tcl_HashEntry *entryPtr;
       TkWindow *winPtr = (TkWindow *) itsTkWin;
@@ -1845,8 +1840,8 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
                                        (char *) itsOverlayWindow );
           Tcl_DeleteHashEntry(entryPtr);
         }
-      glXDestroyContext( itsDisplay, itsOverlayCtx );
-      itsOverlayCtx = NULL;
+      delete itsOverlayGlx;
+      itsOverlayGlx = 0;
     }
 
   if (itsTkWin != NULL)
@@ -2294,7 +2289,8 @@ DOTRACE("Togl::Impl::setupOverlay");
       Tcl_AppendResult(itsInterp,Tk_PathName(winPtr),
                        ": No suitable overlay index visual available",
                        (char *) NULL);
-      itsOverlayCtx = 0;
+      delete itsOverlayGlx;
+      itsOverlayGlx = 0;
       itsOverlayWindow = 0;
       itsOverlayCmap = 0;
       return TCL_ERROR;
@@ -2312,13 +2308,12 @@ DOTRACE("Togl::Impl::setupOverlay");
   itsOverlayTransparentPixel=0; /* maybe, maybe ... */
 #endif
 
-  /*
-    itsOverlayCtx = glXCreateContext( itsDisplay, visinfo, None, GL_TRUE );
-  */
   /* NEW in Togl 1.5 beta 3 */
   /* share display lists with normal layer context */
-  itsOverlayCtx = glXCreateContext( itsDisplay, visinfo,
-                                    itsGlx->context, !itsIndirect );
+
+  Assert( itsOverlayGlx == 0 );
+
+  itsOverlayGlx = new GlxWrapper(itsDisplay, visinfo, !itsIndirect, itsGlx);
 
   XSetWindowAttributes swa;
   swa.colormap = XCreateColormap( itsDisplay,
@@ -2337,8 +2332,9 @@ DOTRACE("Togl::Impl::setupOverlay");
                                     &swa );
 
   int new_flag;
-  Tcl_HashEntry* hPtr = Tcl_CreateHashEntry( &winPtr->dispPtr->winTable,
-                                             (char *) itsOverlayWindow, &new_flag );
+  Tcl_HashEntry* hPtr =
+    Tcl_CreateHashEntry( &winPtr->dispPtr->winTable,
+                         (char *) itsOverlayWindow, &new_flag );
 
   Tcl_SetHashValue( hPtr, winPtr );
 
