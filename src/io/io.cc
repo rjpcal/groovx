@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed May 31 18:53:25 2000
+// written: Mon Jul 10 14:53:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,17 @@
 
 #include "io/io.h"
 
+#include "io/writer.h"
+
+#include "system/demangle.h"
+
+#include "util/strings.h"
+
 #include <cctype>
 #include <cstring>
 #include <string>
 #include <strstream.h>
 #include <typeinfo>
-
-#include "system/demangle.h"
-
-#include "util/strings.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -37,19 +39,33 @@ namespace {
   unsigned long idCounter = 0;
 }
 
+class DummyCountingWriter : public IO::Writer {
+public:
+  DummyCountingWriter() : itsCount(0) {}
+
+  virtual void writeChar(const char*, char)             { ++itsCount; }
+  virtual void writeInt(const char*, int)               { ++itsCount; }
+  virtual void writeBool(const char*, bool)             { ++itsCount; }
+  virtual void writeDouble(const char*, double)         { ++itsCount; }
+  virtual void writeCstring(const char*, const char*)   { ++itsCount; }
+  virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
+  virtual void writeObject(const char*, const IO::IoObject*)      { ++itsCount; }
+  virtual void writeOwnedObject(const char*, const IO::IoObject*) { ++itsCount; }
+  virtual void writeBaseClass(const char*, const IO::IoObject*)   { ++itsCount; }
+  virtual void writeRoot(const IO::IoObject*) {}
+
+  void reset() { itsCount = 0; }
+  unsigned int attribCount() const { return itsCount; }
+
+private:
+  unsigned int itsCount;
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // IO member definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-// // These members are declared and initialized within the class, but
-// // they still must be given a unique *definition* here.
-// const IO::IOFlag IO::NO_FLAGS;
-// const IO::IOFlag IO::TYPENAME;
-// const IO::IOFlag IO::BASES;
-
-// const char IO::SEP;
 
 IO::IoObject::IoObject() : itsId(++idCounter) {
 DOTRACE("IO::IoObject::IoObject");
@@ -64,6 +80,14 @@ DOTRACE("IO::IoObject::~IoObject");
 void IO::IoObject::serialize(ostream&, IO::IOFlag) const {}
 void IO::IoObject::deserialize(istream&, IO::IOFlag) {}
 int IO::IoObject::charCount() const { return 0; }
+
+unsigned int IO::IoObject::ioAttribCount() const {
+DOTRACE("IO::IoObject::ioAttribCount");
+  static DummyCountingWriter counter;
+  counter.reset();
+  this->writeTo(&counter);
+  return counter.attribCount();
+}
 
 unsigned long IO::IoObject::id() const {
 DOTRACE("IO::IoObject::id");
