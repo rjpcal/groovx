@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Feb  1 18:10:30 2000
+// written: Tue Feb  1 18:29:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -352,7 +352,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 	 // Use this to make sure we don't round down when we should round up.
 	 double fudge = 0.0001;
 		
-	 int num_zeros = int( (1.0 - t.avgResponse()) * t->numResponses() + fudge);
+	 int num_zeros = int( (1.0 - t->avgResponse()) * t->numResponses() + fudge);
 	 int num_ones = t->numResponses() - num_zeros;
 
 	 ofs << num_zeros << "  " << num_ones << endl;
