@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Jul 22 17:37:35 1999
+// written: Thu Jul 22 17:46:48 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -109,7 +109,10 @@ class TclGL::GLCmd : public TclCmd {
 public:
   GLCmd(TclPkg* pkg, const char* cmd_name, const char* usage, 
 			  int objc_min=0, int objc_max=100000, bool exact_objc=false) :
-	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc) {}
+	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc)
+  {
+	 DebugEvalNL(cmd_name);
+  }
 protected:
   void checkGL() throw(GLError) {
 	 GLenum status = glGetError();
@@ -868,10 +871,10 @@ public:
   glPolygonModeCmd(TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "face mode", 3, 3)
   {
-	 // Face enum's
-	 pkg->linkVarCopy("GL_FRONT", GL_FRONT);
-	 pkg->linkVarCopy("GL_BACK", GL_BACK);
-	 pkg->linkVarCopy("GL_FRONT_AND_BACK", GL_FRONT_AND_BACK);
+	 // Face enum's: these are already provided by glDrawBufferCmd
+	 //  	 pkg->linkVarCopy("GL_FRONT", GL_FRONT);
+	 //  	 pkg->linkVarCopy("GL_BACK", GL_BACK);
+	 //  	 pkg->linkVarCopy("GL_FRONT_AND_BACK", GL_FRONT_AND_BACK);
 	 // Mode enum's
 	 pkg->linkVarCopy("GL_POINT", GL_POINT);
 	 pkg->linkVarCopy("GL_LINE", GL_LINE);
