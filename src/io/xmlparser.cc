@@ -51,6 +51,7 @@ XmlParser::XmlParser(std::istream& is, int bufsize) :
   itsStream(is),
   itsBufSize(bufsize)
 {
+DOTRACE("XmlParser::XmlParser");
   if (itsParser == 0)
     {
       throw Util::Error("couldn't allocate memory for XML_Parser");
@@ -65,13 +66,18 @@ XmlParser::XmlParser(std::istream& is, int bufsize) :
 
 XmlParser::~XmlParser()
 {
+DOTRACE("XmlParser::~XmlParser");
   XML_ParserFree(itsParser);
 }
 
-void XmlParser::characterData(const char* /*text*/, int /*length*/) {}
+void XmlParser::characterData(const char* /*text*/, int /*length*/)
+{
+DOTRACE("XmlParser::characterData");
+}
 
 void XmlParser::elementStartC(void* data, const char* el, const char** attr)
 {
+DOTRACE("XmlParser::elementStartC");
   XmlParser* p = static_cast<XmlParser*>(data);
   Assert(p != 0);
   p->elementStart(el, attr);
@@ -79,6 +85,7 @@ void XmlParser::elementStartC(void* data, const char* el, const char** attr)
 
 void XmlParser::elementEndC(void* data, const char* el)
 {
+DOTRACE("XmlParser::elementEndC");
   XmlParser* p = static_cast<XmlParser*>(data);
   Assert(p != 0);
   p->elementEnd(el);
@@ -86,6 +93,7 @@ void XmlParser::elementEndC(void* data, const char* el)
 
 void XmlParser::characterDataC(void* data, const char* text, int length)
 {
+DOTRACE("XmlParser::characterDataC");
   XmlParser* p = static_cast<XmlParser*>(data);
   Assert(p != 0);
   p->characterData(text, length);
@@ -93,6 +101,7 @@ void XmlParser::characterDataC(void* data, const char* text, int length)
 
 void XmlParser::parse()
 {
+DOTRACE("XmlParser::parse");
   while (1)
     {
       void* const buf = XML_GetBuffer(itsParser, itsBufSize);
