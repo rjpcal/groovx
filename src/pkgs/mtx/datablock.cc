@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Fri Mar 23 16:34:26 2001
+// written: Sun Mar 25 17:37:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,6 +53,18 @@ public:
 
   // Since the data are borrowed, we always return false here.
   virtual bool isUnique() const { return false; }
+};
+
+class ReferredDataBlock : public DataBlock {
+public:
+  ReferredDataBlock(double* borrowedData, unsigned int dataLength) :
+    DataBlock(borrowedData, dataLength)
+  {}
+
+  virtual ~ReferredDataBlock()
+  { /* don't delete the data, since they are 'borrowed' */ }
+
+  virtual bool isUnique() const { return refCount() <= 1; }
 };
 
 void* DataBlock::operator new(size_t bytes) {
@@ -120,8 +132,11 @@ DOTRACE("DataBlock::makeBlank");
 }
 
 DataBlock* DataBlock::makeBorrowed(double* data, int data_length) {
-  DataBlock* p = new BorrowedDataBlock(data, data_length);
-  return p;
+  return new BorrowedDataBlock(data, data_length);
+}
+
+DataBlock* DataBlock::makeReferred(double* data, int data_length) {
+  return new ReferredDataBlock(data, data_length);
 }
 
 void DataBlock::makeUnique(DataBlock*& rep) {
