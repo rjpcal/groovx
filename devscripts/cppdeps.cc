@@ -1292,6 +1292,9 @@ void cppdeps::print_include_tree(file_info* finfo)
 
 void cppdeps::print_link_deps(file_info* finfo)
 {
+  if (!is_cc_fname(finfo))
+    return;
+
   const string exe = m_cfg_exe_formats.transform(finfo->fname);
 
   if (exe.empty())
