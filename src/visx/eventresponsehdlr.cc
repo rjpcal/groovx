@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jul 11 11:50:13 2001
+// written: Wed Jul 11 12:05:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 
 #include "tcl/convert.h"
 #include "tcl/tclevalcmd.h"
-#include "tcl/tclobjlock.h"
+#include "tcl/tclobjptr.h"
 #include "tcl/tclutil.h"
 
 #include "util/arrays.h"
@@ -55,7 +55,7 @@ namespace {
 
   const string_literal nullScript("{}");
 
-  Tcl::TclObjPtr theNullObject(Tcl_NewStringObj("",-1));
+  Tcl::ObjPtr theNullObject(Tcl_NewStringObj("",-1));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -313,7 +313,7 @@ private:
 
   class RegExp_ResponseVal {
   public:
-    RegExp_ResponseVal(Tcl::TclObjPtr obj = theNullObject, int rv = -1) :
+    RegExp_ResponseVal(Tcl::ObjPtr obj = theNullObject, int rv = -1) :
       itsPatternObj(obj),
       itsRespVal(rv)
       {}
@@ -365,7 +365,7 @@ private:
     int responseValue() { return itsRespVal; }
 
   private:
-    static Tcl_RegExp getCheckedRegexp(Tcl::TclObjPtr patternObj)
+    static Tcl_RegExp getCheckedRegexp(Tcl::ObjPtr patternObj)
       throw(ErrorWithMsg)
       {
         const int flags = 0;
@@ -378,7 +378,7 @@ private:
         return regexp;
       }
 
-    Tcl::TclObjPtr itsPatternObj;
+    Tcl::ObjPtr itsPatternObj;
     int itsRespVal;
   };
 
@@ -426,7 +426,7 @@ private:
       { itsResultCmd.invoke(safeInterp.intp()); }
 
     bool itsIsValid;
-    Tcl::TclObjPtr itsCondition;
+    Tcl::ObjPtr itsCondition;
     Tcl::TclEvalCmd itsResultCmd;
   };
 
@@ -712,7 +712,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
   Tcl_Obj** pairs;
   int num_pairs=0;
-  Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
+  Tcl::ObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
 
   itsSafeIntp.splitList(pairs_list, pairs, num_pairs);
 
@@ -724,7 +724,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
   for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
-    Tcl::TclObjPtr current_pair = pairs[i];
+    Tcl::ObjPtr current_pair = pairs[i];
 
     // Check that the length of the "pair" is really 2
     if (itsSafeIntp.listLength(current_pair) != 2) {
@@ -760,7 +760,7 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 
   Tcl_Obj** pairs;
   int num_pairs=0;
-  Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
+  Tcl::ObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
 
   itsSafeIntp.splitList(pairs_list, pairs, num_pairs);
 
@@ -771,7 +771,7 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 
   for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
-    Tcl::TclObjPtr current_pair = pairs[i];
+    Tcl::ObjPtr current_pair = pairs[i];
 
     // Check that the length of the "pair" is really 2
     if (itsSafeIntp.listLength(current_pair) != 2) {
@@ -779,8 +779,8 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
                          "in EventResponseHdlr::updateFeedbacksIfNeeded");
     }
 
-    Tcl::TclObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
-    Tcl::TclObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
+    Tcl::ObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
+    Tcl::ObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
 
     int response_val = Tcl::fromTcl<int>(response_valObj);
 
