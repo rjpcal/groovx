@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2001 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan 21 12:52:51 2002
-// written: Wed Mar 19 17:58:07 2003
+// written: Wed May 14 14:35:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,6 +33,10 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/strings.h"
+
+#include <sstream>
+
 #include "util/debug.h"
 #include "util/trace.h"
 
@@ -40,6 +44,13 @@ namespace
 {
   int getLevel() { return Debug::level; }
   void setLevel(int v) { Debug::level = v; }
+
+  fstring profSummary()
+  {
+    std::ostringstream oss;
+    Util::Prof::printAllProfData(oss);
+    return fstring(oss.str().c_str());
+  }
 }
 
 extern "C"
@@ -55,7 +66,11 @@ DOTRACE("Gtrace_Init");
   pkg->def("::dbglevel", "", &getLevel);
   pkg->def("::dbglevel", "level", &setLevel);
 
-  return pkg->initStatus();
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "Prof", "$Revision$");
+  pkg2->def("summary", "", &profSummary);
+  pkg2->def("reset", "", &Util::Prof::resetAllProfData);
+
+  return pkg2->combineStatus(pkg->initStatus());
 }
 
 static const char vcid_gtrace_cc[] = "$Header$";
