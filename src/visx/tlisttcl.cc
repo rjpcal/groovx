@@ -3,15 +3,13 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Mar 15 11:13:37 2000
+// written: Wed Mar 15 18:38:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
-
-#include <vector>
 
 #include "application.h"
 #include "experiment.h"
@@ -20,6 +18,8 @@
 
 #include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
+
+#include "util/arrays.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -77,8 +77,10 @@ public:
 			  4, 4, false) {}
 protected:
   virtual void invoke() {
-	 vector<int> objids;
-	 getSequenceFromArg(1, back_inserter(objids), (int*) 0);
+	 unsigned int num_ids = getSequenceLengthOfArg(1);
+	 fixed_block<int> objids(num_ids);
+
+	 getSequenceFromArg(1, &objids[0], (int*) 0);
 
 	 int pixel_width = arg(2).getInt();
 	 int pixel_height = arg(3).getInt();
