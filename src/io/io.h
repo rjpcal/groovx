@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Oct 19 17:38:08 2000
+// written: Sun Oct 22 16:01:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,12 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
-#include "io/iodecls.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REFCOUNTED_H_DEFINED)
+#include "util/refcounted.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
-#include <typeinfo>
-#define TYPEINFO_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
 #endif
 
 class fixed_string;
@@ -36,7 +35,7 @@ class fixed_string;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject {
+class IO::IoObject : public RefCounted {
 public:
 
   /// Default constructor

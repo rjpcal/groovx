@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Mon Oct 16 15:14:13 2000
+// written: Sun Oct 22 15:59:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 #include "ioptrlist.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MASTERPTR_H_DEFINED)
-#include "masterptr.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRHANDLE_H_DEFINED)
+#include "util/ptrhandle.h"
 #endif
 
 template <class T> class PtrList;
@@ -40,7 +40,7 @@ private:
 
 public:
 
-  ItemWithId(MasterPtr<T>* master, int id_) : itsHandle(master), itsId(id_) {}
+  ItemWithId(T* master, int id_) : itsHandle(master), itsId(id_) {}
   ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
 
   /** A symbol to pass to constructors indicating that the item should
@@ -48,7 +48,6 @@ public:
   enum Insert { INSERT };
 
   ItemWithId(T* ptr, Insert /*dummy param*/);
-  ItemWithId(MasterPtr<T>* master, Insert /*dummy param*/);
   ItemWithId(PtrHandle<T> item, Insert /*dummy param*/);
 
   // Default destructor, copy constructor, operator=() are fine
@@ -106,69 +105,41 @@ public:
       index into the list. If \a id is out of range, a segmentation
       fault may occur. If \a is in range, but is not an index for a
       valid object, the pointer returned may be null. */
-  SharedPtr getPtr(int id) const
-    {
-		MasterPtrBase* voidPtr = PtrListBase::getPtrBase(id);
-		// cast as reference to force an exception on error
-		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
-		return SharedPtr(&tPtr, id);
-	 }
+  SharedPtr getPtr(int id) const;
 
   /** Returns the object at index \a id, after a check is performed to
       ensure that \a id is in range, and refers to a valid object. If
       the check fails, an \c InvalidIdError exception is thrown. */
-  SharedPtr getCheckedPtr(int id) const
-	 {
-		MasterPtrBase* voidPtr = PtrListBase::getCheckedPtrBase(id);
-		// cast as reference to force an exception on error
-		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
-		return SharedPtr(&tPtr, id);
-	 }
+  SharedPtr getCheckedPtr(int id) const;
 
   //////////////////
   // manipulators //
   //////////////////
 
   /// Insert \a ptr into the list, and return its id.
-  SharedPtr insert(T* ptr)
-	 { return insert(new MasterPtr<T>(ptr)); }
+  SharedPtr insert(T* master);
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
-  void insertAt(int id, T* ptr)
-	 { PtrListBase::insertPtrBaseAt(id, new MasterPtr<T>(ptr)); }
-
-  /// Insert \a ptr into the list, and return its id.
-  SharedPtr insert(MasterPtr<T>* master)
-	 { return SharedPtr(master, PtrListBase::insertPtrBase(master)); }
-
-  /** Insert \a ptr into the list at index \a id. An exception will be
-      thrown if an object already exists at index \a id. */
-  void insertAt(int id, MasterPtr<T>* master)
-	 { PtrListBase::insertPtrBaseAt(id, master); }
+  void insertAt(int id, T* master);
 
   /// Insert \a handle into the list, and return its id.
   SharedPtr insert(PtrHandle<T> handle)
-	 { return insert(handle.masterPtr()); }
+	 { return insert(handle.get()); }
 
   /** Insert \a handle into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, PtrHandle<T> handle)
-	 { PtrListBase::insertPtrBaseAt(id, handle.masterPtr()); }
+	 { PtrListBase::insertPtrBaseAt(id, handle.get()); }
 
   /// Insert \a item into the list, and return its id.
   SharedPtr insert(ItemWithId<T> item)
-	 { return insert(item.handle().masterPtr()); }
+	 { return insert(item.handle().get()); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, ItemWithId<T> item)
-	 { PtrListBase::insertPtrBaseAt(id, item.handle().masterPtr()); }
-
-protected:
-  /** Reimplemented from \c IoPtrList to return an MasterPtr<T>* that
-      points to \a obj. */
-  virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const;
+	 { PtrListBase::insertPtrBaseAt(id, item.handle().get()); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -192,7 +163,7 @@ public:
   explicit NullableItemWithId(int id_) :
 	 itsHandle(0), itsId(id_) {}
 
-  NullableItemWithId(MasterPtr<T>* master, int id_) :
+  NullableItemWithId(T* master, int id_) :
 	 itsHandle(master), itsId(id_) {}
 
   NullableItemWithId(PtrHandle<T> item_, int id_) :
@@ -237,20 +208,14 @@ public:
 
 template <class T>
 ItemWithId<T>::ItemWithId(T* ptr, Insert /*dummy param*/) :
-  itsHandle(new MasterPtr<T>(ptr)),
+  itsHandle(ptr),
   itsId(ptrList().insert(itsHandle).id())
-{}
-
-template <class T>
-ItemWithId<T>::ItemWithId(MasterPtr<T>* master, Insert /*dummy param*/) :
-  itsHandle(master),
-  itsId(itsId = ptrList().insert(itsHandle).id())
 {}
 
 template <class T>
 ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
   itsHandle(item),
-  itsId(itsId = ptrList().insert(itsHandle).id())
+  itsId(ptrList().insert(itsHandle).id())
 {}
 
 static const char vcid_ptrlist_h[] = "$Header$";

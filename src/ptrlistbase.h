@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct  9 09:12:39 2000
+// written: Sun Oct 22 14:56:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 #include "util/error.h"
 #endif
 
-class MasterPtrBase;
+class RefCounted;
 
 /**
  *
@@ -96,27 +96,27 @@ protected:
   /** Return the \c void* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
-  MasterPtrBase* getPtrBase(int id) const throw ();
+  RefCounted* getPtrBase(int id) const throw ();
 
   /** Like \c getPtrBase(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
-  MasterPtrBase* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  RefCounted* getCheckedPtrBase(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  int insertPtrBase(MasterPtrBase* ptr);
+  int insertPtrBase(RefCounted* ptr);
 
   /** Add obj at index 'id', destroying any the object was previously
 		pointed to from that that location. The list will be expanded if
 		'id' exceeds the size of the list. If id is < 0, the function
 		returns without effect. */
-  void insertPtrBaseAt(int id, MasterPtrBase* ptr);
+  void insertPtrBaseAt(int id, RefCounted* ptr);
 
   /** This function will be called after every insertion into the
       PtrListBase. The default implementation is a no-op. */
-  virtual void afterInsertHook(int id, MasterPtrBase* ptr);
+  virtual void afterInsertHook(int id, RefCounted* ptr);
 
 protected:
   int& firstVacant();

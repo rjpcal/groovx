@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Oct 17 16:18:53 2000
+// written: Sun Oct 22 15:52:53 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -18,6 +18,7 @@
 
 #include "tlistwidget.h"
 #include "toglconfig.h"
+#include "trialbase.h"
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"

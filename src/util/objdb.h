@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Oct 19 17:37:46 2000
+// written: Sun Oct 22 15:08:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
 #endif
-
-class MasterIoPtr;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -42,9 +40,6 @@ public:
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
-
-protected:
-  virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const = 0;
 
 private:
   IoPtrList(const IoPtrList&);

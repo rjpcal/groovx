@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 19 11:49:11 2000
+// written: Sun Oct 22 15:18:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 #include "thlist.h"
 #include "tlist.h"
 #include "tlistwidget.h"
+#include "trialbase.h"
 
 #include "io/reader.h"
 #include "io/asciistreamwriter.h"

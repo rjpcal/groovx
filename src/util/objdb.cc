@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Oct 19 17:48:43 2000
+// written: Sun Oct 22 15:58:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,11 @@
 
 #include "ioptrlist.h"
 
-#include "masterptr.h"
-
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "util/arrays.h"
+#include "util/ptrhandle.h"
 #include "util/strings.h"
 
 #define NO_TRACE
@@ -56,7 +55,7 @@ DOTRACE("IoPtrList::readFrom");
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
-		insertPtrBaseAt(i, makeMasterIoPtr(ioBlock[i]));
+		insertPtrBaseAt(i, ioBlock[i]);
 	 }
 }
 
@@ -74,8 +73,7 @@ DOTRACE("IoPtrList::writeTo");
 	 {
 		DebugEval(i);
 
-		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getPtrBase(i));
-		IO::IoObject* obj = ioPtr ? ioPtr->ioPtr() : 0;
+		IO::IoObject* obj = dynamic_cast<IO::IoObject*>(getPtrBase(i));
 		ioBlock[i] = obj;
 
 		DebugEvalNL(ioBlock[i]);

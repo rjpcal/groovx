@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Tue Oct 17 12:11:25 2000
+// written: Sun Oct 22 15:12:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,6 @@ DOTRACE("PosList::thePosList");
 
 #include "position.h"
 #include "ptrlist.cc"
-#include "masterptrt.cc"
-template class MasterPtr<Position>;
 template class PtrList<Position>;
 
 template <>

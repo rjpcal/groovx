@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Oct 17 12:11:25 2000
+// written: Sun Oct 22 15:12:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,6 @@ DOTRACE("ObjList::theObjList");
 
 #include "grobj.h"
 #include "ptrlist.cc"
-#include "masterptrt.cc"
-template class MasterPtr<GrObj>;
 template class PtrList<GrObj>;
 
 template <>

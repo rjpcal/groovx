@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct 16 15:02:20 2000
+// written: Sun Oct 22 15:33:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "ptrlistbase.h"
 
-#include "masterptr.h"
+#include "util/refcounted.h"
 
 #include "system/demangle.h"
 
@@ -57,17 +57,22 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
+class DummyObject : public RefCounted {
+public:
+  DummyObject() : RefCounted() {}
+  virtual bool isValid() const { return false; }
+};
 
 class VoidPtrHandle {
 public:
   VoidPtrHandle() :
-	 itsMaster(new NullMasterPtr)
+	 itsMaster(new DummyObject)
   {
 	 Invariant(itsMaster != 0);
 	 itsMaster->incrRefCount();
   }
 
-  explicit VoidPtrHandle(MasterPtrBase* master) :
+  explicit VoidPtrHandle(RefCounted* master) :
 	 itsMaster(master)
   {
 	 Invariant(itsMaster != 0);
@@ -95,7 +100,7 @@ public:
 	 return *this;
   }
 
-  MasterPtrBase* masterPtr()
+  RefCounted* masterPtr()
   {
 	 Invariant(itsMaster != 0);
 	 return itsMaster;
@@ -104,12 +109,12 @@ public:
 private:
   void swap(VoidPtrHandle& other)
   {
-	 MasterPtrBase* otherMaster = other.itsMaster;
+	 RefCounted* otherMaster = other.itsMaster;
 	 other.itsMaster = this->itsMaster;
 	 this->itsMaster = otherMaster;
   }
 
-  MasterPtrBase* itsMaster;
+  RefCounted* itsMaster;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +136,7 @@ public:
   typedef std::vector<VoidPtrHandle> VecType;
   VecType itsPtrVec;
 
-  void ensureNotDuplicate(MasterPtrBase* ptr);
+  void ensureNotDuplicate(RefCounted* ptr);
 
 private:
   Impl(const Impl&);
@@ -144,9 +149,9 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-// Asserts that there are no duplicate MasterPtr's in the list, as
+// Asserts that there are no duplicate RefCounted's in the list, as
 // well as no duplicate pointees.
-void PtrListBase::Impl::ensureNotDuplicate(MasterPtrBase* ptr) {
+void PtrListBase::Impl::ensureNotDuplicate(RefCounted* ptr) {
 DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
 
 #ifdef LOCAL_ASSERT
@@ -156,15 +161,6 @@ DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
 		DebugEvalNL(i);
 		Assert(ptr != itsPtrVec[i].masterPtr());
 	 }
-
-  // Next make sure that if ptr's pointee is non-null, that there are
-  // no other pointers referring to that pointee
-  if (ptr->isValid())
-	 for (int j = 0; j < itsPtrVec.size(); ++j)
-		{
-		  DebugEvalNL(i);
-		  Assert( !(*ptr == *(itsPtrVec[j].masterPtr())) );
-		}
 #endif
 }
 
@@ -236,7 +232,7 @@ void PtrListBase::release(int id) {
 DOTRACE("PtrListBase::release");
   if (!isValidId(id)) return;
 
-  itsImpl->itsPtrVec[id] = VoidPtrHandle(new NullMasterPtr);
+  itsImpl->itsPtrVec[id] = VoidPtrHandle(new DummyObject);
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
@@ -257,13 +253,13 @@ DOTRACE("PtrListBase::clear");
   }
 }
 
-MasterPtrBase* PtrListBase::getPtrBase(int id) const throw () {
+RefCounted* PtrListBase::getPtrBase(int id) const throw () {
 DOTRACE("PtrListBase::getPtrBase");
   DebugEvalNL(itsImpl->itsPtrVec[id].masterPtr()->refCount());
   return itsImpl->itsPtrVec[id].masterPtr();
 }
 
-MasterPtrBase* PtrListBase::getCheckedPtrBase(int id) const throw (InvalidIdError) {
+RefCounted* PtrListBase::getCheckedPtrBase(int id) const throw (InvalidIdError) {
 DOTRACE("PtrListBase::getCheckedPtrBase");
   if ( !isValidId(id) ) {
 	 InvalidIdError err("attempt to access invalid id '");
@@ -274,14 +270,14 @@ DOTRACE("PtrListBase::getCheckedPtrBase");
   return getPtrBase(id);
 }
 
-int PtrListBase::insertPtrBase(MasterPtrBase* ptr) {
+int PtrListBase::insertPtrBase(RefCounted* ptr) {
 DOTRACE("PtrListBase::insertPtrBase");
   int new_site = itsImpl->itsFirstVacant;
   insertPtrBaseAt(new_site, ptr);
   return new_site;              // return the id of the inserted void*
 }
 
-void PtrListBase::insertPtrBaseAt(int id, MasterPtrBase* ptr) {
+void PtrListBase::insertPtrBaseAt(int id, RefCounted* ptr) {
 DOTRACE("PtrListBase::insertPtrBaseAt");
 
   Precondition(ptr != 0);
@@ -313,7 +309,7 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
   // nothing needs to be done (in particular, we had better not delete
   // the "previous" object and then hold on the "new" pointer, since
   // the "new" pointer would then be dangling).
-  if ( *(itsImpl->itsPtrVec[uid].masterPtr()) == *ptr) return;
+  if ( itsImpl->itsPtrVec[uid].masterPtr() == ptr ) return;
 
   itsImpl->ensureNotDuplicate(ptr);
 
@@ -338,7 +334,7 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
   DebugEvalNL(itsImpl->itsFirstVacant);
 }
 
-void PtrListBase::afterInsertHook(int /* id */, MasterPtrBase* /* ptr */) {
+void PtrListBase::afterInsertHook(int /* id */, RefCounted* /* ptr */) {
 DOTRACE("PtrListBase::afterInsertHook");
 }
 
