@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Mar  8 16:14:17 2000
+// written: Wed Mar  8 16:51:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 
 struct Tcl_TimerToken_;
 typedef struct Tcl_TimerToken_* Tcl_TimerToken;
+typedef void* ClientData;
 
 class Experiment;
 
