@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri Jun  8 18:46:39 2001
+// written: Fri Aug 10 12:36:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,13 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const IO::VersionId GLBITMAP_SERIAL_VERSION_ID = 2;
 }
 
-GLBitmap* GLBitmap::make() {
+GLBitmap* GLBitmap::make()
+{
 DOTRACE("GLBitmap::make");
   return new GLBitmap;
 }
@@ -40,82 +42,70 @@ GLBitmap::GLBitmap() :
   GLRHolder(make_shared(new GLBmapRenderer())),
   Bitmap(
 #ifndef ACC_COMPILER
-			itsRenderer
+         itsRenderer
 #else
-			shared_ptr<BmapRenderer>(itsRenderer)
+         shared_ptr<BmapRenderer>(itsRenderer)
 #endif
-			)  
+         )
 {
 DOTRACE("GLBitmap::GLBitmap");
-  init();
-}
-
-GLBitmap::GLBitmap(const char* filename) :
-  GLRHolder(make_shared(new GLBmapRenderer())),
-  Bitmap(
-#ifndef ACC_COMPILER
-			itsRenderer
-#else
-			shared_ptr<BmapRenderer>(itsRenderer)
-#endif
-			, filename)
-{
-DOTRACE("GLBitmap::GLBitmap");
-  init(); 
-}
-
-void GLBitmap::init() {
-DOTRACE("GLBitmap::init");
   GrObj::setRenderMode(GLCOMPILE);
   GrObj::setUnRenderMode(CLEAR_BOUNDING_BOX);
   setUsingZoom(true);
 }
 
-GLBitmap::~GLBitmap() {
+GLBitmap::~GLBitmap()
+{
 DOTRACE("GLBitmap::~GLBitmap");
 }
 
-IO::VersionId GLBitmap::serialVersionId() const {
+IO::VersionId GLBitmap::serialVersionId() const
+{
 DOTRACE("GLBitmap::serialVersionId");
   return GLBITMAP_SERIAL_VERSION_ID;
 }
 
-void GLBitmap::readFrom(IO::Reader* reader) {
+void GLBitmap::readFrom(IO::Reader* reader)
+{
 DOTRACE("GLBitmap::readFrom");
 
   reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
 
   bool val;
-  reader->readValue("usingGlBitmap", val); 
+  reader->readValue("usingGlBitmap", val);
   itsRenderer->setUsingGlBitmap(val);
 
   reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
 }
 
-void GLBitmap::writeTo(IO::Writer* writer) const {
+void GLBitmap::writeTo(IO::Writer* writer) const
+{
 DOTRACE("GLBitmap::writeTo");
 
   writer->ensureWriteVersionId("GLBitmap", GLBITMAP_SERIAL_VERSION_ID, 2,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
   writer->writeBaseClass("Bitmap", IO::makeConstProxy<Bitmap>(this));
 }
 
-bool GLBitmap::getUsingGlBitmap() const {
+bool GLBitmap::getUsingGlBitmap() const
+{
 DOTRACE("GLBitmap::getUsingGlBitmap");
   return itsRenderer->getUsingGlBitmap();
 }
 
-void GLBitmap::setUsingGlBitmap(bool val) {
+void GLBitmap::setUsingGlBitmap(bool val)
+{
 DOTRACE("GLBitmap::setUsingGlBitmap");
   itsRenderer->setUsingGlBitmap(val);
 
   // glPixelZoom() does not work with glBitmap()
-  if (itsRenderer->getUsingGlBitmap()) {
-	 setUsingZoom(false);
-  }
+  if (itsRenderer->getUsingGlBitmap())
+	 {
+		setUsingZoom(false);
+	 }
 
   sendStateChangeMsg();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Fri May 18 17:04:03 2001
+// written: Fri Aug 10 12:34:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,15 +46,9 @@ protected:
   /// Construct an empty bitmap.
   GLBitmap();
 
-  /** Create a bitmap from a graphics file. See documentation for \c
-      Bitmap for a list of supported file types. */
-  GLBitmap(const char* filename);
-
 public:
   /// Default creator.
   static GLBitmap* make();
-
-  private: void init();
 
 public:
   /// Virtual destructor.
@@ -64,7 +58,6 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  public:
   /** Query whether the bitmap will be rendered using \c glBitmap()
       (instead of \c glDrawPixels()). */
   bool getUsingGlBitmap() const;

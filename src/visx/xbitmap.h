@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Fri Aug 10 12:38:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,17 +46,10 @@ protected:
   /// Construct an empty bitmap.
   XBitmap();
 
-  /** Create a bitmap from a graphics file. See documentation for \c
-      Bitmap for a list of supported file types. */
-  XBitmap(const char* filename);
-
 public:
   /// Default creator.
   static XBitmap* make();
 
-  private: void init();
-
-public:
   /// Virtual destructor.
   virtual ~XBitmap();
 

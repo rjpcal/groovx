@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri Jun  8 18:46:38 2001
+// written: Fri Aug 10 12:38:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const IO::VersionId XBITMAP_SERIAL_VERSION_ID = 2;
 }
 
@@ -34,7 +35,8 @@ namespace {
 // creators //
 //////////////
 
-XBitmap* XBitmap::make() {
+XBitmap* XBitmap::make()
+{
 DOTRACE("XBitmap::make");
   return new XBitmap;
 }
@@ -43,48 +45,31 @@ XBitmap::XBitmap() :
   XRHolder(make_shared(new XBmapRenderer())),
   Bitmap(
 #ifndef ACC_COMPILER
-			itsRenderer
+         itsRenderer
 #else
-			shared_ptr<BmapRenderer>(itsRenderer)
+         shared_ptr<BmapRenderer>(itsRenderer)
 #endif
-			)  
+         )
 {
 DOTRACE("XBitmap::XBitmap");
-  init();
-}
-
-XBitmap::XBitmap(const char* filename) :
-  XRHolder(make_shared(new XBmapRenderer())),
-  Bitmap(
-#ifndef ACC_COMPILER
-			itsRenderer
-#else
-			shared_ptr<BmapRenderer>(itsRenderer)
-#endif
-			, filename)
-{
-DOTRACE("XBitmap::XBitmap");
-  init();
-}
-
-void XBitmap::init() {
-DOTRACE("XBitmap::init");
-
   GrObj::setRenderMode(DIRECT_RENDER);
   GrObj::setUnRenderMode(CLEAR_BOUNDING_BOX);
   Bitmap::setUsingZoom(false);
 }
 
-XBitmap::~XBitmap() {
+XBitmap::~XBitmap()
+{
 DOTRACE("XBitmap::~XBitmap");
 }
 
-IO::VersionId XBitmap::serialVersionId() const {
+IO::VersionId XBitmap::serialVersionId() const
+{
 DOTRACE("XBitmap::serialVersionId");
   return XBITMAP_SERIAL_VERSION_ID;
 }
 
-void XBitmap::readFrom(IO::Reader* reader) {
+void XBitmap::readFrom(IO::Reader* reader)
+{
 DOTRACE("XBitmap::readFrom");
 
   reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
@@ -92,11 +77,12 @@ DOTRACE("XBitmap::readFrom");
   reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
 }
 
-void XBitmap::writeTo(IO::Writer* writer) const {
+void XBitmap::writeTo(IO::Writer* writer) const
+{
 DOTRACE("XBitmap::writeTo");
 
   writer->ensureWriteVersionId("XBitmap", XBITMAP_SERIAL_VERSION_ID, 2,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   writer->writeBaseClass("Bitmap", IO::makeConstProxy<Bitmap>(this));
 }
