@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Dec 15 12:57:23 1999
+// written: Wed Dec 15 17:42:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,10 +148,10 @@ namespace BlockListTcl {
   class BlockListPkg;
 }
 
-class BlockListTcl::BlockListPkg : public Tcl::ListPkg<BlockList> {
+class BlockListTcl::BlockListPkg : public Tcl::IoPtrListPkg {
 public:
   BlockListPkg(Tcl_Interp* interp) :
-	 Tcl::ListPkg<BlockList>(interp, BlockList::theBlockList(), "BlockList", "3.0")
+	 Tcl::IoPtrListPkg(interp, BlockList::theBlockList(), "BlockList", "3.0")
   {
 	 BlockList::theBlockList().insertAt(0, new Block());
   }

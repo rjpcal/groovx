@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Dec 15 13:06:01 1999
+// written: Wed Dec 15 17:44:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "responsehandler.h"
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
-#include "tclcmd.h"
 #include "listitempkg.h"
 #include "listpkg.h"
 
@@ -60,8 +59,10 @@ public:
 	 declareCAttrib("bindingSubstitution",
 						 &EventResponseHdlr::getBindingSubstitution,
 						 &EventResponseHdlr::setBindingSubstitution);
+
   }
 };
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -79,20 +80,22 @@ public:
 	 Tcl::ListItemPkg<KbdResponseHdlr, RhList>(interp, RhList::theRhList(),
 															 "KbdRh", "$Revision$")
   {
-	 declareCAttrib("useFeedback",
-						 &KbdResponseHdlr::getUseFeedback,
-						 &KbdResponseHdlr::setUseFeedback);
-	 declareCAttrib("keyRespPairs",
-						 &KbdResponseHdlr::getKeyRespPairs,
-						 &KbdResponseHdlr::setKeyRespPairs);
-	 declareCAttrib("feedbackPairs",
-						 &KbdResponseHdlr::getFeedbackPairs,
-						 &KbdResponseHdlr::setFeedbackPairs);
-
 	 Tcl_Eval(interp,
-			 "namespace eval KbdRh {proc kbdResponseHdlr {} {return KbdRh}}\n");
+				 "namespace eval KbdRh {\n"
+				 "  proc kbdResponseHdlr {} {return KbdRh}\n"
+				 "  proc useFeedback args {\n"
+				 "    return [eval EventRh::useFeedback $args]\n"
+				 "  }\n"
+				 "  proc keyRespPairs args {\n"
+				 "    return [eval EventRh::inputResponseMap $args]\n"
+				 "  }\n"
+				 "  proc feedbackPairs args {\n"
+				 "    return [eval EventRh::feedbackMap $args]\n"
+				 "  }\n"
+				 "}\n");
   }
 };
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -125,16 +128,16 @@ namespace RhListTcl {
   class RhListPkg;
 }
 
-class RhListTcl::RhListPkg : public Tcl::ListPkg<RhList> {
+class RhListTcl::RhListPkg : public Tcl::IoPtrListPkg {
 public:
   RhListPkg(Tcl_Interp* interp) :
-	 Tcl::ListPkg<RhList>(interp, RhList::theRhList(),
-								 "RhList", "$Revision$")
+	 Tcl::IoPtrListPkg(interp, RhList::theRhList(), "RhList", "$Revision$")
   {
 	 RhList::theRhList().setInterp(interp);
 	 RhList::theRhList().insertAt(0, new KbdResponseHdlr());
   }
 };
+
 
 //--------------------------------------------------------------------
 //
@@ -155,9 +158,11 @@ DOTRACE("Rh_Init");
   new KbdRhTcl::KbdRhPkg(interp);
   new NullRhTcl::NullRhPkg(interp);
 
+
   FactoryRegistrar<IO, KbdResponseHdlr>   :: registerWith(IoFactory::theOne());
   FactoryRegistrar<IO, NullResponseHdlr>  :: registerWith(IoFactory::theOne());
   FactoryRegistrar<IO, EventResponseHdlr> :: registerWith(IoFactory::theOne());
+
 
   return TCL_OK;
 }

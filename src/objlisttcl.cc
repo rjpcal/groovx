@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Dec  7 18:58:34 1999
+// written: Wed Dec 15 17:43:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,10 +140,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjlistTcl::ObjListPkg : public Tcl::ListPkg<ObjList> {
+class ObjlistTcl::ObjListPkg : public Tcl::IoPtrListPkg {
 public:
   ObjListPkg(Tcl_Interp* interp) :
-	 Tcl::ListPkg<ObjList>(interp, ObjList::theObjList(), "ObjList", "3.0")
+	 Tcl::IoPtrListPkg(interp, ObjList::theObjList(), "ObjList", "3.0")
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
