@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Wed Jun 30 17:17:19 1999
+// written: Mon Mar  6 18:20:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "iomgr.h"
 
+#include "util/strings.h"
+
 #include <iostream.h>
 #include <typeinfo>
-#include <string>
 
 #define NO_TRACE
 #include "trace.h"
@@ -29,7 +30,7 @@ DOTRACE("IoMgr::newIO(const char*)");
 
 IO* IoMgr::newIO(istream& is, IO::IOFlag flag) {
 DOTRACE("IoMgr::newIo(istream&, IO::IOFlag)");
-  string type;
+  fixed_string type;
   is >> type;
   // We must turn off the TYPENAME flag since the typename has already
   // been read from the input stream by the present function.
