@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Tue Oct 19 13:09:11 1999
+// written: Tue Oct 19 18:25:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 
 #include "demangle.h"
 #include "iomgr.h"
+#include "reader.h"
+#include "writer.h"
 
 #ifndef NULL
 #define NULL 0L
@@ -33,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const int RESIZE_CHUNK = 20;
+  const int RESERVE_CHUNK = 20;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -49,12 +51,13 @@ namespace {
 template <class T>
 PtrList<T>::PtrList(int size):
   itsFirstVacant(0), 
-  itsVec(size, (T*) 0)
+  itsVec()
 {
 DOTRACE("PtrList<T>::PtrList");
 
-  DebugEvalNL(itsVec.size());
+  itsVec.reserve(size); 
 
+  DebugEvalNL(itsVec.size());
 }
 
 template <class T>
@@ -172,6 +175,21 @@ int PtrList<T>::charCount() const {
   return ch_count + 5;
 }
 
+template <class T>
+void PtrList<T>::writeTo(Writer* writer) const {
+DOTRACE("PtrList<T>::writeTo");
+  writer->writeInt("itsFirstVacant", itsFirstVacant);
+  writer->writeObjectSeq("itsVec", itsVec.begin(), itsVec.end());
+}
+
+template <class T>
+void PtrList<T>::readFrom(Reader* reader) {
+DOTRACE("PtrList<T>::readFrom");
+  itsFirstVacant = reader->readInt("itsFirstVacant");
+  itsVec.clear();
+  reader->readObjectSeq("itsVec", back_inserter(itsVec), (T*) 0);
+}
+
 ///////////////
 // accessors //
 ///////////////
@@ -234,8 +252,11 @@ void PtrList<T>::insertAt(int id, T* ptr) {
 DOTRACE("PtrList<T>::insertAt");
   if (id < 0) return;
 
+  if (id >= itsVec.capacity()) {
+	 itsVec.reserve(id+RESERVE_CHUNK);
+  }
   if (id >= itsVec.size()) {
-    itsVec.resize(id+RESIZE_CHUNK, NULL);
+    itsVec.resize(id+1, NULL);
   }
 
   // Check to see if we are attempting to insert the same object that
@@ -280,6 +301,8 @@ DOTRACE("PtrList<T>::clear");
 	 delete itsVec[i];
 	 itsVec[i] = NULL;
   }
+
+  itsVec.resize(0);
 
   itsFirstVacant = 0;
 }
