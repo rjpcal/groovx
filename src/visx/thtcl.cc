@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Thu May 11 09:18:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,9 +82,6 @@ public:
 										  TimingHdlr::FROM_RESPONSE));
 	 addCommand( new AddEventCmd(this, "Th::addAbortEvent",
 										  TimingHdlr::FROM_ABORT));
-	 declareCAttrib("autosavePeriod",
-						 &TimingHdlr::getAutosavePeriod,
-						 &TimingHdlr::setAutosavePeriod);
 
 	 TclPkg::eval("namespace eval Th { "
 					  "    proc timingHdlr {} { return [Th] } }");
