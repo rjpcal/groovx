@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Nov 21 13:37:53 2000
+// written: Tue Nov 28 14:41:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -204,6 +204,9 @@ public:
   void trUndrawTrial() const;
   void trDraw(GWT::Canvas& canvas, bool flush) const;
   void trUndraw(GWT::Canvas& canvas, bool flush) const;
+
+  void installSelf(GWT::Widget& widget) const;
+
   void undoLastResponse();
 };
 
@@ -634,6 +637,13 @@ DOTRACE("Trial::Impl::trUndraw");
   if (flush) canvas.flushOutput();
 }
 
+void Trial::Impl::installSelf(GWT::Widget& widget) const {
+DOTRACE("Trial::Impl::installSelf");
+
+  if (itsCurrentNode >= 0 && itsCurrentNode < itsGxNodes.size())
+	 widget.setDrawable(IdItem<GxNode>(itsGxNodes[itsCurrentNode]));
+}
+
 void Trial::Impl::undoLastResponse() {
 DOTRACE("Trial::Impl::undoLastResponse");
   if ( !itsResponses.empty() )
@@ -770,6 +780,9 @@ void Trial::trDraw(GWT::Canvas& canvas, bool flush) const
 
 void Trial::trUndraw(GWT::Canvas& canvas, bool flush) const
   { itsImpl->trUndraw(canvas, flush); }
+
+void Trial::installSelf(GWT::Widget& widget) const
+  { itsImpl->installSelf(widget); }
 
 void Trial::undoLastResponse()
   { itsImpl->undoLastResponse(); }
