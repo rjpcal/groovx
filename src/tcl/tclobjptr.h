@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Thu Jul 19 21:05:54 2001
+// written: Tue Aug  7 11:02:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,8 @@ public:
 
   /// Conversion operator to Tcl_Obj*.
   operator Tcl_ObjPtr() { return itsObj; }
+
+  Tcl_Obj* obj() { return itsObj; }
 
   template <class Cue>
   typename Cue::Type as(Cue)
