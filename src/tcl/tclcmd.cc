@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 19 19:29:37 2000
+// written: Sat Sep 23 16:08:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -431,7 +431,7 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
  	 Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
  	 theCmd->itsResult = TCL_ERROR;
   }
-  catch (exception& err) {
+  catch (std::exception& err) {
 	 dynamic_string msg = "an error of type ";
 	 msg += demangle_cstr(typeid(err).name());
 	 msg += " occurred: ";
