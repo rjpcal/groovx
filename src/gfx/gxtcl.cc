@@ -101,6 +101,12 @@ namespace GxTcl
       }
   }
 
+  void removeAllChildren(Nub::Ref<GxSeparator> sep)
+  {
+    while (sep->numChildren() > 0)
+      sep->removeChildAt(0);
+  }
+
   geom::rect<double> boundingBox(Nub::Ref<GxNode> obj,
                                  Nub::SoftRef<Gfx::Canvas> canvas)
   {
@@ -201,6 +207,7 @@ DOTRACE("Gxseparator_Init");
                  &GxSeparator::setDebugMode,
                  SRC_POS);
   pkg->defGetter("numChildren", &GxSeparator::numChildren, SRC_POS);
+  pkg->def("removeAllChildren", "sep_id(s)", &GxTcl::removeAllChildren, SRC_POS);
   pkg->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt, SRC_POS);
   pkg->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild, SRC_POS);
   Nub::ObjFactory::theOne().register_creator(&GxSeparator::make);
