@@ -648,6 +648,9 @@ public:
     iter_base operator-(int x) const { return iter_base(mtx, elem-x); }
   };
 
+  friend class iter_base<MtxBase, double>;
+  friend class iter_base<const MtxBase, const double>;
+
   typedef iter_base<MtxBase, double> iterator;
   typedef iter_base<const MtxBase, const double> const_iterator;
 
