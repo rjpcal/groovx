@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Tue Nov 19 17:26:59 2002
+// written: Tue Dec 24 20:38:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,10 @@ DOTRACE("GxNode::undraw");
 
   const Gfx::Rect<double> world_box = getBoundingBox(canvas);
 
-  const Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
+  Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
+
+  screen_box.setWidth(screen_box.width()+4);
+  screen_box.setHeight(screen_box.height()+4);
 
   canvas.clearColorBuffer(screen_box);
 }
