@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Oct 24 09:04:25 2000
+// written: Tue Oct 24 10:26:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,9 @@
 
 #include "block.h"
 #include "tlistutils.h"
-#include "objlist.h"
 #include "objtogl.h"
 #include "toglconfig.h"
-#include "poslist.h"
 #include "blocklist.h"
-#include "rhlist.h"
-#include "thlist.h"
-#include "tlist.h"
 #include "tlistwidget.h"
 #include "trialbase.h"
 
@@ -516,54 +511,30 @@ DOTRACE("ExptDriver::Impl::readFrom");
 
   if (svid < 3)
 	 {
-		reader->readOwnedObject("theObjList", &ObjList::theObjList());
-		reader->readOwnedObject("thePosList", &PosList::thePosList());
-		reader->readOwnedObject("theTlist", &Tlist::theTlist());
-		reader->readOwnedObject("theRhList", &RhList::theRhList());
-		reader->readOwnedObject("theThList", &ThList::theThList());
-		reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
+		throw IO::ReadVersionError("ExptDriver", svid, 3,
+											"Try grsh0.8a3");
 	 }
+
+  Assert(svid >= 3);
 
   reader->readValue("hostname", itsHostname);
   reader->readValue("subject", itsSubject);
   reader->readValue("beginDate", itsBeginDate);
   reader->readValue("endDate", itsEndDate);
   reader->readValue("autosaveFile", itsAutosaveFile);
+  reader->readValue("autosavePeriod", itsAutosavePeriod);
+  reader->readValue("infoLog", itsInfoLog);
 
-  if (svid >= 1)
-	 reader->readValue("autosavePeriod", itsAutosavePeriod);
+  reader->readValue("currentBlockIdx", itsCurrentBlockIdx);
 
-  if (svid >= 2)
-	 reader->readValue("infoLog", itsInfoLog);
-
-  if (svid < 3)
-	 {
-		// FIXME this may work, but only as a temporary hack for
-		// converting old files
-		reader->readValue("blockId", itsCurrentBlockIdx);
-
-		itsBlocks.clear();
-	 }
-  else
-	 {
-		reader->readValue("currentBlockIdx", itsCurrentBlockIdx);
-
-		std::vector<Block*> blocks;
-		IO::ReadUtils::template readObjectSeq<Block>(
+  std::vector<Block*> blocks;
+  IO::ReadUtils::template readObjectSeq<Block>(
 							  reader, "blocks", std::back_inserter(blocks));
 
-		itsBlocks.clear();
-		for (int i = 0; i < blocks.size(); ++i)
-		  itsBlocks.push_back(ItemWithId<Block>(blocks[i],
-															 ItemWithId<Block>::INSERT));
-	 }
-
-  if (svid < 3)
-	 {
-		int dummy;
-		reader->readValue("rhId", dummy);
-		reader->readValue("thId", dummy);
-	 }
+  itsBlocks.clear();
+  for (int i = 0; i < blocks.size(); ++i)
+	 itsBlocks.push_back(ItemWithId<Block>(blocks[i],
+														ItemWithId<Block>::INSERT));
 
   reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
   recreateDoUponCompletionProc();
@@ -574,53 +545,29 @@ DOTRACE("ExptDriver::Impl::writeTo");
 
   if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
 	 {
-		writer->writeOwnedObject("theObjList", &ObjList::theObjList());
-		writer->writeOwnedObject("thePosList", &PosList::thePosList());
-		writer->writeOwnedObject("theTlist", &Tlist::theTlist());
-		writer->writeOwnedObject("theRhList", &RhList::theRhList());
-		writer->writeOwnedObject("theThList", &ThList::theThList());
-		writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
+		throw IO::WriteVersionError("ExptDriver",
+											 EXPTDRIVER_SERIAL_VERSION_ID, 3,
+											 "Try grsh0.8a3");
 	 }
+
+  Assert(EXPTDRIVER_SERIAL_VERSION_ID >= 3);
 
   writer->writeValue("hostname", itsHostname);
   writer->writeValue("subject", itsSubject);
   writer->writeValue("beginDate", itsBeginDate);
   writer->writeValue("endDate", itsEndDate);
   writer->writeValue("autosaveFile", itsAutosaveFile);
+  writer->writeValue("autosavePeriod", itsAutosavePeriod);
+  writer->writeValue("infoLog", itsInfoLog);
 
-  if (EXPTDRIVER_SERIAL_VERSION_ID >= 1)
-	 writer->writeValue("autosavePeriod", itsAutosavePeriod);
+  writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
 
-  if (EXPTDRIVER_SERIAL_VERSION_ID >= 2)
-	 writer->writeValue("infoLog", itsInfoLog);
+  std::vector<const Block*> blocks;
+  for (int i = 0; i < itsBlocks.size(); ++i)
+	 blocks.push_back(itsBlocks[i].get());
 
-  if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
-	 {
-		// FIXME this really shouldn't work
-		writer->writeValue("blockId", itsCurrentBlockIdx);
-	 }
-  else
-	 {
-		writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
-
-		// FIXME this is only a temporary hack to allow us to convert
-		// old files to this new format
-		const_cast<ExptDriver::Impl*>(this)->includeAllBlocks();
-
-		std::vector<const Block*> blocks;
-		for (int i = 0; i < itsBlocks.size(); ++i)
-		  blocks.push_back(itsBlocks[i].get());
-
-		IO::WriteUtils::writeObjectSeq(writer, "blocks",
-												 blocks.begin(), blocks.end());
-	 }
-
-  if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
-	 {
-		int dummy = 0;
-		writer->writeValue("rhId", dummy);
-		writer->writeValue("thId", dummy);
-	 }
+  IO::WriteUtils::writeObjectSeq(writer, "blocks",
+											blocks.begin(), blocks.end());
 
   updateDoUponCompletionBody();
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
