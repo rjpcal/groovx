@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Apr  6 12:39:58 2001
+// written: Fri Apr  6 12:46:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -197,10 +197,10 @@ DOTRACE("Mtx::extractStructField");
   if (!structArray)
 	 throw ErrorWithMsg("mxArray* was null");
 
-  if (mxIsStruct(structArray))
+  if (!mxIsStruct(structArray))
 	 throw ErrorWithMsg("mxArray* is not a struct array");
 
-  mxArray* field = mxGetField(structArray, indexIntoArray, "numStoredExemplars");
+  mxArray* field = mxGetField(structArray, indexIntoArray, fieldName);
   if (!field)
 	 {
 		ErrorWithMsg err("struct array does not contain field named '");
