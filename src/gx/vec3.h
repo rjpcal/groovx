@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Mon Aug 27 17:09:57 2001
+// written: Tue Aug 28 09:18:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef VEC3_H_DEFINED
 #define VEC3_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC2_H_DEFINED)
+#include "gfx/vec2.h"
+#endif
 
 namespace Gfx
 {
@@ -45,6 +49,8 @@ public:
 
         V* data()       { return &itsData[0]; }
   const V* data() const { return &itsData[0]; }
+
+  Gfx::Vec2<V> vec2() const { return Gfx::Vec2<V>(x(), y()); }
 
   //
   // Vec3-Vec3 math
