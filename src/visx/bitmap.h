@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Sep 29 15:01:42 2000
+// written: Fri Sep 29 16:54:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,15 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
+#endif
+
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
 
 template <class V> class Rect;
