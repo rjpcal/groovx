@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 10:55:51 1999
-// written: Thu Jun  1 13:42:01 2000
+// written: Tue Sep 19 17:06:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
 class Application {
 protected:
   /// Default no-op constructor.
-  Application();
+  Application(const char* library_env_var = 0);
 
   /** When the concrete Application is created in a program, the
       Application should be installed with this function so that it is
@@ -61,9 +61,15 @@ public:
   /// Retrieves the experiment that is running in the application.
   virtual Experiment* getExperiment() = 0;
 
+  const char* getLibraryDirectory() const;
+
 private:
   Application(const Application&);
   Application& operator=(const Application&);
+
+  class Impl;
+  friend class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_application_h[] = "$Header$";
