@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Fri Feb  1 11:15:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -816,7 +816,8 @@ const FieldMap& Gtext::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("text", &Gtext::itsText, 0, 0, 100, 1,
+    Field("text", &Gtext::itsText,
+          fstring("0"), fstring("0"), fstring("100"), fstring("1"),
           Field::NEW_GROUP | Field::STRING),
     Field("strokeWidth",
           std::make_pair(&Gtext::getStrokeWidth, &Gtext::setStrokeWidth),
