@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu May 10 12:04:47 2001
+// written: Fri Jun  1 14:09:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,9 +140,16 @@ DOTRACE("GLCanvas::swapForeBack");
 	 GLdouble background[4];
 	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
 	 glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
-	 glColor4dv(background);
-	 glClearColor(foreground[0], foreground[1],
-					  foreground[2], foreground[3]);
+
+	 glColor4d(background[0],
+				  background[1],
+				  background[2],
+				  foreground[3]); // <-- note we keep the foreground alpha value
+
+  	 glClearColor(foreground[0],
+  					  foreground[1],
+  					  foreground[2],
+  					  background[3]); // <-- note we keep the background alpha value
   }
   else {
 	 GLint foreground, background;
