@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun Aug 26 08:35:14 2001
+// written: Sun Sep  9 07:08:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,6 +103,8 @@ public:
   void setWidget(Util::SoftRef<GWT::Widget> widg);
 
   virtual Gfx::Canvas& getCanvas() const;
+
+  Tcl_Interp* getInterp() const;
 
   virtual void edBeginExpt();
   virtual void edEndTrial();

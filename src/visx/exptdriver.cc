@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun Aug 26 08:53:53 2001
+// written: Sun Sep  9 07:09:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,9 +159,9 @@ public:
 private:
   ExptDriver* itsOwner;
 
+public:
   Tcl::Interp itsInterp;
 
-public:
   SoftRef<GWT::Widget> itsWidget;
 
   fstring itsHostname;     // Host computer on which Expt was begun
@@ -558,6 +558,9 @@ void ExptDriver::setWidget(Util::SoftRef<GWT::Widget> widg)
 
 Gfx::Canvas& ExptDriver::getCanvas() const
   { return itsImpl->itsWidget->getCanvas(); }
+
+Tcl_Interp* ExptDriver::getInterp() const
+  { return itsImpl->itsInterp.intp(); }
 
 void ExptDriver::edBeginExpt()
   { itsImpl->edBeginExpt(); }
