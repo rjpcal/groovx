@@ -140,8 +140,10 @@ public:
   /// Resume the experiment after it has been halted.
   void edResumeExpt();
 
+#if 0
   /// Pause the experiment until a top-level dialog box is dismissed.
   void pause();
+#endif
 
   /** This saves the experiment file and a summary-of-responses file
       under unique filenames based on the date and time. */

@@ -75,8 +75,10 @@ namespace
     // Create the reset key binding
     w->bind("<Control-KeyPress-r>", fstring("-> ", xp.id(), " reset"));
 
+#if 0
     // Create the pause key binding
     w->bind("<KeyPress-p>", fstring("-> ", xp.id(), " pause"));
+#endif
 
     // Destroy the experiment start key binding
     w->bind("<KeyPress-s>", "");
@@ -94,6 +96,8 @@ namespace
     w->bind("<KeyPress-s>", fstring("-> ", xp.id(), " begin"));
     w->takeFocus();
   }
+
+  void fakePause(Util::Ref<ExptDriver>) {}
 }
 
 extern "C"
@@ -117,7 +121,7 @@ DOTRACE("Exptdriver_Init");
                  &ExptDriver::getAutosavePeriod,
                  &ExptDriver::setAutosavePeriod);
   pkg->defGetter("infoLog", &ExptDriver::getInfoLog);
-  pkg->defAction("pause", &ExptDriver::pause);
+  pkg->def("pause", "expt_id", &fakePause);
   pkg->defAction("storeData", &ExptDriver::storeData);
   // FIXME this conflicts with Element::widget
   pkg->defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);

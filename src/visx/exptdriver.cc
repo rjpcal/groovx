@@ -370,6 +370,11 @@ DOTRACE("ExptDriver::edResumeExpt");
   currentElement()->vxRun(*this);
 }
 
+#if 0
+// This is disabled right now because it interacts badly with top-level
+// Toglet windows that have override_direct=true... neither the Toglet nor
+// the tk_messageBox are unable to receive any events, so the application
+// appears to lock up
 void ExptDriver::pause()
 {
 DOTRACE("ExptDriver::pause");
@@ -404,6 +409,7 @@ DOTRACE("ExptDriver::pause");
 
   edResumeExpt();
 }
+#endif
 
 void ExptDriver::storeData()
 {
