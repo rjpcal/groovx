@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Oct 24 13:40:59 2000
+// written: Tue Oct 24 13:44:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,6 +159,12 @@ public:
 	 return -1;
   }
 
+  // Add obj at index 'id', destroying any the object was previously
+  // pointed to from that that location. The list will be expanded if
+  // 'id' exceeds the size of the list. If id is < 0, the function
+  // returns without effect.
+  void insertPtrBaseAt(int id, RefCounted* ptr);
+
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -305,12 +311,12 @@ DOTRACE("PtrListBase::insertPtrBase");
 	 return existing_site;
 
   int new_site = itsImpl->itsFirstVacant;
-  insertPtrBaseAt(new_site, ptr);
+  itsImpl->insertPtrBaseAt(new_site, ptr);
   return new_site;              // return the id of the inserted void*
 }
 
-void PtrListBase::insertPtrBaseAt(int id, RefCounted* ptr) {
-DOTRACE("PtrListBase::insertPtrBaseAt");
+void PtrListBase::Impl::insertPtrBaseAt(int id, RefCounted* ptr) {
+DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 
   Precondition(ptr != 0);
 
@@ -319,16 +325,16 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
 
   size_t uid = size_t(id);
 
-  if (uid >= itsImpl->itsPtrVec.capacity()) {
-  	 itsImpl->itsPtrVec.reserve(calculateGrowSize(uid));
+  if (uid >= itsPtrVec.capacity()) {
+  	 itsPtrVec.reserve(calculateGrowSize(uid));
   }
-  if (uid >= itsImpl->itsPtrVec.size()) {
-    itsImpl->itsPtrVec.resize(calculateGrowSize(uid), VoidPtrHandle());
+  if (uid >= itsPtrVec.size()) {
+    itsPtrVec.resize(calculateGrowSize(uid), VoidPtrHandle());
   }
 
-  Assert(itsImpl->itsPtrVec.size() > uid);
+  Assert(itsPtrVec.size() > uid);
 
-  if (itsImpl->itsPtrVec[uid].rcObject()->isValid())
+  if (itsPtrVec[uid].rcObject()->isValid())
 	 {
 		InvalidIdError err("object already exists at id '");
 		err.appendNumber(id);
@@ -341,33 +347,27 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
   // nothing needs to be done (in particular, we had better not delete
   // the "previous" object and then hold on the "new" pointer, since
   // the "new" pointer would then be dangling).
-  if ( itsImpl->itsPtrVec[uid].rcObject() == ptr ) return;
+  if ( itsPtrVec[uid].rcObject() == ptr ) return;
 
-  itsImpl->ensureNotDuplicate(ptr);
+  ensureNotDuplicate(ptr);
 
   //
   // The actual insertion
   //
-  itsImpl->itsPtrVec[uid] = VoidPtrHandle(ptr);
+  itsPtrVec[uid] = VoidPtrHandle(ptr);
 
   // It is possible that ptr is not valid, in this case, we might need
-  // to adjust itsImpl->itsFirstVacant if it is currently beyond than
+  // to adjust itsFirstVacant if it is currently beyond than
   // the site that we have just changed.
-  if ( !(ptr->isValid()) && id < itsImpl->itsFirstVacant)
-	 itsImpl->itsFirstVacant = id;
+  if ( !(ptr->isValid()) && id < itsFirstVacant)
+	 itsFirstVacant = id;
 
-  // make sure itsImpl->itsFirstVacant is up-to-date
-  while ( (size_t(itsImpl->itsFirstVacant) < itsImpl->itsPtrVec.size()) &&
-			 (itsImpl->itsPtrVec.at(itsImpl->itsFirstVacant).rcObject()->isValid()) )
-	 { ++(itsImpl->itsFirstVacant); }
+  // make sure itsFirstVacant is up-to-date
+  while ( (size_t(itsFirstVacant) < itsPtrVec.size()) &&
+			 (itsPtrVec.at(itsFirstVacant).rcObject()->isValid()) )
+	 { ++itsFirstVacant; }
 
-  afterInsertHook(id, ptr);
-
-  DebugEvalNL(itsImpl->itsFirstVacant);
-}
-
-void PtrListBase::afterInsertHook(int /* id */, RefCounted* /* ptr */) {
-DOTRACE("PtrListBase::afterInsertHook");
+  DebugEvalNL(itsFirstVacant);
 }
 
 int& PtrListBase::firstVacant() {
