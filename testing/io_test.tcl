@@ -175,7 +175,8 @@ proc testReadCmd { packagename classname item_argn {item_id -1} } {
 		  if { $item_id >= 0 } {
 				eval ::test $testname {"normal use"} {"
 		          set str \[$writecmd $item_id\] 
-		          catch {$readcmd $item_id \$str}
+		          set code \[catch {$readcmd $item_id \$str} msg\]
+				    set result \"\$code\$msg\"
             "} {^0$}
 				eval ::test $testname {"error on junk"} {"
 		          catch {$readcmd $item_id junk}
