@@ -6,12 +6,31 @@
 
 package require Iwidgets
 
+set TMPCOUNTER 0
+
+proc build_scaled_pixmap { fname size } {
+    set px [new GxPixmap]
+    -> $px purgeable 1
+
+    set tmpfile ./tmp[incr ::TMPCOUNTER].pnm
+    eval exec anytopnm $fname \
+	| pnmscale -xysize $size \
+	> $tmpfile 2> /dev/null
+
+    -> $px loadImage $tmpfile
+
+    file delete $tmpfile
+
+    return $px
+}
+
 itcl::class Playlist {
     private variable itsListFile
     private variable itsList
     private variable itsIdx
     private variable itsWidget
     private variable itsPixmap
+    private variable itsPixmapCache
     private variable itsMatch
 
     constructor { argv widget } {
@@ -49,20 +68,25 @@ itcl::class Playlist {
 
 	set i 0
 	set N [llength $items]
-	foreach item $items {
-	    incr i
-	    if { [string match $itsMatch $item] } {
-		lappend itsList $item
-	    }
-	    if { [expr $i % 100] == 0 } {
-		puts -nonewline "$i of $N ...\r"
-		flush stdout
+	if { [string equal $itsMatch "*"] } {
+	    set itsList $items
+	} else {
+	    foreach item $items {
+		incr i
+		if { [string match $itsMatch $item] } {
+		    lappend itsList $item
+		}
+		if { [expr $i % 100] == 0 } {
+		    puts -nonewline "$i of $N ...\r"
+		    flush stdout
+		}
 	    }
 	}
 
 	set itsIdx 0
 	set itsWidget $widget
 	set itsPixmap [new GxPixmap]
+	-> $itsPixmap purgeable 1
     }
 
     public method save {} {
@@ -73,11 +97,7 @@ itcl::class Playlist {
     }
 
     public method spin { step } {
-	incr itsIdx $step
-
-	if { $itsIdx < 0 } { set itsIdx [expr [llength $itsList]-1] }
-
-	if { $itsIdx >= [llength $itsList] } { set itsIdx 0 }
+	set itsIdx [expr ($itsIdx + $step) % [llength $itsList]]
     }
 
     public method filename {} {
@@ -95,26 +115,45 @@ itcl::class Playlist {
     }
 
     public method shuffle {} {
-	set itsList [dlist::shuffle $itsList]
+	set itsList [dlist::shuffle $itsList [clock clicks]]
     }
 
     public method sort {} {
 	set itsList [lsort -dictionary $itsList]
     }
 
+    public method cachenext {} {
+
+	set i [expr ($itsIdx + 1) % [llength $itsList]]
+	set f [lindex $itsList $i]
+	set itsPixmapCache($f) \
+	    [build_scaled_pixmap $f [-> $itsWidget size]]
+	puts "inserted $f in cache"
+    }
+
     public method show {} {
 	set f [$this filename]
-
 	puts $f
 
+	set old $itsPixmap
+	if { [info exists itsPixmapCache($f)] \
+		 && [GxPixmap::is $itsPixmapCache($f)] } {
+	    set itsPixmap $itsPixmapCache($f)
+	    unset itsPixmapCache($f)
+	    puts "got cache hit for $f"
+	} else {
+	    set itsPixmap [build_scaled_pixmap $f [-> $itsWidget size]]
+	}
+
 	-> $itsWidget allowRefresh 0
-
-	-> $itsPixmap loadImage $f
-	-> $itsPixmap zoomTo [-> $itsWidget size]
-
 	-> $itsWidget see $itsPixmap
-
 	-> $itsWidget allowRefresh 1
+
+	delete $old
+
+	update idletasks
+
+	after idle [itcl::code $this cachenext]
     }
 
     public method rotate {angle} {
@@ -217,6 +256,8 @@ set PLAYLIST [Playlist PLAYLIST $argv $t]
 -> $t width 1400
 
 -> $t repack "-side bottom"
+
+glClearColor 0 0 0 0
 
 update
 
