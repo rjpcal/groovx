@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 14:50:47 2002
+// written: Mon Mar  4 15:00:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -399,33 +399,37 @@ void DataHolder::swap(DataHolder& other)
 //
 ///////////////////////////////////////////////////////////////////////
 
-void MtxBase::swap(MtxBase& other)
+template <class Data>
+void MtxBase<Data>::swap(MtxBase& other)
 {
   MtxSpecs::swap(other);
   data_.swap(other.data_);
 }
 
-MtxBase::MtxBase(const MtxBase& other) :
+template <class Data>
+MtxBase<Data>::MtxBase(const MtxBase& other) :
   MtxSpecs(other),
   data_(other.data_)
 {}
 
 namespace
 {
-  DataBlock* newDataBlock(int mrows, int ncols, MtxBase::InitPolicy p)
+  DataBlock* newDataBlock(int mrows, int ncols, WithPolicies::InitPolicy p)
   {
-    if (p == MtxBase::ZEROS) return DataBlock::makeBlank(mrows*ncols);
+    if (p == WithPolicies::ZEROS) return DataBlock::makeBlank(mrows*ncols);
     return DataBlock::makeUninitialized(mrows*ncols);
   }
 }
 
-MtxBase::MtxBase(int mrows, int ncols, InitPolicy p) :
+template <class Data>
+MtxBase<Data>::MtxBase(int mrows, int ncols, InitPolicy p) :
   MtxSpecs(mrows, ncols),
   data_(newDataBlock(mrows, ncols, p))
 {}
 
 #ifdef HAVE_MATLAB
-MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
+template <class Data>
+MtxBase<Data>::MtxBase(mxArray* a, StoragePolicy s) :
   MtxSpecs(mxGetM(a), mxGetN(a)),
   data_(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
@@ -433,7 +437,8 @@ MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
 }
 
-MtxBase::MtxBase(const mxArray* a, StoragePolicy s) :
+template <class Data>
+MtxBase<Data>::MtxBase(const mxArray* a, StoragePolicy s) :
   MtxSpecs(mxGetM(a), mxGetN(a)),
   data_(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
@@ -446,7 +451,10 @@ MtxBase::MtxBase(const mxArray* a, StoragePolicy s) :
 }
 #endif
 
-MtxBase::~MtxBase() {}
+template <class Data>
+MtxBase<Data>::~MtxBase() {}
+
+template class MtxBase<DataHolder>;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -463,7 +471,7 @@ const Mtx& Mtx::emptyMtx()
 }
 
 Mtx::Mtx(const Slice& s) :
-  MtxBase(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY)
+  Base(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY)
 {
   if (s.itsStride != 1)
     throw Util::Error("can't initialize Mtx from Slice with stride != 1");

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 14:54:45 2002
+// written: Mon Mar  4 14:59:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -431,12 +431,13 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
+template <class Data>
 class MtxBase : public MtxSpecs, public WithPolicies
 {
 private:
   MtxBase& operator=(const MtxBase& other); // not allowed
 
-  DataHolder data_;
+  Data data_;
 
 protected:
   void swap(MtxBase& other);
@@ -539,9 +540,11 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Mtx : public MtxBase
+class Mtx : public MtxBase<DataHolder>
 {
 public:
+
+  typedef MtxBase<DataHolder> Base;
 
   //
   // Constructors + Conversion
@@ -549,28 +552,28 @@ public:
 
   static const Mtx& emptyMtx();
 
-  Mtx(mxArray* a, StoragePolicy s = COPY) : MtxBase(a, s) {}
+  Mtx(mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  Mtx(const mxArray* a, StoragePolicy s = COPY) : MtxBase(a, s) {}
+  Mtx(const mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
 
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    MtxBase(data, mrows, ncols, s) {}
+    Base(data, mrows, ncols, s) {}
 
   Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
-    MtxBase(mrows, ncols, p) {}
+    Base(mrows, ncols, p) {}
 
   Mtx(const Slice& s);
 
-  Mtx(const Mtx& other) : MtxBase(other) {}
+  Mtx(const Mtx& other) : Base(other) {}
 
   virtual ~Mtx();
 
   Mtx& operator=(const Mtx& other)
   {
     Mtx temp(other);
-    MtxBase::swap(temp);
+    Base::swap(temp);
     return *this;
   }
 
@@ -778,16 +781,16 @@ public:
   //
 
   double& at(int row, int col)
-    { return MtxBase::at_nc(offsetFromStart(row, col)); }
+    { return Base::at_nc(offsetFromStart(row, col)); }
 
   const double& at(int row, int col) const
-    { return MtxBase::at(offsetFromStart(row, col)); }
+    { return Base::at(offsetFromStart(row, col)); }
 
   double& at(int elem)
-    { return MtxBase::at_nc(offsetFromStart(elem)); }
+    { return Base::at_nc(offsetFromStart(elem)); }
 
   const double& at(int elem) const
-    { return MtxBase::at(offsetFromStart(elem)); }
+    { return Base::at(offsetFromStart(elem)); }
 
   bool sameSize(const Mtx& x) const
   { return (mrows() == x.mrows()) && (ncols() == x.ncols()); }
@@ -852,7 +855,7 @@ public:
   double mean() const { return sum() / nelems(); }
 
   template <class F>
-  void applyF(F func) { MtxBase::applyFF(func); }
+  void applyF(F func) { Base::applyFF(func); }
 
   struct Setter
   {
