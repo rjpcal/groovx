@@ -62,7 +62,7 @@ public:
     itsRenderer(renderer),
     itsFilename(),
     itsRasterPos(0.0, 0.0),
-    itsZoom(0.0, 0.0),
+    itsZoom(1.0, 1.0),
     itsUsingZoom(false),
     itsContrastFlip(false),
     itsVerticalFlip(false),
@@ -304,16 +304,16 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   // Get screen coordinates for the lower left corner
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-  Point<int> screen_point = canvas.getScreenFromWorld(itsImpl->itsRasterPos);
+  Point<int> bottom_left = canvas.getScreenFromWorld(itsImpl->itsRasterPos);
 
   // Move the point to the upper right corner
-  screen_point += size() * itsImpl->getZoom();
+  Point<int> top_right = bottom_left + (size() * itsImpl->getZoom());
 
   Rect<double> bbox;
 
   bbox.setBottomLeft(itsImpl->itsRasterPos);
 
-  bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
+  bbox.setTopRight(canvas.getWorldFromScreen(top_right));
 
   return bbox;
 }
