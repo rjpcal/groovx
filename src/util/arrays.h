@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Mon Jan 21 14:26:05 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ struct static_block
 
   void swap(static_block& other)
     {
-      Util::swap(*this, other);
+      Util::swap2(*this, other);
     }
 
   T data[N];
@@ -200,8 +200,8 @@ public:
 
   void swap(fixed_block& other)
     {
-      Util::swap(N,    other.N);
-      Util::swap(data, other.data);
+      Util::swap2(N,    other.N);
+      Util::swap2(data, other.data);
     }
 
 private:
@@ -270,7 +270,7 @@ public:
   bool unique() const                { return *pn == 1; }  // never throws
 
   void swap(shared_array<T>& other)  // never throws
-  { Util::swap(px,other.px); Util::swap(pn,other.pn); }
+  { Util::swap2(px,other.px); Util::swap2(pn,other.pn); }
 
 private:
 
@@ -364,8 +364,8 @@ public:
 
   void swap(dynamic_block& other)
     {
-      Util::swap(N,    other.N);
-      Util::swap(data, other.data);
+      Util::swap2(N,    other.N);
+      Util::swap2(data, other.data);
     }
 
   void resize(size_type new_size)

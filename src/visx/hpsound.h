@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,8 +82,8 @@ public:
     {
       itsFilename.swap(other.itsFilename);
 
-      Util::swap(itsSBucket,    other.itsSBucket);
-      Util::swap(itsPlayParams, other.itsPlayParams);
+      Util::swap2(itsSBucket,    other.itsSBucket);
+      Util::swap2(itsPlayParams, other.itsPlayParams);
     }
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Jan 18 16:06:54 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ namespace Util
     private:
       void swap(Handle& other)
       {
-        Util::swap(itsMaster, other.itsMaster);
+        Util::swap2(itsMaster, other.itsMaster);
       }
 
       T* itsMaster;
@@ -359,8 +359,8 @@ private:
 
     void swap(WeakHandle& other)
     {
-      Util::swap(itsMaster, other.itsMaster);
-      Util::swap(itsCounts, other.itsCounts);
+      Util::swap2(itsMaster, other.itsMaster);
+      Util::swap2(itsCounts, other.itsCounts);
     }
 
     // In order to avoid storing a separate bool indicating whether we

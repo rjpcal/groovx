@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Mon Jan 21 14:25:18 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -328,7 +328,7 @@ public:
 
   void swap(dlink_list& other)
     {
-      Util::swap(the_node, other.the_node);
+      Util::swap2(the_node, other.the_node);
     }
 };
 

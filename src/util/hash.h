@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Mon Jan 21 14:27:07 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -358,7 +358,7 @@ public:
   void swap(hash_array& other)
     {
       buckets.swap(other.buckets);
-      Util::swap(entry_count, other.entry_count);
+      Util::swap2(entry_count, other.entry_count);
     }
 
   void resize(size_type new_size_hint)

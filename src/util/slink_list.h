@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Jan 21 14:27:29 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ public:
 
   void swap(slink_list& other)
     {
-      Util::swap(head, other.head);
+      Util::swap2(head, other.head);
     }
 
 private:

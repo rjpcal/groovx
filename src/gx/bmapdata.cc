@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Fri Jan 18 16:07:07 2002
+// written: Sat Feb  2 16:43:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ void Gfx::BmapData::swap(Gfx::BmapData& other)
 {
 DOTRACE("Gfx::BmapData::swap");
 
-  Util::swap(itsImpl, other.itsImpl);
+  Util::swap2(itsImpl, other.itsImpl);
 }
 
 void Gfx::BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const

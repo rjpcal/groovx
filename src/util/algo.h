@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jul 22 23:31:48 2001
-// written: Fri Jan 18 16:06:55 2002
+// written: Sat Feb  2 16:44:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,16 +29,13 @@ namespace Util
     { return Util::max(lower, Util::min(upper, val)); }
 
   template <class T>
-  inline void swap(T& t1, T& t2)
+  inline void swap2(T& t1, T& t2)
   {
     T t2_copy = t2;
     t2 = t1;
     t1 = t2_copy;
   }
 }
-
-using Util::max;
-using Util::min;
 
 static const char vcid_algo_h[] = "$Header$";
 #endif // !ALGO_H_DEFINED

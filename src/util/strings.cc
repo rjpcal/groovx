@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Fri Jan 18 16:07:04 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,9 +53,9 @@ void string_rep::realloc(std::size_t capacity)
 
   new_rep.append(this->itsLength, this->itsText);
 
-  Util::swap(itsCapacity, new_rep.itsCapacity);
-  Util::swap(itsLength, new_rep.itsLength);
-  Util::swap(itsText, new_rep.itsText);
+  Util::swap2(itsCapacity, new_rep.itsCapacity);
+  Util::swap2(itsLength, new_rep.itsLength);
+  Util::swap2(itsText, new_rep.itsText);
 }
 
 void string_rep::reserve(std::size_t capacity)
@@ -223,7 +223,7 @@ void fstring::swap(fstring& other)
 {
 DOTRACE("fstring::swap");
 
-  Util::swap(itsRep, other.itsRep);
+  Util::swap2(itsRep, other.itsRep);
 }
 
 fstring& fstring::operator=(const char* text)

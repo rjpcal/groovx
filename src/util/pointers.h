@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Sun Aug 26 08:53:51 2001
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -214,8 +214,8 @@ public:
 
   void swap(shared_ptr<T>& other) throw()
     {
-      Util::swap(px, other.px);
-      Util::swap(pn, other.pn);
+      Util::swap2(px, other.px);
+      Util::swap2(pn, other.pn);
     }
 
 private:

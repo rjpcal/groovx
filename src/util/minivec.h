@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Fri Jan 18 16:06:55 2002
+// written: Sat Feb  2 16:44:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -370,9 +370,9 @@ public:
 
   void swap (minivec<T>& x)
     {
-      Util::swap(start, x.start);
-      Util::swap(finish, x.finish);
-      Util::swap(end_of_storage, x.end_of_storage);
+      Util::swap2(start, x.start);
+      Util::swap2(finish, x.finish);
+      Util::swap2(end_of_storage, x.end_of_storage);
     }
 
   iterator erase (iterator position)
