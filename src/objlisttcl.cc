@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Thu Oct 14 15:56:28 1999
+// written: Tue Nov 30 17:08:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ protected:
 		throw TclError(string("error opening file: ") + filename);
 	 }
 
-	 for (int i = 0; i < objids.size(); ++i) {
+	 for (size_t i = 0; i < objids.size(); ++i) {
 		ObjList::theObjList().getCheckedPtr(objids[i])->
 		  serialize(ofs, IO::TYPENAME | IO::BASES);
 		ofs << endl;

@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Tue Oct 12 09:50:42 1999
+// written: Tue Nov 30 17:03:41 1999
 // $Id$
 //
 //
@@ -375,7 +375,7 @@ protected:
 		C* item = itsPkg->getCItemFromId(ids[0]);
 		returnVal( item->get(itsPropInfo.property) );
 		
-		for (int i = 1; i < ids.size(); ++i) {
+		for (size_t i = 1; i < ids.size(); ++i) {
 		  C* item = itsPkg->getCItemFromId(ids[i]);
 		  lappendVal( item->get(itsPropInfo.property) );
 		}
@@ -392,9 +392,9 @@ protected:
  		  getValSequenceFromArg(itsValArgn, back_inserter(vals));
 		}
 
-		int max_valn = vals.size()-1;
+		size_t max_valn = vals.size()-1;
 
-		for (int i = 0, valn = 0; i < ids.size(); ++i) {
+		for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
 		  C* item = itsPkg->getCItemFromId(ids[i]);
  		  item->set(itsPropInfo.property, vals[valn]);
 		  if (valn < max_valn) ++valn;
@@ -434,7 +434,7 @@ protected:
 		
 		vector<Tcl_Obj*> elements;
 		
-		for (int i = 0; i < vec.size(); ++i) {
+		for (size_t i = 0; i < vec.size(); ++i) {
 		  vector<Tcl_Obj*> sub_elements;
 		  
 		  // property name
@@ -489,7 +489,7 @@ template <class C>
 void CTclIoItemPkg<C>::declareAllProperties() {
   const vector<PropertyInfo<C> >& pinfos = C::getPropertyInfos();
 
-  for (int i = 0; i < pinfos.size(); ++i) {
+  for (size_t i = 0; i < pinfos.size(); ++i) {
 	 declareProperty(pinfos[i]);
   }
 

@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Tue Aug  3 13:25:02 1999
+// written: Tue Nov 30 17:07:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ protected:
 
 	 int repeat = (objc() < 4)  ?  1 : getIntFromArg(3);
 
- 	 for (int i = 0; i < ids.size(); ++i) {
+ 	 for (size_t i = 0; i < ids.size(); ++i) {
  		block->addTrial(ids[i], repeat);
  	 }
 	 returnVoid();

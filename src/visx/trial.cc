@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Nov 23 15:28:04 1999
+// written: Tue Nov 30 17:12:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ DOTRACE("Trial::serialize");
   }
   // itsResponses
   os << itsResponses.size() << sep << sep;
-  for (int i = 0; i < itsResponses.size(); ++i) {
+  for (size_t i = 0; i < itsResponses.size(); ++i) {
 	 os << itsResponses[i].val() << sep << itsResponses[i].msec() << sep;
   }
   // itsType
@@ -213,7 +213,7 @@ int Trial::charCount() const {
 				  + gCharCount<int>(ii->posid) + 2);
   }
   count += (gCharCount<int>(itsResponses.size()) + 2);
-  for (int i = 0; i < itsResponses.size(); ++i) {
+  for (size_t i = 0; i < itsResponses.size(); ++i) {
 	 count += (gCharCount<int>(itsResponses[i].val()) + 1
 				  + gCharCount<int>(itsResponses[i].msec()) + 2);
   }
@@ -309,11 +309,11 @@ DOTRACE("Trial::description");
   
   ost << "trial type == " << trialType()
       << ", objs ==";
-  for (int i = 0; i < itsIdPairs.size(); ++i) {
+  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     ost << " " << itsIdPairs[i].objid;
   }
   ost << ", categories ==";
-  for (int j = 0; j < itsIdPairs.size(); ++j) {
+  for (size_t j = 0; j < itsIdPairs.size(); ++j) {
     DebugEvalNL(itsIdPairs[j].objid);
 
     GrObj* obj = ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
@@ -381,7 +381,7 @@ DOTRACE("Trial::clearResponses");
 
 void Trial::trDraw() const {
 DOTRACE("Trial::trDraw");
-  for (int i = 0; i < itsIdPairs.size(); ++i) {
+  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     Position* pos =
@@ -403,7 +403,7 @@ DOTRACE("Trial::trDraw");
 
 void Trial::trUndraw() const {
 DOTRACE("Trial::trUndraw");
-  for (int i = 0; i < itsIdPairs.size(); ++i) {
+  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     Position* pos =

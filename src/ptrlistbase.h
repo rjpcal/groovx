@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 01:25:33 1999
+// written: Tue Nov 30 17:07:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ public:
   ///
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
-	 for (int i = 0; i < itsVec.size(); ++i) {
+	 for (size_t i = 0; i < itsVec.size(); ++i) {
 		if (isValidId(i)) 
 		  *itr++ = i;
 	 }
