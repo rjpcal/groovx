@@ -34,14 +34,15 @@ set ::SCREENHEIGHT [winfo screenheight .]
 if { $::SCREENWIDTH < 1500 || $::SCREENHEIGHT < 1100 } {
     set ::FONT {-size 10}
     set ::SCALE_WIDTH 5
-    set ::MAINPANE_WIDTH 600
-    set ::MAINPANE_HEIGHT 700
+    set ::PANE_FRACTION 70
 } else {
-    set ::FONT {-size 12}
-    set ::SCALE_WIDTH 15
-    set ::MAINPANE_WIDTH 900
-    set ::MAINPANE_WIDTH 1000
+    set ::FONT {-family Helvetica -size -10}
+    set ::SCALE_WIDTH 10
+    set ::PANE_FRACTION 70
 }
+
+set ::MAINPANE_WIDTH [expr int(0.55 * $::SCREENWIDTH)]
+set ::MAINPANE_HEIGHT [expr int(0.93 * $::SCREENHEIGHT)]
 
 set ::TOGLET_WIDTH [expr $::SCREENWIDTH - $::MAINPANE_WIDTH - 50]
 
@@ -578,7 +579,7 @@ itcl::class Editor {
 
 	$itsPanes show $objtype
 
-	$itsPanes fraction 75 25
+	$itsPanes fraction $::PANE_FRACTION [expr 100-$::PANE_FRACTION]
     }
 
     private method runCmd {} {
