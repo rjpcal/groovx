@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Jul 18 11:23:30 2001
+// written: Sun Jul 22 18:07:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,7 @@ namespace Tcl
 /**
  *
  * \c Tcl::PkgBase is a class more managing groups of related \c
- * TclCmd's. It can be used alone, or as a base class for Tcl
- * packages. It provides several facilities:
+ * Tcl::TclCmd's. It provides several facilities:
  *
  *   -- stores a list of \c TclCmd's, and ensures that these are
  *   properly destroyed upon exit from Tcl
@@ -48,8 +47,7 @@ namespace Tcl
  *   makePkgCmdName())
  *
  *   -- provides a \c protected function \c addCommand() that derived
- *   classes can use (most likely in their constructors) to add \c
- *   TclCmd's to the package
+ *   classes can use to add \c Tcl::TclCmd's to the package
  *
  **/
 ///////////////////////////////////////////////////////////////////////
