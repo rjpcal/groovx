@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:00:26 2001
-// written: Sun Aug  5 20:09:28 2001
+// written: Sun Aug  5 20:13:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,12 @@
 namespace Util
 {
   template <class T>
+  const char* num2str(const T& x);
+
+  template <class T>
   struct Convert
   {
-    static const char* toString(const T& x);
+    static const char* toString(const T& x) { return num2str(x); }
   };
 
   template <>
