@@ -15,6 +15,10 @@
    objects, trials, observer responses, etc.) are implemented in C++,
    and are exposed through a Tcl interface as scriptable objects.
 
+   Note that sitting beside this README file is a TUTORIAL file which
+   should contain some useful examples of how to get started actually
+   using the program.
+
 2. Organization of the files
 
    The src/ directory contains subdirectories for each of the various
