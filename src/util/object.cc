@@ -74,7 +74,7 @@ DOTRACE("Util::Object::objTypename");
 fstring Util::Object::uniqueName() const
 {
 DOTRACE("Util::Object::uniqueName");
-  return fstring(objTypename(), "-", id());
+  return fstring(objTypename(), "(", id(), ")");
 }
 
 static const char vcid_object_cc[] = "$Header$";
