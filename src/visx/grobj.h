@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Sep 21 15:10:49 1999
+// written: Tue Sep 21 16:09:33 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -125,6 +125,7 @@ public:
   // or false if no bounding box is available. The default
   // implementation provided by GrObj returns false.
 
+public:
   bool getMaintainAsepct() const;
   double getWidth() const;
   double getHeight() const;
