@@ -107,25 +107,25 @@ test "PositionTcl-Pos::stringify" "error on bad posid" {
 test "PositionTcl-Pos::stringify" "error on non-integral posid" {
     Pos::stringify 1.5
 } {expected integer but got "1\.5"}
-	 
+
 ### Pos::typeCmd ###
-test "PositionTcl-Pos::type" "args" {
-    Pos::type
-} {wrong \# args: should be "Pos::type item_id"}
-test "PositionTcl-Pos::type" "normal use on Position" { 
+test "PositionTcl-IO::type" "args" {
+    IO::type
+} {wrong \# args: should be "IO::type item_id"}
+test "PositionTcl-IO::type" "normal use on Position" { 
 	 set f [Pos::Pos]
-	 Pos::type $f
+	 IO::type $f
 } {Position}
-test "PositionTcl-Pos::type" "normal use on Jitter" {
+test "PositionTcl-IO::type" "normal use on Jitter" {
 	 set f [Jitter::Jitter]
-	 Pos::type $f
+	 IO::type $f
 } {Jitter}
-test "PositionTcl-Pos::type" "error on too small posid" {
-	 Pos::type -1
-} {Pos::type: attempt to access invalid id '.*' in}
-test "PositionTcl-Pos::type" "error on too large" {
-	 Pos::type 10000
-} {Pos::type: attempt to access invalid id '.*' in}
+test "PositionTcl-IO::type" "error on too small posid" {
+	 IO::type -1
+} {IO::type: attempt to access invalid id '.*' in}
+test "PositionTcl-IO::type" "error on too large" {
+	 IO::type 10000
+} {IO::type: attempt to access invalid id '.*' in}
 
 PosList::reset
 unset pos

@@ -71,7 +71,7 @@ proc testSubclass { package {subclass "GrObj"} {objid -1} } {
 proc testTypeCmd { objname } {
 	 upvar $objname this
 
-	 set cmdname "GrObj::type"
+	 set cmdname "IO::type"
 	 set usage "wrong \# args: should be \"$cmdname item_id\""
 	 set testname "${this(package)}-${cmdname}"
 
@@ -84,9 +84,6 @@ proc testTypeCmd { objname } {
 		  "} {$usage}
 		  eval ::test $testname {"error from bad objid"} {"
 		      $cmdname -1
-		  "} {"${cmdname}: attempt to access invalid id '.*' in"}
-		  eval ::test $testname {"error from too large objid"} {"
-		      $cmdname 10000
 		  "} {"${cmdname}: attempt to access invalid id '.*' in"}
 	 }
 
