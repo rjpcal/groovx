@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Tue Oct 31 12:03:15 2000
+// written: Thu Nov  2 17:15:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,10 +83,10 @@ public:
   bool equals(const string_literal& other) const;
   bool equals(const fixed_string& other) const;
 
-  char* data() { return itsText; }
+  char* data() { itsRep = itsRep->makeUnique(); return itsRep->itsText; }
 
-  const char* c_str() const { return itsText; }
-  unsigned int length() const { return itsLength; }
+  const char* c_str() const { return itsRep->itsText; }
+  unsigned int length() const { return itsRep->itsLength; }
   bool empty() const { return (length() == 0); }
 
   //
@@ -94,22 +94,63 @@ public:
   //
 
   bool operator<(const char* other) const
-	 { return strcmp(itsText, other) < 0; }
+	 { return strcmp(itsRep->itsText, other) < 0; }
 
   template <class StrType>
   bool operator<(const StrType& other) const
-	 { return strcmp(itsText, other.c_str()) < 0; }
+	 {
+		// Check if we are pointing to the same string
+		if (itsRep->itsText == other.c_str()) return false;
+		// ...otherwise do a string compare
+		return strcmp(itsRep->itsText, other.c_str()) < 0;
+	 }
 
   bool operator>(const char* other) const
-	 { return strcmp(this->c_str(), other) < 0; }
+	 { return strcmp(itsRep->itsText, other) < 0; }
 
   template <class StrType>
   bool operator>(const StrType& other) const
-	 { return strcmp(this->c_str(), other.c_str()) > 0; }
+	 {
+		// Check if we are pointing to the same string
+		if (itsRep->itsText == other.c_str()) return false;
+		// ...otherwise do a string compare
+		return strcmp(itsRep->itsText, other.c_str()) > 0;
+	 }
 
 private:
-  char* itsText;
-  unsigned int itsLength;
+  class Rep {
+  private:
+	 Rep(const Rep& other); // not implemented
+	 Rep& operator=(const Rep& other); // not implemented
+
+	 Rep(const char* text);
+	 ~Rep();
+
+	 int itsRefCount;
+
+  public:
+	 static Rep* make(const char* text) { return new Rep(text); }
+
+	 void incrRefCount() { ++itsRefCount; }
+	 void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+
+	 Rep* makeUnique()
+		{
+		  if (itsRefCount <= 1) return this;
+
+		  // It is safe to do this without worring about 'delete-ing
+		  // this', since the previous statement tells us that
+		  // itsRefCount is at least 2
+		  decrRefCount();
+
+		  return make(itsText);
+		}
+
+	 char* itsText;
+	 unsigned int itsLength;
+  };
+
+  Rep* itsRep;
 };
 
 
