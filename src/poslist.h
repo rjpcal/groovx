@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Thu May 27 20:03:59 1999
+// written: Fri Jun 11 21:53:55 1999
 // $Id$
 //
 // This file defines PosList, a singleton class whose instance is a
@@ -32,7 +32,7 @@ class Position;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class PosList : private PtrList<Position> {
+class PosList : private PtrList<Position>, public virtual IO {
 private:
   typedef PtrList<Position> Base;
 
