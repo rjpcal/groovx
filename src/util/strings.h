@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Tue Jul  2 13:08:15 2002
+// written: Wed Jul 31 15:46:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,6 +163,23 @@ public:
     do_init(part1); append(part2, part3, part4, part5);
   }
 
+  template <class T1, class T2, class T3, class T4, class T5, class T6>
+  fstring(const T1& part1, const T2& part2, const T3& part3,
+          const T4& part4, const T5& part5, const T6& part6) :
+    itsRep(0)
+  {
+    do_init(part1); append(part2, part3, part4, part5, part6);
+  }
+
+  template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+  fstring(const T1& part1, const T2& part2, const T3& part3,
+          const T4& part4, const T5& part5, const T6& part6,
+          const T7& part7) :
+    itsRep(0)
+  {
+    do_init(part1); append(part2, part3, part4, part5, part6, part7);
+  }
+
   void swap(fstring& other);
 
   fstring& operator=(const char* text);
@@ -240,6 +257,24 @@ public:
   {
     do_append(part1); do_append(part2); do_append(part3);
     do_append(part4); return *this;
+  }
+
+  /// Append additional text to the fstring.
+  template <class T1, class T2, class T3, class T4, class T5>
+  fstring& append(const T1& part1, const T2& part2, const T3& part3,
+                  const T4& part4, const T5& part5)
+  {
+    do_append(part1); do_append(part2); do_append(part3);
+    do_append(part4); do_append(part5); return *this;
+  }
+
+  /// Append additional text to the fstring.
+  template <class T1, class T2, class T3, class T4, class T5, class T6>
+  fstring& append(const T1& part1, const T2& part2, const T3& part3,
+                  const T4& part4, const T5& part5, const T6& part6)
+  {
+    do_append(part1); do_append(part2); do_append(part3);
+    do_append(part4); do_append(part5); do_append(part6); return *this;
   }
 
   //
