@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Mar 13 14:43:10 2000
+// written: Mon Mar 13 19:58:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "sound.h"
 #include "soundlist.h"
 #include "reader.h"
+#include "response.h"
 #include "tclevalcmd.h"
 #include "tclobjlock.h"
 #include "util/arrays.h"
@@ -181,9 +182,6 @@ private:
 		while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
 		  { /* Empty loop body */ }
 	 }
-
-  bool isValidResponse(int response) const throw()
-	 { return (response != ResponseHandler::INVALID_RESPONSE); }
 
   // We take the last character of the string as the response, in
   // order to handle the numeric keypad, where the keysysms are
@@ -636,19 +634,23 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 void EventResponseHdlr::Impl::handleResponse(const char* keysym) const {
 DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
+  Response theResponse; 
+
+  theResponse.setMsec(getExpt().edElapsedTrialMsec());
+
   getExpt().edResponseSeen();
 
   ignore(&(getExpt()));
 
-  int response = getRespFromKeysym(keysym);       DebugEvalNL(response);
+  theResponse.setVal(getRespFromKeysym(keysym)); DebugEvalNL(theResponse.val());
 
-  if ( !isValidResponse(response) ) {
+  if ( !theResponse.isValid() ) {
 	 getExpt().edAbortTrial();
   }
 
   else {
-	 getExpt().edProcessResponse(response);
-	 if (itsUseFeedback) { feedback(response); }
+	 getExpt().edProcessResponse(theResponse);
+	 if (itsUseFeedback) { feedback(theResponse.val()); }
   }
 }
 
