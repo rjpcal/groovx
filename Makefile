@@ -293,18 +293,17 @@ VISX_OBJS := \
 
 APPWORKS_OBJS := \
 	$(OBJ)/application.do \
-	$(OBJ)/factory.do \
-	$(OBJ)/iditemutils.do \
-	$(OBJ)/ioptrlist.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
 	$(OBJ)/io/asciistreamreader.do \
 	$(OBJ)/io/asciistreamwriter.do \
+	$(OBJ)/io/iditemutils.do \
 	$(OBJ)/io/io.do \
 	$(OBJ)/io/iofactory.do \
 	$(OBJ)/io/iolegacy.do \
 	$(OBJ)/io/iomap.do \
 	$(OBJ)/io/iomgr.do \
+	$(OBJ)/io/ioptrlist.do \
 	$(OBJ)/io/property.do \
 	$(OBJ)/io/reader.do \
 	$(OBJ)/io/readutils.do \
@@ -315,6 +314,7 @@ APPWORKS_OBJS := \
 	$(OBJ)/util/debug.do \
 	$(OBJ)/util/error.do \
 	$(OBJ)/util/errorhandler.do \
+	$(OBJ)/util/factory.do \
 	$(OBJ)/util/observable.do \
 	$(OBJ)/util/observer.do \
 	$(OBJ)/util/ptrhandle.do \
@@ -326,6 +326,7 @@ APPWORKS_OBJS := \
 
 
 TCLWORKS_OBJS := \
+	$(OBJ)/tcl/iotcl.do \
 	$(OBJ)/tcl/listpkg.do \
 	$(OBJ)/tcl/misctcl.do \
 	$(OBJ)/tcl/stringifycmd.do \
@@ -493,23 +494,9 @@ $(PROD_LIBAPPWORKS):   $(PROD_APPWORKS_OBJS)
 #
 #-------------------------------------------------------------------------
 
-ALL_SOURCES := \
-	$(wildcard $(SRC)/*.cc) \
-	$(wildcard $(SRC)/gwt/*.cc) \
-	$(wildcard $(SRC)/io/*.cc) \
-	$(wildcard $(SRC)/system/*.cc) \
-	$(wildcard $(SRC)/tcl/*.cc) \
-	$(wildcard $(SRC)/togl/*.cc) \
-	$(wildcard $(SRC)/util/*.cc) \
+ALL_SOURCES := $(wildcard $(SRC)/*.cc) $(wildcard $(SRC)/[a-z]*/*.cc)
 
-ALL_HEADERS := \
-	$(SRC)/*.h \
-	$(SRC)/gwt/*.h \
-	$(SRC)/io/*.h \
-	$(SRC)/system/*.h \
-	$(SRC)/tcl/*.h \
-	$(SRC)/togl/*.h \
-	$(SRC)/util/*.h
+ALL_HEADERS := $(SRC)/*.h $(SRC)/[a-z]*/*.h
 
 DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
@@ -517,21 +504,6 @@ ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 MAKEDEP := $(SCRIPTS)/makedep
 
 DEPOPTIONS := $(CPP_DEFINES) $(MY_INCLUDE_PATH) $(MAKEDEP_INCLUDES)
-
-$(DEP)/%.d : $(SRC)/%.cc
-	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $< > $@
-
-# One way to handle the dependencies is to have a separate .d file for
-# each source, but this can be very inefficient since it requires
-# 'makedepend' to reopen and reparse the system headers for each
-# source file... this means that remaking all the .d files for the
-# project can take on the order of 60 seconds. So, for now, we do not
-# '#include $(ALL_DEPS)'; instead we make and include one huge
-# dependency file for the whole project, named 'alldepends', and this
-# must be done every time the makefile is run. However this is quite
-# fast, and can be done in under 5 seconds.
-
-#include $(ALL_DEPS)
 
 DEP_FILE := $(DEP)/alldepends
 
@@ -561,9 +533,6 @@ clean_do: clean
 # Make clean, and also remove all production object files
 clean_o: clean
 	rm -f $(OBJ)/*.o $(OBJ)/*/*.o $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
-
-clean_dep: clean
-	rm $(DEP)/*.d $(DEP)/util/*.d $(DEP)/tcl/*.d
 
 # Generate TAGS file based on all source files
 $(SRC)/TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
@@ -605,4 +574,3 @@ ldeps: cdeps
 
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
-
