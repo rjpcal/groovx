@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu May 11 20:25:41 2000
+// written: Mon May 15 18:56:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -428,12 +428,6 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
 	 DebugEvalNL((void*) itsTclCmdToken);
 	 Tcl_DeleteCommandFromToken(itsInterp, itsTclCmdToken);
   }
-
-  // (The matching Tcl_Preserve() call is in setInterp(), rather than in
-  // the constructor).
-  if (itsInterp != 0) {
-	 Tcl_Release(itsInterp);
-  }
 }
 
 void EventResponseHdlr::Impl::serialize(ostream &os, IO::IOFlag flag) const {
@@ -554,7 +548,6 @@ DOTRACE("EventResponseHdlr::Impl::setInterp");
 									const_cast<char*>(itsPrivateCmdName.c_str()),
 									privateHandleCmd, static_cast<ClientData>(this),
 									(Tcl_CmdDeleteProc *) NULL);
-	 Tcl_Preserve(itsInterp);
   }
 }
 
