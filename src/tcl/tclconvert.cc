@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Thu Jul 12 14:12:03 2001
+// written: Thu Jul 12 17:05:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -365,6 +365,14 @@ Tcl_Obj* Tcl::toTcl<Tcl::List>(Tcl::List listObj)
 DOTRACE("Tcl::toTcl<const Value&>");
 
   return listObj.asObj();
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<Tcl::TclValue>(Tcl::TclValue val)
+{
+DOTRACE("Tcl::toTcl<Tcl::TclValue>");
+
+  return val.getObj();
 }
 
 template <>
