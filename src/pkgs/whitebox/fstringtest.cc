@@ -162,8 +162,16 @@ DOTRACE("Fstringtest_Init");
   PKG_RETURN;
 }
 
-// Need this to avoid dyld errors on Mac OS X
+// Need these to avoid dyld errors on Mac OS X
 extern "C" int Fstringtest_SafeInit(Tcl_Interp*) { return 1; }
+
+extern "C" int Fstringtest_Unload(Tcl_Interp*, int /*flags*/)
+{
+DOTRACE("Fstringtest_Unload");
+  return Tcl::Pkg::unloadDestroy(interp, "Fstringtest");
+}
+
+extern "C" int Fstringtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
 static const char vcid_fstringtest_cc[] = "$Header$";
 #endif // !FSTRINGTEST_CC_DEFINED

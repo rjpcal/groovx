@@ -130,8 +130,16 @@ DOTRACE("Vectwotest_Init");
   PKG_RETURN;
 }
 
-// Need this to avoid dyld errors on Mac OS X
+// Need these to avoid dyld errors on Mac OS X
 extern "C" int Vectwotest_SafeInit(Tcl_Interp*) { return 1; }
+
+extern "C" int Vectwotest_Unload(Tcl_Interp* interp, int /*flags*/)
+{
+DOTRACE("Vectwotest_Unload");
+  return Tcl::Pkg::unloadDestroy(interp, "Vectwotest");
+}
+
+extern "C" int Vectwotest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
 static const char vcid_vectwotest_cc[] = "$Header$";
 #endif // !VECTWOTEST_CC_DEFINED

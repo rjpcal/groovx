@@ -163,6 +163,10 @@ DOTRACE("Tcl::Pkg::Pkg");
 Tcl::Pkg::~Pkg() throw()
 {
 DOTRACE("Tcl::Pkg::~Pkg");
+
+  // To avoid double-deletion:
+  Tcl_DeleteExitHandler(&Impl::exitHandler, static_cast<ClientData>(this));
+
   delete rep;
 }
 
@@ -170,6 +174,19 @@ void Tcl::Pkg::onExit(ExitCallback* callback)
 {
 DOTRACE("Tcl::Pkg::onExit");
   rep->exitCallback = callback;
+}
+
+int Tcl::Pkg::unloadDestroy(Tcl_Interp* interp, const char* pkgname)
+{
+DOTRACE("Tcl::Pkg::unloadDestroy");
+  Tcl::Pkg* pkg = Tcl::Pkg::lookup(interp, pkgname);
+  if (pkg != 0)
+    {
+      delete pkg;
+      return 1; // TCL_OK
+    }
+  // else...
+  return 0; // TCL_ERROR
 }
 
 Tcl::Pkg* Tcl::Pkg::lookup(Tcl_Interp* interp, const char* name,

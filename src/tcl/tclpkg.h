@@ -90,6 +90,14 @@ public:
       Tcl interpreter and all associated objects are destroyed.) */
   void onExit(ExitCallback* callback);
 
+  /// Looks up the Tcl::Pkg associated with pkgname, and destroys it.
+  /** This is intended to be called from pkg_Unload procedures called by
+      Tcl when a dynamic library is unloaded. The return value can be
+      returned as the return value of the pkg_Unload procedure; it will be
+      TCL_OK (1) if the Tcl::Pkg was successfully found and destroyed and
+      TCL_ERROR (0) otherwise. */
+  static int unloadDestroy(Tcl_Interp* interp, const char* pkgname);
+
   /// Find a package given its name and version.
   /** If the package is not already loaded, this function will attempt to
       "require" the package. If a null pointer is passed to version (the
