@@ -15,6 +15,22 @@
   This means including a "real" bytesPerPixel functionality, that
   doesn't just assume rgba==24 or rgba==32.
 
+  Problem areas:
+
+  GLCanvas::isRgba()
+  GLCanvas::isColorIndex()
+    --> GlxOpts::rgbaFlag
+
+  GLCanvas::bitsPerPixel()
+    --> GlWindowInterface::bitsPerPixel()
+        --> GlxWrapper::bitsPerPixel()
+	    --> XVisualInfo::depth
+        --> AglWrapper::bitsPerPixel()
+	    --> aglDescribePixelFormat()
+
+  Need BmapData to be able to handle bitsperpixel values other than 8
+  and 24.
+
 * (17-Jul-2004) Clean according to the way of UNIX!
 
   more code reuse!!! less reinventing-the-wheel!!!
