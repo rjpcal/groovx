@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Thu May 10 12:04:44 2001
+// written: Sat May 19 21:09:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,6 +135,10 @@ template class TPtrField<double>;
 ///////////////////////////////////////////////////////////////////////
 
 class FieldMap::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   typedef std::map<fixed_string, const FieldInfo*> MapType;
   MapType itsNameMap;
