@@ -53,7 +53,7 @@ endif
 
 PROJECT = $(HOME)/sorcery/grsh
 SRC := src
-DEP := ./dep
+DEP := ./dep/$(ARCH)
 OBJ := ./obj/$(PLATFORM)
 LIB := $(PROJECT)/lib/$(PLATFORM)
 LOG := ./logs
@@ -340,6 +340,7 @@ TCLWORKS_OBJS := \
 	$(OBJ)/tcl/tclitempkg.do \
 	$(OBJ)/tcl/tclitempkgbase.do \
 	$(OBJ)/tcl/tclpkg.do \
+	$(OBJ)/tcl/tclutil.do \
 	$(OBJ)/tcl/tclvalue.do \
 	$(OBJ)/tcl/tclveccmds.do \
 	$(OBJ)/tcl/tracertcl.do \
@@ -537,10 +538,12 @@ $(DEP)/%.d : $(SRC)/%.cc
 
 #include $(ALL_DEPS)
 
-alldepends: $(ALL_SOURCES) $(ALL_HEADERS)
+DEP_FILE := $(DEP)/alldepends
+
+$(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
 	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $(ALL_SOURCES) > $@
 
-include alldepends
+include $(DEP_FILE)
 
 #-------------------------------------------------------------------------
 #
