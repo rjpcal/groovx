@@ -1,0 +1,426 @@
+***************************************************
+***                                             ***
+*** BOTTOM of stack for items completed in 2000 ***
+***                                             ***
+***************************************************
+
+(19-Jul-1999, nix) Eureka! The right way to build various experiments
+is now suddenly clear (!) There must be an abstract base class
+ExptBuilder that will have pretty much one function, build() (but how
+does it get the params that it needs?). This abstract class can have a
+Tcl interface associated with it. Subclasses will know how to build
+specific types of experiments, such as triads expt's, pairs exp'ts,
+facefinder expt's, etc. In particular, one subclass could do all its
+work in Tcl by just taking a Tcl script as its constructor argument,
+and Tcl_Eval'ing that script in its build() function. This class would
+still allow great flexibility in expt-building since Tcl build scripts
+could be changed without recompiling; however the framework allows
+more stablebuild scripts to be migrated to their own subclasses on the
+C++-side. But wait... what advantage is there to having all this stuff
+in virtual functions? i.e., where is the client that will benefit by
+not having to know the concrete class of some ExptBuilder?
+
+(18-Oct-1999, done) How to handle base classes in the Reader/Writer
+interface? We can can just call Base::readFrom() or Base::writeTo(),
+which will generally work, unless a base class and subclass happen to
+share private data members with the same name. Perhaps we could avoid
+this by giving a fully scoped attribute name (i.e. 'Face::noseLength')
+when storing or retrieving attributes. The disadvantage of this is
+that it is only a convention, and as such it could be ignored on
+purpose or by oversight. [Later] Now I have a readBaseClass() and
+writeBaseClass() that are able to handle a base class's attributes
+inline, inside a nested {} pair.
+
+(19-Oct-1999, done) Just realized how testing should work for
+base-class functionality... the base class test package should provide
+a way to run all of the base class tests on a particular subclass. In
+Tcl, this should just be a matter of providing the subclass name to a
+proc, for example 'IO::testSubClass FixPt'. This can eliminate a lot
+of duplicated script code, and allows all subclasses to benefit when
+new base class tests are written. OK, I just realized also that it
+would make sense to put the test procedures for a class inside that
+class's Tcl namespace... this can be wholly at the script-level
+without having to add any C code.
+
+(5-Nov-1999, done) AsciiStreamReader should gracefully report an invalid
+attribute name, perhaps by throwing a NoSuchAttributeError.
+
+(30-Nov-1999, done 7-Jan-2000) What to do about 'control reaching end
+of non-void function' in ExptDriver::Impl::block(), responseHdlr(),
+and timingHdlr()? Probably the best is to eliminate the error checking
+in block(), responseHdlr(), and timingHdlr(), and require that the
+id's be checked with assertIds() before these functions are called. We
+can add an Assert to this effect inside block(), etc. Done.
+
+(6-Dec-1999, done) Replace GrObj::getScreenFromWorld etc. with
+Canvas::... in BitmapRep (how to get the Canvas& arguments where they
+need to be?)
+
+(11-Jan-2000, done 11-Jan-2000) Need to have quick Tcl access to the
+current trial id. Probably an Expt::currentTrial command for Tcl.
+
+(14-Jan-2000, done 14-Jan-2000) There is some weird problem with
+TlistWidget, perhaps?  Ah yes... first, we didn't initialize
+itsCurTrial and itsVisibility in the constructor, and second of all,
+we didn't check for itsVisibility in safeDrawTrial() before attempting
+to draw.
+
+(14-Jan-2000, done 14-Jan-2000) Need to flesh out the Pipe class that
+has been introduced in Bitmap::loadPbmGzCmd(). OK, this is done so now
+the Pipe class itself provides access to an fstream& that can be used
+to read/write from the Pipe as appropriate.
+
+(6-Dec-1999, done 16-Jan-2000) Do we also want Canvas& arguments in
+the bounding box call chain? I added a Canvas& argument to
+GrObj::getBoundingBox(), but not to the protected
+GrObj::grGetBoundingBox()... the only subclass that needed a Canvas in
+order to implement this function was Bitmap(Rep), so for this
+implementation I just retrieve the Canvas from the
+Application->Experiment->Canvas call chain. Thus GLCanvas::theCanvas()
+is eliminated.
+
+(11-Jan-2000, done 20-Jan-2000) Need a way to defer loading of pbm
+files from when Bitmap's are deserialized until when they are first
+used. This would require a way to for the files to be loaded on
+demand. It would have the added benefit that in an fMRI script, we
+would only have to load the bitmaps that are actually used in the
+experiment. Done using BmapData to handle the actuall caching process.
+
+(8-Feb-2000, done 8-Feb-2000) Should think about doing dynamic tracing
+generically, perhaps with a mixin base class. This is basically done
+by using Util::Tracer.
+
+(27-Jun-1999, done 13-Mar-2000) Maybe Response's want to be first
+class objects rather than lowly int's? This would allow the class to
+have a static member InvalidResponse... would allow subclassing of
+responses... would allow different ResponseHandler's to work with
+different Response subclasses... Interestingly, the creation of a
+Response requires input from both ResponseHandler (for the semantic
+value) and from the TimingHandler (for the response time) --> trying
+to implement Response would probably raise some important design
+issues. Actually, I think I do have a simple Response struct that is
+just local to Trial's right now.
+
+(3-Mar-2000, done 20-Mar-2000) Ugh. I just now realized how much time
+it takes to compile STL headers. In the past, I didn't try to
+forward-declare STL templates since their declarations can vary by
+compiler... but I now realized (duh!) that (by using an extra level of
+indirection) I can use a "stringfwd.h" file that correctly declares
+string, depending on the compiler. On a tiny test file, this reduces
+the compilation time from about 15 sec to only 1-2 sec !!! So I've
+created "stringfwd.h" and "vectorfwd.h", and I'm going to try to use
+these exclusively when a declaration is needed in one of my header
+files. One issue is that of default arguments... these cannot be used
+unless the full class definition is known. This particularly affects
+uses like 'const string& s = ""', but I think the problem can be
+easily circumvented by removing the default argument, and adding
+instead an overloaded function version with no string
+argument. [8-Mar-2000] Well, now, a week later, the compile time for a
+full debug build of the project has been cut nearly in half, and
+"stringfwd.h" is no longer needed at all!  I've found that most
+interfaces can use 'const char*' just fine, and let clients and
+implementors deal with more complex string classes if they so
+choose. Only 12 translation units now depend on <string>, and 21 on
+<vector>. [20-Mar-2000] Decreased those numbers even more now... only
+5 translation units depend on <vector>, 9 on <string>, 3 on <map>, 1
+on <list>, and 1 on <set>.
+
+(21-Mar-2000, done 22-Mar-2000) We need some sort of versioning
+facility for Reader/Writer. OK, but how do we handle versioning
+separately for base classes? Right now, base classes are handled ad
+hoc, with subclasses calling their superclass's writeTo() method from
+within their own writeTo() method. OK, I've added readBaseClass() and
+writeBaseClass() methods to Reader and Writer. This allows base
+classes to be written inline, with a bracketed block of the base
+class's attributes treated as a single attribute for its containing
+class. (In principle, we could now handle owned/contained objects in
+this same way). In order to correctly write base classes, we first
+needed some way to pass the base part of an object as an IO* while
+ensuring that the correct overrides of readFrom()/writeTo() would be
+called (i.e. avoid calling the most fully derived version of these
+functions). This can be done with the IOProxy template, which holds a
+pointer to an object of class C, and forwards all IO functions to the
+C:: versions of those functions. So we can pass an IOProxy<Base>* to
+the readBaseClass() and writeBaseClass() functions in order to achieve
+the desired effect. Another structural change was to allow
+AsciiStreamReader to maintain a stack of attribute maps, so that we
+can represent arbitrarily deep nesting hierarchies of objects. This
+involved just changing itsAttribs from an AttribMap to a
+slink_list<AttribMap>. Finally, we needed to allow the string enders
+('^') that occur inside a base class's attribute to be ignored when
+the end class's attributes are being read... to do this we introduce
+the convention that {}'s protect ^'s, so in order to have reached the
+end of an attribute, we must see a '^' and be at brace level 0. This
+in turn required that {}'s be treated specially--they must be escaped
+with '\' when occurring within an attribute string. 
+
+(28-Mar-2000, done 29-Mar-2000) Need to implement SerialRh (response
+handler). This will share a lot of code with EventResponseHdlr, so we
+probably need to create a base class for both such as FeedbackRh that
+will handle the inputResponseMap and the feedbackMap but will delegate
+attend() and ignore() via abstract functions. ... [Later] OK, so in
+fact we don't need a new ResponseHandler class; instead we can add a
+new event source that translates incoming serial port characters into
+window-system events via Tk_QueueWindowEvent.
+
+
+========================================================================
+| GOAL -- done 11 May 2000
+| 
+| Goal: ExptDriver should not have to know anything about TimingHdlr's
+| or ResponseHdlr's. Done!
+| 
+| To do this, as usual we should try an easy migration path.
+| 1) make Trial an abstract class, and move current Trial implementation
+| into a derived class
+| 2) set up abstract Trial functions to take on behavior of Experiment
+| functions. At first, ExptDriver can just forward stuff to Trial so
+| that we don't have to redefine the handlers' interfaces right away.
+| 
+| (24-Jan-2000) More flexible behavior by putting trial behavior in
+| Trial rather than in ExptDriver.
+| 
+| (9-May-2000) I think I may finally have my hooks into this
+| problem. Branched off behavior from edBeginTrial() into
+| edDoTrial(). Added Trial::trDoTrial(), which is called from
+| edBeginTrial(). For now, trDoTrial() just calls right back to
+| edDoTrial(), mimicking the previous behavior exactly. But... now we
+| can slowly migrate the behavior from edDoTrial() back into
+| trDoTrial(). Then this process can be iterated for the other
+| Experiment:: functions. Eventually this will allow us to create a
+| Trial base class with these new functions as virtual functions, so
+| that we can create Trial's with very different behaviors (e.g. a
+| ball-tracking trial, or a delayed-match trial).
+| 
+| (12-May-2000) The way things look now, there is fairly clean
+| separation amongst the different experiment participants. Basically:
+| 
+|                                 ___________________________________
+|                                |                                   |
+|                                V                                   |
+|  Experiment ---> Block ---> Trial ---> Response     Timing       Trial
+|             <---       <---       <--- Handler   +->Handler ---> Event
+|                                |                 |                 
+|                                |_________________|
+| 
+| Importantly, this means that we can treat ResponseHandler, TimingHdlr,
+| and TrialEvents as implementation details of Trial... so that can now
+| substitute in other Trial subclasses with different behaviors.
++-----------------------------------------------------------------------
+
+(15-Jan-2000, done) I think the executable shouldn't have to depend on
+the shared libraries, since these should be able to be change without
+forcing a relink on the main executable. ... Yes, but we need to be
+able to account for whether static or dynamic linking is being used.
+
+
+(16-Dec-1999, done) Try to fix ToglConfig::loadFonti on irix by
+switching fontnumber to a long before casting to char*. Tried
+it... didn't work.
+
+(done 19-Sep-2000) Want an indirection for auxiliary files so that the
+complete pathname is not hard-coded. To do this kind of added
+indirection (e.g. for now-hard-coded sound files, etc.), we can
+require an environment variable like GRSH_LIB_DIR to point to the root
+of a directory tree that will hold all auxiliary files for grsh
+programs. This can include the current contents of face/faces_triads,
+and face/audio, plus probably some other new goodies.
+
+(note 22-Sep-2000) Looks like I now have a new architecture to target:
+irix6 w/ MIPSpro compiler. The MIPSpro compiler looks to be fairly
+C++-standard compliant. It would be nice to have a separate build for
+that compiler... might be faster, also might allow c++ exceptions in
+shared libraries. But, this is something to try only after I get
+everything compiling cleanly with g++ again (following the upgrade to
+irix6.5 from irix6.3).
+
+(done 23-Sep-2000) OK, I figured out from a post on DejaNews that the
+problem on the sgi is that sgi's libGLU was implemented partially in
+c++ and compiled with MIPSpro; due to incompatible ABI's, this code
+cannot be linked with code compiled by g++. So, I have two options: 1)
+compile a version of OpenGL using g++, or 2) figure out how to get
+MIPSpro to compile my code. For option 2), I guess I can just use
+reinterpret_cast (which I'll define as SGI_IDIOT_CAST)... and keep my
+fingers crossed. ... OK, now I've done five hours of porting so that
+everything compiles/links/runs ok on curie using MIPSpro. I have a few
+bugs to wrinkle out however. And, this effort has provided an impetus
+for becoming more standard-compliant, with regard to the 'std'
+namespace, and the new IOStreams library.
+
+(done 23-Sep-2000) Bug on the new irix build of grsh--the application
+crashes on exit (something in EventResponseHandler::ignore()). OK,
+this is due to the fact that ignore() tries to use itsWidget, but the
+ToglConfig has already been destroyed by the time we try to use
+it. This is fixed by adding forgetWidget() and forgetTrial(), which
+set the pointers to null at the end of a trial or when the experiment
+is halted.
+
+(done 24-Sep-2000) Hey... something good came out of this whole sgi mess:
+now I can use shared libraries on the sgi, since MIPSpro allows
+exceptions to work correctly with shared libraries.
+
+(23-Sep-2000, done 24-Sep-2000) Bugs on the new irix build of grsh:
+togl widget won't run in rgba mode. ... OK, this was due to the hack
+that I had set up to force colormaps to be set, in which the colormap
+was set recursively up the window parent chain. But, trying to set a
+colormap on an rgba window makes no sense, and this is what was
+causing the BadMatch error. In any case, that hack is not needed in
+rgba mode, so I added a check for the widget's itsRgbaFlag before we
+start setting colormaps.
+
+(nix 24-Sep-2000) make startup procedures figure out if X server is
+available
+
+(done 25-Sep-2000) Added a miscellaneous "log" string property to
+ExptDriver, so that we can append human-readable messages to it as
+needed.
+
+========================================================================
+| GOAL -- done 29-Sep-2000
+|   Refactoring the legacy IO interface (serialize/deserialize)
+|
+| (29-Sep-2000) This is done enough for now. I now have a LegacyReader and
+| LegacyWriter that have an augmented interface that allows client
+| classes to emulate the format of their old serialize/deserialize
+| functions within the readFrom/writeTo context. It's a bit clunky, but
+| I think it's much better than before, and there is still room for more
+| streamlining if it becomes important in the future.
+| 
+| (16-May-2000) Phase out the old serialize()/deserialize() interface.
+| 
+| (25-Sep-2000) The main obstacle here is that loadFaces() and
+| loadObjects() rely on the old interface. These will continue to be
+| needed for some time, in order to read older files. But, this only
+| requires the old interface for the GrObj hierarchy. In fact, we only
+| need Face, MorphyFace, and Fish. Plus, we need to arrange a new way to
+| store object databases that works with the new IO interface.
+| 
+| Basically we need an Adapter class that can be used to implement the
+| old IO interface using the functionality defined by the new
+| interface. This would work by trapping all calls to
+| serialize/deserialize in the IoObject base class. This class would
+| then construct an appropriate adapter, and call readFrom or writeTo
+| using this adapter.
+| 
+| The problem that we face is that in the new IO interface, the
+| Reader/Writer does the parsing, but in the old IO interface, the
+| individual classes do the parsing, and they don't always do it the
+| same way. Maybe I have a plan for a big refactoring job:
+| 
+| 1-done) rename current serialize/deserialize/charCount to legacySrlz,
+|    legacyDesrlz, and legacyCharCount.
+| 
+| 2-done) Make legacy functions protected, and force callers to call
+|    through a new serialize/deserialize interface. For now IoObject
+|    just forwards onto the protected functions.
+| 
+| 3-done) Change parameter list of legacy functions to take a Reader* or
+|    Writer*.
+| 
+| 4-done) Have ioSerialize() and ioDeserialize() pass a LegacyReader* or
+|    LegacyWriter* to the legacy functions. These classes will allow
+|    access to the stream and the IOFlag. Add downcasts to the
+|    implementation of the legacy functions.
+| 
+| 5-done) Eliminate legacyCharCount(), and replace it with a slow, but
+|    generic implementation in ioCharCount().
+| 
+| 6-done) Eliminate the stream and flag parameters from the legacy functions.
+| 
+| 7-done) Use writeTypename() rather than checking IO::TYPENAME.
+| 
+| 8-done) Remove the stream and IOFlag parameters from the legacy functions.
+| 
+| 9-done) Reimplement the legacy functions in terms of the LegacyReader and
+|    LegacyWriter interfaces.
+| 
+| 	9a-done) Do the easy stuff--the basic types char, int, bool, double.
+| 	9b-done) Do the harder stuff--Value types.
+| 	9c-done) Let LegacyReader and LegacyWriter handle the typenames
+| 	9c-done) Do the harder stuff--sequences.
+| 	9d-done) Do the harder stuff--strings.
+| 
+| 10-done) Ditch unused IoMgr::newIO() functions.
+| 
+| 11-done) Remove unneeded #include <iostream.h>'s.
+| 
+| 12-done) Eliminate the ioSerialize wrapper functions, and have former
+|    clients just instantiate a LegacyReader/LegacyWriter on their own.
+| 
+| 13-done) Remove legacySrlz and legacyDesrlz from IoObject. Subclasses
+| 	can continue to implement these as private functions, and then
+| 	branch into them (if necessary) from writeTo and readFrom based on
+| 	a dynamic_cast. This way, classes can keep their legacy code
+| 	separate from current code, but clients see only a uniform IO
+| 	interface via readFrom() and writeTo().
+| 
+| 14-done) Remove the now unnecessary dynamic_cast's from legacySrlz() and
+| 	legacyDesrlz() implementations.
+| 
+| 15-done) Remove legacyIoTypename()? I think this might be everywhere the
+| 	same as ioTypename().
+| 
+| 16-done) Add readLegacyVersion() to LegacyReader to handle the '@1' format
+| 	used by Face and MorphyFace.
+| 
+| (13-Apr-2000) Encapsulate the old serialize/deserialize functions by
+| wrapping them in a special Reader/Writer pair, that has specialized
+| functions for each of the currently existing types. If an unsupported
+| type is encountered, we throw an exception. Come to think of it, we'd
+| only have to support a Reader, since we don't want to do any writing
+| if this format is to become obsolete. This would have the advantage of
+| moving all the ugly old code out of the current components.
++-----------------------------------------------------------------------
+
+(21-Sep-2000, done 2-Oct-2000) Arghh! More event-loop problems. Get a
+core dump after Ctrl-C (which halts experiment), followed by Ctrl-Q
+(which rehalts, then attempts to write data and quit). This triggers
+an assertion itsCanvas != 0 in Trial::getCanvas, called from
+Trial::trUndrawTrial(). OK... I'm getting to the bottom of
+this. Basically, the first halt triggers Block::abortTrial(), from
+Trial::trAbortTrial(), from Trial::trHaltExpt(). This changes the
+current trial in the Block. Then, on the next halt, the new current
+Trial attempts to trUndraw(), but this fails since the trial has never
+been begun, and so itsCanvas == 0. TO SOLVE THIS: I think that
+trHaltExpt() doesn't really need to trAbortTrial()... it would be fine
+to just leave the current trial as is; when the experiment resumes
+we'll start off with the same current trial. But this may miss the
+underlying problem... that somehow it is possible to have a "current"
+trial in a corrupted state. We could introduce a state flag into the
+Trial, so that it ignores all requests until it has been officially
+begun. Yes-- this would work. I think the gang-of-four State pattern
+would be good here. Have an abstract TrialState class with virtual
+functions that match the main trial events. These functions take a
+Trial&, and the concrete subclasses take the appropriate action for
+that state. The instances of TrialState are themselves stateless (they
+have no member data, only behavior), so we can store static instances
+of the various states within the TrialState base class. But, maybe we
+should work with Block also to ensure that its 'current' trial is not
+adjusted until that trial is going to be begun. ... Well, I added an
+'itsState' member to Trial::Impl. Right now this is just an enum, and
+all of the action functions check for (itsState == INACTIVE) before
+doing anything. More elegant would be to have itsState be a pointer to
+an implementation of TrialState, so that the (itsState == INACTIVE)
+checks would be just handled by virtual function dispatch. However,
+that solution is probably overkill right now, although I'll keep it in
+mind for the future. But, I still think my solution smells like
+defensive programming... I should perhaps still take a look at Block
+to see if it can be restructured in a better way so that it doesn't
+call action functions on inactive trials.
+
+(nix 2-Oct-2000) Idea for a generic ExptElement interface that would
+apply to Experiment, Block, Trial, ResponseHandler, and
+TimingHandler. In the pseudo chain-of-command hierarchy that describes
+experiment control, this would allow children to know their parents
+only as ExperimentElements, while parents would know the specific type
+of their children. This would help reduce coupling. In particular,
+TrialEvents would only have to know Trial's as ExptElem's in order to
+implement callbacks. Maybe this doesn't work... it looks like
+ExptElement would be nearly identical to TrialBase.
+
+(done 21-Sep-2000) Got some cool breakpoint-type things working with
+Util::Trace. Basically, we can call Util::Trace::setMode() so that we
+break into a command-line on trace-in and trace-out. Then this
+command-line can either reset the mode to RUN, or continue
+stepping. We could easily allow step-in or step-over as well, by
+putting a limit on the stack depth for which tracing is allowed.
