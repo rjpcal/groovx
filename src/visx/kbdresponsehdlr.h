@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Wed Jul 21 15:53:02 1999
+// written: Thu Jul 22 10:02:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,20 +94,20 @@ private:
   string itsFeedbackPairs;
   bool itsUseFeedback;
 
-  struct Condition_Feedback {
-  	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res);
-	 Condition_Feedback(const Condition_Feedback& rhs);
-	 Condition_Feedback& operator=(const Condition_Feedback& rhs);
-
-  	 TclObjPtr condition;
-  	 TclObjPtr result; 
-  };
 //    struct Condition_Feedback {
-//  	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-//  		condition(cond), result(res) {}		
-//  	 Tcl_Obj* condition;
-//  	 Tcl_Obj* result; 
+//    	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res);
+//  	 Condition_Feedback(const Condition_Feedback& rhs);
+//  	 Condition_Feedback& operator=(const Condition_Feedback& rhs);
+
+//    	 TclObjPtr condition;
+//    	 TclObjPtr result; 
 //    };
+  struct Condition_Feedback {
+  	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
+  		condition(cond), result(res) {}		
+  	 Tcl_Obj* condition;
+  	 Tcl_Obj* result; 
+  };
   mutable vector<Condition_Feedback> itsFeedbacks;
 
   mutable const char* itsRawResponse;
