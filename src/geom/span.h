@@ -52,6 +52,10 @@ namespace geom
         throw rutz::error("invalid span (lo > hi)", SRC_POS);
     }
 
+    /// Explicit conversion constructor.
+    template <class U>
+    explicit span(const span<U>& other) : lo(other.lo), hi(other.hi) {}
+
     static span<V> from_any(V v1, V v2)
     {
       return span<V>(rutz::min(v1, v2), rutz::max(v1, v2));

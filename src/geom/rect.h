@@ -60,6 +60,10 @@ namespace geom
 
     rect(const rect<V>& i) : xx(i.xx), yy(i.yy) {}
 
+    template <class U>
+    explicit rect(const rect<U>& other) :
+      xx(other.x_span()), yy(other.y_span()) {}
+
     rect<V>& operator=(const rect<V>& i)
     { xx = i.xx; yy = i.yy; return *this; }
 
