@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Thu Jul 12 13:23:44 2001
+// written: Mon Jul 16 12:15:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,7 @@
 #ifndef HOOKTCL_CC_DEFINED
 #define HOOKTCL_CC_DEFINED
 
-#include "tcl/tclcmd.h"
-#include "tcl/tclpkg.h"
-
-#include <tcl.h>
+#include "tcl/tclitempkg.h"
 
 #define LOCAL_TRACE
 #include "util/trace.h"
@@ -29,7 +26,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   size_t TOTAL = 0;
 }
 
@@ -48,27 +46,9 @@ void operator delete(void* space)
 }
 #endif
 
-class MemUsageCmd : public Tcl::TclCmd {
-public:
-  MemUsageCmd(Tcl_Interp* interp) :
-    Tcl::TclCmd(interp, "memUsage", "", 1, 1, false) {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    ctx.setResult(TOTAL);
-  }
-};
-
-#include "tcl/tclveccmd.h"
-
-class HookCmd : public Tcl::VecCmd {
-public:
-  HookCmd(Tcl_Interp* interp) :
-    Tcl::VecCmd(interp, "hook", "", 1, 0, 10000, false) {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+namespace HookTcl
+{
+  void hook(Tcl::Context& ctx)
   {
     int isum = 0;
 
@@ -79,16 +59,17 @@ protected:
 
     ctx.setResult(isum);
   }
-};
 
+  size_t memUsage() { return TOTAL; }
+}
 
-class HookPkg : public Tcl::TclPkg {
+class HookPkg : public Tcl::TclItemPkg {
 public:
   HookPkg(Tcl_Interp* interp) :
-    Tcl::TclPkg(interp, "Hook", "$Revision$")
+    Tcl::TclItemPkg(interp, "Hook", "$Revision$")
   {
-    addCommand(new HookCmd(interp));
-    addCommand(new MemUsageCmd(interp));
+    defVecRaw( HookTcl::hook, "hook", "variable", 2 );
+    def( HookTcl::memUsage, "memUsage", 0 );
   }
 };
 
