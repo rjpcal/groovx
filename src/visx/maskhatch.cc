@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Sun Nov  3 13:38:57 2002
+// written: Wed Nov 13 12:54:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "visx/grobjaligner.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -61,7 +63,7 @@ DOTRACE("MaskHatch::MaskHatch");
 
   setFieldMap(MaskHatch::classFields());
 
-  setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+  setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
   dbgEval(3, getAlignmentMode());
 }
 

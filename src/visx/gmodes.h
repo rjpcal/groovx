@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 14:48:32 2001
-// written: Fri Jan 18 16:06:53 2002
+// written: Wed Nov 13 12:43:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,44 +97,6 @@ namespace Gmodes
   /** In this mode, the width and height of the object may be set
       independently of each other. */
   const ScalingMode FREE_SCALING             = 3;
-
-
-
-  ///////////////////////////////////////////////////////////////////////
-  //
-  // Alignment modes
-  //
-  ///////////////////////////////////////////////////////////////////////
-
-  /** The symbolic constants of type \c AlignmentMode provide several
-      ways to position an object with respect to the OpenGL coordinate
-      system. The current mode can be get/set with \c
-      getAlignmentMode() and \c setAlignmentMode(). The default
-      alignment mode is \c NATIVE_ALIGNMENT. */
-  typedef int AlignmentMode;
-
-  /** This is the default alignment mode. No additional translations
-      are performed beyond whatever happens in the subclass's \c
-      grRender() implementation. */
-  const AlignmentMode NATIVE_ALIGNMENT      = 1;
-
-  /// The center of the object is aligned with OpenGL's origin.
-  const AlignmentMode CENTER_ON_CENTER      = 2;
-
-  /// The NorthWest corner of the object is aligned with OpenGL's origin.
-  const AlignmentMode NW_ON_CENTER          = 3;
-
-  /// The NorthEast corner of the object is aligned with OpenGL's origin.
-  const AlignmentMode NE_ON_CENTER          = 4;
-
-  /// The SouthWest corner of the object is aligned with OpenGL's origin.
-  const AlignmentMode SW_ON_CENTER          = 5;
-
-  /// The SouthEast corner of the object is aligned with OpenGL's origin.
-  const AlignmentMode SE_ON_CENTER          = 6;
-
-  /// The location of the center of the object may be set arbitrarily.
-  const AlignmentMode ARBITRARY_ON_CENTER   = 7;
 }
 
 static const char vcid_gmodes_h[] = "$Header$";

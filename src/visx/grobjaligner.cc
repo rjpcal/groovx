@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Wed Nov 13 12:37:53 2002
+// written: Wed Nov 13 12:46:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,12 +23,40 @@
 
 #include "util/trace.h"
 
+GrObjAligner::GrObjAligner(Util::SoftRef<GxNode> child) :
+  GxBin(child),
+  itsMode(NATIVE_ALIGNMENT),
+  itsCenter(0.0, 0.0)
+{}
+
+Gfx::Vec2<double> GrObjAligner::getCenter(const Gfx::Rect<double>& bounds) const
+{
+DOTRACE("GrObjAligner::getCenter");
+  switch (itsMode)
+    {
+    case CENTER_ON_CENTER:
+      return Gfx::Vec2<double>(0.0, 0.0);
+    case NW_ON_CENTER:
+      return Gfx::Vec2<double>(bounds.width()/2.0, -bounds.height()/2.0);
+    case NE_ON_CENTER:
+      return Gfx::Vec2<double>(-bounds.width()/2.0, -bounds.height()/2.0);
+    case SW_ON_CENTER:
+      return Gfx::Vec2<double>(bounds.width()/2.0, bounds.height()/2.0);
+    case SE_ON_CENTER:
+      return Gfx::Vec2<double>(-bounds.width()/2.0, bounds.height()/2.0);
+    case ARBITRARY_ON_CENTER:
+      return itsCenter;
+    }
+  // NATIVE_ALIGNMENT
+  return bounds.center();
+}
+
 void GrObjAligner::doAlignment(Gfx::Canvas& canvas,
                                const Gfx::Rect<double>& native) const
 {
 DOTRACE("GrObjAligner::doAlignment");
 
-  if (Gmodes::NATIVE_ALIGNMENT == itsMode) return;
+  if (NATIVE_ALIGNMENT == itsMode) return;
 
   // This indicates where the center of the object will go
   Gfx::Vec2<double> center = getCenter(native);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Sep 11 14:57:37 2002
+// written: Wed Nov 13 12:56:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@
 #include "util/error.h"
 #include "util/ref.h"
 
+#include "visx/gmodes.h"
+#include "visx/grobjaligner.h"
 #include "visx/gtext.h"
 #include "visx/position.h"
 #include "visx/grobj.h"
@@ -80,7 +82,7 @@ namespace
 
         Ref<GrObj> obj(objids[i]);
 
-        obj->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+        obj->setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
         obj->setBBVisibility(true);
         obj->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
         obj->setMaxDimension(0.8);
@@ -101,7 +103,7 @@ namespace
           {
             Ref<Gtext> label(Gtext::make());
             label->setText(fstring(objids[i]));
-            label->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+            label->setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
             label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Wed Nov 13 12:55:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@
 #include "io/writer.h"
 
 #include "util/algo.h"
+
+#include "visx/gmodes.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
