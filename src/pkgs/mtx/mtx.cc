@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri May 11 16:32:21 2001
+// written: Mon Jul  9 17:51:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,27 +29,27 @@
 
 namespace {
   inline void domemswap(double* buf1, double* buf2,
-								double* tempbuf1, size_t nelems)
+                        double* tempbuf1, size_t nelems)
   {
-	 memcpy(tempbuf1, buf1, nelems*sizeof(double));
-	 memcpy(buf1, buf2, nelems*sizeof(double));
-	 memcpy(buf2, tempbuf1, nelems*sizeof(double));
+    memcpy(tempbuf1, buf1, nelems*sizeof(double));
+    memcpy(buf1, buf2, nelems*sizeof(double));
+    memcpy(buf2, tempbuf1, nelems*sizeof(double));
   }
 
   inline void memswap(double* buf1, double* buf2, size_t nelems)
   {
-	 const size_t BUFSIZE = 512;
-	 if (nelems <= BUFSIZE)
-		{
-		  static double swapbuffer[BUFSIZE];
-		  domemswap(buf1, buf2, swapbuffer, nelems);
-		}
-	 else
-		{
-		  double* tempbuf1 = new double[nelems];
-		  domemswap(buf1, buf2, tempbuf1, nelems);
-		  delete [] tempbuf1;
-		}
+    const size_t BUFSIZE = 512;
+    if (nelems <= BUFSIZE)
+      {
+        static double swapbuffer[BUFSIZE];
+        domemswap(buf1, buf2, swapbuffer, nelems);
+      }
+    else
+      {
+        double* tempbuf1 = new double[nelems];
+        domemswap(buf1, buf2, tempbuf1, nelems);
+        delete [] tempbuf1;
+      }
   }
 }
 
@@ -80,7 +80,7 @@ void RC::leq(const void* x, const void* lim, const char* f, int ln)
 }
 
 void RC::inHalfOpen(const void* x, const void* llim, const void* ulim,
-						  const char* f, int ln)
+                    const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
   else raiseException("inHalfOpen: pointer range error", f, ln);
@@ -115,7 +115,7 @@ void Slice::print() const
 {
   for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
     {
-		cout << setw(12) << setprecision(7) << double(*iter);
+      cout << setw(12) << setprecision(7) << double(*iter);
     }
   cout << endl;
 }
@@ -124,13 +124,13 @@ namespace
 {
   struct ValIndex
   {
-	 static int counter;
-	 double val;
-	 int index;
+    static int counter;
+    double val;
+    int index;
 
-	 ValIndex(double v) : val(v), index(counter++) {}
+    ValIndex(double v) : val(v), index(counter++) {}
 
-	 bool operator<(const ValIndex& v2) const { return val < v2.val; }
+    bool operator<(const ValIndex& v2) const { return val < v2.val; }
   };
 
   int ValIndex::counter = 0;
@@ -149,7 +149,7 @@ DOTRACE("Slice::getSortOrder");
   Mtx index(1,nelems());
 
   for (int i = 0; i < nelems(); ++i)
-	 index.at(0,i) = buf[i].index;
+    index.at(0,i) = buf[i].index;
 
   return index;
 }
@@ -164,12 +164,12 @@ void Slice::reorder(const Mtx& index_)
   Mtx index(index_.asColumn());
 
   if (index.mrows() != nelems())
-	 throw ErrorWithMsg("dimension mismatch in Slice::reorder");
+    throw ErrorWithMsg("dimension mismatch in Slice::reorder");
 
   Mtx neworder(nelems(), 1);
 
   for (int i = 0; i < nelems(); ++i)
-	 neworder.at(i,0) = (*this)[int(index.at(i,0))];
+    neworder.at(i,0) = (*this)[int(index.at(i,0))];
 
   *this = neworder.column(0);
 }
@@ -177,7 +177,7 @@ void Slice::reorder(const Mtx& index_)
 Slice& Slice::operator+=(const Slice& other)
 {
   if (itsNelems != other.nelems())
-	 throw ErrorWithMsg("dimension mismatch in Slice::operator+=");
+    throw ErrorWithMsg("dimension mismatch in Slice::operator+=");
 
   MtxConstIter rhs = other.begin();
 
@@ -190,7 +190,7 @@ Slice& Slice::operator+=(const Slice& other)
 Slice& Slice::operator-=(const Slice& other)
 {
   if (itsNelems != other.nelems())
-	 throw ErrorWithMsg("dimension mismatch in Slice::operator-=");
+    throw ErrorWithMsg("dimension mismatch in Slice::operator-=");
 
   MtxConstIter rhs = other.begin();
 
@@ -249,7 +249,7 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
   if (!mxIsNumeric(a))
-	 throw ErrorWithMsg("cannot construct a Mtx with a non-numeric mxArray");
+    throw ErrorWithMsg("cannot construct a Mtx with a non-numeric mxArray");
 
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
@@ -257,13 +257,13 @@ Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 void Mtx::MtxImpl::reshape(int mr, int nc)
 {
   if (mr*nc != nelems())
-	 {
-		ErrorWithMsg err("dimension mismatch in Mtx::reshape: ");
-		err.appendMsg("current nelems == ").appendNumber(nelems())
-		  .appendMsg("; requested ")
-		  .appendNumber(mr).appendMsg("x").appendNumber(nc);
-		throw err;
-	 }
+    {
+      ErrorWithMsg err("dimension mismatch in Mtx::reshape: ");
+      err.appendMsg("current nelems == ").appendNumber(nelems())
+        .appendMsg("; requested ")
+        .appendNumber(mr).appendMsg("x").appendNumber(nc);
+      throw err;
+    }
 
   if (rowstride_ != mrows_)
     throw ErrorWithMsg("reshape not allowed for submatrix");
@@ -300,10 +300,10 @@ void Mtx::MtxImpl::selectColumnRange(int c, int nc)
 void Mtx::MtxImpl::makeUnique()
 {
   if ( !datablock_->isUnique() )
-	 {
-		DOTRACE("Mtx::MtxImpl::makeUnique");
-  		DataBlock::makeUnique(datablock_);
-	 }
+    {
+      DOTRACE("Mtx::MtxImpl::makeUnique");
+      DataBlock::makeUnique(datablock_);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -325,6 +325,8 @@ Mtx::Mtx(const Slice& s) :
     throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
 }
 
+Mtx::~Mtx() {}
+
 mxArray* Mtx::makeMxArray() const
 {
   mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
@@ -343,12 +345,12 @@ void Mtx::resize(int mrowsNew, int ncolsNew)
 {
 DOTRACE("Mtx::resize");
   if (mrows() == mrowsNew && ncols() == ncolsNew)
-	 return;
+    return;
   else
-	 {
-		MtxImpl newImpl(mrowsNew, ncolsNew);
-		this->itsImpl.swap(newImpl);
-	 }
+    {
+      MtxImpl newImpl(mrowsNew, ncolsNew);
+      this->itsImpl.swap(newImpl);
+    }
 }
 
 void Mtx::print() const
@@ -357,8 +359,8 @@ void Mtx::print() const
   for(int i = 0; i < mrows(); ++i)
     {
       for(int j = 0; j < ncols(); ++j)
-		  cout << setw(12) << setprecision(7) << at(i,j);
-		cout << '\n';
+        cout << setw(12) << setprecision(7) << at(i,j);
+      cout << '\n';
     }
   cout << '\n';
 }
@@ -383,12 +385,12 @@ void Mtx::reorderRows(const Mtx& index_)
   Mtx index(index_.asColumn());
 
   if (index.mrows() != mrows())
-	 throw ErrorWithMsg("dimension mismatch in Mtx::reorderRows");
+    throw ErrorWithMsg("dimension mismatch in Mtx::reorderRows");
 
   Mtx neworder(mrows(), ncols());
 
   for (int r = 0; r < mrows(); ++r)
-	 neworder.row(r) = row(int(index.at(r,0)));
+    neworder.row(r) = row(int(index.at(r,0)));
 
   *this = neworder;
 }
@@ -407,12 +409,12 @@ void Mtx::reorderColumns(const Mtx& index_)
   Mtx index(index_.asColumn());
 
   if (index.mrows() != ncols())
-	 throw ErrorWithMsg("dimension mismatch in Mtx::reorderColumns");
+    throw ErrorWithMsg("dimension mismatch in Mtx::reorderColumns");
 
   Mtx neworder(mrows(), ncols());
 
   for (int c = 0; c < ncols(); ++c)
-	 neworder.column(c) = column(int(index.at(c,0)));
+    neworder.column(c) = column(int(index.at(c,0)));
 
   *this = neworder;
 }
@@ -429,10 +431,10 @@ void Mtx::swapColumns(int c1, int c2)
 Mtx& Mtx::operator+=(const Mtx& other)
 {
   if (ncols() != other.ncols())
-	 throw ErrorWithMsg("dimension mismatch in Mtx::operator+=");
+    throw ErrorWithMsg("dimension mismatch in Mtx::operator+=");
 
   for (int i = 0; i < ncols(); ++i)
-	 column(i) += other.column(i);
+    column(i) += other.column(i);
 
   return *this;
 }
@@ -440,21 +442,21 @@ Mtx& Mtx::operator+=(const Mtx& other)
 Mtx& Mtx::operator-=(const Mtx& other)
 {
   if (ncols() != other.ncols())
-	 throw ErrorWithMsg("dimension mismatch in Mtx::operator-=");
+    throw ErrorWithMsg("dimension mismatch in Mtx::operator-=");
 
   for (int i = 0; i < ncols(); ++i)
-	 column(i) -= other.column(i);
+    column(i) -= other.column(i);
 
   return *this;
 }
 
 void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
-							  Slice& result)
+                       Slice& result)
 {
   // e.g mrows == vec.nelems == 3   ncols == 4
   //
   //               | e11  e12  e13  e14 |
-  // [w1 w2 w3] *  | e21  e22  e23  e24 | = 
+  // [w1 w2 w3] *  | e21  e22  e23  e24 | =
   //               | e31  e32  e33  e34 |
   //
   //
@@ -476,17 +478,17 @@ void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
 {
 DOTRACE("Mtx::assign_MMmul");
   if ( (m1.ncols() != m2.mrows()) ||
-		 (this->ncols() != m2.ncols()) )
-	 throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
+       (this->ncols() != m2.ncols()) )
+    throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
 
   for (int n = 0; n < mrows(); ++n)
     {
-		MtxIter rowElement = this->rowIter(n);
+      MtxIter rowElement = this->rowIter(n);
 
-		MtxConstIter veciter = m1.rowIter(n);
+      MtxConstIter veciter = m1.rowIter(n);
 
-		for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
-		  *rowElement = innerProduct(veciter, m2.columnIter(col));
+      for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
+        *rowElement = innerProduct(veciter, m2.columnIter(col));
     }
 }
 
