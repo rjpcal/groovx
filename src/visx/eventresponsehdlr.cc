@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Jul 12 18:24:24 2001
+// written: Mon Jul 16 13:41:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,11 +26,11 @@
 
 #include "gwt/widget.h"
 
-#include "tcl/convert.h"
 #include "tcl/tclcmd.h"
-#include "tcl/tclevalcmd.h"
+#include "tcl/tclcode.h"
 #include "tcl/tclobjptr.h"
 #include "tcl/tcllistobj.h"
+#include "tcl/tclregexp.h"
 #include "tcl/tclutil.h"
 
 #include "util/arrays.h"
@@ -38,8 +38,6 @@
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
-
-#include <tcl.h>
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"
@@ -52,12 +50,11 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   const string_literal ioTag("EventResponseHdlr");
 
   const string_literal nullScript("{}");
-
-  Tcl::ObjPtr theNullObject("");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -168,8 +165,8 @@ public:
     {
       Invariant(check());
       itsErh.ignore(itsWidget);
-    };
-  };
+    }
+  }; // end class ERHActiveState
 
   void changeState(shared_ptr<ERHState> new_state) const
   { itsState = new_state; }
@@ -225,7 +222,7 @@ public:
 
   void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
     {
-      clearEventQueue();
+      itsSafeIntp.clearEventQueue();
 
       itsState = ERHState::activeState(this, widget, trial);
     }
@@ -271,12 +268,6 @@ private:
 
   dynamic_string getBindingScript() const;
 
-  void clearEventQueue() const
-    {
-      while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
-        { /* Empty loop body */ }
-    }
-
   // We take the last character of the string as the response, in
   // order to handle the numeric keypad, where the keysysms are
   // 'KP_0', 'KP_3', etc., wheras we want just the 0 or the 3.
@@ -299,73 +290,13 @@ private:
 
   class RegExp_ResponseVal {
   public:
-    RegExp_ResponseVal(Tcl::ObjPtr obj = theNullObject, int rv = -1) :
-      itsPatternObj(obj),
-      itsRespVal(rv)
-      {}
+    RegExp_ResponseVal() : regExp(), responseValue(-1) {}
 
-    RegExp_ResponseVal(const RegExp_ResponseVal& other) :
-      itsPatternObj(other.itsPatternObj),
-      itsRespVal(other.itsRespVal)
-      {}
+    RegExp_ResponseVal(Tcl::ObjPtr obj, int rv) : regExp(obj),
+																  responseValue(rv) {}
 
-    RegExp_ResponseVal& operator=(const RegExp_ResponseVal& other)
-      {
-        itsPatternObj = other.itsPatternObj;
-        itsRespVal = other.itsRespVal;
-        return *this;
-      }
-
-    bool matchesString(const char* string_to_match) throw(ErrorWithMsg)
-      {
-        static const int REGEX_ERROR        = -1;
-        static const int REGEX_NO_MATCH     =  0;
-        static const int REGEX_FOUND_MATCH  =  1;
-
-        DebugEval(string_to_match); DebugEvalNL(Tcl_GetString(itsPatternObj));
-
-        Tcl_RegExp regexp = getCheckedRegexp(itsPatternObj);
-
-        // OK to pass Tcl_Interp*==0
-        int regex_result =
-          Tcl_RegExpExec(0, regexp, string_to_match, string_to_match);
-
-        switch (regex_result) {
-        case REGEX_ERROR:
-          throw ErrorWithMsg("error executing regular expression "
-                             "for EventResponseHdlr");
-
-        case REGEX_NO_MATCH:
-          return false;
-
-        case REGEX_FOUND_MATCH:
-          return true;
-
-        default: // "can't happen"
-          Assert(false);
-        }
-
-        return false;
-      }
-
-    int responseValue() { return itsRespVal; }
-
-  private:
-    static Tcl_RegExp getCheckedRegexp(Tcl::ObjPtr patternObj)
-      throw(ErrorWithMsg)
-      {
-        const int flags = 0;
-        // OK to pass Tcl_Interp*==0
-        Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj, flags);
-        if (!regexp) {
-          throw ErrorWithMsg("error getting a Tcl_RegExp from ")
-                  .appendMsg("'", Tcl_GetString(patternObj), "'");
-        }
-        return regexp;
-      }
-
-    Tcl::ObjPtr itsPatternObj;
-    int itsRespVal;
+	 Tcl::RegExp regExp;
+	 int responseValue;
   };
 
   fixed_string itsInputResponseMap;
@@ -379,19 +310,14 @@ private:
     // state, which we mark with itsIsValid=false. In order for the
     // object to be used, it must be assigned to with the default
     // assignment constructor.
-    Condition_Feedback() :
-      itsIsValid(false),
-      itsCondition(theNullObject),
-      itsResultCmd(theNullObject)
-      {}
+    Condition_Feedback() : itsIsValid(false), itsCondition(), itsResultCmd() {}
 
     Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-      itsIsValid(false),
+      itsIsValid(true),
       itsCondition(cond),
-      itsResultCmd(res, Tcl::TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
+      itsResultCmd(res, Tcl::Code::THROW_EXCEPTION)
       {
-        if (cond != 0 && res != 0)
-          itsIsValid = true;
+        Precondition(cond != 0); Precondition(res != 0);
       }
 
     bool invokeIfTrue(const Tcl::SafeInterp& safeInterp) throw (ErrorWithMsg)
@@ -413,7 +339,7 @@ private:
 
     bool itsIsValid;
     Tcl::ObjPtr itsCondition;
-    Tcl::TclEvalCmd itsResultCmd;
+    Tcl::Code itsResultCmd;
   };
 
   fixed_string itsFeedbackMap;
@@ -593,8 +519,8 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
 dynamic_string EventResponseHdlr::Impl::getBindingScript() const
 {
   return dynamic_string("{ ")
-	 .append(itsCmdCallback->name()).append(" ")
-	 .append(itsBindingSubstitution).append(" }");
+    .append(itsCmdCallback->name()).append(" ")
+    .append(itsBindingSubstitution).append(" }");
 }
 
 void EventResponseHdlr::Impl::attend(GWT::Widget& widget) const {
@@ -625,20 +551,13 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
   const char* response_string = extractStringFromKeysym(keysym);
 
-  DebugEvalNL(response_string);
-
   updateRegexpsIfNeeded();
 
-  DebugEvalNL(itsRegexps.size());
-
-  for (size_t i = 0; i < itsRegexps.size(); ++i) {
-
-    DebugEvalNL(i);
-
-    if (itsRegexps[i].matchesString(response_string)) {
-      return itsRegexps[i].responseValue();
+  for (size_t i = 0; i < itsRegexps.size(); ++i)
+	 {
+		if (itsRegexps[i].regExp.matchesString(response_string))
+		  return itsRegexps[i].responseValue;
     }
-  }
 
   return ResponseHandler::INVALID_RESPONSE;
 }
@@ -648,13 +567,9 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
   if (!itsUseFeedback) return;
 
-  Precondition(itsSafeIntp.hasInterp());
-
-  DebugEvalNL(response);
-
   updateFeedbacksIfNeeded();
 
-  itsSafeIntp.setGlobalVar("resp_val", Tcl_NewIntObj(response));
+  itsSafeIntp.setGlobalVar("resp_val", response);
 
   bool feedbackGiven = false;
   for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i)
