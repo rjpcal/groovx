@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Wed Nov 13 12:56:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,6 @@ XBitmap::XBitmap() :
   Bitmap(itsRenderer)
 {
 DOTRACE("XBitmap::XBitmap");
-  setRenderMode(Gmodes::DIRECT_RENDER);
   setUsingZoom(false);
 }
 
