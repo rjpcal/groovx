@@ -80,6 +80,8 @@ public:
       }
   }
 
+  virtual ~VecContext() throw() {}
+
   void flushResult()
   {
     Tcl::Context::setObjResult(itsResult.asObj());
@@ -95,7 +97,7 @@ public:
   }
 
 protected:
-  virtual Tcl_Obj* getObjv(unsigned int argn)
+  virtual Tcl_Obj* getObjv(unsigned int argn) throw()
   {
     if (argn == 0) return itsArg0;
 
@@ -136,6 +138,8 @@ class Tcl::VecDispatcher : public Tcl::Dispatcher
 {
 public:
   VecDispatcher(unsigned int key_argn) : itsKeyArgn(key_argn) {}
+
+  virtual ~VecDispatcher() throw() {}
 
   virtual void dispatch(Tcl::Interp& interp,
                         unsigned int objc, Tcl_Obj* const objv[],

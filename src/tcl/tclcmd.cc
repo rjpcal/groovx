@@ -137,7 +137,7 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Dispatcher::~Dispatcher() {}
+Tcl::Dispatcher::~Dispatcher() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -189,6 +189,8 @@ public:
     useCount(0),
     overloads()
   {}
+
+  ~Impl() throw() {}
 
   // These are set once per command object
   Tcl::Interp interp;
@@ -256,7 +258,7 @@ DOTRACE("Tcl::Command::Command");
   rep->overloads->add(this);
 }
 
-Tcl::Command::~Command()
+Tcl::Command::~Command() throw()
 {
 DOTRACE("Tcl::Command::~Command");
 
@@ -411,7 +413,7 @@ Tcl::Context::Context(Tcl::Interp& interp,
   itsObjv(objv)
 {}
 
-Tcl::Context::~Context()
+Tcl::Context::~Context() throw()
 {}
 
 void Tcl::Context::setObjResult(const Tcl::ObjPtr& obj)

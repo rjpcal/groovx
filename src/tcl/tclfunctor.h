@@ -130,6 +130,8 @@ namespace Tcl
   public:
     Functor<0, R, Func>(Func f) : itsHeldFunc(f) {}
 
+    ~Functor() throw() {}
+
     R operator()(Tcl::Context& /*ctx*/)
     {
       return itsHeldFunc();
@@ -148,6 +150,8 @@ namespace Tcl
 
   public:
     Functor<1, R, Func>(Func f) : itsHeldFunc(f) {}
+
+    ~Functor() throw() {}
 
     R operator()(Tcl::Context& ctx)
     {
@@ -169,6 +173,8 @@ namespace Tcl
   public:
     Functor<2, R, Func>(Func f) : itsHeldFunc(f) {}
 
+    ~Functor() throw() {}
+
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
@@ -189,6 +195,8 @@ namespace Tcl
   public:
     Functor<3, R, Func>(Func f) : itsHeldFunc(f) {}
 
+    ~Functor() throw() {}
+
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
@@ -208,6 +216,8 @@ namespace Tcl
 
   public:
     Functor<4, R, Func>(Func f) : itsHeldFunc(f) {}
+
+    ~Functor() throw() {}
 
     R operator()(Tcl::Context& ctx)
     {
@@ -230,6 +240,8 @@ namespace Tcl
   public:
     Functor<5, R, Func>(Func f) : itsHeldFunc(f) {}
 
+    ~Functor() throw() {}
+
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
@@ -251,6 +263,8 @@ namespace Tcl
   public:
     Functor<6, R, Func>(Func f) : itsHeldFunc(f) {}
 
+    ~Functor() throw() {}
+
     R operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
@@ -270,6 +284,8 @@ namespace Tcl
 
   public:
     Functor<7, R, Func>(Func f) : itsHeldFunc(f) {}
+
+    ~Functor() throw() {}
 
     R operator()(Tcl::Context& ctx)
     {
@@ -291,6 +307,8 @@ namespace Tcl
 
   public:
     Functor<8, R, Func>(Func f) : itsHeldFunc(f) {}
+
+    ~Functor() throw() {}
 
     R operator()(Tcl::Context& ctx)
     {
@@ -330,6 +348,8 @@ namespace Tcl
       itsHeldFunc(f)
     {}
 
+    virtual ~GenericCmd() throw() {}
+
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
@@ -353,6 +373,8 @@ namespace Tcl
       Command(interp, cmd_name, usage, nargs+1),
       itsHeldFunc(f)
     {}
+
+    virtual ~GenericCmd() throw() {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)

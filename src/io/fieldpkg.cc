@@ -70,6 +70,8 @@ namespace Tcl
       isItInited(false)
     {}
 
+    ~FieldsLister() throw() {}
+
     typedef void Retn_t;
 
     void operator()(Tcl::Context& ctx);

@@ -89,7 +89,7 @@ public:
           int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~Command();
+  virtual ~Command() throw();
 
   /// Returns the command registered name.
   const fstring& name() const;
@@ -150,7 +150,7 @@ class Tcl::Dispatcher
 {
 public:
   /// Virtual destructor.
-  virtual ~Dispatcher();
+  virtual ~Dispatcher() throw();
 
   /** Interprets the Tcl_Obj* arguments, sets up an appropriate
       Tcl::Context, and calls invoke() on the \a cmd with that
@@ -180,13 +180,13 @@ public:
   Context(Tcl::Interp& interp, unsigned int objc, Tcl_Obj* const* objv);
 
   /// Virtual destructor.
-  virtual ~Context();
+  virtual ~Context() throw();
 
   /// Get the Tcl interpreter of the current invocation.
-  Tcl::Interp& interp() const { return itsInterp; }
+  Tcl::Interp& interp() const throw() { return itsInterp; }
 
   /// Return the number of arguments in the current invocation.
-  unsigned int objc() const { return itsObjc; }
+  unsigned int objc() const throw() { return itsObjc; }
 
 
   /** Attempt to convert argument number \a argn to type \c T, and
@@ -206,14 +206,14 @@ public:
     }
 
   /// Get the raw objv array.
-  Tcl_Obj* const* getRawArgs() const
+  Tcl_Obj* const* getRawArgs() const throw()
     {
       return itsObjv;
     }
 
 protected:
   /// Get the n'th argument.
-  virtual Tcl_Obj* getObjv(unsigned int n) { return itsObjv[n]; }
+  virtual Tcl_Obj* getObjv(unsigned int n) throw() { return itsObjv[n]; }
 
   /// Return a Tcl_Obj*.
   virtual void setObjResult(const Tcl::ObjPtr& obj);
