@@ -183,11 +183,50 @@ public:
                          (Tcl_CmdDeleteProc*) NULL);
   }
 
+  void warnUsage(Tcl_Interp* interp)
+  {
+	 Tcl_Obj* result = Tcl_GetObjResult(interp);
+
+	 Tcl_AppendToObj(result, "wrong # args: should be ", -1);
+
+	 if ( getOverload()==0 )
+		{
+		  appendFullUsage(result);
+		}
+	 else
+		{
+		  Tcl_AppendToObj(result, "one of:", -1);
+		  Impl* cmd = this;
+		  while ( cmd != 0 )
+			 {
+				Tcl_AppendToObj(result, "\n\t", -1);
+				cmd->appendFullUsage(result);
+				cmd = cmd->getOverload();
+			 }
+		}
+  }
+
   /// The procedure that is actually registered with the Tcl C API.
   static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
                             int objc, Tcl_Obj *const objv[]);
 
 private:
+  void appendFullUsage(Tcl_Obj* result)
+	 {
+		if (itsUsage)
+		  {
+			 Tcl_AppendStringsToObj(result,
+											"\"", const_cast<char*>(itsCmdName.c_str()),
+											" ", itsUsage, "\"", (char*)0);
+		  }
+		else
+		  {
+			 Tcl_AppendStringsToObj(result,
+											"\"", const_cast<char*>(itsCmdName.c_str()),
+											"\"", (char*)0);
+		  }
+	 }
+
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
@@ -270,14 +309,12 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
       if ( theImpl == 0 )
         {
           Impl* originalImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
-          Tcl_WrongNumArgs(interp, 1, objv,
-                           const_cast<char*>(originalImpl->usage()));
+			 originalImpl->warnUsage(interp);
           return TCL_ERROR;
         }
     }
 
-  // ...otherwise if the argument count is OK, try the command and
-  // catch all possible exceptions
+  // ...and try the matching overload and catch all possible exceptions
   try
     {
       theImpl->itsOwner->rawInvoke(interp, objc, objv);
