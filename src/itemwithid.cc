@@ -3,7 +3,7 @@
 // itemwithid.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:42:18 2000
-// written: Mon Oct 23 11:43:29 2000
+// written: Mon Oct 23 11:47:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-NullableItemWithId<T>::refresh() const {
+void NullableItemWithId<T>::refresh() const {
   if ( !itsHandle.isValid() )
 	 {
 		typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
