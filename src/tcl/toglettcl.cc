@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Sat Dec 21 11:45:26 2002
+// written: Wed Dec 25 12:49:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
+#include "gfx/pointtcl.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tclerror.h"
@@ -132,6 +133,7 @@ public:
     defGetter("pathname", &Tcl::TkWidget::pathname);
     defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
+    defGetter("size", &Toglet::size);
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);

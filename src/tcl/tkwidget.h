@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Tue Dec 10 13:01:41 2002
+// written: Wed Dec 25 12:47:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,11 @@
 struct Tcl_Interp;
 
 typedef struct Tk_Window_ *Tk_Window;
+
+namespace Gfx
+{
+  template <class T> class Vec2;
+}
 
 namespace Tcl
 {
@@ -47,6 +52,7 @@ public:
 
   int width() const;
   int height() const;
+  Gfx::Vec2<int> size() const;
   void setWidth(int w);
   void setHeight(int h);
 

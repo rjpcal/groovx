@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Thu Dec 19 18:56:12 2002
+// written: Wed Dec 25 12:48:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define TKWIDGET_CC_DEFINED
 
 #include "tkwidget.h"
+
+#include "gx/vec2.h"
 
 #include "tcl/tclsafeinterp.h"
 
@@ -254,6 +256,9 @@ DOTRACE("Tcl::TkWidget::~TkWidget");
 
 int Tcl::TkWidget::width() const { return rep->width; }
 int Tcl::TkWidget::height() const { return rep->height; }
+
+Gfx::Vec2<int> Tcl::TkWidget::size() const
+{ return Gfx::Vec2<int>(width(), height()); }
 
 void Tcl::TkWidget::setWidth(int w)
 {
