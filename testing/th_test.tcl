@@ -14,17 +14,17 @@ set SIMPLETH [IO::new TimingHandler]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
-IO::testDestringifyCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
-IO::testWriteCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
-IO::testReadCmd SimpleThTcl SimpleTh 1 $::SIMPLETH
+IO::testStringifyCmd SimpleThTcl IO 1 $::SIMPLETH
+IO::testDestringifyCmd SimpleThTcl IO 1 $::SIMPLETH
+IO::testWriteCmd SimpleThTcl IO 1 $::SIMPLETH
+IO::testReadCmd SimpleThTcl IO 1 $::SIMPLETH
 
 set TH [IO::new TimingHdlr]
 
-IO::testStringifyCmd ThTcl Th 1 $::TH
-IO::testDestringifyCmd ThTcl Th 1 $::TH
-IO::testWriteCmd ThTcl Th 1 $::TH
-IO::testReadCmd ThTcl Th 1 $::TH
+IO::testStringifyCmd ThTcl IO 1 $::TH
+IO::testDestringifyCmd ThTcl IO 1 $::TH
+IO::testWriteCmd ThTcl IO 1 $::TH
+IO::testReadCmd ThTcl IO 1 $::TH
 
 ### IO::new TimingHandler ###
 test "ThTcl-IO::new SimpleTh" "too many args" {

@@ -13,10 +13,10 @@ set TRIAL [IO::new Trial]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd TrialTcl Trial 1 $::TRIAL
-IO::testDestringifyCmd TrialTcl Trial 1 $::TRIAL
-IO::testWriteCmd TrialTcl Trial 1 $::TRIAL
-IO::testReadCmd TrialTcl Trial 1 $::TRIAL
+IO::testStringifyCmd TrialTcl IO 1 $::TRIAL
+IO::testDestringifyCmd TrialTcl IO 1 $::TRIAL
+IO::testWriteCmd TrialTcl IO 1 $::TRIAL
+IO::testReadCmd TrialTcl IO 1 $::TRIAL
 
 ### Trial::responseHdlrCmd ###
 test "TrialTcl-Trial::responseHdlr" "too few args" {

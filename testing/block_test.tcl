@@ -11,10 +11,10 @@ set ::BLOCK [IO::new Block]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd BlockTcl Block 1 $::BLOCK
-IO::testDestringifyCmd BlockTcl Block 1 $::BLOCK
-IO::testWriteCmd BlockTcl Block 1 $::BLOCK
-IO::testReadCmd BlockTcl Block 1 $::BLOCK
+IO::testStringifyCmd BlockTcl IO 1 $::BLOCK
+IO::testDestringifyCmd BlockTcl IO 1 $::BLOCK
+IO::testWriteCmd BlockTcl IO 1 $::BLOCK
+IO::testReadCmd BlockTcl IO 1 $::BLOCK
 
 ### Block::currentTrialCmd ###
 test "BlockTcl-Block::currentTrial" "too few args" {

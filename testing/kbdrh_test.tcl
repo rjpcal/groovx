@@ -7,17 +7,15 @@
 ###
 ##############################################################################
 
-source ${::TEST_DIR}/io_test.tcl
-
 set ::KBDRH [IO::new KbdResponseHdlr]
 KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd KbdRhTcl KbdRh 1 $::KBDRH
-IO::testDestringifyCmd KbdRhTcl KbdRh 1 $::KBDRH
-IO::testWriteCmd KbdRhTcl KbdRh 1 $::KBDRH
-IO::testReadCmd KbdRhTcl KbdRh 1 $::KBDRH
+IO::testStringifyCmd KbdRhTcl IO 1 $::KBDRH
+IO::testDestringifyCmd KbdRhTcl IO 1 $::KBDRH
+IO::testWriteCmd KbdRhTcl IO 1 $::KBDRH
+IO::testReadCmd KbdRhTcl IO 1 $::KBDRH
 
 ### IO::new KbdRh ###
 test "KbdRhTcl-IO::new KbdRh" "too many args" {

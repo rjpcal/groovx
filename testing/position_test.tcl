@@ -15,10 +15,10 @@ set ::POS [IO::new Position]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd PositionTcl Pos 1 $::POS
-IO::testDestringifyCmd PositionTcl Pos 1 $::POS
-IO::testWriteCmd PositionTcl Pos 1 $::POS
-IO::testReadCmd PositionTcl Pos 1 $::POS
+IO::testStringifyCmd PositionTcl IO 1 $::POS
+IO::testDestringifyCmd PositionTcl IO 1 $::POS
+IO::testWriteCmd PositionTcl IO 1 $::POS
+IO::testReadCmd PositionTcl IO 1 $::POS
 
 ### IO::new Position ###
 test "PositionTcl-IO::new Position" "too many args" {
@@ -89,22 +89,22 @@ test "PositionTcl-Pos::translate" "error on bad posid" {
 
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
-    Pos::stringify
-} {wrong \# args: should be "Pos::stringify item_id"}
-test "PositionTcl-Pos::stringify" "too many args" {
-    Pos::stringify posid junk
-} {wrong \# args: should be "Pos::stringify item_id"}
-test "PositionTcl-Pos::stringify" "normal use" {
+    IO::stringify
+} {wrong \# args: should be "IO::stringify item_id"}
+test "PositionTcl-IO::stringify" "too many args" {
+    IO::stringify posid junk
+} {wrong \# args: should be "IO::stringify item_id"}
+test "PositionTcl-IO::stringify" "normal use" {
 	 Pos::rotate $::pos 3.0 1.5 0.0 -2.2
 	 Pos::scale $::pos 1.0 2.5 4.0
 	 Pos::translate $::pos 5.3 10.6 15.9
-	 Pos::stringify $::pos
+	 IO::stringify $::pos
 } "Position @$::INT { 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3"
-test "PositionTcl-Pos::stringify" "error on bad posid" { 
-    Pos::stringify -1
-} {Pos::stringify: attempt to access invalid id '.*' in}
-test "PositionTcl-Pos::stringify" "error on non-integral posid" {
-    Pos::stringify 1.5
+test "PositionTcl-IO::stringify" "error on bad posid" { 
+    IO::stringify -1
+} {IO::stringify: attempt to access invalid id '.*' in}
+test "PositionTcl-IO::stringify" "error on non-integral posid" {
+    IO::stringify 1.5
 } {expected integer but got "1\.5"}
 
 ### Pos::typeCmd ###

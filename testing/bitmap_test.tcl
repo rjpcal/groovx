@@ -22,10 +22,10 @@ Bitmap::loadPbm $::GLBITMAP $::PBMFILE
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
-IO::testDestringifyCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
-IO::testWriteCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
-IO::testReadCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
+IO::testStringifyCmd GLBitmapTcl IO 1 $::GLBITMAP
+IO::testDestringifyCmd GLBitmapTcl IO 1 $::GLBITMAP
+IO::testWriteCmd GLBitmapTcl IO 1 $::GLBITMAP
+IO::testReadCmd GLBitmapTcl IO 1 $::GLBITMAP
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
@@ -194,10 +194,10 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "error" {} {^$} $no_test
 ### Bitmap::stringifyCmd ###
 ### Bitmap::destringifyCmd ###
 test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
-	 set str1 [Bitmap::stringify $::BITMAP]
+	 set str1 [IO::stringify $::BITMAP]
 	 set ::BITMAP [IO::new GLBitmap]
-	 GLBitmap::destringify $::BITMAP $str1
-	 set str2 [Bitmap::stringify $::BITMAP]
+	 IO::destringify $::BITMAP $str1
+	 set str2 [IO::stringify $::BITMAP]
 	 string equal $str1 $str2
 } {^1$}
 

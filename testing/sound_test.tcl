@@ -17,10 +17,10 @@ set TEST_SOUND [Sound::Sound $::TEST_DIR/sound1.au]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd SoundTcl Sound 1 $::TEST_SOUND
-IO::testDestringifyCmd SoundTcl Sound 1 $::TEST_SOUND
-IO::testWriteCmd SoundTcl Sound 1 $::TEST_SOUND
-IO::testReadCmd SoundTcl Sound 1 $::TEST_SOUND
+IO::testStringifyCmd SoundTcl IO 1 $::TEST_SOUND
+IO::testDestringifyCmd SoundTcl IO 1 $::TEST_SOUND
+IO::testWriteCmd SoundTcl IO 1 $::TEST_SOUND
+IO::testReadCmd SoundTcl IO 1 $::TEST_SOUND
 
 ### Sound::Sound ###
 test "SoundTcl-Sound::Sound" "too few args" {

@@ -11,10 +11,10 @@ source ${::TEST_DIR}/io_test.tcl
 
 set ::JITTER [IO::new Jitter]
 
-IO::testStringifyCmd JitterTcl Jitter 1 $::JITTER
-IO::testDestringifyCmd JitterTcl Jitter 1 $::JITTER
-IO::testWriteCmd JitterTcl Jitter 1 $::JITTER
-IO::testReadCmd JitterTcl Jitter 1 $::JITTER
+IO::testStringifyCmd JitterTcl IO 1 $::JITTER
+IO::testDestringifyCmd JitterTcl IO 1 $::JITTER
+IO::testWriteCmd JitterTcl IO 1 $::JITTER
+IO::testReadCmd JitterTcl IO 1 $::JITTER
 
 unset ::JITTER
 

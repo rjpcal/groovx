@@ -11,10 +11,10 @@ set ::EVENTRH [IO::new EventResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd EventRhTcl EventRh 1 $::EVENTRH
-IO::testDestringifyCmd EventRhTcl EventRh 1 $::EVENTRH
-IO::testWriteCmd EventRhTcl EventRh 1 $::EVENTRH
-IO::testReadCmd EventRhTcl EventRh 1 $::EVENTRH
+IO::testStringifyCmd EventRhTcl IO 1 $::EVENTRH
+IO::testDestringifyCmd EventRhTcl IO 1 $::EVENTRH
+IO::testWriteCmd EventRhTcl IO 1 $::EVENTRH
+IO::testReadCmd EventRhTcl IO 1 $::EVENTRH
 
 ### IO::new EventRh ###
 test "EventRhTcl-IO::new EventRh" "too many args" {

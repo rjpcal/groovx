@@ -97,25 +97,25 @@ proc testTypeCmd { objname } {
 proc testStringifyCmd { objname } {
 	 upvar $objname this
 
-	 IO::testStringifyCmd $this(package) $this(subclass) 1 $this(objid)
+	 IO::testStringifyCmd $this(package) IO 1 $this(objid)
 }
 
 proc testDestringifyCmd { objname } {
 	 upvar $objname this
 
-	 IO::testDestringifyCmd $this(package) $this(subclass) 1 $this(objid)
+	 IO::testDestringifyCmd $this(package) IO 1 $this(objid)
 }
 
 proc testWriteCmd { objname } {
 	 upvar $objname this
 
-	 IO::testWriteCmd $this(package) $this(subclass) 1 $this(objid)
+	 IO::testWriteCmd $this(package) IO 1 $this(objid)
 }
 
 proc testReadCmd { objname } {
 	 upvar $objname this
 
-	 IO::testReadCmd $this(package) $this(subclass) 1 $this(objid)
+	 IO::testReadCmd $this(package) IO 1 $this(objid)
 }
 
 proc testCategoryCmd { objname } {
