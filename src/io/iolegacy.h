@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:03:01 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ private:
   class Impl;
   friend class Impl;
 
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 
@@ -112,7 +112,7 @@ private:
   class Impl;
   friend class Impl;
 
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_iolegacy_h[] = "$Header$";

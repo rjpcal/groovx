@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 12:56:21 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ public:
 
 private:
   class Impl;
-  Impl* itsImpl;
+  Impl* rep;
 };
 
 static const char vcid_bmapdata_h[] = "$Header$";

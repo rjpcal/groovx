@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 12:58:45 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,13 +33,13 @@
 class Gfx::BmapData::Impl
 {
 public:
-  Impl(const Gfx::Vec2<int>& extent, int bits_per_pixel, int byte_alignment) :
-    itsExtent(extent),
-    itsBitsPerPixel(bits_per_pixel),
-    itsByteAlignment(byte_alignment),
-    itsBytes(),
-    itsRowOrder(TOP_FIRST),
-    itsUpdater(0)
+  Impl(const Gfx::Vec2<int>& ex, int bits_per_pixel, int byte_alignment) :
+    extent(ex),
+    bitsPerPixel(bits_per_pixel),
+    byteAlignment(byte_alignment),
+    bytes(),
+    rowOrder(TOP_FIRST),
+    updater(0)
   {
     Precondition(extent.x() >= 0); Precondition(extent.y() >= 0);
 
@@ -51,18 +51,18 @@ public:
 
     unsigned int num_bytes = bytes_per_row * extent.y();
 
-    itsBytes.resize( num_bytes );
+    bytes.resize( num_bytes );
   }
 
   // default copy-ctor and assn-oper OK
 
-  Gfx::Vec2<int> itsExtent;
-  int itsBitsPerPixel;
-  int itsByteAlignment;
-  dynamic_block<unsigned char> itsBytes;
-  RowOrder itsRowOrder;
+  Gfx::Vec2<int> extent;
+  int bitsPerPixel;
+  int byteAlignment;
+  dynamic_block<unsigned char> bytes;
+  RowOrder rowOrder;
 
-  mutable shared_ptr<UpdateFunc> itsUpdater;
+  mutable shared_ptr<UpdateFunc> updater;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -74,34 +74,34 @@ public:
 Gfx::BmapData::UpdateFunc::~UpdateFunc() {}
 
 Gfx::BmapData::BmapData() :
-  itsImpl(new Impl(Gfx::Vec2<int>(0, 0), 1, 1))
+  rep(new Impl(Gfx::Vec2<int>(0, 0), 1, 1))
 {
 DOTRACE("Gfx::BmapData::BmapData");
 }
 
 Gfx::BmapData::BmapData(const Gfx::Vec2<int>& extent,
                         int bits_per_pixel, int byte_alignment) :
-  itsImpl(new Impl(extent, bits_per_pixel, byte_alignment))
+  rep(new Impl(extent, bits_per_pixel, byte_alignment))
 {
 DOTRACE("Gfx::BmapData::BmapData");
 }
 
 Gfx::BmapData::BmapData(const Gfx::BmapData& other) :
-  itsImpl(new Impl(*(other.itsImpl)))
+  rep(new Impl(*(other.rep)))
 {
 DOTRACE("Gfx::BmapData::BmapData(copy)");
 }
 
 Gfx::BmapData::~BmapData()
 {
-  delete itsImpl;
+  delete rep;
 }
 
 unsigned char* Gfx::BmapData::bytesPtr() const
 {
 DOTRACE("Gfx::BmapData::bytesPtr");
   updateIfNeeded();
-  return &(itsImpl->itsBytes[0]);
+  return &(rep->bytes[0]);
 }
 
 unsigned char* Gfx::BmapData::rowPtr(unsigned int row) const
@@ -136,35 +136,35 @@ int Gfx::BmapData::width() const
 {
 DOTRACE("Gfx::BmapData::width");
   updateIfNeeded();
-  return itsImpl->itsExtent.x();
+  return rep->extent.x();
 }
 
 int Gfx::BmapData::height() const
 {
 DOTRACE("Gfx::BmapData::height");
   updateIfNeeded();
-  return itsImpl->itsExtent.y();
+  return rep->extent.y();
 }
 
 Gfx::Vec2<int> Gfx::BmapData::size() const
 {
 DOTRACE("Gfx::BmapData::size");
   updateIfNeeded();
-  return itsImpl->itsExtent;
+  return rep->extent;
 }
 
 int Gfx::BmapData::bitsPerPixel() const
 {
 DOTRACE("Gfx::BmapData::bitsPerPixel");
   updateIfNeeded();
-  return itsImpl->itsBitsPerPixel;
+  return rep->bitsPerPixel;
 }
 
 int Gfx::BmapData::byteAlignment() const
 {
 DOTRACE("Gfx::BmapData::byteAlignment");
   updateIfNeeded();
-  return itsImpl->itsByteAlignment;
+  return rep->byteAlignment;
 }
 
 unsigned int Gfx::BmapData::byteCount() const
@@ -172,22 +172,22 @@ unsigned int Gfx::BmapData::byteCount() const
 DOTRACE("Gfx::BmapData::byteCount");
   updateIfNeeded();
 
-  Assert(itsImpl->itsBytes.size() == bytesPerRow() * itsImpl->itsExtent.y());
+  Assert(rep->bytes.size() == bytesPerRow() * rep->extent.y());
 
-  return itsImpl->itsBytes.size();
+  return rep->bytes.size();
 }
 
 unsigned int Gfx::BmapData::bytesPerRow() const
 {
 DOTRACE("Gfx::BmapData::bytesPerRow");
   updateIfNeeded();
-  return ( (itsImpl->itsExtent.x()*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
+  return ( (rep->extent.x()*rep->bitsPerPixel - 1)/8 + 1 );
 }
 
 Gfx::BmapData::RowOrder
 Gfx::BmapData::rowOrder() const
 {
-  return itsImpl->itsRowOrder;
+  return rep->rowOrder;
 }
 
 void Gfx::BmapData::flipContrast()
@@ -195,15 +195,14 @@ void Gfx::BmapData::flipContrast()
 DOTRACE("Gfx::BmapData::flipContrast");
   updateIfNeeded();
 
-  unsigned int num_bytes = itsImpl->itsBytes.size();
+  unsigned int num_bytes = rep->bytes.size();
 
   // In this case we want to flip each bit
-  if (itsImpl->itsBitsPerPixel == 1)
+  if (rep->bitsPerPixel == 1)
     {
       for (unsigned int i = 0; i < num_bytes; ++i)
         {
-          itsImpl->itsBytes[i] =
-            static_cast<unsigned char>(0xff ^ itsImpl->itsBytes[i]);
+          rep->bytes[i] = static_cast<unsigned char>(0xff ^ rep->bytes[i]);
         }
     }
   // In this case we want to reflect the value of each byte around the
@@ -212,8 +211,7 @@ DOTRACE("Gfx::BmapData::flipContrast");
     {
       for (unsigned int i = 0; i < num_bytes; ++i)
         {
-          itsImpl->itsBytes[i] =
-            static_cast<unsigned char>(0xff - itsImpl->itsBytes[i]);
+          rep->bytes[i] = static_cast<unsigned char>(0xff - rep->bytes[i]);
         }
     }
 }
@@ -228,15 +226,15 @@ DOTRACE("Gfx::BmapData::flipVertical");
 
   dynamic_block<unsigned char> new_bytes(num_bytes);
 
-  for (int row = 0; row < itsImpl->itsExtent.y(); ++row)
+  for (int row = 0; row < rep->extent.y(); ++row)
     {
-      int new_row = (itsImpl->itsExtent.y()-1)-row;
-      memcpy(static_cast<void*> (&(new_bytes[new_row * bytes_per_row])),
-             static_cast<void*> (&(itsImpl->itsBytes [row     * bytes_per_row])),
+      int new_row = (rep->extent.y()-1)-row;
+      memcpy(static_cast<void*> (&(new_bytes [new_row * bytes_per_row])),
+             static_cast<void*> (&(rep->bytes[row     * bytes_per_row])),
              bytes_per_row);
     }
 
-  itsImpl->itsBytes.swap(new_bytes);
+  rep->bytes.swap(new_bytes);
 }
 
 void Gfx::BmapData::clear()
@@ -251,26 +249,26 @@ void Gfx::BmapData::swap(Gfx::BmapData& other)
 {
 DOTRACE("Gfx::BmapData::swap");
 
-  Util::swap2(itsImpl, other.itsImpl);
+  Util::swap2(rep, other.rep);
 }
 
 void Gfx::BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const
 {
 DOTRACE("Gfx::BmapData::queueUpdate");
-  itsImpl->itsUpdater = updater;
+  rep->updater = updater;
 }
 
 void Gfx::BmapData::updateIfNeeded() const
 {
 DOTRACE("Gfx::BmapData::updateIfNeeded");
-  if (itsImpl->itsUpdater.get() != 0)
+  if (rep->updater.get() != 0)
     {
-      shared_ptr<UpdateFunc> tempUpdater(itsImpl->itsUpdater);
+      shared_ptr<UpdateFunc> tempUpdater(rep->updater);
 
-      // We release itsImpl->itsUpdater before doing the update, so
+      // We release rep->updater before doing the update, so
       // that we avoid endless recursion if updateIfNeeded is called
       // again during the updating.
-      itsImpl->itsUpdater.reset(0);
+      rep->updater.reset(0);
 
       tempUpdater->update(const_cast<Gfx::BmapData&>(*this));
     }
@@ -279,21 +277,21 @@ DOTRACE("Gfx::BmapData::updateIfNeeded");
 void Gfx::BmapData::clearQueuedUpdate() const
 {
 DOTRACE("Gfx::BmapData::clearQueuedUpdate");
-  itsImpl->itsUpdater.reset(0);
+  rep->updater.reset(0);
 }
 
 void Gfx::BmapData::setRowOrder(Gfx::BmapData::RowOrder order) const
 {
-  if (order != itsImpl->itsRowOrder)
+  if (order != rep->rowOrder)
     {
       const_cast<BmapData*>(this)->flipVertical();
-      itsImpl->itsRowOrder = order;
+      rep->rowOrder = order;
     }
 }
 
 void Gfx::BmapData::specifyRowOrder(Gfx::BmapData::RowOrder order) const
 {
-  itsImpl->itsRowOrder = order;
+  rep->rowOrder = order;
 }
 
 static const char vcid_bmapdata_cc[] = "$Header$";

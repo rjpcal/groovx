@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Mon Jan 13 11:08:26 2003
+// written: Mon Jan 20 13:06:28 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,17 +24,15 @@
 
 struct CreatorMapBase::Impl
 {
-  Impl() : itsMap() {}
+  Impl() : funcMap() {}
 
-  typedef hash_array<fstring, void*,
-    string_hasher<fstring> >
-  MapType;
+  typedef hash_array<fstring, void*, string_hasher<fstring> > MapType;
 
-  MapType itsMap;
+  MapType funcMap;
 };
 
 CreatorMapBase::CreatorMapBase() :
-  itsImpl(new Impl)
+  rep(new Impl)
 {
 DOTRACE("CreatorMapBase::CreatorMapBase");
 }
@@ -48,8 +46,8 @@ void CreatorMapBase::throwForType(const char* type)
 {
   fstring typelist("known types are:");
 
-  for (Impl::MapType::iterator ii = itsImpl->itsMap.begin();
-       ii != itsImpl->itsMap.end();
+  for (Impl::MapType::iterator ii = rep->funcMap.begin();
+       ii != rep->funcMap.end();
        ++ii)
     {
       if (ii->value != 0)
@@ -67,28 +65,28 @@ void CreatorMapBase::throwForType(const fstring& type)
 void CreatorMapBase::clear()
 {
 DOTRACE("CreatorMapBase::clear");
-  for (Impl::MapType::iterator ii = itsImpl->itsMap.begin();
-       ii != itsImpl->itsMap.end();
+  for (Impl::MapType::iterator ii = rep->funcMap.begin();
+       ii != rep->funcMap.end();
        ++ii)
     {
       killPtr(ii->value);
       ii->value = 0;
     }
 
-  delete itsImpl;
+  delete rep;
 }
 
 void* CreatorMapBase::getPtrForName(const fstring& name) const
 {
 DOTRACE("CreatorMapBase::getPtrForName");
-  return itsImpl->itsMap[name];
+  return rep->funcMap[name];
 }
 
 void CreatorMapBase::setPtrForName(const char* name, void* ptr)
 {
 DOTRACE("CreatorMapBase::setPtrForName");
   fstring sname(name);
-  void*& ptr_slot = itsImpl->itsMap[sname];
+  void*& ptr_slot = rep->funcMap[sname];
   killPtr(ptr_slot);
   ptr_slot = ptr;
 }

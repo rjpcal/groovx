@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Mon Jan 13 11:08:26 2003
+// written: Mon Jan 20 13:08:31 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,6 +101,11 @@ protected:
   void setPtrForName(const char* name, void* ptr);
 
   /// Delete the object at \a ptr.
+
+  // FIXME this would be better done by setting function pointer to an
+  // appropriate "destroy" function. Then CreatorMapBase could guarantee
+  // proper destruction since it could use the function pointer in its
+  // destructor, unlike a virtual call.
   virtual void killPtr(void* ptr) = 0;
 
   /** This must be called by derived class's destructors in order to
@@ -112,7 +117,7 @@ private:
   CreatorMapBase& operator=(const CreatorMapBase&);
 
   struct Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 

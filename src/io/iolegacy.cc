@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:03:39 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 IO::LegacyReader::LegacyReader(STD_IO::istream& is) :
-  itsImpl(new Impl(this, is))
+  rep(new Impl(this, is))
 {
 DOTRACE("IO::LegacyReader::LegacyReader");
 }
@@ -168,14 +168,14 @@ DOTRACE("IO::LegacyReader::LegacyReader");
 IO::LegacyReader::~LegacyReader()
 {
 DOTRACE("IO::LegacyReader::~LegacyReader");
-  delete itsImpl;
+  delete rep;
 }
 
 IO::VersionId IO::LegacyReader::readSerialVersionId()
 {
 DOTRACE("IO::LegacyReader::readSerialVersionId");
-  dbgEvalNL(3, itsImpl->itsLegacyVersionId);
-  return itsImpl->itsLegacyVersionId;
+  dbgEvalNL(3, rep->itsLegacyVersionId);
+  return rep->itsLegacyVersionId;
 }
 
 char IO::LegacyReader::readChar(const fstring& name)
@@ -183,8 +183,8 @@ char IO::LegacyReader::readChar(const fstring& name)
 DOTRACE("IO::LegacyReader::readChar");
   dbgEval(3, name);
   char val;
-  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
-  itsImpl->throwIfError(name);
+  rep->itsInStream >> val;   dbgEvalNL(3, val);
+  rep->throwIfError(name);
   return val;
 }
 
@@ -193,8 +193,8 @@ int IO::LegacyReader::readInt(const fstring& name)
 DOTRACE("IO::LegacyReader::readInt");
   dbgEval(3, name);
   int val;
-  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
-  itsImpl->throwIfError(name);
+  rep->itsInStream >> val;   dbgEvalNL(3, val);
+  rep->throwIfError(name);
   return val;
 }
 
@@ -203,8 +203,8 @@ bool IO::LegacyReader::readBool(const fstring& name)
 DOTRACE("IO::LegacyReader::readBool");
   dbgEval(3, name);
   int val;
-  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
-  itsImpl->throwIfError(name);
+  rep->itsInStream >> val;   dbgEvalNL(3, val);
+  rep->throwIfError(name);
   return bool(val);
 }
 
@@ -213,8 +213,8 @@ double IO::LegacyReader::readDouble(const fstring& name)
 DOTRACE("IO::LegacyReader::readDouble");
   dbgEval(3, name);
   double val;
-  itsImpl->itsInStream >> val;   dbgEvalNL(3, val);
-  itsImpl->throwIfError(name);
+  rep->itsInStream >> val;   dbgEvalNL(3, val);
+  rep->throwIfError(name);
   return val;
 }
 
@@ -224,9 +224,9 @@ DOTRACE("IO::LegacyReader::readStringImpl");
   dbgEvalNL(3, name);
 
   int numchars = 0;
-  itsImpl->itsInStream >> numchars;
+  rep->itsInStream >> numchars;
 
-  itsImpl->throwIfError(name);
+  rep->throwIfError(name);
 
   if (numchars < 0)
     {
@@ -234,19 +234,19 @@ DOTRACE("IO::LegacyReader::readStringImpl");
                           "saw negative character count");
     }
 
-  int c = itsImpl->itsInStream.get();
+  int c = rep->itsInStream.get();
   if (c != ' ')
     {
       throw IO::ReadError("LegacyReader::readStringImpl "
                           "did not have whitespace after character count");
     }
 
-//   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
+//   if (rep->itsInStream.peek() == '\n') { rep->itsInStream.get(); }
 
   fstring new_string;
-  new_string.readsome(itsImpl->itsInStream, (unsigned int) numchars);
+  new_string.readsome(rep->itsInStream, (unsigned int) numchars);
 
-  itsImpl->throwIfError(name);
+  rep->throwIfError(name);
 
   dbgEvalNL(3, new_string);
 
@@ -257,8 +257,8 @@ void IO::LegacyReader::readValueObj(const fstring& name, Value& value)
 {
 DOTRACE("IO::LegacyReader::readValueObj");
   dbgEvalNL(3, name);
-  value.scanFrom(itsImpl->itsInStream);
-  itsImpl->throwIfError(name);
+  value.scanFrom(rep->itsInStream);
+  rep->throwIfError(name);
 }
 
 Ref<IO::IoObject>
@@ -274,7 +274,7 @@ IO::LegacyReader::readMaybeObject(const fstring& name)
 DOTRACE("IO::LegacyReader::readMaybeObject");
   dbgEval(3, name);
   fstring type;
-  itsImpl->itsInStream >> type; dbgEval(3, type);
+  rep->itsInStream >> type; dbgEval(3, type);
 
   if (type == "NULL")
     {
@@ -284,7 +284,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
   Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
   dbgEvalNL(3, obj->ioTypename());
 
-  itsImpl->inflateObject(name, obj);
+  rep->inflateObject(name, obj);
 
   return obj;
 }
@@ -294,8 +294,8 @@ void IO::LegacyReader::readOwnedObject(const fstring& name,
 {
 DOTRACE("IO::LegacyReader::readOwnedObject");
 
-  itsImpl->readTypename(obj->ioTypename());
-  itsImpl->inflateObject(name, obj);
+  rep->readTypename(obj->ioTypename());
+  rep->inflateObject(name, obj);
 }
 
 void IO::LegacyReader::readBaseClass(const fstring& baseClassName,
@@ -306,8 +306,8 @@ DOTRACE("IO::LegacyReader::readBaseClass");
   // For backward-compatibility, we allow the typename to match either the
   // real typename of the base part, or the descriptive name given to the
   // base class.
-  itsImpl->readTypename(basePart->ioTypename(), baseClassName);
-  itsImpl->inflateObject(baseClassName, basePart);
+  rep->readTypename(basePart->ioTypename(), baseClassName);
+  rep->inflateObject(baseClassName, basePart);
 }
 
 Ref<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot)
@@ -497,7 +497,7 @@ public:
 
 
 IO::LegacyWriter::LegacyWriter(STD_IO::ostream& os, bool write_bases) :
-  itsImpl(new Impl(this, os, write_bases))
+  rep(new Impl(this, os, write_bases))
 {
 DOTRACE("IO::LegacyWriter::LegacyWriter");
 }
@@ -505,61 +505,60 @@ DOTRACE("IO::LegacyWriter::LegacyWriter");
 IO::LegacyWriter::~LegacyWriter()
 {
 DOTRACE("IO::LegacyWriter::~LegacyWriter");
-  itsImpl->flushWhitespace();
-  delete itsImpl;
+  rep->flushWhitespace();
+  delete rep;
 }
 
 void IO::LegacyWriter::usePrettyPrint(bool yes)
 {
 DOTRACE("IO::LegacyWriter::usePrettyPrint");
-  itsImpl->usePrettyPrint(yes);
+  rep->usePrettyPrint(yes);
 }
 
 void IO::LegacyWriter::writeChar(const char* name, char val)
 {
 DOTRACE("IO::LegacyWriter::writeChar");
-  itsImpl->stream() << val << itsImpl->itsFSep;
-  itsImpl->throwIfError(name);
+  rep->stream() << val << rep->itsFSep;
+  rep->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeInt(const char* name, int val)
 {
 DOTRACE("IO::LegacyWriter::writeInt");
-  itsImpl->stream() << val << itsImpl->itsFSep;
-  itsImpl->throwIfError(name);
+  rep->stream() << val << rep->itsFSep;
+  rep->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeBool(const char* name, bool val)
 {
 DOTRACE("IO::LegacyWriter::writeBool");
-  itsImpl->stream() << val << itsImpl->itsFSep;
-  itsImpl->throwIfError(name);
+  rep->stream() << val << rep->itsFSep;
+  rep->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeDouble(const char* name, double val)
 {
 DOTRACE("IO::LegacyWriter::writeDouble");
-  itsImpl->stream() << val << itsImpl->itsFSep;
-  itsImpl->throwIfError(name);
+  rep->stream() << val << rep->itsFSep;
+  rep->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeCstring(const char* name, const char* val)
 {
 DOTRACE("IO::LegacyWriter::writeCstring");
 
-  itsImpl->stream() << strlen(val) << " "
-                    << val << itsImpl->itsFSep;
+  rep->stream() << strlen(val) << " " << val << rep->itsFSep;
 
-  itsImpl->throwIfError(name);
+  rep->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeValueObj(const char* name,
                                      const Value& value)
 {
 DOTRACE("IO::LegacyWriter::writeValueObj");
-  value.printTo(itsImpl->stream());
-  itsImpl->stream() << itsImpl->itsFSep;
-  itsImpl->throwIfError(name);
+  value.printTo(rep->stream());
+  rep->stream() << rep->itsFSep;
+  rep->throwIfError(name);
 }
 
 void IO::LegacyWriter::writeObject(const char* name,
@@ -567,7 +566,7 @@ void IO::LegacyWriter::writeObject(const char* name,
 {
 DOTRACE("IO::LegacyWriter::writeObject");
 
-  itsImpl->flattenObject(name, obj);
+  rep->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeOwnedObject(const char* name,
@@ -575,20 +574,20 @@ void IO::LegacyWriter::writeOwnedObject(const char* name,
 {
 DOTRACE("IO::LegacyWriter::writeOwnedObject");
 
-  itsImpl->flattenObject(name, obj);
+  rep->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
                                       Ref<const IO::IoObject> basePart)
 {
 DOTRACE("IO::LegacyWriter::writeBaseClass");
-  if (itsImpl->itsWriteBases)
+  if (rep->itsWriteBases)
     {
-      itsImpl->flattenObject(baseClassName, basePart);
+      rep->flattenObject(baseClassName, basePart);
     }
   else
     {
-      itsImpl->flattenObject(baseClassName, basePart, true);
+      rep->flattenObject(baseClassName, basePart, true);
     }
 }
 
@@ -596,7 +595,7 @@ void IO::LegacyWriter::writeRoot(const IO::IoObject* root)
 {
 DOTRACE("IO::LegacyWriter::writeRoot");
 
-  itsImpl->flattenObject
+  rep->flattenObject
     ("rootObject", SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root),
                                          Util::STRONG,
                                          Util::PRIVATE));

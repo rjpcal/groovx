@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:01:46 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -532,7 +532,7 @@ class FieldMap
 {
 private:
   class Impl;
-  Impl* itsImpl;
+  Impl* rep;
 
   FieldMap(const FieldMap&);
   FieldMap& operator=(const FieldMap&);
@@ -543,14 +543,14 @@ private:
 public:
   FieldMap(const Field* begin, const Field* end,
            const FieldMap* parent=0) :
-    itsImpl(0)
+    rep(0)
   {
     init(begin, end, parent);
   }
 
   template<unsigned int N>
   FieldMap(Field const (&array)[N], const FieldMap* parent=0) :
-    itsImpl(0)
+    rep(0)
   {
     init(&array[0], &array[0]+N, parent);
   }

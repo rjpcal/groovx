@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:01:16 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -285,13 +285,13 @@ DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
 ///////////////////////////////////////////////////////////////////////
 
 AsciiStreamWriter::AsciiStreamWriter(STD_IO::ostream& os) :
-  itsImpl( *(new Impl(this, os)) )
+  rep( new Impl(this, os) )
 {
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
 }
 
 AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
-  itsImpl( *(new Impl(this, filename)) )
+  rep( new Impl(this, filename) )
 {
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 }
@@ -299,66 +299,66 @@ DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 AsciiStreamWriter::~AsciiStreamWriter ()
 {
 DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
-  delete &itsImpl;
+  delete rep;
 }
 
 void AsciiStreamWriter::writeChar(const char* name, char val)
 {
 DOTRACE("AsciiStreamWriter::writeChar");
-  itsImpl.writeBasicType(name, val, "char");
+  rep->writeBasicType(name, val, "char");
 }
 
 void AsciiStreamWriter::writeInt(const char* name, int val)
 {
 DOTRACE("AsciiStreamWriter::writeInt");
-  itsImpl.writeBasicType(name, val, "int");
+  rep->writeBasicType(name, val, "int");
 }
 
 void AsciiStreamWriter::writeBool(const char* name, bool val)
 {
 DOTRACE("AsciiStreamWriter::writeBool");
-  itsImpl.writeBasicType(name, val, "bool");
+  rep->writeBasicType(name, val, "bool");
 }
 
 void AsciiStreamWriter::writeDouble(const char* name, double val)
 {
 DOTRACE("AsciiStreamWriter::writeDouble");
-  itsImpl.writeBasicType(name, val, "double");
+  rep->writeBasicType(name, val, "double");
 }
 
 void AsciiStreamWriter::writeCstring(const char* name, const char* val)
 {
 DOTRACE("AsciiStreamWriter::writeCstring");
-  itsImpl.writeStringType(name, val, "cstring");
+  rep->writeStringType(name, val, "cstring");
 }
 
 void AsciiStreamWriter::writeValueObj(const char* name, const Value& value)
 {
-  itsImpl.writeValueObj(name, value);
+  rep->writeValueObj(name, value);
 }
 
 void AsciiStreamWriter::writeObject(const char* name,
                                     SoftRef<const IO::IoObject> obj)
 {
-  itsImpl.writeObject(name, obj);
+  rep->writeObject(name, obj);
 }
 
 void AsciiStreamWriter::writeOwnedObject(const char* name,
                                          Ref<const IO::IoObject> obj)
 {
-  itsImpl.writeOwnedObject(name, obj);
+  rep->writeOwnedObject(name, obj);
 }
 
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
                                        Ref<const IO::IoObject> basePart)
 {
 DOTRACE("AsciiStreamWriter::writeBaseClass");
-  itsImpl.writeOwnedObject(baseClassName, basePart);
+  rep->writeOwnedObject(baseClassName, basePart);
 }
 
 void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
 {
-  itsImpl.writeRoot(root);
+  rep->writeRoot(root);
 }
 
 #if defined(SHORTEN_SYMBOL_NAMES)

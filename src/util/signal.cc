@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Mon Jan 20 13:10:05 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,20 +88,20 @@ public:
     Lock(const Lock&);
     Lock& operator=(const Lock&);
 
-    Impl* itsImpl;
+    Impl* itsTarget;
 
   public:
     Lock(Impl* impl) :
-      itsImpl(impl)
+      itsTarget(impl)
     {
-      Assert(itsImpl->isItEmitting == false);
-      itsImpl->isItEmitting = true;
+      Assert(itsTarget->isItEmitting == false);
+      itsTarget->isItEmitting = true;
     }
 
     ~Lock()
     {
-      Assert(itsImpl->isItEmitting == true);
-      itsImpl->isItEmitting = false;
+      Assert(itsTarget->isItEmitting == true);
+      itsTarget->isItEmitting = false;
     }
   };
 };

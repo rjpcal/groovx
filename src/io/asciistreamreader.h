@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 12:59:32 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ protected:
 
 private:
   class Impl;
-  Impl& itsImpl;
+  Impl* rep;
 };
 
 // The second part of the hack to shorten mangled names.

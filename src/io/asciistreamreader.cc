@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:00:24 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -565,7 +565,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 ///////////////////////////////////////////////////////////////////////
 
 AsciiStreamReader::AsciiStreamReader (STD_IO::istream& is) :
-  itsImpl( *(new Impl(this, is)) )
+  rep( new Impl(this, is) )
 {
 DOTRACE("AsciiStreamReader::AsciiStreamReader");
   // nothing
@@ -574,74 +574,74 @@ DOTRACE("AsciiStreamReader::AsciiStreamReader");
 AsciiStreamReader::~AsciiStreamReader ()
 {
 DOTRACE("AsciiStreamReader::~AsciiStreamReader");
-  delete &itsImpl;
+  delete rep;
 }
 
 IO::VersionId AsciiStreamReader::readSerialVersionId()
 {
 DOTRACE("AsciiStreamReader::readSerialVersionId");
-  return itsImpl.readSerialVersionId();
+  return rep->readSerialVersionId();
 }
 
 char AsciiStreamReader::readChar(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readChar");
   dbgEvalNL(3, name);
-  return itsImpl.readBasicType<char>(name);
+  return rep->readBasicType<char>(name);
 }
 
 int AsciiStreamReader::readInt(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readInt");
   dbgEvalNL(3, name);
-  return itsImpl.readBasicType<int>(name);
+  return rep->readBasicType<int>(name);
 }
 
 bool AsciiStreamReader::readBool(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readBool");
   dbgEvalNL(3, name);
-  return bool(itsImpl.readBasicType<int>(name));
+  return bool(rep->readBasicType<int>(name));
 }
 
 double AsciiStreamReader::readDouble(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readDouble");
   dbgEvalNL(3, name);
-  return itsImpl.readBasicType<double>(name);
+  return rep->readBasicType<double>(name);
 }
 
 fstring AsciiStreamReader::readStringImpl(const fstring& name)
 {
   dbgEvalNL(3, name);
-  return itsImpl.readStringType(name);
+  return rep->readStringType(name);
 }
 
 void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 {
   dbgEvalNL(3, name);
-  itsImpl.readValueObj(name, value);
+  rep->readValueObj(name, value);
 }
 
 Ref<IO::IoObject>
 AsciiStreamReader::readObject(const fstring& name)
 {
   dbgEvalNL(3, name);
-  return Ref<IO::IoObject>(itsImpl.readMaybeObject(name));
+  return Ref<IO::IoObject>(rep->readMaybeObject(name));
 }
 
 SoftRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
   dbgEvalNL(3, name);
-  return itsImpl.readMaybeObject(name);
+  return rep->readMaybeObject(name);
 }
 
 void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
   dbgEvalNL(3, name);
-  itsImpl.readOwnedObject(this, name, obj);
+  rep->readOwnedObject(this, name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
@@ -650,12 +650,12 @@ void AsciiStreamReader::readBaseClass(
 {
 DOTRACE("AsciiStreamReader::readBaseClass");
   dbgEvalNL(3, baseClassName);
-  itsImpl.readOwnedObject(this, baseClassName, basePart);
+  rep->readOwnedObject(this, baseClassName, basePart);
 }
 
 Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
 {
-  return itsImpl.readRoot(this, given_root);
+  return rep->readRoot(this, given_root);
 }
 
 #if defined(SHORTEN_SYMBOL_NAMES)

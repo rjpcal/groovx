@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Mon Jan 13 11:08:25 2003
+// written: Mon Jan 20 13:09:25 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,26 +58,26 @@ namespace Util
 template <class T, class Ifx>
 class ConcreteIter
 {
-  shared_ptr<Ifx> itsImpl;
+  shared_ptr<Ifx> rep;
 
   void makeUnique()
   {
-    if ( !itsImpl.unique() )
+    if ( !rep.unique() )
       {
-        itsImpl.reset( itsImpl->clone() );
+        rep.reset( rep->clone() );
       }
   }
 
 public:
-  ConcreteIter(const ConcreteIter& other) : itsImpl(other.itsImpl) {}
+  ConcreteIter(const ConcreteIter& other) : rep(other.rep) {}
 
-  ConcreteIter(shared_ptr<Ifx> impl)      : itsImpl(impl) {}
+  ConcreteIter(shared_ptr<Ifx> impl)      : rep(impl) {}
 
   // Default assigment-oper OK
 
-  void next()                    { makeUnique(); itsImpl->next(); }
-  void prev()                    { makeUnique(); itsImpl->prev(); }
-  void step(int n)               { makeUnique(); itsImpl->step(n); }
+  void next()                    { makeUnique(); rep->next(); }
+  void prev()                    { makeUnique(); rep->prev(); }
+  void step(int n)               { makeUnique(); rep->step(n); }
   ConcreteIter& operator++()     { next(); return *this; }
   ConcreteIter operator++(int)   { ConcreteIter c(*this); next(); return c; }
   ConcreteIter& operator--()     { prev(); return *this; }
@@ -87,14 +87,14 @@ public:
   ConcreteIter operator-=(int n) { step(-n); return *this; }
 
   int operator-(const ConcreteIter& other) const
-    { return itsImpl->minus(other.itsImpl); }
+    { return rep->minus(other.rep); }
 
-  T*   operator->()                 const { return &(itsImpl->get()); }
-  T&   operator*()                  const { return itsImpl->get(); }
+  T*   operator->()                 const { return &(rep->get()); }
+  T&   operator*()                  const { return rep->get(); }
 
-  bool atEnd()                      const { return itsImpl->atEnd(); }
+  bool atEnd()                      const { return rep->atEnd(); }
   bool isValid()                    const { return !atEnd(); }
-  int  fromEnd()                    const { return itsImpl->fromEnd(); }
+  int  fromEnd()                    const { return rep->fromEnd(); }
   bool operator==(const IterEnd_t&) const { return atEnd(); }
   bool operator!=(const IterEnd_t&) const { return !atEnd(); }
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:02:48 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,22 +53,22 @@ private:
 
 public:
   typedef std::map<fstring, const Field*> MapType;
-  MapType itsNameMap;
-  const Field* const itsIoBegin;
-  const Field* const itsIoEnd;
+  MapType nameMap;
+  const Field* const ioBegin;
+  const Field* const ioEnd;
 
-  const FieldMap* itsParent;
+  const FieldMap* parent;
 
   Impl(const Field* begin, const Field* end,
-       const FieldMap* parent) :
-    itsNameMap(),
-    itsIoBegin(begin),
-    itsIoEnd(end),
-    itsParent(parent)
+       const FieldMap* par) :
+    nameMap(),
+    ioBegin(begin),
+    ioEnd(end),
+    parent(par)
   {
     while (begin != end)
       {
-        itsNameMap.insert(MapType::value_type(begin->name(), begin));
+        nameMap.insert(MapType::value_type(begin->name(), begin));
         ++begin;
       }
   }
@@ -77,13 +77,13 @@ public:
 void FieldMap::init(const Field* begin, const Field* end,
                     const FieldMap* parent)
 {
-  Assert(itsImpl == 0);
-  itsImpl = new Impl(begin, end, parent);
+  Assert(rep == 0);
+  rep = new Impl(begin, end, parent);
 }
 
 FieldMap::~FieldMap()
 {
-  delete itsImpl;
+  delete rep;
 }
 
 const FieldMap* FieldMap::emptyFieldMap()
@@ -96,19 +96,19 @@ const FieldMap* FieldMap::emptyFieldMap()
 
 bool FieldMap::hasParent() const
 {
-  return (itsImpl->itsParent != 0);
+  return (rep->parent != 0);
 }
 
 const FieldMap* FieldMap::parent() const
 {
-  return itsImpl->itsParent;
+  return rep->parent;
 }
 
 const Field& FieldMap::field(const fstring& name) const
 {
-  Impl::MapType::const_iterator itr = itsImpl->itsNameMap.find(name);
+  Impl::MapType::const_iterator itr = rep->nameMap.find(name);
 
-  if (itr != itsImpl->itsNameMap.end())
+  if (itr != rep->nameMap.end())
     return *((*itr).second);
 
   if (hasParent())
@@ -123,7 +123,7 @@ const Field& FieldMap::field(const fstring& name) const
 
 FieldMap::Iterator FieldMap::ioFields() const
 {
-  return Iterator(itsImpl->itsIoBegin, itsImpl->itsIoEnd);
+  return Iterator(rep->ioBegin, rep->ioEnd);
 }
 
 

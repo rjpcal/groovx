@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Mon Jan 20 13:12:08 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,8 +175,7 @@ private:
   EventResponseHdlr& operator=(const EventResponseHdlr&);
 
   class Impl;
-  friend class EventResponseHdlr::Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:22:30 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -419,7 +419,7 @@ public:
 
   void setdash(unsigned short bit_pattern)
   {
-    dbgEvalNL(3, (void*) bit_pattern);
+    dbgEvalNL(3, (void*) int(bit_pattern));
 
     bool prev_bit = (0x8000 & bit_pattern);
 
@@ -544,7 +544,7 @@ namespace
 }
 
 Gfx::PSCanvas::PSCanvas(const char* filename) :
-  itsImpl(new Impl(filename))
+  rep(new Impl(filename))
 {
 DOTRACE("Gfx::PSCanvas::PSCanvas");
 }
@@ -552,7 +552,7 @@ DOTRACE("Gfx::PSCanvas::PSCanvas");
 Gfx::PSCanvas::~PSCanvas()
 {
 DOTRACE("Gfx::PSCanvas::~PSCanvas");
-  delete itsImpl;
+  delete rep;
 }
 
 Gfx::Vec2<int> Gfx::PSCanvas::screenFromWorld(
@@ -561,7 +561,7 @@ Gfx::Vec2<int> Gfx::PSCanvas::screenFromWorld(
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Vec2)");
 // FIXME
-  itsImpl->raiseError("not implemented");
+  rep->raiseError("not implemented");
   return Gfx::Vec2<int>();
 }
 
@@ -571,7 +571,7 @@ Gfx::Vec2<double> Gfx::PSCanvas::worldFromScreen(
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Vec2)");
 // FIXME
-  itsImpl->raiseError("not implemented");
+  rep->raiseError("not implemented");
   return Gfx::Vec2<double>();
 }
 
@@ -581,7 +581,7 @@ Gfx::Rect<int> Gfx::PSCanvas::screenFromWorld(
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Rect)");
 // FIXME
-  itsImpl->raiseError("not implemented");
+  rep->raiseError("not implemented");
   return Gfx::Rect<int>();
 }
 
@@ -590,7 +590,7 @@ Gfx::Rect<double> Gfx::PSCanvas::worldFromScreen(
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Rect)");
 // FIXME
-  itsImpl->raiseError("not implemented");
+  rep->raiseError("not implemented");
   return Gfx::Rect<double>();
 }
 
@@ -598,7 +598,7 @@ Gfx::Rect<int> Gfx::PSCanvas::getScreenViewport() const
 {
 DOTRACE("Gfx::PSCanvas::getScreenViewport()");
 // FIXME
-  itsImpl->raiseError("not implemented");
+  rep->raiseError("not implemented");
   return Gfx::Rect<int>();
 }
 
@@ -606,7 +606,7 @@ Gfx::Rect<double> Gfx::PSCanvas::getWorldViewport() const
 {
 DOTRACE("Gfx::PSCanvas::getWorldViewport()");
 // FIXME
-  itsImpl->raiseError("not implemented");
+  rep->raiseError("not implemented");
   return Gfx::Rect<double>();
 }
 
@@ -638,21 +638,21 @@ DOTRACE("Gfx::PSCanvas::bitsPerPixel");
 void Gfx::PSCanvas::throwIfError(const char* where) const
 {
 DOTRACE("Gfx::PSCanvas::throwIfError");
-  if (itsImpl->itsFstream.fail())
-    itsImpl->raiseError(where);
+  if (rep->itsFstream.fail())
+    rep->raiseError(where);
 }
 
 
 void Gfx::PSCanvas::pushAttribs()
 {
 DOTRACE("Gfx::PSCanvas::pushAttribs");
-  itsImpl->gsave();
+  rep->gsave();
 }
 
 void Gfx::PSCanvas::popAttribs()
 {
 DOTRACE("Gfx::PSCanvas::popAttribs");
-  itsImpl->grestore();
+  rep->grestore();
 }
 
 void Gfx::PSCanvas::drawOnFrontBuffer()
@@ -670,7 +670,7 @@ DOTRACE("Gfx::PSCanvas::drawOnBackBuffer");
 void Gfx::PSCanvas::setColor(const Gfx::RgbaColor& col)
 {
 DOTRACE("Gfx::PSCanvas::setColor");
-  itsImpl->setrgbcolor(col);
+  rep->setrgbcolor(col);
 }
 
 void Gfx::PSCanvas::setClearColor(const Gfx::RgbaColor&)
@@ -701,7 +701,7 @@ void Gfx::PSCanvas::setPolygonFill(bool on)
 {
 DOTRACE("Gfx::PSCanvas::setPolygonFill");
 
-  itsImpl->itsPolygonFill = on;
+  rep->itsPolygonFill = on;
 }
 
 void Gfx::PSCanvas::setPointSize(double /*size*/)
@@ -714,14 +714,14 @@ void Gfx::PSCanvas::setLineWidth(double width)
 {
 DOTRACE("Gfx::PSCanvas::setLineWidth");
 
-  itsImpl->setlinewidth(width);
+  rep->setlinewidth(width);
 }
 
 void Gfx::PSCanvas::setLineStipple(unsigned short bit_pattern)
 {
 DOTRACE("Gfx::PSCanvas::setLineStipple");
 
-  itsImpl->setdash(bit_pattern);
+  rep->setdash(bit_pattern);
 }
 
 void Gfx::PSCanvas::enableAntialiasing()
@@ -756,37 +756,37 @@ DOTRACE("Gfx::PSCanvas::perspective");
 void Gfx::PSCanvas::pushMatrix()
 {
 DOTRACE("Gfx::PSCanvas::pushMatrix");
-  itsImpl->gsave();
+  rep->gsave();
 }
 
 void Gfx::PSCanvas::popMatrix()
 {
 DOTRACE("Gfx::PSCanvas::popMatrix");
-  itsImpl->grestore();
+  rep->grestore();
 }
 
 void Gfx::PSCanvas::translate(const Gfx::Vec3<double>& v)
 {
 DOTRACE("Gfx::PSCanvas::translate");
-  itsImpl->translate(v);
+  rep->translate(v);
 }
 
 void Gfx::PSCanvas::scale(const Gfx::Vec3<double>& v)
 {
 DOTRACE("Gfx::PSCanvas::scale");
-  itsImpl->scale(v);
+  rep->scale(v);
 }
 
 void Gfx::PSCanvas::rotate(const Gfx::Vec3<double>&, double angle_in_degrees)
 {
 DOTRACE("Gfx::PSCanvas::rotate");
-  itsImpl->rotate(angle_in_degrees);
+  rep->rotate(angle_in_degrees);
 }
 
 void Gfx::PSCanvas::transform(const Gfx::Txform& /*tx*/)
 {
 DOTRACE("Gfx::PSCanvas::transform");
-  itsImpl->raiseError("transform() operation not supported");
+  rep->raiseError("transform() operation not supported");
 }
 
 
@@ -808,7 +808,7 @@ DOTRACE("Gfx::PSCanvas::drawBitmap");
 void Gfx::PSCanvas::grabPixels(const Gfx::Rect<int>&, Gfx::BmapData&)
 {
 DOTRACE("Gfx::PSCanvas::grabPixels");
-  itsImpl->raiseError("grabPixels not possible");
+  rep->raiseError("grabPixels not possible");
 }
 
 void Gfx::PSCanvas::clearColorBuffer()
@@ -827,13 +827,13 @@ void Gfx::PSCanvas::drawRect(const Gfx::Rect<double>& rect)
 {
 DOTRACE("Gfx::PSCanvas::drawRect");
 
-  itsImpl->newpath();
-  itsImpl->moveto(rect.bottomLeft());
-  itsImpl->lineto(rect.bottomRight());
-  itsImpl->lineto(rect.topRight());
-  itsImpl->lineto(rect.topLeft());
-  itsImpl->closepath();
-  itsImpl->stroke();
+  rep->newpath();
+  rep->moveto(rect.bottomLeft());
+  rep->lineto(rect.bottomRight());
+  rep->lineto(rect.topRight());
+  rep->lineto(rect.topLeft());
+  rep->closepath();
+  rep->stroke();
 }
 
 void Gfx::PSCanvas::drawCircle(double inner_radius, double outer_radius,
@@ -841,16 +841,16 @@ void Gfx::PSCanvas::drawCircle(double inner_radius, double outer_radius,
 {
 DOTRACE("Gfx::PSCanvas::drawCircle");
 
-  itsImpl->newpath();
-  itsImpl->arc(0.0, 0.0, outer_radius, 0.0, 360.0);
+  rep->newpath();
+  rep->arc(0.0, 0.0, outer_radius, 0.0, 360.0);
   if (fill)
     {
-      itsImpl->arcn(0.0, 0.0, inner_radius, 360.0, 0.0);
-      itsImpl->fill();
+      rep->arcn(0.0, 0.0, inner_radius, 360.0, 0.0);
+      rep->fill();
     }
   else
     {
-      itsImpl->stroke();
+      rep->stroke();
     }
 }
 
@@ -874,7 +874,7 @@ void Gfx::PSCanvas::drawBezier4(const Gfx::Vec3<double>& p1,
                                 unsigned int /*subdivisions*/)
 {
 DOTRACE("Gfx::PSCanvas::drawBezier4");
-  itsImpl->bezier(p1, p2, p3, p4);
+  rep->bezier(p1, p2, p3, p4);
 }
 
 void Gfx::PSCanvas::drawBezierFill4(const Gfx::Vec3<double>& /*center*/,
@@ -891,74 +891,74 @@ DOTRACE("Gfx::PSCanvas::drawBezierFill4");
 void Gfx::PSCanvas::beginPoints()
 {
 DOTRACE("Gfx::PSCanvas::beginPoints");
-  itsImpl->beginPrimitive(&thePointsPrim);
+  rep->beginPrimitive(&thePointsPrim);
 }
 
 void Gfx::PSCanvas::beginLines()
 {
 DOTRACE("Gfx::PSCanvas::beginLines");
-  itsImpl->beginPrimitive(&theLinesPrim);
+  rep->beginPrimitive(&theLinesPrim);
 }
 
 void Gfx::PSCanvas::beginLineStrip()
 {
 DOTRACE("Gfx::PSCanvas::beginLineStrip");
-  itsImpl->beginPrimitive(&theLineStripPrim);
+  rep->beginPrimitive(&theLineStripPrim);
 }
 
 void Gfx::PSCanvas::beginLineLoop()
 {
 DOTRACE("Gfx::PSCanvas::beginLineLoop");
-  itsImpl->beginPrimitive(&theLineLoopPrim);
+  rep->beginPrimitive(&theLineLoopPrim);
 }
 
 void Gfx::PSCanvas::beginTriangles()
 {
 DOTRACE("Gfx::PSCanvas::beginTriangles");
-  itsImpl->beginPrimitive(&theTrianglesPrim);
+  rep->beginPrimitive(&theTrianglesPrim);
 }
 
 void Gfx::PSCanvas::beginTriangleStrip()
 {
 DOTRACE("Gfx::PSCanvas::beginTriangleStrip");
-  itsImpl->beginPrimitive(&theTriangleStripPrim);
+  rep->beginPrimitive(&theTriangleStripPrim);
 }
 
 void Gfx::PSCanvas::beginTriangleFan()
 {
 DOTRACE("Gfx::PSCanvas::beginTriangleFan");
-  itsImpl->beginPrimitive(&theTriangleFanPrim);
+  rep->beginPrimitive(&theTriangleFanPrim);
 }
 
 void Gfx::PSCanvas::beginQuads()
 {
 DOTRACE("Gfx::PSCanvas::beginQuads");
-  itsImpl->beginPrimitive(&theQuadsPrim);
+  rep->beginPrimitive(&theQuadsPrim);
 }
 
 void Gfx::PSCanvas::beginQuadStrip()
 {
 DOTRACE("Gfx::PSCanvas::beginQuadStrip");
-  itsImpl->beginPrimitive(&theQuadStripPrim);
+  rep->beginPrimitive(&theQuadStripPrim);
 }
 
 void Gfx::PSCanvas::beginPolygon()
 {
 DOTRACE("Gfx::PSCanvas::beginPolygon");
-  itsImpl->beginPrimitive(&thePolygonPrim);
+  rep->beginPrimitive(&thePolygonPrim);
 }
 
 void Gfx::PSCanvas::vertex2(const Gfx::Vec2<double>& v)
 {
 DOTRACE("Gfx::PSCanvas::vertex2");
 
-  if (itsImpl->itsPrimPtr == 0)
+  if (rep->itsPrimPtr == 0)
     {
-      itsImpl->raiseError("called vertex() outside graphics primitive");
+      rep->raiseError("called vertex() outside graphics primitive");
     }
 
-  itsImpl->itsPrimPtr->onVertex(itsImpl, v);
-  ++(itsImpl->itsVcount);
+  rep->itsPrimPtr->onVertex(rep, v);
+  ++(rep->itsVcount);
 }
 
 void Gfx::PSCanvas::vertex3(const Gfx::Vec3<double>& v)
@@ -970,13 +970,13 @@ DOTRACE("Gfx::PSCanvas::vertex3");
 void Gfx::PSCanvas::end()
 {
 DOTRACE("Gfx::PSCanvas::end");
-  itsImpl->endPrimitive();
+  rep->endPrimitive();
 }
 
 void Gfx::PSCanvas::flushOutput()
 {
 DOTRACE("Gfx::PSCanvas::flushOutput");
-  itsImpl->itsFstream << std::flush;
+  rep->itsFstream << std::flush;
 }
 
 static const char vcid_pscanvas_cc[] = "$Header$";

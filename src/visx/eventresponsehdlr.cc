@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Mon Jan 20 13:16:05 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ public:
 
     void rhHaltExpt() { ignore(); }
 
-    void handleResponse(EventResponseHdlr::Impl* impl, const char* event_info)
+    void handleResponse(EventResponseHdlr::Impl* rep, const char* event_info)
     {
       Response theResponse;
 
@@ -132,17 +132,17 @@ public:
 
       itsTrial.trResponseSeen();
 
-      if (++itsResponseCount >= impl->itsMaxResponses)
+      if (++itsResponseCount >= rep->itsMaxResponses)
         ignore();
 
       Util::log( fstring("event_info: ", event_info) );
 
       theResponse.setVal(Response::INVALID_VALUE);
 
-      if ( !impl->itsResponseProc->isNoop() )
+      if ( !rep->itsResponseProc->isNoop() )
         {
           try {
-            theResponse.setVal(impl->itsResponseProc->call<int>(event_info));
+            theResponse.setVal(rep->itsResponseProc->call<int>(event_info));
           } catch (...) {}
         }
 
@@ -150,13 +150,13 @@ public:
 
       if ( !theResponse.isValid() )
         {
-          if ( impl->itsAbortInvalidResponses )
+          if ( rep->itsAbortInvalidResponses )
             itsTrial.trAbort();
         }
       else
         {
           itsTrial.trProcessResponse(theResponse);
-          impl->itsFeedbackMap.giveFeedback(impl->itsInterp, theResponse.val());
+          rep->itsFeedbackMap.giveFeedback(rep->itsInterp, theResponse.val());
         }
     }
   };
@@ -177,18 +177,13 @@ public:
   bool isActive() const   { return itsState.get() != 0; }
   bool isInactive() const { return itsState.get() == 0; }
 
-  // Delegand functions
-
-  void readFrom(IO::Reader* reader);
-  void writeTo(IO::Writer* writer) const;
-
   static void handleResponseCallback(Util::Ref<EventResponseHdlr> erh,
                                      const char* event_info)
   {
-    EventResponseHdlr::Impl* impl = erh->itsImpl;
-    Precondition( impl->isActive() );
+    EventResponseHdlr::Impl* rep = erh->rep;
+    Precondition( rep->isActive() );
 
-    impl->itsState->handleResponse(impl, event_info);
+    rep->itsState->handleResponse(rep, event_info);
   }
 
   //
@@ -256,53 +251,6 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   itsState.reset(0);
 }
 
-void EventResponseHdlr::Impl::readFrom(IO::Reader* reader)
-{
-DOTRACE("EventResponseHdlr::Impl::readFrom");
-
-  const int svid = reader->ensureReadVersionId("EventResponseHdlr", 0,
-                                               "Try grsh0.8a7");
-
-  becomeInactive();
-
-  if (svid < 2)
-    {
-      fstring rmap;
-      reader->readValue("inputResponseMap", rmap);
-      itsOwner->setInputResponseMap(rmap);
-    }
-
-  {
-    fstring rep;
-    reader->readValue("feedbackMap", rep);
-    itsFeedbackMap.set(rep);
-  }
-
-  reader->readValue("useFeedback", itsFeedbackMap.itsUseFeedback);
-  reader->readValue("eventSequence", itsEventSequence);
-  reader->readValue("bindingSubstitution", itsBindingSubstitution);
-
-  if (svid >= 2)
-    {
-      reader->readOwnedObject("responseProc", itsResponseProc);
-    }
-}
-
-void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const
-{
-DOTRACE("EventResponseHdlr::Impl::writeTo");
-
-  writer->ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a7");
-
-  writer->writeValue("feedbackMap", itsFeedbackMap.rep());
-  writer->writeValue("useFeedback", itsFeedbackMap.itsUseFeedback);
-  writer->writeValue("eventSequence", itsEventSequence);
-  writer->writeValue("bindingSubstitution", itsBindingSubstitution);
-
-  writer->writeOwnedObject("responseProc", itsResponseProc);
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -318,20 +266,61 @@ DOTRACE("EventResponseHdlr::make");
 
 EventResponseHdlr::EventResponseHdlr() :
   ResponseHandler(),
-  itsImpl(new Impl(this))
+  rep(new Impl(this))
 {}
 
 EventResponseHdlr::~EventResponseHdlr()
-  { delete itsImpl; }
+  { delete rep; }
 
 IO::VersionId EventResponseHdlr::serialVersionId() const
   { return ERH_SERIAL_VERSION_ID; }
 
 void EventResponseHdlr::readFrom(IO::Reader* reader)
-  { itsImpl->readFrom(reader); }
+{
+DOTRACE("EventResponseHdlr::readFrom");
+
+  const int svid = reader->ensureReadVersionId("EventResponseHdlr", 0,
+                                               "Try grsh0.8a7");
+
+  rep->becomeInactive();
+
+  if (svid < 2)
+    {
+      fstring rmap;
+      reader->readValue("inputResponseMap", rmap);
+      setInputResponseMap(rmap);
+    }
+
+  {
+    fstring fmap;
+    reader->readValue("feedbackMap", fmap);
+    rep->itsFeedbackMap.set(fmap);
+  }
+
+  reader->readValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
+  reader->readValue("eventSequence", rep->itsEventSequence);
+  reader->readValue("bindingSubstitution", rep->itsBindingSubstitution);
+
+  if (svid >= 2)
+    {
+      reader->readOwnedObject("responseProc", rep->itsResponseProc);
+    }
+}
 
 void EventResponseHdlr::writeTo(IO::Writer* writer) const
-  { itsImpl->writeTo(writer); }
+{
+DOTRACE("EventResponseHdlr::writeTo");
+
+  writer->ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
+                               "Try grsh0.8a7");
+
+  writer->writeValue("feedbackMap", rep->itsFeedbackMap.rep());
+  writer->writeValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
+  writer->writeValue("eventSequence", rep->itsEventSequence);
+  writer->writeValue("bindingSubstitution", rep->itsBindingSubstitution);
+
+  writer->writeOwnedObject("responseProc", rep->itsResponseProc);
+}
 
 void EventResponseHdlr::setInputResponseMap(const fstring& s)
 {
@@ -353,115 +342,115 @@ DOTRACE("EventResponseHdlr::setInputResponseMap");
 bool EventResponseHdlr::getUseFeedback() const
 {
 DOTRACE("EventResponseHdlr::getUseFeedback");
-  return itsImpl->itsFeedbackMap.itsUseFeedback;
+  return rep->itsFeedbackMap.itsUseFeedback;
 }
 
 void EventResponseHdlr::setUseFeedback(bool val)
 {
 DOTRACE("EventResponseHdlr::setUseFeedback");
-  itsImpl->itsFeedbackMap.itsUseFeedback = val;
+  rep->itsFeedbackMap.itsUseFeedback = val;
 }
 
 const char* EventResponseHdlr::getFeedbackMap() const
 {
 DOTRACE("EventResponseHdlr::getFeedbackMap");
-  return itsImpl->itsFeedbackMap.rep().c_str();
+  return rep->itsFeedbackMap.rep().c_str();
 }
 
 void EventResponseHdlr::setFeedbackMap(const char* feedback_string)
 {
 DOTRACE("EventResponseHdlr::setFeedbackMap");
-  itsImpl->itsFeedbackMap.set(feedback_string);
+  rep->itsFeedbackMap.set(feedback_string);
 }
 
 const fstring& EventResponseHdlr::getEventSequence() const
-  { return itsImpl->itsEventSequence; }
+  { return rep->itsEventSequence; }
 
 void EventResponseHdlr::setEventSequence(const fstring& seq)
-  { itsImpl->itsEventSequence = seq; }
+  { rep->itsEventSequence = seq; }
 
 const fstring& EventResponseHdlr::getBindingSubstitution() const
-  { return itsImpl->itsBindingSubstitution; }
+  { return rep->itsBindingSubstitution; }
 
 void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
-  { itsImpl->itsBindingSubstitution = sub; }
+  { rep->itsBindingSubstitution = sub; }
 
 fstring EventResponseHdlr::getResponseProc() const
 {
-  return itsImpl->itsResponseProc->fullSpec();
+  return rep->itsResponseProc->fullSpec();
 }
 
 void EventResponseHdlr::setResponseProc(const fstring& args,
                                         const fstring& body)
 {
-  itsImpl->itsResponseProc->define(args, body);
+  rep->itsResponseProc->define(args, body);
 }
 
 void EventResponseHdlr::abortInvalidResponses()
-  { itsImpl->itsAbortInvalidResponses = true; }
+  { rep->itsAbortInvalidResponses = true; }
 
 void EventResponseHdlr::ignoreInvalidResponses()
-  { itsImpl->itsAbortInvalidResponses = false; }
+  { rep->itsAbortInvalidResponses = false; }
 
 void EventResponseHdlr::setMaxResponses(unsigned int count)
-  { itsImpl->itsMaxResponses = count; }
+  { rep->itsMaxResponses = count; }
 
 unsigned int EventResponseHdlr::getMaxResponses() const
-  { return itsImpl->itsMaxResponses; }
+  { return rep->itsMaxResponses; }
 
 void EventResponseHdlr::rhBeginTrial(Util::SoftRef<Toglet> widget,
                                      Trial& trial) const
 {
-  Precondition( itsImpl->isInactive() );
+  Precondition( rep->isInactive() );
 
-  itsImpl->itsInterp.clearEventQueue();
+  rep->itsInterp.clearEventQueue();
 
-  itsImpl->becomeActive(widget, trial);
+  rep->becomeActive(widget, trial);
 
-  Postcondition( itsImpl->isActive() );
+  Postcondition( rep->isActive() );
 }
 
 void EventResponseHdlr::rhAbortTrial() const
 {
-  if ( itsImpl->isActive() )
-    itsImpl->itsState->rhAbortTrial();
+  if ( rep->isActive() )
+    rep->itsState->rhAbortTrial();
 }
 
 void EventResponseHdlr::rhEndTrial() const
 {
-  if ( itsImpl->isActive() )
+  if ( rep->isActive() )
     {
-      itsImpl->itsState->rhEndTrial();
-      itsImpl->becomeInactive();
+      rep->itsState->rhEndTrial();
+      rep->becomeInactive();
     }
 
-  Postcondition( itsImpl->isInactive() );
+  Postcondition( rep->isInactive() );
 }
 
 void EventResponseHdlr::rhHaltExpt() const
 {
-  if ( itsImpl->isActive() )
+  if ( rep->isActive() )
     {
-      itsImpl->itsState->rhHaltExpt();
-      itsImpl->becomeInactive();
+      rep->itsState->rhHaltExpt();
+      rep->becomeInactive();
     }
 
-  Postcondition( itsImpl->isInactive() );
+  Postcondition( rep->isInactive() );
 }
 
 void EventResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet> widget,
                                          Trial& trial) const
 {
-  itsImpl->becomeActive(widget, trial);
+  rep->becomeActive(widget, trial);
 
-  Postcondition( itsImpl->isActive() );
+  Postcondition( rep->isActive() );
 }
 
 void EventResponseHdlr::rhDenyResponses() const
 {
-  itsImpl->becomeInactive();
+  rep->becomeInactive();
 
-  Postcondition( itsImpl->isInactive() );
+  Postcondition( rep->isInactive() );
 }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";

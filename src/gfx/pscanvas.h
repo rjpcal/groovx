@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:18:49 2001
-// written: Mon Jan 13 11:04:47 2003
+// written: Mon Jan 20 13:22:40 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ private:
   PSCanvas(const PSCanvas&);
   PSCanvas& operator=(const PSCanvas&);
 
-  Impl* itsImpl;
+  Impl* rep;
 };
 
 static const char vcid_pscanvas_h[] = "$Header$";
