@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Jul 12 09:27:22 2001
+// written: Thu Jul 12 11:28:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,8 +121,13 @@ class Tcl::TclCmd::Context {
 public:
   friend class TclCmd;
 
+  /// Construct with a Tcl interpreter and an argument list.
   Context(Tcl_Interp* interp, int objc, Tcl_Obj* const* objv);
 
+  /// Virtual destructor.
+  virtual ~Context();
+
+  /// Get the Tcl interpreter of the current invocation.
   Tcl_Interp* interp() const { return itsInterp; }
 
   /// Return the number of arguments in the current invocation.
@@ -135,26 +140,31 @@ public:
   //---------------------------------------------------------------------
 
   /// Attempts to retrieve an \c int from argument number \a argn.
-  int getIntFromArg(int argn) { return Tcl::fromTcl<int>(itsObjv[argn]); }
+  int getIntFromArg(int argn)
+    { return Tcl::fromTcl<int>(getObjv(argn)); }
 
   /// Attempts to retrieve a \c long from argument number \a argn.
-  long getLongFromArg(int argn) { return Tcl::fromTcl<long>(itsObjv[argn]); }
+  long getLongFromArg(int argn)
+    { return Tcl::fromTcl<long>(getObjv(argn)); }
 
   /// Attempts to retrieve a \c bool from argument number \a argn.
-  bool getBoolFromArg(int argn) { return Tcl::fromTcl<bool>(itsObjv[argn]); }
+  bool getBoolFromArg(int argn)
+    { return Tcl::fromTcl<bool>(getObjv(argn)); }
 
   /// Attempts to retrieve a \c double from argument number \a argn.
-  double getDoubleFromArg(int argn) { return Tcl::fromTcl<double>(itsObjv[argn]); }
+  double getDoubleFromArg(int argn)
+    { return Tcl::fromTcl<double>(getObjv(argn)); }
 
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
-  const char* getCstringFromArg(int argn) { return getStringFromArg(argn, (const char**) 0); }
+  const char* getCstringFromArg(int argn)
+    { return getStringFromArg(argn, (const char**) 0); }
 
   /** Attempts to retrieve an string type from argument number \a
       argn. The templated type must be assignable from const char*. */
   template <class Str>
   Str getStringFromArg(int argn, Str* /* dummy */ = 0)
     {
-      return Str(Tcl::fromTcl<const char*>(itsObjv[argn]));
+      return Str(Tcl::fromTcl<const char*>(getObjv(argn)));
     }
 
   /** Attempt to convert argument number \a argn to type \c T, and
@@ -162,7 +172,7 @@ public:
   template <class T>
   T getValFromArg(int argn, T* /*dummy*/=0)
     {
-      return Tcl::fromTcl<T>(itsObjv[argn]);
+      return Tcl::fromTcl<T>(getObjv(argn));
     }
 
   //---------------------------------------------------------------------
@@ -183,7 +193,7 @@ public:
   template <class T, class Iterator>
   void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */)
     {
-      Tcl::List elements(itsObjv[argn]);
+      Tcl::List elements(getObjv(argn));
 
       for (unsigned int i = 0; i < elements.length(); ++i)
         {
@@ -198,7 +208,7 @@ public:
   template <class T>
   List::Iterator<T> beginOfArg(int argn, T* /*dummy*/=0)
     {
-      return List::Iterator<T>(itsObjv[argn], List::Iterator<T>::BEGIN);
+      return List::Iterator<T>(getObjv(argn), List::Iterator<T>::BEGIN);
     }
 
   /** Attempts to convert argument number \a argn into a Tcl list, and
@@ -207,7 +217,7 @@ public:
   template <class T>
   List::Iterator<T> endOfArg(int argn, T* /*dummy*/=0)
     {
-      return List::Iterator<T>(itsObjv[argn], List::Iterator<T>::END);
+      return List::Iterator<T>(getObjv(argn), List::Iterator<T>::END);
     }
 
 
@@ -247,7 +257,7 @@ public:
     ResultAppender(Context* ctx) :
       itsContext(ctx), itsList() {}
 
-    /// Destructor actually returns the value to the TclCmd.
+    /// Destructor actually returns the value to the Context.
     ~ResultAppender()
     { itsContext->setResult(itsList); }
 
@@ -281,12 +291,16 @@ public:
     { return ResultAppender<T>(this); }
 
 protected:
+  /// Get the n'th argument.
+  virtual Tcl_Obj* getObjv(int n) { return itsObjv[n]; }
+
   /// Return a Tcl_Obj*.
-  void setObjResult(Tcl_Obj* obj);
+  virtual void setObjResult(Tcl_Obj* obj);
 
 private:
   Context(const Context&);
   Context& operator=(const Context&);
+
   Tcl_Interp* itsInterp;
   int itsObjc;
   Tcl_Obj* const* itsObjv;
