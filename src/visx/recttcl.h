@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:24:29 2001
-// written: Mon Aug 13 12:15:34 2001
+// written: Tue Aug 28 09:56:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,8 @@ namespace Tcl
     static Gfx::Rect<T> fromTcl( Tcl_Obj* obj )
     {
       Tcl::List listObj(obj);
-      return Gfx::Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
-                          listObj.get(2, (T*)0), listObj.get(3, (T*)0));
+      return Gfx::RectLTRB<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
+                              listObj.get(2, (T*)0), listObj.get(3, (T*)0));
     }
 
     static Tcl::ObjPtr toTcl( const Gfx::Rect<T>& rect )
