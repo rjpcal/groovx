@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed May 10 15:45:07 2000
+// written: Mon May 22 12:18:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +62,8 @@ DOTRACE("ErrorWithMsg::operator=");
 	 delete itsInfo;
 	 itsInfo = new dynamic_string(*(other.itsInfo));
   }
-  return *this;
   DebugEvalNL(*itsInfo);
+  return *this;
 }
 
 const char* ErrorWithMsg::msg_cstr() const {
