@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Thu Jun  1 13:07:41 2000
+// written: Sat Sep 23 16:07:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "system/demangle.h"
 
-#include <algorithm> // for ::count
+#include <algorithm> // for std::count
 #include <typeinfo>
 #include <vector>
 
@@ -57,7 +57,7 @@ public:
 	 }
 
   int itsFirstVacant;
-  vector<void*> itsVec;
+  std::vector<void*> itsVec;
 
 private:
   Impl(const Impl&);
@@ -94,8 +94,8 @@ DOTRACE("VoidPtrList::count");
   // pointers, i.e. the size of the container less the number of null
   // pointers.
   int num_null=0;
-  ::count(itsImpl->itsVec.begin(), itsImpl->itsVec.end(),
-			 static_cast<void *>(NULL), num_null);
+  std::count(itsImpl->itsVec.begin(), itsImpl->itsVec.end(),
+				 static_cast<void *>(NULL), num_null);
   return (itsImpl->itsVec.size() - num_null);
 }
 
