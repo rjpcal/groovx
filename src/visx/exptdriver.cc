@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 15:49:03 2002
+// written: Wed Dec  4 17:27:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -348,7 +348,7 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
   Util::Log::reset(); // to clear any existing timer scopes
   Util::Log::addScope("Expt");
 
-  currentBlock()->beginTrial(*itsOwner);
+  currentBlock()->vxRun(*itsOwner);
 }
 
 
@@ -372,7 +372,7 @@ DOTRACE("ExptDriver::Impl::edNextBlock");
     }
   else
     {
-      currentBlock()->beginTrial(*itsOwner);
+      currentBlock()->vxRun(*itsOwner);
     }
 }
 
@@ -383,7 +383,7 @@ DOTRACE("ExptDriver::Impl::edHaltExpt");
 
   if ( haveValidBlock() )
     {
-      currentBlock()->haltExpt();
+      currentBlock()->vxHalt();
     }
 }
 
@@ -393,7 +393,7 @@ void ExptDriver::Impl::edResumeExpt()
 DOTRACE("ExptDriver::Impl::edResumeExpt");
   ensureHasBlock();
 
-  currentBlock()->beginTrial(*itsOwner);
+  currentBlock()->vxRun(*itsOwner);
 }
 
 

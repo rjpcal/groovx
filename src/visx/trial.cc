@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Dec  4 17:03:54 2002
+// written: Wed Dec  4 17:28:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ public:
   fstring status() const;
 
   int lastResponse() const;
-  void undoPrevious();
+  void vxUndo();
 
   double avgResponse() const;
   double avgRespTime() const;
@@ -149,13 +149,13 @@ public:
 
   void clearObjs();
 
-  void run(Trial* self, const SoftRef<Toglet>& widget,
-           Util::ErrorHandler& errhdlr, Block& block);
+  void vxRun(Trial* self, const SoftRef<Toglet>& widget,
+             Util::ErrorHandler& errhdlr, Block& block);
   double trElapsedMsec();
   void trAbortTrial();
   void trEndTrial();
   void trNextTrial();
-  void halt();
+  void vxHalt();
   void trResponseSeen();
   void trRecordResponse(Response& response);
   void trAllowResponses(Trial* self);
@@ -306,10 +306,10 @@ DOTRACE("Trial::Impl::clearObjs");
 // actions //
 /////////////
 
-void Trial::Impl::run(Trial* self, const SoftRef<Toglet>& widget,
-                      Util::ErrorHandler& errhdlr, Block& block)
+void Trial::Impl::vxRun(Trial* self, const SoftRef<Toglet>& widget,
+                        Util::ErrorHandler& errhdlr, Block& block)
 {
-DOTRACE("Trial::Impl::run");
+DOTRACE("Trial::Impl::vxRun");
   Precondition(self != 0);
   Precondition(widget.isValid());
   Precondition(&errhdlr != 0);
@@ -324,7 +324,7 @@ DOTRACE("Trial::Impl::run");
 
   becomeActive(&block, widget);
 
-  Util::log("Trial::run");
+  Util::log("Trial::vxRun");
 
   itsCurrentNode = 0;
 
@@ -351,7 +351,7 @@ DOTRACE("Trial::Impl::trAbortTrial");
 
   itsActiveState->itsRh->rhAbortTrial();
   itsActiveState->itsTh->thAbortTrial();
-  itsActiveState->itsBlock->abortTrial();
+  itsActiveState->itsBlock->vxAbort();
 }
 
 void Trial::Impl::trEndTrial()
@@ -363,7 +363,7 @@ DOTRACE("Trial::Impl::trEndTrial");
   Util::log("trEndTrial");
 
   itsActiveState->itsRh->rhEndTrial();
-  itsActiveState->itsBlock->endTrial();
+  itsActiveState->itsBlock->vxEndTrial();
 }
 
 void Trial::Impl::trNextTrial()
@@ -378,16 +378,16 @@ DOTRACE("Trial::Impl::trNextTrial");
 
   becomeInactive();
 
-  block->nextTrial();
+  block->vxNext();
 }
 
-void Trial::Impl::halt()
+void Trial::Impl::vxHalt()
 {
-DOTRACE("Trial::Impl::halt");
+DOTRACE("Trial::Impl::vxHalt");
 
   if (isInactive()) return;
 
-  Util::log("Trial::halt");
+  Util::log("Trial::vxHalt");
 
   if (itsActiveState->itsWidget.isValid())
     itsActiveState->itsWidget->undraw();
@@ -453,9 +453,9 @@ DOTRACE("Trial::Impl::installSelf");
     widget->setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
 }
 
-void Trial::Impl::undoPrevious()
+void Trial::Impl::vxUndo()
 {
-DOTRACE("Trial::Impl::undoPrevious");
+DOTRACE("Trial::Impl::vxUndo");
   if ( !itsResponses.empty() )
     itsResponses.pop_back();
 }
@@ -558,8 +558,8 @@ fstring Trial::status() const
 int Trial::lastResponse() const
   { return itsImpl->lastResponse(); }
 
-void Trial::undoPrevious()
-  { itsImpl->undoPrevious(); }
+void Trial::vxUndo()
+  { itsImpl->vxUndo(); }
 
 unsigned int Trial::numResponses() const
   { return itsImpl->itsResponses.size(); }
@@ -597,9 +597,9 @@ void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
 
-void Trial::run(const SoftRef<Toglet>& widget,
-                Util::ErrorHandler& errhdlr, Block& block)
-  { itsImpl->run(this, widget, errhdlr, block); }
+void Trial::vxRun(const SoftRef<Toglet>& widget,
+                  Util::ErrorHandler& errhdlr, Block& block)
+  { itsImpl->vxRun(this, widget, errhdlr, block); }
 
 double Trial::trElapsedMsec()
   { return itsImpl->trElapsedMsec(); }
@@ -613,8 +613,8 @@ void Trial::trEndTrial()
 void Trial::trNextTrial()
   { itsImpl->trNextTrial(); }
 
-void Trial::halt()
-  { itsImpl->halt(); }
+void Trial::vxHalt()
+  { itsImpl->vxHalt(); }
 
 void Trial::trResponseSeen()
   { itsImpl->trResponseSeen(); }

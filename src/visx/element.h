@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Wed Dec  4 17:01:33 2002
+// written: Wed Dec  4 17:25:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,12 +50,12 @@ public:
   virtual fstring status() const = 0;
 
 
-  virtual void run(const Util::SoftRef<Toglet>& widget,
-                   Util::ErrorHandler& errhdlr, Block& block) = 0;
+  virtual void vxRun(const Util::SoftRef<Toglet>& widget,
+                     Util::ErrorHandler& errhdlr, Block& block) = 0;
 
-  virtual void halt() = 0;
+  virtual void vxHalt() = 0;
 
-  virtual void undoPrevious() = 0;
+  virtual void vxUndo() = 0;
 };
 
 static const char vcid_element_h[] = "$Header$";

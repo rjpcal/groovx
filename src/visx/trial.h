@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 17:02:43 2002
+// written: Wed Dec  4 17:25:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,12 +103,12 @@ public:
   // actions //
   /////////////
 
-  virtual void run(const Util::SoftRef<Toglet>& widget,
-                   Util::ErrorHandler& errhdlr, Block& block);
+  virtual void vxRun(const Util::SoftRef<Toglet>& widget,
+                     Util::ErrorHandler& errhdlr, Block& block);
 
-  virtual void halt();
+  virtual void vxHalt();
 
-  virtual void undoPrevious();
+  virtual void vxUndo();
 
   virtual double trElapsedMsec();
 

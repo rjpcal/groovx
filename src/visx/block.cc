@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  4 17:04:56 2002
+// written: Wed Dec  4 17:33:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,20 +63,18 @@ private:
 
 public:
   Impl() :
-    itsTrialSequence(),
+    itsElements(),
     itsRandSeed(0),
-    itsCurTrialSeqIdx(0),
+    itsSequencePos(0),
     itsHasBegun(false),
     itsExperiment(0)
     {}
 
-  // Ordered sequence of indexes into the Tlist
-  typedef minivec<Ref<Element> > TrialSeqType;
-  TrialSeqType itsTrialSequence;
+  minivec<Ref<Element> > itsElements;
 
-  int itsRandSeed;              // Random seed used to create itsTrialSequence
-  int itsCurTrialSeqIdx;        // Index of the current trial
-                                // Also functions as # of completed trials
+  int itsRandSeed;              // Random seed used to create itsElements
+  int itsSequencePos;           // Index of the current element
+                                // Also functions as # of completed elements
 
   mutable bool itsHasBegun;
 
@@ -92,17 +90,17 @@ public:
       return *itsExperiment;
     }
 
-  Ref<Element> currentTrial()
+  Ref<Element> currentElement()
     {
-      Precondition(hasCurrentTrial());
+      Precondition(hasCurrentElement());
 
-      return itsTrialSequence.at(itsCurTrialSeqIdx);
+      return itsElements.at(itsSequencePos);
     }
 
-  bool hasCurrentTrial()
+  bool hasCurrentElement()
     {
-      if ( itsCurTrialSeqIdx < 0 ||
-           (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
+      if ( itsSequencePos < 0 ||
+           (unsigned int) itsSequencePos >= itsElements.size() )
         return false;
       else
         return true;
@@ -139,12 +137,12 @@ Block::~Block()
   delete itsImpl;
 }
 
-void Block::addTrial(Ref<Element> trial, int repeat)
+void Block::addElement(Ref<Element> element, int repeat)
 {
-DOTRACE("Block::addTrial");
+DOTRACE("Block::addElement");
   for (int i = 0; i < repeat; ++i)
     {
-      itsImpl->itsTrialSequence.push_back(trial);
+      itsImpl->itsElements.push_back(element);
     }
 };
 
@@ -155,16 +153,16 @@ DOTRACE("Block::shuffle");
 
   Util::Urand generator(seed);
 
-  std::random_shuffle(itsImpl->itsTrialSequence.begin(),
-                      itsImpl->itsTrialSequence.end(),
+  std::random_shuffle(itsImpl->itsElements.begin(),
+                      itsImpl->itsElements.end(),
                       generator);
 }
 
-void Block::removeAllTrials()
+void Block::clearAllElements()
 {
-DOTRACE("Block::removeAllTrials");
-  itsImpl->itsTrialSequence.clear();
-  itsImpl->itsCurTrialSeqIdx = 0;
+DOTRACE("Block::clearAllElements");
+  itsImpl->itsElements.clear();
+  itsImpl->itsSequencePos = 0;
 }
 
 IO::VersionId Block::serialVersionId() const
@@ -179,14 +177,14 @@ DOTRACE("Block::readFrom");
 
   int svid = reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
-  itsImpl->itsTrialSequence.clear();
+  itsImpl->itsElements.clear();
   IO::ReadUtils::readObjectSeq<Element>(
-        reader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
+        reader, "trialSeq", std::back_inserter(itsImpl->itsElements));
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
-  reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
-  if (itsImpl->itsCurTrialSeqIdx < 0 ||
-      size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size())
+  reader->readValue("curTrialSeqdx", itsImpl->itsSequencePos);
+  if (itsImpl->itsSequencePos < 0 ||
+      size_t(itsImpl->itsSequencePos) > itsImpl->itsElements.size())
     {
       throw IO::ReadError("Block");
     }
@@ -206,42 +204,42 @@ DOTRACE("Block::writeTo");
                                "Try grsh0.8a7");
 
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-                                 itsImpl->itsTrialSequence.begin(),
-                                 itsImpl->itsTrialSequence.end());
+                                 itsImpl->itsElements.begin(),
+                                 itsImpl->itsElements.end());
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
-  writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  writer->writeValue("curTrialSeqdx", itsImpl->itsSequencePos);
 }
 
 ///////////////
 // accessors //
 ///////////////
 
-int Block::numTrials() const
+int Block::numElements() const
 {
-DOTRACE("Block::numTrials");
-  return itsImpl->itsTrialSequence.size();
+DOTRACE("Block::numElements");
+  return itsImpl->itsElements.size();
 }
 
-Util::FwdIter<Util::Ref<Element> > Block::trials() const
+Util::FwdIter<Util::Ref<Element> > Block::getElements() const
 {
   return Util::FwdIter<Util::Ref<Element> >
-    (itsImpl->itsTrialSequence.begin(),
-     itsImpl->itsTrialSequence.end());
+    (itsImpl->itsElements.begin(),
+     itsImpl->itsElements.end());
 }
 
 int Block::numCompleted() const
 {
 DOTRACE("Block::numCompleted");
-  return itsImpl->itsCurTrialSeqIdx;
+  return itsImpl->itsSequencePos;
 }
 
-Util::SoftRef<Element> Block::currentTrial() const
+Util::SoftRef<Element> Block::currentElement() const
 {
-DOTRACE("Block::currentTrial");
+DOTRACE("Block::currentElement");
   if (isComplete()) return Util::SoftRef<Element>();
 
-  return itsImpl->currentTrial();
+  return itsImpl->currentElement();
 }
 
 int Block::trialType() const
@@ -249,44 +247,44 @@ int Block::trialType() const
 DOTRACE("Block::trialType");
   if (isComplete()) return -1;
 
-  dbgEvalNL(3, itsImpl->currentTrial()->trialType());
+  dbgEvalNL(3, itsImpl->currentElement()->trialType());
 
-  return itsImpl->currentTrial()->trialType();
+  return itsImpl->currentElement()->trialType();
 }
 
 int Block::lastResponse() const
 {
 DOTRACE("Block::lastResponse");
 
-  dbgEval(9, itsImpl->itsCurTrialSeqIdx);
-  dbgEvalNL(9, itsImpl->itsTrialSequence.size());
+  dbgEval(9, itsImpl->itsSequencePos);
+  dbgEvalNL(9, itsImpl->itsElements.size());
 
-  if (itsImpl->itsCurTrialSeqIdx == 0 ||
-      itsImpl->itsTrialSequence.size() == 0) return -1;
+  if (itsImpl->itsSequencePos == 0 ||
+      itsImpl->itsElements.size() == 0) return -1;
 
-  Ref<Element> prev_trial =
-    itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
-  return prev_trial->lastResponse();
+  Ref<Element> prev_element =
+    itsImpl->itsElements.at(itsImpl->itsSequencePos-1);
+  return prev_element->lastResponse();
 }
 
 bool Block::isComplete() const
 {
 DOTRACE("Block::isComplete");
 
-  dbgEval(9, itsImpl->itsCurTrialSeqIdx);
-  dbgEvalNL(9, itsImpl->itsTrialSequence.size());
+  dbgEval(9, itsImpl->itsSequencePos);
+  dbgEvalNL(9, itsImpl->itsElements.size());
 
-  // This is 'tricky'. The problem is that itsImpl->itsCurTrialSeqIdx may
-  // temporarily be negative in between an abortTrial and the
-  // corresponding endTrial. This means that we can't only compare
-  // itsImpl->itsCurTrialSeqIdx with itsImpl->itsTrialSequence.size(), because the
-  // former is signed and the latter is unsigned, forcing a
-  // 'promotion' to unsigned of the former... this makes it a huge
-  // positive number if it was actually negative. Thus, we must also
-  // check that itsImpl->itsCurTrialSeqIdx is actually non-negative before
-  // returning 'true' from this function.
-  return ((itsImpl->itsCurTrialSeqIdx >= 0) &&
-          (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
+  // This is 'tricky'. The problem is that itsImpl->itsSequencePos may
+  // temporarily be negative in between a vxAbort and the corresponding
+  // vxEndTrial. This means that we can't only compare
+  // itsImpl->itsSequencePos with itsImpl->itsElements.size(), because the
+  // former is signed and the latter is unsigned, forcing a 'promotion' to
+  // unsigned of the former... this makes it a huge positive number if it
+  // was actually negative. Thus, we must also check that
+  // itsImpl->itsSequencePos is actually non-negative before returning
+  // 'true' from this function.
+  return ((itsImpl->itsSequencePos >= 0) &&
+          (size_t(itsImpl->itsSequencePos) >= itsImpl->itsElements.size()));
 }
 
 fstring Block::status() const
@@ -295,9 +293,9 @@ DOTRACE("Block::status");
   if (isComplete()) return fstring("block is complete");
 
   fstring msg;
-  msg.append("next trial ", currentTrial().id(), ", ")
-    .append(itsImpl->currentTrial()->status())
-    .append(", completed ", numCompleted(), " of ", numTrials());
+  msg.append("next element ", currentElement().id(), ", ")
+    .append(itsImpl->currentElement()->status())
+    .append(", completed ", numCompleted(), " of ", numElements());
 
   return msg;
 }
@@ -308,9 +306,9 @@ DOTRACE("Block::status");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Block::beginTrial(Experiment& expt)
+void Block::vxRun(Experiment& expt)
 {
-DOTRACE("Block::beginTrial");
+DOTRACE("Block::vxRun");
 
   if ( isComplete() ) return;
 
@@ -320,31 +318,31 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->setExpt(expt);
 
-  itsImpl->currentTrial()->
-             run(expt.getWidget(), expt.getErrorHandler(), *this);
+  itsImpl->currentElement()->
+             vxRun(expt.getWidget(), expt.getErrorHandler(), *this);
 }
 
-void Block::abortTrial()
+void Block::vxAbort()
 {
-DOTRACE("Block::abortTrial");
+DOTRACE("Block::vxAbort");
   if (isComplete()) return;
 
-  // Remember the trial that we are about to abort so we can store it
+  // Remember the element that we are about to abort so we can store it
   // at the end of the sequence.
-  Ref<Element> aborted_trial = itsImpl->currentTrial();
+  Ref<Element> aborted_element = itsImpl->currentElement();
 
-  // Erase the aborted trial from the sequence. Subsequent trials will
+  // Erase the aborted element from the sequence. Subsequent elements will
   // slide up to fill in the gap.
-  itsImpl->itsTrialSequence.erase(
-              itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
+  itsImpl->itsElements.erase(
+              itsImpl->itsElements.begin()+itsImpl->itsSequencePos);
 
-  // Add the aborted trial to the back of the sequence.
-  itsImpl->itsTrialSequence.push_back(aborted_trial);
+  // Add the aborted element to the back of the sequence.
+  itsImpl->itsElements.push_back(aborted_element);
 
-  // We must decrement itsImpl->itsCurTrialSeqIdx, so that when it is
-  // incremented by endTrial, the next trial has slid into the
-  // position where the aborted trial once was.
-  --itsImpl->itsCurTrialSeqIdx;
+  // We must decrement itsImpl->itsSequencePos, so that when it is
+  // incremented by vxEndTrial, the next element has slid into the
+  // position where the aborted element once was.
+  --itsImpl->itsSequencePos;
 }
 
 void Block::processResponse(const Response& response)
@@ -358,35 +356,35 @@ DOTRACE("Block::processResponse");
   if (!response.isCorrect())
     {
       // If the response was incorrect, add a repeat of the current
-      // trial to the block and reshuffle
-      addTrial(itsImpl->currentTrial(), 1);
+      // element to the block and reshuffle
+      addElement(itsImpl->currentElement(), 1);
       std::random_shuffle(
-        itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
-        itsImpl->itsTrialSequence.end());
+        itsImpl->itsElements.begin()+itsImpl->itsSequencePos+1,
+        itsImpl->itsElements.end());
     }
 }
 
-void Block::endTrial()
+void Block::vxEndTrial()
 {
-DOTRACE("Block::endTrial");
+DOTRACE("Block::vxEndTrial");
   if (isComplete()) return;
 
-  // Prepare to start next trial.
-  ++itsImpl->itsCurTrialSeqIdx;
+  // Prepare to start next element.
+  ++itsImpl->itsSequencePos;
 
   dbgEval(3, numCompleted());
-  dbgEval(3, numTrials());
+  dbgEval(3, numElements());
   dbgEvalNL(3, isComplete());
 
   itsImpl->getExpt().edEndTrial();
 }
 
-void Block::nextTrial()
+void Block::vxNext()
 {
-DOTRACE("Block::nextTrial");
+DOTRACE("Block::vxNext");
   if ( !isComplete() )
     {
-      beginTrial(itsImpl->getExpt());
+      vxRun(itsImpl->getExpt());
     }
   else
     {
@@ -394,39 +392,39 @@ DOTRACE("Block::nextTrial");
     }
 }
 
-void Block::haltExpt()
+void Block::vxHalt()
 {
-DOTRACE("Block::haltExpt");
+DOTRACE("Block::vxHalt");
 
   if ( itsImpl->itsHasBegun && !isComplete() )
-    itsImpl->currentTrial()->halt();
+    itsImpl->currentElement()->vxHalt();
 }
 
-void Block::undoPrevTrial()
+void Block::vxUndo()
 {
-DOTRACE("Block::undoPrevTrial");
+DOTRACE("Block::vxUndo");
 
-  dbgEval(3, itsImpl->itsCurTrialSeqIdx);
+  dbgEval(3, itsImpl->itsSequencePos);
 
-  // Check to make sure we've completed at least one trial
-  if (itsImpl->itsCurTrialSeqIdx < 1) return;
+  // Check to make sure we've completed at least one element
+  if (itsImpl->itsSequencePos < 1) return;
 
-  // Move the counter back to the previous trial...
-  --itsImpl->itsCurTrialSeqIdx;
+  // Move the counter back to the previous element...
+  --itsImpl->itsSequencePos;
 
-  // ...and erase the last response given to that trial
-  if ( itsImpl->hasCurrentTrial() )
+  // ...and erase the last response given to that element
+  if ( itsImpl->hasCurrentElement() )
     {
-      itsImpl->currentTrial()->undoPrevious();
+      itsImpl->currentElement()->vxUndo();
     }
 }
 
 void Block::resetBlock()
 {
 DOTRACE("Block::resetBlock");
-  while (itsImpl->itsCurTrialSeqIdx > 0)
+  while (itsImpl->itsSequencePos > 0)
     {
-      undoPrevTrial();
+      vxUndo();
     }
 }
 

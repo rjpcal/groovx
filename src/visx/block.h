@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Dec  4 17:09:19 2002
+// written: Wed Dec  4 17:29:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,13 +35,10 @@ class fstring;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * The Block class represents a block as a sequence of trials in an
- * experiment. It maintains a sequence of trial id's, used as indices
- * into the global singleton Tlist, as well as an index for the
- * current trial. Block is responsible for computing response times,
- * and recording the response information into the Trial's. The Block
- * is run by the ExptDriver by alternately calling drawTrial() and one
- * of processResponse() or abortTrial().
+ * The Block class represents a block as a sequence of elements in an
+ * experiment. It maintains a sequence of elements, as well as an index for
+ * the current element. Block is responsible for computing response times,
+ * and recording the response information into the elements.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -68,15 +65,15 @@ public:
   /// Virtual destructor ensures correct destruction of subclasses.
   virtual ~Block();
 
-  /// Add the specified trialid to the block, 'repeat' number of times.
-  void addTrial(Util::Ref<Element> trial, int repeat=1);
+  /// Add the specified element to the block, 'repeat' number of times.
+  void addElement(Util::Ref<Element> element, int repeat=1);
 
-  /// Randomly permute the sequence of trialids.
+  /// Randomly permute the sequence of elements.
   /** @param seed used as the random seed for the shuffle. */
   void shuffle(int seed=0);
 
-  /// Clear the Block's list of trial ids.
-  void removeAllTrials();
+  /// Clear the Block's list of all its contained elements.
+  void clearAllElements();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -86,40 +83,39 @@ public:
   // Element interface
   //
 
-  /// Returns the integer type of the current element.
+  /// Returns the trial type of the current element.
   virtual int trialType() const;
 
-  /// Returns a human-readable description of the current trial.
-  /** This description may include trial's id, the trial's type, the id's
-      of the objects that are displayed in the trial, the categories of
-      those objects, and the number of completed trials and number of total
-      trials. */
+  /// Returns a human-readable description of the current element.
+  /** This description includes the current element's id, its type, the
+      id's of its subobjects, the categories of those objects, and the
+      number of completed trials and number of total trials. */
   virtual fstring status() const;
 
   ///////////////
   // accessors //
   ///////////////
 
-  /// Returns the total number of trials that will comprise the Block.
-  int numTrials() const;
+  /// Returns the total number of elements that will comprise the Block.
+  int numElements() const;
 
-  /// Returns an iterator to all the trials contained in the Block.
-  Util::FwdIter<Util::Ref<Element> > trials() const;
+  /// Returns an iterator to all the elements contained in the Block.
+  Util::FwdIter<Util::Ref<Element> > getElements() const;
 
-  /// Returns the number of trials that have been successfully completed.
-  /** This number will not include trials that have been aborted either due
-      to an invalid response or due to a timeout. */
+  /// Returns the number of elements that have been successfully completed.
+  /** This number will not include elements that have been aborted either
+      due to an invalid response or due to a timeout. */
   int numCompleted() const;
 
-  /// Get the trial id (an index into Tlist) of the current trial.
-  Util::SoftRef<Element> currentTrial() const;
+  /// Get a reference to the current element.
+  Util::SoftRef<Element> currentElement() const;
 
   /// Returns the last valid response recorded in the Block.
   /** But note that "valid" does not necessarily mean "correct". */
   int lastResponse() const;
 
   /// Returns true if the block is complete, false otherwise.
-  /** The block is considered complete if all trials in the trial sequence
+  /** The block is considered complete if all elements in the sequence
       have finished successfully. */
   bool isComplete() const;
 
@@ -127,46 +123,46 @@ public:
   // actions //
   /////////////
 
-  /// Starts the current trial.
-  /** This will be called by nextTrial() as needed. */
-  void beginTrial(Experiment& expt);
+  /// Starts the current element.
+  /** This will be called by vxNext() as needed. */
+  void vxRun(Experiment& expt);
 
-  /// Aborts the current trial of the experiment.
-  /** The current (to be aborted) trial is put at the end of the trial
+  /// Aborts the current element.
+  /** The current (to be aborted) element is put at the end of the element
       sequence in the Block, without recording any response for that
-      trial. The next call to drawTrial will start the same trial that
-      would have started if the current trial had been completed normally,
-      instead of being aborted. */
-  void abortTrial();
+      element. The next call to vxRun() will start the same element that
+      would have started if the current element had been completed
+      normally, instead of being aborted. */
+  void vxAbort();
 
-  /// Records a response to the current trial in the Block.
-  /** Also, prepares the Block for the next trial. The response is recorded
-      for the current trial, and the Block's trial sequence index is
-      incremented. Also, the next call to lastResponse will return the
-      response that was recorded in the present command. */
+  /// Records a response to the current element in the Block.
+  /** Also, prepares the Block for the next element. The response is
+      recorded for the current element, and the Block's element sequence
+      index is incremented. Also, the next call to lastResponse will return
+      the response that was recorded in the present command. */
   void processResponse(const Response& response);
 
-  /// Prepares the Block to start the next trial. */
-  void endTrial();
+  /// Prepares the Block to start the next element. */
+  void vxEndTrial();
 
-  /// Begins the next trial, moving on to the next Block if necessary.
-  void nextTrial();
+  /// Begins the next element, moving on to the next Block if necessary.
+  void vxNext();
 
-  /// Undraws, aborts, and ends the current trial.
-  void haltExpt();
+  /// Undraws, aborts, and ends the current element.
+  void vxHalt();
 
-  /// Undo the previous trial.
+  /// Undo the previous element.
   /** The state of the experiment is restored to what it was just prior to
-      the beginning of the most recent successfully completed trial. Thus,
-      the current trial is changed to its previous value, and the response
-      to the most recently successfully completed trial is erased. After a
-      call to undoPrevTrial(), the next invocation of drawTrial() will redo
-      the trial that was undone in the present command.*/
-  void undoPrevTrial();
+      the beginning of the most recent successfully completed
+      element. Thus, the current element is changed to its previous value,
+      and the response to the most recently successfully completed element
+      is erased. After a call to vxUndo(), the next invocation of
+      vxRun() will redo the element that was undone in the present command.*/
+  void vxUndo();
 
-  /// Restore the Block to a state where none of the trials have been run.
-  /** Undoes all responses to all of the Trial's in the Block, and
-      puts its trial counter back to the beginning of the block. */
+  /// Restore the Block to a state where none of the elements have been run.
+  /** Undoes all responses to all of the elements in the Block, and resets
+      its counter back to the beginning. */
   void resetBlock();
 
 private:
