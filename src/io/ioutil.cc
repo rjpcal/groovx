@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Jul 19 14:15:11 2001
+// written: Fri Jul 20 13:20:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,10 +22,11 @@
 
 #include "util/error.h"
 #include "util/gzstreambuf.h"
+#include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
-#include <fstream.h>
+#include <iostream.h>
 #include <strstream.h>
 
 #define NO_TRACE
@@ -107,54 +108,16 @@ void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
 
 void IO::saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename)
 {
-  STD_IO::ofstream ofs(filename.c_str());
-  if ( ofs.fail() )
-    {
-      ErrorWithMsg err("couldn't open file ");
-      err.appendMsg("'", filename.c_str(), "'");
-      err.appendMsg("for writing");
-      throw err;
-    }
+  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
 
-  if ( filename.ends_with("gz") )
-    {
-      ofs.close();
-
-      Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::out);
-      STD_IO::ostream os(&buf);
-
-      streamWrite<AsciiStreamWriter>(obj, os);
-    }
-  else
-    {
-      streamWrite<AsciiStreamWriter>(obj, ofs);
-    }
+  streamWrite<AsciiStreamWriter>(obj, *os);
 }
 
 void IO::loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename)
 {
-  STD_IO::ifstream ifs(filename.c_str());
-  if ( ifs.fail() )
-    {
-      ErrorWithMsg err("couldn't open file ");
-      err.appendMsg("'", filename.c_str(), "'");
-      err.appendMsg("for reading");
-      throw err;
-    }
+  shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 
-  if ( filename.ends_with("gz") )
-    {
-      ifs.close();
-
-      Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::in);
-      STD_IO::istream is(&buf);
-
-      streamRead<AsciiStreamReader>(obj, is);
-    }
-  else
-    {
-      streamRead<AsciiStreamReader>(obj, ifs);
-    }
+  streamRead<AsciiStreamReader>(obj, *is);
 }
 
 static const char vcid_ioutil_cc[] = "$Header$";
