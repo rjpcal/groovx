@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Sun Nov 21 02:25:55 1999
+// written: Wed Feb 16 07:58:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,11 @@ template <class T>
 PtrList<T>::PtrList(int size) :
   IoPtrList(size)
 {}
+
+template <class T>
+PtrList<T>::~PtrList() {
+  clear();
+}
 
 template <class T>
 T* PtrList<T>::castToT(void* ptr) const { return static_cast<T*>(ptr); }
