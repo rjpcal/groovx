@@ -80,20 +80,26 @@ namespace
     w->bind("<KeyPress-p>", fstring("-> ", xp.id(), " pause"));
 #endif
 
-    // Destroy the experiment start key binding
-    w->bind("<KeyPress-s>", "");
-
     // Force the focus to the widget
     w->takeFocus();
 
     xp->edBeginExpt();
   }
 
-  void waitStartKey(Util::Ref<ExptDriver> xp)
+  void waitStartKey(Util::Ref<ExptDriver> xp, const char* event)
   {
     Util::SoftRef<Toglet> w = xp->getWidget();
 
-    w->bind("<KeyPress-s>", fstring("-> ", xp.id(), " begin"));
+    // This script does two things:
+
+    // (1) destroy the binding that generated this callback (so that we
+    // don't accidentally "start" the experiment twice due to a double
+    // keypress)
+    // (2) actually start the experimeent
+    const fstring script("-> ", w.id(), " bind ", event, " {}; "
+                         "-> ", xp.id(), " begin");
+
+    w->bind(event, script);
     w->takeFocus();
   }
 
@@ -113,7 +119,7 @@ DOTRACE("Exptdriver_Init");
   Tcl::defTracing(pkg, ExptDriver::tracer);
 
   pkg->def( "begin", "expt_id", &beginExpt );
-  pkg->def( "waitStartKey", "expt_id", &waitStartKey );
+  pkg->def( "waitStartKey", "expt_id <event>", &waitStartKey );
 
   pkg->defAttrib("autosaveFile",
                  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
