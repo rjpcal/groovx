@@ -130,5 +130,8 @@ DOTRACE("Vectwotest_Init");
   PKG_RETURN;
 }
 
+// Need this to avoid dyld errors on Mac OS X
+extern "C" int Vectwotest_SafeInit(Tcl_Interp*) { return 1; }
+
 static const char vcid_vectwotest_cc[] = "$Header$";
 #endif // !VECTWOTEST_CC_DEFINED

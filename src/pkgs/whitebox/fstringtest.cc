@@ -162,5 +162,8 @@ DOTRACE("Fstringtest_Init");
   PKG_RETURN;
 }
 
+// Need this to avoid dyld errors on Mac OS X
+extern "C" int Fstringtest_SafeInit(Tcl_Interp*) { return 1; }
+
 static const char vcid_fstringtest_cc[] = "$Header$";
 #endif // !FSTRINGTEST_CC_DEFINED

@@ -153,5 +153,8 @@ DOTRACE("Dlinktest_Init");
   PKG_RETURN;
 }
 
+// Need this to avoid dyld errors on Mac OS X
+extern "C" int Dlinktest_SafeInit(Tcl_Interp*) { return 1; }
+
 static const char vcid_dlinktest_cc[] = "$Header$";
 #endif // !DLINKTEST_CC_DEFINED
