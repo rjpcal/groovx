@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Wed Oct 25 18:16:38 2000
+// written: Thu Oct 26 09:17:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,19 @@
 #endif
 
 template <class T> class PtrList;
+
+template <class Container, class T>
+class ItemWithIdInserter {
+public:
+  Container& itsContainer;
+
+  ItemWithIdInserter(Container& c) : itsContainer(c) {}
+
+  ItemWithIdInserter& operator=(T* obj);
+
+  ItemWithIdInserter& operator*() { return *this; }
+  ItemWithIdInserter& operator++() { return *this; }
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -42,9 +55,9 @@ public:
 
   // Default destructor, copy constructor, operator=() are fine
 
-  /** A symbol to pass to constructors indicating that the item should
-		be inserted into an appropriate PtrList. */
-  enum Insert { INSERT };
+  /** A symbol class to pass to constructors indicating that the item
+		should be inserted into an appropriate PtrList. */
+  class Insert {};
 
   ItemWithId(T* ptr, Insert /*dummy param*/);
   ItemWithId(PtrHandle<T> item, Insert /*dummy param*/);
@@ -63,8 +76,33 @@ public:
 
   PtrHandle<T> handle() const { return itsHandle; }
   int id() const { return itsId; }
+
+
+  template <class Container>
+  static ItemWithIdInserter<Container, T> makeInserter(Container& c)
+	 { return ItemWithIdInserter<Container, T>(c); }
 };
 
+template <class Container, class T>
+inline ItemWithIdInserter<Container, T>&
+ItemWithIdInserter<Container, T>::operator=(T* obj)
+{
+  itsContainer.push_back(ItemWithId<T>(obj, ItemWithId<T>::Insert()));
+  return *this;
+}
+
+template <class Container, class T>
+class NiwidInserter {
+public:
+  Container& itsContainer;
+
+  NiwidInserter(Container& c) : itsContainer(c) {}
+
+  NiwidInserter& operator=(T* obj);
+
+  NiwidInserter& operator*() { return *this; }
+  NiwidInserter& operator++() { return *this; }
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -126,7 +164,26 @@ public:
 
   NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
   int id() const { return itsId; }
+
+
+  //
+  // Related types
+  //
+
+  typedef T ValueType;
+
+  template <class Container>
+  static NiwidInserter<Container, T> makeInserter(Container& c)
+	 { return NiwidInserter<Container, T>(c); }
 };
+
+template <class Container, class T>
+inline NiwidInserter<Container, T>&
+NiwidInserter<Container, T>::operator=(T* obj)
+{
+  itsContainer.push_back(NullableItemWithId<T>(obj));
+  return *this;
+}
 
 static const char vcid_itemwithid_h[] = "$Header$";
 #endif // !ITEMWITHID_H_DEFINED
