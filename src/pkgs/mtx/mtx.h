@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Apr 17 08:34:50 2001
+// written: Tue Apr 17 11:04:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,6 +115,10 @@ public:
 
   bool hasMore() const { return data < stop; }
 
+  // Dereference
+
+  double& operator*() { RC_less(data, stop); return *data; }
+
   // Comparison
 
   bool operator==(const MtxIter& other) const { return data == other.data; }
@@ -123,10 +127,6 @@ public:
 
   difference_type operator-(const MtxIter& other) const
     { return (data - other.data) / stride; }
-
-  // Dereference
-
-  double& operator*() { RC_less(data, stop); return *data; }
 
   // Increment/Decrement
 
@@ -143,6 +143,8 @@ public:
   MtxIter operator-(int x) const { MtxIter res(*this); res -= x; return res; }
 };
 
+
+
 class MtxConstIter {
   const double* data;
   int stride;
@@ -158,11 +160,42 @@ public:
   MtxConstIter(const MtxIter& other) :
 	 data(other.data), stride(other.stride), stop(other.stop) {}
 
-  double operator*() const { RC_less(data, stop); return *data; }
+  typedef random_access_iterator_tag iterator_category;
+  typedef double                     value_type;
+  typedef ptrdiff_t                  difference_type;
+  typedef double*                    pointer;
+  typedef double&                    reference;
 
-  MtxConstIter& operator++() { data += stride; return *this; }
+  MtxConstIter end() const { MtxConstIter e(*this); e.data = stop; return e; }
 
   bool hasMore() const { return data < stop; }
+
+  // Dereference
+
+  double operator*() const { RC_less(data, stop); return *data; }
+
+  // Comparison
+
+  bool operator==(const MtxConstIter& other) const { return data == other.data; }
+
+  bool operator<(const MtxConstIter& other) const { return data < other.data; }
+
+  difference_type operator-(const MtxConstIter& other) const
+    { return (data - other.data) / stride; }
+
+  // Increment/Decrement
+
+  MtxConstIter& operator++() { data += stride; return *this; }
+  MtxConstIter& operator--() { data -= stride; return *this; }
+
+  MtxConstIter operator++(int) { MtxConstIter cpy(*this); data += stride; return cpy; }
+  MtxConstIter operator--(int) { MtxConstIter cpy(*this); data -= stride; return cpy; }
+
+  MtxConstIter& operator+=(int x) { data += x*stride; return *this; }
+  MtxConstIter& operator-=(int x) { data -= x*stride; return *this; }
+
+  MtxConstIter operator+(int x) const { MtxConstIter res(*this); res += x; return res; }
+  MtxConstIter operator-(int x) const { MtxConstIter res(*this); res -= x; return res; }
 };
 
 
@@ -238,6 +271,9 @@ public:
   MtxConstIter begin() const
     { return MtxConstIter(dataStart(), itsStride, itsNelems); }
 
+  MtxConstIter end() const
+    { return begin().end(); }
+
   //
   // Const functions
   //
@@ -272,6 +308,10 @@ public:
     { return sum()/itsNelems; }
 
 
+  // Returns an index matrix so that this->reorder(Mtx) will put the
+  // Slice in sorted order
+  Mtx getSortOrder() const;
+
   bool operator==(const Slice& other) const
   {
 	 if (itsNelems != other.itsNelems) return false;
@@ -305,6 +345,9 @@ public:
   }
 
   void sort();
+
+  // Reorders the Slice by applying *this[i] = *this[index[i]]
+  void reorder(const Mtx& index);
 
   void operator/=(double div) { apply(Div(div)); }
 
@@ -430,6 +473,8 @@ public:
   Mtx asRow() const
     { Mtx result(*this); result.reshape(1, nelems()); return result; }
 
+  void reorderRows(const Mtx& index);
+
 
 
   Slice column(int c) const
@@ -447,6 +492,8 @@ public:
 
   Mtx asColumn() const
     { Mtx result(*this); result.reshape(nelems(), 1); return result; }
+
+  void reorderColumns(const Mtx& index);
 
   void swapColumns(int c1, int c2);
 

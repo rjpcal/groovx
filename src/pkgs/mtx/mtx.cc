@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Apr 17 08:21:06 2001
+// written: Tue Apr 17 11:12:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "mtx.h"
 
 #include "error.h"
+#include "minivec.h"
 #include "strings.h"
 
 #include <algorithm>
@@ -120,9 +121,56 @@ void Slice::print() const
   mexPrintf("\n");
 }
 
+namespace
+{
+  struct ValIndex
+  {
+	 static int counter;
+	 double val;
+	 int index;
+
+	 ValIndex(double v) : val(v), index(counter++) {}
+
+	 bool operator<(const ValIndex& v2) const { return val < v2.val; }
+  };
+
+  int ValIndex::counter = 0;
+}
+
+Mtx Slice::getSortOrder() const
+{
+  ValIndex::counter = 0;
+
+  minivec<ValIndex> buf(begin(), end());
+
+  ::sort(buf.begin(), buf.end());
+
+  Mtx index(1,nelems());
+
+  for (int i = 0; i < nelems(); ++i)
+	 index.at(0,i) = buf[i].index;
+
+  return index;
+}
+
 void Slice::sort()
 {
   ::sort(beginNC(), endNC());
+}
+
+void Slice::reorder(const Mtx& index_)
+{
+  Mtx index(index_.asColumn());
+
+  if (index.mrows() != nelems())
+	 throw ErrorWithMsg("dimension mismatch in Slice::reorder");
+
+  Mtx neworder(nelems(), 1);
+
+  for (int i = 0; i < nelems(); ++i)
+	 neworder.at(i,0) = (*this)[int(index.at(i,0))];
+
+  *this = neworder.column(0);
 }
 
 Slice& Slice::operator+=(const Slice& other)
@@ -361,6 +409,21 @@ Mtx Mtx::rows(int r, int nr) const
   return result;
 }
 
+void Mtx::reorderRows(const Mtx& index_)
+{
+  Mtx index(index_.asColumn());
+
+  if (index.mrows() != mrows())
+	 throw ErrorWithMsg("dimension mismatch in Mtx::reorderRows");
+
+  Mtx neworder(mrows(), ncols());
+
+  for (int r = 0; r < mrows(); ++r)
+	 neworder.row(r) = row(int(index.at(r,0)));
+
+  *this = neworder;
+}
+
 Mtx Mtx::columns(int c, int nc) const
 {
   Mtx result(*this);
@@ -368,6 +431,21 @@ Mtx Mtx::columns(int c, int nc) const
   result.itsImpl.selectColumnRange(c, nc);
 
   return result;
+}
+
+void Mtx::reorderColumns(const Mtx& index_)
+{
+  Mtx index(index_.asColumn());
+
+  if (index.mrows() != ncols())
+	 throw ErrorWithMsg("dimension mismatch in Mtx::reorderColumns");
+
+  Mtx neworder(mrows(), ncols());
+
+  for (int c = 0; c < ncols(); ++c)
+	 neworder.column(c) = column(int(index.at(c,0)));
+
+  *this = neworder;
 }
 
 void Mtx::swapColumns(int c1, int c2)
