@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Sep 10 18:57:59 2001
-// written: Wed Mar 19 17:55:53 2003
+// written: Mon May 12 18:40:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,6 +35,8 @@
 
 #include "tcl/tclpkg.h"
 
+#include <cmath>
+
 namespace
 {
   void testRequireImpl(bool expr, const char* exprString,
@@ -44,10 +46,55 @@ namespace
       throw Util::Error(fstring(file, "@", line,
                                 ": failed test of: ",exprString));
   }
+
+  template <class T, class U>
+  void testRequireEqImpl(const T& expr1,
+                         const U& expr2,
+                         const char* exprString1,
+                         const char* exprString2,
+                         const char* file, int line)
+  {
+    if (!(expr1 == expr2))
+      {
+        fstring msg(file, "@", line, ": failed test:\n");
+        msg.append("\texpected ", exprString1, " == ", exprString2, "\n");
+        msg.append("\tgot: ", expr1, " != ", expr2);
+        throw Util::Error(msg);
+      }
+  }
+
+  double APPROX_TOL = 1e-40;
+
+  bool approxEq(double a, double b, double tol = APPROX_TOL)
+  {
+    return fabs(a-b) < tol;
+  }
+
+  void testRequireApproxImpl(double expr1,
+                             double expr2,
+                             double tol,
+                             const char* exprString1,
+                             const char* exprString2,
+                             const char* file, int line)
+  {
+    if (!approxEq(expr1, expr2, tol))
+      {
+        fstring msg(file, "@", line, ": failed test:\n");
+        msg.append("\texpected ", exprString1, " ~= ", exprString2, "\n");
+        msg.append("\tgot: ", expr1, " != ", expr2);
+        throw Util::Error(msg);
+      }
+  }
 }
 
 #define TEST_REQUIRE(expr) \
-  testRequireImpl(bool(expr), #expr, __FILE__, __LINE__);
+  testRequireImpl(bool(expr), #expr, __FILE__, __LINE__)
+
+#define TEST_REQUIRE_EQ(expr1, expr2) \
+  testRequireEqImpl(expr1, expr2, #expr1, #expr2, __FILE__, __LINE__)
+
+#define TEST_REQUIRE_APPROX(expr1, expr2, tol) \
+  testRequireApproxImpl(expr1, expr2, tol, #expr1, #expr2, __FILE__, __LINE__)
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func)
 
