@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Apr  6 16:51:14 2001
+// written: Tue Apr 10 10:32:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -351,7 +351,7 @@ void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
   MtxIter resultIter = result.beginNC();
 
   for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
-    *resultIter = innerProduct(veciter, mtx.colIter(col));
+    *resultIter = innerProduct(veciter, mtx.columnIter(col));
 }
 
 void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
@@ -368,7 +368,7 @@ DOTRACE("Mtx::assign_MMmul");
 		MtxConstIter veciter = m1.rowIter(n);
 
 		for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
-		  *rowElement = innerProduct(veciter, m2.colIter(col));
+		  *rowElement = innerProduct(veciter, m2.columnIter(col));
     }
 }
 
