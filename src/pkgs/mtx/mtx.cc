@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Mar 14 15:54:21 2001
+// written: Wed Mar 14 16:38:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,7 @@ void Mtx::initialize(double* data, int mrows, int ncols, StoragePolicy s)
 	 storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
 
   mrows_ = mrows;
+  rowstride_ = mrows;
   ncols_ = ncols;
   start_ = storage_->itsData;
 
@@ -80,6 +81,7 @@ Mtx::Mtx(mxArray* a, StoragePolicy s)
 Mtx::Mtx(int mrows, int ncols) :
   storage_(DataBlock::makeBlank(mrows*ncols)),
   mrows_(mrows),
+  rowstride_(mrows),
   ncols_(ncols),
   start_(storage_->itsData)
 {
@@ -130,8 +132,20 @@ void Mtx::reshape(int mrows, int ncols)
   if (mrows*ncols != mrows_*ncols_)
 	 throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
 
+  if (rowstride_ != mrows_)
+	 throw ErrorWithMsg("reshape not allowed for submatrix");
+
   mrows_ = mrows;
+  rowstride_ = mrows;
   ncols_ = ncols;
+}
+
+Mtx Mtx::rows(int r, int nr) const
+{
+  Mtx result(*this);
+  result.start_ += r;
+  result.mrows_ = nr;
+  return result;
 }
 
 void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
@@ -145,14 +159,23 @@ void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
   //
   // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
 
-  if ( (vec.nelems() != mrows_) ||
-		 (result.nelems() != ncols_) )
+  if ( (vec.nelems() != mrows()) ||
+		 (result.nelems() != ncols()) )
 	 throw ErrorWithMsg("dimension mismatch in Mtx::leftMultAndAssign");
 
   ConstSlice::ConstIterator veciter = vec.begin();
 
-  for (int col = 0; col < ncols_; ++col)
+  for (int col = 0; col < ncols(); ++col)
 	 result[col] = Slice::dot(veciter, this->colIter(col));
+}
+
+void Mtx::multAndAssign(const Mtx& m1, const Mtx& m2)
+{
+  for (int n = 0; n < mrows(); ++n)
+	 {
+		Slice result(row(n));
+		m2.leftMultAndAssign(m1.row(n), result);
+	 }
 }
 
 void Mtx::makeUnique()

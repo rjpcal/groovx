@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 14 15:55:02 2001
+// written: Wed Mar 14 16:33:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -264,6 +264,7 @@ private:
   {
 	 doswap(storage_, other.storage_);
 	 doswap(mrows_, other.mrows_);
+	 doswap(rowstride_, other.rowstride_);
 	 doswap(ncols_, other.ncols_);
 	 doswap(start_, other.start_);
   }
@@ -291,6 +292,7 @@ public:
   Mtx(const Mtx& other) :
 	 storage_(other.storage_),
 	 mrows_(other.mrows_),
+	 rowstride_(other.rowstride_),
 	 ncols_(other.ncols_),
 	 start_(other.start_)
   {
@@ -325,9 +327,9 @@ public:
 
   double at(int row, int col) const { return start_[offsetFromStart(row, col)]; }
 
-  ElemProxy at(int elem) { return ElemProxy(*this, elem); }
+  ElemProxy at(int elem) { return ElemProxy(*this, offsetFromStart(elem)); }
 
-  double at(int elem) const { return start_[elem]; }
+  double at(int elem) const { return start_[offsetFromStart(elem)]; }
 
   void reshape(int mrows, int ncols);
 
@@ -344,25 +346,27 @@ public:
   //
 
   Slice row(int r)
-    { return Slice(storage_, address(r,0), mrows_, ncols_); }
+    { return Slice(storage_, address(r,0), rowstride_, ncols_); }
 
   ConstSlice row(int r) const
-    { return ConstSlice(storage_, address(r,0), mrows_, ncols_); }
+    { return ConstSlice(storage_, address(r,0), rowstride_, ncols_); }
 
   ConstSlice::ConstIterator rowIter(int r) const
-    { return ConstSlice::ConstIterator(address(r,0), mrows_, ncols_); }
+    { return ConstSlice::ConstIterator(address(r,0), rowstride_, ncols_); }
+
+
+  Mtx rows(int r, int nr) const;
+
 
   Slice column(int c)
-    { return Slice(storage_, address(0,c), 1, mrows_); }
+    { return Slice(storage_, address(0,c), colstride_, mrows_); }
 
   ConstSlice column(int c) const
-    { return ConstSlice(storage_, address(0,c), 1, mrows_); }
+    { return ConstSlice(storage_, address(0,c), colstride_, mrows_); }
 
   ConstSlice::ConstIterator colIter(int c) const
-    { return ConstSlice::ConstIterator(address(0,c), 1, mrows_); }
+    { return ConstSlice::ConstIterator(address(0,c), colstride_, mrows_); }
 
-  Slice asSlice()
-    { return Slice(storage_, start_, 1, nelems()); }
 
 
   //
@@ -372,13 +376,33 @@ public:
   void apply(double func(double))
     {
 		double* p = start_;
-		double* end = start_+nelems();
-		for (; p < end; ++p)
-		  *p = func(*p);
+		int gap = mrows_ - rowstride_;
+
+		if (gap == 0)
+		  {
+			 double* end = p + nelems();
+			 for (; p < end; ++p)
+				*p = func(*p);
+		  }
+		else
+		  {
+			 for (int c = 0; c < ncols_; ++c)
+				{
+				  for (int r = 0; r < mrows_; ++r)
+					 {
+						*p = func(*p);
+						++p;
+					 }
+				  p += gap;
+				}
+		  }
     }
 
   // result = vec * this;
   void leftMultAndAssign(const ConstSlice& vec, Slice& result) const;
+
+  // this = m1 * m2;
+  void multAndAssign(const Mtx& m1, const Mtx& m2);
 
 private:
   void makeUnique();
@@ -387,7 +411,14 @@ private:
     { return (start_ - storage_->itsData) + offsetFromStart(row, col); }
 
   int offsetFromStart(int row, int col) const
-    { return row + (col*mrows_); }
+    { return row + (col*rowstride_); }
+
+  int offsetFromStart(int elem) const
+  {
+	 return ( elem/mrows() /* == # of columns */
+				 * rowstride_ )
+		+ elem%mrows(); /* == # of rows */
+  }
 
   double* address(int row, int col)
     { return start_ + offsetFromStart(row, col); }
@@ -400,7 +431,9 @@ private:
 
   DataBlock* storage_;
   int mrows_;
+  int rowstride_;
   int ncols_;
+  static const int colstride_ = 1;
   double* start_;
 };
 
