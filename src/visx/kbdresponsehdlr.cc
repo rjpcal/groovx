@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Tue Jul 20 16:45:05 1999
+// written: Wed Jul 21 16:45:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,9 @@
 #include "sound.h"
 #include "soundlist.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
+#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
@@ -151,6 +152,16 @@ void KbdResponseHdlr::setFeedbackPairs(const char* feedback_string) {
 DOTRACE("KbdResponseHdlr::setFeedbackPairs");
   itsFeedbackPairs = feedback_string;
   updateFeedbacks();
+#ifdef LOCAL_DEBUG
+  for (int m = 0; m < itsFeedbacks.size(); ++m) {
+	 Tcl_Obj* cond = itsFeedbacks[m].condition;
+	 Tcl_Obj* res = itsFeedbacks[m].result;
+	 DebugEval(Tcl_GetString(cond));
+	 DebugEvalNL(cond->refCount);
+	 DebugEval(Tcl_GetString(res));
+	 DebugEvalNL(res->refCount);
+  }
+#endif
 }
 
 void KbdResponseHdlr::rhBeginTrial() const {
@@ -421,57 +432,124 @@ DOTRACE("KbdResponseHdlr::ignore");
 //
 //---------------------------------------------------------------------
 
+KbdResponseHdlr::Condition_Feedback::
+Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
+  condition(cond), result(res)
+{
+  DOTRACE("Condition_Feedback(Tcl_Obj*, Tcl_Obj*)");
+  DebugEval(cond->refCount); DebugEvalNL(res->refCount);
+}
+
+KbdResponseHdlr::Condition_Feedback::
+Condition_Feedback(const Condition_Feedback& rhs) :
+  condition(rhs.condition), result(rhs.result)
+{
+  DOTRACE("Condition_Feedback(const Condition_Feedback&)");
+  Tcl_Obj* p = condition; DebugEval(p->refCount);
+  Tcl_Obj* q = result;    DebugEvalNL(q->refCount);
+}
+
+KbdResponseHdlr::Condition_Feedback&
+KbdResponseHdlr::Condition_Feedback::
+operator=(const Condition_Feedback& rhs)
+{
+  DOTRACE("Condition_Feedback::operator=");
+  condition = rhs.condition; result = rhs.result; return *this;
+  Tcl_Obj* p = condition; DebugEval(p->refCount);
+  Tcl_Obj* q = result;    DebugEvalNL(q->refCount);
+}
+
 void KbdResponseHdlr::updateFeedbacks() {
 DOTRACE("KbdResponseHdlr::updateFeedbacks");
   Assert(itsInterp != 0);
 
+  DebugPrintNL("mark 1");
   itsFeedbacks.clear(); 
 
+  DebugPrintNL("mark 2");
   TclObjPtr feedback_pairs_obj(Tcl_NewStringObj(itsFeedbackPairs.c_str(), -1));
 
-  Tcl_Obj** pairs_objs;
+//    Tcl_Obj** pairs_objs;
   int num_pairs=0;
-  if ( Tcl_ListObjGetElements(itsInterp, feedback_pairs_obj, 
-										&num_pairs, &pairs_objs) != TCL_OK ) {
+  DebugPrintNL("mark 3");
+  if ( Tcl_ListObjLength(itsInterp, feedback_pairs_obj, &num_pairs) != TCL_OK ) {
 	 Tcl_BackgroundError(itsInterp);
-    return;
+	 return;
   }
+//    if ( Tcl_ListObjGetElements(itsInterp, feedback_pairs_obj, 
+//  										&num_pairs, &pairs_objs) != TCL_OK ) {
+//  	 Tcl_BackgroundError(itsInterp);
+//      return;
+//    }
+
+//    // Increment ref counts of list elements for duration of function
+//    for (int k = 0; k < num_pairs; ++k) {
+//  	 Tcl_IncrRefCount(pairs_objs[k]);
+//    }
 
   // Loop over the regexp/response value pairs
   for (int i = 0; i < num_pairs; ++i) {
 
-	 // Get the i'th pair from the list of pairs
-    Tcl_Obj* pair_obj = pairs_objs[i];
+	 Tcl_Obj* pair_obj_;
+	 if ( Tcl_ListObjIndex(itsInterp, feedback_pairs_obj, i, &pair_obj_)
+			!= TCL_OK ) {
+		Tcl_BackgroundError(itsInterp);
+		return;
+	 }
+	 TclObjPtr pair_obj(pair_obj_);
 
-    // Check that the length of the "pair" is really 2
-    int length;
-    if (Tcl_ListObjLength(itsInterp, pair_obj, &length) != TCL_OK) {
+	 DebugPrintNL("mark 4");
+	 DebugEvalNL(Tcl_GetString(pair_obj_));
+
+	 Tcl_Obj** pair_elems;
+	 int num_elems=0;
+	 if ( Tcl_ListObjGetElements(itsInterp, pair_obj_,
+										  &num_elems, &pair_elems) != TCL_OK ) {
 		Tcl_BackgroundError(itsInterp);
 		return;
 	 }
-    if (length != 2) {
+    if (num_elems != 2) {
 		Tcl_BackgroundError(itsInterp);
 		return;
 	 }
+	 DebugEvalNL(num_elems);
+
+	 // Hack--these shouldn't be necessary
+	 Tcl_IncrRefCount(pair_elems[0]);
+	 Tcl_IncrRefCount(pair_elems[1]);
+	 Tcl_IncrRefCount(pair_elems[0]);
+	 Tcl_IncrRefCount(pair_elems[1]);
 
     // Get a Tcl_Obj from the first element of the pair.
-    Tcl_Obj *first_obj=NULL;
-    if (Tcl_ListObjIndex(itsInterp, pair_obj, 0, &first_obj) != TCL_OK) {
-      Tcl_BackgroundError(itsInterp);
-		return;
-	 }
+	 DebugPrintNL("mark 5");
+	 DebugEvalNL(Tcl_GetString(pair_elems[0]));
+
+//  	   DebugEval(pair_elems[0]->refCount);
+//  	 TclObjPtr first_obj(pair_elems[0]);
+//  	   DebugEvalNL(pair_elems[0]->refCount);
 
 	 // Get a Tcl_Obj from the second element of the pair; then get an
 	 // integer from that Tcl_Obj.
-	 Tcl_Obj *second_obj=NULL;
-    if (Tcl_ListObjIndex(itsInterp, pair_obj, 1, &second_obj) != TCL_OK) {
-      Tcl_BackgroundError(itsInterp);
-		return;
-	 }
-    
+	 DebugPrintNL("mark 6");
+	 DebugEvalNL(Tcl_GetString(pair_elems[1]));
+
+//  	   DebugEval(pair_elems[1]->refCount);
+//  	 TclObjPtr second_obj(pair_elems[1]);
+//  	   DebugEvalNL(pair_elems[1]->refCount);
+
     // Push the pair onto the vector
-    itsFeedbacks.push_back(Condition_Feedback(first_obj, second_obj));
+	 DebugPrintNL("mark 7");
+    itsFeedbacks.push_back(Condition_Feedback(pair_elems[0], pair_elems[1]));
+
+	 DebugEval(pair_elems[0]->refCount);
+	 DebugEvalNL(pair_elems[1]->refCount);
+	 DebugEvalNL(Tcl_GetString(pair_obj_));
   }
+
+//    // Increment ref counts of list elements for duration of function
+//    for (int j = 0; j < num_pairs; ++j) {
+//  	 Tcl_DecrRefCount(pairs_objs[k]);
+//    }
 
   DebugPrintNL("updateFeedbacks success!");
 }
