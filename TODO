@@ -79,6 +79,11 @@
   FieldMap could change if its child object changes. How do we keep Tcl,
   for example, abreast of such changes?
 
+  Another approach... allowed FieldMap to be a recursive structure. Then we
+  could have named subobjects in a FieldMap, and could specify subfields by
+  using composite names with a hierarchical part separator, such as
+  "aligner.mode". How to pair the submaps with the subobjects?
+
 * (2-Jul-2002) new project name?
 
 OO framework
