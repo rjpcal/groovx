@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Tue Nov 16 12:04:53 1999
+// written: Wed Feb 16 09:12:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,21 +34,43 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * \c Value defines an interface for variant-type value
+ * objects. Clients can attempt to retrieve values of the basic types
+ * from a \c Value object. If such an operation fails, \c ValueError
+ * is thrown. Subclasses may allow conversion among types so that a
+ * value of any basic type can be retrieved, or they may allow only
+ * one basic type to be retrieved.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
 class Value {
 public:
 
+  /// Virtual destructor ensures proper destruction of base classes.
   virtual ~Value();
 
-  enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, STRING, UNKNOWN };
-
+  /// Returns a new dynamically allocated copy of the calling object.
   virtual Value* clone() const = 0;
 
+  /** The symbolic constants of type \c Type can be used by subclasses
+      to indicate the native type of their underlying representation. */
+  enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, STRING, UNKNOWN };
+
+  /** Return the \c Type constant indicating the native type used in
+      the implementation. */
   virtual Type getNativeType() const = 0;
 
+  /// Return a string giving the name of the native type.
   virtual const char* getNativeTypeName() const = 0;
 
-  // Input/Output
+  /// Write the value to an \c ostream.
   virtual void printTo(ostream& os) const;
+
+  /// Read the value from an \c istream.
   virtual void scanFrom(istream& is);
 
   // Two sets of functions are provided to allow values to be
@@ -56,34 +78,59 @@ public:
   // argument. Depending on a subclass's implementation, one or the
   // other type of function may be more efficient.
 
+  /// Attempt to get an \c int representation of the value.
   virtual int getInt() const;
+  /// Attempt to get a \c long representation of the value.
   virtual long getLong() const;
+  /// Attempt to get a \c bool representation of the value.
   virtual bool getBool() const;
+  /// Attempt to get a \c double representation of the value.
   virtual double getDouble() const;
+  /// Attempt to get a C-style string (\c char*) representation of the value.
   virtual const char* getCstring() const;
+  /// Attempt to get an STL \c string representation of the value.
   virtual string getString() const;
 
+  /// Attempt to get an \c int representation of the value.
   virtual void get(int& val) const;
+  /// Attempt to get a \c long representation of the value.
   virtual void get(long& val) const;
+  /// Attempt to get a \c bool representation of the value.
   virtual void get(bool& val) const;
+  /// Attempt to get a \c double representation of the value.
   virtual void get(double& val) const;
+  /// Attempt to get a C-style string (\c char*) representation of the value.
   virtual void get(const char*& val) const;
+  /// Attempt to get an STL \c string representation of the value.
   virtual void get(string& val) const;
 
   // The default implementations of the set functions all throw
   // exceptions, so that the default case is a read-only value.
+
+  /// Attempt to set the value from an \c int representation.
   virtual void setInt(int val);
+  /// Attempt to set the value from a \c long representation.
   virtual void setLong(long val);
+  /// Attempt to set the value from a \c bool representation.
   virtual void setBool(bool val);
+  /// Attempt to set the value from a \c double representation.
   virtual void setDouble(double val);
+  /// Attempt to set the value from a C-style string (\c char*) representation.
   virtual void setCstring(const char* val);
+  /// Attempt to set the value from an STL \c string  representation.
   virtual void setString(const string& val);
 
+  /// Attempt to set the value from an \c int representation.
   void set(int val) { setInt(val); }
+  /// Attempt to set the value from a \c long representation.
   void set(long val) { setLong(val); }
+  /// Attempt to set the value from a \c bool representation.
   void set(bool val) { setBool(val); }
+  /// Attempt to set the value from a \c double representation.
   void set(double val) { setDouble(val); }
+  /// Attempt to set the value from a C-style string (\c char*) representation.
   void set(const char* val) { setCstring(val); }
+  /// Attempt to set the value from an STL \c string  representation.
   void set(const string& val) { setString(val); }
 }; 
 
@@ -106,16 +153,23 @@ inline istream& operator>>(istream& is, Value& val)
 }
 
 ///////////////////////////////////////////////////////////////////////
-//
-// TValue template class definition
-//
+/**
+ *
+ * \c TValue provides a simple templated implementation of \c Value
+ * for the basic types. All attempts to get or set a \c TValue from a
+ * type other than the template type \c T will fail with a \c
+ * ValueError exception being thrown.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
 class TValue : public Value {
 public:
+  /// Construct with an initial value \a val.
   TValue(const T& val) : itsVal(val) {}
 
+  /// Virtual destructor.
   virtual ~TValue ();
 
   virtual Value* clone() const;
@@ -148,22 +202,35 @@ public:
   virtual void setCstring(const char* val);
   virtual void setString(const string& val);
 
+  /** Publicly accessible lone data member allows efficient access to
+      those who know the true type of the object. */
   T itsVal;
 };
 
+
 ///////////////////////////////////////////////////////////////////////
-//
-// TValuePtr template class defintion
-//
+/**
+ *
+ * \c TValuePtr provides a simple templated implementation of \c Value
+ * for the basic types. As in \c TValue, all attempts to get or set a
+ * \c TValuePtr from a type other than the template type \c T will
+ * fail with a \c ValueError exception being thrown. Internally, \c
+ * TValuePtr stores a \c T*, so that the \c TValuePtr can be reseated
+ * after construction to point to a different \c T.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
 class TValuePtr : public Value {
 public:
+  /// Construct and refer to \c valRef.
   TValuePtr(T& valRef) : itsValPtr(&valRef) {}
 
+  /// Virtual destructor.
   virtual ~TValuePtr();
 
+  /// Reseat the internal pointer to refer to \a valRef.
   void reseat(T& valRef) { itsValPtr = &valRef; }
 
   virtual Value* clone() const;
@@ -196,7 +263,10 @@ public:
   virtual void setCstring(const char* val);
   virtual void setString(const string& val);
 
+  /// Return a reference to the currently pointed-to \c T object.
   T& operator()() { return *itsValPtr; }
+
+  /// Return a const reference to the currently pointed-to \c T object.
   const T& operator()() const { return *itsValPtr; }
 
 private:
