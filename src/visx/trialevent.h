@@ -31,8 +31,8 @@
 #define TRIALEVENT_H_DEFINED
 
 #include "io/io.h"
+#include "io/tclprocwrapper.h"
 
-#include "tcl/tclprocwrapper.h"
 #include "tcl/tcltimer.h"
 
 #include "util/stopwatch.h"

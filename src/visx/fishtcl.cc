@@ -30,9 +30,10 @@
 #ifndef FISHTCL_CC_DEFINED
 #define FISHTCL_CC_DEFINED
 
+#include "io/fieldpkg.h"
+
 #include "visx/fish.h"
 
-#include "tcl/fieldpkg.h"
 #include "tcl/objpkg.h"
 #include "tcl/tracertcl.h"
 

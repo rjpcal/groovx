@@ -30,9 +30,9 @@
 #ifndef MORPHYFACETCL_CC_DEFINED
 #define MORPHYFACETCL_CC_DEFINED
 
-#include "visx/morphyface.h"
+#include "io/fieldpkg.h"
 
-#include "tcl/fieldpkg.h"
+#include "visx/morphyface.h"
 
 #include "util/trace.h"
 

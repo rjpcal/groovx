@@ -98,7 +98,7 @@ case ${CXX}-${OS} in
          Darwin)
 	    CXXFLAGS="$CXXFLAGS -dynamic"
 	    # Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
-	    SHLIB_CMD="$CXX -dynamiclib -flat_namespace -undefined suppress -o"
+	    SHLIB_CMD="$CXX -dynamiclib -undefined error -multiply_defined suppress -o"
 	    STATLIB_CMD="libtool -static -o"
 	    ;;
 	 *)
@@ -435,7 +435,7 @@ CPPFLAGS="-I${with_tcltk}/include $CPPFLAGS"
 if test $need_rpath = yes; then
    LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib"
 fi
-LDFLAGS="$LDFLAGS -L${with_tcltk}/lib"
+LDFLAGS="-L${with_tcltk}/lib $LDFLAGS"
 
 AC_MSG_CHECKING([for tcl+tk versions])
 

@@ -32,8 +32,7 @@
 
 #include "util/object.h"
 
-#include "system/demangle.h"
-
+#include "util/demangle.h"
 #include "util/strings.h"
 
 #include <typeinfo>

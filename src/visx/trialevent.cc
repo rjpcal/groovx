@@ -35,15 +35,13 @@
 #include "visx/trial.h"
 
 #include "gfx/canvas.h"
+#include "gfx/toglet.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "system/demangle.h"
-
 #include "tcl/tclmain.h"
-#include "tcl/toglet.h"
 
 #include "util/algo.h"
 #include "util/error.h"

@@ -32,7 +32,7 @@
 
 #include "visx/nullresponsehdlr.h"
 
-#include "tcl/toglet.h"
+#include "gfx/toglet.h"
 
 #include "util/ref.h"
 

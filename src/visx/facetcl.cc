@@ -30,10 +30,10 @@
 #ifndef FACETCL_CC_DEFINED
 #define FACETCL_CC_DEFINED
 
+#include "io/fieldpkg.h"
+
 #include "visx/cloneface.h"
 #include "visx/face.h"
-
-#include "tcl/fieldpkg.h"
 
 #include "util/trace.h"
 

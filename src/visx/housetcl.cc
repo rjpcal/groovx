@@ -30,9 +30,9 @@
 #ifndef HOUSETCL_CC_DEFINED
 #define HOUSETCL_CC_DEFINED
 
-#include "visx/house.h"
+#include "io/fieldpkg.h"
 
-#include "tcl/fieldpkg.h"
+#include "visx/house.h"
 
 #include "util/trace.h"
 

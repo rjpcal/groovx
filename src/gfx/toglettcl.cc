@@ -33,12 +33,12 @@
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
 #include "gfx/pointtcl.h"
+#include "gfx/toglet.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
-#include "tcl/toglet.h"
 
 #include "util/objfactory.h"
 #include "util/ref.h"

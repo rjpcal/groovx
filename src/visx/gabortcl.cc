@@ -30,10 +30,10 @@
 #ifndef GABORTCL_CC_DEFINED
 #define GABORTCL_CC_DEFINED
 
+#include "io/fieldpkg.h"
+
 #include "visx/gabor.h"
 #include "visx/gaborarray.h"
-
-#include "tcl/fieldpkg.h"
 
 #include "util/trace.h"
 

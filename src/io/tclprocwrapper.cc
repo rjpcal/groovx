@@ -30,7 +30,7 @@
 #ifndef TCLPROCWRAPPER_CC_DEFINED
 #define TCLPROCWRAPPER_CC_DEFINED
 
-#include "tcl/tclprocwrapper.h"
+#include "io/tclprocwrapper.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

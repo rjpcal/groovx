@@ -30,18 +30,19 @@
 #ifndef TRIALTCL_CC_DEFINED
 #define TRIALTCL_CC_DEFINED
 
-#include "visx/trial.h"
-
-#include "visx/responsehandler.h"
-#include "visx/timinghdlr.h"
+#include "io/fieldpkg.h"
 
 #include "gfx/gxnode.h"
 
-#include "tcl/fieldpkg.h"
 #include "tcl/itertcl.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
+
+#include "visx/trial.h"
+
+#include "visx/responsehandler.h"
+#include "visx/timinghdlr.h"
 
 #include "util/trace.h"
 

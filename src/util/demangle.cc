@@ -30,7 +30,7 @@
 #ifndef DEMANGLE_CC_DEFINED
 #define DEMANGLE_CC_DEFINED
 
-#include "system/demangle.h"
+#include "util/demangle.h"
 
 #if defined(NO_TYPENAME_MANGLING)
 
@@ -45,12 +45,12 @@ const char* demangle_cstr(const char* in) { return in; }
 
 #  if defined(__GNUC__)
 #    if __GNUC__ < 3
-#      include "system/demangle_gcc_v2.h"
+#      include "util/demangle_gcc_v2.h"
 #    else
-#      include "system/demangle_gcc_v3.h"
+#      include "util/demangle_gcc_v3.h"
 #    endif
 #  elif defined(HAVE_PROG_CXXFILT)
-#    include "system/demangle_cxxfilt.h"
+#    include "util/demangle_cxxfilt.h"
 #  else
 #    error no method specified for typename demangling
 #  endif

@@ -32,10 +32,9 @@
 
 #include "tcl/tclsafeinterp.h"
 
-#include "system/demangle.h"
-
 #include "tcl/tclerror.h"
 
+#include "util/demangle.h"
 #include "util/strings.h"
 
 #include <exception>

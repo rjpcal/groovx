@@ -30,19 +30,20 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
-#include "visx/exptdriver.h"
+#include "gfx/toglet.h"
 
 #include "system/system.h"
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
-#include "tcl/toglet.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
 #include "util/ref.h"
 #include "util/strings.h"
+
+#include "visx/exptdriver.h"
 
 #include "util/trace.h"
 #include "util/debug.h"

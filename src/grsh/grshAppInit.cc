@@ -32,13 +32,13 @@
 
 #include "grsh/grsh.h"
 
-#include "system/demangle.h"
 #include "system/system.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/demangle.h"
 #include "util/error.h"
 #include "util/strings.h"
 #include "util/time.h"
@@ -194,19 +194,6 @@ PackageInfo DELAYED_PKGS[] =
   };
 
 } // end anonymous namespace
-
-///////////////////////////////////////////////////////////////////////
-//
-// namespace Grsh function definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-const char* Grsh::libraryDirectory()
-{
-DOTRACE("Grsh::libraryDirectory");
-
-  return System::theSystem().getenv("GRSH_LIB_DIR");
-}
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -32,8 +32,7 @@
 
 #include "util/signal.h"
 
-#include "system/demangle.h"
-
+#include "util/demangle.h"
 #include "util/dlink_list.h"
 #include "util/ref.h"
 

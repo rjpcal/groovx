@@ -33,11 +33,10 @@
 #include "visx/trial.h"
 
 #include "gfx/gxshapekit.h"
+#include "gfx/toglet.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
-
-#include "tcl/toglet.h"
 
 #include "util/iter.h"
 #include "util/log.h"

@@ -54,10 +54,10 @@
 #include "gfx/pointtcl.h"
 #include "gfx/recttcl.h"
 
+#include "io/fieldpkg.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 
-#include "tcl/fieldpkg.h"
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"

@@ -33,14 +33,13 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 
-#include "system/demangle.h"
-
 #include "tcl/objpkg.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/demangle.h"
 #include "util/objdb.h"
 #include "util/objmgr.h"
 

@@ -30,7 +30,7 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
-#include "grsh/grsh.h"
+#include "system/system.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
@@ -63,7 +63,7 @@ public:
       }
     else
       {
-        fstring lib_dir(Grsh::libraryDirectory());
+        fstring lib_dir(System::theSystem().getenv("GRSH_LIB_DIR"));
         dbgEvalNL(3, lib_dir);
 
         const fstring ok_file(lib_dir, "/audio/saw50_500Hz_300ms.au");

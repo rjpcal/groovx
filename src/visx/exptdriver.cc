@@ -32,19 +32,20 @@
 
 #include "visx/exptdriver.h"
 
+#include "gfx/toglet.h"
+
 #include "grsh/grsh.h"
 
 #include "io/ioutil.h"
 #include "io/readutils.h"
+#include "io/tclprocwrapper.h"
 #include "io/writeutils.h"
 
 #include "system/system.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tclmain.h"
-#include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
-#include "tcl/toglet.h"
 
 #include "util/error.h"
 #include "util/iter.h"

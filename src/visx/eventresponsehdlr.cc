@@ -32,14 +32,15 @@
 
 #include "visx/eventresponsehdlr.h"
 
+#include "gfx/toglet.h"
+
 #include "io/reader.h"
+#include "io/tclprocwrapper.h"
 #include "io/writer.h"
 
 #include "tcl/tclfunctor.h"
 #include "tcl/tclmain.h"
-#include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
-#include "tcl/toglet.h"
 
 #include "util/log.h"
 #include "util/pointers.h"

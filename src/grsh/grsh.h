@@ -30,12 +30,5 @@
 #ifndef GRSH_H_DEFINED
 #define GRSH_H_DEFINED
 
-/// Top-level (i.e. global) info about the application.
-namespace Grsh
-{
-  /// Get the library directory specified by the relevant environment variable.
-  const char* libraryDirectory();
-}
-
 static const char vcid_grsh_h[] = "$Header$";
 #endif // !GRSH_H_DEFINED

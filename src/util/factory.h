@@ -30,9 +30,8 @@
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
 
+#include "util/demangle.h"
 #include "util/traits.h"
-
-#include "system/demangle.h"
 
 #include <typeinfo>
 

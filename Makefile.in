@@ -58,6 +58,8 @@ LDFLAGS         := @LDFLAGS@
 LIBS            := @LIBS@ @X_EXTRA_LIBS@
 with_htmldoc    := @with_htmldoc@
 
+LIB_EXT         := $(LIB_SUFFIX).$(SHLIB_EXT)
+
 #-------------------------------------------------------------------------
 #
 # Directories for different file types
@@ -136,7 +138,7 @@ $(SRC)/%.cc.E : $(SRC)/%.h
 
 %.$(SHLIB_EXT):
 	@[ -d ${@D} ] || mkdir -p ${@D}
-	time $(SHLIB_CMD) $@ $(LDFLAGS) $^
+	time $(SHLIB_CMD) $@ $(LDFLAGS) $^ $(LIBS)
 
 %.$(STATLIB_EXT):
 	@[ -d ${@D} ] || mkdir -p ${@D}
@@ -167,6 +169,14 @@ $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		--pkgdir $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR)
 
+$(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
 ifneq ($(matlab_lib),)
 $(VISX_LIB_DIR)/mtx.so: \
 	$(matlab_lib)/libmx.so \
@@ -186,7 +196,7 @@ endif
 LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(exec_prefix)/lib \
 		--libprefix libDeep \
-		--libext $(LIB_SUFFIX).$(SHLIB_EXT) \
+		--libext $(LIB_EXT) \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
@@ -197,6 +207,49 @@ $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 	$(LIB_DEP_CMD) > $@
 
 include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
+
+# Need to set up the .LIBPATTERNS variable so that we get the right
+# behavior when we specify something like "-lfoo" as a prerequisite.
+.LIBPATTERNS = lib%.dylib lib%.so lib%.a
+
+# Here we have all of the inter-library dependencies. These are needed,
+# e.g., for Mac OS X to be able to do two-level namespace linking. That
+# requires that there be no undefined symbols when creating a shared
+# library, and that in turn requires that each shared library be linked
+# against all its prerequisites.
+
+$(exec_prefix)/lib/libDeepSystem$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(exec_prefix)/lib/libDeepGWT$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(exec_prefix)/lib/libDeepTcl$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepGWT$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+
+$(exec_prefix)/lib/libDeepIO$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(exec_prefix)/lib/libDeepGx$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+
+$(exec_prefix)/lib/libDeepGfx$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepGWT$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepSystem$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+
+$(exec_prefix)/lib/libDeepVisx$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepSystem$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepGx$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepGfx$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
 
 #-------------------------------------------------------------------------
 #

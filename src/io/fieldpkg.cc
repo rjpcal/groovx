@@ -30,7 +30,7 @@
 #ifndef FIELDPKG_CC_DEFINED
 #define FIELDPKG_CC_DEFINED
 
-#include "tcl/fieldpkg.h"
+#include "io/fieldpkg.h"
 
 #include "io/fields.h"
 
