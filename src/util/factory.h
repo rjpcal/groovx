@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Sep 25 18:58:01 2002
+// written: Wed Nov 20 15:06:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,15 +184,21 @@ protected:
   Factory() : itsMap() {}
 
 public:
-  /** Registers a creation function with the factory. The default name
-      associated with the creation function will be given by the
-      type's actual C++ name. */
+  /// Registers a creation function with the factory.
+  /** The default name associated with the creation function will be given
+      by the type's actual C++ name. The function returns the actual name
+      that was paired with the creation function.*/
   template <class DerivedPtr>
-  void registerCreatorFunc(DerivedPtr (*func) ())
+  const char* registerCreatorFunc(DerivedPtr (*func) (), const char* name = 0)
   {
-    itsMap.setPtrForName(
-       demangle_cstr(typeid(typename Util::TypeTraits<DerivedPtr>::Pointee).name()),
-       new CreatorFromFunc<BasePtr, DerivedPtr>(func));
+    if (name == 0)
+      name = demangle_cstr
+        (typeid(typename Util::TypeTraits<DerivedPtr>::Pointee).name());
+
+    itsMap.setPtrForName(name,
+                         new CreatorFromFunc<BasePtr, DerivedPtr>(func));
+
+    return name;
   }
 
   /** Introduces an alternate type name which can be used to create
