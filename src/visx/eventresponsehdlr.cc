@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Jan 28 10:53:00 2002
+// written: Mon Jan 28 13:18:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,7 @@
 #include "tcl/tclfunctor.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/log.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
@@ -38,6 +39,27 @@
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope data
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace
+{
+  const IO::VersionId ERH_SERIAL_VERSION_ID = 2;
+
+  fstring uniqueCmdName(const char* stem)
+  {
+    static int cmdCounter = 0;
+
+    fstring name = "__ERHPrivate::";
+    name.append(stem);
+    name.append(++cmdCounter);
+    return name;
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -117,8 +139,18 @@ public:
 
       ignore();
 
-      theResponse.setVal(impl->itsResponseMap.valueFor(event_info));
-      DebugEvalNL(theResponse.val());
+      Util::log( fstring("event_info: ", event_info) );
+
+      if (impl->itsResponseProc.exists())
+        {
+          theResponse.setVal(impl->itsResponseProc.call(event_info));
+        }
+      else
+        {
+          theResponse.setVal(impl->itsResponseMap.valueFor(event_info));
+        }
+
+      Util::log( fstring("response val: ", theResponse.val()) );
 
       if ( !theResponse.isValid() )
         {
@@ -135,9 +167,11 @@ public:
 
   void becomeActive(Util::SoftRef<GWT::Widget> widget, TrialBase& trial) const
   {
+    Util::log( fstring("binding to ", itsCmdCallback->name()) );
+
     fstring script(itsCmdCallback->name());
-    script.append(" ").append((int)itsOwner->id());
-    script.append(" ").append(itsBindingSubstitution);
+    script.append(" ").append((int)itsOwner->id()).append(" ");
+    script.append("[list ").append(itsBindingSubstitution).append("]");
 
     itsState.reset(new ActiveState(this, widget, trial,
                                    itsEventSequence, script));
@@ -158,17 +192,8 @@ public:
   {
     EventResponseHdlr::Impl* impl = erh->itsImpl;
     Precondition( impl->isActive() );
+
     impl->itsState->handleResponse(impl, event_info);
-  }
-
-  static const char* uniqueCmdName()
-  {
-    static fstring baseName;
-    static int cmdCounter = 0;
-
-    baseName = "__EventResponseHdlrPrivate::handle";
-    baseName.append(++cmdCounter);
-    return baseName.c_str();
   }
 
   //
@@ -190,6 +215,76 @@ public:
   fstring itsBindingSubstitution;
 
   bool itsAbortInvalidResponses;
+
+  class ResponseProc
+  {
+  private:
+    ResponseProc(const ResponseProc&);
+    ResponseProc& operator=(const ResponseProc&);
+
+    fstring itsName;
+    fstring itsArgs;
+    fstring itsBody;
+    Tcl::Interp* itsInterp;
+
+  public:
+    ResponseProc() : itsName(), itsArgs(), itsBody(), itsInterp(0) {}
+
+    ~ResponseProc() { destroy(); }
+
+    void create(Tcl::Interp& intp, const fstring& args, const fstring& body)
+    {
+      destroy();
+
+      itsName = uniqueCmdName("responseProc");
+      itsArgs = args;
+      itsBody = body;
+      itsInterp = &intp;
+
+      itsInterp->createProc("", itsName.c_str(),
+                            itsArgs.c_str(), itsBody.c_str());
+    }
+
+    void destroy()
+    {
+      if (exists())
+        {
+          Assert( itsInterp != 0 );
+          itsInterp->deleteProc("", itsName.c_str());
+
+          itsName = itsArgs = itsBody = fstring();
+        }
+
+      Postcondition( !exists() );
+    }
+
+    bool exists() const { return !itsName.is_empty(); }
+
+    int call(const fstring& args) const
+    {
+      Precondition( exists() );
+
+      Assert( itsInterp != 0 );
+
+      fstring cmd = itsName; cmd.append(" ").append(args);
+
+      Tcl::Code code(cmd, Tcl::Code::IGNORE_ERRORS);
+
+      code.invoke(*itsInterp);
+
+      int result = Response::INVALID_VALUE;
+
+      try { result = itsInterp->getResult<int>(); } catch(...) {}
+
+      return result;
+    }
+
+    const fstring& name() const { return itsName; }
+    const fstring& args() const { return itsArgs; }
+    const fstring& body() const { return itsBody; }
+  };
+
+  ResponseProc itsResponseProc;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -213,12 +308,13 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsState(0),
   itsInterp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
-                              uniqueCmdName(), "<private>")),
+                              uniqueCmdName("handler").c_str(), "<private>")),
   itsResponseMap(input_response_map),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
-  itsAbortInvalidResponses(true)
+  itsAbortInvalidResponses(true),
+  itsResponseProc()
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
 }
@@ -237,6 +333,9 @@ void EventResponseHdlr::Impl::readFrom(IO::Reader* reader)
 {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
+  const int svid = reader->ensureReadVersionId("EventResponseHdlr", 0,
+                                               "Try grsh0.8a7");
+
   becomeInactive();
 
   {
@@ -254,17 +353,34 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
   reader->readValue("useFeedback", itsFeedbackMap.itsUseFeedback);
   reader->readValue("eventSequence", itsEventSequence);
   reader->readValue("bindingSubstitution", itsBindingSubstitution);
+
+  itsResponseProc.destroy();
+
+  if (svid >= 2)
+    {
+      fstring args, body;
+      reader->readValue("responseProcArgs", args);
+      reader->readValue("responseProcBody", body);
+
+      itsResponseProc.create(itsInterp, args, body);
+    }
 }
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const
 {
 DOTRACE("EventResponseHdlr::Impl::writeTo");
 
+  writer->ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
+                               "Try grsh0.8a7");
+
   writer->writeValue("inputResponseMap", itsResponseMap.rep());
   writer->writeValue("feedbackMap", itsFeedbackMap.rep());
   writer->writeValue("useFeedback", itsFeedbackMap.itsUseFeedback);
   writer->writeValue("eventSequence", itsEventSequence);
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
+
+  writer->writeValue("responseProcArgs", itsResponseProc.args());
+  writer->writeValue("responseProcBody", itsResponseProc.body());
 }
 
 
@@ -292,6 +408,9 @@ EventResponseHdlr::EventResponseHdlr(const char* input_response_map) :
 
 EventResponseHdlr::~EventResponseHdlr()
   { delete itsImpl; }
+
+IO::VersionId EventResponseHdlr::serialVersionId() const
+  { return ERH_SERIAL_VERSION_ID; }
 
 void EventResponseHdlr::readFrom(IO::Reader* reader)
   { itsImpl->readFrom(reader); }
@@ -347,6 +466,10 @@ const fstring& EventResponseHdlr::getBindingSubstitution() const
 void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
   { itsImpl->itsBindingSubstitution = sub; }
 
+void EventResponseHdlr::setResponseProc(const fstring& args,
+                                        const fstring& body)
+  { itsImpl->itsResponseProc.create(itsImpl->itsInterp, args, body); }
+
 void EventResponseHdlr::abortInvalidResponses()
   { itsImpl->itsAbortInvalidResponses = true; }
 
@@ -361,38 +484,51 @@ void EventResponseHdlr::rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
   itsImpl->itsInterp.clearEventQueue();
 
   itsImpl->becomeActive(widget, trial);
+
+  Postcondition( itsImpl->isActive() );
 }
 
 void EventResponseHdlr::rhAbortTrial() const
 {
-  Precondition( itsImpl->isActive() );
-  itsImpl->itsState->rhAbortTrial();
+  if ( itsImpl->isActive() )
+    itsImpl->itsState->rhAbortTrial();
 }
 
 void EventResponseHdlr::rhEndTrial() const
 {
-  Precondition( itsImpl->isActive() );
-  itsImpl->itsState->rhEndTrial();
-  itsImpl->becomeInactive();
+  if ( itsImpl->isActive() )
+    {
+      itsImpl->itsState->rhEndTrial();
+      itsImpl->becomeInactive();
+    }
+
+  Postcondition( itsImpl->isInactive() );
 }
 
 void EventResponseHdlr::rhHaltExpt() const
 {
-  if ( itsImpl->isInactive() ) return;
+  if ( itsImpl->isActive() )
+    {
+      itsImpl->itsState->rhHaltExpt();
+      itsImpl->becomeInactive();
+    }
 
-  itsImpl->itsState->rhHaltExpt();
-  itsImpl->becomeInactive();
+  Postcondition( itsImpl->isInactive() );
 }
 
 void EventResponseHdlr::rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
                                          TrialBase& trial) const
 {
   itsImpl->becomeActive(widget, trial);
+
+  Postcondition( itsImpl->isActive() );
 }
 
 void EventResponseHdlr::rhDenyResponses() const
 {
   itsImpl->becomeInactive();
+
+  Postcondition( itsImpl->isInactive() );
 }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";
