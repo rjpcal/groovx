@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Tue Nov 28 19:09:49 2000
+// written: Wed Nov 29 12:24:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,9 +108,6 @@ public:
   virtual void undraw(GWT::Canvas&) const;
 
 private:
-  /// Check all invariants and return true if everything is OK.
-  bool check() const;
-
   Position(const Position&);
   Position& operator=(const Position&);
 

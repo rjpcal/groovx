@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Nov 28 19:07:50 2000
+// written: Wed Nov 29 12:24:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,9 +69,6 @@ Position::Position() :
 DOTRACE("Position::Position()");
 
   DebugEvalNL((void *) itsImpl);
-
-  // empty
-  Invariant(check());
 }
 
 Position::~Position() {
@@ -119,20 +116,17 @@ DOTRACE("Position::writeTo");
 
 void Position::getRotate(double &a, double &x, double &y, double &z) const {
 DOTRACE("Position::getRotate");
-  Invariant(check());
   a = itsImpl->cur.rt_ang;
   itsImpl->cur.rt.get(x, y, z);
 }
 
 void Position::getTranslate(double &x, double &y, double &z) const {
 DOTRACE("Position::getTranslate");
-  Invariant(check());
   itsImpl->cur.tr.get(x, y, z);
 }
 
 void Position::getScale(double &x, double &y, double &z) const {
 DOTRACE("Position::getScale");
-  Invariant(check());
   itsImpl->cur.sc.get(x, y, z);
 }
 
@@ -154,26 +148,22 @@ double Position::rotationAngle() const
 
 void Position::setAngle(double a) {
 DOTRACE("Position::setAngle");
-  Invariant(check());
   itsImpl->cur.rt_ang = a;
 }
 
 void Position::setRotate(double a, double x, double y, double z) {
 DOTRACE("Position::setRotate");
-  Invariant(check());
   itsImpl->cur.rt_ang = a;
   itsImpl->cur.rt.set(x, y, z);
 }
 
 void Position::setScale(double x, double y, double z) {
 DOTRACE("Position::setScale");
-  Invariant(check());
   itsImpl->cur.sc.set(x, y, z);
 }
 
 void Position::setTranslate(double x, double y, double z) {
 DOTRACE("Position::setTranslate");
-  Invariant(check());
   itsImpl->cur.tr.set(x, y, z);
 }
 
@@ -183,7 +173,6 @@ DOTRACE("Position::setTranslate");
 
 void Position::draw(GWT::Canvas& canvas) const {
 DOTRACE("Position::draw");
-  Invariant(check());
   canvas.translate(itsImpl->cur.tr);
   canvas.scale(itsImpl->cur.sc);
   canvas.rotate(itsImpl->cur.rt, itsImpl->cur.rt_ang);
@@ -193,15 +182,9 @@ DOTRACE("Position::draw");
 
 void Position::undraw(GWT::Canvas& canvas) const {
 DOTRACE("Position::undraw");
-
   canvas.translate(itsImpl->last.tr);
   canvas.scale(itsImpl->last.sc);
   canvas.rotate(itsImpl->last.rt, itsImpl->last.rt_ang);
-}
-
-bool Position::check() const {
-DOTRACE("Position::check");
-  return ( itsImpl != 0 );
 }
 
 static const char vcid_position_cc[] = "$Header$";
