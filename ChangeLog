@@ -169,3 +169,8 @@ will be needed, and then they can be phased out.
    somehow that "all Value objects should be gotten from Tcl by assigning
    to them through an fstring". Aha... just needed a bit of template
    metaprogramming a la "Loki" here.
+
+* (9-Nov-2002, done 13-Nov-2002) GLUtil just has font functions
+  Make a new font class? Or move this stuff into Gtext? Yes, yes, yes. OK,
+  GLUtil is history. We have a GxFont class now, with raster-font and
+  vector-font implementations, which is used by Gtext.

@@ -31,13 +31,8 @@
   FieldMap could change if its child object changes. How do we keep Tcl,
   for example, abreast of such changes?
 
-* (9-Nov-2002) Cleanup Togl helper code
-
-** GLUtil just has font functions.
-   Make a new font class? Or move this stuff into Gtext?
-
-** X11Util just has findColormap().
-   Move this back into Togl?
+* (9-Nov-2002) X11Util just has findColormap()
+  Move this back into Togl?
 
 * (4-Nov-2002) Dynamically-sized array-Value objects?
 
