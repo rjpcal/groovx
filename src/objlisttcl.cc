@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct 20 15:03:27 2000
+// written: Tue Oct 24 15:20:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@
 namespace ObjlistTcl {
   class LoadObjectsCmd;
   class SaveObjectsCmd;
-  class LoadMoreCmd;
   class ObjListPkg;  
 }
 
@@ -136,48 +135,6 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// LoadMoreCmd --
-//
-//---------------------------------------------------------------------
-
-class ObjlistTcl::LoadMoreCmd : public Tcl::ASRLoadCmd {
-public:
-  LoadMoreCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::ASRLoadCmd(interp, cmd_name, "filename", 2), itsSandbox(0) {}
-
-protected:
-  virtual IO::IoObject& getIO() { return itsSandbox; }
-  virtual const char* getFilename() { return getCstringFromArg(1); }
-
-  virtual void beforeLoadHook()
-	 {
-		Precondition(itsSandbox.count() == 0);
-	 }
-
-  virtual void afterLoadHook()
-	 {
-		ObjList& olist = ObjList::theObjList();
-
-		for (int id = 0; id < itsSandbox.capacity(); ++id)
-		  {
-			 if (itsSandbox.isValidId(id))
-				{
-				  PtrList<GrObj>::SharedPtr shptr = itsSandbox.getCheckedPtr(id);
-				  itsSandbox.release(id);
-				  PtrList<GrObj>::SharedPtr newobj = olist.insert(shptr);
-				  lappendVal(newobj.id());
-				}
-		  }
-
-		Postcondition(itsSandbox.count() == 0);
-	 }
-
-private:
-  PtrList<GrObj> itsSandbox;
-};
-
-//---------------------------------------------------------------------
-//
 // ObjListPkg class definition
 //
 //---------------------------------------------------------------------
@@ -189,7 +146,6 @@ public:
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
-	 addCommand( new LoadMoreCmd(interp, "ObjList::loadMore") );
   }
 };
 
