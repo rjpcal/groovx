@@ -228,38 +228,10 @@ void GxRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
 DOTRACE("GxRasterFont::bboxOf");
 
-  int asc = 0;
-  int desc = 0;
-  int wid = 0;
+  const int asc = rep->fontInfo->max_bounds.ascent;
+  const int desc = rep->fontInfo->max_bounds.descent;
 
-  dbgEvalNL(2, (void*)this);
-  dbgEvalNL(2, rep->fontInfo);
-
-  dbgEvalNL(2, (void*)rep->fontInfo->per_char);
-
-  if (rep->fontInfo->per_char == 0)
-    {
-      asc = rep->fontInfo->max_bounds.ascent;
-      desc = rep->fontInfo->max_bounds.descent;
-      wid = strlen(text) * rep->fontInfo->max_bounds.width;
-    }
-  else
-    {
-      while (*text != '\0')
-        {
-          XCharStruct& ch = rep->fontInfo->per_char[*text];
-
-          if (ch.ascent > asc)
-            asc = ch.ascent;
-
-          if (ch.descent > desc)
-            desc = ch.descent;
-
-          wid += ch.width;
-
-          ++text;
-        }
-    }
+  const int wid = XTextWidth(rep->fontInfo, text, strlen(text));
 
   dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, wid);
 
