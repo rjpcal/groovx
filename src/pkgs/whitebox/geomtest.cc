@@ -70,7 +70,7 @@ namespace
         const txform TI = T.inverted();
 
         const txform M1 = T.mtx_mul(TI); // compute T * inv(T)
-        const txform M2 = TI.mtx_mul(T);  // compute inv(T) * T
+        const txform M2 = TI.mtx_mul(T); // compute inv(T) * T
 
         dbg_dump(3, M1);
         dbg_dump(3, M2);
