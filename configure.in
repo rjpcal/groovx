@@ -12,7 +12,8 @@ dnl Compiler checks.
 
 AC_PROG_CXX(g++-3 g++ c++)
 
-AC_CHECK_HEADERS(limits dmedia/audio.h Alib.h esd.h)
+AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream
+		  dmedia/audio.h Alib.h esd.h])
 
 dnl Checks for libraries.
 
