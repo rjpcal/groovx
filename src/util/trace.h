@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Aug  4 12:26:21 1999
+// written: Tue Feb  8 16:08:58 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -40,6 +40,14 @@
 #if defined(LOCAL_TRACE) || defined(PROF)
 #  ifndef LOCAL_PROF
 #    define LOCAL_PROF
+#  endif
+#endif
+
+#if !defined(DYNAMIC_TRACE_EXPR)
+#  if defined(LOCAL_TRACE)
+#    define DYNAMIC_TRACE_EXPR true
+#  else
+#    define DYNAMIC_TRACE_EXPR false
 #  endif
 #endif
 
@@ -114,13 +122,12 @@ private:
   const bool giveTraceMsg;
 };
 
-#  ifdef LOCAL_TRACE
-#    define DOTRACE(x) static Prof P__(x); Trace T__(P__, true);
-#  else
-#    define DOTRACE(x) static Prof P__(x); Trace T__(P__, false);
-#  endif
+#    define DOTRACE(x) static Prof P__(x); Trace T__(P__, DYNAMIC_TRACE_EXPR);
+
 #else // !defined(LOCAL_PROF)
+
 #  define DOTRACE(x) {}
+
 #endif // !defined(LOCAL_PROF)
 
 static const char vcid_trace_h[] = "$Header$";
