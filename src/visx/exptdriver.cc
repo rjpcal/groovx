@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Sep 29 09:43:25 2000
+// written: Fri Sep 29 13:43:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -863,7 +863,8 @@ void ExptDriver::Impl::read(const char* filename) {
 DOTRACE("ExptDriver::Impl::read");
   STD_IO::ifstream ifs(filename);
   if (ifs.fail()) throw IO::FilenameError(filename);
-  itsOwner->ioDeserialize(ifs, IO::BASES|IO::TYPENAME);
+  IO::LegacyReader reader(ifs, IO::BASES|IO::TYPENAME);
+  reader.readRoot(itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -879,7 +880,8 @@ DOTRACE("ExptDriver::Impl::write");
 
   STD_IO::ofstream ofs(filename);
   if (ofs.fail()) throw IO::FilenameError(filename);
-  itsOwner->ioSerialize(ofs, IO::BASES|IO::TYPENAME);
+  IO::LegacyWriter writer(ofs, IO::BASES|IO::TYPENAME);
+  writer.writeRoot(itsOwner);
 }
 
 //--------------------------------------------------------------------

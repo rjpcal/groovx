@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Sep 26 18:24:40 2000
+// written: Fri Sep 29 13:44:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "grobj.h"
 #include "objlist.h"
 
+#include "io/iolegacy.h"
 #include "io/iomgr.h"
 
 #include "tcl/listpkg.h"
@@ -70,7 +71,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
   int num_read = 0;
 
-  IO::IoObject::eatWhitespace(ifs);
+  ifs >> ws;
 
   while ( (num_to_read == ALL || num_read < num_to_read)
 			 && (ifs.peek() != EOF) ) {
@@ -96,7 +97,8 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 	 
 	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
 
-	 io->ioDeserialize(ifs, flags);
+	 IO::LegacyReader reader(ifs, flags);
+	 reader.readRoot(io);
 	 
 	 int objid = olist.insert(ObjList::Ptr(p));
 
@@ -104,7 +106,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
 	 ++num_read;
 
-	 IO::IoObject::eatWhitespace(ifs);
+	 ifs >> ws;
   }
 }
 
@@ -146,7 +148,8 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  olist.getCheckedPtr(*itr)->ioSerialize(ofs, flags);
+		  IO::LegacyWriter writer(ofs, flags);
+		  writer.writeRoot(olist.getCheckedPtr(*itr).get());
 		  ofs << endl;
 		}
   }

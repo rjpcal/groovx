@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Sep 27 10:18:49 2000
+// written: Fri Sep 29 13:45:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "io/asciistreamreader.h"
 #include "io/asciistreamwriter.h"
 #include "io/io.h"
+#include "io/iolegacy.h"
 
 #include "util/arrays.h"
 
@@ -39,36 +40,29 @@ void Tcl::StringifyCmd::invoke() {
 DOTRACE("Tcl::StringifyCmd::invoke");
   IO::IoObject& io = getIO();
 
-  int buf_size = io.ioCharCount();
-
-  // Give ourselves a little extra space above what is returned by
-  // ioCharCount, so we have a chance to detect underestimates by
-  // ioCharCount.
-  fixed_block<char> buf(buf_size+32);
-
-  ostrstream ost(&(buf[0]), buf_size+20);
-
   DebugEval(typeid(io).name());
-  DebugEval(buf_size);
+
+  ostrstream ost;
 
   try {
-	 getIO().ioSerialize(ost, IO::BASES|IO::TYPENAME);
+	 IO::LegacyWriter writer(ost, IO::BASES|IO::TYPENAME);
+	 writer.writeRoot(&(getIO()));
 	 ost << '\0';
-	 int chars_used = strlen(&(buf[0]));
-	 DebugEvalNL(chars_used);
-	 if (chars_used > buf_size) {
-		throw TclError("buffer overflow during stringify");
-	 }
   }
   catch (IO::IoError& err) {
 	 err.appendMsg(" with buffer contents ==\n");
 
-	 buf[buf.size()-1] = '\0';
-	 err.appendMsg(&buf[0]);
+	 ost << '\0';
+	 err.appendMsg(ost.str());
+
+	 ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 
 	 throw err;
   }
-  returnCstring(&(buf[0]));
+
+  returnCstring(ost.str());
+
+  ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
 
 Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
@@ -86,12 +80,9 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 
   istrstream ist(buf);
 
-  try {
-	 getIO().ioDeserialize(ist, IO::BASES|IO::TYPENAME);
-  }
-  catch (IO::IoError& err) {
-	 throw TclError(err.msg_cstr());
-  }
+  IO::LegacyReader reader(ist, IO::BASES|IO::TYPENAME);
+  reader.readRoot(&(getIO()));
+
   returnVoid();
 }
 

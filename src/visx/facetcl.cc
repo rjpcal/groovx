@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Sep 26 19:19:46 2000
+// written: Fri Sep 29 13:44:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #include "face.h"
 
 #include "io/iofactory.h"
-#include "io/iomgr.h"
+#include "io/iolegacy.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/tclcmd.h"
@@ -55,6 +55,7 @@ protected:
 };
 
 void FaceTcl::LoadFacesCmd::invoke() {
+DOTRACE("FaceTcl::LoadFacesCmd::invoke");
   const char* file = getCstringFromArg(1);
 
   int num_to_read = -1;			  // -1 indicates to read to eof
@@ -100,16 +101,17 @@ void FaceTcl::LoadFacesCmd::invoke() {
 		char c = char(ist.peek());
 		bool saw_alpha = bool(isalpha(c));
 		if (use_virtual_ctor | saw_alpha) {
-		  IO::IoObject* io = IO::IoMgr::newIO(ist, IO::BASES & IO::TYPENAME);
+		  IO::LegacyReader lrdr(ist, IO::BASES & IO::TYPENAME);
+		  IO::IoObject* io = lrdr.readRoot();
 		  p = dynamic_cast<Face *>(io);
 		  if (!p) {
 			 throw IO::InputError("FaceTcl::loadFaces");
 		  }
 		}
 		else {
-//  		  p = new Face(ist, IO::NO_FLAGS);
 		  p = new Face;
-		  p->ioDeserialize(ist, IO::NO_FLAGS);
+		  IO::LegacyReader reader(ist, IO::NO_FLAGS);
+		  reader.readRoot(p);
 		}
 		int objid = olist.insert(ObjList::Ptr(p));
 
