@@ -353,29 +353,51 @@ namespace
     mutable bool      m_ever_matched;
 
   public:
-    formatter(string input) :
+    // Try to parse the input string as follows:
+    //
+    // (group,)? prefix : link_pattern
+    //
+    // The link pattern may contain a single asterisk ('*'). If there
+    // is an asterisk, then when this formatter is matched, the
+    // asterisk will be replaced with the input string, EXCLUDING that
+    // portion that matched the prefix, and EXCLUDING the portion of
+    // the input that counts as a filename extension (e.g., '.cc' or
+    // '.h').
+    //
+    // E.g.: Suppose the format_spec is given as
+    //
+    //     src/:objdir/*.o
+    //
+    // Then this formatter object would do the following: for an input
+    // string 'src/myfile.cc', transform it to an output string
+    // 'objdir/myfile.o'.
+    formatter(string format_spec) :
       m_ever_matched(false)
     {
-      string::size_type comma = input.find_first_of(',');
+      // Find the 'group', if any
+      const string::size_type comma = format_spec.find_first_of(',');
       if (comma != string::npos)
         {
-          m_group = input.substr(0, comma);
+          m_group = format_spec.substr(0, comma);
           strip_whitespace(m_group);
-          input.erase(0, comma+1);
+          format_spec.erase(0, comma+1);
         }
 
-      string::size_type colon = input.find_first_of(':');
+      // Find the 'prefix' (everything after the group, up to the
+      // first colon)
+      const string::size_type colon = format_spec.find_first_of(':');
       if (colon == string::npos)
         {
           cerr << "ERROR: invalid format (missing colon): '"
-               << input << "'\n";
+               << format_spec << "'\n";
           exit(1);
         }
 
-      m_prefix = input.substr(0, colon);
+      m_prefix = format_spec.substr(0, colon);
       strip_whitespace(m_prefix);
 
-      m_link_pattern = input.substr(colon+1);
+      // Find the 'link_pattern' (everything after the first colon)
+      m_link_pattern = format_spec.substr(colon+1);
       strip_whitespace(m_link_pattern);
 
       m_wildcard_pos = m_link_pattern.find_first_of('*');
@@ -436,9 +458,9 @@ namespace
   public:
     format_set(const char* name) : m_links(), m_setname(name) {}
 
-    void add_format(const string& input)
+    void add_format(const string& format_spec)
     {
-      m_links.push_back(formatter(input));
+      m_links.push_back(formatter(format_spec));
     }
 
     /// Try to find a pattern that matches srcfile, and return its transformation.
@@ -1893,5 +1915,5 @@ int main(int argc, char** argv)
   exit(0);
 }
 
-static const char vcid_cppdeps_cc[] = "$Header$";
+static const char vcid_cppdeps_cc[] = "$Id$ $HeadURL$";
 #endif // !CPPDEPS_CC_DEFINED
