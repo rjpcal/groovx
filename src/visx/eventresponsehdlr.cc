@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Jul 16 13:41:57 2001
+// written: Thu Jul 19 16:41:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "grshapp.h"
 #include "sound.h"
 #include "response.h"
+#include "responsemap.h"
 #include "trialbase.h"
 
 #include "io/reader.h"
@@ -33,8 +34,8 @@
 #include "tcl/tclregexp.h"
 #include "tcl/tclutil.h"
 
-#include "util/arrays.h"
 #include "util/error.h"
+#include "util/minivec.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
@@ -79,6 +80,7 @@ public:
   class ERHActiveState;
   friend class ERHActiveState;
 
+
   class ERHState {
   protected:
     ERHState() {}
@@ -100,6 +102,7 @@ public:
     static shared_ptr<ERHState> inactiveState();
   };
 
+
   class ERHInactiveState : public ERHState {
   public:
     virtual ~ERHInactiveState() {}
@@ -112,6 +115,7 @@ public:
 
     virtual void onDestroy() {};
   };
+
 
   class ERHActiveState : public ERHState {
   private:
@@ -168,57 +172,22 @@ public:
     }
   }; // end class ERHActiveState
 
+
   void changeState(shared_ptr<ERHState> new_state) const
   { itsState = new_state; }
+
 
   // Delegand functions
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  const fixed_string& getInputResponseMap() const
-    { return itsInputResponseMap; }
-
-  void setInputResponseMap(const fixed_string& s)
-    {
-      itsInputResponseMap = s;
-      itsRegexpsAreDirty = true;
-      updateRegexpsIfNeeded();
-    }
-
-  bool getUseFeedback() const
-    { return itsUseFeedback; }
-
-  void setUseFeedback(bool val)
-    { itsUseFeedback = val; }
-
-  const char* getFeedbackMap() const
-    { return itsFeedbackMap.c_str(); }
-
   void setFeedbackMap(const char* feedback_string)
     {
-      itsFeedbackMap = feedback_string;
+      itsFeedbackMapRep = feedback_string;
       itsFeedbacksAreDirty = true;
       updateFeedbacksIfNeeded();
     }
-
-  const fixed_string& getEventSequence() const
-    { return itsEventSequence; }
-
-  void setEventSequence(const fixed_string& seq)
-    { itsEventSequence = seq; }
-
-  const fixed_string& getBindingSubstitution() const
-    { return itsBindingSubstitution; }
-
-  void setBindingSubstitution(const fixed_string& sub)
-    { itsBindingSubstitution = sub.c_str(); }
-
-  void abortInvalidResponses()
-    { itsAbortInvalidResponses = true; }
-
-  void ignoreInvalidResponses()
-    { itsAbortInvalidResponses = false; }
 
   void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
     {
@@ -261,22 +230,11 @@ private:
 
   class PrivateHandleCmd;
 
-  int getRespFromKeysym(const char* keysym) const;
   void feedback(int response) const;
   void updateFeedbacksIfNeeded() const;
   void updateRegexpsIfNeeded() const;
 
   dynamic_string getBindingScript() const;
-
-  // We take the last character of the string as the response, in
-  // order to handle the numeric keypad, where the keysysms are
-  // 'KP_0', 'KP_3', etc., wheras we want just the 0 or the 3.
-  const char* extractStringFromKeysym(const char* text) const
-    {
-      while ( *(++text) != '\0' )
-        { ; }
-      return (text-1);
-    }
 
   // data
 private:
@@ -288,32 +246,14 @@ private:
 
   PrivateHandleCmd* itsCmdCallback;
 
-  class RegExp_ResponseVal {
-  public:
-    RegExp_ResponseVal() : regExp(), responseValue(-1) {}
+public:
+  ResponseMap itsResponseMap;
 
-    RegExp_ResponseVal(Tcl::ObjPtr obj, int rv) : regExp(obj),
-																  responseValue(rv) {}
-
-	 Tcl::RegExp regExp;
-	 int responseValue;
-  };
-
-  fixed_string itsInputResponseMap;
-  mutable dynamic_block<RegExp_ResponseVal> itsRegexps;
-
-  mutable bool itsRegexpsAreDirty;
+private:
 
   class Condition_Feedback {
   public:
-    // This no-argument constructor puts the object in an invalid
-    // state, which we mark with itsIsValid=false. In order for the
-    // object to be used, it must be assigned to with the default
-    // assignment constructor.
-    Condition_Feedback() : itsIsValid(false), itsCondition(), itsResultCmd() {}
-
     Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-      itsIsValid(true),
       itsCondition(cond),
       itsResultCmd(res, Tcl::Code::THROW_EXCEPTION)
       {
@@ -330,23 +270,24 @@ private:
   private:
     bool isTrue(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
       {
-        Precondition(itsIsValid);
         return safeInterp.evalBooleanExpr(itsCondition);
       }
 
     void invoke(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
       { itsResultCmd.invoke(safeInterp.intp()); }
 
-    bool itsIsValid;
     Tcl::ObjPtr itsCondition;
     Tcl::Code itsResultCmd;
   };
 
-  fixed_string itsFeedbackMap;
-  mutable dynamic_block<Condition_Feedback> itsFeedbacks;
+public:
+  fixed_string itsFeedbackMapRep;
+private:
+  mutable minivec<Condition_Feedback> itsFeedbacks;
 
   mutable bool itsFeedbacksAreDirty;
 
+public:
   bool itsUseFeedback;
 
   fixed_string itsEventSequence;
@@ -437,7 +378,7 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 
   itsErh.ignore(itsWidget);
 
-  theResponse.setVal(itsErh.getRespFromKeysym(keysym));
+  theResponse.setVal(itsErh.itsResponseMap.valueFor(keysym));
   DebugEvalNL(theResponse.val());
 
   if ( !theResponse.isValid() ) {
@@ -463,10 +404,8 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsState(ERHState::inactiveState()),
   itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsCmdCallback(new PrivateHandleCmd(this)),
-  itsInputResponseMap(input_response_map),
-  itsRegexps(),
-  itsRegexpsAreDirty(true),
-  itsFeedbackMap(),
+  itsResponseMap(input_response_map),
+  itsFeedbackMapRep(),
   itsFeedbacks(),
   itsFeedbacksAreDirty(true),
   itsUseFeedback(true),
@@ -488,23 +427,26 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
 
   itsState = ERHState::inactiveState();
 
-  reader->readValue("inputResponseMap", itsInputResponseMap);
-  reader->readValue("feedbackMap", itsFeedbackMap);
+  {
+    fixed_string rep;
+    reader->readValue("inputResponseMap", rep);
+    itsResponseMap.set(rep);
+  }
+
+  reader->readValue("feedbackMap", itsFeedbackMapRep);
   reader->readValue("useFeedback", itsUseFeedback);
   reader->readValue("eventSequence", itsEventSequence);
   reader->readValue("bindingSubstitution", itsBindingSubstitution);
 
-  itsRegexpsAreDirty = true;
   itsFeedbacksAreDirty = true;
-  updateRegexpsIfNeeded();
   updateFeedbacksIfNeeded();
 }
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("EventResponseHdlr::Impl::writeTo");
 
-  writer->writeValue("inputResponseMap", itsInputResponseMap);
-  writer->writeValue("feedbackMap", itsFeedbackMap);
+  writer->writeValue("inputResponseMap", itsResponseMap.rep());
+  writer->writeValue("feedbackMap", itsFeedbackMapRep);
   writer->writeValue("useFeedback", itsUseFeedback);
   writer->writeValue("eventSequence", itsEventSequence);
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
@@ -536,32 +478,6 @@ DOTRACE("EventResponseHdlr::Impl::ignore");
 }
 
 
-//--------------------------------------------------------------------
-//
-// EventResponseHdlr::getRespFromKeysysm --
-//
-// This procedure returns the response value associated with the first
-// regexp in itsRegexps that matches the given character string, or
-// returns INVALID_RESPONSE if none of the regexps give a match.
-//
-//--------------------------------------------------------------------
-
-int EventResponseHdlr::Impl::getRespFromKeysym(const char* keysym) const {
-DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
-
-  const char* response_string = extractStringFromKeysym(keysym);
-
-  updateRegexpsIfNeeded();
-
-  for (size_t i = 0; i < itsRegexps.size(); ++i)
-	 {
-		if (itsRegexps[i].regExp.matchesString(response_string))
-		  return itsRegexps[i].responseValue;
-    }
-
-  return ResponseHandler::INVALID_RESPONSE;
-}
-
 void EventResponseHdlr::Impl::feedback(int response) const {
 DOTRACE("EventResponseHdlr::Impl::feedback");
 
@@ -592,13 +508,11 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
   if (!itsFeedbacksAreDirty) return;
 
-  Tcl::List pairs_list(Tcl::ObjPtr(itsFeedbackMap.c_str()));
+  Tcl::List pairs_list(Tcl::ObjPtr(itsFeedbackMapRep.c_str()));
 
-  unsigned int uint_num_pairs = pairs_list.length();
+  itsFeedbacks.clear();
 
-  itsFeedbacks.resize(uint_num_pairs);
-
-  for (unsigned int i = 0; i < uint_num_pairs; ++i)
+  for (unsigned int i = 0; i < pairs_list.length(); ++i)
     {
       Tcl::List current_pair(pairs_list[i]);
 
@@ -608,55 +522,13 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
                              "in EventResponseHdlr::updateFeedbacksIfNeeded");
         }
 
-      itsFeedbacks.at(i) = Impl::Condition_Feedback(current_pair[0],
-                                                    current_pair[1]);
+      itsFeedbacks.push_back(Impl::Condition_Feedback(current_pair[0],
+                                                      current_pair[1]));
     }
 
   itsFeedbacksAreDirty = false;
 
   DebugPrintNL("updateFeedbacksIfNeeded success!");
-}
-
-//--------------------------------------------------------------------
-//
-// EventResponseHdlr::updateRegexpsIfNeeded --
-//
-// Recompiles the internal table of regexps to correspond with the
-// list of regexps and response values stored in the string
-// itsInputResponseMap.
-//
-//--------------------------------------------------------------------
-
-void EventResponseHdlr::Impl::updateRegexpsIfNeeded() const {
-DOTRACE("EventResponseHdlr::Impl::updateRegexpsIfNeeded");
-
-  if (!itsRegexpsAreDirty) return;
-
-  Tcl::List pairs_list(Tcl::ObjPtr(itsInputResponseMap.c_str()));
-
-  unsigned int uint_num_pairs = pairs_list.length();
-
-  itsRegexps.resize(uint_num_pairs);
-
-  for (unsigned int i = 0; i < uint_num_pairs; ++i)
-    {
-      Tcl::List current_pair(pairs_list[i]);
-
-      if (current_pair.length() != 2)
-        {
-          throw ErrorWithMsg("\"pair\" did not have length 2 "
-                             "in EventResponseHdlr::updateRegexpsIfNeeded");
-        }
-
-      Tcl::ObjPtr patternObj = current_pair[0];
-      int response_val = current_pair.get<int>(1);
-
-      itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
-    }
-
-  itsRegexpsAreDirty = false;
-
-  DebugPrintNL("updateRegexpsIfNeeded success!");
 }
 
 
@@ -692,29 +564,30 @@ void EventResponseHdlr::readFrom(IO::Reader* reader)
 void EventResponseHdlr::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-const fixed_string& EventResponseHdlr::getInputResponseMap() const {
+const fixed_string& EventResponseHdlr::getInputResponseMap() const
+{
 DOTRACE("EventResponseHdlr::getInputResponseMap");
-  return itsImpl->getInputResponseMap();
+  return itsImpl->itsResponseMap.rep();
 }
 
 void EventResponseHdlr::setInputResponseMap(const fixed_string& s) {
 DOTRACE("EventResponseHdlr::setInputResponseMap");
-  itsImpl->setInputResponseMap(s);
+  itsImpl->itsResponseMap.set(s);
 }
 
 bool EventResponseHdlr::getUseFeedback() const {
 DOTRACE("EventResponseHdlr::getUseFeedback");
-  return itsImpl->getUseFeedback();
+  return itsImpl->itsUseFeedback;
 }
 
 void EventResponseHdlr::setUseFeedback(bool val) {
 DOTRACE("EventResponseHdlr::setUseFeedback");
-  itsImpl->setUseFeedback(val);
+  itsImpl->itsUseFeedback = val;
 }
 
 const char* EventResponseHdlr::getFeedbackMap() const {
 DOTRACE("EventResponseHdlr::getFeedbackMap");
-  return itsImpl->getFeedbackMap();
+  return itsImpl->itsFeedbackMapRep.c_str();
 }
 
 void EventResponseHdlr::setFeedbackMap(const char* feedback_string) {
@@ -723,22 +596,22 @@ DOTRACE("EventResponseHdlr::setFeedbackMap");
 }
 
 const fixed_string& EventResponseHdlr::getEventSequence() const
-  { return itsImpl->getEventSequence(); }
+  { return itsImpl->itsEventSequence; }
 
 void EventResponseHdlr::setEventSequence(const fixed_string& seq)
-  { itsImpl->setEventSequence(seq); }
+  { itsImpl->itsEventSequence = seq; }
 
 const fixed_string& EventResponseHdlr::getBindingSubstitution() const
-  { return itsImpl->getBindingSubstitution(); }
+  { return itsImpl->itsBindingSubstitution; }
 
 void EventResponseHdlr::setBindingSubstitution(const fixed_string& sub)
-  { itsImpl->setBindingSubstitution(sub); }
+  { itsImpl->itsBindingSubstitution = sub; }
 
 void EventResponseHdlr::abortInvalidResponses()
-  { itsImpl->abortInvalidResponses(); }
+  { itsImpl->itsAbortInvalidResponses = true; }
 
 void EventResponseHdlr::ignoreInvalidResponses()
-  { itsImpl->ignoreInvalidResponses(); }
+  { itsImpl->itsAbortInvalidResponses = false; }
 
 void EventResponseHdlr::rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
   { itsImpl->rhBeginTrial(widget, trial); }
