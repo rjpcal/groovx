@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Aug 10 13:08:32 2001
+// written: Fri Aug 10 13:25:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,13 +47,15 @@ GrObjRenderer::GrObjRenderer() :
 DOTRACE("GrObjRenderer::GrObjRenderer");
 }
 
-GrObjRenderer::~GrObjRenderer() {
+GrObjRenderer::~GrObjRenderer()
+{
 DOTRACE("GrObjRenderer::~GrObjRenderer");
   glDeleteLists(itsDisplayList, 1);
 }
 
 void GrObjRenderer::recompileIfNeeded(const GrObjImpl* obj,
-                                      Gfx::Canvas& canvas) const {
+                                      Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjRenderer::recompileIfNeeded");
   if (itsIsCurrent) return;
 
@@ -67,7 +69,8 @@ DOTRACE("GrObjRenderer::recompileIfNeeded");
 }
 
 bool GrObjRenderer::recacheBitmapIfNeeded(const GrObjImpl* obj,
-                                          Gfx::Canvas& canvas) const {
+                                          Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
   if (itsIsCurrent) return false;
 
@@ -87,15 +90,8 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
 
       obj->grRender(canvas, GrObj::DRAW);
 
-      glReadBuffer(GL_FRONT);
-      Rect<double> bmapbox_init = obj->grGetBoundingBox();
-      Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
-      screen_rect.widenByStep(2);
-      screen_rect.heightenByStep(2);
-      Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
+      Rect<double> bmapbox = obj->grGetBoundingBox();
 
-      DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
-      DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
       itsBitmapCache->grabWorldRect(bmapbox);
     }
     glPopAttrib();
@@ -109,28 +105,26 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
       itsBitmapCache->flipContrast();
     }
 
-  if (GrObj::GL_BITMAP_CACHE == itsMode)
-    {
-      itsBitmapCache->flipContrast();
-    }
-
   postUpdated();
 
   return true;
 }
 
-void GrObjRenderer::callList() const {
+void GrObjRenderer::callList() const
+{
 DOTRACE("GrObjRenderer::callList");
   // We must explicitly check that the display list is valid,
   // since it might be invalid if the object was recently
   // constructed, for example.
-  if (glIsList(itsDisplayList) == GL_TRUE) {
-    glCallList(itsDisplayList);
-    DebugEvalNL(itsDisplayList);
-  }
+  if (glIsList(itsDisplayList) == GL_TRUE)
+    {
+      glCallList(itsDisplayList);
+      DebugEvalNL(itsDisplayList);
+    }
 }
 
-void GrObjRenderer::newList() const {
+void GrObjRenderer::newList() const
+{
 DOTRACE("GrObjRenderer::newList");
   glDeleteLists(itsDisplayList, 1);
   itsDisplayList = glGenLists(1);
@@ -140,7 +134,8 @@ DOTRACE("GrObjRenderer::newList");
     }
 }
 
-void GrObjRenderer::setMode(GrObj::RenderMode new_mode) {
+void GrObjRenderer::setMode(GrObj::RenderMode new_mode)
+{
 DOTRACE("GrObjRenderer::setMode");
 
 #ifdef I686
@@ -170,26 +165,26 @@ DOTRACE("GrObjRenderer::setMode");
     }
 }
 
-void GrObjRenderer::render(const GrObjImpl* obj, Gfx::Canvas& canvas) const {
+void GrObjRenderer::render(const GrObjImpl* obj, Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjRenderer::render");
   DebugEvalNL(itsMode);
-  switch (itsMode) {
+  switch (itsMode)
+    {
+    case GrObj::DIRECT_RENDER:
+      obj->grRender(canvas, GrObj::DRAW);
+      break;
 
-  case GrObj::DIRECT_RENDER:
-    obj->grRender(canvas, GrObj::DRAW);
-    break;
+    case GrObj::GLCOMPILE:
+      callList();
+      break;
 
-  case GrObj::GLCOMPILE:
-    callList();
-    break;
-
-  case GrObj::GL_BITMAP_CACHE:
-  case GrObj::X11_BITMAP_CACHE:
-    Assert(itsBitmapCache.get() != 0);
-    itsBitmapCache->render(canvas);
-    break;
-
-  } // end switch
+    case GrObj::GL_BITMAP_CACHE:
+    case GrObj::X11_BITMAP_CACHE:
+      Assert(itsBitmapCache.get() != 0);
+      itsBitmapCache->render(canvas);
+      break;
+    }
 }
 
 void GrObjRenderer::unrender(const GrObjImpl* obj, Gfx::Canvas& canvas) const
@@ -208,22 +203,24 @@ DOTRACE("GrObjRenderer::unrender");
   glPopAttrib();
 }
 
-bool GrObjRenderer::update(const GrObjImpl* obj, Gfx::Canvas& canvas) const {
+bool GrObjRenderer::update(const GrObjImpl* obj, Gfx::Canvas& canvas) const
+{
 DOTRACE("GrObjRenderer::update");
   canvas.throwIfError("before GrObj::update");
 
   bool objectDrawn = false;
 
-  switch (itsMode) {
-  case GrObj::GLCOMPILE:
-    recompileIfNeeded(obj, canvas);
-    break;
+  switch (itsMode)
+    {
+    case GrObj::GLCOMPILE:
+      recompileIfNeeded(obj, canvas);
+      break;
 
-  case GrObj::GL_BITMAP_CACHE:
-  case GrObj::X11_BITMAP_CACHE:
-    objectDrawn = recacheBitmapIfNeeded(obj, canvas);
-    break;
-  }
+    case GrObj::GL_BITMAP_CACHE:
+    case GrObj::X11_BITMAP_CACHE:
+      objectDrawn = recacheBitmapIfNeeded(obj, canvas);
+      break;
+    }
   canvas.throwIfError("during GrObj::update");
 
   return objectDrawn;
