@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Mon Dec  6 21:35:07 1999
+// written: Sat Jan 15 11:09:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,17 +14,15 @@
 #include "gtext.h"
 
 #include <GL/gl.h>
-#include <togl.h>
-#include <cctype>
 
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 namespace {
   const string ioTag = "Gtext";
