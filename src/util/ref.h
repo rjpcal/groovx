@@ -21,10 +21,6 @@
 #include "util/object.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRHANDLE_H_DEFINED)
-#include "util/ptrhandle.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
 #include "util/traits.h"
 #endif
@@ -197,7 +193,84 @@ namespace Util {
 template <class T>
 class MaybeRef {
 private:
-  mutable NullablePtrHandle<T> itsHandle;
+
+  class NullablePtrHandle {
+  public:
+	 explicit NullablePtrHandle(T* master) : itsMaster(master)
+    {
+      if (itsMaster != 0)
+        itsMaster->incrRefCount();
+    }
+
+	 ~NullablePtrHandle()
+    {
+      if (itsMaster != 0)
+        itsMaster->decrRefCount();
+    }
+
+	 //
+	 // Copy constructors
+	 //
+
+	 NullablePtrHandle(const NullablePtrHandle& other) : itsMaster(other.itsMaster)
+    {
+      if (itsMaster != 0)
+        itsMaster->incrRefCount();
+    }
+
+	 template <class U>
+	 NullablePtrHandle(const NullablePtrHandle<U>& other) :
+		itsMaster(other.isValid() ? other.get() : 0)
+    {
+      if (itsMaster != 0)
+        itsMaster->incrRefCount();
+    }
+
+	 //
+	 // Assignment operators
+	 //
+
+	 NullablePtrHandle& operator=(const NullablePtrHandle& other)
+    {
+      NullablePtrHandle otherCopy(other);
+      this->swap(otherCopy);
+      return *this;
+    }
+
+
+	 bool isValid() const { return itsMaster != 0; }
+
+	 void release()
+    {
+      if (itsMaster != 0)
+        itsMaster->decrRefCount();
+      itsMaster = 0;
+    }
+
+	 T* operator->() const { return get(); }
+	 T& operator*()  const { return *(get()); }
+
+	 T* get()        const { ensureValid(); return itsMaster; }
+
+  private:
+	 void ensureValid() const
+	 {
+		if (itsMaster == 0)
+		  Util::RefHelper::throwErrorWithMsg(
+								"attempted to derefence an invalid WeakRef");
+	 }
+
+	 void swap(NullablePtrHandle& other)
+    {
+      T* otherMaster = other.itsMaster;
+      other.itsMaster = this->itsMaster;
+      this->itsMaster = otherMaster;
+    }
+
+	 T* itsMaster;
+  };
+
+  mutable NullablePtrHandle itsHandle;
   Util::UID itsId;
 
   void insertItem()
@@ -221,31 +294,13 @@ public:
     { if (master != 0) itsId = master->id(); }
 
 
-//    MaybeRef(PtrHandle<T> item) : itsHandle(item), itsId(item->id())
-//      { insertItem(); }
-
-//    MaybeRef(PtrHandle<T> item, bool /*noInsert*/) :
-//      itsHandle(item), itsId(item->id())
-//      {}
-
-
-  MaybeRef(NullablePtrHandle<T> item) :
-    itsHandle(item), itsId(0)
-  {
-    if (itsHandle.isValid()) itsId = itsHandle->id();
-    insertItem();
-  }
-
-  MaybeRef(NullablePtrHandle<T> item, bool /*noInsert*/) :
-    itsHandle(item), itsId(0)
-  {
-    if (itsHandle.isValid()) itsId = itsHandle->id();
-  }
-
-
   template <class U>
   MaybeRef(const MaybeRef<U>& other) :
-    itsHandle(other.handle()), itsId(other.id()) {}
+    itsHandle(0), itsId(other.id())
+  {
+	 if (other.isValid())
+		itsHandle = NullablePtrHandle(other.get());
+  }
 
   template <class U>
   MaybeRef(const Ref<U>& other) :
@@ -264,7 +319,7 @@ public:
     if ( !itsHandle.isValid() )
       {
         Ref<T> p(itsId);
-        itsHandle = NullablePtrHandle<T>(p.get());
+        itsHandle = NullablePtrHandle(p.get());
         if (itsId != itsHandle->id())
           throw ErrorWithMsg("assertion failed in refresh");
       }
@@ -279,7 +334,7 @@ public:
       {
         if (RefHelper::isValidId(itsId)) {
           Ref<T> p(itsId);
-          itsHandle = NullablePtrHandle<T>(p.get());
+          itsHandle = NullablePtrHandle(p.get());
           if (itsId != itsHandle->id())
             throw ErrorWithMsg("assertion failed in attemptRefresh");
         }
@@ -289,7 +344,6 @@ public:
 
   bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
 
-  NullablePtrHandle<T> handle() const { attemptRefresh(); return itsHandle; }
   Util::UID id() const { return itsId; }
 };
 
