@@ -37,8 +37,6 @@
 #include "gx/bbox.h"
 #include "gx/rect.h"
 
-#include "system/system.h"
-
 #include "tcl/tcllistobj.h"
 
 #include "util/cstrstream.h"
@@ -47,6 +45,7 @@
 
 #include <cctype>
 #include <cstdio>
+#include <cstdlib> // for getenv()
 #include <cstring>
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -164,7 +163,7 @@ DOTRACE("GxRasterFont::GxRasterFont");
 
   if (dpy == 0)
     {
-      dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
+      dpy = XOpenDisplay(getenv("DISPLAY"));
       if (dpy == 0)
         throw Util::Error("couldn't open connection to X server");
     }
