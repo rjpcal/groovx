@@ -54,6 +54,8 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
+INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
+
 LOCAL_LIB := $(LOCAL_ARCH)/lib
 LOCAL_BIN := $(LOCAL_ARCH)/bin
 TMP_DIR := ./tmp/$(PLATFORM)
@@ -156,7 +158,7 @@ endif
 ifeq ($(COMPILER),g++)
 	CC := time g++
 # This filter removes warnings that are triggered by standard library files
-	FILTER := |& sed \
+	NFILTER := |& sed \
 		-e '/g++-3.*warning/d;' \
 		-e '/In file included.*g++-3/,/:/d;' \
 		-e '/g++-3.*In method/d;' \
@@ -164,7 +166,7 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d' \
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
-	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
+	CC_SWITCHES += -Wall -W -Wsign-promo
 	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
@@ -185,7 +187,7 @@ endif
 ifeq ($(COMPILER),ppc-g++-2)
 	CC := time c++
 # This filter removes warnings that are triggered by standard library files
-	FILTER := |& sed \
+	NFILTER := |& sed \
 		-e '/darwin.*warning/d;' \
 		-e '/In file included.*darwin/,/:/d;' \
 		-e '/darwin.*In method/d;' \
@@ -193,7 +195,7 @@ ifeq ($(COMPILER),ppc-g++-2)
 		-e '/darwin.*In instantiation of/,/instantiated from here/d' \
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
-	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
+	CC_SWITCHES += -Wall -W -Wsign-promo
 	CPP_DEFINES += -DNO_CPP_LIMITS -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	CPP_DEFINES += -Dlrand48=rand
@@ -245,8 +247,6 @@ endif
 # Directories to search for include files and code libraries
 #
 #-------------------------------------------------------------------------
-
-INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
 LIB_PATH += -L$(LOCAL_LIB)
 
@@ -479,7 +479,6 @@ CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
-
 
 #-------------------------------------------------------------------------
 #
