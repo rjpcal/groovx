@@ -36,6 +36,7 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/time.h"
 #include "util/unittest.h"
 
 #include "util/trace.h"
@@ -58,6 +59,56 @@ namespace
     //  erfc(x)+erfc(-x) == 2
     TEST_REQUIRE_APPROX(Num::erfc(1), 2-Num::erfc(-1), 1e-5);
     TEST_REQUIRE_APPROX(Num::erfc(2), 2-Num::erfc(-2), 1e-5);
+
+
+    double x = 0.0;
+
+    const rutz::time t1 = rutz::time::user_rusage();
+    for (int i = 0; i < 2500; ++i)
+      for (int f = 1; f <= 100; ++f)
+        x += Num::erfc(double(i)/1000.0);
+    const rutz::time t2 = rutz::time::user_rusage();
+    const rutz::time custom_erfc = t2-t1;
+
+    x = 0.0;
+
+    const rutz::time t3 = rutz::time::user_rusage();
+    for (int i = 0; i < 2500; ++i)
+      for (int f = 1; f <= 100; ++f)
+        x += ::erfc(double(i)/1000.0);
+    const rutz::time t4 = rutz::time::user_rusage();
+    const rutz::time builtin_erfc = t4-t3;
+
+    dbg_eval_nl(0, (custom_erfc).msec());
+    dbg_eval_nl(0, (builtin_erfc).msec());
+  }
+
+  void testGammaln()
+  {
+    // Compare custom gammaln() with builtin lgamma() function
+    for (int f = 1; f <= 100; ++f)
+      TEST_REQUIRE_APPROX(Num::gammaln(f), ::lgamma(f), 1e-5);
+
+    double x = 0.0;
+
+    const rutz::time t1 = rutz::time::user_rusage();
+    for (int i = 0; i < 2500; ++i)
+      for (int f = 1; f <= 100; ++f)
+        x += Num::gammaln(f);
+    const rutz::time t2 = rutz::time::user_rusage();
+    const rutz::time custom_gammaln = t2-t1;
+
+    x = 0.0;
+
+    rutz::time t3 = rutz::time::user_rusage();
+    for (int i = 0; i < 2500; ++i)
+      for (int f = 1; f <= 100; ++f)
+        x += ::lgamma(f);
+    rutz::time t4 = rutz::time::user_rusage();
+    const rutz::time builtin_lgamma = t4-t3;
+
+    dbg_eval_nl(0, (custom_gammaln).msec());
+    dbg_eval_nl(0, (builtin_lgamma).msec());
   }
 }
 
@@ -69,6 +120,7 @@ DOTRACE("Numtest_Init");
   PKG_CREATE(interp, "Numtest", "4.$Revision$");
 
   DEF_TEST(pkg, testErfc);
+  DEF_TEST(pkg, testGammaln);
 
   PKG_RETURN;
 }
