@@ -61,7 +61,7 @@ ifeq ($(PLATFORM),hp9000s700)
 #		-e '/Warning.*usr.include./,/\^\^*/d'
 	FILTER := 
 	ARCH_FLAGS := +w +W829,740,8006,818,655,392,495,469,361,749,416 \
-		-DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS -Dstd=
+		-DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS -Dstd= -DSTD_IO=
 	DEPOPTIONS := -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
 		-I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
 		-I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src \
@@ -163,7 +163,7 @@ INCLUDE_DIRS := -I$(HOME)/include -I$(SRC) $(STL_INCLUDE_DIR)
 
 ifeq ($(PLATFORM),hp9000s700)
 	OPENGL_LIB_DIR := -L/opt/graphics/OpenGL/lib
-	AUDIO_LIB_DIR := -L/opt/audio</lib
+	AUDIO_LIB_DIR := -L/opt/audio/lib
 	AUDIO_LIB := -lAlib
 	RPATH_DIR := 
 	LOCAL_LIB_DIR := $(HOME)/lib/$(ARCH)
