@@ -444,7 +444,8 @@ cppdeps::get_direct_includes(const string& src_fname)
       return (*itr).second;
   }
 
-  string dirname_with_slash = src_fname.substr(0, src_fname.find_last_of('/'));
+  string dirname_with_slash =
+    src_fname.substr(0, src_fname.find_last_of('/'));
   dirname_with_slash += '/';
 
   include_list_t& vec = m_direct_includes[src_fname];
@@ -663,9 +664,19 @@ void cppdeps::batch_build()
                                               current_file.length()-offset-ext_len);
                       }
 
-                    // Use C-style stdio here since it came out running quite
-                    // a bit faster than iostreams, at least under g++-3.2.
-                    printf("%s/%s.o: ",
+                    // Make sure that m_objdir ends with a slash if it is
+                    // non-empty, so that we can join it to
+                    // stripped_filename and make a proper pathname.
+                    if (m_objdir.length() > 0
+                        && m_objdir[m_objdir.length()-1] != '/')
+                      {
+                        m_objdir += '/';
+                      }
+
+                    // Use C-style stdio here since it came out running
+                    // quite a bit faster than iostreams, at least under
+                    // g++-3.2.
+                    printf("%s%s.o: ",
                            m_objdir.c_str(),
                            stripped_filename.c_str());
 
