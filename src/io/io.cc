@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Fri Oct 15 19:49:38 1999
+// written: Tue Nov  2 21:23:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "io.h"
 
 #include <cctype>
+#include <cstring>
 #include <typeinfo>
 #include <strstream.h>
 #include <vector>
@@ -57,6 +58,10 @@ DOTRACE("IO::IO");
 IO::~IO() {
 DOTRACE("IO::~IO");
 }
+
+void IO::serialize(ostream& os, IOFlag flag) const {}
+void IO::deserialize(istream& is, IOFlag flag) {}
+int IO::charCount() const { return 0; }
 
 unsigned long IO::id() const {
 DOTRACE("IO::id");
@@ -142,6 +147,16 @@ template int gCharCount<int>(int val);
 template int gCharCount<bool>(bool val);
 template int gCharCount<char>(char val);
 template int gCharCount<double>(double val);
+
+template <>
+int gCharCount(const char* val) {
+  return strlen(val);
+}
+
+template <>
+int gCharCount(char* val) {
+  return strlen(val);
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
