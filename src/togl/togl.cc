@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 08:46:52 2000
+// written: Wed May 24 08:58:45 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -99,8 +99,9 @@ public:
   int makeWindowExist();
 
 private:
-//   void buildAttribList(int* attrib_list, int ci_depth, int dbl_flag);
+  void buildAttribList(int* attrib_list, int ci_depth, int dbl_flag);
   void setupGLXContext(bool directCtx);
+  void createWindow();
   Window findParent();
   Colormap findColormap();
   void setupStackingOrder();
@@ -2280,15 +2281,6 @@ int Togl::makeWindowExist() {
 DOTRACE("Togl::makeWindowExist");
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
-  const int MAX_ATTEMPTS = 12;
-
-  static int ci_depths[MAX_ATTEMPTS] = {
-	 8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
-  };
-  static int dbl_flags[MAX_ATTEMPTS] = {
-	 0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
-  };
-
   if (winPtr->window != None) {
 	 XDestroyWindow(itsDisplay, winPtr->window);
 	 winPtr->window = 0;
@@ -2311,78 +2303,23 @@ DOTRACE("Togl::makeWindowExist");
   }
   else /* !(itsShareContext && FindTogl(itsShareContext)) */ {
 	 int attrib_list[1000];
-	 int directCtx = GL_TRUE;
+
+	 const int MAX_ATTEMPTS = 12;
+
+	 static int ci_depths[MAX_ATTEMPTS] = {
+		8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
+	 };
+	 static int dbl_flags[MAX_ATTEMPTS] = {
+		0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
+	 };
 
 	 /* It may take a few tries to get a visual */
 	 for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++) {
-		int attrib_count = 0;
-
-// 		buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
-
-		attrib_list[attrib_count++] = GLX_USE_GL;
-		if (itsRgbaFlag) {
-		  /* RGB[A] mode */
-		  attrib_list[attrib_count++] = GLX_RGBA;
-		  attrib_list[attrib_count++] = GLX_RED_SIZE;
-		  attrib_list[attrib_count++] = itsRgbaRed;
-		  attrib_list[attrib_count++] = GLX_GREEN_SIZE;
-		  attrib_list[attrib_count++] = itsRgbaGreen;
-		  attrib_list[attrib_count++] = GLX_BLUE_SIZE;
-		  attrib_list[attrib_count++] = itsRgbaBlue;
-		  if (itsAlphaFlag) {
-			 attrib_list[attrib_count++] = GLX_ALPHA_SIZE;
-			 attrib_list[attrib_count++] = itsAlphaSize;
-		  }
-
-		  /* for EPS Output */
-		  freeEpsMaps();
-		}
-		else {
-		  /* Color index mode */
-		  attrib_list[attrib_count++] = GLX_BUFFER_SIZE;
-		  attrib_list[attrib_count++] = ci_depths[attempt];
-		}
-		if (itsDepthFlag) {
-		  attrib_list[attrib_count++] = GLX_DEPTH_SIZE;
-		  attrib_list[attrib_count++] = itsDepthSize;
-		}
-		if (itsDoubleFlag || dbl_flags[attempt]) {
-		  attrib_list[attrib_count++] = GLX_DOUBLEBUFFER;
-		}
-		if (itsStencilFlag) {
-		  attrib_list[attrib_count++] = GLX_STENCIL_SIZE;
-		  attrib_list[attrib_count++] = itsStencilSize;
-		}
-		if (itsAccumFlag) {
-		  attrib_list[attrib_count++] = GLX_ACCUM_RED_SIZE;
-		  attrib_list[attrib_count++] = itsAccumRed;
-		  attrib_list[attrib_count++] = GLX_ACCUM_GREEN_SIZE;
-		  attrib_list[attrib_count++] = itsAccumGreen;
-		  attrib_list[attrib_count++] = GLX_ACCUM_BLUE_SIZE;
-		  attrib_list[attrib_count++] = itsAccumBlue;
-		  if (itsAlphaFlag) {
-			 attrib_list[attrib_count++] = GLX_ACCUM_ALPHA_SIZE;
-			 attrib_list[attrib_count++] = itsAccumAlpha;
-		  }
-		}
-		if (itsAuxNumber != 0) {
-		  attrib_list[attrib_count++] = GLX_AUX_BUFFERS;
-		  attrib_list[attrib_count++] = itsAuxNumber;
-		}
-		if (itsIndirect) {
-		  directCtx = GL_FALSE;
-		}
-
-		/* stereo hack */
-		/*
-		  if (itsStereoFlag) {
-		  attrib_list[attrib_count++] = GLX_STEREO;
-		  }
-		*/
-		attrib_list[attrib_count++] = None;
+ 		buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
 
 		itsVisInfo = glXChooseVisual( itsDisplay,
-											DefaultScreen(itsDisplay), attrib_list );
+												DefaultScreen(itsDisplay), attrib_list );
+
 		if (itsVisInfo) {
 		  /* found a GLX visual! */
 		  break;
@@ -2393,9 +2330,8 @@ DOTRACE("Togl::makeWindowExist");
 		return TCL_ERR(itsInterp, "Togl: couldn't get visual");
 	 }
 
-	 /*
-	  * Create a new OpenGL rendering context.
-	  */
+	 // Create a new OpenGL rendering context.
+	 int directCtx = itsIndirect ? GL_FALSE : GL_TRUE;
 	 setupGLXContext(directCtx);
 
 	 if (itsGLXContext == NULL) {
@@ -2404,6 +2340,125 @@ DOTRACE("Togl::makeWindowExist");
 
   } // end else clause
 
+  createWindow();
+
+  setupStackingOrder();
+
+  setupOverlayIfNeeded();
+
+  // Issue a ConfigureNotify event if there were deferred changes
+  issueConfigureNotify();
+
+  // Request the X window to be displayed
+  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
+
+  // Bind the context to the window and make it the current context
+  Togl_MakeCurrent(this);
+
+  // Check for a single/double buffering snafu
+  checkDblBufferSnafu();
+
+  // for EPS Output
+  setupEpsMaps();
+
+  return TCL_OK;
+
+} // end Togl::makeWindowExist()
+
+void Togl::buildAttribList(int* attrib_list, int ci_depth, int dbl_flag) {
+DOTRACE("Togl::buildAttribList");
+  int attrib_count = 0;
+
+  attrib_list[attrib_count++] = GLX_USE_GL;
+
+  if (itsRgbaFlag) {
+	 /* RGB[A] mode */
+	 attrib_list[attrib_count++] = GLX_RGBA;
+	 attrib_list[attrib_count++] = GLX_RED_SIZE;
+	 attrib_list[attrib_count++] = itsRgbaRed;
+	 attrib_list[attrib_count++] = GLX_GREEN_SIZE;
+	 attrib_list[attrib_count++] = itsRgbaGreen;
+	 attrib_list[attrib_count++] = GLX_BLUE_SIZE;
+	 attrib_list[attrib_count++] = itsRgbaBlue;
+	 if (itsAlphaFlag) {
+		attrib_list[attrib_count++] = GLX_ALPHA_SIZE;
+		attrib_list[attrib_count++] = itsAlphaSize;
+	 }
+
+	 /* for EPS Output */
+	 freeEpsMaps();
+  }
+  else {
+	 /* Color index mode */
+	 attrib_list[attrib_count++] = GLX_BUFFER_SIZE;
+	 attrib_list[attrib_count++] = ci_depth;
+  }
+
+  if (itsDepthFlag) {
+	 attrib_list[attrib_count++] = GLX_DEPTH_SIZE;
+	 attrib_list[attrib_count++] = itsDepthSize;
+  }
+
+  if (itsDoubleFlag || dbl_flag) {
+	 attrib_list[attrib_count++] = GLX_DOUBLEBUFFER;
+  }
+
+  if (itsStencilFlag) {
+	 attrib_list[attrib_count++] = GLX_STENCIL_SIZE;
+	 attrib_list[attrib_count++] = itsStencilSize;
+  }
+
+  if (itsAccumFlag) {
+	 attrib_list[attrib_count++] = GLX_ACCUM_RED_SIZE;
+	 attrib_list[attrib_count++] = itsAccumRed;
+	 attrib_list[attrib_count++] = GLX_ACCUM_GREEN_SIZE;
+	 attrib_list[attrib_count++] = itsAccumGreen;
+	 attrib_list[attrib_count++] = GLX_ACCUM_BLUE_SIZE;
+	 attrib_list[attrib_count++] = itsAccumBlue;
+	 if (itsAlphaFlag) {
+		attrib_list[attrib_count++] = GLX_ACCUM_ALPHA_SIZE;
+		attrib_list[attrib_count++] = itsAccumAlpha;
+	 }
+  }
+
+  if (itsAuxNumber != 0) {
+	 attrib_list[attrib_count++] = GLX_AUX_BUFFERS;
+	 attrib_list[attrib_count++] = itsAuxNumber;
+  }
+
+  /* stereo hack */
+  /*
+	 if (itsStereoFlag) {
+	 attrib_list[attrib_count++] = GLX_STEREO;
+	 }
+  */
+
+  attrib_list[attrib_count++] = None;
+}
+
+void Togl::setupGLXContext(bool directCtx) {
+DOTRACE("Togl::setupGLXContext");
+  if (itsShareList) {
+	 /* share display lists with existing this widget */
+	 Togl* shareWith = FindTogl(itsShareList);
+	 GLXContext shareCtx;
+	 if (shareWith)
+		shareCtx = shareWith->itsGLXContext;
+	 else
+		shareCtx = None;
+	 itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo,
+												 shareCtx, directCtx);
+  }
+  else {
+	 /* don't share display lists */
+	 itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
+  }
+}
+
+void Togl::createWindow() {
+DOTRACE("Togl::createWindow");
+
+  TkWindow *winPtr = (TkWindow *) itsTkWin;
 
   Colormap cmap = findColormap();
 
@@ -2440,51 +2495,6 @@ DOTRACE("Togl::makeWindowExist");
 #ifdef TK_USE_INPUT_METHODS
   winPtr->inputContext = NULL;
 #endif /* TK_USE_INPUT_METHODS */
-
-  setupStackingOrder();
-
-  setupOverlayIfNeeded();
-
-  // Issue a ConfigureNotify event if there were deferred changes
-  issueConfigureNotify();
-
-  // Request the X window to be displayed
-  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
-
-  // Bind the context to the window and make it the current context
-  Togl_MakeCurrent(this);
-
-  // Check for a single/double buffering snafu
-  checkDblBufferSnafu();
-
-  // for EPS Output
-  setupEpsMaps();
-
-  return TCL_OK;
-
-} // end Togl::makeWindowExist()
-
-// void Togl::buildAttribList(int* attrib_list, int ci_depth, int dbl_flag) {
-// DOTRACE("Togl::buildAttribList");
-// }
-
-void Togl::setupGLXContext(bool directCtx) {
-DOTRACE("Togl::setupGLXContext");
-  if (itsShareList) {
-	 /* share display lists with existing this widget */
-	 Togl* shareWith = FindTogl(itsShareList);
-	 GLXContext shareCtx;
-	 if (shareWith)
-		shareCtx = shareWith->itsGLXContext;
-	 else
-		shareCtx = None;
-	 itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo,
-												 shareCtx, directCtx);
-  }
-  else {
-	 /* don't share display lists */
-	 itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
-  }
 }
 
 Window Togl::findParent() {
