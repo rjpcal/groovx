@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 12:08:50 2002
+// written: Tue Sep 17 12:17:22 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -34,7 +34,6 @@
 
 #include "togl/glutil.h"
 #include "togl/glxopts.h"
-#include "togl/glxoverlay.h"
 #include "togl/glxwrapper.h"
 #include "togl/tkutil.h"
 #include "togl/x11util.h"
@@ -73,7 +72,6 @@ struct ToglOpts
     height = 400;
     time = 0;
     privateCmapFlag = 0;
-    overlayFlag = 0;
     glx.toDefaults();
   }
 
@@ -81,7 +79,6 @@ struct ToglOpts
   int height;
   int time;
   int privateCmapFlag;
-  int overlayFlag;
   GlxOpts glx;
 };
 
@@ -99,7 +96,6 @@ namespace
   // Tk option database machinery for Togl:
 
   const int TOGL_GLX_OPTION     = 1 << 0;
-  const int TOGL_OVERLAY_OPTION = 1 << 1;
 
   Tk_OptionTable toglOptionTable = 0;
 
@@ -175,9 +171,6 @@ namespace
     {TK_OPTION_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
      (char*)"false", -1, Tk_Offset(ToglOpts, privateCmapFlag), 0, NULL, 0},
 
-    {TK_OPTION_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
-     (char*)"false", -1, Tk_Offset(ToglOpts, overlayFlag), 0, NULL, TOGL_OVERLAY_OPTION},
-
     {TK_OPTION_INT, (char*)"-time", (char*)"time", (char*)"Time",
      (char*)DEFAULT_TIME, -1, Tk_Offset(ToglOpts, time), 0, NULL, 0},
 
@@ -212,8 +205,6 @@ public:
 
   Tcl_TimerToken itsTimerToken;
 
-  GlxOverlay* itsOverlay;
-
   Impl(Togl* owner, Tcl_Interp* interp);
   ~Impl() throw();
 
@@ -238,8 +229,6 @@ public:
   Togl::Color queryColor(unsigned int color_index) const;
   void queryColor(unsigned int color_index, Togl::Color& color) const;
 
-  void useLayer(Togl::Layer layer);
-
   void loadFontList(GLuint newListBase);
 
   Window windowId() const { return Tk_WindowId(itsTkWin); }
@@ -249,7 +238,6 @@ public:
 private:
   void eventProc(XEvent* eventPtr);
   void makeWindowExist(); // throws a Util::Error on failure
-  void setupOverlay(); // throws a Util::Error on failure
 };
 
 
@@ -265,21 +253,6 @@ private:
 //
 //---------------------------------------------------------------------
 
-// namespace
-// {
-//   class TkWinGuard
-//   {
-//   private:
-//     Tk_Window tkWin;
-//     bool dismissed;
-
-//   public:
-//     TkWinGuard(Tk_Window w) : tkWin(w), dismissed(false) {}
-//     ~TkWinGuard() { if (!dismissed) Tk_DestroyWindow(tkWin); }
-//     void dismiss() { dismissed = true; }
-//   };
-// }
-
 Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
@@ -292,22 +265,13 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
 
   itsUpdatePending(false),
 
-  itsTimerToken(0),
-
-  itsOverlay(0)
+  itsTimerToken(0)
 {
 DOTRACE("Togl::Impl::Impl");
 
   //
-  // Create the window
+  // Configure the widget
   //
-
-//   if (itsTkWin == 0)
-//     {
-//       throw Util::Error("Togl constructor couldn't create Tk_Window");
-//     }
-
-//   TkWinGuard guard(itsTkWin); // destroys the widget in case of exception
 
   itsDisplay = Tk_Display( itsTkWin );
 
@@ -357,10 +321,6 @@ DOTRACE("Togl::Impl::Impl");
                                 static_cast<ClientData>(this) );
     }
 
-//   guard.dismiss();
-
-  Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
-
   //
   // Set up canvas
   //
@@ -394,12 +354,6 @@ DOTRACE("Togl::Impl::~Impl");
   Tcl_DeleteTimerHandler(itsTimerToken);
 
   Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(this));
-
-  if (itsOverlay)
-    {
-      TkUtil::forgetWindow(itsTkWin, itsOverlay->windowId());
-      delete itsOverlay;
-    }
 
   Tk_FreeConfigOptions(reinterpret_cast<char*>(itsOpts.get()),
                        toglOptionTable, itsTkWin);
@@ -451,9 +405,6 @@ DOTRACE("Togl::Impl::configure");
   // and GLX context
   if (mask & TOGL_GLX_OPTION)
     makeWindowExist();
-
-  else if (mask & TOGL_OVERLAY_OPTION)
-    setupOverlay();
 }
 
 void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr) throw()
@@ -533,9 +484,6 @@ DOTRACE("Togl::Impl::requestReconfigure");
       itsOpts->width = Tk_Width(itsTkWin);
       itsOpts->height = Tk_Height(itsTkWin);
       XResizeWindow(itsDisplay, windowId(), itsOpts->width, itsOpts->height);
-
-      if (itsOverlay)
-        itsOverlay->reconfigure(itsOpts->width, itsOpts->height);
 
       itsGlx->makeCurrent(windowId());
     }
@@ -652,20 +600,6 @@ DOTRACE("Togl::Impl::queryColor");
   color.blue  = double(col.blue)  / usmax;
 }
 
-void Togl::Impl::useLayer(Togl::Layer layer)
-{
-DOTRACE("Togl::Impl::useLayer");
-  if (itsOverlay)
-    {
-      switch(layer)
-        {
-        case Normal:  itsGlx->makeCurrent(windowId()); break;
-        case Overlay: itsOverlay->makeCurrent(); break;
-        default:      Assert(0); break;
-        }
-    }
-}
-
 void Togl::Impl::loadFontList(GLuint newListBase)
 {
 DOTRACE("Togl::Impl::loadFontList");
@@ -696,15 +630,7 @@ DOTRACE("Togl::Impl::eventProc");
         DOTRACE("Togl::Impl::eventProc-Expose");
         if (eventPtr->xexpose.count == 0)
           {
-            if (eventPtr->xexpose.window==windowId())
-              {
-                requestRedisplay();
-              }
-            if (itsOverlay
-                && eventPtr->xexpose.window==itsOverlay->windowId())
-              {
-                itsOverlay->requestRedisplay();
-              }
+            requestRedisplay();
           }
       }
       break;
@@ -746,8 +672,6 @@ DOTRACE("Togl::Impl::makeWindowExist");
       X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
     }
 
-  setupOverlay();
-
   Tk_MapWindow(itsTkWin);
 
   // Bind the context to the window and make it the current context
@@ -761,26 +685,6 @@ DOTRACE("Togl::Impl::makeWindowExist");
       // simulate single buffering.
       glDrawBuffer( GL_FRONT );
     }
-}
-
-void Togl::Impl::setupOverlay()
-{
-DOTRACE("Togl::Impl::setupOverlay");
-
-  // We need to destroy the old overlay regardless of whether we will be
-  // turning overlay on or off
-  if (itsOverlay) { delete itsOverlay; itsOverlay = 0; }
-
-  if (!itsOpts->overlayFlag)
-    return;
-
-  itsOverlay = new GlxOverlay(itsDisplay, this->windowId(),
-                              !itsOpts->glx.indirect, itsGlx.get(),
-                              itsOpts->width, itsOpts->height);
-
-  Assert(itsOverlay != 0);
-
-  TkUtil::addWindow(itsTkWin, itsOverlay->windowId());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -814,12 +718,6 @@ void Togl::reshapeCallback()
 DOTRACE("Togl::reshapeCallback");
 
   glViewport(0, 0, rep->itsOpts->width, rep->itsOpts->height);
-  if (rep->itsOpts->overlayFlag)
-    {
-      useLayer( Overlay );
-      glViewport( 0, 0, rep->itsOpts->width, rep->itsOpts->height );
-      useLayer( Normal );
-    }
 }
 
 void Togl::timerCallback()
@@ -881,55 +779,6 @@ DOTRACE("Togl::loadBitmapFonti");
                                            GLUtil::NamedFont(fontnumber)));
 }
 
-
-void Togl::overlayDisplayFunc(Togl::OverlayCallback* proc)
-{
-DOTRACE("Togl::OverlayDisplayFunc");
-  if (rep->itsOverlay)
-    rep->itsOverlay->setDisplayProc(proc, static_cast<void*>(this));
-}
-
-void Togl::useLayer(Togl::Layer layer) { rep->useLayer(layer); }
-
-void Togl::showOverlay() { if (rep->itsOverlay) rep->itsOverlay->show(); }
-void Togl::hideOverlay() { if (rep->itsOverlay) rep->itsOverlay->hide(); }
-
-void Togl::requestOverlayRedisplay()
-  { if (rep->itsOverlay) rep->itsOverlay->requestRedisplay(); }
-
-int Togl::existsOverlay() const
-{
-DOTRACE("Togl::existsOverlay");
-  return rep->itsOpts->overlayFlag;
-}
-
-int Togl::getOverlayTransparentValue() const
-{
-DOTRACE("Togl::getOverlayTransparentValue");
-  return rep->itsOverlay ? rep->itsOverlay->transparentPixel() : -1;
-}
-
-bool Togl::isMappedOverlay() const
-{
-DOTRACE("Togl::isMappedOverlay");
-  return (rep->itsOverlay && rep->itsOverlay->isMapped());
-}
-
-unsigned long Togl::allocColorOverlay( float red, float green,
-                                       float blue ) const
-{
-DOTRACE("Togl::allocColorOverlay");
-  return rep->itsOverlay
-    ? rep->itsOverlay->allocColor(red, green, blue)
-    : (unsigned long) -1;
-}
-
-void Togl::freeColorOverlay( unsigned long pixel ) const
-{
-DOTRACE("Togl::freeColorOverlay");
-  if (rep->itsOverlay)
-    rep->itsOverlay->freeColor(pixel);
-}
 
 void Togl::setWidth(int w)
 {

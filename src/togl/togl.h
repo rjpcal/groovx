@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue Sep 17 11:05:34 2002
+// written: Tue Sep 17 12:17:26 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -109,27 +109,6 @@ public:
   void loadDefaultFont() const;
   void loadBitmapFont(const char* fontname) const;
   void loadBitmapFonti(int fontnumber) const;
-
-  // Layers
-  enum Layer
-    {
-      Normal = 1,
-      Overlay = 2
-    };
-
-  // Overlay functions
-  typedef void (OverlayCallback) (void* togl);
-
-  void overlayDisplayFunc(OverlayCallback* proc);
-  void useLayer(Layer layer);
-  void showOverlay();
-  void hideOverlay();
-  void requestOverlayRedisplay();
-  int existsOverlay() const;
-  int getOverlayTransparentValue() const;
-  bool isMappedOverlay() const;
-  unsigned long allocColorOverlay(float red, float green, float blue) const;
-  void freeColorOverlay(unsigned long index) const;
 
   // Manipulators
   void setWidth(int w);
