@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Nov  3 07:59:33 1999
+// written: Wed Nov  3 18:03:52 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -128,10 +128,10 @@ protected:
 				"tk_messageBox -default ok -icon info "
 				"-title \"Pause\" -type ok "
 				"-message \"Experiment paused. Click OK to continue.\";\n"
-				"after 1000");
+				"after 1000",
+				TclEvalCmd::THROW_EXCEPTION);
 
-	 int result = pauseMsgCmd.invoke(itsInterp);
-	 if (result != TCL_OK) throw TclError();
+	 pauseMsgCmd.invoke(itsInterp);
 
 	 ed->edBeginTrial();
   }
