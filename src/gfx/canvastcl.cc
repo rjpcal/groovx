@@ -35,6 +35,7 @@
 #include "gfx/canvas.h"
 #include "gfx/glcanvas.h"
 #include "gfx/recttcl.h"
+#include "gfx/vectcl.h"
 
 #include "media/bmapdata.h"
 
@@ -80,6 +81,13 @@ namespace
                          viewport.width(),
                          viewport.height());
   }
+
+  geom::vec3d topLeft(Nub::SoftRef<GLCanvas> canvas)
+  {
+    const geom::recti vp = canvas->getScreenViewport();
+    const geom::vec2i tl = vp.top_left();
+    return canvas->worldFromScreen3(geom::vec3d(tl.x(), tl.y(), 0.5));
+  }
 }
 
 extern "C"
@@ -93,6 +101,9 @@ DOTRACE("Canvas_Init");
 
   using rutz::bind_last;
   using rutz::mem_func;
+
+  pkg->defGetter("viewport", &Gfx::Canvas::getScreenViewport, SRC_POS);
+  pkg->def("topLeft", "canvas", &topLeft, SRC_POS);
 
   pkg->def("throwIfError", "",
            bind_last(bind_last(mem_func(&Gfx::Canvas::throwIfError), SRC_POS), ""),
