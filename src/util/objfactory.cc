@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 30 15:01:02 1999
-// written: Mon Jun 11 14:49:18 2001
+// written: Wed Jun 13 17:41:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,13 +20,13 @@ namespace {
 }
 
 Util::ObjFactory::ObjFactory() :
-  Factory<Ref<Util::Object> >() {}
+  Factory<WeakRef<Util::Object> >() {}
 
 Util::ObjFactory::~ObjFactory() {}
 
 Util::ObjFactory& Util::ObjFactory::theOne() {
   if (instance == 0) {
-	 instance = new ObjFactory;
+    instance = new ObjFactory;
   }
   return *instance;
 }
