@@ -13,7 +13,6 @@ itcl::class Editor {
 	 private variable itsPanes
 	 private variable itsControls
 	 private variable itsToglet
-	 private variable itsVisible true
 	 private variable itsFieldPanes
 	 private variable itsFieldControls
 	 private variable itsObjType Face
@@ -113,10 +112,8 @@ itcl::class Editor {
 
 	 private method requestDraw {} {
 		  set viewobj [getViewSelection]
-		  if { $itsVisible && $viewobj != 0 } {
-				Toglet::clearscreen $itsToglet
+		  if { $viewobj != 0 } {
 				Toglet::see $itsToglet $viewobj
-				Toglet::swapBuffers $itsToglet
 		  }
 	 }
 
@@ -147,8 +144,10 @@ itcl::class Editor {
 		  if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
 				if { $itsAttribValues($name) != $val } {
 					 #puts "setting $editobjs $name to $val"
+					 Toglet::allowRefresh $itsToglet 0
 					 ${itsObjType}::$name $editobjs $val
 					 set itsAttribValues($name) $val
+					 Toglet::allowRefresh $itsToglet 1
 				}
 
 				updateControls [lindex $editobjs 0]
