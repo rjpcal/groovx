@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri Mar 10 01:03:38 2000
+// written: Fri Mar 10 15:01:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ DOTRACE("Tcl::VecPropertyCmdBase::invoke");
 	 vector<TclValue> vals;
 
 	 if (ids.size() == 1) {
-		vals.push_back(TclValue(itsPkg->interp(), arg(itsValArgn)));
+		vals.push_back(TclValue(arg(itsValArgn)));
 	 }
 	 else {
 		getValSequenceFromArg(itsValArgn, back_inserter(vals));
