@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Thu Mar 30 12:29:05 2000
+// written: Mon Jun 26 12:14:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,8 @@ void* PtrList<T>::castFromT(T* ptr) const { return static_cast<void*>(ptr); }
 template <class T>
 IO::IoObject* PtrList<T>::fromVoidToIO(void* ptr) const
 {
+  if (ptr == 0) return 0;
+
   IO::IoObject* io = dynamic_cast<IO::IoObject*>(castToT(ptr));
   if ( io == 0 ) { throw ErrorWithMsg("bad cast in fromVoidToIO"); }
   return io;
@@ -46,6 +48,8 @@ IO::IoObject* PtrList<T>::fromVoidToIO(void* ptr) const
 template <class T>
 void* PtrList<T>::fromIOToVoid(IO::IoObject* obj) const
 {
+  if (obj == 0) return 0;
+
   void* v = castFromT(dynamic_cast<T*>(obj));
   if ( v == 0 ) { throw ErrorWithMsg("bad cast in fromIOToVoid"); }
   return v;
