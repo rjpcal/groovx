@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 14:39:47 2000
+// written: Wed Oct 25 14:40:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,40 +126,40 @@ public:
 
   /** Returns the size of the internal array. The number returned also
 		refers to the one-past-the-end index into the PtrList. */
-  virtual int capacity() const;
+  int capacity() const;
 
   /** Returns the number of filled sites in the PtrList. */
-  virtual int count() const;
+  int count() const;
 
   /** Returns true if 'id' is a valid index into a non-NULL T* in
 		the PtrList, given its current size. */
-  virtual bool isValidId(int id) const;
+  bool isValidId(int id) const;
 
   /** If the object at \a id is unshared, removes reference to the
       object at index \a id, causing the object to be destroyed since
       it was unshared. If the object is shared, this operation throws
       an exception. */
-  virtual void remove(int id);
+  void remove(int id);
 
   /** Removes reference to the object at \a id. */
-  virtual void release(int id);
+  void release(int id);
 
   /** Releases references to all unshared objects held by the
       list. Since the objects are unshared, they will be destroyed in
       the process. */
-  virtual void clear();
+  void clear();
 
 protected:
   /** Return the \c IO::IoObject* at the index given by \a id. Checks
 		first if \a id is a valid index, and throws an \c InvalidIdError
 		if it is not. */
-  virtual IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  virtual int insertPtrBase(IO::IoObject* ptr);
+  int insertPtrBase(IO::IoObject* ptr);
 
   /** Subclasses override to throw an exception if \a ptr is of the
       wrong type to be in the list. */
