@@ -35,6 +35,7 @@
 #include "util/strings.h"
 
 #include <sys/resource.h>
+#include <time.h>
 
 Util::Time Util::Time::wallClockNow() throw()
 {
