@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Tue Jan 11 17:17:19 2000
+// written: Thu Jan 13 15:13:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ DOTRACE("BitmapRep::loadPbmFile(istream&)");
 
   // Grab ownership of the bitmap data from pbm into this object's itsBytes.
   pbm.grabBytes(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
-  itsFilename = "(direct_from_stream)";
+  itsFilename = "";
 
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
