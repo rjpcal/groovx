@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Fri Aug 31 17:02:42 2001
+// written: Mon Sep  3 15:25:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,6 +116,14 @@ DOTRACE("Util::RefCounts::releaseStrong");
   return itsStrong;
 }
 
+void Util::RefCounts::releaseStrongNoDelete()
+{
+DOTRACE("Util::RefCounts::releaseStrongNoDelete");
+
+  Assert(itsStrong > 0);
+
+  --itsStrong;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -160,6 +168,11 @@ void Util::RefCounted::decrRefCount() const
 {
   if (itsRefCounts->releaseStrong() == 0)
     delete this;
+}
+
+void Util::RefCounted::decrRefCountNoDelete() const
+{
+  itsRefCounts->releaseStrongNoDelete();
 }
 
 bool Util::RefCounted::isShared() const
