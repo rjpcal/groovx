@@ -38,13 +38,13 @@
 
 #include "util/demangle.h"
 #include "util/error.h"
+#include "util/gzstreambuf.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
 #include "util/value.h"
 
 #include <cstring>           // for strcmp()
-#include <fstream>           // for xmlDebug() and loadXML()
 #include <iostream>          // for cout in xmlDebug()
 #include <istream>           // for TreeBuilder constructor
 #include <map>               // for GroupElement
@@ -562,8 +562,8 @@ namespace
 
 Util::Ref<IO::IoObject> IO::loadXML(const char* filename)
 {
-  std::ifstream ifs(filename);
-  TreeBuilder x(ifs);
+  shared_ptr<std::istream> ifs(Util::igzopen(filename));
+  TreeBuilder x(*ifs);
   x.parse();
 
   ObjectElement& root = x.getRoot();
@@ -572,8 +572,8 @@ Util::Ref<IO::IoObject> IO::loadXML(const char* filename)
 
 void IO::xmlDebug(const char* filename)
 {
-  std::ifstream ifs(filename);
-  TreeBuilder x(ifs);
+  shared_ptr<std::istream> ifs(Util::igzopen(filename));
+  TreeBuilder x(*ifs);
   x.parse();
 
   ObjectElement& root = x.getRoot();
