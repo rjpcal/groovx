@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Thu Sep 28 20:17:05 2000
+// written: Tue Oct 24 09:56:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,14 @@
 #include "util/error.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
+#endif
+
 namespace IO {
   class IoObject;
   class WriteError;
+  class WriteVersionError;
   class Writer;
 }
 
@@ -34,11 +39,33 @@ class Value;
 ///////////////////////////////////////////////////////////////////////
 
 class IO::WriteError : public ErrorWithMsg {
+
 public:
   /// Construct with a descriptive message \a msg.
   WriteError(const char* msg);
 
   virtual ~WriteError();
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * WriteVersionError is an exception class that can be thrown by
+ * clients of Writer if there is a problem serial version id during
+ * the read (e.g. the version is no longer supported).
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class IO::WriteVersionError : public ErrorWithMsg {
+public:
+  /// Construct with information relevant to the problem
+  WriteVersionError(const char* classname,
+						 IO::VersionId attempted_id,
+						 IO::VersionId lowest_supported_id,
+						 const char* msg);
+
+  virtual ~WriteVersionError();
 };
 
 ///////////////////////////////////////////////////////////////////////
