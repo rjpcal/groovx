@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Oct 11 10:48:39 2000
+// written: Wed Oct 11 14:57:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,8 @@
 
 #include "eventresponsehdlr.h"
 
+#include "experiment.h"
+#include "grshapp.h"
 #include "sound.h"
 #include "soundlist.h"
 #include "response.h"
@@ -180,8 +182,6 @@ public:
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  void setInterp(Tcl_Interp* interp);
-
   const fixed_string& getInputResponseMap() const
 	 { return itsInputResponseMap; }
 
@@ -257,8 +257,6 @@ private:
   // effect is cancelled by calling attend().
   void ignore(GWT::Widget& widget) const;
 
-  void raiseBackgroundError(const char* msg) const throw();
-
   static Tcl_ObjCmdProc privateHandleCmd;
   int getRespFromKeysym(const char* keysym) const;
   void feedback(int response) const;
@@ -307,7 +305,7 @@ private:
 
   mutable shared_ptr<ERHState> itsState;
 
-  Tcl_Interp* itsInterp;
+  Tcl::SafeInterp itsSafeIntp;
 
   mutable Tcl_Command itsTclCmdToken;
   const fixed_string itsPrivateCmdName;
@@ -331,8 +329,7 @@ private:
 		  return *this;
 		}
 
-	 bool matchesString(Tcl_Interp* interp,
-							  const char* string_to_match) throw(ErrorWithMsg)
+	 bool matchesString(const char* string_to_match) throw(ErrorWithMsg)
 		{
 		  static const int REGEX_ERROR        = -1;
 		  static const int REGEX_NO_MATCH     =  0;
@@ -340,10 +337,11 @@ private:
 
 		  DebugEval(string_to_match); DebugEvalNL(Tcl_GetString(itsPatternObj));
 
-		  Tcl_RegExp regexp = getCheckedRegexp(interp, itsPatternObj);
+		  Tcl_RegExp regexp = getCheckedRegexp(itsPatternObj);
 
+		  // OK to pass Tcl_Interp*==0
 		  int regex_result =
-			 Tcl_RegExpExec(interp, regexp, string_to_match, string_to_match);
+			 Tcl_RegExpExec(0, regexp, string_to_match, string_to_match);
 
 		  switch (regex_result) {
 		  case REGEX_ERROR:
@@ -366,13 +364,12 @@ private:
 	 int responseValue() { return itsRespVal; }
 
   private:
-	 static Tcl_RegExp getCheckedRegexp(
-		Tcl_Interp* interp, Tcl::TclObjPtr patternObj
-		)
+	 static Tcl_RegExp getCheckedRegexp(Tcl::TclObjPtr patternObj)
 		throw(ErrorWithMsg)
 		{
 		  const int flags = 0;
-		  Tcl_RegExp regexp = Tcl_GetRegExpFromObj(interp, patternObj, flags);
+		  // OK to pass Tcl_Interp*==0
+		  Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj, flags);
 		  if (!regexp) {
 			 throw ErrorWithMsg("error getting a Tcl_RegExp from ")
 				      .appendMsg("'", Tcl_GetString(patternObj), "'");
@@ -524,7 +521,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const char* input_response_map) :
   itsOwner(owner),
   itsState(ERHState::inactiveState()),
-  itsInterp(0),
+  itsSafeIntp(0, Tcl::SafeInterp::IGNORE),
   itsTclCmdToken(0),
   itsPrivateCmdName(getUniqueCmdName().c_str()),
   itsInputResponseMap(input_response_map),
@@ -539,19 +536,32 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsAbortInvalidResponses(true)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
+
+  Application& app = Application::theApp();
+  GrshApp& grshapp = dynamic_cast<GrshApp&>(app);
+
+  itsSafeIntp.reset(grshapp.getInterp(), Tcl::SafeInterp::THROW);
+
+  Invariant(itsSafeIntp.hasInterp());
+
+  itsTclCmdToken =
+	 Tcl_CreateObjCommand(itsSafeIntp.intp(),
+								 const_cast<char*>(itsPrivateCmdName.c_str()),
+								 privateHandleCmd, static_cast<ClientData>(this),
+								 (Tcl_CmdDeleteProc *) NULL);
 }
 
 EventResponseHdlr::Impl::~Impl() {
 DOTRACE("EventResponseHdlr::Impl::~Impl");
 
-  // We must check if itsInterp has been tagged for deletion already,
-  // since if it is then we must not attempt to use it to delete a Tcl
-  // command (this results in "called Tcl_HashEntry on deleted
-  // table"). Not deleting the command in that case does not cause a
-  // resource leak, however, since the Tcl_Interp as part if its own
-  // destruction will delete all commands associated with it.
+  // We must check if the Tcl_Interp* has been tagged for deletion
+  // already, since if it is then we must not attempt to use it to
+  // delete a Tcl command (this results in "called Tcl_HashEntry on
+  // deleted table"). Not deleting the command in that case does not
+  // cause a resource leak, however, since the Tcl_Interp as part if
+  // its own destruction will delete all commands associated with it.
 
-  if ( !Tcl_InterpDeleted(itsInterp) ) {
+  if ( itsSafeIntp.hasInterp() && !Tcl_InterpDeleted(itsSafeIntp.intp()) ) {
 	 try
 		{
 		  itsState->onDestroy(this);
@@ -559,7 +569,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
 		  DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
 		  DebugEvalNL((void*) itsTclCmdToken);
-		  Tcl_DeleteCommandFromToken(itsInterp, itsTclCmdToken);
+		  Tcl_DeleteCommandFromToken(itsSafeIntp.intp(), itsTclCmdToken);
 		}
 	 catch (ErrorWithMsg& err)
 		{ DebugEvalNL(err.msg_cstr()); }
@@ -665,19 +675,6 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
 }
 
-void EventResponseHdlr::Impl::setInterp(Tcl_Interp* interp) {
-DOTRACE("EventResponseHdlr::Impl::setInterp");
-  // can only set itsInterp once
-  if (itsInterp == 0 && interp != 0) {
-	 itsInterp = interp;
-	 itsTclCmdToken =
-		Tcl_CreateObjCommand(itsInterp,
-									const_cast<char*>(itsPrivateCmdName.c_str()),
-									privateHandleCmd, static_cast<ClientData>(this),
-									(Tcl_CmdDeleteProc *) NULL);
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // EventResponseHdlr::Impl helper method definitions
@@ -694,14 +691,6 @@ void EventResponseHdlr::Impl::ignore(GWT::Widget& widget) const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
 
   widget.bind(itsEventSequence.c_str(), nullScript.c_str());
-}
-
-void EventResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
-DOTRACE("EventResponseHdlr::Impl::raiseBackgroundError");
-  DebugEvalNL(msg);
-  Precondition(itsInterp != 0);
-  Tcl_AppendResult(itsInterp, msg, (char*) 0);
-  Tcl_BackgroundError(itsInterp);
 }
 
 //--------------------------------------------------------------------
@@ -753,7 +742,6 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 
 int EventResponseHdlr::Impl::getRespFromKeysym(const char* keysym) const {
 DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
-  Precondition(itsInterp != 0);
 
   const char* response_string = extractStringFromKeysym(keysym);
 
@@ -767,7 +755,7 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
 	 DebugEvalNL(i);
 
-	 if (itsRegexps[i].matchesString(itsInterp, response_string)) {
+	 if (itsRegexps[i].matchesString(response_string)) {
 		return itsRegexps[i].responseValue();
 	 }
   }
@@ -780,21 +768,21 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
   if (!itsUseFeedback) return;
 
-  Precondition(itsInterp != 0);
+  Precondition(itsSafeIntp.hasInterp());
 
   DebugEvalNL(response);
 
   updateFeedbacksIfNeeded();
 
-  Tcl_SetVar2Ex(itsInterp, "resp_val", NULL,
+  Tcl_SetVar2Ex(itsSafeIntp.intp(), "resp_val", NULL,
 					 Tcl_NewIntObj(response), TCL_GLOBAL_ONLY);
 
   bool feedbackGiven = false;
   for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
-	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsInterp);
+	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp.intp());
   }
 
-  Tcl_UnsetVar(itsInterp, "resp_val", 0);
+  Tcl_UnsetVar(itsSafeIntp.intp(), "resp_val", 0);
 }
 
 
@@ -806,7 +794,6 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
 void EventResponseHdlr::Impl::updateFeedbacksIfNeeded() const {
 DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
-  Precondition(itsInterp != 0);
 
   if (!itsFeedbacksAreDirty) return;
 
@@ -814,7 +801,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
   int num_pairs=0;
   Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
 
-  Tcl::Safe::splitList(itsInterp, pairs_list, pairs, num_pairs);
+  Tcl::Safe::splitList(0, pairs_list, pairs, num_pairs);
 
   Assert(num_pairs >= 0);
 
@@ -827,14 +814,13 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 	 Tcl::TclObjPtr current_pair = pairs[i];
 
 	 // Check that the length of the "pair" is really 2
-	 if (Tcl::Safe::listLength(itsInterp, current_pair) != 2) {
-		raiseBackgroundError("\"pair\" did not have length 2 "
-									"in EventResponseHdlr::updateFeedbacksIfNeeded");
-		return;
+	 if (Tcl::Safe::listLength(0, current_pair) != 2) {
+		throw ErrorWithMsg("\"pair\" did not have length 2 "
+								 "in EventResponseHdlr::updateFeedbacksIfNeeded");
 	 }
 
-  	 Tcl_Obj *condition = Tcl::Safe::listElement(itsInterp, current_pair, 0);
-  	 Tcl_Obj *result = Tcl::Safe::listElement(itsInterp, current_pair, 1);
+  	 Tcl_Obj *condition = Tcl::Safe::listElement(0, current_pair, 0);
+  	 Tcl_Obj *result = Tcl::Safe::listElement(0, current_pair, 1);
 
 	 itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
   }
@@ -856,7 +842,6 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
 void EventResponseHdlr::Impl::updateRegexpsIfNeeded() const {
 DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
-  Precondition(itsInterp != 0);
 
   if (!itsRegexpsAreDirty) return;
 
@@ -864,7 +849,7 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
   int num_pairs=0;
   Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
 
-  Tcl::Safe::splitList(itsInterp, pairs_list, pairs, num_pairs);
+  Tcl::Safe::splitList(0, pairs_list, pairs, num_pairs);
 
   Assert(num_pairs >= 0);
   unsigned int uint_num_pairs = num_pairs;
@@ -876,19 +861,18 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 	 Tcl::TclObjPtr current_pair = pairs[i];
 
 	 // Check that the length of the "pair" is really 2
-	 if (Tcl::Safe::listLength(itsInterp, current_pair) != 2) {
-		raiseBackgroundError("\"pair\" did not have length 2 "
-									"in EventResponseHdlr::updateRegexpsIfNeeded");
-		return;
+	 if (Tcl::Safe::listLength(0, current_pair) != 2) {
+		throw ErrorWithMsg("\"pair\" did not have length 2 "
+								 "in EventResponseHdlr::updateFeedbacksIfNeeded");
 	 }
 
 	 Tcl::TclObjPtr patternObj =
-		Tcl::Safe::listElement(itsInterp, current_pair, 0);
+		Tcl::Safe::listElement(0, current_pair, 0);
 
 	 Tcl::TclObjPtr response_valObj =
-		Tcl::Safe::listElement(itsInterp, current_pair, 1);
+		Tcl::Safe::listElement(0, current_pair, 1);
 
-	 int response_val = Tcl::Safe::getInt(itsInterp, response_valObj);
+	 int response_val = Tcl::Safe::getInt(0, response_valObj);
 
 	 itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
@@ -926,9 +910,6 @@ void EventResponseHdlr::readFrom(IO::Reader* reader)
 
 void EventResponseHdlr::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
-
-void EventResponseHdlr::setInterp(Tcl_Interp* interp)
-  { itsImpl->setInterp(interp); }
 
 const fixed_string& EventResponseHdlr::getInputResponseMap() const {
 DOTRACE("EventResponseHdlr::getInputResponseMap");
