@@ -79,56 +79,15 @@ namespace Util { namespace RefHelper {
 
 
 
-template <class T>
-class PrivPtrHandle {
-public:
-  explicit PrivPtrHandle(T* master) : itsMaster(master)
-  {
-    if (master == 0) Util::RefHelper::throwErrorWithMsg(
-                        "T* was null in PrivPtrHandle<T>()");
-    itsMaster->incrRefCount();
-  }
-
-  ~PrivPtrHandle()
-    { itsMaster->decrRefCount(); }
-
-  PrivPtrHandle(const PrivPtrHandle& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-  template <class U> friend class PrivPtrHandle;
-
-  template <class U>
-  PrivPtrHandle(const PrivPtrHandle<U>& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-  PrivPtrHandle& operator=(const PrivPtrHandle& other)
-    {
-      PrivPtrHandle otherCopy(other);
-      this->swap(otherCopy);
-      return *this;
-    }
-
-  T* operator->() const { return itsMaster; }
-  T& operator*()  const { return *itsMaster; }
-
-  T* get()        const { return itsMaster; }
-
-  void swap(PrivPtrHandle& other)
-    {
-      T* otherMaster = other.itsMaster;
-      other.itsMaster = this->itsMaster;
-      this->itsMaster = otherMaster;
-    }
-
-  T* itsMaster;
-};
-
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::Ref<T> is a wrapper of a PrivPtrHandle<T> along with an integer
- * index from a PtrList<T>.
+ * Util::Ref<T> is a ref-counted smart pointer for holding RefCounted
+ * objects. A Util::Ref<T> is guaranteed to always point to a valid
+ * RefCounted object, and uses RefCounted's strong ref counts to
+ * achieve this. Therefore, a Util::Ref<T> cannot be constructed for a
+ * volatlie RefCounted object for which only weak references are
+ * available.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -136,19 +95,64 @@ public:
 namespace Util {
 
 template <class T>
-class Ref : private PrivPtrHandle<T> {
+class Ref {
+private:
+
+  class Handle {
+  public:
+	 explicit Handle(T* master) : itsMaster(master)
+	 {
+		if (master == 0) Util::RefHelper::throwErrorWithMsg(
+									 "attempted to construct a Ref with a null pointer");
+		itsMaster->incrRefCount();
+	 }
+
+	 ~Handle()
+    { itsMaster->decrRefCount(); }
+
+	 Handle(const Handle& other) : itsMaster(other.itsMaster)
+    { itsMaster->incrRefCount(); }
+
+	 template <class U> friend class Handle;
+
+	 template <class U>
+	 Handle(const Handle<U>& other) : itsMaster(other.itsMaster)
+    { itsMaster->incrRefCount(); }
+
+	 Handle& operator=(const Handle& other)
+    {
+      Handle otherCopy(other);
+      this->swap(otherCopy);
+      return *this;
+    }
+
+	 T* get() const { return itsMaster; }
+
+  private:
+	 void swap(Handle& other)
+    {
+      T* otherMaster = other.itsMaster;
+      other.itsMaster = this->itsMaster;
+      this->itsMaster = otherMaster;
+    }
+
+	 T* itsMaster;
+  };
+
+  Handle itsHandle;
+
 public:
   // Default destructor, copy constructor, operator=() are fine
 
-  explicit Ref(Util::UID id) : PrivPtrHandle<T>(RefHelper::getCastedItem<T>(id)) {}
+  explicit Ref(Util::UID id) : itsHandle(RefHelper::getCastedItem<T>(id)) {}
 
-  explicit Ref(T* ptr) : PrivPtrHandle<T>(ptr)
+  explicit Ref(T* ptr) : itsHandle(ptr)
     { RefHelper::insertItem(ptr); }
 
-  Ref(T* ptr, bool /*noInsert*/) : PrivPtrHandle<T>(ptr) {}
+  Ref(T* ptr, bool /*noInsert*/) : itsHandle(ptr) {}
 
   template <class U>
-  Ref(const Ref<U>& other) : PrivPtrHandle<T>(other.get()) {}
+  Ref(const Ref<U>& other) : itsHandle(other.get()) {}
 
   // Will raise an exception if the MaybeRef is invalid
   template <class U>
@@ -157,7 +161,7 @@ public:
   T* operator->() const { return get(); }
   T& operator*()  const { return *(get()); }
 
-  T* get()        const { return PrivPtrHandle<T>::get(); }
+  T* get()        const { return itsHandle.get(); }
 
   Util::UID id() const { return get()->id(); }
 };
@@ -319,7 +323,7 @@ MaybeRef<To> dynamicCast(MaybeRef<Fr> p)
 template <class T>
 template <class U>
 inline Util::Ref<T>::Ref(const MaybeRef<U>& other) :
-  PrivPtrHandle<T>(other.get())
+  itsHandle(other.get())
 {}
 
 static const char vcid_ref_h[] = "$Header$";
