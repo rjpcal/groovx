@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Sat Jan 19 15:18:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,6 +93,9 @@ DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(filename);
   this->sigNodeChanged.emit();
 }
+
+void Bitmap::queuePbmFile(const char* filename)
+  { itsImpl->queuePbmFile(filename); this->sigNodeChanged.emit(); }
 
 void Bitmap::savePbmFile(const char* filename) const
   { itsImpl->savePbmFile(filename); this->sigNodeChanged.emit(); }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Sat Jan 19 15:17:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,7 @@ DOTRACE("Bitmap_Init");
   Tcl::defGenericObjCmds<Bitmap>(pkg1);
 
   pkg1->defVec( "loadPbm", "item_id(s) filename(s)", &Bitmap::loadPbmFile );
+  pkg1->defVec( "queuePbm", "item_id(s) filename(s)", &Bitmap::queuePbmFile );
   pkg1->defVec( "savePbm", "item_id(s) filename(s)", &Bitmap::savePbmFile );
   pkg1->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
                 &Bitmap::grabScreenRect );

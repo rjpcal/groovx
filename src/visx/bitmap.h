@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Sat Jan 19 15:17:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,6 +65,11 @@ public:
 
   /// Loads PBM bitmap data from the PBM file at \a filename.
   void loadPbmFile(const char* filename);
+
+  /** Queues the PBM file \a filename for loading. The PBM bitmap data
+      will not actually be retrieved from the file until it is
+      needed. */
+  void queuePbmFile(const char* filename);
 
   /// Writes PBM bitmap data to the file \a filename.
   void savePbmFile(const char* filename) const;
