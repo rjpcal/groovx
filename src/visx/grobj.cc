@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Oct 13 20:45:50 1999
+// written: Thu Oct 14 13:12:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,27 +31,6 @@
 #ifndef NULL
 #define NULL 0L
 #endif
-
-namespace {
-  void swapForeBack() {
-	 if ( GfxAttribs::usingRgba() ) {
-		GLdouble foreground[4];
-		GLdouble background[4];
-		glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
-		glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
-		glColor4dv(background);
-		glClearColor(foreground[0], foreground[1],
-						 foreground[2], foreground[3]);
-	 }
-	 else {
-		GLint foreground, background;
-		glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-		glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-		glIndexi(background);
-		glClearIndex(foreground);
-	 }
-  }
-}
 
 class GrObjError : public virtual ErrorWithMsg {
 public:
@@ -730,6 +709,26 @@ DOTRACE("GrObj::receiveDestroyMsg");
 /////////////
 // actions //
 /////////////
+
+void GrObj::swapForeBack() {
+DOTRACE("GrObj::swapForeBack");
+  if ( GfxAttribs::usingRgba() ) {
+	 GLdouble foreground[4];
+	 GLdouble background[4];
+	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
+	 glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+	 glColor4dv(background);
+	 glClearColor(foreground[0], foreground[1],
+					  foreground[2], foreground[3]);
+  }
+  else {
+	 GLint foreground, background;
+	 glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+	 glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+	 glIndexi(background);
+	 glClearIndex(foreground);
+  }
+}
 
 void GrObj::update() const {
 DOTRACE("GrObj::update");
