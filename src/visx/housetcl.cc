@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 15:14:19 1999
-// written: Fri Nov 10 17:03:59 2000
+// written: Mon Nov 13 22:15:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "house.h"
 
-#include "tcl/propitempkg.h"
+#include "tcl/fieldpkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -26,7 +26,7 @@ int House_Init(Tcl_Interp* interp) {
 DOTRACE("House_Init");
 
   Tcl::TclPkg* pkg = 
-	 new Tcl::PropItemPkg<House>(interp, "House", "$Revision$");
+	 new Tcl::FieldCntrPkg<House>(interp, "House", "$Revision$");
 
   return pkg->initStatus();
 }
