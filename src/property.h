@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Tue May 30 18:44:40 2000
+// written: Wed May 31 18:27:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,6 +82,9 @@ public:
   ///
   TProperty(const T& init=T());
 
+  /// Virtual destructor.
+  virtual ~TProperty();
+
   ///
   template <class C> friend class PropFriend;
 
@@ -148,6 +151,7 @@ public:
  * that the acceptable range will be [min/div, max/div].
  *
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class T, int min, int max, int div>
 class TBoundedProperty : public TProperty<T> {
@@ -223,6 +227,8 @@ class TPtrProperty : public Property {
 public:
   ///
   TPtrProperty(T& valRef);
+
+  virtual ~TPtrProperty();
 
   ///
   template <class C> friend class PropFriend;
