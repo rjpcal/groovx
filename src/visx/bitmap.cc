@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov  2 22:28:52 1999
+// written: Mon Nov 15 14:10:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,16 +190,11 @@ void Bitmap::grabScreenRect(int left, int top, int right, int bottom) {
 
 void Bitmap::grabScreenRect(const Rect<int>& rect) {
 DOTRACE("Bitmap::grabScreenRect");
-  int width = rect.r - rect.l + 1;    DebugEval(width);
-  int height = rect.t - rect.b + 1;   DebugEvalNL(height);
-
-  int bits_per_pixel = 1;
-  vector<unsigned char> newBytes( (width/8 + 1) * height + 1);
-
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glReadPixels(rect.l, rect.b, width, height,
-					GL_COLOR_INDEX, GL_BITMAP, &(newBytes[0]));
-
+  itsHeight = rect.height();         DebugEvalNL(itsHeight);
+  itsWidth = rect.width();           DebugEval(itsWidth);
+  itsBitsPerPixel = 1;
+  itsByteAlignment = 1;
+  
   itsFilename = "";
   itsRasterY = itsRasterX = 0.0;
   itsZoomY = itsZoomX = 1.0;
@@ -207,11 +202,12 @@ DOTRACE("Bitmap::grabScreenRect");
   itsContrastFlip = false;
   itsVerticalFlip = false;
 
-  itsHeight = height;
-  itsWidth = width;
-  itsBitsPerPixel = bits_per_pixel;
-  itsByteAlignment = 1;
-  
+  vector<unsigned char> newBytes( (itsWidth/8 + 1) * itsHeight + 1);
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glReadPixels(rect.left(), rect.bottom(), itsWidth, itsHeight,
+					GL_COLOR_INDEX, GL_BITMAP, &(newBytes[0]));
+
   itsBytes.swap(newBytes);
   bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
 						itsBitsPerPixel, itsByteAlignment);
@@ -228,8 +224,10 @@ void Bitmap::grabWorldRect(const Rect<double>& rect) {
 DOTRACE("Bitmap::grabWorldRect");
   Rect<int> screen_rect;
 
-  getScreenFromWorld(rect.l, rect.t, screen_rect.l, screen_rect.t);
-  getScreenFromWorld(rect.r, rect.b, screen_rect.r, screen_rect.b, false);
+  getScreenFromWorld(rect.left(), rect.top(),
+							screen_rect.left(), screen_rect.top());
+  getScreenFromWorld(rect.right(), rect.bottom(),
+							screen_rect.right(), screen_rect.bottom(), false);
 
   grabScreenRect(screen_rect);
 }
