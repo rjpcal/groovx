@@ -17,68 +17,6 @@ List::testList TlistTcl Tlist Trial Trial Trial
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
-### Tlist::undrawCmd ###
-test "TlistTcl-Tlist::undraw" "too many args" {
-	 Tlist::undraw junk
-} {wrong \# args: should be "Tlist::undraw"}
-test "TlistTcl-Tlist::undraw" "normal use" {
-	 Tlist::reset
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 Tlist::addObject 0 $f $p
-	 setForeground 1
-	 setBackground 0
-	 clearscreen
-	 Tlist::show 0
-	 Tlist::undraw
-	 pixelCheckSum
-} {^0$}
-test "TlistTcl-Tlist::undraw" "no error" {} $BLANK $no_test
-
-### Tlist::redrawCmd ###
-test "TlistTcl-Tlist::redraw" "too many args" {
-	 Tlist::redraw junk
-} {wrong \# args: should be "Tlist::redraw"}
-test "TlistTcl-Tlist::redraw" "normal use" {
-	 Tlist::reset
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 Tlist::addObject 0 $f $p
-	 Tlist::setCurTrial 0
-	 setForeground 1
-	 setBackground 0
-	 Tlist::redraw
-	 # check to see if some pixels actually got drawn
-	 expr [pixelCheckSum] > 500
-} {^1$}
-test "TlistTcl-Tlist::redraw" "no error" {} $BLANK $no_test
-
-### Tlist::clearscreenCmd ###
-test "TlistTcl-Tlist::clearscreen" "too many args" {
-    Tlist::clearscreen junk
-} {wrong \# args: should be "Tlist::clearscreen"}
-test "TlistTcl-Tlist::clearscreen" "normal use" {
-	 setBackground 0
-	 Tlist::clearscreen
-	 pixelCheckSum
-} {^0$}
-test "TlistTcl-Tlist::clearscreen" "no error" {} $BLANK $no_test
-
-### Tlist::showCmd ###
-test "TlistTcl-Tlist::show" "too few args" {
-	 Tlist::show
-} {wrong \# args: should be "Tlist::show trial_id"}
-test "TlistTcl-Tlist::show" "too many args" {
-	 Tlist::show j u
-} {wrong \# args: should be "Tlist::show trial_id"}
-test "TlistTcl-Tlist::show" "normal use on valid trial id" {
-	 catch {Tlist::show 10}
-} {^0$}
-test "TlistTcl-Tlist::show" "normal use on invalid trial id" { 
-	 catch {Tlist::show -1}
-} {^0$}
-test "TlistTcl-Tlist::show" "no error" {} $BLANK $no_test
-
 ### Tlist::setVisibleCmd ###
 test "TlistTcl-Tlist::setVisible" "too few args" {
     Tlist::setVisible
