@@ -39,7 +39,7 @@
 template <class T>
 GbVec2<T>::GbVec2(T x_, T y_) :
   Gfx::Vec2<T>(x_, y_),
-  TMultiValue<T>(2)
+  rutz::multi_value<T>(2)
 {}
 
 template <class T>
@@ -52,12 +52,12 @@ rutz::fstring GbVec2<T>::value_typename() const
 }
 
 template <class T>
-const T* GbVec2<T>::constBegin() const { return &Gfx::Vec2<T>::x(); }
+const T* GbVec2<T>::const_begin() const { return &Gfx::Vec2<T>::x(); }
 
 template <class T>
 GbVec3<T>::GbVec3(T x_, T y_, T z_) :
   Gfx::Vec3<T>(x_, y_, z_),
-  TMultiValue<T>(3)
+  rutz::multi_value<T>(3)
 {}
 
 template <class T>
@@ -70,7 +70,7 @@ rutz::fstring GbVec3<T>::value_typename() const
 }
 
 template <class T>
-const T* GbVec3<T>::constBegin() const { return Gfx::Vec3<T>::data(); }
+const T* GbVec3<T>::const_begin() const { return Gfx::Vec3<T>::data(); }
 
 template class GbVec2<int>;
 template class GbVec2<double>;

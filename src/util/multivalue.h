@@ -34,33 +34,36 @@
 
 #include "util/value.h"
 
-/// A rutz::value subclass representing a fixed-size set of homogeneous values.
-template <class T>
-class TMultiValue : public rutz::value
+namespace rutz
 {
-public:
-  TMultiValue(int num);
-  virtual ~TMultiValue();
+  /// A rutz::value subclass representing a fixed-size set of homogeneous values.
+  template <class T>
+  class multi_value : public rutz::value
+  {
+  public:
+    multi_value(int num);
+    virtual ~multi_value();
 
-  /// Get a string describing the underlying native type.
-  virtual rutz::fstring value_typename() const = 0;
+    /// Get a string describing the underlying native type.
+    virtual rutz::fstring value_typename() const = 0;
 
-  virtual void print_to(STD_IO::ostream& os) const;
-  virtual void scan_from(STD_IO::istream& is);
+    virtual void print_to(STD_IO::ostream& os) const;
+    virtual void scan_from(STD_IO::istream& is);
 
-protected:
-  /// Returns a const pointer to the start of the underlying storage.
-  virtual const T*   constBegin() const = 0;
-  /// Returns a const pointer to one-past-the-end of the underlying storage.
-          const T*   constEnd()   const { return constBegin() + itsNumValues; }
-  /// Returns a non-const pointer to the start of the underlying storage.
-                T* mutableBegin()       { return const_cast<T*>(constBegin()); }
-  /// Returns a non-const pointer to one-past-the-end of the underlying storage.
-                T* mutableEnd()         { return const_cast<T*>(constEnd()); }
+  protected:
+    /// Returns a const pointer to the start of the underlying storage.
+    virtual const T*   const_begin() const = 0;
+    /// Returns a const pointer to one-past-the-end of the underlying storage.
+    const T*   const_end()   const { return const_begin() + m_num_values; }
+    /// Returns a non-const pointer to the start of the underlying storage.
+    T* mutable_begin()       { return const_cast<T*>(const_begin()); }
+    /// Returns a non-const pointer to one-past-the-end of the underlying storage.
+    T* mutable_end()         { return const_cast<T*>(const_end()); }
 
-private:
-  int itsNumValues;
-};
+  private:
+    int m_num_values;
+  };
+}
 
 static const char vcid_multivalue_h[] = "$Header$";
 #endif // !MULTIVALUE_H_DEFINED

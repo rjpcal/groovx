@@ -38,12 +38,12 @@
 
 GbColor::GbColor(double v) :
   Gfx::RgbaColor(v),
-  TMultiValue<double>(4)
+  rutz::multi_value<double>(4)
 {}
 
 GbColor::GbColor(double r, double g, double b, double a) :
   Gfx::RgbaColor(r,g,b,a),
-  TMultiValue<double>(4)
+  rutz::multi_value<double>(4)
 {}
 
 GbColor::~GbColor() {}
@@ -58,7 +58,7 @@ rutz::fstring GbColor::value_typename() const
   return name;
 }
 
-const double* GbColor::constBegin() const
+const double* GbColor::const_begin() const
 {
   return Gfx::RgbaColor::data();
 }

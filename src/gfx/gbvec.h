@@ -40,7 +40,7 @@
 /// GbVec2 is a field class for holding @-D vectors/points/distances.
 template <class T>
 class GbVec2 : public Gfx::Vec2<T>,
-               public TMultiValue<T>
+               public rutz::multi_value<T>
 {
 public:
   /// Default constructor, or set initial 2-D coordinates.
@@ -48,8 +48,8 @@ public:
 
   /// String conversion constructor.
   GbVec2(const rutz::fstring& s)
-    : TMultiValue<T>(2)
-  { TMultiValue<T>::set_string(s); }
+    : rutz::multi_value<T>(2)
+  { rutz::multi_value<T>::set_string(s); }
 
   /// Virtual destructor.
   virtual ~GbVec2();
@@ -61,13 +61,13 @@ public:
 
   virtual rutz::fstring value_typename() const;
 
-  virtual const T* constBegin() const;
+  virtual const T* const_begin() const;
 };
 
 /// GbVec3 is a field class for holding 3-D vectors/points/distances.
 template <class T>
 class GbVec3 : public Gfx::Vec3<T>,
-               public TMultiValue<T>
+               public rutz::multi_value<T>
 {
 public:
   /// Default constructor, or set initial 3-D coordinates.
@@ -75,8 +75,8 @@ public:
 
   /// String conversion constructor.
   GbVec3(const rutz::fstring& s)
-    : TMultiValue<T>(3)
-  { TMultiValue<T>::set_string(s); }
+    : rutz::multi_value<T>(3)
+  { rutz::multi_value<T>::set_string(s); }
 
   /// Virtual destructor.
   virtual ~GbVec3();
@@ -88,7 +88,7 @@ public:
 
   virtual rutz::fstring value_typename() const;
 
-  virtual const T* constBegin() const;
+  virtual const T* const_begin() const;
 };
 
 static const char vcid_gbvec_h[] = "$Header$";

@@ -37,7 +37,7 @@
 #include "gx/rgbacolor.h"
 
 /// Field class for RGBA colors.
-class GbColor : public Gfx::RgbaColor, public TMultiValue<double>
+class GbColor : public Gfx::RgbaColor, public rutz::multi_value<double>
 {
 public:
   /// Construct with a given luminance (default = white).
@@ -54,7 +54,7 @@ public:
 
   virtual rutz::fstring value_typename() const;
 
-  virtual const double* constBegin() const;
+  virtual const double* const_begin() const;
 };
 
 static const char vcid_gbcolor_h[] = "$Header$";

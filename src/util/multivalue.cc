@@ -38,22 +38,22 @@
 
 #include <iostream>
 
+#include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
 
 template <class T>
-TMultiValue<T>::TMultiValue(int num) : itsNumValues(num) {}
+rutz::multi_value<T>::multi_value(int num) : m_num_values(num) {}
 
 template <class T>
-TMultiValue<T>::~TMultiValue() {}
+rutz::multi_value<T>::~multi_value() {}
 
 template <class T>
-void TMultiValue<T>::print_to(STD_IO::ostream& os) const
+void rutz::multi_value<T>::print_to(STD_IO::ostream& os) const
 {
-DOTRACE("TMultiValue<T>::printTo");
-  const T* dat = constBegin();
-  const T* end = constEnd();
+DOTRACE("rutz::multi_value<T>::print_to");
+  const T* dat = const_begin();
+  const T* end = const_end();
 
   while (dat < end)
     {
@@ -64,17 +64,17 @@ DOTRACE("TMultiValue<T>::printTo");
 }
 
 template <class T>
-void TMultiValue<T>::scan_from(STD_IO::istream& is)
+void rutz::multi_value<T>::scan_from(STD_IO::istream& is)
 {
-DOTRACE("TMultiValue<T>::scan_from");
+DOTRACE("rutz::multi_value<T>::scan_from");
 
   if (is.fail())
     throw rutz::error("istream started out in fail state", SRC_POS);
   if (is.eof())
     throw rutz::error("istream started out in eof state", SRC_POS);
 
-  T* dat = mutableBegin();
-  T* end = mutableEnd();
+  T* dat = mutable_begin();
+  T* end = mutable_end();
 
   while (dat < end)
     {
@@ -96,8 +96,8 @@ DOTRACE("TMultiValue<T>::scan_from");
     }
 }
 
-template class TMultiValue<int>;
-template class TMultiValue<double>;
+template class rutz::multi_value<int>;
+template class rutz::multi_value<double>;
 
 static const char vcid_multivalue_cc[] = "$Header$";
 #endif // !MULTIVALUE_CC_DEFINED
