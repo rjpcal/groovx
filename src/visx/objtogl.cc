@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Sep 17 11:02:02 2002
+// written: Tue Sep 17 12:52:17 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -178,7 +178,7 @@ public:
     defAction("destroy", &Tcl::TkWidget::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
     def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
-    defAttrib("height", &Togl::height, &Togl::setHeight);
+    defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
     defAction("loadDefaultFont", &Togl::loadDefaultFont);
     defSetter("loadFont", &Togl::loadBitmapFont);
@@ -197,7 +197,7 @@ public:
     defAction("takeFocus", &Togl::takeFocus);
     defAction("undraw", &Toglet::undraw);
     defGetter("usingFixedScale", &Toglet::usingFixedScale);
-    defAttrib("width", &Togl::width, &Togl::setWidth);
+    defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
 
     defAction("hook", &Tcl::TkWidget::hook);
 
