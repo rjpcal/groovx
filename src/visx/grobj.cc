@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 23:14:46 1999
+// written: Tue Dec 14 19:44:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 
 #include "bitmaprep.h"
 #include "canvas.h"
+#include "glcanvas.h"
 #include "glbmaprenderer.h"
 #include "error.h"
 #include "rect.h"
@@ -395,7 +396,8 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 		itsOwner->doScaling();
 		itsOwner->doAlignment();
 		
-		Rect<int> screen_pos = GrObj::getScreenFromWorld(getRaw());
+		Rect<int> screen_pos =
+		  GLCanvas::theCanvas().getScreenFromWorld(getRaw());
 
 	 glPopMatrix();
 	 
@@ -406,7 +408,8 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 	 screen_pos.heightenByStep(bp);
 
 	 // ... and project back to world coordinates
-	 itsCachedFinalBB = GrObj::getWorldFromScreen(screen_pos);
+	 itsCachedFinalBB =
+		GLCanvas::theCanvas().getWorldFromScreen(screen_pos);
 	 
 	 // This next line is commented out to disable the caching scheme
 	 // because I don't think it really works, since changes to the
@@ -1332,100 +1335,6 @@ GrObj::GrObjRenderMode GrObj::getRenderMode() const {
 GrObj::GrObjRenderMode GrObj::getUnRenderMode() const {
 DOTRACE("GrObj::getUnRenderMode");
   return itsImpl->getUnRenderMode();
-}
-
-namespace {
-  // These matrices are shared by getScreenFromWorld and
-  // getWorldFromScreen.
-  GLdouble current_mv_matrix[16];
-  GLdouble current_proj_matrix[16];
-  GLint current_viewport[4];
-}
-
-void GrObj::getScreenFromWorld(double world_x, double world_y,
-										 int& screen_x, int& screen_y,
-										 bool recalculate_state) {
-DOTRACE("GrObj::getScreenFromWorld");
-
-  if (recalculate_state) { 
-	 glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
-	 glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
-	 glGetIntegerv(GL_VIEWPORT, current_viewport);
-  }
-
-  double temp_screen_x, temp_screen_y, dummy_z;
-
-  GLint status =
-	 gluProject(world_x, world_y, 0.0,
-					current_mv_matrix, current_proj_matrix, current_viewport,
-					&temp_screen_x, &temp_screen_y, &dummy_z);
-
-  DebugEval(status);
-
-  if (status == GL_FALSE)
-	 throw ErrorWithMsg("GrObj::getScreenFromWorld(): gluProject error");
-
-  screen_x = int(temp_screen_x);
-  screen_y = int(temp_screen_y);
-}
-
-void GrObj::getWorldFromScreen(int screen_x, int screen_y,
-										 double& world_x, double& world_y,
-										 bool recalculate_state) {
-DOTRACE("GrObj::getWorldFromScreen");
-  if (recalculate_state) {
-	 glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
-	 glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
-	 glGetIntegerv(GL_VIEWPORT, current_viewport);
-  }
-
-  double dummy_z;
-
-  GLint status =
-	 gluUnProject(screen_x, screen_y, 0,
-					  current_mv_matrix, current_proj_matrix, current_viewport,
-					  &world_x, &world_y, &dummy_z);
-
-  DebugEval(status);
-
-  if (status == GL_FALSE)
-	 throw ErrorWithMsg("GrObj::getWorldFromScreen(): gluUnProject error");
-}
-
-Point<int> GrObj::getScreenFromWorld(const Point<double>& world_pos,
-												 bool recalculate_state) {
-DOTRACE("GrObj::getScreenFromWorld(Point)");
-  Point<int> screen_pos;
-  getScreenFromWorld(world_pos.x(), world_pos.y(),
-							screen_pos.x(), screen_pos.y(),
-							recalculate_state);
-  return screen_pos;
-}
-
-Point<double> GrObj::getWorldFromScreen(const Point<int>& screen_pos,
-													 bool recalculate_state) {
-DOTRACE("GrObj::getWorldFromScreen(Point)");
-  Point<double> world_pos;
-  getWorldFromScreen(screen_pos.x(), screen_pos.y(),
-							world_pos.x(), world_pos.y(),
-							recalculate_state);
-  return world_pos;
-}
-
-Rect<int> GrObj::getScreenFromWorld(const Rect<double>& world_pos) {
-DOTRACE("GrObj::getScreenFromWorld(Rect)");
-  Rect<int> screen_rect;
-  screen_rect.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft())      );
-  screen_rect.setTopRight  ( getScreenFromWorld(world_pos.topRight(), false) );
-  return screen_rect;
-}
-
-Rect<double> GrObj::getWorldFromScreen(const Rect<int>& screen_pos) {
-DOTRACE("GrObj::getWorldFromScreen(Rect)");
-  Rect<double> world_rect;
-  world_rect.setBottomLeft( getWorldFromScreen(screen_pos.bottomLeft())      );
-  world_rect.setTopRight  ( getWorldFromScreen(screen_pos.topRight(), false) );
-  return world_rect;
 }
 
 //////////////////
