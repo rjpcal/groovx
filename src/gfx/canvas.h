@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Dec  1 17:33:57 1999
+// written: Mon Dec  6 15:48:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,10 @@ public:
   virtual Rect<int> getScreenViewport() const = 0;
   virtual Rect<double> getWorldViewport() const = 0;
 
+
+  virtual bool isRgba() const = 0;
+  virtual bool isColorIndex() const = 0;
+  virtual bool isDoubleBuffered() const = 0;
 
 //    virtual void pushState() const = 0;
 //    virtual void popState() const = 0;
