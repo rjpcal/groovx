@@ -318,25 +318,6 @@ class link_mapping
 public:
   link_mapping() : m_links() {}
 
-  static string get_source_for_header(const string& header)
-  {
-    const string::size_type suff = header.find_last_of('.');
-    string result;
-    result = header.substr(0, suff) + ".cc";
-    if (file_exists(result.c_str()))
-      return result;
-
-    result = header.substr(0, suff) + ".C";
-    if (file_exists(result.c_str()))
-      return result;
-
-    result = header.substr(0, suff) + ".cpp";
-    if (file_exists(result.c_str()))
-      return result;
-
-    return string();
-  }
-
   void append_link_spec(const string& src, const string& link_pattern)
   {
     m_links.push_back(link_spec(src, link_pattern));
@@ -387,6 +368,8 @@ private:
   vector<string>           m_cfg_user_ipath;
   vector<string>           m_cfg_sys_ipath;
   vector<string>           m_cfg_literal_exts;
+  vector<string>           m_cfg_source_exts;
+  vector<string>           m_cfg_header_exts;
   vector<string>           m_cfg_obj_exts;
   string                   m_cfg_obj_prefix;
   bool                     m_cfg_check_sys_deps;
@@ -418,13 +401,15 @@ public:
   // Return value serves two purposes... (1) if it is zero, then the
   // fname is not recognized as a c++ file, and (2) otherwise, the
   // return value gives the length of the c++ filename extension,
-  // including the '.' (i.e. '.C' gives 2, '.cc' gives 3, '.cpp' gives
-  // 4).
-  int is_cc_filename(const char* fname);
+  // including the '.' (i.e. '.cpp' gives 4).
+  int is_cc_filename(const string& fname) const;
 
   // Like is_cc_filename(), but also checks for c++ header-file
   // extensions (like '.h', '.hh', '.hpp').
-  int is_cc_or_h_filename(const char* fname);
+  int is_cc_or_h_filename(const string& fname) const;
+
+  // Find the source file that corresponds to the given header file
+  string find_source_for_header(const string& header) const;
 
   static bool resolve_one(const string& include_name,
                           const string& src_fname,
@@ -500,6 +485,16 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_sys_ipath.push_back("/usr/include");
   m_cfg_sys_ipath.push_back("/usr/include/linux");
   m_cfg_sys_ipath.push_back("/usr/local/matlab/extern/include");
+
+  m_cfg_source_exts.push_back(".cc");
+  m_cfg_source_exts.push_back(".C");
+  m_cfg_source_exts.push_back(".c");
+  m_cfg_source_exts.push_back(".cpp");
+
+  m_cfg_header_exts.push_back(".h");
+  m_cfg_header_exts.push_back(".H");
+  m_cfg_header_exts.push_back(".hh");
+  m_cfg_header_exts.push_back(".hpp");
 
   char** arg = argv+1; // skip to first command-line arg
 
@@ -635,45 +630,50 @@ void cppdeps::inspect(char** arg0, char** argn)
   cerr << "obj_prefix: '" << m_cfg_obj_prefix << "'\n\n";
 }
 
-int cppdeps::is_cc_filename(const char* fname)
+int cppdeps::is_cc_filename(const string& fname) const
 {
-  const unsigned int len = strlen(fname);
-  if (len > 3)
+  string::size_type p = fname.find_last_of('.');
+
+  for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
     {
-      if (strcmp(".c", fname+len-2) == 0) return 2;
-      if (strcmp(".C", fname+len-2) == 0) return 2;
+      if (fname.compare(p, string::npos, m_cfg_source_exts[i]) == 0)
+        return m_cfg_source_exts[i].length();
     }
-  if (len > 4)
-    {
-      if (strcmp(".cc", fname+len-3) == 0) return 3;
-    }
-  if (len > 5)
-    {
-      if (strcmp(".cpp", fname+len-3) == 0) return 4;
-    }
+
   return 0;
 }
 
-int cppdeps::is_cc_or_h_filename(const char* fname)
+int cppdeps::is_cc_or_h_filename(const string& fname) const
 {
-  int n = is_cc_filename(fname);
-  if (n > 0) return n;
+  string::size_type p = fname.find_last_of('.');
 
-  const unsigned int len = strlen(fname);
-  if (len > 3)
+  for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
     {
-      if (strcmp(".h", fname+len-2) == 0) return 2;
-      if (strcmp(".H", fname+len-2) == 0) return 2;
+      if (fname.compare(p, string::npos, m_cfg_source_exts[i]) == 0)
+        return m_cfg_source_exts[i].length();
     }
-  if (len > 4)
+
+  for (unsigned int i = 0; i < m_cfg_header_exts.size(); ++i)
     {
-      if (strcmp(".hh", fname+len-3) == 0) return 3;
+      if (fname.compare(p, string::npos, m_cfg_header_exts[i]) == 0)
+        return m_cfg_header_exts[i].length();
     }
-  if (len > 5)
-    {
-      if (strcmp(".hpp", fname+len-4) == 0) return 4;
-    }
+
   return 0;
+}
+
+string cppdeps::find_source_for_header(const string& header) const
+{
+  const string::size_type suff = header.find_last_of('.');
+
+  for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
+    {
+      const string result = header.substr(0, suff) + m_cfg_source_exts[i];
+      if (file_exists(result.c_str()))
+        return result;
+    }
+
+  return string();
 }
 
 bool cppdeps::resolve_one(const string& include_name,
@@ -991,7 +991,7 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
        i != istop;
        ++i)
     {
-      const string ccfile = m_link_map.get_source_for_header((*i).target);
+      const string ccfile = find_source_for_header((*i).target);
       if (ccfile.length() == 0)
         continue;
 
@@ -1023,7 +1023,7 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
 void cppdeps::print_makefile_dep(const string& fname)
 {
-  const int ext_len = is_cc_filename(fname.c_str());
+  const int ext_len = is_cc_filename(fname);
 
   if (ext_len == 0)
     // it's not a c++ file, so just do nothing
@@ -1031,7 +1031,7 @@ void cppdeps::print_makefile_dep(const string& fname)
 
   // otherwise, we do have a c++ file...
 
-  // Remove the trailing filename suffix (i.e. '.C', '.cc', ...)
+  // Remove the trailing filename suffix (i.e. '.C', '.cpp', ...)
   string fname_stem = fname.substr(0, fname.length()-ext_len);
 
   // Remove a leading directory prefix if necessary
@@ -1085,7 +1085,7 @@ void cppdeps::print_makefile_dep(const string& fname)
 
 void cppdeps::print_include_tree(const string& fname)
 {
-  const int ext_len = is_cc_or_h_filename(fname.c_str());
+  const int ext_len = is_cc_or_h_filename(fname);
 
   if (ext_len == 0)
     // it's not a c++ file, so just do nothing
@@ -1116,7 +1116,7 @@ void cppdeps::print_include_tree(const string& fname)
 
 void cppdeps::print_link_deps(const string& fname)
 {
-  const int ext_len = is_cc_filename(fname.c_str());
+  const int ext_len = is_cc_filename(fname);
 
   if (ext_len == 0)
     // it's not a c++ file, so just do nothing
