@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Jan 26 11:42:09 2000
+// written: Tue Feb  1 18:07:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
 	 io->deserialize(ifs, flags);
 	 
-	 int objid = olist.insert(p);
+	 int objid = olist.insert(ObjList::Ptr(p));
 	 ids.push_back(objid);
 	 ++num_read;
 

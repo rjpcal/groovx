@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Feb  1 17:56:33 2000
+// written: Tue Feb  1 18:10:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ DOTRACE("TlistUtils::createPreview");
   vector<Rect<double> > bbxs(objids.size());
 
   Trial* preview = new Trial();
-  int previewid = tlist.insert(preview);
+  int previewid = tlist.insert(Tlist::Ptr(preview));
 
   double window_area = world_width*world_height;
   double parcel_area = window_area/objids.size();
@@ -94,20 +94,20 @@ DOTRACE("TlistUtils::createPreview");
 	 ost << objids[i] << '\0';
 
 	 Gtext* label = new Gtext(id_string);
-	 int label_objid = ObjList::theObjList().insert(label);
+	 int label_objid = ObjList::theObjList().insert(ObjList::Ptr(label));
 	 label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
 	 label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 	 label->setHeight(0.1);
 
 	 Position* obj_pos = new Position();
-	 int obj_posid = PosList::thePosList().insert(obj_pos);
+	 int obj_posid = PosList::thePosList().insert(PosList::Ptr(obj_pos));
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
 	 obj_pos->setTranslate(obj_x, obj_y, 0.0);
 	 obj_pos->setScale(parcel_side, parcel_side, 1.0);
 
 	 Position* label_pos = new Position();
-	 int label_posid = PosList::thePosList().insert(label_pos);
+	 int label_posid = PosList::thePosList().insert(PosList::Ptr(label_pos));
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
 	 label_pos->setTranslate(label_x, label_y, 0.0);
@@ -138,7 +138,7 @@ DOTRACE("TlistUtils::makeSingles");
   for (size_t i=0; i < vec.size(); ++i) {
 	 int id = vec[i];
 	 if ( !tlist.isValidId(id) ) {
-		tlist.insertAt(id, new Trial);
+		tlist.insertAt(id, Tlist::Ptr(new Trial));
 	 }
 	 Tlist::Ptr t = tlist.getPtr(id);
 	 t->add(id, posid);
@@ -168,7 +168,7 @@ DOTRACE("TlistUtils::makePairs");
   for (size_t i = 0; i < vec.size(); ++i) {
 	 for (size_t j = 0; j < vec.size(); ++j) {
 		if ( !tlist.isValidId(trialid) ) {
-		  tlist.insertAt(trialid, new Trial);
+		  tlist.insertAt(trialid, Tlist::Ptr(new Trial));
 		}
 		Tlist::Ptr t = tlist.getPtr(trialid);
 		t->add(vec[i], posid1);
@@ -241,7 +241,7 @@ DOTRACE("TlistUtils::makeTriads");
 		  // loops over p,e run through all permutations
 		  for (int p = 0; p < NUM_PERMS; ++p) {
 			 if ( !tlist.isValidId(trial) ) {
-				tlist.insertAt(trial, new Trial);
+				tlist.insertAt(trial, Tlist::Ptr(new Trial));
 			 }
 			 Tlist::Ptr t = tlist.getPtr(trial);
 			 for (int e = 0; e < 3; ++e) {
@@ -283,7 +283,7 @@ DOTRACE("TlistUtils::makeSummaryTrial");
   PosList& plist = PosList::thePosList();
 	 
   if ( !tlist.isValidId(trialid) ) {
-	 tlist.insertAt(trialid, new Trial);
+	 tlist.insertAt(trialid, Tlist::Ptr(new Trial));
   }
 
   Tlist::Ptr t = tlist.getPtr(trialid);
@@ -300,7 +300,7 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 		
 	 p->setTranslate(xpos, ypos, 0.0);
 	 p->setScale(scale, scale, 1.0);
-	 int posid = plist.insert(p);
+	 int posid = plist.insert(PosList::Ptr(p));
 
 	 t->add(objids[i], posid);
   }
@@ -392,7 +392,7 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 	 istrstream ist(line);
 	 Trial* t = new Trial;
 	 t->readFromObjidsOnly(ist, offset);
-    tlist.insert(t);
+    tlist.insert(Tlist::Ptr(t));
     ++trial;
   }                          
   if (is.bad()) throw InputError("TlistUtils::readFromObjids");
@@ -436,7 +436,7 @@ DOTRACE("TlistUtils::addObject");
 	 { throw ErrorWithMsg(bad_posid_msg); }
 
   if ( !tlist.isValidId(trialid) ) {
-	 tlist.insertAt(trialid, new Trial);
+	 tlist.insertAt(trialid, Tlist::Ptr(new Trial));
   }
 
   tlist.getPtr(trialid)->add(objid, posid);

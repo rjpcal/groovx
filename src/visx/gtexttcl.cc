@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Dec 15 13:02:31 1999
+// written: Tue Feb  1 18:06:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ protected:
 
 	 Gtext* p = new Gtext(text);
 
-	 int objid = ObjList::theObjList().insert(p);
+	 int objid = ObjList::theObjList().insert(ObjList::Ptr(p));
 	 returnInt(objid);
   }
 };

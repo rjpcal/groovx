@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Dec 16 16:00:28 1999
+// written: Tue Feb  1 18:06:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ public:
 protected:
   virtual void invoke() {
 	 C* p = new C;
-	 int id = itsPkg->theList().insert(p);
+	 int id = itsPkg->theList().insert(List::Ptr(p));
 	 returnInt(id);
   }
 private:

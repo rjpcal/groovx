@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Dec 15 17:42:22 1999
+// written: Tue Feb  1 18:08:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ public:
   BlockListPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, BlockList::theBlockList(), "BlockList", "3.0")
   {
-	 BlockList::theBlockList().insertAt(0, new Block());
+	 BlockList::theBlockList().insertAt(0, BlockList::Ptr(new Block()));
   }
 };
 

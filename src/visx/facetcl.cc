@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Dec  7 19:05:51 1999
+// written: Tue Feb  1 18:05:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ void FaceTcl::LoadFacesCmd::invoke() {
 		else {
 		  p = new Face(ist, IO::NO_FLAGS);
 		}
-		int objid = olist.insert(p);
+		int objid = olist.insert(ObjList::Ptr(p));
 		ids.push_back(objid);
 		++num_read;
 	 }
