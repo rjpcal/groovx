@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Jul  6 14:32:23 1999
+// written: Fri Jul 23 13:41:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ public:
   bool usingFixedScale() const;
 
   // manipulators
+  void destroyWidget();
   void scaleRect(double factor);
   void setColor(const Color& color);
   void setFixedScale(double s);
