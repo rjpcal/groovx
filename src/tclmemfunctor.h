@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 13 09:07:00 2001
-// written: Thu Jul 19 21:08:32 2001
+// written: Sun Aug  5 22:35:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ namespace Tcl
 
     static Tcl_Obj* toTcl(Ref<T> obj)
     {
-      return Convert<Util::UID>::toTcl(obj->id());
+      return Convert<Util::UID>::toTcl(obj.id());
     }
   };
 
@@ -60,7 +60,7 @@ namespace Tcl
 
     static Tcl_Obj* toTcl(WeakRef<T> obj)
     {
-      return Convert<Util::UID>::toTcl(obj->id());
+      return Convert<Util::UID>::toTcl(obj.id());
     }
   };
 
