@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Sun Aug  5 19:06:57 2001
+// written: Sun Aug  5 19:25:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,22 +38,23 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::Interp provides a wrapper around calls to the Tcl
- * interpreter.
+ * Tcl::Interp provides a wrapper around calls to the Tcl interpreter.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class Tcl::Interp {
-public:
+  Interp(const Interp&);
+  Interp& operator=(const Interp&);
 
+public:
   Interp(Tcl_Interp* interp);
   ~Interp();
 
-  Interp(const Interp& other) : itsInterp(other.itsInterp) {}
-
   bool hasInterp() const { return itsInterp != 0; }
-  Tcl_Interp* intp() const { return itsInterp; }
+  Tcl_Interp* intp() const;
+
+  void forgetInterp();
 
   // Expressions
   bool evalBooleanExpr(Tcl_Obj* obj) const;
@@ -99,7 +100,7 @@ private:
 
   void handleError(const char* msg) const;
 
-  borrowed_ptr<Tcl_Interp> const itsInterp;
+  borrowed_ptr<Tcl_Interp> itsInterp;
 };
 
 static const char vcid_tclsafeinterp_h[] = "$Header$";
