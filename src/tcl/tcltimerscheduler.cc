@@ -34,11 +34,16 @@
 
 #include "tcltimerscheduler.h"
 
+#include "tcl/tclmain.h"
+#include "tcl/tclsafeinterp.h"
+
 #include "util/pointers.h"
 
 #include <tcl.h>
 
 #include "util/trace.h"
+#include "util/debug.h"
+DBG_REGISTER
 
 namespace Tcl
 {
@@ -48,15 +53,30 @@ namespace Tcl
 class Tcl::TimerSchedulerToken : public Util::TimerToken
 {
 public:
-  TimerSchedulerToken(Tcl_TimerToken tok);
+  TimerSchedulerToken(int msec,
+                      void (*callback)(void*),
+                      void* clientdata);
   virtual ~TimerSchedulerToken() throw();
 
 private:
+  static void dummyCallback(void* token) throw();
+
+  typedef void (Callback)(void*);
+
   Tcl_TimerToken itsToken;
+  Callback* const itsCallback;
+  void* const itsClientData;
 };
 
-Tcl::TimerSchedulerToken::TimerSchedulerToken(Tcl_TimerToken tok)
-  : itsToken(tok)
+Tcl::TimerSchedulerToken::TimerSchedulerToken(int msec,
+                                              void (*callback)(void*),
+                                              void* clientdata)
+  :
+  itsToken(Tcl_CreateTimerHandler(msec,
+                                  dummyCallback,
+                                  static_cast<void*>(this))),
+  itsCallback(callback),
+  itsClientData(clientdata)
 {
 DOTRACE("Tcl::TimerSchedulerToken::TimerSchedulerToken");
 }
@@ -65,6 +85,27 @@ Tcl::TimerSchedulerToken::~TimerSchedulerToken() throw()
 {
 DOTRACE("Tcl::TimerSchedulerToken::~TimerSchedulerToken");
   Tcl_DeleteTimerHandler(itsToken);
+}
+
+void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
+{
+  TimerSchedulerToken* tok = static_cast<TimerSchedulerToken*>(token);
+
+  Assert(tok != 0);
+
+  try
+    {
+      // BE CAREFUL: calling the client callback here may result in
+      // the TimerScheduleToken object being destroyed. So, if we need
+      // access to any of the token's member variables, we need to
+      // make a local copy of them before calling the callback.
+      (*tok->itsCallback)(tok->itsClientData);
+    }
+  catch(...)
+    {
+      Tcl::Main::interp().handleLiveException("Tcl::Timer callback",
+                                              true);
+    }
 }
 
 Tcl::TimerScheduler::TimerScheduler()
@@ -83,11 +124,8 @@ Tcl::TimerScheduler::schedule(int msec,
                               void* clientdata)
 {
 DOTRACE("Tcl::TimerScheduler::schedule");
-  Tcl_TimerToken tok =
-    Tcl_CreateTimerHandler(msec, callback, clientdata);
-
   return shared_ptr<Util::TimerToken>
-    (new Tcl::TimerSchedulerToken(tok));
+    (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
 }
 
 static const char vcid_tcltimerscheduler_cc[] = "$Header$";

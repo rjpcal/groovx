@@ -34,8 +34,6 @@
 
 #include "tcl/tcltimer.h"
 
-#include "tcl/tclmain.h"
-#include "tcl/tclsafeinterp.h"
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/error.h"
@@ -98,39 +96,31 @@ DOTRACE("Tcl::Timer::cancel");
   itsToken.reset(0);
 }
 
-void Tcl::Timer::dummyCallback(void* clientData) throw()
+void Tcl::Timer::dummyCallback(void* clientData)
 {
 DOTRACE("Tcl::Timer::dummyCallback");
   Tcl::Timer* timer = static_cast<Tcl::Timer*>(clientData);
 
   Assert(timer != 0);
 
-  try
+  timer->itsToken.reset(0);
+
+  dbgEvalNL(3, timer->itsStopWatch.elapsed().msec());
+
+  // NOTE: make sure we re-schedule a repeating event BEFORE we
+  // emit the signal and trigger the callbacks; this way, it's
+  // possible for code inside the callback to cancel() this timer
+  // callback and end the repeating.
+  if (timer->isItRepeating)
     {
-      timer->itsToken.reset(0);
-
-      dbgEvalNL(3, timer->itsStopWatch.elapsed().msec());
-
-      // NOTE: make sure we re-schedule a repeating event BEFORE we
-      // emit the signal and trigger the callbacks; this way, it's
-      // possible for code inside the callback to cancel() this timer
-      // callback and end the repeating.
-      if (timer->isItRepeating)
-        {
-          // can't allow a timer callback that is both repeating and
-          // immediate (delay == 0), otherwise we fall into an
-          // infinite loop
-          Assert(timer->itsMsecDelay != 0);
-          timer->schedule();
-        }
-
-      timer->sigTimeOut.emit();
+      // can't allow a timer callback that is both repeating and
+      // immediate (delay == 0), otherwise we fall into an
+      // infinite loop
+      Assert(timer->itsMsecDelay != 0);
+      timer->schedule();
     }
-  catch(...)
-    {
-      Tcl::Main::interp().handleLiveException("Tcl::Timer callback",
-                                              true);
-    }
+
+  timer->sigTimeOut.emit();
 }
 
 static const char vcid_tcltimer_cc[] = "$Header$";
