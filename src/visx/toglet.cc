@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Mar  3 17:13:26 2000
+// written: Mon Mar  6 12:31:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,16 @@
 
 #include "toglconfig.h"
 
+#include "error.h"
+#include "glcanvas.h"
+#include "strings.h"
+#include "tclevalcmd.h"
+
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <tk.h>
 #include <togl.h>
 #include <cmath>
-#include <string>
 #include <strstream.h>
 
 #ifndef GCC_COMPILER
@@ -27,10 +31,6 @@
 #  include <climits>
 #  define NO_CPP_LIMITS
 #endif
-
-#include "error.h"
-#include "glcanvas.h"
-#include "tclevalcmd.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -45,7 +45,7 @@
 
 class ToglError : public ErrorWithMsg {
 public:
-  ToglError(const string& msg="") : ErrorWithMsg(msg) {}
+  ToglError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ DOTRACE("ToglConfig::getParamValue");
   // Build a Tcl command string to fetch the value of param
   // command will look like:
   //     pathname configure -param
-  string cmd_str = pathname(itsWidget);
+  dynamic_string cmd_str = pathname(itsWidget);
   cmd_str += " configure -";
   cmd_str += param;
 
@@ -181,7 +181,9 @@ DOTRACE("ToglConfig::getIntParam");
   int value;
   if ( Tcl_GetIntFromObj(Togl_Interp(itsWidget), obj, &value) != TCL_OK ) {
 	 Tcl_DecrRefCount(obj);
-	 throw ToglError();
+	 ToglError err("couldn't get integer parameter: ");
+	 err.appendMsg(param);
+	 throw err;
   }
   Tcl_DecrRefCount(obj);
   return value;
@@ -258,7 +260,9 @@ DOTRACE("ToglConfig::destroyWidget");
 DebugPrintNL("ToglConfig::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(Togl_Interp(itsWidget)) ) {
-	 string destroy_cmd_str = string("destroy ") + pathname(itsWidget);
+	 dynamic_string destroy_cmd_str = "destroy ";
+	 destroy_cmd_str += pathname(itsWidget);
+
 	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
 										  Tcl::TclEvalCmd::BACKGROUND_ERROR);
 	 destroy_cmd.invoke(Togl_Interp(itsWidget));
@@ -370,8 +374,11 @@ DOTRACE("ToglConfig::setWidth");
 
 void ToglConfig::bind(const char* event_sequence, const char* script) {
 DOTRACE("ToglConfig::bind");
-  string cmd_str = string("bind ") + pathname(itsWidget) + " "
-	 + event_sequence + " " + script;
+  dynamic_string cmd_str = "bind ";
+  cmd_str += pathname(itsWidget); cmd_str += " ";
+  cmd_str += event_sequence;      cmd_str += " ";
+  cmd_str += script;
+
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
   try { cmd.invoke(Togl_Interp(itsWidget)); }
@@ -387,7 +394,9 @@ DOTRACE("ToglConfig::loadFont");
 	 // Check if font loading succeeded...
 	 if (newListBase == 0) {
 		DebugEval(fontname);
-		throw ToglError(string("unable to load font ") + fontname);
+		ToglError err("unable to load font ");
+		err.appendMsg(fontname);
+		throw err;
 	 }
   }
   catch (ToglError&) { throw; }
@@ -417,7 +426,7 @@ DOTRACE("ToglConfig::loadFonti");
   // Check if font loading succeeded...
   try {
 	 if (newListBase == 0) {
-		throw ToglError(string("unable to load font"));
+		throw ToglError("unable to load font");
 	 }
   }
   catch (ToglError&) { throw; }
@@ -490,7 +499,9 @@ DOTRACE("ToglConfig::swapBuffers");
 
 void ToglConfig::takeFocus() {
 DOTRACE("ToglConfig::takeFocus");
-  string cmd_str = "focus -force "; cmd_str += pathname(itsWidget);
+  dynamic_string cmd_str = "focus -force ";
+  cmd_str += pathname(itsWidget);
+
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
   try { cmd.invoke(Togl_Interp(itsWidget)); }
