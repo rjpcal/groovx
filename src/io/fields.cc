@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug 29 16:52:02 2001
+// written: Fri Aug 31 08:34:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,11 @@
 
 FieldImpl::~FieldImpl() {}
 
+void FieldImpl::throwNotAllowed(const char* what)
+{
+  throw Util::Error(fstring("'", what, "' operation "
+                            "not allowed for that field"));
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
