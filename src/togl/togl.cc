@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 15:07:52 2000
+// written: Wed May 24 15:22:39 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -96,11 +96,13 @@ class Togl
 {
 public:
   Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv);
+  virtual ~Togl();
 
   int configure(Tcl_Interp* interp, int argc, char* argv[], int flags);
 
   void makeCurrent() const;
 
+  static void dummyDestroyProc(char* clientData);
   static void dummyEventProc(ClientData clientData, XEvent* eventPtr);
   static void dummyWidgetCmdDeletedProc(ClientData clientData);
 
@@ -827,38 +829,6 @@ DOTRACE("<togl.cc>::SetupOverlay");
   return TCL_OK;
 }
 
-
-/*
- * Togl_Destroy
- *
- * Gets called when an Togl widget is destroyed.
- */
-#if (TK_MAJOR_VERSION * 100 + TK_MINOR_VERSION) >= 401
-static void Togl_Destroy( char *clientData )
-#else
-  static void Togl_Destroy( ClientData clientData )
-#endif
-{
-DOTRACE("<togl.cc>::Togl_Destroy");
-
-  Togl* togl = (Togl*)clientData;
-
-  Tk_FreeOptions(configSpecs, (char *)togl, togl->itsDisplay, 0);
-
-#ifndef NO_TK_CURSOR
-  if (togl->itsCursor != None) {
-	 Tk_FreeCursor(togl->itsDisplay, togl->itsCursor);
-  }
-#endif
-  if (togl->itsDestroyProc) {
-	 togl->itsDestroyProc(togl);
-  }
-
-  /* remove from linked list */
-  RemoveFromList(togl);
-
-  delete togl;
-}
 
 
 
@@ -2004,6 +1974,24 @@ DOTRACE("Togl::Togl");
   AddToList(this);
 }
 
+Togl::~Togl() {
+DOTRACE("Togl::~Togl");
+
+  Tk_FreeOptions(configSpecs, (char *) this, itsDisplay, 0);
+
+#ifndef NO_TK_CURSOR
+  if (itsCursor != None) {
+	 Tk_FreeCursor(itsDisplay, itsCursor);
+  }
+#endif
+  if (itsDestroyProc) {
+	 itsDestroyProc(this);
+  }
+
+  /* remove from linked list */
+  RemoveFromList(this);
+}
+
 int Togl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags) {
 DOTRACE("Togl::configure");
 
@@ -2087,6 +2075,13 @@ DOTRACE("Togl::makeCurrent");
 #endif /*__sgi STEREO */
 }
 
+
+// Gets called when an Togl widget is destroyed.
+void Togl::dummyDestroyProc(char* clientData) {
+  Togl* togl = (Togl*)clientData;
+  delete togl;
+}
+
 void Togl::dummyEventProc(ClientData clientData, XEvent* eventPtr) {
   Togl* togl = static_cast<Togl*>(clientData);
   togl->eventProc(eventPtr);
@@ -2153,7 +2148,8 @@ DOTRACE("Togl::eventProc");
 		Tcl_CancelIdleCall(Togl_Render, static_cast<ClientData>(this));
 	 }
 
-	 Tcl_EventuallyFree( static_cast<ClientData>(this), Togl_Destroy );
+	 Tcl_EventuallyFree( static_cast<ClientData>(this),
+								Togl::dummyDestroyProc );
 
 	 break;
   default:
