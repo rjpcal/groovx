@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu May 17 15:32:01 2001
+// written: Thu May 17 15:49:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -626,9 +626,16 @@ void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value) {
   itsImpl.readValueObj(name, value); 
 }
 
-IO::IoObject* AsciiStreamReader::readObjectImpl(const fixed_string& attrib_name) {
-  DebugEvalNL(attrib_name); 
-  return itsImpl.readObjectImpl(attrib_name);
+IdItem<IO::IoObject> AsciiStreamReader::readObject(const fixed_string& name)
+{
+  DebugEvalNL(attrib_name);
+  return IdItem<IO::IoObject>(itsImpl.readObjectImpl(name));
+}
+
+MaybeIdItem<IO::IoObject> AsciiStreamReader::readMaybeObject(const fixed_string& name)
+{
+  DebugEvalNL(attrib_name);
+  return MaybeIdItem<IO::IoObject>(itsImpl.readObjectImpl(name));
 }
 
 void AsciiStreamReader::readOwnedObject(const fixed_string& name,
