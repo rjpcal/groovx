@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 15:01:54 2002
+// written: Thu Sep 12 12:35:36 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -214,11 +214,6 @@ int main(int argc, char** argv)
               safeIntp.resetResult();
             }
         }
-
-      // set prompt to "cmd[n]% " where cmd is the name of the program,
-      // and n is the history event number
-      safeIntp.setGlobalVar("tcl_prompt1",
-                    "puts -nonewline \"([history nextid]) $argv0> \"");
 
       // specifies a file to be 'source'd upon startup
       safeIntp.setGlobalVar("tcl_rcFileName", "./grsh_startup.tcl");
