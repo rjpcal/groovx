@@ -94,7 +94,7 @@ public:
   virtual geom::vec3<double> screenFromWorld3(const geom::vec3<double>& world_pos) const = 0;
 
   /// Convert a point from screen coordinates to world coordinates.
-  virtual geom::vec3<double> worldFromScreen3(const geom::vec3<int>& screen_pos) const = 0;
+  virtual geom::vec3<double> worldFromScreen3(const geom::vec3<double>& screen_pos) const = 0;
 
   /// Convert a rect from screen coordinates to world coordinates.
   geom::rect<int> screenBoundsFromWorldRect(const geom::rect<double>& world_pos) const;

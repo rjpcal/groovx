@@ -670,7 +670,7 @@ DOTRACE("Gfx::PSCanvas::screenFromWorld3");
 }
 
 vec3d Gfx::PSCanvas::worldFromScreen3(
-  const vec3i& /*screen_pos*/
+  const vec3d& /*screen_pos*/
   ) const
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen3");

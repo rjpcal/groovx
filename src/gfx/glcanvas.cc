@@ -145,7 +145,7 @@ DOTRACE("GLCanvas::screenFromWorld3");
   return screen_pos;
 }
 
-vec3d GLCanvas::worldFromScreen3(const vec3i& screen_pos) const
+vec3d GLCanvas::worldFromScreen3(const vec3d& screen_pos) const
 {
 DOTRACE("GLCanvas::worldFromScreen3");
 
@@ -162,7 +162,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
   vec3d world_pos;
 
   GLint status =
-    gluUnProject(screen_pos.x(), screen_pos.y(), 0,
+    gluUnProject(screen_pos.x(), screen_pos.y(), screen_pos.z(),
                  current_mv_matrix, current_proj_matrix, current_viewport,
                  &world_pos.x(), &world_pos.y(), &world_pos.z());
 
@@ -502,7 +502,7 @@ DOTRACE("GLCanvas::rasterPos");
       // outside the viewport due to rounding errors.) Then we do a
       // glBitmap() call whose only purpose is to use the "xmove" and
       // "ymove" arguments to adjust the raster position.
-      const vec3d lower_left = worldFromScreen3(vec3i(1,1,0));
+      const vec3d lower_left = worldFromScreen3(vec3d(1.0,1.0,0.0));
       dbg_dump(3, lower_left);
       // FIXME why doesn't lower_left.z() work here?
       glRasterPos3d(lower_left.x(), lower_left.y(), 0.0);

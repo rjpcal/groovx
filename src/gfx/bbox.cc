@@ -64,7 +64,7 @@ struct Gfx::Bbox::Impl
     return canvas.screenFromWorld3(world_pos);
   }
 
-  vec3d worldFromScreen3(const vec3i& screen_pos) const
+  vec3d worldFromScreen3(const vec3d& screen_pos) const
   {
     // FIXME need to install our own modelview matrix here first...
     return canvas.worldFromScreen3(screen_pos);
@@ -178,12 +178,12 @@ void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
 void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
                                const geom::rect<int>& screen_rect)
 {
-  const vec3i o = vec3i(rep->screenFromWorld3(vec3d(lower_left)));
+  const vec3d o = rep->screenFromWorld3(vec3d(lower_left));
 
-  rep->merge(rep->worldFromScreen3(o+screen_rect.bottom_left()));
-  rep->merge(rep->worldFromScreen3(o+screen_rect.bottom_right()));
-  rep->merge(rep->worldFromScreen3(o+screen_rect.top_left()));
-  rep->merge(rep->worldFromScreen3(o+screen_rect.top_right()));
+  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.bottom_left())));
+  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.bottom_right())));
+  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.top_left())));
+  rep->merge(rep->worldFromScreen3(o+vec2d(screen_rect.top_right())));
 }
 
 geom::box<double> Gfx::Bbox::cube() const
