@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 11:32:43 2001
+// written: Tue Aug 21 11:45:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ DOTRACE("GrObj::GrObj");
 
   // The GrObj needs to observe itself in order to update its display
   // list according to state changes.
-  attach(this);
+  connect(this);
 
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
@@ -87,7 +87,7 @@ DOTRACE("GrObj::GrObj");
 GrObj::~GrObj()
 {
 DOTRACE("GrObj::~GrObj");
-  detach(this);
+  disconnect(this);
   delete itsImpl;
 }
 

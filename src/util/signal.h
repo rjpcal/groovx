@@ -1,67 +1,64 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// observable.h
+// signal.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Wed Aug 15 06:49:42 2001
+// written: Tue Aug 21 11:45:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBSERVABLE_H_DEFINED
-#define OBSERVABLE_H_DEFINED
+#ifndef SIGNAL_H_DEFINED
+#define SIGNAL_H_DEFINED
 
 namespace Util
 {
   class Observer;
-  class Observable;
+  class Signal;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
  * Along with Observer, implements the Observer design
- * pattern. Subclasses of Observable do not have to override any
- * virtual functions to become an Observable: all of the machinery is
- * provided in this base class. However, to conform to the expected
- * behavior, subclasses of Observable must call sendStateChangeMsg()
- * when any of their non-mutable properties changes. This in turn will
- * call receiveStateChangeMsg() on all of the Observer's that are
- * observing this Observable.
+ * pattern. Subclasses of Signal do not have to override any virtual
+ * functions to become an Signal: all of the machinery is provided in
+ * this base class. However, to conform to the expected behavior,
+ * subclasses of Signal must call sendStateChangeMsg() when any of
+ * their non-mutable properties changes. This in turn will call
+ * receiveStateChangeMsg() on all of the Observer's that are observing
+ * this Signal.
  *
- * @short Along with Observer, implements the Observer design pattern.
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Observable {
-protected:
-  /** Constructor is protected so that Observable cannot be directly
-      instantiated.  */
-  Observable();
-
+class Util::Signal {
 public:
+  /// Default constructor.
+  Signal();
+
   /// Virtual destructor.
-  virtual ~Observable();
+  virtual ~Signal();
 
-  /// Add an Observer to the list of those watching this Observable.
-  void attach(Observer* obs);
-  /// Remove an Observer from the list of those watching this Observable.
-  void detach(Observer* obs);
+  /// Add an Observer to the list of those watching this Signal.
+  void connect(Observer* sig);
+  /// Remove an Observer from the list of those watching this Signal.
+  void disconnect(Observer* sig);
 
-  /** Informs all this object's Observers that this Observable's state
+  /** Informs all this object's Observers that this Signal's state
       has changed */
   void sendStateChangeMsg() const;
 
 private:
-  Observable(const Observable&);
-  Observable& operator=(const Observable&);
+  Signal(const Signal&);
+  Signal& operator=(const Signal&);
 
-  class ObsImpl;
+  class SigImpl;
 
-  ObsImpl* itsImpl;
+  SigImpl* itsImpl;
 };
 
-static const char vcid_observable_h[] = "$Header$";
-#endif // !OBSERVABLE_H_DEFINED
+static const char vcid_signal_h[] = "$Header$";
+#endif // !SIGNAL_H_DEFINED

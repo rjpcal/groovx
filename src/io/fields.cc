@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Aug 20 10:25:59 2001
+// written: Tue Aug 21 11:44:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include "io/writer.h"
 
 #include "util/iter.h"
-#include "util/observable.h"
+#include "util/signal.h"
 
 #include <map>
 
@@ -124,9 +124,9 @@ FieldMap::Iterator FieldMap::ioFields() const
 //
 ///////////////////////////////////////////////////////////////////////
 
-FieldContainer::FieldContainer(Util::Observable* obs) :
+FieldContainer::FieldContainer(Util::Signal* sig) :
   itsFieldMap(FieldMap::emptyFieldMap()),
-  itsObservable(obs)
+  itsSignal(sig)
 {}
 
 FieldContainer::~FieldContainer() {}
@@ -154,8 +154,8 @@ void FieldContainer::setField(const fstring& name, const Value& new_val)
 void FieldContainer::setField(const Field& field, const Value& new_val)
 {
   field.setValue(this, new_val);
-  if (itsObservable)
-    itsObservable->sendStateChangeMsg();
+  if (itsSignal)
+    itsSignal->sendStateChangeMsg();
 }
 
 void FieldContainer::readFieldsFrom(IO::Reader* reader,
@@ -168,8 +168,8 @@ DOTRACE("FieldContainer::readFieldsFrom");
       itr->readValueFrom(this, reader, itr->name());
     }
 
-  if (itsObservable)
-    itsObservable->sendStateChangeMsg();
+  if (itsSignal)
+    itsSignal->sendStateChangeMsg();
 }
 
 void FieldContainer::writeFieldsTo(IO::Writer* writer,

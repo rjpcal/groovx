@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 21 09:47:57 2001
+// written: Tue Aug 21 11:43:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -471,13 +471,13 @@ class FieldContainer : public virtual Util::Object
 {
 private:
   const FieldMap* itsFieldMap;
-  Util::Observable* itsObservable;
+  Util::Signal* itsSignal;
 
   FieldContainer(const FieldContainer&);
   FieldContainer& operator=(const FieldContainer&);
 
 public:
-  FieldContainer(Util::Observable* obs);
+  FieldContainer(Util::Signal* sig);
   virtual ~FieldContainer();
 
   void setFieldMap(const FieldMap& fields);

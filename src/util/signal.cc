@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// observable.cc
+// signal.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 11:33:12 2001
+// written: Tue Aug 21 11:45:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBSERVABLE_CC_DEFINED
-#define OBSERVABLE_CC_DEFINED
+#ifndef SIGNAL_CC_DEFINED
+#define SIGNAL_CC_DEFINED
 
-#include "util/observable.h"
+#include "util/signal.h"
 
 #include "util/dlink_list.h"
 #include "util/observer.h"
@@ -26,7 +26,7 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Observable::ObsImpl class
+// Signal::SigImpl class
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,48 +37,48 @@ namespace
   typedef dlink_list<ObsRef> ListType;
 }
 
-struct Util::Observable::ObsImpl
+struct Util::Signal::SigImpl
 {
   ListType itsObservers;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Observable method definitions
+// Signal method definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Observable::Observable() :
-  itsImpl(new ObsImpl)
+Util::Signal::Signal() :
+  itsImpl(new SigImpl)
 {
-DOTRACE("Util::Observable::Observable");
+DOTRACE("Util::Signal::Signal");
 }
 
-Util::Observable::~Observable()
+Util::Signal::~Signal()
 {
-DOTRACE("Util::Observable::~Observable");
+DOTRACE("Util::Signal::~Signal");
   delete itsImpl;
 }
 
-void Util::Observable::attach(Util::Observer* obs)
+void Util::Signal::connect(Util::Observer* sig)
 {
-DOTRACE("Util::Observable::attach");
-  if (!obs) return;
-  itsImpl->itsObservers.push_back(ObsRef(obs, Util::WEAK));
+DOTRACE("Util::Signal::connect");
+  if (!sig) return;
+  itsImpl->itsObservers.push_back(ObsRef(sig, Util::WEAK));
   DebugEvalNL(itsImpl->itsObservers.size());
 }
 
-void Util::Observable::detach(Util::Observer* obs)
+void Util::Signal::disconnect(Util::Observer* sig)
 {
-DOTRACE("Util::Observable::detach");
-  if (!obs) return;
-  itsImpl->itsObservers.remove(ObsRef(obs, Util::WEAK));
+DOTRACE("Util::Signal::disconnect");
+  if (!sig) return;
+  itsImpl->itsObservers.remove(ObsRef(sig, Util::WEAK));
   DebugEvalNL(itsImpl->itsObservers.size());
 }
 
-void Util::Observable::sendStateChangeMsg() const
+void Util::Signal::sendStateChangeMsg() const
 {
-DOTRACE("Util::Observable::sendStateChangeMsg");
+DOTRACE("Util::Signal::sendStateChangeMsg");
 
   for (ListType::iterator
          ii = itsImpl->itsObservers.begin(),
@@ -92,5 +92,5 @@ DOTRACE("Util::Observable::sendStateChangeMsg");
     }
 }
 
-static const char vcid_observable_cc[] = "$Header$";
-#endif // !OBSERVABLE_CC_DEFINED
+static const char vcid_signal_cc[] = "$Header$";
+#endif // !SIGNAL_CC_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Fri Aug 17 10:26:59 2001
+// written: Tue Aug 21 11:44:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "io/io.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
-#include "util/observable.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(SIGNAL_H_DEFINED)
+#include "util/signal.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
@@ -44,7 +44,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GxNode : public IO::IoObject, public Util::Observable
+class GxNode : public IO::IoObject, public Util::Signal
 {
 private:
   GxNode(const GxNode&);
@@ -77,7 +77,7 @@ public:
       that subclass will be rendered. The default implementation does
       nothing. */
   virtual void getBoundingBox(Gfx::Rect<double>& bbox,
-										Gfx::Canvas& canvas) const;
+                              Gfx::Canvas& canvas) const;
 
   /// Draw the object on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const = 0;

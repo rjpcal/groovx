@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 21 11:33:01 2001
+// written: Tue Aug 21 11:45:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ DOTRACE("GxSeparator::addChild");
 
   itsImpl->itsChildren.push_back(item);
 
-  item->attach(itsImpl);
+  item->connect(itsImpl);
 
   sendStateChangeMsg();
 
@@ -139,7 +139,7 @@ DOTRACE("GxSeparator::insertChild");
   itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
                               item);
 
-  item->attach(itsImpl);
+  item->connect(itsImpl);
 
   sendStateChangeMsg();
 }
@@ -149,7 +149,7 @@ void GxSeparator::removeChildAt(ChildId index)
 DOTRACE("GxSeparator::removeChildAt");
   if (index < itsImpl->itsChildren.size())
     {
-      itsImpl->itsChildren[index]->detach(itsImpl);
+      itsImpl->itsChildren[index]->disconnect(itsImpl);
       itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 
       sendStateChangeMsg();
@@ -170,7 +170,7 @@ DOTRACE("GxSeparator::removeChild");
     {
       if ( (*itr)->id() == target )
         {
-          (*itr)->detach(itsImpl);
+          (*itr)->disconnect(itsImpl);
           itsImpl->itsChildren.erase(itr);
           sendStateChangeMsg();
           break;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 11:33:37 2001
+// written: Tue Aug 21 11:43:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,10 +45,9 @@ class GrObjImpl;
  * an appropriate render mode with setRenderMode(). Public clients
  * call draw() or undraw() to display or hide the object. The caches
  * that mediate the various drawing modes are kept up to date by using
- * the Observable interface. Thus, whenever a manipulator changes a
+ * the Signal interface. Thus, whenever a manipulator changes a
  * parameter in a derived class, it should also call
- * Observable::sendStateChangeMsg() to indicate that an update is
- * needed.
+ * Signal::sendStateChangeMsg() to indicate that an update is needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
