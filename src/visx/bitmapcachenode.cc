@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Aug 10 14:41:28 2001
+// written: Fri Aug 10 18:10:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,12 @@
 
 #include "bitmaprep.h"
 #include "glbmaprenderer.h"
-#include "grobjimpl.h"
+#include "rect.h"
 #include "xbmaprenderer.h"
 
 #include "gfx/canvas.h"
 
 #include "util/error.h"
-#include "util/janitor.h"
 
 #include <GL/gl.h>
 
@@ -33,12 +32,7 @@
 fstring GrObjRenderer::BITMAP_CACHE_DIR(".");
 
 GrObjRenderer::GrObjRenderer() :
-#ifndef I686
-  itsMode(Gmodes::GLCOMPILE),
-#else
   itsMode(Gmodes::DIRECT_RENDER),
-#endif
-  itsUnMode(Gmodes::SWAP_FORE_BACK),
   itsCacheFilename(""),
   itsBitmapCache(0)
 {
@@ -63,11 +57,9 @@ DOTRACE("GrObjRenderer::invalidate");
   itsBitmapCache.reset( 0 );
 }
 
-bool GrObjRenderer::recacheBitmapIfNeeded(const Gnode* node,
-														const GrObjImpl* obj,
-                                          Gfx::Canvas& canvas) const
+bool GrObjRenderer::recacheBitmap(const Gnode* node, Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
+DOTRACE("GrObjRenderer::recacheBitmap");
 
   if (itsBitmapCache.get() != 0) return false;
 
@@ -75,12 +67,12 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
     {
     case Gmodes::GL_BITMAP_CACHE:
       itsBitmapCache.reset(
-         new BitmapRep(shared_ptr<BmapRenderer>(new GLBmapRenderer())));
+            new BitmapRep(shared_ptr<BmapRenderer>(new GLBmapRenderer())));
       break;
 
     case Gmodes::X11_BITMAP_CACHE:
       itsBitmapCache.reset(
-         new BitmapRep(shared_ptr<BmapRenderer>(new XBmapRenderer())));
+            new BitmapRep(shared_ptr<BmapRenderer>(new XBmapRenderer())));
       break;
     }
 
@@ -98,15 +90,13 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
 
   glPushAttrib(GL_COLOR_BUFFER_BIT);
   {
-	 glDrawBuffer(GL_FRONT);
+    glDrawBuffer(GL_FRONT);
 
-	 node->gnodeDraw(canvas);
+    node->gnodeDraw(canvas);
 
-	 itsBitmapCache->grabWorldRect(bmapbox);
+    itsBitmapCache->grabWorldRect(bmapbox);
   }
   glPopAttrib();
-
-  DebugEvalNL(itsMode);
 
   if (Gmodes::X11_BITMAP_CACHE == itsMode)
     {
@@ -132,27 +122,24 @@ DOTRACE("GrObjRenderer::setMode");
   itsMode = new_mode;
 }
 
-void GrObjRenderer::render(const Gnode* node, const GrObjImpl* impl,
-									Gfx::Canvas& canvas) const
+void GrObjRenderer::render(const Gnode* node, Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjRenderer::render");
   DebugEvalNL(itsMode);
-  switch (itsMode)
-    {
-    case Gmodes::GL_BITMAP_CACHE:
-    case Gmodes::X11_BITMAP_CACHE:
-		{
-		  bool objectDrawn = recacheBitmapIfNeeded(node, impl, canvas);
-		  if (!objectDrawn)
-			 {
-				Assert(itsBitmapCache.get() != 0);
-				itsBitmapCache->render(canvas);
-			 }
-		}
-      break;
 
-	 default:
-		node->gnodeDraw(canvas);
+  if (itsMode != Gmodes::GL_BITMAP_CACHE &&
+      itsMode != Gmodes::X11_BITMAP_CACHE)
+    {
+      node->gnodeDraw(canvas);
+    }
+  else
+    {
+      bool objectDrawn = recacheBitmap(node, canvas);
+      if (!objectDrawn)
+        {
+          Assert(itsBitmapCache.get() != 0);
+          itsBitmapCache->render(canvas);
+        }
     }
 }
 
@@ -163,15 +150,14 @@ DOTRACE("GrObjRenderer::unrender");
   node->gnodeUndraw(canvas);
 }
 
-void GrObjRenderer::saveBitmapCache(const Gnode* node, const GrObjImpl* obj,
-												Gfx::Canvas& canvas,
+void GrObjRenderer::saveBitmapCache(const Gnode* node, Gfx::Canvas& canvas,
                                     const char* filename) const
 {
   if (itsBitmapCache.get() != 0)
-	 {
-		itsCacheFilename = filename;
-		itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
-	 }
+    {
+      itsCacheFilename = filename;
+      itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
+    }
 }
 
 static const char vcid_grobjrenderer_cc[] = "$Header$";

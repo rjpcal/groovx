@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 17:51:28 2001
+// written: Fri Aug 10 18:09:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,6 @@ DOTRACE("GrObjImpl::readFrom");
     int temp;
     reader->readValue("GrObj::unRenderMode", temp);
     itsGLCache->setUnMode(temp);
-    itsRenderer.setUnMode(temp);
   }
 
   {
@@ -124,11 +123,11 @@ DOTRACE("GrObjImpl::writeTo");
 
   writer->writeValue("GrObj::category", itsCategory);
 
-  writer->writeValue("GrObj::renderMode", itsRenderer.getMode());
+  writer->writeValue("GrObj::renderMode", itsGLCache->getMode());
 
   writer->writeValue("GrObj::cacheFilename", itsRenderer.getCacheFilename());
 
-  writer->writeValue("GrObj::unRenderMode", itsRenderer.getUnMode());
+  writer->writeValue("GrObj::unRenderMode", itsGLCache->getUnMode());
 
   writer->writeValue("GrObj::bbVisibility", itsBB->isVisible());
 
@@ -160,7 +159,7 @@ DOTRACE("GrObjImpl::draw");
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
-  itsRenderer.render(itsGLCache.get(), this, canvas);
+  itsRenderer.render(itsGLCache.get(), canvas);
 
   canvas.throwIfError("during GrObj::draw");
 }

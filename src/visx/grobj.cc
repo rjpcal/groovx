@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 17:43:38 2001
+// written: Fri Aug 10 18:09:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,12 +45,12 @@ DOTRACE("GrObj::GrObj");
 
   DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
 
-  itsImpl->itsRenderer.setMode(render_mode);
-  itsImpl->itsRenderer.setUnMode(unrender_mode);
-
   // The GrObj needs to observe itself in order to update its display
   // list according to state changes.
   attach(this);
+
+  setRenderMode(render_mode);
+  setUnRenderMode(unrender_mode);
 
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
@@ -151,12 +151,12 @@ DOTRACE("GrObj::category");
 }
 
 Gmodes::RenderMode GrObj::getRenderMode() const {
-  return itsImpl->itsRenderer.getMode();
+  return itsImpl->itsGLCache->getMode();
 }
 
 Gmodes::RenderMode GrObj::getUnRenderMode() const {
 DOTRACE("GrObj::getUnRenderMode");
-  return itsImpl->itsRenderer.getUnMode();
+  return itsImpl->itsGLCache->getUnMode();
 }
 
 //////////////////
@@ -251,7 +251,6 @@ DOTRACE("GrObj::setRenderMode");
 void GrObj::setUnRenderMode(Gmodes::RenderMode mode) {
 DOTRACE("GrObj::setUnRenderMode");
 
-  itsImpl->itsRenderer.setUnMode(mode);
   itsImpl->itsGLCache->setUnMode(mode);
   sendStateChangeMsg();
 }
@@ -287,7 +286,7 @@ void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
 
   draw(canvas);
 
-  itsImpl->itsRenderer.saveBitmapCache(itsImpl->itsGLCache.get(), itsImpl,
+  itsImpl->itsRenderer.saveBitmapCache(itsImpl->itsGLCache.get(),
                                        canvas, filename);
 }
 
