@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Thu Jul 19 11:30:41 2001
+// written: Thu Jul 19 13:25:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,8 @@ public:
 
   void render(const GrObjImpl* obj, GWT::Canvas& canvas) const;
 
+  void unrender(const GrObjImpl* obj, GWT::Canvas& canvas) const;
+
   void saveBitmapCache(const GrObjImpl* obj, GWT::Canvas& canvas,
                        const char* filename);
 
@@ -61,8 +63,12 @@ public:
         postUpdated();
     }
 
+  GrObj::RenderMode getUnMode() const { return itsUnMode; }
+  void setUnMode(GrObj::RenderMode new_val) { itsUnMode = new_val; }
+
 private:
   GrObj::RenderMode itsMode;
+  GrObj::RenderMode itsUnMode;
 
   mutable dynamic_string itsCacheFilename;
 
