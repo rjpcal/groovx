@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar  5 15:03:18 2002
+// written: Tue May 14 20:45:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -528,24 +528,24 @@ SubMtxRef& SubMtxRef::operator=(const Mtx& other)
 ///////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_MATLAB
-Mtx::Mtx(mxArray* a, StoragePolicy s = COPY) :
+Mtx::Mtx(mxArray* a, StoragePolicy s) :
   Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
 {}
 
-Mtx::Mtx(const mxArray* a, StoragePolicy s = COPY) :
+Mtx::Mtx(const mxArray* a, StoragePolicy s) :
   Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
 {}
 #endif
 
-Mtx::Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
+Mtx::Mtx(double* data, int mrows, int ncols, StoragePolicy s) :
   Base(mrows, ncols, DataHolder(data, mrows, ncols, s))
 {}
 
-Mtx::Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
+Mtx::Mtx(int mrows, int ncols, InitPolicy p) :
   Base(mrows, ncols, DataHolder(mrows, ncols, p))
 {}
 
-Mtx::Mtx(const MtxShape& s, InitPolicy p = ZEROS) :
+Mtx::Mtx(const MtxShape& s, InitPolicy p) :
   Base(s.mrows(), s.ncols(), DataHolder(s.mrows(), s.ncols(), p))
 {}
 
