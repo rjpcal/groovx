@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 13:31:08 2002
+// written: Mon Sep 16 17:07:44 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -986,21 +986,6 @@ Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
 Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
 
 Gfx::Canvas& Togl::getCanvas() const { return rep->itsGlx->canvas(); }
-
-///////////////////////////////////////////////////////////////////////
-//
-// Togl Tcl package
-//
-///////////////////////////////////////////////////////////////////////
-
-extern "C" int Togl_Init(Tcl_Interp *interp)
-{
-DOTRACE("Togl_Init");
-
-  Tcl_PkgProvide(interp, "Togl", TOGL_VERSION);
-
-  return TCL_OK;
-}
 
 static const char vcid_togl_cc[] = "$Header$";
 #endif // !TOGL_CC_DEFINED
