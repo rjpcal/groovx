@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Sep 29 20:26:45 1999
+// written: Wed Sep 29 20:27:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,12 +159,14 @@ public:
 
   template <class T>
   PropertyInfo(const string& name_, PropPtr property_,
-					T min_, T max_, T res_) :
+					T min_, T max_, T res_, bool new_group = false) :
 	 name(name_),
 	 property(property_),
 	 min(new TValue<T>(min_)),
 	 max(new TValue<T>(max_)),
-	 res(new TValue<T>(res_)) {}
+	 res(new TValue<T>(res_)),
+	 startNewGroup(new_group) 
+  {}
   
   PropertyInfo& operator=(const PropertyInfo& rhs) {
 	 name = rhs.name;
