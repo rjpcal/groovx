@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 11:13:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
-#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +27,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FixPt : public GrObj, public FieldContainer {
+class FixPt : public GrObj {
 protected:
   /// Construct with initial values for the cross length and pixel-width.
   FixPt (double len=0.1, int wid=1);

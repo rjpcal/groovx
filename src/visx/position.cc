@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 15 06:42:26 2001
+// written: Wed Aug 15 11:26:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,9 +69,13 @@ struct PositionImpl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& Position::classFields() { return POS_FIELDS; }
+const FieldMap& Position::classFields()
+{
+  return POS_FIELDS;
+}
 
-Position* Position::make() {
+Position* Position::make()
+{
 DOTRACE("Position::make");
   return new Position;
 }
@@ -87,6 +91,8 @@ Position::Position() :
 DOTRACE("Position::Position()");
 
   DebugEvalNL((void *) itsImpl);
+
+  setFieldMap(POS_FIELDS);
 }
 
 Position::~Position()

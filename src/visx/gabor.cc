@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 15 06:40:18 2001
+// written: Wed Aug 15 11:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,8 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                        &GrObj::classFields());
 
   const IO::VersionId GABOR_SERIAL_VERSION_ID = 1;
 }
@@ -73,7 +74,6 @@ DOTRACE("Gabor::make");
 }
 
 Gabor::Gabor() :
-  FieldContainer(this),
   colorMode(1),
   contrast(1.0),
   spatialFreq(3.5),

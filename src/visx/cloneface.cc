@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Aug 15 11:21:15 2001
+// written: Wed Aug 15 11:38:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                            &Face::classFields());
 }
 
 ///////////////////////////////////////////////////////////////////////

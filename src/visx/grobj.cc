@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 14 13:03:47 2001
+// written: Wed Aug 15 11:39:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,9 @@
 
 Util::Tracer GrObj::tracer;
 
+namespace
+{
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -39,6 +42,7 @@ Util::Tracer GrObj::tracer;
 // GrObj default constructor
 GrObj::GrObj(Gmodes::RenderMode render_mode,
              Gmodes::RenderMode unrender_mode) :
+  FieldContainer(this),
   itsImpl(new GrObjImpl(this))
 {
 DOTRACE("GrObj::GrObj");
@@ -59,35 +63,45 @@ DOTRACE("GrObj::GrObj");
 }
 
 // GrObj destructor
-GrObj::~GrObj() {
+GrObj::~GrObj()
+{
 DOTRACE("GrObj::~GrObj");
   detach(this);
   delete itsImpl;
 }
 
-IO::VersionId GrObj::serialVersionId() const {
+IO::VersionId GrObj::serialVersionId() const
+{
 DOTRACE("GrObj::serialVersionId");
   return itsImpl->serialVersionId();
 }
 
-void GrObj::readFrom(IO::Reader* reader) {
+void GrObj::readFrom(IO::Reader* reader)
+{
 DOTRACE("GrObj::readFrom");
 
   itsImpl->readFrom(reader);
   sendStateChangeMsg();
 }
 
-void GrObj::writeTo(IO::Writer* writer) const {
+void GrObj::writeTo(IO::Writer* writer) const
+{
 DOTRACE("GrObj::writeTo");
 
   itsImpl->writeTo(writer);
+}
+
+const FieldMap& GrObj::classFields()
+{
+  return *FieldMap::emptyFieldMap();
 }
 
 ///////////////
 // accessors //
 ///////////////
 
-bool GrObj::getBBVisibility() const {
+bool GrObj::getBBVisibility() const
+{
 DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
@@ -105,56 +119,67 @@ DOTRACE("GrObj::getScalingMode");
   return itsImpl->itsScaler->getMode();
 }
 
-double GrObj::getWidth() const {
+double GrObj::getWidth() const
+{
 DOTRACE("GrObj::getWidth");
   return itsImpl->itsScaler->scaledWidth(grGetBoundingBox());
 }
 
-double GrObj::getHeight() const {
+double GrObj::getHeight() const
+{
 DOTRACE("GrObj::getHeight");
   return itsImpl->itsScaler->scaledHeight(grGetBoundingBox());
 }
 
-double GrObj::getAspectRatio() const {
+double GrObj::getAspectRatio() const
+{
 DOTRACE("GrObj::getAspectRatio");
   return itsImpl->itsScaler->aspectRatio();
 }
 
-double GrObj::getMaxDimension() const {
+double GrObj::getMaxDimension() const
+{
 DOTRACE("GrObj::getMaxDimension");
   return itsImpl->itsScaler->scaledMaxDim(grGetBoundingBox());
 }
 
-Gmodes::AlignmentMode GrObj::getAlignmentMode() const {
+Gmodes::AlignmentMode GrObj::getAlignmentMode() const
+{
 DOTRACE("GrObj::getAlignmentMode");
   return itsImpl->itsAligner->getMode();
 }
 
-double GrObj::getCenterX() const {
+double GrObj::getCenterX() const
+{
 DOTRACE("GrObj::getCenterX");
   return itsImpl->itsAligner->itsCenter.x();
 }
 
-double GrObj::getCenterY() const {
+double GrObj::getCenterY() const
+{
 DOTRACE("GrObj::getCenterY");
   return itsImpl->itsAligner->itsCenter.y();
 }
 
-int GrObj::getPixelBorder() const {
+int GrObj::getPixelBorder() const
+{
 DOTRACE("GrObj::getPixelBorder");
   return itsImpl->itsBB->pixelBorder();
 }
 
-int GrObj::category() const {
+int GrObj::category() const
+{
 DOTRACE("GrObj::category");
   return itsImpl->itsCategory;
 }
 
-Gmodes::RenderMode GrObj::getRenderMode() const {
+Gmodes::RenderMode GrObj::getRenderMode() const
+{
   return itsImpl->itsGLCache->getMode();
 }
 
-Gmodes::RenderMode GrObj::getUnRenderMode() const {
+Gmodes::RenderMode GrObj::getUnRenderMode() const
+{
 DOTRACE("GrObj::getUnRenderMode");
   return itsImpl->itsGLCache->getUnMode();
 }
@@ -163,7 +188,8 @@ DOTRACE("GrObj::getUnRenderMode");
 // manipulators //
 //////////////////
 
-void GrObj::setBitmapCacheDir(const char* dirname) {
+void GrObj::setBitmapCacheDir(const char* dirname)
+{
 DOTRACE("GrObj::setBitmapCacheDir");
   BitmapCacheNode::BITMAP_CACHE_DIR = dirname;
 }
@@ -182,66 +208,76 @@ DOTRACE("GrObj::setScalingMode");
   sendStateChangeMsg();
 }
 
-void GrObj::setWidth(double val) {
+void GrObj::setWidth(double val)
+{
 DOTRACE("GrObj::setWidth");
 
   itsImpl->itsScaler->setWidth(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
-void GrObj::setHeight(double val) {
+void GrObj::setHeight(double val)
+{
 DOTRACE("GrObj::setHeight");
 
   itsImpl->itsScaler->setHeight(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
-void GrObj::setAspectRatio(double val) {
+void GrObj::setAspectRatio(double val)
+{
 DOTRACE("GrObj::setAspectRatio");
 
   itsImpl->itsScaler->setAspectRatio(val);
   sendStateChangeMsg();
 }
 
-void GrObj::setMaxDimension(double val) {
+void GrObj::setMaxDimension(double val)
+{
 DOTRACE("GrObj::setMaxDimension");
 
   itsImpl->itsScaler->setMaxDim(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
-void GrObj::setAlignmentMode(Gmodes::AlignmentMode val) {
+void GrObj::setAlignmentMode(Gmodes::AlignmentMode val)
+{
 DOTRACE("GrObj::setAlignmentMode");
 
   itsImpl->itsAligner->setMode(val);
   sendStateChangeMsg();
 }
 
-void GrObj::setCenterX(double val) {
+void GrObj::setCenterX(double val)
+{
 DOTRACE("GrObj::setCenterX");
 
   itsImpl->itsAligner->itsCenter.x() = val;
   sendStateChangeMsg();
 }
 
-void GrObj::setCenterY(double val) {
+void GrObj::setCenterY(double val)
+{
 DOTRACE("GrObj::setCenterY");
 
   itsImpl->itsAligner->itsCenter.y() = val;
   sendStateChangeMsg();
 }
 
-void GrObj::setPixelBorder(int pixels) {
+void GrObj::setPixelBorder(int pixels)
+{
 DOTRACE("GrObj::setPixelBorder");
   itsImpl->itsBB->setPixelBorder(pixels);
 }
 
-void GrObj::setCategory(int val) {
+void GrObj::setCategory(int val)
+{
 DOTRACE("GrObj::setCategory");
   itsImpl->itsCategory = val;
 }
 
-void GrObj::setRenderMode(Gmodes::RenderMode mode) {
+void GrObj::setRenderMode(Gmodes::RenderMode mode)
+{
 DOTRACE("GrObj::setRenderMode");
 
   itsImpl->itsBitmapCache->setMode(mode);
@@ -249,14 +285,16 @@ DOTRACE("GrObj::setRenderMode");
   sendStateChangeMsg();
 }
 
-void GrObj::setUnRenderMode(Gmodes::RenderMode mode) {
+void GrObj::setUnRenderMode(Gmodes::RenderMode mode)
+{
 DOTRACE("GrObj::setUnRenderMode");
 
   itsImpl->itsGLCache->setUnMode(mode);
   sendStateChangeMsg();
 }
 
-void GrObj::receiveStateChangeMsg(const Util::Observable* obj) {
+void GrObj::receiveStateChangeMsg(const Util::Observable* obj)
+{
 DOTRACE("GrObj::receiveStateChangeMsg");
   DebugEval((void*)this);
   DebugEval((void*)dynamic_cast<GrObj*>(this));

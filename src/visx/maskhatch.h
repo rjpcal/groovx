@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 11:13:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
-#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +28,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MaskHatch : public GrObj, public FieldContainer {
+class MaskHatch : public GrObj {
 protected:
   /// Default constructor.
   MaskHatch();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Aug 15 06:40:18 2001
+// written: Wed Aug 15 11:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,8 @@ namespace
 
   typedef MorphyFace MF;
 
-  const FieldInfo FINFOS[] = {
+  const FieldInfo FINFOS[] =
+  {
     FieldInfo("category", &MF::mfaceCategory, 0, 0, 10, 1, true),
 
     FieldInfo("faceWidth", &MF::faceWidth, 2.75, 1.5, 3.5, 0.1),
@@ -94,7 +95,8 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                        &GrObj::classFields());
 
   const unsigned int NUM_HAIR_POINTS = 15;
   const double* getHairVertices(double top_width, double hair_width)
@@ -188,7 +190,6 @@ DOTRACE("MorphyFace::make");
 
 MorphyFace::MorphyFace() :
   GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
-  FieldContainer(this),
 
   mfaceCategory(0),
 

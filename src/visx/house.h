@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 11:13:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
-#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +29,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class House : public GrObj, public FieldContainer {
+class House : public GrObj {
 protected:
   /// Default constructor.
   House();

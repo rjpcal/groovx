@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug 15 10:51:23 2001
+// written: Wed Aug 15 11:26:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -484,7 +484,7 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap TRIAL_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap TRIAL_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }
 
 //////////////

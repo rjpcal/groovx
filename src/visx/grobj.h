@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Aug 13 16:43:16 2001
+// written: Wed Aug 15 11:16:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gfx/gxnode.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVER_H_DEFINED)
@@ -57,6 +61,7 @@ class GrObjImpl;
 ///////////////////////////////////////////////////////////////////////
 
 class GrObj : public GxNode,
+              public FieldContainer,
               public Util::Observer
 {
 public:
@@ -78,6 +83,8 @@ public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
+
+  static const FieldMap& classFields();
 
   ///////////////////////////////////////////////////////////////////////
   //

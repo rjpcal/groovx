@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 15 06:40:19 2001
+// written: Wed Aug 15 11:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,8 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                       &GrObj::classFields());
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
 }
@@ -129,7 +130,6 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  FieldContainer(this),
   fishCategory(-1),
   dorsalFinCoord(itsCoords[0]),
   tailFinCoord(itsCoords[1]),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug 15 06:40:18 2001
+// written: Wed Aug 15 11:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,8 @@ namespace
     FieldInfo("width", &FixPt::width, 1, 1, 100, 1)
   };
 
-  const FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2);
+  FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2,
+                        &GrObj::classFields());
 
   const IO::VersionId FIXPT_SERIAL_VERSION_ID = 2;
 }
@@ -65,7 +66,6 @@ DOTRACE("FixPt::make");
 }
 
 FixPt::FixPt(double len, int wid) :
-  FieldContainer(this),
   length(len), width(wid)
 {
   setFieldMap(FIXPT_FIELDS);

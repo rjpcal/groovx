@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 10:25:09 2001
+// written: Wed Aug 15 11:40:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,8 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                       &GrObj::classFields());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +84,6 @@ DOTRACE("Face::make");
 }
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
-  FieldContainer(this),
   faceCategory(categ),
   eyeHeight(eh),
   eyeDistance(es),

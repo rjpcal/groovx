@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 11:13:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,6 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
-#include "io/fields.h"
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -30,7 +26,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MorphyFace : public GrObj, public FieldContainer {
+class MorphyFace : public GrObj {
   //////////////
   // creators //
   //////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Aug 15 06:40:18 2001
+// written: Wed Aug 15 11:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,8 @@ namespace
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+  FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                        &GrObj::classFields());
 
   void drawWindow(int num_vert_bars, int num_horiz_bars) {
     // Draw 1x1 window centered on (0,0)
@@ -176,7 +177,6 @@ DOTRACE("House::make");
 }
 
 House::House() :
-  FieldContainer(this),
   storyAspectRatio(3.0),
   numStories(2),
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 06:40:18 2001
+// written: Wed Aug 15 11:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,29 +28,35 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace {
-  const FieldInfo MASK_FINFOS[] = {
+namespace
+{
+  const FieldInfo MASK_FINFOS[] =
+  {
     FieldInfo("numLines", &MaskHatch::numLines, 5, 0, 25, 1, true),
     FieldInfo("lineWidth", &MaskHatch::lineWidth, 1, 0, 25, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS);
+  FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS,
+                       &GrObj::classFields());
 
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
 }
 
-const FieldMap& MaskHatch::classFields() { return MASK_FIELDS; }
+const FieldMap& MaskHatch::classFields()
+{
+  return MASK_FIELDS;
+}
 
-MaskHatch* MaskHatch::make() {
+MaskHatch* MaskHatch::make()
+{
 DOTRACE("MaskHatch::make");
   return new MaskHatch;
 }
 
 MaskHatch::MaskHatch () :
   GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
-  FieldContainer(this),
   numLines(10, 0, 1000),
   lineWidth(1, 0, 1000)
 {
@@ -62,16 +68,19 @@ DOTRACE("MaskHatch::MaskHatch");
   DebugEval(getAlignmentMode());
 }
 
-MaskHatch::~MaskHatch() {
+MaskHatch::~MaskHatch()
+{
 DOTRACE("MaskHatch::~MaskHatch");
 }
 
-IO::VersionId MaskHatch::serialVersionId() const {
+IO::VersionId MaskHatch::serialVersionId() const
+{
 DOTRACE("MaskHatch::serialVersionId");
  return MASKHATCH_SERIAL_VERSION_ID;
 }
 
-void MaskHatch::readFrom(IO::Reader* reader) {
+void MaskHatch::readFrom(IO::Reader* reader)
+{
 DOTRACE("MaskHatch::readFrom");
 
   reader->ensureReadVersionId("MaskHatch", 2, "Try grsh0.8a4");
@@ -81,7 +90,8 @@ DOTRACE("MaskHatch::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void MaskHatch::writeTo(IO::Writer* writer) const {
+void MaskHatch::writeTo(IO::Writer* writer) const
+{
 DOTRACE("MaskHatch::writeTo");
 
   writer->ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
@@ -98,7 +108,8 @@ void MaskHatch::receiveStateChangeMsg(const Util::Observable* obj)
   GrObj::receiveStateChangeMsg(obj);
 }
 
-Gfx::Rect<double> MaskHatch::grGetBoundingBox() const {
+Gfx::Rect<double> MaskHatch::grGetBoundingBox() const
+{
 DOTRACE("MaskHatch::grGetBoundingBox");
 
   Gfx::Rect<double> bbox;
@@ -108,7 +119,8 @@ DOTRACE("MaskHatch::grGetBoundingBox");
   return bbox;
 }
 
-void MaskHatch::grRender(Gfx::Canvas&, DrawMode) const {
+void MaskHatch::grRender(Gfx::Canvas&, DrawMode) const
+{
 DOTRACE("MaskHatch::grRender");
 
   if (numLines() == 0) return;
@@ -119,31 +131,32 @@ DOTRACE("MaskHatch::grRender");
 
     glBegin(GL_LINES);
     {
-      for (int i = 0; i < numLines(); ++i) {
-        GLdouble position = double(i)/numLines();
+      for (int i = 0; i < numLines(); ++i)
+        {
+          GLdouble position = double(i)/numLines();
 
-        // horizontal line
-        glVertex2d(0.0, position);
-        glVertex2d(1.0, position);
+          // horizontal line
+          glVertex2d(0.0, position);
+          glVertex2d(1.0, position);
 
-        // vertical line
-        glVertex2d(position, 0.0);
-        glVertex2d(position, 1.0);
+          // vertical line
+          glVertex2d(position, 0.0);
+          glVertex2d(position, 1.0);
 
-        // lines with slope = 1
-        glVertex2d(0.0, position);
-        glVertex2d(1.0-position, 1.0);
+          // lines with slope = 1
+          glVertex2d(0.0, position);
+          glVertex2d(1.0-position, 1.0);
 
-        glVertex2d(position, 0.0);
-        glVertex2d(1.0, 1.0-position);
+          glVertex2d(position, 0.0);
+          glVertex2d(1.0, 1.0-position);
 
-        // lines with slope = -1
-        glVertex2d(0.0, 1.0-position);
-        glVertex2d(1.0-position, 0.0);
+          // lines with slope = -1
+          glVertex2d(0.0, 1.0-position);
+          glVertex2d(1.0-position, 0.0);
 
-        glVertex2d(position, 1.0);
-        glVertex2d(1.0, position);
-      }
+          glVertex2d(position, 1.0);
+          glVertex2d(1.0, position);
+        }
 
       // final closing lines
       glVertex2d(0.0, 1.0);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Wed Aug 15 11:12:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "grobj.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
-#include "io/fields.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
@@ -35,7 +31,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Fish : public GrObj, public FieldContainer {
+class Fish : public GrObj {
 public:
   /// This tracer dynamically controls the tracing of \c Fish member functions.
   static Util::Tracer tracer;
