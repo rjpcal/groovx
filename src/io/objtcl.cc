@@ -212,13 +212,11 @@ DOTRACE("Obj_Init");
   pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
   pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
-  pkg->eval("proc new {args} { eval Obj::new $args }\n"
-            "\n"
-            "proc newarr {args} { eval Obj::newarr $args }\n"
-            "\n"
-            "proc delete {args} { eval Obj::delete $args }\n"
-            "\n"
-            "proc ::-> {args} {\n"
+  pkg->namespaceAlias("::", "new");
+  pkg->namespaceAlias("::", "newarr");
+  pkg->namespaceAlias("::", "delete");
+
+  pkg->eval("proc ::-> {args} {\n"
             "  set ids [lindex $args 0]\n"
             "  set namesp [Obj::type [lindex $ids 0]]\n"
             "  set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
