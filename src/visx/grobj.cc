@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 15:01:28 2001
+// written: Fri Aug 10 16:33:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,14 +89,14 @@ DOTRACE("GrObj::writeTo");
 
 bool GrObj::getBBVisibility() const {
 DOTRACE("GrObj::getBBVisibility");
-  return itsImpl->itsBB.isVisible();
+  return itsImpl->itsBB->isVisible();
 }
 
 void GrObj::getBoundingBox(Gfx::Canvas& canvas, Rect<double>& bbox) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
-  bbox = itsImpl->itsBB.withBorder(grGetBoundingBox(), canvas);
+  bbox = itsImpl->itsBB->gnodeBoundingBox(canvas);
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const
@@ -142,7 +142,7 @@ DOTRACE("GrObj::getCenterY");
 
 int GrObj::getPixelBorder() const {
 DOTRACE("GrObj::getPixelBorder");
-  return itsImpl->itsBB.pixelBorder();
+  return itsImpl->itsBB->pixelBorder();
 }
 
 int GrObj::category() const {
@@ -170,7 +170,7 @@ DOTRACE("GrObj::setBitmapCacheDir");
 
 void GrObj::setBBVisibility(bool visibility)
 {
-  itsImpl->itsBB.setVisible(visibility);
+  itsImpl->itsBB->setVisible(visibility);
 }
 
 void GrObj::setScalingMode(Gmodes::ScalingMode val)
@@ -232,7 +232,7 @@ DOTRACE("GrObj::setCenterY");
 
 void GrObj::setPixelBorder(int pixels) {
 DOTRACE("GrObj::setPixelBorder");
-  itsImpl->itsBB.setPixelBorder(pixels);
+  itsImpl->itsBB->setPixelBorder(pixels);
 }
 
 void GrObj::setCategory(int val) {

@@ -20,6 +20,8 @@
 #include "grobjimpl.h"
 #include "xbmaprenderer.h"
 
+#include "gfx/canvas.h"
+
 #include "util/error.h"
 #include "util/janitor.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 15:11:01 2001
+// written: Fri Aug 10 16:31:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ class GrObjNode : public Gnode {
   borrowed_ptr<GrObj> itsObj;
 
 public:
-  GrObjNode(GrObj* obj) : itsObj(obj) {}
+  GrObjNode(GrObj* obj) : Gnode(), itsObj(obj) {}
 
   virtual ~GrObjNode() {}
 
@@ -78,7 +78,7 @@ public:
   shared_ptr<GrObjNode> itsObjNode;
 
   int itsCategory;
-  GrObjBBox itsBB;
+  shared_ptr<GrObjBBox> itsBB;
   GrObjScaler itsScaler;
   GrObjAligner itsAligner;
   GrObjRenderer itsRenderer;

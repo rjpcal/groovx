@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Fri Aug 10 10:56:09 2001
+// written: Fri Aug 10 16:34:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,22 @@
 #ifndef GROBJBBOX_H_DEFINED
 #define GROBJBBOX_H_DEFINED
 
-#include "rect.h"
-
-#include "gfx/canvas.h"
+#include "gnode.h"
 
 class GrObjImpl;
 
-class GrObjBBox {
+class GrObjBBox : public Gnode {
 private:
   GrObjBBox(const GrObjBBox&);
   GrObjBBox& operator=(const GrObjBBox&);
 
 public:
-  GrObjBBox(const GrObjImpl* owner) :
-    itsIsVisible(false),
+  GrObjBBox(const GrObjImpl* owner, shared_ptr<Gnode> child) :
+    Gnode(child),
     itsOwner(owner),
+    itsIsVisible(false),
     itsPixelBorder(4)
   {}
-
-  Rect<double> withBorder(const Rect<double>& native,
-                          Gfx::Canvas& canvas) const;
 
   bool isVisible() const { return itsIsVisible; }
   void setVisible(bool val) { itsIsVisible = val; }
@@ -40,13 +36,15 @@ public:
   void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
   int pixelBorder() const { return itsPixelBorder; }
 
-  void draw(Rect<double>& bounds, Gfx::Canvas& canvas) const;
+  virtual void gnodeDraw(Gfx::Canvas& canvas) const;
+  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
+
+  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
-  // data
-  bool itsIsVisible;
+  const GrObjImpl* itsOwner;
 
-  const GrObjImpl* const itsOwner;
+  bool itsIsVisible;
 
   mutable int itsPixelBorder;
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Aug 10 10:46:50 2001
+// written: Fri Aug 10 16:36:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,16 +16,19 @@
 #include "grobjbbox.h"
 
 #include "grobjimpl.h"
+#include "rect.h"
+
+#include "gfx/canvas.h"
 
 #include <GL/gl.h>
 
 #include "util/trace.h"
 
-Rect<double> GrObjBBox::withBorder(
-  const Rect<double>& native,
-  Gfx::Canvas& canvas) const
+Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::withBorder");
+
+  const Rect<double> native = child()->gnodeBoundingBox(canvas);
 
   // Do the object's internal scaling and alignment, and find the
   // bounding box in screen coordinates
@@ -51,11 +54,13 @@ DOTRACE("GrObjBBox::withBorder");
   return canvas.getWorldFromScreen(screen_pos);
 }
 
-void GrObjBBox::draw(Rect<double>& bounds, Gfx::Canvas& canvas) const
+void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjBBox::draw");
+DOTRACE("GrObjBBox::gnodeDraw");
 
   if (!itsIsVisible) return;
+
+  Rect<double> bounds = child()->gnodeBoundingBox(canvas);
 
   glPushAttrib(GL_LINE_BIT);
   {
@@ -71,6 +76,11 @@ DOTRACE("GrObjBBox::draw");
     glEnd();
   }
   glPopAttrib();
+}
+
+void GrObjBBox::gnodeUndraw(Gfx::Canvas& canvas) const
+{
+  gnodeDraw(canvas);
 }
 
 static const char vcid_grobjbbox_cc[] = "$Header$";

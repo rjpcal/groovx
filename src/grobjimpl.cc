@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 15:02:08 2001
+// written: Fri Aug 10 16:35:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ namespace
 GrObjImpl::GrObjImpl(GrObj* obj) :
   itsObjNode(new GrObjNode(obj)),
   itsCategory(-1),
-  itsBB(this),
+  itsBB(new GrObjBBox(this, itsObjNode)),
   itsScaler(),
   itsAligner(),
   itsRenderer()
@@ -93,7 +93,7 @@ DOTRACE("GrObjImpl::readFrom");
   {
     bool val;
     reader->readValue("GrObj::bbVisibility", val);
-    itsBB.setVisible(val);
+    itsBB->setVisible(val);
   }
 
   {
@@ -127,7 +127,7 @@ DOTRACE("GrObjImpl::writeTo");
 
   writer->writeValue("GrObj::unRenderMode", itsRenderer.getUnMode());
 
-  writer->writeValue("GrObj::bbVisibility", itsBB.isVisible());
+  writer->writeValue("GrObj::bbVisibility", itsBB->isVisible());
 
   writer->writeValue("GrObj::scalingMode", itsScaler.getMode());
   writer->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
@@ -163,7 +163,7 @@ DOTRACE("GrObjImpl::draw");
 
       itsRenderer.render(itsObjNode.get(), canvas);
 
-      itsBB.draw(bbox, canvas);
+      itsBB->gnodeDraw(canvas);
     }
 
   canvas.throwIfError("during GrObj::draw");
@@ -209,21 +209,20 @@ DOTRACE("GrObjImpl::undrawDirectRender");
 
   itsRenderer.unrender(itsObjNode.get(), canvas);
 
-  itsBB.draw(bbox, canvas);
+  itsBB->gnodeUndraw(canvas);
 }
 
 void GrObjImpl::undrawClearBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjImpl::undrawClearBoundingBox");
 
-  Rect<double> world_pos =
-    itsBB.withBorder(itsObjNode->gnodeBoundingBox(canvas), canvas);
+  Rect<double> world_pos = itsBB->gnodeBoundingBox(canvas);
 
   Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
 
   // Add an extra one-pixel border around the rect
-  screen_pos.widenByStep(itsBB.pixelBorder());
-  screen_pos.heightenByStep(itsBB.pixelBorder());
+  screen_pos.widenByStep(itsBB->pixelBorder());
+  screen_pos.heightenByStep(itsBB->pixelBorder());
 
   canvas.clearColorBuffer(screen_pos);
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 13:36:59 2001
-// written: Fri Aug 10 13:59:35 2001
+// written: Fri Aug 10 16:30:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,8 @@ protected:
 
 public:
   Gnode() : itsChild() {}
+
+  Gnode(shared_ptr<Gnode> child) : itsChild(child) {}
 
   virtual ~Gnode();
 
