@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Nov 15 16:05:48 1999
+// written: Tue Nov 16 14:43:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -339,7 +339,9 @@ DOTRACE("MorphyFace::getPropertyInfos");
   typedef MorphyFace MF;
 
   if (p.size() == 0) {
-	 p.push_back(PInfo("faceWidth", &MF::faceWidth, 1.5, 3.5, 0.1, true));
+	 p.push_back(PInfo("category", &MF::category, 0, 10, 1, true));
+
+	 p.push_back(PInfo("faceWidth", &MF::faceWidth, 1.5, 3.5, 0.1));
 	 p.push_back(PInfo("topWidth", &MF::topWidth, 0.05, 2.0, 0.05));
 	 p.push_back(PInfo("bottomWidth", &MF::bottomWidth, 0.05, 2.0, 0.05));
 	 p.push_back(PInfo("topHeight", &MF::topHeight, 0.5, 5.0, 0.25));
