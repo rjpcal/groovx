@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Nov 16 12:04:53 2000
+// written: Tue Dec  5 15:34:38 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -208,6 +208,11 @@ class ExptTcl::ExptPkg : public Tcl::CTclItemPkg<ExptDriver>,
 {
 public:
   ExptPkg(Tcl_Interp* interp);
+
+  virtual ~ExptPkg()
+    {
+		itsExptDriver.edClearExpt();
+	 }
 
   virtual IO::IoObject& getIoFromId(int) { return itsExptDriver; }
 
