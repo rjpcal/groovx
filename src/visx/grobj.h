@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Nov 10 12:41:51 1999
+// written: Mon Nov 15 15:54:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,8 @@
 #include "observer.h"
 #endif
 
-class GrObjImpl;
+template <class V> class Point;
+template <class V> class Rect;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -182,16 +183,14 @@ public:
   /** This will return the bounding box given by grGetBoundingBox(),
 		except that those values will be modified to reflect internal
 		scaling, translation, and pixel border values. */
-  bool getBoundingBox(double& left, double& top,
-							 double& right, double& bottom) const;
+  bool getBoundingBox(Rect<double>& bounding_box) const;
 
   /** Subclasses may override this function to fill in the parameters
 		with the bounding box in GL coordinates for the object's onscreen
 		image. The function returns true if a bounding box has provided,
 		or false if no bounding box is available. The default
 		implementation provided by GrObj returns false. */
-  protected: virtual bool grGetBoundingBox(double& left, double& top,
-														 double& right, double& bottom,
+  protected: virtual bool grGetBoundingBox(Rect<double>& bounding_box,
 														 int& border_pixels) const;
 
 public:
@@ -225,7 +224,7 @@ public:
 
   /**@name Screen-World coordinate conversion
 	*
-   * These two functions convert between world coordinates (OpenGL
+   * These functions convert between world coordinates (OpenGL
    * object coordinates) and screen/window coordinates. Normally the
    * OpenGL state (modelview matrix, projection matrix, and viewport)
    * is re-queried each time, but if it is known that the OpenGL state
@@ -241,6 +240,13 @@ public:
   static void getWorldFromScreen(int screen_x, int screen_y,
 											double& world_x, double& world_y,
 											bool recalculate_state = true);
+
+  ///
+  static Point<int> getScreenFromWorld(const Point<double>& world_pos,
+													bool recalculate_state = true);
+  ///
+  static Point<double> getWorldFromScreen(const Point<int>& screen_pos,
+														bool recalculate_state = true);
   //@}
 
   //////////////////
@@ -327,8 +333,9 @@ protected:
   int grDisplayList() const;
 
 private:
-  friend class GrObjImpl;
-  GrObjImpl* const itsImpl;	  // opaque pointer to implementation
+  class Impl;
+  friend class ::GrObj::Impl;
+  Impl* const itsImpl;	  // opaque pointer to implementation
 };
 
 static const char vcid_grobj_h[] = "$Header$";
