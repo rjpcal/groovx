@@ -41,16 +41,22 @@ GlWindowInterface::~GlWindowInterface()
 DOTRACE("GlWindowInterface::~GlWindowInterface");
 }
 
-#define GL_PLATFORM_X11
-
-#ifdef GL_PLATFORM_X11
+#if defined(GL_PLATFORM_GLX)
 #  include "gfx/glxwrapper.h"
 shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
 {
-DOTRACE("GlWindowInterface::make");
+DOTRACE("GlWindowInterface::make[glx]");
   return shared_ptr<GlWindowInterface>
     (GlxWrapper::make(dpy, opts, (GlxWrapper*)0 /*shared context*/));
+}
+#elif defined(GL_PLATFORM_AGL)
+#  include "gfx/aglwrapper.h"
+shared_ptr<GlWindowInterface>
+GlWindowInterface::make(Display* dpy, GlxOpts& opts)
+{
+DOTRACE("GlWindowInterface::make[agl]");
+  return shared_ptr<GlWindowInterface>(AglWrapper::make(dpy, opts));
 }
 #else
 #  error no GL_PLATFORM macro defined!

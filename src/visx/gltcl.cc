@@ -46,10 +46,16 @@
 #include "util/arrays.h"
 #include "util/error.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <cmath>                // for sqrt() in drawThickLine
 #include <map>
+
+#if defined(GL_PLATFORM_GLX)
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#elif defined(GL_PLATFORM_AGL)
+#  include <AGL/gl.h>
+#  include <AGL/glu.h>
+#endif
 
 #include "util/trace.h"
 
@@ -230,7 +236,9 @@ namespace GLTcl
       { NAMEVAL(GL_POLYGON_OFFSET_POINT) },
       { NAMEVAL(GL_POLYGON_OFFSET_LINE) },
       { NAMEVAL(GL_POLYGON_OFFSET_FILL) },
+#ifdef GL_PLATFORM_GLX
       { NAMEVAL(GL_RESCALE_NORMAL_EXT) },
+#endif
 
       // for glMatrixMode
       { NAMEVAL(GL_MODELVIEW) },

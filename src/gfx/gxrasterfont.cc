@@ -32,6 +32,8 @@
 
 #include "gxrasterfont.h"
 
+#if defined(GL_PLATFORM_GLX)
+
 #include "gfx/glcanvas.h"
 
 #include "gx/bbox.h"
@@ -303,6 +305,51 @@ DOTRACE("GxRasterFont::rasterHeight");
 
   return asc + desc;
 }
+
+#else // !defined (GL_PLATFORM_GLX)
+
+//
+// Stub implementation (for now) for non-X11 platforms (e.g. Apple AGL)
+//
+
+#include "util/error.h"
+
+GxRasterFont::GxRasterFont(const char*) : rep(0)
+{
+  throw Util::Error("GxRasterFont not supported");
+}
+
+GxRasterFont::~GxRasterFont() throw() { }
+
+const char* GxRasterFont::fontName() const
+{
+  throw Util::Error("GxRasterFont not supported");
+  return 0;
+}
+
+unsigned int GxRasterFont::listBase() const
+{
+  throw Util::Error("GxRasterFont not supported");
+  return 0;
+}
+
+void GxRasterFont::bboxOf(const char*, Gfx::Bbox&) const
+{
+  throw Util::Error("GxRasterFont not supported");
+}
+
+void GxRasterFont::drawText(const char*, Gfx::Canvas&) const
+{
+  throw Util::Error("GxRasterFont not supported");
+}
+
+int GxRasterFont::rasterHeight() const
+{
+  throw Util::Error("GxRasterFont not supported");
+  return 0;
+}
+
+#endif // !defined (GL_PLATFORM_GLX)
 
 static const char vcid_gxrasterfont_cc[] = "$Header$";
 #endif // !GXRASTERFONT_CC_DEFINED

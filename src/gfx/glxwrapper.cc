@@ -30,6 +30,8 @@
 #ifndef GLXWRAPPER_CC_DEFINED
 #define GLXWRAPPER_CC_DEFINED
 
+#if defined(GL_PLATFORM_GLX)
+
 #include "glxwrapper.h"
 
 #include "gfx/glxopts.h"
@@ -355,6 +357,8 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
   return win;
 }
+
+#endif // defined(GL_PLATFORM_GLX)
 
 static const char vcid_glxwrapper_cc[] = "$Header$";
 #endif // !GLXWRAPPER_CC_DEFINED

@@ -47,8 +47,13 @@
 #include "util/error.h"
 #include "util/pointers.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#if defined(GL_PLATFORM_GLX)
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#elif defined(GL_PLATFORM_AGL)
+#  include <AGL/gl.h>
+#  include <AGL/glu.h>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -235,9 +240,9 @@ DOTRACE("GLCanvas::throwIfError");
 
 namespace
 {
-  int attribStackDepth()
+  GLint attribStackDepth()
   {
-    int d = -1;
+    GLint d = -1;
     glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &d);
     return d;
   }

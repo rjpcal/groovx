@@ -30,6 +30,8 @@
 #ifndef XBMAPRENDERER_H_DEFINED
 #define XBMAPRENDERER_H_DEFINED
 
+#if defined(GL_PLATFORM_GLX)
+
 #include <X11/Xlib.h>
 
 namespace Gfx
@@ -50,6 +52,8 @@ namespace XBmapRenderer
                  const Gfx::Vec2<double>& world_pos,
                  const Gfx::Vec2<double>& zoom);
 };
+
+#endif // defined(GL_PLATFORM_GLX)
 
 static const char vcid_xbmaprenderer_h[] = "$Header$";
 #endif // !XBMAPRENDERER_H_DEFINED

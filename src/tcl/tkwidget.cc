@@ -186,6 +186,7 @@ void TkWidgImpl::keyEventProc(XKeyEvent* eventPtr)
 {
 DOTRACE("TkWidgImpl::keyEventProc");
 
+#if defined(GL_PLATFORM_GLX)
   const bool controlPressed = eventPtr->state & ControlMask;
 
   // Need to save and later restore the event "state" in order that
@@ -206,6 +207,10 @@ DOTRACE("TkWidgImpl::keyEventProc");
 
   GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
   owner->sigKeyPressed.emit(ev);
+#else
+  throw Util::Error("keyEventProc not supported");
+  (void) eventPtr;
+#endif
 }
 
 void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent) throw()
@@ -394,6 +399,7 @@ void Tcl::TkWidget::winInfo() throw()
 {
 DOTRACE("Tcl::TkWidget::winInfo");
 
+#if defined(GL_PLATFORM_GLX)
   Display* dpy = Tk_Display(rep->tkWin);
 
   int natoms = 0;
@@ -433,6 +439,9 @@ DOTRACE("Tcl::TkWidget::winInfo");
     }
 
   XFree(atoms);
+#else
+  throw Util::Error("TkWidget::winInfo not supported");
+#endif
 }
 
 Tcl::Interp& Tcl::TkWidget::interp() const
@@ -456,6 +465,7 @@ double Tcl::TkWidget::pixelsPerInch() const
 {
 DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
+#if defined(GL_PLATFORM_GLX)
   Assert(rep->tkWin != 0);
 
   Screen* scr = Tk_Screen(rep->tkWin);
@@ -468,6 +478,9 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
   dbgEvalNL(3, screen_ppi);
   return screen_ppi;
+#else
+  throw Util::Error("TkWidget::pixelsPerInch not supported");
+#endif
 }
 
 void Tcl::TkWidget::setCursor(const char* cursor_spec)
@@ -516,10 +529,16 @@ void Tcl::TkWidget::warpPointer(int x, int y) const
 {
 DOTRACE("Tcl::TkWidget::warpPointer");
 
+#if defined(GL_PLATFORM_GLX)
   XWarpPointer(Tk_Display(rep->tkWin),
                0, Tk_WindowId(rep->tkWin),
                0, 0, 0, 0,
                x, y);
+#else
+  throw Util::Error("TkWidget::warpPointer not supported");
+  (void) x;
+  (void) y;
+#endif
 }
 
 void Tcl::TkWidget::pack()
@@ -561,15 +580,20 @@ void Tcl::TkWidget::iconify()
 {
 DOTRACE("Tcl::TkWidget::iconify");
 
+#if defined(GL_PLATFORM_GLX)
   XIconifyWindow(Tk_Display(rep->tkWin),
                  Tk_WindowId(rep->tkWin),
                  Tk_ScreenNumber(rep->tkWin));
+#else
+  throw Util::Error("TkWidget::iconify not supported");
+#endif
 }
 
 void Tcl::TkWidget::grabKeyboard()
 {
 DOTRACE("Tcl::TkWidget::grabKeyboard");
 
+#if defined(GL_PLATFORM_GLX)
   const int result =
     XGrabKeyboard(Tk_Display(rep->tkWin),
                   Tk_WindowId(rep->tkWin),
@@ -599,19 +623,27 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
   // is completely finished processing the EnterNotify event.
   Tcl_DoWhenIdle(TkWidgImpl::cTakeFocusCallback,
                  static_cast<ClientData>(this));
+#else
+  throw Util::Error("TkWidget::grabKeyboard not supported");
+#endif
 }
 
 void Tcl::TkWidget::ungrabKeyboard()
 {
 DOTRACE("Tcl::TkWidget::ungrabKeyboard");
 
+#if defined(GL_PLATFORM_GLX)
   XUngrabKeyboard(Tk_Display(rep->tkWin), CurrentTime);
+#else
+  throw Util::Error("TkWidget::ungrabKeyboard not supported");
+#endif
 }
 
 void Tcl::TkWidget::maximize()
 {
 DOTRACE("Tcl::TkWidget::maximize");
 
+#if defined(GL_PLATFORM_GLX)
   const int w = XWidthOfScreen(Tk_Screen(rep->tkWin));
   const int h = XHeightOfScreen(Tk_Screen(rep->tkWin));
   setSize(Gfx::Vec2<int>(w, h));
@@ -625,6 +657,9 @@ DOTRACE("Tcl::TkWidget::maximize");
   Tk_MoveToplevelWindow(mainWin, 0, 0);
 
   grabKeyboard();
+#else
+  throw Util::Error("TkWidget::maximize not supported");
+#endif
 }
 
 void Tcl::TkWidget::minimize()

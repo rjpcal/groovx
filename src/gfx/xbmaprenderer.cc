@@ -30,6 +30,8 @@
 #ifndef XBMAPRENDERER_CC_DEFINED
 #define XBMAPRENDERER_CC_DEFINED
 
+#if defined(GL_PLATFORM_GLX)
+
 #include "xbmaprenderer.h"
 
 #include "gfx/canvas.h"
@@ -116,6 +118,8 @@ DOTRACE("XBmapRenderer::doRender");
   XFreeGC(display, gfx_context_black);
   XFree(image);
 }
+
+#endif // defined(GL_PLATFORM_GLX)
 
 static const char vcid_xbmaprenderer_cc[] = "$Header$";
 #endif // !XBMAPRENDERER_CC_DEFINED

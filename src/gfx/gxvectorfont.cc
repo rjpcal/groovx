@@ -40,7 +40,12 @@
 #include "util/strings.h"
 
 #include <cstring>
-#include <GL/gl.h>
+
+#if defined(GL_PLATFORM_GLX)
+#  include <GL/gl.h>
+#elif defined(GL_PLATFORM_AGL)
+#  include <AGL/gl.h>
+#endif
 
 #include "util/debug.h"
 DBG_REGISTER

@@ -34,6 +34,7 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
+#include "util/error.h"
 #include "util/objfactory.h"
 #include "util/pointers.h"
 #include "util/serialport.h"
@@ -45,7 +46,10 @@
 #include "visx/nullresponsehdlr.h"
 
 #include <tk.h>
-#include <X11/Xlib.h>
+
+#if defined(GL_PLATFORM_GLX)
+#  include <X11/Xlib.h>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -60,6 +64,7 @@ DBG_REGISTER
 namespace
 {
 
+#if defined(GL_PLATFORM_GLX)
   class SerialEventSource
   {
   public:
@@ -131,13 +136,18 @@ namespace
     SerialEventSource& operator=(const SerialEventSource&);
   };
 
-
   shared_ptr<SerialEventSource> theEventSource;
 
   void startSerial(Tcl_Interp* interp, const char* device)
   {
     theEventSource.reset(new SerialEventSource(interp, device));
   }
+#else // defined(GL_PLATFORM_GLX)
+  void startSerial(Tcl_Interp*, const char*)
+  {
+    throw Util::Error("X11 events not available in this build");
+  }
+#endif
 }
 
 

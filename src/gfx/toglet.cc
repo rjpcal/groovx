@@ -181,7 +181,9 @@ DOTRACE("Toglet::Toglet");
   // pointing anywhere meaningful (will be either NULL or garbage).
 
   Tk_GeometryRequest(rep->tkWin, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+#ifdef GL_PLATFORM_GLX
   Tk_SetClassProcs(rep->tkWin, &Impl::classProcs, static_cast<ClientData>(this));
+#endif
   Tk_MakeWindowExist(rep->tkWin);
   Tk_MapWindow(rep->tkWin);
 
