@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Tue Nov 14 12:50:04 2000
+// written: Thu Nov 16 00:40:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #include "util/trace.h"
 
 namespace VALUE_CC_LOCAL {
-  void raiseValueError() { throw ValueError(); }
+  void raiseValueError(const char* msg ="") { throw ValueError(msg); }
 }
 
 using namespace VALUE_CC_LOCAL;
@@ -44,26 +44,26 @@ DOTRACE("Value::~Value");
 }
 
 
-void Value::printTo(STD_IO::ostream&) const { raiseValueError(); }
-void Value::scanFrom(STD_IO::istream&) { raiseValueError(); }
+void Value::printTo(STD_IO::ostream&) const { raiseValueError("printTo"); }
+void Value::scanFrom(STD_IO::istream&) { raiseValueError("scanFrom"); }
 
-int Value::getInt() const { raiseValueError(); return 0; }
-long Value::getLong() const { raiseValueError(); return 0; }
-bool Value::getBool() const { raiseValueError(); return false; }
-double Value::getDouble() const { raiseValueError(); return 0.0; }
-const char* Value::getCstring() const { raiseValueError(); return ""; }
+int Value::getInt() const { raiseValueError("getInt"); return 0; }
+long Value::getLong() const { raiseValueError("getLong"); return 0; }
+bool Value::getBool() const { raiseValueError("getBool"); return false; }
+double Value::getDouble() const { raiseValueError("getDouble"); return 0.0; }
+const char* Value::getCstring() const { raiseValueError("getCstring"); return ""; }
 
-void Value::get(int&) const { raiseValueError(); }
-void Value::get(long&) const { raiseValueError(); }
-void Value::get(bool&) const { raiseValueError(); }
-void Value::get(double&) const { raiseValueError(); }
-void Value::get(const char*&) const { raiseValueError(); }
+void Value::get(int&) const { raiseValueError("get(int&)"); }
+void Value::get(long&) const { raiseValueError("get(long&)"); }
+void Value::get(bool&) const { raiseValueError("get(bool&)"); }
+void Value::get(double&) const { raiseValueError("get(double&)"); }
+void Value::get(const char*&) const { raiseValueError("get(const char*&)"); }
 
-void Value::setInt(int) { raiseValueError(); }
-void Value::setLong(long) { raiseValueError(); }
-void Value::setBool(bool) { raiseValueError(); }
-void Value::setDouble(double) { raiseValueError(); }
-void Value::setCstring(const char*) { raiseValueError(); }
+void Value::setInt(int) { raiseValueError("setInt"); }
+void Value::setLong(long) { raiseValueError("setLong"); }
+void Value::setBool(bool) { raiseValueError("setBool"); }
+void Value::setDouble(double) { raiseValueError("setDouble"); }
+void Value::setCstring(const char*) { raiseValueError("setCstring"); }
 
 
 ///////////////////////////////////////////////////////////////////////
