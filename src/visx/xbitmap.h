@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Mon Sep 20 11:53:15 1999
+// written: Mon Sep 20 11:56:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,10 @@ public:
 
   // Actions
   protected: virtual void bytesChangeHook(unsigned char* theBytes,
-														int width, int height);
+														int width,
+														int height,
+														int bits_per_pixel,
+														int byte_alignment);
 
   protected: virtual void doUndraw(int winRasterX,
 											  int winRasterY,
