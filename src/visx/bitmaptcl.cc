@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jul 11 12:07:07 2001
+// written: Wed Jul 11 12:35:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -243,14 +243,14 @@ extern "C"
 int Bitmap_Init(Tcl_Interp* interp) {
 DOTRACE("Bitmap_Init");
 
-  new BitmapTcl::BitmapPkg(interp);
-  new GLBitmapTcl::GLBitmapPkg(interp);
-  new XBitmapTcl::XBitmapPkg(interp);
+  Tcl::TclPkg* pkg1 = new BitmapTcl::BitmapPkg(interp);
+  Tcl::TclPkg* pkg2 = new GLBitmapTcl::GLBitmapPkg(interp);
+  Tcl::TclPkg* pkg3 = new XBitmapTcl::XBitmapPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&GLBitmap::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&XBitmap::make);
 
-  return TCL_OK;
+  return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));;
 }
 
 static const char vcid_bitmaptcl_cc[] = "$Header$";
