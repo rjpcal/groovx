@@ -92,6 +92,18 @@ namespace Tcl
     typedef P6 Arg6_t;
   };
 
+  //
+  // This macro avoids some of the repetitive typing...
+  //
+
+#ifdef EXTRACT_PARAM
+#  error EXTRACT_PARAM macro already defined
+#endif
+
+#define EXTRACT_PARAM(N) \
+  typename FuncTraits<Func>::Arg##N##_t p##N = \
+  ctx.getValFromArg(N, TypeCue<typename FuncTraits<Func>::Arg##N##_t>());
+
 ///////////////////////////////////////////////////////////////////////
 //
 // zero arguments -- Functor0
@@ -140,9 +152,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>())
-          ));
+		EXTRACT_PARAM(1);
+      ctx.setResult(itsFunc(p1));
     }
 
   private:
@@ -156,9 +167,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>())
-          );
+		EXTRACT_PARAM(1);
+      itsFunc(p1);
     }
 
   private:
@@ -179,10 +189,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>())
-          ));
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2);
+      ctx.setResult(itsFunc(p1, p2));
     }
 
   private:
@@ -196,10 +204,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>())
-          );
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2);
+      itsFunc(p1, p2);
     }
 
   private:
@@ -220,11 +226,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>())
-          ));
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      ctx.setResult(itsFunc(p1, p2, p3));
     }
 
   private:
@@ -238,11 +241,8 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>())
-          );
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      itsFunc(p1, p2, p3);
     }
 
   private:
@@ -263,12 +263,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
-          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>())
-          ));
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+		EXTRACT_PARAM(4);
+      ctx.setResult(itsFunc(p1, p2, p3, p4));
     }
 
   private:
@@ -282,12 +279,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
-          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>())
-          );
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+		EXTRACT_PARAM(4);
+      itsFunc(p1, p2, p3, p4);
     }
 
   private:
@@ -308,13 +302,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
-          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
-          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>())
-          ));
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+		EXTRACT_PARAM(4); EXTRACT_PARAM(5);
+      ctx.setResult(itsFunc(p1, p2, p3, p4, p5));
     }
 
   private:
@@ -328,13 +318,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
-          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
-          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>())
-          );
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+		EXTRACT_PARAM(4); EXTRACT_PARAM(5);
+      itsFunc(p1, p2, p3, p4, p5);
     }
 
   private:
@@ -355,14 +341,9 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
-          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
-          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>()),
-          ctx.getValFromArg(6, TypeCue<typename FuncTraits<Func>::Arg6_t>())
-          ));
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+		EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
+      ctx.setResult(itsFunc(p1, p2, p3, p4, p5, p6));
     }
 
   private:
@@ -376,20 +357,16 @@ namespace Tcl
 
     void operator()(Tcl::Context& ctx)
     {
-      itsFunc(
-          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
-          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
-          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
-          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
-          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>()),
-          ctx.getValFromArg(6, TypeCue<typename FuncTraits<Func>::Arg6_t>())
-          );
+		EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+		EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
+      itsFunc(p1, p2, p3, p4, p5, p6);
     }
 
   private:
     Func itsFunc;
   };
 
+#undef EXTRACT_PARAM
 
 ///////////////////////////////////////////////////////////////////////
 //
