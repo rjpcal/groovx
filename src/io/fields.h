@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Jan 20 13:01:46 2003
+// written: Tue Feb 25 13:00:04 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,14 +75,19 @@ namespace
   template <class T1, class T2>
   struct mypair
   {
-    mypair(const T1& t1, const T2& t2) : first(t1), second(t2) {}
+    // Can't pass these by const reference or else Mac OS X g++-3.1 bugs.
+    mypair(T1 t1, T2 t2) : first(t1), second(t2) {}
+
+    template <class U1, class U2>
+    mypair(const mypair<U1, U2>& p) : first(p.first), second(p.second) {}
 
     T1 first;
     T2 second;
   };
 
+  // Can't pass these by const reference or else Mac OS X g++-3.1 bugs.
   template <class T1, class T2>
-  inline mypair<T1, T2> make_mypair(const T1& t1, const T2& t2)
+  inline mypair<T1, T2> make_mypair(T1 t1, T2 t2)
   {
     return mypair<T1,T2>(t1, t2);
   }
