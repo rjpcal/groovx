@@ -518,13 +518,13 @@ benchmarks: $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 clean:
-	rm -f ./*~ ./expt*2001.asw ./resp*2001 ./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
-		$(SRC)/*~ $(SRC)/*/*~ $(SCRIPTS)/*~ ./testing/*~
+	find . -name \*~ -exec rm -f {} \;
+	rm -f ./expt*2001.asw ./resp*2001 ./\#* ./core
 
 # Make clean, and also remove all debug object files
 cleaner: clean
-	rm -f $(OBJ)/*$(OBJ_EXT) $(OBJ)/*/*$(OBJ_EXT) $(OBJ)/*/*/*$(OBJ_EXT) \
-	 $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
+	find $(OBJ) -name \*$(OBJ_EXT) -exec rm -f {} \;
+	find $(OBJ) -name \*.ii -exec rm -f {} \;
 
 # Count the lines in all source files
 count: $(ALL_SOURCES) $(ALL_HEADERS)
