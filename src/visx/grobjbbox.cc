@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Thu Aug 30 15:38:41 2001
+// written: Fri Aug 31 09:02:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,9 +79,11 @@ DOTRACE("GrObjBBox::gnodeDraw");
                        child()->gnodeBoundingBox(canvas),
                        itsPixelBorder);
 
+#ifdef ANIMATE_BBOX
       itsStipple ^= itsMask;
 
       itsMask = ~itsMask;
+#endif
 
       Gfx::Canvas::AttribSaver saver(canvas);
 

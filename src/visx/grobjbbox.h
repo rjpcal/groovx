@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Sat Aug 25 12:54:35 2001
+// written: Fri Aug 31 09:00:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 
 #include "tcl/tcltimer.h"
 
-#define ANIMATE_BBOX
+//  #define ANIMATE_BBOX
 
 class GrObjBBox : public Gnode
 {
@@ -35,23 +35,23 @@ public:
   bool isVisible() const { return isItVisible; }
   void setVisible(bool val)
   {
-	 if (isItVisible == val) return;
+    if (isItVisible == val) return;
 
     isItVisible = val;
 
 #ifdef ANIMATE_BBOX
     if (isItVisible)
-		{
-		  ++theirTimerCount;
-		  if (theirTimerCount == 1)
-			 theirTimer.schedule();
-		}
+      {
+        ++theirTimerCount;
+        if (theirTimerCount == 1)
+          theirTimer.schedule();
+      }
     else
-		{
-		  --theirTimerCount;
-		  if (theirTimerCount == 0)
-			 theirTimer.cancel();
-		}
+      {
+        --theirTimerCount;
+        if (theirTimerCount == 0)
+          theirTimer.cancel();
+      }
 #endif
   }
 
