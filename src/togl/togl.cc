@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 19:29:03 2002
+// written: Mon Sep 16 19:35:41 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -235,8 +235,9 @@ public:
   unsigned long allocColor(float red, float green, float blue) const;
   void freeColor(unsigned long pixel) const;
   void setColor(unsigned long index, float red, float green, float blue) const;
-  Color queryColor(unsigned int color_index) const;
-  void queryColor(unsigned int color_index, Color& color) const;
+  void setColor(const Togl::Color& color) const;
+  Togl::Color queryColor(unsigned int color_index) const;
+  void queryColor(unsigned int color_index, Togl::Color& color) const;
 
   void useLayer(Togl::Layer layer);
 
@@ -622,6 +623,21 @@ DOTRACE("Togl::Impl::setColor");
   XStoreColor( itsDisplay, Tk_Colormap(itsTkWin), &xcol );
 }
 
+void Togl::Impl::setColor(const Togl::Color& color) const
+{
+DOTRACE("Toglet::setColor");
+
+  static const char* const bad_val_msg = "RGB values must be in [0.0, 1.0]";
+  static const char* const bad_index_msg = "color index must be in [0, 255]";
+
+  if (                     color.pixel > 255) { throw Util::Error(bad_index_msg); }
+  if (color.red   < 0.0 || color.red   > 1.0) { throw Util::Error(bad_val_msg); }
+  if (color.green < 0.0 || color.green > 1.0) { throw Util::Error(bad_val_msg); }
+  if (color.blue  < 0.0 || color.blue  > 1.0) { throw Util::Error(bad_val_msg); }
+
+  setColor(color.pixel, color.red, color.green, color.blue);
+}
+
 Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
 {
   Togl::Color col;
@@ -885,9 +901,12 @@ unsigned long Togl::allocColor( float red, float green, float blue ) const
 void Togl::freeColor( unsigned long pixel ) const
   { rep->freeColor(pixel); }
 
-void Togl::setColor( unsigned long index,
-                     float red, float green, float blue ) const
+void Togl::setColor(unsigned long index,
+                    float red, float green, float blue) const
   { rep->setColor(index, red, green, blue); }
+
+void Togl::setColor(const Togl::Color& color) const
+  { rep->setColor(color); }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
   { return rep->queryColor(color_index); }

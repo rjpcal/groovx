@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 19:28:41 2002
+// written: Mon Sep 16 19:31:30 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -98,6 +98,7 @@ public:
   void freeColor(unsigned long index) const;
   void setColor(unsigned long index,
                 float red, float green, float blue) const;
+  void setColor(const Color& color) const;
   Color queryColor(unsigned int color_index) const;
   void queryColor(unsigned int color_index, Color& color) const;
 

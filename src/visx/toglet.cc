@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 19:28:03 2002
+// written: Mon Sep 16 19:31:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -359,21 +359,6 @@ DOTRACE("Toglet::scaleRect");
   itsSizer->scaleRect(factor);
 
   reshapeCallback();
-}
-
-void Toglet::setColor(const Color& color)
-{
-DOTRACE("Toglet::setColor");
-
-  static const char* const bad_val_msg = "RGB values must be in [0.0, 1.0]";
-  static const char* const bad_index_msg = "color index must be in [0, 255]";
-
-  if (                     color.pixel > 255) { throw Util::Error(bad_index_msg); }
-  if (color.red   < 0.0 || color.red   > 1.0) { throw Util::Error(bad_val_msg); }
-  if (color.green < 0.0 || color.green > 1.0) { throw Util::Error(bad_val_msg); }
-  if (color.blue  < 0.0 || color.blue  > 1.0) { throw Util::Error(bad_val_msg); }
-
-  Togl::setColor(color.pixel, color.red, color.green, color.blue);
 }
 
 void Toglet::setPixelsPerUnit(double s)
