@@ -66,56 +66,20 @@ private:
 
 public:
   /// Create using the given char array as the input buffer.
-  imembuf(const char* s) :
-    m_len(strlen(s)),
-    m_buf(s),
-    m_owned_mem(0)
-  {
-    setg(const_cast<char*>(m_buf),
-         const_cast<char*>(m_buf),
-         const_cast<char*>(m_buf) + m_len);
-  }
+  imembuf(const char* s);
 
   /// Create using the given char array and length as the input buffer.
-  imembuf(const char* s, unsigned int len) :
-    m_len(len),
-    m_buf(s),
-    m_owned_mem(0)
-  {
-    setg(const_cast<char*>(m_buf),
-         const_cast<char*>(m_buf),
-         const_cast<char*>(m_buf) + m_len);
-  }
+  imembuf(const char* s, unsigned int len);
 
-  void make_owning()
-  {
-    if (m_owned_mem == 0)
-      {
-        m_owned_mem = new char[m_len+1];
-        memcpy(m_owned_mem, m_buf, m_len+1);
-        m_buf = 0;
-        setg(m_owned_mem, m_owned_mem, m_owned_mem + m_len);
-      }
-  }
+  void make_owning();
 
   /// Destructor.
-  ~imembuf()
-  {
-    delete [] m_owned_mem;
-  }
+  virtual ~imembuf();
 
   /// Underflow operation.
   /** Since there's no "external data source", if we've come to the
       end of our current buffer, then we're just plain out of data. */
-  virtual int underflow()
-  {
-    if (gptr() < egptr())
-      {
-        return *gptr();
-      }
-
-    return EOF;
-  }
+  virtual int underflow();
 };
 
 /// An input stream class based on imembuf.
@@ -125,7 +89,7 @@ private:
   imembuf m_buf;
 public:
   /// Construct using the given char array as the input buffer.
-  imemstream(const char* s) : STD_IO::istream(&m_buf), m_buf(s) {}
+  imemstream(const char* s);
 };
 
 /// An input stream class based on imembuf that makes a private copy.
@@ -135,10 +99,7 @@ private:
   imembuf m_buf;
 public:
   /// Construct using the given char array as the input buffer.
-  icstrstream(const char* s) : STD_IO::istream(&m_buf), m_buf(s)
-  {
-    m_buf.make_owning();
-  }
+  icstrstream(const char* s);
 };
 
 static const char vcid_cstrstream_h[] = "$Header$";
