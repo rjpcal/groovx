@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Oct 24 16:28:46 2000
+// written: Thu Oct 26 16:27:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,11 @@
 #include "io/iodecls.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDLIB_DEFINED)
+#include <cstdlib>
+#define CSTDLIB_DEFINED
+#endif
+
 class fixed_string;
 
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +42,12 @@ class fixed_string;
 
 class IO::IoObject : public RefCounted {
 public:
+
+  /// Class-specific operator new.
+  void* operator new(size_t bytes);
+
+  /// Class-specific operator delete.
+  void operator delete(void* space, size_t bytes);
 
   /// Default constructor
   IoObject();
