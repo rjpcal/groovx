@@ -3,56 +3,147 @@ $Id$
 
 *** FRONT of priority queue ***
 
-(24-Oct-2000) Work on dlink_list... it's buggy.
+(note 30-Oct-2000) The fact that we now have good unique
+correspondence between objects and ids means that there are flexible
+possibilities for allowing scripts as callbacks. For example, a
+callback class could have an abstract function that takes an object,
+and an implementation could pass that object to a script as an id.
+
+(30-Oct-2000) Use PtrHandle's in TimingHdlr implementation to avoid
+deleteAll().
+
+(2-Nov-2000) Can replace void*'s in tclitempkg.h with IoObject*'s?
+
+(29-Oct-2000) ObjList::LoadObjectCmd can be replaced with something
+generic that works for all IoObject types. Maybe these should go in
+ReadUtils/WriteUtils? Templated on the Reader/Writer type? IoPtrList
+does not need to be an IoObject anymore; instead, it should provide
+functionality for reading+writing object archives.
+
+(27-Oct-2000) Do we still need separate Tcl packages for the different
+PtrList's? I think no. We should be able to have a single IO::
+namespace in Tcl that has commands IO::new, IO::delete, IO::type,
+IO::ids, IO::count, IO::is, IO::purge.
+
+(1-Nov-2000) IoPtrList --> IoDatabase or IoDb.
+
+(1-Nov-2000) Event handling could be done by a chain of
+command... passing either up or down the experiment hierarchy
+(i.e. Expt --> Block --> Trial --> EventResponseHdlr or the reverse
+direction).
+
+(1-Nov-2000) Make PropertyContainer or FieldContainer a base class;
+then Property's can be handled through inheritance rather than by
+templates. This should reduce some code bloat.
+
+
+========================================================================
+GOAL #2
+(24-Jan-2000) Allow a more flexible description of the scene graph, a
+la Open Inventor.
+
+This is now particularly important as Trial's take on more
+behavior... they shouldn't be used anymore as a way to store
+combinations of objects.
+
+(1-Nov-2000) borrowed from OpenInventor --
+
+class GxNode : public IO::IoObject {};
+ |
+ +-- class GrObj : public GxNode {}; --> GxShape
+ |
+ +-- class GxTransformation : public GxNode {};
+ |    |
+ |    +-- class GxTranslation : public GxTransformation {};
+ |    |
+ |    +-- class GxScale : public GxTransformation {};
+ |
+ |
+ +-- class GxGroup : public GxNode {};
+      |
+      +-- class GxSeparator : public GxGroup {};
+
+Then Trial just holds one IdItem<GxNode>, and draws it on a
+DrawEvent. Or, Trial holds a number of IdItem<GxNode>'s, and DrawEvent
+holds an index indicating which one to draw.
+
+This is probably an incompatible change with the old Trial... or maybe
+not... we should be able to convert old Trial structures into new Gx
+hierarchies. And the old add() interface should still work, with a bit
+of translation.
+
+(1-done) Put GxNode in place.
+
+(2-done) Make GrObj derive from GxNode.
+
+(3-done) Find former clients of GrObj who really only need to depend on
+    GxNode. Trial and TlistTcl.
+
+(4-done) Make Position derive from GxNode.
+
+(5-done) Find Position clients who only need to depend on GxNode. Trial.
+
+(6-done) Implement GxSeparator, add a Tcl package for it, and write
+    tests for the Tcl package.
+
+(7-done) getCategory() --> category()
+
+(8-done) Reimplement Trial using GxNode's instead of GrObj's and
+    Position's.
+
+(9-done) Add FieldContainer. Where to put this in the inheritance
+    hierarchy? Right now it is just a mixin class... eventually it
+    could go before GrObj or even GxNode... this would require a
+    coherent policy on how to handle inherited Field's.
+
+(*) Should Trial contain a single GxSeparator, rather than maintain
+    its own list of GxNode's? As is, it is duplicating the
+    functionality of GxSeparator unnecessarily. No--if anything, we
+    should change the semantics so that only one GxNode is drawn at a
+    time... in the future we might allow different GxNode's to be
+    drawn on subsequent calls to trDraw().
+
+(*) Add GxShape, as a base class for basic shapes like GxLine, GxRect,
+    GxDisk, etc.
+
+------------------------------------------------------------------------
+
+(29-Oct-2000) We could make a lot of IoPtrList Tcl commands very
+generic, by allowing a predicate argument to determine which objects
+are to be acted upon. See batch.tcl. This could be called IO::batch.
 
 (25-Oct-2000) ReadUtils and WriteUtils could/should really be
 implemented in terms of iterators that iterate over the elements in
 the stream. Then transferring elements to/from a local container is
 just a simple std::copy type of operation.
 
-(27-Oct-2000) I don't think I need to include "iditem.h" in headers
-where it is just passed in/out of functions.
+(27-Oct-2000) Should IoPtrList attempt to get objects out of the IoMap
+if the PtrList site is empty?
 
-(*) Should PtrList's attempt to get objects out of the IoMap if the
-	 PtrList site is empty?
-
-(*) ObjList::LoadObjectCmd can be replaced with something generic that
-    works for all IoObject types.
+(29-Oct-2000) Add a template TypeIterator to IoPtrList that "sees"
+only objects of the template type. This can be a simple wrapper around
+the plain Iterator, needing to override operator++ and operator*(),
+and adding getTypedObject().
 
 (11-Oct-2000) Put more behavior in Tcl::SafeInterp. This functionality
 would be able to be used in many places.
-
-(8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
-to establishing CountedPtr's as a better way to manage objects between
-C++ and Tcl. Probably Reader/Writer need a special method for
-CountedPtr's. The question is how to keep track of the pointers to the
-reference counts. Or... we could put the reference count right in
-IO... Aha! Instead of AsciiStreamReader maintaining a map<unsigned
-long, IO*> during deserialization, we could use a map<unsigned long,
-CountedPtr<IO> >. However, this introduces a split from the semantics
-of readOwnedObject()... this suggests that we need a separate map for
-owned objects. As this transition will require a nearly universal
-switch to CountedPtr's, we need to provide a feasible migration route,
-perhaps by providing the ability to short-circuit CountedPtr's
-ref-counting at first.
 
 (9-Oct-2000) Could refactor EventResponseHdlr and Trial by using a
 state pattern instead of an enum TrialState.
 
 (5-Oct-2000) Add zstream to Pbm.
 
-(10-Oct-2000) Start reaping the benefits of my PtrList ref-counting
-refactoring by allowing clients to lock onto their resources using
-ItemWithId<T>.
+========================================================================
+GOAL #4
+(24-Jan-2000) Develop a more coherent view of the screen-update model:
+Who gets to do it, and when?
 
-(10-Oct-2000) PtrList could do an "idiot check" on insert to make sure
-that we aren't storing the same pointer in two slots. If this happens
-with the same MasterPtr, we can just return the previous MasterPtr;
-however if it happens with two MasterPtr's pointing to the same
-object, then it is a bug which will result in memory corruption.
+(2-Oct-2000) The first step in this is to eliminate any direct
+attempts to draw to the screen, other than by a Widget object (such as
+TlistWidget). Others who want the screen updated should do so
+indirectly by requesting the widget to redraw itself.
 
-(10-Oct-2000) Make the factory functions return PtrHandle's or
-MasterPtr's.
+------------------------------------------------------------------------
 
 ========================================================================
 "Dynamic templates" 4-Oct-2000
@@ -119,33 +210,17 @@ split the common validation code out of legacyDesrlz and readFrom
 methods, and would also increase the homomorphism of the readFrom and
 writeTo methods.
 
-(29-Sep-2000) Revisit legacyValidTypenames()... this is only used in
-   the PtrList hierarchy. Maybe there is a more direct/efficient way
-   to handle this. We could have a map<string, list<string>> that
-   would relate typenames to lists of alternate typenames. The list
-   could be built at runtime by having clients install their info into
-   the map, or we could just have LegacyReader "magically" know the
-   correct typenames.
-
-(29-Sep-2000) LegacyReader could probably remember the state and
-   handle the braces as well. Actually, LegacyReader could just "know"
-   how to handle Face and MorphyFace...
-
 (28-Sep-2000) fixed_block and dynamic_block should have release()
 members, so that we can use them for exception-safe storage, then
 transfer ownership of the buffer to someone else once the operations
 are safely completed.
 
-(28-Sep-2000) Why do we occasionally get EventRH: itsWidget is NULL
-when the ExptDriver general sanity test fails?
-
 (28-Sep-2000) Why does irix occasionally core-dump during Face testing
 in GrObj::invalidateCaches()?
 
-(24-Sep-2000) Big categories: 1) memory management, 2) screen update
-hierarchy, 3) experiment event sequence, 4) automate data analysis, 5)
-automate series of experiments, 6) untangle the mess that is
-GrObj::Impl.
+(24-Sep-2000) Big categories: 1) screen update hierarchy, 2) untangle
+the mess that is GrObj::Impl, 3) experiment event sequence, 4)
+automate data analysis, 5) automate series of experiments.
 
 (23-Sep-2000) Should have a log-file that can catch non-essential
 messages (such as the timing info that is emitted by TrialEvent
@@ -159,10 +234,17 @@ data in a format suitable for Matlab use, perhaps.
 
 (12-Sep-2000) Would be nice to have some sort of resource/message
 loading, so that we could put strings in a separate resource file.
+[Earlier (30-Jun-1999)] How to late-bind error strings and other
+string literals? Put them in a separate compilation unit, register
+them through id's... it's no fun to have to recompile everything just
+to change one lousy string literal.
 
 (7-Jul-2000) Adding an 'itsCorrectVal' member to Response. Should this
 value be serialized? We don't have a good way to do versioning of
-Value types that are written/read with printTo()/scanFrom().
+Value types that are written/read with printTo() and
+scanFrom(). [...Later] Probably if any versioning becomes necessary,
+it's a good sign that the thing should become an IoObject, rather than
+a plain Value.
 
 (22-May-2000) Need to have a way to destroy the pause keybinding when
 an experiment is done. The problem is, ExptDriver shouldn't know about
@@ -182,42 +264,6 @@ function which would do things like update its GrObj's (and flush
 pending requests like loading bitmap data). Then Block's could have a
 prepareNextTrial() function which could be called during the preceding
 trial.
-
-Goal: ExptDriver shouldn't have to know about any lists except maybe
-BlockList. As for serializing, the lists should register themselves
-with ExptDriver at application startup. Experiment base class should
-declare an abstract manageObject(const char* name, IO* object)
-function. The lists should call this in in their
-Tcl_PkgInitProc's. The problem with this approach is that we lose the
-ability to control the order in which the lists are read/written
-through the IO interface. This is not so much a problem for the
-readFrom()/writeTo() interface, as this is designed to be
-order-independent, but it is a problem for the
-serialize()/deserialize() interface. Perhaps we could use some ad hoc
-strategy to make sure that the managed objects are written in the same
-order every time (based on their ioTypename() for instance?).
-
-========================================================================
-GOAL #2
-(24-Jan-2000) Allow a more flexible description of the scene graph, a
-la Open Inventor.
-
-This is now particularly important as Trial's take on more
-behavior... they shouldn't be used anymore as a way to store
-combinations of objects.
-------------------------------------------------------------------------
-
-========================================================================
-GOAL #4
-(24-Jan-2000) Develop a more coherent view of the screen-update model:
-Who gets to do it, and when?
-
-(2-Oct-2000) The first step in this is to eliminate any direct
-attempts to draw to the screen, other than by a Widget object (such as
-TlistWidget). Others who want the screen updated should do so
-indirectly by requesting the widget to redraw itself.
-
-------------------------------------------------------------------------
 
 ========================================================================
 GOAL #5
@@ -432,39 +478,11 @@ some to stay non-virtual. Aha! The new lightweight GrObj shouldn't
 even have the grRender(), grUnRender(), or grGetBoundingBox()
 functions... these will first be defined in GrObjImpl.
 
-(1-Dec-1999) Unsavory dependencies:
-  EventResponseHdlr on ObjTogl -- axed via Widget abstraction!
-  EventResponseHdlr on SoundList
-  ObjTogl on Tlist -- compilation dep gone, but still link dep
-  Trial on ObjList, PosList?
-  Block on Tlist?
-  BitmapRep on GLCanvas::theCanvas()
-
-... I see that this whole PtrList business introduces some wacky
-  dependencies... I don't think C++ clients should be depending on the
-  PtrList's directly. Instead, maybe the PtrList's should manage
-  CountedPtr's or something similar, so that the integer indices are
-  only visible in Tcl.
-
 (14-Dec-1999) ExptDriver should really own the ToglConfig... maybe it
 should arrange to create this as part of application startup?
 
 (12-Dec-1999) Could have an abstract class for timer callbacks, one
 subclass of which could use a Tcl_Interp* to register timer callbacks.
-
-(3-Dec-1999) I have a potential type-system loophole with TclItemPkg
-and TclItemCmd... TclItemPkg blindly casts TclItemCmd::getItemFromId()
-from void* to T*, without any guarantee that TclItemPkg is dealing
-with the correct type. Suggests we need a template wrapper around
-TclItemPkg?
-
-(22-Nov-1999) Hey, I think I might be able to totally do away with
-PtrList's, at least in the public interface. I think that they could
-be wrapped into the base class, so that every GrObj created is
-automatically placed in the ObjList, and anytime a GrObj is destroyed
-it is removed from the PtrList. This would just entail overriding
-operator new + delete for that class. The class would have static
-operations that mimic the PtrList's operations.
 
 (22-Nov-1999) Need to get rjp_subject working. 1) Need to maintain a
 do_expt script in each subject's directory. 2) Need to make sure that
@@ -516,10 +534,6 @@ modes, and that would generate a temporary bitmap if
 necessary. [Later] This stuff belongs outside of the GrObj class,
 since it needs only the public interface... perhaps it should just go
 in grobjtcl.cc file.
-
-(6-Oct-1999) Should Property's be Observable's? Is this worth the
-extra space? Perhaps only some properties should be Observable's. How
-would this be done?
 
 (5-Oct-1999) Maybe TimingHdlr should have a toggle switch to indicate
 what the behavior should be when a response is seen. (Whether to
@@ -607,11 +621,6 @@ longer the current glX rendering context... perhaps there should be a
 line in both the create and destroy callbacks that resets the
 "official" widget as the glX-current context.
 
-(30-Jun-1999) How to late-bind error strings and other string
-literals? Put them in a separate compilation unit, register them
-through id's... it's no fun to have to recompile everything just to
-change one lousy string literal.
-
 (25-Jun-1999) Just realized how dynamic loading should work for grsh:
 all of the lists, plus all of the base classes that are held by the
 lists, need to be statically (or at least permanently dynamically-)
@@ -626,26 +635,12 @@ right now is the issue with bus ergrors due to OpenGL calls from
 dynamically-linked modules--most of the 'extensions' will use OpenGL,
 so this probably makes them unable to be dynamically loaded.
 
-(30-Jun-1999) Really need to get an iterator working for
-PtrList's... and get rid of these pseudo-working Id's. OK, now have an
-iterator class implemented, but how to construct them? Specifically,
-I'll need to be able to construct iterators from int id's, but then
-what to do if the int is an invalid index? Throw an exception? Leave
-the iterator in a corrupted state? Also, basically all of the PtrList
-operations should use iterators... addPtr() should return an iterator,
-remove() should take an iterator.
-
 (28-Jun-1999) Need way for TclCmd's to "own" TclEvalCmd's, so that the
 Tcl_Interp* management can be hidden from the client.
 
 (27-Jun-1999) could perhaps use TclCmd again in KbdResponseHandler to
 wrap up the event binding... this would allow for exceptions during
 the event handling.
-
-(24-Jun-1999) Would be nice to define some sort of appropriate
-inheritance semantics for CTclPkg's... so that CTclPkg<B> can inherit
-from CTclPkg<A> iff B inherits from A, and furthermore that this
-inheritance does "all the right things".
 
 (22-Jun-1999) Ugh. Spent all day tracking down idiotic pointer
 problems. Should really use vector<unsigned char> rather than C-style
@@ -682,10 +677,6 @@ one or two ObjList's/PosList's. This seems somewhat excessive. What to
 do ...? [Later] This latter problem has been solved by making ObjList
 and PosList singletons.
 
-() Observer/Notifier -- need to change private variable access
-to accessor function. This provides an easy hook for notify. Further
-it hides the distinction between a variable and a computation.
-
 () Add functionality to Tlist to extract statistics from the
 experiment. Add functionality to Trial's to extract statistics from
 themselves. Question: how to deal with the issue of whether to lump
@@ -716,3 +707,31 @@ FixedPosition. What would a Position subclass for moving objects look
 like?
 
 *** BACK ***
+
+(done 1-Nov-2000) Got rid of all the unneeded io tcl commands... we
+don't need a separate stringify/destringify command for each subclass;
+instead, a single one in the IO:: tcl namespace will do just
+fine. This allowed us to get rid of TclIoItemPkg in favor of an
+addIoCommands() function in TclItemPkg, taking an IoFetcher* as an
+argument. This in turn allowed us to get rid of CTclIoItemPkg and the
+duplication that existed between it and CTclItemPkg.
+
+(3-Dec-1999, done 2-Nov-2000) I have a potential type-system loophole
+with TclItemPkg and TclItemCmd... TclItemPkg blindly casts
+TclItemCmd::getItemFromId() from void* to T*, without any guarantee
+that TclItemPkg is dealing with the correct type. Suggests we need a
+template wrapper around TclItemPkg? No... we can fix this by just
+having TclItemCmd<C> require a CTclItemPkg<C> in its constructor
+rather than a plain TclItemPkg.
+
+(24-Oct-2000, done 3-Nov-2000) Work on dlink_list... it's buggy. I
+think it needs an overhaul of the design of the head and
+tail... having these starting off at 0 is not working. OK, I did this,
+but it is still not working if I try to substitute dlink_list in
+gxtraversal.cc. ... OK, now I found this new problem -- it's with
+node::destroy(). If T was a pointer type (say, GxNode*), then calling
+val.~T() was causing the actual GxNode to be destroyed, not just the
+pointer to it. This seems to have been resolved by changing the call
+to (&val)->~T(). I tried substituting dlink_list everywhere slink_list
+was being used, and things still worked fine, so I think I'm going to
+sign off on dlink_list as passing muster for now.

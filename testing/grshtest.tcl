@@ -81,6 +81,8 @@ foreach file $permuted_files {
 	 if { [lindex $file 1] == $::RUN_IF_EQUAL } {
 		  testfile ${TEST_DIR}/[lindex $file 0]
 	 }
+
+	 puts "IO::count [IO::count]"
 }
 
 ### Compute test statistics and exit

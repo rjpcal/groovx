@@ -27,7 +27,7 @@ proc print_time {msg} {
 	 return $msec
 }
 
-print "\n----------------------------------------------------"
+print "\n-----------------------------------------------------------------"
 
 print "\n[clock format [clock seconds]]"
 print "\n[info nameofexecutable]\n"
