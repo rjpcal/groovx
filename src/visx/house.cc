@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Mar  9 16:59:11 2000
+// written: Fri Mar 10 00:22:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,12 +194,12 @@ House::House() :
   numStories(2),
 
   doorPosition(2),
-  doorHeight(0.75),
   doorWidth(0.75),
+  doorHeight(0.75),
 
   numWindows(5),
-  windowHeight(0.5),
   windowWidth(0.75),
+  windowHeight(0.5),
   windowVertBars(1),
   windowHorizBars(1),
 
