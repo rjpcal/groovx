@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Sat Jul 21 18:45:13 2001
+// written: Sun Jul 22 16:05:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ DOTRACE("Toglet::bind");
   dynamic_string cmd_str = "bind ";
   cmd_str.append( pathname() ).append(" ");
   cmd_str.append( event_sequence ).append(" ");
-  cmd_str.append( script );
+  cmd_str.append("{ ").append( script ).append(" }");
 
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 #ifdef ACC_COMPILER

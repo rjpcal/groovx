@@ -71,25 +71,25 @@ namespace ExptTcl
     Util::WeakRef<GWT::Widget> widget = expt->getWidget();
 
     // Create the begin key binding
-    widget->bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
+    widget->bind("<Control-KeyPress-b>", "Togl::takeFocus; Expt::begin");
 
     // Create the quit key binding
-    widget->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
+    widget->bind("<Control-KeyPress-q>", "Expt::storeData; exit");
 
     // Create the save key binding
-    widget->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
+    widget->bind("<Control-KeyPress-s>", "Expt::storeData");
 
     // Create the stop key binding
-    widget->bind("<Control-KeyPress-c>", "{ Expt::stop }");
+    widget->bind("<Control-KeyPress-c>", "Expt::stop");
 
     // Create the reset key binding
-    widget->bind("<Control-KeyPress-r>", "{ Expt::reset }");
+    widget->bind("<Control-KeyPress-r>", "Expt::reset");
 
     // Create the pause key binding
-    widget->bind("<KeyPress-p>", "{ Expt::pause }");
+    widget->bind("<KeyPress-p>", "Expt::pause");
 
     // Destroy the experiment start key binding
-    widget->bind("<KeyPress-s>", "{}");
+    widget->bind("<KeyPress-s>", "");
 
     // Force the focus to the Togl widget
     widget->takeFocus();
@@ -139,14 +139,9 @@ namespace ExptTcl
 
   void setStartCommand(Ref<ExptDriver> expt, const char* command)
   {
-    // Build the script to be executed when the start key is pressed
-    dynamic_string start_command = "{ ";
-    start_command += command;
-    start_command += " }";
-
     Util::WeakRef<GWT::Widget> widget = expt->getWidget();
 
-    widget->bind("<KeyPress-s>", start_command.c_str());
+    widget->bind("<KeyPress-s>", command);
     widget->takeFocus();
   }
 }
@@ -159,8 +154,6 @@ namespace ExptTcl
 
 class ExptTcl::ExpPkg : public Tcl::Pkg
 {
-private:
-
 public:
   ExpPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Exp", "$Revision$")
