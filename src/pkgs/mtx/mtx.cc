@@ -45,7 +45,7 @@ namespace
     const size_t BUFSIZE = 512;
     if (nelems <= BUFSIZE)
       {
-        static double swapbuffer[BUFSIZE];
+        double swapbuffer[BUFSIZE];
         domemswap(buf1, buf2, swapbuffer, nelems);
       }
     else
