@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar 13 18:08:15 2001
+// written: Tue Mar 13 18:32:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -165,12 +165,14 @@ public:
 
 
 class Slice : public ConstSlice {
+  Mtx& itsOrigin;
+
   friend class Mtx;
 
   double* address(int i) { return itsData + itsStride*i; }
 
-  Slice(double* d, int s, int n) :
-	 ConstSlice(d,s,n) {}
+  Slice(Mtx& m, double* d, int s, int n) :
+	 ConstSlice(d,s,n), itsOrigin(m) {}
 
 public:
 
@@ -181,12 +183,12 @@ public:
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return Slice(address(first), itsStride, n);
+	 return Slice(itsOrigin, address(first), itsStride, n);
   }
 
   Slice leftmost(int n)
   {
-	 return Slice(itsData, itsStride, n);
+	 return Slice(itsOrigin, itsData, itsStride, n);
   }
 
   Slice& operator=(const ConstSlice& other);
@@ -339,19 +341,19 @@ public:
   //
 
   Slice row(int r)
-    { return Slice(address(r,0), mrows_, ncols_); }
+    { return Slice(*this, address(r,0), mrows_, ncols_); }
 
   ConstSlice row(int r) const
     { return ConstSlice(address(r,0), mrows_, ncols_); }
 
   Slice column(int c)
-    { return Slice(address(0,c), 1, mrows_); }
+    { return Slice(*this, address(0,c), 1, mrows_); }
 
   ConstSlice column(int c) const
     { return ConstSlice(address(0,c), 1, mrows_); }
 
   Slice asSlice()
-    { return Slice(start_, 1, nelems()); }
+    { return Slice(*this, start_, 1, nelems()); }
 
 
   //
