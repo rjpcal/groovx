@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Oct 23 13:19:15 2000
+// written: Mon Oct 23 23:01:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -215,7 +215,8 @@ DOTRACE("Block::writeTo");
 	 {
 		vector<TrialBase*> trials;
 		for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
-		  trials.push_back(itsImpl->itsTrialSequence[i].get());
+		  trials.push_back(itsImpl->itsTrialSequence[i].isValid() ?
+								 itsImpl->itsTrialSequence[i].get() : 0);
 		IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
 												 trials.begin(), trials.end());
 	 }
