@@ -867,6 +867,9 @@ public:
   /// Print the mtx to stdout
   void print_stdout() const;
 
+  /// Print the mtx to stdout along with a name for the mtx
+  void print_stdout_named(const char* mtx_name) const;
+
   /// Convert the mtx to a string, by printing it to a string stream.
   rutz::fstring as_string() const;
 

@@ -661,6 +661,12 @@ DOTRACE("mtx::print_stdout");
   format_mtx(*this, std::cout, 0, true);
 }
 
+void mtx::print_stdout_named(const char* mtx_name) const
+{
+DOTRACE("mtx::print_stdout_named");
+  format_mtx(*this, std::cout, mtx_name, true);
+}
+
 rutz::fstring mtx::as_string() const
 {
 DOTRACE("mtx::as_string");
