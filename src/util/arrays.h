@@ -3,7 +3,7 @@
 // arrays.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 15:56:36 2000
-// written: Mon Mar  6 17:18:10 2000
+// written: Mon Mar  6 18:18:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ public:
   typedef size_t size_type;
   typedef ptrdiff_t difference_type;
 
-  dynamic_block(size_type n) : N(n), data(new T[N]) {}
+  dynamic_block(size_type n = 0) : N(n), data(new T[N]) {}
   ~dynamic_block() { delete [] data; }
 
   void swap(dynamic_block& other)
