@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Mon Dec  6 14:02:41 1999
+// written: Tue Feb 15 10:54:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,16 +26,16 @@ class Value;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ReadError should be thrown by subclasses of Reader when an error
- * occurs during a call to any of the Reader methods.
+ * Exception class for errors in \c Reader methods. \c ReadError
+ * should be thrown by subclasses of \c Reader when an error occurs
+ * during a call to any of the \c Reader methods.
  *
- * @short Exception class for errors in Reader methods.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class ReadError : public ErrorWithMsg {
 public:
-  ///
+  /// Construct with a descriptive message \a msg.
   ReadError(const string& msg) : ErrorWithMsg(msg) {}
 };
 
@@ -43,60 +43,67 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Reader is the abstract interface that contains the methods that IO
- * objects can use when they deserialize themselves in a readFrom()
- * method. It provides the inverse operations to those in Writer. To
- * reconstruct an object tree, a client should call readRoot() on the
- * root object in that tree.
+ * \c Reader provides the interface that \c IO objects use to restore
+ * their state in a \c readFrom() implementation. It provides the
+ * inverse operations to those in \c Writer. To reconstruct an object
+ * tree, a client should call \c readRoot() on the root object in that
+ * tree. Subclasses of \c Reader will implement this interface using
+ * different back ends for the actual storage medium, for example,
+ * an ASCII text file, an on-screen dialog box, a relational database,
+ * etc.
  *
- * @short Provides the interface for IO objects to deserialize
- * themselves when they implement the IO interface readFrom()/writeTo().
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class Reader {
 public:
-  ///
+
+  /// Virtual destructor allows correct destruction of subclasses.
   virtual ~Reader();
 
-  ///
+  /// Read the \c char attribute associated with the tag \a name.
   virtual char readChar(const string& name) = 0;
-  ///
+
+  /// Read the \c int attribute associated with the tag \a name.
   virtual int readInt(const string& name) = 0;
-  ///
+
+  /// Read the \c bool attribute associated with the tag \a name.
   virtual bool readBool(const string& name) = 0;
-  ///
+
+  /// Read the \c double attribute associated with the tag \a name.
   virtual double readDouble(const string& name) = 0;
 
-  ///
+  /// Read the STL \c string attribute associated with the tag \a name.
   virtual string readString(const string& name) = 0;
-  ///
+
+  /// Read the C-style string (\c char*) attribute associated with the tag \a name.
   virtual char* readCstring(const string& name) = 0;
 
-  ///
+  /// Read the \c Value attribute associated with the tag \a name.
   virtual void readValueObj(const string& name, Value& value) = 0;
 
-  /** This template simply calls the appropriate readXxx() function
-		for the type T */
+  /** This generic function reads a value attribute of any basic type,
+      or of type \c Value. The value associated with tag \a name will
+      be copied into \a returnValue. */
   template <class T>
-  void readValue(const string& name, T& return_value);
+  void readValue(const string& name, T& returnValue);
 
-  /// A new object of the appropriate type will be created, if necessary.
+  /** Get a pointer to the \c IO object associated with the tag \a
+      name. A new object of the appropriate type will be created, if
+      necessary. */
   virtual IO* readObject(const string& name) = 0;
 
-  /** The Reader will use the IO* provided here, rather than creating
-      a new object. */
+  /** Restore the state of the IO object \a obj, associated with the
+      tag \a name. The \c Reader will not create a new object, but
+      will use the IO* provided here. */
   virtual void readOwnedObject(const string& name, IO* obj) = 0;
 
-  /** This function can either create a new root object (if 'root' is
-		passed as 0), or use one that has already been constructed and
-		passed as the 'root' argument. In either case, the function
-		returns the root object that was actually read. */
+  /** Restore an entire object hierarchy, starting with the root
+		object. If \a root is non-null, the function will use \a root as
+		the root object. Otherwise the function will create a new root
+		object. In either case, the function returns the object that was
+		actually used as the root object. */
   virtual IO* readRoot(IO* root=0) = 0;
-
-protected:
-  ///
-  string makeNumberString(int number);
 };
 
 static const char vcid_reader_h[] = "$Header$";
