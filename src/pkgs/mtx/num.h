@@ -88,14 +88,6 @@ namespace dash
   }
 }
 
-/// Numeric operations.
-class Num
-{
-public:
-
-  static const double SQRT_2;
-};
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Functors

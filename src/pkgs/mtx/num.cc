@@ -36,8 +36,6 @@
 
 #include "util/trace.h"
 
-const double Num::SQRT_2 = 1.41421356237;
-
 double dash::detail::gammaln_engine(const double xx)
 {
 DOTRACE("dash::detail::gammaln_engine");
