@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct 20 14:06:54 2000
+// written: Fri Oct 20 15:03:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,15 +15,11 @@
 #include "objlist.h"
 
 #include "io/iolegacy.h"
-#include "io/iomgr.h"
 
 #include "tcl/listpkg.h"
 #include "tcl/stringifycmd.h"
 
-#include "util/strings.h"
-
 #include <fstream.h>
-#include <cctype>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -63,7 +59,6 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
 
   STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
-
   
   ObjList& olist = ObjList::theObjList();
 
