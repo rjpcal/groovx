@@ -59,8 +59,9 @@ test "BitmapTcl-rendering" "normal render" {
 	 Tlist::makeSingles $::POS
 	 clearscreen
 	 show $::BITMAP
-	 expr {[pixelCheckSum] != 0}
-} {^1$}
+	 set sum [pixelCheckSum]
+	 return "[expr $sum != 0] $sum"
+} {^1}
 
 ### Bitmap::flipContrastCmd ###
 test "BitmapTcl-Bitmap::flipContrast" "too few args" {
@@ -80,8 +81,8 @@ test "BitmapTcl-Bitmap::flipContrast" "normal use" {
 	 show $::BITMAP
 	 set count2 [pixelCheckSum]
 	 
-	 expr { $count1 != $count2 }
-} {^1$}
+	 return "[expr $count1 != $count2] $count1 $count2"
+} {^1}
 test "BitmapTcl-Bitmap::flipContrast" "error" {} {^$} $no_test
 
 ### Bitmap::flipVerticalCmd ###
