@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Tue Oct 19 16:08:43 1999
+// written: Mon Nov  8 11:05:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,8 +52,6 @@ public:
   virtual void writeRoot(const IO* root);
 
 private:
-  void flushAttributes();
-
   class Impl;
 
   Impl& itsImpl;
