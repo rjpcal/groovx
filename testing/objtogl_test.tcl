@@ -50,6 +50,7 @@ test "ObjTogl-Togl::refresh" "normal use" {
 	 Togl::setCurTrial 0
 	 setForeground 1
 	 setBackground 0
+	 Togl::setVisible 1
 	 Togl::refresh
 	 # check to see if some pixels actually got drawn
 	 expr [pixelCheckSum] > 500
