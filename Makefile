@@ -439,7 +439,7 @@ ALL_HEADERS := $(wildcard $(SRC)/*.h)  $(wildcard $(SRC)/[a-z]*/*.h)
 DEP_FILE := $(DEP)/alldepends
 
 $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	$(SCRIPTS)/pydep.py $(SRC) > $@
+	pydep.py $(SRC) > $@
 
 include $(DEP_FILE)
 
