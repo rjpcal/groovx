@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 10:35:59 2003
+// written: Tue May 13 11:14:10 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,7 +33,7 @@
 
 #include "gfx/gxshapekit.h"
 
-#include "gx/vec2.h"
+#include "gfx/gbvec.h"
 
 #include "util/arrays.h"
 #include "util/pointers.h"
@@ -58,6 +58,12 @@ public:
              double backgMinSpacing_ = 36.0);
 
   static GaborArray* make() { return new GaborArray; }
+
+  /// Get GaborArray's fields.
+  static const FieldMap& classFields();
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   void saveImage(const char* filename) const;
 
@@ -84,12 +90,11 @@ private:
 
   int itsForegNumber;
   double itsForegSpacing;
-  Gfx::Vec2<int> itsSize;
+  GbVec2<int> itsSize;
   double gaborPeriod;
   double gaborSigma;
   double backgIniSpacing;
   double backgMinSpacing;
-  double backgMinSpacingSqr;
   mutable int totalNumber;
   mutable fixed_block<Element> array;
   mutable shared_ptr<Gfx::BmapData> itsBmap;

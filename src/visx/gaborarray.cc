@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 10:46:02 2003
+// written: Tue May 13 11:14:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,6 +43,10 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 
+#include "io/ioproxy.h"
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/error.h"
 
 #include "visx/gaborpatch.h"
@@ -75,7 +79,6 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
   gaborSigma(gaborSigma_),
   backgIniSpacing(backgIniSpacing_),
   backgMinSpacing(backgMinSpacing_),
-  backgMinSpacingSqr(backgMinSpacing*backgMinSpacing),
   totalNumber(0),
   array(MAX_GABOR_NUMBER)
 {
@@ -84,6 +87,47 @@ DOTRACE("GaborArray::GaborArray");
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
 
   sigNodeChanged.connect(this, &GaborArray::killCache);
+}
+
+const FieldMap& GaborArray::classFields()
+{
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("foregNumber", &GaborArray::itsForegNumber,
+          24, 1, 100, 1, Field::NEW_GROUP),
+    Field("foregSpacing", &GaborArray::itsForegSpacing,
+          45.0, 1.0, 100.0, 1.0),
+    Field("size", Field::ValueType(), &GaborArray::itsSize,
+          "512 512", "16 16", "2048 2048", "16 16", Field::MULTI),
+    Field("gaborPeriod", &GaborArray::gaborPeriod, 15.0, 1.0, 50.0, 1.0),
+    Field("gaborSigma", &GaborArray::gaborSigma, 7.5, 0.5, 25.0, 0.5),
+    Field("backgIniSpacing", &GaborArray::backgIniSpacing,
+          48.0, 1.0, 200.0, 1.0),
+    Field("backgMinSpacing", &GaborArray::backgMinSpacing,
+          36.0, 1.0, 200.0, 1.0),
+  };
+
+  static FieldMap GABORARRAY_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
+
+  return GABORARRAY_FIELDS;
+}
+
+void GaborArray::readFrom(IO::Reader* reader)
+{
+DOTRACE("GaborArray::readFrom");
+
+  readFieldsFrom(reader, classFields());
+
+  reader->readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+}
+
+void GaborArray::writeTo(IO::Writer* writer) const
+{
+DOTRACE("GaborArray::writeTo");
+
+  writeFieldsTo(writer, classFields());
+
+  writer->writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void GaborArray::saveImage(const char* filename) const
@@ -133,6 +177,8 @@ void GaborArray::update() const
 DOTRACE("GaborArray::update");
 
   if (itsBmap.get() != 0) return;
+
+  totalNumber = 0;
 
   Snake snake(itsForegNumber, itsForegSpacing);
 
@@ -231,6 +277,8 @@ bool GaborArray::tryPush(const Element& e) const
 
 bool GaborArray::tooClose(const Vec2d& v, int except) const
 {
+  double backgMinSpacingSqr = backgMinSpacing*backgMinSpacing;
+
   for (int n = 0; n < totalNumber; ++n)
     {
       const double dx = array[n].pos.x() - v.x();
