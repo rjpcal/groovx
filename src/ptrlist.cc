@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Tue Jul 20 16:02:26 1999
+// written: Mon Sep 27 11:03:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -267,6 +267,7 @@ template <class T>
 void PtrList::clear() {
 DOTRACE("PtrList::clear");
   for (int i = 0; i < itsVec.size(); ++i) {
+	 DebugEval(i); DebugEvalNL(itsVec.size());
 	 delete itsVec[i];
 	 itsVec[i] = NULL;
   }
