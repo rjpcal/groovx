@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Jan 21 12:56:52 2002
+// written: Fri Jan 25 10:23:13 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -22,10 +22,10 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
-#include "util/log.h"
 
 #include <cstdlib>
 #include <exception>
+#include <iostream>
 #include <typeinfo>
 
 #include "util/trace.h"
@@ -147,7 +147,7 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
   {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
     {
 #ifdef LOCAL_TRACE
-      Util::log() << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
+      std::cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
 #endif
       int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
       if (result != TCL_OK) { itsStatus = result; }
@@ -199,19 +199,19 @@ DOTRACE("Tcl_AppInit");
     }
   catch (Util::Error& err)
     {
-      Util::log() << "uncaught Error: " << err.msg_cstr() << '\n';
+      std::cerr << "uncaught Error: " << err.msg_cstr() << '\n';
     }
   catch (std::exception& err)
     {
-      Util::log() << "uncaught std::exception of type "
-                  << demangle_cstr(typeid(err).name())
-                  << " occurred: "
-                  << err.what()
-                  << '\n';
+      std::cerr << "uncaught std::exception of type "
+                << demangle_cstr(typeid(err).name())
+                << " occurred: "
+                << err.what()
+                << '\n';
     }
   catch (...)
     {
-      Util::log() << "uncaught exception of unknown type" << '\n';
+      std::cerr << "uncaught exception of unknown type" << '\n';
     }
 
   exit(-1);
