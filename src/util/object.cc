@@ -60,10 +60,16 @@ Util::UID Util::Object::id() const
   return itsId;
 }
 
+fstring Util::Object::realTypename() const
+{
+DOTRACE("Util::Object::realTypename");
+  return demangle_cstr(typeid(*this).name());
+}
+
 fstring Util::Object::objTypename() const
 {
 DOTRACE("Util::Object::objTypename");
-  return demangle_cstr(typeid(*this).name());
+  return realTypename();
 }
 
 static const char vcid_object_cc[] = "$Header$";

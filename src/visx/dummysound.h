@@ -63,7 +63,7 @@ public:
   /// Get the name of the associated sound file.
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
-  virtual fstring ioTypename() const { return "Sound"; }
+  virtual fstring objTypename() const { return "Sound"; }
 
   /// Swap contents with a different DummySound object.
   void swap(DummySound& other)

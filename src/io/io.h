@@ -94,12 +94,6 @@ public:
       provide a way for a class to store and retrieve the
       serialization version of an object. */
   virtual IO::VersionId serialVersionId() const;
-
-  /** Returns the typename of the full object. The implementation
-      provided by \c IO returns a demangled version of \c
-      typeid(*this).name(), which should very closely resemble the way
-      the object was declared in source code. */
-  virtual fstring ioTypename() const;
 };
 
 

@@ -61,19 +61,15 @@ int Io_Init(Tcl_Interp* interp)
 {
 DOTRACE("Io_Init");
 
-  //
-  // IO package
-  //
-
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "IO", "$Revision$");
 
   Tcl::defGenericObjCmds<IO::IoObject>(pkg);
   Tcl::defIoCommands(pkg);
-  pkg->defGetter("type", &IO::IoObject::ioTypename);
+  pkg->defGetter("type", &Util::Object::objTypename);
 
   pkg->eval("proc ::-> {args} {\n"
             "set ids [lindex $args 0]\n"
-            "set namesp [IO::type [lindex $ids 0]]\n"
+            "set namesp [Obj::type [lindex $ids 0]]\n"
             "set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
             "namespace eval $namesp $cmd\n"
             "}");

@@ -300,7 +300,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
     }
 
   Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
-  dbgEvalNL(3, obj->ioTypename());
+  dbgEvalNL(3, obj->objTypename());
 
   rep->inflateObject(name, obj);
 
@@ -312,7 +312,7 @@ void IO::LegacyReader::readOwnedObject(const fstring& name,
 {
 DOTRACE("IO::LegacyReader::readOwnedObject");
 
-  rep->readTypename(obj->ioTypename());
+  rep->readTypename(obj->objTypename());
   rep->inflateObject(name, obj);
 }
 
@@ -324,7 +324,7 @@ DOTRACE("IO::LegacyReader::readBaseClass");
   // For backward-compatibility, we allow the typename to match either the
   // real typename of the base part, or the descriptive name given to the
   // base class.
-  rep->readTypename(basePart->ioTypename(), baseClassName);
+  rep->readTypename(basePart->objTypename(), baseClassName);
   rep->inflateObject(baseClassName, basePart);
 }
 
@@ -336,7 +336,7 @@ DOTRACE("IO::LegacyReader::readRoot");
       return readObject("rootObject");
     }
 
-  dbgEvalNL(3, givenRoot->ioTypename());
+  dbgEvalNL(3, givenRoot->objTypename());
 
   Ref<IO::IoObject> root(givenRoot);
   readOwnedObject("rootObject", root);
@@ -477,8 +477,8 @@ public:
 
     Assert(obj.isValid());
 
-    stream() << obj->ioTypename() << itsFSep;
-    throwIfError(obj->ioTypename().c_str());
+    stream() << obj->objTypename() << itsFSep;
+    throwIfError(obj->objTypename().c_str());
 
     stream() << '@';
 

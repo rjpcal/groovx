@@ -72,7 +72,7 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual fstring ioTypename() const
+  virtual fstring objTypename() const
     { return demangle_cstr(typeid(C).name()); }
 
 private:
@@ -112,7 +112,7 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual fstring ioTypename() const
+  virtual fstring objTypename() const
     { return demangle_cstr(typeid(C).name()); }
 
 private:

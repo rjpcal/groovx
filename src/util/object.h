@@ -69,9 +69,17 @@ public:
   Util::UID id() const;
 
   /// Returns the typename of the full object.
-  /** The default implementation provided by \c Util::Object returns a
-      demangled version of \c typeid(*this).name(), which should very
-      closely resemble the way the object was declared in source code. */
+  /** The result is a demangled version of \c typeid(*this).name(), which
+      should very closely resemble the way the object was declared in
+      source code. */
+  fstring realTypename() const;
+
+  /// Returns the (apparent) typename of the full object.
+  /** The default implementation just returns realTypename(). However,
+      certain kinds of objects -- e.g., proxy objects -- might usefully
+      choose to have objTypename() return something besides the
+      realTypename(), in order to masquerade as a different type of
+      object.  */
   virtual fstring objTypename() const;
 
 private:

@@ -91,7 +91,7 @@ public:
   virtual void setFile(const char* filename);
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
-  virtual fstring ioTypename() const { return "Sound"; }
+  virtual fstring objTypename() const { return "Sound"; }
 
   void swap(HpAudioSound& other)
     {

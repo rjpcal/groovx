@@ -242,7 +242,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 
       if ( !alreadyWritten(obj) )
         {
-          itsBuf << obj->ioTypename().c_str() << ' ' << obj->id() << " := ";
+          itsBuf << obj->objTypename().c_str() << ' ' << obj->id() << " := ";
           flattenObject(obj);
         }
     }
@@ -269,7 +269,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
     {
       Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
-      itsBuf << obj->ioTypename().c_str() << " "
+      itsBuf << obj->objTypename().c_str() << " "
              << name << " := "
              << obj->id() << ATTRIB_ENDER;
 
@@ -286,7 +286,7 @@ void AsciiStreamWriter::Impl::writeOwnedObject(const char* name,
 {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
 
-  fstring type = obj->ioTypename().c_str();
+  fstring type = obj->objTypename().c_str();
 
   itsBuf << type.c_str() << ' ' << name << " := ";
 

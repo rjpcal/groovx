@@ -136,7 +136,7 @@ public:
   // no writeTo() or serialVersionId() overrides since we just want
   // GxPixmap's versions
 
-  virtual fstring ioTypename() const { return fstring("GxPixmap"); }
+  virtual fstring objTypename() const { return fstring("GxPixmap"); }
 
   virtual void readFrom(IO::Reader* reader)
   {

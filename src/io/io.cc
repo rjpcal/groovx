@@ -105,11 +105,5 @@ DOTRACE("IO::IoObject::serialVersionId");
   return 0;
 }
 
-fstring IO::IoObject::ioTypename() const
-{
-DOTRACE("IO::IoObject::ioTypename");
-  return objTypename();
-}
-
 static const char vcid_io_cc[] = "$Header$";
 #endif // !IO_CC_DEFINED

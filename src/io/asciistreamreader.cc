@@ -138,7 +138,7 @@ public:
           {
             fstring msg;
             msg.append("object has already been created\n");
-            msg.append("\ttype: ", object->ioTypename().c_str(), "\n");
+            msg.append("\ttype: ", object->objTypename().c_str(), "\n");
             msg.append("\tid: ", id);
             throw IO::ReadError(msg);
           }
