@@ -786,14 +786,51 @@ unsigned int GxVectorFont::listBase() const
 
 void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
+  int longest = 0;
+  int current = 0;
+  int lines = 1;
+  const char* p = text;
+
+  while (*p != '\0')
+    {
+      if (*p == '\n')
+        {
+          if (current > longest)
+            longest = current;
+          current = 0;
+          ++lines;
+        }
+      else
+        {
+          ++current;
+        }
+      ++p;
+    }
+
+  if (current > longest)
+    longest = current;
+
+
   Gfx::Rect<double> rect;
   rect.left() = 0.0;
-  unsigned int len = strlen(text);
+  unsigned int len = longest;
   rect.right() = len > 0 ? (5*len) - 1 : 1.0;
-  rect.bottom() = -1.0;
+  rect.bottom() = -1.0 - (lines - 1) * 8.0;
   rect.top() = 6.0;
 
   bbox.drawRect(rect);
+}
+
+bool GxVectorFont::isRaster() const throw()
+{
+DOTRACE("GxVectorFont::isRaster");
+  return false;
+}
+
+double GxVectorFont::vectorHeight() const
+{
+DOTRACE("GxVectorFont::vectorHeight");
+  return 8.0;
 }
 
 static const char vcid_gxvectorfont_cc[] = "$Header$";

@@ -787,9 +787,62 @@ DOTRACE("GLCanvas::end");
 void GLCanvas::drawText(const fstring& text, const GxFont& font)
 {
 DOTRACE("GLCanvas::drawText");
-  rasterPos( Vec2d(0.0, 0.0) );
   glListBase( font.listBase() );
-  glCallLists( text.length(), GL_BYTE, text.c_str() );
+//   rasterPos( Vec2d(0.0, 0.0) );
+//   glCallLists( text.length(), GL_BYTE, text.c_str() );
+
+//   return;
+
+  const bool israster = font.isRaster();
+
+  const char* p = text.c_str();
+
+  glMatrixMode(GL_MODELVIEW);
+
+  int line = 0;
+
+  while (1)
+    {
+      int len = 0;
+      while (p[len] != '\0' && p[len] != '\n')
+        ++len;
+
+      dbgEvalNL(0, p);
+
+      glPushMatrix();
+      if (israster)
+        {
+          rasterPos( Vec2d(0.0, 0.0) );
+          if (line > 0)
+            {
+              // this is a workaround to shift the raster position by a given
+              // number of pixels
+              glBitmap(0, 0, 0.0f, 0.0f,
+                       0,                               // x shift
+                       -1 * font.rasterHeight() * line, // y shift
+                       (const GLubyte*) 0);
+            }
+        }
+      else
+        {
+          if (line > 0)
+            glTranslated( 0.0,
+                          -1.0 * font.vectorHeight() * line,
+                          0.0 );
+        }
+      glCallLists( len, GL_BYTE, p );
+      glPopMatrix();
+
+      p += len;
+
+      if (*p == '\0')
+        break;
+
+      // else...
+      Assert(*p == '\n');
+      ++p;
+      ++line;
+    }
 }
 
 void GLCanvas::flushOutput()

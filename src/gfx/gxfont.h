@@ -57,6 +57,15 @@ public:
 
   /// Get the bounding box of a piece of text rendered with this font.
   virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const = 0;
+
+  /// Return true if this font is a raster font (else, it's a vector font).
+  virtual bool isRaster() const throw() = 0;
+
+  /// Return the vector height of the font, in world coords.
+  virtual double vectorHeight() const;
+
+  /// Return the line height of the font, in screen coords (i.e., pixels).
+  virtual int rasterHeight() const;
 };
 
 static const char vcid_gxfont_h[] = "$Header$";

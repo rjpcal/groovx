@@ -224,6 +224,19 @@ DOTRACE("GxRasterFont::listBase");
   return rep->listBase;
 }
 
+namespace
+{
+  int linelength(const char* p)
+  {
+    int n = 0;
+    while (p[n] != '\n' && p[n] != '\0')
+      {
+        ++n;
+      }
+    return n;
+  }
+}
+
 void GxRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
 DOTRACE("GxRasterFont::bboxOf");
@@ -231,17 +244,51 @@ DOTRACE("GxRasterFont::bboxOf");
   const int asc = rep->fontInfo->max_bounds.ascent;
   const int desc = rep->fontInfo->max_bounds.descent;
 
-  const int wid = XTextWidth(rep->fontInfo, text, strlen(text));
+  int maxwid = 0;
 
-  dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, wid);
+  int lines = 0;
+
+  while (1)
+    {
+      int len = linelength(text);
+      int wid = XTextWidth(rep->fontInfo, text, len);
+      text += len;
+      if (wid > maxwid)
+        maxwid = wid;
+
+      ++lines;
+
+      if (*text == '\0')
+        break;
+
+      Assert(*text == '\n');
+      ++text;
+    }
+
+  dbgEval(2, lines); dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, maxwid);
 
   Gfx::Rect<int> screen = bbox.screenFromWorld(Gfx::Rect<double>());
 
-  screen.right() += wid;
-  screen.bottom() -= desc;
+  screen.right() += maxwid;
+  screen.bottom() -= desc + (lines - 1) * (asc+desc);
   screen.top() += asc;
 
   bbox.drawRect(bbox.worldFromScreen(screen));
+}
+
+bool GxRasterFont::isRaster() const throw()
+{
+DOTRACE("GxRasterFont::isRaster");
+  return true;
+}
+
+int GxRasterFont::rasterHeight() const
+{
+DOTRACE("GxRasterFont::rasterHeight");
+  const int asc = rep->fontInfo->max_bounds.ascent;
+  const int desc = rep->fontInfo->max_bounds.descent;
+
+  return asc + desc;
 }
 
 static const char vcid_gxrasterfont_cc[] = "$Header$";

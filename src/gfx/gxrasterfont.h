@@ -47,6 +47,10 @@ public:
 
   virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const;
 
+  virtual bool isRaster() const throw();
+
+  virtual int rasterHeight() const;
+
 private:
   GxRasterFont(const GxRasterFont&);
   GxRasterFont& operator=(const GxRasterFont&);
