@@ -59,9 +59,11 @@ class DepBuilder:
     def visitDir(self, arg, dirname, contents):
         if os.path.basename(dirname)[0].isupper():
             return
+
         for file in contents:
-            if not file[-3:] == '.cc':
+            if not file.endswith('.cc'):
                 continue
+
             fullname = os.path.join(dirname,file)
 
             assert not self.itsFullIncludes.has_key(fullname)
