@@ -3,7 +3,7 @@
 // iditem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Oct 27 14:10:22 2000
+// written: Fri Oct 27 15:50:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,16 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRHANDLE_H_DEFINED)
 #include "util/ptrhandle.h"
+#endif
+
+#if 0
+namespace IO { class IoObject; }
+
+namespace IdItemUtils {
+  bool isValidId(int id);
+  void insertItem(IO::IoObject* obj);
+  IO::IoObject* getCheckedItem(int id);
+}
 #endif
 
 template <class T> class PtrList;

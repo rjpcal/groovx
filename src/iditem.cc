@@ -3,7 +3,7 @@
 // iditem.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:51:16 2000
-// written: Fri Oct 27 13:14:28 2000
+// written: Fri Oct 27 15:50:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,34 +17,55 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
+// IdItemUtils
+//
+///////////////////////////////////////////////////////////////////////
+
+#if 0
+bool IdItemUtils::isValidId(int id) {
+  return IoPtrList::theList().isValidId(id);
+}
+
+void IdItemUtils::insertItem(IO::IoObject* obj) {
+  IoPtrList::theList().insertPtrBase(obj);
+}
+
+IO::IoObject* IdItemUtils::getCheckedItem(int id) {
+  return IoPtrList::theList().getCheckedPtrBase(int id);
+}
+#endif
+
+///////////////////////////////////////////////////////////////////////
+//
 // IdItem member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
 IdItem<T>::IdItem(int id) :
-  itsHandle(ptrList().getCheckedPtr(id).handle())
+  itsHandle(ptrList().template getCheckedIoPtr<T>(id).handle())
 {}
 
 template <class T>
 IdItem<T>::IdItem(T* ptr, Insert /*dummy param*/) :
   itsHandle(ptr)
 {
-  ptrList().insert(itsHandle);
+  ptrList().template insertIo<T>(ptr);
 }
 
 template <class T>
 IdItem<T>::IdItem(PtrHandle<T> item, Insert /*dummy param*/) :
   itsHandle(item)
 {
-  ptrList().insert(itsHandle);
+  ptrList().template insertIo<T>(itsHandle.get());
 }
 
 template <class T>
 IdItem<T>& IdItem<T>::operator=(T* new_master)
 {
   itsHandle = PtrHandle<T>(new_master);
-  ptrList().insert(itsHandle);
+  ptrList().template insertIo<T>(new_master);
+  return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -64,21 +85,24 @@ MaybeIdItem<T>::MaybeIdItem(T* master) :
 {
   if (master != 0)
 	 {
-		itsId = ptrList().insert(master).id();
+		ptrList().template insertIo<T>(master);
+		itsId = master->id();
 	 }
 }
 
 template <class T>
 MaybeIdItem<T>::MaybeIdItem(PtrHandle<T> item) :
   itsHandle(item),
-  itsId(ptrList().insert(itsHandle.get()).id())
-{}
+  itsId(item->id())
+{
+  ptrList().template insertIo<T>(itsHandle.get());
+}
 
 template <class T>
 void MaybeIdItem<T>::refresh() const {
   if ( !itsHandle.isValid() )
 	 {
-		typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
+		IdItem<T> p = ptrList().template getCheckedIoPtr<T>(itsId);
 		itsHandle = p.handle();
 		Assert(itsId == itsHandle->id());
 	 }
@@ -89,7 +113,7 @@ void MaybeIdItem<T>::attemptRefresh() const {
   if ( !itsHandle.isValid() )
 	 {
 		if (ptrList().isValidId(itsId)) {
-		  typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
+		  IdItem<T> p = ptrList().template getCheckedIoPtr<T>(itsId);
 		  itsHandle = p.handle();
 		  Assert(itsId == itsHandle->id());
 		}
