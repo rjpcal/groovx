@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Thu Jan 31 13:29:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,6 +102,14 @@ public:
 
   /// Returns the package version string.
   const char* version();
+
+  /** Causes all of our package's currently defined commands and procedures to
+      be imported into the specified other namespace. */
+  void namespaceAlias(const char* namesp);
+
+  /** Import all of the commands and procedures defined in the specified
+      namespace into our own package namespace. */
+  void inherit(const char* namesp);
 
   /// Does a simple \c Tcl_Eval of \a script using the package's \c Tcl_Interp.
   void eval(const char* script);
