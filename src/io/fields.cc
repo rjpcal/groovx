@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Sun Aug 26 08:35:15 2001
+// written: Wed Aug 29 16:52:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,7 +166,8 @@ DOTRACE("FieldContainer::readFieldsFrom");
 
   for (FieldMap::Iterator itr(fields.ioFields()); itr.isValid(); ++itr)
     {
-      itr->readValueFrom(this, reader, itr->name());
+      if (!itr->isTransient())
+        itr->readValueFrom(this, reader, itr->name());
     }
 
   if (itsSignal)
@@ -180,7 +181,8 @@ DOTRACE("FieldContainer::writeFieldsTo");
 
   for (FieldMap::Iterator itr(fields.ioFields()); itr.isValid(); ++itr)
     {
-      itr->writeValueTo(this, writer, itr->name());
+      if (!itr->isTransient())
+        itr->writeValueTo(this, writer, itr->name());
     }
 }
 
