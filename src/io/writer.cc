@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Tue Oct 19 16:02:37 1999
+// written: Tue Nov 30 17:25:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,11 @@ void Writer::writeValue<char>(const string& name, const char& val) {
 
 template<>
 void Writer::writeValue<int>(const string& name, const int& val) {
+  writeInt(name, val);
+}
+
+template<>
+void Writer::writeValue<size_t>(const string& name, const size_t& val) {
   writeInt(name, val);
 }
 
