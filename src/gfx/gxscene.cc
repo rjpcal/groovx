@@ -179,7 +179,10 @@ void GxScene::flushChanges()
 {
 DOTRACE("GxScene::flushChanges");
   if (isItRefreshing && !isItRefreshed)
-    fullRender();
+    {
+      itsCamera->reshape(*itsCanvas, itsWidth, itsHeight);
+      fullRender();
+    }
 }
 
 void GxScene::onNodeChange()
