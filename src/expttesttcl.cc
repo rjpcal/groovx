@@ -3,7 +3,7 @@
 // expttesttcl.cc
 // Rob Peters
 // created: Tue May 11 13:13:41 1999
-// written: Sun Jun 20 17:50:40 1999
+// written: Sun Jun 20 17:52:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,8 @@ DOTRACE("Expttest_Init");
 	 const char* cmdName;
 	 Tcl_ObjCmdProc* cmdProc;
   };
+
+  using namespace ExptTestTcl;
 
   static CmdName_CmdProc Names_Procs[] = {
     { "Expt::abortTrial", abortTrialCmd },
