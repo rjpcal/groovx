@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Wed Nov 13 12:51:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,6 @@ GLBitmap::GLBitmap() :
   Bitmap(itsRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
-  setRenderMode(Gmodes::GLCOMPILE);
   setUsingZoom(true);
 }
 
