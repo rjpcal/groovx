@@ -76,8 +76,6 @@ public:
   /// Equivalent to calling toglet->makeCurrent().
   static void setCurrent(Util::SoftRef<Toglet> toglet);
 
-  virtual bool isNotShareable() const { return true; }
-
   /// Specify which Tk window should be the parent of new Toglet's.
   static void defaultParent(const char* pathname);
 

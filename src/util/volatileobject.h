@@ -50,8 +50,6 @@ public:
   virtual ~VolatileObject();
 
   void destroy();
-
-  virtual bool isNotShareable() const;
 };
 
 static const char vcid_volatileobject_h[] = "$Header$";

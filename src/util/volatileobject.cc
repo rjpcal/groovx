@@ -39,6 +39,7 @@ Util::VolatileObject::VolatileObject() :
   isItDestroyed(false)
 {
 DOTRACE("Util::VolatileObject::VolatileObject");
+  this->markAsVolatile();
   this->incrRefCount();
 }
 
@@ -65,11 +66,6 @@ DOTRACE("Util::VolatileObject::destroy");
   isItDestroyed = true;
 
   this->decrRefCount();
-}
-
-bool Util::VolatileObject::isNotShareable() const
-{
-  return true;
 }
 
 static const char vcid_volatileobject_cc[] = "$Header$";

@@ -168,10 +168,12 @@ DOTRACE("Util::RefCounted::operator delete");
   ::operator delete(space);
 }
 
-Util::RefCounted::RefCounted() : itsRefCounts(new Util::RefCounts)
+Util::RefCounted::RefCounted() :
+  itsRefCounts(new Util::RefCounts),
+  itsVolatile(false)
 {
 DOTRACE("Util::RefCounted::RefCounted");
-  dbgPrint(7, "RefCounted ctor"); dbgEvalNL(7, (void*)this);
+  dbgPrint(7, "RefCounted ctor"); dbgEvalNL(7, this);
 
   itsRefCounts->acquireWeak();
 }
@@ -179,8 +181,7 @@ DOTRACE("Util::RefCounted::RefCounted");
 Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
-  dbgPrint(7, "RefCounted dtor");
-  dbgEvalNL(7, this);
+  dbgPrint(7, "RefCounted dtor"); dbgEvalNL(7, this);
   dbgDump(7, *itsRefCounts);
 
   // Must guarantee that (strong-count == 0) when the refcounted object is
@@ -191,6 +192,13 @@ DOTRACE("Util::RefCounted::~RefCounted");
 
   itsRefCounts->itsOwnerAlive = false;
   itsRefCounts->releaseWeak();
+}
+
+void Util::RefCounted::markAsVolatile()
+{
+DOTRACE("Util::RefCounted::markAsVolatile");
+  Assert(itsRefCounts->strongCount() == 0);
+  itsVolatile = true;
 }
 
 void Util::RefCounted::incrRefCount() const
@@ -231,7 +239,7 @@ DOTRACE("Util::RefCounted::isUnshared");
 bool Util::RefCounted::isNotShareable() const
 {
 DOTRACE("Util::RefCounted::isNotShareable");
-  return false;
+  return itsVolatile;
 }
 
 int Util::RefCounted::refCount() const

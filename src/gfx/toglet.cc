@@ -211,6 +211,8 @@ Toglet::Toglet(bool pack, bool topLevel) :
 {
 DOTRACE("Toglet::Toglet");
 
+  this->markAsVolatile();
+
   dbgEvalNL(3, (void*) this);
 
   // Get the window mapped onscreen. NOTE -- we need to make these calls
@@ -262,11 +264,11 @@ DOTRACE("Toglet::make");
   Toglet* p = new Toglet;
 
   // Bump the ref count here since Toglet manages its own lifetime (it
-  // overrides isNotShareable() to return true). So we need to bump the ref
-  // count at some point. HOWEVER -- it's best not to bump the ref count
-  // inside the constructor chain... in that case, if an exception occurs,
-  // we'll end up running the RefCounted destructor with refcount != 0,
-  // which violates a fundamental invariant of RefCounted.
+  // calls markAsVolatile()). So we need to bump the ref count at some
+  // point. HOWEVER -- it's best not to bump the ref count inside the
+  // constructor chain... in that case, if an exception occurs, we'll end
+  // up running the RefCounted destructor with refcount != 0, which
+  // violates a fundamental invariant of RefCounted.
   p->incrRefCount();
 
   return p;
