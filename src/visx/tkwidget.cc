@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri Jun 15 19:50:22 2001
+// written: Sat Jun 16 07:25:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "tcl/tkwidget.h"
 
 #include "util/dlink_list.h"
-#include "util/pointers.h"
+#include "util/ref.h"
 
 #include <tk.h>
 #include <X11/Xutil.h>
@@ -31,6 +31,8 @@
 
 class DbgButtonListener : public GWT::ButtonListener {
 public:
+  static DbgButtonListener* make() { return new DbgButtonListener; }
+
   virtual void onButtonPress(unsigned int button, int x, int y)
   {
     cerr << "ButtonPress: "
@@ -41,6 +43,8 @@ public:
 
 class DbgKeyListener : public GWT::KeyListener {
 public:
+  static DbgKeyListener* make() { return new DbgKeyListener; }
+
   virtual void onKeyPress(unsigned int modifiers, const char* keys,
                           int x, int y)
   {
@@ -61,8 +65,8 @@ class Tcl::TkWidget::Impl
 {
 public:
 
-  typedef dlink_list<shared_ptr<GWT::ButtonListener> > Buttons;
-  typedef dlink_list<shared_ptr<GWT::KeyListener> >    Keys;
+  typedef dlink_list<Util::Ref<GWT::ButtonListener> > Buttons;
+  typedef dlink_list<Util::Ref<GWT::KeyListener> >    Keys;
 
   Buttons itsButtonListeners;
   Keys itsKeyListeners;
@@ -128,14 +132,14 @@ public:
 Tcl::TkWidget::TkWidget() : itsImpl(new Impl)
 {
 #if 0
-  addButtonListener(shared_ptr<GWT::ButtonListener>(new DbgButtonListener));
-  addKeyListener(shared_ptr<GWT::KeyListener>(new DbgKeyListener));
+  addButtonListener(Util::Ref<GWT::ButtonListener>(DbgButtonListener::make()));
+  addKeyListener(Util::Ref<GWT::KeyListener>(DbgKeyListener::make()));
 #endif
 }
 
 Tcl::TkWidget::~TkWidget() { delete itsImpl; }
 
-void Tcl::TkWidget::addButtonListener(shared_ptr<GWT::ButtonListener> b)
+void Tcl::TkWidget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
 {
   if (itsImpl->itsButtonListeners.empty())
     {
@@ -154,7 +158,7 @@ void Tcl::TkWidget::removeButtonListeners()
                         static_cast<void*>(itsImpl));
 }
 
-void Tcl::TkWidget::addKeyListener(shared_ptr<GWT::KeyListener> k)
+void Tcl::TkWidget::addKeyListener(Util::Ref<GWT::KeyListener> k)
 {
   if (itsImpl->itsKeyListeners.empty())
     {

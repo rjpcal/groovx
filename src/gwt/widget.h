@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Fri Jun 15 19:50:35 2001
+// written: Sat Jun 16 07:24:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,19 +31,17 @@ class GxNode;
 namespace Util { template <class T> class Ref; };
 namespace Util { template <class T> class WeakRef; }
 
-template <class T> class shared_ptr;
-
 
 //
 // Listener class definitions
 //
 
-class GWT::ButtonListener {
+class GWT::ButtonListener : public Util::Object {
 public:
   virtual void onButtonPress(unsigned int button, int x, int y) = 0;
 };
 
-class GWT::KeyListener {
+class GWT::KeyListener : public Util::Object {
 public:
   virtual void onKeyPress(unsigned int modifiers, const char* keys,
                           int x, int y) = 0;
@@ -68,8 +66,8 @@ public:
 
   virtual Canvas& getCanvas() = 0;
 
-  virtual void addButtonListener (shared_ptr<GWT::ButtonListener> b) = 0;
-  virtual void addKeyListener    (shared_ptr<GWT::KeyListener> k) = 0;
+  virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b) = 0;
+  virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k) = 0;
 
   virtual void bind(const char* event_sequence, const char* script) = 0;
   virtual void takeFocus() = 0;
