@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Feb 16 09:21:42 2000
+// written: Wed Mar  8 17:39:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,6 @@ public:
   TclValue(Tcl_Interp* interp, double val);
   /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, const char* val);
-  /// Construct with initial value \a val.
-  TclValue(Tcl_Interp* interp, const string& val);
 
   /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, const Value& val);
@@ -82,14 +80,12 @@ public:
   virtual bool getBool() const;
   virtual double getDouble() const;
   virtual const char* getCstring() const;
-  virtual string getString() const;
 
   virtual void get(int& val) const;
   virtual void get(long& val) const;
   virtual void get(bool& val) const;
   virtual void get(double& val) const;
   virtual void get(const char*& val) const;
-  virtual void get(string& val) const;
 
 private:
   mutable Tcl_Interp* itsInterp;

@@ -3,17 +3,13 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Mar  8 11:27:03 2000
+// written: Wed Mar  8 17:40:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef VALUE_H_DEFINED
 #define VALUE_H_DEFINED
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
@@ -66,7 +62,7 @@ public:
 
   /** The symbolic constants of type \c Type can be used by subclasses
       to indicate the native type of their underlying representation. */
-  enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, STRING, UNKNOWN };
+  enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, UNKNOWN };
 
   /** Return the \c Type constant indicating the native type used in
       the implementation. */
@@ -96,8 +92,6 @@ public:
   virtual double getDouble() const;
   /// Attempt to get a C-style string (\c char*) representation of the value.
   virtual const char* getCstring() const;
-  /// Attempt to get an STL \c string representation of the value.
-  virtual string getString() const;
 
   /// Attempt to get an \c int representation of the value.
   virtual void get(int& val) const;
@@ -109,8 +103,6 @@ public:
   virtual void get(double& val) const;
   /// Attempt to get a C-style string (\c char*) representation of the value.
   virtual void get(const char*& val) const;
-  /// Attempt to get an STL \c string representation of the value.
-  virtual void get(string& val) const;
 
   // The default implementations of the set functions all throw
   // exceptions, so that the default case is a read-only value.
@@ -125,8 +117,6 @@ public:
   virtual void setDouble(double val);
   /// Attempt to set the value from a C-style string (\c char*) representation.
   virtual void setCstring(const char* val);
-  /// Attempt to set the value from an STL \c string  representation.
-  virtual void setString(const string& val);
 
   /// Attempt to set the value from an \c int representation.
   void set(int val) { setInt(val); }
@@ -138,8 +128,6 @@ public:
   void set(double val) { setDouble(val); }
   /// Attempt to set the value from a C-style string (\c char*) representation.
   void set(const char* val) { setCstring(val); }
-  /// Attempt to set the value from an STL \c string  representation.
-  void set(const string& val) { setString(val); }
 }; 
 
 ///////////////////////////////////////////////////////////////////////
@@ -194,21 +182,18 @@ public:
   virtual bool getBool() const;
   virtual double getDouble() const;
   virtual const char* getCstring() const;
-  virtual string getString() const;
 
   virtual void get(int& val) const;
   virtual void get(long& val) const;
   virtual void get(bool& val) const;
   virtual void get(double& val) const;
   virtual void get(const char*& val) const;
-  virtual void get(string& val) const;
 
   virtual void setInt(int val);
   virtual void setLong(long val);
   virtual void setBool(bool val);
   virtual void setDouble(double val);
   virtual void setCstring(const char* val);
-  virtual void setString(const string& val);
 
   /** Publicly accessible lone data member allows efficient access to
       those who know the true type of the object. */
@@ -255,21 +240,18 @@ public:
   virtual bool getBool() const;
   virtual double getDouble() const;
   virtual const char* getCstring() const;
-  virtual string getString() const;
 
   virtual void get(int& val) const;
   virtual void get(long& val) const;
   virtual void get(bool& val) const;
   virtual void get(double& val) const;
   virtual void get(const char*& val) const;
-  virtual void get(string& val) const;
 
   virtual void setInt(int val);
   virtual void setLong(long val);
   virtual void setBool(bool val);
   virtual void setDouble(double val);
   virtual void setCstring(const char* val);
-  virtual void setString(const string& val);
 
   /// Return a reference to the currently pointed-to \c T object.
   T& operator()() { return *itsValPtr; }
