@@ -66,7 +66,7 @@ Util::Tracer Trial::tracer;
 
 namespace
 {
-  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 4;
+  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 5;
 
   struct ActiveState
   {
@@ -220,7 +220,7 @@ DOTRACE("Trial::readFrom");
 
   rep->becomeInactive();
 
-  reader.ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
+  const int svid = reader.ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
   rep->gxNodes.clear();
   IO::ReadUtils::readObjectSeq<GxNode>
@@ -236,13 +236,16 @@ DOTRACE("Trial::readFrom");
 
   rep->rh = dynamicCast<ResponseHandler>(reader.readMaybeObject("rh"));
   rep->th = dynamicCast<TimingHdlr>(reader.readMaybeObject("th"));
+
+  if (svid >= 5)
+    reader.readValue("info", rep->info);
 }
 
 void Trial::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Trial::writeTo");
 
-  writer.ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 5,
                               "Try grsh0.8a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
@@ -257,6 +260,8 @@ DOTRACE("Trial::writeTo");
 
   writer.writeObject("rh", rep->rh);
   writer.writeObject("th", rep->th);
+
+  writer.writeValue("info", rep->info);
 }
 
 const SoftRef<Toglet>& Trial::getWidget() const
