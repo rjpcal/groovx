@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Sun Aug  4 20:18:30 2002
+// written: Mon Aug  5 13:12:11 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -78,8 +78,7 @@ private:
   Togl& operator=(const Togl&);
 
 public:
-  Togl(Tcl_Interp* interp, const char* pathname,
-       int config_argc = 0, const char** config_argv = 0);
+  Togl(Tcl_Interp* interp, const char* pathname);
   virtual ~Togl();
 
   // Change callbacks for existing widget
@@ -88,7 +87,7 @@ public:
   void setDestroyFunc( Togl_Callback *proc );
 
   // Miscellaneous
-  int configure( Tcl_Interp *interp, int argc, const char *argv[], int flags );
+  int configure( Tcl_Interp *interp, int argc, const char *argv[] );
   void makeCurrent() const;
   static void createCommand( char *cmd_name, Togl_CmdProc *cmd_proc );
   void postRedisplay();

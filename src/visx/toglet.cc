@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jul  3 17:29:33 2002
+// written: Mon Aug  5 13:09:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -292,8 +292,7 @@ public:
   scoped_ptr<TogletSizer> sizer;
   unsigned int fontListBase;
 
-  TogletImpl(Toglet* owner, Tcl_Interp* interp, Util::UID uid,
-             int config_argc, const char** config_argv);
+  TogletImpl(Toglet* owner, Tcl_Interp* interp, Util::UID uid);
 
   ~TogletImpl();
 
@@ -308,10 +307,9 @@ public:
 };
 
 TogletImpl::TogletImpl(Toglet* owner,
-                       Tcl_Interp* interp, Util::UID uid,
-                       int config_argc, const char** config_argv)
+                       Tcl_Interp* interp, Util::UID uid)
   :
-  togl(new Togl(interp, widgetName(uid), config_argc, config_argv)),
+  togl(new Togl(interp, widgetName(uid))),
   canvas(GLCanvas::make(togl->bitsPerPixel(),
                         togl->isRgba(), togl->isDoubleBuffered())),
   sizer(new TogletSizer),
@@ -443,11 +441,9 @@ void TogletImpl::destroyCallback(Togl* togl)
 //
 ///////////////////////////////////////////////////////////////////////
 
-Toglet::Toglet(Tcl_Interp* interp,
-               int config_argc, const char** config_argv,
-               bool pack) :
+Toglet::Toglet(Tcl_Interp* interp, bool pack) :
   Tcl::TkWidget(),
-  rep(new TogletImpl(this, interp, id(), config_argc, config_argv))
+  rep(new TogletImpl(this, interp, id()))
 {
 DOTRACE("Toglet::Toglet");
   DebugEvalNL((void*) this);
