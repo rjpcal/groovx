@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Thu May 15 16:57:52 2003
+// written: Fri May 16 08:39:41 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -148,7 +148,7 @@ public:
     defGetter("pathname", &Tcl::TkWidget::pathname);
     defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
-    defGetter("size", &Toglet::size);
+    defAttrib("size", &Toglet::size, &Toglet::setSize);
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);

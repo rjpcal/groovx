@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri May 16 08:34:03 2003
+// written: Fri May 16 08:41:08 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -291,17 +291,29 @@ int Tcl::TkWidget::width() const { return rep->width; }
 int Tcl::TkWidget::height() const { return rep->height; }
 
 Gfx::Vec2<int> Tcl::TkWidget::size() const
-{ return Gfx::Vec2<int>(width(), height()); }
+{
+  return Gfx::Vec2<int>(width(), height());
+}
 
 void Tcl::TkWidget::setWidth(int w)
 {
+DOTRACE("Tcl::TkWidget::setWidth");
   rep->width = w;
   Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
 }
 
 void Tcl::TkWidget::setHeight(int h)
 {
+DOTRACE("Tcl::TkWidget::setHeight");
   rep->height = h;
+  Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
+}
+
+void Tcl::TkWidget::setSize(Gfx::Vec2<int> sz)
+{
+DOTRACE("Tcl::TkWidget::setSize");
+  rep->width = sz.x();
+  rep->height = sz.y();
   Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
 }
 

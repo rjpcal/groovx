@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Thu May 15 17:09:18 2003
+// written: Fri May 16 08:41:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -77,6 +77,7 @@ public:
   Gfx::Vec2<int> size() const;
   void setWidth(int w);
   void setHeight(int h);
+  void setSize(Gfx::Vec2<int> sz);
 
   Tcl::Interp& interp() const;
   Tk_Window tkWin() const;
