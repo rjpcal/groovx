@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Wed Nov 20 11:49:38 2002
+// written: Wed Nov 20 12:19:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,13 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bezier4.h"
 #include "gx/box.h"
 #include "gx/rgbacolor.h"
 #include "gx/vec3.h"
 
 #include "util/arrays.h"
 #include "util/error.h"
-
-#include "visx/bezier.h"
 
 #include "util/debug.h"
 #include "util/trace.h"

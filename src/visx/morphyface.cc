@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov 19 18:12:56 2002
+// written: Wed Nov 20 12:19:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,10 @@
 
 #include "visx/morphyface.h"
 
-#include "visx/bezier.h"
-
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 
+#include "gx/bezier4.h"
 #include "gx/bbox.h"
 #include "gx/rect.h"
 #include "gx/vec3.h"
