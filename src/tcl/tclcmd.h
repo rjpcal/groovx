@@ -26,12 +26,6 @@ namespace Tcl
   class Context;
 }
 
-template <class T>
-struct TypeCue
-{
-  typedef T Type;
-};
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
