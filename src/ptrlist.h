@@ -3,13 +3,17 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Feb  1 11:30:54 2000
+// written: Tue Feb  1 18:15:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef PTRLIST_H_DEFINED
 #define PTRLIST_H_DEFINED
+
+#ifndef DUMBPTR_H_DEFINED
+#include "dumbptr.h"
+#endif
 
 #ifndef IOPTRLIST_H_DEFINED
 #include "ioptrlist.h"
@@ -39,7 +43,7 @@ public:
   // pointers //
   //////////////
 
-  typedef T* Ptr;
+  typedef DumbPtr<T> Ptr;
 
   ///////////////
   // iterators //
@@ -141,11 +145,11 @@ public:
 public:
   ///
   Ptr getPtr(int id) const throw () 
-	 { return castToT(VoidPtrList::getVoidPtr(id)); }
+	 { return DumbPtr<T>(castToT(VoidPtrList::getVoidPtr(id))); }
 
   ///
   Ptr getCheckedPtr(int id) const throw (InvalidIdError)
-	 { return castToT(VoidPtrList::getCheckedVoidPtr(id)); }
+	 { return DumbPtr<T>(castToT(VoidPtrList::getCheckedVoidPtr(id))); }
 
   /** Puts a list of all valid (i.e. within-range and non-null) trial
 		ids into the vector<int> that is passed in by reference. */
@@ -160,11 +164,11 @@ public:
 
   ///
   int insert(Ptr ptr)
-	 { return VoidPtrList::insertVoidPtr(castFromT(ptr)); }
+	 { return VoidPtrList::insertVoidPtr(castFromT(ptr.get())); }
 
   ///
   void insertAt(int id, Ptr ptr)
-	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr)); }
+	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr.get())); }
 
 protected:
   /**
