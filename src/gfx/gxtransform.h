@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 20 15:15:24 2002
-// written: Wed Nov 20 15:15:48 2002
+// written: Tue Nov 26 19:45:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,8 +99,6 @@ public:
 private:
   GxTransform(const GxTransform&);
   GxTransform& operator=(const GxTransform&);
-
-  void onChange();
 
   /// opaque pointer to implementation
   GxTransformImpl* const rep;
