@@ -47,29 +47,29 @@ namespace
 
 int Debug::level = 0;
 
-#define EVAL_IMPL(T)                                    \
-void Debug::Eval(const char* what, int level,           \
-                 const char* where, int line_no,        \
-                 T expr, bool nl)                       \
-{                                                       \
-  if (lineComplete)                                     \
-    {                                                   \
-      STD_IO::cerr << "[" << level << "]";              \
-      STD_IO::cerr << where << ":" << line_no << ": ";  \
-    }                                                   \
-  if (what)                                             \
-    STD_IO::cerr << "(" << #T << ") " << what << " = "; \
-  STD_IO::cerr << expr;                                 \
-  if (nl)                                               \
-    {                                                   \
-      STD_IO::cerr << STD_IO::endl;                     \
-      lineComplete = true;                              \
-    }                                                   \
-  else                                                  \
-    {                                                   \
-      STD_IO::cerr << ", ";                             \
-      lineComplete = false;                             \
-    }                                                   \
+#define EVAL_IMPL(T)                                            \
+void Debug::Eval(const char* what, int level,                   \
+                 const char* where, int line_no,                \
+                 bool nl, T expr) throw()                       \
+{                                                               \
+  if (lineComplete)                                             \
+    {                                                           \
+      fprintf(stderr, "[%d] %s:%d: ", level, where, line_no);   \
+    }                                                           \
+  if (what)                                                     \
+    fprintf(stderr, "(%s) %s = ", #T, what);                    \
+  STD_IO::cerr.exceptions(STD_IO::ios::goodbit);                \
+  STD_IO::cerr << expr;                                         \
+  if (nl)                                                       \
+    {                                                           \
+      fprintf(stderr, "\n");                                    \
+      lineComplete = true;                                      \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      fprintf(stderr, ", ");                                    \
+      lineComplete = false;                                     \
+    }                                                           \
 }
 
 EVAL_IMPL(bool);
@@ -87,35 +87,35 @@ EVAL_IMPL(const char*);
 EVAL_IMPL(void*);
 EVAL_IMPL(fstring);
 
-void Debug::PanicImpl(const char* what, const char* where, int line_no)
+void Debug::PanicImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Panic (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
-void Debug::AssertImpl(const char* what, const char* where, int line_no)
+void Debug::AssertImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Assertion failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
-void Debug::PreconditionImpl(const char* what, const char* where, int line_no)
+void Debug::PreconditionImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Precondition failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
-void Debug::PostconditionImpl(const char* what, const char* where, int line_no)
+void Debug::PostconditionImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Postcondition failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();
   abort();
 }
 
-void Debug::InvariantImpl(const char* what, const char* where, int line_no)
+void Debug::InvariantImpl(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Invariant failed (%s:%d):\n  '%s'\n\n", where, line_no, what);
   Util::BackTrace::current().print();

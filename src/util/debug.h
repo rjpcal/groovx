@@ -34,26 +34,26 @@ class fstring;
 
 namespace Debug
 {
-  void Eval (const char* what, int level, const char* where, int line_no, bool expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, char expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, unsigned char expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, short expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, unsigned short expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, int expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, unsigned int expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, long expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, unsigned long expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, float expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, double expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, const char* expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, void* expr, bool nl = false);
-  void Eval (const char* what, int level, const char* where, int line_no, fstring expr, bool nl = false);
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, bool expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, char expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned char expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, short expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned short expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, int expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned int expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, long expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned long expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, float expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) throw();
+  void Eval (const char* what, int level, const char* where, int line_no, bool nl, fstring expr) throw();
 
-  void PanicImpl         (const char* what, const char* where, int line_no);
-  void AssertImpl        (const char* what, const char* where, int line_no);
-  void PreconditionImpl  (const char* what, const char* where, int line_no);
-  void PostconditionImpl (const char* what, const char* where, int line_no);
-  void InvariantImpl     (const char* what, const char* where, int line_no);
+  void PanicImpl         (const char* what, const char* where, int line_no) throw();
+  void AssertImpl        (const char* what, const char* where, int line_no) throw();
+  void PreconditionImpl  (const char* what, const char* where, int line_no) throw();
+  void PostconditionImpl (const char* what, const char* where, int line_no) throw();
+  void InvariantImpl     (const char* what, const char* where, int line_no) throw();
 
   extern int level;
 }
@@ -86,20 +86,16 @@ static const char vcid_debug_h[] = "$Id$";
 #endif // DEBUG_H_DEFINED
 
 #if !defined(NO_DEBUG)
-#  define dbgEval(lev, x)    do { if (Debug::level >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, x, false); } while (0)
-#  define dbgEvalNL(lev, x)  do { if (Debug::level >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, x, true); } while (0)
-#  define dbgPrint(lev, x)   do { if (Debug::level >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, x, false); } while (0)
-#  define dbgPrintNL(lev, x) do { if (Debug::level >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, x, true); } while (0)
-#  define dbgDump(lev, x)    do { if (Debug::level >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, "...", true); (x).debugDump(); } } while (0)
+#  define dbgEval(lev, x)    do { if (Debug::level >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbgEvalNL(lev, x)  do { if (Debug::level >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbgPrint(lev, x)   do { if (Debug::level >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbgPrintNL(lev, x) do { if (Debug::level >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbgDump(lev, x)    do { if (Debug::level >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debugDump(); } } while (0)
 
-#  define Assert(expr) \
-        if ( !(expr) ) { Debug::AssertImpl(#expr, __FILE__, __LINE__); }
-#  define Invariant(expr) \
-        if ( !(expr) ) { Debug::InvariantImpl(#expr, __FILE__, __LINE__); }
-#  define Precondition(expr) \
-        if ( !(expr) ) { Debug::PreconditionImpl(#expr, __FILE__, __LINE__); }
-#  define Postcondition(expr) \
-        if ( !(expr) ) { Debug::PostconditionImpl(#expr, __FILE__, __LINE__); }
+#  define Assert(expr)        do { if ( !(expr) ) Debug::AssertImpl(#expr, __FILE__, __LINE__); } while(0)
+#  define Invariant(expr)     do { if ( !(expr) ) Debug::InvariantImpl(#expr, __FILE__, __LINE__); } while(0)
+#  define Precondition(expr)  do { if ( !(expr) ) Debug::PreconditionImpl(#expr, __FILE__, __LINE__); } while(0)
+#  define Postcondition(expr) do { if ( !(expr) ) Debug::PostconditionImpl(#expr, __FILE__, __LINE__); } while(0)
 
 #else // defined(NO_DEBUG)
 
