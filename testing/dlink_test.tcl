@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-load obj/$::env(ARCH)/tests/dlinktest.tso
+package require Dlinktest
 
 foreach cmd [info commands Dlinktest::test*] {
     ::test "dlink_list" "$cmd" $cmd {^$}
