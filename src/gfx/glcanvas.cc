@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Jul  5 14:23:30 2002
+// written: Fri Jul  5 18:42:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -465,7 +465,7 @@ DOTRACE("GLCanvas::grabPixels");
 void GLCanvas::clearColorBuffer()
 {
 DOTRACE("GLCanvas::clearColorBuffer");
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GLCanvas::clearColorBuffer(const Gfx::Rect<int>& screen_rect)
@@ -479,7 +479,7 @@ DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
     glScissor(screen_rect.left(), screen_rect.bottom(),
               screen_rect.width(), screen_rect.height());
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_SCISSOR_TEST);
   }
   glPopAttrib();
