@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Mar  6 10:17:29 2000
+// written: Mon Mar  6 17:26:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "pbm.h"
 #include "reader.h"
 #include "rect.h"
+#include "util/strings.h"
 #include "writer.h"
 
 #include <GL/gl.h>
@@ -42,7 +43,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Bitmap";
+  const string_literal ioTag = "Bitmap";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -152,7 +153,7 @@ DOTRACE("BitmapRep::init");
 void BitmapRep::serialize(ostream& os, int flag) const {
 DOTRACE("BitmapRep::serialize");
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag.c_str() << sep; }
 
   os << itsImpl->itsFilename << '\t';
   os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
@@ -161,12 +162,12 @@ DOTRACE("BitmapRep::serialize");
   os << itsImpl->itsContrastFlip << sep;
   os << itsImpl->itsVerticalFlip << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 }
 
 void BitmapRep::deserialize(istream& is, int flag) {
 DOTRACE("BitmapRep::deserialize");
-  if (flag & IO::TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   IO::eatWhitespace(is);
   getline(is, itsImpl->itsFilename, '\t');
@@ -184,7 +185,7 @@ DOTRACE("BitmapRep::deserialize");
   is >> val;
   itsImpl->itsVerticalFlip = bool(val);
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 
   if ( itsImpl->itsFilename.empty() ) {
 	 clearBytes();
