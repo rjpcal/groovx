@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Thu Jun  1 13:57:04 2000
+// written: Sat Oct  7 13:05:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,9 +60,9 @@ DOTRACE("RhList::theRhList");
   return theInstance; 
 }
 
-void RhList::afterInsertHook(int /* id */, void* ptr) {
+void RhList::afterInsertHook(int /* id */, MasterVoidPtr* ptr) {
 DOTRACE("RhList::afterInsertHook");
-  ResponseHandler* rh = castToT(ptr);
+  ResponseHandler* rh = castToT(ptr->ptr());
   rh->setInterp(itsInterp);
 }
 

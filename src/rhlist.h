@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Thu Jun  1 13:56:50 2000
+// written: Sat Oct  7 13:05:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
 
   /** Reimplemented from \c VoidPtrList to ensure that all owned
       ResposneHandler's have their \c Tcl_Interp* set properly. */
-  virtual void afterInsertHook(int id, void* ptr);
+  virtual void afterInsertHook(int id, MasterVoidPtr* ptr);
 
   /** Set the \c Tcl_Interp* for the \c RhList, which it passes on to
       all \c ResponseHandler's that it owns. */
