@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu May 11 10:54:08 2000
+// written: Wed Aug 30 15:59:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,9 +82,6 @@ public:
   //////////////////////////////
   // Accessors + Manipulators //
   //////////////////////////////
-
-  /// Return the Tcl interpreter that was passed to the constructor.
-  Tcl_Interp* getInterp();
 
   /// Return the name of the file currently being used for autosaves
   const fixed_string& getAutosaveFile() const;

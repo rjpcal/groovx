@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jul 14 16:35:01 2000
+// written: Wed Aug 30 15:59:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,8 +151,6 @@ public:
   void manageObject(const char* name, IO::IoObject* object);
 
   void init();
-
-  Tcl_Interp* getInterp() { return itsInterp; }
 
   const fixed_string& getAutosaveFile() const { return itsAutosaveFile; }
 
@@ -990,10 +988,6 @@ void ExptDriver::writeTo(IO::Writer* writer) const
 // ExptDriver accessor + manipulator method definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-Tcl_Interp* ExptDriver::getInterp()
-  { return itsImpl->getInterp(); }
-
 
 const fixed_string& ExptDriver::getAutosaveFile() const
   { return itsImpl->getAutosaveFile(); }
