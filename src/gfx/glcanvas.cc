@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Jan 18 16:07:07 2002
+// written: Wed Jan 23 10:09:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,17 +32,21 @@
 class GLCanvas::Impl
 {
 public:
-  Impl(bool is_rgba, bool is_db) :
+  Impl(unsigned int color_buffer_bits,
+       bool is_rgba,
+       bool is_db) :
+    itsColorBufferBits(color_buffer_bits),
     isItRgba(is_rgba),
     isItDoubleBuffered(is_db)
   {}
 
-  bool isItRgba;
-  bool isItDoubleBuffered;
+  const unsigned int itsColorBufferBits;
+  const bool isItRgba;
+  const bool isItDoubleBuffered;
 };
 
-GLCanvas::GLCanvas(bool is_rgba, bool is_db) :
-  itsImpl(new Impl(is_rgba, is_db))
+GLCanvas::GLCanvas(unsigned int col_buf_bits, bool is_rgba, bool is_db) :
+  itsImpl(new Impl(col_buf_bits, is_rgba, is_db))
 {}
 
 GLCanvas::~GLCanvas()
@@ -175,8 +179,7 @@ unsigned int GLCanvas::bitsPerPixel() const
 {
 DOTRACE("GLCanvas::bitsPerPixel");
 
-  if (isRgba()) return 24;
-  return 8;
+  return itsImpl->itsColorBufferBits;
 }
 
 void GLCanvas::throwIfError(const char* where) const
@@ -412,7 +415,14 @@ DOTRACE("GLCanvas::grabPixels");
 
   const int pixel_alignment = 1;
 
-  Gfx::BmapData new_data(bounds.extent(), bitsPerPixel(), pixel_alignment);
+  // NOTE: we can't just use GLCanvas::bitsPerPixel() here, since that won't
+  // work in the case of a 16-bit color buffer; in that case, we are still in
+  // RGBA mode, so glReadPixels() will return one byte per color component
+  // (i.e. 24 bits per pixel) regardless of the actual color buffer depth.
+  const int bmap_bits_per_pixel = isRgba() ? 24 : 8;
+
+  Gfx::BmapData new_data(bounds.extent(),
+                         bmap_bits_per_pixel, pixel_alignment);
 
   glPixelStorei(GL_PACK_ALIGNMENT, pixel_alignment);
 

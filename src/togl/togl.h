@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue Jan 22 16:13:18 2002
+// written: Wed Jan 23 09:48:09 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -111,8 +111,9 @@ public:
   char* ident() const;
   int width() const;
   int height() const;
-  bool usesRgba() const;
+  bool isRgba() const;
   bool isDoubleBuffered() const;
+  unsigned int bitsPerPixel() const;
   bool hasPrivateCmap() const;
   Tcl_Interp* interp() const;
   Tk_Window tkWin() const;

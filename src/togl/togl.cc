@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jan 22 16:22:08 2002
+// written: Wed Jan 23 10:09:14 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -147,8 +147,9 @@ public:
   char* ident() const { return itsIdent; }
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
-  bool usesRgba() const { return itsRgbaFlag; }
+  bool isRgba() const { return itsRgbaFlag; }
   bool isDoubleBuffered() const { return itsDoubleFlag; }
+  unsigned int bitsPerPixel() const { return itsBitsPerPixel; }
   bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
@@ -280,6 +281,8 @@ public:
   GLfloat* itsEpsGreenMap;
   GLfloat* itsEpsBlueMap;
   GLint itsEpsMapSize;              /* = Number of indices in our Togl */
+
+  unsigned int itsBitsPerPixel;
 };
 
 
@@ -449,32 +452,32 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
     {
 
       /* Next, if we're using Mesa and displaying on an HP with the
-	 "Color Recovery" feature and the visual is 8-bit TrueColor,
-	 search for a special colormap initialized for dithering.  Mesa
-	 will know how to dither using this colormap. */
+         "Color Recovery" feature and the visual is 8-bit TrueColor,
+         search for a special colormap initialized for dithering.  Mesa
+         will know how to dither using this colormap. */
       Atom hp_cr_maps = XInternAtom( dpy, "_HP_RGB_SMOOTH_MAP_LIST", True );
       if (hp_cr_maps
-	  && visinfo->visual->c_class==TrueColor
-	  && visinfo->depth==8)
-	{
-	  int numCmaps;
-	  XStandardColormap *standardCmaps;
-	  Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
-					    &numCmaps, hp_cr_maps );
-	  if (status)
-	    {
-	      for (int i=0; i<numCmaps; i++)
-		{
-		  if (standardCmaps[i].visualid == visinfo->visual->visualid)
-		    {
-		      Colormap cmap = standardCmaps[i].colormap;
-		      XFree( standardCmaps );
-		      return cmap;
-		    }
-		}
-	      XFree(standardCmaps);
-	    }
-	}
+          && visinfo->visual->c_class==TrueColor
+          && visinfo->depth==8)
+        {
+          int numCmaps;
+          XStandardColormap *standardCmaps;
+          Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
+                                            &numCmaps, hp_cr_maps );
+          if (status)
+            {
+              for (int i=0; i<numCmaps; i++)
+                {
+                  if (standardCmaps[i].visualid == visinfo->visual->visualid)
+                    {
+                      Colormap cmap = standardCmaps[i].colormap;
+                      XFree( standardCmaps );
+                      return cmap;
+                    }
+                }
+              XFree(standardCmaps);
+            }
+        }
     }
 
   /*
@@ -595,11 +598,14 @@ int Togl::width() const
 int Togl::height() const
   { return itsImpl->height(); }
 
-bool Togl::usesRgba() const
-  { return itsImpl->usesRgba(); }
+bool Togl::isRgba() const
+  { return itsImpl->isRgba(); }
 
 bool Togl::isDoubleBuffered() const
   { return itsImpl->isDoubleBuffered(); }
+
+unsigned int Togl::bitsPerPixel() const
+  { return itsImpl->bitsPerPixel(); }
 
 bool Togl::hasPrivateCmap() const
   { return itsImpl->hasPrivateCmap(); }
@@ -1255,7 +1261,9 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsEpsRedMap(NULL),
   itsEpsGreenMap(NULL),
   itsEpsBlueMap(NULL),
-  itsEpsMapSize(0)
+  itsEpsMapSize(0),
+
+  itsBitsPerPixel(0)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -1324,7 +1332,7 @@ DOTRACE("Togl::Impl::Impl");
   if (itsTimerProc)
     {
       Tk_CreateTimerHandler( itsTime, Togl::Impl::dummyTimerCallback,
-			     static_cast<ClientData>(this) );
+                             static_cast<ClientData>(this) );
     }
 
   addSelfToList();
@@ -2095,43 +2103,47 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
       const int MAX_ATTEMPTS = 12;
 
       static int ci_depths[MAX_ATTEMPTS] =
-	{
-	  8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
-	};
+        {
+          8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
+        };
       static int dbl_flags[MAX_ATTEMPTS] =
-	{
-	  0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
-	};
+        {
+          0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
+        };
 
       /* It may take a few tries to get a visual */
       for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++)
-	{
-	  DebugEvalNL(attempt);
-	  buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
+        {
+          DebugEvalNL(attempt);
+          buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
 
-	  itsVisInfo = glXChooseVisual( itsDisplay,
-					DefaultScreen(itsDisplay), attrib_list );
+          itsVisInfo = glXChooseVisual( itsDisplay,
+                                        DefaultScreen(itsDisplay), attrib_list );
 
-	  if (itsVisInfo)
-	    {
-	      DebugEvalNL((void*)itsVisInfo->visualid);
-	      /* found a GLX visual! */
-	      break;
-	    }
-	}
+          if (itsVisInfo)
+            {
+              /* found a GLX visual! */
+              itsBitsPerPixel = itsVisInfo->depth;
+
+              DebugEvalNL((void*)itsVisInfo->visualid);
+              DebugEvalNL(itsVisInfo->depth);
+              DebugEvalNL(itsVisInfo->bits_per_rgb);
+              break;
+            }
+        }
 
       if (itsVisInfo==NULL)
-	{
-	  return TCL_ERR(itsInterp, "Togl: couldn't get visual");
-	}
+        {
+          return TCL_ERR(itsInterp, "Togl: couldn't get visual");
+        }
 
       // Create a new OpenGL rendering context.
       setupGLXContext();   DebugEvalNL(itsGLXContext);
 
       if (itsGLXContext == NULL)
-	{
-	  return TCL_ERR(itsInterp, "could not create rendering context");
-	}
+        {
+          return TCL_ERR(itsInterp, "could not create rendering context");
+        }
     }
 
   return TCL_OK;

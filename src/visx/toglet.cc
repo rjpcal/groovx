@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Wed Jan 23 09:52:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,8 @@ Toglet::Toglet(Tcl_Interp* interp,
                double dist, double unit_angle) :
   Tcl::TkWidget(),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
-  itsCanvas(new GLCanvas(itsTogl->usesRgba(), itsTogl->isDoubleBuffered())),
+  itsCanvas(new GLCanvas(itsTogl->bitsPerPixel(),
+                         itsTogl->isRgba(), itsTogl->isDoubleBuffered())),
   itsViewingDistance(dist),
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
@@ -158,7 +159,7 @@ DOTRACE("Toglet::Toglet");
 
   itsTogl->makeCurrent();
 
-  if ( itsTogl->usesRgba() )
+  if ( itsTogl->isRgba() )
     {
       itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
       itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
@@ -549,7 +550,7 @@ DOTRACE("Toglet::writeEpsFile");
 
     // Set fore/background colors to extremes for the purposes of EPS
     // rendering
-    if ( itsTogl->usesRgba() )
+    if ( itsTogl->isRgba() )
       {
         itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
         itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Jan 18 16:06:58 2002
+// written: Wed Jan 23 09:46:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,9 @@
 class GLCanvas : public Gfx::Canvas
 {
 public:
-  GLCanvas(bool is_rgba, bool is_doublebuffered);
+  GLCanvas(unsigned int bits_per_pixel,
+           bool is_rgba,
+           bool is_doublebuffered);
 
   virtual ~GLCanvas();
 
