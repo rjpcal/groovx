@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Mar 15 16:44:02 2001
+// written: Wed Mar 21 11:45:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -391,7 +391,7 @@ private:
 
 	 int mrows() const { return mrows_; }
 	 int rowstride() const { return rowstride_; }
-	 int rowgap() const { return mrows_ - rowstride_; }
+	 unsigned int rowgap() const { return rowstride_ - mrows_; }
 
 	 int ncols() const { return ncols_; }
 	 int colstride() const { return colstride_; }
@@ -426,7 +426,7 @@ private:
 	 void apply(double func(double))
     {
 		double* p = storage_->itsData + offset_;
-		int gap = rowgap();
+		unsigned int gap = rowgap();
 
 		if (gap == 0)
 		  {
