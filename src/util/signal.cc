@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Sat Sep 23 16:35:13 2000
+// written: Wed Oct 18 22:08:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +58,7 @@ DOTRACE("Observable::~Observable");
 void Observable::attach(Observer* obs) {
 DOTRACE("Observable::attach");
   if (!obs) return;
+  DebugEvalNL((void*)obs);
   itsImpl.itsObservers.push_back(obs);
 }
 
@@ -71,6 +73,8 @@ DOTRACE("Observable::sendStateChangeMsg");
   for (std::list<Observer *>::iterator ii = itsImpl.itsObservers.begin();
 		 ii != itsImpl.itsObservers.end();
 		 ii++) {
+	 DebugEvalNL((void*)*ii);
+	 Assert(*ii != 0);
 	 (*ii)->receiveStateChangeMsg(this);
   }
 }
@@ -92,6 +96,8 @@ DOTRACE("Observable::sendDestroyMsg");
 
 	 DebugEval((void *) this);
 	 DebugEvalNL((void *) obs);
+
+	 Assert(obs != 0);
 
 	 // Let the observer know that 'this' is being destroyed ...
 	 obs->receiveDestroyMsg(this);
