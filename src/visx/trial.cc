@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Jul  7 13:01:58 1999
+// written: Tue Aug  3 13:16:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -258,6 +258,11 @@ DOTRACE("Trial::avgRespTime");
 // manipulators //
 //////////////////
 
+void Trial::clearObjs() {
+DOTRACE("Trial::clearObjs");
+  itsIdPairs.clear(); 
+}
+
 void Trial::setResponseHandler(int rhid) {
 DOTRACE("Trial::setResponseHandler");
   itsRhId = rhid;
@@ -266,6 +271,11 @@ DOTRACE("Trial::setResponseHandler");
 void Trial::setTimingHdlr(int thid) {
 DOTRACE("setTimingHdlr");
   itsThId = thid;
+}
+
+void Trial::clearResponses() {
+DOTRACE("Trial::clearResponses");
+  itsResponses.clear();
 }
 
 /////////////

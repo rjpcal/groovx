@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Jul  7 12:36:44 1999
+// written: Tue Aug  3 13:16:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,6 +121,8 @@ public:
 	 itsIdPairs.push_back(IdPair(objid, posid));
   }
 
+  void clearObjs();
+
   void setType(int t) { itsType = t; }
 
   void setResponseHandler(int rhid);
@@ -131,6 +133,8 @@ public:
   }
 
   void undoLastResponse();
+
+  void clearResponses();
 
   /////////////
   // actions //
