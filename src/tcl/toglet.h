@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 15:09:21 2002
+// written: Thu Nov 21 15:19:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,6 @@
 #define TOGLET_H_DEFINED
 
 #include "tcl/tkwidget.h"
-
-struct Tcl_Interp;
-
-class TogletSizer;
 
 namespace Gfx
 {
@@ -90,7 +86,6 @@ private:
   Toglet& operator=(const Toglet&); // no assignment operator
 
   Impl* const rep;
-  TogletSizer* itsSizer;
 };
 
 static const char vcid_toglet_h[] = "$Header$";
