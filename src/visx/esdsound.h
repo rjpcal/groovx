@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Wed Jun 26 13:00:11 2002
+// written: Sat Aug 10 11:11:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ DOTRACE("Sound::initSound");
 bool Sound::haveSound()
 {
 DOTRACE("Sound::haveSound");
-  return (ESD > 0);
+  return (ESD >= 0);
 }
 
 void Sound::closeSound()
