@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Mon Sep 17 11:28:49 2001
+// written: Mon Sep 17 13:35:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,12 +44,13 @@ class Tcl::VecContext : public Tcl::Context
 public:
   VecContext(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const objv[],
              unsigned int num_calls) :
-    Tcl::Context(interp, objc, objv),
+    Context(interp, objc, objv),
+    itsArg0(objv[0]),
     itsArgs(),
     itsNumCalls(num_calls),
     itsResult()
   {
-    for (unsigned int i = 0; i < objc; ++i)
+    for (unsigned int i = 1; i < objc; ++i)
       {
         Tcl::List arg(objv[i]);
         if (arg.length() == 0)
@@ -77,7 +78,9 @@ public:
 protected:
   virtual Tcl_Obj* getObjv(unsigned int argn)
   {
-    return *(itsArgs.at(argn));
+    if (argn == 0) return itsArg0;
+
+    return *(itsArgs.at(argn-1));
   }
 
   virtual void setObjResult(const Tcl::ObjPtr& obj)
@@ -88,6 +91,7 @@ protected:
 private:
   typedef Tcl::List::Iterator<Tcl_Obj*> Iter;
 
+  Tcl_Obj* itsArg0;
   minivec<Iter> itsArgs;
   unsigned int const itsNumCalls;
   Tcl::List itsResult;
