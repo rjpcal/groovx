@@ -3,7 +3,7 @@
 // thlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:37 1999
-// written: Mon Oct  9 08:34:53 2000
+// written: Mon Oct 16 15:23:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,10 @@ DOTRACE("ThList::theThList");
 #include "masterptrt.cc"
 template class MasterPtr<TimingHdlr>;
 template class PtrList<TimingHdlr>;
+
+template <>
+PtrList<TimingHdlr>& NullableItemWithId<TimingHdlr>::theirPtrList =
+  ThList::theThList();
 
 static const char vcid_thlist_cc[] = "$Header$";
 #endif // !THLIST_CC_DEFINED

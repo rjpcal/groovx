@@ -3,7 +3,7 @@
 // masterptr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:18:28 2000
-// written: Mon Oct  9 13:25:45 2000
+// written: Mon Oct 16 14:34:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -200,6 +200,108 @@ public:
 
 private:
   void swap(PtrHandle& other)
+    {
+		MasterPtr<T>* otherMaster = other.itsMaster;
+		other.itsMaster = this->itsMaster;
+		this->itsMaster = otherMaster;
+	 }
+
+  MasterPtr<T>* itsMaster;
+};
+
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * NullablePtrHandle<T> is a stack-based wrapper for ref-counted
+ * MasterPtr<T>'s, similar to PtrHandle<T>, except that a
+ * NullablePtrHandle may point to no MasterPtr<T> at all. isValid()
+ * may be called to determine if there is currently a non-null pointee.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class NullablePtrHandle {
+public:
+  explicit NullablePtrHandle(MasterPtr<T>* master) : itsMaster(master)
+    {
+		if (itsMaster != 0)
+		  itsMaster->incrRefCount();
+	 }
+
+  explicit NullablePtrHandle(PtrHandle<T> other) :
+	 itsMaster(other.masterPtr())
+    {
+		ensureValid();
+		itsMaster->incrRefCount();
+	 }
+
+  ~NullablePtrHandle()
+    {
+		if (itsMaster != 0)
+		  itsMaster->decrRefCount();
+	 }
+
+  NullablePtrHandle(const NullablePtrHandle& other) : itsMaster(other.itsMaster)
+    {
+		if (itsMaster != 0)
+		  itsMaster->incrRefCount();
+	 }
+
+  NullablePtrHandle& operator=(const NullablePtrHandle& other)
+    {
+		NullablePtrHandle otherCopy(other);
+		this->swap(otherCopy);
+		return *this;
+	 }
+
+  NullablePtrHandle& operator=(const PtrHandle<T>& other)
+    {
+		NullablePtrHandle otherCopy(other);
+		this->swap(otherCopy);
+		return *this;
+	 }
+
+  bool isValid() const { return itsMaster != 0; }
+
+  void release()
+    {
+		if (itsMaster != 0)
+		  itsMaster->decrRefCount();
+		itsMaster = 0;
+	 }
+
+        MasterPtr<T>* masterPtr()       { return itsMaster; }
+  const MasterPtr<T>* masterPtr() const { return itsMaster; }
+
+        T* operator->()       { return get(); }
+  const T* operator->() const { return get(); }
+        T& operator*()        { return *(get()); }
+  const T& operator*()  const { return *(get()); }
+
+  T* get()
+  {
+	 ensureValid();
+	 return (itsMaster->getPtr());
+  }
+
+  const T* get() const
+  {
+	 ensureValid();
+	 return (itsMaster->getPtr());
+  }
+
+private:
+  void ensureValid()
+  {
+	 if (itsMaster == 0)
+		MasterPtrBase::throwErrorWithMsg(
+			  "attempted to derefence invalid NullablePtrHandle");
+  }
+
+  void swap(NullablePtrHandle& other)
     {
 		MasterPtr<T>* otherMaster = other.itsMaster;
 		other.itsMaster = this->itsMaster;

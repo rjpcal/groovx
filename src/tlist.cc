@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Mon Oct  9 08:34:59 2000
+// written: Mon Oct 16 15:23:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,10 @@ DOTRACE("Tlist::readFrom");
 #include "masterptrt.cc"
 template class MasterPtr<TrialBase>;
 template class PtrList<TrialBase>;
+
+template <>
+PtrList<TrialBase>& NullableItemWithId<TrialBase>::theirPtrList =
+  Tlist::theTlist();
 
 static const char vcid_tlist_cc[] = "$Header$";
 #endif // !TLIST_CC_DEFINED
