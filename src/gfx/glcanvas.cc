@@ -707,16 +707,19 @@ DOTRACE("GLCanvas::drawPixels");
 
   if (data.bits_per_pixel() == 32)
     {
+      DOTRACE("GLCanvas::drawPixels[32]");
       glDrawPixels(data.width(), data.height(), GL_RGBA, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytes_ptr()));
     }
   else if (data.bits_per_pixel() == 24)
     {
+      DOTRACE("GLCanvas::drawPixels[24]");
       glDrawPixels(data.width(), data.height(), GL_RGB, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytes_ptr()));
     }
   else if (data.bits_per_pixel() == 8)
     {
+      DOTRACE("GLCanvas::drawPixels[8]");
       if (isRgba())
         {
           glDrawPixels(data.width(), data.height(),
@@ -732,6 +735,9 @@ DOTRACE("GLCanvas::drawPixels");
     }
   else if (data.bits_per_pixel() == 1)
     {
+      DOTRACE("GLCanvas::drawPixels[1]");
+
+#if 0
       if (isRgba())
         {
           GLfloat simplemap[] = {0.0, 1.0};
@@ -744,6 +750,41 @@ DOTRACE("GLCanvas::drawPixels");
 
       glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX,
                    GL_BITMAP, static_cast<GLvoid*>(data.bytes_ptr()));
+#else
+
+      // for nvidia driver; it's much faster (~125x faster) to first
+      // unpack the 1-bit-per-pixel bitmap into an 8-bits-per-pixel
+      // image before calling glDrawPixels()
+
+      media::bmap_data unpacked(data.size(), 8, 1);
+
+      const unsigned char* sptr = data.bytes_ptr();
+      const unsigned char* sstop = sptr + data.byte_count();
+      unsigned char* dptr = unpacked.bytes_ptr();
+      unsigned char* dstop = unpacked.bytes_ptr() + unpacked.byte_count();
+
+      while (sptr != sstop)
+        {
+          ASSERT((dptr+7) < dstop);
+
+          *dptr++ = ((*sptr) & (1 << 7)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 6)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 5)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 4)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 3)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 2)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 1)) ? 255 : 0;
+          *dptr++ = ((*sptr) & (1 << 0)) ? 255 : 0;
+
+          ++sptr;
+        }
+
+      glPixelStorei(GL_UNPACK_ALIGNMENT, unpacked.byte_alignment());
+
+      glDrawPixels(unpacked.width(), unpacked.height(),
+                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                   static_cast<GLvoid*>(unpacked.bytes_ptr()));
+#endif
     }
 }
 
