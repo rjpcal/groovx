@@ -1,2 +1,0 @@
-#!/bin/csh -f
-echo {src/*.cc,src/[a-z]*/*.cc}
