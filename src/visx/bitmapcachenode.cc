@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Jan 18 16:07:03 2002
+// written: Mon Jan 21 11:56:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,13 @@
 
 #include "visx/bitmapcachenode.h"
 
-#include "visx/bitmaprep.h"
 #include "visx/glbmaprenderer.h"
 #include "visx/xbmaprenderer.h"
 
 #include "gfx/canvas.h"
 
+#include "gx/bmapdata.h"
+#include "gx/pbm.h"
 #include "gx/rect.h"
 
 #include "util/error.h"
@@ -34,7 +35,8 @@ BitmapCacheNode::BitmapCacheNode(Util::SoftRef<Gnode> child) :
   Gnode(child),
   itsMode(Gmodes::DIRECT_RENDER),
   itsCacheFilename(""),
-  itsBitmapRep(0)
+  itsBmapRenderer(0),
+  itsBmapData(0)
 {
 DOTRACE("BitmapCacheNode::BitmapCacheNode");
 }
@@ -48,13 +50,15 @@ void BitmapCacheNode::setCacheFilename(const fstring& name)
 {
 DOTRACE("BitmapCacheNode::setCacheFilename");
   itsCacheFilename = name;
-  itsBitmapRep.reset( 0 );
+  itsBmapRenderer.reset( 0 );
+  itsBmapData.reset( 0 );
 }
 
 void BitmapCacheNode::invalidate()
 {
 DOTRACE("BitmapCacheNode::invalidate");
-  itsBitmapRep.reset( 0 );
+  itsBmapRenderer.reset( 0 );
+  itsBmapData.reset( 0 );
   itsCacheFilename = "";
 }
 
@@ -62,27 +66,26 @@ void BitmapCacheNode::recacheBitmap(Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapCacheNode::recacheBitmap");
 
-  if (itsBitmapRep.get() != 0)
+  if (itsBmapData.get() != 0 && itsBmapRenderer.get() != 0)
     return;
 
   switch (itsMode)
     {
     case Gmodes::GL_BITMAP_CACHE:
-      itsBitmapRep.reset(
-            new BitmapRep(shared_ptr<BmapRenderer>(new GLBmapRenderer())));
+      itsBmapRenderer.reset(new GLBmapRenderer());
       break;
 
     case Gmodes::X11_BITMAP_CACHE:
-      itsBitmapRep.reset(
-            new BitmapRep(shared_ptr<BmapRenderer>(new XBmapRenderer())));
+      itsBmapRenderer.reset(new XBmapRenderer());
       break;
     }
 
-  Assert(itsBitmapRep.get() != 0);
+  Assert(itsBmapRenderer.get() != 0);
 
   if ( !itsCacheFilename.empty() )
     {
-      itsBitmapRep->queuePbmFile(fullCacheFilename().c_str());
+      itsBmapData.reset(new Gfx::BmapData());
+      Pbm::load(fullCacheFilename().c_str(), *itsBmapData);
       return;
     }
 
@@ -100,12 +103,13 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
     child()->gnodeDraw(canvas);
   }
 
-  itsBitmapRep->grabWorldRect(bmapbox);
+  itsBmapData.reset(new Gfx::BmapData());
+  canvas.grabPixels(screen_rect, *itsBmapData);
 
   if (Gmodes::X11_BITMAP_CACHE == itsMode)
     {
-      itsBitmapRep->flipVertical();
-      itsBitmapRep->flipContrast();
+      itsBmapData->flipVertical();
+      itsBmapData->flipContrast();
     }
 }
 
@@ -124,13 +128,13 @@ DOTRACE("BitmapCacheNode::setMode");
   itsMode = new_mode;
 }
 
-void BitmapCacheNode::saveBitmapCache(Gfx::Canvas& canvas,
+void BitmapCacheNode::saveBitmapCache(Gfx::Canvas& /*canvas*/,
                                       const char* filename) const
 {
-  if (itsBitmapRep.get() != 0)
+  if (itsBmapData.get() != 0)
     {
       itsCacheFilename = filename;
-      itsBitmapRep->savePbmFile(fullCacheFilename().c_str());
+      Pbm::save(fullCacheFilename().c_str(), *itsBmapData);
     }
 }
 
@@ -147,8 +151,11 @@ DOTRACE("BitmapCacheNode::gnodeDraw");
   else
     {
       recacheBitmap(canvas);
-      Assert(itsBitmapRep.get() != 0);
-      itsBitmapRep->render(canvas);
+      Assert(itsBmapRenderer.get() != 0 && itsBmapData.get() != 0);
+      itsBmapRenderer->doRender(canvas,
+                                *itsBmapData,
+                                Gfx::Vec2<double>(), // position = (0,0)
+                                Gfx::Vec2<double>(1.0, 1.0)); // zoom = (1,1)
     }
 }
 
@@ -164,8 +171,18 @@ DOTRACE("BitmapCacheNode::gnodeBoundingBox");
 
   // else
   recacheBitmap(canvas);
-  Assert(itsBitmapRep.get() != 0);
-  return itsBitmapRep->grGetBoundingBox(canvas);
+  Assert(itsBmapData.get() != 0);
+
+  Gfx::Vec2<int> bottom_left = canvas.screenFromWorld(Gfx::Vec2<double>());
+  Gfx::Vec2<int> top_right = bottom_left + (itsBmapData->extent());
+
+  Gfx::Rect<double> bbox;
+
+  bbox.setBottomLeft(Gfx::Vec2<double>());
+
+  bbox.setTopRight(canvas.worldFromScreen(top_right));
+
+  return bbox;
 }
 
 static const char vcid_bitmapcachenode_cc[] = "$Header$";

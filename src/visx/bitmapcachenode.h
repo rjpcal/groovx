@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Fri Jan 18 16:06:53 2002
+// written: Mon Jan 21 11:56:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,9 @@
 #include "util/strings.h"
 #include "util/pointers.h"
 
-class BitmapRep;
+class BmapRenderer;
+
+namespace Gfx { class BmapData; }
 
 class BitmapCacheNode : public Gnode
 {
@@ -50,7 +52,8 @@ private:
 
   mutable fstring itsCacheFilename;
 
-  mutable shared_ptr<BitmapRep> itsBitmapRep;
+  mutable shared_ptr<BmapRenderer> itsBmapRenderer;
+  mutable shared_ptr<Gfx::BmapData> itsBmapData;
 
   fstring fullCacheFilename() const
     {
