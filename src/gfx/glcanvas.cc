@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Aug 13 15:32:52 2001
+// written: Tue Aug 14 11:51:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -346,6 +346,20 @@ DOTRACE("GLCanvas::throwIfError");
         reinterpret_cast<const char*>(gluErrorString(status));
       throw Util::Error(fstring("GL error: ", msg, " ", where));
     }
+}
+
+void GLCanvas::drawRect(const Gfx::Rect<double>& rect) const
+{
+DOTRACE("GLCanvas::drawRect");
+
+  glBegin(GL_LINE_LOOP);
+  {
+    glVertex2d(rect.left(), rect.bottom());
+    glVertex2d(rect.right(), rect.bottom());
+    glVertex2d(rect.right(), rect.top());
+    glVertex2d(rect.left(), rect.top());
+  }
+  glEnd();
 }
 
 static const char vcid_glcanvas_cc[] = "$Header$";
