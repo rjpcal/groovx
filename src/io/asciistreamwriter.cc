@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Tue Nov 16 12:46:11 1999
+// written: Wed Dec  1 12:02:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ namespace {
 
   void addEscapes(string& text) {
 	 // Escape any special characters
-	 for (int pos = 0; pos < text.length(); /* ++ done in loop body */ ) {
+	 for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ ) {
 
 		switch (text[pos]) {
 		case '\\': // i.e., a single backslash
@@ -186,7 +186,7 @@ DOTRACE("AsciiStreamWriter::Impl::flushAttributes");
 
   itsBuf << itsAttribs.size() << endl;
 
-  for (int i = 0; i < itsAttribs.size(); ++i) {
+  for (size_t i = 0; i < itsAttribs.size(); ++i) {
 	 itsBuf << itsAttribs[i] << STRING_ENDER << endl;
   }
 
