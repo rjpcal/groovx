@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Sep  7 14:47:48 1999
+// written: Tue Sep  7 14:49:45 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -42,7 +42,7 @@ extern "C" {
   Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
   Tcl_PackageInitProc Trial_Init;
-  Tcl_PackageInitProx Xbitmap_Init;
+  Tcl_PackageInitProc Xbitmap_Init;
 }
 
 struct PkgName_PkgProc {
