@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 19:01:44 2002
+// written: Mon Aug  5 19:21:27 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -111,17 +111,19 @@ namespace
 
   // Tk option database machinery for Togl:
 
-  const int TOGL_GLX_OPTION = 0x1;
+  const int TOGL_GLX_OPTION     = 1 << 0;
+  const int TOGL_OVERLAY_OPTION = 1 << 1;
+  const int TOGL_GEOM_OPTION    = 1 << 2;
 
   Tk_OptionTable toglOptionTable = 0;
 
   Tk_OptionSpec optionSpecs[] =
   {
     {TK_OPTION_PIXELS, (char*)"-width", (char*)"width", (char*)"Width",
-     (char*)DEFAULT_WIDTH, -1, Tk_Offset(ToglOpts, width), 0, NULL, 0},
+     (char*)DEFAULT_WIDTH, -1, Tk_Offset(ToglOpts, width), 0, NULL, TOGL_GEOM_OPTION},
 
     {TK_OPTION_PIXELS, (char*)"-height", (char*)"height", (char*)"Height",
-     (char*)DEFAULT_HEIGHT, -1, Tk_Offset(ToglOpts, height), 0, NULL, 0},
+     (char*)DEFAULT_HEIGHT, -1, Tk_Offset(ToglOpts, height), 0, NULL, TOGL_GEOM_OPTION},
 
     {TK_OPTION_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
 #ifndef NO_RGBA
@@ -194,7 +196,7 @@ namespace
      (char*)"false", -1, Tk_Offset(ToglOpts, privateCmapFlag), 0, NULL, 0},
 
     {TK_OPTION_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
-     (char*)"false", -1, Tk_Offset(ToglOpts, overlayFlag), 0, NULL, 0},
+     (char*)"false", -1, Tk_Offset(ToglOpts, overlayFlag), 0, NULL, TOGL_OVERLAY_OPTION},
 
     { TK_OPTION_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
       (char*)"", -1, Tk_Offset(ToglOpts, cursor), TK_OPTION_NULL_OK, NULL , 0},
@@ -438,21 +440,25 @@ DOTRACE("Togl::Impl::configure");
       return TCL_ERROR;
     }
 
-  Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
-
-  // If any GLX options changed, then we have to recreate the window and
-  // GLX context
-  if (mask & TOGL_GLX_OPTION)
+  try
     {
-      try
+      // If any GLX options changed, then we have to recreate the window
+      // and GLX context
+      if (mask & TOGL_GLX_OPTION)
+        makeWindowExist();
+      else
         {
-          makeWindowExist();
+          if (mask & TOGL_GEOM_OPTION)
+            Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
+
+          if (mask & TOGL_OVERLAY_OPTION)
+            setupOverlay();
         }
-      catch (Util::Error& err)
-        {
-          Tcl_AppendResult(itsInterp, err.msg_cstr(), NULL);
-          return TCL_ERROR;
-        }
+    }
+  catch (Util::Error& err)
+    {
+      Tcl_AppendResult(itsInterp, err.msg_cstr(), NULL);
+      return TCL_ERROR;
     }
 
   return TCL_OK;
@@ -635,49 +641,56 @@ DOTRACE("Togl::Impl::eventProc");
   switch (eventPtr->type)
     {
     case Expose:
-      DebugPrintNL("Expose");
-      if (eventPtr->xexpose.count == 0)
-        {
-          if (eventPtr->xexpose.window==windowId())
-            {
-              requestRedisplay();
-            }
-          if (itsOverlay
-              && eventPtr->xexpose.window==itsOverlay->windowId())
-            {
-              itsOverlay->requestRedisplay();
-            }
-        }
+      {
+        DOTRACE("Togl::Impl::eventProc-Expose");
+        if (eventPtr->xexpose.count == 0)
+          {
+            if (eventPtr->xexpose.window==windowId())
+              {
+                requestRedisplay();
+              }
+            if (itsOverlay
+                && eventPtr->xexpose.window==itsOverlay->windowId())
+              {
+                itsOverlay->requestRedisplay();
+              }
+          }
+      }
       break;
     case ConfigureNotify:
-      DebugPrintNL("ConfigureNotify");
-      requestReconfigure();
+      {
+        DOTRACE("Togl::Impl::eventProc-ConfigureNotify");
+        requestReconfigure();
+      }
       break;
     case MapNotify:
-      DebugPrintNL("MapNotify");
+      {
+        DOTRACE("Togl::Impl::eventProc-MapNotify");
+      }
       break;
     case DestroyNotify:
-      DebugPrintNL("DestroyNotify");
-      if (itsWidgetCmd != 0)
-        {
-          Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
-          itsWidgetCmd = 0;
-        }
-      if (itsUserTimerProc != 0)
-        {
-          Tcl_DeleteTimerHandler(itsTimerToken);
-          itsUserTimerProc = 0;
-        }
-      if (itsUpdatePending)
-        {
-          Tcl_CancelIdleCall(Togl::Impl::cRenderCallback,
-                             static_cast<ClientData>(this));
-          itsUpdatePending = 0;
-        }
+      {
+        DOTRACE("Togl::Impl::eventProc-DestroyNotify");
+        if (itsWidgetCmd != 0)
+          {
+            Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
+            itsWidgetCmd = 0;
+          }
+        if (itsUserTimerProc != 0)
+          {
+            Tcl_DeleteTimerHandler(itsTimerToken);
+            itsUserTimerProc = 0;
+          }
+        if (itsUpdatePending)
+          {
+            Tcl_CancelIdleCall(Togl::Impl::cRenderCallback,
+                               static_cast<ClientData>(this));
+            itsUpdatePending = 0;
+          }
 
-      Tcl_EventuallyFree( static_cast<ClientData>(this),
-                          Togl::Impl::cDestroyCallback );
-
+        Tcl_EventuallyFree( static_cast<ClientData>(this),
+                            Togl::Impl::cDestroyCallback );
+      }
       break;
     default:
       /*nothing*/
@@ -771,10 +784,12 @@ void Togl::Impl::setupOverlay()
 {
 DOTRACE("Togl::Impl::setupOverlay");
 
+  // We need to destroy the old overlay regardless of whether we will be
+  // turning overlay on or off
+  if (itsOverlay) { delete itsOverlay; itsOverlay = 0; }
+
   if (!itsOpts.overlayFlag)
     return;
-
-  if (itsOverlay) { delete itsOverlay; itsOverlay = 0; }
 
   itsOverlay = new GlxOverlay(itsDisplay, this->windowId(),
                               !itsOpts.glx.indirect, itsGlx.get(),
