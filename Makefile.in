@@ -187,7 +187,6 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--module Tcl \
 		--module IO \
 		--module Gx \
-		--module Togl \
 		--module System \
 		--module Util \
 		>
