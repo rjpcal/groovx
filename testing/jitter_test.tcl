@@ -40,7 +40,7 @@ test "Jitter::setJitter" "normal use" {
 test "Jitter::setJitter" "error from non-numeric input" {
     set jit [new Jitter]
     -> $jit setJitter junk 1.0 1.0
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 test "Jitter::setJitter" "error from wrong type" {
     set p [new GxTransform]
     Jitter::setJitter $p 1 1 1

@@ -21,7 +21,7 @@ test "MiscTcl-rand" "normal use" {
 } {^1$}
 test "MiscTcl-rand" "error from non-numeric input" {
     rand junk 0
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 
 ### srandCmd ###
 test "MiscTcl-srand" "too few args" {
@@ -36,10 +36,10 @@ test "MiscTcl-srand" "normal use" {
 } {^1$}
 test "MiscTcl-srand" "error from non-numeric input" {
     srand junk
-} {expected long value but got "junk"}
+} {expected.*but got}
 test "MiscTcl-srand" "error from non-integral number" {
     srand 1.5
-} {expected long value but got "1\.5"}
+} {expected.*but got}
 
 ### sleepCmd ###
 test "MiscTcl-sleep" "too few args" {
@@ -55,7 +55,7 @@ test "MiscTcl-sleep" "normal use" {
 } {^1$}
 test "MiscTcl-sleep" "error from negative input" {
     sleep -1
-} {signed/unsigned conversion failed}
+} {expected.*but got}
 
 ### usleepCmd ###
 test "MiscTcl-usleep" "too few args" {
@@ -71,7 +71,7 @@ test "MiscTcl-usleep" "normal use" {
 } {^1 }
 test "MiscTcl-usleep" "error from negative input" {
     usleep -1
-} {signed/unsigned conversion failed}
+} {expected.*but got}
 
 ### usleeprCmd ###
 test "MiscTcl-usleepr" "too few args" {
@@ -87,4 +87,4 @@ test "MiscTcl-usleepr" "normal use" {
 } {^1 }
 test "MiscTcl-usleepr" "error from negative input" {
     usleepr -1 -1
-} {signed/unsigned conversion failed}
+} {expected.*but got}

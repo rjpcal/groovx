@@ -19,10 +19,10 @@ test "Dlist-dlist::choose" "norm2" {
 } {7 3\.1 5}
 test "Dlist-dlist::choose" "err1" {
      dlist::choose {1 2} {-1 0}
-} {signed/unsigned conversion failed}
+} {expected.*but got}
 test "Dlist-dlist::choose" "err2" {
      dlist::choose {1 2} {1.5 0}
-} {expected integer but got "1\.5"}
+} {expected.*but got}
 
 ### dlist::index ###
 test "Dlist-dlist::index" "args" {
@@ -49,7 +49,7 @@ test "Dlist-dlist::not" "norm2" {
 } {0 1 0 0}
 test "Dlist-dlist::not" "error" {
      dlist::not { -1.5 0.3 }
-} {expected integer but got "-1\.5"}
+} {expected.*but got}
 
 ### dlist::ones ###
 test "Dlist-dlist::ones" "args" {
@@ -63,10 +63,10 @@ test "Dlist-dlist::ones" "norm2" {
 } {1 1 1 1 1}
 test "Dlist-dlist::ones" "err1" {
      dlist::ones 4.5
-} {expected integer but got "4\.5"}
+} {expected.*but got}
 test "Dlist-dlist::ones" "err2" {
     dlist::ones -1
-} {signed/unsigned conversion failed}
+} {expected.*but got}
 
 ### dlist::pickone ###
 test "Dlist-dlist::pickone" "args" {
@@ -96,7 +96,7 @@ test "Dlist-dlist::range" "step+" { dlist::range 2 11  3} {^2 5 8 11$}
 test "Dlist-dlist::range" "step-" { dlist::range 12 1 -3} {^12 9 6 3$}
 test "Dlist-dlist::range" "err1" {
     dlist::range 0.5 6
-} {expected integer but got "0\.5"}
+} {expected.*but got}
 
 ### dlist::repeat ###
 test "Dlist-dlist::repeat" "args" {
@@ -113,10 +113,10 @@ test "Dlist-dlist::repeat" "norm3" {
 } {4 5 5 6 6 6}
 test "Dlist-dlist::repeat" "err4" {
     dlist::repeat { 4 5 6 } { -1 2 3 }
-} {signed/unsigned conversion failed}
+} {expected.*but got}
 test "Dlist-dlist::repeat" "err2" {
      dlist::repeat { 4 5 6 } { 1.5 2 3 }
-} {expected integer but got "1\.5"}
+} {expected.*but got}
 
 ### dlist::select ###
 test "Dlist-dlist::select" "args" {
@@ -130,7 +130,7 @@ test "Dlist-dlist::select" "norm2" {
 } {2\.5 str \{L L\}}
 test "Dlist-dlist::select" "error" {
      dlist::select {1 2 3} {1.5 0.2 0.8}
-} {expected integer but got "1\.5"}
+} {expected.*but got}
 
 ### dlist::slice ###
 test "Dlist-dlist::slice" "args" {
@@ -164,7 +164,7 @@ test "Dlist-dlist::sum" "norm mixed" {
 } {^2\.4$}
 test "Dlist-dlist::sum" "error" {
      dlist::sum { 1 junk }
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 
 ### dlist::zeros ###
 test "Dlist-dlist::zeros" "args" {
@@ -178,6 +178,4 @@ test "Dlist-dlist::zeros" "norm2" {
 } {0 0 0 0 0}
 test "Dlist-dlist::zeros" "err1" {
     dlist::zeros 3.5
-} {expected integer but got "3\.5"}
-
-
+} {expected.*but got}

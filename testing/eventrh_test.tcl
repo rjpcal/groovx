@@ -61,7 +61,7 @@ test "EventRhTcl-EventRh::useFeedback" "normal use 7" {
 } {^0$}
 test "EventRhTcl-EventRh::useFeedback" "error on non-boolean input" {
 	 EventRh::useFeedback $::EVENTRH FLASE
-} {expected boolean value but got "FLASE"}
+} {expected.*but got}
 test "EventRhTcl-EventRh::useFeedback" "error on bad rhid" {
 	 EventRh::useFeedback -1
 } {useFeedback: .*$}

@@ -29,13 +29,13 @@ proc testWriteLGX { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $cmdname -1
-    "} {"signed/unsigned conversion failed.*$"}
+    "} {"expected.*but got"}
     eval ::test $testname {"error from too large id"} {"
         $cmdname 10000000
     "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $cmdname 1.5
-    "} {"expected long value but got \"1\.5\""}
+    "} {"expected.*but got"}
 
     eval ::test $testname {"normal use"} {"
         set code \[catch {$cmdname $objref} result\]
@@ -58,13 +58,13 @@ proc testReadLGX { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $cmdname -1 junk
-    "} {"signed/unsigned conversion failed.*$"}
+    "} {"expected.*but got"}
     eval ::test $testname {"error from too large id"} {"
         $cmdname 10000000 junk
     "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $cmdname 1.5 junk
-    "} {"expected long value but got \"1\.5\""}
+    "} {"expected.*but got"}
 
     eval ::test $testname {"normal use"} {"
         set str \[$stringify $objref\]
@@ -91,13 +91,13 @@ proc testWriteASW { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $cmdname -1
-    "} {"signed/unsigned conversion failed.*$"}
+    "} {"expected.*but got"}
     eval ::test $testname {"error from too large id"} {"
         $cmdname 10000000
     "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $cmdname 1.5
-    "} {"expected long value but got \"1\.5\""}
+    "} {"expected.*but got"}
 
     eval ::test $testname {"normal use"} {"
         set code \[catch {$cmdname $objref} result\]
@@ -120,13 +120,13 @@ proc testReadASW { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $readcmd -1 junk
-    "} {"signed/unsigned conversion failed.*$"}
+    "} {"expected.*but got"}
     eval ::test $testname {"error from too large id"} {"
         $readcmd 10000000 junk
     "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $readcmd 1.5 junk
-    "} {"expected long value but got \"1\.5\""}
+    "} {"expected.*but got"}
 
     eval ::test $testname {"normal use"} {"
         set str \[$writecmd $objref\]

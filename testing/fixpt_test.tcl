@@ -32,7 +32,7 @@ test "FixptTcl-length" "normal set" {
 } {^0$}
 test "FixptTcl-length" "error from non-numeric input" {
     FixPt::length $::fix junk
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 test "FixptTcl-length" "error from bad objid" {
     FixPt::length -1 1.0
 } {^FixPt::length: }
@@ -53,7 +53,7 @@ test "FixptTcl-width" "normal set" {
 } {^0$}
 test "FixptTcl-width" "error from non-numeric input" {
     FixPt::width $::fix junk
-} {expected integer but got "junk"}
+} {expected.*but got}
 test "FixptTcl-width" "error from bad objid" {
     FixPt::width -1 5
 } {^FixPt::width: }
@@ -63,7 +63,7 @@ test "FixptTcl-width" "error from wrong type" {
 } {^FixPt::width: }
 test "FixptTcl-width" "error from non-integral number" {
     FixPt::width $::fix 1.5
-} {expected integer but got "1\.5"}
+} {expected.*but got}
 
 unset fix
 

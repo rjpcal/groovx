@@ -120,7 +120,7 @@ test "GxSepTcl-GxSeparator::removeChildAt" "id too small" {
 	 set gxsep [Obj::new GxSeparator]
 	 GxSeparator::removeChildAt $gxsep -1
 	 GxSeparator::numChildren $gxsep
-} {signed/unsigned conversion failed}
+} {expected.*but got}
 
 test "GxSepTcl-GxSeparator::removeChildAt" "use when empty" {
 	 set gxsep [Obj::new GxSeparator]

@@ -12,6 +12,7 @@ set pkgs {
     Basesixfourtest
     Fstringtest
     Signaltest
+    Tcltimertest
     Vectwotest
 }
 

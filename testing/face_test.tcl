@@ -42,7 +42,7 @@ test "Face::eyeHeight" "normal use query" {
 } {^1$}
 test "Face::eyeHeight" "error from nun-numeric input" {
     Face::eyeHeight $::faceid junk
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 test "Face::eyeHeight" "error from bad objid" {
     Face::eyeHeight -1
 } {Face::eyeHeight: .*}
@@ -65,7 +65,7 @@ test "Face::eyeDistance" "normal use query" {
 } {^1$}
 test "Face::eyeDistance" "error from nun-numeric input" {
     Face::eyeDistance $::faceid junk
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 test "Face::eyeDistance" "error from bad objid" {
     Face::eyeDistance -1
 } {Face::eyeDistance: .*}
@@ -88,7 +88,7 @@ test "Face::noseLength" "normal use query" {
 } {^1$}
 test "Face::noseLength" "error from nun-numeric input" {
     Face::noseLength $::faceid junk
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 test "Face::noseLength" "error from bad objid" {
     Face::noseLength -1
 } {Face::noseLength: .*}
@@ -111,7 +111,7 @@ test "Face::mouthHeight" "normal use query" {
 } {^1$}
 test "Face::mouthHeight" "error from nun-numeric input" {
     Face::mouthHeight $::faceid junk
-} {expected floating-point number but got "junk"}
+} {expected.*but got}
 test "Face::mouthHeight" "error from bad objid" {
     Face::mouthHeight -1
 } {Face::mouthHeight: .*}

@@ -62,7 +62,7 @@ test "KbdRhTcl-KbdRh::useFeedback" "normal use 7" {
 } {^0$}
 test "KbdRhTcl-KbdRh::useFeedback" "error on non-boolean input" {
 	 KbdRh::useFeedback $::KBDRH FLASE
-} {expected boolean value but got "FLASE"}
+} {expected.*but got}
 test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
 	 KbdRh::useFeedback -1
 } {useFeedback: .*$}

@@ -56,7 +56,7 @@ test "Toglet::setVisible" "unusual set on" {
 } {^0$}
 test "Toglet::setVisible" "error on non-numeric input" {
     Toglet::setVisible [Toglet::current] junk
-} {expected boolean value but got "junk"}
+} {expected.*but got}
 
 ### pixelsPerUnitCmd ###
 test "GxCamera-pixelsPerUnit" "args" {
