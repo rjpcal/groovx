@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 11:19:08 2000
-// written: Thu May 10 12:04:38 2001
+// written: Sat May 19 11:13:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@ namespace IO { class IoObject; }
 
 namespace IdItemUtils {
   bool isValidId(int id);
-  void insertItem(IO::IoObject* obj);
   IO::IoObject* getCheckedItem(int id);
 
 #ifndef ACC_COMPILER
