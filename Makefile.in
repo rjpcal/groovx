@@ -169,9 +169,13 @@ $(SCRIPTS)/cppdeps: $(SCRIPTS)/cppdeps.cc
 	$(CXX) -O2 -Wall $^ -o $@
 
 $(DEP)/cppdepends: $(SCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
-	time $(SCRIPTS)/cppdeps --src $(SRC) --objdir $(OBJ)/ |sort> $(DEP)/altdeps
-	diff $@ $(DEP)/altdeps > /dev/null
+	time $(SCRIPTS)/cppdeps --src $(SRC) --objdir $(OBJ)/ |sort> $@
+
+# Old code that would run the old Tcl script and compare its output against
+# the new C++ dependency-computation script
+
+#	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $(DEP)/altdeps
+#	diff $@ $(DEP)/altdeps > /dev/null
 
 # dependencies of package shlib's on object files
 
@@ -184,7 +188,7 @@ $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
 		--objext $(OBJEXT) \
 		--pkgsrc $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR) \
-		--pkgdirs hashtest,matlabengine,minivectest,mtx,whitebox
+		--pkgdirs hashtest,matlabengine,mtx,whitebox
 
 $(VISX_LIB_DIR)/dlinktest.$(SHLIB_EXT): \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
