@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jun 15 06:55:03 2001
+// written: Wed Jun 20 17:45:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,6 @@
 
 #include <tcl.h>
 #include <iostream.h>
-#include <fstream.h>
 #include <sys/time.h>
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
@@ -722,9 +721,7 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
 
 void ExptDriver::Impl::writeASW(const char* filename) const {
 DOTRACE("ExptDriver::Impl::write");
-  STD_IO::ofstream ofs(filename);
-  if (ofs.fail()) throw IO::FilenameError(filename);
-  AsciiStreamWriter writer(ofs);
+  AsciiStreamWriter writer(filename);
   writer.writeRoot(itsOwner);
 }
 
