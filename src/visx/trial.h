@@ -139,9 +139,17 @@ public:
   double trElapsedMsec();
 
   void trProcessResponse(Response& response);
+  void trDraw();
+  void trRender();
+  void trUndraw();
+  void trSwapBuffers();
+  void trRenderBack();
+  void trRenderFront();
+  void trClearBuffer();
+  void trFinishDrawing();
   void trAllowResponses();
   void trDenyResponses();
-  void trAbort();
+  void trAbortTrial();
   void trEndTrial();
 
   void installSelf(Util::SoftRef<Toglet> widget) const;

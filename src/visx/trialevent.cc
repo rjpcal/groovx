@@ -32,9 +32,6 @@
 
 #include "visx/trialevent.h"
 
-#include "gfx/canvas.h"
-#include "gfx/toglet.h"
-
 #include "io/ioproxy.h"
 #include "io/outputfile.h"
 #include "io/reader.h"
@@ -174,235 +171,59 @@ DOTRACE("TrialEvent::invokeTemplate");
 
 //---------------------------------------------------------------------
 //
-// AbortTrialEvent
+// TrialMemFuncEvent
 //
 //---------------------------------------------------------------------
 
-AbortTrialEvent::AbortTrialEvent(unsigned int msec) : TrialEvent(msec) {}
-
-AbortTrialEvent::~AbortTrialEvent() throw() {}
-
-void AbortTrialEvent::invoke(Trial& trial)
+fstring TrialMemFuncEvent::objTypename() const
 {
-DOTRACE("AbortTrialEvent::invoke");
-  trial.trAbort();
+  return itsTypename;
 }
 
-//---------------------------------------------------------------------
-//
-// DrawEvent
-//
-//---------------------------------------------------------------------
-
-DrawEvent::DrawEvent(unsigned int msec) : TrialEvent(msec) {}
-
-DrawEvent::~DrawEvent() throw() {}
-
-void DrawEvent::invoke(Trial& trial)
+TrialMemFuncEvent* TrialMemFuncEvent::make(CallbackType callback,
+                                           const fstring& type,
+                                           unsigned int msec)
 {
-DOTRACE("DrawEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    {
-      trial.installSelf(widget);
-      widget->setVisibility(true);
-      widget->fullRender();
-    }
+  return new TrialMemFuncEvent(callback, type, msec);
 }
 
-//---------------------------------------------------------------------
-//
-// RenderEvent
-//
-//---------------------------------------------------------------------
+TrialMemFuncEvent::TrialMemFuncEvent(CallbackType callback,
+                                     const fstring& type,
+                                     unsigned int msec) :
+  TrialEvent(msec),
+  itsCallback(callback),
+  itsTypename(type)
+{}
 
-RenderEvent::RenderEvent(unsigned int msec) : TrialEvent(msec) {}
+TrialMemFuncEvent::~TrialMemFuncEvent() throw() {}
 
-RenderEvent::~RenderEvent() throw() {}
-
-void RenderEvent::invoke(Trial& trial)
+void TrialMemFuncEvent::invoke(Trial& trial)
 {
-DOTRACE("RenderEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    {
-      trial.installSelf(widget);
-      widget->setVisibility(true);
-      widget->render();
-    }
+DOTRACE("TrialMemFuncEvent::invoke");
+  (trial.*itsCallback)();
 }
 
-//---------------------------------------------------------------------
-//
-// EndTrialEvent
-//
-//---------------------------------------------------------------------
-
-EndTrialEvent::EndTrialEvent(unsigned int msec) : TrialEvent(msec) {}
-
-EndTrialEvent::~EndTrialEvent() throw() {}
-
-void EndTrialEvent::invoke(Trial& trial)
-{
-DOTRACE("EndTrialEvent::invoke");
-  trial.trEndTrial();
+#define MAKE_EVENT(EventName)                                                \
+TrialEvent* make##EventName##Event()                                         \
+{                                                                            \
+  return TrialMemFuncEvent::make(&Trial::tr##EventName, #EventName "Event"); \
 }
 
-//---------------------------------------------------------------------
-//
-// NextNodeEvent
-//
-//---------------------------------------------------------------------
+MAKE_EVENT(AbortTrial);
+MAKE_EVENT(Draw);
+MAKE_EVENT(Render);
+MAKE_EVENT(EndTrial);
+MAKE_EVENT(NextNode);
+MAKE_EVENT(AllowResponses);
+MAKE_EVENT(DenyResponses);
+MAKE_EVENT(Undraw);
+MAKE_EVENT(RenderBack);
+MAKE_EVENT(RenderFront);
+MAKE_EVENT(SwapBuffers);
+MAKE_EVENT(ClearBuffer);
+MAKE_EVENT(FinishDrawing);
 
-NextNodeEvent::NextNodeEvent(unsigned int msec) : TrialEvent(msec) {}
-
-NextNodeEvent::~NextNodeEvent() throw() {}
-
-void NextNodeEvent::invoke(Trial& trial)
-{
-DOTRACE("NextNodeEvent::invoke");
-  trial.trNextNode();
-}
-
-//---------------------------------------------------------------------
-//
-// AllowResponsesEvent
-//
-//---------------------------------------------------------------------
-
-AllowResponsesEvent::AllowResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
-
-AllowResponsesEvent::~AllowResponsesEvent() throw() {}
-
-void AllowResponsesEvent::invoke(Trial& trial)
-{
-DOTRACE("AllowResponsesEvent::invoke");
-  trial.trAllowResponses();
-}
-
-//---------------------------------------------------------------------
-//
-// DenyResponsesEvent
-//
-//---------------------------------------------------------------------
-
-DenyResponsesEvent::DenyResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
-
-DenyResponsesEvent::~DenyResponsesEvent() throw() {}
-
-void DenyResponsesEvent::invoke(Trial& trial)
-{
-DOTRACE("DenyResponsesEvent::invoke");
-  trial.trDenyResponses();
-}
-
-//---------------------------------------------------------------------
-//
-// UndrawEvent
-//
-//---------------------------------------------------------------------
-
-UndrawEvent::UndrawEvent(unsigned int msec) : TrialEvent(msec) {}
-
-UndrawEvent::~UndrawEvent() throw() {}
-
-void UndrawEvent::invoke(Trial& trial)
-{
-DOTRACE("UndrawEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    widget->undraw();
-}
-
-//---------------------------------------------------------------------
-//
-// SwapBuffersEvent
-//
-//---------------------------------------------------------------------
-
-SwapBuffersEvent::SwapBuffersEvent(unsigned int msec) : TrialEvent(msec) {}
-
-SwapBuffersEvent::~SwapBuffersEvent() throw() {}
-
-void SwapBuffersEvent::invoke(Trial& trial)
-{
-DOTRACE("SwapBuffersEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    widget->swapBuffers();
-}
-
-//---------------------------------------------------------------------
-//
-// RenderBackEvent
-//
-//---------------------------------------------------------------------
-
-RenderBackEvent::RenderBackEvent(unsigned int msec) : TrialEvent(msec) {}
-
-RenderBackEvent::~RenderBackEvent() throw() {}
-
-void RenderBackEvent::invoke(Trial& trial)
-{
-DOTRACE("RenderBackEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    widget->getCanvas().drawOnBackBuffer();
-}
-
-//---------------------------------------------------------------------
-//
-// RenderFrontEvent
-//
-//---------------------------------------------------------------------
-
-RenderFrontEvent::RenderFrontEvent(unsigned int msec) : TrialEvent(msec) {}
-
-RenderFrontEvent::~RenderFrontEvent() throw() {}
-
-void RenderFrontEvent::invoke(Trial& trial)
-{
-DOTRACE("RenderFrontEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    widget->getCanvas().drawOnFrontBuffer();
-}
-
-//---------------------------------------------------------------------
-//
-// ClearBufferEvent
-//
-//---------------------------------------------------------------------
-
-ClearBufferEvent::ClearBufferEvent(unsigned int msec) : TrialEvent(msec) {}
-
-ClearBufferEvent::~ClearBufferEvent() throw() {}
-
-void ClearBufferEvent::invoke(Trial& trial)
-{
-DOTRACE("ClearBufferEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    widget->clearscreen();
-}
-
-//---------------------------------------------------------------------
-//
-// FinishDrawingEvent
-//
-//---------------------------------------------------------------------
-
-FinishDrawingEvent::FinishDrawingEvent(unsigned int msec) : TrialEvent(msec) {}
-
-FinishDrawingEvent::~FinishDrawingEvent() throw() {}
-
-void FinishDrawingEvent::invoke(Trial& trial)
-{
-DOTRACE("FinishDrawingEvent::invoke");
-  Util::SoftRef<Toglet> widget = trial.getWidget();
-  if (widget.isValid())
-    widget->getCanvas().finishDrawing();
-}
+#undef MAKE_EVENT
 
 //---------------------------------------------------------------------
 //

@@ -46,6 +46,19 @@
 
 namespace
 {
+  typedef TrialEvent* (CreatorFunc)();
+
+  Tcl::Pkg* addEventType(Tcl_Interp* interp,
+                         CreatorFunc* func,
+                         const char* name)
+  {
+    Tcl::Pkg* pkg = new Tcl::Pkg(interp, name, "$Revision$");
+    Util::ObjFactory::theOne().registerCreatorFunc(func, name);
+    pkg->inheritPkg("TrialEvent");
+
+    return pkg;
+  }
+
   template <class EventType>
   Tcl::Pkg* initEventType(Tcl_Interp* interp)
   {
@@ -83,19 +96,19 @@ DOTRACE("Trialevent_Init");
 
   pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
 
-  initEventType<AbortTrialEvent>(interp);
-  initEventType<DrawEvent>(interp);
-  initEventType<RenderEvent>(interp);
-  initEventType<UndrawEvent>(interp);
-  initEventType<EndTrialEvent>(interp);
-  initEventType<NextNodeEvent>(interp);
-  initEventType<AllowResponsesEvent>(interp);
-  initEventType<DenyResponsesEvent>(interp);
-  initEventType<SwapBuffersEvent>(interp);
-  initEventType<RenderBackEvent>(interp);
-  initEventType<RenderFrontEvent>(interp);
-  initEventType<ClearBufferEvent>(interp);
-  initEventType<FinishDrawingEvent>(interp);
+  addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
+  addEventType(interp, &makeDrawEvent, "DrawEvent");
+  addEventType(interp, &makeRenderEvent, "RenderEvent");
+  addEventType(interp, &makeUndrawEvent, "UndrawEvent");
+  addEventType(interp, &makeEndTrialEvent, "EndTrialEvent");
+  addEventType(interp, &makeNextNodeEvent, "NextNodeEvent");
+  addEventType(interp, &makeAllowResponsesEvent, "AllowResponsesEvent");
+  addEventType(interp, &makeDenyResponsesEvent, "DenyResponsesEvent");
+  addEventType(interp, &makeSwapBuffersEvent, "SwapBuffersEvent");
+  addEventType(interp, &makeRenderBackEvent, "RenderBackEvent");
+  addEventType(interp, &makeRenderFrontEvent, "RenderFrontEvent");
+  addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
+  addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
 
   return pkg->initStatus();
 }

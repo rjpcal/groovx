@@ -131,276 +131,79 @@ private:
   mutable int itsInvokeCount;
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// TrialEvent derived classes defintions
-//
-///////////////////////////////////////////////////////////////////////
+
 
 //  ###################################################################
 //  ===================================================================
 
-/// TrialEvent subclass to call Trial::trAbort().
-class AbortTrialEvent : public TrialEvent
+/// TrialEvent subclass that just binds to an arbitrary Trial member function.
+class TrialMemFuncEvent : public TrialEvent
 {
+public:
+  typedef void (Trial::* CallbackType)();
+
+  /// Overridden to return the typename that was passed to the constructor.
+  virtual fstring objTypename() const;
+
+  /// Make a new event bound to a given Trial member function.
+  static TrialMemFuncEvent* make(CallbackType callback,
+                                 const fstring& type,
+                                 unsigned int msec = 0);
+
 protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  AbortTrialEvent(unsigned int msec = 0);
+  /// Constructor.
+  TrialMemFuncEvent(CallbackType callback,
+                    const fstring& type,
+                    unsigned int msec = 0);
 
   /// Virtual destructor.
-  virtual ~AbortTrialEvent() throw();
+  virtual ~TrialMemFuncEvent() throw();
 
   virtual void invoke(Trial& trial);
 
-public:
-  /// Default creator.
-  static AbortTrialEvent* make() { return new AbortTrialEvent; }
+private:
+  CallbackType itsCallback;
+  fstring itsTypename;
 };
 
 //  ###################################################################
 //  ===================================================================
 
-/// TrialEvent subclass to call Trial::installSelf() and Widget::fullRender().
-class DrawEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  DrawEvent(unsigned int msec = 0);
+//  Here's a set of creator functions that return different
+//  TrialMemFuncEvent objects bound to different Trial member functions.
 
-  /// Virtual destructor.
-  virtual ~DrawEvent() throw();
+/// Return a TrialMemFuncEvent bound to Trial::trAbortTrial.
+TrialEvent* makeAbortTrialEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trDraw.
+TrialEvent* makeDrawEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trRender.
+TrialEvent* makeRenderEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trEndTrial.
+TrialEvent* makeEndTrialEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trNextNode.
+TrialEvent* makeNextNodeEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trAllowResponses.
+TrialEvent* makeAllowResponsesEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trDenyResponses.
+TrialEvent* makeDenyResponsesEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trUndraw.
+TrialEvent* makeUndrawEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trRenderBack.
+TrialEvent* makeRenderBackEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trRenderFront.
+TrialEvent* makeRenderFrontEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trSwapBuffers.
+TrialEvent* makeSwapBuffersEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trClearBuffer.
+TrialEvent* makeClearBufferEvent();
+/// Return a TrialMemFuncEvent bound to Trial::trFinishDrawing.
+TrialEvent* makeFinishDrawingEvent();
 
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static DrawEvent* make() { return new DrawEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Widget::render().
-class RenderEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  RenderEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~RenderEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static RenderEvent* make() { return new RenderEvent; }
-};
 
 //  ###################################################################
 //  ===================================================================
 
-/// TrialEvent subclass to call Trial::trEndTrial().
-class EndTrialEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  EndTrialEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~EndTrialEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static EndTrialEvent* make() { return new EndTrialEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Trial::trNextNode().
-class NextNodeEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  NextNodeEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~NextNodeEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static NextNodeEvent* make() { return new NextNodeEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Trial::trAllowResponses().
-class AllowResponsesEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  AllowResponsesEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~AllowResponsesEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static AllowResponsesEvent* make() { return new AllowResponsesEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Trial::trDenyResponses().
-class DenyResponsesEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  DenyResponsesEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~DenyResponsesEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static DenyResponsesEvent* make() { return new DenyResponsesEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Widget::undraw().
-class UndrawEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  UndrawEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~UndrawEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static UndrawEvent* make() { return new UndrawEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Canvas::drawOnBackBuffer().
-class RenderBackEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  RenderBackEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~RenderBackEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static RenderBackEvent* make() { return new RenderBackEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
-class RenderFrontEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  RenderFrontEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~RenderFrontEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static RenderFrontEvent* make() { return new RenderFrontEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Widget::swapBuffers().
-class SwapBuffersEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  SwapBuffersEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~SwapBuffersEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static SwapBuffersEvent* make() { return new SwapBuffersEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Canvas::clearColorBuffer().
-class ClearBufferEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  ClearBufferEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~ClearBufferEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static ClearBufferEvent* make() { return new ClearBufferEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call Canvas::finishDrawing().
-class FinishDrawingEvent : public TrialEvent
-{
-protected:
-  /// Construct with a requested delay of \a msec milliseconds.
-  FinishDrawingEvent(unsigned int msec = 0);
-
-  /// Virtual destructor.
-  virtual ~FinishDrawingEvent() throw();
-
-  virtual void invoke(Trial& trial);
-
-public:
-  /// Default creator.
-  static FinishDrawingEvent* make() { return new FinishDrawingEvent; }
-};
-
-//  ###################################################################
-//  ===================================================================
-
-/// TrialEvent subclass to call an arbitrary piece of Tcl code.
+/// TrialEvent subclass to send a single byte to an output file.
 class FileWriteEvent : public TrialEvent
 {
 protected:

@@ -32,6 +32,7 @@
 
 #include "visx/trial.h"
 
+#include "gfx/canvas.h"
 #include "gfx/gxshapekit.h"
 #include "gfx/toglet.h"
 
@@ -439,13 +440,13 @@ DOTRACE("Trial::trElapsedMsec");
   return rep->activeState->th->getElapsedMsec();
 }
 
-void Trial::trAbort()
+void Trial::trAbortTrial()
 {
-DOTRACE("Trial::trAbort");
+DOTRACE("Trial::trAbortTrial");
 
   Precondition( rep->isActive() );
 
-  Util::log("trAbort");
+  Util::log("trAbortTrial");
 
   rep->activeState->status = CHILD_ABORTED;
   rep->activeState->rh->rhAbortTrial();
@@ -525,6 +526,79 @@ DOTRACE("Trial::trProcessResponse");
       rep->activeState->status = CHILD_REPEAT;
     }
 }
+
+void Trial::trDraw()
+{
+DOTRACE("Trial::trDraw");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    {
+      installSelf(widget);
+      widget->setVisibility(true);
+      widget->fullRender();
+    }
+}
+
+void Trial::trRender()
+{
+DOTRACE("Trial::trRender");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    {
+      installSelf(widget);
+      widget->setVisibility(true);
+      widget->render();
+    }
+}
+
+void Trial::trUndraw()
+{
+DOTRACE("Trial::trUndraw");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    widget->undraw();
+}
+
+void Trial::trSwapBuffers()
+{
+DOTRACE("Trial::trSwapBuffers");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    widget->swapBuffers();
+}
+
+void Trial::trRenderBack()
+{
+DOTRACE("Trial::trRenderBack");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    widget->getCanvas().drawOnBackBuffer();
+}
+
+void Trial::trRenderFront()
+{
+DOTRACE("Trial::trRenderFront");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    widget->getCanvas().drawOnFrontBuffer();
+}
+
+void Trial::trClearBuffer()
+{
+DOTRACE("Trial::trClearBuffer");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    widget->clearscreen();
+}
+
+void Trial::trFinishDrawing()
+{
+DOTRACE("Trial::trFinishDrawing");
+  Util::SoftRef<Toglet> widget = getWidget();
+  if (widget.isValid())
+    widget->getCanvas().finishDrawing();
+}
+
 
 void Trial::trAllowResponses()
 {
