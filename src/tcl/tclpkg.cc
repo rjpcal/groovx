@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri May 18 17:18:58 2001
+// written: Sat May 19 22:14:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@
 #include "tcl/tclveccmds.h"
 
 #include "util/strings.h"
-
-#include <tcl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
