@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Jan 21 14:33:14 2002
+// written: Wed Apr  3 17:58:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -366,6 +366,9 @@ bool Bitmap::getUsingZoom() const
 
 bool Bitmap::isPurgeable() const
   { return itsImpl->itsPurgeable; }
+
+const char* Bitmap::filename() const
+  { return itsImpl->itsFilename.c_str(); }
 
 //////////////////
 // manipulators //
