@@ -583,6 +583,12 @@ DOTRACE("Toglet::takeFocus");
   catch (Tcl::TclError&) { throw; }
 }
 
+void Toglet::makeCurrent() {
+DOTRACE("Toglet::makeCurrent");
+ 
+  if (itsTogl) itsTogl->makeCurrent();
+}
+
 void Toglet::writeEpsFile(const char* filename) {
 DOTRACE("Toglet::writeEpsFile");
 

@@ -115,6 +115,8 @@ public:
   virtual void swapBuffers();
   virtual void takeFocus();
 
+  void makeCurrent();
+
   // actions
   void loadDefaultFont();
   void loadFont(const char* fontname);
