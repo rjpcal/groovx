@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Wed May 14 18:05:31 2003
+// written: Wed May 14 18:28:26 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -337,8 +337,8 @@ DOTRACE("GaborArray::updateBmap");
 
       const double theta =
         (itsArray[i].type == Element::CONTOUR)
-        ? rad_0_2pi(itsThetaJitter * rand_theta +
-                    (1.0 - itsThetaJitter) * (itsArray[i].theta + M_PI_2))
+        ? rad_0_2pi(itsThetaJitter * (rand_theta - M_PI) +
+                    (itsArray[i].theta + M_PI_2))
         : rand_theta;
 
       const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
