@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jun 23 14:10:19 1999
+// written: Wed Jun 23 14:28:32 1999
 // $Id$
 //
 //
@@ -60,24 +60,6 @@ protected:
   template <class T>
   void declareAttrib(const char* attrib_name, Attrib<T>* attrib)
   { declareAttrib_(this, attrib_name, attrib); }
-
-//   void declareGetter(const char* cmd_name, Getter<int>* getter);
-//   void declareGetter(const char* cmd_name, Getter<bool>* getter);
-//   void declareGetter(const char* cmd_name, Getter<double>* getter);
-//   void declareGetter(const char* cmd_name, Getter<const char*>* getter);
-//   void declareGetter(const char* cmd_name, Getter<const string&>* getter);
-
-//   void declareSetter(const char* cmd_name, Setter<int>* setter);
-//   void declareSetter(const char* cmd_name, Setter<bool>* setter);
-//   void declareSetter(const char* cmd_name, Setter<double>* setter);
-//   void declareSetter(const char* cmd_name, Setter<const char*>* setter);
-// //   void declareSetter(const char* cmd_name, Setter<const string&>* setter);
-
-//   void declareAttrib(const char* attrib_name, Attrib<int>* attrib);
-//   void declareAttrib(const char* attrib_name, Attrib<bool>* attrib);
-//   void declareAttrib(const char* attrib_name, Attrib<double>* attrib);
-//   void declareAttrib(const char* attrib_name, Attrib<const char*>* attrib);
-//   void declareAttrib(const char* attrib_name, Attrib<const string&>* attrib);
 
   void declareAction(const char* action_name, Action* action);
 
