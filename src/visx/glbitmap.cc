@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Sep  8 13:08:26 1999
+// written: Mon Sep 20 09:57:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #include "glbitmap.h"
 
 #include <GL/gl.h>
-
-#include "pbm.h"
 
 #define NO_TRACE
 #include "trace.h"
