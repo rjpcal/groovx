@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Wed Dec 15 13:05:17 1999
+// written: Wed Mar  8 16:34:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,16 +133,15 @@ public:
 };
 
 
-extern "C" Tcl_PackageInitProc Pos_Init;
-
+extern "C"
 int Pos_Init(Tcl_Interp* interp) {
 DOTRACE("Pos_Init");
 
-  new PosTcl::PosPkg(interp);
+  Tcl::TclPkg* pkg = new PosTcl::PosPkg(interp);
 
   FactoryRegistrar<IO, Position>::registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_positiontcl_cc[] = "$Header$";

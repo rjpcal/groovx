@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Mar  6 19:10:24 2000
+// written: Wed Mar  8 16:36:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,15 +149,14 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Sound_Init;
-
+extern "C"
 int Sound_Init(Tcl_Interp* interp) {
 DOTRACE("Sound_Init");
 
-  new SoundTcl::SoundPkg(interp);
-  new SoundListTcl::SoundListPkg(interp);
+  Tcl::TclPkg* pkg1 = new SoundTcl::SoundPkg(interp);
+  Tcl::TclPkg* pkg2 = new SoundListTcl::SoundListPkg(interp);
 
-  return TCL_OK;
+  return pkg1->initedOk() ? pkg2->initStatus() : pkg1->initStatus();
 }
 
 static const char vcid_soundtcl_cc[] = "$Header$";

@@ -3,15 +3,13 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu Feb 17 13:58:54 2000
+// written: Wed Mar  8 16:31:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FISHTCL_CC_DEFINED
 #define FISHTCL_CC_DEFINED
-
-#include <tcl.h>
 
 #include "iofactory.h"
 #include "objlist.h"
@@ -61,15 +59,14 @@ public:
   }
 };
 
-extern "C" Tcl_PackageInitProc Fish_Init;
-
+extern "C"
 int Fish_Init(Tcl_Interp* interp) {
 
-  new FishTcl::FishPkg(interp);
+  Tcl::TclPkg* pkg = new FishTcl::FishPkg(interp);
 
   FactoryRegistrar<IO, Fish>::registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_fishtcl_cc[] = "$Header$";

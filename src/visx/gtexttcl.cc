@@ -3,15 +3,13 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Tue Feb  1 18:06:21 2000
+// written: Wed Mar  8 16:32:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GTEXTTCL_CC_DEFINED
 #define GTEXTTCL_CC_DEFINED
-
-#include <tcl.h>
 
 #include "iofactory.h"
 #include "objlist.h"
@@ -74,16 +72,15 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Gtext_Init;
-
+extern "C"
 int Gtext_Init(Tcl_Interp* interp) {
 DOTRACE("Gtext_Init");
 
-  new GtextTcl::GtextPkg(interp); 
+  Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp); 
 
   FactoryRegistrar<IO, Gtext>::registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_gtexttcl_cc[] = "$Header$";

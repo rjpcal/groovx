@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar  8 11:05:21 2000
+// written: Wed Mar  8 16:30:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,17 +142,16 @@ public:
 };
   
 
-extern "C" Tcl_PackageInitProc Face_Init;
-
+extern "C"
 int Face_Init(Tcl_Interp* interp) {
 DOTRACE("Face_Init");
 
-  new FaceTcl::FacePkg(interp);
+  Tcl::TclPkg* pkg = new FaceTcl::FacePkg(interp);
 
   FactoryRegistrar<IO, Face>      :: registerWith(IoFactory::theOne());
   FactoryRegistrar<IO, CloneFace> :: registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";

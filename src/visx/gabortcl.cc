@@ -3,15 +3,13 @@
 // gabortcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 14:16:30 1999
-// written: Tue Dec  7 19:15:03 1999
+// written: Wed Mar  8 16:32:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GABORTCL_CC_DEFINED
 #define GABORTCL_CC_DEFINED
-
-#include <tcl.h>
 
 #include "objlist.h"
 #include "propitempkg.h"
@@ -20,15 +18,15 @@
 #define NO_TRACE
 #include "trace.h"
 
-extern "C" Tcl_PackageInitProc Gabor_Init;
-
+extern "C"
 int Gabor_Init(Tcl_Interp* interp) {
 DOTRACE("Gabor_Init");
 
-  new Tcl::PropertyListItemPkg<Gabor, ObjList>(interp, ObjList::theObjList(),
-															  "Gabor", "1.1");
+  Tcl::TclPkg* pkg = new Tcl::PropertyListItemPkg<Gabor, ObjList>(
+                              interp, ObjList::theObjList(),
+										"Gabor", "1.1");
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_gabortcl_cc[] = "$Header$";

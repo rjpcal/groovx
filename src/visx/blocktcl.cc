@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Tue Feb  1 18:08:51 2000
+// written: Wed Mar  8 16:27:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef BLOCKTCL_CC_DEFINED
 #define BLOCKTCL_CC_DEFINED
 
-#include <tcl.h>
 #include <vector>
 
 #include "iofactory.h"
@@ -163,17 +162,16 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Block_Init;
-
+extern "C"
 int Block_Init(Tcl_Interp* interp) {
 DOTRACE("Block_Init");
 
-  new BlockTcl::BlockPkg(interp);
-  new BlockListTcl::BlockListPkg(interp);
+  Tcl::TclPkg* pkg1 = new BlockTcl::BlockPkg(interp);
+  Tcl::TclPkg* pkg2 = new BlockListTcl::BlockListPkg(interp);
 
   FactoryRegistrar<IO, Block>::registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg1->initedOk() ? pkg2->initStatus() : pkg1->initStatus();
 }
 
 static const char vcid_blocktcl_cc[] = "$Header$";

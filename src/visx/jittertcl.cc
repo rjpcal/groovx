@@ -2,15 +2,12 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Dec 15 13:03:59 1999
+// written: Wed Mar  8 16:33:54 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef JITTERTCL_CC_DEFINED
 #define JITTERTCL_CC_DEFINED
-
-#include <tcl.h>
-#include <strstream.h>
 
 #include "iofactory.h"
 #include "jitter.h"
@@ -69,16 +66,15 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Jitter_Init;
-
+extern "C"
 int Jitter_Init(Tcl_Interp* interp) {
 DOTRACE("Jitter_Init");
 
-  new JitterTcl::JitterPkg(interp);
+  Tcl::TclPkg* pkg = new JitterTcl::JitterPkg(interp);
 
   FactoryRegistrar<IO, Jitter>::registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_jittertcl_cc[] = "$Header$";
