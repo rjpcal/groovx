@@ -127,7 +127,7 @@ proc testIsCmd { objname } {
     upvar $objname this
 
     set cmdname "${this(baseclass)}::is"
-    set usage "wrong \# args: should be \"$cmdname item_id\""
+    set usage "wrong \# args: should be "
     set testname "${this(packagename)}-${cmdname}"
 
 	 eval ::test $testname {"too few args"} {"
