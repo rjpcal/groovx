@@ -140,11 +140,6 @@ case ${CXX}-${OS} in
 	    STATLIB_CMD="ar rus"
 	    ;;
       esac
-      AC_MSG_CHECKING([for path to libstdc++])
-      libstdcxx=`dirname \`$CXX -print-file-name=libstdc++.so\``
-      libstdcxx=`cd $libstdcxx 2> /dev/null && /bin/pwd`
-      LDFLAGS="$LDFLAGS -Wl,-rpath,$libstdcxx"
-      AC_MSG_RESULT($libstdcxx)
       cxxflags_debug="-O1 -g"
       cxxflags_prod="-O2"
       ;;
@@ -236,6 +231,17 @@ case $OS in
       AC_MSG_ERROR([unknown operating system $OS])
       ;;
 esac
+
+if test $need_rpath = yes; then
+   # We don't want to do this test unless we $need_rpath, because if we try
+   # to do this under Darwin it causes later tests to fail (such as the
+   # "virtual base class address-offsets" test).
+   AC_MSG_CHECKING([for path to libstdc++])
+   libstdcxx=`dirname \`$CXX -print-file-name=libstdc++.so\``
+   libstdcxx=`cd $libstdcxx 2> /dev/null && /bin/pwd`
+   LDFLAGS="$LDFLAGS -Wl,-rpath,$libstdcxx"
+   AC_MSG_RESULT($libstdcxx)
+fi
 
 AC_SUBST(SHLIB_EXT)
 AC_SUBST(STATLIB_EXT)
