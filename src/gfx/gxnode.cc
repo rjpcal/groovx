@@ -15,6 +15,10 @@
 
 #include "gfx/gxnode.h"
 
+#include "gfx/gxtraversal.h"
+
+#include "util/ref.h"
+
 #include "util/trace.h"
 
 GxNode::GxNode()
@@ -37,6 +41,13 @@ bool GxNode::contains(GxNode* other) const
 {
 DOTRACE("GxNode::contains");
   return (this == other);
+}
+
+Util::FwdIter<const Util::Ref<GxNode> > GxNode::deepChildren()
+{
+DOTRACE("GxNode::deepChildren");
+
+  return GxTraversal(Util::Ref<GxNode>(this));
 }
 
 void GxNode::getBoundingBox(Gfx::Rect<double>&, Gfx::Canvas&) const

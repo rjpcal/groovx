@@ -13,12 +13,16 @@
 #ifndef GXNODE_H_DEFINED
 #define GXNODE_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
+#include "io/io.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
 #include "util/observable.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
+#include "util/utilfwd.h"
 #endif
 
 namespace Gfx
@@ -26,6 +30,11 @@ namespace Gfx
   class Canvas;
   template <class V> class Rect;
 }
+
+namespace Util
+{
+  template <class T> class Ref;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -59,6 +68,10 @@ public:
       composite structure. This function is used to avoid generated
       cycles in the scene graph. */
   virtual bool contains(GxNode* other) const;
+
+  /** Returns an iterator to all the children recursively contained in
+      this object. */
+  virtual Util::FwdIter<const Util::Ref<GxNode> > deepChildren();
 
   /** Subclasses override this to transform \a bbox according to how
       that subclass will be rendered. The default implementation does
