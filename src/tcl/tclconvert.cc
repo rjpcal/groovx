@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Mon Sep  3 13:27:59 2001
+// written: Mon Sep  3 14:02:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,9 @@
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclobjptr.h"
-#include "tcl/tclvalue.h"
 
 #include "util/strings.h"
+#include "util/value.h"
 
 #include <tcl.h>
 
@@ -58,6 +58,7 @@ namespace
     {
       if ( (itsObj->typePtr != target_type) && Tcl_IsShared(itsObj) )
         {
+          DOTRACE("SafeUnshared::SafeUnshared-duping");
           isItOwning = true;
           itsObj = Tcl_DuplicateObj(itsObj);
           Tcl_IncrRefCount(itsObj);
@@ -232,14 +233,6 @@ DOTRACE("Tcl::Convert<fstring>::fromTcl");
 }
 
 template <>
-Tcl::TclValue Tcl::Convert<Tcl::TclValue>::fromTcl(Tcl_Obj* obj)
-{
-DOTRACE("Tcl::Convert<Tcl::TclValue>::fromTcl");
-
-  return Tcl::TclValue(obj);
-}
-
-template <>
 Tcl::List Tcl::Convert<Tcl::List>::fromTcl(Tcl_Obj* obj)
 {
 DOTRACE("Tcl::Convert<Tcl::List>::fromTcl");
@@ -359,8 +352,7 @@ Tcl::ObjPtr Tcl::Convert<const Value&>::toTcl(const Value& val)
 {
 DOTRACE("Tcl::Convert<const Value&>::toTcl");
 
-  TclValue tval(val);
-  return tval.getObj();
+  return Tcl::ObjPtr(val.get(Util::TypeCue<const char*>()));
 }
 
 template <>
@@ -369,14 +361,6 @@ Tcl::ObjPtr Tcl::Convert<Tcl::List>::toTcl(Tcl::List listObj)
 DOTRACE("Tcl::Convert<const Value&>::toTcl");
 
   return listObj.asObj();
-}
-
-template <>
-Tcl::ObjPtr Tcl::Convert<Tcl::TclValue>::toTcl(Tcl::TclValue val)
-{
-DOTRACE("Tcl::Convert<Tcl::TclValue>::toTcl");
-
-  return val.getObj();
 }
 
 template <>

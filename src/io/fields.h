@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Sep  3 13:54:32 2001
+// written: Mon Sep  3 14:15:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H_DEFINED)
-#include "tcl/tclvalue.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
@@ -217,9 +213,9 @@ public:
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
-    Tcl::TclValue tval(new_val);
+    fstring sval = new_val.as(Util::TypeCue<fstring>());
 
-    dereference(cobj, itsValueMember).assignFrom(tval);
+    dereference(cobj, itsValueMember).Value::set(sval);
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
