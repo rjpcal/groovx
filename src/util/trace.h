@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep  9 12:19:40 2002
+// written: Wed Sep 25 19:00:32 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -55,10 +55,7 @@
 
 
 #ifdef HAVE_IOSFWD
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
+#  include <iosfwd>
 #else
 class ostream;
 #endif

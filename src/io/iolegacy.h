@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Mon Sep  9 12:17:34 2002
+// written: Wed Sep 25 18:54:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,23 +13,12 @@
 #ifndef IOLEGACY_H_DEFINED
 #define IOLEGACY_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(READER_H_DEFINED)
 #include "io/reader.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WRITER_H_DEFINED)
 #include "io/writer.h"
-#endif
 
 #ifdef HAVE_IOSFWD
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
+#  include <iosfwd>
 #else
 class istream;
 class ostream;

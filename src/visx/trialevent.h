@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Tue May 14 19:50:02 2002
+// written: Wed Sep 25 19:03:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,21 +13,12 @@
 #ifndef TRIALEVENT_H_DEFINED
 #define TRIALEVENT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLPROFWRAPPER_H_DEFINED)
 #include "tcl/tclprocwrapper.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
 #include "util/stopwatch.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
 
 namespace Util
 {

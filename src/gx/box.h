@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Fri Jul  5 13:47:01 2002
+// written: Wed Sep 25 18:53:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef BOX_H_DEFINED
 #define BOX_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC3_H_DEFINED)
 #include "gx/vec3.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H_DEFINED)
 #include "gx/rect.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
 
 namespace Gfx
 {

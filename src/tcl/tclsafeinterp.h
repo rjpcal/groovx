@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Fri Sep  6 12:15:07 2002
+// written: Wed Sep 25 18:57:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef TCLSAFEINTERP_H_DEFINED
 #define TCLSAFEINTERP_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
 struct Tcl_Interp;
 struct Tcl_Obj;

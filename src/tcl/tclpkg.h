@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jun 26 12:18:56 2002
+// written: Wed Sep 25 18:57:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef TCLPKG_H_DEFINED
 #define TCLPKG_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLFUNCTOR_H_DEFINED)
 #include "tcl/tclfunctor.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLPKGBASE_H_DEFINED)
 #include "tcl/tclpkgbase.h"
-#endif
 
 namespace Tcl
 {

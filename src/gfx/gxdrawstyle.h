@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:16:30 2001
-// written: Fri Jul  5 14:11:35 2002
+// written: Wed Sep 25 18:52:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef GXDRAWSTYLE_H_DEFINED
 #define GXDRAWSTYLE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gfx/gxnode.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
-#endif
 
 /// GxDrawStyle is a graphics node class for line/polygon drawing styles.
 class GxDrawStyle : public GxNode, public FieldContainer

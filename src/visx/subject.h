@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jan 18 16:06:51 2002
+// written: Wed Sep 25 19:03:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,9 @@
 #ifndef SUBJECT_H_DEFINED
 #define SUBJECT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
-#include "util/strings.h"
-#define STRING_DEFINED
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
-#endif
+
+#include "util/strings.h"
 
 ///////////////////////////////////////////////////////////////////////
 // Subject class

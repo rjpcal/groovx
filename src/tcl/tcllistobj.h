@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Mon Sep 16 13:16:55 2002
+// written: Wed Sep 25 18:57:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,8 @@
 #ifndef TCLLISTOBJ_H_DEFINED
 #define TCLLISTOBJ_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
-#endif
 
 namespace Tcl
 {

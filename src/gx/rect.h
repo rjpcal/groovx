@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jul  3 16:39:36 2002
+// written: Wed Sep 25 18:53:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef RECT_H_DEFINED
 #define RECT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC2_H_DEFINED)
 #include "gx/vec2.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
 
 namespace Gfx
 {

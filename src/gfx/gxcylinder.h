@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:43:20 2002
-// written: Fri Jul  5 15:17:53 2002
+// written: Wed Sep 25 18:52:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef GXCYLINDER_H_DEFINED
 #define GXCYLINDER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gfx/gxnode.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
-#endif
 
 //  ###################################################################
 //  ===================================================================

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:11 1999
-// written: Wed Jun 26 12:56:23 2002
+// written: Wed Sep 25 19:02:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef KBDRESPONSEHDLR_H_DEFINED
 #define KBDRESPONSEHDLR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EVENTRESPONSEHDLR_H_DEFINED)
 #include "visx/eventresponsehdlr.h"
-#endif
 
 
 /// KbdResponseHdlr is just EventResponseHdlr with a default "keypress" event type.

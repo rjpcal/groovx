@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Wed Jun 26 11:05:48 2002
+// written: Wed Sep 25 18:56:51 2002
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -19,13 +19,9 @@
 #ifndef TCLCODE_H_DEFINED
 #define TCLCODE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
 struct Tcl_Obj;
 struct Tcl_Interp;

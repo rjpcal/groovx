@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 25 17:26:14 2002
-// written: Tue Jun 25 17:28:13 2002
+// written: Wed Sep 25 18:53:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef CANVASWIDGET_H_DEFINED
 #define CANVASWIDGET_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WIDGET_H_DEFINED)
 #include "gwt/widget.h"
-#endif
 
 namespace GWT
 {

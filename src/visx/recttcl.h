@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:24:29 2001
-// written: Tue Jul  2 13:02:22 2002
+// written: Wed Sep 25 19:03:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef RECTTCL_H_DEFINED
 #define RECTTCL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H_DEFINED)
 #include "gx/rect.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLLISTOBJ_H_DEFINED)
 #include "tcl/tcllistobj.h"
-#endif
 
 namespace Tcl
 {

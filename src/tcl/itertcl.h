@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 14:02:32 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Sep 25 18:56:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef ITERTCL_H_DEFINED
 #define ITERTCL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITER_H_DEFINED)
 #include "util/iter.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLLISTOBJ_H_DEFINED)
 #include "tcl/tcllistobj.h"
-#endif
 
 namespace Tcl
 {

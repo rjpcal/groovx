@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Wed Jun 26 12:31:58 2002
+// written: Wed Sep 25 18:51:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef GBCOLOR_H_DEFINED
 #define GBCOLOR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MULTIVALUE_H_DEFINED)
 #include "util/multivalue.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RGBACOLOR_H_DEFINED)
 #include "gx/rgbacolor.h"
-#endif
 
 /// Field class for RGBA colors.
 class GbColor : public Gfx::RgbaColor, public TMultiValue<double>

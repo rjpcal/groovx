@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Wed Jun 26 10:56:12 2002
+// written: Wed Sep 25 18:59:44 2002
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -24,9 +24,7 @@
 #ifndef POINTERS_H_DEFINED
 #define POINTERS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
 
 /// A borrowed pointer class
 /** The sole purpose of this class is to explicitly state the fact that a

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:41:47 2002
-// written: Thu Jan 31 10:15:19 2002
+// written: Wed Sep 25 18:57:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,11 @@
 #ifndef TCLPROCWRAPPER_H_DEFINED
 #define TCLPROCWRAPPER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLSAFEINTERP_H_DEFINED)
 #include "tcl/tclsafeinterp.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
-#endif
 
 namespace Tcl
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Jan 30 11:31:01 2002
+// written: Wed Sep 25 19:01:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef EVENTRESPONSEHDLR_H_DEFINED
 #define EVENTRESPONSEHDLR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RESPONSEHANDLER_H_DEFINED)
-#include "visx/responsehandler.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
 #include "util/tracer.h"
-#endif
+
+#include "visx/responsehandler.h"
 
 class fstring;
 

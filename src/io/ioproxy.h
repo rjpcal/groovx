@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Tue Jul  2 13:01:43 2002
+// written: Wed Sep 25 18:54:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,14 @@
 #ifndef IOPROXY_H_DEFINED
 #define IOPROXY_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
 #include "system/demangle.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
 #include <typeinfo>
-#define TYPEINFO_DEFINED
-#endif
 
 namespace IO
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Wed Sep 25 19:01:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef FISH_H_DEFINED
 #define FISH_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
-#include "visx/grobj.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
 #include "util/tracer.h"
-#endif
+
+#include "visx/grobj.h"
 
 ///////////////////////////////////////////////////////////////////////
 /**

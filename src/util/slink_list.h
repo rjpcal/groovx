@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Tue Jul  2 13:08:49 2002
+// written: Wed Sep 25 19:00:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef SLINK_LIST_H_DEFINED
 #define SLINK_LIST_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**

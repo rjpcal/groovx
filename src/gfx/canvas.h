@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Fri Jul  5 14:22:01 2002
+// written: Wed Sep 25 18:51:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef CANVAS_H_DEFINED
 #define CANVAS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
-#endif
 
 template <class T> class dynamic_block;
 

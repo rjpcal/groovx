@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Jul  5 14:22:38 2002
+// written: Wed Sep 25 18:52:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef GLCANVAS_H_DEFINED
 #define GLCANVAS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVAS_H_DEFINED)
 #include "gfx/canvas.h"
-#endif
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
 class GLCanvas : public Gfx::Canvas

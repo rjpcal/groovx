@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Wed Sep 25 19:00:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,8 @@
 #ifndef SIGNAL_H_DEFINED
 #define SIGNAL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
 
 namespace Util
 {
@@ -153,8 +148,8 @@ template <class C, class MF>
 inline Util::SoftRef<Slot> Slot::make(C* obj, MF mf)
 {
   return Util::SoftRef<Slot>(SlotAdapter<C, MF>::make(obj, mf),
-			     Util::STRONG,
-			     Util::PRIVATE);
+                             Util::STRONG,
+                             Util::PRIVATE);
 };
 
 template <class C, class MF>

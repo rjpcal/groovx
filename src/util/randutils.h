@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 02:35:53 1999
-// written: Fri Jan 18 16:06:54 2002
+// written: Wed Sep 25 18:59:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,7 @@
 #ifndef RANDUTILS_H_DEFINED
 #define RANDUTILS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDLIB_DEFINED)
 #include <cstdlib>
-#define CSTDLIB_DEFINED
-#endif
 
 namespace Util
 {

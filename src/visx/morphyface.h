@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Wed Sep 25 19:02:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef MORPHYFACE_H_DEFINED
 #define MORPHYFACE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "visx/grobj.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Tue Apr  2 13:21:52 2002
+// written: Wed Sep 25 18:53:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,8 @@
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ARRAYS_H_DEFINED)
 #include "util/arrays.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
 namespace Gfx
 {

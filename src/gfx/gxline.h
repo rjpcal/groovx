@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 15:53:53 2002
-// written: Fri Jul  5 14:11:35 2002
+// written: Wed Sep 25 18:52:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef GXLINE_H_DEFINED
 #define GXLINE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GBVEC_H_DEFINED)
 #include "gfx/gbvec.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gfx/gxnode.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**

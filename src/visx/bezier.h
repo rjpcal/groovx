@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Sat Feb  2 16:58:05 2002
+// written: Wed Sep 25 19:00:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,22 +13,11 @@
 #ifndef BEZIER_H_DEFINED
 #define BEZIER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CMATH_DEFINED)
-#include <cmath>
-#define CMATH_DEFINED
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ARRAYS_H_DEFINED)
 #include "util/arrays.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(SLINK_LIST_H_DEFINED)
 #include "util/slink_list.h"
-#endif
+
+#include <cmath>
 
 ///////////////////////////////////////////////////////////////////////
 /**

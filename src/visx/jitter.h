@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:40 1999
-// written: Fri Jul  5 14:11:34 2002
+// written: Wed Sep 25 19:02:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef JITTER_H_DEFINED
 #define JITTER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POSITION_H_DEFINED)
 #include "visx/position.h"
-#endif
 
 /// Jitter is a Position subclass that has randomness in its position.
 class Jitter : public Position

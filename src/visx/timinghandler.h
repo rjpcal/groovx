@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 10:56:20 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Wed Sep 25 19:03:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef TIMINGHANDLER_H_DEFINED
 #define TIMINGHANDLER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TIMINGHDLR_H_DEFINED)
 #include "visx/timinghdlr.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //

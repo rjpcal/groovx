@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Sep  9 12:19:31 2002
+// written: Wed Sep 25 19:00:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,20 +13,12 @@
 #ifndef STRINGS_H_DEFINED
 #define STRINGS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
-#define CSTDDEF_DEFINED
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
 #include "util/tostring.h"
-#endif
 
 #ifdef HAVE_IOSFWD
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
+#  include <iosfwd>
 #else
 class istream;
 class ostream;

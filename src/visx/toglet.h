@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Sep 17 21:24:07 2002
+// written: Wed Sep 25 19:03:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGL_H_DEFINED)
 #include "togl/togl.h"
-#endif
 
 class TogletSizer;
 

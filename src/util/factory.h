@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Sat Aug 10 14:51:11 2002
+// written: Wed Sep 25 18:58:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,18 +13,11 @@
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
 #include "util/traits.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
 #include "system/demangle.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
 #include <typeinfo>
-#define TYPEINFO_DEFINED
-#endif
 
 class fstring;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Tue Jul  2 13:03:14 2002
+// written: Wed Sep 25 18:59:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef MULTIVALUE_H_DEFINED
 #define MULTIVALUE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
 #include "util/value.h"
-#endif
 
 /// A Value subclass representing a (small) set of homogeneous values.
 template <class T>

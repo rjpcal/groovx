@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Wed Jun 26 12:07:46 2002
+// written: Wed Sep 25 18:58:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,11 @@
 #ifndef HASH_H_DEFINED
 #define HASH_H_DEFINED
 
+#include "util/algo.h"
 #include "util/arrays.h"
 #include "util/slink_list.h"
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
-#include "util/algo.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
-#define CSTDDEF_DEFINED
-#endif
 
 namespace
 {

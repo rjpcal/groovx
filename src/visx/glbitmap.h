@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Wed Jun 26 12:05:48 2002
+// written: Wed Sep 25 19:02:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,10 @@
 #ifndef GLBITMAP_H_DEFINED
 #define GLBITMAP_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H_DEFINED)
 #include "visx/bitmap.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GLBMAPRENDERER_H_DEFINED)
 #include "visx/glbmaprenderer.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
 /// Allows a shared_ptr to be initialized before passing it to the Bitmap constructor.
 struct GLRHolder

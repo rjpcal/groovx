@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Tue May 14 19:29:07 2002
+// written: Wed Sep 25 19:03:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,9 @@
 #ifndef XBITMAP_H_DEFINED
 #define XBITMAP_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H_DEFINED)
 #include "visx/bitmap.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(XBMAPRENDERER_H_DEFINED)
 #include "visx/xbmaprenderer.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
 // Used to allow a shared_ptr to be initialized before we pass it to
 // the Bitmap constructor

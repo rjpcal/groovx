@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jul  5 14:11:34 2002
+// written: Wed Sep 25 19:02:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,21 +13,13 @@
 #ifndef GROBJ_H_DEFINED
 #define GROBJ_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GMODES_H_DEFINED)
-#include "visx/gmodes.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gfx/gxnode.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
 #include "util/tracer.h"
-#endif
+
+#include "visx/gmodes.h"
 
 class GrObjImpl;
 

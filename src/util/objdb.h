@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Sep 12 15:01:08 2002
+// written: Wed Sep 25 18:59:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,9 @@
 #ifndef OBJDB_H_DEFINED
 #define OBJDB_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITER_H_DEFINED)
 #include "util/iter.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UID_H_DEFINED)
 #include "util/uid.h"
-#endif
 
 namespace Util
 {

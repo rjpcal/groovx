@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Aug  7 15:32:29 2002
+// written: Wed Sep 25 18:57:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,9 @@
 #ifndef ARRAYS_H_DEFINED
 #define ARRAYS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
-#define CSTDDEF_DEFINED
-#endif
 
 namespace Util
 {

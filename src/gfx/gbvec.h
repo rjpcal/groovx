@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Jun 26 12:35:39 2002
+// written: Wed Sep 25 18:52:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef GBVEC_H_DEFINED
 #define GBVEC_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MULTIVALUE_H_DEFINED)
 #include "util/multivalue.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC3_H_DEFINED)
 #include "gx/vec3.h"
-#endif
 
 /// GbVec3 is a field class for holding 3-D vectors/points/distances.
 template <class T>

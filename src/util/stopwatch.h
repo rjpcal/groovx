@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 18 10:24:59 1999
-// written: Fri Jan 25 14:21:17 2002
+// written: Wed Sep 25 19:00:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,7 @@
 #ifndef STOPWATCH_H_DEFINED
 #define STOPWATCH_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TIME_H_DEFINED)
 #include <sys/time.h>
-#define TIME_H_DEFINED
-#endif
 
 class StopWatch
 {

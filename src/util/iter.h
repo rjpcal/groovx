@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Wed Jun 26 12:08:35 2002
+// written: Wed Sep 25 18:58:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,9 @@
 #ifndef ITER_H_DEFINED
 #define ITER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILITY_DEFINED)
 #include <utility>
-#define UTILITY_DEFINED
-#endif
 
 namespace Util
 {

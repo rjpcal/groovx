@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Wed Sep 25 19:02:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef GLBMAPRENDERER_H_DEFINED
 #define GLBMAPRENDERER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BMAPRENDERER_H_DEFINED)
 #include "visx/bmaprenderer.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Wed Jun 26 11:21:49 2002
+// written: Wed Sep 25 18:56:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,8 @@
 #ifndef TCLERROR_H_DEFINED
 #define TCLERROR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERRORHANDLER_H_DEFINED)
 #include "util/errorhandler.h"
-#endif
 
 struct Tcl_Interp;
 

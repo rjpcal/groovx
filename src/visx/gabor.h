@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 27 11:02:06 2002
+// written: Wed Sep 25 19:01:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,9 @@
 #ifndef GABOR_H_DEFINED
 #define GABOR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GBCOLOR_H_DEFINED)
 #include "gfx/gbcolor.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "visx/grobj.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Tue Sep 17 23:09:06 2002
+// written: Wed Sep 25 18:57:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,7 @@
 
 #include "togl/glxopts.h"
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
 
 #include <GL/glx.h>
 #include <X11/Xlib.h>

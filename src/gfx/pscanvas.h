@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:18:49 2001
-// written: Fri Jul  5 14:22:46 2002
+// written: Wed Sep 25 18:53:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef PSCANVAS_H_DEFINED
 #define PSCANVAS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVAS_H_DEFINED)
 #include "gfx/canvas.h"
-#endif
 
 namespace Gfx
 {

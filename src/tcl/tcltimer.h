@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Fri Jan 18 16:06:56 2002
+// written: Wed Sep 25 18:57:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,8 @@
 #ifndef TCLTIMER_H_DEFINED
 #define TCLTIMER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(SIGNAL_H_DEFINED)
 #include "util/signal.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
 #include "util/stopwatch.h"
-#endif
 
 struct Tcl_TimerToken_;
 typedef struct Tcl_TimerToken_* Tcl_TimerToken;

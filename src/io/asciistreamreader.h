@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Mon Sep  9 12:17:00 2002
+// written: Wed Sep 25 18:53:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,10 @@
 #ifndef ASCIISTREAMREADER_H_DEFINED
 #define ASCIISTREAMREADER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(READER_H_DEFINED)
 #include "io/reader.h"
-#endif
 
 #ifdef HAVE_IOSFWD
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
+#  include <iosfwd>
 #else
 class istream;
 class ostream;

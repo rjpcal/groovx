@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Wed Sep 25 19:04:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef XBMAPRENDERER_H_DEFINED
 #define XBMAPRENDERER_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BMAPRENDERER_H_DEFINED)
 #include "visx/bmaprenderer.h"
-#endif
 
 struct _XImage;
 typedef _XImage XImage;

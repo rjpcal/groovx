@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Wed Sep 18 13:16:17 2002
+// written: Wed Sep 25 19:03:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef TKWIDGET_H_DEFINED
 #define TKWIDGET_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVASWIDGET_H_DEFINED)
 #include "gwt/canvaswidget.h"
-#endif
 
 struct Tcl_Interp;
 

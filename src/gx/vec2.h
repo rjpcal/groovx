@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Wed Jun 26 12:35:05 2002
+// written: Wed Sep 25 18:53:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,7 @@
 #ifndef VEC2_H_DEFINED
 #define VEC2_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CMATH_DEFINED)
 #include <cmath>
-#define CMATH_DEFINED
-#endif
 
 namespace Gfx
 {

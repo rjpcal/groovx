@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:12:37 1999
-// written: Fri Jan 18 16:06:55 2002
+// written: Wed Sep 25 18:59:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef OBJMGR_H_DEFINED
 #define OBJMGR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
 
 class fstring;
 

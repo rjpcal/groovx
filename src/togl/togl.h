@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Sep 18 13:06:43 2002
+// written: Wed Sep 25 18:57:43 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -24,9 +24,7 @@
 #ifndef TOGL_H_DEFINED
 #define TOGL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
 #include "visx/tkwidget.h"
-#endif
 
 struct Tcl_Interp;
 struct Tcl_Obj;

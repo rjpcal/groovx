@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 15:15:40 2002
-// written: Fri Jul  5 16:08:56 2002
+// written: Wed Sep 25 18:52:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,21 +13,11 @@
 #ifndef GXLIGHTING_H_DEFINED
 #define GXLIGHTING_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GBCOLOR_H_DEFINED)
 #include "gfx/gbcolor.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GBVEC_H_DEFINED)
 #include "gfx/gbvec.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gfx/gxnode.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
-#endif
 
 //  ###################################################################
 //  ===================================================================

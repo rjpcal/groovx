@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Thu Sep 12 14:25:35 2002
+// written: Wed Sep 25 18:57:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,25 +13,12 @@
 #ifndef TCLFUNCTOR_H_DEFINED
 #define TCLFUNCTOR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H_DEFINED)
 #include "tcl/tclcmd.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
 #include "tcl/tclveccmd.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FUNCTORS_H_DEFINED)
 #include "util/functors.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
 
 namespace Tcl
 {

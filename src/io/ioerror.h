@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 12 21:42:09 2001
-// written: Fri Jan 18 16:06:57 2002
+// written: Wed Sep 25 18:59:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef IOERROR_H_DEFINED
 #define IOERROR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
-#endif
 
 namespace IO
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:45:35 2000
-// written: Sat Sep 21 12:02:15 2002
+// written: Wed Sep 25 19:00:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,10 +16,7 @@
 #ifdef HAVE_FSTREAM
 #  include <fstream>
 #else
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FSTREAM_H_DEFINED)
-#    include <fstream.h>
-#    define FSTREAM_H_DEFINED
-#  endif
+#  include <fstream.h>
 #endif
 
 namespace Util

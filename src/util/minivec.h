@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Mon Sep  9 11:28:52 2002
+// written: Wed Sep 25 18:58:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,25 +13,13 @@
 #ifndef MINIVEC_H_DEFINED
 #define MINIVEC_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(NEW_DEFINED)
+#include <iterator>
 #include <new>
-#define NEW_DEFINED
-#endif
 
 #ifdef HAVE_LIMITS
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LIMITS_DEFINED)
 #include <limits>
-#define LIMITS_DEFINED
-#endif
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITERATOR_DEFINED)
-#include <iterator>
-#define ITERATOR_DEFINED
 #endif
 
 namespace MVUtils

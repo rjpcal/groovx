@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Wed Jun 26 11:16:30 2002
+// written: Wed Sep 25 18:56:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,7 @@
 #ifndef DATABLOCK_H_DEFINED
 #define DATABLOCK_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
 #include <cstddef>
-#define CSTDDEF_DEFINED
-#endif
 
 /// Base class for holding ref-counted arrays of floating-point data.
 /** Serves as the implementation for higher-level matrix classes, etc. */

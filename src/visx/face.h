@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Mon Feb 25 10:44:29 2002
+// written: Wed Sep 25 19:01:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,7 @@
 #ifndef FACE_H_DEFINED
 #define FACE_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
 #include "visx/grobj.h"
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
