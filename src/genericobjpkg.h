@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Jun 13 15:16:01 2001
+// written: Fri Jun 15 15:26:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,11 @@ public:
 
   virtual bool isMyType(const Util::Object* obj) = 0;
 
-  bool isMyType(int id);
+  bool isNotMyType(const Util::Object* obj) { return !isMyType(obj); }
+
+  bool isIdMyType(Util::UID uid);
+
+  bool isIdNotMyType(Util::UID uid) { return !isIdMyType(uid); }
 };
 
 /** CountAllCmd **/
