@@ -57,6 +57,7 @@ void BitmapCacheNode::invalidate()
 {
 DOTRACE("BitmapCacheNode::invalidate");
   itsBitmapRep.reset( 0 );
+  itsCacheFilename = "";
 }
 
 void BitmapCacheNode::recacheBitmap(Gfx::Canvas& canvas) const
