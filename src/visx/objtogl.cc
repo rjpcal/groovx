@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Nov  9 13:18:11 1999
+// written: Tue Nov 30 17:06:13 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -274,7 +274,9 @@ protected:
     // Create a new ToglConfig object using the following default
     // settings: viewing distance = 30 inches, one GL unit == 2.05
     // degrees visual angle
-    ObjTogl::theConfig = new TlistToglConfig(ObjTogl::widget, 30, 2.05);
+    ObjTogl::theConfig = new TlistToglConfig(ObjTogl::widget,
+															viewing_dist,
+															gl_unit_angle);
     
 	 if (pack) {
 		string pack_cmd_str =
