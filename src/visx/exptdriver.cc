@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Oct 24 10:26:48 2000
+// written: Tue Oct 24 15:36:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -590,11 +590,13 @@ DOTRACE("ExptDriver::Impl::includeAllBlocks");
 
   itsBlocks.clear();
 
-  BlockList& blockList = BlockList::theBlockList();
-  for (int i = 0; i < blockList.capacity(); ++i)
+  std::vector<int> blockids;
+
+  BlockList::theBlockList().insertValidIds(std::back_inserter(blockids));
+
+  for (int i = 0; i < blockids.size(); ++i)
 	 {
-		if (blockList.isValidId(i))
-		  itsBlocks.push_back(blockList.getPtr(i));
+		itsBlocks.push_back(ItemWithId<Block>(i));
 	 }  
 
   itsCurrentBlockIdx = 0;
