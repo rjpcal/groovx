@@ -12,6 +12,9 @@ package require Pos
 package require Tlist
 package require Objtogl
 
+source ${::TEST_DIR}/list_test.tcl
+List::testList TlistTcl Tlist Trial Trial Trial
+
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 ### Tlist::undrawCmd ###
@@ -75,24 +78,6 @@ test "TlistTcl-Tlist::show" "normal use on invalid trial id" {
 	 catch {Tlist::show -1}
 } {^0$}
 test "TlistTcl-Tlist::show" "no error" {} $BLANK $no_test
-
-### Tlist::countCmd ###
-test "TlistTcl-Tlist::count" "too many args" {
-	 Tlist::count junk
-} {wrong \# args: should be "Tlist::count"}
-test "TlistTcl-Tlist::count" "normal use on empty Tlist" {
-	 Tlist::reset
-	 Tlist::count
-} {^0$}
-test "TlistTcl-Tlist::count" "normal use on non-empty Tlist" {
-	 Tlist::reset
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 Tlist::addObject 0 $f $p
-	 Tlist::addObject 3 $f $p
-	 Tlist::count
-} {^2$}
-test "TlistTcl-Tlist::count" "no error" {} $BLANK $no_test
 
 ### Tlist::setVisibleCmd ###
 test "TlistTcl-Tlist::setVisible" "too few args" {
@@ -160,22 +145,6 @@ test "TlistTcl-Tlist::setCurTrial" "error on too large trial id" {
 	 Tlist::reset
     Tlist::setCurTrial 10000
 } {Tlist::setCurTrial: invalid trial id}
-
-### Tlist::resetCmd ###
-test "TlistTcl-Tlist::reset" "too many args" {
-	 Tlist::reset junk
-} {wrong \# args: should be "Tlist::reset"}
-test "TlistTcl-Tlist::reset" "normal use" {
-	 ObjList::reset
-	 PosList::reset
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 Tlist::addObject 0 $f $p
-	 Tlist::addObject 1 $f $p
-	 Tlist::reset
-	 Tlist::count
-} {^0$}
-test "TlistTcl-Tlist::reset" "no error" {} $BLANK $no_test
 
 ### Tlist::loadObjidFileCmd ###
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {
@@ -379,15 +348,6 @@ test "TlistTcl-Tlist::write_responses" "normal use" {
 
 ### Tlist::stringifyCmd ###
 ### Tlist::destringifyCmd ###
-test "TlistTcl-Tlist::stringify" "too many args" {
-    Tlist::stringify junk
-} {wrong \# args: should be "Tlist::stringify"}
-test "TlistTcl-Tlist::destringify" "too few args" {
-    Tlist::destringify
-} {wrong \# args: should be "Tlist::destringify string"}
-test "TlistTcl-Tlist::destringify" "too many args" {
-    Tlist::destringify j u
-} {wrong \# args: should be "Tlist::destringify string"}
 test "TlistTcl-Tlist::destringify" "write, read, write and compare" {
 	 ObjList::reset
 	 PosList::reset
@@ -402,7 +362,4 @@ test "TlistTcl-Tlist::destringify" "write, read, write and compare" {
 	 set str2 [Tlist::stringify]
 	 expr [string compare $str $str2] == 0
 } {^1$}
-test "TlistTcl-Tlist::destringify" "error on junk input" {
-	 Tlist::destringify "what a bunch of hogwash this is"
-} {Tlist::destringify: InputError: Tlist}
 
