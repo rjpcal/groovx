@@ -3,7 +3,7 @@
 // expttesttcl.cc
 // Rob Peters
 // created: Tue May 11 13:13:41 1999
-// written: Wed May 12 15:40:17 1999
+// written: Sun Jun 20 17:50:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,15 @@
 
 #include "expt.h"
 #include "tcllink.h"
-#include "expttcl.h"
+#include "exptdriver.h"
 
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
+
+namespace {
+  Expt& getExpt() { return ExptDriver::theExptDriver().expt(); }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -28,9 +32,6 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace ExptTestTcl {
-  using namespace ExptTcl;
-
-  int Expttest_Init(Tcl_Interp* interp);
 
   // Tcl command procedures used only for testing the Expt class
 #ifdef LOCAL_TEST
@@ -61,7 +62,7 @@ namespace ExptTestTcl {
 
 #ifdef LOCAL_TEST
 int ExptTestTcl::abortTrialCmd(ClientData, Tcl_Interp* interp,
-                           int objc, Tcl_Obj* const objv[]) {
+										 int objc, Tcl_Obj* const objv[]) {
 DOTRACE("ExptTestTcl::abortTrialCmd");
   if (objc != 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
@@ -78,20 +79,20 @@ DOTRACE("ExptTestTcl::abortTrialCmd");
 // ExptTestTcl::beginTrialCmd --
 //
 // Start the next trial in the current experiment. Mainly a driver for
-// Expt::beginTrial. 
+// Expt::drawTrial. 
 //
 // Results: 
 // If Expt::verbose is true, a description of the current trial is
 // returned, otherwise nothing.
 //
 // Side effects:
-// See comments for Expt::beginTrial.
+// See comments for Expt::drawTrial.
 //
 //--------------------------------------------------------------------
 
 #ifdef LOCAL_TEST
 int ExptTestTcl::beginTrialCmd(ClientData, Tcl_Interp* interp,
-                           int objc, Tcl_Obj* const objv[]) {
+										 int objc, Tcl_Obj* const objv[]) {
 DOTRACE("ExptTestTcl::beginTrialCmd");
   if (objc != 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
@@ -99,11 +100,8 @@ DOTRACE("ExptTestTcl::beginTrialCmd");
   }
 
   Expt& expt = getExpt();
-  expt.beginTrial();
+  expt.drawTrial();
 
-  if (expt.getVerbose()) {
-    Tcl_SetObjResult(interp, Tcl_NewStringObj(expt.trialDescription(), -1));
-  }
   return TCL_OK;
 }
 #endif
@@ -114,13 +112,13 @@ DOTRACE("ExptTestTcl::beginTrialCmd");
 //
 // Record a response to the current trial in the current Expt, and
 // prepare the Expt for the next trial. Simply a driver for
-// Expt::recordResponse -- see comments for that function.
+// Expt::processResponse -- see comments for that function.
 //
 //--------------------------------------------------------------------
 
 #ifdef LOCAL_TEST
 int ExptTestTcl::recordResponseCmd(ClientData, Tcl_Interp* interp,
-                               int objc, Tcl_Obj* const objv[]) {
+											  int objc, Tcl_Obj* const objv[]) {
 DOTRACE("ExptTestTcl::recordResponseCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "response");
@@ -131,7 +129,7 @@ DOTRACE("ExptTestTcl::recordResponseCmd");
   if (Tcl_GetIntFromObj(interp, objv[1], &response) != TCL_OK)
     return TCL_ERROR;
 
-  getExpt().recordResponse(response);
+  getExpt().processResponse(response);
   return TCL_OK;
 }
 #endif
@@ -147,7 +145,8 @@ DOTRACE("ExptTestTcl::recordResponseCmd");
 
 #ifdef LOCAL_TEST
 int ExptTestTcl::undrawTrialCmd(ClientData, Tcl_Interp* interp,
-                            int objc, Tcl_Obj* const objv[]) {
+										  int objc, Tcl_Obj* const objv[]) {
+DOTRACE("ExptTestTcl::undrawTrialCmd");
 DOTRACE("ExptTestTcl::undrawTrialCmd");
   if (objc > 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
@@ -163,27 +162,20 @@ DOTRACE("ExptTestTcl::undrawTrialCmd");
 //
 // ExptTestTcl::Expttest_Init --
 //
-//
-//
-// Results:
-//
-//
-//
-// Side effects:
-//
-//
-//
 //--------------------------------------------------------------------
 
 
-struct CmdName_CmdProc {
-  const char* cmdName;
-  Tcl_ObjCmdProc* cmdProc;
-};
+extern "C" int Expttest_Init(Tcl_Interp* interp);
 
-int ExptTestTcl::Expttest_Init(Tcl_Interp* interp) {
+int Expttest_Init(Tcl_Interp* interp) {
+DOTRACE("Expttest_Init");
 
 #ifdef LOCAL_TEST
+  struct CmdName_CmdProc {
+	 const char* cmdName;
+	 Tcl_ObjCmdProc* cmdProc;
+  };
+
   static CmdName_CmdProc Names_Procs[] = {
     { "Expt::abortTrial", abortTrialCmd },
     { "Expt::beginTrial", beginTrialCmd },
@@ -192,7 +184,7 @@ int ExptTestTcl::Expttest_Init(Tcl_Interp* interp) {
   };
 
   // Add all commands to the ::Expt namespace.
-  for (int i = 0; i < sizeof(Names_Procs)/sizeof(CmdName_CmdProc); i++) {
+  for (int i = 0; i < sizeof(Names_Procs)/sizeof(CmdName_CmdProc); ++i) {
     Tcl_CreateObjCommand(interp, 
                          const_cast<char *>(Names_Procs[i].cmdName),
                          Names_Procs[i].cmdProc,
