@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov  3 09:55:23 1999
+// written: Wed Nov  3 14:47:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,20 +100,6 @@ public:
   // under unique filenames, and optionally quits the application if
   // quitApplication is true.
   void writeAndExit(bool quitApplication=false);
-
-protected:
-  void init();
-
-  Block& block() const;
-  ResponseHandler& responseHandler() const;
-  TimingHdlr& timingHdlr() const;
-
-  bool needAutosave() const;
-
-  // Check the validity of all its id's, return true if all are ok,
-  // otherwise returns false, halts the experiment, and issues an
-  // error message to itsInterp.
-  bool assertIds() const; 
 
 private:
   class ExptImpl;
