@@ -73,3 +73,19 @@ test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
 	 KbdRh::keyRespPairs $::rhid { {{^[aA]$} 0} {{^[lL]$} 1} }
 	 KbdRh::keyRespPairs $::rhid
 } {^ \{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\} $}
+
+### KbdRh::feedbackPairs ###
+test "KbdRhTcl-KbdRh::feedbackPairs" "too few args" {
+	 KbdRh::feedbackPairs
+} {^wrong \# args: should be "KbdRh::feedbackPairs item_id\(s\) \?new_value\(s\)\?"$}
+test "KbdRhTcl-KbdRh::feedbackPairs" "too many args" {
+	 KbdRh::feedbackPairs junk junk junk
+} {^wrong \# args: should be "KbdRh::feedbackPairs item_id\(s\) \?new_value\(s\)\?"$}
+test "KbdRhTcl-KbdRh::feedbackPairs" "error on bad rhid" {
+	 KbdRh::feedbackPairs -1
+} {^KbdRh::feedbackPairs: .*$}
+test "KbdRhTcl-KbdRh::feedbackPairs" "normal use" {
+	 KbdRh::feedbackPairs $::rhid { {x 5} {z 9} }
+	 KbdRh::feedbackPairs $::rhid
+} {^ \{x 5\} \{z 9\} $}
+
