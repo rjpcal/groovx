@@ -90,9 +90,11 @@ AC_MSG_CHECKING([for windowing system])
 if test "$enable_aqua" = "yes"; then
    windowsystem=aqua
    AC_MSG_RESULT([Mac OS X Aqua])
+   AC_DEFINE(GL_PLATFORM_AGL,1,[use Apple OpenGL windowsystem interface (agl)])
 else
    windowsystem=x11
    AC_MSG_RESULT([X11])
+   AC_DEFINE(GL_PLATFORM_GLX,1,[use X11 OpenGL windowsystem interface (glx)])
 fi
 
 ##########################################################################
@@ -100,6 +102,14 @@ fi
 
 AC_LANG(C++)
 AC_PROG_CXX(g++-3 g++ c++ CC)
+
+AC_PROG_CXXCPP
+
+BUILD="build"
+AC_SUBST(BUILD)
+
+CPPFLAGS="$CPPFLAGS -I${BUILD}/compat/include"
+LDFLAGS="$LDFLAGS -L${BUILD}/compat/lib"
 
 case ${CXX}-${OS} in
    *g++*)
@@ -381,7 +391,17 @@ fi
 ##########################################################################
 ### Checks for header files.
 
-AC_PATH_XTRA
+AC_MSG_CHECKING([for cxxcpp])
+AC_MSG_RESULT([$CXXCPP])
+
+case $windowsystem in
+   x11)
+      AC_PATH_XTRA
+      ;;
+   aqua)
+      # nothing
+      ;;
+esac
 
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
@@ -430,14 +450,21 @@ AC_CHECK_LIB_CXX(jpeg,
 AC_CHECK_LIB_CXX(z, [#include <zlib.h>], [gzopen(0,0)],
 		 [LIBS="-lz $LIBS"], [AC_MSG_ERROR(libz check failed)])
 
-AC_CHECK_LIB_CXX(X11, [#include <X11/Xlib.h>], [XQueryColor(0,0,0)],
-		 [LIBS="-lX11 $LIBS"], [AC_MSG_ERROR(libX11 check failed)])
+case $windowsystem in
+   x11)
+      AC_CHECK_LIB_CXX(X11, [#include <X11/Xlib.h>], [XQueryColor(0,0,0)],
+	               [LIBS="-lX11 $LIBS"], [AC_MSG_ERROR(libX11 check failed)])
+      AC_CHECK_LIB_CXX(GL, [#include <GL/gl.h>], [glEnd()],
+         	       [LIBS="-lGL $LIBS"], [AC_MSG_ERROR(libGL check failed)])
 
-AC_CHECK_LIB_CXX(GL, [#include <GL/gl.h>], [glEnd()],
-		 [LIBS="-lGL $LIBS"], [AC_MSG_ERROR(libGL check failed)])
+      AC_CHECK_LIB_CXX(GLU, [#include <GL/glu.h>], [gluErrorString(0)],
+      		       [LIBS="-lGLU $LIBS"], [AC_MSG_ERROR(libGLU check failed)])
+      ;;
+   aqua)
+      LIBS="$LIBS -framework AGL -framework OpenGL"
+      ;;
+esac
 
-AC_CHECK_LIB_CXX(GLU, [#include <GL/glu.h>], [gluErrorString(0)],
-		 [LIBS="-lGLU $LIBS"], [AC_MSG_ERROR(libGLU check failed)])
 
 AC_CHECK_LIB_CXX(expat, [#include <expat.h>], [XML_ParserFree(0)],
 		 [LIBS="-lexpat $LIBS"], [AC_MSG_ERROR(libexpat check failed)])
@@ -467,43 +494,58 @@ LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 
 ### --with-tcltk
 
-AC_MSG_CHECKING([for location of tcl+tk >= 8.4])
+AC_MSG_CHECKING([for location of tcl+tk >= 8.5])
 
 AC_ARG_WITH(tcltk,
 	    [AC_HELP_STRING([--with-tcltk=DIR],
-			    [specify where tcl+tk >= 8.4 are installed [/usr/local]])],
+			    [specify where tcl+tk >= 8.5 are installed [/usr/local]])],
 	    ,
 	    with_tcltk=/usr/local)
 
 AC_MSG_RESULT($with_tcltk)
 
-# Need to *prepend* with_tcltk/include to CPPFLAGS, so that we find
-# tcl.h, tk.h, etc. in with_tcltk rather than in the standard system
-# location
+case $windowsystem in
+   x11)
+      # Need to *prepend* with_tcltk/include to CPPFLAGS, so that we find
+      # tcl.h, tk.h, etc. in with_tcltk rather than in the standard system
+      # location
 
-CPPFLAGS="-I${with_tcltk}/include $CPPFLAGS"
+      CPPFLAGS="-I${with_tcltk}/include $CPPFLAGS"
 
-if test $need_rpath = yes; then
-   LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib"
-fi
-LDFLAGS="-L${with_tcltk}/lib $LDFLAGS"
+      if test $need_rpath = yes; then
+         LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib"
+      fi
+      LDFLAGS="-L${with_tcltk}/lib $LDFLAGS"
 
-AC_MSG_CHECKING([for tcl+tk versions])
+      AC_MSG_CHECKING([for tcl+tk versions])
 
-if ! test -r ${with_tcltk}/lib/tclConfig.sh; then
-   AC_MSG_ERROR([could not find tclConfig.sh in ${with_tcltk}/lib])
-fi
+      if ! test -r ${with_tcltk}/lib/tclConfig.sh; then
+         AC_MSG_ERROR([could not find tclConfig.sh in ${with_tcltk}/lib])
+      fi
 
-if ! test -r ${with_tcltk}/lib/tkConfig.sh; then
-   AC_MSG_ERROR([could not find tkConfig.sh in ${with_tcltk}/lib])
-fi
+      if ! test -r ${with_tcltk}/lib/tkConfig.sh; then
+         AC_MSG_ERROR([could not find tkConfig.sh in ${with_tcltk}/lib])
+      fi
 
-TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
-TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
+      TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
+      TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
 
-AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
+      AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 
-LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
+      LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
+      ;;
+   aqua)
+      AC_DEFINE(MAC_OSX_TK,1,[use Mac OS X aqua port of Tk])
+      CPPFLAGS="-I${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
+      CPPFLAGS="-I${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
+      CPPFLAGS="-I${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
+      CPPFLAGS="-I${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
+      LIBS="$LIBS -F${with_tcltk} -framework Tk -framework Tcl"
+      ;;
+   *)
+      AC_MSG_ERROR([unknown windowing system $windowsystem])
+      ;;
+esac
 
 ### --with-matlab
 
