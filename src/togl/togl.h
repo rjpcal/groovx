@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue May 30 16:49:58 2000
+// written: Wed Sep 13 16:43:09 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -93,8 +93,11 @@ extern void Togl_ResetDefaultCallbacks( void );
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Togl
-{
+class Togl {
+private:
+  Togl(const Togl&);
+  Togl& operator=(const Togl&);
+
 public:
   Togl(Tcl_Interp* interp, const char* pathname,
 		 int config_argc = 0, char** config_argv = 0);
