@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Feb  1 10:54:31 2000
+// written: Tue Feb  1 17:50:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -321,7 +321,7 @@ DOTRACE("ExptDriver::Impl::block");
   Assert( BlockList::theBlockList().isValidId(itsBlockId) );
 
 #ifdef LOCAL_DEBUG
-  Block* block = BlockList::theBlockList().getPtr(itsBlockId);
+  BlockList::Ptr block = BlockList::theBlockList().getPtr(itsBlockId);
   DebugEvalNL((void *) block);
   return *block;
 #else
@@ -335,7 +335,7 @@ DOTRACE("ExptDriver::Impl::responseHandler");
   Assert( RhList::theRhList().isValidId(itsRhId) );
 
 #ifdef LOCAL_DEBUG
-  ResponseHandler* rh = RhList::theRhList().getPtr(itsRhId);
+  RhList::Ptr rh = RhList::theRhList().getPtr(itsRhId);
   DebugEval(itsRhId);   DebugEvalNL((void *) rh);
   return *rh;
 #else
@@ -349,7 +349,7 @@ DOTRACE("ExptDriver::Impl::timingHdlr");
   Assert( ThList::theThList().isValidId(itsThId) );
 
 #ifdef LOCAL_DEBUG
-  TimingHdlr* th = ThList::theThList().getPtr(itsThId);
+  ThList::Ptr th = ThList::theThList().getPtr(itsThId);
   DebugEvalNL((void *) th);
   return *th;
 #else

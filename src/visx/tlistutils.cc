@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Sun Jan 16 23:07:53 2000
+// written: Tue Feb  1 17:53:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ DOTRACE("TlistUtils::makeSingles");
 	 if ( !tlist.isValidId(id) ) {
 		tlist.insertAt(id, new Trial);
 	 }
-	 Trial* t = tlist.getPtr(id);
+	 Tlist::Ptr t = tlist.getPtr(id);
 	 t->add(id, posid);
 	 const GrObj* obj = olist.getCheckedPtr(id);
 	 t->setType(obj->getCategory());
@@ -170,7 +170,7 @@ DOTRACE("TlistUtils::makePairs");
 		if ( !tlist.isValidId(trialid) ) {
 		  tlist.insertAt(trialid, new Trial);
 		}
-		Trial* t = tlist.getPtr(trialid);
+		Tlist::Ptr t = tlist.getPtr(trialid);
 		t->add(vec[i], posid1);
 		t->add(vec[j], posid2);
 		t->setType( i == j );
@@ -243,7 +243,7 @@ DOTRACE("TlistUtils::makeTriads");
 			 if ( !tlist.isValidId(trial) ) {
 				tlist.insertAt(trial, new Trial);
 			 }
-			 Trial* t = tlist.getPtr(trial);
+			 Tlist::Ptr t = tlist.getPtr(trial);
 			 for (int e = 0; e < 3; ++e) {
 				t->add(base_triad[permutations[p][e]], posid[e]);
 			 }
@@ -286,7 +286,7 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 	 tlist.insertAt(trialid, new Trial);
   }
 
-  Trial* t = tlist.getPtr(trialid);
+  Tlist::Ptr t = tlist.getPtr(trialid);
 
   for (size_t i=0; i < objids.size(); ++i) {
 	 int row = i / num_cols;
@@ -327,11 +327,11 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 const Trial& t = *(tlist.getPtr(trialids[i]));
+	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
 	 ofs << setw(wid) << trialids[i];
-	 ofs << setw(wid) << t.numResponses();
-	 ofs << setw(wid) << t.avgResponse();	 
-	 ofs << setw(wid) << t.avgRespTime() << endl;
+	 ofs << setw(wid) << t->numResponses();
+	 ofs << setw(wid) << t->avgResponse();	 
+	 ofs << setw(wid) << t->avgRespTime() << endl;
   }
 
   if (ofs.fail()) { throw ErrorWithMsg("error while writing to file"); }
@@ -347,13 +347,13 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
   ofstream ofs(filename);
 	 
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 const Trial& t = *(tlist.getPtr(trialids[i]));
+	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
 		
 	 // Use this to make sure we don't round down when we should round up.
 	 double fudge = 0.0001;
 		
-	 int num_zeros = int( (1.0 - t.avgResponse())*t.numResponses() + fudge);
-	 int num_ones = t.numResponses() - num_zeros;
+	 int num_zeros = int( (1.0 - t.avgResponse()) * t->numResponses() + fudge);
+	 int num_ones = t->numResponses() - num_zeros;
 
 	 ofs << num_zeros << "  " << num_ones << endl;
   }
@@ -414,14 +414,14 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 const Trial& t = *(tlist.getPtr(trialids[i]));
-	 Trial::ObjGrp objs = t.objs();
+	 Tlist::Ptr t = tlist.getPtr(trialids[i]);
+	 Trial::ObjGrp objs = t->objs();
 	 
 	 for (size_t j = 0; j < objs.size(); ++j) {
 		ofs << objs[j].objid << ' ';
 	 }
 		
-	 ofs << t.avgResponse() << endl;
+	 ofs << t->avgResponse() << endl;
   }
 }
 
