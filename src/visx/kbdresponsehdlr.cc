@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:12 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Wed Jan 30 11:28:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "util/strings.h"
 
 #include "util/trace.h"
-#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -33,14 +32,7 @@ DOTRACE("KbdResponseHdlr::make");
 }
 
 KbdResponseHdlr::KbdResponseHdlr() :
-  EventResponseHdlr("")
-{
-  setEventSequence("<KeyPress>");
-  setBindingSubstitution("%K");
-}
-
-KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
-  EventResponseHdlr(key_resp_pairs)
+  EventResponseHdlr()
 {
   setEventSequence("<KeyPress>");
   setBindingSubstitution("%K");

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:11 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Wed Jan 30 11:25:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,29 +26,12 @@
 
 class KbdResponseHdlr : public EventResponseHdlr
 {
-  // creators
 protected:
   KbdResponseHdlr();
-  KbdResponseHdlr(const char* key_resp_pairs);
 public:
   static KbdResponseHdlr* make();
 
   virtual ~KbdResponseHdlr();
-
-  const fstring& getKeyRespPairs() const
-    { return EventResponseHdlr::getInputResponseMap(); }
-  void setKeyRespPairs(const fstring& s)
-    { EventResponseHdlr::setInputResponseMap(s); }
-
-  bool getUseFeedback() const
-    { return EventResponseHdlr::getUseFeedback(); }
-  void setUseFeedback(bool val)
-    { EventResponseHdlr::setUseFeedback(val); }
-
-  const char* getFeedbackPairs() const
-    { return EventResponseHdlr::getFeedbackMap(); }
-  void setFeedbackPairs(const char* feedback_string)
-    { EventResponseHdlr::setFeedbackMap(feedback_string); }
 };
 
 static const char vcid_kbdresponsehdlr_h[] = "$Header$";
