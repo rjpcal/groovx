@@ -63,7 +63,11 @@ namespace
   public:
     typedef std::list<Tcl::Command*> List;
 
+    Tcl::Interp itsInterp;
+    const fstring itsCmdName;
     List itsList;
+
+    Overloads(Tcl::Interp& interp, const char* cmd_name);
 
     void add(Tcl::Command* p) { itsList.push_back(p); }
 
@@ -113,10 +117,7 @@ namespace
       return warning;
     }
 
-    int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
-    {
-      return (*itsList.begin())->rawInvoke(s_objc, objv);
-    }
+    int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
   };
 
   // Holds the the addresses of all valid Tcl::Command objects (this is
@@ -135,6 +136,55 @@ namespace
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
+}
+
+namespace
+{
+  int cInvokeCallback(ClientData clientData,
+                      Tcl_Interp*, /* use Tcl::Command's own Tcl::Interp */
+                      int s_objc,
+                      Tcl_Obj *const objv[]) throw()
+  {
+    Overloads* ov = static_cast<Overloads*>(clientData);
+
+    Assert(ov != 0);
+
+    return ov->rawInvoke(s_objc, objv);
+  }
+}
+
+Overloads::Overloads(Tcl::Interp& interp, const char* cmd_name) :
+  itsInterp(interp),
+  itsCmdName(cmd_name),
+  itsList()
+{
+DOTRACE("Overloads::Overloads");
+
+  Tcl_CreateObjCommand(interp.intp(),
+                       cmd_name,
+                       cInvokeCallback,
+                       static_cast<ClientData>(this),
+                       (Tcl_CmdDeleteProc*) NULL);
+}
+
+int Overloads::rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
+{
+DOTRACE("Overloads::rawInvoke");
+
+  Assert(s_objc >= 0);
+
+  if (GET_DBG_LEVEL() > 1)
+    {
+      for (int argi = 0; argi < s_objc; ++argi)
+        {
+          const char* arg = Tcl_GetString(objv[argi]);
+          dbgPrint(1, argi);
+          dbgPrint(1, " argv = ");
+          dbgPrintNL(1, arg);
+        }
+    }
+
+  return (*itsList.begin())->rawInvoke(s_objc, objv);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -216,21 +266,6 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
-{
-  int cInvokeCallback(ClientData clientData,
-                      Tcl_Interp*, /* use Tcl::Command's own Tcl::Interp */
-                      int s_objc,
-                      Tcl_Obj *const objv[]) throw()
-  {
-    Overloads* ov = static_cast<Overloads*>(clientData);
-
-    Assert(ov != 0);
-
-    return ov->rawInvoke(s_objc, objv);
-  }
-}
-
 Tcl::Command::Command(Tcl::Interp& interp,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc) :
@@ -250,13 +285,7 @@ DOTRACE("Tcl::Command::Command");
     }
   else
     {
-      rep->overloads.reset( new Overloads );
-
-      Tcl_CreateObjCommand(interp.intp(),
-                           rep->cmdName.c_str(),
-                           cInvokeCallback,
-                           static_cast<ClientData>(rep->overloads.get()),
-                           (Tcl_CmdDeleteProc*) NULL);
+      rep->overloads.reset( new Overloads(interp, cmd_name) );
 
       commandTable()[rep->cmdName] = this;
     }
@@ -322,19 +351,6 @@ bool Tcl::Command::rejectsObjc(unsigned int objc) const
 int Tcl::Command::rawInvoke(int s_objc, Tcl_Obj* const objv[]) throw()
 {
 DOTRACE("Tcl::Command::rawInvoke");
-
-  Assert(s_objc >= 0);
-
-  if (GET_DBG_LEVEL() > 1)
-    {
-      for (int argi = 0; argi < s_objc; ++argi)
-        {
-          const char* arg = Tcl_GetString(objv[argi]);
-          dbgPrint(1, argi);
-          dbgPrint(1, " argv = ");
-          dbgPrintNL(1, arg);
-        }
-    }
 
   unsigned int objc = (unsigned int) s_objc;
 
