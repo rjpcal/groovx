@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Jul 13 14:26:40 2001
+// written: Fri Jul 13 14:36:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -405,6 +405,25 @@ namespace Tcl
   {
     return makeGenericVecCmd(interp, wrapFunc(f), cmd_name, usage,
                              FuncTraits<Func>::numArgs, keyarg);
+  }
+
+///////////////////////////////////////////////////////////////////////
+//
+// versions that can be used with TclPkg's
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class Pkg, class Func>
+  inline void def(Pkg* pkg, Func f, const char* cmd_name, const char* usage)
+  {
+    pkg->addCommand( makeCmd(pkg->interp(), f, cmd_name, usage) );
+  }
+
+  template <class Pkg, class Func>
+  inline void defVec(Pkg* pkg, Func f, const char* cmd_name,
+                     const char* usage, unsigned int keyarg=1)
+  {
+    pkg->addCommand( makeVecCmd(pkg->interp(), f, cmd_name, usage, keyarg) );
   }
 
 } // end namespace Tcl
