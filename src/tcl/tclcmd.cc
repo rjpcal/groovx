@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Mar 16 12:07:00 2000
+// written: Fri Mar 17 17:42:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@
 #include "demangle.h"
 #include "tcl/errmsg.h"
 
+#include "util/strings.h"
+
 #include <tcl.h>
 #include <exception>
 #include <typeinfo>
-#include <string>
-#include <vector>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -70,10 +70,9 @@ namespace {
 
 class Tcl::TclCmd::Impl {
 public:
-  Impl() : itsArgsInited(false), itsArgs() {}
-
-  bool itsArgsInited;
-  vector<TclValue> itsArgs;
+  // This used to hold something but is now empty... but we can leave
+  // it here as a placeholder for additional fields that may be needed
+  // in the future.
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -120,24 +119,13 @@ DOTRACE("Tcl::TclCmd::errorMessage");
 }
 
 
-Tcl::TclValue& Tcl::TclCmd::arg(int argn) {
+Tcl::TclValue Tcl::TclCmd::arg(int argn) {
 DOTRACE("Tcl::TclCmd::arg");
   if (argn < 0 || argn > itsObjc) {
-	 throw TclError("argument number too high");
+	 throw TclError("argument number out of range");
   }
 
-  if ( !itsImpl->itsArgsInited ) {
-	 itsImpl->itsArgs.clear();
-	 itsImpl->itsArgs.reserve(itsObjc);
-
-	 for (int i=0; i < itsObjc; ++i) {
-		itsImpl->itsArgs.push_back(TclValue(itsInterp, itsObjv[i]));
-	 }
-
-	 itsImpl->itsArgsInited = true;
-  }
-
-  return itsImpl->itsArgs[argn];
+  return TclValue(itsInterp, itsObjv[argn]);
 }
 
 int Tcl::TclCmd::getIntFromArg(int argn) {
@@ -277,14 +265,6 @@ const char* Tcl::TclCmd::getValFromObj<const char*>(
   Tcl_Interp*, Tcl_Obj* obj, const char** /*dummy*/
 ) {
 DOTRACE("Tcl::TclCmd::getValFromObj<const char*>");
-  return Tcl_GetString(obj);
-}
-
-template <>
-string Tcl::TclCmd::getValFromObj<string>(
-  Tcl_Interp*, Tcl_Obj* obj, string* /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<string>");
   return Tcl_GetString(obj);
 }
 
@@ -447,23 +427,22 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
   try {
-	 theCmd->itsImpl->itsArgsInited = false;
 	 theCmd->invoke();
   }
   catch (TclError& err) {
 	 DebugPrintNL("catch (TclError&)");
-	 if (string(err.msg_cstr()) != "") {
+	 if ( !string_literal(err.msg_cstr()).empty() ) {
 		Tcl::err_message(interp, theCmd->itsObjv, err.msg_cstr());
 	 }
 	 theCmd->itsResult = TCL_ERROR;
   }
   catch (ErrorWithMsg& err) {
 	 DebugPrintNL("catch (ErrorWithMsg&)");
-	 if (string(err.msg_cstr()) != "") {
+	 if ( !string_literal(err.msg_cstr()).empty() ) {
 		Tcl::err_message(interp, theCmd->itsObjv, err.msg_cstr());
 	 }
 	 else {
-		string msg = "an error of type ";
+		dynamic_string msg = "an error of type ";
 		msg += demangle_cstr(typeid(err).name());
 		msg += " occurred";
 		Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
@@ -472,14 +451,14 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
   }
   catch (Error& err) {
  	 DebugPrintNL("catch (Error&)");
-	 string msg = "an error of type ";
+	 dynamic_string msg = "an error of type ";
 	 msg += demangle_cstr(typeid(err).name());
 	 msg += " occurred";
  	 Tcl::err_message(interp, theCmd->itsObjv, msg.c_str());
  	 theCmd->itsResult = TCL_ERROR;
   }
   catch (exception& err) {
-	 string msg = "an error of type ";
+	 dynamic_string msg = "an error of type ";
 	 msg += demangle_cstr(typeid(err).name());
 	 msg += " occurred: ";
 	 msg += err.what();
@@ -494,7 +473,6 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 
 
   // cleanup
-  theCmd->itsImpl->itsArgs.clear();
   theCmd->itsObjc = 0;
 
   DebugEvalNL(theCmd->itsResult == TCL_OK);
