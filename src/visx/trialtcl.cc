@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed May 23 18:48:04 2001
+// written: Sat May 26 18:00:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,9 @@
 #define TRIALTCL_CC_DEFINED
 
 #include "trial.h"
+
+#include "responsehandler.h"
+#include "timinghdlr.h"
 
 #include "io/iofactory.h"
 
