@@ -32,61 +32,16 @@
 #ifndef TCLTIMER_H_DEFINED
 #define TCLTIMER_H_DEFINED
 
+#include "tcl/tcltimerscheduler.h"
+
 #include "util/pointers.h"
 #include "util/signal.h"
 #include "util/stopwatch.h"
 
-struct Tcl_TimerToken_;
-typedef struct Tcl_TimerToken_* Tcl_TimerToken;
-typedef void* ClientData;
-
-template <class T> class shared_ptr;
-
 namespace Tcl
 {
   class Timer;
-  class TimerScheduler;
-  class TimerSchedulerToken;
 }
-
-namespace Util
-{
-  class TimerToken;
-}
-
-class Util::TimerToken
-{
-private:
-  TimerToken(const TimerToken&);
-  TimerToken& operator=(const TimerToken&);
-
-protected:
-  TimerToken();
-
-public:
-  virtual ~TimerToken() throw();
-};
-
-class Tcl::TimerSchedulerToken : public Util::TimerToken
-{
-public:
-  TimerSchedulerToken(Tcl_TimerToken tok);
-  virtual ~TimerSchedulerToken() throw();
-
-private:
-  Tcl_TimerToken itsToken;
-};
-
-class Tcl::TimerScheduler
-{
-public:
-  TimerScheduler();
-
-  // Tcl_TimerToken
-  shared_ptr<Util::TimerToken> schedule(int msec,
-                                        void (*callback)(void*),
-                                        void* clientdata);
-};
 
 /// Wraps a signal/slot interface around the Tcl timer callback mechansim.
 class Tcl::Timer
@@ -111,7 +66,7 @@ public:
   double elapsedMsec() const { return itsStopWatch.elapsed().msec(); }
 
 private:
-  static void dummyCallback(ClientData clientData) throw();
+  static void dummyCallback(void* clientData) throw();
 
   Timer(const Timer&);
   Timer& operator=(const Timer&);

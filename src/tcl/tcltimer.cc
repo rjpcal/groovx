@@ -39,44 +39,9 @@
 
 #include "util/error.h"
 
-#include <tcl.h>
-
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
-
-Util::TimerToken::TimerToken() {}
-Util::TimerToken::~TimerToken() throw() {}
-
-Tcl::TimerSchedulerToken::TimerSchedulerToken(Tcl_TimerToken tok)
-  : itsToken(tok)
-{
-DOTRACE("Tcl::TimerSchedulerToken::TimerSchedulerToken");
-}
-
-Tcl::TimerSchedulerToken::~TimerSchedulerToken() throw()
-{
-DOTRACE("Tcl::TimerSchedulerToken::~TimerSchedulerToken");
-  Tcl_DeleteTimerHandler(itsToken);
-}
-
-Tcl::TimerScheduler::TimerScheduler()
-{
-DOTRACE("Tcl::TimerScheduler::TimerScheduler");
-}
-
-shared_ptr<Util::TimerToken>
-Tcl::TimerScheduler::schedule(int msec,
-                              void (*callback)(void*),
-                              void* clientdata)
-{
-DOTRACE("Tcl::TimerScheduler::schedule");
-  Tcl_TimerToken tok =
-    Tcl_CreateTimerHandler(msec, callback, clientdata);
-
-  return shared_ptr<Util::TimerToken>
-    (new Tcl::TimerSchedulerToken(tok));
-}
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :
   sigTimeOut(),
@@ -115,13 +80,13 @@ DOTRACE("Tcl::Timer::schedule");
   // invocation; this saves a trip into the event loop and back.
   if (itsMsecDelay == 0)
     {
-      dummyCallback(static_cast<ClientData>(this));
+      dummyCallback(static_cast<void*>(this));
     }
   else
     {
       itsToken = itsScheduler.schedule(itsMsecDelay,
                                        dummyCallback,
-                                       static_cast<ClientData>(this));
+                                       static_cast<void*>(this));
     }
 }
 
@@ -132,7 +97,7 @@ DOTRACE("Tcl::Timer::cancel");
   itsToken.reset(0);
 }
 
-void Tcl::Timer::dummyCallback(ClientData clientData) throw()
+void Tcl::Timer::dummyCallback(void* clientData) throw()
 {
 DOTRACE("Tcl::Timer::dummyCallback");
   Tcl::Timer* timer = static_cast<Tcl::Timer*>(clientData);
