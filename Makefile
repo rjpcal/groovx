@@ -44,12 +44,9 @@ include Makedefs
 #
 #-------------------------------------------------------------------------
 
-TCL_VERSION := 8.4
-TK_VERSION := 8.4
+TCLTK_VERSION := 8.4
 
 MAKEFLAGS += --warn-undefined-variables
-
-CC_SWITCHES :=
 
 #-------------------------------------------------------------------------
 #
@@ -152,7 +149,7 @@ ifeq ($(COMPILER),MIPSpro)
 	CXX := time /opt/MIPSpro/bin/CC -mips3
 	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
 		-e '/static const char vcid_/,/^ *\^$$/d'
-	CC_SWITCHES += -n32 -ptused -no_prelink \
+	CXXFLAGS += -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
 
 	DEFS += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
@@ -160,12 +157,12 @@ ifeq ($(COMPILER),MIPSpro)
 	CPPFLAGS += -I$(HOME)/local/$(ARCH)/include/cppheaders
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g -O0
+		CXXFLAGS += -g -O0
 	endif
 
 # Tests showed that -O3 provided little improvement over -O2 for this app
 	ifeq ($(MODE),prod)
-		CC_SWITCHES += -O2
+		CXXFLAGS += -O2
 	endif
 
 	SHLIB_CMD := $(CXX) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
@@ -174,19 +171,19 @@ endif
 
 ifeq ($(COMPILER),g++2)
 	CXX := time g++2
-	CC_SWITCHES += -Wall -W -Wsign-promo
+	CXXFLAGS += -Wall -W -Wsign-promo
 	DEFS += -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g -O1
+		CXXFLAGS += -g -O1
 	endif
 
 	ifeq ($(MODE),prod)
-		CC_SWITCHES += -O3
+		CXXFLAGS += -O3
 	endif
 
 ifeq ($(PLATFORM),ppc)
-	CC_SWITCHES += -dynamic
+	CXXFLAGS += -dynamic
 
 # Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
 	SHLIB_CMD := $(CXX) -dynamiclib -flat_namespace -undefined suppress -o
@@ -201,11 +198,11 @@ ifeq ($(COMPILER),g++3)
 	CXX := time g++-3
 # Filter the compiler output...
 	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
-	CC_SWITCHES += $(WARNINGS)
+	CXXFLAGS += $(WARNINGS)
 	DEFS += -DSTD_IO=std
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -O1 -g
+		CXXFLAGS += -O1 -g
 	endif
 
 # Need this to allow symbols from the executable to be accessed by loaded
@@ -215,7 +212,7 @@ ifeq ($(COMPILER),g++3)
 
 # can't use -O3 with g++301, since we get core dumps...
 	ifeq ($(MODE),prod)
-		CC_SWITCHES += -O2
+		CXXFLAGS += -O2
 	endif
 
 	SHLIB_CMD := $(CXX) -shared -o
@@ -232,7 +229,7 @@ LDFLAGS += -L$(exec_prefix)/lib -L$(with_tcltk)/lib
 
 LIBS += \
 	-lGLU -lGL \
-	-ltcl$(TCL_VERSION) -ltk$(TK_VERSION) \
+	-ltcl$(TCLTK_VERSION) -ltk$(TCLTK_VERSION) \
 	-lXmu -lX11 -lXext \
 	-lz \
 	-lpng \
@@ -259,13 +256,13 @@ endif
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-ALL_CC_OPTIONS := $(CC_SWITCHES) $(CPPFLAGS) $(DEFS)
+ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
 	@mkdir -p $(LOGS)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
-	$(CXX) $(ALL_CC_OPTIONS) \
+	$(CXX) $(ALL_CXXFLAGS) \
 		-c $< \
 		-o $@
 
@@ -273,7 +270,7 @@ $(OBJ)/%.do : $(SRC)/%.cc
 	@mkdir -p $(LOGS)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
-	$(CXX) $(ALL_CC_OPTIONS) \
+	$(CXX) $(ALL_CXXFLAGS) \
 		-c $< \
 		-o $@
 
@@ -281,11 +278,11 @@ $(OBJ)/%.do : $(SRC)/%.cc
 .SECONDARY:
 
 $(SRC)/%.precc : $(SRC)/%.cc
-	$(CXX) -E $< $(ALL_CC_OPTIONS) > $@
+	$(CXX) -E $< $(ALL_CXXFLAGS) > $@
 
 $(SRC)/%.preh : $(SRC)/%.h
 	echo "#include \"$<\"" > .temp.cc
-	$(CXX) -E .temp.cc $(ALL_CC_OPTIONS) > $@
+	$(CXX) -E .temp.cc $(ALL_CXXFLAGS) > $@
 
 #-------------------------------------------------------------------------
 #
