@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:36 2001
+// written: Fri May 11 16:23:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,29 +43,25 @@
 #  endif
 #endif
 
-#ifdef LOCAL_DEBUG
-#  include <iostream.h>
-#  define DUMP_VAL1(expr) cerr << #expr << " == " << (expr) << ", ";
-#  define DUMP_VAL2(expr) cerr << #expr << " == " << (expr) << endl;
-#  define DebugEval(expr) cerr << #expr << " == " << (expr) << ", ";
-#  define DebugEvalNL(expr) cerr << #expr << " == " << (expr) << endl;
-#  define DebugPrint(expr) cerr << expr << " ";
-#  define DebugPrintNL(expr) cerr << expr << " " << endl;
-#else
-#  define DUMP_VAL1(expr) {}
-#  define DUMP_VAL2(expr) {}
-#  define DebugEval(expr) {}
-#  define DebugEvalNL(expr) {}
-#  define DebugPrint(str) {}
-#  define DebugPrintNL(str) {}
-#endif
-
 namespace Debug {
   void AssertImpl        (const char* what, const char* where, int line_no);
   void PreconditionImpl  (const char* what, const char* where, int line_no);
   void PostconditionImpl (const char* what, const char* where, int line_no);
   void InvariantImpl     (const char* what, const char* where, int line_no);
 }
+
+#ifdef LOCAL_DEBUG
+#  include <iostream.h>
+#  define DebugEval(expr) cerr << #expr << " == " << (expr) << ", ";
+#  define DebugEvalNL(expr) cerr << #expr << " == " << (expr) << endl;
+#  define DebugPrint(expr) cerr << expr << " ";
+#  define DebugPrintNL(expr) cerr << expr << " " << endl;
+#else
+#  define DebugEval(expr) {}
+#  define DebugEvalNL(expr) {}
+#  define DebugPrint(str) {}
+#  define DebugPrintNL(str) {}
+#endif
 
 #ifdef LOCAL_ASSERT
 #  define Assert(expr) \
