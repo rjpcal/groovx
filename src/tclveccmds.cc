@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue Dec  7 12:53:17 1999
+// written: Tue Dec  7 13:04:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,11 +60,26 @@ DOTRACE("TVecGetterCmd<>::invoke");
   }
 }
 
+// Oddly, aCC requires this specialization of invoke() for the type
+// 'const string&', even though the code is *exactly the same* as in
+// the generic templated version of invoke() above.
 template<>
 void TVecGetterCmd<const string&>::invoke() {
-  int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
-  void* item = itsPkg->getItemFromId(id);
+  vector<int> ids;
+  if (itsItemArgn) {
+	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+  }
+  else {
+	 ids.push_back(-1);
+  }
+  
+  void* item = itsPkg->getItemFromId(ids[0]);
   returnVal(itsGetter->get(item));
+  
+  for (size_t i = 1; i < ids.size(); ++i) {
+	 void* item = itsPkg->getItemFromId(ids[i]);
+	 lappendVal(itsGetter->get(item));
+  }
 }
 
 // Explicit instatiation requests
