@@ -105,7 +105,7 @@ private:
 public:
   Impl(Tcl_Interp* interp, const char* name, const char* version);
 
-  ~Impl();
+  ~Impl() throw();
 
   Tcl::Interp interp;
   slink_list<shared_ptr<Command> > cmds;
@@ -117,6 +117,8 @@ public:
 
   slink_list<shared_ptr<int> > ownedInts;
   slink_list<shared_ptr<double> > ownedDoubles;
+
+  ExitCallback* exitCallback;
 };
 
 Tcl::PkgBase::Impl::Impl(Tcl_Interp* intp,
@@ -128,14 +130,17 @@ Tcl::PkgBase::Impl::Impl(Tcl_Interp* intp,
   version(makeCleanVersionString(vers)),
   initStatus(TCL_OK),
   ownedInts(),
-  ownedDoubles()
+  ownedDoubles(),
+  exitCallback(0)
 {
 DOTRACE("Tcl::PkgBase::Impl::Impl");
 }
 
-Tcl::PkgBase::Impl::~Impl()
+Tcl::PkgBase::Impl::~Impl() throw()
 {
 DOTRACE("Tcl::PkgBase::Impl::~Impl");
+  if (exitCallback != 0)
+    exitCallback();
 }
 
 Tcl::PkgBase::PkgBase(Tcl_Interp* interp,
@@ -153,10 +158,16 @@ DOTRACE("Tcl::PkgBase::PkgBase");
   Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(this));
 }
 
-Tcl::PkgBase::~PkgBase()
+Tcl::PkgBase::~PkgBase() throw()
 {
 DOTRACE("Tcl::PkgBase::~PkgBase");
   delete rep;
+}
+
+void Tcl::PkgBase::onExit(ExitCallback* callback)
+{
+DOTRACE("Tcl::PkgBase::onExit");
+  rep->exitCallback = callback;
 }
 
 Tcl::PkgBase* Tcl::PkgBase::lookup(Tcl_Interp* interp, const char* name,
