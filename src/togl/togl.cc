@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jul  9 14:06:08 2002
+// written: Tue Jul 30 11:20:35 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -1934,6 +1934,18 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
     {
       return TCL_ERR(itsInterp, "could not create rendering context");
     }
+
+  // Make sure we don't try to use a depth buffer with indirect rendering
+  if ( glXIsDirect(itsDisplay, itsGLXContext) == False &&
+       itsDepthFlag == true )
+    {
+      glXDestroyContext(itsDisplay, itsGLXContext);
+      itsGLXContext = 0;
+      itsDepthFlag = false;
+      return setupVisInfoAndContext();
+    }
+
+  itsIndirect = glXIsDirect(itsDisplay, itsGLXContext);
 
   return TCL_OK;
 }
