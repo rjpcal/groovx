@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Sep 27 12:08:40 1999
+// written: Wed Nov  3 13:45:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <iostream.h>
 #include <fstream.h>
 #include <string>
+#include <vector>
 
 #include "tclerror.h"
 #include "block.h"
@@ -27,6 +28,7 @@
 #include "trial.h"
 #include "objlist.h"
 #include "objtogl.h"
+#include "reader.h"
 #include "toglconfig.h"
 #include "poslist.h"
 #include "blocklist.h"
@@ -34,6 +36,7 @@
 #include "thlist.h"
 #include "tlist.h"
 #include "timeutils.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -63,16 +66,157 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////
 //
+// ExptDriver::ExptHelper utility class
+//
+///////////////////////////////////////////////////////////////////////
+
+class ExptDriver::ExptImpl {
+public:
+  ExptImpl(ExptDriver* owner);
+  ~ExptImpl();
+
+  void serialize(ostream& os, IO::IOFlag flag) const;
+  void deserialize(istream& is, IO::IOFlag flag);
+
+  bool doesDoUponCompletionExist() const;
+
+  void raiseBackgroundError(const char* msg) const;
+  void raiseBackgroundError(const string& msg) const;
+
+  void doAutosave();
+
+  //////////////////
+  // data members //
+  //////////////////
+
+private:
+  ExptDriver* self;
+
+public:
+  Tcl_Interp* itsInterp;
+
+private:
+  mutable string itsDoUponCompletionBody;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// ExptDriver::ExptHelper member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+ExptDriver::ExptImpl::ExptImpl(ExptDriver* owner) :
+  itsInterp(0),
+  self(owner)
+{
+}
+
+ExptDriver::ExptImpl::~ExptImpl() {
+}
+
+void ExptDriver::ExptImpl::serialize(ostream& os, IO::IOFlag /*flag*/) const {
+
+  if (doesDoUponCompletionExist()) {
+	 Tcl_ResetResult(itsInterp);
+	 int tclresult =
+		Tcl_GlobalEval(itsInterp,
+							"info body Expt::doUponCompletion");
+	 
+	 if (tclresult != TCL_OK) {
+		throw OutputError("couldn't get the proc body for Expt::doUponCompletion");
+	 }
+	 
+	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
+  }
+  else {
+	 itsDoUponCompletionBody = "";
+  }
+
+  os << itsDoUponCompletionBody.length() << endl
+	  << itsDoUponCompletionBody << endl;
+}
+
+void ExptDriver::ExptImpl::deserialize(istream& is, IO::IOFlag /*flag*/) {
+  int length;
+  is >> length;
+  if (is.peek() == '\n') { is.get(); }
+
+  vector<char> buf(length+1);
+  is.read(&buf[0], length);
+  buf[length] = '\0';
+
+  itsDoUponCompletionBody = &buf[0];
+
+  string proc_cmd = "namespace eval Expt { proc doUponCompletion {} {"
+	 + itsDoUponCompletionBody + "} }";
+
+  vector<char> cmd_copy(proc_cmd.begin(), proc_cmd.end());
+  cmd_copy.push_back('\0');
+ 
+  int tclresult = Tcl_GlobalEval(itsInterp, &cmd_copy[0]);
+
+  if (tclresult != TCL_OK) {
+	 throw InputError("error while reconstituting Expt::doUponCompletion");
+  }
+}
+
+bool ExptDriver::ExptImpl::doesDoUponCompletionExist() const {
+  Tcl_ResetResult(itsInterp);
+  int tclresult =
+	 Tcl_GlobalEval(itsInterp,
+						 "llength [  namespace eval ::Expt "
+						 "            {info procs doUponCompletion}  ]");
+
+  if (tclresult != TCL_OK) {
+	 raiseBackgroundError("error getting procs in doesDoUponCompletionExist");
+	 return false;
+  }
+
+  int llength;
+  tclresult = Tcl_GetIntFromObj(itsInterp,
+										  Tcl_GetObjResult(itsInterp),
+										  &llength);
+
+  if (tclresult != TCL_OK) {
+	 raiseBackgroundError("error reading result in doesDoUponCompletionExist");
+	 return false;
+  }
+
+  return (llength > 0);
+}
+
+void ExptDriver::ExptImpl::raiseBackgroundError(const char* msg) const {
+  Tcl_AppendResult(itsInterp, msg, (char*) 0);
+  Tcl_BackgroundError(itsInterp);
+}
+
+void ExptDriver::ExptImpl::raiseBackgroundError(const string& msg) const {
+  Tcl_AppendResult(itsInterp, msg.c_str(), (char*) 0);
+  Tcl_BackgroundError(itsInterp);
+}
+
+void ExptDriver::ExptImpl::doAutosave() {
+  try {
+	 DebugEvalNL(self->getAutosaveFile().c_str());
+	 self->write(self->getAutosaveFile().c_str());
+  }
+  catch (TclError& err) {
+	 raiseBackgroundError(err.msg().c_str());
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // ExptDriver creator method definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 ExptDriver::ExptDriver() :
-  itsInterp(0),
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
   itsRhId(0),
-  itsThId(0)
+  itsThId(0),
+  itsImpl(new ExptImpl(this))
 {
 DOTRACE("ExptDriver::ExptDriver");
 }
@@ -86,7 +230,8 @@ DOTRACE("ExptDriver::theExptDriver");
 
 ExptDriver::~ExptDriver() {
 DOTRACE("ExptDriver::~ExptDriver");
-//   Tcl_Release(itsInterp);
+//   Tcl_Release(itsImpl->itsInterp);
+  delete itsImpl; 
 }
 
 void ExptDriver::init() {
@@ -97,23 +242,23 @@ DOTRACE("ExptDriver::init");
   // Get the current time/date
   static TclEvalCmd dateStringCmd("clock format [clock seconds]");
 
-  result = dateStringCmd.invoke(itsInterp);
+  result = dateStringCmd.invoke(itsImpl->itsInterp);
   if (result != TCL_OK) throw TclError("couldn't get date");
 
-  itsBeginDate = Tcl_GetStringResult(itsInterp);
+  itsBeginDate = Tcl_GetStringResult(itsImpl->itsInterp);
 
   // Get the hostname
-  itsHostname = Tcl_GetVar2(itsInterp, "env", "HOST",
+  itsHostname = Tcl_GetVar2(itsImpl->itsInterp, "env", "HOST",
 									 TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
 
   // Get the subject's initials as the tail of the current directory
   static TclEvalCmd subjectKeyCmd("file tail [pwd]");
 
-  result = subjectKeyCmd.invoke(itsInterp);
+  result = subjectKeyCmd.invoke(itsImpl->itsInterp);
   if (result != TCL_OK) throw TclError("couldn't get subject initials");
 
   // Get the result, and remove an optional leading 'human_', if present
-  const char* key = Tcl_GetStringResult(itsInterp);
+  const char* key = Tcl_GetStringResult(itsImpl->itsInterp);
   if ( strncmp(key, "human_", 6) == 0 ) {
     key += 6;
   }
@@ -146,6 +291,8 @@ DOTRACE("ExptDriver::serialize");
 	  << itsRhId << sep 
 	  << itsThId << endl;
 
+  itsImpl->serialize(os, flag);
+
   if (os.fail()) throw OutputError(ioTag);
 }
 
@@ -167,6 +314,8 @@ DOTRACE("ExptDriver::deserialize");
   getline(is, itsAutosaveFile, '\n');
 
   is >> itsBlockId >> itsRhId >> itsThId;
+
+  itsImpl->deserialize(is, flag);
 
   if (is.fail()) throw InputError(ioTag);
 }
@@ -191,6 +340,14 @@ DOTRACE("ExptDriver::charCount");
 			 + 5); // fudge factor
 }
 
+void ExptDriver::readFrom(Reader* reader) {
+DOTRACE("ExptDriver::readFrom");
+}
+
+void ExptDriver::writeTo(Writer* writer) const {
+DOTRACE("ExptDriver::writeTo");
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -200,16 +357,16 @@ DOTRACE("ExptDriver::charCount");
 
 Tcl_Interp* ExptDriver::getInterp() {
 DOTRACE("ExptDriver::getInterp");
-  return itsInterp;
+  return itsImpl->itsInterp;
 }
 
 
 void ExptDriver::setInterp(Tcl_Interp* interp) {
 DOTRACE("ExptDriver::setInterp");
-  // itsInterp can only be set once
-  if (itsInterp == NULL) {
-	 itsInterp = interp;
-	 Tcl_Preserve(itsInterp);
+  // itsImpl->itsInterp can only be set once
+  if (itsImpl->itsInterp == NULL) {
+	 itsImpl->itsInterp = interp;
+	 Tcl_Preserve(itsImpl->itsInterp);
   }
 }
 
@@ -225,8 +382,7 @@ DOTRACE("ExptDriver::block");
 #endif
   }
   catch (InvalidIdError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }
 }
 
@@ -242,8 +398,7 @@ DOTRACE("ExptDriver::responseHandler");
 #endif
   }
   catch (InvalidIdError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }  
 }
 
@@ -259,8 +414,7 @@ DOTRACE("ExptDriver::timingHdlr");
 #endif
   }
   catch (InvalidIdError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }  
 }
 
@@ -286,8 +440,7 @@ DOTRACE("ExptDriver::assertIds");
   }
 
   // ...one of the validity checks failed, so generate an error+message
-  Tcl_AppendResult(itsInterp, "invalid item id", (char*) 0);
-  Tcl_BackgroundError(itsInterp);
+  itsImpl->raiseBackgroundError("invalid item id");
 
   // ...and halt any of the participants for which we have valid id's
   edHaltExpt();
@@ -345,8 +498,7 @@ DOTRACE("ExptDriver::draw");
 	 block().drawTrial();
   }
   catch (InvalidIdError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }
 }
 
@@ -358,8 +510,7 @@ DOTRACE("ExptDriver::undraw");
 	 block().undrawTrial();
   }
   catch (InvalidIdError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }
 }
 
@@ -369,8 +520,7 @@ DOTRACE("ExptDriver::edSwapBuffers");
 	 ObjTogl::theToglConfig()->swapBuffers();
   }
   catch (TclError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }
 }
 
@@ -487,14 +637,7 @@ DOTRACE("ExptDriver::edEndTrial");
   block().endTrial();
 
   if ( needAutosave() ) {
-	 try {
-		DebugEvalNL(getAutosaveFile().c_str());
-		write(getAutosaveFile().c_str());
-	 }
-	 catch (TclError& err) {
-		Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-		Tcl_BackgroundError(itsInterp);
-	 }
+	 itsImpl->doAutosave();
   }
 
   DebugEval(block().numCompleted());
@@ -519,8 +662,20 @@ DOTRACE("ExptDriver::edEndTrial");
 	 else {
 		int elapsed_msec = elapsedMsecSince(itsBeginTime);
 		cout << "expt completed in " << elapsed_msec << " milliseconds\n";
-		ExptDriver::writeAndExit();
-		return; // We'll never get here since writeAndExit calls exit()
+
+		// Write but don't exit
+		ExptDriver::writeAndExit(false);
+
+		// Call the user-defined callback
+		if (itsImpl->doesDoUponCompletionExist()) {
+		  int tclresult = Tcl_GlobalEval(itsImpl->itsInterp, "Expt::doUponCompletion");
+		  if (tclresult != TCL_OK) {
+			 itsImpl->raiseBackgroundError(
+					         "error while evaluating Expt::doUponCompletion");
+		  }
+		}
+
+		return;
 	 }
   }    
 
@@ -620,9 +775,9 @@ DOTRACE("ExptDriver::write");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::writeAndExit() {
+void ExptDriver::writeAndExit(bool quitApplication) {
 DOTRACE("ExptDriver::writeAndExit");
-  Assert(itsInterp != 0);
+  Assert(itsImpl->itsInterp != 0);
 
   edHaltExpt();
 
@@ -630,17 +785,19 @@ DOTRACE("ExptDriver::writeAndExit");
   // the ExptDriver.
   static TclEvalCmd dateStringCmd("clock format [clock seconds]");
 
-  int result = dateStringCmd.invoke(itsInterp);
-  if (result != TCL_OK) { Tcl_BackgroundError(itsInterp); }
-  itsEndDate = Tcl_GetStringResult(itsInterp);
+  int result = dateStringCmd.invoke(itsImpl->itsInterp);
+  if (result != TCL_OK) 
+	 { itsImpl->raiseBackgroundError("error getting date string"); }
+  itsEndDate = Tcl_GetStringResult(itsImpl->itsInterp);
 
   // Format the current time into a unique filename extension
   static TclEvalCmd uniqueFilenameCmd(
         "clock format [clock seconds] -format %H%M%d%b%Y");
 
-  result = uniqueFilenameCmd.invoke(itsInterp);
-  if (result != TCL_OK) { Tcl_BackgroundError(itsInterp); }
-  string unique_filename = Tcl_GetStringResult(itsInterp);
+  result = uniqueFilenameCmd.invoke(itsImpl->itsInterp);
+  if (result != TCL_OK)
+	 { itsImpl->raiseBackgroundError("error creating unique filenames"); }
+  string unique_filename = Tcl_GetStringResult(itsImpl->itsInterp);
 
   // Write the main experiment file
   string expt_filename = string("expt") + unique_filename;
@@ -656,16 +813,16 @@ DOTRACE("ExptDriver::writeAndExit");
 
   }
   catch (IoError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }
   catch (TclError& err) {
-	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
-	 Tcl_BackgroundError(itsInterp);
+	 itsImpl->raiseBackgroundError(err.msg().c_str());
   }
 
   // Gracefully exit the application (or not)
-//   Tcl_Exit(0);
+  if (quitApplication) {
+	 Tcl_Exit(0);
+  }
 }
 
 static const char vcid_exptdriver_cc[] = "$Header$";
