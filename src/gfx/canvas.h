@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Tue Aug 28 11:06:56 2001
+// written: Tue Aug 28 11:36:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ public:
 
   virtual void drawRect(const Gfx::Rect<double>& rect) = 0;
 
-  virtual void drawCircle(double inner_radius, double outer_radius,
+  virtual void drawCircle(double inner_radius, double outer_radius, bool fill,
                           unsigned int slices, unsigned int loops) = 0;
 
   virtual void drawBezier4(const Gfx::Vec3<double>& p1,

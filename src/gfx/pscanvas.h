@@ -96,7 +96,7 @@ public:
 
   virtual void drawRect(const Gfx::Rect<double>& rect);
 
-  virtual void drawCircle(double inner_radius, double outer_radius,
+  virtual void drawCircle(double inner_radius, double outer_radius, bool fill,
                           unsigned int slices, unsigned int loops);
 
   virtual void drawBezier4(const Gfx::Vec3<double>& p1,

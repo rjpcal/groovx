@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Aug 28 11:08:13 2001
+// written: Tue Aug 28 11:37:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -449,13 +449,13 @@ DOTRACE("GLCanvas::drawRect");
   vertex2(rect.topLeft());
 }
 
-void GLCanvas::drawCircle(double inner_radius, double outer_radius,
+void GLCanvas::drawCircle(double inner_radius, double outer_radius, bool fill,
                           unsigned int slices, unsigned int loops)
 {
 DOTRACE("GLCanvas::drawCircle");
 
   GLUquadricObj* qobj = gluNewQuadric();
-  gluQuadricDrawStyle(qobj, GLU_SILHOUETTE);
+  gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_SILHOUETTE);
   gluDisk(qobj, inner_radius, outer_radius, slices, loops);
   gluDeleteQuadric(qobj);
 }
