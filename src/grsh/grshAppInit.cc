@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Sat Jun 16 18:40:32 2001
+// written: Wed Jun 20 18:16:04 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -13,7 +13,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include <iostream.h>
 #include <tk.h>
 
 #include "grshapp.h"
@@ -21,10 +20,10 @@
 #include "system/demangle.h"
 
 #include "util/error.h"
+#include "util/log.h"
 
 #include <cstdlib>
 #include <exception>
-#include <iostream.h>
 #include <typeinfo>
 
 #define NO_TRACE
@@ -141,7 +140,7 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
   {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i) {
 #ifdef LOCAL_TRACE
-    cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << endl << flush;
+    Util::log() << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
 #endif
     int result = IMMEDIATE_PKGS[i].pkgInitProc(interp);
     if (result != TCL_OK) { itsStatus = result; }
@@ -186,22 +185,22 @@ DOTRACE("Tcl_AppInit");
     return theApp.status();
   }
   catch (ErrorWithMsg& err) {
-    cerr << "uncaught ErrorWithMsg: " << err.msg_cstr() << endl;
+    Util::log() << "uncaught ErrorWithMsg: " << err.msg_cstr() << '\n';
   }
   catch (Error& err) {
-    cerr << "uncaught Error of type"
-         << demangle_cstr(typeid(err).name())
-         << endl;
+    Util::log() << "uncaught Error of type"
+                << demangle_cstr(typeid(err).name())
+                << '\n';
   }
   catch (std::exception& err) {
-    cerr << "uncaught std::exception of type "
-         << demangle_cstr(typeid(err).name())
-         << " occurred: "
-         << err.what()
-         << endl;
+    Util::log() << "uncaught std::exception of type "
+                << demangle_cstr(typeid(err).name())
+                << " occurred: "
+                << err.what()
+                << '\n';
   }
   catch (...) {
-    cerr << "uncaught exception of unknown type" << endl;
+    Util::log() << "uncaught exception of unknown type" << '\n';
   }
 
   exit(-1);
