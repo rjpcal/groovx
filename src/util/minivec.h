@@ -3,7 +3,7 @@
 // minivec.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 31 11:01:16 2000
-// written: Tue Oct 31 11:19:59 2000
+// written: Tue Oct 31 11:23:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,12 +11,24 @@
 #ifndef MINIVEC_H_DEFINED
 #define MINIVEC_H_DEFINED
 
-#include "src/util/error.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
+#include "util/error.h"
+#endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(NEW_DEFINED)
 #include <new>
+#define NEW_DEFINED
+#endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LIMITS_DEFINED)
 #include <limits>
+#define LIMITS_DEFINED
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITERATOR_DEFINED)
 #include <iterator>
+#define ITERATOR_DEFINED
+#endif
 
 namespace MVUtils {
 
