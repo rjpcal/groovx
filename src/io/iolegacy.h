@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Fri Nov 10 17:03:51 2000
+// written: Thu Dec  7 18:42:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,8 @@ class IO::LegacyWriter : public IO::Writer {
 public:
   LegacyWriter(STD_IO::ostream& os, bool write_bases=true);
   virtual ~LegacyWriter();
+
+  void usePrettyPrint(bool yes=true);
 
   virtual void writeChar(const char* name, char val);
   virtual void writeInt(const char* name, int val);

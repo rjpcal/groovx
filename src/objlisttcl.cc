@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Nov 10 17:27:05 2000
+// written: Thu Dec  7 18:44:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,14 +66,13 @@ namespace ObjlistTcl {
 	 }
 
   template <class WriterType, class Iterator>
-  void writeBatch(STD_IO::ostream& os, Iterator obj_itr, Iterator end)
+  void writeBatch(WriterType& writer, Iterator obj_itr, Iterator end)
 	 {
 		while (obj_itr != end)
 		  {
-			 WriterType writer(os);
 			 IdItem<IO::IoObject> item(*obj_itr);
 			 writer.writeRoot(item.get());
-			 os << endl;
+//  			 os << endl;
 
 			 ++obj_itr;
 		  }
@@ -136,8 +135,9 @@ protected:
 		throw err;
 	 }
 
-	 writeBatch<IO::LegacyWriter>(ofs, beginOfArg(1, (int*)0),
-											endOfArg(1, (int*)0));
+	 IO::LegacyWriter writer(ofs, use_bases);
+	 writer.usePrettyPrint(false);
+	 writeBatch(writer, beginOfArg(1, (int*)0), endOfArg(1, (int*)0));
   }
 };
 
