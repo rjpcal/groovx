@@ -3,7 +3,7 @@
 // Io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Sep 27 15:22:56 2000
+// written: Thu Sep 28 11:12:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,6 +103,16 @@ void IO::IoObject::legacySrlz(IO::Writer* writer) const {
 
 void IO::IoObject::legacyDesrlz(IO::Reader* reader) {
   throw IO::InputError("legacyDesrlz not implemented for this object");
+}
+
+fixed_string IO::IoObject::legacyIoTypename() const {
+DOTRACE("IO::IoObject::legacyIoTypename");
+  return demangle_cstr(typeid(*this).name());
+}
+
+fixed_string IO::IoObject::legacyValidTypenames() const {
+DOTRACE("IO::IoObject::legacyValidTypenames");
+  return demangle_cstr(typeid(*this).name());
 }
 
 unsigned int IO::IoObject::ioAttribCount() const {

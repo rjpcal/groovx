@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Sep 27 15:15:55 2000
+// written: Thu Sep 28 10:49:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,6 +132,10 @@ public:
       subclass must implement its own formatting. \c readFrom() should
       be favored over \c legacyDesrlz(). */
   virtual void legacyDesrlz(IO::Reader* reader);
+
+  virtual fixed_string legacyIoTypename() const;
+
+  virtual fixed_string legacyValidTypenames() const;
 
 private:
   unsigned long itsId;
