@@ -39,6 +39,7 @@ DBG_REGISTER
 #include "util/fstring.h"
 
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 
 #define LOCAL_PROF
@@ -53,32 +54,35 @@ namespace
 unsigned char rutz::debug::key_levels[rutz::debug::MAX_KEYS];
 const char*   rutz::debug::key_filenames[rutz::debug::MAX_KEYS];
 
-#define EVAL_IMPL(T)                                            \
-void rutz::debug::eval(const char* what, int level,             \
-                       const char* where, int line_no,          \
-                       bool nl, T expr) throw()                 \
-{                                                               \
-  std::cerr.exceptions(std::ios::goodbit);                      \
-  if (debug_line_complete)                                      \
-    {                                                           \
-      std::cerr << "[" << level << "] "                         \
-                   << where << ":" << line_no << ": ";          \
-    }                                                           \
-  if (what)                                                     \
-    {                                                           \
-      std::cerr << "(" << #T << ") " << what << " = ";          \
-    }                                                           \
-  std::cerr << expr;                                            \
-  if (nl)                                                       \
-    {                                                           \
-      std::cerr << "\n";                                        \
-      debug_line_complete = true;                               \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      std::cerr << ", ";                                        \
-      debug_line_complete = false;                              \
-    }                                                           \
+#define EVAL_IMPL(T)                                    \
+void rutz::debug::eval(const char* what, int level,     \
+                       const char* where, int line_no,  \
+                       bool nl, T expr) throw()         \
+{                                                       \
+  using std::cerr;                                      \
+  using std::setw;                                      \
+  cerr.exceptions(std::ios::goodbit);                   \
+  if (debug_line_complete)                              \
+    {                                                   \
+      cerr << "[" << setw(2) << level << "] "           \
+           << setw(30) << where << ":"                  \
+           << line_no << ": ";                          \
+    }                                                   \
+  if (what)                                             \
+    {                                                   \
+      cerr << "(" << #T << ") " << what << " = ";       \
+    }                                                   \
+  cerr << expr;                                         \
+  if (nl)                                               \
+    {                                                   \
+      cerr << "\n";                                     \
+      debug_line_complete = true;                       \
+    }                                                   \
+  else                                                  \
+    {                                                   \
+      cerr << ", ";                                     \
+      debug_line_complete = false;                      \
+    }                                                   \
 }
 
 EVAL_IMPL(bool);
@@ -95,6 +99,11 @@ EVAL_IMPL(double);
 EVAL_IMPL(const char*);
 EVAL_IMPL(void*);
 EVAL_IMPL(rutz::fstring);
+
+void rutz::debug::dump(const char* what, int level, const char* where, int line_no) throw()
+{
+  rutz::debug::eval(what, level, where, line_no, true, "...");
+}
 
 void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
 {
