@@ -95,10 +95,12 @@ DOTRACE("NullMasterPtr::isNull");
   return true;
 }
 
+// We treat a NullMasterPtr as equal to another MasterPtrBase if and
+// only if the other MasterPtrBase isNull(), regardless of whether
+// 'other' is actually of type NullMasterPtr.
 bool NullMasterPtr::operator==(const MasterPtrBase& other) { 
 DOTRACE("NullMasterPtr::operator==");
-  bool otherIsNull = (dynamic_cast<const NullMasterPtr*>(&other) != 0);
-  return otherIsNull;
+  return other.isNull();
 }
 
 ///////////////////////////////////////////////////////////////////////
