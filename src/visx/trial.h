@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Tue Nov 16 14:00:54 1999
+// written: Tue Nov 16 14:03:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,8 +168,6 @@ private:
   int itsType;
   int itsRhId;
   int itsThId;
-
-  mutable bool isItRendered;
 };
 
 static const char vcid_trial_h[] = "$Id$";
