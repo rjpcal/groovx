@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Fri Aug 17 14:11:20 2001
+// written: Fri Aug 17 14:58:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,8 @@ public:
   int operator-(const ConcreteIter& other) const
     { return itsImpl->minus(other.itsImpl); }
 
-  T*   operator->()                 const { return itsImpl->get(); }
-  T&   operator*()                  const { return *(itsImpl->get()); }
+  T*   operator->()                 const { return &(itsImpl->get()); }
+  T&   operator*()                  const { return itsImpl->get(); }
 
   bool atEnd()                      const { return itsImpl->atEnd(); }
   int  fromEnd()                    const { return itsImpl->fromEnd(); }
@@ -83,7 +83,7 @@ public:
   virtual ~FwdIterIfx() {}
   virtual FwdIterIfx<T>* clone() const = 0;
   virtual void next() = 0;
-  virtual T* get() const = 0;
+  virtual T& get() const = 0;
   virtual bool atEnd() const = 0;
 
   template <class It>
@@ -110,7 +110,7 @@ public:
 
   virtual Base* clone() const { return new FwdIterAdapter(*this); }
   virtual void   next()       { ++itsIter; }
-  virtual T*      get() const { return itsIter.operator->(); }
+  virtual T&      get() const { return *itsIter; }
   virtual bool  atEnd() const { return itsIter == itsEnd; }
 };
 
@@ -176,7 +176,7 @@ public:
   virtual Base* clone() const { return new BidirIterAdapter(*this); }
   virtual void   next()       { ++itsIter; }
   virtual void   prev()       { --itsIter; }
-  virtual T*      get() const { return itsIter.operator->(); }
+  virtual T&      get() const { return *itsIter; }
   virtual bool  atEnd() const { return itsIter == itsEnd; }
 };
 
@@ -241,13 +241,13 @@ public:
   RxsIterAdapter<Iter, T>(Iter iter, Iter end) :
     Base(), itsIter(iter), itsEnd(end) {}
 
-  virtual Base*  clone() const { return new RxsIterAdapter(*this); }
-  virtual void    next()       { ++itsIter; }
-  virtual void    prev()       { --itsIter; }
-  virtual void    step(int n)  { itsIter += n; }
-  virtual T*       get() const { return itsIter.operator->(); }
-  virtual bool   atEnd() const { return itsIter == itsEnd; }
-  virtual int  fromEnd() const { return itsEnd - itsIter; }
+  virtual Base*  clone()       const { return new RxsIterAdapter(*this); }
+  virtual void    next()             { ++itsIter; }
+  virtual void    prev()             { --itsIter; }
+  virtual void    step(int n)        { itsIter += n; }
+  virtual T&       get()       const { return *itsIter; }
+  virtual bool   atEnd()       const { return itsIter == itsEnd; }
+  virtual int  fromEnd()       const { return itsEnd - itsIter; }
 
   virtual int minus(RxsIterIfx<T>& other_) const
   {
