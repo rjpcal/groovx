@@ -275,6 +275,78 @@ bool operator<(const dependency& i1, const dependency& i2)
   return i1.target < i2.target;
 }
 
+class link_mapping
+{
+  class link_spec
+  {
+  private:
+    string            m_source_prefix;
+    string            m_link_pattern;
+    string::size_type m_wildcard_pos;
+
+  public:
+    link_spec(const string& src, const string& link) :
+      m_source_prefix(src),
+      m_link_pattern(link),
+      m_wildcard_pos(link.find_first_of('*'))
+    {}
+
+    bool matches_source(const string& srcfile) const
+    {
+      return strncmp(srcfile.c_str(),
+                     m_source_prefix.c_str(),
+                     m_source_prefix.length()) == 0;
+    }
+
+    string get_link(const string& srcfile) const
+    {
+      if (m_wildcard_pos == string::npos)
+        return m_link_pattern;
+
+      // else...
+      const string::size_type suff = srcfile.find_last_of('.');
+      const string stem = srcfile.substr(0, suff);
+      string result = m_link_pattern;
+      result.replace(m_wildcard_pos, m_wildcard_pos+1,
+                     stem);
+      return result;
+    }
+  };
+
+  vector<link_spec> m_links;
+
+public:
+  link_mapping() : m_links() {}
+
+  static string get_source_for_header(const string& header)
+  {
+    const string::size_type suff = header.find_last_of('.');
+    string result = header.substr(0, suff);
+    result += ".cc";
+    if (file_exists(result.c_str()))
+      return result;
+
+    return string();
+  }
+
+  void append_link_spec(const string& src, const string& link_pattern)
+  {
+    m_links.push_back(link_spec(src, link_pattern));
+  }
+
+  string get_link_for_source(const string& srcfile) const
+  {
+    for (unsigned int i = 0; i < m_links.size(); ++i)
+      {
+        if (m_links[i].matches_source(srcfile))
+          return m_links[i].get_link(srcfile);
+      }
+    cerr << "no patterns matched source file: " << srcfile << '\n';
+    exit(1);
+    return string(); // can't happen, but placate compiler
+  }
+};
+
 /// A class for doing fast include-file dependency analysis.
 /** Several shortcuts (er, hacks...) are taken to make the parsing
     extremely fast and cheap, but at worst this makes the computed
@@ -299,7 +371,8 @@ private:
     {
       MAKEFILE_DEPS,
       DIRECT_INCLUDE_TREE,
-      NESTED_INCLUDE_TREE
+      NESTED_INCLUDE_TREE,
+      LINK_DEPS
     };
 
   // Member variables
@@ -315,14 +388,18 @@ private:
 
   dep_map_t                m_nested_includes;
   dep_map_t                m_direct_includes;
+  dep_map_t                m_link_deps;
 
-  map<string, parse_state> m_parse_states;
+  map<string, parse_state> m_cdep_parse_states;
+  map<string, parse_state> m_ldep_parse_states;
 
   string                   m_strip_prefix;
 
   const time_t             m_start_time;  // so we can check to see if
                                           // any source files have
                                           // timestamps in the future
+
+  link_mapping             m_link_map;
 
 public:
   cppdeps(int argc, char** argv);
@@ -349,9 +426,11 @@ public:
 
   const dep_list_t& get_direct_includes(const string& src_fname);
   const dep_list_t& get_nested_includes(const string& src_fname);
+  const dep_list_t& get_link_deps(const string& src_fname);
 
   void print_makefile_dep(const string& current_file);
   void print_include_tree(const string& current_file);
+  void print_link_deps(const string& current_file);
 
   typedef void (cppdeps::* output_func)(const string&);
 
@@ -448,6 +527,10 @@ cppdeps::cppdeps(const int argc, char** const argv) :
       else if (strcmp(*arg, "--output-nested-includes") == 0)
         {
           m_output_mode = NESTED_INCLUDE_TREE;
+        }
+      else if (strcmp(*arg, "--output-link-deps") == 0)
+        {
+          m_output_mode = LINK_DEPS;
         }
       else if (strcmp(*arg, "--literal") == 0)
         {
@@ -803,14 +886,14 @@ cppdeps::get_nested_includes(const string& src_fname)
       return (*itr).second;
   }
 
-  if (m_parse_states[src_fname] == IN_PROGRESS)
+  if (m_cdep_parse_states[src_fname] == IN_PROGRESS)
     {
       cerr << "ERROR: in " << src_fname
            << ": untrapped nested #include recursion\n";
       exit(1);
     }
 
-  m_parse_states[src_fname] = IN_PROGRESS;
+  m_cdep_parse_states[src_fname] = IN_PROGRESS;
 
   // use a set to build up the list of #includes, so that
   //   (1) we automatically avoid duplicates
@@ -846,7 +929,7 @@ cppdeps::get_nested_includes(const string& src_fname)
         }
 
       // Check for other recursion cycles
-      if (m_parse_states[(*i).target] == IN_PROGRESS)
+      if (m_cdep_parse_states[(*i).target] == IN_PROGRESS)
         {
           if (!m_quiet)
             cerr << "WARNING: in " << src_fname
@@ -862,7 +945,69 @@ cppdeps::get_nested_includes(const string& src_fname)
   assert(result.empty());
   result.assign(includes_set.begin(), includes_set.end());
 
-  m_parse_states[src_fname] = COMPLETE;
+  m_cdep_parse_states[src_fname] = COMPLETE;
+
+  return result;
+}
+
+const cppdeps::dep_list_t&
+cppdeps::get_link_deps(const string& src_fname_orig)
+{
+  const string src_fname = make_normpath(src_fname_orig);
+
+  {
+    dep_map_t::iterator itr = m_link_deps.find(src_fname);
+    if (itr != m_link_deps.end())
+      return (*itr).second;
+  }
+
+  if (m_ldep_parse_states[src_fname] == IN_PROGRESS)
+    {
+      cerr << "ERROR: in " << src_fname
+           << ": untrapped nested link-dep recursion\n";
+      exit(1);
+    }
+
+  m_ldep_parse_states[src_fname] = IN_PROGRESS;
+
+  std::set<dependency> deps_set;
+
+  deps_set.insert(src_fname);
+
+  const dep_list_t& includes = get_nested_includes(src_fname);
+
+  for (dep_list_t::const_iterator
+         i = includes.begin(),
+         istop = includes.end();
+       i != istop;
+       ++i)
+    {
+      const string ccfile = m_link_map.get_source_for_header((*i).target);
+      if (ccfile.length() == 0)
+        continue;
+
+      if (ccfile == src_fname)
+        continue;
+
+      // Check for other recursion cycles
+      if (m_ldep_parse_states[ccfile] == IN_PROGRESS)
+        {
+          if (!m_quiet)
+            cerr << "WARNING: in " << src_fname
+                 << ": recursive link-dep cycle with " << ccfile << "\n";
+          continue;
+        }
+
+      const dep_list_t& indirect_deps = get_link_deps(ccfile);
+
+      deps_set.insert(indirect_deps.begin(), indirect_deps.end());
+    }
+
+  dep_list_t& result = m_link_deps[src_fname];
+  assert(result.empty());
+  result.assign(deps_set.begin(), deps_set.end());
+
+  m_ldep_parse_states[src_fname] = COMPLETE;
 
   return result;
 }
@@ -960,6 +1105,26 @@ void cppdeps::print_include_tree(const string& fname)
   printf("\n");
 }
 
+void cppdeps::print_link_deps(const string& fname)
+{
+  const int ext_len = is_cc_filename(fname.c_str());
+
+  if (ext_len == 0)
+    // it's not a c++ file, so just do nothing
+    return;
+
+  const dep_list_t& deps = get_link_deps(fname);
+
+  for (dep_list_t::const_iterator
+         itr = deps.begin(),
+         stop = deps.end();
+       itr != stop;
+       ++itr)
+    {
+      printf("%s: %s\n", fname.c_str(), (*itr).target.c_str());
+    }
+}
+
 void cppdeps::traverse_sources(output_func handler)
 {
   // start off with a copy of m_src_files
@@ -1017,6 +1182,12 @@ void cppdeps::batch_build()
     case NESTED_INCLUDE_TREE:
       {
         traverse_sources(&cppdeps::print_include_tree);
+      }
+      break;
+
+    case LINK_DEPS:
+      {
+        traverse_sources(&cppdeps::print_link_deps);
       }
       break;
     }
