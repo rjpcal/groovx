@@ -109,6 +109,24 @@ case ${CXX}-${OS} in
       cxxflags_debug="-O1 -g"
       cxxflags_prod="-O2"
       ;;
+   *icc*)
+      #1418: external definition with no prior declaration
+      #1419: external declaration in primary source file
+      #177: variable [] was declared but never referenced
+      #193: zero used for undefined preprocessing identifier
+      #279: controlling expression is constant
+      #383: value copied to temporary, reference to temporary used
+      #424: extra ";" ignored
+      #444: destructor for base class [] is not virtual
+      #530: inline function [] cannot be explicitly instantiated
+      #810: conversion from "double" to "int" may lose significant bits
+      #981: operands are evaluated in unspecified order
+      CXXFLAGS="$CXXFLAGS -Wall -Werror -wd177,1418,279,383,981,444,810,1419,424,530,193"
+      cxxflags_debug="-g -O1"
+      cxxflags_prod="-O2"
+      SHLIB_CMD="$CXX -shared -o"
+      STATLIB_CMD="ar rus"
+      ;;
    CC-IRIX)
       CPPFLAGS="$CPPFLAGS -I$(HOME)/local/$(ARCH)/include/cppheaders"
       CXXFLAGS="$CXXFLAGS -mips3 -n32 -ptused -no_prelink -no_auto_include"
