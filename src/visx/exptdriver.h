@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Oct 24 07:11:14 2000
+// written: Thu Oct 26 14:07:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,6 +93,8 @@ public:
   /** Add a message to the info log. The message will automatically be
 		date/time-stamped. */
   void addLogInfo(const char* message);
+
+  void addBlock(int block_id);
 
   virtual Util::ErrorHandler& getErrorHandler();
 
