@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Fri Aug 17 14:06:43 2001
+// written: Tue Aug 21 19:08:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,10 +33,13 @@ namespace
 
 #if 0
 #include <cstdlib>
+#include <cstdio>
 
 void* operator new(size_t bytes)
 {
   TOTAL += bytes;
+  printf("%d bytes  ", (int) bytes);
+  Util::Trace::printStackTrace();
   return malloc(bytes);
 }
 
