@@ -72,5 +72,18 @@ private:
   static double gammalnEngine(double xx);
 };
 
+///////////////////////////////////////////////////////////////////////
+//
+// Functors
+//
+///////////////////////////////////////////////////////////////////////
+
+class Div {
+  double factor;
+public:
+  Div(double div) : factor(1.0/div) {}
+  double operator()(double d) { return factor*d; }
+};
+
 static const char vcid_num_h[] = "$Header$";
 #endif // !NUM_H_DEFINED

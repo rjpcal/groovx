@@ -14,6 +14,7 @@
 #define KEANU_H_DEFINED
 
 #include "datablock.h"
+#include "num.h"
 
 class Mtx;
 
@@ -49,9 +50,11 @@ public:
 	 itsNelems = other.itsNelems;
   }
 
-  double operator[](int i) const { return *(address(i)); }
+  //
+  // Data access
+  //
 
-  const double* data() const { return itsData; }
+  double operator[](int i) const { return *(address(i)); }
 
   int nelems() const { return itsNelems; }
 
@@ -68,6 +71,18 @@ public:
 	 return ConstSlice(itsData, itsStride, n);
   }
 
+  //
+  // Functions
+  //
+
+  double sum() const
+  {
+	 double s = 0.0;
+	 for (ConstIterator i = begin(), e = end(); i != e; ++i)
+		s += *i;
+	 return s;
+  }
+
   static double dot(const ConstSlice& s1, const ConstSlice& s2)
   {
 	 double result = 0.0;
@@ -76,6 +91,10 @@ public:
 		result += s1[i] * s2[i];
 	 return result;
   }
+
+  //
+  // Iteration
+  //
 
   class ConstIterator {
 	 const double* data;
@@ -117,8 +136,6 @@ public:
 
   double& operator[](int i) { return *(address(i)); }
 
-  Slice& operator=(const Slice& other);
-
   Slice rightmost(int n)
   {
 	 int first = itsNelems - n;
@@ -131,14 +148,69 @@ public:
   {
 	 return Slice(itsData, itsStride, n);
   }
+
+  Slice& operator=(const Slice& other);
+
+  //
+  // Functions
+  //
+
+  template <class F>
+  void apply(F func)
+  {
+	 for (Iterator i = begin(), e = end(); i != e; ++i)
+		*i = func(*i);
+  }
+
+  void operator/=(double div) { apply(Div(div)); }
+
+  //
+  // Iteration
+  //
+
+  class Iterator {
+	 double* data;
+	 int stride;
+
+	 Iterator(double* d, int s) : data(d), stride(s) {}
+
+	 friend class Slice;
+
+  public:
+
+	 double& operator*() { return *data; }
+
+	 Iterator& operator++() { data += stride; return *this; }
+
+	 bool operator==(const Iterator& other) const
+	   { return data == other.data; }
+
+	 bool operator!=(const Iterator& other) const
+	   { return data != other.data; }
+  };
+
+  Iterator begin()
+    { return Iterator(itsData, itsStride); }
+  Iterator end()
+    { return Iterator(address(itsNelems), itsStride); }
 };
 
 typedef struct mxArray_tag mxArray;
 
 class Mtx {
 private:
+  template <class T>
+  static void doswap(T& t1, T& t2)
+  { T t2_ = t2; t2 = t1; t1 = t2_; }
 
-  Mtx& operator=(const Mtx&); // not allowed
+
+  void swap(Mtx& other)
+  {
+	 doswap(block_, other.block_);
+	 doswap(mrows_, other.mrows_);
+	 doswap(ncols_, other.ncols_);
+	 doswap(start_, other.start_);
+  }
 
   Mtx(const Mtx& other, int column /* zero-based */) :
 	 block_(other.block_),
@@ -160,9 +232,12 @@ public:
   Mtx(mxArray* a, StoragePolicy s = COPY);
 
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY)
-  { initialize(data, mrows, ncols, s); }
+    { initialize(data, mrows, ncols, s); }
 
   Mtx(int mrows, int ncols);
+
+  Mtx(const ConstSlice& s)
+    { initialize(s.itsData, s.nelems(), 1, BORROW); }
 
   Mtx(const Mtx& other) :
 	 block_(other.block_),
@@ -174,6 +249,12 @@ public:
   }
 
   ~Mtx();
+
+  Mtx& operator=(const Mtx& other)
+  {
+	 Mtx temp(other);
+	 this->swap(temp);
+  }
 
   mxArray* makeMxArray() const;
 
@@ -197,16 +278,25 @@ public:
 
   int ncols() const { return ncols_; }
 
-  Mtx columnSlice(int column) const { return Mtx(*this, column); }
+  Mtx column(int column) const { return Mtx(*this, column); }
 
-  Slice rowSlice(int row)
+  Slice row(int row)
     { return Slice(address(row,0), mrows_, ncols_); }
 
-  ConstSlice rowSlice(int row) const
+  ConstSlice row(int row) const
     { return ConstSlice(address(row,0), mrows_, ncols_); }
 
   Slice asSlice()
     { return Slice(start_, 1, nelems()); }
+
+
+  void apply(double func(double))
+    {
+		double* p = start_;
+		double* end = start_+nelems();
+		for (; p < end; ++p)
+		  *p = func(*p);
+    }
 
 private:
   int index(int row, int col) const { return row + (col*mrows_); }
