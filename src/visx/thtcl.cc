@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Jul 12 13:23:43 2001
+// written: Sat Jul 14 11:27:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "trialevent.h"
 
 #include "tcl/genericobjpkg.h"
+#include "tcl/objfunctor.h"
 #include "tcl/tclcmd.h"
 
 #include "util/objfactory.h"
@@ -27,37 +28,31 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace ThTcl {
-  class AddEventCmd;
+namespace ThTcl
+{
+  int addImmediateEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+                        int msec)
+  {
+    return th->addEventByName(event_type, TimingHdlr::IMMEDIATE, msec);
+  }
+  int addStartEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+                    int msec)
+  {
+    return th->addEventByName(event_type, TimingHdlr::FROM_START, msec);
+  }
+  int addResponseEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+                       int msec)
+  {
+    return th->addEventByName(event_type, TimingHdlr::FROM_RESPONSE, msec);
+  }
+  int addAbortEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+                    int msec)
+  {
+    return th->addEventByName(event_type, TimingHdlr::FROM_ABORT, msec);
+  }
+
   class ThPkg;
 }
-
-//---------------------------------------------------------------------
-//
-// AddEventCmd --
-//
-//---------------------------------------------------------------------
-
-class ThTcl::AddEventCmd : public Tcl::TclItemCmd<TimingHdlr> {
-public:
-  AddEventCmd(Tcl::CTclItemPkg<TimingHdlr>* pkg, const char* cmd_name,
-              TimingHdlr::TimePoint time_point) :
-    Tcl::TclItemCmd<TimingHdlr>(pkg, cmd_name,
-                           "th_id event_type msec_delay", 4, 4),
-    itsTimePoint(time_point) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    TimingHdlr* th = getItem(ctx);
-    const char* event_type = ctx.getCstringFromArg(2);
-    int msec = ctx.getIntFromArg(3);
-
-    int eventid = th->addEventByName(event_type, itsTimePoint, msec);
-    ctx.setResult(eventid);
-  }
-private:
-  TimingHdlr::TimePoint itsTimePoint;
-};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -70,18 +65,18 @@ public:
   ThPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<TimingHdlr>(interp, "Th", "$Revision$")
   {
-    addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
-                                TimingHdlr::IMMEDIATE));
-    addCommand( new AddEventCmd(this, "Th::addStartEvent",
-                                TimingHdlr::FROM_START));
-    addCommand( new AddEventCmd(this, "Th::addResponseEvent",
-                                TimingHdlr::FROM_RESPONSE));
-    addCommand( new AddEventCmd(this, "Th::addAbortEvent",
-                                TimingHdlr::FROM_ABORT));
+    Tcl::def( this, &ThTcl::addImmediateEvent,
+              "Th::addImmediateEvent", "th_id event_type msec_delay" );
+    Tcl::def( this, &ThTcl::addStartEvent,
+              "Th::addStartEvent", "th_id event_type msec_delay" );
+    Tcl::def( this, &ThTcl::addResponseEvent,
+              "Th::addResponseEvent", "th_id event_type msec_delay" );
+    Tcl::def( this, &ThTcl::addAbortEvent,
+              "Th::addAbortEvent", "th_id event_type msec_delay" );
 
     Tcl::TclPkg::eval("namespace eval Th { "
                       "    proc autosavePeriod {id args} { "
-                      "        return [eval Expt::autosavePeriod $args] } }");
+                      "        error {use Expt::autosavePeriod instead} } }");
   }
 };
 
@@ -91,7 +86,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace SimpleThTcl {
+namespace SimpleThTcl
+{
   class SimpleThPkg;
 }
 
@@ -123,7 +119,8 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Th_Init(Tcl_Interp* interp) {
+int Th_Init(Tcl_Interp* interp)
+{
 DOTRACE("Th_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
