@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 20 16:50:27 2002
+// written: Wed Nov 20 17:16:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,9 +30,7 @@ class BitmapImpl;
  *
  * \c Bitmap is a subclass of \c GxShapeKit that manages bitmap data, but
  * does not implement a method for rendering the bitmap data to the screen,
- * since there is typically more than one way to do this. A rendering
- * method must be provided by passing a suitable \c BmapRenderer to a \c
- * Bitmap constructor.
+ * since there is typically more than one way to do this.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
