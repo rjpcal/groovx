@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Jan 11 15:41:36 2000
+// written: Thu Jan 27 14:01:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,6 +139,8 @@ public:
   void readFrom(Reader* reader);
   void writeTo(Writer* writer) const;
 
+  void manageObject(const char* name, IO* object);
+
   void init();
 
   Tcl_Interp* getInterp() { return itsInterp; }
@@ -194,6 +196,17 @@ private:
   mutable StopWatch itsTimer;
 
   mutable string itsDoUponCompletionBody;
+
+  struct ManagedObject {
+	 ManagedObject(const string& n, IO* obj) :
+		name(n), object(obj) {}
+	 ManagedObject(const char* n, IO* obj) :
+		name(n), object(obj) {}
+	 string name;
+	 IO* object;
+  };
+
+  vector<ManagedObject> itsManagedObjects;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -208,7 +221,8 @@ ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
   itsRhId(0),
-  itsThId(0)
+  itsThId(0),
+  itsManagedObjects()
 {
 DOTRACE("ExptDriver::Impl::Impl");
   Tcl_Preserve(itsInterp);
@@ -626,6 +640,11 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
 }
 
+void ExptDriver::Impl::manageObject(const char* name, IO* object) {
+DOTRACE("ExptDriver::Impl::manageObject");
+  itsManagedObjects.push_back(ManagedObject(name, object)); 
+}
+
 void ExptDriver::Impl::init() {
 DOTRACE("ExptDriver::Impl::init");
 
@@ -1024,6 +1043,9 @@ Widget* ExptDriver::getWidget()
 
 Canvas* ExptDriver::getCanvas()
   { return itsImpl->getCanvas(); }
+
+void ExptDriver::manageObject(const char* name, IO* object)
+  { itsImpl->manageObject(name, object); }
 
 void ExptDriver::edDraw() 
   { itsImpl->edDraw(); }
