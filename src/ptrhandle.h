@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 15:56:41 2000
-// written: Mon Jun 11 15:08:14 2001
+// written: Tue Jun 12 12:01:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,73 +21,9 @@ namespace PtrHandleUtil {
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * PtrHandle<T> is a stack-based wrapper for ref-counted T's.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class PtrHandle {
-public:
-  explicit PtrHandle(T* master) : itsMaster(master)
-  {
-	 if (master == 0) PtrHandleUtil::throwErrorWithMsg(
-								"T* was null in PtrHandle<T>()");
-	 itsMaster->incrRefCount();
-  }
-
-  ~PtrHandle()
-    { itsMaster->decrRefCount(); }
-
-  PtrHandle(const PtrHandle& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-  template <class U> friend class PtrHandle;
-
-  template <class U>
-  PtrHandle(const PtrHandle<U>& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-  PtrHandle& operator=(const PtrHandle& other)
-    {
-		PtrHandle otherCopy(other);
-		this->swap(otherCopy);
-		return *this;
-	 }
-
-  T* operator->() const { return itsMaster; }
-  T& operator*()  const { return *itsMaster; }
-
-  T* get()        const { return itsMaster; }
-
-private:
-  void swap(PtrHandle& other)
-    {
-		T* otherMaster = other.itsMaster;
-		other.itsMaster = this->itsMaster;
-		this->itsMaster = otherMaster;
-	 }
-
-  T* itsMaster;
-};
-
-
-template <class To, class Fr>
-PtrHandle<To> dynamicCast(PtrHandle<Fr> p)
-{
-  Fr* f = p.get();
-  To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-  return PtrHandle<To>(&t);
-}
-
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
  * NullablePtrHandle<T> is a stack-based wrapper for ref-counted T's,
- * similar to PtrHandle<T>, except that a NullablePtrHandle may point
- * to no T at all. isValid() may be called to determine if there is
- * currently a non-null pointee.
+ * that may point to no T at all. isValid() may be called to determine
+ * if there is currently a non-null pointee.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -97,15 +33,15 @@ class NullablePtrHandle {
 public:
   explicit NullablePtrHandle(T* master) : itsMaster(master)
     {
-		if (itsMaster != 0)
-		  itsMaster->incrRefCount();
-	 }
+      if (itsMaster != 0)
+        itsMaster->incrRefCount();
+    }
 
   ~NullablePtrHandle()
     {
-		if (itsMaster != 0)
-		  itsMaster->decrRefCount();
-	 }
+      if (itsMaster != 0)
+        itsMaster->decrRefCount();
+    }
 
   //
   // Copy constructors
@@ -113,25 +49,17 @@ public:
 
   NullablePtrHandle(const NullablePtrHandle& other) : itsMaster(other.itsMaster)
     {
-		if (itsMaster != 0)
-		  itsMaster->incrRefCount();
-	 }
+      if (itsMaster != 0)
+        itsMaster->incrRefCount();
+    }
 
   template <class U>
   NullablePtrHandle(const NullablePtrHandle<U>& other) :
-	 itsMaster(other.isValid() ? other.get() : 0)
-    { 
-		if (itsMaster != 0)
-		  itsMaster->incrRefCount();
-	 }
-
-  template <class U>
-  explicit NullablePtrHandle(PtrHandle<U> other) :
-	 itsMaster(other.get())
+    itsMaster(other.isValid() ? other.get() : 0)
     {
-		ensureValid();
-		itsMaster->incrRefCount();
-	 }
+      if (itsMaster != 0)
+        itsMaster->incrRefCount();
+    }
 
   //
   // Assignment operators
@@ -139,28 +67,20 @@ public:
 
   NullablePtrHandle& operator=(const NullablePtrHandle& other)
     {
-		NullablePtrHandle otherCopy(other);
-		this->swap(otherCopy);
-		return *this;
-	 }
-
-  NullablePtrHandle& operator=(const PtrHandle<T>& other)
-    {
-		NullablePtrHandle otherCopy(other);
-		this->swap(otherCopy);
-		return *this;
-	 }
-
+      NullablePtrHandle otherCopy(other);
+      this->swap(otherCopy);
+      return *this;
+    }
 
 
   bool isValid() const { return itsMaster != 0; }
 
   void release()
     {
-		if (itsMaster != 0)
-		  itsMaster->decrRefCount();
-		itsMaster = 0;
-	 }
+      if (itsMaster != 0)
+        itsMaster->decrRefCount();
+      itsMaster = 0;
+    }
 
   T* operator->() const { return get(); }
   T& operator*()  const { return *(get()); }
@@ -170,17 +90,17 @@ public:
 private:
   void ensureValid() const
   {
-	 if (itsMaster == 0)
-		PtrHandleUtil::throwErrorWithMsg(
-			  "attempted to derefence invalid NullablePtrHandle");
+    if (itsMaster == 0)
+      PtrHandleUtil::throwErrorWithMsg(
+           "attempted to derefence invalid NullablePtrHandle");
   }
 
   void swap(NullablePtrHandle& other)
     {
-		T* otherMaster = other.itsMaster;
-		other.itsMaster = this->itsMaster;
-		this->itsMaster = otherMaster;
-	 }
+      T* otherMaster = other.itsMaster;
+      other.itsMaster = this->itsMaster;
+      this->itsMaster = otherMaster;
+    }
 
   T* itsMaster;
 };

@@ -50,6 +50,8 @@ namespace Util { namespace RefHelper {
 
   void insertItem(Util::Object* obj);
 
+  void throwErrorWithMsg(const char* msg);
+
 #ifndef ACC_COMPILER
 #  define DYNCAST dynamic_cast
 #else
@@ -60,9 +62,9 @@ namespace Util { namespace RefHelper {
   template <class T>
   inline T* getCastedItem(Util::UID id)
   {
-	 Util::Object* obj = getCheckedItem(id);
-	 T& t = DYNCAST<T&>(*obj);
-	 return &t;
+    Util::Object* obj = getCheckedItem(id);
+    T& t = DYNCAST<T&>(*obj);
+    return &t;
   }
 
 #ifdef DYNCAST
@@ -77,10 +79,55 @@ namespace Util { namespace RefHelper {
 
 
 
+template <class T>
+class PrivPtrHandle {
+public:
+  explicit PrivPtrHandle(T* master) : itsMaster(master)
+  {
+    if (master == 0) Util::RefHelper::throwErrorWithMsg(
+                        "T* was null in PrivPtrHandle<T>()");
+    itsMaster->incrRefCount();
+  }
+
+  ~PrivPtrHandle()
+    { itsMaster->decrRefCount(); }
+
+  PrivPtrHandle(const PrivPtrHandle& other) : itsMaster(other.itsMaster)
+    { itsMaster->incrRefCount(); }
+
+  template <class U> friend class PrivPtrHandle;
+
+  template <class U>
+  PrivPtrHandle(const PrivPtrHandle<U>& other) : itsMaster(other.itsMaster)
+    { itsMaster->incrRefCount(); }
+
+  PrivPtrHandle& operator=(const PrivPtrHandle& other)
+    {
+      PrivPtrHandle otherCopy(other);
+      this->swap(otherCopy);
+      return *this;
+    }
+
+  T* operator->() const { return itsMaster; }
+  T& operator*()  const { return *itsMaster; }
+
+  T* get()        const { return itsMaster; }
+
+  void swap(PrivPtrHandle& other)
+    {
+      T* otherMaster = other.itsMaster;
+      other.itsMaster = this->itsMaster;
+      this->itsMaster = otherMaster;
+    }
+
+  T* itsMaster;
+};
+
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::Ref<T> is a wrapper of a PtrHandle<T> along with an integer
+ * Util::Ref<T> is a wrapper of a PrivPtrHandle<T> along with an integer
  * index from a PtrList<T>.
  *
  **/
@@ -89,39 +136,30 @@ namespace Util { namespace RefHelper {
 namespace Util {
 
 template <class T>
-class Ref {
-private:
-  PtrHandle<T> itsHandle;
-
+class Ref : private PrivPtrHandle<T> {
 public:
   // Default destructor, copy constructor, operator=() are fine
 
-  explicit Ref(Util::UID id) : itsHandle(RefHelper::getCastedItem<T>(id)) {}
+  explicit Ref(Util::UID id) : PrivPtrHandle<T>(RefHelper::getCastedItem<T>(id)) {}
 
-  explicit Ref(T* ptr) : itsHandle(ptr)
+  explicit Ref(T* ptr) : PrivPtrHandle<T>(ptr)
     { RefHelper::insertItem(ptr); }
 
-  Ref(T* ptr, bool /*noInsert*/) : itsHandle(ptr) {}
-
-  Ref(PtrHandle<T> item) : itsHandle(item)
-    { RefHelper::insertItem(item.get()); }
-
-  Ref(PtrHandle<T> item, bool /*noInsert*/) : itsHandle(item) {}
+  Ref(T* ptr, bool /*noInsert*/) : PrivPtrHandle<T>(ptr) {}
 
   template <class U>
-  Ref(const Ref<U>& other) : itsHandle(other.handle()) {}
+  Ref(const Ref<U>& other) : PrivPtrHandle<T>(other.get()) {}
 
   // Will raise an exception if the MaybeRef is invalid
   template <class U>
   Ref(const MaybeRef<U>& other);
 
-  T* operator->() const { return itsHandle.get(); }
-  T& operator*()  const { return *(itsHandle.get()); }
+  T* operator->() const { return get(); }
+  T& operator*()  const { return *(get()); }
 
-  T* get()        const { return itsHandle.get(); }
+  T* get()        const { return PrivPtrHandle<T>::get(); }
 
-  PtrHandle<T> handle() const { return itsHandle; }
-  Util::UID id() const { return itsHandle->id(); }
+  Util::UID id() const { return get()->id(); }
 };
 
 // TypeTraits specialization for Util::Ref smart pointer
@@ -160,8 +198,8 @@ private:
 
   void insertItem()
   {
-	 if (itsHandle.isValid())
-		RefHelper::insertItem(itsHandle.get());
+    if (itsHandle.isValid())
+      RefHelper::insertItem(itsHandle.get());
   }
 
 public:
@@ -171,43 +209,43 @@ public:
 
   explicit MaybeRef(T* master) : itsHandle(master), itsId(0)
   {
-	 if (master != 0) itsId = master->id();
-	 insertItem();
+    if (master != 0) itsId = master->id();
+    insertItem();
   }
 
   MaybeRef(T* master, bool /*noInsert*/) : itsHandle(master), itsId(0)
     { if (master != 0) itsId = master->id(); }
 
 
-  MaybeRef(PtrHandle<T> item) : itsHandle(item), itsId(item->id())
-    { insertItem(); }
+//    MaybeRef(PtrHandle<T> item) : itsHandle(item), itsId(item->id())
+//      { insertItem(); }
 
-  MaybeRef(PtrHandle<T> item, bool /*noInsert*/) :
-	 itsHandle(item), itsId(item->id())
-    {}
+//    MaybeRef(PtrHandle<T> item, bool /*noInsert*/) :
+//      itsHandle(item), itsId(item->id())
+//      {}
 
 
   MaybeRef(NullablePtrHandle<T> item) :
-	 itsHandle(item), itsId(0)
+    itsHandle(item), itsId(0)
   {
-	 if (itsHandle.isValid()) itsId = itsHandle->id();
+    if (itsHandle.isValid()) itsId = itsHandle->id();
     insertItem();
   }
 
   MaybeRef(NullablePtrHandle<T> item, bool /*noInsert*/) :
-	 itsHandle(item), itsId(0)
+    itsHandle(item), itsId(0)
   {
-	 if (itsHandle.isValid()) itsId = itsHandle->id();
+    if (itsHandle.isValid()) itsId = itsHandle->id();
   }
 
 
   template <class U>
   MaybeRef(const MaybeRef<U>& other) :
-	 itsHandle(other.handle()), itsId(other.id()) {}
+    itsHandle(other.handle()), itsId(other.id()) {}
 
   template <class U>
   MaybeRef(const Ref<U>& other) :
-	 itsHandle(other.handle()), itsId(other.id()) {}
+    itsHandle(other.get()), itsId(other.id()) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -219,13 +257,13 @@ public:
   /** This will try to refresh the handle from the id, and will throw
       an exception if the operation fails (if the id is invalid). */
   void refresh() const {
-	 if ( !itsHandle.isValid() )
-		{
-		  Ref<T> p(itsId);
-		  itsHandle = p.handle();
-		  if (itsId != itsHandle->id())
-			 throw ErrorWithMsg("assertion failed in refresh");
-		}
+    if ( !itsHandle.isValid() )
+      {
+        Ref<T> p(itsId);
+        itsHandle = NullablePtrHandle<T>(p.get());
+        if (itsId != itsHandle->id())
+          throw ErrorWithMsg("assertion failed in refresh");
+      }
   }
 
 
@@ -233,15 +271,15 @@ public:
       throw an exception if the operation fails; it will just leave
       the object with an invalid handle. */
   void attemptRefresh() const {
-	 if ( !itsHandle.isValid() )
-		{
-		  if (RefHelper::isValidId(itsId)) {
-			 Ref<T> p(itsId);
-			 itsHandle = p.handle();
-			 if (itsId != itsHandle->id())
-				throw ErrorWithMsg("assertion failed in attemptRefresh");
-		  }
-		}
+    if ( !itsHandle.isValid() )
+      {
+        if (RefHelper::isValidId(itsId)) {
+          Ref<T> p(itsId);
+          itsHandle = NullablePtrHandle<T>(p.get());
+          if (itsId != itsHandle->id())
+            throw ErrorWithMsg("assertion failed in attemptRefresh");
+        }
+      }
   }
 
 
@@ -255,7 +293,7 @@ public:
 
   template <class T>
   struct TypeTraits<MaybeRef<T> > {
-	 typedef T Pointee;
+    typedef T Pointee;
   };
 
 } // end namespace Util
@@ -264,11 +302,11 @@ template <class To, class Fr>
 MaybeRef<To> dynamicCast(MaybeRef<Fr> p)
 {
   if (p.isValid())
-	 {
-		Fr* f = p.get();
-		To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-		return MaybeRef<To>(&t);
-	 }
+    {
+      Fr* f = p.get();
+      To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
+      return MaybeRef<To>(&t);
+    }
   return MaybeRef<To>(p.id());
 }
 
@@ -281,7 +319,7 @@ MaybeRef<To> dynamicCast(MaybeRef<Fr> p)
 template <class T>
 template <class U>
 inline Util::Ref<T>::Ref(const MaybeRef<U>& other) :
-  itsHandle(other.get())
+  PrivPtrHandle<T>(other.get())
 {}
 
 static const char vcid_ref_h[] = "$Header$";
