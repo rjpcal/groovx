@@ -41,7 +41,6 @@
 #include "nub/ref.h"
 
 #include "util/arrays.h"
-#include "util/ioerror.h"
 #include "util/fstring.h"
 #include "util/gzstreambuf.h"
 #include "util/value.h"
