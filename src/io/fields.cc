@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Nov 13 20:37:12 2000
+// written: Tue Nov 14 12:47:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,14 @@ template <class T>
 TField<T>::~TField() {}
 
 template <class T>
+void TField<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
+{ reader->readValueObj(name, itsVal); }
+
+template <class T>
+void TField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) const
+{ writer->writeValueObj(name.c_str(), itsVal); }
+
+template <class T>
 const Value& TField<T>::value() const { return itsVal; }
 
 template <class T>
@@ -53,6 +61,43 @@ template class TField<bool>;
 template class TField<double>;
 
 template <class T>
+TBoundedField<T>::TBoundedField(FieldContainer* owner, const T& val,
+										  const T& min, const T& max) :
+	 Field(owner),
+	 itsVal(val),
+	 itsMin(min),
+	 itsMax(max)
+{}
+
+template <class T>
+TBoundedField<T>::~TBoundedField() {}
+
+template <class T>
+void TBoundedField<T>::readValueFrom(IO::Reader* reader,
+												 const fixed_string& name)
+{ reader->readValueObj(name, itsVal); }
+
+template <class T>
+void TBoundedField<T>::writeValueTo(IO::Writer* writer,
+												const fixed_string& name) const
+{ writer->writeValueObj(name.c_str(), itsVal); }
+
+template <class T>
+const Value& TBoundedField<T>::value() const
+{ return itsVal; }
+
+template <class T>
+void TBoundedField<T>::doSetValue(const Value& new_val) {
+  T temp; new_val.get(temp);
+  if (temp >= itsMin && temp <= itsMax)
+	 itsVal.itsVal = temp;
+}
+
+template class TBoundedField<int>;
+template class TBoundedField<bool>;
+template class TBoundedField<double>;
+
+template <class T>
 TPtrField<T>::TPtrField(FieldContainer* owner, T& valRef) :
   Field(owner),
   itsVal(valRef)
@@ -60,6 +105,14 @@ TPtrField<T>::TPtrField(FieldContainer* owner, T& valRef) :
 
 template <class T>
 TPtrField<T>::~TPtrField() {}
+
+template <class T>
+void TPtrField<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
+{ reader->readValueObj(name, itsVal); }
+
+template <class T>
+void TPtrField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) const
+{ writer->writeValueObj(name.c_str(), itsVal); }
 
 template <class T>
 void TPtrField<T>::doSetValue(const Value& new_val)
@@ -191,8 +244,7 @@ DOTRACE("FieldContainer::readFieldsFrom");
 		 itr != end;
 		 ++itr)
 	 {
-		reader->readValueObj(itr->name(),
-									const_cast<Value&>(field(*itr).value()));
+		field(*itr).readValueFrom(reader, itr->name());
 	 }
 
   sendStateChangeMsg();
@@ -206,7 +258,7 @@ DOTRACE("FieldContainer::writeFieldsTo");
 		 itr != end;
 		 ++itr)
 	 {
-		writer->writeValueObj(itr->name().c_str(), field(*itr).value());
+		field(*itr).writeValueTo(writer, itr->name());
 	 }
 }
 

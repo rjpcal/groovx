@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Nov 14 08:06:38 2000
+// written: Tue Nov 14 12:52:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,6 +125,9 @@ public:
   Field(FieldContainer* owner);
   virtual ~Field();
 
+  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name) = 0;
+  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const = 0;
+
   virtual const Value& value() const = 0;
   void setValue(const Value& new_val);
 };
@@ -142,18 +145,23 @@ class TField : public Field {
 protected:
   virtual void doSetValue(const Value& new_val);
 
+  TField(const TField&);		  // not implemented
+  TField& operator=(const TField&);	// not implemented
+
 public:
   TField(FieldContainer* owner, const T& val = T());
   virtual ~TField();
 
+  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
+  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
+
   virtual const Value& value() const;
 
   void setNative(T new_val) { itsVal.itsVal = new_val; }
-  T getNative() const { return itsVal.itsVal; }  
 
-  T& operator()() { return itsVal.itsVal; }
   const T& operator()() const { return itsVal.itsVal; }
 
+private:
   TValue<T> itsVal;
 };
 
@@ -165,24 +173,31 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-template <class T, int min, int max, int div>
-class TBoundedField : public TField<T> {
+template <class T>
+class TBoundedField : public Field {
 protected:
-  virtual void doSetValue(const Value& new_val)
-	 {
-		T temp; new_val.get(temp);
-		setNative(temp);
-	 }
+  virtual void doSetValue(const Value& new_val);
+
+  TBoundedField(const TBoundedField&); // not implemented
+  TBoundedField& operator=(const TBoundedField&); // not implemented
 
 public:
-  TBoundedField(FieldContainer* owner, const T& val = T()) :
-	 TField<T>(owner, val) {}
+  TBoundedField(FieldContainer* owner, const T& val,
+					 const T& min, const T& max);
 
-  void setNative(T new_val)
-	 {
-		if (new_val >= min/T(div) && new_val <= max/T(div))
-		  TField<T>::itsVal.itsVal = new_val;
-	 }
+  virtual ~TBoundedField();
+
+  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
+  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
+
+  virtual const Value& value() const;
+
+  const T& operator()() const { return itsVal.itsVal; }
+
+private:
+  TValue<T> itsVal;
+  const T itsMin;
+  const T itsMax;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -198,22 +213,20 @@ class TPtrField : public Field {
 protected:
   virtual void doSetValue(const Value& new_val);
 
+  TPtrField(const TPtrField&);  // not implemented
+  TPtrField& operator=(const TPtrField&);	// not implemented
+
 public:
   TPtrField(FieldContainer* owner, T& valRef);
   virtual ~TPtrField();
+
+  virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
+  virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
 
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
   virtual const Value& value() const;
 
-  ///
-  void setNative(T new_val) { itsVal() = new_val; }
-  ///
-  T getNative() const { return itsVal(); }
-
-  ///
-  T& operator()() { return itsVal(); }
-  ///
   const T& operator()() const { return itsVal(); }
 
 private:
