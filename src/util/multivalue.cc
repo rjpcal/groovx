@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:58:56 2001
-// written: Wed Aug 22 17:04:46 2001
+// written: Wed Aug 22 17:36:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,7 @@ const char* TMultiValue<T>::get(Util::TypeCue<const char*>) const
   static char buf[256];
   ostrstream ost(buf, 256);
   printTo(ost);
+  ost << '\0';
   return buf;
 }
 
