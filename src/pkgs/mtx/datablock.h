@@ -147,13 +147,6 @@ public:
   /// Generic construction from a data_block.
   data_holder(data_block* d);
 
-//   /// Construct from a matlab array and a storage policy.
-//   data_holder(mxArray* a, storage_policy s);
-
-//   /** With a const mxArray*, only BORROW or COPY are allowed as
-//       storage policies, in order to preserve const-correctness. */
-//   data_holder(const mxArray* a, storage_policy s);
-
   /// Copy constructor.
   data_holder(const data_holder& other);
 
