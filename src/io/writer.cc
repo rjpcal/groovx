@@ -64,7 +64,15 @@ void IO::Writer::writeValue<int>(const char* name, const int& val)
 }
 
 template<>
-void IO::Writer::writeValue<size_t>(const char* name, const size_t& val)
+void IO::Writer::writeValue<unsigned int>(const char* name,
+					  const unsigned int& val)
+{
+  writeInt(name, val);
+}
+
+template<>
+void IO::Writer::writeValue<unsigned long>(const char* name,
+					   const unsigned long& val)
 {
   writeInt(name, val);
 }

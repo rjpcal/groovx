@@ -66,8 +66,15 @@ void IO::Reader::readValue<int>(const fstring& name, int& return_value)
 }
 
 template <>
-void IO::Reader::readValue<size_t>(const fstring& name,
-                                   size_t& return_value)
+void IO::Reader::readValue<unsigned int>(const fstring& name,
+					 unsigned int& return_value)
+{
+  return_value = readInt(name);
+}
+
+template <>
+void IO::Reader::readValue<unsigned long>(const fstring& name,
+					  unsigned long& return_value)
 {
   return_value = readInt(name);
 }
