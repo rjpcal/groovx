@@ -83,7 +83,7 @@ DOTRACE("DummySound::readFrom");
 
   DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
 
-  if (!itsFilename.empty())
+  if (!itsFilename.is_empty())
     setFile(itsFilename.c_str());
 }
 
