@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 14:10:48 2000
+// written: Wed May 24 14:28:16 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -24,7 +24,9 @@
 #ifndef TOGL_CC_DEFINED
 #define TOGL_CC_DEFINED
 
-#include "togl.h"
+#include "togl/togl.h"
+
+#include "tcl/tclpkg.h"
 
 #include <iostream.h>
 
@@ -189,8 +191,6 @@ public:
 /*
  * Prototypes for functions local to this file
  */
-static int Togl_Cmd(ClientData clientData, Tcl_Interp *interp,
-                    int argc, char **argv);
 static void Togl_EventProc(ClientData clientData, XEvent *eventPtr);
 #ifdef MESA_COLOR_HACK
 static int get_free_color_cells( Display *display, int screen,
@@ -464,30 +464,6 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
   return XCreateColormap( dpy, root, visinfo->visual, AllocNone );
 }
 
-
-
-/*
- * Togl_Init
- *
- *   Called upon system startup to create Togl command.
- */
-int Togl_Init(Tcl_Interp *interp)
-{
-DOTRACE("<togl.cc>::Togl_Init");
-  /* The following allows Togl to be loaded dynamically into a running
-	* tclsh, if togl is made into a shared lib.  Contributed by Kerel
-	* Zuiderveld (karel.zuiderveld@cv.ruu.nl)
-	*/
-  if (Tcl_PkgProvide(interp, "Togl", TOGL_VERSION) != TCL_OK) {
-	 return TCL_ERROR;
-  }
-
-  Tcl_CreateCommand(interp, "togl", Togl_Cmd,
-						  (ClientData) Tk_MainWindow(interp), NULL);
-  Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
-
-  return TCL_OK;
-}
 
 
 /*
@@ -770,41 +746,6 @@ DOTRACE("<togl.cc>::Togl_Widget");
 }
 
 
-
-/*
- * Togl_Cmd
- *
- *   Called when Togl is executed - creation of a Togl widget.
- *     * Creates a new window
- *     * Creates an 'Togl' data structure
- *     * Creates an event handler for this window
- *     * Creates a command that handles this object
- *     * Configures this Togl for the given arguments
- */
-static int Togl_Cmd(ClientData clientData, Tcl_Interp *interp,
-                    int argc, char **argv)
-{
-DOTRACE("<togl.cc>::Togl_Cmd");
-  if (argc <= 1) {
-	 return TCL_ERR(interp,
-						 "wrong # args: should be \"pathName read filename\"");
-  }
-
-  Tk_Window mainwin = (Tk_Window)clientData;
-
-  /* Create Togl data structure */
-  try {
-	 new Togl(interp, mainwin, argc, argv);
-  }
-  catch (...) {
-	 return TCL_ERROR;
-  }
-
-  return TCL_OK;
-}
-
-
-
 /*
  * Do all the setup for overlay planes
  * Return:   TCL_OK or TCL_ERROR
@@ -871,12 +812,13 @@ DOTRACE("<togl.cc>::SetupOverlay");
 
   swa.border_pixel = 0;
   swa.event_mask = ALL_EVENTS_MASK;
-  togl->itsOverlayWindow = XCreateWindow( dpy, Tk_WindowId(togl->itsTkWin), 0, 0,
-													togl->itsWidth, togl->itsHeight, 0,
-													visinfo->depth, InputOutput,
-													visinfo->visual,
-													CWBorderPixel|CWColormap|CWEventMask,
-													&swa );
+  togl->itsOverlayWindow = XCreateWindow( dpy, Tk_WindowId(togl->itsTkWin),
+														0, 0,
+														togl->itsWidth, togl->itsHeight, 0,
+														visinfo->depth, InputOutput,
+														visinfo->visual,
+														CWBorderPixel|CWColormap|CWEventMask,
+														&swa );
 
   int new_flag;
   Tcl_HashEntry* hPtr = Tcl_CreateHashEntry( &winPtr->dispPtr->winTable,
@@ -2081,6 +2023,12 @@ DOTRACE("<togl.cc>::Togl_StereoFrustum");
 //
 ///////////////////////////////////////////////////////////////////////
 
+//     * Creates a new window
+//     * Creates an 'Togl' data structure
+//     * Creates an event handler for this window
+//     * Creates a command that handles this object
+//     * Configures this Togl for the given arguments
+
 Togl::Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv) :
   itsNext(NULL),
   itsGLXContext(NULL),
@@ -2694,6 +2642,61 @@ DOTRACE("Togl::freeEpsMaps");
   if (itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
   itsEpsRedMap = itsEpsGreenMap = itsEpsBlueMap = NULL;
   itsEpsMapSize = 0;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Togl Tcl package
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace ToglTcl {
+  int ToglCmd(ClientData clientData, Tcl_Interp *interp,
+				  int argc, char **argv);
+
+  class ToglPkg;
+}
+
+int ToglTcl::ToglCmd(ClientData clientData, Tcl_Interp *interp,
+							int argc, char **argv)
+{
+DOTRACE("ToglTcl::ToglCmd");
+  if (argc <= 1) {
+	 return TCL_ERR(interp,
+						 "wrong # args: should be \"pathName read filename\"");
+  }
+
+  Tk_Window mainwin = (Tk_Window)clientData;
+
+  /* Create Togl data structure */
+  try {
+	 new Togl(interp, mainwin, argc, argv);
+  }
+  catch (...) {
+	 return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+class ToglTcl::ToglPkg : public Tcl::TclPkg {
+public:
+  ToglPkg(Tcl_Interp* interp) :
+	 TclPkg(interp, "Togl", TOGL_VERSION)
+	 {
+		Tcl_CreateCommand(interp, "togl", ToglTcl::ToglCmd,
+								(ClientData) Tk_MainWindow(interp), NULL);
+		Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
+	 }
+};
+
+extern "C" int Togl_Init(Tcl_Interp *interp)
+{
+DOTRACE("Togl_Init");
+
+  new ToglTcl::ToglPkg(interp);
+
+  return TCL_OK;
 }
 
 static const char vcid_togl_cc[] = "$Header$";
