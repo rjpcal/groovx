@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon May 15 18:56:22 2000
+// written: Tue May 16 00:13:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -420,13 +420,20 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   // destruction will delete all commands associated with it.
 
   if ( !Tcl_InterpDeleted(itsInterp) ) {
-	 if (itsWidget != 0)
-		ignore();
+	 try
+		{
+		  if (itsWidget != 0)
+			 ignore();
 
-	 DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
+		  DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
-	 DebugEvalNL((void*) itsTclCmdToken);
-	 Tcl_DeleteCommandFromToken(itsInterp, itsTclCmdToken);
+		  DebugEvalNL((void*) itsTclCmdToken);
+		  Tcl_DeleteCommandFromToken(itsInterp, itsTclCmdToken);
+		}
+	 catch (ErrorWithMsg& err)
+		{ DebugEvalNL(err.msg_cstr()); }
+	 catch (...)
+		{ DebugPrintNL("an unknown error occurred"); }
   }
 }
 
