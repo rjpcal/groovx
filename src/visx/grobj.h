@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 17 10:35:14 2001
+// written: Tue Aug 21 11:33:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
       values. Subclasses of GrObj should override grGetBoundingBox(),
       not boundingBox(). */
   virtual void getBoundingBox(Gfx::Rect<double>& bbox,
-										Gfx::Canvas& canvas) const;
+                              Gfx::Canvas& canvas) const;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
@@ -216,7 +216,7 @@ public:
       are not met, in which case the scaling mode is unchanged. */
   void setUnRenderMode(Gmodes::RenderMode mode);
 
-  virtual void receiveStateChangeMsg(const Util::Observable* obj);
+  virtual void receiveStateChangeMsg();
 
 
   ///////////////////////////////////////////////////////////////////////

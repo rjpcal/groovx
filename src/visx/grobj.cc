@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Sat Aug 18 08:12:55 2001
+// written: Tue Aug 21 11:32:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -311,19 +311,10 @@ void GrObj::setUnRenderMode(Gmodes::RenderMode)
 DOTRACE("GrObj::setUnRenderMode");
 }
 
-void GrObj::receiveStateChangeMsg(const Util::Observable* obj)
+void GrObj::receiveStateChangeMsg()
 {
 DOTRACE("GrObj::receiveStateChangeMsg");
-  DebugEval((void*)this);
-  DebugEval((void*)dynamic_cast<GrObj*>(this));
-  DebugEval((void*)dynamic_cast<Util::Observer*>(this));
-  DebugEval((void*)dynamic_cast<Util::Observable*>(this));
-  DebugEvalNL((void*)obj);
-  if (obj == this)
-    {
-      DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
-      itsImpl->invalidateCaches();
-    }
+  itsImpl->invalidateCaches();
 }
 
 

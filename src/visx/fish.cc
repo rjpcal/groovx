@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Aug 18 08:12:38 2001
+// written: Tue Aug 21 11:32:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -299,14 +299,14 @@ DOTRACE("Fish::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void Fish::receiveStateChangeMsg(const Util::Observable* obj)
+void Fish::receiveStateChangeMsg()
 {
 DOTRACE("Fish::receiveStateChangeMsg");
 
   itsEndPt_Part = &(itsEndPts[itsCurrentEndPt].itsPart);
   itsEndPt_Bkpt = &(itsEndPts[itsCurrentEndPt].itsBkpt);
 
-  GrObj::receiveStateChangeMsg(obj);
+  GrObj::receiveStateChangeMsg();
 }
 
 void Fish::readSplineFile(const char* splinefile)

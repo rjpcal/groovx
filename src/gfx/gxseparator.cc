@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri Aug 17 16:38:08 2001
+// written: Tue Aug 21 11:33:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public:
         }
     }
 
-  virtual void receiveStateChangeMsg(const Observable*)
+  virtual void receiveStateChangeMsg()
   {
     DOTRACE("GxSeparator::Impl::receiveStateChangeMsg");
     itsOwner->sendStateChangeMsg();

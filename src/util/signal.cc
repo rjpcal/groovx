@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Mon Aug 13 16:39:13 2001
+// written: Tue Aug 21 11:33:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ DOTRACE("Util::Observable::sendStateChangeMsg");
     {
       DebugPrintNL("sending state change...");
       if ((*ii).isValid())
-        (*ii)->receiveStateChangeMsg(this);
+        (*ii)->receiveStateChangeMsg();
     }
 }
 

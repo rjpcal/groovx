@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:37:02 1999
-// written: Mon Aug 13 16:42:14 2001
+// written: Tue Aug 21 11:32:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 
 namespace Util
 {
-  class Observable;
   class Observer;
 }
 
@@ -31,17 +30,16 @@ namespace Util
  * attach() on that Observable. Thereafter, the Observer will receive
  * notifications of changes in the Observable via receiveStateChangeMsg().
  *
- * @short Along with Observable, implements the Observer design pattern.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class Util::Observer : public virtual Util::Object {
 public:
-  ///
+  /// Virtual destructor.
   virtual ~Observer();
 
   /// Informs the Observer that one of its subjects has changed.
-  virtual void receiveStateChangeMsg(const Observable* obj) = 0;
+  virtual void receiveStateChangeMsg() = 0;
 };
 
 static const char vcid_observer_h[] = "$Header$";
