@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Jan 30 10:18:48 2002
+// written: Wed Jan 30 11:31:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,9 +86,6 @@ public:
   /// Default creator.
   static EventResponseHdlr* make();
 
-  /// Construct with an initial input_response_map.
-  EventResponseHdlr(const char* input_response_map);
-
   /// Virtual destructor.
   virtual ~EventResponseHdlr();
 
@@ -99,9 +96,6 @@ public:
   ////////////////////////////
   // manipulators/accessors //
   ////////////////////////////
-
-  /// Returns the current input response map.
-  const fstring& getInputResponseMap() const;
 
   /// Use \a responseMap as the current input response map.
   void setInputResponseMap(const fstring& responseMap);
