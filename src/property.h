@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Thu Sep 30 11:09:26 1999
+// written: Sat Oct  2 21:17:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,6 +124,49 @@ template <class C, class T, int min, int max, int div>
 class CTBoundedProperty : public TBoundedProperty<T, min, max, div> { 
 public:
   CTBoundedProperty(T init = T()) : TBoundedProperty<T, min, max, div>(init) {}
+  friend class C;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// TPtrProperty template concrete class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class TPtrProperty : public Property, public virtual IO {
+public:
+  TPtrProperty(T& valRef) : itsVal(valRef) {}
+
+  template <class C> friend class PropFriend;
+
+protected:
+  virtual void serialize(ostream& os, IOFlag) const 
+	 { os << itsVal() << ' '; }
+  virtual void deserialize(istream& is, IOFlag)
+	 { is >> itsVal(); }
+
+  virtual int charCount() const
+	 { return gCharCount<T>(itsVal()); }
+
+
+  virtual void set(const Value& new_val) { new_val.get(itsVal()); }
+  virtual const Value& get() const { return itsVal; }
+
+  virtual void setNative(T new_val) { itsVal() = new_val; }
+  virtual T getNative() const { return itsVal(); }
+
+  T& operator()() { return itsVal(); }
+  const T& operator()() const { return itsVal(); }
+
+private:
+  TValuePtr<T> itsVal;
+};
+
+template <class C, class T>
+class CTPtrProperty : public TPtrProperty<T> {
+public:
+  CTPtrProperty(T& valRef) : TPtrProperty<T>(valRef) {}
   friend class C;
 };
 
