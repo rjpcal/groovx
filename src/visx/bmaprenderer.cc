@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 16:55:36 1999
-// written: Thu May 10 12:04:49 2001
+// written: Wed Aug  8 11:14:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,13 +20,6 @@
 BmapRenderer::~BmapRenderer()
 {
 DOTRACE("BmapRenderer::~BmapRenderer");
-}
-
-void BmapRenderer::doUndraw(GWT::Canvas& /*canvas*/,
-					  int /*winRasterX*/, int /*winRasterY*/,
-					  int /*winWidthX*/, int /*winHeightY*/) const
-{
-DOTRACE("BmapRenderer::doUndraw");
 }
 
 void BmapRenderer::notifyBytesChanged() const

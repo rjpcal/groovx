@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Aug  8 08:07:38 2001
+// written: Wed Aug  8 11:15:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,19 +145,6 @@ DOTRACE("XBmapRenderer::doRender");
             0, 0, screen_pos.x(), screen_pos.y(),
             data.width(), data.height());
   glXWaitX();
-}
-
-void XBmapRenderer::doUndraw(GWT::Canvas& /* canvas */,
-                             int winRasterX, int winRasterY,
-                             int winWidthX, int winHeightY) const
-{
-DOTRACE("XBmapRenderer::doUndraw");
-  glPushAttrib(GL_SCISSOR_BIT);
-    glEnable(GL_SCISSOR_TEST);
-      glScissor(winRasterX, winRasterY, winWidthX, winHeightY);
-      glClear(GL_COLOR_BUFFER_BIT);
-    glDisable(GL_SCISSOR_TEST);
-  glPopAttrib();
 }
 
 void XBmapRenderer::notifyBytesChanged() const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Mon Jun 11 15:08:16 2001
+// written: Wed Aug  8 10:37:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
 #endif
+
+template <class V> class Point;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -45,12 +47,12 @@ public:
   /// Nested class in allows \c BmapData objects to be updated lazily.
   class UpdateFunc {
   public:
-	 /// Virtual destructor ensures correct destruction of subclasses.
-	 virtual ~UpdateFunc();
+    /// Virtual destructor ensures correct destruction of subclasses.
+    virtual ~UpdateFunc();
 
-	 /** To be overridden by subclasses to provide a way to update the
+    /** To be overridden by subclasses to provide a way to update the
         \c BmapData. */
-	 virtual void update(BmapData& update_me) = 0;
+    virtual void update(BmapData& update_me) = 0;
   };
 
   //---------------------------------------------------------------------
@@ -63,7 +65,7 @@ public:
   BmapData();
 
   /// Construct with the given image data specifications.
-  BmapData(int width, int height, int bits_per_pixel, int byte_alignment);
+  BmapData(const Point<int>& extent, int bits_per_pixel, int byte_alignment);
 
   /// Destructor frees Impl*.
   ~BmapData();
@@ -88,6 +90,9 @@ public:
 
   /// Returns the bitmap's height in pixels.
   int height() const;
+
+  /// Returns the bitmap's extent (x-width, y-height) in pixels.
+  Point<int> extent() const;
 
   /// Returns the number of bits used per pixel in the bitmap.
   int bitsPerPixel() const;
@@ -125,7 +130,7 @@ public:
 
   /// Swaps the internal representation with the given arguments.
   void swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
-				int& bits_per_pixel, int& byte_alignment);
+            int& bits_per_pixel, int& byte_alignment);
 
   /** Queues the update given by \a updater. The \c update() function
       will be called only when the bitmap data must be accessed. */

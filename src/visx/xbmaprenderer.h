@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Wed Aug  8 08:08:09 2001
+// written: Wed Aug  8 11:15:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,10 +48,6 @@ public:
                         const BmapData& data,
                         const Point<double>& world_pos,
                         const Point<double>& zoom) const;
-
-  virtual void doUndraw(GWT::Canvas& canvas,
-                        int winRasterX, int winRasterY,
-                        int winWidthX, int winHeightY) const;
 
   /** Reimplemented from \c BmapRenderer to keep the \c XImage
       up-to-date when the bitmap data change. */
