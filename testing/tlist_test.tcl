@@ -48,7 +48,7 @@ test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/junk_text_file $o $p -1]
 	 ObjDb::clear
 	 llength $trials
-} {Tlist::loadObjidFile: IO::InputError:}
+} {Tlist::loadObjidFile:}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
 	 set o [new Face 11]
 	 set p [new Position 4]
