@@ -9,7 +9,6 @@
 
 package require Pos
 package require Jitter
-package require Poslist
 
 set ::POS [IO::new Position]
 
