@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Nov 10 17:23:55 2000
+// written: Mon Nov 13 21:10:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "cloneface.h"
 #include "face.h"
 
-#include "tcl/propitempkg.h"
+#include "tcl/fieldpkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -26,7 +26,7 @@ int Face_Init(Tcl_Interp* interp) {
 DOTRACE("Face_Init");
 
   Tcl::TclPkg* pkg =
-	 new Tcl::PropItemPkg<Face>(interp, "Face", "$Revision$"); 
+	 new Tcl::FieldCntrPkg<Face>(interp, "Face", "$Revision$"); 
 
   IO::IoFactory::theOne().registerCreatorFunc(&CloneFace::make);
 
