@@ -302,7 +302,6 @@ APPWORKS_OBJS := \
 	$(OBJ)/application.do \
 	$(OBJ)/factory.do \
 	$(OBJ)/ioptrlist.do \
-	$(OBJ)/masterptr.do \
 	$(OBJ)/ptrlistbase.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
@@ -324,6 +323,8 @@ APPWORKS_OBJS := \
 	$(OBJ)/util/errorhandler.do \
 	$(OBJ)/util/observable.do \
 	$(OBJ)/util/observer.do \
+	$(OBJ)/util/ptrhandle.do \
+	$(OBJ)/util/refcounted.do \
 	$(OBJ)/util/serialport.do \
 	$(OBJ)/util/strings.do \
 	$(OBJ)/util/trace.do \
