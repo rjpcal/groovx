@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri Nov 10 17:03:49 2000
+// written: Tue Nov 14 13:14:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,49 @@ namespace Tcl {
 
 namespace Tcl {
 
+class ListIteratorBase {
+public:
+  typedef int difference_type;
+
+  enum Pos { BEGIN, END };
+
+  ListIteratorBase(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN);
+  ListIteratorBase(const ListIteratorBase& other);
+  ~ListIteratorBase();
+
+  ListIteratorBase& operator=(const ListIteratorBase& other);
+
+  ListIteratorBase& operator++()
+	 { ++itsIndex; return *this; }
+
+  ListIteratorBase operator++(int)
+	 { ListIteratorBase temp(*this); ++itsIndex; return temp; }
+
+  difference_type operator-(const ListIteratorBase& other) const
+	 {
+		if (this->itsIndex > other.itsIndex)
+		  return int(this->itsIndex - other.itsIndex);
+		else
+		  return -(int(other.itsIndex - this->itsIndex));
+	 }
+
+  bool operator==(const ListIteratorBase& other) const
+	 { return (itsIndex == other.itsIndex && itsList == other.itsList); }
+
+  bool operator!=(const ListIteratorBase& other) const
+	 { return (itsIndex != other.itsIndex || itsList != other.itsList); }
+
+private:
+  void swap(ListIteratorBase& other);
+
+protected:
+  Tcl_Interp* itsInterp;
+  Tcl_Obj* itsList;
+  Tcl_Obj** itsListElements;
+  unsigned int itsElementCount;
+  unsigned int itsIndex;
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -47,49 +90,14 @@ namespace Tcl {
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class ListIterator {
+class ListIterator : public ListIteratorBase {
 public:
+  ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN) :
+	 ListIteratorBase(interp, aList, pos) {}
+
   typedef T value_type;
-  typedef int difference_type;
-
-  enum Pos { BEGIN, END };
-
-  ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN);
-  ListIterator(const ListIterator& other);
-  ~ListIterator();
-
-  ListIterator& operator=(const ListIterator& other);
 
   T operator*() const;
-
-  ListIterator& operator++()
-	 { ++itsIndex; return *this; }
-
-  ListIterator operator++(int)
-	 { ListIterator temp(*this); ++itsIndex; return temp; }
-
-  difference_type operator-(const ListIterator& other) const
-	 {
-		if (this->itsIndex > other.itsIndex)
-		  return int(this->itsIndex - other.itsIndex);
-		else
-		  return -(int(other.itsIndex - this->itsIndex));
-	 }
-
-  bool operator==(const ListIterator& other) const
-	 { return (itsIndex == other.itsIndex && itsList == other.itsList); }
-
-  bool operator!=(const ListIterator& other) const
-	 { return (itsIndex != other.itsIndex || itsList != other.itsList); }
-
-private:
-  void swap(ListIterator& other);
-
-  Tcl_Interp* itsInterp;
-  Tcl_Obj* itsList;
-  Tcl_Obj** itsListElements;
-  unsigned int itsElementCount;
-  unsigned int itsIndex;
 };
 
 } // end namespace Tcl
@@ -399,6 +407,7 @@ protected:
   Tcl_Interp* interp() { return itsInterp; }
 
 private:
+  friend class ListIteratorBase;
   template <class T> friend class ListIterator;
 
   /// The procedure that is actually registered with the Tcl C API.

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Nov 10 17:03:56 2000
+// written: Tue Nov 14 13:13:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -502,15 +502,15 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 ///////////////////////////////////////////////////////////////////////
 
 
-template <class T>
-Tcl::ListIterator<T>::ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos) :
+Tcl::ListIteratorBase::ListIteratorBase(Tcl_Interp* interp,
+													 Tcl_Obj* aList, Pos pos) :
   itsInterp(interp),
   itsList(aList),
   itsListElements(0),
   itsElementCount(0),
   itsIndex(0)
 {
-DOTRACE("Tcl::ListIterator::ListIterator");
+DOTRACE("Tcl::ListIteratorBase::ListIteratorBase");
   if (itsList == 0)
 	 throw TclError("attempted to construct ListIterator with null Tcl_Obj*");
 
@@ -525,33 +525,50 @@ DOTRACE("Tcl::ListIterator::ListIterator");
 	 itsIndex = itsElementCount;
 }
 
-template <class T>
-Tcl::ListIterator<T>::ListIterator(const ListIterator& other) :
+Tcl::ListIteratorBase::ListIteratorBase(const ListIteratorBase& other) :
   itsInterp(other.itsInterp),
   itsList(other.itsList),
   itsListElements(other.itsListElements),
   itsElementCount(other.itsElementCount),
   itsIndex(other.itsIndex)
 {
-DOTRACE("Tcl::ListIterator::ListIterator(copy ctor)");
+DOTRACE("Tcl::ListIteratorBase::ListIteratorBase(copy ctor)");
   Tcl_IncrRefCount(itsList);
 }
 
-template <class T>
-Tcl::ListIterator<T>::~ListIterator()
+Tcl::ListIteratorBase::~ListIteratorBase()
 {
-DOTRACE("Tcl::ListIterator::~ListIterator");
+DOTRACE("Tcl::ListIteratorBase::~ListIteratorBase");
   Tcl_DecrRefCount(itsList);
 }
 
-
-template <class T>
-Tcl::ListIterator<T>& Tcl::ListIterator<T>::operator=(const ListIterator& other)
+Tcl::ListIteratorBase& Tcl::ListIteratorBase::operator=(
+  const ListIteratorBase& other)
 {
 DOTRACE("Tcl::ListIterator::operator=");
-  ListIterator other_copy(other);
+  ListIteratorBase other_copy(other);
   this->swap(other_copy);
   return *this;
+}
+
+namespace {
+  template <class T>
+	 inline void local_swap(T& a, T& b)
+	 {
+		T b_copy = b;
+		b = a;
+		a = b_copy;
+	 }
+}
+
+void Tcl::ListIteratorBase::swap(ListIteratorBase& other)
+{
+DOTRACE("Tcl::ListIteratorBase::swap");
+  local_swap(itsInterp, other.itsInterp);
+  local_swap(itsList, other.itsList);
+  local_swap(itsListElements, other.itsListElements);
+  local_swap(itsElementCount, other.itsElementCount);
+  local_swap(itsIndex, other.itsIndex);
 }
 
 template <class T>
@@ -565,27 +582,6 @@ DOTRACE("Tcl::ListIterator::operator*");
   DebugEvalNL(itsListElements[itsIndex]);
 
   return TclCmd::getValFromObj(itsInterp, itsListElements[itsIndex], (T*)0);
-}
-
-namespace {
-  template <class T>
-	 inline void local_swap(T& a, T& b)
-	 {
-		T b_copy = b;
-		b = a;
-		a = b_copy;
-	 }
-}
-
-template <class T>
-void Tcl::ListIterator<T>::swap(ListIterator<T>& other)
-{
-DOTRACE("Tcl::ListIterator::swap");
-  local_swap(itsInterp, other.itsInterp);
-  local_swap(itsList, other.itsList);
-  local_swap(itsListElements, other.itsListElements);
-  local_swap(itsElementCount, other.itsElementCount);
-  local_swap(itsIndex, other.itsIndex);
 }
 
 // Explicit instantiation requests
