@@ -159,7 +159,7 @@ ifeq ($(COMPILER),aCC)
 endif
 
 ifeq ($(COMPILER),MIPSpro)
-	CC := time /opt/MIPSpro/bin/CC
+	CC := time /opt/MIPSpro/bin/CC -mips3
 	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
 		-e '/static const char vcid_/,/^ *\^$$/d'
 	CC_SWITCHES += -n32 -ptused -no_prelink \
