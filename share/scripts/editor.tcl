@@ -41,6 +41,7 @@ itcl::class FieldControls {
 	 private variable isItMulti
 	 private variable isItGettable
 	 private variable isItSettable
+	 private variable isItBoolean
 	 private variable itsFrame
 	 private variable itsControls
 	 private variable itsMultiControls
@@ -48,12 +49,19 @@ itcl::class FieldControls {
 
 	 private method setControl {fname val} {
 		  set control $itsControls($fname)
+
 		  if { $isItString($fname) } {
 				$control delete 0 end
 				$control insert 0 $val
 		  } elseif { $isItMulti($fname) } {
 				foreach ctrl $itsMultiControls($fname) v $val {
 					 $ctrl set $v
+				}
+		  } elseif { $isItBoolean($fname) } {
+				if { $val } {
+					 $control select $fname
+				} else {
+					 $control deselect $fname
 				}
 		  } else {
 				$control set $val
@@ -63,13 +71,14 @@ itcl::class FieldControls {
 
 	 private method onControl {callback fname {val {}}} {
 		  if { $isItString($fname) } {
-				set control $itsControls($fname)
-				set val [$control get]
+				set val [$itsControls($fname) get]
 		  } elseif { $isItMulti($fname) } {
 				set val [list]
 				foreach ctrl $itsMultiControls($fname) {
 					 lappend val [$ctrl get]
 				}
+		  } elseif { $isItBoolean($fname) } {
+				set val [$itsControls($fname) get $fname]
 		  }
 		  $callback $fname $val
 	 }
@@ -117,10 +126,12 @@ itcl::class FieldControls {
 				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
 				set isItGettable($fname) [expr [lsearch $flags NO_GET] == -1]
 				set isItSettable($fname) [expr [lsearch $flags NO_SET] == -1]
+				set isItBoolean($fname) [expr [lsearch $flags BOOLEAN] != -1]
 				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
 
 				if {$startsnewgroup} {
-					 set currentframe [frame $itsFrame.column[incr column]]
+					 set currentframe [frame $itsFrame.column$column]
+					 incr column
 					 pack $currentframe -side left -fill y -expand yes
 				}
 
@@ -160,6 +171,15 @@ itcl::class FieldControls {
 						  lappend itsMultiControls($fname) $path
 					 }
 					 set itsControls($fname) $pane.$fname
+				} elseif { $isItBoolean($fname) } {
+
+					 set itsControls($fname) [iwidgets::checkbox $pane.$fname \
+								-borderwidth 0]
+
+					 $pane.$fname add $fname -text $fname \
+								-command [itcl::code $this onControl $setCallback $fname]
+
+					 $pane.$fname configure -foreground brown
 				} else {
 
 					 buildScale $pane.$fname $fname $lower $upper $step \
