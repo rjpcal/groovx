@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sat Sep 23 15:32:24 2000
+// written: Mon Oct  9 19:23:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <fstream.h>
 #include <iostream.h>
 #include <iomanip.h>
+#include <vector>
 
 int MAX_TRACE_LEVEL = 6;
 
@@ -45,6 +46,7 @@ namespace {
 	 }
   }
 
+  std::vector<Util::Prof*> callStack;
 }
 
 Util::Prof::~Prof() {
@@ -60,12 +62,48 @@ Util::Prof::~Prof() {
   }
 }
 
+void Util::Trace::printStackTrace(ostream& os) {
+  os << "stack trace:\n";
+  for (int i = 0; i < callStack.size(); ++i) {
+	 os << '\t' << i << ' ' << callStack[i]->name() << '\n';
+  }
+  os << flush;
+}
+
 void Util::Trace::setMode(Mode new_mode) {
   TRACE_MODE = new_mode;
 }
 
 Util::Trace::Mode Util::Trace::getMode() {
   return TRACE_MODE;
+}
+
+Util::Trace::Trace(Prof& p, bool useMsg) :
+  prof(p),
+  start(), finish(), elapsed(),
+  giveTraceMsg(useMsg)
+{
+  if (giveTraceMsg)
+	 {
+		printIn();
+	 }
+
+  callStack.push_back(&p);
+
+  gettimeofday(&start, NULL);
+}
+
+Util::Trace::~Trace()
+{
+  gettimeofday(&finish, NULL);
+  elapsed.tv_sec = finish.tv_sec - start.tv_sec;
+  elapsed.tv_usec = finish.tv_usec - start.tv_usec;
+  prof.add(elapsed);
+  if (giveTraceMsg)
+	 {
+		printOut();
+	 }
+  callStack.pop_back();
 }
 
 void Util::Trace::printIn() {
