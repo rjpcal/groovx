@@ -59,7 +59,7 @@ namespace
   }
 }
 
-Tcl::ObjPtr Tcl::Dict::doPut(const char*, Tcl::ObjPtr)
+void Tcl::Dict::doPut(const char*, Tcl::ObjPtr)
 {
   noDictError();
   Assert(0);
