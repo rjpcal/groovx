@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jun 20 17:34:02 2001
+// written: Wed Jul 11 11:50:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 
 #include "gwt/widget.h"
 
+#include "tcl/convert.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclobjlock.h"
 #include "tcl/tclutil.h"
@@ -781,7 +782,7 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
     Tcl::TclObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
     Tcl::TclObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
 
-    int response_val = itsSafeIntp.getInt(response_valObj);
+    int response_val = Tcl::fromTcl<int>(response_valObj);
 
     itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
