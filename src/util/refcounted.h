@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Fri Aug 31 17:02:42 2001
+// written: Mon Sep  3 15:23:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,7 @@ public:
 protected:
   void acquireStrong();
   Count releaseStrong();
+  void releaseStrongNoDelete();
 
 public:
   Count strongCount() { return itsStrong; }
@@ -143,6 +144,11 @@ public:
       reference count to fall to zero or below, the pointee and the
       pointer will be destroyed by a call to 'delete this'. */
   void decrRefCount() const;
+
+  /** Decrement the object's reference count. Unlike decrRefCount(),
+      the object will NOT be delete'd if the reference count falls to
+      zero. */
+  void decrRefCountNoDelete() const;
 
   /// Returns true if the reference count is greater than one.
   bool isShared() const;
