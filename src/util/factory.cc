@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Thu Mar  9 16:25:07 2000
+// written: Fri Mar 10 00:41:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@ void FactoryError::throwForType(const char* type) {
 }
 
 struct CreatorMapBase::Impl {
+  Impl() : itsMap() {}
+
   map<string, void*> itsMap;
 };
 
