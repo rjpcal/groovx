@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Thu Jun  6 18:19:19 2002
+// written: Mon Sep  9 11:58:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,8 +75,7 @@ void GLCacheNode::invalidate()
 
 void GLCacheNode::setMode(Gmodes::RenderMode new_mode)
 {
-#ifdef I686
-  // display lists don't work at present with i686/linux/mesa
+#ifdef BROKEN_GL_DISPLAY_LISTS
   if (new_mode == Gmodes::GLCOMPILE) new_mode = Gmodes::DIRECT_RENDER;
 #endif
 

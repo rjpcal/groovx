@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Apr 25 09:50:41 2002
+// written: Mon Sep  9 11:58:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,8 +116,7 @@ void BitmapCacheNode::setMode(Gmodes::RenderMode new_mode)
 {
 DOTRACE("BitmapCacheNode::setMode");
 
-#ifdef I686
-  // display lists don't work at present with i686/linux/mesa
+#ifdef BROKEN_GL_DISPLAY_LISTS
   if (new_mode == Gmodes::GLCOMPILE) new_mode = Gmodes::DIRECT_RENDER;
 #endif
 
