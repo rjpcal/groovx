@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Aug 20 10:24:38 2001
+// written: Thu Aug 30 10:09:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,9 +106,9 @@ DOTRACE("Tcl::FieldsLister::operator()");
               Tcl::List sub_list;
 
               sub_list.append(field.name());           // property name
-              sub_list.append<TclValue>(field.min());  // min value
-              sub_list.append<TclValue>(field.max());  // max value
-              sub_list.append<TclValue>(field.res());  // resolution value
+              sub_list.append(field.min());            // min value
+              sub_list.append(field.max());            // max value
+              sub_list.append(field.res());            // resolution value
               sub_list.append(field.startsNewGroup()); // start new group flag
 
               itsFieldList.append(sub_list);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug 29 16:44:10 2001
+// written: Thu Aug 30 10:06:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,9 +62,12 @@ public:
   const T itsMin;
   const T itsMax;
 
-  static shared_ptr<BoundsChecker<T> > make(const T& min, const T& max)
+  static shared_ptr<BoundsChecker<T> > make(const T& min, const T& max,
+                                            bool check)
   {
-    return shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max));
+    return check ?
+      shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max)) :
+      shared_ptr<BoundsChecker<T> >(0);
   }
 
   T limit(const T& raw)
@@ -301,18 +304,39 @@ class Field
 private:
   const fstring itsName;
   shared_ptr<FieldImpl> itsFieldImpl;
-  shared_ptr<Value> itsDefaultValue;
-  shared_ptr<Value> itsMin;
-  shared_ptr<Value> itsMax;
-  shared_ptr<Value> itsRes;
+  const fstring itsDefaultValue;
+  const fstring itsMin;
+  const fstring itsMax;
+  const fstring itsRes;
   unsigned int itsFlags;
 
 public:
 
-  static const unsigned int NEW_GROUP = 1 << 0;
-  static const unsigned int TRANSIENT = 1 << 1;
+  //
+  // Attribute flags
+  //
 
-  struct BoundsCheck {};
+  static const unsigned int NEW_GROUP = 1 << 0;
+  static const unsigned int TRANSIENT = 1 << 1; // otherwise, "persistent"
+  static const unsigned int STRING    = 1 << 2; // otherwise, "numeric"
+  static const unsigned int MULTI     = 1 << 3; // otherwise, "single"
+  static const unsigned int CHECKED   = 1 << 4; // otherwise, "unchecked"
+
+  unsigned int flags() const    { return itsFlags; }
+
+  bool startsNewGroup() const   { return   itsFlags & NEW_GROUP; }
+
+  bool isTransient() const      { return   itsFlags & TRANSIENT ; }
+  bool isPersistent() const     { return !(itsFlags & TRANSIENT); }
+
+  bool isString() const         { return   itsFlags & STRING ; }
+  bool isNumeric() const        { return !(itsFlags & STRING); }
+
+  bool isMultiValued() const    { return   itsFlags & MULTI ; }
+  bool isSingleValued() const   { return !(itsFlags & MULTI); }
+
+  bool isChecked() const        { return   itsFlags & CHECKED ; }
+  bool isUnchecked() const      { return !(itsFlags & CHECKED); }
 
   struct ValueType {};
 
@@ -324,11 +348,12 @@ public:
 
   template <class C, class T>
   static shared_ptr<FieldImpl> makeImpl(T C::* member_ptr,
-                                        const T& min, const T& max)
+                                        const T& min, const T& max,
+                                        bool check)
   {
     return shared_ptr<FieldImpl>
       (new DataMemberFieldImpl<C,T>
-       (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max)));
+       (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max, check)));
   }
 
   template <class C, class T>
@@ -350,10 +375,10 @@ public:
         unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
-    itsDefaultValue(new TValue<T>(def)),
-    itsMin(new TValue<T>(min)),
-    itsMax(new TValue<T>(max)),
-    itsRes(new TValue<T>(res)),
+    itsDefaultValue(def),
+    itsMin(min),
+    itsMax(max),
+    itsRes(res),
     itsFlags(flags)
   {}
 
@@ -362,37 +387,20 @@ public:
         const T& def, const T& min, const T& max, const T& res,
         unsigned int flags=0) :
     itsName(name),
-    itsFieldImpl(makeImpl(member_ptr_init)),
-    itsDefaultValue(new TValue<T>(def)),
-    itsMin(new TValue<T>(min)),
-    itsMax(new TValue<T>(max)),
-    itsRes(new TValue<T>(res)),
-    itsFlags(flags)
-  {}
-
-  template <class T, class M>
-  Field(const fstring& name, BoundsCheck, M member_ptr_init,
-        const T& def, const T& min, const T& max, const T& res,
-        unsigned int flags=0) :
-    itsName(name),
-    itsFieldImpl(makeImpl(member_ptr_init, min, max)),
-    itsDefaultValue(new TValue<T>(def)),
-    itsMin(new TValue<T>(min)),
-    itsMax(new TValue<T>(max)),
-    itsRes(new TValue<T>(res)),
+    itsFieldImpl(makeImpl(member_ptr_init, min, max, (flags & CHECKED))),
+    itsDefaultValue(def),
+    itsMin(min),
+    itsMax(max),
+    itsRes(res),
     itsFlags(flags)
   {}
 
   const fstring& name() const { return itsName; }
-  const Value& defaultValue() const { return *itsDefaultValue; }
+  const fstring& defaultValue() const { return itsDefaultValue; }
 
-  const Value& min() const { return *itsMin; }
-  const Value& max() const { return *itsMax; }
-  const Value& res() const { return *itsRes; }
-
-  bool startsNewGroup() const { return itsFlags & NEW_GROUP; }
-
-  bool isTransient() const { return itsFlags & TRANSIENT; }
+  const fstring& min() const { return itsMin; }
+  const fstring& max() const { return itsMax; }
+  const fstring& res() const { return itsRes; }
 
   void setValue(FieldContainer* obj, const Value& new_val) const
   {
