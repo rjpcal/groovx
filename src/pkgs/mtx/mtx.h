@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 17:27:50 2002
+// written: Mon Mar  4 17:38:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -507,6 +507,11 @@ protected:
   const double* address(int row, int col) const
   { return data_.storage() + offsetFromStorage(row, col); }
 
+  const double* storage() const { return data_.storage(); }
+  double* storage_nc() { return data_.storage_nc(); }
+
+public:
+
 #ifdef APPLY_IMPL
 #  error macro error
 #endif // APPLY_IMPL
@@ -550,11 +555,6 @@ protected:
   }
 
 #undef APPLY_IMPL
-
-  const double* storage() const { return data_.storage(); }
-  double* storage_nc() { return data_.storage_nc(); }
-
-public:
 
   //
   // Iterators
