@@ -123,7 +123,7 @@ const char* Util::Error::what() const throw()
 const rutz::backtrace& Util::Error::lastBackTrace()
 {
   if (last == 0)
-    last = new BackTrace();
+    last = new rutz::backtrace();
 
   return *last;
 }
