@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Mar 16 14:07:23 2000
+// written: Tue Mar 21 19:35:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,18 +45,21 @@ DOTRACE("Tcl::VecGetterBaseCmd::invoke");
 		id_itr = beginOfArg(itsItemArgn, (int*)0),
 		end    =   endOfArg(itsItemArgn, (int*)0);
 
-	 // We do the first iteration outside the loop, because if there is
-	 // only one item, we want to do a regular return rather than a
-	 // list-append to the return value. It is safe to assume that
-	 // there is at least one item in the list, otherwise the number of
-	 // arguments to the command would have been wrong.
-	 void* item = itsPkg->getItemFromId(*id_itr);
-	 doReturnValForItem(item);
-
-	 while (++id_itr != end)
+	 // If there is only one item, we want to do a regular return
+	 // rather than a list-append to the return value.
+	 if ( 1 == (end - id_itr) )
 		{
 		  void* item = itsPkg->getItemFromId(*id_itr);
-		  doAppendValForItem(item);
+		  doReturnValForItem(item);
+		}
+	 else
+		{
+		  while (id_itr != end)
+			 {
+				void* item = itsPkg->getItemFromId(*id_itr);
+				doAppendValForItem(item);
+				++id_itr;
+			 }
 		}
   }
   else {
