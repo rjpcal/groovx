@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Nov 15 08:09:25 2000
+// written: Thu Nov 16 01:18:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,10 +28,13 @@
 namespace {
   const FieldInfo FINFOS[] = {
 	 FieldInfo("eyeAspect", &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
-	 FieldInfo("vertOffset", &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01),
+	 FieldInfo("vertOffset", &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
   };
 
-  const FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+2, &Face::classFields());
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+											 &Face::classFields());
 }
 
 ///////////////////////////////////////////////////////////////////////
