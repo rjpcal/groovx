@@ -11,7 +11,7 @@ package require Exp
 package require Tlist
 package require Toglet
 package require Block
-package require Nullrh
+package require Nullresponsehdlr
 package require Th
 
 source ${::TEST_DIR}/io_test.tcl
