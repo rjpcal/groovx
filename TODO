@@ -7,7 +7,11 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (13-Nov-2002) Cleanup (or dissolve?) GrObj once and for all
+* (13-Nov-2002) Cleanup GrObj once and for all
+
+  OK, replaced Gnode with GxBin. Changed all of the Gnode subclasses into
+  generic Gx* node subclasses. So now I feel better; all the stuff is
+  generic. In principle GrObj could become a Gx* class now itself.
 
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
@@ -20,6 +24,12 @@
   in FieldContainer that provides access to a child, if any. Then we can
   have a wrapper cast function that first tries dynamic_cast, and if that
   fails, tries to cast a child subobject to the proper type.
+
+  Aha! And of course this should be recursive.
+
+  One problem is that this kind of things means that a given object's
+  FieldMap could change if its child object changes. How do we keep Tcl,
+  for example, abreast of such changes?
 
 * (9-Nov-2002) Cleanup Togl helper code
 
