@@ -78,6 +78,7 @@ class cppdeps
   map<string, ParseState> m_parse_states;
 
   bool m_check_sys_includes;
+  bool m_quiet;
 
 public:
   cppdeps(char** argv);
@@ -192,7 +193,8 @@ namespace
 }
 
 cppdeps::cppdeps(char** argv) :
-  m_check_sys_includes(false)
+  m_check_sys_includes(false),
+  m_quiet(false)
 {
   m_sys_ipath.push_back("/usr/include");
   m_sys_ipath.push_back("/usr/include/linux");
@@ -204,6 +206,10 @@ cppdeps::cppdeps(char** argv) :
         {
           m_user_ipath.push_back(*++argv);
         }
+      else if (strcmp(*argv, "--sysinclude") == 0)
+        {
+          m_sys_ipath.push_back(*++argv);
+        }
       else if (strcmp(*argv, "--src") == 0)
         {
           m_srcdir = trim_dirname(*++argv);
@@ -212,6 +218,14 @@ cppdeps::cppdeps(char** argv) :
       else if (strcmp(*argv, "--objdir") == 0)
         {
           m_objdir = trim_dirname(*++argv);
+        }
+      else if (strcmp(*argv, "--checksys") == 0)
+        {
+          m_check_sys_includes = true;
+        }
+      else if (strcmp(*argv, "--quiet") == 0)
+        {
+          m_quiet = true;
         }
       ++argv;
     }
@@ -395,13 +409,20 @@ cppdeps::get_direct_includes(const string& filename)
 
       const int include_length = fptr - include_name;
 
-      if (!resolve_one(include_name, include_length, filename,
-                       dirname_with_slash, m_user_ipath, vec))
-        {
-          const string include_string(include_name, include_length);
-          cerr << "warning: couldn\'t resolve #include \""
-               << include_string << "\" for " << filename << "\n";
-        }
+      if (resolve_one(include_name, include_length, filename,
+                      dirname_with_slash, m_user_ipath, vec))
+        continue;
+
+      if (m_check_sys_includes &&
+          resolve_one(include_name, include_length, filename,
+                      dirname_with_slash, m_sys_ipath, vec))
+        continue;
+
+      const string include_string(include_name, include_length);
+      if (!m_quiet)
+        cerr << "WARNING: in " << filename
+             << ": couldn\'t resolve #include \""
+             << include_string << "\"\n";
     }
 
   return vec;
@@ -418,7 +439,8 @@ cppdeps::get_nested_includes(const string& filename)
 
   if (m_parse_states[filename] == IN_PROGRESS)
     {
-      cerr << "nested includes recursion " << filename << '\n';
+      cerr << "ERROR: in " << filename
+           << ": untrapped nested #include recursion\n";
       exit(1);
     }
 
@@ -440,10 +462,24 @@ cppdeps::get_nested_includes(const string& filename)
       if (*i == filename)
         continue;
 
-      const include_list_t& indirect = get_nested_includes(*i);
-
-      vec.insert(vec.end(), indirect.begin(), indirect.end());
+      // Check for other recursion cycles
+      if (m_parse_states[*i] == IN_PROGRESS)
+        {
+          if (!m_quiet)
+            cerr << "WARNING: in " << filename
+                 << ": recursive #include cycle with " << *i << "\n";
+        }
+      else
+        {
+          const include_list_t& indirect = get_nested_includes(*i);
+          vec.insert(vec.end(), indirect.begin(), indirect.end());
+        }
     }
+
+  // do a sort and uniquify before storing the result
+  std::sort(vec.begin(), vec.end());
+  include_list_t::iterator it = std::unique(vec.begin(), vec.end());
+  vec.erase(it, vec.end());
 
   include_list_t& result = m_nested_includes[filename];
   result.swap(vec);
@@ -495,18 +531,15 @@ void cppdeps::batch_build()
                 {
                   const include_list_t& includes = get_nested_includes(fullname);
 
-                  // This essentially does a unique sort for us.
-                  const set<string> uniq(includes.begin(), includes.end());
-
                   // Use C-style stdio here since it came out running quite
                   // a bit faster than iostreams, at least under g++-3.2.
                   printf("%s/%s.o: ",
                          m_objdir.c_str(),
                          fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
 
-                  for (set<string>::const_iterator
-                         itr = uniq.begin(),
-                         stop = uniq.end();
+                  for (include_list_t::const_iterator
+                         itr = includes.begin(),
+                         stop = includes.end();
                        itr != stop;
                        ++itr)
                     {
