@@ -79,7 +79,11 @@ proc finish {} {
 	 set ::END_CLICKS [clock clicks]
 	 set elapsed_ms [expr ($::END_CLICKS-$::START_CLICKS) / $clicks_per_ms]
 	 set per_test [expr $::num_tests ? ($elapsed_ms/$::num_tests) : 0]
-	 set msg "$::num_success tests succeeded of $::num_tests tests attempted.\n"
+	 set msg ""
+	 if { $::num_success < $::num_tests } {
+		  append msg "-- WARNING -- BUGGY SOFTWARE --"
+	 }
+	 append msg "$::num_success tests succeeded of $::num_tests tests attempted.\n"
 	 append msg "Testing lasted $elapsed_ms msec, or $per_test msec per test.\n"
 
 	 if { [llength $::FAILED] > 0 } {
