@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Aug 29 10:29:30 2001
+// written: Fri Aug 31 09:23:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,14 @@ namespace GxTcl
         ++itr;
       }
   }
+
+  fstring gxsepFields()
+  {
+    static fstring result =
+      "{addChildren 0 10 1 {NEW_GROUP STRING NO_GET}} "
+      "{children 0 20 1 {STRING NO_SET}} ";
+    return result;
+  }
 }
 
 extern "C"
@@ -71,6 +79,9 @@ DOTRACE("Gx_Init");
 
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GxSeparator", "$Revision$");
   Tcl::defGenericObjCmds<GxSeparator>(pkg2);
+
+  pkg2->def( "fields", "", &GxTcl::gxsepFields );
+  pkg2->def( "allFields", "", &GxTcl::gxsepFields );
 
   pkg2->def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
   pkg2->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
