@@ -5,15 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Aug 31 16:21:50 2001
+// written: Mon Sep 10 16:57:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GXTCL_CC_DEFINED
 #define GXTCL_CC_DEFINED
-
-#include "itertcl.h"
 
 #include "gfx/gxcolor.h"
 #include "gfx/gxdrawstyle.h"
@@ -22,6 +20,7 @@
 #include "gfx/pscanvas.h"
 
 #include "tcl/fieldpkg.h"
+#include "tcl/itertcl.h"
 #include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"
