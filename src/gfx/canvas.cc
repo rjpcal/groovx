@@ -3,7 +3,7 @@
 // canvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:38 1999
-// written: Wed Dec  1 17:41:32 1999
+// written: Mon Dec  6 15:52:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "rect.h"
 
 #include "debug.h"
+#include "trace.h"
 
 Canvas::~Canvas() {}
 
@@ -37,6 +38,10 @@ public:
   virtual Rect<int> getScreenViewport() const;
   virtual Rect<double> getWorldViewport() const;
 
+
+  virtual bool isRgba() const;
+  virtual bool isColorIndex() const;
+  virtual bool isDoubleBuffered() const;
 
   virtual void pushState() const;
   virtual void popState() const;
@@ -154,6 +159,27 @@ Rect<double> GLCanvas::getWorldViewport() const {
   return getWorldFromScreen(getScreenViewport());
 }
 
+
+bool GLCanvas::isRgba() const {
+DOTRACE("GLCanvas::isRgba");
+  GLboolean val;
+  glGetBooleanv(GL_RGBA_MODE, &val);
+  return (val == GL_TRUE);
+}
+
+bool GLCanvas::isColorIndex() const {
+DOTRACE("GLCanvas::isColorIndex");
+  GLboolean val;
+  glGetBooleanv(GL_INDEX_MODE, &val);
+  return (val == GL_TRUE);
+}
+
+bool GLCanvas::isDoubleBuffered() const {
+DOTRACE("GLCanvas::isDoubleBuffered");
+  GLboolean val;
+  glGetBooleanv(GL_DOUBLEBUFFER, &val);
+  return (val == GL_TRUE);
+}
 
 
 void GLCanvas::pushState() const {
