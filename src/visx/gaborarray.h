@@ -98,6 +98,8 @@ public:
 
   void saveImage(const char* filename) const;
 
+  void saveContourOnlyImage(const char* filename) const;
+
 protected:
   virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
 

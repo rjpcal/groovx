@@ -60,6 +60,8 @@ DOTRACE("Gaborarray_Init");
   Tcl::defFieldContainer<GaborArray>(pkg);
   Tcl::defCreator<GaborArray>(pkg);
   pkg->def("saveImage", "item_id filename", &GaborArray::saveImage);
+  pkg->def("saveContourOnlyImage", "item_id filename",
+           &GaborArray::saveContourOnlyImage);
 
   PKG_RETURN;
 }

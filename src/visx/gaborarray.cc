@@ -164,6 +164,68 @@ DOTRACE("GaborArray::saveImage");
   ImgFile::save(filename, *itsBmap);
 }
 
+void GaborArray::saveContourOnlyImage(const char* filename) const
+{
+DOTRACE("GaborArray::saveContourOnlyImage");
+
+  updateForeg();
+
+  const int npix = itsSizeX*itsSizeY;
+
+  fixed_block<double> win(npix);
+
+  for (int i = 0; i < npix; ++i)
+    win[i] = 0.0;
+
+  for (int i = 0; i < itsTotalNumber; ++i)
+    {
+      if (itsArray[i].type != Element::CONTOUR)
+        continue;
+
+      const double theta = rad_0_2pi(itsArray[i].theta + M_PI_2);
+
+      const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
+      const int ycenter = int(itsArray[i].pos.y() + itsSizeY / 2.0 + 0.5);
+
+      const double period = 1.5*itsForegSpacing;
+
+      const GaborPatch& p =
+        GaborPatch::lookup(itsForegSpacing/2.0, 2*M_PI/period,
+                           theta, 0.0);
+
+      // bottom left:
+      const int x0 = xcenter - p.size() / 2;
+      const int y0 = ycenter - p.size() / 2;
+      // top right:
+      const int x1 = x0 + p.size();
+      const int y1 = y0 + p.size();
+
+      for (int y = y0; y < y1; ++y)
+        for (int x = x0; x < x1; ++x)
+          {
+            if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
+              win[x+y*itsSizeX] += p.at(x-x0, y-y0);
+          }
+    }
+
+  shared_ptr<BmapData> result(new BmapData(Vec2i(itsSizeX, itsSizeY),
+                                           8, 1));
+
+  unsigned char* bytes = result->bytesPtr();
+
+  for (int k = 0; k < npix; ++k)
+    {
+      int val = int(win[k]*255);
+
+      if      (val < 0)   { val = 0; }
+      else if (val > 255) { val = 255; }
+
+      *bytes++ = val;
+    }
+
+  ImgFile::save(filename, *result);
+}
+
 void GaborArray::grGetBoundingBox(Bbox& bbox) const
 {
 DOTRACE("GaborArray::grGetBoundingBox");
