@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Nov 15 16:13:52 1999
+// written: Thu Nov 18 13:47:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -334,10 +334,6 @@ protected:
   /** This function queries whether the GrObj's cached representation
 		is in correspondence with all of its parameters. */
   bool grIsCurrent() const;
-
-  /** This function returns the id of the OpenGL display list that
-		should be compiled in grRecompile. */
-  int grDisplayList() const;
 
 private:
   class Impl;
