@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Jul 18 14:01:34 2001
+// written: Fri Jul 20 07:53:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,10 @@
 #ifndef STRINGS_H_DEFINED
 #define STRINGS_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTRING_DEFINED)
 #include <cstring>
+#define CSTRING_DEFINED
+#endif
 
 class string_literal;
 class fixed_string;
@@ -122,7 +125,7 @@ public:
       return strcmp(itsRep->itsText, other.c_str()) > 0;
     }
 
-private:
+//  private:
   class Rep {
   private:
     Rep(const Rep& other); // not implemented

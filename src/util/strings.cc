@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Jul 18 14:05:28 2001
+// written: Fri Jul 20 08:02:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define STRINGS_CC_DEFINED
 
 #include "util/strings.h"
+
+#include "util/freelist.h"
 
 #include <cstring>
 #include <iostream.h>
@@ -53,31 +55,25 @@ bool string_literal::equals(const string_literal& other) const
 //
 //---------------------------------------------------------------------
 
-namespace {
-  struct FreeNode {
-    FreeNode* next;
-  };
-
-  FreeNode* fsFreeList = 0;
+namespace
+{
+  FreeList<fixed_string::Rep> repList;
 }
 
-void* fixed_string::Rep::operator new(size_t bytes) {
-  Assert(bytes == sizeof(Rep));
-  if (fsFreeList == 0)
-    return ::operator new(bytes);
-  FreeNode* node = fsFreeList;
-  fsFreeList = fsFreeList->next;
-  return (void*)node;
+void* fixed_string::Rep::operator new(size_t bytes)
+{
+  return repList.allocate(bytes);
 }
 
-void fixed_string::Rep::operator delete(void* space) {
-  ((FreeNode*)space)->next = fsFreeList;
-  fsFreeList = (FreeNode*)space;
+void fixed_string::Rep::operator delete(void* space)
+{
+  repList.deallocate(space);
 }
 
 fixed_string::Rep::Rep() {}
 
-fixed_string::Rep::~Rep() {
+fixed_string::Rep::~Rep()
+{
   delete [] itsText;
 }
 
