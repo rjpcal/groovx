@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Feb 16 08:19:18 2000
+// written: Wed Feb 16 14:33:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -199,6 +199,10 @@ protected:
 
   /// Casts \a ptr to the correct type, then \c delete's it.
   virtual void destroyPtr(void* ptr);
+
+  /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
+      \a T replaced with the the typename of the actual template argument. */
+  virtual const string& alternateIoTags() const;
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";

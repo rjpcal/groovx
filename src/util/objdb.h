@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Dec  6 14:00:45 1999
+// written: Wed Feb 16 14:31:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,11 @@ protected:
   virtual IO* fromVoidToIO(void* ptr) const = 0;
   /// Subclasses must override this to cast the IO* to a void*.
   virtual void* fromIOToVoid(IO* ptr) const = 0;
+
+  /** May be overridden by subclasses to provide a list of alternative
+      typenames suitable for use in \c IO::readTypename(). The default
+      implementation here returns an empty string. */
+  virtual const string& alternateIoTags() const;
 };
 
 static const char vcid_ioptrlist_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Feb 16 07:58:59 2000
+// written: Wed Feb 16 14:35:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,10 @@
 #define PTRLIST_CC_DEFINED
 
 #include "ptrlist.h"
+
+#include <typeinfo>
+
+#include "demangle.h"
 
 template <class T>
 PtrList<T>::PtrList(int size) :
@@ -48,6 +52,16 @@ void* PtrList<T>::fromIOToVoid(IO* obj) const
 template <class T>
 void PtrList<T>::destroyPtr(void* ptr)
 { delete castToT(ptr); }
+
+template <class T>
+const string& PtrList<T>::alternateIoTags() const {
+  static string result =
+	 IoPtrList::alternateIoTags() +
+	 " PtrList<" + demangle(typeid(T).name()) + ">";
+
+  return result;
+}
+
 
 static const char vcid_ptrlist_cc[] = "$Header$";
 #endif // !PTRLIST_CC_DEFINED
