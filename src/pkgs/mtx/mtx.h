@@ -13,6 +13,8 @@
 #ifndef KEANU_H_DEFINED
 #define KEANU_H_DEFINED
 
+#include <cstddef>
+
 class Slice {
   const double* data;
   int stride;
@@ -35,69 +37,92 @@ public:
   }
 };
 
+class DataBlock {
+private:
+  DataBlock(const DataBlock& other); // not implemented
+  DataBlock& operator=(const DataBlock& other); // not implemented
+
+  // Class-specific operator new.
+  void* operator new(size_t bytes);
+
+  // Class-specific operator delete.
+  void operator delete(void* space);
+
+  DataBlock();
+  ~DataBlock();
+
+  static DataBlock* getEmptyDataBlock();
+
+  friend class DummyFriend; // to eliminate compiler warning
+
+public:
+  static DataBlock* makeDataCopy(const double* data, int data_length);
+
+  static DataBlock* makeBlank(int length);
+
+  static void makeUnique(DataBlock*& rep);
+
+  void incrRefCount() { ++itsRefCount; }
+  void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+
+private:
+  int itsRefCount;
+
+public:
+  double* itsData;
+  unsigned int itsLength;
+};
+
+
 typedef struct mxArray_tag mxArray;
 
 class Mtx {
 private:
 
-  enum StorageType { BORROWED, OWNED };
-
   Mtx& operator=(const Mtx&); // not allowed
 
   Mtx(const Mtx& other, int column /* zero-based */) :
+	 block_(other.block_),
 	 mrows_(other.mrows_),
 	 ncols_(1),
-	 data_(other.data_ + (other.mrows_*column)),
-	 storage_(BORROWED)
-  {}
+	 start_(other.start_ + (other.mrows_*column))
+  {
+	 block_->incrRefCount();
+  }
 
 public:
   Mtx(mxArray* a);
 
+  Mtx(int mrows, int ncols);
+
   Mtx(const Mtx& other) :
+	 block_(other.block_),
 	 mrows_(other.mrows_),
 	 ncols_(other.ncols_),
-	 data_(0),
-	 storage_(other.storage_)
+	 start_(other.start_)
   {
-	 switch(storage_) {
-	 case BORROWED:
-		data_ = other.data_;
-		break;
-	 case OWNED:
-		data_ = new double[nelems()];
-		for (int i = 0; i < nelems(); ++i)
-		  data_[i] = other.data_[i];
-		break;
-	 }
+	 block_->incrRefCount();
   }
 
-  ~Mtx()
-  {
-	 switch(storage_) {
-	 case OWNED:
-		delete [] data_;
-		break;
-	 case BORROWED:
-		break;
-	 }
-  }
+  ~Mtx();
+
+  mxArray* makeMxArray() const;
 
   void print() const;
 
   int index(int row, int col) const { return row + (col*mrows_); }
 
-  double* address(int row, int col) { return data_ + index(row, col); }
+  double* address(int row, int col) { return start_ + index(row, col); }
 
-  const double* address(int row, int col) const { return data_ + index(row, col); }
+  const double* address(int row, int col) const { return start_ + index(row, col); }
 
-  double& at(int row, int col) { return data_[index(row, col)]; }
+  double& at(int row, int col) { return start_[index(row, col)]; }
 
-  double at(int row, int col) const { return data_[index(row, col)]; }
+  double at(int row, int col) const { return start_[index(row, col)]; }
 
-  double& at(int elem) { return data_[elem]; }
+  double& at(int elem) { return start_[elem]; }
 
-  double at(int elem) const { return data_[elem]; }
+  double at(int elem) const { return start_[elem]; }
 
   int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
 
@@ -107,17 +132,18 @@ public:
 
   int ncols() const { return ncols_; }
 
-  double* data() { return data_; }
+  double* data() { return start_; }
 
-  const double* data() const { return data_; }
+  const double* data() const { return start_; }
 
   Mtx columnSlice(int column) const { return Mtx(*this, column); }
 
 private:
+
+  DataBlock* block_;
   int mrows_;
   int ncols_;
-  double* data_;
-  StorageType storage_;
+  double* start_;
 };
 
 static const char vcid_keanu_h[] = "$Header$";
