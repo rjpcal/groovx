@@ -272,6 +272,17 @@ DOTRACE("GlxWrapper::GlxWrapper");
 
   AttribList attribs(opts);
 
+  dbg_eval_nl(3, (void*)itsDisplay);
+  dbg_eval_nl(3, DefaultScreen(itsDisplay));
+
+  int errorBase = 0;
+  int eventBase = 0;
+
+  if (False == glXQueryExtension(itsDisplay, &errorBase, &eventBase))
+    {
+      throw rutz::error("no GLX extension on the X server", SRC_POS);
+    }
+
   itsVisInfo = glXChooseVisual(itsDisplay,
                                DefaultScreen(itsDisplay),
                                attribs.get());
