@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Apr 16 14:59:33 2001
+// written: Tue Apr 17 08:34:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "datablock.h"
 #include "num.h"
+
+#include <iterator>
 
 class fixed_string;
 
@@ -103,15 +105,42 @@ class MtxIter {
 
 public:
 
-  double& operator*() { RC_less(data, stop); return *data; }
+  typedef random_access_iterator_tag iterator_category;
+  typedef double                     value_type;
+  typedef ptrdiff_t                  difference_type;
+  typedef double*                    pointer;
+  typedef double&                    reference;
 
-  MtxIter& operator++()
-  {
-	 data += stride;
-	 return *this;
-  }
+  MtxIter end() const { MtxIter res(*this); res.data = stop; return res; }
 
   bool hasMore() const { return data < stop; }
+
+  // Comparison
+
+  bool operator==(const MtxIter& other) const { return data == other.data; }
+
+  bool operator<(const MtxIter& other) const { return data < other.data; }
+
+  difference_type operator-(const MtxIter& other) const
+    { return (data - other.data) / stride; }
+
+  // Dereference
+
+  double& operator*() { RC_less(data, stop); return *data; }
+
+  // Increment/Decrement
+
+  MtxIter& operator++() { data += stride; return *this; }
+  MtxIter& operator--() { data -= stride; return *this; }
+
+  MtxIter operator++(int) { MtxIter cpy(*this); data += stride; return cpy; }
+  MtxIter operator--(int) { MtxIter cpy(*this); data -= stride; return cpy; }
+
+  MtxIter& operator+=(int x) { data += x*stride; return *this; }
+  MtxIter& operator-=(int x) { data -= x*stride; return *this; }
+
+  MtxIter operator+(int x) const { MtxIter res(*this); res += x; return res; }
+  MtxIter operator-(int x) const { MtxIter res(*this); res -= x; return res; }
 };
 
 class MtxConstIter {
@@ -203,6 +232,9 @@ public:
   MtxIter beginNC()
     { return MtxIter(itsOwner, storageOffset(0), itsStride, itsNelems); }
 
+  MtxIter endNC()
+    { return beginNC().end(); }
+
   MtxConstIter begin() const
     { return MtxConstIter(dataStart(), itsStride, itsNelems); }
 
@@ -271,6 +303,8 @@ public:
 	 for (MtxIter i = beginNC(); i.hasMore(); ++i)
 		*i = func(*i);
   }
+
+  void sort();
 
   void operator/=(double div) { apply(Div(div)); }
 

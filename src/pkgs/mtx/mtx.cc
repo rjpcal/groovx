@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Apr 16 18:06:53 2001
+// written: Tue Apr 17 08:21:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "error.h"
 #include "strings.h"
 
+#include <algorithm>
 #include "libmatlb.h"
 
 #include "trace.h"
@@ -117,6 +118,11 @@ void Slice::print() const
 		mexPrintf("%7.4f   ", double(*iter));
     }
   mexPrintf("\n");
+}
+
+void Slice::sort()
+{
+  ::sort(beginNC(), endNC());
 }
 
 Slice& Slice::operator+=(const Slice& other)
