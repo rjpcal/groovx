@@ -7,7 +7,7 @@
 # This is the Makefile for the grsh shell. This shell provides the
 # following functionality:
 # 
-# 	1) Tcl/Tk 8.3.3 core
+# 	1) Tcl/Tk core
 # 	2) OpenGL graphics
 # 	3) A set of extensions for running visual psychophysics experiments
 #
@@ -482,11 +482,11 @@ cleaner: clean
 	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
 
 # Count the lines in all source files
-count: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc $+
+count: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+	wc $+ | tee $(LOGS)/count
 
-counts: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc $+ | sort -n > counts
+count_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+	wc $+ | sort -n | tee $(LOGS)/count_sort
 
 do_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
@@ -500,15 +500,12 @@ H_TAGS: $(ALL_HEADERS)
 	find $(SRC) -name \*.h | $(ETAGS) - -o $@
 
 # Count the number of non-commented source lines
-ncsl: $(ALL_SOURCES) $(ALL_HEADERS)
-	NCSL $+
+ncsl: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+	NCSL $+ | tee $(LOGS)/ncsl
 
-# Count the number of non-commented source lines
-ncsls: $(ALL_SOURCES) $(ALL_HEADERS)
-	NCSL $+ | sort -n > ncsls
-
-# Remove all object files and build a new production executable from scratch
-new: cleaner $(EXECUTABLE)
+# Count the number of non-commented source lines and sort
+ncsl_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+	NCSL $+ | sort -n | tee $(LOGS)/ncsl_sort
 
 o_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.o" | sort -n +4 > o_sizes
@@ -520,12 +517,6 @@ showpid:
 # Generate TAGS file based on all source files
 TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
 	find $(SRC) -name \*.h -or -name \*.cc | $(ETAGS) - -o $@
-
-tardist: clean
-	cd ..; tar cvfz grsh.tar.gz grsh \
-		--exclude *.o --exclude *.do \
-		--exclude *.a --exclude *.sl \
-		--exclude *,v --exclude *~ --exclude a.out
 
 SNAPSHOT := grsh-`date +%Y_%m_%d`
 
