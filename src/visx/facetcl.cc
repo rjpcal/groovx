@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Oct 20 14:56:29 2000
+// written: Fri Oct 20 17:01:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ DOTRACE("Face_Init");
   Tcl::TclPkg* pkg = new Tcl::PropertyListItemPkg<Face, ObjList>(
               interp, ObjList::theObjList(), "Face", "$Revision$"); 
 
-  FactoryRegistrar<IO::IoObject, CloneFace> :: registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&CloneFace::make);
 
   return pkg->initStatus();
 }
