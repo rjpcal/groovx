@@ -32,6 +32,7 @@
 
 #include "util/log.h"
 
+#include "util/object.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
 #include "util/minivec.h"
@@ -102,6 +103,24 @@ DOTRACE("Util::Log::removeScope");
           scopes.erase(scopes.begin() + i);
         }
     }
+}
+
+void Util::Log::addObjScope(const Util::Object& obj)
+{
+DOTRACE("Util::Log::addObjScope");
+
+  const fstring scopename(obj.objTypename(), " ", obj.id());
+
+  addScope(scopename);
+}
+
+void Util::Log::removeObjScope(const Util::Object& obj)
+{
+DOTRACE("Util::Log::removeObjScope");
+
+  const fstring scopename(obj.objTypename(), " ", obj.id());
+
+  removeScope(scopename);
 }
 
 void Util::log(const char* msg)

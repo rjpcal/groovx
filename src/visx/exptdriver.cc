@@ -267,7 +267,7 @@ DOTRACE("ExptDriver::vxAllChildrenFinished");
   Util::log( fstring("Expt::doWhenComplete") );
   rep->doWhenComplete->invoke(""); // Call the user-defined callback
 
-  Util::Log::removeScope("Expt");
+  Util::Log::removeObjScope(*this);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ DOTRACE("ExptDriver::edBeginExpt");
   rep->numTrialsCompleted = 0;
 
   Util::Log::reset(); // to clear any existing timer scopes
-  Util::Log::addScope("Expt");
+  Util::Log::addObjScope(*this);
 
   currentElement()->vxRun(*this);
 }

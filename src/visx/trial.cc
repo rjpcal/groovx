@@ -76,12 +76,12 @@ namespace
       status(Element::CHILD_OK)
     {
       Precondition(parent != 0);
-      Util::Log::addScope("Trial");
+      Util::Log::addObjScope(*parent);
     }
 
     ~ActiveState()
     {
-      Util::Log::removeScope("Trial");
+      Util::Log::removeObjScope(*parent);
     }
 
     Element* parent;

@@ -34,12 +34,20 @@ class fstring;
 
 namespace Util
 {
+  class Object;
+
   namespace Log
   {
     void reset();
 
     void addScope(const fstring& name);
     void removeScope(const fstring& name);
+
+    /// Add a scope named after the given object's type + id.
+    void addObjScope(const Util::Object& obj);
+
+    /// Remove the scope named after the given object's type + id.
+    void removeObjScope(const Util::Object& obj);
   }
 
   void log(const char* msg);

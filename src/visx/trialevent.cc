@@ -143,10 +143,7 @@ DOTRACE("TrialEvent::invokeTemplate");
   const double msec = itsTimer.elapsedMsec();
   const double error = itsTimer.delayMsec() - msec;
 
-  fstring scopename(demangle_cstr(typeid(*this).name()), " ",
-                    IO::IoObject::id());
-
-  Util::Log::addScope(scopename);
+  Util::Log::addObjScope(*this);
 
   Util::log( fstring("req ", itsRequestedDelay,
                      " - ", -itsEstimatedOffset) );
@@ -172,7 +169,7 @@ DOTRACE("TrialEvent::invokeTemplate");
 
   Util::log( "event complete" );
 
-  Util::Log::removeScope(scopename);
+  Util::Log::removeObjScope(*this);
 }
 
 ///////////////////////////////////////////////////////////////////////
