@@ -90,7 +90,7 @@ namespace
 
     t0.schedule();
     t1.schedule();
-    t2.schedule();
+    t2.schedule(); // delay==0 ==> callback should happen immediately
 
     TEST_REQUIRE(t0.isPending());
     TEST_REQUIRE(t1.isPending());
