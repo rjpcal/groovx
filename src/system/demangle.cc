@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Thu Feb 27 16:28:33 2003
+// written: Thu Feb 27 16:54:53 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,8 @@ const char* demangle_cstr(const char* in) { return in; }
 #    else
 #      include "system/demangle_gcc_v3.h"
 #    endif
+#  elif defined(HAVE_PROG_CXXFILT)
+#    include "system/demangle_cxxfilt.h"
 #  else
 #    error no method specified for typename demangling
 #  endif
