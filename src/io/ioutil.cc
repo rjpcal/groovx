@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Mar 15 11:10:27 2000
+// written: Thu Mar 23 19:34:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "util/arrays.h"
 
 #include <cstring>
+#include <fstream.h>
 #include <strstream.h>
 #include <typeinfo>
 
@@ -110,6 +111,40 @@ DOTRACE("Tcl::ReadCmd::invoke");
   istrstream ist(str);
 
   AsciiStreamReader reader(ist);
+  reader.readRoot(&io);
+}
+
+void Tcl::ASWSaveCmd::invoke() {
+DOTRACE("Tcl::ASWSaveCmd::invoke");
+  IO& io = getIO();
+  const char* filename = getFilename();
+
+  ofstream ofs(filename);
+  if ( ofs.fail() ) {
+	 Tcl::TclError err("couldn't open file ");
+	 err.appendMsg("'", filename, "'");
+	 err.appendMsg("for writing");
+	 throw err;
+  }
+
+  AsciiStreamWriter writer(ofs);
+  writer.writeRoot(&io);
+}
+
+void Tcl::ASRLoadCmd::invoke() {
+DOTRACE("Tcl::ASRLoadCmd::invoke");
+  IO& io = getIO();
+  const char* filename = getFilename();
+
+  ifstream ifs(filename);
+  if ( ifs.fail() ) {
+	 Tcl::TclError err("couldn't open file ");
+	 err.appendMsg("'", filename, "'");
+	 err.appendMsg("for reading");
+	 throw err;
+  }
+
+  AsciiStreamReader reader(ifs);
   reader.readRoot(&io);
 }
 

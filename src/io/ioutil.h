@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Wed Mar 22 16:47:00 2000
+// written: Thu Mar 23 19:26:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,34 @@ public:
 
 protected:
   virtual IO& getIO() = 0;
+
+private:
+  virtual void invoke();
+};
+
+class ASWSaveCmd : public TclCmd {
+public:
+  ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
+				 const char* usage, int objc) :
+	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+protected:
+  virtual IO& getIO() = 0;
+  virtual const char* getFilename() = 0;
+
+private:
+  virtual void invoke();
+};
+
+class ASRLoadCmd : public TclCmd {
+public:
+  ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name,
+				 const char* usage, int objc) :
+	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+protected:
+  virtual IO& getIO() = 0;
+  virtual const char* getFilename() = 0;
 
 private:
   virtual void invoke();
