@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Mar 15 18:20:02 2000
+// written: Wed Mar 29 23:13:28 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -16,17 +16,17 @@
 #ifndef TCLGL_CC_DEFINED
 #define TCLGL_CC_DEFINED
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <tcl.h>
-#include <cmath>                // for sqrt() in drawThickLine
-#include <map>
-
 #include "tcl/tclpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
 
 #include "util/arrays.h"
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <tcl.h>
+#include <cmath>                // for sqrt() in drawThickLine
+#include <map>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -1373,9 +1373,9 @@ DOTRACE("drawOneLineCmd");
     return TCL_ERROR;
   }
 
-  double* coord = new double[4];
+  fixed_block<double> coord(4);
   for (int i = 1; i < objc; ++i) {
-    if (Tcl_GetDoubleFromObj(interp, objv[i], coord+i-1) != TCL_OK)
+    if (Tcl_GetDoubleFromObj(interp, objv[i], &(coord.at(i-1))) != TCL_OK)
       return TCL_ERROR;
   }
   
@@ -1385,7 +1385,6 @@ DOTRACE("drawOneLineCmd");
   glEnd();
   glFlush();
 
-  delete [] coord;
   return TCL_OK;
 }
 
@@ -1412,11 +1411,9 @@ DOTRACE("drawThickLineCmd");
     return TCL_ERROR;
   }
 
-  double* coord = new double[5]; // fill with x1 y1 x2 y2 thickness
-  int i = 1;
-  double* p = coord;
-  for ( ; i < objc; ++i, ++p) {
-    if (Tcl_GetDoubleFromObj(interp, objv[i], p) != TCL_OK)
+  fixed_block<double> coord(5); // fill with x1 y1 x2 y2 thickness
+  for (int i = 1; i < objc; ++i) {
+    if (Tcl_GetDoubleFromObj(interp, objv[i], &(coord.at(i-1))) != TCL_OK)
       return TCL_ERROR;
   }
   
@@ -1439,7 +1436,6 @@ DOTRACE("drawThickLineCmd");
   glEnd();
   glFlush();
 
-  delete [] coord;
   return TCL_OK;
 }
 
@@ -1562,22 +1558,21 @@ DOTRACE("TclGL::pixelCheckSumCmd");
   else {
 	 GLint viewport[4];
 	 glGetIntegerv(GL_VIEWPORT, viewport);
-	 x = viewport[0];
-	 y = viewport[1];
-	 w = viewport[2];
-	 h = viewport[3];
+	 x = viewport[0];										 DebugEval(x);
+	 y = viewport[1];										 DebugEval(y);
+	 w = viewport[2];										 DebugEval(w);
+	 h = viewport[3];										 DebugEvalNL(h);  
   }
 
 
-  GLubyte* pixels = new GLubyte[w*h];
+  fixed_block<GLubyte> pixels(w*h);
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, pixels);
+  glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
 
   long int sum = 0;
-  for (int i = 0; i < w*h; ++i) {
+  for (int i = 0; i < pixels.size(); ++i) {
 	 sum += pixels[i];
   }
-  delete [] pixels;
 
   Tcl_SetObjResult(interp, Tcl_NewIntObj(sum));
   return TCL_OK;
