@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu May 20 09:47:35 1999
+// written: Wed May 26 10:42:11 1999
 // $Id$
 //
 // The Face class is derived from GrObj. Face provides the
@@ -121,23 +121,23 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 inline void Face::setNoseLen(float nl) {
-  grPostRecompile();
   itsNoseLength() = abs(nl);
+  sendStateChangeMsg();
 }
 
 inline void Face::setEyeDist(float ed) {
-  grPostRecompile();
   itsEyeDistance() = abs(ed);
+  sendStateChangeMsg();
 }
 
 inline void Face::setEyeHgt(float eh) {
-  grPostRecompile();
   itsEyeHeight() = eh;
+  sendStateChangeMsg();
 }
 
 inline void Face::setMouthHgt(float mh) {
-  grPostRecompile();
   itsMouthHeight() = mh;
+  sendStateChangeMsg();
 }
 
 static const char vcid_face_h[] = "$Header$";
