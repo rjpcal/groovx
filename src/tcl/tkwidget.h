@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Sat Nov 23 14:49:36 2002
+// written: Sat Nov 23 17:31:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,9 +49,6 @@ public:
   void setWidth(int w);
   void setHeight(int h);
 
-  int timeOut() const;
-  void setTimeOut(int msec);
-
   Tcl_Interp* interp() const;
   Tk_Window tkWin() const;
   const char* pathname() const;
@@ -62,9 +59,6 @@ public:
   virtual void displayCallback() = 0;
 
   virtual void reshapeCallback(int width, int height) = 0;
-
-  /// Default version is a no-op.
-  virtual void timerCallback();
 
   /// Bind the given script to the event_sequence.
   void bind(const char* event_sequence, const char* script);

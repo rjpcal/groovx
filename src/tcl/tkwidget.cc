@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sat Nov 23 14:51:20 2002
+// written: Sat Nov 23 17:30:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,9 +91,6 @@ public:
   int width;
   int height;
 
-  int timeout;
-  Tcl_TimerToken timerToken;
-
   bool updatePending;
   bool shutdownRequested;
 
@@ -121,8 +118,6 @@ public:
 
   static void cEventCallback(ClientData clientData, XEvent* rawEvent);
 
-  static void cTimerCallback(ClientData clientData) throw();
-
   static void cRenderCallback(ClientData clientData) throw();
 
   static void cEventuallyFreeCallback(char* clientData) throw()
@@ -141,8 +136,6 @@ TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p,
                                 (char *) 0)),
   width(400),
   height(400),
-  timeout(-1),
-  timerToken(0),
   updatePending(false),
   shutdownRequested(false)
 {
@@ -158,20 +151,11 @@ DOTRACE("TkWidgImpl::TkWidgImpl");
   Tk_CreateEventHandler(tkWin, EVENT_MASK,
                         TkWidgImpl::cEventCallback,
                         static_cast<void*>(owner));
-
-  if (timeout > 0)
-    {
-      timerToken =
-        Tcl_CreateTimerHandler(timeout, &cTimerCallback,
-                               static_cast<ClientData>(owner));
-    }
 }
 
 TkWidgImpl::~TkWidgImpl()
 {
 DOTRACE("TkWidgImpl::~TkWidgImpl");
-
-  Tcl_DeleteTimerHandler(timerToken);
 
   Tk_DeleteEventHandler(tkWin, EVENT_MASK,
                         TkWidgImpl::cEventCallback,
@@ -252,25 +236,6 @@ DOTRACE("TkWidgImpl::cEventCallback");
     }
 }
 
-void TkWidgImpl::cTimerCallback(ClientData clientData) throw()
-{
-DOTRACE("TkWidgImpl::cTimerCallback");
-
-  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
-
-  try
-    {
-      widg->timerCallback();
-      widg->rep->timerToken =
-        Tcl_CreateTimerHandler(widg->rep->timeout, cTimerCallback,
-                               static_cast<ClientData>(widg));
-    }
-  catch (...)
-    {
-      Tcl::Interp(widg->interp()).handleLiveException("cTimerCallback", true);
-    }
-}
-
 void TkWidgImpl::cRenderCallback(ClientData clientData) throw()
 {
 DOTRACE("TkWidgImpl::cRenderCallback");
@@ -322,25 +287,6 @@ void Tcl::TkWidget::setHeight(int h)
 {
   rep->height = h;
   Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
-}
-
-int Tcl::TkWidget::timeOut() const
-{
-  return rep->timeout;
-}
-
-void Tcl::TkWidget::setTimeOut(int msec)
-{
-  Tcl_DeleteTimerHandler(rep->timerToken);
-
-  rep->timeout = msec;
-
-  if (rep->timeout > 0)
-    {
-      rep->timerToken =
-        Tcl_CreateTimerHandler(rep->timeout, &TkWidgImpl::cTimerCallback,
-                               static_cast<ClientData>(this));
-    }
 }
 
 void Tcl::TkWidget::destroyWidget()
@@ -398,13 +344,6 @@ DOTRACE("Tcl::TkWidget::pack");
   pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
   Tcl::Code pack_cmd(Tcl::toTcl(pack_cmd_str), Tcl::Code::THROW_EXCEPTION);
   pack_cmd.invoke(rep->interp);
-}
-
-void Tcl::TkWidget::timerCallback()
-{
-DOTRACE("Tcl::TkWidget::timerCallback");
-
-  std::cout << "timer callback" << std::endl;
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)

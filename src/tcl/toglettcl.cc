@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Sat Nov 23 14:27:45 2002
+// written: Sat Nov 23 17:29:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,7 +156,6 @@ public:
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
-    defAttrib("timeOut", &Tcl::TkWidget::timeOut, &Tcl::TkWidget::setTimeOut);
     defAction("undraw", &Toglet::undraw);
     defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
 
