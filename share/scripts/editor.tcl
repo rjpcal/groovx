@@ -651,6 +651,7 @@ itcl::body Editor::init {parent objtype } {
 	Gabor \
 	Gtext \
 	GxCylinder \
+	GxDisk \
 	GxDrawStyle \
 	GxColor \
 	GxFixedScaleCamera \
