@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 15:28:33 2002
+// written: Thu Sep 12 16:24:30 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -41,7 +41,7 @@ namespace ObjTogl
 {
   SoftRef<Toglet> theWidget;
 
-  void ObjTogl::setCurrentTogl(SoftRef<Toglet> toglet)
+  void setCurrentTogl(SoftRef<Toglet> toglet)
   {
     DOTRACE("ObjTogl::setCurrentTogl");
 
