@@ -8,8 +8,6 @@
 
 package require Iwidgets
 
-set TMPCOUNTER 0
-
 proc msg { tag content } {
     puts [format "%15s: %s" $tag $content]
 }
@@ -114,6 +112,9 @@ itcl::class Playlist {
     private variable itsMatch
     private variable itsRandSeq
     private variable itsPurgeList
+    private variable itsMode
+    private variable itsDelCount
+    private variable itsShowCount
 
     constructor { argv widget } {
 	set fname [lindex $argv end]
@@ -186,6 +187,10 @@ itcl::class Playlist {
 
 	set itsRandSeq [RandSeq \#auto]
 	::srand [clock clicks]
+
+	set itsMode spinning
+	set itsDelCount 0
+	set itsShowCount 0
     }
 
     public method save {} {
@@ -208,11 +213,14 @@ itcl::class Playlist {
 	if { $guesstep == 0 } { set guesstep 1 }
 
 	set itsGuessNext [expr ($itsIdx + $guesstep) % [llength $itsList]]
+
+	set itsMode "stepping"
     }
 
     public method jump {} {
 	set itsIdx [$itsRandSeq inext 0 [llength $itsList]]
 	set itsGuessNext [$itsRandSeq ipeek 0 [llength $itsList]]
+	set itsMode "jumping"
     }
 
     public method filename {} {
@@ -223,12 +231,24 @@ itcl::class Playlist {
 	return "([expr $itsIdx + 1] of [llength $itsList]) [$this filename]"
     }
 
+    public method mode { m } { set itsMode $m }
+
     public method remove {} {
 	set target [lindex $itsList $itsIdx]
 	msg "hide file" $target
 	lappend itsPurgeList $target
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
-	$this spin 0
+	switch -- $itsMode {
+	    jumping {
+		$this jump
+	    }
+	    spinning {
+		$this spin 0
+	    }
+	    default {
+		$this spin 0
+	    }
+	}
     }
 
     public method purge {} {
@@ -241,9 +261,14 @@ itcl::class Playlist {
 	    set fd [open $stubfile w]
 	    close $fd
 	    file delete $f
+	    incr itsDelCount
 	}
 	set itsPurgeList [list]
 	save
+	msg "files deleted" $itsDelCount
+	msg "files shown" $itsShowCount
+	msg "percent kept" [format "%.2f%%" \
+				[expr 100 * (1.0 - double($itsDelCount)/$itsShowCount)]]
     }
 
     public method shuffle {} {
@@ -279,6 +304,7 @@ itcl::class Playlist {
 	    set f [$this filename]
 	}
 
+	msg "index" "$itsIdx of [llength $itsList]"
 	msg "show file" $f
 
 	set old $itsPixmap
@@ -302,6 +328,8 @@ itcl::class Playlist {
 	ObjDb::clear
 
 	msg "pixmaps" [GxPixmap::findAll]
+
+	incr itsShowCount
 
 	after idle [itcl::code $this cachenext]
     }
@@ -413,9 +441,10 @@ bind all <Key-Left> {spinPic -1; PLAYLIST show}
 bind all <Key-Right> {spinPic 1; PLAYLIST show}
 bind all <Key-Up> {jumpPic; PLAYLIST show}
 bind all <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
+bind all <Shift-Key-Down> {PLAYLIST mode spinning; PLAYLIST remove; updateText; PLAYLIST show}
 bind all <Key-Return> {PLAYLIST save}
--> $t bind <Key-x> {PLAYLIST purge}
--> $t bind <Key-Escape> {PLAYLIST purge; exit }
+bind all <Key-x> {PLAYLIST purge}
+bind all <Key-Escape> {PLAYLIST purge; exit }
 
 -> $t height [expr [winfo screenheight .] - 100]
 -> $t width [expr [winfo screenwidth .] - 25]
