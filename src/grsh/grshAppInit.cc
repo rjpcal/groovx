@@ -2,7 +2,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 07:55:09 1999
+// written: Fri Mar 12 08:13:30 1999
 static const char[] vcid = "$Id$";
 //
 // This is the main application file for a Tcl/Tk application that
@@ -20,7 +20,7 @@ static const char[] vcid = "$Id$";
 
 // forward declarations of package init procedures (entire ".h" files
 // are not needed here
-namespace ExptTcl			{ Tcl_PackageInitProc Expt_Init;			 }
+namespace ExptTcl       { Tcl_PackageInitProc Expt_Init;        }
 namespace FaceTcl       { Tcl_PackageInitProc Face_Init;        }
 namespace FixptTcl      { Tcl_PackageInitProc Fixpt_Init;       }
 namespace GlistTcl      { Tcl_PackageInitProc Glist_Init;       }
@@ -45,21 +45,21 @@ int main(int argc, char **argv) {
 int Tcl_AppInit(Tcl_Interp *interp) {
 DOTRACE("Tcl_AppInit");
 
-  if (Tcl_Init(interp)                  == TCL_ERROR)   { return TCL_ERROR; }
-  if (Tk_Init(interp)                   == TCL_ERROR)   { return TCL_ERROR; }
-  if (Togl_Init(interp)                 == TCL_ERROR)   { return TCL_ERROR; }
-  if (ExptTcl::Expt_Init(interp)        == TCL_ERROR)   { return TCL_ERROR; }
-  if (FaceTcl::Face_Init(interp)        == TCL_ERROR)   { return TCL_ERROR; }
-  if (FixptTcl::Fixpt_Init(interp)      == TCL_ERROR)   { return TCL_ERROR; }
-  if (GlistTcl::Glist_Init(interp)      == TCL_ERROR)   { return TCL_ERROR; }
-  if (MiscTcl::Misctcl_Init(interp)     == TCL_ERROR)   { return TCL_ERROR; }
-  if (ObjlistTcl::Objlist_Init(interp)  == TCL_ERROR)   { return TCL_ERROR; }
-  if (ObjTogl::Objtogl_Init(interp)     == TCL_ERROR)   { return TCL_ERROR; }
-  if (ScaleableTcl::Scaleable_Init(interp) == TCL_ERROR) { return TCL_ERROR; }
-  if (SubjectTcl::Subject_Init(interp)  == TCL_ERROR)   { return TCL_ERROR; }
-  if (Tcldlist::Tcldlist_Init(interp)   == TCL_ERROR)   { return TCL_ERROR; }
-  if (TclGL::Tclgl_Init(interp)         == TCL_ERROR)   { return TCL_ERROR; }
-  if (TimerTcl::Timer_Init(interp)      == TCL_ERROR)   { return TCL_ERROR; }
+  if (Tcl_Init(interp)                  != TCL_OK)   { return TCL_ERROR; }
+  if (Tk_Init(interp)                   != TCL_OK)   { return TCL_ERROR; }
+  if (Togl_Init(interp)                 != TCL_OK)   { return TCL_ERROR; }
+  if (ExptTcl::Expt_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
+  if (FaceTcl::Face_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
+  if (FixptTcl::Fixpt_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
+  if (GlistTcl::Glist_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
+  if (MiscTcl::Misctcl_Init(interp)     != TCL_OK)   { return TCL_ERROR; }
+  if (ObjlistTcl::Objlist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
+  if (ObjTogl::Objtogl_Init(interp)     != TCL_OK)   { return TCL_ERROR; }
+  if (ScaleableTcl::Scaleable_Init(interp) != TCL_OK) { return TCL_ERROR; }
+  if (SubjectTcl::Subject_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
+  if (Tcldlist::Tcldlist_Init(interp)   != TCL_OK)   { return TCL_ERROR; }
+  if (TclGL::Tclgl_Init(interp)         != TCL_OK)   { return TCL_ERROR; }
+  if (TimerTcl::Timer_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
 
   // set prompt to "grsh[n]% " where n is the history event number
   Tcl_SetVar(interp, "tcl_prompt1", 
