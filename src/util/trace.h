@@ -93,6 +93,10 @@ public:
   /// Return the per-call average time in microseconds since the last reset().
   double avgTime() const throw();
 
+  /// Print this object's info to the given file.
+  void printProfData(FILE* f) const throw();
+
+  /// Print this object's info to the given stream.
   void printProfData(STD_IO::ostream& os) const throw();
 
   /// Whether to write a profiling summary file when the program exits.
@@ -101,7 +105,10 @@ public:
   /// Reset all call counts and elapsed times to zero.
   static void resetAllProfData() throw();
 
-  /// Print all profile data on the given stream.
+  /// Print all profile data to the given file.
+  static void printAllProfData(FILE* f) throw();
+
+  /// Print all profile data to the given stream.
   static void printAllProfData(STD_IO::ostream& os) throw();
 
 private:
