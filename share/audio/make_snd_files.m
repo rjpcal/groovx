@@ -26,61 +26,12 @@ function make_snd_files()
            350
            500];
 
-  dur = 0.3;
   samp_freq = 44100;
-
-  taper_width = 441;
-  taper = [linspace(0,1,taper_width)...
-           ones(1,dur*samp_freq-2*taper_width)...
-           linspace(1,0,taper_width)];
-
-  tail = zeros(1, 0.1*samp_freq);
 
   saw_widths = [0.25 0.50 0.75 1.0];
 
-  for f = 1:length(freqs)
-    freq = freqs(f);
-
-    snd = taper .* sinwave(freq, dur, samp_freq);
-    snd = [snd tail];
-    auwrite(snd, samp_freq, sprintf('sin_%dHz_%dms.au', freq, dur*1000));
-
-    for w = 1:length(saw_widths)
-      saw_width = saw_widths(w);
-
-      snd = taper .* sawwave(freq, dur, samp_freq, saw_width);
-      snd = [snd tail];
-      auwrite(snd, samp_freq, sprintf('saw%d_%dHz_%dms.au', ...
-                                      saw_width*100, freq, dur*1000));
-    end
-  end
-
-  dur = 0.12;
-  gapdur = 0.06;
-  gap = zeros(1, floor(gapdur*samp_freq));
-  tail = zeros(1, 0.1*samp_freq);
-
-  taper_width = 441;
-  taper = [linspace(0,1,taper_width)...
-           ones(1,dur*samp_freq-2*taper_width)...
-           linspace(1,0,taper_width)];
-
-  for f = 1:length(freqs)
-    freq = freqs(f);
-
-    snd = taper .* sinwave(freq, dur, samp_freq);
-    snd = [snd gap snd tail];
-    auwrite(snd, samp_freq, sprintf('sin_%dHz_2x%dms.au', freq, dur*1000));
-
-    for w = 1:length(saw_widths)
-      saw_width = saw_widths(w);
-
-      snd = taper .* sawwave(freq, dur, samp_freq, saw_width);
-      snd = [snd gap snd tail];
-      auwrite(snd, samp_freq, sprintf('saw%d_%dHz_2x%dms.au', ...
-                                      saw_width*100, freq, dur*1000));
-    end
-  end
+  make_single_beeps(freqs, saw_widths, samp_freq);
+  make_double_beeps(freqs, saw_widths, samp_freq);
 
 % 12 C  16.4  60  C  261    108  C  4186.0
 % 13 C# 17.3   61 C# 277.2   109 C# 4434.9
@@ -133,6 +84,65 @@ function make_snd_files()
 % 57 A 220.0   105 A 3520.0   na A 56320.0
 % 58 A# 233.1   106 A# 3729.3   na A# 59669.0
 % 59 B 246.9   107 B 3951.1   na B 63217.1
+
+
+function make_single_beeps(freqs, saw_widths, samp_freq)
+
+  dur = 0.3;
+
+  tail = zeros(1, 0.1*samp_freq);
+
+  taper_width = 441;
+  taper = [linspace(0,1,taper_width)...
+           ones(1,dur*samp_freq-2*taper_width)...
+           linspace(1,0,taper_width)];
+
+  for f = 1:length(freqs)
+    freq = freqs(f);
+
+    snd = taper .* sinwave(freq, dur, samp_freq);
+    snd = [snd tail];
+    auwrite(snd, samp_freq, sprintf('sin_%dHz_%dms.au', freq, dur*1000));
+
+    for w = 1:length(saw_widths)
+      saw_width = saw_widths(w);
+
+      snd = taper .* sawwave(freq, dur, samp_freq, saw_width);
+      snd = [snd tail];
+      auwrite(snd, samp_freq, sprintf('saw%d_%dHz_%dms.au', ...
+                                      saw_width*100, freq, dur*1000));
+    end
+  end
+
+
+function make_double_beeps(freqs, saw_widths, samp_freq)
+
+  dur = 0.12;
+  gapdur = 0.06;
+  gap = zeros(1, floor(gapdur*samp_freq));
+  tail = zeros(1, 0.1*samp_freq);
+
+  taper_width = 441;
+  taper = [linspace(0,1,taper_width)...
+           ones(1,dur*samp_freq-2*taper_width)...
+           linspace(1,0,taper_width)];
+
+  for f = 1:length(freqs)
+    freq = freqs(f);
+
+    snd = taper .* sinwave(freq, dur, samp_freq);
+    snd = [snd gap snd tail];
+    auwrite(snd, samp_freq, sprintf('sin_%dHz_2x%dms.au', freq, dur*1000));
+
+    for w = 1:length(saw_widths)
+      saw_width = saw_widths(w);
+
+      snd = taper .* sawwave(freq, dur, samp_freq, saw_width);
+      snd = [snd gap snd tail];
+      auwrite(snd, samp_freq, sprintf('saw%d_%dHz_2x%dms.au', ...
+                                      saw_width*100, freq, dur*1000));
+    end
+  end
 
 
 function snd = sinwave(freq, secs, sample_freq)
