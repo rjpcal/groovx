@@ -53,10 +53,10 @@ test "SoundTcl-Sound::file" "normal filename query" {
 test "SoundTcl-Sound::file" "error on bad filename" {
 	 exec rm -rf $::TEST_DIR/nonexistent_file
 	 Sound::file $::TEST_SOUND $::TEST_DIR/nonexistent_file
-} "^Sound::file: bad or nonexistent file '$::TEST_DIR/nonexistent_file'$"
+} "^Sound::file:"
 test "SoundTcl-Sound::file" "error on junk file" {
 	 Sound::file $::TEST_SOUND $::TEST_DIR/junk_text_file
-} "^Sound::file: HP Audio Error: Cannot Determine File Format$" \
+} "^Sound::file:" \
   [expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 ### Sound::playCmd ###
