@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Thu Sep 13 11:27:36 2001
+// written: Fri Sep 14 14:48:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,12 +16,6 @@
 #include "tcl/tclpkg.h"
 
 #include "util/trace.h"
-
-///////////////////////////////////////////////////////////////////////
-//
-//
-//
-///////////////////////////////////////////////////////////////////////
 
 namespace
 {
@@ -49,14 +43,13 @@ void operator delete(void* space)
 #define LOCAL_DEBUG
 #include "util/debug.h"
 
-#undef LOCAL_DEBUG
-#include "util/debug.h"
+#include "util/dlink_list.h"
 
 namespace HookTcl
 {
   void hook()
   {
-    DebugPrintNL("foo!");
+    DebugEvalNL((void*)vcid_dlink_list_h);
   }
 
   size_t memUsage() { return TOTAL; }
