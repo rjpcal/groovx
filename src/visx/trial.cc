@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Nov 28 14:41:58 2000
+// written: Tue Nov 28 15:35:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
-#include "gwt/canvas.h"
 #include "gwt/widget.h"
 
 #include "util/errorhandler.h"
@@ -81,7 +80,6 @@ public:
 	 itsRh(-1),
 	 itsTh(0),
 	 itsState(INACTIVE),
-	 itsCanvas(0),
 	 itsBlock(0)
 	 {}
 
@@ -100,7 +98,7 @@ private:
 
   TrialState itsState;
 
-  GWT::Canvas* itsCanvas;
+  GWT::Widget* itsWidget;
   Block* itsBlock;
 
   bool assertIdsOrHalt()
@@ -116,11 +114,11 @@ private:
 		return false;
 	 }
 
-  GWT::Canvas& getCanvas() const
+  GWT::Widget& getWidget() const
 	 {
 		Precondition(itsState == ACTIVE);
-		Precondition(itsCanvas != 0);
-		return *itsCanvas;
+		Precondition(itsWidget != 0);
+		return *itsWidget;
 	 }
 
   ResponseHandler& responseHandler()
@@ -200,10 +198,6 @@ public:
   void trHaltExpt();
   void trResponseSeen();
   void trRecordResponse(Response& response);
-  void trDrawTrial() const;
-  void trUndrawTrial() const;
-  void trDraw(GWT::Canvas& canvas, bool flush) const;
-  void trUndraw(GWT::Canvas& canvas, bool flush) const;
 
   void installSelf(GWT::Widget& widget) const;
 
@@ -487,11 +481,11 @@ DOTRACE("Trial::Impl::trDoTrial");
   Precondition(&errhdlr != 0);
   Precondition(&block != 0);
 
-  itsCanvas = widget.getCanvas();
+  itsWidget = &widget;
   itsBlock = &block;
 
   Assert(itsBlock != 0);
-  Assert(itsCanvas != 0);
+  Assert(itsWidget != 0);
 
   if ( !assertIdsOrHalt() ) return;
 
@@ -563,7 +557,7 @@ DOTRACE("Trial::Impl::trHaltExpt");
 	 timeTrace("trHaltExpt");
   }
 
-  trUndrawTrial();
+  getWidget().undraw();
   trAbortTrial();
   trEndTrial();
 
@@ -601,40 +595,6 @@ DOTRACE("Trial::Impl::trRecordResponse");
   itsResponses.push_back(response);
 
   getBlock().processResponse(response);
-}
-
-void Trial::Impl::trDrawTrial() const {
-DOTRACE("Trial::Impl::trDrawTrial");
-  if (INACTIVE == itsState) return;
-
-  trDraw(getCanvas(), true);
-
-  getBlock().drawTrialHook();
-}
-
-void Trial::Impl::trUndrawTrial() const {
-DOTRACE("Trial::Impl::trUndrawTrial");
-  if (INACTIVE == itsState) return;
-
-  trUndraw(getCanvas(), true);
-}
-
-void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
-DOTRACE("Trial::Impl::trDraw");
-
-  if (itsCurrentNode >= 0 && itsCurrentNode < itsGxNodes.size())
-	 itsGxNodes[itsCurrentNode]->draw(canvas);
-
-  if (flush) canvas.flushOutput();
-}
-
-void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
-DOTRACE("Trial::Impl::trUndraw");
-
-  if (itsCurrentNode >= 0 && itsCurrentNode < itsGxNodes.size())
-	 itsGxNodes[itsCurrentNode]->undraw(canvas);
-
-  if (flush) canvas.flushOutput();
 }
 
 void Trial::Impl::installSelf(GWT::Widget& widget) const {
@@ -768,18 +728,6 @@ void Trial::trResponseSeen()
 
 void Trial::trRecordResponse(Response& response)
   { itsImpl->trRecordResponse(response); }
-
-void Trial::trDrawTrial() const
-  { itsImpl->trDrawTrial(); }
-
-void Trial::trUndrawTrial() const
-  { itsImpl->trUndrawTrial(); }
-
-void Trial::trDraw(GWT::Canvas& canvas, bool flush) const
-  { itsImpl->trDraw(canvas, flush); }
-
-void Trial::trUndraw(GWT::Canvas& canvas, bool flush) const
-  { itsImpl->trUndraw(canvas, flush); }
 
 void Trial::installSelf(GWT::Widget& widget) const
   { itsImpl->installSelf(widget); }
