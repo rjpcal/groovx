@@ -299,6 +299,8 @@ public:
   parse_state  ldep_parse_state;
   bool         direct_cdeps_done;
   dep_list_t   direct_cdeps;
+  bool         nested_cdeps_done;
+  dep_list_t   nested_cdeps;
 
 private:
   file_info(const string& t)
@@ -310,7 +312,9 @@ private:
     cdep_parse_state(NOT_STARTED),
     ldep_parse_state(NOT_STARTED),
     direct_cdeps_done(false),
-    direct_cdeps()
+    direct_cdeps(),
+    nested_cdeps_done(false),
+    nested_cdeps()
   {}
 
   file_info(const file_info&); // not implemented
@@ -459,7 +463,6 @@ private:
 
   vector<string>           m_src_files;
 
-  dep_map_t                m_nested_cdeps;
   dep_map_t                m_direct_ldeps;
   dep_map_t                m_nested_ldeps;
 
@@ -499,7 +502,7 @@ public:
                           dep_list_t& vec);
 
   const dep_list_t& get_direct_cdeps(file_info* src_finfo);
-  const dep_list_t& get_nested_cdeps(const string& src_fname);
+  const dep_list_t& get_nested_cdeps(file_info* src_finfo);
   const dep_list_t& get_direct_ldeps(const string& src_fname);
   const dep_list_t& get_nested_ldeps(const string& src_fname);
 
@@ -1025,22 +1028,19 @@ const dep_list_t& cppdeps::get_direct_cdeps(file_info* src_finfo)
         }
     }
 
+  src_finfo->direct_cdeps_done = true;
+
   return vec;
 }
 
-const dep_list_t& cppdeps::get_nested_cdeps(const string& src_fname)
+const dep_list_t& cppdeps::get_nested_cdeps(file_info* src_finfo)
 {
-  {
-    dep_map_t::iterator itr = m_nested_cdeps.find(src_fname);
-    if (itr != m_nested_cdeps.end())
-      return (*itr).second;
-  }
-
-  file_info* src_finfo = file_info::get(src_fname);
+  if (src_finfo->nested_cdeps_done)
+    return src_finfo->nested_cdeps;
 
   if (src_finfo->cdep_parse_state == IN_PROGRESS)
     {
-      cerr << "ERROR: in " << src_fname
+      cerr << "ERROR: in " << src_finfo->target
            << ": untrapped nested #include recursion\n";
       exit(1);
     }
@@ -1067,7 +1067,8 @@ const dep_list_t& cppdeps::get_nested_cdeps(const string& src_fname)
        ++i)
     {
       // Check for self-inclusion to avoid infinite recursion.
-      if ((*i)->target == src_fname)
+      // FIXME just do pointer comparison here:
+      if ((*i)->target == src_finfo->target)
         continue;
 
       // Check if the included file is to be treated as a 'literal' file,
@@ -1084,30 +1085,32 @@ const dep_list_t& cppdeps::get_nested_cdeps(const string& src_fname)
       if ((*i)->cdep_parse_state == IN_PROGRESS)
         {
           if (!m_cfg_quiet)
-            warning() << "in " << src_fname
+            warning() << "in " << src_finfo->target
                       << ": recursive #include cycle with "
                       << (*i)->target << "\n";
           continue;
         }
 
       ++m_nest_level;
-      const dep_list_t& indirect = get_nested_cdeps((*i)->target);
+      const dep_list_t& indirect = get_nested_cdeps(*i);
       --m_nest_level;
       dep_set.insert(indirect.begin(), indirect.end());
     }
 
-  dep_list_t& result = m_nested_cdeps[src_fname];
-  assert(result.empty());
-  result.assign(dep_set.begin(), dep_set.end());
+  assert(src_finfo->nested_cdeps.empty());
+  src_finfo->nested_cdeps.assign(dep_set.begin(), dep_set.end());
 
+  src_finfo->nested_cdeps_done = true;
   src_finfo->cdep_parse_state = COMPLETE;
 
-  return result;
+  return src_finfo->nested_cdeps;
 }
 
 const dep_list_t& cppdeps::get_direct_ldeps(const string& src_fname_orig)
 {
   const string src_fname = make_normpath(src_fname_orig);
+
+  file_info* src_finfo = file_info::get(src_fname_orig);
 
   {
     dep_map_t::iterator itr = m_direct_ldeps.find(src_fname);
@@ -1118,7 +1121,7 @@ const dep_list_t& cppdeps::get_direct_ldeps(const string& src_fname_orig)
   std::set<file_info*, file_info_cmp> deps_set;
 
   ++m_nest_level;
-  const dep_list_t& cdeps = get_nested_cdeps(src_fname_orig);
+  const dep_list_t& cdeps = get_nested_cdeps(src_finfo);
   --m_nest_level;
 
   for (dep_list_t::const_iterator
@@ -1262,7 +1265,7 @@ void cppdeps::print_makefile_dep(const string& fname)
 
   printf(": ");
 
-  const dep_list_t& cdeps = get_nested_cdeps(fname);
+  const dep_list_t& cdeps = get_nested_cdeps(file_info::get(fname));
 
   for (dep_list_t::const_iterator
          itr = cdeps.begin(),
@@ -1287,7 +1290,7 @@ void cppdeps::print_include_tree(const string& fname)
   const dep_list_t& cdeps =
     (m_cfg_output_mode & DIRECT_INCLUDE_TREE)
     ? get_direct_cdeps(finfo)
-    : get_nested_cdeps(finfo->target);
+    : get_nested_cdeps(finfo);
 
   printf("%s:: ", fname.c_str());
 
