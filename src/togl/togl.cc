@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Jul 31 17:52:12 2002
+// written: Sat Aug  3 16:30:34 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -193,9 +193,9 @@ private:
 public:
   GlxWrapper(Display* dpy, XVisualInfo* visinfo, bool direct,
              GlxWrapper* share = 0) :
-    itsContext(0),
     itsDisplay(dpy),
-    itsVisInfo(visinfo)
+    itsVisInfo(visinfo),
+    itsContext(0)
   {
     createContext(direct, share);
   }
@@ -250,6 +250,146 @@ public:
 
   XVisualInfo* visInfo() const { return itsVisInfo; }
 };
+
+struct X11Util
+{
+  static Colormap findColormap(Display* dpy, XVisualInfo* visInfo,
+                               bool rgba, bool privateCmap);
+
+  static Colormap rgbColormap(Display *dpy, int scrnum,
+                              const XVisualInfo *visinfo);
+
+  static void hackInstallColormap(Display* dpy, Window win, Colormap cmap);
+};
+
+// Return an X colormap to use for OpenGL RGB-mode rendering.
+// Input:  dpy - the X display
+//         scrnum - the X screen number
+//         visinfo - the XVisualInfo as returned by glXChooseVisual()
+// Return:  an X Colormap or 0 if there's a _serious_ error.
+Colormap X11Util::rgbColormap(Display *dpy, int scrnum,
+                              const XVisualInfo *visinfo)
+{
+DOTRACE("X11Util::rgbColormap");
+  Window root = RootWindow(dpy,scrnum);
+
+  // First check if visinfo's visual matches the default/root visual.
+
+  if (visinfo->visual==DefaultVisual(dpy,scrnum))
+    {
+      /* use the default/root colormap */
+      Colormap cmap;
+      cmap = DefaultColormap( dpy, scrnum );
+      return cmap;
+    }
+
+
+  // Next, try to find a standard X colormap.
+
+#ifndef SOLARIS_BUG
+  Status status = XmuLookupStandardColormap( dpy, visinfo->screen,
+                                             visinfo->visualid, visinfo->depth,
+                                             XA_RGB_DEFAULT_MAP,
+                                             /* replace */ False,
+                                             /* retain */ True);
+  if (status == 1)
+    {
+      int numCmaps;
+      XStandardColormap *standardCmaps;
+      Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
+                                        &numCmaps, XA_RGB_DEFAULT_MAP);
+      if (status == 1)
+        {
+          for (int i = 0; i < numCmaps; i++)
+            {
+              if (standardCmaps[i].visualid == visinfo->visualid)
+                {
+                  Colormap cmap = standardCmaps[i].colormap;
+                  XFree(standardCmaps);
+                  return cmap;
+                }
+            }
+          XFree(standardCmaps);
+        }
+    }
+#endif
+
+  // If we get here, give up and just allocate a new colormap.
+
+  return XCreateColormap( dpy, root, visinfo->visual, AllocNone );
+}
+
+Colormap X11Util::findColormap(Display* dpy, XVisualInfo* visInfo,
+                               bool rgba, bool privateCmap)
+{
+DOTRACE("X11Util::findColormap");
+
+  int scrnum = DefaultScreen(dpy);
+  Colormap cmap;
+  if (rgba)
+    {
+      /* Colormap for RGB mode */
+      cmap = rgbColormap( dpy, scrnum, visInfo );
+    }
+  else
+    {
+      /* Colormap for CI mode */
+      if (privateCmap)
+        {
+          /* need read/write colormap so user can store own color entries */
+          cmap = XCreateColormap(dpy,
+                                 RootWindow(dpy, visInfo->screen),
+                                 visInfo->visual, AllocAll);
+        }
+      else
+        {
+          if (visInfo->visual==DefaultVisual(dpy, scrnum))
+            {
+              /* share default/root colormap */
+              cmap = DefaultColormap(dpy,scrnum);
+            }
+          else
+            {
+              /* make a new read-only colormap */
+              cmap = XCreateColormap(dpy,
+                                     RootWindow(dpy, visInfo->screen),
+                                     visInfo->visual, AllocNone);
+            }
+        }
+    }
+
+  return cmap;
+}
+
+void X11Util::hackInstallColormap(Display* dpy, Window win, Colormap cmap)
+{
+DOTRACE("X11Util::hackInstallColormap");
+
+  // This is a hack to get the a window's colormap to be
+  // visible... basically we install this colormap in all windows up the
+  // window hierarchy up to (but not including) the root window. It should
+  // be possible to get the window manager to install the colormap when the
+  // Togl widget becomes the active window, but this has not worked yet.
+
+  Window current = win;
+  Window root = XRootWindow( dpy, DefaultScreen(dpy) );
+
+  while (current != root)
+    {
+      DebugEval((void*)current); DebugEvalNL((void*)root);
+
+      XSetWindowColormap(dpy, current, cmap);
+
+      Window parent;
+      Window* children;
+      unsigned int nchildren;
+
+      XQueryTree(dpy, current, &root, &parent, &children, &nchildren);
+      XFree(children);
+
+      current = parent;
+    }
+}
 
 class Togl::Impl
 {
@@ -343,7 +483,7 @@ public:
   Screen* screen() const { return Tk_Screen(itsTkWin); }
   int screenNumber() const { return Tk_ScreenNumber(itsTkWin); }
   Colormap colormap() const { return Tk_Colormap(itsTkWin); }
-  Window windowId() const { return itsWindowId; }
+  Window windowId() const { return ((TkWindow*) itsTkWin)->window; }
 
   int dumpToEpsFile(const char* filename, int inColor,
                     void (*user_redraw)( const Togl* )) const;
@@ -360,7 +500,6 @@ private:
   shared_ptr<GlxAttribs> buildAttribList();
   void createWindow();
   Window findParent();
-  Colormap findColormap();
   void setupStackingOrder();
   void setupOverlayIfNeeded();
   int setupOverlay();
@@ -374,7 +513,6 @@ public:
   GlxWrapper* itsGlx;           /* Normal planes GLX context */
   Display* itsDisplay;          /* X's token for the window's display. */
   Tk_Window  itsTkWin;          /* Tk window structure */
-  Window itsWindowId;
   Tcl_Interp* itsInterp;        /* Tcl interpreter */
   Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
 #ifndef NO_TK_CURSOR
@@ -546,67 +684,6 @@ static ClientData DefaultClientData = NULL;
 static Tcl_HashTable CommandTable;
 
 
-/*
- * Return an X colormap to use for OpenGL RGB-mode rendering.
- * Input:  dpy - the X display
- *         scrnum - the X screen number
- *         visinfo - the XVisualInfo as returned by glXChooseVisual()
- * Return:  an X Colormap or 0 if there's a _serious_ error.
- */
-static Colormap
-get_rgb_colormap( Display *dpy, int scrnum, const XVisualInfo *visinfo )
-{
-DOTRACE("<togl.cc>::get_rgb_colormap");
-  Window root = RootWindow(dpy,scrnum);
-
-  /*
-   * First check if visinfo's visual matches the default/root visual.
-   */
-  if (visinfo->visual==DefaultVisual(dpy,scrnum))
-    {
-      /* use the default/root colormap */
-      Colormap cmap;
-      cmap = DefaultColormap( dpy, scrnum );
-      return cmap;
-    }
-
-  /*
-   * Next, try to find a standard X colormap.
-   */
-#ifndef SOLARIS_BUG
-  Status status = XmuLookupStandardColormap( dpy, visinfo->screen,
-                                             visinfo->visualid, visinfo->depth,
-                                             XA_RGB_DEFAULT_MAP,
-                                             /* replace */ False,
-                                             /* retain */ True);
-  if (status == 1)
-    {
-      int numCmaps;
-      XStandardColormap *standardCmaps;
-      Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
-                                        &numCmaps, XA_RGB_DEFAULT_MAP);
-      if (status == 1)
-        {
-          for (int i = 0; i < numCmaps; i++)
-            {
-              if (standardCmaps[i].visualid == visinfo->visualid)
-                {
-                  Colormap cmap = standardCmaps[i].colormap;
-                  XFree(standardCmaps);
-                  return cmap;
-                }
-            }
-          XFree(standardCmaps);
-        }
-    }
-#endif
-
-  /*
-   * If we get here, give up and just allocate a new colormap.
-   */
-  return XCreateColormap( dpy, root, visinfo->visual, AllocNone );
-}
-
 
 void Togl_CreateFunc( Togl_Callback *proc )
   { DefaultCreateProc = proc; }
@@ -640,19 +717,19 @@ DOTRACE("<togl.cc>::Togl_ResetDefaultCallbacks");
 }
 
 void Togl::setDisplayFunc( Togl_Callback *proc )
-  { itsImpl->setDisplayFunc(proc); }
+  { rep->setDisplayFunc(proc); }
 
 void Togl::setReshapeFunc( Togl_Callback *proc )
-  { itsImpl->setReshapeFunc(proc); }
+  { rep->setReshapeFunc(proc); }
 
 void Togl::setDestroyFunc( Togl_Callback *proc )
-  { itsImpl->setDestroyFunc(proc); }
+  { rep->setDestroyFunc(proc); }
 
 int Togl::configure(Tcl_Interp *interp, int argc, const char *argv[], int flags)
-  { return itsImpl->configure(interp, argc, argv, flags); }
+  { return rep->configure(interp, argc, argv, flags); }
 
 void Togl::makeCurrent() const
-  { itsImpl->makeCurrent(); }
+  { rep->makeCurrent(); }
 
 /*
  * Togl_CreateCommand
@@ -671,40 +748,40 @@ DOTRACE("Togl::createCommand");
 }
 
 void Togl::postRedisplay()
-  { itsImpl->postRedisplay(); }
+  { rep->postRedisplay(); }
 
 void Togl::postReconfigure()
-  { itsImpl->postReconfigure(); }
+  { rep->postReconfigure(); }
 
 void Togl::swapBuffers() const
-  { itsImpl->swapBuffers(); }
+  { rep->swapBuffers(); }
 
 int Togl::width() const
-  { return itsImpl->width(); }
+  { return rep->width(); }
 
 int Togl::height() const
-  { return itsImpl->height(); }
+  { return rep->height(); }
 
 bool Togl::isRgba() const
-  { return itsImpl->isRgba(); }
+  { return rep->isRgba(); }
 
 bool Togl::isDoubleBuffered() const
-  { return itsImpl->isDoubleBuffered(); }
+  { return rep->isDoubleBuffered(); }
 
 unsigned int Togl::bitsPerPixel() const
-  { return itsImpl->bitsPerPixel(); }
+  { return rep->bitsPerPixel(); }
 
 bool Togl::hasPrivateCmap() const
-  { return itsImpl->hasPrivateCmap(); }
+  { return rep->hasPrivateCmap(); }
 
 Tcl_Interp* Togl::interp() const
-  { return itsImpl->interp(); }
+  { return rep->interp(); }
 
 Tk_Window Togl::tkWin() const
-  { return itsImpl->tkWin(); }
+  { return rep->tkWin(); }
 
 const char* Togl::pathname() const
-  { return itsImpl->pathname(); }
+  { return rep->pathname(); }
 
 int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
                    int argc, char *argv[])
@@ -889,23 +966,23 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
 
 
 unsigned long Togl::allocColor( float red, float green, float blue ) const
-  { return itsImpl->allocColor(red, green, blue); }
+  { return rep->allocColor(red, green, blue); }
 
 void Togl::freeColor( unsigned long pixel ) const
-  { itsImpl->freeColor(pixel); }
+  { rep->freeColor(pixel); }
 
 void Togl::setColor( unsigned long index,
                      float red, float green, float blue ) const
-  { itsImpl->setColor(index, red, green, blue); }
+  { rep->setColor(index, red, green, blue); }
 
 GLuint Togl::loadBitmapFont( const char *fontname ) const
-  { return itsImpl->loadBitmapFont(fontname); }
+  { return rep->loadBitmapFont(fontname); }
 
 GLuint Togl::loadBitmapFonti( int fontnumber ) const
-  { return itsImpl->loadBitmapFonti(fontnumber); }
+  { return rep->loadBitmapFonti(fontnumber); }
 
 void Togl::unloadBitmapFont( GLuint fontbase ) const
-  { itsImpl->unloadBitmapFont(fontbase); }
+  { rep->unloadBitmapFont(fontbase); }
 
 
 void Togl::overlayDisplayFunc( Togl_Callback *proc )
@@ -915,32 +992,32 @@ DOTRACE("Togl::OverlayDisplayFunc");
 }
 
 void Togl::useLayer( int layer )
-  { itsImpl->useLayer(layer); }
+  { rep->useLayer(layer); }
 
 void Togl::showOverlay()
-  { itsImpl->showOverlay(); }
+  { rep->showOverlay(); }
 
 void Togl::hideOverlay()
-  { itsImpl->hideOverlay(); }
+  { rep->hideOverlay(); }
 
 void Togl::postOverlayRedisplay()
-  { itsImpl->postOverlayRedisplay(); }
+  { rep->postOverlayRedisplay(); }
 
 int Togl::existsOverlay() const
-  { return itsImpl->existsOverlay(); }
+  { return rep->existsOverlay(); }
 
 int Togl::getOverlayTransparentValue() const
-  { return itsImpl->getOverlayTransparentValue(); }
+  { return rep->getOverlayTransparentValue(); }
 
 int Togl::isMappedOverlay() const
-  { return itsImpl->isMappedOverlay(); }
+  { return rep->isMappedOverlay(); }
 
 unsigned long Togl::allocColorOverlay( float red, float green,
                                        float blue ) const
-  { return itsImpl->allocColorOverlay(red, green, blue); }
+  { return rep->allocColorOverlay(red, green, blue); }
 
 void Togl::freeColorOverlay( unsigned long pixel ) const
-  { itsImpl->freeColorOverlay(pixel); }
+  { rep->freeColorOverlay(pixel); }
 
 
 
@@ -955,11 +1032,11 @@ DOTRACE("Togl::defaultClientData");
 }
 
 ClientData Togl::getClientData() const
-  { return itsImpl->getClientData(); }
+  { return rep->getClientData(); }
 
 
 void Togl::setClientData( ClientData clientData )
-  { itsImpl->setClientData(clientData); }
+  { rep->setClientData(clientData); }
 
 
 
@@ -969,19 +1046,19 @@ void Togl::setClientData( ClientData clientData )
  */
 
 Display* Togl::display() const
-  { return itsImpl->display(); }
+  { return rep->display(); }
 
 Screen* Togl::screen() const
-  { return itsImpl->screen(); }
+  { return rep->screen(); }
 
 int Togl::screenNumber() const
-  { return itsImpl->screenNumber(); }
+  { return rep->screenNumber(); }
 
 Colormap Togl::colormap() const
-  { return itsImpl->colormap(); }
+  { return rep->colormap(); }
 
 Window Togl::windowId() const
-  { return itsImpl->windowId(); }
+  { return rep->windowId(); }
 
 
 /*
@@ -1187,7 +1264,7 @@ DOTRACE("<togl.cc>::generateEPS");
 
 int Togl::dumpToEpsFile( const char *filename, int inColor,
                          void (*user_redraw)( const Togl* )) const
-  { return itsImpl->dumpToEpsFile(filename, inColor, user_redraw); }
+  { return rep->dumpToEpsFile(filename, inColor, user_redraw); }
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -1198,7 +1275,7 @@ int Togl::dumpToEpsFile( const char *filename, int inColor,
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname,
            int config_argc, const char** config_argv) :
-  itsImpl(new Impl(this, interp, pathname, config_argc, config_argv))
+  rep(new Impl(this, interp, pathname, config_argc, config_argv))
 {
 DOTRACE("Togl::Togl");
 }
@@ -1206,7 +1283,7 @@ DOTRACE("Togl::Togl");
 Togl::~Togl()
 {
 DOTRACE("Togl::~Togl");
-  delete itsImpl;
+  delete rep;
 }
 
 //     * Creates a new window
@@ -1223,7 +1300,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsGlx(0),
   itsDisplay(0),
   itsTkWin(0),
-  itsWindowId(0),
   itsInterp(interp),
   itsWidgetCmd(0),
 #ifndef NO_TK_CURSOR
@@ -2020,7 +2096,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
   // Issue a ConfigureNotify event if there were deferred changes
   issueConfigureNotify();
 
-  XSelectInput(itsDisplay, itsWindowId, ALL_EVENTS_MASK);
+  XSelectInput(itsDisplay, windowId(), ALL_EVENTS_MASK);
 
   // Request the X window to be displayed
   XMapWindow(itsDisplay, windowId());
@@ -2123,7 +2199,8 @@ DOTRACE("Togl::Impl::createWindow");
 
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
-  Colormap cmap = findColormap();
+  Colormap cmap = X11Util::findColormap(itsDisplay, itsVisInfo,
+                                        itsRgbaFlag, itsPrivateCmapFlag);
 
   /* Make sure Tk knows to switch to the new colormap when the cursor
    * is over this window when running in color index mode.
@@ -2138,47 +2215,19 @@ DOTRACE("Togl::Impl::createWindow");
   winPtr->atts.colormap = cmap;
   winPtr->atts.border_pixel = 0;
   winPtr->atts.event_mask = ALL_EVENTS_MASK;
-  itsWindowId = XCreateWindow(itsDisplay,
-                              parent,
-                              0, 0, itsWidth, itsHeight,
-                              0, itsVisInfo->depth,
-                              InputOutput, itsVisInfo->visual,
-                              CWBorderPixel | CWColormap | CWEventMask,
-                              &winPtr->atts);
+  winPtr->window = XCreateWindow(itsDisplay,
+                                 parent,
+                                 0, 0, itsWidth, itsHeight,
+                                 0, itsVisInfo->depth,
+                                 InputOutput, itsVisInfo->visual,
+                                 CWBorderPixel | CWColormap | CWEventMask,
+                                 &winPtr->atts);
 
-  DebugEvalNL(itsWindowId);
-
-  winPtr->window = itsWindowId;
-
-  // This is a hack to get the Togl widget's colormap to be
-  // visible... basically we install this colormap in all windows up
-  // the window hierarchy up to (but not including) the root
-  // window. It should be possible to get the window manager to
-  // install the colormap when the Togl widget becomes the active
-  // window, but this has not worked yet.
+  DebugEvalNL(winPtr->window);
 
   if (!itsRgbaFlag)
     {
-
-      Window current = itsWindowId;
-      Window root = XRootWindow( itsDisplay, DefaultScreen(itsDisplay) );
-
-      while (current != root)
-        {
-
-          DebugEval((void*)current); DebugEvalNL((void*)root);
-
-          XSetWindowColormap(itsDisplay, current, cmap);
-
-          Window parent;
-          Window* children;
-          unsigned int nchildren;
-
-          XQueryTree(itsDisplay, current, &root, &parent, &children, &nchildren);
-          XFree(children);
-
-          current = parent;
-        }
+      X11Util::hackInstallColormap(itsDisplay, winPtr->window, cmap);
     }
 
   int dummy_new_flag;
@@ -2209,47 +2258,6 @@ DOTRACE("Togl::Impl::findParent");
       Tk_MakeWindowExist((Tk_Window) winPtr->parentPtr);
     }
   return winPtr->parentPtr->window;
-}
-
-Colormap Togl::Impl::findColormap()
-{
-DOTRACE("Togl::Impl::findColormap");
-
-  int scrnum = DefaultScreen(itsDisplay);
-  Colormap cmap;
-  if (itsRgbaFlag)
-    {
-      /* Colormap for RGB mode */
-      cmap = get_rgb_colormap( itsDisplay, scrnum, itsVisInfo );
-    }
-  else
-    {
-      /* Colormap for CI mode */
-      if (itsPrivateCmapFlag)
-        {
-          /* need read/write colormap so user can store own color entries */
-          cmap = XCreateColormap(itsDisplay,
-                                 RootWindow(itsDisplay, itsVisInfo->screen),
-                                 itsVisInfo->visual, AllocAll);
-        }
-      else
-        {
-          if (itsVisInfo->visual==DefaultVisual(itsDisplay, scrnum))
-            {
-              /* share default/root colormap */
-              cmap = DefaultColormap(itsDisplay,scrnum);
-            }
-          else
-            {
-              /* make a new read-only colormap */
-              cmap = XCreateColormap(itsDisplay,
-                                     RootWindow(itsDisplay, itsVisInfo->screen),
-                                     itsVisInfo->visual, AllocNone);
-            }
-        }
-    }
-
-  return cmap;
 }
 
 void Togl::Impl::setupStackingOrder()
@@ -2394,7 +2402,6 @@ DOTRACE("Togl::Impl::setupOverlay");
 
   Tcl_SetHashValue( hPtr, winPtr );
 
-  /*   XMapWindow( itsDisplay, itsOverlayWindow );*/
   itsOverlayIsMapped = 0;
 
   /* Make sure window manager installs our colormap */
@@ -2470,7 +2477,7 @@ DOTRACE("Togl::Impl::checkDblBufferSnafu");
 
 namespace
 {
-  int ToglCmd(ClientData, Tcl_Interp *interp, int argc, char **argv)
+  int ToglCmd(ClientData, Tcl_Interp* interp, int argc, char** argv)
   {
     DOTRACE("ToglCmd");
     if (argc <= 1)
