@@ -18,10 +18,7 @@ set EXPT [new ExptDriver]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testWriteLGX ExptTcl $::EXPT
-IO::testReadLGX ExptTcl $::EXPT
-IO::testWriteASW ExptTcl $::EXPT
-IO::testReadASW ExptTcl $::EXPT
+::testReadWrite ExptTcl $::EXPT
 
 delete $EXPT
 

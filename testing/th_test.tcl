@@ -7,21 +7,13 @@
 ###
 ##############################################################################
 
-set SIMPLETH [Obj::new TimingHandler]
-
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testWriteLGX SimpleThTcl $::SIMPLETH
-IO::testReadLGX SimpleThTcl $::SIMPLETH
-IO::testWriteASW SimpleThTcl $::SIMPLETH
-IO::testReadASW SimpleThTcl $::SIMPLETH
-
+set SIMPLETH [Obj::new TimingHandler]
 set TH [Obj::new TimingHdlr]
 
-IO::testWriteLGX ThTcl $::TH
-IO::testReadLGX ThTcl $::TH
-IO::testWriteASW ThTcl $::TH
-IO::testReadASW ThTcl $::TH
+::testReadWrite SimpleThTcl $::SIMPLETH
+::testReadWrite ThTcl $::TH
 
 ### Obj::new TimingHandler ###
 test "ThTcl-Obj::new SimpleTh" "too many args" {

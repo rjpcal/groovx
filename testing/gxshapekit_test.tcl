@@ -40,10 +40,7 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 
     testTypeCmd testObj
     if { $testObj(objid) > 0 } {
-	testWriteLGX testObj
-	testReadLGX testObj
-	testReadASW testObj
-	testWriteASW testObj
+	::testReadWrite $testObj(package) $testObj(objid)
     }
     testCategoryCmd testObj
     testDrawCmd testObj
@@ -87,30 +84,6 @@ proc testTypeCmd { objname } {
             $cmdname $this(objid)
         "} {$this(subclass)}
     }
-}
-
-proc testWriteLGX { objname } {
-    upvar $objname this
-
-    IO::testWriteLGX $this(package) $this(objid)
-}
-
-proc testReadLGX { objname } {
-    upvar $objname this
-
-    IO::testReadLGX $this(package) $this(objid)
-}
-
-proc testWriteASW { objname } {
-    upvar $objname this
-
-    IO::testWriteASW $this(package) $this(objid)
-}
-
-proc testReadASW { objname } {
-    upvar $objname this
-
-    IO::testReadASW $this(package) $this(objid)
 }
 
 proc testCategoryCmd { objname } {

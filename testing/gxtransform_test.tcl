@@ -13,10 +13,7 @@ set ::POS [Obj::new GxTransform]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testWriteLGX GxTransform $::POS
-IO::testReadLGX GxTransform $::POS
-IO::testWriteASW GxTransform $::POS
-IO::testReadASW GxTransform $::POS
+::testReadWrite GxTransform $::POS
 
 ### Obj::new GxTransform ###
 test "GxTransform-Obj::new GxTransform" "too many args" {

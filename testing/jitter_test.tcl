@@ -11,10 +11,7 @@ source ${::TEST_DIR}/io_test.tcl
 
 set ::JITTER [Obj::new Jitter]
 
-IO::testWriteLGX JitterTcl $::JITTER
-IO::testReadLGX JitterTcl $::JITTER
-IO::testWriteASW JitterTcl $::JITTER
-IO::testReadASW JitterTcl $::JITTER
+::testReadWrite JitterTcl $::JITTER
 
 unset ::JITTER
 

@@ -18,10 +18,7 @@ GxPixmap::loadImage $::PIXMAP $::IMGFILE
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testWriteLGX GxPixmap $::PIXMAP
-IO::testReadLGX GxPixmap $::PIXMAP
-IO::testWriteASW GxPixmap $::PIXMAP
-IO::testReadASW GxPixmap $::PIXMAP
+::testReadWrite GxPixmap $::PIXMAP
 
 ### Obj::new GxPixmap ###
 test "Obj::new GxPixmap" "too many args" {
