@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Wed Jun 30 14:21:28 1999
+// written: Thu Nov 11 15:01:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,6 +66,16 @@ DOTRACE("RhList::deserialize");
   
   // This ensures that all the new ResponseHandler's have their
   // Tcl_Interp* set correctly
+  setInterp(itsInterp);
+}
+
+void RhList::readFrom(Reader* reader) {
+DOTRACE("RhList::readFrom");
+
+  Base::readFrom(reader);
+
+  // Ensure that all the new ResponseHandler's have their Tcl_Interp*
+  // set correctly
   setInterp(itsInterp);
 }
 

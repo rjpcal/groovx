@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Wed Jun 30 14:22:50 1999
+// written: Thu Nov 11 14:59:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,15 @@ protected:
 public:
   static RhList& theRhList();
 
+  /** This does the same as PtrList<ResponseHandler>::deserialize(),
+		except that it ensures that the any new ResponseHandler's that
+		are created have setInterp() properly called on them */
   virtual void deserialize(istream &is, IOFlag flag);
+
+  /** This does the same as PtrList<ResponseHandler>::readFrom(),
+		except that it ensures that the any new ResponseHandler's that
+		are created have setInterp() properly called on them */
+  virtual void readFrom(Reader* reader);
 
   //////////////////
   // manipulators //
