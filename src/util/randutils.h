@@ -2,8 +2,7 @@
 // randutils.h
 // Rob Peters
 // created: Mon Mar  8 02:35:53 1999
-// written: Fri Mar 12 12:55:12 1999
-static const char vcid_randutils_h[] = "$Id$";
+// written: Sun Mar 14 20:32:50 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RANDUTILS_H_DEFINED
@@ -24,4 +23,5 @@ namespace {
   }
 }
 
+static const char vcid_randutils_h[] = "$Header$";
 #endif // !RANDUTILS_H_DEFINED
