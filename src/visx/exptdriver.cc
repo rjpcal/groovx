@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun 20 18:06:48 2001
+// written: Wed Jul 11 14:47:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 
 #include "system/system.h"
 
+#include "tcl/convert.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclevalcmd.h"
 
@@ -313,17 +314,15 @@ DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
       return false;
     }
 
-  int llength;
-  int tclresult = Tcl_GetIntFromObj(itsInterp,
-                                    Tcl_GetObjResult(itsInterp),
-                                    &llength);
-
-  if (tclresult != TCL_OK) {
+  try {
+    int llength = Tcl::fromTcl<int>(Tcl_GetObjResult(itsInterp));
+	 return (llength > 0);
+  }
+  catch (...) {
     itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");
-    return false;
   }
 
-  return (llength > 0);
+  return false;
 }
 
 void ExptDriver::Impl::updateDoUponCompletionBody() const {
