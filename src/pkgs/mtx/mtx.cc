@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue May 14 20:45:37 2002
+// written: Wed Jul 31 16:21:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,10 +59,10 @@ namespace
 
 namespace RC
 {
-  void raiseException(const char* msg, const char* f, int ln);
+  void raiseException(const fstring& msg, const char* f, int ln);
 }
 
-void RC::raiseException(const char* msg, const char* f, int ln)
+void RC::raiseException(const fstring& msg, const char* f, int ln)
 {
   DebugPrintNL(msg);
   fstring errmsg;
@@ -96,28 +96,51 @@ void RC::inHalfOpen(const void* x, const void* llim, const void* ulim,
   else raiseException("inHalfOpen: pointer range error", f, ln);
 }
 
+void RC::inFullOpen(const void* x, const void* llim, const void* ulim,
+                    const char* f, int ln)
+{
+  if (x>=llim && x<=ulim) ; // OK
+  else raiseException("inFullOpen: pointer range error", f, ln);
+}
+
 void RC::geq(int x, int lim, const char* f, int ln)
 {
   if (x>=lim) ; // OK
-  else raiseException("geq: integer range error", f, ln);
+  else raiseException(fstring("geq: integer range error ",
+                              x, " !>= ", lim),
+                      f, ln);
 }
 
 void RC::less(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raiseException("less: integer range error", f, ln);
+  else raiseException(fstring("less: integer range error ",
+                              x, " !< ", lim),
+                      f, ln);
 }
 
 void RC::leq(int x, int lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raiseException("leq: integer range error", f, ln);
+  else raiseException(fstring("leq: integer range error ",
+                              x, " !<= ", lim),
+                      f, ln);
 }
 
 void RC::inHalfOpen(int x, int llim, int ulim, const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException("inHalfOpen: integer range error", f, ln);
+  else raiseException(fstring("inHalfOpen: integer range error ",
+                              x, " !in [", llim, ", ", ulim, ")"),
+                      f, ln);
+}
+
+void RC::inFullOpen(int x, int llim, int ulim, const char* f, int ln)
+{
+  if (x>=llim && x<=ulim) ; // OK
+  else raiseException(fstring("inFullOpen: integer range error ",
+                              x, " !in [", llim, ", ", ulim, "]"),
+                      f, ln);
 }
 
 
@@ -530,27 +553,38 @@ SubMtxRef& SubMtxRef::operator=(const Mtx& other)
 #ifdef HAVE_MATLAB
 Mtx::Mtx(mxArray* a, StoragePolicy s) :
   Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
-{}
+{
+DOTRACE("Mtx::Mtx(mxArray*, StoragePolicy)");
+}
 
 Mtx::Mtx(const mxArray* a, StoragePolicy s) :
   Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
-{}
+{
+DOTRACE("Mtx::Mtx(const mxArray*, StoragePolicy)");
+}
 #endif
 
 Mtx::Mtx(double* data, int mrows, int ncols, StoragePolicy s) :
   Base(mrows, ncols, DataHolder(data, mrows, ncols, s))
-{}
+{
+DOTRACE("Mtx::Mtx(double*, int, int, StoragePolicy)");
+}
 
 Mtx::Mtx(int mrows, int ncols, InitPolicy p) :
   Base(mrows, ncols, DataHolder(mrows, ncols, p))
-{}
+{
+DOTRACE("Mtx::Mtx(int, int, InitPolicy)");
+}
 
 Mtx::Mtx(const MtxShape& s, InitPolicy p) :
   Base(s.mrows(), s.ncols(), DataHolder(s.mrows(), s.ncols(), p))
-{}
+{
+DOTRACE("Mtx::Mtx(const MtxShape&, InitPolicy)");
+}
 
 const Mtx& Mtx::emptyMtx()
 {
+DOTRACE("Mtx::emptyMtx");
   // FIXME this is probably not safe in mex files due to the improper C++
   // static initialization/termination semantics there.
   static Mtx m(0,0);
@@ -560,6 +594,7 @@ const Mtx& Mtx::emptyMtx()
 Mtx::Mtx(const Slice& s) :
   Base(s.nelems(), 1, DataHolder(s.nelems(), 1, NO_INIT))
 {
+DOTRACE("Mtx::Mtx");
   std::copy(s.begin(), s.end(), this->colmaj_begin_nc());
 }
 
@@ -568,6 +603,7 @@ Mtx::~Mtx() {}
 #ifdef HAVE_MATLAB
 mxArray* Mtx::makeMxArray() const
 {
+DOTRACE("Mtx::makeMxArray");
   mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
 
   std::copy(colmaj_begin(), colmaj_end(), mxGetPr(result_mx));
@@ -622,6 +658,8 @@ void Mtx::print(const char* mtxName) const
 
 void Mtx::reorderRows(const Mtx& index_)
 {
+DOTRACE("Mtx::reorderRows");
+
   Mtx index(index_.asColumn());
 
   if (index.mrows() != mrows())
@@ -637,6 +675,8 @@ void Mtx::reorderRows(const Mtx& index_)
 
 void Mtx::reorderColumns(const Mtx& index_)
 {
+DOTRACE("Mtx::reorderColumns");
+
   Mtx index(index_.asColumn());
 
   if (index.mrows() != ncols())
@@ -652,6 +692,8 @@ void Mtx::reorderColumns(const Mtx& index_)
 
 void Mtx::swapColumns(int c1, int c2)
 {
+DOTRACE("Mtx::swapColumns");
+
   if (c1 == c2) return;
 
   memswap(address_nc(0,c1), address_nc(0,c2), mrows());
@@ -659,6 +701,8 @@ void Mtx::swapColumns(int c1, int c2)
 
 Mtx Mtx::meanRow() const
 {
+DOTRACE("Mtx::meanRow");
+
   Mtx res(1, ncols());
 
   MtxIter resiter = res.row(0).beginNC();
@@ -671,6 +715,8 @@ Mtx Mtx::meanRow() const
 
 Mtx Mtx::meanColumn() const
 {
+DOTRACE("Mtx::meanColumn");
+
   Mtx res(mrows(), 1);
 
   MtxIter resiter = res.column(0).beginNC();
@@ -683,6 +729,8 @@ Mtx Mtx::meanColumn() const
 
 Mtx::const_iterator Mtx::find_min() const
 {
+DOTRACE("Mtx::find_min");
+
   if (nelems() == 0)
     throw Util::Error("find_min(): the matrix must be non-empty");
 
@@ -691,6 +739,8 @@ Mtx::const_iterator Mtx::find_min() const
 
 Mtx::const_iterator Mtx::find_max() const
 {
+DOTRACE("Mtx::find_max");
+
   if (nelems() == 0)
     throw Util::Error("find_max(): the matrix must be non-empty");
 
@@ -699,6 +749,8 @@ Mtx::const_iterator Mtx::find_max() const
 
 double Mtx::min() const
 {
+DOTRACE("Mtx::min");
+
   if (nelems() == 0)
     throw Util::Error("min(): the matrix must be non-empty");
 
@@ -707,6 +759,8 @@ double Mtx::min() const
 
 double Mtx::max() const
 {
+DOTRACE("Mtx::max");
+
   if (nelems() == 0)
     throw Util::Error("max(): the matrix must be non-empty");
 
@@ -715,11 +769,13 @@ double Mtx::max() const
 
 double Mtx::sum() const
 {
+DOTRACE("Mtx::sum");
   return std::accumulate(begin(), end(), 0.0);
 }
 
 Mtx& Mtx::operator+=(const Mtx& other)
 {
+DOTRACE("Mtx::operator+=(const Mtx&)");
   if (ncols() != other.ncols())
     throw Util::Error("dimension mismatch in Mtx::operator+=");
 
@@ -731,6 +787,7 @@ Mtx& Mtx::operator+=(const Mtx& other)
 
 Mtx& Mtx::operator-=(const Mtx& other)
 {
+DOTRACE("Mtx::operator-=(const Mtx&)");
   if (ncols() != other.ncols())
     throw Util::Error("dimension mismatch in Mtx::operator-=");
 
@@ -742,6 +799,7 @@ Mtx& Mtx::operator-=(const Mtx& other)
 
 bool Mtx::operator==(const Mtx& other) const
 {
+DOTRACE("Mtx::operator==(const Mtx&)");
   if ( (mrows() != other.mrows()) || (ncols() != other.ncols()) )
     return false;
   for (int c = 0; c < ncols(); ++c)
@@ -752,6 +810,8 @@ bool Mtx::operator==(const Mtx& other) const
 void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
                        Slice& result)
 {
+DOTRACE("Mtx::VMmul_assign");
+
   // e.g mrows == vec.nelems == 3   ncols == 4
   //
   //               | e11  e12  e13  e14 |
@@ -848,31 +908,37 @@ namespace
 
 Mtx operator+(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("operator+(Mtx, Mtx)");
   return binaryOp(m1, m2, std::plus<double>());
 }
 
 Mtx operator-(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("operator-(Mtx, Mtx)");
   return binaryOp(m1, m2, std::minus<double>());
 }
 
 Mtx arr_mul(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("arr_mul(Mtx, Mtx)");
   return binaryOp(m1, m2, std::multiplies<double>());
 }
 
 Mtx arr_div(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("arr_div(Mtx, Mtx)");
   return binaryOp(m1, m2, std::divides<double>());
 }
 
 Mtx min(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("min(Mtx, Mtx)");
   return binaryOp(m1, m2, Min());
 }
 
 Mtx max(const Mtx& m1, const Mtx& m2)
 {
+DOTRACE("max(Mtx, Mtx)");
   return binaryOp(m1, m2, Max());
 }
 
