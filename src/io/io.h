@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Dec  6 14:00:37 1999
+// written: Tue Feb  8 17:42:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #endif
 
 #ifndef ERROR_H_DEFINED
-#include "error.h"
+#include "util/error.h"
 #endif
 
 class istream;
