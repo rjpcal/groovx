@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu May 17 10:56:04 2001
+// written: Thu May 17 10:59:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ public:
 };
 
 template <class To, class Fr>
-IdItem<To> dynamicCast(IdItem<class Fr> p)
+IdItem<To> dynamicCast(IdItem<Fr> p)
 {
   Fr* f = p.get();
   To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
@@ -234,11 +234,15 @@ public:
 };
 
 template <class To, class Fr>
-MaybeIdItem<To> dynamicCast(MaybeIdItem<class Fr> p)
+MaybeIdItem<To> dynamicCast(MaybeIdItem<Fr> p)
 {
-  Fr* f = p.get();
-  To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-  return MaybeIdItem<To>(&t);
+  if (p.isValid())
+	 {
+		Fr* f = p.get();
+		To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
+		return MaybeIdItem<To>(&t, p.id());
+	 }
+  return MaybeIdItem<To>((To*)0, p.id());
 }
 
 template <class Container, class T>
