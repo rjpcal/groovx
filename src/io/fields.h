@@ -41,11 +41,6 @@
 #include "util/value.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILITY_DEFINED)
-#include <utility>
-#define UTILITY_DEFINED
-#endif
-
 namespace IO
 {
   class Reader;
@@ -87,6 +82,29 @@ public:
     return Util::clamp(raw, itsMin, itsMax);
   }
 };
+
+// Have to use this local replacement for std::pair because #include'ing
+// <utility> brings in std::rel_ops, which, with g++-2.96 on Mac OS X, match
+// too greedily and mess up template instantiations with classes that already
+// have their own relational operators.
+
+namespace
+{
+  template <class T1, class T2>
+  struct mypair
+  {
+    mypair(const T1& t1, const T2& t2) : first(t1), second(t2) {}
+
+    T1 first;
+    T2 second;
+  };
+
+  template <class T1, class T2>
+  mypair<T1, T2> make_mypair(const T1& t1, const T2& t2)
+  {
+    return mypair<T1,T2>(t1, t2);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -390,7 +408,7 @@ public:
 
   template <class C, class T, class T2>
   static shared_ptr<FieldImpl>
-  makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs,
+  makeImpl(mypair<T (C::*)() const, void (C::*)(T)> funcs,
            const T2& /* min */, const T2& /* max */, bool /* check */)
   {
     return shared_ptr<FieldImpl>
@@ -519,7 +537,7 @@ public:
     init(begin, end, parent);
   }
 
-  template<std::size_t N>
+  template<unsigned int N>
   FieldMap(Field const (&array)[N], const FieldMap* parent=0) :
     itsImpl(0)
   {
