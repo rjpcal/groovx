@@ -39,11 +39,11 @@
 
 #include "util/error.h"
 #include "util/log.h"
-#include "util/minivec.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -82,7 +82,7 @@ public:
     trial(0)
     {}
 
-  typedef minivec<Util::Ref<TrialEvent> > EventGroup;
+  typedef std::vector<Util::Ref<TrialEvent> > EventGroup;
 
   EventGroup immediateEvents;
   EventGroup startEvents;

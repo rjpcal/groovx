@@ -36,8 +36,9 @@
 #include "tcl/tcllistobj.h"
 
 #include "util/error.h"
-#include "util/minivec.h"
 #include "util/pointers.h"
+
+#include <vector>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -110,7 +111,7 @@ private:
   typedef Tcl::List::Iterator<Tcl_Obj*> Iter;
 
   Tcl_Obj* itsArg0;
-  minivec<Iter> itsArgs;
+  std::vector<Iter> itsArgs;
   unsigned int const itsNumCalls;
   Tcl::List itsResult;
 };

@@ -35,12 +35,12 @@
 #include "util/object.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
-#include "util/minivec.h"
 
 #include <algorithm>
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <vector>
 
 #include "util/trace.h"
 
@@ -65,7 +65,7 @@ namespace
     }
   };
 
-  minivec<ScopeInfo> scopes;
+  std::vector<ScopeInfo> scopes;
 
   template <class Str>
   inline void logImpl(Str msg)

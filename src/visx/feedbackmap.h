@@ -35,8 +35,9 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
-#include "util/minivec.h"
 #include "util/strings.h"
+
+#include <vector>
 
 /// FeedbackMap associates feedbacks with different boolean conditions.
 class FeedbackMap
@@ -133,7 +134,7 @@ public:
 
 private:
   fstring itsRep;
-  mutable minivec<Item> itsItems;
+  mutable std::vector<Item> itsItems;
   mutable bool isItDirty;
 };
 

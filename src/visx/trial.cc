@@ -41,13 +41,14 @@
 
 #include "util/iter.h"
 #include "util/log.h"
-#include "util/minivec.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
 #include "visx/response.h"
 #include "visx/responsehandler.h"
 #include "visx/timinghdlr.h"
+
+#include <vector>
 
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"
@@ -129,12 +130,12 @@ public:
 
   int correctResponse;
 
-  typedef minivec<Ref<GxNode> > GxNodes;
+  typedef std::vector<Ref<GxNode> > GxNodes;
   GxNodes gxNodes;
 
   unsigned int currentNode;
 
-  minivec<Response> responses;
+  std::vector<Response> responses;
 
   int trialType;
   SoftRef<ResponseHandler> rh;
@@ -335,7 +336,7 @@ double Trial::avgResponse() const
 {
 DOTRACE("Trial::avgResponse");
   int sum = 0;
-  for (minivec<Response>::const_iterator ii = rep->responses.begin();
+  for (std::vector<Response>::const_iterator ii = rep->responses.begin();
        ii != rep->responses.end();
        ++ii)
     {
@@ -348,7 +349,7 @@ double Trial::avgRespTime() const
 {
 DOTRACE("Trial::avgRespTime");
   int sum = 0;
-  for (minivec<Response>::const_iterator ii = rep->responses.begin();
+  for (std::vector<Response>::const_iterator ii = rep->responses.begin();
        ii != rep->responses.end();
        ++ii)
     {

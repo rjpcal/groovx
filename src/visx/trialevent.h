@@ -35,9 +35,10 @@
 
 #include "tcl/tcltimer.h"
 
-#include "util/minivec.h"
 #include "util/stopwatch.h"
 #include "util/ref.h"
+
+#include <vector>
 
 class OutputFile;
 class Trial;
@@ -332,7 +333,7 @@ public:
   void clearEvents();
 
 private:
-  minivec<Util::Ref<TrialEvent> > itsEvents;
+  std::vector<Util::Ref<TrialEvent> > itsEvents;
 };
 
 static const char vcid_trialevent_h[] = "$Header$";

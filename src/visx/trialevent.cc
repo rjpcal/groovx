@@ -362,7 +362,7 @@ void MultiEvent::invoke(Trial& trial)
 
 void MultiEvent::readFrom(IO::Reader& reader)
 {
-  minivec<Util::Ref<TrialEvent> > newEvents;
+  std::vector<Util::Ref<TrialEvent> > newEvents;
 
   IO::ReadUtils::readObjectSeq<TrialEvent>
     (reader, "events", std::back_inserter(newEvents));
