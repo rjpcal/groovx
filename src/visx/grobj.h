@@ -1,8 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Jun 15 19:44:51 1999
+// written: Wed Jun 30 10:23:05 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -17,6 +18,7 @@
 // default version, which simply recompiles the display list (if
 // necessary) and then calls the display list, should be adequate in
 // most situations.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJ_H_DEFINED
@@ -85,6 +87,10 @@ public:
   /////////////
   // actions //
   /////////////
+
+  virtual void update() const;
+  // Recompiles the OpenGL display list, if necessary, otherwise does
+  // nothing.
 
   virtual void draw() const;
   // This function may be overridden, but a default version is
