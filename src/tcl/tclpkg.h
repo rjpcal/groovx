@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jun  6 17:44:05 2001
+// written: Wed Jun  6 17:47:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -335,6 +335,8 @@ protected:
 	 int id = itsPkg->itemArgn() ? getIntFromArg(itsPkg->itemArgn()) : -1;
 	 return itsPkg->getCItemFromId(id);
   }
+
+  int afterItemArg(int n) { return itsPkg->itemArgn() + n; }
 
 private:
   TclItemCmd(const TclItemCmd&);
