@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Nov 17 18:25:36 1999
+// written: Wed Dec  1 11:21:50 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -276,6 +276,8 @@ public:
 
 	 ExptDriver::theExptDriver().setInterp(interp);
 	 
+	 Experiment::installExperiment(&ExptDriver::theExptDriver());
+
 	 addCommand( new BeginCmd(this, "Expt::begin") );
 	 addCommand( new PauseCmd(this, "Expt::pause") );
 	 addCommand( new ReadCmd(this, "Expt::read") );
