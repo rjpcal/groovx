@@ -412,38 +412,38 @@ DOTRACE("GrObj::Impl::charCount");
 
 void GrObj::Impl::readFrom(Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
-  reader->readValue("category", itsCategory);
+  reader->readValue("GrObj::category", itsCategory);
 
-  reader->readValue("renderMode", itsRenderer.itsMode);
-  reader->readValue("unRenderMod", itsUnRenderer.itsMode);
+  reader->readValue("GrObj::renderMode", itsRenderer.itsMode);
+  reader->readValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
 
-  reader->readValue("bbVisibility", itsBB.itsIsVisible);
+  reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
-  reader->readValue("scalingMode", itsScaler.itsMode);
-  reader->readValue("widthFactor", itsScaler.itsWidthFactor);
-  reader->readValue("heightFactor", itsScaler.itsHeightFactor);
+  reader->readValue("GrObj::scalingMode", itsScaler.itsMode);
+  reader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
+  reader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
 
-  reader->readValue("alignmentMode", itsAligner.itsMode);
-  reader->readValue("centerX", itsAligner.itsCenterX);
-  reader->readValue("centerY", itsAligner.itsCenterY);
+  reader->readValue("GrObj::alignmentMode", itsAligner.itsMode);
+  reader->readValue("GrObj::centerX", itsAligner.itsCenterX);
+  reader->readValue("GrObj::centerY", itsAligner.itsCenterY);
 }
 
 void GrObj::Impl::writeTo(Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
-  writer->writeValue("category", itsCategory);
+  writer->writeValue("GrObj::category", itsCategory);
 
-  writer->writeValue("renderMode", itsRenderer.itsMode);
-  writer->writeValue("unRenderMod", itsUnRenderer.itsMode);
+  writer->writeValue("GrObj::renderMode", itsRenderer.itsMode);
+  writer->writeValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
 
-  writer->writeValue("bbVisibility", itsBB.itsIsVisible);
+  writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
-  writer->writeValue("scalingMode", itsScaler.itsMode);
-  writer->writeValue("widthFactor", itsScaler.itsWidthFactor);
-  writer->writeValue("heightFactor", itsScaler.itsHeightFactor);
+  writer->writeValue("GrObj::scalingMode", itsScaler.itsMode);
+  writer->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
+  writer->writeValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
 
-  writer->writeValue("alignmentMode", itsAligner.itsMode);
-  writer->writeValue("centerX", itsAligner.itsCenterX);
-  writer->writeValue("centerY", itsAligner.itsCenterY);
+  writer->writeValue("GrObj::alignmentMode", itsAligner.itsMode);
+  writer->writeValue("GrObj::centerX", itsAligner.itsCenterX);
+  writer->writeValue("GrObj::centerY", itsAligner.itsCenterY);
 }
 
 
