@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug 15 06:46:29 2001
+// written: Wed Aug 15 07:08:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,10 +53,13 @@ class FieldMemberPtr {
 public:
   virtual ~FieldMemberPtr();
 
-private:
-  virtual Field& dereference(FieldContainer* obj) const = 0;
+  virtual void set(FieldContainer* obj, const Value& new_val) const = 0;
+  virtual shared_ptr<Value> get(const FieldContainer* obj) const = 0;
 
-  friend class FieldInfo;
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader* reader, const fstring& name) = 0;
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer* writer, const fstring& name) const = 0;
 };
 
 /** CFieldMemberPtr  */
@@ -65,7 +68,7 @@ class CFieldMemberPtr : public FieldMemberPtr {
 private:
   T C::* itsPtr;
 
-  virtual Field& dereference(FieldContainer* obj) const;
+  Field& dereference(FieldContainer* obj) const;
 
 public:
   CFieldMemberPtr(T C::* ptr) : itsPtr(ptr) {}
@@ -74,6 +77,14 @@ public:
 
   CFieldMemberPtr& operator=(const CFieldMemberPtr& other)
     { itsPtr = other.itsPtr; return *this; }
+
+  virtual void set(FieldContainer* obj, const Value& new_val) const;
+  virtual shared_ptr<Value> get(const FieldContainer* obj) const;
+
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader* reader, const fstring& name);
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer* writer, const fstring& name) const;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -118,11 +129,7 @@ public:
 
   bool startsNewGroup() const { return itsStartsNewGroup; }
 
-private:
-  friend class FieldContainer;
-
-  Field& dereference(FieldContainer* obj) const
-    { return itsMemberPtr->dereference(obj); }
+  FieldMemberPtr& memberPtr() const { return *itsMemberPtr; }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -379,6 +386,35 @@ Field& CFieldMemberPtr<C, T>::dereference(FieldContainer* obj) const
 {
   C& p = dynamic_cast<C&>(*obj);
   return p.*itsPtr;
+}
+
+template <class C, class T>
+void CFieldMemberPtr<C, T>::set(FieldContainer* obj,
+                                const Value& new_val) const
+{
+  dereference(obj).setValue(new_val);
+}
+
+template <class C, class T>
+shared_ptr<Value> CFieldMemberPtr<C, T>::get(const FieldContainer* obj) const
+{
+  return dereference(const_cast<FieldContainer*>(obj)).value();
+}
+
+template <class C, class T>
+void CFieldMemberPtr<C, T>::readValueFrom(FieldContainer* obj,
+                                          IO::Reader* reader,
+                                          const fstring& name)
+{
+  dereference(obj).readValueFrom(reader, name);
+}
+
+template <class C, class T>
+void CFieldMemberPtr<C, T>::writeValueTo(const FieldContainer* obj,
+                                         IO::Writer* writer,
+                                         const fstring& name) const
+{
+  dereference(const_cast<FieldContainer*>(obj)).writeValueTo(writer, name);
 }
 
 static const char vcid_fields_h[] = "$Header$";

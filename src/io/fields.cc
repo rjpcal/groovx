@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug 15 06:46:45 2001
+// written: Wed Aug 15 07:07:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ shared_ptr<Value> FieldContainer::getField(const fstring& name) const
 
 shared_ptr<Value> FieldContainer::getField(const FieldInfo& pinfo) const
 {
-  return pinfo.dereference(const_cast<FieldContainer*>(this)).value();
+  return pinfo.memberPtr().get(this);
 }
 
 void FieldContainer::setField(const fstring& name, const Value& new_val)
@@ -298,7 +298,7 @@ void FieldContainer::setField(const fstring& name, const Value& new_val)
 
 void FieldContainer::setField(const FieldInfo& pinfo, const Value& new_val)
 {
-  pinfo.dereference(this).setValue(new_val);
+  pinfo.memberPtr().set(this, new_val);
   if (itsObservable)
     itsObservable->sendStateChangeMsg();
 }
@@ -313,7 +313,7 @@ DOTRACE("FieldContainer::readFieldsFrom");
        itr != end;
        ++itr)
     {
-      itr->dereference(this).readValueFrom(reader, itr->name());
+      itr->memberPtr().readValueFrom(this, reader, itr->name());
     }
 
   if (itsObservable)
@@ -330,8 +330,7 @@ DOTRACE("FieldContainer::writeFieldsTo");
        itr != end;
        ++itr)
     {
-      itr->dereference(const_cast<FieldContainer*>(this))
-        .writeValueTo(writer, itr->name());
+      itr->memberPtr().writeValueTo(this, writer, itr->name());
     }
 }
 
