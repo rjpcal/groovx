@@ -25,10 +25,10 @@ test "ObjTogl-Togl::undraw" "too many args" {
 	 Togl::undraw junk
 } {wrong \# args: should be "Togl::undraw"}
 test "ObjTogl-Togl::undraw" "normal use" {
-	 Tlist::reset
 	 set f [Face::Face]
 	 set p [Pos::Pos]
-	 Tlist::addObject 0 $f $p
+	 set t [Trial::Trial]
+	 Trial::add $t $f $p
 	 setForeground 1
 	 setBackground 0
 	 clearscreen
@@ -43,10 +43,10 @@ test "ObjTogl-Togl::refresh" "too many args" {
 	 Togl::refresh junk
 } {wrong \# args: should be "Togl::refresh"}
 test "ObjTogl-Togl::refresh" "normal use" {
-	 Tlist::reset
 	 set f [Face::Face]
 	 set p [Pos::Pos]
-	 Tlist::addObject 0 $f $p
+	 set t [Trial::Trial]
+	 Trial::add $t $f $p
 	 Togl::setCurTrial 0
 	 setForeground 1
 	 setBackground 0
@@ -115,7 +115,8 @@ test "ObjTogl-Togl::setCurTrial" "too many args" {
 test "ObjTogl-Togl::setCurTrial" "normal use" {
 	 set f [Face::Face]
 	 set p [Pos::Pos]
-	 Tlist::addObject 0 0 0
+	 set t [Trial::Trial]
+	 Trial::add $t $f $p
 	 catch {Togl::setCurTrial 0}
 } {^0$}
 test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {
