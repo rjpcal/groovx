@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Fri May 26 14:58:07 2000
+// written: Tue May 30 16:06:43 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -173,7 +173,7 @@ public:
   Screen* screen() const { return Tk_Screen(itsTkWin); }
   int screenNumber() const { return Tk_ScreenNumber(itsTkWin); }
   Colormap colormap() const { return Tk_Colormap(itsTkWin); }
-  Window windowId() const { return Tk_WindowId(itsTkWin); }
+  Window windowId() const { return itsWindowId; }
 
   int dumpToEpsFile(const char* filename, int inColor,
 						  void (*user_redraw)( const Togl* )) const;
@@ -212,6 +212,7 @@ public:
   GLXContext itsGLXContext;		/* Normal planes GLX context */
   Display* itsDisplay;		/* X's token for the window's display. */
   Tk_Window  itsTkWin;		/* Tk window structure */
+  Window itsWindowId;
   Tcl_Interp* itsInterp;		/* Tcl interpreter */
   Tcl_Command itsWidgetCmd;       /* Token for togl's widget command */
 #ifndef NO_TK_CURSOR
@@ -1299,6 +1300,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsGLXContext(NULL),
   itsDisplay(0),
   itsTkWin(0),
+  itsWindowId(0),
   itsInterp(interp),
 #ifndef NO_TK_CURSOR
   itsCursor(None),
@@ -2032,6 +2034,8 @@ DOTRACE("Togl::Impl::makeWindowExist");
   // Issue a ConfigureNotify event if there were deferred changes
   issueConfigureNotify();
 
+  XSelectInput(itsDisplay, itsWindowId, ALL_EVENTS_MASK);
+
   // Request the X window to be displayed
   XMapWindow(itsDisplay, windowId());
 
@@ -2225,29 +2229,57 @@ DOTRACE("Togl::Impl::createWindow");
   /* Make sure Tk knows to switch to the new colormap when the cursor
 	* is over this window when running in color index mode.
 	*/
-  /*   Tk_SetWindowVisual(itsTkWin, itsVisInfo->visual, itsVisInfo->depth, cmap);*/
-										  /* Rob's */
-  Tk_SetWindowColormap(itsTkWin, cmap);
+  Tk_SetWindowVisual(itsTkWin, itsVisInfo->visual, itsVisInfo->depth, cmap);
 
   // Find parent of window (necessary for creation)
   Window parent = findParent();
 
-  XSetWindowAttributes swa;
-  swa.colormap = cmap;
-  swa.border_pixel = 0;
-  swa.event_mask = ALL_EVENTS_MASK;
-  winPtr->window = XCreateWindow(itsDisplay, parent,
-											0, 0, itsWidth, itsHeight,
-											0, itsVisInfo->depth,
-											InputOutput, itsVisInfo->visual,
-											CWBorderPixel | CWColormap | CWEventMask,
-											&swa);
+  DebugEvalNL(parent);
 
-  /* Make sure window manager installs our colormap */
-  XSetWMColormapWindows( itsDisplay, winPtr->window, &(winPtr->window), 1 );
+  winPtr->atts.colormap = cmap;
+  winPtr->atts.border_pixel = 0;
+  winPtr->atts.event_mask = ALL_EVENTS_MASK;
+  itsWindowId = XCreateWindow(itsDisplay,
+ 										parent,
+										0, 0, itsWidth, itsHeight,
+										0, itsVisInfo->depth,
+										InputOutput, itsVisInfo->visual,
+										CWBorderPixel | CWColormap | CWEventMask,
+										&winPtr->atts);
+
+  DebugEvalNL(itsWindowId);
+
+  winPtr->window = itsWindowId;
+
+  // This is a hack to get the Togl widget's colormap to be
+  // visible... basically we install this colormap in all windows up
+  // the window hierarchy up to (but not including) the root
+  // window. It should be possible to get the window manager to
+  // install the colormap when the Togl widget becomes the active
+  // window, but this has not worked yet.
+
+  Window current = itsWindowId;
+  Window root = XRootWindow( itsDisplay, DefaultScreen(itsDisplay) );
+
+  while (current != root) {
+
+	 DebugEval((void*)current); DebugEvalNL((void*)root);
+
+	 XSetWindowColormap(itsDisplay, current, cmap);
+
+	 Window parent;
+	 Window* children;
+	 unsigned int nchildren;
+
+	 XQueryTree(itsDisplay, current, &root, &parent, &children, &nchildren);
+	 XFree(children);
+
+	 current = parent;
+  }
+
   int dummy_new_flag;
   Tcl_HashEntry *hPtr = Tcl_CreateHashEntry(&winPtr->dispPtr->winTable,
-												(char *) winPtr->window, &dummy_new_flag);
+												(char *) windowId(), &dummy_new_flag);
   Tcl_SetHashValue(hPtr, winPtr);
 
   winPtr->dirtyAtts = 0;
