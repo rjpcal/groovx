@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu May 11 18:45:37 2000
+// written: Fri May 19 19:16:05 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -124,24 +124,28 @@ DOTRACE("ExptTcl::BeginCmd::beginCmd");
 class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   PauseCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
-	 {}
-protected:
-  virtual void invoke() {
-	 ExptDriver* ed = getItem();
-	 ed->edHaltExpt();
-
-	 static Tcl::TclEvalCmd pauseMsgCmd(
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, 1, 1),
+	 itsPauseMsgCmd(
 				"tk_messageBox -default ok -icon info "
 				"-title \"Pause\" -type ok "
 				"-message \"Experiment paused. Click OK to continue.\";\n"
 				"after 1000",
-				Tcl::TclEvalCmd::THROW_EXCEPTION);
+				Tcl::TclEvalCmd::THROW_EXCEPTION)
+  {}
 
-	 pauseMsgCmd.invoke(interp());
+protected:
+  virtual void invoke() {
+
+	 ExptDriver* ed = getItem();
+	 ed->edHaltExpt();
+
+	 itsPauseMsgCmd.invoke(interp());
 
 	 ed->edResumeExpt();
   }
+
+private:
+  Tcl::TclEvalCmd itsPauseMsgCmd;
 };
 
 //--------------------------------------------------------------------
@@ -225,38 +229,7 @@ protected:
 
 class ExptTcl::ExptPkg : public Tcl::CTclIoItemPkg<ExptDriver> {
 public:
-  ExptPkg(Tcl_Interp* interp) :
-	 Tcl::CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
-	 itsExptDriver(interp)
-  {
-  DOTRACE("ExptPkg::ExptPkg");
-
-    Tcl::addTracing(this, ExptDriver::tracer);
-
-	 addCommand( new BeginCmd(this, "Expt::begin") );
-	 addCommand( new PauseCmd(this, "Expt::pause") );
-	 addCommand( new ReadCmd(this, "Expt::read") );
-	 addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
-	 addCommand( new WriteCmd(this, "Expt::write") );
-
-    declareCAttrib("autosaveFile",
-						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
-    declareCAttrib("autosavePeriod",
-						 &ExptDriver::getAutosavePeriod,
-						 &ExptDriver::setAutosavePeriod);
-	 declareCAction("reset", &ExptDriver::edResetExpt);
-	 declareCAction("stop", &ExptDriver::edHaltExpt);
-	 declareCAction("storeData", &ExptDriver::storeData);
-	 declareCGetter("currentTrial", &ExptDriver::edGetCurrentTrial);
-
-	 // Install the experiment into the application
-	 Application& app = Application::theApp();
-	 GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
-
-	 if (grshapp != 0) {
-		grshapp->installExperiment(&itsExptDriver);
-	 }
-  }
+  ExptPkg(Tcl_Interp* interp);
 
   virtual IO::IoObject& getIoFromId(int) { return itsExptDriver; }
 
@@ -268,15 +241,46 @@ private:
   ExptDriver itsExptDriver;
 };
 
+ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
+  Tcl::CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
+  itsExptDriver(interp)
+{
+  DOTRACE("ExptPkg::ExptPkg");
+
+  Tcl::addTracing(this, ExptDriver::tracer);
+
+  addCommand( new BeginCmd(this, "Expt::begin") );
+  addCommand( new PauseCmd(this, "Expt::pause") );
+  addCommand( new ReadCmd(this, "Expt::read") );
+  addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
+  addCommand( new WriteCmd(this, "Expt::write") );
+
+  declareCAttrib("autosaveFile",
+					  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+  declareCAttrib("autosavePeriod",
+					  &ExptDriver::getAutosavePeriod,
+					  &ExptDriver::setAutosavePeriod);
+  declareCAction("reset", &ExptDriver::edResetExpt);
+  declareCAction("stop", &ExptDriver::edHaltExpt);
+  declareCAction("storeData", &ExptDriver::storeData);
+  declareCGetter("currentTrial", &ExptDriver::edGetCurrentTrial);
+
+  // Install the experiment into the application
+  Application& app = Application::theApp();
+  GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
+
+  if (grshapp != 0) {
+	 grshapp->installExperiment(&itsExptDriver);
+  }
+}
+
 //---------------------------------------------------------------------
 //
 // Expt_Init --
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Expt_Init;
-
-int Expt_Init(Tcl_Interp* interp) {
+extern "C" int Expt_Init(Tcl_Interp* interp) {
 DOTRACE("Expt_Init");
 
   new ExptTcl::ExptPkg(interp);
