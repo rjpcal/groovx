@@ -292,7 +292,9 @@ $(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
 ifdef FILTER
 	csh -fc "($(CC) -c $< -o $@ $(ALL_CC_OPTIONS)) $(FILTER)"
 else
-	$(CC) -c $< -o $@ $(ALL_CC_OPTIONS)
+	$(CC) $(ALL_CC_OPTIONS) \
+		-c $< \
+		-o $@
 endif
 
 # to avoid deleting any intermediate targets
