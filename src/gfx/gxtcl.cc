@@ -380,6 +380,21 @@ DOTRACE("Gxshapekit_Init");
   PKG_RETURN;
 }
 
+namespace
+{
+  void scramble1(Util::SoftRef<GxPixmap> pixmap,
+                 int numsubcols, int numsubrows)
+  {
+    pixmap->scramble(numsubcols, numsubrows, 0);
+  }
+
+  void scramble2(Util::SoftRef<GxPixmap> pixmap,
+                 int numsubcols, int numsubrows, int seed)
+  {
+    pixmap->scramble(numsubcols, numsubrows, seed);
+  }
+}
+
 extern "C"
 int Gxpixmap_Init(Tcl_Interp* interp)
 {
@@ -390,24 +405,29 @@ DOTRACE("Gxpixmap_Init");
   Tcl::defCreator<GxPixmap>(pkg, "Bitmap");
   Tcl::defGenericObjCmds<GxPixmap>(pkg);
 
-  pkg->defGetter( "filename", &GxPixmap::filename );
-  pkg->defVec( "loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );
-  pkg->defVec( "queueImage", "item_id(s) filename(s)", &GxPixmap::queueImage );
-  pkg->defVec( "saveImage", "item_id(s) filename(s)", &GxPixmap::saveImage );
-  pkg->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
-               &GxPixmap::grabScreenRect );
-  pkg->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
-               &GxPixmap::grabWorldRect );
-  pkg->defAction("flipContrast", &GxPixmap::flipContrast);
-  pkg->defAction("flipVertical", &GxPixmap::flipVertical);
-  pkg->defGetter("size", &GxPixmap::size);
-  pkg->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
-  pkg->defSetter("zoomTo", &GxPixmap::zoomTo);
-  pkg->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
-  pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
+
   pkg->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
   pkg->defGetter("checkSum", &GxPixmap::checkSum);
-  pkg->defVec("scramble", "numcols numrows seed", &GxPixmap::scramble);
+  pkg->defGetter("filename", &GxPixmap::filename );
+  pkg->defAction("flipContrast", &GxPixmap::flipContrast);
+  pkg->defAction("flipVertical", &GxPixmap::flipVertical);
+  pkg->defVec("grabScreenRect", "item_id(s) {left top right bottom}",
+              &GxPixmap::grabScreenRect );
+  pkg->defVec("grabWorldRect", "item_id(s) {left top right bottom}",
+              &GxPixmap::grabWorldRect );
+  pkg->defVec("loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );
+  pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
+  pkg->defVec("queueImage", "item_id(s) filename(s)", &GxPixmap::queueImage );
+  pkg->defAction("reload", &GxPixmap::reload);
+  pkg->defVec("saveImage", "item_id(s) filename(s)", &GxPixmap::saveImage );
+  pkg->defVec("scramble", "numcols numrows", &scramble1);
+  pkg->defVec("scramble", "numcols numrows ?seed?", &scramble2);
+  pkg->defVec("scramble", "numcols numrows ?seed moveParts flipLR flipTB?",
+              &GxPixmap::scramble);
+  pkg->defGetter("size", &GxPixmap::size);
+  pkg->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
+  pkg->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
+  pkg->defSetter("zoomTo", &GxPixmap::zoomTo);
 
   // For GLBitmap/XBitmap backward-compatibility
   Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeGL, "GLBitmap");

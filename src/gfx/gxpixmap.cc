@@ -278,6 +278,15 @@ DOTRACE("GxPixmap::loadImage");
   this->sigNodeChanged.emit();
 }
 
+void GxPixmap::reload()
+{
+DOTRACE("GxPixmap::reload");
+
+  ImgFile::load(rep->itsFilename.c_str(), rep->itsData);
+
+  this->sigNodeChanged.emit();
+}
+
 void GxPixmap::queueImage(const char* filename)
 {
 DOTRACE("GxPixmap::queueImage");
@@ -468,12 +477,18 @@ DOTRACE("GxPixmap::setAsBitmap");
   this->sigNodeChanged.emit();
 }
 
-void GxPixmap::scramble(int numsubcols, int numsubrows, int seed)
+void GxPixmap::scramble(int numsubcols, int numsubrows, int seed,
+                        bool allowMoveSubparts,
+                        bool allowFlipLeftRight,
+                        bool allowFlipTopBottom)
 {
 DOTRACE("GxPixmap::scramble");
 
   shared_ptr<Gfx::BmapData> newdata =
-    rep->itsData.makeScrambled(numsubcols, numsubrows, seed);
+    rep->itsData.makeScrambled(numsubcols, numsubrows, seed,
+                               allowMoveSubparts,
+                               allowFlipLeftRight,
+                               allowFlipTopBottom);
 
   rep->itsData.swap(*newdata);
 

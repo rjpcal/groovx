@@ -189,8 +189,12 @@ public:
   /// Specify the row order but leave the actual memory untouched.
   void specifyRowOrder(RowOrder order) const;
 
+  /// Generate a new image from scrambled subparts of the current image.
   shared_ptr<BmapData> makeScrambled(int numsubcols, int numsubrows,
-                                     int seed) const;
+                                     int seed,
+                                     bool allowMoveSubparts = true,
+                                     bool allowFlipLeftRight = true,
+                                     bool allowFlipTopBottom = true) const;
 
 private:
   class Impl;

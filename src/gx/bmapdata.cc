@@ -346,7 +346,10 @@ void Gfx::BmapData::specifyRowOrder(Gfx::BmapData::RowOrder order) const
 }
 
 shared_ptr<Gfx::BmapData>
-Gfx::BmapData::makeScrambled(int nsubimg_x, int nsubimg_y, int seed) const
+Gfx::BmapData::makeScrambled(int nsubimg_x, int nsubimg_y, int seed,
+                             bool allowMoveSubparts,
+                             bool allowFlipLeftRight,
+                             bool allowFlipTopBottom) const
 {
 DOTRACE("Gfx::BmapData::makeScrambled");
 
@@ -377,7 +380,10 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   Util::Urand generator(seed);
 
-  std::random_shuffle(newpos.begin(), newpos.end(), generator);
+  if (allowMoveSubparts)
+    {
+      std::random_shuffle(newpos.begin(), newpos.end(), generator);
+    }
 
   if (rep->bitsPerPixel != 8 && rep->bitsPerPixel != 24)
     {
@@ -392,8 +398,8 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   for (int i = 0; i < npos; ++i)
     {
-      const bool fliplr = generator.booldraw();
-      const bool fliptb = generator.booldraw();
+      const bool fliplr = allowFlipLeftRight && generator.booldraw();
+      const bool fliptb = allowFlipTopBottom && generator.booldraw();
 
       const int src_subimg_y = i / nsubimg_x;
       const int src_subimg_x = i % nsubimg_x;

@@ -77,6 +77,12 @@ public:
   /** The file must be in one of the supported image formats. */
   void loadImage(const char* filename);
 
+  /// Reload bitmap data from the image file most recently loaded.
+  /** This has the effect of reverting any changes that might have been
+      made to the image data since loading. The underlying image file is
+      not affected. */
+  void reload();
+
   /// Queues the image file \a filename for loading.
   /** The image will not actually be retrieved from the file until it is
       needed. */
@@ -157,8 +163,10 @@ public:
   /// Change whether the image will be rendered as a 1-bit bitmap.
   void setAsBitmap(bool val);
 
-  ///
-  void scramble(int numsubcols, int numsubrows, int seed);
+  void scramble(int numsubcols, int numsubrows, int seed,
+                bool allowMoveSubparts = true,
+                bool allowFlipLeftRight = true,
+                bool allowFlipTopBottom = true);
 
 protected:
   /// Implements the \c GxShapeKit rendering operation.
