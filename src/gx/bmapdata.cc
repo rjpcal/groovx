@@ -3,7 +3,7 @@
 // bmapdata.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jan 20 00:37:03 2000
-// written: Sun Mar  5 20:31:38 2000
+// written: Mon Mar  6 19:24:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,6 @@
 
 #include <algorithm>
 #include <cstring>				  // for memcpy
-#include <memory>
-#include <vector>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -43,7 +41,7 @@ public:
   int itsHeight;
   int itsBitsPerPixel;
   int itsByteAlignment;
-  vector<unsigned char> itsBytes;
+  dynamic_block<unsigned char> itsBytes;
 
   mutable auto_ptr<UpdateFunc> itsUpdater;
 };
@@ -83,12 +81,12 @@ DOTRACE("BmapData::bytesPtr");
   return const_cast<unsigned char*>(&(itsImpl->itsBytes[0]));
 }
 
-vector<unsigned char>& BmapData::bytesVec() {
+dynamic_block<unsigned char>& BmapData::bytesVec() {
   updateIfNeeded(); 
   return itsImpl->itsBytes;
 }
 
-const vector<unsigned char>& BmapData::bytesVec() const {
+const dynamic_block<unsigned char>& BmapData::bytesVec() const {
   updateIfNeeded(); 
   return itsImpl->itsBytes;
 }
@@ -155,7 +153,7 @@ DOTRACE("BmapData::flipVertical");
   int bytes_per_row = bytesPerRow();
   int num_bytes = byteCount();
   
-  vector<unsigned char> new_bytes(num_bytes);
+  dynamic_block<unsigned char> new_bytes(num_bytes);
   
   for (int row = 0; row < itsImpl->itsHeight; ++row) {
 	 int new_row = (itsImpl->itsHeight-1)-row;
@@ -196,7 +194,7 @@ DOTRACE("BmapData::swap");
 #endif
 }
 
-void BmapData::swap(vector<unsigned char>& bytes, int& width, int& height,
+void BmapData::swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
 						  int& bits_per_pixel, int& byte_alignment) {
 DOTRACE("BmapData::swap");
   updateIfNeeded();

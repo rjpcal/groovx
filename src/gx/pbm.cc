@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Mon Mar  6 13:45:43 2000
+// written: Mon Mar  6 19:13:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,10 @@
 #include "pbm.h"
 
 #include "bmapdata.h"
+#include "util/arrays.h"
 
 #include <fstream.h>
 #include <cctype>
-#include <vector>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -52,7 +52,7 @@ class Pbm::Impl {
 public:
   Impl() {}
 
-  void setBytes(const vector<unsigned char>& bytes,
+  void setBytes(const dynamic_block<unsigned char>& bytes,
 					 int width, int height, int bits_per_pixel);
 
   int itsMode;
@@ -62,10 +62,10 @@ public:
   int itsBitsPerPixel;
 
   int itsNumBytes;
-  vector<unsigned char> itsBytes;
+  dynamic_block<unsigned char> itsBytes;
 };
 
-void Pbm::Impl::setBytes(const vector<unsigned char>& bytes,
+void Pbm::Impl::setBytes(const dynamic_block<unsigned char>& bytes,
 								 int width, int height, int bits_per_pixel) {
   itsBytes = bytes;
   itsNumBytes = bytes.size();

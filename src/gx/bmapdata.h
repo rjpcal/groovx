@@ -3,7 +3,7 @@
 // bmapdata.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jan 19 17:25:51 2000
-// written: Sun Mar  5 20:18:06 2000
+// written: Mon Mar  6 19:11:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
 
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
+#ifndef ARRAYS_H_DEFINED
+#include "util/arrays.h"
 #endif
 
 #ifndef MEMORY_DEFINED
@@ -78,10 +77,10 @@ public:
   unsigned char* bytesPtr() const;
 
   /// Returns a reference to the container of the raw image data.
-  vector<unsigned char>& bytesVec();
+  dynamic_block<unsigned char>& bytesVec();
 
   /// Returns a reference to the container of the raw image data.
-  const vector<unsigned char>& bytesVec() const;
+  const dynamic_block<unsigned char>& bytesVec() const;
 
   /// Returns the bitmap's width in pixels.
   int width() const;
@@ -124,7 +123,7 @@ public:
   void swap(BmapData& other);
 
   /// Swaps the internal representation with the given arguments.
-  void swap(vector<unsigned char>& bytes, int& width, int& height,
+  void swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
 				int& bits_per_pixel, int& byte_alignment);
 
   /** Queues the update given by \a updater. The \c update() function
