@@ -23,8 +23,6 @@
 #include "util/objdb.h"
 #include "util/objmgr.h"
 
-#include "system/demangle.h"
-
 #include <fstream.h>
 
 #define NO_TRACE
@@ -134,7 +132,7 @@ namespace
 
   fstring objType(Util::SoftRef<Util::Object> obj)
   {
-    return demangle_cstr(typeid(*obj).name());
+    return typeid(*obj).name();
   }
 
   void dbClear() { ObjDb::theDb().clear(); }
