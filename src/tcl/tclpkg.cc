@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu Aug 16 15:14:31 2001
+// written: Sun Aug 19 16:38:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ namespace Tcl
            itr != end;
            ++itr)
         {
-          if (itsCaster->isMyType(*itr))
+          if (itsCaster->isMyType((*itr).getWeak()))
             ++count;
         }
       ctx.setResult(count);
@@ -93,8 +93,8 @@ namespace Tcl
            itr != end;
            ++itr)
         {
-          if (itsCaster->isMyType(*itr))
-            result.append((*itr)->id());
+          if (itsCaster->isMyType((*itr).getWeak()))
+            result.append((*itr).id());
         }
 
       ctx.setResult(result);
@@ -116,9 +116,13 @@ namespace Tcl
            itr != end;
            /* increment done in loop body */)
         {
-          if (itsCaster->isMyType(*itr) && (*itr)->isUnshared())
+          DebugEval((*itr)->id());
+          DebugEval((*itr)->refCounts()->strongCount());
+          DebugEvalNL((*itr)->refCounts()->weakCount());
+
+          if (itsCaster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
             {
-              int remove_me = (*itr)->id();
+              Util::UID remove_me = (*itr)->id();
               ++itr;
               theDb.remove(remove_me);
             }
