@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Sep 10 14:23:49 1999
+// written: Fri Sep 17 09:58:52 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJ_CC_DEFINED
@@ -51,14 +53,34 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////////////////
-// GrObj member functions
+//
+// GrObjImpl structure
+//
 ///////////////////////////////////////////////////////////////////////
+
+class GrObjImpl {
+public:
+  GrObjImpl() : isUsed(false) {};
+  bool isUsed;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// GrObj member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+const GrObj::GrObjRenderMode GrObj::GROBJ_DIRECT_RENDER;
+const GrObj::GrObjRenderMode GrObj::GROBJ_GL_COMPILE;
+const GrObj::GrObjRenderMode GrObj::GROBJ_GL_BITMAP_CACHE;
+const GrObj::GrObjRenderMode GrObj::GROBJ_X11_BITMAP_CACHE;
 
 // GrObj default constructor
 GrObj::GrObj() : 
   itsIsCurrent(0),
   itsUsingCompile(true),
-  itsDisplayList(-1)
+  itsDisplayList(-1),
+  itsImpl(new GrObjImpl)
 {
 DOTRACE("GrObj::GrObj");
   // The GrObj needs to observe itself in order to update its display
@@ -71,7 +93,8 @@ DOTRACE("GrObj::GrObj");
 GrObj::GrObj(istream& is, IOFlag flag) :
   itsIsCurrent(0),
   itsUsingCompile(true),
-  itsDisplayList(-1)
+  itsDisplayList(-1),
+  itsImpl(new GrObjImpl)
 {
 DOTRACE("GrObj::GrObj(istream&)");
   deserialize(is, flag);
@@ -84,6 +107,7 @@ DOTRACE("GrObj::GrObj(istream&)");
 GrObj::~GrObj() {
 DOTRACE("GrObj::~GrObj");
   glDeleteLists(itsDisplayList, 1);
+  delete itsImpl;
 }
 
 // write the object's state to an output stream. The output stream must
@@ -94,6 +118,12 @@ DOTRACE("GrObj::serialize");
 
 void GrObj::deserialize(istream&, IOFlag) {
 DOTRACE("GrObj::deserialize");
+}
+
+bool GrObj::getBoundingBox(double& /*left*/, double& /*top*/,
+									double& /*right*/, double& /*bottom*/) {
+DOTRACE("GrObj::getBoundingBox");
+  return false;
 }
 
 void GrObj::receiveStateChangeMsg(const Observable* obj) {
