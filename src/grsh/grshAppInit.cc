@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Dec  6 13:29:57 2000
+// written: Thu Dec  7 16:14:21 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -104,7 +104,9 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Trial",    Trial_Init     }
 };
 
+#if 0
 PackageInfo DELAYED_PKGS[] = {};
+#endif
 
 } // end anonymous namespace
 
@@ -138,12 +140,14 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 	 if (result != TCL_OK) { itsStatus = result; }
   }}
 
+#if 0
   {for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i) {
 	 Tcl_StaticPackage((Tcl_Interp*) 0,
 							 const_cast<char*>(DELAYED_PKGS[i].pkgName),
 							 DELAYED_PKGS[i].pkgInitProc,
 							 0);
   }}
+#endif
 
   // set prompt to "cmd[n]% " where cmd is the name of the program,
   // and n is the history event number
