@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:32:01 2002
-// written: Thu Sep  5 16:13:42 2002
+// written: Wed Sep 11 14:08:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,11 @@ public:
   Main(int argc, char** argv);
   ~Main();
 
-  Tcl_Interp* interp() const;
+  static Tcl_Interp* interp();
 
-  Tcl::Interp& safeInterp() const;
+  static Tcl::Interp& safeInterp();
 
-  void run();
+  static void run();
 
 private:
   Main(const Main&);
