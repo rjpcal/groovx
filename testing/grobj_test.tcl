@@ -91,18 +91,6 @@ test "GrobjTcl-GrObj::category" "normal use vector set with many values" {
 } "^${INT}${SP}${INT}$"
 test "GrobjTcl-GrObj::category" "error" {} {^$} $no_test
 
-### GrObj::usingCompileCmd ###
-test "GrobjTcl-GrObj::usingCompile" "too few args" {
-	 GrObj::usingCompile
-} {^wrong \# args: should be "GrObj::usingCompile item_id\(s\) \?new_value\(s\)\?"$}
-test "GrobjTcl-GrObj::usingCompile" "too many args" {
-	 GrObj::usingCompile 0 0 junk
-} {^wrong \# args: should be "GrObj::usingCompile item_id\(s\) \?new_value\(s\)\?"$}
-test "GrobjTcl-GrObj::usingCompile" "normal use vector get" {
-	 GrObj::usingCompile "$::FACE $::FIXPT"
-} "^${INT}${SP}${INT}$"
-test "GrobjTcl-GrObj::usingCompile" "error" {} {^$} $no_test
-
 ### GrObj::updateCmd ###
 test "GrobjTcl-GrObj::update" "too few args" {
 	 GrObj::update
