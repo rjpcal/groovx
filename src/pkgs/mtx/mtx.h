@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 17:38:44 2002
+// written: Mon Mar  4 17:43:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,6 @@ template <class T>
 class MtxIterBase
 {
 protected:
-
   MtxIterBase(T* d, int str, int n) :
     data(d), stride(str), stop(data+str*n) {}
 
@@ -135,7 +134,7 @@ public:
     data(other.data), stride(other.stride), stop(other.stop) {}
 
   template <class U>
-  MtxIterBase(const MtxIterBase<U>& other) :
+  explicit MtxIterBase(const MtxIterBase<U>& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
 
   typedef std::random_access_iterator_tag iterator_category;
@@ -181,6 +180,8 @@ public:
 private:
   friend class Slice;
   friend class Mtx;
+
+  template <class U> friend class MtxIterBase;
 
   T* data;
   int stride;
