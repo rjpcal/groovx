@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Feb 27 15:16:22 2002
+// written: Wed Feb 27 15:40:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,11 +30,13 @@ class fstring;
 
 namespace RC // Range checking
 {
+  void geq(const void* x, const void* lim, const char* f, int ln);
   void less(const void* x, const void* lim, const char* f, int ln);
   void leq(const void* x, const void* lim, const char* f, int ln);
   void inHalfOpen(const void* x, const void* llim, const void* ulim,
                   const char* f, int ln);
 
+  void geq(int x, int lim, const char* f, int ln);
   void less(int x, int lim, const char* f, int ln);
   void leq(int x, int lim, const char* f, int ln);
   void inHalfOpen(int x, int llim, int ulim, const char* f, int ln);
@@ -42,21 +44,25 @@ namespace RC // Range checking
 
 #ifdef RANGE_CHECK
 // Range check
+#  define RC_geq(x,lim) RC::geq((x),(lim),__FILE__,__LINE__)
 #  define RC_less(x,lim) RC::less((x),(lim),__FILE__,__LINE__)
 #  define RC_leq(x,lim) RC::leq((x),(lim),__FILE__,__LINE__)
 #  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__)
 
 // Range check, and return the checked value
+#  define RCR_geq(x,lim) (RC::geq((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_less(x,lim) (RC::less((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_leq(x,lim) (RC::leq((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
 
 #else // !RANGE_CHECK
 
+#  define RC_geq(x,lim)
 #  define RC_less(x,lim)
 #  define RC_leq(x,lim)
 #  define RC_inHalfOpen(x,llim,ulim)
 
+#  define RCR_geq(x,lim) (x)
 #  define RCR_less(x,lim) (x)
 #  define RCR_leq(x,lim) (x)
 #  define RCR_inHalfOpen(x,llim,ulim) (x)
@@ -199,6 +205,20 @@ public:
     RC_inHalfOpen(n, 0, itsNelems);
 
     return Slice(itsOwner, storageOffset(0), itsStride, n);
+  }
+
+  Slice range_n(int first, int n)
+  {
+    RC_inHalfOpen(first, 0, itsNelems);
+    RC_geq(n, 0);
+    RC_leq(first+n, itsNelems);
+
+    return Slice(itsOwner, storageOffset(first), itsStride, n);
+  }
+
+  Slice range(int first, int one_past_last)
+  {
+    return range_n(first, one_past_last - first);
   }
 
   void print() const;
@@ -701,6 +721,8 @@ public:
   };
 
   void setAll(double x) { applyF(Setter(x)); }
+
+  void clear(double x = 0.0) { applyF(Setter(x)); }
 
   Mtx& operator+=(double x) { applyF(Add(x)); return *this; }
   Mtx& operator-=(double x) { applyF(Sub(x)); return *this; }
